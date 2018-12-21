@@ -57,7 +57,29 @@ class Alma extends PaymentModule
 
         $this->ps_versions_compliancy = array('min' => '1.6', 'max' => _PS_VERSION_);
 
+        if (version_compare(_PS_VERSION_, '1.7', '>=')) {
+            $this->currencies = true;
+            $this->currencies_mode = 'checkbox';
+        }
+
         $this->file = __FILE__;
+    }
+
+    public function isActive()
+    {
+        $authorized = false;
+        foreach (Module::getPaymentModules() as $module) {
+            if ($module['name'] == $this->name) {
+                $authorized = true;
+            }
+        }
+
+        if(!$authorized) {
+            return false;
+        }
+
+        return in_array(strtoupper($this->context->currency->iso_code), $this->limited_currencies) &&
+            in_array(strtoupper($this->context->country->iso_code), $this->limited_countries);
     }
 
     public function getContent()
