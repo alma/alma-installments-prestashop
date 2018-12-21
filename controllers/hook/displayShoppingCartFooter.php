@@ -50,8 +50,13 @@ class AlmaDisplayShoppingCartFooterController extends AlmaProtectedHookControlle
             return null;
         }
 
+        $alma = AlmaClient::defaultInstance();
+        if (!$alma) {
+            AlmaLogger::instance()->error('Cannot check cart eligibility: no API client');
+            return null;
+        }
+
         try {
-            $alma = AlmaClient::defaultInstance();
             $eligibility = $alma->payments->eligibility($payment_data);
         } catch (RequestError $e) {
             AlmaLogger::instance()->error("Error when checking cart {$this->context->cart->id} eligibility: " . $e->getMessage());
