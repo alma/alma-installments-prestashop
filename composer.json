@@ -1,0 +1,16 @@
+{
+    "name": "alma/alma-instalments-prestashop",
+    "description": "Payment method module to integrate Alma in PrestaShop",
+    "type": "library",
+    "require": {
+        "alma/alma-php-client": "dev-master"
+    },
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Olivier Lance",
+            "email": "olivier.lance@getalma.eu"
+        }
+    ],
+    "minimum-stability": "dev"
+}

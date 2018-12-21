@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<module>
+    <name>alma</name>
+    <displayName><![CDATA[Alma Monthly Payments for PrestaShop]]></displayName>
+    <version><![CDATA[1.0.0]]></version>
+    <description><![CDATA[Offer a secure split payment option to your customers]]></description>
+    <author><![CDATA[Alma]]></author>
+    <tab><![CDATA[payments_gateways]]></tab>
+	<confirmUninstall><![CDATA[Are you sure you want to deactivate Alma Monthly Payments from your shop?]]></confirmUninstall>
+    <is_configurable>1</is_configurable>
+    <need_instance>0</need_instance>
+	<limited_countries>FR</limited_countries>
+</module>

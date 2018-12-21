@@ -1,0 +1,58 @@
+.payment_module .alma img {
+    vertical-align: middle;
+    cursor: pointer;
+}
+
+.alma-button.disabled {
+    opacity: 0.5;
+}
+
+.alma-button.disabled img {
+    opacity: 0.5;
+}
+
+.alma-button--wrapper {
+    display: table;
+}
+
+.alma-button--wrapper > div {
+    display: table-cell;
+    vertical-align: middle;
+}
+
+.alma-button--description {
+    font-size: 0.8em;
+    opacity: 0.6;
+}
+
+.alma-error {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+
+    padding: 15px;
+
+    font-weight: bold;
+    font-size: 1.2em;
+    text-align: center;
+
+    background: rgba(77, 133, 229, 0.9);
+    color: white;
+
+    z-index: 9999;
+}
+
+.alma-error--close-btn {
+    position: absolute;
+    top: 50%;
+    margin-top: -10px;
+    right: 10px;
+    height: 20px;
+    width: 20px;
+    font-size: 2em;
+    line-height: 0.5em;
+    vertical-align: top;
+
+    cursor: pointer;
+}
