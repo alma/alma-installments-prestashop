@@ -34,22 +34,22 @@ class PaymentData
     public static function dataFromCart($cart, $context)
     {
         if ($cart->id_customer == 0 || $cart->id_address_delivery == 0 || $cart->id_address_invoice == 0) {
-            AlmaLogger::instance()->error("[Alma] Missing Customer ID or Delivery/Billing address ID for Cart {$cart->id}");
-            return null;
+            AlmaLogger::instance()->warning("[Alma] Missing Customer ID or Delivery/Billing address ID for Cart {$cart->id}");
         }
 
-        $customer = new Customer($cart->id_customer);
-        if (!Validate::isLoadedObject($customer)) {
-            AlmaLogger::instance()->error("[Alma] Error loading Customer " . $cart->id_customer . " from Cart " . $cart->id);
-            return null;
+        $customer = null;
+        if ($cart->id_customer) {
+            $customer = new Customer($cart->id_customer);
+            if (!Validate::isLoadedObject($customer)) {
+                AlmaLogger::instance()->error("[Alma] Error loading Customer " . $cart->id_customer . " from Cart " . $cart->id);
+                return null;
+            }
         }
 
-        $purchaseAmount = (float)$cart->getOrderTotal(true, Cart::BOTH);
+        if (!$customer) {
+            $customer = $context->customer;
+        }
 
-        $shippingAddress = new Address((int)$cart->id_address_delivery);
-        $billingAddress = new Address((int)$cart->id_address_invoice);
-
-        $customer = $context->customer;
         $customerData = array(
             'first_name' => $customer->firstname,
             'last_name' => $customer->lastname,
@@ -58,6 +58,14 @@ class PaymentData
             'addresses' => array(),
             'phone' => null,
         );
+
+        if ($customerData['birth_date'] == '0000-00-00')
+        {
+            $customerData['birth_date'] = null;
+        }
+
+        $shippingAddress = new Address((int)$cart->id_address_delivery);
+        $billingAddress = new Address((int)$cart->id_address_invoice);
 
         if ($shippingAddress->phone) {
             $customerData['phone'] = $shippingAddress->phone;
@@ -80,6 +88,8 @@ class PaymentData
                 $customerData['phone'] = $address['phone_mobile'];
             }
         }
+
+        $purchaseAmount = (float)$cart->getOrderTotal(true, Cart::BOTH);
 
         $data = array(
             "payment" => array(
