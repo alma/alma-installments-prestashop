@@ -56,6 +56,7 @@ class AlmaSettings
         $result = true;
 
         $configKeys = array(
+            'ALMA_FULLY_CONFIGURED',
             'ALMA_ACTIVATE_LOGGING',
             'ALMA_API_MODE',
             'ALMA_LIVE_API_KEY',
@@ -79,9 +80,14 @@ class AlmaSettings
 
 
     /* Getters */
+    public static function isFullyConfigured()
+    {
+        return (bool)(int)self::get('ALMA_FULLY_CONFIGURED', false);
+    }
+
     public static function canLog()
     {
-        return (bool)self::get('ALMA_ACTIVATE_LOGGING', false);
+        return (bool)(int)self::get('ALMA_ACTIVATE_LOGGING', false);
     }
 
     public static function getActiveMode()
@@ -110,7 +116,7 @@ class AlmaSettings
 
     public static function showDisabledButton()
     {
-        return (bool)self::get('ALMA_SHOW_DISABLED_BUTTON', true);
+        return (bool)(int)self::get('ALMA_SHOW_DISABLED_BUTTON', true);
     }
 
     public static function needsAPIKeys()
@@ -130,7 +136,7 @@ class AlmaSettings
 
     public static function showEligibilityMessage()
     {
-        return (bool)self::get('ALMA_SHOW_ELIGIBILITY_MESSAGE', true);
+        return (bool)(int)self::get('ALMA_SHOW_ELIGIBILITY_MESSAGE', true);
     }
 
     public static function getPaymentButtonTitle($default = '')
