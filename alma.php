@@ -65,23 +65,6 @@ class Alma extends PaymentModule
         $this->file = __FILE__;
     }
 
-    public function isActive()
-    {
-        $authorized = false;
-        foreach (Module::getPaymentModules() as $module) {
-            if ($module['name'] == $this->name) {
-                $authorized = true;
-            }
-        }
-
-        if(!$authorized) {
-            return false;
-        }
-
-        return in_array(strtoupper($this->context->currency->iso_code), $this->limited_currencies) &&
-            in_array(strtoupper($this->context->country->iso_code), $this->limited_countries);
-    }
-
     public function getContent()
     {
         return $this->runHookController('getContent', null);

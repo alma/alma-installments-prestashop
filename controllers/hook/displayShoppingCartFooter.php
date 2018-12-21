@@ -39,8 +39,7 @@ class AlmaDisplayShoppingCartFooterController extends AlmaProtectedHookControlle
 {
     public function run($params)
     {
-        $almaModule = new Alma();
-        if (!AlmaSettings::isFullyConfigured() || !$almaModule->isActive() || !AlmaSettings::showEligibilityMessage()) {
+        if (!AlmaSettings::isFullyConfigured() || !AlmaSettings::showEligibilityMessage()) {
             return null;
         }
 
