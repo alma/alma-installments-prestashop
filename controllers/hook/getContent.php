@@ -43,7 +43,7 @@ class AlmaGetContentController extends AlmaAdminHookController
         }
 
         // Consider the plugin as fully configured only when everything goes well
-        AlmaSettings::updateValue('ALMA_FULLY_CONFIGURED', null);
+        AlmaSettings::updateValue('ALMA_FULLY_CONFIGURED', '0');
 
         $apiOnly = Tools::getValue('_api_only');
 
@@ -95,7 +95,7 @@ class AlmaGetContentController extends AlmaAdminHookController
         AlmaSettings::updateValue('ALMA_TEST_API_KEY', $testKey);
 
         // Everything has been properly validated: we're fully configured
-        AlmaSettings::updateValue('ALMA_FULLY_CONFIGURED', true);
+        AlmaSettings::updateValue('ALMA_FULLY_CONFIGURED', '1');
 
         $this->context->smarty->clearAssign('validation_error');
         return $this->module->display($this->module->file, 'getContent.tpl');
@@ -386,7 +386,7 @@ class AlmaGetContentController extends AlmaAdminHookController
     {
         if (Tools::isSubmit('alma_config_form')) {
             $messages = $this->processConfiguration();
-        } else {
+        } elseif (!AlmaSettings::needsAPIKeys()) {
             $messages = $this->credentialsError(
                 AlmaSettings::getActiveMode(),
                 AlmaSettings::getLiveKey(),
