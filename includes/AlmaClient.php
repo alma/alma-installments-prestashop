@@ -54,10 +54,10 @@ class AlmaClient
                 'mode' => AlmaSettings::getActiveMode(),
                 'api_root' => 'http://alma:1337',
                 'force_tls' => false,
-                'logger' => new AlmaLogger(),
+                'logger' => AlmaLogger::instance(),
             ));
         } catch (\Exception $e) {
-            AlmaLogger::instance()->error("Error creating Alma API client: " . print_r($e, true));
+            AlmaLogger::instance()->error("Error creating Alma API client: " . $e->getMessage());
         }
 
         return $alma;
