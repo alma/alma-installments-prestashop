@@ -25,8 +25,7 @@ You first need to create your merchant account on [dashboard.getalma.eu](https:/
 
 ### Installing
 
-Download [the latest release](https://github.com/alma/alma-installments-prestashop/releases) and unzip it in your `modules` directory,
-or upload it from your modules catalog in your PrestaShop admin.
+Download [the latest release](https://github.com/alma/alma-installments-prestashop/releases) and unzip it in your `modules` directory, in a directory named `alma`.
 
 ### Configuring the module
 
