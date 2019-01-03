@@ -152,7 +152,7 @@ class AlmaValidationModuleFrontController extends ModuleFrontController
         }
 
         $first_instalment = $payment->payment_plan[0];
-        if ($payment->state !== Payment::STATE_IN_PROGRESS || $first_instalment->state !== Instalment::STATE_PAID) {
+        if (!in_array($payment->state, array(Payment::STATE_IN_PROGRESS, Payment::STATE_PAID)) || $first_instalment->state !== Instalment::STATE_PAID) {
             AlmaLogger::instance()->error("Payment '{$paymentId}': state incorrect {$payment->state} & {$first_instalment->state}");
             $this->fail($cart);
             return;
