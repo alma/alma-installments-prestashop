@@ -106,7 +106,7 @@ class AlmaGetContentController extends AlmaAdminHookController
         $modes = array(ALMA_MODE_TEST, ALMA_MODE_LIVE);
 
         foreach ($modes as $mode) {
-            $alma = AlmaClient::createInstance($mode == ALMA_MODE_LIVE ? $liveKey : $testKey);
+            $alma = AlmaClient::createInstance($mode == ALMA_MODE_LIVE ? $liveKey : $testKey, $mode);
             if (!$alma) {
                 $this->context->smarty->assign('validation_error', 'alma_client_null');
                 return $this->module->display($this->module->file, 'getContent.tpl');

@@ -45,13 +45,17 @@ class AlmaClient
         return $_alma_client;
     }
 
-    public static function createInstance($apiKey)
+    public static function createInstance($apiKey, $mode=null)
     {
+        if (!$mode) {
+            $mode = AlmaSettings::getActiveMode();
+        }
+
         $alma = null;
 
         try {
             $alma = new Client($apiKey, array(
-                'mode' => AlmaSettings::getActiveMode(),
+                'mode' => $mode,
                 'logger' => AlmaLogger::instance(),
             ));
         } catch (\Exception $e) {
