@@ -72,7 +72,17 @@ class Alma extends PaymentModule
 
     public function install()
     {
-        $result = parent::install();
+        $core_install = parent::install();
+        if (!$core_install) {
+            PrestaShopLogger::addLog("Alma: Core module install failed (returned {$core_install})", 3);
+
+            if (count($this->_errors) > 0) {
+                $errors = implode(', ', $this->_errors);
+                PrestaShopLogger::addLog("Alma: module install errors: {$errors})", 3);
+            }
+
+            return false;
+        }
 
         if (!$this->checkDependencies()) {
             return false;
@@ -102,7 +112,7 @@ class Alma extends PaymentModule
             }
         }
 
-        return $result;
+        return true;
     }
 
     private function checkDependencies()
