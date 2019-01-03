@@ -72,6 +72,8 @@ class Alma extends PaymentModule
 
     public function install()
     {
+        $result = parent::install();
+
         if (!$this->checkDependencies()) {
             return false;
         }
@@ -100,7 +102,7 @@ class Alma extends PaymentModule
             }
         }
 
-        return parent::install();
+        return $result;
     }
 
     private function checkDependencies()
