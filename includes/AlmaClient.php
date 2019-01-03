@@ -52,8 +52,6 @@ class AlmaClient
         try {
             $alma = new Client($apiKey, array(
                 'mode' => AlmaSettings::getActiveMode(),
-                'api_root' => 'http://alma:1337',
-                'force_tls' => false,
                 'logger' => AlmaLogger::instance(),
             ));
         } catch (\Exception $e) {
