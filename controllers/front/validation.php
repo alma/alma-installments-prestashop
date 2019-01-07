@@ -71,7 +71,7 @@ class AlmaValidationModuleFrontController extends ModuleFrontController
                     'Please try again or contact us if the problem persists. Cart ID: %d',
                     'validation'
                 ),
-                (int)$cart->id
+                (int)$cart ? $cart->id : -1
             );
         }
         
@@ -83,23 +83,39 @@ class AlmaValidationModuleFrontController extends ModuleFrontController
     {
         parent::initContent();
 
+        $alma = AlmaClient::defaultInstance();
+        if (!$alma) {
+            AlmaLogger::instance()->error("[Alma] Error instantiating Alma API Client");
+            $this->fail(null);
+            return;
+        }
+
+        $paymentId = Tools::getValue('pid');
+        try {
+            $payment = $alma->payments->fetch($paymentId);
+        } catch (RequestError $e) {
+            AlmaLogger::instance()->error("[Alma] Error fetching payment with ID {$paymentId}: {$e->getMessage()}");
+            $this->fail(null);
+            return;
+        }
+
         // Check if cart exists and all fields are set
-        $cart = $this->context->cart;
-        if ($cart->id_customer == 0 || $cart->id_address_delivery == 0 || $cart->id_address_invoice == 0) {
-            AlmaLogger::instance()->error("[Alma] Payment validation error: Cart {$cart->id} does not look valid.", 3);
+        $cart = new Cart($payment->custom_data['cart_id']);
+        if (!$cart || $cart->id_customer == 0 || $cart->id_address_delivery == 0 || $cart->id_address_invoice == 0) {
+            AlmaLogger::instance()->error("[Alma] Payment validation error: Cart {$cart->id} does not look valid.");
             $this->fail($cart);
             return;
         }
 
         if (!$this->module->active) {
-            AlmaLogger::instance()->error("[Alma] Payment validation error for Cart {$cart->id}: module not active.", 3);
+            AlmaLogger::instance()->error("[Alma] Payment validation error for Cart {$cart->id}: module not active.");
             $this->fail($cart);
             return;
         }
 
         // Check if module is enabled
         $authorized = false;
-        foreach (Module::getPaymentModules() as $module) {
+        foreach (PaymentModule::getInstalledPaymentModules() as $module) {
             if ($module['name'] == $this->module->name) {
                 $authorized = true;
             }
@@ -129,58 +145,56 @@ class AlmaValidationModuleFrontController extends ModuleFrontController
             return;
         }
 
-        $alma = AlmaClient::defaultInstance();
-        if (!$alma) {
-            $this->fail($cart);
-            return;
+        if (!$cart->OrderExists()) {
+            $purchaseAmount = alma_price_to_cents((float)$cart->getOrderTotal(true, Cart::BOTH));
+            if ($payment->purchase_amount !== $purchaseAmount) {
+                AlmaLogger::instance()->error("[Alma] Payment validation error for Cart {$cart->id}: Purchase amount mismatch!");
+                $this->fail($cart);
+                return;
+            }
+
+            $first_instalment = $payment->payment_plan[0];
+            if (!in_array($payment->state, array(Payment::STATE_IN_PROGRESS, Payment::STATE_PAID)) || $first_instalment->state !== Instalment::STATE_PAID) {
+                AlmaLogger::instance()->error("Payment '{$paymentId}': state incorrect {$payment->state} & {$first_instalment->state}");
+                $this->fail($cart);
+                return;
+            }
+
+            $extra_vars = array('payment_id' => $payment->id);
+            $payment_mode =  sprintf(
+                $this->module->l('Alma - %d monthly payments', 'validation'),
+                count($payment->payment_plan)
+            );
+
+            $this->module->validateOrder(
+                (int)$cart->id,
+                Configuration::get('PS_OS_PAYMENT'),
+                alma_price_from_cents($purchaseAmount),
+                $payment_mode,
+                null,
+                $extra_vars,
+                (int)$cart->id_currency,
+                false,
+                $customer->secure_key
+            );
+
+            $extraRedirectArgs = '';
+        } else {
+            $this->context->updateCustomer($customer);
+            $order = Order::getByCartId((int)$cart->id);
+            $this->module->currentOrder = (int)$order->id;
+
+            $token_cart = md5(_COOKIE_KEY_ . 'recover_cart_' . $cart->id);
+            $extraRedirectArgs = "&recover_cart={$cart->id}&token_cart={$token_cart}";
         }
-
-        $paymentId = Tools::getValue('pid');
-        try {
-            $payment = $alma->payments->fetch($paymentId);
-        } catch (RequestError $e) {
-            AlmaLogger::instance()->error("[Alma] Error fetching payment with ID {$paymentId}: {$e->getMessage()}");
-            $this->fail($cart);
-            return;
-        }
-
-        $purchaseAmount = alma_price_to_cents((float)$cart->getOrderTotal(true, Cart::BOTH));
-        if ($payment->purchase_amount !== $purchaseAmount) {
-            AlmaLogger::instance()->error("[Alma] Payment validation error for Cart {$cart->id}: Purchase amount mismatch!");
-            $this->fail($cart);
-            return;
-        }
-
-        $first_instalment = $payment->payment_plan[0];
-        if (!in_array($payment->state, array(Payment::STATE_IN_PROGRESS, Payment::STATE_PAID)) || $first_instalment->state !== Instalment::STATE_PAID) {
-            AlmaLogger::instance()->error("Payment '{$paymentId}': state incorrect {$payment->state} & {$first_instalment->state}");
-            $this->fail($cart);
-            return;
-        }
-
-        $extra_vars = array('payment_id' => $payment->id);
-        $payment_mode =  sprintf(
-            $this->module->l('Alma - %d monthly payments', 'validation'),
-            count($payment->payment_plan)
-        );
-
-        $this->module->validateOrder(
-            (int)$cart->id,
-            Configuration::get('PS_OS_PAYMENT'),
-            alma_price_from_cents($purchaseAmount),
-            $payment_mode,
-            null,
-            $extra_vars,
-            (int)$cart->id_currency,
-            false,
-            $customer->secure_key
-        );
 
         Tools::redirect(
-            'index.php?controller=order-confirmation&id_cart=' . (int)$cart->id .
+            $this->context->link->getPageLink('order-confirmation', true) .
+            '?id_cart='   . (int)$cart->id .
             '&id_module=' . (int)$this->module->id .
-            '&id_order=' . $this->module->currentOrder .
-            '&key=' . $customer->secure_key
+            '&id_order='  . (int)$this->module->currentOrder .
+            '&key='       . $customer->secure_key .
+            $extraRedirectArgs
         );
     }
 }
