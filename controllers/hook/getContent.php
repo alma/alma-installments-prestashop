@@ -384,6 +384,8 @@ class AlmaGetContentController extends AlmaAdminHookController
 
     public function run($params)
     {
+        $messages = '';
+        
         if (Tools::isSubmit('alma_config_form')) {
             $messages = $this->processConfiguration();
         } elseif (!AlmaSettings::needsAPIKeys()) {
