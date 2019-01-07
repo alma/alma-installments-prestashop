@@ -107,6 +107,9 @@ class PaymentData
                     'city' => $billingAddress->city,
                     'country' => $billingAddress->country,
                 ),
+                "custom_data" => array(
+                    "cart_id" => $cart->id
+                ),
             ),
             "customer" => $customerData,
         );
