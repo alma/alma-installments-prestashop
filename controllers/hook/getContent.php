@@ -87,12 +87,16 @@ class AlmaGetContentController extends AlmaAdminHookController
         }
 
         $credentialsError = $this->credentialsError($apiMode, $liveKey, $testKey);
-        if ($credentialsError) {
-            return $credentialsError;
+        if ($credentialsError['error']) {
+            return $credentialsError['message'];
         }
 
         AlmaSettings::updateValue('ALMA_LIVE_API_KEY', $liveKey);
         AlmaSettings::updateValue('ALMA_TEST_API_KEY', $testKey);
+
+        if ($credentialsError['warning']) {
+            return $credentialsError['message'];
+        }
 
         // Everything has been properly validated: we're fully configured
         AlmaSettings::updateValue('ALMA_FULLY_CONFIGURED', '1');
@@ -109,7 +113,7 @@ class AlmaGetContentController extends AlmaAdminHookController
             $alma = AlmaClient::createInstance($mode == ALMA_MODE_LIVE ? $liveKey : $testKey, $mode);
             if (!$alma) {
                 $this->context->smarty->assign('validation_error', 'alma_client_null');
-                return $this->module->display($this->module->file, 'getContent.tpl');
+                return array('error' => true, 'message' => $this->module->display($this->module->file, 'getContent.tpl'));
             }
 
             try {
@@ -135,7 +139,7 @@ class AlmaGetContentController extends AlmaAdminHookController
                         'level' => $apiMode == $mode ? 'danger' : 'warning',
                     )
                 );
-                return $this->module->display($this->module->file, 'getContent.tpl');
+                return array('warning' => true, 'message' => $this->module->display($this->module->file, 'getContent.tpl'));
             }
         }
 
