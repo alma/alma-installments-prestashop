@@ -180,9 +180,12 @@ class AlmaValidationModuleFrontController extends ModuleFrontController
 
             $extraRedirectArgs = '';
         } else {
-            $this->context->updateCustomer($customer);
-            $order = Order::getByCartId((int)$cart->id);
-            $this->module->currentOrder = (int)$order->id;
+            if (is_callable(array('Order', 'getByCartId'))) {
+                $order = Order::getByCartId((int)$cart->id);
+                $this->module->currentOrder = (int)$order->id;
+            } else {
+                $this->module->currentOrder = (int)Order::getOrderByCartId((int)$cart->id);
+            }
 
             $token_cart = md5(_COOKIE_KEY_ . 'recover_cart_' . $cart->id);
             $extraRedirectArgs = "&recover_cart={$cart->id}&token_cart={$token_cart}";
