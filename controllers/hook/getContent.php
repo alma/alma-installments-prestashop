@@ -87,14 +87,15 @@ class AlmaGetContentController extends AlmaAdminHookController
         }
 
         $credentialsError = $this->credentialsError($apiMode, $liveKey, $testKey);
-        if ($credentialsError['error']) {
+
+        if ($credentialsError && array_key_exists('error', $credentialsError)) {
             return $credentialsError['message'];
         }
 
         AlmaSettings::updateValue('ALMA_LIVE_API_KEY', $liveKey);
         AlmaSettings::updateValue('ALMA_TEST_API_KEY', $testKey);
 
-        if ($credentialsError['warning']) {
+        if ($credentialsError && array_key_exists('warning', $credentialsError)) {
             return $credentialsError['message'];
         }
 
@@ -121,14 +122,14 @@ class AlmaGetContentController extends AlmaAdminHookController
             } catch (RequestError $e) {
                 if ($e->response && $e->response->responseCode === 401) {
                     $this->context->smarty->assign('validation_error', "{$mode}_authentication_error");
-                    return $this->module->display($this->module->file, 'getContent.tpl');
+                    return array('error' => true, 'message' => $this->module->display($this->module->file, 'getContent.tpl'));
                 } else {
                     AlmaLogger::instance()->error('Error while fetching merchant status: ' . $e->getMessage());
 
                     $this->context->smarty->assign('validation_error', 'api_request_error');
                     $this->context->smarty->assign('error', $e->getMessage());
 
-                    return $this->module->display($this->module->file, 'getContent.tpl');
+                    return array('error' => true, 'message' => $this->module->display($this->module->file, 'getContent.tpl'));
                 }
             }
 
@@ -398,6 +399,10 @@ class AlmaGetContentController extends AlmaAdminHookController
                 AlmaSettings::getLiveKey(),
                 AlmaSettings::getTestKey()
             );
+
+            if ($messages) {
+                $messages = $messages['message'];
+            }
         }
 
         $html_form = $this->renderForm();
