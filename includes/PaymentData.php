@@ -93,7 +93,9 @@ class PaymentData
 
         $data = array(
             "payment" => array(
+                "customer_cancel_url" => $context->link->getPageLink('order'),
                 "return_url" => $context->link->getModuleLink('alma', 'validation'),
+                "ipn_callback_url" => $context->link->getModuleLink('alma', 'ipn'),
                 "purchase_amount" => (int)($purchaseAmount * 100),
                 "shipping_address" => array(
                     "line1" => $shippingAddress->address1,
