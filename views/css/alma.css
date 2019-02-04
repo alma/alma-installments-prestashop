@@ -1,4 +1,4 @@
-.payment_module .alma img {
+.payment_module .alma-button img {
     vertical-align: middle;
     cursor: pointer;
 }
@@ -11,11 +11,18 @@
     opacity: 0.5;
 }
 
-.alma-button--wrapper {
-    display: table;
+.payment_module a.alma-button {
+    display: table !important;
+    width: 100%;
+    padding-left: 17px;
 }
 
-.alma-button--wrapper > div {
+.alma-button--logo {
+    width:1%;
+    white-space:nowrap;
+}
+
+.alma-button > span {
     display: table-cell;
     vertical-align: middle;
 }

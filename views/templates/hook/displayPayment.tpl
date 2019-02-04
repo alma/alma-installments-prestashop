@@ -22,41 +22,35 @@
 *}
 
 <div class="row">
-    <div class="col-xs-12 col-md-6">
-        <div class="payment_module">
+    <div class="col-xs-12">
+        <p class="payment_module">
             {if $disabled}
-                <div class="alma-button--wrapper disabled alma-button">
-                    <div class="alma-button--logo">
-                        <div>
-                            <img src="{$logo}" alt="Alma">
-                        </div>
-                    </div>
-                    <div class="alma-button--text">
-                        <div>
+                <a href="#" onclick="return false;" class="disabled alma-button">
+                    <span class="alma-button--logo">
+                        <img src="{$logo}" alt="Alma">
+                    </span>
+                    <span class="alma-button--text">
+                        <span class="alma-button--description">
                             {if $error}
                                 {l s='Alma monthly payments are not available due to an error' mod='alma'}
                             {else}
                                 {l s='Alma monthly payments are not available for this order' mod='alma'}
                             {/if}
-                        </div>
-                    </div>
-                </div>
+                        </span>
+                    </span>
+                </a>
             {else}
-                <div class="alma-button--wrapper">
-                    <div class="alma-button--logo">
-                        <a href="{$link->getModuleLink('alma', 'payment')|escape:'html'}" class="alma-button">
-                            <img src="{$logo}" alt="Alma">
-                        </a>
-                    </div>
-                    <div class="alma-button--text">
-                        <a href="{$link->getModuleLink('alma', 'payment')|escape:'html'}" class="alma-button">
-                            <span class="alma-button--title">{$title}</span>
-                            <br>
-                            <span class="alma-button--description">{$desc}</span>
-                        </a>
-                    </div>
-                </div>
+                <a href="{$link->getModuleLink('alma', 'payment')|escape:'html'}" class="alma-button">
+                    <span class="alma-button--logo">
+                        <img src="{$logo}" alt="Alma">
+                    </span>
+                    <span class="alma-button--text">
+                        <span class="alma-button--title">{$title}</span>
+                        <br>
+                        <span class="alma-button--description">{$desc}</span>
+                    </span>
+                </a>
             {/if}
-        </div>
+        </p>
     </div>
 </div>
