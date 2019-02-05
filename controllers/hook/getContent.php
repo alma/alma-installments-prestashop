@@ -72,6 +72,14 @@ class AlmaGetContentController extends AlmaAdminHookController
 
             $activateLogging = Tools::getValue('ALMA_ACTIVATE_LOGGING_ON') == '1';
             AlmaSettings::updateValue('ALMA_ACTIVATE_LOGGING', $activateLogging);
+        } else {
+            $defaults = $this->getDefaultValues();
+
+            foreach ($defaults as $key => $value) {
+                if (AlmaSettings::get($key, null) != null) {
+                    AlmaSettings::updateValue($key, $value);
+                }
+            }
         }
 
         $apiMode = Tools::getValue('ALMA_API_MODE');
@@ -363,21 +371,19 @@ class AlmaGetContentController extends AlmaAdminHookController
         $helper->token = Tools::getAdminTokenLite('AdminModules');
 
 
-        $defaultButtonTitle = $this->module->l('Monthly Payments with Alma', 'getContent');
-        $defaultButtonDescription = $this->module->l('Pay in 3 monthly payments with your credit card.', 'getContent');
-        $defaultEligibilityMsg = $this->module->l('Your cart is eligible for monthly payments.', 'getContent');
-        $defaultNoneligibilityMsg = $this->module->l('Your cart is not eligible for monthly payments.', 'getContent');
+        $defaults = $this->getDefaultValues();
+
         $helper->tpl_vars = array(
             'fields_value' => array(
                 'ALMA_LIVE_API_KEY' => AlmaSettings::getLiveKey(),
                 'ALMA_TEST_API_KEY' => AlmaSettings::getTestKey(),
                 'ALMA_API_MODE' => AlmaSettings::getActiveMode(),
-                'ALMA_PAYMENT_BUTTON_TITLE' => AlmaSettings::getPaymentButtonTitle($defaultButtonTitle),
-                'ALMA_PAYMENT_BUTTON_DESC' => AlmaSettings::getPaymentButtonDescription($defaultButtonDescription),
+                'ALMA_PAYMENT_BUTTON_TITLE' => AlmaSettings::getPaymentButtonTitle($defaults['ALMA_PAYMENT_BUTTON_TITLE']),
+                'ALMA_PAYMENT_BUTTON_DESC' => AlmaSettings::getPaymentButtonDescription($defaults['ALMA_PAYMENT_BUTTON_DESC']),
                 'ALMA_SHOW_DISABLED_BUTTON' => AlmaSettings::showDisabledButton(),
                 'ALMA_SHOW_ELIGIBILITY_MESSAGE_ON' => AlmaSettings::showEligibilityMessage(),
-                'ALMA_IS_ELIGIBLE_MESSAGE' => AlmaSettings::getEligibilityMessage($defaultEligibilityMsg),
-                'ALMA_NOT_ELIGIBLE_MESSAGE' => AlmaSettings::getNonEligibilityMessage($defaultNoneligibilityMsg),
+                'ALMA_IS_ELIGIBLE_MESSAGE' => AlmaSettings::getEligibilityMessage($defaults['ALMA_IS_ELIGIBLE_MESSAGE']),
+                'ALMA_NOT_ELIGIBLE_MESSAGE' => AlmaSettings::getNonEligibilityMessage($defaults['ALMA_NOT_ELIGIBLE_MESSAGE']),
                 'ALMA_ACTIVATE_LOGGING_ON' => (bool)AlmaSettings::canLog(),
                 '_api_only' => true,
             ),
@@ -385,6 +391,20 @@ class AlmaGetContentController extends AlmaAdminHookController
         );
 
         return $extra_msg . $helper->generateForm($fields_forms);
+    }
+
+    private function getDefaultValues() {
+        $defaultButtonTitle = $this->module->l('Monthly Payments with Alma', 'getContent');
+        $defaultButtonDescription = $this->module->l('Pay in 3 monthly payments with your credit card.', 'getContent');
+        $defaultEligibilityMsg = $this->module->l('Your cart is eligible for monthly payments.', 'getContent');
+        $defaultNonEligibilityMsg = $this->module->l('Your cart is not eligible for monthly payments.', 'getContent');
+
+        return array(
+            'ALMA_PAYMENT_BUTTON_TITLE' => $defaultButtonTitle,
+            'ALMA_PAYMENT_BUTTON_DESC' => $defaultButtonDescription,
+            'ALMA_IS_ELIGIBLE_MESSAGE' => $defaultEligibilityMsg,
+            'ALMA_NOT_ELIGIBLE_MESSAGE' => $defaultNonEligibilityMsg,
+        );
     }
 
     public function run($params)
