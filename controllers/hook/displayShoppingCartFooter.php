@@ -31,9 +31,8 @@ if (!defined('_PS_VERSION_')) {
 
 include_once(_PS_MODULE_DIR_ . 'alma/includes/AlmaProtectedHookController.php');
 include_once(_PS_MODULE_DIR_ . 'alma/includes/functions.php');
-include_once(_PS_MODULE_DIR_ . 'alma/includes/PaymentData.php');
-include_once(_PS_MODULE_DIR_ . 'alma/includes/AlmaClient.php');
 include_once(_PS_MODULE_DIR_ . 'alma/includes/AlmaSettings.php');
+include_once(_PS_MODULE_DIR_ . 'alma/includes/AlmaEligibilityHelper.php');
 
 class AlmaDisplayShoppingCartFooterController extends AlmaProtectedHookController
 {
@@ -43,54 +42,28 @@ class AlmaDisplayShoppingCartFooterController extends AlmaProtectedHookControlle
             return null;
         }
 
-        $payment_data = PaymentData::dataFromCart($this->context->cart, $this->context);
-        if (!$payment_data) {
-            AlmaLogger::instance()->error('Cannot check cart eligibility: no data extracted from cart');
-            return null;
-        }
-
-        $alma = AlmaClient::defaultInstance();
-        if (!$alma) {
-            AlmaLogger::instance()->error('Cannot check cart eligibility: no API client');
-            return null;
-        }
-
-        try {
-            $eligibility = $alma->payments->eligibility($payment_data);
-        } catch (RequestError $e) {
-            AlmaLogger::instance()->error("Error when checking cart {$this->context->cart->id} eligibility: " . $e->getMessage());
-            return null;
-        }
-
+        $eligibility = AlmaEligibilityHelper::eligibilityCheck($this->context);
         $eligibility_msg = AlmaSettings::getEligibilityMessage();
 
         if (!$eligibility->isEligible) {
             $eligibility_msg = AlmaSettings::getNonEligibilityMessage();
 
-            try {
-                $merchant = $alma->merchants->me();
-            } catch (RequestError $e) {
-                AlmaLogger::instance()->error('Error fetching merchant information: ' . $e->getMessage());
-            }
+            $cart       = $this->context->cart;
+            $cart_total = alma_price_to_cents((float)$cart->getOrderTotal(true, Cart::BOTH));
+            $min_amount = $eligibility->constraints["purchase_amount"]["minimum"];
+            $max_amount = $eligibility->constraints["purchase_amount"]["maximum"];
 
-            if (isset($merchant) && $merchant) {
-                $cart       = $this->context->cart;
-                $cart_total = alma_price_to_cents((float)$cart->getOrderTotal(true, Cart::BOTH));
-                $min_amount = $merchant->minimum_purchase_amount;
-                $max_amount = $merchant->maximum_purchase_amount;
-
-                if ($cart_total < $min_amount || $cart_total > $max_amount) {
-                    if ($cart_total > $max_amount) {
-                        $eligibility_msg .= ' ' . sprintf(
+            if ($cart_total < $min_amount || $cart_total > $max_amount) {
+                if ($cart_total > $max_amount) {
+                    $eligibility_msg .= ' ' . sprintf(
                             $this->module->l('(Maximum amount: %s)', 'displayShoppingCartFooter'),
                             Tools::displayPrice(alma_price_from_cents($max_amount))
                         );
-                    } else {
-                        $eligibility_msg .= ' ' . sprintf(
+                } else {
+                    $eligibility_msg .= ' ' . sprintf(
                             $this->module->l('(Minimum amount: %s)', 'displayShoppingCartFooter'),
                             Tools::displayPrice(alma_price_from_cents($min_amount))
                         );
-                    }
                 }
             }
         }

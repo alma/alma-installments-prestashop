@@ -23,47 +23,41 @@
  *
  */
 
-use Alma\API\RequestError;
-
 if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-include_once(_PS_MODULE_DIR_ . 'alma/includes/AlmaProtectedHookController.php');
+include_once(_PS_MODULE_DIR_ . 'alma/includes/AlmaLogger.php');
 include_once(_PS_MODULE_DIR_ . 'alma/includes/AlmaClient.php');
-include_once(_PS_MODULE_DIR_ . 'alma/includes/AlmaSettings.php');
-include_once(_PS_MODULE_DIR_ . 'alma/includes/AlmaEligibilityHelper.php');
+include_once(_PS_MODULE_DIR_ . 'alma/includes/PaymentData.php');
 
-class AlmaDisplayPaymentController extends AlmaProtectedHookController
+use Alma\API\RequestError;
+
+
+class AlmaEligibilityHelper
 {
-    public function run($params)
-    {
-        // First check that we can offer Alma for this payment
-        $eligibility = AlmaEligibilityHelper::eligibilityCheck($this->context);
-
-        $error = false;
-        if (!$eligibility) {
-            $error = true;
+    public static function eligibilityCheck($context) {
+        $payment_data = PaymentData::dataFromCart($context->cart, $context);
+        if (!$payment_data) {
+            AlmaLogger::instance()->error('Cannot check cart eligibility: no data extracted from cart');
+            return null;
         }
 
-        if (isset($eligibility) && $eligibility->isEligible) {
-            $disabled = false;
-        } else {
-            if (AlmaSettings::showDisabledButton()) {
-                $disabled = true;
-            } else {
-                return null;
-            }
+        $alma = AlmaClient::defaultInstance();
+        if (!$alma) {
+            AlmaLogger::instance()->error('Cannot check cart eligibility: no API client');
+            return null;
         }
 
-        $this->context->smarty->assign(array(
-            'logo' => Media::getMediaPath(_PS_MODULE_DIR_.$this->module->name.'/views/img/logo_full.png'),
-            'disabled' => $disabled,
-            'error' => $error,
-            'title' => AlmaSettings::getPaymentButtonTitle(),
-            'desc' => AlmaSettings::getPaymentButtonDescription(),
-        ));
+        $eligibility = null;
 
-        return $this->module->display($this->module->file, 'displayPayment.tpl');
+        try {
+            $eligibility = $alma->payments->eligibility($payment_data);
+        } catch (RequestError $e) {
+            AlmaLogger::instance()->error("Error when checking cart {$context->cart->id} eligibility: " . $e->getMessage());
+            return null;
+        }
+
+        return $eligibility;
     }
 }
