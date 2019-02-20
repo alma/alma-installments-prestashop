@@ -28,6 +28,7 @@ if (!defined('_PS_VERSION_')) {
 }
 
 include_once(_PS_MODULE_DIR_ . 'alma/includes/AlmaLogger.php');
+include_once(_PS_MODULE_DIR_ . 'alma/includes/functions.php');
 
 class PaymentData
 {
@@ -96,7 +97,7 @@ class PaymentData
                 "customer_cancel_url" => $context->link->getPageLink('order'),
                 "return_url" => $context->link->getModuleLink('alma', 'validation'),
                 "ipn_callback_url" => $context->link->getModuleLink('alma', 'ipn'),
-                "purchase_amount" => (int)($purchaseAmount * 100),
+                "purchase_amount" => alma_price_to_cents($purchaseAmount),
                 "shipping_address" => array(
                     "line1" => $shippingAddress->address1,
                     'postal_code' => $shippingAddress->postcode,
