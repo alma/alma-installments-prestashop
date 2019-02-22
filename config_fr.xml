@@ -9,5 +9,5 @@
 	<confirmUninstall><![CDATA[Voulez-vous vraiment désactiver le paiement en plusieurs fois par Alma sur votre boutique ?]]></confirmUninstall>
 	<is_configurable>1</is_configurable>
 	<need_instance>0</need_instance>
-	<limited_countries>FR</limited_countries>
+	<limited_countries></limited_countries>
 </module>

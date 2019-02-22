@@ -43,6 +43,10 @@ class Alma extends PaymentModule
         $this->need_instance = false;
         $this->bootstrap = true;
 
+        $this->limited_currencies = array('EUR');
+
+        $this->ps_versions_compliancy = array('min' => '1.6', 'max' => _PS_VERSION_);
+
         parent::__construct();
 
         $this->displayName = $this->l('Alma Monthly Payments for PrestaShop', 'alma');
@@ -52,10 +56,6 @@ class Alma extends PaymentModule
             'alma'
         );
 
-        $this->limited_countries = array('FR');
-        $this->limited_currencies = array('EUR');
-
-        $this->ps_versions_compliancy = array('min' => '1.6', 'max' => _PS_VERSION_);
 
         if (version_compare(_PS_VERSION_, '1.7', '>=')) {
             $this->currencies = true;
@@ -85,16 +85,6 @@ class Alma extends PaymentModule
         }
 
         if (!$this->checkDependencies()) {
-            return false;
-        }
-
-        $iso_code = Tools::strtoupper(Country::getIsoById(Configuration::get('PS_COUNTRY_DEFAULT')));
-
-        if (in_array($iso_code, $this->limited_countries) == false) {
-            $limited_countries = var_export($this->limited_countries, true);
-            $this->_errors[] = $this->l(
-                "This module is not available in your country ({$iso_code} not in {$limited_countries})"
-            );
             return false;
         }
 
