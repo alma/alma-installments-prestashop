@@ -23,8 +23,8 @@
 }
 
 .alma-button > span {
-    display: table-cell;
-    vertical-align: middle;
+    display: table-cell !important;
+    vertical-align: middle !important;
 }
 
 .alma-button--description {
