@@ -39,16 +39,18 @@ class AlmaSettings
 {
     public static function get($configKey, $default = null)
     {
-        if (!Configuration::hasKey($configKey)) {
-            return $default;
-        }
+        $idShop = Shop::getContextShopID();
+        $idShopGroup = Shop::getContextShopGroupID();
 
-        return Configuration::get($configKey);
+        return Configuration::get($configKey, null, $idShopGroup, $idShop, $default);
     }
 
     public static function updateValue($configKey, $value)
     {
-        Configuration::updateValue($configKey, $value);
+        $idShop = Shop::getContextShopID();
+        $idShopGroup = Shop::getContextShopGroupID();
+
+        Configuration::updateValue($configKey, $value, false, $idShopGroup, $idShop);
     }
 
     public static function deleteAllValues()
