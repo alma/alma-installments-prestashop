@@ -198,11 +198,7 @@ class AlmaGetContentController extends AlmaAdminHookController
                         'label' => $this->module->l('API Mode', 'getContent'),
                         'type' => 'select',
                         'required' => true,
-                        'desc' => $this->module->l(
-                            'Use Test mode until you are ready to take real orders with Alma. ' .
-                            'In Test mode, only admins can see Alma on cart/checkout pages.',
-                            'getContent'
-                        ),
+                        'desc' => $this->module->l('Use Test mode until you are ready to take real orders with Alma. In Test mode, only admins can see Alma on cart/checkout pages.', 'getContent'),
                         'options' => array(
                             'id' => 'api_mode',
                             'name' => 'name',
@@ -227,10 +223,7 @@ class AlmaGetContentController extends AlmaAdminHookController
                     array(
                         'name' => 'ALMA_PAYMENT_BUTTON_TITLE',
                         'label' => $this->module->l('Title', 'getContent'),
-                        'desc' => $this->module->l(
-                            'This controls the payment method name which the user sees during checkout.',
-                            'getContent'
-                        ),
+                        'desc' => $this->module->l('This controls the payment method name which the user sees during checkout.', 'getContent'),
                         'type' => 'text',
                         'size' => 75,
                         'required' => true,
@@ -238,10 +231,7 @@ class AlmaGetContentController extends AlmaAdminHookController
                     array(
                         'name' => 'ALMA_PAYMENT_BUTTON_DESC',
                         'label' => $this->module->l('Description', 'getContent'),
-                        'desc' => $this->module->l(
-                            'This controls the payment method description which the user sees during checkout.',
-                            'getContent'
-                        ),
+                        'desc' => $this->module->l('This controls the payment method description which the user sees during checkout.', 'getContent'),
                         'type' => 'text',
                         'size' => 75,
                         'required' => true,
@@ -288,11 +278,7 @@ class AlmaGetContentController extends AlmaAdminHookController
                                 array(
                                     'id' => 'ON',
                                     'val' => true,
-                                    'label' => $this->module->l(
-                                        'Display a message under the cart summary to indicate its ' .
-                                        'eligibility for monthly payments.',
-                                        'getContent'
-                                    ),
+                                    'label' => $this->module->l('Display a message under the cart summary to indicate its eligibility for monthly payments.', 'getContent'),
                                 )
                             ),
                         ),
@@ -300,10 +286,7 @@ class AlmaGetContentController extends AlmaAdminHookController
                     array(
                         'name' => 'ALMA_IS_ELIGIBLE_MESSAGE',
                         'label' => $this->module->l('Eligibility message', 'getContent'),
-                        'desc' => $this->module->l(
-                            'Message displayed below the cart totals when it is eligible for monthly payments.',
-                            'getContent'
-                        ),
+                        'desc' => $this->module->l('Message displayed below the cart totals when it is eligible for monthly payments.', 'getContent'),
                         'type' => 'text',
                         'size' => 75,
                         'required' => true,

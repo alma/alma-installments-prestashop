@@ -135,13 +135,13 @@ class AlmaSettings
 
     public static function getEligibilityMessage()
     {
-        $default = Translate::getModuleTranslation('alma', 'Your cart is eligible for monthly payments.', 'settings');
+        $default = Translate::getModuleTranslation('alma', 'Your cart is eligible for monthly payments.', 'almasettings');
         return self::get('ALMA_IS_ELIGIBLE_MESSAGE', $default);
     }
 
     public static function getNonEligibilityMessage()
     {
-        $default = Translate::getModuleTranslation('alma', 'Your cart is not eligible for monthly payments.', 'settings');
+        $default = Translate::getModuleTranslation('alma', 'Your cart is not eligible for monthly payments.', 'almasettings');
         return self::get('ALMA_NOT_ELIGIBLE_MESSAGE', $default);
     }
 
@@ -152,14 +152,14 @@ class AlmaSettings
 
     public static function getPaymentButtonTitle()
     {
-        $default = Translate::getModuleTranslation('alma', 'Monthly Payments with Alma', 'settings');
+        $default = Translate::getModuleTranslation('alma', 'Monthly Payments with Alma', 'almasettings');
         return self::get('ALMA_PAYMENT_BUTTON_TITLE', $default);
 
     }
 
     public static function getPaymentButtonDescription()
     {
-        $default = Translate::getModuleTranslation('alma', 'Pay in 3 monthly payments with your credit card.', 'settings');
+        $default = Translate::getModuleTranslation('alma', 'Pay in 3 monthly payments with your credit card.', 'almasettings');
         return self::get('ALMA_PAYMENT_BUTTON_DESC', $default);
     }
 
