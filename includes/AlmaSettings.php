@@ -162,4 +162,9 @@ class AlmaSettings
         $default = Translate::getModuleTranslation('alma', 'Pay in 3 monthly payments with your credit card.', 'settings');
         return self::get('ALMA_PAYMENT_BUTTON_DESC', $default);
     }
+
+    public static function displayOrderConfirmation()
+    {
+        return (bool)(int)self::get('ALMA_DISPLAY_ORDER_CONFIRMATION', false);
+    }
 }

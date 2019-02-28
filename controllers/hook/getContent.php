@@ -70,6 +70,9 @@ class AlmaGetContentController extends AlmaAdminHookController
             AlmaSettings::updateValue('ALMA_IS_ELIGIBLE_MESSAGE', $eligibleMsg);
             AlmaSettings::updateValue('ALMA_NOT_ELIGIBLE_MESSAGE', $nonEligibleMsg);
 
+            $displayOrderConfirmation = Tools::getValue('ALMA_DISPLAY_ORDER_CONFIRMATION_ON') == '1';
+            AlmaSettings::updateValue('ALMA_DISPLAY_ORDER_CONFIRMATION', $displayOrderConfirmation);
+
             $activateLogging = Tools::getValue('ALMA_ACTIVATE_LOGGING_ON') == '1';
             AlmaSettings::updateValue('ALMA_ACTIVATE_LOGGING', $activateLogging);
         }
@@ -322,6 +325,35 @@ class AlmaGetContentController extends AlmaAdminHookController
             ),
         );
 
+        $order_confirmation_form = array(
+            'form' => array(
+                'legend' => array(
+                    'title' => $this->module->l('Order confirmation', 'getContent'),
+                    'image' => $iconPath,
+                ),
+                'input' => array(
+                    array(
+                        'name' => 'ALMA_DISPLAY_ORDER_CONFIRMATION',
+                        'label' => $this->module->l('Display order confirmation', 'getContent'),
+                        'desc' => $this->module->l('Activate this setting when you do not have your own order confirmation page', 'getContent'),
+                        'type' => 'checkbox',
+                        'values' => array(
+                            'id' => 'id',
+                            'name' => 'label',
+                            'query' => array(
+                                array(
+                                    'id' => 'ON',
+                                    'val' => true,
+                                    'label' => $this->module->l('Confirm successful order to customers when they come back from the Alma payment page', 'getContent'),
+                                )
+                            ),
+                        ),
+                    ),
+                ),
+                'submit' => array('title' => $this->module->l('Save'), 'class' => 'btn btn-default pull-right'),
+            ),
+        );
+
         $debug_form = array(
             'form' => array(
                 'legend' => array(
@@ -357,7 +389,7 @@ class AlmaGetContentController extends AlmaAdminHookController
             );
             $fields_forms = array($api_config_form, $debug_form);
         } else {
-            $fields_forms = array($cart_eligibility_form, $payment_button_form, $api_config_form, $debug_form);
+            $fields_forms = array($cart_eligibility_form, $payment_button_form, $api_config_form, $order_confirmation_form, $debug_form);
         }
 
         $helper = new HelperForm();
@@ -383,6 +415,7 @@ class AlmaGetContentController extends AlmaAdminHookController
             'ALMA_SHOW_ELIGIBILITY_MESSAGE_ON' => AlmaSettings::showEligibilityMessage(),
             'ALMA_IS_ELIGIBLE_MESSAGE' => AlmaSettings::getEligibilityMessage(),
             'ALMA_NOT_ELIGIBLE_MESSAGE' => AlmaSettings::getNonEligibilityMessage(),
+            'ALMA_DISPLAY_ORDER_CONFIRMATION_ON' => AlmaSettings::displayOrderConfirmation(),
             'ALMA_ACTIVATE_LOGGING_ON' => (bool)AlmaSettings::canLog(),
             '_api_only' => true,
         );
