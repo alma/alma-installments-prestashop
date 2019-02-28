@@ -23,6 +23,6 @@
 
 <div style="margin: 15px 0">
     <img src="{$logo}"
-         style="width: initial !important; height: initial !important; border: none !important; vertical-align: middle"
+         style="width: auto !important; height: 25px !important; border: none !important; vertical-align: middle"
          alt="Alma"> <span style="text-transform: initial">{$eligibility_msg}</span>
 </div>
