@@ -45,6 +45,14 @@ class AlmaLogger extends AbstractLogger
         return $instance;
     }
 
+    public static function loggerClass() {
+        if (class_exists('PrestaShopLogger')) {
+            return PrestaShopLogger;
+        } else {
+            return Logger;
+        }
+    }
+
     public function log($level, $message, array $context = array())
     {
         if (!AlmaSettings::canLog()) {
@@ -62,6 +70,7 @@ class AlmaLogger extends AbstractLogger
             LogLevel::EMERGENCY => 4,
         );
 
-        PrestaShopLogger::addLog($message, $levels[$level]);
+        $Logger = AlmaLogger::loggerClass();
+        $Logger::addLog($message, $levels[$level]);
     }
 }

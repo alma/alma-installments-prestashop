@@ -22,11 +22,7 @@
 *}
 
 {if isset($validation_error)}
-    {if isset($level)}
-        <div class="alert alert-{$level}">
-    {else}
-        <div class="alert alert-danger">
-    {/if}
+    <div class="{$validation_error_classes}">
         {if $validation_error == 'missing_required_setting'}
             {l s='Please fill in all required settings' mod='alma'}
         {elseif $validation_error == 'alma_client_null'}
@@ -81,7 +77,7 @@
     </div>
 
 {elseif isset($tip)}
-    <div class="alert alert-info">
+    <div class="{$tip_classes}">
         {l s='Thanks for installing Alma!' mod='alma'}
         <br>
         {l s='You must start by filling in your API keys.' mod='alma'}
@@ -91,7 +87,7 @@
         </a>
     </div>
 {else}
-    <div class="alert alert-success">
+    <div class="{$success_classes}">
         {l s='Settings successfully updated' mod='alma'}
     </div>
 {/if}

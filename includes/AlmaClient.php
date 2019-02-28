@@ -56,7 +56,7 @@ class AlmaClient
         try {
             $alma = new Client($apiKey, array(
                 'mode' => $mode,
-                'logger' => AlmaLogger::instance(),
+                'logger' => AlmaLogger::instance()
             ));
         } catch (\Exception $e) {
             AlmaLogger::instance()->error("Error creating Alma API client: " . $e->getMessage());

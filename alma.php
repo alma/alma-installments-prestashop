@@ -29,6 +29,7 @@ if (!defined('_PS_VERSION_')) {
 
 include_once(_PS_MODULE_DIR_ . 'alma/vendor/autoload.php');
 include_once(_PS_MODULE_DIR_ . 'alma/includes/AlmaSettings.php');
+include_once(_PS_MODULE_DIR_ . 'alma/includes/AlmaLogger.php');
 
 class Alma extends PaymentModule
 {
@@ -45,7 +46,7 @@ class Alma extends PaymentModule
 
         $this->limited_currencies = array('EUR');
 
-        $this->ps_versions_compliancy = array('min' => '1.6', 'max' => _PS_VERSION_);
+        $this->ps_versions_compliancy = array('min' => '1.5.6.2', 'max' => _PS_VERSION_);
 
         parent::__construct();
 
@@ -72,13 +73,15 @@ class Alma extends PaymentModule
 
     public function install()
     {
+        $Logger = AlmaLogger::loggerClass();
+
         $core_install = parent::install();
         if (!$core_install) {
-            PrestaShopLogger::addLog("Alma: Core module install failed (returned {$core_install})", 3);
+            $Logger::addLog("Alma: Core module install failed (returned {$core_install})", 3);
 
             if (count($this->_errors) > 0) {
                 $errors = implode(', ', $this->_errors);
-                PrestaShopLogger::addLog("Alma: module install errors: {$errors})", 3);
+                $Logger::addLog("Alma: module install errors: {$errors})", 3);
             }
 
             return false;

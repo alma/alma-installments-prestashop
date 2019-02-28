@@ -68,9 +68,16 @@ class AlmaDisplayShoppingCartFooterController extends AlmaProtectedHookControlle
             }
         }
 
+        if (is_callable('Media::getMediaPath')) {
+            $logoPath = Media::getMediaPath(_PS_MODULE_DIR_ . $this->module->name . '/views/img/tiny_logo.png');
+        } else {
+            $logoPath = $this->module->getPathUri() . '/views/img/tiny_logo.png';
+        }
+
+
         $this->context->smarty->assign(array(
             'eligibility_msg' => $eligibility_msg,
-            'logo' => Media::getMediaPath(_PS_MODULE_DIR_.$this->module->name.'/views/img/tiny_logo.png'),
+            'logo' => $logoPath,
         ));
 
         return $this->module->display($this->module->file, 'displayShoppingCartFooter.tpl');

@@ -72,14 +72,6 @@ class AlmaGetContentController extends AlmaAdminHookController
 
             $activateLogging = Tools::getValue('ALMA_ACTIVATE_LOGGING_ON') == '1';
             AlmaSettings::updateValue('ALMA_ACTIVATE_LOGGING', $activateLogging);
-        } else {
-            $defaults = $this->getDefaultValues();
-
-            foreach ($defaults as $key => $value) {
-                if (AlmaSettings::get($key, null) != null) {
-                    AlmaSettings::updateValue($key, $value);
-                }
-            }
         }
 
         $apiMode = Tools::getValue('ALMA_API_MODE');
@@ -142,12 +134,9 @@ class AlmaGetContentController extends AlmaAdminHookController
             }
 
             if (!$merchant->can_create_payments) {
-                $this->context->smarty->assign(
-                    array(
-                        'validation_error' => "inactive_{$mode}_account",
-                        'level' => $apiMode == $mode ? 'danger' : 'warning',
-                    )
-                );
+                $this->context->smarty->assign('validation_error', "inactive_{$mode}_account");
+                $this->assignSmartyAlertClasses($apiMode == $mode ? 'danger' : 'warning');
+
                 return array('warning' => true, 'message' => $this->module->display($this->module->file, 'getContent.tpl'));
             }
         }
@@ -158,12 +147,20 @@ class AlmaGetContentController extends AlmaAdminHookController
     public function renderForm()
     {
         $needs_key = AlmaSettings::needsAPIKeys();
-        $iconPath = Media::getMediaPath(_PS_MODULE_DIR_ . $this->module->name . '/views/img/logo16x16.png');
+
+        if (is_callable('Media::getMediaPath')) {
+            $iconPath = Media::getMediaPath(_PS_MODULE_DIR_ . $this->module->name . '/views/img/logo16x16.png');
+        } else {
+            $iconPath = $this->module->getPathUri() . '/views/img/logo16x16.png';
+        }
 
         $extra_msg = null;
         if ($needs_key && !Tools::isSubmit('alma_config_form')) {
             $this->context->smarty->clearAllAssign();
+
+            $this->assignSmartyAlertClasses();
             $this->context->smarty->assign('tip', 'fill_api_keys');
+
             $extra_msg = $this->module->display($this->module->file, 'getContent.tpl');
         }
 
@@ -178,12 +175,14 @@ class AlmaGetContentController extends AlmaAdminHookController
                         'name' => 'ALMA_LIVE_API_KEY',
                         'label' => $this->module->l('Live API key', 'getContent'),
                         'type' => 'text',
+                        'size' => 75,
                         'required' => true
                     ),
                     array(
                         'name' => 'ALMA_TEST_API_KEY',
                         'label' => $this->module->l('Test API key', 'getContent'),
                         'type' => 'text',
+                        'size' => 75,
                         'required' => true,
                         'desc' => sprintf(
                             $this->module->l('You can find your API keys on %1$syour Alma dashboard%2$s', 'getContent'),
@@ -230,6 +229,7 @@ class AlmaGetContentController extends AlmaAdminHookController
                             'getContent'
                         ),
                         'type' => 'text',
+                        'size' => 75,
                         'required' => true,
                     ),
                     array(
@@ -240,6 +240,7 @@ class AlmaGetContentController extends AlmaAdminHookController
                             'getContent'
                         ),
                         'type' => 'text',
+                        'size' => 75,
                         'required' => true,
                     ),
                     array(
@@ -301,6 +302,7 @@ class AlmaGetContentController extends AlmaAdminHookController
                             'getContent'
                         ),
                         'type' => 'text',
+                        'size' => 75,
                         'required' => true,
                     ),
                     array(
@@ -312,6 +314,7 @@ class AlmaGetContentController extends AlmaAdminHookController
                             'getContent'
                         ),
                         'type' => 'text',
+                        'size' => 75,
                         'required' => true,
                     ),
                 ),
@@ -370,47 +373,47 @@ class AlmaGetContentController extends AlmaAdminHookController
 
         $helper->token = Tools::getAdminTokenLite('AdminModules');
 
-
-        $defaults = $this->getDefaultValues();
-
-        $helper->tpl_vars = array(
-            'fields_value' => array(
-                'ALMA_LIVE_API_KEY' => AlmaSettings::getLiveKey(),
-                'ALMA_TEST_API_KEY' => AlmaSettings::getTestKey(),
-                'ALMA_API_MODE' => AlmaSettings::getActiveMode(),
-                'ALMA_PAYMENT_BUTTON_TITLE' => AlmaSettings::getPaymentButtonTitle($defaults['ALMA_PAYMENT_BUTTON_TITLE']),
-                'ALMA_PAYMENT_BUTTON_DESC' => AlmaSettings::getPaymentButtonDescription($defaults['ALMA_PAYMENT_BUTTON_DESC']),
-                'ALMA_SHOW_DISABLED_BUTTON' => AlmaSettings::showDisabledButton(),
-                'ALMA_SHOW_ELIGIBILITY_MESSAGE_ON' => AlmaSettings::showEligibilityMessage(),
-                'ALMA_IS_ELIGIBLE_MESSAGE' => AlmaSettings::getEligibilityMessage($defaults['ALMA_IS_ELIGIBLE_MESSAGE']),
-                'ALMA_NOT_ELIGIBLE_MESSAGE' => AlmaSettings::getNonEligibilityMessage($defaults['ALMA_NOT_ELIGIBLE_MESSAGE']),
-                'ALMA_ACTIVATE_LOGGING_ON' => (bool)AlmaSettings::canLog(),
-                '_api_only' => true,
-            ),
-            'languages' => $this->context->controller->getLanguages()
+        $helper->fields_value = array(
+            'ALMA_LIVE_API_KEY' => AlmaSettings::getLiveKey(),
+            'ALMA_TEST_API_KEY' => AlmaSettings::getTestKey(),
+            'ALMA_API_MODE' => AlmaSettings::getActiveMode(),
+            'ALMA_PAYMENT_BUTTON_TITLE' => AlmaSettings::getPaymentButtonTitle(),
+            'ALMA_PAYMENT_BUTTON_DESC' => AlmaSettings::getPaymentButtonDescription(),
+            'ALMA_SHOW_DISABLED_BUTTON' => AlmaSettings::showDisabledButton(),
+            'ALMA_SHOW_ELIGIBILITY_MESSAGE_ON' => AlmaSettings::showEligibilityMessage(),
+            'ALMA_IS_ELIGIBLE_MESSAGE' => AlmaSettings::getEligibilityMessage(),
+            'ALMA_NOT_ELIGIBLE_MESSAGE' => AlmaSettings::getNonEligibilityMessage(),
+            'ALMA_ACTIVATE_LOGGING_ON' => (bool)AlmaSettings::canLog(),
+            '_api_only' => true,
         );
+
+        $helper->languages = $this->context->controller->getLanguages();
 
         return $extra_msg . $helper->generateForm($fields_forms);
     }
 
-    private function getDefaultValues() {
-        $defaultButtonTitle = $this->module->l('Monthly Payments with Alma', 'getContent');
-        $defaultButtonDescription = $this->module->l('Pay in 3 monthly payments with your credit card.', 'getContent');
-        $defaultEligibilityMsg = $this->module->l('Your cart is eligible for monthly payments.', 'getContent');
-        $defaultNonEligibilityMsg = $this->module->l('Your cart is not eligible for monthly payments.', 'getContent');
-
-        return array(
-            'ALMA_PAYMENT_BUTTON_TITLE' => $defaultButtonTitle,
-            'ALMA_PAYMENT_BUTTON_DESC' => $defaultButtonDescription,
-            'ALMA_IS_ELIGIBLE_MESSAGE' => $defaultEligibilityMsg,
-            'ALMA_NOT_ELIGIBLE_MESSAGE' => $defaultNonEligibilityMsg,
-        );
+    private function assignSmartyAlertClasses($level = 'danger') {
+        if (version_compare(_PS_VERSION_, '1.6', '<')) {
+            $this->context->smarty->assign(array(
+                'validation_error_classes' => 'alert',
+                'tip_classes' => 'conf',
+                'success_classes' => 'conf',
+            ));
+        } else {
+            $this->context->smarty->assign(array(
+                'validation_error_classes' => "alert alert-$level",
+                'tip_classes' => 'alert alert-info',
+                'success_classes' => 'alert alert-success',
+            ));
+        }
     }
 
     public function run($params)
     {
         $messages = '';
-        
+
+        $this->assignSmartyAlertClasses();
+
         if (Tools::isSubmit('alma_config_form')) {
             $messages = $this->processConfiguration();
         } elseif (!AlmaSettings::needsAPIKeys()) {

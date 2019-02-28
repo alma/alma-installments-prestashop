@@ -39,16 +39,23 @@ class AlmaSettings
 {
     public static function get($configKey, $default = null)
     {
-        $idShop = Shop::getContextShopID();
-        $idShopGroup = Shop::getContextShopGroupID();
+        $idShop = Shop::getContextShopID(true);
+        $idShopGroup = Shop::getContextShopGroupID(true);
 
-        return Configuration::get($configKey, null, $idShopGroup, $idShop, $default);
+        $value = Configuration::get($configKey, null, $idShopGroup, $idShop, $default);
+
+        // Configuration::get in PrestaShop 1.5 doesn't have a default argument, so we handle it here
+        if (!$value && !Configuration::hasKey($configKey, null, $idShopGroup, $idShop)) {
+            $value = $default;
+        }
+
+        return $value;
     }
 
     public static function updateValue($configKey, $value)
     {
-        $idShop = Shop::getContextShopID();
-        $idShopGroup = Shop::getContextShopGroupID();
+        $idShop = Shop::getContextShopID(true);
+        $idShopGroup = Shop::getContextShopGroupID(true);
 
         Configuration::updateValue($configKey, $value, false, $idShopGroup, $idShop);
     }
@@ -126,13 +133,15 @@ class AlmaSettings
         return empty(self::get('ALMA_LIVE_API_KEY', '') . self::get('ALMA_TEST_API_KEY', ''));
     }
 
-    public static function getEligibilityMessage($default = '')
+    public static function getEligibilityMessage()
     {
+        $default = Translate::getModuleTranslation('alma', 'Your cart is eligible for monthly payments.', 'settings');
         return self::get('ALMA_IS_ELIGIBLE_MESSAGE', $default);
     }
 
-    public static function getNonEligibilityMessage($default = '')
+    public static function getNonEligibilityMessage()
     {
+        $default = Translate::getModuleTranslation('alma', 'Your cart is not eligible for monthly payments.', 'settings');
         return self::get('ALMA_NOT_ELIGIBLE_MESSAGE', $default);
     }
 
@@ -141,13 +150,16 @@ class AlmaSettings
         return (bool)(int)self::get('ALMA_SHOW_ELIGIBILITY_MESSAGE', true);
     }
 
-    public static function getPaymentButtonTitle($default = '')
+    public static function getPaymentButtonTitle()
     {
+        $default = Translate::getModuleTranslation('alma', 'Monthly Payments with Alma', 'settings');
         return self::get('ALMA_PAYMENT_BUTTON_TITLE', $default);
+
     }
 
-    public static function getPaymentButtonDescription($default = '')
+    public static function getPaymentButtonDescription()
     {
+        $default = Translate::getModuleTranslation('alma', 'Pay in 3 monthly payments with your credit card.', 'settings');
         return self::get('ALMA_PAYMENT_BUTTON_DESC', $default);
     }
 }

@@ -40,6 +40,15 @@ class AlmaIpnModuleFrontController extends ModuleFrontController
         $this->context = Context::getContext();
     }
 
+    public function ajaxDie($value = null, $controller = NULL, $method = NULL)
+    {
+        if (method_exists(get_parent_class($this), 'ajaxDie')) {
+            parent::ajaxDie($value);
+        } else {
+            die($value);
+        }
+    }
+
     private function fail($msg = null)
     {
         header('X-PHP-Response-Code: 500', true, 500);

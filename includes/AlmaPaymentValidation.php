@@ -148,10 +148,15 @@ class AlmaPaymentValidation
             }
 
             $extra_vars = array('transaction_id' => $payment->id);
-            $payment_mode =  sprintf(
-                $this->module->l('Alma - %d monthly payments', 'validation'),
-                count($payment->payment_plan)
-            );
+
+            if (version_compare(_PS_VERSION_, '1.6', '<')) {
+                $payment_mode = $this->module->displayName;
+            } else {
+                $payment_mode =  sprintf(
+                    $this->module->l('Alma - %d monthly payments', 'validation'),
+                    count($payment->payment_plan)
+                );
+            }
 
             $this->module->validateOrder(
                 (int)$cart->id,
