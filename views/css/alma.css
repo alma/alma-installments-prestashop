@@ -21,9 +21,31 @@
     padding-left: 17px;
 }
 
+p.payment_module a.alma-button:after {
+    display: block;
+    content: "\f054";
+    position: absolute;
+    right: 15px;
+    margin-top: -11px;
+    top: 50%;
+    font-family: "FontAwesome";
+    font-size: 25px;
+    height: 22px;
+    width: 14px;
+    color: #777;
+}
+
 .alma-button--logo {
     width:1%;
     white-space:nowrap;
+}
+
+.alma-button--logo img {
+    height: 50px;
+}
+
+.alma-button--text {
+    padding-left: 10px;
 }
 
 .alma-button > span {
