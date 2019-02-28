@@ -62,8 +62,6 @@ class AlmaSettings
 
     public static function deleteAllValues()
     {
-        $result = true;
-
         $configKeys = array(
             'ALMA_FULLY_CONFIGURED',
             'ALMA_ACTIVATE_LOGGING',
@@ -79,12 +77,10 @@ class AlmaSettings
         );
 
         foreach ($configKeys as $configKey) {
-            if (Configuration::hasKey($configKey)) {
-                $result = $result && Configuration::deleteByName($configKey);
-            }
+            Configuration::deleteByName($configKey);
         }
 
-        return $result;
+        return true;
     }
 
 
