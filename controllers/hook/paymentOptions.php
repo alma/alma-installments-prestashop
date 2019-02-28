@@ -76,7 +76,7 @@ class AlmaPaymentOptionsController extends AlmaProtectedHookController
             ->setCallToActionText(AlmaSettings::getPaymentButtonTitle())
             ->setAdditionalInformation($template)
             ->setAction($this->context->link->getModuleLink($this->module->name, 'payment', array(), true))
-            ->setLogo(Media::getMediaPath(_PS_MODULE_DIR_.$this->module->name.'/views/img/tiny_logo.png'));
+            ->setLogo(Media::getMediaPath(_PS_MODULE_DIR_.$this->module->name.'/views/img/tiny_alma_payment_logos.svg'));
 
         return array($paymentOption);
     }

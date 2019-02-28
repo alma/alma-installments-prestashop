@@ -3,6 +3,10 @@
     cursor: pointer;
 }
 
+.payment-option img[src*="tiny_alma_payment_logos.svg"] {
+    height: 25px;
+}
+
 .alma-button.disabled {
     opacity: 0.5;
 }

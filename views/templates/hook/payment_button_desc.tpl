@@ -22,4 +22,6 @@
 *}
 
 
-<span class="alma-button--description">{$desc}</span>
+<p>
+    {$desc}
+</p>
