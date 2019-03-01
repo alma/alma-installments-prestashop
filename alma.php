@@ -33,13 +33,15 @@ include_once(_PS_MODULE_DIR_ . 'alma/includes/AlmaLogger.php');
 
 class Alma extends PaymentModule
 {
+    const VERSION = '1.0.1';
+
     public $_path;
 
     public function __construct()
     {
         $this->name = 'alma';
         $this->tab = 'payments_gateways';
-        $this->version = '1.0.0';
+        $this->version = self::VERSION;
         $this->author = 'Alma';
         $this->need_instance = false;
         $this->bootstrap = true;

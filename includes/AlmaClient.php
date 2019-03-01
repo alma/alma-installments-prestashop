@@ -58,6 +58,10 @@ class AlmaClient
                 'mode' => $mode,
                 'logger' => AlmaLogger::instance()
             ));
+
+            $alma->addUserAgentComponent('PrestaShop', _PS_VERSION_);
+            $alma->addUserAgentComponent('Alma for PrestaShop', Alma::VERSION);
+
         } catch (\Exception $e) {
             AlmaLogger::instance()->error("Error creating Alma API client: " . $e->getMessage());
         }
