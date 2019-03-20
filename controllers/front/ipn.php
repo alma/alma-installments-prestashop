@@ -40,7 +40,7 @@ class AlmaIpnModuleFrontController extends ModuleFrontController
         $this->context = Context::getContext();
     }
 
-    public function ajaxDie($value = null, $controller = NULL, $method = NULL)
+    public function ajaxDie($value = null, $controller = null, $method = null)
     {
         if (method_exists(get_parent_class($this), 'ajaxDie')) {
             parent::ajaxDie($value);

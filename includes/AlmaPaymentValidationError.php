@@ -1,6 +1,6 @@
 <?php
 /**
- * 2018 Alma / Nabla SAS
+ * 2018-2019 Alma SAS
  *
  * THE MIT LICENSE
  *
@@ -17,25 +17,19 @@
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
  *
- * @author    Alma / Nabla SAS <contact@getalma.eu>
- * @copyright 2018 Alma / Nabla SAS
+ * @author    Alma SAS <contact@getalma.eu>
+ * @copyright 2018-2019 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  *
  */
 
-if (!defined('_PS_VERSION_')) {
-    exit;
-}
-
-include_once(_PS_MODULE_DIR_ . 'alma/includes/AlmaSettings.php');
-include_once(_PS_MODULE_DIR_ . 'alma/includes/AlmaHookController.php');
-
-class AlmaProtectedHookController extends AlmaHookController
+class AlmaPaymentValidationError extends \Exception
 {
-    public function canRun()
-    {
-        $isTest = AlmaSettings::getActiveMode() === ALMA_MODE_TEST;
+    public $cart;
 
-        return ($this->loggedAsEmployee() || !$isTest) && in_array(Tools::strtoupper($this->context->currency->iso_code), $this->module->limited_currencies);
+    public function __construct($cart = null, $message = "", $code = 0, Throwable $previous = null)
+    {
+        parent::__construct($message, $code, $previous);
+        $this->cart = $cart;
     }
 }

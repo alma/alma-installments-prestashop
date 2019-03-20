@@ -26,20 +26,11 @@
 include_once(_PS_MODULE_DIR_ . 'alma/includes/functions.php');
 include_once(_PS_MODULE_DIR_ . 'alma/includes/AlmaLogger.php');
 include_once(_PS_MODULE_DIR_ . 'alma/includes/AlmaClient.php');
+include_once(_PS_MODULE_DIR_ . 'alma/includes/AlmaPaymentValidationError.php');
 
 use Alma\API\Entities\Payment;
 use Alma\Api\Entities\Instalment;
 use Alma\API\RequestError;
-
-class AlmaPaymentValidationError extends \Exception {
-    public $cart;
-
-    public function __construct($cart = null, $message = "", $code = 0, Throwable $previous = null)
-    {
-        parent::__construct($message, $code, $previous);
-        $this->cart = $cart;
-    }
-}
 
 class AlmaPaymentValidation
 {

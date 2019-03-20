@@ -33,10 +33,10 @@ include_once(_PS_MODULE_DIR_ . 'alma/includes/PaymentData.php');
 
 use Alma\API\RequestError;
 
-
 class AlmaEligibilityHelper
 {
-    public static function eligibilityCheck($context) {
+    public static function eligibilityCheck($context)
+    {
         $payment_data = PaymentData::dataFromCart($context->cart, $context);
         if (!$payment_data) {
             AlmaLogger::instance()->error('Cannot check cart eligibility: no data extracted from cart');

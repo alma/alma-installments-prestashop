@@ -45,7 +45,7 @@ class AlmaClient
         return $_alma_client;
     }
 
-    public static function createInstance($apiKey, $mode=null)
+    public static function createInstance($apiKey, $mode = null)
     {
         if (!$mode) {
             $mode = AlmaSettings::getActiveMode();
@@ -61,7 +61,6 @@ class AlmaClient
 
             $alma->addUserAgentComponent('PrestaShop', _PS_VERSION_);
             $alma->addUserAgentComponent('Alma for PrestaShop', Alma::VERSION);
-
         } catch (\Exception $e) {
             AlmaLogger::instance()->error("Error creating Alma API client: " . $e->getMessage());
         }

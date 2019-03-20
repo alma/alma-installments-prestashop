@@ -56,14 +56,14 @@ class AlmaDisplayShoppingCartFooterController extends AlmaProtectedHookControlle
             if ($cart_total < $min_amount || $cart_total > $max_amount) {
                 if ($cart_total > $max_amount) {
                     $eligibility_msg .= ' ' . sprintf(
-                            $this->module->l('(Maximum amount: %s)', 'displayShoppingCartFooter'),
-                            Tools::displayPrice(alma_price_from_cents($max_amount))
-                        );
+                        $this->module->l('(Maximum amount: %s)', 'displayShoppingCartFooter'),
+                        Tools::displayPrice(alma_price_from_cents($max_amount))
+                    );
                 } else {
                     $eligibility_msg .= ' ' . sprintf(
-                            $this->module->l('(Minimum amount: %s)', 'displayShoppingCartFooter'),
-                            Tools::displayPrice(alma_price_from_cents($min_amount))
-                        );
+                        $this->module->l('(Minimum amount: %s)', 'displayShoppingCartFooter'),
+                        Tools::displayPrice(alma_price_from_cents($min_amount))
+                    );
                 }
             }
         }
