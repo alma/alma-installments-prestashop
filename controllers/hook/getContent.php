@@ -555,7 +555,13 @@ class AlmaGetContentController extends AlmaAdminHookController
             );
             $fields_forms = array($api_config_form, $debug_form);
         } else {
-            $fields_forms = array($cart_eligibility_form, $payment_button_form, $pnx_config_form, $order_confirmation_form, $api_config_form, $debug_form);
+            $fields_forms = array($cart_eligibility_form, $payment_button_form);
+
+            if ($pnx_config_form) {
+                $fields_forms[] = $pnx_config_form;
+            }
+
+            $fields_forms = array_merge($fields_forms, array($order_confirmation_form, $api_config_form, $debug_form));
         }
 
         $helper = new HelperForm();
