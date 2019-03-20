@@ -62,13 +62,17 @@ class AlmaDisplayPaymentController extends AlmaProtectedHookController
             $logoPath = $this->module->getPathUri() . '/views/img/alma_payment_logos.svg';
         }
 
-        $this->context->smarty->assign(array(
-            'logo' => $logoPath,
-            'disabled' => $disabled,
-            'error' => $error,
-            'title' => AlmaSettings::getPaymentButtonTitle(),
-            'desc' => AlmaSettings::getPaymentButtonDescription(),
-        ));
+        $cart = $this->context->cart;
+        $this->context->smarty->assign(
+            array(
+                'logo' => $logoPath,
+                'disabled' => $disabled,
+                'error' => $error,
+                'title' => AlmaSettings::getPaymentButtonTitle(),
+                'desc' => AlmaSettings::getPaymentButtonDescription(),
+                'order_total' => (float)$cart->getOrderTotal(true, Cart::BOTH),
+            )
+        );
 
         return $this->module->display($this->module->file, 'displayPayment.tpl');
     }
