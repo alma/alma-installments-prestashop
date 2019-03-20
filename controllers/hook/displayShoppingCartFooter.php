@@ -1,6 +1,6 @@
 <?php
 /**
- * 2018 Alma / Nabla SAS
+ * 2018-2019 Alma SAS
  *
  * THE MIT LICENSE
  *
@@ -17,22 +17,19 @@
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
  *
- * @author    Alma / Nabla SAS <contact@getalma.eu>
- * @copyright 2018 Alma / Nabla SAS
+ * @author    Alma SAS <contact@getalma.eu>
+ * @copyright 2018-2019 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
- *
  */
-
-use Alma\API\RequestError;
 
 if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-include_once(_PS_MODULE_DIR_ . 'alma/includes/AlmaProtectedHookController.php');
-include_once(_PS_MODULE_DIR_ . 'alma/includes/functions.php');
-include_once(_PS_MODULE_DIR_ . 'alma/includes/AlmaSettings.php');
-include_once(_PS_MODULE_DIR_ . 'alma/includes/AlmaEligibilityHelper.php');
+include_once _PS_MODULE_DIR_ . 'alma/includes/AlmaProtectedHookController.php';
+include_once _PS_MODULE_DIR_ . 'alma/includes/functions.php';
+include_once _PS_MODULE_DIR_ . 'alma/includes/AlmaSettings.php';
+include_once _PS_MODULE_DIR_ . 'alma/includes/AlmaEligibilityHelper.php';
 
 class AlmaDisplayShoppingCartFooterController extends AlmaProtectedHookController
 {
@@ -48,10 +45,10 @@ class AlmaDisplayShoppingCartFooterController extends AlmaProtectedHookControlle
         if (!$eligibility->isEligible) {
             $eligibility_msg = AlmaSettings::getNonEligibilityMessage();
 
-            $cart       = $this->context->cart;
-            $cart_total = alma_price_to_cents((float)$cart->getOrderTotal(true, Cart::BOTH));
-            $min_amount = $eligibility->constraints["purchase_amount"]["minimum"];
-            $max_amount = $eligibility->constraints["purchase_amount"]["maximum"];
+            $cart = $this->context->cart;
+            $cart_total = alma_price_to_cents((float) $cart->getOrderTotal(true, Cart::BOTH));
+            $min_amount = $eligibility->constraints['purchase_amount']['minimum'];
+            $max_amount = $eligibility->constraints['purchase_amount']['maximum'];
 
             if ($cart_total < $min_amount || $cart_total > $max_amount) {
                 if ($cart_total > $max_amount) {
@@ -73,7 +70,6 @@ class AlmaDisplayShoppingCartFooterController extends AlmaProtectedHookControlle
         } else {
             $logoPath = $this->module->getPathUri() . '/views/img/alma_logo.svg';
         }
-
 
         $this->context->smarty->assign(array(
             'eligibility_msg' => $eligibility_msg,

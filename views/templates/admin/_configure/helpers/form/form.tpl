@@ -1,4 +1,4 @@
-<!--
+{*
  * 2018-2019 Alma SAS
  *
  * THE MIT LICENSE
@@ -19,8 +19,8 @@
  * @author    Alma SAS <contact@getalma.eu>
  * @copyright 2018-2019 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
- *
- -->
+ *}
+
 {extends file="helpers/form/form.tpl"}
 
 {block name="input"}

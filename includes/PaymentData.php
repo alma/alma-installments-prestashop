@@ -1,6 +1,6 @@
 <?php
 /**
- * 2018 Alma / Nabla SAS
+ * 2018-2019 Alma SAS
  *
  * THE MIT LICENSE
  *
@@ -17,18 +17,17 @@
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
  *
- * @author    Alma / Nabla SAS <contact@getalma.eu>
- * @copyright 2018 Alma / Nabla SAS
+ * @author    Alma SAS <contact@getalma.eu>
+ * @copyright 2018-2019 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
- *
  */
 
 if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-include_once(_PS_MODULE_DIR_ . 'alma/includes/AlmaLogger.php');
-include_once(_PS_MODULE_DIR_ . 'alma/includes/functions.php');
+include_once _PS_MODULE_DIR_ . 'alma/includes/AlmaLogger.php';
+include_once _PS_MODULE_DIR_ . 'alma/includes/functions.php';
 
 class PaymentData
 {
@@ -42,7 +41,8 @@ class PaymentData
         if ($cart->id_customer) {
             $customer = new Customer($cart->id_customer);
             if (!Validate::isLoadedObject($customer)) {
-                AlmaLogger::instance()->error("[Alma] Error loading Customer " . $cart->id_customer . " from Cart " . $cart->id);
+                AlmaLogger::instance()->error('[Alma] Error loading Customer ' . $cart->id_customer . ' from Cart ' . $cart->id);
+
                 return null;
             }
         }
@@ -60,13 +60,12 @@ class PaymentData
             'phone' => null,
         );
 
-        if ($customerData['birth_date'] == '0000-00-00')
-        {
+        if ($customerData['birth_date'] == '0000-00-00') {
             $customerData['birth_date'] = null;
         }
 
-        $shippingAddress = new Address((int)$cart->id_address_delivery);
-        $billingAddress = new Address((int)$cart->id_address_invoice);
+        $shippingAddress = new Address((int) $cart->id_address_delivery);
+        $billingAddress = new Address((int) $cart->id_address_invoice);
 
         if ($shippingAddress->phone) {
             $customerData['phone'] = $shippingAddress->phone;
@@ -90,32 +89,32 @@ class PaymentData
             }
         }
 
-        $purchaseAmount = (float)$cart->getOrderTotal(true, Cart::BOTH);
+        $purchaseAmount = (float) $cart->getOrderTotal(true, Cart::BOTH);
 
         $data = array(
-            "payment" => array(
-                "installments_count" => (int)$installments_count,
-                "customer_cancel_url" => $context->link->getPageLink('order'),
-                "return_url" => $context->link->getModuleLink('alma', 'validation'),
-                "ipn_callback_url" => $context->link->getModuleLink('alma', 'ipn'),
-                "purchase_amount" => alma_price_to_cents($purchaseAmount),
-                "shipping_address" => array(
-                    "line1" => $shippingAddress->address1,
+            'payment' => array(
+                'installments_count' => (int) $installments_count,
+                'customer_cancel_url' => $context->link->getPageLink('order'),
+                'return_url' => $context->link->getModuleLink('alma', 'validation'),
+                'ipn_callback_url' => $context->link->getModuleLink('alma', 'ipn'),
+                'purchase_amount' => alma_price_to_cents($purchaseAmount),
+                'shipping_address' => array(
+                    'line1' => $shippingAddress->address1,
                     'postal_code' => $shippingAddress->postcode,
                     'city' => $shippingAddress->city,
                     'country' => $shippingAddress->country,
                 ),
-                "billing_address" => array(
-                    "line1" => $billingAddress->address1,
+                'billing_address' => array(
+                    'line1' => $billingAddress->address1,
                     'postal_code' => $billingAddress->postcode,
                     'city' => $billingAddress->city,
                     'country' => $billingAddress->country,
                 ),
-                "custom_data" => array(
-                    "cart_id" => $cart->id
+                'custom_data' => array(
+                    'cart_id' => $cart->id,
                 ),
             ),
-            "customer" => $customerData,
+            'customer' => $customerData,
         );
 
         return $data;

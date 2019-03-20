@@ -1,6 +1,6 @@
 <?php
 /**
- * 2018 Alma / Nabla SAS
+ * 2018-2019 Alma SAS
  *
  * THE MIT LICENSE
  *
@@ -17,18 +17,16 @@
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
  *
- * @author    Alma / Nabla SAS <contact@getalma.eu>
- * @copyright 2018 Alma / Nabla SAS
+ * @author    Alma SAS <contact@getalma.eu>
+ * @copyright 2018-2019 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
- *
  */
 
 if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-include_once(_PS_MODULE_DIR_ . 'alma/includes/AlmaPaymentValidation.php');
-
+include_once _PS_MODULE_DIR_ . 'alma/includes/AlmaPaymentValidation.php';
 
 class AlmaIpnModuleFrontController extends ModuleFrontController
 {
@@ -59,7 +57,7 @@ class AlmaIpnModuleFrontController extends ModuleFrontController
     {
         parent::postProcess();
 
-        header("Content-Type: application/json");
+        header('Content-Type: application/json');
 
         $paymentId = Tools::getValue('pid');
         $validator = new AlmaPaymentValidation($this->context, $this->module);

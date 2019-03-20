@@ -1,6 +1,6 @@
 <?php
 /**
- * 2018 Alma / Nabla SAS
+ * 2018-2019 Alma SAS
  *
  * THE MIT LICENSE
  *
@@ -17,18 +17,17 @@
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
  *
- * @author    Alma / Nabla SAS <contact@getalma.eu>
- * @copyright 2018 Alma / Nabla SAS
+ * @author    Alma SAS <contact@getalma.eu>
+ * @copyright 2018-2019 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
- *
  */
 
 if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-include_once(_PS_MODULE_DIR_ . 'alma/includes/AlmaSettings.php');
-include_once(_PS_MODULE_DIR_ . 'alma/includes/AlmaHookController.php');
+include_once _PS_MODULE_DIR_ . 'alma/includes/AlmaSettings.php';
+include_once _PS_MODULE_DIR_ . 'alma/includes/AlmaHookController.php';
 
 class AlmaProtectedHookController extends AlmaHookController
 {

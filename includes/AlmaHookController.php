@@ -1,6 +1,6 @@
 <?php
 /**
- * 2018 Alma / Nabla SAS
+ * 2018-2019 Alma SAS
  *
  * THE MIT LICENSE
  *
@@ -17,10 +17,9 @@
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
  *
- * @author    Alma / Nabla SAS <contact@getalma.eu>
- * @copyright 2018 Alma / Nabla SAS
+ * @author    Alma SAS <contact@getalma.eu>
+ * @copyright 2018-2019 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
- *
  */
 
 if (!defined('_PS_VERSION_')) {
@@ -37,11 +36,11 @@ class AlmaHookController
 
     protected function loggedAsEmployee()
     {
-        $cookie = new Cookie('psAdmin', '', (int)Configuration::get('PS_COOKIE_LIFETIME_BO'));
-        $employee = new Employee((int)$cookie->id_employee);
+        $cookie = new Cookie('psAdmin', '', (int) Configuration::get('PS_COOKIE_LIFETIME_BO'));
+        $employee = new Employee((int) $cookie->id_employee);
 
         return Validate::isLoadedObject($employee)
-            && $employee->checkPassword((int)$cookie->id_employee, $cookie->passwd)
+            && $employee->checkPassword((int) $cookie->id_employee, $cookie->passwd)
             && (!isset($cookie->remote_addr)
                 || $cookie->remote_addr == ip2long(Tools::getRemoteAddr())
                 || !Configuration::get('PS_COOKIE_CHECKIP'));

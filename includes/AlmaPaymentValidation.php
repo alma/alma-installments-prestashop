@@ -1,6 +1,6 @@
 <?php
 /**
- * 2018 Alma / Nabla SAS
+ * 2018-2019 Alma SAS
  *
  * THE MIT LICENSE
  *
@@ -17,16 +17,15 @@
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
  *
- * @author    Alma / Nabla SAS <contact@getalma.eu>
- * @copyright 2018 Alma / Nabla SAS
+ * @author    Alma SAS <contact@getalma.eu>
+ * @copyright 2018-2019 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
- *
  */
 
-include_once(_PS_MODULE_DIR_ . 'alma/includes/functions.php');
-include_once(_PS_MODULE_DIR_ . 'alma/includes/AlmaLogger.php');
-include_once(_PS_MODULE_DIR_ . 'alma/includes/AlmaClient.php');
-include_once(_PS_MODULE_DIR_ . 'alma/includes/AlmaPaymentValidationError.php');
+include_once _PS_MODULE_DIR_ . 'alma/includes/functions.php';
+include_once _PS_MODULE_DIR_ . 'alma/includes/AlmaLogger.php';
+include_once _PS_MODULE_DIR_ . 'alma/includes/AlmaClient.php';
+include_once _PS_MODULE_DIR_ . 'alma/includes/AlmaPaymentValidationError.php';
 
 use Alma\API\Entities\Payment;
 use Alma\Api\Entities\Instalment;
@@ -62,15 +61,17 @@ class AlmaPaymentValidation
 
     /**
      * @param $almaPaymentId
+     *
      * @return string URL to redirect the customer to
+     *
      * @throws AlmaPaymentValidationError
      */
     public function validatePayment($almaPaymentId)
     {
         $alma = AlmaClient::defaultInstance();
         if (!$alma) {
-            AlmaLogger::instance()->error("[Alma] Error instantiating Alma API Client");
-            throw new AlmaPaymentValidationError(null, "api_client_init");
+            AlmaLogger::instance()->error('[Alma] Error instantiating Alma API Client');
+            throw new AlmaPaymentValidationError(null, 'api_client_init');
         }
 
         try {
@@ -84,12 +85,12 @@ class AlmaPaymentValidation
         $cart = new Cart($payment->custom_data['cart_id']);
         if (!$cart || $cart->id_customer == 0 || $cart->id_address_delivery == 0 || $cart->id_address_invoice == 0) {
             AlmaLogger::instance()->error("[Alma] Payment validation error: Cart {$cart->id} does not look valid.");
-            throw new AlmaPaymentValidationError($cart, "cart_invalid");
+            throw new AlmaPaymentValidationError($cart, 'cart_invalid');
         }
 
         if (!$this->module->active) {
             AlmaLogger::instance()->error("[Alma] Payment validation error for Cart {$cart->id}: module not active.");
-            throw new AlmaPaymentValidationError($cart, "inactive_module");
+            throw new AlmaPaymentValidationError($cart, 'inactive_module');
         }
 
         // Check if module is enabled
@@ -102,7 +103,7 @@ class AlmaPaymentValidation
 
         if (!$authorized) {
             AlmaLogger::instance()->error("[Alma] Payment validation error for Cart {$cart->id}: module not enabled anymore.");
-            throw new AlmaPaymentValidationError($cart, "disabled_module");
+            throw new AlmaPaymentValidationError($cart, 'disabled_module');
         }
 
         if (!$this->checkCurrency()) {
@@ -118,11 +119,11 @@ class AlmaPaymentValidation
                 "cannot load Customer {$cart->id_customer}"
             );
 
-            throw new AlmaPaymentValidationError($cart, "cannot load customer");
+            throw new AlmaPaymentValidationError($cart, 'cannot load customer');
         }
 
         if (!$cart->OrderExists()) {
-            $purchaseAmount = alma_price_to_cents((float)$cart->getOrderTotal(true, Cart::BOTH));
+            $purchaseAmount = alma_price_to_cents((float) $cart->getOrderTotal(true, Cart::BOTH));
             if ($payment->purchase_amount !== $purchaseAmount) {
                 $alma->payments->flagAsPotentialFraud($almaPaymentId, Payment::FRAUD_AMOUNT_MISMATCH);
 
@@ -143,20 +144,20 @@ class AlmaPaymentValidation
             if (version_compare(_PS_VERSION_, '1.6', '<')) {
                 $payment_mode = $this->module->displayName;
             } else {
-                $payment_mode =  sprintf(
+                $payment_mode = sprintf(
                     $this->module->l('Alma - %d monthly payments', 'validation'),
                     count($payment->payment_plan)
                 );
             }
 
             $this->module->validateOrder(
-                (int)$cart->id,
+                (int) $cart->id,
                 Configuration::get('PS_OS_PAYMENT'),
                 alma_price_from_cents($purchaseAmount),
                 $payment_mode,
                 null,
                 $extra_vars,
-                (int)$cart->id_currency,
+                (int) $cart->id_currency,
                 false,
                 $customer->secure_key
             );
@@ -164,10 +165,10 @@ class AlmaPaymentValidation
             $extraRedirectArgs = '';
         } else {
             if (is_callable(array('Order', 'getByCartId'))) {
-                $order = Order::getByCartId((int)$cart->id);
-                $this->module->currentOrder = (int)$order->id;
+                $order = Order::getByCartId((int) $cart->id);
+                $this->module->currentOrder = (int) $order->id;
             } else {
-                $this->module->currentOrder = (int)Order::getOrderByCartId((int)$cart->id);
+                $this->module->currentOrder = (int) Order::getOrderByCartId((int) $cart->id);
             }
 
             $token_cart = md5(_COOKIE_KEY_ . 'recover_cart_' . $cart->id);
@@ -175,10 +176,10 @@ class AlmaPaymentValidation
         }
 
         return $this->context->link->getPageLink('order-confirmation', true) .
-            '?id_cart='   . (int)$cart->id .
-            '&id_module=' . (int)$this->module->id .
-            '&id_order='  . (int)$this->module->currentOrder .
-            '&key='       . $customer->secure_key .
+            '?id_cart=' . (int) $cart->id .
+            '&id_module=' . (int) $this->module->id .
+            '&id_order=' . (int) $this->module->currentOrder .
+            '&key=' . $customer->secure_key .
             $extraRedirectArgs;
     }
 }

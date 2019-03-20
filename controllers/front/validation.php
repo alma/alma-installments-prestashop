@@ -1,6 +1,6 @@
 <?php
 /**
- * 2018 Alma / Nabla SAS
+ * 2018-2019 Alma SAS
  *
  * THE MIT LICENSE
  *
@@ -17,18 +17,16 @@
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
  *
- * @author    Alma / Nabla SAS <contact@getalma.eu>
- * @copyright 2018 Alma / Nabla SAS
+ * @author    Alma SAS <contact@getalma.eu>
+ * @copyright 2018-2019 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
- *
  */
 
 if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-include_once(_PS_MODULE_DIR_ . 'alma/includes/AlmaPaymentValidation.php');
-
+include_once _PS_MODULE_DIR_ . 'alma/includes/AlmaPaymentValidation.php';
 
 class AlmaValidationModuleFrontController extends ModuleFrontController
 {
@@ -49,11 +47,12 @@ class AlmaValidationModuleFrontController extends ModuleFrontController
                     'Please try again or contact us if the problem persists. Cart ID: %d',
                     'validation'
                 ),
-                (int)$cart ? $cart->id : -1
+                (int) $cart ? $cart->id : -1
             );
         }
-        
+
         $this->context->cookie->__set('alma_error', $msg);
+
         return 'index.php?controller=order&step=1';
     }
 

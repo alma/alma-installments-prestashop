@@ -1,6 +1,6 @@
 <?php
 /**
- * 2018 Alma / Nabla SAS
+ * 2018-2019 Alma SAS
  *
  * THE MIT LICENSE
  *
@@ -17,10 +17,9 @@
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
  *
- * @author    Alma / Nabla SAS <contact@getalma.eu>
- * @copyright 2018 Alma / Nabla SAS
+ * @author    Alma SAS <contact@getalma.eu>
+ * @copyright 2018-2019 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
- *
  */
 
 if (!defined('_PS_VERSION_')) {
@@ -83,16 +82,15 @@ class AlmaSettings
         return true;
     }
 
-
     /* Getters */
     public static function isFullyConfigured()
     {
-        return (bool)(int)self::get('ALMA_FULLY_CONFIGURED', false);
+        return (bool) (int) self::get('ALMA_FULLY_CONFIGURED', false);
     }
 
     public static function canLog()
     {
-        return (bool)(int)self::get('ALMA_ACTIVATE_LOGGING', false);
+        return (bool) (int) self::get('ALMA_ACTIVATE_LOGGING', false);
     }
 
     public static function getActiveMode()
@@ -121,7 +119,7 @@ class AlmaSettings
 
     public static function showDisabledButton()
     {
-        return (bool)(int)self::get('ALMA_SHOW_DISABLED_BUTTON', true);
+        return (bool) (int) self::get('ALMA_SHOW_DISABLED_BUTTON', true);
     }
 
     public static function needsAPIKeys()
@@ -132,56 +130,62 @@ class AlmaSettings
     public static function getEligibilityMessage()
     {
         $default = Translate::getModuleTranslation('alma', 'Your cart is eligible for monthly payments.', 'almasettings');
+
         return self::get('ALMA_IS_ELIGIBLE_MESSAGE', $default);
     }
 
     public static function getNonEligibilityMessage()
     {
         $default = Translate::getModuleTranslation('alma', 'Your cart is not eligible for monthly payments.', 'almasettings');
+
         return self::get('ALMA_NOT_ELIGIBLE_MESSAGE', $default);
     }
 
     public static function showEligibilityMessage()
     {
-        return (bool)(int)self::get('ALMA_SHOW_ELIGIBILITY_MESSAGE', true);
+        return (bool) (int) self::get('ALMA_SHOW_ELIGIBILITY_MESSAGE', true);
     }
 
     public static function getPaymentButtonTitle()
     {
         $default = Translate::getModuleTranslation('alma', 'Monthly Payments with Alma', 'almasettings');
+
         return self::get('ALMA_PAYMENT_BUTTON_TITLE', $default);
     }
 
     public static function getPaymentButtonDescription()
     {
         $default = Translate::getModuleTranslation('alma', 'Pay in 3 monthly payments with your credit card.', 'almasettings');
+
         return self::get('ALMA_PAYMENT_BUTTON_DESC', $default);
     }
 
     public static function displayOrderConfirmation()
     {
-        return (bool)(int)self::get('ALMA_DISPLAY_ORDER_CONFIRMATION', false);
+        return (bool) (int) self::get('ALMA_DISPLAY_ORDER_CONFIRMATION', false);
     }
 
     public static function isInstallmentPlanEnabled($n)
     {
-        return (bool)(int)self::get("ALMA_P${n}X_ENABLED", $n == 3);
+        return (bool) (int) self::get("ALMA_P${n}X_ENABLED", $n == 3);
     }
 
     public static function installmentPlansMaxN()
     {
-        return (int)self::get("ALMA_PNX_MAX_N", 3);
+        return (int) self::get('ALMA_PNX_MAX_N', 3);
     }
 
     public static function installmentPlanMinAmount($n, $merchant = null)
     {
         $default = $merchant ? $merchant->minimum_purchase_amount : 10000;
-        return (int)self::get("ALMA_P${n}X_MIN_AMOUNT", $default);
+
+        return (int) self::get("ALMA_P${n}X_MIN_AMOUNT", $default);
     }
 
     public static function installmentPlanMaxAmount($n, $merchant = null)
     {
         $default = $merchant ? $merchant->maximum_purchase_amount : 100000;
-        return (int)self::get("ALMA_P${n}X_MAX_AMOUNT", $default);
+
+        return (int) self::get("ALMA_P${n}X_MAX_AMOUNT", $default);
     }
 }

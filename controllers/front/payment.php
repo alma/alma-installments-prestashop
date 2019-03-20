@@ -1,6 +1,6 @@
 <?php
 /**
- * 2018 Alma / Nabla SAS
+ * 2018-2019 Alma SAS
  *
  * THE MIT LICENSE
  *
@@ -17,10 +17,9 @@
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
  *
- * @author    Alma / Nabla SAS <contact@getalma.eu>
- * @copyright 2018 Alma / Nabla SAS
+ * @author    Alma SAS <contact@getalma.eu>
+ * @copyright 2018-2019 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
- *
  */
 
 use Alma\API\RequestError;
@@ -29,9 +28,9 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-include_once(_PS_MODULE_DIR_ . 'alma/includes/PaymentData.php');
-include_once(_PS_MODULE_DIR_ . 'alma/includes/AlmaClient.php');
-include_once(_PS_MODULE_DIR_ . 'alma/includes/AlmaLogger.php');
+include_once _PS_MODULE_DIR_ . 'alma/includes/PaymentData.php';
+include_once _PS_MODULE_DIR_ . 'alma/includes/AlmaClient.php';
+include_once _PS_MODULE_DIR_ . 'alma/includes/AlmaLogger.php';
 
 class AlmaPaymentModuleFrontController extends ModuleFrontController
 {
@@ -76,6 +75,7 @@ class AlmaPaymentModuleFrontController extends ModuleFrontController
         // Check if cart exists and all fields are set
         if (!$this->module->active) {
             Tools::redirect('index.php?controller=order&step=1');
+
             return;
         }
 
@@ -90,6 +90,7 @@ class AlmaPaymentModuleFrontController extends ModuleFrontController
         if (!$authorized) {
             AlmaLogger::instance()->warning('[Alma] Not authorized!');
             Tools::redirect('index.php?controller=order&step=1');
+
             return;
         }
 
@@ -97,14 +98,16 @@ class AlmaPaymentModuleFrontController extends ModuleFrontController
             $msg = $this->module->l('Alma monthly payments are not available for this currency', 'payment');
             $this->context->cookie->__set('alma_error', $msg);
             Tools::redirect('index.php?controller=order&step=1');
+
             return;
         }
 
         $cart = $this->context->cart;
-        $data = PaymentData::dataFromCart($cart, $this->context, Tools::getValue("n", "3"));
+        $data = PaymentData::dataFromCart($cart, $this->context, Tools::getValue('n', '3'));
         $alma = AlmaClient::defaultInstance();
         if (!$data || !$alma) {
             $this->genericErrorAndRedirect();
+
             return;
         }
 
@@ -114,6 +117,7 @@ class AlmaPaymentModuleFrontController extends ModuleFrontController
             $msg = "[Alma] ERROR when creating payment for Cart {$cart->id}: {$e->getMessage()}";
             AlmaLogger::instance()->error($msg);
             $this->genericErrorAndRedirect();
+
             return;
         }
 

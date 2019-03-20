@@ -1,6 +1,6 @@
 <?php
 /**
- * 2018 Alma / Nabla SAS
+ * 2018-2019 Alma SAS
  *
  * THE MIT LICENSE
  *
@@ -17,10 +17,9 @@
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
  *
- * @author    Alma / Nabla SAS <contact@getalma.eu>
- * @copyright 2018 Alma / Nabla SAS
+ * @author    Alma SAS <contact@getalma.eu>
+ * @copyright 2018-2019 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
- *
  */
 
 use Alma\API\RequestError;
@@ -29,10 +28,10 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-include_once(_PS_MODULE_DIR_ . 'alma/includes/AlmaProtectedHookController.php');
-include_once(_PS_MODULE_DIR_ . 'alma/includes/PaymentData.php');
-include_once(_PS_MODULE_DIR_ . 'alma/includes/AlmaClient.php');
-include_once(_PS_MODULE_DIR_ . 'alma/includes/AlmaSettings.php');
+include_once _PS_MODULE_DIR_ . 'alma/includes/AlmaProtectedHookController.php';
+include_once _PS_MODULE_DIR_ . 'alma/includes/PaymentData.php';
+include_once _PS_MODULE_DIR_ . 'alma/includes/AlmaClient.php';
+include_once _PS_MODULE_DIR_ . 'alma/includes/AlmaSettings.php';
 
 class AlmaPaymentOptionsController extends AlmaProtectedHookController
 {
@@ -42,12 +41,14 @@ class AlmaPaymentOptionsController extends AlmaProtectedHookController
         $payment_data = PaymentData::dataFromCart($this->context->cart, $this->context);
         if (!$payment_data) {
             AlmaLogger::instance()->error('Cannot check cart eligibility: no data extracted from cart');
+
             return array();
         }
 
         $alma = AlmaClient::defaultInstance();
         if (!$alma) {
             AlmaLogger::instance()->error('Cannot check cart eligibility: no API client');
+
             return array();
         }
 
@@ -55,6 +56,7 @@ class AlmaPaymentOptionsController extends AlmaProtectedHookController
             $eligibility = $alma->payments->eligibility($payment_data);
         } catch (RequestError $e) {
             AlmaLogger::instance()->error("Error when checking cart {$this->context->cart->id} eligibility: " . $e->getMessage());
+
             return array();
         }
 
@@ -65,7 +67,7 @@ class AlmaPaymentOptionsController extends AlmaProtectedHookController
         $options = array();
         $n = 1;
         while ($n < AlmaSettings::installmentPlansMaxN()) {
-            $n += 1;
+            ++$n;
 
             if (!AlmaSettings::isInstallmentPlanEnabled($n)) {
                 continue;
@@ -90,8 +92,8 @@ class AlmaPaymentOptionsController extends AlmaProtectedHookController
                 ->setModuleName($this->module->name)
                 ->setCallToActionText(sprintf(AlmaSettings::getPaymentButtonTitle(), $n))
                 ->setAdditionalInformation($template)
-                ->setAction($this->context->link->getModuleLink($this->module->name, 'payment', array("n" => $n), true))
-                ->setLogo(Media::getMediaPath(_PS_MODULE_DIR_.$this->module->name.'/views/img/tiny_alma_payment_logos.svg'));
+                ->setAction($this->context->link->getModuleLink($this->module->name, 'payment', array('n' => $n), true))
+                ->setLogo(Media::getMediaPath(_PS_MODULE_DIR_ . $this->module->name . '/views/img/tiny_alma_payment_logos.svg'));
 
             $options[] = $paymentOption;
         }

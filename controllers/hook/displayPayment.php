@@ -1,6 +1,6 @@
 <?php
 /**
- * 2018 Alma / Nabla SAS
+ * 2018-2019 Alma SAS
  *
  * THE MIT LICENSE
  *
@@ -17,22 +17,19 @@
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
  *
- * @author    Alma / Nabla SAS <contact@getalma.eu>
- * @copyright 2018 Alma / Nabla SAS
+ * @author    Alma SAS <contact@getalma.eu>
+ * @copyright 2018-2019 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
- *
  */
-
-use Alma\API\RequestError;
 
 if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-include_once(_PS_MODULE_DIR_ . 'alma/includes/AlmaProtectedHookController.php');
-include_once(_PS_MODULE_DIR_ . 'alma/includes/AlmaClient.php');
-include_once(_PS_MODULE_DIR_ . 'alma/includes/AlmaSettings.php');
-include_once(_PS_MODULE_DIR_ . 'alma/includes/AlmaEligibilityHelper.php');
+include_once _PS_MODULE_DIR_ . 'alma/includes/AlmaProtectedHookController.php';
+include_once _PS_MODULE_DIR_ . 'alma/includes/AlmaClient.php';
+include_once _PS_MODULE_DIR_ . 'alma/includes/AlmaSettings.php';
+include_once _PS_MODULE_DIR_ . 'alma/includes/AlmaEligibilityHelper.php';
 
 class AlmaDisplayPaymentController extends AlmaProtectedHookController
 {
@@ -70,7 +67,7 @@ class AlmaDisplayPaymentController extends AlmaProtectedHookController
                 'error' => $error,
                 'title' => AlmaSettings::getPaymentButtonTitle(),
                 'desc' => AlmaSettings::getPaymentButtonDescription(),
-                'order_total' => (float)$cart->getOrderTotal(true, Cart::BOTH),
+                'order_total' => (float) $cart->getOrderTotal(true, Cart::BOTH),
             )
         );
 

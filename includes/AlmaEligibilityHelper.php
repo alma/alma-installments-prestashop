@@ -1,6 +1,6 @@
 <?php
 /**
- * 2018 Alma / Nabla SAS
+ * 2018-2019 Alma SAS
  *
  * THE MIT LICENSE
  *
@@ -17,19 +17,18 @@
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
  *
- * @author    Alma / Nabla SAS <contact@getalma.eu>
- * @copyright 2018 Alma / Nabla SAS
+ * @author    Alma SAS <contact@getalma.eu>
+ * @copyright 2018-2019 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
- *
  */
 
 if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-include_once(_PS_MODULE_DIR_ . 'alma/includes/AlmaLogger.php');
-include_once(_PS_MODULE_DIR_ . 'alma/includes/AlmaClient.php');
-include_once(_PS_MODULE_DIR_ . 'alma/includes/PaymentData.php');
+include_once _PS_MODULE_DIR_ . 'alma/includes/AlmaLogger.php';
+include_once _PS_MODULE_DIR_ . 'alma/includes/AlmaClient.php';
+include_once _PS_MODULE_DIR_ . 'alma/includes/PaymentData.php';
 
 use Alma\API\RequestError;
 
@@ -40,12 +39,14 @@ class AlmaEligibilityHelper
         $payment_data = PaymentData::dataFromCart($context->cart, $context);
         if (!$payment_data) {
             AlmaLogger::instance()->error('Cannot check cart eligibility: no data extracted from cart');
+
             return null;
         }
 
         $alma = AlmaClient::defaultInstance();
         if (!$alma) {
             AlmaLogger::instance()->error('Cannot check cart eligibility: no API client');
+
             return null;
         }
 
@@ -55,6 +56,7 @@ class AlmaEligibilityHelper
             $eligibility = $alma->payments->eligibility($payment_data);
         } catch (RequestError $e) {
             AlmaLogger::instance()->error("Error when checking cart {$context->cart->id} eligibility: " . $e->getMessage());
+
             return null;
         }
 

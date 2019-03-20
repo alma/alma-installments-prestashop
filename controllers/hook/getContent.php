@@ -1,6 +1,6 @@
 <?php
 /**
- * 2018 Alma / Nabla SAS
+ * 2018-2019 Alma SAS
  *
  * THE MIT LICENSE
  *
@@ -17,10 +17,9 @@
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
  *
- * @author    Alma / Nabla SAS <contact@getalma.eu>
- * @copyright 2018 Alma / Nabla SAS
+ * @author    Alma SAS <contact@getalma.eu>
+ * @copyright 2018-2019 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
- *
  */
 
 use Alma\API\RequestError;
@@ -29,11 +28,11 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-include_once(_PS_MODULE_DIR_ . 'alma/includes/AlmaAdminHookController.php');
-include_once(_PS_MODULE_DIR_ . 'alma/includes/AlmaSettings.php');
-include_once(_PS_MODULE_DIR_ . 'alma/includes/AlmaClient.php');
-include_once(_PS_MODULE_DIR_ . 'alma/includes/AlmaLogger.php');
-include_once(_PS_MODULE_DIR_ . 'alma/includes/functions.php');
+include_once _PS_MODULE_DIR_ . 'alma/includes/AlmaAdminHookController.php';
+include_once _PS_MODULE_DIR_ . 'alma/includes/AlmaSettings.php';
+include_once _PS_MODULE_DIR_ . 'alma/includes/AlmaClient.php';
+include_once _PS_MODULE_DIR_ . 'alma/includes/AlmaLogger.php';
+include_once _PS_MODULE_DIR_ . 'alma/includes/functions.php';
 
 class AlmaGetContentController extends AlmaAdminHookController
 {
@@ -58,6 +57,7 @@ class AlmaGetContentController extends AlmaAdminHookController
             if (empty($title) || empty($description) ||
                 ($showEligibility && (empty($eligibleMsg) || empty($nonEligibleMsg)))) {
                 $this->context->smarty->assign('validation_error', 'missing_required_setting');
+
                 return $this->module->display($this->module->file, 'getContent.tpl');
             }
 
@@ -82,18 +82,19 @@ class AlmaGetContentController extends AlmaAdminHookController
                 if ($merchant) {
                     // First validate that plans boundaries are correctly set
                     foreach ($merchant->fee_plans as $feePlan) {
-                        $n = $feePlan["installments_count"];
+                        $n = $feePlan['installments_count'];
                         $min = alma_price_to_cents(Tools::getValue("ALMA_P${n}X_MIN_AMOUNT"));
                         $max = alma_price_to_cents(Tools::getValue("ALMA_P${n}X_MAX_AMOUNT"));
 
-                        if (!($min >= $merchant->minimum_purchase_amount && $min <= min($max,
-                                $merchant->maximum_purchase_amount))) {
+                        if (!($min >= $merchant->minimum_purchase_amount &&
+                            $min <= min($max, $merchant->maximum_purchase_amount))) {
                             $this->context->smarty->assign(array(
                                 'validation_error' => 'pnx_min_amount',
                                 'n' => $n,
                                 'min' => alma_price_from_cents($merchant->minimum_purchase_amount),
-                                'max' => alma_price_from_cents(min($max, $merchant->maximum_purchase_amount))
+                                'max' => alma_price_from_cents(min($max, $merchant->maximum_purchase_amount)),
                             ));
+
                             return $this->module->display($this->module->file, 'getContent.tpl');
                         }
 
@@ -102,8 +103,9 @@ class AlmaGetContentController extends AlmaAdminHookController
                                 'validation_error' => 'pnx_max_amount',
                                 'n' => $n,
                                 'min' => alma_price_from_cents($min),
-                                'max' => alma_price_from_cents($merchant->maximum_purchase_amount)
+                                'max' => alma_price_from_cents($merchant->maximum_purchase_amount),
                             ));
+
                             return $this->module->display($this->module->file, 'getContent.tpl');
                         }
                     }
@@ -113,13 +115,13 @@ class AlmaGetContentController extends AlmaAdminHookController
                     // eligible for the others
                     $maxN = 0;
                     foreach ($merchant->fee_plans as $feePlan) {
-                        $n = $feePlan["installments_count"];
+                        $n = $feePlan['installments_count'];
                         $min = Tools::getValue("ALMA_P${n}X_MIN_AMOUNT");
                         $max = Tools::getValue("ALMA_P${n}X_MAX_AMOUNT");
 
                         $overlap = false;
                         foreach ($merchant->fee_plans as $other_plan) {
-                            $other_n = $other_plan["installments_count"];
+                            $other_n = $other_plan['installments_count'];
                             if ($n == $other_n) {
                                 continue;
                             }
@@ -144,17 +146,21 @@ class AlmaGetContentController extends AlmaAdminHookController
 
                         $enablePlan = Tools::getValue("ALMA_P${n}X_ENABLED_ON") == '1';
                         AlmaSettings::updateValue("ALMA_P${n}X_ENABLED", $enablePlan);
-                        AlmaSettings::updateValue("ALMA_P${n}X_MIN_AMOUNT",
-                            alma_price_to_cents(Tools::getValue("ALMA_P${n}X_MIN_AMOUNT")));
-                        AlmaSettings::updateValue("ALMA_P${n}X_MAX_AMOUNT",
-                            alma_price_to_cents(Tools::getValue("ALMA_P${n}X_MAX_AMOUNT")));
+                        AlmaSettings::updateValue(
+                            "ALMA_P${n}X_MIN_AMOUNT",
+                            alma_price_to_cents(Tools::getValue("ALMA_P${n}X_MIN_AMOUNT"))
+                        );
+                        AlmaSettings::updateValue(
+                            "ALMA_P${n}X_MAX_AMOUNT",
+                            alma_price_to_cents(Tools::getValue("ALMA_P${n}X_MAX_AMOUNT"))
+                        );
 
                         if ($n > $maxN && $enablePlan) {
                             $maxN = $n;
                         }
                     }
 
-                    AlmaSettings::updateValue("ALMA_PNX_MAX_N", $maxN);
+                    AlmaSettings::updateValue('ALMA_PNX_MAX_N', $maxN);
                 }
             }
         }
@@ -168,6 +174,7 @@ class AlmaGetContentController extends AlmaAdminHookController
 
         if (empty($liveKey) || empty($testKey)) {
             $this->context->smarty->assign('validation_error', 'missing_required_setting');
+
             return $this->module->display($this->module->file, 'getContent.tpl');
         }
 
@@ -188,6 +195,7 @@ class AlmaGetContentController extends AlmaAdminHookController
         AlmaSettings::updateValue('ALMA_FULLY_CONFIGURED', '1');
 
         $this->context->smarty->clearAssign('validation_error');
+
         return $this->module->display($this->module->file, 'getContent.tpl');
     }
 
@@ -199,6 +207,7 @@ class AlmaGetContentController extends AlmaAdminHookController
             $alma = AlmaClient::createInstance($mode == ALMA_MODE_LIVE ? $liveKey : $testKey, $mode);
             if (!$alma) {
                 $this->context->smarty->assign('validation_error', 'alma_client_null');
+
                 return array('error' => true, 'message' => $this->module->display($this->module->file, 'getContent.tpl'));
             }
 
@@ -207,6 +216,7 @@ class AlmaGetContentController extends AlmaAdminHookController
             } catch (RequestError $e) {
                 if ($e->response && $e->response->responseCode === 401) {
                     $this->context->smarty->assign('validation_error', "{$mode}_authentication_error");
+
                     return array('error' => true, 'message' => $this->module->display($this->module->file, 'getContent.tpl'));
                 } else {
                     AlmaLogger::instance()->error('Error while fetching merchant status: ' . $e->getMessage());
@@ -276,7 +286,7 @@ class AlmaGetContentController extends AlmaAdminHookController
                         'label' => $this->module->l('Live API key', 'getContent'),
                         'type' => 'text',
                         'size' => 75,
-                        'required' => true
+                        'required' => true,
                     ),
                     array(
                         'name' => 'ALMA_TEST_API_KEY',
@@ -334,10 +344,10 @@ class AlmaGetContentController extends AlmaAdminHookController
                     $tabTitle = sprintf($this->module->l('%d-installment payments', 'getContent'), $n);
 
                     if (AlmaSettings::isInstallmentPlanEnabled($n)) {
-                        $pnxTabs[$tabId] = "✅ " . $tabTitle;
+                        $pnxTabs[$tabId] = '✅ ' . $tabTitle;
                         $activeTab = $activeTab ?: $tabId;
                     } else {
-                        $pnxTabs[$tabId] = "❌ " . $tabTitle;
+                        $pnxTabs[$tabId] = '❌ ' . $tabTitle;
                     }
 
                     $tpl = $this->context->smarty->createTemplate(_PS_ROOT_DIR_ . "{$this->module->_path}/views/templates/hook/pnx_fees.tpl");
@@ -361,7 +371,7 @@ class AlmaGetContentController extends AlmaAdminHookController
                                 array(
                                     'id' => 'ON',
                                     'val' => true,
-                                )
+                                ),
                             ),
                         ),
                     );
@@ -372,8 +382,8 @@ class AlmaGetContentController extends AlmaAdminHookController
                         'label' => $this->module->l('Minimum amount (€)', 'getContent'),
                         'desc' => $this->module->l('Minimum purchase amount to activate this plan', 'getContent'),
                         'type' => 'number',
-                        'min' => (int)alma_price_from_cents($merchant->minimum_purchase_amount),
-                        'max' => (int)alma_price_from_cents($merchant->maximum_purchase_amount),
+                        'min' => (int) alma_price_from_cents($merchant->minimum_purchase_amount),
+                        'max' => (int) alma_price_from_cents($merchant->maximum_purchase_amount),
                     );
 
                     $pnx_config_form['form']['input'][] = array(
@@ -382,8 +392,8 @@ class AlmaGetContentController extends AlmaAdminHookController
                         'label' => $this->module->l('Maximum amount (€)', 'getContent'),
                         'desc' => $this->module->l('Maximum purchase amount to activate this plan', 'getContent'),
                         'type' => 'number',
-                        'min' => (int)alma_price_from_cents($merchant->minimum_purchase_amount),
-                        'max' => (int)alma_price_from_cents($merchant->maximum_purchase_amount),
+                        'min' => (int) alma_price_from_cents($merchant->minimum_purchase_amount),
+                        'max' => (int) alma_price_from_cents($merchant->maximum_purchase_amount),
                     );
                 }
 
@@ -476,7 +486,7 @@ class AlmaGetContentController extends AlmaAdminHookController
                                     'id' => 'ON',
                                     'val' => true,
                                     'label' => $this->module->l('Display a message under the cart summary to indicate its eligibility for monthly payments.', 'getContent'),
-                                )
+                                ),
                             ),
                         ),
                     ),
@@ -525,7 +535,7 @@ class AlmaGetContentController extends AlmaAdminHookController
                                     'id' => 'ON',
                                     'val' => true,
                                     'label' => $this->module->l('Confirm successful order to customers when they come back from the Alma payment page', 'getContent'),
-                                )
+                                ),
                             ),
                         ),
                     ),
@@ -553,7 +563,7 @@ class AlmaGetContentController extends AlmaAdminHookController
                                     'id' => 'ON',
                                     'val' => true,
                                     'label' => '',
-                                )
+                                ),
                             ),
                         ),
                     ),
@@ -581,8 +591,8 @@ class AlmaGetContentController extends AlmaAdminHookController
         $helper = new HelperForm();
         $helper->module = $this->module;
         $helper->table = 'alma_config';
-        $helper->default_form_language = (int)Configuration::get('PS_LANG_DEFAULT');
-        $helper->allow_employee_form_lang = (int)Configuration::get('PS_BO_ALLOW_EMPLOYEE_FORM_LANG');
+        $helper->default_form_language = (int) Configuration::get('PS_LANG_DEFAULT');
+        $helper->allow_employee_form_lang = (int) Configuration::get('PS_BO_ALLOW_EMPLOYEE_FORM_LANG');
         $helper->submit_action = 'alma_config_form';
 
         $helper->currentIndex = $this->context->link->getAdminLink('AdminModules', false) .
@@ -603,16 +613,16 @@ class AlmaGetContentController extends AlmaAdminHookController
             'ALMA_IS_ELIGIBLE_MESSAGE' => AlmaSettings::getEligibilityMessage(),
             'ALMA_NOT_ELIGIBLE_MESSAGE' => AlmaSettings::getNonEligibilityMessage(),
             'ALMA_DISPLAY_ORDER_CONFIRMATION_ON' => AlmaSettings::displayOrderConfirmation(),
-            'ALMA_ACTIVATE_LOGGING_ON' => (bool)AlmaSettings::canLog(),
+            'ALMA_ACTIVATE_LOGGING_ON' => (bool) AlmaSettings::canLog(),
             '_api_only' => true,
         );
 
         if ($merchant) {
             foreach ($merchant->fee_plans as $feePlan) {
-                $n = $feePlan["installments_count"];
+                $n = $feePlan['installments_count'];
                 $helper->fields_value["ALMA_P${n}X_ENABLED_ON"] = AlmaSettings::isInstallmentPlanEnabled($n);
-                $helper->fields_value["ALMA_P${n}X_MIN_AMOUNT"] = (int)alma_price_from_cents(AlmaSettings::installmentPlanMinAmount($n, $merchant));
-                $helper->fields_value["ALMA_P${n}X_MAX_AMOUNT"] = (int)alma_price_from_cents(AlmaSettings::installmentPlanMaxAmount($n, $merchant));
+                $helper->fields_value["ALMA_P${n}X_MIN_AMOUNT"] = (int) alma_price_from_cents(AlmaSettings::installmentPlanMinAmount($n, $merchant));
+                $helper->fields_value["ALMA_P${n}X_MAX_AMOUNT"] = (int) alma_price_from_cents(AlmaSettings::installmentPlanMaxAmount($n, $merchant));
             }
         }
 
@@ -665,6 +675,7 @@ class AlmaGetContentController extends AlmaAdminHookController
         }
 
         $html_form = $this->renderForm($merchant);
+
         return $messages . $html_form;
     }
 }
