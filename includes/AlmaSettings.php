@@ -150,7 +150,6 @@ class AlmaSettings
     {
         $default = Translate::getModuleTranslation('alma', 'Monthly Payments with Alma', 'almasettings');
         return self::get('ALMA_PAYMENT_BUTTON_TITLE', $default);
-
     }
 
     public static function getPaymentButtonDescription()
@@ -162,5 +161,27 @@ class AlmaSettings
     public static function displayOrderConfirmation()
     {
         return (bool)(int)self::get('ALMA_DISPLAY_ORDER_CONFIRMATION', false);
+    }
+
+    public static function isInstallmentPlanEnabled($n)
+    {
+        return (bool)(int)self::get("ALMA_P${n}X_ENABLED", $n == 3);
+    }
+
+    public static function installmentPlansMaxN()
+    {
+        return (int)self::get("ALMA_PNX_MAX_N", 3);
+    }
+
+    public static function installmentPlanMinAmount($n, $merchant = null)
+    {
+        $default = $merchant ? $merchant->minimum_purchase_amount : 10000;
+        return (int)self::get("ALMA_P${n}X_MIN_AMOUNT", $default);
+    }
+
+    public static function installmentPlanMaxAmount($n, $merchant = null)
+    {
+        $default = $merchant ? $merchant->maximum_purchase_amount : 100000;
+        return (int)self::get("ALMA_P${n}X_MAX_AMOUNT", $default);
     }
 }

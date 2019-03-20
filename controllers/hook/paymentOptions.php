@@ -62,22 +62,40 @@ class AlmaPaymentOptionsController extends AlmaProtectedHookController
             return array();
         }
 
-        $this->context->smarty->assign(array(
-            'desc' => AlmaSettings::getPaymentButtonDescription(),
-        ));
+        $options = array();
+        $n = 1;
+        while ($n < AlmaSettings::installmentPlansMaxN()) {
+            $n += 1;
 
-        $paymentOption = new PrestaShop\PrestaShop\Core\Payment\PaymentOption();
-        $template = $this->context->smarty->fetch(
-            "module:{$this->module->name}/views/templates/hook/payment_button_desc.tpl"
-        );
+            if (!AlmaSettings::isInstallmentPlanEnabled($n)) {
+                continue;
+            } else {
+                $min = AlmaSettings::installmentPlanMinAmount($n);
+                $max = AlmaSettings::installmentPlanMaxAmount($n);
 
-        $paymentOption
-            ->setModuleName($this->module->name)
-            ->setCallToActionText(AlmaSettings::getPaymentButtonTitle())
-            ->setAdditionalInformation($template)
-            ->setAction($this->context->link->getModuleLink($this->module->name, 'payment', array(), true))
-            ->setLogo(Media::getMediaPath(_PS_MODULE_DIR_.$this->module->name.'/views/img/tiny_alma_payment_logos.svg'));
+                if ($payment_data['payment']['purchase_amount'] < $min || $payment_data['payment']['purchase_amount'] >= $max) {
+                    continue;
+                }
+            }
 
-        return array($paymentOption);
+            $paymentOption = new PrestaShop\PrestaShop\Core\Payment\PaymentOption();
+            $this->context->smarty->assign(array(
+                'desc' => sprintf(AlmaSettings::getPaymentButtonDescription(), $n),
+            ));
+            $template = $this->context->smarty->fetch(
+                "module:{$this->module->name}/views/templates/hook/payment_button_desc.tpl"
+            );
+
+            $paymentOption
+                ->setModuleName($this->module->name)
+                ->setCallToActionText(sprintf(AlmaSettings::getPaymentButtonTitle(), $n))
+                ->setAdditionalInformation($template)
+                ->setAction($this->context->link->getModuleLink($this->module->name, 'payment', array("n" => $n), true))
+                ->setLogo(Media::getMediaPath(_PS_MODULE_DIR_.$this->module->name.'/views/img/tiny_alma_payment_logos.svg'));
+
+            $options[] = $paymentOption;
+        }
+
+        return $options;
     }
 }

@@ -32,7 +32,7 @@ include_once(_PS_MODULE_DIR_ . 'alma/includes/functions.php');
 
 class PaymentData
 {
-    public static function dataFromCart($cart, $context)
+    public static function dataFromCart($cart, $context, $installments_count = 3)
     {
         if ($cart->id_customer == 0 || $cart->id_address_delivery == 0 || $cart->id_address_invoice == 0) {
             AlmaLogger::instance()->warning("[Alma] Missing Customer ID or Delivery/Billing address ID for Cart {$cart->id}");
@@ -94,6 +94,7 @@ class PaymentData
 
         $data = array(
             "payment" => array(
+                "installments_count" => (int)$installments_count,
                 "customer_cancel_url" => $context->link->getPageLink('order'),
                 "return_url" => $context->link->getModuleLink('alma', 'validation'),
                 "ipn_callback_url" => $context->link->getModuleLink('alma', 'ipn'),

@@ -101,7 +101,7 @@ class AlmaPaymentModuleFrontController extends ModuleFrontController
         }
 
         $cart = $this->context->cart;
-        $data = PaymentData::dataFromCart($cart, $this->context);
+        $data = PaymentData::dataFromCart($cart, $this->context, Tools::getValue("n", "3"));
         $alma = AlmaClient::defaultInstance();
         if (!$data || !$alma) {
             $this->genericErrorAndRedirect();
@@ -111,7 +111,8 @@ class AlmaPaymentModuleFrontController extends ModuleFrontController
         try {
             $payment = $alma->payments->createPayment($data);
         } catch (RequestError $e) {
-            AlmaLogger::instance()->error("[Alma] ERROR when creating payment for Cart {$cart->id}: {$e->getMessage()}");
+            $msg = "[Alma] ERROR when creating payment for Cart {$cart->id}: {$e->getMessage()}";
+            AlmaLogger::instance()->error($msg);
             $this->genericErrorAndRedirect();
             return;
         }

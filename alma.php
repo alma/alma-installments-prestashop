@@ -93,7 +93,7 @@ class Alma extends PaymentModule
             return false;
         }
 
-        $commonHooks = array('header', 'displayShoppingCartFooter');
+        $commonHooks = array('header', 'displayBackOfficeHeader', 'displayShoppingCartFooter');
 
         if (version_compare(_PS_VERSION_, '1.7', '>=')) {
             $paymentHooks = array('paymentOptions', 'displayPaymentReturn');
@@ -179,6 +179,11 @@ class Alma extends PaymentModule
                 return $this->display($this->file, 'header.tpl');
             }
         }
+    }
+
+    public function hookDisplayBackOfficeHeader($params)
+    {
+        $this->context->controller->addCSS($this->_path.'views/css/admin/_configure/helpers/form/form.css', 'all');
     }
 
     private function runHookController($hookName, $params)

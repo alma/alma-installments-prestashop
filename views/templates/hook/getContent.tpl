@@ -71,6 +71,14 @@
                 <br>
                 {l s='You can refresh/come back to this page when you are ready.' mod='alma'}
             {/if}
+        {elseif $validation_error == 'pnx_min_amount'}
+            {l s='Minimum amount for %1$d-installment plan must be within %2$d and %3$d.' sprintf=array($n, $min, $max) mod='alma'}
+        {elseif $validation_error == 'pnx_max_amount'}
+            {l s='Maximum amount for %1$d-installment plan must be within %2$d and %3$d.' sprintf=array($n, $min, $max) mod='alma'}
+        {elseif $validation_error == 'pnx_coverage_gap'}
+            {l s='There is a gap in the range of purchase amounts covered by your installment plans:' mod='alma'}
+            <br>
+            {l s='%d-installment plan has no overlaps with other plans' sprintf=$n mod='alma'}
         {else}
             {$validation_error}
         {/if}
