@@ -316,7 +316,6 @@ class AlmaGetContentController extends AlmaAdminHookController
             if ($merchant) {
                 $pnx_config_form = array(
                     'form' => array(
-                        'tabs' => array(),
                         'legend' => array(
                             'title' => $this->module->l('Installments plans', 'getContent'),
                             'image' => $iconPath,
@@ -326,28 +325,32 @@ class AlmaGetContentController extends AlmaAdminHookController
                     ),
                 );
 
+                $pnxTabs = array();
+                $activeTab = null;
+
                 foreach ($merchant->fee_plans as $feePlan) {
                     $n = $feePlan['installments_count'];
                     $tabId = "p${n}x";
                     $tabTitle = sprintf($this->module->l('%d-installment payments', 'getContent'), $n);
 
                     if (AlmaSettings::isInstallmentPlanEnabled($n)) {
-                        $pnx_config_form['form']['tabs'][$tabId] = "✅ " . $tabTitle;
+                        $pnxTabs[$tabId] = "✅ " . $tabTitle;
+                        $activeTab = $activeTab ?: $tabId;
                     } else {
-                        $pnx_config_form['form']['tabs'][$tabId] = "❌ " . $tabTitle;
+                        $pnxTabs[$tabId] = "❌ " . $tabTitle;
                     }
 
                     $tpl = $this->context->smarty->createTemplate(_PS_ROOT_DIR_ . "{$this->module->_path}/views/templates/hook/pnx_fees.tpl");
                     $tpl->assign(array('fee_plan' => $feePlan));
 
                     $pnx_config_form['form']['input'][] = array(
-                        'tab' => $tabId,
+                        'form_group_class' => "$tabId-content",
                         'type' => 'html',
                         'html_content' => $tpl->fetch(),
                     );
 
                     $pnx_config_form['form']['input'][] = array(
-                        'tab' => $tabId,
+                        'form_group_class' => "$tabId-content",
                         'name' => "ALMA_P${n}X_ENABLED",
                         'label' => sprintf($this->module->l('Enable %d-installment payments', 'getContent'), $n),
                         'type' => 'checkbox',
@@ -364,7 +367,7 @@ class AlmaGetContentController extends AlmaAdminHookController
                     );
 
                     $pnx_config_form['form']['input'][] = array(
-                        'tab' => $tabId,
+                        'form_group_class' => "$tabId-content",
                         'name' => "ALMA_P${n}X_MIN_AMOUNT",
                         'label' => $this->module->l('Minimum amount (€)', 'getContent'),
                         'desc' => $this->module->l('Minimum purchase amount to activate this plan', 'getContent'),
@@ -374,7 +377,7 @@ class AlmaGetContentController extends AlmaAdminHookController
                     );
 
                     $pnx_config_form['form']['input'][] = array(
-                        'tab' => $tabId,
+                        'form_group_class' => "$tabId-content",
                         'name' => "ALMA_P${n}X_MAX_AMOUNT",
                         'label' => $this->module->l('Maximum amount (€)', 'getContent'),
                         'desc' => $this->module->l('Maximum purchase amount to activate this plan', 'getContent'),
@@ -383,6 +386,17 @@ class AlmaGetContentController extends AlmaAdminHookController
                         'max' => (int)alma_price_from_cents($merchant->maximum_purchase_amount),
                     );
                 }
+
+                $tpl = $this->context->smarty->createTemplate(_PS_ROOT_DIR_ . "{$this->module->_path}/views/templates/hook/pnx_tabs.tpl");
+                $tpl->assign(array('tabs' => $pnxTabs, 'active' => $activeTab));
+
+                array_unshift(
+                    $pnx_config_form['form']['input'],
+                    array(
+                        'type' => 'html',
+                        'html_content' => $tpl->fetch(),
+                    )
+                );
             }
         }
 
