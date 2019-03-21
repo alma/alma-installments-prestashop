@@ -27,9 +27,14 @@
     }
 </style>
 
+<p>
+    <b>
+        {l s='You can offer monthly installments for amounts between %d€ and %d€.' sprintf=array($min_amount, $max_amount) mod='alma'}
+    </b>
+</p>
+
 <p class="alma-fee-plan-details">
     {l s='Fees applied to each transaction for this plan:' mod='alma'}
-
     <br>
     {if $fee_plan["merchant_fee_variable"] > 0}
         <b>{l s='You pay:' mod='alma'}</b>

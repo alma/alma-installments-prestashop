@@ -359,10 +359,13 @@ class AlmaGetContentController extends AlmaAdminHookController
                         $pnxTabs[$tabId] = '❌ ' . $tabTitle;
                     }
 
+                    $minAmount = (int)alma_price_from_cents($merchant->minimum_purchase_amount);
+                    $maxAmount = (int)alma_price_from_cents($merchant->maximum_purchase_amount);
+
                     $tpl = $this->context->smarty->createTemplate(
                         _PS_ROOT_DIR_ . "{$this->module->_path}/views/templates/hook/pnx_fees.tpl"
                     );
-                    $tpl->assign(array('fee_plan' => $feePlan));
+                    $tpl->assign(array('fee_plan' => $feePlan, 'min_amount' => $minAmount, 'max_amount' => $maxAmount));
 
                     $pnx_config_form['form']['input'][] = array(
                         'form_group_class' => "$tabId-content",
@@ -393,8 +396,8 @@ class AlmaGetContentController extends AlmaAdminHookController
                         'label' => $this->module->l('Minimum amount (€)', 'getContent'),
                         'desc' => $this->module->l('Minimum purchase amount to activate this plan', 'getContent'),
                         'type' => 'number',
-                        'min' => (int) alma_price_from_cents($merchant->minimum_purchase_amount),
-                        'max' => (int) alma_price_from_cents($merchant->maximum_purchase_amount),
+                        'min' => $minAmount,
+                        'max' => $maxAmount,
                     );
 
                     $pnx_config_form['form']['input'][] = array(
@@ -403,8 +406,8 @@ class AlmaGetContentController extends AlmaAdminHookController
                         'label' => $this->module->l('Maximum amount (€)', 'getContent'),
                         'desc' => $this->module->l('Maximum purchase amount to activate this plan', 'getContent'),
                         'type' => 'number',
-                        'min' => (int) alma_price_from_cents($merchant->minimum_purchase_amount),
-                        'max' => (int) alma_price_from_cents($merchant->maximum_purchase_amount),
+                        'min' => $minAmount,
+                        'max' => $maxAmount,
                     );
                 }
 
