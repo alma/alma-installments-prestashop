@@ -35,6 +35,7 @@ class AlmaProtectedHookController extends AlmaHookController
     {
         $isTest = AlmaSettings::getActiveMode() === ALMA_MODE_TEST;
 
-        return ($this->loggedAsEmployee() || !$isTest) && in_array(Tools::strtoupper($this->context->currency->iso_code), $this->module->limited_currencies);
+        return ($this->loggedAsEmployee() || !$isTest)
+            && in_array(Tools::strtoupper($this->context->currency->iso_code), $this->module->limited_currencies);
     }
 }

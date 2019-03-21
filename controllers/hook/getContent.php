@@ -208,7 +208,9 @@ class AlmaGetContentController extends AlmaAdminHookController
             if (!$alma) {
                 $this->context->smarty->assign('validation_error', 'alma_client_null');
 
-                return array('error' => true, 'message' => $this->module->display($this->module->file, 'getContent.tpl'));
+                $errorMessage = $this->module->display($this->module->file, 'getContent.tpl');
+
+                return array('error' => true, 'message' => $errorMessage);
             }
 
             try {
@@ -217,14 +219,18 @@ class AlmaGetContentController extends AlmaAdminHookController
                 if ($e->response && $e->response->responseCode === 401) {
                     $this->context->smarty->assign('validation_error', "{$mode}_authentication_error");
 
-                    return array('error' => true, 'message' => $this->module->display($this->module->file, 'getContent.tpl'));
+                    $errorMessage = $this->module->display($this->module->file, 'getContent.tpl');
+
+                    return array('error' => true, 'message' => $errorMessage);
                 } else {
                     AlmaLogger::instance()->error('Error while fetching merchant status: ' . $e->getMessage());
 
                     $this->context->smarty->assign('validation_error', 'api_request_error');
                     $this->context->smarty->assign('error', $e->getMessage());
 
-                    return array('error' => true, 'message' => $this->module->display($this->module->file, 'getContent.tpl'));
+                    $errorMessage = $this->module->display($this->module->file, 'getContent.tpl');
+
+                    return array('error' => true, 'message' => $errorMessage);
                 }
             }
 
@@ -232,7 +238,9 @@ class AlmaGetContentController extends AlmaAdminHookController
                 $this->context->smarty->assign('validation_error', "inactive_{$mode}_account");
                 $this->assignSmartyAlertClasses($apiMode == $mode ? 'danger' : 'warning');
 
-                return array('warning' => true, 'message' => $this->module->display($this->module->file, 'getContent.tpl'));
+                $errorMessage = $this->module->display($this->module->file, 'getContent.tpl');
+
+                return array('warning' => true, 'message' => $errorMessage);
             }
         }
 
@@ -305,6 +313,7 @@ class AlmaGetContentController extends AlmaAdminHookController
                         'label' => $this->module->l('API Mode', 'getContent'),
                         'type' => 'select',
                         'required' => true,
+                        // PrestaShop won't detect the string if the call to `l` is multiline
                         'desc' => $this->module->l('Use Test mode until you are ready to take real orders with Alma. In Test mode, only admins can see Alma on cart/checkout pages.', 'getContent'),
                         'options' => array(
                             'id' => 'api_mode',
@@ -350,7 +359,9 @@ class AlmaGetContentController extends AlmaAdminHookController
                         $pnxTabs[$tabId] = '❌ ' . $tabTitle;
                     }
 
-                    $tpl = $this->context->smarty->createTemplate(_PS_ROOT_DIR_ . "{$this->module->_path}/views/templates/hook/pnx_fees.tpl");
+                    $tpl = $this->context->smarty->createTemplate(
+                        _PS_ROOT_DIR_ . "{$this->module->_path}/views/templates/hook/pnx_fees.tpl"
+                    );
                     $tpl->assign(array('fee_plan' => $feePlan));
 
                     $pnx_config_form['form']['input'][] = array(
@@ -397,7 +408,9 @@ class AlmaGetContentController extends AlmaAdminHookController
                     );
                 }
 
-                $tpl = $this->context->smarty->createTemplate(_PS_ROOT_DIR_ . "{$this->module->_path}/views/templates/hook/pnx_tabs.tpl");
+                $tpl = $this->context->smarty->createTemplate(
+                    _PS_ROOT_DIR_ . "{$this->module->_path}/views/templates/hook/pnx_tabs.tpl"
+                );
                 $tpl->assign(array('tabs' => $pnxTabs, 'active' => $activeTab));
 
                 array_unshift(
@@ -420,6 +433,7 @@ class AlmaGetContentController extends AlmaAdminHookController
                     array(
                         'name' => 'ALMA_PAYMENT_BUTTON_TITLE',
                         'label' => $this->module->l('Title', 'getContent'),
+                        // PrestaShop won't detect the string if the call to `l` is multiline
                         'desc' => $this->module->l('This controls the payment method name which the user sees during checkout.', 'getContent'),
                         'type' => 'text',
                         'size' => 75,
@@ -428,6 +442,7 @@ class AlmaGetContentController extends AlmaAdminHookController
                     array(
                         'name' => 'ALMA_PAYMENT_BUTTON_DESC',
                         'label' => $this->module->l('Description', 'getContent'),
+                        // PrestaShop won't detect the string if the call to `l` is multiline
                         'desc' => $this->module->l('This controls the payment method description which the user sees during checkout.', 'getContent'),
                         'type' => 'text',
                         'size' => 75,
@@ -462,6 +477,7 @@ class AlmaGetContentController extends AlmaAdminHookController
                 $payment_button_form['form']['input'],
                 array(
                     'type' => 'html',
+                    // PrestaShop won't detect the string if the call to `l` is multiline
                     'html_content' => $this->module->l('Use "%d" in the fields below where you want the installments count to appear. For instance, "Pay in %d monthly installments" will appear as "Pay in 3 monthly installments"', 'getContent'),
                 )
             );
@@ -485,6 +501,7 @@ class AlmaGetContentController extends AlmaAdminHookController
                                 array(
                                     'id' => 'ON',
                                     'val' => true,
+                                    // PrestaShop won't detect the string if the call to `l` is multiline
                                     'label' => $this->module->l('Display a message under the cart summary to indicate its eligibility for monthly payments.', 'getContent'),
                                 ),
                             ),
@@ -493,6 +510,7 @@ class AlmaGetContentController extends AlmaAdminHookController
                     array(
                         'name' => 'ALMA_IS_ELIGIBLE_MESSAGE',
                         'label' => $this->module->l('Eligibility message', 'getContent'),
+                        // PrestaShop won't detect the string if the call to `l` is multiline
                         'desc' => $this->module->l('Message displayed below the cart totals when it is eligible for monthly payments.', 'getContent'),
                         'type' => 'text',
                         'size' => 75,
@@ -525,6 +543,7 @@ class AlmaGetContentController extends AlmaAdminHookController
                     array(
                         'name' => 'ALMA_DISPLAY_ORDER_CONFIRMATION',
                         'label' => $this->module->l('Display order confirmation', 'getContent'),
+                        // PrestaShop won't detect the string if the call to `l` is multiline
                         'desc' => $this->module->l('Activate this setting when you do not have your own order confirmation page', 'getContent'),
                         'type' => 'checkbox',
                         'values' => array(
@@ -534,6 +553,7 @@ class AlmaGetContentController extends AlmaAdminHookController
                                 array(
                                     'id' => 'ON',
                                     'val' => true,
+                                    // PrestaShop won't detect the string if the call to `l` is multiline
                                     'label' => $this->module->l('Confirm successful order to customers when they come back from the Alma payment page', 'getContent'),
                                 ),
                             ),
@@ -621,8 +641,13 @@ class AlmaGetContentController extends AlmaAdminHookController
             foreach ($merchant->fee_plans as $feePlan) {
                 $n = $feePlan['installments_count'];
                 $helper->fields_value["ALMA_P${n}X_ENABLED_ON"] = AlmaSettings::isInstallmentPlanEnabled($n);
-                $helper->fields_value["ALMA_P${n}X_MIN_AMOUNT"] = (int) alma_price_from_cents(AlmaSettings::installmentPlanMinAmount($n, $merchant));
-                $helper->fields_value["ALMA_P${n}X_MAX_AMOUNT"] = (int) alma_price_from_cents(AlmaSettings::installmentPlanMaxAmount($n, $merchant));
+
+                $minAmount = (int) alma_price_from_cents(AlmaSettings::installmentPlanMinAmount($n, $merchant));
+                $helper->fields_value["ALMA_P${n}X_MIN_AMOUNT"] = $minAmount;
+
+                $maxN = AlmaSettings::installmentPlansMaxN();
+                $maxAmount = (int) alma_price_from_cents(AlmaSettings::installmentPlanMaxAmount($n, $maxN));
+                $helper->fields_value["ALMA_P${n}X_MAX_AMOUNT"] = $maxAmount;
             }
         }
 

@@ -54,15 +54,15 @@ class AlmaDisplayPaymentController extends AlmaProtectedHookController
         }
 
         if (is_callable('Media::getMediaPath')) {
-            $logoPath = Media::getMediaPath(_PS_MODULE_DIR_ . $this->module->name . '/views/img/alma_payment_logos.svg');
+            $logo = Media::getMediaPath(_PS_MODULE_DIR_ . $this->module->name . '/views/img/alma_payment_logos.svg');
         } else {
-            $logoPath = $this->module->getPathUri() . '/views/img/alma_payment_logos.svg';
+            $logo = $this->module->getPathUri() . '/views/img/alma_payment_logos.svg';
         }
 
         $cart = $this->context->cart;
         $this->context->smarty->assign(
             array(
-                'logo' => $logoPath,
+                'logo' => $logo,
                 'disabled' => $disabled,
                 'error' => $error,
                 'title' => AlmaSettings::getPaymentButtonTitle(),

@@ -55,7 +55,9 @@ class AlmaPaymentOptionsController extends AlmaProtectedHookController
         try {
             $eligibility = $alma->payments->eligibility($payment_data);
         } catch (RequestError $e) {
-            AlmaLogger::instance()->error("Error when checking cart {$this->context->cart->id} eligibility: " . $e->getMessage());
+            AlmaLogger::instance()->error(
+                "Error when checking cart {$this->context->cart->id} eligibility: " . $e->getMessage()
+            );
 
             return array();
         }
@@ -75,7 +77,9 @@ class AlmaPaymentOptionsController extends AlmaProtectedHookController
                 $min = AlmaSettings::installmentPlanMinAmount($n);
                 $max = AlmaSettings::installmentPlanMaxAmount($n);
 
-                if ($payment_data['payment']['purchase_amount'] < $min || $payment_data['payment']['purchase_amount'] >= $max) {
+                if ($payment_data['payment']['purchase_amount'] < $min
+                    || $payment_data['payment']['purchase_amount'] >= $max
+                ) {
                     continue;
                 }
             }
@@ -93,7 +97,11 @@ class AlmaPaymentOptionsController extends AlmaProtectedHookController
                 ->setCallToActionText(sprintf(AlmaSettings::getPaymentButtonTitle(), $n))
                 ->setAdditionalInformation($template)
                 ->setAction($this->context->link->getModuleLink($this->module->name, 'payment', array('n' => $n), true))
-                ->setLogo(Media::getMediaPath(_PS_MODULE_DIR_ . $this->module->name . '/views/img/tiny_alma_payment_logos.svg'));
+                ->setLogo(
+                    Media::getMediaPath(
+                        _PS_MODULE_DIR_ . $this->module->name . '/views/img/tiny_alma_payment_logos.svg'
+                    )
+                );
 
             $options[] = $paymentOption;
         }

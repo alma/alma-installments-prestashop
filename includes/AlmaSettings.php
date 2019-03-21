@@ -36,6 +36,11 @@ if (!defined('ALMA_MODE_LIVE')) {
 
 class AlmaSettings
 {
+    public static function l($str)
+    {
+        return Translate::getModuleTranslation('alma', $str, 'almasettings');
+    }
+
     public static function get($configKey, $default = null)
     {
         $idShop = Shop::getContextShopID(true);
@@ -124,19 +129,20 @@ class AlmaSettings
 
     public static function needsAPIKeys()
     {
-        return empty(self::get('ALMA_LIVE_API_KEY', '') . self::get('ALMA_TEST_API_KEY', ''));
+        return empty(self::get('ALMA_LIVE_API_KEY', ''))
+            || empty(self::get('ALMA_TEST_API_KEY', ''));
     }
 
     public static function getEligibilityMessage()
     {
-        $default = Translate::getModuleTranslation('alma', 'Your cart is eligible for monthly payments.', 'almasettings');
+        $default = self::l('Your cart is eligible for monthly payments.');
 
         return self::get('ALMA_IS_ELIGIBLE_MESSAGE', $default);
     }
 
     public static function getNonEligibilityMessage()
     {
-        $default = Translate::getModuleTranslation('alma', 'Your cart is not eligible for monthly payments.', 'almasettings');
+        $default = self::l('Your cart is not eligible for monthly payments.');
 
         return self::get('ALMA_NOT_ELIGIBLE_MESSAGE', $default);
     }
@@ -148,14 +154,14 @@ class AlmaSettings
 
     public static function getPaymentButtonTitle()
     {
-        $default = Translate::getModuleTranslation('alma', 'Monthly Payments with Alma', 'almasettings');
+        $default = self::l('Monthly Payments with Alma');
 
         return self::get('ALMA_PAYMENT_BUTTON_TITLE', $default);
     }
 
     public static function getPaymentButtonDescription()
     {
-        $default = Translate::getModuleTranslation('alma', 'Pay in 3 monthly payments with your credit card.', 'almasettings');
+        $default = self::l('Pay in 3 monthly payments with your credit card.');
 
         return self::get('ALMA_PAYMENT_BUTTON_DESC', $default);
     }

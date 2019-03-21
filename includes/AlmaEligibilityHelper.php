@@ -55,7 +55,9 @@ class AlmaEligibilityHelper
         try {
             $eligibility = $alma->payments->eligibility($payment_data);
         } catch (RequestError $e) {
-            AlmaLogger::instance()->error("Error when checking cart {$context->cart->id} eligibility: " . $e->getMessage());
+            AlmaLogger::instance()->error(
+                "Error when checking cart {$context->cart->id} eligibility: " . $e->getMessage()
+            );
 
             return null;
         }

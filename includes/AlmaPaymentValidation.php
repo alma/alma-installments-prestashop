@@ -102,7 +102,9 @@ class AlmaPaymentValidation
         }
 
         if (!$authorized) {
-            AlmaLogger::instance()->error("[Alma] Payment validation error for Cart {$cart->id}: module not enabled anymore.");
+            AlmaLogger::instance()->error(
+                "[Alma] Payment validation error for Cart {$cart->id}: module not enabled anymore."
+            );
             throw new AlmaPaymentValidationError($cart, 'disabled_module');
         }
 
@@ -127,15 +129,23 @@ class AlmaPaymentValidation
             if ($payment->purchase_amount !== $purchaseAmount) {
                 $alma->payments->flagAsPotentialFraud($almaPaymentId, Payment::FRAUD_AMOUNT_MISMATCH);
 
-                AlmaLogger::instance()->error("[Alma] Payment validation error for Cart {$cart->id}: Purchase amount mismatch!");
+                AlmaLogger::instance()->error(
+                    "[Alma] Payment validation error for Cart {$cart->id}: Purchase amount mismatch!"
+                );
+
                 throw new AlmaPaymentValidationError($cart, Payment::FRAUD_AMOUNT_MISMATCH);
             }
 
             $first_instalment = $payment->payment_plan[0];
-            if (!in_array($payment->state, array(Payment::STATE_IN_PROGRESS, Payment::STATE_PAID)) || $first_instalment->state !== Instalment::STATE_PAID) {
+            if (!in_array($payment->state, array(Payment::STATE_IN_PROGRESS, Payment::STATE_PAID))
+                || $first_instalment->state !== Instalment::STATE_PAID
+            ) {
                 $alma->payments->flagAsPotentialFraud($almaPaymentId, Payment::FRAUD_STATE_ERROR);
 
-                AlmaLogger::instance()->error("Payment '{$almaPaymentId}': state error {$payment->state} & {$first_instalment->state}");
+                AlmaLogger::instance()->error(
+                    "Payment '{$almaPaymentId}': state error {$payment->state} & {$first_instalment->state}"
+                );
+
                 throw new AlmaPaymentValidationError($cart, Payment::FRAUD_STATE_ERROR);
             }
 
