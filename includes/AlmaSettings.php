@@ -135,14 +135,14 @@ class AlmaSettings
 
     public static function getEligibilityMessage()
     {
-        $default = self::l('Your cart is eligible for monthly payments.');
+        $default = self::l('Your cart is eligible for monthly installments.');
 
         return self::get('ALMA_IS_ELIGIBLE_MESSAGE', $default);
     }
 
     public static function getNonEligibilityMessage()
     {
-        $default = self::l('Your cart is not eligible for monthly payments.');
+        $default = self::l('Your cart is not eligible for monthly installments.');
 
         return self::get('ALMA_NOT_ELIGIBLE_MESSAGE', $default);
     }
@@ -154,14 +154,14 @@ class AlmaSettings
 
     public static function getPaymentButtonTitle()
     {
-        $default = self::l('Monthly Payments with Alma');
+        $default = self::l('Monthly Installments with Alma');
 
         return self::get('ALMA_PAYMENT_BUTTON_TITLE', $default);
     }
 
     public static function getPaymentButtonDescription()
     {
-        $default = self::l('Pay in 3 monthly payments with your credit card.');
+        $default = self::l('Pay in 3 monthly installments with your credit card.');
 
         return self::get('ALMA_PAYMENT_BUTTON_DESC', $default);
     }

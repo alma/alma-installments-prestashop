@@ -51,10 +51,10 @@ class Alma extends PaymentModule
 
         parent::__construct();
 
-        $this->displayName = $this->l('Alma Monthly Payments for PrestaShop', 'alma');
-        $this->description = $this->l('Offer a secure split payment option to your customers', 'alma');
+        $this->displayName = $this->l('Alma Monthly Installments for PrestaShop', 'alma');
+        $this->description = $this->l('Offer an easy and safe installments payments option to your customers', 'alma');
         $this->confirmUninstall = $this->l(
-            'Are you sure you want to deactivate Alma Monthly Payments from your shop?',
+            'Are you sure you want to deactivate Alma Monthly Installments from your shop?',
             'alma'
         );
 

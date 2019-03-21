@@ -32,9 +32,9 @@
                     <span class="alma-button--text">
                         <span class="alma-button--description">
                             {if $error}
-                                {l s='Alma monthly payments are not available due to an error' mod='alma'}
+                                {l s='Alma Monthly Installments are not available due to an error' mod='alma'}
                             {else}
-                                {l s='Alma monthly payments are not available for this order' mod='alma'}
+                                {l s='Alma Monthly Installments are not available for this order' mod='alma'}
                             {/if}
                         </span>
                     </span>

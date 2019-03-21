@@ -502,7 +502,7 @@ class AlmaGetContentController extends AlmaAdminHookController
                                     'id' => 'ON',
                                     'val' => true,
                                     // PrestaShop won't detect the string if the call to `l` is multiline
-                                    'label' => $this->module->l('Display a message under the cart summary to indicate its eligibility for monthly payments.', 'getContent'),
+                                    'label' => $this->module->l('Display a message under the cart summary to indicate its eligibility for monthly installments.', 'getContent'),
                                 ),
                             ),
                         ),
@@ -511,7 +511,7 @@ class AlmaGetContentController extends AlmaAdminHookController
                         'name' => 'ALMA_IS_ELIGIBLE_MESSAGE',
                         'label' => $this->module->l('Eligibility message', 'getContent'),
                         // PrestaShop won't detect the string if the call to `l` is multiline
-                        'desc' => $this->module->l('Message displayed below the cart totals when it is eligible for monthly payments.', 'getContent'),
+                        'desc' => $this->module->l('Message displayed below the cart totals when it is eligible for monthly installments.', 'getContent'),
                         'type' => 'text',
                         'size' => 75,
                         'required' => true,
@@ -519,11 +519,8 @@ class AlmaGetContentController extends AlmaAdminHookController
                     array(
                         'name' => 'ALMA_NOT_ELIGIBLE_MESSAGE',
                         'label' => $this->module->l('Non-eligibility message', 'getContent'),
-                        'desc' => $this->module->l(
-                            'Message displayed below the cart totals when it is not eligible' .
-                            ' for monthly payments.',
-                            'getContent'
-                        ),
+                        // PrestaShop won't detect the string if the call to `l` is multiline
+                        'desc' => $this->module->l('Message displayed below the cart totals when it is not eligible for monthly installments.', 'getContent'),
                         'type' => 'text',
                         'size' => 75,
                         'required' => true,

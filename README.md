@@ -1,7 +1,7 @@
 Alma Installments for PrestaShop
 ===================================
 
-This plugin adds a new payment method to PrestaShop 1.5.6.2+, which allows you to offer monthly payments to your customer using Alma.
+This plugin adds a new payment method to PrestaShop 1.5.6.2+, which allows you to offer installments payments to your customer using Alma.
 
 ## ⚠️ Restricted availability
 
@@ -12,10 +12,10 @@ This plugin adds a new payment method to PrestaShop 1.5.6.2+, which allows you t
 
 ## Description
 
-[Alma](https://getalma.eu) is a service to provide merchants with an **easy** and **safe** monthly payments solution.  
+[Alma](https://getalma.eu) is a service to provide merchants with an **easy** and **safe** installments payments solution.  
 Let your customers pay for their purchases at their own pace! You'll receive the funds instantly, and your customer will pay later over a few monthly installments.
 
-This plugin integrates Alma into PrestaShop 1.6+ by adding a new payment method that you can activate to offer monthly payments to your customers.
+This plugin integrates Alma into PrestaShop 1.6+ by adding a new payment method that you can activate to offer monthly installments to your customers.
 
 ## Installation
 

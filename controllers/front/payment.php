@@ -95,7 +95,7 @@ class AlmaPaymentModuleFrontController extends ModuleFrontController
         }
 
         if (!$this->checkCurrency()) {
-            $msg = $this->module->l('Alma monthly payments are not available for this currency', 'payment');
+            $msg = $this->module->l('Alma Monthly Installments are not available for this currency', 'payment');
             $this->context->cookie->__set('alma_error', $msg);
             Tools::redirect('index.php?controller=order&step=1');
 
