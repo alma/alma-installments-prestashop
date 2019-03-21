@@ -32,13 +32,13 @@
         {elseif $validation_error == 'live_authentication_error'}
             {l s='Could not connect to Alma using your Live API key.' mod='alma'}
             <br>
-            <a href="https://dashboard.getalma.eu/security">
+            <a href="https://dashboard.getalma.eu/api">
                 {l s='Please double check your Live API key on your Alma dashboard.' mod='alma'}
             </a>
         {elseif $validation_error == 'test_authentication_error'}
             {l s='Could not connect to Alma using your Test API keys.' mod='alma'}
             <br>
-            <a href="https://dashboard.getalma.eu/security">
+            <a href="https://dashboard.getalma.eu/api">
                 {l s='Please double check your Test API key on your Alma dashboard.' mod='alma'}
             </a>
         {elseif $validation_error == 'api_request_error'}
@@ -49,13 +49,13 @@
             {if $level == 'warning'}
                 {l s='Your Alma account is not activated yet. You won\'t be able to use Alma in Live mode.' mod='alma'}
                 <br>
-                <a href="https://dashboard.getalma.eu/security">
+                <a href="https://dashboard.getalma.eu/">
                     {l s='Activate your account on your Alma dashboard before switching to Live mode.' mod='alma'}
                 </a>
             {else}
                 {l s='Your Alma account needs to be activated before you can use Alma on your shop.' mod='alma'}
                 <br>
-                <a href="https://dashboard.getalma.eu/security">
+                <a href="https://dashboard.getalma.eu/">
                     {l s='Go to your Alma dashboard to activate your account.' mod='alma'}
                 </a>
                 <br>
@@ -65,7 +65,7 @@
             {if $level != 'warning'}
                 {l s='Your Alma account needs to be activated before you can use Alma on your shop.' mod='alma'}
                 <br>
-                <a href="https://dashboard.getalma.eu/security">
+                <a href="https://dashboard.getalma.eu/">
                     {l s='Go to your Alma dashboard to activate your account.' mod='alma'}
                 </a>
                 <br>
@@ -90,7 +90,7 @@
         <br>
         {l s='You must start by filling in your API keys.' mod='alma'}
         <br>
-        <a href="https://dashboard.getalma.eu/security">
+        <a href="https://dashboard.getalma.eu/api">
             {l s='You can find them in your Alma dashboard' mod='alma'}
         </a>
     </div>

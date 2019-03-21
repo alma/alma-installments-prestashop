@@ -62,6 +62,6 @@
     {/if}
 
     <br><br>
-    <a href='mailto:contact@getalma.eu?subject={l s='Fees for %d-installment plans' sprintf=$fee_plan['installments_count'] mod='alma'}'>{l s='Contact us' mod='alma'}</a>
+    <a href='mailto:contact@getalma.eu?subject={l s='Fees for %d-installment plan' sprintf=$fee_plan['installments_count'] mod='alma'}'>{l s='Contact us' mod='alma'}</a>
     {l s='if you think your sales volumes warrant better rates!' mod='alma'}
 </p>

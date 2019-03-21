@@ -304,7 +304,7 @@ class AlmaGetContentController extends AlmaAdminHookController
                         'required' => true,
                         'desc' => sprintf(
                             $this->module->l('You can find your API keys on %1$syour Alma dashboard%2$s', 'getContent'),
-                            '<a href="https://dashboard.getalma.eu/security" target="_blank">',
+                            '<a href="https://dashboard.getalma.eu/api" target="_blank">',
                             '</a>'
                         ),
                     ),
