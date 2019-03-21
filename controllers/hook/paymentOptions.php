@@ -85,23 +85,27 @@ class AlmaPaymentOptionsController extends AlmaProtectedHookController
             }
 
             $paymentOption = new PrestaShop\PrestaShop\Core\Payment\PaymentOption();
-            $this->context->smarty->assign(array(
-                'desc' => sprintf(AlmaSettings::getPaymentButtonDescription(), $n),
-            ));
-            $template = $this->context->smarty->fetch(
-                "module:{$this->module->name}/views/templates/hook/payment_button_desc.tpl"
-            );
-
             $paymentOption
                 ->setModuleName($this->module->name)
                 ->setCallToActionText(sprintf(AlmaSettings::getPaymentButtonTitle(), $n))
-                ->setAdditionalInformation($template)
                 ->setAction($this->context->link->getModuleLink($this->module->name, 'payment', array('n' => $n), true))
                 ->setLogo(
                     Media::getMediaPath(
                         _PS_MODULE_DIR_ . $this->module->name . '/views/img/tiny_alma_payment_logos.svg'
                     )
                 );
+
+            if (!empty(AlmaSettings::getPaymentButtonDescription())) {
+                $this->context->smarty->assign(array(
+                    'desc' => sprintf(AlmaSettings::getPaymentButtonDescription(), $n),
+                ));
+
+                $template = $this->context->smarty->fetch(
+                    "module:{$this->module->name}/views/templates/hook/payment_button_desc.tpl"
+                );
+
+                $paymentOption->setAdditionalInformation($template);
+            }
 
             $options[] = $paymentOption;
         }

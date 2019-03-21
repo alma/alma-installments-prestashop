@@ -446,31 +446,34 @@ class AlmaGetContentController extends AlmaAdminHookController
                         'desc' => $this->module->l('This controls the payment method description which the user sees during checkout.', 'getContent'),
                         'type' => 'text',
                         'size' => 75,
-                        'required' => true,
-                    ),
-                    array(
-                        'name' => 'ALMA_SHOW_DISABLED_BUTTON',
-                        'type' => 'radio',
-                        'label' => $this->module->l('When Alma is not available...', 'getContent'),
-                        'class' => 't',
-                        'required' => true,
-                        'values' => array(
-                            array(
-                                'id' => 'ON',
-                                'value' => true,
-                                'label' => $this->module->l('Display payment button, disabled', 'getContent'),
-                            ),
-                            array(
-                                'id' => 'OFF',
-                                'value' => false,
-                                'label' => $this->module->l('Hide payment button', 'getContent'),
-                            ),
-                        ),
+                        'required' => version_compare(_PS_VERSION_, '1.7', '<'),
                     ),
                 ),
                 'submit' => array('title' => $this->module->l('Save'), 'class' => 'btn btn-default pull-right'),
             ),
         );
+
+        if (version_compare(_PS_VERSION_, '1.7', '<')) {
+            $payment_button_form['form']['input'][] = array(
+                'name' => 'ALMA_SHOW_DISABLED_BUTTON',
+                'type' => 'radio',
+                'label' => $this->module->l('When Alma is not available...', 'getContent'),
+                'class' => 't',
+                'required' => true,
+                'values' => array(
+                    array(
+                        'id' => 'ON',
+                        'value' => true,
+                        'label' => $this->module->l('Display payment button, disabled', 'getContent'),
+                    ),
+                    array(
+                        'id' => 'OFF',
+                        'value' => false,
+                        'label' => $this->module->l('Hide payment button', 'getContent'),
+                    ),
+                ),
+            );
+        }
 
         if (version_compare(_PS_VERSION_, '1.7', '>=')) {
             array_unshift(
