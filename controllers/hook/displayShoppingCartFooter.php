@@ -40,26 +40,26 @@ class AlmaDisplayShoppingCartFooterController extends AlmaProtectedHookControlle
         }
 
         $eligibility = AlmaEligibilityHelper::eligibilityCheck($this->context);
-        $eligibility_msg = AlmaSettings::getEligibilityMessage();
+        $eligibilityMsg = AlmaSettings::getEligibilityMessage();
 
         if (!$eligibility->isEligible) {
-            $eligibility_msg = AlmaSettings::getNonEligibilityMessage();
+            $eligibilityMsg = AlmaSettings::getNonEligibilityMessage();
 
             $cart = $this->context->cart;
-            $cart_total = alma_price_to_cents((float) $cart->getOrderTotal(true, Cart::BOTH));
-            $min_amount = $eligibility->constraints['purchase_amount']['minimum'];
-            $max_amount = $eligibility->constraints['purchase_amount']['maximum'];
+            $cartTotal = almaPriceToCents((float) $cart->getOrderTotal(true, Cart::BOTH));
+            $minAmount = $eligibility->constraints['purchase_amount']['minimum'];
+            $maxAmount = $eligibility->constraints['purchase_amount']['maximum'];
 
-            if ($cart_total < $min_amount || $cart_total > $max_amount) {
-                if ($cart_total > $max_amount) {
-                    $eligibility_msg .= ' ' . sprintf(
+            if ($cartTotal < $minAmount || $cartTotal > $maxAmount) {
+                if ($cartTotal > $maxAmount) {
+                    $eligibilityMsg .= ' ' . sprintf(
                         $this->module->l('(Maximum amount: %s)', 'displayShoppingCartFooter'),
-                        Tools::displayPrice(alma_price_from_cents($max_amount))
+                        Tools::displayPrice(almaPriceFromCents($maxAmount))
                     );
                 } else {
-                    $eligibility_msg .= ' ' . sprintf(
+                    $eligibilityMsg .= ' ' . sprintf(
                         $this->module->l('(Minimum amount: %s)', 'displayShoppingCartFooter'),
-                        Tools::displayPrice(alma_price_from_cents($min_amount))
+                        Tools::displayPrice(almaPriceFromCents($minAmount))
                     );
                 }
             }
@@ -72,7 +72,7 @@ class AlmaDisplayShoppingCartFooterController extends AlmaProtectedHookControlle
         }
 
         $this->context->smarty->assign(array(
-            'eligibility_msg' => $eligibility_msg,
+            'eligibility_msg' => $eligibilityMsg,
             'logo' => $logo,
         ));
 

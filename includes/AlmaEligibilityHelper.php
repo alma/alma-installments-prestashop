@@ -36,8 +36,8 @@ class AlmaEligibilityHelper
 {
     public static function eligibilityCheck($context)
     {
-        $payment_data = PaymentData::dataFromCart($context->cart, $context);
-        if (!$payment_data) {
+        $paymentData = PaymentData::dataFromCart($context->cart, $context);
+        if (!$paymentData) {
             AlmaLogger::instance()->error('Cannot check cart eligibility: no data extracted from cart');
 
             return null;
@@ -53,7 +53,7 @@ class AlmaEligibilityHelper
         $eligibility = null;
 
         try {
-            $eligibility = $alma->payments->eligibility($payment_data);
+            $eligibility = $alma->payments->eligibility($paymentData);
         } catch (RequestError $e) {
             AlmaLogger::instance()->error(
                 "Error when checking cart {$context->cart->id} eligibility: " . $e->getMessage()

@@ -29,7 +29,7 @@
  *
  * @return int
  */
-function alma_price_to_cents($price)
+function almaPriceToCents($price)
 {
     return (int) (round($price * 100));
 }
@@ -41,7 +41,7 @@ function alma_price_to_cents($price)
  *
  * @return float
  */
-function alma_price_from_cents($price)
+function almaPriceFromCents($price)
 {
     return (float) ($price / 100);
 }

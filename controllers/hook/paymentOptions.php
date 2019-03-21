@@ -38,8 +38,8 @@ class AlmaPaymentOptionsController extends AlmaProtectedHookController
     public function run($params)
     {
         // First check that we can offer Alma for this payment
-        $payment_data = PaymentData::dataFromCart($this->context->cart, $this->context);
-        if (!$payment_data) {
+        $paymentData = PaymentData::dataFromCart($this->context->cart, $this->context);
+        if (!$paymentData) {
             AlmaLogger::instance()->error('Cannot check cart eligibility: no data extracted from cart');
 
             return array();
@@ -53,7 +53,7 @@ class AlmaPaymentOptionsController extends AlmaProtectedHookController
         }
 
         try {
-            $eligibility = $alma->payments->eligibility($payment_data);
+            $eligibility = $alma->payments->eligibility($paymentData);
         } catch (RequestError $e) {
             AlmaLogger::instance()->error(
                 "Error when checking cart {$this->context->cart->id} eligibility: " . $e->getMessage()
@@ -77,8 +77,8 @@ class AlmaPaymentOptionsController extends AlmaProtectedHookController
                 $min = AlmaSettings::installmentPlanMinAmount($n);
                 $max = AlmaSettings::installmentPlanMaxAmount($n);
 
-                if ($payment_data['payment']['purchase_amount'] < $min
-                    || $payment_data['payment']['purchase_amount'] >= $max
+                if ($paymentData['payment']['purchase_amount'] < $min
+                    || $paymentData['payment']['purchase_amount'] >= $max
                 ) {
                     continue;
                 }

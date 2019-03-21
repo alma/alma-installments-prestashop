@@ -31,7 +31,7 @@ include_once _PS_MODULE_DIR_ . 'alma/includes/functions.php';
 
 class PaymentData
 {
-    public static function dataFromCart($cart, $context, $installments_count = 3)
+    public static function dataFromCart($cart, $context, $installmentsCount = 3)
     {
         if ($cart->id_customer == 0 || $cart->id_address_delivery == 0 || $cart->id_address_invoice == 0) {
             AlmaLogger::instance()->warning(
@@ -97,11 +97,11 @@ class PaymentData
 
         $data = array(
             'payment' => array(
-                'installments_count' => (int) $installments_count,
+                'installments_count' => (int) $installmentsCount,
                 'customer_cancel_url' => $context->link->getPageLink('order'),
                 'return_url' => $context->link->getModuleLink('alma', 'validation'),
                 'ipn_callback_url' => $context->link->getModuleLink('alma', 'ipn'),
-                'purchase_amount' => alma_price_to_cents($purchaseAmount),
+                'purchase_amount' => almaPriceToCents($purchaseAmount),
                 'shipping_address' => array(
                     'line1' => $shippingAddress->address1,
                     'postal_code' => $shippingAddress->postcode,

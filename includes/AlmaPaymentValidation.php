@@ -125,7 +125,7 @@ class AlmaPaymentValidation
         }
 
         if (!$cart->OrderExists()) {
-            $purchaseAmount = alma_price_to_cents((float) $cart->getOrderTotal(true, Cart::BOTH));
+            $purchaseAmount = almaPriceToCents((float) $cart->getOrderTotal(true, Cart::BOTH));
             if ($payment->purchase_amount !== $purchaseAmount) {
                 $alma->payments->flagAsPotentialFraud($almaPaymentId, Payment::FRAUD_AMOUNT_MISMATCH);
 
@@ -136,25 +136,25 @@ class AlmaPaymentValidation
                 throw new AlmaPaymentValidationError($cart, Payment::FRAUD_AMOUNT_MISMATCH);
             }
 
-            $first_instalment = $payment->payment_plan[0];
+            $firstInstalment = $payment->payment_plan[0];
             if (!in_array($payment->state, array(Payment::STATE_IN_PROGRESS, Payment::STATE_PAID))
-                || $first_instalment->state !== Instalment::STATE_PAID
+                || $firstInstalment->state !== Instalment::STATE_PAID
             ) {
                 $alma->payments->flagAsPotentialFraud($almaPaymentId, Payment::FRAUD_STATE_ERROR);
 
                 AlmaLogger::instance()->error(
-                    "Payment '{$almaPaymentId}': state error {$payment->state} & {$first_instalment->state}"
+                    "Payment '{$almaPaymentId}': state error {$payment->state} & {$firstInstalment->state}"
                 );
 
                 throw new AlmaPaymentValidationError($cart, Payment::FRAUD_STATE_ERROR);
             }
 
-            $extra_vars = array('transaction_id' => $payment->id);
+            $extraVars = array('transaction_id' => $payment->id);
 
             if (version_compare(_PS_VERSION_, '1.6', '<')) {
-                $payment_mode = $this->module->displayName;
+                $paymentMode = $this->module->displayName;
             } else {
-                $payment_mode = sprintf(
+                $paymentMode = sprintf(
                     $this->module->l('Alma - %d monthly installments', 'validation'),
                     count($payment->payment_plan)
                 );
@@ -163,10 +163,10 @@ class AlmaPaymentValidation
             $this->module->validateOrder(
                 (int) $cart->id,
                 Configuration::get('PS_OS_PAYMENT'),
-                alma_price_from_cents($purchaseAmount),
-                $payment_mode,
+                almaPriceFromCents($purchaseAmount),
+                $paymentMode,
                 null,
-                $extra_vars,
+                $extraVars,
                 (int) $cart->id_currency,
                 false,
                 $customer->secure_key
@@ -181,8 +181,8 @@ class AlmaPaymentValidation
                 $this->module->currentOrder = (int) Order::getOrderByCartId((int) $cart->id);
             }
 
-            $token_cart = md5(_COOKIE_KEY_ . 'recover_cart_' . $cart->id);
-            $extraRedirectArgs = "&recover_cart={$cart->id}&token_cart={$token_cart}";
+            $tokenCart = md5(_COOKIE_KEY_ . 'recover_cart_' . $cart->id);
+            $extraRedirectArgs = "&recover_cart={$cart->id}&token_cart={$tokenCart}";
         }
 
         return $this->context->link->getPageLink('order-confirmation', true) .

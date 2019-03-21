@@ -35,13 +35,13 @@ class AlmaClient
 {
     public static function defaultInstance()
     {
-        static $_alma_client;
+        static $_almaClient;
 
-        if (!$_alma_client) {
-            $_alma_client = self::createInstance(AlmaSettings::getActiveAPIKey());
+        if (!$_almaClient) {
+            $_almaClient = self::createInstance(AlmaSettings::getActiveAPIKey());
         }
 
-        return $_alma_client;
+        return $_almaClient;
     }
 
     public static function createInstance($apiKey, $mode = null)

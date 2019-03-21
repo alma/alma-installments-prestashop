@@ -83,16 +83,16 @@ class AlmaGetContentController extends AlmaAdminHookController
                     // First validate that plans boundaries are correctly set
                     foreach ($merchant->fee_plans as $feePlan) {
                         $n = $feePlan['installments_count'];
-                        $min = alma_price_to_cents(Tools::getValue("ALMA_P${n}X_MIN_AMOUNT"));
-                        $max = alma_price_to_cents(Tools::getValue("ALMA_P${n}X_MAX_AMOUNT"));
+                        $min = almaPriceToCents(Tools::getValue("ALMA_P${n}X_MIN_AMOUNT"));
+                        $max = almaPriceToCents(Tools::getValue("ALMA_P${n}X_MAX_AMOUNT"));
 
                         if (!($min >= $merchant->minimum_purchase_amount &&
                             $min <= min($max, $merchant->maximum_purchase_amount))) {
                             $this->context->smarty->assign(array(
                                 'validation_error' => 'pnx_min_amount',
                                 'n' => $n,
-                                'min' => alma_price_from_cents($merchant->minimum_purchase_amount),
-                                'max' => alma_price_from_cents(min($max, $merchant->maximum_purchase_amount)),
+                                'min' => almaPriceFromCents($merchant->minimum_purchase_amount),
+                                'max' => almaPriceFromCents(min($max, $merchant->maximum_purchase_amount)),
                             ));
 
                             return $this->module->display($this->module->file, 'getContent.tpl');
@@ -102,8 +102,8 @@ class AlmaGetContentController extends AlmaAdminHookController
                             $this->context->smarty->assign(array(
                                 'validation_error' => 'pnx_max_amount',
                                 'n' => $n,
-                                'min' => alma_price_from_cents($min),
-                                'max' => alma_price_from_cents($merchant->maximum_purchase_amount),
+                                'min' => almaPriceFromCents($min),
+                                'max' => almaPriceFromCents($merchant->maximum_purchase_amount),
                             ));
 
                             return $this->module->display($this->module->file, 'getContent.tpl');
@@ -121,13 +121,13 @@ class AlmaGetContentController extends AlmaAdminHookController
 
                         $overlap = false;
                         foreach ($merchant->fee_plans as $other_plan) {
-                            $other_n = $other_plan['installments_count'];
-                            if ($n == $other_n) {
+                            $otherN = $other_plan['installments_count'];
+                            if ($n == $otherN) {
                                 continue;
                             }
 
-                            $otherMin = Tools::getValue("ALMA_P${other_n}X_MIN_AMOUNT");
-                            $otherMax = Tools::getValue("ALMA_P${other_n}X_MAX_AMOUNT");
+                            $otherMin = Tools::getValue("ALMA_P${otherN}X_MIN_AMOUNT");
+                            $otherMax = Tools::getValue("ALMA_P${otherN}X_MAX_AMOUNT");
 
                             if (($min >= $otherMin && $min <= $otherMax) || ($max >= $otherMin && $max <= $otherMax)) {
                                 $overlap = true;
@@ -148,11 +148,11 @@ class AlmaGetContentController extends AlmaAdminHookController
                         AlmaSettings::updateValue("ALMA_P${n}X_ENABLED", $enablePlan);
                         AlmaSettings::updateValue(
                             "ALMA_P${n}X_MIN_AMOUNT",
-                            alma_price_to_cents(Tools::getValue("ALMA_P${n}X_MIN_AMOUNT"))
+                            almaPriceToCents(Tools::getValue("ALMA_P${n}X_MIN_AMOUNT"))
                         );
                         AlmaSettings::updateValue(
                             "ALMA_P${n}X_MAX_AMOUNT",
-                            alma_price_to_cents(Tools::getValue("ALMA_P${n}X_MAX_AMOUNT"))
+                            almaPriceToCents(Tools::getValue("ALMA_P${n}X_MAX_AMOUNT"))
                         );
 
                         if ($n > $maxN && $enablePlan) {
@@ -264,7 +264,7 @@ class AlmaGetContentController extends AlmaAdminHookController
 
     public function renderForm($merchant)
     {
-        $needs_key = AlmaSettings::needsAPIKeys();
+        $needsKeys = AlmaSettings::needsAPIKeys();
 
         if (is_callable('Media::getMediaPath')) {
             $iconPath = Media::getMediaPath(_PS_MODULE_DIR_ . $this->module->name . '/views/img/logo16x16.png');
@@ -272,17 +272,17 @@ class AlmaGetContentController extends AlmaAdminHookController
             $iconPath = $this->module->getPathUri() . '/views/img/logo16x16.png';
         }
 
-        $extra_msg = null;
-        if ($needs_key && !Tools::isSubmit('alma_config_form')) {
+        $extraMessage = null;
+        if ($needsKeys && !Tools::isSubmit('alma_config_form')) {
             $this->context->smarty->clearAllAssign();
 
             $this->assignSmartyAlertClasses();
             $this->context->smarty->assign('tip', 'fill_api_keys');
 
-            $extra_msg = $this->module->display($this->module->file, 'getContent.tpl');
+            $extraMessage = $this->module->display($this->module->file, 'getContent.tpl');
         }
 
-        $api_config_form = array(
+        $apiConfigForm = array(
             'form' => array(
                 'legend' => array(
                     'title' => $this->module->l('API configuration', 'getContent'),
@@ -330,10 +330,10 @@ class AlmaGetContentController extends AlmaAdminHookController
         );
 
         // Hybrid pNx is available on PrestaShop 1.7 only at the moment
-        $pnx_config_form = null;
+        $pnxConfigForm = null;
         if (version_compare(_PS_VERSION_, '1.7', '>=')) {
             if ($merchant) {
-                $pnx_config_form = array(
+                $pnxConfigForm = array(
                     'form' => array(
                         'legend' => array(
                             'title' => $this->module->l('Installments plans', 'getContent'),
@@ -359,21 +359,21 @@ class AlmaGetContentController extends AlmaAdminHookController
                         $pnxTabs[$tabId] = '❌ ' . $tabTitle;
                     }
 
-                    $minAmount = (int)alma_price_from_cents($merchant->minimum_purchase_amount);
-                    $maxAmount = (int)alma_price_from_cents($merchant->maximum_purchase_amount);
+                    $minAmount = (int)almaPriceFromCents($merchant->minimum_purchase_amount);
+                    $maxAmount = (int)almaPriceFromCents($merchant->maximum_purchase_amount);
 
                     $tpl = $this->context->smarty->createTemplate(
                         _PS_ROOT_DIR_ . "{$this->module->_path}/views/templates/hook/pnx_fees.tpl"
                     );
                     $tpl->assign(array('fee_plan' => $feePlan, 'min_amount' => $minAmount, 'max_amount' => $maxAmount));
 
-                    $pnx_config_form['form']['input'][] = array(
+                    $pnxConfigForm['form']['input'][] = array(
                         'form_group_class' => "$tabId-content",
                         'type' => 'html',
                         'html_content' => $tpl->fetch(),
                     );
 
-                    $pnx_config_form['form']['input'][] = array(
+                    $pnxConfigForm['form']['input'][] = array(
                         'form_group_class' => "$tabId-content",
                         'name' => "ALMA_P${n}X_ENABLED",
                         'label' => sprintf($this->module->l('Enable %d-installment payments', 'getContent'), $n),
@@ -390,7 +390,7 @@ class AlmaGetContentController extends AlmaAdminHookController
                         ),
                     );
 
-                    $pnx_config_form['form']['input'][] = array(
+                    $pnxConfigForm['form']['input'][] = array(
                         'form_group_class' => "$tabId-content",
                         'name' => "ALMA_P${n}X_MIN_AMOUNT",
                         'label' => $this->module->l('Minimum amount (€)', 'getContent'),
@@ -400,7 +400,7 @@ class AlmaGetContentController extends AlmaAdminHookController
                         'max' => $maxAmount,
                     );
 
-                    $pnx_config_form['form']['input'][] = array(
+                    $pnxConfigForm['form']['input'][] = array(
                         'form_group_class' => "$tabId-content",
                         'name' => "ALMA_P${n}X_MAX_AMOUNT",
                         'label' => $this->module->l('Maximum amount (€)', 'getContent'),
@@ -417,7 +417,7 @@ class AlmaGetContentController extends AlmaAdminHookController
                 $tpl->assign(array('tabs' => $pnxTabs, 'active' => $activeTab));
 
                 array_unshift(
-                    $pnx_config_form['form']['input'],
+                    $pnxConfigForm['form']['input'],
                     array(
                         'type' => 'html',
                         'html_content' => $tpl->fetch(),
@@ -426,7 +426,7 @@ class AlmaGetContentController extends AlmaAdminHookController
             }
         }
 
-        $payment_button_form = array(
+        $paymentButtonForm = array(
             'form' => array(
                 'legend' => array(
                     'title' => $this->module->l('Payment method configuration', 'getContent'),
@@ -457,7 +457,7 @@ class AlmaGetContentController extends AlmaAdminHookController
         );
 
         if (version_compare(_PS_VERSION_, '1.7', '<')) {
-            $payment_button_form['form']['input'][] = array(
+            $paymentButtonForm['form']['input'][] = array(
                 'name' => 'ALMA_SHOW_DISABLED_BUTTON',
                 'type' => 'radio',
                 'label' => $this->module->l('When Alma is not available...', 'getContent'),
@@ -480,7 +480,7 @@ class AlmaGetContentController extends AlmaAdminHookController
 
         if (version_compare(_PS_VERSION_, '1.7', '>=')) {
             array_unshift(
-                $payment_button_form['form']['input'],
+                $paymentButtonForm['form']['input'],
                 array(
                     'type' => 'html',
                     // PrestaShop won't detect the string if the call to `l` is multiline
@@ -489,7 +489,7 @@ class AlmaGetContentController extends AlmaAdminHookController
             );
         }
 
-        $cart_eligibility_form = array(
+        $cartEligibilityForm = array(
             'form' => array(
                 'legend' => array(
                     'title' => $this->module->l('Cart eligibility message', 'getContent'),
@@ -536,7 +536,7 @@ class AlmaGetContentController extends AlmaAdminHookController
             ),
         );
 
-        $order_confirmation_form = array(
+        $orderConfirmationForm = array(
             'form' => array(
                 'legend' => array(
                     'title' => $this->module->l('Order confirmation', 'getContent'),
@@ -567,7 +567,7 @@ class AlmaGetContentController extends AlmaAdminHookController
             ),
         );
 
-        $debug_form = array(
+        $debugForm = array(
             'form' => array(
                 'legend' => array(
                     'title' => $this->module->l('Debug options', 'getContent'),
@@ -595,20 +595,20 @@ class AlmaGetContentController extends AlmaAdminHookController
             ),
         );
 
-        if ($needs_key) {
-            $api_config_form['form']['input'][] = array(
+        if ($needsKeys) {
+            $apiConfigForm['form']['input'][] = array(
                 'name' => '_api_only',
                 'type' => 'hidden',
             );
-            $fields_forms = array($api_config_form, $debug_form);
+            $fieldsForms = array($apiConfigForm, $debugForm);
         } else {
-            $fields_forms = array($cart_eligibility_form, $payment_button_form);
+            $fieldsForms = array($cartEligibilityForm, $paymentButtonForm);
 
-            if ($pnx_config_form) {
-                $fields_forms[] = $pnx_config_form;
+            if ($pnxConfigForm) {
+                $fieldsForms[] = $pnxConfigForm;
             }
 
-            $fields_forms = array_merge($fields_forms, array($order_confirmation_form, $api_config_form, $debug_form));
+            $fieldsForms = array_merge($fieldsForms, array($orderConfirmationForm, $apiConfigForm, $debugForm));
         }
 
         $helper = new HelperForm();
@@ -645,18 +645,18 @@ class AlmaGetContentController extends AlmaAdminHookController
                 $n = $feePlan['installments_count'];
                 $helper->fields_value["ALMA_P${n}X_ENABLED_ON"] = AlmaSettings::isInstallmentPlanEnabled($n);
 
-                $minAmount = (int) alma_price_from_cents(AlmaSettings::installmentPlanMinAmount($n, $merchant));
+                $minAmount = (int) almaPriceFromCents(AlmaSettings::installmentPlanMinAmount($n, $merchant));
                 $helper->fields_value["ALMA_P${n}X_MIN_AMOUNT"] = $minAmount;
 
                 $maxN = AlmaSettings::installmentPlansMaxN();
-                $maxAmount = (int) alma_price_from_cents(AlmaSettings::installmentPlanMaxAmount($n, $maxN));
+                $maxAmount = (int) almaPriceFromCents(AlmaSettings::installmentPlanMaxAmount($n, $maxN));
                 $helper->fields_value["ALMA_P${n}X_MAX_AMOUNT"] = $maxAmount;
             }
         }
 
         $helper->languages = $this->context->controller->getLanguages();
 
-        return $extra_msg . $helper->generateForm($fields_forms);
+        return $extraMessage . $helper->generateForm($fieldsForms);
     }
 
     private function assignSmartyAlertClasses($level = 'danger')
@@ -702,8 +702,8 @@ class AlmaGetContentController extends AlmaAdminHookController
             $merchant = $this->getMerchant();
         }
 
-        $html_form = $this->renderForm($merchant);
+        $htmlForm = $this->renderForm($merchant);
 
-        return $messages . $html_form;
+        return $messages . $htmlForm;
     }
 }
