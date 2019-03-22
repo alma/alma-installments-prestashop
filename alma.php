@@ -44,6 +44,7 @@ class Alma extends PaymentModule
         $this->author = 'Alma';
         $this->need_instance = false;
         $this->bootstrap = true;
+        $this->module_key = 'ad25114b1fb02d9d8b8787b992a0ccdb';
 
         $this->limited_currencies = array('EUR');
 
