@@ -47,9 +47,9 @@ class AlmaLogger extends AbstractLogger
     public static function loggerClass()
     {
         if (class_exists('PrestaShopLogger')) {
-            return PrestaShopLogger;
+            return 'PrestaShopLogger';
         } else {
-            return Logger;
+            return 'Logger';
         }
     }
 
