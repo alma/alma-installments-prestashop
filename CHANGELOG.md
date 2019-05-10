@@ -1,6 +1,15 @@
 Changelog
 =========
 
+v1.1.0
+------
+
+* Adds support for multiple installments plans (2-, 3- and 4-installment plans) on PrestaShop 1.7+
+* Adds order_total as a template variable for displayPayment
+* Various fixes to comply with PSR1/PSR2 and PrestaShop validator
+* Preparation for marketplace validation & release
+
+
 v1.0.1
 ------
 
