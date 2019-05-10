@@ -10,6 +10,10 @@ $_MODULE['<{alma}prestashop>alma_fbb47375d2272bef79f5722a183bf1ec'] = 'Alma néc
 $_MODULE['<{alma}prestashop>alma_7fb83ba9cf3cc38857a2ddae98534d22'] = 'Alma nécessite OpenSSL >= 1.0.1';
 $_MODULE['<{alma}prestashop>almapaymentvalidation_efa820507b1951ee5722003639b1a0b0'] = 'Le paiement en plusieurs fois Alma n\'est pas disponible pour cette devise';
 $_MODULE['<{alma}prestashop>almapaymentvalidation_6f11098989b14063e0a4cfe362734850'] = 'Alma - Paiement en %d fois';
+$_MODULE['<{alma}prestashop>almasettings_00606cb1a7827b23ee7191f6676d65b8'] = 'Commande éligible au paiement en plusieurs fois';
+$_MODULE['<{alma}prestashop>almasettings_fb88c06896e14fceee15a6f25dc770b2'] = 'Paiement en plusieurs fois indisponible pour cette commande';
+$_MODULE['<{alma}prestashop>almasettings_b0eb91b4dfcbae022cf68944f712ec0c'] = 'Alma - Paiement en plusieurs fois';
+$_MODULE['<{alma}prestashop>almasettings_45f792ac707b6979208305a03555580f'] = 'Payez en 3 fois avec votre carte bancaire';
 $_MODULE['<{alma}prestashop>payment_efa820507b1951ee5722003639b1a0b0'] = 'Le paiement en plusieurs fois Alma n\'est pas disponible pour cette devise';
 $_MODULE['<{alma}prestashop>getcontent_1d13f5970032b45327add3c337ac82ee'] = 'Configuration de l\'API';
 $_MODULE['<{alma}prestashop>getcontent_1460d8f2c6a41fef185dfbf0e09bc83a'] = 'Clef d\'API Live';

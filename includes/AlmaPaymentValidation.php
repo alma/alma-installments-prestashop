@@ -110,7 +110,7 @@ class AlmaPaymentValidation
 
         if (!$this->checkCurrency()) {
             AlmaLogger::instance()->error("[Alma] Payment validation error for Cart {$cart->id}: currency mismatch.");
-            $msg = $this->module->l('Alma Monthly Installments are not available for this currency', 'payment');
+            $msg = $this->module->l('Alma Monthly Installments are not available for this currency', 'almapaymentvalidation');
             throw new AlmaPaymentValidationError($cart, $msg);
         }
 
@@ -155,7 +155,7 @@ class AlmaPaymentValidation
                 $paymentMode = $this->module->displayName;
             } else {
                 $paymentMode = sprintf(
-                    $this->module->l('Alma - %d monthly installments', 'validation'),
+                    $this->module->l('Alma - %d monthly installments', 'almapaymentvalidation'),
                     count($payment->payment_plan)
                 );
             }
