@@ -368,6 +368,10 @@ class AlmaGetContentController extends AlmaAdminHookController
                     $tpl->assign(array('fee_plan' => $feePlan, 'min_amount' => $minAmount, 'max_amount' => $maxAmount));
 
                     $pnxConfigForm['form']['input'][] = array(
+                        // Prevent notices for undefined index
+                        'name' => null,
+                        'label' => null,
+                        ///
                         'form_group_class' => "$tabId-content",
                         'type' => 'html',
                         'html_content' => $tpl->fetch(),
@@ -385,6 +389,7 @@ class AlmaGetContentController extends AlmaAdminHookController
                                 array(
                                     'id' => 'ON',
                                     'val' => true,
+                                    'label' => '',
                                 ),
                             ),
                         ),
@@ -419,6 +424,8 @@ class AlmaGetContentController extends AlmaAdminHookController
                 array_unshift(
                     $pnxConfigForm['form']['input'],
                     array(
+                        'name' => null,
+                        'label' => null,
                         'type' => 'html',
                         'html_content' => $tpl->fetch(),
                     )
@@ -482,6 +489,8 @@ class AlmaGetContentController extends AlmaAdminHookController
             array_unshift(
                 $paymentButtonForm['form']['input'],
                 array(
+                    'name' => null,
+                    'label' => null,
                     'type' => 'html',
                     // PrestaShop won't detect the string if the call to `l` is multiline
                     'html_content' => $this->module->l('Use "%d" in the fields below where you want the installments count to appear. For instance, "Pay in %d monthly installments" will appear as "Pay in 3 monthly installments"', 'getContent'),
@@ -598,6 +607,7 @@ class AlmaGetContentController extends AlmaAdminHookController
         if ($needsKeys) {
             $apiConfigForm['form']['input'][] = array(
                 'name' => '_api_only',
+                'label' => null,
                 'type' => 'hidden',
             );
             $fieldsForms = array($apiConfigForm, $debugForm);
@@ -648,8 +658,7 @@ class AlmaGetContentController extends AlmaAdminHookController
                 $minAmount = (int) almaPriceFromCents(AlmaSettings::installmentPlanMinAmount($n, $merchant));
                 $helper->fields_value["ALMA_P${n}X_MIN_AMOUNT"] = $minAmount;
 
-                $maxN = AlmaSettings::installmentPlansMaxN();
-                $maxAmount = (int) almaPriceFromCents(AlmaSettings::installmentPlanMaxAmount($n, $maxN));
+                $maxAmount = (int) almaPriceFromCents(AlmaSettings::installmentPlanMaxAmount($n));
                 $helper->fields_value["ALMA_P${n}X_MAX_AMOUNT"] = $maxAmount;
             }
         }
