@@ -187,12 +187,12 @@ class AlmaGetContentController extends AlmaAdminHookController
         AlmaSettings::updateValue('ALMA_LIVE_API_KEY', $liveKey);
         AlmaSettings::updateValue('ALMA_TEST_API_KEY', $testKey);
 
+        // At this point, consider things are sufficiently configured to be usable
+        AlmaSettings::updateValue('ALMA_FULLY_CONFIGURED', '1');
+
         if ($credentialsError && array_key_exists('warning', $credentialsError)) {
             return $credentialsError['message'];
         }
-
-        // Everything has been properly validated: we're fully configured
-        AlmaSettings::updateValue('ALMA_FULLY_CONFIGURED', '1');
 
         $this->context->smarty->clearAssign('validation_error');
 
