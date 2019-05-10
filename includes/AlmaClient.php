@@ -55,7 +55,7 @@ class AlmaClient
         try {
             $alma = new Client($apiKey, array(
                 'mode' => $mode,
-                'logger' => AlmaLogger::instance()
+                'logger' => AlmaLogger::instance(),
             ));
 
             $alma->addUserAgentComponent('PrestaShop', _PS_VERSION_);

@@ -359,8 +359,8 @@ class AlmaGetContentController extends AlmaAdminHookController
                         $pnxTabs[$tabId] = '❌ ' . $tabTitle;
                     }
 
-                    $minAmount = (int)almaPriceFromCents($merchant->minimum_purchase_amount);
-                    $maxAmount = (int)almaPriceFromCents($merchant->maximum_purchase_amount);
+                    $minAmount = (int) almaPriceFromCents($merchant->minimum_purchase_amount);
+                    $maxAmount = (int) almaPriceFromCents($merchant->maximum_purchase_amount);
 
                     $tpl = $this->context->smarty->createTemplate(
                         _PS_ROOT_DIR_ . "{$this->module->_path}/views/templates/hook/pnx_fees.tpl"
