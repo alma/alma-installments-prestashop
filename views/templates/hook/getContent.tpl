@@ -46,7 +46,7 @@
             <br>
             {$error}
         {elseif $validation_error == 'inactive_live_account'}
-            {if $level == 'warning'}
+            {if isset($level) && $level == 'warning'}
                 {l s='Your Alma account is not activated yet. You won\'t be able to use Alma in Live mode.' mod='alma'}
                 <br>
                 <a href="https://dashboard.getalma.eu/">
@@ -62,7 +62,7 @@
                 {l s='You can refresh/come back to this page when you are ready.' mod='alma'}
             {/if}
         {elseif $validation_error == 'inactive_test_account'}
-            {if $level != 'warning'}
+            {if isset($level) && $level != 'warning'}
                 {l s='Your Alma account needs to be activated before you can use Alma on your shop.' mod='alma'}
                 <br>
                 <a href="https://dashboard.getalma.eu/">
