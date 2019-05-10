@@ -78,6 +78,16 @@ class AlmaSettings
             'ALMA_NOT_ELIGIBLE_MESSAGE',
             'ALMA_PAYMENT_BUTTON_TITLE',
             'ALMA_PAYMENT_BUTTON_DESC',
+            'ALMA_P2X_ENABLED',
+            'ALMA_P3X_ENABLED',
+            'ALMA_P4X_ENABLED',
+            'ALMA_P2X_MIN_AMOUNT',
+            'ALMA_P3X_MIN_AMOUNT',
+            'ALMA_P4X_MIN_AMOUNT',
+            'ALMA_P2X_MAX_AMOUNT',
+            'ALMA_P3X_MAX_AMOUNT',
+            'ALMA_P4X_MAX_AMOUNT',
+            'ALMA_PNX_MAX_N',
         );
 
         foreach ($configKeys as $configKey) {
