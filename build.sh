@@ -6,7 +6,7 @@ rm -rf ./dist/
 rm -rf /tmp/alma-build/alma
 mkdir -p /tmp/alma-build/alma
 
-cp -r ./* /tmp/alma-build/alma/
+cp -r ./alma/* /tmp/alma-build/alma/
 
 mkdir ./dist
 

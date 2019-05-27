@@ -1,0 +1,36 @@
+version: '3'
+
+services:
+  mysql:
+    image: mysql:5.7
+    environment:
+      - MYSQL_ROOT_PASSWORD=admin
+      - MYSQL_DATABASE=prestashop
+    expose:
+      - 3306
+    ports:
+      - 3307:3306
+    volumes:
+      - "./tmp/db_data:/var/lib/mysql"
+
+  prestashop:
+    image: prestashop/prestashop
+    environment:
+      - DB_SERVER=mysql
+      - DB_NAME=prestashop
+      - DB_USER=root
+      - DB_PASSWD-admin
+      - PS_INSTALL_AUTO=1
+      - PS_ERASE_DB=1
+      - PS_DOMAIN=localhost:8080
+      - PS_SHOP_URL=localhost:8080
+      - PS_COUNTRY=FR
+      - PS_LANGUAGE=fr
+      - PS_FOLDER_ADMIN=almin
+      - PS_FOLDER_INSTALL=alminstall
+      - ADMIN_MAIL=admin@test.prestashop.com
+      - ADMIN_PASSWD=test2test
+    ports:
+      - "8080:80"
+    volumes:
+      - ./alma:/var/www/html/modules/alma
