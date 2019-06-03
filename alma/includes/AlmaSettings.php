@@ -139,8 +139,8 @@ class AlmaSettings
 
     public static function needsAPIKeys()
     {
-        return empty(self::get('ALMA_LIVE_API_KEY', ''))
-            || empty(self::get('ALMA_TEST_API_KEY', ''));
+        return trim(self::get('ALMA_LIVE_API_KEY', '')) == false
+            || trim(self::get('ALMA_TEST_API_KEY', '')) == false;
     }
 
     public static function getEligibilityMessage()
