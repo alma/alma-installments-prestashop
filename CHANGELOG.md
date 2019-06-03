@@ -1,6 +1,11 @@
 Changelog
 =========
 
+v1.1.1
+------
+
+* Fixes usage of `empty` that can cause issues in older versions of PHP
+
 v1.1.0
 ------
 
