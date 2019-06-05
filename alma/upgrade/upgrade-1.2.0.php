@@ -27,5 +27,6 @@ if (!defined('_PS_VERSION_')) {
 
 function upgrade_module_1_2_0($object)
 {
-    return $object->registerHook('actionOrderSlipAdd');
+    return $object->registerHook('actionOrderSlipAdd')
+        && $object->registerHook('actionOrderStatusPostUpdate');
 }

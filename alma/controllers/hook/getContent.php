@@ -21,7 +21,6 @@
  * @copyright 2018-2019 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
-
 use Alma\API\RequestError;
 
 if (!defined('_PS_VERSION_')) {
@@ -70,6 +69,12 @@ class AlmaGetContentController extends AlmaAdminHookController
             AlmaSettings::updateValue('ALMA_SHOW_ELIGIBILITY_MESSAGE', $showEligibility);
             AlmaSettings::updateValue('ALMA_IS_ELIGIBLE_MESSAGE', $eligibleMsg);
             AlmaSettings::updateValue('ALMA_NOT_ELIGIBLE_MESSAGE', $nonEligibleMsg);
+
+            $idStateRefund = Tools::getValue('ALMA_STATE_REFUND');
+            AlmaSettings::updateValue('ALMA_STATE_REFUND', $idStateRefund);
+
+            $isStateRfundEnable = Tools::getValue('ALMA_STATE_REFUND_ENABLE_ON', 0);
+            AlmaSettings::updateValue('ALMA_STATE_REFUND_ENABLE', $isStateRfundEnable);
 
             $displayOrderConfirmation = Tools::getValue('ALMA_DISPLAY_ORDER_CONFIRMATION_ON') == '1';
             AlmaSettings::updateValue('ALMA_DISPLAY_ORDER_CONFIRMATION', $displayOrderConfirmation);
@@ -576,6 +581,47 @@ class AlmaGetContentController extends AlmaAdminHookController
             ),
         );
 
+        $stateForm = array(
+            'form' => array(
+                'legend' => array(
+                    'title' => $this->module->l('States', 'getContent'),
+                    'image' => $iconPath,
+                ),
+                'input' => array(
+                    array(
+                        'name' => 'ALMA_STATE_REFUND_ENABLE',
+                        'label' => $this->module->l('Activate refund by change state', 'getContent'),
+                        'type' => 'checkbox',
+                        'values' => array(
+                            'id' => 'id',
+                            'name' => 'label',
+                            'query' => array(
+                                array(
+                                    'id' => 'ON',
+                                    'val' => true,
+                                    'label' => '',
+                                ),
+                            ),
+                        ),
+                    ),
+                    array(
+                        'name' => 'ALMA_STATE_REFUND',
+                        'label' => $this->module->l('Refund state order', 'getContent'),
+                        // PrestaShop won't detect the string if the call to `l` is multiline
+                        'desc' => $this->module->l('Your order state to sync refund with Alma', 'getContent'),
+                        'type' => 'select',
+                        'required' => true,
+                        'options' => array(
+                            'query' => OrderState::getOrderStates($this->context->cookie->id_lang),
+                            'id' => 'id_order_state',
+                            'name' => 'name',
+                        ),
+                    ),
+                ),
+                'submit' => array('title' => $this->module->l('Save'), 'class' => 'btn btn-default pull-right'),
+            ),
+        );
+
         $debugForm = array(
             'form' => array(
                 'legend' => array(
@@ -618,7 +664,7 @@ class AlmaGetContentController extends AlmaAdminHookController
                 $fieldsForms[] = $pnxConfigForm;
             }
 
-            $fieldsForms = array_merge($fieldsForms, array($orderConfirmationForm, $apiConfigForm, $debugForm));
+            $fieldsForms = array_merge($fieldsForms, array($orderConfirmationForm, $apiConfigForm, $stateForm, $debugForm));
         }
 
         $helper = new HelperForm();
@@ -647,6 +693,8 @@ class AlmaGetContentController extends AlmaAdminHookController
             'ALMA_NOT_ELIGIBLE_MESSAGE' => AlmaSettings::getNonEligibilityMessage(),
             'ALMA_DISPLAY_ORDER_CONFIRMATION_ON' => AlmaSettings::displayOrderConfirmation(),
             'ALMA_ACTIVATE_LOGGING_ON' => (bool) AlmaSettings::canLog(),
+            'ALMA_STATE_REFUND' => AlmaSettings::getStateRefund(),
+            'ALMA_STATE_REFUND_ENABLE_ON' => AlmaSettings::isRefundEnableByState(),
             '_api_only' => true,
         );
 

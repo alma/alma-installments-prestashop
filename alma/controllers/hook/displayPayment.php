@@ -66,7 +66,7 @@ class AlmaDisplayPaymentController extends AlmaProtectedHookController
                 'disabled' => $disabled,
                 'error' => $error,
                 'title' => AlmaSettings::getPaymentButtonTitle(),
-                'desc' => AlmaSettings::getPaymentButtonDescription(),
+                'desc' => sprintf(AlmaSettings::getPaymentButtonDescription(), 3),
                 'order_total' => (float) $cart->getOrderTotal(true, Cart::BOTH),
             )
         );

@@ -37,13 +37,20 @@ class AlmaRefundController extends AlmaAdminHookController
 {
     public function run($params)
     {
-        $merchant = $this->getMerchant();
         $order = $params['order'];
         if (!$order_payment = $this->getCurrentOrderPayment($order)) {
             return;
         }
         $id_payment = $order_payment->transaction_id;
+        if (version_compare(_PS_VERSION_, '1.6', '>=')) {
+            $this->runAfter16($params, $id_payment);
+        } else if (version_compare(_PS_VERSION_, '1.6', '<')) {
+            $this->runBefore16($params, $id_payment);
+        }
+    }
 
+    protected function runAfter16($params, $id_payment)
+    {
         $amount = 0;
         $voucher = 0;
         $order_detail_list = array();
@@ -97,7 +104,7 @@ class AlmaRefundController extends AlmaAdminHookController
             return;
         }
         try {
-            $payment = $alma->payments->refund($id_payment, $is_total, $amount * 100);
+            $payment = $alma->payments->refund($id_payment, $is_total, almaPriceToCents($amount));
         } catch (RequestError $e) {
             $msg = "[Alma] ERROR when creating refund for Order {$order->id}: {$e->getMessage()}";
             AlmaLogger::instance()->error($msg);
@@ -106,18 +113,26 @@ class AlmaRefundController extends AlmaAdminHookController
         }
     }
 
-    private function getMerchant()
+    protected function runBefore16($params, $id_payment)
     {
-        $alma = AlmaClient::defaultInstance();
-
-        if (!$alma) {
-            return null;
+        $order = $params['order'];
+        $qtyList = $params['qtyList'];
+        $products = $order->getProducts();
+        $amount = 0;
+        foreach ($qtyList as $id_order_detail => $qty) {
+            $amount = $products[$id_order_detail]['unit_price_tax_incl'] * $qty;
         }
-
+        $alma = AlmaClient::defaultInstance();
+        if (!$alma) {
+            return;
+        }
+        $is_total = $amount == $order->total_paid_tax_incl ? true : false;
         try {
-            return $alma->merchants->me();
+            $payment = $alma->payments->refund($id_payment, $is_total, almaPriceToCents($amount));
         } catch (RequestError $e) {
-            return null;
+            $msg = "[Alma] ERROR when creating refund for Order {$order->id}: {$e->getMessage()}";
+            AlmaLogger::instance()->error($msg);
+            return;
         }
     }
 
@@ -130,7 +145,6 @@ class AlmaRefundController extends AlmaAdminHookController
         if ($order_payments && isset($order_payments[0])) {
             return $order_payments[0];
         }
-
         return false;
     }
 }
