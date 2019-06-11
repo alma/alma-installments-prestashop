@@ -51,8 +51,8 @@ class AlmaRefundController extends AlmaAdminHookController
 
     protected function runAfter16($params, $id_payment)
     {
+        $order = $params['order'];
         $amount = 0;
-        $voucher = 0;
         $order_detail_list = array();
         $full_quantity_list = array();
         $refunds = Tools::getValue('partialRefundProduct');
@@ -81,7 +81,6 @@ class AlmaRefundController extends AlmaAdminHookController
         if ((int) Tools::getValue('refund_voucher_off') == 1) {
             $amount -= (float) Tools::getValue('order_discount_price');
         } elseif ((int) Tools::getValue('refund_voucher_off') == 2) {
-            $choosen = true;
             $amount = (float) Tools::getValue('refund_voucher_choose');
         }
 
@@ -98,13 +97,13 @@ class AlmaRefundController extends AlmaAdminHookController
             }
         }
 
-        $is_total = $amount == $order->total_paid_tax_incl ? true : false;
+        $is_total = $amount == $order->total_paid_tax_incl;
         $alma = AlmaClient::defaultInstance();
         if (!$alma) {
             return;
         }
         try {
-            $payment = $alma->payments->refund($id_payment, $is_total, almaPriceToCents($amount));
+            $alma->payments->refund($id_payment, $is_total, almaPriceToCents($amount));
         } catch (RequestError $e) {
             $msg = "[Alma] ERROR when creating refund for Order {$order->id}: {$e->getMessage()}";
             AlmaLogger::instance()->error($msg);
