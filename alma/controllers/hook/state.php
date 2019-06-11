@@ -40,20 +40,22 @@ class AlmaStateController extends AlmaAdminHookController
         if (!AlmaSettings::isRefundEnabledByState()) {
             return false;
         }
-        $id_order = $params['id_order'];
+
         $order = new Order($params['id_order']);
         $newStatus = $params['newOrderStatus'];
         if (!$order_payment = $this->getCurrentOrderPayment($order)) {
             return;
         }
+
         $id_payment = $order_payment->transaction_id;
         if ($newStatus->id == AlmaSettings::getRefundState()) {
             $alma = AlmaClient::defaultInstance();
             if (!$alma) {
                 return;
             }
+
             try {
-                $payment = $alma->payments->refund($id_payment, true);
+                $alma->payments->refund($id_payment, true);
             } catch (RequestError $e) {
                 $msg = "[Alma] ERROR when creating refund for Order {$order->id}: {$e->getMessage()}";
                 AlmaLogger::instance()->error($msg);
