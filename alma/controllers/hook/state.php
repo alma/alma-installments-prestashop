@@ -37,7 +37,7 @@ class AlmaStateController extends AlmaAdminHookController
 {
     public function run($params)
     {
-        if (!AlmaSettings::isRefundEnableByState()) {
+        if (!AlmaSettings::isRefundEnabledByState()) {
             return false;
         }
         $id_order = $params['id_order'];
@@ -47,7 +47,7 @@ class AlmaStateController extends AlmaAdminHookController
             return;
         }
         $id_payment = $order_payment->transaction_id;
-        if ($newStatus->id == AlmaSettings::getStateRefund()) {
+        if ($newStatus->id == AlmaSettings::getRefundState()) {
             $alma = AlmaClient::defaultInstance();
             if (!$alma) {
                 return;

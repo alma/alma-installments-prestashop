@@ -73,8 +73,8 @@ class AlmaGetContentController extends AlmaAdminHookController
             $idStateRefund = Tools::getValue('ALMA_STATE_REFUND');
             AlmaSettings::updateValue('ALMA_STATE_REFUND', $idStateRefund);
 
-            $isStateRfundEnable = Tools::getValue('ALMA_STATE_REFUND_ENABLE_ON', 0);
-            AlmaSettings::updateValue('ALMA_STATE_REFUND_ENABLE', $isStateRfundEnable);
+            $isStateRefundEnabled = Tools::getValue('ALMA_STATE_REFUND_ENABLED_ON', 0);
+            AlmaSettings::updateValue('ALMA_STATE_REFUND_ENABLED', $isStateRefundEnabled);
 
             $displayOrderConfirmation = Tools::getValue('ALMA_DISPLAY_ORDER_CONFIRMATION_ON') == '1';
             AlmaSettings::updateValue('ALMA_DISPLAY_ORDER_CONFIRMATION', $displayOrderConfirmation);
@@ -589,7 +589,7 @@ class AlmaGetContentController extends AlmaAdminHookController
                 ),
                 'input' => array(
                     array(
-                        'name' => 'ALMA_STATE_REFUND_ENABLE',
+                        'name' => 'ALMA_STATE_REFUND_ENABLED',
                         'label' => $this->module->l('Activate refund by change state', 'getContent'),
                         'type' => 'checkbox',
                         'values' => array(
@@ -693,8 +693,8 @@ class AlmaGetContentController extends AlmaAdminHookController
             'ALMA_NOT_ELIGIBLE_MESSAGE' => AlmaSettings::getNonEligibilityMessage(),
             'ALMA_DISPLAY_ORDER_CONFIRMATION_ON' => AlmaSettings::displayOrderConfirmation(),
             'ALMA_ACTIVATE_LOGGING_ON' => (bool) AlmaSettings::canLog(),
-            'ALMA_STATE_REFUND' => AlmaSettings::getStateRefund(),
-            'ALMA_STATE_REFUND_ENABLE_ON' => AlmaSettings::isRefundEnableByState(),
+            'ALMA_STATE_REFUND' => AlmaSettings::getRefundState(),
+            'ALMA_STATE_REFUND_ENABLED_ON' => AlmaSettings::isRefundEnabledByState(),
             '_api_only' => true,
         );
 

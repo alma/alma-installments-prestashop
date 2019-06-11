@@ -88,7 +88,7 @@ class AlmaSettings
             'ALMA_P4X_MAX_AMOUNT',
             'ALMA_PNX_MAX_N',
             'ALMA_STATE_REFUND',
-            'ALMA_STATE_REFUND_ENABLE',
+            'ALMA_STATE_REFUND_ENABLED',
         );
 
         foreach ($configKeys as $configKey) {
@@ -206,13 +206,13 @@ class AlmaSettings
         return (int) self::get("ALMA_P${n}X_MAX_AMOUNT", $default);
     }
 
-    public static function getStateRefund()
+    public static function getRefundState()
     {
         return (int) self::get('ALMA_STATE_REFUND', 7);
     }
 
-    public static function isRefundEnableByState()
+    public static function isRefundEnabledByState()
     {
-        return (bool) self::get('ALMA_STATE_REFUND_ENABLE', 0);
+        return (bool) self::get('ALMA_STATE_REFUND_ENABLED', 0);
     }
 }
