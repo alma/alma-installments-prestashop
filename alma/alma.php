@@ -189,6 +189,8 @@ class Alma extends PaymentModule
 
     private function runHookController($hookName, $params)
     {
+        $hookName = preg_replace("/[^a-zA-Z0-9]/", "", $hookName);
+
         require_once dirname(__FILE__) . '/controllers/hook/' . $hookName . '.php';
         $controller_name = $this->name . $hookName . 'Controller';
         $controller = new $controller_name($this);
