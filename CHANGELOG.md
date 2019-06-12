@@ -1,6 +1,14 @@
 Changelog
 =========
 
+v1.2.0
+------
+
+* Adds refund capability with either PrestaShop's refund feature & order state change to "refund" state (configurable)
+* Applies security suggestions from PrestaShop's security audit
+* Updates dependencies (alma-php-client)
+* Changes default values for some configurable messages
+
 v1.1.1
 ------
 
