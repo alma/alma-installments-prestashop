@@ -88,7 +88,13 @@ class Alma extends PaymentModule
             return false;
         }
 
-        $commonHooks = array('header', 'displayBackOfficeHeader', 'displayShoppingCartFooter');
+        $commonHooks = array(
+            'header',
+            'displayBackOfficeHeader',
+            'displayShoppingCartFooter',
+            'actionOrderSlipAdd',
+            'actionOrderStatusPostUpdate'
+        );
 
         if (version_compare(_PS_VERSION_, '1.7', '>=')) {
             $paymentHooks = array('paymentOptions', 'displayPaymentReturn');
@@ -212,5 +218,15 @@ class Alma extends PaymentModule
     public function hookDisplayShoppingCartFooter($params)
     {
         return $this->runHookController('displayShoppingCartFooter', $params);
+    }
+
+    public function hookActionOrderSlipAdd($params)
+    {
+        return $this->runHookController('refund', $params);
+    }
+
+    public function hookActionOrderStatusPostUpdate($params)
+    {
+        return $this->runHookController('state', $params);
     }
 }

@@ -21,7 +21,6 @@
  * @copyright 2018-2019 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
-
 use Alma\API\RequestError;
 
 if (!defined('_PS_VERSION_')) {
@@ -70,6 +69,12 @@ class AlmaGetContentController extends AlmaAdminHookController
             AlmaSettings::updateValue('ALMA_SHOW_ELIGIBILITY_MESSAGE', $showEligibility);
             AlmaSettings::updateValue('ALMA_IS_ELIGIBLE_MESSAGE', $eligibleMsg);
             AlmaSettings::updateValue('ALMA_NOT_ELIGIBLE_MESSAGE', $nonEligibleMsg);
+
+            $idStateRefund = Tools::getValue('ALMA_STATE_REFUND');
+            AlmaSettings::updateValue('ALMA_STATE_REFUND', $idStateRefund);
+
+            $isStateRefundEnabled = Tools::getValue('ALMA_STATE_REFUND_ENABLED_ON', 0);
+            AlmaSettings::updateValue('ALMA_STATE_REFUND_ENABLED', $isStateRefundEnabled);
 
             $displayOrderConfirmation = Tools::getValue('ALMA_DISPLAY_ORDER_CONFIRMATION_ON') == '1';
             AlmaSettings::updateValue('ALMA_DISPLAY_ORDER_CONFIRMATION', $displayOrderConfirmation);
@@ -576,6 +581,54 @@ class AlmaGetContentController extends AlmaAdminHookController
             ),
         );
 
+        $refundStateForm = array(
+            'form' => array(
+                'legend' => array(
+                    'title' => $this->module->l('Refund with state change', 'getContent'),
+                    'image' => $iconPath,
+                ),
+                'input' => array(
+                    array(
+                        'name' => null,
+                        'label' => null,
+                        'type' => 'html',
+                        // PrestaShop won't detect the string if the call to `l` is multiline
+                        'html_content' => $this->module->l('If you usually refund orders by changing their state, activate this option and choose the state you want to use to trigger refunds on Alma payments', 'getContent'),
+                    ),
+                    array(
+                        'name' => 'ALMA_STATE_REFUND_ENABLED',
+                        'label' => $this->module->l('Activate refund by change state', 'getContent'),
+                        'type' => 'checkbox',
+                        'values' => array(
+                            'id' => 'id',
+                            'name' => 'label',
+                            'query' => array(
+                                array(
+                                    'id' => 'ON',
+                                    'val' => true,
+                                    'label' => '',
+                                ),
+                            ),
+                        ),
+                    ),
+                    array(
+                        'name' => 'ALMA_STATE_REFUND',
+                        'label' => $this->module->l('Refund state order', 'getContent'),
+                        // PrestaShop won't detect the string if the call to `l` is multiline
+                        'desc' => $this->module->l('Your order state to sync refund with Alma', 'getContent'),
+                        'type' => 'select',
+                        'required' => true,
+                        'options' => array(
+                            'query' => OrderState::getOrderStates($this->context->cookie->id_lang),
+                            'id' => 'id_order_state',
+                            'name' => 'name',
+                        ),
+                    ),
+                ),
+                'submit' => array('title' => $this->module->l('Save'), 'class' => 'btn btn-default pull-right'),
+            ),
+        );
+
         $debugForm = array(
             'form' => array(
                 'legend' => array(
@@ -612,7 +665,7 @@ class AlmaGetContentController extends AlmaAdminHookController
             );
             $fieldsForms = array($apiConfigForm, $debugForm);
         } else {
-            $fieldsForms = array($cartEligibilityForm, $paymentButtonForm);
+            $fieldsForms = array($cartEligibilityForm, $paymentButtonForm, $refundStateForm);
 
             if ($pnxConfigForm) {
                 $fieldsForms[] = $pnxConfigForm;
@@ -647,6 +700,8 @@ class AlmaGetContentController extends AlmaAdminHookController
             'ALMA_NOT_ELIGIBLE_MESSAGE' => AlmaSettings::getNonEligibilityMessage(),
             'ALMA_DISPLAY_ORDER_CONFIRMATION_ON' => AlmaSettings::displayOrderConfirmation(),
             'ALMA_ACTIVATE_LOGGING_ON' => (bool) AlmaSettings::canLog(),
+            'ALMA_STATE_REFUND' => AlmaSettings::getRefundState(),
+            'ALMA_STATE_REFUND_ENABLED_ON' => AlmaSettings::isRefundEnabledByState(),
             '_api_only' => true,
         );
 

@@ -21,7 +21,6 @@
  * @copyright 2018-2019 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
-
 if (!defined('_PS_VERSION_')) {
     exit;
 }
@@ -88,6 +87,8 @@ class AlmaSettings
             'ALMA_P3X_MAX_AMOUNT',
             'ALMA_P4X_MAX_AMOUNT',
             'ALMA_PNX_MAX_N',
+            'ALMA_STATE_REFUND',
+            'ALMA_STATE_REFUND_ENABLED',
         );
 
         foreach ($configKeys as $configKey) {
@@ -203,5 +204,15 @@ class AlmaSettings
         $default = $merchant ? $merchant->maximum_purchase_amount : 100000;
 
         return (int) self::get("ALMA_P${n}X_MAX_AMOUNT", $default);
+    }
+
+    public static function getRefundState()
+    {
+        return (int) self::get('ALMA_STATE_REFUND', 7);
+    }
+
+    public static function isRefundEnabledByState()
+    {
+        return (bool) self::get('ALMA_STATE_REFUND_ENABLED', 0);
     }
 }
