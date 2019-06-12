@@ -24,12 +24,12 @@
 <div id="alma-pnx-tabs" style="display: none;">
     <ul class="nav nav-tabs">
         {foreach $tabs as $tabId => $title}
-            <li {if $active == $tabId}class="active"{/if}><a href="#{$tabId}" data-toggle="tab">{$title}</a></li>
+            <li {if $active == $tabId}class="active"{/if}><a href="#{$tabId|escape:'htmlall':'UTF-8'}" data-toggle="tab">{$title|escape:'htmlall':'UTF-8'}</a></li>
         {/foreach}
     </ul>
     <div class="tab-content panel">
         {foreach $tabs as $tabId => $title}
-            <div id="{$tabId}" class="tab-pane{if $active == $tabId} active{/if}"></div>
+            <div id="{$tabId|escape:'htmlall':'UTF-8'}" class="tab-pane{if $active == $tabId} active{/if}"></div>
         {/foreach}
     </div>
 </div>
@@ -41,7 +41,7 @@
             $tabs.children().prependTo($tabs.closest(".form-wrapper"));
 
             {foreach $tabs as $tabId => $title}
-                $(".{$tabId}-content").appendTo("#{$tabId}");
+                $(".{$tabId|escape:'htmlall':'UTF-8'}-content").appendTo("#{$tabId|escape:'htmlall':'UTF-8'}");
             {/foreach}
         });
     })(jQuery);

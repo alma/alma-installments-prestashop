@@ -22,7 +22,7 @@
  *}
 
 <div style="margin: 15px 0">
-    <img src="{$logo}"
+    <img src="{$logo|escape:'htmlall':'UTF-8'}"
          style="width: auto !important; height: 25px !important; border: none !important; vertical-align: middle"
-         alt="Alma"> <span style="text-transform: initial">{$eligibility_msg}</span>
+         alt="Alma"> <span style="text-transform: initial">{$eligibility_msg|escape:'htmlall':'UTF-8'}</span>
 </div>

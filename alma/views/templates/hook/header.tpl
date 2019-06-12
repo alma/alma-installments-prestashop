@@ -24,6 +24,6 @@
 {if $alma_error}
     <div class="alma-error">
         <div class="alma-error--close-btn">×</div>
-        {$alma_error}
+        {$alma_error|escape:'htmlall':'UTF-8'}
     </div>
 {/if}

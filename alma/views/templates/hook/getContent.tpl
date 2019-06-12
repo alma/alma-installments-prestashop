@@ -22,7 +22,7 @@
  *}
 
 {if isset($validation_error)}
-    <div class="{$validation_error_classes}">
+    <div class="{$validation_error_classes|escape:'htmlall':'UTF-8'}">
         {if $validation_error == 'missing_required_setting'}
             {l s='Please fill in all required settings' mod='alma'}
         {elseif $validation_error == 'alma_client_null'}
@@ -44,7 +44,7 @@
         {elseif $validation_error == 'api_request_error'}
             {l s='API error:' mod='alma'}
             <br>
-            {$error}
+            {$error|escape:'htmlall':'UTF-8'}
         {elseif $validation_error == 'inactive_live_account'}
             {if isset($level) && $level == 'warning'}
                 {l s='Your Alma account is not activated yet. You won\'t be able to use Alma in Live mode.' mod='alma'}
@@ -80,12 +80,12 @@
             <br>
             {l s='%d-installment plan has no overlaps with other plans' sprintf=$n mod='alma'}
         {else}
-            {$validation_error}
+            {$validation_error|escape:'htmlall':'UTF-8'}
         {/if}
     </div>
 
 {elseif isset($tip)}
-    <div class="{$tip_classes}">
+    <div class="{$tip_classes|escape:'htmlall':'UTF-8'}">
         {l s='Thanks for installing Alma!' mod='alma'}
         <br>
         {l s='You must start by filling in your API keys.' mod='alma'}
@@ -95,7 +95,7 @@
         </a>
     </div>
 {else}
-    <div class="{$success_classes}">
+    <div class="{$success_classes|escape:'htmlall':'UTF-8'}">
         {l s='Settings successfully updated' mod='alma'}
     </div>
 {/if}

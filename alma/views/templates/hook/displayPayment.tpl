@@ -27,7 +27,7 @@
             {if $disabled}
                 <a href="#" onclick="return false;" class="disabled alma-button">
                     <span class="alma-button--logo">
-                        <img src="{$logo}" alt="Alma">
+                        <img src="{$logo|escape:'htmlall':'UTF-8'}" alt="Alma">
                     </span>
                     <span class="alma-button--text">
                         <span class="alma-button--description">
@@ -42,12 +42,12 @@
             {else}
                 <a href="{$link->getModuleLink('alma', 'payment')|escape:'html'}" class="alma-button">
                     <span class="alma-button--logo">
-                        <img src="{$logo}" alt="Alma">
+                        <img src="{$logo|escape:'htmlall':'UTF-8'}" alt="Alma">
                     </span>
                     <span class="alma-button--text">
-                        <span class="alma-button--title">{$title}</span>
+                        <span class="alma-button--title">{$title|escape:'htmlall':'UTF-8'}</span>
                         <br>
-                        <span class="alma-button--description">{$desc}</span>
+                        <span class="alma-button--description">{$desc|escape:'htmlall':'UTF-8'}</span>
                     </span>
                 </a>
             {/if}

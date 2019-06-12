@@ -22,5 +22,5 @@
  *}
 
 <p>
-    {$desc}
+    {$desc|escape:'htmlall':'UTF-8'}
 </p>
