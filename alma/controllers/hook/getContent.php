@@ -581,13 +581,20 @@ class AlmaGetContentController extends AlmaAdminHookController
             ),
         );
 
-        $stateForm = array(
+        $refundStateForm = array(
             'form' => array(
                 'legend' => array(
-                    'title' => $this->module->l('States', 'getContent'),
+                    'title' => $this->module->l('Refund with state change', 'getContent'),
                     'image' => $iconPath,
                 ),
                 'input' => array(
+                    array(
+                        'name' => null,
+                        'label' => null,
+                        'type' => 'html',
+                        // PrestaShop won't detect the string if the call to `l` is multiline
+                        'html_content' => $this->module->l('If you usually refund orders by changing their state, activate this option and choose the state you want to use to trigger refunds on Alma payments', 'getContent'),
+                    ),
                     array(
                         'name' => 'ALMA_STATE_REFUND_ENABLED',
                         'label' => $this->module->l('Activate refund by change state', 'getContent'),
@@ -658,13 +665,13 @@ class AlmaGetContentController extends AlmaAdminHookController
             );
             $fieldsForms = array($apiConfigForm, $debugForm);
         } else {
-            $fieldsForms = array($cartEligibilityForm, $paymentButtonForm);
+            $fieldsForms = array($cartEligibilityForm, $paymentButtonForm, $refundStateForm);
 
             if ($pnxConfigForm) {
                 $fieldsForms[] = $pnxConfigForm;
             }
 
-            $fieldsForms = array_merge($fieldsForms, array($orderConfirmationForm, $apiConfigForm, $stateForm, $debugForm));
+            $fieldsForms = array_merge($fieldsForms, array($orderConfirmationForm, $apiConfigForm, $debugForm));
         }
 
         $helper = new HelperForm();
