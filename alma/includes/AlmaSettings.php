@@ -146,6 +146,8 @@ class AlmaSettings
 
     public static function getEligibilityMessage()
     {
+        // Allow PrestaShop's translation feature to detect those strings
+        // $this->l('Your cart is eligible for monthly installments.', 'almasettings');
         $default = self::l('Your cart is eligible for monthly installments.');
 
         return self::get('ALMA_IS_ELIGIBLE_MESSAGE', $default);
@@ -153,6 +155,8 @@ class AlmaSettings
 
     public static function getNonEligibilityMessage()
     {
+        // Allow PrestaShop's translation feature to detect those strings
+        // $this->l('Your cart is not eligible for monthly installments.', 'almasettings');
         $default = self::l('Your cart is not eligible for monthly installments.');
 
         return self::get('ALMA_NOT_ELIGIBLE_MESSAGE', $default);
@@ -165,14 +169,18 @@ class AlmaSettings
 
     public static function getPaymentButtonTitle()
     {
-        $default = self::l('Monthly Installments with Alma');
+        // Allow PrestaShop's translation feature to detect those strings
+        // $this->l('Pay in %d installments', 'almasettings');
+        $default = self::l('Pay in %d installments');
 
         return self::get('ALMA_PAYMENT_BUTTON_TITLE', $default);
     }
 
     public static function getPaymentButtonDescription()
     {
-        $default = self::l('Pay in 3 monthly installments with your credit card.');
+        // Allow PrestaShop's translation feature to detect those strings
+        // $this->l('Pay in %d monthly installments with your credit card.', 'almasettings');
+        $default = self::l('Pay in %d monthly installments with your credit card.');
 
         return self::get('ALMA_PAYMENT_BUTTON_DESC', $default);
     }
