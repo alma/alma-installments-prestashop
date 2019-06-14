@@ -91,7 +91,9 @@ class AlmaGetContentController extends AlmaAdminHookController
                         $min = almaPriceToCents(Tools::getValue("ALMA_P${n}X_MIN_AMOUNT"));
                         $max = almaPriceToCents(Tools::getValue("ALMA_P${n}X_MAX_AMOUNT"));
 
-                        if (!($min >= $merchant->minimum_purchase_amount &&
+                        $enablePlan = Tools::getValue("ALMA_P${n}X_ENABLED_ON") == '1';
+
+                        if ($enablePlan && !($min >= $merchant->minimum_purchase_amount &&
                             $min <= min($max, $merchant->maximum_purchase_amount))) {
                             $this->context->smarty->assign(array(
                                 'validation_error' => 'pnx_min_amount',
@@ -103,7 +105,7 @@ class AlmaGetContentController extends AlmaAdminHookController
                             return $this->module->display($this->module->file, 'getContent.tpl');
                         }
 
-                        if (!($max >= $min && $max <= $merchant->maximum_purchase_amount)) {
+                        if ($enablePlan && !($max >= $min && $max <= $merchant->maximum_purchase_amount)) {
                             $this->context->smarty->assign(array(
                                 'validation_error' => 'pnx_max_amount',
                                 'n' => $n,
@@ -115,42 +117,45 @@ class AlmaGetContentController extends AlmaAdminHookController
                         }
                     }
 
-                    // Validate that there's no purchase amount gaps between the different plans
-                    // i.e. that there isn't a purchase amount too high to be eligible for some plans but too low to be
-                    // eligible for the others
                     $maxN = 0;
                     foreach ($merchant->fee_plans as $feePlan) {
                         $n = $feePlan['installments_count'];
                         $min = Tools::getValue("ALMA_P${n}X_MIN_AMOUNT");
                         $max = Tools::getValue("ALMA_P${n}X_MAX_AMOUNT");
 
-                        $overlap = false;
-                        foreach ($merchant->fee_plans as $other_plan) {
-                            $otherN = $other_plan['installments_count'];
-                            if ($n == $otherN) {
-                                continue;
-                            }
-
-                            $otherMin = Tools::getValue("ALMA_P${otherN}X_MIN_AMOUNT");
-                            $otherMax = Tools::getValue("ALMA_P${otherN}X_MAX_AMOUNT");
-
-                            if (($min >= $otherMin && $min <= $otherMax) || ($max >= $otherMin && $max <= $otherMax)) {
-                                $overlap = true;
-                                break;
-                            }
-                        }
-
-                        if (!$overlap) {
-                            $this->context->smarty->assign(array(
-                                'validation_error' => 'pnx_coverage_gap',
-                                'n' => $n,
-                            ));
-
-                            return $this->module->display($this->module->file, 'getContent.tpl');
-                        }
-
                         $enablePlan = Tools::getValue("ALMA_P${n}X_ENABLED_ON") == '1';
-                        AlmaSettings::updateValue("ALMA_P${n}X_ENABLED", $enablePlan);
+                        AlmaSettings::updateValue("ALMA_P${n}X_ENABLED", $enablePlan ? '1' : '0');
+
+                        // Validate that there's no purchase amount gaps between the different plans
+                        // i.e. that there isn't a purchase amount too high to be eligible for some plans but too low
+                        // to be eligible for the others
+                        if ($enablePlan) {
+                            $overlap = false;
+                            foreach ($merchant->fee_plans as $other_plan) {
+                                $otherN = $other_plan['installments_count'];
+                                if ($n == $otherN) {
+                                    continue;
+                                }
+
+                                $otherMin = Tools::getValue("ALMA_P${otherN}X_MIN_AMOUNT");
+                                $otherMax = Tools::getValue("ALMA_P${otherN}X_MAX_AMOUNT");
+
+                                if (($min >= $otherMin && $min <= $otherMax) || ($max >= $otherMin && $max <= $otherMax)) {
+                                    $overlap = true;
+                                    break;
+                                }
+                            }
+
+                            if (!$overlap) {
+                                $this->context->smarty->assign(array(
+                                    'validation_error' => 'pnx_coverage_gap',
+                                    'n' => $n,
+                                ));
+
+                                return $this->module->display($this->module->file, 'getContent.tpl');
+                            }
+                        }
+
                         AlmaSettings::updateValue(
                             "ALMA_P${n}X_MIN_AMOUNT",
                             almaPriceToCents(Tools::getValue("ALMA_P${n}X_MIN_AMOUNT"))
