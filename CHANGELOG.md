@@ -1,6 +1,12 @@
 Changelog
 =========
 
+v1.2.1
+------
+
+* Fixes boundary checks on installment plans that triggered errors on disabled plans
+* Fixes p3x payment option remaining enabled even when unchecked in the module configuration
+
 v1.2.0
 ------
 
