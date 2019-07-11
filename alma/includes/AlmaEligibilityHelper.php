@@ -26,16 +26,61 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
+include_once _PS_MODULE_DIR_ . 'alma/includes/AlmaSettings.php';
 include_once _PS_MODULE_DIR_ . 'alma/includes/AlmaLogger.php';
 include_once _PS_MODULE_DIR_ . 'alma/includes/AlmaClient.php';
 include_once _PS_MODULE_DIR_ . 'alma/includes/PaymentData.php';
+include_once _PS_MODULE_DIR_ . 'alma/includes/functions.php';
 
 use Alma\API\RequestError;
 
 class AlmaEligibilityHelper
 {
+    private static function checkPnXBounds($cart) {
+        $purchaseAmount = almaPriceToCents((float) $cart->getordertotal(true, Cart::BOTH));
+        $globalMin = PHP_INT_MAX;
+        $globalMax = 0;
+
+        $n = 1;
+        while ($n < AlmaSettings::installmentPlansMaxN()) {
+            ++$n;
+
+            if (!AlmaSettings::isInstallmentPlanEnabled($n)) {
+                continue;
+            } else {
+                $min = AlmaSettings::installmentPlanMinAmount($n);
+                $globalMin = min($min, $globalMin);
+
+                $max = AlmaSettings::installmentPlanMaxAmount($n);
+                $globalMax = max($max, $globalMax);
+
+                if ($purchaseAmount >= $min && $purchaseAmount < $max) {
+                    return true;
+                }
+            }
+        }
+
+        return array($globalMin, $globalMax);
+    }
+
     public static function eligibilityCheck($context)
     {
+        $pnxBounds = self::checkPnXBounds($context->cart);
+        // If we got an array, then the cart is not eligible because not within the returned bounds
+        if (is_array($pnxBounds)) {
+            // Mock Alma's Eligibility object
+            $eligibility = new stdClass();
+            $eligibility->isEligible = false;
+            $eligibility->constraints = array(
+                "purchase_amount" => array(
+                    "minimum" => $pnxBounds[0],
+                    "maximum" => $pnxBounds[1]
+                )
+            );
+
+            return $eligibility;
+        }
+
         $paymentData = PaymentData::dataFromCart($context->cart, $context);
         if (!$paymentData) {
             AlmaLogger::instance()->error('Cannot check cart eligibility: no data extracted from cart');
