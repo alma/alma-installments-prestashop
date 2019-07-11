@@ -30,6 +30,7 @@ include_once _PS_MODULE_DIR_ . 'alma/includes/AlmaProtectedHookController.php';
 include_once _PS_MODULE_DIR_ . 'alma/includes/AlmaClient.php';
 include_once _PS_MODULE_DIR_ . 'alma/includes/AlmaSettings.php';
 include_once _PS_MODULE_DIR_ . 'alma/includes/AlmaEligibilityHelper.php';
+include_once _PS_MODULE_DIR_ . 'alma/includes/functions.php';
 
 class AlmaDisplayPaymentController extends AlmaProtectedHookController
 {
