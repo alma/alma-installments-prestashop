@@ -27,7 +27,7 @@
             <p class="payment_module">
                 <a href="#" onclick="return false;" class="disabled alma-button">
                     <span class="alma-button--logo">
-                        <img src="{$logo}" alt="Alma">
+                        <img src="{$logo|escape:'htmlall':'UTF-8'}" alt="Alma">
                     </span>
                     <span class="alma-button--text">
                         <span class="alma-button--description">
@@ -49,13 +49,13 @@
                 <p class="payment_module">
                     <a href="{$option.link}" class="alma-button">
                         <span class="alma-button--logo">
-                            <img src="{$logo}" alt="Alma">
+                            <img src="{$logo|escape:'htmlall':'UTF-8'}" alt="Alma">
                         </span>
                         <span class="alma-button--text">
-                            <span class="alma-button--title">{$option.text}</span>
+                            <span class="alma-button--title">{$option.text|escape:'htmlall':'UTF-8'}</span>
                             {if $option.desc}
                                 <br>
-                                <span class="alma-button--description">{$option.desc}</span>
+                                <span class="alma-button--description">{$option.desc|escape:'htmlall':'UTF-8'}</span>
                             {/if}
                         </span>
                     </a>
