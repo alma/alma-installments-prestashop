@@ -1,0 +1,33 @@
+.nav-tabs {
+    border-bottom: 1px solid #ccced7;
+    overflow: auto;
+}
+.nav-tabs > li {
+    float: left;
+    margin-bottom: -1px;
+    padding: 5px;
+}
+.nav-tabs > li > a {
+    margin-right: 2px;
+    line-height: 1.42857;
+    border: 1px solid transparent;
+    border-radius: 3px 3px 0 0;
+    padding: 5px;
+}
+.nav-tabs > li > a:hover {
+    border-color:#eee #eee #ddd;
+}
+.nav-tabs > li.active > a,
+.nav-tabs > li.active > a:hover,
+.nav-tabs > li.active > a:focus {
+    color: #555;
+    border: 1px solid #ccced7;
+    border-bottom-color: transparent;
+    cursor: default;
+}
+.tab-pane {
+    display: none;
+}
+.tab-pane.active {
+    display: block;
+}

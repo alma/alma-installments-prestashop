@@ -21,7 +21,7 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  *}
 
-<div id="alma-pnx-tabs" style="display: none;">
+<div id="alma-pnx-tabs">
     <ul class="nav nav-tabs">
         {foreach $tabs as $tabId => $title}
             <li {if $active == $tabId}class="active"{/if}><a href="#{$tabId|escape:'htmlall':'UTF-8'}" data-toggle="tab">{$title|escape:'htmlall':'UTF-8'}</a></li>
@@ -37,12 +37,28 @@
 <script type="text/javascript">
     (function($) {
         $(function() {
+            {if isset($tabs) && $tabs|count}
+                if (typeof helper_tabs == 'undefined') {
+                    var helper_tabs = {$tabs|json_encode};
+                    var unique_field_id = '';
+                }
+            {/if}
             var $tabs = $("#alma-pnx-tabs");
             $tabs.children().prependTo($tabs.closest(".form-wrapper"));
 
             {foreach $tabs as $tabId => $title}
                 $(".{$tabId|escape:'htmlall':'UTF-8'}-content").appendTo("#{$tabId|escape:'htmlall':'UTF-8'}");
             {/foreach}
+
+            {if $forceTabs}
+                $('.nav-tabs li a').on('click', function() {
+                    var target = $(this).attr('href');
+                    $('.tab-pane').hide();
+                    $('.nav-tabs li').removeClass('active');
+                    $(target).show();
+                    $(this).parent().addClass('active');
+                })
+            {/if}
         });
     })(jQuery);
 </script>

@@ -21,13 +21,13 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  *}
 
-<div class="row">
-    <div class="col-xs-12">
-        <p class="payment_module">
-            {if $disabled}
+{if $disabled}
+    <div class="row">
+        <div class="col-xs-12">
+            <p class="payment_module">
                 <a href="#" onclick="return false;" class="disabled alma-button">
                     <span class="alma-button--logo">
-                        <img src="{$logo|escape:'htmlall':'UTF-8'}" alt="Alma">
+                        <img src="{$logo}" alt="Alma">
                     </span>
                     <span class="alma-button--text">
                         <span class="alma-button--description">
@@ -39,18 +39,28 @@
                         </span>
                     </span>
                 </a>
-            {else}
-                <a href="{$link->getModuleLink('alma', 'payment')|escape:'html'}" class="alma-button">
-                    <span class="alma-button--logo">
-                        <img src="{$logo|escape:'htmlall':'UTF-8'}" alt="Alma">
-                    </span>
-                    <span class="alma-button--text">
-                        <span class="alma-button--title">{$title|escape:'htmlall':'UTF-8'}</span>
-                        <br>
-                        <span class="alma-button--description">{$desc|escape:'htmlall':'UTF-8'}</span>
-                    </span>
-                </a>
-            {/if}
-        </p>
+            </p>
+        </div>
     </div>
-</div>
+{else}
+    {foreach from=$options item=option}
+        <div class="row">
+            <div class="col-xs-12">
+                <p class="payment_module">
+                    <a href="{$option.link}" class="alma-button">
+                        <span class="alma-button--logo">
+                            <img src="{$logo}" alt="Alma">
+                        </span>
+                        <span class="alma-button--text">
+                            <span class="alma-button--title">{$option.text}</span>
+                            {if $option.desc}
+                                <br>
+                                <span class="alma-button--description">{$option.desc}</span>
+                            {/if}
+                        </span>
+                    </a>
+                 </p>
+            </div>
+        </div>
+    {/foreach}
+{/if}
