@@ -30,6 +30,7 @@ include_once _PS_MODULE_DIR_ . 'alma/includes/AlmaProtectedHookController.php';
 include_once _PS_MODULE_DIR_ . 'alma/includes/AlmaClient.php';
 include_once _PS_MODULE_DIR_ . 'alma/includes/AlmaSettings.php';
 include_once _PS_MODULE_DIR_ . 'alma/includes/AlmaEligibilityHelper.php';
+include_once _PS_MODULE_DIR_ . 'alma/includes/functions.php';
 
 class AlmaDisplayPaymentController extends AlmaProtectedHookController
 {
@@ -59,6 +60,37 @@ class AlmaDisplayPaymentController extends AlmaProtectedHookController
             $logo = $this->module->getPathUri() . '/views/img/alma_payment_logos.svg';
         }
 
+        $cart = $params['cart'];
+        $purchaseAmount = almaPriceToCents((float) $cart->getordertotal(true, Cart::BOTH));
+        $options = array();
+        $n = 1;
+        while ($n < AlmaSettings::installmentPlansMaxN()) {
+            ++$n;
+
+            if (!AlmaSettings::isInstallmentPlanEnabled($n)) {
+                continue;
+            } else {
+                $min = AlmaSettings::installmentPlanMinAmount($n);
+                $max = AlmaSettings::installmentPlanMaxAmount($n);
+
+                if ($purchaseAmount < $min
+                    || $purchaseAmount >= $max
+                ) {
+                    continue;
+                }
+            }
+
+            $paymentOption = [
+                'text' => sprintf(AlmaSettings::getPaymentButtonTitle(), $n),
+                'link' => $this->context->link->getModuleLink($this->module->name, 'payment', array('n' => $n), true),
+            ];
+            if (!empty(AlmaSettings::getPaymentButtonDescription())) {
+                $paymentOption['desc'] = sprintf(AlmaSettings::getPaymentButtonDescription(), $n);
+            }
+
+            $options[] = $paymentOption;
+        }
+
         $cart = $this->context->cart;
         $this->context->smarty->assign(
             array(
@@ -68,6 +100,7 @@ class AlmaDisplayPaymentController extends AlmaProtectedHookController
                 'title' => sprintf(AlmaSettings::getPaymentButtonTitle(), 3),
                 'desc' => sprintf(AlmaSettings::getPaymentButtonDescription(), 3),
                 'order_total' => (float) $cart->getOrderTotal(true, Cart::BOTH),
+                'options' => $options,
             )
         );
 

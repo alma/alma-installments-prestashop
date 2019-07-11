@@ -21,6 +21,7 @@
  * @copyright 2018-2019 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
+
 use Alma\API\RequestError;
 
 if (!defined('_PS_VERSION_')) {
@@ -82,96 +83,93 @@ class AlmaGetContentController extends AlmaAdminHookController
             $activateLogging = Tools::getValue('ALMA_ACTIVATE_LOGGING_ON') == '1';
             AlmaSettings::updateValue('ALMA_ACTIVATE_LOGGING', $activateLogging);
 
-            // Hybrid pNx is available on PrestaShop 1.7 only at the moment
-            if (version_compare(_PS_VERSION_, '1.7', '>=')) {
-                if ($merchant) {
-                    // First validate that plans boundaries are correctly set
-                    foreach ($merchant->fee_plans as $feePlan) {
-                        $n = $feePlan['installments_count'];
-                        $min = almaPriceToCents(Tools::getValue("ALMA_P${n}X_MIN_AMOUNT"));
-                        $max = almaPriceToCents(Tools::getValue("ALMA_P${n}X_MAX_AMOUNT"));
+            if ($merchant) {
+                // First validate that plans boundaries are correctly set
+                foreach ($merchant->fee_plans as $feePlan) {
+                    $n = $feePlan['installments_count'];
+                    $min = almaPriceToCents(Tools::getValue("ALMA_P${n}X_MIN_AMOUNT"));
+                    $max = almaPriceToCents(Tools::getValue("ALMA_P${n}X_MAX_AMOUNT"));
 
-                        $enablePlan = Tools::getValue("ALMA_P${n}X_ENABLED_ON") == '1';
+                    $enablePlan = Tools::getValue("ALMA_P${n}X_ENABLED_ON") == '1';
 
-                        if ($enablePlan && !($min >= $merchant->minimum_purchase_amount &&
+                    if ($enablePlan && !($min >= $merchant->minimum_purchase_amount &&
                             $min <= min($max, $merchant->maximum_purchase_amount))) {
-                            $this->context->smarty->assign(array(
-                                'validation_error' => 'pnx_min_amount',
-                                'n' => $n,
-                                'min' => almaPriceFromCents($merchant->minimum_purchase_amount),
-                                'max' => almaPriceFromCents(min($max, $merchant->maximum_purchase_amount)),
-                            ));
+                        $this->context->smarty->assign(array(
+                            'validation_error' => 'pnx_min_amount',
+                            'n' => $n,
+                            'min' => almaPriceFromCents($merchant->minimum_purchase_amount),
+                            'max' => almaPriceFromCents(min($max, $merchant->maximum_purchase_amount)),
+                        ));
 
-                            return $this->module->display($this->module->file, 'getContent.tpl');
-                        }
-
-                        if ($enablePlan && !($max >= $min && $max <= $merchant->maximum_purchase_amount)) {
-                            $this->context->smarty->assign(array(
-                                'validation_error' => 'pnx_max_amount',
-                                'n' => $n,
-                                'min' => almaPriceFromCents($min),
-                                'max' => almaPriceFromCents($merchant->maximum_purchase_amount),
-                            ));
-
-                            return $this->module->display($this->module->file, 'getContent.tpl');
-                        }
+                        return $this->module->display($this->module->file, 'getContent.tpl');
                     }
 
-                    $maxN = 0;
-                    foreach ($merchant->fee_plans as $feePlan) {
-                        $n = $feePlan['installments_count'];
-                        $min = Tools::getValue("ALMA_P${n}X_MIN_AMOUNT");
-                        $max = Tools::getValue("ALMA_P${n}X_MAX_AMOUNT");
+                    if ($enablePlan && !($max >= $min && $max <= $merchant->maximum_purchase_amount)) {
+                        $this->context->smarty->assign(array(
+                            'validation_error' => 'pnx_max_amount',
+                            'n' => $n,
+                            'min' => almaPriceFromCents($min),
+                            'max' => almaPriceFromCents($merchant->maximum_purchase_amount),
+                        ));
 
-                        $enablePlan = Tools::getValue("ALMA_P${n}X_ENABLED_ON") == '1';
-                        AlmaSettings::updateValue("ALMA_P${n}X_ENABLED", $enablePlan ? '1' : '0');
-
-                        // Validate that there's no purchase amount gaps between the different plans
-                        // i.e. that there isn't a purchase amount too high to be eligible for some plans but too low
-                        // to be eligible for the others
-                        if ($enablePlan) {
-                            $overlap = false;
-                            foreach ($merchant->fee_plans as $other_plan) {
-                                $otherN = $other_plan['installments_count'];
-                                if ($n == $otherN) {
-                                    continue;
-                                }
-
-                                $otherMin = Tools::getValue("ALMA_P${otherN}X_MIN_AMOUNT");
-                                $otherMax = Tools::getValue("ALMA_P${otherN}X_MAX_AMOUNT");
-
-                                if (($min >= $otherMin && $min <= $otherMax) || ($max >= $otherMin && $max <= $otherMax)) {
-                                    $overlap = true;
-                                    break;
-                                }
-                            }
-
-                            if (!$overlap) {
-                                $this->context->smarty->assign(array(
-                                    'validation_error' => 'pnx_coverage_gap',
-                                    'n' => $n,
-                                ));
-
-                                return $this->module->display($this->module->file, 'getContent.tpl');
-                            }
-                        }
-
-                        AlmaSettings::updateValue(
-                            "ALMA_P${n}X_MIN_AMOUNT",
-                            almaPriceToCents(Tools::getValue("ALMA_P${n}X_MIN_AMOUNT"))
-                        );
-                        AlmaSettings::updateValue(
-                            "ALMA_P${n}X_MAX_AMOUNT",
-                            almaPriceToCents(Tools::getValue("ALMA_P${n}X_MAX_AMOUNT"))
-                        );
-
-                        if ($n > $maxN && $enablePlan) {
-                            $maxN = $n;
-                        }
+                        return $this->module->display($this->module->file, 'getContent.tpl');
                     }
-
-                    AlmaSettings::updateValue('ALMA_PNX_MAX_N', $maxN);
                 }
+
+                $maxN = 0;
+                foreach ($merchant->fee_plans as $feePlan) {
+                    $n = $feePlan['installments_count'];
+                    $min = Tools::getValue("ALMA_P${n}X_MIN_AMOUNT");
+                    $max = Tools::getValue("ALMA_P${n}X_MAX_AMOUNT");
+
+                    $enablePlan = Tools::getValue("ALMA_P${n}X_ENABLED_ON") == '1';
+                    AlmaSettings::updateValue("ALMA_P${n}X_ENABLED", $enablePlan ? '1' : '0');
+
+                    // Validate that there's no purchase amount gaps between the different plans
+                    // i.e. that there isn't a purchase amount too high to be eligible for some plans but too low
+                    // to be eligible for the others
+                    if ($enablePlan) {
+                        $overlap = false;
+                        foreach ($merchant->fee_plans as $other_plan) {
+                            $otherN = $other_plan['installments_count'];
+                            if ($n == $otherN) {
+                                continue;
+                            }
+
+                            $otherMin = Tools::getValue("ALMA_P${otherN}X_MIN_AMOUNT");
+                            $otherMax = Tools::getValue("ALMA_P${otherN}X_MAX_AMOUNT");
+
+                            if (($min >= $otherMin && $min <= $otherMax) || ($max >= $otherMin && $max <= $otherMax)) {
+                                $overlap = true;
+                                break;
+                            }
+                        }
+
+                        if (!$overlap) {
+                            $this->context->smarty->assign(array(
+                                'validation_error' => 'pnx_coverage_gap',
+                                'n' => $n,
+                            ));
+
+                            return $this->module->display($this->module->file, 'getContent.tpl');
+                        }
+                    }
+
+                    AlmaSettings::updateValue(
+                        "ALMA_P${n}X_MIN_AMOUNT",
+                        almaPriceToCents(Tools::getValue("ALMA_P${n}X_MIN_AMOUNT"))
+                    );
+                    AlmaSettings::updateValue(
+                        "ALMA_P${n}X_MAX_AMOUNT",
+                        almaPriceToCents(Tools::getValue("ALMA_P${n}X_MAX_AMOUNT"))
+                    );
+
+                    if ($n > $maxN && $enablePlan) {
+                        $maxN = $n;
+                    }
+                }
+
+                AlmaSettings::updateValue('ALMA_PNX_MAX_N', $maxN);
             }
         }
 
@@ -339,108 +337,109 @@ class AlmaGetContentController extends AlmaAdminHookController
             ),
         );
 
-        // Hybrid pNx is available on PrestaShop 1.7 only at the moment
         $pnxConfigForm = null;
-        if (version_compare(_PS_VERSION_, '1.7', '>=')) {
-            if ($merchant) {
-                $pnxConfigForm = array(
-                    'form' => array(
-                        'legend' => array(
-                            'title' => $this->module->l('Installments plans', 'getContent'),
-                            'image' => $iconPath,
+        if ($merchant) {
+            $pnxConfigForm = array(
+                'form' => array(
+                    'legend' => array(
+                        'title' => $this->module->l('Installments plans', 'getContent'),
+                        'image' => $iconPath,
+                    ),
+                    'input' => array(),
+                    'submit' => array('title' => $this->module->l('Save'), 'class' => 'btn btn-default pull-right'),
+                ),
+            );
+
+            $pnxTabs = array();
+            $activeTab = null;
+
+            foreach ($merchant->fee_plans as $feePlan) {
+                $n = $feePlan['installments_count'];
+                $tabId = "p${n}x";
+                $tabTitle = sprintf($this->module->l('%d-installment payments', 'getContent'), $n);
+
+                if (AlmaSettings::isInstallmentPlanEnabled($n)) {
+                    $pnxTabs[$tabId] = '✅ ' . $tabTitle;
+                    $activeTab = $activeTab ?: $tabId;
+                } else {
+                    $pnxTabs[$tabId] = '❌ ' . $tabTitle;
+                }
+
+                $minAmount = (int)almaPriceFromCents($merchant->minimum_purchase_amount);
+                $maxAmount = (int)almaPriceFromCents($merchant->maximum_purchase_amount);
+
+                $tpl = $this->context->smarty->createTemplate(
+                    _PS_ROOT_DIR_ . "{$this->module->_path}/views/templates/hook/pnx_fees.tpl"
+                );
+                $tpl->assign(array('fee_plan' => $feePlan, 'min_amount' => $minAmount, 'max_amount' => $maxAmount));
+
+                $pnxConfigForm['form']['input'][] = array(
+                    // Prevent notices for undefined index
+                    'name' => null,
+                    'label' => null,
+                    ///
+                    'form_group_class' => "$tabId-content",
+                    'type' => 'html',
+                    'html_content' => $tpl->fetch(),
+                );
+
+                $pnxConfigForm['form']['input'][] = array(
+                    'form_group_class' => "$tabId-content",
+                    'name' => "ALMA_P${n}X_ENABLED",
+                    'label' => sprintf($this->module->l('Enable %d-installment payments', 'getContent'), $n),
+                    'type' => 'checkbox',
+                    'values' => array(
+                        'id' => 'id',
+                        'name' => 'label',
+                        'query' => array(
+                            array(
+                                'id' => 'ON',
+                                'val' => true,
+                                'label' => '',
+                            ),
                         ),
-                        'input' => array(),
-                        'submit' => array('title' => $this->module->l('Save'), 'class' => 'btn btn-default pull-right'),
                     ),
                 );
 
-                $pnxTabs = array();
-                $activeTab = null;
-
-                foreach ($merchant->fee_plans as $feePlan) {
-                    $n = $feePlan['installments_count'];
-                    $tabId = "p${n}x";
-                    $tabTitle = sprintf($this->module->l('%d-installment payments', 'getContent'), $n);
-
-                    if (AlmaSettings::isInstallmentPlanEnabled($n)) {
-                        $pnxTabs[$tabId] = '✅ ' . $tabTitle;
-                        $activeTab = $activeTab ?: $tabId;
-                    } else {
-                        $pnxTabs[$tabId] = '❌ ' . $tabTitle;
-                    }
-
-                    $minAmount = (int) almaPriceFromCents($merchant->minimum_purchase_amount);
-                    $maxAmount = (int) almaPriceFromCents($merchant->maximum_purchase_amount);
-
-                    $tpl = $this->context->smarty->createTemplate(
-                        _PS_ROOT_DIR_ . "{$this->module->_path}/views/templates/hook/pnx_fees.tpl"
-                    );
-                    $tpl->assign(array('fee_plan' => $feePlan, 'min_amount' => $minAmount, 'max_amount' => $maxAmount));
-
-                    $pnxConfigForm['form']['input'][] = array(
-                        // Prevent notices for undefined index
-                        'name' => null,
-                        'label' => null,
-                        ///
-                        'form_group_class' => "$tabId-content",
-                        'type' => 'html',
-                        'html_content' => $tpl->fetch(),
-                    );
-
-                    $pnxConfigForm['form']['input'][] = array(
-                        'form_group_class' => "$tabId-content",
-                        'name' => "ALMA_P${n}X_ENABLED",
-                        'label' => sprintf($this->module->l('Enable %d-installment payments', 'getContent'), $n),
-                        'type' => 'checkbox',
-                        'values' => array(
-                            'id' => 'id',
-                            'name' => 'label',
-                            'query' => array(
-                                array(
-                                    'id' => 'ON',
-                                    'val' => true,
-                                    'label' => '',
-                                ),
-                            ),
-                        ),
-                    );
-
-                    $pnxConfigForm['form']['input'][] = array(
-                        'form_group_class' => "$tabId-content",
-                        'name' => "ALMA_P${n}X_MIN_AMOUNT",
-                        'label' => $this->module->l('Minimum amount (€)', 'getContent'),
-                        'desc' => $this->module->l('Minimum purchase amount to activate this plan', 'getContent'),
-                        'type' => 'number',
-                        'min' => $minAmount,
-                        'max' => $maxAmount,
-                    );
-
-                    $pnxConfigForm['form']['input'][] = array(
-                        'form_group_class' => "$tabId-content",
-                        'name' => "ALMA_P${n}X_MAX_AMOUNT",
-                        'label' => $this->module->l('Maximum amount (€)', 'getContent'),
-                        'desc' => $this->module->l('Maximum purchase amount to activate this plan', 'getContent'),
-                        'type' => 'number',
-                        'min' => $minAmount,
-                        'max' => $maxAmount,
-                    );
-                }
-
-                $tpl = $this->context->smarty->createTemplate(
-                    _PS_ROOT_DIR_ . "{$this->module->_path}/views/templates/hook/pnx_tabs.tpl"
+                $pnxConfigForm['form']['input'][] = array(
+                    'form_group_class' => "$tabId-content",
+                    'name' => "ALMA_P${n}X_MIN_AMOUNT",
+                    'label' => $this->module->l('Minimum amount (€)', 'getContent'),
+                    'desc' => $this->module->l('Minimum purchase amount to activate this plan', 'getContent'),
+                    'type' => 'number',
+                    'min' => $minAmount,
+                    'max' => $maxAmount,
                 );
-                $tpl->assign(array('tabs' => $pnxTabs, 'active' => $activeTab));
 
-                array_unshift(
-                    $pnxConfigForm['form']['input'],
-                    array(
-                        'name' => null,
-                        'label' => null,
-                        'type' => 'html',
-                        'html_content' => $tpl->fetch(),
-                    )
+                $pnxConfigForm['form']['input'][] = array(
+                    'form_group_class' => "$tabId-content",
+                    'name' => "ALMA_P${n}X_MAX_AMOUNT",
+                    'label' => $this->module->l('Maximum amount (€)', 'getContent'),
+                    'desc' => $this->module->l('Maximum purchase amount to activate this plan', 'getContent'),
+                    'type' => 'number',
+                    'min' => $minAmount,
+                    'max' => $maxAmount,
                 );
             }
+
+            $tpl = $this->context->smarty->createTemplate(
+                _PS_ROOT_DIR_ . "{$this->module->_path}/views/templates/hook/pnx_tabs.tpl"
+            );
+            $forceTabs = false;
+            if (version_compare(_PS_VERSION_, '1.7', '<')) {
+                $forceTabs = true;
+            }
+            $tpl->assign(array('tabs' => $pnxTabs, 'active' => $activeTab, 'forceTabs' => $forceTabs));
+
+            array_unshift(
+                $pnxConfigForm['form']['input'],
+                array(
+                    'name' => null,
+                    'label' => null,
+                    'type' => 'html',
+                    'html_content' => $tpl->fetch(),
+                )
+            );
         }
 
         $paymentButtonForm = array(
@@ -682,9 +681,13 @@ class AlmaGetContentController extends AlmaAdminHookController
         $helper = new HelperForm();
         $helper->module = $this->module;
         $helper->table = 'alma_config';
-        $helper->default_form_language = (int) Configuration::get('PS_LANG_DEFAULT');
-        $helper->allow_employee_form_lang = (int) Configuration::get('PS_BO_ALLOW_EMPLOYEE_FORM_LANG');
+        $helper->default_form_language = (int)Configuration::get('PS_LANG_DEFAULT');
+        $helper->allow_employee_form_lang = (int)Configuration::get('PS_BO_ALLOW_EMPLOYEE_FORM_LANG');
         $helper->submit_action = 'alma_config_form';
+        if (version_compare(_PS_VERSION_, '1.6', '<')) {
+            $helper->base_folder = 'helpers/form/15/';
+            $this->context->controller->addCss(_MODULE_DIR_ . $this->module->name . '/views/css/admin/tabs.css');
+        }
 
         $helper->currentIndex = $this->context->link->getAdminLink('AdminModules', false) .
             '&configure=' . $this->module->name .
@@ -704,7 +707,7 @@ class AlmaGetContentController extends AlmaAdminHookController
             'ALMA_IS_ELIGIBLE_MESSAGE' => AlmaSettings::getEligibilityMessage(),
             'ALMA_NOT_ELIGIBLE_MESSAGE' => AlmaSettings::getNonEligibilityMessage(),
             'ALMA_DISPLAY_ORDER_CONFIRMATION_ON' => AlmaSettings::displayOrderConfirmation(),
-            'ALMA_ACTIVATE_LOGGING_ON' => (bool) AlmaSettings::canLog(),
+            'ALMA_ACTIVATE_LOGGING_ON' => (bool)AlmaSettings::canLog(),
             'ALMA_STATE_REFUND' => AlmaSettings::getRefundState(),
             'ALMA_STATE_REFUND_ENABLED_ON' => AlmaSettings::isRefundEnabledByState(),
             '_api_only' => true,
@@ -715,10 +718,10 @@ class AlmaGetContentController extends AlmaAdminHookController
                 $n = $feePlan['installments_count'];
                 $helper->fields_value["ALMA_P${n}X_ENABLED_ON"] = AlmaSettings::isInstallmentPlanEnabled($n);
 
-                $minAmount = (int) almaPriceFromCents(AlmaSettings::installmentPlanMinAmount($n, $merchant));
+                $minAmount = (int)almaPriceFromCents(AlmaSettings::installmentPlanMinAmount($n, $merchant));
                 $helper->fields_value["ALMA_P${n}X_MIN_AMOUNT"] = $minAmount;
 
-                $maxAmount = (int) almaPriceFromCents(AlmaSettings::installmentPlanMaxAmount($n));
+                $maxAmount = (int)almaPriceFromCents(AlmaSettings::installmentPlanMaxAmount($n));
                 $helper->fields_value["ALMA_P${n}X_MAX_AMOUNT"] = $maxAmount;
             }
         }
