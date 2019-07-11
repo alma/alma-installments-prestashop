@@ -4,8 +4,8 @@ Changelog
 v1.2.2
 ------
 
-* Add PnX hybride from 1.5.6.2 to 1.6.x
-* Fixes PnX eligibility on cart
+* Adds hybrid PnX from 1.5.6.2 to 1.6.x
+* Fixes eligibility message on cart not being in sync with configured hybrid PnX amount bounds 
 
 v1.2.1
 ------
