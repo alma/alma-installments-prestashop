@@ -32,7 +32,7 @@ include_once _PS_MODULE_DIR_ . 'alma/includes/AlmaLogger.php';
 
 class Alma extends PaymentModule
 {
-    const VERSION = '1.2.2';
+    const VERSION = '1.3.0';
 
     public $_path;
 
@@ -40,7 +40,7 @@ class Alma extends PaymentModule
     {
         $this->name = 'alma';
         $this->tab = 'payments_gateways';
-        $this->version = '1.2.2';
+        $this->version = '1.3.0';
         $this->author = 'Alma';
         $this->need_instance = false;
         $this->bootstrap = true;
@@ -61,6 +61,7 @@ class Alma extends PaymentModule
         $this->confirmUninstall = $this->l('Are you sure you want to deactivate Alma Monthly Installments from your shop?', 'alma');
 
         $this->file = __FILE__;
+        $this->installTabs();
     }
 
     public function getContent()
@@ -93,7 +94,7 @@ class Alma extends PaymentModule
             'displayBackOfficeHeader',
             'displayShoppingCartFooter',
             'actionOrderSlipAdd',
-            'actionOrderStatusPostUpdate'
+            'actionOrderStatusPostUpdate',
         );
 
         if (version_compare(_PS_VERSION_, '1.7', '>=')) {
@@ -163,6 +164,55 @@ class Alma extends PaymentModule
 
         return $result;
     }
+    public function installTabs()
+    {
+        if (version_compare(_PS_VERSION_, '1.6', '>=')) {
+            $this->installTab('alma', 'Alma');
+        }
+        $this->installTab('AdminAlmaCategories', 'Exclusion de catégories', 'alma', 'credit_card');
+        return true;
+    }
+
+    protected function installTab($class, $name, $parent = null, $icon = null)
+    {
+        $tabId = (int) Tab::getIdFromClassName($class);
+        if (!$tabId) {
+            $tabId = null;
+        }
+
+        $tab = new Tab($tabId);
+        $tab->active = 1;
+        $tab->class_name = $class;
+        $tab->name = array();
+        foreach (Language::getLanguages(true) as $lang) {
+            $tab->name[$lang['id_lang']] = $name;
+        }
+        if ($parent) {
+            if (version_compare(_PS_VERSION_, '1.7', '>=')) {
+                if ($icon) {
+                    $tab->icon = $icon;
+                }
+            }
+            $tab->id_parent = (int)Tab::getIdFromClassName($parent);
+        } else {
+            $tab->id_parent = 0;
+        }
+        $tab->module = $this->name;
+
+        return $tab->save();
+    }
+
+    protected function uninstallTab()
+    {
+        $tabId = (int) Tab::getIdFromClassName($class);
+        if (!$tabId) {
+            return true;
+        }
+
+        $tab = new Tab($tabId);
+
+        return $tab->delete();
+    }
 
     public function hookHeader($params)
     {
@@ -230,5 +280,10 @@ class Alma extends PaymentModule
     public function hookActionOrderStatusPostUpdate($params)
     {
         return $this->runHookController('state', $params);
+    }
+
+    public function hookDisplayProductButtons($params)
+    {
+        return $this->runHookController('displayEligibilty', $params);
     }
 }
