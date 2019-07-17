@@ -95,6 +95,7 @@ class Alma extends PaymentModule
             'displayShoppingCartFooter',
             'actionOrderSlipAdd',
             'actionOrderStatusPostUpdate',
+            'displayProductButtons',
         );
 
         if (version_compare(_PS_VERSION_, '1.7', '>=')) {

@@ -36,8 +36,8 @@ use Alma\API\RequestError;
 
 class AlmaEligibilityHelper
 {
-    private static function checkPnXBounds($cart) {
-        $purchaseAmount = almaPriceToCents((float) $cart->getordertotal(true, Cart::BOTH));
+    private static function checkPnXBounds($amount) {
+        $purchaseAmount = almaPriceToCents($amount);
         $globalMin = PHP_INT_MAX;
         $globalMax = 0;
 
@@ -65,7 +65,7 @@ class AlmaEligibilityHelper
 
     public static function eligibilityCheck($context)
     {
-        $pnxBounds = self::checkPnXBounds($context->cart);
+        $pnxBounds = self::checkPnXBounds((float) $context->cart->getordertotal(true, Cart::BOTH));
         // If we got an array, then the cart is not eligible because not within the returned bounds
         if (is_array($pnxBounds)) {
             // Mock Alma's Eligibility object
@@ -102,6 +102,80 @@ class AlmaEligibilityHelper
         } catch (RequestError $e) {
             AlmaLogger::instance()->error(
                 "Error when checking cart {$context->cart->id} eligibility: " . $e->getMessage()
+            );
+
+            return null;
+        }
+
+        return $eligibility;
+    }
+
+    public static function eligibilityProduct(Product $product)
+    {
+        $idCategoriesExlude = [];
+        if ($idCategoriesExlude) {
+            foreach ($categoriesExclude as $category) {
+                if (AlmaProduct::productIsInCategory($category)) {
+                    return null;
+                }
+            }
+        }
+
+        $id_product_attribute = 0;
+        $purchaseAmount = (float) $product->getPrice(true, $id_product_attribute);
+        $pnxBounds = self::checkPnXBounds($purchaseAmount);
+        // If we got an array, then the product is not eligible because not within the returned bounds
+        if (is_array($pnxBounds)) {
+            // Mock Alma's Eligibility object
+            $eligibility = new stdClass();
+            $eligibility->isEligible = false;
+            $eligibility->constraints = array(
+                'purchase_amount' => array(
+                    'minimum' => $pnxBounds[0],
+                    'maximum' => $pnxBounds[1]
+                )
+            );
+
+            return $eligibility;
+        }
+
+        $installments = [];
+        $n = 1;
+        while ($n < AlmaSettings::installmentPlansMaxN()) {
+            ++$n;
+            if (!AlmaSettings::isInstallmentPlanEnabled($n)) {
+                continue;
+            } else {
+                $installments[] = $n;
+            }
+        }
+
+        $paymentData = array(
+            'payment' => array(
+                'purchase_amount' => almaPriceToCents($purchaseAmount),
+                'installments_count' => $installments,
+            ),
+        );
+        if (!$paymentData) {
+            AlmaLogger::instance()->error('Cannot check product eligibility: no data price from product');
+
+            return null;
+        }
+
+        $alma = AlmaClient::defaultInstance();
+        if (!$alma) {
+            AlmaLogger::instance()->error('Cannot check product eligibility: no API client');
+
+            return null;
+        }
+
+        $eligibility = null;
+
+        try {
+            $eligibility = $alma->payments->eligibility($paymentData);
+        } catch (RequestError $e) {
+            AlmaLogger::instance()->error(
+                "Error when checking product {$product->cart->id} eligibility: " . $e->getMessage()
             );
 
             return null;
