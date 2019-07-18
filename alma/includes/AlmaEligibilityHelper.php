@@ -81,12 +81,24 @@ class AlmaEligibilityHelper
             return $eligibility;
         }
 
+        $installments = [];
+        $n = 1;
+        while ($n < AlmaSettings::installmentPlansMaxN()) {
+            ++$n;
+            if (!AlmaSettings::isInstallmentPlanEnabled($n)) {
+                continue;
+            } else {
+                $installments[] = $n;
+            }
+        }
+
         $paymentData = PaymentData::dataFromCart($context->cart, $context);
         if (!$paymentData) {
             AlmaLogger::instance()->error('Cannot check cart eligibility: no data extracted from cart');
 
             return null;
         }
+        $paymentData['payment']['installments_count'] = $installments;
 
         $alma = AlmaClient::defaultInstance();
         if (!$alma) {

@@ -42,13 +42,24 @@ class AlmaDisplayShoppingCartFooterController extends AlmaProtectedHookControlle
         $eligibility = AlmaEligibilityHelper::eligibilityCheck($this->context);
         $eligibilityMsg = AlmaSettings::getEligibilityMessage();
 
-        if (!$eligibility->isEligible) {
+        $isEligible = false;
+        if ($eligibility instanceof Eligibility) {
+            $isEligible = $eligibility->isEligible();
+        } else if (is_array($eligibility)) {
+            foreach ($eligibility as $eli) {
+                if (true == $eli->isEligible()) {
+                     $isEligible = true;
+                }
+            }
+        }
+
+        if (!$isEligible) {
             $eligibilityMsg = AlmaSettings::getNonEligibilityMessage();
 
             $cart = $this->context->cart;
             $cartTotal = almaPriceToCents((float) $cart->getOrderTotal(true, Cart::BOTH));
-            $minAmount = $eligibility->constraints['purchase_amount']['minimum'];
-            $maxAmount = $eligibility->constraints['purchase_amount']['maximum'];
+            $minAmount = AlmaSettings::installmentPlanMinAmount($n);
+            $maxAmount = AlmaSettings::installmentPlanMaxAmount($n);
 
             if ($cartTotal < $minAmount || $cartTotal > $maxAmount) {
                 if ($cartTotal > $maxAmount) {

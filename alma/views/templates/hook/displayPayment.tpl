@@ -53,10 +53,8 @@
                         </span>
                         <span class="alma-button--text">
                             <span class="alma-button--title">{$option.text|escape:'htmlall':'UTF-8'}</span>
-                            {if $option.desc}
-                                <br>
-                                <span class="alma-button--description">{$option.desc|escape:'htmlall':'UTF-8'}</span>
-                            {/if}
+                            <br>
+                            <span class="alma-button--description">{$option.message|escape:'htmlall':'UTF-8'}</span>
                         </span>
                     </a>
                  </p>

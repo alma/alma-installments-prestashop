@@ -76,10 +76,12 @@ class AlmaDisplayEligibiltyController extends AlmaAdminHookController
             $installmentsCount = $plans = [];
             $n = 2;
             while ($n < AlmaSettings::installmentPlansMaxN()) {
+
                 ++$n;
                 if (!AlmaSettings::isInstallmentPlanEnabled($n)) {
                     continue;
                 } else {
+
                     $installment = $eligibility[$n];
                     $installmentsCount[] = $n;
                     $plan = $installment->getPaymentPlan();
@@ -89,6 +91,7 @@ class AlmaDisplayEligibiltyController extends AlmaAdminHookController
                     $message = '';
 
                     if (2 == $n) {
+
                         if ($diff) {
                             $firstInstallmentMessage = Tools::displayPrice(almaPriceFromCents($plan[0]['purchase_amount']));
                             $otherInstallmentsMessage = sprintf($this->module->l('and %s'), Tools::displayPrice(almaPriceFromCents($plan[1]['purchase_amount'])));
@@ -96,7 +99,9 @@ class AlmaDisplayEligibiltyController extends AlmaAdminHookController
                             $firstInstallmentMessage = '2x ' . Tools::displayPrice(almaPriceFromCents($plan[0]['purchase_amount']));
                             $otherInstallmentsMessage = '';
                         }
+
                     } else if ($n > 2) {
+
                         if ($plan[0] != $plan[1]) {
                             $firstInstallmentMessage = Tools::displayPrice(almaPriceFromCents($plan[0]['purchase_amount']));
                             $otherInstallmentsMessage = sprintf($this->module->l('and %s'), ($n - 1) . 'x ' . Tools::displayPrice(almaPriceFromCents($plan[1]['purchase_amount'])));
@@ -104,6 +109,7 @@ class AlmaDisplayEligibiltyController extends AlmaAdminHookController
                             $firstInstallmentMessage = Tools::displayPrice(almaPriceFromCents($plan[0]['purchase_amount']));
                             $otherInstallmentsMessage = $n . 'x ' . Tools::displayPrice(almaPriceFromCents($plan[0]['purchase_amount']));
                         }
+
                     }
                     $message = $firstInstallmentMessage . ' ' . $otherInstallmentsMessage;
                     $message .= $feeMessage ? '<br /><span class="alma-text-normal alma-text-grey">' . $feeMessage . '</span>' : '';
