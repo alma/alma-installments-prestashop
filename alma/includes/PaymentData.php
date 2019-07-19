@@ -95,6 +95,28 @@ class PaymentData
 
         $purchaseAmount = (float) $cart->getOrderTotal(true, Cart::BOTH);
 
+        $orderData = array();
+        $products = $cart->getProducts();
+        $carrier = new Carrier($cart->id_carrier);
+        if ($products) {
+            $orderData['line_items'] = array();
+            foreach ($products as $productLine) {
+                $product = new Product($productLine['id_product'], $productLine['id_product_attribute']);
+                $orderData['line_items'][] = array(
+                    'title' => $productLine['name'],
+                    'category' => $productLine['category'],
+                    'unit_price' => almaPriceToCents($productLine['price']),
+                    'quantity' => $productLine['cart_quantity'],
+                    'url' => $context->link->getProductLink($product),
+                    'picture_url' => $context->link->getImageLink($productLine['link_rewrite'], $productLine['id_image']),
+                );
+            }
+        }
+        $orderData['shipping'] = array(
+            'title' => $carrier->name,
+            'price' => almaPriceToCents($cart->getOrderTotal(true, Cart::ONLY_SHIPPING)),
+        );
+
         $data = array(
             'payment' => array(
                 'installments_count' => (int) $installmentsCount,
@@ -119,6 +141,9 @@ class PaymentData
                 ),
             ),
             'customer' => $customerData,
+            'order' => array(
+                'data' => $orderData,
+            ),
         );
 
         return $data;
