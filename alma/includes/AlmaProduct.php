@@ -25,22 +25,25 @@
 class AlmaProduct
 {
 
-    public static function productIsInCategory($idProduct, $idCategory, $childs = false)
+    public static function productIsInCategory($idProducts, $idCategory, $childs = false)
     {
-        $cache_key = $idProduct . '_' . $idCategory . '_c' . ($childs ? 'y' : 'n');
+        $cache_key = implode('-', $idProducts) . '_' . $idCategory . '_c' . ($childs ? 'y' : 'n');
         if (Cache::isStored($cache_key)) {
             return Cache::retrieve($cache_key);
         } else {
             $id_lang = Context::getContext()->language->id;
             $ret = [];
-            $rows = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS('
-                SELECT cp.`id_category` FROM `' . _DB_PREFIX_ . 'category_product` cp
+            $sql = 'SELECT cp.`id_category` FROM `' . _DB_PREFIX_ . 'category_product` cp
                 LEFT JOIN `' . _DB_PREFIX_ . 'category` c ON (c.id_category = cp.id_category)
                 LEFT JOIN `' . _DB_PREFIX_ . 'category_lang` cl ON (cp.`id_category` = cl.`id_category`' . Shop::addSqlRestrictionOnLang('cl') . ')
                 ' . Shop::addSqlAssociation('category', 'c') . '
-                WHERE cp.`id_product` = ' . (int) $idProduct . '
-                    AND cl.`id_lang` = ' . (int) $id_lang
-            );
+                WHERE cl.`id_lang` = ' . (int) $id_lang . ' ';
+            if (is_array($idProducts)) {
+                $sql .= 'AND cp.`id_product` IN (' . implode(',', $idProducts) . ');';
+            } else {
+                $sql .= 'AND cp.`id_product` = ' . (int) $idProducts . ';';
+            }
+            $rows = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS($sql);
             $product_categories = [];
             foreach ($rows as $val) {
                 if ($val['id_category'] == $idCategory) {

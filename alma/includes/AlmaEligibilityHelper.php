@@ -29,10 +29,12 @@ if (!defined('_PS_VERSION_')) {
 include_once _PS_MODULE_DIR_ . 'alma/includes/AlmaSettings.php';
 include_once _PS_MODULE_DIR_ . 'alma/includes/AlmaLogger.php';
 include_once _PS_MODULE_DIR_ . 'alma/includes/AlmaClient.php';
+include_once _PS_MODULE_DIR_ . 'alma/includes/AlmaProduct.php';
 include_once _PS_MODULE_DIR_ . 'alma/includes/PaymentData.php';
 include_once _PS_MODULE_DIR_ . 'alma/includes/functions.php';
 
 use Alma\API\RequestError;
+use Alma\API\Endpoints\Results\Eligibility;
 
 class AlmaEligibilityHelper
 {
@@ -63,20 +65,41 @@ class AlmaEligibilityHelper
         return array($globalMin, $globalMax);
     }
 
+    protected static function checkEligibilityCart(Cart $cart)
+    {
+        $products = $cart->getProducts();
+        $idProducts = [];
+        foreach ($products as $product) {
+            $idProducts[] = $product['id_product'];
+        }
+        $categoriesExludes = AlmaSettings::getExcludeCategories();
+        if ($categoriesExludes && count($categoriesExludes) > 0) {
+            foreach ($categoriesExludes as $category) {
+                if (AlmaProduct::productIsInCategory($idProducts, $category)) {
+                    $eligibility = new Eligibility();
+                    $eligibility->setIsEligible(false);
+                    $eligibility->setReasons('unavailable');
+
+                    return $eligibility;
+                }
+            }
+        }
+        return null;
+    }
+
     public static function eligibilityCheck($context)
     {
         $pnxBounds = self::checkPnXBounds((float) $context->cart->getordertotal(true, Cart::BOTH));
         // If we got an array, then the cart is not eligible because not within the returned bounds
         if (is_array($pnxBounds)) {
-            // Mock Alma's Eligibility object
-            $eligibility = new stdClass();
-            $eligibility->isEligible = false;
-            $eligibility->constraints = array(
-                "purchase_amount" => array(
-                    "minimum" => $pnxBounds[0],
-                    "maximum" => $pnxBounds[1]
+            $eligibility = new Eligibility();
+            $eligibility->setIsEligible(false);
+            $eligibility->setCnstraints(array(
+                'purchase_amount' => array(
+                    'minimum' => $pnxBounds[0],
+                    'maximum' => $pnxBounds[1]
                 )
-            );
+            ));
 
             return $eligibility;
         }
@@ -99,6 +122,12 @@ class AlmaEligibilityHelper
             return null;
         }
         $paymentData['payment']['installments_count'] = $installments;
+
+        $eligibility = self::checkEligibilityCart($context->cart);
+
+        if ($eligibility instanceof Eligibility) {
+            return $eligibility;
+        }
 
         $alma = AlmaClient::defaultInstance();
         if (!$alma) {
@@ -124,11 +153,15 @@ class AlmaEligibilityHelper
 
     public static function eligibilityProduct(Product $product)
     {
-        $idCategoriesExlude = [];
-        if ($idCategoriesExlude) {
-            foreach ($categoriesExclude as $category) {
-                if (AlmaProduct::productIsInCategory($category)) {
-                    return null;
+        $categoriesExludes = AlmaSettings::getExcludeCategories();
+        if ($categoriesExludes && count($categoriesExludes) > 0) {print_r($categoriesExludes);
+            foreach ($categoriesExludes as $category) {
+                if (AlmaProduct::productIsInCategory($produc->id_product, $category)) {
+                    $eligibility = new Eligibility();
+                    $eligibility->setIsEligible(false);
+                    $eligibility->setReasons('unavailable');
+
+                    return $eligibility;
                 }
             }
         }
@@ -138,15 +171,14 @@ class AlmaEligibilityHelper
         $pnxBounds = self::checkPnXBounds($purchaseAmount);
         // If we got an array, then the product is not eligible because not within the returned bounds
         if (is_array($pnxBounds)) {
-            // Mock Alma's Eligibility object
-            $eligibility = new stdClass();
-            $eligibility->isEligible = false;
-            $eligibility->constraints = array(
+            $eligibility = new Eligibility();
+            $eligibility->setIsEligible(false);
+            $eligibility->setConstraints(array(
                 'purchase_amount' => array(
                     'minimum' => $pnxBounds[0],
                     'maximum' => $pnxBounds[1]
                 )
-            );
+            ));
 
             return $eligibility;
         }

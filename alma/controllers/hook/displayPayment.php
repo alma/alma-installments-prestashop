@@ -48,9 +48,11 @@ class AlmaDisplayPaymentController extends AlmaProtectedHookController
         if ($eligibility instanceof Eligibility) {
             $isEligible = $eligibility->isEligible();
         } else if (is_array($eligibility)) {
+            $error = true;
             foreach ($eligibility as $eli) {
                 if (true == $eli->isEligible()) {
                      $isEligible = true;
+                     $error = false;
                      break;
                 }
             }
@@ -72,68 +74,70 @@ class AlmaDisplayPaymentController extends AlmaProtectedHookController
             $logo = $this->module->getPathUri() . '/views/img/alma_payment_logos.svg';
         }
 
-        $cart = $params['cart'];
-        $purchaseAmount = almaPriceToCents((float) $cart->getordertotal(true, Cart::BOTH));
         $options = array();
-        $n = 1;
-        while ($n < AlmaSettings::installmentPlansMaxN()) {
-            ++$n;
+        if ($isEligible) {
+            $cart = $params['cart'];
+            $purchaseAmount = almaPriceToCents((float) $cart->getordertotal(true, Cart::BOTH));
+            $n = 1;
+            while ($n < AlmaSettings::installmentPlansMaxN()) {
+                ++$n;
 
-            if (!AlmaSettings::isInstallmentPlanEnabled($n)) {
-                continue;
-            } else {
-                $min = AlmaSettings::installmentPlanMinAmount($n);
-                $max = AlmaSettings::installmentPlanMaxAmount($n);
-
-                if ($purchaseAmount < $min
-                    || $purchaseAmount >= $max
-                ) {
+                if (!AlmaSettings::isInstallmentPlanEnabled($n)) {
                     continue;
-                }
-            }
-
-            $installment = $eligibility[$n];
-            $plan = $installment->getPaymentPlan();
-            $diff = $plan[0]['purchase_amount'] != $plan[1]['purchase_amount'] ? true : false;
-            $fee = $plan[0]['customer_fee'] ? Tools::displayPrice(almaPriceFromCents($plan[0]['customer_fee'])) : null;
-            $feeMessage = $fee ? ' ' . sprintf($this->module->l('(with fee: %s)'), $fee) : '';
-            $message = '';
-
-            if (2 == $n) {
-
-                if ($diff) {
-                    $firstInstallmentMessage = Tools::displayPrice(almaPriceFromCents($plan[0]['purchase_amount']));
-                    $otherInstallmentsMessage = sprintf($this->module->l('and %s'), Tools::displayPrice(almaPriceFromCents($plan[1]['purchase_amount'])));
-                } else  {
-                    $firstInstallmentMessage = '2x ' . Tools::displayPrice(almaPriceFromCents($plan[0]['purchase_amount']));
-                    $otherInstallmentsMessage = '';
-                }
-
-            } else if ($n > 2) {
-
-                if ($plan[0] != $plan[1]) {
-                    $firstInstallmentMessage = Tools::displayPrice(almaPriceFromCents($plan[0]['purchase_amount']));
-                    $otherInstallmentsMessage = sprintf($this->module->l('and %s'), ($n - 1) . 'x ' . Tools::displayPrice(almaPriceFromCents($plan[1]['purchase_amount'])));
                 } else {
-                    $firstInstallmentMessage = Tools::displayPrice(almaPriceFromCents($plan[0]['purchase_amount']));
-                    $otherInstallmentsMessage = $n . 'x ' . Tools::displayPrice(almaPriceFromCents($plan[0]['purchase_amount']));
+                    $min = AlmaSettings::installmentPlanMinAmount($n);
+                    $max = AlmaSettings::installmentPlanMaxAmount($n);
+
+                    if ($purchaseAmount < $min
+                        || $purchaseAmount >= $max
+                    ) {
+                        continue;
+                    }
                 }
 
+                $installment = $eligibility[$n];
+                $plan = $installment->getPaymentPlan();
+                $diff = $plan[0]['purchase_amount'] != $plan[1]['purchase_amount'] ? true : false;
+                $fee = $plan[0]['customer_fee'] ? Tools::displayPrice(almaPriceFromCents($plan[0]['customer_fee'])) : null;
+                $feeMessage = $fee ? ' ' . sprintf($this->module->l('(with fee: %s)'), $fee) : '';
+                $message = '';
+
+                if (2 == $n) {
+
+                    if ($diff) {
+                        $firstInstallmentMessage = Tools::displayPrice(almaPriceFromCents($plan[0]['purchase_amount']));
+                        $otherInstallmentsMessage = sprintf($this->module->l('and %s'), Tools::displayPrice(almaPriceFromCents($plan[1]['purchase_amount'])));
+                    } else  {
+                        $firstInstallmentMessage = '2x ' . Tools::displayPrice(almaPriceFromCents($plan[0]['purchase_amount']));
+                        $otherInstallmentsMessage = '';
+                    }
+
+                } else if ($n > 2) {
+
+                    if ($plan[0] != $plan[1]) {
+                        $firstInstallmentMessage = Tools::displayPrice(almaPriceFromCents($plan[0]['purchase_amount']));
+                        $otherInstallmentsMessage = sprintf($this->module->l('and %s'), ($n - 1) . 'x ' . Tools::displayPrice(almaPriceFromCents($plan[1]['purchase_amount'])));
+                    } else {
+                        $firstInstallmentMessage = Tools::displayPrice(almaPriceFromCents($plan[0]['purchase_amount']));
+                        $otherInstallmentsMessage = $n . 'x ' . Tools::displayPrice(almaPriceFromCents($plan[0]['purchase_amount']));
+                    }
+
+                }
+                $message = $firstInstallmentMessage . ' ' . $feeMessage . ' ' . $otherInstallmentsMessage;
+
+
+                $paymentOption = [
+                    'installments' => $n,
+                    'text' => sprintf(AlmaSettings::getPaymentButtonTitle(), $n),
+                    'link' => $this->context->link->getModuleLink($this->module->name, 'payment', array('n' => $n), true),
+                    'message' => $message,
+                ];
+                if (!empty(AlmaSettings::getPaymentButtonDescription())) {
+                    $paymentOption['desc'] = sprintf(AlmaSettings::getPaymentButtonDescription(), $n);
+                }
+
+                $options[] = $paymentOption;
             }
-            $message = $firstInstallmentMessage . ' ' . $feeMessage . ' ' . $otherInstallmentsMessage;
-
-
-            $paymentOption = [
-                'installments' => $n,
-                'text' => sprintf(AlmaSettings::getPaymentButtonTitle(), $n),
-                'link' => $this->context->link->getModuleLink($this->module->name, 'payment', array('n' => $n), true),
-                'message' => $message,
-            ];
-            if (!empty(AlmaSettings::getPaymentButtonDescription())) {
-                $paymentOption['desc'] = sprintf(AlmaSettings::getPaymentButtonDescription(), $n);
-            }
-
-            $options[] = $paymentOption;
         }
 
         $cart = $this->context->cart;
