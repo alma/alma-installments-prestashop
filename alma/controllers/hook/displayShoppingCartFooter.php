@@ -52,14 +52,28 @@ class AlmaDisplayShoppingCartFooterController extends AlmaProtectedHookControlle
                 }
             }
         }
-
         if (!$isEligible) {
             $eligibilityMsg = AlmaSettings::getNonEligibilityMessage();
 
             $cart = $this->context->cart;
             $cartTotal = almaPriceToCents((float) $cart->getOrderTotal(true, Cart::BOTH));
-            $minAmount = AlmaSettings::installmentPlanMinAmount($n);
-            $maxAmount = AlmaSettings::installmentPlanMaxAmount($n);
+
+            $n = 1;
+            $minAmount = 0;
+            $maxAmount = PHP_INT_MAX;
+            while ($n < AlmaSettings::installmentPlansMaxN()) {
+                ++$n;
+
+                if (!AlmaSettings::isInstallmentPlanEnabled($n)) {
+                    continue;
+                } else {
+                    $min = AlmaSettings::installmentPlanMinAmount($n);
+                    $minAmount = min($min, $minAmount);
+
+                    $max = AlmaSettings::installmentPlanMaxAmount($n);
+                    $maxAmount = max($max, $maxAmount);
+                }
+            }
 
             if ($cartTotal < $minAmount || $cartTotal > $maxAmount) {
                 if ($cartTotal > $maxAmount) {
