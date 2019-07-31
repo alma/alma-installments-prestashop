@@ -3,7 +3,7 @@
     "description": "Payment method module to integrate Alma in PrestaShop",
     "type": "library",
     "require": {
-        "alma/alma-php-client": "^1.0.3"
+        "alma/alma-php-client": "^1.0.5"
     },
     "license": "MIT",
     "authors": [

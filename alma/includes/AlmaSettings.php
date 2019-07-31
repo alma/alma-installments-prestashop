@@ -266,4 +266,14 @@ class AlmaSettings
         }
         self::updateValue('ALMA_EXCLUDE_CATEGORIES', Tools::jsonDecode($categories));
     }
+
+    public static function isShareOfCheckout()
+    {
+        return (bool) self::get('ALMA_SHARE_OF_CHECKOUT', 0);
+    }
+
+    public static function getWebhookReportId()
+    {
+        return (string) self::get('ALMA_WEBHOOK_REPORT_ID', false);
+    }
 }

@@ -28,8 +28,9 @@ if (!defined('_PS_VERSION_')) {
 
 include_once _PS_MODULE_DIR_ . 'alma/includes/AlmaSecurity.php';
 include_once _PS_MODULE_DIR_ . 'alma/includes/AlmaShareOfCheckout.php';
+include_once _PS_MODULE_DIR_ . 'alma/includes/AlmaSettings.php';
 
-class AlmaShareModuleFrontController extends ModuleFrontController
+class AlmaReportModuleFrontController extends ModuleFrontController
 {
     public $ssl = true;
 
@@ -57,6 +58,10 @@ class AlmaShareModuleFrontController extends ModuleFrontController
     public function postProcess()
     {
         parent::postProcess();
+
+        if (!AlmaSettings::getWebhookReportId()) {
+            $this->fail('access denied');
+        }
 
         header('Content-Type: application/json');
 
