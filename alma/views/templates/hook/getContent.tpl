@@ -25,6 +25,10 @@
     <div class="{$validation_error_classes|escape:'htmlall':'UTF-8'}">
         {if $validation_error == 'missing_required_setting'}
             {l s='Please fill in all required settings' mod='alma'}
+        {elseif $validation_error == 'missing_key_for_live_mode'}
+            {l s='Please provide your Live API key to operate in Live mode' mod='alma'}
+        {elseif $validation_error == 'missing_key_for_test_mode'}
+            {l s='Please provide your Test API key to operate in Test mode' mod='alma'}
         {elseif $validation_error == 'alma_client_null'}
             {l s='Error while initializing Alma API client.' mod='alma'}
             <br>
@@ -32,13 +36,13 @@
         {elseif $validation_error == 'live_authentication_error'}
             {l s='Could not connect to Alma using your Live API key.' mod='alma'}
             <br>
-            <a href="https://dashboard.getalma.eu/api">
+            <a href="https://dashboard.getalma.eu/api" target="_blank">
                 {l s='Please double check your Live API key on your Alma dashboard.' mod='alma'}
             </a>
         {elseif $validation_error == 'test_authentication_error'}
             {l s='Could not connect to Alma using your Test API keys.' mod='alma'}
             <br>
-            <a href="https://dashboard.getalma.eu/api">
+            <a href="https://dashboard.sandbox.getalma.eu/api" target="_blank">
                 {l s='Please double check your Test API key on your Alma dashboard.' mod='alma'}
             </a>
         {elseif $validation_error == 'api_request_error'}
@@ -49,7 +53,7 @@
             {if isset($level) && $level == 'warning'}
                 {l s='Your Alma account is not activated yet. You won\'t be able to use Alma in Live mode.' mod='alma'}
                 <br>
-                <a href="https://dashboard.getalma.eu/">
+                <a href="https://dashboard.getalma.eu/" target="_blank">
                     {l s='Activate your account on your Alma dashboard before switching to Live mode.' mod='alma'}
                 </a>
             {else}
@@ -65,7 +69,7 @@
             {if isset($level) && $level != 'warning'}
                 {l s='Your Alma account needs to be activated before you can use Alma on your shop.' mod='alma'}
                 <br>
-                <a href="https://dashboard.getalma.eu/">
+                <a href="https://dashboard.sandbox.getalma.eu/" target="_blank">
                     {l s='Go to your Alma dashboard to activate your account.' mod='alma'}
                 </a>
                 <br>
@@ -102,12 +106,12 @@
             {capture name="live_dashboard_link"}
                 {l s='You can find your Live API key in [1]your Alma dashboard[/1]' mod='alma'}
             {/capture}
-            {$smarty.capture.live_dashboard_link|replace:'[1]':'<a href="https://dashboard.getalma.eu/api">'|replace:'[/1]':'</a>'}
+            {$smarty.capture.live_dashboard_link|escape:'htmlall':'UTF-8'|replace:'[1]':'<a href="https://dashboard.getalma.eu/api" target=\"_blank\">'|replace:'[/1]':'</a>'}
             <br>
             {capture name="sandbox_dashboard_link"}
                 {l s='To use the Test mode, you need your Test API key from [1]your sandbox dasboard[/1]' mod='alma'}
             {/capture}
-            {$smarty.capture.sandbox_dashboard_link|replace:'[1]':'<a href="https://dashboard.sandbox.getalma.eu/api">'|replace:'[/1]':'</a>'}
+            {$smarty.capture.sandbox_dashboard_link|escape:'htmlall':'UTF-8'|replace:'[1]':'<a href="https://dashboard.sandbox.getalma.eu/api" target=\"_blank\">'|replace:'[/1]':'</a>'}
             <br>
         </p>
         <br>

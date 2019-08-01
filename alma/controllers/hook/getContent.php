@@ -180,13 +180,13 @@ class AlmaGetContentController extends AlmaAdminHookController
         $liveKey = trim(Tools::getValue('ALMA_LIVE_API_KEY'));
         $testKey = trim(Tools::getValue('ALMA_TEST_API_KEY'));
 
-        if (empty($liveKey) || empty($testKey)) {
-            $this->context->smarty->assign('validation_error', 'missing_required_setting');
+        if ((empty($liveKey) && $apiMode == ALMA_MODE_LIVE) || (empty($testKey) && $apiMode == ALMA_MODE_TEST)) {
+            $this->context->smarty->assign('validation_error', "missing_key_for_{$apiMode}_mode");
 
             return $this->module->display($this->module->file, 'getContent.tpl');
         }
 
-        $credentialsError = $this->credentialsError($apiMode, $liveKey, $testKey);
+        $credentialsError = $this->credentialsError($apiMode,  $liveKey, $testKey);
 
         if ($credentialsError && array_key_exists('error', $credentialsError)) {
             return $credentialsError['message'];
@@ -212,7 +212,12 @@ class AlmaGetContentController extends AlmaAdminHookController
         $modes = array(ALMA_MODE_TEST, ALMA_MODE_LIVE);
 
         foreach ($modes as $mode) {
-            $alma = AlmaClient::createInstance($mode == ALMA_MODE_LIVE ? $liveKey : $testKey, $mode);
+            $key = ($mode == ALMA_MODE_LIVE ? $liveKey : $testKey);
+            if (!$key) {
+                continue;
+            }
+
+            $alma = AlmaClient::createInstance($key, $mode);
             if (!$alma) {
                 $this->context->smarty->assign('validation_error', 'alma_client_null');
 
@@ -272,7 +277,7 @@ class AlmaGetContentController extends AlmaAdminHookController
 
     public function renderForm($merchant)
     {
-        $needsKeys = AlmaSettings::needsAPIKeys();
+        $needsKeys = $this->needsAPIKey();
 
         if (is_callable('Media::getMediaPath')) {
             $iconPath = Media::getMediaPath(_PS_MODULE_DIR_ . $this->module->name . '/views/img/logo16x16.png');
@@ -298,30 +303,6 @@ class AlmaGetContentController extends AlmaAdminHookController
                 ),
                 'input' => array(
                     array(
-                        'name' => 'ALMA_LIVE_API_KEY',
-                        'label' => $this->module->l('Live API key', 'getContent'),
-                        'type' => 'text',
-                        'size' => 75,
-                        'required' => false,
-                        'desc' => sprintf(
-                            $this->module->l('You can find your Live API key on %1$syour Alma dashboard%2$s', 'getContent'),
-                            '<a href="https://dashboard.getalma.eu/api" target="_blank">',
-                            '</a>'
-                        ),
-                    ),
-                    array(
-                        'name' => 'ALMA_TEST_API_KEY',
-                        'label' => $this->module->l('Test API key', 'getContent'),
-                        'type' => 'text',
-                        'size' => 75,
-                        'required' => false,
-                        'desc' => sprintf(
-                            $this->module->l('You can find your Test API key on %1$syour sandbox dashboard%2$s', 'getContent'),
-                            '<a href="https://dashboard.sandbox.getalma.eu/api" target="_blank">',
-                            '</a>'
-                        ),
-                    ),
-                    array(
                         'name' => 'ALMA_API_MODE',
                         'label' => $this->module->l('API Mode', 'getContent'),
                         'type' => 'select',
@@ -335,6 +316,31 @@ class AlmaGetContentController extends AlmaAdminHookController
                                 array('api_mode' => ALMA_MODE_LIVE, 'name' => 'Live'),
                                 array('api_mode' => ALMA_MODE_TEST, 'name' => 'Test'),
                             ),
+                        ),
+                    ),
+
+                    array(
+                        'name' => 'ALMA_LIVE_API_KEY',
+                        'label' => $this->module->l('Live API key', 'getContent'),
+                        'type' => 'text',
+                        'size' => 75,
+                        'required' => false,
+                        'desc' => $this->module->l('Not required for Test mode', 'getContent') . ' – ' . sprintf(
+                            $this->module->l('You can find your Live API key on %1$syour Alma dashboard%2$s', 'getContent'),
+                            '<a href="https://dashboard.getalma.eu/api" target="_blank">',
+                            '</a>'
+                        ),
+                    ),
+                    array(
+                        'name' => 'ALMA_TEST_API_KEY',
+                        'label' => $this->module->l('Test API key', 'getContent'),
+                        'type' => 'text',
+                        'size' => 75,
+                        'required' => false,
+                        'desc' => $this->module->l('Not required for Live mode', 'getContent') . ' – ' . sprintf(
+                            $this->module->l('You can find your Test API key on %1$syour sandbox dashboard%2$s', 'getContent'),
+                            '<a href="https://dashboard.sandbox.getalma.eu/api" target="_blank">',
+                            '</a>'
                         ),
                     ),
                 ),
@@ -753,6 +759,12 @@ class AlmaGetContentController extends AlmaAdminHookController
         }
     }
 
+    public function needsAPIKey()
+    {
+        $key = trim(AlmaSettings::getActiveAPIKey());
+        return $key == "" || $key == null;
+    }
+
     public function run($params)
     {
         $messages = '';
@@ -762,7 +774,7 @@ class AlmaGetContentController extends AlmaAdminHookController
 
         if (Tools::isSubmit('alma_config_form')) {
             $messages = $this->processConfiguration($merchant);
-        } elseif (!AlmaSettings::needsAPIKeys()) {
+        } elseif (!$this->needsAPIKey()) {
             $messages = $this->credentialsError(
                 AlmaSettings::getActiveMode(),
                 AlmaSettings::getLiveKey(),

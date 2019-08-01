@@ -89,6 +89,7 @@ class AlmaSettings
             'ALMA_PNX_MAX_N',
             'ALMA_STATE_REFUND',
             'ALMA_STATE_REFUND_ENABLED',
+            'ALMA_DISPLAY_ORDER_CONFIRMATION'
         );
 
         foreach ($configKeys as $configKey) {
@@ -136,12 +137,6 @@ class AlmaSettings
     public static function showDisabledButton()
     {
         return (bool) (int) self::get('ALMA_SHOW_DISABLED_BUTTON', true);
-    }
-
-    public static function needsAPIKeys()
-    {
-        return trim(self::get('ALMA_LIVE_API_KEY', '')) == false
-            || trim(self::get('ALMA_TEST_API_KEY', '')) == false;
     }
 
     public static function getEligibilityMessage()
