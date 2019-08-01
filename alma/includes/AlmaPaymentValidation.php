@@ -125,8 +125,12 @@ class AlmaPaymentValidation
         }
 
         if (!$cart->OrderExists()) {
-            $purchaseAmount = almaPriceToCents((float) $cart->getOrderTotal(true, Cart::BOTH));
-            if ($payment->purchase_amount !== $purchaseAmount) {
+            $cartTotals = (float) $cart->getOrderTotal(true, Cart::BOTH);
+
+            if (
+                $payment->purchase_amount !== almaPriceToCents($cartTotals) &&
+                $payment->purchase_amount !== almaPriceToCents_str($cartTotals)
+            ) {
                 $alma->payments->flagAsPotentialFraud($almaPaymentId, Payment::FRAUD_AMOUNT_MISMATCH . " - " . $cart->getOrderTotal(true, Cart::BOTH) . " * 100 vs " . $payment->purchase_amount);
 
                 AlmaLogger::instance()->error(
@@ -163,7 +167,7 @@ class AlmaPaymentValidation
             $this->module->validateOrder(
                 (int) $cart->id,
                 Configuration::get('PS_OS_PAYMENT'),
-                almaPriceFromCents($purchaseAmount),
+                almaPriceFromCents($payment->purchase_amount),
                 $paymentMode,
                 null,
                 $extraVars,

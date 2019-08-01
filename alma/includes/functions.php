@@ -35,6 +35,25 @@ function almaPriceToCents($price)
 }
 
 /**
+ * Same as above but with a string-based implementation, to try and kill the rounding problems subject for good
+ */
+function almaPriceToCents_str($price)
+{
+    $priceStr = strval($price);
+    $parts = explode(".", $priceStr);
+
+    if (count($parts) == 1) {
+        $parts[] = "00";
+    } elseif (strlen($parts[1]) == 1) {
+        $parts[1] .= "0";
+    } elseif (strlen($parts[1]) > 2) {
+        $parts[1] = substr($parts[1], 0, 2);
+    }
+
+    return intval(implode($parts));
+}
+
+/**
  * Converts an integer price in cents to a float price in the used currency units
  *
  * @param $price int
