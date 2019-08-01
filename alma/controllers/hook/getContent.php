@@ -186,7 +186,7 @@ class AlmaGetContentController extends AlmaAdminHookController
             return $this->module->display($this->module->file, 'getContent.tpl');
         }
 
-        $credentialsError = $this->credentialsError($apiMode,  $liveKey, $testKey);
+        $credentialsError = $this->credentialsError($apiMode, $liveKey, $testKey);
 
         if ($credentialsError && array_key_exists('error', $credentialsError)) {
             return $credentialsError['message'];

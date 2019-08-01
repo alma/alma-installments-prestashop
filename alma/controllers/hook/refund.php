@@ -45,7 +45,7 @@ class AlmaRefundController extends AlmaAdminHookController
         $id_payment = $order_payment->transaction_id;
         if (version_compare(_PS_VERSION_, '1.6', '>=')) {
             $this->runAfter16($params, $id_payment);
-        } else if (version_compare(_PS_VERSION_, '1.6', '<')) {
+        } elseif (version_compare(_PS_VERSION_, '1.6', '<')) {
             $this->runBefore16($params, $id_payment);
         }
     }
@@ -72,7 +72,8 @@ class AlmaRefundController extends AlmaAdminHookController
 
             $order_detail = new OrderDetail((int) $id_order_detail);
             if (empty($amount_detail)) {
-                $order_detail_list[$id_order_detail]['amount'] = $order_detail->unit_price_tax_incl * $order_detail_list[$id_order_detail]['quantity'];
+                $order_quantity = $order_detail_list[$id_order_detail]['quantity'];
+                $order_detail_list[$id_order_detail]['amount'] = $order_detail->unit_price_tax_incl * $order_quantity;
             } else {
                 $order_detail_list[$id_order_detail]['amount'] = (float) str_replace(',', '.', $amount_detail);
             }
@@ -85,7 +86,7 @@ class AlmaRefundController extends AlmaAdminHookController
             $amount = (float) Tools::getValue('refund_voucher_choose');
         }
 
-        $shipping_cost_amount = (float) str_replace(',', '.', Tools::getValue('partialRefundShippingCost')) ? (float) str_replace(',', '.', Tools::getValue('partialRefundShippingCost')) : false;
+        $shipping_cost_amount = (float) str_replace(',', '.', Tools::getValue('partialRefundShippingCost')) ?: false;
 
         if ($shipping_cost_amount > 0) {
             if (!Tools::getValue('TaxMethod')) {

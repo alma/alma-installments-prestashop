@@ -127,11 +127,11 @@ class AlmaPaymentValidation
         if (!$cart->OrderExists()) {
             $cartTotals = (float) $cart->getOrderTotal(true, Cart::BOTH);
 
-            if (
-                $payment->purchase_amount !== almaPriceToCents($cartTotals) &&
-                $payment->purchase_amount !== almaPriceToCents_str($cartTotals)
-            ) {
-                $alma->payments->flagAsPotentialFraud($almaPaymentId, Payment::FRAUD_AMOUNT_MISMATCH . " - " . $cart->getOrderTotal(true, Cart::BOTH) . " * 100 vs " . $payment->purchase_amount);
+            if ($payment->purchase_amount !== almaPriceToCents($cartTotals) &&
+                $payment->purchase_amount !== almaPriceToCents_str($cartTotals)) {
+                $reason = Payment::FRAUD_AMOUNT_MISMATCH;
+                $reason .= " - " . $cart->getOrderTotal(true, Cart::BOTH) . " * 100 vs " . $payment->purchase_amount;
+                $alma->payments->flagAsPotentialFraud($almaPaymentId, $reason);
 
                 AlmaLogger::instance()->error(
                     "[Alma] Payment validation error for Cart {$cart->id}: Purchase amount mismatch!"

@@ -36,7 +36,8 @@ use Alma\API\RequestError;
 
 class AlmaEligibilityHelper
 {
-    private static function checkPnXBounds($cart) {
+    private static function checkPnXBounds($cart)
+    {
         $purchaseAmount = almaPriceToCents((float) $cart->getordertotal(true, Cart::BOTH));
         $globalMin = PHP_INT_MAX;
         $globalMax = 0;
