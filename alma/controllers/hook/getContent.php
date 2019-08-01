@@ -461,6 +461,14 @@ class AlmaGetContentController extends AlmaAdminHookController
                 ),
                 'input' => array(
                     array(
+                        'name' => null,
+                        'label' => null,
+                        'type' => 'html',
+                        // PrestaShop won't detect the string if the call to `l` is multiline
+                        'html_content' => $this->module->l('Use "%d" in the fields below where you want the installments count to appear. For instance, "Pay in %d monthly installments" will appear as "Pay in 3 monthly installments"', 'getContent'),
+                    ),
+
+                    array(
                         'name' => 'ALMA_PAYMENT_BUTTON_TITLE',
                         'label' => $this->module->l('Title', 'getContent'),
                         // PrestaShop won't detect the string if the call to `l` is multiline
@@ -502,19 +510,6 @@ class AlmaGetContentController extends AlmaAdminHookController
                         'label' => $this->module->l('Hide payment button', 'getContent'),
                     ),
                 ),
-            );
-        }
-
-        if (version_compare(_PS_VERSION_, '1.7', '>=')) {
-            array_unshift(
-                $paymentButtonForm['form']['input'],
-                array(
-                    'name' => null,
-                    'label' => null,
-                    'type' => 'html',
-                    // PrestaShop won't detect the string if the call to `l` is multiline
-                    'html_content' => $this->module->l('Use "%d" in the fields below where you want the installments count to appear. For instance, "Pay in %d monthly installments" will appear as "Pay in 3 monthly installments"', 'getContent'),
-                )
             );
         }
 
