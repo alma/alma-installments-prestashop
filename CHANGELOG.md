@@ -1,6 +1,12 @@
 Changelog
 =========
 
+v1.2.3
+------
+
+* New attempt at overcoming float rounding issues on payment validation
+* Improves onboarding UX: more guidance for the merchant, and less constraints on API keys requirements
+
 v1.2.2
 ------
 
