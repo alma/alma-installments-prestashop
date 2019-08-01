@@ -302,17 +302,22 @@ class AlmaGetContentController extends AlmaAdminHookController
                         'label' => $this->module->l('Live API key', 'getContent'),
                         'type' => 'text',
                         'size' => 75,
-                        'required' => true,
+                        'required' => false,
+                        'desc' => sprintf(
+                            $this->module->l('You can find your Live API key on %1$syour Alma dashboard%2$s', 'getContent'),
+                            '<a href="https://dashboard.getalma.eu/api" target="_blank">',
+                            '</a>'
+                        ),
                     ),
                     array(
                         'name' => 'ALMA_TEST_API_KEY',
                         'label' => $this->module->l('Test API key', 'getContent'),
                         'type' => 'text',
                         'size' => 75,
-                        'required' => true,
+                        'required' => false,
                         'desc' => sprintf(
-                            $this->module->l('You can find your API keys on %1$syour Alma dashboard%2$s', 'getContent'),
-                            '<a href="https://dashboard.getalma.eu/api" target="_blank">',
+                            $this->module->l('You can find your Test API key on %1$syour sandbox dashboard%2$s', 'getContent'),
+                            '<a href="https://dashboard.sandbox.getalma.eu/api" target="_blank">',
                             '</a>'
                         ),
                     ),

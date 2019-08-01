@@ -86,13 +86,34 @@
 
 {elseif isset($tip)}
     <div class="{$tip_classes|escape:'htmlall':'UTF-8'}">
-        {l s='Thanks for installing Alma!' mod='alma'}
+        <p>
+            {l s='Thanks for installing Alma!' mod='alma'}
+            <br>
+            <b>{l s='You need to create an Alma account before proceeding.' mod='alma'}</b>
+            <br>
+            <a href="https://support.getalma.eu/hc/fr/articles/360007913920-D%C3%A9marrer-avec-le-paiement-en-plusieurs-fois-Alma-sur-mon-site-e-commerce" target="_blank">
+                {l s='Read our getting started guide' mod='alma'}
+            </a>
+        </p>
         <br>
-        {l s='You must start by filling in your API keys.' mod='alma'}
+        <p>
+            <b>{l s='You can then fill in your API keys:' mod='alma'}</b>
+            <br>
+            {capture name="live_dashboard_link"}
+                {l s='You can find your Live API key in [1]your Alma dashboard[/1]' mod='alma'}
+            {/capture}
+            {$smarty.capture.live_dashboard_link|replace:'[1]':'<a href="https://dashboard.getalma.eu/api">'|replace:'[/1]':'</a>'}
+            <br>
+            {capture name="sandbox_dashboard_link"}
+                {l s='To use the Test mode, you need your Test API key from [1]your sandbox dasboard[/1]' mod='alma'}
+            {/capture}
+            {$smarty.capture.sandbox_dashboard_link|replace:'[1]':'<a href="https://dashboard.sandbox.getalma.eu/api">'|replace:'[/1]':'</a>'}
+            <br>
+        </p>
         <br>
-        <a href="https://dashboard.getalma.eu/api">
-            {l s='You can find them in your Alma dashboard' mod='alma'}
-        </a>
+        <p>
+            En cas de problème, contactez-nous par email à <a href="mailto:support@getalma.eu">support@getalma.eu</a>
+        </p>
     </div>
 {else}
     <div class="{$success_classes|escape:'htmlall':'UTF-8'}">
