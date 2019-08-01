@@ -39,18 +39,18 @@ function almaPriceToCents($price)
  */
 function almaPriceToCents_str($price)
 {
-    $priceStr = strval($price);
+    $priceStr = (string) $price;
     $parts = explode(".", $priceStr);
 
     if (count($parts) == 1) {
         $parts[] = "00";
-    } elseif (strlen($parts[1]) == 1) {
+    } elseif (Tools::strlen($parts[1]) == 1) {
         $parts[1] .= "0";
-    } elseif (strlen($parts[1]) > 2) {
-        $parts[1] = substr($parts[1], 0, 2);
+    } elseif (Tools::strlen($parts[1]) > 2) {
+        $parts[1] = Tools::substr($parts[1], 0, 2);
     }
 
-    return intval(implode($parts));
+    return (int) implode($parts);
 }
 
 /**
