@@ -38,7 +38,7 @@
     <br>
     {if $fee_plan["merchant_fee_variable"] > 0}
         <b>{l s='You pay:' mod='alma'}</b>
-        {rtrim(sprintf("%.2f", $fee_plan["merchant_fee_variable"] / 100.0), '.0')}%
+        {rtrim(sprintf("%.2f", $fee_plan["merchant_fee_variable"] / 100.0), '.0')|escape:'htmlall':'UTF-8'}%
     {/if}
 
     {if $fee_plan["merchant_fee_fixed"] > 0}
@@ -47,13 +47,13 @@
         {else}
             +
         {/if}
-        {rtrim(sprintf("%.2f", $fee_plan["merchant_fee_fixed"] / 100.0), '.0')}€
+        {rtrim(sprintf("%.2f", $fee_plan["merchant_fee_fixed"] / 100.0), '.0')|escape:'htmlall':'UTF-8'}€
     {/if}
 
     {if $fee_plan["customer_fee_variable"] > 0}
         <br>
         <b>{l s='Customers pay:' mod='alma'}</b>
-        {rtrim(sprintf("%.2f", $fee_plan["customer_fee_variable"] / 100.0), '.0')}%
+        {rtrim(sprintf("%.2f", $fee_plan["customer_fee_variable"] / 100.0), '.0')|escape:'htmlall':'UTF-8'}%
     {/if}
 
     {if $fee_plan["customer_fee_fixed"] > 0}
@@ -63,7 +63,7 @@
         {else}
             +
         {/if}
-        {rtrim(sprintf("%.2f", $fee_plan["customer_fee_fixed"] / 100.0), '.0')}€
+        {rtrim(sprintf("%.2f", $fee_plan["customer_fee_fixed"] / 100.0), '.0')|escape:'htmlall':'UTF-8'}€
     {/if}
 
     <br><br>

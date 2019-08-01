@@ -28,7 +28,7 @@
         {assign var='value_text' value=$fields_value[$input.name]}
             <input type="number"
                    name="{$input.name|escape:'htmlall':'UTF-8'}"
-                   id="{if isset($input.id)}{$input.id}{else}{$input.name|escape:'htmlall':'UTF-8'}{/if}"
+                   id="{if isset($input.id)}{$input.id|escape:'htmlall':'UTF-8'}{else}{$input.name|escape:'htmlall':'UTF-8'}{/if}"
                    value="{$value_text|escape:'html':'UTF-8'}"
                    class="alma {if isset($input.class)}{$input.class|escape:'htmlall':'UTF-8'}{/if}"
                     {if isset($input.size)} size="{$input.size|escape:'htmlall':'UTF-8'}"{/if}
