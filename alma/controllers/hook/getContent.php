@@ -380,7 +380,7 @@ class AlmaGetContentController extends AlmaAdminHookController
                 $maxAmount = (int)almaPriceFromCents($merchant->maximum_purchase_amount);
 
                 $tpl = $this->context->smarty->createTemplate(
-                    _PS_ROOT_DIR_ . "{$this->module->_path}/views/templates/hook/pnx_fees.tpl"
+                    "{$this->module->local_path}views/templates/hook/pnx_fees.tpl"
                 );
                 $tpl->assign(array('fee_plan' => $feePlan, 'min_amount' => $minAmount, 'max_amount' => $maxAmount));
 
@@ -434,7 +434,7 @@ class AlmaGetContentController extends AlmaAdminHookController
             }
 
             $tpl = $this->context->smarty->createTemplate(
-                _PS_ROOT_DIR_ . "{$this->module->_path}/views/templates/hook/pnx_tabs.tpl"
+                "{$this->module->local_path}views/templates/hook/pnx_tabs.tpl"
             );
             $forceTabs = false;
             if (version_compare(_PS_VERSION_, '1.7', '<')) {

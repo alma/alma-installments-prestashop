@@ -35,6 +35,7 @@ class Alma extends PaymentModule
     const VERSION = '1.2.3';
 
     public $_path;
+    public $local_path;
 
     public function __construct()
     {
@@ -61,6 +62,10 @@ class Alma extends PaymentModule
         $this->confirmUninstall = $this->l('Are you sure you want to deactivate Alma Monthly Installments from your shop?', 'alma');
 
         $this->file = __FILE__;
+
+        if (version_compare(_PS_VERSION_, '1.5.0.1', '<')) {
+            $this->local_path = _PS_MODULE_DIR_ . $this->name . '/';
+        }
     }
 
     public function getContent()
