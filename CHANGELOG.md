@@ -1,6 +1,11 @@
 Changelog
 =========
 
+v1.2.4
+------
+
+* Fixes a bug that could prevent Alma from working on PrestaShop installed in a subdirectory of the main domain
+
 v1.2.3
 ------
 
