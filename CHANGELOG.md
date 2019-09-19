@@ -1,6 +1,11 @@
 Changelog
 =========
 
+v1.2.5
+------
+
+* Dependencies update (to include bug fix in Alma PHP Client)
+
 v1.2.4
 ------
 
