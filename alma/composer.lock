@@ -8,16 +8,16 @@
     "packages": [
         {
             "name": "alma/alma-php-client",
-            "version": "v1.0.3",
+            "version": "v1.0.7",
             "source": {
                 "type": "git",
                 "url": "https://github.com/alma/alma-php-client.git",
-                "reference": "ca39c66e7f2b22c063c0adb4b8ab98da6e824a7e"
+                "reference": "b32cbd30b347d391643682823cfbb223f04802ce"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/alma/alma-php-client/zipball/ca39c66e7f2b22c063c0adb4b8ab98da6e824a7e",
-                "reference": "ca39c66e7f2b22c063c0adb4b8ab98da6e824a7e",
+                "url": "https://api.github.com/repos/alma/alma-php-client/zipball/b32cbd30b347d391643682823cfbb223f04802ce",
+                "reference": "b32cbd30b347d391643682823cfbb223f04802ce",
                 "shasum": ""
             },
             "require": {
@@ -50,7 +50,7 @@
                 }
             ],
             "description": "PHP API client for the Alma payments API",
-            "time": "2019-06-11T08:37:10+00:00"
+            "time": "2019-09-19T16:51:08+00:00"
         },
         {
             "name": "psr/log",

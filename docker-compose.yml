@@ -14,7 +14,7 @@ services:
       - "./tmp/db_data:/var/lib/mysql"
 
   prestashop:
-    image: prestashop/prestashop
+    image: prestashop/prestashop:1.7
     environment:
       - DB_SERVER=mysql
       - DB_NAME=prestashop
