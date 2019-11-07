@@ -127,8 +127,7 @@ class AlmaPaymentValidation
         if (!$cart->OrderExists()) {
             $cartTotals = (float) $cart->getOrderTotal(true, Cart::BOTH);
 
-            if ($payment->purchase_amount !== almaPriceToCents($cartTotals) &&
-                $payment->purchase_amount !== almaPriceToCents_str($cartTotals)) {
+            if (abs($payment->purchase_amount - almaPriceToCents($cartTotals)) > 2) {
                 $reason = Payment::FRAUD_AMOUNT_MISMATCH;
                 $reason .= " - " . $cart->getOrderTotal(true, Cart::BOTH) . " * 100 vs " . $payment->purchase_amount;
                 $alma->payments->flagAsPotentialFraud($almaPaymentId, $reason);
