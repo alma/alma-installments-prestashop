@@ -1,6 +1,13 @@
 Changelog
 =========
 
+v1.2.6
+------
+
+* Dependencies update
+* Improves paid amount comparison in payment validation to limit false positives
+
+
 v1.2.5
 ------
 
