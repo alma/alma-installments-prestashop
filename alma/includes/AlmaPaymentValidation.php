@@ -130,7 +130,12 @@ class AlmaPaymentValidation
             if (abs($payment->purchase_amount - almaPriceToCents($cartTotals)) > 2) {
                 $reason = Payment::FRAUD_AMOUNT_MISMATCH;
                 $reason .= " - " . $cart->getOrderTotal(true, Cart::BOTH) . " * 100 vs " . $payment->purchase_amount;
-                $alma->payments->flagAsPotentialFraud($almaPaymentId, $reason);
+
+                try {
+                    $alma->payments->flagAsPotentialFraud($almaPaymentId, $reason);
+                } catch (RequestError $e) {
+                    AlmaLogger::instance()->warning("[Alma] Failed to notify Alma of amount mismatch");
+                }
 
                 AlmaLogger::instance()->error(
                     "[Alma] Payment validation error for Cart {$cart->id}: Purchase amount mismatch!"
@@ -143,7 +148,11 @@ class AlmaPaymentValidation
             if (!in_array($payment->state, array(Payment::STATE_IN_PROGRESS, Payment::STATE_PAID))
                 || $firstInstalment->state !== Instalment::STATE_PAID
             ) {
-                $alma->payments->flagAsPotentialFraud($almaPaymentId, Payment::FRAUD_STATE_ERROR);
+                try {
+                    $alma->payments->flagAsPotentialFraud($almaPaymentId, Payment::FRAUD_STATE_ERROR);
+                } catch (RequestError $e) {
+                    AlmaLogger::instance()->warning("[Alma] Failed to notify Alma of potential fraud");
+                }
 
                 AlmaLogger::instance()->error(
                     "Payment '{$almaPaymentId}': state error {$payment->state} & {$firstInstalment->state}"
