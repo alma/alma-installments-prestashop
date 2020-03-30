@@ -33,6 +33,7 @@ use Alma\API\RequestError;
 
 class AlmaPaymentValidation
 {
+    /** @var Context */
     private $context;
     private $module;
 
@@ -172,6 +173,7 @@ class AlmaPaymentValidation
                 );
             }
 
+            // Place order
             $this->module->validateOrder(
                 (int) $cart->id,
                 Configuration::get('PS_OS_PAYMENT'),
@@ -184,15 +186,22 @@ class AlmaPaymentValidation
                 $customer->secure_key
             );
 
-            $extraRedirectArgs = '';
-        } else {
-            if (is_callable(array('Order', 'getByCartId'))) {
-                $order = Order::getByCartId((int) $cart->id);
-                $this->module->currentOrder = (int) $order->id;
-            } else {
-                $this->module->currentOrder = (int) Order::getOrderByCartId((int) $cart->id);
+            // Update payment's order reference & link
+            $order = $this->getOrderByCartId((int) $cart->id);
+
+            try {
+                $alma->payments->addOrder($payment->id, array(
+                    "merchant_reference" => $order->reference,
+                ));
+            } catch (RequestError $e) {
+                AlmaLogger::instance()->error("[Alma] Error updating order reference {$order->reference}: {$e->getMessage()}");
+            } catch (PrestaShopException $e) {
+                AlmaLogger::instance()->error("[Alma] Error updating order reference {$order->reference}: {$e->getMessage()}");
             }
 
+            $extraRedirectArgs = '';
+        } else {
+            $this->module->currentOrder = $this->getOrderByCartId((int) $cart->id);
             $tokenCart = md5(_COOKIE_KEY_ . 'recover_cart_' . $cart->id);
             $extraRedirectArgs = "&recover_cart={$cart->id}&token_cart={$tokenCart}";
         }
@@ -203,5 +212,14 @@ class AlmaPaymentValidation
             '&id_order=' . (int) $this->module->currentOrder .
             '&key=' . $customer->secure_key .
             $extraRedirectArgs;
+    }
+
+    private function getOrderByCartId($cartId) {
+        if (is_callable(array('Order', 'getByCartId'))) {
+            return Order::getByCartId((int) $cartId);
+        } else {
+            $orderId = (int) Order::getOrderByCartId((int) $cartId);
+            return new Order($orderId);
+        }
     }
 }
