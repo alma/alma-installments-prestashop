@@ -1,6 +1,6 @@
 <?php
 /**
- * 2018-2019 Alma SAS
+ * 2018-2020 Alma SAS
  *
  * THE MIT LICENSE
  *
@@ -18,7 +18,7 @@
  * IN THE SOFTWARE.
  *
  * @author    Alma SAS <contact@getalma.eu>
- * @copyright 2018-2019 Alma SAS
+ * @copyright 2018-2020 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
@@ -214,7 +214,8 @@ class AlmaPaymentValidation
             $extraRedirectArgs;
     }
 
-    private function getOrderByCartId($cartId) {
+    private function getOrderByCartId($cartId)
+    {
         if (is_callable(array('Order', 'getByCartId'))) {
             return Order::getByCartId((int) $cartId);
         } else {
