@@ -8,16 +8,16 @@
     "packages": [
         {
             "name": "alma/alma-php-client",
-            "version": "v1.0.7",
+            "version": "v1.0.10",
             "source": {
                 "type": "git",
                 "url": "https://github.com/alma/alma-php-client.git",
-                "reference": "b32cbd30b347d391643682823cfbb223f04802ce"
+                "reference": "05d75ad6817d9af29cf5f6c8b42d980bdd8f3e61"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/alma/alma-php-client/zipball/b32cbd30b347d391643682823cfbb223f04802ce",
-                "reference": "b32cbd30b347d391643682823cfbb223f04802ce",
+                "url": "https://api.github.com/repos/alma/alma-php-client/zipball/05d75ad6817d9af29cf5f6c8b42d980bdd8f3e61",
+                "reference": "05d75ad6817d9af29cf5f6c8b42d980bdd8f3e61",
                 "shasum": ""
             },
             "require": {
@@ -50,7 +50,7 @@
                 }
             ],
             "description": "PHP API client for the Alma payments API",
-            "time": "2019-09-19T16:51:08+00:00"
+            "time": "2020-03-30T22:09:54+00:00"
         },
         {
             "name": "psr/log",
@@ -58,12 +58,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/php-fig/log.git",
-                "reference": "446d54b4cb6bf489fc9d75f55843658e6f25d801"
+                "reference": "0f73288fd15629204f9d42b7055f72dacbe811fc"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/php-fig/log/zipball/446d54b4cb6bf489fc9d75f55843658e6f25d801",
-                "reference": "446d54b4cb6bf489fc9d75f55843658e6f25d801",
+                "url": "https://api.github.com/repos/php-fig/log/zipball/0f73288fd15629204f9d42b7055f72dacbe811fc",
+                "reference": "0f73288fd15629204f9d42b7055f72dacbe811fc",
                 "shasum": ""
             },
             "require": {
@@ -97,7 +97,7 @@
                 "psr",
                 "psr-3"
             ],
-            "time": "2019-11-01T11:05:21+00:00"
+            "time": "2020-03-23T09:12:05+00:00"
         }
     ],
     "packages-dev": [],
