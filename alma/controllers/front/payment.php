@@ -112,7 +112,7 @@ class AlmaPaymentModuleFrontController extends ModuleFrontController
         }
 
         try {
-            $payment = $alma->payments->createPayment($data);
+            $payment = $alma->payments->create($data);
         } catch (RequestError $e) {
             $msg = "[Alma] ERROR when creating payment for Cart {$cart->id}: {$e->getMessage()}";
             AlmaLogger::instance()->error($msg);
