@@ -186,7 +186,7 @@ class AlmaPaymentValidation
                 $customer->secure_key
             );
 
-            // Update payment's order reference & link
+            // Update payment's order reference
             $order = $this->getOrderByCartId((int) $cart->id);
 
             try {
