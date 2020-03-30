@@ -33,6 +33,7 @@ use Alma\API\RequestError;
 
 class AlmaPaymentValidation
 {
+    /** @var Context */
     private $context;
     private $module;
 
@@ -130,7 +131,12 @@ class AlmaPaymentValidation
             if (abs($payment->purchase_amount - almaPriceToCents($cartTotals)) > 2) {
                 $reason = Payment::FRAUD_AMOUNT_MISMATCH;
                 $reason .= " - " . $cart->getOrderTotal(true, Cart::BOTH) . " * 100 vs " . $payment->purchase_amount;
-                $alma->payments->flagAsPotentialFraud($almaPaymentId, $reason);
+
+                try {
+                    $alma->payments->flagAsPotentialFraud($almaPaymentId, $reason);
+                } catch (RequestError $e) {
+                    AlmaLogger::instance()->warning("[Alma] Failed to notify Alma of amount mismatch");
+                }
 
                 AlmaLogger::instance()->error(
                     "[Alma] Payment validation error for Cart {$cart->id}: Purchase amount mismatch!"
@@ -143,7 +149,11 @@ class AlmaPaymentValidation
             if (!in_array($payment->state, array(Payment::STATE_IN_PROGRESS, Payment::STATE_PAID))
                 || $firstInstalment->state !== Instalment::STATE_PAID
             ) {
-                $alma->payments->flagAsPotentialFraud($almaPaymentId, Payment::FRAUD_STATE_ERROR);
+                try {
+                    $alma->payments->flagAsPotentialFraud($almaPaymentId, Payment::FRAUD_STATE_ERROR);
+                } catch (RequestError $e) {
+                    AlmaLogger::instance()->warning("[Alma] Failed to notify Alma of potential fraud");
+                }
 
                 AlmaLogger::instance()->error(
                     "Payment '{$almaPaymentId}': state error {$payment->state} & {$firstInstalment->state}"
@@ -163,6 +173,7 @@ class AlmaPaymentValidation
                 );
             }
 
+            // Place order
             $this->module->validateOrder(
                 (int) $cart->id,
                 Configuration::get('PS_OS_PAYMENT'),
@@ -175,15 +186,22 @@ class AlmaPaymentValidation
                 $customer->secure_key
             );
 
-            $extraRedirectArgs = '';
-        } else {
-            if (is_callable(array('Order', 'getByCartId'))) {
-                $order = Order::getByCartId((int) $cart->id);
-                $this->module->currentOrder = (int) $order->id;
-            } else {
-                $this->module->currentOrder = (int) Order::getOrderByCartId((int) $cart->id);
+            // Update payment's order reference
+            $order = $this->getOrderByCartId((int) $cart->id);
+
+            try {
+                $alma->payments->addOrder($payment->id, array(
+                    "merchant_reference" => $order->reference,
+                ));
+            } catch (RequestError $e) {
+                AlmaLogger::instance()->error("[Alma] Error updating order reference {$order->reference}: {$e->getMessage()}");
+            } catch (PrestaShopException $e) {
+                AlmaLogger::instance()->error("[Alma] Error updating order reference {$order->reference}: {$e->getMessage()}");
             }
 
+            $extraRedirectArgs = '';
+        } else {
+            $this->module->currentOrder = $this->getOrderByCartId((int) $cart->id);
             $tokenCart = md5(_COOKIE_KEY_ . 'recover_cart_' . $cart->id);
             $extraRedirectArgs = "&recover_cart={$cart->id}&token_cart={$tokenCart}";
         }
@@ -194,5 +212,14 @@ class AlmaPaymentValidation
             '&id_order=' . (int) $this->module->currentOrder .
             '&key=' . $customer->secure_key .
             $extraRedirectArgs;
+    }
+
+    private function getOrderByCartId($cartId) {
+        if (is_callable(array('Order', 'getByCartId'))) {
+            return Order::getByCartId((int) $cartId);
+        } else {
+            $orderId = (int) Order::getOrderByCartId((int) $cartId);
+            return new Order($orderId);
+        }
     }
 }
