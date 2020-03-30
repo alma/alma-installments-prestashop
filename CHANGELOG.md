@@ -1,6 +1,13 @@
 Changelog
 =========
 
+v1.2.7
+------
+
+* Dependencies update
+* Send order reference to Alma upon payment confirmation, to make it easier for merchants to 
+  associate Alma payments with actual orders in their PrestaShop orders
+
 v1.2.6
 ------
 
