@@ -27,10 +27,18 @@ if (!defined('_PS_VERSION_')) {
 }
 
 include_once _PS_MODULE_DIR_ . 'alma/includes/AlmaLogger.php';
+include_once _PS_MODULE_DIR_ . 'alma/includes/ShippingData.php';
 include_once _PS_MODULE_DIR_ . 'alma/includes/functions.php';
 
 class PaymentData
 {
+    /**
+     * @param Cart $cart
+     * @param Context $context
+     * @param int $installmentsCount
+     * @return array|null
+     * @throws Exception
+     */
     public static function dataFromCart($cart, $context, $installmentsCount = 3)
     {
         if ($cart->id_customer == 0 || $cart->id_address_delivery == 0 || $cart->id_address_invoice == 0) {
@@ -108,6 +116,7 @@ class PaymentData
                     'city' => $shippingAddress->city,
                     'country' => $shippingAddress->country,
                 ),
+                'shipping_info' => ShippingData::shippingInfo($cart),
                 'billing_address' => array(
                     'line1' => $billingAddress->address1,
                     'postal_code' => $billingAddress->postcode,
