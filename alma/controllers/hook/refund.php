@@ -38,6 +38,11 @@ class AlmaRefundController extends AlmaAdminHookController
 {
     public function run($params)
     {
+        // When a discount refund is generated, we *must not* refund the customer via Alma
+        if (Tools::isSubmit('generateDiscountRefund') || Tools::isSubmit('generateDiscount')) {
+            return;
+        }
+
         $order = $params['order'];
         if (!$order_payment = $this->getCurrentOrderPayment($order)) {
             return;
