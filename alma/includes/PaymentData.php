@@ -93,7 +93,7 @@ class PaymentData
             }
         }
 
-        $purchaseAmount = (float) $cart->getOrderTotal(true, Cart::BOTH);
+        $purchaseAmount = (float)Tools::ps_round((float)$cart->getOrderTotal(true, Cart::BOTH), 2);
 
         $data = array(
             'payment' => array(

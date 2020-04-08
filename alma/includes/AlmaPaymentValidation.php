@@ -126,7 +126,7 @@ class AlmaPaymentValidation
         }
 
         if (!$cart->OrderExists()) {
-            $cartTotals = (float) $cart->getOrderTotal(true, Cart::BOTH);
+            $cartTotals = (float)Tools::ps_round((float)$cart->getOrderTotal(true, Cart::BOTH), 2);
 
             if (abs($payment->purchase_amount - almaPriceToCents($cartTotals)) > 2) {
                 $reason = Payment::FRAUD_AMOUNT_MISMATCH;
