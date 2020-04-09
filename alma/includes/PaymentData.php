@@ -28,6 +28,7 @@ if (!defined('_PS_VERSION_')) {
 
 include_once _PS_MODULE_DIR_ . 'alma/includes/AlmaLogger.php';
 include_once _PS_MODULE_DIR_ . 'alma/includes/ShippingData.php';
+include_once _PS_MODULE_DIR_ . 'alma/includes/CartData.php';
 include_once _PS_MODULE_DIR_ . 'alma/includes/functions.php';
 
 class PaymentData
@@ -117,6 +118,7 @@ class PaymentData
                     'country' => $shippingAddress->country,
                 ),
                 'shipping_info' => ShippingData::shippingInfo($cart),
+                'cart' => CartData::cartInfo($cart),
                 'billing_address' => array(
                     'line1' => $billingAddress->address1,
                     'postal_code' => $billingAddress->postcode,
