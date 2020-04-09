@@ -31,22 +31,55 @@ include_once _PS_MODULE_DIR_ . 'alma/includes/functions.php';
 
 class CartData
 {
+    private static $taxCalculationMethod = array();
+
     /**
      * @param Cart $cart
+     * @return array
      * @throws PrestaShopDatabaseException
      * @throws PrestaShopException
      */
     public static function cartInfo($cart) {
+        return array(
+            "items" => self::getCartItems($cart),
+            "discounts" => self::getCartDiscounts($cart),
+        );
+    }
+
+    /**
+     * @param Cart $cart
+     * @return bool|mixed
+     */
+    private static function includeTaxes($cart) {
+        if (version_compare(_PS_VERSION_, '1.7', '>=')) {
+            $taxConfiguration = new TaxConfiguration();
+            return $taxConfiguration->includeTaxes();
+        } else {
+            if (!Configuration::get('PS_TAX')) {
+                return false;
+            }
+
+            $idCustomer = (int)$cart->id_customer;
+            if (!array_key_exists($idCustomer, self::$taxCalculationMethod)) {
+                self::$taxCalculationMethod[$idCustomer] = !Product::getTaxCalculationMethod($idCustomer);
+            }
+            return self::$taxCalculationMethod[$idCustomer];
+        }
+    }
+
+    /**
+     * @param Cart $cart
+     * @return array of items
+     *
+     * @throws PrestaShopDatabaseException
+     * @throws PrestaShopException
+     */
+    private static function getCartItems($cart) {
         $items = array();
 
-        $productDetails = array();
-        if (version_compare(_PS_VERSION_, '1.7', '>=')) {
-            $products = $cart->getProductsWithSeparatedGifts();
-        } else {
-            $products = $cart->getProducts(true);
-            $productDetails = self::getProductsDetails($products);
-        }
-
+        $summaryDetails = $cart->getSummaryDetails($cart->id_lang, true);
+        $products = array_merge($summaryDetails['products'], $summaryDetails['gift_products']);
+        $productsDetails = self::getProductsDetails($products);
         $combinationsNames = self::getProductsCombinations($cart, $products);
 
         foreach ($products as $idx => $productRow) {
@@ -56,15 +89,20 @@ class CartData
             $pid = (int)$product->id;
             $link = Context::getContext()->link;
 
+            $manufacturer_name = isset($productRow['manufacturer_name']) ? $productRow['manufacturer_name'] : null;
+            if (!$manufacturer_name and isset($productsDetails[$pid])) {
+                $manufacturer_name = $productsDetails[$pid]['manufacturer_name'];
+            }
+
             $data = array(
                 'sku' => $productRow['reference'],
-                'vendor' => isset($productRow['manufacturer_name']) ? $productRow['manufacturer_name'] : $productDetails[$pid]['manufacturer_name'],
+                'vendor' => $manufacturer_name,
                 'title' => $productRow['name'],
                 'variant_title' => null,
-                'quantity' => $productRow['cart_quantity'],
-                'unit_price' => almaPriceToCents($productRow['price_wt']),
-                'line_price' => almaPriceToCents($productRow['total_wt']),
-                'is_gift' => isset($productRow['is_gift']) ? $productRow['is_gift'] : null,
+                'quantity' => (int)$productRow['cart_quantity'],
+                'unit_price' => almaPriceToCents(self::includeTaxes($cart) ? (float)$productRow['price_wt'] : (float)$productRow['price']),
+                'line_price' => almaPriceToCents(self::includeTaxes($cart) ? (float)$productRow['total_wt'] : (float)$productRow['total']),
+                'is_gift' => isset($productRow['gift']) ? (bool)$productRow['gift'] : (isset($productRow['is_gift']) ? (bool)$productRow['is_gift'] : null),
                 'categories' => array($productRow['category']),
                 'url' => $link->getProductLink(
                     $product,
@@ -79,8 +117,8 @@ class CartData
                     true
                 ),
                 'picture_url' => $link->getImageLink($productRow['link_rewrite'], $productRow['id_image'], 'large_default'),
-                'requires_shipping' => !!(isset($productRow['is_virtual']) ? $productRow['is_virtual'] : $productDetails['is_virtual']),
-                'taxes_included' => true,
+                'requires_shipping' => !(bool)(isset($productRow['is_virtual']) ? $productRow['is_virtual'] : $productsDetails[$pid]['is_virtual']),
+                'taxes_included' => self::includeTaxes($cart),
             );
 
             if (isset($productRow['id_product_attribute']) && (int)$productRow['id_product_attribute']) {
@@ -94,7 +132,7 @@ class CartData
             $items[] = $data;
         }
 
-        return array("items" => $items);
+        return $items;
     }
 
     /**
@@ -183,5 +221,23 @@ class CartData
         }
 
         return $combinationsNames;
+    }
+
+    /**
+     * @param Cart $cart
+     * @return array of discount items
+     */
+    private static function getCartDiscounts($cart) {
+        $discounts = array();
+        $cartRules = $cart->getCartRules(CartRule::FILTER_ACTION_ALL, false);
+
+        foreach ($cartRules as $cartRule) {
+            $discounts[] = array(
+                "title" => isset($cartRule["name"]) ? $cartRule["name"] : $cartRule["description"],
+                "amount" => almaPriceToCents(self::includeTaxes($cart) ? (float)$cartRule["value_real"] : (float)$cartRule["value_tax_exc"])
+            );
+        }
+
+        return $discounts;
     }
 }
