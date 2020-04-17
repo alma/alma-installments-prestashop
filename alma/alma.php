@@ -32,7 +32,7 @@ include_once _PS_MODULE_DIR_ . 'alma/includes/AlmaLogger.php';
 
 class Alma extends PaymentModule
 {
-    const VERSION = '1.2.7';
+    const VERSION = '1.3.0';
 
     public $_path;
     public $local_path;
@@ -41,7 +41,7 @@ class Alma extends PaymentModule
     {
         $this->name = 'alma';
         $this->tab = 'payments_gateways';
-        $this->version = '1.2.7';
+        $this->version = '1.3.0';
         $this->author = 'Alma';
         $this->need_instance = false;
         $this->bootstrap = true;

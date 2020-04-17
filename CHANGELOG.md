@@ -1,6 +1,13 @@
 Changelog
 =========
 
+v1.3.0
+------
+
+* Compatibility with the Advance EU Compliance module (PrestaShop 1.6)
+* Round prices using PrestaShop's internal method, to comply with merchant's configured preferences
+* Include cart contents & shipping information in payment data to improve customer UX & fraud detection
+
 v1.2.7
 ------
 
