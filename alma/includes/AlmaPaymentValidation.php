@@ -194,9 +194,11 @@ class AlmaPaymentValidation
                     "merchant_reference" => $order->reference,
                 ));
             } catch (RequestError $e) {
-                AlmaLogger::instance()->error("[Alma] Error updating order reference {$order->reference}: {$e->getMessage()}");
+                $msg = "[Alma] Error updating order reference {$order->reference}: {$e->getMessage()}";
+                AlmaLogger::instance()->error($msg);
             } catch (PrestaShopException $e) {
-                AlmaLogger::instance()->error("[Alma] Error updating order reference {$order->reference}: {$e->getMessage()}");
+                $msg = "[Alma] Error updating order reference {$order->reference}: {$e->getMessage()}";
+                AlmaLogger::instance()->error($msg);
             }
 
             $extraRedirectArgs = '';

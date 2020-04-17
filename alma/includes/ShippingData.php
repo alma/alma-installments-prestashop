@@ -35,7 +35,8 @@ class ShippingData
      * @param Cart $cart
      * @return array|null
      */
-    public static function shippingInfo($cart) {
+    public static function shippingInfo($cart)
+    {
         $addressId = $cart->id_address_delivery;
         $deliveryOption = $cart->getDeliveryOption(null, true);
 
@@ -66,7 +67,7 @@ class ShippingData
 
         $shippingInfo["available_options"] = array();
         $knownOptions = array();
-        foreach($deliveryOptionList[$addressId] as $key => $carriers) {
+        foreach ($deliveryOptionList[$addressId] as $carriers) {
             foreach ($carriers['carrier_list'] as $id => $carrierOptionInfo) {
                 $carrierOption = new Carrier($id, $cart->id_lang);
                 if (!$carrierOption) {
@@ -97,7 +98,8 @@ class ShippingData
      * @param $carrierInfo
      * @return array
      */
-    private static function shippingInfoData($carrier, $carrierInfo) {
+    private static function shippingInfoData($carrier, $carrierInfo)
+    {
         return array(
             "amount" => almaPriceToCents((float)$carrierInfo["price_with_tax"]),
             "carrier" => $carrier->name,
@@ -107,11 +109,13 @@ class ShippingData
         );
     }
 
-    private static function isExpressShipping($carrierInfo) {
+    private static function isExpressShipping($carrierInfo)
+    {
         return null;
     }
 
-    private static function isPickupShipping($carrierInfo) {
+    private static function isPickupShipping($carrierInfo)
+    {
         return null;
     }
 }
