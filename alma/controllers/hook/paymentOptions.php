@@ -84,18 +84,14 @@ class AlmaPaymentOptionsController extends AlmaProtectedHookController
                 }
             }
 
-            $paymentOption = new PrestaShop\PrestaShop\Core\Payment\PaymentOption();
-            $paymentOption
-                ->setModuleName($this->module->name)
-                ->setCallToActionText(sprintf(AlmaSettings::getPaymentButtonTitle(), $n))
-                ->setAction($this->context->link->getModuleLink($this->module->name, 'payment', array('n' => $n), true))
-                ->setLogo(
-                    Media::getMediaPath(
-                        _PS_MODULE_DIR_ . $this->module->name . '/views/img/tiny_alma_payment_logos.svg'
-                    )
-                );
+            $forEUComplianceModule = $params['for_eu_compliance_module'];
+            $paymentOption = $this->createPaymentOption(
+                $forEUComplianceModule,
+                sprintf(AlmaSettings::getPaymentButtonTitle(), $n),
+                $this->context->link->getModuleLink($this->module->name, 'payment', array('n' => $n), true)
+            );
 
-            if (!empty(AlmaSettings::getPaymentButtonDescription())) {
+            if (!$forEUComplianceModule && !empty(AlmaSettings::getPaymentButtonDescription())) {
                 $this->context->smarty->assign(array(
                     'desc' => sprintf(AlmaSettings::getPaymentButtonDescription(), $n),
                 ));
@@ -111,5 +107,27 @@ class AlmaPaymentOptionsController extends AlmaProtectedHookController
         }
 
         return $options;
+    }
+
+    private function createPaymentOption($forEUComplianceModule, $ctaText, $action)
+    {
+        if ($forEUComplianceModule) {
+            $logo = Media::getMediaPath(_PS_MODULE_DIR_ . $this->module->name . '/views/img/alma_payment_logos.svg');
+            $paymentOption = array(
+                'cta_text' => $ctaText,
+                'action' => $action,
+                'logo' => $logo
+            );
+        } else {
+            $paymentOption = new PrestaShop\PrestaShop\Core\Payment\PaymentOption();
+            $logo = Media::getMediaPath(_PS_MODULE_DIR_ . $this->module->name . '/views/img/tiny_alma_payment_logos.svg');
+            $paymentOption
+                ->setModuleName($this->module->name)
+                ->setCallToActionText($ctaText)
+                ->setAction($action)
+                ->setLogo($logo);
+        }
+
+        return $paymentOption;
     }
 }

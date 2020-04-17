@@ -104,7 +104,7 @@ class Alma extends PaymentModule
         if (version_compare(_PS_VERSION_, '1.7', '>=')) {
             $paymentHooks = array('paymentOptions', 'displayPaymentReturn');
         } else {
-            $paymentHooks = array('displayPayment', 'displayPaymentReturn');
+            $paymentHooks = array('displayPayment', 'displayPaymentEU', 'displayPaymentReturn');
         }
 
         foreach (array_merge($commonHooks, $paymentHooks) as $hook) {
@@ -209,6 +209,12 @@ class Alma extends PaymentModule
 
     public function hookPaymentOptions($params)
     {
+        return $this->runHookController('paymentOptions', $params);
+    }
+
+    public function hookDisplayPaymentEU($params)
+    {
+        $params['for_eu_compliance_module'] = true;
         return $this->runHookController('paymentOptions', $params);
     }
 
