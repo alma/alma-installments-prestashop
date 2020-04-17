@@ -116,7 +116,7 @@ class CartData
                     false,
                     true
                 ),
-                'picture_url' => $link->getImageLink($productRow['link_rewrite'], $productRow['id_image'], 'large_default'),
+                'picture_url' => $link->getImageLink($productRow['link_rewrite'], $productRow['id_image'], self::getFormattedImageTypeName('large')),
                 'requires_shipping' => !(bool)(isset($productRow['is_virtual']) ? $productRow['is_virtual'] : $productsDetails[$pid]['is_virtual']),
                 'taxes_included' => self::includeTaxes($cart),
             );
@@ -133,6 +133,14 @@ class CartData
         }
 
         return $items;
+    }
+
+    private static function getFormattedImageTypeName($name) {
+        if (version_compare(_PS_VERSION_, '1.7', '>=')) {
+            return ImageType::getFormattedName($name);
+        } else {
+            return ImageType::getFormatedName($name);
+        }
     }
 
     /**
