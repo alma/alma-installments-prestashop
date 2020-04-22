@@ -84,7 +84,11 @@ class AlmaPaymentOptionsController extends AlmaProtectedHookController
                 }
             }
 
-            $forEUComplianceModule = $params['for_eu_compliance_module'];
+            $forEUComplianceModule = false;
+            if (array_key_exists('for_eu_compliance_module', $params)) {
+                $forEUComplianceModule = $params['for_eu_compliance_module'];
+            }
+
             $paymentOption = $this->createPaymentOption(
                 $forEUComplianceModule,
                 sprintf(AlmaSettings::getPaymentButtonTitle(), $n),
