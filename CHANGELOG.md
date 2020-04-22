@@ -1,6 +1,11 @@
 Changelog
 =========
 
+v1.3.1
+------
+
+* Fixes an issue that could prevent all payment options to show in PrestaShop 1.7
+
 v1.3.0
 ------
 
