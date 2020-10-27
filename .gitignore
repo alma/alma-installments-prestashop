@@ -2,3 +2,4 @@ alma/vendor
 alma/config*.xml
 dist
 tmp
+prestashop
