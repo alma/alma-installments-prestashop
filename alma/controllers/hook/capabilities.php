@@ -1,6 +1,6 @@
 <?php
 /**
- * 2018-2019 Alma SAS
+ * 2018-2020 Alma SAS
  *
  * THE MIT LICENSE
  *
@@ -18,40 +18,26 @@
  * IN THE SOFTWARE.
  *
  * @author    Alma SAS <contact@getalma.eu>
- * @copyright 2018-2019 Alma SAS
+ * @copyright 2018-2020 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
+
 
 if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-class AlmaSecurity
+
+include_once _PS_MODULE_DIR_ . 'alma/includes/AlmaSettings.php';
+include_once _PS_MODULE_DIR_ . 'alma/includes/AlmaProtectedHookController.php';
+
+class AlmaCapabilitiesController extends AlmaProtectedHookController
 {
-    protected $apiKey;
-
-    public function __construct($apiKey)
+    public function run($params)
     {
-        $this->apiKey = $apiKey;
+
+        header('Content-Type: application/json');
+        json_encode(array('webhook' => "share_of_chekout", 'endpoint' => _PS_BASE_URL_."/module/alma/share"));        
     }
 
-    /**
-     * Check if signature is valid
-     *
-     * @param array $data
-     * @param string $sig
-     * @return boolean
-     */
-    public function validSignature(array $data, string $sig)
-    {
-        ksort($data);
-        $token = http_build_query($data);                   
-        $encode = hash_hmac('sha256', $token, $this->apiKey);         
-        // print_r($encode);
-        // print_r($sig);
-        if ($encode != $sig) {
-            throw new Exception('access denied');
-        }
-        return true;
-    }
 }

@@ -61,18 +61,20 @@ class AlmaShareModuleFrontController extends ModuleFrontController
         header('Content-Type: application/json');
 
         $sig = Tools::getValue('sig', null);
-        $since = Tools::getValue('since', null);
-
+        $from = Tools::getValue('from', null);
+        $to = Tools::getValue('to', null);
+        
         $security = new AlmaSecurity(AlmaSettings::getActiveAPIKey());
+        
         try {
-            $security->validSignature(array('since' => $since), $sig);
+            $security->validSignature(array('from' => $from, 'to' => $to), $sig);
         } catch (Exception $e) {
             $this->fail($e->getMessage());
         }
 
         $shareOfCheckout = new AlmaShareOfCheckout($this->context, $this->module);
         try {
-            $data = $shareOfCheckout->getPayments($since);
+            $data = $shareOfCheckout->getPayments($from,$to);
         } catch (Exception $e) {
             $this->fail($e->getMessage());
         }

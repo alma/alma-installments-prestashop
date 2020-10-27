@@ -38,18 +38,26 @@ class AlmaShareOfCheckout
      * @return string URL to redirect the customer to
      * @throws Exception
      */
-    public function getPayments($since)
+    public function getPayments($from,$to)
     {
-        if (!$this->isValidTimeStamp($since)) {
-            AlmaLogger::instance()->error("[Alma] ShareOfCheckout since value {$since}: not a valid timestamp.");
-            throw new Exception('not a valid timestamp');
+        if (!$this->isValidTimeStamp($from)) {
+            AlmaLogger::instance()->error("[Alma] ShareOfCheckout 'from' value {$from}: not a valid timestamp.");
+            throw new Exception('"FROM" is not a valid timestamp');
         }
-        $dateSince = new Datetime();
-        $dateSince->setTimestamp($since);
+        if (!$this->isValidTimeStamp($to)) {
+            AlmaLogger::instance()->error("[Alma] ShareOfCheckout 'to' value {$to}: not a valid timestamp.");
+            throw new Exception('"TO" is not a valid timestamp');
+        }
+        $dateFrom = new Datetime();
+        $dateFrom->setTimestamp($from);
+        $dateTo = new Datetime();
+        $dateTo->setTimestamp($to);
+        
         $payments = Db::getInstance()->executeS('
             SELECT `payment_method`, COUNT(`id_order_payment`) AS `count`, SUM(`amount`) AS `tpv`
             FROM `'._DB_PREFIX_.'order_payment`
-            WHERE `date_add` >= \'' . pSQL($dateSince->format('Y-m-d')) . '\'
+            WHERE `date_add` >= \'' . pSQL($dateFrom->format('Y-m-d')) . '\'
+            AND `date_add` <= \'' . pSQL($dateTo->format('Y-m-d')) . '\'
             GROUP BY `payment_method`
         ');
         $data = [];
