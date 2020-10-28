@@ -62,6 +62,7 @@ class Alma extends PaymentModule
         $this->confirmUninstall = $this->l('Are you sure you want to deactivate Alma Monthly Installments from your shop?', 'alma');
 
         $this->file = __FILE__;
+        $this->installTabs();
 
         if (version_compare(_PS_VERSION_, '1.5.0.1', '<')) {
             $this->local_path = _PS_MODULE_DIR_ . $this->name . '/';
@@ -98,7 +99,7 @@ class Alma extends PaymentModule
             'displayBackOfficeHeader',
             'displayShoppingCartFooter',
             'actionOrderSlipAdd',
-            'actionOrderStatusPostUpdate'
+            'actionOrderStatusPostUpdate',
         );
 
         if (version_compare(_PS_VERSION_, '1.7', '>=')) {
@@ -169,6 +170,56 @@ class Alma extends PaymentModule
         return $result;
     }
 
+    public function installTabs()
+    {
+        if (version_compare(_PS_VERSION_, '1.6', '>=')) {
+            $this->installTab('alma', 'Alma');
+        }
+        $this->installTab('AdminAlmaCategories', 'Exclusion de catégories', 'alma', 'credit_card');
+        return true;
+    }
+
+    protected function installTab($class, $name, $parent = null, $icon = null)
+    {
+        $tabId = (int) Tab::getIdFromClassName($class);
+        if (!$tabId) {
+            $tabId = null;
+        }
+
+        $tab = new Tab($tabId);
+        $tab->active = 1;
+        $tab->class_name = $class;
+        $tab->name = array();
+        foreach (Language::getLanguages(true) as $lang) {
+            $tab->name[$lang['id_lang']] = $name;
+        }
+        if ($parent) {
+            if (version_compare(_PS_VERSION_, '1.7', '>=')) {
+                if ($icon) {
+                    $tab->icon = $icon;
+                }
+            }
+            $tab->id_parent = (int)Tab::getIdFromClassName($parent);
+        } else {
+            $tab->id_parent = 0;
+        }
+        $tab->module = $this->name;
+
+        return $tab->save();
+    }
+
+    protected function uninstallTab($class =null)
+    {
+        $tabId = (int) Tab::getIdFromClassName($class);
+        if (!$tabId) {
+            return true;
+        }
+
+        $tab = new Tab($tabId);
+
+        return $tab->delete();
+    }
+
     public function hookHeader($params)
     {
         if ($this->context->controller->php_self == 'order-opc' || $this->context->controller->php_self == 'order') {
@@ -185,6 +236,11 @@ class Alma extends PaymentModule
                 return $this->display($this->file, 'header.tpl');
             }
         }
+    }
+
+    public function hookDisplayProductButtons($params)
+    {
+        return $this->runHookController('displayEligibilty', $params);
     }
 
     public function hookDisplayBackOfficeHeader($params)

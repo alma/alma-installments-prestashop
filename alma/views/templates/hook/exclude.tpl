@@ -1,0 +1,39 @@
+{*
+ * 2018-2019 Alma SAS
+ *
+ * THE MIT LICENSE
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
+ * documentation files (the "Software"), to deal in the Software without restriction, including without limitation
+ * the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and
+ * to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+ * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the
+ * Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE
+ * WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
+ * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+ * IN THE SOFTWARE.
+ *
+ * @author    Alma SAS <contact@getalma.eu>
+ * @copyright 2018-2019 Alma SAS
+ * @license   https://opensource.org/licenses/MIT The MIT License
+ *}
+
+<div id="alma-exclude">
+    <p>{l s='You can not offer Alma when selling weapons, medical equipment and dematerialized products (gift card, license keys for video games, software, ...)' mod='alma'}</p>
+    <p>{l s='In case of failure to pay relating to an order containing a product of this list, your insurance Alma will not cover you.' mod='alma'}</p>
+    <br />
+    <p>{l s='You can use [1]exclusion lists[/1] to be compliant with these restrictions.' tags=array($excludeLink, '</a>') mod='alma'}</p>
+    <br />
+    <p>{l s='[1]Exclude categories :[/1] %s' mod='alma' sprintf=$excludeCategories tags=array('<strong>', '</strong>')}</p>
+</div>
+
+<!--
+Vous ne pouvez proposer Alma lors de la vente d'armes, de matériel médical et de produits dématérialisés (carte cadeau, clés de licence de jeux vidéos, logiciels, ...)
+En cas de défaut d'un paiement relatif à une commande contenant un produit de cette liste, votre assurance Alma ne vous couvrira pas.
+Vous pouvez utiliser les listes d'exclusion pour vous conformer à ces restrictions.
+Catégories exclues :
+%n produits exclus en plus des catégories ci-dessus.
+-->

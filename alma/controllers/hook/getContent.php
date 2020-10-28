@@ -591,6 +591,33 @@ class AlmaGetContentController extends AlmaAdminHookController
             ),
         );
 
+        $tplExclude = $this->context->smarty->createTemplate(
+            _PS_ROOT_DIR_ . "{$this->module->_path}/views/templates/hook/exclude.tpl"
+        );
+        $excludeCategories = AlmaSettings::getExcludeNameCategories();
+        $tplExclude->assign(array(
+            'excludeCategories' => $excludeCategories,
+            'excludeLink' => '<a href="' . $this->context->link->getAdminLink('AdminAlmaCategories') . '">',
+        ));
+        $excludeForm = array(
+            'form' => array(
+                'legend' => array(
+                    'title' => $this->module->l('Exclude categories', 'getContent'),
+                    'image' => $iconPath,
+                ),
+                'input' => array(
+                    array(
+                        'name' => null,
+                        'label' => null,
+                        'type' => 'html',
+                        // PrestaShop won't detect the string if the call to `l` is multiline
+                        'html_content' => $tplExclude->fetch(),
+                    ),
+                ),
+                'submit' => array('title' => $this->module->l('Save'), 'class' => 'btn btn-default pull-right'),
+            ),
+        );
+
         $refundStateForm = array(
             'form' => array(
                 'legend' => array(
@@ -681,7 +708,8 @@ class AlmaGetContentController extends AlmaAdminHookController
                 $fieldsForms[] = $pnxConfigForm;
             }
 
-            $fieldsForms = array_merge($fieldsForms, array($orderConfirmationForm, $apiConfigForm, $debugForm));
+            //$fieldsForms = array_merge($fieldsForms, array($orderConfirmationForm, $apiConfigForm, $debugForm));
+            $fieldsForms = array_merge($fieldsForms, array($orderConfirmationForm, $excludeForm, $apiConfigForm, $debugForm));
         }
 
         $helper = new HelperForm();
