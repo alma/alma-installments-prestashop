@@ -60,7 +60,8 @@ class AlmaSettings
     {
         $idShop = Shop::getContextShopID(true);
         $idShopGroup = Shop::getContextShopGroupID(true);
-
+        // echo "configkey : ".$configKey;
+        // echo 'value : '.$value;
         Configuration::updateValue($configKey, $value, false, $idShopGroup, $idShop);
     }
 
@@ -223,7 +224,7 @@ class AlmaSettings
 
     public static function getExcludeCategories()
     {
-        $categories = self::get('ALMA_EXCLUDE_CATEGORIES', null);
+        $categories = self::get('ALMA_EXCLUDE_CATEGORIES', null);        
         if (null !== $categories) {
             return json_decode($categories);
         }
@@ -239,25 +240,57 @@ class AlmaSettings
             foreach ($categories as $category) {
                 $categoriesName[] = $category['name'];
             }
-        }
+        }        
         return implode(', ', $categoriesName);
     }
 
     public static function addExcludeCategories($idCategory)
-    {
-        $categories = self::getExcludeCategories();
+    {        
+        $categories = self::getExcludeCategories();            
         if (!in_array($idCategory, $categories)) {
             $categories[] = $idCategory;
-        }
-        self::updateValue('ALMA_EXCLUDE_CATEGORIES', Tools::jsonEncode($categories));
+        }        
+        self::updateExcludeCategories($categories);        
     }
 
     public static function removeExcludeCategories($idCategory)
     {
         $categories = self::getExcludeCategories();
-        if (($key = array_search($idCategory, $categories)) !== false) {
+        if (($key = array_search($idCategory, $categories)) !== false) {        
             unset($categories[$key]);
         }
-        self::updateValue('ALMA_EXCLUDE_CATEGORIES', Tools::jsonDecode($categories));
+        self::updateExcludeCategories(array_values($categories));
+    }
+
+    /**
+     * Update ALMA_EXCLUDE_CATEGORIES value
+     *
+     * @param array $categories
+     * @return void
+     */
+    private static function updateExcludeCategories($categories){
+        if (version_compare(_PS_VERSION_, '1.7', '<')) {
+            self::updateValue('ALMA_EXCLUDE_CATEGORIES', Tools::jsonEncode($categories));
+        }
+        else{
+            self::updateValue('ALMA_EXCLUDE_CATEGORIES', json_encode($categories));
+        }
+    }
+
+    /**
+     * Check if some products in cart are in the excludes listing
+     *
+     * @param object $params
+     * @return array
+     */
+    public static function getCartExclusion($params){
+        $products = $params['cart']->getProducts(true);
+        $cartProductsCategories = array();        
+        foreach($products as $k => $p){            
+            $cartProductsCategories[] =  $p['id_category_default'];                
+        }
+        $excludeListing = self::getExcludeCategories();                        
+        return array_intersect($cartProductsCategories, $excludeListing);        
+        
     }
 }

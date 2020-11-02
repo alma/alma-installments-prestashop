@@ -45,7 +45,9 @@ class AlmaDisplayShoppingCartFooterController extends AlmaProtectedHookControlle
         if (!$eligibility->isEligible) {
             $eligibilityMsg = AlmaSettings::getNonEligibilityMessage();
 
+            
             $cart = $this->context->cart;
+
             $cartTotal = almaPriceToCents((float) $cart->getOrderTotal(true, Cart::BOTH));
             $minAmount = $eligibility->constraints['purchase_amount']['minimum'];
             $maxAmount = $eligibility->constraints['purchase_amount']['maximum'];
@@ -65,6 +67,15 @@ class AlmaDisplayShoppingCartFooterController extends AlmaProtectedHookControlle
             }
         }
 
+        // Check if some products in cart are in the excludes listing
+        $diff = AlmaSettings::getCartExclusion($params);
+        if(!empty($diff)){
+            $excludeListingName = AlmaSettings::getExcludeNameCategories();
+            $eligibilityMsg = ' Paiment en plusieurs fois - Commande non eligible car votre panier contient un produit de(s) catégorie(s) : '.$excludeListingName;
+        }
+        
+        
+
         if (is_callable('Media::getMediaPath')) {
             $logo = Media::getMediaPath(_PS_MODULE_DIR_ . $this->module->name . '/views/img/alma_logo.svg');
         } else {
@@ -75,6 +86,7 @@ class AlmaDisplayShoppingCartFooterController extends AlmaProtectedHookControlle
             'eligibility_msg' => $eligibilityMsg,
             'logo' => $logo,
         ));
+               
 
         return $this->module->display($this->module->file, 'displayShoppingCartFooter.tpl');
     }

@@ -591,6 +591,7 @@ class AlmaGetContentController extends AlmaAdminHookController
             ),
         );
 
+        // Exclusion
         $tplExclude = $this->context->smarty->createTemplate(
             _PS_ROOT_DIR_ . "{$this->module->_path}/views/templates/hook/exclude.tpl"
         );

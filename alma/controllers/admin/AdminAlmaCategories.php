@@ -127,6 +127,7 @@ class AdminAlmaCategoriesController extends ModuleAdminController
         }
 
         $this->_group = 'GROUP BY a.`id_category`';
+        
     }
 
     public function renderView()
@@ -167,6 +168,7 @@ class AdminAlmaCategoriesController extends ModuleAdminController
     public function ajaxProcessExcludeCategory()
     {
         if (!$id_category = (int)Tools::getValue('id_category')) {
+            //@todo
             die(Tools::jsonEncode(array('success' => false, 'error' => true, 'text' => $this->l('Failed to update the status'))));
         } else {
             $category = new Category((int)$id_category);

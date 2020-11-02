@@ -62,7 +62,12 @@ class AlmaPaymentOptionsController extends AlmaProtectedHookController
             return array();
         }
 
-        if (isset($eligibility) && !$eligibility->isEligible) {
+        // Check if some products in cart are in the excludes listing
+        $diff = AlmaSettings::getCartExclusion($params); 
+        $excludeCategory = !empty($diff) ? true : false;
+
+
+        if (isset($eligibility) && !$eligibility->isEligible || $excludeCategory) {
             return array();
         }
 
@@ -109,7 +114,7 @@ class AlmaPaymentOptionsController extends AlmaProtectedHookController
 
             $options[] = $paymentOption;
         }
-
+        
         return $options;
     }
 
