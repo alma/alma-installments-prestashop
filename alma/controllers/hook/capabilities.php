@@ -37,7 +37,10 @@ class AlmaCapabilitiesController extends AlmaProtectedHookController
     {
 
         header('Content-Type: application/json');
-        json_encode(array('webhook' => "share_of_chekout", 'endpoint' => _PS_BASE_URL_."/module/alma/share"));        
+        json_encode(array(
+            'webhook' => "share_of_chekout", 
+            'endpoint' => Tools::getHttpHost(true)._PS_BASE_URL_."/module/alma/share")
+        );
     }
 
 }
