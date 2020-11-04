@@ -238,11 +238,6 @@ class Alma extends PaymentModule
         }
     }
 
-    public function hookDisplayProductButtons($params)
-    {
-        return $this->runHookController('displayEligibilty', $params);
-    }
-
     public function hookDisplayBackOfficeHeader($params)
     {
         $this->context->controller->addCSS($this->_path . 'views/css/admin/_configure/helpers/form/form.css', 'all');

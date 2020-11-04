@@ -615,7 +615,7 @@ class AlmaGetContentController extends AlmaAdminHookController
                         'html_content' => $tplExclude->fetch(),
                     ),
                 ),
-                'submit' => array('title' => $this->module->l('Save'), 'class' => 'btn btn-default pull-right'),
+               // 'submit' => array('title' => $this->module->l('Save'), 'class' => 'btn btn-default pull-right'),
             ),
         );
 
@@ -708,8 +708,7 @@ class AlmaGetContentController extends AlmaAdminHookController
             if ($pnxConfigForm) {
                 $fieldsForms[] = $pnxConfigForm;
             }
-
-            //$fieldsForms = array_merge($fieldsForms, array($orderConfirmationForm, $apiConfigForm, $debugForm));
+            
             $fieldsForms = array_merge($fieldsForms, array($orderConfirmationForm, $excludeForm, $apiConfigForm, $debugForm));
         }
 

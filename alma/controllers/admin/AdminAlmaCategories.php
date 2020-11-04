@@ -47,31 +47,27 @@ class AdminAlmaCategoriesController extends ModuleAdminController
 
         $this->fields_list = array(
             'id_category' => array(
-               // 'title' => $this->module->l('ID', array(), 'Admin.Global'),
-               'title' => 'id',
+                'title' => $this->module->l('ID', array()),               
                 'align' => 'center',
                 'class' => 'fixed-width-xs',
             ),
             'name' => array(
-                //'title' => $this->module->l('Name', array(), 'Admin.Global'),
+                'title' => $this->module->l('Name', array()),
                 'title' => 'Name',
                 'filter_key' => 'b!name',
             ),
             'description' => array(
-                //'title' => $this->module->l('Description', array(), 'Admin.Global'),
-                'title' => 'Description',
+                'title' => $this->module->l('Description', array()),
                 'filter_key' => 'b!description',
                 'callback' => 'getDescriptionClean',
                 'orderby' => false,
             ),
             'parent' => array(
-                //'title' => $this->module->l('Parent', array(), 'Admin.Global'),
-                'title' => 'Parent',
+                'title' => $this->module->l('Parent', array()),
                 'filter_key' => 'cpl!name',
             ),
             'exclude' => array(
-                //'title' => $this->module->l('Exclude', array(), 'Admin.Global'),
-                'title' => 'Exclude',
+                'title' => $this->module->l('Exclude', array()),
                 'callback' => 'getExclude',
                 'type' => 'bool',
                 'class' => 'fixed-width-xs',
@@ -83,18 +79,15 @@ class AdminAlmaCategoriesController extends ModuleAdminController
 
         $this->bulk_actions = array(
             'enable' => array(
-                //'text' => $this->module->l('Exclude selected', array(), 'Admin.Actions'),
-                'text' => 'Exclude selected',
+                'text' => $this->module->l('Exclude selected', array()),
                 'icon' => 'icon-power-off text-success',
-                //'confirm' => $this->module->l('Exclude selected items?', array(), 'Admin.Notifications.Warning'),
-                'confirm' => 'Exclude selected items?',
+                'confirm' => $this->module->l('Exclude selected items?', array()),                
             ),
             'disable' => array(
-                //'text' => $this->module->l('Include selected', array(), 'Admin.Actions'),
-                'text' => 'Include selected',
+                'text' => $this->module->l('Include selected', array()),
                 'icon' => 'icon-power-off text-danger',
-                //'confirm' => $this->module->l('Include selected items?', array(), 'Admin.Notifications.Warning'),
-                'confirm' => 'Include selected items?',
+                'confirm' => $this->module->l('Include selected items?', array()),
+                
             ),
         );
 

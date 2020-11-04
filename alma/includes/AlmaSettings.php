@@ -234,6 +234,9 @@ class AlmaSettings
     public static function getExcludeNameCategories()
     {
         $categories = self::getExcludeCategories();
+        if (!$categories) {
+            return '';
+        }
         $categories = Category::getCategories(false, false, false, sprintf('AND c.`id_category` IN (%s)', implode(',', $categories)));
         $categoriesName = [];
         if (count($categories) > 0) {
