@@ -219,4 +219,14 @@ class AlmaSettings
     {
         return (bool) self::get('ALMA_STATE_REFUND_ENABLED', 0);
     }
+
+    public static function isShareOfCheckout()
+    {
+        return (bool) self::get('ALMA_SHARE_OF_CHECKOUT', 1);
+    }
+
+    public static function getWebhookReportId()
+    {
+        return (string) self::get('ALMA_WEBHOOK_REPORT_ID', false);
+    }
 }

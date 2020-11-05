@@ -22,25 +22,33 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
-
 if (!defined('_PS_VERSION_')) {
     exit;
 }
 
+class AlmaApiFrontController extends ModuleFrontControllerCore{
 
-include_once _PS_MODULE_DIR_ . 'alma/includes/AlmaSettings.php';
-include_once _PS_MODULE_DIR_ . 'alma/includes/AlmaProtectedHookController.php';
+    public $ssl = true;
 
-class AlmaCapabilitiesController extends AlmaProtectedHookController
-{
-    public function run($params)
+    public function __construct()
+    {        
+        parent::__construct();
+        $this->context = Context::getContext();
+    }
+
+    public function ajaxDie($value = null, $controller = null, $method = null)
     {
+        if (method_exists(get_parent_class($this), 'ajaxDie')) {
+            parent::ajaxDie($value);
+        } else {
+            die($value);
+        }
+    }
 
-        header('Content-Type: application/json');
-        json_encode(array(
-            'webhook' => "share_of_chekout", 
-            'endpoint' => Tools::getHttpHost(true)._PS_BASE_URL_."/module/alma/share")
-        );
+    protected function fail($msg = null)
+    {
+        header('X-PHP-Response-Code: 500', true, 500);
+        $this->ajaxDie(json_encode(array('error' => $msg)));
     }
 
 }

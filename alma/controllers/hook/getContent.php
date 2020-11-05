@@ -30,6 +30,7 @@ if (!defined('_PS_VERSION_')) {
 
 include_once _PS_MODULE_DIR_ . 'alma/includes/AlmaAdminHookController.php';
 include_once _PS_MODULE_DIR_ . 'alma/includes/AlmaSettings.php';
+include_once _PS_MODULE_DIR_ . 'alma/includes/AlmaShareOfCheckout.php';
 include_once _PS_MODULE_DIR_ . 'alma/includes/AlmaClient.php';
 include_once _PS_MODULE_DIR_ . 'alma/includes/AlmaLogger.php';
 include_once _PS_MODULE_DIR_ . 'alma/includes/functions.php';
@@ -79,6 +80,12 @@ class AlmaGetContentController extends AlmaAdminHookController
 
             $displayOrderConfirmation = Tools::getValue('ALMA_DISPLAY_ORDER_CONFIRMATION_ON') == '1';
             AlmaSettings::updateValue('ALMA_DISPLAY_ORDER_CONFIRMATION', $displayOrderConfirmation);
+
+            //$almaShareOfCheckout = new AlmaShareOfCheckout($this->context, $this->module);
+            //$isShareOfCheckout = Tools::getValue('ALMA_SHARE_OF_CHECKOUT_ON') == '1';
+            AlmaSettings::updateValue('ALMA_SHARE_OF_CHECKOUT', 1);
+            //$almaShareOfCheckout->toggleShare($isShareOfCheckout);
+
 
             $activateLogging = Tools::getValue('ALMA_ACTIVATE_LOGGING_ON') == '1';
             AlmaSettings::updateValue('ALMA_ACTIVATE_LOGGING', $activateLogging);
@@ -639,6 +646,40 @@ class AlmaGetContentController extends AlmaAdminHookController
             ),
         );
 
+        // $shareForm = array(
+        //     'form' => array(
+        //         'legend' => array(
+        //             'title' => $this->module->l('Share of checkout', 'getContent'),
+        //             'image' => $iconPath,
+        //         ),
+        //         'input' => array(
+        //             array(
+        //                 'name' => null,
+        //                 'label' => null,
+        //                 'type' => 'html',
+        //                 'html_content' => $this->module->l('If you want to share data from your shop checkout to build better Alma product'),
+        //             ),
+        //             array(
+        //                 'name' => 'ALMA_SHARE_OF_CHECKOUT',
+        //                 'label' => $this->module->l('Enable', 'getContent'),
+        //                 'type' => 'checkbox',
+        //                 'values' => array(
+        //                     'id' => 'id',
+        //                     'name' => 'label',
+        //                     'query' => array(
+        //                         array(
+        //                             'id' => 'ON',
+        //                             'val' => true,
+        //                             'label' => '',
+        //                         ),
+        //                     ),
+        //                 ),
+        //             ),
+        //         ),
+        //         'submit' => array('title' => $this->module->l('Save'), 'class' => 'btn btn-default pull-right'),
+        //     ),
+        // );
+
         $debugForm = array(
             'form' => array(
                 'legend' => array(
@@ -713,6 +754,7 @@ class AlmaGetContentController extends AlmaAdminHookController
             'ALMA_IS_ELIGIBLE_MESSAGE' => AlmaSettings::getEligibilityMessage(),
             'ALMA_NOT_ELIGIBLE_MESSAGE' => AlmaSettings::getNonEligibilityMessage(),
             'ALMA_DISPLAY_ORDER_CONFIRMATION_ON' => AlmaSettings::displayOrderConfirmation(),
+            'ALMA_SHARE_OF_CHECKOUT_ON' => AlmaSettings::isShareOfCheckout(),
             'ALMA_ACTIVATE_LOGGING_ON' => (bool)AlmaSettings::canLog(),
             'ALMA_STATE_REFUND' => AlmaSettings::getRefundState(),
             'ALMA_STATE_REFUND_ENABLED_ON' => AlmaSettings::isRefundEnabledByState(),

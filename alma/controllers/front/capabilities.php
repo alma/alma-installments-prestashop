@@ -22,33 +22,26 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
+
 if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-include_once _PS_MODULE_DIR_ . 'alma/includes/AlmaPaymentValidation.php';
 include_once _PS_MODULE_DIR_ . 'alma/includes/AlmaApiFrontController.php';
 
-class AlmaIpnModuleFrontController extends AlmaApiFrontController
-{
+class AlmaCapabilitiesModuleFrontController extends AlmaApiFrontController
+{    
 
     public function postProcess()
     {
         parent::postProcess();
 
         header('Content-Type: application/json');
+        $data = array(
+            'webhook' => "share_of_chekout", 
+            'endpoint' => Tools::getHttpHost(true)."/module/alma/report");
 
-        $paymentId = Tools::getValue('pid');
-        $validator = new AlmaPaymentValidation($this->context, $this->module);
-
-        try {
-            $validator->validatePayment($paymentId);
-        } catch (AlmaPaymentValidationError $e) {
-            $this->fail($e->getMessage());
-        } catch (Exception $e) {
-            $this->fail($e->getMessage());
-        }
-
-        $this->ajaxDie(json_encode(array('success' => true)));
+        $this->ajaxDie(json_encode(array('success' => true, 'data' => $data)));
     }
+
 }

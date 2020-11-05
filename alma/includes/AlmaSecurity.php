@@ -26,6 +26,8 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
+use Alma\API\Entities\Webhook;
+
 class AlmaSecurity
 {
     protected $apiKey;
@@ -42,14 +44,9 @@ class AlmaSecurity
      * @param string $sig
      * @return boolean
      */
-    public function validSignature(array $data, string $sig)
-    {
-        ksort($data);
-        $token = http_build_query($data);                   
-        $encode = hash_hmac('sha256', $token, $this->apiKey);         
-        // print_r($encode);
-        // print_r($sig);
-        if ($encode != $sig) {
+    public function validSignature(array $data, string $signature)
+    {        
+        if (!Webhook::verifySignature($signature, $data, $this->apiKey)) {    
             throw new Exception('access denied');
         }
         return true;

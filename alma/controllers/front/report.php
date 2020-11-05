@@ -28,35 +28,21 @@ if (!defined('_PS_VERSION_')) {
 
 include_once _PS_MODULE_DIR_ . 'alma/includes/AlmaSecurity.php';
 include_once _PS_MODULE_DIR_ . 'alma/includes/AlmaShareOfCheckout.php';
+include_once _PS_MODULE_DIR_ . 'alma/includes/AlmaSettings.php';
+include_once _PS_MODULE_DIR_ . 'alma/includes/AlmaApiFrontController.php';
 
-class AlmaShareModuleFrontController extends ModuleFrontController
-{
-    public $ssl = true;
-
-    public function __construct()
-    {
-        parent::__construct();
-        $this->context = Context::getContext();
-    }
-
-    public function ajaxDie($value = null, $controller = null, $method = null)
-    {
-        if (method_exists(get_parent_class($this), 'ajaxDie')) {
-            parent::ajaxDie($value);
-        } else {
-            die($value);
-        }
-    }
-
-    private function fail($msg = null)
-    {
-        header('X-PHP-Response-Code: 500', true, 500);
-        $this->ajaxDie(json_encode(array('error' => $msg)));
-    }
+class AlmaReportModuleFrontController extends AlmaApiFrontController
+{   
 
     public function postProcess()
     {
         parent::postProcess();
+
+        
+        if (!AlmaSettings::isShareOfCheckout()) {
+            $this->fail('access denied');            
+        }
+        
 
         header('Content-Type: application/json');
 
@@ -66,7 +52,7 @@ class AlmaShareModuleFrontController extends ModuleFrontController
         
         $security = new AlmaSecurity(AlmaSettings::getActiveAPIKey());
         
-        try {
+        try {            
             $security->validSignature(array('from' => $from, 'to' => $to), $sig);
         } catch (Exception $e) {
             $this->fail($e->getMessage());

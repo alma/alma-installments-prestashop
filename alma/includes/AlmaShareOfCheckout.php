@@ -78,4 +78,29 @@ class AlmaShareOfCheckout
             && ($timestamp <= PHP_INT_MAX)
             && ($timestamp >= ~PHP_INT_MAX);
     }
+
+    public function toggleShare($value)
+    {
+        $alma = AlmaClient::defaultInstance();
+        if (!$alma) {
+            AlmaLogger::instance()->error('[Alma] Error instantiating Alma API Client');
+            throw new Exception('Error instantiating Alma API Client');
+        }
+
+        $report = false;
+        try {
+            $almaWebhookReportId = AlmaSettings::getWebhookReportId();
+            if ($value && !$almaWebhookReportId) {
+                $report = $alma->webhooks->create('ecommerce_report', $this->context->link->getModuleLink('alma', 'report'));
+                AlmaSettings::updateValue('ALMA_WEBHOOK_REPORT_ID', $report->id);
+            } else if(!$value && $almaWebhookReportId) {
+                $report = $alma->webhooks->delete($almaWebhookReportId);
+                AlmaSettings::updateValue('ALMA_WEBHOOK_REPORT_ID', '');
+            }
+        } catch (Error $e) {
+            AlmaLogger::instance()->error('[Alma] Error call webhook');
+            throw new Exception('Error call Alma webhook');
+        }
+        return $report;
+    }
 }

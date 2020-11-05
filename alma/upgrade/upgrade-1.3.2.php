@@ -7,5 +7,5 @@ if (!defined('_PS_VERSION_')) {
 
 function upgrade_module_1_3_2($module)
 {
-    return $module->registerHook('capabilities');   
+    return true;
 }
