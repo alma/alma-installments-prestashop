@@ -5,6 +5,10 @@
     "require": {
         "alma/alma-php-client": "^1.0"
     },
+    "require-dev": {
+        "prestashop/autoindex": "^1.0",
+        "squizlabs/php_codesniffer": "3.*"
+    },
     "autoload": {
         "psr-4": {
             "Alma\\PrestaShop\\": ["lib/", "."],
