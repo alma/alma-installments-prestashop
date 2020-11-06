@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<ruleset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="PHP_CodeSniffer" xsi:noNamespaceSchemaLocation="phpcs.xsd">
+ 
+ <description>Check if lines max length are > 120 chars (because php-cs-fixer doesn't implement this fix) </description>
+
+ <file>./controllers</file>
+ <file>./includes</file>
+ <file>./alma.php</file>
+
+ <rule ref="Generic.Files.LineLength">
+  <properties>
+   <property name="lineLimit" value="120"/>
+   <property name="absoluteLineLimit" value="120"/>
+  </properties>
+</rule>
+</ruleset>

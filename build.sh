@@ -3,14 +3,24 @@
 DIR=`pwd`
 
 rm -rf ./dist/
-rm -rf /tmp/alma-build/alma
-mkdir -p /tmp/alma-build/alma
+rm -rf /tmp/alma-build/alma-installments-prestashop
+mkdir -p /tmp/alma-build/alma-installments-prestashop/alma
 
-cp -r ./alma/* /tmp/alma-build/alma/
+
+cp -r ./alma/* /tmp/alma-build/alma-installments-prestashop/alma
 
 mkdir ./dist
 
-cd /tmp/alma-build/ || exit
-zip -9 -r "$DIR/dist/alma.zip" alma --exclude \*dist\* \*.git\* \*.idea\* \*.DS_Store
+cd /tmp/alma-build/alma-installments-prestashop/alma || exit
+
+rm -rf vendor
+
+composer install --no-dev
+
+$DIR/alma/vendor/bin/autoindex prestashop:add:index
+
+cd ..
+
+zip -9 -r "$DIR/dist/alma.zip" alma --exclude  "*/.*" "*/build.sh" "*/dist" "*/docker*"
 
 rm -rf /tmp/alma-build
