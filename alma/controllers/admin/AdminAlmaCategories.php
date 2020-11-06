@@ -37,6 +37,9 @@ class AdminAlmaCategoriesController extends ModuleAdminController
         $this->explicitSelect = false;
         $this->_defaultOrderBy = 'position';
         $this->allow_export = true;
+        $this->list_no_link  = true;
+        
+        
 
         parent::__construct();
 
@@ -47,27 +50,26 @@ class AdminAlmaCategoriesController extends ModuleAdminController
 
         $this->fields_list = array(
             'id_category' => array(
-                'title' => $this->module->l('ID', array()),               
+                'title' => $this->module->l('ID', 'AdminAlmaCategories'),               
                 'align' => 'center',
                 'class' => 'fixed-width-xs',
             ),
             'name' => array(
-                'title' => $this->module->l('Name', array()),
-                'title' => 'Name',
+                'title' => $this->module->l('Name', 'AdminAlmaCategories'),
                 'filter_key' => 'b!name',
             ),
             'description' => array(
-                'title' => $this->module->l('Description', array()),
+                'title' => $this->module->l('Description', 'AdminAlmaCategories'),
                 'filter_key' => 'b!description',
                 'callback' => 'getDescriptionClean',
                 'orderby' => false,
             ),
             'parent' => array(
-                'title' => $this->module->l('Parent', array()),
+                'title' => $this->module->l('Parent', 'AdminAlmaCategories'),
                 'filter_key' => 'cpl!name',
             ),
             'exclude' => array(
-                'title' => $this->module->l('Exclude', array()),
+                'title' => $this->module->l('Exclude', 'AdminAlmaCategories'),
                 'callback' => 'getExclude',
                 'type' => 'bool',
                 'class' => 'fixed-width-xs',
@@ -79,14 +81,14 @@ class AdminAlmaCategoriesController extends ModuleAdminController
 
         $this->bulk_actions = array(
             'enable' => array(
-                'text' => $this->module->l('Exclude selected', array()),
+                'text' => $this->module->l('Exclude selected', 'AdminAlmaCategories'),
                 'icon' => 'icon-power-off text-success',
-                'confirm' => $this->module->l('Exclude selected items?', array()),                
+                'confirm' => $this->module->l('Exclude selected items?', 'AdminAlmaCategories'),
             ),
             'disable' => array(
-                'text' => $this->module->l('Include selected', array()),
+                'text' => $this->module->l('Include selected', 'AdminAlmaCategories'),
                 'icon' => 'icon-power-off text-danger',
-                'confirm' => $this->module->l('Include selected items?', array()),
+                'confirm' => $this->module->l('Include selected items?', 'AdminAlmaCategories'),
                 
             ),
         );
@@ -123,9 +125,16 @@ class AdminAlmaCategoriesController extends ModuleAdminController
         
     }
 
+
+    public function initToolbar(){
+        return false;
+    }
+    
+
     public function renderView()
     {
         $this->initToolbar();
+        
 
         return $this->renderList();
     }
@@ -145,6 +154,7 @@ class AdminAlmaCategoriesController extends ModuleAdminController
                 AlmaSettings::removeExcludeCategories($id_category);
             }
         }
+        header("Location:" .$this->context->link->getAdminLink('AdminAlmaCategories'));
     }
 
     protected function processBulkDisable()
@@ -155,13 +165,13 @@ class AdminAlmaCategoriesController extends ModuleAdminController
             if (Validate::isLoadedObject($category)) {
                 AlmaSettings::addExcludeCategories($id_category);
             }
-        }
+        }        
+        header("Location:" .$this->context->link->getAdminLink('AdminAlmaCategories'));        
     }
 
     public function ajaxProcessExcludeCategory()
     {
         if (!$id_category = (int)Tools::getValue('id_category')) {
-            //@todo
             die(Tools::jsonEncode(array('success' => false, 'error' => true, 'text' => $this->l('Failed to update the status'))));
         } else {
             $category = new Category((int)$id_category);

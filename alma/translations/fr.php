@@ -12,11 +12,11 @@ $_MODULE['<{alma}prestashop>adminalmacategories_b718adec73e04ce3ec720dd11a06a308
 $_MODULE['<{alma}prestashop>adminalmacategories_49ee3087348e8d44e1feda1917443987'] = 'Nom';
 $_MODULE['<{alma}prestashop>adminalmacategories_b5a7adde1af5c87d7fd797b6245c2a39'] = 'Description';
 $_MODULE['<{alma}prestashop>adminalmacategories_30269022e9d8f51beaabb52e5d0de2b7'] = 'Parent';
-$_MODULE['<{alma}prestashop>adminalmacategories_843f2812f595e7ec7c5036e89fde02d6'] = 'Exclure';
+$_MODULE['<{alma}prestashop>adminalmacategories_843f2812f595e7ec7c5036e89fde02d6'] = 'Exclue';
 $_MODULE['<{alma}prestashop>adminalmacategories_8787919ad59b1eb884d5fb4ba5bff4c5'] = 'Retirer ma selection de la liste d\'exclusion';
-$_MODULE['<{alma}prestashop>adminalmacategories_060b510d876a8b8bc8c9e0cc4a121213'] = 'Retirer les catégories sélectionnés de la liste d\'exclusion ?';
+$_MODULE['<{alma}prestashop>adminalmacategories_060b510d876a8b8bc8c9e0cc4a121213'] = 'Retirer les catégories sélectionnés des exclusions ?';
 $_MODULE['<{alma}prestashop>adminalmacategories_45e55cc81f5b2da62b2c8a8b4dc1f6bb'] = 'Ajouter ma selection dans la liste d\'exclusion';
-$_MODULE['<{alma}prestashop>adminalmacategories_60f5d9722879236fe31f28a27a0c4d44'] = 'Ajouter les catégories sélectionnés dans la liste d\'exclusion ?';
+$_MODULE['<{alma}prestashop>adminalmacategories_60f5d9722879236fe31f28a27a0c4d44'] = 'Ajouter les catégories sélectionnés dans la liste exclusion ?';
 $_MODULE['<{alma}prestashop>adminalmacategories_f86f7b91afe27e79305a6b07bdb0d3c0'] = 'Impossible de mettre à jour ces status';
 $_MODULE['<{alma}prestashop>adminalmacategories_de360c8b5dd9a9fdd592b1c08b3b4a62'] = 'Les status ont été mis à jour correctement';
 $_MODULE['<{alma}prestashop>payment_efa820507b1951ee5722003639b1a0b0'] = 'Le paiement en plusieurs fois Alma n\'est pas disponible pour cette devise';
