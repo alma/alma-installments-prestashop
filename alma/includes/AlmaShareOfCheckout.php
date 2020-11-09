@@ -22,6 +22,8 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
+include_once _PS_MODULE_DIR_ . 'alma/includes/functions.php';
+
 class AlmaShareOfCheckout
 {
     private $context;
@@ -64,8 +66,8 @@ class AlmaShareOfCheckout
         if ($payments) {
             foreach ($payments as $payment) {
                 $data[$payment['payment_method']] = [
-                    'count' => $payment['count'],
-                    'tpv' => $payment['tpv'],
+                    'count' => (int) $payment['count'],                    
+                    'tpv' => almaPriceToCents($payment['tpv']),
                 ];
             }
         }
