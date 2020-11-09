@@ -33,6 +33,7 @@ include_once _PS_MODULE_DIR_ . 'alma/includes/PaymentData.php';
 include_once _PS_MODULE_DIR_ . 'alma/includes/AlmaClient.php';
 include_once _PS_MODULE_DIR_ . 'alma/includes/AlmaSettings.php';
 include_once _PS_MODULE_DIR_ . 'alma/includes/CartData.php';
+include_once _PS_MODULE_DIR_ . 'alma/includes/AlmaEligibilityHelper.php';
 
 class AlmaPaymentOptionsController extends AlmaProtectedHookController
 {
@@ -64,7 +65,7 @@ class AlmaPaymentOptionsController extends AlmaProtectedHookController
         }
 
         // Check if some products in cart are in the excludes listing
-        $diff = CartData::getCartExclusion($params['cart']); 
+        $diff = CartData::getCartExclusion($params['cart']);
         $excludeCategory = !empty($diff);
 
 
@@ -101,9 +102,13 @@ class AlmaPaymentOptionsController extends AlmaProtectedHookController
                 $this->context->link->getModuleLink($this->module->name, 'payment', array('n' => $n), true)
             );
 
+
+            $paymentDataPnX = PaymentData::dataFromCart($this->context->cart, $this->context, $n);
+            $eligibilityPnX = $alma->payments->eligibility($paymentDataPnX);
             if (!$forEUComplianceModule && !empty(AlmaSettings::getPaymentButtonDescription())) {
                 $this->context->smarty->assign(array(
                     'desc' => sprintf(AlmaSettings::getPaymentButtonDescription(), $n),
+                    'plans' => (array) $eligibilityPnX->paymentPlan,
                 ));
 
                 $template = $this->context->smarty->fetch(
@@ -115,7 +120,7 @@ class AlmaPaymentOptionsController extends AlmaProtectedHookController
 
             $options[] = $paymentOption;
         }
-        
+
         return $options;
     }
 
