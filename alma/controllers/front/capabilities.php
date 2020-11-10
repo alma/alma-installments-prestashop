@@ -36,6 +36,10 @@ class AlmaCapabilitiesModuleFrontController extends AlmaApiFrontController
     {
         parent::postProcess();
 
+        if (!AlmaSettings::isShareOfCheckout()) {
+            $this->fail('access denied');            
+        }
+
         header('Content-Type: application/json');
         $data = array(
             'webhook' => "share_of_chekout", 
