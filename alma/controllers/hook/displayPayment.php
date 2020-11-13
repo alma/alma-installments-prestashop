@@ -44,6 +44,12 @@ class AlmaDisplayPaymentController extends AlmaProtectedHookController
             $error = true;
         }
 
+        // Check if some products in cart are in the excludes listing
+        $diff = AlmaSettings::getCartExclusion($params); 
+        if(!empty($diff)){
+            return false;
+        }
+
         if (isset($eligibility) && $eligibility->isEligible) {
             $disabled = false;
         } else {
