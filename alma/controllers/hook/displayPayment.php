@@ -87,9 +87,15 @@ class AlmaDisplayPaymentController extends AlmaProtectedHookController
                 }
             }
 
+            $alma = AlmaClient::defaultInstance();
+            $paymentDataPnX = PaymentData::dataFromCart($this->context->cart, $this->context, $n);
+            $eligibilityPnX = $alma->payments->eligibility($paymentDataPnX);  
+            
+
             $paymentOption = [
                 'text' => sprintf(AlmaSettings::getPaymentButtonTitle(), $n),
                 'link' => $this->context->link->getModuleLink($this->module->name, 'payment', array('n' => $n), true),
+                'plans' =>$eligibilityPnX->paymentPlan,
             ];
             if (!empty(AlmaSettings::getPaymentButtonDescription())) {
                 $paymentOption['desc'] = sprintf(AlmaSettings::getPaymentButtonDescription(), $n);
