@@ -192,6 +192,12 @@ class AdminAlmaCategoriesController extends ModuleAdminController
 
     public static function getDescriptionClean($description)
     {
-        return Tools::getDescriptionClean($description);
+        if (version_compare(_PS_VERSION_, '1.6', '>=')) {
+            return Tools::getDescriptionClean($description);
+        }
+        else{
+            return strip_tags(stripslashes($description));
+        }
+        
     }
 }
