@@ -41,14 +41,14 @@ class AlmaSecurity
      * Check if signature is valid
      *
      * @param array $data
-     * @param string $sig
+     * @param string $signature
      * @return boolean
      */
-    public function validSignature(array $data, string $signature)
+    public function validSignature(array $data, $signature)
     {        
-        if (!Webhook::verifySignature($signature, $data, $this->apiKey)) {    
+        if (!Webhook::verifySignature($signature, $data, $this->apiKey) || !is_string($signature)) {    
             throw new Exception('access denied');
-        }
+        }        
         return true;
     }
 }
