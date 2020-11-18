@@ -26,11 +26,7 @@
 </p>
 {foreach from=$plans item=v name=counter}        
         
-        <p style="display: flex;
-        justify-content: space-between;
-        padding: 4px 0px;
-        margin: 4px 0px;
-        border-bottom: 1px solid lightgrey;">    
+        <p class="alma-p-fee-plan--descritpion">    
             <span>Echéance {$smarty.foreach.counter.iteration} : le {$v.due_date|date_format:"%d/%m/%Y"}</span>
             <span>{math equation=$v.purchase_amount / 100 format="%.2f"}&euro;</span>
         </p>

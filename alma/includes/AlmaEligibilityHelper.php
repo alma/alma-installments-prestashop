@@ -81,7 +81,7 @@ class AlmaEligibilityHelper
 
             return $eligibility;
         }
-                       
+
         $paymentData = PaymentData::dataFromCart($context->cart, $context);
         if (!$paymentData) {
             AlmaLogger::instance()->error('Cannot check cart eligibility: no data extracted from cart');

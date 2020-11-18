@@ -81,6 +81,21 @@ p.payment_module a.alma-button:after {
     opacity: 0.6;
 }
 
+.alma-fee-plan--description{
+    font-size: 0.8em;
+    opacity: 0.6;
+    display: flex;
+    padding: 4px 0px;
+
+}
+.alma-p-fee-plan--descritpion{
+    display: flex;
+    justify-content: space-between;
+    padding: 4px 0px;
+    margin: 4px 0px;
+    border-bottom: 1px solid lightgrey;
+}
+
 .alma-error {
     position: fixed;
     top: 0;

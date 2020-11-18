@@ -58,7 +58,7 @@
                                 <span class="alma-button--description">{$option.desc|escape:'htmlall':'UTF-8'}</span>
                             {/if}
                             {foreach from=$option.plans item=v name=counter}                
-                            <span class="alma-button--description" style="display: flex;padding: 4px 0px;">    
+                            <span class="alma-fee-plan--description">    
                                 <span>Echéance {$smarty.foreach.counter.iteration} : le {$v.due_date|date_format:"%d/%m/%Y"}</span>
                                 <span>&nbsp;-&nbsp;{math equation=$v.purchase_amount / 100 format="%.2f"}&euro;</span>
                             </span>         
