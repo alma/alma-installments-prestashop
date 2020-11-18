@@ -5,12 +5,9 @@
     "require": {
         "alma/alma-php-client": "^1.0"
     },
-    "require-dev": {
-        "prestashop/autoindex": "^1.0",
-        "squizlabs/php_codesniffer": "3.*"
-    },
     "config": {
-        "prepend-autoloader": false
+        "prepend-autoloader": false,
+        "optimize-autoloader": true
     },
     "license": "MIT",
     "authors": [
