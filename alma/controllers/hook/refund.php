@@ -138,6 +138,7 @@ class AlmaRefundController extends AlmaAdminHookController
         } catch (RequestError $e) {
             $msg = "[Alma] ERROR when creating refund for Order {$order->id}: {$e->getMessage()}";
             AlmaLogger::instance()->error($msg);
+
             return;
         }
     }
@@ -151,6 +152,7 @@ class AlmaRefundController extends AlmaAdminHookController
         if ($order_payments && isset($order_payments[0])) {
             return $order_payments[0];
         }
+
         return false;
     }
 }

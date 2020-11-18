@@ -35,42 +35,48 @@ class CartData
 
     /**
      * @param Cart $cart
+     *
      * @return array
+     *
      * @throws PrestaShopDatabaseException
      * @throws PrestaShopException
      */
     public static function cartInfo($cart)
     {
         return array(
-            "items" => self::getCartItems($cart),
-            "discounts" => self::getCartDiscounts($cart),
+            'items' => self::getCartItems($cart),
+            'discounts' => self::getCartDiscounts($cart),
         );
     }
 
     /**
      * @param Cart $cart
+     *
      * @return bool|mixed
      */
     private static function includeTaxes($cart)
     {
         if (version_compare(_PS_VERSION_, '1.7', '>=')) {
             $taxConfiguration = new TaxConfiguration();
+
             return $taxConfiguration->includeTaxes();
         } else {
             if (!Configuration::get('PS_TAX')) {
                 return false;
             }
 
-            $idCustomer = (int)$cart->id_customer;
+            $idCustomer = (int) $cart->id_customer;
             if (!array_key_exists($idCustomer, self::$taxCalculationMethod)) {
                 self::$taxCalculationMethod[$idCustomer] = !Product::getTaxCalculationMethod($idCustomer);
             }
+
             return self::$taxCalculationMethod[$idCustomer];
         }
     }
 
     /**
      * @param Cart $cart
+     *
      * @return array of items
      *
      * @throws PrestaShopDatabaseException
@@ -89,7 +95,7 @@ class CartData
             $product = new Product(null, false, $cart->id_lang);
             $product->hydrate($productRow);
 
-            $pid = (int)$product->id;
+            $pid = (int) $product->id;
             $link = Context::getContext()->link;
 
             $manufacturer_name = isset($productRow['manufacturer_name']) ? $productRow['manufacturer_name'] : null;
@@ -97,13 +103,13 @@ class CartData
                 $manufacturer_name = $productsDetails[$pid]['manufacturer_name'];
             }
 
-            $unitPrice = self::includeTaxes($cart) ? (float)$productRow['price_wt'] : (float)$productRow['price'];
-            $linePrice = self::includeTaxes($cart) ? (float)$productRow['total_wt'] : (float)$productRow['total'];
+            $unitPrice = self::includeTaxes($cart) ? (float) $productRow['price_wt'] : (float) $productRow['price'];
+            $linePrice = self::includeTaxes($cart) ? (float) $productRow['total_wt'] : (float) $productRow['total'];
 
             if (isset($productRow['gift'])) {
-                $isGift = (bool)$productRow['gift'];
+                $isGift = (bool) $productRow['gift'];
             } else {
-                $isGift = isset($productRow['is_gift']) ? (bool)$productRow['is_gift'] : null;
+                $isGift = isset($productRow['is_gift']) ? (bool) $productRow['is_gift'] : null;
             }
 
             $pictureUrl = $link->getImageLink(
@@ -113,9 +119,9 @@ class CartData
             );
 
             if (isset($productRow['is_virtual'])) {
-                $requiresShipping = !(bool)($productRow['is_virtual']);
+                $requiresShipping = !(bool) ($productRow['is_virtual']);
             } else {
-                $requiresShipping = !(bool)($productsDetails[$pid]['is_virtual']);
+                $requiresShipping = !(bool) ($productsDetails[$pid]['is_virtual']);
             }
 
             $data = array(
@@ -123,7 +129,7 @@ class CartData
                 'vendor' => $manufacturer_name,
                 'title' => $productRow['name'],
                 'variant_title' => null,
-                'quantity' => (int)$productRow['cart_quantity'],
+                'quantity' => (int) $productRow['cart_quantity'],
                 'unit_price' => almaPriceToCents($unitPrice),
                 'line_price' => almaPriceToCents($linePrice),
                 'is_gift' => $isGift,
@@ -145,7 +151,7 @@ class CartData
                 'taxes_included' => self::includeTaxes($cart),
             );
 
-            if (isset($productRow['id_product_attribute']) && (int)$productRow['id_product_attribute']) {
+            if (isset($productRow['id_product_attribute']) && (int) $productRow['id_product_attribute']) {
                 $unique_id = "$pid-{$productRow['id_product_attribute']}";
 
                 if ($combinationName = $combinationsNames[$unique_id]) {
@@ -170,6 +176,7 @@ class CartData
 
     /**
      * @param array $products
+     *
      * @return array
      */
     private static function getProductsDetails($products)
@@ -184,7 +191,7 @@ class CartData
             $in[] = $productRow['id_product'];
         }
 
-        $in = implode(", ", $in);
+        $in = implode(', ', $in);
         $sql->where("p.`id_product` IN ({$in})");
 
         $db = Db::getInstance();
@@ -197,7 +204,7 @@ class CartData
         }
 
         while ($result = $db->nextRow($results)) {
-            $productsDetails[(int)$result['id_product']] = $result;
+            $productsDetails[(int) $result['id_product']] = $result;
         }
 
         return $productsDetails;
@@ -206,6 +213,7 @@ class CartData
     /**
      * @param Cart $cart
      * @param array $products
+     *
      * @return array
      */
     private static function getProductsCombinations($cart, $products)
@@ -237,7 +245,7 @@ class CartData
             'pa2.`id_product` = p.`id_product` AND pa2.`id_product_attribute` = pa.`id_product_attribute`'
         );
 
-        /** @noinspection PhpUnhandledExceptionInspection */
+        /* @noinspection PhpUnhandledExceptionInspection */
         $sql->select("({$combinationName->build()}) as combination_name");
 
         $sql->from('product', 'p');
@@ -247,7 +255,7 @@ class CartData
         $where = '';
         $op = '';
         foreach ($products as $productRow) {
-            if (!isset($productRow['id_product_attribute']) || !(int)$productRow['id_product_attribute']) {
+            if (!isset($productRow['id_product_attribute']) || !(int) $productRow['id_product_attribute']) {
                 continue;
             }
 
@@ -275,6 +283,7 @@ class CartData
 
     /**
      * @param Cart $cart
+     *
      * @return array of discount items
      */
     private static function getCartDiscounts($cart)
@@ -283,10 +292,10 @@ class CartData
         $cartRules = $cart->getCartRules(CartRule::FILTER_ACTION_ALL, false);
 
         foreach ($cartRules as $cartRule) {
-            $amount = self::includeTaxes($cart) ? (float)$cartRule["value_real"] : (float)$cartRule["value_tax_exc"];
+            $amount = self::includeTaxes($cart) ? (float) $cartRule['value_real'] : (float) $cartRule['value_tax_exc'];
             $discounts[] = array(
-                "title" => isset($cartRule["name"]) ? $cartRule["name"] : $cartRule["description"],
-                "amount" => almaPriceToCents($amount)
+                'title' => isset($cartRule['name']) ? $cartRule['name'] : $cartRule['description'],
+                'amount' => almaPriceToCents($amount),
             );
         }
 

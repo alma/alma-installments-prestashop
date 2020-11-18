@@ -73,10 +73,10 @@ class AlmaEligibilityHelper
             $eligibility = new stdClass();
             $eligibility->isEligible = false;
             $eligibility->constraints = array(
-                "purchase_amount" => array(
-                    "minimum" => $pnxBounds[0],
-                    "maximum" => $pnxBounds[1]
-                )
+                'purchase_amount' => array(
+                    'minimum' => $pnxBounds[0],
+                    'maximum' => $pnxBounds[1],
+                ),
             );
 
             return $eligibility;

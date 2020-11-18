@@ -80,10 +80,10 @@ class AlmaDisplayPaymentController extends AlmaProtectedHookController
                 }
             }
 
-            $paymentOption = [
+            $paymentOption = array(
                 'text' => sprintf(AlmaSettings::getPaymentButtonTitle(), $n),
                 'link' => $this->context->link->getModuleLink($this->module->name, 'payment', array('n' => $n), true),
-            ];
+            );
             if (!empty(AlmaSettings::getPaymentButtonDescription())) {
                 $paymentOption['desc'] = sprintf(AlmaSettings::getPaymentButtonDescription(), $n);
             }

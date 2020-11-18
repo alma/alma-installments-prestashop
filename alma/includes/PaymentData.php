@@ -37,7 +37,9 @@ class PaymentData
      * @param Cart $cart
      * @param Context $context
      * @param int $installmentsCount
+     *
      * @return array|null
+     *
      * @throws Exception
      */
     public static function dataFromCart($cart, $context, $installmentsCount = 3)
@@ -102,7 +104,7 @@ class PaymentData
             }
         }
 
-        $purchaseAmount = (float)Tools::ps_round((float)$cart->getOrderTotal(true, Cart::BOTH), 2);
+        $purchaseAmount = (float) Tools::ps_round((float) $cart->getOrderTotal(true, Cart::BOTH), 2);
 
         $data = array(
             'payment' => array(
@@ -129,7 +131,7 @@ class PaymentData
                     'cart_id' => $cart->id,
                     'purchase_amount_new_conversion_func' => almaPriceToCents_str($purchaseAmount),
                     'cart_totals' => $purchaseAmount,
-                    'cart_totals_high_precision' => number_format($purchaseAmount, 16)
+                    'cart_totals_high_precision' => number_format($purchaseAmount, 16),
                 ),
             ),
             'customer' => $customerData,

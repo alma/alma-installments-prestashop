@@ -122,7 +122,7 @@ class AlmaPaymentOptionsController extends AlmaProtectedHookController
             $paymentOption = array(
                 'cta_text' => $ctaText,
                 'action' => $action,
-                'logo' => $logo
+                'logo' => $logo,
             );
         } else {
             $paymentOption = new PrestaShop\PrestaShop\Core\Payment\PaymentOption();

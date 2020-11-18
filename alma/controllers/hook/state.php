@@ -75,6 +75,7 @@ class AlmaStateController extends AlmaAdminHookController
         if ($order_payments && isset($order_payments[0])) {
             return $order_payments[0];
         }
+
         return false;
     }
 }

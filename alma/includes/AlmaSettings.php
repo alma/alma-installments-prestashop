@@ -90,7 +90,7 @@ class AlmaSettings
             'ALMA_PNX_MAX_N',
             'ALMA_STATE_REFUND',
             'ALMA_STATE_REFUND_ENABLED',
-            'ALMA_DISPLAY_ORDER_CONFIRMATION'
+            'ALMA_DISPLAY_ORDER_CONFIRMATION',
         );
 
         foreach ($configKeys as $configKey) {

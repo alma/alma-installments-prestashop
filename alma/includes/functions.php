@@ -40,12 +40,12 @@ function almaPriceToCents($price)
 function almaPriceToCents_str($price)
 {
     $priceStr = (string) $price;
-    $parts = explode(".", $priceStr);
+    $parts = explode('.', $priceStr);
 
     if (count($parts) == 1) {
-        $parts[] = "00";
+        $parts[] = '00';
     } elseif (Tools::strlen($parts[1]) == 1) {
-        $parts[1] .= "0";
+        $parts[1] .= '0';
     } elseif (Tools::strlen($parts[1]) > 2) {
         $parts[1] = Tools::substr($parts[1], 0, 2);
     }

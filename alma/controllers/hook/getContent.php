@@ -379,8 +379,8 @@ class AlmaGetContentController extends AlmaAdminHookController
                     $pnxTabs[$tabId] = '❌ ' . $tabTitle;
                 }
 
-                $minAmount = (int)almaPriceFromCents($merchant->minimum_purchase_amount);
-                $maxAmount = (int)almaPriceFromCents($merchant->maximum_purchase_amount);
+                $minAmount = (int) almaPriceFromCents($merchant->minimum_purchase_amount);
+                $maxAmount = (int) almaPriceFromCents($merchant->maximum_purchase_amount);
 
                 $tpl = $this->context->smarty->createTemplate(
                     "{$this->module->local_path}views/templates/hook/pnx_fees.tpl"
@@ -700,8 +700,8 @@ class AlmaGetContentController extends AlmaAdminHookController
         $helper = new HelperForm();
         $helper->module = $this->module;
         $helper->table = 'alma_config';
-        $helper->default_form_language = (int)Configuration::get('PS_LANG_DEFAULT');
-        $helper->allow_employee_form_lang = (int)Configuration::get('PS_BO_ALLOW_EMPLOYEE_FORM_LANG');
+        $helper->default_form_language = (int) Configuration::get('PS_LANG_DEFAULT');
+        $helper->allow_employee_form_lang = (int) Configuration::get('PS_BO_ALLOW_EMPLOYEE_FORM_LANG');
         $helper->submit_action = 'alma_config_form';
         if (version_compare(_PS_VERSION_, '1.6', '<')) {
             $helper->base_folder = 'helpers/form/15/';
@@ -726,7 +726,7 @@ class AlmaGetContentController extends AlmaAdminHookController
             'ALMA_IS_ELIGIBLE_MESSAGE' => AlmaSettings::getEligibilityMessage(),
             'ALMA_NOT_ELIGIBLE_MESSAGE' => AlmaSettings::getNonEligibilityMessage(),
             'ALMA_DISPLAY_ORDER_CONFIRMATION_ON' => AlmaSettings::displayOrderConfirmation(),
-            'ALMA_ACTIVATE_LOGGING_ON' => (bool)AlmaSettings::canLog(),
+            'ALMA_ACTIVATE_LOGGING_ON' => (bool) AlmaSettings::canLog(),
             'ALMA_STATE_REFUND' => AlmaSettings::getRefundState(),
             'ALMA_STATE_REFUND_ENABLED_ON' => AlmaSettings::isRefundEnabledByState(),
             '_api_only' => true,
@@ -737,10 +737,10 @@ class AlmaGetContentController extends AlmaAdminHookController
                 $n = $feePlan['installments_count'];
                 $helper->fields_value["ALMA_P${n}X_ENABLED_ON"] = AlmaSettings::isInstallmentPlanEnabled($n);
 
-                $minAmount = (int)almaPriceFromCents(AlmaSettings::installmentPlanMinAmount($n, $merchant));
+                $minAmount = (int) almaPriceFromCents(AlmaSettings::installmentPlanMinAmount($n, $merchant));
                 $helper->fields_value["ALMA_P${n}X_MIN_AMOUNT"] = $minAmount;
 
-                $maxAmount = (int)almaPriceFromCents(AlmaSettings::installmentPlanMaxAmount($n));
+                $maxAmount = (int) almaPriceFromCents(AlmaSettings::installmentPlanMaxAmount($n));
                 $helper->fields_value["ALMA_P${n}X_MAX_AMOUNT"] = $maxAmount;
             }
         }
@@ -770,7 +770,8 @@ class AlmaGetContentController extends AlmaAdminHookController
     public function needsAPIKey()
     {
         $key = trim(AlmaSettings::getActiveAPIKey());
-        return $key == "" || $key == null;
+
+        return $key == '' || $key == null;
     }
 
     public function run($params)

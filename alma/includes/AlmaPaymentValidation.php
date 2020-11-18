@@ -27,8 +27,8 @@ include_once _PS_MODULE_DIR_ . 'alma/includes/AlmaLogger.php';
 include_once _PS_MODULE_DIR_ . 'alma/includes/AlmaClient.php';
 include_once _PS_MODULE_DIR_ . 'alma/includes/AlmaPaymentValidationError.php';
 
-use Alma\API\Entities\Payment;
 use Alma\Api\Entities\Instalment;
+use Alma\API\Entities\Payment;
 use Alma\API\RequestError;
 
 class AlmaPaymentValidation
@@ -127,16 +127,16 @@ class AlmaPaymentValidation
         }
 
         if (!$cart->OrderExists()) {
-            $cartTotals = (float)Tools::ps_round((float)$cart->getOrderTotal(true, Cart::BOTH), 2);
+            $cartTotals = (float) Tools::ps_round((float) $cart->getOrderTotal(true, Cart::BOTH), 2);
 
             if (abs($payment->purchase_amount - almaPriceToCents($cartTotals)) > 2) {
                 $reason = Payment::FRAUD_AMOUNT_MISMATCH;
-                $reason .= " - " . $cart->getOrderTotal(true, Cart::BOTH) . " * 100 vs " . $payment->purchase_amount;
+                $reason .= ' - ' . $cart->getOrderTotal(true, Cart::BOTH) . ' * 100 vs ' . $payment->purchase_amount;
 
                 try {
                     $alma->payments->flagAsPotentialFraud($almaPaymentId, $reason);
                 } catch (RequestError $e) {
-                    AlmaLogger::instance()->warning("[Alma] Failed to notify Alma of amount mismatch");
+                    AlmaLogger::instance()->warning('[Alma] Failed to notify Alma of amount mismatch');
                 }
 
                 AlmaLogger::instance()->error(
@@ -153,7 +153,7 @@ class AlmaPaymentValidation
                 try {
                     $alma->payments->flagAsPotentialFraud($almaPaymentId, Payment::FRAUD_STATE_ERROR);
                 } catch (RequestError $e) {
-                    AlmaLogger::instance()->warning("[Alma] Failed to notify Alma of potential fraud");
+                    AlmaLogger::instance()->warning('[Alma] Failed to notify Alma of potential fraud');
                 }
 
                 AlmaLogger::instance()->error(
@@ -192,7 +192,7 @@ class AlmaPaymentValidation
 
             try {
                 $alma->payments->addOrder($payment->id, array(
-                    "merchant_reference" => $order->reference,
+                    'merchant_reference' => $order->reference,
                 ));
             } catch (RequestError $e) {
                 $msg = "[Alma] Error updating order reference {$order->reference}: {$e->getMessage()}";
@@ -223,6 +223,7 @@ class AlmaPaymentValidation
             return Order::getByCartId((int) $cartId);
         } else {
             $orderId = (int) Order::getOrderByCartId((int) $cartId);
+
             return new Order($orderId);
         }
     }
