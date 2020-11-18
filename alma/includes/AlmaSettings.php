@@ -60,8 +60,6 @@ class AlmaSettings
     {
         $idShop = Shop::getContextShopID(true);
         $idShopGroup = Shop::getContextShopGroupID(true);
-        // echo "configkey : ".$configKey;
-        // echo 'value : '.$value;
         Configuration::updateValue($configKey, $value, false, $idShopGroup, $idShop);
     }
 

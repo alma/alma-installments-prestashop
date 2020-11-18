@@ -175,12 +175,13 @@ class Alma extends PaymentModule
         if (version_compare(_PS_VERSION_, '1.6', '>=')) {
             $this->installTab('alma', 'Alma');
         }
-        $this->installTab('AdminAlmaCategories', 'Exclusion de catégories', 'alma', 'credit_card');
+        $this->installTab('AdminAlmaCategories', $this->l('Exclude category'), 'alma', 'credit_card');
         return true;
     }
 
     protected function installTab($class, $name, $parent = null, $icon = null)
     {
+        
         $tabId = (int) Tab::getIdFromClassName($class);
         if (!$tabId) {
             $tabId = null;
@@ -206,18 +207,6 @@ class Alma extends PaymentModule
         $tab->module = $this->name;
 
         return $tab->save();
-    }
-
-    protected function uninstallTab($class =null)
-    {
-        $tabId = (int) Tab::getIdFromClassName($class);
-        if (!$tabId) {
-            return true;
-        }
-
-        $tab = new Tab($tabId);
-
-        return $tab->delete();
     }
 
     public function hookHeader($params)

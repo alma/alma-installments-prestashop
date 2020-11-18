@@ -8,6 +8,7 @@ $_MODULE['<{alma}prestashop>alma_eaa507b722b18fe29d24bea91d8c2c52'] = 'Voulez-vo
 $_MODULE['<{alma}prestashop>alma_7bab99339291e7eea710b4a998e663de'] = 'Alma nécessite l\'extension PHP cURL';
 $_MODULE['<{alma}prestashop>alma_fbb47375d2272bef79f5722a183bf1ec'] = 'Alma nécessite l\'extension PHP JSON';
 $_MODULE['<{alma}prestashop>alma_7fb83ba9cf3cc38857a2ddae98534d22'] = 'Alma nécessite OpenSSL >= 1.0.1';
+$_MODULE['<{alma}prestashop>alma_44f897b1f0f000f4e6257a1e52275e38'] = 'Exclusion de catégories';
 $_MODULE['<{alma}prestashop>adminalmacategories_b718adec73e04ce3ec720dd11a06a308'] = 'ID';
 $_MODULE['<{alma}prestashop>adminalmacategories_49ee3087348e8d44e1feda1917443987'] = 'Nom';
 $_MODULE['<{alma}prestashop>adminalmacategories_b5a7adde1af5c87d7fd797b6245c2a39'] = 'Description';
