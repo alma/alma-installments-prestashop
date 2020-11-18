@@ -26,7 +26,7 @@ class AlmaPaymentValidationError extends \Exception
 {
     public $cart;
 
-    public function __construct($cart = null, $message = '', $code = 0, Throwable $previous = null)
+    public function __construct($cart = null, $message = '', $code = 0, $previous = null)
     {
         parent::__construct($message, $code, $previous);
         $this->cart = $cart;
