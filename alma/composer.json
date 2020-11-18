@@ -19,7 +19,8 @@
         ]
     },
     "config": {
-        "prepend-autoloader": false
+        "prepend-autoloader": false,
+        "optimize-autoloader": true
     },
     "license": "MIT",
     "authors": [

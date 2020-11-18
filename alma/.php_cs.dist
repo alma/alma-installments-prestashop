@@ -32,14 +32,16 @@ $finder = PhpCsFixer\Finder::create()->in([
 ]);
 
 return PhpCsFixer\Config::create()
-    ->setRiskyAllowed(false)
+    ->setRiskyAllowed(true)
     ->setRules([
-        '@Symfony' => true,     
-        '@PSR2' => true,     
+        '@Symfony' => true,
+        '@PSR2' => true,
         'concat_space' => [
-            'spacing' => 'one',           
+            'spacing' => 'one',
         ],
-        'array_syntax' => false,
+        'array_syntax' => [
+        	'syntax' => 'short'
+		],
         'header_comment' => [
             'comment_type'=> 'PHPDoc',
             'header' => $header,
