@@ -81,9 +81,6 @@ class AlmaEligibilityHelper
 
             return $eligibility;
         }
-        AlmaLogger::instance()->warning(
-            "[Alma] one"
-        );
         
         $paymentData = PaymentData::dataFromCart($context->cart, $context);
         if (!$paymentData) {

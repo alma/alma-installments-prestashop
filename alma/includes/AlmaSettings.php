@@ -224,9 +224,4 @@ class AlmaSettings
     {
         return (bool) self::get('ALMA_SHARE_OF_CHECKOUT', 0);
     }
-
-    public static function getWebhookReportId()
-    {
-        return (string) self::get('ALMA_WEBHOOK_REPORT_ID', false);
-    }
 }
