@@ -21,3 +21,5 @@ composer dump-autoload --optimize
 cd ..
 
 zip -9 -r "$DIR/dist/alma.zip" alma --exclude  "*/.*" "*/build.sh" "*/dist" "*/docker*"
+
+rm -rf "$DIR/tmp/build"
