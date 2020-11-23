@@ -49,10 +49,13 @@ class AlmaCapabilitiesModuleFrontController extends AlmaApiFrontController
             $endpoint = Tools::getHttpHost(true)."/module/alma/report";
         }
         $data = array(
-            'webhook' => "share_of_chekout", 
             'platform' => "Prestashop",
-            'version' => _PS_VERSION_,
-            'endpoint' => $endpoint);
+            'version' => _PS_VERSION_,            
+            'webhooks' => array(
+                'webhook' => 'share_of_chekout', 
+                'endpoint' => $endpoint
+                )
+            );
 
         $this->ajaxDie(json_encode(array('success' => true, 'data' => $data)));
     }
