@@ -37,70 +37,42 @@ class AlmaDisplayPaymentController extends AlmaProtectedHookController
 {
     public function run($params)
     {
-        // First check that we can offer Alma for this payment
-        $eligibility = AlmaEligibilityHelper::eligibilityCheck($this->context);
+		// Check if some products in cart are in the excludes listing
+		$diff = CartData::getCartExclusion($params['cart']);
+		if(!empty($diff)){
+			return false;
+		}
 
-        $error = false;
-        if (!$eligibility) {
-            $error = true;
-        }
-
-        // Check if some products in cart are in the excludes listing
-        $diff = CartData::getCartExclusion($params['cart']); 
-        if(!empty($diff)){
-            return false;
-        }
-
-        if (isset($eligibility) && $eligibility->isEligible) {
-            $disabled = false;
-        } else {
-            if (AlmaSettings::showDisabledButton()) {
-                $disabled = true;
-            } else {
-                return null;
-            }
-        }
-
-        if (is_callable('Media::getMediaPath')) {
+		if (is_callable('Media::getMediaPath')) {
             $logo = Media::getMediaPath(_PS_MODULE_DIR_ . $this->module->name . '/views/img/alma_payment_logos.svg');
         } else {
             $logo = $this->module->getPathUri() . '/views/img/alma_payment_logos.svg';
         }
 
-        $cart = $params['cart'];
-        $purchaseAmount = almaPriceToCents((float) $cart->getordertotal(true, Cart::BOTH));
+        $installmentPlans = AlmaEligibilityHelper::eligibilityCheck($this->context);
         $options = array();
-        $n = 1;
-        while ($n < AlmaSettings::installmentPlansMaxN()) {
-            ++$n;
-
-            if (!AlmaSettings::isInstallmentPlanEnabled($n)) {
-                continue;
-            } else {
-                $min = AlmaSettings::installmentPlanMinAmount($n);
-                $max = AlmaSettings::installmentPlanMaxAmount($n);
-
-                if ($purchaseAmount < $min
-                    || $purchaseAmount >= $max
-                ) {
-                    continue;
+        foreach($installmentPlans as $plan){
+            $n = $plan->installmentsCount;
+            if(!$plan->isEligible){
+                if (AlmaSettings::showDisabledButton()) {
+                    $disabled = true;
+                    $plans = null;
                 }
             }
-
-            $alma = AlmaClient::defaultInstance();
-            $paymentDataPnX = PaymentData::dataFromCart($this->context->cart, $this->context, $n);
-            $eligibilityPnX = $alma->payments->eligibility($paymentDataPnX);  
-            
-
+            else{
+                $disabled = false;
+                $plans = $plan->paymentPlan;
+            }
             $paymentOption = [
                 'text' => sprintf(AlmaSettings::getPaymentButtonTitle(), $n),
                 'link' => $this->context->link->getModuleLink($this->module->name, 'payment', array('n' => $n), true),
-                'plans' =>$eligibilityPnX->paymentPlan,
+                'plans' => $plans,
+                'disabled' => $disabled,
+                'error' => false,
             ];
             if (!empty(AlmaSettings::getPaymentButtonDescription())) {
                 $paymentOption['desc'] = sprintf(AlmaSettings::getPaymentButtonDescription(), $n);
             }
-
             $options[] = $paymentOption;
         }
 
@@ -108,8 +80,6 @@ class AlmaDisplayPaymentController extends AlmaProtectedHookController
         $this->context->smarty->assign(
             array(
                 'logo' => $logo,
-                'disabled' => $disabled,
-                'error' => $error,
                 'title' => sprintf(AlmaSettings::getPaymentButtonTitle(), 3),
                 'desc' => sprintf(AlmaSettings::getPaymentButtonDescription(), 3),
                 'order_total' => (float) $cart->getOrderTotal(true, Cart::BOTH),

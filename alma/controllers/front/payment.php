@@ -103,7 +103,7 @@ class AlmaPaymentModuleFrontController extends ModuleFrontController
         }
 
         $cart = $this->context->cart;
-        $data = PaymentData::dataFromCart($cart, $this->context, Tools::getValue('n', '3'));
+        $data = PaymentData::dataFromCart($cart, $this->context, (int) Tools::getValue('n', '3'));
         $alma = AlmaClient::defaultInstance();
         if (!$data || !$alma) {
             $this->genericErrorAndRedirect();

@@ -22,8 +22,6 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
-use Alma\API\RequestError;
-
 if (!defined('_PS_VERSION_')) {
     exit;
 }
@@ -39,76 +37,35 @@ class AlmaPaymentOptionsController extends AlmaProtectedHookController
 {
     public function run($params)
     {
-        // First check that we can offer Alma for this payment
-        $paymentData = PaymentData::dataFromCart($this->context->cart, $this->context);
-        if (!$paymentData) {
-            AlmaLogger::instance()->error('Cannot check cart eligibility: no data extracted from cart');
+		// Check if some products in cart are in the excludes listing
+		$diff = CartData::getCartExclusion($params['cart']);
 
-            return array();
-        }
+		if (!empty($diff)) {
+			return [];
+		}
 
-        $alma = AlmaClient::defaultInstance();
-        if (!$alma) {
-            AlmaLogger::instance()->error('Cannot check cart eligibility: no API client');
+		$installmentPlans = AlmaEligibilityHelper::eligibilityCheck($this->context);
+        $options = [];
 
-            return array();
-        }
-
-        try {
-            $eligibility = $alma->payments->eligibility($paymentData);
-        } catch (RequestError $e) {
-            AlmaLogger::instance()->error(
-                "Error when checking cart {$this->context->cart->id} eligibility: " . $e->getMessage()
-            );
-
-            return array();
-        }
-
-        // Check if some products in cart are in the excludes listing
-        $diff = CartData::getCartExclusion($params['cart']);
-        $excludeCategory = !empty($diff);
-
-
-        if (isset($eligibility) && !$eligibility->isEligible || $excludeCategory) {
-            return array();
-        }
-
-        $options = array();
-        $n = 1;
-        while ($n < AlmaSettings::installmentPlansMaxN()) {
-            ++$n;
-
-            if (!AlmaSettings::isInstallmentPlanEnabled($n)) {
+        foreach($installmentPlans as $plan){
+            if(!$plan->isEligible){
                 continue;
-            } else {
-                $min = AlmaSettings::installmentPlanMinAmount($n);
-                $max = AlmaSettings::installmentPlanMaxAmount($n);
-
-                if ($paymentData['payment']['purchase_amount'] < $min
-                    || $paymentData['payment']['purchase_amount'] >= $max
-                ) {
-                    continue;
-                }
             }
-
+            $n = $plan->installmentsCount;
             $forEUComplianceModule = false;
             if (array_key_exists('for_eu_compliance_module', $params)) {
                 $forEUComplianceModule = $params['for_eu_compliance_module'];
             }
-
             $paymentOption = $this->createPaymentOption(
                 $forEUComplianceModule,
                 sprintf(AlmaSettings::getPaymentButtonTitle(), $n),
                 $this->context->link->getModuleLink($this->module->name, 'payment', array('n' => $n), true)
             );
 
-
-            $paymentDataPnX = PaymentData::dataFromCart($this->context->cart, $this->context, $n);
-            $eligibilityPnX = $alma->payments->eligibility($paymentDataPnX);
             if (!$forEUComplianceModule && !empty(AlmaSettings::getPaymentButtonDescription())) {
                 $this->context->smarty->assign(array(
                     'desc' => sprintf(AlmaSettings::getPaymentButtonDescription(), $n),
-                    'plans' => (array) $eligibilityPnX->paymentPlan,
+                    'plans' => (array) $plan->paymentPlan,
                 ));
 
                 $template = $this->context->smarty->fetch(
@@ -117,8 +74,7 @@ class AlmaPaymentOptionsController extends AlmaProtectedHookController
 
                 $paymentOption->setAdditionalInformation($template);
             }
-
-            $options[] = $paymentOption;
+             $options[] = $paymentOption;
         }
 
         return $options;

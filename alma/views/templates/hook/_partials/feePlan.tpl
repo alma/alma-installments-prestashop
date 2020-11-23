@@ -21,8 +21,16 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  *}
 
-<p>
-    {$desc|escape:'htmlall':'UTF-8'}
-</p>
-{include file="modules/alma/views/templates/hook/_partials/feePlan.tpl" plans=$plans}
-<br />
+{foreach from=$plans item=v name=counter}
+    <span class="alma-fee-plan--description">
+        <span class="alma-fee-plan--date">
+            {if $smarty.foreach.counter.iteration === 1}
+                {l s='Today' mod='alma'}
+            {else}
+                {dateFormat date= $v.due_date|date_format:"%Y-%m-%d" full = 0}
+            {/if}
+        </span>
+        <span>{math equation=$v.purchase_amount / 100 format="%.2f"}&euro;</span>
+    </span>
+    <br>
+{/foreach}

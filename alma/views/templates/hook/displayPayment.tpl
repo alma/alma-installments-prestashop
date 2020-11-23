@@ -21,29 +21,36 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  *}
 
-{if $disabled}
-    <div class="row">
-        <div class="col-xs-12">
-            <p class="payment_module">
-                <a href="#" onclick="return false;" class="disabled alma-button">
-                    <span class="alma-button--logo">
-                        <img src="{$logo|escape:'htmlall':'UTF-8'}" alt="Alma">
-                    </span>
-                    <span class="alma-button--text">
-                        <span class="alma-button--description">
-                            {if $error}
-                                {l s='Alma Monthly Installments are not available due to an error' mod='alma'}
-                            {else}
-                                {l s='Alma Monthly Installments are not available for this order' mod='alma'}
-                            {/if}
+
+{foreach from=$options item=option}
+    {if $option.disabled}
+        <div class="row">
+            <div class="col-xs-12">
+                <p class="payment_module">
+                    <a href="#" onclick="return false;" class="disabled alma-button">
+                        <span class="alma-button--logo">
+                            <img src="{$logo|escape:'htmlall':'UTF-8'}" alt="Alma">
                         </span>
-                    </span>
-                </a>
-            </p>
+                        <span class="alma-button--text">
+                            <span class="alma-button--title">{$option.text|escape:'htmlall':'UTF-8'}</span>
+                            <span class="alma-button--description">
+                                {if $option.desc}
+                                    <br>
+                                    <span class="alma-button--description">{$option.desc|escape:'htmlall':'UTF-8'}</span>
+                                {/if}
+                                <br><br>
+                                {if $option.error}
+                                    {l s='Alma Monthly Installments are not available due to an error' mod='alma'}
+                                {else}
+                                    {l s='Alma Monthly Installments are not available for this order' mod='alma'}
+                                {/if}
+                            </span>
+                        </span>
+                    </a>
+                </p>
+            </div>
         </div>
-    </div>
-{else}
-    {foreach from=$options item=option}
+    {else}
         <div class="row">
             <div class="col-xs-12">
                 <p class="payment_module">
@@ -57,18 +64,13 @@
                                 <br>
                                 <span class="alma-button--description">{$option.desc|escape:'htmlall':'UTF-8'}</span>
                             {/if}
-                            {foreach from=$option.plans item=v name=counter}                
-                            <span class="alma-fee-plan--description">    
-                                <span>Echéance {$smarty.foreach.counter.iteration} : le {$v.due_date|date_format:"%d/%m/%Y"}</span>
-                                <span>&nbsp;-&nbsp;{math equation=$v.purchase_amount / 100 format="%.2f"}&euro;</span>
-                            </span>         
-                        {/foreach}
-
+                            <br><br>
+                            {include file="modules/alma/views/templates/hook/_partials/feePlan.tpl" plans=$option.plans}
                         </span>                        
                     </a>
-                 </p>
-                 
+                </p>                 
             </div>
         </div>
-    {/foreach}
-{/if}
+    {/if}
+{/foreach}
+

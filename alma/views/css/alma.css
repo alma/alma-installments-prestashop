@@ -81,19 +81,30 @@ p.payment_module a.alma-button:after {
     opacity: 0.6;
 }
 
-.alma-fee-plan--description{
+.payment_module .alma-fee-plan--description{
     font-size: 0.8em;
     opacity: 0.6;
     display: flex;
     padding: 4px 0px;
 
 }
-.alma-p-fee-plan--descritpion{
+
+.payment_module .alma-fee-plan--date{
+    width: 150px;
+    display: inline-block;
+}
+
+.payment-options  .alma-fee-plan--description{
     display: flex;
     justify-content: space-between;
     padding: 4px 0px;
     margin: 4px 0px;
     border-bottom: 1px solid lightgrey;
+}
+
+.payment-options  .alma-fee-plan--date{
+    width: 150px;
+    display: inline-block;
 }
 
 .alma-error {
