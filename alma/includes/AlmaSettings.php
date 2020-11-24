@@ -222,6 +222,6 @@ class AlmaSettings
 
     public static function isShareOfCheckout()
     {
-        return (bool) self::get('ALMA_SHARE_OF_CHECKOUT', 0);
+        return (bool) self::get('ALMA_SHARE_OF_CHECKOUT', 1);
     }
 }

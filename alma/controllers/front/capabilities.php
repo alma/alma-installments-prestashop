@@ -42,20 +42,20 @@ class AlmaCapabilitiesModuleFrontController extends AlmaApiFrontController
 
         header('Content-Type: application/json');
 
-        if (version_compare(_PS_VERSION_, '1.7', '<')) {
-            $endpoint = Tools::getHttpHost(true)."/index.php?controller=report&module=alma&fc=module";            
-        }
-        else{
-            $endpoint = Tools::getHttpHost(true)."/module/alma/report";
-        }
         $data = array(
-            'platform' => "Prestashop",
-            'version' => _PS_VERSION_,            
+            'platform' => array(
+                'name'                  => 'Prestashop',
+                'version'               => _PS_VERSION_,
+                'module_version'        => Alma::VERSION,
+                'max_execution_time'    => (int) ini_get('max_execution_time'),
+            ),
             'webhooks' => array(
-                'webhook' => 'share_of_chekout', 
-                'endpoint' => $endpoint
+                array(
+                    'webhook'   => 'share_of_checkout', 
+                    'endpoint'  => Context::getContext()->link->getModuleLink('alma', 'report'),
                 )
-            );
+            )
+        );
 
         $this->ajaxDie(json_encode(array('success' => true, 'data' => $data)));
     }

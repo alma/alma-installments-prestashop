@@ -26,7 +26,7 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-class AlmaApiFrontController extends ModuleFrontControllerCore{
+class AlmaApiFrontController extends ModuleFrontController{
 
     public $ssl = true;
 
@@ -37,11 +37,8 @@ class AlmaApiFrontController extends ModuleFrontControllerCore{
     }
 
     public function ajaxDie($value = null, $controller = null, $method = null)
-    {
-        if (version_compare(_PS_VERSION_, '1.6', '<')) {
-            die($value);       
-        }
-        if (method_exists(get_parent_class($this), 'ajaxDie')) {                        
+    {        
+        if (method_exists(ModuleFrontController::class, 'ajaxDie')) {                        
             parent::ajaxDie($value);
         } else {
             die($value);

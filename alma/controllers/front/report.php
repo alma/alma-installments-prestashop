@@ -39,7 +39,7 @@ class AlmaReportModuleFrontController extends AlmaApiFrontController
         parent::postProcess();
 
         if (!AlmaSettings::isShareOfCheckout()) {
-            $this->fail('access denied');            
+            $this->fail('access denied');
         }
 
         header('Content-Type: application/json');
@@ -47,11 +47,7 @@ class AlmaReportModuleFrontController extends AlmaApiFrontController
         $sig = Tools::getValue('sig', null);
         $from = Tools::getValue('from', null);
         $to = Tools::getValue('to', null);
-        $timeout = Tools::getValue('timeout', null);
         $data = array('from' => $from, 'to' => $to);
-        if($timeout){
-            $data['timeout'] = $timeout;            
-        }
 
         $security = new AlmaSecurity(AlmaSettings::getActiveAPIKey());
         

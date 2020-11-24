@@ -55,19 +55,21 @@ class AlmaShareOfCheckout
         $dateTo = new Datetime();
         $dateTo->setTimestamp($to);
         
-        $payments = Db::getInstance()->executeS('
-            SELECT `payment_method`, COUNT(`id_order_payment`) AS `count`, SUM(`amount`) AS `tpv`
-            FROM `'._DB_PREFIX_.'order_payment`
-            WHERE `date_add` >= \'' . pSQL($dateFrom->format('Y-m-d')) . '\'
-            AND `date_add` <= \'' . pSQL($dateTo->format('Y-m-d')) . '\'
-            GROUP BY `payment_method`
+        $checkouts = Db::getInstance()->executeS('
+            SELECT op.`payment_method`, COUNT(op.`id_order_payment`) AS `count`, SUM(op.`amount`) AS `tpv`
+            FROM `'._DB_PREFIX_.'order_payment` op
+            INNER JOIN `'._DB_PREFIX_.'orders` o on o.`reference` = op.`order_reference`
+            WHERE op.`date_add` >= \'' . pSQL($dateFrom->format('Y-m-d')) . '\'
+            AND op.`date_add` <= \'' . pSQL($dateTo->format('Y-m-d')) . '\'
+            AND o.`valid` = 1
+            GROUP BY op.`payment_method`
         ');
         $data = [];
-        if ($payments) {
-            foreach ($payments as $payment) {
-                $data[$payment['payment_method']] = [
-                    'count' => (int) $payment['count'],                    
-                    'tpv' => almaPriceToCents($payment['tpv']),
+        if ($checkouts) {
+            foreach ($checkouts as $checkout) {
+                $data[$checkout['payment_method']] = [
+                    'count' => (int) $checkout['count'],                    
+                    'tpv' => almaPriceToCents($checkout['tpv']),
                 ];
             }
         }
