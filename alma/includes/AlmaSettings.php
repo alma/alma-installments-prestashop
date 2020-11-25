@@ -91,7 +91,7 @@ class AlmaSettings
             'ALMA_STATE_REFUND',
             'ALMA_STATE_REFUND_ENABLED',
             'ALMA_DISPLAY_ORDER_CONFIRMATION',
-			'ALMA_CAPABILITIES_WEBHOOK_ID'
+            'ALMA_CAPABILITIES_WEBHOOK_ID'
         );
 
         foreach ($configKeys as $configKey) {
@@ -104,12 +104,12 @@ class AlmaSettings
     /* Getters */
     public static function isFullyConfigured()
     {
-        return (bool) (int) self::get('ALMA_FULLY_CONFIGURED', false);
+        return (bool)(int)self::get('ALMA_FULLY_CONFIGURED', false);
     }
 
     public static function canLog()
     {
-        return (bool) (int) self::get('ALMA_ACTIVATE_LOGGING', false);
+        return (bool)(int)self::get('ALMA_ACTIVATE_LOGGING', false);
     }
 
     public static function getActiveMode()
@@ -138,7 +138,7 @@ class AlmaSettings
 
     public static function showDisabledButton()
     {
-        return (bool) (int) self::get('ALMA_SHOW_DISABLED_BUTTON', true);
+        return (bool)(int)self::get('ALMA_SHOW_DISABLED_BUTTON', true);
     }
 
     public static function getEligibilityMessage()
@@ -161,7 +161,7 @@ class AlmaSettings
 
     public static function showEligibilityMessage()
     {
-        return (bool) (int) self::get('ALMA_SHOW_ELIGIBILITY_MESSAGE', true);
+        return (bool)(int)self::get('ALMA_SHOW_ELIGIBILITY_MESSAGE', true);
     }
 
     public static function getPaymentButtonTitle()
@@ -184,45 +184,45 @@ class AlmaSettings
 
     public static function displayOrderConfirmation()
     {
-        return (bool) (int) self::get('ALMA_DISPLAY_ORDER_CONFIRMATION', false);
+        return (bool)(int)self::get('ALMA_DISPLAY_ORDER_CONFIRMATION', false);
     }
 
     public static function isInstallmentPlanEnabled($n)
     {
-        return (bool) (int) self::get("ALMA_P${n}X_ENABLED", $n == 3);
+        return (bool)(int)self::get("ALMA_P${n}X_ENABLED", $n == 3);
     }
 
     public static function installmentPlansMaxN()
     {
-        return (int) self::get('ALMA_PNX_MAX_N', 3);
+        return (int)self::get('ALMA_PNX_MAX_N', 3);
     }
 
     public static function installmentPlanMinAmount($n, $merchant = null)
     {
         $default = $merchant ? $merchant->minimum_purchase_amount : 10000;
 
-        return (int) self::get("ALMA_P${n}X_MIN_AMOUNT", $default);
+        return (int)self::get("ALMA_P${n}X_MIN_AMOUNT", $default);
     }
 
     public static function installmentPlanMaxAmount($n, $merchant = null)
     {
         $default = $merchant ? $merchant->maximum_purchase_amount : 100000;
 
-        return (int) self::get("ALMA_P${n}X_MAX_AMOUNT", $default);
+        return (int)self::get("ALMA_P${n}X_MAX_AMOUNT", $default);
     }
 
     public static function getRefundState()
     {
-        return (int) self::get('ALMA_STATE_REFUND', 7);
+        return (int)self::get('ALMA_STATE_REFUND', 7);
     }
 
     public static function isRefundEnabledByState()
     {
-        return (bool) self::get('ALMA_STATE_REFUND_ENABLED', 0);
+        return (bool)self::get('ALMA_STATE_REFUND_ENABLED', 0);
     }
 
     public static function isShareOfCheckout()
     {
-        return (bool) self::get('ALMA_SHARE_OF_CHECKOUT', 1);
+        return (bool)self::get('ALMA_SHARE_OF_CHECKOUT', 1);
     }
 }

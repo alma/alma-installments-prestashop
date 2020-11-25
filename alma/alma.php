@@ -154,14 +154,14 @@ class Alma extends PaymentModule
         $result = parent::uninstall();
 
         // Check whether we need to delete the capabilities webhook before losing all API keys & config
-		if (AlmaSettings::get("ALMA_CAPABILITIES_WEBHOOK_ID") != null) {
-			try {
-				$alma = AlmaClient::instanceForMode(Alma\API\LIVE_MODE);
-				$alma->webhooks->delete(AlmaSettings::get("ALMA_CAPABILITIES_WEBHOOK_ID"));
-			} catch (Exception $e) {
-				// silent
-			}
-		}
+        if (AlmaSettings::get("ALMA_CAPABILITIES_WEBHOOK_ID") != null) {
+            try {
+                $alma = AlmaClient::instanceForMode(Alma\API\LIVE_MODE);
+                $alma->webhooks->delete(AlmaSettings::get("ALMA_CAPABILITIES_WEBHOOK_ID"));
+            } catch (Exception $e) {
+                // silent
+            }
+        }
 
         $result = $result && AlmaSettings::deleteAllValues();
 

@@ -203,12 +203,12 @@ class AlmaGetContentController extends AlmaAdminHookController
 
         // Register capabilities webhook against Alma API
         if ($liveKey) {
-			try {
-				AlmaCapabilitiesModuleFrontController::registerEndpoint($liveKey);
-			} catch (Exception $e) {
-				// pass silently
-			}
-		}
+            try {
+                AlmaCapabilitiesModuleFrontController::registerEndpoint($liveKey);
+            } catch (Exception $e) {
+                // pass silently
+            }
+        }
 
         if ($credentialsError && array_key_exists('warning', $credentialsError)) {
             return $credentialsError['message'];
@@ -320,7 +320,8 @@ class AlmaGetContentController extends AlmaAdminHookController
                         'type' => 'select',
                         'required' => true,
                         // PrestaShop won't detect the string if the call to `l` is multiline
-                        'desc' => $this->module->l('Use Test mode until you are ready to take real orders with Alma. In Test mode, only admins can see Alma on cart/checkout pages.', 'getContent'),
+                        'desc' => $this->module->l('Use Test mode until you are ready to take real orders with Alma. In Test mode, only admins can see Alma on cart/checkout pages.',
+                            'getContent'),
                         'options' => array(
                             'id' => 'api_mode',
                             'name' => 'name',
@@ -338,10 +339,11 @@ class AlmaGetContentController extends AlmaAdminHookController
                         'size' => 75,
                         'required' => false,
                         'desc' => $this->module->l('Not required for Test mode', 'getContent') . ' – ' . sprintf(
-                            $this->module->l('You can find your Live API key on %1$syour Alma dashboard%2$s', 'getContent'),
-                            '<a href="https://dashboard.getalma.eu/api" target="_blank">',
-                            '</a>'
-                        ),
+                                $this->module->l('You can find your Live API key on %1$syour Alma dashboard%2$s',
+                                    'getContent'),
+                                '<a href="https://dashboard.getalma.eu/api" target="_blank">',
+                                '</a>'
+                            ),
                     ),
                     array(
                         'name' => 'ALMA_TEST_API_KEY',
@@ -350,10 +352,11 @@ class AlmaGetContentController extends AlmaAdminHookController
                         'size' => 75,
                         'required' => false,
                         'desc' => $this->module->l('Not required for Live mode', 'getContent') . ' – ' . sprintf(
-                            $this->module->l('You can find your Test API key on %1$syour sandbox dashboard%2$s', 'getContent'),
-                            '<a href="https://dashboard.sandbox.getalma.eu/api" target="_blank">',
-                            '</a>'
-                        ),
+                                $this->module->l('You can find your Test API key on %1$syour sandbox dashboard%2$s',
+                                    'getContent'),
+                                '<a href="https://dashboard.sandbox.getalma.eu/api" target="_blank">',
+                                '</a>'
+                            ),
                     ),
                 ),
                 'submit' => array('title' => $this->module->l('Save'), 'class' => 'btn btn-default pull-right'),
@@ -477,14 +480,16 @@ class AlmaGetContentController extends AlmaAdminHookController
                         'label' => null,
                         'type' => 'html',
                         // PrestaShop won't detect the string if the call to `l` is multiline
-                        'html_content' => $this->module->l('Use "%d" in the fields below where you want the installments count to appear. For instance, "Pay in %d monthly installments" will appear as "Pay in 3 monthly installments"', 'getContent'),
+                        'html_content' => $this->module->l('Use "%d" in the fields below where you want the installments count to appear. For instance, "Pay in %d monthly installments" will appear as "Pay in 3 monthly installments"',
+                            'getContent'),
                     ),
 
                     array(
                         'name' => 'ALMA_PAYMENT_BUTTON_TITLE',
                         'label' => $this->module->l('Title', 'getContent'),
                         // PrestaShop won't detect the string if the call to `l` is multiline
-                        'desc' => $this->module->l('This controls the payment method name which the user sees during checkout.', 'getContent'),
+                        'desc' => $this->module->l('This controls the payment method name which the user sees during checkout.',
+                            'getContent'),
                         'type' => 'text',
                         'size' => 75,
                         'required' => true,
@@ -493,7 +498,8 @@ class AlmaGetContentController extends AlmaAdminHookController
                         'name' => 'ALMA_PAYMENT_BUTTON_DESC',
                         'label' => $this->module->l('Description', 'getContent'),
                         // PrestaShop won't detect the string if the call to `l` is multiline
-                        'desc' => $this->module->l('This controls the payment method description which the user sees during checkout.', 'getContent'),
+                        'desc' => $this->module->l('This controls the payment method description which the user sees during checkout.',
+                            'getContent'),
                         'type' => 'text',
                         'size' => 75,
                         'required' => version_compare(_PS_VERSION_, '1.7', '<'),
@@ -544,7 +550,8 @@ class AlmaGetContentController extends AlmaAdminHookController
                                     'id' => 'ON',
                                     'val' => true,
                                     // PrestaShop won't detect the string if the call to `l` is multiline
-                                    'label' => $this->module->l('Display a message under the cart summary to indicate its eligibility for monthly installments.', 'getContent'),
+                                    'label' => $this->module->l('Display a message under the cart summary to indicate its eligibility for monthly installments.',
+                                        'getContent'),
                                 ),
                             ),
                         ),
@@ -553,7 +560,8 @@ class AlmaGetContentController extends AlmaAdminHookController
                         'name' => 'ALMA_IS_ELIGIBLE_MESSAGE',
                         'label' => $this->module->l('Eligibility message', 'getContent'),
                         // PrestaShop won't detect the string if the call to `l` is multiline
-                        'desc' => $this->module->l('Message displayed below the cart totals when it is eligible for monthly installments.', 'getContent'),
+                        'desc' => $this->module->l('Message displayed below the cart totals when it is eligible for monthly installments.',
+                            'getContent'),
                         'type' => 'text',
                         'size' => 75,
                         'required' => true,
@@ -562,7 +570,8 @@ class AlmaGetContentController extends AlmaAdminHookController
                         'name' => 'ALMA_NOT_ELIGIBLE_MESSAGE',
                         'label' => $this->module->l('Non-eligibility message', 'getContent'),
                         // PrestaShop won't detect the string if the call to `l` is multiline
-                        'desc' => $this->module->l('Message displayed below the cart totals when it is not eligible for monthly installments.', 'getContent'),
+                        'desc' => $this->module->l('Message displayed below the cart totals when it is not eligible for monthly installments.',
+                            'getContent'),
                         'type' => 'text',
                         'size' => 75,
                         'required' => true,
@@ -583,7 +592,8 @@ class AlmaGetContentController extends AlmaAdminHookController
                         'name' => 'ALMA_DISPLAY_ORDER_CONFIRMATION',
                         'label' => $this->module->l('Display order confirmation', 'getContent'),
                         // PrestaShop won't detect the string if the call to `l` is multiline
-                        'desc' => $this->module->l('Activate this setting when you do not have your own order confirmation page', 'getContent'),
+                        'desc' => $this->module->l('Activate this setting when you do not have your own order confirmation page',
+                            'getContent'),
                         'type' => 'checkbox',
                         'values' => array(
                             'id' => 'id',
@@ -593,7 +603,8 @@ class AlmaGetContentController extends AlmaAdminHookController
                                     'id' => 'ON',
                                     'val' => true,
                                     // PrestaShop won't detect the string if the call to `l` is multiline
-                                    'label' => $this->module->l('Confirm successful order to customers when they come back from the Alma payment page', 'getContent'),
+                                    'label' => $this->module->l('Confirm successful order to customers when they come back from the Alma payment page',
+                                        'getContent'),
                                 ),
                             ),
                         ),
@@ -615,7 +626,8 @@ class AlmaGetContentController extends AlmaAdminHookController
                         'label' => null,
                         'type' => 'html',
                         // PrestaShop won't detect the string if the call to `l` is multiline
-                        'html_content' => $this->module->l('If you usually refund orders by changing their state, activate this option and choose the state you want to use to trigger refunds on Alma payments', 'getContent'),
+                        'html_content' => $this->module->l('If you usually refund orders by changing their state, activate this option and choose the state you want to use to trigger refunds on Alma payments',
+                            'getContent'),
                     ),
                     array(
                         'name' => 'ALMA_STATE_REFUND_ENABLED',

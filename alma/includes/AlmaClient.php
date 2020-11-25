@@ -44,15 +44,15 @@ class AlmaClient
         return $_almaClient;
     }
 
-	public static function instanceForMode($mode)
-	{
-		if ($mode == Alma\API\LIVE_MODE) {
-			$apiKey = AlmaSettings::getLiveKey();
-		} else {
-			$apiKey = AlmaSettings::getTestKey();
-		}
+    public static function instanceForMode($mode)
+    {
+        if ($mode == Alma\API\LIVE_MODE) {
+            $apiKey = AlmaSettings::getLiveKey();
+        } else {
+            $apiKey = AlmaSettings::getTestKey();
+        }
 
-		return self::createInstance($apiKey, $mode);
+        return self::createInstance($apiKey, $mode);
     }
 
     public static function createInstance($apiKey, $mode = null)
