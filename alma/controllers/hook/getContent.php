@@ -598,7 +598,7 @@ class AlmaGetContentController extends AlmaAdminHookController
         $excludeCategories = AlmaSettings::getExcludeNameCategories();
         $tplExclude->assign(array(
             'excludeCategories' => $excludeCategories,
-            'excludeLink' => '<a href="' . $this->context->link->getAdminLink('AdminAlmaCategories') . '">',
+            'excludeLink' => $this->context->link->getAdminLink('AdminAlmaCategories'),
         ));
         $excludeForm = array(
             'form' => array(

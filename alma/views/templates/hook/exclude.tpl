@@ -25,9 +25,14 @@
     <p>{l s='You can not offer Alma when selling weapons, medical equipment and dematerialized products (gift card, license keys for video games, software, ...)' mod='alma'}</p>
     <p>{l s='In case of failure to pay relating to an order containing a product of this list, your insurance Alma will not cover you.' mod='alma'}</p>
     <br />
-    <p>{l s='You can use [1]exclusion lists[/1] to be compliant with these restrictions.' tags=array($excludeLink, '</a>') mod='alma'}</p>
+    <p>
+        {l s='You can use' mod='alma'}
+        <strong>
+            <a href='{$excludeLink}' title="{l s='exclusion lists' mod='alma'}">{l s='exclusion lists' mod='alma'}</a>
+        </strong>
+        {l s='to be compliant with these restrictions.' mod='alma'}</p>
     <br />
-    <p>{l s='[1]Exclude categories :[/1] %s' mod='alma' sprintf=$excludeCategories tags=array('<strong>', '</strong>')}</p>
+    <p><strong>{l s='Exclude categories : ' mod='alma'}</strong>&nbsp;{l s='%s' mod='alma' sprintf=$excludeCategories}</p>
 </div>
 
 <!--

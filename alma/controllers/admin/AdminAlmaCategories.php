@@ -169,19 +169,6 @@ class AdminAlmaCategoriesController extends ModuleAdminController
         header("Location:" .$this->context->link->getAdminLink('AdminAlmaCategories'));        
     }
 
-    public function ajaxProcessExcludeCategory()
-    {
-        if (!$id_category = (int)Tools::getValue('id_category')) {
-            die(Tools::jsonEncode(array('success' => false, 'error' => true, 'text' => $this->l('Failed to update the status'))));
-        } else {
-            $category = new Category((int)$id_category);
-            if (Validate::isLoadedObject($category)) {
-                AlmaSettings::addExcludeCategories($id_category);
-                die(Tools::jsonEncode(array('success' => true, 'text' => $this->l('The status has been updated successfully'))));
-            }
-        }
-    }
-
     public static function getExclude($id_category)
     {
         if (in_array($id_category, self::$exclude_categories)) {

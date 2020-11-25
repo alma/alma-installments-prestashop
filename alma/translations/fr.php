@@ -18,8 +18,6 @@ $_MODULE['<{alma}prestashop>adminalmacategories_8787919ad59b1eb884d5fb4ba5bff4c5
 $_MODULE['<{alma}prestashop>adminalmacategories_060b510d876a8b8bc8c9e0cc4a121213'] = 'Retirer les catégories sélectionnés des exclusions ?';
 $_MODULE['<{alma}prestashop>adminalmacategories_45e55cc81f5b2da62b2c8a8b4dc1f6bb'] = 'Ajouter ma selection dans la liste d\'exclusion';
 $_MODULE['<{alma}prestashop>adminalmacategories_60f5d9722879236fe31f28a27a0c4d44'] = 'Ajouter les catégories sélectionnés dans la liste exclusion ?';
-$_MODULE['<{alma}prestashop>adminalmacategories_f86f7b91afe27e79305a6b07bdb0d3c0'] = 'Impossible de mettre à jour ces status';
-$_MODULE['<{alma}prestashop>adminalmacategories_de360c8b5dd9a9fdd592b1c08b3b4a62'] = 'Les status ont été mis à jour correctement';
 $_MODULE['<{alma}prestashop>payment_efa820507b1951ee5722003639b1a0b0'] = 'Le paiement en plusieurs fois Alma n\'est pas disponible pour cette devise';
 $_MODULE['<{alma}prestashop>displayshoppingcartfooter_32e97d76996c6f0dfd417842f5c4de0d'] = '(Montant maximum : %s)';
 $_MODULE['<{alma}prestashop>displayshoppingcartfooter_f0dccaed959417fe135b77d2956c9c48'] = '(Montant minimum : %s)';
@@ -83,8 +81,10 @@ $_MODULE['<{alma}prestashop>displaypaymentreturn_d61c09b6ad630202a5f4f57df12c9d6
 $_MODULE['<{alma}prestashop>displaypaymentreturn_25e7e0cd6d175afc29909d4e5268f41a'] = 'Merci pour votre confiance !';
 $_MODULE['<{alma}prestashop>exclude_46ea824033ea35c4936882722dfe3883'] = 'Vous ne pouvez pas proposer avec Alma : la vente d’armes, du matériel médical et de produits dématérialisés (carte cadeau, clés de licence de jeux vidéo, logiciels, ...) ';
 $_MODULE['<{alma}prestashop>exclude_25e269e4d02f4641e91c8e153fe90db6'] = 'En cas de paiement refusé relatif à une commande contenant un produit de cette liste, votre assurance Alma ne vous couvrira pas. ';
-$_MODULE['<{alma}prestashop>exclude_4b1e87c006a059d509f612d8b763aaa0'] = 'Vous pouvez utiliser [1]la liste d’exclusion[/1] pour respecter ces restrictions.';
-$_MODULE['<{alma}prestashop>exclude_ad88fa4cdc5294422b17d39d00eb506c'] = '[1]Catégories exclues : [/1] %s';
+$_MODULE['<{alma}prestashop>exclude_a613b371046b3d4bbbaf064357a2c498'] = 'Vous pouvez utiliser';
+$_MODULE['<{alma}prestashop>exclude_9fdb26e5eedcc371b448ac3d2f89d64a'] = 'les listes d\'exclusion';
+$_MODULE['<{alma}prestashop>exclude_ee242484ef1c13f0ce2cf63aca5343ab'] = 'pour vous conformer à ces restrictions';
+$_MODULE['<{alma}prestashop>exclude_bfe6da931a12f345db87f02c95260ac9'] = 'Catégories exclues :';
 $_MODULE['<{alma}prestashop>getcontent_53ce4ef3d9b0dde0cb18ee9424dc4e4f'] = 'Merci de renseigner tous les champs obligatoires';
 $_MODULE['<{alma}prestashop>getcontent_8f5fc63df52306a94566eba9f11de438'] = 'Renseignez votre clef d\'API Live pour utiliser le mode Live';
 $_MODULE['<{alma}prestashop>getcontent_fde62b5820c448b8db7eb98235de0138'] = 'Renseignez votre clef d\'API Test pour utiliser le mode Test';
