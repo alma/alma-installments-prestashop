@@ -8,16 +8,16 @@
     "packages": [
         {
             "name": "alma/alma-php-client",
-            "version": "v1.0.10",
+            "version": "v1.0.12",
             "source": {
                 "type": "git",
                 "url": "https://github.com/alma/alma-php-client.git",
-                "reference": "05d75ad6817d9af29cf5f6c8b42d980bdd8f3e61"
+                "reference": "25bf026479be277c553c315c66a03d4c8bbab23d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/alma/alma-php-client/zipball/05d75ad6817d9af29cf5f6c8b42d980bdd8f3e61",
-                "reference": "05d75ad6817d9af29cf5f6c8b42d980bdd8f3e61",
+                "url": "https://api.github.com/repos/alma/alma-php-client/zipball/25bf026479be277c553c315c66a03d4c8bbab23d",
+                "reference": "25bf026479be277c553c315c66a03d4c8bbab23d",
                 "shasum": ""
             },
             "require": {
@@ -50,7 +50,11 @@
                 }
             ],
             "description": "PHP API client for the Alma payments API",
-            "time": "2020-03-30T22:09:54+00:00"
+            "support": {
+                "issues": "https://github.com/alma/alma-php-client/issues",
+                "source": "https://github.com/alma/alma-php-client/tree/v1.0.12"
+            },
+            "time": "2020-11-25T17:09:18+00:00"
         },
         {
             "name": "psr/log",
@@ -58,17 +62,18 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/php-fig/log.git",
-                "reference": "0f73288fd15629204f9d42b7055f72dacbe811fc"
+                "reference": "dd738d0b4491f32725492cf345f6b501f5922fec"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/php-fig/log/zipball/0f73288fd15629204f9d42b7055f72dacbe811fc",
-                "reference": "0f73288fd15629204f9d42b7055f72dacbe811fc",
+                "url": "https://api.github.com/repos/php-fig/log/zipball/dd738d0b4491f32725492cf345f6b501f5922fec",
+                "reference": "dd738d0b4491f32725492cf345f6b501f5922fec",
                 "shasum": ""
             },
             "require": {
                 "php": ">=5.3.0"
             },
+            "default-branch": true,
             "type": "library",
             "extra": {
                 "branch-alias": {
@@ -87,7 +92,7 @@
             "authors": [
                 {
                     "name": "PHP-FIG",
-                    "homepage": "http://www.php-fig.org/"
+                    "homepage": "https://www.php-fig.org/"
                 }
             ],
             "description": "Common interface for logging libraries",
@@ -97,7 +102,10 @@
                 "psr",
                 "psr-3"
             ],
-            "time": "2020-03-23T09:12:05+00:00"
+            "support": {
+                "source": "https://github.com/php-fig/log/tree/master"
+            },
+            "time": "2020-09-18T06:44:51+00:00"
         }
     ],
     "packages-dev": [],
@@ -107,5 +115,6 @@
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": [],
-    "platform-dev": []
+    "platform-dev": [],
+    "plugin-api-version": "2.0.0"
 }
