@@ -201,6 +201,15 @@ class AlmaGetContentController extends AlmaAdminHookController
         // At this point, consider things are sufficiently configured to be usable
         AlmaSettings::updateValue('ALMA_FULLY_CONFIGURED', '1');
 
+        // Register capabilities webhook against Alma API
+        if ($liveKey) {
+			try {
+				AlmaCapabilitiesModuleFrontController::registerEndpoint($liveKey);
+			} catch (Exception $e) {
+				// pass silently
+			}
+		}
+
         if ($credentialsError && array_key_exists('warning', $credentialsError)) {
             return $credentialsError['message'];
         }
@@ -715,7 +724,7 @@ class AlmaGetContentController extends AlmaAdminHookController
             'ALMA_SHOW_ELIGIBILITY_MESSAGE_ON' => AlmaSettings::showEligibilityMessage(),
             'ALMA_IS_ELIGIBLE_MESSAGE' => AlmaSettings::getEligibilityMessage(),
             'ALMA_NOT_ELIGIBLE_MESSAGE' => AlmaSettings::getNonEligibilityMessage(),
-            'ALMA_DISPLAY_ORDER_CONFIRMATION_ON' => AlmaSettings::displayOrderConfirmation(),  
+            'ALMA_DISPLAY_ORDER_CONFIRMATION_ON' => AlmaSettings::displayOrderConfirmation(),
             'ALMA_ACTIVATE_LOGGING_ON' => (bool)AlmaSettings::canLog(),
             'ALMA_STATE_REFUND' => AlmaSettings::getRefundState(),
             'ALMA_STATE_REFUND_ENABLED_ON' => AlmaSettings::isRefundEnabledByState(),

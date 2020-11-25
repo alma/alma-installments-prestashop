@@ -98,7 +98,7 @@ class Alma extends PaymentModule
             'displayBackOfficeHeader',
             'displayShoppingCartFooter',
             'actionOrderSlipAdd',
-            'actionOrderStatusPostUpdate',   
+            'actionOrderStatusPostUpdate',
         );
 
         if (version_compare(_PS_VERSION_, '1.7', '>=')) {
@@ -151,7 +151,19 @@ class Alma extends PaymentModule
 
     public function uninstall()
     {
-        $result = parent::uninstall() && AlmaSettings::deleteAllValues();
+        $result = parent::uninstall();
+
+        // Check whether we need to delete the capabilities webhook before losing all API keys & config
+		if (AlmaSettings::get("ALMA_CAPABILITIES_WEBHOOK_ID") != null) {
+			try {
+				$alma = AlmaClient::instanceForMode(Alma\API\LIVE_MODE);
+				$alma->webhooks->delete(AlmaSettings::get("ALMA_CAPABILITIES_WEBHOOK_ID"));
+			} catch (Exception $e) {
+				// silent
+			}
+		}
+
+        $result = $result && AlmaSettings::deleteAllValues();
 
         $paymentModuleConf = array(
             'CONF_ALMA_FIXED',

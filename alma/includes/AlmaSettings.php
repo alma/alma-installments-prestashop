@@ -27,11 +27,11 @@ if (!defined('_PS_VERSION_')) {
 }
 
 if (!defined('ALMA_MODE_TEST')) {
-    define('ALMA_MODE_TEST', 'test');
+    define('ALMA_MODE_TEST', Alma\API\TEST_MODE);
 }
 
 if (!defined('ALMA_MODE_LIVE')) {
-    define('ALMA_MODE_LIVE', 'live');
+    define('ALMA_MODE_LIVE', Alma\API\LIVE_MODE);
 }
 
 class AlmaSettings
@@ -90,7 +90,8 @@ class AlmaSettings
             'ALMA_PNX_MAX_N',
             'ALMA_STATE_REFUND',
             'ALMA_STATE_REFUND_ENABLED',
-            'ALMA_DISPLAY_ORDER_CONFIRMATION'
+            'ALMA_DISPLAY_ORDER_CONFIRMATION',
+			'ALMA_CAPABILITIES_WEBHOOK_ID'
         );
 
         foreach ($configKeys as $configKey) {

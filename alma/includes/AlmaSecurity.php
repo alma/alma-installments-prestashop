@@ -44,11 +44,11 @@ class AlmaSecurity
      * @param string $signature
      * @return boolean
      */
-    public function validSignature(array $data, $signature)
-    {        
-        if (!Webhook::verifySignature($signature, $data, $this->apiKey) || !is_string($signature)) {    
+    public function validSignature($data, $signature)
+    {
+        if (!Webhook::verifySignature($signature, $data, $this->apiKey) || !is_string($signature)) {
             throw new Exception('access denied');
-        }        
+        }
         return true;
     }
 }

@@ -23,6 +23,8 @@
  */
 
 
+use Alma\API\Entities\Webhook;
+
 if (!defined('_PS_VERSION_')) {
     exit;
 }
@@ -30,14 +32,55 @@ if (!defined('_PS_VERSION_')) {
 include_once _PS_MODULE_DIR_ . 'alma/includes/AlmaApiFrontController.php';
 
 class AlmaCapabilitiesModuleFrontController extends AlmaApiFrontController
-{    
+{
+	public static function registerEndpoint($apiKey)
+	{
+		$alma = AlmaClient::createInstance($apiKey, Alma\API\LIVE_MODE);
+
+		if (!$alma) {
+			AlmaLogger::instance()->warning("Cannot register capabilities endpoint: no Alma client");
+			return;
+		}
+
+		$endpointURL = Context::getContext()->link->getModuleLink('alma', 'capabilities');
+
+		$webhookId = AlmaSettings::get('ALMA_CAPABILITIES_WEBHOOK_ID');
+		if ($webhookId != null) {
+			try {
+				$webhook = $alma->webhooks->fetch($webhookId);
+			} catch (\Alma\API\RequestError $e) {
+				if ($e->response->responseCode == 404) {
+					$webhookId = null;
+					AlmaSettings::updateValue('ALMA_CAPABILITIES_WEBHOOK_ID', $webhookId);
+				} else {
+					AlmaLogger::instance()->warning("Could not fetch registered capabilities webhook");
+				}
+			}
+
+			if ((isset($webhook) && $webhook->url != $endpointURL) || (!isset($webhook) && $webhookId)) {
+				try {
+					$alma->webhooks->delete($webhookId);
+				} catch (\Alma\API\RequestError $e) {
+					AlmaLogger::instance()->warning("Could not delete outdated capabilities webhook");
+					return;
+				}
+			}
+		}
+
+		try {
+			$webhook = $alma->webhooks->create(Webhook::TYPE_INTEGRATION_CAPABILITIES, $endpointURL);
+			AlmaSettings::updateValue('ALMA_CAPABILITIES_WEBHOOK_ID', $webhook->id);
+		} catch (Exception $e) {
+			AlmaLogger::instance()->warning("Cannot register capabilities endpoint: " . $e->getMessage());
+		}
+	}
 
     public function postProcess()
     {
         parent::postProcess();
 
         if (!AlmaSettings::isShareOfCheckout()) {
-            $this->fail('access denied');            
+            $this->fail('access denied');
         }
 
         header('Content-Type: application/json');
@@ -51,7 +94,7 @@ class AlmaCapabilitiesModuleFrontController extends AlmaApiFrontController
             ),
             'webhooks' => array(
                 array(
-                    'webhook'   => 'share_of_checkout', 
+                    'webhook'   => 'share_of_checkout',
                     'endpoint'  => Context::getContext()->link->getModuleLink('alma', 'report'),
                 )
             )
