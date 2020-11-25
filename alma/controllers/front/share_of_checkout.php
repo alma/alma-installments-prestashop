@@ -31,16 +31,12 @@ include_once _PS_MODULE_DIR_ . 'alma/includes/AlmaShareOfCheckout.php';
 include_once _PS_MODULE_DIR_ . 'alma/includes/AlmaSettings.php';
 include_once _PS_MODULE_DIR_ . 'alma/includes/AlmaApiFrontController.php';
 
-class AlmaReportModuleFrontController extends AlmaApiFrontController
-{   
+class AlmaShareOfCheckoutModuleFrontController extends AlmaApiFrontController
+{
 
     public function postProcess()
     {
         parent::postProcess();
-
-        if (!AlmaSettings::isShareOfCheckout()) {
-            $this->fail('access denied');
-        }
 
         header('Content-Type: application/json');
 
@@ -50,16 +46,20 @@ class AlmaReportModuleFrontController extends AlmaApiFrontController
         $data = array('from' => $from, 'to' => $to);
 
         $security = new AlmaSecurity(AlmaSettings::getActiveAPIKey());
-        
-        try {            
+
+        try {
             $security->validSignature($data, $sig);
-        } catch (Exception $e) {
+        }
+        catch (SignatureError $e) {
+            $this->fail("Invalid signature");
+        }
+        catch (Exception $e) {
             $this->fail($e->getMessage());
         }
 
         $shareOfCheckout = new AlmaShareOfCheckout($this->context, $this->module);
         try {
-            $data = $shareOfCheckout->getPayments($from,$to);
+            $data = $shareOfCheckout->getPayments($from, $to);
         } catch (Exception $e) {
             $this->fail($e->getMessage());
         }

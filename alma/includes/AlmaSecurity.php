@@ -28,6 +28,11 @@ if (!defined('_PS_VERSION_')) {
 
 use Alma\API\Entities\Webhook;
 
+class SignatureError extends \Exception
+{
+
+}
+
 class AlmaSecurity
 {
     protected $apiKey;
@@ -43,11 +48,12 @@ class AlmaSecurity
      * @param array $data
      * @param string $signature
      * @return boolean
+     * @throws SignatureError
      */
     public function validSignature($data, $signature)
     {
-        if (!Webhook::verifySignature($signature, $data, $this->apiKey) || !is_string($signature)) {
-            throw new Exception('access denied');
+        if (!Webhook::verifySignature($signature, $data, $this->apiKey)) {
+            throw new SignatureError();
         }
         return true;
     }

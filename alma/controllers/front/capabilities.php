@@ -92,7 +92,7 @@ class AlmaCapabilitiesModuleFrontController extends AlmaApiFrontController
             'webhooks' => array(
                 array(
                     'webhook' => 'share_of_checkout',
-                    'endpoint' => Context::getContext()->link->getModuleLink('alma', 'report'),
+                    'endpoint' => Context::getContext()->link->getModuleLink('alma', 'share_of_checkout'),
                 )
             )
         );

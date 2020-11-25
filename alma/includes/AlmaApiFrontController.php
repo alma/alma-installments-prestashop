@@ -26,19 +26,20 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-class AlmaApiFrontController extends ModuleFrontController{
+class AlmaApiFrontController extends ModuleFrontController
+{
 
     public $ssl = true;
 
     public function __construct()
-    {        
+    {
         parent::__construct();
         $this->context = Context::getContext();
     }
 
     public function ajaxDie($value = null, $controller = null, $method = null)
-    {        
-        if (method_exists(ModuleFrontController::class, 'ajaxDie')) {                        
+    {
+        if (method_exists(ModuleFrontController::class, 'ajaxDie')) {
             parent::ajaxDie($value);
         } else {
             die($value);

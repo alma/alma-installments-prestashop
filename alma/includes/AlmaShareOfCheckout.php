@@ -36,11 +36,12 @@ class AlmaShareOfCheckout
     }
 
     /**
-     * @param $getPayments
-     * @return string URL to redirect the customer to
-     * @throws Exception
+     * @param $from
+     * @param $to
+     * @return array URL to redirect the customer to
+     * @throws PrestaShopDatabaseException
      */
-    public function getPayments($from,$to)
+    public function getPayments($from, $to)
     {
         if (!$this->isValidTimeStamp($from)) {
             AlmaLogger::instance()->error("[Alma] ShareOfCheckout 'from' value {$from}: not a valid timestamp.");
@@ -54,11 +55,11 @@ class AlmaShareOfCheckout
         $dateFrom->setTimestamp($from);
         $dateTo = new Datetime();
         $dateTo->setTimestamp($to);
-        
+
         $checkouts = Db::getInstance()->executeS('
             SELECT op.`payment_method`, COUNT(op.`id_order_payment`) AS `count`, SUM(op.`amount`) AS `tpv`
-            FROM `'._DB_PREFIX_.'order_payment` op
-            INNER JOIN `'._DB_PREFIX_.'orders` o on o.`reference` = op.`order_reference`
+            FROM `' . _DB_PREFIX_ . 'order_payment` op
+            INNER JOIN `' . _DB_PREFIX_ . 'orders` o on o.`reference` = op.`order_reference`
             WHERE op.`date_add` >= \'' . pSQL($dateFrom->format('Y-m-d')) . '\'
             AND op.`date_add` <= \'' . pSQL($dateTo->format('Y-m-d')) . '\'
             AND o.`valid` = 1
@@ -68,7 +69,7 @@ class AlmaShareOfCheckout
         if ($checkouts) {
             foreach ($checkouts as $checkout) {
                 $data[$checkout['payment_method']] = [
-                    'count' => (int) $checkout['count'],                    
+                    'count' => (int)$checkout['count'],
                     'tpv' => almaPriceToCents($checkout['tpv']),
                 ];
             }
@@ -78,7 +79,7 @@ class AlmaShareOfCheckout
 
     protected function isValidTimeStamp($timestamp)
     {
-        return ((string) (int) $timestamp === $timestamp)
+        return ((string)(int)$timestamp === $timestamp)
             && ($timestamp <= PHP_INT_MAX)
             && ($timestamp >= ~PHP_INT_MAX);
     }
