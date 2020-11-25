@@ -79,10 +79,6 @@ class AlmaCapabilitiesModuleFrontController extends AlmaApiFrontController
     {
         parent::postProcess();
 
-        if (!AlmaSettings::isShareOfCheckout()) {
-            $this->fail('access denied');
-        }
-
         header('Content-Type: application/json');
 
         $data = array(
@@ -90,6 +86,7 @@ class AlmaCapabilitiesModuleFrontController extends AlmaApiFrontController
                 'name' => 'Prestashop',
                 'version' => _PS_VERSION_,
                 'module_version' => Alma::VERSION,
+                'php_version' => rtrim(str_replace(PHP_EXTRA_VERSION, '', PHP_VERSION), '-'),
                 'max_execution_time' => (int)ini_get('max_execution_time'),
             ),
             'webhooks' => array(
