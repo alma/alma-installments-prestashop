@@ -220,9 +220,4 @@ class AlmaSettings
     {
         return (bool)self::get('ALMA_STATE_REFUND_ENABLED', 0);
     }
-
-    public static function isShareOfCheckout()
-    {
-        return (bool)self::get('ALMA_SHARE_OF_CHECKOUT', 1);
-    }
 }
