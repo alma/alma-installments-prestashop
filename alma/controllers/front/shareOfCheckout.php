@@ -26,6 +26,7 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
+
 include_once _PS_MODULE_DIR_ . 'alma/includes/AlmaSecurity.php';
 include_once _PS_MODULE_DIR_ . 'alma/includes/AlmaShareOfCheckout.php';
 include_once _PS_MODULE_DIR_ . 'alma/includes/AlmaSettings.php';

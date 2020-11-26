@@ -26,12 +26,14 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
+use Alma\API\Client;
+
 if (!defined('ALMA_MODE_TEST')) {
-    define('ALMA_MODE_TEST', Alma\API\TEST_MODE);
+    define('ALMA_MODE_TEST', Client::TEST_MODE);
 }
 
 if (!defined('ALMA_MODE_LIVE')) {
-    define('ALMA_MODE_LIVE', Alma\API\LIVE_MODE);
+    define('ALMA_MODE_LIVE', Client::LIVE_MODE);
 }
 
 class AlmaSettings

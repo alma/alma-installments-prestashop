@@ -24,18 +24,22 @@
 
 
 use Alma\API\Entities\Webhook;
+use Alma\API\Client;
+
 
 if (!defined('_PS_VERSION_')) {
     exit;
 }
 
 include_once _PS_MODULE_DIR_ . 'alma/includes/AlmaApiFrontController.php';
+include_once _PS_MODULE_DIR_ . 'alma/includes/AlmaClient.php';
+include_once _PS_MODULE_DIR_ . 'alma/includes/AlmaLogger.php';
 
 class AlmaCapabilitiesModuleFrontController extends AlmaApiFrontController
 {
     public static function registerEndpoint($apiKey)
     {
-        $alma = AlmaClient::createInstance($apiKey, Alma\API\LIVE_MODE);
+        $alma = AlmaClient::createInstance($apiKey, Client::LIVE_MODE);        
 
         if (!$alma) {
             AlmaLogger::instance()->warning("Cannot register capabilities endpoint: no Alma client");
@@ -92,7 +96,7 @@ class AlmaCapabilitiesModuleFrontController extends AlmaApiFrontController
             'webhooks' => array(
                 array(
                     'webhook' => 'share_of_checkout',
-                    'endpoint' => Context::getContext()->link->getModuleLink('alma', 'share_of_checkout'),
+                    'endpoint' => Context::getContext()->link->getModuleLink('alma', 'shareOfCheckout'),
                 )
             )
         );

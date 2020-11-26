@@ -34,6 +34,7 @@ include_once _PS_MODULE_DIR_ . 'alma/includes/AlmaShareOfCheckout.php';
 include_once _PS_MODULE_DIR_ . 'alma/includes/AlmaClient.php';
 include_once _PS_MODULE_DIR_ . 'alma/includes/AlmaLogger.php';
 include_once _PS_MODULE_DIR_ . 'alma/includes/functions.php';
+include_once _PS_MODULE_DIR_ . 'alma/controllers/front/capabilities.php';
 
 class AlmaGetContentController extends AlmaAdminHookController
 {

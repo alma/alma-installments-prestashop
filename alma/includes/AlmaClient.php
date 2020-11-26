@@ -46,7 +46,7 @@ class AlmaClient
 
     public static function instanceForMode($mode)
     {
-        if ($mode == Alma\API\LIVE_MODE) {
+        if ($mode == Client::LIVE_MODE) {
             $apiKey = AlmaSettings::getLiveKey();
         } else {
             $apiKey = AlmaSettings::getTestKey();

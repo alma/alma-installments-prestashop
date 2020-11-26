@@ -5,7 +5,8 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-include_once _PS_MODULE_DIR_ . "alma/includes/AlmaSettings.php";
+include_once _PS_MODULE_DIR_ . 'alma/includes/AlmaSettings.php';
+include_once _PS_MODULE_DIR_ . 'alma/controllers/front/capabilities.php';
 
 function upgrade_module_1_3_2($module)
 {
