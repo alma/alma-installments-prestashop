@@ -1,6 +1,6 @@
 <?php
 /**
- * 2018-2020 Alma SAS
+ * 2018-2019 Alma SAS
  *
  * THE MIT LICENSE
  *
@@ -18,7 +18,7 @@
  * IN THE SOFTWARE.
  *
  * @author    Alma SAS <contact@getalma.eu>
- * @copyright 2018-2020 Alma SAS
+ * @copyright 2018-2019 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
@@ -26,29 +26,35 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-include_once _PS_MODULE_DIR_ . 'alma/includes/AlmaPaymentValidation.php';
-include_once _PS_MODULE_DIR_ . 'alma/includes/AlmaApiFrontController.php';
+use Alma\API\Entities\Webhook;
 
-class AlmaIpnModuleFrontController extends AlmaApiFrontController
+class SignatureError extends \Exception
 {
 
-    public function postProcess()
+}
+
+class AlmaSecurity
+{
+    protected $apiKey;
+
+    public function __construct($apiKey)
     {
-        parent::postProcess();
+        $this->apiKey = $apiKey;
+    }
 
-        header('Content-Type: application/json');
-
-        $paymentId = Tools::getValue('pid');
-        $validator = new AlmaPaymentValidation($this->context, $this->module);
-
-        try {
-            $validator->validatePayment($paymentId);
-        } catch (AlmaPaymentValidationError $e) {
-            $this->fail($e->getMessage());
-        } catch (Exception $e) {
-            $this->fail($e->getMessage());
+    /**
+     * Check if signature is valid
+     *
+     * @param array $data
+     * @param string $signature
+     * @return boolean
+     * @throws SignatureError
+     */
+    public function validSignature($data, $signature)
+    {
+        if (!Webhook::verifySignature($signature, $data, $this->apiKey)) {
+            throw new SignatureError();
         }
-
-        $this->ajaxDie(json_encode(array('success' => true)));
+        return true;
     }
 }

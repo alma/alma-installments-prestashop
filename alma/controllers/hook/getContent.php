@@ -30,9 +30,11 @@ if (!defined('_PS_VERSION_')) {
 
 include_once _PS_MODULE_DIR_ . 'alma/includes/AlmaAdminHookController.php';
 include_once _PS_MODULE_DIR_ . 'alma/includes/AlmaSettings.php';
+include_once _PS_MODULE_DIR_ . 'alma/includes/AlmaShareOfCheckout.php';
 include_once _PS_MODULE_DIR_ . 'alma/includes/AlmaClient.php';
 include_once _PS_MODULE_DIR_ . 'alma/includes/AlmaLogger.php';
 include_once _PS_MODULE_DIR_ . 'alma/includes/functions.php';
+include_once _PS_MODULE_DIR_ . 'alma/controllers/front/capabilities.php';
 
 class AlmaGetContentController extends AlmaAdminHookController
 {
@@ -198,6 +200,15 @@ class AlmaGetContentController extends AlmaAdminHookController
         // At this point, consider things are sufficiently configured to be usable
         AlmaSettings::updateValue('ALMA_FULLY_CONFIGURED', '1');
 
+        // Register capabilities webhook against Alma API
+        if ($liveKey) {
+            try {
+                AlmaCapabilitiesModuleFrontController::registerEndpoint($liveKey);
+            } catch (Exception $e) {
+                // pass silently
+            }
+        }
+
         if ($credentialsError && array_key_exists('warning', $credentialsError)) {
             return $credentialsError['message'];
         }
@@ -327,9 +338,8 @@ class AlmaGetContentController extends AlmaAdminHookController
                         'required' => false,
                         'desc' => $this->module->l('Not required for Test mode', 'getContent') . ' – ' . sprintf(
                             $this->module->l('You can find your Live API key on %1$syour Alma dashboard%2$s', 'getContent'),
-                            '<a href="https://dashboard.getalma.eu/api" target="_blank">',
-                            '</a>'
-                        ),
+                            '<a href="https://dashboard.getalma.eu/api" target="_blank">', '</a>'
+                            ),
                     ),
                     array(
                         'name' => 'ALMA_TEST_API_KEY',
@@ -338,10 +348,10 @@ class AlmaGetContentController extends AlmaAdminHookController
                         'size' => 75,
                         'required' => false,
                         'desc' => $this->module->l('Not required for Live mode', 'getContent') . ' – ' . sprintf(
-                            $this->module->l('You can find your Test API key on %1$syour sandbox dashboard%2$s', 'getContent'),
-                            '<a href="https://dashboard.sandbox.getalma.eu/api" target="_blank">',
-                            '</a>'
-                        ),
+                                $this->module->l('You can find your Test API key on %1$syour sandbox dashboard%2$s', 'getContent'),
+                                '<a href="https://dashboard.sandbox.getalma.eu/api" target="_blank">',
+                                '</a>'
+                            ),
                     ),
                 ),
                 'submit' => array('title' => $this->module->l('Save'), 'class' => 'btn btn-default pull-right'),

@@ -26,29 +26,30 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-include_once _PS_MODULE_DIR_ . 'alma/includes/AlmaPaymentValidation.php';
-include_once _PS_MODULE_DIR_ . 'alma/includes/AlmaApiFrontController.php';
-
-class AlmaIpnModuleFrontController extends AlmaApiFrontController
+class AlmaApiFrontController extends ModuleFrontController
 {
 
-    public function postProcess()
+    public $ssl = true;
+
+    public function __construct()
     {
-        parent::postProcess();
-
-        header('Content-Type: application/json');
-
-        $paymentId = Tools::getValue('pid');
-        $validator = new AlmaPaymentValidation($this->context, $this->module);
-
-        try {
-            $validator->validatePayment($paymentId);
-        } catch (AlmaPaymentValidationError $e) {
-            $this->fail($e->getMessage());
-        } catch (Exception $e) {
-            $this->fail($e->getMessage());
-        }
-
-        $this->ajaxDie(json_encode(array('success' => true)));
+        parent::__construct();
+        $this->context = Context::getContext();
     }
+
+    public function ajaxDie($value = null, $controller = null, $method = null)
+    {
+        if (method_exists(ModuleFrontController::class, 'ajaxDie')) {
+            parent::ajaxDie($value);
+        } else {
+            die($value);
+        }
+    }
+
+    protected function fail($msg = null)
+    {
+        header('X-PHP-Response-Code: 500', true, 500);
+        $this->ajaxDie(json_encode(array('error' => $msg)));
+    }
+
 }

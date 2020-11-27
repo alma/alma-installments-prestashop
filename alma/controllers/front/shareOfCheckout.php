@@ -1,6 +1,6 @@
 <?php
 /**
- * 2018-2020 Alma SAS
+ * 2018-2019 Alma SAS
  *
  * THE MIT LICENSE
  *
@@ -18,7 +18,7 @@
  * IN THE SOFTWARE.
  *
  * @author    Alma SAS <contact@getalma.eu>
- * @copyright 2018-2020 Alma SAS
+ * @copyright 2018-2019 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
@@ -26,10 +26,13 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-include_once _PS_MODULE_DIR_ . 'alma/includes/AlmaPaymentValidation.php';
+
+include_once _PS_MODULE_DIR_ . 'alma/includes/AlmaSecurity.php';
+include_once _PS_MODULE_DIR_ . 'alma/includes/AlmaShareOfCheckout.php';
+include_once _PS_MODULE_DIR_ . 'alma/includes/AlmaSettings.php';
 include_once _PS_MODULE_DIR_ . 'alma/includes/AlmaApiFrontController.php';
 
-class AlmaIpnModuleFrontController extends AlmaApiFrontController
+class AlmaShareOfCheckoutModuleFrontController extends AlmaApiFrontController
 {
 
     public function postProcess()
@@ -38,17 +41,30 @@ class AlmaIpnModuleFrontController extends AlmaApiFrontController
 
         header('Content-Type: application/json');
 
-        $paymentId = Tools::getValue('pid');
-        $validator = new AlmaPaymentValidation($this->context, $this->module);
+        $sig = Tools::getValue('sig', null);
+        $from = Tools::getValue('from', null);
+        $to = Tools::getValue('to', null);
+        $data = array('from' => $from, 'to' => $to);
+
+        $security = new AlmaSecurity(AlmaSettings::getActiveAPIKey());
 
         try {
-            $validator->validatePayment($paymentId);
-        } catch (AlmaPaymentValidationError $e) {
+            $security->validSignature($data, $sig);
+        }
+        catch (SignatureError $e) {
+            $this->fail("Invalid signature");
+        }
+        catch (Exception $e) {
             $this->fail($e->getMessage());
+        }
+
+        $shareOfCheckout = new AlmaShareOfCheckout($this->context, $this->module);
+        try {
+            $data = $shareOfCheckout->getPayments($from, $to);
         } catch (Exception $e) {
             $this->fail($e->getMessage());
         }
 
-        $this->ajaxDie(json_encode(array('success' => true)));
+        $this->ajaxDie(json_encode(array('success' => true, 'data' => $data)));
     }
 }
