@@ -84,6 +84,7 @@ class AlmaDisplayPaymentController extends AlmaProtectedHookController
                 'desc' => sprintf(AlmaSettings::getPaymentButtonDescription(), 3),
                 'order_total' => (float) $cart->getOrderTotal(true, Cart::BOTH),
                 'options' => $options,
+                'prestashop_version' => _PS_VERSION_,
             )
         );
 

@@ -21,13 +21,16 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  *}
 
-
+{assign var="icone_diplsay" value=""}
+{if $prestashop_version < 1.6}
+    {assign var="icone_diplsay" value="disable_arrow_icone"}
+{/if}
 {foreach from=$options item=option}
     {if $option.disabled}
         <div class="row">
             <div class="col-xs-12">
                 <p class="payment_module">
-                    <a href="#" onclick="return false;" class="disabled alma-button">
+                    <a href="#" onclick="return false;" class="disabled alma-button  {$icone_diplsay}">
                         <span class="alma-button--logo">
                             <img src="{$logo|escape:'htmlall':'UTF-8'}" alt="Alma">
                         </span>
@@ -54,7 +57,7 @@
         <div class="row">
             <div class="col-xs-12">
                 <p class="payment_module">
-                    <a href="{$option.link}" class="alma-button">
+                    <a href="{$option.link}" class="alma-button  {$icone_diplsay}">
                         <span class="alma-button--logo">
                             <img src="{$logo|escape:'htmlall':'UTF-8'}" alt="Alma">
                         </span>

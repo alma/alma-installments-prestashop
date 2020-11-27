@@ -58,6 +58,11 @@ p.payment_module a.alma-button:after {
     color: #777;
 }
 
+p.payment_module a.alma-button.disable_arrow_icone:after {
+    display: none;
+}
+
+
 .alma-button--logo {
     width:1%;
     white-space:nowrap;
