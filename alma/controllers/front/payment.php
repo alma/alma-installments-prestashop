@@ -61,11 +61,8 @@ class AlmaPaymentModuleFrontController extends ModuleFrontController
 
     private function genericErrorAndRedirect()
     {
-        $msg = $this->module->l(
-            'There was an error while generating your payment request. ' .
-            'Please try again later or contact us if the problem persists.',
-            'payment'
-        );
+        // `l` method call isn't detected by translation tool if multiline
+        $msg = $this->module->l('There was an error while generating your payment request. Please try again later or contact us if the problem persists.', 'payment');
         $this->context->cookie->__set('alma_error', $msg);
         Tools::redirect('index.php?controller=order&step=1');
     }
@@ -102,12 +99,23 @@ class AlmaPaymentModuleFrontController extends ModuleFrontController
             return;
         }
 
+        $installmentsCount = (int) Tools::getValue('n', '3');
+
         $cart = $this->context->cart;
-        $data = PaymentData::dataFromCart($cart, $this->context, (int) Tools::getValue('n', '3'));
+        $data = PaymentData::dataFromCart($cart, $this->context, $installmentsCount);
         $alma = AlmaClient::defaultInstance();
         if (!$data || !$alma) {
             $this->genericErrorAndRedirect();
+            return;
+        }
 
+        // Check that the selected installments count is indeed enabled
+        if (
+            !AlmaSettings::isInstallmentPlanEnabled($installmentsCount) ||
+            AlmaSettings::installmentPlanMinAmount($installmentsCount) > $data["payment"]["purchase_amount"] ||
+            AlmaSettings::installmentPlanMaxAmount($installmentsCount) < $data["payment"]["purchase_amount"]
+        ) {
+            $this->genericErrorAndRedirect();
             return;
         }
 

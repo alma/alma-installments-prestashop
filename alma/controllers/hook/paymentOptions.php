@@ -37,8 +37,8 @@ class AlmaPaymentOptionsController extends AlmaProtectedHookController
 {
     public function run($params)
     {
-		// Check if some products in cart are in the excludes listing
-		$diff = CartData::getCartExclusion($params['cart']);
+		//  Check if some products in cart are in the excludes listing
+        $diff = CartData::getCartExclusion($params['cart']);
 
 		if (!empty($diff)) {
 			return [];
@@ -46,22 +46,26 @@ class AlmaPaymentOptionsController extends AlmaProtectedHookController
 
 		$installmentPlans = AlmaEligibilityHelper::eligibilityCheck($this->context);
         $options = [];
+		$sortOrders = [];
 
         foreach($installmentPlans as $plan){
             if(!$plan->isEligible){
                 continue;
             }
+
             $n = $plan->installmentsCount;
             $forEUComplianceModule = false;
             if (array_key_exists('for_eu_compliance_module', $params)) {
                 $forEUComplianceModule = $params['for_eu_compliance_module'];
             }
+
             $paymentOption = $this->createPaymentOption(
                 $forEUComplianceModule,
                 sprintf(AlmaSettings::getPaymentButtonTitle(), $n),
                 $this->context->link->getModuleLink($this->module->name, 'payment', array('n' => $n), true),
                 $n
             );
+
             if (!$forEUComplianceModule && !empty(AlmaSettings::getPaymentButtonDescription())) {
                 $this->context->smarty->assign(array(
                     'desc' => sprintf(AlmaSettings::getPaymentButtonDescription(), $n),
@@ -74,10 +78,19 @@ class AlmaPaymentOptionsController extends AlmaProtectedHookController
 
                 $paymentOption->setAdditionalInformation($template);
             }
-             $options[] = $paymentOption;
+
+            $sortOrder = AlmaSettings::installmentPlanSortOrder($n);
+            $options[$sortOrder] = $paymentOption;
+            $sortOrders[] = $sortOrder;
         }
 
-        return $options;
+        $sortedOptions = array();
+        sort($sortOrders);
+        foreach ($sortOrders as $order) {
+            $sortedOptions[] = $options[$order];
+        }
+
+        return $sortedOptions;
     }
 
     private function createPaymentOption($forEUComplianceModule, $ctaText, $action, $n)

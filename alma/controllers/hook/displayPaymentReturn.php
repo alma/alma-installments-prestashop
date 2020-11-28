@@ -31,12 +31,13 @@ include_once _PS_MODULE_DIR_ . 'alma/includes/AlmaSettings.php';
 
 class AlmaDisplayPaymentReturnController extends AlmaProtectedHookController
 {
+    public function canRun()
+    {
+        return parent::canRun() && AlmaSettings::displayOrderConfirmation();
+    }
+
     public function run($params)
     {
-        if (!AlmaSettings::displayOrderConfirmation()) {
-            return null;
-        }
-
         $order = array_key_exists('objOrder', $params) ? $params['objOrder'] : $params['order'];
         $this->context->smarty->assign(array(
             'order_reference' => $order->reference,

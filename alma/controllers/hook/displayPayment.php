@@ -96,7 +96,15 @@ class AlmaDisplayPaymentController extends AlmaProtectedHookController
                 $paymentOption['desc'] = sprintf(AlmaSettings::getPaymentButtonDescription(), $n);
             }
 
-            $options[] = $paymentOption;
+            $sortOrder = AlmaSettings::installmentPlanSortOrder($n);
+            $options[$sortOrder] = $paymentOption;
+            $sortOrders[] = $sortOrder;
+        }
+
+        $sortedOptions = array();
+        sort($sortOrders);
+        foreach ($sortOrders as $order) {
+            $sortedOptions[] = $options[$order];
         }
 
         $cart = $this->context->cart;
@@ -105,7 +113,7 @@ class AlmaDisplayPaymentController extends AlmaProtectedHookController
                 'title' => sprintf(AlmaSettings::getPaymentButtonTitle(), 3),
                 'desc' => sprintf(AlmaSettings::getPaymentButtonDescription(), 3),
                 'order_total' => (float) $cart->getOrderTotal(true, Cart::BOTH),
-                'options' => $options,
+                'options' => $sortedOptions,
                 'old_prestashop_version' => version_compare(_PS_VERSION_, '1.6', '<'),
             )
         );

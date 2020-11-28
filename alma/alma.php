@@ -108,13 +108,30 @@ class Alma extends PaymentModule
             $paymentHooks = array('displayPayment', 'displayPaymentEU', 'displayPaymentReturn');
         }
 
-        foreach (array_merge($commonHooks, $paymentHooks) as $hook) {
+        if (version_compare(_PS_VERSION_, '1.6', '>=')) {
+            $productHooks = array('displayProductPriceBlock');
+        } else {
+            $productHooks = array('displayProductButtons');
+        }
+
+        foreach (array_merge($commonHooks, $paymentHooks, $productHooks) as $hook) {
             if (!$this->registerHook($hook)) {
                 return false;
             }
         }
 
 		return $this->installTabs();
+    }
+
+    public function hookDisplayProductPriceBlock($params)
+    {
+        return $this->runHookController('displayProductPriceBlock', $params);
+    }
+
+    // displayProductButtons is registered on PrestaShop 1.5 only, as displayProductPriceBlock wasn't available then
+    public function hookDisplayProductButtons($params)
+    {
+        return $this->runHookController('displayProductPriceBlock', $params);
     }
 
     private function checkDependencies()
@@ -208,20 +225,7 @@ class Alma extends PaymentModule
 
     public function hookHeader($params)
     {
-        if ($this->context->controller->php_self == 'order-opc' || $this->context->controller->php_self == 'order') {
-            $this->context->controller->addCSS($this->_path . 'views/css/alma.css', 'all');
-            $this->context->controller->addJS($this->_path . 'views/js/alma_error.js');
-
-            if ($this->context->cookie->__get('alma_error')) {
-                $this->context->smarty->assign(array(
-                    'alma_error' => $this->context->cookie->__get('alma_error'),
-                ));
-
-                $this->context->cookie->__unset('alma_error');
-
-                return $this->display($this->file, 'header.tpl');
-            }
-        }
+        return $this->runHookController("frontHeader", $params);
     }
 
     public function hookDisplayBackOfficeHeader($params)

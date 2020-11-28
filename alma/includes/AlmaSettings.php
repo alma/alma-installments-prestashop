@@ -71,6 +71,7 @@ class AlmaSettings
             'ALMA_FULLY_CONFIGURED',
             'ALMA_ACTIVATE_LOGGING',
             'ALMA_API_MODE',
+            'ALMA_MERCHANT_ID',
             'ALMA_LIVE_API_KEY',
             'ALMA_TEST_API_KEY',
             'ALMA_SHOW_DISABLED_BUTTON',
@@ -93,7 +94,9 @@ class AlmaSettings
             'ALMA_STATE_REFUND_ENABLED',
             'ALMA_DISPLAY_ORDER_CONFIRMATION',
             'ALMA_EXCLUDED_CATEGORIES',
-            'ALMA_NOT_ELIGIBLE_CATEGORIES'
+            'ALMA_NOT_ELIGIBLE_CATEGORIES',
+            'ALMA_DISPLAY_ORDER_CONFIRMATION',
+            'ALMA_SHOW_PRODUCT_ELIGIBILITY',
         );
 
         foreach ($configKeys as $configKey) {
@@ -222,7 +225,12 @@ class AlmaSettings
 
         return (int) self::get("ALMA_P${n}X_MAX_AMOUNT", $default);
     }
-    
+
+	public static function installmentPlanSortOrder($n)
+	{
+		return (int) self::get("ALMA_P${n}X_SORT_ORDER", (int) $n);
+	}
+
     public static function activeInstallmentsCounts()
     {
         $installmentsCounts = array();
@@ -235,7 +243,7 @@ class AlmaSettings
 
         return $installmentsCounts;
     }
-    
+
     public static function getRefundState()
     {
         return (int) self::get('ALMA_STATE_REFUND', 7);
@@ -318,5 +326,14 @@ class AlmaSettings
         }
     }
 
+    public static function showProductEligibility()
+    {
+        return (bool) self::get('ALMA_SHOW_PRODUCT_ELIGIBILITY', 1);
+    }
+
+    public static function getMerchantId()
+    {
+        return self::get('ALMA_MERCHANT_ID');
+    }
 
 }

@@ -1,0 +1,93 @@
+.alma-pp-container {
+    min-height: 35px;
+    line-height: 1em;
+}
+
+.alma-pp-container.ps15 {
+    float: right;
+    margin: 15px 0;
+}
+
+.alma-pp-container img.logo {
+    height: 25px;
+}
+
+.alma-pp-container > .alma-widget-container {
+    display: inline-block;
+}
+
+.alma-pp-container div {
+    margin-bottom: 0 !important;
+}
+
+@-webkit-keyframes placeload {
+    0% {
+        background-position: -468px 0;
+    }
+    100% {
+        background-position: 468px 0;
+    }
+}
+
+@keyframes placeload {
+    0% {
+        background-position: -468px 0;
+    }
+    100% {
+        background-position: 468px 0;
+    }
+}
+
+.animated-placeholder {
+    display: inline-block;
+
+    width: 200px;
+    max-width: 80%;
+    height: 3ex;
+
+    padding: 5px 0px;
+
+    vertical-align: middle;
+
+    -webkit-animation-duration: 1s;
+    animation-duration: 1s;
+    -webkit-animation-fill-mode: forwards;
+    animation-fill-mode: forwards;
+    -webkit-animation-iteration-count: infinite;
+    animation-iteration-count: infinite;
+    -webkit-animation-name: placeload;
+    animation-name: placeload;
+    -webkit-animation-timing-function: linear;
+    animation-timing-function: linear;
+    background: #e8e8e8;
+    background: -webkit-gradient(
+            linear,
+            left top,
+            right top,
+            color-stop(8%, #e8e8e8),
+            color-stop(18%, #d6d6d6),
+            color-stop(33%, #e8e8e8)
+    );
+    background: -webkit-linear-gradient(
+            left,
+            #e8e8e8 8%,
+            #d6d6d6 18%,
+            #e8e8e8 33%
+    );
+    background: linear-gradient(to right, #e8e8e8 8%, #d6d6d6 18%, #e8e8e8 33%);
+    -webkit-background-size: 800px 104px;
+    background-size: 1200px 104px;
+    position: relative;
+}
+
+.alma-modal--wrapper {
+    z-index: 9999;
+}
+
+.alma-payment_plan--plan {
+    display: none;
+}
+
+.alma-hiw_content--wrapper ul:not(.alma-hiw_content--plans-btns) {
+    padding-left: 40px;
+}

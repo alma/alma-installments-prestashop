@@ -34,24 +34,25 @@ include_once _PS_MODULE_DIR_ . 'alma/includes/CartData.php';
 
 class AlmaDisplayShoppingCartFooterController extends AlmaProtectedHookController
 {
+    public function canRun()
+    {
+        return parent::canRun() && AlmaSettings::showEligibilityMessage();
+    }
+
     public function run($params)
     {
-        if (!AlmaSettings::isFullyConfigured() || !AlmaSettings::showEligibilityMessage()) {
-            return null;
-        }
-
         $eligibilities = AlmaEligibilityHelper::eligibilityCheck($this->context);
         $eligible = false;
-        foreach($eligibilities as $eligibility){
+        foreach($eligibilities as $eligibility) {
             if($eligibility->isEligible){
                 $eligible = true;
                 break;
             }
         }
-        if(empty($eligibilities)){
+
+        if(empty($eligibilities)) {
             $eligibilityMsg = AlmaSettings::getNonEligibilityMessage();
-        }
-        elseif(!$eligible){
+        } elseif(!$eligible) {
             $cart = $this->context->cart;
             $cartTotal = almaPriceToCents((float) $cart->getOrderTotal(true, Cart::BOTH));
             $minimum = PHP_INT_MAX;
@@ -86,13 +87,13 @@ class AlmaDisplayShoppingCartFooterController extends AlmaProtectedHookControlle
 
             $eligibilityMsg = AlmaSettings::getNonEligibilityMessage().$eligibilityMsg;
         }
-        else{
+        else {
             $eligibilityMsg = AlmaSettings::getEligibilityMessage();
         }
 
         // Check if some products in cart are in the excludes listing
         $diff = CartData::getCartExclusion($params['cart']);
-        if(!empty($diff)) {
+        if (!empty($diff)) {
             $eligibilityMsg = AlmaSettings::getNonEligibilityCategoriesMessage();
         }
 

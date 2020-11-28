@@ -36,7 +36,7 @@ include_once _PS_MODULE_DIR_ . 'alma/includes/functions.php';
 
 class AlmaGetContentController extends AlmaAdminHookController
 {
-    public function processConfiguration($merchant)
+    public function processConfiguration()
     {
         if (!Tools::isSubmit('alma_config_form')) {
             return null;
@@ -45,12 +45,43 @@ class AlmaGetContentController extends AlmaAdminHookController
         // Consider the plugin as fully configured only when everything goes well
         AlmaSettings::updateValue('ALMA_FULLY_CONFIGURED', '0');
 
+        $apiMode = Tools::getValue('ALMA_API_MODE');
+        AlmaSettings::updateValue('ALMA_API_MODE', $apiMode);
+
+        // Get & check provided API keys
+        $liveKey = trim(Tools::getValue('ALMA_LIVE_API_KEY'));
+        $testKey = trim(Tools::getValue('ALMA_TEST_API_KEY'));
+
+        if ((empty($liveKey) && $apiMode == ALMA_MODE_LIVE) || (empty($testKey) && $apiMode == ALMA_MODE_TEST)) {
+            $this->context->smarty->assign('validation_error', "missing_key_for_{$apiMode}_mode");
+
+            return $this->module->display($this->module->file, 'getContent.tpl');
+        }
+
+        $credentialsError = $this->credentialsError($apiMode, $liveKey, $testKey);
+
+        if ($credentialsError && array_key_exists('error', $credentialsError)) {
+            return $credentialsError['message'];
+        }
+
+        // Down here, we know the provided API keys are correct (at least the one for the chosen API mode)
+        AlmaSettings::updateValue('ALMA_LIVE_API_KEY', $liveKey);
+        AlmaSettings::updateValue('ALMA_TEST_API_KEY', $testKey);
+
+        // Try to get merchant from configured API key/mode
+        $merchant = $this->getMerchant();
+
+        if ($merchant) {
+            // Save merchant API ID for widgets usage on frontend
+            AlmaSettings::updateValue('ALMA_MERCHANT_ID', $merchant->id);
+        }
+
         $apiOnly = Tools::getValue('_api_only');
 
         if (!$apiOnly) {
             $title = Tools::getValue('ALMA_PAYMENT_BUTTON_TITLE');
             $description = Tools::getValue('ALMA_PAYMENT_BUTTON_DESC');
-            $showEligibility = Tools::getValue('ALMA_SHOW_ELIGIBILITY_MESSAGE_ON') == '1';
+            $showEligibility = (bool) Tools::getValue('ALMA_SHOW_ELIGIBILITY_MESSAGE_ON');
             $eligibleMsg = Tools::getValue('ALMA_IS_ELIGIBLE_MESSAGE');
             $nonEligibleMsg = Tools::getValue('ALMA_NOT_ELIGIBLE_MESSAGE');
             $nonEligibleCategoriesMsg = Tools::getValue('ALMA_NOT_ELIGIBLE_CATEGORIES');
@@ -62,10 +93,13 @@ class AlmaGetContentController extends AlmaAdminHookController
                 return $this->module->display($this->module->file, 'getContent.tpl');
             }
 
+            $showProductEligibility = (bool) Tools::getValue('ALMA_SHOW_PRODUCT_ELIGIBILITY_ON');
+            AlmaSettings::updateValue('ALMA_SHOW_PRODUCT_ELIGIBILITY', $showProductEligibility);
+
             AlmaSettings::updateValue('ALMA_PAYMENT_BUTTON_TITLE', $title);
             AlmaSettings::updateValue('ALMA_PAYMENT_BUTTON_DESC', $description);
 
-            $showDisabledButton = Tools::getValue('ALMA_SHOW_DISABLED_BUTTON') == '1';
+            $showDisabledButton = (bool) Tools::getValue('ALMA_SHOW_DISABLED_BUTTON');
             AlmaSettings::updateValue('ALMA_SHOW_DISABLED_BUTTON', $showDisabledButton);
 
             AlmaSettings::updateValue('ALMA_SHOW_ELIGIBILITY_MESSAGE', $showEligibility);
@@ -76,23 +110,23 @@ class AlmaGetContentController extends AlmaAdminHookController
             $idStateRefund = Tools::getValue('ALMA_STATE_REFUND');
             AlmaSettings::updateValue('ALMA_STATE_REFUND', $idStateRefund);
 
-            $isStateRefundEnabled = Tools::getValue('ALMA_STATE_REFUND_ENABLED_ON', 0);
+            $isStateRefundEnabled = (bool) Tools::getValue('ALMA_STATE_REFUND_ENABLED_ON');
             AlmaSettings::updateValue('ALMA_STATE_REFUND_ENABLED', $isStateRefundEnabled);
 
-            $displayOrderConfirmation = Tools::getValue('ALMA_DISPLAY_ORDER_CONFIRMATION_ON') == '1';
+            $displayOrderConfirmation = (bool) Tools::getValue('ALMA_DISPLAY_ORDER_CONFIRMATION_ON');
             AlmaSettings::updateValue('ALMA_DISPLAY_ORDER_CONFIRMATION', $displayOrderConfirmation);
 
-            $activateLogging = Tools::getValue('ALMA_ACTIVATE_LOGGING_ON') == '1';
+            $activateLogging = (bool) Tools::getValue('ALMA_ACTIVATE_LOGGING_ON');
             AlmaSettings::updateValue('ALMA_ACTIVATE_LOGGING', $activateLogging);
 
             if ($merchant) {
                 // First validate that plans boundaries are correctly set
                 foreach ($merchant->fee_plans as $feePlan) {
                     $n = $feePlan['installments_count'];
-                    $min = almaPriceToCents(Tools::getValue("ALMA_P${n}X_MIN_AMOUNT"));
-                    $max = almaPriceToCents(Tools::getValue("ALMA_P${n}X_MAX_AMOUNT"));
+                    $min = almaPriceToCents((int) Tools::getValue("ALMA_P${n}X_MIN_AMOUNT"));
+                    $max = almaPriceToCents((int) Tools::getValue("ALMA_P${n}X_MAX_AMOUNT"));
 
-                    $enablePlan = Tools::getValue("ALMA_P${n}X_ENABLED_ON") == '1';
+                    $enablePlan = (bool) Tools::getValue("ALMA_P${n}X_ENABLED_ON");
 
                     if ($enablePlan && !($min >= $merchant->minimum_purchase_amount &&
                             $min <= min($max, $merchant->maximum_purchase_amount))) {
@@ -121,28 +155,41 @@ class AlmaGetContentController extends AlmaAdminHookController
                 $maxN = 0;
                 foreach ($merchant->fee_plans as $feePlan) {
                     $n = $feePlan['installments_count'];
-                    $min = Tools::getValue("ALMA_P${n}X_MIN_AMOUNT");
-                    $max = Tools::getValue("ALMA_P${n}X_MAX_AMOUNT");
+                    $min = (int) Tools::getValue("ALMA_P${n}X_MIN_AMOUNT");
+                    $max = (int) Tools::getValue("ALMA_P${n}X_MAX_AMOUNT");
 
-                    $enablePlan = Tools::getValue("ALMA_P${n}X_ENABLED_ON") == '1';
+                    // In case merchant inverted min & max values, correct it
+                    if ($min > $max) {
+                        $realMin = $max;
+                        $max = $min;
+                        $min = $realMin;
+                    }
+
+                    $enablePlan = (bool) Tools::getValue("ALMA_P${n}X_ENABLED_ON");
                     AlmaSettings::updateValue("ALMA_P${n}X_ENABLED", $enablePlan ? '1' : '0');
 
                     // Validate that there's no purchase amount gaps between the different plans
                     // i.e. that there isn't a purchase amount too high to be eligible for some plans but too low
                     // to be eligible for the others
                     if ($enablePlan) {
-                        $overlap = false;
-                        foreach ($merchant->fee_plans as $other_plan) {
-                            $otherN = $other_plan['installments_count'];
-                            if ($n == $otherN) {
+                        $overlap = true;
+                        foreach ($merchant->fee_plans as $otherPlan) {
+                            $otherN = $otherPlan['installments_count'];
+                            $enableOtherN = (bool) Tools::getValue("ALMA_P${otherN}X_ENABLED_ON");
+                            if ($n == $otherN || !$enableOtherN) {
                                 continue;
                             }
 
-                            $otherMin = Tools::getValue("ALMA_P${otherN}X_MIN_AMOUNT");
-                            $otherMax = Tools::getValue("ALMA_P${otherN}X_MAX_AMOUNT");
+                            $otherMin = (int) Tools::getValue("ALMA_P${otherN}X_MIN_AMOUNT");
+                            $otherMax = (int) Tools::getValue("ALMA_P${otherN}X_MAX_AMOUNT");
+                            if ($otherMin > $otherMax) {
+                                $realMin = $otherMax;
+                                $otherMax = $otherMin;
+                                $otherMin = $realMin;
+                            }
 
-                            if (($min >= $otherMin && $min <= $otherMax) || ($max >= $otherMin && $max <= $otherMax)) {
-                                $overlap = true;
+                            if ($max < $otherMin || $min > $otherMax) {
+                                $overlap = false;
                                 break;
                             }
                         }
@@ -157,14 +204,11 @@ class AlmaGetContentController extends AlmaAdminHookController
                         }
                     }
 
-                    AlmaSettings::updateValue(
-                        "ALMA_P${n}X_MIN_AMOUNT",
-                        almaPriceToCents(Tools::getValue("ALMA_P${n}X_MIN_AMOUNT"))
-                    );
-                    AlmaSettings::updateValue(
-                        "ALMA_P${n}X_MAX_AMOUNT",
-                        almaPriceToCents(Tools::getValue("ALMA_P${n}X_MAX_AMOUNT"))
-                    );
+                    AlmaSettings::updateValue("ALMA_P${n}X_MIN_AMOUNT", almaPriceToCents($min));
+                    AlmaSettings::updateValue("ALMA_P${n}X_MAX_AMOUNT", almaPriceToCents($max));
+
+                    $sortOrder = (int)Tools::getValue("ALMA_P${n}X_SORT_ORDER");
+                    AlmaSettings::updateValue("ALMA_P${n}X_SORT_ORDER", $sortOrder);
 
                     if ($n > $maxN && $enablePlan) {
                         $maxN = $n;
@@ -174,28 +218,6 @@ class AlmaGetContentController extends AlmaAdminHookController
                 AlmaSettings::updateValue('ALMA_PNX_MAX_N', $maxN);
             }
         }
-
-        $apiMode = Tools::getValue('ALMA_API_MODE');
-        AlmaSettings::updateValue('ALMA_API_MODE', $apiMode);
-
-        // Get & check provided API keys
-        $liveKey = trim(Tools::getValue('ALMA_LIVE_API_KEY'));
-        $testKey = trim(Tools::getValue('ALMA_TEST_API_KEY'));
-
-        if ((empty($liveKey) && $apiMode == ALMA_MODE_LIVE) || (empty($testKey) && $apiMode == ALMA_MODE_TEST)) {
-            $this->context->smarty->assign('validation_error', "missing_key_for_{$apiMode}_mode");
-
-            return $this->module->display($this->module->file, 'getContent.tpl');
-        }
-
-        $credentialsError = $this->credentialsError($apiMode, $liveKey, $testKey);
-
-        if ($credentialsError && array_key_exists('error', $credentialsError)) {
-            return $credentialsError['message'];
-        }
-
-        AlmaSettings::updateValue('ALMA_LIVE_API_KEY', $liveKey);
-        AlmaSettings::updateValue('ALMA_TEST_API_KEY', $testKey);
 
         // At this point, consider things are sufficiently configured to be usable
         AlmaSettings::updateValue('ALMA_FULLY_CONFIGURED', '1');
@@ -277,9 +299,10 @@ class AlmaGetContentController extends AlmaAdminHookController
         }
     }
 
-    public function renderForm($merchant)
+    public function renderForm()
     {
         $needsKeys = $this->needsAPIKey();
+        $merchant = $this->getMerchant();
 
         if (is_callable('Media::getMediaPath')) {
             $iconPath = Media::getMediaPath(_PS_MODULE_DIR_ . $this->module->name . '/views/img/logos/alma_tiny.svg');
@@ -433,6 +456,16 @@ class AlmaGetContentController extends AlmaAdminHookController
                     'min' => $minAmount,
                     'max' => $maxAmount,
                 );
+
+                $pnxConfigForm['form']['input'][] = array(
+                    'form_group_class' => "$tabId-content",
+                    'name' => "ALMA_P${n}X_SORT_ORDER",
+                    'label' => $this->module->l('Sort order', 'getContent'),
+                    'desc' => $this->module->l('Use relative values to set the order of your plans on the checkout page', 'getContent'),
+                    'type' => 'number',
+                    'min' => 1,
+                    'max' => count($merchant->fee_plans),
+                );
             }
 
             $tpl = $this->context->smarty->createTemplate(
@@ -514,6 +547,36 @@ class AlmaGetContentController extends AlmaAdminHookController
                 ),
             );
         }
+
+        $productEligibilityForm = array(
+            'form' => array(
+                'legend' => array(
+                    'title' => $this->module->l('Eligibility on product pages', 'getContent'),
+                    'image' => $iconPath,
+                ),
+                'input' => array(
+                    array(
+                        'name' => 'ALMA_SHOW_PRODUCT_ELIGIBILITY',
+                        'label' => $this->module->l('Show product eligibility on details page', 'getContent'),
+                        'desc' => $this->module->l('Takes wanted quantity into account & includes a popup link with installments details', 'getContent'),
+                        'type' => 'checkbox',
+                        'values' => array(
+                            'id' => 'id',
+                            'name' => 'label',
+                            'query' => array(
+                                array(
+                                    'id' => 'ON',
+                                    'val' => true,
+                                    // PrestaShop won't detect the string if the call to `l` is multiline
+                                    'label' => $this->module->l('Display the product\'s eligibility', 'getContent'),
+                                ),
+                            ),
+                        ),
+                    ),
+                ),
+                'submit' => array('title' => $this->module->l('Save'), 'class' => 'btn btn-default pull-right'),
+            )
+        );
 
         $cartEligibilityForm = array(
             'form' => array(
@@ -720,7 +783,7 @@ class AlmaGetContentController extends AlmaAdminHookController
             );
             $fieldsForms = array($apiConfigForm, $debugForm);
         } else {
-            $fieldsForms = array($cartEligibilityForm, $paymentButtonForm, $refundStateForm);
+            $fieldsForms = array($productEligibilityForm, $cartEligibilityForm, $paymentButtonForm, $refundStateForm);
 
             if ($pnxConfigForm) {
                 $fieldsForms[] = $pnxConfigForm;
@@ -762,6 +825,7 @@ class AlmaGetContentController extends AlmaAdminHookController
             'ALMA_STATE_REFUND' => AlmaSettings::getRefundState(),
             'ALMA_STATE_REFUND_ENABLED_ON' => AlmaSettings::isRefundEnabledByState(),
             'ALMA_NOT_ELIGIBLE_CATEGORIES' => AlmaSettings::getNonEligibilityCategoriesMessage(),
+            'ALMA_SHOW_PRODUCT_ELIGIBILITY_ON' => AlmaSettings::showProductEligibility(),
             '_api_only' => true,
         );
 
@@ -775,6 +839,9 @@ class AlmaGetContentController extends AlmaAdminHookController
 
                 $maxAmount = (int)almaPriceFromCents(AlmaSettings::installmentPlanMaxAmount($n));
                 $helper->fields_value["ALMA_P${n}X_MAX_AMOUNT"] = $maxAmount;
+
+                $sortOrder = (int) AlmaSettings::installmentPlanSortOrder($n);
+                $helper->fields_value["ALMA_P${n}X_SORT_ORDER"] = $sortOrder;
             }
         }
 
@@ -811,10 +878,8 @@ class AlmaGetContentController extends AlmaAdminHookController
         $messages = '';
         $this->assignSmartyAlertClasses();
 
-        $merchant = $this->getMerchant();
-
         if (Tools::isSubmit('alma_config_form')) {
-            $messages = $this->processConfiguration($merchant);
+            $messages = $this->processConfiguration();
         } elseif (!$this->needsAPIKey()) {
             $messages = $this->credentialsError(
                 AlmaSettings::getActiveMode(),
@@ -827,12 +892,7 @@ class AlmaGetContentController extends AlmaAdminHookController
             }
         }
 
-        // Re-get merchant, in case API keys were set/fixed above
-        if (!$merchant) {
-            $merchant = $this->getMerchant();
-        }
-
-        $htmlForm = $this->renderForm($merchant);
+        $htmlForm = $this->renderForm();
 
         return $messages . $htmlForm;
     }

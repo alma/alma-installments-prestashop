@@ -22,24 +22,34 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
+use Alma\API\RequestError;
+
 if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-include_once _PS_MODULE_DIR_ . 'alma/includes/AlmaSettings.php';
-include_once _PS_MODULE_DIR_ . 'alma/includes/AlmaHookController.php';
+include_once _PS_MODULE_DIR_ . 'alma/vendor/autoload.php';
+include_once _PS_MODULE_DIR_ . 'alma/includes/utils/AlmaSettings.php';
+include_once _PS_MODULE_DIR_ . 'alma/includes/api/AlmaClient.php';
 
-class AlmaProtectedHookController extends AlmaHookController
+function upgrade_module_1_4_0($object)
 {
-    public function canRun()
-    {
-        $isLive = AlmaSettings::getActiveMode() === ALMA_MODE_LIVE;
+    // If module has already been configured, get the merchant's API ID from Alma's API
+    if (AlmaSettings::isFullyConfigured()) {
+        $alma = AlmaClient::defaultInstance();
 
-        // Front controllers can run if the module is properly configured ...
-        return AlmaSettings::isFullyConfigured()
-            // ... and the plugin is in LIVE mode, or the visitor is an admin
-            && ($isLive || $this->loggedAsEmployee())
-            // ... and the current shop's currency is EUR
-            && in_array(Tools::strtoupper($this->context->currency->iso_code), $this->module->limited_currencies);
+        if (!$alma) {
+            return true;
+        }
+
+        try {
+            $merchant = $alma->merchants->me();
+        } catch (RequestError $e) {
+            return true;
+        }
+
+        AlmaSettings::updateValue('ALMA_MERCHANT_ID', $merchant->id);
     }
+
+    return true;
 }

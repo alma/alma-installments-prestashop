@@ -64,3 +64,24 @@ function almaPriceFromCents($price)
 {
     return (float) ($price / 100);
 }
+
+/**
+ * @param $svg string Path to the SVG file to get a data-url for
+ * @return string data-url for the given SVG
+ */
+function almaSvgDataUrl($svg) {
+    static $_dataUrlCache = array();
+
+    if (!array_key_exists($svg, $_dataUrlCache)) {
+        $content = file_get_contents($svg);
+
+        if ($content === false) {
+            return "";
+        }
+
+        $content = preg_replace("/%20/", " ", rawurlencode(preg_replace("/[\r\n]+/", "", $content)));
+        $_dataUrlCache[$svg] = "data:image/svg+xml," . $content;
+    }
+
+    return $_dataUrlCache[$svg];
+}
