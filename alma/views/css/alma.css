@@ -58,7 +58,7 @@ p.payment_module a.alma-button:after {
     color: #777;
 }
 
-p.payment_module a.alma-button.disable_arrow_icone:after {
+p.payment_module a.alma-button.disable-arrow-icon:after {
     display: none;
 }
 

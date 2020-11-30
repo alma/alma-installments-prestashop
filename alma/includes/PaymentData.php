@@ -36,7 +36,7 @@ class PaymentData
     /**
      * @param Cart $cart
      * @param Context $context
-     * @param int $installmentsCount
+     * @param int|array $installmentsCount
      * @return array|null
      * @throws Exception
      */

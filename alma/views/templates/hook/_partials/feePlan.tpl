@@ -27,7 +27,7 @@
             {if $smarty.foreach.counter.iteration === 1}
                 {l s='Today' mod='alma'}
             {else}
-                {dateFormat date= $v.due_date|date_format:"%Y-%m-%d" full = 0}
+                {dateFormat date=$v.due_date|date_format:"%Y-%m-%d" full=0}
             {/if}
         </span>
         <span>{math equation=$v.purchase_amount / 100 format="%.2f"}&euro;</span>

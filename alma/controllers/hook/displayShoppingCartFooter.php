@@ -45,35 +45,45 @@ class AlmaDisplayShoppingCartFooterController extends AlmaProtectedHookControlle
         foreach($eligibilities as $eligibility){
             if($eligibility->isEligible){
                 $eligible = true;
+                break;
             }
         }
-        if(!$eligible){
+        if(empty($eligibilities)){
+            $eligibilityMsg = AlmaSettings::getNonEligibilityMessage();
+        }
+        elseif(!$eligible){
             $cart = $this->context->cart;
             $cartTotal = almaPriceToCents((float) $cart->getOrderTotal(true, Cart::BOTH));
-            $minimum = 9999999;
+            $minimum = PHP_INT_MAX;
             $maximum = 0;
+
             foreach($eligibilities as $eligibility){
-                if(!$eligibility->isEligible){
-                    $minAmount = $eligibility->constraints['purchase_amount']['minimum'];
-                    $maxAmount = $eligibility->constraints['purchase_amount']['maximum'];
-                    if ($cartTotal < $minAmount || $cartTotal > $maxAmount) {
-                        if ($cartTotal > $maxAmount && $maxAmount > $maximum) {
-                            $eligibilityMsg = ' ' . sprintf(
-                                $this->module->l('(Maximum amount: %s)', 'displayShoppingCartFooter'),
-                                Tools::displayPrice(almaPriceFromCents($maxAmount))
-                            );
-                            $maximum = $maxAmount;
-                        }
-                        if ($cartTotal < $minAmount && $minAmount < $minimum) {
-                            $eligibilityMsg = ' ' . sprintf(
-                                $this->module->l('(Minimum amount: %s)', 'displayShoppingCartFooter'),
-                                Tools::displayPrice(almaPriceFromCents($minAmount))
-                            );
-                            $minimum = $minAmount;
-                        }
+                $minAmount = $eligibility->constraints['purchase_amount']['minimum'];
+                $maxAmount = $eligibility->constraints['purchase_amount']['maximum'];
+                if ($cartTotal < $minAmount || $cartTotal > $maxAmount) {
+                    if ($cartTotal > $maxAmount && $maxAmount > $maximum) {
+                        $maximum = $maxAmount;
+                    }
+                    if ($cartTotal < $minAmount && $minAmount < $minimum) {
+                        $minimum = $minAmount;
                     }
                 }
             }
+
+            if($cartTotal > $maximum && $maximum != 0){
+                $eligibilityMsg = ' ' . sprintf(
+                    $this->module->l('(Maximum amount: %s)', 'displayShoppingCartFooter'),
+                    Tools::displayPrice(almaPriceFromCents($maximum))
+                );
+            }
+
+            if($cartTotal < $minimum && $minimum != PHP_INT_MAX){
+                $eligibilityMsg = ' ' . sprintf(
+                    $this->module->l('(Minimum amount: %s)', 'displayShoppingCartFooter'),
+                    Tools::displayPrice(almaPriceFromCents($minimum))
+                );
+            }
+
             $eligibilityMsg = AlmaSettings::getNonEligibilityMessage().$eligibilityMsg;
         }
         else{
@@ -82,7 +92,7 @@ class AlmaDisplayShoppingCartFooterController extends AlmaProtectedHookControlle
 
         // Check if some products in cart are in the excludes listing
         $diff = CartData::getCartExclusion($params['cart']);
-        if(!empty($diff)){
+        if(!empty($diff)) {
             $eligibilityMsg = AlmaSettings::getNonEligibilityCategoriesMessage();
         }
 
