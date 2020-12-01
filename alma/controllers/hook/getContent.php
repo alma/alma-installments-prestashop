@@ -282,9 +282,9 @@ class AlmaGetContentController extends AlmaAdminHookController
         $needsKeys = $this->needsAPIKey();
 
         if (is_callable('Media::getMediaPath')) {
-            $iconPath = Media::getMediaPath(_PS_MODULE_DIR_ . $this->module->name . '/views/img/logo16x16.png');
+            $iconPath = Media::getMediaPath(_PS_MODULE_DIR_ . $this->module->name . '/views/img/logos/logo16x16.png');
         } else {
-            $iconPath = $this->module->getPathUri() . '/views/img/logo16x16.png';
+            $iconPath = $this->module->getPathUri() . '/views/img/logos/logo16x16.png';
         }
 
         $extraMessage = null;

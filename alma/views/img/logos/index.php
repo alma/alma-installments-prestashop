@@ -1,4 +1,5 @@
-{*
+<?php
+/**
  * 2018-2020 Alma SAS
  *
  * THE MIT LICENSE
@@ -19,17 +20,12 @@
  * @author    Alma SAS <contact@getalma.eu>
  * @copyright 2018-2020 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
- *}
+ */
 
-{foreach from=$plans item=v name=counter}
-    <span class="alma-fee-plan--description">
-        <span class="alma-fee-plan--date">
-            {if $smarty.foreach.counter.iteration === 1}
-                {l s='Today' mod='alma'}
-            {else}
-                {dateFormat date=$v.due_date|date_format:"%Y-%m-%d" full=0}
-            {/if}
-        </span>
-        <span>{math equation=$v.purchase_amount / 100 format="%.2f"}&euro;</span>
-    </span>    
-{/foreach}
+header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
+header('Last-Modified: ' . gmdate('D, d M Y H:i:s') . ' GMT');
+header('Cache-Control: no-store, no-cache, must-revalidate');
+header('Cache-Control: post-check=0, pre-check=0', false);
+header('Pragma: no-cache');
+header('Location: ../');
+exit;
