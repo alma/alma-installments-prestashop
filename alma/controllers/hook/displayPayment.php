@@ -78,9 +78,9 @@ class AlmaDisplayPaymentController extends AlmaProtectedHookController
             }
 
             if (is_callable('Media::getMediaPath')) {
-                $logo = Media::getMediaPath(_PS_MODULE_DIR_ . $this->module->name . '/views/img/logos/alma_p'.$n.'x.svg');
+                $logo = Media::getMediaPath(_PS_MODULE_DIR_ . $this->module->name . "/views/img/logos/alma_p${n}x.svg");
             } else {
-                $logo = $this->module->getPathUri() . '/views/img/logos/alma_p'.$n.'x.svg';
+                $logo = $this->module->getPathUri() . "/views/img/logos/alma_p${n}x.svg";
             }
 
             $paymentOption = [

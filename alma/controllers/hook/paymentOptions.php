@@ -85,7 +85,7 @@ class AlmaPaymentOptionsController extends AlmaProtectedHookController
         $baseDir = _PS_MODULE_DIR_ . $this->module->name;
 
         if ($forEUComplianceModule) {
-            $logo = Media::getMediaPath($baseDir . '/views/img/alma_payment_logos.svg');
+            $logo = Media::getMediaPath("${baseDir}/views/img/alma_payment_logos.svg");
             $paymentOption = array(
                 'cta_text' => $ctaText,
                 'action' => $action,
@@ -93,7 +93,7 @@ class AlmaPaymentOptionsController extends AlmaProtectedHookController
             );
         } else {
             $paymentOption = new PrestaShop\PrestaShop\Core\Payment\PaymentOption();
-            $logo = Media::getMediaPath($baseDir . '/views/img/logos/alma_p'.$n.'x.svg');
+            $logo = Media::getMediaPath("${baseDir}/views/img/logos/alma_p${n}x.svg");
             $paymentOption
                 ->setModuleName($this->module->name)
                 ->setCallToActionText($ctaText)
