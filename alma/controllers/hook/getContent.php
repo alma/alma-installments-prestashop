@@ -591,19 +591,21 @@ class AlmaGetContentController extends AlmaAdminHookController
             ),
         );
 
+        
+
         // Exclusion
-        $tplExclude = $this->context->smarty->createTemplate(
-            _PS_ROOT_DIR_ . "{$this->module->_path}/views/templates/hook/exclude.tpl"
+        $tpl = $this->context->smarty->createTemplate(
+            "{$this->module->local_path}views/templates/hook/excludedCategories.tpl"            
         );
-        $excludeCategories = AlmaSettings::getExcludeNameCategories();
-        $tplExclude->assign(array(
-            'excludeCategories' => $excludeCategories,
-            'excludeLink' => $this->context->link->getAdminLink('AdminAlmaCategories'),
-        ));
-        $excludeForm = array(
+        $excludedCategories = AlmaSettings::getExcludedNameCategories();
+        $tpl->assign(array(
+            'excludedCategories' => $excludedCategories,
+            'excludedLink' => $this->context->link->getAdminLink('AdminAlmaCategories'),
+        ));        
+        $excludedForm = array(
             'form' => array(
                 'legend' => array(
-                    'title' => $this->module->l('Exclude categories', 'getContent'),
+                    'title' => $this->module->l('Excluded categories', 'getContent'),
                     'image' => $iconPath,
                 ),
                 'input' => array(
@@ -612,10 +614,10 @@ class AlmaGetContentController extends AlmaAdminHookController
                         'label' => null,
                         'type' => 'html',
                         // PrestaShop won't detect the string if the call to `l` is multiline
-                        'html_content' => $tplExclude->fetch(),
+                        'desc' => $tpl->fetch(),                        
                     ),
                 ),
-               // 'submit' => array('title' => $this->module->l('Save'), 'class' => 'btn btn-default pull-right'),
+                //'submit' => array('title' => $this->module->l('Save'), 'class' => 'btn btn-default pull-right'),
             ),
         );
 
@@ -709,7 +711,7 @@ class AlmaGetContentController extends AlmaAdminHookController
                 $fieldsForms[] = $pnxConfigForm;
             }
             
-            $fieldsForms = array_merge($fieldsForms, array($orderConfirmationForm, $excludeForm, $apiConfigForm, $debugForm));
+            $fieldsForms = array_merge($fieldsForms, array($orderConfirmationForm, $excludedForm, $apiConfigForm, $debugForm));
         }
 
         $helper = new HelperForm();

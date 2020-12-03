@@ -21,18 +21,18 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  *}
 
-<div id="alma-exclude">
+<div id="alma-excluded">
     <p>{l s='You can not offer Alma when selling weapons, medical equipment and dematerialized products (gift card, license keys for video games, software, ...)' mod='alma'}</p>
     <p>{l s='In case of failure to pay relating to an order containing a product of this list, your insurance Alma will not cover you.' mod='alma'}</p>
     <br />
     <p>
         {l s='You can use' mod='alma'}
         <strong>
-            <a href='{$excludeLink}' title="{l s='exclusion lists' mod='alma'}">{l s='exclusion lists' mod='alma'}</a>
+            <a href='{$excludedLink}' title="{l s='exclusion lists' mod='alma'}">{l s='exclusion lists' mod='alma'}</a>
         </strong>
         {l s='to be compliant with these restrictions.' mod='alma'}</p>
     <br />
-    <p><strong>{l s='Exclude categories : ' mod='alma'}</strong>&nbsp;{l s='%s' mod='alma' sprintf=$excludeCategories}</p>
+    <p><strong>{l s='Excluded categories : ' mod='alma'}</strong>&nbsp;{l s='%s' mod='alma' sprintf=$excludedCategories}</p>
 </div>
 
 <!--

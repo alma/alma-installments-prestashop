@@ -24,8 +24,8 @@
 
 class AdminAlmaCategoriesController extends ModuleAdminController
 {
-    private $original_filter = '';
-    static $exclude_categories = [];
+    static $excludedCategories = [];
+    private $excludeFilter = null;
 
     public function __construct()
     {
@@ -36,17 +36,10 @@ class AdminAlmaCategoriesController extends ModuleAdminController
         $this->deleted = false;
         $this->explicitSelect = false;
         $this->_defaultOrderBy = 'position';
-        $this->allow_export = true;
+        $this->allow_export = false;
         $this->list_no_link  = true;
         
-        
-
         parent::__construct();
-
-        $this->fieldImageSettings = array(
-            'name' => 'image',
-            'dir' => 'c',
-        );
 
         $this->fields_list = array(
             'id_category' => array(
@@ -68,39 +61,36 @@ class AdminAlmaCategoriesController extends ModuleAdminController
                 'title' => $this->module->l('Parent', 'AdminAlmaCategories'),
                 'filter_key' => 'cpl!name',
             ),
-            'exclude' => array(
-                'title' => $this->module->l('Exclude', 'AdminAlmaCategories'),
-                'callback' => 'getExclude',
+            'excluded' => array(
+                'title' => $this->module->l('Alma Eligible', 'AdminAlmaCategories'),
+                'callback' => 'getExcluded',
                 'type' => 'bool',
                 'class' => 'fixed-width-xs',
                 'align' => 'center',
                 'ajax' => true,
-                'orderby' => false,
+                'orderby' => false,           
             ),
         );
 
         $this->bulk_actions = array(
             'enable' => array(
-                'text' => $this->module->l('Exclude selected', 'AdminAlmaCategories'),
-                'icon' => 'icon-power-off text-success',
-                'confirm' => $this->module->l('Exclude selected items?', 'AdminAlmaCategories'),
+                'text' => $this->module->l('Enable Alma for these categories', 'AdminAlmaCategories'),
+                'icon' => 'icon-check text-success',
             ),
             'disable' => array(
-                'text' => $this->module->l('Include selected', 'AdminAlmaCategories'),
-                'icon' => 'icon-power-off text-danger',
-                'confirm' => $this->module->l('Include selected items?', 'AdminAlmaCategories'),
-                
+                'text' => $this->module->l('Disable Alma for these categories', 'AdminAlmaCategories'),
+                'icon' => 'icon-ban text-danger',
             ),
         );
 
-        self::$exclude_categories = AlmaSettings::getExcludeCategories();
+        self::$excludedCategories = AlmaSettings::getExcludedCategories();
     }
 
     public function init()
     {
         parent::init();
 
-        $this->_select = 'a.`id_category`, b.`name`, b.`description`, cpl.`name` as `parent`, a.`id_category` as `exclude`';
+        $this->_select = 'a.`id_category`, b.`name`, b.`description`, cpl.`name` as `parent`, a.`id_category` as `excluded`';
         $this->_use_found_rows = false;
 
         if (Shop::getContext() == Shop::CONTEXT_SHOP) {
@@ -126,6 +116,167 @@ class AdminAlmaCategoriesController extends ModuleAdminController
     }
 
 
+    public function processFilter() {
+                
+        $this->excludeFilter = null;                
+        $excludeFilterKey = 'almacategoriescategoryFilter_excluded';
+        Hook::exec('action' . $this->controller_name . 'ListingFieldsModifier', array(
+            'fields' => &$this->fields_list,
+        ));
+
+        if (!isset($this->list_id)) {
+            $this->list_id = $this->table;
+        }
+        
+        if(method_exists('AdminControllerCore','getCookieFilterPrefix')){
+            $prefix = $this->getCookieFilterPrefix();
+        }
+        else{
+            $prefix = str_replace(array('admin','controller'), '',Tools::strtolower(get_class($this)));
+        }
+
+        if (isset($this->list_id)) {
+            foreach ($_POST as $key => $value) {
+                if ($value === '') {
+                    unset($this->context->cookie->{$prefix . $key});
+                } elseif (stripos($key, $this->list_id . 'Filter_') === 0) {
+                    $this->context->cookie->{$prefix . $key} = !is_array($value) ? $value : json_encode($value);
+                } elseif (stripos($key, 'submitFilter') === 0) {
+                    $this->context->cookie->$key = !is_array($value) ? $value : json_encode($value);
+                }
+            }
+
+            foreach ($_GET as $key => $value) {
+                if (stripos($key, $this->list_id . 'Filter_') === 0) {
+                    $this->context->cookie->{$prefix . $key} = !is_array($value) ? $value : json_encode($value);
+                } elseif (stripos($key, 'submitFilter') === 0) {
+                    $this->context->cookie->$key = !is_array($value) ? $value : json_encode($value);
+                }
+                if (stripos($key, $this->list_id . 'Orderby') === 0 && Validate::isOrderBy($value)) {
+                    if ($value === '' || $value == $this->_defaultOrderBy) {
+                        unset($this->context->cookie->{$prefix . $key});
+                    } else {
+                        $this->context->cookie->{$prefix . $key} = $value;
+                    }
+                } elseif (stripos($key, $this->list_id . 'Orderway') === 0 && Validate::isOrderWay($value)) {
+                    if ($value === '' || $value == $this->_defaultOrderWay) {
+                        unset($this->context->cookie->{$prefix . $key});
+                    } else {
+                        $this->context->cookie->{$prefix . $key} = $value;
+                    }
+                }
+            }
+        }
+
+        $filters = $this->context->cookie->getFamily($prefix . $this->list_id . 'Filter_');
+        foreach($filters as $key => $filter){
+            if($key === $excludeFilterKey){
+                $this->excludeFilter = (int) $filter;                
+                unset($filters[$key]);                                
+            }
+            
+        }
+        $definition = false;
+        if (isset($this->className) && $this->className) {
+            $definition = ObjectModel::getDefinition($this->className);
+        }
+
+        foreach ($filters as $key => $value) {
+            /* Extracting filters from $_POST on key filter_ */
+            if ($value != null && !strncmp($key, $prefix . $this->list_id . 'Filter_', 7 + Tools::strlen($prefix . $this->list_id))) {
+                $key = Tools::substr($key, 7 + Tools::strlen($prefix . $this->list_id));
+                /* Table alias could be specified using a ! eg. alias!field */
+                $tmp_tab = explode('!', $key);
+                $filter = count($tmp_tab) > 1 ? $tmp_tab[1] : $tmp_tab[0];
+
+                if ($field = $this->filterToField($key, $filter)) {
+                    $type = (array_key_exists('filter_type', $field) ? $field['filter_type'] : (array_key_exists('type', $field) ? $field['type'] : false));
+                    if (($type == 'date' || $type == 'datetime') && is_string($value)) {
+                        $value = json_decode($value, true);
+                    }
+                    $key = isset($tmp_tab[1]) ? $tmp_tab[0] . '.`' . $tmp_tab[1] . '`' : '`' . $tmp_tab[0] . '`';
+
+                    // Assignment by reference
+                    if (array_key_exists('tmpTableFilter', $field)) {
+                        $sql_filter = &$this->_tmpTableFilter;
+                    } elseif (array_key_exists('havingFilter', $field)) {
+                        $sql_filter = &$this->_filterHaving;
+                    } else {
+                        $sql_filter = &$this->_filter;
+                    }
+
+                    /* Only for date filtering (from, to) */
+                    if (is_array($value)) {
+                        if (isset($value[0]) && !empty($value[0])) {
+                            if (!Validate::isDate($value[0])) {
+                                $this->errors[] = $this->trans('The \'From\' date format is invalid (YYYY-MM-DD)', array(), 'Admin.Notifications.Error');
+                            } else {
+                                $sql_filter .= ' AND ' . pSQL($key) . ' >= \'' . pSQL(Tools::dateFrom($value[0])) . '\'';
+                            }
+                        }
+
+                        if (isset($value[1]) && !empty($value[1])) {
+                            if (!Validate::isDate($value[1])) {
+                                $this->errors[] = $this->trans('The \'To\' date format is invalid (YYYY-MM-DD)', array(), 'Admin.Notifications.Error');
+                            } else {
+                                $sql_filter .= ' AND ' . pSQL($key) . ' <= \'' . pSQL(Tools::dateTo($value[1])) . '\'';
+                            }
+                        }
+                    } else {
+                        $sql_filter .= ' AND ';
+                        $check_key = ($key == $this->identifier || $key == '`' . $this->identifier . '`');
+                        $alias = ($definition && !empty($definition['fields'][$filter]['shop'])) ? 'sa' : 'a';
+
+                        if ($type == 'int' || $type == 'bool') {
+                            $sql_filter .= (($check_key || $key == '`active`') ? $alias . '.' : '') . pSQL($key) . ' = ' . (int) $value . ' ';
+                        } elseif ($type == 'decimal') {
+                            $sql_filter .= ($check_key ? $alias . '.' : '') . pSQL($key) . ' = ' . (float) $value . ' ';
+                        } elseif ($type == 'select') {
+                            $sql_filter .= ($check_key ? $alias . '.' : '') . pSQL($key) . ' = \'' . pSQL($value) . '\' ';
+                        } elseif ($type == 'price') {
+                            $value = (float) str_replace(',', '.', $value);
+                            $sql_filter .= ($check_key ? $alias . '.' : '') . pSQL($key) . ' = ' . pSQL(trim($value)) . ' ';
+                        } else {
+                            $sql_filter .= ($check_key ? $alias . '.' : '') . pSQL($key) . ' LIKE \'%' . pSQL(trim($value)) . '%\' ';
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    public function getList(
+        $id_lang,
+        $order_by = null,
+        $order_way = null,
+        $start = 0,
+        $limit = null,
+        $id_lang_shop = false
+    ) {
+        parent::getList($id_lang, $order_by, $order_way, $start, $limit, $id_lang_shop);
+        if(1 === $this->excludeFilter){
+            foreach($this->_list as $k => $list){
+                foreach(self::$excludedCategories as $excluded){
+                    if($list['id_category'] === $excluded){
+                        unset($this->_list[$k]);
+                    }
+                }
+            }
+        }
+        elseif(0 === $this->excludeFilter){
+            $tmp = array();
+            foreach(self::$excludedCategories as $excluded){
+                foreach($this->_list as $k => $list){
+                    if($list['id_category'] === $excluded){
+                        $tmp[] = $list;
+                    }
+                }
+            }
+            $this->_list = $tmp;
+        }
+    }
+
+
     public function initToolbar(){
         return false;
     }
@@ -134,52 +285,65 @@ class AdminAlmaCategoriesController extends ModuleAdminController
     public function renderView()
     {
         $this->initToolbar();
-        
 
         return $this->renderList();
     }
 
 
-    public function postProcess()
-    {
-        return parent::postProcess();
-    }
-
+    /**
+     * processBulkEnable REMOVE Excluded Categories from ALMA_EXCLUDE_CATEGORIES
+     *
+     * @return void
+     */
     protected function processBulkEnable()
     {
         $cats_ids = array();
         foreach (Tools::getValue($this->table . 'Box') as $id_category) {
             $category = new Category((int) $id_category);
             if (Validate::isLoadedObject($category)) {
-                AlmaSettings::removeExcludeCategories($id_category);
+                AlmaSettings::removeExcludedCategories($id_category);
             }
         }
+        // need to force page refresh here for obscure reason
         header("Location:" .$this->context->link->getAdminLink('AdminAlmaCategories'));
     }
 
+    /**
+     * processBulkEnable INSERT Excluded Categories in ALMA_EXCLUDE_CATEGORIES
+     *
+     * @return void
+     */
     protected function processBulkDisable()
     {
         $cats_ids = array();
         foreach (Tools::getValue($this->table . 'Box') as $id_category) {
             $category = new Category((int)$id_category);
             if (Validate::isLoadedObject($category)) {
-                AlmaSettings::addExcludeCategories($id_category);
+                AlmaSettings::addExcludedCategories($id_category);
             }
         }        
+        // need to force page refresh here for obscure reason
         header("Location:" .$this->context->link->getAdminLink('AdminAlmaCategories'));        
     }
 
-    public static function getExclude($id_category)
+    public static function getExcluded($id_category)
     {
-        if (in_array($id_category, self::$exclude_categories)) {
-            return '✅';
+        if (in_array($id_category, self::$excludedCategories)) {
+            if (version_compare(_PS_VERSION_, '1.6', '>=')) {
+                return '<i class="icon-ban text-danger"></i>';
+            }
+            return '❌';            
         }
-        return '❌';
+        if (version_compare(_PS_VERSION_, '1.6', '>=')) {
+            return '<i class="icon-check text-success"></i>';
+        }        
+        return '✅';
+        
     }
 
     public static function getDescriptionClean($description)
     {
-        if (version_compare(_PS_VERSION_, '1.6', '>=')) {
+        if (version_compare(_PS_VERSION_, '1.7', '>=')) {
             return Tools::getDescriptionClean($description);
         }
         else{

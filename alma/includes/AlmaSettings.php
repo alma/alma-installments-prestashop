@@ -90,7 +90,7 @@ class AlmaSettings
             'ALMA_STATE_REFUND',
             'ALMA_STATE_REFUND_ENABLED',
             'ALMA_DISPLAY_ORDER_CONFIRMATION',
-            'ALMA_EXCLUDE_CATEGORIES',
+            'ALMA_EXCLUDED_CATEGORIES',
         );
 
         foreach ($configKeys as $configKey) {
@@ -220,18 +220,18 @@ class AlmaSettings
         return (bool) self::get('ALMA_STATE_REFUND_ENABLED', 0);
     }
 
-    public static function getExcludeCategories()
+    public static function getExcludedCategories()
     {
-        $categories = self::get('ALMA_EXCLUDE_CATEGORIES', null);        
+        $categories = self::get('ALMA_EXCLUDED_CATEGORIES', null);        
         if (null !== $categories) {
             return json_decode($categories);
         }
         return [];
     }
 
-    public static function getExcludeNameCategories()
+    public static function getExcludedNameCategories()
     {
-        $categories = self::getExcludeCategories();
+        $categories = self::getExcludedCategories();
         if (!$categories) {
             return '';
         }
@@ -245,41 +245,41 @@ class AlmaSettings
         return implode(', ', $categoriesName);
     }
 
-    public static function addExcludeCategories($idCategory)
+    public static function addExcludedCategories($idCategory)
     {        
-        $categories = self::getExcludeCategories();            
+        $categories = self::getExcludedCategories();            
         if (!in_array($idCategory, $categories)) {
             $categories[] = $idCategory;
         }        
-        self::updateExcludeCategories($categories);        
+        self::updateExcludedCategories($categories);        
     }
 
-    public static function removeExcludeCategories($idCategory)
+    public static function removeExcludedCategories($idCategory)
     {
-        $categories = self::getExcludeCategories();
+        $categories = self::getExcludedCategories();
         if (($key = array_search($idCategory, $categories)) !== false) {        
             unset($categories[$key]);
         }
-        self::updateExcludeCategories(array_values($categories));
+        self::updateExcludedCategories(array_values($categories));
     }
 
     /**
-     * Update ALMA_EXCLUDE_CATEGORIES value
+     * Update ALMA_EXCLUDED_CATEGORIES value
      *
      * @param array $categories
      * @return void
      */
-    private static function updateExcludeCategories($categories){
+    private static function updateExcludedCategories($categories){
         if (version_compare(_PS_VERSION_, '1.7', '<')) {
-            self::updateValue('ALMA_EXCLUDE_CATEGORIES', Tools::jsonEncode($categories));
+            self::updateValue('ALMA_EXCLUDED_CATEGORIES', Tools::jsonEncode($categories));
         }
         else{
-            self::updateValue('ALMA_EXCLUDE_CATEGORIES', json_encode($categories));
+            self::updateValue('ALMA_EXCLUDED_CATEGORIES', json_encode($categories));
         }
     }
 
     /**
-     * Check if some products in cart are in the excludes listing
+     * Check if some products in cart are in the excluded listing
      *
      * @param object $params
      * @return array
@@ -290,8 +290,8 @@ class AlmaSettings
         foreach($products as $k => $p){            
             $cartProductsCategories[] =  $p['id_category_default'];                
         }
-        $excludeListing = self::getExcludeCategories();                        
-        return array_intersect($cartProductsCategories, $excludeListing);        
+        $excludedListing = self::getExcludedCategories();                        
+        return array_intersect($cartProductsCategories, $excludedListing);        
         
     }
 }

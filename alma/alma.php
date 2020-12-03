@@ -172,10 +172,9 @@ class Alma extends PaymentModule
 
     public function installTabs()
     {
-        if (version_compare(_PS_VERSION_, '1.6', '>=')) {
-            $this->installTab('alma', 'Alma');
-        }
-        $this->installTab('AdminAlmaCategories', $this->l('Exclude category'), 'alma', 'credit_card');
+        $this->installTab('alma', 'Alma');
+        $this->installTab('AdminAlmaCategories', $this->l('Excluded categories'), 'alma', 'not_interested');  
+        
         return true;
     }
 
