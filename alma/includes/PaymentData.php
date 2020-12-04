@@ -119,7 +119,7 @@ class PaymentData
                     'city' => $shippingAddress->city,
                     'country' => $shippingAddress->country,
                 ),
-                'shipping_info' => ShippingData::shippingInfo($cart),
+                //'shipping_info' => ShippingData::shippingInfo($cart),
                 'cart' => CartData::cartInfo($cart),
                 'billing_address' => array(
                     'line1' => $billingAddress->address1,

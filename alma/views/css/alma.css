@@ -71,6 +71,10 @@ p.payment_module a.alma-button.disable-arrow-icon:after {
 .alma-button--logo img {
     height: 50px;
 }
+.disable-arrow-icon .alma-button--logo img{
+    height: 30px;
+}
+
 
 .alma-button--text {
     padding-left: 10px;
