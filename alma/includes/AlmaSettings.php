@@ -91,6 +91,7 @@ class AlmaSettings
             'ALMA_STATE_REFUND_ENABLED',
             'ALMA_DISPLAY_ORDER_CONFIRMATION',
             'ALMA_EXCLUDED_CATEGORIES',
+            'ALMA_NOT_ELIGIBLE_CATEGORIES'
         );
 
         foreach ($configKeys as $configKey) {
@@ -157,6 +158,16 @@ class AlmaSettings
 
         return self::get('ALMA_NOT_ELIGIBLE_MESSAGE', $default);
     }
+    public static function getNonEligibilityCategoriesMessage()
+    {
+        // Allow PrestaShop's translation feature to detect those strings
+        // $this->l('Your cart is not eligible for monthly installments.', 'almasettings');
+        $default = self::l('Your cart is not eligible for monthly installments.');
+
+        return self::get('ALMA_NOT_ELIGIBLE_CATEGORIES', $default);
+    }
+
+    
 
     public static function showEligibilityMessage()
     {
@@ -278,20 +289,5 @@ class AlmaSettings
         }
     }
 
-    /**
-     * Check if some products in cart are in the excluded listing
-     *
-     * @param object $params
-     * @return array
-     */
-    public static function getCartExclusion($params){
-        $products = $params['cart']->getProducts(true);
-        $cartProductsCategories = array();        
-        foreach($products as $k => $p){            
-            $cartProductsCategories[] =  $p['id_category_default'];                
-        }
-        $excludedListing = self::getExcludedCategories();                        
-        return array_intersect($cartProductsCategories, $excludedListing);        
-        
-    }
+    
 }

@@ -30,6 +30,7 @@ include_once _PS_MODULE_DIR_ . 'alma/includes/AlmaProtectedHookController.php';
 include_once _PS_MODULE_DIR_ . 'alma/includes/functions.php';
 include_once _PS_MODULE_DIR_ . 'alma/includes/AlmaSettings.php';
 include_once _PS_MODULE_DIR_ . 'alma/includes/AlmaEligibilityHelper.php';
+include_once _PS_MODULE_DIR_ . 'alma/includes/CartData.php';
 
 class AlmaDisplayShoppingCartFooterController extends AlmaProtectedHookController
 {
@@ -65,11 +66,9 @@ class AlmaDisplayShoppingCartFooterController extends AlmaProtectedHookControlle
         }
 
         // Check if some products in cart are in the excludes listing
-        $diff = AlmaSettings::getCartExclusion($params);
+        $diff = CartData::getCartExclusion($params['cart']);
         if(!empty($diff)){
-            $excludeListingName = AlmaSettings::getExcludeNameCategories();
-            $eligibilityMsg = $this->module->l(' Paiment en plusieurs fois - Commande non eligible car votre panier contient un produit de(s) catégorie(s) : '.$excludeListingName);
-            //' Paiment en plusieurs fois - Commande non eligible car votre panier contient un produit de(s) catégorie(s) : '.$excludeListingName;
+            $eligibilityMsg = AlmaSettings::getNonEligibilityCategoriesMessage();            
         }
         
         

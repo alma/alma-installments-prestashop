@@ -28,6 +28,7 @@ if (!defined('_PS_VERSION_')) {
 
 include_once _PS_MODULE_DIR_ . 'alma/includes/AlmaLogger.php';
 include_once _PS_MODULE_DIR_ . 'alma/includes/functions.php';
+include_once _PS_MODULE_DIR_ . 'alma/includes/AlmaSettings.php';
 
 class CartData
 {
@@ -291,5 +292,22 @@ class CartData
         }
 
         return $discounts;
+    }
+
+    /**
+     * Check if some products in cart are in the excluded listing
+     *
+     * @param object $params
+     * @return array
+     */
+    public static function getCartExclusion($cart){
+        $products = $cart->getProducts(true);
+        $cartProductsCategories = array();        
+        foreach($products as $k => $p){            
+            $cartProductsCategories[] =  $p['id_category_default'];                
+        }
+        $excludedListing = AlmaSettings::getExcludedCategories();                        
+        return array_intersect($cartProductsCategories, $excludedListing);        
+        
     }
 }

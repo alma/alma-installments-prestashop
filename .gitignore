@@ -3,3 +3,4 @@ alma/config*.xml
 dist
 tmp
 prestashop
+**/.DS_Store

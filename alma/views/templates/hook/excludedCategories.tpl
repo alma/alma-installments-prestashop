@@ -34,11 +34,3 @@
     <br />
     <p><strong>{l s='Excluded categories : ' mod='alma'}</strong>&nbsp;{l s='%s' mod='alma' sprintf=$excludedCategories}</p>
 </div>
-
-<!--
-Vous ne pouvez proposer Alma lors de la vente d'armes, de matériel médical et de produits dématérialisés (carte cadeau, clés de licence de jeux vidéos, logiciels, ...)
-En cas de défaut d'un paiement relatif à une commande contenant un produit de cette liste, votre assurance Alma ne vous couvrira pas.
-Vous pouvez utiliser les listes d'exclusion pour vous conformer à ces restrictions.
-Catégories exclues :
-%n produits exclus en plus des catégories ci-dessus.
--->

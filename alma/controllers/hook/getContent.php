@@ -53,6 +53,7 @@ class AlmaGetContentController extends AlmaAdminHookController
             $showEligibility = Tools::getValue('ALMA_SHOW_ELIGIBILITY_MESSAGE_ON') == '1';
             $eligibleMsg = Tools::getValue('ALMA_IS_ELIGIBLE_MESSAGE');
             $nonEligibleMsg = Tools::getValue('ALMA_NOT_ELIGIBLE_MESSAGE');
+            $nonEligibleCategoriesMsg = Tools::getValue('ALMA_NOT_ELIGIBLE_CATEGORIES');
 
             if (empty($title) || empty($description) ||
                 ($showEligibility && (empty($eligibleMsg) || empty($nonEligibleMsg)))) {
@@ -70,6 +71,8 @@ class AlmaGetContentController extends AlmaAdminHookController
             AlmaSettings::updateValue('ALMA_SHOW_ELIGIBILITY_MESSAGE', $showEligibility);
             AlmaSettings::updateValue('ALMA_IS_ELIGIBLE_MESSAGE', $eligibleMsg);
             AlmaSettings::updateValue('ALMA_NOT_ELIGIBLE_MESSAGE', $nonEligibleMsg);
+            AlmaSettings::updateValue('ALMA_NOT_ELIGIBLE_CATEGORIES', $nonEligibleCategoriesMsg);
+            
 
             $idStateRefund = Tools::getValue('ALMA_STATE_REFUND');
             AlmaSettings::updateValue('ALMA_STATE_REFUND', $idStateRefund);
@@ -616,8 +619,17 @@ class AlmaGetContentController extends AlmaAdminHookController
                         // PrestaShop won't detect the string if the call to `l` is multiline
                         'desc' => $tpl->fetch(),                        
                     ),
+                    array(
+                        'name' => 'ALMA_NOT_ELIGIBLE_CATEGORIES',
+                        'label' => $this->module->l('Excluded categories non-eligibility message ', 'getContent'),
+                        // PrestaShop won't detect the string if the call to `l` is multiline
+                        'desc' => $this->module->l('Message displayed below the cart totals when it is not eligible for monthly installments.', 'getContent'),
+                        'type' => 'text',
+                        'size' => 75,
+                        'required' => false,
+                    ),
                 ),
-                //'submit' => array('title' => $this->module->l('Save'), 'class' => 'btn btn-default pull-right'),
+                'submit' => array('title' => $this->module->l('Save'), 'class' => 'btn btn-default pull-right'),
             ),
         );
 
@@ -746,6 +758,7 @@ class AlmaGetContentController extends AlmaAdminHookController
             'ALMA_ACTIVATE_LOGGING_ON' => (bool)AlmaSettings::canLog(),
             'ALMA_STATE_REFUND' => AlmaSettings::getRefundState(),
             'ALMA_STATE_REFUND_ENABLED_ON' => AlmaSettings::isRefundEnabledByState(),
+            'ALMA_NOT_ELIGIBLE_CATEGORIES' => AlmaSettings::getNonEligibilityCategoriesMessage(),
             '_api_only' => true,
         );
 

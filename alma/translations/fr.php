@@ -9,7 +9,6 @@ $_MODULE['<{alma}prestashop>alma_7bab99339291e7eea710b4a998e663de'] = 'Alma néc
 $_MODULE['<{alma}prestashop>alma_fbb47375d2272bef79f5722a183bf1ec'] = 'Alma nécessite l\'extension PHP JSON';
 $_MODULE['<{alma}prestashop>alma_7fb83ba9cf3cc38857a2ddae98534d22'] = 'Alma nécessite OpenSSL >= 1.0.1';
 $_MODULE['<{alma}prestashop>alma_36359547b09bdb31f46c419a0bd5807e'] = 'Catégories exclues';
-$_MODULE['<{alma}prestashop>alma_9f05c0ace014254c599746f786a78af7'] = 'Catégories exclues';
 $_MODULE['<{alma}prestashop>adminalmacategories_b718adec73e04ce3ec720dd11a06a308'] = 'ID';
 $_MODULE['<{alma}prestashop>adminalmacategories_49ee3087348e8d44e1feda1917443987'] = 'Nom';
 $_MODULE['<{alma}prestashop>adminalmacategories_b5a7adde1af5c87d7fd797b6245c2a39'] = 'Description';
@@ -58,6 +57,7 @@ $_MODULE['<{alma}prestashop>getcontent_2f8907138277e6b1693dfa7ad4666f83'] = 'Aff
 $_MODULE['<{alma}prestashop>getcontent_83674e9661afaf7494705c4626a42db9'] = 'Activez cette option lorsque vous n\'avez pas votre propre page de confirmation de commande';
 $_MODULE['<{alma}prestashop>getcontent_d342c4d4173641303554804de4d59b05'] = 'Confirme la prise en compte de leur commande aux clients revenant de la page de paiement Alma';
 $_MODULE['<{alma}prestashop>getcontent_36359547b09bdb31f46c419a0bd5807e'] = 'Catégories exclues';
+$_MODULE['<{alma}prestashop>getcontent_41c2bdcbfb6ea702ac49667124a1652a'] = 'Message de non-éligibilité pour catégories exclues';
 $_MODULE['<{alma}prestashop>getcontent_9d21f767a50ad583330024bce9afa2e1'] = 'Remboursement par changement d\'état';
 $_MODULE['<{alma}prestashop>getcontent_0a07c3044858beda6297a34fb0be9236'] = 'Si vous remboursez généralement vos commandes en changeant leur état, activez cette option et choisissez l\'état que vous souhaitez utiliser pour déclencher les remboursements de paiements Alma.';
 $_MODULE['<{alma}prestashop>getcontent_49908a1beb86a417b6f77ed65cbf83d2'] = 'Activer le remboursement par changement d\'état';
