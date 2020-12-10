@@ -38,8 +38,8 @@ class AlmaRefundController extends AlmaAdminHookController
 {
     public function run($params)
     {
-        // When a discount refund is generated, we *must not* refund the customer via Alma
-        if (Tools::isSubmit('generateDiscountRefund') || Tools::isSubmit('generateDiscount')) {
+        // When a discount refund or a credit is generated, we *must not* refund the customer via Alma
+        if (Tools::isSubmit('generateDiscountRefund') || Tools::isSubmit('generateDiscount') || Tools::isSubmit('generateCreditSlip')) {
             return;
         }
 
