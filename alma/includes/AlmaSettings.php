@@ -167,7 +167,7 @@ class AlmaSettings
         return self::get('ALMA_NOT_ELIGIBLE_CATEGORIES', $default);
     }
 
-    
+
 
     public static function showEligibilityMessage()
     {
@@ -233,18 +233,18 @@ class AlmaSettings
 
     public static function getExcludedCategories()
     {
-        $categories = self::get('ALMA_EXCLUDED_CATEGORIES', null);        
+        $categories = self::get('ALMA_EXCLUDED_CATEGORIES', null);
         if (null !== $categories) {
             return json_decode($categories);
         }
         return [];
     }
 
-    public static function getExcludedNameCategories()
+    public static function getExcludedCategoryNames()
     {
         $categories = self::getExcludedCategories();
         if (!$categories) {
-            return '';
+			return array();
         }
         $categories = Category::getCategories(false, false, false, sprintf('AND c.`id_category` IN (%s)', implode(',', $categories)));
         $categoriesName = [];
@@ -252,23 +252,23 @@ class AlmaSettings
             foreach ($categories as $category) {
                 $categoriesName[] = $category['name'];
             }
-        }        
-        return implode(', ', $categoriesName);
+        }
+        return $categoriesName;
     }
 
     public static function addExcludedCategories($idCategory)
-    {        
-        $categories = self::getExcludedCategories();            
+    {
+        $categories = self::getExcludedCategories();
         if (!in_array($idCategory, $categories)) {
             $categories[] = $idCategory;
-        }        
-        self::updateExcludedCategories($categories);        
+        }
+        self::updateExcludedCategories($categories);
     }
 
     public static function removeExcludedCategories($idCategory)
     {
         $categories = self::getExcludedCategories();
-        if (($key = array_search($idCategory, $categories)) !== false) {        
+        if (($key = array_search($idCategory, $categories)) !== false) {
             unset($categories[$key]);
         }
         self::updateExcludedCategories(array_values($categories));
@@ -289,5 +289,5 @@ class AlmaSettings
         }
     }
 
-    
+
 }

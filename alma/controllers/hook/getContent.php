@@ -72,7 +72,6 @@ class AlmaGetContentController extends AlmaAdminHookController
             AlmaSettings::updateValue('ALMA_IS_ELIGIBLE_MESSAGE', $eligibleMsg);
             AlmaSettings::updateValue('ALMA_NOT_ELIGIBLE_MESSAGE', $nonEligibleMsg);
             AlmaSettings::updateValue('ALMA_NOT_ELIGIBLE_CATEGORIES', $nonEligibleCategoriesMsg);
-            
 
             $idStateRefund = Tools::getValue('ALMA_STATE_REFUND');
             AlmaSettings::updateValue('ALMA_STATE_REFUND', $idStateRefund);
@@ -594,17 +593,21 @@ class AlmaGetContentController extends AlmaAdminHookController
             ),
         );
 
-        
+
 
         // Exclusion
         $tpl = $this->context->smarty->createTemplate(
-            "{$this->module->local_path}views/templates/hook/excludedCategories.tpl"            
+            "{$this->module->local_path}views/templates/hook/excludedCategories.tpl"
         );
-        $excludedCategories = AlmaSettings::getExcludedNameCategories();
+
+        $excludedCategoryNames = AlmaSettings::getExcludedCategoryNames();
+
         $tpl->assign(array(
-            'excludedCategories' => $excludedCategories,
+            'excludedCategories' => count($excludedCategoryNames) > 0
+				? implode(', ', $excludedCategoryNames)
+				: $this->module->l('No excluded categories', 'getContent'),
             'excludedLink' => $this->context->link->getAdminLink('AdminAlmaCategories'),
-        ));        
+        ));
         $excludedForm = array(
             'form' => array(
                 'legend' => array(
@@ -617,13 +620,13 @@ class AlmaGetContentController extends AlmaAdminHookController
                         'label' => null,
                         'type' => 'html',
                         // PrestaShop won't detect the string if the call to `l` is multiline
-                        'desc' => $tpl->fetch(),                        
+                        'desc' => $tpl->fetch(),
                     ),
                     array(
                         'name' => 'ALMA_NOT_ELIGIBLE_CATEGORIES',
                         'label' => $this->module->l('Excluded categories non-eligibility message ', 'getContent'),
                         // PrestaShop won't detect the string if the call to `l` is multiline
-                        'desc' => $this->module->l('Message displayed below the cart totals when it is not eligible for monthly installments.', 'getContent'),
+                        'desc' => $this->module->l('Message displayed on an excluded product page or on the cart page if it contains an excluded product.', 'getContent'),
                         'type' => 'text',
                         'size' => 75,
                         'required' => false,
@@ -722,7 +725,7 @@ class AlmaGetContentController extends AlmaAdminHookController
             if ($pnxConfigForm) {
                 $fieldsForms[] = $pnxConfigForm;
             }
-            
+
             $fieldsForms = array_merge($fieldsForms, array($orderConfirmationForm, $excludedForm, $apiConfigForm, $debugForm));
         }
 
