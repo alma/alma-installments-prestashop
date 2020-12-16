@@ -62,7 +62,6 @@ class Alma extends PaymentModule
         $this->confirmUninstall = $this->l('Are you sure you want to deactivate Alma Monthly Installments from your shop?', 'alma');
 
         $this->file = __FILE__;
-        $this->installTabs();
 
         if (version_compare(_PS_VERSION_, '1.5.0.1', '<')) {
             $this->local_path = _PS_MODULE_DIR_ . $this->name . '/';
@@ -113,6 +112,8 @@ class Alma extends PaymentModule
                 return false;
             }
         }
+
+		$this->installTabs();
 
         return true;
     }
@@ -172,15 +173,13 @@ class Alma extends PaymentModule
 
     public function installTabs()
     {
-        $this->installTab('alma', 'Alma');
-        $this->installTab('AdminAlmaCategories', $this->l('Excluded categories'), 'alma', 'not_interested');  
-        
-        return true;
+        return $this->installTab('alma', 'Alma')
+			&& $this->installTab('AdminAlmaCategories', $this->l('Excluded categories'), 'alma', 'not_interested');
     }
 
     protected function installTab($class, $name, $parent = null, $icon = null)
     {
-        
+
         $tabId = (int) Tab::getIdFromClassName($class);
         if (!$tabId) {
             $tabId = null;
