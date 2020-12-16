@@ -33,7 +33,7 @@
 
     <p style="margin: 20px 0;">
         {capture name='intro2'}
-            {l s='Use the %1$s%2$scategory exclusions page%3$s%4$s to comply with these restrictions.' sprintf=array('<strong>', "<a href='$exludedLink'>", '</a>', '</strong>') mod='alma'}
+            {l s='Use the %1$s%2$scategory exclusions page%3$s%4$s to comply with these restrictions.' sprintf=array('<strong>', "<a href='$excludedLink'>", '</a>', '</strong>') mod='alma'}
         {/capture}
         {$smarty.capture.intro2|unescape:'html'}
     </p>
