@@ -30,6 +30,7 @@ include_once _PS_MODULE_DIR_ . 'alma/includes/AlmaProtectedHookController.php';
 include_once _PS_MODULE_DIR_ . 'alma/includes/functions.php';
 include_once _PS_MODULE_DIR_ . 'alma/includes/AlmaSettings.php';
 include_once _PS_MODULE_DIR_ . 'alma/includes/AlmaEligibilityHelper.php';
+include_once _PS_MODULE_DIR_ . 'alma/includes/CartData.php';
 
 class AlmaDisplayShoppingCartFooterController extends AlmaProtectedHookController
 {
@@ -44,7 +45,6 @@ class AlmaDisplayShoppingCartFooterController extends AlmaProtectedHookControlle
 
         if (!$eligibility->isEligible) {
             $eligibilityMsg = AlmaSettings::getNonEligibilityMessage();
-
             $cart = $this->context->cart;
             $cartTotal = almaPriceToCents((float) $cart->getOrderTotal(true, Cart::BOTH));
             $minAmount = $eligibility->constraints['purchase_amount']['minimum'];
@@ -64,6 +64,14 @@ class AlmaDisplayShoppingCartFooterController extends AlmaProtectedHookControlle
                 }
             }
         }
+
+        // Check if some products in cart are in the excludes listing
+        $diff = CartData::getCartExclusion($params['cart']);
+        if(!empty($diff)){
+            $eligibilityMsg = AlmaSettings::getNonEligibilityCategoriesMessage();            
+        }
+        
+        
 
         if (is_callable('Media::getMediaPath')) {
             $logo = Media::getMediaPath(_PS_MODULE_DIR_ . $this->module->name . '/views/img/alma_logo.svg');

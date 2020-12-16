@@ -1,6 +1,12 @@
 Changelog
 =========
 
+vNEXT
+-----
+
+* Adds an "Excluded categories" custom tab/page to let merchants deactivate Alma for categories of
+  products that are not compatible with our legal terms.
+
 v1.3.1
 ------
 

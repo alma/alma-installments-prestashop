@@ -34,6 +34,8 @@ if (!defined('ALMA_MODE_LIVE')) {
     define('ALMA_MODE_LIVE', 'live');
 }
 
+include_once _PS_MODULE_DIR_ . 'alma/includes/model/AlmaCategory.php';
+
 class AlmaSettings
 {
     public static function l($str)
@@ -60,7 +62,6 @@ class AlmaSettings
     {
         $idShop = Shop::getContextShopID(true);
         $idShopGroup = Shop::getContextShopGroupID(true);
-
         Configuration::updateValue($configKey, $value, false, $idShopGroup, $idShop);
     }
 
@@ -90,7 +91,9 @@ class AlmaSettings
             'ALMA_PNX_MAX_N',
             'ALMA_STATE_REFUND',
             'ALMA_STATE_REFUND_ENABLED',
-            'ALMA_DISPLAY_ORDER_CONFIRMATION'
+            'ALMA_DISPLAY_ORDER_CONFIRMATION',
+            'ALMA_EXCLUDED_CATEGORIES',
+            'ALMA_NOT_ELIGIBLE_CATEGORIES'
         );
 
         foreach ($configKeys as $configKey) {
@@ -157,6 +160,16 @@ class AlmaSettings
 
         return self::get('ALMA_NOT_ELIGIBLE_MESSAGE', $default);
     }
+    public static function getNonEligibilityCategoriesMessage()
+    {
+        // Allow PrestaShop's translation feature to detect those strings
+        // $this->l('Your cart is not eligible for monthly installments.', 'almasettings');
+        $default = self::l('Your cart is not eligible for monthly installments.');
+
+        return self::get('ALMA_NOT_ELIGIBLE_CATEGORIES', $default);
+    }
+
+
 
     public static function showEligibilityMessage()
     {
@@ -219,4 +232,78 @@ class AlmaSettings
     {
         return (bool) self::get('ALMA_STATE_REFUND_ENABLED', 0);
     }
+
+    public static function getExcludedCategories()
+    {
+        $categories = self::get('ALMA_EXCLUDED_CATEGORIES');
+        if (null !== $categories && 'null' !== $categories) {
+            return json_decode($categories);
+        }
+        return [];
+    }
+
+    public static function getExcludedCategoryNames()
+    {
+        $categories = self::getExcludedCategories();
+        if (!$categories) {
+			return array();
+        }
+        $categories = Category::getCategories(false, false, false, sprintf('AND c.`id_category` IN (%s)', implode(',', $categories)));
+        $categoriesName = [];
+        if (count($categories) > 0) {
+            foreach ($categories as $category) {
+                $categoriesName[] = $category['name'];
+            }
+        }
+        return $categoriesName;
+    }
+
+    public static function addExcludedCategories($idCategory)
+    {
+    	$excludedCategories = self::getExcludedCategories();
+
+        $category = AlmaCategory::fromCategory($idCategory);
+        if (!$category) {
+        	return;
+		}
+
+        // Add the selected category and all its children categories
+        $categoriesToExclude = array_merge([$idCategory], $category->getAllChildrenIds());
+        $excludedCategories  = array_merge($excludedCategories, array_diff($categoriesToExclude, $excludedCategories));
+
+        self::updateExcludedCategories($excludedCategories);
+    }
+
+    public static function removeExcludedCategories($idCategory)
+    {
+        $excludedCategories = self::getExcludedCategories();
+
+		$category = AlmaCategory::fromCategory($idCategory);
+		if (!$category) {
+			return;
+		}
+
+		// Remove the selected categories and all its children categories
+		$categoriesToRemove =  array_merge([$idCategory], $category->getAllChildrenIds());
+		$excludedCategories = array_diff($excludedCategories, $categoriesToRemove);
+
+        self::updateExcludedCategories($excludedCategories);
+    }
+
+    /**
+     * Update ALMA_EXCLUDED_CATEGORIES value
+     *
+     * @param array $categories
+     * @return void
+     */
+    private static function updateExcludedCategories($categories){
+        if (version_compare(_PS_VERSION_, '1.7', '<')) {
+            self::updateValue('ALMA_EXCLUDED_CATEGORIES', Tools::jsonEncode($categories));
+        }
+        else{
+            self::updateValue('ALMA_EXCLUDED_CATEGORIES', json_encode($categories));
+        }
+    }
+
+
 }

@@ -32,6 +32,7 @@ include_once _PS_MODULE_DIR_ . 'alma/includes/AlmaProtectedHookController.php';
 include_once _PS_MODULE_DIR_ . 'alma/includes/PaymentData.php';
 include_once _PS_MODULE_DIR_ . 'alma/includes/AlmaClient.php';
 include_once _PS_MODULE_DIR_ . 'alma/includes/AlmaSettings.php';
+include_once _PS_MODULE_DIR_ . 'alma/includes/CartData.php';
 
 class AlmaPaymentOptionsController extends AlmaProtectedHookController
 {
@@ -62,7 +63,12 @@ class AlmaPaymentOptionsController extends AlmaProtectedHookController
             return array();
         }
 
-        if (isset($eligibility) && !$eligibility->isEligible) {
+        // Check if some products in cart are in the excludes listing
+        $diff = CartData::getCartExclusion($params['cart']); 
+        $excludeCategory = !empty($diff);
+
+
+        if (isset($eligibility) && !$eligibility->isEligible || $excludeCategory) {
             return array();
         }
 
@@ -109,7 +115,7 @@ class AlmaPaymentOptionsController extends AlmaProtectedHookController
 
             $options[] = $paymentOption;
         }
-
+        
         return $options;
     }
 

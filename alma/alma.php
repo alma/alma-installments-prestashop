@@ -98,7 +98,7 @@ class Alma extends PaymentModule
             'displayBackOfficeHeader',
             'displayShoppingCartFooter',
             'actionOrderSlipAdd',
-            'actionOrderStatusPostUpdate'
+            'actionOrderStatusPostUpdate',
         );
 
         if (version_compare(_PS_VERSION_, '1.7', '>=')) {
@@ -113,7 +113,7 @@ class Alma extends PaymentModule
             }
         }
 
-        return true;
+		return $this->installTabs();
     }
 
     private function checkDependencies()
@@ -169,6 +169,42 @@ class Alma extends PaymentModule
         return $result;
     }
 
+    public function installTabs()
+    {
+        return $this->installTab('alma', 'Alma')
+			&& $this->installTab('AdminAlmaCategories', $this->l('Excluded categories'), 'alma', 'not_interested');
+    }
+
+    protected function installTab($class, $name, $parent = null, $icon = null)
+    {
+
+        $tabId = (int) Tab::getIdFromClassName($class);
+        if (!$tabId) {
+            $tabId = null;
+        }
+
+        $tab = new Tab($tabId);
+        $tab->active = 1;
+        $tab->class_name = $class;
+        $tab->name = array();
+        foreach (Language::getLanguages(true) as $lang) {
+            $tab->name[$lang['id_lang']] = $name;
+        }
+        if ($parent) {
+            if (version_compare(_PS_VERSION_, '1.7', '>=')) {
+                if ($icon) {
+                    $tab->icon = $icon;
+                }
+            }
+            $tab->id_parent = (int)Tab::getIdFromClassName($parent);
+        } else {
+            $tab->id_parent = 0;
+        }
+        $tab->module = $this->name;
+
+        return $tab->save();
+    }
+
     public function hookHeader($params)
     {
         if ($this->context->controller->php_self == 'order-opc' || $this->context->controller->php_self == 'order') {
@@ -190,6 +226,7 @@ class Alma extends PaymentModule
     public function hookDisplayBackOfficeHeader($params)
     {
         $this->context->controller->addCSS($this->_path . 'views/css/admin/_configure/helpers/form/form.css', 'all');
+        $this->context->controller->addCSS($this->_path . 'views/css/admin/almaPage.css', 'all');
     }
 
     private function runHookController($hookName, $params)
