@@ -113,9 +113,7 @@ class Alma extends PaymentModule
             }
         }
 
-		$this->installTabs();
-
-        return true;
+		return $this->installTabs();
     }
 
     private function checkDependencies()
