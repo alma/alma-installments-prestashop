@@ -297,17 +297,16 @@ class CartData
     /**
      * Check if some products in cart are in the excluded listing
      *
-     * @param object $params
+     * @param Cart $cart
      * @return array
      */
     public static function getCartExclusion($cart){
         $products = $cart->getProducts(true);
-        $cartProductsCategories = array();        
-        foreach($products as $k => $p){            
-            $cartProductsCategories[] =  $p['id_category_default'];                
+        $cartProductsCategories = array();
+        foreach($products as $k => $p){
+            $cartProductsCategories[] =  $p['id_category_default'];
         }
-        $excludedListing = AlmaSettings::getExcludedCategories();                        
-        return array_intersect($cartProductsCategories, $excludedListing);        
-        
+        $excludedListing = AlmaSettings::getExcludedCategories();
+        return array_intersect($cartProductsCategories, $excludedListing);
     }
 }

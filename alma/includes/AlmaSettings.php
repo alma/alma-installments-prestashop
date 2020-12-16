@@ -34,6 +34,8 @@ if (!defined('ALMA_MODE_LIVE')) {
     define('ALMA_MODE_LIVE', 'live');
 }
 
+include_once _PS_MODULE_DIR_ . 'alma/includes/model/AlmaCategory.php';
+
 class AlmaSettings
 {
     public static function l($str)
@@ -233,8 +235,8 @@ class AlmaSettings
 
     public static function getExcludedCategories()
     {
-        $categories = self::get('ALMA_EXCLUDED_CATEGORIES', null);
-        if (null !== $categories) {
+        $categories = self::get('ALMA_EXCLUDED_CATEGORIES');
+        if (null !== $categories && 'null' !== $categories) {
             return json_decode($categories);
         }
         return [];
@@ -258,20 +260,34 @@ class AlmaSettings
 
     public static function addExcludedCategories($idCategory)
     {
-        $categories = self::getExcludedCategories();
-        if (!in_array($idCategory, $categories)) {
-            $categories[] = $idCategory;
-        }
-        self::updateExcludedCategories($categories);
+    	$excludedCategories = self::getExcludedCategories();
+
+        $category = AlmaCategory::fromCategory($idCategory);
+        if (!$category) {
+        	return;
+		}
+
+        // Add the selected category and all its children categories
+        $categoriesToExclude = array_merge([$idCategory], $category->getAllChildrenIds());
+        $excludedCategories  = array_merge($excludedCategories, array_diff($categoriesToExclude, $excludedCategories));
+
+        self::updateExcludedCategories($excludedCategories);
     }
 
     public static function removeExcludedCategories($idCategory)
     {
-        $categories = self::getExcludedCategories();
-        if (($key = array_search($idCategory, $categories)) !== false) {
-            unset($categories[$key]);
-        }
-        self::updateExcludedCategories(array_values($categories));
+        $excludedCategories = self::getExcludedCategories();
+
+		$category = AlmaCategory::fromCategory($idCategory);
+		if (!$category) {
+			return;
+		}
+
+		// Remove the selected categories and all its children categories
+		$categoriesToRemove =  array_merge([$idCategory], $category->getAllChildrenIds());
+		$excludedCategories = array_diff($excludedCategories, $categoriesToRemove);
+
+        self::updateExcludedCategories($excludedCategories);
     }
 
     /**
