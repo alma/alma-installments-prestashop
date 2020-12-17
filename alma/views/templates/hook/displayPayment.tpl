@@ -30,7 +30,7 @@
         <div class="row">
             <div class="col-xs-12">
                 <p class="payment_module">
-                    <a href="#" onclick="return false;" class="disabled alma-button  {$iconDisplay}">
+                    <a href="#" onclick="return false;" class="disabled alma-button {$iconDisplay}">
                         <span class="alma-button--logo">
                             <img src="{$option.logo|escape:'htmlall':'UTF-8'}" alt="Alma">
                         </span>
@@ -57,7 +57,7 @@
         <div class="row">
             <div class="col-xs-12">
                 <p class="payment_module">
-                    <a href="{$option.link}" class="alma-button  {$iconDisplay}">
+                    <a href="{$option.link}" class="alma-button {$iconDisplay}">
                         <span class="alma-button--logo">
                             <img src="{$option.logo|escape:'htmlall':'UTF-8'}" alt="Alma">
                         </span>
@@ -67,8 +67,10 @@
                                 <br>
                                 <span class="alma-button--description">{$option.desc|escape:'htmlall':'UTF-8'}</span>
                             {/if}
-                            <br><br>
-                            {include file="modules/alma/views/templates/hook/_partials/feePlan.tpl" plans=$option.plans}
+
+                            <span class="alma-button--fee-plans">
+                                {include file="modules/alma/views/templates/hook/_partials/feePlan.tpl" plans=$option.plans}
+                            </span>
                         </span>
                     </a>
                 </p>

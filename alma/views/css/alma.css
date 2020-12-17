@@ -39,9 +39,9 @@
 }
 
 .payment_module a.alma-button {
-    display: table !important;
     width: 100%;
     padding-left: 17px;
+    background: #fbfbfb;
 }
 
 p.payment_module a.alma-button:after {
@@ -62,48 +62,57 @@ p.payment_module a.alma-button.disable-arrow-icon:after {
     display: none;
 }
 
-
 .alma-button--logo {
-    width:1%;
-    white-space:nowrap;
+    margin-right: 20px;
+    white-space: nowrap;
 }
 
 .alma-button--logo img {
-    height: 50px;
+    height: 35px;
 }
-.disable-arrow-icon .alma-button--logo img{
+
+.disable-arrow-icon .alma-button--logo img {
     height: 30px;
 }
 
 
 .alma-button--text {
-    padding-left: 10px;
+
+}
+
+.alma-button--title {
+    color: #333 !important;
 }
 
 .alma-button > span {
-    display: table-cell !important;
+    display: inline-block !important;
     vertical-align: middle !important;
 }
 
 .alma-button--description {
-    font-size: 0.8em;
-    opacity: 0.6;
+    font-size: 0.9em;
+    color: #777;
 }
 
-.payment_module .alma-fee-plan--description{
-    font-size: 0.8em;
-    opacity: 0.6;
+.payment_module .alma-button .alma-button--fee-plans {
+    display: block;
+    margin-top: 15px;
+}
+
+.payment_module .alma-fee-plan--description {
     display: flex;
-    padding: 4px 0px;
+    padding: 4px 0;
 
+    font-size: 0.8em;
+    font-weight: normal !important;
 }
 
-.payment_module .alma-fee-plan--date{
-    width: 150px;
+.payment_module .alma-fee-plan--date {
     display: inline-block;
+    width: 150px;
 }
 
-.payment-options  .alma-fee-plan--description{
+.payment-options .alma-fee-plan--description {
     display: flex;
     justify-content: space-between;
     padding: 4px 0px;
@@ -111,7 +120,7 @@ p.payment_module a.alma-button.disable-arrow-icon:after {
     border-bottom: 1px solid lightgrey;
 }
 
-.payment-options  .alma-fee-plan--date{
+.payment-options .alma-fee-plan--date {
     width: 150px;
     display: inline-block;
 }

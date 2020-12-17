@@ -30,6 +30,6 @@
                 {dateFormat date=$v.due_date|date_format:"%Y-%m-%d" full=0}
             {/if}
         </span>
-        <span>{math equation=$v.purchase_amount / 100 format="%.2f"}&euro;</span>
-    </span>    
+        <span class="alma-fee-plan--amount">{math equation=($v.purchase_amount + $v.customer_fee) / 100 format="%.2f"}&#8239;&euro;</span>
+    </span>
 {/foreach}
