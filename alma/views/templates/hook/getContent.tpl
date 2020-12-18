@@ -103,15 +103,13 @@
         <p>
             <b>{l s='You can then fill in your API keys:' mod='alma'}</b>
             <br>
-            {capture name="live_dashboard_link"}
-                {l s='You can find your Live API key in [1]your Alma dashboard[/1]' mod='alma'}
-            {/capture}
-            {$smarty.capture.live_dashboard_link|escape:'htmlall':'UTF-8'|replace:'[1]':'<a href="https://dashboard.getalma.eu/api" target=\"_blank\">'|replace:'[/1]':'</a>'}
+            {almaDisplayHtml}
+                {l s='You can find your Live API key in [1]your Alma dashboard[/1]' sprintf=['[1]' => '<a href="https://dashboard.getalma.eu/api" target=\"_blank\">', '[/1]' => '</a>'] mod='alma'}
+            {/almaDisplayHtml}
             <br>
-            {capture name="sandbox_dashboard_link"}
-                {l s='To use the Test mode, you need your Test API key from [1]your sandbox dasboard[/1]' mod='alma'}
-            {/capture}
-            {$smarty.capture.sandbox_dashboard_link|escape:'htmlall':'UTF-8'|replace:'[1]':'<a href="https://dashboard.sandbox.getalma.eu/api" target=\"_blank\">'|replace:'[/1]':'</a>'}
+            {almaDisplayHtml}
+                {l s='To use the Test mode, you need your Test API key from [1]your sandbox dasboard[/1]' sprintf=['[1]' => '<a href="https://dashboard.sandbox.getalma.eu/api" target=\"_blank\">', '[/1]' => '</a>'] mod='alma'}
+            {/almaDisplayHtml}
             <br>
         </p>
         <br>
