@@ -15,17 +15,21 @@ function smarty_function_almaFormatPrice($params, $smarty) {
 	$legacy = version_compare(_PS_VERSION_, '1.7.6.0', '<');
 	$price = $params['price'];
 
+	$currency = Context::getContext()->currency;
 	if (array_key_exists('currency', $params))
 	{
-		$currency = Currency::getCurrencyInstance((int)($params['currency']));
-		if (Validate::isLoadedObject($currency))
-			if ($legacy) {
-				return Tools::displayPrice($price, $currency, false);
-			} else {
-				return Locale::formatPrice($price, $currency->iso_code);
-			}
+		$paramCurrency = Currency::getCurrencyInstance((int)($params['currency']));
+		if (Validate::isLoadedObject($paramCurrency)) {
+			$currency = $paramCurrency;
+		}
 	}
-	return $legacy ? Tools::displayPrice($price) : Locale::formatPrice($price, Context::getContext()->currency->iso_code);
+
+	if ($legacy) {
+		return Tools::displayPrice($price, $currency, false);
+	} else {
+		$locale = Context::getContext()->currentLocale;
+		return $locale->formatPrice($price, $currency->iso_code);
+	}
 }
 
 $smarty = Context::getContext()->smarty;
