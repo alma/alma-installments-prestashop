@@ -2,7 +2,7 @@ version: '3'
 
 services:
   mysql:
-    image: mysql:5.6
+    image: mysql:5.5
     environment:
       - MYSQL_ROOT_PASSWORD=admin
       - MYSQL_DATABASE=prestashop
@@ -34,3 +34,4 @@ services:
       - "8080:80"
     volumes:
       - ./alma:/var/www/html/modules/alma
+      - ./docker/php-customization.ini:/usr/local/etc/php/conf.d/php-customization.ini
