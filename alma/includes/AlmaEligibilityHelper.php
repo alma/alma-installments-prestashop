@@ -33,81 +33,72 @@ include_once _PS_MODULE_DIR_ . 'alma/includes/PaymentData.php';
 include_once _PS_MODULE_DIR_ . 'alma/includes/functions.php';
 
 use Alma\API\RequestError;
+use Alma\API\Endpoints\Results\Eligibility;
 
 class AlmaEligibilityHelper
 {
-    private static function checkPnXBounds($cart)
-    {
-        $purchaseAmount = almaPriceToCents((float) $cart->getordertotal(true, Cart::BOTH));
-        $globalMin = PHP_INT_MAX;
-        $globalMax = 0;
-
-        $n = 1;
-        while ($n < AlmaSettings::installmentPlansMaxN()) {
-            ++$n;
-
-            if (!AlmaSettings::isInstallmentPlanEnabled($n)) {
-                continue;
-            } else {
-                $min = AlmaSettings::installmentPlanMinAmount($n);
-                $globalMin = min($min, $globalMin);
-
-                $max = AlmaSettings::installmentPlanMaxAmount($n);
-                $globalMax = max($max, $globalMax);
-
-                if ($purchaseAmount >= $min && $purchaseAmount < $max) {
-                    return true;
-                }
-            }
-        }
-
-        return array($globalMin, $globalMax);
-    }
 
     public static function eligibilityCheck($context)
     {
-        $pnxBounds = self::checkPnXBounds($context->cart);
-        // If we got an array, then the cart is not eligible because not within the returned bounds
-        if (is_array($pnxBounds)) {
-            // Mock Alma's Eligibility object
-            $eligibility = new stdClass();
-            $eligibility->isEligible = false;
-            $eligibility->constraints = array(
-                "purchase_amount" => array(
-                    "minimum" => $pnxBounds[0],
-                    "maximum" => $pnxBounds[1]
-                )
-            );
-
-            return $eligibility;
-        }
-
-        $paymentData = PaymentData::dataFromCart($context->cart, $context);
-        if (!$paymentData) {
-            AlmaLogger::instance()->error('Cannot check cart eligibility: no data extracted from cart');
-
-            return null;
-        }
-
+        $eligibilities = array();
+        $activePlans = array();
+        $almaEligibilities = array();
+        $purchaseAmount = almaPriceToCents($context->cart->getOrderTotal(true, Cart::BOTH));
         $alma = AlmaClient::defaultInstance();
         if (!$alma) {
             AlmaLogger::instance()->error('Cannot check cart eligibility: no API client');
-
-            return null;
+            return array();
+        }
+        
+        if(0 === AlmaSettings::installmentPlansMaxN()){            
+            return array();
+        }
+                        
+        foreach(AlmaSettings::activeInstallmentsCounts() as $n){
+            if ($purchaseAmount < AlmaSettings::installmentPlanMinAmount($n) || $purchaseAmount > AlmaSettings::installmentPlanMaxAmount($n)) {                    
+                $eligibility = new Eligibility(
+                    array(
+                        'installments_count' => $n,
+                        'eligible' => false,
+                        'constraints' => array(
+                            'purchase_amount' => array(
+                                'minimum' => AlmaSettings::installmentPlanMinAmount($n),
+                                'maximum' => AlmaSettings::installmentPlanMaxAmount($n)
+                            )
+                        )
+                        
+                    )
+                );
+                $eligibilities[] = $eligibility;
+            } else {
+                $activePlans[] = $n;
+            }
         }
 
-        $eligibility = null;
-
+        $paymentData = PaymentData::dataFromCart($context->cart, $context, $activePlans);
+        if (!$paymentData) {
+            AlmaLogger::instance()->error('Cannot check cart eligibility: no data extracted from cart');
+            return array();
+        }
         try {
-            $eligibility = $alma->payments->eligibility($paymentData);
+            if(!empty($activePlans)){
+                $almaEligibilities = $alma->payments->eligibility($paymentData);
+            }            
         } catch (RequestError $e) {
             AlmaLogger::instance()->error(
                 "Error when checking cart {$context->cart->id} eligibility: " . $e->getMessage()
             );
+            return array();
+        }        
+        
+        $eligibilities = array_merge((array) $eligibilities, (array) $almaEligibilities);
+        usort($eligibilities, array("AlmaEligibilityHelper", "cmp_installments_count"));
 
-            return null;
-        }
+        return $eligibilities;
+    }
 
-        return $eligibility;
+    public static function cmp_installments_count($a, $b)
+    {
+        return $a->installmentsCount > $b->installmentsCount ? 1 : ($a->installmentsCount == $b->installmentsCount ? 0 : -1);
     }
 }

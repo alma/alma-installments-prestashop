@@ -1,4 +1,5 @@
-{*
+<?php
+/**
  * 2018-2020 Alma SAS
  *
  * THE MIT LICENSE
@@ -19,12 +20,12 @@
  * @author    Alma SAS <contact@getalma.eu>
  * @copyright 2018-2020 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
- *}
+ */
 
-<div style="margin-bottom: 20px;">
-    <p>
-        {$desc|escape:'htmlall':'UTF-8'}
-    </p>
-
-    {include file="modules/alma/views/templates/hook/_partials/feePlan.tpl" plans=$plans oneLiner=false}
-</div>
+header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
+header('Last-Modified: ' . gmdate('D, d M Y H:i:s') . ' GMT');
+header('Cache-Control: no-store, no-cache, must-revalidate');
+header('Cache-Control: post-check=0, pre-check=0', false);
+header('Pragma: no-cache');
+header('Location: ../');
+exit;

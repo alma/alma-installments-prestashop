@@ -37,60 +37,61 @@ class AlmaDisplayPaymentController extends AlmaProtectedHookController
 {
     public function run($params)
     {
-        // First check that we can offer Alma for this payment
-        $eligibility = AlmaEligibilityHelper::eligibilityCheck($this->context);
+		// Check if some products in cart are in the excludes listing
+		$diff = CartData::getCartExclusion($params['cart']);
+		if(!empty($diff)){
+			return false;
+		}
 
-        $error = false;
-        if (!$eligibility) {
-            $error = true;
-        }
-
-        // Check if some products in cart are in the excludes listing
-        $diff = CartData::getCartExclusion($params['cart']); 
-        if(!empty($diff)){
-            return false;
-        }
-
-        if (isset($eligibility) && $eligibility->isEligible) {
-            $disabled = false;
-        } else {
+        $installmentPlans = AlmaEligibilityHelper::eligibilityCheck($this->context);
+        $options = [];
+        if(empty($installmentPlans)) {
             if (AlmaSettings::showDisabledButton()) {
-                $disabled = true;
-            } else {
-                return null;
+                foreach(AlmaSettings::activeInstallmentsCounts() as $n){
+                    $paymentOption = [
+                        'text' => sprintf(AlmaSettings::getPaymentButtonTitle(), $n),
+                        'link' => $this->context->link->getModuleLink($this->module->name, 'payment', array('n' => $n), true),
+                        'plans' => null,
+                        'disabled' => true,
+                        'error' => true,
+                    ];
+                    $options[] = $paymentOption;
+                }
             }
+            return $options;
         }
 
-        if (is_callable('Media::getMediaPath')) {
-            $logo = Media::getMediaPath(_PS_MODULE_DIR_ . $this->module->name . '/views/img/alma_payment_logos.svg');
-        } else {
-            $logo = $this->module->getPathUri() . '/views/img/alma_payment_logos.svg';
-        }
-
-        $cart = $params['cart'];
-        $purchaseAmount = almaPriceToCents((float) $cart->getordertotal(true, Cart::BOTH));
-        $options = array();
-        $n = 1;
-        while ($n < AlmaSettings::installmentPlansMaxN()) {
-            ++$n;
-
-            if (!AlmaSettings::isInstallmentPlanEnabled($n)) {
-                continue;
-            } else {
-                $min = AlmaSettings::installmentPlanMinAmount($n);
-                $max = AlmaSettings::installmentPlanMaxAmount($n);
-
-                if ($purchaseAmount < $min
-                    || $purchaseAmount >= $max
-                ) {
+        foreach($installmentPlans as $plan) {
+            $n = $plan->installmentsCount;
+            if(!$plan->isEligible && AlmaSettings::isInstallmentPlanEnabled($n)){
+                if (AlmaSettings::showDisabledButton()) {
+                    $disabled = true;
+                    $plans = null;
+                }
+                else{
                     continue;
                 }
+            }
+            else{
+                $disabled = false;
+                $plans = $plan->paymentPlan;
+            }
+
+            if (is_callable('Media::getMediaPath')) {
+                $logo = Media::getMediaPath(_PS_MODULE_DIR_ . $this->module->name . "/views/img/logos/alma_p${n}x.svg");
+            } else {
+                $logo = $this->module->getPathUri() . "/views/img/logos/alma_p${n}x.svg";
             }
 
             $paymentOption = [
                 'text' => sprintf(AlmaSettings::getPaymentButtonTitle(), $n),
                 'link' => $this->context->link->getModuleLink($this->module->name, 'payment', array('n' => $n), true),
+                'plans' => $plans,
+                'disabled' => $disabled,
+                'error' => false,
+                'logo' => $logo,
             ];
+
             if (!empty(AlmaSettings::getPaymentButtonDescription())) {
                 $paymentOption['desc'] = sprintf(AlmaSettings::getPaymentButtonDescription(), $n);
             }
@@ -101,13 +102,11 @@ class AlmaDisplayPaymentController extends AlmaProtectedHookController
         $cart = $this->context->cart;
         $this->context->smarty->assign(
             array(
-                'logo' => $logo,
-                'disabled' => $disabled,
-                'error' => $error,
                 'title' => sprintf(AlmaSettings::getPaymentButtonTitle(), 3),
                 'desc' => sprintf(AlmaSettings::getPaymentButtonDescription(), 3),
                 'order_total' => (float) $cart->getOrderTotal(true, Cart::BOTH),
                 'options' => $options,
+                'old_prestashop_version' => version_compare(_PS_VERSION_, '1.6', '<'),
             )
         );
 

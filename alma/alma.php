@@ -27,6 +27,7 @@ if (!defined('_PS_VERSION_')) {
 }
 
 include_once _PS_MODULE_DIR_ . 'alma/vendor/autoload.php';
+include_once _PS_MODULE_DIR_ . 'alma/includes/utils/smarty.php';
 include_once _PS_MODULE_DIR_ . 'alma/includes/AlmaSettings.php';
 include_once _PS_MODULE_DIR_ . 'alma/includes/AlmaLogger.php';
 

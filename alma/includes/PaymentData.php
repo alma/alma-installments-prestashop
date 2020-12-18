@@ -36,12 +36,14 @@ class PaymentData
     /**
      * @param Cart $cart
      * @param Context $context
-     * @param int $installmentsCount
+     * @param int|array $installmentsCount
      * @return array|null
      * @throws Exception
      */
     public static function dataFromCart($cart, $context, $installmentsCount = 3)
     {
+        
+        
         if ($cart->id_customer == 0 || $cart->id_address_delivery == 0 || $cart->id_address_invoice == 0) {
             AlmaLogger::instance()->warning(
                 "[Alma] Missing Customer ID or Delivery/Billing address ID for Cart {$cart->id}"
@@ -106,7 +108,7 @@ class PaymentData
 
         $data = array(
             'payment' => array(
-                'installments_count' => (int) $installmentsCount,
+                'installments_count' => $installmentsCount,
                 'customer_cancel_url' => $context->link->getPageLink('order'),
                 'return_url' => $context->link->getModuleLink('alma', 'validation'),
                 'ipn_callback_url' => $context->link->getModuleLink('alma', 'ipn'),
@@ -117,7 +119,7 @@ class PaymentData
                     'city' => $shippingAddress->city,
                     'country' => $shippingAddress->country,
                 ),
-                'shipping_info' => ShippingData::shippingInfo($cart),
+                //'shipping_info' => ShippingData::shippingInfo($cart),
                 'cart' => CartData::cartInfo($cart),
                 'billing_address' => array(
                     'line1' => $billingAddress->address1,

@@ -26,10 +26,6 @@
     cursor: pointer;
 }
 
-.payment-option img[src*="tiny_alma_payment_logos.svg"] {
-    height: 25px;
-}
-
 .alma-button.disabled {
     opacity: 0.5;
 }
@@ -39,9 +35,9 @@
 }
 
 .payment_module a.alma-button {
-    display: table !important;
     width: 100%;
-    padding-left: 17px;
+    background: #fbfbfb;
+    padding: 20px 17px;
 }
 
 p.payment_module a.alma-button:after {
@@ -58,27 +54,79 @@ p.payment_module a.alma-button:after {
     color: #777;
 }
 
+p.payment_module a.alma-button.disable-arrow-icon:after {
+    display: none;
+}
+
 .alma-button--logo {
-    width:1%;
-    white-space:nowrap;
+    margin-right: 20px;
+    white-space: nowrap;
 }
 
 .alma-button--logo img {
-    height: 50px;
+    height: 35px;
 }
 
+.disable-arrow-icon .alma-button--logo img {
+    height: 30px;
+}
+
+
 .alma-button--text {
-    padding-left: 10px;
+
+}
+
+.alma-button--title {
+    color: #333 !important;
 }
 
 .alma-button > span {
-    display: table-cell !important;
+    display: inline-block !important;
     vertical-align: middle !important;
 }
 
 .alma-button--description {
-    font-size: 0.8em;
-    opacity: 0.6;
+    font-size: 0.9em;
+    color: #777;
+}
+
+.payment_module .alma-button .alma-button--fee-plans {
+    display: block;
+    margin-top: 15px;
+}
+
+.payment_module .alma-fee-plan--description {
+    padding: 4px 0;
+    font-size: 0.9em;
+    font-weight: normal !important;
+    letter-spacing: initial !important;
+}
+
+.payment_module .alma-fee-plan--date {
+    display: inline-block;
+    width: 150px;
+}
+
+.payment-options .alma-fee-plan--description {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 4px 0px;
+    margin: 4px 0px;
+    border-bottom: 1px solid lightgrey;
+}
+
+.payment-options .alma-fee-plan--description:last-child {
+    border-bottom: none;
+}
+
+.payment-options .alma-fee-plan--date {
+    width: 150px;
+    display: inline-block;
+}
+
+.payment-options .alma-fee-plan--amount {
+    text-align: right;
 }
 
 .alma-error {

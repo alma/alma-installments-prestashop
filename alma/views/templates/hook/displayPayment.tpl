@@ -21,35 +21,45 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  *}
 
-{if $disabled}
-    <div class="row">
-        <div class="col-xs-12">
-            <p class="payment_module">
-                <a href="#" onclick="return false;" class="disabled alma-button">
-                    <span class="alma-button--logo">
-                        <img src="{$logo|escape:'htmlall':'UTF-8'}" alt="Alma">
-                    </span>
-                    <span class="alma-button--text">
-                        <span class="alma-button--description">
-                            {if $error}
-                                {l s='Alma Monthly Installments are not available due to an error' mod='alma'}
-                            {else}
-                                {l s='Alma Monthly Installments are not available for this order' mod='alma'}
-                            {/if}
-                        </span>
-                    </span>
-                </a>
-            </p>
-        </div>
-    </div>
-{else}
-    {foreach from=$options item=option}
+{assign var="iconDisplay" value=""}
+{if $old_prestashop_version}
+    {assign var="iconDisplay" value="disable-arrow-icon"}
+{/if}
+{foreach from=$options item=option}
+    {if $option.disabled}
         <div class="row">
             <div class="col-xs-12">
                 <p class="payment_module">
-                    <a href="{$option.link}" class="alma-button">
+                    <a href="#" onclick="return false;" class="disabled alma-button {$iconDisplay}">
                         <span class="alma-button--logo">
-                            <img src="{$logo|escape:'htmlall':'UTF-8'}" alt="Alma">
+                            <img src="{$option.logo|escape:'htmlall':'UTF-8'}" alt="Alma">
+                        </span>
+                        <span class="alma-button--text">
+                            <span class="alma-button--title">{$option.text|escape:'htmlall':'UTF-8'}</span>
+                            <span class="alma-button--description">
+                                {if $option.desc}
+                                    <br>
+                                    <span class="alma-button--description">{$option.desc|escape:'htmlall':'UTF-8'}</span>
+                                {/if}
+                                <br><br>
+                                {if $option.error}
+                                    {l s='Alma Monthly Installments are not available due to an error' mod='alma'}
+                                {else}
+                                    {l s='Alma Monthly Installments are not available for this order' mod='alma'}
+                                {/if}
+                            </span>
+                        </span>
+                    </a>
+                </p>
+            </div>
+        </div>
+    {else}
+        <div class="row">
+            <div class="col-xs-12">
+                <p class="payment_module">
+                    <a href="{$option.link}" class="alma-button {$iconDisplay}">
+                        <span class="alma-button--logo">
+                            <img src="{$option.logo|escape:'htmlall':'UTF-8'}" alt="Alma">
                         </span>
                         <span class="alma-button--text">
                             <span class="alma-button--title">{$option.text|escape:'htmlall':'UTF-8'}</span>
@@ -57,10 +67,15 @@
                                 <br>
                                 <span class="alma-button--description">{$option.desc|escape:'htmlall':'UTF-8'}</span>
                             {/if}
+
+                            <span class="alma-button--fee-plans">
+                                {include file="modules/alma/views/templates/hook/_partials/feePlan.tpl" plans=$option.plans oneLiner=true}
+                            </span>
                         </span>
                     </a>
-                 </p>
+                </p>
             </div>
         </div>
-    {/foreach}
-{/if}
+    {/if}
+{/foreach}
+

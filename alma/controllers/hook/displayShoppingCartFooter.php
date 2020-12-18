@@ -40,43 +40,66 @@ class AlmaDisplayShoppingCartFooterController extends AlmaProtectedHookControlle
             return null;
         }
 
-        $eligibility = AlmaEligibilityHelper::eligibilityCheck($this->context);
-        $eligibilityMsg = AlmaSettings::getEligibilityMessage();
-
-        if (!$eligibility->isEligible) {
+        $eligibilities = AlmaEligibilityHelper::eligibilityCheck($this->context);
+        $eligible = false;
+        foreach($eligibilities as $eligibility){
+            if($eligibility->isEligible){
+                $eligible = true;
+                break;
+            }
+        }
+        if(empty($eligibilities)){
             $eligibilityMsg = AlmaSettings::getNonEligibilityMessage();
+        }
+        elseif(!$eligible){
             $cart = $this->context->cart;
             $cartTotal = almaPriceToCents((float) $cart->getOrderTotal(true, Cart::BOTH));
-            $minAmount = $eligibility->constraints['purchase_amount']['minimum'];
-            $maxAmount = $eligibility->constraints['purchase_amount']['maximum'];
+            $minimum = PHP_INT_MAX;
+            $maximum = 0;
 
-            if ($cartTotal < $minAmount || $cartTotal > $maxAmount) {
-                if ($cartTotal > $maxAmount) {
-                    $eligibilityMsg .= ' ' . sprintf(
-                        $this->module->l('(Maximum amount: %s)', 'displayShoppingCartFooter'),
-                        Tools::displayPrice(almaPriceFromCents($maxAmount))
-                    );
-                } else {
-                    $eligibilityMsg .= ' ' . sprintf(
-                        $this->module->l('(Minimum amount: %s)', 'displayShoppingCartFooter'),
-                        Tools::displayPrice(almaPriceFromCents($minAmount))
-                    );
+            foreach($eligibilities as $eligibility){
+                $minAmount = $eligibility->constraints['purchase_amount']['minimum'];
+                $maxAmount = $eligibility->constraints['purchase_amount']['maximum'];
+                if ($cartTotal < $minAmount || $cartTotal > $maxAmount) {
+                    if ($cartTotal > $maxAmount && $maxAmount > $maximum) {
+                        $maximum = $maxAmount;
+                    }
+                    if ($cartTotal < $minAmount && $minAmount < $minimum) {
+                        $minimum = $minAmount;
+                    }
                 }
             }
+
+            if($cartTotal > $maximum && $maximum != 0){
+                $eligibilityMsg = ' ' . sprintf(
+                    $this->module->l('(Maximum amount: %s)', 'displayShoppingCartFooter'),
+                    Tools::displayPrice(almaPriceFromCents($maximum))
+                );
+            }
+
+            if($cartTotal < $minimum && $minimum != PHP_INT_MAX){
+                $eligibilityMsg = ' ' . sprintf(
+                    $this->module->l('(Minimum amount: %s)', 'displayShoppingCartFooter'),
+                    Tools::displayPrice(almaPriceFromCents($minimum))
+                );
+            }
+
+            $eligibilityMsg = AlmaSettings::getNonEligibilityMessage().$eligibilityMsg;
+        }
+        else{
+            $eligibilityMsg = AlmaSettings::getEligibilityMessage();
         }
 
         // Check if some products in cart are in the excludes listing
         $diff = CartData::getCartExclusion($params['cart']);
-        if(!empty($diff)){
-            $eligibilityMsg = AlmaSettings::getNonEligibilityCategoriesMessage();            
+        if(!empty($diff)) {
+            $eligibilityMsg = AlmaSettings::getNonEligibilityCategoriesMessage();
         }
-        
-        
 
         if (is_callable('Media::getMediaPath')) {
-            $logo = Media::getMediaPath(_PS_MODULE_DIR_ . $this->module->name . '/views/img/alma_logo.svg');
+            $logo = Media::getMediaPath(_PS_MODULE_DIR_ . $this->module->name . '/views/img/logos/logo_alma.svg');
         } else {
-            $logo = $this->module->getPathUri() . '/views/img/alma_logo.svg';
+            $logo = $this->module->getPathUri() . '/views/img/logos/logo_alma.svg';
         }
 
         $this->context->smarty->assign(array(

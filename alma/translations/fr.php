@@ -117,3 +117,7 @@ $_MODULE['<{alma}prestashop>pnx_fees_0e9398180f2a07b403cd7b404468c9f3'] = 'Vos c
 $_MODULE['<{alma}prestashop>pnx_fees_7b58e78060e24470aeab5e97d9bb0165'] = 'Frais pour les paiements en %d fois';
 $_MODULE['<{alma}prestashop>pnx_fees_02d4482d332e1aef3437cd61c9bcc624'] = 'Contactez-nous';
 $_MODULE['<{alma}prestashop>pnx_fees_5532ee2e5ea88b613ccb38e9c88f9a77'] = 'si vous pensez que vos volumes justifient de meilleurs tarifs !';
+$_MODULE['<{alma}prestashop>feeplan_4987191009309ebb9b2d3b2e24f4d294'] = '%1$s aujourd\'hui puis %2$d ⨉ %3$s';
+$_MODULE['<{alma}prestashop>feeplan_304bcb1f18f0897c89c6a79cf0725af1'] = '(Dont frais inclus : %s)';
+$_MODULE['<{alma}prestashop>feeplan_3acc62b245d8bc10f04d81f69d85b685'] = '(Sans frais)';
+$_MODULE['<{alma}prestashop>feeplan_1dd1c5fb7f25cd41b291d43a89e3aefd'] = 'Aujourd\'hui';

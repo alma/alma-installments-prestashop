@@ -222,7 +222,20 @@ class AlmaSettings
 
         return (int) self::get("ALMA_P${n}X_MAX_AMOUNT", $default);
     }
+    
+    public static function activeInstallmentsCounts()
+    {
+        $installmentsCounts = array();
 
+        for ($n = 2; $n <= self::installmentPlansMaxN(); $n++) {
+            if (self::isInstallmentPlanEnabled($n)) {
+                $installmentsCounts[] = $n;
+            }
+        }
+
+        return $installmentsCounts;
+    }
+    
     public static function getRefundState()
     {
         return (int) self::get('ALMA_STATE_REFUND', 7);

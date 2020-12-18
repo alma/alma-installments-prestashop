@@ -44,19 +44,23 @@
                 }
             {/if}
             var $tabs = $("#alma-pnx-tabs");
-            $tabs.children().prependTo($tabs.closest(".form-wrapper"));
+            var $formWrapper = $tabs.closest(".form-wrapper").addClass('alma-pnx-tabs');
+
+            $tabs.children().prependTo($formWrapper);
 
             {foreach $tabs as $tabId => $title}
                 $(".{$tabId|escape:'htmlall':'UTF-8'}-content").appendTo("#{$tabId|escape:'htmlall':'UTF-8'}");
             {/foreach}
 
             {if $forceTabs}
-                $('.nav-tabs li a').on('click', function() {
+                $('.nav-tabs li a').on('click', function(e) {
+                    e.preventDefault();
                     var target = $(this).attr('href');
                     $('.tab-pane').hide();
                     $('.nav-tabs li').removeClass('active');
                     $(target).show();
                     $(this).parent().addClass('active');
+                    return false;
                 })
             {/if}
         });
