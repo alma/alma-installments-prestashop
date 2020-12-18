@@ -21,8 +21,10 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  *}
 
-<p>
-    {$desc|escape:'htmlall':'UTF-8'}
-</p>
-{include file="modules/alma/views/templates/hook/_partials/feePlan.tpl" plans=$plans oneLiner=false}
-<br />
+<div style="margin-bottom: 20px;">
+    <p>
+        {$desc|escape:'htmlall':'UTF-8'}
+    </p>
+
+    {include file="modules/alma/views/templates/hook/_partials/feePlan.tpl" plans=$plans oneLiner=false}
+</div>

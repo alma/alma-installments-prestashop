@@ -21,7 +21,7 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  *}
 
-{if oneLiner}
+{if $oneLiner}
     {$installmentsCount=count($plans)}
     {capture assign='firstAmount'}{almaFormatPrice price=($plans[0].purchase_amount + $plans[0].customer_fee) / 100}{/capture}
     {capture assign='fees'}{almaFormatPrice price=($plans[0].customer_fee) / 100}{/capture}
@@ -55,6 +55,12 @@
             </span>
             <span class="alma-fee-plan--amount">
                 {almaFormatPrice price=$amount}
+                {if $v.customer_fee > 0}
+                    {capture assign='fees'}{almaFormatPrice price=($plans[0].customer_fee) / 100}{/capture}
+                    <small style="display: block">
+                        {l s='(Including fees: %s)' sprintf=[$fees] mod='alma'}
+                    </small>
+                {/if}
             </span>
         </span>
     {/foreach}
