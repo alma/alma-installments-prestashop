@@ -24,5 +24,5 @@
 <p>
     {$desc|escape:'htmlall':'UTF-8'}
 </p>
-{include file="modules/alma/views/templates/hook/_partials/feePlan.tpl" plans=$plans}
+{include file="modules/alma/views/templates/hook/_partials/feePlan.tpl" plans=$plans oneLiner=false}
 <br />

@@ -21,15 +21,41 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  *}
 
-{foreach from=$plans item=v name=counter}
+{if oneLiner}
+    {$installmentsCount=count($plans)}
+    {capture assign='firstAmount'}{almaFormatPrice price=($plans[0].purchase_amount + $plans[0].customer_fee) / 100}{/capture}
+    {capture assign='fees'}{almaFormatPrice price=($plans[0].customer_fee) / 100}{/capture}
+    {capture assign='nextAmounts'}{almaFormatPrice price=($plans[1].purchase_amount + $plans[1].customer_fee) / 100}{/capture}
+
     <span class="alma-fee-plan--description">
-        <span class="alma-fee-plan--date">
-            {if $smarty.foreach.counter.iteration === 1}
-                {l s='Today' mod='alma'}
+        {almaDisplayHtml}
+            {l s='%1$s today then %2$d&#8239;⨉&#8239;%3$s' sprintf=[$firstAmount, $installmentsCount - 1, $nextAmounts] mod='alma'}
+        {/almaDisplayHtml}
+
+        <br>
+        <small>
+            {if $plans[0].customer_fee > 0}
+                {l s='(Including fees: %s)' sprintf=[$fees] mod='alma'}
             {else}
-                {dateFormat date=$v.due_date|date_format:"%Y-%m-%d" full=0}
+                {l s='(No additional fees)' mod='alma'}
             {/if}
-        </span>
-        <span class="alma-fee-plan--amount">{math equation=($v.purchase_amount + $v.customer_fee) / 100 format="%.2f"}&#8239;&euro;</span>
+        </small>
     </span>
-{/foreach}
+{else}
+    {foreach from=$plans item=v name=counter}
+        {$amount=($v.purchase_amount + $v.customer_fee) / 100}
+
+        <span class="alma-fee-plan--description">
+            <span class="alma-fee-plan--date">
+                {if $smarty.foreach.counter.iteration === 1}
+                    {l s='Today' mod='alma'}
+                {else}
+                    {dateFormat date=$v.due_date|date_format:"%Y-%m-%d" full=0}
+                {/if}
+            </span>
+            <span class="alma-fee-plan--amount">
+                {almaFormatPrice price=$amount}
+            </span>
+        </span>
+    {/foreach}
+{/if}

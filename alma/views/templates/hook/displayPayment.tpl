@@ -69,7 +69,7 @@
                             {/if}
 
                             <span class="alma-button--fee-plans">
-                                {include file="modules/alma/views/templates/hook/_partials/feePlan.tpl" plans=$option.plans}
+                                {include file="modules/alma/views/templates/hook/_partials/feePlan.tpl" plans=$option.plans oneLiner=true}
                             </span>
                         </span>
                     </a>
