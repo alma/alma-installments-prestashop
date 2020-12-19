@@ -22,17 +22,52 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
+namespace Alma\PrestaShop\API;
+
 if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-include_once _PS_MODULE_DIR_ . 'alma/includes/AlmaSettings.php';
-include_once _PS_MODULE_DIR_ . 'alma/includes/AlmaHookController.php';
+use Alma\API\Client;
 
-class AlmaAdminHookController extends AlmaHookController
+use Alma;
+use Alma\PrestaShop\Utils\Settings;
+use Alma\PrestaShop\Utils\Logger;
+use Exception;
+
+class ClientHelper
 {
-    public function canRun()
+    public static function defaultInstance()
     {
-        return $this->loggedAsEmployee();
+        static $_almaClient;
+
+        if (!$_almaClient) {
+            $_almaClient = self::createInstance(Settings::getActiveAPIKey());
+        }
+
+        return $_almaClient;
+    }
+
+    public static function createInstance($apiKey, $mode = null)
+    {
+        if (!$mode) {
+            $mode = Settings::getActiveMode();
+        }
+
+        $alma = null;
+
+        try {
+            $alma = new Client($apiKey, array(
+                'mode' => $mode,
+                'logger' => Logger::instance(),
+            ));
+
+            $alma->addUserAgentComponent('PrestaShop', _PS_VERSION_);
+            $alma->addUserAgentComponent('Alma for PrestaShop', Alma::VERSION);
+        } catch (Exception $e) {
+            Logger::instance()->error('Error creating Alma API client: ' . $e->getMessage());
+        }
+
+        return $alma;
     }
 }

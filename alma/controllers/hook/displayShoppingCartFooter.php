@@ -22,26 +22,30 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
+namespace Alma\PrestaShop\Controllers\Hook;
+
 if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-include_once _PS_MODULE_DIR_ . 'alma/includes/AlmaProtectedHookController.php';
-include_once _PS_MODULE_DIR_ . 'alma/includes/functions.php';
-include_once _PS_MODULE_DIR_ . 'alma/includes/AlmaSettings.php';
-include_once _PS_MODULE_DIR_ . 'alma/includes/AlmaEligibilityHelper.php';
-include_once _PS_MODULE_DIR_ . 'alma/includes/CartData.php';
+use Alma\PrestaShop\API\EligibilityHelper;
+use Alma\PrestaShop\Hooks\FrontendHookController;
+use Alma\PrestaShop\Model\CartData;
+use Alma\PrestaShop\Utils\Settings;
 
-class AlmaDisplayShoppingCartFooterController extends AlmaProtectedHookController
+use Cart;
+use Media;
+
+final class DisplayShoppingCartFooterHookController extends FrontendHookController
 {
     public function canRun()
     {
-        return parent::canRun() && AlmaSettings::showEligibilityMessage();
+        return parent::canRun() && Settings::showEligibilityMessage();
     }
 
     public function run($params)
     {
-        $eligibilities = AlmaEligibilityHelper::eligibilityCheck($this->context);
+        $eligibilities = EligibilityHelper::eligibilityCheck($this->context);
         $eligible = false;
         foreach($eligibilities as $eligibility) {
             if($eligibility->isEligible){
@@ -51,7 +55,7 @@ class AlmaDisplayShoppingCartFooterController extends AlmaProtectedHookControlle
         }
 
         if(empty($eligibilities)) {
-            $eligibilityMsg = AlmaSettings::getNonEligibilityMessage();
+            $eligibilityMsg = Settings::getNonEligibilityMessage();
         } elseif(!$eligible) {
             $cart = $this->context->cart;
             $cartTotal = almaPriceToCents((float) $cart->getOrderTotal(true, Cart::BOTH));
@@ -71,30 +75,31 @@ class AlmaDisplayShoppingCartFooterController extends AlmaProtectedHookControlle
                 }
             }
 
+            $eligibilityMsg = '';
             if($cartTotal > $maximum && $maximum != 0){
                 $eligibilityMsg = ' ' . sprintf(
                     $this->module->l('(Maximum amount: %s)', 'displayShoppingCartFooter'),
-                    Tools::displayPrice(almaPriceFromCents($maximum))
+                    almaFormatPrice($maximum)
                 );
             }
 
             if($cartTotal < $minimum && $minimum != PHP_INT_MAX){
                 $eligibilityMsg = ' ' . sprintf(
                     $this->module->l('(Minimum amount: %s)', 'displayShoppingCartFooter'),
-                    Tools::displayPrice(almaPriceFromCents($minimum))
+                    almaFormatPrice($minimum)
                 );
             }
 
-            $eligibilityMsg = AlmaSettings::getNonEligibilityMessage().$eligibilityMsg;
+            $eligibilityMsg = Settings::getNonEligibilityMessage() . $eligibilityMsg;
         }
         else {
-            $eligibilityMsg = AlmaSettings::getEligibilityMessage();
+            $eligibilityMsg = Settings::getEligibilityMessage();
         }
 
         // Check if some products in cart are in the excludes listing
         $diff = CartData::getCartExclusion($params['cart']);
         if (!empty($diff)) {
-            $eligibilityMsg = AlmaSettings::getNonEligibilityCategoriesMessage();
+            $eligibilityMsg = Settings::getNonEligibilityCategoriesMessage();
         }
 
         if (is_callable('Media::getMediaPath')) {

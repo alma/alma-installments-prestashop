@@ -22,17 +22,29 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
+namespace Alma\PrestaShop\Model;
+
 if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-include_once _PS_MODULE_DIR_ . 'alma/includes/AlmaLogger.php';
-include_once _PS_MODULE_DIR_ . 'alma/includes/functions.php';
-include_once _PS_MODULE_DIR_ . 'alma/includes/AlmaSettings.php';
+use Alma\PrestaShop\Utils\Settings;
+
+use CartRule;
+use Context;
+use Db;
+use DbQuery;
+use ImageType;
+use PrestaShopException;
+use PrestaShopDatabaseException;
+use Cart;
+use Configuration;
+use Product;
+use TaxConfiguration;
 
 class CartData
 {
-    private static $taxCalculationMethod = array();
+    private static $taxCalculationMethod = [];
 
     /**
      * @param Cart $cart
@@ -70,16 +82,16 @@ class CartData
         }
     }
 
-    /**
-     * @param Cart $cart
-     * @return array of items
-     *
-     * @throws PrestaShopDatabaseException
-     * @throws PrestaShopException
-     */
+	/**
+	 * @param Cart $cart
+	 * @return array of items
+	 *
+	 * @throws PrestaShopDatabaseException
+	 * @throws PrestaShopException
+	 */
     private static function getCartItems($cart)
     {
-        $items = array();
+        $items = [];
 
         $summaryDetails = $cart->getSummaryDetails($cart->id_lang, true);
         $products = array_merge($summaryDetails['products'], $summaryDetails['gift_products']);
@@ -180,7 +192,7 @@ class CartData
         $sql->from('product', 'p');
         $sql->innerJoin('manufacturer', 'm', 'm.`id_manufacturer` = p.`id_manufacturer`');
 
-        $in = array();
+        $in = [];
         foreach ($products as $productRow) {
             $in[] = $productRow['id_product'];
         }
@@ -189,7 +201,7 @@ class CartData
         $sql->where("p.`id_product` IN ({$in})");
 
         $db = Db::getInstance();
-        $productsDetails = array();
+        $productsDetails = [];
 
         try {
             $results = $db->query($sql);
@@ -204,11 +216,13 @@ class CartData
         return $productsDetails;
     }
 
-    /**
-     * @param Cart $cart
-     * @param array $products
-     * @return array
-     */
+	/**
+	 * @param Cart $cart
+	 * @param array $products
+	 * @return array
+	 *
+	 * @throws PrestaShopException
+	 */
     private static function getProductsCombinations($cart, $products)
     {
         $sql = new DbQuery();
@@ -259,7 +273,7 @@ class CartData
         $sql->where($where);
 
         $db = Db::getInstance();
-        $combinationsNames = array();
+        $combinationsNames = [];
 
         try {
             $results = $db->query($sql);
@@ -280,7 +294,7 @@ class CartData
      */
     private static function getCartDiscounts($cart)
     {
-        $discounts = array();
+        $discounts = [];
         $cartRules = $cart->getCartRules(CartRule::FILTER_ACTION_ALL, false);
 
         foreach ($cartRules as $cartRule) {
@@ -302,11 +316,13 @@ class CartData
      */
     public static function getCartExclusion($cart){
         $products = $cart->getProducts(true);
-        $cartProductsCategories = array();
+        $cartProductsCategories = [];
+
         foreach($products as $k => $p){
             $cartProductsCategories[] =  $p['id_category_default'];
         }
-        $excludedListing = AlmaSettings::getExcludedCategories();
+
+        $excludedListing = Settings::getExcludedCategories();
         return array_intersect($cartProductsCategories, $excludedListing);
     }
 }

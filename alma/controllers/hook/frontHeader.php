@@ -22,26 +22,27 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
+namespace Alma\PrestaShop\Controllers\Hook;
+
 if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-include_once _PS_MODULE_DIR_ . 'alma/includes/hooks/AlmaFrontHookController.php';
-include_once _PS_MODULE_DIR_ . 'alma/includes/api/AlmaClient.php';
-include_once _PS_MODULE_DIR_ . 'alma/includes/utils/AlmaSettings.php';
-include_once _PS_MODULE_DIR_ . 'alma/includes/api/AlmaEligibilityHelper.php';
-include_once _PS_MODULE_DIR_ . 'alma/includes/utils/functions.php';
+use Alma\PrestaShop\Hooks\FrontendHookController;
+use Alma\PrestaShop\Utils\Settings;
 
-class AlmaFrontHeaderController extends AlmaFrontHookController
+final class FrontHeaderHookController extends FrontendHookController
 {
     public function run($params)
     {
         $controllerName = preg_replace("/[[:^alnum:]]+/", "", $this->context->controller->php_self);
-        $handler = array($this, "handle${controllerName}Page");
+        $handler = [$this, "handle${controllerName}Page"];
 
         if (is_callable($handler)) {
-            return call_user_func_array($handler, array($params));
+            return call_user_func_array($handler, [$params]);
         }
+
+        return null;
     }
 
     private function handleOrderPage($params)
@@ -50,14 +51,16 @@ class AlmaFrontHeaderController extends AlmaFrontHookController
         $this->context->controller->addJS($this->module->_path . 'views/js/alma_error.js');
 
         if ($this->context->cookie->__get('alma_error')) {
-            $this->context->smarty->assign(array(
+            $this->context->smarty->assign([
                 'alma_error' => $this->context->cookie->__get('alma_error'),
-            ));
+			]);
 
             $this->context->cookie->__unset('alma_error');
 
             return $this->module->display($this->module->file, 'frontHeaderError.tpl');
         }
+
+        return null;
     }
 
     private function handleOrderOpcPage($params)
@@ -67,7 +70,7 @@ class AlmaFrontHeaderController extends AlmaFrontHookController
 
     private function handleProductPage($params)
     {
-        if (AlmaSettings::showProductEligibility()) {
+        if (Settings::showProductEligibility()) {
             $this->context->controller->addCSS($this->module->_path . 'views/css/alma-widgets.umd.css', 'all');
             $this->context->controller->addJS($this->module->_path . 'views/js/alma-widgets.umd.min.js', 'all');
             $this->context->controller->addCSS($this->module->_path . 'views/css/alma-product.css', 'all');

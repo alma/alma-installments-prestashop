@@ -22,24 +22,16 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
+namespace Alma\PrestaShop\Hooks;
+
 if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-include_once _PS_MODULE_DIR_ . 'alma/includes/AlmaSettings.php';
-include_once _PS_MODULE_DIR_ . 'alma/includes/AlmaHookController.php';
-
-class AlmaProtectedHookController extends AlmaHookController
+abstract class AdminHookController extends HookController
 {
     public function canRun()
     {
-        $isLive = AlmaSettings::getActiveMode() === ALMA_MODE_LIVE;
-
-        // Front controllers can run if the module is properly configured ...
-        return AlmaSettings::isFullyConfigured()
-            // ... and the plugin is in LIVE mode, or the visitor is an admin
-            && ($isLive || $this->loggedAsEmployee())
-            // ... and the current shop's currency is EUR
-            && in_array(Tools::strtoupper($this->context->currency->iso_code), $this->module->limited_currencies);
+        return $this->loggedAsEmployee();
     }
 }

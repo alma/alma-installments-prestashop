@@ -22,6 +22,8 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
+use Alma\PrestaShop\Utils\Settings;
+
 class AdminAlmaCategoriesController extends ModuleAdminController
 {
     static $excludedCategories = [];
@@ -83,7 +85,7 @@ class AdminAlmaCategoriesController extends ModuleAdminController
             ),
         );
 
-        self::$excludedCategories = AlmaSettings::getExcludedCategories();
+        self::$excludedCategories = Settings::getExcludedCategories();
     }
 
     public function init()
@@ -132,7 +134,7 @@ class AdminAlmaCategoriesController extends ModuleAdminController
             $prefix = $this->getCookieFilterPrefix();
         }
         else{
-            $prefix = str_replace(array('admin','controller'), '',Tools::strtolower(get_class($this)));
+            $prefix = str_replace(array('admin','controller'), '', Tools::strtolower(get_class($this)));
         }
 
         if (isset($this->list_id)) {
@@ -302,7 +304,7 @@ class AdminAlmaCategoriesController extends ModuleAdminController
             $category = new Category((int) $id_category);
 
             if (Validate::isLoadedObject($category)) {
-                AlmaSettings::removeExcludedCategories((int) $id_category);
+                Settings::removeExcludedCategories((int) $id_category);
             }
         }
 
@@ -321,7 +323,7 @@ class AdminAlmaCategoriesController extends ModuleAdminController
             $category = new Category((int)$id_category);
 
             if (Validate::isLoadedObject($category)) {
-                AlmaSettings::addExcludedCategories((int) $id_category);
+                Settings::addExcludedCategories((int) $id_category);
             }
         }
 

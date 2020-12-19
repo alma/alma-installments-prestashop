@@ -22,24 +22,36 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
-use Alma\API\RequestError;
+namespace Alma\PrestaShop\Controllers\Hook;
 
 if (!defined('_PS_VERSION_')) {
-    exit;
+	exit;
 }
 
-include_once _PS_MODULE_DIR_ . 'alma/includes/AlmaAdminHookController.php';
-include_once _PS_MODULE_DIR_ . 'alma/includes/AlmaSettings.php';
-include_once _PS_MODULE_DIR_ . 'alma/includes/AlmaClient.php';
-include_once _PS_MODULE_DIR_ . 'alma/includes/AlmaLogger.php';
-include_once _PS_MODULE_DIR_ . 'alma/includes/functions.php';
+use Alma\API\RequestError;
 
-class AlmaStateController extends AlmaAdminHookController
+use Alma\PrestaShop\API\ClientHelper;
+use Alma\PrestaShop\Hooks\AdminHookController;
+use Alma\PrestaShop\Utils\Logger;
+use Alma\PrestaShop\Utils\Settings;
+
+use Order;
+use OrderPayment;
+use PrestaShopDatabaseException;
+use PrestaShopException;
+
+final class StateHookController extends AdminHookController
 {
-    public function run($params)
+	/**
+	 * @param $params
+	 *
+	 * @throws PrestaShopDatabaseException
+	 * @throws PrestaShopException
+	 */
+	public function run($params)
     {
-        if (!AlmaSettings::isRefundEnabledByState()) {
-            return false;
+        if (!Settings::isRefundEnabledByState()) {
+            return;
         }
 
         $order = new Order($params['id_order']);
@@ -49,8 +61,8 @@ class AlmaStateController extends AlmaAdminHookController
         }
 
         $id_payment = $order_payment->transaction_id;
-        if ($newStatus->id == AlmaSettings::getRefundState()) {
-            $alma = AlmaClient::defaultInstance();
+        if ($newStatus->id == Settings::getRefundState()) {
+            $alma = ClientHelper::defaultInstance();
             if (!$alma) {
                 return;
             }
@@ -59,7 +71,7 @@ class AlmaStateController extends AlmaAdminHookController
                 $alma->payments->refund($id_payment, true);
             } catch (RequestError $e) {
                 $msg = "[Alma] ERROR when creating refund for Order {$order->id}: {$e->getMessage()}";
-                AlmaLogger::instance()->error($msg);
+                Logger::instance()->error($msg);
 
                 return;
             }

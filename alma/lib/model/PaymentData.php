@@ -22,14 +22,22 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
+namespace Alma\PrestaShop\Model;
+
 if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-include_once _PS_MODULE_DIR_ . 'alma/includes/AlmaLogger.php';
-include_once _PS_MODULE_DIR_ . 'alma/includes/ShippingData.php';
-include_once _PS_MODULE_DIR_ . 'alma/includes/CartData.php';
-include_once _PS_MODULE_DIR_ . 'alma/includes/functions.php';
+use Alma\PrestaShop\Utils\Logger;
+
+use Exception;
+use Address;
+use Cart;
+use Context;
+use Customer;
+use Tools;
+use Validate;
+
 
 class PaymentData
 {
@@ -42,10 +50,8 @@ class PaymentData
      */
     public static function dataFromCart($cart, $context, $installmentsCount = 3)
     {
-        
-        
         if ($cart->id_customer == 0 || $cart->id_address_delivery == 0 || $cart->id_address_invoice == 0) {
-            AlmaLogger::instance()->warning(
+            Logger::instance()->warning(
                 "[Alma] Missing Customer ID or Delivery/Billing address ID for Cart {$cart->id}"
             );
         }
@@ -54,7 +60,7 @@ class PaymentData
         if ($cart->id_customer) {
             $customer = new Customer($cart->id_customer);
             if (!Validate::isLoadedObject($customer)) {
-                AlmaLogger::instance()->error(
+                Logger::instance()->error(
                     "[Alma] Error loading Customer {$cart->id_customer} from Cart {$cart->id}"
                 );
 
@@ -104,39 +110,37 @@ class PaymentData
             }
         }
 
-        $purchaseAmount = (float)Tools::ps_round((float)$cart->getOrderTotal(true, Cart::BOTH), 2);
+        $purchaseAmount = (float) Tools::ps_round((float)$cart->getOrderTotal(true, Cart::BOTH), 2);
 
-        $data = array(
-            'payment' => array(
-                'installments_count' => $installmentsCount,
-                'customer_cancel_url' => $context->link->getPageLink('order'),
-                'return_url' => $context->link->getModuleLink('alma', 'validation'),
-                'ipn_callback_url' => $context->link->getModuleLink('alma', 'ipn'),
-                'purchase_amount' => almaPriceToCents($purchaseAmount),
-                'shipping_address' => array(
-                    'line1' => $shippingAddress->address1,
-                    'postal_code' => $shippingAddress->postcode,
-                    'city' => $shippingAddress->city,
-                    'country' => $shippingAddress->country,
-                ),
-                //'shipping_info' => ShippingData::shippingInfo($cart),
-                'cart' => CartData::cartInfo($cart),
-                'billing_address' => array(
-                    'line1' => $billingAddress->address1,
-                    'postal_code' => $billingAddress->postcode,
-                    'city' => $billingAddress->city,
-                    'country' => $billingAddress->country,
-                ),
-                'custom_data' => array(
-                    'cart_id' => $cart->id,
-                    'purchase_amount_new_conversion_func' => almaPriceToCents_str($purchaseAmount),
-                    'cart_totals' => $purchaseAmount,
-                    'cart_totals_high_precision' => number_format($purchaseAmount, 16)
-                ),
-            ),
-            'customer' => $customerData,
-        );
-
-        return $data;
+		return array(
+			'payment' => array(
+				'installments_count' => $installmentsCount,
+				'customer_cancel_url' => $context->link->getPageLink('order'),
+				'return_url' => $context->link->getModuleLink('alma', 'validation'),
+				'ipn_callback_url' => $context->link->getModuleLink('alma', 'ipn'),
+				'purchase_amount' => almaPriceToCents($purchaseAmount),
+				'shipping_address' => array(
+					'line1' => $shippingAddress->address1,
+					'postal_code' => $shippingAddress->postcode,
+					'city' => $shippingAddress->city,
+					'country' => $shippingAddress->country,
+				),
+				//'shipping_info' => ShippingData::shippingInfo($cart),
+				'cart' => CartData::cartInfo($cart),
+				'billing_address' => array(
+					'line1' => $billingAddress->address1,
+					'postal_code' => $billingAddress->postcode,
+					'city' => $billingAddress->city,
+					'country' => $billingAddress->country,
+				),
+				'custom_data' => array(
+					'cart_id' => $cart->id,
+					'purchase_amount_new_conversion_func' => almaPriceToCents_str($purchaseAmount),
+					'cart_totals' => $purchaseAmount,
+					'cart_totals_high_precision' => number_format($purchaseAmount, 16)
+				),
+			),
+			'customer' => $customerData,
+		);
     }
 }

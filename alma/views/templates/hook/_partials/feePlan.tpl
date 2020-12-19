@@ -23,9 +23,9 @@
 
 {if $oneLiner}
     {$installmentsCount=count($plans)}
-    {capture assign='firstAmount'}{almaFormatPrice price=($plans[0].purchase_amount + $plans[0].customer_fee) / 100}{/capture}
-    {capture assign='fees'}{almaFormatPrice price=($plans[0].customer_fee) / 100}{/capture}
-    {capture assign='nextAmounts'}{almaFormatPrice price=($plans[1].purchase_amount + $plans[1].customer_fee) / 100}{/capture}
+    {capture assign='firstAmount'}{almaFormatPrice cents=$plans[0].purchase_amount + $plans[0].customer_fee}{/capture}
+    {capture assign='fees'}{almaFormatPrice cents=$plans[0].customer_fee}{/capture}
+    {capture assign='nextAmounts'}{almaFormatPrice cents=$plans[1].purchase_amount + $plans[1].customer_fee}{/capture}
 
     <span class="alma-fee-plan--description">
         {almaDisplayHtml}
@@ -43,8 +43,6 @@
     </span>
 {else}
     {foreach from=$plans item=v name=counter}
-        {$amount=($v.purchase_amount + $v.customer_fee) / 100}
-
         <span class="alma-fee-plan--description">
             <span class="alma-fee-plan--date">
                 {if $smarty.foreach.counter.iteration === 1}
@@ -54,9 +52,9 @@
                 {/if}
             </span>
             <span class="alma-fee-plan--amount">
-                {almaFormatPrice price=$amount}
+                {almaFormatPrice cents=$v.purchase_amount + $v.customer_fee}
                 {if $v.customer_fee > 0}
-                    {capture assign='fees'}{almaFormatPrice price=($plans[0].customer_fee) / 100}{/capture}
+                    {capture assign='fees'}{almaFormatPrice cents=$plans[0].customer_fee}{/capture}
                     <small style="display: block">
                         {l s='(Including fees: %s)' sprintf=[$fees] mod='alma'}
                     </small>

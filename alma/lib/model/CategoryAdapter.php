@@ -22,36 +22,69 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
+namespace Alma\PrestaShop\Model;
+
+use Exception;
+use Category;
+use Validate;
+
 if (!defined('_PS_VERSION_')) {
-    exit;
+	exit;
 }
 
-class AlmaHookController
+class CategoryAdapter
 {
-    public function __construct($module)
-    {
-        $this->module = $module;
-        $this->context = Context::getContext();
-    }
+	/**
+	 * @var int
+	 */
+	private $idCategory;
 
-    protected function loggedAsEmployee()
-    {
-        $cookie = new Cookie('psAdmin', '', (int) Configuration::get('PS_COOKIE_LIFETIME_BO'));
-        $employee = new Employee((int) $cookie->id_employee);
+	/**
+	 * @var Category
+	 */
+	private $category;
 
-        return Validate::isLoadedObject($employee)
-            && $employee->checkPassword((int) $cookie->id_employee, $cookie->passwd)
-            && (!isset($cookie->remote_addr)
-                || $cookie->remote_addr == ip2long(Tools::getRemoteAddr())
-                || !Configuration::get('PS_COOKIE_CHECKIP'));
-    }
+	/**
+	 * @param $idCategory int ID of the PrestaShop Category to load.
+	 * @return CategoryAdapter
+	 */
+	public static function fromCategory($idCategory)
+	{
+		try {
+			return new CategoryAdapter($idCategory);
+		} catch (Exception $e) {
+			return null;
+		}
 
-    public function run($params)
-    {
-    }
+	}
 
-    public function canRun()
-    {
-        return true;
-    }
+	/**
+	 * AlmaCategory constructor.
+	 *
+	 * @param $idCategory int ID of the PrestaShop Category to load.
+	 * @throws Exception
+	 */
+	public function __construct($idCategory)
+	{
+		$this->idCategory = $idCategory;
+		$this->category = new Category($idCategory);
+
+		if (!Validate::isLoadedObject($this->category)) {
+			throw new Exception("Could not load Category with id $idCategory");
+		}
+	}
+
+	private function map_category_ids($category) {
+		return (int) $category->id;
+	}
+
+	public function getAllChildrenIds()
+	{
+		if (version_compare(_PS_VERSION_, '1.5.0.1', '<')) {
+			// We don't support PrestaShop versions that old, so don't even try to find an alternative
+			return [];
+		}
+
+		return array_map([$this, 'map_category_ids'], $this->category->getAllChildren()->getResults());
+	}
 }

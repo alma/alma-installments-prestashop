@@ -26,7 +26,8 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-include_once _PS_MODULE_DIR_ . 'alma/includes/AlmaPaymentValidation.php';
+use Alma\PrestaShop\API\PaymentValidation;
+use Alma\PrestaShop\API\PaymentValidationError;
 
 class AlmaIpnModuleFrontController extends ModuleFrontController
 {
@@ -40,7 +41,10 @@ class AlmaIpnModuleFrontController extends ModuleFrontController
 
     public function ajaxDie($value = null, $controller = null, $method = null)
     {
-        if (method_exists(get_parent_class($this), 'ajaxDie')) {
+		if (method_exists(get_parent_class($this), 'ajaxRender')) {
+			parent::ajaxRender($value);
+			exit;
+		} else if (method_exists(get_parent_class($this), 'ajaxDie')) {
             parent::ajaxDie($value);
         } else {
             die($value);
@@ -60,11 +64,11 @@ class AlmaIpnModuleFrontController extends ModuleFrontController
         header('Content-Type: application/json');
 
         $paymentId = Tools::getValue('pid');
-        $validator = new AlmaPaymentValidation($this->context, $this->module);
+        $validator = new PaymentValidation($this->context, $this->module);
 
         try {
             $validator->validatePayment($paymentId);
-        } catch (AlmaPaymentValidationError $e) {
+        } catch (PaymentValidationError $e) {
             $this->fail($e->getMessage());
         } catch (Exception $e) {
             $this->fail($e->getMessage());

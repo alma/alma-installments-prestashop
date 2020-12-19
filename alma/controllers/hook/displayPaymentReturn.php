@@ -22,18 +22,20 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
+namespace Alma\PrestaShop\Controllers\Hook;
+
 if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-include_once _PS_MODULE_DIR_ . 'alma/includes/AlmaProtectedHookController.php';
-include_once _PS_MODULE_DIR_ . 'alma/includes/AlmaSettings.php';
+use Alma\PrestaShop\Hooks\FrontendHookController;
+use Alma\PrestaShop\Utils\Settings;
 
-class AlmaDisplayPaymentReturnController extends AlmaProtectedHookController
+final class DisplayPaymentReturnHookController extends FrontendHookController
 {
     public function canRun()
     {
-        return parent::canRun() && AlmaSettings::displayOrderConfirmation();
+        return parent::canRun() && Settings::displayOrderConfirmation();
     }
 
     public function run($params)

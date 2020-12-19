@@ -1,7 +1,7 @@
 <?php
 
 $finder = PhpCsFixer\Finder::create()->in([
-    __DIR__.'/includes',
+	__DIR__ . '/lib',
     __DIR__.'/views',
     __DIR__.'/controllers',
     //__DIR__.'/tests',

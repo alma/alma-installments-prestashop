@@ -22,18 +22,21 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
+namespace Alma\PrestaShop\Controllers\Hook;
+
 if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-include_once _PS_MODULE_DIR_ . 'alma/includes/AlmaProtectedHookController.php';
-include_once _PS_MODULE_DIR_ . 'alma/includes/PaymentData.php';
-include_once _PS_MODULE_DIR_ . 'alma/includes/AlmaClient.php';
-include_once _PS_MODULE_DIR_ . 'alma/includes/AlmaSettings.php';
-include_once _PS_MODULE_DIR_ . 'alma/includes/CartData.php';
-include_once _PS_MODULE_DIR_ . 'alma/includes/AlmaEligibilityHelper.php';
+use Alma\PrestaShop\API\EligibilityHelper;
+use Alma\PrestaShop\Hooks\FrontendHookController;
+use Alma\PrestaShop\Model\CartData;
+use Alma\PrestaShop\Utils\Settings;
 
-class AlmaPaymentOptionsController extends AlmaProtectedHookController
+use Media;
+use PrestaShop\PrestaShop\Core\Payment\PaymentOption;
+
+final class PaymentOptionsHookController extends FrontendHookController
 {
     public function run($params)
     {
@@ -44,7 +47,7 @@ class AlmaPaymentOptionsController extends AlmaProtectedHookController
 			return [];
 		}
 
-		$installmentPlans = AlmaEligibilityHelper::eligibilityCheck($this->context);
+		$installmentPlans = EligibilityHelper::eligibilityCheck($this->context);
         $options = [];
 		$sortOrders = [];
 
@@ -61,14 +64,16 @@ class AlmaPaymentOptionsController extends AlmaProtectedHookController
 
             $paymentOption = $this->createPaymentOption(
                 $forEUComplianceModule,
-                sprintf(AlmaSettings::getPaymentButtonTitle(), $n),
+                sprintf(Settings::getPaymentButtonTitle(), $n),
                 $this->context->link->getModuleLink($this->module->name, 'payment', array('n' => $n), true),
                 $n
             );
 
-            if (!$forEUComplianceModule && !empty(AlmaSettings::getPaymentButtonDescription())) {
+			$paymentButtonDescription = Settings::getPaymentButtonDescription();
+
+			if (!$forEUComplianceModule && !empty($paymentButtonDescription)) {
                 $this->context->smarty->assign(array(
-                    'desc' => sprintf(AlmaSettings::getPaymentButtonDescription(), $n),
+                    'desc' => sprintf($paymentButtonDescription, $n),
                     'plans' => (array) $plan->paymentPlan,
                 ));
 
@@ -79,7 +84,7 @@ class AlmaPaymentOptionsController extends AlmaProtectedHookController
                 $paymentOption->setAdditionalInformation($template);
             }
 
-            $sortOrder = AlmaSettings::installmentPlanSortOrder($n);
+            $sortOrder = Settings::installmentPlanSortOrder($n);
             $options[$sortOrder] = $paymentOption;
             $sortOrders[] = $sortOrder;
         }
@@ -105,7 +110,7 @@ class AlmaPaymentOptionsController extends AlmaProtectedHookController
                 'logo' => $logo
             );
         } else {
-            $paymentOption = new PrestaShop\PrestaShop\Core\Payment\PaymentOption();
+            $paymentOption = new PaymentOption();
             $logo = Media::getMediaPath("${baseDir}/views/img/logos/alma_p${n}x.svg");
             $paymentOption
                 ->setModuleName($this->module->name)

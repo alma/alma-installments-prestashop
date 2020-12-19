@@ -22,48 +22,17 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
-use Alma\API\Client;
+namespace Alma\PrestaShop\API;
 
-if (!defined('_PS_VERSION_')) {
-    exit;
-}
+use Exception;
 
-include_once _PS_MODULE_DIR_ . 'alma/includes/AlmaLogger.php';
-include_once _PS_MODULE_DIR_ . 'alma/includes/AlmaSettings.php';
-
-class AlmaClient
+class PaymentValidationError extends Exception
 {
-    public static function defaultInstance()
+    public $cart;
+
+    public function __construct($cart = null, $message = '', $code = 0, $previous = null)
     {
-        static $_almaClient;
-
-        if (!$_almaClient) {
-            $_almaClient = self::createInstance(AlmaSettings::getActiveAPIKey());
-        }
-
-        return $_almaClient;
-    }
-
-    public static function createInstance($apiKey, $mode = null)
-    {
-        if (!$mode) {
-            $mode = AlmaSettings::getActiveMode();
-        }
-
-        $alma = null;
-
-        try {
-            $alma = new Client($apiKey, array(
-                'mode' => $mode,
-                'logger' => AlmaLogger::instance(),
-            ));
-
-            $alma->addUserAgentComponent('PrestaShop', _PS_VERSION_);
-            $alma->addUserAgentComponent('Alma for PrestaShop', Alma::VERSION);
-        } catch (\Exception $e) {
-            AlmaLogger::instance()->error('Error creating Alma API client: ' . $e->getMessage());
-        }
-
-        return $alma;
+        parent::__construct($message, $code, $previous);
+        $this->cart = $cart;
     }
 }

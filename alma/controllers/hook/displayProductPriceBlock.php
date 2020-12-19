@@ -22,22 +22,25 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
+namespace Alma\PrestaShop\Controllers\Hook;
+
 if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-include_once _PS_MODULE_DIR_ . 'alma/includes/AlmaProtectedHookController.php';
-include_once _PS_MODULE_DIR_ . 'alma/includes/AlmaSettings.php';
-include_once _PS_MODULE_DIR_ . 'alma/includes/functions.php';
+use Alma\PrestaShop\Hooks\FrontendHookController;
+use Alma\PrestaShop\Utils\Settings;
 
-class AlmaDisplayProductPriceBlockController extends AlmaProtectedHookController
+use Product;
+
+final class DisplayProductPriceBlockHookController extends FrontendHookController
 {
     public function canRun()
     {
         return parent::canRun() &&
             $this->context->controller->php_self == 'product' &&
-            AlmaSettings::showProductEligibility() &&
-            AlmaSettings::getMerchantId() != null;
+            Settings::showProductEligibility() &&
+            Settings::getMerchantId() != null;
     }
 
     public function run($params)
@@ -87,16 +90,16 @@ class AlmaDisplayProductPriceBlockController extends AlmaProtectedHookController
         $globalMax = 0;
 
         $n = 1;
-        while ($n < AlmaSettings::installmentPlansMaxN()) {
+        while ($n < Settings::installmentPlansMaxN()) {
             ++$n;
 
-            if (!AlmaSettings::isInstallmentPlanEnabled($n)) {
+            if (!Settings::isInstallmentPlanEnabled($n)) {
                 continue;
             } else {
-                $min = AlmaSettings::installmentPlanMinAmount($n);
+                $min = Settings::installmentPlanMinAmount($n);
                 $globalMin = min($min, $globalMin);
 
-                $max = AlmaSettings::installmentPlanMaxAmount($n);
+                $max = Settings::installmentPlanMaxAmount($n);
                 $globalMax = max($max, $globalMax);
             }
         }
@@ -110,13 +113,13 @@ class AlmaDisplayProductPriceBlockController extends AlmaProtectedHookController
 
         $this->context->smarty->assign(
             array(
-                'merchantId' => AlmaSettings::getMerchantId(),
-                'apiMode' => AlmaSettings::getActiveMode(),
-                'installmentsCounts' => AlmaSettings::activeInstallmentsCounts(),
+                'merchantId' => Settings::getMerchantId(),
+                'apiMode' => Settings::getActiveMode(),
+                'installmentsCounts' => Settings::activeInstallmentsCounts(),
                 'productId' => $productId,
                 'productPrice' => $price,
                 'refreshPrice' => $refreshPrice,
-                'logo' => almaSvgDataUrl(_PS_MODULE_DIR_ . $this->module->name . '/views/img/alma_logo.svg'),
+                'logo' => almaSvgDataUrl(_PS_MODULE_DIR_ . $this->module->name . '/views/img/logos/logo_alma.svg'),
                 'min' => $globalMin,
                 'max' => $globalMax,
                 'psVersion' => $psVersion

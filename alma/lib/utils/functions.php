@@ -22,6 +22,9 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
+use Alma\PrestaShop\Utils\Logger;
+use PrestaShop\PrestaShop\Core\Localization\Exception\LocalizationException;
+
 /**
  * Converts a float price to its integer cents value, used by the API
  *
@@ -36,6 +39,9 @@ function almaPriceToCents($price)
 
 /**
  * Same as above but with a string-based implementation, to try and kill the rounding problems subject for good
+ *
+ * @param $price float The price to convert to cents
+ * @return int
  */
 function almaPriceToCents_str($price)
 {
@@ -84,4 +90,47 @@ function almaSvgDataUrl($svg) {
     }
 
     return $_dataUrlCache[$svg];
+}
+
+/**
+ * @param int $cents Price to be formatted, in cents (will be converted to currency's base)
+ * @param int|null $id_currency
+ * @return string The formatted price, using the current locale and provided or current currency
+ */
+function almaFormatPrice($cents, $id_currency = null) {
+	$legacy = version_compare(_PS_VERSION_, '1.7.6.0', '<');
+	$currency = Context::getContext()->currency;
+	$price = almaPriceFromCents($cents);
+
+	if ($id_currency) {
+		$currency = Currency::getCurrencyInstance((int) $id_currency);
+		if (!Validate::isLoadedObject($currency)) {
+			$currency = Context::getContext()->currency;
+		}
+	}
+
+	// We default to a naive format of the price, in case things don't work with PrestaShop localization
+	$formattedPrice = sprintf('%.2f€', $price);
+
+	try {
+		if ($legacy) {
+			$formattedPrice = Tools::displayPrice($price, $currency);
+		} else {
+			$locale = Context::getContext()->currentLocale;
+			try {
+				$formattedPrice = $locale->formatPrice($price, $currency->iso_code);
+			} catch (LocalizationException $e) {
+				// Catch LocalizationException at this level too, so that we can fallback to Tools::displayPrice if it
+				// still exists. If it, itself, throws a LocalizationException, it will be caught by the outer catch.
+				if (method_exists(Tools, 'displayPrice')) {
+					$formattedPrice = Tools::displayPrice($price, $currency);
+				}
+			}
+		}
+	} catch (LocalizationException $e) {
+		Logger::instance()->warning("Price localization error: $e");
+	}
+
+
+	return $formattedPrice;
 }

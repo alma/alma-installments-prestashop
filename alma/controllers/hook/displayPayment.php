@@ -22,18 +22,21 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
+namespace Alma\PrestaShop\Controllers\Hook;
+
 if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-include_once _PS_MODULE_DIR_ . 'alma/includes/AlmaProtectedHookController.php';
-include_once _PS_MODULE_DIR_ . 'alma/includes/AlmaClient.php';
-include_once _PS_MODULE_DIR_ . 'alma/includes/AlmaSettings.php';
-include_once _PS_MODULE_DIR_ . 'alma/includes/AlmaEligibilityHelper.php';
-include_once _PS_MODULE_DIR_ . 'alma/includes/functions.php';
-include_once _PS_MODULE_DIR_ . 'alma/includes/CartData.php';
+use Alma\PrestaShop\Hooks\FrontendHookController;
+use Alma\PrestaShop\API\EligibilityHelper;
+use Alma\PrestaShop\Utils\Settings;
+use Alma\PrestaShop\Model\CartData;
 
-class AlmaDisplayPaymentController extends AlmaProtectedHookController
+use Cart;
+use Media;
+
+final class DisplayPaymentHookController extends FrontendHookController
 {
     public function run($params)
     {
@@ -43,13 +46,13 @@ class AlmaDisplayPaymentController extends AlmaProtectedHookController
 			return false;
 		}
 
-        $installmentPlans = AlmaEligibilityHelper::eligibilityCheck($this->context);
+        $installmentPlans = EligibilityHelper::eligibilityCheck($this->context);
         $options = [];
         if(empty($installmentPlans)) {
-            if (AlmaSettings::showDisabledButton()) {
-                foreach(AlmaSettings::activeInstallmentsCounts() as $n){
+            if (Settings::showDisabledButton()) {
+                foreach(Settings::activeInstallmentsCounts() as $n){
                     $paymentOption = [
-                        'text' => sprintf(AlmaSettings::getPaymentButtonTitle(), $n),
+                        'text' => sprintf(Settings::getPaymentButtonTitle(), $n),
                         'link' => $this->context->link->getModuleLink($this->module->name, 'payment', array('n' => $n), true),
                         'plans' => null,
                         'disabled' => true,
@@ -61,18 +64,18 @@ class AlmaDisplayPaymentController extends AlmaProtectedHookController
             return $options;
         }
 
-        foreach($installmentPlans as $plan) {
+		$paymentButtonDescription = Settings::getPaymentButtonDescription();
+
+		foreach($installmentPlans as $plan) {
             $n = $plan->installmentsCount;
-            if(!$plan->isEligible && AlmaSettings::isInstallmentPlanEnabled($n)){
-                if (AlmaSettings::showDisabledButton()) {
+            if(!$plan->isEligible && Settings::isInstallmentPlanEnabled($n)){
+                if (Settings::showDisabledButton()) {
                     $disabled = true;
                     $plans = null;
-                }
-                else{
+                } else {
                     continue;
                 }
-            }
-            else{
+            } else {
                 $disabled = false;
                 $plans = $plan->paymentPlan;
             }
@@ -84,7 +87,7 @@ class AlmaDisplayPaymentController extends AlmaProtectedHookController
             }
 
             $paymentOption = [
-                'text' => sprintf(AlmaSettings::getPaymentButtonTitle(), $n),
+                'text' => sprintf(Settings::getPaymentButtonTitle(), $n),
                 'link' => $this->context->link->getModuleLink($this->module->name, 'payment', array('n' => $n), true),
                 'plans' => $plans,
                 'disabled' => $disabled,
@@ -92,11 +95,11 @@ class AlmaDisplayPaymentController extends AlmaProtectedHookController
                 'logo' => $logo,
             ];
 
-            if (!empty(AlmaSettings::getPaymentButtonDescription())) {
-                $paymentOption['desc'] = sprintf(AlmaSettings::getPaymentButtonDescription(), $n);
+            if (!empty($paymentButtonDescription)) {
+                $paymentOption['desc'] = sprintf($paymentButtonDescription, $n);
             }
 
-            $sortOrder = AlmaSettings::installmentPlanSortOrder($n);
+            $sortOrder = Settings::installmentPlanSortOrder($n);
             $options[$sortOrder] = $paymentOption;
             $sortOrders[] = $sortOrder;
         }
@@ -110,8 +113,8 @@ class AlmaDisplayPaymentController extends AlmaProtectedHookController
         $cart = $this->context->cart;
         $this->context->smarty->assign(
             array(
-                'title' => sprintf(AlmaSettings::getPaymentButtonTitle(), 3),
-                'desc' => sprintf(AlmaSettings::getPaymentButtonDescription(), 3),
+                'title' => sprintf(Settings::getPaymentButtonTitle(), 3),
+                'desc' => sprintf($paymentButtonDescription, 3),
                 'order_total' => (float) $cart->getOrderTotal(true, Cart::BOTH),
                 'options' => $sortedOptions,
                 'old_prestashop_version' => version_compare(_PS_VERSION_, '1.6', '<'),

@@ -22,6 +22,8 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
+namespace Alma\PrestaShop\Utils;
+
 if (!defined('_PS_VERSION_')) {
     exit;
 }
@@ -34,9 +36,15 @@ if (!defined('ALMA_MODE_LIVE')) {
     define('ALMA_MODE_LIVE', 'live');
 }
 
-include_once _PS_MODULE_DIR_ . 'alma/includes/model/AlmaCategory.php';
+use Category;
+use Configuration;
+use Shop;
 
-class AlmaSettings
+use Alma\PrestaShop\Model\CategoryAdapter;
+use Tools;
+use Translate;
+
+class Settings
 {
     public static function l($str)
     {
@@ -283,7 +291,7 @@ class AlmaSettings
     {
     	$excludedCategories = self::getExcludedCategories();
 
-        $category = AlmaCategory::fromCategory($idCategory);
+        $category = CategoryAdapter::fromCategory($idCategory);
         if (!$category) {
         	return;
 		}
@@ -299,7 +307,7 @@ class AlmaSettings
     {
         $excludedCategories = self::getExcludedCategories();
 
-		$category = AlmaCategory::fromCategory($idCategory);
+		$category = CategoryAdapter::fromCategory($idCategory);
 		if (!$category) {
 			return;
 		}

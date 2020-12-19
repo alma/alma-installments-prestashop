@@ -29,8 +29,8 @@ if (!defined('_PS_VERSION_')) {
 }
 
 include_once _PS_MODULE_DIR_ . 'alma/vendor/autoload.php';
-include_once _PS_MODULE_DIR_ . 'alma/includes/utils/AlmaSettings.php';
-include_once _PS_MODULE_DIR_ . 'alma/includes/api/AlmaClient.php';
+include_once _PS_MODULE_DIR_ . 'alma/lib/utils/AlmaSettings.php';
+include_once _PS_MODULE_DIR_ . 'alma/lib/api/AlmaClient.php';
 
 function upgrade_module_1_4_0($object)
 {

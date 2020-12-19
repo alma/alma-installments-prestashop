@@ -22,13 +22,26 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
-class AlmaPaymentValidationError extends \Exception
-{
-    public $cart;
+namespace Alma\PrestaShop\Hooks;
 
-    public function __construct($cart = null, $message = '', $code = 0, Throwable $previous = null)
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
+use Alma\PrestaShop\Utils\Settings;
+use Tools;
+
+abstract class FrontendHookController extends HookController
+{
+    public function canRun()
     {
-        parent::__construct($message, $code, $previous);
-        $this->cart = $cart;
+        $isLive = Settings::getActiveMode() === ALMA_MODE_LIVE;
+
+        // Front controllers can run if the module is properly configured ...
+        return Settings::isFullyConfigured()
+            // ... and the plugin is in LIVE mode, or the visitor is an admin
+            && ($isLive || $this->loggedAsEmployee())
+            // ... and the current shop's currency is EUR
+            && in_array(Tools::strtoupper($this->context->currency->iso_code), $this->module->limited_currencies);
     }
 }

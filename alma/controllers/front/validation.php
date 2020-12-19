@@ -26,7 +26,8 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-include_once _PS_MODULE_DIR_ . 'alma/includes/AlmaPaymentValidation.php';
+use Alma\PrestaShop\API\PaymentValidation;
+use Alma\PrestaShop\API\PaymentValidationError;
 
 class AlmaValidationModuleFrontController extends ModuleFrontController
 {
@@ -61,11 +62,11 @@ class AlmaValidationModuleFrontController extends ModuleFrontController
         parent::postProcess();
 
         $paymentId = Tools::getValue('pid');
-        $validator = new AlmaPaymentValidation($this->context, $this->module);
+        $validator = new PaymentValidation($this->context, $this->module);
 
         try {
             $redirect_to = $validator->validatePayment($paymentId);
-        } catch (AlmaPaymentValidationError $e) {
+        } catch (PaymentValidationError $e) {
             $redirect_to = $this->fail($e->cart, $e->getMessage());
         } catch (Exception $e) {
             $redirect_to = $this->fail(null, $e->getMessage());

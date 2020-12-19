@@ -22,55 +22,55 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
-use Psr\Log\AbstractLogger;
-use Psr\Log\LogLevel;
+namespace Alma\PrestaShop\Hooks;
+
+use Alma;
+use Configuration;
+use Context;
+use Cookie;
+use Employee;
+use Tools;
+use Validate;
 
 if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-include_once _PS_MODULE_DIR_ . 'alma/includes/AlmaSettings.php';
-
-class AlmaLogger extends AbstractLogger
+abstract class HookController
 {
-    public static function instance()
+	/** @var Alma */
+	protected $module;
+
+	/** @var Context */
+	protected $context;
+
+	/**
+	 * HookController constructor.
+	 *
+	 * @param $module Alma
+	 */
+	public function __construct($module)
     {
-        static $instance;
-
-        if (!$instance) {
-            $instance = new AlmaLogger();
-        }
-
-        return $instance;
+        $this->module = $module;
+        $this->context = Context::getContext();
     }
 
-    public static function loggerClass()
+    protected function loggedAsEmployee()
     {
-        if (class_exists('PrestaShopLogger')) {
-            return 'PrestaShopLogger';
-        } else {
-            return 'Logger';
-        }
+        $cookie = new Cookie('psAdmin', '', (int) Configuration::get('PS_COOKIE_LIFETIME_BO'));
+        $employee = new Employee((int) $cookie->id_employee);
+
+        return Validate::isLoadedObject($employee)
+            && $employee->checkPassword((int) $cookie->id_employee, $cookie->passwd)
+            && (!isset($cookie->remote_addr)
+                || $cookie->remote_addr == ip2long(Tools::getRemoteAddr())
+                || !Configuration::get('PS_COOKIE_CHECKIP'));
     }
 
-    public function log($level, $message, array $context = array())
+    abstract public function run($params);
+
+    public function canRun()
     {
-        if (!AlmaSettings::canLog()) {
-            return;
-        }
-
-        $levels = array(
-            LogLevel::DEBUG => 1,
-            LogLevel::INFO => 1,
-            LogLevel::NOTICE => 1,
-            LogLevel::WARNING => 2,
-            LogLevel::ERROR => 3,
-            LogLevel::ALERT => 4,
-            LogLevel::CRITICAL => 4,
-            LogLevel::EMERGENCY => 4,
-        );
-
-        $Logger = AlmaLogger::loggerClass();
-        $Logger::addLog($message, $levels[$level]);
+        return true;
     }
 }

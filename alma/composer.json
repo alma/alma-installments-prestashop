@@ -5,6 +5,15 @@
     "require": {
         "alma/alma-php-client": "^1.0"
     },
+    "autoload": {
+        "psr-4": {
+            "Alma\\PrestaShop\\": ["lib/", "."],
+            "Alma\\PrestaShop\\Controllers\\Hook\\": "controllers/hook/"
+        },
+        "files": [
+            "lib/utils/functions.php"
+        ]
+    },
     "config": {
         "prepend-autoloader": false
     },

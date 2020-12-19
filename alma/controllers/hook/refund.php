@@ -22,19 +22,26 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
-use Alma\API\RequestError;
+namespace Alma\PrestaShop\Controllers\Hook;
 
 if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-include_once _PS_MODULE_DIR_ . 'alma/includes/AlmaAdminHookController.php';
-include_once _PS_MODULE_DIR_ . 'alma/includes/AlmaSettings.php';
-include_once _PS_MODULE_DIR_ . 'alma/includes/AlmaClient.php';
-include_once _PS_MODULE_DIR_ . 'alma/includes/AlmaLogger.php';
-include_once _PS_MODULE_DIR_ . 'alma/includes/functions.php';
+use Alma\API\RequestError;
 
-class AlmaRefundController extends AlmaAdminHookController
+use Alma\PrestaShop\API\ClientHelper;
+use Alma\PrestaShop\Hooks\AdminHookController;
+use Alma\PrestaShop\Utils\Logger;
+
+use Order;
+use OrderDetail;
+use OrderPayment;
+use Tax;
+use TaxCalculator;
+use Tools;
+
+final class RefundHookController extends AdminHookController
 {
     public function run($params)
     {
@@ -60,15 +67,13 @@ class AlmaRefundController extends AlmaAdminHookController
         $order = $params['order'];
         $amount = 0;
         $order_detail_list = array();
-        $full_quantity_list = array();
+
         $refunds = Tools::getValue('partialRefundProduct');
         foreach ($refunds as $id_order_detail => $amount_detail) {
             $quantity = Tools::getValue('partialRefundProductQuantity');
             if (!$quantity[$id_order_detail]) {
                 continue;
             }
-
-            $full_quantity_list[$id_order_detail] = (int) $quantity[$id_order_detail];
 
             $order_detail_list[$id_order_detail] = array(
                 'quantity' => (int) $quantity[$id_order_detail],
@@ -105,7 +110,7 @@ class AlmaRefundController extends AlmaAdminHookController
         }
 
         $is_total = $amount == $order->total_paid_tax_incl;
-        $alma = AlmaClient::defaultInstance();
+        $alma = ClientHelper::defaultInstance();
         if (!$alma) {
             return;
         }
@@ -113,7 +118,7 @@ class AlmaRefundController extends AlmaAdminHookController
             $alma->payments->refund($id_payment, $is_total, almaPriceToCents($amount));
         } catch (RequestError $e) {
             $msg = "[Alma] ERROR when creating refund for Order {$order->id}: {$e->getMessage()}";
-            AlmaLogger::instance()->error($msg);
+            Logger::instance()->error($msg);
 
             return;
         }
@@ -125,19 +130,23 @@ class AlmaRefundController extends AlmaAdminHookController
         $qtyList = $params['qtyList'];
         $products = $order->getProducts();
         $amount = 0;
+
         foreach ($qtyList as $id_order_detail => $qty) {
             $amount = $products[$id_order_detail]['unit_price_tax_incl'] * $qty;
         }
-        $alma = AlmaClient::defaultInstance();
+        $alma = ClientHelper::defaultInstance();
+
         if (!$alma) {
             return;
         }
-        $is_total = $amount == $order->total_paid_tax_incl ? true : false;
+
+        $is_total = $amount == $order->total_paid_tax_incl;
+
         try {
             $alma->payments->refund($id_payment, $is_total, almaPriceToCents($amount));
         } catch (RequestError $e) {
             $msg = "[Alma] ERROR when creating refund for Order {$order->id}: {$e->getMessage()}";
-            AlmaLogger::instance()->error($msg);
+            Logger::instance()->error($msg);
             return;
         }
     }

@@ -22,62 +22,55 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
+namespace Alma\PrestaShop\Utils;
+
 if (!defined('_PS_VERSION_')) {
 	exit;
 }
 
-class AlmaCategory
+use Psr\Log\AbstractLogger;
+use Psr\Log\LogLevel;
+
+class Logger extends AbstractLogger
 {
-	/**
-	 * @var int
-	 */
-	private $idCategory;
+    public static function instance()
+    {
+        static $instance;
 
-	/**
-	 * @var Category
-	 */
-	private $category;
+        if (!$instance) {
+            $instance = new Logger();
+        }
 
-	/**
-	 * @param $idCategory int ID of the PrestaShop Category to load.
-	 * @return AlmaCategory
-	 */
-	public static function fromCategory($idCategory)
-	{
-		try {
-			return new AlmaCategory($idCategory);
-		} catch (Exception $e) {
-			return null;
-		}
+        return $instance;
+    }
 
-	}
+    public static function loggerClass()
+    {
+        if (class_exists('PrestaShopLogger')) {
+            return 'PrestaShopLogger';
+        } else {
+            return 'Logger';
+        }
+    }
 
-	/**
-	 * AlmaCategory constructor.
-	 *
-	 * @param $idCategory int ID of the PrestaShop Category to load.
-	 */
-	public function __construct($idCategory)
-	{
-		$this->idCategory = $idCategory;
-		$this->category = new Category($idCategory);
+    public function log($level, $message, array $context = array())
+    {
+        if (!Settings::canLog()) {
+            return;
+        }
 
-		if (!Validate::isLoadedObject($this->category)) {
-			throw new Exception("Could not load Category with id $idCategory");
-		}
-	}
+        $levels = array(
+            LogLevel::DEBUG => 1,
+            LogLevel::INFO => 1,
+            LogLevel::NOTICE => 1,
+            LogLevel::WARNING => 2,
+            LogLevel::ERROR => 3,
+            LogLevel::ALERT => 4,
+            LogLevel::CRITICAL => 4,
+            LogLevel::EMERGENCY => 4,
+        );
 
-	private function map_category_ids($category) {
-		return (int) $category->id;
-	}
-
-	public function getAllChildrenIds()
-	{
-		if (version_compare(_PS_VERSION_, '1.5.0.1', '<')) {
-			// We don't support PrestaShop versions that old, so don't even try to find an alternative
-			return [];
-		}
-
-		return array_map([$this, 'map_category_ids'], $this->category->getAllChildren()->getResults());
-	}
+        $Logger = Logger::loggerClass();
+        $Logger::addLog($message, $levels[$level]);
+    }
 }

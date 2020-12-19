@@ -22,12 +22,14 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
+namespace Alma\PrestaShop\Model;
+
 if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-include_once _PS_MODULE_DIR_ . 'alma/includes/AlmaLogger.php';
-include_once _PS_MODULE_DIR_ . 'alma/includes/functions.php';
+use Carrier;
+use Cart;
 
 class ShippingData
 {
@@ -57,7 +59,6 @@ class ShippingData
         }
 
         $carrierInfo = $deliveryOptionList[$addressId][$carriersListKey]['carrier_list'][$carrierId];
-        /** @var Carrier $carrier */
         $carrier = new Carrier($carrierId, $cart->id_lang);
         if (!$carrier) {
             return null;
@@ -94,8 +95,8 @@ class ShippingData
 
     /**
      *
-     * @param $carrier
-     * @param $carrierInfo
+     * @param Carrier $carrier
+     * @param array $carrierInfo
      * @return array
      */
     private static function shippingInfoData($carrier, $carrierInfo)

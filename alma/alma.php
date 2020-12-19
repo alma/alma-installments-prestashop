@@ -26,10 +26,11 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-include_once _PS_MODULE_DIR_ . 'alma/vendor/autoload.php';
-include_once _PS_MODULE_DIR_ . 'alma/includes/utils/smarty.php';
-include_once _PS_MODULE_DIR_ . 'alma/includes/AlmaSettings.php';
-include_once _PS_MODULE_DIR_ . 'alma/includes/AlmaLogger.php';
+require_once _PS_MODULE_DIR_ . 'alma/vendor/autoload.php';
+require_once _PS_MODULE_DIR_ . 'alma/lib/utils/smarty.php';
+
+use Alma\PrestaShop\Utils\Settings;
+use Alma\PrestaShop\Utils\Logger;
 
 class Alma extends PaymentModule
 {
@@ -38,7 +39,13 @@ class Alma extends PaymentModule
     public $_path;
     public $local_path;
 
-    public function __construct()
+    /** @var string */
+	public $file;
+
+	/** @var string[] */
+	public $limited_currencies;
+
+	public function __construct()
     {
         $this->name = 'alma';
         $this->tab = 'payments_gateways';
@@ -76,7 +83,7 @@ class Alma extends PaymentModule
 
     public function install()
     {
-        $Logger = AlmaLogger::loggerClass();
+        $Logger = Logger::loggerClass();
 
         $core_install = parent::install();
         if (!$core_install) {
@@ -169,7 +176,7 @@ class Alma extends PaymentModule
 
     public function uninstall()
     {
-        $result = parent::uninstall() && AlmaSettings::deleteAllValues();
+        $result = parent::uninstall() && Settings::deleteAllValues();
 
         $paymentModuleConf = array(
             'CONF_ALMA_FIXED',
@@ -195,52 +202,40 @@ class Alma extends PaymentModule
 
     protected function installTab($class, $name, $parent = null, $icon = null)
     {
-
-        $tabId = (int) Tab::getIdFromClassName($class);
-        if (!$tabId) {
-            $tabId = null;
-        }
-
-        $tab = new Tab($tabId);
+        $tab = Tab::getInstanceFromClassName($class);
         $tab->active = 1;
         $tab->class_name = $class;
         $tab->name = array();
+
         foreach (Language::getLanguages(true) as $lang) {
             $tab->name[$lang['id_lang']] = $name;
         }
+
         if ($parent) {
             if (version_compare(_PS_VERSION_, '1.7', '>=')) {
                 if ($icon) {
                     $tab->icon = $icon;
                 }
             }
-            $tab->id_parent = (int)Tab::getIdFromClassName($parent);
+
+            $parentTab = Tab::getInstanceFromClassName($parent);
+            $tab->id_parent = $parentTab->id;
         } else {
             $tab->id_parent = 0;
         }
+
         $tab->module = $this->name;
 
         return $tab->save();
-    }
-
-    public function hookHeader($params)
-    {
-        return $this->runHookController("frontHeader", $params);
-    }
-
-    public function hookDisplayBackOfficeHeader($params)
-    {
-        $this->context->controller->addCSS($this->_path . 'views/css/admin/_configure/helpers/form/form.css', 'all');
-        $this->context->controller->addCSS($this->_path . 'views/css/admin/almaPage.css', 'all');
     }
 
     private function runHookController($hookName, $params)
     {
         $hookName = preg_replace("/[^a-zA-Z0-9]/", "", $hookName);
 
-        require_once dirname(__FILE__) . '/controllers/hook/' . $hookName . '.php';
-        $controller_name = $this->name . $hookName . 'Controller';
-        $controller = new $controller_name($this);
+        require_once dirname(__FILE__) . "/controllers/hook/${hookName}.php";
+        $ControllerName = "Alma\PrestaShop\Controllers\Hook\\${hookName}HookController";
+        $controller = new $ControllerName($this);
 
         if ($controller->canRun()) {
             return $controller->run($params);
@@ -248,6 +243,17 @@ class Alma extends PaymentModule
             return null;
         }
     }
+
+	public function hookHeader($params)
+	{
+		return $this->runHookController("frontHeader", $params);
+	}
+
+	public function hookDisplayBackOfficeHeader($params)
+	{
+		$this->context->controller->addCSS($this->_path . 'views/css/admin/_configure/helpers/form/form.css', 'all');
+		$this->context->controller->addCSS($this->_path . 'views/css/admin/almaPage.css', 'all');
+	}
 
     public function hookPaymentOptions($params)
     {

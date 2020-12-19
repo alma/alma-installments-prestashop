@@ -22,15 +22,16 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
-use Alma\API\RequestError;
-
 if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-include_once _PS_MODULE_DIR_ . 'alma/includes/PaymentData.php';
-include_once _PS_MODULE_DIR_ . 'alma/includes/AlmaClient.php';
-include_once _PS_MODULE_DIR_ . 'alma/includes/AlmaLogger.php';
+use Alma\API\RequestError;
+
+use Alma\PrestaShop\API\ClientHelper;
+use Alma\PrestaShop\Utils\Settings;
+use Alma\PrestaShop\Utils\Logger;
+use Alma\PrestaShop\Model\PaymentData;
 
 class AlmaPaymentModuleFrontController extends ModuleFrontController
 {
@@ -85,7 +86,7 @@ class AlmaPaymentModuleFrontController extends ModuleFrontController
         }
 
         if (!$authorized) {
-            AlmaLogger::instance()->warning('[Alma] Not authorized!');
+            Logger::instance()->warning('[Alma] Not authorized!');
             Tools::redirect('index.php?controller=order&step=1');
 
             return;
@@ -103,7 +104,7 @@ class AlmaPaymentModuleFrontController extends ModuleFrontController
 
         $cart = $this->context->cart;
         $data = PaymentData::dataFromCart($cart, $this->context, $installmentsCount);
-        $alma = AlmaClient::defaultInstance();
+        $alma = ClientHelper::defaultInstance();
         if (!$data || !$alma) {
             $this->genericErrorAndRedirect();
             return;
@@ -111,9 +112,9 @@ class AlmaPaymentModuleFrontController extends ModuleFrontController
 
         // Check that the selected installments count is indeed enabled
         if (
-            !AlmaSettings::isInstallmentPlanEnabled($installmentsCount) ||
-            AlmaSettings::installmentPlanMinAmount($installmentsCount) > $data["payment"]["purchase_amount"] ||
-            AlmaSettings::installmentPlanMaxAmount($installmentsCount) < $data["payment"]["purchase_amount"]
+            !Settings::isInstallmentPlanEnabled($installmentsCount) ||
+            Settings::installmentPlanMinAmount($installmentsCount) > $data["payment"]["purchase_amount"] ||
+            Settings::installmentPlanMaxAmount($installmentsCount) < $data["payment"]["purchase_amount"]
         ) {
             $this->genericErrorAndRedirect();
             return;
@@ -123,7 +124,7 @@ class AlmaPaymentModuleFrontController extends ModuleFrontController
             $payment = $alma->payments->create($data);
         } catch (RequestError $e) {
             $msg = "[Alma] ERROR when creating payment for Cart {$cart->id}: {$e->getMessage()}";
-            AlmaLogger::instance()->error($msg);
+            Logger::instance()->error($msg);
             $this->genericErrorAndRedirect();
 
             return;
