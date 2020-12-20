@@ -47,6 +47,7 @@ class PaymentValidation
 {
     /** @var Context */
     private $context;
+    /** @var PaymentModule */
     private $module;
 
     public function __construct($context, $module)
@@ -176,14 +177,10 @@ class PaymentValidation
 
             $extraVars = array('transaction_id' => $payment->id);
 
-            if (version_compare(_PS_VERSION_, '1.6', '<')) {
-                $paymentMode = $this->module->displayName;
-            } else {
-                $paymentMode = sprintf(
-                    $this->module->l('Alma - %d monthly installments', 'almapaymentvalidation'),
-                    count($payment->payment_plan)
-                );
-            }
+			$paymentMode = sprintf(
+				$this->module->l('Alma - %d monthly installments', 'almapaymentvalidation'),
+				count($payment->payment_plan)
+			);
 
             // Place order
             $this->module->validateOrder(
