@@ -376,7 +376,7 @@ final class GetContentHookController extends AdminHookController
                         ),
                     ),
                 ),
-                'submit' => array('title' => $this->module->l('Save'), 'class' => 'btn btn-default pull-right'),
+                'submit' => array('title' => $this->module->l('Save'), 'class' => 'button btn btn-default pull-right'),
             ),
         );
 
@@ -389,7 +389,7 @@ final class GetContentHookController extends AdminHookController
                         'image' => $iconPath,
                     ),
                     'input' => [],
-                    'submit' => ['title' => $this->module->l('Save'), 'class' => 'btn btn-default pull-right'],
+                    'submit' => ['title' => $this->module->l('Save'), 'class' => 'button btn btn-default pull-right'],
                 ),
             );
 
@@ -470,8 +470,7 @@ final class GetContentHookController extends AdminHookController
                     'label' => $this->module->l('Sort order', 'getContent'),
                     'desc' => $this->module->l('Use relative values to set the order of your plans on the checkout page', 'getContent'),
                     'type' => 'number',
-                    'min' => 1,
-                    'max' => count($merchant->fee_plans),
+                    'min' => 0
                 );
             }
 
@@ -529,7 +528,7 @@ final class GetContentHookController extends AdminHookController
                         'required' => version_compare(_PS_VERSION_, '1.7', '<'),
                     ),
                 ),
-                'submit' => array('title' => $this->module->l('Save'), 'class' => 'btn btn-default pull-right'),
+                'submit' => array('title' => $this->module->l('Save'), 'class' => 'button btn btn-default pull-right'),
             ),
         );
 
@@ -581,7 +580,7 @@ final class GetContentHookController extends AdminHookController
                         ),
                     ),
                 ),
-                'submit' => array('title' => $this->module->l('Save'), 'class' => 'btn btn-default pull-right'),
+                'submit' => array('title' => $this->module->l('Save'), 'class' => 'button btn btn-default pull-right'),
             )
         );
 
@@ -628,7 +627,7 @@ final class GetContentHookController extends AdminHookController
                         'required' => true,
                     ),
                 ),
-                'submit' => array('title' => $this->module->l('Save'), 'class' => 'btn btn-default pull-right'),
+                'submit' => array('title' => $this->module->l('Save'), 'class' => 'button btn btn-default pull-right'),
             ),
         );
 
@@ -659,7 +658,7 @@ final class GetContentHookController extends AdminHookController
                         ),
                     ),
                 ),
-                'submit' => array('title' => $this->module->l('Save'), 'class' => 'btn btn-default pull-right'),
+                'submit' => array('title' => $this->module->l('Save'), 'class' => 'button btn btn-default pull-right'),
             ),
         );
 
@@ -702,7 +701,7 @@ final class GetContentHookController extends AdminHookController
                         'required' => false,
                     ),
                 ),
-                'submit' => array('title' => $this->module->l('Save'), 'class' => 'btn btn-default pull-right'),
+                'submit' => array('title' => $this->module->l('Save'), 'class' => 'button btn btn-default pull-right'),
             ),
         );
 
@@ -750,7 +749,7 @@ final class GetContentHookController extends AdminHookController
                         ),
                     ),
                 ),
-                'submit' => array('title' => $this->module->l('Save'), 'class' => 'btn btn-default pull-right'),
+                'submit' => array('title' => $this->module->l('Save'), 'class' => 'button btn btn-default pull-right'),
             ),
         );
 
@@ -778,7 +777,7 @@ final class GetContentHookController extends AdminHookController
                         ),
                     ),
                 ),
-                'submit' => array('title' => $this->module->l('Save'), 'class' => 'btn btn-default pull-right'),
+                'submit' => array('title' => $this->module->l('Save'), 'class' => 'button btn btn-default pull-right'),
             ),
         );
 
