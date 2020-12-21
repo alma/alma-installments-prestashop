@@ -148,24 +148,24 @@ final class GetContentHookController extends AdminHookController
 
                     $enablePlan = (bool) Tools::getValue("ALMA_P${n}X_ENABLED_ON");
 
-                    if ($enablePlan && !($min >= $merchant->minimum_purchase_amount &&
-                            $min <= min($max, $merchant->maximum_purchase_amount))) {
+                    if ($enablePlan && !($min >= $feePlan['min_purchase_amount'] &&
+                            $min <= min($max, $feePlan['max_purchase_amount']))) {
                         $this->context->smarty->assign([
                             'validation_error' => 'pnx_min_amount',
                             'n' => $n,
-                            'min' => almaPriceFromCents($merchant->minimum_purchase_amount),
-                            'max' => almaPriceFromCents(min($max, $merchant->maximum_purchase_amount)),
+                            'min' => almaPriceFromCents($feePlan['min_purchase_amount']),
+                            'max' => almaPriceFromCents(min($max, $feePlan['max_purchase_amount'])),
                         ]);
 
                         return $this->module->display($this->module->file, 'getContent.tpl');
                     }
 
-                    if ($enablePlan && !($max >= $min && $max <= $merchant->maximum_purchase_amount)) {
+                    if ($enablePlan && !($max >= $min && $max <= $feePlan['max_purchase_amount'])) {
                         $this->context->smarty->assign([
                             'validation_error' => 'pnx_max_amount',
                             'n' => $n,
                             'min' => almaPriceFromCents($min),
-                            'max' => almaPriceFromCents($merchant->maximum_purchase_amount),
+                            'max' => almaPriceFromCents($feePlan['max_purchase_amount']),
                         ]);
 
                         return $this->module->display($this->module->file, 'getContent.tpl');
@@ -343,18 +343,18 @@ final class GetContentHookController extends AdminHookController
         $apiConfigForm = [
             'form' => [
                 'legend' => [
-                    'title' => $this->module->l('API configuration', 'getContent'),
+                    'title' => $this->module->l('API configuration', 'GetContentHookController'),
                     'image' => $iconPath,
                 ],
                 'input' => [
                     [
                         'name' => 'ALMA_API_MODE',
-                        'label' => $this->module->l('API Mode', 'getContent'),
+                        'label' => $this->module->l('API Mode', 'GetContentHookController'),
                         'type' => 'select',
                         'required' => true,
                         // PrestaShop won't detect the string if the call to `l` is multiline
                         // phpcs:ignore
-                        'desc' => $this->module->l('Use Test mode until you are ready to take real orders with Alma. In Test mode, only admins can see Alma on cart/checkout pages.', 'getContent'),
+                        'desc' => $this->module->l('Use Test mode until you are ready to take real orders with Alma. In Test mode, only admins can see Alma on cart/checkout pages.', 'GetContentHookController'),
                         'options' => [
                             'id' => 'api_mode',
                             'name' => 'name',
@@ -367,26 +367,26 @@ final class GetContentHookController extends AdminHookController
 
                     [
                         'name' => 'ALMA_LIVE_API_KEY',
-                        'label' => $this->module->l('Live API key', 'getContent'),
+                        'label' => $this->module->l('Live API key', 'GetContentHookController'),
                         'type' => 'text',
                         'size' => 75,
                         'required' => false,
-                        'desc' => $this->module->l('Not required for Test mode', 'getContent') . ' – ' . sprintf(
+                        'desc' => $this->module->l('Not required for Test mode', 'GetContentHookController') . ' – ' . sprintf(
                             // phpcs:ignore
-                            $this->module->l('You can find your Live API key on %1$syour Alma dashboard%2$s', 'getContent'),
+                            $this->module->l('You can find your Live API key on %1$syour Alma dashboard%2$s', 'GetContentHookController'),
                             '<a href="https://dashboard.getalma.eu/api" target="_blank">',
                             '</a>'
                         ),
                     ],
                     [
                         'name' => 'ALMA_TEST_API_KEY',
-                        'label' => $this->module->l('Test API key', 'getContent'),
+                        'label' => $this->module->l('Test API key', 'GetContentHookController'),
                         'type' => 'text',
                         'size' => 75,
                         'required' => false,
-                        'desc' => $this->module->l('Not required for Live mode', 'getContent') . ' – ' . sprintf(
+                        'desc' => $this->module->l('Not required for Live mode', 'GetContentHookController') . ' – ' . sprintf(
                             // phpcs:ignore
-                            $this->module->l('You can find your Test API key on %1$syour sandbox dashboard%2$s', 'getContent'),
+                            $this->module->l('You can find your Test API key on %1$syour sandbox dashboard%2$s', 'GetContentHookController'),
                             '<a href="https://dashboard.sandbox.getalma.eu/api" target="_blank">',
                             '</a>'
                         ),
@@ -401,7 +401,7 @@ final class GetContentHookController extends AdminHookController
             $pnxConfigForm = [
                 'form' => [
                     'legend' => [
-                        'title' => $this->module->l('Installments plans', 'getContent'),
+                        'title' => $this->module->l('Installments plans', 'GetContentHookController'),
                         'image' => $iconPath,
                     ],
                     'input' => [],
@@ -414,8 +414,15 @@ final class GetContentHookController extends AdminHookController
 
             foreach ($merchant->fee_plans as $feePlan) {
                 $n = $feePlan['installments_count'];
+
+                // Disable and hide disallowed fee plans
+                if (!$feePlan['allowed']) {
+                    Settings::updateValue("ALMA_P${n}X_ENABLED", '0');
+                    continue;
+                }
+
                 $tabId = "p${n}x";
-                $tabTitle = sprintf($this->module->l('%d-installment payments', 'getContent'), $n);
+                $tabTitle = sprintf($this->module->l('%d-installment payments', 'GetContentHookController'), $n);
 
                 if (Settings::isInstallmentPlanEnabled($n)) {
                     $pnxTabs[$tabId] = '✅ ' . $tabTitle;
@@ -424,8 +431,8 @@ final class GetContentHookController extends AdminHookController
                     $pnxTabs[$tabId] = '❌ ' . $tabTitle;
                 }
 
-                $minAmount = (int) almaPriceFromCents($merchant->minimum_purchase_amount);
-                $maxAmount = (int) almaPriceFromCents($merchant->maximum_purchase_amount);
+                $minAmount = (int) almaPriceFromCents($feePlan['min_purchase_amount']);
+                $maxAmount = (int) almaPriceFromCents($feePlan['max_purchase_amount']);
 
                 $tpl = $this->context->smarty->createTemplate(
                     "{$this->module->local_path}views/templates/hook/pnx_fees.tpl"
@@ -445,7 +452,7 @@ final class GetContentHookController extends AdminHookController
                 $pnxConfigForm['form']['input'][] = [
                     'form_group_class' => "$tabId-content",
                     'name' => "ALMA_P${n}X_ENABLED",
-                    'label' => sprintf($this->module->l('Enable %d-installment payments', 'getContent'), $n),
+                    'label' => sprintf($this->module->l('Enable %d-installment payments', 'GetContentHookController'), $n),
                     'type' => 'checkbox',
                     'values' => [
                         'id' => 'id',
@@ -463,8 +470,8 @@ final class GetContentHookController extends AdminHookController
                 $pnxConfigForm['form']['input'][] = [
                     'form_group_class' => "$tabId-content",
                     'name' => "ALMA_P${n}X_MIN_AMOUNT",
-                    'label' => $this->module->l('Minimum amount (€)', 'getContent'),
-                    'desc' => $this->module->l('Minimum purchase amount to activate this plan', 'getContent'),
+                    'label' => $this->module->l('Minimum amount (€)', 'GetContentHookController'),
+                    'desc' => $this->module->l('Minimum purchase amount to activate this plan', 'GetContentHookController'),
                     'type' => 'number',
                     'min' => $minAmount,
                     'max' => $maxAmount,
@@ -473,8 +480,8 @@ final class GetContentHookController extends AdminHookController
                 $pnxConfigForm['form']['input'][] = [
                     'form_group_class' => "$tabId-content",
                     'name' => "ALMA_P${n}X_MAX_AMOUNT",
-                    'label' => $this->module->l('Maximum amount (€)', 'getContent'),
-                    'desc' => $this->module->l('Maximum purchase amount to activate this plan', 'getContent'),
+                    'label' => $this->module->l('Maximum amount (€)', 'GetContentHookController'),
+                    'desc' => $this->module->l('Maximum purchase amount to activate this plan', 'GetContentHookController'),
                     'type' => 'number',
                     'min' => $minAmount,
                     'max' => $maxAmount,
@@ -483,9 +490,9 @@ final class GetContentHookController extends AdminHookController
                 $pnxConfigForm['form']['input'][] = [
                     'form_group_class' => "$tabId-content",
                     'name' => "ALMA_P${n}X_SORT_ORDER",
-                    'label' => $this->module->l('Sort order', 'getContent'),
+                    'label' => $this->module->l('Sort order', 'GetContentHookController'),
                     // phpcs:ignore
-                    'desc' => $this->module->l('Use relative values to set the order of your plans on the checkout page', 'getContent'),
+                    'desc' => $this->module->l('Use relative values to set the order of your plans on the checkout page', 'GetContentHookController'),
                     'type' => 'number',
                     'min' => 0,
                 ];
@@ -514,7 +521,7 @@ final class GetContentHookController extends AdminHookController
         $paymentButtonForm = [
             'form' => [
                 'legend' => [
-                    'title' => $this->module->l('Payment method configuration', 'getContent'),
+                    'title' => $this->module->l('Payment method configuration', 'GetContentHookController'),
                     'image' => $iconPath,
                 ],
                 'input' => [
@@ -524,25 +531,25 @@ final class GetContentHookController extends AdminHookController
                         'type' => 'html',
                         // PrestaShop won't detect the string if the call to `l` is multiline
                         // phpcs:ignore
-                        'html_content' => $this->module->l('Use "%d" in the fields below where you want the installments count to appear. For instance, "Pay in %d monthly installments" will appear as "Pay in 3 monthly installments"', 'getContent'),
+                        'html_content' => $this->module->l('Use "%d" in the fields below where you want the installments count to appear. For instance, "Pay in %d monthly installments" will appear as "Pay in 3 monthly installments"', 'GetContentHookController'),
                     ],
 
                     [
                         'name' => 'ALMA_PAYMENT_BUTTON_TITLE',
-                        'label' => $this->module->l('Title', 'getContent'),
+                        'label' => $this->module->l('Title', 'GetContentHookController'),
                         // PrestaShop won't detect the string if the call to `l` is multiline
                         // phpcs:ignore
-                        'desc' => $this->module->l('This controls the payment method name which the user sees during checkout.', 'getContent'),
+                        'desc' => $this->module->l('This controls the payment method name which the user sees during checkout.', 'GetContentHookController'),
                         'type' => 'text',
                         'size' => 75,
                         'required' => true,
                     ],
                     [
                         'name' => 'ALMA_PAYMENT_BUTTON_DESC',
-                        'label' => $this->module->l('Description', 'getContent'),
+                        'label' => $this->module->l('Description', 'GetContentHookController'),
                         // PrestaShop won't detect the string if the call to `l` is multiline
                         // phpcs:ignore
-                        'desc' => $this->module->l('This controls the payment method description which the user sees during checkout.', 'getContent'),
+                        'desc' => $this->module->l('This controls the payment method description which the user sees during checkout.', 'GetContentHookController'),
                         'type' => 'text',
                         'size' => 75,
                         'required' => version_compare(_PS_VERSION_, '1.7', '<'),
@@ -556,19 +563,19 @@ final class GetContentHookController extends AdminHookController
             $paymentButtonForm['form']['input'][] = [
                 'name' => 'ALMA_SHOW_DISABLED_BUTTON',
                 'type' => 'radio',
-                'label' => $this->module->l('When Alma is not available...', 'getContent'),
+                'label' => $this->module->l('When Alma is not available...', 'GetContentHookController'),
                 'class' => 't',
                 'required' => true,
                 'values' => [
                     [
                         'id' => 'ON',
                         'value' => true,
-                        'label' => $this->module->l('Display payment button, disabled', 'getContent'),
+                        'label' => $this->module->l('Display payment button, disabled', 'GetContentHookController'),
                     ],
                     [
                         'id' => 'OFF',
                         'value' => false,
-                        'label' => $this->module->l('Hide payment button', 'getContent'),
+                        'label' => $this->module->l('Hide payment button', 'GetContentHookController'),
                     ],
                 ],
             ];
@@ -577,15 +584,15 @@ final class GetContentHookController extends AdminHookController
         $productEligibilityForm = [
             'form' => [
                 'legend' => [
-                    'title' => $this->module->l('Eligibility on product pages', 'getContent'),
+                    'title' => $this->module->l('Eligibility on product pages', 'GetContentHookController'),
                     'image' => $iconPath,
                 ],
                 'input' => [
                     [
                         'name' => 'ALMA_SHOW_PRODUCT_ELIGIBILITY',
-                        'label' => $this->module->l('Show product eligibility on details page', 'getContent'),
+                        'label' => $this->module->l('Show product eligibility on details page', 'GetContentHookController'),
                         // phpcs:ignore
-                        'desc' => $this->module->l('Displays a badge with eligible Alma plans with installments details', 'getContent'),
+                        'desc' => $this->module->l('Displays a badge with eligible Alma plans with installments details', 'GetContentHookController'),
                         'type' => 'checkbox',
                         'values' => [
                             'id' => 'id',
@@ -595,18 +602,18 @@ final class GetContentHookController extends AdminHookController
                                     'id' => 'ON',
                                     'val' => true,
                                     // PrestaShop won't detect the string if the call to `l` is multiline
-                                    'label' => $this->module->l('Display the product\'s eligibility', 'getContent'),
+                                    'label' => $this->module->l('Display the product\'s eligibility', 'GetContentHookController'),
                                 ],
                             ],
                         ],
                     ],
                     [
                         'name' => 'ALMA_PRODUCT_PRICE_SELECTOR',
-                        'label' => $this->module->l('Product price query selector', 'getContent'),
+                        'label' => $this->module->l('Product price query selector', 'GetContentHookController'),
                         'desc' => sprintf(
                             // PrestaShop won't detect the string if the call to `l` is multiline
                             // phpcs:ignore
-                            $this->module->l('%1$sAdvanced%2$s Query selector for our scripts to correctly find the displayed price of a product', 'getContent'),
+                            $this->module->l('%1$sAdvanced%2$s Query selector for our scripts to correctly find the displayed price of a product', 'GetContentHookController'),
                             '<b>',
                             '</b>'
                         ),
@@ -616,11 +623,11 @@ final class GetContentHookController extends AdminHookController
                     ],
                     [
                         'name' => 'ALMA_PRODUCT_ATTR_SELECTOR',
-                        'label' => $this->module->l('Product attribute dropdown query selector', 'getContent'),
+                        'label' => $this->module->l('Product attribute dropdown query selector', 'GetContentHookController'),
                         'desc' => sprintf(
                             // PrestaShop won't detect the string if the call to `l` is multiline
                             // phpcs:ignore
-                            $this->module->l('%1$sAdvanced%2$s Query selector for our scripts to correctly find the selected attributes of a product combination', 'getContent'),
+                            $this->module->l('%1$sAdvanced%2$s Query selector for our scripts to correctly find the selected attributes of a product combination', 'GetContentHookController'),
                             '<b>',
                             '</b>'
                         ),
@@ -630,11 +637,11 @@ final class GetContentHookController extends AdminHookController
                     ],
                     [
                         'name' => 'ALMA_PRODUCT_ATTR_RADIO_SELECTOR',
-                        'label' => $this->module->l('Product attribute radio button query selector', 'getContent'),
+                        'label' => $this->module->l('Product attribute radio button query selector', 'GetContentHookController'),
                         'desc' => sprintf(
                             // PrestaShop won't detect the string if the call to `l` is multiline
                             // phpcs:ignore
-                            $this->module->l('%1$sAdvanced%2$s Query selector for our scripts to correctly find the selected attributes of a product combination', 'getContent'),
+                            $this->module->l('%1$sAdvanced%2$s Query selector for our scripts to correctly find the selected attributes of a product combination', 'GetContentHookController'),
                             '<b>',
                             '</b>'
                         ),
@@ -644,11 +651,11 @@ final class GetContentHookController extends AdminHookController
                     ],
                     [
                         'name' => 'ALMA_PRODUCT_COLOR_PICK_SELECTOR',
-                        'label' => $this->module->l('Product color picker query selector', 'getContent'),
+                        'label' => $this->module->l('Product color picker query selector', 'GetContentHookController'),
                         'desc' => sprintf(
                             // PrestaShop won't detect the string if the call to `l` is multiline
                             // phpcs:ignore
-                            $this->module->l('%1$sAdvanced%2$s Query selector for our scripts to correctly find the chosen color option of a product', 'getContent'),
+                            $this->module->l('%1$sAdvanced%2$s Query selector for our scripts to correctly find the chosen color option of a product', 'GetContentHookController'),
                             '<b>',
                             '</b>'
                         ),
@@ -658,11 +665,11 @@ final class GetContentHookController extends AdminHookController
                     ],
                     [
                         'name' => 'ALMA_PRODUCT_QUANTITY_SELECTOR',
-                        'label' => $this->module->l('Product quantity query selector', 'getContent'),
+                        'label' => $this->module->l('Product quantity query selector', 'GetContentHookController'),
                         'desc' => sprintf(
                             // PrestaShop won't detect the string if the call to `l` is multiline
                             // phpcs:ignore
-                            $this->module->l('%1$sAdvanced%2$s Query selector for our scripts to correctly find the wanted quantity of a product', 'getContent'),
+                            $this->module->l('%1$sAdvanced%2$s Query selector for our scripts to correctly find the wanted quantity of a product', 'GetContentHookController'),
                             '<b>',
                             '</b>'
                         ),
@@ -678,13 +685,13 @@ final class GetContentHookController extends AdminHookController
         $cartEligibilityForm = [
             'form' => [
                 'legend' => [
-                    'title' => $this->module->l('Cart eligibility message', 'getContent'),
+                    'title' => $this->module->l('Cart eligibility message', 'GetContentHookController'),
                     'image' => $iconPath,
                 ],
                 'input' => [
                     [
                         'name' => 'ALMA_SHOW_ELIGIBILITY_MESSAGE',
-                        'label' => $this->module->l('Show eligibility message', 'getContent'),
+                        'label' => $this->module->l('Show eligibility message', 'GetContentHookController'),
                         'type' => 'checkbox',
                         'values' => [
                             'id' => 'id',
@@ -695,27 +702,27 @@ final class GetContentHookController extends AdminHookController
                                     'val' => true,
                                     // PrestaShop won't detect the string if the call to `l` is multiline
                                     // phpcs:ignore
-                                    'label' => $this->module->l('Display a message under the cart summary to indicate its eligibility for monthly installments.', 'getContent'),
+                                    'label' => $this->module->l('Display a message under the cart summary to indicate its eligibility for monthly installments.', 'GetContentHookController'),
                                 ],
                             ],
                         ],
                     ],
                     [
                         'name' => 'ALMA_IS_ELIGIBLE_MESSAGE',
-                        'label' => $this->module->l('Eligibility message', 'getContent'),
+                        'label' => $this->module->l('Eligibility message', 'GetContentHookController'),
                         // PrestaShop won't detect the string if the call to `l` is multiline
                         // phpcs:ignore
-                        'desc' => $this->module->l('Message displayed below the cart totals when it is eligible for monthly installments.', 'getContent'),
+                        'desc' => $this->module->l('Message displayed below the cart totals when it is eligible for monthly installments.', 'GetContentHookController'),
                         'type' => 'text',
                         'size' => 75,
                         'required' => true,
                     ],
                     [
                         'name' => 'ALMA_NOT_ELIGIBLE_MESSAGE',
-                        'label' => $this->module->l('Non-eligibility message', 'getContent'),
+                        'label' => $this->module->l('Non-eligibility message', 'GetContentHookController'),
                         // PrestaShop won't detect the string if the call to `l` is multiline
                         // phpcs:ignore
-                        'desc' => $this->module->l('Message displayed below the cart totals when it is not eligible for monthly installments.', 'getContent'),
+                        'desc' => $this->module->l('Message displayed below the cart totals when it is not eligible for monthly installments.', 'GetContentHookController'),
                         'type' => 'text',
                         'size' => 75,
                         'required' => true,
@@ -728,16 +735,16 @@ final class GetContentHookController extends AdminHookController
         $orderConfirmationForm = [
             'form' => [
                 'legend' => [
-                    'title' => $this->module->l('Order confirmation', 'getContent'),
+                    'title' => $this->module->l('Order confirmation', 'GetContentHookController'),
                     'image' => $iconPath,
                 ],
                 'input' => [
                     [
                         'name' => 'ALMA_DISPLAY_ORDER_CONFIRMATION',
-                        'label' => $this->module->l('Display order confirmation', 'getContent'),
+                        'label' => $this->module->l('Display order confirmation', 'GetContentHookController'),
                         // PrestaShop won't detect the string if the call to `l` is multiline
                         // phpcs:ignore
-                        'desc' => $this->module->l('Activate this setting when you do not have your own order confirmation page', 'getContent'),
+                        'desc' => $this->module->l('Activate this setting when you do not have your own order confirmation page', 'GetContentHookController'),
                         'type' => 'checkbox',
                         'values' => [
                             'id' => 'id',
@@ -748,7 +755,7 @@ final class GetContentHookController extends AdminHookController
                                     'val' => true,
                                     // PrestaShop won't detect the string if the call to `l` is multiline
                                     // phpcs:ignore
-                                    'label' => $this->module->l('Confirm successful order to customers when they come back from the Alma payment page', 'getContent'),
+                                    'label' => $this->module->l('Confirm successful order to customers when they come back from the Alma payment page', 'GetContentHookController'),
                                 ],
                             ],
                         ],
@@ -768,13 +775,13 @@ final class GetContentHookController extends AdminHookController
         $tpl->assign([
             'excludedCategories' => count($excludedCategoryNames) > 0
                 ? implode(', ', $excludedCategoryNames)
-                : $this->module->l('No excluded categories', 'getContent'),
+                : $this->module->l('No excluded categories', 'GetContentHookController'),
             'excludedLink' => $this->context->link->getAdminLink('AdminAlmaCategories'),
         ]);
         $excludedForm = [
             'form' => [
                 'legend' => [
-                    'title' => $this->module->l('Excluded categories', 'getContent'),
+                    'title' => $this->module->l('Excluded categories', 'GetContentHookController'),
                     'image' => $iconPath,
                 ],
                 'input' => [
@@ -787,10 +794,10 @@ final class GetContentHookController extends AdminHookController
                     ],
                     [
                         'name' => 'ALMA_NOT_ELIGIBLE_CATEGORIES',
-                        'label' => $this->module->l('Excluded categories non-eligibility message ', 'getContent'),
+                        'label' => $this->module->l('Excluded categories non-eligibility message ', 'GetContentHookController'),
                         // PrestaShop won't detect the string if the call to `l` is multiline
                         // phpcs:ignore
-                        'desc' => $this->module->l('Message displayed on an excluded product page or on the cart page if it contains an excluded product.', 'getContent'),
+                        'desc' => $this->module->l('Message displayed on an excluded product page or on the cart page if it contains an excluded product.', 'GetContentHookController'),
                         'type' => 'text',
                         'size' => 75,
                         'required' => false,
@@ -803,7 +810,7 @@ final class GetContentHookController extends AdminHookController
         $refundStateForm = [
             'form' => [
                 'legend' => [
-                    'title' => $this->module->l('Refund with state change', 'getContent'),
+                    'title' => $this->module->l('Refund with state change', 'GetContentHookController'),
                     'image' => $iconPath,
                 ],
                 'input' => [
@@ -813,11 +820,11 @@ final class GetContentHookController extends AdminHookController
                         'type' => 'html',
                         // PrestaShop won't detect the string if the call to `l` is multiline
                         // phpcs:ignore
-                        'html_content' => $this->module->l('If you usually refund orders by changing their state, activate this option and choose the state you want to use to trigger refunds on Alma payments', 'getContent'),
+                        'html_content' => $this->module->l('If you usually refund orders by changing their state, activate this option and choose the state you want to use to trigger refunds on Alma payments', 'GetContentHookController'),
                     ],
                     [
                         'name' => 'ALMA_STATE_REFUND_ENABLED',
-                        'label' => $this->module->l('Activate refund by change state', 'getContent'),
+                        'label' => $this->module->l('Activate refund by change state', 'GetContentHookController'),
                         'type' => 'checkbox',
                         'values' => [
                             'id' => 'id',
@@ -833,9 +840,9 @@ final class GetContentHookController extends AdminHookController
                     ],
                     [
                         'name' => 'ALMA_STATE_REFUND',
-                        'label' => $this->module->l('Refund state order', 'getContent'),
+                        'label' => $this->module->l('Refund state order', 'GetContentHookController'),
                         // PrestaShop won't detect the string if the call to `l` is multiline
-                        'desc' => $this->module->l('Your order state to sync refund with Alma', 'getContent'),
+                        'desc' => $this->module->l('Your order state to sync refund with Alma', 'GetContentHookController'),
                         'type' => 'select',
                         'required' => true,
                         'options' => [
@@ -852,13 +859,13 @@ final class GetContentHookController extends AdminHookController
         $debugForm = [
             'form' => [
                 'legend' => [
-                    'title' => $this->module->l('Debug options', 'getContent'),
+                    'title' => $this->module->l('Debug options', 'GetContentHookController'),
                     'image' => $iconPath,
                 ],
                 'input' => [
                     [
                         'name' => 'ALMA_ACTIVATE_LOGGING',
-                        'label' => $this->module->l('Activate logging', 'getContent'),
+                        'label' => $this->module->l('Activate logging', 'GetContentHookController'),
                         'type' => 'checkbox',
                         'values' => [
                             'id' => 'id',

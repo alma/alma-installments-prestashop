@@ -212,9 +212,19 @@ class Settings
         return (bool) (int) self::get('ALMA_DISPLAY_ORDER_CONFIRMATION', $default);
     }
 
-    public static function isInstallmentPlanEnabled($n)
+    public static function isInstallmentPlanEnabled($n, $merchant = null)
     {
-        return (bool) (int) self::get("ALMA_P${n}X_ENABLED", $n == 3);
+        $default = ($n === 3);
+
+        if ($merchant) {
+            $plan = self::getMerchantFeePlan($merchant, $n);
+
+            if ($plan && !$plan['allowed']) {
+                return false;
+            }
+        }
+
+        return (bool) (int) self::get("ALMA_P${n}X_ENABLED", $default);
     }
 
     public static function installmentPlansMaxN()
@@ -222,16 +232,43 @@ class Settings
         return (int) self::get('ALMA_PNX_MAX_N', 3);
     }
 
+    private static function getMerchantFeePlan($merchant, $n)
+    {
+        foreach ($merchant->fee_plans as $plan) {
+            if ($plan['installments_count'] === $n) {
+                return $plan;
+            }
+        }
+
+        return null;
+    }
+
     public static function installmentPlanMinAmount($n, $merchant = null)
     {
-        $default = $merchant ? $merchant->minimum_purchase_amount : 10000;
+        $default = 10000;
+
+        if ($merchant) {
+            $plan = self::getMerchantFeePlan($merchant, $n);
+
+            if ($plan) {
+                $default = $plan['min_purchase_amount'];
+            }
+        }
 
         return (int) self::get("ALMA_P${n}X_MIN_AMOUNT", $default);
     }
 
     public static function installmentPlanMaxAmount($n, $merchant = null)
     {
-        $default = $merchant ? $merchant->maximum_purchase_amount : 100000;
+        $default = 100000;
+
+        if ($merchant) {
+            $plan = self::getMerchantFeePlan($merchant, $n);
+
+            if ($plan) {
+                $default = $plan['max_purchase_amount'];
+            }
+        }
 
         return (int) self::get("ALMA_P${n}X_MAX_AMOUNT", $default);
     }
