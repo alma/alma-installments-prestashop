@@ -1,5 +1,7 @@
 (function ($) {
     $(function () {
+        var selectors = window.__alma_widgetQuerySelectors;
+
         function initWidget(merchantId, apiMode, containerId, purchaseAmount, plans) {
             var widgets = Alma.Widgets.initialize(merchantId, apiMode);
 
@@ -23,11 +25,11 @@
 
                 var purchaseAmount = settings.amount;
                 if (settings.refreshPrice) {
-                    var $price = $(settings.priceQuerySelector);
+                    var $price = $(selectors.price);
                     if ($price.length === 0) {
                         throw new Error(
                             'Could not find price element with query selector "' +
-                            settings.priceQuerySelector +
+                            selectors.price +
                             '"'
                         )
                     }
@@ -38,7 +40,11 @@
                         .replace(/[^\d.]/g, '');
 
                     purchaseAmount = Alma.Utils.priceToCents(purchaseAmount);
-                    purchaseAmount *= Number($("#buy_block #quantity_wanted").val());
+
+                    var $quantityWanted = $(selectors.quantity);
+                    if ($quantityWanted.length) {
+                        purchaseAmount *= Number($quantityWanted.val());
+                    }
                 }
 
                 initWidget(
@@ -60,10 +66,10 @@
                 setTimeout(refreshWidgets, 1);
             }
 
-            $body.on("change", "#buy_block .attribute_select", delayedRefresh);
-            $body.on("change", "#buy_block #quantity_wanted", delayedRefresh);
-            $body.on("click", "#buy_block .color_pick", delayedRefresh);
-            $body.on("click", "#buy_block .attribute_radio", delayedRefresh);
+            $body.on("change", selectors.attrSelect, delayedRefresh);
+            $body.on("click", selectors.attrRadio, delayedRefresh);
+            $body.on("click", selectors.colorPick, delayedRefresh);
+            $body.on("change", selectors.quantity, delayedRefresh);
         }
 
         refreshWidgets();

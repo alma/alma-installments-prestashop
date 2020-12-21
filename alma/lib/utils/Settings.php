@@ -379,6 +379,30 @@ class Settings
 		return self::get('ALMA_PRODUCT_PRICE_SELECTOR', $default);
     }
 
+    public static function getProductAttrQuerySelector()
+    {
+        $default = '#buy_block .attribute_select';
+        return self::get('ALMA_PRODUCT_ATTR_SELECTOR', $default);
+    }
+
+    public static function getProductAttrRadioQuerySelector()
+    {
+        $default = '#buy_block .attribute_radio';
+        return self::get('ALMA_PRODUCT_ATTR_RADIO_SELECTOR', $default);
+    }
+
+    public static function getProductColorPickQuerySelector()
+    {
+        $default = '#buy_block .color_pick';
+        return self::get('ALMA_PRODUCT_COLOR_PICK_SELECTOR', $default);
+    }
+
+    public static function getProductQuantityQuerySelector()
+    {
+        $default = '#buy_block #quantity_wanted';
+        return self::get('ALMA_PRODUCT_QUANTITY_SELECTOR', $default);
+    }
+
     public static function getMerchantId()
     {
         return self::get('ALMA_MERCHANT_ID');

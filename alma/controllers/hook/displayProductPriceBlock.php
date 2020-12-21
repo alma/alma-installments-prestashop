@@ -106,7 +106,6 @@ final class DisplayProductPriceBlockHookController extends FrontendHookControlle
 					'amount' => $price,
 					'plans' => Settings::activePlans(),
 					'refreshPrice' => $refreshPrice,
-					'priceQuerySelector' => Settings::getProductPriceQuerySelector(),
 					'decimalSeparator' => LocaleHelper::decimalSeparator(),
 					'thousandSeparator' => LocaleHelper::thousandSeparator(),
 				]

@@ -81,6 +81,18 @@ final class FrontHeaderHookController extends FrontendHookController
 
 		$controller = $this->context->controller;
 
+		$smarty = $this->context->smarty;
+		$selectorsTpl = $smarty->createTemplate("{$this->module->local_path}views/templates/hook/widgetQuerySelectors.tpl");
+		$selectorsTpl->assign([
+            'priceSelector' => Settings::getProductPriceQuerySelector(),
+            'attrSelectSelector' => Settings::getProductAttrQuerySelector(),
+            'attrRadioSelector' => Settings::getProductAttrRadioQuerySelector(),
+            'colorPickSelector' => Settings::getProductColorPickQuerySelector(),
+            'quantitySelector' => Settings::getProductQuantityQuerySelector(),
+        ]);
+
+		$content = $selectorsTpl->fetch();
+
 		if (version_compare(_PS_VERSION_, '1.7', '<')) {
 			$controller->addCSS($widgetsCssUrl);
 			$controller->addCSS($this->module->_path . $productCssPath);
@@ -102,13 +114,13 @@ final class FrontHeaderHookController extends FrontendHookController
 				// For versions 1.7.0.0 and 1.7.0.1, it was impossible to register a remote script via FrontController
 				// with the new registerJavascript method, and the deprecated addJS method had been changed to be just a
 				// proxy to registerJavascript...
-				return <<<TAG
+				$content .= <<<TAG
 					<link rel="stylesheet" href="$widgetsCssUrl">
 					<script src="$widgetsJsUrl"></script>
 TAG;
 			}
 		}
 
-		return null;
+		return $content;
     }
 }

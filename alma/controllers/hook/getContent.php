@@ -29,12 +29,10 @@ if (!defined('_PS_VERSION_')) {
 }
 
 use Alma\API\RequestError;
-
 use Alma\PrestaShop\API\ClientHelper;
 use Alma\PrestaShop\Hooks\AdminHookController;
 use Alma\PrestaShop\Utils\Logger;
 use Alma\PrestaShop\Utils\Settings;
-
 use Configuration;
 use HelperForm;
 use Media;
@@ -103,8 +101,20 @@ final class GetContentHookController extends AdminHookController
             $showProductEligibility = (bool) Tools::getValue('ALMA_SHOW_PRODUCT_ELIGIBILITY_ON');
             Settings::updateValue('ALMA_SHOW_PRODUCT_ELIGIBILITY', $showProductEligibility);
 
-			$productPriceQuerySelector = Tools::getValue('ALMA_PRODUCT_PRICE_SELECTOR');
-			Settings::updateValue('ALMA_PRODUCT_PRICE_SELECTOR', $productPriceQuerySelector);
+            $productPriceQuerySelector = Tools::getValue('ALMA_PRODUCT_PRICE_SELECTOR');
+            Settings::updateValue('ALMA_PRODUCT_PRICE_SELECTOR', $productPriceQuerySelector);
+
+            $productAttrQuerySelector = Tools::getValue('ALMA_PRODUCT_ATTR_SELECTOR');
+            Settings::updateValue('ALMA_PRODUCT_ATTR_SELECTOR', $productAttrQuerySelector);
+
+            $productAttrRadioQuerySelector = Tools::getValue('ALMA_PRODUCT_ATTR_RADIO_SELECTOR');
+            Settings::updateValue('ALMA_PRODUCT_ATTR_RADIO_SELECTOR', $productAttrRadioQuerySelector);
+
+            $productColorPickQuerySelector = Tools::getValue('ALMA_PRODUCT_COLOR_PICK_SELECTOR');
+            Settings::updateValue('ALMA_PRODUCT_COLOR_PICK_SELECTOR', $productColorPickQuerySelector);
+
+            $productQuantityQuerySelector = Tools::getValue('ALMA_PRODUCT_QUANTITY_SELECTOR');
+            Settings::updateValue('ALMA_PRODUCT_QUANTITY_SELECTOR', $productQuantityQuerySelector);
 
             Settings::updateValue('ALMA_PAYMENT_BUTTON_TITLE', $title);
             Settings::updateValue('ALMA_PAYMENT_BUTTON_DESC', $description);
@@ -593,7 +603,56 @@ final class GetContentHookController extends AdminHookController
 						'type' => 'text',
 						'size' => 75,
 						'required' => true,
-					]
+					],
+                    [
+						'name' => 'ALMA_PRODUCT_ATTR_SELECTOR',
+						'label' => $this->module->l('Product attribute dropdown query selector', 'getContent'),
+						'desc' => sprintf(
+							// PrestaShop won't detect the string if the call to `l` is multiline
+							$this->module->l('%1$sAdvanced%2$s Query selector for our scripts to correctly find the selected attributes of a product combination', 'getContent'),
+							'<b>', '</b>'
+						),
+						'type' => 'text',
+						'size' => 75,
+						'required' => true,
+					],
+                    [
+						'name' => 'ALMA_PRODUCT_ATTR_RADIO_SELECTOR',
+						'label' => $this->module->l('Product attribute radio button query selector', 'getContent'),
+						'desc' => sprintf(
+							// PrestaShop won't detect the string if the call to `l` is multiline
+							$this->module->l('%1$sAdvanced%2$s Query selector for our scripts to correctly find the selected attributes of a product combination', 'getContent'),
+							'<b>', '</b>'
+						),
+						'type' => 'text',
+						'size' => 75,
+						'required' => true,
+					],
+                    [
+						'name' => 'ALMA_PRODUCT_COLOR_PICK_SELECTOR',
+						'label' => $this->module->l('Product color picker query selector', 'getContent'),
+						'desc' => sprintf(
+							// PrestaShop won't detect the string if the call to `l` is multiline
+							$this->module->l('%1$sAdvanced%2$s Query selector for our scripts to correctly find the chosen color option of a product', 'getContent'),
+							'<b>', '</b>'
+						),
+						'type' => 'text',
+						'size' => 75,
+						'required' => true,
+					],
+                    [
+						'name' => 'ALMA_PRODUCT_QUANTITY_SELECTOR',
+						'label' => $this->module->l('Product quantity query selector', 'getContent'),
+						'desc' => sprintf(
+							// PrestaShop won't detect the string if the call to `l` is multiline
+							$this->module->l('%1$sAdvanced%2$s Query selector for our scripts to correctly find the wanted quantity of a product', 'getContent'),
+							'<b>', '</b>'
+						),
+						'type' => 'text',
+						'size' => 75,
+						'required' => true,
+					],
+
 				],
                 'submit' => ['title' => $this->module->l('Save'), 'class' => 'button btn btn-default pull-right'],
 			]
@@ -849,6 +908,10 @@ final class GetContentHookController extends AdminHookController
             'ALMA_NOT_ELIGIBLE_CATEGORIES' => Settings::getNonEligibleCategoriesMessage(),
             'ALMA_SHOW_PRODUCT_ELIGIBILITY_ON' => Settings::showProductEligibility(),
             'ALMA_PRODUCT_PRICE_SELECTOR' => Settings::getProductPriceQuerySelector(),
+            'ALMA_PRODUCT_ATTR_SELECTOR' => Settings::getProductAttrQuerySelector(),
+            'ALMA_PRODUCT_ATTR_RADIO_SELECTOR' => Settings::getProductAttrRadioQuerySelector(),
+            'ALMA_PRODUCT_COLOR_PICK_SELECTOR' => Settings::getProductColorPickQuerySelector(),
+            'ALMA_PRODUCT_QUANTITY_SELECTOR' => Settings::getProductQuantityQuerySelector(),
             '_api_only' => true,
         );
 
