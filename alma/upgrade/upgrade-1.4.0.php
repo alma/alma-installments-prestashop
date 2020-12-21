@@ -32,7 +32,7 @@ use Alma\API\RequestError;
 use Alma\PrestaShop\Utils\Settings;
 use Alma\PrestaShop\API\ClientHelper;
 
-function upgrade_module_NEXT($module)
+function upgrade_module_1_4_0($module)
 {
 	// If module has already been configured, get the merchant's API ID from Alma's API
 	if (Settings::isFullyConfigured()) {
