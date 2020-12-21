@@ -103,7 +103,6 @@ class Settings
             'ALMA_DISPLAY_ORDER_CONFIRMATION',
             'ALMA_EXCLUDED_CATEGORIES',
             'ALMA_NOT_ELIGIBLE_CATEGORIES',
-            'ALMA_DISPLAY_ORDER_CONFIRMATION',
             'ALMA_SHOW_PRODUCT_ELIGIBILITY',
         ];
 
@@ -206,7 +205,11 @@ class Settings
 
     public static function displayOrderConfirmation()
     {
-        return (bool) (int) self::get('ALMA_DISPLAY_ORDER_CONFIRMATION', false);
+        // This option is mainly useful for pre-1.7 versions, where the default theme doesn't include a confirmation
+        // page for third-party payment modules.
+        $default = version_compare(_PS_VERSION_, '1.7', '<');
+
+        return (bool) (int) self::get('ALMA_DISPLAY_ORDER_CONFIRMATION', $default);
     }
 
     public static function isInstallmentPlanEnabled($n)
