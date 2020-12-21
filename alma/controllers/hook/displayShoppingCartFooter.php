@@ -99,7 +99,7 @@ final class DisplayShoppingCartFooterHookController extends FrontendHookControll
         // Check if some products in cart are in the excludes listing
         $diff = CartData::getCartExclusion($params['cart']);
         if (!empty($diff)) {
-            $eligibilityMsg = Settings::getNonEligibilityCategoriesMessage();
+            $eligibilityMsg = Settings::getNonEligibleCategoriesMessage();
         }
 
         if (is_callable('Media::getMediaPath')) {
