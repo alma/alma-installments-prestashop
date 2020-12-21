@@ -38,6 +38,7 @@ if (!defined('ALMA_MODE_LIVE')) {
 
 use Category;
 use Configuration;
+use Product;
 use Shop;
 
 use Alma\PrestaShop\Model\CategoryAdapter;
@@ -48,7 +49,7 @@ class Settings
 {
     public static function l($str)
     {
-        return Translate::getModuleTranslation('alma', $str, 'almasettings');
+        return Translate::getModuleTranslation('alma', $str, 'settings');
     }
 
     public static function get($configKey, $default = null)
@@ -157,7 +158,7 @@ class Settings
     public static function getEligibilityMessage()
     {
         // Allow PrestaShop's translation feature to detect those strings
-        // $this->l('Your cart is eligible for monthly installments.', 'almasettings');
+        // $this->l('Your cart is eligible for monthly installments.', 'settings');
         $default = self::l('Your cart is eligible for monthly installments.');
 
         return self::get('ALMA_IS_ELIGIBLE_MESSAGE', $default);
@@ -166,21 +167,20 @@ class Settings
     public static function getNonEligibilityMessage()
     {
         // Allow PrestaShop's translation feature to detect those strings
-        // $this->l('Your cart is not eligible for monthly installments.', 'almasettings');
+        // $this->l('Your cart is not eligible for monthly installments.', 'settings');
         $default = self::l('Your cart is not eligible for monthly installments.');
 
         return self::get('ALMA_NOT_ELIGIBLE_MESSAGE', $default);
     }
-    public static function getNonEligibilityCategoriesMessage()
+
+    public static function getNonEligibleCategoriesMessage()
     {
         // Allow PrestaShop's translation feature to detect those strings
-        // $this->l('Your cart is not eligible for monthly installments.', 'almasettings');
+        // $this->l('Your cart is not eligible for monthly installments.', 'settings');
         $default = self::l('Your cart is not eligible for monthly installments.');
 
         return self::get('ALMA_NOT_ELIGIBLE_CATEGORIES', $default);
     }
-
-
 
     public static function showEligibilityMessage()
     {
@@ -190,7 +190,7 @@ class Settings
     public static function getPaymentButtonTitle()
     {
         // Allow PrestaShop's translation feature to detect those strings
-        // $this->l('Pay in %d installments', 'almasettings');
+        // $this->l('Pay in %d installments', 'settings');
         $default = self::l('Pay in %d installments');
 
         return self::get('ALMA_PAYMENT_BUTTON_TITLE', $default);
@@ -199,7 +199,7 @@ class Settings
     public static function getPaymentButtonDescription()
     {
         // Allow PrestaShop's translation feature to detect those strings
-        // $this->l('Pay in %d monthly installments with your credit card.', 'almasettings');
+        // $this->l('Pay in %d monthly installments with your credit card.', 'settings');
         $default = self::l('Pay in %d monthly installments with your credit card.');
 
         return self::get('ALMA_PAYMENT_BUTTON_DESC', $default);
@@ -239,15 +239,30 @@ class Settings
 		return (int) self::get("ALMA_P${n}X_SORT_ORDER", (int) $n);
 	}
 
+	public static function activePlans()
+	{
+		$plans = [];
+
+		for ($n = 2; $n <= self::installmentPlansMaxN(); $n++) {
+			if (self::isInstallmentPlanEnabled($n)) {
+				$plans[] = [
+					"installmentsCount" => $n,
+					"minAmount" => self::installmentPlanMinAmount($n),
+					"maxAmount" => self::installmentPlanMaxAmount($n),
+				];
+			}
+		}
+
+		return $plans;
+	}
+
     public static function activeInstallmentsCounts()
     {
-        $installmentsCounts = array();
+        $installmentsCounts = [];
 
-        for ($n = 2; $n <= self::installmentPlansMaxN(); $n++) {
-            if (self::isInstallmentPlanEnabled($n)) {
-                $installmentsCounts[] = $n;
-            }
-        }
+        foreach (self::activePlans() as $plan) {
+        	$installmentsCounts[] = $plan["installmentsCount"];
+		}
 
         return $installmentsCounts;
     }
@@ -275,8 +290,9 @@ class Settings
     {
         $categories = self::getExcludedCategories();
         if (!$categories) {
-			return array();
+			return [];
         }
+
         $categories = Category::getCategories(false, false, false, sprintf('AND c.`id_category` IN (%s)', implode(',', $categories)));
         $categoriesName = [];
         if (count($categories) > 0) {
@@ -284,6 +300,7 @@ class Settings
                 $categoriesName[] = $category['name'];
             }
         }
+
         return $categoriesName;
     }
 
@@ -334,9 +351,32 @@ class Settings
         }
     }
 
+
+	/**
+	 * @param $productId int The product ID to check for exclusion
+	 *
+	 * @return bool Whether this product belongs to an excluded category
+	 */
+	public static function isProductExcluded($productId)
+	{
+		$excludedCategories = [];
+
+		foreach (self::getExcludedCategories() as $categoryId) {
+			$excludedCategories[] = ['id_category' => (int) $categoryId];
+		}
+
+		return Product::idIsOnCategoryId($productId, $excludedCategories);
+    }
+
     public static function showProductEligibility()
     {
         return (bool) self::get('ALMA_SHOW_PRODUCT_ELIGIBILITY', 1);
+    }
+
+	public static function getProductPriceQuerySelector()
+	{
+		$default = '[itemprop=price],#our_price_display';
+		return self::get('ALMA_PRODUCT_PRICE_SELECTOR', $default);
     }
 
     public static function getMerchantId()
