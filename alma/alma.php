@@ -253,7 +253,7 @@ class Alma extends PaymentModule
     {
         $hookName = preg_replace('/[^a-zA-Z0-9]/', '', $hookName);
 
-        require_once dirname(__FILE__) . "/controllers/hook/${hookName}.php";
+        require_once dirname(__FILE__) . "/controllers/hook/${hookName}HookController.php";
         $ControllerName = "Alma\PrestaShop\Controllers\Hook\\${hookName}HookController";
         $controller = new $ControllerName($this);
 
