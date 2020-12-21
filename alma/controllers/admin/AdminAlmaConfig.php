@@ -34,6 +34,6 @@ class AdminAlmaConfigController extends ModuleAdminController
 				['configure' => 'alma', 'module_name' => 'alma', 'tab_module' => 'payments_gateways']
 		) . '&configure=alma&module_name=alma&tab_module=payments_gateways';
 
-		header("Location:" . $location);
+		Tools::redirectAdmin($location);
 	}
 }
