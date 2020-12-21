@@ -57,7 +57,10 @@ class EligibilityHelper
         }
 
         foreach(Settings::activeInstallmentsCounts() as $n){
-            if ($purchaseAmount < Settings::installmentPlanMinAmount($n) || $purchaseAmount > Settings::installmentPlanMaxAmount($n)) {
+            if (
+                $purchaseAmount < Settings::installmentPlanMinAmount($n)
+                || $purchaseAmount > Settings::installmentPlanMaxAmount($n)
+            ) {
                 $eligibility = new Eligibility(
                     array(
                         'installments_count' => $n,
@@ -101,6 +104,10 @@ class EligibilityHelper
 
     public static function cmp_installments_count($a, $b)
     {
-        return $a->installmentsCount > $b->installmentsCount ? 1 : ($a->installmentsCount == $b->installmentsCount ? 0 : -1);
+        if ($a->installmentsCount > $b->installmentsCount) {
+            return 1;
+        } else {
+            return ($a->installmentsCount == $b->installmentsCount ? 0 : -1);
+        }
     }
 }

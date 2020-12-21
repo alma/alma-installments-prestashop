@@ -24,11 +24,11 @@ IN THE SOFTWARE.
 TXT;
 
 $finder = PhpCsFixer\Finder::create()->in([
-	__DIR__ . '/lib',
-    __DIR__.'/views',
-    __DIR__.'/controllers',
-    //__DIR__.'/tests',
-    __DIR__.'/upgrade',
+    __DIR__ . 'alma/lib',
+    __DIR__ . 'alma/views',
+    __DIR__ . 'alma/controllers',
+    //__DIR__.'alma/tests',
+    __DIR__ . 'alma/upgrade',
 ]);
 
 return PhpCsFixer\Config::create()
@@ -70,4 +70,4 @@ return PhpCsFixer\Config::create()
         //'non_printable_character' => true,
     ])
     ->setFinder($finder)
-    ->setCacheFile(__DIR__.'/.php_cs.cache');
+    ->setCacheFile(__DIR__ . '/tmp/.php_cs.cache');

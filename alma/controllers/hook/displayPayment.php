@@ -53,7 +53,12 @@ final class DisplayPaymentHookController extends FrontendHookController
                 foreach(Settings::activeInstallmentsCounts() as $n){
                     $paymentOption = [
                         'text' => sprintf(Settings::getPaymentButtonTitle(), $n),
-                        'link' => $this->context->link->getModuleLink($this->module->name, 'payment', array('n' => $n), true),
+                        'link' => $this->context->link->getModuleLink(
+                            $this->module->name,
+                            'payment',
+                            array('n' => $n),
+                            true
+                        ),
                         'plans' => null,
                         'disabled' => true,
                         'error' => true,

@@ -92,13 +92,17 @@ class AdminAlmaCategoriesController extends ModuleAdminController
     {
         parent::init();
 
-        $this->_select = 'a.`id_category`, b.`name`, b.`description`, cpl.`name` as `parent`, a.`id_category` as `excluded`';
+        $this->_select = (
+            'a.`id_category`, b.`name`, b.`description`, cpl.`name` as `parent`, a.`id_category` as `excluded`'
+        );
         $this->_use_found_rows = false;
 
         if (Shop::getContext() == Shop::CONTEXT_SHOP) {
-            $this->_join .= ' LEFT JOIN `' . _DB_PREFIX_ . 'category_shop` sa ON (a.`id_category` = sa.`id_category` AND sa.id_shop = ' . (int) $this->context->shop->id . ') ';
+            $this->_join .= ' LEFT JOIN `' . _DB_PREFIX_ . 'category_shop` sa ON (a.`id_category` = sa.`id_category`';
+            $this->_join .= ' AND sa.id_shop = ' . (int) $this->context->shop->id . ') ';
         } else {
-            $this->_join .= ' LEFT JOIN `' . _DB_PREFIX_ . 'category_shop` sa ON (a.`id_category` = sa.`id_category` AND sa.id_shop = a.id_shop_default) ';
+            $this->_join .= ' LEFT JOIN `' . _DB_PREFIX_ . 'category_shop` sa ON (a.`id_category` = sa.`id_category` ';
+            $this->_join .= ' AND sa.id_shop = a.id_shop_default) ';
         }
         $this->_join .= ' LEFT JOIN `' . _DB_PREFIX_ . 'category` cp ON (a.`id_parent` = cp.`id_category`)
             LEFT JOIN `' . _DB_PREFIX_ . 'category_lang` cpl ON (cp.`id_category` = cpl.`id_category`) ';
@@ -186,14 +190,21 @@ class AdminAlmaCategoriesController extends ModuleAdminController
 
         foreach ($filters as $key => $value) {
             /* Extracting filters from $_POST on key filter_ */
-            if ($value != null && !strncmp($key, $prefix . $this->list_id . 'Filter_', 7 + Tools::strlen($prefix . $this->list_id))) {
+            if (
+                $value != null
+                && !strncmp($key, $prefix . $this->list_id . 'Filter_', 7 + Tools::strlen($prefix . $this->list_id))
+            ) {
                 $key = Tools::substr($key, 7 + Tools::strlen($prefix . $this->list_id));
                 /* Table alias could be specified using a ! eg. alias!field */
                 $tmp_tab = explode('!', $key);
                 $filter = count($tmp_tab) > 1 ? $tmp_tab[1] : $tmp_tab[0];
 
                 if ($field = $this->filterToField($key, $filter)) {
-                    $type = (array_key_exists('filter_type', $field) ? $field['filter_type'] : (array_key_exists('type', $field) ? $field['type'] : false));
+                    if (array_key_exists('filter_type', $field)) {
+                        $type = ($field['filter_type']);
+                    } else {
+                        $type = ((array_key_exists('type', $field) ? $field['type'] : false));
+                    }
                     if (($type == 'date' || $type == 'datetime') && is_string($value)) {
                         $value = json_decode($value, true);
                     }
@@ -212,15 +223,25 @@ class AdminAlmaCategoriesController extends ModuleAdminController
                     if (is_array($value)) {
                         if (isset($value[0]) && !empty($value[0])) {
                             if (!Validate::isDate($value[0])) {
-                                $this->errors[] = $this->trans('The \'From\' date format is invalid (YYYY-MM-DD)', array(), 'Admin.Notifications.Error');
+                                $this->errors[] = $this->trans(
+                                    'The \'From\' date format is invalid (YYYY-MM-DD)',
+                                    array(),
+                                    'Admin.Notifications.Error'
+                                );
                             } else {
-                                $sql_filter .= ' AND ' . pSQL($key) . ' >= \'' . pSQL(Tools::dateFrom($value[0])) . '\'';
+                                $sql_filter .= (
+                                    ' AND ' . pSQL($key) . ' >= \'' . pSQL(Tools::dateFrom($value[0])) . '\''
+                                );
                             }
                         }
 
                         if (isset($value[1]) && !empty($value[1])) {
                             if (!Validate::isDate($value[1])) {
-                                $this->errors[] = $this->trans('The \'To\' date format is invalid (YYYY-MM-DD)', array(), 'Admin.Notifications.Error');
+                                $this->errors[] = $this->trans(
+                                    'The \'To\' date format is invalid (YYYY-MM-DD)',
+                                    array(),
+                                    'Admin.Notifications.Error'
+                                );
                             } else {
                                 $sql_filter .= ' AND ' . pSQL($key) . ' <= \'' . pSQL(Tools::dateTo($value[1])) . '\'';
                             }
@@ -231,16 +252,36 @@ class AdminAlmaCategoriesController extends ModuleAdminController
                         $alias = ($definition && !empty($definition['fields'][$filter]['shop'])) ? 'sa' : 'a';
 
                         if ($type == 'int' || $type == 'bool') {
-                            $sql_filter .= (($check_key || $key == '`active`') ? $alias . '.' : '') . pSQL($key) . ' = ' . (int) $value . ' ';
+                            if (($check_key || $key == '`active`')) {
+                                $sql_filter .= ($alias . '.') . pSQL($key) . ' = ' . (int)$value . ' ';
+                            } else {
+                                $sql_filter .= ('') . pSQL($key) . ' = ' . (int)$value . ' ';
+                            }
                         } elseif ($type == 'decimal') {
-                            $sql_filter .= ($check_key ? $alias . '.' : '') . pSQL($key) . ' = ' . (float) $value . ' ';
+                            if ($check_key) {
+                                $sql_filter .= ($alias . '.') . pSQL($key) . ' = ' . (float)$value . ' ';
+                            } else {
+                                $sql_filter .= ('') . pSQL($key) . ' = ' . (float)$value . ' ';
+                            }
                         } elseif ($type == 'select') {
-                            $sql_filter .= ($check_key ? $alias . '.' : '') . pSQL($key) . ' = \'' . pSQL($value) . '\' ';
+                            if ($check_key) {
+                                $sql_filter .= ($alias . '.') . pSQL($key) . ' = \'' . pSQL($value) . '\' ';
+                            } else {
+                                $sql_filter .= ('') . pSQL($key) . ' = \'' . pSQL($value) . '\' ';
+                            }
                         } elseif ($type == 'price') {
                             $value = (float) str_replace(',', '.', $value);
-                            $sql_filter .= ($check_key ? $alias . '.' : '') . pSQL($key) . ' = ' . pSQL(trim($value)) . ' ';
+                            if ($check_key) {
+                                $sql_filter .= ($alias . '.') . pSQL($key) . ' = ' . pSQL(trim($value)) . ' ';
+                            } else {
+                                $sql_filter .= ('') . pSQL($key) . ' = ' . pSQL(trim($value)) . ' ';
+                            }
                         } else {
-                            $sql_filter .= ($check_key ? $alias . '.' : '') . pSQL($key) . ' LIKE \'%' . pSQL(trim($value)) . '%\' ';
+                            if ($check_key) {
+                                $sql_filter .= ($alias . '.') . pSQL($key) . ' LIKE \'%' . pSQL(trim($value)) . '%\' ';
+                            } else {
+                                $sql_filter .= ('') . pSQL($key) . ' LIKE \'%' . pSQL(trim($value)) . '%\' ';
+                            }
                         }
                     }
                 }

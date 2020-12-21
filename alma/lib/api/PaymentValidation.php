@@ -124,6 +124,7 @@ class PaymentValidation
 
         if (!$this->checkCurrency()) {
             Logger::instance()->error("[Alma] Payment validation error for Cart {$cart->id}: currency mismatch.");
+            // phpcs:ignore
             $msg = $this->module->l('Alma Monthly Installments are not available for this currency', 'paymentvalidation');
             throw new PaymentValidationError($cart, $msg);
         }

@@ -67,6 +67,7 @@ class Alma extends PaymentModule
 
         $this->displayName = $this->l('Alma Monthly Installments for PrestaShop', 'alma');
         $this->description = $this->l('Offer an easy and safe installments payments option to your customers', 'alma');
+        // phpcs:ignore
         $this->confirmUninstall = $this->l('Are you sure you want to deactivate Alma Monthly Installments from your shop?', 'alma');
 
         $this->file = __FILE__;
@@ -191,7 +192,7 @@ class Alma extends PaymentModule
         return $result && $this->uninstallTabs();
     }
 
-    private function installTabs()
+    public function installTabs()
     {
         return $this->installTab('alma', 'Alma')
 			&& $this->installTab('AdminAlmaConfig', $this->l('Configuration'), 'alma', 1, 'tune')
