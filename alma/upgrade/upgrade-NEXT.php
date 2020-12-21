@@ -26,7 +26,30 @@ if (!defined('_PS_VERSION_')) {
 	exit;
 }
 
+include_once _PS_MODULE_DIR_ . 'alma/vendor/autoload.php';
+
+use Alma\API\RequestError;
+use Alma\PrestaShop\Utils\Settings;
+use Alma\PrestaShop\API\ClientHelper;
+
 function upgrade_module_NEXT($module)
 {
+	// If module has already been configured, get the merchant's API ID from Alma's API
+	if (Settings::isFullyConfigured()) {
+		$alma = ClientHelper::defaultInstance();
+
+		if (!$alma) {
+			return true;
+		}
+
+		try {
+			$merchant = $alma->merchants->me();
+		} catch (RequestError $e) {
+			return true;
+		}
+
+		Settings::updateValue('ALMA_MERCHANT_ID', $merchant->id);
+	}
+
 	return $module->installTabs();
 }
