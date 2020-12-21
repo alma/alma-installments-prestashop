@@ -76,11 +76,6 @@ class Alma extends PaymentModule
         }
     }
 
-    public function getContent()
-    {
-        return $this->runHookController('getContent', null);
-    }
-
     public function install()
     {
         $Logger = Logger::loggerClass();
@@ -193,21 +188,33 @@ class Alma extends PaymentModule
             }
         }
 
-        return $result;
+        return $result && $this->uninstallTabs();
     }
 
-    public function installTabs()
+    private function installTabs()
     {
         return $this->installTab('alma', 'Alma')
-			&& $this->installTab('AdminAlmaCategories', $this->l('Excluded categories'), 'alma', 'not_interested');
+			&& $this->installTab('AdminAlmaConfig', $this->l('Configuration'), 'alma', 1, 'tune')
+			&& $this->installTab('AdminAlmaCategories', $this->l('Excluded categories'), 'alma', 2, 'not_interested');
     }
 
-    protected function installTab($class, $name, $parent = null, $icon = null)
+	private function uninstallTabs()
+	{
+		return $this->uninstallTab('AdminAlmaCategories')
+			&& $this->uninstallTab('AdminAlmaConfig')
+			&& $this->uninstallTab('alma');
+	}
+
+    private function installTab($class, $name, $parent = null, $position = null, $icon = null)
     {
         $tab = Tab::getInstanceFromClassName($class);
         $tab->active = 1;
         $tab->class_name = $class;
         $tab->name = array();
+
+        if ($position) {
+        	$tab->position = $position;
+		}
 
         foreach (Language::getLanguages(true) as $lang) {
             $tab->name[$lang['id_lang']] = $name;
@@ -231,6 +238,16 @@ class Alma extends PaymentModule
         return $tab->save();
     }
 
+	private function uninstallTab($class)
+	{
+		$tab = Tab::getInstanceFromClassName($class);
+		if (!Validate::isLoadedObject($tab)) {
+			return true;
+		}
+
+		return $tab->delete();
+    }
+
     private function runHookController($hookName, $params)
     {
         $hookName = preg_replace("/[^a-zA-Z0-9]/", "", $hookName);
@@ -245,6 +262,11 @@ class Alma extends PaymentModule
             return null;
         }
     }
+
+	public function getContent()
+	{
+		return $this->runHookController('getContent', null);
+	}
 
 	public function hookHeader($params)
 	{
