@@ -44,7 +44,7 @@ final class FrontHeaderHookController extends FrontendHookController
             return $content . call_user_func_array($handler, [$params]);
         }
 
-        return null;
+        return $content;
     }
 
     private function handleOrderPage($params)
