@@ -21,16 +21,5 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  *}
 
-{$containerId="alma-installments-{$productId}"}
-
-<div class="alma-pp-container {$psVersion}">
-    {if $isExcluded}
-        {include file='modules/alma/views/templates/hook/_partials/exclusionMsg.tpl' logo=$logo msg=$exclusionMsg}
-    {else}
-        {include
-            file='modules/alma/views/templates/hook/_partials/plansWidgetContainer.tpl'
-            containerId=$containerId
-            settings=$settings
-        }
-    {/if}
-</div>
+<img src="{$logo}" alt="Alma" class="logo">
+<span>{$msg|escape:'html':'UTF-8'}</span>

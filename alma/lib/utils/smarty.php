@@ -1,5 +1,7 @@
 <?php
 
+$smarty = Context::getContext()->smarty;
+
 function smarty_prefilter_almaDisplayHtml($source, $template)
 {
 	return preg_replace(
@@ -12,6 +14,8 @@ function smarty_prefilter_almaDisplayHtml($source, $template)
 	);
 }
 
+$smarty->registerFilter('pre', 'smarty_prefilter_almaDisplayHtml');
+
 /**
  * @param $params
  * @param $smarty
@@ -21,6 +25,14 @@ function smarty_function_almaFormatPrice($params, $smarty) {
 	return almaFormatPrice($params['cents'], isset($params['currency']) ? $params['currency'] : null);
 }
 
-$smarty = Context::getContext()->smarty;
-$smarty->registerFilter('pre', 'smarty_prefilter_almaDisplayHtml');
 smartyRegisterFunction($smarty, 'function', 'almaFormatPrice', 'smarty_function_almaFormatPrice');
+
+function smarty_modifier_almaJsonEncode($value) {
+	if (version_compare(_PS_VERSION_, '1.7', '<')) {
+		return Tools::jsonEncode($value);
+	} else {
+		return json_encode($value);
+	}
+}
+
+smartyRegisterFunction($smarty, 'modifier', 'almaJsonEncode', 'smarty_modifier_almaJsonEncode');

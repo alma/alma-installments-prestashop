@@ -21,16 +21,5 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  *}
 
-{$containerId="alma-installments-{$productId}"}
-
-<div class="alma-pp-container {$psVersion}">
-    {if $isExcluded}
-        {include file='modules/alma/views/templates/hook/_partials/exclusionMsg.tpl' logo=$logo msg=$exclusionMsg}
-    {else}
-        {include
-            file='modules/alma/views/templates/hook/_partials/plansWidgetContainer.tpl'
-            containerId=$containerId
-            settings=$settings
-        }
-    {/if}
-</div>
+<div id="{$containerId}" class="alma-widget-container" data-settings="{$settings|almaJsonEncode|escape}"></div>
+<script type="text/javascript">window.__alma_refreshWidgets && __alma_refreshWidgets();</script>

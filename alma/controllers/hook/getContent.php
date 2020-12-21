@@ -103,6 +103,9 @@ final class GetContentHookController extends AdminHookController
             $showProductEligibility = (bool) Tools::getValue('ALMA_SHOW_PRODUCT_ELIGIBILITY_ON');
             Settings::updateValue('ALMA_SHOW_PRODUCT_ELIGIBILITY', $showProductEligibility);
 
+			$productPriceQuerySelector = Tools::getValue('ALMA_PRODUCT_PRICE_SELECTOR');
+			Settings::updateValue('ALMA_PRODUCT_PRICE_SELECTOR', $productPriceQuerySelector);
+
             Settings::updateValue('ALMA_PAYMENT_BUTTON_TITLE', $title);
             Settings::updateValue('ALMA_PAYMENT_BUTTON_DESC', $description);
 
@@ -554,35 +557,47 @@ final class GetContentHookController extends AdminHookController
             );
         }
 
-        $productEligibilityForm = array(
-            'form' => array(
-                'legend' => array(
+        $productEligibilityForm = [
+            'form' => [
+                'legend' => [
                     'title' => $this->module->l('Eligibility on product pages', 'getContent'),
                     'image' => $iconPath,
-                ),
-                'input' => array(
-                    array(
+				],
+                'input' => [
+                    [
                         'name' => 'ALMA_SHOW_PRODUCT_ELIGIBILITY',
                         'label' => $this->module->l('Show product eligibility on details page', 'getContent'),
-                        'desc' => $this->module->l('Takes wanted quantity into account & lib a popup link with installments details', 'getContent'),
+                        'desc' => $this->module->l('Displays a badge with eligible Alma plans with installments details', 'getContent'),
                         'type' => 'checkbox',
-                        'values' => array(
+                        'values' => [
                             'id' => 'id',
                             'name' => 'label',
-                            'query' => array(
-                                array(
+                            'query' => [
+                                [
                                     'id' => 'ON',
                                     'val' => true,
                                     // PrestaShop won't detect the string if the call to `l` is multiline
                                     'label' => $this->module->l('Display the product\'s eligibility', 'getContent'),
-                                ),
-                            ),
-                        ),
-                    ),
-                ),
-                'submit' => array('title' => $this->module->l('Save'), 'class' => 'button btn btn-default pull-right'),
-            )
-        );
+								],
+							],
+						],
+					],
+					[
+						'name' => 'ALMA_PRODUCT_PRICE_SELECTOR',
+						'label' => $this->module->l('Product price query selector', 'getContent'),
+						'desc' => sprintf(
+							// PrestaShop won't detect the string if the call to `l` is multiline
+							$this->module->l('%1$sAdvanced%2$s Query selector for our scripts to correctly find the displayed price of a product', 'getContent'),
+							'<b>', '</b>'
+						),
+						'type' => 'text',
+						'size' => 75,
+						'required' => true,
+					]
+				],
+                'submit' => ['title' => $this->module->l('Save'), 'class' => 'button btn btn-default pull-right'],
+			]
+		];
 
         $cartEligibilityForm = array(
             'form' => array(
@@ -831,8 +846,9 @@ final class GetContentHookController extends AdminHookController
             'ALMA_ACTIVATE_LOGGING_ON' => (bool) Settings::canLog(),
             'ALMA_STATE_REFUND' => Settings::getRefundState(),
             'ALMA_STATE_REFUND_ENABLED_ON' => Settings::isRefundEnabledByState(),
-            'ALMA_NOT_ELIGIBLE_CATEGORIES' => Settings::getNonEligibilityCategoriesMessage(),
+            'ALMA_NOT_ELIGIBLE_CATEGORIES' => Settings::getNonEligibleCategoriesMessage(),
             'ALMA_SHOW_PRODUCT_ELIGIBILITY_ON' => Settings::showProductEligibility(),
+            'ALMA_PRODUCT_PRICE_SELECTOR' => Settings::getProductPriceQuerySelector(),
             '_api_only' => true,
         );
 
@@ -841,10 +857,10 @@ final class GetContentHookController extends AdminHookController
                 $n = $feePlan['installments_count'];
                 $helper->fields_value["ALMA_P${n}X_ENABLED_ON"] = Settings::isInstallmentPlanEnabled($n);
 
-                $minAmount = (int)almaPriceFromCents(Settings::installmentPlanMinAmount($n, $merchant));
+                $minAmount = (int) almaPriceFromCents(Settings::installmentPlanMinAmount($n, $merchant));
                 $helper->fields_value["ALMA_P${n}X_MIN_AMOUNT"] = $minAmount;
 
-                $maxAmount = (int)almaPriceFromCents(Settings::installmentPlanMaxAmount($n));
+                $maxAmount = (int) almaPriceFromCents(Settings::installmentPlanMaxAmount($n));
                 $helper->fields_value["ALMA_P${n}X_MAX_AMOUNT"] = $maxAmount;
 
                 $sortOrder = (int) Settings::installmentPlanSortOrder($n);

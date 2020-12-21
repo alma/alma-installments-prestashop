@@ -38,8 +38,10 @@ final class FrontHeaderHookController extends FrontendHookController
         $controllerName = preg_replace("/[[:^alnum:]]+/", "", $this->context->controller->php_self);
         $handler = [$this, "handle${controllerName}Page"];
 
+        $content = $this->injectWidgetAssets($params);
+
         if (is_callable($handler)) {
-            return call_user_func_array($handler, [$params]);
+            return $content . call_user_func_array($handler, [$params]);
         }
 
         return null;
@@ -68,14 +70,45 @@ final class FrontHeaderHookController extends FrontendHookController
         return $this->handleOrderPage($params);
     }
 
-    private function handleProductPage($params)
+    private function injectWidgetAssets($params)
     {
-        if (Settings::showProductEligibility()) {
-            $this->context->controller->addCSS($this->module->_path . 'views/css/alma-widgets.umd.css', 'all');
-            $this->context->controller->addJS($this->module->_path . 'views/js/alma-widgets.umd.min.js', 'all');
-            $this->context->controller->addCSS($this->module->_path . 'views/css/alma-product.css', 'all');
-            $this->context->controller->addJS($this->module->_path . 'views/js/alma-product.js', 'all');
-            return null;
-        }
+        if (!Settings::showProductEligibility()) return null;
+
+        $widgetsCssUrl 	   = 'https://unpkg.io/@alma/widgets@1.x.x/dist/alma-widgets.css';
+        $widgetsJsUrl      = 'https://unpkg.io/@alma/widgets@1.x.x/dist/alma-widgets.umd.js';
+        $productScriptPath = 'views/js/alma-product.js';
+        $productCssPath    = 'views/css/alma-product.css';
+
+		$controller = $this->context->controller;
+
+		if (version_compare(_PS_VERSION_, '1.7', '<')) {
+			$controller->addCSS($widgetsCssUrl);
+			$controller->addCSS($this->module->_path . $productCssPath);
+
+			$controller->addJS($widgetsJsUrl);
+			$controller->addJS($this->module->_path . $productScriptPath);
+		} else {
+			$moduleName = $this->module->name;
+			$scriptPath = "modules/$moduleName/$productScriptPath";
+			$cssPath    = "modules/$moduleName/$productCssPath";
+
+			$controller->registerJavascript('alma-product-script', $scriptPath, ['priority' => 1000]);
+			$controller->registerStylesheet('alma-product-css', $cssPath);
+
+			if (version_compare(_PS_VERSION_, '1.7.0.2', '>=')) {
+				$controller->registerStylesheet('alma-remote-widgets-css', $widgetsCssUrl, ['server' => 'remote']);
+				$controller->registerJavascript('alma-remote-widgets-js', $widgetsJsUrl, ['server' => 'remote']);
+			} else {
+				// For versions 1.7.0.0 and 1.7.0.1, it was impossible to register a remote script via FrontController
+				// with the new registerJavascript method, and the deprecated addJS method had been changed to be just a
+				// proxy to registerJavascript...
+				return <<<TAG
+					<link rel="stylesheet" href="$widgetsCssUrl">
+					<script src="$widgetsJsUrl"></script>
+TAG;
+			}
+		}
+
+		return null;
     }
 }

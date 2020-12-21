@@ -29,8 +29,8 @@ if (!defined('_PS_VERSION_')) {
 }
 
 use Alma\PrestaShop\Hooks\FrontendHookController;
+use Alma\PrestaShop\Utils\LocaleHelper;
 use Alma\PrestaShop\Utils\Settings;
-
 use Product;
 
 final class DisplayProductPriceBlockHookController extends FrontendHookController
@@ -67,7 +67,7 @@ final class DisplayProductPriceBlockHookController extends FrontendHookControlle
             $productParams = $params['product'];
             $productId = $productParams['id_product'];
 
-            $quantity = max((int)$productParams['minimal_quantity'], (int)$productParams['quantity_wanted']);
+            $quantity = max((int) $productParams['minimal_quantity'], (int) $productParams['quantity_wanted']);
             $price = almaPriceToCents(
                 Product::getPriceStatic(
                     $productId,
@@ -86,24 +86,6 @@ final class DisplayProductPriceBlockHookController extends FrontendHookControlle
             $refreshPrice = false;
         }
 
-        $globalMin = PHP_INT_MAX;
-        $globalMax = 0;
-
-        $n = 1;
-        while ($n < Settings::installmentPlansMaxN()) {
-            ++$n;
-
-            if (!Settings::isInstallmentPlanEnabled($n)) {
-                continue;
-            } else {
-                $min = Settings::installmentPlanMinAmount($n);
-                $globalMin = min($min, $globalMin);
-
-                $max = Settings::installmentPlanMaxAmount($n);
-                $globalMax = max($max, $globalMax);
-            }
-        }
-
         $psVersion = 'ps15';
         if (version_compare(_PS_VERSION_, '1.7', '>=')) {
             $psVersion = 'ps17';
@@ -111,20 +93,26 @@ final class DisplayProductPriceBlockHookController extends FrontendHookControlle
             $psVersion = 'ps16';
         }
 
-        $this->context->smarty->assign(
-            array(
-                'merchantId' => Settings::getMerchantId(),
-                'apiMode' => Settings::getActiveMode(),
-                'installmentsCounts' => Settings::activeInstallmentsCounts(),
-                'productId' => $productId,
-                'productPrice' => $price,
-                'refreshPrice' => $refreshPrice,
-                'logo' => almaSvgDataUrl(_PS_MODULE_DIR_ . $this->module->name . '/views/img/logos/logo_alma.svg'),
-                'min' => $globalMin,
-                'max' => $globalMax,
-                'psVersion' => $psVersion
-            )
-        );
+		$this->context->smarty->assign(
+			[
+				'productId' => $productId,
+				'psVersion' => $psVersion,
+				'logo' => almaSvgDataUrl(_PS_MODULE_DIR_ . $this->module->name . '/views/img/logos/logo_alma.svg'),
+				'isExcluded' => Settings::isProductExcluded($productId),
+				'exclusionMsg' => Settings::getNonEligibleCategoriesMessage(),
+				'settings' => [
+					'merchantId' => Settings::getMerchantId(),
+					'apiMode' => Settings::getActiveMode(),
+					'amount' => $price,
+					'plans' => Settings::activePlans(),
+					'refreshPrice' => $refreshPrice,
+					'priceQuerySelector' => Settings::getProductPriceQuerySelector(),
+					'decimalSeparator' => LocaleHelper::decimalSeparator(),
+					'thousandSeparator' => LocaleHelper::thousandSeparator(),
+				]
+
+			]
+		);
 
         return $this->module->display($this->module->file, 'displayProductPriceBlock.tpl');
     }
