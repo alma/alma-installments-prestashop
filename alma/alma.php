@@ -127,6 +127,8 @@ class Alma extends PaymentModule
             }
         }
 
+        Tools::clearCache();
+
 		return $this->installTabs();
     }
 
