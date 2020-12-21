@@ -209,7 +209,7 @@ class PaymentValidation
 
             $extraRedirectArgs = '';
         } else {
-            $this->module->currentOrder = $this->getOrderByCartId((int) $cart->id);
+            $this->module->currentOrder = $this->getOrderByCartId((int) $cart->id)->id;
             $tokenCart = md5(_COOKIE_KEY_ . 'recover_cart_' . $cart->id);
             $extraRedirectArgs = "&recover_cart={$cart->id}&token_cart={$tokenCart}";
         }
