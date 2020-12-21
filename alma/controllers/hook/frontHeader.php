@@ -35,7 +35,7 @@ final class FrontHeaderHookController extends FrontendHookController
 {
     public function run($params)
     {
-        $controllerName = preg_replace("/[[:^alnum:]]+/", "", $this->context->controller->php_self);
+        $controllerName = preg_replace('/[[:^alnum:]]+/', '', $this->context->controller->php_self);
         $handler = [$this, "handle${controllerName}Page"];
 
         $content = $this->injectWidgetAssets($params);
@@ -55,7 +55,7 @@ final class FrontHeaderHookController extends FrontendHookController
         if ($this->context->cookie->__get('alma_error')) {
             $this->context->smarty->assign([
                 'alma_error' => $this->context->cookie->__get('alma_error'),
-			]);
+            ]);
 
             $this->context->cookie->__unset('alma_error');
 
@@ -72,18 +72,22 @@ final class FrontHeaderHookController extends FrontendHookController
 
     private function injectWidgetAssets($params)
     {
-        if (!Settings::showProductEligibility()) return null;
+        if (!Settings::showProductEligibility()) {
+            return null;
+        }
 
-        $widgetsCssUrl 	   = 'https://unpkg.io/@alma/widgets@1.x.x/dist/alma-widgets.css';
-        $widgetsJsUrl      = 'https://unpkg.io/@alma/widgets@1.x.x/dist/alma-widgets.umd.js';
+        $widgetsCssUrl = 'https://unpkg.io/@alma/widgets@1.x.x/dist/alma-widgets.css';
+        $widgetsJsUrl = 'https://unpkg.io/@alma/widgets@1.x.x/dist/alma-widgets.umd.js';
         $productScriptPath = 'views/js/alma-product.js';
-        $productCssPath    = 'views/css/alma-product.css';
+        $productCssPath = 'views/css/alma-product.css';
 
-		$controller = $this->context->controller;
+        $controller = $this->context->controller;
 
-		$smarty = $this->context->smarty;
-		$selectorsTpl = $smarty->createTemplate("{$this->module->local_path}views/templates/hook/widgetQuerySelectors.tpl");
-		$selectorsTpl->assign([
+        $smarty = $this->context->smarty;
+        $selectorsTpl = $smarty->createTemplate(
+            "{$this->module->local_path}views/templates/hook/widgetQuerySelectors.tpl"
+        );
+        $selectorsTpl->assign([
             'priceSelector' => Settings::getProductPriceQuerySelector(),
             'attrSelectSelector' => Settings::getProductAttrQuerySelector(),
             'attrRadioSelector' => Settings::getProductAttrRadioQuerySelector(),
@@ -91,36 +95,36 @@ final class FrontHeaderHookController extends FrontendHookController
             'quantitySelector' => Settings::getProductQuantityQuerySelector(),
         ]);
 
-		$content = $selectorsTpl->fetch();
+        $content = $selectorsTpl->fetch();
 
-		if (version_compare(_PS_VERSION_, '1.7', '<')) {
-			$controller->addCSS($widgetsCssUrl);
-			$controller->addCSS($this->module->_path . $productCssPath);
+        if (version_compare(_PS_VERSION_, '1.7', '<')) {
+            $controller->addCSS($widgetsCssUrl);
+            $controller->addCSS($this->module->_path . $productCssPath);
 
-			$controller->addJS($widgetsJsUrl);
-			$controller->addJS($this->module->_path . $productScriptPath);
-		} else {
-			$moduleName = $this->module->name;
-			$scriptPath = "modules/$moduleName/$productScriptPath";
-			$cssPath    = "modules/$moduleName/$productCssPath";
+            $controller->addJS($widgetsJsUrl);
+            $controller->addJS($this->module->_path . $productScriptPath);
+        } else {
+            $moduleName = $this->module->name;
+            $scriptPath = "modules/$moduleName/$productScriptPath";
+            $cssPath = "modules/$moduleName/$productCssPath";
 
-			$controller->registerJavascript('alma-product-script', $scriptPath, ['priority' => 1000]);
-			$controller->registerStylesheet('alma-product-css', $cssPath);
+            $controller->registerJavascript('alma-product-script', $scriptPath, ['priority' => 1000]);
+            $controller->registerStylesheet('alma-product-css', $cssPath);
 
-			if (version_compare(_PS_VERSION_, '1.7.0.2', '>=')) {
-				$controller->registerStylesheet('alma-remote-widgets-css', $widgetsCssUrl, ['server' => 'remote']);
-				$controller->registerJavascript('alma-remote-widgets-js', $widgetsJsUrl, ['server' => 'remote']);
-			} else {
-				// For versions 1.7.0.0 and 1.7.0.1, it was impossible to register a remote script via FrontController
-				// with the new registerJavascript method, and the deprecated addJS method had been changed to be just a
-				// proxy to registerJavascript...
-				$content .= <<<TAG
+            if (version_compare(_PS_VERSION_, '1.7.0.2', '>=')) {
+                $controller->registerStylesheet('alma-remote-widgets-css', $widgetsCssUrl, ['server' => 'remote']);
+                $controller->registerJavascript('alma-remote-widgets-js', $widgetsJsUrl, ['server' => 'remote']);
+            } else {
+                // For versions 1.7.0.0 and 1.7.0.1, it was impossible to register a remote script via FrontController
+                // with the new registerJavascript method, and the deprecated addJS method had been changed to be just a
+                // proxy to registerJavascript...
+                $content .= <<<TAG
 					<link rel="stylesheet" href="$widgetsCssUrl">
 					<script src="$widgetsJsUrl"></script>
 TAG;
-			}
-		}
+            }
+        }
 
-		return $content;
+        return $content;
     }
 }

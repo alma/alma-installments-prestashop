@@ -24,11 +24,11 @@ IN THE SOFTWARE.
 TXT;
 
 $finder = PhpCsFixer\Finder::create()->in([
-    __DIR__ . 'alma/lib',
-    __DIR__ . 'alma/views',
-    __DIR__ . 'alma/controllers',
-    //__DIR__.'alma/tests',
-    __DIR__ . 'alma/upgrade',
+    __DIR__ . '/alma/lib',
+    __DIR__ . '/alma/views',
+    __DIR__ . '/alma/controllers',
+    //__DIR__.'/alma/tests',
+    __DIR__ . '/alma/upgrade',
 ]);
 
 return PhpCsFixer\Config::create()

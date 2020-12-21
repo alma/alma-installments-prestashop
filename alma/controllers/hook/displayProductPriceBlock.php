@@ -48,13 +48,13 @@ final class DisplayProductPriceBlockHookController extends FrontendHookControlle
         if (array_key_exists('type', $params)) {
             if (
                 (version_compare(_PS_VERSION_, '1.6.0', '>') && $params['type'] === 'price') ||
-                (!in_array($params['type'], array("price", "after_price")))
+                (!in_array($params['type'], ['price', 'after_price']))
             ) {
                 return null;
             }
         }
 
-        /** @var Product $product */
+        /* @var Product $product */
         if ($params['product'] instanceof Product) {
             $product = $params['product'];
             $price = almaPriceToCents($product->getPrice(true));
@@ -89,29 +89,28 @@ final class DisplayProductPriceBlockHookController extends FrontendHookControlle
         $psVersion = 'ps15';
         if (version_compare(_PS_VERSION_, '1.7', '>=')) {
             $psVersion = 'ps17';
-        } else if (version_compare(_PS_VERSION_, '1.6', '>=')) {
+        } elseif (version_compare(_PS_VERSION_, '1.6', '>=')) {
             $psVersion = 'ps16';
         }
 
-		$this->context->smarty->assign(
-			[
-				'productId' => $productId,
-				'psVersion' => $psVersion,
-				'logo' => almaSvgDataUrl(_PS_MODULE_DIR_ . $this->module->name . '/views/img/logos/logo_alma.svg'),
-				'isExcluded' => Settings::isProductExcluded($productId),
-				'exclusionMsg' => Settings::getNonEligibleCategoriesMessage(),
-				'settings' => [
-					'merchantId' => Settings::getMerchantId(),
-					'apiMode' => Settings::getActiveMode(),
-					'amount' => $price,
-					'plans' => Settings::activePlans(),
-					'refreshPrice' => $refreshPrice,
-					'decimalSeparator' => LocaleHelper::decimalSeparator(),
-					'thousandSeparator' => LocaleHelper::thousandSeparator(),
-				]
-
-			]
-		);
+        $this->context->smarty->assign(
+            [
+                'productId' => $productId,
+                'psVersion' => $psVersion,
+                'logo' => almaSvgDataUrl(_PS_MODULE_DIR_ . $this->module->name . '/views/img/logos/logo_alma.svg'),
+                'isExcluded' => Settings::isProductExcluded($productId),
+                'exclusionMsg' => Settings::getNonEligibleCategoriesMessage(),
+                'settings' => [
+                    'merchantId' => Settings::getMerchantId(),
+                    'apiMode' => Settings::getActiveMode(),
+                    'amount' => $price,
+                    'plans' => Settings::activePlans(),
+                    'refreshPrice' => $refreshPrice,
+                    'decimalSeparator' => LocaleHelper::decimalSeparator(),
+                    'thousandSeparator' => LocaleHelper::thousandSeparator(),
+                ],
+            ]
+        );
 
         return $this->module->display($this->module->file, 'displayProductPriceBlock.tpl');
     }

@@ -24,22 +24,20 @@
 
 namespace Alma\PrestaShop\API;
 
-use Alma\API\Entities\Payment;
 use Alma\Api\Entities\Instalment;
+use Alma\API\Entities\Payment;
 use Alma\API\RequestError;
-
 use Alma\PrestaShop\Utils\Logger;
-
-use Exception;
-use PrestaShopException;
-use OrderCore;
 use Cart;
 use Configuration;
 use Context;
 use Currency;
 use Customer;
+use Exception;
 use Order;
+use OrderCore;
 use PaymentModule;
+use PrestaShopException;
 use Tools;
 use Validate;
 
@@ -79,7 +77,7 @@ class PaymentValidation
      * @return string URL to redirect the customer to
      *
      * @throws PaymentValidationError|PrestaShopException|Exception
-	 */
+     */
     public function validatePayment($almaPaymentId)
     {
         $alma = ClientHelper::defaultInstance();
@@ -140,16 +138,16 @@ class PaymentValidation
         }
 
         if (!$cart->OrderExists()) {
-            $cartTotals = (float)Tools::ps_round((float)$cart->getOrderTotal(true, Cart::BOTH), 2);
+            $cartTotals = (float) Tools::ps_round((float) $cart->getOrderTotal(true, Cart::BOTH), 2);
 
             if (abs($payment->purchase_amount - almaPriceToCents($cartTotals)) > 2) {
                 $reason = Payment::FRAUD_AMOUNT_MISMATCH;
-                $reason .= " - " . $cart->getOrderTotal(true, Cart::BOTH) . " * 100 vs " . $payment->purchase_amount;
+                $reason .= ' - ' . $cart->getOrderTotal(true, Cart::BOTH) . ' * 100 vs ' . $payment->purchase_amount;
 
                 try {
                     $alma->payments->flagAsPotentialFraud($almaPaymentId, $reason);
                 } catch (RequestError $e) {
-                    Logger::instance()->warning("[Alma] Failed to notify Alma of amount mismatch");
+                    Logger::instance()->warning('[Alma] Failed to notify Alma of amount mismatch');
                 }
 
                 Logger::instance()->error(
@@ -160,13 +158,13 @@ class PaymentValidation
             }
 
             $firstInstalment = $payment->payment_plan[0];
-            if (!in_array($payment->state, array(Payment::STATE_IN_PROGRESS, Payment::STATE_PAID))
+            if (!in_array($payment->state, [Payment::STATE_IN_PROGRESS, Payment::STATE_PAID])
                 || $firstInstalment->state !== Instalment::STATE_PAID
             ) {
                 try {
                     $alma->payments->flagAsPotentialFraud($almaPaymentId, Payment::FRAUD_STATE_ERROR);
                 } catch (RequestError $e) {
-                    Logger::instance()->warning("[Alma] Failed to notify Alma of potential fraud");
+                    Logger::instance()->warning('[Alma] Failed to notify Alma of potential fraud');
                 }
 
                 Logger::instance()->error(
@@ -176,12 +174,12 @@ class PaymentValidation
                 throw new PaymentValidationError($cart, Payment::FRAUD_STATE_ERROR);
             }
 
-            $extraVars = array('transaction_id' => $payment->id);
+            $extraVars = ['transaction_id' => $payment->id];
 
-			$paymentMode = sprintf(
-				$this->module->l('Alma - %d monthly installments', 'paymentvalidation'),
-				count($payment->payment_plan)
-			);
+            $paymentMode = sprintf(
+                $this->module->l('Alma - %d monthly installments', 'paymentvalidation'),
+                count($payment->payment_plan)
+            );
 
             // Place order
             $this->module->validateOrder(
@@ -200,9 +198,9 @@ class PaymentValidation
             $order = $this->getOrderByCartId((int) $cart->id);
 
             try {
-                $alma->payments->addOrder($payment->id, array(
-                    "merchant_reference" => $order->reference,
-                ));
+                $alma->payments->addOrder($payment->id, [
+                    'merchant_reference' => $order->reference,
+                ]);
             } catch (RequestError $e) {
                 $msg = "[Alma] Error updating order reference {$order->reference}: {$e->getMessage()}";
                 Logger::instance()->error($msg);
@@ -223,18 +221,20 @@ class PaymentValidation
             $extraRedirectArgs;
     }
 
-	/**
-	 * @param $cartId
-	 * @return OrderCore|null
-
-	 * @throws PrestaShopException
-	 */
+    /**
+     * @param $cartId
+     *
+     * @return OrderCore|null
+     *
+     * @throws PrestaShopException
+     */
     private function getOrderByCartId($cartId)
     {
-        if (is_callable(array('Order', 'getByCartId'))) {
+        if (is_callable(['Order', 'getByCartId'])) {
             return Order::getByCartId((int) $cartId);
         } else {
             $orderId = (int) Order::getOrderByCartId((int) $cartId);
+
             return new Order($orderId);
         }
     }

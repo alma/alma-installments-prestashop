@@ -28,16 +28,14 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-use Alma\PrestaShop\Utils\Logger;
-
-use Exception;
 use Address;
+use Alma\PrestaShop\Utils\Logger;
 use Cart;
 use Context;
 use Customer;
+use Exception;
 use Tools;
 use Validate;
-
 
 class PaymentData
 {
@@ -45,7 +43,9 @@ class PaymentData
      * @param Cart $cart
      * @param Context $context
      * @param int|array $installmentsCount
+     *
      * @return array|null
+     *
      * @throws Exception
      */
     public static function dataFromCart($cart, $context, $installmentsCount = 3)
@@ -72,14 +72,14 @@ class PaymentData
             $customer = $context->customer;
         }
 
-        $customerData = array(
+        $customerData = [
             'first_name' => $customer->firstname,
             'last_name' => $customer->lastname,
             'email' => $customer->email,
             'birth_date' => $customer->birthday,
-            'addresses' => array(),
+            'addresses' => [],
             'phone' => null,
-        );
+        ];
 
         if ($customerData['birth_date'] == '0000-00-00') {
             $customerData['birth_date'] = null;
@@ -96,12 +96,12 @@ class PaymentData
 
         $addresses = $customer->getAddresses($customer->id_lang);
         foreach ($addresses as $address) {
-            array_push($customerData['addresses'], array(
+            array_push($customerData['addresses'], [
                 'line1' => $address['address1'],
                 'postal_code' => $address['postcode'],
                 'city' => $address['city'],
                 'country' => $address['country'],
-            ));
+            ]);
 
             if (is_null($customerData['phone']) && $address['phone']) {
                 $customerData['phone'] = $address['phone'];
@@ -110,37 +110,37 @@ class PaymentData
             }
         }
 
-        $purchaseAmount = (float) Tools::ps_round((float)$cart->getOrderTotal(true, Cart::BOTH), 2);
+        $purchaseAmount = (float) Tools::ps_round((float) $cart->getOrderTotal(true, Cart::BOTH), 2);
 
-		return array(
-			'payment' => array(
-				'installments_count' => $installmentsCount,
-				'customer_cancel_url' => $context->link->getPageLink('order'),
-				'return_url' => $context->link->getModuleLink('alma', 'validation'),
-				'ipn_callback_url' => $context->link->getModuleLink('alma', 'ipn'),
-				'purchase_amount' => almaPriceToCents($purchaseAmount),
-				'shipping_address' => array(
-					'line1' => $shippingAddress->address1,
-					'postal_code' => $shippingAddress->postcode,
-					'city' => $shippingAddress->city,
-					'country' => $shippingAddress->country,
-				),
-				//'shipping_info' => ShippingData::shippingInfo($cart),
-				'cart' => CartData::cartInfo($cart),
-				'billing_address' => array(
-					'line1' => $billingAddress->address1,
-					'postal_code' => $billingAddress->postcode,
-					'city' => $billingAddress->city,
-					'country' => $billingAddress->country,
-				),
-				'custom_data' => array(
-					'cart_id' => $cart->id,
-					'purchase_amount_new_conversion_func' => almaPriceToCents_str($purchaseAmount),
-					'cart_totals' => $purchaseAmount,
-					'cart_totals_high_precision' => number_format($purchaseAmount, 16)
-				),
-			),
-			'customer' => $customerData,
-		);
+        return [
+            'payment' => [
+                'installments_count' => $installmentsCount,
+                'customer_cancel_url' => $context->link->getPageLink('order'),
+                'return_url' => $context->link->getModuleLink('alma', 'validation'),
+                'ipn_callback_url' => $context->link->getModuleLink('alma', 'ipn'),
+                'purchase_amount' => almaPriceToCents($purchaseAmount),
+                'shipping_address' => [
+                    'line1' => $shippingAddress->address1,
+                    'postal_code' => $shippingAddress->postcode,
+                    'city' => $shippingAddress->city,
+                    'country' => $shippingAddress->country,
+                ],
+                //'shipping_info' => ShippingData::shippingInfo($cart),
+                'cart' => CartData::cartInfo($cart),
+                'billing_address' => [
+                    'line1' => $billingAddress->address1,
+                    'postal_code' => $billingAddress->postcode,
+                    'city' => $billingAddress->city,
+                    'country' => $billingAddress->country,
+                ],
+                'custom_data' => [
+                    'cart_id' => $cart->id,
+                    'purchase_amount_new_conversion_func' => almaPriceToCents_str($purchaseAmount),
+                    'cart_totals' => $purchaseAmount,
+                    'cart_totals_high_precision' => number_format($purchaseAmount, 16),
+                ],
+            ],
+            'customer' => $customerData,
+        ];
     }
 }

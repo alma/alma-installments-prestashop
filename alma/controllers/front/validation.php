@@ -69,7 +69,7 @@ class AlmaValidationModuleFrontController extends ModuleFrontController
             $redirect_to = $this->fail(null, $e->getMessage());
         }
 
-        if (is_callable(array($this, 'setRedirectAfter'))) {
+        if (is_callable([$this, 'setRedirectAfter'])) {
             $this->setRedirectAfter($redirect_to);
         } else {
             Tools::redirect($redirect_to);

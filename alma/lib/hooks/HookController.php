@@ -38,18 +38,18 @@ if (!defined('_PS_VERSION_')) {
 
 abstract class HookController
 {
-	/** @var Alma */
-	protected $module;
+    /** @var Alma */
+    protected $module;
 
-	/** @var Context */
-	protected $context;
+    /** @var Context */
+    protected $context;
 
-	/**
-	 * HookController constructor.
-	 *
-	 * @param $module Alma
-	 */
-	public function __construct($module)
+    /**
+     * HookController constructor.
+     *
+     * @param $module Alma
+     */
+    public function __construct($module)
     {
         $this->module = $module;
         $this->context = Context::getContext();

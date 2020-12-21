@@ -15,8 +15,9 @@ update-tools: install-tools
 	composer update --working-dir=tools
 
 
-.PHONY: lint-fix
+.PHONY: lint
 lint: install-tools
+	./tools/vendor/bin/phpcs alma
 	./tools/vendor/bin/php-cs-fixer fix --dry-run --diff alma
 
 .PHONY: lint-fix

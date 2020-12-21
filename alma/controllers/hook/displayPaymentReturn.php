@@ -41,9 +41,9 @@ final class DisplayPaymentReturnHookController extends FrontendHookController
     public function run($params)
     {
         $order = array_key_exists('objOrder', $params) ? $params['objOrder'] : $params['order'];
-        $this->context->smarty->assign(array(
+        $this->context->smarty->assign([
             'order_reference' => $order->reference,
-        ));
+        ]);
 
         return $this->module->display($this->module->file, 'displayPaymentReturn.tpl');
     }

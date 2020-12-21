@@ -32,7 +32,6 @@ use Alma\PrestaShop\API\EligibilityHelper;
 use Alma\PrestaShop\Hooks\FrontendHookController;
 use Alma\PrestaShop\Model\CartData;
 use Alma\PrestaShop\Utils\Settings;
-
 use Cart;
 use Media;
 
@@ -47,22 +46,22 @@ final class DisplayShoppingCartFooterHookController extends FrontendHookControll
     {
         $eligibilities = EligibilityHelper::eligibilityCheck($this->context);
         $eligible = false;
-        foreach($eligibilities as $eligibility) {
-            if($eligibility->isEligible){
+        foreach ($eligibilities as $eligibility) {
+            if ($eligibility->isEligible) {
                 $eligible = true;
                 break;
             }
         }
 
-        if(empty($eligibilities)) {
+        if (empty($eligibilities)) {
             $eligibilityMsg = Settings::getNonEligibilityMessage();
-        } elseif(!$eligible) {
+        } elseif (!$eligible) {
             $cart = $this->context->cart;
             $cartTotal = almaPriceToCents((float) $cart->getOrderTotal(true, Cart::BOTH));
             $minimum = PHP_INT_MAX;
             $maximum = 0;
 
-            foreach($eligibilities as $eligibility){
+            foreach ($eligibilities as $eligibility) {
                 $minAmount = $eligibility->constraints['purchase_amount']['minimum'];
                 $maxAmount = $eligibility->constraints['purchase_amount']['maximum'];
                 if ($cartTotal < $minAmount || $cartTotal > $maxAmount) {
@@ -76,14 +75,14 @@ final class DisplayShoppingCartFooterHookController extends FrontendHookControll
             }
 
             $eligibilityMsg = '';
-            if($cartTotal > $maximum && $maximum != 0){
+            if ($cartTotal > $maximum && $maximum != 0) {
                 $eligibilityMsg = ' ' . sprintf(
                     $this->module->l('(Maximum amount: %s)', 'displayShoppingCartFooter'),
                     almaFormatPrice($maximum)
                 );
             }
 
-            if($cartTotal < $minimum && $minimum != PHP_INT_MAX){
+            if ($cartTotal < $minimum && $minimum != PHP_INT_MAX) {
                 $eligibilityMsg = ' ' . sprintf(
                     $this->module->l('(Minimum amount: %s)', 'displayShoppingCartFooter'),
                     almaFormatPrice($minimum)
@@ -91,8 +90,7 @@ final class DisplayShoppingCartFooterHookController extends FrontendHookControll
             }
 
             $eligibilityMsg = Settings::getNonEligibilityMessage() . $eligibilityMsg;
-        }
-        else {
+        } else {
             $eligibilityMsg = Settings::getEligibilityMessage();
         }
 
@@ -108,10 +106,10 @@ final class DisplayShoppingCartFooterHookController extends FrontendHookControll
             $logo = $this->module->getPathUri() . '/views/img/logos/logo_alma.svg';
         }
 
-        $this->context->smarty->assign(array(
+        $this->context->smarty->assign([
             'eligibility_msg' => $eligibilityMsg,
             'logo' => $logo,
-        ));
+        ]);
 
         return $this->module->display($this->module->file, 'displayShoppingCartFooter.tpl');
     }

@@ -28,11 +28,10 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-use Alma\PrestaShop\Hooks\FrontendHookController;
 use Alma\PrestaShop\API\EligibilityHelper;
-use Alma\PrestaShop\Utils\Settings;
+use Alma\PrestaShop\Hooks\FrontendHookController;
 use Alma\PrestaShop\Model\CartData;
-
+use Alma\PrestaShop\Utils\Settings;
 use Cart;
 use Media;
 
@@ -40,23 +39,23 @@ final class DisplayPaymentHookController extends FrontendHookController
 {
     public function run($params)
     {
-		// Check if some products in cart are in the excludes listing
-		$diff = CartData::getCartExclusion($params['cart']);
-		if(!empty($diff)){
-			return false;
-		}
+        // Check if some products in cart are in the excludes listing
+        $diff = CartData::getCartExclusion($params['cart']);
+        if (!empty($diff)) {
+            return false;
+        }
 
         $installmentPlans = EligibilityHelper::eligibilityCheck($this->context);
         $options = [];
-        if(empty($installmentPlans)) {
+        if (empty($installmentPlans)) {
             if (Settings::showDisabledButton()) {
-                foreach(Settings::activeInstallmentsCounts() as $n){
+                foreach (Settings::activeInstallmentsCounts() as $n) {
                     $paymentOption = [
                         'text' => sprintf(Settings::getPaymentButtonTitle(), $n),
                         'link' => $this->context->link->getModuleLink(
                             $this->module->name,
                             'payment',
-                            array('n' => $n),
+                            ['n' => $n],
                             true
                         ),
                         'plans' => null,
@@ -66,14 +65,15 @@ final class DisplayPaymentHookController extends FrontendHookController
                     $options[] = $paymentOption;
                 }
             }
+
             return $options;
         }
 
-		$paymentButtonDescription = Settings::getPaymentButtonDescription();
+        $paymentButtonDescription = Settings::getPaymentButtonDescription();
 
-		foreach($installmentPlans as $plan) {
+        foreach ($installmentPlans as $plan) {
             $n = $plan->installmentsCount;
-            if(!$plan->isEligible && Settings::isInstallmentPlanEnabled($n)){
+            if (!$plan->isEligible && Settings::isInstallmentPlanEnabled($n)) {
                 if (Settings::showDisabledButton()) {
                     $disabled = true;
                     $plans = null;
@@ -93,7 +93,7 @@ final class DisplayPaymentHookController extends FrontendHookController
 
             $paymentOption = [
                 'text' => sprintf(Settings::getPaymentButtonTitle(), $n),
-                'link' => $this->context->link->getModuleLink($this->module->name, 'payment', array('n' => $n), true),
+                'link' => $this->context->link->getModuleLink($this->module->name, 'payment', ['n' => $n], true),
                 'plans' => $plans,
                 'disabled' => $disabled,
                 'error' => false,
@@ -109,7 +109,7 @@ final class DisplayPaymentHookController extends FrontendHookController
             $sortOrders[] = $sortOrder;
         }
 
-        $sortedOptions = array();
+        $sortedOptions = [];
         sort($sortOrders);
         foreach ($sortOrders as $order) {
             $sortedOptions[] = $options[$order];
@@ -117,13 +117,13 @@ final class DisplayPaymentHookController extends FrontendHookController
 
         $cart = $this->context->cart;
         $this->context->smarty->assign(
-            array(
+            [
                 'title' => sprintf(Settings::getPaymentButtonTitle(), 3),
                 'desc' => sprintf($paymentButtonDescription, 3),
                 'order_total' => (float) $cart->getOrderTotal(true, Cart::BOTH),
                 'options' => $sortedOptions,
                 'old_prestashop_version' => version_compare(_PS_VERSION_, '1.6', '<'),
-            )
+            ]
         );
 
         return $this->module->display($this->module->file, 'displayPayment.tpl');

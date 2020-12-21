@@ -36,12 +36,11 @@ if (!defined('ALMA_MODE_LIVE')) {
     define('ALMA_MODE_LIVE', 'live');
 }
 
+use Alma\PrestaShop\Model\CategoryAdapter;
 use Category;
 use Configuration;
 use Product;
 use Shop;
-
-use Alma\PrestaShop\Model\CategoryAdapter;
 use Tools;
 use Translate;
 
@@ -76,7 +75,7 @@ class Settings
 
     public static function deleteAllValues()
     {
-        $configKeys = array(
+        $configKeys = [
             'ALMA_FULLY_CONFIGURED',
             'ALMA_ACTIVATE_LOGGING',
             'ALMA_API_MODE',
@@ -106,7 +105,7 @@ class Settings
             'ALMA_NOT_ELIGIBLE_CATEGORIES',
             'ALMA_DISPLAY_ORDER_CONFIRMATION',
             'ALMA_SHOW_PRODUCT_ELIGIBILITY',
-        );
+        ];
 
         foreach ($configKeys as $configKey) {
             Configuration::deleteByName($configKey);
@@ -234,35 +233,35 @@ class Settings
         return (int) self::get("ALMA_P${n}X_MAX_AMOUNT", $default);
     }
 
-	public static function installmentPlanSortOrder($n)
-	{
-		return (int) self::get("ALMA_P${n}X_SORT_ORDER", (int) $n);
-	}
+    public static function installmentPlanSortOrder($n)
+    {
+        return (int) self::get("ALMA_P${n}X_SORT_ORDER", (int) $n);
+    }
 
-	public static function activePlans()
-	{
-		$plans = [];
+    public static function activePlans()
+    {
+        $plans = [];
 
-		for ($n = 2; $n <= self::installmentPlansMaxN(); $n++) {
-			if (self::isInstallmentPlanEnabled($n)) {
-				$plans[] = [
-					"installmentsCount" => $n,
-					"minAmount" => self::installmentPlanMinAmount($n),
-					"maxAmount" => self::installmentPlanMaxAmount($n),
-				];
-			}
-		}
+        for ($n = 2; $n <= self::installmentPlansMaxN(); ++$n) {
+            if (self::isInstallmentPlanEnabled($n)) {
+                $plans[] = [
+                    'installmentsCount' => $n,
+                    'minAmount' => self::installmentPlanMinAmount($n),
+                    'maxAmount' => self::installmentPlanMaxAmount($n),
+                ];
+            }
+        }
 
-		return $plans;
-	}
+        return $plans;
+    }
 
     public static function activeInstallmentsCounts()
     {
         $installmentsCounts = [];
 
         foreach (self::activePlans() as $plan) {
-        	$installmentsCounts[] = $plan["installmentsCount"];
-		}
+            $installmentsCounts[] = $plan['installmentsCount'];
+        }
 
         return $installmentsCounts;
     }
@@ -283,6 +282,7 @@ class Settings
         if (null !== $categories && 'null' !== $categories) {
             return json_decode($categories);
         }
+
         return [];
     }
 
@@ -290,7 +290,7 @@ class Settings
     {
         $categories = self::getExcludedCategories();
         if (!$categories) {
-			return [];
+            return [];
         }
 
         $categories = Category::getCategories(
@@ -311,16 +311,16 @@ class Settings
 
     public static function addExcludedCategories($idCategory)
     {
-    	$excludedCategories = self::getExcludedCategories();
+        $excludedCategories = self::getExcludedCategories();
 
         $category = CategoryAdapter::fromCategory($idCategory);
         if (!$category) {
-        	return;
-		}
+            return;
+        }
 
         // Add the selected category and all its children categories
         $categoriesToExclude = array_merge([$idCategory], $category->getAllChildrenIds());
-        $excludedCategories  = array_merge($excludedCategories, array_diff($categoriesToExclude, $excludedCategories));
+        $excludedCategories = array_merge($excludedCategories, array_diff($categoriesToExclude, $excludedCategories));
 
         self::updateExcludedCategories($excludedCategories);
     }
@@ -329,14 +329,14 @@ class Settings
     {
         $excludedCategories = self::getExcludedCategories();
 
-		$category = CategoryAdapter::fromCategory($idCategory);
-		if (!$category) {
-			return;
-		}
+        $category = CategoryAdapter::fromCategory($idCategory);
+        if (!$category) {
+            return;
+        }
 
-		// Remove the selected categories and all its children categories
-		$categoriesToRemove =  array_merge([$idCategory], $category->getAllChildrenIds());
-		$excludedCategories = array_diff($excludedCategories, $categoriesToRemove);
+        // Remove the selected categories and all its children categories
+        $categoriesToRemove = array_merge([$idCategory], $category->getAllChildrenIds());
+        $excludedCategories = array_diff($excludedCategories, $categoriesToRemove);
 
         self::updateExcludedCategories($excludedCategories);
     }
@@ -345,32 +345,32 @@ class Settings
      * Update ALMA_EXCLUDED_CATEGORIES value
      *
      * @param array $categories
+     *
      * @return void
      */
-    private static function updateExcludedCategories($categories){
+    private static function updateExcludedCategories($categories)
+    {
         if (version_compare(_PS_VERSION_, '1.7', '<')) {
             self::updateValue('ALMA_EXCLUDED_CATEGORIES', Tools::jsonEncode($categories));
-        }
-        else{
+        } else {
             self::updateValue('ALMA_EXCLUDED_CATEGORIES', json_encode($categories));
         }
     }
 
+    /**
+     * @param $productId int The product ID to check for exclusion
+     *
+     * @return bool Whether this product belongs to an excluded category
+     */
+    public static function isProductExcluded($productId)
+    {
+        $excludedCategories = [];
 
-	/**
-	 * @param $productId int The product ID to check for exclusion
-	 *
-	 * @return bool Whether this product belongs to an excluded category
-	 */
-	public static function isProductExcluded($productId)
-	{
-		$excludedCategories = [];
+        foreach (self::getExcludedCategories() as $categoryId) {
+            $excludedCategories[] = ['id_category' => (int) $categoryId];
+        }
 
-		foreach (self::getExcludedCategories() as $categoryId) {
-			$excludedCategories[] = ['id_category' => (int) $categoryId];
-		}
-
-		return Product::idIsOnCategoryId($productId, $excludedCategories);
+        return Product::idIsOnCategoryId($productId, $excludedCategories);
     }
 
     public static function showProductEligibility()
@@ -378,33 +378,38 @@ class Settings
         return (bool) self::get('ALMA_SHOW_PRODUCT_ELIGIBILITY', 1);
     }
 
-	public static function getProductPriceQuerySelector()
-	{
-		$default = '[itemprop=price],#our_price_display';
-		return self::get('ALMA_PRODUCT_PRICE_SELECTOR', $default);
+    public static function getProductPriceQuerySelector()
+    {
+        $default = '[itemprop=price],#our_price_display';
+
+        return self::get('ALMA_PRODUCT_PRICE_SELECTOR', $default);
     }
 
     public static function getProductAttrQuerySelector()
     {
         $default = '#buy_block .attribute_select';
+
         return self::get('ALMA_PRODUCT_ATTR_SELECTOR', $default);
     }
 
     public static function getProductAttrRadioQuerySelector()
     {
         $default = '#buy_block .attribute_radio';
+
         return self::get('ALMA_PRODUCT_ATTR_RADIO_SELECTOR', $default);
     }
 
     public static function getProductColorPickQuerySelector()
     {
         $default = '#buy_block .color_pick';
+
         return self::get('ALMA_PRODUCT_COLOR_PICK_SELECTOR', $default);
     }
 
     public static function getProductQuantityQuerySelector()
     {
         $default = '#buy_block #quantity_wanted';
+
         return self::get('ALMA_PRODUCT_QUANTITY_SELECTOR', $default);
     }
 
@@ -412,5 +417,4 @@ class Settings
     {
         return self::get('ALMA_MERCHANT_ID');
     }
-
 }

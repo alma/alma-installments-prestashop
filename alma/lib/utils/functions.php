@@ -41,17 +41,18 @@ function almaPriceToCents($price)
  * Same as above but with a string-based implementation, to try and kill the rounding problems subject for good
  *
  * @param $price float The price to convert to cents
+ *
  * @return int
  */
 function almaPriceToCents_str($price)
 {
     $priceStr = (string) $price;
-    $parts = explode(".", $priceStr);
+    $parts = explode('.', $priceStr);
 
     if (count($parts) == 1) {
-        $parts[] = "00";
+        $parts[] = '00';
     } elseif (Tools::strlen($parts[1]) == 1) {
-        $parts[1] .= "0";
+        $parts[1] .= '0';
     } elseif (Tools::strlen($parts[1]) > 2) {
         $parts[1] = Tools::substr($parts[1], 0, 2);
     }
@@ -73,20 +74,22 @@ function almaPriceFromCents($price)
 
 /**
  * @param $svg string Path to the SVG file to get a data-url for
+ *
  * @return string data-url for the given SVG
  */
-function almaSvgDataUrl($svg) {
-    static $_dataUrlCache = array();
+function almaSvgDataUrl($svg)
+{
+    static $_dataUrlCache = [];
 
     if (!array_key_exists($svg, $_dataUrlCache)) {
         $content = file_get_contents($svg);
 
         if ($content === false) {
-            return "";
+            return '';
         }
 
-        $content = preg_replace("/%20/", " ", rawurlencode(preg_replace("/[\r\n]+/", "", $content)));
-        $_dataUrlCache[$svg] = "data:image/svg+xml," . $content;
+        $content = preg_replace('/%20/', ' ', rawurlencode(preg_replace("/[\r\n]+/", '', $content)));
+        $_dataUrlCache[$svg] = 'data:image/svg+xml,' . $content;
     }
 
     return $_dataUrlCache[$svg];
@@ -95,42 +98,43 @@ function almaSvgDataUrl($svg) {
 /**
  * @param int $cents Price to be formatted, in cents (will be converted to currency's base)
  * @param int|null $id_currency
+ *
  * @return string The formatted price, using the current locale and provided or current currency
  */
-function almaFormatPrice($cents, $id_currency = null) {
-	$legacy = version_compare(_PS_VERSION_, '1.7.6.0', '<');
-	$currency = Context::getContext()->currency;
-	$price = almaPriceFromCents($cents);
+function almaFormatPrice($cents, $id_currency = null)
+{
+    $legacy = version_compare(_PS_VERSION_, '1.7.6.0', '<');
+    $currency = Context::getContext()->currency;
+    $price = almaPriceFromCents($cents);
 
-	if ($id_currency) {
-		$currency = Currency::getCurrencyInstance((int) $id_currency);
-		if (!Validate::isLoadedObject($currency)) {
-			$currency = Context::getContext()->currency;
-		}
-	}
+    if ($id_currency) {
+        $currency = Currency::getCurrencyInstance((int) $id_currency);
+        if (!Validate::isLoadedObject($currency)) {
+            $currency = Context::getContext()->currency;
+        }
+    }
 
-	// We default to a naive format of the price, in case things don't work with PrestaShop localization
-	$formattedPrice = sprintf('%.2f€', $price);
+    // We default to a naive format of the price, in case things don't work with PrestaShop localization
+    $formattedPrice = sprintf('%.2f€', $price);
 
-	try {
-		if ($legacy) {
-			$formattedPrice = Tools::displayPrice($price, $currency);
-		} else {
-			$locale = Context::getContext()->currentLocale;
-			try {
-				$formattedPrice = $locale->formatPrice($price, $currency->iso_code);
-			} catch (LocalizationException $e) {
-				// Catch LocalizationException at this level too, so that we can fallback to Tools::displayPrice if it
-				// still exists. If it, itself, throws a LocalizationException, it will be caught by the outer catch.
-				if (method_exists(Tools, 'displayPrice')) {
-					$formattedPrice = Tools::displayPrice($price, $currency);
-				}
-			}
-		}
-	} catch (LocalizationException $e) {
-		Logger::instance()->warning("Price localization error: $e");
-	}
+    try {
+        if ($legacy) {
+            $formattedPrice = Tools::displayPrice($price, $currency);
+        } else {
+            $locale = Context::getContext()->currentLocale;
+            try {
+                $formattedPrice = $locale->formatPrice($price, $currency->iso_code);
+            } catch (LocalizationException $e) {
+                // Catch LocalizationException at this level too, so that we can fallback to Tools::displayPrice if it
+                // still exists. If it, itself, throws a LocalizationException, it will be caught by the outer catch.
+                if (method_exists(Tools, 'displayPrice')) {
+                    $formattedPrice = Tools::displayPrice($price, $currency);
+                }
+            }
+        }
+    } catch (LocalizationException $e) {
+        Logger::instance()->warning("Price localization error: $e");
+    }
 
-
-	return $formattedPrice;
+    return $formattedPrice;
 }

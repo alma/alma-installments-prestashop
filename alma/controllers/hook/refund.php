@@ -29,11 +29,9 @@ if (!defined('_PS_VERSION_')) {
 }
 
 use Alma\API\RequestError;
-
 use Alma\PrestaShop\API\ClientHelper;
 use Alma\PrestaShop\Hooks\AdminHookController;
 use Alma\PrestaShop\Utils\Logger;
-
 use Order;
 use OrderDetail;
 use OrderPayment;
@@ -66,7 +64,7 @@ final class RefundHookController extends AdminHookController
     {
         $order = $params['order'];
         $amount = 0;
-        $order_detail_list = array();
+        $order_detail_list = [];
 
         $refunds = Tools::getValue('partialRefundProduct');
         foreach ($refunds as $id_order_detail => $amount_detail) {
@@ -75,10 +73,10 @@ final class RefundHookController extends AdminHookController
                 continue;
             }
 
-            $order_detail_list[$id_order_detail] = array(
+            $order_detail_list[$id_order_detail] = [
                 'quantity' => (int) $quantity[$id_order_detail],
                 'id_order_detail' => (int) $id_order_detail,
-            );
+            ];
 
             $order_detail = new OrderDetail((int) $id_order_detail);
             if (empty($amount_detail)) {
@@ -102,7 +100,7 @@ final class RefundHookController extends AdminHookController
             if (!Tools::getValue('TaxMethod')) {
                 $tax = new Tax();
                 $tax->rate = $order->carrier_tax_rate;
-                $tax_calculator = new TaxCalculator(array($tax));
+                $tax_calculator = new TaxCalculator([$tax]);
                 $amount += $tax_calculator->addTaxes($shipping_cost_amount);
             } else {
                 $amount += $shipping_cost_amount;
@@ -147,6 +145,7 @@ final class RefundHookController extends AdminHookController
         } catch (RequestError $e) {
             $msg = "[Alma] ERROR when creating refund for Order {$order->id}: {$e->getMessage()}";
             Logger::instance()->error($msg);
+
             return;
         }
     }
@@ -160,6 +159,7 @@ final class RefundHookController extends AdminHookController
         if ($order_payments && isset($order_payments[0])) {
             return $order_payments[0];
         }
+
         return false;
     }
 }

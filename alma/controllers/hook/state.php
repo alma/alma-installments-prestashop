@@ -25,16 +25,14 @@
 namespace Alma\PrestaShop\Controllers\Hook;
 
 if (!defined('_PS_VERSION_')) {
-	exit;
+    exit;
 }
 
 use Alma\API\RequestError;
-
 use Alma\PrestaShop\API\ClientHelper;
 use Alma\PrestaShop\Hooks\AdminHookController;
 use Alma\PrestaShop\Utils\Logger;
 use Alma\PrestaShop\Utils\Settings;
-
 use Order;
 use OrderPayment;
 use PrestaShopDatabaseException;
@@ -42,13 +40,13 @@ use PrestaShopException;
 
 final class StateHookController extends AdminHookController
 {
-	/**
-	 * @param $params
-	 *
-	 * @throws PrestaShopDatabaseException
-	 * @throws PrestaShopException
-	 */
-	public function run($params)
+    /**
+     * @param $params
+     *
+     * @throws PrestaShopDatabaseException
+     * @throws PrestaShopException
+     */
+    public function run($params)
     {
         if (!Settings::isRefundEnabledByState()) {
             return;
@@ -87,6 +85,7 @@ final class StateHookController extends AdminHookController
         if ($order_payments && isset($order_payments[0])) {
             return $order_payments[0];
         }
+
         return false;
     }
 }

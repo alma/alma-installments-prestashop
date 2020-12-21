@@ -28,11 +28,10 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-use Alma\API\Client;
-
 use Alma;
-use Alma\PrestaShop\Utils\Settings;
+use Alma\API\Client;
 use Alma\PrestaShop\Utils\Logger;
+use Alma\PrestaShop\Utils\Settings;
 use Exception;
 
 class ClientHelper
@@ -57,10 +56,10 @@ class ClientHelper
         $alma = null;
 
         try {
-            $alma = new Client($apiKey, array(
+            $alma = new Client($apiKey, [
                 'mode' => $mode,
                 'logger' => Logger::instance(),
-            ));
+            ]);
 
             $alma->addUserAgentComponent('PrestaShop', _PS_VERSION_);
             $alma->addUserAgentComponent('Alma for PrestaShop', Alma::VERSION);

@@ -25,7 +25,7 @@
 namespace Alma\PrestaShop\Utils;
 
 if (!defined('_PS_VERSION_')) {
-	exit;
+    exit;
 }
 
 use Psr\Log\AbstractLogger;
@@ -53,13 +53,13 @@ class Logger extends AbstractLogger
         }
     }
 
-    public function log($level, $message, array $context = array())
+    public function log($level, $message, array $context = [])
     {
         if (!Settings::canLog()) {
             return;
         }
 
-        $levels = array(
+        $levels = [
             LogLevel::DEBUG => 1,
             LogLevel::INFO => 1,
             LogLevel::NOTICE => 1,
@@ -68,7 +68,7 @@ class Logger extends AbstractLogger
             LogLevel::ALERT => 4,
             LogLevel::CRITICAL => 4,
             LogLevel::EMERGENCY => 4,
-        );
+        ];
 
         $Logger = Logger::loggerClass();
         $Logger::addLog($message, $levels[$level]);

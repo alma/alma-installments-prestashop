@@ -26,7 +26,7 @@ use Alma\PrestaShop\Utils\Settings;
 
 class AdminAlmaCategoriesController extends ModuleAdminController
 {
-    static $excludedCategories = [];
+    public static $excludedCategories = [];
     private $excludeFilter = null;
 
     public function __construct()
@@ -39,31 +39,31 @@ class AdminAlmaCategoriesController extends ModuleAdminController
         $this->explicitSelect = false;
         $this->_defaultOrderBy = 'position';
         $this->allow_export = false;
-        $this->list_no_link  = true;
+        $this->list_no_link = true;
 
         parent::__construct();
 
-        $this->fields_list = array(
-            'id_category' => array(
+        $this->fields_list = [
+            'id_category' => [
                 'title' => $this->module->l('ID', 'AdminAlmaCategories'),
                 'align' => 'center',
                 'class' => 'fixed-width-xs',
-            ),
-            'name' => array(
+            ],
+            'name' => [
                 'title' => $this->module->l('Name', 'AdminAlmaCategories'),
                 'filter_key' => 'b!name',
-            ),
-            'description' => array(
+            ],
+            'description' => [
                 'title' => $this->module->l('Description', 'AdminAlmaCategories'),
                 'filter_key' => 'b!description',
                 'callback' => 'getDescriptionClean',
                 'orderby' => false,
-            ),
-            'parent' => array(
+            ],
+            'parent' => [
                 'title' => $this->module->l('Parent', 'AdminAlmaCategories'),
                 'filter_key' => 'cpl!name',
-            ),
-            'excluded' => array(
+            ],
+            'excluded' => [
                 'title' => $this->module->l('Alma Eligible', 'AdminAlmaCategories'),
                 'callback' => 'getExcluded',
                 'type' => 'bool',
@@ -71,19 +71,19 @@ class AdminAlmaCategoriesController extends ModuleAdminController
                 'align' => 'center',
                 'ajax' => true,
                 'orderby' => false,
-            ),
-        );
+            ],
+        ];
 
-        $this->bulk_actions = array(
-            'enable' => array(
+        $this->bulk_actions = [
+            'enable' => [
                 'text' => $this->module->l('Enable Alma for these categories', 'AdminAlmaCategories'),
                 'icon' => 'icon-check text-success',
-            ),
-            'disable' => array(
+            ],
+            'disable' => [
                 'text' => $this->module->l('Disable Alma for these categories', 'AdminAlmaCategories'),
                 'icon' => 'icon-ban text-danger',
-            ),
-        );
+            ],
+        ];
 
         self::$excludedCategories = Settings::getExcludedCategories();
     }
@@ -118,27 +118,24 @@ class AdminAlmaCategoriesController extends ModuleAdminController
         }
 
         $this->_group = 'GROUP BY a.`id_category`';
-
     }
 
-
-    public function processFilter() {
-
+    public function processFilter()
+    {
         $this->excludeFilter = null;
         $excludeFilterKey = 'almacategoriescategoryFilter_excluded';
-        Hook::exec('action' . $this->controller_name . 'ListingFieldsModifier', array(
+        Hook::exec('action' . $this->controller_name . 'ListingFieldsModifier', [
             'fields' => &$this->fields_list,
-        ));
+        ]);
 
         if (!isset($this->list_id)) {
             $this->list_id = $this->table;
         }
 
-        if(method_exists('AdminControllerCore','getCookieFilterPrefix')){
+        if (method_exists('AdminControllerCore', 'getCookieFilterPrefix')) {
             $prefix = $this->getCookieFilterPrefix();
-        }
-        else{
-            $prefix = str_replace(array('admin','controller'), '', Tools::strtolower(get_class($this)));
+        } else {
+            $prefix = str_replace(['admin', 'controller'], '', Tools::strtolower(get_class($this)));
         }
 
         if (isset($this->list_id)) {
@@ -175,13 +172,12 @@ class AdminAlmaCategoriesController extends ModuleAdminController
         }
 
         $filters = $this->context->cookie->getFamily($prefix . $this->list_id . 'Filter_');
-        foreach($filters as $key => $filter){
-        	// Extract our custom excluded filter here and remove it from the filters list to avoid a SQL error
-            if($key === $excludeFilterKey){
+        foreach ($filters as $key => $filter) {
+            // Extract our custom excluded filter here and remove it from the filters list to avoid a SQL error
+            if ($key === $excludeFilterKey) {
                 $this->excludeFilter = (int) $filter;
                 unset($filters[$key]);
             }
-
         }
         $definition = false;
         if (isset($this->className) && $this->className) {
@@ -225,7 +221,7 @@ class AdminAlmaCategoriesController extends ModuleAdminController
                             if (!Validate::isDate($value[0])) {
                                 $this->errors[] = $this->trans(
                                     'The \'From\' date format is invalid (YYYY-MM-DD)',
-                                    array(),
+                                    [],
                                     'Admin.Notifications.Error'
                                 );
                             } else {
@@ -239,7 +235,7 @@ class AdminAlmaCategoriesController extends ModuleAdminController
                             if (!Validate::isDate($value[1])) {
                                 $this->errors[] = $this->trans(
                                     'The \'To\' date format is invalid (YYYY-MM-DD)',
-                                    array(),
+                                    [],
                                     'Admin.Notifications.Error'
                                 );
                             } else {
@@ -253,15 +249,15 @@ class AdminAlmaCategoriesController extends ModuleAdminController
 
                         if ($type == 'int' || $type == 'bool') {
                             if (($check_key || $key == '`active`')) {
-                                $sql_filter .= ($alias . '.') . pSQL($key) . ' = ' . (int)$value . ' ';
+                                $sql_filter .= ($alias . '.') . pSQL($key) . ' = ' . (int) $value . ' ';
                             } else {
-                                $sql_filter .= ('') . pSQL($key) . ' = ' . (int)$value . ' ';
+                                $sql_filter .= ('') . pSQL($key) . ' = ' . (int) $value . ' ';
                             }
                         } elseif ($type == 'decimal') {
                             if ($check_key) {
-                                $sql_filter .= ($alias . '.') . pSQL($key) . ' = ' . (float)$value . ' ';
+                                $sql_filter .= ($alias . '.') . pSQL($key) . ' = ' . (float) $value . ' ';
                             } else {
-                                $sql_filter .= ('') . pSQL($key) . ' = ' . (float)$value . ' ';
+                                $sql_filter .= ('') . pSQL($key) . ' = ' . (float) $value . ' ';
                             }
                         } elseif ($type == 'select') {
                             if ($check_key) {
@@ -298,20 +294,19 @@ class AdminAlmaCategoriesController extends ModuleAdminController
         $id_lang_shop = false
     ) {
         parent::getList($id_lang, $order_by, $order_way, $start, $limit, $id_lang_shop);
-        if(1 === $this->excludeFilter){
-            foreach($this->_list as $k => $list){
-                foreach(self::$excludedCategories as $excluded){
-                    if($list['id_category'] === $excluded){
+        if (1 === $this->excludeFilter) {
+            foreach ($this->_list as $k => $list) {
+                foreach (self::$excludedCategories as $excluded) {
+                    if ($list['id_category'] === $excluded) {
                         unset($this->_list[$k]);
                     }
                 }
             }
-        }
-        elseif(0 === $this->excludeFilter){
-            $tmp = array();
-            foreach(self::$excludedCategories as $excluded){
-                foreach($this->_list as $k => $list){
-                    if($list['id_category'] === $excluded){
+        } elseif (0 === $this->excludeFilter) {
+            $tmp = [];
+            foreach (self::$excludedCategories as $excluded) {
+                foreach ($this->_list as $k => $list) {
+                    if ($list['id_category'] === $excluded) {
                         $tmp[] = $list;
                     }
                 }
@@ -320,11 +315,10 @@ class AdminAlmaCategoriesController extends ModuleAdminController
         }
     }
 
-
-    public function initToolbar(){
+    public function initToolbar()
+    {
         return false;
     }
-
 
     public function renderView()
     {
@@ -332,7 +326,6 @@ class AdminAlmaCategoriesController extends ModuleAdminController
 
         return $this->renderList();
     }
-
 
     /**
      * processBulkEnable REMOVE Excluded Categories from ALMA_EXCLUDED_CATEGORIES
@@ -350,7 +343,7 @@ class AdminAlmaCategoriesController extends ModuleAdminController
         }
 
         // need to force page refresh here for obscure reason
-        header("Location:" .$this->context->link->getAdminLink('AdminAlmaCategories'));
+        header('Location:' . $this->context->link->getAdminLink('AdminAlmaCategories'));
     }
 
     /**
@@ -361,7 +354,7 @@ class AdminAlmaCategoriesController extends ModuleAdminController
     protected function processBulkDisable()
     {
         foreach (Tools::getValue($this->table . 'Box') as $id_category) {
-            $category = new Category((int)$id_category);
+            $category = new Category((int) $id_category);
 
             if (Validate::isLoadedObject($category)) {
                 Settings::addExcludedCategories((int) $id_category);
@@ -369,7 +362,7 @@ class AdminAlmaCategoriesController extends ModuleAdminController
         }
 
         // need to force page refresh here for obscure reason
-        header("Location:" .$this->context->link->getAdminLink('AdminAlmaCategories'));
+        header('Location:' . $this->context->link->getAdminLink('AdminAlmaCategories'));
     }
 
     public static function getExcluded($id_category)
@@ -378,11 +371,13 @@ class AdminAlmaCategoriesController extends ModuleAdminController
             if (version_compare(_PS_VERSION_, '1.6', '>=')) {
                 return '<i class="icon-ban text-danger"></i>';
             }
+
             return '❌';
         }
         if (version_compare(_PS_VERSION_, '1.6', '>=')) {
             return '<i class="icon-check text-success"></i>';
         }
+
         return '✅';
     }
 
@@ -390,8 +385,7 @@ class AdminAlmaCategoriesController extends ModuleAdminController
     {
         if (version_compare(_PS_VERSION_, '1.7', '>=')) {
             return Tools::getDescriptionClean($description);
-        }
-        else{
+        } else {
             return strip_tags(stripslashes($description));
         }
     }

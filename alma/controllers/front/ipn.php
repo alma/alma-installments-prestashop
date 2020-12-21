@@ -41,10 +41,10 @@ class AlmaIpnModuleFrontController extends ModuleFrontController
 
     public function ajaxDie($value = null, $controller = null, $method = null)
     {
-		if (method_exists(get_parent_class($this), 'ajaxRender')) {
-			parent::ajaxRender($value);
-			exit;
-		} else if (method_exists(get_parent_class($this), 'ajaxDie')) {
+        if (method_exists(get_parent_class($this), 'ajaxRender')) {
+            parent::ajaxRender($value);
+            exit;
+        } elseif (method_exists(get_parent_class($this), 'ajaxDie')) {
             parent::ajaxDie($value);
         } else {
             die($value);
@@ -54,7 +54,7 @@ class AlmaIpnModuleFrontController extends ModuleFrontController
     private function fail($msg = null)
     {
         header('X-PHP-Response-Code: 500', true, 500);
-        $this->ajaxDie(json_encode(array('error' => $msg)));
+        $this->ajaxDie(json_encode(['error' => $msg]));
     }
 
     public function postProcess()
@@ -74,6 +74,6 @@ class AlmaIpnModuleFrontController extends ModuleFrontController
             $this->fail($e->getMessage());
         }
 
-        $this->ajaxDie(json_encode(array('success' => true)));
+        $this->ajaxDie(json_encode(['success' => true]));
     }
 }

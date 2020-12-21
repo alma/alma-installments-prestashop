@@ -28,7 +28,7 @@ use Context;
 use Tools;
 
 if (!defined('_PS_VERSION_')) {
-	exit;
+    exit;
 }
 
 /**
@@ -41,73 +41,71 @@ if (!defined('_PS_VERSION_')) {
  *
  * This class is meant to help handle currency- and other locale-related data throughout PrestaShop versions, making
  * those differences transparent.
- *
- *
- * @package Alma\PrestaShop\Utils
  */
 class LocaleHelper
 {
-	/**
-	 * Find the current decimal separator depending on the current context.
-	 * @return string The decimal separator used for the current context (locale)
-	 */
-	public static function decimalSeparator()
-	{
-		if (version_compare(_PS_VERSION_, '1.7', '<')) {
-			$currencyFormat = Context::getContext()->currency->format;
+    /**
+     * Find the current decimal separator depending on the current context.
+     *
+     * @return string The decimal separator used for the current context (locale)
+     */
+    public static function decimalSeparator()
+    {
+        if (version_compare(_PS_VERSION_, '1.7', '<')) {
+            $currencyFormat = Context::getContext()->currency->format;
 
-			switch ($currencyFormat) {
-				case 1: 		// X0,000.00
-				case 4:			// 0,000.00X
-				case 5:			// 0'000.00X
-					return '.';
-				case 2:			// 0 000,00X
-				case 3:			// X0.000,00
-					return ',';
-			}
-		} else if (version_compare(_PS_VERSION_, '1.7.6', '<')) {
-			$cldr = Tools::getCldr(Context::getContext());
-			$culture = $cldr->getCulture();
-			$locale = $cldr->getRepository()->locales[$culture];
+            switch ($currencyFormat) {
+                case 1: 		// X0,000.00
+                case 4:			// 0,000.00X
+                case 5:			// 0'000.00X
+                    return '.';
+                case 2:			// 0 000,00X
+                case 3:			// X0.000,00
+                    return ',';
+            }
+        } elseif (version_compare(_PS_VERSION_, '1.7.6', '<')) {
+            $cldr = Tools::getCldr(Context::getContext());
+            $culture = $cldr->getCulture();
+            $locale = $cldr->getRepository()->locales[$culture];
 
-			return $locale['numbers']['symbols-numberSystem-latn']['decimal'];
-		} else {
-			$currentLocale = Context::getContext()->getCurrentLocale();
-			$numberSpec = $currentLocale->getNumberSpecification();
-			$symbols = $numberSpec->getSymbolsByNumberingSystem('latn');
+            return $locale['numbers']['symbols-numberSystem-latn']['decimal'];
+        } else {
+            $currentLocale = Context::getContext()->getCurrentLocale();
+            $numberSpec = $currentLocale->getNumberSpecification();
+            $symbols = $numberSpec->getSymbolsByNumberingSystem('latn');
 
-			return $symbols->getDecimal();
-		}
-	}
+            return $symbols->getDecimal();
+        }
+    }
 
-	public static function thousandSeparator()
-	{
-		if (version_compare(_PS_VERSION_, '1.7', '<')) {
-			$currencyFormat = Context::getContext()->currency->format;
+    public static function thousandSeparator()
+    {
+        if (version_compare(_PS_VERSION_, '1.7', '<')) {
+            $currencyFormat = Context::getContext()->currency->format;
 
-			switch ($currencyFormat) {
-				case 1: 		// X0,000.00
-				case 4:			// 0,000.00X
-					return ',';
-				case 2:			// 0 000,00X
-					return ' ';
-				case 3:			// X0.000,00
-					return '.';
-				case 5:			// 0'000.00X
-					return "'";
-			}
-		} else if (version_compare(_PS_VERSION_, '1.7.6', '<')) {
-			$cldr = Tools::getCldr(Context::getContext());
-			$culture = $cldr->getCulture();
-			$locale = $cldr->getRepository()->locales[$culture];
+            switch ($currencyFormat) {
+                case 1: 		// X0,000.00
+                case 4:			// 0,000.00X
+                    return ',';
+                case 2:			// 0 000,00X
+                    return ' ';
+                case 3:			// X0.000,00
+                    return '.';
+                case 5:			// 0'000.00X
+                    return "'";
+            }
+        } elseif (version_compare(_PS_VERSION_, '1.7.6', '<')) {
+            $cldr = Tools::getCldr(Context::getContext());
+            $culture = $cldr->getCulture();
+            $locale = $cldr->getRepository()->locales[$culture];
 
-			return $locale['numbers']['symbols-numberSystem-latn']['group'];
-		} else {
-			$currentLocale = Context::getContext()->getCurrentLocale();
-			$numberSpec = $currentLocale->getNumberSpecification();
-			$symbols = $numberSpec->getSymbolsByNumberingSystem('latn');
+            return $locale['numbers']['symbols-numberSystem-latn']['group'];
+        } else {
+            $currentLocale = Context::getContext()->getCurrentLocale();
+            $numberSpec = $currentLocale->getNumberSpecification();
+            $symbols = $numberSpec->getSymbolsByNumberingSystem('latn');
 
-			return $symbols->getGroup();
-		}
-	}
+            return $symbols->getGroup();
+        }
+    }
 }

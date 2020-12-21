@@ -28,51 +28,48 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-use Alma\API\RequestError;
 use Alma\API\Endpoints\Results\Eligibility;
-
+use Alma\API\RequestError;
 use Alma\PrestaShop\Model\PaymentData;
 use Alma\PrestaShop\Utils\Logger;
 use Alma\PrestaShop\Utils\Settings;
-
 use Cart;
 
 class EligibilityHelper
 {
-
     public static function eligibilityCheck($context)
     {
-        $eligibilities = array();
-        $activePlans = array();
-        $almaEligibilities = array();
+        $eligibilities = [];
+        $activePlans = [];
+        $almaEligibilities = [];
         $purchaseAmount = almaPriceToCents($context->cart->getOrderTotal(true, Cart::BOTH));
         $alma = ClientHelper::defaultInstance();
         if (!$alma) {
             Logger::instance()->error('Cannot check cart eligibility: no API client');
-            return array();
+
+            return [];
         }
 
-        if(0 === Settings::installmentPlansMaxN()){
-            return array();
+        if (0 === Settings::installmentPlansMaxN()) {
+            return [];
         }
 
-        foreach(Settings::activeInstallmentsCounts() as $n){
+        foreach (Settings::activeInstallmentsCounts() as $n) {
             if (
                 $purchaseAmount < Settings::installmentPlanMinAmount($n)
                 || $purchaseAmount > Settings::installmentPlanMaxAmount($n)
             ) {
                 $eligibility = new Eligibility(
-                    array(
+                    [
                         'installments_count' => $n,
                         'eligible' => false,
-                        'constraints' => array(
-                            'purchase_amount' => array(
+                        'constraints' => [
+                            'purchase_amount' => [
                                 'minimum' => Settings::installmentPlanMinAmount($n),
-                                'maximum' => Settings::installmentPlanMaxAmount($n)
-                            )
-                        )
-
-                    )
+                                'maximum' => Settings::installmentPlanMaxAmount($n),
+                            ],
+                        ],
+                    ]
                 );
                 $eligibilities[] = $eligibility;
             } else {
@@ -83,21 +80,23 @@ class EligibilityHelper
         $paymentData = PaymentData::dataFromCart($context->cart, $context, $activePlans);
         if (!$paymentData) {
             Logger::instance()->error('Cannot check cart eligibility: no data extracted from cart');
-            return array();
+
+            return [];
         }
         try {
-            if(!empty($activePlans)){
+            if (!empty($activePlans)) {
                 $almaEligibilities = $alma->payments->eligibility($paymentData);
             }
         } catch (RequestError $e) {
             Logger::instance()->error(
                 "Error when checking cart {$context->cart->id} eligibility: " . $e->getMessage()
             );
-            return array();
+
+            return [];
         }
 
         $eligibilities = array_merge((array) $eligibilities, (array) $almaEligibilities);
-        usort($eligibilities, ['Alma\PrestaShop\API\EligibilityHelper', "cmp_installments_count"]);
+        usort($eligibilities, ['Alma\PrestaShop\API\EligibilityHelper', 'cmp_installments_count']);
 
         return $eligibilities;
     }
@@ -107,7 +106,7 @@ class EligibilityHelper
         if ($a->installmentsCount > $b->installmentsCount) {
             return 1;
         } else {
-            return ($a->installmentsCount == $b->installmentsCount ? 0 : -1);
+            return $a->installmentsCount == $b->installmentsCount ? 0 : -1;
         }
     }
 }

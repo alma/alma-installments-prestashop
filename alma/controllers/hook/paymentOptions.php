@@ -32,7 +32,6 @@ use Alma\PrestaShop\API\EligibilityHelper;
 use Alma\PrestaShop\Hooks\FrontendHookController;
 use Alma\PrestaShop\Model\CartData;
 use Alma\PrestaShop\Utils\Settings;
-
 use Media;
 use PrestaShop\PrestaShop\Core\Payment\PaymentOption;
 
@@ -40,19 +39,19 @@ final class PaymentOptionsHookController extends FrontendHookController
 {
     public function run($params)
     {
-		//  Check if some products in cart are in the excludes listing
+        //  Check if some products in cart are in the excludes listing
         $diff = CartData::getCartExclusion($params['cart']);
 
-		if (!empty($diff)) {
-			return [];
-		}
+        if (!empty($diff)) {
+            return [];
+        }
 
-		$installmentPlans = EligibilityHelper::eligibilityCheck($this->context);
+        $installmentPlans = EligibilityHelper::eligibilityCheck($this->context);
         $options = [];
-		$sortOrders = [];
+        $sortOrders = [];
 
-        foreach($installmentPlans as $plan){
-            if(!$plan->isEligible){
+        foreach ($installmentPlans as $plan) {
+            if (!$plan->isEligible) {
                 continue;
             }
 
@@ -65,17 +64,17 @@ final class PaymentOptionsHookController extends FrontendHookController
             $paymentOption = $this->createPaymentOption(
                 $forEUComplianceModule,
                 sprintf(Settings::getPaymentButtonTitle(), $n),
-                $this->context->link->getModuleLink($this->module->name, 'payment', array('n' => $n), true),
+                $this->context->link->getModuleLink($this->module->name, 'payment', ['n' => $n], true),
                 $n
             );
 
-			$paymentButtonDescription = Settings::getPaymentButtonDescription();
+            $paymentButtonDescription = Settings::getPaymentButtonDescription();
 
-			if (!$forEUComplianceModule && !empty($paymentButtonDescription)) {
-                $this->context->smarty->assign(array(
+            if (!$forEUComplianceModule && !empty($paymentButtonDescription)) {
+                $this->context->smarty->assign([
                     'desc' => sprintf($paymentButtonDescription, $n),
                     'plans' => (array) $plan->paymentPlan,
-                ));
+                ]);
 
                 $template = $this->context->smarty->fetch(
                     "module:{$this->module->name}/views/templates/hook/payment_button_desc.tpl"
@@ -89,7 +88,7 @@ final class PaymentOptionsHookController extends FrontendHookController
             $sortOrders[] = $sortOrder;
         }
 
-        $sortedOptions = array();
+        $sortedOptions = [];
         sort($sortOrders);
         foreach ($sortOrders as $order) {
             $sortedOptions[] = $options[$order];
@@ -104,11 +103,11 @@ final class PaymentOptionsHookController extends FrontendHookController
 
         if ($forEUComplianceModule) {
             $logo = Media::getMediaPath("${baseDir}/views/img/logos/alma_payment_logos.svg");
-            $paymentOption = array(
+            $paymentOption = [
                 'cta_text' => $ctaText,
                 'action' => $action,
-                'logo' => $logo
-            );
+                'logo' => $logo,
+            ];
         } else {
             $paymentOption = new PaymentOption();
             $logo = Media::getMediaPath("${baseDir}/views/img/logos/alma_p${n}x.svg");

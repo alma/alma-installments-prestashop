@@ -27,11 +27,10 @@ if (!defined('_PS_VERSION_')) {
 }
 
 use Alma\API\RequestError;
-
 use Alma\PrestaShop\API\ClientHelper;
-use Alma\PrestaShop\Utils\Settings;
-use Alma\PrestaShop\Utils\Logger;
 use Alma\PrestaShop\Model\PaymentData;
+use Alma\PrestaShop\Utils\Logger;
+use Alma\PrestaShop\Utils\Settings;
 
 class AlmaPaymentModuleFrontController extends ModuleFrontController
 {
@@ -108,16 +107,18 @@ class AlmaPaymentModuleFrontController extends ModuleFrontController
         $alma = ClientHelper::defaultInstance();
         if (!$data || !$alma) {
             $this->genericErrorAndRedirect();
+
             return;
         }
 
         // Check that the selected installments count is indeed enabled
         if (
             !Settings::isInstallmentPlanEnabled($installmentsCount) ||
-            Settings::installmentPlanMinAmount($installmentsCount) > $data["payment"]["purchase_amount"] ||
-            Settings::installmentPlanMaxAmount($installmentsCount) < $data["payment"]["purchase_amount"]
+            Settings::installmentPlanMinAmount($installmentsCount) > $data['payment']['purchase_amount'] ||
+            Settings::installmentPlanMaxAmount($installmentsCount) < $data['payment']['purchase_amount']
         ) {
             $this->genericErrorAndRedirect();
+
             return;
         }
 

@@ -35,6 +35,7 @@ class ShippingData
 {
     /**
      * @param Cart $cart
+     *
      * @return array|null
      */
     public static function shippingInfo($cart)
@@ -66,8 +67,8 @@ class ShippingData
 
         $shippingInfo = self::shippingInfoData($carrier, $carrierInfo);
 
-        $shippingInfo["available_options"] = array();
-        $knownOptions = array();
+        $shippingInfo['available_options'] = [];
+        $knownOptions = [];
         foreach ($deliveryOptionList[$addressId] as $carriers) {
             foreach ($carriers['carrier_list'] as $id => $carrierOptionInfo) {
                 $carrierOption = new Carrier($id, $cart->id_lang);
@@ -80,34 +81,34 @@ class ShippingData
             }
         }
 
-        $shippingInfo["available_options"] = array_values($knownOptions);
+        $shippingInfo['available_options'] = array_values($knownOptions);
 
         if (count($deliveryOption) > 1) {
-            $shippingInfo["is_multi_shipping"] = true;
-            $shippingInfo["multi_shipping_info"] = array(
-                "addresses_selection" => $deliveryOption,
-                "delivery_options" => $deliveryOptionList
-            );
+            $shippingInfo['is_multi_shipping'] = true;
+            $shippingInfo['multi_shipping_info'] = [
+                'addresses_selection' => $deliveryOption,
+                'delivery_options' => $deliveryOptionList,
+            ];
         }
 
         return $shippingInfo;
     }
 
     /**
-     *
      * @param Carrier $carrier
      * @param array $carrierInfo
+     *
      * @return array
      */
     private static function shippingInfoData($carrier, $carrierInfo)
     {
-        return array(
-            "amount" => almaPriceToCents((float)$carrierInfo["price_with_tax"]),
-            "carrier" => $carrier->name,
-            "title" => $carrier->delay,
-            "express_delivery" => self::isExpressShipping($carrierInfo),
-            "pickup_delivery" => self::isPickupShipping($carrierInfo),
-        );
+        return [
+            'amount' => almaPriceToCents((float) $carrierInfo['price_with_tax']),
+            'carrier' => $carrier->name,
+            'title' => $carrier->delay,
+            'express_delivery' => self::isExpressShipping($carrierInfo),
+            'pickup_delivery' => self::isPickupShipping($carrierInfo),
+        ];
     }
 
     private static function isExpressShipping($carrierInfo)
