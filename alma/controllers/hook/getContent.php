@@ -863,13 +863,22 @@ final class GetContentHookController extends AdminHookController
             );
             $fieldsForms = array($apiConfigForm, $debugForm);
         } else {
-            $fieldsForms = array($productEligibilityForm, $cartEligibilityForm, $paymentButtonForm, $refundStateForm);
+            $fieldsForms = [];
 
             if ($pnxConfigForm) {
                 $fieldsForms[] = $pnxConfigForm;
             }
 
-            $fieldsForms = array_merge($fieldsForms, array($orderConfirmationForm, $excludedForm, $apiConfigForm, $debugForm));
+            $fieldsForms = array_merge($fieldsForms, [
+                $productEligibilityForm,
+                $cartEligibilityForm,
+                $paymentButtonForm,
+                $excludedForm,
+                $refundStateForm,
+                $orderConfirmationForm,
+                $apiConfigForm,
+                $debugForm
+            ]);
         }
 
         $helper = new HelperForm();
