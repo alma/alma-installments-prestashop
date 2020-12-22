@@ -1,11 +1,24 @@
 Changelog
 =========
 
-vNEXT
------
+v1.4.0
+------
 
+* All logos have been updated to our latest branding
 * Adds an "Excluded categories" custom tab/page to let merchants deactivate Alma for categories of
-  products that are not compatible with our legal terms.
+  products that are not compatible with our legal terms. The exclusion configuration is accessible via a new Tab in the
+  PrestaShop backoffice.
+* Display a detailed payment plan for the selected Alma payment method at checkout.
+* Display a "badge" on product pages, which shows customers whether they can pay products with Alma and, if that's the 
+  case, what the payment plan would be.
+* Correctly syncs fee plans display and information with Alma's API data
+* Temporarily removes the sending of shipping information as it causes a bug with orders with multiple carriers.
+* Fixes the appearance of config buttons in PrestaShop 1.5.
+* Fixes a bug in the IPN processing code that caused an exception to be thrown when the order had already been 
+  processed.
+* Fixes issues with eligibility messages display when there are multiple activated fee plans
+* By default, display the module's own confirmation page template on PrestaShop 1.5 & 1.6 (only for new installations)
+* Added some code quality tooling to the repository
 
 v1.3.1
 ------
