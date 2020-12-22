@@ -22,58 +22,55 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
+namespace Alma\PrestaShop\Utils;
+
 if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-use Alma\PrestaShop\API\PaymentValidation;
-use Alma\PrestaShop\API\PaymentValidationError;
+use Psr\Log\AbstractLogger;
+use Psr\Log\LogLevel;
 
-class AlmaIpnModuleFrontController extends ModuleFrontController
+class Logger extends AbstractLogger
 {
-    public $ssl = true;
-
-    public function __construct()
+    public static function instance()
     {
-        parent::__construct();
-        $this->context = Context::getContext();
+        static $instance;
+
+        if (!$instance) {
+            $instance = new Logger();
+        }
+
+        return $instance;
     }
 
-    public function ajaxDie($value = null, $controller = null, $method = null)
+    public static function loggerClass()
     {
-        if (method_exists(get_parent_class($this), 'ajaxRender')) {
-            parent::ajaxRender($value);
-            exit;
-        } elseif (method_exists(get_parent_class($this), 'ajaxDie')) {
-            parent::ajaxDie($value);
+        if (class_exists('PrestaShopLogger')) {
+            return 'PrestaShopLogger';
         } else {
-            die($value);
+            return 'Logger';
         }
     }
 
-    private function fail($msg = null)
+    public function log($level, $message, array $context = [])
     {
-        header('X-PHP-Response-Code: 500', true, 500);
-        $this->ajaxDie(json_encode(['error' => $msg]));
-    }
-
-    public function postProcess()
-    {
-        parent::postProcess();
-
-        header('Content-Type: application/json');
-
-        $paymentId = Tools::getValue('pid');
-        $validator = new PaymentValidation($this->context, $this->module);
-
-        try {
-            $validator->validatePayment($paymentId);
-        } catch (PaymentValidationError $e) {
-            $this->fail($e->getMessage());
-        } catch (Exception $e) {
-            $this->fail($e->getMessage());
+        if (!Settings::canLog()) {
+            return;
         }
 
-        $this->ajaxDie(json_encode(['success' => true]));
+        $levels = [
+            LogLevel::DEBUG => 1,
+            LogLevel::INFO => 1,
+            LogLevel::NOTICE => 1,
+            LogLevel::WARNING => 2,
+            LogLevel::ERROR => 3,
+            LogLevel::ALERT => 4,
+            LogLevel::CRITICAL => 4,
+            LogLevel::EMERGENCY => 4,
+        ];
+
+        $Logger = Logger::loggerClass();
+        $Logger::addLog($message, $levels[$level]);
     }
 }

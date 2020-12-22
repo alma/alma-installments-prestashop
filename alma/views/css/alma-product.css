@@ -1,0 +1,21 @@
+.alma-pp-container.ps15 {
+    float: right;
+    margin: 15px 0;
+}
+
+.alma-pp-container.ps15 .alma-paymentPlans {
+    text-align: left !important;
+}
+
+.alma-pp-container img.logo {
+    display: inline-block;
+    width: auto !important;
+    height: 20px !important;
+    border: none !important;
+    vertical-align: middle;
+}
+
+.alma-widget-root .atw-z-50.atw-bg-black,
+.alma-widget-root.alma-howItWorks > div {
+    z-index: 99999 !important;
+}

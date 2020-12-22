@@ -22,58 +22,55 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
+namespace Alma\PrestaShop\Hooks;
+
+use Alma;
+use Configuration;
+use Context;
+use Cookie;
+use Employee;
+use Tools;
+use Validate;
+
 if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-use Alma\PrestaShop\API\PaymentValidation;
-use Alma\PrestaShop\API\PaymentValidationError;
-
-class AlmaIpnModuleFrontController extends ModuleFrontController
+abstract class HookController
 {
-    public $ssl = true;
+    /** @var Alma */
+    protected $module;
 
-    public function __construct()
+    /** @var Context */
+    protected $context;
+
+    /**
+     * HookController constructor.
+     *
+     * @param $module Alma
+     */
+    public function __construct($module)
     {
-        parent::__construct();
+        $this->module = $module;
         $this->context = Context::getContext();
     }
 
-    public function ajaxDie($value = null, $controller = null, $method = null)
+    protected function loggedAsEmployee()
     {
-        if (method_exists(get_parent_class($this), 'ajaxRender')) {
-            parent::ajaxRender($value);
-            exit;
-        } elseif (method_exists(get_parent_class($this), 'ajaxDie')) {
-            parent::ajaxDie($value);
-        } else {
-            die($value);
-        }
+        $cookie = new Cookie('psAdmin', '', (int) Configuration::get('PS_COOKIE_LIFETIME_BO'));
+        $employee = new Employee((int) $cookie->id_employee);
+
+        return Validate::isLoadedObject($employee)
+            && $employee->checkPassword((int) $cookie->id_employee, $cookie->passwd)
+            && (!isset($cookie->remote_addr)
+                || $cookie->remote_addr == ip2long(Tools::getRemoteAddr())
+                || !Configuration::get('PS_COOKIE_CHECKIP'));
     }
 
-    private function fail($msg = null)
+    abstract public function run($params);
+
+    public function canRun()
     {
-        header('X-PHP-Response-Code: 500', true, 500);
-        $this->ajaxDie(json_encode(['error' => $msg]));
-    }
-
-    public function postProcess()
-    {
-        parent::postProcess();
-
-        header('Content-Type: application/json');
-
-        $paymentId = Tools::getValue('pid');
-        $validator = new PaymentValidation($this->context, $this->module);
-
-        try {
-            $validator->validatePayment($paymentId);
-        } catch (PaymentValidationError $e) {
-            $this->fail($e->getMessage());
-        } catch (Exception $e) {
-            $this->fail($e->getMessage());
-        }
-
-        $this->ajaxDie(json_encode(['success' => true]));
+        return true;
     }
 }

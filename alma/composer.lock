@@ -8,16 +8,16 @@
     "packages": [
         {
             "name": "alma/alma-php-client",
-            "version": "v1.0.10",
+            "version": "v1.0.11",
             "source": {
                 "type": "git",
                 "url": "https://github.com/alma/alma-php-client.git",
-                "reference": "05d75ad6817d9af29cf5f6c8b42d980bdd8f3e61"
+                "reference": "bc7d362f0f7606369cc1ef5c04fbb05b1cc740db"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/alma/alma-php-client/zipball/05d75ad6817d9af29cf5f6c8b42d980bdd8f3e61",
-                "reference": "05d75ad6817d9af29cf5f6c8b42d980bdd8f3e61",
+                "url": "https://api.github.com/repos/alma/alma-php-client/zipball/bc7d362f0f7606369cc1ef5c04fbb05b1cc740db",
+                "reference": "bc7d362f0f7606369cc1ef5c04fbb05b1cc740db",
                 "shasum": ""
             },
             "require": {
@@ -50,7 +50,7 @@
                 }
             ],
             "description": "PHP API client for the Alma payments API",
-            "time": "2020-03-30T22:09:54+00:00"
+            "time": "2020-07-07T11:39:11+00:00"
         },
         {
             "name": "psr/log",
@@ -58,12 +58,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/php-fig/log.git",
-                "reference": "0f73288fd15629204f9d42b7055f72dacbe811fc"
+                "reference": "dd738d0b4491f32725492cf345f6b501f5922fec"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/php-fig/log/zipball/0f73288fd15629204f9d42b7055f72dacbe811fc",
-                "reference": "0f73288fd15629204f9d42b7055f72dacbe811fc",
+                "url": "https://api.github.com/repos/php-fig/log/zipball/dd738d0b4491f32725492cf345f6b501f5922fec",
+                "reference": "dd738d0b4491f32725492cf345f6b501f5922fec",
                 "shasum": ""
             },
             "require": {
@@ -87,7 +87,7 @@
             "authors": [
                 {
                     "name": "PHP-FIG",
-                    "homepage": "http://www.php-fig.org/"
+                    "homepage": "https://www.php-fig.org/"
                 }
             ],
             "description": "Common interface for logging libraries",
@@ -97,7 +97,7 @@
                 "psr",
                 "psr-3"
             ],
-            "time": "2020-03-23T09:12:05+00:00"
+            "time": "2020-09-18T06:44:51+00:00"
         }
     ],
     "packages-dev": [],

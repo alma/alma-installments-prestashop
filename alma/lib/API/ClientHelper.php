@@ -22,57 +22,51 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
+namespace Alma\PrestaShop\API;
+
 if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-use Alma\PrestaShop\API\PaymentValidation;
-use Alma\PrestaShop\API\PaymentValidationError;
+use Alma;
+use Alma\API\Client;
+use Alma\PrestaShop\Utils\Logger;
+use Alma\PrestaShop\Utils\Settings;
+use Exception;
 
-class AlmaValidationModuleFrontController extends ModuleFrontController
+class ClientHelper
 {
-    public $ssl = true;
-
-    public function __construct()
+    public static function defaultInstance()
     {
-        parent::__construct();
-        $this->context = Context::getContext();
-    }
+        static $_almaClient;
 
-    private function fail($cart, $msg = null)
-    {
-        if (!$msg) {
-            $msg = sprintf(
-                // phpcs:ignore
-                $this->module->l('There was an error while validating your payment. Please try again or contact us if the problem persists. Cart ID: %d', 'validation'),
-                (int) $cart ? $cart->id : -1
-            );
+        if (!$_almaClient) {
+            $_almaClient = self::createInstance(Settings::getActiveAPIKey());
         }
 
-        $this->context->cookie->__set('alma_error', $msg);
-
-        return 'index.php?controller=order&step=1';
+        return $_almaClient;
     }
 
-    public function postProcess()
+    public static function createInstance($apiKey, $mode = null)
     {
-        parent::postProcess();
+        if (!$mode) {
+            $mode = Settings::getActiveMode();
+        }
 
-        $paymentId = Tools::getValue('pid');
-        $validator = new PaymentValidation($this->context, $this->module);
+        $alma = null;
 
         try {
-            $redirect_to = $validator->validatePayment($paymentId);
-        } catch (PaymentValidationError $e) {
-            $redirect_to = $this->fail($e->cart, $e->getMessage());
+            $alma = new Client($apiKey, [
+                'mode' => $mode,
+                'logger' => Logger::instance(),
+            ]);
+
+            $alma->addUserAgentComponent('PrestaShop', _PS_VERSION_);
+            $alma->addUserAgentComponent('Alma for PrestaShop', Alma::VERSION);
         } catch (Exception $e) {
-            $redirect_to = $this->fail(null, $e->getMessage());
+            Logger::instance()->error('Error creating Alma API client: ' . $e->getMessage());
         }
 
-        if (is_callable([$this, 'setRedirectAfter'])) {
-            $this->setRedirectAfter($redirect_to);
-        } else {
-            Tools::redirect($redirect_to);
-        }
+        return $alma;
     }
 }

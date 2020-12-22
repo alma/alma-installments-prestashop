@@ -22,10 +22,29 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
-header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
-header('Last-Modified: ' . gmdate('D, d M Y H:i:s') . ' GMT');
-header('Cache-Control: no-store, no-cache, must-revalidate');
-header('Cache-Control: post-check=0, pre-check=0', false);
-header('Pragma: no-cache');
-header('Location: ../');
-exit;
+namespace Alma\PrestaShop\Controllers\Hook;
+
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
+use Alma\PrestaShop\Hooks\FrontendHookController;
+use Alma\PrestaShop\Utils\Settings;
+
+final class DisplayPaymentReturnHookController extends FrontendHookController
+{
+    public function canRun()
+    {
+        return parent::canRun() && Settings::displayOrderConfirmation();
+    }
+
+    public function run($params)
+    {
+        $order = array_key_exists('objOrder', $params) ? $params['objOrder'] : $params['order'];
+        $this->context->smarty->assign([
+            'order_reference' => $order->reference,
+        ]);
+
+        return $this->module->display($this->module->file, 'displayPaymentReturn.tpl');
+    }
+}

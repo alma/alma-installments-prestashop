@@ -22,15 +22,15 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
-use Alma\API\RequestError;
-
 if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-include_once _PS_MODULE_DIR_ . 'alma/includes/PaymentData.php';
-include_once _PS_MODULE_DIR_ . 'alma/includes/AlmaClient.php';
-include_once _PS_MODULE_DIR_ . 'alma/includes/AlmaLogger.php';
+use Alma\API\RequestError;
+use Alma\PrestaShop\API\ClientHelper;
+use Alma\PrestaShop\Model\PaymentData;
+use Alma\PrestaShop\Utils\Logger;
+use Alma\PrestaShop\Utils\Settings;
 
 class AlmaPaymentModuleFrontController extends ModuleFrontController
 {
@@ -61,11 +61,9 @@ class AlmaPaymentModuleFrontController extends ModuleFrontController
 
     private function genericErrorAndRedirect()
     {
-        $msg = $this->module->l(
-            'There was an error while generating your payment request. ' .
-            'Please try again later or contact us if the problem persists.',
-            'payment'
-        );
+        // `l` method call isn't detected by translation tool if multiline
+        // phpcs:ignore
+        $msg = $this->module->l('There was an error while generating your payment request. Please try again later or contact us if the problem persists.', 'payment');
         $this->context->cookie->__set('alma_error', $msg);
         Tools::redirect('index.php?controller=order&step=1');
     }
@@ -88,7 +86,7 @@ class AlmaPaymentModuleFrontController extends ModuleFrontController
         }
 
         if (!$authorized) {
-            AlmaLogger::instance()->warning('[Alma] Not authorized!');
+            Logger::instance()->warning('[Alma] Not authorized!');
             Tools::redirect('index.php?controller=order&step=1');
 
             return;
@@ -102,10 +100,23 @@ class AlmaPaymentModuleFrontController extends ModuleFrontController
             return;
         }
 
+        $installmentsCount = (int) Tools::getValue('n', '3');
+
         $cart = $this->context->cart;
-        $data = PaymentData::dataFromCart($cart, $this->context, (int) Tools::getValue('n', '3'));
-        $alma = AlmaClient::defaultInstance();
+        $data = PaymentData::dataFromCart($cart, $this->context, $installmentsCount);
+        $alma = ClientHelper::defaultInstance();
         if (!$data || !$alma) {
+            $this->genericErrorAndRedirect();
+
+            return;
+        }
+
+        // Check that the selected installments count is indeed enabled
+        if (
+            !Settings::isInstallmentPlanEnabled($installmentsCount) ||
+            Settings::installmentPlanMinAmount($installmentsCount) > $data['payment']['purchase_amount'] ||
+            Settings::installmentPlanMaxAmount($installmentsCount) < $data['payment']['purchase_amount']
+        ) {
             $this->genericErrorAndRedirect();
 
             return;
@@ -115,7 +126,7 @@ class AlmaPaymentModuleFrontController extends ModuleFrontController
             $payment = $alma->payments->create($data);
         } catch (RequestError $e) {
             $msg = "[Alma] ERROR when creating payment for Cart {$cart->id}: {$e->getMessage()}";
-            AlmaLogger::instance()->error($msg);
+            Logger::instance()->error($msg);
             $this->genericErrorAndRedirect();
 
             return;

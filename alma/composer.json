@@ -5,8 +5,22 @@
     "require": {
         "alma/alma-php-client": "^1.0"
     },
+    "require-dev": {
+        "prestashop/autoindex": "^1.0",
+        "squizlabs/php_codesniffer": "3.*"
+    },
+    "autoload": {
+        "psr-4": {
+            "Alma\\PrestaShop\\": ["lib/", "."],
+            "Alma\\PrestaShop\\Controllers\\Hook\\": "controllers/hook/"
+        },
+        "files": [
+            "lib/utils/functions.php"
+        ]
+    },
     "config": {
-        "prepend-autoloader": false
+        "prepend-autoloader": false,
+        "optimize-autoloader": true
     },
     "license": "MIT",
     "authors": [

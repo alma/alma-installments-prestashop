@@ -22,10 +22,26 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
-header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
-header('Last-Modified: ' . gmdate('D, d M Y H:i:s') . ' GMT');
-header('Cache-Control: no-store, no-cache, must-revalidate');
-header('Cache-Control: post-check=0, pre-check=0', false);
-header('Pragma: no-cache');
-header('Location: ../');
-exit;
+namespace Alma\PrestaShop\Hooks;
+
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
+use Alma\PrestaShop\Utils\Settings;
+use Tools;
+
+abstract class FrontendHookController extends HookController
+{
+    public function canRun()
+    {
+        $isLive = Settings::getActiveMode() === ALMA_MODE_LIVE;
+
+        // Front controllers can run if the module is properly configured ...
+        return Settings::isFullyConfigured()
+            // ... and the plugin is in LIVE mode, or the visitor is an admin
+            && ($isLive || $this->loggedAsEmployee())
+            // ... and the current shop's currency is EUR
+            && in_array(Tools::strtoupper($this->context->currency->iso_code), $this->module->limited_currencies);
+    }
+}

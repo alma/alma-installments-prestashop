@@ -104,11 +104,11 @@
             <b>{l s='You can then fill in your API keys:' mod='alma'}</b>
             <br>
             {almaDisplayHtml}
-                {l s='You can find your Live API key in [1]your Alma dashboard[/1]' sprintf=['[1]' => '<a href="https://dashboard.getalma.eu/api" target=\"_blank\">', '[/1]' => '</a>'] mod='alma'}
+                {l s='You can find your Live API key in %1$syour Alma dashboard%2$s' sprintf=['<a href="https://dashboard.getalma.eu/api" target=\"_blank\">', '</a>'] mod='alma'}
             {/almaDisplayHtml}
             <br>
             {almaDisplayHtml}
-                {l s='To use the Test mode, you need your Test API key from [1]your sandbox dasboard[/1]' sprintf=['[1]' => '<a href="https://dashboard.sandbox.getalma.eu/api" target=\"_blank\">', '[/1]' => '</a>'] mod='alma'}
+                {l s='To use the Test mode, you need your Test API key from %1$syour sandbox dasboard%2$s' sprintf=['<a href="https://dashboard.sandbox.getalma.eu/api" target=\"_blank\">', '</a>'] mod='alma'}
             {/almaDisplayHtml}
             <br>
         </p>

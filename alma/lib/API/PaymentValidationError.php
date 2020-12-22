@@ -22,10 +22,17 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
-header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
-header('Last-Modified: ' . gmdate('D, d M Y H:i:s') . ' GMT');
-header('Cache-Control: no-store, no-cache, must-revalidate');
-header('Cache-Control: post-check=0, pre-check=0', false);
-header('Pragma: no-cache');
-header('Location: ../');
-exit;
+namespace Alma\PrestaShop\API;
+
+use Exception;
+
+class PaymentValidationError extends Exception
+{
+    public $cart;
+
+    public function __construct($cart = null, $message = '', $code = 0, $previous = null)
+    {
+        parent::__construct($message, $code, $previous);
+        $this->cart = $cart;
+    }
+}

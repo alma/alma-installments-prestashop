@@ -21,6 +21,8 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  *}
 
+{$n=$fee_plan['installments_count']}
+
 <style type="text/css">
     p.alma-fee-plan-details {
         line-height: 1.5em;
@@ -29,7 +31,7 @@
 
 <p>
     <b>
-        {l s='You can offer monthly installments for amounts between %d€ and %d€.' sprintf=array($min_amount, $max_amount) mod='alma'}
+        {l s='You can offer %d-installment payments for amounts between %d€ and %d€.' sprintf=array($n, $min_amount, $max_amount) mod='alma'}
     </b>
 </p>
 
@@ -67,6 +69,6 @@
     {/if}
 
     <br><br>
-    <a href='mailto:contact@getalma.eu?subject={l s='Fees for %d-installment plan' sprintf=$fee_plan['installments_count'] mod='alma'}'>{l s='Contact us' mod='alma'}</a>
+    <a href='mailto:contact@getalma.eu?subject={l s='Fees for %d-installment plan' sprintf=$n mod='alma'}'>{l s='Contact us' mod='alma'}</a>
     {l s='if you think your sales volumes warrant better rates!' mod='alma'}
 </p>

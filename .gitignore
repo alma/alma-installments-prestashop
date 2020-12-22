@@ -1,6 +1,10 @@
 alma/vendor
 alma/config*.xml
+.php_cs.cache
 dist
 tmp
 prestashop
 **/.DS_Store
+
+tools/vendor
+

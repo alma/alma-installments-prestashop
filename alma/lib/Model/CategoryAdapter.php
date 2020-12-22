@@ -22,58 +22,71 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
+namespace Alma\PrestaShop\Model;
+
+use Category;
+use Exception;
+use Validate;
+
 if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-use Alma\PrestaShop\API\PaymentValidation;
-use Alma\PrestaShop\API\PaymentValidationError;
-
-class AlmaIpnModuleFrontController extends ModuleFrontController
+class CategoryAdapter
 {
-    public $ssl = true;
+    /**
+     * @var int
+     */
+    private $idCategory;
 
-    public function __construct()
+    /**
+     * @var Category
+     */
+    private $category;
+
+    /**
+     * @param $idCategory int ID of the PrestaShop Category to load
+     *
+     * @return CategoryAdapter
+     */
+    public static function fromCategory($idCategory)
     {
-        parent::__construct();
-        $this->context = Context::getContext();
-    }
-
-    public function ajaxDie($value = null, $controller = null, $method = null)
-    {
-        if (method_exists(get_parent_class($this), 'ajaxRender')) {
-            parent::ajaxRender($value);
-            exit;
-        } elseif (method_exists(get_parent_class($this), 'ajaxDie')) {
-            parent::ajaxDie($value);
-        } else {
-            die($value);
-        }
-    }
-
-    private function fail($msg = null)
-    {
-        header('X-PHP-Response-Code: 500', true, 500);
-        $this->ajaxDie(json_encode(['error' => $msg]));
-    }
-
-    public function postProcess()
-    {
-        parent::postProcess();
-
-        header('Content-Type: application/json');
-
-        $paymentId = Tools::getValue('pid');
-        $validator = new PaymentValidation($this->context, $this->module);
-
         try {
-            $validator->validatePayment($paymentId);
-        } catch (PaymentValidationError $e) {
-            $this->fail($e->getMessage());
+            return new CategoryAdapter($idCategory);
         } catch (Exception $e) {
-            $this->fail($e->getMessage());
+            return null;
+        }
+    }
+
+    /**
+     * AlmaCategory constructor.
+     *
+     * @param $idCategory int ID of the PrestaShop Category to load
+     *
+     * @throws Exception
+     */
+    public function __construct($idCategory)
+    {
+        $this->idCategory = $idCategory;
+        $this->category = new Category($idCategory);
+
+        if (!Validate::isLoadedObject($this->category)) {
+            throw new Exception("Could not load Category with id $idCategory");
+        }
+    }
+
+    private function map_category_ids($category)
+    {
+        return (int) $category->id;
+    }
+
+    public function getAllChildrenIds()
+    {
+        if (version_compare(_PS_VERSION_, '1.5.0.1', '<')) {
+            // We don't support PrestaShop versions that old, so don't even try to find an alternative
+            return [];
         }
 
-        $this->ajaxDie(json_encode(['success' => true]));
+        return array_map([$this, 'map_category_ids'], $this->category->getAllChildren()->getResults());
     }
 }

@@ -22,10 +22,41 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
-header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
-header('Last-Modified: ' . gmdate('D, d M Y H:i:s') . ' GMT');
-header('Cache-Control: no-store, no-cache, must-revalidate');
-header('Cache-Control: post-check=0, pre-check=0', false);
-header('Pragma: no-cache');
-header('Location: ../');
-exit;
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
+include_once _PS_MODULE_DIR_ . 'alma/vendor/autoload.php';
+
+use Alma\API\RequestError;
+use Alma\PrestaShop\API\ClientHelper;
+use Alma\PrestaShop\Utils\Settings;
+
+function upgrade_module_1_4_0($module)
+{
+    // If module has already been configured, get the merchant's API ID from Alma's API
+    if (Settings::isFullyConfigured()) {
+        $alma = ClientHelper::defaultInstance();
+
+        if (!$alma) {
+            return true;
+        }
+
+        try {
+            $merchant = $alma->merchants->me();
+        } catch (RequestError $e) {
+            return true;
+        }
+
+        Settings::updateValue('ALMA_MERCHANT_ID', $merchant->id);
+    }
+
+    // Default value for the display of our order confirmation page has changed; make sure we don't suddenly start
+    // showing it on shops that had not changed the value and thus were not displaying it.
+    $currentValue = Settings::get('ALMA_DISPLAY_ORDER_CONFIRMATION');
+    if ($currentValue === null) {
+        Settings::updateValue('ALMA_DISPLAY_ORDER_CONFIRMATION', '0');
+    }
+
+    return $module->installTabs();
+}
