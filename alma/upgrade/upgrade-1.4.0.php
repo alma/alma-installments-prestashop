@@ -51,5 +51,12 @@ function upgrade_module_1_4_0($module)
         Settings::updateValue('ALMA_MERCHANT_ID', $merchant->id);
     }
 
+    // Default value for the display of our order confirmation page has changed; make sure we don't suddenly start
+    // showing it on shops that had not changed the value and thus were not displaying it.
+    $currentValue = Settings::get('ALMA_DISPLAY_ORDER_CONFIRMATION');
+    if ($currentValue === null) {
+        Settings::updateValue('ALMA_DISPLAY_ORDER_CONFIRMATION', '0');
+    }
+
     return $module->installTabs();
 }
