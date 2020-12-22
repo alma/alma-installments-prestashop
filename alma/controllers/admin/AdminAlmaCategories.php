@@ -92,9 +92,7 @@ class AdminAlmaCategoriesController extends ModuleAdminController
     {
         parent::init();
 
-        $this->_select = (
-            'a.`id_category`, b.`name`, b.`description`, cpl.`name` as `parent`, a.`id_category` as `excluded`'
-        );
+        $this->_select = ('a.`id_category`, b.`name`, b.`description`, cpl.`name` as `parent`, a.`id_category` as `excluded`');
         $this->_use_found_rows = false;
 
         if (Shop::getContext() == Shop::CONTEXT_SHOP) {
@@ -186,10 +184,8 @@ class AdminAlmaCategoriesController extends ModuleAdminController
 
         foreach ($filters as $key => $value) {
             /* Extracting filters from $_POST on key filter_ */
-            if (
-                $value != null
-                && !strncmp($key, $prefix . $this->list_id . 'Filter_', 7 + Tools::strlen($prefix . $this->list_id))
-            ) {
+            // phpcs:ignore
+            if ($value != null && !strncmp($key, $prefix . $this->list_id . 'Filter_', 7 + Tools::strlen($prefix . $this->list_id))) {
                 $key = Tools::substr($key, 7 + Tools::strlen($prefix . $this->list_id));
                 /* Table alias could be specified using a ! eg. alias!field */
                 $tmp_tab = explode('!', $key);
@@ -225,9 +221,7 @@ class AdminAlmaCategoriesController extends ModuleAdminController
                                     'Admin.Notifications.Error'
                                 );
                             } else {
-                                $sql_filter .= (
-                                    ' AND ' . pSQL($key) . ' >= \'' . pSQL(Tools::dateFrom($value[0])) . '\''
-                                );
+                                $sql_filter .= (' AND ' . pSQL($key) . ' >= \'' . pSQL(Tools::dateFrom($value[0])) . '\'');
                             }
                         }
 
@@ -343,7 +337,7 @@ class AdminAlmaCategoriesController extends ModuleAdminController
         }
 
         // need to force page refresh here for obscure reason
-        header('Location:' . $this->context->link->getAdminLink('AdminAlmaCategories'));
+        Tools::redirectAdmin($this->context->link->getAdminLink('AdminAlmaCategories'));
     }
 
     /**
@@ -362,7 +356,7 @@ class AdminAlmaCategoriesController extends ModuleAdminController
         }
 
         // need to force page refresh here for obscure reason
-        header('Location:' . $this->context->link->getAdminLink('AdminAlmaCategories'));
+        Tools::redirectAdmin($this->context->link->getAdminLink('AdminAlmaCategories'));
     }
 
     public static function getExcluded($id_category)
@@ -386,7 +380,7 @@ class AdminAlmaCategoriesController extends ModuleAdminController
         if (version_compare(_PS_VERSION_, '1.7', '>=')) {
             return Tools::getDescriptionClean($description);
         } else {
-            return strip_tags(stripslashes($description));
+            return strip_tags(Tools::stripslashes($description));
         }
     }
 }

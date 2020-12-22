@@ -70,7 +70,7 @@ final class DisplayPaymentHookController extends FrontendHookController
         }
 
         $paymentButtonDescription = Settings::getPaymentButtonDescription();
-
+        $sortOrders = [];
         foreach ($installmentPlans as $plan) {
             $n = $plan->installmentsCount;
             if (!$plan->isEligible && Settings::isInstallmentPlanEnabled($n)) {

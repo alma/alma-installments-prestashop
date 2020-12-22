@@ -45,11 +45,11 @@ final class DisplayProductPriceBlockHookController extends FrontendHookControlle
 
     public function run($params)
     {
+
         if (array_key_exists('type', $params)) {
-            if (
-                (version_compare(_PS_VERSION_, '1.6.0', '>') && $params['type'] === 'price') ||
-                (!in_array($params['type'], ['price', 'after_price']))
-            ) {
+            $skip = (version_compare(_PS_VERSION_, '1.6.0', '>') && $params['type'] === 'price') ||
+                (!in_array($params['type'], ['price', 'after_price']));
+            if ($skip) {
                 return null;
             }
         }

@@ -21,5 +21,5 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  *}
 
-<img src="{$logo}" alt="Alma" class="logo">
+<img src="{$logo|escape:'html':'UTF-8'}" alt="Alma" class="logo">
 <span>{$msg|escape:'html':'UTF-8'}</span>
