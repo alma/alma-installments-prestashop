@@ -10,3 +10,11 @@
 i.icon-alma{
     vertical-align: text-bottom !important;
 }
+
+.adminalmarefunds .page-breadcrumb {
+    display: none;
+}
+
+.adminalmarefunds #desc-order-new {
+    display: none;
+}
