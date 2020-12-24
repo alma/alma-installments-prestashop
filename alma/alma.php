@@ -196,7 +196,8 @@ class Alma extends PaymentModule
     {
         return $this->installTab('alma', 'Alma')
             && $this->installTab('AdminAlmaConfig', $this->l('Configuration'), 'alma', 1, 'tune')
-            && $this->installTab('AdminAlmaCategories', $this->l('Excluded categories'), 'alma', 2, 'not_interested');
+            && $this->installTab('AdminAlmaRefunds', $this->l('Refunds'), 'alma', 2, 'exchange')
+            && $this->installTab('AdminAlmaCategories', $this->l('Excluded categories'), 'alma', 3, 'not_interested');
     }
 
     private function uninstallTabs()

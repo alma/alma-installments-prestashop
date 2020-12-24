@@ -1,4 +1,5 @@
 <?php
+
 /**
  * 2018-2020 Alma SAS
  *
@@ -44,9 +45,9 @@ final class RefundHookController extends AdminHookController
     public function run($params)
     {
         // When a discount refund is generated, we *must not* refund the customer via Alma
-        if (Tools::isSubmit('generateDiscountRefund') || Tools::isSubmit('generateDiscount')) {
-            return;
-        }
+        // if (Tools::isSubmit('generateDiscountRefund') || Tools::isSubmit('generateDiscount')) {
+        //     return;
+        // }
 
         $order = $params['order'];
         if (!$order_payment = $this->getCurrentOrderPayment($order)) {
@@ -54,10 +55,17 @@ final class RefundHookController extends AdminHookController
         }
         $id_payment = $order_payment->transaction_id;
         if (version_compare(_PS_VERSION_, '1.6', '>=')) {
-            $this->runAfter16($params, $id_payment);
+            $amount = $this->runAfter16($params, $id_payment);
         } elseif (version_compare(_PS_VERSION_, '1.6', '<')) {
-            $this->runBefore16($params, $id_payment);
+            $amount = $this->runBefore16($params, $id_payment);
         }
+
+        $this->context->controller->warnings[] = sprintf(
+            $this->module->l('WARNING : No Alma refund has been made so far. you may process a refund on %1$sthis page%2$s', 'AdminAlmaRefunds'),
+            "<a href='{$this->context->link->getAdminLink('AdminAlmaRefunds')}&id_order={$params['order']->id_cart}&vieworder&amount={$amount}'>",
+            '</a>'
+        );
+        $this->context->controller->errors[] = '';
     }
 
     protected function runAfter16($params, $id_payment)
@@ -107,19 +115,23 @@ final class RefundHookController extends AdminHookController
             }
         }
 
-        $is_total = $amount == $order->total_paid_tax_incl;
+        //$is_total = $amount == $order->total_paid_tax_incl;
         $alma = ClientHelper::defaultInstance();
         if (!$alma) {
             return;
         }
-        try {
-            $alma->payments->refund($id_payment, $is_total, almaPriceToCents($amount));
-        } catch (RequestError $e) {
-            $msg = "[Alma] ERROR when creating refund for Order {$order->id}: {$e->getMessage()}";
-            Logger::instance()->error($msg);
 
-            return;
-        }
+        return $amount;
+
+        //die();
+        // try {
+        //     $alma->payments->refund($id_payment, $is_total, almaPriceToCents($amount));
+        // } catch (RequestError $e) {
+        //     $msg = "[Alma] ERROR when creating refund for Order {$order->id}: {$e->getMessage()}";
+        //     Logger::instance()->error($msg);
+
+        //     return;
+        // }
     }
 
     protected function runBefore16($params, $id_payment)
@@ -138,16 +150,18 @@ final class RefundHookController extends AdminHookController
             return;
         }
 
-        $is_total = $amount == $order->total_paid_tax_incl;
+        return $amount;
 
-        try {
-            $alma->payments->refund($id_payment, $is_total, almaPriceToCents($amount));
-        } catch (RequestError $e) {
-            $msg = "[Alma] ERROR when creating refund for Order {$order->id}: {$e->getMessage()}";
-            Logger::instance()->error($msg);
+        //$is_total = $amount == $order->total_paid_tax_incl;
 
-            return;
-        }
+        // try {
+        //     $alma->payments->refund($id_payment, $is_total, almaPriceToCents($amount));
+        // } catch (RequestError $e) {
+        //     $msg = "[Alma] ERROR when creating refund for Order {$order->id}: {$e->getMessage()}";
+        //     Logger::instance()->error($msg);
+
+        //     return;
+        // }
     }
 
     private function getCurrentOrderPayment(Order $order)
