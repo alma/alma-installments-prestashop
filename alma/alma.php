@@ -34,7 +34,7 @@ use Alma\PrestaShop\Utils\Settings;
 
 class Alma extends PaymentModule
 {
-    const VERSION = '1.4.0';
+    const VERSION = '1.4.1';
 
     public $_path;
     public $local_path;
@@ -49,7 +49,7 @@ class Alma extends PaymentModule
     {
         $this->name = 'alma';
         $this->tab = 'payments_gateways';
-        $this->version = '1.4.0';
+        $this->version = '1.4.1';
         $this->author = 'Alma';
         $this->need_instance = false;
         $this->bootstrap = true;

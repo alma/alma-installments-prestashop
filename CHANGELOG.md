@@ -1,6 +1,11 @@
 Changelog
 =========
 
+v1.4.1
+------
+
+* Fix paths case to prevent errors on case-sensitive file systems
+
 v1.4.0
 ------
 
