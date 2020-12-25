@@ -15,7 +15,7 @@
             "Alma\\PrestaShop\\Controllers\\Hook\\": "controllers/hook/"
         },
         "files": [
-            "lib/utils/functions.php"
+            "lib/Utils/functions.php"
         ]
     },
     "config": {

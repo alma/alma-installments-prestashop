@@ -27,7 +27,7 @@ if (!defined('_PS_VERSION_')) {
 }
 
 require_once _PS_MODULE_DIR_ . 'alma/vendor/autoload.php';
-require_once _PS_MODULE_DIR_ . 'alma/lib/utils/smarty.php';
+require_once _PS_MODULE_DIR_ . 'alma/lib/Utils/smarty.php';
 
 use Alma\PrestaShop\Utils\Logger;
 use Alma\PrestaShop\Utils\Settings;
@@ -251,7 +251,7 @@ class Alma extends PaymentModule
 
     private function runHookController($hookName, $params)
     {
-        $hookName = preg_replace('/[^a-zA-Z0-9]/', '', $hookName);
+        $hookName = ucfirst(preg_replace('/[^a-zA-Z0-9]/', '', $hookName));
 
         require_once dirname(__FILE__) . "/controllers/hook/${hookName}HookController.php";
         $ControllerName = "Alma\PrestaShop\Controllers\Hook\\${hookName}HookController";
