@@ -35,44 +35,50 @@
 {/if}
 <form method="POST" action="" class="defaultForm form-horizontal">
     <input type="hidden" class="alma" name="orderID" required value="{$order.id}" />
-    <div class="panel">
-        <div class="panel-heading">
+    <div class="{$css.panel}">
+        <div class="panel-heading">        
             <img src="{$iconPath}"/>
             {l s='Alma refund' mod='AdminAlmaRefunds'}
         </div>
         <div class="form-wrapper">            
-            <div class="form-group">
+            <div class="{$css.formGroup}">
                 <label class="control-label col-lg-3"> {l s='Order ID:' mod='AdminAlmaRefunds'}</label>
                 <div class="col-lg-9">                    
-                    <div class="radio">{$order.id}</div>
+                    <div class="{$css.padding}">{$order.id}</div>
                 </div>            
             </div>
-            <div class="form-group">
+            <div class="{$css.formGroup}">
                 <label class="control-label col-lg-3"> {l s='Reference:' mod='AdminAlmaRefunds'}</label>
                 <div class="col-lg-9">                    
-                    <div class="radio">{$order.reference}</div>
+                    <div class="{$css.padding}">{$order.reference}</div>
                 </div>            
             </div>
-            <div class="form-group">
+            <div class="{$css.formGroup}">
+                <label class="control-label col-lg-3"> {l s='Status:' mod='AdminAlmaRefunds'}</label>
+                <div class="col-lg-9">                    
+                    <div class="{$css.padding}">{$order.status}</div>
+                </div>            
+            </div>
+            <div class="{$css.formGroup}">
                 <label class="control-label col-lg-3"> {l s='Order amount:' mod='AdminAlmaRefunds'}</label>
                 <div class="col-lg-9">                    
-                    <div class="radio">{$order.maxAmount}</div>
+                    <div class="{$css.padding}">{$order.maxAmount}</div>
                 </div>            
             </div>
-            <div class="form-group">
+            <div class="{$css.formGroup}">
                 <label class="control-label col-lg-3"> {l s='Customer:' mod='AdminAlmaRefunds'}</label>
                 <div class="col-lg-9">                    
-                    <div class="radio">{$customer.firstName} {$customer.lastName}</div>
+                    <div class="{$css.padding}">{$customer.firstName} {$customer.lastName}</div>
                 </div>            
             </div>
-            <div class="form-group">
+            <div class="{$css.formGroup}">
                 <label class="control-label col-lg-3"> {l s='Email:' mod='AdminAlmaRefunds'}</label>
                 <div class="col-lg-9">                    
-                    <div class="radio">{$customer.email}</div>
+                    <div class="{$css.padding}">{$customer.email}</div>
                 </div>            
             </div>
-            <div class="form-group" id="amountDisplay">
-                <label class="control-label col-lg-3"> {l s='Amount (Max. %s):' sprintf=$order.maxAmount mod='AdminAlmaRefunds'}</label>
+            <div class="{$css.formGroup}" id="amountDisplay">
+                <label class="control-label col-lg-3 required"> {l s='Amount (Max. %s):' sprintf=$order.maxAmount mod='AdminAlmaRefunds'}</label>
                 <div class="col-lg-9">
                     <div class="input-group">
                         <span class="input-group-addon">{$order.currencySymbole}</span>
@@ -80,17 +86,17 @@
                     </div>
                 </div>            
             </div>   
-            <div class="form-group">
+            <div class="{$css.formGroup}">
                 <label class="control-label col-lg-3 required"> {l s='Refund type:' mod='AdminAlmaRefunds'}</label>
                 <div class="col-lg-9">
                     <div class="radio t">
-                        <label>
+                        <label class="{$css.labelRadio}">
                             <input type="radio" name="refundType" value="total"/>
                             {l s='Total' mod='AdminAlmaRefunds'}
                         </label>
                     </div>
                     <div class="radio t">
-                        <label>
+                        <label class="{$css.labelRadio}">
                             <input type="radio" name="refundType" value="partial" checked="checked"/>
                             {l s='Partial' mod='AdminAlmaRefunds'}
                         </label>
@@ -98,9 +104,9 @@
                 </div>            
             </div>       
         </div>  
-        <div class="panel-footer">
-                <button type="submit" class="button btn btn-default button-medium pull-right"><span>{l s='Process this refund' mod='AdminAlmaRefunds'}</button>                                         
-                <button type="button" data-url="{$moduleUrl}" id="backToOrdersList" class="button btn btn-default button-medium pull-left"><span>{l s='Back to Alma orders list' mod='AdminAlmaRefunds'}</button>                                         
+        <div class="panel-footer clear">
+                <button type="submit" class="button btn btn-default button-medium {$css.pullRight}"><span>{l s='Process this refund' mod='AdminAlmaRefunds'}</button>                                         
+                <button type="button" data-url="{$moduleUrl}" id="backToOrdersList" class="button btn btn-default button-medium {$css.pullLeft}"><span>{l s='Back to Alma orders list' mod='AdminAlmaRefunds'}</button>                                         
         </div>  
     </div>
 </form>
