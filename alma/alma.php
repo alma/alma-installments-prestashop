@@ -1,4 +1,5 @@
 <?php
+
 /**
  * 2018-2021 Alma SAS
  *
@@ -193,7 +194,7 @@ class Alma extends PaymentModule
     {
         return $this->installTab('alma', 'Alma')
             && $this->installTab('AdminAlmaConfig', $this->l('Configuration'), 'alma', 1, 'tune')
-            && $this->installTab('AdminAlmaRefunds', $this->l('Refunds'), 'alma', 2, 'exchange')
+            && $this->installTab('AdminAlmaRefunds', $this->l('Refunds'), 'alma', 2, 'loop')
             && $this->installTab('AdminAlmaCategories', $this->l('Excluded categories'), 'alma', 3, 'not_interested');
     }
 
