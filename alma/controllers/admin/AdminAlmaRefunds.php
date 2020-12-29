@@ -23,11 +23,6 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
-
-
 use Alma\PrestaShop\API\ClientHelper;
 
 final class AdminAlmaRefundsController extends ModuleAdminController
@@ -165,12 +160,17 @@ final class AdminAlmaRefundsController extends ModuleAdminController
 
         $order = new Order($tr['id_order']);
 
-        return Tools::displayPrice($echo, (int)$order->id_currency);
+        return almaFormatPrice(almaPriceToCents($echo), (int)$order->id_currency);
     }
 
     public function getRefund($id_order)
     {
-        return "<a href='{$this->context->link->getAdminLink('AdminAlmaRefunds')}&id_order={$id_order}&vieworder'><i class='icon-exchange'></i></a>";
+
+        if (version_compare(_PS_VERSION_, '1.6', '<')) {
+            return "<a href='{$this->context->link->getAdminLink('AdminAlmaRefunds')}&id_order={$id_order}&vieworder'><span class='icon-refund'></span></a>";
+        } else {
+            return "<a href='{$this->context->link->getAdminLink('AdminAlmaRefunds')}&id_order={$id_order}&vieworder'><i class='icon-exchange'></i></a>";
+        }
     }
 
     public function initToolbar()
@@ -178,9 +178,9 @@ final class AdminAlmaRefundsController extends ModuleAdminController
 
         if ($this->display == 'view') {
             $this->toolbar_title = sprintf($this->module->l('Alma refund for order reference %1$s (ID: %2$d)', 'AdminAlmaRefunds'), $this->order->reference, $this->order->id);
-            $this->addMetaTitle($this->toolbar_title);
         }
         parent::initToolbar();
+        unset($this->toolbar_btn['new']);
     }
 
 
@@ -188,41 +188,68 @@ final class AdminAlmaRefundsController extends ModuleAdminController
     {
 
         if (is_callable('Media::getMediaPath')) {
-            $iconPath = Media::getMediaPath(_PS_MODULE_DIR_ . $this->module->name . '/views/img/logo16x16.png');
+            $iconPath = Media::getMediaPath(_PS_MODULE_DIR_ . $this->module->name . '/views/img/logos/alma_tiny.svg');
         } else {
-            $iconPath = $this->module->getPathUri() . '/views/img/logo16x16.png';
+            $iconPath = $this->module->getPathUri() . '/views/img/logos/alma_tiny.svg';
         }
 
         $customer = new Customer((int)$this->order->id_customer);
         $currency = new Currency($this->order->id_currency);
         $amountRefund = Tools::getValue('amount');
 
+        if (version_compare(_PS_VERSION_, '1.6', '<')) {
+            $padding = "alma-pt-3";
+            $formGroup = "form-group-15";
+            $pullRight = "pull-right-15";
+            $pullLeft = "pull-left-15";
+            $panel = "panel15";
+            $labelRadio = "t";
+        } else {
+            $padding = "alma-pt-8";
+            $formGroup = "form-group";
+            $pullRight = "pull-right";
+            $pullLeft = "pull-left";
+            $panel = "panel";
+            $labelRadio = "";
+        }
+
+        $css = [
+            'padding'       => $padding,
+            'formGroup'     => $formGroup,
+            'pullRight'     => $pullRight,
+            'pullLeft'      => $pullLeft,
+            'panel'         => $panel,
+            'labelRadio'    => $labelRadio,
+        ];
+
         $tpl = $this->context->smarty->createTemplate(
             "{$this->module->local_path}views/templates/hook/refunds.tpl"
         );
         $orderData = [
             'id' => $this->order->id,
-            'reference' => $this->order->reference,
-            'maxAmount' => Tools::displayPrice($this->order->total_paid_tax_incl, (int)$this->order->id_currency),
-            'amountRefund' => $amountRefund,
-            'currencySymbole' => $currency->sign,
+            'reference'         => $this->order->reference,
+            'maxAmount'         => almaFormatPrice(almaPriceToCents($this->order->total_paid_tax_incl), (int)$this->order->id_currency),
+            'amountRefund'      => $amountRefund,
+            'currencySymbole'   => $currency->sign,
+            'status'            => $this->statuses_array[$this->order->current_state],
         ];
         $customerData = [
-            'email' => $customer->email,
+            'email'     => $customer->email,
             'firstName' => $customer->firstname,
-            'lastName' => $customer->lastname,
+            'lastName'  => $customer->lastname,
         ];
         $tpl->assign(array(
-            'iconPath' => $iconPath,
+            'iconPath'  => $iconPath,
             'moduleUrl' => $this->context->link->getAdminLink('AdminAlmaRefunds'),
-            'success' => $this->success,
-            'error' => $this->error,
-            'order' => $orderData,
-            'customer' => $customerData,
+            'success'   => $this->success,
+            'error'     => $this->error,
+            'order'     => $orderData,
+            'customer'  => $customerData,
+            'css'       => $css,
 
         ));
-        $this->content .= $tpl->fetch();
-        return parent::renderView();
+
+        return parent::renderView() . $tpl->fetch();
     }
 
 
@@ -283,7 +310,7 @@ final class AdminAlmaRefundsController extends ModuleAdminController
             return false;
         }
         try {
-            //$alma->payments->refund($id_payment, $is_total, almaPriceToCents($amount));
+            $alma->payments->refund($id_payment, $is_total, almaPriceToCents($amount));
             $this->success = sprintf($this->module->l('Your refund for Order %d has been made !', 'AdminAlmaRefunds'), $this->order->id);
             return true;
         } catch (RequestError $e) {
