@@ -21,68 +21,20 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  *}
 
-{if $error}
-<div class="alert alert-danger">
-    {$error|escape}
-    <button type="button" class="close" data-dismiss="alert">×</button>
-</div>
-{/if}
-{if $success}
-<div class="alert alert-success">
-    {$success|escape}
-    <button type="button" class="close" data-dismiss="alert">×</button>
-</div>
-{/if}
 <form method="POST" action="" class="defaultForm form-horizontal">
     <input type="hidden" class="alma" name="orderID" required value="{$order.id}" />
-    <div class="{$css.panel}">
+    <div class="{$css.panel}" id="alma_refunds">
         <div class="panel-heading">        
             <img src="{$iconPath}"/>
             {l s='Alma refund' mod='AdminAlmaRefunds'}
         </div>
-        <div class="form-wrapper">            
-            <div class="{$css.formGroup}">
-                <label class="control-label col-lg-3"> {l s='Order ID:' mod='AdminAlmaRefunds'}</label>
-                <div class="col-lg-9">                    
-                    <div class="{$css.padding}">{$order.id}</div>
-                </div>            
-            </div>
-            <div class="{$css.formGroup}">
-                <label class="control-label col-lg-3"> {l s='Reference:' mod='AdminAlmaRefunds'}</label>
-                <div class="col-lg-9">                    
-                    <div class="{$css.padding}">{$order.reference}</div>
-                </div>            
-            </div>
-            <div class="{$css.formGroup}">
-                <label class="control-label col-lg-3"> {l s='Status:' mod='AdminAlmaRefunds'}</label>
-                <div class="col-lg-9">                    
-                    <div class="{$css.padding}">{$order.status}</div>
-                </div>            
-            </div>
-            <div class="{$css.formGroup}">
-                <label class="control-label col-lg-3"> {l s='Order amount:' mod='AdminAlmaRefunds'}</label>
-                <div class="col-lg-9">                    
-                    <div class="{$css.padding}">{$order.maxAmount}</div>
-                </div>            
-            </div>
-            <div class="{$css.formGroup}">
-                <label class="control-label col-lg-3"> {l s='Customer:' mod='AdminAlmaRefunds'}</label>
-                <div class="col-lg-9">                    
-                    <div class="{$css.padding}">{$customer.firstName} {$customer.lastName}</div>
-                </div>            
-            </div>
-            <div class="{$css.formGroup}">
-                <label class="control-label col-lg-3"> {l s='Email:' mod='AdminAlmaRefunds'}</label>
-                <div class="col-lg-9">                    
-                    <div class="{$css.padding}">{$customer.email}</div>
-                </div>            
-            </div>
+        <div class="form-wrapper">                                        
             <div class="{$css.formGroup}" id="amountDisplay">
                 <label class="control-label col-lg-3 required"> {l s='Amount (Max. %s):' sprintf=$order.maxAmount mod='AdminAlmaRefunds'}</label>
                 <div class="col-lg-9">
                     <div class="input-group">
                         <span class="input-group-addon">{$order.currencySymbole}</span>
-                        <input type="number" step="0.01" class="alma" id="amount" value="{$order.amountRefund}" name="amount" placeholder="{l s='Amount to refund...' mod='AdminAlmaRefunds'}" />
+                        <input type="number" step="0.01" class="alma" id="amount" value="" name="amount" placeholder="{l s='Amount to refund...' mod='AdminAlmaRefunds'}" />
                     </div>
                 </div>            
             </div>   
@@ -102,11 +54,18 @@
                         </label>
                     </div>                
                 </div>            
-            </div>       
+            </div>
+            <div class="{$css.formGroup}">
+                <label class="control-label col-lg-3"></label>
+                <div class="col-lg-9">
+                    <p>
+                        Texte : remboursement alma + changement de status si total bla bla bla toussa toussa...
+                    </p>
+                </div>
+            </div>
         </div>  
         <div class="panel-footer clear">
-                <button type="submit" class="button btn btn-default button-medium {$css.pullRight}"><span>{l s='Process this refund' mod='AdminAlmaRefunds'}</button>                                         
-                <button type="button" data-url="{$moduleUrl}" id="backToOrdersList" class="button btn btn-default button-medium {$css.pullLeft}"><span>{l s='Back to Alma orders list' mod='AdminAlmaRefunds'}</button>                                         
+                <button type="submit" class="button btn btn-primary button-medium {$css.pullRight}"><span>{l s='Process this refund' mod='AdminAlmaRefunds'}</button>                
         </div>  
     </div>
 </form>
@@ -124,8 +83,5 @@
                 $("#amount").prop('required',true);
             }
         });
-        $('#backToOrdersList').click(function(){            
-            window.location.href= $(this).data('url');
-        })
     });
 </script>

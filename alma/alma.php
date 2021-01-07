@@ -103,8 +103,8 @@ class Alma extends PaymentModule
             'header',
             'displayBackOfficeHeader',
             'displayShoppingCartFooter',
-            'actionOrderSlipAdd',
             'actionOrderStatusPostUpdate',
+            'displayAdminOrder',
         ];
 
         if (version_compare(_PS_VERSION_, '1.7', '>=')) {
@@ -222,8 +222,7 @@ class Alma extends PaymentModule
     {
         return $this->installTab('alma', 'Alma')
             && $this->installTab('AdminAlmaConfig', $this->l('Configuration'), 'alma', 1, 'tune')
-            && $this->installTab('AdminAlmaRefunds', $this->l('Refunds'), 'alma', 2, 'loop')
-            && $this->installTab('AdminAlmaCategories', $this->l('Excluded categories'), 'alma', 3, 'not_interested');
+            && $this->installTab('AdminAlmaCategories', $this->l('Excluded categories'), 'alma', 2, 'not_interested');
     }
 
     private function uninstallTabs()
@@ -347,9 +346,9 @@ class Alma extends PaymentModule
         return $this->runHookController('displayShoppingCartFooter', $params);
     }
 
-    public function hookActionOrderSlipAdd($params)
+    public function hookDisplayAdminOrder($params)
     {
-        return $this->runHookController('refund', $params);
+        $this->runHookController('displayRefunds', $params);
     }
 
     public function hookActionOrderStatusPostUpdate($params)
