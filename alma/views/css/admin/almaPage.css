@@ -44,21 +44,4 @@ i.icon-alma{
     margin: 0 auto;
     margin-bottom: 0px;
     margin-bottom: 20px !important;
-    background-color: #fff;
-    border: 1px solid #00000014;
-    border-radius: 4px;
-    box-shadow: 0 1px 1px rgba(0,0,0,.05);
-}
-
-
-.icon-refund{
-    display: block;
-    height: 25px;
-    width: 28px;
-    background: url('../../img/icons/icon-refund.png') no-repeat;
-    margin: 0 auto;
-}
-
-.icon-refund:hover{
-    background: url('../../img/icons/icon-refund.png') 0 -25px no-repeat;
 }
