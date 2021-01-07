@@ -1,7 +1,7 @@
 <?php
 
 $header = <<<TXT
-2018-2020 Alma SAS
+2018-2021 Alma SAS
 
 THE MIT LICENSE
 
@@ -19,7 +19,7 @@ CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFT
 IN THE SOFTWARE.
 
 @author    Alma SAS <contact@getalma.eu>
-@copyright 2018-2020 Alma SAS
+@copyright 2018-2021 Alma SAS
 @license   https://opensource.org/licenses/MIT The MIT License
 TXT;
 
