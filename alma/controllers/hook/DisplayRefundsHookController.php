@@ -71,31 +71,10 @@ final class DisplayRefundsHookController extends AdminHookController
         $currency = new Currency($this->order->id_currency);
 
         if (version_compare(_PS_VERSION_, '1.6', '<')) {
-            $padding    = "alma-pt-3";
-            $formGroup  = "form-group-15";
-            $pullRight  = "pull-right-15";
-            $pullLeft   = "pull-left-15";
-            $panel      = "panel15";
-            $labelRadio = "t";
             $refundTpl  = "order_refund_15";
         } else {
-            $padding    = "alma-pt-8";
-            $formGroup  = "form-group";
-            $pullRight  = "pull-right";
-            $pullLeft   = "pull-left";
-            $panel      = "panel";
-            $labelRadio = "";
             $refundTpl  = "order_refund";
         }
-
-        $css = [
-            'padding'       => $padding,
-            'formGroup'     => $formGroup,
-            'pullRight'     => $pullRight,
-            'pullLeft'      => $pullLeft,
-            'panel'         => $panel,
-            'labelRadio'    => $labelRadio,
-        ];
 
         $orderData = [
             'id'                => $this->order->id,
@@ -111,7 +90,6 @@ final class DisplayRefundsHookController extends AdminHookController
         $tpl->assign([
             'iconPath'  => $iconPath,
             'order'     => $orderData,
-            'css'       => $css,
         ]);
 
         echo $tpl->fetch();
@@ -138,11 +116,11 @@ final class DisplayRefundsHookController extends AdminHookController
         }
         try {
             $alma->payments->refund($id_payment, $is_total, almaPriceToCents($amount));
-            $this->success = sprintf($this->module->l('Your refund for Order %d has been made !', 'AdminAlmaRefunds'), $this->order->id);
+            $this->success = sprintf($this->module->l('Your refund for Order %d has been made !', 'displayRefunds'), $this->order->id);
             return true;
         } catch (RequestError $e) {
             $msg = "[Alma] ERROR when creating refund for Order {$this->sorder->id}: {$e->getMessage()}";
-            $this->error = sprintf($this->module->l('ERROR when creating refund for order %d', 'AdminAlmaRefunds'), $this->order->id);
+            $this->error = sprintf($this->module->l('ERROR when creating refund for order %d', 'displayRefunds'), $this->order->id);
             AlmaLogger::instance()->error($msg);
 
             return false;
@@ -163,7 +141,7 @@ final class DisplayRefundsHookController extends AdminHookController
                 $amount = Tools::getValue('amount');
                 $is_total = false;
                 if ($amount > $this->order->total_paid_tax_incl) {
-                    $this->error = $this->module->l('ERROR: Amount is too high', 'AdminAlmaRefunds');
+                    $this->error = $this->module->l('ERROR: Amount is too high', 'displayRefunds');
 
                     return;
                 } elseif ($amount === $this->order->total_paid_tax_incl) {

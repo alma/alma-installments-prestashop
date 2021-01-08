@@ -310,7 +310,7 @@ class Alma extends PaymentModule
 
     public function hookDisplayAdminOrder($params)
     {
-        $this->runHookController('displayRefunds', $params);
+        return $this->runHookController('displayRefunds', $params);
     }
 
     public function hookActionOrderStatusPostUpdate($params)
