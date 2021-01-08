@@ -11,13 +11,6 @@ i.icon-alma{
     vertical-align: text-bottom !important;
 }
 
-.adminalmarefunds .page-breadcrumb {
-    display: none;
-}
-
-.adminalmarefunds #desc-order-new{
-    display: none;
-}
 
 .alma-pt-8{
     padding-top:8px;
@@ -35,13 +28,14 @@ i.icon-alma{
     float: right;
 }
 
-.pull-left-15{
-    float: left;
-}
-
 .panel15{
     width: 600px;
     margin: 0 auto;
     margin-bottom: 0px;
     margin-bottom: 20px !important;
+}
+
+.alma-input-number{
+    width: 300px;
+    height: 20px;
 }
