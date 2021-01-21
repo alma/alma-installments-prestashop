@@ -1,6 +1,15 @@
 Changelog
 =========
 
+v1.4.2
+------
+
+* Register product price hooks on upgrade so that Alma badges are visible by default on product pages after upgrading
+* Update UNPKG URLs to use the unpkg.com domain instead of unpkg.io one, which is apparently a test domain name
+* Fixes the "show product eligibility" setting not being properly deactivated when unchecked
+* Revert use of `use` syntax in `alma.php` as it makes PrestaShop fail on module code evaluation
+
+
 v1.4.1
 ------
 
