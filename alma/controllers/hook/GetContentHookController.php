@@ -1,4 +1,5 @@
 <?php
+
 /**
  * 2018-2020 Alma SAS
  *
@@ -91,15 +92,17 @@ final class GetContentHookController extends AdminHookController
             $nonEligibleMsg = Tools::getValue('ALMA_NOT_ELIGIBLE_MESSAGE');
             $nonEligibleCategoriesMsg = Tools::getValue('ALMA_NOT_ELIGIBLE_CATEGORIES');
 
-            if (empty($title) || empty($description) ||
-                ($showEligibility && (empty($eligibleMsg) || empty($nonEligibleMsg)))) {
+            if (
+                empty($title) || empty($description) ||
+                ($showEligibility && (empty($eligibleMsg) || empty($nonEligibleMsg)))
+            ) {
                 $this->context->smarty->assign('validation_error', 'missing_required_setting');
 
                 return $this->module->display($this->module->file, 'getContent.tpl');
             }
 
             $showProductEligibility = (bool) Tools::getValue('ALMA_SHOW_PRODUCT_ELIGIBILITY_ON');
-            Settings::updateValue('ALMA_SHOW_PRODUCT_ELIGIBILITY', $showProductEligibility);
+            Settings::updateValue('ALMA_SHOW_PRODUCT_ELIGIBILITY', $showProductEligibility ? '1' : '0');
 
             $productPriceQuerySelector = Tools::getValue('ALMA_PRODUCT_PRICE_SELECTOR');
             Settings::updateValue('ALMA_PRODUCT_PRICE_SELECTOR', $productPriceQuerySelector);
@@ -149,7 +152,7 @@ final class GetContentHookController extends AdminHookController
                     $enablePlan = (bool) Tools::getValue("ALMA_P${n}X_ENABLED_ON");
 
                     if ($enablePlan && !($min >= $feePlan['min_purchase_amount'] &&
-                            $min <= min($max, $feePlan['max_purchase_amount']))) {
+                        $min <= min($max, $feePlan['max_purchase_amount']))) {
                         $this->context->smarty->assign([
                             'validation_error' => 'pnx_min_amount',
                             'n' => $n,
