@@ -76,8 +76,8 @@ final class FrontHeaderHookController extends FrontendHookController
             return null;
         }
 
-        $widgetsCssUrl = 'https://unpkg.io/@alma/widgets@1.x.x/dist/alma-widgets.css';
-        $widgetsJsUrl = 'https://unpkg.io/@alma/widgets@1.x.x/dist/alma-widgets.umd.js';
+        $widgetsCssUrl = 'https://unpkg.com/@alma/widgets@1.x.x/dist/alma-widgets.css';
+        $widgetsJsUrl = 'https://unpkg.com/@alma/widgets@1.x.x/dist/alma-widgets.umd.js';
         $productScriptPath = 'views/js/alma-product.js';
         $productCssPath = 'views/css/alma-product.css';
 
