@@ -12,7 +12,7 @@ mkdir ./dist
 
 cd ./tmp/build/alma || exit
 
-rm -rf vendor
+rm -rf vendor config.xml config_fr.xml
 composer install --no-dev --optimize-autoloader
 composer dump-autoload --optimize
 
