@@ -1,5 +1,5 @@
 {*
- * 2018-2020 Alma SAS
+ * 2018-2021 Alma SAS
  *
  * THE MIT LICENSE
  *
@@ -17,7 +17,7 @@
  * IN THE SOFTWARE.
  *
  * @author    Alma SAS <contact@getalma.eu>
- * @copyright 2018-2020 Alma SAS
+ * @copyright 2018-2021 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  *}
 
@@ -239,13 +239,13 @@
                                                 </div><br />
                                             {/if}
                                         {/if}
-                                        
+
                                         {if isset($input.lang) AND $input.lang}
                                             <div class="translatable">
                                                 {foreach $languages as $language}
                                                     <div class="lang_{$language.id_lang}" id="{$input.name}_{$language.id_lang}" style="display:{if $language.id_lang == $defaultFormLanguage}block{else}none{/if}; float: left;">
                                                         <input type="file" name="{$input.name}_{$language.id_lang}" {if isset($input.id)}id="{$input.id}_{$language.id_lang}"{/if} />
-                                        
+
                                                     </div>
                                                 {/foreach}
                                             </div>

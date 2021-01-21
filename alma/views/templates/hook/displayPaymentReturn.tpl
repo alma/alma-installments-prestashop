@@ -1,5 +1,5 @@
 {*
- * 2018-2020 Alma SAS
+ * 2018-2021 Alma SAS
  *
  * THE MIT LICENSE
  *
@@ -17,7 +17,7 @@
  * IN THE SOFTWARE.
  *
  * @author    Alma SAS <contact@getalma.eu>
- * @copyright 2018-2020 Alma SAS
+ * @copyright 2018-2021 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  *}
 
