@@ -61,7 +61,7 @@ class ShippingData
         if (!isset($cart->unique_carrier)) {
             $carrierIds = explode(",", $carriersListKey);
             foreach ($carrierIds as $id) {
-                if ($id != "") {
+                if (!empty($id)) {
                     $carrierIdArray[] = $id;
                 }
             }
@@ -69,7 +69,7 @@ class ShippingData
             $carrierIdArray[] = $cart->id_carrier;
         }
 
-        $shippingInfo = array();
+        $shippingInfo = ["selected_options" => []];
         foreach ($carrierIdArray as $carrierId) {
             $carrierInfo = $deliveryOptionList[$addressId][$carriersListKey]['carrier_list'][$carrierId];
             /** @var Carrier $carrier */
@@ -77,7 +77,7 @@ class ShippingData
             if (!$carrier) {
                 continue;
             }
-            $shippingInfo[] = self::shippingInfoData($carrier, $carrierInfo);
+            $shippingInfo["selected_options"][] = self::shippingInfoData($carrier, $carrierInfo);
         }
 
         $knownOptions = array();
