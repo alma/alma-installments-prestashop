@@ -1,4 +1,5 @@
 <?php
+
 /**
  * 2018-2021 Alma SAS
  *
@@ -42,8 +43,6 @@ $_MODULE['<{alma}prestashop>adminalmacategories_1ef246272d910a217e66aff142f708ad
 $_MODULE['<{alma}prestashop>payment_2f9f52496706027b880bac2e3c9af1d8'] = 'Une erreur est survenue lors de la requête de paiement. Veuillez réessayer, ou contactez-nous si le problème persiste.';
 $_MODULE['<{alma}prestashop>payment_efa820507b1951ee5722003639b1a0b0'] = 'Le paiement en plusieurs fois Alma n\'est pas disponible pour cette devise';
 $_MODULE['<{alma}prestashop>validation_9d55a51cbc2d6cf7f9251b0cec59390e'] = 'Une erreur est survenue lors de la validation de votre paiement. Veuillez réessayer ou nous contacter si le problème persiste. ID Panier : %d';
-$_MODULE['<{alma}prestashop>displayshoppingcartfooterhookcontroller_32e97d76996c6f0dfd417842f5c4de0d'] = '(Montant maximum : %s)';
-$_MODULE['<{alma}prestashop>displayshoppingcartfooterhookcontroller_f0dccaed959417fe135b77d2956c9c48'] = '(Montant minimum : %s)';
 $_MODULE['<{alma}prestashop>getcontenthookcontroller_1d13f5970032b45327add3c337ac82ee'] = 'Configuration de l\'API';
 $_MODULE['<{alma}prestashop>getcontenthookcontroller_fe1d478b2e434b92277b47f0cf62e040'] = 'Mode de l\'API';
 $_MODULE['<{alma}prestashop>getcontenthookcontroller_0e95e5facc2cad62d6458c65164c4455'] = 'Utilisez le mode Test jusqu’à ce que vous soyez prêt(e) à accepter des commandes avec Alma. En mode Test, seuls les administrateurs voient Alma sur les pages de panier/validation de commande.';
@@ -111,6 +110,8 @@ $_MODULE['<{alma}prestashop>paymentvalidation_efa820507b1951ee5722003639b1a0b0']
 $_MODULE['<{alma}prestashop>paymentvalidation_6f11098989b14063e0a4cfe362734850'] = 'Alma - Paiement en %d fois';
 $_MODULE['<{alma}prestashop>settings_00606cb1a7827b23ee7191f6676d65b8'] = 'Paiement fractionné disponible';
 $_MODULE['<{alma}prestashop>settings_fb88c06896e14fceee15a6f25dc770b2'] = 'Paiement fractionné indisponible';
+$_MODULE['<{alma}prestashop>settings_f0dccaed959417fe135b77d2956c9c48'] = '(Montant minimum : %s)';
+$_MODULE['<{alma}prestashop>settings_32e97d76996c6f0dfd417842f5c4de0d'] = '(Montant maximum : %s)';
 $_MODULE['<{alma}prestashop>settings_300de0751d957421cc332ba21c43a598'] = 'Payer en %d fois';
 $_MODULE['<{alma}prestashop>settings_673742ef792de1da72351e0e40ff4b95'] = 'Payer en %d fois par carte bancaire';
 $_MODULE['<{alma}prestashop>displaypayment_e3a4feb89e28638db3aa25b5737b7497'] = 'Le paiement en plusieurs fois Alma n\'est pas disponible du fait d\'une erreur';

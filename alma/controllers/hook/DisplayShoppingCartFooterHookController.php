@@ -1,4 +1,5 @@
 <?php
+
 /**
  * 2018-2021 Alma SAS
  *
@@ -76,17 +77,11 @@ final class DisplayShoppingCartFooterHookController extends FrontendHookControll
 
             $eligibilityMsg = '';
             if ($cartTotal > $maximum && $maximum != 0) {
-                $eligibilityMsg = ' ' . sprintf(
-                    $this->module->l('(Maximum amount: %s)', 'displayShoppingCartFooter'),
-                    almaFormatPrice($maximum)
-                );
+                $eligibilityMsg = ' ' . Settings::getNonEligibilityMaxAmountMessage($maximum);
             }
 
             if ($cartTotal < $minimum && $minimum != PHP_INT_MAX) {
-                $eligibilityMsg = ' ' . sprintf(
-                    $this->module->l('(Minimum amount: %s)', 'displayShoppingCartFooter'),
-                    almaFormatPrice($minimum)
-                );
+                $eligibilityMsg = ' ' . Settings::getNonEligibilityMinAmountMessage($minimum);
             }
 
             $eligibilityMsg = Settings::getNonEligibilityMessage() . $eligibilityMsg;

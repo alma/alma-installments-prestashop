@@ -1,4 +1,5 @@
 <?php
+
 /**
  * 2018-2021 Alma SAS
  *
@@ -183,6 +184,30 @@ class Settings
     public static function showEligibilityMessage()
     {
         return (bool) (int) self::get('ALMA_SHOW_ELIGIBILITY_MESSAGE', true);
+    }
+
+    public static function getNonEligibilityMinAmountMessage($minimum)
+    {
+        // Allow PrestaShop's translation feature to detect those strings
+        // $this->l('(Minimum amount: %s)', 'settings');        
+        $default = sprintf(
+            self::l('(Minimum amount: %s)'),
+            almaFormatPrice($minimum)
+        );
+
+        return $default;
+    }
+
+    public static function getNonEligibilityMaxAmountMessage($maximum)
+    {
+        // Allow PrestaShop's translation feature to detect those strings
+        // $this->l('(Maximum amount: %s)', 'settings');        
+        $default = sprintf(
+            self::l('(Maximum amount: %s)'),
+            almaFormatPrice($maximum)
+        );
+
+        return $default;
     }
 
     public static function getPaymentButtonTitle()
