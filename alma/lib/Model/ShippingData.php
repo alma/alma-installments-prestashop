@@ -1,4 +1,5 @@
 <?php
+
 /**
  * 2018-2021 Alma SAS
  *
@@ -41,7 +42,11 @@ class ShippingData
     public static function shippingInfo($cart)
     {
         $addressId = $cart->id_address_delivery;
+
         $deliveryOption = $cart->getDeliveryOption(null, true);
+        if ($deliveryOption === false) {
+            $deliveryOption = $cart->getDeliveryOption();
+        }
 
         // We don't have any shipping information for the shipping address
         if ($deliveryOption === false || !isset($deliveryOption[$addressId])) {
@@ -54,21 +59,31 @@ class ShippingData
             return null;
         }
 
-        $carrierId = $cart->id_carrier;
-        if (!$carrierId) {
-            $carrierId = key($deliveryOptionList[$addressId][$carriersListKey]);
+        $carrierIdArray = array();
+
+        if (!isset($cart->unique_carrier)) {
+            $carrierIds = explode(",", $carriersListKey);
+            foreach ($carrierIds as $id) {
+                if (!empty($id)) {
+                    $carrierIdArray[] = $id;
+                }
+            }
+        } else {
+            $carrierIdArray[] = $cart->id_carrier;
         }
 
-        $carrierInfo = $deliveryOptionList[$addressId][$carriersListKey]['carrier_list'][$carrierId];
-        $carrier = new Carrier($carrierId, $cart->id_lang);
-        if (!$carrier) {
-            return null;
+        $shippingInfo = ["selected_options" => []];
+        foreach ($carrierIdArray as $carrierId) {
+            $carrierInfo = $deliveryOptionList[$addressId][$carriersListKey]['carrier_list'][$carrierId];
+            /** @var Carrier $carrier */
+            $carrier = new Carrier($carrierId, $cart->id_lang);
+            if (!$carrier) {
+                continue;
+            }
+            $shippingInfo["selected_options"][] = self::shippingInfoData($carrier, $carrierInfo);
         }
 
-        $shippingInfo = self::shippingInfoData($carrier, $carrierInfo);
-
-        $shippingInfo['available_options'] = [];
-        $knownOptions = [];
+        $knownOptions = array();
         foreach ($deliveryOptionList[$addressId] as $carriers) {
             foreach ($carriers['carrier_list'] as $id => $carrierOptionInfo) {
                 $carrierOption = new Carrier($id, $cart->id_lang);
