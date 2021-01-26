@@ -41,9 +41,12 @@ class ShippingData
      */
     public static function shippingInfo($cart)
     {
-
         $addressId = $cart->id_address_delivery;
+
         $deliveryOption = $cart->getDeliveryOption(null, true);
+        if ($deliveryOption === false) {
+            $deliveryOption = $cart->getDeliveryOption();
+        }
 
         // We don't have any shipping information for the shipping address
         if ($deliveryOption === false || !isset($deliveryOption[$addressId])) {
