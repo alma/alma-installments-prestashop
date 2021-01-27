@@ -21,40 +21,14 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  *}
 
-<form method="POST" action="" class="defaultForm form-horizontal">
-    <input type="hidden" class="alma" name="orderID" required value="{$order.id}" />
+<form id="alma-refund" method="POST" action="{$actionUrl}" class="defaultForm form-horizontal">
+    <input type="hidden" class="alma" name="orderId" required value="{$order.id}"/>
     <div class="panel" id="alma_refunds">
-        <div class="panel-heading">        
+        <div class="panel-heading">
             <img src="{$iconPath}"/>
             {l s='Alma refund' mod='alma'}
         </div>
-        <div class="form-wrapper">                                        
-            <div class="form-group" id="amountDisplay">
-                <label class="control-label col-lg-3 required"> {l s='Amount (Max. %s):' sprintf=$order.maxAmount mod='alma'}</label>
-                <div class="col-lg-9">
-                    <div class="input-group">
-                        <span class="input-group-addon">{$order.currencySymbole}</span>
-                        <input type="number" step="0.01" class="alma" id="amount" value="" name="amount" placeholder="{l s='Amount to refund...' mod='alma'}" />
-                    </div>
-                </div>            
-            </div>   
-            <div class="form-group">
-                <label class="control-label col-lg-3 required"> {l s='Refund type:' mod='alma'}</label>
-                <div class="col-lg-9">
-                    <div class="radio t">
-                        <label>
-                            <input type="radio" name="refundType" value="total"/>
-                            {l s='Total' mod='alma'}
-                        </label>
-                    </div>
-                    <div class="radio t">
-                        <label>
-                            <input type="radio" name="refundType" value="partial" checked="checked"/>
-                            {l s='Partial' mod='alma'}
-                        </label>
-                    </div>                
-                </div>            
-            </div>
+        <div class="form-wrapper">
             <div class="form-group">
                 <label class="control-label col-lg-3"></label>
                 <div class="col-lg-9">
@@ -63,24 +37,78 @@
                     </p>
                 </div>
             </div>
-        </div>  
+            <div class="form-group">
+                <label class="control-label col-lg-3 required"> {l s='Refund type:' mod='alma'}</label>
+                <div class="col-lg-9">
+                    <div class="radio t">
+                        <label>
+                            <input type="radio" name="refundType" value="total" checked="checked"/>
+                            {l s='Total' mod='alma'}
+                        </label>
+                    </div>
+                    <div class="radio t">
+                        <label>
+                            <input type="radio" name="refundType" value="partial"/>
+                            {l s='Partial' mod='alma'}
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group" id="amountDisplay" style="display: none">
+                <label class="control-label col-lg-3 required"> {l s='Amount (Max. %s):' sprintf=$order.maxAmount mod='alma'}</label>
+                <div class="col-lg-9">
+                    <div class="input-group">
+                        <span class="input-group-addon">{$order.currencySymbol}</span>
+                        <input type="text" class="alma" value="" name="amount"
+                               placeholder="{l s='Amount to refund...' mod='alma'}"/>
+                    </div>
+                </div>
+            </div>
+        </div>
         <div class="panel-footer clear">
-                <button type="submit" class="button btn btn-primary button-medium pull-right"><span>{l s='Process this refund' mod='alma'}</button>                
-        </div>  
+            <button type="submit" class="button btn btn-primary button-medium pull-right">
+                <span>{l s='Process this refund' mod='alma'}</button>
+        </div>
     </div>
 </form>
 
 <script type="text/javascript">
-    $(function(){    
-        $("#amount").prop('required',true);
-        $('input[type=radio][name=refundType]').change(function() {
-            if (this.value == 'total') {
+    $(function () {
+        $('input[type=radio][name=refundType]').change(function () {
+            if (this.value === 'total') {
                 $('#amountDisplay').hide();
-                $("#amount").prop('required',false);
-            }
-            else if (this.value == 'partial') {
+                $("#amount").prop('required', false);
+            } else if (this.value === 'partial') {
                 $('#amountDisplay').show();
-                $("#amount").prop('required',true);
+                $("#amount").prop('required', true);
+            }
+        });
+
+        var $form = $('form#alma-refund');
+        $form.submit(function (e) {
+            if (e) {
+                e.preventDefault();
+
+                $.ajax({
+                    type: 'POST',
+                    url: $form.attr('action'),
+                    dataType: 'json',
+                    data: {
+                        ajax: true,
+                        action: 'Refund',
+                        orderId: $form.find('[name=orderId]').val(),
+                        refundType: $form.find('[name=refundType]:checked').val(),
+                        amount: $form.find('[name=amount]').val(),
+                    }
+                })
+                .done(function (data) {
+                    console.log(data);
+                })
+                .fail(function (data) {
+                    console.log(data);
+                });
+
+                return false;
             }
         });
     });
