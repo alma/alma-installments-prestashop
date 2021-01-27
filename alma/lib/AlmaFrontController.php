@@ -22,15 +22,16 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
+namespace Alma\PrestaShop;
+
+use Context;
+use ModuleFrontController;
+
 if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-use Alma\PrestaShop\AlmaFrontController;
-use Alma\PrestaShop\API\PaymentValidation;
-use Alma\PrestaShop\API\PaymentValidationError;
-
-class AlmaIpnModuleFrontController extends AlmaFrontController
+class AlmaFrontController extends ModuleFrontController
 {
     public $ssl = true;
 
@@ -42,39 +43,19 @@ class AlmaIpnModuleFrontController extends AlmaFrontController
 
     public function ajaxDie($value = null, $controller = null, $method = null)
     {
-        if (method_exists(get_parent_class(get_parent_class($this)), 'ajaxRender')) {
+        if (method_exists(get_parent_class($this), 'ajaxRender')) {
             parent::ajaxRender($value);
             exit;
-        } elseif (method_exists(get_parent_class(get_parent_class($this)), 'ajaxDie')) {
+        } elseif (method_exists(get_parent_class($this), 'ajaxDie')) {
             parent::ajaxDie($value);
         } else {
             die($value);
         }
     }
 
-    private function fail($msg = null)
+    protected function ajaxFail($msg = null)
     {
         header('X-PHP-Response-Code: 500', true, 500);
         $this->ajaxDie(json_encode(['error' => $msg]));
-    }
-
-    public function postProcess()
-    {
-        parent::postProcess();
-
-        header('Content-Type: application/json');
-
-        $paymentId = Tools::getValue('pid');
-        $validator = new PaymentValidation($this->context, $this->module);
-
-        try {
-            $validator->validatePayment($paymentId);
-        } catch (PaymentValidationError $e) {
-            $this->ajaxFail($e->getMessage());
-        } catch (Exception $e) {
-            $this->ajaxFail($e->getMessage());
-        }
-
-        $this->ajaxDie(json_encode(['success' => true]));
     }
 }

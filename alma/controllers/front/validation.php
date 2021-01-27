@@ -26,19 +26,12 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
+use Alma\PrestaShop\AlmaFrontController;
 use Alma\PrestaShop\API\PaymentValidation;
 use Alma\PrestaShop\API\PaymentValidationError;
 
-class AlmaValidationModuleFrontController extends ModuleFrontController
+class AlmaValidationModuleFrontController extends AlmaFrontController
 {
-    public $ssl = true;
-
-    public function __construct()
-    {
-        parent::__construct();
-        $this->context = Context::getContext();
-    }
-
     private function fail($cart, $msg = null)
     {
         if (!$msg) {
