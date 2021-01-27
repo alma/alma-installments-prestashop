@@ -51,22 +51,32 @@ class AdminAlmaRefundsController extends ModuleAdminController
         }
 
         $paymentId = $orderPayment->transaction_id;
-        if ($refundType == "partial") {
-            $isTotal = false;
-            $amount = str_replace(',', '.', Tools::getValue('amount'));
 
-            if ($amount > $order->total_paid_tax_incl) {
-                $this->ajaxFail(
-                    $this->module->l('Error: Amount is higher than maximum refundable', 'AdminAlmaRefundsController'),
-                    400
-                );
-            } elseif ($amount === $order->total_paid_tax_incl) {
+        switch ($refundType) {
+            case 'partial_multi':
+                $isTotal = false;
+                $amount = $order->total_paid_tax_incl;
+                break;
+            case 'partial':
+                $isTotal = false;
+                $amount = str_replace(',', '.', Tools::getValue('amount'));
+
+                if ($amount > $order->total_paid_tax_incl) {
+                    $this->ajaxFail(
+                        $this->module->l('Error: Amount is higher than maximum refundable', 'AdminAlmaRefundsController'),
+                        400
+                    );
+                } elseif ($amount === $order->total_paid_tax_incl) {
+                    // si on passe a true ça va rembourser toutes les commandes et changer les status
+                    // ça me parait pas super...
+                    //$isTotal = true;
+                }
+                break;
+            case 'total':
                 $isTotal = true;
-            }
-        } else {
-            $isTotal = true;
-            $amount = $order->total_paid_tax_incl;
+                $amount = $order->getOrdersTotalPaid();
         }
+
 
         $refundResult = false;
         try {
@@ -82,12 +92,17 @@ class AdminAlmaRefundsController extends ModuleAdminController
             );
         } else if ($isTotal) {
             // Mark order as refunded if this was a total refund action
-            $current_order_state = $order->getCurrentOrderState();
 
-            if ($current_order_state->id !== 7) {
-                $history = new OrderHistory();
-                $history->id_order = (int)$order->id;
-                $history->changeIdOrderState(7, (int)($order->id));
+            $orders = Order::getByReference($order->reference);
+            foreach ($orders as $o) {
+                $current_order_state = $o->getCurrentOrderState();
+                if ($current_order_state->id !== 7) {
+                    $history = new OrderHistory();
+                    $history->id_order = (int)$o->id;
+                    $history->id_employee = (int) ContextCore::getContext()->employee->id;
+
+                    $history->changeIdOrderState(7, $o);
+                }
             }
         }
 

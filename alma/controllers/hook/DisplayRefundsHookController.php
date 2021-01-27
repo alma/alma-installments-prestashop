@@ -58,11 +58,28 @@ final class DisplayRefundsHookController extends AdminHookController
             $iconPath = $this->module->getPathUri() . '/views/img/logos/alma_tiny.svg';
         }
 
+
+        //multi shipping
+        $ordersId = null;
+        $ordersTotalAmount = null;
+        if ($order->getOrdersTotalPaid() > $order->total_paid_tax_incl) {
+            $orders = Order::getByReference($order->reference);
+            foreach ($orders as $o) {
+                if ($o->id != $order->id) {
+                    $ordersId .= "{$o->id},";
+                }
+            }
+            $ordersId = rtrim($ordersId, ',');
+            $ordersTotalAmount = $order->getOrdersTotalPaid();
+        }
+
         $currency = new Currency($order->id_currency);
         $orderData = [
             'id' => $order->id,
             'maxAmount' => almaFormatPrice(almaPriceToCents($order->total_paid_tax_incl), (int)$order->id_currency),
             'currencySymbol' => $currency->sign,
+            'ordersId' => $ordersId,
+            'ordersTotalAmount' => almaFormatPrice(almaPriceToCents($ordersTotalAmount), (int)$order->id_currency),
         ];
 
         if (version_compare(_PS_VERSION_, '1.6', '<')) {
