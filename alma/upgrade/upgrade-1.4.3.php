@@ -1,4 +1,5 @@
 <?php
+
 /**
  * 2018-2021 Alma SAS
  *
@@ -32,5 +33,7 @@ if (!defined('_PS_VERSION_')) {
  */
 function upgrade_module_1_4_3($module)
 {
+    $module->unregisterHook('orderSlipAdd');
+
     return $module->uninstallTabs() && $module->installTabs();
 }

@@ -21,6 +21,9 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  *}
 
+<div class="alert alert-success alma-success"  style="display:none" data-alert="success"></div>
+<div class="alert alert-danger alma-danger" style="display:none" data-alert="danger"></div>
+
 <form id="alma-refund" method="POST" action="{$actionUrl}" class="defaultForm form-horizontal">
     <input type="hidden" class="alma" name="orderId" required value="{$order.id}"/>
     <div class="panel" id="alma_refunds">
@@ -39,16 +42,34 @@
             </div>
             <div class="form-group">
                 <label class="control-label col-lg-3 required"> {l s='Refund type:' mod='alma'}</label>
-                <div class="col-lg-9">
+                <div class="col-lg-9">                    
                     <div class="radio t">
                         <label>
-                            <input type="radio" name="refundType" value="total" checked="checked"/>
-                            {l s='Total' mod='alma'}
+                            <input type="radio" class="refundType" name="refundType" value="total" checked="checked"/>
+                            {if $order.ordersId}
+                                {l s='Refund the integrity of this purchase' mod='alma'}
+                                <br>
+                                <i>{l s='Refund this order (id : %1$d) and all linked orders (id : %2$s)' sprintf=array($order.id, $order.ordersId) mod='alma'}
+                                <br>
+                                {l s='Total amount : %s' sprintf=$order.ordersTotalAmount mod='alma'}
+                                </i>
+                            {else}
+                                {l s='Total' mod='alma'}
+                            {/if}
+
                         </label>
                     </div>
+                    {if $order.ordersId}
+                        <div class="radio t">
+                            <label>
+                                <input type="radio" class="refundType" name="refundType" value="partial_multi" />                            
+                                {l s='Only this purchase (%s)' sprintf=$order.maxAmount mod='alma'}
+                            </label>
+                        </div>
+                    {/if}
                     <div class="radio t">
                         <label>
-                            <input type="radio" name="refundType" value="partial"/>
+                            <input type="radio" class="refundType" name="refundType" value="partial"/>
                             {l s='Partial' mod='alma'}
                         </label>
                     </div>
@@ -74,20 +95,24 @@
 
 <script type="text/javascript">
     $(function () {
+        var $form = $('form#alma-refund');
+
         $('input[type=radio][name=refundType]').change(function () {
-            if (this.value === 'total') {
+            if (this.value === 'partial') {
+                $('#amountDisplay').show();                
+                $($form.find('[name=amount]')).prop('required', true);
+            } else {
                 $('#amountDisplay').hide();
-                $("#amount").prop('required', false);
-            } else if (this.value === 'partial') {
-                $('#amountDisplay').show();
-                $("#amount").prop('required', true);
-            }
+                $($form.find('[name=amount]')).prop('required', false);
+            }            
         });
 
-        var $form = $('form#alma-refund');
+        
         $form.submit(function (e) {
             if (e) {
                 e.preventDefault();
+                $('.alma-danger').html('').hide();
+                $('.alma-success').html('').hide();
 
                 $.ajax({
                     type: 'POST',
@@ -102,10 +127,10 @@
                     }
                 })
                 .done(function (data) {
-                    console.log(data);
+                    $('.alma-success').html(data.message).show();
                 })
-                .fail(function (data) {
-                    console.log(data);
+                .fail(function (data) {                                        
+                    $('.alma-danger').html(data.responseJSON.message).show();                    
                 });
 
                 return false;
