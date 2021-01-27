@@ -28,35 +28,10 @@ if (!defined('_PS_VERSION_')) {
 
 use Alma\PrestaShop\API\PaymentValidation;
 use Alma\PrestaShop\API\PaymentValidationError;
+use Alma\PrestaShop\AlmaFrontController;
 
-class AlmaIpnModuleFrontController extends ModuleFrontController
+class AlmaIpnModuleFrontController extends AlmaFrontController
 {
-    public $ssl = true;
-
-    public function __construct()
-    {
-        parent::__construct();
-        $this->context = Context::getContext();
-    }
-
-    public function ajaxDie($value = null, $controller = null, $method = null)
-    {
-        if (method_exists(get_parent_class($this), 'ajaxRender')) {
-            parent::ajaxRender($value);
-            exit;
-        } elseif (method_exists(get_parent_class($this), 'ajaxDie')) {
-            parent::ajaxDie($value);
-        } else {
-            die($value);
-        }
-    }
-
-    private function fail($msg = null)
-    {
-        header('X-PHP-Response-Code: 500', true, 500);
-        $this->ajaxDie(json_encode(['error' => $msg]));
-    }
-
     public function postProcess()
     {
         parent::postProcess();
@@ -69,9 +44,9 @@ class AlmaIpnModuleFrontController extends ModuleFrontController
         try {
             $validator->validatePayment($paymentId);
         } catch (PaymentValidationError $e) {
-            $this->fail($e->getMessage());
+            $this->ajaxFail($e->getMessage());
         } catch (Exception $e) {
-            $this->fail($e->getMessage());
+            $this->ajaxFail($e->getMessage());
         }
 
         $this->ajaxDie(json_encode(['success' => true]));
