@@ -222,12 +222,14 @@ class Alma extends PaymentModule
     {
         return $this->installTab('alma', 'Alma')
             && $this->installTab('AdminAlmaConfig', $this->l('Configuration'), 'alma', 1, 'tune')
-            && $this->installTab('AdminAlmaCategories', $this->l('Excluded categories'), 'alma', 2, 'not_interested');
+            && $this->installTab('AdminAlmaCategories', $this->l('Excluded categories'), 'alma', 2, 'not_interested')
+            && $this->installTab('AdminAlmaRefunds', false, 'alma');
     }
 
-    private function uninstallTabs()
+    public function uninstallTabs()
     {
         return $this->uninstallTab('AdminAlmaCategories')
+            && $this->uninstallTab('AdminAlmaRefunds')
             && $this->uninstallTab('AdminAlmaConfig')
             && $this->uninstallTab('alma');
     }
@@ -235,7 +237,7 @@ class Alma extends PaymentModule
     private function installTab($class, $name, $parent = null, $position = null, $icon = null)
     {
         $tab = Tab::getInstanceFromClassName($class);
-        $tab->active = 1;
+        $tab->active = $name !== false;
         $tab->class_name = $class;
         $tab->name = [];
 
