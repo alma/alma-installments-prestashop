@@ -126,3 +126,5 @@
         });
     });
 </script>
+
+{include file='./_partials/refunds.tpl'}
