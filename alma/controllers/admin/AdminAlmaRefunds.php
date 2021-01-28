@@ -1,10 +1,5 @@
 <?php
 
-use Alma\API\Entities\Payment;
-use Alma\API\RequestError;
-use Alma\PrestaShop\API\ClientHelper;
-use Alma\PrestaShop\Utils\Logger;
-
 /**
  * 2018-2021 Alma SAS
  *
@@ -27,6 +22,12 @@ use Alma\PrestaShop\Utils\Logger;
  * @copyright 2018-2021 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
+
+use Alma\API\RequestError;
+use Alma\API\Entities\Payment;
+use Alma\PrestaShop\Utils\Logger;
+use Alma\PrestaShop\API\ClientHelper;
+
 
 class AdminAlmaRefundsController extends ModuleAdminController
 {
@@ -91,17 +92,11 @@ class AdminAlmaRefundsController extends ModuleAdminController
                 $this->module->l('There was an error while processing the refund', 'AdminAlmaRefundsController')
             );
         } else if ($isTotal) {
-            // Mark order as refunded if this was a total refund action
-
             $orders = Order::getByReference($order->reference);
             foreach ($orders as $o) {
                 $current_order_state = $o->getCurrentOrderState();
-                if ($current_order_state->id !== 7) {
-                    $history = new OrderHistory();
-                    $history->id_order = (int)$o->id;
-                    $history->id_employee = (int) ContextCore::getContext()->employee->id;
-
-                    $history->changeIdOrderState(7, $o);
+                if ($current_order_state->id !== Configuration::get('PS_OS_REFUND')) {
+                    $o->setCurrentState(Configuration::get('PS_OS_REFUND'));
                 }
             }
         }
