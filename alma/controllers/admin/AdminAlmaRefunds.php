@@ -95,7 +95,7 @@ class AdminAlmaRefundsController extends ModuleAdminController
             $orders = Order::getByReference($order->reference);
             foreach ($orders as $o) {
                 $current_order_state = $o->getCurrentOrderState();
-                if ($current_order_state->id !== Configuration::get('PS_OS_REFUND')) {
+                if ($current_order_state->id !== (int) Configuration::get('PS_OS_REFUND')) {
                     $o->setCurrentState(Configuration::get('PS_OS_REFUND'));
                 }
             }
