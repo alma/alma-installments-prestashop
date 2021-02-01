@@ -24,7 +24,6 @@
  */
 
 use Alma\API\RequestError;
-use Alma\API\Entities\Payment;
 use Alma\PrestaShop\Utils\Logger;
 use Alma\PrestaShop\API\ClientHelper;
 
@@ -36,13 +35,18 @@ class AdminAlmaRefundsController extends ModuleAdminController
     protected function ajaxFail($msg = null, $statusCode = 500)
     {
         header("X-PHP-Response-Code: $statusCode", true, $statusCode);
-        $this->ajaxDie(json_encode(['error' => true, 'message' => $msg]));
+
+        $json = ['error' => true, 'message' => $msg];
+        method_exists(get_parent_class($this), 'ajaxDie')
+            ? $this->ajaxDie(json_encode($json))
+            : die(Tools::jsonEncode($json));
     }
 
     public function ajaxProcessRefund()
     {
         $refundType = Tools::getValue('refundType');
         $order = new Order(Tools::getValue('orderId'));
+
 
         $orderPayment = $this->getCurrentOrderPayment($order);
         if (!$orderPayment) {
@@ -101,11 +105,15 @@ class AdminAlmaRefundsController extends ModuleAdminController
             }
         }
 
-        $this->ajaxDie(json_encode([
+        $json = [
             'success' => true,
             'message' => $this->module->l('Refund has been processed', 'AdminAlmaRefundsController'),
             'paymentData' => $refundResult
-        ]));
+        ];
+
+        method_exists(get_parent_class($this), 'ajaxDie')
+            ? $this->ajaxDie(json_encode($json))
+            : die(Tools::jsonEncode($json));
     }
 
     private function getCurrentOrderPayment(Order $order)

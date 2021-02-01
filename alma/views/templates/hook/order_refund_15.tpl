@@ -30,7 +30,7 @@
         {l s='Alma refund' mod='alma'}
     </legend>
     <form id="alma-refund"  method="POST" action="{$actionUrl}" class="defaultForm form-horizontal">
-        <input type="hidden" class="alma" name="orderID" required value="{$order.id}" />
+        <input type="hidden" class="alma" name="orderId" required value="{$order.id}" />
         <p>
             {l s='Texte : remboursement alma + changement de status si total bla bla bla toussa toussa...' mod='alma'}
         </p>                           
@@ -79,52 +79,5 @@
         </div>         
     </form>
 </fieldset>
-
-<script type="text/javascript">
-    $(function () {
-        var $form = $('form#alma-refund');
-
-        $('input[type=radio][name=refundType]').change(function () {
-            if (this.value === 'partial') {
-                $('#amountDisplay').show();                
-                $($form.find('[name=amount]')).prop('required', true);
-            } else {
-                $('#amountDisplay').hide();
-                $($form.find('[name=amount]')).prop('required', false);
-            }            
-        });
-
-        
-        $form.submit(function (e) {
-            if (e) {
-                e.preventDefault();
-                $('.alma-danger').html('').hide();
-                $('.alma-success').html('').hide();
-
-                $.ajax({
-                    type: 'POST',
-                    url: $form.attr('action'),
-                    dataType: 'json',
-                    data: {
-                        ajax: true,
-                        action: 'Refund',
-                        orderId: $form.find('[name=orderId]').val(),
-                        refundType: $form.find('[name=refundType]:checked').val(),
-                        amount: $form.find('[name=amount]').val(),
-                    }
-                })
-                .done(function (data) {
-                    $('.alma-success').html(data.message).show();
-                })
-                .fail(function (data) { 
-                    console.log(data);                                       
-                    //$('.alma-danger').html(data.responseJSON.message).show();                    
-                });
-
-                return false;
-            }
-        });
-    });
-</script>
 
 {include file='./_partials/refunds.tpl'}
