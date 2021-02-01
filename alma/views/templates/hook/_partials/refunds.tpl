@@ -40,6 +40,7 @@
         $form.submit(function (e) {
             if (e) {
                 e.preventDefault();
+                $($form.find('[type=submit]')).attr("disabled", true);
                 $('.alma-danger').html('').hide();
                 $('.alma-success').html('').hide();
 
@@ -54,12 +55,16 @@
                         refundType: $form.find('[name=refundType]:checked').val(),
                         amount: $form.find('[name=amount]').val(),
                     }
-                })
+                })                
                 .done(function (data) {
                     $('.alma-success').html(data.message).show();
                 })
-                .fail(function (data) {                                        
-                    $('.alma-danger').html(data.responseJSON.message).show();                    
+                .fail(function (data) {
+                    var jsondata = JSON.parse(data.responseText);                    
+                    $('.alma-danger').html(jsondata.message).show();
+                })
+                .complete(function(){
+                    $($form.find('[type=submit]')).attr("disabled", false);
                 });
 
                 return false;
@@ -67,4 +72,3 @@
         });
     });
 </script>
-
