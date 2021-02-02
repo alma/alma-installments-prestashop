@@ -38,7 +38,7 @@
             <p><b>{l s='Refund type:' mod='alma'}</b></p>                                    
             <table>
                 <tr>
-                    <td><input type="radio" name="refundType" value="total" checked="checked"/></td>
+                    <td><input type="radio" autocomplete="off" name="refundType" value="total" checked="checked"/></td>
                     <td>
                         {if $order.ordersId}
                             {l s='Refund the integrity of this purchase' mod='alma'}
@@ -54,12 +54,12 @@
                 </tr>
                 {if $order.ordersId}
                 <tr>
-                    <td><input type="radio" class="refundType" name="refundType" value="partial_multi" /></td>
+                    <td><input type="radio" autocomplete="off" class="refundType" name="refundType" value="partial_multi" /></td>
                     <td>{l s='Only this purchase (%s)' sprintf=$order.maxAmount mod='alma'}</td>
                 </tr>
                 {/if} 
                 <tr>
-                    <td><input type="radio" name="refundType" value="partial" /></td>
+                    <td><input type="radio" autocomplete="off" name="refundType" value="partial" /></td>
                     <td>{l s='Partial' mod='alma'}</td>
                 </tr>
             </table>
@@ -69,7 +69,7 @@
                     {l s='Amount (Max. %s):' sprintf=$order.maxAmount mod='alma'}
                     </td>
                     <td>
-                    <input type="text" class="alma-input-number" id="amount" value="" name="amount" placeholder="{l s='Amount to refund...' mod='alma'}" />
+                    <input type="text" autocomplete="off" class="alma-input-number" id="amount" value="" name="amount" placeholder="{l s='Amount to refund...' mod='alma'}" />
                     </td>
                 </tr>   
             </table>                                                 

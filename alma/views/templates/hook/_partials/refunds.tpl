@@ -63,7 +63,7 @@
                     var jsondata = JSON.parse(data.responseText);                    
                     $('.alma-danger').html(jsondata.message).show();
                 })
-                .complete(function(){
+                .always(function(){
                     $($form.find('[type=submit]')).attr("disabled", false);
                 });
 
