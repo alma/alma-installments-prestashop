@@ -104,8 +104,13 @@ class Alma extends PaymentModule
             'displayBackOfficeHeader',
             'displayShoppingCartFooter',
             'actionOrderStatusPostUpdate',
-            'displayAdminOrder',
         ];
+
+        if (version_compare(_PS_VERSION_, '1.7.7.0', '>=')) {
+            $displayAdminOrderHooks = ['displayAdminOrderMain'];
+        } else {
+            $displayAdminOrderHooks = ['displayAdminOrder'];
+        }
 
         if (version_compare(_PS_VERSION_, '1.7', '>=')) {
             $paymentHooks = ['paymentOptions', 'displayPaymentReturn'];
@@ -119,7 +124,7 @@ class Alma extends PaymentModule
             $productHooks = ['displayProductButtons'];
         }
 
-        foreach (array_merge($commonHooks, $paymentHooks, $productHooks) as $hook) {
+        foreach (array_merge($commonHooks, $paymentHooks, $productHooks, $displayAdminOrderHooks) as $hook) {
             if (!$this->registerHook($hook)) {
                 return false;
             }
@@ -336,6 +341,11 @@ class Alma extends PaymentModule
     }
 
     public function hookDisplayAdminOrder($params)
+    {
+        return $this->runHookController('displayRefunds', $params);
+    }
+
+    public function hookDisplayAdminOrderMain($params)
     {
         return $this->runHookController('displayRefunds', $params);
     }

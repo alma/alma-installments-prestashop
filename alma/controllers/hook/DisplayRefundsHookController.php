@@ -29,10 +29,10 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-use Alma\PrestaShop\Hooks\AdminHookController;
-use Currency;
 use Media;
 use Order;
+use Currency;
+use Alma\PrestaShop\Hooks\AdminHookController;
 
 final class DisplayRefundsHookController extends AdminHookController
 {
@@ -84,8 +84,10 @@ final class DisplayRefundsHookController extends AdminHookController
 
         if (version_compare(_PS_VERSION_, '1.6', '<')) {
             $refundTpl = "order_refund_15";
-        } else {
+        } elseif (version_compare(_PS_VERSION_, '1.7.7.0', '<')) {
             $refundTpl = "order_refund";
+        } else {
+            $refundTpl = "order_refund_1770";
         }
 
         $tpl = $this->context->smarty->createTemplate(
@@ -98,6 +100,6 @@ final class DisplayRefundsHookController extends AdminHookController
             'actionUrl' => $this->context->link->getAdminLink('AdminAlmaRefunds')
         ]);
 
-        echo $tpl->fetch();
+        return $tpl->fetch();
     }
 }
