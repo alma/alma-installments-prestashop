@@ -1,4 +1,5 @@
 <?php
+
 /**
  * 2018-2021 Alma SAS
  *
@@ -91,8 +92,10 @@ final class GetContentHookController extends AdminHookController
             $nonEligibleMsg = Tools::getValue('ALMA_NOT_ELIGIBLE_MESSAGE');
             $nonEligibleCategoriesMsg = Tools::getValue('ALMA_NOT_ELIGIBLE_CATEGORIES');
 
-            if (empty($title) || empty($description) ||
-                ($showEligibility && (empty($eligibleMsg) || empty($nonEligibleMsg)))) {
+            if (
+                empty($title) || empty($description) ||
+                ($showEligibility && (empty($eligibleMsg) || empty($nonEligibleMsg)))
+            ) {
                 $this->context->smarty->assign('validation_error', 'missing_required_setting');
 
                 return $this->module->display($this->module->file, 'getContent.tpl');
@@ -338,6 +341,19 @@ final class GetContentHookController extends AdminHookController
             $this->context->smarty->assign('tip', 'fill_api_keys');
 
             $extraMessage = $this->module->display($this->module->file, 'getContent.tpl');
+        }
+
+        $almaNews = null;
+        if ($merchant) {
+            $tpl = $this->context->smarty->createTemplate(
+                "{$this->module->local_path}views/templates/hook/news.tpl"
+            );
+            $old_presta = false;
+            if (version_compare(_PS_VERSION_, '1.6', '<')) {
+                $old_presta = true;
+            }
+            $tpl->assign(['old_presta' => $old_presta, 'icon' => $iconPath]);
+            $almaNews = $tpl->fetch();
         }
 
         $apiConfigForm = [
@@ -908,10 +924,11 @@ final class GetContentHookController extends AdminHookController
             $fieldsForms = [$apiConfigForm, $debugForm];
         } else {
             $fieldsForms = [];
-
             if ($pnxConfigForm) {
                 $fieldsForms[] = $pnxConfigForm;
             }
+
+
 
             $fieldsForms = array_merge($fieldsForms, [
                 $productEligibilityForm,
@@ -986,7 +1003,7 @@ final class GetContentHookController extends AdminHookController
 
         $helper->languages = $this->context->controller->getLanguages();
 
-        return $extraMessage . $helper->generateForm($fieldsForms);
+        return $extraMessage . $almaNews . $helper->generateForm($fieldsForms);
     }
 
     private function assignSmartyAlertClasses($level = 'danger')
