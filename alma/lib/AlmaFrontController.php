@@ -22,50 +22,40 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
+namespace Alma\PrestaShop;
+
+use Context;
+use ModuleFrontController;
+
 if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-use Alma\PrestaShop\AlmaFrontController;
-use Alma\PrestaShop\API\PaymentValidation;
-use Alma\PrestaShop\API\PaymentValidationError;
-
-class AlmaValidationModuleFrontController extends AlmaFrontController
+class AlmaFrontController extends ModuleFrontController
 {
-    private function fail($cart, $msg = null)
+    public $ssl = true;
+
+    public function __construct()
     {
-        if (!$msg) {
-            $msg = sprintf(
-                // phpcs:ignore
-                $this->module->l('There was an error while validating your payment. Please try again or contact us if the problem persists. Cart ID: %d', 'validation'),
-                (int) $cart ? $cart->id : -1
-            );
-        }
-
-        $this->context->cookie->__set('alma_error', $msg);
-
-        return 'index.php?controller=order&step=1';
+        parent::__construct();
+        $this->context = Context::getContext();
     }
 
-    public function postProcess()
+    public function ajaxDie($value = null, $controller = null, $method = null)
     {
-        parent::postProcess();
-
-        $paymentId = Tools::getValue('pid');
-        $validator = new PaymentValidation($this->context, $this->module);
-
-        try {
-            $redirect_to = $validator->validatePayment($paymentId);
-        } catch (PaymentValidationError $e) {
-            $redirect_to = $this->fail($e->cart, $e->getMessage());
-        } catch (Exception $e) {
-            $redirect_to = $this->fail(null, $e->getMessage());
-        }
-
-        if (is_callable([$this, 'setRedirectAfter'])) {
-            $this->setRedirectAfter($redirect_to);
+        if (method_exists(get_parent_class($this), 'ajaxRender')) {
+            parent::ajaxRender($value);
+            exit;
+        } elseif (method_exists(get_parent_class($this), 'ajaxDie')) {
+            parent::ajaxDie($value);
         } else {
-            Tools::redirect($redirect_to);
+            die($value);
         }
+    }
+
+    protected function ajaxFail($msg = null)
+    {
+        header('X-PHP-Response-Code: 500', true, 500);
+        $this->ajaxDie(json_encode(['error' => $msg]));
     }
 }

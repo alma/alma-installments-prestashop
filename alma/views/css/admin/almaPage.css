@@ -10,3 +10,32 @@
 i.icon-alma{
     vertical-align: text-bottom !important;
 }
+
+
+.alma-pt-8{
+    padding-top:8px;
+}
+
+.alma-pt-3{
+    padding-top:3px;
+}
+
+.form-group-15{
+    margin-bottom: 1rem;
+}
+
+.pull-right-15{
+    float: right;
+}
+
+.panel15{
+    width: 600px;
+    margin: 0 auto;
+    margin-bottom: 0px;
+    margin-bottom: 20px !important;
+}
+
+.alma-input-number{
+    width: 300px;
+    height: 20px;
+}

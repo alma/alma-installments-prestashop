@@ -1,4 +1,5 @@
 <?php
+
 /**
  * 2018-2021 Alma SAS
  *
@@ -26,29 +27,13 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-use Alma\PrestaShop\API\PaymentValidation;
-use Alma\PrestaShop\API\PaymentValidationError;
-use Alma\PrestaShop\AlmaFrontController;
-
-class AlmaIpnModuleFrontController extends AlmaFrontController
+/**
+ * @param Alma $module
+ * @return bool
+ */
+function upgrade_module_1_4_3($module)
 {
-    public function postProcess()
-    {
-        parent::postProcess();
+    $module->unregisterHook('orderSlipAdd');
 
-        header('Content-Type: application/json');
-
-        $paymentId = Tools::getValue('pid');
-        $validator = new PaymentValidation($this->context, $this->module);
-
-        try {
-            $validator->validatePayment($paymentId);
-        } catch (PaymentValidationError $e) {
-            $this->ajaxFail($e->getMessage());
-        } catch (Exception $e) {
-            $this->ajaxFail($e->getMessage());
-        }
-
-        $this->ajaxDie(json_encode(['success' => true]));
-    }
+    return $module->uninstallTabs() && $module->installTabs();
 }
