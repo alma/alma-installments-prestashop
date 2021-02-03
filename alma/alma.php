@@ -1,4 +1,5 @@
 <?php
+
 /**
  * 2018-2021 Alma SAS
  *
@@ -122,7 +123,26 @@ class Alma extends PaymentModule
 
         Tools::clearCache();
 
+        $this->updateCarriersWithAlma();
+
         return $this->installTabs();
+    }
+
+    private function updateCarriersWithAlma()
+    {
+
+        $id_module = $this->id;
+        $id_shop = (int) $this->context->shop->id;
+        $id_lang = Context::getContext()->language->id;
+        $carriers = CarrierCore::getCarriers($id_lang, true, false, false, null, CarrierCore::ALL_CARRIERS);
+        $values = null;
+        foreach ($carriers as $carrier) {
+            $values .= "({$id_module},{$id_shop},{$carrier['id_reference']}),";
+        }
+        $values = rtrim($values, ',');
+        Db::getInstance()->execute('DELETE FROM `' . _DB_PREFIX_ . 'module_carrier` WHERE `id_module` = ' . $id_module);
+        Db::getInstance()->execute('INSERT INTO `' . _DB_PREFIX_ . 'module_carrier` (`id_module`, `id_shop`, `id_reference`)
+         VALUES ' . $values);
     }
 
     public function hookDisplayProductPriceBlock($params)
