@@ -123,7 +123,10 @@ class Alma extends PaymentModule
 
         Tools::clearCache();
 
-        $this->updateCarriersWithAlma();
+        // Enable Alma payment for all installed carriers in PrestaShop 1.7+
+        if (version_compare(_PS_VERSION_, '1.7', '>=')) {
+            $this->updateCarriersWithAlma();
+        }
 
         return $this->installTabs();
     }
@@ -133,8 +136,8 @@ class Alma extends PaymentModule
 
         $id_module = $this->id;
         $id_shop = (int) $this->context->shop->id;
-        $id_lang = Context::getContext()->language->id;
-        $carriers = CarrierCore::getCarriers($id_lang, true, false, false, null, CarrierCore::ALL_CARRIERS);
+        $id_lang = $this->context->language->id;
+        $carriers = CarrierCore::getCarriers($id_lang, false, false, false, null, CarrierCore::ALL_CARRIERS);
         $values = null;
         foreach ($carriers as $carrier) {
             $values .= "({$id_module},{$id_shop},{$carrier['id_reference']}),";
