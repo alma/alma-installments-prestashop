@@ -72,10 +72,11 @@
                                 {include file="modules/alma/views/templates/hook/_partials/feePlan.tpl" plans=$option.plans oneLiner=true}
                             </span>
                         </span>
-                    </a>
+                    </a>                    
                 </p>
-            </div>
+            </div>            
         </div>
     {/if}
 {/foreach}
 
+<div id="almaFragments" data-apimode="{$apiMode}" data-merchantid="{$merchantId}"></div>

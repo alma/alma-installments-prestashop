@@ -1,4 +1,5 @@
 <?php
+
 /**
  * 2018-2021 Alma SAS
  *
@@ -42,6 +43,18 @@ class AlmaPaymentModuleFrontController extends ModuleFrontController
         $this->context = Context::getContext();
     }
 
+    protected function ajaxFail($msg = null, $statusCode = 500)
+    {
+        header("X-PHP-Response-Code: $statusCode", true, $statusCode);
+
+        $json = ['error' => true, 'message' => $msg];
+        method_exists(get_parent_class($this), 'ajaxDie')
+            ? $this->ajaxDie(json_encode($json))
+            : die(Tools::jsonEncode($json));
+    }
+
+
+
     private function checkCurrency()
     {
         $currencyOrder = new Currency($this->context->cart->id_currency);
@@ -65,14 +78,15 @@ class AlmaPaymentModuleFrontController extends ModuleFrontController
         // phpcs:ignore
         $msg = $this->module->l('There was an error while generating your payment request. Please try again later or contact us if the problem persists.', 'payment');
         $this->context->cookie->__set('alma_error', $msg);
-        Tools::redirect('index.php?controller=order&step=1');
+        $this->ajaxFail();
     }
 
     public function postProcess()
     {
+
         // Check if cart exists and all fields are set
         if (!$this->module->active) {
-            Tools::redirect('index.php?controller=order&step=1');
+            $this->ajaxFail();
 
             return;
         }
@@ -87,7 +101,7 @@ class AlmaPaymentModuleFrontController extends ModuleFrontController
 
         if (!$authorized) {
             Logger::instance()->warning('[Alma] Not authorized!');
-            Tools::redirect('index.php?controller=order&step=1');
+            $this->ajaxFail();
 
             return;
         }
@@ -95,7 +109,7 @@ class AlmaPaymentModuleFrontController extends ModuleFrontController
         if (!$this->checkCurrency()) {
             $msg = $this->module->l('Alma Monthly Installments are not available for this currency', 'payment');
             $this->context->cookie->__set('alma_error', $msg);
-            Tools::redirect('index.php?controller=order&step=1');
+            $this->ajaxFail();
 
             return;
         }
@@ -122,16 +136,11 @@ class AlmaPaymentModuleFrontController extends ModuleFrontController
             return;
         }
 
-        try {
-            $payment = $alma->payments->create($data);
-        } catch (RequestError $e) {
-            $msg = "[Alma] ERROR when creating payment for Cart {$cart->id}: {$e->getMessage()}";
-            Logger::instance()->error($msg);
-            $this->genericErrorAndRedirect();
 
-            return;
-        }
+        method_exists(get_parent_class($this), 'ajaxDie')
+            ? $this->ajaxDie(json_encode($data))
+            : die(Tools::jsonEncode($data));
 
-        Tools::redirect($payment->url);
+        return false;
     }
 }
