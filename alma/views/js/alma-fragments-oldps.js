@@ -35,7 +35,7 @@ $(function () {
         })
 
 
-    $('.alma-button').click(function (e) {
+    $('.alma-fragments').click(function (e) {
         e.preventDefault();
         $('.display-framgent').remove();
         $(this).parent().parent().after('<div id="alma-payment" class="col-xs-12 display-framgent"></div>');

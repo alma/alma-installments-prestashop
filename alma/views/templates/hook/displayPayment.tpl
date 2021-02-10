@@ -22,15 +22,17 @@
  *}
 
 {assign var="iconDisplay" value=""}
+{assign var="almaButton" value="alma-button-with-bkg"}
 {if $old_prestashop_version}
     {assign var="iconDisplay" value="disable-arrow-icon"}
+    {assign var="almaButton" value="alma-button"}
 {/if}
 {foreach from=$options item=option}
     {if $option.disabled}
         <div class="row">
             <div class="col-xs-12">
                 <p class="payment_module">
-                    <a href="#" onclick="return false;" class="disabled alma-button {$iconDisplay}">
+                    <a href="#" onclick="return false;" class="disabled {$almaButton} {$iconDisplay}">
                         <span class="alma-button--logo">
                             <img src="{$option.logo|escape:'htmlall':'UTF-8'}" alt="Alma">
                         </span>
@@ -57,7 +59,7 @@
         <div class="row">
             <div class="col-xs-12">
                 <p class="payment_module">
-                    <a href="{$option.link}" class="alma-button {$iconDisplay}">
+                    <a href="{$option.link}" class="alma-fragments {$almaButton} {$iconDisplay}">
                         <span class="alma-button--logo">
                             <img src="{$option.logo|escape:'htmlall':'UTF-8'}" alt="Alma">
                         </span>
