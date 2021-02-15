@@ -29,12 +29,13 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-use Alma\PrestaShop\API\EligibilityHelper;
-use Alma\PrestaShop\Hooks\FrontendHookController;
-use Alma\PrestaShop\Model\CartData;
-use Alma\PrestaShop\Utils\Settings;
 use Cart;
 use Media;
+use Alma\PrestaShop\Model\CartData;
+use Alma\PrestaShop\Utils\Settings;
+use Alma\PrestaShop\Utils\LocaleHelper;
+use Alma\PrestaShop\API\EligibilityHelper;
+use Alma\PrestaShop\Hooks\FrontendHookController;
 
 final class DisplayShoppingCartFooterHookController extends FrontendHookController
 {
@@ -53,12 +54,13 @@ final class DisplayShoppingCartFooterHookController extends FrontendHookControll
                 break;
             }
         }
-
+        $cart = $this->context->cart;
+        $cartTotal = almaPriceToCents((float) $cart->getOrderTotal(true, Cart::BOTH));
         if (empty($eligibilities)) {
             $eligibilityMsg = Settings::getNonEligibilityMessage();
         } elseif (!$eligible) {
-            $cart = $this->context->cart;
-            $cartTotal = almaPriceToCents((float) $cart->getOrderTotal(true, Cart::BOTH));
+
+
             $minimum = PHP_INT_MAX;
             $maximum = 0;
 
@@ -90,9 +92,11 @@ final class DisplayShoppingCartFooterHookController extends FrontendHookControll
         }
 
         // Check if some products in cart are in the excludes listing
+        $isExcluded = false;
         $diff = CartData::getCartExclusion($params['cart']);
         if (!empty($diff)) {
             $eligibilityMsg = Settings::getNonEligibleCategoriesMessage();
+            $isExcluded = true;
         }
 
         if (is_callable('Media::getMediaPath')) {
@@ -101,9 +105,30 @@ final class DisplayShoppingCartFooterHookController extends FrontendHookControll
             $logo = $this->module->getPathUri() . '/views/img/logos/logo_alma.svg';
         }
 
+        // need ps verions && refresh price
+        $psVersion = "1.7";
+        $refreshPrice = true;
+        if (version_compare(_PS_VERSION_, '1.7', '<')) {
+            $psVersion = "1.6";
+            $refreshPrice = false;
+            if (version_compare(_PS_VERSION_, '1.6', '<')) {
+                $psVersion = "1.5";
+            }
+        }
         $this->context->smarty->assign([
-            'eligibility_msg' => $eligibilityMsg,
-            'logo' => $logo,
+            'eligibility_msg'   => $eligibilityMsg,
+            'logo'              => $logo,
+            'isExcluded'        => $isExcluded,
+            'settings'          => [
+                'merchantId'        => Settings::getMerchantId(),
+                'apiMode'           => Settings::getActiveMode(),
+                'amount'            => $cartTotal,
+                'plans'             => Settings::activePlans(),
+                'refreshPrice'      => $refreshPrice,
+                'decimalSeparator'  => LocaleHelper::decimalSeparator(),
+                'thousandSeparator' => LocaleHelper::thousandSeparator(),
+                'psVersion'         => $psVersion,
+            ],
         ]);
 
         return $this->module->display($this->module->file, 'displayShoppingCartFooter.tpl');

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * 2018-2021 Alma SAS
  *
@@ -28,8 +29,9 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-use Alma\PrestaShop\Hooks\FrontendHookController;
+use Alma\PrestaShop\Model\CartData;
 use Alma\PrestaShop\Utils\Settings;
+use Alma\PrestaShop\Hooks\FrontendHookController;
 
 final class FrontHeaderHookController extends FrontendHookController
 {
@@ -80,6 +82,7 @@ final class FrontHeaderHookController extends FrontendHookController
         $widgetsJsUrl = 'https://unpkg.com/@alma/widgets@1.x.x/dist/alma-widgets.umd.js';
         $productScriptPath = 'views/js/alma-product.js';
         $productCssPath = 'views/css/alma-product.css';
+        $cartScriptPath = 'views/js/alma-cart.js';
 
         $controller = $this->context->controller;
 
@@ -96,19 +99,40 @@ final class FrontHeaderHookController extends FrontendHookController
         ]);
 
         $content = $selectorsTpl->fetch();
-
+        // echo '<pre>';
+        // print_r($controller);
+        // echo '</pre>';
+        //echo $controller->step;
+        //var_dump($controller->nbProducts);        
+        $diff = CartData::getCartExclusion($params['cart']);
+        $isExcluded = !empty($diff) ? true : false;
         if (version_compare(_PS_VERSION_, '1.7', '<')) {
             $controller->addCSS($widgetsCssUrl);
             $controller->addCSS($this->module->_path . $productCssPath);
 
             $controller->addJS($widgetsJsUrl);
-            $controller->addJS($this->module->_path . $productScriptPath);
+            if (
+                ($controller->php_self == "order" && $controller->step == 0 || $controller->php_self == "order-opc")
+                && (isset($controller->nbProducts) && $controller->nbProducts != 0)
+            ) {
+                $controller->addJS($this->module->_path . $cartScriptPath);
+            } else {
+                $controller->addJS($this->module->_path . $productScriptPath);
+            }
         } else {
             $moduleName = $this->module->name;
             $scriptPath = "modules/$moduleName/$productScriptPath";
             $cssPath = "modules/$moduleName/$productCssPath";
+            $cartScriptPath = "modules/$moduleName/$cartScriptPath";
 
-            $controller->registerJavascript('alma-product-script', $scriptPath, ['priority' => 1000]);
+            if (
+                $controller->php_self == "cart"
+            ) {
+                $controller->registerJavascript('alma-cart-script', $cartScriptPath, ['priority' => 1000]);
+            } else {
+                $controller->registerJavascript('alma-product-script', $scriptPath, ['priority' => 1000]);
+            }
+
             $controller->registerStylesheet('alma-product-css', $cssPath);
 
             if (version_compare(_PS_VERSION_, '1.7.0.2', '>=')) {
