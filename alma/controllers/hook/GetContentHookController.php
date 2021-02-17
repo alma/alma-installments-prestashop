@@ -1,4 +1,5 @@
 <?php
+
 /**
  * 2018-2021 Alma SAS
  *
@@ -87,12 +88,13 @@ final class GetContentHookController extends AdminHookController
             $title = Tools::getValue('ALMA_PAYMENT_BUTTON_TITLE');
             $description = Tools::getValue('ALMA_PAYMENT_BUTTON_DESC');
             $showEligibility = (bool) Tools::getValue('ALMA_SHOW_ELIGIBILITY_MESSAGE_ON');
-            $eligibleMsg = Tools::getValue('ALMA_IS_ELIGIBLE_MESSAGE');
             $nonEligibleMsg = Tools::getValue('ALMA_NOT_ELIGIBLE_MESSAGE');
             $nonEligibleCategoriesMsg = Tools::getValue('ALMA_NOT_ELIGIBLE_CATEGORIES');
 
-            if (empty($title) || empty($description) ||
-                ($showEligibility && (empty($eligibleMsg) || empty($nonEligibleMsg)))) {
+            if (
+                empty($title) || empty($description) ||
+                ($showEligibility && empty($nonEligibleMsg))
+            ) {
                 $this->context->smarty->assign('validation_error', 'missing_required_setting');
 
                 return $this->module->display($this->module->file, 'getContent.tpl');
@@ -123,7 +125,6 @@ final class GetContentHookController extends AdminHookController
             Settings::updateValue('ALMA_SHOW_DISABLED_BUTTON', $showDisabledButton);
 
             Settings::updateValue('ALMA_SHOW_ELIGIBILITY_MESSAGE', $showEligibility);
-            Settings::updateValue('ALMA_IS_ELIGIBLE_MESSAGE', $eligibleMsg);
             Settings::updateValue('ALMA_NOT_ELIGIBLE_MESSAGE', $nonEligibleMsg);
             Settings::updateValue('ALMA_NOT_ELIGIBLE_CATEGORIES', $nonEligibleCategoriesMsg);
 
@@ -721,16 +722,6 @@ final class GetContentHookController extends AdminHookController
                         ],
                     ],
                     [
-                        'name' => 'ALMA_IS_ELIGIBLE_MESSAGE',
-                        'label' => $this->module->l('Eligibility message', 'GetContentHookController'),
-                        // PrestaShop won't detect the string if the call to `l` is multiline
-                        // phpcs:ignore
-                        'desc' => $this->module->l('Message displayed below the cart totals when it is eligible for monthly installments.', 'GetContentHookController'),
-                        'type' => 'text',
-                        'size' => 75,
-                        'required' => true,
-                    ],
-                    [
                         'name' => 'ALMA_NOT_ELIGIBLE_MESSAGE',
                         'label' => $this->module->l('Non-eligibility message', 'GetContentHookController'),
                         // PrestaShop won't detect the string if the call to `l` is multiline
@@ -952,7 +943,6 @@ final class GetContentHookController extends AdminHookController
             'ALMA_PAYMENT_BUTTON_DESC' => Settings::getPaymentButtonDescription(),
             'ALMA_SHOW_DISABLED_BUTTON' => Settings::showDisabledButton(),
             'ALMA_SHOW_ELIGIBILITY_MESSAGE_ON' => Settings::showEligibilityMessage(),
-            'ALMA_IS_ELIGIBLE_MESSAGE' => Settings::getEligibilityMessage(),
             'ALMA_NOT_ELIGIBLE_MESSAGE' => Settings::getNonEligibilityMessage(),
             'ALMA_DISPLAY_ORDER_CONFIRMATION_ON' => Settings::displayOrderConfirmation(),
             'ALMA_ACTIVATE_LOGGING_ON' => (bool) Settings::canLog(),

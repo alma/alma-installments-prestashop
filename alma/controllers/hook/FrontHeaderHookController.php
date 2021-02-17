@@ -99,19 +99,14 @@ final class FrontHeaderHookController extends FrontendHookController
         ]);
 
         $content = $selectorsTpl->fetch();
-        // echo '<pre>';
-        // print_r($controller);
-        // echo '</pre>';
-        //echo $controller->step;
-        //var_dump($controller->nbProducts);        
-        $diff = CartData::getCartExclusion($params['cart']);
-        $isExcluded = !empty($diff) ? true : false;
+
         if (version_compare(_PS_VERSION_, '1.7', '<')) {
             $controller->addCSS($widgetsCssUrl);
             $controller->addCSS($this->module->_path . $productCssPath);
 
             $controller->addJS($widgetsJsUrl);
             if (
+                Settings::showEligibilityMessage() &&
                 ($controller->php_self == "order" && $controller->step == 0 || $controller->php_self == "order-opc")
                 && (isset($controller->nbProducts) && $controller->nbProducts != 0)
             ) {
@@ -125,9 +120,7 @@ final class FrontHeaderHookController extends FrontendHookController
             $cssPath = "modules/$moduleName/$productCssPath";
             $cartScriptPath = "modules/$moduleName/$cartScriptPath";
 
-            if (
-                $controller->php_self == "cart"
-            ) {
+            if ($controller->php_self == "cart" && Settings::showEligibilityMessage()) {
                 $controller->registerJavascript('alma-cart-script', $cartScriptPath, ['priority' => 1000]);
             } else {
                 $controller->registerJavascript('alma-product-script', $scriptPath, ['priority' => 1000]);
