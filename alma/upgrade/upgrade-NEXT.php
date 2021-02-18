@@ -29,7 +29,7 @@ if (!defined('_PS_VERSION_')) {
 
 function upgrade_module_NEXT($module)
 {
-    Configuration::deleteByName('ALMA_IS_ELIGIBLE_MESSAGE');
+    ConfigurationCore::deleteByName('ALMA_IS_ELIGIBLE_MESSAGE');
 
     return true;
 }
