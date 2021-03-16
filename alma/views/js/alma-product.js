@@ -93,7 +93,7 @@
                     settings.plans,
                 )
             })
-        }, 100);
+        }, 150);
 
 
         if (window.prestashop != null && window.prestashop.on != null) {
