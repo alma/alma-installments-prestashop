@@ -1,4 +1,5 @@
 <?php
+
 /**
  * 2018-2021 Alma SAS
  *
@@ -46,8 +47,15 @@ final class DisplayProductPriceBlockHookController extends FrontendHookControlle
     public function run($params)
     {
         if (array_key_exists('type', $params)) {
-            $skip = (version_compare(_PS_VERSION_, '1.6.0', '>') && $params['type'] === 'price') ||
-                (!in_array($params['type'], ['price', 'after_price']));
+
+            if (version_compare(_PS_VERSION_, '1.7', '>')) {
+                $skip = $params['type'] === 'price' || (!in_array($params['type'], ['price', 'after_price']));
+            } elseif (version_compare(_PS_VERSION_, '1.6', '>')) {
+                $skip = $params['type'] !== 'weight';
+            } else {
+                $skip = !in_array($params['type'], ['price', 'after_price']);
+            }
+
             if ($skip) {
                 return null;
             }

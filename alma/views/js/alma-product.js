@@ -1,25 +1,25 @@
 /**
- * 2018-2021 Alma SAS
- *
- * THE MIT LICENSE
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
- * documentation files (the "Software"), to deal in the Software without restriction, including without limitation
- * the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and
- * to permit persons to whom the Software is furnished to do so, subject to the following conditions:
- * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the
- * Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE
- * WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
- * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
- * IN THE SOFTWARE.
- *
- * @author    Alma SAS <contact@getalma.eu>
- * @copyright 2018-2021 Alma SAS
- * @license   https://opensource.org/licenses/MIT The MIT License
- */
+* 2018-2021 Alma SAS
+*
+* THE MIT LICENSE
+*
+* Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
+* documentation files (the "Software"), to deal in the Software without restriction, including without limitation
+* the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and
+* to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the
+* Software.
+*
+* THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE
+* WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+* AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
+* CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+* IN THE SOFTWARE.
+*
+* @author    Alma SAS <contact@getalma.eu>
+* @copyright 2018-2021 Alma SAS
+* @license   https://opensource.org/licenses/MIT The MIT License
+*/
 
 (function ($) {
     $(function () {
@@ -37,7 +37,22 @@
             widgets.render();
         }
 
-        function refreshWidgets() {
+        function debounce(func, wait, immediate) {
+            var timeout;
+            return function () {
+                var context = this, args = arguments;
+                var later = function () {
+                    timeout = null;
+                    if (!immediate) func.apply(context, args);
+                };
+                var callNow = immediate && !timeout;
+                clearTimeout(timeout);
+                timeout = setTimeout(later, wait);
+                if (callNow) func.apply(context, args);
+            };
+        }
+
+        var refreshWidgets = debounce(function () {
             $(".alma-pp-container").each(function () {
                 var $widget = $(this).find(".alma-widget-container");
                 if (!$widget.length) {
@@ -78,21 +93,18 @@
                     settings.plans,
                 )
             })
-        }
+        }, 150);
+
 
         if (window.prestashop != null && window.prestashop.on != null) {
             prestashop.on("updatedProduct", refreshWidgets);
         } else {
             let $body = $("body");
-
-            function delayedRefresh() {
-                setTimeout(refreshWidgets, 1);
-            }
-
-            $body.on("change", selectors.attrSelect, delayedRefresh);
-            $body.on("click", selectors.attrRadio, delayedRefresh);
-            $body.on("click", selectors.colorPick, delayedRefresh);
-            $body.on("change", selectors.quantity, delayedRefresh);
+            $body.on("change", selectors.attrSelect, refreshWidgets);
+            $body.on("click", selectors.attrRadio, refreshWidgets);
+            $body.on("click", selectors.colorPick, refreshWidgets);
+            $body.on("keyup", selectors.quantity, refreshWidgets);
+            $body.on("change", selectors.quantity, refreshWidgets);
         }
 
         refreshWidgets();
