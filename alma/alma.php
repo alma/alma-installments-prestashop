@@ -1,4 +1,5 @@
 <?php
+
 /**
  * 2018-2021 Alma SAS
  *
@@ -122,7 +123,29 @@ class Alma extends PaymentModule
 
         Tools::clearCache();
 
+        // Enable Alma payment for all installed carriers in PrestaShop 1.7+
+        if (version_compare(_PS_VERSION_, '1.7', '>=')) {
+            $this->updateCarriersWithAlma();
+        }
+
         return $this->installTabs();
+    }
+
+    private function updateCarriersWithAlma()
+    {
+
+        $id_module = $this->id;
+        $id_shop = (int) $this->context->shop->id;
+        $id_lang = $this->context->language->id;
+        $carriers = Carrier::getCarriers($id_lang, false, false, false, null, Carrier::ALL_CARRIERS);
+        $values = null;
+        foreach ($carriers as $carrier) {
+            $values .= "({$id_module},{$id_shop},{$carrier['id_reference']}),";
+        }
+        $values = rtrim($values, ',');
+        Db::getInstance()->execute('DELETE FROM `' . _DB_PREFIX_ . 'module_carrier` WHERE `id_module` = ' . $id_module);
+        Db::getInstance()->execute('INSERT INTO `' . _DB_PREFIX_ . 'module_carrier` (`id_module`, `id_shop`, `id_reference`)
+         VALUES ' . $values);
     }
 
     public function hookDisplayProductPriceBlock($params)
