@@ -137,7 +137,7 @@ class Alma extends PaymentModule
         $id_module = $this->id;
         $id_shop = (int) $this->context->shop->id;
         $id_lang = $this->context->language->id;
-        $carriers = CarrierCore::getCarriers($id_lang, false, false, false, null, CarrierCore::ALL_CARRIERS);
+        $carriers = Carrier::getCarriers($id_lang, false, false, false, null, Carrier::ALL_CARRIERS);
         $values = null;
         foreach ($carriers as $carrier) {
             $values .= "({$id_module},{$id_shop},{$carrier['id_reference']}),";
