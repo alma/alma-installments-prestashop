@@ -1,4 +1,5 @@
 <?php
+
 /**
  * 2018-2021 Alma SAS
  *
@@ -94,7 +95,11 @@ class PaymentData
             $customerData['phone'] = $shippingAddress->phone_mobile;
         }
 
-        $addresses = $customer->getAddresses($customer->id_lang);
+        if (version_compare(_PS_VERSION_, '1.5.4.0', '<')) {
+            $addresses = $customer->getAddresses($context->language->id);
+        } else {
+            $addresses = $customer->getAddresses($customer->id_lang);
+        }
         foreach ($addresses as $address) {
             array_push($customerData['addresses'], [
                 'line1' => $address['address1'],

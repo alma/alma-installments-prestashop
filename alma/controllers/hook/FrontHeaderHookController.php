@@ -1,4 +1,5 @@
 <?php
+
 /**
  * 2018-2021 Alma SAS
  *
@@ -98,7 +99,11 @@ final class FrontHeaderHookController extends FrontendHookController
         $content = $selectorsTpl->fetch();
 
         if (version_compare(_PS_VERSION_, '1.7', '<')) {
-            $controller->addCSS($widgetsCssUrl);
+            if (version_compare(_PS_VERSION_, '1.5.6.2', '<')) {
+                $content .= '<link rel="stylesheet" href="' . $widgetsCssUrl . '">';
+            } else {
+                $controller->addCSS($widgetsCssUrl);
+            }
             $controller->addCSS($this->module->_path . $productCssPath);
 
             $controller->addJS($widgetsJsUrl);

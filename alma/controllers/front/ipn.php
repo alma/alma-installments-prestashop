@@ -1,4 +1,5 @@
 <?php
+
 /**
  * 2018-2021 Alma SAS
  *
@@ -41,10 +42,10 @@ class AlmaIpnModuleFrontController extends ModuleFrontController
 
     public function ajaxDie($value = null, $controller = null, $method = null)
     {
-        if (method_exists(get_parent_class($this), 'ajaxRender')) {
+        if (method_exists(get_parent_class(get_parent_class($this)), 'ajaxRender')) {
             parent::ajaxRender($value);
             exit;
-        } elseif (method_exists(get_parent_class($this), 'ajaxDie')) {
+        } elseif (method_exists(get_parent_class(get_parent_class($this)), 'ajaxDie')) {
             parent::ajaxDie($value);
         } else {
             die($value);
