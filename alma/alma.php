@@ -59,7 +59,11 @@ class Alma extends PaymentModule
 
         $this->limited_currencies = ['EUR'];
 
-        $this->ps_versions_compliancy = ['min' => '1.5.6.2', 'max' => _PS_VERSION_];
+        $version = explode('.', _PS_VERSION_);
+        $version[3] = (int) $version[3] + 1;
+        $version = implode(".", $version);
+
+        $this->ps_versions_compliancy = ['min' => '1.5.3.1', 'max' => $version];
 
         parent::__construct();
 
