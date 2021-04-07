@@ -74,7 +74,18 @@ final class DisplayProductPriceBlockHookController extends FrontendHookControlle
             $productParams = $params['product'];
             $productId = $productParams['id_product'];
 
-            $quantity = max((int) $productParams['minimal_quantity'], (int) $productParams['quantity_wanted']);
+            if (!array_key_exists('minimal_quantity', $productParams) && !array_key_exists('quantity_wanted', $productParams)) {
+                $quantity = 1;
+            } else {
+                if (!array_key_exists('minimal_quantity', $productParams) && array_key_exists('quantity_wanted', $productParams)) {
+                    $productParams['minimal_quantity'] = 1;
+                }
+                if (array_key_exists('minimal_quantity', $productParams) && !array_key_exists('quantity_wanted', $productParams)) {
+                    $productParams['quantity_wanted'] = 1;
+                }
+                $quantity = max((int) $productParams['minimal_quantity'], (int) $productParams['quantity_wanted']);
+            }
+
             $price = almaPriceToCents(
                 Product::getPriceStatic(
                     $productId,
