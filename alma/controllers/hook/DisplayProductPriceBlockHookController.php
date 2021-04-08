@@ -74,13 +74,14 @@ final class DisplayProductPriceBlockHookController extends FrontendHookControlle
             $productParams = $params['product'];
             $productId = $productParams['id_product'];
 
-            if (!array_key_exists('minimal_quantity', $productParams) && !array_key_exists('quantity_wanted', $productParams)) {
+
+            if (!isset($productParams['quantity_wanted']) && !isset($productParams['minimal_quantity'])) {
                 $quantity = 1;
             } else {
-                if (!array_key_exists('minimal_quantity', $productParams) && array_key_exists('quantity_wanted', $productParams)) {
+                if (!isset($productParams['minimal_quantity']) && isset($productParams['quantity_wanted'])) {
                     $productParams['minimal_quantity'] = 1;
                 }
-                if (array_key_exists('minimal_quantity', $productParams) && !array_key_exists('quantity_wanted', $productParams)) {
+                if (isset($productParams['minimal_quantity']) && !isset($productParams['quantity_wanted'])) {
                     $productParams['quantity_wanted'] = 1;
                 }
                 $quantity = max((int) $productParams['minimal_quantity'], (int) $productParams['quantity_wanted']);
