@@ -143,31 +143,35 @@ final class GetContentHookController extends AdminHookController
 
             if ($merchant) {
                 // First validate that plans boundaries are correctly set
-                foreach ($merchant->fee_plans as $feePlan) {
-                    $n = $feePlan['installments_count'];
+                $feePlans = $this->getFeePlans();
+                foreach ($feePlans as $feePlan) {
+                    $n = $feePlan->installments_count;
+                    if (1 == $n) {
+                        continue;
+                    }
                     $min = almaPriceToCents((int) Tools::getValue("ALMA_P${n}X_MIN_AMOUNT"));
                     $max = almaPriceToCents((int) Tools::getValue("ALMA_P${n}X_MAX_AMOUNT"));
 
                     $enablePlan = (bool) Tools::getValue("ALMA_P${n}X_ENABLED_ON");
 
-                    if ($enablePlan && !($min >= $feePlan['min_purchase_amount'] &&
-                        $min <= min($max, $feePlan['max_purchase_amount']))) {
+                    if ($enablePlan && !($min >= $feePlan->min_purchase_amount &&
+                        $min <= min($max, $feePlan->max_purchase_amount))) {
                         $this->context->smarty->assign([
                             'validation_error' => 'pnx_min_amount',
                             'n' => $n,
-                            'min' => almaPriceFromCents($feePlan['min_purchase_amount']),
-                            'max' => almaPriceFromCents(min($max, $feePlan['max_purchase_amount'])),
+                            'min' => almaPriceFromCents($feePlan->min_purchase_amount),
+                            'max' => almaPriceFromCents(min($max, $feePlan->max_purchase_amount)),
                         ]);
 
                         return $this->module->display($this->module->file, 'getContent.tpl');
                     }
 
-                    if ($enablePlan && !($max >= $min && $max <= $feePlan['max_purchase_amount'])) {
+                    if ($enablePlan && !($max >= $min && $max <= $feePlan->max_purchase_amount)) {
                         $this->context->smarty->assign([
                             'validation_error' => 'pnx_max_amount',
                             'n' => $n,
                             'min' => almaPriceFromCents($min),
-                            'max' => almaPriceFromCents($feePlan['max_purchase_amount']),
+                            'max' => almaPriceFromCents($feePlan->max_purchase_amount),
                         ]);
 
                         return $this->module->display($this->module->file, 'getContent.tpl');
@@ -175,8 +179,11 @@ final class GetContentHookController extends AdminHookController
                 }
 
                 $maxN = 0;
-                foreach ($merchant->fee_plans as $feePlan) {
-                    $n = $feePlan['installments_count'];
+                foreach ($feePlans as $feePlan) {
+                    $n = $feePlan->installments_count;
+                    if (1 == $n) {
+                        continue;
+                    }
                     $min = (int) Tools::getValue("ALMA_P${n}X_MIN_AMOUNT");
                     $max = (int) Tools::getValue("ALMA_P${n}X_MAX_AMOUNT");
 
@@ -284,6 +291,21 @@ final class GetContentHookController extends AdminHookController
         }
     }
 
+    private function getFeePlans()
+    {
+        $alma = ClientHelper::defaultInstance();
+
+        if (!$alma) {
+            return null;
+        }
+
+        try {
+            return (array) $alma->merchants->feePlans('general', 'all', false);
+        } catch (RequestError $e) {
+            return null;
+        }
+    }
+
     public function renderForm()
     {
         $needsKeys = $this->needsAPIKey();
@@ -381,11 +403,15 @@ final class GetContentHookController extends AdminHookController
             $pnxTabs = [];
             $activeTab = null;
 
-            foreach ($merchant->fee_plans as $feePlan) {
-                $n = $feePlan['installments_count'];
+            $feePlans = $this->getFeePlans();
+            foreach ($feePlans as $feePlan) {
+                $n = $feePlan->installments_count;
 
+                if (1 == $n) {
+                    continue;
+                }
                 // Disable and hide disallowed fee plans
-                if (!$feePlan['allowed']) {
+                if (!$feePlan->allowed) {
                     Settings::updateValue("ALMA_P${n}X_ENABLED", '0');
                     continue;
                 }
@@ -400,13 +426,13 @@ final class GetContentHookController extends AdminHookController
                     $pnxTabs[$tabId] = '❌ ' . $tabTitle;
                 }
 
-                $minAmount = (int) almaPriceFromCents($feePlan['min_purchase_amount']);
-                $maxAmount = (int) almaPriceFromCents($feePlan['max_purchase_amount']);
+                $minAmount = (int) almaPriceFromCents($feePlan->min_purchase_amount);
+                $maxAmount = (int) almaPriceFromCents($feePlan->max_purchase_amount);
 
                 $tpl = $this->context->smarty->createTemplate(
                     "{$this->module->local_path}views/templates/hook/pnx_fees.tpl"
                 );
-                $tpl->assign(['fee_plan' => $feePlan, 'min_amount' => $minAmount, 'max_amount' => $maxAmount]);
+                $tpl->assign(['fee_plan' => (array) $feePlan, 'min_amount' => $minAmount, 'max_amount' => $maxAmount]);
 
                 $pnxConfigForm['form']['input'][] = [
                     // Prevent notices for undefined index
@@ -934,8 +960,11 @@ final class GetContentHookController extends AdminHookController
         ];
 
         if ($merchant) {
-            foreach ($merchant->fee_plans as $feePlan) {
-                $n = $feePlan['installments_count'];
+            foreach ($feePlans as $feePlan) {
+                $n = $feePlan->installments_count;
+                if (1 == $n) {
+                    continue;
+                }
                 $helper->fields_value["ALMA_P${n}X_ENABLED_ON"] = Settings::isInstallmentPlanEnabled($n);
 
                 $minAmount = (int) almaPriceFromCents(Settings::installmentPlanMinAmount($n, $merchant));
