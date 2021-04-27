@@ -24,6 +24,10 @@
 
 namespace Alma\PrestaShop\Controllers\Hook;
 
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
 if (!defined('_PS_VERSION_')) {
     exit;
 }
@@ -146,13 +150,13 @@ final class GetContentHookController extends AdminHookController
                 $feePlans = $this->getFeePlans();
                 foreach ($feePlans as $feePlan) {
                     $n = $feePlan->installments_count;
+                    $key = Settings::keyForFeePlan($feePlan);
                     if (1 == $n) {
                         continue;
                     }
-                    $min = almaPriceToCents((int) Tools::getValue("ALMA_P${n}X_MIN_AMOUNT"));
-                    $max = almaPriceToCents((int) Tools::getValue("ALMA_P${n}X_MAX_AMOUNT"));
-
-                    $enablePlan = (bool) Tools::getValue("ALMA_P${n}X_ENABLED_ON");
+                    $min = almaPriceToCents((int) Tools::getValue("ALMA_${key}_MIN_AMOUNT"));
+                    $max = almaPriceToCents((int) Tools::getValue("ALMA_${key}_MIN_AMOUNT"));
+                    $enablePlan = (bool) Tools::getValue("ALMA_${key}_ENABLED_ON");
 
                     if ($enablePlan && !($min >= $feePlan->min_purchase_amount &&
                         $min <= min($max, $feePlan->max_purchase_amount))) {
@@ -178,14 +182,18 @@ final class GetContentHookController extends AdminHookController
                     }
                 }
 
-                $maxN = 0;
+                //$maxN = 0;
+                $almaPlans = [];
                 foreach ($feePlans as $feePlan) {
                     $n = $feePlan->installments_count;
+                    $key = Settings::keyForFeePlan($feePlan);
+
                     if (1 == $n) {
                         continue;
                     }
-                    $min = (int) Tools::getValue("ALMA_P${n}X_MIN_AMOUNT");
-                    $max = (int) Tools::getValue("ALMA_P${n}X_MAX_AMOUNT");
+
+                    $min = (int) Tools::getValue("ALMA_${key}_MIN_AMOUNT");
+                    $max = (int) Tools::getValue("ALMA_${key}_MAX_AMOUNT");
 
                     // In case merchant inverted min & max values, correct it
                     if ($min > $max) {
@@ -194,20 +202,20 @@ final class GetContentHookController extends AdminHookController
                         $min = $realMin;
                     }
 
-                    $enablePlan = (bool) Tools::getValue("ALMA_P${n}X_ENABLED_ON");
-                    Settings::updateValue("ALMA_P${n}X_ENABLED", $enablePlan ? '1' : '0');
-                    Settings::updateValue("ALMA_P${n}X_MIN_AMOUNT", almaPriceToCents($min));
-                    Settings::updateValue("ALMA_P${n}X_MAX_AMOUNT", almaPriceToCents($max));
+                    $enablePlan = (bool) Tools::getValue("ALMA_${key}_ENABLED_ON");
+                    $almaPlans[$key]['enabled'] = $enablePlan ? '1' : '0';
+                    $almaPlans[$key]['min'] = almaPriceToCents($min);
+                    $almaPlans[$key]['max'] = almaPriceToCents($max);
+                    $sortOrder = (int) Tools::getValue("ALMA_${key}_SORT_ORDER");
+                    $almaPlans[$key]['sort'] = $sortOrder;
 
-                    $sortOrder = (int) Tools::getValue("ALMA_P${n}X_SORT_ORDER");
-                    Settings::updateValue("ALMA_P${n}X_SORT_ORDER", $sortOrder);
-
-                    if ($n > $maxN && $enablePlan) {
-                        $maxN = $n;
-                    }
+                    // if ($n > $maxN && $enablePlan) {
+                    //     $maxN = $n;
+                    // }
                 }
 
-                Settings::updateValue('ALMA_PNX_MAX_N', $maxN);
+                Settings::updateValue('ALMA_FEE_PLANS', json_encode($almaPlans));
+                //Settings::updateValue('ALMA_PNX_MAX_N', $maxN);
             }
         }
 
@@ -404,22 +412,28 @@ final class GetContentHookController extends AdminHookController
             $activeTab = null;
 
             $feePlans = $this->getFeePlans();
-            foreach ($feePlans as $feePlan) {
-                $n = $feePlan->installments_count;
+            $installmentsPlans = json_decode(Settings::getFeePlans());
 
-                if (1 == $n) {
+            foreach ($feePlans as $feePlan) {
+                $key = Settings::keyForFeePlan($feePlan);
+
+                if (1 == $feePlan->installments_count) {
                     continue;
                 }
+
                 // Disable and hide disallowed fee plans
                 if (!$feePlan->allowed) {
-                    Settings::updateValue("ALMA_P${n}X_ENABLED", '0');
+                    unset($installmentsPlans->$key);
+                    Settings::updateValue('ALMA_FEE_PLANS', json_encode($installmentsPlans));
+
                     continue;
                 }
 
-                $tabId = "p${n}x";
-                $tabTitle = sprintf($this->module->l('%d-installment payments', 'GetContentHookController'), $n);
+                $tabId = $key;
+                $tabTitle = sprintf($this->module->l('%d-installment payments', 'GetContentHookController'), $feePlan->installments_count);
 
-                if (Settings::isInstallmentPlanEnabled($n)) {
+                $enable = isset($installmentsPlans->$key->enabled) ? $installmentsPlans->$key->enabled : 0;
+                if (1 == $enable) {
                     $pnxTabs[$tabId] = '✅ ' . $tabTitle;
                     $activeTab = $activeTab ?: $tabId;
                 } else {
@@ -446,10 +460,10 @@ final class GetContentHookController extends AdminHookController
 
                 $pnxConfigForm['form']['input'][] = [
                     'form_group_class' => "$tabId-content",
-                    'name' => "ALMA_P${n}X_ENABLED",
+                    'name' => "ALMA_${key}_ENABLED",
                     'label' => sprintf(
                         $this->module->l('Enable %d-installment payments', 'GetContentHookController'),
-                        $n
+                        $feePlan->installments_count
                     ),
                     'type' => 'checkbox',
                     'values' => [
@@ -467,7 +481,7 @@ final class GetContentHookController extends AdminHookController
 
                 $pnxConfigForm['form']['input'][] = [
                     'form_group_class' => "$tabId-content",
-                    'name' => "ALMA_P${n}X_MIN_AMOUNT",
+                    'name' => "ALMA_${key}_MIN_AMOUNT",
                     'label' => $this->module->l('Minimum amount (€)', 'GetContentHookController'),
                     // phpcs:ignore
                     'desc' => $this->module->l('Minimum purchase amount to activate this plan', 'GetContentHookController'),
@@ -478,7 +492,7 @@ final class GetContentHookController extends AdminHookController
 
                 $pnxConfigForm['form']['input'][] = [
                     'form_group_class' => "$tabId-content",
-                    'name' => "ALMA_P${n}X_MAX_AMOUNT",
+                    'name' => "ALMA_${key}_MAX_AMOUNT",
                     'label' => $this->module->l('Maximum amount (€)', 'GetContentHookController'),
                     // phpcs:ignore
                     'desc' => $this->module->l('Maximum purchase amount to activate this plan', 'GetContentHookController'),
@@ -489,7 +503,7 @@ final class GetContentHookController extends AdminHookController
 
                 $pnxConfigForm['form']['input'][] = [
                     'form_group_class' => "$tabId-content",
-                    'name' => "ALMA_P${n}X_SORT_ORDER",
+                    'name' => "ALMA_${key}_SORT_ORDER",
                     'label' => $this->module->l('Sort order', 'GetContentHookController'),
                     // phpcs:ignore
                     'desc' => $this->module->l('Use relative values to set the order of your plans on the checkout page', 'GetContentHookController'),
@@ -960,21 +974,21 @@ final class GetContentHookController extends AdminHookController
         ];
 
         if ($merchant) {
+            $i = 1;
             foreach ($feePlans as $feePlan) {
-                $n = $feePlan->installments_count;
-                if (1 == $n) {
+                $key = Settings::keyForFeePlan($feePlan);
+                if (1 == $feePlan->installments_count || !$feePlan->allowed) {
                     continue;
                 }
-                $helper->fields_value["ALMA_P${n}X_ENABLED_ON"] = Settings::isInstallmentPlanEnabled($n);
 
-                $minAmount = (int) almaPriceFromCents(Settings::installmentPlanMinAmount($n, $merchant));
-                $helper->fields_value["ALMA_P${n}X_MIN_AMOUNT"] = $minAmount;
-
-                $maxAmount = (int) almaPriceFromCents(Settings::installmentPlanMaxAmount($n));
-                $helper->fields_value["ALMA_P${n}X_MAX_AMOUNT"] = $maxAmount;
-
-                $sortOrder = (int) Settings::installmentPlanSortOrder($n);
-                $helper->fields_value["ALMA_P${n}X_SORT_ORDER"] = $sortOrder;
+                $helper->fields_value["ALMA_${key}_ENABLED_ON"] = isset($installmentsPlans->$key->enabled) ? $installmentsPlans->$key->enabled : 0;
+                $minAmount = isset($installmentsPlans->$key->min) ? $installmentsPlans->$key->min : $feePlan->min_purchase_amount;
+                $helper->fields_value["ALMA_${key}_MIN_AMOUNT"] = (int) almaPriceFromCents($minAmount);
+                $maxAmount = isset($installmentsPlans->$key->max) ? $installmentsPlans->$key->max : $feePlan->max_purchase_amount;
+                $helper->fields_value["ALMA_${key}_MAX_AMOUNT"] = (int) almaPriceFromCents($maxAmount);
+                $sortOrder = isset($installmentsPlans->$key->sort) ? $installmentsPlans->$key->sort : $i;
+                ++$i;
+                $helper->fields_value["ALMA_${key}_SORT_ORDER"] = $sortOrder;
             }
         }
 

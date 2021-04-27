@@ -89,22 +89,28 @@ class Settings
             'ALMA_NOT_ELIGIBLE_MESSAGE',
             'ALMA_PAYMENT_BUTTON_TITLE',
             'ALMA_PAYMENT_BUTTON_DESC',
-            'ALMA_P2X_ENABLED',
-            'ALMA_P3X_ENABLED',
-            'ALMA_P4X_ENABLED',
-            'ALMA_P2X_MIN_AMOUNT',
-            'ALMA_P3X_MIN_AMOUNT',
-            'ALMA_P4X_MIN_AMOUNT',
-            'ALMA_P2X_MAX_AMOUNT',
-            'ALMA_P3X_MAX_AMOUNT',
-            'ALMA_P4X_MAX_AMOUNT',
-            'ALMA_PNX_MAX_N',
+            // 'ALMA_P2X_ENABLED',
+            // 'ALMA_P3X_ENABLED',
+            // 'ALMA_P4X_ENABLED',
+            // 'ALMA_P2X_MIN_AMOUNT',
+            // 'ALMA_P3X_MIN_AMOUNT',
+            // 'ALMA_P4X_MIN_AMOUNT',
+            // 'ALMA_P2X_MAX_AMOUNT',
+            // 'ALMA_P3X_MAX_AMOUNT',
+            // 'ALMA_P4X_MAX_AMOUNT',
+            //'ALMA_PNX_MAX_N',
             'ALMA_STATE_REFUND',
             'ALMA_STATE_REFUND_ENABLED',
             'ALMA_DISPLAY_ORDER_CONFIRMATION',
             'ALMA_EXCLUDED_CATEGORIES',
             'ALMA_NOT_ELIGIBLE_CATEGORIES',
             'ALMA_SHOW_PRODUCT_ELIGIBILITY',
+            'ALMA_FEE_PLANS',
+            'ALMA_PRODUCT_ATTR_RADIO_SELECTOR',
+            'ALMA_PRODUCT_ATTR_SELECTOR',
+            'ALMA_PRODUCT_COLOR_PICK_SELECTOR',
+            'ALMA_PRODUCT_PRICE_SELECTOR',
+            'ALMA_PRODUCT_QUANTITY_SELECTOR',
         ];
 
         foreach ($configKeys as $configKey) {
@@ -252,10 +258,10 @@ class Settings
         return (bool) (int) self::get("ALMA_P${n}X_ENABLED", $default);
     }
 
-    public static function installmentPlansMaxN()
-    {
-        return (int) self::get('ALMA_PNX_MAX_N', 3);
-    }
+    // public static function installmentPlansMaxN()
+    // {
+    //     return (int) self::get('ALMA_PNX_MAX_N', 3);
+    // }
 
     private static function getMerchantFeePlan($merchant, $n)
     {
@@ -303,16 +309,24 @@ class Settings
         return (int) self::get("ALMA_P${n}X_SORT_ORDER", (int) $n);
     }
 
+    public static function getInstallmentsCount($key)
+    {
+        preg_match("/general_(\d)_/", $key, $installmentsCount);
+
+        return $installmentsCount[1];
+    }
+
     public static function activePlans()
     {
         $plans = [];
+        $feePlans = json_decode(self::getFeePlans());
 
-        for ($n = 2; $n <= self::installmentPlansMaxN(); ++$n) {
-            if (self::isInstallmentPlanEnabled($n)) {
+        foreach ($feePlans as $key => $feePlan) {
+            if (1 == $feePlan->enabled) {
                 $plans[] = [
-                    'installmentsCount' => $n,
-                    'minAmount' => self::installmentPlanMinAmount($n),
-                    'maxAmount' => self::installmentPlanMaxAmount($n),
+                    'installmentsCount' => (int) self::getInstallmentsCount($key),
+                    'minAmount' => $feePlan->min,
+                    'maxAmount' => $feePlan->max,
                 ];
             }
         }
@@ -481,5 +495,34 @@ class Settings
     public static function getMerchantId()
     {
         return self::get('ALMA_MERCHANT_ID');
+    }
+
+    public static function keyForFeePlan($plan)
+    {
+        return self::key(
+            $plan->kind,
+            intval($plan->installments_count),
+            intval($plan->deferred_days),
+            intval($plan->deferred_months)
+        );
+    }
+
+    private static function key(
+        $planKind,
+        $installmentsCount,
+        $deferredDays,
+        $deferredMonths
+    ) {
+        return implode('_', [$planKind, $installmentsCount, $deferredDays, $deferredMonths]);
+    }
+
+    public static function getFeePlans()
+    {
+        return self::get('ALMA_FEE_PLANS');
+    }
+
+    public static function getFeePlanLabelFromKey($key)
+    {
+        return 'paiement en x fois (+x j/m)';
     }
 }

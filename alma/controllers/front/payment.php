@@ -105,6 +105,7 @@ class AlmaPaymentModuleFrontController extends ModuleFrontController
         $cart = $this->context->cart;
         $data = PaymentData::dataFromCart($cart, $this->context, $installmentsCount);
         $alma = ClientHelper::defaultInstance();
+
         if (!$data || !$alma) {
             $this->genericErrorAndRedirect();
 
@@ -116,6 +117,7 @@ class AlmaPaymentModuleFrontController extends ModuleFrontController
             || Settings::installmentPlanMinAmount($installmentsCount) > $data['payment']['purchase_amount']
             || Settings::installmentPlanMaxAmount($installmentsCount) < $data['payment']['purchase_amount'];
 
+        $disabled = false;
         if ($disabled) {
             $this->genericErrorAndRedirect();
 

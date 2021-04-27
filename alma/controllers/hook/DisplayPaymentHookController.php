@@ -46,6 +46,9 @@ final class DisplayPaymentHookController extends FrontendHookController
         }
 
         $installmentPlans = EligibilityHelper::eligibilityCheck($this->context);
+
+        //print_r($installmentPlans);
+        //return;
         $options = [];
         if (empty($installmentPlans)) {
             if (Settings::showDisabledButton()) {
@@ -71,8 +74,10 @@ final class DisplayPaymentHookController extends FrontendHookController
 
         $paymentButtonDescription = Settings::getPaymentButtonDescription();
         $sortOrders = [];
+
         foreach ($installmentPlans as $plan) {
             $n = $plan->installmentsCount;
+            echo 'ici';
             if (!$plan->isEligible && Settings::isInstallmentPlanEnabled($n)) {
                 if (Settings::showDisabledButton()) {
                     $disabled = true;
