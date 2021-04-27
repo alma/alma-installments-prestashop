@@ -326,10 +326,14 @@ class CartData
     public static function getCartExclusion($cart)
     {
         $products = $cart->getProducts(true);
+
         $cartProductsCategories = [];
 
-        foreach ($products as $k => $p) {
-            $cartProductsCategories[] = $p['id_category_default'];
+        foreach ($products as $p) {
+            $productCategories = Product::getProductCategories((int) $p['id_product']);
+            foreach ($productCategories as $cat) {
+                $cartProductsCategories[] = $cat;
+            }
         }
 
         $excludedListing = Settings::getExcludedCategories();
