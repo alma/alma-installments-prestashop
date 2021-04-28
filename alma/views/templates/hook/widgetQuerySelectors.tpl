@@ -21,12 +21,7 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  *}
 
-<script type="text/javascript">
-    window.__alma_widgetQuerySelectors = {
-        price: '{$priceSelector|escape}',
-        attrSelect: '{$attrSelectSelector|escape}',
-        attrRadio: '{$attrRadioSelector|escape}',
-        colorPick: '{$colorPickSelector|escape}',
-        quantity: '{$quantitySelector|escape}',
-    }
-</script>
+
+<div style="display:none">
+    <input type="hidden" id="alma-widget-config" value="{$widgetQuerySelectors|escape}" />
+</div>
