@@ -100,10 +100,12 @@ class AlmaPaymentModuleFrontController extends ModuleFrontController
             return;
         }
 
-        $installmentsCount = (int) Tools::getValue('n', '3');
+        $key = Tools::getValue('key', '3');
+        $feePlans = json_decode(Settings::getFeePlans());
+        $installmentsCount = Settings::getInstallmentsCount($key);
 
         $cart = $this->context->cart;
-        $data = PaymentData::dataFromCart($cart, $this->context, $installmentsCount);
+        $data = PaymentData::dataFromCart($cart, $this->context, (int) $installmentsCount);
         $alma = ClientHelper::defaultInstance();
 
         if (!$data || !$alma) {
@@ -113,11 +115,14 @@ class AlmaPaymentModuleFrontController extends ModuleFrontController
         }
 
         // Check that the selected installments count is indeed enabled
-        $disabled = !Settings::isInstallmentPlanEnabled($installmentsCount)
-            || Settings::installmentPlanMinAmount($installmentsCount) > $data['payment']['purchase_amount']
-            || Settings::installmentPlanMaxAmount($installmentsCount) < $data['payment']['purchase_amount'];
+        // $disabled = !Settings::isInstallmentPlanEnabled($installmentsCount)
+        //     || Settings::installmentPlanMinAmount($installmentsCount) > $data['payment']['purchase_amount']
+        //     || Settings::installmentPlanMaxAmount($installmentsCount) < $data['payment']['purchase_amount'];
 
-        $disabled = false;
+        $disabled = !$feePlans->$key->enabled
+            || $feePlans->$key->min > $data['payment']['purchase_amount']
+            || $feePlans->$key->max < $data['payment']['purchase_amount'];
+
         if ($disabled) {
             $this->genericErrorAndRedirect();
 

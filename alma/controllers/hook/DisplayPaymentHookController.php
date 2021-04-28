@@ -52,6 +52,7 @@ final class DisplayPaymentHookController extends FrontendHookController
         $options = [];
         if (empty($installmentPlans)) {
             if (Settings::showDisabledButton()) {
+                echo 'on est la';
                 foreach (Settings::activeInstallmentsCounts() as $n) {
                     $paymentOption = [
                         'text' => sprintf(Settings::getPaymentButtonTitle(), $n),
@@ -74,11 +75,13 @@ final class DisplayPaymentHookController extends FrontendHookController
 
         $paymentButtonDescription = Settings::getPaymentButtonDescription();
         $sortOrders = [];
-
+        $feePlans = json_decode(Settings::getFeePlans());
         foreach ($installmentPlans as $plan) {
             $n = $plan->installmentsCount;
-            echo 'ici';
-            if (!$plan->isEligible && Settings::isInstallmentPlanEnabled($n)) {
+            // @todo change that when eligibility endpoint will be update
+            $key = "general_{$plan->installmentsCount}_0_0";
+            //if (!$plan->isEligible && Settings::isInstallmentPlanEnabled($n)) {
+            if (!$plan->isEligible && $feePlans->$key->enabled) {
                 if (Settings::showDisabledButton()) {
                     $disabled = true;
                     $plans = null;
@@ -98,7 +101,7 @@ final class DisplayPaymentHookController extends FrontendHookController
 
             $paymentOption = [
                 'text' => sprintf(Settings::getPaymentButtonTitle(), $n),
-                'link' => $this->context->link->getModuleLink($this->module->name, 'payment', ['n' => $n], true),
+                'link' => $this->context->link->getModuleLink($this->module->name, 'payment', ['key' => $key], true),
                 'plans' => $plans,
                 'disabled' => $disabled,
                 'error' => false,
@@ -109,7 +112,8 @@ final class DisplayPaymentHookController extends FrontendHookController
                 $paymentOption['desc'] = sprintf($paymentButtonDescription, $n);
             }
 
-            $sortOrder = Settings::installmentPlanSortOrder($n);
+            //$sortOrder = Settings::installmentPlanSortOrder($n);
+            $sortOrder = $feePlans->$key->sort;
             $options[$sortOrder] = $paymentOption;
             $sortOrders[] = $sortOrder;
         }

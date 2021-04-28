@@ -115,6 +115,12 @@ final class DisplayProductPriceBlockHookController extends FrontendHookControlle
             $psVersion = 'ps16';
         }
 
+        $activePlans = Settings::activePlans();
+
+        if (!$activePlans) {
+            return;
+        }
+
         $this->context->smarty->assign(
             [
                 'productId' => $productId,
@@ -126,7 +132,7 @@ final class DisplayProductPriceBlockHookController extends FrontendHookControlle
                     'merchantId' => Settings::getMerchantId(),
                     'apiMode' => Settings::getActiveMode(),
                     'amount' => $price,
-                    'plans' => Settings::activePlans(),
+                    'plans' => $activePlans,
                     'refreshPrice' => $refreshPrice,
                     'decimalSeparator' => LocaleHelper::decimalSeparator(),
                     'thousandSeparator' => LocaleHelper::thousandSeparator(),

@@ -208,14 +208,9 @@ final class GetContentHookController extends AdminHookController
                     $almaPlans[$key]['max'] = almaPriceToCents($max);
                     $sortOrder = (int) Tools::getValue("ALMA_${key}_SORT_ORDER");
                     $almaPlans[$key]['sort'] = $sortOrder;
-
-                    // if ($n > $maxN && $enablePlan) {
-                    //     $maxN = $n;
-                    // }
                 }
 
                 Settings::updateValue('ALMA_FEE_PLANS', json_encode($almaPlans));
-                //Settings::updateValue('ALMA_PNX_MAX_N', $maxN);
             }
         }
 

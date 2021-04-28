@@ -76,6 +76,8 @@ class EligibilityHelper
                                     'maximum' => $feePlan->max,
                                 ],
                             ],
+                            // 'sort' => $feePlan->sort,
+                            // 'enabled' => $feePlan->enabled,
                         ]
                     );
                     $eligibilities[] = $eligibility;
