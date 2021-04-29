@@ -24,10 +24,6 @@
 
 namespace Alma\PrestaShop\Controllers\Hook;
 
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
-
 if (!defined('_PS_VERSION_')) {
     exit;
 }
@@ -86,6 +82,23 @@ final class GetContentHookController extends AdminHookController
         }
 
         $apiOnly = Tools::getValue('_api_only');
+
+        if ($apiOnly && $merchant) {
+            $feePlans = $this->getFeePlans();
+            foreach ($feePlans as $feePlan) {
+                $n = $feePlan->installments_count;
+                if (3 == $n && !Settings::isDeferred($feePlan)) {
+                    $key = Settings::keyForFeePlan($feePlan);
+                    $almaPlans = [];
+                    $almaPlans[$key]['enabled'] = 1;
+                    $almaPlans[$key]['min'] = $feePlan->min_purchase_amount;
+                    $almaPlans[$key]['max'] = $feePlan->max_purchase_amount;
+                    $almaPlans[$key]['sort'] = 1;
+                    Settings::updateValue('ALMA_FEE_PLANS', json_encode($almaPlans));
+                    break;
+                }
+            }
+        }
 
         if (!$apiOnly) {
             $title = Tools::getValue('ALMA_PAYMENT_BUTTON_TITLE');
@@ -151,7 +164,7 @@ final class GetContentHookController extends AdminHookController
                 foreach ($feePlans as $feePlan) {
                     $n = $feePlan->installments_count;
                     $key = Settings::keyForFeePlan($feePlan);
-                    if (1 == $n) {
+                    if (1 == $n && !Settings::isDeferred($feePlan)) {
                         continue;
                     }
                     $min = almaPriceToCents((int) Tools::getValue("ALMA_${key}_MIN_AMOUNT"));
@@ -188,7 +201,7 @@ final class GetContentHookController extends AdminHookController
                     $n = $feePlan->installments_count;
                     $key = Settings::keyForFeePlan($feePlan);
 
-                    if (1 == $n) {
+                    if (1 == $n && !Settings::isDeferred($feePlan)) {
                         continue;
                     }
 
@@ -303,7 +316,7 @@ final class GetContentHookController extends AdminHookController
         }
 
         try {
-            return (array) $alma->merchants->feePlans('general', 'all', false);
+            return (array) $alma->merchants->feePlans('general', 'all', true);
         } catch (RequestError $e) {
             return null;
         }
@@ -411,8 +424,7 @@ final class GetContentHookController extends AdminHookController
 
             foreach ($feePlans as $feePlan) {
                 $key = Settings::keyForFeePlan($feePlan);
-
-                if (1 == $feePlan->installments_count) {
+                if (1 == $feePlan->installments_count && !Settings::isDeferred($feePlan)) {
                     continue;
                 }
 
@@ -972,7 +984,8 @@ final class GetContentHookController extends AdminHookController
             $i = 1;
             foreach ($feePlans as $feePlan) {
                 $key = Settings::keyForFeePlan($feePlan);
-                if (1 == $feePlan->installments_count || !$feePlan->allowed) {
+                if ((1 == $feePlan->installments_count && !Settings::isDeferred($feePlan))
+                    || !$feePlan->allowed) {
                     continue;
                 }
 

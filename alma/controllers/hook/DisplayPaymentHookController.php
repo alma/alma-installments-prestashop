@@ -80,7 +80,6 @@ final class DisplayPaymentHookController extends FrontendHookController
             $n = $plan->installmentsCount;
             // @todo change that when eligibility endpoint will be update
             $key = "general_{$plan->installmentsCount}_0_0";
-            //if (!$plan->isEligible && Settings::isInstallmentPlanEnabled($n)) {
             if (!$plan->isEligible && $feePlans->$key->enabled) {
                 if (Settings::showDisabledButton()) {
                     $disabled = true;
@@ -112,7 +111,6 @@ final class DisplayPaymentHookController extends FrontendHookController
                 $paymentOption['desc'] = sprintf($paymentButtonDescription, $n);
             }
 
-            //$sortOrder = Settings::installmentPlanSortOrder($n);
             $sortOrder = $feePlans->$key->sort;
             $options[$sortOrder] = $paymentOption;
             $sortOrders[] = $sortOrder;

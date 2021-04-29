@@ -1,5 +1,4 @@
 <?php
-
 /**
  * 2018-2021 Alma SAS
  *
@@ -243,71 +242,71 @@ class Settings
         return (bool) (int) self::get('ALMA_DISPLAY_ORDER_CONFIRMATION', $default);
     }
 
-    public static function isInstallmentPlanEnabled($n, $merchant = null)
-    {
-        $default = ($n === 3);
+    // public static function isInstallmentPlanEnabled($n, $merchant = null)
+    // {
+    //     $default = ($n === 3);
 
-        if ($merchant) {
-            $plan = self::getMerchantFeePlan($merchant, $n);
+    //     if ($merchant) {
+    //         $plan = self::getMerchantFeePlan($merchant, $n);
 
-            if ($plan && !$plan['allowed']) {
-                return false;
-            }
-        }
+    //         if ($plan && !$plan['allowed']) {
+    //             return false;
+    //         }
+    //     }
 
-        return (bool) (int) self::get("ALMA_P${n}X_ENABLED", $default);
-    }
+    //     return (bool) (int) self::get("ALMA_P${n}X_ENABLED", $default);
+    // }
 
     // public static function installmentPlansMaxN()
     // {
     //     return (int) self::get('ALMA_PNX_MAX_N', 3);
     // }
 
-    private static function getMerchantFeePlan($merchant, $n)
-    {
-        foreach ($merchant->fee_plans as $plan) {
-            if ($plan['installments_count'] === $n) {
-                return $plan;
-            }
-        }
+    // private static function getMerchantFeePlan($merchant, $n)
+    // {
+    //     foreach ($merchant->fee_plans as $plan) {
+    //         if ($plan['installments_count'] === $n) {
+    //             return $plan;
+    //         }
+    //     }
 
-        return null;
-    }
+    //     return null;
+    // }
 
-    public static function installmentPlanMinAmount($n, $merchant = null)
-    {
-        $default = 10000;
+    // public static function installmentPlanMinAmount($n, $merchant = null)
+    // {
+    //     $default = 10000;
 
-        if ($merchant) {
-            $plan = self::getMerchantFeePlan($merchant, $n);
+    //     if ($merchant) {
+    //         $plan = self::getMerchantFeePlan($merchant, $n);
 
-            if ($plan) {
-                $default = $plan['min_purchase_amount'];
-            }
-        }
+    //         if ($plan) {
+    //             $default = $plan['min_purchase_amount'];
+    //         }
+    //     }
 
-        return (int) self::get("ALMA_P${n}X_MIN_AMOUNT", $default);
-    }
+    //     return (int) self::get("ALMA_P${n}X_MIN_AMOUNT", $default);
+    // }
 
-    public static function installmentPlanMaxAmount($n, $merchant = null)
-    {
-        $default = 100000;
+    // public static function installmentPlanMaxAmount($n, $merchant = null)
+    // {
+    //     $default = 100000;
 
-        if ($merchant) {
-            $plan = self::getMerchantFeePlan($merchant, $n);
+    //     if ($merchant) {
+    //         $plan = self::getMerchantFeePlan($merchant, $n);
 
-            if ($plan) {
-                $default = $plan['max_purchase_amount'];
-            }
-        }
+    //         if ($plan) {
+    //             $default = $plan['max_purchase_amount'];
+    //         }
+    //     }
 
-        return (int) self::get("ALMA_P${n}X_MAX_AMOUNT", $default);
-    }
+    //     return (int) self::get("ALMA_P${n}X_MAX_AMOUNT", $default);
+    // }
 
-    public static function installmentPlanSortOrder($n)
-    {
-        return (int) self::get("ALMA_P${n}X_SORT_ORDER", (int) $n);
-    }
+    // public static function installmentPlanSortOrder($n)
+    // {
+    //     return (int) self::get("ALMA_P${n}X_SORT_ORDER", (int) $n);
+    // }
 
     public static function getInstallmentsCount($key)
     {
@@ -524,5 +523,10 @@ class Settings
     public static function getFeePlanLabelFromKey($key)
     {
         return 'paiement en x fois (+x j/m)';
+    }
+
+    public static function isDeferred($plan)
+    {
+        return 0 < $plan->deferred_days || 0 < $plan->deferred_months;
     }
 }

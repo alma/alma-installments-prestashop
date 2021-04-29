@@ -49,6 +49,7 @@ final class PaymentOptionsHookController extends FrontendHookController
         $installmentPlans = EligibilityHelper::eligibilityCheck($this->context);
         $options = [];
         $sortOrders = [];
+        $feePlans = json_decode(Settings::getFeePlans());
 
         foreach ($installmentPlans as $plan) {
             if (!$plan->isEligible) {
@@ -56,7 +57,11 @@ final class PaymentOptionsHookController extends FrontendHookController
             }
 
             $n = $plan->installmentsCount;
+            // @todo change that when eligibility endpoint will be update
+            $key = "general_{$plan->installmentsCount}_0_0";
+
             $forEUComplianceModule = false;
+
             if (array_key_exists('for_eu_compliance_module', $params)) {
                 $forEUComplianceModule = $params['for_eu_compliance_module'];
             }
@@ -64,7 +69,7 @@ final class PaymentOptionsHookController extends FrontendHookController
             $paymentOption = $this->createPaymentOption(
                 $forEUComplianceModule,
                 sprintf(Settings::getPaymentButtonTitle(), $n),
-                $this->context->link->getModuleLink($this->module->name, 'payment', ['n' => $n], true),
+                $this->context->link->getModuleLink($this->module->name, 'payment', ['key' => $key], true),
                 $n
             );
 
@@ -83,7 +88,7 @@ final class PaymentOptionsHookController extends FrontendHookController
                 $paymentOption->setAdditionalInformation($template);
             }
 
-            $sortOrder = Settings::installmentPlanSortOrder($n);
+            $sortOrder = $feePlans->$key->sort;
             $options[$sortOrder] = $paymentOption;
             $sortOrders[] = $sortOrder;
         }

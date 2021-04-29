@@ -50,10 +50,6 @@ class EligibilityHelper
             return [];
         }
 
-        // if (0 === Settings::installmentPlansMaxN()) {
-        //     return [];
-        // }
-
         $feePlans = json_decode(Settings::getFeePlans());
 
         if (!$feePlans) {
@@ -76,8 +72,6 @@ class EligibilityHelper
                                     'maximum' => $feePlan->max,
                                 ],
                             ],
-                            // 'sort' => $feePlan->sort,
-                            // 'enabled' => $feePlan->enabled,
                         ]
                     );
                     $eligibilities[] = $eligibility;
@@ -86,29 +80,6 @@ class EligibilityHelper
                 }
             }
         }
-
-        // foreach (Settings::activeInstallmentsCounts() as $n) {
-        //     if (
-        //         $purchaseAmount < Settings::installmentPlanMinAmount($n)
-        //         || $purchaseAmount > Settings::installmentPlanMaxAmount($n)
-        //     ) {
-        //         $eligibility = new Eligibility(
-        //             [
-        //                 'installments_count' => $n,
-        //                 'eligible' => false,
-        //                 'constraints' => [
-        //                     'purchase_amount' => [
-        //                         'minimum' => Settings::installmentPlanMinAmount($n),
-        //                         'maximum' => Settings::installmentPlanMaxAmount($n),
-        //                     ],
-        //                 ],
-        //             ]
-        //         );
-        //         $eligibilities[] = $eligibility;
-        //     } else {
-        //         $activePlans[] = $n;
-        //     }
-        // }
 
         $paymentData = PaymentData::dataFromCart($context->cart, $context, $activePlans);
         if (!$paymentData) {

@@ -115,10 +115,6 @@ class AlmaPaymentModuleFrontController extends ModuleFrontController
         }
 
         // Check that the selected installments count is indeed enabled
-        // $disabled = !Settings::isInstallmentPlanEnabled($installmentsCount)
-        //     || Settings::installmentPlanMinAmount($installmentsCount) > $data['payment']['purchase_amount']
-        //     || Settings::installmentPlanMaxAmount($installmentsCount) < $data['payment']['purchase_amount'];
-
         $disabled = !$feePlans->$key->enabled
             || $feePlans->$key->min > $data['payment']['purchase_amount']
             || $feePlans->$key->max < $data['payment']['purchase_amount'];
