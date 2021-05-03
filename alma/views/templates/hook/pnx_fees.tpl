@@ -31,7 +31,13 @@
 
 <p>
     <b>
+    {if $n == 1 and $deferred}
+        {l s='You can offer deferred payments for amounts between %d€ and %d€.' sprintf=array($min_amount, $max_amount) mod='alma'}
+    {elseif $deferred}
+    {l s='You can offer %d-deferred payments for amounts between %d€ and %d€.' sprintf=array($n, $min_amount, $max_amount) mod='alma'}
+    {else}
         {l s='You can offer %d-installment payments for amounts between %d€ and %d€.' sprintf=array($n, $min_amount, $max_amount) mod='alma'}
+    {/if}        
     </b>
 </p>
 

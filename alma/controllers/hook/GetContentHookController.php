@@ -168,7 +168,7 @@ final class GetContentHookController extends AdminHookController
                         continue;
                     }
                     $min = almaPriceToCents((int) Tools::getValue("ALMA_${key}_MIN_AMOUNT"));
-                    $max = almaPriceToCents((int) Tools::getValue("ALMA_${key}_MIN_AMOUNT"));
+                    $max = almaPriceToCents((int) Tools::getValue("ALMA_${key}_MAX_AMOUNT"));
                     $enablePlan = (bool) Tools::getValue("ALMA_${key}_ENABLED_ON");
 
                     if ($enablePlan && !($min >= $feePlan->min_purchase_amount &&
@@ -195,7 +195,6 @@ final class GetContentHookController extends AdminHookController
                     }
                 }
 
-                //$maxN = 0;
                 $almaPlans = [];
                 foreach ($feePlans as $feePlan) {
                     $n = $feePlan->installments_count;
@@ -422,7 +421,22 @@ final class GetContentHookController extends AdminHookController
             $feePlans = $this->getFeePlans();
             $installmentsPlans = json_decode(Settings::getFeePlans());
 
+            // sort fee plans by pnx then by pay later duration
+            $feePlansOrdered = [];
+            $feePlanDeferred = [];
             foreach ($feePlans as $feePlan) {
+                if (!Settings::isDeferred($feePlan)) {
+                    $feePlansOrdered[$feePlan->installments_count] = $feePlan;
+                } else {
+                    $duration = $feePlan->deferred_months * 30 + $feePlan->deferred_days;
+                    $feePlanDeferred[$feePlan->installments_count . $duration] = $feePlan;
+                }
+            }
+            sort($feePlansOrdered);
+            sort($feePlanDeferred);
+            $feePlansOrdered = array_merge($feePlansOrdered, $feePlanDeferred);
+
+            foreach ($feePlansOrdered as $feePlan) {
                 $key = Settings::keyForFeePlan($feePlan);
                 if (1 == $feePlan->installments_count && !Settings::isDeferred($feePlan)) {
                     continue;
@@ -438,6 +452,27 @@ final class GetContentHookController extends AdminHookController
 
                 $tabId = $key;
                 $tabTitle = sprintf($this->module->l('%d-installment payments', 'GetContentHookController'), $feePlan->installments_count);
+                $duration = $feePlan->deferred_months * 30 + $feePlan->deferred_days;
+                $label = sprintf(
+                    $this->module->l('Enable %d-installment payments', 'GetContentHookController'),
+                    $feePlan->installments_count
+                );
+                if (Settings::isDeferred($feePlan)) {
+                    if ($feePlan->installments_count == 1) {
+                        $tabTitle = sprintf($this->module->l('Deferred payments + %d days', 'GetContentHookController'), $duration);
+                        $label = sprintf(
+                            $this->module->l('Enable deferred payments (+%d days)', 'GetContentHookController'),
+                            $duration
+                        );
+                    } else {
+                        $tabTitle = sprintf($this->module->l('%d-deferred payments + %d days', 'GetContentHookController'), $feePlan->installments_count, $duration);
+                        $label = sprintf(
+                            $this->module->l('Enable %d-deferred payments (+%d days)', 'GetContentHookController'),
+                            $feePlan->installments_count,
+                            $duration
+                        );
+                    }
+                }
 
                 $enable = isset($installmentsPlans->$key->enabled) ? $installmentsPlans->$key->enabled : 0;
                 if (1 == $enable) {
@@ -453,7 +488,7 @@ final class GetContentHookController extends AdminHookController
                 $tpl = $this->context->smarty->createTemplate(
                     "{$this->module->local_path}views/templates/hook/pnx_fees.tpl"
                 );
-                $tpl->assign(['fee_plan' => (array) $feePlan, 'min_amount' => $minAmount, 'max_amount' => $maxAmount]);
+                $tpl->assign(['fee_plan' => (array) $feePlan, 'min_amount' => $minAmount, 'max_amount' => $maxAmount, 'deferred' => $duration]);
 
                 $pnxConfigForm['form']['input'][] = [
                     // Prevent notices for undefined index
@@ -468,10 +503,7 @@ final class GetContentHookController extends AdminHookController
                 $pnxConfigForm['form']['input'][] = [
                     'form_group_class' => "$tabId-content",
                     'name' => "ALMA_${key}_ENABLED",
-                    'label' => sprintf(
-                        $this->module->l('Enable %d-installment payments', 'GetContentHookController'),
-                        $feePlan->installments_count
-                    ),
+                    'label' => $label,
                     'type' => 'checkbox',
                     'values' => [
                         'id' => 'id',
