@@ -1,5 +1,4 @@
 <?php
-
 /**
  * 2018-2021 Alma SAS
  *
@@ -47,7 +46,6 @@ final class DisplayProductPriceBlockHookController extends FrontendHookControlle
     public function run($params)
     {
         if (array_key_exists('type', $params)) {
-
             if (version_compare(_PS_VERSION_, '1.7', '>')) {
                 $skip = $params['type'] === 'price' || (!in_array($params['type'], ['price', 'after_price']));
             } elseif (version_compare(_PS_VERSION_, '1.6', '>')) {
@@ -74,7 +72,16 @@ final class DisplayProductPriceBlockHookController extends FrontendHookControlle
             $productParams = $params['product'];
             $productId = $productParams['id_product'];
 
-            $quantity = max((int) $productParams['minimal_quantity'], (int) $productParams['quantity_wanted']);
+            if (!isset($productParams['quantity_wanted']) && !isset($productParams['minimal_quantity'])) {
+                $quantity = 1;
+            } elseif (!isset($productParams['quantity_wanted'])) {
+                $quantity = (int) $productParams['minimal_quantity'];
+            } elseif (!isset($productParams['minimal_quantity'])) {
+                $quantity = (int) $productParams['quantity_wanted'];
+            } else {
+                $quantity = max((int) $productParams['minimal_quantity'], (int) $productParams['quantity_wanted']);
+            }
+
             $price = almaPriceToCents(
                 Product::getPriceStatic(
                     $productId,
