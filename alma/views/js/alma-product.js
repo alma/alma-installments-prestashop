@@ -23,7 +23,7 @@
 
 (function ($) {
     $(function () {
-        var selectors = window.__alma_widgetQuerySelectors;
+        var selectors = JSON.parse($('#alma-widget-config').val());
 
         function initWidget(merchantId, apiMode, containerId, purchaseAmount, plans) {
             var widgets = Alma.Widgets.initialize(merchantId, apiMode);

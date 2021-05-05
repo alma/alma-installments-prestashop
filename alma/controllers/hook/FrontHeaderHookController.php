@@ -88,12 +88,15 @@ final class FrontHeaderHookController extends FrontendHookController
         $selectorsTpl = $smarty->createTemplate(
             "{$this->module->local_path}views/templates/hook/widgetQuerySelectors.tpl"
         );
+
+        $widgetQuerySelectors = json_encode([
+            'price' => Settings::getProductPriceQuerySelector(),
+            'attrSelect' => Settings::getProductAttrQuerySelector(),
+            'attrRadio' => Settings::getProductAttrRadioQuerySelector(),
+            'colorPick' => Settings::getProductColorPickQuerySelector(),
+            'quantity' => Settings::getProductQuantityQuerySelector(), ]);
         $selectorsTpl->assign([
-            'priceSelector' => Settings::getProductPriceQuerySelector(),
-            'attrSelectSelector' => Settings::getProductAttrQuerySelector(),
-            'attrRadioSelector' => Settings::getProductAttrRadioQuerySelector(),
-            'colorPickSelector' => Settings::getProductColorPickQuerySelector(),
-            'quantitySelector' => Settings::getProductQuantityQuerySelector(),
+            'widgetQuerySelectors' => $widgetQuerySelectors,
         ]);
 
         $content = $selectorsTpl->fetch();
