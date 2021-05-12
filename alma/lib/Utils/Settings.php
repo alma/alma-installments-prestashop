@@ -92,18 +92,6 @@ class Settings
             'ALMA_DEFERRED_BUTTON_TITLE',
             'ALMA_DEFERRED_BUTTON_DESC',
             'ALMA_DEFERRED_BUTTON_POSITION',
-            // @todo udpate PrestaShop : delete fields in database and add new field
-            // 'ALMA_P2X_ENABLED',
-            // 'ALMA_P3X_ENABLED',
-            // 'ALMA_P4X_ENABLED',
-            // 'ALMA_P2X_MIN_AMOUNT',
-            // 'ALMA_P3X_MIN_AMOUNT',
-            // 'ALMA_P4X_MIN_AMOUNT',
-            // 'ALMA_P2X_MAX_AMOUNT',
-            // 'ALMA_P3X_MAX_AMOUNT',
-            // 'ALMA_P4X_MAX_AMOUNT',
-            // pnx + position ?
-            //'ALMA_PNX_MAX_N',
             'ALMA_STATE_REFUND',
             'ALMA_STATE_REFUND_ENABLED',
             'ALMA_DISPLAY_ORDER_CONFIRMATION',
