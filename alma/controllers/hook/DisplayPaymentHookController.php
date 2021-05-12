@@ -32,8 +32,8 @@ use Alma\PrestaShop\API\EligibilityHelper;
 use Alma\PrestaShop\Hooks\FrontendHookController;
 use Alma\PrestaShop\Model\CartData;
 use Alma\PrestaShop\Utils\Settings;
-use Cart;
 use Media;
+use stdClass;
 
 final class DisplayPaymentHookController extends FrontendHookController
 {
@@ -47,92 +47,177 @@ final class DisplayPaymentHookController extends FrontendHookController
 
         $installmentPlans = EligibilityHelper::eligibilityCheck($this->context);
 
-        //print_r($installmentPlans);
-        //return;
-        $options = [];
         if (empty($installmentPlans)) {
-            if (Settings::showDisabledButton()) {
-                echo 'on est la';
-                foreach (Settings::activeInstallmentsCounts() as $n) {
-                    $paymentOption = [
-                        'text' => sprintf(Settings::getPaymentButtonTitle(), $n),
-                        'link' => $this->context->link->getModuleLink(
-                            $this->module->name,
-                            'payment',
-                            ['n' => $n],
-                            true
-                        ),
-                        'plans' => null,
-                        'disabled' => true,
-                        'error' => true,
-                    ];
-                    $options[] = $paymentOption;
-                }
-            }
-
-            return $options;
+            return;
         }
 
-        $paymentButtonDescription = Settings::getPaymentButtonDescription();
-        $sortOrders = [];
         $feePlans = json_decode(Settings::getFeePlans());
+        $paymentOptionPnx = [];
+        $paymentOptionDeferred = [];
+
+        $eligibilityA = new stdClass();
+        $eligibilityA->installmentsCount = 1;
+        $eligibilityA->isEligible = true;
+        $eligibilityA->constraints = [];
+        $eligibilityA->deferred_days = 15;
+        $eligibilityA->deferred_months = 0;
+        $eligibilityA->error = false;
+
+        $eligibilityB = new stdClass();
+        $eligibilityB->installmentsCount = 1;
+        $eligibilityB->isEligible = true;
+        $eligibilityB->constraints = [];
+        $eligibilityB->deferred_days = 0;
+        $eligibilityB->deferred_months = 1;
+        $eligibilityB->error = false;
+
+        $installmentPlans[] = $eligibilityA;
+        $installmentPlans[] = $eligibilityB;
+
         foreach ($installmentPlans as $plan) {
+            if (!$plan->isEligible) {
+                continue;
+            }
+
             $n = $plan->installmentsCount;
             // @todo change that when eligibility endpoint will be update
-            $key = "general_{$plan->installmentsCount}_0_0";
-            if (!$plan->isEligible && $feePlans->$key->enabled) {
-                if (Settings::showDisabledButton()) {
-                    $disabled = true;
-                    $plans = null;
-                } else {
-                    continue;
-                }
+            //temporaire
+            if (isset($plan->deferred_days)) {
+                $deferred_days = $plan->deferred_days;
+                $deferred_months = $plan->deferred_months;
+                $key = "general_{$n}_{$deferred_days}_{$deferred_months}";
+                //temporaire
+                $isDeferred = true;
             } else {
-                $disabled = false;
+                $key = "general_{$n}_0_0";
+                //temporaire
+                $isDeferred = false;
+            }
+
+            //if (Settings::isDeferred($plan)) {
+            if ($isDeferred) {
+                $duration = Settings::getDuration($plan);
+                $paymentOption = [
+                    'link' => $this->context->link->getModuleLink($this->module->name, 'payment', ['key' => $key], true),
+                    'duration' => $duration,
+                    'key' => $key,
+                    'pnx' => $n,
+                    ];
+                $paymentOptionDeferred[$duration] = $paymentOption;
+            } else {
                 $plans = $plan->paymentPlan;
-            }
 
-            if (is_callable('Media::getMediaPath')) {
-                $logo = Media::getMediaPath(_PS_MODULE_DIR_ . $this->module->name . "/views/img/logos/alma_p${n}x.svg");
-            } else {
-                $logo = $this->module->getPathUri() . "/views/img/logos/alma_p${n}x.svg";
-            }
+                if (is_callable('Media::getMediaPath')) {
+                    $logoPnx = Media::getMediaPath(_PS_MODULE_DIR_ . $this->module->name . "/views/img/logos/p${n}x_logo.svg");
+                } else {
+                    $logoPnx = $this->module->getPathUri() . "/views/img/logos/p${n}x_logo.svg";
+                }
 
-            $paymentOption = [
-                'text' => sprintf(Settings::getPaymentButtonTitle(), $n),
+                $paymentOption = [
                 'link' => $this->context->link->getModuleLink($this->module->name, 'payment', ['key' => $key], true),
                 'plans' => $plans,
-                'disabled' => $disabled,
-                'error' => false,
-                'logo' => $logo,
-            ];
-
-            if (!empty($paymentButtonDescription)) {
-                $paymentOption['desc'] = sprintf($paymentButtonDescription, $n);
+                'logo_pnx' => $logoPnx,
+                'pnx' => $n,
+                ];
+                $paymentOptionPnx[$n] = $paymentOption;
             }
+        }
+        //ksort($paymentOptionPnx);
+        $paymentOptionPnx = array_values($paymentOptionPnx);
+        //ksort($paymentOptionDeferred);
+        $paymentOptionDeferred = array_values($paymentOptionDeferred);
 
-            $sortOrder = $feePlans->$key->sort;
-            $options[$sortOrder] = $paymentOption;
-            $sortOrders[] = $sortOrder;
+        $pnx = null;
+        if ($paymentOptionPnx) {
+            $pnx = $this->displayAlmaPaymentOption('pnx', $paymentOptionPnx, false);
+        } else {
+            $disabled = false;
+            foreach ($installmentPlans as $plan) {
+                $n = $plan->installmentsCount;
+                //temporaire
+                if (isset($plan->deferred_days)) {
+                    $deferred_days = $plan->deferred_days;
+                    $deferred_months = $plan->deferred_months;
+                    $key = "general_{$n}_{$deferred_days}_{$deferred_months}";
+                    //temporaire
+                    $isDeferred = true;
+                } else {
+                    $key = "general_{$n}_0_0";
+                    //temporaire
+                    $isDeferred = false;
+                }
+                if (!$plan->isEligible && $feePlans->$key->enabled && !$isDeferred) {
+                    // @todo filtrer sur pnx
+                    $disabled = true;
+                    break;
+                }
+            }
+            if (Settings::showDisabledButton() && $disabled) {
+                $pnx = $this->displayAlmaPaymentOption('pnx', null, true);
+            }
         }
 
-        $sortedOptions = [];
-        sort($sortOrders);
-        foreach ($sortOrders as $order) {
-            $sortedOptions[] = $options[$order];
+        $deferred = null;
+        if ($paymentOptionDeferred) {
+            $deferred = $this->displayAlmaPaymentOption('deferred', $paymentOptionDeferred, false);
+        } else {
+            $disabled = false;
+            foreach ($installmentPlans as $plan) {
+                $n = $plan->installmentsCount;
+                //temporaire
+                if (isset($plan->deferred_days)) {
+                    $deferred_days = $plan->deferred_days;
+                    $deferred_months = $plan->deferred_months;
+                    $key = "general_{$n}_{$deferred_days}_{$deferred_months}";
+                    //temporaire
+                    $isDeferred = true;
+                } else {
+                    $key = "general_{$n}_0_0";
+                    //temporaire
+                    $isDeferred = false;
+                }
+                if (!$plan->isEligible && $feePlans->$key->enabled && $isDeferred) {
+                    // @todo filtrer sur pay later
+                    $disabled = true;
+                    break;
+                }
+            }
+            if (Settings::showDisabledButton() && $disabled) {
+                $deferred = $this->displayAlmaPaymentOption('deferred', null, true);
+            }
         }
 
-        $cart = $this->context->cart;
+        $payment = Settings::getPaymentButtonPosition() <= Settings::getPaymentButtonPositionDeferred()
+            ? $pnx . $deferred
+            : $deferred . $pnx;
+
+        return $payment;
+    }
+
+    private function displayAlmaPaymentOption($type, $paymentOption, $disabled)
+    {
         $this->context->smarty->assign(
             [
-                'title' => sprintf(Settings::getPaymentButtonTitle(), 3),
-                'desc' => sprintf($paymentButtonDescription, 3),
-                'order_total' => (float) $cart->getOrderTotal(true, Cart::BOTH),
-                'options' => $sortedOptions,
+                'logo' => $this->getAlmaLogo(),
+                'title' => $type == 'pnx' ? Settings::getPaymentButtonTitle() : Settings::getPaymentButtonTitleDeferred(),
+                'desc' => $type == 'pnx' ? Settings::getPaymentButtonDescription() : Settings::getPaymentButtonDescriptionDeferred(),
+                'options' => $paymentOption,
+                'disabled' => $disabled,
                 'old_prestashop_version' => version_compare(_PS_VERSION_, '1.6', '<'),
             ]
         );
 
-        return $this->module->display($this->module->file, 'displayPayment.tpl');
+        return $this->module->display($this->module->file, "displayPayment_{$type}.tpl");
+    }
+
+    private function getAlmaLogo()
+    {
+        if (is_callable('Media::getMediaPath')) {
+            $logo = Media::getMediaPath(_PS_MODULE_DIR_ . $this->module->name . '/views/img/logos/alma_payment_logos.svg');
+        } else {
+            $logo = $this->module->getPathUri() . '/views/img/logos/alma_payment_logos.svg';
+        }
+
+        return $logo;
     }
 }

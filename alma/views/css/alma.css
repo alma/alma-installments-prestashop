@@ -71,11 +71,6 @@ p.payment_module a.alma-button.disable-arrow-icon:after {
     height: 30px;
 }
 
-
-.alma-button--text {
-
-}
-
 .alma-button--title {
     color: #333 !important;
 }
@@ -159,4 +154,8 @@ p.payment_module a.alma-button.disable-arrow-icon:after {
     vertical-align: top;
 
     cursor: pointer;
+}
+
+p.payment_module a.disable-arrow-icon {
+    background: none;
 }

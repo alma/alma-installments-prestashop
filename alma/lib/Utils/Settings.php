@@ -88,6 +88,11 @@ class Settings
             'ALMA_NOT_ELIGIBLE_MESSAGE',
             'ALMA_PAYMENT_BUTTON_TITLE',
             'ALMA_PAYMENT_BUTTON_DESC',
+            'ALMA_PAYMENT_BUTTON_POSITION',
+            'ALMA_DEFERRED_BUTTON_TITLE',
+            'ALMA_DEFERRED_BUTTON_DESC',
+            'ALMA_DEFERRED_BUTTON_POSITION',
+            // @todo udpate PrestaShop : delete fields in database and add new field
             // 'ALMA_P2X_ENABLED',
             // 'ALMA_P3X_ENABLED',
             // 'ALMA_P4X_ENABLED',
@@ -97,6 +102,7 @@ class Settings
             // 'ALMA_P2X_MAX_AMOUNT',
             // 'ALMA_P3X_MAX_AMOUNT',
             // 'ALMA_P4X_MAX_AMOUNT',
+            // pnx + position ?
             //'ALMA_PNX_MAX_N',
             'ALMA_STATE_REFUND',
             'ALMA_STATE_REFUND_ENABLED',
@@ -218,8 +224,8 @@ class Settings
     public static function getPaymentButtonTitle()
     {
         // Allow PrestaShop's translation feature to detect those strings
-        // $this->l('Pay in %d installments', 'settings');
-        $default = self::l('Pay in %d installments');
+        // $this->l('Pay by installment', 'settings');
+        $default = self::l('Pay by installment');
 
         return self::get('ALMA_PAYMENT_BUTTON_TITLE', $default);
     }
@@ -227,10 +233,46 @@ class Settings
     public static function getPaymentButtonDescription()
     {
         // Allow PrestaShop's translation feature to detect those strings
-        // $this->l('Pay in %d monthly installments with your credit card.', 'settings');
-        $default = self::l('Pay in %d monthly installments with your credit card.');
+        // $this->l('Pay by installment with your credit card.', 'settings');
+        $default = self::l('Pay by installment with your credit card.');
 
         return self::get('ALMA_PAYMENT_BUTTON_DESC', $default);
+    }
+
+    public static function getPaymentButtonPosition()
+    {
+        // Allow PrestaShop's translation feature to detect those strings
+        // $this->l('Pay in %d monthly installments with your credit card.', 'settings');
+        //$default = self::l('Pay in %d monthly installments with your credit card.');
+
+        return (int) self::get('ALMA_PAYMENT_BUTTON_POSITION', 1);
+    }
+
+    public static function getPaymentButtonTitleDeferred()
+    {
+        // Allow PrestaShop's translation feature to detect those strings
+        // $this->l('Buy now pay later', 'settings');
+        $default = self::l('Buy now pay later');
+
+        return self::get('ALMA_DEFERRED_BUTTON_TITLE', $default);
+    }
+
+    public static function getPaymentButtonDescriptionDeferred()
+    {
+        // Allow PrestaShop's translation feature to detect those strings
+        // $this->l('Buy now pay later with your credit card.', 'settings');
+        $default = self::l('Buy now pay later with your credit card.');
+
+        return self::get('ALMA_DEFERRED_BUTTON_DESC', $default);
+    }
+
+    public static function getPaymentButtonPositionDeferred()
+    {
+        // Allow PrestaShop's translation feature to detect those strings
+        // $this->l('Pay in %d monthly installments with your credit card.', 'settings');
+        //$default = self::l('Pay in %d monthly installments with your credit card.');
+
+        return (int) self::get('ALMA_DEFERRED_BUTTON_POSITION', 2);
     }
 
     public static function displayOrderConfirmation()
@@ -241,72 +283,6 @@ class Settings
 
         return (bool) (int) self::get('ALMA_DISPLAY_ORDER_CONFIRMATION', $default);
     }
-
-    // public static function isInstallmentPlanEnabled($n, $merchant = null)
-    // {
-    //     $default = ($n === 3);
-
-    //     if ($merchant) {
-    //         $plan = self::getMerchantFeePlan($merchant, $n);
-
-    //         if ($plan && !$plan['allowed']) {
-    //             return false;
-    //         }
-    //     }
-
-    //     return (bool) (int) self::get("ALMA_P${n}X_ENABLED", $default);
-    // }
-
-    // public static function installmentPlansMaxN()
-    // {
-    //     return (int) self::get('ALMA_PNX_MAX_N', 3);
-    // }
-
-    // private static function getMerchantFeePlan($merchant, $n)
-    // {
-    //     foreach ($merchant->fee_plans as $plan) {
-    //         if ($plan['installments_count'] === $n) {
-    //             return $plan;
-    //         }
-    //     }
-
-    //     return null;
-    // }
-
-    // public static function installmentPlanMinAmount($n, $merchant = null)
-    // {
-    //     $default = 10000;
-
-    //     if ($merchant) {
-    //         $plan = self::getMerchantFeePlan($merchant, $n);
-
-    //         if ($plan) {
-    //             $default = $plan['min_purchase_amount'];
-    //         }
-    //     }
-
-    //     return (int) self::get("ALMA_P${n}X_MIN_AMOUNT", $default);
-    // }
-
-    // public static function installmentPlanMaxAmount($n, $merchant = null)
-    // {
-    //     $default = 100000;
-
-    //     if ($merchant) {
-    //         $plan = self::getMerchantFeePlan($merchant, $n);
-
-    //         if ($plan) {
-    //             $default = $plan['max_purchase_amount'];
-    //         }
-    //     }
-
-    //     return (int) self::get("ALMA_P${n}X_MAX_AMOUNT", $default);
-    // }
-
-    // public static function installmentPlanSortOrder($n)
-    // {
-    //     return (int) self::get("ALMA_P${n}X_SORT_ORDER", (int) $n);
-    // }
 
     public static function getInstallmentsCount($key)
     {
@@ -331,17 +307,6 @@ class Settings
         }
 
         return $plans;
-    }
-
-    public static function activeInstallmentsCounts()
-    {
-        $installmentsCounts = [];
-
-        foreach (self::activePlans() as $plan) {
-            $installmentsCounts[] = $plan['installmentsCount'];
-        }
-
-        return $installmentsCounts;
     }
 
     public static function getRefundState()
@@ -520,13 +485,13 @@ class Settings
         return self::get('ALMA_FEE_PLANS');
     }
 
-    public static function getFeePlanLabelFromKey($key)
-    {
-        return 'paiement en x fois (+x j/m)';
-    }
-
     public static function isDeferred($plan)
     {
         return 0 < $plan->deferred_days || 0 < $plan->deferred_months;
+    }
+
+    public static function getDuration($plan)
+    {
+        return $plan->deferred_months * 30 + $plan->deferred_days;
     }
 }

@@ -26,5 +26,23 @@
         {$desc|escape:'htmlall':'UTF-8'}
     </p>
 
-    {include file="modules/alma/views/templates/hook/_partials/feePlan.tpl" plans=$plans oneLiner=false}
+    {foreach from=$options item=option name=counter}     
+        <label for="{$option.key}">
+        {assign var="checked" value=""}        
+        {if $smarty.foreach.counter.iteration === 1}
+            {assign var="checked" value="checked='checked'"}
+        {/if}        
+            <input {$checked} onclick="handleChangeAlmaDeferred(this);" autocomplete="off" type="radio" name="alma_deferred" value="{$option.link}" id="{$option.key}">
+            {l s='+ %d days' sprintf=array($option.duration) mod='alma'}
+            &nbsp;
+        </label>
+    {/foreach}
 </div>
+<script type="text/javascript">
+    ;handleChangeAlmaDeferred = function(e){        
+        let payment = document.querySelector( 'input[name="payment-option"]:checked');        
+        let div = document.querySelector('div[id="pay-with-'+payment.id+'-form"');
+        let form = div.querySelector('form');        
+        form.action = e.value;
+    };
+</script>
