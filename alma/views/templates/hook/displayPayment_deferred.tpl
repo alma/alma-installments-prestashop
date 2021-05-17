@@ -79,7 +79,7 @@
                             <br>
                             <button type="submit" id="processAlmaDeferred" class="button btn btn-default standard-checkout">
                                 <span>
-                                    {l s='Process' mod='alma'}
+                                    {l s='Confirm & pay' mod='alma'}
                                     <i class="icon-chevron-right right"></i>
                                 </span>
                             </button>
