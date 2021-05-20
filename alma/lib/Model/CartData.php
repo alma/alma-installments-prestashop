@@ -215,8 +215,10 @@ class CartData
             return $productsDetails;
         }
 
-        while ($result = $db->nextRow($results)) {
-            $productsDetails[(int) $result['id_product']] = $result;
+        if ($results !== false) {
+            while ($result = $db->nextRow($results)) {
+                $productsDetails[(int) $result['id_product']] = $result;
+            }
         }
 
         return $productsDetails;
