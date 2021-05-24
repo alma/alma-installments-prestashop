@@ -95,18 +95,11 @@ class EligibilityHelper
             return [];
         }
 
-        $eligibilities = array_merge((array) $eligibilities, (array) $almaEligibilities);
-        usort($eligibilities, ['Alma\PrestaShop\API\EligibilityHelper', 'cmp_installments_count']);
+        $eligibilities = array_merge((array)$eligibilities, (array)$almaEligibilities);
+        usort($eligibilities, function ($a, $b) {
+            return $a->installmentsCount - $b->installmentsCount;
+        });
 
         return $eligibilities;
-    }
-
-    public static function cmp_installments_count($a, $b)
-    {
-        if ($a->installmentsCount > $b->installmentsCount) {
-            return 1;
-        } else {
-            return $a->installmentsCount == $b->installmentsCount ? 0 : -1;
-        }
     }
 }
