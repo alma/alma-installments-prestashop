@@ -1,6 +1,21 @@
 Changelog
 =========
 
+v1.4.3
+------
+
+* Adds compatibility for PrestaShop 1.5.3.1+
+* Fixes some missing French translations
+* Fixes support for multi-carrier in shipping info data
+* Fixes bug in module's config that would prevent saving configuration when changing min/max amounts of fee plans
+* Makes sure Alma is activated for all carriers upon module installation
+* Fixes Alma badge not showing up on product pages in some older PrestaShop instances
+* Fixes Alma badge loading when used in conjunction with PrestaShop's JavaScript compaction feature
+* Fixes bug with Alma badge when displayed product doesn't have a selectable wanted quantity
+* Makes category exclusion work with secondary categories
+* Prevents crash from `psAdmin` cookie being saved automatically by PrestaShop when it is destroyed
+* Switches Alma badge script/css URLs to jsDelivr
+
 v1.4.2
 ------
 
