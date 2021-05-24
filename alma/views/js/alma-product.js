@@ -52,7 +52,7 @@
             };
         }
 
-        var refreshWidgets = debounce(function () {
+        var refreshWidgets = debounce(function (evt, initialRefresh) {
             $(".alma-pp-container").each(function () {
                 var $widget = $(this).find(".alma-widget-container");
                 if (!$widget.length) {
@@ -62,7 +62,7 @@
                 var settings = $widget.data("settings");
 
                 var purchaseAmount = settings.amount;
-                if (settings.refreshPrice) {
+                if (!initialRefresh || settings.refreshPrice) {
                     var $price = $(selectors.price);
                     if ($price.length === 0) {
                         throw new Error(
@@ -107,7 +107,7 @@
             $body.on("change", selectors.quantity, refreshWidgets);
         }
 
-        refreshWidgets();
+        refreshWidgets(null, true);
         window.__alma_refreshWidgets = refreshWidgets;
     });
 })(jQuery)
