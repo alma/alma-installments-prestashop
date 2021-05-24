@@ -59,10 +59,10 @@ class ShippingData
             return null;
         }
 
-        $carrierIdArray = array();
+        $carrierIdArray = [];
 
         if (!isset($cart->unique_carrier)) {
-            $carrierIds = explode(",", $carriersListKey);
+            $carrierIds = explode(',', $carriersListKey);
             foreach ($carrierIds as $id) {
                 if (!empty($id)) {
                     $carrierIdArray[] = $id;
@@ -72,7 +72,7 @@ class ShippingData
             $carrierIdArray[] = $cart->id_carrier;
         }
 
-        $shippingInfo = ["selected_options" => []];
+        $shippingInfo = ['selected_options' => []];
         foreach ($carrierIdArray as $carrierId) {
             $carrierInfo = $deliveryOptionList[$addressId][$carriersListKey]['carrier_list'][$carrierId];
             /** @var Carrier $carrier */
@@ -80,10 +80,10 @@ class ShippingData
             if (!$carrier) {
                 continue;
             }
-            $shippingInfo["selected_options"][] = self::shippingInfoData($carrier, $carrierInfo);
+            $shippingInfo['selected_options'][] = self::shippingInfoData($carrier, $carrierInfo);
         }
 
-        $knownOptions = array();
+        $knownOptions = [];
         foreach ($deliveryOptionList[$addressId] as $carriers) {
             foreach ($carriers['carrier_list'] as $id => $carrierOptionInfo) {
                 $carrierOption = new Carrier($id, $cart->id_lang);

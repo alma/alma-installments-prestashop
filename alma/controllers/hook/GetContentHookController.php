@@ -1,5 +1,4 @@
 <?php
-
 /**
  * 2018-2021 Alma SAS
  *
@@ -92,9 +91,9 @@ final class GetContentHookController extends AdminHookController
             $nonEligibleMsg = Tools::getValue('ALMA_NOT_ELIGIBLE_MESSAGE');
             $nonEligibleCategoriesMsg = Tools::getValue('ALMA_NOT_ELIGIBLE_CATEGORIES');
 
-            if (
-                empty($title) || empty($description) ||
-                ($showEligibility && (empty($eligibleMsg) || empty($nonEligibleMsg)))
+            if (empty($title)
+                || empty($description)
+                || ($showEligibility && (empty($eligibleMsg) || empty($nonEligibleMsg)))
             ) {
                 $this->context->smarty->assign('validation_error', 'missing_required_setting');
 

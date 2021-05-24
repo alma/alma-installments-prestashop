@@ -71,17 +71,23 @@ final class DisplayProductPriceBlockHookController extends FrontendHookControlle
             $refreshPrice = true;
         } else {
             $productParams = isset($params['product']) ? $params['product'] : [];
-            $productId = isset($productParams['id_product']) ? $productParams['id_product'] : Tools::getValue('id_product');
-            $productAttributeId = isset($productParams['id_product_attribute']) ? $productParams['id_product_attribute'] : null;
+
+            $productId = isset($productParams['id_product'])
+                ? $productParams['id_product']
+                : Tools::getValue('id_product');
+
+            $productAttributeId = isset($productParams['id_product_attribute'])
+                ? $productParams['id_product_attribute']
+                : null;
 
             if (!isset($productParams['quantity_wanted']) && !isset($productParams['minimal_quantity'])) {
                 $quantity = 1;
             } elseif (!isset($productParams['quantity_wanted'])) {
-                $quantity = (int)$productParams['minimal_quantity'];
+                $quantity = (int) $productParams['minimal_quantity'];
             } elseif (!isset($productParams['minimal_quantity'])) {
-                $quantity = (int)$productParams['quantity_wanted'];
+                $quantity = (int) $productParams['quantity_wanted'];
             } else {
-                $quantity = max((int)$productParams['minimal_quantity'], (int)$productParams['quantity_wanted']);
+                $quantity = max((int) $productParams['minimal_quantity'], (int) $productParams['quantity_wanted']);
             }
 
             $price = almaPriceToCents(

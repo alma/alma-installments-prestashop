@@ -95,7 +95,7 @@ class EligibilityHelper
             return [];
         }
 
-        $eligibilities = array_merge((array)$eligibilities, (array)$almaEligibilities);
+        $eligibilities = array_merge((array) $eligibilities, (array) $almaEligibilities);
         usort($eligibilities, function ($a, $b) {
             return $a->installmentsCount - $b->installmentsCount;
         });

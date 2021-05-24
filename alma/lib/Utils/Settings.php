@@ -189,7 +189,7 @@ class Settings
     public static function getNonEligibilityMinAmountMessage($minimum)
     {
         // Allow PrestaShop's translation feature to detect those strings
-        // $this->l('(Minimum amount: %s)', 'settings');        
+        // $this->l('(Minimum amount: %s)', 'settings');
         $default = sprintf(
             self::l('(Minimum amount: %s)'),
             almaFormatPrice($minimum)
@@ -201,7 +201,7 @@ class Settings
     public static function getNonEligibilityMaxAmountMessage($maximum)
     {
         // Allow PrestaShop's translation feature to detect those strings
-        // $this->l('(Maximum amount: %s)', 'settings');        
+        // $this->l('(Maximum amount: %s)', 'settings');
         $default = sprintf(
             self::l('(Maximum amount: %s)'),
             almaFormatPrice($maximum)

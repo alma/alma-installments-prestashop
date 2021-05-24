@@ -56,10 +56,10 @@ abstract class HookController
 
     protected function loggedAsEmployee()
     {
-        $cookie = new Cookie('psAdmin', '', (int)Configuration::get('PS_COOKIE_LIFETIME_BO'));
+        $cookie = new Cookie('psAdmin', '', (int) Configuration::get('PS_COOKIE_LIFETIME_BO'));
         $cookie->disallowWriting();
 
-        return Employee::checkPassword((int)$cookie->id_employee, $cookie->passwd) &&
+        return Employee::checkPassword((int) $cookie->id_employee, $cookie->passwd) &&
             (!isset($cookie->remote_addr)
                 || $cookie->remote_addr == ip2long(Tools::getRemoteAddr())
                 || !Configuration::get('PS_COOKIE_CHECKIP'));

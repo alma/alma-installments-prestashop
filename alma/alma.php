@@ -1,5 +1,4 @@
 <?php
-
 /**
  * 2018-2021 Alma SAS
  *
@@ -61,7 +60,7 @@ class Alma extends PaymentModule
 
         $version = explode('.', _PS_VERSION_);
         $version[3] = (int) $version[3] + 1;
-        $version = implode(".", $version);
+        $version = implode('.', $version);
 
         $this->ps_versions_compliancy = ['min' => '1.5.3.1', 'max' => $version];
 
@@ -137,7 +136,6 @@ class Alma extends PaymentModule
 
     private function updateCarriersWithAlma()
     {
-
         $id_module = $this->id;
         $id_shop = (int) $this->context->shop->id;
         $id_lang = $this->context->language->id;
