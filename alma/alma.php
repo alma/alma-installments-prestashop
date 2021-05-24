@@ -147,9 +147,12 @@ class Alma extends PaymentModule
             $values .= "({$id_module},{$id_shop},{$carrier['id_reference']}),";
         }
         $values = rtrim($values, ',');
-        Db::getInstance()->execute('DELETE FROM `' . _DB_PREFIX_ . 'module_carrier` WHERE `id_module` = ' . $id_module);
-        Db::getInstance()->execute('INSERT INTO `' . _DB_PREFIX_ . 'module_carrier` (`id_module`, `id_shop`, `id_reference`)
-         VALUES ' . $values);
+        Db::getInstance()->execute(
+            'DELETE FROM `' . _DB_PREFIX_ . 'module_carrier` WHERE `id_module` = ' . $id_module
+        );
+        Db::getInstance()->execute(
+            'INSERT INTO `' . _DB_PREFIX_ . 'module_carrier` (`id_module`, `id_shop`, `id_reference`) VALUES ' . $values
+        );
     }
 
     public function hookDisplayProductPriceBlock($params)
