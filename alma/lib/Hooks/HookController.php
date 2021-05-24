@@ -71,4 +71,13 @@ abstract class HookController
     {
         return true;
     }
+
+    protected function currentControllerName()
+    {
+        $controller = $this->context->controller;
+
+        return isset($controller->php_self)
+            ? preg_replace('/[[:^alnum:]]+/', '', $controller->php_self)
+            : explode('Controller', get_class($controller))[0];
+    }
 }

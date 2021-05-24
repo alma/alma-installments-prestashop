@@ -32,13 +32,14 @@ use Alma\PrestaShop\Hooks\FrontendHookController;
 use Alma\PrestaShop\Utils\LocaleHelper;
 use Alma\PrestaShop\Utils\Settings;
 use Product;
+use Tools;
 
 final class DisplayProductPriceBlockHookController extends FrontendHookController
 {
     public function canRun()
     {
         return parent::canRun() &&
-            $this->context->controller->php_self == 'product' &&
+            Tools::strtolower($this->currentControllerName()) == 'product' &&
             Settings::showProductEligibility() &&
             Settings::getMerchantId() != null;
     }
@@ -60,7 +61,7 @@ final class DisplayProductPriceBlockHookController extends FrontendHookControlle
         }
 
         /* @var Product $product */
-        if ($params['product'] instanceof Product) {
+        if (isset($params['product']) && $params['product'] instanceof Product) {
             $product = $params['product'];
             $price = almaPriceToCents($product->getPrice(true));
             $productId = $product->id;
@@ -69,24 +70,25 @@ final class DisplayProductPriceBlockHookController extends FrontendHookControlle
             // the frontend to make sure we're displaying something relevant
             $refreshPrice = true;
         } else {
-            $productParams = $params['product'];
-            $productId = $productParams['id_product'];
+            $productParams = isset($params['product']) ? $params['product'] : [];
+            $productId = isset($productParams['id_product']) ? $productParams['id_product'] : Tools::getValue('id_product');
+            $productAttributeId = isset($productParams['id_product_attribute']) ? $productParams['id_product_attribute'] : null;
 
             if (!isset($productParams['quantity_wanted']) && !isset($productParams['minimal_quantity'])) {
                 $quantity = 1;
             } elseif (!isset($productParams['quantity_wanted'])) {
-                $quantity = (int) $productParams['minimal_quantity'];
+                $quantity = (int)$productParams['minimal_quantity'];
             } elseif (!isset($productParams['minimal_quantity'])) {
-                $quantity = (int) $productParams['quantity_wanted'];
+                $quantity = (int)$productParams['quantity_wanted'];
             } else {
-                $quantity = max((int) $productParams['minimal_quantity'], (int) $productParams['quantity_wanted']);
+                $quantity = max((int)$productParams['minimal_quantity'], (int)$productParams['quantity_wanted']);
             }
 
             $price = almaPriceToCents(
                 Product::getPriceStatic(
                     $productId,
                     true,
-                    $productParams['id_product_attribute'],
+                    $productAttributeId,
                     6,
                     null,
                     false,
@@ -97,7 +99,7 @@ final class DisplayProductPriceBlockHookController extends FrontendHookControlle
 
             // Being able to use `quantity_wanted` here means we don't have to reload price on the front-end
             $price *= $quantity;
-            $refreshPrice = false;
+            $refreshPrice = $productAttributeId === null;
         }
 
         $psVersion = 'ps15';

@@ -36,7 +36,7 @@ final class FrontHeaderHookController extends FrontendHookController
 {
     public function run($params)
     {
-        $controllerName = preg_replace('/[[:^alnum:]]+/', '', $this->context->controller->php_self);
+        $controllerName = $this->currentControllerName();
         $handler = [$this, "handle${controllerName}Page"];
 
         $content = $this->injectWidgetAssets($params);
