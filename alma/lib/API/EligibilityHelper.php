@@ -57,14 +57,14 @@ class EligibilityHelper
         }
 
         foreach ($feePlans as $key => $feePlan) {
-            $installmentsCount = Settings::getInstallmentsCount($key);
+            $getDataFromKey = Settings::getDataFromKey($key);
 
             if (1 == $feePlan->enabled) {
                 if ($purchaseAmount < $feePlan->min
                 || $purchaseAmount > $feePlan->max) {
                     $eligibility = new Eligibility(
                         [
-                            'installments_count' => $installmentsCount,
+                            'installments_count' => $getDataFromKey['installmentsCount'],
                             'eligible' => false,
                             'constraints' => [
                                 'purchase_amount' => [
@@ -76,7 +76,7 @@ class EligibilityHelper
                     );
                     $eligibilities[] = $eligibility;
                 } else {
-                    $activePlans[] = (int) $installmentsCount;
+                    $activePlans[] = (int) $getDataFromKey['installmentsCount'];
                 }
             }
         }

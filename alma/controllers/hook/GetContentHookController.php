@@ -118,16 +118,10 @@ final class GetContentHookController extends AdminHookController
             $nonEligibleMsg = Tools::getValue('ALMA_NOT_ELIGIBLE_MESSAGE');
             $nonEligibleCategoriesMsg = Tools::getValue('ALMA_NOT_ELIGIBLE_CATEGORIES');
 
-<<<<<<< HEAD
-            if (empty($title)
-                || empty($description)
-                || ($showEligibility && (empty($eligibleMsg) || empty($nonEligibleMsg)))
-=======
             if (
                 empty($title) || empty($description) ||
                 empty($titleDeferred) || empty($descriptionDeferred) ||
                 ($showEligibility && (empty($eligibleMsg) || empty($nonEligibleMsg)))
->>>>>>> 147a039... prepare bnpl frontend for new eligibility endpoint
             ) {
                 $this->context->smarty->assign('validation_error', 'missing_required_setting');
 

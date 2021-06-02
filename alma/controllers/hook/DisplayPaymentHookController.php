@@ -107,24 +107,24 @@ final class DisplayPaymentHookController extends FrontendHookController
             } else {
                 $plans = $plan->paymentPlan;
 
-                if (is_callable('Media::getMediaPath')) {
-                    $logoPnx = Media::getMediaPath(_PS_MODULE_DIR_ . $this->module->name . "/views/img/logos/p${n}x_logo.svg");
-                } else {
-                    $logoPnx = $this->module->getPathUri() . "/views/img/logos/p${n}x_logo.svg";
-                }
+                if ($n != 1) {
+                    if (is_callable('Media::getMediaPath')) {
+                        $logoPnx = Media::getMediaPath(_PS_MODULE_DIR_ . $this->module->name . "/views/img/logos/p${n}x_logo.svg");
+                    } else {
+                        $logoPnx = $this->module->getPathUri() . "/views/img/logos/p${n}x_logo.svg";
+                    }
 
-                $paymentOption = [
-                'link' => $this->context->link->getModuleLink($this->module->name, 'payment', ['key' => $key], true),
-                'plans' => $plans,
-                'logo_pnx' => $logoPnx,
-                'pnx' => $n,
-                ];
-                $paymentOptionPnx[$n] = $paymentOption;
+                    $paymentOption = [
+                        'link' => $this->context->link->getModuleLink($this->module->name, 'payment', ['key' => $key], true),
+                        'plans' => $plans,
+                        'logo_pnx' => $logoPnx,
+                        'pnx' => $n,
+                    ];
+                    $paymentOptionPnx[$n] = $paymentOption;
+                }
             }
         }
-        //ksort($paymentOptionPnx);
         $paymentOptionPnx = array_values($paymentOptionPnx);
-        //ksort($paymentOptionDeferred);
         $paymentOptionDeferred = array_values($paymentOptionDeferred);
 
         $pnx = null;

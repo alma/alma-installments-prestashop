@@ -272,25 +272,21 @@ class Settings
         return (bool) (int) self::get('ALMA_DISPLAY_ORDER_CONFIRMATION', $default);
     }
 
-    public static function getInstallmentsCount($key)
-    {
-        preg_match("/general_(\d)_/", $key, $installmentsCount);
-
-        return $installmentsCount[1];
-    }
-
-    public static function activePlans()
+    public static function activePlans($onlyPnx = false)
     {
         $plans = [];
         $feePlans = json_decode(self::getFeePlans());
 
         foreach ($feePlans as $key => $feePlan) {
             if (1 == $feePlan->enabled) {
-                $plans[] = [
-                    'installmentsCount' => (int) self::getInstallmentsCount($key),
-                    'minAmount' => $feePlan->min,
-                    'maxAmount' => $feePlan->max,
-                ];
+                $installmentsCount = self::getDataFromKey($key);
+                if ($onlyPnx && (int) $installmentsCount['installmentsCount'] !== 1) {
+                    $plans[] = [
+                        'installmentsCount' => (int) $installmentsCount['installmentsCount'],
+                        'minAmount' => $feePlan->min,
+                        'maxAmount' => $feePlan->max,
+                    ];
+                }
             }
         }
 
@@ -481,5 +477,16 @@ class Settings
     public static function getDuration($plan)
     {
         return $plan->deferred_months * 30 + $plan->deferred_days;
+    }
+
+    public static function getDataFromKey($key)
+    {
+        preg_match("/general_(\d*)_(\d*)_(\d*)/", $key, $data);
+
+        return [
+            'installmentsCount' => $data[1],
+            'deferredDays' => $data[2],
+            'deferredMonths' => $data[3],
+        ];
     }
 }

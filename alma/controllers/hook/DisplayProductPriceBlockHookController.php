@@ -115,7 +115,7 @@ final class DisplayProductPriceBlockHookController extends FrontendHookControlle
             $psVersion = 'ps16';
         }
 
-        $activePlans = Settings::activePlans();
+        $activePlans = Settings::activePlans(true);
 
         if (!$activePlans) {
             return;

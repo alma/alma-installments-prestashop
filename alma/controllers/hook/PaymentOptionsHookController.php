@@ -112,24 +112,25 @@ final class PaymentOptionsHookController extends FrontendHookController
                 $paymentOptionDeferredData[$duration] = $paymentOption;
             } else {
                 $plans = $plan->paymentPlan;
-                $logoPnx = Media::getMediaPath(_PS_MODULE_DIR_ . $this->module->name . "/views/img/logos/p${n}x_logo.svg");
-                $paymentOption = [
-                    'link' => $this->context->link->getModuleLink($this->module->name, 'payment', ['key' => $key], true),
-                    'plans' => $plans,
-                    'error' => false,
-                    'logo_pnx' => $logoPnx,
-                    'pnx' => $n,
-                ];
-                $paymentOptionPnxData[$n] = $paymentOption;
+                if ($n != 1) {
+                    $logoPnx = Media::getMediaPath(_PS_MODULE_DIR_ . $this->module->name . "/views/img/logos/p${n}x_logo.svg");
+                    $paymentOption = [
+                        'link' => $this->context->link->getModuleLink($this->module->name, 'payment', ['key' => $key], true),
+                        'plans' => $plans,
+                        'error' => false,
+                        'logo_pnx' => $logoPnx,
+                        'pnx' => $n,
+                    ];
+                    $paymentOptionPnxData[$n] = $paymentOption;
+                }
             }
         }
 
         $paymentOptionPnxData = array_values($paymentOptionPnxData);
         $paymentOptionDeferredData = array_values($paymentOptionDeferredData);
         $forEUComplianceModule = false;
-        echo 'on est la !';
+
         if (array_key_exists('for_eu_compliance_module', $params)) {
-            echo 'on est pas la alors ?';
             $forEUComplianceModule = $params['for_eu_compliance_module'];
         }
 

@@ -49,7 +49,7 @@ class PaymentData
      *
      * @throws Exception
      */
-    public static function dataFromCart($cart, $context, $installmentsCount = 3)
+    public static function dataFromCart($cart, $context, $installmentsCount = 3, $deferredDays = 0, $deferredMonths = 0)
     {
         if ($cart->id_customer == 0 || $cart->id_address_delivery == 0 || $cart->id_address_invoice == 0) {
             Logger::instance()->warning(
@@ -119,6 +119,8 @@ class PaymentData
 
         return [
             'payment' => [
+                'deferred_days' => $deferredDays,
+                'deferred_months' => $deferredMonths,
                 'installments_count' => $installmentsCount,
                 'customer_cancel_url' => $context->link->getPageLink('order'),
                 'return_url' => $context->link->getModuleLink('alma', 'validation'),
