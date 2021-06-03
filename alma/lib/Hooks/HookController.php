@@ -30,6 +30,7 @@ use Context;
 use Cookie;
 use Employee;
 use Tools;
+use Validate;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -58,9 +59,11 @@ abstract class HookController
     {
         $cookie = new Cookie('psAdmin', '', (int) Configuration::get('PS_COOKIE_LIFETIME_BO'));
         $cookie->disallowWriting();
+        $employee = new Employee((int) $cookie->id_employee);
 
-        return Employee::checkPassword((int) $cookie->id_employee, $cookie->passwd) &&
-            (!isset($cookie->remote_addr)
+        return Validate::isLoadedObject($employee)
+            && $employee->checkPassword((int) $cookie->id_employee, $cookie->passwd)
+            && (!isset($cookie->remote_addr)
                 || $cookie->remote_addr == ip2long(Tools::getRemoteAddr())
                 || !Configuration::get('PS_COOKIE_CHECKIP'));
     }
