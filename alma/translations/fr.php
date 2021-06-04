@@ -75,6 +75,11 @@ $_MODULE['<{alma}prestashop>getcontenthookcontroller_e8d03edc1db73b1772e8cc2c4eb
 $_MODULE['<{alma}prestashop>getcontenthookcontroller_c983e13e7d3723063c76831b801b985f'] = 'Activer sur les fiches produit';
 $_MODULE['<{alma}prestashop>getcontenthookcontroller_f87f93543cef831b750e04378e93946b'] = 'Affiche un badge Alma montrant les échéanciers disponibles';
 $_MODULE['<{alma}prestashop>getcontenthookcontroller_79d3451454dde4e88cac5f4574ceaf20'] = 'Afficher l\'éligibilité des produits';
+$_MODULE['<{alma}prestashop>getcontenthookcontroller_084b80cec4cc3ae2e46be76c1d46f1be'] = 'Afficher le badge';
+$_MODULE['<{alma}prestashop>getcontenthookcontroller_8d0b357f88a05575256c7f59f59d26a6'] = 'Afficher le badge après le prix (par défaut)';
+$_MODULE['<{alma}prestashop>getcontenthookcontroller_15574f3d05437ffe709ff767607b4fd8'] = 'Afficher le badge dans un selecteur CSS spécifique';
+$_MODULE['<{alma}prestashop>getcontenthookcontroller_c7f90b0228ce0e09fe5dccd6342ec7d2'] = '%1$sAvancé%2$s [Optionnel] Sélecteur CSS utilisé par nos scripts pour afficher le badge sur la page produit';
+$_MODULE['<{alma}prestashop>getcontenthookcontroller_cc12a5229a16dced1984745e05872a94'] = 'Ex : #id, .class, ...';
 $_MODULE['<{alma}prestashop>getcontenthookcontroller_e1d2be70aeea464e47df8c8b134d0e27'] = 'Sélecteur CSS du prix des produits';
 $_MODULE['<{alma}prestashop>getcontenthookcontroller_ee6623512506b3b7c31b7ae6a44450ec'] = '%1$sAvancé%2$s Sélecteur CSS utilisé par nos scripts pour extraire le prix affiché des produits';
 $_MODULE['<{alma}prestashop>getcontenthookcontroller_64bc0a68646ce311949a2519036230c5'] = 'Sélecteur CSS des attributs en listes déroulantes';
