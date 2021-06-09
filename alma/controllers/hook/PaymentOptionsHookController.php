@@ -95,15 +95,6 @@ final class PaymentOptionsHookController extends FrontendHookController
             $sortedOptions[] = $options[$order];
         }
 
-        $tpl = $this->context->smarty->createTemplate(
-            "module:{$this->module->name}/views/templates/hook/fragments.tpl"
-        );
-        $tpl->assign([
-            'merchantId' => Settings::getMerchantId(),
-            'apiMode' => Settings::getActiveMode(),
-        ]);
-        echo  $tpl->fetch();
-
         return $sortedOptions;
     }
 

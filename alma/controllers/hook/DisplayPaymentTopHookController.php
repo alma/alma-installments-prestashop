@@ -1,3 +1,4 @@
+<?php
 /**
  * 2018-2021 Alma SAS
  *
@@ -21,42 +22,29 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
-$(function () {
-    pay = function (paymentData) {
-        fragments.createPaymentForm(paymentData).mount("#alma-payment");
-    };
+namespace Alma\PrestaShop\Controllers\Hook;
 
-    const fragments = new Alma.Fragments(
-        $("#almaFragments").data("merchantid"),
-        {
-            mode: $("#almaFragments").data("apimode"),
-        }
-    );
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
 
-    $(".alma-fragments").click(function (e) {
-        e.preventDefault();
-        $(".display-fragment").remove();
-        $(this)
-            .parent()
-            .parent()
-            .after(
-                '<div id="alma-payment" class="col-xs-12 display-fragment"></div>'
-            );
-        url = $(this).attr("href");
-        $.ajax({
-            type: "POST",
-            url: url,
-            dataType: "json",
-            data: {
-                ajax: true,
-                action: "payment",
-            },
-        })
-            .done(function (data) {
-                pay(data);
-            })
-            .fail(function (data) {
-                window.location.href = "index.php?controller=order&step=1";
-            });
-    });
-});
+use Alma\PrestaShop\Hooks\FrontendHookController;
+use Alma\PrestaShop\Utils\Settings;
+
+final class DisplayPaymentTopHookController extends FrontendHookController
+{
+    public function canRun()
+    {
+        return parent::canRun() && Settings::getMerchantId() !== null;
+    }
+
+    public function run($params)
+    {
+        $this->context->smarty->assign([
+            'merchantId' => Settings::getMerchantId(),
+            'apiMode' => Settings::getActiveMode(),
+        ]);
+
+        return $this->module->display($this->module->file, 'fragments.tpl');
+    }
+}

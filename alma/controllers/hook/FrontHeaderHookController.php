@@ -83,7 +83,7 @@ final class FrontHeaderHookController extends FrontendHookController
         $productCssPath = 'views/css/alma-product.css';
 
         $fragmentsScriptPath = 'views/js/alma-fragments.js';
-        $fragmentsJsUrl = Settings::getFramgentsJsUrl();
+        $fragmentsJsUrl = Settings::getFragmentsJsUrl();
 
         $controller = $this->context->controller;
 

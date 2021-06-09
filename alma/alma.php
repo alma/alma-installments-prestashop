@@ -107,7 +107,7 @@ class Alma extends PaymentModule
         ];
 
         if (version_compare(_PS_VERSION_, '1.7', '>=')) {
-            $paymentHooks = ['paymentOptions', 'displayPaymentReturn'];
+            $paymentHooks = ['paymentOptions', 'displayPaymentReturn', 'displayPaymentTop'];
         } else {
             $paymentHooks = ['displayPayment', 'displayPaymentEU', 'displayPaymentReturn'];
         }
@@ -151,6 +151,11 @@ class Alma extends PaymentModule
         Db::getInstance()->execute(
             'INSERT INTO `' . _DB_PREFIX_ . 'module_carrier` (`id_module`, `id_shop`, `id_reference`) VALUES ' . $values
         );
+    }
+
+    public function hookDisplayPaymentTop($params)
+    {
+        return $this->runHookController('displayPaymentTop', $params);
     }
 
     public function hookDisplayProductPriceBlock($params)

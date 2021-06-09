@@ -483,8 +483,8 @@ class Settings
         return self::get('ALMA_MERCHANT_ID');
     }
 
-    public static function getFramgentsJsUrl()
+    public static function getFragmentsJsUrl()
     {
-        return "https://unpkg.com/@alma/fragments@1.x/dist/alma-fragments.umd.js";
+        return 'https://cdn.jsdelivr.net/npm/@alma/fragments@1.x/dist/alma-fragments.umd.js';
     }
 }
