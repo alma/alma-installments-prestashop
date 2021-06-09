@@ -1,5 +1,4 @@
 <?php
-
 /**
  * 2018-2021 Alma SAS
  *
@@ -27,7 +26,6 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-use Alma\API\RequestError;
 use Alma\PrestaShop\API\ClientHelper;
 use Alma\PrestaShop\Model\PaymentData;
 use Alma\PrestaShop\Utils\Logger;
@@ -52,8 +50,6 @@ class AlmaPaymentModuleFrontController extends ModuleFrontController
             ? $this->ajaxDie(json_encode($json))
             : die(Tools::jsonEncode($json));
     }
-
-
 
     private function checkCurrency()
     {
@@ -83,7 +79,6 @@ class AlmaPaymentModuleFrontController extends ModuleFrontController
 
     public function postProcess()
     {
-
         // Check if cart exists and all fields are set
         if (!$this->module->active) {
             $this->ajaxFail();
@@ -135,7 +130,6 @@ class AlmaPaymentModuleFrontController extends ModuleFrontController
 
             return;
         }
-
 
         method_exists(get_parent_class($this), 'ajaxDie')
             ? $this->ajaxDie(json_encode($data))
