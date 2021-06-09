@@ -5,6 +5,6 @@ dist
 tmp
 prestashop
 **/.DS_Store
-
+tests
 tools/vendor
 

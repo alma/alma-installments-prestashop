@@ -34,13 +34,16 @@
     opacity: 0.5;
 }
 
-.payment_module a.alma-button {
-    width: 100%;
+.payment_module a.alma-button-with-bkg {    
     background: #fbfbfb;
     padding: 20px 17px;
 }
 
-p.payment_module a.alma-button:after {
+.payment_module a.alma-button {
+    padding: 20px 17px;
+}
+
+p.payment_module a.alma-button-with-bkg:after {
     display: block;
     content: "\f054";
     position: absolute;
@@ -71,10 +74,6 @@ p.payment_module a.alma-button.disable-arrow-icon:after {
     height: 30px;
 }
 
-
-.alma-button--text {
-
-}
 
 .alma-button--title {
     color: #333 !important;

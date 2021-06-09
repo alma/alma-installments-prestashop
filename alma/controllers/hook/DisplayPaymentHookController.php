@@ -1,4 +1,5 @@
 <?php
+
 /**
  * 2018-2021 Alma SAS
  *
@@ -123,6 +124,8 @@ final class DisplayPaymentHookController extends FrontendHookController
                 'order_total' => (float) $cart->getOrderTotal(true, Cart::BOTH),
                 'options' => $sortedOptions,
                 'old_prestashop_version' => version_compare(_PS_VERSION_, '1.6', '<'),
+                'merchantId' => Settings::getMerchantId(),
+                'apiMode' => Settings::getActiveMode(),
             ]
         );
 
