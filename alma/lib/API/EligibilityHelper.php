@@ -65,6 +65,8 @@ class EligibilityHelper
                     $eligibility = new Eligibility(
                         [
                             'installments_count' => $getDataFromKey['installmentsCount'],
+                            'deferred_days' => $getDataFromKey['deferredDays'],
+                            'deferred_months' => $getDataFromKey['deferredMonths'],
                             'eligible' => false,
                             'constraints' => [
                                 'purchase_amount' => [
@@ -76,7 +78,8 @@ class EligibilityHelper
                     );
                     $eligibilities[] = $eligibility;
                 } else {
-                    $activePlans[] = (int) $getDataFromKey['installmentsCount'];
+                    //$activePlans[] = (int) $getDataFromKey['installmentsCount'];
+                    $activePlans[] = $getDataFromKey;
                 }
             }
         }

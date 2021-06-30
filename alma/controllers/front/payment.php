@@ -100,12 +100,12 @@ class AlmaPaymentModuleFrontController extends ModuleFrontController
             return;
         }
 
-        $key = Tools::getValue('key', '3');
+        $key = Tools::getValue('key', 'general_3_0_0');
         $feePlans = json_decode(Settings::getFeePlans());
         $dataFromKey = Settings::getDataFromKey($key);
 
         $cart = $this->context->cart;
-        $data = PaymentData::dataFromCart($cart, $this->context, (int) $dataFromKey['installmentsCount'], (int) $dataFromKey['deferredDays'], (int) $dataFromKey['deferredMonths']);
+        $data = PaymentData::dataFromCart($cart, $this->context, $dataFromKey, true);
         $alma = ClientHelper::defaultInstance();
 
         if (!$data || !$alma) {

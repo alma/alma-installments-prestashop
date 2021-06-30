@@ -33,7 +33,6 @@ use Alma\PrestaShop\Hooks\FrontendHookController;
 use Alma\PrestaShop\Model\CartData;
 use Alma\PrestaShop\Utils\Settings;
 use Media;
-use stdClass;
 
 final class DisplayPaymentHookController extends FrontendHookController
 {
@@ -55,55 +54,24 @@ final class DisplayPaymentHookController extends FrontendHookController
         $paymentOptionPnx = [];
         $paymentOptionDeferred = [];
 
-        $eligibilityA = new stdClass();
-        $eligibilityA->installmentsCount = 1;
-        $eligibilityA->isEligible = true;
-        $eligibilityA->constraints = [];
-        $eligibilityA->deferred_days = 15;
-        $eligibilityA->deferred_months = 0;
-        $eligibilityA->error = false;
-
-        $eligibilityB = new stdClass();
-        $eligibilityB->installmentsCount = 1;
-        $eligibilityB->isEligible = true;
-        $eligibilityB->constraints = [];
-        $eligibilityB->deferred_days = 0;
-        $eligibilityB->deferred_months = 1;
-        $eligibilityB->error = false;
-
-        $installmentPlans[] = $eligibilityA;
-        $installmentPlans[] = $eligibilityB;
-
         foreach ($installmentPlans as $plan) {
             if (!$plan->isEligible) {
                 continue;
             }
-
             $n = $plan->installmentsCount;
-            // @todo change that when eligibility endpoint will be update
-            //temporaire
-            if (isset($plan->deferred_days)) {
-                $deferred_days = $plan->deferred_days;
-                $deferred_months = $plan->deferred_months;
-                $key = "general_{$n}_{$deferred_days}_{$deferred_months}";
-                //temporaire
-                $isDeferred = true;
-            } else {
-                $key = "general_{$n}_0_0";
-                //temporaire
-                $isDeferred = false;
-            }
+            $key = "general_{$n}_{$plan->deferredDays}_{$plan->deferredMonths}";
 
-            //if (Settings::isDeferred($plan)) {
-            if ($isDeferred) {
-                $duration = Settings::getDuration($plan);
-                $paymentOption = [
+            if (Settings::isDeferred($plan)) {
+                if ($n == 1) {
+                    $duration = Settings::getDuration($plan);
+                    $paymentOption = [
                     'link' => $this->context->link->getModuleLink($this->module->name, 'payment', ['key' => $key], true),
                     'duration' => $duration,
                     'key' => $key,
                     'pnx' => $n,
                     ];
-                $paymentOptionDeferred[$duration] = $paymentOption;
+                    $paymentOptionDeferred[$duration] = $paymentOption;
+                }
             } else {
                 $plans = $plan->paymentPlan;
 
@@ -125,7 +93,9 @@ final class DisplayPaymentHookController extends FrontendHookController
             }
         }
         $paymentOptionPnx = array_values($paymentOptionPnx);
-        $paymentOptionDeferred = array_values($paymentOptionDeferred);
+        usort($paymentOptionDeferred, function ($a, $b) {
+            return $a['duration'] - $b['duration'];
+        });
 
         $pnx = null;
         if ($paymentOptionPnx) {
@@ -134,20 +104,8 @@ final class DisplayPaymentHookController extends FrontendHookController
             $disabled = false;
             foreach ($installmentPlans as $plan) {
                 $n = $plan->installmentsCount;
-                //temporaire
-                if (isset($plan->deferred_days)) {
-                    $deferred_days = $plan->deferred_days;
-                    $deferred_months = $plan->deferred_months;
-                    $key = "general_{$n}_{$deferred_days}_{$deferred_months}";
-                    //temporaire
-                    $isDeferred = true;
-                } else {
-                    $key = "general_{$n}_0_0";
-                    //temporaire
-                    $isDeferred = false;
-                }
-                if (!$plan->isEligible && $feePlans->$key->enabled && !$isDeferred) {
-                    // @todo filtrer sur pnx
+                $key = "general_{$n}_{$plan->deferredDays}_{$plan->deferredMonths}";
+                if (!$plan->isEligible && $feePlans->$key->enabled && !Settings::isDeferred($plan)) {
                     $disabled = true;
                     break;
                 }
@@ -164,20 +122,8 @@ final class DisplayPaymentHookController extends FrontendHookController
             $disabled = false;
             foreach ($installmentPlans as $plan) {
                 $n = $plan->installmentsCount;
-                //temporaire
-                if (isset($plan->deferred_days)) {
-                    $deferred_days = $plan->deferred_days;
-                    $deferred_months = $plan->deferred_months;
-                    $key = "general_{$n}_{$deferred_days}_{$deferred_months}";
-                    //temporaire
-                    $isDeferred = true;
-                } else {
-                    $key = "general_{$n}_0_0";
-                    //temporaire
-                    $isDeferred = false;
-                }
-                if (!$plan->isEligible && $feePlans->$key->enabled && $isDeferred) {
-                    // @todo filtrer sur pay later
+                $key = "general_{$n}_{$plan->deferredDays}_{$plan->deferredMonths}";
+                if (!$plan->isEligible && $feePlans->$key->enabled && Settings::isDeferred($plan)) {
                     $disabled = true;
                     break;
                 }

@@ -177,13 +177,14 @@ class PaymentValidation
 
             $extraVars = ['transaction_id' => $payment->id];
 
-            $installmentCount = count($payment->payment_plan);
+            // why ?
+            // $installmentCount = count($payment->payment_plan);
+            $installmentCount = $payment->installments_count;
 
-            if ($payment->deferred_days != 0 || $payment->deferred_months != 0) {
+            if (Settings::isDeferred($payment)) {
                 $days = Settings::getDuration($payment);
                 $paymentMode = sprintf(
-                    $this->module->l('Alma - %1d monthly installments (+%2d days)', 'paymentvalidation'),
-                    $installmentCount,
+                    $this->module->l('Alma - deferred payment (+%d days)', 'paymentvalidation'),
                     $days
                 );
             } else {

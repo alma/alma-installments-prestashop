@@ -279,10 +279,10 @@ class Settings
 
         foreach ($feePlans as $key => $feePlan) {
             if (1 == $feePlan->enabled) {
-                $installmentsCount = self::getDataFromKey($key);
-                if ($onlyPnx && (int) $installmentsCount['installmentsCount'] !== 1) {
+                $dataFromKey = self::getDataFromKey($key);
+                if ($onlyPnx && $dataFromKey['deferredMonths'] === 0 && $dataFromKey['deferredDays'] === 0) {
                     $plans[] = [
-                        'installmentsCount' => (int) $installmentsCount['installmentsCount'],
+                        'installmentsCount' => (int) $dataFromKey['installmentsCount'],
                         'minAmount' => $feePlan->min,
                         'maxAmount' => $feePlan->max,
                     ];
@@ -471,12 +471,20 @@ class Settings
 
     public static function isDeferred($plan)
     {
-        return 0 < $plan->deferred_days || 0 < $plan->deferred_months;
+        if (isset($plan->deferred_days)) {
+            return 0 < $plan->deferred_days || 0 < $plan->deferred_months;
+        } else {
+            return 0 < $plan->deferredDays || 0 < $plan->deferredMonths;
+        }
     }
 
     public static function getDuration($plan)
     {
-        return $plan->deferred_months * 30 + $plan->deferred_days;
+        if (isset($plan->deferred_days)) {
+            return $plan->deferred_months * 30 + $plan->deferred_days;
+        } else {
+            return $plan->deferredMonths * 30 + $plan->deferredDays;
+        }
     }
 
     public static function getDataFromKey($key)
@@ -484,9 +492,9 @@ class Settings
         preg_match("/general_(\d*)_(\d*)_(\d*)/", $key, $data);
 
         return [
-            'installmentsCount' => $data[1],
-            'deferredDays' => $data[2],
-            'deferredMonths' => $data[3],
+            'installmentsCount' => (int) $data[1],
+            'deferredDays' => (int) $data[2],
+            'deferredMonths' => (int) $data[3],
         ];
     }
 }

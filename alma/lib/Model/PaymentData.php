@@ -43,13 +43,13 @@ class PaymentData
     /**
      * @param Cart $cart
      * @param Context $context
-     * @param int|array $installmentsCount
+     * @param array $feePlans
      *
      * @return array|null
      *
      * @throws Exception
      */
-    public static function dataFromCart($cart, $context, $installmentsCount = 3, $deferredDays = 0, $deferredMonths = 0)
+    public static function dataFromCart($cart, $context, $feePlans, $forPayment = false)
     {
         if ($cart->id_customer == 0 || $cart->id_address_delivery == 0 || $cart->id_address_invoice == 0) {
             Logger::instance()->warning(
@@ -67,6 +67,25 @@ class PaymentData
 
                 return null;
             }
+        }
+
+        $purchaseAmount = (float) Tools::ps_round((float) $cart->getOrderTotal(true, Cart::BOTH), 2);
+
+        /* Eligibility Endpoint V2 */
+        if (!$forPayment) {
+            $queries = [];
+            foreach ($feePlans as $plan) {
+                $queries[] = [
+                    'purchase_amount' => almaPriceToCents($purchaseAmount),
+                    'installments_count' => $plan['installmentsCount'],
+                    'deferred_days' => $plan['deferredDays'],
+                    'deferred_months' => $plan['deferredMonths'],
+            ];
+            }
+
+            return [
+                'purchase_amount' => almaPriceToCents($purchaseAmount),
+                'queries' => $queries, ];
         }
 
         if (!$customer) {
@@ -115,17 +134,15 @@ class PaymentData
             }
         }
 
-        $purchaseAmount = (float) Tools::ps_round((float) $cart->getOrderTotal(true, Cart::BOTH), 2);
-
         return [
             'payment' => [
-                'deferred_days' => $deferredDays,
-                'deferred_months' => $deferredMonths,
-                'installments_count' => $installmentsCount,
+                'installments_count' => $feePlans['installmentsCount'],
+                'deferred_days' => $feePlans['deferredDays'],
+                'deferred_months' => $feePlans['deferredMonths'],
+                'purchase_amount' => almaPriceToCents($purchaseAmount),
                 'customer_cancel_url' => $context->link->getPageLink('order'),
                 'return_url' => $context->link->getModuleLink('alma', 'validation'),
                 'ipn_callback_url' => $context->link->getModuleLink('alma', 'ipn'),
-                'purchase_amount' => almaPriceToCents($purchaseAmount),
                 'shipping_address' => [
                     'line1' => $shippingAddress->address1,
                     'postal_code' => $shippingAddress->postcode,

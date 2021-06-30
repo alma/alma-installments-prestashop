@@ -445,8 +445,7 @@ final class GetContentHookController extends AdminHookController
                     $feePlanDeferred[$feePlan->installments_count . $duration] = $feePlan;
                 }
             }
-            sort($feePlansOrdered);
-            sort($feePlanDeferred);
+            ksort($feePlanDeferred);
             $feePlansOrdered = array_merge($feePlansOrdered, $feePlanDeferred);
 
             foreach ($feePlansOrdered as $feePlan) {

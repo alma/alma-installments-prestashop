@@ -24,10 +24,6 @@
 
 namespace Alma\PrestaShop\Controllers\Hook;
 
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
-
 if (!defined('_PS_VERSION_')) {
     exit;
 }
@@ -38,7 +34,6 @@ use Alma\PrestaShop\Model\CartData;
 use Alma\PrestaShop\Utils\Settings;
 use Media;
 use PrestaShop\PrestaShop\Core\Payment\PaymentOption;
-use stdClass;
 
 final class PaymentOptionsHookController extends FrontendHookController
 {
@@ -60,59 +55,28 @@ final class PaymentOptionsHookController extends FrontendHookController
         $paymentOptionPnxData = [];
         $paymentOptionDeferredData = [];
 
-        $feePlans = json_decode(Settings::getFeePlans());
-
-        $eligibilityA = new stdClass();
-        $eligibilityA->installmentsCount = 1;
-        $eligibilityA->isEligible = true;
-        $eligibilityA->constraints = [];
-        $eligibilityA->deferred_days = 15;
-        $eligibilityA->deferred_months = 0;
-        $eligibilityA->error = false;
-
-        $eligibilityB = new stdClass();
-        $eligibilityB->installmentsCount = 1;
-        $eligibilityB->isEligible = true;
-        $eligibilityB->constraints = [];
-        $eligibilityB->deferred_days = 0;
-        $eligibilityB->deferred_months = 1;
-        $eligibilityB->error = false;
-
-        $installmentPlans[] = $eligibilityA;
-        $installmentPlans[] = $eligibilityB;
-
         foreach ($installmentPlans as $plan) {
             if (!$plan->isEligible) {
                 continue;
             }
 
             $n = $plan->installmentsCount;
+            $key = "general_{$n}_{$plan->deferredDays}_{$plan->deferredMonths}";
 
-            if (isset($plan->deferred_days)) {
-                $deferred_days = $plan->deferred_days;
-                $deferred_months = $plan->deferred_months;
-                $key = "general_{$n}_{$deferred_days}_{$deferred_months}";
-                //temporaire
-                $isDeferred = true;
-            } else {
-                $key = "general_{$n}_0_0";
-                //temporaire
-                $isDeferred = false;
-            }
-
-            //if (Settings::isDeferred($plan)) {
-            if ($isDeferred) {
-                $duration = Settings::getDuration($plan);
-                $paymentOption = [
-                    'link' => $this->context->link->getModuleLink($this->module->name, 'payment', ['key' => $key], true),
-                    'duration' => $duration,
-                    'key' => $key,
-                    'pnx' => $n,
-                ];
-                $paymentOptionDeferredData[$duration] = $paymentOption;
+            if (Settings::isDeferred($plan)) {
+                if ($n === 1) {
+                    $duration = Settings::getDuration($plan);
+                    $paymentOption = [
+                        'link' => $this->context->link->getModuleLink($this->module->name, 'payment', ['key' => $key], true),
+                        'duration' => $duration,
+                        'key' => $key,
+                        'pnx' => $n,
+                    ];
+                    $paymentOptionDeferredData[$duration] = $paymentOption;
+                }
             } else {
                 $plans = $plan->paymentPlan;
-                if ($n != 1) {
+                if ($n !== 1) {
                     $logoPnx = Media::getMediaPath(_PS_MODULE_DIR_ . $this->module->name . "/views/img/logos/p${n}x_logo.svg");
                     $paymentOption = [
                         'link' => $this->context->link->getModuleLink($this->module->name, 'payment', ['key' => $key], true),
@@ -127,9 +91,11 @@ final class PaymentOptionsHookController extends FrontendHookController
         }
 
         $paymentOptionPnxData = array_values($paymentOptionPnxData);
-        $paymentOptionDeferredData = array_values($paymentOptionDeferredData);
-        $forEUComplianceModule = false;
+        usort($paymentOptionDeferredData, function ($a, $b) {
+            return $a['duration'] - $b['duration'];
+        });
 
+        $forEUComplianceModule = false;
         if (array_key_exists('for_eu_compliance_module', $params)) {
             $forEUComplianceModule = $params['for_eu_compliance_module'];
         }
