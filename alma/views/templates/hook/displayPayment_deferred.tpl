@@ -64,25 +64,42 @@
                                 <span class="alma-button--description">{$desc|escape:'htmlall':'UTF-8'}</span>
                             {/if}
                             <span class="alma-button--fee-plans">
-                                {foreach from=$options item=option name=counter}
-                                    {assign var="checked" value=""}
+                                {foreach from=$options item=option name=counter}                                                             
+                                    {assign var="checked" value=""}                                    
                                     {if $smarty.foreach.counter.iteration === 1}
                                         {assign var="checked" value="checked='checked'"}
                                     {/if}
                                     <input {$checked} autocomplete="off" type="radio" name="alma_deferred" value="{$option.link}" id="{$option.key}">
                                     <label for="{$option.key}">
-                                        {l s='+ %d days' sprintf=$option.duration mod='alma'}
+                                        {$option.label}
                                         &nbsp;
-                                    </label>
+                                    </label>                                    
+                                {/foreach}
+                                {foreach from=$options item=option name=counter}
+                                    {assign var="display" value="display:none;"}
+                                    {if $smarty.foreach.counter.iteration === 1}                                        
+                                        {assign var="display" value=""}
+                                    {/if}
+                                    <span style="{$display}" class="alma-button--fee-plans alma-deferred-display" id="alma-deferred-{$option.key}">
+                                        {include file="modules/alma/views/templates/hook/_partials/deferred.tpl" plans=$option.plans}                                        
+                                    </span>
                                 {/foreach}
                             </span>
                             <br>
-                            <button type="submit" id="processAlmaDeferred" class="button btn btn-default standard-checkout">
-                                <span>
-                                    {l s='Confirm & pay' mod='alma'}
-                                    <i class="icon-chevron-right right"></i>
+                            {if $old_prestashop_version}
+                                <span class="button_large" id="processAlmaDeferred">
+                            {else}
+                                <button type="submit" id="processAlmaDeferred" class="button btn btn-default standard-checkout">
+                            {/if}
+                            <span>
+                                {l s='Confirm & pay' mod='alma'}
+                                <i class="icon-chevron-right right"></i>
+                            </span>
+                            {if $old_prestashop_version}
                                 </span>
-                            </button>
+                            {else}
+                                </button>
+                            {/if}
                         </span>
                     </a>
                 </p>
@@ -91,7 +108,11 @@
     {/if}
     <script type="text/javascript">
         (function($) {
-            $(function() {                        
+            $(function() {        
+                $('input[name=alma_deferred]').on('change', function(){
+                    $('.alma-deferred-display').hide();                
+                    $('#alma-deferred-'+this.id).show();
+                });                
 
                 $('#processAlmaDeferred').on('click', function(){
                     let val = $('input[name=alma_deferred]:checked').val();

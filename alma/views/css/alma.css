@@ -97,6 +97,13 @@ p.payment_module a.alma-button.disable-arrow-icon:after {
     letter-spacing: initial !important;
 }
 
+.payment_module .alma-deferred--description {
+    padding: 4px 0;
+    font-size: 0.9em;
+    font-weight: normal !important;
+    letter-spacing: initial !important;
+}
+
 .payment_module .alma-fee-plan--date {
     display: inline-block;
     width: 150px;
@@ -109,6 +116,14 @@ p.payment_module a.alma-button.disable-arrow-icon:after {
     padding: 4px 0px;
     margin: 4px 0px;
     border-bottom: 1px solid lightgrey;
+}
+
+.payment-options .alma-deferred--description {
+    justify-content: space-between;
+    align-items: center;
+    padding: 4px 0px;
+    margin: 4px 0px;
+    font-weight: normal !important;
 }
 
 .payment-options .alma-fee-plan--description:last-child {

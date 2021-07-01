@@ -73,25 +73,33 @@
                                     <input autocomplete="off" type="radio" name="alma_pnx" value="{$option.link}" {$checked} id="alma_p{$option.pnx}x">
                                     <label for="alma_p{$option.pnx}x">
                                         <img style="float:none;" src="{$option.logo_pnx|escape:'htmlall':'UTF-8'}" alt=""/>
-                                    </label>                                
+                                    </label>
                                 {/foreach}
                                 {foreach from=$options item=option name=counter}
                                     {assign var="display" value="display:none;"}
                                     {if $smarty.foreach.counter.iteration === 1}
                                         {assign var="display" value=""}
-                                    {/if}                               
+                                    {/if}                             
                                     <span style="{$display}" class="alma-button--fee-plans alma-fee-plans-display" id="fee_plans_alma_p{$option.pnx}x">
                                         {include file="modules/alma/views/templates/hook/_partials/feePlan.tpl" plans=$option.plans oneLiner=true}
-                                    </span>                              
+                                    </span>
                                 {/foreach}
                             </span>
                             <br>
-                            <button type="submit" id="processAlmaPnx" class="button btn btn-default standard-checkout">
-                                <span>
-                                    {l s='Confirm & pay' mod='alma'}
-                                    <i class="icon-chevron-right right"></i>
+                            {if $old_prestashop_version}
+                                <span class="button_large" id="processAlmaPnx">
+                            {else}
+                                <button type="submit" id="processAlmaPnx" class="button btn btn-default standard-checkout">
+                            {/if}
+                            <span>
+                                {l s='Confirm & pay' mod='alma'}
+                                <i class="icon-chevron-right right"></i>
+                            </span>
+                            {if $old_prestashop_version}
                                 </span>
-                            </button>
+                            {else}
+                                </button>
+                            {/if}                                                        
                         </span>
                     </a>
                 </p>

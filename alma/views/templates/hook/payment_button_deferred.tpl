@@ -37,9 +37,21 @@
             &nbsp;
         </label>
     {/foreach}
+    <br>
+    {foreach from=$options item=option name=counter}
+        {assign var="display" value="display:none;"}
+        {if $smarty.foreach.counter.iteration === 1}
+            {assign var="display" value=""}
+        {/if}        
+        <span style="{$display}" class="alma-button--fee-plans alma-deferred-display" id="deferred_alma_{$option.key}">
+            {include file="modules/alma/views/templates/hook/_partials/deferred.tpl" plans=$option.plans}
+        </span>
+    {/foreach}
 </div>
 <script type="text/javascript">
-    ;handleChangeAlmaDeferred = function(e){        
+    ;handleChangeAlmaDeferred = function(e){      
+        for (let el of document.querySelectorAll('.alma-deferred-display')) el.style.display = 'none';
+        document.querySelector('#deferred_alma_'+e.id).style.display = "block";  
         let payment = document.querySelector( 'input[name="payment-option"]:checked');        
         let div = document.querySelector('div[id="pay-with-'+payment.id+'-form"');
         let form = div.querySelector('form');        

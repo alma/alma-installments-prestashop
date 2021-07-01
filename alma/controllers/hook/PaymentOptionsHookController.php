@@ -62,20 +62,27 @@ final class PaymentOptionsHookController extends FrontendHookController
 
             $n = $plan->installmentsCount;
             $key = "general_{$n}_{$plan->deferredDays}_{$plan->deferredMonths}";
-
+            $plans = $plan->paymentPlan;
             if (Settings::isDeferred($plan)) {
                 if ($n === 1) {
                     $duration = Settings::getDuration($plan);
+                    // `l` method call isn't detected by translation tool if multiline
+                    // phpcs:ignore
+                    $label = sprintf(
+                        $this->module->l('+ %d days', 'PaymentOptionsHookController'),
+                        $duration
+                    );
                     $paymentOption = [
                         'link' => $this->context->link->getModuleLink($this->module->name, 'payment', ['key' => $key], true),
                         'duration' => $duration,
                         'key' => $key,
                         'pnx' => $n,
+                        'label' => $label,
+                        'plans' => $plans,
                     ];
                     $paymentOptionDeferredData[$duration] = $paymentOption;
                 }
             } else {
-                $plans = $plan->paymentPlan;
                 if ($n !== 1) {
                     $logoPnx = Media::getMediaPath(_PS_MODULE_DIR_ . $this->module->name . "/views/img/logos/p${n}x_logo.svg");
                     $paymentOption = [
