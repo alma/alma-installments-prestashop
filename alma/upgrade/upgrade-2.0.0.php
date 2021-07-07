@@ -31,7 +31,6 @@ include_once _PS_MODULE_DIR_ . 'alma/vendor/autoload.php';
 use Alma\API\RequestError;
 use Alma\PrestaShop\API\ClientHelper;
 use Alma\PrestaShop\Utils\Settings;
-use Configuration;
 
 function upgrade_module_2_0_0($module)
 {
