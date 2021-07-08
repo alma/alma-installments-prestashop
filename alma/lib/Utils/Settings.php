@@ -435,7 +435,11 @@ class Settings
 
     public static function getProductQuantityQuerySelector()
     {
-        $default = '#buy_block #quantity_wanted';
+        if (version_compare(_PS_VERSION_, '1.7', '<')) {
+            $default = '#buy_block #quantity_wanted';
+        } else {
+            $default = '#quantity_wanted';
+        }
 
         return self::get('ALMA_PRODUCT_QUANTITY_SELECTOR', $default);
     }
