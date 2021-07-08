@@ -473,13 +473,13 @@ final class GetContentHookController extends AdminHookController
                     if ($feePlan->installments_count == 1) {
                         $tabTitle = sprintf($this->module->l('Deferred payments + %d days', 'GetContentHookController'), $duration);
                         $label = sprintf(
-                            $this->module->l('Enable deferred payments (+%d days)', 'GetContentHookController'),
+                            $this->module->l('Enable deferred payments +%d days', 'GetContentHookController'),
                             $duration
                         );
                     } else {
                         $tabTitle = sprintf($this->module->l('%d-deferred payments + %d days', 'GetContentHookController'), $feePlan->installments_count, $duration);
                         $label = sprintf(
-                            $this->module->l('Enable %d-deferred payments (+%d days)', 'GetContentHookController'),
+                            $this->module->l('Enable %d-deferred payments +%d days', 'GetContentHookController'),
                             $feePlan->installments_count,
                             $duration
                         );
@@ -623,7 +623,7 @@ final class GetContentHookController extends AdminHookController
                         'type' => 'html',
                         // PrestaShop won't detect the string if the call to `l` is multiline
                         // phpcs:ignore
-                        'html_content' => "<h4>{$this->module->l('Buy now pay later', 'GetContentHookController')}</h4>",
+                        'html_content' => "<h4>{$this->module->l('Defered payment', 'GetContentHookController')}</h4>",
                     ],
                     [
                         'name' => 'ALMA_DEFERRED_BUTTON_TITLE',
