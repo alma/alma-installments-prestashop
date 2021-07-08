@@ -131,6 +131,12 @@ final class GetContentHookController extends AdminHookController
             $productPriceQuerySelector = Tools::getValue('ALMA_PRODUCT_PRICE_SELECTOR');
             Settings::updateValue('ALMA_PRODUCT_PRICE_SELECTOR', $productPriceQuerySelector);
 
+            $widgetCustomPosition = (bool) Tools::getValue('ALMA_WIDGET_POSITION_CUSTOM');
+            Settings::updateValue('ALMA_WIDGET_POSITION_CUSTOM', $widgetCustomPosition);
+
+            $productWidgetPositionQuerySelector = Tools::getValue('ALMA_WIDGET_POSITION_SELECTOR');
+            Settings::updateValue('ALMA_WIDGET_POSITION_SELECTOR', $productWidgetPositionQuerySelector);
+
             $productAttrQuerySelector = Tools::getValue('ALMA_PRODUCT_ATTR_SELECTOR');
             Settings::updateValue('ALMA_PRODUCT_ATTR_SELECTOR', $productAttrQuerySelector);
 
@@ -705,6 +711,40 @@ final class GetContentHookController extends AdminHookController
                         ],
                     ],
                     [
+                        'name' => 'ALMA_WIDGET_POSITION_CUSTOM',
+                        'type' => 'radio',
+                        'label' => $this->module->l('Display badge', 'GetContentHookController'),
+                        'class' => 't',
+                        'required' => true,
+                        'values' => [
+                            [
+                                'id' => 'OFF',
+                                'value' => false,
+                                'label' => $this->module->l('Display badge after price (by default)', 'GetContentHookController'),
+                            ],
+                            [
+                                'id' => 'ON',
+                                'value' => true,
+                                'label' => $this->module->l('Display badge on custom css selector', 'GetContentHookController'),
+                            ],
+                        ],
+                    ],
+                    [
+                        'name' => 'ALMA_WIDGET_POSITION_SELECTOR',
+                        'label' => $this->module->l('Display badge on custom css selector', 'GetContentHookController'),
+                        'desc' => sprintf(
+                            // PrestaShop won't detect the string if the call to `l` is multiline
+                            // phpcs:ignore
+                            $this->module->l('%1$sAdvanced%2$s [Optional] Query selector for our scripts to display the badge on product page', 'GetContentHookController'),
+                            '<b>',
+                            '</b>'
+                        ),
+                        'type' => 'text',
+                        'size' => 75,
+                        'placeholder' => $this->module->l('E.g. #id, .class, ...', 'GetContentHookController'),
+                        'required' => false,
+                    ],
+                    [
                         'name' => 'ALMA_PRODUCT_PRICE_SELECTOR',
                         'label' => $this->module->l('Product price query selector', 'GetContentHookController'),
                         'desc' => sprintf(
@@ -1031,6 +1071,8 @@ final class GetContentHookController extends AdminHookController
             'ALMA_NOT_ELIGIBLE_CATEGORIES' => Settings::getNonEligibleCategoriesMessage(),
             'ALMA_SHOW_PRODUCT_ELIGIBILITY_ON' => Settings::showProductEligibility(),
             'ALMA_PRODUCT_PRICE_SELECTOR' => Settings::getProductPriceQuerySelector(),
+            'ALMA_WIDGET_POSITION_SELECTOR' => Settings::getProductWidgetPositionQuerySelector(),
+            'ALMA_WIDGET_POSITION_CUSTOM' => Settings::isWidgetCustomPosition(),
             'ALMA_PRODUCT_ATTR_SELECTOR' => Settings::getProductAttrQuerySelector(),
             'ALMA_PRODUCT_ATTR_RADIO_SELECTOR' => Settings::getProductAttrRadioQuerySelector(),
             'ALMA_PRODUCT_COLOR_PICK_SELECTOR' => Settings::getProductColorPickQuerySelector(),

@@ -102,6 +102,8 @@ class Settings
             'ALMA_PRODUCT_COLOR_PICK_SELECTOR',
             'ALMA_PRODUCT_PRICE_SELECTOR',
             'ALMA_PRODUCT_QUANTITY_SELECTOR',
+            'ALMA_WIDGET_POSITION_SELECTOR',
+            'ALMA_WIDGET_POSITION_CUSTOM',
         ];
 
         foreach ($configKeys as $configKey) {
@@ -366,6 +368,18 @@ class Settings
         $default = '[itemprop=price],#our_price_display';
 
         return self::get('ALMA_PRODUCT_PRICE_SELECTOR', $default);
+    }
+
+    public static function getProductWidgetPositionQuerySelector()
+    {
+        $default = '';
+
+        return self::get('ALMA_WIDGET_POSITION_SELECTOR', $default);
+    }
+
+    public static function isWidgetCustomPosition()
+    {
+        return (bool) (int) self::get('ALMA_WIDGET_POSITION_CUSTOM', false);
     }
 
     public static function getProductAttrQuerySelector()

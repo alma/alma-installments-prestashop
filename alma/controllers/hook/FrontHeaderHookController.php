@@ -94,7 +94,9 @@ final class FrontHeaderHookController extends FrontendHookController
             'attrSelect' => Settings::getProductAttrQuerySelector(),
             'attrRadio' => Settings::getProductAttrRadioQuerySelector(),
             'colorPick' => Settings::getProductColorPickQuerySelector(),
-            'quantity' => Settings::getProductQuantityQuerySelector(), ]);
+            'quantity' => Settings::getProductQuantityQuerySelector(),
+            'isCustom' => Settings::isWidgetCustomPosition(),
+            'position' => Settings::getProductWidgetPositionQuerySelector(), ]);
         $selectorsTpl->assign([
             'widgetQuerySelectors' => $widgetQuerySelectors,
         ]);
