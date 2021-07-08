@@ -55,6 +55,8 @@ function upgrade_module_2_0_0($module)
             'ALMA_P3X_SORT_ORDER',
             'ALMA_P4X_SORT_ORDER',
             'ALMA_PNX_MAX_N',
+            'ALMA_IS_ELIGIBLE_MESSAGE',
+            'ALMA_NOT_ELIGIBLE_MESSAGE',
         ];
 
         try {

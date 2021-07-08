@@ -84,8 +84,6 @@ class Settings
             'ALMA_TEST_API_KEY',
             'ALMA_SHOW_DISABLED_BUTTON',
             'ALMA_SHOW_ELIGIBILITY_MESSAGE',
-            'ALMA_IS_ELIGIBLE_MESSAGE',
-            'ALMA_NOT_ELIGIBLE_MESSAGE',
             'ALMA_PAYMENT_BUTTON_TITLE',
             'ALMA_PAYMENT_BUTTON_DESC',
             'ALMA_PAYMENT_BUTTON_POSITION',
@@ -153,24 +151,6 @@ class Settings
         return (bool) (int) self::get('ALMA_SHOW_DISABLED_BUTTON', true);
     }
 
-    public static function getEligibilityMessage()
-    {
-        // Allow PrestaShop's translation feature to detect those strings
-        // $this->l('Your cart is eligible for monthly installments.', 'settings');
-        $default = self::l('Your cart is eligible for monthly installments.');
-
-        return self::get('ALMA_IS_ELIGIBLE_MESSAGE', $default);
-    }
-
-    public static function getNonEligibilityMessage()
-    {
-        // Allow PrestaShop's translation feature to detect those strings
-        // $this->l('Your cart is not eligible for monthly installments.', 'settings');
-        $default = self::l('Your cart is not eligible for monthly installments.');
-
-        return self::get('ALMA_NOT_ELIGIBLE_MESSAGE', $default);
-    }
-
     public static function getNonEligibleCategoriesMessage()
     {
         // Allow PrestaShop's translation feature to detect those strings
@@ -183,30 +163,6 @@ class Settings
     public static function showEligibilityMessage()
     {
         return (bool) (int) self::get('ALMA_SHOW_ELIGIBILITY_MESSAGE', true);
-    }
-
-    public static function getNonEligibilityMinAmountMessage($minimum)
-    {
-        // Allow PrestaShop's translation feature to detect those strings
-        // $this->l('(Minimum amount: %s)', 'settings');
-        $default = sprintf(
-            self::l('(Minimum amount: %s)'),
-            almaFormatPrice($minimum)
-        );
-
-        return $default;
-    }
-
-    public static function getNonEligibilityMaxAmountMessage($maximum)
-    {
-        // Allow PrestaShop's translation feature to detect those strings
-        // $this->l('(Maximum amount: %s)', 'settings');
-        $default = sprintf(
-            self::l('(Maximum amount: %s)'),
-            almaFormatPrice($maximum)
-        );
-
-        return $default;
     }
 
     public static function getPaymentButtonTitle()

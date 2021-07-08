@@ -80,6 +80,7 @@ final class FrontHeaderHookController extends FrontendHookController
         $widgetsJsUrl = 'https://cdn.jsdelivr.net/npm/@alma/widgets@1.x/dist/alma-widgets.umd.js';
         $productScriptPath = 'views/js/alma-product.js';
         $productCssPath = 'views/css/alma-product.css';
+        $cartScriptPath = 'views/js/alma-cart.js';
 
         $controller = $this->context->controller;
 
@@ -109,13 +110,28 @@ final class FrontHeaderHookController extends FrontendHookController
             $controller->addCSS($this->module->_path . $productCssPath);
 
             $controller->addJS($widgetsJsUrl);
-            $controller->addJS($this->module->_path . $productScriptPath);
+            // $controller->addJS($this->module->_path . $productScriptPath);
+            if (
+                Settings::showEligibilityMessage() &&
+                ($controller->php_self == 'order' && $controller->step == 0 || $controller->php_self == 'order-opc')
+                && (isset($controller->nbProducts) && $controller->nbProducts != 0)
+            ) {
+                $controller->addJS($this->module->_path . $cartScriptPath);
+            } else {
+                $controller->addJS($this->module->_path . $productScriptPath);
+            }
         } else {
             $moduleName = $this->module->name;
             $scriptPath = "modules/$moduleName/$productScriptPath";
             $cssPath = "modules/$moduleName/$productCssPath";
+            $cartScriptPath = "modules/$moduleName/$cartScriptPath";
 
-            $controller->registerJavascript('alma-product-script', $scriptPath, ['priority' => 1000]);
+            if ($controller->php_self == 'cart' && Settings::showEligibilityMessage()) {
+                $controller->registerJavascript('alma-cart-script', $cartScriptPath, ['priority' => 1000]);
+            } else {
+                $controller->registerJavascript('alma-product-script', $scriptPath, ['priority' => 1000]);
+            }
+            //$controller->registerJavascript('alma-product-script', $scriptPath, ['priority' => 1000]);
             $controller->registerStylesheet('alma-product-css', $cssPath);
 
             if (version_compare(_PS_VERSION_, '1.7.0.2', '>=')) {

@@ -114,14 +114,11 @@ final class GetContentHookController extends AdminHookController
                 $positionDeferred = 2;
             }
             $showEligibility = (bool) Tools::getValue('ALMA_SHOW_ELIGIBILITY_MESSAGE_ON');
-            $eligibleMsg = Tools::getValue('ALMA_IS_ELIGIBLE_MESSAGE');
-            $nonEligibleMsg = Tools::getValue('ALMA_NOT_ELIGIBLE_MESSAGE');
             $nonEligibleCategoriesMsg = Tools::getValue('ALMA_NOT_ELIGIBLE_CATEGORIES');
 
             if (
                 empty($title) || empty($description) ||
-                empty($titleDeferred) || empty($descriptionDeferred) ||
-                ($showEligibility && (empty($eligibleMsg) || empty($nonEligibleMsg)))
+                empty($titleDeferred) || empty($descriptionDeferred)
             ) {
                 $this->context->smarty->assign('validation_error', 'missing_required_setting');
 
@@ -157,8 +154,6 @@ final class GetContentHookController extends AdminHookController
             Settings::updateValue('ALMA_SHOW_DISABLED_BUTTON', $showDisabledButton);
 
             Settings::updateValue('ALMA_SHOW_ELIGIBILITY_MESSAGE', $showEligibility);
-            Settings::updateValue('ALMA_IS_ELIGIBLE_MESSAGE', $eligibleMsg);
-            Settings::updateValue('ALMA_NOT_ELIGIBLE_MESSAGE', $nonEligibleMsg);
             Settings::updateValue('ALMA_NOT_ELIGIBLE_CATEGORIES', $nonEligibleCategoriesMsg);
 
             $idStateRefund = Tools::getValue('ALMA_STATE_REFUND');
@@ -795,7 +790,9 @@ final class GetContentHookController extends AdminHookController
                 'input' => [
                     [
                         'name' => 'ALMA_SHOW_ELIGIBILITY_MESSAGE',
-                        'label' => $this->module->l('Show eligibility message', 'GetContentHookController'),
+                        'label' => $this->module->l('Show cart eligibility', 'GetContentHookController'),
+                        // phpcs:ignore
+                        'desc' => $this->module->l('Displays a badge with eligible Alma plans with installments details', 'GetContentHookController'),
                         'type' => 'checkbox',
                         'values' => [
                             'id' => 'id',
@@ -806,30 +803,10 @@ final class GetContentHookController extends AdminHookController
                                     'val' => true,
                                     // PrestaShop won't detect the string if the call to `l` is multiline
                                     // phpcs:ignore
-                                    'label' => $this->module->l('Display a message under the cart summary to indicate its eligibility for monthly installments.', 'GetContentHookController'),
+                                    'label' => $this->module->l('Display the cart\'s eligibility.', 'GetContentHookController'),
                                 ],
                             ],
                         ],
-                    ],
-                    [
-                        'name' => 'ALMA_IS_ELIGIBLE_MESSAGE',
-                        'label' => $this->module->l('Eligibility message', 'GetContentHookController'),
-                        // PrestaShop won't detect the string if the call to `l` is multiline
-                        // phpcs:ignore
-                        'desc' => $this->module->l('Message displayed below the cart totals when it is eligible for monthly installments.', 'GetContentHookController'),
-                        'type' => 'text',
-                        'size' => 75,
-                        'required' => true,
-                    ],
-                    [
-                        'name' => 'ALMA_NOT_ELIGIBLE_MESSAGE',
-                        'label' => $this->module->l('Non-eligibility message', 'GetContentHookController'),
-                        // PrestaShop won't detect the string if the call to `l` is multiline
-                        // phpcs:ignore
-                        'desc' => $this->module->l('Message displayed below the cart totals when it is not eligible for monthly installments.', 'GetContentHookController'),
-                        'type' => 'text',
-                        'size' => 75,
-                        'required' => true,
                     ],
                 ],
                 'submit' => ['title' => $this->module->l('Save'), 'class' => 'button btn btn-default pull-right'],
@@ -1047,8 +1024,6 @@ final class GetContentHookController extends AdminHookController
             'ALMA_DEFERRED_BUTTON_POSITION' => Settings::getPaymentButtonPositionDeferred(),
             'ALMA_SHOW_DISABLED_BUTTON' => Settings::showDisabledButton(),
             'ALMA_SHOW_ELIGIBILITY_MESSAGE_ON' => Settings::showEligibilityMessage(),
-            'ALMA_IS_ELIGIBLE_MESSAGE' => Settings::getEligibilityMessage(),
-            'ALMA_NOT_ELIGIBLE_MESSAGE' => Settings::getNonEligibilityMessage(),
             'ALMA_DISPLAY_ORDER_CONFIRMATION_ON' => Settings::displayOrderConfirmation(),
             'ALMA_ACTIVATE_LOGGING_ON' => (bool) Settings::canLog(),
             'ALMA_STATE_REFUND' => Settings::getRefundState(),

@@ -89,12 +89,8 @@ $_MODULE['<{alma}prestashop>getcontenthookcontroller_98f18c89e4d685c547191f23327
 $_MODULE['<{alma}prestashop>getcontenthookcontroller_366d7ba8c20d488eddca485888952b30'] = 'Sélecteur CSS du choix de quantité';
 $_MODULE['<{alma}prestashop>getcontenthookcontroller_97cadaaeae5141e73da33e4d1daa9687'] = '%1$sAvancé%2$s Sélecteur CSS utilisé par nos scripts pour extraire la quantité de produits choisie par le client';
 $_MODULE['<{alma}prestashop>getcontenthookcontroller_32b27986105ad9d3a8130e1c2f2055fb'] = 'Éligibilité du panier';
-$_MODULE['<{alma}prestashop>getcontenthookcontroller_2185543a093ecb0099cd5a97c32f9832'] = 'Indiquer l\'éligibilité du panier';
-$_MODULE['<{alma}prestashop>getcontenthookcontroller_1a5713f74511ac941ff2a131094c37e4'] = 'Affiche un message indiquant l’éligibilité du panier au paiement en plusieurs fois';
-$_MODULE['<{alma}prestashop>getcontenthookcontroller_e75f1795ca7e676a8b6b7a651fd59a26'] = 'Message d\'éligibilité';
-$_MODULE['<{alma}prestashop>getcontenthookcontroller_2c7407c96213d397e199daa2604a11c0'] = 'Message affiché en-dessous du panier lorsqu’il est éligible au paiement en plusieurs fois';
-$_MODULE['<{alma}prestashop>getcontenthookcontroller_130bde797609164c1107b27bb03f4c3c'] = 'Message de non-éligibilité';
-$_MODULE['<{alma}prestashop>getcontenthookcontroller_9cb9ef9b42273c2703740978520fd7b3'] = 'Message affiché en-dessous du panier lorsqu’il n\'est pas éligible au paiement en plusieurs fois';
+$_MODULE['<{alma}prestashop>getcontenthookcontroller_181e80a3b6c6145727dde8fd9867153a'] = 'Activer sur le panier';
+$_MODULE['<{alma}prestashop>getcontenthookcontroller_48c815d52ee86e0d7fc6eaa6d6ca458d'] = 'Afficher l\'éligibilité du panier';
 $_MODULE['<{alma}prestashop>getcontenthookcontroller_fb077ecba55e5552916bde26d8b9e794'] = 'Confirmation de commande';
 $_MODULE['<{alma}prestashop>getcontenthookcontroller_2f8907138277e6b1693dfa7ad4666f83'] = 'Afficher la confirmation de commande';
 $_MODULE['<{alma}prestashop>getcontenthookcontroller_83674e9661afaf7494705c4626a42db9'] = 'Activez cette option lorsque vous n\'avez pas votre propre page de confirmation de commande';
@@ -114,10 +110,7 @@ $_MODULE['<{alma}prestashop>paymentoptionshookcontroller_ab1e62594430a8b87995993
 $_MODULE['<{alma}prestashop>paymentvalidation_efa820507b1951ee5722003639b1a0b0'] = 'Alma n\'est pas disponible dans cette devise';
 $_MODULE['<{alma}prestashop>paymentvalidation_f92a56255bc589673e231e3d63cd8195'] = 'Alma - Paiement différé (+%d jours)';
 $_MODULE['<{alma}prestashop>paymentvalidation_6f11098989b14063e0a4cfe362734850'] = 'Alma - Paiement en %d fois';
-$_MODULE['<{alma}prestashop>settings_00606cb1a7827b23ee7191f6676d65b8'] = 'Paiement fractionné disponible';
 $_MODULE['<{alma}prestashop>settings_fb88c06896e14fceee15a6f25dc770b2'] = 'Paiement fractionné indisponible';
-$_MODULE['<{alma}prestashop>settings_f0dccaed959417fe135b77d2956c9c48'] = '(Montant minimum : %s)';
-$_MODULE['<{alma}prestashop>settings_32e97d76996c6f0dfd417842f5c4de0d'] = '(Montant maximum : %s)';
 $_MODULE['<{alma}prestashop>settings_fcbe63678596051e99d7ee95bf66e10f'] = 'Payer en plusieurs fois';
 $_MODULE['<{alma}prestashop>settings_2954f88f1b1da56d8a8b82f7e65de590'] = 'Payer en plusieurs fois par carte bancaire';
 $_MODULE['<{alma}prestashop>settings_673742ef792de1da72351e0e40ff4b95'] = 'Payer en %d fois par carte bancaire';
