@@ -23,6 +23,8 @@
 
 window.onload = function () {
     $(function () {
+        var selectors = JSON.parse($("#alma-widget-config").val());
+
         function initWidget(
             merchantId,
             apiMode,
@@ -33,7 +35,7 @@ window.onload = function () {
             var widgets = Alma.Widgets.initialize(merchantId, apiMode);
 
             widgets.add(Alma.Widgets.PaymentPlans, {
-                container: "#" + containerId,
+                container: containerId,
                 purchaseAmount: purchaseAmount,
                 plans: plans,
             });
@@ -59,10 +61,15 @@ window.onload = function () {
                 purchaseAmount = Alma.Utils.priceToCents(purchaseAmount);
             }
 
+            let position =
+                1 == selectors.isCartCustom
+                    ? selectors.cartPosition
+                    : "#alma-cart-widget";
+
             initWidget(
                 settings.merchantId,
                 settings.apiMode,
-                "alma-cart-widget",
+                position,
                 purchaseAmount,
                 settings.plans
             );

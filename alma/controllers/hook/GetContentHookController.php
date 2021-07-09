@@ -149,6 +149,12 @@ final class GetContentHookController extends AdminHookController
             $productQuantityQuerySelector = Tools::getValue('ALMA_PRODUCT_QUANTITY_SELECTOR');
             Settings::updateValue('ALMA_PRODUCT_QUANTITY_SELECTOR', $productQuantityQuerySelector);
 
+            $cartWidgetCustomPosition = (bool) Tools::getValue('ALMA_CART_WIDGET_POSITION_CUSTOM');
+            Settings::updateValue('ALMA_CART_WIDGET_POSITION_CUSTOM', $cartWidgetCustomPosition);
+
+            $cartWidgetPositionQuerySelector = Tools::getValue('ALMA_CART_WIDGET_POSITION_SELECTOR');
+            Settings::updateValue('ALMA_CART_WIDGET_POSITION_SELECTOR', $cartWidgetPositionQuerySelector);
+
             Settings::updateValue('ALMA_PAYMENT_BUTTON_TITLE', $title);
             Settings::updateValue('ALMA_PAYMENT_BUTTON_DESC', $description);
             Settings::updateValue('ALMA_PAYMENT_BUTTON_POSITION', $position);
@@ -848,6 +854,40 @@ final class GetContentHookController extends AdminHookController
                             ],
                         ],
                     ],
+                    [
+                        'name' => 'ALMA_CART_WIDGET_POSITION_CUSTOM',
+                        'type' => 'radio',
+                        'label' => $this->module->l('Display badge', 'GetContentHookController'),
+                        'class' => 't',
+                        'required' => true,
+                        'values' => [
+                            [
+                                'id' => 'OFF',
+                                'value' => false,
+                                'label' => $this->module->l('Display badge after cart (by default)', 'GetContentHookController'),
+                            ],
+                            [
+                                'id' => 'ON',
+                                'value' => true,
+                                'label' => $this->module->l('Display badge on custom css selector', 'GetContentHookController'),
+                            ],
+                        ],
+                    ],
+                    [
+                        'name' => 'ALMA_CART_WIDGET_POSITION_SELECTOR',
+                        'label' => $this->module->l('Display badge on custom css selector', 'GetContentHookController'),
+                        'desc' => sprintf(
+                            // PrestaShop won't detect the string if the call to `l` is multiline
+                            // phpcs:ignore
+                            $this->module->l('%1$sAdvanced%2$s [Optional] Query selector for our scripts to display the badge on cart page', 'GetContentHookController'),
+                            '<b>',
+                            '</b>'
+                        ),
+                        'type' => 'text',
+                        'size' => 75,
+                        'placeholder' => $this->module->l('E.g. #id, .class, ...', 'GetContentHookController'),
+                        'required' => false,
+                    ],
                 ],
                 'submit' => ['title' => $this->module->l('Save'), 'class' => 'button btn btn-default pull-right'],
             ],
@@ -1073,6 +1113,8 @@ final class GetContentHookController extends AdminHookController
             'ALMA_PRODUCT_PRICE_SELECTOR' => Settings::getProductPriceQuerySelector(),
             'ALMA_WIDGET_POSITION_SELECTOR' => Settings::getProductWidgetPositionQuerySelector(),
             'ALMA_WIDGET_POSITION_CUSTOM' => Settings::isWidgetCustomPosition(),
+            'ALMA_CART_WIDGET_POSITION_SELECTOR' => Settings::getCartWidgetPositionQuerySelector(),
+            'ALMA_CART_WIDGET_POSITION_CUSTOM' => Settings::isCartWidgetCustomPosition(),
             'ALMA_PRODUCT_ATTR_SELECTOR' => Settings::getProductAttrQuerySelector(),
             'ALMA_PRODUCT_ATTR_RADIO_SELECTOR' => Settings::getProductAttrRadioQuerySelector(),
             'ALMA_PRODUCT_COLOR_PICK_SELECTOR' => Settings::getProductColorPickQuerySelector(),

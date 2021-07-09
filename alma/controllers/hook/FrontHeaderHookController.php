@@ -96,7 +96,9 @@ final class FrontHeaderHookController extends FrontendHookController
             'colorPick' => Settings::getProductColorPickQuerySelector(),
             'quantity' => Settings::getProductQuantityQuerySelector(),
             'isCustom' => Settings::isWidgetCustomPosition(),
-            'position' => Settings::getProductWidgetPositionQuerySelector(), ]);
+            'position' => Settings::getProductWidgetPositionQuerySelector(),
+            'isCartCustom' => Settings::isCartWidgetCustomPosition(),
+            'cartPosition' => Settings::getCartWidgetPositionQuerySelector(), ]);
         $selectorsTpl->assign([
             'widgetQuerySelectors' => $widgetQuerySelectors,
         ]);

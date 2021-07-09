@@ -104,6 +104,8 @@ class Settings
             'ALMA_PRODUCT_QUANTITY_SELECTOR',
             'ALMA_WIDGET_POSITION_SELECTOR',
             'ALMA_WIDGET_POSITION_CUSTOM',
+            'ALMA_CART_WIDGET_POSITION_SELECTOR',
+            'ALMA_CART_WIDGET_POSITION_CUSTOM',
         ];
 
         foreach ($configKeys as $configKey) {
@@ -380,6 +382,18 @@ class Settings
     public static function isWidgetCustomPosition()
     {
         return (bool) (int) self::get('ALMA_WIDGET_POSITION_CUSTOM', false);
+    }
+
+    public static function getCartWidgetPositionQuerySelector()
+    {
+        $default = '';
+
+        return self::get('ALMA_CART_WIDGET_POSITION_SELECTOR', $default);
+    }
+
+    public static function isCartWidgetCustomPosition()
+    {
+        return (bool) (int) self::get('ALMA_CART_WIDGET_POSITION_CUSTOM', false);
     }
 
     public static function getProductAttrQuerySelector()

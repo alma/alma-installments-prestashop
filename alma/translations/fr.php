@@ -96,6 +96,8 @@ $_MODULE['<{alma}prestashop>getcontenthookcontroller_97cadaaeae5141e73da33e4d1da
 $_MODULE['<{alma}prestashop>getcontenthookcontroller_32b27986105ad9d3a8130e1c2f2055fb'] = 'Éligibilité du panier';
 $_MODULE['<{alma}prestashop>getcontenthookcontroller_181e80a3b6c6145727dde8fd9867153a'] = 'Activer sur le panier';
 $_MODULE['<{alma}prestashop>getcontenthookcontroller_48c815d52ee86e0d7fc6eaa6d6ca458d'] = 'Afficher l\'éligibilité du panier';
+$_MODULE['<{alma}prestashop>getcontenthookcontroller_7585570774ecf018af6ffb20b587e2a9'] = 'Afficher le badge après le panier (par défaut)';
+$_MODULE['<{alma}prestashop>getcontenthookcontroller_4de0aaff6698ae15ba4b87c10fcb2e6e'] = '%1$sAvancé%2$s [Optionnel] Sélecteur CSS utilisé par nos scripts pour afficher le badge sur la page du panier';
 $_MODULE['<{alma}prestashop>getcontenthookcontroller_fb077ecba55e5552916bde26d8b9e794'] = 'Confirmation de commande';
 $_MODULE['<{alma}prestashop>getcontenthookcontroller_2f8907138277e6b1693dfa7ad4666f83'] = 'Afficher la confirmation de commande';
 $_MODULE['<{alma}prestashop>getcontenthookcontroller_83674e9661afaf7494705c4626a42db9'] = 'Activez cette option lorsque vous n\'avez pas votre propre page de confirmation de commande';
