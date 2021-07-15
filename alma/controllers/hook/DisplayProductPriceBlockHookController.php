@@ -137,8 +137,7 @@ final class DisplayProductPriceBlockHookController extends FrontendHookControlle
             }
         }
         if ($isEligible) {
-            $this->context->smarty->assign(
-                [
+            $this->context->smarty->assign([
             'productId' => $productId,
             'psVersion' => $psVersion,
             'logo' => almaSvgDataUrl(_PS_MODULE_DIR_ . $this->module->name . '/views/img/logos/logo_alma.svg'),
@@ -152,9 +151,8 @@ final class DisplayProductPriceBlockHookController extends FrontendHookControlle
                 'refreshPrice' => $refreshPrice,
                 'decimalSeparator' => LocaleHelper::decimalSeparator(),
                 'thousandSeparator' => LocaleHelper::thousandSeparator(),
-            ],
-        ]
-            );
+                ],
+            ]);
 
             return $this->module->display($this->module->file, 'displayProductPriceBlock.tpl');
         } else {

@@ -73,7 +73,12 @@ final class PaymentOptionsHookController extends FrontendHookController
                         $duration
                     );
                     $paymentOption = [
-                        'link' => $this->context->link->getModuleLink($this->module->name, 'payment', ['key' => $key], true),
+                        'link' => $this->context->link->getModuleLink(
+                            $this->module->name,
+                            'payment',
+                            ['key' => $key],
+                            true
+                        ),
                         'duration' => $duration,
                         'key' => $key,
                         'pnx' => $n,
@@ -84,9 +89,16 @@ final class PaymentOptionsHookController extends FrontendHookController
                 }
             } else {
                 if ($n !== 1) {
-                    $logoPnx = Media::getMediaPath(_PS_MODULE_DIR_ . $this->module->name . "/views/img/logos/p${n}x_logo.svg");
+                    $logoPnx = Media::getMediaPath(
+                        _PS_MODULE_DIR_ . $this->module->name . "/views/img/logos/p${n}x_logo.svg"
+                    );
                     $paymentOption = [
-                        'link' => $this->context->link->getModuleLink($this->module->name, 'payment', ['key' => $key], true),
+                        'link' => $this->context->link->getModuleLink(
+                            $this->module->name,
+                            'payment',
+                            ['key' => $key],
+                            true
+                        ),
                         'plans' => $plans,
                         'error' => false,
                         'logo_pnx' => $logoPnx,

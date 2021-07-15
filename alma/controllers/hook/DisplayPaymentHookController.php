@@ -72,7 +72,12 @@ final class DisplayPaymentHookController extends FrontendHookController
                         $duration
                     );
                     $paymentOption = [
-                    'link' => $this->context->link->getModuleLink($this->module->name, 'payment', ['key' => $key], true),
+                    'link' => $this->context->link->getModuleLink(
+                        $this->module->name,
+                        'payment',
+                        ['key' => $key],
+                        true
+                    ),
                     'duration' => $duration,
                     'key' => $key,
                     'pnx' => $n,
@@ -84,13 +89,20 @@ final class DisplayPaymentHookController extends FrontendHookController
             } else {
                 if ($n != 1) {
                     if (is_callable('Media::getMediaPath')) {
-                        $logoPnx = Media::getMediaPath(_PS_MODULE_DIR_ . $this->module->name . "/views/img/logos/p${n}x_logo.svg");
+                        $logoPnx = Media::getMediaPath(
+                            _PS_MODULE_DIR_ . $this->module->name . "/views/img/logos/p${n}x_logo.svg"
+                        );
                     } else {
                         $logoPnx = $this->module->getPathUri() . "/views/img/logos/p${n}x_logo.svg";
                     }
 
                     $paymentOption = [
-                        'link' => $this->context->link->getModuleLink($this->module->name, 'payment', ['key' => $key], true),
+                        'link' => $this->context->link->getModuleLink(
+                            $this->module->name,
+                            'payment',
+                            ['key' => $key],
+                            true
+                        ),
                         'plans' => $plans,
                         'logo_pnx' => $logoPnx,
                         'pnx' => $n,
@@ -152,8 +164,12 @@ final class DisplayPaymentHookController extends FrontendHookController
         $this->context->smarty->assign(
             [
                 'logo' => $this->getAlmaLogo(),
-                'title' => $type == 'pnx' ? Settings::getPaymentButtonTitle() : Settings::getPaymentButtonTitleDeferred(),
-                'desc' => $type == 'pnx' ? Settings::getPaymentButtonDescription() : Settings::getPaymentButtonDescriptionDeferred(),
+                'title' => $type == 'pnx'
+                    ? Settings::getPaymentButtonTitle()
+                    : Settings::getPaymentButtonTitleDeferred(),
+                'desc' => $type == 'pnx'
+                    ? Settings::getPaymentButtonDescription()
+                    : Settings::getPaymentButtonDescriptionDeferred(),
                 'options' => $paymentOption,
                 'disabled' => $disabled,
                 'old_prestashop_version' => version_compare(_PS_VERSION_, '1.6', '<'),
@@ -166,7 +182,9 @@ final class DisplayPaymentHookController extends FrontendHookController
     private function getAlmaLogo()
     {
         if (is_callable('Media::getMediaPath')) {
-            $logo = Media::getMediaPath(_PS_MODULE_DIR_ . $this->module->name . '/views/img/logos/alma_payment_logos.svg');
+            $logo = Media::getMediaPath(
+                _PS_MODULE_DIR_ . $this->module->name . '/views/img/logos/alma_payment_logos.svg'
+            );
         } else {
             $logo = $this->module->getPathUri() . '/views/img/logos/alma_payment_logos.svg';
         }

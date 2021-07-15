@@ -114,9 +114,7 @@ final class FrontHeaderHookController extends FrontendHookController
             $controller->addCSS($this->module->_path . $productCssPath);
 
             $controller->addJS($widgetsJsUrl);
-            // $controller->addJS($this->module->_path . $productScriptPath);
-            if (
-                Settings::showEligibilityMessage() &&
+            if (Settings::showEligibilityMessage() &&
                 ($controller->php_self == 'order' && $controller->step == 0 || $controller->php_self == 'order-opc')
                 && (isset($controller->nbProducts) && $controller->nbProducts != 0)
             ) {
@@ -135,7 +133,6 @@ final class FrontHeaderHookController extends FrontendHookController
             } else {
                 $controller->registerJavascript('alma-product-script', $scriptPath, ['priority' => 1000]);
             }
-            //$controller->registerJavascript('alma-product-script', $scriptPath, ['priority' => 1000]);
             $controller->registerStylesheet('alma-product-css', $cssPath);
 
             if (version_compare(_PS_VERSION_, '1.7.0.2', '>=')) {
