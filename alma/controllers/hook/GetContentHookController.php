@@ -114,6 +114,9 @@ final class GetContentHookController extends AdminHookController
                 $positionDeferred = 2;
             }
             $showEligibility = (bool) Tools::getValue('ALMA_SHOW_ELIGIBILITY_MESSAGE_ON');
+            $showCartEligibilityNotEligible = (bool) Tools::getValue('ALMA_CART_WDGT_NOT_ELGBL_ON');
+            $showProductEligibilityNotEligible = (bool) Tools::getValue('ALMA_PRODUCT_WDGT_NOT_ELGBL_ON');
+
             $nonEligibleCategoriesMsg = Tools::getValue('ALMA_NOT_ELIGIBLE_CATEGORIES');
 
             if (
@@ -152,8 +155,8 @@ final class GetContentHookController extends AdminHookController
             $cartWidgetCustomPosition = (bool) Tools::getValue('ALMA_CART_WIDGET_POSITION_CUSTOM');
             Settings::updateValue('ALMA_CART_WIDGET_POSITION_CUSTOM', $cartWidgetCustomPosition);
 
-            $cartWidgetPositionQuerySelector = Tools::getValue('ALMA_CART_WIDGET_POSITION_SELECTOR');
-            Settings::updateValue('ALMA_CART_WIDGET_POSITION_SELECTOR', $cartWidgetPositionQuerySelector);
+            $cartWidgetPositionQuerySelector = Tools::getValue('ALMA_CART_WDGT_POS_SELECTOR');
+            Settings::updateValue('ALMA_CART_WDGT_POS_SELECTOR', $cartWidgetPositionQuerySelector);
 
             Settings::updateValue('ALMA_PAYMENT_BUTTON_TITLE', $title);
             Settings::updateValue('ALMA_PAYMENT_BUTTON_DESC', $description);
@@ -167,6 +170,9 @@ final class GetContentHookController extends AdminHookController
 
             Settings::updateValue('ALMA_SHOW_ELIGIBILITY_MESSAGE', $showEligibility);
             Settings::updateValue('ALMA_NOT_ELIGIBLE_CATEGORIES', $nonEligibleCategoriesMsg);
+
+            Settings::updateValue('ALMA_CART_WDGT_NOT_ELGBL', $showCartEligibilityNotEligible);
+            Settings::updateValue('ALMA_PRODUCT_WDGT_NOT_ELGBL', $showProductEligibilityNotEligible);
 
             $idStateRefund = Tools::getValue('ALMA_STATE_REFUND');
             Settings::updateValue('ALMA_STATE_REFUND', $idStateRefund);
@@ -717,19 +723,39 @@ final class GetContentHookController extends AdminHookController
                         ],
                     ],
                     [
+                        'name' => 'ALMA_PRODUCT_WDGT_NOT_ELGBL',
+                        'label' => $this->module->l('Display badge', 'GetContentHookController'),
+                        // phpcs:ignore
+                        'desc' => $this->module->l('Displays a badge when product price is too high or tow low', 'GetContentHookController'),
+                        'type' => 'checkbox',
+                        'values' => [
+                            'id' => 'id',
+                            'name' => 'label',
+                            'query' => [
+                                [
+                                    'id' => 'ON',
+                                    'val' => true,
+                                    // PrestaShop won't detect the string if the call to `l` is multiline
+                                    // phpcs:ignore
+                                    'label' => $this->module->l('Display badge when the product is not eligible.', 'GetContentHookController'),
+                                ],
+                            ],
+                        ],
+                    ],
+                    [
                         'name' => 'ALMA_WIDGET_POSITION_CUSTOM',
                         'type' => 'radio',
-                        'label' => $this->module->l('Display badge', 'GetContentHookController'),
+                        'label' => $this->module->l('Badge position', 'GetContentHookController'),
                         'class' => 't',
                         'required' => true,
                         'values' => [
                             [
-                                'id' => 'OFF',
+                                'id' => 'ALMA_WIDGET_POSITION_CUSTOM_OFF',
                                 'value' => false,
                                 'label' => $this->module->l('Display badge after price (by default)', 'GetContentHookController'),
                             ],
                             [
-                                'id' => 'ON',
+                                'id' => 'ALMA_WIDGET_POSITION_CUSTOM_ON',
                                 'value' => true,
                                 'label' => $this->module->l('Display badge on custom css selector', 'GetContentHookController'),
                             ],
@@ -855,26 +881,46 @@ final class GetContentHookController extends AdminHookController
                         ],
                     ],
                     [
+                        'name' => 'ALMA_CART_WDGT_NOT_ELGBL',
+                        'label' => $this->module->l('Display badge', 'GetContentHookController'),
+                        // phpcs:ignore
+                        'desc' => $this->module->l('Displays a badge when cart amount is too high or tow low', 'GetContentHookController'),
+                        'type' => 'checkbox',
+                        'values' => [
+                            'id' => 'id',
+                            'name' => 'label',
+                            'query' => [
+                                [
+                                    'id' => 'ON',
+                                    'val' => true,
+                                    // PrestaShop won't detect the string if the call to `l` is multiline
+                                    // phpcs:ignore
+                                    'label' => $this->module->l('Display badge when the cart is not eligible.', 'GetContentHookController'),
+                                ],
+                            ],
+                        ],
+                    ],
+                    [
                         'name' => 'ALMA_CART_WIDGET_POSITION_CUSTOM',
                         'type' => 'radio',
-                        'label' => $this->module->l('Display badge', 'GetContentHookController'),
+                        'label' => $this->module->l('Badge position', 'GetContentHookController'),
                         'class' => 't',
                         'required' => true,
                         'values' => [
                             [
-                                'id' => 'OFF',
+                                'id' => 'ALMA_CART_WIDGET_POSITION_CUSTOM_OFF',
                                 'value' => false,
                                 'label' => $this->module->l('Display badge after cart (by default)', 'GetContentHookController'),
                             ],
                             [
-                                'id' => 'ON',
+                                'id' => 'ALMA_CART_WIDGET_POSITION_CUSTOM_ON',
                                 'value' => true,
                                 'label' => $this->module->l('Display badge on custom css selector', 'GetContentHookController'),
                             ],
                         ],
                     ],
                     [
-                        'name' => 'ALMA_CART_WIDGET_POSITION_SELECTOR',
+                        'name' => 'ALMA_CART_WDGT_POS_SELECTOR',
                         'label' => $this->module->l('Display badge on custom css selector', 'GetContentHookController'),
                         'desc' => sprintf(
                             // PrestaShop won't detect the string if the call to `l` is multiline
@@ -1104,6 +1150,8 @@ final class GetContentHookController extends AdminHookController
             'ALMA_DEFERRED_BUTTON_POSITION' => Settings::getPaymentButtonPositionDeferred(),
             'ALMA_SHOW_DISABLED_BUTTON' => Settings::showDisabledButton(),
             'ALMA_SHOW_ELIGIBILITY_MESSAGE_ON' => Settings::showEligibilityMessage(),
+            'ALMA_CART_WDGT_NOT_ELGBL_ON' => Settings::showCartWidgetIfNotEligible(),
+            'ALMA_PRODUCT_WDGT_NOT_ELGBL_ON' => Settings::showProductWidgetIfNotEligible(),
             'ALMA_DISPLAY_ORDER_CONFIRMATION_ON' => Settings::displayOrderConfirmation(),
             'ALMA_ACTIVATE_LOGGING_ON' => (bool) Settings::canLog(),
             'ALMA_STATE_REFUND' => Settings::getRefundState(),
@@ -1113,7 +1161,7 @@ final class GetContentHookController extends AdminHookController
             'ALMA_PRODUCT_PRICE_SELECTOR' => Settings::getProductPriceQuerySelector(),
             'ALMA_WIDGET_POSITION_SELECTOR' => Settings::getProductWidgetPositionQuerySelector(),
             'ALMA_WIDGET_POSITION_CUSTOM' => Settings::isWidgetCustomPosition(),
-            'ALMA_CART_WIDGET_POSITION_SELECTOR' => Settings::getCartWidgetPositionQuerySelector(),
+            'ALMA_CART_WDGT_POS_SELECTOR' => Settings::getCartWidgetPositionQuerySelector(),
             'ALMA_CART_WIDGET_POSITION_CUSTOM' => Settings::isCartWidgetCustomPosition(),
             'ALMA_PRODUCT_ATTR_SELECTOR' => Settings::getProductAttrQuerySelector(),
             'ALMA_PRODUCT_ATTR_RADIO_SELECTOR' => Settings::getProductAttrRadioQuerySelector(),

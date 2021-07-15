@@ -80,6 +80,9 @@ $_MODULE['<{alma}prestashop>getcontenthookcontroller_c983e13e7d3723063c76831b801
 $_MODULE['<{alma}prestashop>getcontenthookcontroller_f87f93543cef831b750e04378e93946b'] = 'Affiche un badge Alma montrant les échéanciers disponibles';
 $_MODULE['<{alma}prestashop>getcontenthookcontroller_79d3451454dde4e88cac5f4574ceaf20'] = 'Afficher l\'éligibilité des produits';
 $_MODULE['<{alma}prestashop>getcontenthookcontroller_084b80cec4cc3ae2e46be76c1d46f1be'] = 'Afficher le badge';
+$_MODULE['<{alma}prestashop>getcontenthookcontroller_4df78495283c221ee042ab4cc46a34af'] = 'Affiche le badge lorsque le prix du produit est trop bas ou trop élevé';
+$_MODULE['<{alma}prestashop>getcontenthookcontroller_bf63845185a11afa206cad86cc18b5b7'] = 'Afficher le badge lorsque le produit n\'est pas éligible.';
+$_MODULE['<{alma}prestashop>getcontenthookcontroller_49d8a171493de99a27f3a669c94d6954'] = 'Position du badge';
 $_MODULE['<{alma}prestashop>getcontenthookcontroller_8d0b357f88a05575256c7f59f59d26a6'] = 'Afficher le badge après le prix (par défaut)';
 $_MODULE['<{alma}prestashop>getcontenthookcontroller_15574f3d05437ffe709ff767607b4fd8'] = 'Afficher le badge dans un selecteur CSS spécifique';
 $_MODULE['<{alma}prestashop>getcontenthookcontroller_c7f90b0228ce0e09fe5dccd6342ec7d2'] = '%1$sAvancé%2$s [Optionnel] Sélecteur CSS utilisé par nos scripts pour afficher le badge sur la page produit';
@@ -96,6 +99,8 @@ $_MODULE['<{alma}prestashop>getcontenthookcontroller_97cadaaeae5141e73da33e4d1da
 $_MODULE['<{alma}prestashop>getcontenthookcontroller_32b27986105ad9d3a8130e1c2f2055fb'] = 'Éligibilité du panier';
 $_MODULE['<{alma}prestashop>getcontenthookcontroller_181e80a3b6c6145727dde8fd9867153a'] = 'Activer sur le panier';
 $_MODULE['<{alma}prestashop>getcontenthookcontroller_48c815d52ee86e0d7fc6eaa6d6ca458d'] = 'Afficher l\'éligibilité du panier';
+$_MODULE['<{alma}prestashop>getcontenthookcontroller_75200c80e8cb1b12d9b437ab223b92a0'] = 'Affiche le badge lorsque le montant du panier est trop bas ou trop élevé';
+$_MODULE['<{alma}prestashop>getcontenthookcontroller_3d27a1c035d8075385f8f588926ffbb5'] = 'Afficher le badge lorsque le panier n\'est pas éligible.';
 $_MODULE['<{alma}prestashop>getcontenthookcontroller_7585570774ecf018af6ffb20b587e2a9'] = 'Afficher le badge après le panier (par défaut)';
 $_MODULE['<{alma}prestashop>getcontenthookcontroller_4de0aaff6698ae15ba4b87c10fcb2e6e'] = '%1$sAvancé%2$s [Optionnel] Sélecteur CSS utilisé par nos scripts pour afficher le badge sur la page du panier';
 $_MODULE['<{alma}prestashop>getcontenthookcontroller_fb077ecba55e5552916bde26d8b9e794'] = 'Confirmation de commande';
@@ -117,7 +122,7 @@ $_MODULE['<{alma}prestashop>paymentoptionshookcontroller_ab1e62594430a8b87995993
 $_MODULE['<{alma}prestashop>paymentvalidation_efa820507b1951ee5722003639b1a0b0'] = 'Alma n\'est pas disponible dans cette devise';
 $_MODULE['<{alma}prestashop>paymentvalidation_f92a56255bc589673e231e3d63cd8195'] = 'Alma - Paiement différé (+%d jours)';
 $_MODULE['<{alma}prestashop>paymentvalidation_6f11098989b14063e0a4cfe362734850'] = 'Alma - Paiement en %d fois';
-$_MODULE['<{alma}prestashop>settings_fb88c06896e14fceee15a6f25dc770b2'] = 'Paiement fractionné indisponible';
+$_MODULE['<{alma}prestashop>settings_7a854e750fe5f3e7120020c7c20987d4'] = 'Paiements avec Alma indisponibles';
 $_MODULE['<{alma}prestashop>settings_fcbe63678596051e99d7ee95bf66e10f'] = 'Payer en plusieurs fois';
 $_MODULE['<{alma}prestashop>settings_2954f88f1b1da56d8a8b82f7e65de590'] = 'Payer en plusieurs fois par carte bancaire';
 $_MODULE['<{alma}prestashop>settings_673742ef792de1da72351e0e40ff4b95'] = 'Payer en %d fois par carte bancaire';

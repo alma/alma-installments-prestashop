@@ -104,8 +104,10 @@ class Settings
             'ALMA_PRODUCT_QUANTITY_SELECTOR',
             'ALMA_WIDGET_POSITION_SELECTOR',
             'ALMA_WIDGET_POSITION_CUSTOM',
-            'ALMA_CART_WIDGET_POSITION_SELECTOR',
+            'ALMA_CART_WDGT_POS_SELECTOR',
             'ALMA_CART_WIDGET_POSITION_CUSTOM',
+            'ALMA_CART_WDGT_NOT_ELGBL',
+            'ALMA_PRODUCT_WDGT_NOT_ELGBL',
         ];
 
         foreach ($configKeys as $configKey) {
@@ -158,8 +160,8 @@ class Settings
     public static function getNonEligibleCategoriesMessage()
     {
         // Allow PrestaShop's translation feature to detect those strings
-        // $this->l('Your cart is not eligible for monthly installments.', 'settings');
-        $default = self::l('Your cart is not eligible for monthly installments.');
+        // $this->l('Your cart is not eligible for payments with Alma.', 'settings');
+        $default = self::l('Your cart is not eligible for payments with Alma.');
 
         return self::get('ALMA_NOT_ELIGIBLE_CATEGORIES', $default);
     }
@@ -167,6 +169,16 @@ class Settings
     public static function showEligibilityMessage()
     {
         return (bool) (int) self::get('ALMA_SHOW_ELIGIBILITY_MESSAGE', true);
+    }
+
+    public static function showCartWidgetIfNotEligible()
+    {
+        return (bool) (int) self::get('ALMA_CART_WDGT_NOT_ELGBL', true);
+    }
+
+    public static function showProductWidgetIfNotEligible()
+    {
+        return (bool) (int) self::get('ALMA_PRODUCT_WDGT_NOT_ELGBL', true);
     }
 
     public static function getPaymentButtonTitle()
@@ -388,7 +400,7 @@ class Settings
     {
         $default = '';
 
-        return self::get('ALMA_CART_WIDGET_POSITION_SELECTOR', $default);
+        return self::get('ALMA_CART_WDGT_POS_SELECTOR', $default);
     }
 
     public static function isCartWidgetCustomPosition()

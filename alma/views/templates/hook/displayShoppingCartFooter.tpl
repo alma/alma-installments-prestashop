@@ -21,7 +21,7 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  *}
 
-{if $isExcluded || !$isEligible}
+{if $isExcluded}
     <div style="margin: 15px 0">
         <img src="{$logo|escape:'htmlall':'UTF-8'}"
             style="width: auto !important; height: 25px !important; border: none !important; vertical-align: middle"

@@ -28,6 +28,7 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
+use Alma\PrestaShop\API\EligibilityHelper;
 use Alma\PrestaShop\Hooks\FrontendHookController;
 use Alma\PrestaShop\Model\CartData;
 use Alma\PrestaShop\Utils\LocaleHelper;
@@ -54,7 +55,18 @@ final class DisplayShoppingCartFooterHookController extends FrontendHookControll
 
         $cart = $this->context->cart;
         $cartTotal = almaPriceToCents((float) $cart->getOrderTotal(true, Cart::BOTH));
+
         $isEligible = true;
+        if (!Settings::showCartWidgetIfNotEligible()) {
+            $installmentPlans = EligibilityHelper::eligibilityCheck($this->context);
+            $isEligible = false;
+            foreach ($installmentPlans as $plan) {
+                if ($plan->installmentsCount !== 1 && $plan->isEligible) {
+                    $isEligible = true;
+                    break;
+                }
+            }
+        }
 
         // Check if some products in cart are in the excludes listing
         $isExcluded = false;
@@ -81,23 +93,26 @@ final class DisplayShoppingCartFooterHookController extends FrontendHookControll
             }
         }
 
-        $this->context->smarty->assign([
-            'eligibility_msg' => $eligibilityMsg,
-            'logo' => $logo,
-            'isExcluded' => $isExcluded,
-            'isEligible' => $isEligible,
-            'settings' => [
-                'merchantId' => Settings::getMerchantId(),
-                'apiMode' => Settings::getActiveMode(),
-                'amount' => $cartTotal,
-                'plans' => $activePlans,
-                'refreshPrice' => $refreshPrice,
-                'decimalSeparator' => LocaleHelper::decimalSeparator(),
-                'thousandSeparator' => LocaleHelper::thousandSeparator(),
-                'psVersion' => $psVersion,
-            ],
-        ]);
+        if ($isEligible) {
+            $this->context->smarty->assign([
+                'eligibility_msg' => $eligibilityMsg,
+                'logo' => $logo,
+                'isExcluded' => $isExcluded,
+                'settings' => [
+                    'merchantId' => Settings::getMerchantId(),
+                    'apiMode' => Settings::getActiveMode(),
+                    'amount' => $cartTotal,
+                    'plans' => $activePlans,
+                    'refreshPrice' => $refreshPrice,
+                    'decimalSeparator' => LocaleHelper::decimalSeparator(),
+                    'thousandSeparator' => LocaleHelper::thousandSeparator(),
+                    'psVersion' => $psVersion,
+                ],
+            ]);
 
-        return $this->module->display($this->module->file, 'displayShoppingCartFooter.tpl');
+            return $this->module->display($this->module->file, 'displayShoppingCartFooter.tpl');
+        } else {
+            return;
+        }
     }
 }
