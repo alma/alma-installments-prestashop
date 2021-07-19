@@ -23,7 +23,9 @@
 
 window.onload = function () {
     $(function () {
-        var selectors = JSON.parse($("#alma-widget-config").val());
+        if ($("#alma-widget-config").length) {
+            var selectors = JSON.parse($("#alma-widget-config").val());
+        }
 
         function initWidget(
             merchantId,
@@ -75,11 +77,13 @@ window.onload = function () {
             );
         }
 
-        if (window.prestashop != null && window.prestashop.on != null) {
-            prestashop.on("updatedCart", refreshWidgets);
-        }
+        if ($("#alma-widget-config").length) {
+            if (window.prestashop != null && window.prestashop.on != null) {
+                prestashop.on("updatedCart", refreshWidgets);
+            }
 
-        refreshWidgets();
-        window.__alma_refreshWidgets = refreshWidgets;
+            refreshWidgets();
+            window.__alma_refreshWidgets = refreshWidgets;
+        }
     });
 };

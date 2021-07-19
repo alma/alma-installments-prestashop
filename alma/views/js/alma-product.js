@@ -23,7 +23,9 @@
 
 (function ($) {
     $(function () {
-        var selectors = JSON.parse($("#alma-widget-config").val());
+        if ($("#alma-widget-config").length) {
+            var selectors = JSON.parse($("#alma-widget-config").val());
+        }
 
         function initWidget(
             merchantId,
@@ -108,18 +110,20 @@
             });
         }, 150);
 
-        if (window.prestashop != null && window.prestashop.on != null) {
-            prestashop.on("updatedProduct", refreshWidgets);
-        } else {
-            let $body = $("body");
-            $body.on("change", selectors.attrSelect, refreshWidgets);
-            $body.on("click", selectors.attrRadio, refreshWidgets);
-            $body.on("click", selectors.colorPick, refreshWidgets);
-            $body.on("keyup", selectors.quantity, refreshWidgets);
-            $body.on("change", selectors.quantity, refreshWidgets);
-        }
+        if ($("#alma-widget-config").length) {
+            if (window.prestashop != null && window.prestashop.on != null) {
+                prestashop.on("updatedProduct", refreshWidgets);
+            } else {
+                let $body = $("body");
+                $body.on("change", selectors.attrSelect, refreshWidgets);
+                $body.on("click", selectors.attrRadio, refreshWidgets);
+                $body.on("click", selectors.colorPick, refreshWidgets);
+                $body.on("keyup", selectors.quantity, refreshWidgets);
+                $body.on("change", selectors.quantity, refreshWidgets);
+            }
 
-        refreshWidgets(null, true);
-        window.__alma_refreshWidgets = refreshWidgets;
+            refreshWidgets(null, true);
+            window.__alma_refreshWidgets = refreshWidgets;
+        }
     });
 })(jQuery);

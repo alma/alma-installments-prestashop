@@ -22,14 +22,16 @@
  *}
 
 {assign var="iconDisplay" value=""}
+{assign var="almaButton" value="alma-button-with-bkg"}
 {if $old_prestashop_version}
     {assign var="iconDisplay" value="disable-arrow-icon"}
+    {assign var="almaButton" value="alma-button"}
 {/if}
 {if $disabled}
     <div class="row">
         <div class="col-xs-12">
             <p class="payment_module">
-                <a href="#" onclick="return false;" class="disabled alma-button {$iconDisplay}">
+                <a href="#" onclick="return false;" class="disabled {$almaButton} {$iconDisplay}">
                     <span class="alma-button--logo">
                         <img src="{$logo|escape:'htmlall':'UTF-8'}" alt="Alma">
                     </span>
@@ -53,7 +55,7 @@
         <div class="row">
             <div class="col-xs-12">
                 <p class="payment_module">
-                    <a  class="alma-button {$iconDisplay}">
+                    <a class="alma-fragments {$almaButton} {$iconDisplay}">
                         <span class="alma-button--logo">
                             <img src="{$logo|escape:'htmlall':'UTF-8'}" alt="Alma">
                         </span>
@@ -71,6 +73,7 @@
                                     {/if}
                                     <input {$checked} autocomplete="off" type="radio" name="alma_deferred" value="{$option.link}" id="{$option.key}">
                                     <label for="{$option.key}">
+                                        <img style="float:none;" src="{$option.logo_deferred|escape:'htmlall':'UTF-8'}" alt=""/>
                                         {$option.label}
                                         &nbsp;
                                     </label>                                    
@@ -108,19 +111,26 @@
     {/if}
     <script type="text/javascript">
         (function($) {
-            $(function() {        
-                $('input[name=alma_deferred]').on('change', function(){
-                    $('.alma-deferred-display').hide();                
-                    $('#alma-deferred-'+this.id).show();
+            $(function() {
+                $("input[name=alma_deferred]").on("change", function () {
+                    $(".display-fragment").remove();
+                    $(".alma-deferred-display").hide();                  
+                    $("#alma-deferred-" + this.id).show();
                 });                
 
-                $('#processAlmaDeferred').on('click', function(){
-                    let val = $('input[name=alma_deferred]:checked').val();
-                    if(val){
-                        window.location.href= val;
-                    }
-                })
+                $("#processAlmaDeferred").click(function (e) {
+                    e.preventDefault();
+                    $(".display-fragment").remove();
+                    $(this)
+                        .parent()
+                        .parent()
+                        .after(
+                            '<div id="alma-payment" class="col-xs-12 display-fragment"></div>'
+                        );
+                    let url = $("input[name=alma_deferred]:checked").val();
+                    processAlmaPayment(url);
+                });                                
             });
         })(jQuery);
-    </script>
+    </script>    
 {/if}

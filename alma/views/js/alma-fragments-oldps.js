@@ -1,4 +1,4 @@
-{*
+/**
  * 2018-2021 Alma SAS
  *
  * THE MIT LICENSE
@@ -19,24 +19,41 @@
  * @author    Alma SAS <contact@getalma.eu>
  * @copyright 2018-2021 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
- *}
+ */
 
-<div id="alma-excluded">
-    <p>
-        {almaDisplayHtml}
-            {l s='Some products (gift cards, license keys, software, weapons, ...) cannot be sold with Alma, as per %sour terms%s (see Exclusions paragraph).' mod='alma' sprintf=array('<a href="https://getalma.eu/legal/terms/payment" target="_blank">', '</a>')}
-        {/almaDisplayHtml}
-    </p>
+$(function () {
+    almaPay = function (paymentData) {
+        fragments.createPaymentForm(paymentData).mount("#alma-payment");
+        $("html, body").animate(
+            {
+                scrollTop: $("#alma-payment").offset().top,
+            },
+            3000
+        );
+    };
 
-    <p>{l s='If you are selling such products on your shop, you need to configure Alma so that it is not enabled when customers view or shop them.' mod='alma'}</p>
+    processAlmaPayment = function (url) {
+        $.ajax({
+            type: "POST",
+            url: url,
+            dataType: "json",
+            data: {
+                ajax: true,
+                action: "payment",
+            },
+        })
+            .done(function (data) {
+                almaPay(data);
+            })
+            .fail(function () {
+                window.location.href = "index.php?controller=order&step=1";
+            });
+    };
 
-    <p style="margin: 20px 0;">
-        {almaDisplayHtml}
-            {l s='Use the %1$s%2$scategory exclusions page%3$s%4$s to comply with these restrictions.' sprintf=array('<strong>', "<a href='$excludedLink'>", '</a>', '</strong>') mod='alma'}
-        {/almaDisplayHtml}
-    </p>
-    <p>
-        <strong>{l s='Categories currently excluded : ' mod='alma'}</strong>
-        {$excludedCategories|escape:'htmlall':'UTF-8'}
-    </p>
-</div>
+    const fragments = new Alma.Fragments(
+        $("#almaFragments").data("merchantid"),
+        {
+            mode: $("#almaFragments").data("apimode"),
+        }
+    );
+});

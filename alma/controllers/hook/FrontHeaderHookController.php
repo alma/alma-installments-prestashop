@@ -38,7 +38,7 @@ final class FrontHeaderHookController extends FrontendHookController
         $controllerName = $this->currentControllerName();
         $handler = [$this, "handle${controllerName}Page"];
 
-        $content = $this->injectWidgetAssets($params);
+        $content = $this->injectAlmaAssets($params);
 
         if (is_callable($handler)) {
             return $content . call_user_func_array($handler, [$params]);
@@ -70,82 +70,92 @@ final class FrontHeaderHookController extends FrontendHookController
         return $this->handleOrderPage($params);
     }
 
-    private function injectWidgetAssets($params)
+    private function injectAlmaAssets($params)
     {
-        if (!Settings::showProductEligibility()) {
-            return null;
-        }
-
         $widgetsCssUrl = 'https://cdn.jsdelivr.net/npm/@alma/widgets@1.x/dist/alma-widgets.css';
         $widgetsJsUrl = 'https://cdn.jsdelivr.net/npm/@alma/widgets@1.x/dist/alma-widgets.umd.js';
         $productScriptPath = 'views/js/alma-product.js';
         $productCssPath = 'views/css/alma-product.css';
         $cartScriptPath = 'views/js/alma-cart.js';
 
+        $fragmentsScriptPath = 'views/js/alma-fragments.js';
+        $fragmentsJsUrl = Settings::getFragmentsJsUrl();
+
         $controller = $this->context->controller;
-
-        $smarty = $this->context->smarty;
-        $selectorsTpl = $smarty->createTemplate(
-            "{$this->module->local_path}views/templates/hook/widgetQuerySelectors.tpl"
-        );
-
-        $widgetQuerySelectors = json_encode([
-            'price' => Settings::getProductPriceQuerySelector(),
-            'attrSelect' => Settings::getProductAttrQuerySelector(),
-            'attrRadio' => Settings::getProductAttrRadioQuerySelector(),
-            'colorPick' => Settings::getProductColorPickQuerySelector(),
-            'quantity' => Settings::getProductQuantityQuerySelector(),
-            'isCustom' => Settings::isWidgetCustomPosition(),
-            'position' => Settings::getProductWidgetPositionQuerySelector(),
-            'isCartCustom' => Settings::isCartWidgetCustomPosition(),
-            'cartPosition' => Settings::getCartWidgetPositionQuerySelector(), ]);
-        $selectorsTpl->assign([
-            'widgetQuerySelectors' => $widgetQuerySelectors,
-        ]);
-
-        $content = $selectorsTpl->fetch();
+        $content = null;
 
         if (version_compare(_PS_VERSION_, '1.7', '<')) {
-            if (version_compare(_PS_VERSION_, '1.5.6.2', '<')) {
-                $content .= '<link rel="stylesheet" href="' . $widgetsCssUrl . '">';
+            // Fragments
+            if (($controller->php_self == 'order' && $controller->step == 3) || $controller->php_self == 'order-opc') {
+                $fragmentsScriptPath = 'views/js/alma-fragments-oldps.js';
+                $controller->addJS($fragmentsJsUrl);
+                $controller->addJS($this->module->_path . $fragmentsScriptPath);
             } else {
-                $controller->addCSS($widgetsCssUrl);
-            }
-            $controller->addCSS($this->module->_path . $productCssPath);
-
-            $controller->addJS($widgetsJsUrl);
-            if (Settings::showEligibilityMessage() &&
-                ($controller->php_self == 'order' && $controller->step == 0 || $controller->php_self == 'order-opc')
-                && (isset($controller->nbProducts) && $controller->nbProducts != 0)
-            ) {
-                $controller->addJS($this->module->_path . $cartScriptPath);
-            } else {
-                $controller->addJS($this->module->_path . $productScriptPath);
+                // Cart widget
+                if (Settings::showEligibilityMessage() &&
+                    ($controller->php_self == 'order' && $controller->step == 0 || $controller->php_self == 'order-opc')
+                    && (isset($controller->nbProducts) && $controller->nbProducts != 0)
+                ) {
+                    if (version_compare(_PS_VERSION_, '1.5.6.2', '<')) {
+                        $content .= '<link rel="stylesheet" href="' . $widgetsCssUrl . '">';
+                    } else {
+                        $controller->addCSS($widgetsCssUrl);
+                    }
+                    $controller->addCSS($this->module->_path . $productCssPath);
+                    $controller->addJS($widgetsJsUrl);
+                    $controller->addJS($this->module->_path . $cartScriptPath);
+                }
+                // Product widget
+                elseif (Settings::showProductEligibility()
+                && ($controller->php_self == 'product' || 'ProductController' == get_class($controller))) {
+                    if (version_compare(_PS_VERSION_, '1.5.6.2', '<')) {
+                        $content .= '<link rel="stylesheet" href="' . $widgetsCssUrl . '">';
+                    } else {
+                        $controller->addCSS($widgetsCssUrl);
+                    }
+                    $controller->addCSS($this->module->_path . $productCssPath);
+                    $controller->addJS($widgetsJsUrl);
+                    $controller->addJS($this->module->_path . $productScriptPath);
+                }
             }
         } else {
             $moduleName = $this->module->name;
             $scriptPath = "modules/$moduleName/$productScriptPath";
             $cssPath = "modules/$moduleName/$productCssPath";
             $cartScriptPath = "modules/$moduleName/$cartScriptPath";
+            $fragmentsScriptPath = "modules/$moduleName/$fragmentsScriptPath";
 
-            if ($controller->php_self == 'cart' && Settings::showEligibilityMessage()) {
+            if ($controller->php_self == 'order') {
+                $controller->registerJavascript('alma-fragments-script', $fragmentsScriptPath, ['priority' => 1000, 'position' => 'head']);
+            } elseif ($controller->php_self == 'cart' && Settings::showEligibilityMessage()) {
+                $controller->registerStylesheet('alma-product-css', $cssPath);
                 $controller->registerJavascript('alma-cart-script', $cartScriptPath, ['priority' => 1000]);
-            } else {
+            } elseif (Settings::showProductEligibility() && $controller->php_self == 'product') {
+                $controller->registerStylesheet('alma-product-css', $cssPath);
                 $controller->registerJavascript('alma-product-script', $scriptPath, ['priority' => 1000]);
             }
-            $controller->registerStylesheet('alma-product-css', $cssPath);
 
             if (version_compare(_PS_VERSION_, '1.7.0.2', '>=')) {
-                $controller->registerStylesheet('alma-remote-widgets-css', $widgetsCssUrl, ['server' => 'remote']);
-                $controller->registerJavascript('alma-remote-widgets-js', $widgetsJsUrl, ['server' => 'remote']);
+                if ($controller->php_self == 'order') {
+                    $controller->registerJavascript('alma-remote-fragments-js', $fragmentsJsUrl, ['server' => 'remote', 'position' => 'head']);
+                } elseif (($controller->php_self == 'cart' && Settings::showEligibilityMessage()) || $controller->php_self == 'product') {
+                    $controller->registerStylesheet('alma-remote-widgets-css', $widgetsCssUrl, ['server' => 'remote']);
+                    $controller->registerJavascript('alma-remote-widgets-js', $widgetsJsUrl, ['server' => 'remote']);
+                }
             } else {
                 // For versions 1.7.0.0 and 1.7.0.1, it was impossible to register a remote script via FrontController
                 // with the new registerJavascript method, and the deprecated addJS method had been changed to be just a
                 // proxy to registerJavascript...
-                $content .= <<<TAG
+                if ($controller->php_self == 'order') {
+                    $content .= <<<TAG
+                    <script scr="$fragmentsJsUrl"></script>
+TAG;
+                } else {
+                    $content .= <<<TAG
 					<link rel="stylesheet" href="$widgetsCssUrl">
 					<script src="$widgetsJsUrl"></script>
 TAG;
+                }
             }
         }
 

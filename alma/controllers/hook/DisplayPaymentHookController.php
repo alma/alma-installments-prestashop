@@ -65,10 +65,17 @@ final class DisplayPaymentHookController extends FrontendHookController
             if (Settings::isDeferred($plan)) {
                 if ($n == 1) {
                     $duration = Settings::getDuration($plan);
+                    if (is_callable('Media::getMediaPath')) {
+                        $logoDeferred = Media::getMediaPath(
+                            _PS_MODULE_DIR_ . $this->module->name . "/views/img/logos/${duration}j_logo.svg"
+                        );
+                    } else {
+                        $logoDeferred = $this->module->getPathUri() . "/views/img/logos/${duration}j_logo.svg";
+                    }
                     // `l` method call isn't detected by translation tool if multiline
                     // phpcs:ignore
                     $label = sprintf(
-                        $this->module->l('+ %d days', 'DisplayPaymentHookController'),
+                        $this->module->l('days', 'DisplayPaymentHookController'),
                         $duration
                     );
                     $paymentOption = [
@@ -81,6 +88,7 @@ final class DisplayPaymentHookController extends FrontendHookController
                     'duration' => $duration,
                     'key' => $key,
                     'pnx' => $n,
+                    'logo_deferred' => $logoDeferred,
                     'label' => $label,
                     'plans' => $plans,
                     ];
@@ -173,6 +181,8 @@ final class DisplayPaymentHookController extends FrontendHookController
                 'options' => $paymentOption,
                 'disabled' => $disabled,
                 'old_prestashop_version' => version_compare(_PS_VERSION_, '1.6', '<'),
+                'merchantId' => Settings::getMerchantId(),
+                'apiMode' => Settings::getActiveMode(),
             ]
         );
 

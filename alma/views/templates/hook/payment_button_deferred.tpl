@@ -33,7 +33,8 @@
             {assign var="checked" value="checked='checked'"}
         {/if}        
             <input {$checked} onclick="handleChangeAlmaDeferred(this);" autocomplete="off" type="radio" name="alma_deferred" value="{$option.link}" id="{$option.key}">
-            {l s='+ %d days' sprintf=array($option.duration) mod='alma'}
+            <img style="float:none;" src="{$option.logo_deferred|escape:'htmlall':'UTF-8'}" alt=""/>
+            {l s='days' sprintf=array($option.duration) mod='alma'}
             &nbsp;
         </label>
     {/foreach}

@@ -43,7 +43,7 @@ $_MODULE['<{alma}prestashop>adminalmacategories_1ef246272d910a217e66aff142f708ad
 $_MODULE['<{alma}prestashop>payment_2f9f52496706027b880bac2e3c9af1d8'] = 'Une erreur est survenue lors de la requête de paiement. Veuillez réessayer, ou contactez-nous si le problème persiste.';
 $_MODULE['<{alma}prestashop>payment_efa820507b1951ee5722003639b1a0b0'] = 'Le paiement en plusieurs fois Alma n\'est pas disponible pour cette devise';
 $_MODULE['<{alma}prestashop>validation_9d55a51cbc2d6cf7f9251b0cec59390e'] = 'Une erreur est survenue lors de la validation de votre paiement. Veuillez réessayer ou nous contacter si le problème persiste. ID Panier : %d';
-$_MODULE['<{alma}prestashop>displaypaymenthookcontroller_ab1e62594430a8b87995993312cdd200'] = '+ %d jours';
+$_MODULE['<{alma}prestashop>displaypaymenthookcontroller_44fdec47036f482b68b748f9d786801b'] = 'jours';
 $_MODULE['<{alma}prestashop>getcontenthookcontroller_1d13f5970032b45327add3c337ac82ee'] = 'Configuration de l\'API';
 $_MODULE['<{alma}prestashop>getcontenthookcontroller_fe1d478b2e434b92277b47f0cf62e040'] = 'Mode de l\'API';
 $_MODULE['<{alma}prestashop>getcontenthookcontroller_0e95e5facc2cad62d6458c65164c4455'] = 'Utilisez le mode Test jusqu’à ce que vous soyez prêt(e) à accepter des commandes avec Alma. En mode Test, seuls les administrateurs voient Alma sur les pages de panier/validation de commande.';
@@ -165,7 +165,7 @@ $_MODULE['<{alma}prestashop>getcontent_8e51eafe439b0adfecc2dc209c2efb15'] = 'Vou
 $_MODULE['<{alma}prestashop>getcontent_1e6898bbd6a44041932ac84cbda13bd7'] = 'Retrouvez votre clef d\'API Live sur %1$svotre tableau de bord Alma%2$s';
 $_MODULE['<{alma}prestashop>getcontent_689c39b29a6d91e6dff728a7762cbc9e'] = 'Pour utiliser le mode Test, récupérez votre clef d\'API Test sur %1$svotre tableau de bord sandbox%2$s';
 $_MODULE['<{alma}prestashop>getcontent_7f40d377cc4942c4f0d6e75a736f8445'] = 'Configuration enregistrée avec succès';
-$_MODULE['<{alma}prestashop>payment_button_deferred_ab1e62594430a8b87995993312cdd200'] = '+ %d jours';
+$_MODULE['<{alma}prestashop>payment_button_deferred_44fdec47036f482b68b748f9d786801b'] = 'jours';
 $_MODULE['<{alma}prestashop>pnx_fees_4e2f4fa3e1ee06a189998bdf3748658e'] = 'Vous pouvez proposer le paiement différé pour des montants entre %d€ et %d€.';
 $_MODULE['<{alma}prestashop>pnx_fees_549a5d74b2274c6ed70cd44e7281f35a'] = 'Vous pouvez proposer le paiement différé en %d fois pour des montants entre %d€ et %d€.';
 $_MODULE['<{alma}prestashop>pnx_fees_fecab32c5aaa794e9bf4d86081269a57'] = 'Vous pouvez proposer le paiement en %d fois pour des montants entre %d€ et %d€.';

@@ -64,8 +64,11 @@ final class PaymentOptionsHookController extends FrontendHookController
             $key = "general_{$n}_{$plan->deferredDays}_{$plan->deferredMonths}";
             $plans = $plan->paymentPlan;
             if (Settings::isDeferred($plan)) {
-                if ($n === 1) {
+                if ($n == 1) {
                     $duration = Settings::getDuration($plan);
+                    $logoDeferred = Media::getMediaPath(
+                        _PS_MODULE_DIR_ . $this->module->name . "/views/img/logos/${duration}j_logo.svg"
+                    );
                     // `l` method call isn't detected by translation tool if multiline
                     // phpcs:ignore
                     $label = sprintf(
@@ -83,12 +86,13 @@ final class PaymentOptionsHookController extends FrontendHookController
                         'key' => $key,
                         'pnx' => $n,
                         'label' => $label,
+                        'logo_deferred' => $logoDeferred,
                         'plans' => $plans,
                     ];
                     $paymentOptionDeferredData[$duration] = $paymentOption;
                 }
             } else {
-                if ($n !== 1) {
+                if ($n != 1) {
                     $logoPnx = Media::getMediaPath(
                         _PS_MODULE_DIR_ . $this->module->name . "/views/img/logos/p${n}x_logo.svg"
                     );

@@ -108,11 +108,18 @@ final class DisplayShoppingCartFooterHookController extends FrontendHookControll
                     'thousandSeparator' => LocaleHelper::thousandSeparator(),
                     'psVersion' => $psVersion,
                 ],
+                'widgetQuerySelectors' => json_encode([
+                    'price' => Settings::getProductPriceQuerySelector(),
+                    'attrSelect' => Settings::getProductAttrQuerySelector(),
+                    'attrRadio' => Settings::getProductAttrRadioQuerySelector(),
+                    'colorPick' => Settings::getProductColorPickQuerySelector(),
+                    'quantity' => Settings::getProductQuantityQuerySelector(),
+                    'isCartCustom' => Settings::isCartWidgetCustomPosition(),
+                    'cartPosition' => Settings::getCartWidgetPositionQuerySelector(),
+                    ]),
             ]);
 
             return $this->module->display($this->module->file, 'displayShoppingCartFooter.tpl');
-        } else {
-            return;
         }
     }
 }

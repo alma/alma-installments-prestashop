@@ -22,15 +22,17 @@
  *}
 
 {assign var="iconDisplay" value=""}
+{assign var="almaButton" value="alma-button-with-bkg"}
 {if $old_prestashop_version}
     {assign var="iconDisplay" value="disable-arrow-icon"}
+     {assign var="almaButton" value="alma-button"}
 {/if}
 
 {if $disabled}
     <div class="row">
         <div class="col-xs-12">
             <p class="payment_module">
-                <a href="#" onclick="return false;" class="disabled alma-button {$iconDisplay}">
+                <a href="#" onclick="return false;" class="disabled {$almaButton} {$iconDisplay}">
                     <span class="alma-button--logo">
                         <img src="{$logo|escape:'htmlall':'UTF-8'}" alt="Alma">
                     </span>
@@ -54,7 +56,7 @@
         <div class="row">
             <div class="col-xs-12">
                 <p class="payment_module">
-                    <a  class="alma-button {$iconDisplay}">
+                    <a  class="alma-fragments {$almaButton} {$iconDisplay}">
                         <span class="alma-button--logo">
                             <img src="{$logo|escape:'htmlall':'UTF-8'}" alt="Alma">
                         </span>
@@ -99,7 +101,7 @@
                                 </span>
                             {else}
                                 </button>
-                            {/if}                                                        
+                            {/if}
                         </span>
                     </a>
                 </p>
@@ -110,16 +112,23 @@
         (function($) {
             $(function() {
                 $('input[name=alma_pnx]').on('change', function(){
+                    $(".display-fragment").remove();
                     $('.alma-fee-plans-display').hide();                
                     $('#fee_plans_'+this.id).show();
                 });
 
-                $('#processAlmaPnx').on('click', function(){
-                    let val = $('input[name=alma_pnx]:checked').val();
-                    if(val){
-                        window.location.href= val;
-                    }
-                });            
+                 $("#processAlmaPnx").click(function (e) {
+                    e.preventDefault();
+                    $(".display-fragment").remove();
+                    $(this)
+                        .parent()
+                        .parent()
+                        .after(
+                            '<div id="alma-payment" class="col-xs-12 display-fragment"></div>'
+                        );
+                    let url = $("input[name=alma_pnx]:checked").val();
+                    processAlmaPayment(url);
+                });          
             });
         })(jQuery);
     </script>

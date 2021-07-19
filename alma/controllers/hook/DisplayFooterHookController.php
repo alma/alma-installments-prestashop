@@ -1,4 +1,5 @@
-{*
+<?php
+/**
  * 2018-2021 Alma SAS
  *
  * THE MIT LICENSE
@@ -19,9 +20,34 @@
  * @author    Alma SAS <contact@getalma.eu>
  * @copyright 2018-2021 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
- *}
+ */
 
+namespace Alma\PrestaShop\Controllers\Hook;
 
-<div style="display:none">
-    <input type="hidden" id="alma-widget-config" value="{$widgetQuerySelectors|escape}" />
-</div>
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
+use Alma\PrestaShop\Hooks\FrontendHookController;
+use Alma\PrestaShop\Utils\Settings;
+
+final class DisplayFooterHookController extends FrontendHookController
+{
+    public function canRun()
+    {
+        return parent::canRun() && Settings::getMerchantId() !== null;
+    }
+
+    public function run($params)
+    {
+        $controller = $this->context->controller;
+        if (($controller->php_self == 'order' && $controller->step == 3) || $controller->php_self == 'order-opc') {
+            $this->context->smarty->assign([
+            'merchantId' => Settings::getMerchantId(),
+            'apiMode' => Settings::getActiveMode(),
+            ]);
+
+            return $this->module->display($this->module->file, 'fragments.tpl');
+        }
+    }
+}

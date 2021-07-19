@@ -152,11 +152,18 @@ final class DisplayProductPriceBlockHookController extends FrontendHookControlle
                 'decimalSeparator' => LocaleHelper::decimalSeparator(),
                 'thousandSeparator' => LocaleHelper::thousandSeparator(),
                 ],
+            'widgetQuerySelectors' => json_encode([
+                'price' => Settings::getProductPriceQuerySelector(),
+                'attrSelect' => Settings::getProductAttrQuerySelector(),
+                'attrRadio' => Settings::getProductAttrRadioQuerySelector(),
+                'colorPick' => Settings::getProductColorPickQuerySelector(),
+                'quantity' => Settings::getProductQuantityQuerySelector(),
+                'isCustom' => Settings::isWidgetCustomPosition(),
+                'position' => Settings::getProductWidgetPositionQuerySelector(),
+                ]),
             ]);
 
             return $this->module->display($this->module->file, 'displayProductPriceBlock.tpl');
-        } else {
-            return;
         }
     }
 }

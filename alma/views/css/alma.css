@@ -34,13 +34,16 @@
     opacity: 0.5;
 }
 
-.payment_module a.alma-button {
-    width: 100%;
+p.payment_module a.alma-button-with-bkg {
     background: #fbfbfb;
     padding: 20px 17px;
 }
 
-p.payment_module a.alma-button:after {
+.payment_module a.alma-button {
+    padding: 20px 17px;
+}
+
+p.payment_module a:after {
     display: block;
     content: "\f054";
     position: absolute;
@@ -54,7 +57,7 @@ p.payment_module a.alma-button:after {
     color: #777;
 }
 
-p.payment_module a.alma-button.disable-arrow-icon:after {
+p.payment_module a.disable-arrow-icon:after {
     display: none;
 }
 
@@ -75,6 +78,7 @@ p.payment_module a.alma-button.disable-arrow-icon:after {
     color: #333 !important;
 }
 
+.alma-button-with-bkg > span,
 .alma-button > span {
     display: inline-block !important;
     vertical-align: middle !important;
@@ -85,6 +89,7 @@ p.payment_module a.alma-button.disable-arrow-icon:after {
     color: #777;
 }
 
+.payment_module .alma-button-with-bkg .alma-button--fee-plans,
 .payment_module .alma-button .alma-button--fee-plans {
     display: block;
     margin-top: 15px;
