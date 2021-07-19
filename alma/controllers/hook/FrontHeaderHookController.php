@@ -126,7 +126,11 @@ final class FrontHeaderHookController extends FrontendHookController
             $fragmentsScriptPath = "modules/$moduleName/$fragmentsScriptPath";
 
             if ($controller->php_self == 'order') {
-                $controller->registerJavascript('alma-fragments-script', $fragmentsScriptPath, ['priority' => 1000, 'position' => 'head']);
+                $controller->registerJavascript(
+                    'alma-fragments-script',
+                    $fragmentsScriptPath,
+                    ['priority' => 1000, 'position' => 'head']
+                );
             } elseif ($controller->php_self == 'cart' && Settings::showEligibilityMessage()) {
                 $controller->registerStylesheet('alma-product-css', $cssPath);
                 $controller->registerJavascript('alma-cart-script', $cartScriptPath, ['priority' => 1000]);
@@ -137,8 +141,13 @@ final class FrontHeaderHookController extends FrontendHookController
 
             if (version_compare(_PS_VERSION_, '1.7.0.2', '>=')) {
                 if ($controller->php_self == 'order') {
-                    $controller->registerJavascript('alma-remote-fragments-js', $fragmentsJsUrl, ['server' => 'remote', 'position' => 'head']);
-                } elseif (($controller->php_self == 'cart' && Settings::showEligibilityMessage()) || $controller->php_self == 'product') {
+                    $controller->registerJavascript(
+                        'alma-remote-fragments-js',
+                        $fragmentsJsUrl,
+                        ['server' => 'remote', 'position' => 'head']
+                    );
+                } elseif (($controller->php_self == 'cart' && Settings::showEligibilityMessage())
+                || $controller->php_self == 'product') {
                     $controller->registerStylesheet('alma-remote-widgets-css', $widgetsCssUrl, ['server' => 'remote']);
                     $controller->registerJavascript('alma-remote-widgets-js', $widgetsJsUrl, ['server' => 'remote']);
                 }
