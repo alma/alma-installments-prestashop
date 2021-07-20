@@ -72,6 +72,20 @@ function upgrade_module_2_0_0($module)
             foreach ($configKeys as $configKey) {
                 Configuration::deleteByName($configKey);
             }
+
+            if (version_compare(_PS_VERSION_, '1.7', '>=')) {
+                $module->registerHook('displayPaymentTop');
+            } else {
+                $module->registerHook('displayFooter');
+            }
+
+            Configuration::deleteByName('ALMA_NOT_ELIGIBLE_CATEGORIES');
+            Configuration::deleteByName('ALMA_PAYMENT_BUTTON_TITLE');
+            Configuration::deleteByName('ALMA_PAYMENT_BUTTON_DESC');
+            Settings::updateValue('ALMA_NOT_ELIGIBLE_CATEGORIES', Settings::getNonEligibleCategoriesMessage());
+            Settings::updateValue('ALMA_PAYMENT_BUTTON_TITLE', Settings::getPaymentButtonTitle());
+            Settings::updateValue('ALMA_PAYMENT_BUTTON_DESC', Settings::getPaymentButtonDescription());
+            Settings::updateValue('ALMA_FEE_PLANS', json_encode($almaPlans));
         } catch (RequestError $e) {
             return true;
         }
