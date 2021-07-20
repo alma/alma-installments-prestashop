@@ -137,7 +137,5 @@ class AlmaPaymentModuleFrontController extends ModuleFrontController
         method_exists(get_parent_class($this), 'ajaxDie')
         ? $this->ajaxDie(json_encode($data))
         : die(Tools::jsonEncode($data));
-
-        return false;
     }
 }

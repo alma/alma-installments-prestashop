@@ -1206,7 +1206,6 @@ final class GetContentHookController extends AdminHookController
                     ? $installmentsPlans->$key->max
                     : $feePlan->max_purchase_amount;
                 $helper->fields_value["ALMA_${key}_MAX_AMOUNT"] = (int) almaPriceFromCents($maxAmount);
-                $sortOrder = isset($installmentsPlans->$key->sort) ? $installmentsPlans->$key->sort : $i;
                 ++$i;
             }
         }
