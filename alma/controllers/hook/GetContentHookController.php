@@ -105,14 +105,7 @@ final class GetContentHookController extends AdminHookController
             $titleDeferred = Tools::getValue('ALMA_DEFERRED_BUTTON_TITLE');
             $description = Tools::getValue('ALMA_PAYMENT_BUTTON_DESC');
             $descriptionDeferred = Tools::getValue('ALMA_DEFERRED_BUTTON_DESC');
-            $position = (int) Tools::getValue('ALMA_PAYMENT_BUTTON_POSITION');
-            if (!$position) {
-                $position = 1;
-            }
-            $positionDeferred = Tools::getValue('ALMA_DEFERRED_BUTTON_POSITION');
-            if (!$positionDeferred) {
-                $positionDeferred = 2;
-            }
+
             $showEligibility = (bool) Tools::getValue('ALMA_SHOW_ELIGIBILITY_MESSAGE_ON');
             $showCartEligibilityNotEligible = (bool) Tools::getValue('ALMA_CART_WDGT_NOT_ELGBL_ON');
             $showProductEligibilityNotEligible = (bool) Tools::getValue('ALMA_PRODUCT_WDGT_NOT_ELGBL_ON');
@@ -157,10 +150,9 @@ final class GetContentHookController extends AdminHookController
 
             Settings::updateValue('ALMA_PAYMENT_BUTTON_TITLE', $title);
             Settings::updateValue('ALMA_PAYMENT_BUTTON_DESC', $description);
-            Settings::updateValue('ALMA_PAYMENT_BUTTON_POSITION', $position);
+
             Settings::updateValue('ALMA_DEFERRED_BUTTON_TITLE', $titleDeferred);
             Settings::updateValue('ALMA_DEFERRED_BUTTON_DESC', $descriptionDeferred);
-            Settings::updateValue('ALMA_DEFERRED_BUTTON_POSITION', $positionDeferred);
 
             $showDisabledButton = (bool) Tools::getValue('ALMA_SHOW_DISABLED_BUTTON');
             Settings::updateValue('ALMA_SHOW_DISABLED_BUTTON', $showDisabledButton);
@@ -195,6 +187,7 @@ final class GetContentHookController extends AdminHookController
                     $min = almaPriceToCents((int) Tools::getValue("ALMA_${key}_MIN_AMOUNT"));
                     $max = almaPriceToCents((int) Tools::getValue("ALMA_${key}_MAX_AMOUNT"));
                     $enablePlan = (bool) Tools::getValue("ALMA_${key}_ENABLED_ON");
+                    // $order = (int) Tools::getValue("ALMA_${key}_SORT_ORDER");
 
                     if ($enablePlan && !($min >= $feePlan->min_purchase_amount &&
                         $min <= min($max, $feePlan->max_purchase_amount))) {
@@ -243,6 +236,7 @@ final class GetContentHookController extends AdminHookController
                     $almaPlans[$key]['enabled'] = $enablePlan ? '1' : '0';
                     $almaPlans[$key]['min'] = almaPriceToCents($min);
                     $almaPlans[$key]['max'] = almaPriceToCents($max);
+                    $almaPlans[$key]['order'] = (int) Tools::getValue("ALMA_${key}_SORT_ORDER");
                 }
 
                 Settings::updateValue('ALMA_FEE_PLANS', json_encode($almaPlans));
@@ -572,6 +566,15 @@ final class GetContentHookController extends AdminHookController
                     'min' => $minAmount,
                     'max' => $maxAmount,
                 ];
+
+                $pnxConfigForm['form']['input'][] = [
+                    'form_group_class' => "$tabId-content",
+                    'name' => "ALMA_${key}_SORT_ORDER",
+                    'label' => $this->module->l('Position', 'GetContentHookController'),
+                    // phpcs:ignore
+                    'desc' => $this->module->l('Use relative values to set the order on the checkout page', 'GetContentHookController'),
+                    'type' => 'number',
+                ];
             }
 
             $tpl = $this->context->smarty->createTemplate(
@@ -630,15 +633,6 @@ final class GetContentHookController extends AdminHookController
                         'required' => true,
                     ],
                     [
-                        'name' => 'ALMA_PAYMENT_BUTTON_POSITION',
-                        'label' => $this->module->l('Position', 'GetContentHookController'),
-                        // PrestaShop won't detect the string if the call to `l` is multiline
-                        // phpcs:ignore
-                        'desc' => $this->module->l('Use relative values to set the order on the checkout page', 'GetContentHookController'),
-                        'type' => 'text',
-                        'size' => 75,
-                    ],
-                    [
                         'name' => null,
                         'label' => null,
                         'type' => 'html',
@@ -665,15 +659,6 @@ final class GetContentHookController extends AdminHookController
                         'type' => 'text',
                         'size' => 75,
                         'required' => true,
-                    ],
-                    [
-                        'name' => 'ALMA_DEFERRED_BUTTON_POSITION',
-                        'label' => $this->module->l('Position', 'GetContentHookController'),
-                        // PrestaShop won't detect the string if the call to `l` is multiline
-                        // phpcs:ignore
-                        'desc' => $this->module->l('Use relative values to set the order on the checkout page', 'GetContentHookController'),
-                        'type' => 'text',
-                        'size' => 75,
                     ],
                 ],
                 'submit' => ['title' => $this->module->l('Save'), 'class' => 'button btn btn-default pull-right'],
@@ -1160,10 +1145,8 @@ final class GetContentHookController extends AdminHookController
             'ALMA_API_MODE' => Settings::getActiveMode(),
             'ALMA_PAYMENT_BUTTON_TITLE' => Settings::getPaymentButtonTitle(),
             'ALMA_PAYMENT_BUTTON_DESC' => Settings::getPaymentButtonDescription(),
-            'ALMA_PAYMENT_BUTTON_POSITION' => Settings::getPaymentButtonPosition(),
             'ALMA_DEFERRED_BUTTON_TITLE' => Settings::getPaymentButtonTitleDeferred(),
             'ALMA_DEFERRED_BUTTON_DESC' => Settings::getPaymentButtonDescriptionDeferred(),
-            'ALMA_DEFERRED_BUTTON_POSITION' => Settings::getPaymentButtonPositionDeferred(),
             'ALMA_SHOW_DISABLED_BUTTON' => Settings::showDisabledButton(),
             'ALMA_SHOW_ELIGIBILITY_MESSAGE_ON' => Settings::showEligibilityMessage(),
             'ALMA_CART_WDGT_NOT_ELGBL_ON' => Settings::showCartWidgetIfNotEligible(),
@@ -1206,6 +1189,10 @@ final class GetContentHookController extends AdminHookController
                     ? $installmentsPlans->$key->max
                     : $feePlan->max_purchase_amount;
                 $helper->fields_value["ALMA_${key}_MAX_AMOUNT"] = (int) almaPriceFromCents($maxAmount);
+                $order = isset($installmentsPlans->$key->order)
+                    ? $installmentsPlans->$key->order
+                    : $i;
+                $helper->fields_value["ALMA_${key}_SORT_ORDER"] = $order;
                 ++$i;
             }
         }

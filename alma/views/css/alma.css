@@ -26,11 +26,13 @@
     cursor: pointer;
 }
 
-.alma-button.disabled {
+.alma-button.disabled,
+.alma-button-with-bkg.disabled {
     opacity: 0.5;
 }
 
-.alma-button.disabled img {
+.alma-button.disabled img,
+.alma-button-with-bkg.disabled img {
     opacity: 0.5;
 }
 

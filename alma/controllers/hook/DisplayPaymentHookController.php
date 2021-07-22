@@ -53,31 +53,25 @@ final class DisplayPaymentHookController extends FrontendHookController
         $feePlans = json_decode(Settings::getFeePlans());
         $paymentOptionPnx = [];
         $paymentOptionDeferred = [];
+        $paymentOptions = [];
+        $sortOptions = [];
 
         foreach ($installmentPlans as $plan) {
-            if (!$plan->isEligible) {
-                continue;
-            }
             $n = $plan->installmentsCount;
             $key = "general_{$n}_{$plan->deferredDays}_{$plan->deferredMonths}";
-
             $plans = $plan->paymentPlan;
+            $disabled = false;
+
             if (Settings::isDeferred($plan)) {
                 if ($n == 1) {
-                    $duration = Settings::getDuration($plan);
-                    if (is_callable('Media::getMediaPath')) {
-                        $logoDeferred = Media::getMediaPath(
-                            _PS_MODULE_DIR_ . $this->module->name . "/views/img/logos/${duration}j_logo.svg"
-                        );
-                    } else {
-                        $logoDeferred = $this->module->getPathUri() . "/views/img/logos/${duration}j_logo.svg";
+                    if (!$plan->isEligible && $feePlans->$key->enabled && Settings::showDisabledButton()) {
+                        $disabled = true;
+                        $plans = null;
+                    } elseif (!$plan->isEligible) {
+                        continue;
                     }
-                    // `l` method call isn't detected by translation tool if multiline
-                    // phpcs:ignore
-                    $label = sprintf(
-                        $this->module->l('days', 'DisplayPaymentHookController'),
-                        $duration
-                    );
+                    $duration = Settings::getDuration($plan);
+                    $logo = $this->getAlmaLogo(true, $duration);
                     $paymentOption = [
                     'link' => $this->context->link->getModuleLink(
                         $this->module->name,
@@ -85,25 +79,28 @@ final class DisplayPaymentHookController extends FrontendHookController
                         ['key' => $key],
                         true
                     ),
+                    'disabled' => $disabled,
                     'duration' => $duration,
                     'key' => $key,
                     'pnx' => $n,
-                    'logo_deferred' => $logoDeferred,
-                    'label' => $label,
+                    'logo' => $logo,
                     'plans' => $plans,
+                    'isDeferred' => true,
+                    'text' => sprintf(Settings::getPaymentButtonTitleDeferred(), $duration),
+                    'desc' => sprintf(Settings::getPaymentButtonDescriptionDeferred(), $duration),
                     ];
-                    $paymentOptionDeferred[$key] = $paymentOption;
+                    $paymentOptions[$key] = $paymentOption;
+                    $sortOptions[$key] = $feePlans->$key->order;
                 }
             } else {
                 if ($n != 1) {
-                    if (is_callable('Media::getMediaPath')) {
-                        $logoPnx = Media::getMediaPath(
-                            _PS_MODULE_DIR_ . $this->module->name . "/views/img/logos/p${n}x_logo.svg"
-                        );
-                    } else {
-                        $logoPnx = $this->module->getPathUri() . "/views/img/logos/p${n}x_logo.svg";
+                    if (!$plan->isEligible && $feePlans->$key->enabled && Settings::showDisabledButton()) {
+                        $disabled = true;
+                        $plans = null;
+                    } elseif (!$plan->isEligible) {
+                        continue;
                     }
-
+                    $logo = $this->getAlmaLogo(false, $n);
                     $paymentOption = [
                         'link' => $this->context->link->getModuleLink(
                             $this->module->name,
@@ -111,92 +108,55 @@ final class DisplayPaymentHookController extends FrontendHookController
                             ['key' => $key],
                             true
                         ),
+                        'disabled' => $disabled,
                         'plans' => $plans,
-                        'logo_pnx' => $logoPnx,
                         'pnx' => $n,
+                        'logo' => $logo,
+                        'isDeferred' => false,
+                        'text' => sprintf(Settings::getPaymentButtonTitle(), $n),
+                        'desc' => sprintf(Settings::getPaymentButtonDescription(), $n),
                     ];
-                    $paymentOptionPnx[$n] = $paymentOption;
+                    $paymentOptions[$key] = $paymentOption;
+                    $sortOptions[$key] = $feePlans->$key->order;
                 }
             }
         }
-        $paymentOptionPnx = array_values($paymentOptionPnx);
-        usort($paymentOptionDeferred, function ($a, $b) {
-            return $a['duration'] - $b['duration'];
-        });
 
-        $pnx = null;
-        if ($paymentOptionPnx) {
-            $pnx = $this->displayAlmaPaymentOption('pnx', $paymentOptionPnx, false);
-        } else {
-            $disabled = false;
-            foreach ($installmentPlans as $plan) {
-                $n = $plan->installmentsCount;
-                $key = "general_{$n}_{$plan->deferredDays}_{$plan->deferredMonths}";
-                if (!$plan->isEligible && $feePlans->$key->enabled && !Settings::isDeferred($plan)) {
-                    $disabled = true;
-                    break;
-                }
-            }
-            if (Settings::showDisabledButton() && $disabled) {
-                $pnx = $this->displayAlmaPaymentOption('pnx', null, true);
-            }
+        asort($sortOptions);
+        $payment = [];
+        foreach ($sortOptions as $key => $option) {
+            $payment[] = $paymentOptions[$key];
         }
 
-        $deferred = null;
-        if ($paymentOptionDeferred) {
-            $deferred = $this->displayAlmaPaymentOption('deferred', $paymentOptionDeferred, false);
-        } else {
-            $disabled = false;
-            foreach ($installmentPlans as $plan) {
-                $n = $plan->installmentsCount;
-                $key = "general_{$n}_{$plan->deferredDays}_{$plan->deferredMonths}";
-                if (!$plan->isEligible && $feePlans->$key->enabled && Settings::isDeferred($plan)) {
-                    $disabled = true;
-                    break;
-                }
-            }
-            if (Settings::showDisabledButton() && $disabled) {
-                $deferred = $this->displayAlmaPaymentOption('deferred', null, true);
-            }
-        }
-
-        $payment = Settings::getPaymentButtonPosition() <= Settings::getPaymentButtonPositionDeferred()
-            ? $pnx . $deferred
-            : $deferred . $pnx;
-
-        return $payment;
+        return $this->displayAlmaPaymentOption($payment);
     }
 
-    private function displayAlmaPaymentOption($type, $paymentOption, $disabled)
+    private function displayAlmaPaymentOption($paymentOption)
     {
         $this->context->smarty->assign(
             [
-                'logo' => $this->getAlmaLogo(),
-                'title' => $type == 'pnx'
-                    ? Settings::getPaymentButtonTitle()
-                    : Settings::getPaymentButtonTitleDeferred(),
-                'desc' => $type == 'pnx'
-                    ? Settings::getPaymentButtonDescription()
-                    : Settings::getPaymentButtonDescriptionDeferred(),
                 'options' => $paymentOption,
-                'disabled' => $disabled,
                 'old_prestashop_version' => version_compare(_PS_VERSION_, '1.6', '<'),
-                'merchantId' => Settings::getMerchantId(),
-                'apiMode' => Settings::getActiveMode(),
             ]
         );
 
-        return $this->module->display($this->module->file, "displayPayment_{$type}.tpl");
+        return $this->module->display($this->module->file, 'displayPayment.tpl');
     }
 
-    private function getAlmaLogo()
+    private function getAlmaLogo($isDeferred, $value)
     {
+        if ($isDeferred) {
+            $logoName = "${value}j_logo.svg";
+        } else {
+            $logoName = "p${value}x_logo.svg";
+        }
+
         if (is_callable('Media::getMediaPath')) {
             $logo = Media::getMediaPath(
-                _PS_MODULE_DIR_ . $this->module->name . '/views/img/logos/alma_payment_logos.svg'
+                _PS_MODULE_DIR_ . $this->module->name . "/views/img/logos/${logoName}"
             );
         } else {
-            $logo = $this->module->getPathUri() . '/views/img/logos/alma_payment_logos.svg';
+            $logo = $this->module->getPathUri() . "/views/img/logos/${logoName}";
         }
 
         return $logo;

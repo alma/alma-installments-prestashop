@@ -86,10 +86,8 @@ class Settings
             'ALMA_SHOW_ELIGIBILITY_MESSAGE',
             'ALMA_PAYMENT_BUTTON_TITLE',
             'ALMA_PAYMENT_BUTTON_DESC',
-            'ALMA_PAYMENT_BUTTON_POSITION',
             'ALMA_DEFERRED_BUTTON_TITLE',
             'ALMA_DEFERRED_BUTTON_DESC',
-            'ALMA_DEFERRED_BUTTON_POSITION',
             'ALMA_STATE_REFUND',
             'ALMA_STATE_REFUND_ENABLED',
             'ALMA_DISPLAY_ORDER_CONFIRMATION',
@@ -184,8 +182,8 @@ class Settings
     public static function getPaymentButtonTitle()
     {
         // Allow PrestaShop's translation feature to detect those strings
-        // $this->l('Pay by installment', 'settings');
-        $default = self::l('Pay by installment');
+        // $this->l('Pay in %d installments', 'settings');
+        $default = self::l('Pay in %d installments');
 
         return self::get('ALMA_PAYMENT_BUTTON_TITLE', $default);
     }
@@ -193,26 +191,17 @@ class Settings
     public static function getPaymentButtonDescription()
     {
         // Allow PrestaShop's translation feature to detect those strings
-        // $this->l('Pay by installment with your credit card.', 'settings');
-        $default = self::l('Pay by installment with your credit card.');
+        // $this->l('Pay in %d monthly installments with your credit card.', 'settings');
+        $default = self::l('Pay in %d monthly installments with your credit card.');
 
         return self::get('ALMA_PAYMENT_BUTTON_DESC', $default);
-    }
-
-    public static function getPaymentButtonPosition()
-    {
-        // Allow PrestaShop's translation feature to detect those strings
-        // $this->l('Pay in %d monthly installments with your credit card.', 'settings');
-        //$default = self::l('Pay in %d monthly installments with your credit card.');
-
-        return (int) self::get('ALMA_PAYMENT_BUTTON_POSITION', 1);
     }
 
     public static function getPaymentButtonTitleDeferred()
     {
         // Allow PrestaShop's translation feature to detect those strings
-        // $this->l('Buy now pay later', 'settings');
-        $default = self::l('Buy now pay later');
+        // $this->l('Buy now Pay in %d days', 'settings');
+        $default = self::l('Buy now Pay in %d days');
 
         return self::get('ALMA_DEFERRED_BUTTON_TITLE', $default);
     }
@@ -220,19 +209,10 @@ class Settings
     public static function getPaymentButtonDescriptionDeferred()
     {
         // Allow PrestaShop's translation feature to detect those strings
-        // $this->l('Buy now pay later with your credit card.', 'settings');
-        $default = self::l('Buy now pay later with your credit card.');
+        // $this->l('Buy now pay in %d days with your credit card.', 'settings');
+        $default = self::l('Buy now pay in %d days with your credit card.');
 
         return self::get('ALMA_DEFERRED_BUTTON_DESC', $default);
-    }
-
-    public static function getPaymentButtonPositionDeferred()
-    {
-        // Allow PrestaShop's translation feature to detect those strings
-        // $this->l('Pay in %d monthly installments with your credit card.', 'settings');
-        //$default = self::l('Pay in %d monthly installments with your credit card.');
-
-        return (int) self::get('ALMA_DEFERRED_BUTTON_POSITION', 2);
     }
 
     public static function displayOrderConfirmation()

@@ -24,39 +24,6 @@
 <div style="margin-bottom: 20px;">
     <p>
         {$desc|escape:'htmlall':'UTF-8'}
-    </p>
-
-    
-    {foreach from=$options_pnx item=option name=counter}        
-        {assign var="checked" value=""}        
-        {if $smarty.foreach.counter.iteration === 1}
-            {assign var="checked" value="checked='checked'"}
-        {/if}        
-        <label for="alma_p{$option.pnx}x">
-            <input onclick="handleChangeAlmaPnx(this);" autocomplete="off" type="radio" name="alma_pnx" value="{$option.link}" {$checked} id="alma_p{$option.pnx}x">
-            <img style="float:none;" src="{$option.logo_pnx|escape:'htmlall':'UTF-8'}" alt=""/>
-            &nbsp;
-        </label>        
-    {/foreach}
-    <br>
-    {foreach from=$options_pnx item=option name=counter}
-        {assign var="display" value="display:none;"}
-        {if $smarty.foreach.counter.iteration === 1}
-            {assign var="display" value=""}
-        {/if}        
-        <span style="{$display}" class="alma-button--fee-plans alma-fee-plans-display" id="fee_plans_alma_p{$option.pnx}x">
-            {include file="modules/alma/views/templates/hook/_partials/feePlan.tpl" plans=$option.plans oneLiner=false}
-        </span>
-    {/foreach}
+    </p>    
+    {include file="modules/alma/views/templates/hook/_partials/feePlan.tpl" plans=$plans oneLiner=false}    
 </div>
-
-<script type="text/javascript">
-    ;handleChangeAlmaPnx = function(e){      
-        for (let el of document.querySelectorAll('.alma-fee-plans-display')) el.style.display = 'none';
-        document.querySelector('#fee_plans_'+e.id).style.display = "block";
-        let payment = document.querySelector( 'input[name="payment-option"]:checked');
-        let div = document.querySelector('div[id="pay-with-'+payment.id+'-form"');
-        let form = div.querySelector('form');
-        form.action = e.value;
-    };
-</script>

@@ -25,37 +25,6 @@
     <p>
         {$desc|escape:'htmlall':'UTF-8'}
     </p>
-
-    {foreach from=$options item=option name=counter}     
-        <label for="{$option.key}">
-        {assign var="checked" value=""}        
-        {if $smarty.foreach.counter.iteration === 1}
-            {assign var="checked" value="checked='checked'"}
-        {/if}        
-            <input {$checked} onclick="handleChangeAlmaDeferred(this);" autocomplete="off" type="radio" name="alma_deferred" value="{$option.link}" id="{$option.key}">
-            <img style="float:none;" src="{$option.logo_deferred|escape:'htmlall':'UTF-8'}" alt=""/>
-            {l s='days' sprintf=array($option.duration) mod='alma'}
-            &nbsp;
-        </label>
-    {/foreach}
-    <br>
-    {foreach from=$options item=option name=counter}
-        {assign var="display" value="display:none;"}
-        {if $smarty.foreach.counter.iteration === 1}
-            {assign var="display" value=""}
-        {/if}        
-        <span style="{$display}" class="alma-button--fee-plans alma-deferred-display" id="deferred_alma_{$option.key}">
-            {include file="modules/alma/views/templates/hook/_partials/deferred.tpl" plans=$option.plans}
-        </span>
-    {/foreach}
+    {include file="modules/alma/views/templates/hook/_partials/deferred.tpl" plans=$plans}
 </div>
-<script type="text/javascript">
-    ;handleChangeAlmaDeferred = function(e){      
-        for (let el of document.querySelectorAll('.alma-deferred-display')) el.style.display = 'none';
-        document.querySelector('#deferred_alma_'+e.id).style.display = "block";  
-        let payment = document.querySelector( 'input[name="payment-option"]:checked');        
-        let div = document.querySelector('div[id="pay-with-'+payment.id+'-form"');
-        let form = div.querySelector('form');        
-        form.action = e.value;
-    };
-</script>
+

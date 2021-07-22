@@ -78,7 +78,6 @@ class EligibilityHelper
                     );
                     $eligibilities[] = $eligibility;
                 } else {
-                    //$activePlans[] = (int) $getDataFromKey['installmentsCount'];
                     $activePlans[] = $getDataFromKey;
                 }
             }

@@ -66,6 +66,7 @@ function upgrade_module_2_0_0($module)
                 $almaPlans[$key]['enabled'] = Settings::get("ALMA_P{$i}X_ENABLED", 0);
                 $almaPlans[$key]['min'] = Settings::get("ALMA_P{$i}X_MIN_AMOUNT", 100);
                 $almaPlans[$key]['max'] = Settings::get("ALMA_P{$i}X_MAX_AMOUNT", 500);
+                $almaPlans[$key]['order'] = Settings::get("ALMA_P{$i}X_SORT_ORDER", $i);
             }
             Settings::updateValue('ALMA_FEE_PLANS', json_encode($almaPlans));
 
@@ -80,12 +81,7 @@ function upgrade_module_2_0_0($module)
             }
 
             Configuration::deleteByName('ALMA_NOT_ELIGIBLE_CATEGORIES');
-            Configuration::deleteByName('ALMA_PAYMENT_BUTTON_TITLE');
-            Configuration::deleteByName('ALMA_PAYMENT_BUTTON_DESC');
             Settings::updateValue('ALMA_NOT_ELIGIBLE_CATEGORIES', Settings::getNonEligibleCategoriesMessage());
-            Settings::updateValue('ALMA_PAYMENT_BUTTON_TITLE', Settings::getPaymentButtonTitle());
-            Settings::updateValue('ALMA_PAYMENT_BUTTON_DESC', Settings::getPaymentButtonDescription());
-            Settings::updateValue('ALMA_FEE_PLANS', json_encode($almaPlans));
         } catch (RequestError $e) {
             return true;
         }
