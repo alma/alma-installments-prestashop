@@ -184,10 +184,12 @@ final class GetContentHookController extends AdminHookController
                     if (1 == $n && !Settings::isDeferred($feePlan)) {
                         continue;
                     }
+                    if (1 != $n && Settings::isDeferred($feePlan)) {
+                        continue;
+                    }
                     $min = almaPriceToCents((int) Tools::getValue("ALMA_${key}_MIN_AMOUNT"));
                     $max = almaPriceToCents((int) Tools::getValue("ALMA_${key}_MAX_AMOUNT"));
                     $enablePlan = (bool) Tools::getValue("ALMA_${key}_ENABLED_ON");
-                    // $order = (int) Tools::getValue("ALMA_${key}_SORT_ORDER");
 
                     if ($enablePlan && !($min >= $feePlan->min_purchase_amount &&
                         $min <= min($max, $feePlan->max_purchase_amount))) {
@@ -214,6 +216,7 @@ final class GetContentHookController extends AdminHookController
                 }
 
                 $almaPlans = [];
+                $position = 1;
                 foreach ($feePlans as $feePlan) {
                     $n = $feePlan->installments_count;
                     $key = Settings::keyForFeePlan($feePlan);
@@ -222,8 +225,13 @@ final class GetContentHookController extends AdminHookController
                         continue;
                     }
 
+                    if (1 != $n && Settings::isDeferred($feePlan)) {
+                        continue;
+                    }
+
                     $min = (int) Tools::getValue("ALMA_${key}_MIN_AMOUNT");
                     $max = (int) Tools::getValue("ALMA_${key}_MAX_AMOUNT");
+                    $order = (int) Tools::getValue("ALMA_${key}_SORT_ORDER");
 
                     // In case merchant inverted min & max values, correct it
                     if ($min > $max) {
@@ -232,11 +240,21 @@ final class GetContentHookController extends AdminHookController
                         $min = $realMin;
                     }
 
-                    $enablePlan = (bool) Tools::getValue("ALMA_${key}_ENABLED_ON");
-                    $almaPlans[$key]['enabled'] = $enablePlan ? '1' : '0';
-                    $almaPlans[$key]['min'] = almaPriceToCents($min);
-                    $almaPlans[$key]['max'] = almaPriceToCents($max);
-                    $almaPlans[$key]['order'] = (int) Tools::getValue("ALMA_${key}_SORT_ORDER");
+                    // in case of difference between sandbox and production feeplans
+                    if (0 == $min && 0 == $max && 0 == $order) {
+                        $enablePlan = (bool) Tools::getValue("ALMA_${key}_ENABLED_ON");
+                        $almaPlans[$key]['enabled'] = '0';
+                        $almaPlans[$key]['min'] = $feePlan->min_purchase_amount;
+                        $almaPlans[$key]['max'] = $feePlan->max_purchase_amount;
+                        $almaPlans[$key]['order'] = (int) $position;
+                        ++$position;
+                    } else {
+                        $enablePlan = (bool) Tools::getValue("ALMA_${key}_ENABLED_ON");
+                        $almaPlans[$key]['enabled'] = $enablePlan ? '1' : '0';
+                        $almaPlans[$key]['min'] = almaPriceToCents($min);
+                        $almaPlans[$key]['max'] = almaPriceToCents($max);
+                        $almaPlans[$key]['order'] = (int) Tools::getValue("ALMA_${key}_SORT_ORDER");
+                    }
                 }
 
                 Settings::updateValue('ALMA_FEE_PLANS', json_encode($almaPlans));
