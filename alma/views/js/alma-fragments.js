@@ -22,50 +22,55 @@
  */
 
 window.onload = function () {
-    const fragments = new Alma.Fragments(
-        $("#almaFragments").data("merchantid"),
-        {
-            mode: $("#almaFragments").data("apimode"),
-        }
-    );
-
-    almaPay = function (paymentData) {
-        fragments.createPaymentForm(paymentData).mount("#alma-payment");
-        $("html, body").animate(
+    if ($("#almaFragments").length != 0) {
+        const fragments = new Alma.Fragments(
+            $("#almaFragments").data("merchantid"),
             {
-                scrollTop: $("#alma-payment").offset().top,
-            },
-            4500
+                mode: $("#almaFragments").data("apimode"),
+            }
         );
-    };
 
-    $('input[name="payment-option"]').change(function () {
-        $("#alma-payment").remove();
-    });
-
-    $(".js-payment-option-form form").submit(function (e) {
-        e.preventDefault();
-        url = $(this).attr("action");
-        if (
-            url.indexOf("module/alma/payment") != -1 ||
-            url.indexOf("module=alma") != -1
-        ) {
-            $("#payment-confirmation").after('<div id="alma-payment"></div>');
-            $.ajax({
-                type: "POST",
-                url: url,
-                dataType: "json",
-                data: {
-                    ajax: true,
-                    action: "payment",
+        almaPay = function (paymentData) {
+            fragments.createPaymentForm(paymentData).mount("#alma-payment");
+            $("html, body").animate(
+                {
+                    scrollTop: $("#alma-payment").offset().top,
                 },
-            })
-                .done(function (data) {
-                    almaPay(data);
+                4500
+            );
+        };
+
+        $('input[name="payment-option"]').change(function () {
+            $("#alma-payment").remove();
+        });
+
+        $(".js-payment-option-form form").submit(function (e) {
+            e.preventDefault();
+            url = $(this).attr("action");
+            if (
+                url.indexOf("module/alma/payment") != -1 ||
+                url.indexOf("module=alma") != -1
+            ) {
+                $("#payment-confirmation").after(
+                    '<div id="alma-payment"></div>'
+                );
+                $.ajax({
+                    type: "POST",
+                    url: url,
+                    dataType: "json",
+                    data: {
+                        ajax: true,
+                        action: "payment",
+                    },
                 })
-                .fail(function (data) {
-                    window.location.href = "index.php?controller=order&step=1";
-                });
-        }
-    });
+                    .done(function (data) {
+                        almaPay(data);
+                    })
+                    .fail(function (data) {
+                        window.location.href =
+                            "index.php?controller=order&step=1";
+                    });
+            }
+        });
+    }
 };
