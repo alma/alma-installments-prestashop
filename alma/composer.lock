@@ -4,20 +4,20 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "6872f17de5a6efcba9b15d03074d8928",
+    "content-hash": "d25d2125bfc061954f8c6455201fb466",
     "packages": [
         {
             "name": "alma/alma-php-client",
-            "version": "dev-feat/eligibility-v2",
+            "version": "v1.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/alma/alma-php-client.git",
-                "reference": "3c71093c7eaf6bd2fef2ee4617d53849343acb74"
+                "reference": "ce345686a99a6fbb233e50ce66053eb82ab89ceb"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/alma/alma-php-client/zipball/3c71093c7eaf6bd2fef2ee4617d53849343acb74",
-                "reference": "3c71093c7eaf6bd2fef2ee4617d53849343acb74",
+                "url": "https://api.github.com/repos/alma/alma-php-client/zipball/ce345686a99a6fbb233e50ce66053eb82ab89ceb",
+                "reference": "ce345686a99a6fbb233e50ce66053eb82ab89ceb",
                 "shasum": ""
             },
             "require": {
@@ -52,11 +52,11 @@
                 }
             ],
             "description": "PHP API client for the Alma payments API",
-            "time": "2021-06-30T14:08:37+00:00"
+            "time": "2021-07-30T13:53:32+00:00"
         },
         {
             "name": "psr/log",
-            "version": "dev-master",
+            "version": "1.1.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/php-fig/log.git",
@@ -103,18 +103,9 @@
         }
     ],
     "packages-dev": [],
-    "aliases": [
-        {
-            "alias": "1.0",
-            "alias_normalized": "1.0.0.0",
-            "version": "dev-feat/eligibility-v2",
-            "package": "alma/alma-php-client"
-        }
-    ],
+    "aliases": [],
     "minimum-stability": "dev",
-    "stability-flags": {
-        "alma/alma-php-client": 20
-    },
+    "stability-flags": [],
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": [],
