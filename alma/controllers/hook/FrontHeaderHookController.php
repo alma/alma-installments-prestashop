@@ -133,7 +133,7 @@ final class FrontHeaderHookController extends FrontendHookController
             } elseif ($controller->php_self == 'cart' && Settings::showEligibilityMessage()) {
                 $controller->registerStylesheet('alma-product-css', $cssPath);
                 $controller->registerJavascript('alma-cart-script', $cartScriptPath, ['priority' => 1000]);
-            } elseif (Settings::showProductEligibility() && $controller->php_self == 'product') {
+            } else {
                 $controller->registerStylesheet('alma-product-css', $cssPath);
                 $controller->registerJavascript('alma-product-script', $scriptPath, ['priority' => 1000]);
             }
@@ -145,8 +145,7 @@ final class FrontHeaderHookController extends FrontendHookController
                         $fragmentsJsUrl,
                         ['server' => 'remote', 'position' => 'head']
                     );
-                } elseif (($controller->php_self == 'cart' && Settings::showEligibilityMessage())
-                || $controller->php_self == 'product') {
+                } else {
                     $controller->registerStylesheet('alma-remote-widgets-css', $widgetsCssUrl, ['server' => 'remote']);
                     $controller->registerJavascript('alma-remote-widgets-js', $widgetsJsUrl, ['server' => 'remote']);
                 }

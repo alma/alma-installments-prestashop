@@ -23,10 +23,6 @@
 
 (function ($) {
     $(function () {
-        if ($("#alma-widget-config").length) {
-            var selectors = JSON.parse($("#alma-widget-config").val());
-        }
-
         function initWidget(
             merchantId,
             apiMode,
@@ -62,6 +58,7 @@
         }
 
         var refreshWidgets = debounce(function (evt, initialRefresh) {
+            var selectors = JSON.parse($("#alma-widget-config").val());
             $(".alma-pp-container").each(function () {
                 var $widget = $(this).find(".alma-widget-container");
                 if (!$widget.length) {
@@ -111,6 +108,7 @@
         }, 150);
 
         if ($("#alma-widget-config").length) {
+            var selectors = JSON.parse($("#alma-widget-config").val());
             if (window.prestashop != null && window.prestashop.on != null) {
                 prestashop.on("updatedProduct", refreshWidgets);
             } else {
@@ -123,7 +121,8 @@
             }
 
             refreshWidgets(null, true);
-            window.__alma_refreshWidgets = refreshWidgets;
         }
+
+        window.__alma_refreshWidgets = refreshWidgets;
     });
 })(jQuery);
