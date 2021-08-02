@@ -60,11 +60,16 @@ final class PaymentOptionsHookController extends FrontendHookController
         $paymentOptions = [];
         $sortOptions = [];
         $feePlans = json_decode(Settings::getFeePlans());
+        $i = 1;
 
         foreach ($installmentPlans as $plan) {
             if (!$plan->isEligible) {
                 continue;
             }
+
+            // call almaFragments once
+            $first = 1 == $i;
+            ++$i;
 
             $n = $plan->installmentsCount;
             $key = "general_{$n}_{$plan->deferredDays}_{$plan->deferredMonths}";
@@ -88,6 +93,9 @@ final class PaymentOptionsHookController extends FrontendHookController
                         $this->context->smarty->assign([
                             'desc' => sprintf(Settings::getPaymentButtonDescriptionDeferred(), $duration),
                             'plans' => (array) $plans,
+                            'apiMode' => Settings::getActiveMode(),
+                            'merchantId' => Settings::getMerchantId(),
+                            'first' => $first,
                         ]);
                         $template = $this->context->smarty->fetch(
                             "module:{$this->module->name}/views/templates/hook/payment_button_deferred.tpl"
@@ -116,6 +124,9 @@ final class PaymentOptionsHookController extends FrontendHookController
                         $this->context->smarty->assign([
                             'desc' => sprintf(Settings::getPaymentButtonDescription(), $n),
                             'plans' => (array) $plans,
+                            'apiMode' => Settings::getActiveMode(),
+                            'merchantId' => Settings::getMerchantId(),
+                            'first' => $first,
                         ]);
 
                         $template = $this->context->smarty->fetch(

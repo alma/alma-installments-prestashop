@@ -74,12 +74,6 @@ function upgrade_module_2_0_0($module)
                 Configuration::deleteByName($configKey);
             }
 
-            if (version_compare(_PS_VERSION_, '1.7', '>=')) {
-                $module->registerHook('displayPaymentTop');
-            } else {
-                $module->registerHook('displayFooter');
-            }
-
             Configuration::deleteByName('ALMA_NOT_ELIGIBLE_CATEGORIES');
             Settings::updateValue('ALMA_NOT_ELIGIBLE_CATEGORIES', Settings::getNonEligibleCategoriesMessage());
         } catch (RequestError $e) {

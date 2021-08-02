@@ -107,9 +107,9 @@ class Alma extends PaymentModule
         ];
 
         if (version_compare(_PS_VERSION_, '1.7', '>=')) {
-            $paymentHooks = ['paymentOptions', 'displayPaymentReturn', 'displayPaymentTop'];
+            $paymentHooks = ['paymentOptions', 'displayPaymentReturn'];
         } else {
-            $paymentHooks = ['displayPayment', 'displayPaymentEU', 'displayPaymentReturn', 'displayFooter'];
+            $paymentHooks = ['displayPayment', 'displayPaymentEU', 'displayPaymentReturn'];
         }
 
         if (version_compare(_PS_VERSION_, '1.6', '>=')) {
@@ -340,15 +340,5 @@ class Alma extends PaymentModule
     public function hookActionOrderStatusPostUpdate($params)
     {
         return $this->runHookController('state', $params);
-    }
-
-    public function hookDisplayFooter($params)
-    {
-        return $this->runHookController('displayFooter', $params);
-    }
-
-    public function hookDisplayPaymentTop($params)
-    {
-        return $this->runHookController('displayPaymentTop', $params);
     }
 }

@@ -22,7 +22,11 @@
  */
 
 $(function () {
-    almaPay = function (paymentData) {
+    almaPay = function (paymentData, mode, merchantId) {
+        const fragments = new Alma.Fragments(merchantId, {
+            mode: mode,
+        });
+
         fragments.createPaymentForm(paymentData).mount("#alma-payment");
         $("html, body").animate(
             {
@@ -32,7 +36,7 @@ $(function () {
         );
     };
 
-    processAlmaPayment = function (url) {
+    processAlmaPayment = function (url, mode, merchantId) {
         $.ajax({
             type: "POST",
             url: url,
@@ -43,17 +47,10 @@ $(function () {
             },
         })
             .done(function (data) {
-                almaPay(data);
+                almaPay(data, mode, merchantId);
             })
             .fail(function () {
                 window.location.href = "index.php?controller=order&step=1";
             });
     };
-
-    const fragments = new Alma.Fragments(
-        $("#almaFragments").data("merchantid"),
-        {
-            mode: $("#almaFragments").data("apimode"),
-        }
-    );
 });

@@ -36,7 +36,7 @@
 {/foreach}
 <script type="text/javascript">
     (function($) {
-        $(function() {                      
+        $(function() {                       
             $(".alma-fragments-deferred").click(function (e) {
                 e.preventDefault();
                 $(".display-fragment").remove();
@@ -46,7 +46,7 @@
                     .after(
                         '<div id="alma-payment" class="col-xs-12 display-fragment"></div>'
                     );
-                processAlmaPayment(this.href);
+                processAlmaPayment(this.href, '{$apiMode}', '{$merchantId}');
             });              
 
             $(".alma-fragments-pnx").click(function (e) {
@@ -58,7 +58,7 @@
                     .after(
                         '<div id="alma-payment" class="col-xs-12 display-fragment"></div>'
                     );
-                processAlmaPayment(this.href);
+                processAlmaPayment(this.href, '{$apiMode}', '{$merchantId}');
             });    
 
         });
