@@ -93,7 +93,7 @@ final class GetContentHookController extends AdminHookController
                     $almaPlans[$key]['enabled'] = 1;
                     $almaPlans[$key]['min'] = $feePlan->min_purchase_amount;
                     $almaPlans[$key]['max'] = $feePlan->max_purchase_amount;
-                    $almaPlans[$key]['sort'] = 1;
+                    $almaPlans[$key]['order'] = 1;
                     Settings::updateValue('ALMA_FEE_PLANS', json_encode($almaPlans));
                     break;
                 }
