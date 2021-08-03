@@ -51,7 +51,11 @@ class PaymentData
      */
     public static function dataFromCart($cart, $context, $feePlans, $forPayment = false)
     {
-        if ($cart->id_customer == 0 || $cart->id_address_delivery == 0 || $cart->id_address_invoice == 0) {
+        if ($forPayment && (
+            $cart->id_customer == 0 ||
+            $cart->id_address_delivery == 0 ||
+            $cart->id_address_invoice == 0
+        )) {
             Logger::instance()->warning(
                 "[Alma] Missing Customer ID or Delivery/Billing address ID for Cart {$cart->id}"
             );
