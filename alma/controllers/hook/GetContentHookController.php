@@ -157,7 +157,7 @@ final class GetContentHookController extends AdminHookController
             $showDisabledButton = (bool) Tools::getValue('ALMA_SHOW_DISABLED_BUTTON');
             Settings::updateValue('ALMA_SHOW_DISABLED_BUTTON', $showDisabledButton);
 
-            Settings::updateValue('ALMA_SHOW_ELIGIBILITY_MESSAGE', $showEligibility);
+            Settings::updateValue('ALMA_SHOW_ELIGIBILITY_MESSAGE', $showEligibility ? '1' : '0');
             Settings::updateValue('ALMA_NOT_ELIGIBLE_CATEGORIES', $nonEligibleCategoriesMsg);
 
             Settings::updateValue('ALMA_CART_WDGT_NOT_ELGBL', $showCartEligibilityNotEligible);
