@@ -1188,7 +1188,7 @@ final class GetContentHookController extends AdminHookController
         ];
 
         if ($merchant) {
-            $i = 1;
+            $i = 2;
             foreach ($feePlans as $feePlan) {
                 $key = Settings::keyForFeePlan($feePlan);
                 if ((1 == $feePlan->installments_count && !Settings::isDeferred($feePlan))
