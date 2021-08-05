@@ -77,7 +77,10 @@ function upgrade_module_2_0_0($module)
             Configuration::deleteByName('ALMA_NOT_ELIGIBLE_CATEGORIES');
             Settings::updateValue('ALMA_NOT_ELIGIBLE_CATEGORIES', Settings::getNonEligibleCategoriesMessage());
 
-            Tools::clearCache();
+            Tools::clearSmartyCache();
+            Tools::clearXMLCache();
+            Media::clearCache();
+            Tools::generateIndex();
         } catch (RequestError $e) {
             return true;
         }
