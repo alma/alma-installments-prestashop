@@ -44,6 +44,12 @@ window.onload = function () {
             $("#alma-payment").remove();
         });
 
+        $(".ps-shown-by-js").click(function () {
+            if ($(this).is(":not(:checked)")) {
+                $("#alma-payment").remove();
+            }
+        });
+
         $(".js-payment-option-form form").submit(function (e) {
             e.preventDefault();
             url = $(this).attr("action");
