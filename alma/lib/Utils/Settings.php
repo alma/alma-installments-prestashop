@@ -477,9 +477,4 @@ class Settings
             'deferredMonths' => (int) $data[3],
         ];
     }
-
-    public static function getFragmentsJsUrl()
-    {
-        return 'https://cdn.jsdelivr.net/npm/@alma/fragments@1.x/dist/alma-fragments.umd.js';
-    }
 }

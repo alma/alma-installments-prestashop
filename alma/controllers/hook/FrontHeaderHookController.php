@@ -78,59 +78,42 @@ final class FrontHeaderHookController extends FrontendHookController
         $productCssPath = 'views/css/alma-product.css';
         $cartScriptPath = 'views/js/alma-cart.js';
 
-        $fragmentsScriptPath = 'views/js/alma-fragments.js';
-        $fragmentsJsUrl = Settings::getFragmentsJsUrl();
-
         $controller = $this->context->controller;
         $content = null;
 
         if (version_compare(_PS_VERSION_, '1.7', '<')) {
-            // Fragments
-            if (($controller->php_self == 'order' && $controller->step == 3) || $controller->php_self == 'order-opc') {
-                $fragmentsScriptPath = 'views/js/alma-fragments-oldps.js';
-                $controller->addJS($fragmentsJsUrl);
-                $controller->addJS($this->module->_path . $fragmentsScriptPath);
-            } else {
-                // Cart widget
-                if (Settings::showEligibilityMessage() &&
+            // Cart widget
+            if (Settings::showEligibilityMessage() &&
                     ($controller->php_self == 'order' && $controller->step == 0 || $controller->php_self == 'order-opc')
                     && (isset($controller->nbProducts) && $controller->nbProducts != 0)
                 ) {
-                    if (version_compare(_PS_VERSION_, '1.5.6.2', '<')) {
-                        $content .= '<link rel="stylesheet" href="' . $widgetsCssUrl . '">';
-                    } else {
-                        $controller->addCSS($widgetsCssUrl);
-                    }
-                    $controller->addCSS($this->module->_path . $productCssPath);
-                    $controller->addJS($widgetsJsUrl);
-                    $controller->addJS($this->module->_path . $cartScriptPath);
-                } elseif (Settings::showProductEligibility()
-                && ($controller->php_self == 'product' || 'ProductController' == get_class($controller))) {
-                    // Product widget
-                    if (version_compare(_PS_VERSION_, '1.5.6.2', '<')) {
-                        $content .= '<link rel="stylesheet" href="' . $widgetsCssUrl . '">';
-                    } else {
-                        $controller->addCSS($widgetsCssUrl);
-                    }
-                    $controller->addCSS($this->module->_path . $productCssPath);
-                    $controller->addJS($widgetsJsUrl);
-                    $controller->addJS($this->module->_path . $productScriptPath);
+                if (version_compare(_PS_VERSION_, '1.5.6.2', '<')) {
+                    $content .= '<link rel="stylesheet" href="' . $widgetsCssUrl . '">';
+                } else {
+                    $controller->addCSS($widgetsCssUrl);
                 }
+                $controller->addCSS($this->module->_path . $productCssPath);
+                $controller->addJS($widgetsJsUrl);
+                $controller->addJS($this->module->_path . $cartScriptPath);
+            } elseif (Settings::showProductEligibility()
+                && ($controller->php_self == 'product' || 'ProductController' == get_class($controller))) {
+                // Product widget
+                if (version_compare(_PS_VERSION_, '1.5.6.2', '<')) {
+                    $content .= '<link rel="stylesheet" href="' . $widgetsCssUrl . '">';
+                } else {
+                    $controller->addCSS($widgetsCssUrl);
+                }
+                $controller->addCSS($this->module->_path . $productCssPath);
+                $controller->addJS($widgetsJsUrl);
+                $controller->addJS($this->module->_path . $productScriptPath);
             }
         } else {
             $moduleName = $this->module->name;
             $scriptPath = "modules/$moduleName/$productScriptPath";
             $cssPath = "modules/$moduleName/$productCssPath";
             $cartScriptPath = "modules/$moduleName/$cartScriptPath";
-            $fragmentsScriptPath = "modules/$moduleName/$fragmentsScriptPath";
 
-            if ($controller->php_self == 'order') {
-                $controller->registerJavascript(
-                    'alma-fragments-script',
-                    $fragmentsScriptPath,
-                    ['priority' => 1000, 'position' => 'head']
-                );
-            } elseif ($controller->php_self == 'cart' && Settings::showEligibilityMessage()) {
+            if ($controller->php_self == 'cart' && Settings::showEligibilityMessage()) {
                 $controller->registerStylesheet('alma-product-css', $cssPath);
                 $controller->registerJavascript('alma-cart-script', $cartScriptPath, ['priority' => 1000]);
             } else {
@@ -139,30 +122,16 @@ final class FrontHeaderHookController extends FrontendHookController
             }
 
             if (version_compare(_PS_VERSION_, '1.7.0.2', '>=')) {
-                if ($controller->php_self == 'order') {
-                    $controller->registerJavascript(
-                        'alma-remote-fragments-js',
-                        $fragmentsJsUrl,
-                        ['server' => 'remote', 'position' => 'head']
-                    );
-                } else {
-                    $controller->registerStylesheet('alma-remote-widgets-css', $widgetsCssUrl, ['server' => 'remote']);
-                    $controller->registerJavascript('alma-remote-widgets-js', $widgetsJsUrl, ['server' => 'remote']);
-                }
+                $controller->registerStylesheet('alma-remote-widgets-css', $widgetsCssUrl, ['server' => 'remote']);
+                $controller->registerJavascript('alma-remote-widgets-js', $widgetsJsUrl, ['server' => 'remote']);
             } else {
                 // For versions 1.7.0.0 and 1.7.0.1, it was impossible to register a remote script via FrontController
                 // with the new registerJavascript method, and the deprecated addJS method had been changed to be just a
                 // proxy to registerJavascript...
-                if ($controller->php_self == 'order') {
-                    $content .= <<<TAG
-                    <script scr="$fragmentsJsUrl"></script>
-TAG;
-                } else {
-                    $content .= <<<TAG
+                $content .= <<<TAG
 					<link rel="stylesheet" href="$widgetsCssUrl">
 					<script src="$widgetsJsUrl"></script>
 TAG;
-                }
             }
         }
 
