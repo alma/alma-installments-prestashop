@@ -25,8 +25,8 @@
 
 global $_MODULE;
 $_MODULE = [];
-$_MODULE['<{alma}prestashop>alma_f9d4da2cd01a3bf46688b86d0113e887'] = '2x 3x 4x Alma — Paiement en plusieurs fois simple et garanti par carte bancaire';
-$_MODULE['<{alma}prestashop>alma_7f9c508fa226d3e72644403653115c29'] = 'Vendez plus en boostant votre satisfaction client ! Sécurisez votre trésorerie avec Alma, le paiement en plusieurs fois simple et garanti.';
+$_MODULE['<{alma}prestashop>alma_f9d4da2cd01a3bf46688b86d0113e887'] = ' 2x 3x 4x, J+15 ou J+30 Alma —  Paiement en plusieurs fois et différé';
+$_MODULE['<{alma}prestashop>alma_7f9c508fa226d3e72644403653115c29'] = 'Boostez vos ventes en installant Alma ! C\'est simple et garanti, votre trésorerie est sécurisée. 0 engagement, 0 abonnement, 0 risque.';
 $_MODULE['<{alma}prestashop>alma_eaa507b722b18fe29d24bea91d8c2c52'] = 'Voulez-vous vraiment supprimer les paiements en plusieurs fois Alma de votre boutique ?';
 $_MODULE['<{alma}prestashop>alma_7bab99339291e7eea710b4a998e663de'] = 'Alma nécessite l\'extension PHP cURL';
 $_MODULE['<{alma}prestashop>alma_fbb47375d2272bef79f5722a183bf1ec'] = 'Alma nécessite l\'extension PHP JSON';
@@ -117,9 +117,8 @@ $_MODULE['<{alma}prestashop>getcontenthookcontroller_76d8f6f6704ea9de044aa669d13
 $_MODULE['<{alma}prestashop>getcontenthookcontroller_a2175c8178a92176b9810d330fbc0e9e'] = 'État de commande à synchroniser avec le remboursement Alma';
 $_MODULE['<{alma}prestashop>getcontenthookcontroller_1bd879809ceec8809db58ca2f12965bc'] = 'Options de débogage';
 $_MODULE['<{alma}prestashop>getcontenthookcontroller_3132e398e6e7acace9290305a55a7d25'] = 'Activer les logs';
-$_MODULE['<{alma}prestashop>paymentoptionshookcontroller_ab1e62594430a8b87995993312cdd200'] = '+ %d jours';
 $_MODULE['<{alma}prestashop>paymentvalidation_efa820507b1951ee5722003639b1a0b0'] = 'Alma n\'est pas disponible dans cette devise';
-$_MODULE['<{alma}prestashop>paymentvalidation_f92a56255bc589673e231e3d63cd8195'] = 'Alma - Paiement différé (+%d jours)';
+$_MODULE['<{alma}prestashop>paymentvalidation_1d879e270cfb195f257aab3116618d8b'] = 'Alma - Paiement +%d jours';
 $_MODULE['<{alma}prestashop>paymentvalidation_6f11098989b14063e0a4cfe362734850'] = 'Alma - Paiement en %d fois';
 $_MODULE['<{alma}prestashop>settings_7a854e750fe5f3e7120020c7c20987d4'] = 'Paiements avec Alma indisponibles';
 $_MODULE['<{alma}prestashop>settings_300de0751d957421cc332ba21c43a598'] = 'Payer en %d fois';
@@ -131,7 +130,6 @@ $_MODULE['<{alma}prestashop>displaypaymentreturn_b418b8841d436c5ffc0cd145143645f
 $_MODULE['<{alma}prestashop>displaypaymentreturn_9b9b747500bf38015ecb1a12119d50cc'] = 'Référence de votre commande :';
 $_MODULE['<{alma}prestashop>displaypaymentreturn_d61c09b6ad630202a5f4f57df12c9d65'] = 'Vous devriez bientôt recevoir un email de confirmation.';
 $_MODULE['<{alma}prestashop>displaypaymentreturn_25e7e0cd6d175afc29909d4e5268f41a'] = 'Merci pour votre confiance !';
-$_MODULE['<{alma}prestashop>displaypayment_pnx_22f0189423433ab0e055b91d98970e5f'] = 'Le paiement en plusieurs fois Alma n\'est pas disponible pour cette commande';
 $_MODULE['<{alma}prestashop>excludedcategories_ebb1e29b7a24f7244361d8c9bef5cafd'] = 'Certains produits (cartes cadeau, clés de licence, logiciels, armes, ...) ne peuvent pas être vendus avec Alma, comme indiqué dans %snos CGV%s (voir le paragraphe Exclusions).';
 $_MODULE['<{alma}prestashop>excludedcategories_2b02fe17f294da7167110f5df2b72fc0'] = 'Si vous vendez de tels produits, vous devez configurer le module Alma pour qu\'il soit désactivé lorsque vos clients les consultent ou les achètent.';
 $_MODULE['<{alma}prestashop>excludedcategories_eeecfb6e26e4e102986292a543d37542'] = 'Utilisez %1$s%2$sla page d\'exclusion de catégories%3$s%4$s pour vous confomer à ces restrictions.';
@@ -160,7 +158,6 @@ $_MODULE['<{alma}prestashop>getcontent_8e51eafe439b0adfecc2dc209c2efb15'] = 'Vou
 $_MODULE['<{alma}prestashop>getcontent_1e6898bbd6a44041932ac84cbda13bd7'] = 'Retrouvez votre clef d\'API Live sur %1$svotre tableau de bord Alma%2$s';
 $_MODULE['<{alma}prestashop>getcontent_689c39b29a6d91e6dff728a7762cbc9e'] = 'Pour utiliser le mode Test, récupérez votre clef d\'API Test sur %1$svotre tableau de bord sandbox%2$s';
 $_MODULE['<{alma}prestashop>getcontent_7f40d377cc4942c4f0d6e75a736f8445'] = 'Configuration enregistrée avec succès';
-$_MODULE['<{alma}prestashop>payment_button_deferred_44fdec47036f482b68b748f9d786801b'] = 'jours';
 $_MODULE['<{alma}prestashop>pnx_fees_4e2f4fa3e1ee06a189998bdf3748658e'] = 'Vous pouvez proposer le paiement différé pour des montants entre %d€ et %d€.';
 $_MODULE['<{alma}prestashop>pnx_fees_549a5d74b2274c6ed70cd44e7281f35a'] = 'Vous pouvez proposer le paiement différé en %d fois pour des montants entre %d€ et %d€.';
 $_MODULE['<{alma}prestashop>pnx_fees_fecab32c5aaa794e9bf4d86081269a57'] = 'Vous pouvez proposer le paiement en %d fois pour des montants entre %d€ et %d€.';
@@ -173,6 +170,8 @@ $_MODULE['<{alma}prestashop>pnx_fees_5532ee2e5ea88b613ccb38e9c88f9a77'] = 'si vo
 $_MODULE['<{alma}prestashop>deferred_9088921432b295dfe6f02863b2dc0ff8'] = '0 € aujourd\'hui puis %1$s le %2$s';
 $_MODULE['<{alma}prestashop>deferred_304bcb1f18f0897c89c6a79cf0725af1'] = '(Dont frais inclus : %s)';
 $_MODULE['<{alma}prestashop>deferred_3acc62b245d8bc10f04d81f69d85b685'] = '(Sans frais)';
+$_MODULE['<{alma}prestashop>displaypayment_deferred_905dbe578ba7a221e637203026fdb986'] = 'Le paiement différé Alma n\'est pas disponible pour cette commande';
+$_MODULE['<{alma}prestashop>displaypayment_pnx_22f0189423433ab0e055b91d98970e5f'] = 'Le paiement en plusieurs fois Alma n\'est pas disponible pour cette commande';
 $_MODULE['<{alma}prestashop>feeplan_4987191009309ebb9b2d3b2e24f4d294'] = '%1$s aujourd\'hui puis %2$d ⨉ %3$s';
 $_MODULE['<{alma}prestashop>feeplan_304bcb1f18f0897c89c6a79cf0725af1'] = '(Dont frais inclus : %s)';
 $_MODULE['<{alma}prestashop>feeplan_3acc62b245d8bc10f04d81f69d85b685'] = '(Sans frais)';

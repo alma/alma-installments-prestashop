@@ -184,7 +184,7 @@ class PaymentValidation
             if (Settings::isDeferred($payment)) {
                 $days = Settings::getDuration($payment);
                 $paymentMode = sprintf(
-                    $this->module->l('Alma - deferred payment (+%d days)', 'paymentvalidation'),
+                    $this->module->l('Alma - +%d days payment', 'paymentvalidation'),
                     $days
                 );
             } else {
