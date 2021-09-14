@@ -289,6 +289,19 @@ class Alma extends PaymentModule
         }
     }
 
+    public function viewAccess()
+    {
+        // Simply redirect to the default module's configuration page
+        $location = $this->context->link->getAdminLink(
+            'AdminModules',
+            true,
+            [],
+            ['configure' => 'alma', 'module_name' => 'alma', 'tab_module' => 'payments_gateways']
+        ) . '&configure=alma&module_name=alma&tab_module=payments_gateways';
+
+        Tools::redirectAdmin($location);
+    }
+
     public function getContent()
     {
         return $this->runHookController('getContent', null);
