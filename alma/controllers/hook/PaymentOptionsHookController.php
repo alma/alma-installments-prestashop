@@ -47,62 +47,121 @@ final class PaymentOptionsHookController extends FrontendHookController
         }
 
         $installmentPlans = EligibilityHelper::eligibilityCheck($this->context);
-        $options = [];
-        $sortOrders = [];
+
+        if (empty($installmentPlans)) {
+            return [];
+        }
+
+        $forEUComplianceModule = false;
+        if (array_key_exists('for_eu_compliance_module', $params)) {
+            $forEUComplianceModule = $params['for_eu_compliance_module'];
+        }
+
+        $paymentOptions = [];
+        $sortOptions = [];
+        $feePlans = json_decode(Settings::getFeePlans());
+        $i = 1;
 
         foreach ($installmentPlans as $plan) {
             if (!$plan->isEligible) {
                 continue;
             }
 
+            // call almaFragments once
+            $first = 1 == $i;
+            ++$i;
+
             $n = $plan->installmentsCount;
-            $forEUComplianceModule = false;
-            if (array_key_exists('for_eu_compliance_module', $params)) {
-                $forEUComplianceModule = $params['for_eu_compliance_module'];
+            $key = "general_{$n}_{$plan->deferredDays}_{$plan->deferredMonths}";
+            $plans = $plan->paymentPlan;
+            if (Settings::isDeferred($plan)) {
+                if ($n == 1) {
+                    $duration = Settings::getDuration($plan);
+                    $paymentOptionDeferred = $this->createPaymentOption(
+                        $forEUComplianceModule,
+                        sprintf(Settings::getPaymentButtonTitleDeferred(), $duration),
+                        $this->context->link->getModuleLink(
+                            $this->module->name,
+                            'payment',
+                            ['key' => $key],
+                            true
+                        ),
+                        true,
+                        $duration
+                    );
+                    if (!$forEUComplianceModule) {
+                        $this->context->smarty->assign([
+                            'desc' => sprintf(Settings::getPaymentButtonDescriptionDeferred(), $duration),
+                            'plans' => (array) $plans,
+                            'apiMode' => Settings::getActiveMode(),
+                            'merchantId' => Settings::getMerchantId(),
+                            'first' => $first,
+                        ]);
+                        $template = $this->context->smarty->fetch(
+                            "module:{$this->module->name}/views/templates/hook/payment_button_deferred.tpl"
+                        );
+                        $paymentOptionDeferred->setAdditionalInformation($template);
+                    }
+                    $sortOptions[$key] = $feePlans->$key->order;
+                    $paymentOptions[$key] = $paymentOptionDeferred;
+                }
+            } else {
+                if ($n != 1) {
+                    $paymentOptionPnx = $this->createPaymentOption(
+                        $forEUComplianceModule,
+                        sprintf(Settings::getPaymentButtonTitle(), $n),
+                        $this->context->link->getModuleLink(
+                            $this->module->name,
+                            'payment',
+                            ['key' => $key],
+                            true
+                        ),
+                        false,
+                        $n
+                    );
+
+                    if (!$forEUComplianceModule) {
+                        $this->context->smarty->assign([
+                            'desc' => sprintf(Settings::getPaymentButtonDescription(), $n),
+                            'plans' => (array) $plans,
+                            'apiMode' => Settings::getActiveMode(),
+                            'merchantId' => Settings::getMerchantId(),
+                            'first' => $first,
+                        ]);
+
+                        $template = $this->context->smarty->fetch(
+                            "module:{$this->module->name}/views/templates/hook/payment_button_pnx.tpl"
+                        );
+
+                        $paymentOptionPnx->setAdditionalInformation($template);
+                    }
+                    $sortOptions[$key] = $feePlans->$key->order;
+                    $paymentOptions[$key] = $paymentOptionPnx;
+                }
             }
-
-            $paymentOption = $this->createPaymentOption(
-                $forEUComplianceModule,
-                sprintf(Settings::getPaymentButtonTitle(), $n),
-                $this->context->link->getModuleLink($this->module->name, 'payment', ['n' => $n], true),
-                $n
-            );
-
-            $paymentButtonDescription = Settings::getPaymentButtonDescription();
-
-            if (!$forEUComplianceModule && !empty($paymentButtonDescription)) {
-                $this->context->smarty->assign([
-                    'desc' => sprintf($paymentButtonDescription, $n),
-                    'plans' => (array) $plan->paymentPlan,
-                ]);
-
-                $template = $this->context->smarty->fetch(
-                    "module:{$this->module->name}/views/templates/hook/payment_button_desc.tpl"
-                );
-
-                $paymentOption->setAdditionalInformation($template);
-            }
-
-            $sortOrder = Settings::installmentPlanSortOrder($n);
-            $options[$sortOrder] = $paymentOption;
-            $sortOrders[] = $sortOrder;
         }
 
-        $sortedOptions = [];
-        sort($sortOrders);
-        foreach ($sortOrders as $order) {
-            $sortedOptions[] = $options[$order];
+        asort($sortOptions);
+        $payment = [];
+        foreach ($sortOptions as $key => $option) {
+            $payment[] = $paymentOptions[$key];
         }
 
-        return $sortedOptions;
+        return $payment;
     }
 
-    private function createPaymentOption($forEUComplianceModule, $ctaText, $action, $n)
+    private function createPaymentOption($forEUComplianceModule, $ctaText, $action, $deferred, $value)
     {
         $baseDir = _PS_MODULE_DIR_ . $this->module->name;
 
+        if ($deferred) {
+            $logoName = "${value}j_logo.svg";
+        } else {
+            $logoName = "p${value}x_logo.svg";
+        }
+
         if ($forEUComplianceModule) {
-            $logo = Media::getMediaPath("${baseDir}/views/img/logos/alma_payment_logos.svg");
+            $logo = Media::getMediaPath("${baseDir}/views/img/logos/alma_payment_logos_tiny.svg");
             $paymentOption = [
                 'cta_text' => $ctaText,
                 'action' => $action,
@@ -110,7 +169,7 @@ final class PaymentOptionsHookController extends FrontendHookController
             ];
         } else {
             $paymentOption = new PaymentOption();
-            $logo = Media::getMediaPath("${baseDir}/views/img/logos/alma_p${n}x.svg");
+            $logo = Media::getMediaPath("${baseDir}/views/img/logos/${logoName}");
             $paymentOption
                 ->setModuleName($this->module->name)
                 ->setCallToActionText($ctaText)

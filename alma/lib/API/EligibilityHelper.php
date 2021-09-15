@@ -50,30 +50,36 @@ class EligibilityHelper
             return [];
         }
 
-        if (0 === Settings::installmentPlansMaxN()) {
+        $feePlans = json_decode(Settings::getFeePlans());
+
+        if (!$feePlans) {
             return [];
         }
 
-        foreach (Settings::activeInstallmentsCounts() as $n) {
-            if (
-                $purchaseAmount < Settings::installmentPlanMinAmount($n)
-                || $purchaseAmount > Settings::installmentPlanMaxAmount($n)
-            ) {
-                $eligibility = new Eligibility(
-                    [
-                        'installments_count' => $n,
-                        'eligible' => false,
-                        'constraints' => [
-                            'purchase_amount' => [
-                                'minimum' => Settings::installmentPlanMinAmount($n),
-                                'maximum' => Settings::installmentPlanMaxAmount($n),
+        foreach ($feePlans as $key => $feePlan) {
+            $getDataFromKey = Settings::getDataFromKey($key);
+
+            if (1 == $feePlan->enabled) {
+                if ($purchaseAmount < $feePlan->min
+                || $purchaseAmount > $feePlan->max) {
+                    $eligibility = new Eligibility(
+                        [
+                            'installments_count' => $getDataFromKey['installmentsCount'],
+                            'deferred_days' => $getDataFromKey['deferredDays'],
+                            'deferred_months' => $getDataFromKey['deferredMonths'],
+                            'eligible' => false,
+                            'constraints' => [
+                                'purchase_amount' => [
+                                    'minimum' => $feePlan->min,
+                                    'maximum' => $feePlan->max,
+                                ],
                             ],
-                        ],
-                    ]
-                );
-                $eligibilities[] = $eligibility;
-            } else {
-                $activePlans[] = $n;
+                        ]
+                    );
+                    $eligibilities[] = $eligibility;
+                } else {
+                    $activePlans[] = $getDataFromKey;
+                }
             }
         }
 

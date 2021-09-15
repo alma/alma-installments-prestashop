@@ -115,25 +115,55 @@ final class DisplayProductPriceBlockHookController extends FrontendHookControlle
             $psVersion = 'ps16';
         }
 
-        $this->context->smarty->assign(
-            [
-                'productId' => $productId,
-                'psVersion' => $psVersion,
-                'logo' => almaSvgDataUrl(_PS_MODULE_DIR_ . $this->module->name . '/views/img/logos/logo_alma.svg'),
-                'isExcluded' => Settings::isProductExcluded($productId),
-                'exclusionMsg' => Settings::getNonEligibleCategoriesMessage(),
-                'settings' => [
-                    'merchantId' => Settings::getMerchantId(),
-                    'apiMode' => Settings::getActiveMode(),
-                    'amount' => $price,
-                    'plans' => Settings::activePlans(),
-                    'refreshPrice' => $refreshPrice,
-                    'decimalSeparator' => LocaleHelper::decimalSeparator(),
-                    'thousandSeparator' => LocaleHelper::thousandSeparator(),
-                ],
-            ]
-        );
+        $activePlans = Settings::activePlans(true);
 
-        return $this->module->display($this->module->file, 'displayProductPriceBlock.tpl');
+        if (!$activePlans) {
+            return;
+        }
+
+        $isEligible = true;
+
+        if (!Settings::showProductWidgetIfNotEligible()) {
+            $feePlans = json_decode(Settings::getFeePlans());
+
+            $isEligible = false;
+            foreach ($feePlans as $feePlan) {
+                if (1 == $feePlan->enabled) {
+                    if ($price > $feePlan->min && $price < $feePlan->max) {
+                        $isEligible = true;
+                        break;
+                    }
+                }
+            }
+        }
+        if ($isEligible) {
+            $this->context->smarty->assign([
+            'productId' => $productId,
+            'psVersion' => $psVersion,
+            'logo' => almaSvgDataUrl(_PS_MODULE_DIR_ . $this->module->name . '/views/img/logos/logo_alma.svg'),
+            'isExcluded' => Settings::isProductExcluded($productId),
+            'exclusionMsg' => Settings::getNonEligibleCategoriesMessage(),
+            'settings' => [
+                'merchantId' => Settings::getMerchantId(),
+                'apiMode' => Settings::getActiveMode(),
+                'amount' => $price,
+                'plans' => $activePlans,
+                'refreshPrice' => $refreshPrice,
+                'decimalSeparator' => LocaleHelper::decimalSeparator(),
+                'thousandSeparator' => LocaleHelper::thousandSeparator(),
+                ],
+            'widgetQuerySelectors' => json_encode([
+                'price' => Settings::getProductPriceQuerySelector(),
+                'attrSelect' => Settings::getProductAttrQuerySelector(),
+                'attrRadio' => Settings::getProductAttrRadioQuerySelector(),
+                'colorPick' => Settings::getProductColorPickQuerySelector(),
+                'quantity' => Settings::getProductQuantityQuerySelector(),
+                'isCustom' => Settings::isWidgetCustomPosition(),
+                'position' => Settings::getProductWidgetPositionQuerySelector(),
+                ]),
+            ]);
+
+            return $this->module->display($this->module->file, 'displayProductPriceBlock.tpl');
+        }
     }
 }

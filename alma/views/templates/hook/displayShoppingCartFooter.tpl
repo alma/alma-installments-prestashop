@@ -20,9 +20,17 @@
  * @copyright 2018-2021 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  *}
-
-<div style="margin: 15px 0">
-    <img src="{$logo|escape:'htmlall':'UTF-8'}"
-         style="width: auto !important; height: 25px !important; border: none !important; vertical-align: middle"
-         alt="Alma"> <span style="text-transform: initial">{$eligibility_msg|escape:'htmlall':'UTF-8'}</span>
+ 
+<div style="display:none">
+    <input type="hidden" id="alma-widget-config" value="{$widgetQuerySelectors|escape:'htmlall':'UTF-8'}" />
 </div>
+{if $isExcluded}
+    <div style="margin: 15px 0">
+        <img src="{$logo|escape:'htmlall':'UTF-8'}"
+            style="width: auto !important; height: 25px !important; border: none !important; vertical-align: middle"
+            alt="Alma"> <span style="text-transform: initial">{$eligibility_msg|escape:'htmlall':'UTF-8'}</span>
+    </div>
+{else}
+    <div {if $settings.psVersion != "1.7"} style="margin:15px 0" {/if} id="alma-cart-widget" class="alma-widget-container" data-settings="{$settings|almaJsonEncode|escape:'htmlall':'UTF-8'}"></div>
+    <script type="text/javascript">window.__alma_refreshWidgets && __alma_refreshWidgets();</script>
+{/if}

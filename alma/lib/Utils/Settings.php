@@ -1,5 +1,4 @@
 <?php
-
 /**
  * 2018-2021 Alma SAS
  *
@@ -85,26 +84,28 @@ class Settings
             'ALMA_TEST_API_KEY',
             'ALMA_SHOW_DISABLED_BUTTON',
             'ALMA_SHOW_ELIGIBILITY_MESSAGE',
-            'ALMA_IS_ELIGIBLE_MESSAGE',
-            'ALMA_NOT_ELIGIBLE_MESSAGE',
             'ALMA_PAYMENT_BUTTON_TITLE',
             'ALMA_PAYMENT_BUTTON_DESC',
-            'ALMA_P2X_ENABLED',
-            'ALMA_P3X_ENABLED',
-            'ALMA_P4X_ENABLED',
-            'ALMA_P2X_MIN_AMOUNT',
-            'ALMA_P3X_MIN_AMOUNT',
-            'ALMA_P4X_MIN_AMOUNT',
-            'ALMA_P2X_MAX_AMOUNT',
-            'ALMA_P3X_MAX_AMOUNT',
-            'ALMA_P4X_MAX_AMOUNT',
-            'ALMA_PNX_MAX_N',
+            'ALMA_DEFERRED_BUTTON_TITLE',
+            'ALMA_DEFERRED_BUTTON_DESC',
             'ALMA_STATE_REFUND',
             'ALMA_STATE_REFUND_ENABLED',
             'ALMA_DISPLAY_ORDER_CONFIRMATION',
             'ALMA_EXCLUDED_CATEGORIES',
             'ALMA_NOT_ELIGIBLE_CATEGORIES',
             'ALMA_SHOW_PRODUCT_ELIGIBILITY',
+            'ALMA_FEE_PLANS',
+            'ALMA_PRODUCT_ATTR_RADIO_SELECTOR',
+            'ALMA_PRODUCT_ATTR_SELECTOR',
+            'ALMA_PRODUCT_COLOR_PICK_SELECTOR',
+            'ALMA_PRODUCT_PRICE_SELECTOR',
+            'ALMA_PRODUCT_QUANTITY_SELECTOR',
+            'ALMA_WIDGET_POSITION_SELECTOR',
+            'ALMA_WIDGET_POSITION_CUSTOM',
+            'ALMA_CART_WDGT_POS_SELECTOR',
+            'ALMA_CART_WIDGET_POSITION_CUSTOM',
+            'ALMA_CART_WDGT_NOT_ELGBL',
+            'ALMA_PRODUCT_WDGT_NOT_ELGBL',
         ];
 
         foreach ($configKeys as $configKey) {
@@ -154,29 +155,11 @@ class Settings
         return (bool) (int) self::get('ALMA_SHOW_DISABLED_BUTTON', true);
     }
 
-    public static function getEligibilityMessage()
-    {
-        // Allow PrestaShop's translation feature to detect those strings
-        // $this->l('Your cart is eligible for monthly installments.', 'settings');
-        $default = self::l('Your cart is eligible for monthly installments.');
-
-        return self::get('ALMA_IS_ELIGIBLE_MESSAGE', $default);
-    }
-
-    public static function getNonEligibilityMessage()
-    {
-        // Allow PrestaShop's translation feature to detect those strings
-        // $this->l('Your cart is not eligible for monthly installments.', 'settings');
-        $default = self::l('Your cart is not eligible for monthly installments.');
-
-        return self::get('ALMA_NOT_ELIGIBLE_MESSAGE', $default);
-    }
-
     public static function getNonEligibleCategoriesMessage()
     {
         // Allow PrestaShop's translation feature to detect those strings
-        // $this->l('Your cart is not eligible for monthly installments.', 'settings');
-        $default = self::l('Your cart is not eligible for monthly installments.');
+        // $this->l('Your cart is not eligible for payments with Alma.', 'settings');
+        $default = self::l('Your cart is not eligible for payments with Alma.');
 
         return self::get('ALMA_NOT_ELIGIBLE_CATEGORIES', $default);
     }
@@ -186,28 +169,14 @@ class Settings
         return (bool) (int) self::get('ALMA_SHOW_ELIGIBILITY_MESSAGE', true);
     }
 
-    public static function getNonEligibilityMinAmountMessage($minimum)
+    public static function showCartWidgetIfNotEligible()
     {
-        // Allow PrestaShop's translation feature to detect those strings
-        // $this->l('(Minimum amount: %s)', 'settings');
-        $default = sprintf(
-            self::l('(Minimum amount: %s)'),
-            almaFormatPrice($minimum)
-        );
-
-        return $default;
+        return (bool) (int) self::get('ALMA_CART_WDGT_NOT_ELGBL', true);
     }
 
-    public static function getNonEligibilityMaxAmountMessage($maximum)
+    public static function showProductWidgetIfNotEligible()
     {
-        // Allow PrestaShop's translation feature to detect those strings
-        // $this->l('(Maximum amount: %s)', 'settings');
-        $default = sprintf(
-            self::l('(Maximum amount: %s)'),
-            almaFormatPrice($maximum)
-        );
-
-        return $default;
+        return (bool) (int) self::get('ALMA_PRODUCT_WDGT_NOT_ELGBL', true);
     }
 
     public static function getPaymentButtonTitle()
@@ -228,6 +197,24 @@ class Settings
         return self::get('ALMA_PAYMENT_BUTTON_DESC', $default);
     }
 
+    public static function getPaymentButtonTitleDeferred()
+    {
+        // Allow PrestaShop's translation feature to detect those strings
+        // $this->l('Buy now Pay in %d days', 'settings');
+        $default = self::l('Buy now Pay in %d days');
+
+        return self::get('ALMA_DEFERRED_BUTTON_TITLE', $default);
+    }
+
+    public static function getPaymentButtonDescriptionDeferred()
+    {
+        // Allow PrestaShop's translation feature to detect those strings
+        // $this->l('Buy now pay in %d days with your credit card.', 'settings');
+        $default = self::l('Buy now pay in %d days with your credit card.');
+
+        return self::get('ALMA_DEFERRED_BUTTON_DESC', $default);
+    }
+
     public static function displayOrderConfirmation()
     {
         // This option is mainly useful for pre-1.7 versions, where the default theme doesn't include a confirmation
@@ -237,98 +224,25 @@ class Settings
         return (bool) (int) self::get('ALMA_DISPLAY_ORDER_CONFIRMATION', $default);
     }
 
-    public static function isInstallmentPlanEnabled($n, $merchant = null)
-    {
-        $default = ($n === 3);
-
-        if ($merchant) {
-            $plan = self::getMerchantFeePlan($merchant, $n);
-
-            if ($plan && !$plan['allowed']) {
-                return false;
-            }
-        }
-
-        return (bool) (int) self::get("ALMA_P${n}X_ENABLED", $default);
-    }
-
-    public static function installmentPlansMaxN()
-    {
-        return (int) self::get('ALMA_PNX_MAX_N', 3);
-    }
-
-    private static function getMerchantFeePlan($merchant, $n)
-    {
-        foreach ($merchant->fee_plans as $plan) {
-            if ($plan['installments_count'] === $n) {
-                return $plan;
-            }
-        }
-
-        return null;
-    }
-
-    public static function installmentPlanMinAmount($n, $merchant = null)
-    {
-        $default = 10000;
-
-        if ($merchant) {
-            $plan = self::getMerchantFeePlan($merchant, $n);
-
-            if ($plan) {
-                $default = $plan['min_purchase_amount'];
-            }
-        }
-
-        return (int) self::get("ALMA_P${n}X_MIN_AMOUNT", $default);
-    }
-
-    public static function installmentPlanMaxAmount($n, $merchant = null)
-    {
-        $default = 100000;
-
-        if ($merchant) {
-            $plan = self::getMerchantFeePlan($merchant, $n);
-
-            if ($plan) {
-                $default = $plan['max_purchase_amount'];
-            }
-        }
-
-        return (int) self::get("ALMA_P${n}X_MAX_AMOUNT", $default);
-    }
-
-    public static function installmentPlanSortOrder($n)
-    {
-        return (int) self::get("ALMA_P${n}X_SORT_ORDER", (int) $n);
-    }
-
-    public static function activePlans()
+    public static function activePlans($onlyPnx = false)
     {
         $plans = [];
+        $feePlans = json_decode(self::getFeePlans());
 
-        for ($n = 2; $n <= self::installmentPlansMaxN(); ++$n) {
-            if (self::isInstallmentPlanEnabled($n)) {
-                $plans[] = [
-                    'installmentsCount' => $n,
-                    'minAmount' => self::installmentPlanMinAmount($n),
-                    'maxAmount' => self::installmentPlanMaxAmount($n),
-                ];
+        foreach ($feePlans as $key => $feePlan) {
+            if (1 == $feePlan->enabled) {
+                $dataFromKey = self::getDataFromKey($key);
+                if ($onlyPnx && $dataFromKey['deferredMonths'] === 0 && $dataFromKey['deferredDays'] === 0) {
+                    $plans[] = [
+                        'installmentsCount' => (int) $dataFromKey['installmentsCount'],
+                        'minAmount' => $feePlan->min,
+                        'maxAmount' => $feePlan->max,
+                    ];
+                }
             }
         }
 
         return $plans;
-    }
-
-    public static function activeInstallmentsCounts()
-    {
-        $installmentsCounts = [];
-
-        foreach (self::activePlans() as $plan) {
-            $installmentsCounts[] = $plan['installmentsCount'];
-        }
-
-        return $installmentsCounts;
     }
 
     public static function getRefundState()
@@ -450,6 +364,30 @@ class Settings
         return self::get('ALMA_PRODUCT_PRICE_SELECTOR', $default);
     }
 
+    public static function getProductWidgetPositionQuerySelector()
+    {
+        $default = '';
+
+        return self::get('ALMA_WIDGET_POSITION_SELECTOR', $default);
+    }
+
+    public static function isWidgetCustomPosition()
+    {
+        return (bool) (int) self::get('ALMA_WIDGET_POSITION_CUSTOM', false);
+    }
+
+    public static function getCartWidgetPositionQuerySelector()
+    {
+        $default = '';
+
+        return self::get('ALMA_CART_WDGT_POS_SELECTOR', $default);
+    }
+
+    public static function isCartWidgetCustomPosition()
+    {
+        return (bool) (int) self::get('ALMA_CART_WIDGET_POSITION_CUSTOM', false);
+    }
+
     public static function getProductAttrQuerySelector()
     {
         $default = '#buy_block .attribute_select';
@@ -473,7 +411,11 @@ class Settings
 
     public static function getProductQuantityQuerySelector()
     {
-        $default = '#buy_block #quantity_wanted';
+        if (version_compare(_PS_VERSION_, '1.7', '<')) {
+            $default = '#buy_block #quantity_wanted';
+        } else {
+            $default = '#quantity_wanted';
+        }
 
         return self::get('ALMA_PRODUCT_QUANTITY_SELECTOR', $default);
     }
@@ -481,5 +423,58 @@ class Settings
     public static function getMerchantId()
     {
         return self::get('ALMA_MERCHANT_ID');
+    }
+
+    public static function keyForFeePlan($plan)
+    {
+        return self::key(
+            $plan->kind,
+            intval($plan->installments_count),
+            intval($plan->deferred_days),
+            intval($plan->deferred_months)
+        );
+    }
+
+    private static function key(
+        $planKind,
+        $installmentsCount,
+        $deferredDays,
+        $deferredMonths
+    ) {
+        return implode('_', [$planKind, $installmentsCount, $deferredDays, $deferredMonths]);
+    }
+
+    public static function getFeePlans()
+    {
+        return self::get('ALMA_FEE_PLANS');
+    }
+
+    public static function isDeferred($plan)
+    {
+        if (isset($plan->deferred_days)) {
+            return 0 < $plan->deferred_days || 0 < $plan->deferred_months;
+        } else {
+            return 0 < $plan->deferredDays || 0 < $plan->deferredMonths;
+        }
+    }
+
+    public static function getDuration($plan)
+    {
+        if (isset($plan->deferred_days)) {
+            return $plan->deferred_months * 30 + $plan->deferred_days;
+        } else {
+            return $plan->deferredMonths * 30 + $plan->deferredDays;
+        }
+    }
+
+    public static function getDataFromKey($key)
+    {
+        preg_match("/general_(\d*)_(\d*)_(\d*)/", $key, $data);
+
+        return [
+            'installmentsCount' => (int) $data[1],
+            'deferredDays' => (int) $data[2],
+            'deferredMonths' => (int) $data[3],
+        ];
     }
 }

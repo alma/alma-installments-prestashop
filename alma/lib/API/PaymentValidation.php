@@ -28,6 +28,7 @@ use Alma\Api\Entities\Instalment;
 use Alma\API\Entities\Payment;
 use Alma\API\RequestError;
 use Alma\PrestaShop\Utils\Logger;
+use Alma\PrestaShop\Utils\Settings;
 use Cart;
 use Configuration;
 use Context;
@@ -176,10 +177,22 @@ class PaymentValidation
 
             $extraVars = ['transaction_id' => $payment->id];
 
-            $paymentMode = sprintf(
-                $this->module->l('Alma - %d monthly installments', 'paymentvalidation'),
-                count($payment->payment_plan)
-            );
+            // why ?
+            // $installmentCount = count($payment->payment_plan);
+            $installmentCount = $payment->installments_count;
+
+            if (Settings::isDeferred($payment)) {
+                $days = Settings::getDuration($payment);
+                $paymentMode = sprintf(
+                    $this->module->l('Alma - +%d days payment', 'paymentvalidation'),
+                    $days
+                );
+            } else {
+                $paymentMode = sprintf(
+                    $this->module->l('Alma - %d monthly installments', 'paymentvalidation'),
+                    $installmentCount
+                );
+            }
 
             // Place order
             $this->module->validateOrder(

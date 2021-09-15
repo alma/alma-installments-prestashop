@@ -83,18 +83,36 @@ final class GetContentHookController extends AdminHookController
 
         $apiOnly = Tools::getValue('_api_only');
 
+        if ($apiOnly && $merchant) {
+            $feePlans = $this->getFeePlans();
+            foreach ($feePlans as $feePlan) {
+                $n = $feePlan->installments_count;
+                if (3 == $n && !Settings::isDeferred($feePlan)) {
+                    $key = Settings::keyForFeePlan($feePlan);
+                    $almaPlans = [];
+                    $almaPlans[$key]['enabled'] = 1;
+                    $almaPlans[$key]['min'] = $feePlan->min_purchase_amount;
+                    $almaPlans[$key]['max'] = $feePlan->max_purchase_amount;
+                    $almaPlans[$key]['order'] = 1;
+                    Settings::updateValue('ALMA_FEE_PLANS', json_encode($almaPlans));
+                    break;
+                }
+            }
+        }
+
         if (!$apiOnly) {
             $title = Tools::getValue('ALMA_PAYMENT_BUTTON_TITLE');
+            $titleDeferred = Tools::getValue('ALMA_DEFERRED_BUTTON_TITLE');
             $description = Tools::getValue('ALMA_PAYMENT_BUTTON_DESC');
+            $descriptionDeferred = Tools::getValue('ALMA_DEFERRED_BUTTON_DESC');
+
             $showEligibility = (bool) Tools::getValue('ALMA_SHOW_ELIGIBILITY_MESSAGE_ON');
-            $eligibleMsg = Tools::getValue('ALMA_IS_ELIGIBLE_MESSAGE');
-            $nonEligibleMsg = Tools::getValue('ALMA_NOT_ELIGIBLE_MESSAGE');
+            $showCartEligibilityNotEligible = (bool) Tools::getValue('ALMA_CART_WDGT_NOT_ELGBL_ON');
+            $showProductEligibilityNotEligible = (bool) Tools::getValue('ALMA_PRODUCT_WDGT_NOT_ELGBL_ON');
+
             $nonEligibleCategoriesMsg = Tools::getValue('ALMA_NOT_ELIGIBLE_CATEGORIES');
 
-            if (empty($title)
-                || empty($description)
-                || ($showEligibility && (empty($eligibleMsg) || empty($nonEligibleMsg)))
-            ) {
+            if (empty($title) || empty($description) || empty($titleDeferred) || empty($descriptionDeferred)) {
                 $this->context->smarty->assign('validation_error', 'missing_required_setting');
 
                 return $this->module->display($this->module->file, 'getContent.tpl');
@@ -105,6 +123,12 @@ final class GetContentHookController extends AdminHookController
 
             $productPriceQuerySelector = Tools::getValue('ALMA_PRODUCT_PRICE_SELECTOR');
             Settings::updateValue('ALMA_PRODUCT_PRICE_SELECTOR', $productPriceQuerySelector);
+
+            $widgetCustomPosition = (bool) Tools::getValue('ALMA_WIDGET_POSITION_CUSTOM');
+            Settings::updateValue('ALMA_WIDGET_POSITION_CUSTOM', $widgetCustomPosition);
+
+            $productWidgetPositionQuerySelector = Tools::getValue('ALMA_WIDGET_POSITION_SELECTOR');
+            Settings::updateValue('ALMA_WIDGET_POSITION_SELECTOR', $productWidgetPositionQuerySelector);
 
             $productAttrQuerySelector = Tools::getValue('ALMA_PRODUCT_ATTR_SELECTOR');
             Settings::updateValue('ALMA_PRODUCT_ATTR_SELECTOR', $productAttrQuerySelector);
@@ -118,16 +142,26 @@ final class GetContentHookController extends AdminHookController
             $productQuantityQuerySelector = Tools::getValue('ALMA_PRODUCT_QUANTITY_SELECTOR');
             Settings::updateValue('ALMA_PRODUCT_QUANTITY_SELECTOR', $productQuantityQuerySelector);
 
+            $cartWidgetCustomPosition = (bool) Tools::getValue('ALMA_CART_WIDGET_POSITION_CUSTOM');
+            Settings::updateValue('ALMA_CART_WIDGET_POSITION_CUSTOM', $cartWidgetCustomPosition);
+
+            $cartWidgetPositionQuerySelector = Tools::getValue('ALMA_CART_WDGT_POS_SELECTOR');
+            Settings::updateValue('ALMA_CART_WDGT_POS_SELECTOR', $cartWidgetPositionQuerySelector);
+
             Settings::updateValue('ALMA_PAYMENT_BUTTON_TITLE', $title);
             Settings::updateValue('ALMA_PAYMENT_BUTTON_DESC', $description);
+
+            Settings::updateValue('ALMA_DEFERRED_BUTTON_TITLE', $titleDeferred);
+            Settings::updateValue('ALMA_DEFERRED_BUTTON_DESC', $descriptionDeferred);
 
             $showDisabledButton = (bool) Tools::getValue('ALMA_SHOW_DISABLED_BUTTON');
             Settings::updateValue('ALMA_SHOW_DISABLED_BUTTON', $showDisabledButton);
 
-            Settings::updateValue('ALMA_SHOW_ELIGIBILITY_MESSAGE', $showEligibility);
-            Settings::updateValue('ALMA_IS_ELIGIBLE_MESSAGE', $eligibleMsg);
-            Settings::updateValue('ALMA_NOT_ELIGIBLE_MESSAGE', $nonEligibleMsg);
+            Settings::updateValue('ALMA_SHOW_ELIGIBILITY_MESSAGE', $showEligibility ? '1' : '0');
             Settings::updateValue('ALMA_NOT_ELIGIBLE_CATEGORIES', $nonEligibleCategoriesMsg);
+
+            Settings::updateValue('ALMA_CART_WDGT_NOT_ELGBL', $showCartEligibilityNotEligible);
+            Settings::updateValue('ALMA_PRODUCT_WDGT_NOT_ELGBL', $showProductEligibilityNotEligible);
 
             $idStateRefund = Tools::getValue('ALMA_STATE_REFUND');
             Settings::updateValue('ALMA_STATE_REFUND', $idStateRefund);
@@ -143,42 +177,61 @@ final class GetContentHookController extends AdminHookController
 
             if ($merchant) {
                 // First validate that plans boundaries are correctly set
-                foreach ($merchant->fee_plans as $feePlan) {
-                    $n = $feePlan['installments_count'];
-                    $min = almaPriceToCents((int) Tools::getValue("ALMA_P${n}X_MIN_AMOUNT"));
-                    $max = almaPriceToCents((int) Tools::getValue("ALMA_P${n}X_MAX_AMOUNT"));
+                $feePlans = $this->getFeePlans();
+                foreach ($feePlans as $feePlan) {
+                    $n = $feePlan->installments_count;
+                    $key = Settings::keyForFeePlan($feePlan);
+                    if (1 == $n && !Settings::isDeferred($feePlan)) {
+                        continue;
+                    }
+                    if (1 != $n && Settings::isDeferred($feePlan)) {
+                        continue;
+                    }
+                    $min = almaPriceToCents((int) Tools::getValue("ALMA_${key}_MIN_AMOUNT"));
+                    $max = almaPriceToCents((int) Tools::getValue("ALMA_${key}_MAX_AMOUNT"));
+                    $enablePlan = (bool) Tools::getValue("ALMA_${key}_ENABLED_ON");
 
-                    $enablePlan = (bool) Tools::getValue("ALMA_P${n}X_ENABLED_ON");
-
-                    if ($enablePlan && !($min >= $feePlan['min_purchase_amount'] &&
-                        $min <= min($max, $feePlan['max_purchase_amount']))) {
+                    if ($enablePlan && !($min >= $feePlan->min_purchase_amount &&
+                        $min <= min($max, $feePlan->max_purchase_amount))) {
                         $this->context->smarty->assign([
                             'validation_error' => 'pnx_min_amount',
                             'n' => $n,
-                            'min' => almaPriceFromCents($feePlan['min_purchase_amount']),
-                            'max' => almaPriceFromCents(min($max, $feePlan['max_purchase_amount'])),
+                            'min' => almaPriceFromCents($feePlan->min_purchase_amount),
+                            'max' => almaPriceFromCents(min($max, $feePlan->max_purchase_amount)),
                         ]);
 
                         return $this->module->display($this->module->file, 'getContent.tpl');
                     }
 
-                    if ($enablePlan && !($max >= $min && $max <= $feePlan['max_purchase_amount'])) {
+                    if ($enablePlan && !($max >= $min && $max <= $feePlan->max_purchase_amount)) {
                         $this->context->smarty->assign([
                             'validation_error' => 'pnx_max_amount',
                             'n' => $n,
                             'min' => almaPriceFromCents($min),
-                            'max' => almaPriceFromCents($feePlan['max_purchase_amount']),
+                            'max' => almaPriceFromCents($feePlan->max_purchase_amount),
                         ]);
 
                         return $this->module->display($this->module->file, 'getContent.tpl');
                     }
                 }
 
-                $maxN = 0;
-                foreach ($merchant->fee_plans as $feePlan) {
-                    $n = $feePlan['installments_count'];
-                    $min = (int) Tools::getValue("ALMA_P${n}X_MIN_AMOUNT");
-                    $max = (int) Tools::getValue("ALMA_P${n}X_MAX_AMOUNT");
+                $almaPlans = [];
+                $position = 1;
+                foreach ($feePlans as $feePlan) {
+                    $n = $feePlan->installments_count;
+                    $key = Settings::keyForFeePlan($feePlan);
+
+                    if (1 == $n && !Settings::isDeferred($feePlan)) {
+                        continue;
+                    }
+
+                    if (1 != $n && Settings::isDeferred($feePlan)) {
+                        continue;
+                    }
+
+                    $min = (int) Tools::getValue("ALMA_${key}_MIN_AMOUNT");
+                    $max = (int) Tools::getValue("ALMA_${key}_MAX_AMOUNT");
+                    $order = (int) Tools::getValue("ALMA_${key}_SORT_ORDER");
 
                     // In case merchant inverted min & max values, correct it
                     if ($min > $max) {
@@ -187,20 +240,24 @@ final class GetContentHookController extends AdminHookController
                         $min = $realMin;
                     }
 
-                    $enablePlan = (bool) Tools::getValue("ALMA_P${n}X_ENABLED_ON");
-                    Settings::updateValue("ALMA_P${n}X_ENABLED", $enablePlan ? '1' : '0');
-                    Settings::updateValue("ALMA_P${n}X_MIN_AMOUNT", almaPriceToCents($min));
-                    Settings::updateValue("ALMA_P${n}X_MAX_AMOUNT", almaPriceToCents($max));
-
-                    $sortOrder = (int) Tools::getValue("ALMA_P${n}X_SORT_ORDER");
-                    Settings::updateValue("ALMA_P${n}X_SORT_ORDER", $sortOrder);
-
-                    if ($n > $maxN && $enablePlan) {
-                        $maxN = $n;
+                    // in case of difference between sandbox and production feeplans
+                    if (0 == $min && 0 == $max && 0 == $order) {
+                        $enablePlan = (bool) Tools::getValue("ALMA_${key}_ENABLED_ON");
+                        $almaPlans[$key]['enabled'] = '0';
+                        $almaPlans[$key]['min'] = $feePlan->min_purchase_amount;
+                        $almaPlans[$key]['max'] = $feePlan->max_purchase_amount;
+                        $almaPlans[$key]['order'] = (int) $position;
+                        ++$position;
+                    } else {
+                        $enablePlan = (bool) Tools::getValue("ALMA_${key}_ENABLED_ON");
+                        $almaPlans[$key]['enabled'] = $enablePlan ? '1' : '0';
+                        $almaPlans[$key]['min'] = almaPriceToCents($min);
+                        $almaPlans[$key]['max'] = almaPriceToCents($max);
+                        $almaPlans[$key]['order'] = (int) Tools::getValue("ALMA_${key}_SORT_ORDER");
                     }
                 }
 
-                Settings::updateValue('ALMA_PNX_MAX_N', $maxN);
+                Settings::updateValue('ALMA_FEE_PLANS', json_encode($almaPlans));
             }
         }
 
@@ -279,6 +336,21 @@ final class GetContentHookController extends AdminHookController
 
         try {
             return $alma->merchants->me();
+        } catch (RequestError $e) {
+            return null;
+        }
+    }
+
+    private function getFeePlans()
+    {
+        $alma = ClientHelper::defaultInstance();
+
+        if (!$alma) {
+            return null;
+        }
+
+        try {
+            return (array) $alma->merchants->feePlans('general', 'all', true);
         } catch (RequestError $e) {
             return null;
         }
@@ -381,32 +453,87 @@ final class GetContentHookController extends AdminHookController
             $pnxTabs = [];
             $activeTab = null;
 
-            foreach ($merchant->fee_plans as $feePlan) {
-                $n = $feePlan['installments_count'];
+            $feePlans = $this->getFeePlans();
+            $installmentsPlans = json_decode(Settings::getFeePlans());
 
-                // Disable and hide disallowed fee plans
-                if (!$feePlan['allowed']) {
-                    Settings::updateValue("ALMA_P${n}X_ENABLED", '0');
+            // sort fee plans by pnx then by pay later duration
+            $feePlansOrdered = [];
+            $feePlanDeferred = [];
+            foreach ($feePlans as $feePlan) {
+                if (!Settings::isDeferred($feePlan)) {
+                    $feePlansOrdered[$feePlan->installments_count] = $feePlan;
+                } else {
+                    $duration = Settings::getDuration($feePlan);
+                    $feePlanDeferred[$feePlan->installments_count . $duration] = $feePlan;
+                }
+            }
+            ksort($feePlanDeferred);
+            $feePlansOrdered = array_merge($feePlansOrdered, $feePlanDeferred);
+
+            foreach ($feePlansOrdered as $feePlan) {
+                $key = Settings::keyForFeePlan($feePlan);
+                if (1 == $feePlan->installments_count && !Settings::isDeferred($feePlan)) {
                     continue;
                 }
 
-                $tabId = "p${n}x";
-                $tabTitle = sprintf($this->module->l('%d-installment payments', 'GetContentHookController'), $n);
+                // Disable and hide disallowed fee plans
+                if (!$feePlan->allowed) {
+                    unset($installmentsPlans->$key);
+                    Settings::updateValue('ALMA_FEE_PLANS', json_encode($installmentsPlans));
 
-                if (Settings::isInstallmentPlanEnabled($n)) {
+                    continue;
+                }
+
+                $tabId = $key;
+                // PrestaShop won't detect the string if the call to `l` is multiline
+                // phpcs:ignore
+                $tabTitle = sprintf($this->module->l('%d-installment payments', 'GetContentHookController'), $feePlan->installments_count);
+                $duration = Settings::getDuration($feePlan);
+                $label = sprintf(
+                    $this->module->l('Enable %d-installment payments', 'GetContentHookController'),
+                    $feePlan->installments_count
+                );
+                if (Settings::isDeferred($feePlan)) {
+                    if ($feePlan->installments_count == 1) {
+                        // PrestaShop won't detect the string if the call to `l` is multiline
+                        // phpcs:ignore
+                        $tabTitle = sprintf($this->module->l('Deferred payments + %d days', 'GetContentHookController'), $duration);
+                        $label = sprintf(
+                            $this->module->l('Enable deferred payments +%d days', 'GetContentHookController'),
+                            $duration
+                        );
+                    } else {
+                        // PrestaShop won't detect the string if the call to `l` is multiline
+                        // phpcs:ignore
+                        $tabTitle = sprintf($this->module->l('%d-deferred payments + %d days', 'GetContentHookController'), $feePlan->installments_count, $duration);
+                        $label = sprintf(
+                            $this->module->l('Enable %d-deferred payments +%d days', 'GetContentHookController'),
+                            $feePlan->installments_count,
+                            $duration
+                        );
+                    }
+                }
+
+                $enable = isset($installmentsPlans->$key->enabled) ? $installmentsPlans->$key->enabled : 0;
+                if (1 == $enable) {
                     $pnxTabs[$tabId] = '✅ ' . $tabTitle;
                     $activeTab = $activeTab ?: $tabId;
                 } else {
                     $pnxTabs[$tabId] = '❌ ' . $tabTitle;
                 }
 
-                $minAmount = (int) almaPriceFromCents($feePlan['min_purchase_amount']);
-                $maxAmount = (int) almaPriceFromCents($feePlan['max_purchase_amount']);
+                $minAmount = (int) almaPriceFromCents($feePlan->min_purchase_amount);
+                $maxAmount = (int) almaPriceFromCents($feePlan->max_purchase_amount);
 
                 $tpl = $this->context->smarty->createTemplate(
                     "{$this->module->local_path}views/templates/hook/pnx_fees.tpl"
                 );
-                $tpl->assign(['fee_plan' => $feePlan, 'min_amount' => $minAmount, 'max_amount' => $maxAmount]);
+                $tpl->assign(
+                    ['fee_plan' => (array) $feePlan,
+                    'min_amount' => $minAmount,
+                    'max_amount' => $maxAmount,
+                    'deferred' => $duration, ]
+                );
 
                 $pnxConfigForm['form']['input'][] = [
                     // Prevent notices for undefined index
@@ -420,11 +547,8 @@ final class GetContentHookController extends AdminHookController
 
                 $pnxConfigForm['form']['input'][] = [
                     'form_group_class' => "$tabId-content",
-                    'name' => "ALMA_P${n}X_ENABLED",
-                    'label' => sprintf(
-                        $this->module->l('Enable %d-installment payments', 'GetContentHookController'),
-                        $n
-                    ),
+                    'name' => "ALMA_${key}_ENABLED",
+                    'label' => $label,
                     'type' => 'checkbox',
                     'values' => [
                         'id' => 'id',
@@ -441,7 +565,7 @@ final class GetContentHookController extends AdminHookController
 
                 $pnxConfigForm['form']['input'][] = [
                     'form_group_class' => "$tabId-content",
-                    'name' => "ALMA_P${n}X_MIN_AMOUNT",
+                    'name' => "ALMA_${key}_MIN_AMOUNT",
                     'label' => $this->module->l('Minimum amount (€)', 'GetContentHookController'),
                     // phpcs:ignore
                     'desc' => $this->module->l('Minimum purchase amount to activate this plan', 'GetContentHookController'),
@@ -452,7 +576,7 @@ final class GetContentHookController extends AdminHookController
 
                 $pnxConfigForm['form']['input'][] = [
                     'form_group_class' => "$tabId-content",
-                    'name' => "ALMA_P${n}X_MAX_AMOUNT",
+                    'name' => "ALMA_${key}_MAX_AMOUNT",
                     'label' => $this->module->l('Maximum amount (€)', 'GetContentHookController'),
                     // phpcs:ignore
                     'desc' => $this->module->l('Maximum purchase amount to activate this plan', 'GetContentHookController'),
@@ -463,12 +587,11 @@ final class GetContentHookController extends AdminHookController
 
                 $pnxConfigForm['form']['input'][] = [
                     'form_group_class' => "$tabId-content",
-                    'name' => "ALMA_P${n}X_SORT_ORDER",
-                    'label' => $this->module->l('Sort order', 'GetContentHookController'),
+                    'name' => "ALMA_${key}_SORT_ORDER",
+                    'label' => $this->module->l('Position', 'GetContentHookController'),
                     // phpcs:ignore
-                    'desc' => $this->module->l('Use relative values to set the order of your plans on the checkout page', 'GetContentHookController'),
+                    'desc' => $this->module->l('Use relative values to set the order on the checkout page', 'GetContentHookController'),
                     'type' => 'number',
-                    'min' => 0,
                 ];
             }
 
@@ -505,9 +628,8 @@ final class GetContentHookController extends AdminHookController
                         'type' => 'html',
                         // PrestaShop won't detect the string if the call to `l` is multiline
                         // phpcs:ignore
-                        'html_content' => $this->module->l('Use "%d" in the fields below where you want the installments count to appear. For instance, "Pay in %d monthly installments" will appear as "Pay in 3 monthly installments"', 'GetContentHookController'),
+                        'html_content' => "<h4>{$this->module->l('Payment by installment', 'GetContentHookController')}</h4>",
                     ],
-
                     [
                         'name' => 'ALMA_PAYMENT_BUTTON_TITLE',
                         'label' => $this->module->l('Title', 'GetContentHookController'),
@@ -526,7 +648,35 @@ final class GetContentHookController extends AdminHookController
                         'desc' => $this->module->l('This controls the payment method description which the user sees during checkout.', 'GetContentHookController'),
                         'type' => 'text',
                         'size' => 75,
-                        'required' => version_compare(_PS_VERSION_, '1.7', '<'),
+                        'required' => true,
+                    ],
+                    [
+                        'name' => null,
+                        'label' => null,
+                        'type' => 'html',
+                        // PrestaShop won't detect the string if the call to `l` is multiline
+                        // phpcs:ignore
+                        'html_content' => "<h4>{$this->module->l('Defered payment', 'GetContentHookController')}</h4>",
+                    ],
+                    [
+                        'name' => 'ALMA_DEFERRED_BUTTON_TITLE',
+                        'label' => $this->module->l('Title', 'GetContentHookController'),
+                        // PrestaShop won't detect the string if the call to `l` is multiline
+                        // phpcs:ignore
+                        'desc' => $this->module->l('This controls the payment method name which the user sees during checkout.', 'GetContentHookController'),
+                        'type' => 'text',
+                        'size' => 75,
+                        'required' => true,
+                    ],
+                    [
+                        'name' => 'ALMA_DEFERRED_BUTTON_DESC',
+                        'label' => $this->module->l('Description', 'GetContentHookController'),
+                        // PrestaShop won't detect the string if the call to `l` is multiline
+                        // phpcs:ignore
+                        'desc' => $this->module->l('This controls the payment method description which the user sees during checkout.', 'GetContentHookController'),
+                        'type' => 'text',
+                        'size' => 75,
+                        'required' => true,
                     ],
                 ],
                 'submit' => ['title' => $this->module->l('Save'), 'class' => 'button btn btn-default pull-right'],
@@ -582,6 +732,64 @@ final class GetContentHookController extends AdminHookController
                                 ],
                             ],
                         ],
+                    ],
+                    [
+                        'name' => 'ALMA_PRODUCT_WDGT_NOT_ELGBL',
+                        'label' => $this->module->l('Display badge', 'GetContentHookController'),
+                        // phpcs:ignore
+                        'desc' => $this->module->l('Displays a badge when product price is too high or tow low', 'GetContentHookController'),
+                        'type' => 'checkbox',
+                        'values' => [
+                            'id' => 'id',
+                            'name' => 'label',
+                            'query' => [
+                                [
+                                    'id' => 'ON',
+                                    'val' => true,
+                                    // PrestaShop won't detect the string if the call to `l` is multiline
+                                    // phpcs:ignore
+                                    'label' => $this->module->l('Display badge when the product is not eligible.', 'GetContentHookController'),
+                                ],
+                            ],
+                        ],
+                    ],
+                    [
+                        'name' => 'ALMA_WIDGET_POSITION_CUSTOM',
+                        'type' => 'radio',
+                        'label' => $this->module->l('Badge position', 'GetContentHookController'),
+                        'class' => 't',
+                        'required' => true,
+                        'values' => [
+                            [
+                                'id' => 'ALMA_WIDGET_POSITION_CUSTOM_OFF',
+                                'value' => false,
+                                // PrestaShop won't detect the string if the call to `l` is multiline
+                                // phpcs:ignore
+                                'label' => $this->module->l('Display badge after price (by default)', 'GetContentHookController'),
+                            ],
+                            [
+                                'id' => 'ALMA_WIDGET_POSITION_CUSTOM_ON',
+                                'value' => true,
+                                // PrestaShop won't detect the string if the call to `l` is multiline
+                                // phpcs:ignore
+                                'label' => $this->module->l('Display badge on custom css selector', 'GetContentHookController'),
+                            ],
+                        ],
+                    ],
+                    [
+                        'name' => 'ALMA_WIDGET_POSITION_SELECTOR',
+                        'label' => $this->module->l('Display badge on custom css selector', 'GetContentHookController'),
+                        'desc' => sprintf(
+                            // PrestaShop won't detect the string if the call to `l` is multiline
+                            // phpcs:ignore
+                            $this->module->l('%1$sAdvanced%2$s [Optional] Query selector for our scripts to display the badge on product page', 'GetContentHookController'),
+                            '<b>',
+                            '</b>'
+                        ),
+                        'type' => 'text',
+                        'size' => 75,
+                        'placeholder' => $this->module->l('E.g. #id, .class, ...', 'GetContentHookController'),
+                        'required' => false,
                     ],
                     [
                         'name' => 'ALMA_PRODUCT_PRICE_SELECTOR',
@@ -669,7 +877,9 @@ final class GetContentHookController extends AdminHookController
                 'input' => [
                     [
                         'name' => 'ALMA_SHOW_ELIGIBILITY_MESSAGE',
-                        'label' => $this->module->l('Show eligibility message', 'GetContentHookController'),
+                        'label' => $this->module->l('Show cart eligibility', 'GetContentHookController'),
+                        // phpcs:ignore
+                        'desc' => $this->module->l('Displays a badge with eligible Alma plans with installments details', 'GetContentHookController'),
                         'type' => 'checkbox',
                         'values' => [
                             'id' => 'id',
@@ -680,30 +890,68 @@ final class GetContentHookController extends AdminHookController
                                     'val' => true,
                                     // PrestaShop won't detect the string if the call to `l` is multiline
                                     // phpcs:ignore
-                                    'label' => $this->module->l('Display a message under the cart summary to indicate its eligibility for monthly installments.', 'GetContentHookController'),
+                                    'label' => $this->module->l('Display the cart\'s eligibility.', 'GetContentHookController'),
                                 ],
                             ],
                         ],
                     ],
                     [
-                        'name' => 'ALMA_IS_ELIGIBLE_MESSAGE',
-                        'label' => $this->module->l('Eligibility message', 'GetContentHookController'),
-                        // PrestaShop won't detect the string if the call to `l` is multiline
+                        'name' => 'ALMA_CART_WDGT_NOT_ELGBL',
+                        'label' => $this->module->l('Display badge', 'GetContentHookController'),
                         // phpcs:ignore
-                        'desc' => $this->module->l('Message displayed below the cart totals when it is eligible for monthly installments.', 'GetContentHookController'),
-                        'type' => 'text',
-                        'size' => 75,
-                        'required' => true,
+                        'desc' => $this->module->l('Displays a badge when cart amount is too high or tow low', 'GetContentHookController'),
+                        'type' => 'checkbox',
+                        'values' => [
+                            'id' => 'id',
+                            'name' => 'label',
+                            'query' => [
+                                [
+                                    'id' => 'ON',
+                                    'val' => true,
+                                    // PrestaShop won't detect the string if the call to `l` is multiline
+                                    // phpcs:ignore
+                                    'label' => $this->module->l('Display badge when the cart is not eligible.', 'GetContentHookController'),
+                                ],
+                            ],
+                        ],
                     ],
                     [
-                        'name' => 'ALMA_NOT_ELIGIBLE_MESSAGE',
-                        'label' => $this->module->l('Non-eligibility message', 'GetContentHookController'),
-                        // PrestaShop won't detect the string if the call to `l` is multiline
-                        // phpcs:ignore
-                        'desc' => $this->module->l('Message displayed below the cart totals when it is not eligible for monthly installments.', 'GetContentHookController'),
+                        'name' => 'ALMA_CART_WIDGET_POSITION_CUSTOM',
+                        'type' => 'radio',
+                        'label' => $this->module->l('Badge position', 'GetContentHookController'),
+                        'class' => 't',
+                        'required' => true,
+                        'values' => [
+                            [
+                                'id' => 'ALMA_CART_WIDGET_POSITION_CUSTOM_OFF',
+                                'value' => false,
+                                // PrestaShop won't detect the string if the call to `l` is multiline
+                                // phpcs:ignore
+                                'label' => $this->module->l('Display badge after cart (by default)', 'GetContentHookController'),
+                            ],
+                            [
+                                'id' => 'ALMA_CART_WIDGET_POSITION_CUSTOM_ON',
+                                'value' => true,
+                                // PrestaShop won't detect the string if the call to `l` is multiline
+                                // phpcs:ignore
+                                'label' => $this->module->l('Display badge on custom css selector', 'GetContentHookController'),
+                            ],
+                        ],
+                    ],
+                    [
+                        'name' => 'ALMA_CART_WDGT_POS_SELECTOR',
+                        'label' => $this->module->l('Display badge on custom css selector', 'GetContentHookController'),
+                        'desc' => sprintf(
+                            // PrestaShop won't detect the string if the call to `l` is multiline
+                            // phpcs:ignore
+                            $this->module->l('%1$sAdvanced%2$s [Optional] Query selector for our scripts to display the badge on cart page', 'GetContentHookController'),
+                            '<b>',
+                            '</b>'
+                        ),
                         'type' => 'text',
                         'size' => 75,
-                        'required' => true,
+                        'placeholder' => $this->module->l('E.g. #id, .class, ...', 'GetContentHookController'),
+                        'required' => false,
                     ],
                 ],
                 'submit' => ['title' => $this->module->l('Save'), 'class' => 'button btn btn-default pull-right'],
@@ -915,10 +1163,12 @@ final class GetContentHookController extends AdminHookController
             'ALMA_API_MODE' => Settings::getActiveMode(),
             'ALMA_PAYMENT_BUTTON_TITLE' => Settings::getPaymentButtonTitle(),
             'ALMA_PAYMENT_BUTTON_DESC' => Settings::getPaymentButtonDescription(),
+            'ALMA_DEFERRED_BUTTON_TITLE' => Settings::getPaymentButtonTitleDeferred(),
+            'ALMA_DEFERRED_BUTTON_DESC' => Settings::getPaymentButtonDescriptionDeferred(),
             'ALMA_SHOW_DISABLED_BUTTON' => Settings::showDisabledButton(),
             'ALMA_SHOW_ELIGIBILITY_MESSAGE_ON' => Settings::showEligibilityMessage(),
-            'ALMA_IS_ELIGIBLE_MESSAGE' => Settings::getEligibilityMessage(),
-            'ALMA_NOT_ELIGIBLE_MESSAGE' => Settings::getNonEligibilityMessage(),
+            'ALMA_CART_WDGT_NOT_ELGBL_ON' => Settings::showCartWidgetIfNotEligible(),
+            'ALMA_PRODUCT_WDGT_NOT_ELGBL_ON' => Settings::showProductWidgetIfNotEligible(),
             'ALMA_DISPLAY_ORDER_CONFIRMATION_ON' => Settings::displayOrderConfirmation(),
             'ALMA_ACTIVATE_LOGGING_ON' => (bool) Settings::canLog(),
             'ALMA_STATE_REFUND' => Settings::getRefundState(),
@@ -926,6 +1176,10 @@ final class GetContentHookController extends AdminHookController
             'ALMA_NOT_ELIGIBLE_CATEGORIES' => Settings::getNonEligibleCategoriesMessage(),
             'ALMA_SHOW_PRODUCT_ELIGIBILITY_ON' => Settings::showProductEligibility(),
             'ALMA_PRODUCT_PRICE_SELECTOR' => Settings::getProductPriceQuerySelector(),
+            'ALMA_WIDGET_POSITION_SELECTOR' => Settings::getProductWidgetPositionQuerySelector(),
+            'ALMA_WIDGET_POSITION_CUSTOM' => Settings::isWidgetCustomPosition(),
+            'ALMA_CART_WDGT_POS_SELECTOR' => Settings::getCartWidgetPositionQuerySelector(),
+            'ALMA_CART_WIDGET_POSITION_CUSTOM' => Settings::isCartWidgetCustomPosition(),
             'ALMA_PRODUCT_ATTR_SELECTOR' => Settings::getProductAttrQuerySelector(),
             'ALMA_PRODUCT_ATTR_RADIO_SELECTOR' => Settings::getProductAttrRadioQuerySelector(),
             'ALMA_PRODUCT_COLOR_PICK_SELECTOR' => Settings::getProductColorPickQuerySelector(),
@@ -934,18 +1188,30 @@ final class GetContentHookController extends AdminHookController
         ];
 
         if ($merchant) {
-            foreach ($merchant->fee_plans as $feePlan) {
-                $n = $feePlan['installments_count'];
-                $helper->fields_value["ALMA_P${n}X_ENABLED_ON"] = Settings::isInstallmentPlanEnabled($n);
+            $i = 2;
+            foreach ($feePlans as $feePlan) {
+                $key = Settings::keyForFeePlan($feePlan);
+                if ((1 == $feePlan->installments_count && !Settings::isDeferred($feePlan))
+                    || !$feePlan->allowed) {
+                    continue;
+                }
 
-                $minAmount = (int) almaPriceFromCents(Settings::installmentPlanMinAmount($n, $merchant));
-                $helper->fields_value["ALMA_P${n}X_MIN_AMOUNT"] = $minAmount;
-
-                $maxAmount = (int) almaPriceFromCents(Settings::installmentPlanMaxAmount($n));
-                $helper->fields_value["ALMA_P${n}X_MAX_AMOUNT"] = $maxAmount;
-
-                $sortOrder = (int) Settings::installmentPlanSortOrder($n);
-                $helper->fields_value["ALMA_P${n}X_SORT_ORDER"] = $sortOrder;
+                $helper->fields_value["ALMA_${key}_ENABLED_ON"] = isset($installmentsPlans->$key->enabled)
+                    ? $installmentsPlans->$key->enabled
+                    : 0;
+                $minAmount = isset($installmentsPlans->$key->min)
+                    ? $installmentsPlans->$key->min
+                    : $feePlan->min_purchase_amount;
+                $helper->fields_value["ALMA_${key}_MIN_AMOUNT"] = (int) almaPriceFromCents($minAmount);
+                $maxAmount = isset($installmentsPlans->$key->max)
+                    ? $installmentsPlans->$key->max
+                    : $feePlan->max_purchase_amount;
+                $helper->fields_value["ALMA_${key}_MAX_AMOUNT"] = (int) almaPriceFromCents($maxAmount);
+                $order = isset($installmentsPlans->$key->order)
+                    ? $installmentsPlans->$key->order
+                    : $i;
+                $helper->fields_value["ALMA_${key}_SORT_ORDER"] = $order;
+                ++$i;
             }
         }
 

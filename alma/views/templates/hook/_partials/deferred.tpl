@@ -22,6 +22,17 @@
  *}
 
 
-<div style="display:none">
-    <input type="hidden" id="alma-widget-config" value="{$widgetQuerySelectors|escape}" />
-</div>
+{capture assign='amount'}{almaFormatPrice cents=$plans[0].purchase_amount + $plans[0].customer_fee}{/capture}
+{capture assign='due_date'}{dateFormat date=$plans[0].due_date|date_format:"%Y-%m-%d" full=0}{/capture}
+{capture assign='fees'}{almaFormatPrice cents=$plans[0].customer_fee}{/capture}
+<span class="alma-deferred--description">
+    {l s='0 € today then %1$s on %2$s' sprintf=[$amount,$due_date] mod='alma'}
+    <br>
+    <small>
+        {if $plans[0].customer_fee > 0}
+            {l s='(Including fees: %s)' sprintf=[$fees] mod='alma'}
+        {else}
+            {l s='(No additional fees)' mod='alma'}
+        {/if}
+    </small>
+</span>

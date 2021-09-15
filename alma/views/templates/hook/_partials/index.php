@@ -1,4 +1,5 @@
-{*
+<?php
+/**
  * 2018-2021 Alma SAS
  *
  * THE MIT LICENSE
@@ -19,24 +20,12 @@
  * @author    Alma SAS <contact@getalma.eu>
  * @copyright 2018-2021 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
- *}
+ */
 
-<div id="alma-excluded">
-    <p>
-        {almaDisplayHtml}
-            {l s='Some products (gift cards, license keys, software, weapons, ...) cannot be sold with Alma, as per %sour terms%s (see Exclusions paragraph).' mod='alma' sprintf=array('<a href="https://getalma.eu/legal/terms/payment" target="_blank">', '</a>')}
-        {/almaDisplayHtml}
-    </p>
-
-    <p>{l s='If you are selling such products on your shop, you need to configure Alma so that it is not enabled when customers view or shop them.' mod='alma'}</p>
-
-    <p style="margin: 20px 0;">
-        {almaDisplayHtml}
-            {l s='Use the %1$s%2$scategory exclusions page%3$s%4$s to comply with these restrictions.' sprintf=array('<strong>', "<a href='$excludedLink'>", '</a>', '</strong>') mod='alma'}
-        {/almaDisplayHtml}
-    </p>
-    <p>
-        <strong>{l s='Categories currently excluded : ' mod='alma'}</strong>
-        {$excludedCategories|escape:'htmlall':'UTF-8'}
-    </p>
-</div>
+header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
+header('Last-Modified: ' . gmdate('D, d M Y H:i:s') . ' GMT');
+header('Cache-Control: no-store, no-cache, must-revalidate');
+header('Cache-Control: post-check=0, pre-check=0', false);
+header('Pragma: no-cache');
+header('Location: ../');
+exit;

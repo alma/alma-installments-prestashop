@@ -26,21 +26,26 @@
     cursor: pointer;
 }
 
-.alma-button.disabled {
+.alma-button.disabled,
+.alma-button-with-bkg.disabled {
     opacity: 0.5;
 }
 
-.alma-button.disabled img {
+.alma-button.disabled img,
+.alma-button-with-bkg.disabled img {
     opacity: 0.5;
 }
 
-.payment_module a.alma-button {
-    width: 100%;
+p.payment_module a.alma-button-with-bkg {
     background: #fbfbfb;
     padding: 20px 17px;
 }
 
-p.payment_module a.alma-button:after {
+.payment_module a.alma-button {
+    padding: 20px 17px;
+}
+
+p.payment_module a:after {
     display: block;
     content: "\f054";
     position: absolute;
@@ -54,7 +59,7 @@ p.payment_module a.alma-button:after {
     color: #777;
 }
 
-p.payment_module a.alma-button.disable-arrow-icon:after {
+p.payment_module a.disable-arrow-icon:after {
     display: none;
 }
 
@@ -71,15 +76,11 @@ p.payment_module a.alma-button.disable-arrow-icon:after {
     height: 30px;
 }
 
-
-.alma-button--text {
-
-}
-
 .alma-button--title {
     color: #333 !important;
 }
 
+.alma-button-with-bkg > span,
 .alma-button > span {
     display: inline-block !important;
     vertical-align: middle !important;
@@ -90,12 +91,20 @@ p.payment_module a.alma-button.disable-arrow-icon:after {
     color: #777;
 }
 
+.payment_module .alma-button-with-bkg .alma-button--fee-plans,
 .payment_module .alma-button .alma-button--fee-plans {
     display: block;
     margin-top: 15px;
 }
 
 .payment_module .alma-fee-plan--description {
+    padding: 4px 0;
+    font-size: 0.9em;
+    font-weight: normal !important;
+    letter-spacing: initial !important;
+}
+
+.payment_module .alma-deferred--description {
     padding: 4px 0;
     font-size: 0.9em;
     font-weight: normal !important;
@@ -114,6 +123,14 @@ p.payment_module a.alma-button.disable-arrow-icon:after {
     padding: 4px 0px;
     margin: 4px 0px;
     border-bottom: 1px solid lightgrey;
+}
+
+.payment-options .alma-deferred--description {
+    justify-content: space-between;
+    align-items: center;
+    padding: 4px 0px;
+    margin: 4px 0px;
+    font-weight: normal !important;
 }
 
 .payment-options .alma-fee-plan--description:last-child {
@@ -159,4 +176,8 @@ p.payment_module a.alma-button.disable-arrow-icon:after {
     vertical-align: top;
 
     cursor: pointer;
+}
+
+p.payment_module a.disable-arrow-icon {
+    background: none;
 }
