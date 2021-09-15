@@ -1,5 +1,20 @@
 # Changelog
 
+## v2.0.0
+
+-   Adds Buy Now Pay Later with Alma
+-   Support for 10-installment plans
+-   Adds custom position for Alma badge in product page
+-   Adds possibility to hide Alma badge if product is non eligible
+-   Replace eligibility messages in cart by Alma badge
+-   Adds custom position for Alma badge in cart
+-   Adds possibility to hide Alma badge if cart is non eligible
+-   Makes some css/js optimizations in front
+-   Fixes some minor bugs in Alma configuration page
+-   Fixes some bugs in smarty templates
+-   Fixes delete Alma badge values in database when uninstall Alma module
+-   Removes useless files
+
 ## v1.4.4
 
 -   Fixes bug preventing orders status to be correctly handled in some situations
