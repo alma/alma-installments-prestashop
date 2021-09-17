@@ -1,4 +1,5 @@
-{*
+<?php
+/**
  * 2018-2021 Alma SAS
  *
  * THE MIT LICENSE
@@ -19,14 +20,23 @@
  * @author    Alma SAS <contact@getalma.eu>
  * @copyright 2018-2021 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
- *}
+ */
 
-<div class="alma-fee-plan--block">
-    <p>
-        {$desc|escape:'htmlall':'UTF-8'}
-    </p>
-    {include file="modules/alma/views/templates/hook/_partials/deferred.tpl" plans=$plans}
-</div>
-{if $first}
-    <div id="almaFragments" data-apimode="{$apiMode}" data-merchantid="{$merchantId}"></div>    
-{/if}
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
+function upgrade_module_next($module)
+{
+    if (version_compare(_PS_VERSION_, '1.7', '>=')) {
+        $module->unregisterHook('displayPaymentReturn');
+        $module->registerHook('paymentReturn');
+    }
+
+    $configKey = 'ALMA_DISPLAY_ORDER_CONFIRMATION';
+    if (Configuration::hasKey($configKey)) {
+        Configuration::deleteByName($configKey);
+    }
+
+    return true;
+}

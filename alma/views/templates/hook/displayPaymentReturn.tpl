@@ -22,20 +22,47 @@
  *}
 
 <section class="order-confirmation">
+    <div class="alma-confirmation--logo">
+        <img src="/modules/alma/views/img/logos/logo_alma.svg" alt="Alma" />
+    </div>
     <h2>
-        {l s='Your order has been placed successfully' mod='alma'}
+        {l s='Your payment with Alma was successful' mod='alma'}
     </h2>
     <h3>
-        {l s='It will be processed soon.' mod='alma'}
+        {l s='Here is your order reference:' mod='alma'} {$order_reference|escape:'htmlall':'UTF-8'}
     </h3>
 
     <p>
-        {l s='Here is your order reference:' mod='alma'} <b>{$order_reference|escape:'htmlall':'UTF-8'}</b>
+        {l s='Detail of your payment:' mod='alma'} <b>{$payment_order->payment_method|escape:'htmlall':'UTF-8'}</b>
     </p>
+    <div class="alma-fee-plan--block">
+    {foreach from=$payment->payment_plan item=plan name=counter}
+        <span class="alma-fee-plan--description">
+            <span class="alma-fee-plan--date">
+                {if $smarty.foreach.counter.iteration === 1}
+                    {l s='Today' mod='alma'}
+                {else}
+                    {dateFormat date=$plan->due_date|date_format:"%Y-%m-%d" full=0}
+                {/if}
+            </span>
+            <span class="alma-fee-plan--amount">
+                {almaFormatPrice cents=$plan->purchase_amount + $plan->customer_fee}
+                {if $plan->customer_fee > 0}
+                    {capture assign='fees'}{almaFormatPrice cents=$payment->payment_plan[0].customer_fee}{/capture}
+                    <small style="display: block">
+                        {l s='(Including fees: %s)' sprintf=[$fees] mod='alma'}
+                    </small>
+                {/if}
+            </span>
+        </span>
+    {/foreach}
+    </div>
     <p>
         {l s='You should receive a confirmation email shortly' mod='alma'}
     </p>
-
+    <p>
+        {l s='If you want to follow the progress of your deadlines:' mod='alma'} <a href="{$payment->url}" target="_blank" title="{l s='follow its deadlines' mod='alma'}">{l s='click here' mod='alma'}</a>
+    </p>
     <p>
         {l s='We appreciate your business' mod='alma'}
     </p>
