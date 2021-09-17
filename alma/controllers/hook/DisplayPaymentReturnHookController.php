@@ -28,21 +28,36 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
+use Alma\API\RequestError;
+use Alma\PrestaShop\API\ClientHelper;
+use Alma\PrestaShop\API\PaymentValidationError;
 use Alma\PrestaShop\Hooks\FrontendHookController;
+use Alma\PrestaShop\Utils\Logger;
 use Alma\PrestaShop\Utils\Settings;
+use OrderPayment;
 
 final class DisplayPaymentReturnHookController extends FrontendHookController
 {
-    public function canRun()
-    {
-        return parent::canRun() && Settings::displayOrderConfirmation();
-    }
-
     public function run($params)
     {
+        $this->context->controller->addCSS($this->module->_path . 'views/css/alma.css', 'all');
+
         $order = array_key_exists('objOrder', $params) ? $params['objOrder'] : $params['order'];
+        $orderPayment = new OrderPayment($order->invoice_number);
+        $alma = ClientHelper::defaultInstance();
+        $almaPaymentId = $orderPayment->transaction_id;
+
+        try {
+            $payment = $alma->payments->fetch($almaPaymentId);
+        } catch (RequestError $e) {
+            Logger::instance()->error("[Alma] Error fetching payment with ID {$almaPaymentId}: {$e->getMessage()}");
+            throw new PaymentValidationError(null, $e->getMessage());
+        }
+
         $this->context->smarty->assign([
             'order_reference' => $order->reference,
+            'payment_order' => $orderPayment,
+            'payment' => $payment,
         ]);
 
         return $this->module->display($this->module->file, 'displayPaymentReturn.tpl');
