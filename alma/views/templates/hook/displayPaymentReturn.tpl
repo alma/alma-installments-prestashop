@@ -33,7 +33,7 @@
     </h3>
 
     <p>
-        {l s='Detail of your payment:' mod='alma'} <b>{$payment_order->payment_method|escape:'htmlall':'UTF-8'}</b>
+        {l s='Details for your payment:' mod='alma'} <b>{$payment_order->payment_method|escape:'htmlall':'UTF-8'}</b>
     </p>
     <div class="alma-fee-plan--block">
     {foreach from=$payment->payment_plan item=plan name=counter}
@@ -61,7 +61,7 @@
         {l s='You should receive a confirmation email shortly' mod='alma'}
     </p>
     <p>
-        {l s='If you want to follow the progress of your deadlines:' mod='alma'} <a href="{$payment->url}" target="_blank" title="{l s='follow its deadlines' mod='alma'}">{l s='click here' mod='alma'}</a>
+        {l s='To check your payment\'s progress, change you card or pay in advance:' mod='alma'} <a href="{$payment->url}" target="_blank" title="{l s='follow its deadlines' mod='alma'}">{l s='click here' mod='alma'}</a>
     </p>
     <p>
         {l s='We appreciate your business' mod='alma'}

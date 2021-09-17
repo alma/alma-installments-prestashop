@@ -1,30 +1,7 @@
 <?php
 
-/**
- * 2018-2021 Alma SAS
- *
- * THE MIT LICENSE
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
- * documentation files (the "Software"), to deal in the Software without restriction, including without limitation
- * the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and
- * to permit persons to whom the Software is furnished to do so, subject to the following conditions:
- * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the
- * Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE
- * WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
- * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
- * IN THE SOFTWARE.
- *
- * @author    Alma SAS <contact@getalma.eu>
- * @copyright 2018-2021 Alma SAS
- * @license   https://opensource.org/licenses/MIT The MIT License
- */
-
 global $_MODULE;
-$_MODULE = [];
+$_MODULE = array();
 $_MODULE['<{alma}prestashop>alma_f9d4da2cd01a3bf46688b86d0113e887'] = ' 2x 3x 4x, J+15 ou J+30 Alma —  Paiement en plusieurs fois et différé';
 $_MODULE['<{alma}prestashop>alma_7f9c508fa226d3e72644403653115c29'] = 'Boostez vos ventes en installant Alma ! C\'est simple et garanti, votre trésorerie est sécurisée. 0 engagement, 0 abonnement, 0 risque.';
 $_MODULE['<{alma}prestashop>alma_eaa507b722b18fe29d24bea91d8c2c52'] = 'Voulez-vous vraiment supprimer les paiements en plusieurs fois Alma de votre boutique ?';
@@ -123,13 +100,13 @@ $_MODULE['<{alma}prestashop>settings_726c61fad46c135efb4198820e5484ba'] = 'Payer
 $_MODULE['<{alma}prestashop>settings_72eeebc4fa7b487eda1e6a468f1c1b48'] = 'Payer dans %d jours par carte bancaire';
 $_MODULE['<{alma}prestashop>displaypaymentreturn_aca755511864a8c0038740357db865ab'] = 'Votre paiement avec Alma a été passé avec succès';
 $_MODULE['<{alma}prestashop>displaypaymentreturn_9b9b747500bf38015ecb1a12119d50cc'] = 'Référence de votre commande :';
-$_MODULE['<{alma}prestashop>displaypaymentreturn_298d118f116eb34fcb54836dadd96b3c'] = 'Détail de votre paiement :';
+$_MODULE['<{alma}prestashop>displaypaymentreturn_709fa7b44d5d59d2802e7878e35453a9'] = 'Détail de votre paiement :';
 $_MODULE['<{alma}prestashop>displaypaymentreturn_1dd1c5fb7f25cd41b291d43a89e3aefd'] = 'Aujourd\'hui';
 $_MODULE['<{alma}prestashop>displaypaymentreturn_304bcb1f18f0897c89c6a79cf0725af1'] = '(Frais inclus : %s)';
 $_MODULE['<{alma}prestashop>displaypaymentreturn_d61c09b6ad630202a5f4f57df12c9d65'] = 'Vous devriez bientôt recevoir un email de confirmation.';
-$_MODULE['<{alma}prestashop>displaypaymentreturn_c3790fa0fb607ae72c6488dee5cc77fa'] = 'Si vous souhaitez suivre l\'avancé de vos échéances :';
+$_MODULE['<{alma}prestashop>displaypaymentreturn_47f0ca55ca88fc5d8f3d6984c2dd30bc'] = 'Pour voir l\'avancée de vos échéances, changer de carte bancaire ou payer en anticipé à tout moment :';
 $_MODULE['<{alma}prestashop>displaypaymentreturn_51f745e831355683181d4b287d354eed'] = 'suivre ses échéances';
-$_MODULE['<{alma}prestashop>displaypaymentreturn_a4ea91cd0d1ea33d8113457644dd6157'] = 'cliquer ici';
+$_MODULE['<{alma}prestashop>displaypaymentreturn_a4ea91cd0d1ea33d8113457644dd6157'] = 'cliquez ici';
 $_MODULE['<{alma}prestashop>displaypaymentreturn_25e7e0cd6d175afc29909d4e5268f41a'] = 'Merci pour votre confiance !';
 $_MODULE['<{alma}prestashop>excludedcategories_ebb1e29b7a24f7244361d8c9bef5cafd'] = 'Certains produits (cartes cadeau, clés de licence, logiciels, armes, ...) ne peuvent pas être vendus avec Alma, comme indiqué dans %snos CGV%s (voir le paragraphe Exclusions).';
 $_MODULE['<{alma}prestashop>excludedcategories_2b02fe17f294da7167110f5df2b72fc0'] = 'Si vous vendez de tels produits, vous devez configurer le module Alma pour qu\'il soit désactivé lorsque vos clients les consultent ou les achètent.';
