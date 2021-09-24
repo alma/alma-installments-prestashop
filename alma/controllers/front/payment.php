@@ -27,14 +27,21 @@ if (!defined('_PS_VERSION_')) {
 }
 
 use Alma\API\RequestError;
-use Alma\PrestaShop\AlmaFrontController;
 use Alma\PrestaShop\API\ClientHelper;
 use Alma\PrestaShop\Model\PaymentData;
 use Alma\PrestaShop\Utils\Logger;
 use Alma\PrestaShop\Utils\Settings;
 
-class AlmaPaymentModuleFrontController extends AlmaFrontController
+class AlmaPaymentModuleFrontController extends ModuleFrontController
 {
+    public $ssl = true;
+
+    public function __construct()
+    {
+        parent::__construct();
+        $this->context = Context::getContext();
+    }
+
     private function checkCurrency()
     {
         $currencyOrder = new Currency($this->context->cart->id_currency);

@@ -26,11 +26,10 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-use Alma\PrestaShop\AlmaFrontController;
 use Alma\PrestaShop\API\PaymentValidation;
 use Alma\PrestaShop\API\PaymentValidationError;
 
-class AlmaIpnModuleFrontController extends AlmaFrontController
+class AlmaIpnModuleFrontController extends ModuleFrontController
 {
     public $ssl = true;
 
@@ -70,9 +69,9 @@ class AlmaIpnModuleFrontController extends AlmaFrontController
         try {
             $validator->validatePayment($paymentId);
         } catch (PaymentValidationError $e) {
-            $this->ajaxFail($e->getMessage());
+            $this->fail($e->getMessage());
         } catch (Exception $e) {
-            $this->ajaxFail($e->getMessage());
+            $this->fail($e->getMessage());
         }
 
         $this->ajaxDie(json_encode(['success' => true]));
