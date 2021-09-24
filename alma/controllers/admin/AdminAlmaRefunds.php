@@ -1,5 +1,4 @@
 <?php
-
 /**
  * 2018-2021 Alma SAS
  *
@@ -24,9 +23,8 @@
  */
 
 use Alma\API\RequestError;
-use Alma\PrestaShop\Utils\Logger;
 use Alma\PrestaShop\API\ClientHelper;
-
+use Alma\PrestaShop\Utils\Logger;
 
 class AdminAlmaRefundsController extends ModuleAdminController
 {
@@ -46,7 +44,6 @@ class AdminAlmaRefundsController extends ModuleAdminController
     {
         $refundType = Tools::getValue('refundType');
         $order = new Order(Tools::getValue('orderId'));
-
 
         $orderPayment = $this->getCurrentOrderPayment($order);
         if (!$orderPayment) {
@@ -82,7 +79,6 @@ class AdminAlmaRefundsController extends ModuleAdminController
                 $amount = $order->getOrdersTotalPaid();
         }
 
-
         $refundResult = false;
         try {
             $refundResult = $this->runRefund($paymentId, $amount, $isTotal);
@@ -95,7 +91,7 @@ class AdminAlmaRefundsController extends ModuleAdminController
             $this->ajaxFail(
                 $this->module->l('There was an error while processing the refund', 'AdminAlmaRefundsController')
             );
-        } else if ($isTotal) {
+        } elseif ($isTotal) {
             $orders = Order::getByReference($order->reference);
             foreach ($orders as $o) {
                 $current_order_state = $o->getCurrentOrderState();
@@ -108,7 +104,7 @@ class AdminAlmaRefundsController extends ModuleAdminController
         $json = [
             'success' => true,
             'message' => $this->module->l('Refund has been processed', 'AdminAlmaRefundsController'),
-            'paymentData' => $refundResult
+            'paymentData' => $refundResult,
         ];
 
         method_exists(get_parent_class($this), 'ajaxDie')
