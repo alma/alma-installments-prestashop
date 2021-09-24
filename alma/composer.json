@@ -7,7 +7,7 @@
     },
     "autoload": {
         "psr-4": {
-            "Alma\\PrestaShop\\": ["lib/","."],
+            "Alma\\PrestaShop\\": ["lib/", "."],
             "Alma\\PrestaShop\\Controllers\\Hook\\": "controllers/hook/"
         },
         "files": [
