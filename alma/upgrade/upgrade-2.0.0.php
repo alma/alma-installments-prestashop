@@ -80,7 +80,6 @@ function upgrade_module_2_0_0($module)
             Tools::clearSmartyCache();
             Tools::clearXMLCache();
             Media::clearCache();
-            Tools::generateIndex();
         } catch (RequestError $e) {
             return true;
         }
