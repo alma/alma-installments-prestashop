@@ -4,20 +4,20 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "d25d2125bfc061954f8c6455201fb466",
+    "content-hash": "c8f5c1852816c1cc1e81f2a5c6339879",
     "packages": [
         {
             "name": "alma/alma-php-client",
-            "version": "v1.2.0",
+            "version": "v1.3.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/alma/alma-php-client.git",
-                "reference": "ce345686a99a6fbb233e50ce66053eb82ab89ceb"
+                "reference": "ba2ad85ea8acde83acb7f714e8310043bb15ad15"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/alma/alma-php-client/zipball/ce345686a99a6fbb233e50ce66053eb82ab89ceb",
-                "reference": "ce345686a99a6fbb233e50ce66053eb82ab89ceb",
+                "url": "https://api.github.com/repos/alma/alma-php-client/zipball/ba2ad85ea8acde83acb7f714e8310043bb15ad15",
+                "reference": "ba2ad85ea8acde83acb7f714e8310043bb15ad15",
                 "shasum": ""
             },
             "require": {
@@ -52,7 +52,11 @@
                 }
             ],
             "description": "PHP API client for the Alma payments API",
-            "time": "2021-07-30T13:53:32+00:00"
+            "support": {
+                "issues": "https://github.com/alma/alma-php-client/issues",
+                "source": "https://github.com/alma/alma-php-client/tree/v1.3.0"
+            },
+            "time": "2021-09-27T12:07:35+00:00"
         },
         {
             "name": "psr/log",
@@ -99,6 +103,9 @@
                 "psr",
                 "psr-3"
             ],
+            "support": {
+                "source": "https://github.com/php-fig/log/tree/1.1.4"
+            },
             "time": "2021-05-03T11:20:27+00:00"
         }
     ],
@@ -110,5 +117,5 @@
     "prefer-lowest": false,
     "platform": [],
     "platform-dev": [],
-    "plugin-api-version": "1.1.0"
+    "plugin-api-version": "2.1.0"
 }
