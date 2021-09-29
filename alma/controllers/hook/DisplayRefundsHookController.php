@@ -29,8 +29,10 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
+use Alma\PrestaShop\API\ClientHelper;
 use Media;
 use Order;
+use OrderPayment;
 use Currency;
 use Alma\PrestaShop\Hooks\AdminHookController;
 
@@ -52,16 +54,47 @@ final class DisplayRefundsHookController extends AdminHookController
             return;
         }
 
+        $alma = ClientHelper::defaultInstance();
+        if (!$alma) {
+            return false;
+        }
+
+        $orderPayment = $this->getCurrentOrderPayment($order);
+        if (!$orderPayment) {
+            $this->ajaxFail(
+                $this->module->l('Error: Could not find Alma transaction', 'AdminAlmaRefundsController')
+            );
+        }
+
+        $paymentId = $orderPayment->transaction_id;
+
+        $payment = $alma->payments->fetch($paymentId);
+
         if (is_callable('Media::getMediaPath')) {
             $iconPath = Media::getMediaPath(_PS_MODULE_DIR_ . $this->module->name . '/views/img/logos/alma_tiny.svg');
         } else {
             $iconPath = $this->module->getPathUri() . '/views/img/logos/alma_tiny.svg';
         }
 
+        $refundData = null;
+        $totalRefund = null;
+        $percentRefund = null;
+        if ($payment->refunds) {
+            foreach($payment->refunds as $refund) {
+                $totalRefund += $refund->amount;
+            }
+
+            $percentRefund = (100 / $order->getOrdersTotalPaid()) * almaPriceFromCents($totalRefund);
+        
+            $refundData = [
+                'totalRefundAmount' => almaFormatPrice($totalRefund, (int)$order->id_currency),
+                'percentRefund' => $percentRefund,
+            ];
+        }
 
         //multi shipping
         $ordersId = null;
-        $ordersTotalAmount = null;
+        $ordersTotalAmount = $order->total_paid_tax_incl;
         if ($order->getOrdersTotalPaid() > $order->total_paid_tax_incl) {
             $orders = Order::getByReference($order->reference);
             foreach ($orders as $o) {
@@ -97,9 +130,20 @@ final class DisplayRefundsHookController extends AdminHookController
         $tpl->assign([
             'iconPath' => $iconPath,
             'order' => $orderData,
+            'refund' => $refundData,
             'actionUrl' => $this->context->link->getAdminLink('AdminAlmaRefunds')
         ]);
 
         return $tpl->fetch();
+    }
+
+    private function getCurrentOrderPayment(Order $order)
+    {
+        $orderPayments = OrderPayment::getByOrderReference($order->reference);
+        if ($orderPayments && isset($orderPayments[0])) {
+            return $orderPayments[0];
+        }
+
+        return false;
     }
 }

@@ -39,3 +39,20 @@ i.icon-alma{
     width: 300px;
     height: 20px;
 }
+
+.alma--form_order_type_refund{
+    padding-top: calc(.375rem + 1px);
+    padding-bottom: calc(.375rem + 1px);
+}
+
+.form-alma.disabled{
+    position: relative;
+}
+.form-alma.disabled::before{
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(255, 255, 255, .7);
+    z-index: 1;
+}

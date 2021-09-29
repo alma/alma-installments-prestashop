@@ -58,6 +58,13 @@
                 })                
                 .done(function (data) {
                     $('.alma-success').html(data.message).show();
+                    $('.alma-progress').show();
+                    $('.alma-progress .progress-bar').attr('aria-valuenow', data.percentRefund)
+                    .width(data.percentRefund + '%')
+                    .html(data.totalRefundAmount + ' / ' + data.totalOrderAmount);
+                    if (data.totalRefund >= data.totalOrder) {
+                        $form.addClass('disabled')
+                    };
                 })
                 .fail(function (data) {
                     var jsondata = JSON.parse(data.responseText);                    
