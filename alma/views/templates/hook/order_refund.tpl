@@ -24,19 +24,28 @@
 <div class="alert alert-success alma-success"  style="display:none" data-alert="success"></div>
 <div class="alert alert-danger alma-danger" style="display:none" data-alert="danger"></div>
 
-<form id="alma-refund" method="POST" action="{$actionUrl}" class="defaultForm form-horizontal">
+<form id="alma-refund" method="POST" action="{$actionUrl}" class="defaultForm form-horizontal form-alma {if $refund.totalRefundAmount >= $order.ordersTotalAmount}disabled{/if}">
     <input type="hidden" class="alma" name="orderId" required value="{$order.id}"/>
     <div class="panel" id="alma_refunds">
-        <div class="panel-heading">
-            <img src="{$iconPath}"/>
-            {l s='Alma refund' mod='alma'}
+        <div class="panel-heading row">
+            <div class="col-sm-6">
+                <img src="{$iconPath}"/>
+                {l s='Alma refund' mod='alma'}
+            </div>
+            <div class="col-sm-6">
+                <div class="progress alma-progress" {if !$refund}style="display:none"{/if}>
+                    <div class="progress-bar" role="progressbar" aria-valuenow="{$refund.percentRefund}" aria-valuemin="0" aria-valuemax="100" style="width: {$refund.percentRefund}%;">
+                        {$refund.totalRefundAmount} / {$order.ordersTotalAmount}
+                    </div>
+                </div>
+            </div>
         </div>
         <div class="form-wrapper">
             <div class="form-group">
                 <label class="control-label col-lg-3"></label>
                 <div class="col-lg-9">
                     <p>
-                        Texte : remboursement alma + changement de status si total bla bla bla toussa toussa...
+                        {l s='Text : refund alma + change status if total bla bla bla toussa toussa...' mod='alma'}
                     </p>
                 </div>
             </div>
@@ -76,7 +85,7 @@
                 </div>
             </div>
             <div class="form-group" id="amountDisplay" style="display: none">
-                <label class="control-label col-lg-3 required"> {l s='Amount (Max. %s):' sprintf=$order.maxAmount mod='alma'}</label>
+                <label class="control-label col-lg-3 required"> {l s='Amount (Max. %s):' sprintf=$order.ordersTotalAmount mod='alma'}</label>
                 <div class="col-lg-9">
                     <div class="input-group">
                         <span class="input-group-addon">{$order.currencySymbol}</span>

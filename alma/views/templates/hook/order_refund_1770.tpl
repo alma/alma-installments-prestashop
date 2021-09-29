@@ -60,8 +60,8 @@
                             <input type="radio" autocomplete="off" class="refundType" id="total" name="refundType" value="total" checked="checked"/>
                             <label>
                                 {if $order.ordersId}
-                                    {l s='Refund the integrity of this purchase : ' mod='alma'}                                
-                                    <i>{l s='Refund this order (id : %1$d) and all linked orders (id : %2$s)' sprintf=array($order.id, $order.ordersId) mod='alma'}                                
+                                    {l s='Refund the integrity of this purchase : ' mod='alma'}
+                                    <i>{l s='Refund this order (id : %1$d) and all linked orders (id : %2$s)' sprintf=array($order.id, $order.ordersId) mod='alma'}
                                     {l s='Total amount : %s' sprintf=$order.ordersTotalAmount mod='alma'}
                                     </i>
                                 {else}
@@ -85,7 +85,7 @@
                         </div>
                         <div class="form-group" id="amountDisplay" style="display: none">
                             <label class="form-control-label" for="amount">
-                                <span class="text-danger">*</span> {l s='Amount (Max. %s):' sprintf=$order.maxAmount mod='alma'}
+                                <span class="text-danger">*</span> {l s='Amount (Max. %s):' sprintf=$order.ordersTotalAmount mod='alma'}
                             </label>
                             <div class="input-group">
                                 <input 

@@ -33,7 +33,7 @@ if (!defined('_PS_VERSION_')) {
  */
 function upgrade_module_1_4_3($module)
 {
-    $module->unregisterHook('orderSlipAdd');
+    $module->unregisterHook('actionOrderSlipAdd');
 
     return $module->uninstallTabs() && $module->installTabs();
 }
