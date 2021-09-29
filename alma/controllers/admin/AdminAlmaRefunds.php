@@ -68,10 +68,8 @@ class AdminAlmaRefundsController extends ModuleAdminController
                         $this->module->l('Error: Amount is higher than maximum refundable', 'AdminAlmaRefundsController'),
                         400
                     );
-                } elseif ($amount === $order->total_paid_tax_incl) {
-                    // si on passe a true ça va rembourser toutes les commandes et changer les status
-                    // ça me parait pas super...
-                    //$isTotal = true;
+                } elseif ($amount === $order->getOrdersTotalPaid()) {
+                    $isTotal = true;
                 }
                 break;
             case 'total':
@@ -80,6 +78,11 @@ class AdminAlmaRefundsController extends ModuleAdminController
         }
 
         $refundResult = false;
+        $percentRefund = null;
+        $totalRefund = null;
+        $totalRefundAmount = null;
+        $totalOrder = null;
+        $totalOrderAmount = null;
         try {
             $refundResult = $this->runRefund($paymentId, $amount, $isTotal);
         } catch (RequestError $e) {
@@ -91,7 +94,17 @@ class AdminAlmaRefundsController extends ModuleAdminController
             $this->ajaxFail(
                 $this->module->l('There was an error while processing the refund', 'AdminAlmaRefundsController')
             );
-        } elseif ($isTotal) {
+        } else {
+            $totalOrder = $refundResult->purchase_amount;
+            $totalOrderAmount = almaFormatPrice($totalOrder, (int)$order->id_currency);
+            foreach($refundResult->refunds as $refund) {
+                $totalRefund += $refund->amount;
+            }
+            $totalRefundAmount = almaFormatPrice($totalRefund, (int)$order->id_currency);
+            $percentRefund = (100 / $totalOrder) * $totalRefund;
+        }
+        
+        if ($isTotal) {
             $orders = Order::getByReference($order->reference);
             foreach ($orders as $o) {
                 $current_order_state = $o->getCurrentOrderState();
@@ -105,6 +118,11 @@ class AdminAlmaRefundsController extends ModuleAdminController
             'success' => true,
             'message' => $this->module->l('Refund has been processed', 'AdminAlmaRefundsController'),
             'paymentData' => $refundResult,
+            'percentRefund' => $percentRefund,
+            'totalRefund' => $totalRefund,
+            'totalRefundAmount' => $totalRefundAmount,
+            'totalOrder' => $totalOrder,
+            'totalOrderAmount' => $totalOrderAmount
         ];
 
         method_exists(get_parent_class($this), 'ajaxDie')
