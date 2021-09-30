@@ -59,17 +59,17 @@
                         {if $order.ordersId}
                             <div class="radio t">
                                 <label>
-                                    <input type="radio" autocomplete="off" class="refundType" name="refundType" value="partial_multi" />                            
+                                    <input type="radio" autocomplete="off" class="refundType form-check-input" name="refundType" value="partial_multi" />                            
                                     {l s='Only this purchase (%s)' sprintf=$order.maxAmount mod='alma'}
                                 </label>
                             </div>
                         {/if}
                         <div class="radio t">
-                            <input type="radio" autocomplete="off" class="refundType" id="total" name="refundType" value="total" checked="checked"/>
+                            <input type="radio" autocomplete="off" class="refundType form-check-input" id="total" name="refundType" value="total" checked="checked"/>
                             <label>
                                 {if $order.ordersId}
-                                    {l s='Refund the integrity of this purchase : ' mod='alma'}
-                                    <i>{l s='Refund this order (id : %1$d) and all linked orders (id : %2$s)' sprintf=array($order.id, $order.ordersId) mod='alma'}
+                                    {l s='Refund the integrity of this purchase : ' mod='alma'}<br />
+                                    <i>{l s='Refund this order (id : %1$d) and all linked orders (id : %2$s)' sprintf=array($order.id, $order.ordersId) mod='alma'}<br />
                                     {l s='Total amount : %s' sprintf=$order.ordersTotalAmount mod='alma'}
                                     </i>
                                 {else}
@@ -79,7 +79,7 @@
                         </div>
                         <div class="radio t">
                             <label>
-                                <input type="radio" autocomplete="off" class="refundType" name="refundType" value="partial"/>
+                                <input type="radio" autocomplete="off" class="refundType form-check-input" name="refundType" value="partial"/>
                                 {l s='Partial' mod='alma'}
                             </label>
                         </div>
