@@ -24,7 +24,7 @@
 <div class="alert alert-success alma-success"  style="display:none" data-alert="success"></div>
 <div class="alert alert-danger alma-danger" style="display:none" data-alert="danger"></div>
 
-<form id="alma-refund" method="POST" action="{$actionUrl}" class="defaultForm form-horizontal form-alma {if $refund.totalRefundAmount >= $order.ordersTotalAmount}disabled{/if}">
+<form id="alma-refund" method="POST" action="{$actionUrl}" class="defaultForm form-horizontal form-alma {if $refund.percentRefund >= 100}disabled{/if}">
     <input type="hidden" class="alma" name="orderId" required value="{$order.id}"/>
     <div class="panel" id="alma_refunds">
         <div class="panel-heading row">
@@ -51,7 +51,15 @@
             </div>
             <div class="form-group">
                 <label class="control-label col-lg-3 required"> {l s='Refund type:' mod='alma'}</label>
-                <div class="col-lg-9">                    
+                <div class="col-lg-9">
+                    {if $order.ordersId}
+                        <div class="radio t">
+                            <label>
+                                <input type="radio" class="refundType" name="refundType" value="partial_multi" />                            
+                                {l s='Only this purchase (%s)' sprintf=$order.maxAmount mod='alma'}
+                            </label>
+                        </div>
+                    {/if}
                     <div class="radio t">
                         <label>
                             <input type="radio" class="refundType" name="refundType" value="total" checked="checked"/>
@@ -68,14 +76,6 @@
 
                         </label>
                     </div>
-                    {if $order.ordersId}
-                        <div class="radio t">
-                            <label>
-                                <input type="radio" class="refundType" name="refundType" value="partial_multi" />                            
-                                {l s='Only this purchase (%s)' sprintf=$order.maxAmount mod='alma'}
-                            </label>
-                        </div>
-                    {/if}
                     <div class="radio t">
                         <label>
                             <input type="radio" class="refundType" name="refundType" value="partial"/>

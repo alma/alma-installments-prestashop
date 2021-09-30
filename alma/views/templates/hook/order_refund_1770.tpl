@@ -35,13 +35,13 @@
             </div>
             <div class="col-md-6">
                 <div class="progress alma-progress" style="height: 20px; {if !$refund}display:none{/if}">
-                    <div class="progress-bar" role="progressbar" style="width: {$refund.percentRefund}%" aria-valuenow="{$refund.percentRefund}" aria-valuemin="0" aria-valuemax="100">{$refund.totalRefundAmount} / {$order.ordersTotalAmount}</div>
+                    <div class="progress-bar" role="progressbar" style="line-height: 10px;width: {$refund.percentRefund}%" aria-valuenow="{$refund.percentRefund}" aria-valuemin="0" aria-valuemax="100">{$refund.totalRefundAmount} / {$order.ordersTotalAmount}</div>
                 </div>
             </div>
         </div>
     </div>
     <div class="card-body">
-        <form id="alma-refund" method="POST" action="{$actionUrl}" class="defaultForm form-horizontal form-alma {if $refund.totalRefundAmount >= $order.ordersTotalAmount}disabled{/if}">
+        <form id="alma-refund" method="POST" action="{$actionUrl}" class="defaultForm form-horizontal form-alma {if $refund.percentRefund >= 100}disabled{/if}">
             <input type="hidden" class="alma" name="orderId" required value="{$order.id}"/>  
             <div class="row">
                 <div class="col">
@@ -56,6 +56,14 @@
                 </label>                
                 <div class="col-sm">
                     <div class="alma--form_order_type_refund">
+                        {if $order.ordersId}
+                            <div class="radio t">
+                                <label>
+                                    <input type="radio" autocomplete="off" class="refundType" name="refundType" value="partial_multi" />                            
+                                    {l s='Only this purchase (%s)' sprintf=$order.maxAmount mod='alma'}
+                                </label>
+                            </div>
+                        {/if}
                         <div class="radio t">
                             <input type="radio" autocomplete="off" class="refundType" id="total" name="refundType" value="total" checked="checked"/>
                             <label>
@@ -69,14 +77,6 @@
                                 {/if}
                             </label>
                         </div>
-                        {if $order.ordersId}
-                            <div class="radio t">
-                                <label>
-                                    <input type="radio" autocomplete="off" class="refundType" name="refundType" value="partial_multi" />                            
-                                    {l s='Only this purchase (%s)' sprintf=$order.maxAmount mod='alma'}
-                                </label>
-                            </div>
-                        {/if}
                         <div class="radio t">
                             <label>
                                 <input type="radio" autocomplete="off" class="refundType" name="refundType" value="partial"/>
