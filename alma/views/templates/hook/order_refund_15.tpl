@@ -34,8 +34,8 @@
         <table cellspacing="0" cellpadding="0" class="table tableDnD alma-table-refund" style="float:right; {if !$refund}display:none;{/if}">
             <thead>
             <tr> 
-                <th>Remboursement</th>
-                <th>Total</th>
+                <th>{l s='Refunded' mod='alma'}</th>
+                <th>{l s='Total' mod='alma'}</th>
                 <th></th>
             </tr>
             </thead>
@@ -59,6 +59,11 @@
         <div class="clear"></div>
         <label>{l s='Refund type:' mod='alma'}</label>
         <div class="margin-form">
+            {if $order.ordersId}
+                <input type="radio" autocomplete="off" class="refundType" name="refundType" value="partial_multi" />
+                <label>{l s='Only this purchase (%s)' sprintf=$order.maxAmount mod='alma'}</label>
+                <div class="clear"></div>
+            {/if} 
             <input type="radio" autocomplete="off" name="refundType" value="total" checked="checked"/>
             <label>
                 {if $order.ordersId}
@@ -73,15 +78,9 @@
                 {/if}
             </label>
             <div class="clear"></div>
-            {if $order.ordersId}
-                <input type="radio" autocomplete="off" class="refundType" name="refundType" value="partial_multi" />
-                <label>{l s='Only this purchase (%s)' sprintf=$order.maxAmount mod='alma'}</label>
-                <div class="clear"></div>
-            {/if} 
             <input type="radio" autocomplete="off" name="refundType" value="partial" />
             <label>{l s='Partial' mod='alma'}</label>
             <div class="clear"></div>
-             
         </div>
         <div style="display:none;" id="amountDisplay">
             <label>
