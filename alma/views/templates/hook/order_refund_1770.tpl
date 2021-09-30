@@ -41,7 +41,7 @@
         </div>
     </div>
     <div class="card-body">
-        <form id="alma-refund" method="POST" action="{$actionUrl}" class="defaultForm form-horizontal form-alma {if $refund.percentRefund >= 100}disabled{/if}">
+        <form id="alma-refund" method="POST" action="{$actionUrl}" class="defaultForm form-horizontal form-alma {if $refund.percentRefund|string_format:"%.2f" >= 100}disabled{/if}">
             <input type="hidden" class="alma" name="orderId" required value="{$order.id}"/>  
             <div class="row">
                 <div class="col">
