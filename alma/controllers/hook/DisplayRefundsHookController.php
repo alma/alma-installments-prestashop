@@ -116,11 +116,11 @@ final class DisplayRefundsHookController extends AdminHookController
         ];
 
         if (version_compare(_PS_VERSION_, '1.6', '<')) {
-            $refundTpl = "order_refund_15";
+            $refundTpl = "order_refund_ps15";
         } elseif (version_compare(_PS_VERSION_, '1.7.7.0', '<')) {
-            $refundTpl = "order_refund";
+            $refundTpl = "order_refund_bs3";
         } else {
-            $refundTpl = "order_refund_1770";
+            $refundTpl = "order_refund_bs4";
         }
 
         $tpl = $this->context->smarty->createTemplate(
