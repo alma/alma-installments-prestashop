@@ -29,54 +29,72 @@
         <img src="{$iconPath}"/>
         {l s='Alma refund' mod='alma'}
     </legend>
-    <form id="alma-refund"  method="POST" action="{$actionUrl}" class="defaultForm form-horizontal">
+    <form id="alma-refund"  method="POST" action="{$actionUrl}" class="defaultForm form-horizontal form-alma {if $refund.percentRefund >= 100}disabled{/if}">
         <input type="hidden" class="alma" name="orderId" required value="{$order.id}" />
+        <table cellspacing="0" cellpadding="0" class="table tableDnD alma-table-refund" style="float:right; {if !$refund}display:none;{/if}">
+            <thead>
+            <tr> 
+                <th>Remboursement</th>
+                <th>Total</th>
+                <th></th>
+            </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="refundAmount">
+                        {$refund.totalRefundAmount}
+                    </td>
+                    <td>
+                        {$order.ordersTotalAmount}
+                    </td>
+                    <td>
+                        <img src="../img/admin/money.gif" />
+                    </td>
+                </tr>
+	        </tbody>
+	    </table>
         <p>
-            {l s='Texte : remboursement alma + changement de status si total bla bla bla toussa toussa...' mod='alma'}
-        </p>                           
-        <div class="form-group-15">
-            <p><b>{l s='Refund type:' mod='alma'}</b></p>                                    
-            <table>
-                <tr>
-                    <td><input type="radio" autocomplete="off" name="refundType" value="total" checked="checked"/></td>
-                    <td>
-                        {if $order.ordersId}
-                            {l s='Refund the integrity of this purchase' mod='alma'}
-                            <br>
-                            <i>{l s='Refund this order (id : %1$d) and all linked orders (id : %2$s)' sprintf=array($order.id, $order.ordersId) mod='alma'}
-                            <br>
-                            {l s='Total amount : %s' sprintf=$order.ordersTotalAmount mod='alma'}
-                            </i>
-                        {else}
-                            {l s='Total' mod='alma'}
-                        {/if}
-                    </td>
-                </tr>
+            {l s='Text : refund alma + change status if total bla bla bla toussa toussa...' mod='alma'}
+        </p>
+        <div class="clear"></div>
+        <label>{l s='Refund type:' mod='alma'}</label>
+        <div class="margin-form">
+            <input type="radio" autocomplete="off" name="refundType" value="total" checked="checked"/>
+            <label>
                 {if $order.ordersId}
-                <tr>
-                    <td><input type="radio" autocomplete="off" class="refundType" name="refundType" value="partial_multi" /></td>
-                    <td>{l s='Only this purchase (%s)' sprintf=$order.maxAmount mod='alma'}</td>
-                </tr>
-                {/if} 
-                <tr>
-                    <td><input type="radio" autocomplete="off" name="refundType" value="partial" /></td>
-                    <td>{l s='Partial' mod='alma'}</td>
-                </tr>
-            </table>
-            <table>
-                <tr style="display:none;" id="amountDisplay">
-                    <td>
-                    {l s='Amount (Max. %s):' sprintf=$order.maxAmount mod='alma'}
-                    </td>
-                    <td>
-                    <input type="text" autocomplete="off" class="alma-input-number" id="amount" value="" name="amount" placeholder="{l s='Amount to refund...' mod='alma'}" />
-                    </td>
-                </tr>   
-            </table>                                                 
+                    {l s='Refund the integrity of this purchase' mod='alma'}
+                    <br>
+                    <i>{l s='Refund this order (id : %1$d) and all linked orders (id : %2$s)' sprintf=array($order.id, $order.ordersId) mod='alma'}
+                    <br>
+                    {l s='Total amount : %s' sprintf=$order.ordersTotalAmount mod='alma'}
+                    </i>
+                {else}
+                    {l s='Total' mod='alma'}
+                {/if}
+            </label>
+            <div class="clear"></div>
+            {if $order.ordersId}
+                <input type="radio" autocomplete="off" class="refundType" name="refundType" value="partial_multi" />
+                <label>{l s='Only this purchase (%s)' sprintf=$order.maxAmount mod='alma'}</label>
+                <div class="clear"></div>
+            {/if} 
+            <input type="radio" autocomplete="off" name="refundType" value="partial" />
+            <label>{l s='Partial' mod='alma'}</label>
+            <div class="clear"></div>
+             
         </div>
-        <div class="panel-footer clear">
-            <button type="submit" class="button btn btn-primary button-medium pull-right-15"><span>{l s='Process this refund' mod='alma'}</button>                
-        </div>         
+        <div style="display:none;" id="amountDisplay">
+            <label>
+                {l s='Amount (Max. %s):' sprintf=$order.ordersTotalAmount mod='alma'}
+            </label>
+            <div class="margin-form">
+                <input type="text" autocomplete="off" class="alma-input-number" id="amount" value="" name="amount" placeholder="{l s='Amount to refund...' mod='alma'}" />
+            </div>
+        </div>  
+        <div class="clear"></div>
+        <div class="margin-form">
+            <input type="submit" class="button" value="{l s='Process this refund' mod='alma'}" />
+        </div>
     </form>
 </fieldset>
 

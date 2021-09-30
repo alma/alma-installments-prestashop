@@ -63,13 +63,11 @@ class AdminAlmaRefundsController extends ModuleAdminController
                 $isTotal = false;
                 $amount = str_replace(',', '.', Tools::getValue('amount'));
 
-                if ($amount > $order->total_paid_tax_incl) {
+                if ($amount > $order->getOrdersTotalPaid()) {
                     $this->ajaxFail(
                         $this->module->l('Error: Amount is higher than maximum refundable', 'AdminAlmaRefundsController'),
                         400
                     );
-                } elseif ($amount === $order->getOrdersTotalPaid()) {
-                    $isTotal = true;
                 }
                 break;
             case 'total':

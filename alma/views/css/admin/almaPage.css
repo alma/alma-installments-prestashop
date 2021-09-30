@@ -57,7 +57,26 @@ i.icon-alma{
     z-index: 1;
 }
 
+/*PS1.6*/
 .panel-heading .alma-progress{
     margin-top: 7px;
     margin-bottom: 5px;
+}
+
+/*PS1.5*/
+#alma-refund .margin-form input[type=radio] {
+    float: left;
+    margin-top: 2px;
+}
+#alma-refund .margin-form label {
+    font-weight: normal;
+    text-align: left;
+    width: 90%;
+    color: #000;
+    float: left;
+    margin-bottom: 5px;
+    padding-left: 5px;
+}
+fieldset .form-alma.disabled::before{
+    background-color: rgba(235, 237, 244, .7);
 }

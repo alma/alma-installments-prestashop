@@ -58,10 +58,16 @@
                 })                
                 .done(function (data) {
                     $('.alma-success').html(data.message).show();
-                    $('.alma-progress').show();
-                    $('.alma-progress .progress-bar').attr('aria-valuenow', data.percentRefund)
-                    .width(data.percentRefund + '%')
-                    .html(data.totalRefundAmount + ' / ' + data.totalOrderAmount);
+                    if ($('.alma-progress').length > 0) {
+                        $('.alma-progress').show();
+                        $('.alma-progress .progress-bar').attr('aria-valuenow', data.percentRefund)
+                        .width(data.percentRefund + '%')
+                        .html(data.totalRefundAmount + ' / ' + data.totalOrderAmount);
+                    }
+                    if ($('.alma-table-refund').length > 0) {
+                        $('.alma-table-refund').show();
+                        $('.alma-table-refund .refundAmount').html(data.totalRefundAmount);
+                    }
                     if (data.totalRefund >= data.totalOrder) {
                         $form.addClass('disabled')
                     };
