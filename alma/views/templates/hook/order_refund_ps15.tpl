@@ -34,7 +34,7 @@
         <table cellspacing="0" cellpadding="0" class="table tableDnD alma-table-refund" style="float:right; {if !$refund}display:none;{/if}">
             <thead>
             <tr> 
-                <th>{l s='Refunded' mod='alma'}</th>
+                <th>{l s='Amount refunded' mod='alma'}</th>
                 <th>{l s='Total' mod='alma'}</th>
                 <th></th>
             </tr>
@@ -54,27 +54,28 @@
 	        </tbody>
 	    </table>
         <p>
-            {l s='Text : refund alma + change status if total bla bla bla toussa toussa...' mod='alma'}
+            {l s='Refund this order thanks to the Alma module. This will be applied in your Alma dashboard automatically.' mod='alma'}
+            <a href="https://docs.getalma.eu/docs/remboursement" target="_blank">{l s='See documentation' mod='alma'}</a>
         </p>
         <div class="clear"></div>
         <label>{l s='Refund type:' mod='alma'}</label>
         <div class="margin-form">
             {if $order.ordersId}
                 <input type="radio" autocomplete="off" class="refundType" name="refundType" value="partial_multi" />
-                <label>{l s='Only this purchase (%s)' sprintf=$order.maxAmount mod='alma'}</label>
+                <label>{l s='Only this order (%s)' sprintf=$order.maxAmount mod='alma'}</label>
                 <div class="clear"></div>
             {/if} 
             <input type="radio" autocomplete="off" name="refundType" value="total" checked="checked"/>
             <label>
                 {if $order.ordersId}
-                    {l s='Refund the integrity of this purchase' mod='alma'}
+                    {l s='Refund the entire order' mod='alma'}
                     <br>
-                    <i>{l s='Refund this order (id : %1$d) and all linked orders (id : %2$s)' sprintf=array($order.id, $order.ordersId) mod='alma'}
+                    <i>{l s='Refund this order (id: %1$d) and all those linked to the same payment (id: %2$s)' sprintf=array($order.id, $order.ordersId) mod='alma'}
                     <br>
-                    {l s='Total amount : %s' sprintf=$order.ordersTotalAmount mod='alma'}
+                    {l s='Total amount: %s' sprintf=$order.ordersTotalAmount mod='alma'}
                     </i>
                 {else}
-                    {l s='Total' mod='alma'}
+                    {l s='Total amount' mod='alma'}
                 {/if}
             </label>
             <div class="clear"></div>
@@ -92,7 +93,7 @@
         </div>  
         <div class="clear"></div>
         <div class="margin-form">
-            <input type="submit" class="button" value="{l s='Process this refund' mod='alma'}" />
+            <input type="submit" class="button" value="{l s='Proceed the refund' mod='alma'}" />
         </div>
     </form>
 </fieldset>

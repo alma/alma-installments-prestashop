@@ -40,11 +40,6 @@ i.icon-alma{
     height: 20px;
 }
 
-.alma--form_order_type_refund{
-    padding-top: calc(.375rem + 1px);
-    padding-bottom: calc(.375rem + 1px);
-}
-
 .form-alma.disabled{
     position: relative;
 }

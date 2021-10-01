@@ -46,67 +46,68 @@
             <div class="row">
                 <div class="col">
                     <p>
-                        {l s='Text : refund alma + change status if total bla bla bla toussa toussa...' mod="alma"}
+                        {l s='Refund this order thanks to the Alma module. This will be applied in your Alma dashboard automatically.' mod='alma'}
+                        <a href="https://docs.getalma.eu/docs/remboursement" target="_blank">{l s='See documentation' mod='alma'}</a>
                     </p>
                 </div>
             </div>
             <div class="form-group row">
-                <label class='control-label col-lg-2'>                
+                <label class='control-label text-right col-lg-2'>                
                     <span class="text-danger">*</span> {l s='Refund type:' mod='alma'}
                 </label>                
                 <div class="col-sm">
-                    <div class="alma--form_order_type_refund">
-                        {if $order.ordersId}
-                            <div class="radio t">
-                                <label>
-                                    <input type="radio" autocomplete="off" class="refundType form-check-input" name="refundType" value="partial_multi" />                            
-                                    {l s='Only this purchase (%s)' sprintf=$order.maxAmount mod='alma'}
-                                </label>
-                            </div>
-                        {/if}
-                        <div class="radio t">
-                            <input type="radio" autocomplete="off" class="refundType form-check-input" id="total" name="refundType" value="total" checked="checked"/>
-                            <label>
-                                {if $order.ordersId}
-                                    {l s='Refund the integrity of this purchase : ' mod='alma'}<br />
-                                    <i>{l s='Refund this order (id : %1$d) and all linked orders (id : %2$s)' sprintf=array($order.id, $order.ordersId) mod='alma'}<br />
-                                    {l s='Total amount : %s' sprintf=$order.ordersTotalAmount mod='alma'}
-                                    </i>
-                                {else}
-                                    {l s='Total' mod='alma'}
-                                {/if}
-                            </label>
-                        </div>
+                    {if $order.ordersId}
                         <div class="radio t">
                             <label>
-                                <input type="radio" autocomplete="off" class="refundType form-check-input" name="refundType" value="partial"/>
-                                {l s='Partial' mod='alma'}
+                                <input type="radio" autocomplete="off" class="refundType form-check-input" name="refundType" value="partial_multi" />                            
+                                {l s='Only this order (%s)' sprintf=$order.maxAmount mod='alma'}
                             </label>
                         </div>
-                        <div class="form-group" id="amountDisplay" style="display: none">
-                            <label class="form-control-label" for="amount">
-                                <span class="text-danger">*</span> {l s='Amount (Max. %s):' sprintf=$order.ordersTotalAmount mod='alma'}
-                            </label>
-                            <div class="input-group">
-                                <input 
-                                    type="text" 
-                                    class="alma" 
-                                    name="amount" 
-                                    autocomplete="off" 
-                                    id="amount" 
-                                    placeholder="{l s='Amount to refund...' mod='alma'}"
-                                />
-                                <div class="input-group-append">
-                                    <div class="input-group-text">{$order.currencySymbol}</div>
-                                </div>
-                            </div>
+                    {/if}
+                    <div class="radio t">
+                        <input type="radio" autocomplete="off" class="refundType form-check-input" id="total" name="refundType" value="total" checked="checked"/>
+                        <label>
+                            {if $order.ordersId}
+                                {l s='Refund the entire order' mod='alma'}<br />
+                                <i>{l s='Refund this order (id: %1$d) and all those linked to the same payment (id: %2$s)' sprintf=array($order.id, $order.ordersId) mod='alma'}<br />
+                                {l s='Total amount: %s' sprintf=$order.ordersTotalAmount mod='alma'}
+                                </i>
+                            {else}
+                                {l s='Total amount' mod='alma'}
+                            {/if}
+                        </label>
+                    </div>
+                    <div class="radio t">
+                        <label>
+                            <input type="radio" autocomplete="off" class="refundType form-check-input" name="refundType" value="partial"/>
+                            {l s='Partial' mod='alma'}
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group row" id="amountDisplay" style="display: none">
+                <label class='control-label text-right col-lg-2' for="amount">                
+                    <span class="text-danger">*</span> {l s='Amount (Max. %s):' sprintf=$order.ordersTotalAmount mod='alma'}
+                </label>
+                <div class="col-sm">
+                    <div class="input-group">
+                        <input 
+                            type="text" 
+                            class="alma" 
+                            name="amount" 
+                            autocomplete="off" 
+                            id="amount" 
+                            placeholder="{l s='Amount to refund...' mod='alma'}"
+                        />
+                        <div class="input-group-append">
+                            <div class="input-group-text">{$order.currencySymbol}</div>
                         </div>
                     </div>
                 </div>
             </div>
             <div class="text-right">
             <button type="submit" class="button btn btn-primary button-medium pull-right">
-                <span>{l s='Process this refund' mod='alma'}</button>
+                <span>{l s='Proceed the refund' mod='alma'}</button>
         </div>
         </form>
     </div>
