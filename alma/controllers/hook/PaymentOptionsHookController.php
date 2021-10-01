@@ -32,8 +32,10 @@ use Alma\PrestaShop\API\EligibilityHelper;
 use Alma\PrestaShop\Hooks\FrontendHookController;
 use Alma\PrestaShop\Model\CartData;
 use Alma\PrestaShop\Utils\Settings;
+use Cart;
 use Media;
 use PrestaShop\PrestaShop\Core\Payment\PaymentOption;
+use Tools;
 
 final class PaymentOptionsHookController extends FrontendHookController
 {
@@ -61,6 +63,9 @@ final class PaymentOptionsHookController extends FrontendHookController
         $sortOptions = [];
         $feePlans = json_decode(Settings::getFeePlans());
         $i = 1;
+        $totalCart = (float) almaPriceToCents(
+            Tools::ps_round((float) $this->context->cart->getOrderTotal(true, Cart::BOTH), 2)
+        );
 
         foreach ($installmentPlans as $plan) {
             if (!$plan->isEligible) {
@@ -90,12 +95,18 @@ final class PaymentOptionsHookController extends FrontendHookController
                         $duration
                     );
                     if (!$forEUComplianceModule) {
+                        $creditInfo = [
+                            'totalCart' => $totalCart,
+                            'costCredit' => $plan->customerTotalCostAmount,
+                            'totalCredit' => $plan->customerTotalCostAmount + $totalCart,
+                        ];
                         $this->context->smarty->assign([
                             'desc' => sprintf(Settings::getPaymentButtonDescriptionDeferred(), $duration),
                             'plans' => (array) $plans,
                             'apiMode' => Settings::getActiveMode(),
                             'merchantId' => Settings::getMerchantId(),
                             'first' => $first,
+                            'creditInfo' => $creditInfo,
                         ]);
                         $template = $this->context->smarty->fetch(
                             "module:{$this->module->name}/views/templates/hook/payment_button_deferred.tpl"
@@ -121,12 +132,18 @@ final class PaymentOptionsHookController extends FrontendHookController
                     );
 
                     if (!$forEUComplianceModule) {
+                        $creditInfo = [
+                            'totalCart' => $totalCart,
+                            'costCredit' => $plan->customerTotalCostAmount,
+                            'totalCredit' => $plan->customerTotalCostAmount + $totalCart,
+                        ];
                         $this->context->smarty->assign([
                             'desc' => sprintf(Settings::getPaymentButtonDescription(), $n),
                             'plans' => (array) $plans,
                             'apiMode' => Settings::getActiveMode(),
                             'merchantId' => Settings::getMerchantId(),
                             'first' => $first,
+                            'creditInfo' => $creditInfo,
                         ]);
 
                         $template = $this->context->smarty->fetch(

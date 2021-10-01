@@ -60,7 +60,7 @@
                                 <span class="alma-button--description">{$option.desc|escape:'htmlall':'UTF-8'}</span>
                             {/if}
                             <span class="alma-button--fee-plans">
-                                {include file="modules/alma/views/templates/hook/_partials/deferred.tpl" plans=$option.plans oneLiner=true}
+                                {include file="modules/alma/views/templates/hook/_partials/deferred.tpl" plans=$option.plans creditInfo=$option.creditInfo oneLiner=true}
                             </span>
                         </span>      
                     </a>

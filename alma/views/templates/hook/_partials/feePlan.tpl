@@ -21,45 +21,106 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  *}
 
-{if $oneLiner}
-    {$installmentsCount=count($plans)}
-    {capture assign='firstAmount'}{almaFormatPrice cents=$plans[0].purchase_amount + $plans[0].customer_fee}{/capture}
-    {capture assign='fees'}{almaFormatPrice cents=$plans[0].customer_fee}{/capture}
-    {capture assign='nextAmounts'}{almaFormatPrice cents=$plans[1].purchase_amount + $plans[1].customer_fee}{/capture}
+{$installmentsCount=count($plans)}
+{capture assign='fixedAPR'}{l s='Fixed APR' mod='alma'}{/capture}
+{capture assign='cartTotal'}{l s='Cart total' mod='alma'}{/capture}
+{capture assign='costCredit'}{l s='Cost of credit' mod='alma'}{/capture}
+{capture assign='total'}{l s='Total' mod='alma'}{/capture}
+{capture assign='firstAmount'}{almaFormatPrice cents=$plans[0].total_amount}{/capture}
+{capture assign='fees'}{almaFormatPrice cents=$plans[0].customer_fee}{/capture}
+{capture assign='nextAmounts'}{almaFormatPrice cents=$plans[1].total_amount}{/capture}
 
+{if $oneLiner}
     <span class="alma-fee-plan--description">
         {almaDisplayHtml}
             {l s='%1$s today then %2$d&#8239;⨉&#8239;%3$s' sprintf=[$firstAmount, $installmentsCount - 1, $nextAmounts] mod='alma'}
         {/almaDisplayHtml}
 
-        <br>
-        <small>
-            {if $plans[0].customer_fee > 0}
-                {l s='(Including fees: %s)' sprintf=[$fees] mod='alma'}
-            {else}
-                {l s='(No additional fees)' mod='alma'}
-            {/if}
-        </small>
-    </span>
-{else}
-    {foreach from=$plans item=v name=counter}
-        <span class="alma-fee-plan--description">
-            <span class="alma-fee-plan--date">
-                {if $smarty.foreach.counter.iteration === 1}
-                    {l s='Today' mod='alma'}
+        {if 4 > $installmentsCount}
+            <br>
+            <small>
+                {if $plans[0].customer_fee > 0}
+                    {l s='(Including fees: %s)' sprintf=[$fees] mod='alma'}
                 {else}
-                    {dateFormat date=$v.due_date|date_format:"%Y-%m-%d" full=0}
+                    {l s='(No additional fees)' mod='alma'}
                 {/if}
-            </span>
-            <span class="alma-fee-plan--amount">
-                {almaFormatPrice cents=$v.purchase_amount + $v.customer_fee}
-                {if $v.customer_fee > 0}
-                    {capture assign='fees'}{almaFormatPrice cents=$plans[0].customer_fee}{/capture}
-                    <small style="display: block">
-                        {l s='(Including fees: %s)' sprintf=[$fees] mod='alma'}
-                    </small>
-                {/if}
-            </span>
+            </small>
+        {/if}
+    </span>
+
+    {if 4 < $installmentsCount}
+        <br><br>
+        <strong>{l s='Your credit' mod='alma'}</strong>
+        <br>
+        <span class="alma-fee-plan--description">
+            <span class="alma-credit-desc-left">{$cartTotal}</span>
+            <span class="alma-credit-desc-right">{almaFormatPrice cents=$creditInfo.totalCart}</span>
         </span>
-    {/foreach}
+        <br>
+        <span class="alma-fee-plan--description">
+            <span class="alma-credit-desc-left">{$costCredit}</span>
+            <span class="alma-credit-desc-right">{almaFormatPrice cents=$creditInfo.costCredit}</span>
+        </span>
+        <br>
+        <span class="alma-fee-plan--description">
+            <span class="alma-credit-desc-left">{$fixedAPR}</span>
+            <span class="alma-credit-desc-right"></span>
+        </span>
+        <br>
+        <span class="alma-fee-plan--description">            
+            <span style="float:left;"><b>{$total}</b></span>
+            <span style="float:right;"><b>{almaFormatPrice cents=$creditInfo.totalCredit}</b></span>
+        </span>
+    {/if}
+{else}
+    {if 4 < $installmentsCount}        
+        <span>
+        {almaDisplayHtml}
+            {l s='%1$s today then %2$d&#8239;⨉&#8239;%3$s' sprintf=[$firstAmount, $installmentsCount - 1, $nextAmounts] mod='alma'}
+        {/almaDisplayHtml}        
+        </span>
+        <br>
+        <br>
+        <strong>{l s='Your credit' mod='alma'}</strong>
+        <span class="alma-fee-plan--description">
+            <span class="alma-fee-plan--date">{$cartTotal}</span>
+            <span class="alma-fee-plan--amount">{almaFormatPrice cents=$creditInfo.totalCart}</span>
+        </span>
+        <span class="alma-fee-plan--description">
+            <span class="alma-fee-plan--date">{$costCredit}</span>
+            <span class="alma-fee-plan--amount">{almaFormatPrice cents=$creditInfo.costCredit}</span>
+        </span>
+        <span class="alma-fee-plan--description">
+            <span class="alma-fee-plan--date">{$fixedAPR}</span>
+            <span class="alma-fee-plan--amount"></span>
+        </span>
+        <strong>
+        <span class="alma-fee-plan--description">            
+                <span class="alma-fee-plan--date">{$total}</span>
+                <span class="alma-fee-plan--amount">{almaFormatPrice cents=$creditInfo.totalCredit}</span>            
+        </span>
+        </strong>
+        <br>        
+    {else}
+        {foreach from=$plans item=v name=counter}
+            <span class="alma-fee-plan--description">
+                <span class="alma-fee-plan--date">
+                    {if $smarty.foreach.counter.iteration === 1}
+                        {l s='Today' mod='alma'}
+                    {else}
+                        {dateFormat date=$v.due_date|date_format:"%Y-%m-%d" full=0}
+                    {/if}
+                </span>
+                <span class="alma-fee-plan--amount">
+                    {almaFormatPrice cents=$v.total_amount}
+                    {if $v.customer_fee > 0}
+                        {capture assign='fees'}{almaFormatPrice cents=$plans[0].customer_fee}{/capture}
+                        <small style="display: block">
+                            {l s='(Including fees: %s)' sprintf=[$fees] mod='alma'}
+                        </small>
+                    {/if}
+                </span>
+            </span>
+        {/foreach}
+    {/if}
 {/if}

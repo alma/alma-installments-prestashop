@@ -32,7 +32,9 @@ use Alma\PrestaShop\API\EligibilityHelper;
 use Alma\PrestaShop\Hooks\FrontendHookController;
 use Alma\PrestaShop\Model\CartData;
 use Alma\PrestaShop\Utils\Settings;
+use Cart;
 use Media;
+use Tools;
 
 final class DisplayPaymentHookController extends FrontendHookController
 {
@@ -51,16 +53,22 @@ final class DisplayPaymentHookController extends FrontendHookController
         }
 
         $feePlans = json_decode(Settings::getFeePlans());
-        $paymentOptionPnx = [];
-        $paymentOptionDeferred = [];
         $paymentOptions = [];
         $sortOptions = [];
+        $totalCart = (float) almaPriceToCents(
+            Tools::ps_round((float) $this->context->cart->getOrderTotal(true, Cart::BOTH), 2)
+        );
 
         foreach ($installmentPlans as $plan) {
             $n = $plan->installmentsCount;
             $key = "general_{$n}_{$plan->deferredDays}_{$plan->deferredMonths}";
             $plans = $plan->paymentPlan;
             $disabled = false;
+            $creditInfo = [
+                'totalCart' => $totalCart,
+                'costCredit' => $plan->customerTotalCostAmount,
+                'totalCredit' => $plan->customerTotalCostAmount + $totalCart,
+            ];
 
             if (Settings::isDeferred($plan)) {
                 if ($n == 1) {
@@ -88,6 +96,7 @@ final class DisplayPaymentHookController extends FrontendHookController
                     'isDeferred' => true,
                     'text' => sprintf(Settings::getPaymentButtonTitleDeferred(), $duration),
                     'desc' => sprintf(Settings::getPaymentButtonDescriptionDeferred(), $duration),
+                    'creditInfo' => $creditInfo,
                     ];
                     $paymentOptions[$key] = $paymentOption;
                     $sortOptions[$key] = $feePlans->$key->order;
@@ -115,6 +124,7 @@ final class DisplayPaymentHookController extends FrontendHookController
                         'isDeferred' => false,
                         'text' => sprintf(Settings::getPaymentButtonTitle(), $n),
                         'desc' => sprintf(Settings::getPaymentButtonDescription(), $n),
+                        'creditInfo' => $creditInfo,
                     ];
                     $paymentOptions[$key] = $paymentOption;
                     $sortOptions[$key] = $feePlans->$key->order;
