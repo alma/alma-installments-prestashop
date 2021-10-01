@@ -42,21 +42,19 @@
         </div>
         <div class="form-wrapper">
             <div class="form-group">
-                <label class="control-label col-lg-3"></label>
-                <div class="col-lg-9">
-                    <p>
-                        {l s='Text : refund alma + change status if total bla bla bla toussa toussa...' mod='alma'}
-                    </p>
-                </div>
+                <p class="col-lg-12">
+                    {l s='Refund this order thanks to the Alma module. This will be applied in your Alma dashboard automatically.' mod='alma'}
+                    <a href="https://docs.getalma.eu/docs/remboursement" target="_blank">{l s='See documentation' mod='alma'}</a>
+                </p>
             </div>
             <div class="form-group">
-                <label class="control-label col-lg-3 required"> {l s='Refund type:' mod='alma'}</label>
-                <div class="col-lg-9">
+                <label class="control-label col-lg-2 required"> {l s='Refund type:' mod='alma'}</label>
+                <div class="col-lg-10">
                     {if $order.ordersId}
                         <div class="radio t">
                             <label>
                                 <input type="radio" class="refundType" name="refundType" value="partial_multi" />                            
-                                {l s='Only this purchase (%s)' sprintf=$order.maxAmount mod='alma'}
+                                {l s='Only this order (%s)' sprintf=$order.maxAmount mod='alma'}
                             </label>
                         </div>
                     {/if}
@@ -64,14 +62,14 @@
                         <label>
                             <input type="radio" class="refundType" name="refundType" value="total" checked="checked"/>
                             {if $order.ordersId}
-                                {l s='Refund the integrity of this purchase' mod='alma'}
+                                {l s='Refund the entire order' mod='alma'}
                                 <br>
-                                <i>{l s='Refund this order (id : %1$d) and all linked orders (id : %2$s)' sprintf=array($order.id, $order.ordersId) mod='alma'}
+                                <i>{l s='Refund this order (id: %1$d) and all those linked to the same payment (id: %2$s)' sprintf=array($order.id, $order.ordersId) mod='alma'}
                                 <br>
-                                {l s='Total amount : %s' sprintf=$order.ordersTotalAmount mod='alma'}
+                                {l s='Total amount: %s' sprintf=$order.ordersTotalAmount mod='alma'}
                                 </i>
                             {else}
-                                {l s='Total' mod='alma'}
+                                {l s='Total amount' mod='alma'}
                             {/if}
 
                         </label>
@@ -85,8 +83,8 @@
                 </div>
             </div>
             <div class="form-group" id="amountDisplay" style="display: none">
-                <label class="control-label col-lg-3 required"> {l s='Amount (Max. %s):' sprintf=$order.ordersTotalAmount mod='alma'}</label>
-                <div class="col-lg-9">
+                <label class="control-label col-lg-2 required"> {l s='Amount (Max. %s):' sprintf=$order.ordersTotalAmount mod='alma'}</label>
+                <div class="col-lg-2">
                     <div class="input-group">
                         <span class="input-group-addon">{$order.currencySymbol}</span>
                         <input type="text" class="alma" value="" name="amount"
@@ -97,7 +95,7 @@
         </div>
         <div class="panel-footer clear">
             <button type="submit" class="button btn btn-primary button-medium pull-right">
-                <span>{l s='Process this refund' mod='alma'}</button>
+                <span>{l s='Proceed the refund' mod='alma'}</button>
         </div>
     </div>
 </form>
