@@ -68,6 +68,7 @@ final class DisplayPaymentHookController extends FrontendHookController
                 'totalCart' => $totalCart,
                 'costCredit' => $plan->customerTotalCostAmount,
                 'totalCredit' => $plan->customerTotalCostAmount + $totalCart,
+                'taeg' => $plan->annualInterestRate,
             ];
 
             if (Settings::isDeferred($plan)) {

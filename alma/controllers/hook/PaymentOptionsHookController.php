@@ -79,6 +79,12 @@ final class PaymentOptionsHookController extends FrontendHookController
             $n = $plan->installmentsCount;
             $key = "general_{$n}_{$plan->deferredDays}_{$plan->deferredMonths}";
             $plans = $plan->paymentPlan;
+            $creditInfo = [
+                'totalCart' => $totalCart,
+                'costCredit' => $plan->customerTotalCostAmount,
+                'totalCredit' => $plan->customerTotalCostAmount + $totalCart,
+                'taeg' => $plan->annualInterestRate,
+            ];
             if (Settings::isDeferred($plan)) {
                 if ($n == 1) {
                     $duration = Settings::getDuration($plan);
@@ -95,11 +101,6 @@ final class PaymentOptionsHookController extends FrontendHookController
                         $duration
                     );
                     if (!$forEUComplianceModule) {
-                        $creditInfo = [
-                            'totalCart' => $totalCart,
-                            'costCredit' => $plan->customerTotalCostAmount,
-                            'totalCredit' => $plan->customerTotalCostAmount + $totalCart,
-                        ];
                         $this->context->smarty->assign([
                             'desc' => sprintf(Settings::getPaymentButtonDescriptionDeferred(), $duration),
                             'plans' => (array) $plans,
@@ -132,11 +133,6 @@ final class PaymentOptionsHookController extends FrontendHookController
                     );
 
                     if (!$forEUComplianceModule) {
-                        $creditInfo = [
-                            'totalCart' => $totalCart,
-                            'costCredit' => $plan->customerTotalCostAmount,
-                            'totalCredit' => $plan->customerTotalCostAmount + $totalCart,
-                        ];
                         $this->context->smarty->assign([
                             'desc' => sprintf(Settings::getPaymentButtonDescription(), $n),
                             'plans' => (array) $plans,

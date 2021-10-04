@@ -64,7 +64,7 @@
         <br>
         <span class="alma-fee-plan--description">
             <span class="alma-credit-desc-left">{$fixedAPR}</span>
-            <span class="alma-credit-desc-right"></span>
+            <span class="alma-credit-desc-right">{$creditInfo.taeg / 100}%</span>
         </span>
         <br>
         <span class="alma-fee-plan--description">            
@@ -92,7 +92,7 @@
         </span>
         <span class="alma-fee-plan--description">
             <span class="alma-fee-plan--date">{$fixedAPR}</span>
-            <span class="alma-fee-plan--amount"></span>
+            <span class="alma-fee-plan--amount">{$creditInfo.taeg / 100}%</span>
         </span>
         <strong>
         <span class="alma-fee-plan--description">            
