@@ -1,28 +1,5 @@
 <?php
 
-/**
- * 2018-2021 Alma SAS
- *
- * THE MIT LICENSE
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
- * documentation files (the "Software"), to deal in the Software without restriction, including without limitation
- * the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and
- * to permit persons to whom the Software is furnished to do so, subject to the following conditions:
- * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the
- * Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE
- * WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
- * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
- * IN THE SOFTWARE.
- *
- * @author    Alma SAS <contact@getalma.eu>
- * @copyright 2018-2021 Alma SAS
- * @license   https://opensource.org/licenses/MIT The MIT License
- */
-
 global $_MODULE;
 $_MODULE = [];
 
@@ -41,9 +18,14 @@ $_MODULE['<{alma}prestashop>adminalmacategories_30269022e9d8f51beaabb52e5d0de2b7
 $_MODULE['<{alma}prestashop>adminalmacategories_97b1d2407df2098b636c462aa766d028'] = 'Eligible Alma';
 $_MODULE['<{alma}prestashop>adminalmacategories_6da38e7cdb5552e79a4ec4e2c62f2b93'] = 'Activer Alma pour ces catégories';
 $_MODULE['<{alma}prestashop>adminalmacategories_1ef246272d910a217e66aff142f708ad'] = 'Désactiver Alma pour ces catégories';
+$_MODULE['<{alma}prestashop>adminalmarefunds_71aaf9aac15f0a36ff8ccbafae21a931'] = 'Erreur : La transaction Alma n\'a pas été trouvée';
+$_MODULE['<{alma}prestashop>adminalmarefunds_804dd5602d862158294c1ce82326cea0'] = 'Erreur : Le montant renseigné est supérieur au montant maximum remboursable';
+$_MODULE['<{alma}prestashop>adminalmarefunds_69c00601627a9011bf5c4816abf00b5a'] = 'Il y a eu une erreur lors de l\'execution du remboursement';
+$_MODULE['<{alma}prestashop>adminalmarefunds_6b96aca9bb86443522e8a0b117e8e4bf'] = 'Le remboursement a été déclenché';
 $_MODULE['<{alma}prestashop>payment_2f9f52496706027b880bac2e3c9af1d8'] = 'Une erreur est survenue lors de la requête de paiement. Veuillez réessayer, ou contactez-nous si le problème persiste.';
 $_MODULE['<{alma}prestashop>payment_efa820507b1951ee5722003639b1a0b0'] = 'Le paiement en plusieurs fois Alma n\'est pas disponible pour cette devise';
 $_MODULE['<{alma}prestashop>validation_9d55a51cbc2d6cf7f9251b0cec59390e'] = 'Une erreur est survenue lors de la validation de votre paiement. Veuillez réessayer ou nous contacter si le problème persiste. ID Panier : %d';
+$_MODULE['<{alma}prestashop>displayrefundshookcontroller_71aaf9aac15f0a36ff8ccbafae21a931'] = 'Erreur : La transaction Alma n\'a pas été trouvée';
 $_MODULE['<{alma}prestashop>getcontenthookcontroller_1d13f5970032b45327add3c337ac82ee'] = 'Configuration de l\'API';
 $_MODULE['<{alma}prestashop>getcontenthookcontroller_fe1d478b2e434b92277b47f0cf62e040'] = 'Mode de l\'API';
 $_MODULE['<{alma}prestashop>getcontenthookcontroller_0e95e5facc2cad62d6458c65164c4455'] = 'Utilisez le mode Test jusqu’à ce que vous soyez prêt(e) à accepter des commandes avec Alma. En mode Test, seuls les administrateurs voient Alma sur les pages de panier/validation de commande.';
