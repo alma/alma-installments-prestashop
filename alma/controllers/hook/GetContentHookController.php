@@ -511,9 +511,9 @@ final class GetContentHookController extends AdminHookController
                     } else {
                         // PrestaShop won't detect the string if the call to `l` is multiline
                         // phpcs:ignore
-                        $tabTitle = sprintf($this->module->l('%d-deferred payments + %d days', 'GetContentHookController'), $feePlan->installments_count, $duration);
+                        $tabTitle = sprintf($this->module->l('%d-installment payments + %d-deferred days', 'GetContentHookController'), $feePlan->installments_count, $duration);
                         $label = sprintf(
-                            $this->module->l('Enable %d-deferred payments +%d days', 'GetContentHookController'),
+                            $this->module->l('Enable %d-installment payments +%d-deferred days', 'GetContentHookController'),
                             $feePlan->installments_count,
                             $duration
                         );
