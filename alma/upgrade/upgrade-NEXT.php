@@ -34,6 +34,11 @@ if (!defined('_PS_VERSION_')) {
 function upgrade_module_1_4_3($module)
 {
     $module->unregisterHook('actionOrderSlipAdd');
-
+    if (version_compare(_PS_VERSION_, '1.7.7.0', '>=')) {
+        $module->registerHook('displayAdminOrderMain');
+    } else {
+        $module->registerHook('displayAdminOrder');
+    }
+    
     return $module->uninstallTabs() && $module->installTabs();
 }
