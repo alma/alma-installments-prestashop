@@ -32,8 +32,10 @@ use Alma\PrestaShop\API\EligibilityHelper;
 use Alma\PrestaShop\Hooks\FrontendHookController;
 use Alma\PrestaShop\Model\CartData;
 use Alma\PrestaShop\Utils\Settings;
+use Cart;
 use Media;
 use PrestaShop\PrestaShop\Core\Payment\PaymentOption;
+use Tools;
 
 final class PaymentOptionsHookController extends FrontendHookController
 {
@@ -61,6 +63,9 @@ final class PaymentOptionsHookController extends FrontendHookController
         $sortOptions = [];
         $feePlans = json_decode(Settings::getFeePlans());
         $i = 1;
+        $totalCart = (float) almaPriceToCents(
+            Tools::ps_round((float) $this->context->cart->getOrderTotal(true, Cart::BOTH), 2)
+        );
 
         foreach ($installmentPlans as $plan) {
             if (!$plan->isEligible) {
@@ -74,6 +79,12 @@ final class PaymentOptionsHookController extends FrontendHookController
             $n = $plan->installmentsCount;
             $key = "general_{$n}_{$plan->deferredDays}_{$plan->deferredMonths}";
             $plans = $plan->paymentPlan;
+            $creditInfo = [
+                'totalCart' => $totalCart,
+                'costCredit' => $plan->customerTotalCostAmount,
+                'totalCredit' => $plan->customerTotalCostAmount + $totalCart,
+                'taeg' => $plan->annualInterestRate,
+            ];
             if (Settings::isDeferred($plan)) {
                 if ($n == 1) {
                     $duration = Settings::getDuration($plan);
@@ -96,6 +107,7 @@ final class PaymentOptionsHookController extends FrontendHookController
                             'apiMode' => Settings::getActiveMode(),
                             'merchantId' => Settings::getMerchantId(),
                             'first' => $first,
+                            'creditInfo' => $creditInfo,
                         ]);
                         $template = $this->context->smarty->fetch(
                             "module:{$this->module->name}/views/templates/hook/payment_button_deferred.tpl"
@@ -127,6 +139,7 @@ final class PaymentOptionsHookController extends FrontendHookController
                             'apiMode' => Settings::getActiveMode(),
                             'merchantId' => Settings::getMerchantId(),
                             'first' => $first,
+                            'creditInfo' => $creditInfo,
                         ]);
 
                         $template = $this->context->smarty->fetch(

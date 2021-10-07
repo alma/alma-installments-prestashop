@@ -181,3 +181,13 @@ p.payment_module a.disable-arrow-icon:after {
 p.payment_module a.disable-arrow-icon {
     background: none;
 }
+
+.payment_module .alma-credit-desc-left {
+    float: left;
+    font-weight: normal;
+}
+
+.payment_module .alma-credit-desc-right {
+    float: right;
+    font-weight: normal;
+}

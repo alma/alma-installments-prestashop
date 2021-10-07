@@ -74,6 +74,12 @@
         {rtrim(sprintf("%.2f", $fee_plan["customer_fee_fixed"] / 100.0), '.0')|escape:'htmlall':'UTF-8'}€
     {/if}
 
+    {if $fee_plan["customer_lending_rate"] > 0}
+    <br>
+    <b>{l s='Customer lending rate:' mod='alma'}</b>
+    {$fee_plan["customer_lending_rate"] / 100}%
+    {/if}
+
     <br><br>
     <a href='mailto:contact@getalma.eu?subject={l s='Fees for %d-installment plan' sprintf=$n mod='alma'}'>{l s='Contact us' mod='alma'}</a>
     {l s='if you think your sales volumes warrant better rates!' mod='alma'}

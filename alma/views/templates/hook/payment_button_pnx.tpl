@@ -25,8 +25,8 @@
     <p>
         {$desc|escape:'htmlall':'UTF-8'}
     </p>    
-    {include file="modules/alma/views/templates/hook/_partials/feePlan.tpl" plans=$plans oneLiner=false}    
+    {include file="modules/alma/views/templates/hook/_partials/feePlan.tpl" plans=$plans creditInfo=$creditInfo oneLiner=false}    
 </div>
-{if $first}
+{* {if $first}
     <div id="almaFragments" data-apimode="{$apiMode}" data-merchantid="{$merchantId}"></div>    
-{/if}
+{/if} *}
