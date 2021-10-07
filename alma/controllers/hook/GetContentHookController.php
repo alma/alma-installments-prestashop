@@ -180,6 +180,8 @@ final class GetContentHookController extends AdminHookController
                 $feePlans = $this->getFeePlans();
                 foreach ($feePlans as $feePlan) {
                     $n = $feePlan->installments_count;
+                    $deferred_days = $feePlan->deferred_days;
+                    $deferred_months = $feePlan->deferred_months;
                     $key = Settings::keyForFeePlan($feePlan);
                     if (1 == $n && !Settings::isDeferred($feePlan)) {
                         continue;
@@ -196,6 +198,8 @@ final class GetContentHookController extends AdminHookController
                         $this->context->smarty->assign([
                             'validation_error' => 'pnx_min_amount',
                             'n' => $n,
+                            'deferred_days' => $deferred_days,
+                            'deferred_months' => $deferred_months,
                             'min' => almaPriceFromCents($feePlan->min_purchase_amount),
                             'max' => almaPriceFromCents(min($max, $feePlan->max_purchase_amount)),
                         ]);
@@ -207,6 +211,8 @@ final class GetContentHookController extends AdminHookController
                         $this->context->smarty->assign([
                             'validation_error' => 'pnx_max_amount',
                             'n' => $n,
+                            'deferred_days' => $deferred_days,
+                            'deferred_months' => $deferred_months,
                             'min' => almaPriceFromCents($min),
                             'max' => almaPriceFromCents($feePlan->max_purchase_amount),
                         ]);
@@ -505,9 +511,9 @@ final class GetContentHookController extends AdminHookController
                     } else {
                         // PrestaShop won't detect the string if the call to `l` is multiline
                         // phpcs:ignore
-                        $tabTitle = sprintf($this->module->l('%d-deferred payments + %d days', 'GetContentHookController'), $feePlan->installments_count, $duration);
+                        $tabTitle = sprintf($this->module->l('%d-installment payments + %d-deferred days', 'GetContentHookController'), $feePlan->installments_count, $duration);
                         $label = sprintf(
-                            $this->module->l('Enable %d-deferred payments +%d days', 'GetContentHookController'),
+                            $this->module->l('Enable %d-installment payments +%d-deferred days', 'GetContentHookController'),
                             $feePlan->installments_count,
                             $duration
                         );
