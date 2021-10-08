@@ -1,5 +1,14 @@
 # Changelog
 
+## v2.1.0
+
+-   P10X is now available with Alma !
+-   Add interest info P10X
+-   Fix P10X legal informations
+-   Fix error on link breadcrumb alma module
+-   Fix error message min/max amount BNPL
+-   Fix error when upgrade module Prestashop 1.6.0.X and 1.5.X
+
 ## v2.0.0
 
 -   Adds Buy Now Pay Later with Alma
