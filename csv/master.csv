@@ -1,0 +1,154 @@
+File;EN;FR
+alma;Alma Monthly Installments for PrestaShop;2x 3x 4x, J+15 ou J+30 Alma — Paiement en plusieurs fois et différé
+alma;Offer an easy and safe installments payments option to your customers;Boostez vos ventes en installant Alma ! C'est simple et garanti, votre trésorerie est sécurisée. 0 engagement, 0 abonnement, 0 risque.
+alma;Are you sure you want to deactivate Alma Monthly Installments from your shop?;Voulez-vous vraiment supprimer les paiements en plusieurs fois Alma de votre boutique ?
+alma;Alma requires the CURL PHP extension.;Alma nécessite l'extension PHP cURL
+alma;Alma requires the JSON PHP extension.;Alma nécessite l'extension PHP JSON
+alma;Alma requires OpenSSL >= 1.0.1;Alma nécessite OpenSSL >= 1.0.1
+alma;Configuration;Configuration
+alma;Excluded categories;Catégories exclues
+adminalmacategories;ID;ID
+adminalmacategories;Name;Nom
+adminalmacategories;Description;Description
+adminalmacategories;Parent;Parent
+adminalmacategories;Alma Eligible;Eligible Alma
+adminalmacategories;Enable Alma for these categories;Activer Alma pour ces catégories
+adminalmacategories;Disable Alma for these categories;Désactiver Alma pour ces catégories
+payment;There was an error while generating your payment request. Please try again later or contact us if the problem persists.;Une erreur est survenue lors de la requête de paiement. Veuillez réessayer, ou contactez-nous si le problème persiste.
+payment;Alma Monthly Installments are not available for this currency;Le paiement en plusieurs fois Alma n'est pas disponible pour cette devise
+validation;There was an error while validating your payment. Please try again or contact us if the problem persists. Cart ID: %d;Une erreur est survenue lors de la validation de votre paiement. Veuillez réessayer ou nous contacter si le problème persiste. ID Panier : %d
+getcontenthookcontroller;API configuration;Configuration de l'API
+getcontenthookcontroller;API Mode;Mode de l'API
+getcontenthookcontroller;Use Test mode until you are ready to take real orders with Alma. In Test mode, only admins can see Alma on cart/checkout pages.;Utilisez le mode Test jusqu’à ce que vous soyez prêt(e) à accepter des commandes avec Alma. En mode Test, seuls les administrateurs voient Alma sur les pages de panier/validation de commande.
+getcontenthookcontroller;Live API key;Clef d'API Live
+getcontenthookcontroller;Not required for Test mode;Non requis en mode Test
+getcontenthookcontroller;You can find your Live API key on %1$syour Alma dashboard%2$s;Retrouvez votre clef d'API Live sur %1$svotre tableau de bord Alma%2$s
+getcontenthookcontroller;Test API key;Clef d'API Test
+getcontenthookcontroller;Not required for Live mode;Non requis en mode Live
+getcontenthookcontroller;You can find your Test API key on %1$syour sandbox dashboard%2$s;Retrouvez votre clef d'API Test sur %1$svotre tableau de bord sandbox%2$s
+getcontenthookcontroller;Save;Enregistrer
+getcontenthookcontroller;Installments plans;Échéanciers
+getcontenthookcontroller;%d-installment payments;Paiement en %d fois
+getcontenthookcontroller;Enable %d-installment payments;Activer les paiements en %d fois
+getcontenthookcontroller;Deferred payments + %d days;Paiement différé + %d jours
+getcontenthookcontroller;Enable deferred payments +%d days;Activer les paiements à J+%d
+getcontenthookcontroller;%d-deferred payments + %d days;
+getcontenthookcontroller;Enable %d-deferred payments +%d days;
+getcontenthookcontroller;Minimum amount (€);Montant minimum (€)
+getcontenthookcontroller;Minimum purchase amount to activate this plan;Montant d'achat minimum pour activer cet échéancier
+getcontenthookcontroller;Maximum amount (€);Montant maximum (€)
+getcontenthookcontroller;Maximum purchase amount to activate this plan;Montant d'achat maximum pour activer cet échéancier
+getcontenthookcontroller;Position;Position
+getcontenthookcontroller;Use relative values to set the order on the checkout page;Utilisez des valeurs relatives pour ordonner les choix sur votre page de paiement
+getcontenthookcontroller;Payment method configuration;Configuration de la méthode de paiement
+getcontenthookcontroller;Payment by installment;Paiement en plusieurs fois
+getcontenthookcontroller;Title;Titre
+getcontenthookcontroller;This controls the payment method name which the user sees during checkout.;Choisissez le nom de la méthode de paiement que l'utilisateur voit pendant la validation de commande.
+getcontenthookcontroller;Description;Description
+getcontenthookcontroller;This controls the payment method description which the user sees during checkout.;Choisissez la description de la méthode de paiement sur la page de validation de commande.
+getcontenthookcontroller;Defered payment;Paiement différé
+getcontenthookcontroller;When Alma is not available...;Lorsqu'Alma n'est pas disponible...
+getcontenthookcontroller;Display payment button, disabled;Afficher le bouton de paiement désactivé
+getcontenthookcontroller;Hide payment button;Cacher le bouton de paiement
+getcontenthookcontroller;Eligibility on product pages;Eligibilité des produits
+getcontenthookcontroller;Show product eligibility on details page;Activer sur les fiches produit
+getcontenthookcontroller;Displays a badge with eligible Alma plans with installments details;Affiche un badge Alma montrant les échéanciers disponibles
+getcontenthookcontroller;Display the product's eligibility;Afficher l'éligibilité des produits
+getcontenthookcontroller;Display badge;Afficher le badge
+getcontenthookcontroller;Displays a badge when product price is too high or tow low;Affiche le badge lorsque le prix du produit est trop bas ou trop élevé
+getcontenthookcontroller;Display badge when the product is not eligible.;Afficher le badge lorsque le produit n'est pas éligible.
+getcontenthookcontroller;Badge position;Position du badge
+getcontenthookcontroller;Display badge after price (by default);Afficher le badge après le prix (par défaut)
+getcontenthookcontroller;Display badge on custom css selector;Afficher le badge dans un selecteur CSS spécifique
+getcontenthookcontroller;%1$sAdvanced%2$s [Optional] Query selector for our scripts to display the badge on product page;%1$sAvancé%2$s [Optionnel] Sélecteur CSS utilisé par nos scripts pour afficher le badge sur la page produit
+getcontenthookcontroller;E.g. #id, .class, ...;Ex : #id, .class, ...
+getcontenthookcontroller;Product price query selector;Sélecteur CSS du prix des produits
+getcontenthookcontroller;%1$sAdvanced%2$s Query selector for our scripts to correctly find the displayed price of a product;%1$sAvancé%2$s Sélecteur CSS utilisé par nos scripts pour extraire le prix affiché des produits
+getcontenthookcontroller;Product attribute dropdown query selector;Sélecteur CSS des attributs en listes déroulantes
+getcontenthookcontroller;%1$sAdvanced%2$s Query selector for our scripts to correctly find the selected attributes of a product combination;%1$sAvancé%2$s Sélecteur CSS utilisé par nos scripts pour identifier les attributs de produits variables
+getcontenthookcontroller;Product attribute radio button query selector;Sélecteur CSS des attributs en boutons radio
+getcontenthookcontroller;Product color picker query selector;Sélecteur CSS des choix de couleur
+getcontenthookcontroller;%1$sAdvanced%2$s Query selector for our scripts to correctly find the chosen color option of a product;%1$sAvancé%2$s Sélecteur CSS utilisé par nos scripts pour identifier les options de couleur des produits
+getcontenthookcontroller;Product quantity query selector;Sélecteur CSS du choix de quantité
+getcontenthookcontroller;%1$sAdvanced%2$s Query selector for our scripts to correctly find the wanted quantity of a product;%1$sAvancé%2$s Sélecteur CSS utilisé par nos scripts pour extraire la quantité de produits choisie par le client
+getcontenthookcontroller;Cart eligibility message;Éligibilité du panier
+getcontenthookcontroller;Show cart eligibility;Activer sur le panier
+getcontenthookcontroller;Display the cart's eligibility.;Afficher l'éligibilité du panier
+getcontenthookcontroller;Displays a badge when cart amount is too high or tow low;Affiche le badge lorsque le montant du panier est trop bas ou trop élevé
+getcontenthookcontroller;Display badge when the cart is not eligible.;Afficher le badge lorsque le panier n'est pas éligible.
+getcontenthookcontroller;Display badge after cart (by default);Afficher le badge après le panier (par défaut)
+getcontenthookcontroller;%1$sAdvanced%2$s [Optional] Query selector for our scripts to display the badge on cart page;%1$sAvancé%2$s [Optionnel] Sélecteur CSS utilisé par nos scripts pour afficher le badge sur la page du panier
+getcontenthookcontroller;Order confirmation;Confirmation de commande
+getcontenthookcontroller;Display order confirmation;Afficher la confirmation de commande
+getcontenthookcontroller;Activate this setting when you do not have your own order confirmation page;Activez cette option lorsque vous n'avez pas votre propre page de confirmation de commande
+getcontenthookcontroller;Confirm successful order to customers when they come back from the Alma payment page;Confirme la prise en compte de leur commande aux clients revenant de la page de paiement Alma
+getcontenthookcontroller;No excluded categories;Aucune
+getcontenthookcontroller;Excluded categories;Catégories exclues
+getcontenthookcontroller;Excluded categories non-eligibility message ;Message de non-éligibilité pour catégories exclues
+getcontenthookcontroller;Message displayed on an excluded product page or on the cart page if it contains an excluded product.;Message affiché sur les pages de produits exclus ou sur la page du panier s'il contient un produit exclus
+getcontenthookcontroller;Refund with state change;Remboursement par changement d'état
+getcontenthookcontroller;If you usually refund orders by changing their state, activate this option and choose the state you want to use to trigger refunds on Alma payments;Si vous remboursez généralement vos commandes en changeant leur état, activez cette option et choisissez l'état que vous souhaitez utiliser pour déclencher les remboursements de paiements Alma.
+getcontenthookcontroller;Activate refund by change state;Activer le remboursement par changement d'état
+getcontenthookcontroller;Refund state order;État de commande du remboursement
+getcontenthookcontroller;Your order state to sync refund with Alma;État de commande à synchroniser avec le remboursement Alma
+getcontenthookcontroller;Debug options;Options de débogage
+getcontenthookcontroller;Activate logging;Activer les logs
+paymentvalidation;Alma Monthly Installments are not available for this currency;Alma n'est pas disponible dans cette devise
+paymentvalidation;Alma - +%d days payment;Alma - Paiement +%d jours
+paymentvalidation;Alma - %d monthly installments;Alma - Paiement en %d fois
+settings;Your cart is not eligible for payments with Alma.;Paiements avec Alma indisponibles
+settings;Pay in %d installments;Payer en %d fois
+settings;Pay in %d monthly installments with your credit card.;Payer en %d fois par carte bancaire
+settings;Buy now Pay in %d days;Payer dans %d jours
+settings;Buy now pay in %d days with your credit card.;Payer dans %d jours par carte bancaire
+displaypaymentreturn;Your order has been placed successfully;Votre commande a été passée avec succès
+displaypaymentreturn;It will be processed soon.;Nous la traiterons dans les meilleurs délais
+displaypaymentreturn;Here is your order reference:;Référence de votre commande :
+displaypaymentreturn;You should receive a confirmation email shortly;Vous devriez bientôt recevoir un email de confirmation.
+displaypaymentreturn;We appreciate your business;Merci pour votre confiance !
+excludedcategories;Some products (gift cards, license keys, software, weapons, ...) cannot be sold with Alma, as per %sour terms%s (see Exclusions paragraph).;Certains produits (cartes cadeau, clés de licence, logiciels, armes, ...) ne peuvent pas être vendus avec Alma, comme indiqué dans %snos CGV%s (voir le paragraphe Exclusions).
+excludedcategories;If you are selling such products on your shop, you need to configure Alma so that it is not enabled when customers view or shop them.;Si vous vendez de tels produits, vous devez configurer le module Alma pour qu'il soit désactivé lorsque vos clients les consultent ou les achètent.
+excludedcategories;Use the %1$s%2$scategory exclusions page%3$s%4$s to comply with these restrictions.;Utilisez %1$s%2$sla page d'exclusion de catégories%3$s%4$s pour vous confomer à ces restrictions.
+excludedcategories;Categories currently excluded : ;Catégories actuellement exclues :
+getcontent;Please fill in all required settings;Merci de renseigner tous les champs obligatoires
+getcontent;Please provide your Live API key to operate in Live mode;Renseignez votre clef d'API Live pour utiliser le mode Live
+getcontent;Please provide your Test API key to operate in Test mode;Renseignez votre clef d'API Test pour utiliser le mode Test
+getcontent;Error while initializing Alma API client.;Erreur d'initialisation du client d'API Alma
+getcontent;Activate logging in the debug options and check the logs for more details.;Activez les logs dans les options de débogage et vérifiez les logs pour plus de détails.
+getcontent;Could not connect to Alma using your Live API key.;Impossible de se connecter à Alma avec votre clef d'API Live.
+getcontent;Please double check your Live API key on your Alma dashboard.;Vérifiez votre clef d'API Live sur votre tableau de bord Alma.
+getcontent;Could not connect to Alma using your Test API keys.;Impossible de se connecter à Alma avec votre clef d'API Test.
+getcontent;Please double check your Test API key on your Alma dashboard.;Vérifiez votre clef d'API Test sur votre tableau de bord Alma.
+getcontent;API error:;Erreur API :
+getcontent;Your Alma account is not activated yet. You won't be able to use Alma in Live mode.;Votre compte Alma n'est pas encore activé. Vous ne pourrez pas utiliser Alma en mode Live.
+getcontent;Activate your account on your Alma dashboard before switching to Live mode.;Activez votre compte via votre tableau de bord Alma avant de passer en mode Live.
+getcontent;Your Alma account needs to be activated before you can use Alma on your shop.;Votre compte Alma doit être activé avant que vous ne puissiez utiliser Alma sur votre boutique.
+getcontent;Go to your Alma dashboard to activate your account.;Rendez-vous sur votre tableau de bord Alma pour activer votre compte.
+getcontent;You can refresh/come back to this page when you are ready.;Vous pouvez rafraîchir/revenir à cette page lorsque c'est fait.
+getcontent;Minimum amount for %1$d-installment plan must be within %2$d and %3$d.;Le montant minimum pour les paiements en %1$d fois doit être entre %2$d et %3$d.
+getcontent;Maximum amount for %1$d-installment plan must be within %2$d and %3$d.;Le montant maximum pour les paiements en %1$d fois doit être entre %2$d et %3$d.
+getcontent;Thanks for installing Alma!;Merci d'avoir installé Alma !
+getcontent;You need to create an Alma account before proceeding.;Avant toute chose, vous devez créer un compte Alma.
+getcontent;Read our getting started guide;Consultez notre guide de démarrage
+getcontent;You can then fill in your API keys:;Vous pourrez ensuite renseigner vos clefs d'API :
+getcontent;You can find your Live API key in %1$syour Alma dashboard%2$s;Retrouvez votre clef d'API Live sur %1$svotre tableau de bord Alma%2$s
+getcontent;To use the Test mode, you need your Test API key from %1$syour sandbox dasboard%2$s;Pour utiliser le mode Test, récupérez votre clef d'API Test sur %1$svotre tableau de bord sandbox%2$s
+getcontent;Settings successfully updated;Configuration enregistrée avec succès
+pnx_fees;You can offer deferred payments for amounts between %d€ and %d€.;Vous pouvez proposer le paiement différé pour des montants entre %d€ et %d€.
+pnx_fees;You can offer %d-deferred payments for amounts between %d€ and %d€.;Vous pouvez proposer le paiement différé en %d fois pour des montants entre %d€ et %d€.
+pnx_fees;You can offer %d-installment payments for amounts between %d€ and %d€.;Vous pouvez proposer le paiement en %d fois pour des montants entre %d€ et %d€.
+pnx_fees;Fees applied to each transaction for this plan:;Frais appliqués à chaque transaction pour cet échéancier :
+pnx_fees;You pay:;Vous payez :
+pnx_fees;Customers pay:;Vos clients paient :
+pnx_fees;Fees for %d-installment plan;Frais pour les paiements en %d fois
+pnx_fees;Contact us;Contactez-nous
+pnx_fees;if you think your sales volumes warrant better rates!;si vous pensez que vos volumes justifient de meilleurs tarifs !
+deferred;0 € today then %1$s on %2$s;0 € aujourd'hui puis %1$s le %2$s
+deferred;(Including fees: %s);(Dont frais inclus : %s)
+deferred;(No additional fees);(Sans frais)
+displaypayment_deferred;Alma Deferred Payment is not available for this order;Le paiement différé Alma n'est pas disponible pour cette commande
+displaypayment_pnx;Alma Monthly Installments are not available for this order;Le paiement en plusieurs fois Alma n'est pas disponible pour cette commande
+feeplan;%1$s today then %2$d ⨉ %3$s;%1$s aujourd'hui puis %2$d ⨉ %3$s
+feeplan;(Including fees: %s);(Dont frais inclus : %s)
+feeplan;(No additional fees);(Sans frais)
+feeplan;Today;Aujourd'hui
