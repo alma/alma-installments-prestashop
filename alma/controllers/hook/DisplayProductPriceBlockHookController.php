@@ -129,7 +129,7 @@ final class DisplayProductPriceBlockHookController extends FrontendHookControlle
             $isEligible = false;
             foreach ($feePlans as $feePlan) {
                 if (1 == $feePlan->enabled) {
-                    if ($price > $feePlan->min && $price < $feePlan->max) {
+                    if ($price >= $feePlan->min && $price <= $feePlan->max) {
                         $isEligible = true;
                         break;
                     }
