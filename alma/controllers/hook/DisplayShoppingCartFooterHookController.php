@@ -74,6 +74,9 @@ final class DisplayShoppingCartFooterHookController extends FrontendHookControll
         if (!empty($diff)) {
             $eligibilityMsg = Settings::getNonEligibleCategoriesMessage();
             $isExcluded = true;
+            if(!Settings::showCategoriesWidgetIfNotEligible()) {
+                $isEligible = false;
+            }
         }
 
         if (is_callable('Media::getMediaPath')) {

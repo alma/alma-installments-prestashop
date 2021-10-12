@@ -110,6 +110,7 @@ $_MODULE['<{alma}prestashop>getcontenthookcontroller_83674e9661afaf7494705c4626a
 $_MODULE['<{alma}prestashop>getcontenthookcontroller_d342c4d4173641303554804de4d59b05'] = 'Confirme la prise en compte de leur commande aux clients revenant de la page de paiement Alma';
 $_MODULE['<{alma}prestashop>getcontenthookcontroller_6d3653d4dfc00d04cb9d3835253ca2ce'] = 'Aucune';
 $_MODULE['<{alma}prestashop>getcontenthookcontroller_36359547b09bdb31f46c419a0bd5807e'] = 'Catégories exclues';
+$_MODULE['<{alma}prestashop>getcontenthookcontroller_f7647306d4f1d148cc6ce5261238534b'] = 'Afficher le badge même si la catégorie est exclue';
 $_MODULE['<{alma}prestashop>getcontenthookcontroller_41c2bdcbfb6ea702ac49667124a1652a'] = 'Message de non-éligibilité pour catégories exclues';
 $_MODULE['<{alma}prestashop>getcontenthookcontroller_c4cea4750fb3ef077cbf2e1283c312ac'] = 'Message affiché sur les pages de produits exclus ou sur la page du panier s\'il contient un produit exclus';
 $_MODULE['<{alma}prestashop>getcontenthookcontroller_9d21f767a50ad583330024bce9afa2e1'] = 'Remboursement par changement d\'état';

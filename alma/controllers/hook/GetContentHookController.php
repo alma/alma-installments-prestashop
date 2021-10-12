@@ -109,6 +109,7 @@ final class GetContentHookController extends AdminHookController
             $showEligibility = (bool) Tools::getValue('ALMA_SHOW_ELIGIBILITY_MESSAGE_ON');
             $showCartEligibilityNotEligible = (bool) Tools::getValue('ALMA_CART_WDGT_NOT_ELGBL_ON');
             $showProductEligibilityNotEligible = (bool) Tools::getValue('ALMA_PRODUCT_WDGT_NOT_ELGBL_ON');
+            $showCategoriesEligibilityNotEligible = (bool) Tools::getValue('ALMA_CATEGORIES_WDGT_NOT_ELGBL_ON');
 
             $nonEligibleCategoriesMsg = Tools::getValue('ALMA_NOT_ELIGIBLE_CATEGORIES');
 
@@ -162,6 +163,7 @@ final class GetContentHookController extends AdminHookController
 
             Settings::updateValue('ALMA_CART_WDGT_NOT_ELGBL', $showCartEligibilityNotEligible);
             Settings::updateValue('ALMA_PRODUCT_WDGT_NOT_ELGBL', $showProductEligibilityNotEligible);
+            Settings::updateValue('ALMA_CATEGORIES_WDGT_NOT_ELGBL', $showCategoriesEligibilityNotEligible);
 
             $idStateRefund = Tools::getValue('ALMA_STATE_REFUND');
             Settings::updateValue('ALMA_STATE_REFUND', $idStateRefund);
@@ -1027,6 +1029,24 @@ final class GetContentHookController extends AdminHookController
                         'desc' => $tpl->fetch(),
                     ],
                     [
+                        'name' => 'ALMA_CATEGORIES_WDGT_NOT_ELGBL',
+                        'label' => $this->module->l('Display badge', 'GetContentHookController'),
+                        'type' => 'checkbox',
+                        'values' => [
+                            'id' => 'id',
+                            'name' => 'label',
+                            'query' => [
+                                [
+                                    'id' => 'ON',
+                                    'val' => true,
+                                    // PrestaShop won't detect the string if the call to `l` is multiline
+                                    // phpcs:ignore
+                                    'label' => $this->module->l('Display badge even if categories is not eligible.', 'GetContentHookController'),
+                                ],
+                            ],
+                        ],
+                    ],
+                    [
                         'name' => 'ALMA_NOT_ELIGIBLE_CATEGORIES',
                         // phpcs:ignore
                         'label' => $this->module->l('Excluded categories non-eligibility message ', 'GetContentHookController'),
@@ -1177,6 +1197,7 @@ final class GetContentHookController extends AdminHookController
             'ALMA_SHOW_ELIGIBILITY_MESSAGE_ON' => Settings::showEligibilityMessage(),
             'ALMA_CART_WDGT_NOT_ELGBL_ON' => Settings::showCartWidgetIfNotEligible(),
             'ALMA_PRODUCT_WDGT_NOT_ELGBL_ON' => Settings::showProductWidgetIfNotEligible(),
+            'ALMA_CATEGORIES_WDGT_NOT_ELGBL_ON' => Settings::showCategoriesWidgetIfNotEligible(),
             'ALMA_DISPLAY_ORDER_CONFIRMATION_ON' => Settings::displayOrderConfirmation(),
             'ALMA_ACTIVATE_LOGGING_ON' => (bool) Settings::canLog(),
             'ALMA_STATE_REFUND' => Settings::getRefundState(),
