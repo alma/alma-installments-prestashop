@@ -35,6 +35,7 @@ use Alma\PrestaShop\Utils\Logger;
 use Alma\PrestaShop\Utils\Settings;
 use Configuration;
 use HelperForm;
+use Language;
 use Media;
 use OrderState;
 use Tools;
@@ -100,7 +101,15 @@ final class GetContentHookController extends AdminHookController
             }
         }
 
+        // Get languages are active
+        $languages = $this->context->controller->getLanguages();
+        // var_dump($languages);
+        // exit();
+
         if (!$apiOnly) {
+            foreach ($languages as $language) {
+
+            }
             $title = Tools::getValue('ALMA_PAYMENT_BUTTON_TITLE');
             $titleDeferred = Tools::getValue('ALMA_DEFERRED_BUTTON_TITLE');
             $description = Tools::getValue('ALMA_PAYMENT_BUTTON_DESC');
@@ -643,7 +652,7 @@ final class GetContentHookController extends AdminHookController
                     [
                         'name' => 'ALMA_PAYMENT_BUTTON_TITLE',
                         'label' => $this->module->l('Title', 'GetContentHookController'),
-                        //'lang' => true,
+                        'lang' => true,
                         // PrestaShop won't detect the string if the call to `l` is multiline
                         // phpcs:ignore
                         'desc' => $this->module->l('This controls the payment method name which the user sees during checkout.', 'GetContentHookController'),
