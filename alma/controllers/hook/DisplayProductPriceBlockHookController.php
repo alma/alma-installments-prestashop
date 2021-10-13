@@ -136,7 +136,7 @@ final class DisplayProductPriceBlockHookController extends FrontendHookControlle
                 }
             }
         }
-        if(!Settings::showCategoriesWidgetIfNotEligible() && Settings::isProductExcluded($productId)) {
+        if (!Settings::showCategoriesWidgetIfNotEligible() && Settings::isProductExcluded($productId)) {
             $isEligible = false;
         }
         if ($isEligible) {
