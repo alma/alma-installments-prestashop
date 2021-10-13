@@ -1030,7 +1030,10 @@ final class GetContentHookController extends AdminHookController
                     ],
                     [
                         'name' => 'ALMA_CATEGORIES_WDGT_NOT_ELGBL',
-                        'label' => $this->module->l('Display badge', 'GetContentHookController'),
+                        'label' => $this->module->l('Display message', 'GetContentHookController'),
+                        // PrestaShop won't detect the string if the call to `l` is multiline
+                        // phpcs:ignore
+                        'desc' => $this->module->l('Display the message below if the product is excluded from the category', 'GetContentHookController'),
                         'type' => 'checkbox',
                         'values' => [
                             'id' => 'id',
@@ -1041,7 +1044,7 @@ final class GetContentHookController extends AdminHookController
                                     'val' => true,
                                     // PrestaShop won't detect the string if the call to `l` is multiline
                                     // phpcs:ignore
-                                    'label' => $this->module->l('Display badge even if categories is not eligible.', 'GetContentHookController'),
+                                    'label' => $this->module->l('Display the message below if the product is excluded', 'GetContentHookController'),
                                 ],
                             ],
                         ],
