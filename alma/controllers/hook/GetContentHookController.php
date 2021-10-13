@@ -643,6 +643,7 @@ final class GetContentHookController extends AdminHookController
                     [
                         'name' => 'ALMA_PAYMENT_BUTTON_TITLE',
                         'label' => $this->module->l('Title', 'GetContentHookController'),
+                        //'lang' => true,
                         // PrestaShop won't detect the string if the call to `l` is multiline
                         // phpcs:ignore
                         'desc' => $this->module->l('This controls the payment method name which the user sees during checkout.', 'GetContentHookController'),
@@ -653,6 +654,7 @@ final class GetContentHookController extends AdminHookController
                     [
                         'name' => 'ALMA_PAYMENT_BUTTON_DESC',
                         'label' => $this->module->l('Description', 'GetContentHookController'),
+                        'lang' => true,
                         // PrestaShop won't detect the string if the call to `l` is multiline
                         // phpcs:ignore
                         'desc' => $this->module->l('This controls the payment method description which the user sees during checkout.', 'GetContentHookController'),
