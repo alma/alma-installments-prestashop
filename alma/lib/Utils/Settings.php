@@ -158,17 +158,22 @@ class Settings
         return (bool) (int) self::get('ALMA_SHOW_DISABLED_BUTTON', true);
     }
 
-    public static function getNonEligibleCategoriesMessage()
+    public static function getNonEligibleCategoriesMessage($idlang = null)
     {
         // Allow PrestaShop's translation feature to detect those strings
         // $this->l('Your cart is not eligible for payments with Alma.', 'settings');
-        $default = null;
+        $default = '';
         $languages = Language::getLanguages();
         foreach ($languages as $language) {
-            $default = json_encode($default[$language['id_lang']] = self::l('Your cart is not eligible for payments with Alma.', $language['locale']));
+            $default[$language['id_lang']] = self::l('Your cart is not eligible for payments with Alma.', $language['locale']);
         }
 
-        return json_decode(self::get('ALMA_NOT_ELIGIBLE_CATEGORIES', $default), true);
+        if ($idlang) {
+            $str = json_decode($default, true);
+            return $str[$idlang];
+        }
+
+        return json_decode(self::get('ALMA_NOT_ELIGIBLE_CATEGORIES', json_encode($default)), true);
     }
 
     public static function showEligibilityMessage()
@@ -191,56 +196,76 @@ class Settings
         return (bool) (int) self::get('ALMA_CATEGORIES_WDGT_NOT_ELGBL', true);
     }
 
-    public static function getPaymentButtonTitle()
+    public static function getPaymentButtonTitle($idlang = null)
     {
         // Allow PrestaShop's translation feature to detect those strings
         // $this->l('Pay in %d installments', 'settings');
-        $default = null;
+        $default = '';
         $languages = Language::getLanguages();
         foreach ($languages as $language) {
-            $default = json_encode($default[$language['id_lang']] = self::l('Pay in %d installments', $language['locale']));
+            $default[$language['id_lang']] = self::l('Pay in %d installments', $language['locale']);
         }
 
-        return json_decode(self::get('ALMA_PAYMENT_BUTTON_TITLE', $default), true);
+        if ($idlang) {
+            $str = json_decode($default, true);
+            return $str[$idlang];
+        }
+
+        return json_decode(self::get('ALMA_PAYMENT_BUTTON_TITLE', json_encode($default)), true);
     }
 
-    public static function getPaymentButtonDescription()
+    public static function getPaymentButtonDescription($idlang = null)
     {
         // Allow PrestaShop's translation feature to detect those strings
         // $this->l('Pay in %d monthly installments with your credit card.', 'settings');
-        $default = null;
+        $default = '';
         $languages = Language::getLanguages();
         foreach ($languages as $language) {
-            $default = json_encode($default[$language['id_lang']] = self::l('Pay in %d monthly installments with your credit card.', $language['locale']));
+            $default[$language['id_lang']] = self::l('Pay in %d monthly installments with your credit card.', $language['locale']);
         }
 
-        return json_decode(self::get('ALMA_PAYMENT_BUTTON_DESC', $default), true);
+        if ($idlang) {
+            $str = json_decode($default, true);
+            return $str[$idlang];
+        }
+
+        return json_decode(self::get('ALMA_PAYMENT_BUTTON_DESC', json_encode($default)), true);
     }
 
-    public static function getPaymentButtonTitleDeferred()
+    public static function getPaymentButtonTitleDeferred($idlang = null)
     {
         // Allow PrestaShop's translation feature to detect those strings
         // $this->l('Buy now Pay in %d days', 'settings');
-        $default = null;
+        $default = '';
         $languages = Language::getLanguages();
         foreach ($languages as $language) {
-            $default = json_encode($default[$language['id_lang']] = self::l('Buy now Pay in %d days', $language['locale']));
+            $default[$language['id_lang']] = self::l('Buy now Pay in %d days', $language['locale']);
         }
 
-        return json_decode(self::get('ALMA_DEFERRED_BUTTON_TITLE', $default), true);
+        if ($idlang) {
+            $str = json_decode($default, true);
+            return $str[$idlang];
+        }
+
+        return json_decode(self::get('ALMA_DEFERRED_BUTTON_TITLE', json_encode($default)), true);
     }
 
-    public static function getPaymentButtonDescriptionDeferred()
+    public static function getPaymentButtonDescriptionDeferred($idlang = null)
     {
         // Allow PrestaShop's translation feature to detect those strings
         // $this->l('Buy now pay in %d days with your credit card.', 'settings');
-        $default = null;
+        $default = '';
         $languages = Language::getLanguages();
         foreach ($languages as $language) {
-            $default = json_encode($default[$language['id_lang']] = self::l('Buy now pay in %d days with your credit card.', $language['locale']));
+            $default[$language['id_lang']] = self::l('Buy now pay in %d days with your credit card.', $language['locale']);
         }
 
-        return json_decode(self::get('ALMA_DEFERRED_BUTTON_DESC', $default), true);
+        if ($idlang) {
+            $str = json_decode($default, true);
+            return $str[$idlang];
+        }
+
+        return json_decode(self::get('ALMA_DEFERRED_BUTTON_DESC', json_encode($default)), true);
     }
 
     public static function displayOrderConfirmation()

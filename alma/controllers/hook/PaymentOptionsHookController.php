@@ -90,7 +90,7 @@ final class PaymentOptionsHookController extends FrontendHookController
                     $duration = Settings::getDuration($plan);
                     $paymentOptionDeferred = $this->createPaymentOption(
                         $forEUComplianceModule,
-                        sprintf(Settings::getPaymentButtonTitleDeferred(), $duration),
+                        sprintf(Settings::getPaymentButtonTitleDeferred($this->context->language->id), $duration),
                         $this->context->link->getModuleLink(
                             $this->module->name,
                             'payment',
@@ -102,7 +102,7 @@ final class PaymentOptionsHookController extends FrontendHookController
                     );
                     if (!$forEUComplianceModule) {
                         $this->context->smarty->assign([
-                            'desc' => sprintf(Settings::getPaymentButtonDescriptionDeferred(), $duration),
+                            'desc' => sprintf(Settings::getPaymentButtonDescriptionDeferred($this->context->language->id), $duration),
                             'plans' => (array) $plans,
                             'apiMode' => Settings::getActiveMode(),
                             'merchantId' => Settings::getMerchantId(),
@@ -121,7 +121,7 @@ final class PaymentOptionsHookController extends FrontendHookController
                 if ($n != 1) {
                     $paymentOptionPnx = $this->createPaymentOption(
                         $forEUComplianceModule,
-                        sprintf(Settings::getPaymentButtonTitle(), $n),
+                        sprintf(Settings::getPaymentButtonTitle($this->context->language->id), $n),
                         $this->context->link->getModuleLink(
                             $this->module->name,
                             'payment',
@@ -134,7 +134,7 @@ final class PaymentOptionsHookController extends FrontendHookController
 
                     if (!$forEUComplianceModule) {
                         $this->context->smarty->assign([
-                            'desc' => sprintf(Settings::getPaymentButtonDescription(), $n),
+                            'desc' => sprintf(Settings::getPaymentButtonDescription($this->context->language->id), $n),
                             'plans' => (array) $plans,
                             'apiMode' => Settings::getActiveMode(),
                             'merchantId' => Settings::getMerchantId(),
