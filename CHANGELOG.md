@@ -1,5 +1,12 @@
 # Changelog
 
+## v2.2.0
+
+-   Now you can hide the message of product page or cart page if it contains an excluded product
+-   Fix Narrow no-break space in EN payment page
+-   Show badge if product price equal limit of eligibility and badge is hide
+-   Update all payment logo PnX and BNPL
+
 ## v2.1.0
 
 -   P10X is now available with Alma !
