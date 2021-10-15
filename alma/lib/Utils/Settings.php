@@ -106,6 +106,7 @@ class Settings
             'ALMA_CART_WIDGET_POSITION_CUSTOM',
             'ALMA_CART_WDGT_NOT_ELGBL',
             'ALMA_PRODUCT_WDGT_NOT_ELGBL',
+            'ALMA_CATEGORIES_WDGT_NOT_ELGBL',
         ];
 
         foreach ($configKeys as $configKey) {
@@ -177,6 +178,11 @@ class Settings
     public static function showProductWidgetIfNotEligible()
     {
         return (bool) (int) self::get('ALMA_PRODUCT_WDGT_NOT_ELGBL', true);
+    }
+
+    public static function showCategoriesWidgetIfNotEligible()
+    {
+        return (bool) (int) self::get('ALMA_CATEGORIES_WDGT_NOT_ELGBL', true);
     }
 
     public static function getPaymentButtonTitle()

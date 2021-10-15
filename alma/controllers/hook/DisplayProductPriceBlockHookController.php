@@ -136,6 +136,9 @@ final class DisplayProductPriceBlockHookController extends FrontendHookControlle
                 }
             }
         }
+        if (!Settings::showCategoriesWidgetIfNotEligible() && Settings::isProductExcluded($productId)) {
+            $isEligible = false;
+        }
         if ($isEligible) {
             $this->context->smarty->assign([
             'productId' => $productId,
