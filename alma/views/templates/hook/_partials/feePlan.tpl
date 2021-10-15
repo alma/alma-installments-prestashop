@@ -33,7 +33,7 @@
 {if $oneLiner}
     <span class="alma-fee-plan--description">
         {almaDisplayHtml}
-            {l s='%1$s today then %2$d&#8239;⨉&#8239;%3$s' sprintf=[$firstAmount, $installmentsCount - 1, $nextAmounts] mod='alma'}
+            {l s='%1$s today then %2$d x %3$s' sprintf=[$firstAmount, $installmentsCount - 1, $nextAmounts] mod='alma'}
         {/almaDisplayHtml}
 
         {if 4 > $installmentsCount}
@@ -76,7 +76,7 @@
     {if 4 < $installmentsCount}        
         <span>
         {almaDisplayHtml}
-            {l s='%1$s today then %2$d&#8239;⨉&#8239;%3$s' sprintf=[$firstAmount, $installmentsCount - 1, $nextAmounts] mod='alma'}
+            {l s='%1$s today then %2$d x %3$s' sprintf=[$firstAmount, $installmentsCount - 1, $nextAmounts] mod='alma'}
         {/almaDisplayHtml}        
         </span>
         <br>
