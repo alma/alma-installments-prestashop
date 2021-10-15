@@ -33,8 +33,10 @@ use Address;
 use Alma\PrestaShop\Utils\Logger;
 use Cart;
 use Context;
+use Country;
 use Customer;
 use Exception;
+use State;
 use Tools;
 use Validate;
 
@@ -103,6 +105,9 @@ class PaymentData
             'birth_date' => $customer->birthday,
             'addresses' => [],
             'phone' => null,
+            'country' => null,
+            'county_sublocality' => null,
+            'state_province' => null,
         ];
 
         if ($customerData['birth_date'] == '0000-00-00') {
@@ -128,7 +133,9 @@ class PaymentData
                 'line1' => $address['address1'],
                 'postal_code' => $address['postcode'],
                 'city' => $address['city'],
-                'country' => $address['country'],
+                'country' => Country::getIsoById((int) $address['id_country']),
+                'county_sublocality' => null,
+                'state_province' => $address['state'],
             ]);
 
             if (is_null($customerData['phone']) && $address['phone']) {
@@ -137,6 +144,12 @@ class PaymentData
                 $customerData['phone'] = $address['phone_mobile'];
             }
         }
+
+        $customerData['state_province'] = State::getNameById((int) $billingAddress->id_state);
+        $customerData['country'] = Country::getIsoById((int) $billingAddress->id_country);
+
+        $locale = explode('-', $context->language->locale);
+        $locale = $locale[0];
 
         return [
             'payment' => [
@@ -151,7 +164,9 @@ class PaymentData
                     'line1' => $shippingAddress->address1,
                     'postal_code' => $shippingAddress->postcode,
                     'city' => $shippingAddress->city,
-                    'country' => $shippingAddress->country,
+                    'country' => Country::getIsoById((int) $shippingAddress->id_country),
+                    'county_sublocality' => null,
+                    'state_province' => State::getNameById((int) $shippingAddress->id_state),
                 ],
                 'shipping_info' => ShippingData::shippingInfo($cart),
                 'cart' => CartData::cartInfo($cart),
@@ -159,7 +174,9 @@ class PaymentData
                     'line1' => $billingAddress->address1,
                     'postal_code' => $billingAddress->postcode,
                     'city' => $billingAddress->city,
-                    'country' => $billingAddress->country,
+                    'country' => Country::getIsoById((int) $billingAddress->id_country),
+                    'county_sublocality' => null,
+                    'state_province' => State::getNameById((int) $billingAddress->id_state),
                 ],
                 'custom_data' => [
                     'cart_id' => $cart->id,
@@ -167,6 +184,7 @@ class PaymentData
                     'cart_totals' => $purchaseAmount,
                     'cart_totals_high_precision' => number_format($purchaseAmount, 16),
                 ],
+                'locale' => $locale,
             ],
             'customer' => $customerData,
         ];
