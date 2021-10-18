@@ -160,25 +160,7 @@ class Settings
 
     public static function getNonEligibleCategoriesMessage($idlang = null)
     {
-        // Allow PrestaShop's translation feature to detect those strings
-        // $this->l('Your cart is not eligible for payments with Alma.', 'settings');
-        $default = [];
-        $locale = null;
-        $languages = Language::getLanguages();
-        foreach ($languages as $language) {
-            if (array_key_exists('locale', $language)) {
-                $locale = $language['locale'];
-            }
-            $default[$language['id_lang']] = self::l('Your cart is not eligible for payments with Alma.', $locale);
-        }
-
-        if ($idlang) {
-            $default = '';
-            $str = json_decode($default, true);
-            return $str[$idlang];
-        }
-
-        return json_decode(self::get('ALMA_NOT_ELIGIBLE_CATEGORIES', json_encode($default)), true);
+        return self::getTranslationsByLanguage('Your cart is not eligible for payments with Alma.', 'ALMA_NOT_ELIGIBLE_CATEGORIES', $idlang);
     }
 
     public static function showEligibilityMessage()
@@ -203,94 +185,22 @@ class Settings
 
     public static function getPaymentButtonTitle($idlang = null)
     {
-        // Allow PrestaShop's translation feature to detect those strings
-        // $this->l('Pay in %d installments', 'settings');
-        $default = [];
-        $locale = null;
-        $languages = Language::getLanguages();
-        foreach ($languages as $language) {
-            if (array_key_exists('locale', $language)) {
-                $locale = $language['locale'];
-            }
-            $default[$language['id_lang']] = self::l('Pay in %d installments', $locale);
-        }
-
-        if ($idlang) {
-            $default = '';
-            $str = json_decode($default, true);
-            return $str[$idlang];
-        }
-
-        return json_decode(self::get('ALMA_PAYMENT_BUTTON_TITLE', json_encode($default)), true);
+        return self::getTranslationsByLanguage('Pay in %d installments', 'ALMA_PAYMENT_BUTTON_TITLE', $idlang);
     }
 
     public static function getPaymentButtonDescription($idlang = null)
     {
-        // Allow PrestaShop's translation feature to detect those strings
-        // $this->l('Pay in %d monthly installments with your credit card.', 'settings');
-        $default = [];
-        $locale = null;
-        $languages = Language::getLanguages();
-        foreach ($languages as $language) {
-            if (array_key_exists('locale', $language)) {
-                $locale = $language['locale'];
-            }
-            $default[$language['id_lang']] = self::l('Pay in %d monthly installments with your credit card.', $locale);
-        }
-
-        if ($idlang) {
-            $default = '';
-            $str = json_decode($default, true);
-            return $str[$idlang];
-        }
-
-        return json_decode(self::get('ALMA_PAYMENT_BUTTON_DESC', json_encode($default)), true);
+        return self::getTranslationsByLanguage('Pay in %d monthly installments with your credit card.', 'ALMA_PAYMENT_BUTTON_DESC', $idlang);
     }
 
     public static function getPaymentButtonTitleDeferred($idlang = null)
     {
-        // Allow PrestaShop's translation feature to detect those strings
-        // $this->l('Buy now Pay in %d days', 'settings');
-        $default = [];
-        $locale = null;
-        $languages = Language::getLanguages();
-        foreach ($languages as $language) {
-            if (array_key_exists('locale', $language)) {
-                $locale = $language['locale'];
-            }
-            $default[$language['id_lang']] = self::l('Buy now Pay in %d days', $locale);
-        }
-
-        if ($idlang) {
-            $default = '';
-            $str = json_decode($default, true);
-            return $str[$idlang];
-        }
-
-        return json_decode(self::get('ALMA_DEFERRED_BUTTON_TITLE', json_encode($default)), true);
+        return self::getTranslationsByLanguage('Buy now Pay in %d days', 'ALMA_DEFERRED_BUTTON_TITLE', $idlang);
     }
 
     public static function getPaymentButtonDescriptionDeferred($idlang = null)
     {
-        // Allow PrestaShop's translation feature to detect those strings
-        // $this->l('Buy now pay in %d days with your credit card.', 'settings');
-        $default = [];
-        $locale = null;
-        $languages = Language::getLanguages();
-        foreach ($languages as $language) {
-            if (array_key_exists('locale', $language)) {
-                $locale = $language['locale'];
-            }
-            $default[$language['id_lang']] = self::l('Buy now pay in %d days with your credit card.', $locale);
-        }
-
-        if ($idlang) {
-            $default = '';
-            $str = json_decode($default, true);
-            return $str[$idlang];
-        }
-
-        return json_decode(self::get('ALMA_DEFERRED_BUTTON_DESC', json_encode($default)), true);
+        return self::getTranslationsByLanguage('Buy now pay in %d days with your credit card.', 'ALMA_DEFERRED_BUTTON_DESC', $idlang);
     }
 
     public static function displayOrderConfirmation()
@@ -554,5 +464,30 @@ class Settings
             'deferredDays' => (int) $data[2],
             'deferredMonths' => (int) $data[3],
         ];
+    }
+
+    public static function getTranslationsByLanguage($str, $nameConfig, $idlang = null)
+    {
+        // Allow PrestaShop's translation feature to detect those strings
+        // $this->l($str, 'settings');
+        $default = [];
+        $locale = null;
+        $languages = Language::getLanguages();
+        foreach ($languages as $language) {
+            if (array_key_exists('locale', $language)) {
+                $locale = $language['locale'];
+            }
+            $default[$language['id_lang']] = self::l($str, $locale);
+        }
+        var_dump($default);
+        exit();
+
+        if ($idlang) {
+            $default = '';
+            $str = json_decode($default, true);
+            return $str[$idlang];
+        }
+
+        return json_decode(self::get($nameConfig, json_encode($default)), true);
     }
 }
