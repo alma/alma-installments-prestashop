@@ -148,8 +148,7 @@ class PaymentData
         $customerData['state_province'] = State::getNameById((int) $billingAddress->id_state);
         $customerData['country'] = Country::getIsoById((int) $billingAddress->id_country);
 
-        $locale = explode('-', $context->language->locale);
-        $locale = $locale[0];
+        $locale = $context->language->iso_code;
 
         return [
             'payment' => [

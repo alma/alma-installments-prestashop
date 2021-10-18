@@ -163,9 +163,13 @@ class Settings
         // Allow PrestaShop's translation feature to detect those strings
         // $this->l('Your cart is not eligible for payments with Alma.', 'settings');
         $default = [];
+        $locale = null;
         $languages = Language::getLanguages();
         foreach ($languages as $language) {
-            $default[$language['id_lang']] = self::l('Your cart is not eligible for payments with Alma.', $language['locale']);
+            if (array_key_exists('locale', $language)) {
+                $locale = $language['locale'];
+            }
+            $default[$language['id_lang']] = self::l('Your cart is not eligible for payments with Alma.', $locale);
         }
 
         if ($idlang) {
@@ -202,9 +206,13 @@ class Settings
         // Allow PrestaShop's translation feature to detect those strings
         // $this->l('Pay in %d installments', 'settings');
         $default = [];
+        $locale = null;
         $languages = Language::getLanguages();
         foreach ($languages as $language) {
-            $default[$language['id_lang']] = self::l('Pay in %d installments', $language['locale']);
+            if (array_key_exists('locale', $language)) {
+                $locale = $language['locale'];
+            }
+            $default[$language['id_lang']] = self::l('Pay in %d installments', $locale);
         }
 
         if ($idlang) {
@@ -221,9 +229,13 @@ class Settings
         // Allow PrestaShop's translation feature to detect those strings
         // $this->l('Pay in %d monthly installments with your credit card.', 'settings');
         $default = [];
+        $locale = null;
         $languages = Language::getLanguages();
         foreach ($languages as $language) {
-            $default[$language['id_lang']] = self::l('Pay in %d monthly installments with your credit card.', $language['locale']);
+            if (array_key_exists('locale', $language)) {
+                $locale = $language['locale'];
+            }
+            $default[$language['id_lang']] = self::l('Pay in %d monthly installments with your credit card.', $locale);
         }
 
         if ($idlang) {
@@ -240,9 +252,13 @@ class Settings
         // Allow PrestaShop's translation feature to detect those strings
         // $this->l('Buy now Pay in %d days', 'settings');
         $default = [];
+        $locale = null;
         $languages = Language::getLanguages();
         foreach ($languages as $language) {
-            $default[$language['id_lang']] = self::l('Buy now Pay in %d days', $language['locale']);
+            if (array_key_exists('locale', $language)) {
+                $locale = $language['locale'];
+            }
+            $default[$language['id_lang']] = self::l('Buy now Pay in %d days', $locale);
         }
 
         if ($idlang) {
@@ -259,9 +275,13 @@ class Settings
         // Allow PrestaShop's translation feature to detect those strings
         // $this->l('Buy now pay in %d days with your credit card.', 'settings');
         $default = [];
+        $locale = null;
         $languages = Language::getLanguages();
         foreach ($languages as $language) {
-            $default[$language['id_lang']] = self::l('Buy now pay in %d days with your credit card.', $language['locale']);
+            if (array_key_exists('locale', $language)) {
+                $locale = $language['locale'];
+            }
+            $default[$language['id_lang']] = self::l('Buy now pay in %d days with your credit card.', $locale);
         }
 
         if ($idlang) {
