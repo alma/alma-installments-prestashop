@@ -479,8 +479,6 @@ class Settings
             }
             $default[$language['id_lang']] = self::l($str, $locale);
         }
-        var_dump($default);
-        exit();
 
         if ($idlang) {
             $default = '';
