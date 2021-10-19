@@ -122,11 +122,11 @@ $_MODULE['<{alma}prestashop>getcontenthookcontroller_3132e398e6e7acace9290305a55
 $_MODULE['<{alma}prestashop>paymentvalidation_efa820507b1951ee5722003639b1a0b0'] = 'Alma Monthly Installments are not available for this currency';
 $_MODULE['<{alma}prestashop>paymentvalidation_1d879e270cfb195f257aab3116618d8b'] = 'Alma - +%d days payment';
 $_MODULE['<{alma}prestashop>paymentvalidation_6f11098989b14063e0a4cfe362734850'] = 'Alma - %d monthly installments';
-$_MODULE['<{alma}prestashop>settings_7a854e750fe5f3e7120020c7c20987d4'] = 'Your cart is not eligible for payments with Alma.';
-$_MODULE['<{alma}prestashop>settings_300de0751d957421cc332ba21c43a598'] = 'Pago en %d vos (test es)';
-$_MODULE['<{alma}prestashop>settings_673742ef792de1da72351e0e40ff4b95'] = 'Pay in %d monthly installments with your credit card.';
-$_MODULE['<{alma}prestashop>settings_726c61fad46c135efb4198820e5484ba'] = 'Buy now Pay in %d days';
-$_MODULE['<{alma}prestashop>settings_72eeebc4fa7b487eda1e6a468f1c1b48'] = 'Buy now pay in %d days with your credit card.';
+$_MODULE['<{alma}prestashop>settings_7a854e750fe5f3e7120020c7c20987d4'] = 'Su carro no es elegible para los pagos con Alma.';
+$_MODULE['<{alma}prestashop>settings_300de0751d957421cc332ba21c43a598'] = 'Pagar en %d cuotas mensuales';
+$_MODULE['<{alma}prestashop>settings_673742ef792de1da72351e0e40ff4b95'] = 'Pague en %d cuotas mensuales con su tarjeta de crédito.';
+$_MODULE['<{alma}prestashop>settings_726c61fad46c135efb4198820e5484ba'] = 'Comprar ahora Pagar en %d días';
+$_MODULE['<{alma}prestashop>settings_72eeebc4fa7b487eda1e6a468f1c1b48'] = 'Compre ahora y pague en %d días con su tarjeta de crédito.';
 $_MODULE['<{alma}prestashop>displaypaymentreturn_32898621245c4cbae868294bef6fa540'] = 'Your order has been placed successfully';
 $_MODULE['<{alma}prestashop>displaypaymentreturn_b418b8841d436c5ffc0cd145143645f1'] = 'It will be processed soon.';
 $_MODULE['<{alma}prestashop>displaypaymentreturn_9b9b747500bf38015ecb1a12119d50cc'] = 'Here is your order reference:';

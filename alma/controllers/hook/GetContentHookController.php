@@ -110,23 +110,47 @@ final class GetContentHookController extends AdminHookController
             $descriptions = [];
             $descriptionsDeferred = [];
             foreach ($languages as $language) {
-                $titles[$language['id_lang']] = Tools::getValue('ALMA_PAYMENT_BUTTON_TITLE_' . $language['id_lang']);
-                $titlesDeferred[$language['id_lang']] = Tools::getValue('ALMA_DEFERRED_BUTTON_TITLE_' . $language['id_lang']);
-                $descriptions[$language['id_lang']] = Tools::getValue('ALMA_PAYMENT_BUTTON_DESC_' . $language['id_lang']);
-                $descriptionsDeferred[$language['id_lang']] = Tools::getValue('ALMA_DEFERRED_BUTTON_DESC_' . $language['id_lang']);
-                $nonEligibleCategoriesMsg[$language['id_lang']] = Tools::getValue('ALMA_NOT_ELIGIBLE_CATEGORIES_' . $language['id_lang']);
+                $locale = $language['iso_code'];
+                if (array_key_exists('locale', $language)) {
+                    $locale = $language['locale'];
+                }
+                $titles[$language['id_lang']] = [
+                    'locale' => $locale,
+                    'string' => Tools::getValue('ALMA_PAYMENT_BUTTON_TITLE_' . $language['id_lang']),
+                ];
+                $titlesDeferred[$language['id_lang']] = [
+                    'locale' => $locale,
+                    'string' => Tools::getValue('ALMA_DEFERRED_BUTTON_TITLE_' . $language['id_lang']),
+                ];
+                $descriptions[$language['id_lang']] = [
+                    'locale' => $locale,
+                    'string' => Tools::getValue('ALMA_PAYMENT_BUTTON_DESC_' . $language['id_lang']),
+                ];
+                $descriptionsDeferred[$language['id_lang']] = [
+                    'locale' => $locale,
+                    'string' => Tools::getValue('ALMA_DEFERRED_BUTTON_DESC_' . $language['id_lang']),
+                ];
+                $nonEligibleCategoriesMsg[$language['id_lang']] = [
+                    'locale' => $locale,
+                    'string' => Tools::getValue('ALMA_NOT_ELIGIBLE_CATEGORIES_' . $language['id_lang'])
+                ];
+
+                if (
+                    empty($titles[$language['id_lang']]['string']) || 
+                    empty($descriptions[$language['id_lang']]['string']) || 
+                    empty($titlesDeferred[$language['id_lang']]['string']) || 
+                    empty($descriptionsDeferred[$language['id_lang']]['string'])
+                ) {
+                    $this->context->smarty->assign('validation_error', 'missing_required_setting');
+    
+                    return $this->module->display($this->module->file, 'getContent.tpl');
+                }
             }
 
             $showEligibility = (bool) Tools::getValue('ALMA_SHOW_ELIGIBILITY_MESSAGE_ON');
             $showCartEligibilityNotEligible = (bool) Tools::getValue('ALMA_CART_WDGT_NOT_ELGBL_ON');
             $showProductEligibilityNotEligible = (bool) Tools::getValue('ALMA_PRODUCT_WDGT_NOT_ELGBL_ON');
             $showCategoriesEligibilityNotEligible = (bool) Tools::getValue('ALMA_CATEGORIES_WDGT_NOT_ELGBL_ON');
-
-            if (empty($titles) || empty($descriptions) || empty($titlesDeferred) || empty($descriptionsDeferred)) {
-                $this->context->smarty->assign('validation_error', 'missing_required_setting');
-
-                return $this->module->display($this->module->file, 'getContent.tpl');
-            }
 
             $showProductEligibility = (bool) Tools::getValue('ALMA_SHOW_PRODUCT_ELIGIBILITY_ON');
             Settings::updateValue('ALMA_SHOW_PRODUCT_ELIGIBILITY', $showProductEligibility ? '1' : '0');

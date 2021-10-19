@@ -471,21 +471,26 @@ class Settings
         // Allow PrestaShop's translation feature to detect those strings
         // $this->l($str, 'settings');
         $default = [];
-        $locale = null;
         $languages = Language::getLanguages();
         foreach ($languages as $language) {
+            $locale = $language['iso_code'];
             if (array_key_exists('locale', $language)) {
                 $locale = $language['locale'];
             }
-            $default[$language['id_lang']] = self::l($str, $locale);
+            $default[$language['id_lang']] = [
+                'locale' => $locale,
+                'string' => self::l($str, $locale)
+            ];
         }
-
         if ($idlang) {
-            $default = '';
-            $str = json_decode($default, true);
-            return $str[$idlang];
+            return $default[$idlang]['string'];
         }
 
-        return json_decode(self::get($nameConfig, json_encode($default)), true);
+        $datasConfig = json_decode(self::get($nameConfig, json_encode($default)), true);
+        foreach ($datasConfig as $key => $data) {
+            $return[$key] = $data['string'];
+        }
+
+        return $return;
     }
 }
