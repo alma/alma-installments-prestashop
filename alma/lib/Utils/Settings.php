@@ -39,6 +39,7 @@ if (!defined('ALMA_MODE_LIVE')) {
 use Alma\PrestaShop\Model\CategoryAdapter;
 use Category;
 use Configuration;
+use Context;
 use Language;
 use Module;
 use Product;
@@ -50,7 +51,12 @@ class Settings
 {
     public static function l($str, $locale = null)
     {
-        return Translate::getModuleTranslation('alma', $str, 'settings', null, false, $locale);
+        // if length is over 2 string then use ps 1.7 function
+        if (strlen($locale) > 2) {
+            return Translate::getModuleTranslation('alma', $str, 'settings', null, false, $locale);
+        }
+
+        return self::getModuleTranslation('alma', $str, 'settings', null, false, $locale);
     }
 
     public static function get($configKey, $default = null)
@@ -160,7 +166,7 @@ class Settings
 
     public static function getNonEligibleCategoriesMessage($idlang = null)
     {
-        return self::getTranslationsByLanguage('Your cart is not eligible for payments with Alma.', 'ALMA_NOT_ELIGIBLE_CATEGORIES', $idlang);
+        return self::getCustomFieldsByKeyConfig('ALMA_NOT_ELIGIBLE_CATEGORIES', $idlang);
     }
 
     public static function showEligibilityMessage()
@@ -183,24 +189,83 @@ class Settings
         return (bool) (int) self::get('ALMA_CATEGORIES_WDGT_NOT_ELGBL', true);
     }
 
+    public static function customFields()
+    {
+        return [
+            'ALMA_PAYMENT_BUTTON_TITLE' => 'Pay in %d installments',
+            'ALMA_PAYMENT_BUTTON_DESC' => 'Pay in %d monthly installments with your credit card.',
+            'ALMA_DEFERRED_BUTTON_TITLE' => 'Buy now Pay in %d days',
+            'ALMA_DEFERRED_BUTTON_DESC' => 'Buy now pay in %d days with your credit card.',
+            'ALMA_NOT_ELIGIBLE_CATEGORIES' => 'Your cart is not eligible for payments with Alma.'
+        ];
+    }
+
+    public static function getCustomFieldsByIso($iso)
+    {
+        return self::getModuleTranslations('alma', self::customFields(), 'settings', $iso);
+    }
+
+    public static function getCustomFields()
+    {
+        $languages = Language::getLanguages();
+        foreach ($languages as $language) {
+            $return[$language['id_lang']] = self::getCustomFieldsByIso($language['iso_code']);
+        }
+
+        return $return;
+    }
+
+    public static function getDefaultCustomFieldsByKeyConfig($keyConfig, $idlang = null)
+    {
+        $customFields = self::getCustomFields();
+        foreach ($customFields as $keyIdLang => $fields) {
+            $return[$keyIdLang] = [
+                'locale' => Language::getIsoById($keyIdLang),
+                'string' => $fields[$keyConfig],
+            ];
+        }
+
+        if ($idlang) {
+            return $return[$idlang];
+        }
+
+        return $return;
+    }
+
+    public static function getCustomFieldsByKeyConfig($keyConfig, $idlang = null)
+    {
+        $field = self::getDefaultCustomFieldsByKeyConfig($keyConfig, $idlang);
+
+        $datasConfig = json_decode(self::get($keyConfig, json_encode($field)), true);
+        foreach ($datasConfig as $key => $data) {
+            $return[$key] = $data['string'];
+        }
+
+        if ($idlang) {
+            return $return[$idlang];
+        }
+    
+        return $return;
+    }
+
     public static function getPaymentButtonTitle($idlang = null)
     {
-        return self::getTranslationsByLanguage('Pay in %d installments', 'ALMA_PAYMENT_BUTTON_TITLE', $idlang);
+        return self::getCustomFieldsByKeyConfig('ALMA_PAYMENT_BUTTON_TITLE', $idlang);
     }
 
     public static function getPaymentButtonDescription($idlang = null)
     {
-        return self::getTranslationsByLanguage('Pay in %d monthly installments with your credit card.', 'ALMA_PAYMENT_BUTTON_DESC', $idlang);
+        return self::getCustomFieldsByKeyConfig('ALMA_PAYMENT_BUTTON_DESC', $idlang);
     }
 
     public static function getPaymentButtonTitleDeferred($idlang = null)
     {
-        return self::getTranslationsByLanguage('Buy now Pay in %d days', 'ALMA_DEFERRED_BUTTON_TITLE', $idlang);
+        return self::getCustomFieldsByKeyConfig('ALMA_DEFERRED_BUTTON_TITLE', $idlang);
     }
 
     public static function getPaymentButtonDescriptionDeferred($idlang = null)
     {
-        return self::getTranslationsByLanguage('Buy now pay in %d days with your credit card.', 'ALMA_DEFERRED_BUTTON_DESC', $idlang);
+        return self::getCustomFieldsByKeyConfig('ALMA_DEFERRED_BUTTON_DESC', $idlang);
     }
 
     public static function displayOrderConfirmation()
@@ -492,5 +557,171 @@ class Settings
         }
 
         return $return;
+    }
+
+    public static function getModuleTranslations(
+        $module,
+        $arrayString,
+        $source,
+        $locale,
+        $js = false,
+        $escape = true
+    ) {
+        global $_MODULES, $_MODULE, $_LANGADM;
+
+        static $langCache = [];
+        // $_MODULES is a cache of translations for all module.
+        // $translations_merged is a cache of wether a specific module's translations have already been added to $_MODULES
+        static $translationsMerged = [];
+
+        $name = $module instanceof Module ? $module->name : $module;
+
+        $iso = $locale;
+
+        if (!isset($translationsMerged[$name][$iso])) {
+            $filesByPriority = [
+                // PrestaShop 1.5 translations
+                _PS_MODULE_DIR_ . $name . '/translations/' . $iso . '.php',
+                // PrestaShop 1.4 translations
+                _PS_MODULE_DIR_ . $name . '/' . $iso . '.php',
+                // Translations in theme
+                _PS_THEME_DIR_ . 'modules/' . $name . '/translations/' . $iso . '.php',
+                _PS_THEME_DIR_ . 'modules/' . $name . '/' . $iso . '.php',
+            ];
+            foreach ($filesByPriority as $file) {
+                if (file_exists($file)) {
+                    include_once $file;
+                    $_MODULES = !empty($_MODULES) ? array_merge($_MODULES, $_MODULE) : $_MODULE;
+                }
+            }
+            $translationsMerged[$name][$iso] = true;
+        }
+
+        foreach ($arrayString as $keyConfig => $string) {
+            $string = preg_replace("/\\\*'/", "\'", $string);
+            $key = md5($string);
+
+            $cacheKey = $name . '|' . $string . '|' . $source . '|' . (int) $js . '|' . $iso;
+
+            if (isset($langCache[$cacheKey])) {
+                $ret = $langCache[$cacheKey];
+            } else {
+                $currentKey = strtolower('<{' . $name . '}' . _THEME_NAME_ . '>' . $source) . '_' . $key;
+                $defaultKey = strtolower('<{' . $name . '}prestashop>' . $source) . '_' . $key;
+    
+                if (!empty($_MODULES[$currentKey])) {
+                    $ret = stripslashes($_MODULES[$currentKey]);
+                } elseif (!empty($_MODULES[$defaultKey])) {
+                    $ret = stripslashes($_MODULES[$defaultKey]);
+                } elseif (!empty($_LANGADM)) {
+                    // if translation was not found in module, look for it in AdminController or Helpers
+                    $ret = stripslashes(Translate::getGenericAdminTranslation($string, $key, $_LANGADM));
+                } else {
+                    $ret = stripslashes($string);
+                }
+    
+                if ($js) {
+                    $ret = addslashes($ret);
+                } elseif ($escape) {
+                    $ret = htmlspecialchars($ret, ENT_COMPAT, 'UTF-8');
+                }
+    
+                $langCache[$cacheKey] = $ret;
+            }
+            $rets[$keyConfig] = $langCache[$cacheKey];
+        }
+
+        return $rets;
+    }
+
+    public static function getModuleTranslation(
+        $module,
+        $originalString,
+        $source,
+        $sprintf = null,
+        $js = false,
+        $locale = null,
+        $fallback = true,
+        $escape = true
+    ) {
+        global $_MODULES, $_MODULE, $_LANGADM;
+
+        static $langCache = [];
+        // $_MODULES is a cache of translations for all module.
+        // $translations_merged is a cache of wether a specific module's translations have already been added to $_MODULES
+        static $translationsMerged = [];
+
+        $name = $module instanceof Module ? $module->name : $module;
+
+        $iso = $locale;
+
+        if (!isset($translationsMerged[$name][$iso])) {
+            $filesByPriority = [
+                // PrestaShop 1.5 translations
+                _PS_MODULE_DIR_ . $name . '/translations/' . $iso . '.php',
+                // PrestaShop 1.4 translations
+                _PS_MODULE_DIR_ . $name . '/' . $iso . '.php',
+                // Translations in theme
+                _PS_THEME_DIR_ . 'modules/' . $name . '/translations/' . $iso . '.php',
+                _PS_THEME_DIR_ . 'modules/' . $name . '/' . $iso . '.php',
+            ];
+            foreach ($filesByPriority as $file) {
+                if (file_exists($file)) {
+                    include_once $file;
+                    $_MODULES = !empty($_MODULES) ? array_merge($_MODULES, $_MODULE) : $_MODULE;
+                }
+            }
+            $translationsMerged[$name][$iso] = true;
+        }
+
+        $string = preg_replace("/\\\*'/", "\'", $originalString);
+        $key = md5($string);
+
+        $cacheKey = $name . '|' . $string . '|' . $source . '|' . (int) $js . '|' . $iso;
+        if (isset($langCache[$cacheKey])) {
+            $ret = $langCache[$cacheKey];
+        } else {
+            $currentKey = strtolower('<{' . $name . '}' . _THEME_NAME_ . '>' . $source) . '_' . $key;
+            $defaultKey = strtolower('<{' . $name . '}prestashop>' . $source) . '_' . $key;
+
+            if ('controller' == substr($source, -10, 10)) {
+                $file = substr($source, 0, -10);
+                $currentKeyFile = strtolower('<{' . $name . '}' . _THEME_NAME_ . '>' . $file) . '_' . $key;
+                $defaultKeyFile = strtolower('<{' . $name . '}prestashop>' . $file) . '_' . $key;
+            }
+
+            if (isset($currentKeyFile) && !empty($_MODULES[$currentKeyFile])) {
+                $ret = stripslashes($_MODULES[$currentKeyFile]);
+            } elseif (isset($defaultKeyFile) && !empty($_MODULES[$defaultKeyFile])) {
+                $ret = stripslashes($_MODULES[$defaultKeyFile]);
+            } elseif (!empty($_MODULES[$currentKey])) {
+                $ret = stripslashes($_MODULES[$currentKey]);
+            } elseif (!empty($_MODULES[$defaultKey])) {
+                $ret = stripslashes($_MODULES[$defaultKey]);
+            } elseif (!empty($_LANGADM)) {
+                // if translation was not found in module, look for it in AdminController or Helpers
+                $ret = stripslashes(Translate::getGenericAdminTranslation($string, $key, $_LANGADM));
+            } else {
+                $ret = stripslashes($string);
+            }
+
+            if ($sprintf !== null) {
+                $ret = Translate::checkAndReplaceArgs($ret, $sprintf);
+            }
+
+            if ($js) {
+                $ret = addslashes($ret);
+            } elseif ($escape) {
+                $ret = htmlspecialchars($ret, ENT_COMPAT, 'UTF-8');
+            }
+
+            if ($sprintf === null) {
+                $langCache[$cacheKey] = $ret;
+            } else {
+                return $ret;
+            }
+        }
+
+        return $langCache[$cacheKey];
     }
 }
