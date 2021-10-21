@@ -75,6 +75,17 @@ class PaymentData
             }
         }
 
+        $shippingAddress = new Address((int) $cart->id_address_delivery);
+        $billingAddress = new Address((int) $cart->id_address_invoice);
+
+        $countryShippingAddress = Country::getIsoById((int) $shippingAddress->id_country);
+        $countryBillingAddress = Country::getIsoById((int) $billingAddress->id_country);
+
+        $locale = $context->language->iso_code;
+        if (property_exists($context->language, 'locale')) {
+            $locale = $context->language->locale;
+        }
+
         $purchaseAmount = (float) Tools::ps_round((float) $cart->getOrderTotal(true, Cart::BOTH), 2);
 
         /* Eligibility Endpoint V2 */
@@ -91,7 +102,15 @@ class PaymentData
 
             return [
                 'purchase_amount' => almaPriceToCents($purchaseAmount),
-                'queries' => $queries, ];
+                'queries' => $queries,
+                'shipping_address' => [ 
+                    'country' => $countryShippingAddress
+                ],
+                'billing_address' => [ 
+                    'country' => $countryBillingAddress
+                ],
+                'locale' => $locale,
+            ];
         }
 
         if (!$customer) {
@@ -113,9 +132,6 @@ class PaymentData
         if ($customerData['birth_date'] == '0000-00-00') {
             $customerData['birth_date'] = null;
         }
-
-        $shippingAddress = new Address((int) $cart->id_address_delivery);
-        $billingAddress = new Address((int) $cart->id_address_invoice);
 
         if ($shippingAddress->phone) {
             $customerData['phone'] = $shippingAddress->phone;
@@ -148,8 +164,6 @@ class PaymentData
         $customerData['state_province'] = State::getNameById((int) $billingAddress->id_state);
         $customerData['country'] = Country::getIsoById((int) $billingAddress->id_country);
 
-        $locale = $context->language->iso_code;
-
         return [
             'payment' => [
                 'installments_count' => $feePlans['installmentsCount'],
@@ -163,9 +177,9 @@ class PaymentData
                     'line1' => $shippingAddress->address1,
                     'postal_code' => $shippingAddress->postcode,
                     'city' => $shippingAddress->city,
-                    'country' => Country::getIsoById((int) $shippingAddress->id_country),
+                    'country' => $countryShippingAddress,
                     'county_sublocality' => null,
-                    'state_province' => State::getNameById((int) $shippingAddress->id_state),
+                    'state_province' => $shippingAddress->id_state > 0 ? State::getNameById((int) $shippingAddress->id_state) : '',
                 ],
                 'shipping_info' => ShippingData::shippingInfo($cart),
                 'cart' => CartData::cartInfo($cart),
@@ -173,9 +187,9 @@ class PaymentData
                     'line1' => $billingAddress->address1,
                     'postal_code' => $billingAddress->postcode,
                     'city' => $billingAddress->city,
-                    'country' => Country::getIsoById((int) $billingAddress->id_country),
+                    'country' => $countryBillingAddress,
                     'county_sublocality' => null,
-                    'state_province' => State::getNameById((int) $billingAddress->id_state),
+                    'state_province' => $billingAddress->id_state > 0 ? State::getNameById((int) $billingAddress->id_state) : '',
                 ],
                 'custom_data' => [
                     'cart_id' => $cart->id,
