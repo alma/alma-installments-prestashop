@@ -32,7 +32,7 @@ use Alma\API\RequestError;
 use Alma\PrestaShop\API\ClientHelper;
 use Alma\PrestaShop\Utils\Settings;
 
-function upgrade_module_NEXT($module)
+function upgrade_module_2_3_0($module)
 {
     if (Settings::isFullyConfigured()) {
         $alma = ClientHelper::defaultInstance();
@@ -54,11 +54,11 @@ function upgrade_module_NEXT($module)
                 Configuration::deleteByName($configKey);
             }
 
-            Settings::updateValue('ALMA_PAYMENT_BUTTON_TITLE', Settings::getPaymentButtonTitle());
-            Settings::updateValue('ALMA_PAYMENT_BUTTON_DESC', Settings::getPaymentButtonDescription());
-            Settings::updateValue('ALMA_DEFERRED_BUTTON_TITLE', Settings::getPaymentButtonTitleDeferred());
-            Settings::updateValue('ALMA_DEFERRED_BUTTON_DESC', Settings::getPaymentButtonDescriptionDeferred());
-            Settings::updateValue('ALMA_NOT_ELIGIBLE_CATEGORIES', Settings::getNonEligibleCategoriesMessage());
+            Settings::updateValue('ALMA_PAYMENT_BUTTON_TITLE', json_encode(Settings::getDefaultCustomFieldsByKeyConfig('ALMA_PAYMENT_BUTTON_TITLE')));
+            Settings::updateValue('ALMA_PAYMENT_BUTTON_DESC', json_encode(Settings::getDefaultCustomFieldsByKeyConfig('ALMA_PAYMENT_BUTTON_DESC')));
+            Settings::updateValue('ALMA_DEFERRED_BUTTON_TITLE', json_encode(Settings::getDefaultCustomFieldsByKeyConfig('ALMA_DEFERRED_BUTTON_TITLE')));
+            Settings::updateValue('ALMA_DEFERRED_BUTTON_DESC', json_encode(Settings::getDefaultCustomFieldsByKeyConfig('ALMA_DEFERRED_BUTTON_DESC')));
+            Settings::updateValue('ALMA_NOT_ELIGIBLE_CATEGORIES', json_encode(Settings::getDefaultCustomFieldsByKeyConfig('ALMA_NOT_ELIGIBLE_CATEGORIES')));
         } catch (RequestError $e) {
             return true;
         }
