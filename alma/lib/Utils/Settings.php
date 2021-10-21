@@ -49,14 +49,9 @@ use Translate;
 
 class Settings
 {
-    public static function l($str, $locale = null)
+    public static function l($str)
     {
-        // if length is over 2 string then use ps 1.7 function
-        if (strlen($locale) > 2) {
-            return Translate::getModuleTranslation('alma', $str, 'settings', null, false, $locale);
-        }
-
-        return self::getModuleTranslation('alma', $str, 'settings', null, false, $locale);
+        return Translate::getModuleTranslation('alma', $str, 'settings');
     }
 
     public static function get($configKey, $default = null)
@@ -531,34 +526,6 @@ class Settings
         ];
     }
 
-    public static function getTranslationsByLanguage($str, $nameConfig, $idlang = null)
-    {
-        // Allow PrestaShop's translation feature to detect those strings
-        // $this->l($str, 'settings');
-        $default = [];
-        $languages = Language::getLanguages();
-        foreach ($languages as $language) {
-            $locale = $language['iso_code'];
-            if (array_key_exists('locale', $language)) {
-                $locale = $language['locale'];
-            }
-            $default[$language['id_lang']] = [
-                'locale' => $locale,
-                'string' => self::l($str, $locale)
-            ];
-        }
-        if ($idlang) {
-            return $default[$idlang]['string'];
-        }
-
-        $datasConfig = json_decode(self::get($nameConfig, json_encode($default)), true);
-        foreach ($datasConfig as $key => $data) {
-            $return[$key] = $data['string'];
-        }
-
-        return $return;
-    }
-
     public static function getModuleTranslations(
         $module,
         $arrayString,
@@ -632,96 +599,5 @@ class Settings
         }
 
         return $rets;
-    }
-
-    public static function getModuleTranslation(
-        $module,
-        $originalString,
-        $source,
-        $sprintf = null,
-        $js = false,
-        $locale = null,
-        $fallback = true,
-        $escape = true
-    ) {
-        global $_MODULES, $_MODULE, $_LANGADM;
-
-        static $langCache = [];
-        // $_MODULES is a cache of translations for all module.
-        // $translations_merged is a cache of wether a specific module's translations have already been added to $_MODULES
-        static $translationsMerged = [];
-
-        $name = $module instanceof Module ? $module->name : $module;
-
-        $iso = $locale;
-
-        if (!isset($translationsMerged[$name][$iso])) {
-            $filesByPriority = [
-                // PrestaShop 1.5 translations
-                _PS_MODULE_DIR_ . $name . '/translations/' . $iso . '.php',
-                // PrestaShop 1.4 translations
-                _PS_MODULE_DIR_ . $name . '/' . $iso . '.php',
-                // Translations in theme
-                _PS_THEME_DIR_ . 'modules/' . $name . '/translations/' . $iso . '.php',
-                _PS_THEME_DIR_ . 'modules/' . $name . '/' . $iso . '.php',
-            ];
-            foreach ($filesByPriority as $file) {
-                if (file_exists($file)) {
-                    include_once $file;
-                    $_MODULES = !empty($_MODULES) ? array_merge($_MODULES, $_MODULE) : $_MODULE;
-                }
-            }
-            $translationsMerged[$name][$iso] = true;
-        }
-
-        $string = preg_replace("/\\\*'/", "\'", $originalString);
-        $key = md5($string);
-
-        $cacheKey = $name . '|' . $string . '|' . $source . '|' . (int) $js . '|' . $iso;
-        if (isset($langCache[$cacheKey])) {
-            $ret = $langCache[$cacheKey];
-        } else {
-            $currentKey = strtolower('<{' . $name . '}' . _THEME_NAME_ . '>' . $source) . '_' . $key;
-            $defaultKey = strtolower('<{' . $name . '}prestashop>' . $source) . '_' . $key;
-
-            if ('controller' == substr($source, -10, 10)) {
-                $file = substr($source, 0, -10);
-                $currentKeyFile = strtolower('<{' . $name . '}' . _THEME_NAME_ . '>' . $file) . '_' . $key;
-                $defaultKeyFile = strtolower('<{' . $name . '}prestashop>' . $file) . '_' . $key;
-            }
-
-            if (isset($currentKeyFile) && !empty($_MODULES[$currentKeyFile])) {
-                $ret = stripslashes($_MODULES[$currentKeyFile]);
-            } elseif (isset($defaultKeyFile) && !empty($_MODULES[$defaultKeyFile])) {
-                $ret = stripslashes($_MODULES[$defaultKeyFile]);
-            } elseif (!empty($_MODULES[$currentKey])) {
-                $ret = stripslashes($_MODULES[$currentKey]);
-            } elseif (!empty($_MODULES[$defaultKey])) {
-                $ret = stripslashes($_MODULES[$defaultKey]);
-            } elseif (!empty($_LANGADM)) {
-                // if translation was not found in module, look for it in AdminController or Helpers
-                $ret = stripslashes(Translate::getGenericAdminTranslation($string, $key, $_LANGADM));
-            } else {
-                $ret = stripslashes($string);
-            }
-
-            if ($sprintf !== null) {
-                $ret = Translate::checkAndReplaceArgs($ret, $sprintf);
-            }
-
-            if ($js) {
-                $ret = addslashes($ret);
-            } elseif ($escape) {
-                $ret = htmlspecialchars($ret, ENT_COMPAT, 'UTF-8');
-            }
-
-            if ($sprintf === null) {
-                $langCache[$cacheKey] = $ret;
-            } else {
-                return $ret;
-            }
-        }
-
-        return $langCache[$cacheKey];
     }
 }
