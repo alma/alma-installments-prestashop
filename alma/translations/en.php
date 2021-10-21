@@ -15,7 +15,8 @@
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE
  * WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
- * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+ * IN THE SOFTWARE.
  * 
  * @author    Alma SAS <contact@getalma.eu>
  * @copyright 2018-2021 Alma SAS
@@ -25,9 +26,9 @@
 global $_MODULE;
 $_MODULE = [];
 
-$_MODULE['<{alma}prestashop>alma_f9d4da2cd01a3bf46688b86d0113e887'] = 'Alma Monthly Installments for PrestaShop';
+$_MODULE['<{alma}prestashop>alma_d4b3f55d02c6448c36a233c1f1c27a18'] = '2x 3x 4x, D+15 or D+30 Alma - Payment in instalments and deferred';
 $_MODULE['<{alma}prestashop>alma_7f9c508fa226d3e72644403653115c29'] = 'Offer an easy and safe installments payments option to your customers';
-$_MODULE['<{alma}prestashop>alma_eaa507b722b18fe29d24bea91d8c2c52'] = 'Are you sure you want to deactivate Alma Monthly Installments from your shop?';
+$_MODULE['<{alma}prestashop>alma_ce67a7d4b82bc360a17d25943924b388'] = 'Are you sure you want to deactivate Alma payments from your shop?';
 $_MODULE['<{alma}prestashop>alma_7bab99339291e7eea710b4a998e663de'] = 'Alma requires the CURL PHP extension.';
 $_MODULE['<{alma}prestashop>alma_fbb47375d2272bef79f5722a183bf1ec'] = 'Alma requires the JSON PHP extension.';
 $_MODULE['<{alma}prestashop>alma_7fb83ba9cf3cc38857a2ddae98534d22'] = 'Alma requires OpenSSL >= 1.0.1';
@@ -58,8 +59,8 @@ $_MODULE['<{alma}prestashop>getcontenthookcontroller_445b31fd41d49bfa07607421c51
 $_MODULE['<{alma}prestashop>getcontenthookcontroller_200b9884c24938888bc2462029b5241d'] = 'Enable %d-installment payments';
 $_MODULE['<{alma}prestashop>getcontenthookcontroller_00a67585074c0f91b2446943f30f8c33'] = 'Deferred payments + %d days';
 $_MODULE['<{alma}prestashop>getcontenthookcontroller_203cf2399ac7e381d5e3f50e9af16981'] = 'Enable deferred payments +%d days';
-$_MODULE['<{alma}prestashop>getcontenthookcontroller_6102c3be7e20c7be731da05cb130ad7f'] = '%d-deferred payments + %d days';
-$_MODULE['<{alma}prestashop>getcontenthookcontroller_34d49628224648ee541f415ededd2952'] = 'Enable %d-deferred payments +%d days';
+$_MODULE['<{alma}prestashop>getcontenthookcontroller_1414abef78f33ed4e9cfd75624b1f0b7'] = '%d-installment payments + %d-deferred days';
+$_MODULE['<{alma}prestashop>getcontenthookcontroller_1cc27a7dd338c415c7ec905916039fdb'] = 'Enable %d-installment payments +%d-deferred days';
 $_MODULE['<{alma}prestashop>getcontenthookcontroller_d504e870a0b1c384090207ca30b7a558'] = 'Minimum amount (€)';
 $_MODULE['<{alma}prestashop>getcontenthookcontroller_f1b557392c6a71b77a2752b67700c43d'] = 'Minimum purchase amount to activate this plan';
 $_MODULE['<{alma}prestashop>getcontenthookcontroller_c86bcf847758c12df1f6344fda4de53b'] = 'Maximum amount (€)';
@@ -79,7 +80,7 @@ $_MODULE['<{alma}prestashop>getcontenthookcontroller_312b74149761f30bdcb38460993
 $_MODULE['<{alma}prestashop>getcontenthookcontroller_e8d03edc1db73b1772e8cc2c4eb6ea18'] = 'Eligibility on product pages';
 $_MODULE['<{alma}prestashop>getcontenthookcontroller_c983e13e7d3723063c76831b801b985f'] = 'Show product eligibility on details page';
 $_MODULE['<{alma}prestashop>getcontenthookcontroller_f87f93543cef831b750e04378e93946b'] = 'Displays a badge with eligible Alma plans with installments details';
-$_MODULE['<{alma}prestashop>getcontenthookcontroller_71887fb80abe8a5cbcfba7a25c647b35'] = 'Display the product\'s eligibility';
+$_MODULE['<{alma}prestashop>getcontenthookcontroller_79d3451454dde4e88cac5f4574ceaf20'] = 'Display the product\'s eligibility';
 $_MODULE['<{alma}prestashop>getcontenthookcontroller_084b80cec4cc3ae2e46be76c1d46f1be'] = 'Display badge';
 $_MODULE['<{alma}prestashop>getcontenthookcontroller_4df78495283c221ee042ab4cc46a34af'] = 'Displays a badge when product price is too high or tow low';
 $_MODULE['<{alma}prestashop>getcontenthookcontroller_bf63845185a11afa206cad86cc18b5b7'] = 'Display badge when the product is not eligible.';
@@ -99,7 +100,7 @@ $_MODULE['<{alma}prestashop>getcontenthookcontroller_366d7ba8c20d488eddca4858889
 $_MODULE['<{alma}prestashop>getcontenthookcontroller_97cadaaeae5141e73da33e4d1daa9687'] = '%1$sAdvanced%2$s Query selector for our scripts to correctly find the wanted quantity of a product';
 $_MODULE['<{alma}prestashop>getcontenthookcontroller_32b27986105ad9d3a8130e1c2f2055fb'] = 'Cart eligibility message';
 $_MODULE['<{alma}prestashop>getcontenthookcontroller_181e80a3b6c6145727dde8fd9867153a'] = 'Show cart eligibility';
-$_MODULE['<{alma}prestashop>getcontenthookcontroller_dce0e1d3a3c2e50a56ffb6a2ff758059'] = 'Display the cart\'s eligibility.';
+$_MODULE['<{alma}prestashop>getcontenthookcontroller_48c815d52ee86e0d7fc6eaa6d6ca458d'] = 'Display the cart\'s eligibility.';
 $_MODULE['<{alma}prestashop>getcontenthookcontroller_75200c80e8cb1b12d9b437ab223b92a0'] = 'Displays a badge when cart amount is too high or tow low';
 $_MODULE['<{alma}prestashop>getcontenthookcontroller_3d27a1c035d8075385f8f588926ffbb5'] = 'Display badge when the cart is not eligible.';
 $_MODULE['<{alma}prestashop>getcontenthookcontroller_7585570774ecf018af6ffb20b587e2a9'] = 'Display badge after cart (by default)';
@@ -110,6 +111,9 @@ $_MODULE['<{alma}prestashop>getcontenthookcontroller_83674e9661afaf7494705c4626a
 $_MODULE['<{alma}prestashop>getcontenthookcontroller_d342c4d4173641303554804de4d59b05'] = 'Confirm successful order to customers when they come back from the Alma payment page';
 $_MODULE['<{alma}prestashop>getcontenthookcontroller_6d3653d4dfc00d04cb9d3835253ca2ce'] = 'No excluded categories';
 $_MODULE['<{alma}prestashop>getcontenthookcontroller_36359547b09bdb31f46c419a0bd5807e'] = 'Excluded categories';
+$_MODULE['<{alma}prestashop>getcontenthookcontroller_df5ed76049aadaf1ebbbfa69f07f40a7'] = 'Display message';
+$_MODULE['<{alma}prestashop>getcontenthookcontroller_cdd3f0ad524d536ba47c7d9250851a85'] = 'Display the message below if the product is excluded from the category';
+$_MODULE['<{alma}prestashop>getcontenthookcontroller_f5e42a943a36e2a61ba9f97b18030867'] = 'Display the message below if the product is excluded';
 $_MODULE['<{alma}prestashop>getcontenthookcontroller_41c2bdcbfb6ea702ac49667124a1652a'] = 'Excluded categories non-eligibility message ';
 $_MODULE['<{alma}prestashop>getcontenthookcontroller_c4cea4750fb3ef077cbf2e1283c312ac'] = 'Message displayed on an excluded product page or on the cart page if it contains an excluded product.';
 $_MODULE['<{alma}prestashop>getcontenthookcontroller_9d21f767a50ad583330024bce9afa2e1'] = 'Refund with state change';
@@ -146,12 +150,16 @@ $_MODULE['<{alma}prestashop>getcontent_d358092a92b9aff0c902c2e15dcd5107'] = 'Ple
 $_MODULE['<{alma}prestashop>getcontent_c120761de1807ac22af2d19e28e1eb2c'] = 'Could not connect to Alma using your Test API keys.';
 $_MODULE['<{alma}prestashop>getcontent_c5ea9bb62bac888c8278ab818ce6a510'] = 'Please double check your Test API key on your Alma dashboard.';
 $_MODULE['<{alma}prestashop>getcontent_801bd3beda9eee6608ad2b2333bf0ef0'] = 'API error:';
-$_MODULE['<{alma}prestashop>getcontent_f515df803409fb61dfdc4397497ae4e9'] = 'Your Alma account is not activated yet. You won\'t be able to use Alma in Live mode.';
+$_MODULE['<{alma}prestashop>getcontent_a78a39f69aaa8df1446c11e3f425186b'] = 'Your Alma account is not activated yet. You won\'t be able to use Alma in Live mode.';
 $_MODULE['<{alma}prestashop>getcontent_fde6026db97af22bdf607b5928cca6d0'] = 'Activate your account on your Alma dashboard before switching to Live mode.';
 $_MODULE['<{alma}prestashop>getcontent_775ab97c1b3d6e302ff6c35731e221fc'] = 'Your Alma account needs to be activated before you can use Alma on your shop.';
 $_MODULE['<{alma}prestashop>getcontent_634138f364946020366320968cfaaafb'] = 'Go to your Alma dashboard to activate your account.';
 $_MODULE['<{alma}prestashop>getcontent_d9438342b5d0b3b0fdd44e9943ed1e38'] = 'You can refresh/come back to this page when you are ready.';
+$_MODULE['<{alma}prestashop>getcontent_07e9b735fd84faf12679bba676838036'] = 'Minimum amount for deferred + %1$d days plan must be within %2$d and %3$d.';
+$_MODULE['<{alma}prestashop>getcontent_4fa87d94e814439cd1d7b00595372a18'] = 'Minimum amount for deferred + %1$d months plan must be within %2$d and %3$d.';
 $_MODULE['<{alma}prestashop>getcontent_1f6c47dd9eb3469c7afd7bf99fbb8dbb'] = 'Minimum amount for %1$d-installment plan must be within %2$d and %3$d.';
+$_MODULE['<{alma}prestashop>getcontent_a4978be2e8b36124fd4505f7e7f2aa3f'] = 'Maximum amount for deferred %1$d days plan must be within %2$d and %3$d.';
+$_MODULE['<{alma}prestashop>getcontent_b47a7c1526a093a0afe5f28bdeb5face'] = 'Maximum amount for deferred %1$d months plan must be within %2$d and %3$d.';
 $_MODULE['<{alma}prestashop>getcontent_8c10d3b0970a247fc554062dc9055fd1'] = 'Maximum amount for %1$d-installment plan must be within %2$d and %3$d.';
 $_MODULE['<{alma}prestashop>getcontent_2d4a12c50532eb37b1a827fe310070c3'] = 'Thanks for installing Alma!';
 $_MODULE['<{alma}prestashop>getcontent_bbea702c04c766345509aa28d60812ad'] = 'You need to create an Alma account before proceeding.';
@@ -166,6 +174,7 @@ $_MODULE['<{alma}prestashop>pnx_fees_fecab32c5aaa794e9bf4d86081269a57'] = 'You c
 $_MODULE['<{alma}prestashop>pnx_fees_ce1806ea97e5e9a13df2c4bf1f13aa7e'] = 'Fees applied to each transaction for this plan:';
 $_MODULE['<{alma}prestashop>pnx_fees_58ef0d245ec0d2618ccf871a7ef019df'] = 'You pay:';
 $_MODULE['<{alma}prestashop>pnx_fees_0e9398180f2a07b403cd7b404468c9f3'] = 'Customers pay:';
+$_MODULE['<{alma}prestashop>pnx_fees_44dee6709e953dae7c83fa4e5b23a82c'] = 'Customer lending rate:';
 $_MODULE['<{alma}prestashop>pnx_fees_7b58e78060e24470aeab5e97d9bb0165'] = 'Fees for %d-installment plan';
 $_MODULE['<{alma}prestashop>pnx_fees_02d4482d332e1aef3437cd61c9bcc624'] = 'Contact us';
 $_MODULE['<{alma}prestashop>pnx_fees_5532ee2e5ea88b613ccb38e9c88f9a77'] = 'if you think your sales volumes warrant better rates!';
@@ -174,7 +183,12 @@ $_MODULE['<{alma}prestashop>deferred_304bcb1f18f0897c89c6a79cf0725af1'] = '(Incl
 $_MODULE['<{alma}prestashop>deferred_3acc62b245d8bc10f04d81f69d85b685'] = '(No additional fees)';
 $_MODULE['<{alma}prestashop>displaypayment_deferred_905dbe578ba7a221e637203026fdb986'] = 'Alma Deferred Payment is not available for this order';
 $_MODULE['<{alma}prestashop>displaypayment_pnx_22f0189423433ab0e055b91d98970e5f'] = 'Alma Monthly Installments are not available for this order';
-$_MODULE['<{alma}prestashop>feeplan_f507bb760481a576aa10a0f4dc6da52b'] = '%1$s today then %2$d ⨉ %3$s';
+$_MODULE['<{alma}prestashop>feeplan_64408fc092e84b9eb352626a0bcbbdf7'] = 'Fixed APR';
+$_MODULE['<{alma}prestashop>feeplan_ae9a134243362e66fef28a6b2e8a77c4'] = 'Cart total';
+$_MODULE['<{alma}prestashop>feeplan_d63a8fbc00567ee4b9640d1284b16e7b'] = 'Cost of credit';
+$_MODULE['<{alma}prestashop>feeplan_96b0141273eabab320119c467cdcaf17'] = 'Total';
+$_MODULE['<{alma}prestashop>feeplan_bc69b42c4bd339154f9025f3299ad146'] = '%1$s today then %2$d x %3$s';
 $_MODULE['<{alma}prestashop>feeplan_304bcb1f18f0897c89c6a79cf0725af1'] = '(Including fees: %s)';
 $_MODULE['<{alma}prestashop>feeplan_3acc62b245d8bc10f04d81f69d85b685'] = '(No additional fees)';
+$_MODULE['<{alma}prestashop>feeplan_9c8a7900448628ee2978be9a3945d148'] = 'Your credit';
 $_MODULE['<{alma}prestashop>feeplan_1dd1c5fb7f25cd41b291d43a89e3aefd'] = 'Today';

@@ -13,7 +13,7 @@ INPUT=$1
 
 OLDIFS=$IFS
 IFS=';'
-NBCOLUMN=$(head -1 $INPUT | sed 's/[^;]//g' | wc -c | sed 's/^ *//g')
+NBCOLUMN=$(head -1 $INPUT | sed 's/[^${IFS}]//g' | wc -c | sed 's/^ *//g')
 
 (( $NBCOLUMN < 3 )) && { echo "$INPUT file have not 3 column minimum"; exit 99; }
 [ ! -f $INPUT ] && { echo "$INPUT file not found"; exit 99; }
@@ -36,7 +36,8 @@ read -r -d '' BEGIN <<- EOF
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE
  * WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
- * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+ * IN THE SOFTWARE.
  * 
  * @author    Alma SAS <contact@getalma.eu>
  * @copyright 2018-2021 Alma SAS
@@ -48,22 +49,30 @@ global \$_MODULE;
 EOF
 
 line=1
-while read hook en fr
+while read hook en fr es nl
 do
     hook=$(sed 's/\"//g' <<< $hook)
     [[ -z "$hook" ]] && echo "empty hook at line:$line"
     [[ -z "$en" ]] && echo "empty en translation for hook '$hook' at line:$line"
     [[ -z "$fr" ]] && echo "empty fr translation for en '$en' at line:$line"
-    if [ x$hook != "xFile" ] && [ x$en != "xEN" ] && [ x$fr != "xFR" ]; then
+    [[ -z "$es" ]] && echo "empty es translation for fr '$fr' at line:$line"
+    [[ -z "$nl" ]] && echo "empty nl translation for es '$es' at line:$line"
+    if [ x$hook != "xFile" ] && [ x$en != "xEN" ] && [ x$fr != "xFR" ] && [ x$es != "xES" ] && [ x$nl != "xNL" ]; then
         en=$(sed 's/\"//g' <<< $en)
         fr=$(sed 's/\"//g' <<< $fr)
-        MD5="$(echo -n $en | md5)"
+        es=$(sed 's/\"//g' <<< $es)
+        nl=$(sed 's/\"//g' <<< $nl)
+        MD5="$(echo -n ${en//\'/\\\'} | md5)"
         NAMEFILE=$hook
-        ALLEN="$ALLEN\n\$_MODULE['<{alma}prestashop>${NAMEFILE}_${MD5}}'] = '${en//\'/\\\'}';"
-        ALLFR="$ALLFR\n\$_MODULE['<{alma}prestashop>${NAMEFILE}_${MD5}}'] = '${fr//\'/\\\'}';"
+        ALLEN="$ALLEN\n\$_MODULE['<{alma}prestashop>${NAMEFILE}_${MD5}'] = '${en//\'/\\\'}';"
+        ALLFR="$ALLFR\n\$_MODULE['<{alma}prestashop>${NAMEFILE}_${MD5}'] = '${fr//\'/\\\'}';"
+        ALLES="$ALLES\n\$_MODULE['<{alma}prestashop>${NAMEFILE}_${MD5}'] = '${es//\'/\\\'}';"
+        ALLNL="$ALLNL\n\$_MODULE['<{alma}prestashop>${NAMEFILE}_${MD5}'] = '${nl//\'/\\\'}';"
     fi
     let line++
 done < $INPUT
 IFS=$OLDIFS
 echo -e "$BEGIN$ALLEN" > en.php
 echo -e "$BEGIN$ALLFR" > fr.php
+echo -e "$BEGIN$ALLES" > es.php
+echo -e "$BEGIN$ALLNL" > nl.php
