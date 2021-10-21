@@ -558,6 +558,7 @@ class Settings
             foreach ($filesByPriority as $file) {
                 if (file_exists($file)) {
                     include_once $file;
+                    unset($_MODULES);
                     $_MODULES = !empty($_MODULES) ? array_merge($_MODULES, $_MODULE) : $_MODULE;
                 }
             }
