@@ -195,16 +195,20 @@ class Settings
         ];
     }
 
-    public static function getCustomFieldsByIso($iso)
+    public static function getCustomFieldsByIso($iso, $idlang = null)
     {
-        return self::getModuleTranslations('alma', self::customFields(), 'settings', $iso);
+        $unset = false;
+        if ($idlang) {
+            $unset = true;
+        }
+        return self::getModuleTranslations('alma', self::customFields(), 'settings', $iso, $unset);
     }
 
-    public static function getCustomFields()
+    public static function getCustomFields($idlang = null)
     {
         $languages = Language::getLanguages();
         foreach ($languages as $language) {
-            $return[$language['id_lang']] = self::getCustomFieldsByIso($language['iso_code']);
+            $return[$language['id_lang']] = self::getCustomFieldsByIso($language['iso_code'], $idlang);
         }
 
         return $return;
@@ -212,7 +216,7 @@ class Settings
 
     public static function getDefaultCustomFieldsByKeyConfig($keyConfig, $idlang = null)
     {
-        $customFields = self::getCustomFields();
+        $customFields = self::getCustomFields($idlang);
         foreach ($customFields as $keyIdLang => $fields) {
             $return[$keyIdLang] = [
                 'locale' => Language::getIsoById($keyIdLang),
@@ -531,6 +535,7 @@ class Settings
         $arrayString,
         $source,
         $locale,
+        $unset = false,
         $js = false,
         $escape = true
     ) {
@@ -558,7 +563,9 @@ class Settings
             foreach ($filesByPriority as $file) {
                 if (file_exists($file)) {
                     include_once $file;
-                    unset($_MODULES);
+                    if ($unset) {
+                        unset($_MODULES);
+                    }
                     $_MODULES = !empty($_MODULES) ? array_merge($_MODULES, $_MODULE) : $_MODULE;
                 }
             }
