@@ -99,6 +99,9 @@ final class GetContentHookController extends AdminHookController
                     break;
                 }
             }
+
+            // init Custom Field to install and Save Api Key
+            Settings::initCustomFields();
         }
 
         // Get languages are active

@@ -54,11 +54,7 @@ function upgrade_module_2_3_0($module)
                 Configuration::deleteByName($configKey);
             }
 
-            Settings::updateValue('ALMA_PAYMENT_BUTTON_TITLE', json_encode(Settings::getDefaultCustomFieldsByKeyConfig('ALMA_PAYMENT_BUTTON_TITLE')));
-            Settings::updateValue('ALMA_PAYMENT_BUTTON_DESC', json_encode(Settings::getDefaultCustomFieldsByKeyConfig('ALMA_PAYMENT_BUTTON_DESC')));
-            Settings::updateValue('ALMA_DEFERRED_BUTTON_TITLE', json_encode(Settings::getDefaultCustomFieldsByKeyConfig('ALMA_DEFERRED_BUTTON_TITLE')));
-            Settings::updateValue('ALMA_DEFERRED_BUTTON_DESC', json_encode(Settings::getDefaultCustomFieldsByKeyConfig('ALMA_DEFERRED_BUTTON_DESC')));
-            Settings::updateValue('ALMA_NOT_ELIGIBLE_CATEGORIES', json_encode(Settings::getDefaultCustomFieldsByKeyConfig('ALMA_NOT_ELIGIBLE_CATEGORIES')));
+            Settings::initCustomFields();
         } catch (RequestError $e) {
             return true;
         }

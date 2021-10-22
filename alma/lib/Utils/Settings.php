@@ -184,6 +184,15 @@ class Settings
         return (bool) (int) self::get('ALMA_CATEGORIES_WDGT_NOT_ELGBL', true);
     }
 
+    public static function initCustomFields()
+    {
+        Settings::updateValue('ALMA_PAYMENT_BUTTON_TITLE', json_encode(Settings::getDefaultCustomFieldsByKeyConfig('ALMA_PAYMENT_BUTTON_TITLE')));
+        Settings::updateValue('ALMA_PAYMENT_BUTTON_DESC', json_encode(Settings::getDefaultCustomFieldsByKeyConfig('ALMA_PAYMENT_BUTTON_DESC')));
+        Settings::updateValue('ALMA_DEFERRED_BUTTON_TITLE', json_encode(Settings::getDefaultCustomFieldsByKeyConfig('ALMA_DEFERRED_BUTTON_TITLE')));
+        Settings::updateValue('ALMA_DEFERRED_BUTTON_DESC', json_encode(Settings::getDefaultCustomFieldsByKeyConfig('ALMA_DEFERRED_BUTTON_DESC')));
+        Settings::updateValue('ALMA_NOT_ELIGIBLE_CATEGORIES', json_encode(Settings::getDefaultCustomFieldsByKeyConfig('ALMA_NOT_ELIGIBLE_CATEGORIES')));
+    }
+
     public static function customFields()
     {
         return [
