@@ -8,6 +8,7 @@
 ## execute file in bash and not sh for good MD5 (bash build-tradfile-from-csv.sh ./myfile.csv)
 ## Check separator is well ";" not ","
 ## If you have problème carraige return. Check is the file to convert is well Unix (LF) ans not DOS/Windows (CRLF)
+## If the last trad is not generated, add carriage return after le last ligne of trad
 
 INPUT=$1
 
