@@ -571,7 +571,7 @@ class Settings
             ];
             foreach ($filesByPriority as $file) {
                 if (file_exists($file)) {
-                    include_once $file;
+                    include $file;
                     if ($unset) {
                         unset($_MODULES);
                     }
