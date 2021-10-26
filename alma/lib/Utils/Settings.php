@@ -186,11 +186,9 @@ class Settings
 
     public static function initCustomFields()
     {
-        Settings::updateValue('ALMA_PAYMENT_BUTTON_TITLE', json_encode(Settings::getDefaultCustomFieldsByKeyConfig('ALMA_PAYMENT_BUTTON_TITLE')));
-        Settings::updateValue('ALMA_PAYMENT_BUTTON_DESC', json_encode(Settings::getDefaultCustomFieldsByKeyConfig('ALMA_PAYMENT_BUTTON_DESC')));
-        Settings::updateValue('ALMA_DEFERRED_BUTTON_TITLE', json_encode(Settings::getDefaultCustomFieldsByKeyConfig('ALMA_DEFERRED_BUTTON_TITLE')));
-        Settings::updateValue('ALMA_DEFERRED_BUTTON_DESC', json_encode(Settings::getDefaultCustomFieldsByKeyConfig('ALMA_DEFERRED_BUTTON_DESC')));
-        Settings::updateValue('ALMA_NOT_ELIGIBLE_CATEGORIES', json_encode(Settings::getDefaultCustomFieldsByKeyConfig('ALMA_NOT_ELIGIBLE_CATEGORIES')));
+        foreach (self::customFields() as $keyConfig => $string) {
+            Settings::updateValue($keyConfig, json_encode(Settings::getDefaultCustomFieldsByKeyConfig($keyConfig)));
+        }
     }
 
     public static function customFields()
@@ -552,7 +550,8 @@ class Settings
 
         static $langCache = [];
         // $_MODULES is a cache of translations for all module.
-        // $translations_merged is a cache of wether a specific module's translations have already been added to $_MODULES
+        // phpcs:ignore
+        // $translationsMerged is a cache of wether a specific module's translations have already been added to $_MODULES
         static $translationsMerged = [];
 
         $name = $module instanceof Module ? $module->name : $module;

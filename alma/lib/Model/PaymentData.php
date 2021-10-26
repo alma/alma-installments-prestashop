@@ -161,7 +161,9 @@ class PaymentData
             }
         }
 
-        $customerData['state_province'] = State::getNameById((int) $billingAddress->id_state);
+        $idStateShipping = $shippingAddress->id_state;
+        $idStateBilling = $billingAddress->id_state;
+        $customerData['state_province'] = State::getNameById((int) $idStateBilling);
         $customerData['country'] = Country::getIsoById((int) $billingAddress->id_country);
 
         return [
@@ -179,7 +181,7 @@ class PaymentData
                     'city' => $shippingAddress->city,
                     'country' => $countryShippingAddress,
                     'county_sublocality' => null,
-                    'state_province' => $shippingAddress->id_state > 0 ? State::getNameById((int) $shippingAddress->id_state) : '',
+                    'state_province' => $idStateShipping > 0 ? State::getNameById((int) $idStateShipping) : '',
                 ],
                 'shipping_info' => ShippingData::shippingInfo($cart),
                 'cart' => CartData::cartInfo($cart),
@@ -189,7 +191,7 @@ class PaymentData
                     'city' => $billingAddress->city,
                     'country' => $countryBillingAddress,
                     'county_sublocality' => null,
-                    'state_province' => $billingAddress->id_state > 0 ? State::getNameById((int) $billingAddress->id_state) : '',
+                    'state_province' => $idStateBilling > 0 ? $customerData['state_province'] : '',
                 ],
                 'custom_data' => [
                     'cart_id' => $cart->id,
