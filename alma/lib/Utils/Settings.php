@@ -39,7 +39,6 @@ if (!defined('ALMA_MODE_LIVE')) {
 use Alma\PrestaShop\Model\CategoryAdapter;
 use Category;
 use Configuration;
-use Context;
 use Language;
 use Module;
 use Product;
@@ -198,16 +197,18 @@ class Settings
             'ALMA_PAYMENT_BUTTON_DESC' => 'Pay in %d monthly installments with your credit card.',
             'ALMA_DEFERRED_BUTTON_TITLE' => 'Buy now Pay in %d days',
             'ALMA_DEFERRED_BUTTON_DESC' => 'Buy now pay in %d days with your credit card.',
-            'ALMA_NOT_ELIGIBLE_CATEGORIES' => 'Your cart is not eligible for payments with Alma.'
+            'ALMA_NOT_ELIGIBLE_CATEGORIES' => 'Your cart is not eligible for payments with Alma.',
         ];
     }
 
     public static function getCustomFieldsByIso($iso, $idlang = null)
     {
         $unset = false;
+
         if ($idlang) {
             $unset = true;
         }
+
         return self::getModuleTranslations('alma', self::customFields(), 'settings', $iso, $unset);
     }
 
@@ -250,7 +251,7 @@ class Settings
         if ($idlang) {
             return $return[$idlang];
         }
-    
+
         return $return;
     }
 
@@ -591,7 +592,7 @@ class Settings
             } else {
                 $currentKey = strtolower('<{' . $name . '}' . _THEME_NAME_ . '>' . $source) . '_' . $key;
                 $defaultKey = strtolower('<{' . $name . '}prestashop>' . $source) . '_' . $key;
-    
+
                 if (!empty($_MODULES[$currentKey])) {
                     $ret = stripslashes($_MODULES[$currentKey]);
                 } elseif (!empty($_MODULES[$defaultKey])) {
@@ -602,13 +603,13 @@ class Settings
                 } else {
                     $ret = stripslashes($string);
                 }
-    
+
                 if ($js) {
                     $ret = addslashes($ret);
                 } elseif ($escape) {
                     $ret = htmlspecialchars($ret, ENT_COMPAT, 'UTF-8');
                 }
-    
+
                 $langCache[$cacheKey] = $ret;
             }
             $rets[$keyConfig] = $langCache[$cacheKey];

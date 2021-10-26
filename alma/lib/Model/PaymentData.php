@@ -103,11 +103,11 @@ class PaymentData
             return [
                 'purchase_amount' => almaPriceToCents($purchaseAmount),
                 'queries' => $queries,
-                'shipping_address' => [ 
-                    'country' => $countryShippingAddress
+                'shipping_address' => [
+                    'country' => $countryShippingAddress,
                 ],
-                'billing_address' => [ 
-                    'country' => $countryBillingAddress
+                'billing_address' => [
+                    'country' => $countryBillingAddress,
                 ],
                 'locale' => $locale,
             ];

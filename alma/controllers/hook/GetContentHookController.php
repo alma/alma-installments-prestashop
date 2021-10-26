@@ -35,7 +35,6 @@ use Alma\PrestaShop\Utils\Logger;
 use Alma\PrestaShop\Utils\Settings;
 use Configuration;
 use HelperForm;
-use Language;
 use Media;
 use OrderState;
 use Tools;
@@ -135,17 +134,17 @@ final class GetContentHookController extends AdminHookController
                 ];
                 $nonEligibleCategoriesMsg[$language['id_lang']] = [
                     'locale' => $locale,
-                    'string' => Tools::getValue('ALMA_NOT_ELIGIBLE_CATEGORIES_' . $language['id_lang'])
+                    'string' => Tools::getValue('ALMA_NOT_ELIGIBLE_CATEGORIES_' . $language['id_lang']),
                 ];
 
                 if (
-                    empty($titles[$language['id_lang']]['string']) || 
-                    empty($descriptions[$language['id_lang']]['string']) || 
-                    empty($titlesDeferred[$language['id_lang']]['string']) || 
+                    empty($titles[$language['id_lang']]['string']) ||
+                    empty($descriptions[$language['id_lang']]['string']) ||
+                    empty($titlesDeferred[$language['id_lang']]['string']) ||
                     empty($descriptionsDeferred[$language['id_lang']]['string'])
                 ) {
                     $this->context->smarty->assign('validation_error', 'missing_required_setting');
-    
+
                     return $this->module->display($this->module->file, 'getContent.tpl');
                 }
             }
