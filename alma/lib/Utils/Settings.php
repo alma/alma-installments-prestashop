@@ -183,6 +183,9 @@ class Settings
         return (bool) (int) self::get('ALMA_CATEGORIES_WDGT_NOT_ELGBL', true);
     }
 
+    /**
+     * Init default custom fileds in ps_configuration table
+     */
     public static function initCustomFields()
     {
         foreach (self::customFields() as $keyConfig => $string) {
@@ -190,6 +193,11 @@ class Settings
         }
     }
 
+    /**
+     * Default custom fields
+     * 
+     * @return array
+     */
     public static function customFields()
     {
         return [
@@ -201,6 +209,14 @@ class Settings
         ];
     }
 
+    /**
+     * Get array of custom field by iso code
+     * 
+     * @param string $iso
+     * @param int $idLang
+     * 
+     * @return array
+     */
     public static function getCustomFieldsByIso($iso, $idLang = null)
     {
         $unset = false;
@@ -212,6 +228,13 @@ class Settings
         return self::getModuleTranslations('alma', self::customFields(), 'settings', $iso, $unset);
     }
 
+    /**
+     * Get custom fields by language 
+     * 
+     * @param int $idLang
+     * 
+     * @return array
+     */
     public static function getCustomFields($idLang = null)
     {
         $languages = Language::getLanguages();
@@ -222,6 +245,14 @@ class Settings
         return $return;
     }
 
+    /**
+     * Array default of custom fields for insert to ps_configuration table defore json_encode
+     * 
+     * @param string $keyConfig
+     * @param int $idLang
+     * 
+     * @return array
+     */
     public static function getDefaultCustomFieldsByKeyConfig($keyConfig, $idLang = null)
     {
         $customFields = self::getCustomFields($idLang);
@@ -239,6 +270,14 @@ class Settings
         return $return;
     }
 
+    /**
+     * Traitment for format array custom fields for read in front
+     * 
+     * @param string $keyConfig
+     * @param int $idLang
+     * 
+     * @return array
+     */
     public static function getCustomFieldsByKeyConfig($keyConfig, $idLang = null)
     {
         $field = self::getDefaultCustomFieldsByKeyConfig($keyConfig, $idLang);
@@ -255,21 +294,49 @@ class Settings
         return $return;
     }
 
+    /**
+     * Get Custom title button well formated
+     * 
+     * @param int $idLang
+     * 
+     * @return array
+     */
     public static function getPaymentButtonTitle($idLang = null)
     {
         return self::getCustomFieldsByKeyConfig('ALMA_PAYMENT_BUTTON_TITLE', $idLang);
     }
 
+    /**
+     * Get Custom description button well formated
+     * 
+     * @param int $idLang
+     * 
+     * @return array
+     */
     public static function getPaymentButtonDescription($idLang = null)
     {
         return self::getCustomFieldsByKeyConfig('ALMA_PAYMENT_BUTTON_DESC', $idLang);
     }
 
+    /**
+     * Get Custom title deferred button well formated
+     * 
+     * @param int $idLang
+     * 
+     * @return array
+     */
     public static function getPaymentButtonTitleDeferred($idLang = null)
     {
         return self::getCustomFieldsByKeyConfig('ALMA_DEFERRED_BUTTON_TITLE', $idLang);
     }
 
+    /**
+     * Get Custom description deferred button well formated
+     * 
+     * @param int $idLang
+     * 
+     * @return array
+     */
     public static function getPaymentButtonDescriptionDeferred($idLang = null)
     {
         return self::getCustomFieldsByKeyConfig('ALMA_DEFERRED_BUTTON_DESC', $idLang);
@@ -538,9 +605,22 @@ class Settings
         ];
     }
 
+    /**
+     * Get translation by file iso if exist 
+     * 
+     * @param string $module
+     * @param array $arrayTrad
+     * @param string $source
+     * @param string $locale
+     * @param int $unset
+     * @param bool $js
+     * @param bool $escape
+     * 
+     * @return array
+     */
     public static function getModuleTranslations(
         $module,
-        $arrayString,
+        $arrayTrad,
         $source,
         $locale,
         $unset = false,
@@ -583,7 +663,7 @@ class Settings
             $translationsMerged[$name][$iso] = true;
         }
 
-        foreach ($arrayString as $keyConfig => $string) {
+        foreach ($arrayTrad as $keyConfig => $string) {
             $string = preg_replace("/\\\*'/", "\'", $string);
             $key = md5($string);
 
