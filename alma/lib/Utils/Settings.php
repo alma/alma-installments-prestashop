@@ -555,6 +555,8 @@ class Settings
         // $translationsMerged is a cache of wether a specific module's translations have already been added to $_MODULES
         static $translationsMerged = [];
 
+        $_TRADS = [];
+
         $name = $module instanceof Module ? $module->name : $module;
 
         $iso = $locale;
@@ -575,7 +577,7 @@ class Settings
                     if ($unset) {
                         unset($_MODULES);
                     }
-                    $_MODULES = !empty($_MODULES) ? array_merge($_MODULES, $_MODULE) : $_MODULE;
+                    $_TRADS = !empty($_TRADS) ? array_merge($_MODULES, $_MODULE) : $_MODULE;
                 }
             }
             $translationsMerged[$name][$iso] = true;
@@ -593,10 +595,10 @@ class Settings
                 $currentKey = strtolower('<{' . $name . '}' . _THEME_NAME_ . '>' . $source) . '_' . $key;
                 $defaultKey = strtolower('<{' . $name . '}prestashop>' . $source) . '_' . $key;
 
-                if (!empty($_MODULES[$currentKey])) {
-                    $ret = stripslashes($_MODULES[$currentKey]);
-                } elseif (!empty($_MODULES[$defaultKey])) {
-                    $ret = stripslashes($_MODULES[$defaultKey]);
+                if (!empty($_TRADS[$currentKey])) {
+                    $ret = stripslashes($_TRADS[$currentKey]);
+                } elseif (!empty($_TRADS[$defaultKey])) {
+                    $ret = stripslashes($_TRADS[$defaultKey]);
                 } elseif (!empty($_LANGADM)) {
                     // if translation was not found in module, look for it in AdminController or Helpers
                     $ret = stripslashes(Translate::getGenericAdminTranslation($string, $key, $_LANGADM));
