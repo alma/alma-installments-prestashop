@@ -158,9 +158,9 @@ class Settings
         return (bool) (int) self::get('ALMA_SHOW_DISABLED_BUTTON', true);
     }
 
-    public static function getNonEligibleCategoriesMessage($idlang = null)
+    public static function getNonEligibleCategoriesMessage($idLang = null)
     {
-        return self::getCustomFieldsByKeyConfig('ALMA_NOT_ELIGIBLE_CATEGORIES', $idlang);
+        return self::getCustomFieldsByKeyConfig('ALMA_NOT_ELIGIBLE_CATEGORIES', $idLang);
     }
 
     public static function showEligibilityMessage()
@@ -201,30 +201,30 @@ class Settings
         ];
     }
 
-    public static function getCustomFieldsByIso($iso, $idlang = null)
+    public static function getCustomFieldsByIso($iso, $idLang = null)
     {
         $unset = false;
 
-        if ($idlang) {
+        if ($idLang) {
             $unset = true;
         }
 
         return self::getModuleTranslations('alma', self::customFields(), 'settings', $iso, $unset);
     }
 
-    public static function getCustomFields($idlang = null)
+    public static function getCustomFields($idLang = null)
     {
         $languages = Language::getLanguages();
         foreach ($languages as $language) {
-            $return[$language['id_lang']] = self::getCustomFieldsByIso($language['iso_code'], $idlang);
+            $return[$language['id_lang']] = self::getCustomFieldsByIso($language['iso_code'], $idLang);
         }
 
         return $return;
     }
 
-    public static function getDefaultCustomFieldsByKeyConfig($keyConfig, $idlang = null)
+    public static function getDefaultCustomFieldsByKeyConfig($keyConfig, $idLang = null)
     {
-        $customFields = self::getCustomFields($idlang);
+        $customFields = self::getCustomFields($idLang);
         foreach ($customFields as $keyIdLang => $fields) {
             $return[$keyIdLang] = [
                 'locale' => Language::getIsoById($keyIdLang),
@@ -232,47 +232,47 @@ class Settings
             ];
         }
 
-        if ($idlang) {
-            return $return[$idlang];
+        if ($idLang) {
+            return $return[$idLang];
         }
 
         return $return;
     }
 
-    public static function getCustomFieldsByKeyConfig($keyConfig, $idlang = null)
+    public static function getCustomFieldsByKeyConfig($keyConfig, $idLang = null)
     {
-        $field = self::getDefaultCustomFieldsByKeyConfig($keyConfig, $idlang);
+        $field = self::getDefaultCustomFieldsByKeyConfig($keyConfig, $idLang);
 
         $datasConfig = json_decode(self::get($keyConfig, json_encode($field)), true);
         foreach ($datasConfig as $key => $data) {
             $return[$key] = $data['string'];
         }
 
-        if ($idlang) {
-            return $return[$idlang];
+        if ($idLang) {
+            return $return[$idLang];
         }
 
         return $return;
     }
 
-    public static function getPaymentButtonTitle($idlang = null)
+    public static function getPaymentButtonTitle($idLang = null)
     {
-        return self::getCustomFieldsByKeyConfig('ALMA_PAYMENT_BUTTON_TITLE', $idlang);
+        return self::getCustomFieldsByKeyConfig('ALMA_PAYMENT_BUTTON_TITLE', $idLang);
     }
 
-    public static function getPaymentButtonDescription($idlang = null)
+    public static function getPaymentButtonDescription($idLang = null)
     {
-        return self::getCustomFieldsByKeyConfig('ALMA_PAYMENT_BUTTON_DESC', $idlang);
+        return self::getCustomFieldsByKeyConfig('ALMA_PAYMENT_BUTTON_DESC', $idLang);
     }
 
-    public static function getPaymentButtonTitleDeferred($idlang = null)
+    public static function getPaymentButtonTitleDeferred($idLang = null)
     {
-        return self::getCustomFieldsByKeyConfig('ALMA_DEFERRED_BUTTON_TITLE', $idlang);
+        return self::getCustomFieldsByKeyConfig('ALMA_DEFERRED_BUTTON_TITLE', $idLang);
     }
 
-    public static function getPaymentButtonDescriptionDeferred($idlang = null)
+    public static function getPaymentButtonDescriptionDeferred($idLang = null)
     {
-        return self::getCustomFieldsByKeyConfig('ALMA_DEFERRED_BUTTON_DESC', $idlang);
+        return self::getCustomFieldsByKeyConfig('ALMA_DEFERRED_BUTTON_DESC', $idLang);
     }
 
     public static function displayOrderConfirmation()
