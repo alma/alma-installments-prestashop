@@ -94,7 +94,8 @@ final class DisplayRefundsHookController extends AdminHookController
 
         //multi shipping
         $ordersId = null;
-        $ordersTotalAmount = $order->total_paid_tax_incl;
+        $fees = almaPriceFromCents($payment->customer_fee);
+        $ordersTotalAmount = $order->total_paid_tax_incl + $fees;
         if ($order->getOrdersTotalPaid() > $order->total_paid_tax_incl) {
             $orders = Order::getByReference($order->reference);
             foreach ($orders as $o) {
@@ -103,7 +104,7 @@ final class DisplayRefundsHookController extends AdminHookController
                 }
             }
             $ordersId = rtrim($ordersId, ',');
-            $ordersTotalAmount = $order->getOrdersTotalPaid();
+            $ordersTotalAmount = $order->getOrdersTotalPaid() + $fees;
         }
 
         $currency = new Currency($order->id_currency);
