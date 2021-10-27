@@ -48,7 +48,6 @@ use Translate;
 
 class Settings
 {
-
     const ALMA_PAYMENT_BUTTON_TITLE = 'ALMA_PAYMENT_BUTTON_TITLE';
     const ALMA_PAYMENT_BUTTON_DESC = 'ALMA_PAYMENT_BUTTON_DESC';
     const ALMA_DEFERRED_BUTTON_TITLE = 'ALMA_DEFERRED_BUTTON_TITLE';
@@ -167,7 +166,7 @@ class Settings
 
     public static function getNonEligibleCategoriesMessage($idLang = null)
     {
-        return self::getCustomFieldsByKeyConfig('ALMA_NOT_ELIGIBLE_CATEGORIES', $idLang);
+        return self::getCustomFieldsByKeyConfig(self::ALMA_NOT_ELIGIBLE_CATEGORIES, $idLang);
     }
 
     public static function showEligibilityMessage()
@@ -192,6 +191,8 @@ class Settings
 
     /**
      * Init default custom fileds in ps_configuration table
+     *
+     * @return void
      */
     public static function initCustomFields()
     {
@@ -202,7 +203,7 @@ class Settings
 
     /**
      * Default custom fields
-     * 
+     *
      * @return array
      */
     public static function customFields()
@@ -218,10 +219,10 @@ class Settings
 
     /**
      * Get array of custom field by iso code
-     * 
+     *
      * @param string $iso
      * @param int $idLang
-     * 
+     *
      * @return array
      */
     public static function getCustomFieldsByIso($iso, $idLang = null)
@@ -236,10 +237,10 @@ class Settings
     }
 
     /**
-     * Get custom fields by language 
-     * 
+     * Get custom fields by language
+     *
      * @param int $idLang
-     * 
+     *
      * @return array
      */
     public static function getCustomFields($idLang = null)
@@ -254,10 +255,10 @@ class Settings
 
     /**
      * Array default of custom fields for insert to ps_configuration table defore json_encode
-     * 
+     *
      * @param string $keyConfig
      * @param int $idLang
-     * 
+     *
      * @return array
      */
     public static function getDefaultCustomFieldsByKeyConfig($keyConfig, $idLang = null)
@@ -279,10 +280,10 @@ class Settings
 
     /**
      * Traitment for format array custom fields for read in front
-     * 
+     *
      * @param string $keyConfig
      * @param int $idLang
-     * 
+     *
      * @return array
      */
     public static function getCustomFieldsByKeyConfig($keyConfig, $idLang = null)
@@ -303,50 +304,50 @@ class Settings
 
     /**
      * Get Custom title button well formated
-     * 
+     *
      * @param int $idLang
-     * 
+     *
      * @return array
      */
     public static function getPaymentButtonTitle($idLang = null)
     {
-        return self::getCustomFieldsByKeyConfig('ALMA_PAYMENT_BUTTON_TITLE', $idLang);
+        return self::getCustomFieldsByKeyConfig(self::ALMA_PAYMENT_BUTTON_TITLE, $idLang);
     }
 
     /**
      * Get Custom description button well formated
-     * 
+     *
      * @param int $idLang
-     * 
+     *
      * @return array
      */
     public static function getPaymentButtonDescription($idLang = null)
     {
-        return self::getCustomFieldsByKeyConfig('ALMA_PAYMENT_BUTTON_DESC', $idLang);
+        return self::getCustomFieldsByKeyConfig(self::ALMA_PAYMENT_BUTTON_DESC, $idLang);
     }
 
     /**
      * Get Custom title deferred button well formated
-     * 
+     *
      * @param int $idLang
-     * 
+     *
      * @return array
      */
     public static function getPaymentButtonTitleDeferred($idLang = null)
     {
-        return self::getCustomFieldsByKeyConfig('ALMA_DEFERRED_BUTTON_TITLE', $idLang);
+        return self::getCustomFieldsByKeyConfig(self::ALMA_DEFERRED_BUTTON_TITLE, $idLang);
     }
 
     /**
      * Get Custom description deferred button well formated
-     * 
+     *
      * @param int $idLang
-     * 
+     *
      * @return array
      */
     public static function getPaymentButtonDescriptionDeferred($idLang = null)
     {
-        return self::getCustomFieldsByKeyConfig('ALMA_DEFERRED_BUTTON_DESC', $idLang);
+        return self::getCustomFieldsByKeyConfig(self::ALMA_DEFERRED_BUTTON_DESC, $idLang);
     }
 
     public static function displayOrderConfirmation()
@@ -613,8 +614,8 @@ class Settings
     }
 
     /**
-     * Get translation by file iso if exist 
-     * 
+     * Get translation by file iso if exist
+     *
      * @param string $module
      * @param array $arrayTrad
      * @param string $source
@@ -622,9 +623,9 @@ class Settings
      * @param int $unset
      * @param bool $js
      * @param bool $escape
-     * 
+     *
      * @return array
-     * 
+     *
      * @see AdminTranslationsController::getModuleTranslations
      */
     public static function getModuleTranslations(
