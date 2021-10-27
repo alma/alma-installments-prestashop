@@ -1,5 +1,11 @@
 # Changelog
 
+## v2.3.0
+
+-   Alma module is now available in Spanish, English, and Dutch
+-   Add locale datas to send for eligibility and payment api
+-   Add editable custom fields for each language active in store
+
 ## v2.2.0
 
 -   Now you can hide the message of product page or cart page if it contains an excluded product
