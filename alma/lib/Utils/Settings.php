@@ -48,6 +48,13 @@ use Translate;
 
 class Settings
 {
+
+    const ALMA_PAYMENT_BUTTON_TITLE = 'ALMA_PAYMENT_BUTTON_TITLE';
+    const ALMA_PAYMENT_BUTTON_DESC = 'ALMA_PAYMENT_BUTTON_DESC';
+    const ALMA_DEFERRED_BUTTON_TITLE = 'ALMA_DEFERRED_BUTTON_TITLE';
+    const ALMA_DEFERRED_BUTTON_DESC = 'ALMA_DEFERRED_BUTTON_DESC';
+    const ALMA_NOT_ELIGIBLE_CATEGORIES = 'ALMA_NOT_ELIGIBLE_CATEGORIES';
+
     public static function l($str)
     {
         return Translate::getModuleTranslation('alma', $str, 'settings');
@@ -86,15 +93,15 @@ class Settings
             'ALMA_TEST_API_KEY',
             'ALMA_SHOW_DISABLED_BUTTON',
             'ALMA_SHOW_ELIGIBILITY_MESSAGE',
-            'ALMA_PAYMENT_BUTTON_TITLE',
-            'ALMA_PAYMENT_BUTTON_DESC',
-            'ALMA_DEFERRED_BUTTON_TITLE',
-            'ALMA_DEFERRED_BUTTON_DESC',
+            self::ALMA_PAYMENT_BUTTON_TITLE,
+            self::ALMA_PAYMENT_BUTTON_DESC,
+            self::ALMA_DEFERRED_BUTTON_TITLE,
+            self::ALMA_DEFERRED_BUTTON_DESC,
+            self::ALMA_NOT_ELIGIBLE_CATEGORIES,
             'ALMA_STATE_REFUND',
             'ALMA_STATE_REFUND_ENABLED',
             'ALMA_DISPLAY_ORDER_CONFIRMATION',
             'ALMA_EXCLUDED_CATEGORIES',
-            'ALMA_NOT_ELIGIBLE_CATEGORIES',
             'ALMA_SHOW_PRODUCT_ELIGIBILITY',
             'ALMA_FEE_PLANS',
             'ALMA_PRODUCT_ATTR_RADIO_SELECTOR',
@@ -201,11 +208,11 @@ class Settings
     public static function customFields()
     {
         return [
-            'ALMA_PAYMENT_BUTTON_TITLE' => 'Pay in %d installments',
-            'ALMA_PAYMENT_BUTTON_DESC' => 'Pay in %d monthly installments with your credit card.',
-            'ALMA_DEFERRED_BUTTON_TITLE' => 'Buy now Pay in %d days',
-            'ALMA_DEFERRED_BUTTON_DESC' => 'Buy now pay in %d days with your credit card.',
-            'ALMA_NOT_ELIGIBLE_CATEGORIES' => 'Your cart is not eligible for payments with Alma.',
+            self::ALMA_PAYMENT_BUTTON_TITLE => 'Pay in %d installments',
+            self::ALMA_PAYMENT_BUTTON_DESC => 'Pay in %d monthly installments with your credit card.',
+            self::ALMA_DEFERRED_BUTTON_TITLE => 'Buy now Pay in %d days',
+            self::ALMA_DEFERRED_BUTTON_DESC => 'Buy now pay in %d days with your credit card.',
+            self::ALMA_NOT_ELIGIBLE_CATEGORIES => 'Your cart is not eligible for payments with Alma.',
         ];
     }
 
@@ -617,6 +624,8 @@ class Settings
      * @param bool $escape
      * 
      * @return array
+     * 
+     * @see AdminTranslationsController::getModuleTranslations
      */
     public static function getModuleTranslations(
         $module,
