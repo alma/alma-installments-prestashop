@@ -79,24 +79,13 @@ final class DisplayRefundsHookController extends AdminHookController
         $refundData = null;
         $totalRefund = null;
         $percentRefund = null;
-        if ($payment->refunds) {
-            foreach($payment->refunds as $refund) {
-                $totalRefund += $refund->amount;
-            }
-
-            $percentRefund = (100 / $order->getOrdersTotalPaid()) * almaPriceFromCents($totalRefund);
-        
-            $refundData = [
-                'totalRefundAmount' => almaFormatPrice($totalRefund, (int)$order->id_currency),
-                'percentRefund' => $percentRefund,
-            ];
-        }
+        $orderTotalPaid = $order->getOrdersTotalPaid();
+        $fees = almaPriceFromCents($payment->customer_fee);
+        $ordersTotalAmount = $order->total_paid_tax_incl + $fees;
 
         //multi shipping
         $ordersId = null;
-        $fees = almaPriceFromCents($payment->customer_fee);
-        $ordersTotalAmount = $order->total_paid_tax_incl + $fees;
-        if ($order->getOrdersTotalPaid() > $order->total_paid_tax_incl) {
+        if ($orderTotalPaid > $order->total_paid_tax_incl) {
             $orders = Order::getByReference($order->reference);
             foreach ($orders as $o) {
                 if ($o->id != $order->id) {
@@ -104,7 +93,20 @@ final class DisplayRefundsHookController extends AdminHookController
                 }
             }
             $ordersId = rtrim($ordersId, ',');
-            $ordersTotalAmount = $order->getOrdersTotalPaid() + $fees;
+            $ordersTotalAmount = $orderTotalPaid + $fees;
+        }
+
+        if ($payment->refunds) {
+            foreach($payment->refunds as $refund) {
+                $totalRefund += $refund->amount;
+            }
+
+            $percentRefund = (100 / $ordersTotalAmount) * almaPriceFromCents($totalRefund);
+        
+            $refundData = [
+                'totalRefundAmount' => almaFormatPrice($totalRefund, (int)$order->id_currency),
+                'percentRefund' => $percentRefund,
+            ];
         }
 
         $currency = new Currency($order->id_currency);
