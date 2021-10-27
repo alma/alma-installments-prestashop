@@ -25,9 +25,10 @@
 
 global $_MODULE;
 $_MODULE = [];
-$_MODULE['<{alma}prestashop>alma_f9d4da2cd01a3bf46688b86d0113e887'] = ' 2x 3x 4x, J+15 ou J+30 Alma —  Paiement en plusieurs fois et différé';
+
+$_MODULE['<{alma}prestashop>alma_d4b3f55d02c6448c36a233c1f1c27a18'] = ' 2x 3x 4x, J+15 ou J+30 Alma — Paiement en plusieurs fois et différé';
 $_MODULE['<{alma}prestashop>alma_7f9c508fa226d3e72644403653115c29'] = 'Boostez vos ventes en installant Alma ! C\'est simple et garanti, votre trésorerie est sécurisée. 0 engagement, 0 abonnement, 0 risque.';
-$_MODULE['<{alma}prestashop>alma_eaa507b722b18fe29d24bea91d8c2c52'] = 'Voulez-vous vraiment supprimer les paiements en plusieurs fois Alma de votre boutique ?';
+$_MODULE['<{alma}prestashop>alma_ce67a7d4b82bc360a17d25943924b388'] = 'Voulez-vous vraiment supprimer les paiements Alma de votre boutique ?';
 $_MODULE['<{alma}prestashop>alma_7bab99339291e7eea710b4a998e663de'] = 'Alma nécessite l\'extension PHP cURL';
 $_MODULE['<{alma}prestashop>alma_fbb47375d2272bef79f5722a183bf1ec'] = 'Alma nécessite l\'extension PHP JSON';
 $_MODULE['<{alma}prestashop>alma_7fb83ba9cf3cc38857a2ddae98534d22'] = 'Alma nécessite OpenSSL >= 1.0.1';
@@ -61,7 +62,7 @@ $_MODULE['<{alma}prestashop>getcontenthookcontroller_203cf2399ac7e381d5e3f50e9af
 $_MODULE['<{alma}prestashop>getcontenthookcontroller_1414abef78f33ed4e9cfd75624b1f0b7'] = 'Paiement en %d fois +%d jours différés';
 $_MODULE['<{alma}prestashop>getcontenthookcontroller_1cc27a7dd338c415c7ec905916039fdb'] = 'Activer les paiements en %d fois +%d jours différés';
 $_MODULE['<{alma}prestashop>getcontenthookcontroller_d504e870a0b1c384090207ca30b7a558'] = 'Montant minimum (€)';
-$_MODULE['<{alma}prestashop>getcontenthookcontroller_f1b557392c6a71b77a2752b67700c43d'] = 'Montant d\'achat minimum  pour activer cet échéancier';
+$_MODULE['<{alma}prestashop>getcontenthookcontroller_f1b557392c6a71b77a2752b67700c43d'] = 'Montant d\'achat minimum pour activer cet échéancier';
 $_MODULE['<{alma}prestashop>getcontenthookcontroller_c86bcf847758c12df1f6344fda4de53b'] = 'Montant maximum (€)';
 $_MODULE['<{alma}prestashop>getcontenthookcontroller_08731158c9453896032d9e106813dc22'] = 'Montant d\'achat maximum pour activer cet échéancier';
 $_MODULE['<{alma}prestashop>getcontenthookcontroller_52f5e0bc3859bc5f5e25130b6c7e8881'] = 'Position';
@@ -154,11 +155,11 @@ $_MODULE['<{alma}prestashop>getcontent_fde6026db97af22bdf607b5928cca6d0'] = 'Act
 $_MODULE['<{alma}prestashop>getcontent_775ab97c1b3d6e302ff6c35731e221fc'] = 'Votre compte Alma doit être activé avant que vous ne puissiez utiliser Alma sur votre boutique.';
 $_MODULE['<{alma}prestashop>getcontent_634138f364946020366320968cfaaafb'] = 'Rendez-vous sur votre tableau de bord Alma pour activer votre compte.';
 $_MODULE['<{alma}prestashop>getcontent_d9438342b5d0b3b0fdd44e9943ed1e38'] = 'Vous pouvez rafraîchir/revenir à cette page lorsque c\'est fait.';
-$_MODULE['<{alma}prestashop>getcontent_3a078c4961c741dd07c831bc35090f99'] = 'Le montant minimum pour les paiements différés + %1$d jours doit être entre %2$d et %3$d.';
-$_MODULE['<{alma}prestashop>getcontent_6748f1406ab1f4fc5bca9636b89a8527'] = 'Le montant minimum pour les paiements différés + %1$d mois doit être entre %2$d et %3$d.';
+$_MODULE['<{alma}prestashop>getcontent_07e9b735fd84faf12679bba676838036'] = 'Le montant minimum pour les paiements différés + %1$d jours doit être entre %2$d et %3$d.';
+$_MODULE['<{alma}prestashop>getcontent_4fa87d94e814439cd1d7b00595372a18'] = 'Le montant minimum pour les paiements différés + %1$d mois doit être entre %2$d et %3$d.';
 $_MODULE['<{alma}prestashop>getcontent_1f6c47dd9eb3469c7afd7bf99fbb8dbb'] = 'Le montant minimum pour les paiements en %1$d fois doit être entre %2$d et %3$d.';
-$_MODULE['<{alma}prestashop>getcontent_fba3d32047e6ba13406c7156de5fc9b1'] = 'Le montant maximum pour les paiements différés %1$d jours doit être entre %2$d et %3$d.';
-$_MODULE['<{alma}prestashop>getcontent_5cab48478c89406fb118e3fb707c4ead'] = 'Le montant maximum pour les paiements différés %1$d mois doit être entre %2$d et %3$d.';
+$_MODULE['<{alma}prestashop>getcontent_a4978be2e8b36124fd4505f7e7f2aa3f'] = 'Le montant maximum pour les paiements différés %1$d jours doit être entre %2$d et %3$d.';
+$_MODULE['<{alma}prestashop>getcontent_b47a7c1526a093a0afe5f28bdeb5face'] = 'Le montant maximum pour les paiements différés %1$d mois doit être entre %2$d et %3$d.';
 $_MODULE['<{alma}prestashop>getcontent_8c10d3b0970a247fc554062dc9055fd1'] = 'Le montant maximum pour les paiements en %1$d fois doit être entre %2$d et %3$d.';
 $_MODULE['<{alma}prestashop>getcontent_2d4a12c50532eb37b1a827fe310070c3'] = 'Merci d\'avoir installé Alma !';
 $_MODULE['<{alma}prestashop>getcontent_bbea702c04c766345509aa28d60812ad'] = 'Avant toute chose, vous devez créer un compte Alma.';
@@ -186,7 +187,7 @@ $_MODULE['<{alma}prestashop>feeplan_64408fc092e84b9eb352626a0bcbbdf7'] = 'TAEG f
 $_MODULE['<{alma}prestashop>feeplan_ae9a134243362e66fef28a6b2e8a77c4'] = 'Votre panier';
 $_MODULE['<{alma}prestashop>feeplan_d63a8fbc00567ee4b9640d1284b16e7b'] = 'Coût du crédit';
 $_MODULE['<{alma}prestashop>feeplan_96b0141273eabab320119c467cdcaf17'] = 'Total';
-$_MODULE['<{alma}prestashop>feeplan_bc69b42c4bd339154f9025f3299ad146'] = '%1$s aujourd\'hui puis %2$d x %3$s';
+$_MODULE['<{alma}prestashop>feeplan_bc69b42c4bd339154f9025f3299ad146'] = '%1$s aujourd\'hui puis %2$d x %3$s';
 $_MODULE['<{alma}prestashop>feeplan_304bcb1f18f0897c89c6a79cf0725af1'] = '(Dont frais inclus : %s)';
 $_MODULE['<{alma}prestashop>feeplan_3acc62b245d8bc10f04d81f69d85b685'] = '(Sans frais)';
 $_MODULE['<{alma}prestashop>feeplan_9c8a7900448628ee2978be9a3945d148'] = 'Votre crédit';

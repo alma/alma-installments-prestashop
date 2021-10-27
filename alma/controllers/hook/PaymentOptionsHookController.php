@@ -50,6 +50,8 @@ final class PaymentOptionsHookController extends FrontendHookController
 
         $installmentPlans = EligibilityHelper::eligibilityCheck($this->context);
 
+        $idLang = $this->context->language->id;
+
         if (empty($installmentPlans)) {
             return [];
         }
@@ -90,7 +92,7 @@ final class PaymentOptionsHookController extends FrontendHookController
                     $duration = Settings::getDuration($plan);
                     $paymentOptionDeferred = $this->createPaymentOption(
                         $forEUComplianceModule,
-                        sprintf(Settings::getPaymentButtonTitleDeferred(), $duration),
+                        sprintf(Settings::getPaymentButtonTitleDeferred($idLang), $duration),
                         $this->context->link->getModuleLink(
                             $this->module->name,
                             'payment',
@@ -102,7 +104,7 @@ final class PaymentOptionsHookController extends FrontendHookController
                     );
                     if (!$forEUComplianceModule) {
                         $this->context->smarty->assign([
-                            'desc' => sprintf(Settings::getPaymentButtonDescriptionDeferred(), $duration),
+                            'desc' => sprintf(Settings::getPaymentButtonDescriptionDeferred($idLang), $duration),
                             'plans' => (array) $plans,
                             'apiMode' => Settings::getActiveMode(),
                             'merchantId' => Settings::getMerchantId(),
@@ -121,7 +123,7 @@ final class PaymentOptionsHookController extends FrontendHookController
                 if ($n != 1) {
                     $paymentOptionPnx = $this->createPaymentOption(
                         $forEUComplianceModule,
-                        sprintf(Settings::getPaymentButtonTitle(), $n),
+                        sprintf(Settings::getPaymentButtonTitle($idLang), $n),
                         $this->context->link->getModuleLink(
                             $this->module->name,
                             'payment',
@@ -134,7 +136,7 @@ final class PaymentOptionsHookController extends FrontendHookController
 
                     if (!$forEUComplianceModule) {
                         $this->context->smarty->assign([
-                            'desc' => sprintf(Settings::getPaymentButtonDescription(), $n),
+                            'desc' => sprintf(Settings::getPaymentButtonDescription($idLang), $n),
                             'plans' => (array) $plans,
                             'apiMode' => Settings::getActiveMode(),
                             'merchantId' => Settings::getMerchantId(),

@@ -145,7 +145,7 @@ final class DisplayProductPriceBlockHookController extends FrontendHookControlle
             'psVersion' => $psVersion,
             'logo' => almaSvgDataUrl(_PS_MODULE_DIR_ . $this->module->name . '/views/img/logos/logo_alma.svg'),
             'isExcluded' => Settings::isProductExcluded($productId),
-            'exclusionMsg' => Settings::getNonEligibleCategoriesMessage(),
+            'exclusionMsg' => Settings::getNonEligibleCategoriesMessage($this->context->language->id),
             'settings' => [
                 'merchantId' => Settings::getMerchantId(),
                 'apiMode' => Settings::getActiveMode(),

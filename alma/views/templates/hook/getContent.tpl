@@ -77,17 +77,17 @@
             {/if}
         {elseif $validation_error == 'pnx_min_amount'}
             {if $n == 1 && $deferred_days > 0 && $deferred_months == 0}
-                {l s='Minimum amount for + %1$d-deferred days plan must be within %2$d and %3$d.' sprintf=array($deferred_days, $min, $max) mod='alma'}
+                {l s='Minimum amount for deferred + %1$d days plan must be within %2$d and %3$d.' sprintf=array($deferred_days, $min, $max) mod='alma'}
             {elseif $n == 1 && $deferred_days == 0 && $deferred_months > 0}
-                {l s='Minimum amount for + %1$d-deferred months plan must be within %2$d and %3$d.' sprintf=array($deferred_months, $min, $max) mod='alma'}
+                {l s='Minimum amount for deferred + %1$d months plan must be within %2$d and %3$d.' sprintf=array($deferred_months, $min, $max) mod='alma'}
             {else}
                 {l s='Minimum amount for %1$d-installment plan must be within %2$d and %3$d.' sprintf=array($n, $min, $max) mod='alma'}
             {/if}
         {elseif $validation_error == 'pnx_max_amount'}
             {if $n == 1 && $deferred_days > 0 && $deferred_months == 0}
-                {l s='Maximum amount for %1$d-deferred days plan must be within %2$d and %3$d.' sprintf=array($deferred_days, $min, $max) mod='alma'}
+                {l s='Maximum amount for deferred %1$d days plan must be within %2$d and %3$d.' sprintf=array($deferred_days, $min, $max) mod='alma'}
             {elseif $n == 1 && $deferred_days == 0 && $deferred_months > 0}
-                {l s='Maximum amount for %1$d-deferred months plan must be within %2$d and %3$d.' sprintf=array($deferred_months, $min, $max) mod='alma'}
+                {l s='Maximum amount for deferred %1$d months plan must be within %2$d and %3$d.' sprintf=array($deferred_months, $min, $max) mod='alma'}
             {else}
                 {l s='Maximum amount for %1$d-installment plan must be within %2$d and %3$d.' sprintf=array($n, $min, $max) mod='alma'}
             {/if}

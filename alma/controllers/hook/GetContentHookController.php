@@ -98,26 +98,61 @@ final class GetContentHookController extends AdminHookController
                     break;
                 }
             }
+
+            // init Custom Field to install and Save Api Key
+            Settings::initCustomFields();
         }
 
+        // Get languages are active
+        $languages = $this->context->controller->getLanguages();
+
         if (!$apiOnly) {
-            $title = Tools::getValue('ALMA_PAYMENT_BUTTON_TITLE');
-            $titleDeferred = Tools::getValue('ALMA_DEFERRED_BUTTON_TITLE');
-            $description = Tools::getValue('ALMA_PAYMENT_BUTTON_DESC');
-            $descriptionDeferred = Tools::getValue('ALMA_DEFERRED_BUTTON_DESC');
+            $titles = [];
+            $titlesDeferred = [];
+            $descriptions = [];
+            $descriptionsDeferred = [];
+            $nonEligibleCategoriesMsg = [];
+            foreach ($languages as $language) {
+                $locale = $language['iso_code'];
+                if (array_key_exists('locale', $language)) {
+                    $locale = $language['locale'];
+                }
+                $titles[$language['id_lang']] = [
+                    'locale' => $locale,
+                    'string' => Tools::getValue('ALMA_PAYMENT_BUTTON_TITLE_' . $language['id_lang']),
+                ];
+                $titlesDeferred[$language['id_lang']] = [
+                    'locale' => $locale,
+                    'string' => Tools::getValue('ALMA_DEFERRED_BUTTON_TITLE_' . $language['id_lang']),
+                ];
+                $descriptions[$language['id_lang']] = [
+                    'locale' => $locale,
+                    'string' => Tools::getValue('ALMA_PAYMENT_BUTTON_DESC_' . $language['id_lang']),
+                ];
+                $descriptionsDeferred[$language['id_lang']] = [
+                    'locale' => $locale,
+                    'string' => Tools::getValue('ALMA_DEFERRED_BUTTON_DESC_' . $language['id_lang']),
+                ];
+                $nonEligibleCategoriesMsg[$language['id_lang']] = [
+                    'locale' => $locale,
+                    'string' => Tools::getValue('ALMA_NOT_ELIGIBLE_CATEGORIES_' . $language['id_lang']),
+                ];
+
+                if (empty($titles[$language['id_lang']]['string'])
+                    || empty($descriptions[$language['id_lang']]['string'])
+                    || empty($titlesDeferred[$language['id_lang']]['string'])
+                    || empty($descriptionsDeferred[$language['id_lang']]['string'])
+                ) {
+                    $this->context->smarty->assign('validation_error', 'missing_required_setting');
+
+                    return $this->module->display($this->module->file, 'getContent.tpl');
+                }
+            }
 
             $showEligibility = (bool) Tools::getValue('ALMA_SHOW_ELIGIBILITY_MESSAGE_ON');
             $showCartEligibilityNotEligible = (bool) Tools::getValue('ALMA_CART_WDGT_NOT_ELGBL_ON');
             $showProductEligibilityNotEligible = (bool) Tools::getValue('ALMA_PRODUCT_WDGT_NOT_ELGBL_ON');
             $showCategoriesEligibilityNotEligible = (bool) Tools::getValue('ALMA_CATEGORIES_WDGT_NOT_ELGBL_ON');
-
-            $nonEligibleCategoriesMsg = Tools::getValue('ALMA_NOT_ELIGIBLE_CATEGORIES');
-
-            if (empty($title) || empty($description) || empty($titleDeferred) || empty($descriptionDeferred)) {
-                $this->context->smarty->assign('validation_error', 'missing_required_setting');
-
-                return $this->module->display($this->module->file, 'getContent.tpl');
-            }
 
             $showProductEligibility = (bool) Tools::getValue('ALMA_SHOW_PRODUCT_ELIGIBILITY_ON');
             Settings::updateValue('ALMA_SHOW_PRODUCT_ELIGIBILITY', $showProductEligibility ? '1' : '0');
@@ -149,17 +184,17 @@ final class GetContentHookController extends AdminHookController
             $cartWidgetPositionQuerySelector = Tools::getValue('ALMA_CART_WDGT_POS_SELECTOR');
             Settings::updateValue('ALMA_CART_WDGT_POS_SELECTOR', $cartWidgetPositionQuerySelector);
 
-            Settings::updateValue('ALMA_PAYMENT_BUTTON_TITLE', $title);
-            Settings::updateValue('ALMA_PAYMENT_BUTTON_DESC', $description);
+            Settings::updateValue('ALMA_PAYMENT_BUTTON_TITLE', json_encode($titles));
+            Settings::updateValue('ALMA_PAYMENT_BUTTON_DESC', json_encode($descriptions));
 
-            Settings::updateValue('ALMA_DEFERRED_BUTTON_TITLE', $titleDeferred);
-            Settings::updateValue('ALMA_DEFERRED_BUTTON_DESC', $descriptionDeferred);
+            Settings::updateValue('ALMA_DEFERRED_BUTTON_TITLE', json_encode($titlesDeferred));
+            Settings::updateValue('ALMA_DEFERRED_BUTTON_DESC', json_encode($descriptionsDeferred));
 
             $showDisabledButton = (bool) Tools::getValue('ALMA_SHOW_DISABLED_BUTTON');
             Settings::updateValue('ALMA_SHOW_DISABLED_BUTTON', $showDisabledButton);
 
             Settings::updateValue('ALMA_SHOW_ELIGIBILITY_MESSAGE', $showEligibility ? '1' : '0');
-            Settings::updateValue('ALMA_NOT_ELIGIBLE_CATEGORIES', $nonEligibleCategoriesMsg);
+            Settings::updateValue('ALMA_NOT_ELIGIBLE_CATEGORIES', json_encode($nonEligibleCategoriesMsg));
 
             Settings::updateValue('ALMA_CART_WDGT_NOT_ELGBL', $showCartEligibilityNotEligible);
             Settings::updateValue('ALMA_PRODUCT_WDGT_NOT_ELGBL', $showProductEligibilityNotEligible);
@@ -643,6 +678,7 @@ final class GetContentHookController extends AdminHookController
                     [
                         'name' => 'ALMA_PAYMENT_BUTTON_TITLE',
                         'label' => $this->module->l('Title', 'GetContentHookController'),
+                        'lang' => true,
                         // PrestaShop won't detect the string if the call to `l` is multiline
                         // phpcs:ignore
                         'desc' => $this->module->l('This controls the payment method name which the user sees during checkout.', 'GetContentHookController'),
@@ -653,6 +689,7 @@ final class GetContentHookController extends AdminHookController
                     [
                         'name' => 'ALMA_PAYMENT_BUTTON_DESC',
                         'label' => $this->module->l('Description', 'GetContentHookController'),
+                        'lang' => true,
                         // PrestaShop won't detect the string if the call to `l` is multiline
                         // phpcs:ignore
                         'desc' => $this->module->l('This controls the payment method description which the user sees during checkout.', 'GetContentHookController'),
@@ -671,6 +708,7 @@ final class GetContentHookController extends AdminHookController
                     [
                         'name' => 'ALMA_DEFERRED_BUTTON_TITLE',
                         'label' => $this->module->l('Title', 'GetContentHookController'),
+                        'lang' => true,
                         // PrestaShop won't detect the string if the call to `l` is multiline
                         // phpcs:ignore
                         'desc' => $this->module->l('This controls the payment method name which the user sees during checkout.', 'GetContentHookController'),
@@ -681,6 +719,7 @@ final class GetContentHookController extends AdminHookController
                     [
                         'name' => 'ALMA_DEFERRED_BUTTON_DESC',
                         'label' => $this->module->l('Description', 'GetContentHookController'),
+                        'lang' => true,
                         // PrestaShop won't detect the string if the call to `l` is multiline
                         // phpcs:ignore
                         'desc' => $this->module->l('This controls the payment method description which the user sees during checkout.', 'GetContentHookController'),
@@ -1053,6 +1092,7 @@ final class GetContentHookController extends AdminHookController
                         'name' => 'ALMA_NOT_ELIGIBLE_CATEGORIES',
                         // phpcs:ignore
                         'label' => $this->module->l('Excluded categories non-eligibility message ', 'GetContentHookController'),
+                        'lang' => true,
                         // PrestaShop won't detect the string if the call to `l` is multiline
                         // phpcs:ignore
                         'desc' => $this->module->l('Message displayed on an excluded product page or on the cart page if it contains an excluded product.', 'GetContentHookController'),

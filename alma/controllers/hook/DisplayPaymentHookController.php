@@ -46,6 +46,8 @@ final class DisplayPaymentHookController extends FrontendHookController
             return false;
         }
 
+        $idLang = $this->context->language->id;
+
         $installmentPlans = EligibilityHelper::eligibilityCheck($this->context);
 
         if (empty($installmentPlans)) {
@@ -95,8 +97,8 @@ final class DisplayPaymentHookController extends FrontendHookController
                     'logo' => $logo,
                     'plans' => $plans,
                     'isDeferred' => true,
-                    'text' => sprintf(Settings::getPaymentButtonTitleDeferred(), $duration),
-                    'desc' => sprintf(Settings::getPaymentButtonDescriptionDeferred(), $duration),
+                    'text' => sprintf(Settings::getPaymentButtonTitleDeferred($idLang), $duration),
+                    'desc' => sprintf(Settings::getPaymentButtonDescriptionDeferred($idLang), $duration),
                     'creditInfo' => $creditInfo,
                     ];
                     $paymentOptions[$key] = $paymentOption;
@@ -123,8 +125,8 @@ final class DisplayPaymentHookController extends FrontendHookController
                         'pnx' => $n,
                         'logo' => $logo,
                         'isDeferred' => false,
-                        'text' => sprintf(Settings::getPaymentButtonTitle(), $n),
-                        'desc' => sprintf(Settings::getPaymentButtonDescription(), $n),
+                        'text' => sprintf(Settings::getPaymentButtonTitle($idLang), $n),
+                        'desc' => sprintf(Settings::getPaymentButtonDescription($idLang), $n),
                         'creditInfo' => $creditInfo,
                     ];
                     $paymentOptions[$key] = $paymentOption;

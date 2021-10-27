@@ -72,7 +72,7 @@ final class DisplayShoppingCartFooterHookController extends FrontendHookControll
         $isExcluded = false;
         $diff = CartData::getCartExclusion($params['cart']);
         if (!empty($diff)) {
-            $eligibilityMsg = Settings::getNonEligibleCategoriesMessage();
+            $eligibilityMsg = Settings::getNonEligibleCategoriesMessage($this->context->language->id);
             $isExcluded = true;
             if (!Settings::showCategoriesWidgetIfNotEligible()) {
                 $isEligible = false;

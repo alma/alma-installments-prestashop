@@ -33,8 +33,10 @@ use Address;
 use Alma\PrestaShop\Utils\Logger;
 use Cart;
 use Context;
+use Country;
 use Customer;
 use Exception;
+use State;
 use Tools;
 use Validate;
 
@@ -73,6 +75,17 @@ class PaymentData
             }
         }
 
+        $shippingAddress = new Address((int) $cart->id_address_delivery);
+        $billingAddress = new Address((int) $cart->id_address_invoice);
+
+        $countryShippingAddress = Country::getIsoById((int) $shippingAddress->id_country);
+        $countryBillingAddress = Country::getIsoById((int) $billingAddress->id_country);
+
+        $locale = $context->language->iso_code;
+        if (property_exists($context->language, 'locale')) {
+            $locale = $context->language->locale;
+        }
+
         $purchaseAmount = (float) Tools::ps_round((float) $cart->getOrderTotal(true, Cart::BOTH), 2);
 
         /* Eligibility Endpoint V2 */
@@ -89,7 +102,15 @@ class PaymentData
 
             return [
                 'purchase_amount' => almaPriceToCents($purchaseAmount),
-                'queries' => $queries, ];
+                'queries' => $queries,
+                'shipping_address' => [
+                    'country' => $countryShippingAddress,
+                ],
+                'billing_address' => [
+                    'country' => $countryBillingAddress,
+                ],
+                'locale' => $locale,
+            ];
         }
 
         if (!$customer) {
@@ -103,14 +124,14 @@ class PaymentData
             'birth_date' => $customer->birthday,
             'addresses' => [],
             'phone' => null,
+            'country' => null,
+            'county_sublocality' => null,
+            'state_province' => null,
         ];
 
         if ($customerData['birth_date'] == '0000-00-00') {
             $customerData['birth_date'] = null;
         }
-
-        $shippingAddress = new Address((int) $cart->id_address_delivery);
-        $billingAddress = new Address((int) $cart->id_address_invoice);
 
         if ($shippingAddress->phone) {
             $customerData['phone'] = $shippingAddress->phone;
@@ -128,7 +149,9 @@ class PaymentData
                 'line1' => $address['address1'],
                 'postal_code' => $address['postcode'],
                 'city' => $address['city'],
-                'country' => $address['country'],
+                'country' => Country::getIsoById((int) $address['id_country']),
+                'county_sublocality' => null,
+                'state_province' => $address['state'],
             ]);
 
             if (is_null($customerData['phone']) && $address['phone']) {
@@ -137,6 +160,11 @@ class PaymentData
                 $customerData['phone'] = $address['phone_mobile'];
             }
         }
+
+        $idStateShipping = $shippingAddress->id_state;
+        $idStateBilling = $billingAddress->id_state;
+        $customerData['state_province'] = State::getNameById((int) $idStateBilling);
+        $customerData['country'] = Country::getIsoById((int) $billingAddress->id_country);
 
         return [
             'payment' => [
@@ -151,7 +179,9 @@ class PaymentData
                     'line1' => $shippingAddress->address1,
                     'postal_code' => $shippingAddress->postcode,
                     'city' => $shippingAddress->city,
-                    'country' => $shippingAddress->country,
+                    'country' => $countryShippingAddress,
+                    'county_sublocality' => null,
+                    'state_province' => $idStateShipping > 0 ? State::getNameById((int) $idStateShipping) : '',
                 ],
                 'shipping_info' => ShippingData::shippingInfo($cart),
                 'cart' => CartData::cartInfo($cart),
@@ -159,7 +189,9 @@ class PaymentData
                     'line1' => $billingAddress->address1,
                     'postal_code' => $billingAddress->postcode,
                     'city' => $billingAddress->city,
-                    'country' => $billingAddress->country,
+                    'country' => $countryBillingAddress,
+                    'county_sublocality' => null,
+                    'state_province' => $idStateBilling > 0 ? $customerData['state_province'] : '',
                 ],
                 'custom_data' => [
                     'cart_id' => $cart->id,
@@ -167,6 +199,7 @@ class PaymentData
                     'cart_totals' => $purchaseAmount,
                     'cart_totals_high_precision' => number_format($purchaseAmount, 16),
                 ],
+                'locale' => $locale,
             ],
             'customer' => $customerData,
         ];
