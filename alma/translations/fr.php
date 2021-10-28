@@ -122,6 +122,11 @@ $_MODULE['<{alma}prestashop>getcontenthookcontroller_3132e398e6e7acace9290305a55
 $_MODULE['<{alma}prestashop>paymentvalidation_efa820507b1951ee5722003639b1a0b0'] = 'Alma n\'est pas disponible dans cette devise';
 $_MODULE['<{alma}prestashop>paymentvalidation_1d879e270cfb195f257aab3116618d8b'] = 'Alma - Paiement +%d jours';
 $_MODULE['<{alma}prestashop>paymentvalidation_6f11098989b14063e0a4cfe362734850'] = 'Alma - Paiement en %d fois';
+$_MODULE['<{alma}prestashop>settings_7a854e750fe5f3e7120020c7c20987d4'] = 'Paiements avec Alma indisponibles';
+$_MODULE['<{alma}prestashop>settings_300de0751d957421cc332ba21c43a598'] = 'Payer en %d fois';
+$_MODULE['<{alma}prestashop>settings_673742ef792de1da72351e0e40ff4b95'] = 'Payer en %d fois par carte bancaire';
+$_MODULE['<{alma}prestashop>settings_726c61fad46c135efb4198820e5484ba'] = 'Payer dans %d jours';
+$_MODULE['<{alma}prestashop>settings_72eeebc4fa7b487eda1e6a468f1c1b48'] = 'Payer dans %d jours par carte bancaire';
 $_MODULE['<{alma}prestashop>displaypaymentreturn_64408fc092e84b9eb352626a0bcbbdf7'] = 'TAEG fixe';
 $_MODULE['<{alma}prestashop>displaypaymentreturn_ae9a134243362e66fef28a6b2e8a77c4'] = 'Votre panier';
 $_MODULE['<{alma}prestashop>displaypaymentreturn_d63a8fbc00567ee4b9640d1284b16e7b'] = 'Coût du crédit';
