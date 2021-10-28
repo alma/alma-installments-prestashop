@@ -62,7 +62,7 @@ final class DisplayRefundsHookController extends AdminHookController
         $orderPayment = $this->getCurrentOrderPayment($order);
         if (!$orderPayment) {
             $this->ajaxFail(
-                $this->module->l('Error: The Alma transaction was not found', 'AdminAlmaRefundsController')
+                $this->module->l('Error: Could not find Alma transaction', 'DisplayRefundsHookController')
             );
         }
 

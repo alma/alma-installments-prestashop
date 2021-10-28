@@ -48,7 +48,7 @@ class AdminAlmaRefundsController extends ModuleAdminController
         $orderPayment = $this->getCurrentOrderPayment($order);
         if (!$orderPayment) {
             $this->ajaxFail(
-                $this->module->l('Error: The Alma transaction was not found', 'AdminAlmaRefundsController')
+                $this->module->l('Error: Could not find Alma transaction', 'AdminAlmaRefunds')
             );
         }
 
@@ -65,7 +65,7 @@ class AdminAlmaRefundsController extends ModuleAdminController
 
                 if ($amount > $order->getOrdersTotalPaid()) {
                     $this->ajaxFail(
-                        $this->module->l('Error: The amount is greater than the maximum refundable amount', 'AdminAlmaRefundsController'),
+                        $this->module->l('Error: Amount is higher than maximum refundable', 'AdminAlmaRefunds'),
                         400
                     );
                 }
@@ -90,7 +90,7 @@ class AdminAlmaRefundsController extends ModuleAdminController
 
         if ($refundResult === false) {
             $this->ajaxFail(
-                $this->module->l('There was an error while processing the refund', 'AdminAlmaRefundsController')
+                $this->module->l('There was an error while processing the refund', 'AdminAlmaRefunds')
             );
         } else {
             $fees = $refundResult->customer_fee;
@@ -115,7 +115,7 @@ class AdminAlmaRefundsController extends ModuleAdminController
 
         $json = [
             'success' => true,
-            'message' => $this->module->l('The refund has been processed', 'AdminAlmaRefundsController'),
+            'message' => $this->module->l('Refund has been processed', 'AdminAlmaRefunds'),
             'paymentData' => $refundResult,
             'percentRefund' => $percentRefund,
             'totalRefund' => $totalRefund,

@@ -43,7 +43,7 @@
         <div class="form-wrapper">
             <div class="form-group">
                 <p class="col-lg-12">
-                    {l s='Refund this order thanks to the Alma module. This will be applied in your Alma dashboard automatically.' mod='alma'}
+                    {l s='Refund this order thanks to the Alma module. This will be applied in your Alma dashboard automatically. The maximum refundable amount includes client fees.' mod='alma'}
                     <a href="https://docs.getalma.eu/docs/remboursement" target="_blank">{l s='See documentation' mod='alma'}</a>
                 </p>
             </div>

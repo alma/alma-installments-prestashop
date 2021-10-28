@@ -46,13 +46,13 @@
             <div class="row">
                 <div class="col">
                     <p>
-                        {l s='Refund this order thanks to the Alma module. This will be applied in your Alma dashboard automatically.' mod='alma'}
+                        {l s='Refund this order thanks to the Alma module. This will be applied in your Alma dashboard automatically. The maximum refundable amount includes client fees.' mod='alma'}
                         <a href="https://docs.getalma.eu/docs/remboursement" target="_blank">{l s='See documentation' mod='alma'}</a>
                     </p>
                 </div>
             </div>
             <div class="form-group row">
-                <label class='control-label text-right col-lg-2'>                
+                <label class='control-label text-right col-lg-4'>                
                     <span class="text-danger">*</span> {l s='Refund type:' mod='alma'}
                 </label>                
                 <div class="col-sm">
@@ -65,8 +65,8 @@
                         </div>
                     {/if}
                     <div class="radio t">
-                        <input type="radio" autocomplete="off" class="refundType form-check-input" id="total" name="refundType" value="total" checked="checked"/>
                         <label>
+                            <input type="radio" autocomplete="off" class="refundType form-check-input" id="total" name="refundType" value="total" checked="checked"/>
                             {if $order.ordersId}
                                 {l s='Refund the entire order' mod='alma'}<br />
                                 <i>{l s='Refund this order (id: %1$d) and all those linked to the same payment (id: %2$s)' sprintf=array($order.id, $order.ordersId) mod='alma'}<br />
@@ -86,7 +86,7 @@
                 </div>
             </div>
             <div class="form-group row" id="amountDisplay" style="display: none">
-                <label class='control-label text-right col-lg-2' for="amount">                
+                <label class='control-label text-rightcol-lg-4' for="amount">                
                     <span class="text-danger">*</span> {l s='Amount (Max. %s):' sprintf=$order.ordersTotalAmount mod='alma'}
                 </label>
                 <div class="col-sm">
