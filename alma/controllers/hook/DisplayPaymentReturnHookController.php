@@ -49,6 +49,7 @@ final class DisplayPaymentReturnHookController extends FrontendHookController
         $almaPaymentId = $orderPayment->transaction_id;
         $customer_interest_total = 0;
         $total_credit = 0;
+        $annual_interest_rate = 0;
 
         try {
             $payment = $alma->payments->fetch($almaPaymentId);
@@ -61,6 +62,10 @@ final class DisplayPaymentReturnHookController extends FrontendHookController
             $customer_interest_total += $plan->customer_interest;
         }
 
+        if (4 < $payment->installments_count) {
+            $annual_interest_rate = $payment->annual_interest_rate;
+        }
+
         $total_credit = $payment->purchase_amount + $customer_interest_total;
 
         $this->context->smarty->assign([
@@ -69,7 +74,7 @@ final class DisplayPaymentReturnHookController extends FrontendHookController
             'payment' => $payment,
             'purchase_amount' => $payment->purchase_amount,
             'customer_interest_total' => $customer_interest_total,
-            'annual_interest_rate' => $payment->annual_interest_rate,
+            'annual_interest_rate' => $annual_interest_rate,
             'total_credit' => $total_credit,
         ]);
 

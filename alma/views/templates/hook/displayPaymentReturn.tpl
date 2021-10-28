@@ -62,26 +62,30 @@
                 </span>
             </span>
         {/foreach}
-        <strong>
-        <span class="alma-fee-plan--description">            
-                <span class="alma-fee-plan--date">{$total}</span>
-                <span class="alma-fee-plan--amount">{almaFormatPrice cents=$total_credit}</span>            
-        </span>
-        </strong>
+        {if 4 < $payment->installments_count}
+            <strong>
+            <span class="alma-fee-plan--description">            
+                    <span class="alma-fee-plan--date">{$total}</span>
+                    <span class="alma-fee-plan--amount">{almaFormatPrice cents=$total_credit}</span>            
+            </span>
+            </strong>
 
-        <hr class="alma-fee-plan--space" />
-        <span class="alma-fee-plan--description">
-            <span class="alma-fee-plan--date">{$cartTotal}</span>
-            <span class="alma-fee-plan--amount">{almaFormatPrice cents=$purchase_amount}</span>
-        </span>
-        <span class="alma-fee-plan--description">
-            <span class="alma-fee-plan--date">{$costCredit}</span>
-            <span class="alma-fee-plan--amount">{almaFormatPrice cents=$customer_interest_total}</span>
-        </span>
-        <span class="alma-fee-plan--description">
-            <span class="alma-fee-plan--date">{$fixedAPR}</span>
-            <span class="alma-fee-plan--amount">{$annual_interest_rate * 100}%</span>
-        </span>
+            <hr class="alma-fee-plan--space" />
+            <span class="alma-fee-plan--description">
+                <span class="alma-fee-plan--date">{$cartTotal}</span>
+                <span class="alma-fee-plan--amount">{almaFormatPrice cents=$purchase_amount}</span>
+            </span>
+            <span class="alma-fee-plan--description">
+                <span class="alma-fee-plan--date">{$costCredit}</span>
+                <span class="alma-fee-plan--amount">{almaFormatPrice cents=$customer_interest_total}</span>
+            </span>
+
+            
+            <span class="alma-fee-plan--description">
+                <span class="alma-fee-plan--date">{$fixedAPR}</span>
+                <span class="alma-fee-plan--amount">{$annual_interest_rate * 100}%</span>
+            </span>
+        {/if}
     </div>
     <p>
         {l s='You should receive a confirmation email shortly' mod='alma'}
