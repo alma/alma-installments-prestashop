@@ -1,5 +1,28 @@
 <?php
 
+/**
+ * 2018-2021 Alma SAS
+ *
+ * THE MIT LICENSE
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
+ * documentation files (the "Software"), to deal in the Software without restriction, including without limitation
+ * the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and
+ * to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+ * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the
+ * Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE
+ * WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
+ * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+ * IN THE SOFTWARE.
+ *
+ * @author    Alma SAS <contact@getalma.eu>
+ * @copyright 2018-2021 Alma SAS
+ * @license   https://opensource.org/licenses/MIT The MIT License
+ */
+
 global $_MODULE;
 $_MODULE = [];
 
@@ -99,14 +122,14 @@ $_MODULE['<{alma}prestashop>getcontenthookcontroller_3132e398e6e7acace9290305a55
 $_MODULE['<{alma}prestashop>paymentvalidation_efa820507b1951ee5722003639b1a0b0'] = 'Alma n\'est pas disponible dans cette devise';
 $_MODULE['<{alma}prestashop>paymentvalidation_1d879e270cfb195f257aab3116618d8b'] = 'Alma - Paiement +%d jours';
 $_MODULE['<{alma}prestashop>paymentvalidation_6f11098989b14063e0a4cfe362734850'] = 'Alma - Paiement en %d fois';
-$_MODULE['<{alma}prestashop>settings_7a854e750fe5f3e7120020c7c20987d4'] = 'Paiements avec Alma indisponibles';
-$_MODULE['<{alma}prestashop>settings_300de0751d957421cc332ba21c43a598'] = 'Payer en %d fois';
-$_MODULE['<{alma}prestashop>settings_673742ef792de1da72351e0e40ff4b95'] = 'Payer en %d fois par carte bancaire';
-$_MODULE['<{alma}prestashop>settings_726c61fad46c135efb4198820e5484ba'] = 'Payer dans %d jours';
-$_MODULE['<{alma}prestashop>settings_72eeebc4fa7b487eda1e6a468f1c1b48'] = 'Payer dans %d jours par carte bancaire';
+$_MODULE['<{alma}prestashop>displaypaymentreturn_64408fc092e84b9eb352626a0bcbbdf7'] = 'TAEG fixe';
+$_MODULE['<{alma}prestashop>displaypaymentreturn_ae9a134243362e66fef28a6b2e8a77c4'] = 'Votre panier';
+$_MODULE['<{alma}prestashop>displaypaymentreturn_d63a8fbc00567ee4b9640d1284b16e7b'] = 'Coût du crédit';
+$_MODULE['<{alma}prestashop>displaypaymentreturn_96b0141273eabab320119c467cdcaf17'] = 'Total';
 $_MODULE['<{alma}prestashop>displaypaymentreturn_aca755511864a8c0038740357db865ab'] = 'Votre paiement avec Alma a été passé avec succès';
 $_MODULE['<{alma}prestashop>displaypaymentreturn_9b9b747500bf38015ecb1a12119d50cc'] = 'Référence de votre commande :';
 $_MODULE['<{alma}prestashop>displaypaymentreturn_709fa7b44d5d59d2802e7878e35453a9'] = 'Détail de votre paiement :';
+$_MODULE['<{alma}prestashop>displaypaymentreturn_9c8a7900448628ee2978be9a3945d148'] = 'Votre crédit';
 $_MODULE['<{alma}prestashop>displaypaymentreturn_1dd1c5fb7f25cd41b291d43a89e3aefd'] = 'Aujourd\'hui';
 $_MODULE['<{alma}prestashop>displaypaymentreturn_304bcb1f18f0897c89c6a79cf0725af1'] = '(Frais inclus : %s)';
 $_MODULE['<{alma}prestashop>displaypaymentreturn_d61c09b6ad630202a5f4f57df12c9d65'] = 'Vous devriez bientôt recevoir un email de confirmation.';

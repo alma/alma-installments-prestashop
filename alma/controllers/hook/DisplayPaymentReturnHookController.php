@@ -30,6 +30,7 @@ if (!defined('_PS_VERSION_')) {
 
 use Alma\API\RequestError;
 use Alma\PrestaShop\API\ClientHelper;
+use Alma\PrestaShop\API\EligibilityHelper;
 use Alma\PrestaShop\API\PaymentValidationError;
 use Alma\PrestaShop\Hooks\FrontendHookController;
 use Alma\PrestaShop\Utils\Logger;
@@ -46,6 +47,8 @@ final class DisplayPaymentReturnHookController extends FrontendHookController
         $orderPayment = new OrderPayment($order->invoice_number);
         $alma = ClientHelper::defaultInstance();
         $almaPaymentId = $orderPayment->transaction_id;
+        $customer_interest_total = 0;
+        $total_credit = 0;
 
         try {
             $payment = $alma->payments->fetch($almaPaymentId);
@@ -54,10 +57,20 @@ final class DisplayPaymentReturnHookController extends FrontendHookController
             throw new PaymentValidationError(null, $e->getMessage());
         }
 
+        foreach ($payment->payment_plan as $plan) {
+            $customer_interest_total += $plan->customer_interest;
+        }
+
+        $total_credit = $payment->purchase_amount + $customer_interest_total;
+
         $this->context->smarty->assign([
             'order_reference' => $order->reference,
             'payment_order' => $orderPayment,
             'payment' => $payment,
+            'purchase_amount' => $payment->purchase_amount,
+            'customer_interest_total' => $customer_interest_total,
+            'annual_interest_rate' => $payment->annual_interest_rate,
+            'total_credit' => $total_credit,
         ]);
 
         return $this->module->display($this->module->file, 'displayPaymentReturn.tpl');

@@ -109,7 +109,6 @@ p.payment_module a.disable-arrow-icon:after {
 .order-confirmation .alma-fee-plan--description {
     padding: 4px 0;
     font-size: 0.9em;
-    font-weight: normal !important;
     letter-spacing: initial !important;
 }
 
@@ -158,6 +157,10 @@ p.payment_module a.disable-arrow-icon:after {
 .payment-options .alma-fee-plan--amount,
 .order-confirmation .alma-fee-plan--amount {
     text-align: right;
+}
+
+.order-confirmation .alma-fee-plan--space{
+    border-color: transparent;
 }
 
 .alma-error {
