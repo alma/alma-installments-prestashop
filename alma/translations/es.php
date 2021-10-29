@@ -198,7 +198,7 @@ $_MODULE['<{alma}prestashop>adminalmarefunds_69c00601627a9011bf5c4816abf00b5a'] 
 $_MODULE['<{alma}prestashop>adminalmarefunds_9bbf53faf470010110269d041cab1e9f'] = 'El reembolso se ha procesado';
 $_MODULE['<{alma}prestashop>displayrefundshookcontroller_7960c85fd5916169fc5038a2192094f8'] = 'Error: No se ha podido encontrar la transacción de Alma';
 $_MODULE['<{alma}prestashop>order_refund_bs3_db13e38ee45ff954199d15a509508f57'] = 'Reembolso de Alma';
-$_MODULE['<{alma}prestashop>order_refund_bs3_7b733aaae1af325d74f354a9be9a0cbc'] = 'Reembolse este pedido con el módulo de Alma. Se aplicará en su panel de control de Alma de forma automática.';
+$_MODULE['<{alma}prestashop>order_refund_bs3_a3d0c40208c168891be9eaa16d972d14'] = 'Reembolse este pedido con el módulo de Alma. Se aplicará en su panel de control de Alma de forma automática. El importe máximo reembolsable incluye los costes que debe pagar el cliente.';
 $_MODULE['<{alma}prestashop>order_refund_bs3_26e127fb66f009d552d662962ed992d4'] = 'Ver documentación';
 $_MODULE['<{alma}prestashop>order_refund_bs3_3f20b5130f65e1287ba5b3e341e542f9'] = 'Tipo de reembolso';
 $_MODULE['<{alma}prestashop>order_refund_bs3_7eefad58341b7a853ac151fdfeb9a5ce'] = 'Solo este pedido (%s)';
@@ -211,7 +211,7 @@ $_MODULE['<{alma}prestashop>order_refund_bs3_88d0b8b8a18adb1a2d0e05d3c766743f'] 
 $_MODULE['<{alma}prestashop>order_refund_bs3_6036af1bc6455aea1332546921cae25b'] = 'Importe para reembolsar...';
 $_MODULE['<{alma}prestashop>order_refund_bs3_becd29bb1a0004cdfc177e9bb117e56f'] = 'Proceder al reembolso';
 $_MODULE['<{alma}prestashop>order_refund_bs4_db13e38ee45ff954199d15a509508f57'] = 'Reembolso de Alma';
-$_MODULE['<{alma}prestashop>order_refund_bs4_7b733aaae1af325d74f354a9be9a0cbc'] = 'Reembolse este pedido con el módulo de Alma. Se aplicará en su panel de control de Alma de forma automática.';
+$_MODULE['<{alma}prestashop>order_refund_bs4_a3d0c40208c168891be9eaa16d972d14'] = 'Reembolse este pedido con el módulo de Alma. Se aplicará en su panel de control de Alma de forma automática. El importe máximo reembolsable incluye los costes que debe pagar el cliente.';
 $_MODULE['<{alma}prestashop>order_refund_bs4_26e127fb66f009d552d662962ed992d4'] = 'Ver documentación';
 $_MODULE['<{alma}prestashop>order_refund_bs4_3f20b5130f65e1287ba5b3e341e542f9'] = 'Tipo de reembolso';
 $_MODULE['<{alma}prestashop>order_refund_bs4_7eefad58341b7a853ac151fdfeb9a5ce'] = 'Solo este pedido (%s)';
@@ -226,7 +226,7 @@ $_MODULE['<{alma}prestashop>order_refund_bs4_becd29bb1a0004cdfc177e9bb117e56f'] 
 $_MODULE['<{alma}prestashop>order_refund_ps15_db13e38ee45ff954199d15a509508f57'] = 'Reembolso de Alma';
 $_MODULE['<{alma}prestashop>order_refund_ps15_cbb3ab577b705e328991986e35218f50'] = 'Importe reembolsado';
 $_MODULE['<{alma}prestashop>order_refund_ps15_96b0141273eabab320119c467cdcaf17'] = 'Total';
-$_MODULE['<{alma}prestashop>order_refund_ps15_7b733aaae1af325d74f354a9be9a0cbc'] = 'Reembolse este pedido con el módulo de Alma. Se aplicará en su panel de control de Alma de forma automática.';
+$_MODULE['<{alma}prestashop>order_refund_ps15_a3d0c40208c168891be9eaa16d972d14'] = 'Reembolse este pedido con el módulo de Alma. Se aplicará en su panel de control de Alma de forma automática. El importe máximo reembolsable incluye los costes que debe pagar el cliente.';
 $_MODULE['<{alma}prestashop>order_refund_ps15_26e127fb66f009d552d662962ed992d4'] = 'Ver documentación';
 $_MODULE['<{alma}prestashop>order_refund_ps15_3f20b5130f65e1287ba5b3e341e542f9'] = 'Tipo de reembolso';
 $_MODULE['<{alma}prestashop>order_refund_ps15_7eefad58341b7a853ac151fdfeb9a5ce'] = 'Solo este pedido (%s)';
