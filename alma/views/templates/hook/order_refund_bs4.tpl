@@ -86,7 +86,7 @@
                 </div>
             </div>
             <div class="form-group row" id="amountDisplay" style="display: none">
-                <label class='control-label text-rightcol-lg-4' for="amount">                
+                <label class='control-label text-right col-lg-4' for="amount">
                     <span class="text-danger">*</span> {l s='Amount (Max. %s):' sprintf=$order.ordersTotalAmount mod='alma'}
                 </label>
                 <div class="col-sm">
