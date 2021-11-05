@@ -166,7 +166,7 @@ class Settings
 
     public static function getNonEligibleCategoriesMessage($idLang = null)
     {
-        return self::getCustomFieldsByKeyConfig(self::ALMA_NOT_ELIGIBLE_CATEGORIES, $idLang);
+        return self::checkIfLoadAllCustomFields(self::ALMA_NOT_ELIGIBLE_CATEGORIES, $idLang);
     }
 
     public static function showEligibilityMessage()
@@ -303,6 +303,51 @@ class Settings
     }
 
     /**
+     * get custom field by config key name and id_lang
+     *
+     * @param string $keyConfig
+     * @param int $idLang
+     *
+     * @return string
+     */
+    public static function getCustomFieldByKeyConfigByLang($keyConfig, $idLang)
+    {
+        $field = self::getDefaultCustomFieldsByKeyConfig($keyConfig, $idLang);
+
+        $datasConfig = json_decode(self::get($keyConfig, json_encode($field)), true);
+        foreach ($datasConfig as $key => $data) {
+            $return[$key] = $data['string'];
+        }
+
+        return $return[$idLang];
+    }
+
+    /**
+     * Check if load all custom fields
+     *
+     * @param int $idLang
+     *
+     * @return array
+     */
+    public static function checkIfLoadAllCustomFields($keyConfig, $idLang = null)
+    {
+        $arrayFields = self::getCustomFieldsByKeyConfig($keyConfig, $idLang);
+        $countArrayFields = count($arrayFields);
+        $languages = Language::getLanguages();
+        $countLanguages = count($languages);
+
+        if ($countArrayFields < $countLanguages) {
+            foreach ($languages as $lang) {
+                if (! array_key_exists($lang['id_lang'], $arrayFields)) {
+                    $arrayFields[$lang['id_lang']] = 'Texte NL';
+                }
+            }
+        }
+
+        return $arrayFields;
+    }
+
+    /**
      * Get Custom title button well formated
      *
      * @param int $idLang
@@ -311,7 +356,7 @@ class Settings
      */
     public static function getPaymentButtonTitle($idLang = null)
     {
-        return self::getCustomFieldsByKeyConfig(self::ALMA_PAYMENT_BUTTON_TITLE, $idLang);
+        return self::checkIfLoadAllCustomFields(self::ALMA_PAYMENT_BUTTON_TITLE, $idLang);
     }
 
     /**
@@ -323,7 +368,7 @@ class Settings
      */
     public static function getPaymentButtonDescription($idLang = null)
     {
-        return self::getCustomFieldsByKeyConfig(self::ALMA_PAYMENT_BUTTON_DESC, $idLang);
+        return self::checkIfLoadAllCustomFields(self::ALMA_PAYMENT_BUTTON_DESC, $idLang);
     }
 
     /**
@@ -335,7 +380,7 @@ class Settings
      */
     public static function getPaymentButtonTitleDeferred($idLang = null)
     {
-        return self::getCustomFieldsByKeyConfig(self::ALMA_DEFERRED_BUTTON_TITLE, $idLang);
+        return self::checkIfLoadAllCustomFields(self::ALMA_DEFERRED_BUTTON_TITLE, $idLang);
     }
 
     /**
@@ -347,7 +392,7 @@ class Settings
      */
     public static function getPaymentButtonDescriptionDeferred($idLang = null)
     {
-        return self::getCustomFieldsByKeyConfig(self::ALMA_DEFERRED_BUTTON_DESC, $idLang);
+        return self::checkIfLoadAllCustomFields(self::ALMA_DEFERRED_BUTTON_DESC, $idLang);
     }
 
     public static function displayOrderConfirmation()
