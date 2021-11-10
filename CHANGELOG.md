@@ -1,5 +1,9 @@
 # Changelog
 
+## v2.3.1
+
+-   Alma module is now available in Italian and German
+
 ## v2.3.0
 
 -   Alma module is now available in Spanish, English, and Dutch
