@@ -112,7 +112,7 @@ class Alma extends PaymentModule
         }
 
         if (version_compare(_PS_VERSION_, '1.7', '>=')) {
-            $paymentHooks = ['paymentOptions', 'paymentReturn'];
+            $paymentHooks = ['paymentOptions', 'displayPaymentReturn'];
         } else {
             $paymentHooks = ['displayPayment', 'displayPaymentEU', 'displayPaymentReturn'];
         }
@@ -342,14 +342,7 @@ class Alma extends PaymentModule
         return $this->runHookController('displayPayment', $params);
     }
 
-    // Deprecated for version 1.7
     public function hookDisplayPaymentReturn($params)
-    {
-        return $this->runHookController('displayPaymentReturn', $params);
-    }
-
-    // New name of displayPaymentReturn hook for 1.7
-    public function hookPaymentReturn($params)
     {
         return $this->runHookController('displayPaymentReturn', $params);
     }
