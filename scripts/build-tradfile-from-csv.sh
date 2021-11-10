@@ -50,7 +50,7 @@ global \$_MODULE;
 EOF
 
 line=1
-while read hook en fr es nl de it
+while read hook en fr es nl
 do
     hook=$(sed 's/\"//g' <<< $hook)
     [[ -z "$hook" ]] && echo "empty hook at line:$line"
@@ -58,23 +58,17 @@ do
     [[ -z "$fr" ]] && echo "empty fr translation for en '$en' at line:$line"
     [[ -z "$es" ]] && echo "empty es translation for fr '$fr' at line:$line"
     [[ -z "$nl" ]] && echo "empty nl translation for es '$es' at line:$line"
-    [[ -z "$de" ]] && echo "empty de translation for nl '$nl' at line:$line"
-    [[ -z "$it" ]] && echo "empty it translation for de '$de' at line:$line"
-    if [ x$hook != "xFile" ] && [ x$en != "xEN" ] && [ x$fr != "xFR" ] && [ x$es != "xES" ] && [ x$nl != "xNL" ] && [ x$de != "xDE" ] && [ x$it != "xIT" ]; then
+    if [ x$hook != "xFile" ] && [ x$en != "xEN" ] && [ x$fr != "xFR" ] && [ x$es != "xES" ] && [ x$nl != "xNL" ]; then
         en=$(sed 's/\"//g' <<< $en)
         fr=$(sed 's/\"//g' <<< $fr)
         es=$(sed 's/\"//g' <<< $es)
         nl=$(sed 's/\"//g' <<< $nl)
-        de=$(sed 's/\"//g' <<< $de)
-        it=$(sed 's/\"//g' <<< $it)
         MD5="$(echo -n ${en//\'/\\\'} | md5)"
         NAMEFILE=$hook
         ALLEN="$ALLEN\n\$_MODULE['<{alma}prestashop>${NAMEFILE}_${MD5}'] = '${en//\'/\\\'}';"
         ALLFR="$ALLFR\n\$_MODULE['<{alma}prestashop>${NAMEFILE}_${MD5}'] = '${fr//\'/\\\'}';"
         ALLES="$ALLES\n\$_MODULE['<{alma}prestashop>${NAMEFILE}_${MD5}'] = '${es//\'/\\\'}';"
         ALLNL="$ALLNL\n\$_MODULE['<{alma}prestashop>${NAMEFILE}_${MD5}'] = '${nl//\'/\\\'}';"
-        ALLDE="$ALLDE\n\$_MODULE['<{alma}prestashop>${NAMEFILE}_${MD5}'] = '${de//\'/\\\'}';"
-        ALLIT="$ALLIT\n\$_MODULE['<{alma}prestashop>${NAMEFILE}_${MD5}'] = '${it//\'/\\\'}';"
     fi
     let line++
 done < $INPUT
@@ -83,5 +77,3 @@ echo -e "$BEGIN$ALLEN" > en.php
 echo -e "$BEGIN$ALLFR" > fr.php
 echo -e "$BEGIN$ALLES" > es.php
 echo -e "$BEGIN$ALLNL" > nl.php
-echo -e "$BEGIN$ALLDE" > de.php
-echo -e "$BEGIN$ALLIT" > it.php
