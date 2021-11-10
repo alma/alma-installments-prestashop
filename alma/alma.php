@@ -102,14 +102,9 @@ class Alma extends PaymentModule
             'header',
             'displayBackOfficeHeader',
             'displayShoppingCartFooter',
+            'actionOrderSlipAdd',
             'actionOrderStatusPostUpdate',
         ];
-
-        if (version_compare(_PS_VERSION_, '1.7.7.0', '>=')) {
-            $displayAdminOrderHooks = ['displayAdminOrderMain'];
-        } else {
-            $displayAdminOrderHooks = ['displayAdminOrder'];
-        }
 
         if (version_compare(_PS_VERSION_, '1.7', '>=')) {
             $paymentHooks = ['paymentOptions', 'displayPaymentReturn'];
@@ -123,7 +118,7 @@ class Alma extends PaymentModule
             $productHooks = ['displayProductButtons'];
         }
 
-        foreach (array_merge($commonHooks, $paymentHooks, $productHooks, $displayAdminOrderHooks) as $hook) {
+        foreach (array_merge($commonHooks, $paymentHooks, $productHooks) as $hook) {
             if (!$this->registerHook($hook)) {
                 return false;
             }
@@ -226,14 +221,12 @@ class Alma extends PaymentModule
     {
         return $this->installTab('alma', 'Alma')
             && $this->installTab('AdminAlmaConfig', $this->l('Configuration'), 'alma', 1, 'tune')
-            && $this->installTab('AdminAlmaCategories', $this->l('Excluded categories'), 'alma', 2, 'not_interested')
-            && $this->installTab('AdminAlmaRefunds', false, 'alma');
+            && $this->installTab('AdminAlmaCategories', $this->l('Excluded categories'), 'alma', 2, 'not_interested');
     }
 
-    public function uninstallTabs()
+    private function uninstallTabs()
     {
         return $this->uninstallTab('AdminAlmaCategories')
-            && $this->uninstallTab('AdminAlmaRefunds')
             && $this->uninstallTab('AdminAlmaConfig')
             && $this->uninstallTab('alma');
     }
@@ -241,7 +234,7 @@ class Alma extends PaymentModule
     private function installTab($class, $name, $parent = null, $position = null, $icon = null)
     {
         $tab = Tab::getInstanceFromClassName($class);
-        $tab->active = $name !== false;
+        $tab->active = 1;
         $tab->class_name = $class;
         $tab->name = [];
 
@@ -352,14 +345,9 @@ class Alma extends PaymentModule
         return $this->runHookController('displayShoppingCartFooter', $params);
     }
 
-    public function hookDisplayAdminOrder($params)
+    public function hookActionOrderSlipAdd($params)
     {
-        return $this->runHookController('displayRefunds', $params);
-    }
-
-    public function hookDisplayAdminOrderMain($params)
-    {
-        return $this->runHookController('displayRefunds', $params);
+        return $this->runHookController('refund', $params);
     }
 
     public function hookActionOrderStatusPostUpdate($params)
