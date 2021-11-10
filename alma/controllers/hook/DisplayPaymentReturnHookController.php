@@ -28,21 +28,54 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
+use Alma\API\RequestError;
+use Alma\PrestaShop\API\ClientHelper;
+use Alma\PrestaShop\API\EligibilityHelper;
+use Alma\PrestaShop\API\PaymentValidationError;
 use Alma\PrestaShop\Hooks\FrontendHookController;
+use Alma\PrestaShop\Utils\Logger;
 use Alma\PrestaShop\Utils\Settings;
+use OrderPayment;
 
 final class DisplayPaymentReturnHookController extends FrontendHookController
 {
-    public function canRun()
-    {
-        return parent::canRun() && Settings::displayOrderConfirmation();
-    }
-
     public function run($params)
     {
+        $this->context->controller->addCSS($this->module->_path . 'views/css/alma.css', 'all');
+
         $order = array_key_exists('objOrder', $params) ? $params['objOrder'] : $params['order'];
+        $orderPayment = new OrderPayment($order->invoice_number);
+        $alma = ClientHelper::defaultInstance();
+        $almaPaymentId = $orderPayment->transaction_id;
+        $customer_interest_total = 0;
+        $total_credit = 0;
+        $annual_interest_rate = 0;
+
+        try {
+            $payment = $alma->payments->fetch($almaPaymentId);
+        } catch (RequestError $e) {
+            Logger::instance()->error("[Alma] Error fetching payment with ID {$almaPaymentId}: {$e->getMessage()}");
+            throw new PaymentValidationError(null, $e->getMessage());
+        }
+
+        foreach ($payment->payment_plan as $plan) {
+            $customer_interest_total += $plan->customer_interest;
+        }
+
+        if (4 < $payment->installments_count) {
+            $annual_interest_rate = $payment->annual_interest_rate;
+        }
+
+        $total_credit = $payment->purchase_amount + $customer_interest_total;
+
         $this->context->smarty->assign([
             'order_reference' => $order->reference,
+            'payment_order' => $orderPayment,
+            'payment' => $payment,
+            'purchase_amount' => $payment->purchase_amount,
+            'customer_interest_total' => $customer_interest_total,
+            'annual_interest_rate' => $annual_interest_rate,
+            'total_credit' => $total_credit,
         ]);
 
         return $this->module->display($this->module->file, 'displayPaymentReturn.tpl');
