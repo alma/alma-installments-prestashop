@@ -1156,7 +1156,6 @@ final class GetContentHookController extends AdminHookController
             $fieldsForms = [$apiConfigForm, $debugForm];
         } else {
             $fieldsForms = [];
-
             if ($pnxConfigForm) {
                 $fieldsForms[] = $pnxConfigForm;
             }

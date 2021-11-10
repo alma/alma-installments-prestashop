@@ -10,3 +10,68 @@
 i.icon-alma{
     vertical-align: text-bottom !important;
 }
+
+
+.alma-pt-8{
+    padding-top:8px;
+}
+
+.alma-pt-3{
+    padding-top:3px;
+}
+
+.form-group-15{
+    margin-bottom: 1rem;
+}
+
+.pull-right-15{
+    float: right;
+}
+
+.panel15{
+    width: 600px;
+    margin: 0 auto;
+    margin-bottom: 0px;
+    margin-bottom: 20px !important;
+}
+
+.alma-input-number{
+    width: 300px;
+    height: 20px;
+}
+
+.form-alma.disabled{
+    position: relative;
+}
+.form-alma.disabled::before{
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(255, 255, 255, .7);
+    z-index: 1;
+}
+
+/*PS1.6*/
+.panel-heading .alma-progress{
+    margin-top: 7px;
+    margin-bottom: 5px;
+}
+
+/*PS1.5*/
+#alma-refund .margin-form input[type=radio] {
+    float: left;
+    margin-top: 2px;
+}
+#alma-refund .margin-form label {
+    font-weight: normal;
+    text-align: left;
+    width: 90%;
+    color: #000;
+    float: left;
+    margin-bottom: 5px;
+    padding-left: 5px;
+}
+fieldset .form-alma.disabled::before{
+    background-color: rgba(235, 237, 244, .7);
+}
