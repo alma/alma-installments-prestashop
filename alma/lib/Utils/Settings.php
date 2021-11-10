@@ -243,11 +243,11 @@ class Settings
      *
      * @return array
      */
-    public static function getCustomFields($idLang = null)
+    public static function getCustomFields($languages)
     {
         $languages = Language::getLanguages(false);
         foreach ($languages as $language) {
-            $return[$language['id_lang']] = self::getCustomFieldsByIso($language['iso_code'], $idLang);
+            $return[$language['id_lang']] = self::getCustomFieldsByIso($language['iso_code']);
         }
 
         return $return;
@@ -257,22 +257,19 @@ class Settings
      * Array default of custom fields for insert to ps_configuration table defore json_encode
      *
      * @param string $keyConfig
-     * @param int $idLang
      *
      * @return array
      */
-    public static function getDefaultCustomFieldsByKeyConfig($keyConfig, $idLang = null)
+    public static function getDefaultCustomFieldsByKeyConfig($keyConfig)
     {
-        $customFields = self::getCustomFields($idLang);
+        $languages = Language::getLanguages();
+
+        $customFields = self::getCustomFields($languages);
         foreach ($customFields as $keyIdLang => $fields) {
             $return[$keyIdLang] = [
                 'locale' => Language::getIsoById($keyIdLang),
                 'string' => $fields[$keyConfig],
             ];
-        }
-
-        if ($idLang) {
-            return $return[$idLang];
         }
 
         return $return;
@@ -325,6 +322,7 @@ class Settings
     /**
      * Check if load all custom fields
      *
+     * @param string $keyConfig
      * @param int $idLang
      *
      * @return array
@@ -332,31 +330,56 @@ class Settings
     public static function checkIfLoadAllCustomFields($keyConfig, $idLang = null)
     {
         $arrayFields = self::getCustomFieldsByKeyConfig($keyConfig, $idLang);
-        $countArrayFields = count($arrayFields);
-        $languages = Language::getLanguages();
-        $countLanguages = count($languages);
+        if (! is_string($arrayFields)) {
+            $countArrayFields = count($arrayFields);
+            $languages = Language::getLanguages();
+            $countLanguages = count($languages);
 
-        if ($countArrayFields < $countLanguages) {
-            foreach ($languages as $lang) {
-                if (! array_key_exists($lang['id_lang'], $arrayFields)) {
-                    $arrayFields[$lang['id_lang']] = 'Texte NL';
+            if ($countArrayFields < $countLanguages) {
+                foreach ($languages as $lang) {
+                    if (! array_key_exists($lang['id_lang'], $arrayFields)) {
+                        $arrayFields[$lang['id_lang']] = self::getModuleTranslation($keyConfig, 'settings', $lang['id_lang']);
+                    }
                 }
             }
         }
-
         return $arrayFields;
     }
 
+    public static function getCustomField($keyConfig, $idLang)
+    {
+        $getConfig = json_decode(self::get($keyConfig), true);
+        $string = $getConfig[$idLang]['string'];
+
+        if (!$string) {
+            $string = self::getModuleTranslation($keyConfig, 'settings', $idLang);
+        }
+
+        return $string;
+    }
+
     /**
-     * Get Custom title button well formated
+     * Get array Custom titles button well formated
      *
      * @param int $idLang
      *
      * @return array
      */
-    public static function getPaymentButtonTitle($idLang = null)
+    public static function getPaymentButtonTitle()
     {
-        return self::checkIfLoadAllCustomFields(self::ALMA_PAYMENT_BUTTON_TITLE, $idLang);
+        return self::checkIfLoadAllCustomFields(self::ALMA_PAYMENT_BUTTON_TITLE);
+    }
+
+    /**
+     * Get Custom title button by id lang
+     *
+     * @param int $idLang
+     *
+     * @return string
+     */
+    public static function getPaymentButtonTitleByLang($idLang)
+    {
+        return self::getCustomField(self::ALMA_PAYMENT_BUTTON_TITLE, $idLang);
     }
 
     /**
@@ -751,6 +774,86 @@ class Settings
             }
             $rets[$keyConfig] = $langCache[$cacheKey];
         }
+
+        return $rets;
+    }
+
+    /**
+     * Get translation by file iso if exist
+     *
+     * @param array $string
+     * @param string $source
+     * @param string $locale
+     * @param bool $js
+     *
+     * @return array
+     *
+     * @see AdminTranslationsController::getModuleTranslation
+     */
+    public static function getModuleTranslation(
+        $string,
+        $source,
+        $idLang,
+        $js = false
+    ) {
+        global $_MODULES, $_MODULE, $_LANGADM;
+
+        static $langCache = [];
+        // $_MODULES is a cache of translations for all module.
+        // phpcs:ignore
+        // $translationsMerged is a cache of wether a specific module's translations have already been added to $_MODULES
+        static $translationsMerged = [];
+
+        $name = 'alma';
+
+
+        $iso = Language::getIsoById($idLang);
+
+        if (!isset($translationsMerged[$name][$iso])) {
+            $filesByPriority = [
+                // PrestaShop 1.5 translations
+                _PS_MODULE_DIR_ . $name . '/translations/' . $iso . '.php',
+                // PrestaShop 1.4 translations
+                _PS_MODULE_DIR_ . $name . '/' . $iso . '.php',
+                // Translations in theme
+                _PS_THEME_DIR_ . 'modules/' . $name . '/translations/' . $iso . '.php',
+                _PS_THEME_DIR_ . 'modules/' . $name . '/' . $iso . '.php',
+            ];
+            foreach ($filesByPriority as $file) {
+                if (file_exists($file)) {
+                    include $file;
+                    $_MODULES = !empty($_MODULES) ? array_merge($_MODULES, $_MODULE) : $_MODULE;
+                }
+            }
+            $translationsMerged[$name][$iso] = true;
+        }
+
+        $string = preg_replace("/\\\*'/", "\'", $string);
+        $key = md5($string);
+
+        $cacheKey = $name . '|' . $string . '|' . $source . '|' . (int) $js . '|' . $iso;
+
+        if (isset($langCache[$cacheKey])) {
+            $ret = $langCache[$cacheKey];
+        } else {
+            $currentKey = strtolower('<{' . $name . '}' . _THEME_NAME_ . '>' . $source) . '_' . $key;
+            $defaultKey = strtolower('<{' . $name . '}prestashop>' . $source) . '_' . $key;
+
+            if (!empty($_MODULES[$currentKey])) {
+                $ret = stripslashes($_MODULES[$currentKey]);
+            } elseif (!empty($_MODULES[$defaultKey])) {
+                $ret = stripslashes($_MODULES[$defaultKey]);
+            } elseif (!empty($_LANGADM)) {
+                // if translation was not found in module, look for it in AdminController or Helpers
+                $ret = stripslashes(Translate::getGenericAdminTranslation($string, $key, $_LANGADM));
+            } else {
+                $ret = stripslashes($string);
+            }
+            $ret = htmlspecialchars($ret, ENT_COMPAT, 'UTF-8');
+
+            $langCache[$cacheKey] = $ret;
+        }
+        $rets[$keyConfig] = $langCache[$cacheKey];
 
         return $rets;
     }

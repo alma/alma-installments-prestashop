@@ -123,7 +123,7 @@ final class PaymentOptionsHookController extends FrontendHookController
                 if ($n != 1) {
                     $paymentOptionPnx = $this->createPaymentOption(
                         $forEUComplianceModule,
-                        sprintf(Settings::getPaymentButtonTitle($idLang), $n),
+                        sprintf(Settings::getPaymentButtonTitleByLang($idLang), $n),
                         $this->context->link->getModuleLink(
                             $this->module->name,
                             'payment',

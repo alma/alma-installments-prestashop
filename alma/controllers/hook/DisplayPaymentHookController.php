@@ -125,7 +125,7 @@ final class DisplayPaymentHookController extends FrontendHookController
                         'pnx' => $n,
                         'logo' => $logo,
                         'isDeferred' => false,
-                        'text' => sprintf(Settings::getPaymentButtonTitle($idLang), $n),
+                        'text' => sprintf(Settings::getPaymentButtonTitleByLang($idLang), $n),
                         'desc' => sprintf(Settings::getPaymentButtonDescription($idLang), $n),
                         'creditInfo' => $creditInfo,
                     ];
