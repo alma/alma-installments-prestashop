@@ -21,7 +21,7 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  *}
 
-<div class="alma-fee-plan--block">
+<div style="margin-bottom: 20px;">
     <p>
         {$desc|escape:'htmlall':'UTF-8'}
     </p>

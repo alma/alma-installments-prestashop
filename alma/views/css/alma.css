@@ -91,24 +91,16 @@ p.payment_module a.disable-arrow-icon:after {
     color: #777;
 }
 
-.alma-confirmation--logo{
-    float: right;
-}
-
-.alma-fee-plan--block {
-    margin-bottom: 20px;
-}
-
-.payment_module .alma-button .alma-button--fee-plans,
-.order-confirmation .alma-button .alma-button--fee-plans {
+.payment_module .alma-button-with-bkg .alma-button--fee-plans,
+.payment_module .alma-button .alma-button--fee-plans {
     display: block;
     margin-top: 15px;
 }
 
-.payment_module .alma-fee-plan--description,
-.order-confirmation .alma-fee-plan--description {
+.payment_module .alma-fee-plan--description {
     padding: 4px 0;
     font-size: 0.9em;
+    font-weight: normal !important;
     letter-spacing: initial !important;
 }
 
@@ -119,14 +111,12 @@ p.payment_module a.disable-arrow-icon:after {
     letter-spacing: initial !important;
 }
 
-.payment_module .alma-fee-plan--date,
-.order-confirmation .alma-fee-plan--date {
+.payment_module .alma-fee-plan--date {
     display: inline-block;
     width: 150px;
 }
 
-.payment-options .alma-fee-plan--description,
-.order-confirmation .alma-fee-plan--description {
+.payment-options .alma-fee-plan--description {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -143,24 +133,17 @@ p.payment_module a.disable-arrow-icon:after {
     font-weight: normal !important;
 }
 
-.payment-options .alma-fee-plan--description:last-child,
-.order-confirmation .alma-fee-plan--description:last-child {
+.payment-options .alma-fee-plan--description:last-child {
     border-bottom: none;
 }
 
-.payment-options .alma-fee-plan--date,
-.order-confirmation .alma-fee-plan--date {
+.payment-options .alma-fee-plan--date {
     width: 150px;
     display: inline-block;
 }
 
-.payment-options .alma-fee-plan--amount,
-.order-confirmation .alma-fee-plan--amount {
+.payment-options .alma-fee-plan--amount {
     text-align: right;
-}
-
-.order-confirmation .alma-fee-plan--space{
-    border-color: transparent;
 }
 
 .alma-error {

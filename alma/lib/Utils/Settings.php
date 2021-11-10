@@ -99,6 +99,7 @@ class Settings
             self::ALMA_NOT_ELIGIBLE_CATEGORIES,
             'ALMA_STATE_REFUND',
             'ALMA_STATE_REFUND_ENABLED',
+            'ALMA_DISPLAY_ORDER_CONFIRMATION',
             'ALMA_EXCLUDED_CATEGORIES',
             'ALMA_SHOW_PRODUCT_ELIGIBILITY',
             'ALMA_FEE_PLANS',
@@ -347,6 +348,15 @@ class Settings
     public static function getPaymentButtonDescriptionDeferred($idLang = null)
     {
         return self::getCustomFieldsByKeyConfig(self::ALMA_DEFERRED_BUTTON_DESC, $idLang);
+    }
+
+    public static function displayOrderConfirmation()
+    {
+        // This option is mainly useful for pre-1.7 versions, where the default theme doesn't include a confirmation
+        // page for third-party payment modules.
+        $default = version_compare(_PS_VERSION_, '1.7', '<');
+
+        return (bool) (int) self::get('ALMA_DISPLAY_ORDER_CONFIRMATION', $default);
     }
 
     public static function activePlans($onlyPnx = false)
