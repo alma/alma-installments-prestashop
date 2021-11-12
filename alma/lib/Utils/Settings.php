@@ -245,7 +245,7 @@ class Settings
      */
     public static function getCustomFields($idLang = null)
     {
-        $languages = Language::getLanguages();
+        $languages = Language::getLanguages(false);
         foreach ($languages as $language) {
             $return[$language['id_lang']] = self::getCustomFieldsByIso($language['iso_code'], $idLang);
         }
