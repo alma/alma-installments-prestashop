@@ -1,5 +1,9 @@
 # Changelog
 
+## v2.3.2
+
+-   Fix empty custom fields if language is disabled
+
 ## v2.3.1
 
 -   Alma module is now available in Italian and German

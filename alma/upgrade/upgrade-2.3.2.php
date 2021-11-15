@@ -32,7 +32,7 @@ use Alma\API\RequestError;
 use Alma\PrestaShop\API\ClientHelper;
 use Alma\PrestaShop\Utils\Settings;
 
-function upgrade_module_2_3_0($module)
+function upgrade_module_2_3_2($module)
 {
     if (Settings::isFullyConfigured()) {
         $alma = ClientHelper::defaultInstance();
