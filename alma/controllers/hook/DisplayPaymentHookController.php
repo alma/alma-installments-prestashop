@@ -97,8 +97,8 @@ final class DisplayPaymentHookController extends FrontendHookController
                     'logo' => $logo,
                     'plans' => $plans,
                     'isDeferred' => true,
-                    'text' => sprintf(Settings::getPaymentButtonTitleDeferred($idLang), $duration),
-                    'desc' => sprintf(Settings::getPaymentButtonDescriptionDeferred($idLang), $duration),
+                    'text' => sprintf(Settings::getPaymentButtonTitleDeferredByLang($idLang), $duration),
+                    'desc' => sprintf(Settings::getPaymentButtonDescriptionDeferredByLang($idLang), $duration),
                     'creditInfo' => $creditInfo,
                     ];
                     $paymentOptions[$key] = $paymentOption;
@@ -126,7 +126,7 @@ final class DisplayPaymentHookController extends FrontendHookController
                         'logo' => $logo,
                         'isDeferred' => false,
                         'text' => sprintf(Settings::getPaymentButtonTitleByLang($idLang), $n),
-                        'desc' => sprintf(Settings::getPaymentButtonDescription($idLang), $n),
+                        'desc' => sprintf(Settings::getPaymentButtonDescriptionByLang($idLang), $n),
                         'creditInfo' => $creditInfo,
                     ];
                     $paymentOptions[$key] = $paymentOption;

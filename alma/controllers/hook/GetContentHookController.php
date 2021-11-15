@@ -99,8 +99,6 @@ final class GetContentHookController extends AdminHookController
                 }
             }
 
-            // init Custom Field to install and Save Api Key
-            Settings::initCustomFields();
         }
 
         // Get languages are active
@@ -1227,6 +1225,9 @@ final class GetContentHookController extends AdminHookController
             '&module_name=' . $this->module->name;
 
         $helper->token = Tools::getAdminTokenLite('AdminModules');
+
+        // var_dump(Settings::getPaymentButtonDescription());
+        // exit();
 
         $helper->fields_value = [
             'ALMA_LIVE_API_KEY' => Settings::getLiveKey(),

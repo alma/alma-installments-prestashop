@@ -92,7 +92,7 @@ final class PaymentOptionsHookController extends FrontendHookController
                     $duration = Settings::getDuration($plan);
                     $paymentOptionDeferred = $this->createPaymentOption(
                         $forEUComplianceModule,
-                        sprintf(Settings::getPaymentButtonTitleDeferred($idLang), $duration),
+                        sprintf(Settings::getPaymentButtonTitleDeferredByLang($idLang), $duration),
                         $this->context->link->getModuleLink(
                             $this->module->name,
                             'payment',
@@ -104,7 +104,7 @@ final class PaymentOptionsHookController extends FrontendHookController
                     );
                     if (!$forEUComplianceModule) {
                         $this->context->smarty->assign([
-                            'desc' => sprintf(Settings::getPaymentButtonDescriptionDeferred($idLang), $duration),
+                            'desc' => sprintf(Settings::getPaymentButtonDescriptionDeferredByLang($idLang), $duration),
                             'plans' => (array) $plans,
                             'apiMode' => Settings::getActiveMode(),
                             'merchantId' => Settings::getMerchantId(),
@@ -136,7 +136,7 @@ final class PaymentOptionsHookController extends FrontendHookController
 
                     if (!$forEUComplianceModule) {
                         $this->context->smarty->assign([
-                            'desc' => sprintf(Settings::getPaymentButtonDescription($idLang), $n),
+                            'desc' => sprintf(Settings::getPaymentButtonDescriptionByLang($idLang), $n),
                             'plans' => (array) $plans,
                             'apiMode' => Settings::getActiveMode(),
                             'merchantId' => Settings::getMerchantId(),

@@ -164,9 +164,14 @@ class Settings
         return (bool) (int) self::get('ALMA_SHOW_DISABLED_BUTTON', true);
     }
 
-    public static function getNonEligibleCategoriesMessage($idLang = null)
+    public static function getNonEligibleCategoriesMessage()
     {
-        return self::checkIfLoadAllCustomFields(self::ALMA_NOT_ELIGIBLE_CATEGORIES, $idLang);
+        return self::checkIfLoadAllCustomFields(self::ALMA_NOT_ELIGIBLE_CATEGORIES);
+    }
+
+    public static function getNonEligibleCategoriesMessageByLang($idLang)
+    {
+        return self::getNonEligibleCategoriesMessage()[$idLang];
     }
 
     public static function showEligibilityMessage()
@@ -197,7 +202,7 @@ class Settings
     public static function initCustomFields()
     {
         foreach (self::customFields() as $keyConfig => $string) {
-            Settings::updateValue($keyConfig, json_encode(Settings::getDefaultCustomFieldsByKeyConfig($keyConfig)));
+            Settings::updateValue($keyConfig, json_encode(Settings::getAllLangCustomFieldByKeyConfig($keyConfig)));
         }
     }
 
@@ -218,57 +223,19 @@ class Settings
     }
 
     /**
-     * Get array of custom field by iso code
-     *
-     * @param string $iso
-     * @param int $idLang
-     *
-     * @return array
-     */
-    public static function getCustomFieldsByIso($iso, $idLang = null)
-    {
-        $unset = false;
-
-        if ($idLang) {
-            $unset = true;
-        }
-
-        return self::getModuleTranslations('alma', self::customFields(), 'settings', $iso, $unset);
-    }
-
-    /**
      * Get custom fields by language
      *
      * @param int $idLang
+     * @param array $languages
      *
      * @return array
      */
-    public static function getCustomFields($languages)
+    public static function getAllLangCustomFieldByKeyConfig($keyConfig, $languages)
     {
-        $languages = Language::getLanguages(false);
         foreach ($languages as $language) {
-            $return[$language['id_lang']] = self::getCustomFieldsByIso($language['iso_code']);
-        }
-
-        return $return;
-    }
-
-    /**
-     * Array default of custom fields for insert to ps_configuration table defore json_encode
-     *
-     * @param string $keyConfig
-     *
-     * @return array
-     */
-    public static function getDefaultCustomFieldsByKeyConfig($keyConfig)
-    {
-        $languages = Language::getLanguages();
-
-        $customFields = self::getCustomFields($languages);
-        foreach ($customFields as $keyIdLang => $fields) {
-            $return[$keyIdLang] = [
-                'locale' => Language::getIsoById($keyIdLang),
-                'string' => $fields[$keyConfig],
+            $return[$language['id_lang']] = [
+                'locale' => $language['iso_code'],
+                'string' => self::getModuleTranslation(self::customFields()[$keyConfig], 'settings', $language['id_lang'])
             ];
         }
 
@@ -279,44 +246,20 @@ class Settings
      * Traitment for format array custom fields for read in front
      *
      * @param string $keyConfig
-     * @param int $idLang
+     * @param array $languages
      *
      * @return array
      */
-    public static function getCustomFieldsByKeyConfig($keyConfig, $idLang = null)
+    public static function getCustomFieldByKeyConfig($keyConfig, $languages)
     {
-        $field = self::getDefaultCustomFieldsByKeyConfig($keyConfig, $idLang);
+        $defaultField = self::getAllLangCustomFieldByKeyConfig($keyConfig, $languages);
 
-        $datasConfig = json_decode(self::get($keyConfig, json_encode($field)), true);
-        foreach ($datasConfig as $key => $data) {
-            $return[$key] = $data['string'];
-        }
-
-        if ($idLang) {
-            return $return[$idLang];
+        $allLangField = json_decode(self::get($keyConfig, json_encode($defaultField)), true);
+        foreach ($allLangField as $key => $field) {
+            $return[$key] = $field['string'];
         }
 
         return $return;
-    }
-
-    /**
-     * get custom field by config key name and id_lang
-     *
-     * @param string $keyConfig
-     * @param int $idLang
-     *
-     * @return string
-     */
-    public static function getCustomFieldByKeyConfigByLang($keyConfig, $idLang)
-    {
-        $field = self::getDefaultCustomFieldsByKeyConfig($keyConfig, $idLang);
-
-        $datasConfig = json_decode(self::get($keyConfig, json_encode($field)), true);
-        foreach ($datasConfig as $key => $data) {
-            $return[$key] = $data['string'];
-        }
-
-        return $return[$idLang];
     }
 
     /**
@@ -327,41 +270,26 @@ class Settings
      *
      * @return array
      */
-    public static function checkIfLoadAllCustomFields($keyConfig, $idLang = null)
+    public static function checkIfLoadAllCustomFields($keyConfig)
     {
-        $arrayFields = self::getCustomFieldsByKeyConfig($keyConfig, $idLang);
-        if (! is_string($arrayFields)) {
-            $countArrayFields = count($arrayFields);
-            $languages = Language::getLanguages();
-            $countLanguages = count($languages);
+        $languages = Language::getLanguages(false);
+        $arrayFields = self::getCustomFieldByKeyConfig($keyConfig, $languages);
+        $countArrayFields = count($arrayFields);
+        $countLanguages = count($languages);
 
-            if ($countArrayFields < $countLanguages) {
-                foreach ($languages as $lang) {
-                    if (! array_key_exists($lang['id_lang'], $arrayFields)) {
-                        $arrayFields[$lang['id_lang']] = self::getModuleTranslation($keyConfig, 'settings', $lang['id_lang']);
-                    }
+        if ($countArrayFields < $countLanguages) {
+            foreach ($languages as $lang) {
+                if (! array_key_exists($lang['id_lang'], $arrayFields)) {
+                    $arrayFields[$lang['id_lang']] = self::getModuleTranslation(self::customFields()[$keyConfig], 'settings', $lang['id_lang']);
                 }
             }
         }
+
         return $arrayFields;
-    }
-
-    public static function getCustomField($keyConfig, $idLang)
-    {
-        $getConfig = json_decode(self::get($keyConfig), true);
-        $string = $getConfig[$idLang]['string'];
-
-        if (!$string) {
-            $string = self::getModuleTranslation($keyConfig, 'settings', $idLang);
-        }
-
-        return $string;
     }
 
     /**
      * Get array Custom titles button well formated
-     *
-     * @param int $idLang
      *
      * @return array
      */
@@ -379,7 +307,17 @@ class Settings
      */
     public static function getPaymentButtonTitleByLang($idLang)
     {
-        return self::getCustomField(self::ALMA_PAYMENT_BUTTON_TITLE, $idLang);
+        return self::getPaymentButtonTitle()[$idLang];
+    }
+
+    /**
+     * Get Custom description button well formated
+     *
+     * @return array
+     */
+    public static function getPaymentButtonDescription()
+    {
+        return self::checkIfLoadAllCustomFields(self::ALMA_PAYMENT_BUTTON_DESC);
     }
 
     /**
@@ -387,11 +325,21 @@ class Settings
      *
      * @param int $idLang
      *
+     * @return string
+     */
+    public static function getPaymentButtonDescriptionByLang($idLang)
+    {
+        return self::getPaymentButtonDescription()[$idLang];
+    }
+
+    /**
+     * Get Custom title deferred button well formated
+     *
      * @return array
      */
-    public static function getPaymentButtonDescription($idLang = null)
+    public static function getPaymentButtonTitleDeferred()
     {
-        return self::checkIfLoadAllCustomFields(self::ALMA_PAYMENT_BUTTON_DESC, $idLang);
+        return self::checkIfLoadAllCustomFields(self::ALMA_DEFERRED_BUTTON_TITLE);
     }
 
     /**
@@ -399,11 +347,21 @@ class Settings
      *
      * @param int $idLang
      *
+     * @return string
+     */
+    public static function getPaymentButtonTitleDeferredByLang($idLang)
+    {
+        return self::getPaymentButtonTitleDeferred()[$idLang];
+    }
+
+    /**
+     * Get Custom description deferred button well formated
+     *
      * @return array
      */
-    public static function getPaymentButtonTitleDeferred($idLang = null)
+    public static function getPaymentButtonDescriptionDeferred()
     {
-        return self::checkIfLoadAllCustomFields(self::ALMA_DEFERRED_BUTTON_TITLE, $idLang);
+        return self::checkIfLoadAllCustomFields(self::ALMA_DEFERRED_BUTTON_DESC);
     }
 
     /**
@@ -411,11 +369,11 @@ class Settings
      *
      * @param int $idLang
      *
-     * @return array
+     * @return string
      */
-    public static function getPaymentButtonDescriptionDeferred($idLang = null)
+    public static function getPaymentButtonDescriptionDeferredByLang($idLang)
     {
-        return self::checkIfLoadAllCustomFields(self::ALMA_DEFERRED_BUTTON_DESC, $idLang);
+        return self::getPaymentButtonDescriptionDeferred()[$idLang];
     }
 
     public static function displayOrderConfirmation()
@@ -684,107 +642,9 @@ class Settings
     /**
      * Get translation by file iso if exist
      *
-     * @param string $module
-     * @param array $arrayTrad
-     * @param string $source
-     * @param string $locale
-     * @param int $unset
-     * @param bool $js
-     * @param bool $escape
-     *
-     * @return array
-     *
-     * @see AdminTranslationsController::getModuleTranslations
-     */
-    public static function getModuleTranslations(
-        $module,
-        $arrayTrad,
-        $source,
-        $locale,
-        $unset = false,
-        $js = false,
-        $escape = true
-    ) {
-        global $_MODULES, $_MODULE, $_LANGADM;
-
-        static $langCache = [];
-        // $_MODULES is a cache of translations for all module.
-        // phpcs:ignore
-        // $translationsMerged is a cache of wether a specific module's translations have already been added to $_MODULES
-        static $translationsMerged = [];
-
-        $_TRADS = [];
-
-        $name = $module instanceof Module ? $module->name : $module;
-
-        $iso = $locale;
-
-        if (!isset($translationsMerged[$name][$iso])) {
-            $filesByPriority = [
-                // PrestaShop 1.5 translations
-                _PS_MODULE_DIR_ . $name . '/translations/' . $iso . '.php',
-                // PrestaShop 1.4 translations
-                _PS_MODULE_DIR_ . $name . '/' . $iso . '.php',
-                // Translations in theme
-                _PS_THEME_DIR_ . 'modules/' . $name . '/translations/' . $iso . '.php',
-                _PS_THEME_DIR_ . 'modules/' . $name . '/' . $iso . '.php',
-            ];
-            foreach ($filesByPriority as $file) {
-                if (file_exists($file)) {
-                    include $file;
-                    if ($unset) {
-                        unset($_MODULES);
-                    }
-                    $_TRADS = !empty($_TRADS) ? array_merge($_MODULES, $_MODULE) : $_MODULE;
-                }
-            }
-            $translationsMerged[$name][$iso] = true;
-        }
-
-        foreach ($arrayTrad as $keyConfig => $string) {
-            $string = preg_replace("/\\\*'/", "\'", $string);
-            $key = md5($string);
-
-            $cacheKey = $name . '|' . $string . '|' . $source . '|' . (int) $js . '|' . $iso;
-
-            if (isset($langCache[$cacheKey])) {
-                $ret = $langCache[$cacheKey];
-            } else {
-                $currentKey = strtolower('<{' . $name . '}' . _THEME_NAME_ . '>' . $source) . '_' . $key;
-                $defaultKey = strtolower('<{' . $name . '}prestashop>' . $source) . '_' . $key;
-
-                if (!empty($_TRADS[$currentKey])) {
-                    $ret = stripslashes($_TRADS[$currentKey]);
-                } elseif (!empty($_TRADS[$defaultKey])) {
-                    $ret = stripslashes($_TRADS[$defaultKey]);
-                } elseif (!empty($_LANGADM)) {
-                    // if translation was not found in module, look for it in AdminController or Helpers
-                    $ret = stripslashes(Translate::getGenericAdminTranslation($string, $key, $_LANGADM));
-                } else {
-                    $ret = stripslashes($string);
-                }
-
-                if ($js) {
-                    $ret = addslashes($ret);
-                } elseif ($escape) {
-                    $ret = htmlspecialchars($ret, ENT_COMPAT, 'UTF-8');
-                }
-
-                $langCache[$cacheKey] = $ret;
-            }
-            $rets[$keyConfig] = $langCache[$cacheKey];
-        }
-
-        return $rets;
-    }
-
-    /**
-     * Get translation by file iso if exist
-     *
      * @param array $string
      * @param string $source
      * @param string $locale
-     * @param bool $js
      *
      * @return array
      *
@@ -793,68 +653,42 @@ class Settings
     public static function getModuleTranslation(
         $string,
         $source,
-        $idLang,
-        $js = false
+        $idLang
     ) {
-        global $_MODULES, $_MODULE, $_LANGADM;
-
-        static $langCache = [];
-        // $_MODULES is a cache of translations for all module.
-        // phpcs:ignore
-        // $translationsMerged is a cache of wether a specific module's translations have already been added to $_MODULES
-        static $translationsMerged = [];
+        global $_MODULE;
 
         $name = 'alma';
 
-
         $iso = Language::getIsoById($idLang);
 
-        if (!isset($translationsMerged[$name][$iso])) {
-            $filesByPriority = [
-                // PrestaShop 1.5 translations
-                _PS_MODULE_DIR_ . $name . '/translations/' . $iso . '.php',
-                // PrestaShop 1.4 translations
-                _PS_MODULE_DIR_ . $name . '/' . $iso . '.php',
-                // Translations in theme
-                _PS_THEME_DIR_ . 'modules/' . $name . '/translations/' . $iso . '.php',
-                _PS_THEME_DIR_ . 'modules/' . $name . '/' . $iso . '.php',
-            ];
-            foreach ($filesByPriority as $file) {
-                if (file_exists($file)) {
-                    include $file;
-                    $_MODULES = !empty($_MODULES) ? array_merge($_MODULES, $_MODULE) : $_MODULE;
-                }
+        $filesByPriority = [
+            // PrestaShop 1.5 translations
+            _PS_MODULE_DIR_ . $name . '/translations/' . $iso . '.php',
+            // PrestaShop 1.4 translations
+            _PS_MODULE_DIR_ . $name . '/' . $iso . '.php',
+            // Translations in theme
+            _PS_THEME_DIR_ . 'modules/' . $name . '/translations/' . $iso . '.php',
+            _PS_THEME_DIR_ . 'modules/' . $name . '/' . $iso . '.php',
+        ];
+        foreach ($filesByPriority as $file) {
+            if (file_exists($file)) {
+                include $file;
+                $_TRADS[$iso] = !empty($_TRADS[$iso]) ? array_merge($_TRADS[$iso], $_MODULE) : $_MODULE;
             }
-            $translationsMerged[$name][$iso] = true;
         }
 
         $string = preg_replace("/\\\*'/", "\'", $string);
         $key = md5($string);
 
-        $cacheKey = $name . '|' . $string . '|' . $source . '|' . (int) $js . '|' . $iso;
+        $defaultKey = strtolower('<{' . $name . '}prestashop>' . $source) . '_' . $key;
 
-        if (isset($langCache[$cacheKey])) {
-            $ret = $langCache[$cacheKey];
+        if (!empty($_TRADS[$iso][$defaultKey])) {
+            $ret = stripslashes($_TRADS[$iso][$defaultKey]);
         } else {
-            $currentKey = strtolower('<{' . $name . '}' . _THEME_NAME_ . '>' . $source) . '_' . $key;
-            $defaultKey = strtolower('<{' . $name . '}prestashop>' . $source) . '_' . $key;
-
-            if (!empty($_MODULES[$currentKey])) {
-                $ret = stripslashes($_MODULES[$currentKey]);
-            } elseif (!empty($_MODULES[$defaultKey])) {
-                $ret = stripslashes($_MODULES[$defaultKey]);
-            } elseif (!empty($_LANGADM)) {
-                // if translation was not found in module, look for it in AdminController or Helpers
-                $ret = stripslashes(Translate::getGenericAdminTranslation($string, $key, $_LANGADM));
-            } else {
-                $ret = stripslashes($string);
-            }
-            $ret = htmlspecialchars($ret, ENT_COMPAT, 'UTF-8');
-
-            $langCache[$cacheKey] = $ret;
+            $ret = stripslashes($string);
         }
-        $rets[$keyConfig] = $langCache[$cacheKey];
+        $ret = htmlspecialchars($ret, ENT_COMPAT, 'UTF-8');
 
-        return $rets;
+        return $ret;
     }
 }
