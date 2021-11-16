@@ -33,6 +33,7 @@ use Alma\PrestaShop\API\ClientHelper;
 use Alma\PrestaShop\Hooks\AdminHookController;
 use Alma\PrestaShop\Utils\Logger;
 use Alma\PrestaShop\Utils\Settings;
+use Alma\PrestaShop\Utils\SettingsCustomFields;
 use Configuration;
 use HelperForm;
 use Media;
@@ -1233,10 +1234,10 @@ final class GetContentHookController extends AdminHookController
             'ALMA_LIVE_API_KEY' => Settings::getLiveKey(),
             'ALMA_TEST_API_KEY' => Settings::getTestKey(),
             'ALMA_API_MODE' => Settings::getActiveMode(),
-            'ALMA_PAYMENT_BUTTON_TITLE' => Settings::getPaymentButtonTitle(),
-            'ALMA_PAYMENT_BUTTON_DESC' => Settings::getPaymentButtonDescription(),
-            'ALMA_DEFERRED_BUTTON_TITLE' => Settings::getPaymentButtonTitleDeferred(),
-            'ALMA_DEFERRED_BUTTON_DESC' => Settings::getPaymentButtonDescriptionDeferred(),
+            'ALMA_PAYMENT_BUTTON_TITLE' => SettingsCustomFields::getPaymentButtonTitle(),
+            'ALMA_PAYMENT_BUTTON_DESC' => SettingsCustomFields::getPaymentButtonDescription(),
+            'ALMA_DEFERRED_BUTTON_TITLE' => SettingsCustomFields::getPaymentButtonTitleDeferred(),
+            'ALMA_DEFERRED_BUTTON_DESC' => SettingsCustomFields::getPaymentButtonDescriptionDeferred(),
             'ALMA_SHOW_DISABLED_BUTTON' => Settings::showDisabledButton(),
             'ALMA_SHOW_ELIGIBILITY_MESSAGE_ON' => Settings::showEligibilityMessage(),
             'ALMA_CART_WDGT_NOT_ELGBL_ON' => Settings::showCartWidgetIfNotEligible(),
@@ -1246,7 +1247,7 @@ final class GetContentHookController extends AdminHookController
             'ALMA_ACTIVATE_LOGGING_ON' => (bool) Settings::canLog(),
             'ALMA_STATE_REFUND' => Settings::getRefundState(),
             'ALMA_STATE_REFUND_ENABLED_ON' => Settings::isRefundEnabledByState(),
-            'ALMA_NOT_ELIGIBLE_CATEGORIES' => Settings::getNonEligibleCategoriesMessage(),
+            'ALMA_NOT_ELIGIBLE_CATEGORIES' => SettingsCustomFields::getNonEligibleCategoriesMessage(),
             'ALMA_SHOW_PRODUCT_ELIGIBILITY_ON' => Settings::showProductEligibility(),
             'ALMA_PRODUCT_PRICE_SELECTOR' => Settings::getProductPriceQuerySelector(),
             'ALMA_WIDGET_POSITION_SELECTOR' => Settings::getProductWidgetPositionQuerySelector(),

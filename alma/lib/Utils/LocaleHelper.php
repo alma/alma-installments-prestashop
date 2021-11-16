@@ -25,6 +25,7 @@
 namespace Alma\PrestaShop\Utils;
 
 use Context;
+use Language;
 use Tools;
 
 if (!defined('_PS_VERSION_')) {
@@ -107,5 +108,58 @@ class LocaleHelper
 
             return $symbols->getGroup();
         }
+    }
+
+    /**
+     * Get translation by file iso if exist
+     *
+     * @param array $string
+     * @param string $source
+     * @param string $locale
+     *
+     * @return array
+     *
+     * @see AdminTranslationsController::getModuleTranslation
+     */
+    public static function getModuleTranslation(
+        $string,
+        $source,
+        $idLang
+    ) {
+        global $_MODULE;
+
+        $name = 'alma';
+
+        $iso = Language::getIsoById($idLang);
+
+        $filesByPriority = [
+            // PrestaShop 1.5 translations
+            _PS_MODULE_DIR_ . $name . '/translations/' . $iso . '.php',
+            // PrestaShop 1.4 translations
+            _PS_MODULE_DIR_ . $name . '/' . $iso . '.php',
+            // Translations in theme
+            _PS_THEME_DIR_ . 'modules/' . $name . '/translations/' . $iso . '.php',
+            _PS_THEME_DIR_ . 'modules/' . $name . '/' . $iso . '.php',
+        ];
+        foreach ($filesByPriority as $file) {
+            if (file_exists($file)) {
+                include $file;
+                $_TRADS[$iso] = !empty($_TRADS[$iso]) ? array_merge($_TRADS[$iso], $_MODULE) : $_MODULE;
+            }
+        }
+
+        $string = preg_replace("/\\\*'/", "\'", $string);
+        $key = md5($string);
+
+        $defaultKey = strtolower('<{' . $name . '}prestashop>' . $source) . '_' . $key;
+
+        if (!empty($_TRADS[$iso][$defaultKey])) {
+            $ret = stripslashes($_TRADS[$iso][$defaultKey]);
+        } else {
+            $ret = stripslashes($string);
+        }
+        $ret = htmlspecialchars($ret, ENT_COMPAT, 'UTF-8');
+
+        return $ret;
     }
 }

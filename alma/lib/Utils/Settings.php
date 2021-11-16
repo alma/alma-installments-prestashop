@@ -36,24 +36,16 @@ if (!defined('ALMA_MODE_LIVE')) {
     define('ALMA_MODE_LIVE', 'live');
 }
 
-use Alma\PrestaShop\Model\CategoryAdapter;
-use Category;
-use Configuration;
-use Language;
-use Module;
-use Product;
 use Shop;
 use Tools;
+use Product;
+use Category;
 use Translate;
+use Configuration;
+use Alma\PrestaShop\Model\CategoryAdapter;
 
 class Settings
 {
-    const ALMA_PAYMENT_BUTTON_TITLE = 'ALMA_PAYMENT_BUTTON_TITLE';
-    const ALMA_PAYMENT_BUTTON_DESC = 'ALMA_PAYMENT_BUTTON_DESC';
-    const ALMA_DEFERRED_BUTTON_TITLE = 'ALMA_DEFERRED_BUTTON_TITLE';
-    const ALMA_DEFERRED_BUTTON_DESC = 'ALMA_DEFERRED_BUTTON_DESC';
-    const ALMA_NOT_ELIGIBLE_CATEGORIES = 'ALMA_NOT_ELIGIBLE_CATEGORIES';
-
     public static function l($str)
     {
         return Translate::getModuleTranslation('alma', $str, 'settings');
@@ -92,11 +84,11 @@ class Settings
             'ALMA_TEST_API_KEY',
             'ALMA_SHOW_DISABLED_BUTTON',
             'ALMA_SHOW_ELIGIBILITY_MESSAGE',
-            self::ALMA_PAYMENT_BUTTON_TITLE,
-            self::ALMA_PAYMENT_BUTTON_DESC,
-            self::ALMA_DEFERRED_BUTTON_TITLE,
-            self::ALMA_DEFERRED_BUTTON_DESC,
-            self::ALMA_NOT_ELIGIBLE_CATEGORIES,
+            SettingsCustomFields::ALMA_PAYMENT_BUTTON_TITLE,
+            SettingsCustomFields::ALMA_PAYMENT_BUTTON_DESC,
+            SettingsCustomFields::ALMA_DEFERRED_BUTTON_TITLE,
+            SettingsCustomFields::ALMA_DEFERRED_BUTTON_DESC,
+            SettingsCustomFields::ALMA_NOT_ELIGIBLE_CATEGORIES,
             'ALMA_STATE_REFUND',
             'ALMA_STATE_REFUND_ENABLED',
             'ALMA_DISPLAY_ORDER_CONFIRMATION',
@@ -164,16 +156,6 @@ class Settings
         return (bool) (int) self::get('ALMA_SHOW_DISABLED_BUTTON', true);
     }
 
-    public static function getNonEligibleCategoriesMessage()
-    {
-        return self::checkIfLoadAllCustomFields(self::ALMA_NOT_ELIGIBLE_CATEGORIES);
-    }
-
-    public static function getNonEligibleCategoriesMessageByLang($idLang)
-    {
-        return self::getNonEligibleCategoriesMessage()[$idLang];
-    }
-
     public static function showEligibilityMessage()
     {
         return (bool) (int) self::get('ALMA_SHOW_ELIGIBILITY_MESSAGE', true);
@@ -192,188 +174,6 @@ class Settings
     public static function showCategoriesWidgetIfNotEligible()
     {
         return (bool) (int) self::get('ALMA_CATEGORIES_WDGT_NOT_ELGBL', true);
-    }
-
-    /**
-     * Init default custom fileds in ps_configuration table
-     *
-     * @return void
-     */
-    public static function initCustomFields()
-    {
-        foreach (self::customFields() as $keyConfig => $string) {
-            Settings::updateValue($keyConfig, json_encode(Settings::getAllLangCustomFieldByKeyConfig($keyConfig)));
-        }
-    }
-
-    /**
-     * Default custom fields
-     *
-     * @return array
-     */
-    public static function customFields()
-    {
-        return [
-            self::ALMA_PAYMENT_BUTTON_TITLE => 'Pay in %d installments',
-            self::ALMA_PAYMENT_BUTTON_DESC => 'Pay in %d monthly installments with your credit card.',
-            self::ALMA_DEFERRED_BUTTON_TITLE => 'Buy now Pay in %d days',
-            self::ALMA_DEFERRED_BUTTON_DESC => 'Buy now pay in %d days with your credit card.',
-            self::ALMA_NOT_ELIGIBLE_CATEGORIES => 'Your cart is not eligible for payments with Alma.',
-        ];
-    }
-
-    /**
-     * Get custom fields by language
-     *
-     * @param int $idLang
-     * @param array $languages
-     *
-     * @return array
-     */
-    public static function getAllLangCustomFieldByKeyConfig($keyConfig, $languages)
-    {
-        foreach ($languages as $language) {
-            $return[$language['id_lang']] = [
-                'locale' => $language['iso_code'],
-                'string' => self::getModuleTranslation(self::customFields()[$keyConfig], 'settings', $language['id_lang'])
-            ];
-        }
-
-        return $return;
-    }
-
-    /**
-     * Traitment for format array custom fields for read in front
-     *
-     * @param string $keyConfig
-     * @param array $languages
-     *
-     * @return array
-     */
-    public static function getCustomFieldByKeyConfig($keyConfig, $languages)
-    {
-        $defaultField = self::getAllLangCustomFieldByKeyConfig($keyConfig, $languages);
-
-        $allLangField = json_decode(self::get($keyConfig, json_encode($defaultField)), true);
-        foreach ($allLangField as $key => $field) {
-            $return[$key] = $field['string'];
-        }
-
-        return $return;
-    }
-
-    /**
-     * Check if load all custom fields
-     *
-     * @param string $keyConfig
-     * @param int $idLang
-     *
-     * @return array
-     */
-    public static function checkIfLoadAllCustomFields($keyConfig)
-    {
-        $languages = Language::getLanguages(false);
-        $arrayFields = self::getCustomFieldByKeyConfig($keyConfig, $languages);
-        $countArrayFields = count($arrayFields);
-        $countLanguages = count($languages);
-
-        if ($countArrayFields < $countLanguages) {
-            foreach ($languages as $lang) {
-                if (! array_key_exists($lang['id_lang'], $arrayFields)) {
-                    $arrayFields[$lang['id_lang']] = self::getModuleTranslation(self::customFields()[$keyConfig], 'settings', $lang['id_lang']);
-                }
-            }
-        }
-
-        return $arrayFields;
-    }
-
-    /**
-     * Get array Custom titles button well formated
-     *
-     * @return array
-     */
-    public static function getPaymentButtonTitle()
-    {
-        return self::checkIfLoadAllCustomFields(self::ALMA_PAYMENT_BUTTON_TITLE);
-    }
-
-    /**
-     * Get Custom title button by id lang
-     *
-     * @param int $idLang
-     *
-     * @return string
-     */
-    public static function getPaymentButtonTitleByLang($idLang)
-    {
-        return self::getPaymentButtonTitle()[$idLang];
-    }
-
-    /**
-     * Get Custom description button well formated
-     *
-     * @return array
-     */
-    public static function getPaymentButtonDescription()
-    {
-        return self::checkIfLoadAllCustomFields(self::ALMA_PAYMENT_BUTTON_DESC);
-    }
-
-    /**
-     * Get Custom description button well formated
-     *
-     * @param int $idLang
-     *
-     * @return string
-     */
-    public static function getPaymentButtonDescriptionByLang($idLang)
-    {
-        return self::getPaymentButtonDescription()[$idLang];
-    }
-
-    /**
-     * Get Custom title deferred button well formated
-     *
-     * @return array
-     */
-    public static function getPaymentButtonTitleDeferred()
-    {
-        return self::checkIfLoadAllCustomFields(self::ALMA_DEFERRED_BUTTON_TITLE);
-    }
-
-    /**
-     * Get Custom title deferred button well formated
-     *
-     * @param int $idLang
-     *
-     * @return string
-     */
-    public static function getPaymentButtonTitleDeferredByLang($idLang)
-    {
-        return self::getPaymentButtonTitleDeferred()[$idLang];
-    }
-
-    /**
-     * Get Custom description deferred button well formated
-     *
-     * @return array
-     */
-    public static function getPaymentButtonDescriptionDeferred()
-    {
-        return self::checkIfLoadAllCustomFields(self::ALMA_DEFERRED_BUTTON_DESC);
-    }
-
-    /**
-     * Get Custom description deferred button well formated
-     *
-     * @param int $idLang
-     *
-     * @return string
-     */
-    public static function getPaymentButtonDescriptionDeferredByLang($idLang)
-    {
-        return self::getPaymentButtonDescriptionDeferred()[$idLang];
     }
 
     public static function displayOrderConfirmation()
@@ -637,58 +437,5 @@ class Settings
             'deferredDays' => (int) $data[2],
             'deferredMonths' => (int) $data[3],
         ];
-    }
-
-    /**
-     * Get translation by file iso if exist
-     *
-     * @param array $string
-     * @param string $source
-     * @param string $locale
-     *
-     * @return array
-     *
-     * @see AdminTranslationsController::getModuleTranslation
-     */
-    public static function getModuleTranslation(
-        $string,
-        $source,
-        $idLang
-    ) {
-        global $_MODULE;
-
-        $name = 'alma';
-
-        $iso = Language::getIsoById($idLang);
-
-        $filesByPriority = [
-            // PrestaShop 1.5 translations
-            _PS_MODULE_DIR_ . $name . '/translations/' . $iso . '.php',
-            // PrestaShop 1.4 translations
-            _PS_MODULE_DIR_ . $name . '/' . $iso . '.php',
-            // Translations in theme
-            _PS_THEME_DIR_ . 'modules/' . $name . '/translations/' . $iso . '.php',
-            _PS_THEME_DIR_ . 'modules/' . $name . '/' . $iso . '.php',
-        ];
-        foreach ($filesByPriority as $file) {
-            if (file_exists($file)) {
-                include $file;
-                $_TRADS[$iso] = !empty($_TRADS[$iso]) ? array_merge($_TRADS[$iso], $_MODULE) : $_MODULE;
-            }
-        }
-
-        $string = preg_replace("/\\\*'/", "\'", $string);
-        $key = md5($string);
-
-        $defaultKey = strtolower('<{' . $name . '}prestashop>' . $source) . '_' . $key;
-
-        if (!empty($_TRADS[$iso][$defaultKey])) {
-            $ret = stripslashes($_TRADS[$iso][$defaultKey]);
-        } else {
-            $ret = stripslashes($string);
-        }
-        $ret = htmlspecialchars($ret, ENT_COMPAT, 'UTF-8');
-
-        return $ret;
     }
 }
