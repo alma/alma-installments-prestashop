@@ -49,7 +49,7 @@
                         '<div id="alma-payment" class="col-xs-12 display-fragment"></div>'
                     );
                 processAlmaPayment(this.href);
-            });              
+            });
         
             $(".alma-fragments-pnx").click(function (e) {
                 if (getInstallmentByUrl(this.href) <= 4) {
