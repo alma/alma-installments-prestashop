@@ -89,12 +89,13 @@ window.onload = function () {
         $(".js-payment-option-form form").submit(function (e) {
             url = $(this).attr("action");
 
-            if (getInstallmentByUrl(url) <= 4 && $("#almaFragments").data("activatefragment")) {
-                e.preventDefault();
-                if (
-                    url.indexOf("module/alma/payment") != -1 ||
-                    url.indexOf("module=alma") != -1
-                ) {
+            if (
+                url.indexOf("module/alma/payment") != -1 ||
+                url.indexOf("module=alma") != -1
+            ) {
+                if (getInstallmentByUrl(url) <= 4 && $("#almaFragments").data("activatefragment")) {
+                    e.preventDefault();
+
                     $("#payment-confirmation").after(
                         '<div id="alma-payment"></div>'
                     );
