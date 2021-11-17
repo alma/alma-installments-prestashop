@@ -25,7 +25,6 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-use Alma\API\RequestError;
 use Alma\PrestaShop\API\ClientHelper;
 use Alma\PrestaShop\Model\PaymentData;
 use Alma\PrestaShop\Utils\Logger;
