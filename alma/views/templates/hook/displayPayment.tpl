@@ -34,3 +34,33 @@
         {include file="modules/alma/views/templates/hook/_partials/displayPayment_pnx.tpl" plans=$option.plans installmentText=$option.installmentText deferred_trigger_limit_days=$option.deferred_trigger_limit_days creditInfo=$option.creditInfo iconDisplay=$iconDisplay almaButton=$almaButton}
     {/if}
 {/foreach}
+<script type="text/javascript">
+    (function($) {
+        $(function() {                       
+            $(".alma-fragments-deferred").click(function (e) {
+                e.preventDefault();
+                $(".display-fragment").remove();
+                $(this)
+                    .parent()
+                    .parent()
+                    .after(
+                        '<div id="alma-payment" class="col-xs-12 display-fragment"></div>'
+                    );
+                processAlmaPayment(this.href, '{$apiMode}', '{$merchantId}');
+            });              
+
+            $(".alma-fragments-pnx").click(function (e) {
+                e.preventDefault();
+                $(".display-fragment").remove();
+                $(this)
+                    .parent()
+                    .parent()
+                    .after(
+                        '<div id="alma-payment" class="col-xs-12 display-fragment"></div>'
+                    );
+                processAlmaPayment(this.href, '{$apiMode}', '{$merchantId}');
+            });    
+
+        });
+    })(jQuery);
+</script>    

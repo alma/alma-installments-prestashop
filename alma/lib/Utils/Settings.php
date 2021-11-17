@@ -622,4 +622,9 @@ class Settings
 
         return $dataFromKey;
     }
+
+    public static function getFragmentsJsUrl()
+    {
+        return 'https://cdn.jsdelivr.net/npm/@alma/fragments@1.x/dist/alma-fragments.umd.js';
+    }
 }

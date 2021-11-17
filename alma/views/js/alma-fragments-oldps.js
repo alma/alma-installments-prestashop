@@ -1,5 +1,5 @@
-{*
- * 2018-2022 Alma SAS
+/**
+ * 2018-2021 Alma SAS
  *
  * THE MIT LICENSE
  *
@@ -17,16 +17,40 @@
  * IN THE SOFTWARE.
  *
  * @author    Alma SAS <contact@getalma.eu>
- * @copyright 2018-2022 Alma SAS
+ * @copyright 2018-2021 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
- *}
+ */
 
-<div class="alma-fee-plan--block">
-    <p>
-        {$desc|escape:'htmlall':'UTF-8'}
-    </p>
-    {include file="modules/alma/views/templates/hook/_partials/deferred.tpl" plans=$plans}
-</div>
-{if $first}
-    <div id="almaFragments" data-apimode="{$apiMode}" data-merchantid="{$merchantId}"></div>    
-{/if}
+$(function () {
+    almaPay = function (paymentData, mode, merchantId) {
+        const fragments = new Alma.Fragments(merchantId, {
+            mode: mode,
+        });
+
+        fragments.createPaymentForm(paymentData).mount("#alma-payment");
+        $("html, body").animate(
+            {
+                scrollTop: $("#alma-payment").offset().top,
+            },
+            3000
+        );
+    };
+
+    processAlmaPayment = function (url, mode, merchantId) {
+        $.ajax({
+            type: "POST",
+            url: url,
+            dataType: "json",
+            data: {
+                ajax: true,
+                action: "payment",
+            },
+        })
+            .done(function (data) {
+                almaPay(data, mode, merchantId);
+            })
+            .fail(function () {
+                window.location.href = "index.php?controller=order&step=1";
+            });
+    };
+});
