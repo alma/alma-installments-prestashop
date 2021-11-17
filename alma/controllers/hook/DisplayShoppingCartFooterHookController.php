@@ -33,6 +33,7 @@ use Alma\PrestaShop\Hooks\FrontendHookController;
 use Alma\PrestaShop\Model\CartData;
 use Alma\PrestaShop\Utils\LocaleHelper;
 use Alma\PrestaShop\Utils\Settings;
+use Alma\PrestaShop\Utils\SettingsCustomFields;
 use Cart;
 use Media;
 
@@ -72,7 +73,7 @@ final class DisplayShoppingCartFooterHookController extends FrontendHookControll
         $isExcluded = false;
         $diff = CartData::getCartExclusion($params['cart']);
         if (!empty($diff)) {
-            $eligibilityMsg = Settings::getNonEligibleCategoriesMessage($this->context->language->id);
+            $eligibilityMsg = SettingsCustomFields::getNonEligibleCategoriesMessageByLang($this->context->language->id);
             $isExcluded = true;
             if (!Settings::showCategoriesWidgetIfNotEligible()) {
                 $isEligible = false;

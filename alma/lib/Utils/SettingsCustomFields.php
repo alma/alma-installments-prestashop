@@ -45,8 +45,10 @@ class SettingsCustomFields
      */
     public static function initCustomFields()
     {
+        $languages = Language::getLanguages(false);
+
         foreach (self::customFields() as $keyConfig => $string) {
-            Settings::updateValue($keyConfig, json_encode(Settings::getAllLangCustomFieldByKeyConfig($keyConfig)));
+            Settings::updateValue($keyConfig, json_encode(self::getAllLangCustomFieldByKeyConfig($keyConfig, $languages)));
         }
     }
 
