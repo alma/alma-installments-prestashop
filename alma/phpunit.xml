@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="./vendor/phpunit/phpunit/phpunit.xsd"
+         bootstrap="vendor/autoload.php"
+         colors="true"
+>
+    <testsuites>
+        <testsuite name="Test Suite">
+            <directory suffix="Test.php">./tests</directory>
+        </testsuite>
+        <testsuite name="Test_Custom_Fields">
+            <directory suffix="Test.php">./tests/Unit/lib/Utils</directory>
+        </testsuite>
+    </testsuites>
+    <coverage processUncoveredFiles="true">
+        <include>
+            <directory suffix=".php">./app</directory>
+            <directory suffix=".php">./src</directory>
+            <directory suffix=".php">./lib</directory>
+        </include>
+    </coverage>
+    <php>
+        <ini name="error_reporting" value="-1" />
+        <env name="KERNEL_CLASS" value="App\Kernel" />
+        <env name="APP_ENV" value="test" />
+        <env name="APP_DEBUG" value="1" />
+        <!-- <env name="SHELL_VERBOSITY" value="-1" /> -->
+    </php>
+</phpunit>

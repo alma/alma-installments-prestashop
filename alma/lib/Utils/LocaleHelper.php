@@ -124,13 +124,11 @@ class LocaleHelper
     public static function getModuleTranslation(
         $string,
         $source,
-        $idLang
+        $iso
     ) {
-        global $_MODULE;
+        global $_MODULE, $_TRADS;
 
         $name = 'alma';
-
-        $iso = Language::getIsoById($idLang);
 
         $filesByPriority = [
             // PrestaShop 1.5 translations

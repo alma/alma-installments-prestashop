@@ -6,4 +6,4 @@ tmp
 prestashop
 **/.DS_Store
 tools/vendor
-
+.phpunit.result.cache
