@@ -1227,9 +1227,6 @@ final class GetContentHookController extends AdminHookController
 
         $helper->token = Tools::getAdminTokenLite('AdminModules');
 
-        // var_dump(Settings::getPaymentButtonDescription());
-        // exit();
-
         $helper->fields_value = [
             'ALMA_LIVE_API_KEY' => Settings::getLiveKey(),
             'ALMA_TEST_API_KEY' => Settings::getTestKey(),
