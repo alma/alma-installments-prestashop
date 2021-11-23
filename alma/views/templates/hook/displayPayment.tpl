@@ -34,6 +34,7 @@
         {include file="modules/alma/views/templates/hook/_partials/displayPayment_pnx.tpl" plans=$option.plans installmentText=$option.installmentText deferred_trigger_limit_days=$option.deferred_trigger_limit_days creditInfo=$option.creditInfo iconDisplay=$iconDisplay almaButton=$almaButton}
     {/if}
 {/foreach}
+<div id="almaFragments" data-apimode="{$apiMode}" data-merchantid="{$merchantId}"></div>
 <script type="text/javascript">
     (function($) {
         $(function() {                       
@@ -46,21 +47,22 @@
                     .after(
                         '<div id="alma-payment" class="col-xs-12 display-fragment"></div>'
                     );
-                processAlmaPayment(this.href, '{$apiMode}', '{$merchantId}');
+                processAlmaPayment(this.href);
             });              
-
+        
             $(".alma-fragments-pnx").click(function (e) {
-                e.preventDefault();
-                $(".display-fragment").remove();
-                $(this)
-                    .parent()
-                    .parent()
-                    .after(
-                        '<div id="alma-payment" class="col-xs-12 display-fragment"></div>'
-                    );
-                processAlmaPayment(this.href, '{$apiMode}', '{$merchantId}');
-            });    
-
+                if (getInstallmentByUrl(this.href) <= 4 ) {
+                    e.preventDefault();
+                    $(".display-fragment").remove();
+                    $(this)
+                        .parent()
+                        .parent()
+                        .after(
+                            '<div id="alma-payment" class="col-xs-12 display-fragment"></div>'
+                        );
+                    processAlmaPayment(this.href);
+                }
+            });
         });
     })(jQuery);
 </script>    

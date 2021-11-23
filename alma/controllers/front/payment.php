@@ -25,6 +25,7 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
+use Alma\API\RequestError;
 use Alma\PrestaShop\API\ClientHelper;
 use Alma\PrestaShop\Model\PaymentData;
 use Alma\PrestaShop\Utils\Logger;
@@ -135,8 +136,22 @@ class AlmaPaymentModuleFrontController extends ModuleFrontController
             return;
         }
 
-        method_exists(get_parent_class($this), 'ajaxDie')
-        ? $this->ajaxDie(json_encode($data))
-        : die(Tools::jsonEncode($data));
+        if ($data['payment']["installments_count"] <= 4) {
+            method_exists(get_parent_class($this), 'ajaxDie')
+            ? $this->ajaxDie(json_encode($data))
+            : die(Tools::jsonEncode($data));
+        }
+
+        try {
+            $payment = $alma->payments->create($data);
+        } catch (RequestError $e) {
+            $msg = "[Alma] ERROR when creating payment for Cart {$cart->id}: {$e->getMessage()}";
+            Logger::instance()->error($msg);
+            $this->genericErrorAndRedirect();
+
+            return;
+        }
+
+        Tools::redirect($payment->url);
     }
 }

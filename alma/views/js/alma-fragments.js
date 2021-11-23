@@ -23,14 +23,31 @@
 
 window.onload = function () {
     if ($("#almaFragments").length != 0) {
-        const fragments = new Alma.Fragments(
-            $("#almaFragments").data("merchantid"),
-            {
-                mode: $("#almaFragments").data("apimode"),
+        getInstallmentByUrl = function (sUrl) {
+            var sParamsURL = sUrl.split('?'),
+                sURLVariables = sParamsURL[1].split('&'),
+                sParameterName,
+                sKey,
+                sInstallment,
+                i;
+        
+            for (i = 0; i < sURLVariables.length; i++) {
+                sParameterName = sURLVariables[i].split('=');
+        
+                if (sParameterName[0] === 'key') {
+                    sKey =  typeof sParameterName[1] === undefined ? false : decodeURIComponent(sParameterName[1]);
+                }
             }
-        );
+
+            sInstallment = sKey.split('_');
+            return sInstallment[1];
+        };
 
         almaPay = function (paymentData) {
+            const fragments = new Alma.Fragments($("#almaFragments").data("merchantid"), {
+                mode: $("#almaFragments").data("apimode"),
+            });
+
             fragments.createPaymentForm(paymentData).mount("#alma-payment");
             $("html, body").animate(
                 {
@@ -38,6 +55,24 @@ window.onload = function () {
                 },
                 4500
             );
+        };
+
+        processAlmaPayment = function (url) {
+            $.ajax({
+                type: "POST",
+                url: url,
+                dataType: "json",
+                data: {
+                    ajax: true,
+                    action: "payment",
+                },
+            })
+                .done(function (data) {
+                    almaPay(data);
+                })
+                .fail(function () {
+                    window.location.href = "index.php?controller=order&step=1";
+                });
         };
 
         $('input[name="payment-option"]').change(function () {
@@ -50,32 +85,21 @@ window.onload = function () {
             }
         });
 
+        // PS 1.7 : paymentOptions
         $(".js-payment-option-form form").submit(function (e) {
-            e.preventDefault();
             url = $(this).attr("action");
-            if (
-                url.indexOf("module/alma/payment") != -1 ||
-                url.indexOf("module=alma") != -1
-            ) {
-                $("#payment-confirmation").after(
-                    '<div id="alma-payment"></div>'
-                );
-                $.ajax({
-                    type: "POST",
-                    url: url,
-                    dataType: "json",
-                    data: {
-                        ajax: true,
-                        action: "payment",
-                    },
-                })
-                    .done(function (data) {
-                        almaPay(data);
-                    })
-                    .fail(function (data) {
-                        window.location.href =
-                            "index.php?controller=order&step=1";
-                    });
+
+            if (getInstallmentByUrl(url) <= 4) {
+                e.preventDefault();
+                if (
+                    url.indexOf("module/alma/payment") != -1 ||
+                    url.indexOf("module=alma") != -1
+                ) {
+                    $("#payment-confirmation").after(
+                        '<div id="alma-payment"></div>'
+                    );
+                    processAlmaPayment(url);
+                }
             }
         });
     }

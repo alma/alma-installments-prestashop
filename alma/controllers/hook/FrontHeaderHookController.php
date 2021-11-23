@@ -87,7 +87,6 @@ class FrontHeaderHookController extends FrontendHookController
         if (version_compare(_PS_VERSION_, '1.7', '<')) {
             // Fragments
             if (($controller->php_self == 'order' && $controller->step == 3) || $controller->php_self == 'order-opc') {
-                $fragmentsScriptPath = 'views/js/alma-fragments-oldps.js';
                 $controller->addJS($fragmentsJsUrl);
                 $controller->addJS($this->module->_path . $fragmentsScriptPath);
             }
