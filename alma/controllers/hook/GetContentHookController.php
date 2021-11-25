@@ -258,6 +258,9 @@ final class GetContentHookController extends AdminHookController
 
             $descriptionPaymentTrigger = Tools::getValue('ALMA_DESCRIPTION_TRIGGER');
             Settings::updateValue('ALMA_DESCRIPTION_TRIGGER', $descriptionPaymentTrigger);
+            
+            $activateFragment = (bool) Tools::getValue('ALMA_ACTIVATE_FRAGMENT_ON');
+            Settings::updateValue('ALMA_ACTIVATE_FRAGMENT', $activateFragment);
 
             $activateLogging = (bool) Tools::getValue('ALMA_ACTIVATE_LOGGING_ON');
             Settings::updateValue('ALMA_ACTIVATE_LOGGING', $activateLogging);
