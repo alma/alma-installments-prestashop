@@ -89,7 +89,7 @@ window.onload = function () {
         $(".js-payment-option-form form").submit(function (e) {
             url = $(this).attr("action");
 
-            if (getInstallmentByUrl(url) <= 4) {
+            if (getInstallmentByUrl(url) <= 4 && $("#almaFragments").data("activatefragment")) {
                 e.preventDefault();
                 if (
                     url.indexOf("module/alma/payment") != -1 ||

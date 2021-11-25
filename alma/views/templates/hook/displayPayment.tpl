@@ -34,7 +34,8 @@
         {include file="modules/alma/views/templates/hook/_partials/displayPayment_pnx.tpl" plans=$option.plans installmentText=$option.installmentText deferred_trigger_limit_days=$option.deferred_trigger_limit_days creditInfo=$option.creditInfo iconDisplay=$iconDisplay almaButton=$almaButton}
     {/if}
 {/foreach}
-<div id="almaFragments" data-apimode="{$apiMode}" data-merchantid="{$merchantId}"></div>
+{if $activateFragment}
+<div id="almaFragments" data-apimode="{$apiMode}" data-merchantid="{$merchantId}" data-activatefragment="{$activateFragment}"></div>
 <script type="text/javascript">
     (function($) {
         $(function() {                       
@@ -51,7 +52,7 @@
             });              
         
             $(".alma-fragments-pnx").click(function (e) {
-                if (getInstallmentByUrl(this.href) <= 4 ) {
+                if (getInstallmentByUrl(this.href) <= 4) {
                     e.preventDefault();
                     $(".display-fragment").remove();
                     $(this)
@@ -66,3 +67,4 @@
         });
     })(jQuery);
 </script>    
+{/if}

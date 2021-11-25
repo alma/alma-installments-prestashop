@@ -245,6 +245,9 @@ final class GetContentHookController extends AdminHookController
 
             $descriptionPaymentTrigger = Tools::getValue('ALMA_DESCRIPTION_TRIGGER');
             Settings::updateValue('ALMA_DESCRIPTION_TRIGGER', $descriptionPaymentTrigger);
+            
+            $activateFragment = (bool) Tools::getValue('ALMA_ACTIVATE_FRAGMENT_ON');
+            Settings::updateValue('ALMA_ACTIVATE_FRAGMENT', $activateFragment);
 
             $activateLogging = (bool) Tools::getValue('ALMA_ACTIVATE_LOGGING_ON');
             Settings::updateValue('ALMA_ACTIVATE_LOGGING', $activateLogging);
@@ -548,6 +551,7 @@ final class GetContentHookController extends AdminHookController
             'ALMA_CART_WDGT_NOT_ELGBL_ON' => Settings::showCartWidgetIfNotEligible(),
             'ALMA_PRODUCT_WDGT_NOT_ELGBL_ON' => Settings::showProductWidgetIfNotEligible(),
             'ALMA_CATEGORIES_WDGT_NOT_ELGBL_ON' => Settings::showCategoriesWidgetIfNotEligible(),
+            'ALMA_ACTIVATE_FRAGMENT_ON' => Settings::activateFragment(),
             'ALMA_ACTIVATE_LOGGING_ON' => (bool) Settings::canLog(),
             'ALMA_SHARE_OF_CHECKOUT_STATE_ON' => Settings::getShareOfChekcoutStatus(),
             'ALMA_SHARE_OF_CHECKOUT_DATE' => Settings::getCurrentTimestamp(),

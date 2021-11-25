@@ -105,6 +105,7 @@ class Settings
             'ALMA_STATE_TRIGGER',
             'ALMA_PAYMENT_ON_TRIGGERING_ENABLED',
             PaymentOnTriggeringAdminFormBuilder::ALMA_DESCRIPTION_TRIGGER,
+            'ALMA_ACTIVATE_FRAGMENT',
             'ALMA_EXCLUDED_CATEGORIES',
             'ALMA_SHOW_PRODUCT_ELIGIBILITY',
             'ALMA_FEE_PLANS',
@@ -306,6 +307,11 @@ class Settings
     public static function getKeyDescriptionPaymentTrigger()
     {
         return self::get('ALMA_DESCRIPTION_TRIGGER', PaymentOnTriggeringAdminFormBuilder::ALMA_DESCRIPTION_TRIGGER_AT_SHIPPING);
+    }
+
+    public static function activateFragment()
+    {
+        return (bool) (int) self::get('ALMA_ACTIVATE_FRAGMENT', false);
     }
 
     public static function activePlans()
