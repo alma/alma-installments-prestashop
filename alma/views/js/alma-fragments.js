@@ -22,59 +22,59 @@
  */
 
 window.onload = function () {
-    if ($("#almaFragments").length != 0) {
-        getInstallmentByUrl = function (sUrl) {
-            var sParamsURL = sUrl.split('?'),
-                sURLVariables = sParamsURL[1].split('&'),
-                sParameterName,
-                sKey,
-                sInstallment,
-                i;
-        
-            for (i = 0; i < sURLVariables.length; i++) {
-                sParameterName = sURLVariables[i].split('=');
-        
-                if (sParameterName[0] === 'key') {
-                    sKey =  typeof sParameterName[1] === undefined ? false : decodeURIComponent(sParameterName[1]);
-                }
+    getInstallmentByUrl = function (sUrl) {
+        var sParamsURL = sUrl.split('?'),
+            sURLVariables = sParamsURL[1].split('&'),
+            sParameterName,
+            sKey,
+            sInstallment,
+            i;
+    
+        for (i = 0; i < sURLVariables.length; i++) {
+            sParameterName = sURLVariables[i].split('=');
+    
+            if (sParameterName[0] === 'key') {
+                sKey =  typeof sParameterName[1] === undefined ? false : decodeURIComponent(sParameterName[1]);
             }
+        }
 
-            sInstallment = sKey.split('_');
-            return sInstallment[1];
-        };
+        sInstallment = sKey.split('_');
+        return sInstallment[1];
+    };
 
-        almaPay = function (paymentData) {
-            const fragments = new Alma.Fragments($("#almaFragments").data("merchantid"), {
-                mode: $("#almaFragments").data("apimode"),
-            });
+    almaPay = function (paymentData) {
+        const fragments = new Alma.Fragments($("#almaFragments").data("merchantid"), {
+            mode: $("#almaFragments").data("apimode"),
+        });
 
-            fragments.createPaymentForm(paymentData).mount("#alma-payment");
-            $("html, body").animate(
-                {
-                    scrollTop: $("#alma-payment").offset().top,
-                },
-                4500
-            );
-        };
+        fragments.createPaymentForm(paymentData).mount("#alma-payment");
+        $("html, body").animate(
+            {
+                scrollTop: $("#alma-payment").offset().top,
+            },
+            4500
+        );
+    };
 
-        processAlmaPayment = function (url) {
-            $.ajax({
-                type: "POST",
-                url: url,
-                dataType: "json",
-                data: {
-                    ajax: true,
-                    action: "payment",
-                },
+    processAlmaPayment = function (url) {
+        $.ajax({
+            type: "POST",
+            url: url,
+            dataType: "json",
+            data: {
+                ajax: true,
+                action: "payment",
+            },
+        })
+            .done(function (data) {
+                almaPay(data);
             })
-                .done(function (data) {
-                    almaPay(data);
-                })
-                .fail(function () {
-                    window.location.href = "index.php?controller=order&step=1";
-                });
-        };
+            .fail(function () {
+                window.location.href = "index.php?controller=order&step=1";
+            });
+    };
 
+    if ($("#almaFragments").length != 0) {
         $('input[name="payment-option"]').change(function () {
             $("#alma-payment").remove();
         });
