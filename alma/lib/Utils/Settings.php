@@ -394,7 +394,7 @@ class Settings
     {
         $categories = self::get('ALMA_EXCLUDED_CATEGORIES');
         if (null !== $categories && 'null' !== $categories) {
-            return json_decode($categories);
+            return (array) json_decode($categories);
         }
 
         return [];
