@@ -1,0 +1,10 @@
+project_id: 15
+api_token_env: "CROWDIN_PERSONAL_TOKEN"
+base_path: alma
+base_url: https://almapay.crowdin.com
+
+preserve_hierarchy: true
+files:
+  -
+    source: /translations/en.php
+    translation: /translations/%two_letters_code%.php
