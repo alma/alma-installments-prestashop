@@ -32,17 +32,23 @@ window.onload = function () {
             apiMode,
             containerId,
             purchaseAmount,
+            locale,
+            showIfNotEligible,
             plans
         ) {
-            var widgets = Alma.Widgets.initialize(merchantId, apiMode);
+            callApiMode = Alma.ApiMode.LIVE;
+            if (apiMode === 'test') {
+                callApiMode = Alma.ApiMode.TEST;
+            }
+            var widgets = Alma.Widgets.initialize(merchantId, callApiMode);
 
             widgets.add(Alma.Widgets.PaymentPlans, {
                 container: containerId,
                 purchaseAmount: purchaseAmount,
+                locale: locale,
+                hideIfNotEligible: !showIfNotEligible,
                 plans: plans,
             });
-
-            widgets.render();
         }
 
         function refreshWidgets() {
@@ -73,6 +79,8 @@ window.onload = function () {
                 settings.apiMode,
                 position,
                 purchaseAmount,
+                settings.locale,
+                settings.showIfNotEligible,
                 settings.plans
             );
         }

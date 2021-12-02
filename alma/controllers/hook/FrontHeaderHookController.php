@@ -72,8 +72,8 @@ final class FrontHeaderHookController extends FrontendHookController
 
     private function injectAlmaAssets($params)
     {
-        $widgetsCssUrl = 'https://cdn.jsdelivr.net/npm/@alma/widgets@1.x/dist/alma-widgets.css';
-        $widgetsJsUrl = 'https://cdn.jsdelivr.net/npm/@alma/widgets@1.x/dist/alma-widgets.umd.js';
+        $widgetsCssUrl = 'https://cdn.jsdelivr.net/npm/@alma/widgets@2.x/dist/alma-widgets.css';
+        $widgetsJsUrl = 'https://cdn.jsdelivr.net/npm/@alma/widgets@2.x/dist/alma-widgets.umd.js';
         $productScriptPath = 'views/js/alma-product.js';
         $productCssPath = 'views/css/alma-product.css';
         $cartScriptPath = 'views/js/alma-cart.js';
