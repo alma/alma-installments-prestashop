@@ -67,10 +67,10 @@ class AlmaValidationModuleFrontController extends ModuleFrontController
             Logger::log(LogLevel::DEBUG, 'payment_validate');
             $redirect_to = $validator->validatePayment($paymentId);
         } catch (PaymentValidationError $e) {
-            Logger::log(LogLevel::DEBUG, 'payment_validation_error - Message : ' . $e->getMessage());
+            Logger::log(LogLevel::ERROR, 'payment_validation_error - Message : ' . $e->getMessage());
             $redirect_to = $this->fail($e->cart, $e->getMessage());
         } catch (Exception $e) {
-            Logger::log(LogLevel::DEBUG, 'payment_error - Message : ' . $e->getMessage());
+            Logger::log(LogLevel::ERROR, 'payment_error - Message : ' . $e->getMessage());
             $redirect_to = $this->fail(null, $e->getMessage());
         }
 
