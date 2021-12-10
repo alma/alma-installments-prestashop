@@ -359,7 +359,7 @@ class Settings
         return (bool) (int) self::get('ALMA_DISPLAY_ORDER_CONFIRMATION', $default);
     }
 
-    public static function activePlans($onlyPnx = false)
+    public static function activePlans()
     {
         $plans = [];
         $count = 0;
@@ -368,26 +368,18 @@ class Settings
         foreach ($feePlans as $key => $feePlan) {
             if (1 == $feePlan->enabled) {
                 $dataFromKey = self::getDataFromKey($key);
-                if ($onlyPnx && $dataFromKey['deferredMonths'] === 0 && $dataFromKey['deferredDays'] === 0) {
-                    $plans[$count] = [
-                        'installmentsCount' => (int) $dataFromKey['installmentsCount'],
-                        'minAmount' => $feePlan->min,
-                        'maxAmount' => $feePlan->max,
-                    ];
-                } else {
-                    $plans[$count] = [
-                        'installmentsCount' => (int) $dataFromKey['installmentsCount'],
-                        'minAmount' => $feePlan->min,
-                        'maxAmount' => $feePlan->max,
-                    ];
+                $plans[] = [
+                    'installmentsCount' => (int) $dataFromKey['installmentsCount'],
+                    'minAmount' => $feePlan->min,
+                    'maxAmount' => $feePlan->max,
+                ];
 
-                    if ($dataFromKey['installmentsCount'] === 1 && $dataFromKey['deferredDays'] > 0) {
-                        $plans[$count]['deferredDays'] = (int) $dataFromKey['deferredDays'];
-                    }
-    
-                    if ($dataFromKey['installmentsCount'] === 1 && $dataFromKey['deferredMonths'] > 0) {
-                        $plans[$count]['deferredMonths'] = (int) $dataFromKey['deferredMonths'];
-                    }
+                if ($dataFromKey['installmentsCount'] === 1 && $dataFromKey['deferredDays'] > 0) {
+                    $plans[$count]['deferredDays'] = (int) $dataFromKey['deferredDays'];
+                }
+
+                if ($dataFromKey['installmentsCount'] === 1 && $dataFromKey['deferredMonths'] > 0) {
+                    $plans[$count]['deferredMonths'] = (int) $dataFromKey['deferredMonths'];
                 }
             }
             $count++;

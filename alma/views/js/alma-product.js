@@ -38,8 +38,6 @@
             }
             var widgets = Alma.Widgets.initialize(merchantId, callApiMode);
 
-            console.log(containerId);
-
             widgets.add(Alma.Widgets.PaymentPlans, {
                 container: containerId,
                 purchaseAmount: purchaseAmount,
