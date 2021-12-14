@@ -21,7 +21,7 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
-window.onload = function () {
+ (function ($) {
     $(function () {
         if ($("#alma-widget-config").length) {
             var selectors = JSON.parse($("#alma-widget-config").val());
@@ -94,4 +94,4 @@ window.onload = function () {
             window.__alma_refreshWidgets = refreshWidgets;
         }
     });
-};
+})(jQuery);
