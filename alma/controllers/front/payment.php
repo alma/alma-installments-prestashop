@@ -136,7 +136,7 @@ class AlmaPaymentModuleFrontController extends ModuleFrontController
             return;
         }
 
-        if ($data['payment']["installments_count"] <= 4 && Settings::activateFragment()) {
+        if ($data['payment']['installments_count'] <= 4 && Settings::activateFragment()) {
             method_exists(get_parent_class($this), 'ajaxDie')
             ? $this->ajaxDie(json_encode($data))
             : die(Tools::jsonEncode($data));
