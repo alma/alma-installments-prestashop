@@ -362,7 +362,6 @@ class Settings
     public static function activePlans()
     {
         $plans = [];
-        $count = 0;
         $feePlans = json_decode(self::getFeePlans());
 
         foreach ($feePlans as $key => $feePlan) {
@@ -372,17 +371,10 @@ class Settings
                     'installmentsCount' => (int) $dataFromKey['installmentsCount'],
                     'minAmount' => $feePlan->min,
                     'maxAmount' => $feePlan->max,
+                    'deferredDays' => (int) $dataFromKey['deferredDays'],
+                    'deferredMonths' => (int) $dataFromKey['deferredMonths'],
                 ];
-
-                if ($dataFromKey['installmentsCount'] === 1 && $dataFromKey['deferredDays'] > 0) {
-                    $plans[$count]['deferredDays'] = (int) $dataFromKey['deferredDays'];
-                }
-
-                if ($dataFromKey['installmentsCount'] === 1 && $dataFromKey['deferredMonths'] > 0) {
-                    $plans[$count]['deferredMonths'] = (int) $dataFromKey['deferredMonths'];
-                }
             }
-            ++$count;
         }
 
         return $plans;
