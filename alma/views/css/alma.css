@@ -205,3 +205,8 @@ p.payment_module a.disable-arrow-icon {
     float: right;
     font-weight: normal;
 }
+
+/* Fix for merchant provisional before fix repo */
+#alma-fragments-popup {
+    z-index: 100 !important;
+}
