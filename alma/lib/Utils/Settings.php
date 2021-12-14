@@ -382,7 +382,7 @@ class Settings
                     $plans[$count]['deferredMonths'] = (int) $dataFromKey['deferredMonths'];
                 }
             }
-            $count++;
+            ++$count;
         }
 
         return $plans;
