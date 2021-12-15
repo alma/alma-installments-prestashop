@@ -380,6 +380,24 @@ class Settings
         return $plans;
     }
 
+    /**
+     * Get locale by id_lang with condition NL for widget (provisional)
+     * 
+     * @param int $idLang
+     * 
+     * @return string
+     */
+    public static function localeByIdLangForWidget($idLang)
+    {
+        $locale = Language::getIsoById($idLang);
+
+        if ($locale == 'nl') {
+            $locale = 'nl-NL';
+        }
+
+        return $locale;
+    }
+
     public static function getRefundState()
     {
         return (int) self::get('ALMA_STATE_REFUND', 7);
