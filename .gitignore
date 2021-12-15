@@ -3,7 +3,7 @@ alma/config*.xml
 .php_cs.cache
 dist
 tmp
-prestashop
+prestashop*
 **/.DS_Store
 tools/vendor
-
+.vscode
