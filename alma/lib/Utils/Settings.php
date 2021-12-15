@@ -382,9 +382,9 @@ class Settings
 
     /**
      * Get locale by id_lang with condition NL for widget (provisional)
-     * 
+     *
      * @param int $idLang
-     * 
+     *
      * @return string
      */
     public static function localeByIdLangForWidget($idLang)
