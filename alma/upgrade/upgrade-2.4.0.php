@@ -26,7 +26,7 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-function upgrade_module_next($module)
+function upgrade_module_2_4_0($module)
 {
     if (version_compare(_PS_VERSION_, '1.7', '>=')) {
         $module->unregisterHook('displayPaymentReturn');
@@ -38,5 +38,12 @@ function upgrade_module_next($module)
         Configuration::deleteByName($configKey);
     }
 
-    return true;
+    $module->unregisterHook('actionOrderSlipAdd');
+    if (version_compare(_PS_VERSION_, '1.7.7.0', '>=')) {
+        $module->registerHook('displayAdminOrderMain');
+    } else {
+        $module->registerHook('displayAdminOrder');
+    }
+
+    return $module->uninstallTabs() && $module->installTabs();
 }
