@@ -105,6 +105,7 @@ final class PaymentOptionsHookController extends FrontendHookController
                     );
                     if (!$forEUComplianceModule) {
                         $this->context->smarty->assign([
+                            // phpcs:ignore
                             'desc' => sprintf(SettingsCustomFields::getPaymentButtonDescriptionDeferredByLang($idLang), $duration),
                             'plans' => (array) $plans,
                             'apiMode' => Settings::getActiveMode(),

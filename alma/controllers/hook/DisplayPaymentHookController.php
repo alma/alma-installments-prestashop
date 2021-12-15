@@ -99,6 +99,7 @@ final class DisplayPaymentHookController extends FrontendHookController
                     'plans' => $plans,
                     'isDeferred' => true,
                     'text' => sprintf(SettingsCustomFields::getPaymentButtonTitleDeferredByLang($idLang), $duration),
+                    // phpcs:ignore
                     'desc' => sprintf(SettingsCustomFields::getPaymentButtonDescriptionDeferredByLang($idLang), $duration),
                     'creditInfo' => $creditInfo,
                     ];
