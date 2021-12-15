@@ -99,7 +99,6 @@ final class GetContentHookController extends AdminHookController
                     break;
                 }
             }
-
         }
 
         // Get languages are active

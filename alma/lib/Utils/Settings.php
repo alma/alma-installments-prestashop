@@ -36,13 +36,13 @@ if (!defined('ALMA_MODE_LIVE')) {
     define('ALMA_MODE_LIVE', 'live');
 }
 
+use Alma\PrestaShop\Model\CategoryAdapter;
+use Category;
+use Configuration;
+use Product;
 use Shop;
 use Tools;
-use Product;
-use Category;
 use Translate;
-use Configuration;
-use Alma\PrestaShop\Model\CategoryAdapter;
 
 class Settings
 {

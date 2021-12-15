@@ -83,7 +83,7 @@ class SettingsCustomFields
             $return[$language['id_lang']] = [
                 'locale' => $language['iso_code'],
                 // phpcs:ignore
-                'string' => LocaleHelper::getModuleTranslation(self::customFields()[$keyConfig], 'settings', $language['iso_code'])
+                'string' => LocaleHelper::getModuleTranslation(self::customFields()[$keyConfig], 'settings', $language['iso_code']),
             ];
         }
 
@@ -126,7 +126,7 @@ class SettingsCustomFields
 
         if ($countArrayFields < $countLanguages) {
             foreach ($languages as $lang) {
-                if (! array_key_exists($lang['id_lang'], $arrayFields)) {
+                if (!array_key_exists($lang['id_lang'], $arrayFields)) {
                     // phpcs:ignore
                     $arrayFields[$lang['id_lang']] = LocaleHelper::getModuleTranslation(self::customFields()[$keyConfig], 'settings', $lang['iso_code']);
                 }

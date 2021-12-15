@@ -25,7 +25,6 @@
 namespace Alma\PrestaShop\Utils;
 
 use Context;
-use Language;
 use Tools;
 
 if (!defined('_PS_VERSION_')) {
