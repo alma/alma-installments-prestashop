@@ -32,6 +32,7 @@ use Alma\PrestaShop\API\EligibilityHelper;
 use Alma\PrestaShop\Hooks\FrontendHookController;
 use Alma\PrestaShop\Model\CartData;
 use Alma\PrestaShop\Utils\Settings;
+use Alma\PrestaShop\Utils\SettingsCustomFields;
 use Cart;
 use Media;
 use Tools;
@@ -97,8 +98,9 @@ final class DisplayPaymentHookController extends FrontendHookController
                     'logo' => $logo,
                     'plans' => $plans,
                     'isDeferred' => true,
-                    'text' => sprintf(Settings::getPaymentButtonTitleDeferred($idLang), $duration),
-                    'desc' => sprintf(Settings::getPaymentButtonDescriptionDeferred($idLang), $duration),
+                    'text' => sprintf(SettingsCustomFields::getPaymentButtonTitleDeferredByLang($idLang), $duration),
+                    // phpcs:ignore
+                    'desc' => sprintf(SettingsCustomFields::getPaymentButtonDescriptionDeferredByLang($idLang), $duration),
                     'creditInfo' => $creditInfo,
                     ];
                     $paymentOptions[$key] = $paymentOption;
@@ -125,8 +127,8 @@ final class DisplayPaymentHookController extends FrontendHookController
                         'pnx' => $n,
                         'logo' => $logo,
                         'isDeferred' => false,
-                        'text' => sprintf(Settings::getPaymentButtonTitle($idLang), $n),
-                        'desc' => sprintf(Settings::getPaymentButtonDescription($idLang), $n),
+                        'text' => sprintf(SettingsCustomFields::getPaymentButtonTitleByLang($idLang), $n),
+                        'desc' => sprintf(SettingsCustomFields::getPaymentButtonDescriptionByLang($idLang), $n),
                         'creditInfo' => $creditInfo,
                     ];
                     $paymentOptions[$key] = $paymentOption;
