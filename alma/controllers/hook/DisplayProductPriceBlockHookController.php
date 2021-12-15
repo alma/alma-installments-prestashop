@@ -116,7 +116,9 @@ final class DisplayProductPriceBlockHookController extends FrontendHookControlle
             $psVersion = 'ps16';
         }
 
-        $activePlans = Settings::activePlans(true);
+        $activePlans = Settings::activePlans();
+
+        $locale = Settings::localeByIdLangForWidget($this->context->language->id);
 
         if (!$activePlans) {
             return;
@@ -155,6 +157,8 @@ final class DisplayProductPriceBlockHookController extends FrontendHookControlle
                 'refreshPrice' => $refreshPrice,
                 'decimalSeparator' => LocaleHelper::decimalSeparator(),
                 'thousandSeparator' => LocaleHelper::thousandSeparator(),
+                'showIfNotEligible' => Settings::showProductWidgetIfNotEligible(),
+                'locale' => $locale,
                 ],
             'widgetQuerySelectors' => json_encode([
                 'price' => Settings::getProductPriceQuerySelector(),

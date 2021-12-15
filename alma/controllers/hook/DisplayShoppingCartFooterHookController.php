@@ -48,7 +48,9 @@ final class DisplayShoppingCartFooterHookController extends FrontendHookControll
     {
         $eligibilityMsg = null;
 
-        $activePlans = Settings::activePlans(true);
+        $activePlans = Settings::activePlans();
+
+        $locale = Settings::localeByIdLangForWidget($this->context->language->id);
 
         if (!$activePlans) {
             return;
@@ -111,6 +113,8 @@ final class DisplayShoppingCartFooterHookController extends FrontendHookControll
                     'decimalSeparator' => LocaleHelper::decimalSeparator(),
                     'thousandSeparator' => LocaleHelper::thousandSeparator(),
                     'psVersion' => $psVersion,
+                    'showIfNotEligible' => Settings::showCartWidgetIfNotEligible(),
+                    'locale' => $locale,
                 ],
                 'widgetQuerySelectors' => json_encode([
                     'price' => Settings::getProductPriceQuerySelector(),

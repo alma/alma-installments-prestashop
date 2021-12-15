@@ -185,7 +185,7 @@ class Settings
         return (bool) (int) self::get('ALMA_DISPLAY_ORDER_CONFIRMATION', $default);
     }
 
-    public static function activePlans($onlyPnx = false)
+    public static function activePlans()
     {
         $plans = [];
         $feePlans = json_decode(self::getFeePlans());
@@ -193,17 +193,35 @@ class Settings
         foreach ($feePlans as $key => $feePlan) {
             if (1 == $feePlan->enabled) {
                 $dataFromKey = self::getDataFromKey($key);
-                if ($onlyPnx && $dataFromKey['deferredMonths'] === 0 && $dataFromKey['deferredDays'] === 0) {
-                    $plans[] = [
-                        'installmentsCount' => (int) $dataFromKey['installmentsCount'],
-                        'minAmount' => $feePlan->min,
-                        'maxAmount' => $feePlan->max,
-                    ];
-                }
+                $plans[] = [
+                    'installmentsCount' => (int) $dataFromKey['installmentsCount'],
+                    'minAmount' => $feePlan->min,
+                    'maxAmount' => $feePlan->max,
+                    'deferredDays' => (int) $dataFromKey['deferredDays'],
+                    'deferredMonths' => (int) $dataFromKey['deferredMonths'],
+                ];
             }
         }
 
         return $plans;
+    }
+
+    /**
+     * Get locale by id_lang with condition NL for widget (provisional)
+     *
+     * @param int $idLang
+     *
+     * @return string
+     */
+    public static function localeByIdLangForWidget($idLang)
+    {
+        $locale = Language::getIsoById($idLang);
+
+        if ($locale == 'nl') {
+            $locale = 'nl-NL';
+        }
+
+        return $locale;
     }
 
     public static function getRefundState()
