@@ -95,14 +95,14 @@ class AdminAlmaRefundsController extends ModuleAdminController
         } else {
             $fees = $refundResult->customer_fee;
             $totalOrder = $refundResult->purchase_amount + $fees;
-            $totalOrderAmount = almaFormatPrice($totalOrder, (int)$order->id_currency);
-            foreach($refundResult->refunds as $refund) {
+            $totalOrderAmount = almaFormatPrice($totalOrder, (int) $order->id_currency);
+            foreach ($refundResult->refunds as $refund) {
                 $totalRefund += $refund->amount;
             }
-            $totalRefundAmount = almaFormatPrice($totalRefund, (int)$order->id_currency);
+            $totalRefundAmount = almaFormatPrice($totalRefund, (int) $order->id_currency);
             $percentRefund = (100 / $totalOrder) * $totalRefund;
         }
-        
+
         if ($isTotal) {
             $orders = Order::getByReference($order->reference);
             foreach ($orders as $o) {
@@ -121,7 +121,7 @@ class AdminAlmaRefundsController extends ModuleAdminController
             'totalRefund' => $totalRefund,
             'totalRefundAmount' => $totalRefundAmount,
             'totalOrder' => $totalOrder,
-            'totalOrderAmount' => $totalOrderAmount
+            'totalOrderAmount' => $totalOrderAmount,
         ];
 
         method_exists(get_parent_class($this), 'ajaxDie')

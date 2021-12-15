@@ -30,15 +30,14 @@ if (!defined('_PS_VERSION_')) {
 }
 
 use Alma\PrestaShop\API\ClientHelper;
+use Alma\PrestaShop\Hooks\AdminHookController;
+use Currency;
 use Media;
 use Order;
 use OrderPayment;
-use Currency;
-use Alma\PrestaShop\Hooks\AdminHookController;
 
 final class DisplayRefundsHookController extends AdminHookController
 {
-
     /** @var Order */
     public $order;
 
@@ -50,7 +49,7 @@ final class DisplayRefundsHookController extends AdminHookController
     public function run($params)
     {
         $order = new Order($params['id_order']);
-        if ($order->module !== "alma") {
+        if ($order->module !== 'alma') {
             return;
         }
 
@@ -97,14 +96,14 @@ final class DisplayRefundsHookController extends AdminHookController
         }
 
         if ($payment->refunds) {
-            foreach($payment->refunds as $refund) {
+            foreach ($payment->refunds as $refund) {
                 $totalRefund += $refund->amount;
             }
 
             $percentRefund = (100 / $ordersTotalAmount) * almaPriceFromCents($totalRefund);
-        
+
             $refundData = [
-                'totalRefundAmount' => almaFormatPrice($totalRefund, (int)$order->id_currency),
+                'totalRefundAmount' => almaFormatPrice($totalRefund, (int) $order->id_currency),
                 'percentRefund' => $percentRefund,
             ];
         }
@@ -112,18 +111,18 @@ final class DisplayRefundsHookController extends AdminHookController
         $currency = new Currency($order->id_currency);
         $orderData = [
             'id' => $order->id,
-            'maxAmount' => almaFormatPrice(almaPriceToCents($order->total_paid_tax_incl), (int)$order->id_currency),
+            'maxAmount' => almaFormatPrice(almaPriceToCents($order->total_paid_tax_incl), (int) $order->id_currency),
             'currencySymbol' => $currency->sign,
             'ordersId' => $ordersId,
-            'ordersTotalAmount' => almaFormatPrice(almaPriceToCents($ordersTotalAmount), (int)$order->id_currency),
+            'ordersTotalAmount' => almaFormatPrice(almaPriceToCents($ordersTotalAmount), (int) $order->id_currency),
         ];
 
         if (version_compare(_PS_VERSION_, '1.6', '<')) {
-            $refundTpl = "order_refund_ps15";
+            $refundTpl = 'order_refund_ps15';
         } elseif (version_compare(_PS_VERSION_, '1.7.7.0', '<')) {
-            $refundTpl = "order_refund_bs3";
+            $refundTpl = 'order_refund_bs3';
         } else {
-            $refundTpl = "order_refund_bs4";
+            $refundTpl = 'order_refund_bs4';
         }
 
         $tpl = $this->context->smarty->createTemplate(
@@ -134,7 +133,7 @@ final class DisplayRefundsHookController extends AdminHookController
             'iconPath' => $iconPath,
             'order' => $orderData,
             'refund' => $refundData,
-            'actionUrl' => $this->context->link->getAdminLink('AdminAlmaRefunds')
+            'actionUrl' => $this->context->link->getAdminLink('AdminAlmaRefunds'),
         ]);
 
         return $tpl->fetch();

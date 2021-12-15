@@ -27,10 +27,6 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-/**
- * @param Alma $module
- * @return bool
- */
 function upgrade_module_1_4_3($module)
 {
     $module->unregisterHook('actionOrderSlipAdd');
@@ -39,6 +35,6 @@ function upgrade_module_1_4_3($module)
     } else {
         $module->registerHook('displayAdminOrder');
     }
-    
+
     return $module->uninstallTabs() && $module->installTabs();
 }
