@@ -55,7 +55,7 @@
 	    </table>
         <p>
             {l s='Refund this order thanks to the Alma module. This will be applied in your Alma dashboard automatically. The maximum refundable amount includes client fees.' mod='alma'}
-            <a href="https://docs.getalma.eu/docs/remboursement" target="_blank">{l s='See documentation' mod='alma'}</a>
+            <a href="https://docs.getalma.eu/docs/prestashop-refund" target="_blank">{l s='See documentation' mod='alma'}</a>
         </p>
         <div class="clear"></div>
         <label>{l s='Refund type:' mod='alma'}</label>
