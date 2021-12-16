@@ -204,9 +204,6 @@ final class GetContentHookController extends AdminHookController
             $isStateRefundEnabled = (bool) Tools::getValue('ALMA_STATE_REFUND_ENABLED_ON');
             Settings::updateValue('ALMA_STATE_REFUND_ENABLED', $isStateRefundEnabled);
 
-            $displayOrderConfirmation = (bool) Tools::getValue('ALMA_DISPLAY_ORDER_CONFIRMATION_ON');
-            Settings::updateValue('ALMA_DISPLAY_ORDER_CONFIRMATION', $displayOrderConfirmation);
-
             $activateLogging = (bool) Tools::getValue('ALMA_ACTIVATE_LOGGING_ON');
             Settings::updateValue('ALMA_ACTIVATE_LOGGING', $activateLogging);
 
@@ -1005,39 +1002,6 @@ final class GetContentHookController extends AdminHookController
             ],
         ];
 
-        $orderConfirmationForm = [
-            'form' => [
-                'legend' => [
-                    'title' => $this->module->l('Order confirmation', 'GetContentHookController'),
-                    'image' => $iconPath,
-                ],
-                'input' => [
-                    [
-                        'name' => 'ALMA_DISPLAY_ORDER_CONFIRMATION',
-                        'label' => $this->module->l('Display order confirmation', 'GetContentHookController'),
-                        // PrestaShop won't detect the string if the call to `l` is multiline
-                        // phpcs:ignore
-                        'desc' => $this->module->l('Activate this setting when you do not have your own order confirmation page', 'GetContentHookController'),
-                        'type' => 'checkbox',
-                        'values' => [
-                            'id' => 'id',
-                            'name' => 'label',
-                            'query' => [
-                                [
-                                    'id' => 'ON',
-                                    'val' => true,
-                                    // PrestaShop won't detect the string if the call to `l` is multiline
-                                    // phpcs:ignore
-                                    'label' => $this->module->l('Confirm successful order to customers when they come back from the Alma payment page', 'GetContentHookController'),
-                                ],
-                            ],
-                        ],
-                    ],
-                ],
-                'submit' => ['title' => $this->module->l('Save'), 'class' => 'button btn btn-default pull-right'],
-            ],
-        ];
-
         // Exclusion
         $tpl = $this->context->smarty->createTemplate(
             "{$this->module->local_path}views/templates/hook/excludedCategories.tpl"
@@ -1200,7 +1164,6 @@ final class GetContentHookController extends AdminHookController
                 $paymentButtonForm,
                 $excludedForm,
                 $refundStateForm,
-                $orderConfirmationForm,
                 $apiConfigForm,
                 $debugForm,
             ]);
@@ -1238,7 +1201,6 @@ final class GetContentHookController extends AdminHookController
             'ALMA_CART_WDGT_NOT_ELGBL_ON' => Settings::showCartWidgetIfNotEligible(),
             'ALMA_PRODUCT_WDGT_NOT_ELGBL_ON' => Settings::showProductWidgetIfNotEligible(),
             'ALMA_CATEGORIES_WDGT_NOT_ELGBL_ON' => Settings::showCategoriesWidgetIfNotEligible(),
-            'ALMA_DISPLAY_ORDER_CONFIRMATION_ON' => Settings::displayOrderConfirmation(),
             'ALMA_ACTIVATE_LOGGING_ON' => (bool) Settings::canLog(),
             'ALMA_STATE_REFUND' => Settings::getRefundState(),
             'ALMA_STATE_REFUND_ENABLED_ON' => Settings::isRefundEnabledByState(),
