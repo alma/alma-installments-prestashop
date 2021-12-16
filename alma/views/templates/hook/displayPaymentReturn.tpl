@@ -48,7 +48,7 @@
             <span class="alma-fee-plan--amount">
                 {almaFormatPrice cents=$plan->purchase_amount + $plan->customer_fee}
                 {if $plan->customer_fee > 0}
-                    {capture assign='fees'}{almaFormatPrice cents=$payment->payment_plan[0].customer_fee}{/capture}
+                    {capture assign='fees'}{almaFormatPrice cents=$payment->payment_plan[0]->customer_fee}{/capture}
                     <small style="display: block">
                         {l s='(Including fees: %s)' sprintf=[$fees] mod='alma'}
                     </small>
