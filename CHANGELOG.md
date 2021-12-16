@@ -1,5 +1,12 @@
 # Changelog
 
+## v2.4.0
+
+-   New interface for alma refunds directly in the order page
+-   Payment confirmation page is now with Alma payment information
+-   New design and internationalization of Alma Widget
+-   Fixes custom fields if you add new language
+
 ## v2.3.2
 
 -   Fix empty custom fields if language is disabled

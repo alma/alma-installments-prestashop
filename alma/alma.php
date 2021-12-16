@@ -31,7 +31,7 @@ require_once _PS_MODULE_DIR_ . 'alma/lib/Utils/smarty.php';
 
 class Alma extends PaymentModule
 {
-    const VERSION = '2.3.2';
+    const VERSION = '2.4.0';
 
     public $_path;
     public $local_path;
@@ -46,7 +46,7 @@ class Alma extends PaymentModule
     {
         $this->name = 'alma';
         $this->tab = 'payments_gateways';
-        $this->version = '2.3.2';
+        $this->version = '2.4.0';
         $this->author = 'Alma';
         $this->need_instance = false;
         $this->bootstrap = true;
