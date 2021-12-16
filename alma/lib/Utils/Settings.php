@@ -39,8 +39,6 @@ if (!defined('ALMA_MODE_LIVE')) {
 use Alma\PrestaShop\Model\CategoryAdapter;
 use Category;
 use Configuration;
-use Language;
-use Module;
 use Product;
 use Shop;
 use Tools;
@@ -48,12 +46,6 @@ use Translate;
 
 class Settings
 {
-    const ALMA_PAYMENT_BUTTON_TITLE = 'ALMA_PAYMENT_BUTTON_TITLE';
-    const ALMA_PAYMENT_BUTTON_DESC = 'ALMA_PAYMENT_BUTTON_DESC';
-    const ALMA_DEFERRED_BUTTON_TITLE = 'ALMA_DEFERRED_BUTTON_TITLE';
-    const ALMA_DEFERRED_BUTTON_DESC = 'ALMA_DEFERRED_BUTTON_DESC';
-    const ALMA_NOT_ELIGIBLE_CATEGORIES = 'ALMA_NOT_ELIGIBLE_CATEGORIES';
-
     public static function l($str)
     {
         return Translate::getModuleTranslation('alma', $str, 'settings');
@@ -92,11 +84,11 @@ class Settings
             'ALMA_TEST_API_KEY',
             'ALMA_SHOW_DISABLED_BUTTON',
             'ALMA_SHOW_ELIGIBILITY_MESSAGE',
-            self::ALMA_PAYMENT_BUTTON_TITLE,
-            self::ALMA_PAYMENT_BUTTON_DESC,
-            self::ALMA_DEFERRED_BUTTON_TITLE,
-            self::ALMA_DEFERRED_BUTTON_DESC,
-            self::ALMA_NOT_ELIGIBLE_CATEGORIES,
+            SettingsCustomFields::ALMA_PAYMENT_BUTTON_TITLE,
+            SettingsCustomFields::ALMA_PAYMENT_BUTTON_DESC,
+            SettingsCustomFields::ALMA_DEFERRED_BUTTON_TITLE,
+            SettingsCustomFields::ALMA_DEFERRED_BUTTON_DESC,
+            SettingsCustomFields::ALMA_NOT_ELIGIBLE_CATEGORIES,
             'ALMA_STATE_REFUND',
             'ALMA_STATE_REFUND_ENABLED',
             'ALMA_EXCLUDED_CATEGORIES',
@@ -161,11 +153,6 @@ class Settings
     public static function showDisabledButton()
     {
         return (bool) (int) self::get('ALMA_SHOW_DISABLED_BUTTON', true);
-    }
-
-    public static function getNonEligibleCategoriesMessage($idLang = null)
-    {
-        return self::getCustomFieldsByKeyConfig(self::ALMA_NOT_ELIGIBLE_CATEGORIES, $idLang);
     }
 
     public static function showEligibilityMessage()
@@ -357,17 +344,35 @@ class Settings
         foreach ($feePlans as $key => $feePlan) {
             if (1 == $feePlan->enabled) {
                 $dataFromKey = self::getDataFromKey($key);
-                if ($onlyPnx && $dataFromKey['deferredMonths'] === 0 && $dataFromKey['deferredDays'] === 0) {
-                    $plans[] = [
-                        'installmentsCount' => (int) $dataFromKey['installmentsCount'],
-                        'minAmount' => $feePlan->min,
-                        'maxAmount' => $feePlan->max,
-                    ];
-                }
+                $plans[] = [
+                    'installmentsCount' => (int) $dataFromKey['installmentsCount'],
+                    'minAmount' => $feePlan->min,
+                    'maxAmount' => $feePlan->max,
+                    'deferredDays' => (int) $dataFromKey['deferredDays'],
+                    'deferredMonths' => (int) $dataFromKey['deferredMonths'],
+                ];
             }
         }
 
         return $plans;
+    }
+
+    /**
+     * Get locale by id_lang with condition NL for widget (provisional)
+     *
+     * @param int $idLang
+     *
+     * @return string
+     */
+    public static function localeByIdLangForWidget($idLang)
+    {
+        $locale = Language::getIsoById($idLang);
+
+        if ($locale == 'nl') {
+            $locale = 'nl-NL';
+        }
+
+        return $locale;
     }
 
     public static function getRefundState()
@@ -601,102 +606,5 @@ class Settings
             'deferredDays' => (int) $data[2],
             'deferredMonths' => (int) $data[3],
         ];
-    }
-
-    /**
-     * Get translation by file iso if exist
-     *
-     * @param string $module
-     * @param array $arrayTrad
-     * @param string $source
-     * @param string $locale
-     * @param int $unset
-     * @param bool $js
-     * @param bool $escape
-     *
-     * @return array
-     *
-     * @see AdminTranslationsController::getModuleTranslations
-     */
-    public static function getModuleTranslations(
-        $module,
-        $arrayTrad,
-        $source,
-        $locale,
-        $unset = false,
-        $js = false,
-        $escape = true
-    ) {
-        global $_MODULES, $_MODULE, $_LANGADM;
-
-        static $langCache = [];
-        // $_MODULES is a cache of translations for all module.
-        // phpcs:ignore
-        // $translationsMerged is a cache of wether a specific module's translations have already been added to $_MODULES
-        static $translationsMerged = [];
-
-        $_TRADS = [];
-
-        $name = $module instanceof Module ? $module->name : $module;
-
-        $iso = $locale;
-
-        if (!isset($translationsMerged[$name][$iso])) {
-            $filesByPriority = [
-                // PrestaShop 1.5 translations
-                _PS_MODULE_DIR_ . $name . '/translations/' . $iso . '.php',
-                // PrestaShop 1.4 translations
-                _PS_MODULE_DIR_ . $name . '/' . $iso . '.php',
-                // Translations in theme
-                _PS_THEME_DIR_ . 'modules/' . $name . '/translations/' . $iso . '.php',
-                _PS_THEME_DIR_ . 'modules/' . $name . '/' . $iso . '.php',
-            ];
-            foreach ($filesByPriority as $file) {
-                if (file_exists($file)) {
-                    include $file;
-                    if ($unset) {
-                        unset($_MODULES);
-                    }
-                    $_TRADS = !empty($_TRADS) ? array_merge($_MODULES, $_MODULE) : $_MODULE;
-                }
-            }
-            $translationsMerged[$name][$iso] = true;
-        }
-
-        foreach ($arrayTrad as $keyConfig => $string) {
-            $string = preg_replace("/\\\*'/", "\'", $string);
-            $key = md5($string);
-
-            $cacheKey = $name . '|' . $string . '|' . $source . '|' . (int) $js . '|' . $iso;
-
-            if (isset($langCache[$cacheKey])) {
-                $ret = $langCache[$cacheKey];
-            } else {
-                $currentKey = strtolower('<{' . $name . '}' . _THEME_NAME_ . '>' . $source) . '_' . $key;
-                $defaultKey = strtolower('<{' . $name . '}prestashop>' . $source) . '_' . $key;
-
-                if (!empty($_TRADS[$currentKey])) {
-                    $ret = stripslashes($_TRADS[$currentKey]);
-                } elseif (!empty($_TRADS[$defaultKey])) {
-                    $ret = stripslashes($_TRADS[$defaultKey]);
-                } elseif (!empty($_LANGADM)) {
-                    // if translation was not found in module, look for it in AdminController or Helpers
-                    $ret = stripslashes(Translate::getGenericAdminTranslation($string, $key, $_LANGADM));
-                } else {
-                    $ret = stripslashes($string);
-                }
-
-                if ($js) {
-                    $ret = addslashes($ret);
-                } elseif ($escape) {
-                    $ret = htmlspecialchars($ret, ENT_COMPAT, 'UTF-8');
-                }
-
-                $langCache[$cacheKey] = $ret;
-            }
-            $rets[$keyConfig] = $langCache[$cacheKey];
-        }
-
-        return $rets;
     }
 }

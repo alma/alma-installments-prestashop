@@ -31,6 +31,7 @@ if (!defined('_PS_VERSION_')) {
 use Alma\PrestaShop\Hooks\FrontendHookController;
 use Alma\PrestaShop\Utils\LocaleHelper;
 use Alma\PrestaShop\Utils\Settings;
+use Alma\PrestaShop\Utils\SettingsCustomFields;
 use Product;
 use Tools;
 
@@ -115,7 +116,9 @@ final class DisplayProductPriceBlockHookController extends FrontendHookControlle
             $psVersion = 'ps16';
         }
 
-        $activePlans = Settings::activePlans(true);
+        $activePlans = Settings::activePlans();
+
+        $locale = Settings::localeByIdLangForWidget($this->context->language->id);
 
         if (!$activePlans) {
             return;
@@ -145,7 +148,7 @@ final class DisplayProductPriceBlockHookController extends FrontendHookControlle
             'psVersion' => $psVersion,
             'logo' => almaSvgDataUrl(_PS_MODULE_DIR_ . $this->module->name . '/views/img/logos/logo_alma.svg'),
             'isExcluded' => Settings::isProductExcluded($productId),
-            'exclusionMsg' => Settings::getNonEligibleCategoriesMessage($this->context->language->id),
+            'exclusionMsg' => SettingsCustomFields::getNonEligibleCategoriesMessageByLang($this->context->language->id),
             'settings' => [
                 'merchantId' => Settings::getMerchantId(),
                 'apiMode' => Settings::getActiveMode(),
@@ -154,6 +157,8 @@ final class DisplayProductPriceBlockHookController extends FrontendHookControlle
                 'refreshPrice' => $refreshPrice,
                 'decimalSeparator' => LocaleHelper::decimalSeparator(),
                 'thousandSeparator' => LocaleHelper::thousandSeparator(),
+                'showIfNotEligible' => Settings::showProductWidgetIfNotEligible(),
+                'locale' => $locale,
                 ],
             'widgetQuerySelectors' => json_encode([
                 'price' => Settings::getProductPriceQuerySelector(),

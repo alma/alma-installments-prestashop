@@ -33,6 +33,7 @@ use Alma\PrestaShop\Hooks\FrontendHookController;
 use Alma\PrestaShop\Model\CartData;
 use Alma\PrestaShop\Utils\LocaleHelper;
 use Alma\PrestaShop\Utils\Settings;
+use Alma\PrestaShop\Utils\SettingsCustomFields;
 use Cart;
 use Media;
 
@@ -47,7 +48,9 @@ final class DisplayShoppingCartFooterHookController extends FrontendHookControll
     {
         $eligibilityMsg = null;
 
-        $activePlans = Settings::activePlans(true);
+        $activePlans = Settings::activePlans();
+
+        $locale = Settings::localeByIdLangForWidget($this->context->language->id);
 
         if (!$activePlans) {
             return;
@@ -72,7 +75,7 @@ final class DisplayShoppingCartFooterHookController extends FrontendHookControll
         $isExcluded = false;
         $diff = CartData::getCartExclusion($params['cart']);
         if (!empty($diff)) {
-            $eligibilityMsg = Settings::getNonEligibleCategoriesMessage($this->context->language->id);
+            $eligibilityMsg = SettingsCustomFields::getNonEligibleCategoriesMessageByLang($this->context->language->id);
             $isExcluded = true;
             if (!Settings::showCategoriesWidgetIfNotEligible()) {
                 $isEligible = false;
@@ -110,6 +113,8 @@ final class DisplayShoppingCartFooterHookController extends FrontendHookControll
                     'decimalSeparator' => LocaleHelper::decimalSeparator(),
                     'thousandSeparator' => LocaleHelper::thousandSeparator(),
                     'psVersion' => $psVersion,
+                    'showIfNotEligible' => Settings::showCartWidgetIfNotEligible(),
+                    'locale' => $locale,
                 ],
                 'widgetQuerySelectors' => json_encode([
                     'price' => Settings::getProductPriceQuerySelector(),
