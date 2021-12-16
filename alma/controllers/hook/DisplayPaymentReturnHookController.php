@@ -34,9 +34,6 @@ use Alma\PrestaShop\API\PaymentValidationError;
 use Alma\PrestaShop\Hooks\FrontendHookController;
 use Alma\PrestaShop\Model\OrderData;
 use Alma\PrestaShop\Utils\Logger;
-use Alma\PrestaShop\Utils\Settings;
-use Order;
-use OrderPayment;
 
 final class DisplayPaymentReturnHookController extends FrontendHookController
 {
