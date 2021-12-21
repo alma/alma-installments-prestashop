@@ -29,20 +29,20 @@
         <div class="row">
             <div class="col-md-6">
                 <h3 class="card-header-title">
-                    <img src="{$iconPath}"/>
+                    <img src="{$iconPath|escape:'htmlall':'UTF-8'}"/>
                     {l s='Alma refund' mod='alma'}
                 </h3>
             </div>
             <div class="col-md-6">
                 <div class="progress alma-progress" style="height: 20px; {if !$refund}display:none{/if}">
-                    <div class="progress-bar" role="progressbar" style="line-height: 10px;width: {$refund.percentRefund}%" aria-valuenow="{$refund.percentRefund}" aria-valuemin="0" aria-valuemax="100">{$refund.totalRefundAmount} / {$order.ordersTotalAmount}</div>
+                    <div class="progress-bar" role="progressbar" style="line-height: 10px;width: {$refund.percentRefund|escape:'htmlall':'UTF-8'}%" aria-valuenow="{$refund.percentRefund|escape:'htmlall':'UTF-8'}" aria-valuemin="0" aria-valuemax="100">{$refund.totalRefundAmount|escape:'htmlall':'UTF-8'} / {$order.ordersTotalAmount|escape:'htmlall':'UTF-8'}</div>
                 </div>
             </div>
         </div>
     </div>
     <div class="card-body">
-        <form id="alma-refund" method="POST" action="{$actionUrl}" class="defaultForm form-horizontal form-alma {if $refund.percentRefund|string_format:"%.2f" >= 100}disabled{/if}">
-            <input type="hidden" class="alma" name="orderId" required value="{$order.id}"/>  
+        <form id="alma-refund" method="POST" action="{$actionUrl|escape:'htmlall':'UTF-8'}" class="defaultForm form-horizontal form-alma {if $refund.percentRefund|string_format:"%.2f" >= 100}disabled{/if}">
+            <input type="hidden" class="alma" name="orderId" required value="{$order.id|escape:'htmlall':'UTF-8'}"/>  
             <div class="row">
                 <div class="col">
                     <p>
@@ -100,7 +100,7 @@
                             placeholder="{l s='Amount to refund...' mod='alma'}"
                         />
                         <div class="input-group-append">
-                            <div class="input-group-text">{$order.currencySymbol}</div>
+                            <div class="input-group-text">{$order.currencySymbol|escape:'htmlall':'UTF-8'}</div>
                         </div>
                     </div>
                 </div>
