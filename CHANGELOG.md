@@ -1,5 +1,10 @@
 # Changelog
 
+## v2.4.1
+
+-   Fixes escape validator Prestashop
+-   Fixes function upgrade v2.3.0
+
 ## v2.4.0
 
 -   New interface for alma refunds directly in the order page
