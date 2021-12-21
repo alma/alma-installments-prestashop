@@ -61,7 +61,7 @@
         {l s='You should receive a confirmation email shortly' mod='alma'}
     </p>
     <p>
-        {l s='To check your payment\'s progress, change you card or pay in advance:' mod='alma'} <a href="{$payment->url}" target="_blank" title="{l s='follow its deadlines' mod='alma'}">{l s='click here' mod='alma'}</a>
+        {l s='To check your payment\'s progress, change you card or pay in advance:' mod='alma'} <a href="{$payment->url|escape:'htmlall':'UTF-8'}" target="_blank" title="{l s='follow its deadlines' mod='alma'}">{l s='click here' mod='alma'}</a>
     </p>
     <p>
         {l s='We appreciate your business' mod='alma'}

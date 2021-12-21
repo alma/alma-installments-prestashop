@@ -26,11 +26,11 @@
 <div class="alma-danger error" style="display:none"></div>
 <fieldset>
     <legend>
-        <img src="{$iconPath}"/>
+        <img src="{$iconPath|escape:'htmlall':'UTF-8'}"/>
         {l s='Alma refund' mod='alma'}
     </legend>
-    <form id="alma-refund"  method="POST" action="{$actionUrl}" class="defaultForm form-horizontal form-alma {if $refund.percentRefund >= 100}disabled{/if}">
-        <input type="hidden" class="alma" name="orderId" required value="{$order.id}" />
+    <form id="alma-refund"  method="POST" action="{$actionUrl|escape:'htmlall':'UTF-8'}" class="defaultForm form-horizontal form-alma {if $refund.percentRefund >= 100}disabled{/if}">
+        <input type="hidden" class="alma" name="orderId" required value="{$order.id|escape:'htmlall':'UTF-8'}" />
         <table cellspacing="0" cellpadding="0" class="table tableDnD alma-table-refund" style="float:right; {if !$refund}display:none;{/if}">
             <thead>
             <tr> 
@@ -42,10 +42,10 @@
             <tbody>
                 <tr>
                     <td class="refundAmount">
-                        {$refund.totalRefundAmount}
+                        {$refund.totalRefundAmount|escape:'htmlall':'UTF-8'}
                     </td>
                     <td>
-                        {$order.ordersTotalAmount}
+                        {$order.ordersTotalAmount|escape:'htmlall':'UTF-8'}
                     </td>
                     <td>
                         <img src="../img/admin/money.gif" />

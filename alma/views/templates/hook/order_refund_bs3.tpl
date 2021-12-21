@@ -24,18 +24,18 @@
 <div class="alert alert-success alma-success"  style="display:none" data-alert="success"></div>
 <div class="alert alert-danger alma-danger" style="display:none" data-alert="danger"></div>
 
-<form id="alma-refund" method="POST" action="{$actionUrl}" class="defaultForm form-horizontal form-alma {if $refund.percentRefund >= 100}disabled{/if}">
-    <input type="hidden" class="alma" name="orderId" required value="{$order.id}"/>
+<form id="alma-refund" method="POST" action="{$actionUrl|escape:'htmlall':'UTF-8'}" class="defaultForm form-horizontal form-alma {if $refund.percentRefund >= 100}disabled{/if}">
+    <input type="hidden" class="alma" name="orderId" required value="{$order.id|escape:'htmlall':'UTF-8'}"/>
     <div class="panel" id="alma_refunds">
         <div class="panel-heading row">
             <div class="col-sm-6">
-                <img src="{$iconPath}"/>
+                <img src="{$iconPath|escape:'htmlall':'UTF-8'}"/>
                 {l s='Alma refund' mod='alma'}
             </div>
             <div class="col-sm-6">
                 <div class="progress alma-progress" {if !$refund}style="display:none"{/if}>
-                    <div class="progress-bar" role="progressbar" aria-valuenow="{$refund.percentRefund}" aria-valuemin="0" aria-valuemax="100" style="width: {$refund.percentRefund}%;">
-                        {$refund.totalRefundAmount} / {$order.ordersTotalAmount}
+                    <div class="progress-bar" role="progressbar" aria-valuenow="{$refund.percentRefund|escape:'htmlall':'UTF-8'}" aria-valuemin="0" aria-valuemax="100" style="width: {$refund.percentRefund|escape:'htmlall':'UTF-8'}%;">
+                        {$refund.totalRefundAmount|escape:'htmlall':'UTF-8'} / {$order.ordersTotalAmount|escape:'htmlall':'UTF-8'}
                     </div>
                 </div>
             </div>
@@ -86,7 +86,7 @@
                 <label class="control-label col-lg-2 required"> {l s='Amount (Max. %s):' sprintf=$order.ordersTotalAmount mod='alma'}</label>
                 <div class="col-lg-2">
                     <div class="input-group">
-                        <span class="input-group-addon">{$order.currencySymbol}</span>
+                        <span class="input-group-addon">{$order.currencySymbol|escape:'htmlall':'UTF-8'}</span>
                         <input type="text" class="alma" value="" name="amount"
                                placeholder="{l s='Amount to refund...' mod='alma'}"/>
                     </div>
