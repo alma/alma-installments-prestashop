@@ -31,6 +31,7 @@ include_once _PS_MODULE_DIR_ . 'alma/vendor/autoload.php';
 use Alma\API\RequestError;
 use Alma\PrestaShop\API\ClientHelper;
 use Alma\PrestaShop\Utils\Settings;
+use Alma\PrestaShop\Utils\SettingsCustomFields;
 
 function upgrade_module_2_3_0($module)
 {
@@ -54,7 +55,7 @@ function upgrade_module_2_3_0($module)
                 Configuration::deleteByName($configKey);
             }
 
-            Settings::initCustomFields();
+            SettingsCustomFields::initCustomFields();
         } catch (RequestError $e) {
             return true;
         }
