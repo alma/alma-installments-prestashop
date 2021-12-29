@@ -75,3 +75,54 @@ i.icon-alma{
 fieldset .form-alma.disabled::before{
     background-color: rgba(235, 237, 244, .7);
 }
+
+/*Switch*/
+.bootstrap label.switch{
+    display: flex;
+    align-items: center;
+    padding-left: 10px;
+    height: 30px;
+}
+
+.switch input[type=checkbox]{
+	height: 0;
+	width: 0;
+	visibility: hidden;
+}
+
+.switch .slider {
+	cursor: pointer;
+	text-indent: -9999px;
+	width: 60px;
+	height: 30px;
+	background: grey;
+	display: block;
+	border-radius: 100px;
+	position: relative;
+    margin-right: 20px;
+}
+
+.switch .slider:after {
+	content: '';
+	position: absolute;
+	top: 5px;
+	left: 5px;
+	width: 20px;
+	height: 20px;
+	background: #fff;
+	border-radius: 20px;
+	transition: 0.3s;
+}
+
+.switch input:checked + .slider {
+	background: #00425d;
+}
+
+.switch input:checked + .slider:after {
+	left: calc(100% - 5px);
+	transform: translateX(-100%);
+}
+
+.switch .slider:active:after {
+	width: 35px;
+}

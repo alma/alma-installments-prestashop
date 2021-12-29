@@ -40,6 +40,19 @@
                     {if isset($input.required) && $input.required } required="required" {/if}
                     {if isset($input.placeholder) && $input.placeholder } placeholder="{$input.placeholder|escape:'htmlall':'UTF-8'}"{/if}
             />
+    {else if $input.type == 'switch'}
+        {foreach $input.values.query as $value}
+            {assign var=id_checkbox value=$input.name|cat:'_'|cat:$value[$input.values.id]}
+            <div class="checkbox{if isset($input.expand) && strtolower($input.expand.default) == 'show'} hidden{/if}">
+                {strip}
+                    <label class="switch" for="{$id_checkbox}">
+                        <input type="checkbox" name="{$id_checkbox}" id="{$id_checkbox}" class="{if isset($input.class)}{$input.class}{/if}"{if isset($value.val)} value="{$value.val|escape:'html':'UTF-8'}"{/if}{if isset($fields_value[$id_checkbox]) && $fields_value[$id_checkbox]} checked="checked"{/if} />
+                        <span class="slider round"></span>
+                        <span class="switch-name">{$value[$input.values.name]}</span>
+                    </label>
+                {/strip}
+            </div>
+        {/foreach}
     {else}
         {$smarty.block.parent}
     {/if}

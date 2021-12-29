@@ -589,7 +589,7 @@ final class GetContentHookController extends AdminHookController
                     'form_group_class' => "$tabId-content",
                     'name' => "ALMA_${key}_ENABLED",
                     'label' => $label,
-                    'type' => 'checkbox',
+                    'type' => 'switch',
                     'values' => [
                         'id' => 'id',
                         'name' => 'label',
@@ -762,7 +762,7 @@ final class GetContentHookController extends AdminHookController
                         'label' => $this->module->l('Show product eligibility on details page', 'GetContentHookController'),
                         // phpcs:ignore
                         'desc' => $this->module->l('Displays a badge with eligible Alma plans with installments details', 'GetContentHookController'),
-                        'type' => 'checkbox',
+                        'type' => 'switch',
                         'values' => [
                             'id' => 'id',
                             'name' => 'label',
@@ -782,7 +782,7 @@ final class GetContentHookController extends AdminHookController
                         'label' => $this->module->l('Display badge', 'GetContentHookController'),
                         // phpcs:ignore
                         'desc' => $this->module->l('Displays a badge when product price is too high or tow low', 'GetContentHookController'),
-                        'type' => 'checkbox',
+                        'type' => 'switch',
                         'values' => [
                             'id' => 'id',
                             'name' => 'label',
@@ -924,7 +924,7 @@ final class GetContentHookController extends AdminHookController
                         'label' => $this->module->l('Show cart eligibility', 'GetContentHookController'),
                         // phpcs:ignore
                         'desc' => $this->module->l('Displays a badge with eligible Alma plans with installments details', 'GetContentHookController'),
-                        'type' => 'checkbox',
+                        'type' => 'switch',
                         'values' => [
                             'id' => 'id',
                             'name' => 'label',
@@ -944,7 +944,7 @@ final class GetContentHookController extends AdminHookController
                         'label' => $this->module->l('Display badge', 'GetContentHookController'),
                         // phpcs:ignore
                         'desc' => $this->module->l('Displays a badge when cart amount is too high or tow low', 'GetContentHookController'),
-                        'type' => 'checkbox',
+                        'type' => 'switch',
                         'values' => [
                             'id' => 'id',
                             'name' => 'label',
@@ -1035,7 +1035,7 @@ final class GetContentHookController extends AdminHookController
                         // PrestaShop won't detect the string if the call to `l` is multiline
                         // phpcs:ignore
                         'desc' => $this->module->l('Display the message below if the product is excluded from the category', 'GetContentHookController'),
-                        'type' => 'checkbox',
+                        'type' => 'switch',
                         'values' => [
                             'id' => 'id',
                             'name' => 'label',
@@ -1085,7 +1085,7 @@ final class GetContentHookController extends AdminHookController
                     [
                         'name' => 'ALMA_STATE_REFUND_ENABLED',
                         'label' => $this->module->l('Activate refund by change state', 'GetContentHookController'),
-                        'type' => 'checkbox',
+                        'type' => 'switch',
                         'values' => [
                             'id' => 'id',
                             'name' => 'label',
@@ -1127,7 +1127,7 @@ final class GetContentHookController extends AdminHookController
                     [
                         'name' => 'ALMA_ACTIVATE_LOGGING',
                         'label' => $this->module->l('Activate logging', 'GetContentHookController'),
-                        'type' => 'checkbox',
+                        'type' => 'switch',
                         'values' => [
                             'id' => 'id',
                             'name' => 'label',
