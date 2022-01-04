@@ -337,7 +337,7 @@ class AdminAlmaCategoriesController extends ModuleAdminController
     }
 
     public function displayVoidactionLink($token = null, $id)
-    { 
+    {
         return '';
     }
 
