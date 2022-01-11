@@ -24,11 +24,6 @@
 
 namespace Alma\PrestaShop\Utils;
 
-use Alma;
-use Tools;
-use Module;
-use Context;
-
 if (!defined('_PS_VERSION_')) {
     exit;
 }
@@ -40,22 +35,51 @@ if (!defined('_PS_VERSION_')) {
  */
 abstract class AbstractAdminFormBuilder
 {
-/**
+    private $image;
+    private $title;
+
+    /**
+     * @param $image
+     * @param $title
+     */
+    public function __construct($image, $title)
+    {
+        $this->image = $image;
+        $this->title = $title;
+    }
+
+    /**
+     * Form Configuration
+     *
+     * @return array built form
+     */
+    public function build()
+    {
+        return [
+            'form' => [
+                'legend' => $this->legendForm(),
+                'input'  => $this->configForm(),
+                'submit' => ['title' => $this->getSubmitTitle(), 'class' => 'button btn btn-default pull-right'],
+            ],
+        ];
+    }
+
+    /**
      * Input Switch Form Configuration
      *
      * @return array inputSwitchForm
      */
-    public function inputSwitchForm($name, $label, $desc, $helpDesc)
+    protected function inputSwitchForm($name, $label, $desc, $helpDesc)
     {
         return [
-            'name' => $name,
+            'name'   => $name,
             // phpcs:ignore
-            'label' => $label,
+            'label'  => $label,
             // phpcs:ignore
-            'desc' => $desc,
-            'type' => 'switch',
+            'desc'   => $desc,
+            'type'   => 'switch',
             'values' => [
-                'id' => 'id',
+                'id'    => 'id',
                 'name' => 'label',
                 'query' => [
                     [
@@ -75,17 +99,17 @@ abstract class AbstractAdminFormBuilder
      *
      * @return array inputRadioForm
      */
-    public function inputRadioForm($name, $label, $labelOff, $labelOn)
+    protected function inputRadioForm($name, $label, $labelOff, $labelOn)
     {
         return [
-            'name' => $name,
-            'type' => 'radio',
-            'label' => $label,
-            'class' => 't',
+            'name'     => $name,
+            'type'     => 'radio',
+            'label'    => $label,
+            'class'    => 't',
             'required' => true,
-            'values' => [
+            'values'   => [
                 [
-                    'id' => $name . '_OFF',
+                    'id'    => $name . '_OFF',
                     'value' => false,
                     // PrestaShop won't detect the string if the call to `l` is multiline
                     // phpcs:ignore
@@ -107,20 +131,20 @@ abstract class AbstractAdminFormBuilder
      *
      * @return array inputTextForm
      */
-    public function inputTextForm($name, $label, $desc, $placeholder = null)
+    protected function inputTextForm($name, $label, $desc, $placeholder = null)
     {
         $dataInput = [
-            'name' => $name,
-            'label' => $label,
-            'desc' => sprintf(
-                // PrestaShop won't detect the string if the call to `l` is multiline
-                // phpcs:ignore
+            'name'     => $name,
+            'label'    => $label,
+            'desc'     => sprintf(
+            // PrestaShop won't detect the string if the call to `l` is multiline
+            // phpcs:ignore
                 $desc,
                 '<b>',
                 '</b>'
             ),
-            'type' => 'text',
-            'size' => 75,
+            'type'     => 'text',
+            'size'     => 75,
             'required' => false,
         ];
 
@@ -130,4 +154,28 @@ abstract class AbstractAdminFormBuilder
 
         return $dataInput;
     }
+
+    /**
+     * Legend Form Configuration
+     *
+     * @return array legendForm
+     */
+    protected function legendForm()
+    {
+        return [
+            'title' => $this->title,
+            'image' => $this->image,
+        ];
+    }
+
+    /**
+     * @return array
+     */
+    abstract protected function configForm();
+
+    /**
+     * @return string
+     */
+    abstract protected function getSubmitTitle();
+
 }

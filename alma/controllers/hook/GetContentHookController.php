@@ -32,7 +32,8 @@ use Alma\API\RequestError;
 use Alma\PrestaShop\API\ClientHelper;
 use Alma\PrestaShop\Hooks\AdminHookController;
 use Alma\PrestaShop\Utils\AdminFormBuilder;
-use Alma\PrestaShop\Utils\AlmaAdminFormBuilder;
+use Alma\PrestaShop\Utils\CartEligibilityAdminFormBuilder;
+use Alma\PrestaShop\Utils\ProductEligibilityAdminFormBuilder;
 use Alma\PrestaShop\Utils\Logger;
 use Alma\PrestaShop\Utils\Settings;
 use Alma\PrestaShop\Utils\SettingsCustomFields;
@@ -751,96 +752,8 @@ final class GetContentHookController extends AdminHookController
             ];
         }
 
-        $builder = new AlmaAdminFormBuilder($this->module);
-
-        $legendProductEligibilityForm = [
-            'title' => $this->module->l('Eligibility on product pages', 'GetContentHookController'),
-            'image' => $iconPath,
-        ];
-
-        $inputsProductEligibilityForm = [
-            $builder->inputSwitchForm(
-                'ALMA_SHOW_PRODUCT_ELIGIBILITY',
-                $this->module->l('Show product eligibility on details page', 'GetContentHookController'), 
-                $this->module->l('Displays a badge with eligible Alma plans with installments details', 'GetContentHookController'), 
-                $this->module->l('Display the product\'s eligibility', 'GetContentHookController')
-            ),
-            $builder->inputSwitchForm(
-                'ALMA_PRODUCT_WDGT_NOT_ELGBL',
-                $this->module->l('Display badge', 'GetContentHookController'), 
-                $this->module->l('Displays a badge when product price is too high or tow low', 'GetContentHookController'), 
-                $this->module->l('Display badge when the product is not eligible.', 'GetContentHookController')
-            ),
-            $builder->inputRadioForm(
-                'ALMA_WIDGET_POSITION_CUSTOM',
-                $this->module->l('Badge position', 'GetContentHookController'), 
-                $this->module->l('Display badge after price (by default)', 'GetContentHookController'), 
-                $this->module->l('Display badge on custom css selector', 'GetContentHookController')
-            ),
-            $builder->inputTextForm(
-                'ALMA_WIDGET_POSITION_SELECTOR',
-                $this->module->l('Display badge on custom css selector', 'GetContentHookController'), 
-                $this->module->l('%1$sAdvanced%2$s [Optional] Query selector for our scripts to display the badge on product page', 'GetContentHookController'), 
-                $this->module->l('E.g. #id, .class, ...', 'GetContentHookController')
-            ),
-            $builder->inputTextForm(
-                'ALMA_PRODUCT_PRICE_SELECTOR',
-                $this->module->l('Product price query selector', 'GetContentHookController'), 
-                $this->module->l('%1$sAdvanced%2$s Query selector for our scripts to correctly find the displayed price of a product', 'GetContentHookController')
-            ),
-            $builder->inputTextForm(
-                'ALMA_PRODUCT_ATTR_SELECTOR',
-                $this->module->l('Product attribute dropdown query selector', 'GetContentHookController'), 
-                $this->module->l('%1$sAdvanced%2$s Query selector for our scripts to correctly find the selected attributes of a product combination', 'GetContentHookController')
-            ),
-            $builder->inputTextForm(
-                'ALMA_PRODUCT_ATTR_RADIO_SELECTOR',
-                $this->module->l('Product attribute radio button query selector', 'GetContentHookController'), 
-                $this->module->l('%1$sAdvanced%2$s Query selector for our scripts to correctly find the selected attributes of a product combination', 'GetContentHookController')
-            ),
-            $builder->inputTextForm(
-                'ALMA_PRODUCT_COLOR_PICK_SELECTOR',
-                $this->module->l('Product color picker query selector', 'GetContentHookController'), 
-                $this->module->l('%1$sAdvanced%2$s Query selector for our scripts to correctly find the chosen color option of a product', 'GetContentHookController')
-            ),
-            $builder->inputTextForm(
-                'ALMA_PRODUCT_QUANTITY_SELECTOR',
-                $this->module->l('Product quantity query selector', 'GetContentHookController'), 
-                $this->module->l('%1$sAdvanced%2$s Query selector for our scripts to correctly find the wanted quantity of a product', 'GetContentHookController')
-            ),
-        ];
-
-        $legendCartEligibilityForm = [
-            'title' => $this->module->l('Cart eligibility message', 'GetContentHookController'),
-            'image' => $iconPath,
-        ];
-
-        $inputsCartEligibilityForm = [
-            $builder->inputSwitchForm(
-                'ALMA_SHOW_ELIGIBILITY_MESSAGE',
-                $this->module->l('Show cart eligibility', 'GetContentHookController'), 
-                $this->module->l('Displays a badge with eligible Alma plans with installments details', 'GetContentHookController'), 
-                $this->module->l('Display the cart\'s eligibility.', 'GetContentHookController')
-            ),
-            $builder->inputSwitchForm(
-                'ALMA_CART_WDGT_NOT_ELGBL',
-                $this->module->l('Display badge', 'GetContentHookController'), 
-                $this->module->l('Displays a badge when cart amount is too high or tow low', 'GetContentHookController'), 
-                $this->module->l('Display badge when the cart is not eligible.', 'GetContentHookController')
-            ),
-            $builder->inputRadioForm(
-                'ALMA_CART_WIDGET_POSITION_CUSTOM',
-                $this->module->l('Badge position', 'GetContentHookController'), 
-                $this->module->l('Display badge after cart (by default)', 'GetContentHookController'), 
-                $this->module->l('Display badge on custom css selector', 'GetContentHookController')
-            ),
-            $builder->inputTextForm(
-                'ALMA_CART_WDGT_POS_SELECTOR',
-                $this->module->l('Display badge on custom css selector', 'GetContentHookController'), 
-                $this->module->l('%1$sAdvanced%2$s [Optional] Query selector for our scripts to display the badge on cart page', 'GetContentHookController'), 
-                $this->module->l('E.g. #id, .class, ...', 'GetContentHookController')
-            ),
-        ];
+        $cartBuilder = new CartEligibilityAdminFormBuilder($this->module, $iconPath);
+        $productBuilder = new ProductEligibilityAdminFormBuilder($this->module, $iconPath);
 
         $cartEligibilityForm = [
             'form' => [
@@ -1089,8 +1002,8 @@ final class GetContentHookController extends AdminHookController
             }
 
             $fieldsForms = array_merge($fieldsForms, [
-                $builder->configForm($legendProductEligibilityForm, $inputsProductEligibilityForm, $this->module->l('Save')),
-                $builder->configForm($legendCartEligibilityForm, $inputsCartEligibilityForm, $this->module->l('Save')),
+                $productBuilder->build(),
+                $cartBuilder->build(),
                 $paymentButtonForm,
                 $excludedForm,
                 $refundStateForm,
