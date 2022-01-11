@@ -61,11 +61,11 @@ class AlmaAdminFormBuilder extends AbstractAdminFormBuilder
     }
 
     /**
-     * Product Eligibility Form Configuration
+     * Form Configuration
      *
-     * @return array productEligibilityForm
+     * @return array configForm
      */
-    public function productEligibilityForm($legend, $inputs, $submitTitle)
+    public function configForm($legend, $inputs, $submitTitle)
     {
         return [
             'form' => [

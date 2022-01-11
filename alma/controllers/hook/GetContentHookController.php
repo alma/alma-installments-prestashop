@@ -758,7 +758,7 @@ final class GetContentHookController extends AdminHookController
             'image' => $iconPath,
         ];
 
-        $inputProductEligibilityForm = [
+        $inputsProductEligibilityForm = [
             $builder->inputSwitchForm(
                 'ALMA_SHOW_PRODUCT_ELIGIBILITY',
                 $this->module->l('Show product eligibility on details page', 'GetContentHookController'), 
@@ -810,168 +810,37 @@ final class GetContentHookController extends AdminHookController
             ),
         ];
 
-        // $productEligibilityForm = [
-        //     'form' => [
-        //         'legend' => [
-        //             'title' => $this->module->l('Eligibility on product pages', 'GetContentHookController'),
-        //             'image' => $iconPath,
-        //         ],
-        //         'input' => [
-        //             // [
-        //             //     'name' => 'ALMA_SHOW_PRODUCT_ELIGIBILITY',
-        //             //     // phpcs:ignore
-        //             //     'label' => $this->module->l('Show product eligibility on details page', 'GetContentHookController'),
-        //             //     // phpcs:ignore
-        //             //     'desc' => $this->module->l('Displays a badge with eligible Alma plans with installments details', 'GetContentHookController'),
-        //             //     'type' => 'switch',
-        //             //     'values' => [
-        //             //         'id' => 'id',
-        //             //         'name' => 'label',
-        //             //         'query' => [
-        //             //             [
-        //             //                 'id' => 'ON',
-        //             //                 'val' => true,
-        //             //                 // PrestaShop won't detect the string if the call to `l` is multiline
-        //             //                 // phpcs:ignore
-        //             //                 'label' => $this->module->l('Display the product\'s eligibility', 'GetContentHookController'),
-        //             //             ],
-        //             //         ],
-        //             //     ],
-        //             // ],
-        //             // [
-        //             //     'name' => 'ALMA_PRODUCT_WDGT_NOT_ELGBL',
-        //             //     'label' => $this->module->l('Display badge', 'GetContentHookController'),
-        //             //     // phpcs:ignore
-        //             //     'desc' => $this->module->l('Displays a badge when product price is too high or tow low', 'GetContentHookController'),
-        //             //     'type' => 'switch',
-        //             //     'values' => [
-        //             //         'id' => 'id',
-        //             //         'name' => 'label',
-        //             //         'query' => [
-        //             //             [
-        //             //                 'id' => 'ON',
-        //             //                 'val' => true,
-        //             //                 // PrestaShop won't detect the string if the call to `l` is multiline
-        //             //                 // phpcs:ignore
-        //             //                 'label' => $this->module->l('Display badge when the product is not eligible.', 'GetContentHookController'),
-        //             //             ],
-        //             //         ],
-        //             //     ],
-        //             // ],
-        //             // [
-        //             //     'name' => 'ALMA_WIDGET_POSITION_CUSTOM',
-        //             //     'type' => 'radio',
-        //             //     'label' => $this->module->l('Badge position', 'GetContentHookController'),
-        //             //     'class' => 't',
-        //             //     'required' => true,
-        //             //     'values' => [
-        //             //         [
-        //             //             'id' => 'ALMA_WIDGET_POSITION_CUSTOM_OFF',
-        //             //             'value' => false,
-        //             //             // PrestaShop won't detect the string if the call to `l` is multiline
-        //             //             // phpcs:ignore
-        //             //             'label' => $this->module->l('Display badge after price (by default)', 'GetContentHookController'),
-        //             //         ],
-        //             //         [
-        //             //             'id' => 'ALMA_WIDGET_POSITION_CUSTOM_ON',
-        //             //             'value' => true,
-        //             //             // PrestaShop won't detect the string if the call to `l` is multiline
-        //             //             // phpcs:ignore
-        //             //             'label' => $this->module->l('Display badge on custom css selector', 'GetContentHookController'),
-        //             //         ],
-        //             //     ],
-        //             // ],
-        //             // [
-        //             //     'name' => 'ALMA_WIDGET_POSITION_SELECTOR',
-        //             //     'label' => $this->module->l('Display badge on custom css selector', 'GetContentHookController'),
-        //             //     'desc' => sprintf(
-        //             //         // PrestaShop won't detect the string if the call to `l` is multiline
-        //             //         // phpcs:ignore
-        //             //         $this->module->l('%1$sAdvanced%2$s [Optional] Query selector for our scripts to display the badge on product page', 'GetContentHookController'),
-        //             //         '<b>',
-        //             //         '</b>'
-        //             //     ),
-        //             //     'type' => 'text',
-        //             //     'size' => 75,
-        //             //     'placeholder' => $this->module->l('E.g. #id, .class, ...', 'GetContentHookController'),
-        //             //     'required' => false,
-        //             // ],
-        //             // [
-        //             //     'name' => 'ALMA_PRODUCT_PRICE_SELECTOR',
-        //             //     'label' => $this->module->l('Product price query selector', 'GetContentHookController'),
-        //             //     'desc' => sprintf(
-        //             //         // PrestaShop won't detect the string if the call to `l` is multiline
-        //             //         // phpcs:ignore
-        //             //         $this->module->l('%1$sAdvanced%2$s Query selector for our scripts to correctly find the displayed price of a product', 'GetContentHookController'),
-        //             //         '<b>',
-        //             //         '</b>'
-        //             //     ),
-        //             //     'type' => 'text',
-        //             //     'size' => 75,
-        //             //     'required' => true,
-        //             // ],
-        //             // [
-        //             //     'name' => 'ALMA_PRODUCT_ATTR_SELECTOR',
-        //             //     // phpcs:ignore
-        //             //     'label' => $this->module->l('Product attribute dropdown query selector', 'GetContentHookController'),
-        //             //     'desc' => sprintf(
-        //             //         // PrestaShop won't detect the string if the call to `l` is multiline
-        //             //         // phpcs:ignore
-        //             //         $this->module->l('%1$sAdvanced%2$s Query selector for our scripts to correctly find the selected attributes of a product combination', 'GetContentHookController'),
-        //             //         '<b>',
-        //             //         '</b>'
-        //             //     ),
-        //             //     'type' => 'text',
-        //             //     'size' => 75,
-        //             //     'required' => true,
-        //             // ],
-        //             // [
-        //             //     'name' => 'ALMA_PRODUCT_ATTR_RADIO_SELECTOR',
-        //             //     // phpcs:ignore
-        //             //     'label' => $this->module->l('Product attribute radio button query selector', 'GetContentHookController'),
-        //             //     'desc' => sprintf(
-        //             //         // PrestaShop won't detect the string if the call to `l` is multiline
-        //             //         // phpcs:ignore
-        //             //         $this->module->l('%1$sAdvanced%2$s Query selector for our scripts to correctly find the selected attributes of a product combination', 'GetContentHookController'),
-        //             //         '<b>',
-        //             //         '</b>'
-        //             //     ),
-        //             //     'type' => 'text',
-        //             //     'size' => 75,
-        //             //     'required' => true,
-        //             // ],
-        //             // [
-        //             //     'name' => 'ALMA_PRODUCT_COLOR_PICK_SELECTOR',
-        //             //     'label' => $this->module->l('Product color picker query selector', 'GetContentHookController'),
-        //             //     'desc' => sprintf(
-        //             //         // PrestaShop won't detect the string if the call to `l` is multiline
-        //             //         // phpcs:ignore
-        //             //         $this->module->l('%1$sAdvanced%2$s Query selector for our scripts to correctly find the chosen color option of a product', 'GetContentHookController'),
-        //             //         '<b>',
-        //             //         '</b>'
-        //             //     ),
-        //             //     'type' => 'text',
-        //             //     'size' => 75,
-        //             //     'required' => true,
-        //             // ],
-        //             // [
-        //             //     'name' => 'ALMA_PRODUCT_QUANTITY_SELECTOR',
-        //             //     'label' => $this->module->l('Product quantity query selector', 'GetContentHookController'),
-        //             //     'desc' => sprintf(
-        //             //         // PrestaShop won't detect the string if the call to `l` is multiline
-        //             //         // phpcs:ignore
-        //             //         $this->module->l('%1$sAdvanced%2$s Query selector for our scripts to correctly find the wanted quantity of a product', 'GetContentHookController'),
-        //             //         '<b>',
-        //             //         '</b>'
-        //             //     ),
-        //             //     'type' => 'text',
-        //             //     'size' => 75,
-        //             //     'required' => true,
-        //             // ],
-        //         ],
-        //         'submit' => ['title' => $this->module->l('Save'), 'class' => 'button btn btn-default pull-right'],
-        //     ],
-        // ];
+        $legendCartEligibilityForm = [
+            'title' => $this->module->l('Cart eligibility message', 'GetContentHookController'),
+            'image' => $iconPath,
+        ];
+
+        $inputsCartEligibilityForm = [
+            $builder->inputSwitchForm(
+                'ALMA_SHOW_ELIGIBILITY_MESSAGE',
+                $this->module->l('Show cart eligibility', 'GetContentHookController'), 
+                $this->module->l('Displays a badge with eligible Alma plans with installments details', 'GetContentHookController'), 
+                $this->module->l('Display the cart\'s eligibility.', 'GetContentHookController')
+            ),
+            $builder->inputSwitchForm(
+                'ALMA_CART_WDGT_NOT_ELGBL',
+                $this->module->l('Display badge', 'GetContentHookController'), 
+                $this->module->l('Displays a badge when cart amount is too high or tow low', 'GetContentHookController'), 
+                $this->module->l('Display badge when the cart is not eligible.', 'GetContentHookController')
+            ),
+            $builder->inputRadioForm(
+                'ALMA_CART_WIDGET_POSITION_CUSTOM',
+                $this->module->l('Badge position', 'GetContentHookController'), 
+                $this->module->l('Display badge after cart (by default)', 'GetContentHookController'), 
+                $this->module->l('Display badge on custom css selector', 'GetContentHookController')
+            ),
+            $builder->inputTextForm(
+                'ALMA_CART_WDGT_POS_SELECTOR',
+                $this->module->l('Display badge on custom css selector', 'GetContentHookController'), 
+                $this->module->l('%1$sAdvanced%2$s [Optional] Query selector for our scripts to display the badge on cart page', 'GetContentHookController'), 
+                $this->module->l('E.g. #id, .class, ...', 'GetContentHookController')
+            ),
+        ];
 
         $cartEligibilityForm = [
             'form' => [
@@ -980,84 +849,84 @@ final class GetContentHookController extends AdminHookController
                     'image' => $iconPath,
                 ],
                 'input' => [
-                    [
-                        'name' => 'ALMA_SHOW_ELIGIBILITY_MESSAGE',
-                        'label' => $this->module->l('Show cart eligibility', 'GetContentHookController'),
-                        // phpcs:ignore
-                        'desc' => $this->module->l('Displays a badge with eligible Alma plans with installments details', 'GetContentHookController'),
-                        'type' => 'switch',
-                        'values' => [
-                            'id' => 'id',
-                            'name' => 'label',
-                            'query' => [
-                                [
-                                    'id' => 'ON',
-                                    'val' => true,
-                                    // PrestaShop won't detect the string if the call to `l` is multiline
-                                    // phpcs:ignore
-                                    'label' => $this->module->l('Display the cart\'s eligibility.', 'GetContentHookController'),
-                                ],
-                            ],
-                        ],
-                    ],
-                    [
-                        'name' => 'ALMA_CART_WDGT_NOT_ELGBL',
-                        'label' => $this->module->l('Display badge', 'GetContentHookController'),
-                        // phpcs:ignore
-                        'desc' => $this->module->l('Displays a badge when cart amount is too high or tow low', 'GetContentHookController'),
-                        'type' => 'switch',
-                        'values' => [
-                            'id' => 'id',
-                            'name' => 'label',
-                            'query' => [
-                                [
-                                    'id' => 'ON',
-                                    'val' => true,
-                                    // PrestaShop won't detect the string if the call to `l` is multiline
-                                    // phpcs:ignore
-                                    'label' => $this->module->l('Display badge when the cart is not eligible.', 'GetContentHookController'),
-                                ],
-                            ],
-                        ],
-                    ],
-                    [
-                        'name' => 'ALMA_CART_WIDGET_POSITION_CUSTOM',
-                        'type' => 'radio',
-                        'label' => $this->module->l('Badge position', 'GetContentHookController'),
-                        'class' => 't',
-                        'required' => true,
-                        'values' => [
-                            [
-                                'id' => 'ALMA_CART_WIDGET_POSITION_CUSTOM_OFF',
-                                'value' => false,
-                                // PrestaShop won't detect the string if the call to `l` is multiline
-                                // phpcs:ignore
-                                'label' => $this->module->l('Display badge after cart (by default)', 'GetContentHookController'),
-                            ],
-                            [
-                                'id' => 'ALMA_CART_WIDGET_POSITION_CUSTOM_ON',
-                                'value' => true,
-                                // PrestaShop won't detect the string if the call to `l` is multiline
-                                // phpcs:ignore
-                                'label' => $this->module->l('Display badge on custom css selector', 'GetContentHookController'),
-                            ],
-                        ],
-                    ],
-                    [
-                        'name' => 'ALMA_CART_WDGT_POS_SELECTOR',
-                        'label' => $this->module->l('Display badge on custom css selector', 'GetContentHookController'),
-                        'desc' => sprintf(
-                            // PrestaShop won't detect the string if the call to `l` is multiline
-                            // phpcs:ignore
-                            $this->module->l('%1$sAdvanced%2$s [Optional] Query selector for our scripts to display the badge on cart page', 'GetContentHookController'),
-                            '<b>',
-                            '</b>'
-                        ),
-                        'type' => 'text',
-                        'size' => 75,
-                        'placeholder' => $this->module->l('E.g. #id, .class, ...', 'GetContentHookController'),
-                        'required' => false,
-                    ],
+                    // [
+                    //     'name' => 'ALMA_SHOW_ELIGIBILITY_MESSAGE',
+                    //     'label' => $this->module->l('Show cart eligibility', 'GetContentHookController'),
+                    //     // phpcs:ignore
+                    //     'desc' => $this->module->l('Displays a badge with eligible Alma plans with installments details', 'GetContentHookController'),
+                    //     'type' => 'switch',
+                    //     'values' => [
+                    //         'id' => 'id',
+                    //         'name' => 'label',
+                    //         'query' => [
+                    //             [
+                    //                 'id' => 'ON',
+                    //                 'val' => true,
+                    //                 // PrestaShop won't detect the string if the call to `l` is multiline
+                    //                 // phpcs:ignore
+                    //                 'label' => $this->module->l('Display the cart\'s eligibility.', 'GetContentHookController'),
+                    //             ],
+                    //         ],
+                    //     ],
+                    // ],
+                    // [
+                    //     'name' => 'ALMA_CART_WDGT_NOT_ELGBL',
+                    //     'label' => $this->module->l('Display badge', 'GetContentHookController'),
+                    //     // phpcs:ignore
+                    //     'desc' => $this->module->l('Displays a badge when cart amount is too high or tow low', 'GetContentHookController'),
+                    //     'type' => 'switch',
+                    //     'values' => [
+                    //         'id' => 'id',
+                    //         'name' => 'label',
+                    //         'query' => [
+                    //             [
+                    //                 'id' => 'ON',
+                    //                 'val' => true,
+                    //                 // PrestaShop won't detect the string if the call to `l` is multiline
+                    //                 // phpcs:ignore
+                    //                 'label' => $this->module->l('Display badge when the cart is not eligible.', 'GetContentHookController'),
+                    //             ],
+                    //         ],
+                    //     ],
+                    // ],
+                    // [
+                    //     'name' => 'ALMA_CART_WIDGET_POSITION_CUSTOM',
+                    //     'type' => 'radio',
+                    //     'label' => $this->module->l('Badge position', 'GetContentHookController'),
+                    //     'class' => 't',
+                    //     'required' => true,
+                    //     'values' => [
+                    //         [
+                    //             'id' => 'ALMA_CART_WIDGET_POSITION_CUSTOM_OFF',
+                    //             'value' => false,
+                    //             // PrestaShop won't detect the string if the call to `l` is multiline
+                    //             // phpcs:ignore
+                    //             'label' => $this->module->l('Display badge after cart (by default)', 'GetContentHookController'),
+                    //         ],
+                    //         [
+                    //             'id' => 'ALMA_CART_WIDGET_POSITION_CUSTOM_ON',
+                    //             'value' => true,
+                    //             // PrestaShop won't detect the string if the call to `l` is multiline
+                    //             // phpcs:ignore
+                    //             'label' => $this->module->l('Display badge on custom css selector', 'GetContentHookController'),
+                    //         ],
+                    //     ],
+                    // ],
+                    // [
+                    //     'name' => 'ALMA_CART_WDGT_POS_SELECTOR',
+                    //     'label' => $this->module->l('Display badge on custom css selector', 'GetContentHookController'),
+                    //     'desc' => sprintf(
+                    //         // PrestaShop won't detect the string if the call to `l` is multiline
+                    //         // phpcs:ignore
+                    //         $this->module->l('%1$sAdvanced%2$s [Optional] Query selector for our scripts to display the badge on cart page', 'GetContentHookController'),
+                    //         '<b>',
+                    //         '</b>'
+                    //     ),
+                    //     'type' => 'text',
+                    //     'size' => 75,
+                    //     'placeholder' => $this->module->l('E.g. #id, .class, ...', 'GetContentHookController'),
+                    //     'required' => false,
+                    // ],
                 ],
                 'submit' => ['title' => $this->module->l('Save'), 'class' => 'button btn btn-default pull-right'],
             ],
@@ -1220,8 +1089,8 @@ final class GetContentHookController extends AdminHookController
             }
 
             $fieldsForms = array_merge($fieldsForms, [
-                $builder->productEligibilityForm($legendProductEligibilityForm, $inputProductEligibilityForm, $this->module->l('Save')),
-                $cartEligibilityForm,
+                $builder->configForm($legendProductEligibilityForm, $inputsProductEligibilityForm, $this->module->l('Save')),
+                $builder->configForm($legendCartEligibilityForm, $inputsCartEligibilityForm, $this->module->l('Save')),
                 $paymentButtonForm,
                 $excludedForm,
                 $refundStateForm,
