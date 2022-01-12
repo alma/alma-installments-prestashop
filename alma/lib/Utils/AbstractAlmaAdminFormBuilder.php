@@ -17,13 +17,17 @@ abstract class AbstractAlmaAdminFormBuilder extends AbstractAdminFormBuilder
      */
     protected $module;
 
+    /**
+     * @param Alma $module
+     * @param      $image
+     */
     public function __construct(Alma $module, $image)
     {
-        AbstractAdminFormBuilder::__construct(
+        $this->module = $module;
+        parent::__construct(
             $image,
             $this->getTitle()
         );
-        $this->module = $module;
     }
 
     protected function getSubmitTitle()
