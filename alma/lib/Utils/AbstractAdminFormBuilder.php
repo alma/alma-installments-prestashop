@@ -69,13 +69,11 @@ abstract class AbstractAdminFormBuilder
      *
      * @return array inputSwitchForm
      */
-    protected function inputSwitchForm($name, $label, $desc, $helpDesc)
+    protected function inputSwitchForm($name, $label, $desc = null, $helpDesc = null)
     {
-        return [
+        $dataInput = [
             'name'   => $name,
-            // phpcs:ignore
             'label'  => $label,
-            // phpcs:ignore
             'desc'   => $desc,
             'type'   => 'switch',
             'values' => [
@@ -85,13 +83,20 @@ abstract class AbstractAdminFormBuilder
                     [
                         'id' => 'ON',
                         'val' => true,
-                        // PrestaShop won't detect the string if the call to `l` is multiline
-                        // phpcs:ignore
-                        'label' => $helpDesc,
+                        'label' => '',
                     ],
                 ],
             ],
         ];
+
+        if ($desc) {
+            $dataInput['desc'] = $desc;
+        }
+        if ($helpDesc) {
+            $dataInput['values']['query'][0]['label'] = $helpDesc;
+        }
+
+        return $dataInput;
     }
 
     /**
@@ -101,7 +106,7 @@ abstract class AbstractAdminFormBuilder
      */
     protected function inputRadioForm($name, $label, $labelOff, $labelOn)
     {
-        return [
+        $dataInput = [
             'name'     => $name,
             'type'     => 'radio',
             'label'    => $label,
@@ -124,6 +129,8 @@ abstract class AbstractAdminFormBuilder
                 ],
             ],
         ];
+
+        return $dataInput;
     }
 
     /**
@@ -131,7 +138,7 @@ abstract class AbstractAdminFormBuilder
      *
      * @return array inputTextForm
      */
-    protected function inputTextForm($name, $label, $desc, $placeholder = null)
+    protected function inputTextForm($name, $label, $desc, $placeholder = null, $required = false, $lang = false)
     {
         $dataInput = [
             'name'     => $name,
@@ -145,12 +152,79 @@ abstract class AbstractAdminFormBuilder
             ),
             'type'     => 'text',
             'size'     => 75,
-            'required' => false,
+            'required' => $required,
         ];
 
         if ($placeholder) {
             $dataInput['placeholder'] = $placeholder;
         }
+        if ($lang) {
+            $dataInput['lang'] = $lang;
+        }
+
+        return $dataInput;
+    }
+
+    /**
+     * Input Select Form Configuration
+     *
+     * @return array inputSelectForm
+     */
+    protected function inputSelectForm($name, $label, $desc, $query)
+    {
+        $dataInput = [
+            'name' => $name,
+            'label' => $label,
+            'desc' => $desc,
+            'type' => 'select',
+            'required' => true,
+            'options' => [
+                'query' => $query,
+                'id' => 'id_order_state',
+                'name' => 'name',
+            ],
+        ];
+
+        return $dataInput;
+    }
+
+    /**
+     * Input Html Configuration
+     *
+     * @return array inputHtml
+     */
+    protected function inputHtml($tpl = null, $htmlContent = null)
+    {
+        $dataInput = [
+            'name' => null,
+            'label' => null,
+            'type' => 'html',
+            // PrestaShop won't detect the string if the call to `l` is multiline
+        ];
+
+        if ($htmlContent) {
+            $dataInput['html_content'] = $htmlContent;
+        }
+
+        if ($tpl) {
+            $dataInput['desc'] = $tpl->fetch();
+        }
+
+        return $dataInput;
+    }
+
+    /**
+     * Input Hidden Configuration
+     *
+     * @return array inputHiddenForm
+     */
+    protected function inputHiddenForm($name)
+    {
+        $dataInput = [
+            'name' => $name,
+            'label' => null,
+            'type' => 'hidden',
+        ];
 
         return $dataInput;
     }

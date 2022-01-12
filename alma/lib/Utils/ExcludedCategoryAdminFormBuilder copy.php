@@ -1,0 +1,73 @@
+<?php
+/**
+ * 2018-2021 Alma SAS
+ *
+ * THE MIT LICENSE
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
+ * documentation files (the "Software"), to deal in the Software without restriction, including without limitation
+ * the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and
+ * to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+ * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the
+ * Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE
+ * WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
+ * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+ * IN THE SOFTWARE.
+ *
+ * @author    Alma SAS <contact@getalma.eu>
+ * @copyright 2018-2021 Alma SAS
+ * @license   https://opensource.org/licenses/MIT The MIT License
+ */
+
+namespace Alma\PrestaShop\Utils;
+
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
+/**
+ * Class ExcludedCategoryAdminFormBuilder
+ *
+ * @package Alma\PrestaShop\Utils
+ */
+class ExcludedCategoryAdminFormBuilder extends AbstractAlmaAdminFormBuilder
+{
+    protected function configForm() {
+        // Exclusion
+        $tpl = $this->context->smarty->createTemplate(
+            "{$this->module->local_path}views/templates/hook/excludedCategories.tpl"
+        );
+
+        $excludedCategoryNames = Settings::getExcludedCategoryNames();
+
+        $tpl->assign([
+            'excludedCategories' => count($excludedCategoryNames) > 0
+                ? implode(', ', $excludedCategoryNames)
+                : $this->module->l('No excluded categories', 'GetContentHookController'),
+            'excludedLink' => $this->context->link->getAdminLink('AdminAlmaCategories'),
+        ]);
+
+        return [
+            $this->inputHtml($tpl),
+            $this->inputSwitchForm(
+                'ALMA_CATEGORIES_WDGT_NOT_ELGBL',
+                $this->module->l('Display message', 'GetContentHookController'),
+                $this->module->l('Display the message below if the product is excluded from the category', 'GetContentHookController'),
+                $this->module->l('Display the message below if the product is excluded', 'GetContentHookController')
+            ),
+            $this->inputTextForm(
+                'ALMA_NOT_ELIGIBLE_CATEGORIES',
+                $this->module->l('Excluded categories non-eligibility message ', 'GetContentHookController'),
+                $this->module->l('Message displayed on an excluded product page or on the cart page if it contains an excluded product.', 'GetContentHookController'),
+            ),
+        ];
+    }
+
+    protected function getTitle()
+    {
+        return $this->module->l('Excluded categories', 'GetContentHookController');
+    }
+}

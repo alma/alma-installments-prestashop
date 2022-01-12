@@ -29,9 +29,9 @@ if (!defined('_PS_VERSION_')) {
 }
 
 /**
- * Class AdminFormBuilder.
+ * Class ProductEligibilityAdminFormBuilder.
  *
- * Builder Form Alma
+ * Builder Form Product Eligibility Alma
  */
 class ProductEligibilityAdminFormBuilder extends AbstractAlmaAdminFormBuilder
 {

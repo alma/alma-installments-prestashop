@@ -32,9 +32,14 @@ use Alma\API\RequestError;
 use Alma\PrestaShop\API\ClientHelper;
 use Alma\PrestaShop\Hooks\AdminHookController;
 use Alma\PrestaShop\Utils\AdminFormBuilder;
+use Alma\PrestaShop\Utils\ApiAdminFormBuilder;
 use Alma\PrestaShop\Utils\CartEligibilityAdminFormBuilder;
+use Alma\PrestaShop\Utils\DebugAdminFormBuilder;
+use Alma\PrestaShop\Utils\ExcludedCategoryAdminFormBuilder;
 use Alma\PrestaShop\Utils\ProductEligibilityAdminFormBuilder;
 use Alma\PrestaShop\Utils\Logger;
+use Alma\PrestaShop\Utils\PaymentButtonAdminFormBuilder;
+use Alma\PrestaShop\Utils\RefundAdminFormBuilder;
 use Alma\PrestaShop\Utils\Settings;
 use Alma\PrestaShop\Utils\SettingsCustomFields;
 use Configuration;
@@ -418,66 +423,6 @@ final class GetContentHookController extends AdminHookController
             $extraMessage = $this->module->display($this->module->file, 'getContent.tpl');
         }
 
-        $apiConfigForm = [
-            'form' => [
-                'legend' => [
-                    'title' => $this->module->l('API configuration', 'GetContentHookController'),
-                    'image' => $iconPath,
-                ],
-                'input' => [
-                    [
-                        'name' => 'ALMA_API_MODE',
-                        'label' => $this->module->l('API Mode', 'GetContentHookController'),
-                        'type' => 'select',
-                        'required' => true,
-                        // PrestaShop won't detect the string if the call to `l` is multiline
-                        // phpcs:ignore
-                        'desc' => $this->module->l('Use Test mode until you are ready to take real orders with Alma. In Test mode, only admins can see Alma on cart/checkout pages.', 'GetContentHookController'),
-                        'options' => [
-                            'id' => 'api_mode',
-                            'name' => 'name',
-                            'query' => [
-                                ['api_mode' => ALMA_MODE_LIVE, 'name' => 'Live'],
-                                ['api_mode' => ALMA_MODE_TEST, 'name' => 'Test'],
-                            ],
-                        ],
-                    ],
-
-                    [
-                        'name' => 'ALMA_LIVE_API_KEY',
-                        'label' => $this->module->l('Live API key', 'GetContentHookController'),
-                        'type' => 'text',
-                        'size' => 75,
-                        'required' => false,
-                        'desc' => $this->module->l('Not required for Test mode', 'GetContentHookController') .
-                            ' – ' .
-                            sprintf(
-                                // phpcs:ignore
-                                $this->module->l('You can find your Live API key on %1$syour Alma dashboard%2$s', 'GetContentHookController'),
-                                '<a href="https://dashboard.getalma.eu/api" target="_blank">',
-                                '</a>'
-                            ),
-                    ],
-                    [
-                        'name' => 'ALMA_TEST_API_KEY',
-                        'label' => $this->module->l('Test API key', 'GetContentHookController'),
-                        'type' => 'text',
-                        'size' => 75,
-                        'required' => false,
-                        'desc' => $this->module->l('Not required for Live mode', 'GetContentHookController') .
-                            ' – ' .
-                            sprintf(
-                                // phpcs:ignore
-                                $this->module->l('You can find your Test API key on %1$syour sandbox dashboard%2$s', 'GetContentHookController'),
-                                '<a href="https://dashboard.sandbox.getalma.eu/api" target="_blank">',
-                                '</a>'
-                            ),
-                    ],
-                ],
-                'submit' => ['title' => $this->module->l('Save'), 'class' => 'button btn btn-default pull-right'],
-            ],
-        ];
-
         $pnxConfigForm = null;
         if ($merchant) {
             $pnxConfigForm = [
@@ -658,343 +603,115 @@ final class GetContentHookController extends AdminHookController
             );
         }
 
-        $paymentButtonForm = [
-            'form' => [
-                'legend' => [
-                    'title' => $this->module->l('Payment method configuration', 'GetContentHookController'),
-                    'image' => $iconPath,
-                ],
-                'input' => [
-                    [
-                        'name' => null,
-                        'label' => null,
-                        'type' => 'html',
-                        // PrestaShop won't detect the string if the call to `l` is multiline
-                        // phpcs:ignore
-                        'html_content' => "<h4>{$this->module->l('Payment by installment', 'GetContentHookController')}</h4>",
-                    ],
-                    [
-                        'name' => 'ALMA_PAYMENT_BUTTON_TITLE',
-                        'label' => $this->module->l('Title', 'GetContentHookController'),
-                        'lang' => true,
-                        // PrestaShop won't detect the string if the call to `l` is multiline
-                        // phpcs:ignore
-                        'desc' => $this->module->l('This controls the payment method name which the user sees during checkout.', 'GetContentHookController'),
-                        'type' => 'text',
-                        'size' => 75,
-                        'required' => true,
-                    ],
-                    [
-                        'name' => 'ALMA_PAYMENT_BUTTON_DESC',
-                        'label' => $this->module->l('Description', 'GetContentHookController'),
-                        'lang' => true,
-                        // PrestaShop won't detect the string if the call to `l` is multiline
-                        // phpcs:ignore
-                        'desc' => $this->module->l('This controls the payment method description which the user sees during checkout.', 'GetContentHookController'),
-                        'type' => 'text',
-                        'size' => 75,
-                        'required' => true,
-                    ],
-                    [
-                        'name' => null,
-                        'label' => null,
-                        'type' => 'html',
-                        // PrestaShop won't detect the string if the call to `l` is multiline
-                        // phpcs:ignore
-                        'html_content' => "<h4>{$this->module->l('Defered payment', 'GetContentHookController')}</h4>",
-                    ],
-                    [
-                        'name' => 'ALMA_DEFERRED_BUTTON_TITLE',
-                        'label' => $this->module->l('Title', 'GetContentHookController'),
-                        'lang' => true,
-                        // PrestaShop won't detect the string if the call to `l` is multiline
-                        // phpcs:ignore
-                        'desc' => $this->module->l('This controls the payment method name which the user sees during checkout.', 'GetContentHookController'),
-                        'type' => 'text',
-                        'size' => 75,
-                        'required' => true,
-                    ],
-                    [
-                        'name' => 'ALMA_DEFERRED_BUTTON_DESC',
-                        'label' => $this->module->l('Description', 'GetContentHookController'),
-                        'lang' => true,
-                        // PrestaShop won't detect the string if the call to `l` is multiline
-                        // phpcs:ignore
-                        'desc' => $this->module->l('This controls the payment method description which the user sees during checkout.', 'GetContentHookController'),
-                        'type' => 'text',
-                        'size' => 75,
-                        'required' => true,
-                    ],
-                ],
-                'submit' => ['title' => $this->module->l('Save'), 'class' => 'button btn btn-default pull-right'],
-            ],
-        ];
+        // $paymentButtonForm = [
+        //     'form' => [
+        //         'legend' => [
+        //             'title' => $this->module->l('Payment method configuration', 'GetContentHookController'),
+        //             'image' => $iconPath,
+        //         ],
+        //         'input' => [
+        //             // [
+        //             //     'name' => null,
+        //             //     'label' => null,
+        //             //     'type' => 'html',
+        //             //     // PrestaShop won't detect the string if the call to `l` is multiline
+        //             //     // phpcs:ignore
+        //             //     'html_content' => "<h4>{$this->module->l('Payment by installment', 'GetContentHookController')}</h4>",
+        //             // ],
+        //             // [
+        //             //     'name' => 'ALMA_PAYMENT_BUTTON_TITLE',
+        //             //     'label' => $this->module->l('Title', 'GetContentHookController'),
+        //             //     'lang' => true,
+        //             //     // PrestaShop won't detect the string if the call to `l` is multiline
+        //             //     // phpcs:ignore
+        //             //     'desc' => $this->module->l('This controls the payment method name which the user sees during checkout.', 'GetContentHookController'),
+        //             //     'type' => 'text',
+        //             //     'size' => 75,
+        //             //     'required' => true,
+        //             // ],
+        //             // [
+        //             //     'name' => 'ALMA_PAYMENT_BUTTON_DESC',
+        //             //     'label' => $this->module->l('Description', 'GetContentHookController'),
+        //             //     'lang' => true,
+        //             //     // PrestaShop won't detect the string if the call to `l` is multiline
+        //             //     // phpcs:ignore
+        //             //     'desc' => $this->module->l('This controls the payment method description which the user sees during checkout.', 'GetContentHookController'),
+        //             //     'type' => 'text',
+        //             //     'size' => 75,
+        //             //     'required' => true,
+        //             // ],
+        //             // [
+        //             //     'name' => null,
+        //             //     'label' => null,
+        //             //     'type' => 'html',
+        //             //     // PrestaShop won't detect the string if the call to `l` is multiline
+        //             //     // phpcs:ignore
+        //             //     'html_content' => "<h4>{$this->module->l('Defered payment', 'GetContentHookController')}</h4>",
+        //             // ],
+        //             // [
+        //             //     'name' => 'ALMA_DEFERRED_BUTTON_TITLE',
+        //             //     'label' => $this->module->l('Title', 'GetContentHookController'),
+        //             //     'lang' => true,
+        //             //     // PrestaShop won't detect the string if the call to `l` is multiline
+        //             //     // phpcs:ignore
+        //             //     'desc' => $this->module->l('This controls the payment method name which the user sees during checkout.', 'GetContentHookController'),
+        //             //     'type' => 'text',
+        //             //     'size' => 75,
+        //             //     'required' => true,
+        //             // ],
+        //             // [
+        //             //     'name' => 'ALMA_DEFERRED_BUTTON_DESC',
+        //             //     'label' => $this->module->l('Description', 'GetContentHookController'),
+        //             //     'lang' => true,
+        //             //     // PrestaShop won't detect the string if the call to `l` is multiline
+        //             //     // phpcs:ignore
+        //             //     'desc' => $this->module->l('This controls the payment method description which the user sees during checkout.', 'GetContentHookController'),
+        //             //     'type' => 'text',
+        //             //     'size' => 75,
+        //             //     'required' => true,
+        //             // ],
+        //         ],
+        //         'submit' => ['title' => $this->module->l('Save'), 'class' => 'button btn btn-default pull-right'],
+        //     ],
+        // ];
 
-        if (version_compare(_PS_VERSION_, '1.7', '<')) {
-            $paymentButtonForm['form']['input'][] = [
-                'name' => 'ALMA_SHOW_DISABLED_BUTTON',
-                'type' => 'radio',
-                'label' => $this->module->l('When Alma is not available...', 'GetContentHookController'),
-                'class' => 't',
-                'required' => true,
-                'values' => [
-                    [
-                        'id' => 'ON',
-                        'value' => true,
-                        'label' => $this->module->l('Display payment button, disabled', 'GetContentHookController'),
-                    ],
-                    [
-                        'id' => 'OFF',
-                        'value' => false,
-                        'label' => $this->module->l('Hide payment button', 'GetContentHookController'),
-                    ],
-                ],
-            ];
-        }
+        // if (version_compare(_PS_VERSION_, '1.7', '<')) {
+        //     $paymentButtonForm['form']['input'][] = [
+        //         'name' => 'ALMA_SHOW_DISABLED_BUTTON',
+        //         'type' => 'radio',
+        //         'label' => $this->module->l('When Alma is not available...', 'GetContentHookController'),
+        //         'class' => 't',
+        //         'required' => true,
+        //         'values' => [
+        //             [
+        //                 'id' => 'ON',
+        //                 'value' => true,
+        //                 'label' => $this->module->l('Display payment button, disabled', 'GetContentHookController'),
+        //             ],
+        //             [
+        //                 'id' => 'OFF',
+        //                 'value' => false,
+        //                 'label' => $this->module->l('Hide payment button', 'GetContentHookController'),
+        //             ],
+        //         ],
+        //     ];
+        // }
 
+        $apiBuilder = new ApiAdminFormBuilder($this->module, $iconPath);
         $cartBuilder = new CartEligibilityAdminFormBuilder($this->module, $iconPath);
         $productBuilder = new ProductEligibilityAdminFormBuilder($this->module, $iconPath);
-
-        $cartEligibilityForm = [
-            'form' => [
-                'legend' => [
-                    'title' => $this->module->l('Cart eligibility message', 'GetContentHookController'),
-                    'image' => $iconPath,
-                ],
-                'input' => [
-                    // [
-                    //     'name' => 'ALMA_SHOW_ELIGIBILITY_MESSAGE',
-                    //     'label' => $this->module->l('Show cart eligibility', 'GetContentHookController'),
-                    //     // phpcs:ignore
-                    //     'desc' => $this->module->l('Displays a badge with eligible Alma plans with installments details', 'GetContentHookController'),
-                    //     'type' => 'switch',
-                    //     'values' => [
-                    //         'id' => 'id',
-                    //         'name' => 'label',
-                    //         'query' => [
-                    //             [
-                    //                 'id' => 'ON',
-                    //                 'val' => true,
-                    //                 // PrestaShop won't detect the string if the call to `l` is multiline
-                    //                 // phpcs:ignore
-                    //                 'label' => $this->module->l('Display the cart\'s eligibility.', 'GetContentHookController'),
-                    //             ],
-                    //         ],
-                    //     ],
-                    // ],
-                    // [
-                    //     'name' => 'ALMA_CART_WDGT_NOT_ELGBL',
-                    //     'label' => $this->module->l('Display badge', 'GetContentHookController'),
-                    //     // phpcs:ignore
-                    //     'desc' => $this->module->l('Displays a badge when cart amount is too high or tow low', 'GetContentHookController'),
-                    //     'type' => 'switch',
-                    //     'values' => [
-                    //         'id' => 'id',
-                    //         'name' => 'label',
-                    //         'query' => [
-                    //             [
-                    //                 'id' => 'ON',
-                    //                 'val' => true,
-                    //                 // PrestaShop won't detect the string if the call to `l` is multiline
-                    //                 // phpcs:ignore
-                    //                 'label' => $this->module->l('Display badge when the cart is not eligible.', 'GetContentHookController'),
-                    //             ],
-                    //         ],
-                    //     ],
-                    // ],
-                    // [
-                    //     'name' => 'ALMA_CART_WIDGET_POSITION_CUSTOM',
-                    //     'type' => 'radio',
-                    //     'label' => $this->module->l('Badge position', 'GetContentHookController'),
-                    //     'class' => 't',
-                    //     'required' => true,
-                    //     'values' => [
-                    //         [
-                    //             'id' => 'ALMA_CART_WIDGET_POSITION_CUSTOM_OFF',
-                    //             'value' => false,
-                    //             // PrestaShop won't detect the string if the call to `l` is multiline
-                    //             // phpcs:ignore
-                    //             'label' => $this->module->l('Display badge after cart (by default)', 'GetContentHookController'),
-                    //         ],
-                    //         [
-                    //             'id' => 'ALMA_CART_WIDGET_POSITION_CUSTOM_ON',
-                    //             'value' => true,
-                    //             // PrestaShop won't detect the string if the call to `l` is multiline
-                    //             // phpcs:ignore
-                    //             'label' => $this->module->l('Display badge on custom css selector', 'GetContentHookController'),
-                    //         ],
-                    //     ],
-                    // ],
-                    // [
-                    //     'name' => 'ALMA_CART_WDGT_POS_SELECTOR',
-                    //     'label' => $this->module->l('Display badge on custom css selector', 'GetContentHookController'),
-                    //     'desc' => sprintf(
-                    //         // PrestaShop won't detect the string if the call to `l` is multiline
-                    //         // phpcs:ignore
-                    //         $this->module->l('%1$sAdvanced%2$s [Optional] Query selector for our scripts to display the badge on cart page', 'GetContentHookController'),
-                    //         '<b>',
-                    //         '</b>'
-                    //     ),
-                    //     'type' => 'text',
-                    //     'size' => 75,
-                    //     'placeholder' => $this->module->l('E.g. #id, .class, ...', 'GetContentHookController'),
-                    //     'required' => false,
-                    // ],
-                ],
-                'submit' => ['title' => $this->module->l('Save'), 'class' => 'button btn btn-default pull-right'],
-            ],
-        ];
-
-        // Exclusion
-        $tpl = $this->context->smarty->createTemplate(
-            "{$this->module->local_path}views/templates/hook/excludedCategories.tpl"
-        );
-
-        $excludedCategoryNames = Settings::getExcludedCategoryNames();
-
-        $tpl->assign([
-            'excludedCategories' => count($excludedCategoryNames) > 0
-                ? implode(', ', $excludedCategoryNames)
-                : $this->module->l('No excluded categories', 'GetContentHookController'),
-            'excludedLink' => $this->context->link->getAdminLink('AdminAlmaCategories'),
-        ]);
-        $excludedForm = [
-            'form' => [
-                'legend' => [
-                    'title' => $this->module->l('Excluded categories', 'GetContentHookController'),
-                    'image' => $iconPath,
-                ],
-                'input' => [
-                    [
-                        'name' => null,
-                        'label' => null,
-                        'type' => 'html',
-                        // PrestaShop won't detect the string if the call to `l` is multiline
-                        'desc' => $tpl->fetch(),
-                    ],
-                    [
-                        'name' => 'ALMA_CATEGORIES_WDGT_NOT_ELGBL',
-                        'label' => $this->module->l('Display message', 'GetContentHookController'),
-                        // PrestaShop won't detect the string if the call to `l` is multiline
-                        // phpcs:ignore
-                        'desc' => $this->module->l('Display the message below if the product is excluded from the category', 'GetContentHookController'),
-                        'type' => 'switch',
-                        'values' => [
-                            'id' => 'id',
-                            'name' => 'label',
-                            'query' => [
-                                [
-                                    'id' => 'ON',
-                                    'val' => true,
-                                    // PrestaShop won't detect the string if the call to `l` is multiline
-                                    // phpcs:ignore
-                                    'label' => $this->module->l('Display the message below if the product is excluded', 'GetContentHookController'),
-                                ],
-                            ],
-                        ],
-                    ],
-                    [
-                        'name' => 'ALMA_NOT_ELIGIBLE_CATEGORIES',
-                        // phpcs:ignore
-                        'label' => $this->module->l('Excluded categories non-eligibility message ', 'GetContentHookController'),
-                        'lang' => true,
-                        // PrestaShop won't detect the string if the call to `l` is multiline
-                        // phpcs:ignore
-                        'desc' => $this->module->l('Message displayed on an excluded product page or on the cart page if it contains an excluded product.', 'GetContentHookController'),
-                        'type' => 'text',
-                        'size' => 75,
-                        'required' => false,
-                    ],
-                ],
-                'submit' => ['title' => $this->module->l('Save'), 'class' => 'button btn btn-default pull-right'],
-            ],
-        ];
-
-        $refundStateForm = [
-            'form' => [
-                'legend' => [
-                    'title' => $this->module->l('Refund with state change', 'GetContentHookController'),
-                    'image' => $iconPath,
-                ],
-                'input' => [
-                    [
-                        'name' => null,
-                        'label' => null,
-                        'type' => 'html',
-                        // PrestaShop won't detect the string if the call to `l` is multiline
-                        // phpcs:ignore
-                        'html_content' => $this->module->l('If you usually refund orders by changing their state, activate this option and choose the state you want to use to trigger refunds on Alma payments', 'GetContentHookController'),
-                    ],
-                    [
-                        'name' => 'ALMA_STATE_REFUND_ENABLED',
-                        'label' => $this->module->l('Activate refund by change state', 'GetContentHookController'),
-                        'type' => 'switch',
-                        'values' => [
-                            'id' => 'id',
-                            'name' => 'label',
-                            'query' => [
-                                [
-                                    'id' => 'ON',
-                                    'val' => true,
-                                    'label' => '',
-                                ],
-                            ],
-                        ],
-                    ],
-                    [
-                        'name' => 'ALMA_STATE_REFUND',
-                        'label' => $this->module->l('Refund state order', 'GetContentHookController'),
-                        // PrestaShop won't detect the string if the call to `l` is multiline
-                        // phpcs:ignore
-                        'desc' => $this->module->l('Your order state to sync refund with Alma', 'GetContentHookController'),
-                        'type' => 'select',
-                        'required' => true,
-                        'options' => [
-                            'query' => OrderState::getOrderStates($this->context->cookie->id_lang),
-                            'id' => 'id_order_state',
-                            'name' => 'name',
-                        ],
-                    ],
-                ],
-                'submit' => ['title' => $this->module->l('Save'), 'class' => 'button btn btn-default pull-right'],
-            ],
-        ];
-
-        $debugForm = [
-            'form' => [
-                'legend' => [
-                    'title' => $this->module->l('Debug options', 'GetContentHookController'),
-                    'image' => $iconPath,
-                ],
-                'input' => [
-                    [
-                        'name' => 'ALMA_ACTIVATE_LOGGING',
-                        'label' => $this->module->l('Activate logging', 'GetContentHookController'),
-                        'type' => 'switch',
-                        'values' => [
-                            'id' => 'id',
-                            'name' => 'label',
-                            'query' => [
-                                [
-                                    'id' => 'ON',
-                                    'val' => true,
-                                    'label' => '',
-                                ],
-                            ],
-                        ],
-                    ],
-                ],
-                'submit' => ['title' => $this->module->l('Save'), 'class' => 'button btn btn-default pull-right'],
-            ],
-        ];
-
+        $excludedBuilder = new ExcludedCategoryAdminFormBuilder($this->module, $iconPath);
+        $refundBuilder = new RefundAdminFormBuilder($this->module, $iconPath);
+        $paymentBuilder = new PaymentButtonAdminFormBuilder($this->module, $iconPath);
+        $debugBuilder = new DebugAdminFormBuilder($this->module, $iconPath);
+        
         if ($needsKeys) {
             $apiConfigForm['form']['input'][] = [
                 'name' => '_api_only',
                 'label' => null,
                 'type' => 'hidden',
             ];
-            $fieldsForms = [$apiConfigForm, $debugForm];
+            $fieldsForms = [$apiBuilder->build(), $debugBuilder->build()];
         } else {
             $fieldsForms = [];
             if ($pnxConfigForm) {
@@ -1004,11 +721,11 @@ final class GetContentHookController extends AdminHookController
             $fieldsForms = array_merge($fieldsForms, [
                 $productBuilder->build(),
                 $cartBuilder->build(),
-                $paymentButtonForm,
-                $excludedForm,
-                $refundStateForm,
-                $apiConfigForm,
-                $debugForm,
+                $paymentBuilder->build(),
+                $excludedBuilder->build(),
+                $refundBuilder->build(),
+                $apiBuilder->build(),
+                $debugBuilder->build(),
             ]);
         }
 
