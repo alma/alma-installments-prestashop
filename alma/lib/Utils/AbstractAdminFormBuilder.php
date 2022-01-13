@@ -89,7 +89,7 @@ abstract class AbstractAdminFormBuilder
         ];
 
         if ($form_group_class) {
-            $dataInput['desc'] = $form_group_class;
+            $dataInput['form_group_class'] = $form_group_class;
         }
 
         if ($desc) {
@@ -183,7 +183,7 @@ abstract class AbstractAdminFormBuilder
         ];
 
         if ($form_group_class) {
-            $dataInput['min'] = $form_group_class;
+            $dataInput['form_group_class'] = $form_group_class;
         }
 
         if ($min) {

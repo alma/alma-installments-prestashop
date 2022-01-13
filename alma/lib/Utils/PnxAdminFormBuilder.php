@@ -36,6 +36,7 @@ if (!defined('_PS_VERSION_')) {
 class PnxAdminFormBuilder extends AbstractAlmaAdminFormBuilder
 {
     protected function configForm() {
+        $return = [];
         $pnxTabs = [];
         $activeTab = null;
         $installmentsPlans = $this->config['installmentsPlans'];
@@ -108,15 +109,17 @@ class PnxAdminFormBuilder extends AbstractAlmaAdminFormBuilder
                 'deferred' => $duration, ]
             );
 
-            $return[] = [
-                $this->inputHtml($tpl, "$tabId-content"),
+            array_push($return,
+                $this->inputHtml($tpl, null, "$tabId-content"),
                 $this->inputSwitchForm(
-                    'ALMA_${key}_ENABLED',
+                    "ALMA_${key}_ENABLED",
                     $label,
+                    null,
+                    null,
                     "$tabId-content"
                 ),
                 $this->inputNumberForm(
-                    'ALMA_${key}_MIN_AMOUNT',
+                    "ALMA_${key}_MIN_AMOUNT",
                     $this->module->l('Minimum amount (€)', 'GetContentHookController'),
                     $this->module->l('Minimum purchase amount to activate this plan', 'GetContentHookController'),
                     $minAmount,
@@ -124,7 +127,7 @@ class PnxAdminFormBuilder extends AbstractAlmaAdminFormBuilder
                     "$tabId-content"
                 ),
                 $this->inputNumberForm(
-                    'ALMA_${key}_MAX_AMOUNT',
+                    "ALMA_${key}_MAX_AMOUNT",
                     $this->module->l('Maximum amount (€)', 'GetContentHookController'),
                     $this->module->l('Maximum purchase amount to activate this plan', 'GetContentHookController'),
                     $minAmount,
@@ -132,14 +135,14 @@ class PnxAdminFormBuilder extends AbstractAlmaAdminFormBuilder
                     "$tabId-content"
                 ),
                 $this->inputNumberForm(
-                    'ALMA_${key}_SORT_ORDER',
+                    "ALMA_${key}_SORT_ORDER",
                     $this->module->l('Position', 'GetContentHookController'),
                     $this->module->l('Use relative values to set the order on the checkout page', 'GetContentHookController'),
                     null,
                     null,
                     "$tabId-content"
                 ),
-            ];
+            );
         }
 
         $tpl = $this->context->smarty->createTemplate(
@@ -160,6 +163,8 @@ class PnxAdminFormBuilder extends AbstractAlmaAdminFormBuilder
                 'html_content' => $tpl->fetch(),
             ]
         );
+
+        // var_dump($return);
 
         return $return;
     }
