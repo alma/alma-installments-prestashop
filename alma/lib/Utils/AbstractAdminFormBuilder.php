@@ -146,13 +146,7 @@ abstract class AbstractAdminFormBuilder
         $dataInput = [
             'name'     => $name,
             'label'    => $label,
-            'desc'     => sprintf(
-            // PrestaShop won't detect the string if the call to `l` is multiline
-            // phpcs:ignore
-                $desc,
-                '<b>',
-                '</b>'
-            ),
+            'desc'     => $desc,
             'type'     => 'text',
             'size'     => 75,
             'required' => $required,

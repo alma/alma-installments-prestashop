@@ -58,33 +58,69 @@ class ProductEligibilityAdminFormBuilder extends AbstractAlmaAdminFormBuilder
            $this->inputTextForm(
                'ALMA_WIDGET_POSITION_SELECTOR',
                $this->module->l('Display badge on custom css selector', 'GetContentHookController'),
-               $this->module->l('%1$sAdvanced%2$s [Optional] Query selector for our scripts to display the badge on product page', 'GetContentHookController'),
+               sprintf(
+                // PrestaShop won't detect the string if the call to `l` is multiline
+                // phpcs:ignore
+                $this->module->l('%1$sAdvanced%2$s [Optional] Query selector for our scripts to display the badge on product page', 'GetContentHookController'),
+                '<b>',
+                '</b>'
+               ),
                $this->module->l('E.g. #id, .class, ...', 'GetContentHookController')
            ),
            $this->inputTextForm(
                'ALMA_PRODUCT_PRICE_SELECTOR',
                $this->module->l('Product price query selector', 'GetContentHookController'),
-               $this->module->l('%1$sAdvanced%2$s Query selector for our scripts to correctly find the displayed price of a product', 'GetContentHookController')
+               sprintf(
+                // PrestaShop won't detect the string if the call to `l` is multiline
+                // phpcs:ignore
+                $this->module->l('%1$sAdvanced%2$s Query selector for our scripts to correctly find the displayed price of a product', 'GetContentHookController'),
+                '<b>',
+                '</b>'
+               )
            ),
            $this->inputTextForm(
                'ALMA_PRODUCT_ATTR_SELECTOR',
                $this->module->l('Product attribute dropdown query selector', 'GetContentHookController'),
-               $this->module->l('%1$sAdvanced%2$s Query selector for our scripts to correctly find the selected attributes of a product combination', 'GetContentHookController')
+               sprintf(
+                // PrestaShop won't detect the string if the call to `l` is multiline
+                // phpcs:ignore
+                $this->module->l('%1$sAdvanced%2$s Query selector for our scripts to correctly find the selected attributes of a product combination', 'GetContentHookController'),
+                '<b>',
+                '</b>'
+               )
            ),
            $this->inputTextForm(
                'ALMA_PRODUCT_ATTR_RADIO_SELECTOR',
                $this->module->l('Product attribute radio button query selector', 'GetContentHookController'),
-               $this->module->l('%1$sAdvanced%2$s Query selector for our scripts to correctly find the selected attributes of a product combination', 'GetContentHookController')
+               sprintf(
+                // PrestaShop won't detect the string if the call to `l` is multiline
+                // phpcs:ignore
+                $this->module->l('%1$sAdvanced%2$s Query selector for our scripts to correctly find the selected attributes of a product combination', 'GetContentHookController'),
+                '<b>',
+                '</b>'
+               )
            ),
            $this->inputTextForm(
                'ALMA_PRODUCT_COLOR_PICK_SELECTOR',
                $this->module->l('Product color picker query selector', 'GetContentHookController'),
-               $this->module->l('%1$sAdvanced%2$s Query selector for our scripts to correctly find the chosen color option of a product', 'GetContentHookController')
+               sprintf(
+                // PrestaShop won't detect the string if the call to `l` is multiline
+                // phpcs:ignore
+                $this->module->l('%1$sAdvanced%2$s Query selector for our scripts to correctly find the chosen color option of a product', 'GetContentHookController'),
+                '<b>',
+                '</b>'
+               )
            ),
            $this->inputTextForm(
                'ALMA_PRODUCT_QUANTITY_SELECTOR',
                $this->module->l('Product quantity query selector', 'GetContentHookController'),
-               $this->module->l('%1$sAdvanced%2$s Query selector for our scripts to correctly find the wanted quantity of a product', 'GetContentHookController')
+               sprintf(
+                // PrestaShop won't detect the string if the call to `l` is multiline
+                // phpcs:ignore
+                $this->module->l('%1$sAdvanced%2$s Query selector for our scripts to correctly find the wanted quantity of a product', 'GetContentHookController'),
+                '<b>',
+                '</b>'
+               )
            ),
        ];
     }
