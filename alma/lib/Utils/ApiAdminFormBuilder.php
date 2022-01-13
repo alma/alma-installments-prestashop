@@ -46,7 +46,8 @@ class ApiAdminFormBuilder extends AbstractAlmaAdminFormBuilder
                 [
                     ['api_mode' => ALMA_MODE_LIVE, 'name' => 'Live'],
                     ['api_mode' => ALMA_MODE_TEST, 'name' => 'Test'],
-                ]
+                ],
+                'api_mode'
             ),
             $this->inputTextForm(
                 'ALMA_LIVE_API_KEY',

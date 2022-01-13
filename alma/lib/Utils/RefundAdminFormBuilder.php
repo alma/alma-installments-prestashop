@@ -48,7 +48,8 @@ class RefundAdminFormBuilder extends AbstractAlmaAdminFormBuilder
                 'ALMA_STATE_REFUND',
                 $this->module->l('Refund state order', 'GetContentHookController'),
                 $this->module->l('Your order state to sync refund with Alma', 'GetContentHookController'),
-                OrderState::getOrderStates($this->context->cookie->id_lang)
+                OrderState::getOrderStates($this->context->cookie->id_lang),
+                'id_order_state'
             ),
         ];
     }

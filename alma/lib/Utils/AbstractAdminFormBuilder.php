@@ -201,7 +201,7 @@ abstract class AbstractAdminFormBuilder
      *
      * @return array inputSelectForm
      */
-    protected function inputSelectForm($name, $label, $desc, $query)
+    protected function inputSelectForm($name, $label, $desc, $query, $id)
     {
         $dataInput = [
             'name' => $name,
@@ -211,7 +211,7 @@ abstract class AbstractAdminFormBuilder
             'required' => true,
             'options' => [
                 'query' => $query,
-                'id' => 'id_order_state',
+                'id' => $id,
                 'name' => 'name',
             ],
         ];
