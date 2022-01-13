@@ -141,7 +141,7 @@ class PnxAdminFormBuilder extends AbstractAlmaAdminFormBuilder
                     null,
                     null,
                     "$tabId-content"
-                ),
+                )
             );
         }
 
