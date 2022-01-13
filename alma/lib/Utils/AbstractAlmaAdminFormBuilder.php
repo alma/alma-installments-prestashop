@@ -3,6 +3,7 @@
 namespace Alma\PrestaShop\Utils;
 
 use Alma;
+use Context;
 
 /**
  * Class AbstractAlmaAdminFormBuilder
@@ -18,12 +19,24 @@ abstract class AbstractAlmaAdminFormBuilder extends AbstractAdminFormBuilder
     protected $module;
 
     /**
-     * @param Alma $module
-     * @param      $image
+     * @var Context
      */
-    public function __construct(Alma $module, $image)
+    protected $context;
+
+    protected $config;
+    
+
+    /**
+     * @param Alma      $module
+     * @param Context   $context
+     * @param string    $image
+     * @param array     $config
+     */
+    public function __construct(Alma $module, Context $context, $image, $config = [])
     {
         $this->module = $module;
+        $this->context = $context;
+        $this->config = $config;
         parent::__construct(
             $image,
             $this->getTitle()

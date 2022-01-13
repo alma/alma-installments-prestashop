@@ -69,12 +69,11 @@ abstract class AbstractAdminFormBuilder
      *
      * @return array inputSwitchForm
      */
-    protected function inputSwitchForm($name, $label, $desc = null, $helpDesc = null)
+    protected function inputSwitchForm($name, $label, $desc = null, $helpDesc = null, $form_group_class = null)
     {
         $dataInput = [
             'name'   => $name,
             'label'  => $label,
-            'desc'   => $desc,
             'type'   => 'switch',
             'values' => [
                 'id'    => 'id',
@@ -88,6 +87,10 @@ abstract class AbstractAdminFormBuilder
                 ],
             ],
         ];
+
+        if ($form_group_class) {
+            $dataInput['desc'] = $form_group_class;
+        }
 
         if ($desc) {
             $dataInput['desc'] = $desc;
@@ -166,6 +169,34 @@ abstract class AbstractAdminFormBuilder
     }
 
     /**
+     * Input Number Form Configuration
+     *
+     * @return array inputNumberForm
+     */
+    protected function inputNumberForm($name, $label, $desc, $min = null, $max = null, $form_group_class = null)
+    {
+        $dataInput = [
+            'name' => $name,
+            'label' => $label,
+            'desc' => $desc,
+            'type' => 'number',
+        ];
+
+        if ($form_group_class) {
+            $dataInput['min'] = $form_group_class;
+        }
+
+        if ($min) {
+            $dataInput['min'] = $min;
+        }
+        if ($max) {
+            $dataInput['max'] = $max;
+        }
+
+        return $dataInput;
+    }
+
+    /**
      * Input Select Form Configuration
      *
      * @return array inputSelectForm
@@ -193,7 +224,7 @@ abstract class AbstractAdminFormBuilder
      *
      * @return array inputHtml
      */
-    protected function inputHtml($tpl = null, $htmlContent = null)
+    protected function inputHtml($tpl = null, $htmlContent = null, $form_group_class = null)
     {
         $dataInput = [
             'name' => null,
@@ -208,6 +239,10 @@ abstract class AbstractAdminFormBuilder
 
         if ($tpl) {
             $dataInput['desc'] = $tpl->fetch();
+        }
+
+        if ($form_group_class) {
+            $dataInput['form_group_class'] = $form_group_class;
         }
 
         return $dataInput;

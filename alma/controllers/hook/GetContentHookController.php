@@ -31,7 +31,6 @@ if (!defined('_PS_VERSION_')) {
 use Alma\API\RequestError;
 use Alma\PrestaShop\API\ClientHelper;
 use Alma\PrestaShop\Hooks\AdminHookController;
-use Alma\PrestaShop\Utils\AdminFormBuilder;
 use Alma\PrestaShop\Utils\ApiAdminFormBuilder;
 use Alma\PrestaShop\Utils\CartEligibilityAdminFormBuilder;
 use Alma\PrestaShop\Utils\DebugAdminFormBuilder;
@@ -39,13 +38,13 @@ use Alma\PrestaShop\Utils\ExcludedCategoryAdminFormBuilder;
 use Alma\PrestaShop\Utils\ProductEligibilityAdminFormBuilder;
 use Alma\PrestaShop\Utils\Logger;
 use Alma\PrestaShop\Utils\PaymentButtonAdminFormBuilder;
+use Alma\PrestaShop\Utils\PnxAdminFormBuilder;
 use Alma\PrestaShop\Utils\RefundAdminFormBuilder;
 use Alma\PrestaShop\Utils\Settings;
 use Alma\PrestaShop\Utils\SettingsCustomFields;
 use Configuration;
 use HelperForm;
 use Media;
-use OrderState;
 use Tools;
 
 final class GetContentHookController extends AdminHookController
@@ -423,21 +422,21 @@ final class GetContentHookController extends AdminHookController
             $extraMessage = $this->module->display($this->module->file, 'getContent.tpl');
         }
 
-        $pnxConfigForm = null;
+        // $pnxConfigForm = null;
         if ($merchant) {
-            $pnxConfigForm = [
-                'form' => [
-                    'legend' => [
-                        'title' => $this->module->l('Installments plans', 'GetContentHookController'),
-                        'image' => $iconPath,
-                    ],
-                    'input' => [],
-                    'submit' => ['title' => $this->module->l('Save'), 'class' => 'button btn btn-default pull-right'],
-                ],
-            ];
+            // $pnxConfigForm = [
+            //     'form' => [
+            //         'legend' => [
+            //             'title' => $this->module->l('Installments plans', 'GetContentHookController'),
+            //             'image' => $iconPath,
+            //         ],
+            //         'input' => [],
+            //         'submit' => ['title' => $this->module->l('Save'), 'class' => 'button btn btn-default pull-right'],
+            //     ],
+            // ];
 
-            $pnxTabs = [];
-            $activeTab = null;
+            // $pnxTabs = [];
+            // $activeTab = null;
 
             $feePlans = $this->getFeePlans();
             $installmentsPlans = json_decode(Settings::getFeePlans());
@@ -456,278 +455,178 @@ final class GetContentHookController extends AdminHookController
             ksort($feePlanDeferred);
             $feePlansOrdered = array_merge($feePlansOrdered, $feePlanDeferred);
 
-            foreach ($feePlansOrdered as $feePlan) {
-                $key = Settings::keyForFeePlan($feePlan);
-                if (1 == $feePlan->installments_count && !Settings::isDeferred($feePlan)) {
-                    continue;
-                }
+            // foreach ($feePlansOrdered as $feePlan) {
+                // $key = Settings::keyForFeePlan($feePlan);
+                // if (1 == $feePlan->installments_count && !Settings::isDeferred($feePlan)) {
+                //     continue;
+                // }
 
-                // Disable and hide disallowed fee plans
-                if (!$feePlan->allowed) {
-                    unset($installmentsPlans->$key);
-                    Settings::updateValue('ALMA_FEE_PLANS', json_encode($installmentsPlans));
+                // // Disable and hide disallowed fee plans
+                // if (!$feePlan->allowed) {
+                //     unset($installmentsPlans->$key);
+                //     Settings::updateValue('ALMA_FEE_PLANS', json_encode($installmentsPlans));
 
-                    continue;
-                }
+                //     continue;
+                // }
 
-                $tabId = $key;
-                // PrestaShop won't detect the string if the call to `l` is multiline
-                // phpcs:ignore
-                $tabTitle = sprintf($this->module->l('%d-installment payments', 'GetContentHookController'), $feePlan->installments_count);
-                $duration = Settings::getDuration($feePlan);
-                $label = sprintf(
-                    $this->module->l('Enable %d-installment payments', 'GetContentHookController'),
-                    $feePlan->installments_count
-                );
-                if (Settings::isDeferred($feePlan)) {
-                    if ($feePlan->installments_count == 1) {
-                        // PrestaShop won't detect the string if the call to `l` is multiline
-                        // phpcs:ignore
-                        $tabTitle = sprintf($this->module->l('Deferred payments + %d days', 'GetContentHookController'), $duration);
-                        $label = sprintf(
-                            $this->module->l('Enable deferred payments +%d days', 'GetContentHookController'),
-                            $duration
-                        );
-                    } else {
-                        // PrestaShop won't detect the string if the call to `l` is multiline
-                        // phpcs:ignore
-                        $tabTitle = sprintf($this->module->l('%d-installment payments + %d-deferred days', 'GetContentHookController'), $feePlan->installments_count, $duration);
-                        $label = sprintf(
-                            // PrestaShop won't detect the string if the call to `l` is multiline
-                            // phpcs:ignore
-                            $this->module->l('Enable %d-installment payments +%d-deferred days', 'GetContentHookController'),
-                            $feePlan->installments_count,
-                            $duration
-                        );
-                    }
-                }
+                // $feePlans[] = $feePlan;
 
-                $enable = isset($installmentsPlans->$key->enabled) ? $installmentsPlans->$key->enabled : 0;
-                if (1 == $enable) {
-                    $pnxTabs[$tabId] = '✅ ' . $tabTitle;
-                    $activeTab = $activeTab ?: $tabId;
-                } else {
-                    $pnxTabs[$tabId] = '❌ ' . $tabTitle;
-                }
+                // $tabId = $key;
+                // // PrestaShop won't detect the string if the call to `l` is multiline
+                // // phpcs:ignore
+                // $tabTitle = sprintf($this->module->l('%d-installment payments', 'GetContentHookController'), $feePlan->installments_count);
+                // $duration = Settings::getDuration($feePlan);
+                // $label = sprintf(
+                //     $this->module->l('Enable %d-installment payments', 'GetContentHookController'),
+                //     $feePlan->installments_count
+                // );
+                // if (Settings::isDeferred($feePlan)) {
+                //     if ($feePlan->installments_count == 1) {
+                //         // PrestaShop won't detect the string if the call to `l` is multiline
+                //         // phpcs:ignore
+                //         $tabTitle = sprintf($this->module->l('Deferred payments + %d days', 'GetContentHookController'), $duration);
+                //         $label = sprintf(
+                //             $this->module->l('Enable deferred payments +%d days', 'GetContentHookController'),
+                //             $duration
+                //         );
+                //     } else {
+                //         // PrestaShop won't detect the string if the call to `l` is multiline
+                //         // phpcs:ignore
+                //         $tabTitle = sprintf($this->module->l('%d-installment payments + %d-deferred days', 'GetContentHookController'), $feePlan->installments_count, $duration);
+                //         $label = sprintf(
+                //             // PrestaShop won't detect the string if the call to `l` is multiline
+                //             // phpcs:ignore
+                //             $this->module->l('Enable %d-installment payments +%d-deferred days', 'GetContentHookController'),
+                //             $feePlan->installments_count,
+                //             $duration
+                //         );
+                //     }
+                // }
 
-                $minAmount = (int) almaPriceFromCents($feePlan->min_purchase_amount);
-                $maxAmount = (int) almaPriceFromCents($feePlan->max_purchase_amount);
+                // $enable = isset($installmentsPlans->$key->enabled) ? $installmentsPlans->$key->enabled : 0;
+                // if (1 == $enable) {
+                //     $pnxTabs[$tabId] = '✅ ' . $tabTitle;
+                //     $activeTab = $activeTab ?: $tabId;
+                // } else {
+                //     $pnxTabs[$tabId] = '❌ ' . $tabTitle;
+                // }
 
-                $tpl = $this->context->smarty->createTemplate(
-                    "{$this->module->local_path}views/templates/hook/pnx_fees.tpl"
-                );
-                $tpl->assign(
-                    ['fee_plan' => (array) $feePlan,
-                    'min_amount' => $minAmount,
-                    'max_amount' => $maxAmount,
-                    'deferred' => $duration, ]
-                );
+                // $minAmount = (int) almaPriceFromCents($feePlan->min_purchase_amount);
+                // $maxAmount = (int) almaPriceFromCents($feePlan->max_purchase_amount);
 
-                $pnxConfigForm['form']['input'][] = [
-                    // Prevent notices for undefined index
-                    'name' => null,
-                    'label' => null,
-                    ///
-                    'form_group_class' => "$tabId-content",
-                    'type' => 'html',
-                    'html_content' => $tpl->fetch(),
-                ];
+                // $tpl = $this->context->smarty->createTemplate(
+                //     "{$this->module->local_path}views/templates/hook/pnx_fees.tpl"
+                // );
+                // $tpl->assign(
+                //     ['fee_plan' => (array) $feePlan,
+                //     'min_amount' => $minAmount,
+                //     'max_amount' => $maxAmount,
+                //     'deferred' => $duration, ]
+                // );
 
-                $pnxConfigForm['form']['input'][] = [
-                    'form_group_class' => "$tabId-content",
-                    'name' => "ALMA_${key}_ENABLED",
-                    'label' => $label,
-                    'type' => 'switch',
-                    'values' => [
-                        'id' => 'id',
-                        'name' => 'label',
-                        'query' => [
-                            [
-                                'id' => 'ON',
-                                'val' => true,
-                                'label' => '',
-                            ],
-                        ],
-                    ],
-                ];
+                // $pnxConfigForm['form']['input'][] = [
+                //     // Prevent notices for undefined index
+                //     'name' => null,
+                //     'label' => null,
+                //     ///
+                //     'form_group_class' => "$tabId-content",
+                //     'type' => 'html',
+                //     'html_content' => $tpl->fetch(),
+                // ];
 
-                $pnxConfigForm['form']['input'][] = [
-                    'form_group_class' => "$tabId-content",
-                    'name' => "ALMA_${key}_MIN_AMOUNT",
-                    'label' => $this->module->l('Minimum amount (€)', 'GetContentHookController'),
-                    // phpcs:ignore
-                    'desc' => $this->module->l('Minimum purchase amount to activate this plan', 'GetContentHookController'),
-                    'type' => 'number',
-                    'min' => $minAmount,
-                    'max' => $maxAmount,
-                ];
+                // $pnxConfigForm['form']['input'][] = [
+                //     'form_group_class' => "$tabId-content",
+                //     'name' => "ALMA_${key}_ENABLED",
+                //     'label' => $label,
+                //     'type' => 'switch',
+                //     'values' => [
+                //         'id' => 'id',
+                //         'name' => 'label',
+                //         'query' => [
+                //             [
+                //                 'id' => 'ON',
+                //                 'val' => true,
+                //                 'label' => '',
+                //             ],
+                //         ],
+                //     ],
+                // ];
 
-                $pnxConfigForm['form']['input'][] = [
-                    'form_group_class' => "$tabId-content",
-                    'name' => "ALMA_${key}_MAX_AMOUNT",
-                    'label' => $this->module->l('Maximum amount (€)', 'GetContentHookController'),
-                    // phpcs:ignore
-                    'desc' => $this->module->l('Maximum purchase amount to activate this plan', 'GetContentHookController'),
-                    'type' => 'number',
-                    'min' => $minAmount,
-                    'max' => $maxAmount,
-                ];
+                // $pnxConfigForm['form']['input'][] = [
+                //     'form_group_class' => "$tabId-content",
+                //     'name' => "ALMA_${key}_MIN_AMOUNT",
+                //     'label' => $this->module->l('Minimum amount (€)', 'GetContentHookController'),
+                //     // phpcs:ignore
+                //     'desc' => $this->module->l('Minimum purchase amount to activate this plan', 'GetContentHookController'),
+                //     'type' => 'number',
+                //     'min' => $minAmount,
+                //     'max' => $maxAmount,
+                // ];
 
-                $pnxConfigForm['form']['input'][] = [
-                    'form_group_class' => "$tabId-content",
-                    'name' => "ALMA_${key}_SORT_ORDER",
-                    'label' => $this->module->l('Position', 'GetContentHookController'),
-                    // phpcs:ignore
-                    'desc' => $this->module->l('Use relative values to set the order on the checkout page', 'GetContentHookController'),
-                    'type' => 'number',
-                ];
-            }
+                // $pnxConfigForm['form']['input'][] = [
+                //     'form_group_class' => "$tabId-content",
+                //     'name' => "ALMA_${key}_MAX_AMOUNT",
+                //     'label' => $this->module->l('Maximum amount (€)', 'GetContentHookController'),
+                //     // phpcs:ignore
+                //     'desc' => $this->module->l('Maximum purchase amount to activate this plan', 'GetContentHookController'),
+                //     'type' => 'number',
+                //     'min' => $minAmount,
+                //     'max' => $maxAmount,
+                // ];
 
-            $tpl = $this->context->smarty->createTemplate(
-                "{$this->module->local_path}views/templates/hook/pnx_tabs.tpl"
-            );
-            $forceTabs = false;
-            if (version_compare(_PS_VERSION_, '1.7', '<')) {
-                $forceTabs = true;
-            }
-            $tpl->assign(['tabs' => $pnxTabs, 'active' => $activeTab, 'forceTabs' => $forceTabs]);
+                // $pnxConfigForm['form']['input'][] = [
+                //     'form_group_class' => "$tabId-content",
+                //     'name' => "ALMA_${key}_SORT_ORDER",
+                //     'label' => $this->module->l('Position', 'GetContentHookController'),
+                //     // phpcs:ignore
+                //     'desc' => $this->module->l('Use relative values to set the order on the checkout page', 'GetContentHookController'),
+                //     'type' => 'number',
+                // ];
+            // }
 
-            array_unshift(
-                $pnxConfigForm['form']['input'],
-                [
-                    'name' => null,
-                    'label' => null,
-                    'type' => 'html',
-                    'html_content' => $tpl->fetch(),
-                ]
-            );
+            // $tpl = $this->context->smarty->createTemplate(
+            //     "{$this->module->local_path}views/templates/hook/pnx_tabs.tpl"
+            // );
+            // $forceTabs = false;
+            // if (version_compare(_PS_VERSION_, '1.7', '<')) {
+            //     $forceTabs = true;
+            // }
+            // $tpl->assign(['tabs' => $pnxTabs, 'active' => $activeTab, 'forceTabs' => $forceTabs]);
+
+            // array_unshift(
+            //     $pnxConfigForm['form']['input'],
+            //     [
+            //         'name' => null,
+            //         'label' => null,
+            //         'type' => 'html',
+            //         'html_content' => $tpl->fetch(),
+            //     ]
+            // );
         }
 
-        // $paymentButtonForm = [
-        //     'form' => [
-        //         'legend' => [
-        //             'title' => $this->module->l('Payment method configuration', 'GetContentHookController'),
-        //             'image' => $iconPath,
-        //         ],
-        //         'input' => [
-        //             // [
-        //             //     'name' => null,
-        //             //     'label' => null,
-        //             //     'type' => 'html',
-        //             //     // PrestaShop won't detect the string if the call to `l` is multiline
-        //             //     // phpcs:ignore
-        //             //     'html_content' => "<h4>{$this->module->l('Payment by installment', 'GetContentHookController')}</h4>",
-        //             // ],
-        //             // [
-        //             //     'name' => 'ALMA_PAYMENT_BUTTON_TITLE',
-        //             //     'label' => $this->module->l('Title', 'GetContentHookController'),
-        //             //     'lang' => true,
-        //             //     // PrestaShop won't detect the string if the call to `l` is multiline
-        //             //     // phpcs:ignore
-        //             //     'desc' => $this->module->l('This controls the payment method name which the user sees during checkout.', 'GetContentHookController'),
-        //             //     'type' => 'text',
-        //             //     'size' => 75,
-        //             //     'required' => true,
-        //             // ],
-        //             // [
-        //             //     'name' => 'ALMA_PAYMENT_BUTTON_DESC',
-        //             //     'label' => $this->module->l('Description', 'GetContentHookController'),
-        //             //     'lang' => true,
-        //             //     // PrestaShop won't detect the string if the call to `l` is multiline
-        //             //     // phpcs:ignore
-        //             //     'desc' => $this->module->l('This controls the payment method description which the user sees during checkout.', 'GetContentHookController'),
-        //             //     'type' => 'text',
-        //             //     'size' => 75,
-        //             //     'required' => true,
-        //             // ],
-        //             // [
-        //             //     'name' => null,
-        //             //     'label' => null,
-        //             //     'type' => 'html',
-        //             //     // PrestaShop won't detect the string if the call to `l` is multiline
-        //             //     // phpcs:ignore
-        //             //     'html_content' => "<h4>{$this->module->l('Defered payment', 'GetContentHookController')}</h4>",
-        //             // ],
-        //             // [
-        //             //     'name' => 'ALMA_DEFERRED_BUTTON_TITLE',
-        //             //     'label' => $this->module->l('Title', 'GetContentHookController'),
-        //             //     'lang' => true,
-        //             //     // PrestaShop won't detect the string if the call to `l` is multiline
-        //             //     // phpcs:ignore
-        //             //     'desc' => $this->module->l('This controls the payment method name which the user sees during checkout.', 'GetContentHookController'),
-        //             //     'type' => 'text',
-        //             //     'size' => 75,
-        //             //     'required' => true,
-        //             // ],
-        //             // [
-        //             //     'name' => 'ALMA_DEFERRED_BUTTON_DESC',
-        //             //     'label' => $this->module->l('Description', 'GetContentHookController'),
-        //             //     'lang' => true,
-        //             //     // PrestaShop won't detect the string if the call to `l` is multiline
-        //             //     // phpcs:ignore
-        //             //     'desc' => $this->module->l('This controls the payment method description which the user sees during checkout.', 'GetContentHookController'),
-        //             //     'type' => 'text',
-        //             //     'size' => 75,
-        //             //     'required' => true,
-        //             // ],
-        //         ],
-        //         'submit' => ['title' => $this->module->l('Save'), 'class' => 'button btn btn-default pull-right'],
-        //     ],
-        // ];
+        $pnxBuilder = new PnxAdminFormBuilder($this->module, $this->context, $iconPath, ['feePlans' => $feePlansOrdered, 'installmentsPlans' => $installmentsPlans]);
+        $apiBuilder = new ApiAdminFormBuilder($this->module, $this->context, $iconPath, ['needsAPIKey' => $needsKeys]);
+        $cartBuilder = new CartEligibilityAdminFormBuilder($this->module, $this->context, $iconPath);
+        $productBuilder = new ProductEligibilityAdminFormBuilder($this->module, $this->context, $iconPath);
+        $excludedBuilder = new ExcludedCategoryAdminFormBuilder($this->module, $this->context, $iconPath);
+        $refundBuilder = new RefundAdminFormBuilder($this->module, $this->context, $iconPath);
+        $paymentBuilder = new PaymentButtonAdminFormBuilder($this->module, $this->context, $iconPath);
+        $debugBuilder = new DebugAdminFormBuilder($this->module, $this->context, $iconPath);
 
-        // if (version_compare(_PS_VERSION_, '1.7', '<')) {
-        //     $paymentButtonForm['form']['input'][] = [
-        //         'name' => 'ALMA_SHOW_DISABLED_BUTTON',
-        //         'type' => 'radio',
-        //         'label' => $this->module->l('When Alma is not available...', 'GetContentHookController'),
-        //         'class' => 't',
-        //         'required' => true,
-        //         'values' => [
-        //             [
-        //                 'id' => 'ON',
-        //                 'value' => true,
-        //                 'label' => $this->module->l('Display payment button, disabled', 'GetContentHookController'),
-        //             ],
-        //             [
-        //                 'id' => 'OFF',
-        //                 'value' => false,
-        //                 'label' => $this->module->l('Hide payment button', 'GetContentHookController'),
-        //             ],
-        //         ],
-        //     ];
-        // }
+        $fieldsForms = [];
 
-        $apiBuilder = new ApiAdminFormBuilder($this->module, $iconPath);
-        $cartBuilder = new CartEligibilityAdminFormBuilder($this->module, $iconPath);
-        $productBuilder = new ProductEligibilityAdminFormBuilder($this->module, $iconPath);
-        $excludedBuilder = new ExcludedCategoryAdminFormBuilder($this->module, $iconPath);
-        $refundBuilder = new RefundAdminFormBuilder($this->module, $iconPath);
-        $paymentBuilder = new PaymentButtonAdminFormBuilder($this->module, $iconPath);
-        $debugBuilder = new DebugAdminFormBuilder($this->module, $iconPath);
-        
-        if ($needsKeys) {
-            $apiConfigForm['form']['input'][] = [
-                'name' => '_api_only',
-                'label' => null,
-                'type' => 'hidden',
-            ];
-            $fieldsForms = [$apiBuilder->build(), $debugBuilder->build()];
-        } else {
-            $fieldsForms = [];
-            if ($pnxConfigForm) {
-                $fieldsForms[] = $pnxConfigForm;
+        if (!$needsKeys) {
+            if ($pnxBuilder) {
+                $fieldsForms[] = $pnxBuilder->build();
             }
-
-            $fieldsForms = array_merge($fieldsForms, [
-                $productBuilder->build(),
-                $cartBuilder->build(),
-                $paymentBuilder->build(),
-                $excludedBuilder->build(),
-                $refundBuilder->build(),
-                $apiBuilder->build(),
-                $debugBuilder->build(),
-            ]);
+            $fieldsForms[] = $productBuilder->build();
+            $fieldsForms[] = $cartBuilder->build();
+            $fieldsForms[] = $paymentBuilder->build();
+            $fieldsForms[] = $excludedBuilder->build();
+            $fieldsForms[] = $refundBuilder->build();
         }
+        $fieldsForms[] = $apiBuilder->build();
+        $fieldsForms[] = $debugBuilder->build();
 
         $helper = new HelperForm();
         $helper->module = $this->module;

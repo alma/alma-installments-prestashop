@@ -36,11 +36,9 @@ if (!defined('_PS_VERSION_')) {
 class ApiAdminFormBuilder extends AbstractAlmaAdminFormBuilder
 {
     protected function configForm() {
-        // if ($needsAPIKey) {
-        //     $inputHidden = $this->inputHiddenForm('_api_only');
-        // }
+        $needsAPIKey = isset($this->config['needsAPIKey']) ? boolval($this->config['needsAPIKey']) : false;
 
-        return [
+        $return = [
             $this->inputSelectForm(
                 'ALMA_API_MODE',
                 $this->module->l('API Mode', 'GetContentHookController'),
@@ -74,8 +72,13 @@ class ApiAdminFormBuilder extends AbstractAlmaAdminFormBuilder
                         '</a>'
                     )
             ),
-            // $inputHiden
         ];
+
+        if ($needsAPIKey) {
+            $return[] = $this->inputHiddenForm('_api_only');
+        }
+
+        return $return;
     }
 
     protected function getTitle()
