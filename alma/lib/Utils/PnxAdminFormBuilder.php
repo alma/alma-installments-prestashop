@@ -164,8 +164,6 @@ class PnxAdminFormBuilder extends AbstractAlmaAdminFormBuilder
             ]
         );
 
-        // var_dump($return);
-
         return $return;
     }
 

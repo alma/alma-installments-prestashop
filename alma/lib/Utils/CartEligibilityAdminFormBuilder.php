@@ -39,7 +39,6 @@ class CartEligibilityAdminFormBuilder extends AbstractAlmaAdminFormBuilder
 
     protected function configForm()
     {
-        // TODO: Implement configForm() method.
         return [
             $this->inputSwitchForm(
                 self::ALMA_SHOW_ELIGIBILITY_MESSAGE,

@@ -109,7 +109,7 @@ abstract class AbstractAdminFormBuilder
      */
     protected function inputRadioForm($name, $label, $labelOff, $labelOn)
     {
-        $dataInput = [
+        return [
             'name'     => $name,
             'type'     => 'radio',
             'label'    => $label,
@@ -119,21 +119,15 @@ abstract class AbstractAdminFormBuilder
                 [
                     'id'    => $name . '_OFF',
                     'value' => false,
-                    // PrestaShop won't detect the string if the call to `l` is multiline
-                    // phpcs:ignore
                     'label' => $labelOff,
                 ],
                 [
                     'id' => $name . '_ON',
                     'value' => true,
-                    // PrestaShop won't detect the string if the call to `l` is multiline
-                    // phpcs:ignore
                     'label' => $labelOn,
                 ],
             ],
         ];
-
-        return $dataInput;
     }
 
     /**
@@ -197,7 +191,7 @@ abstract class AbstractAdminFormBuilder
      */
     protected function inputSelectForm($name, $label, $desc, $query, $id)
     {
-        $dataInput = [
+        return [
             'name' => $name,
             'label' => $label,
             'desc' => $desc,
@@ -209,8 +203,6 @@ abstract class AbstractAdminFormBuilder
                 'name' => 'name',
             ],
         ];
-
-        return $dataInput;
     }
 
     /**
@@ -224,7 +216,6 @@ abstract class AbstractAdminFormBuilder
             'name' => null,
             'label' => null,
             'type' => 'html',
-            // PrestaShop won't detect the string if the call to `l` is multiline
         ];
 
         if ($htmlContent) {
@@ -249,13 +240,11 @@ abstract class AbstractAdminFormBuilder
      */
     protected function inputHiddenForm($name)
     {
-        $dataInput = [
+        return [
             'name' => $name,
             'label' => null,
             'type' => 'hidden',
         ];
-
-        return $dataInput;
     }
 
     /**
