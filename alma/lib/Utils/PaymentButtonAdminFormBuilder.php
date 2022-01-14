@@ -35,11 +35,17 @@ if (!defined('_PS_VERSION_')) {
  */
 class PaymentButtonAdminFormBuilder extends AbstractAlmaAdminFormBuilder
 {
+    const ALMA_PAYMENT_BUTTON_TITLE = 'ALMA_PAYMENT_BUTTON_TITLE';
+    const ALMA_PAYMENT_BUTTON_DESC = 'ALMA_PAYMENT_BUTTON_DESC';
+    const ALMA_DEFERRED_BUTTON_TITLE = 'ALMA_DEFERRED_BUTTON_TITLE';
+    const ALMA_DEFERRED_BUTTON_DESC = 'ALMA_DEFERRED_BUTTON_DESC';
+    const ALMA_SHOW_DISABLED_BUTTON = 'ALMA_SHOW_DISABLED_BUTTON';
+
     protected function configForm() {
         $return = [
             $this->inputHtml(null, "<h4>{$this->module->l('Payment by installment', 'GetContentHookController')}</h4>"),
             $this->inputTextForm(
-                'ALMA_PAYMENT_BUTTON_TITLE',
+                self::ALMA_PAYMENT_BUTTON_TITLE,
                 $this->module->l('Title', 'GetContentHookController'),
                 $this->module->l('This controls the payment method name which the user sees during checkout.', 'GetContentHookController'),
                 null,
@@ -47,7 +53,7 @@ class PaymentButtonAdminFormBuilder extends AbstractAlmaAdminFormBuilder
                 true
             ),
             $this->inputTextForm(
-                'ALMA_PAYMENT_BUTTON_DESC',
+                self::ALMA_PAYMENT_BUTTON_DESC,
                 $this->module->l('Description', 'GetContentHookController'),
                 $this->module->l('This controls the payment method description which the user sees during checkout.', 'GetContentHookController'),
                 null,
@@ -56,7 +62,7 @@ class PaymentButtonAdminFormBuilder extends AbstractAlmaAdminFormBuilder
             ),
             $this->inputHtml(null, "<h4>{$this->module->l('Defered payment', 'GetContentHookController')}</h4>"),
             $this->inputTextForm(
-                'ALMA_DEFERRED_BUTTON_TITLE',
+                self::ALMA_DEFERRED_BUTTON_TITLE,
                 $this->module->l('Title', 'GetContentHookController'),
                 $this->module->l('This controls the payment method name which the user sees during checkout.', 'GetContentHookController'),
                 null,
@@ -64,7 +70,7 @@ class PaymentButtonAdminFormBuilder extends AbstractAlmaAdminFormBuilder
                 true
             ),
             $this->inputTextForm(
-                'ALMA_DEFERRED_BUTTON_DESC',
+                self::ALMA_DEFERRED_BUTTON_DESC,
                 $this->module->l('Description', 'GetContentHookController'),
                 $this->module->l('This controls the payment method description which the user sees during checkout.', 'GetContentHookController'),
                 null,
@@ -75,7 +81,7 @@ class PaymentButtonAdminFormBuilder extends AbstractAlmaAdminFormBuilder
 
         if (version_compare(_PS_VERSION_, '1.7', '<')) {
             $return[] = $this->inputRadioForm(
-                'ALMA_SHOW_DISABLED_BUTTON',
+                self::ALMA_SHOW_DISABLED_BUTTON,
                 $this->module->l('When Alma is not available...', 'GetContentHookController'),
                 $this->module->l('Hide payment button', 'GetContentHookController'),
                 $this->module->l('Display payment button, disabled', 'GetContentHookController')

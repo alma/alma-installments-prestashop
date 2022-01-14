@@ -37,15 +37,18 @@ if (!defined('_PS_VERSION_')) {
  */
 class RefundAdminFormBuilder extends AbstractAlmaAdminFormBuilder
 {
+    const ALMA_STATE_REFUND_ENABLED = 'ALMA_STATE_REFUND_ENABLED';
+    const ALMA_STATE_REFUND = 'ALMA_STATE_REFUND';
+
     protected function configForm() {
         return [
             $this->inputHtml(null, $this->module->l('If you usually refund orders by changing their state, activate this option and choose the state you want to use to trigger refunds on Alma payments', 'GetContentHookController')),
             $this->inputAlmaSwitchForm(
-                'ALMA_STATE_REFUND_ENABLED',
+                self::ALMA_STATE_REFUND_ENABLED,
                 $this->module->l('Activate refund by change state', 'GetContentHookController')
             ),
             $this->inputSelectForm(
-                'ALMA_STATE_REFUND',
+                self::ALMA_STATE_REFUND,
                 $this->module->l('Refund state order', 'GetContentHookController'),
                 $this->module->l('Your order state to sync refund with Alma', 'GetContentHookController'),
                 OrderState::getOrderStates($this->context->cookie->id_lang),

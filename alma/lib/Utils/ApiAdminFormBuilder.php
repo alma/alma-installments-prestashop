@@ -35,12 +35,16 @@ if (!defined('_PS_VERSION_')) {
  */
 class ApiAdminFormBuilder extends AbstractAlmaAdminFormBuilder
 {
+    const ALMA_API_MODE = 'ALMA_API_MODE';
+    const ALMA_LIVE_API_KEY = 'ALMA_LIVE_API_KEY';
+    const ALMA_TEST_API_KEY = 'ALMA_TEST_API_KEY';
+
     protected function configForm() {
         $needsAPIKey = isset($this->config['needsAPIKey']) ? boolval($this->config['needsAPIKey']) : false;
 
         $return = [
             $this->inputSelectForm(
-                'ALMA_API_MODE',
+                self::ALMA_API_MODE,
                 $this->module->l('API Mode', 'GetContentHookController'),
                 $this->module->l('Use Test mode until you are ready to take real orders with Alma. In Test mode, only admins can see Alma on cart/checkout pages.', 'GetContentHookController'),
                 [
@@ -50,7 +54,7 @@ class ApiAdminFormBuilder extends AbstractAlmaAdminFormBuilder
                 'api_mode'
             ),
             $this->inputTextForm(
-                'ALMA_LIVE_API_KEY',
+                self::ALMA_LIVE_API_KEY,
                 $this->module->l('Live API key', 'GetContentHookController'),
                 $this->module->l('Not required for Test mode', 'GetContentHookController') .
                     ' – ' .
@@ -62,7 +66,7 @@ class ApiAdminFormBuilder extends AbstractAlmaAdminFormBuilder
                     )
             ),
             $this->inputTextForm(
-                'ALMA_TEST_API_KEY',
+                self::ALMA_TEST_API_KEY,
                 $this->module->l('Test API key', 'GetContentHookController'),
                 $this->module->l('Not required for Live mode', 'GetContentHookController') .
                     ' – ' .

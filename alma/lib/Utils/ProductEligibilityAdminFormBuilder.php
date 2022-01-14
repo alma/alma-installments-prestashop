@@ -35,28 +35,38 @@ if (!defined('_PS_VERSION_')) {
  */
 class ProductEligibilityAdminFormBuilder extends AbstractAlmaAdminFormBuilder
 {
+    const ALMA_SHOW_PRODUCT_ELIGIBILITY = 'ALMA_SHOW_PRODUCT_ELIGIBILITY';
+    const ALMA_PRODUCT_WDGT_NOT_ELGBL = 'ALMA_PRODUCT_WDGT_NOT_ELGBL';
+    const ALMA_WIDGET_POSITION_CUSTOM = 'ALMA_WIDGET_POSITION_CUSTOM';
+    const ALMA_WIDGET_POSITION_SELECTOR = 'ALMA_WIDGET_POSITION_SELECTOR';
+    const ALMA_PRODUCT_PRICE_SELECTOR = 'ALMA_PRODUCT_PRICE_SELECTOR';
+    const ALMA_PRODUCT_ATTR_SELECTOR = 'ALMA_PRODUCT_ATTR_SELECTOR';
+    const ALMA_PRODUCT_ATTR_RADIO_SELECTOR = 'ALMA_PRODUCT_ATTR_RADIO_SELECTOR';
+    const ALMA_PRODUCT_COLOR_PICK_SELECTOR = 'ALMA_PRODUCT_COLOR_PICK_SELECTOR';
+    const ALMA_PRODUCT_QUANTITY_SELECTOR = 'ALMA_PRODUCT_QUANTITY_SELECTOR';
+
     protected function configForm() {
        return [
            $this->inputAlmaSwitchForm(
-               'ALMA_SHOW_PRODUCT_ELIGIBILITY',
+               self::ALMA_SHOW_PRODUCT_ELIGIBILITY,
                $this->module->l('Show product eligibility on details page', 'GetContentHookController'),
                $this->module->l('Displays a badge with eligible Alma plans with installments details', 'GetContentHookController'),
                $this->module->l('Display the product\'s eligibility', 'GetContentHookController')
            ),
            $this->inputAlmaSwitchForm(
-               'ALMA_PRODUCT_WDGT_NOT_ELGBL',
+               self::ALMA_PRODUCT_WDGT_NOT_ELGBL,
                $this->module->l('Display badge', 'GetContentHookController'),
                $this->module->l('Displays a badge when product price is too high or tow low', 'GetContentHookController'),
                $this->module->l('Display badge when the product is not eligible.', 'GetContentHookController')
            ),
            $this->inputRadioForm(
-               'ALMA_WIDGET_POSITION_CUSTOM',
+               self::ALMA_WIDGET_POSITION_CUSTOM,
                $this->module->l('Badge position', 'GetContentHookController'),
                $this->module->l('Display badge after price (by default)', 'GetContentHookController'),
                $this->module->l('Display badge on custom css selector', 'GetContentHookController')
            ),
            $this->inputTextForm(
-               'ALMA_WIDGET_POSITION_SELECTOR',
+               self::ALMA_WIDGET_POSITION_SELECTOR,
                $this->module->l('Display badge on custom css selector', 'GetContentHookController'),
                sprintf(
                 // PrestaShop won't detect the string if the call to `l` is multiline
@@ -68,7 +78,7 @@ class ProductEligibilityAdminFormBuilder extends AbstractAlmaAdminFormBuilder
                $this->module->l('E.g. #id, .class, ...', 'GetContentHookController')
            ),
            $this->inputTextForm(
-               'ALMA_PRODUCT_PRICE_SELECTOR',
+               self::ALMA_PRODUCT_PRICE_SELECTOR,
                $this->module->l('Product price query selector', 'GetContentHookController'),
                sprintf(
                 // PrestaShop won't detect the string if the call to `l` is multiline
@@ -79,7 +89,7 @@ class ProductEligibilityAdminFormBuilder extends AbstractAlmaAdminFormBuilder
                )
            ),
            $this->inputTextForm(
-               'ALMA_PRODUCT_ATTR_SELECTOR',
+               self::ALMA_PRODUCT_ATTR_SELECTOR,
                $this->module->l('Product attribute dropdown query selector', 'GetContentHookController'),
                sprintf(
                 // PrestaShop won't detect the string if the call to `l` is multiline
@@ -90,7 +100,7 @@ class ProductEligibilityAdminFormBuilder extends AbstractAlmaAdminFormBuilder
                )
            ),
            $this->inputTextForm(
-               'ALMA_PRODUCT_ATTR_RADIO_SELECTOR',
+               self::ALMA_PRODUCT_ATTR_RADIO_SELECTOR,
                $this->module->l('Product attribute radio button query selector', 'GetContentHookController'),
                sprintf(
                 // PrestaShop won't detect the string if the call to `l` is multiline
@@ -101,7 +111,7 @@ class ProductEligibilityAdminFormBuilder extends AbstractAlmaAdminFormBuilder
                )
            ),
            $this->inputTextForm(
-               'ALMA_PRODUCT_COLOR_PICK_SELECTOR',
+               self::ALMA_PRODUCT_COLOR_PICK_SELECTOR,
                $this->module->l('Product color picker query selector', 'GetContentHookController'),
                sprintf(
                 // PrestaShop won't detect the string if the call to `l` is multiline
@@ -112,7 +122,7 @@ class ProductEligibilityAdminFormBuilder extends AbstractAlmaAdminFormBuilder
                )
            ),
            $this->inputTextForm(
-               'ALMA_PRODUCT_QUANTITY_SELECTOR',
+               self::ALMA_PRODUCT_QUANTITY_SELECTOR,
                $this->module->l('Product quantity query selector', 'GetContentHookController'),
                sprintf(
                 // PrestaShop won't detect the string if the call to `l` is multiline
