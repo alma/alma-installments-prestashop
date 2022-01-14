@@ -30,8 +30,6 @@ if (!defined('_PS_VERSION_')) {
 
 /**
  * Class CartEligibilityAdminFormBuilder
- *
- * @package Alma\PrestaShop\Utils
  */
 class CartEligibilityAdminFormBuilder extends AbstractAlmaAdminFormBuilder
 {

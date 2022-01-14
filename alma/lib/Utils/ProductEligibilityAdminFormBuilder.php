@@ -45,17 +45,20 @@ class ProductEligibilityAdminFormBuilder extends AbstractAlmaAdminFormBuilder
     const ALMA_PRODUCT_COLOR_PICK_SELECTOR = 'ALMA_PRODUCT_COLOR_PICK_SELECTOR';
     const ALMA_PRODUCT_QUANTITY_SELECTOR = 'ALMA_PRODUCT_QUANTITY_SELECTOR';
 
-    protected function configForm() {
-       return [
+    protected function configForm()
+    {
+        return [
            $this->inputAlmaSwitchForm(
                self::ALMA_SHOW_PRODUCT_ELIGIBILITY,
                $this->module->l('Show product eligibility on details page', 'GetContentHookController'),
+               // phpcs:ignore
                $this->module->l('Displays a badge with eligible Alma plans with installments details', 'GetContentHookController'),
                $this->module->l('Display the product\'s eligibility', 'GetContentHookController')
            ),
            $this->inputAlmaSwitchForm(
                self::ALMA_PRODUCT_WDGT_NOT_ELGBL,
                $this->module->l('Display badge', 'GetContentHookController'),
+               // phpcs:ignore
                $this->module->l('Displays a badge when product price is too high or tow low', 'GetContentHookController'),
                $this->module->l('Display badge when the product is not eligible.', 'GetContentHookController')
            ),
@@ -72,8 +75,8 @@ class ProductEligibilityAdminFormBuilder extends AbstractAlmaAdminFormBuilder
                 // PrestaShop won't detect the string if the call to `l` is multiline
                 // phpcs:ignore
                 $this->module->l('%1$sAdvanced%2$s [Optional] Query selector for our scripts to display the badge on product page', 'GetContentHookController'),
-                '<b>',
-                '</b>'
+                   '<b>',
+                   '</b>'
                ),
                $this->module->l('E.g. #id, .class, ...', 'GetContentHookController')
            ),
@@ -84,8 +87,8 @@ class ProductEligibilityAdminFormBuilder extends AbstractAlmaAdminFormBuilder
                 // PrestaShop won't detect the string if the call to `l` is multiline
                 // phpcs:ignore
                 $this->module->l('%1$sAdvanced%2$s Query selector for our scripts to correctly find the displayed price of a product', 'GetContentHookController'),
-                '<b>',
-                '</b>'
+                   '<b>',
+                   '</b>'
                )
            ),
            $this->inputTextForm(
@@ -95,8 +98,8 @@ class ProductEligibilityAdminFormBuilder extends AbstractAlmaAdminFormBuilder
                 // PrestaShop won't detect the string if the call to `l` is multiline
                 // phpcs:ignore
                 $this->module->l('%1$sAdvanced%2$s Query selector for our scripts to correctly find the selected attributes of a product combination', 'GetContentHookController'),
-                '<b>',
-                '</b>'
+                   '<b>',
+                   '</b>'
                )
            ),
            $this->inputTextForm(
@@ -106,8 +109,8 @@ class ProductEligibilityAdminFormBuilder extends AbstractAlmaAdminFormBuilder
                 // PrestaShop won't detect the string if the call to `l` is multiline
                 // phpcs:ignore
                 $this->module->l('%1$sAdvanced%2$s Query selector for our scripts to correctly find the selected attributes of a product combination', 'GetContentHookController'),
-                '<b>',
-                '</b>'
+                   '<b>',
+                   '</b>'
                )
            ),
            $this->inputTextForm(
@@ -117,8 +120,8 @@ class ProductEligibilityAdminFormBuilder extends AbstractAlmaAdminFormBuilder
                 // PrestaShop won't detect the string if the call to `l` is multiline
                 // phpcs:ignore
                 $this->module->l('%1$sAdvanced%2$s Query selector for our scripts to correctly find the chosen color option of a product', 'GetContentHookController'),
-                '<b>',
-                '</b>'
+                   '<b>',
+                   '</b>'
                )
            ),
            $this->inputTextForm(
@@ -128,11 +131,11 @@ class ProductEligibilityAdminFormBuilder extends AbstractAlmaAdminFormBuilder
                 // PrestaShop won't detect the string if the call to `l` is multiline
                 // phpcs:ignore
                 $this->module->l('%1$sAdvanced%2$s Query selector for our scripts to correctly find the wanted quantity of a product', 'GetContentHookController'),
-                '<b>',
-                '</b>'
+                   '<b>',
+                   '</b>'
                )
            ),
-       ];
+        ];
     }
 
     protected function getTitle()

@@ -30,19 +30,18 @@ if (!defined('_PS_VERSION_')) {
 
 /**
  * Class DebugAdminFormBuilder
- *
- * @package Alma\PrestaShop\Utils
  */
 class DebugAdminFormBuilder extends AbstractAlmaAdminFormBuilder
 {
     const ALMA_ACTIVATE_LOGGING = 'ALMA_ACTIVATE_LOGGING';
 
-    protected function configForm() {
+    protected function configForm()
+    {
         return [
             $this->inputAlmaSwitchForm(
                 self::ALMA_ACTIVATE_LOGGING,
                 $this->module->l('Activate logging', 'GetContentHookController')
-            )
+            ),
         ];
     }
 

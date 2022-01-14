@@ -58,7 +58,7 @@ abstract class AbstractAdminFormBuilder
         return [
             'form' => [
                 'legend' => $this->legendForm(),
-                'input'  => $this->configForm(),
+                'input' => $this->configForm(),
                 'submit' => ['title' => $this->getSubmitTitle(), 'class' => 'button btn btn-default pull-right'],
             ],
         ];
@@ -69,12 +69,13 @@ abstract class AbstractAdminFormBuilder
      *
      * @return array inputSwitchForm
      */
+    // phpcs:ignore
     protected function inputSwitchForm($name, $label, $labelOn = 'Yes', $labelOff = 'No', $desc = null, $form_group_class = null)
     {
         $dataInput = [
-            'name'   => $name,
-            'label'  => $label,
-            'type'   => 'switch',
+            'name' => $name,
+            'label' => $label,
+            'type' => 'switch',
             'required' => false,
             'values' => [
                 [
@@ -109,11 +110,11 @@ abstract class AbstractAdminFormBuilder
     protected function inputAlmaSwitchForm($name, $label, $desc = null, $helpDesc = null, $form_group_class = null)
     {
         $dataInput = [
-            'name'   => $name,
-            'label'  => $label,
-            'type'   => 'alma_switch',
+            'name' => $name,
+            'label' => $label,
+            'type' => 'alma_switch',
             'values' => [
-                'id'    => 'id',
+                'id' => 'id',
                 'name' => 'label',
                 'query' => [
                     [
@@ -147,14 +148,14 @@ abstract class AbstractAdminFormBuilder
     protected function inputRadioForm($name, $label, $labelOff, $labelOn)
     {
         return [
-            'name'     => $name,
-            'type'     => 'radio',
-            'label'    => $label,
-            'class'    => 't',
+            'name' => $name,
+            'type' => 'radio',
+            'label' => $label,
+            'class' => 't',
             'required' => true,
-            'values'   => [
+            'values' => [
                 [
-                    'id'    => $name . '_OFF',
+                    'id' => $name . '_OFF',
                     'value' => false,
                     'label' => $labelOff,
                 ],
@@ -175,11 +176,11 @@ abstract class AbstractAdminFormBuilder
     protected function inputTextForm($name, $label, $desc, $placeholder = null, $required = false, $lang = false)
     {
         $dataInput = [
-            'name'     => $name,
-            'label'    => $label,
-            'desc'     => $desc,
-            'type'     => 'text',
-            'size'     => 75,
+            'name' => $name,
+            'label' => $label,
+            'desc' => $desc,
+            'type' => 'text',
+            'size' => 75,
             'required' => $required,
         ];
 
@@ -306,5 +307,4 @@ abstract class AbstractAdminFormBuilder
      * @return string
      */
     abstract protected function getSubmitTitle();
-
 }

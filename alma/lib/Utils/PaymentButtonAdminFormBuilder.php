@@ -30,8 +30,6 @@ if (!defined('_PS_VERSION_')) {
 
 /**
  * Class PaymentButtonAdminFormBuilder
- *
- * @package Alma\PrestaShop\Utils
  */
 class PaymentButtonAdminFormBuilder extends AbstractAlmaAdminFormBuilder
 {
@@ -41,12 +39,14 @@ class PaymentButtonAdminFormBuilder extends AbstractAlmaAdminFormBuilder
     const ALMA_DEFERRED_BUTTON_DESC = 'ALMA_DEFERRED_BUTTON_DESC';
     const ALMA_SHOW_DISABLED_BUTTON = 'ALMA_SHOW_DISABLED_BUTTON';
 
-    protected function configForm() {
+    protected function configForm()
+    {
         $return = [
             $this->inputHtml(null, "<h4>{$this->module->l('Payment by installment', 'GetContentHookController')}</h4>"),
             $this->inputTextForm(
                 self::ALMA_PAYMENT_BUTTON_TITLE,
                 $this->module->l('Title', 'GetContentHookController'),
+                // phpcs:ignore
                 $this->module->l('This controls the payment method name which the user sees during checkout.', 'GetContentHookController'),
                 null,
                 true,
@@ -55,6 +55,7 @@ class PaymentButtonAdminFormBuilder extends AbstractAlmaAdminFormBuilder
             $this->inputTextForm(
                 self::ALMA_PAYMENT_BUTTON_DESC,
                 $this->module->l('Description', 'GetContentHookController'),
+                // phpcs:ignore
                 $this->module->l('This controls the payment method description which the user sees during checkout.', 'GetContentHookController'),
                 null,
                 true,
@@ -64,6 +65,7 @@ class PaymentButtonAdminFormBuilder extends AbstractAlmaAdminFormBuilder
             $this->inputTextForm(
                 self::ALMA_DEFERRED_BUTTON_TITLE,
                 $this->module->l('Title', 'GetContentHookController'),
+                // phpcs:ignore
                 $this->module->l('This controls the payment method name which the user sees during checkout.', 'GetContentHookController'),
                 null,
                 true,
@@ -72,6 +74,7 @@ class PaymentButtonAdminFormBuilder extends AbstractAlmaAdminFormBuilder
             $this->inputTextForm(
                 self::ALMA_DEFERRED_BUTTON_DESC,
                 $this->module->l('Description', 'GetContentHookController'),
+                // phpcs:ignore
                 $this->module->l('This controls the payment method description which the user sees during checkout.', 'GetContentHookController'),
                 null,
                 true,

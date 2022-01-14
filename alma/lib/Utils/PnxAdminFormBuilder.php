@@ -32,14 +32,11 @@ if (!defined('_PS_VERSION_')) {
 
 /**
  * Class PnxAdminFormBuilder
- *
- * @package Alma\PrestaShop\Utils
  */
 class PnxAdminFormBuilder extends AbstractAlmaAdminFormBuilder
 {
     /**
-     * @param FeePlan $feePlan
-     * @param int     $duration
+     * @param int $duration
      *
      * @return array
      */
@@ -55,10 +52,10 @@ class PnxAdminFormBuilder extends AbstractAlmaAdminFormBuilder
         );
         $tpl->assign(
             [
-                'fee_plan'   => (array) $feePlan,
+                'fee_plan' => (array) $feePlan,
                 'min_amount' => $minAmount,
                 'max_amount' => $maxAmount,
-                'deferred'   => $duration,
+                'deferred' => $duration,
             ]
         );
 
@@ -103,9 +100,9 @@ class PnxAdminFormBuilder extends AbstractAlmaAdminFormBuilder
 
     protected function configForm()
     {
-        $return            = [];
-        $pnxTabs           = [];
-        $activeTab         = null;
+        $return = [];
+        $pnxTabs = [];
+        $activeTab = null;
         $installmentsPlans = $this->config['installmentsPlans'];
 
         /** @var FeePlan $feePlan */
@@ -124,12 +121,12 @@ class PnxAdminFormBuilder extends AbstractAlmaAdminFormBuilder
             $pnxTabs[$tabId] = '❌ ';
             if ($this->isEnabled($key, $installmentsPlans)) {
                 $pnxTabs[$tabId] = '✅ ';
-                $activeTab       = $activeTab ?: $tabId;
+                $activeTab = $activeTab ?: $tabId;
             }
             $pnxTabs[$tabId] .= $this->getTabTitle($feePlan, $duration);
         }
 
-        $tpl       = $this->context->smarty->createTemplate(
+        $tpl = $this->context->smarty->createTemplate(
             "{$this->module->local_path}views/templates/hook/pnx_tabs.tpl"
         );
         $forceTabs = false;
@@ -141,9 +138,9 @@ class PnxAdminFormBuilder extends AbstractAlmaAdminFormBuilder
         array_unshift(
             $return,
             [
-                'name'         => null,
-                'label'        => null,
-                'type'         => 'html',
+                'name' => null,
+                'label' => null,
+                'type' => 'html',
                 'html_content' => $tpl->fetch(),
             ]
         );
@@ -164,8 +161,7 @@ class PnxAdminFormBuilder extends AbstractAlmaAdminFormBuilder
     }
 
     /**
-     * @param FeePlan $feePlan
-     * @param int     $duration
+     * @param int $duration
      *
      * @return string
      */
@@ -196,8 +192,7 @@ class PnxAdminFormBuilder extends AbstractAlmaAdminFormBuilder
     }
 
     /**
-     * @param FeePlan $feePlan
-     * @param int     $duration
+     * @param int $duration
      *
      * @return string
      */

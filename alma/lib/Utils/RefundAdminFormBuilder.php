@@ -32,16 +32,16 @@ if (!defined('_PS_VERSION_')) {
 
 /**
  * Class RefundAdminFormBuilder
- *
- * @package Alma\PrestaShop\Utils
  */
 class RefundAdminFormBuilder extends AbstractAlmaAdminFormBuilder
 {
     const ALMA_STATE_REFUND_ENABLED = 'ALMA_STATE_REFUND_ENABLED';
     const ALMA_STATE_REFUND = 'ALMA_STATE_REFUND';
 
-    protected function configForm() {
+    protected function configForm()
+    {
         return [
+            // phpcs:ignore
             $this->inputHtml(null, $this->module->l('If you usually refund orders by changing their state, activate this option and choose the state you want to use to trigger refunds on Alma payments', 'GetContentHookController')),
             $this->inputAlmaSwitchForm(
                 self::ALMA_STATE_REFUND_ENABLED,

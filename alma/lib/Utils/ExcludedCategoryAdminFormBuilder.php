@@ -30,15 +30,14 @@ if (!defined('_PS_VERSION_')) {
 
 /**
  * Class ExcludedCategoryAdminFormBuilder
- *
- * @package Alma\PrestaShop\Utils
  */
 class ExcludedCategoryAdminFormBuilder extends AbstractAlmaAdminFormBuilder
 {
     const ALMA_CATEGORIES_WDGT_NOT_ELGBL = 'ALMA_CATEGORIES_WDGT_NOT_ELGBL';
     const ALMA_NOT_ELIGIBLE_CATEGORIES = 'ALMA_NOT_ELIGIBLE_CATEGORIES';
 
-    protected function configForm() {
+    protected function configForm()
+    {
         // Exclusion
         $tpl = $this->context->smarty->createTemplate(
             "{$this->module->local_path}views/templates/hook/excludedCategories.tpl"
@@ -58,12 +57,14 @@ class ExcludedCategoryAdminFormBuilder extends AbstractAlmaAdminFormBuilder
             $this->inputAlmaSwitchForm(
                 self::ALMA_CATEGORIES_WDGT_NOT_ELGBL,
                 $this->module->l('Display message', 'GetContentHookController'),
+                // phpcs:ignore
                 $this->module->l('Display the message below if the product is excluded from the category', 'GetContentHookController'),
                 $this->module->l('Display the message below if the product is excluded', 'GetContentHookController')
             ),
             $this->inputTextForm(
                 self::ALMA_NOT_ELIGIBLE_CATEGORIES,
                 $this->module->l('Excluded categories non-eligibility message ', 'GetContentHookController'),
+                // phpcs:ignore
                 $this->module->l('Message displayed on an excluded product page or on the cart page if it contains an excluded product.', 'GetContentHookController'),
                 null,
                 false,

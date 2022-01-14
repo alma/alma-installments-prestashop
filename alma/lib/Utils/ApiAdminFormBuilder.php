@@ -30,8 +30,6 @@ if (!defined('_PS_VERSION_')) {
 
 /**
  * Class ApiAdminFormBuilder
- *
- * @package Alma\PrestaShop\Utils
  */
 class ApiAdminFormBuilder extends AbstractAlmaAdminFormBuilder
 {
@@ -39,13 +37,15 @@ class ApiAdminFormBuilder extends AbstractAlmaAdminFormBuilder
     const ALMA_LIVE_API_KEY = 'ALMA_LIVE_API_KEY';
     const ALMA_TEST_API_KEY = 'ALMA_TEST_API_KEY';
 
-    protected function configForm() {
+    protected function configForm()
+    {
         $needsAPIKey = isset($this->config['needsAPIKey']) ? boolval($this->config['needsAPIKey']) : false;
 
         $return = [
             $this->inputSelectForm(
                 self::ALMA_API_MODE,
                 $this->module->l('API Mode', 'GetContentHookController'),
+                // phpcs:ignore
                 $this->module->l('Use Test mode until you are ready to take real orders with Alma. In Test mode, only admins can see Alma on cart/checkout pages.', 'GetContentHookController'),
                 [
                     ['api_mode' => ALMA_MODE_LIVE, 'name' => 'Live'],

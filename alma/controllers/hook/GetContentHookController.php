@@ -35,10 +35,10 @@ use Alma\PrestaShop\Utils\ApiAdminFormBuilder;
 use Alma\PrestaShop\Utils\CartEligibilityAdminFormBuilder;
 use Alma\PrestaShop\Utils\DebugAdminFormBuilder;
 use Alma\PrestaShop\Utils\ExcludedCategoryAdminFormBuilder;
-use Alma\PrestaShop\Utils\ProductEligibilityAdminFormBuilder;
 use Alma\PrestaShop\Utils\Logger;
 use Alma\PrestaShop\Utils\PaymentButtonAdminFormBuilder;
 use Alma\PrestaShop\Utils\PnxAdminFormBuilder;
+use Alma\PrestaShop\Utils\ProductEligibilityAdminFormBuilder;
 use Alma\PrestaShop\Utils\RefundAdminFormBuilder;
 use Alma\PrestaShop\Utils\Settings;
 use Alma\PrestaShop\Utils\SettingsCustomFields;
@@ -441,6 +441,7 @@ final class GetContentHookController extends AdminHookController
             $feePlansOrdered = array_merge($feePlansOrdered, $feePlanDeferred);
         }
 
+        // phpcs:ignore
         $pnxBuilder = new PnxAdminFormBuilder($this->module, $this->context, $iconPath, ['feePlans' => $feePlansOrdered, 'installmentsPlans' => $installmentsPlans]);
         $apiBuilder = new ApiAdminFormBuilder($this->module, $this->context, $iconPath, ['needsAPIKey' => $needsKeys]);
         $cartBuilder = new CartEligibilityAdminFormBuilder($this->module, $this->context, $iconPath);
