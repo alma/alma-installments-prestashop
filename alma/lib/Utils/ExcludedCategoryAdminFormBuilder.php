@@ -52,7 +52,7 @@ class ExcludedCategoryAdminFormBuilder extends AbstractAlmaAdminFormBuilder
 
         return [
             $this->inputHtml($tpl),
-            $this->inputSwitchForm(
+            $this->inputAlmaSwitchForm(
                 'ALMA_CATEGORIES_WDGT_NOT_ELGBL',
                 $this->module->l('Display message', 'GetContentHookController'),
                 $this->module->l('Display the message below if the product is excluded from the category', 'GetContentHookController'),

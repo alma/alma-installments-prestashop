@@ -37,13 +37,13 @@ class ProductEligibilityAdminFormBuilder extends AbstractAlmaAdminFormBuilder
 {
     protected function configForm() {
        return [
-           $this->inputSwitchForm(
+           $this->inputAlmaSwitchForm(
                'ALMA_SHOW_PRODUCT_ELIGIBILITY',
                $this->module->l('Show product eligibility on details page', 'GetContentHookController'),
                $this->module->l('Displays a badge with eligible Alma plans with installments details', 'GetContentHookController'),
                $this->module->l('Display the product\'s eligibility', 'GetContentHookController')
            ),
-           $this->inputSwitchForm(
+           $this->inputAlmaSwitchForm(
                'ALMA_PRODUCT_WDGT_NOT_ELGBL',
                $this->module->l('Display badge', 'GetContentHookController'),
                $this->module->l('Displays a badge when product price is too high or tow low', 'GetContentHookController'),

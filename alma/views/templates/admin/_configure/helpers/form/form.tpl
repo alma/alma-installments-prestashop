@@ -40,7 +40,7 @@
                     {if isset($input.required) && $input.required } required="required" {/if}
                     {if isset($input.placeholder) && $input.placeholder } placeholder="{$input.placeholder|escape:'htmlall':'UTF-8'}"{/if}
             />
-    {else if $input.type == 'switch'}
+    {else if $input.type == 'alma_switch'}
         {foreach $input.values.query as $value}
             {assign var=id_checkbox value=$input.name|cat:'_'|cat:$value[$input.values.id]}
             <div class="checkbox{if isset($input.expand) && strtolower($input.expand.default) == 'show'} hidden{/if}">

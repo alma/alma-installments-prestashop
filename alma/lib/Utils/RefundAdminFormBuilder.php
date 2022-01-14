@@ -40,7 +40,7 @@ class RefundAdminFormBuilder extends AbstractAlmaAdminFormBuilder
     protected function configForm() {
         return [
             $this->inputHtml(null, $this->module->l('If you usually refund orders by changing their state, activate this option and choose the state you want to use to trigger refunds on Alma payments', 'GetContentHookController')),
-            $this->inputSwitchForm(
+            $this->inputAlmaSwitchForm(
                 'ALMA_STATE_REFUND_ENABLED',
                 $this->module->l('Activate refund by change state', 'GetContentHookController')
             ),

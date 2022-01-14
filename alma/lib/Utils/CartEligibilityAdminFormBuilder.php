@@ -40,7 +40,7 @@ class CartEligibilityAdminFormBuilder extends AbstractAlmaAdminFormBuilder
     protected function configForm()
     {
         return [
-            $this->inputSwitchForm(
+            $this->inputAlmaSwitchForm(
                 self::ALMA_SHOW_ELIGIBILITY_MESSAGE,
                 $this->module->l('Show cart eligibility', 'GetContentHookController'),
                 $this->module->l(
@@ -49,7 +49,7 @@ class CartEligibilityAdminFormBuilder extends AbstractAlmaAdminFormBuilder
                 ),
                 $this->module->l('Display the cart\'s eligibility.', 'GetContentHookController')
             ),
-            $this->inputSwitchForm(
+            $this->inputAlmaSwitchForm(
                 'ALMA_CART_WDGT_NOT_ELGBL',
                 $this->module->l('Display badge', 'GetContentHookController'),
                 $this->module->l(

@@ -69,12 +69,49 @@ abstract class AbstractAdminFormBuilder
      *
      * @return array inputSwitchForm
      */
-    protected function inputSwitchForm($name, $label, $desc = null, $helpDesc = null, $form_group_class = null)
+    protected function inputSwitchForm($name, $label, $labelOn = 'Yes', $labelOff = 'No', $desc = null, $form_group_class = null)
     {
         $dataInput = [
             'name'   => $name,
             'label'  => $label,
             'type'   => 'switch',
+            'required' => false,
+            'values' => [
+                [
+                    'id' => $name . '_ON',
+                    'value' => 1,
+                    'label' => $labelOn,
+                ],
+                [
+                    'id' => $name . '_OFF',
+                    'value' => 0,
+                    'label' => $labelOff,
+                ],
+            ],
+        ];
+
+        if ($form_group_class) {
+            $dataInput['form_group_class'] = $form_group_class;
+        }
+
+        if ($desc) {
+            $dataInput['desc'] = $desc;
+        }
+
+        return $dataInput;
+    }
+
+    /**
+     * Input Switch Form Configuration
+     *
+     * @return array inputSwitchForm
+     */
+    protected function inputAlmaSwitchForm($name, $label, $desc = null, $helpDesc = null, $form_group_class = null)
+    {
+        $dataInput = [
+            'name'   => $name,
+            'label'  => $label,
+            'type'   => 'alma_switch',
             'values' => [
                 'id'    => 'id',
                 'name' => 'label',

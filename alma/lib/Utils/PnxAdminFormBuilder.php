@@ -111,7 +111,7 @@ class PnxAdminFormBuilder extends AbstractAlmaAdminFormBuilder
 
             array_push($return,
                 $this->inputHtml($tpl, null, "$tabId-content"),
-                $this->inputSwitchForm(
+                $this->inputAlmaSwitchForm(
                     "ALMA_${key}_ENABLED",
                     $label,
                     null,

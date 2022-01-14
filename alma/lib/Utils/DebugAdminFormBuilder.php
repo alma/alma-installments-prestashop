@@ -37,7 +37,7 @@ class DebugAdminFormBuilder extends AbstractAlmaAdminFormBuilder
 {
     protected function configForm() {
         return [
-            $this->inputSwitchForm(
+            $this->inputAlmaSwitchForm(
                 'ALMA_ACTIVATE_LOGGING',
                 $this->module->l('Activate logging', 'GetContentHookController')
             )
