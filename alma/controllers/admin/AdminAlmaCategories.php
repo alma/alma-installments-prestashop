@@ -331,12 +331,12 @@ class AdminAlmaCategoriesController extends ModuleAdminController
      */
     public function renderList()
     {
-        $this->addRowAction('voidaction');
+        $this->addRowAction('voidAction');
 
         return parent::renderList();
     }
 
-    public function displayVoidactionLink($token = null, $id)
+    public function displayVoidActionLink()
     {
         return '';
     }
