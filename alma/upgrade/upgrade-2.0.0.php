@@ -31,6 +31,7 @@ include_once _PS_MODULE_DIR_ . 'alma/vendor/autoload.php';
 use Alma\API\RequestError;
 use Alma\PrestaShop\API\ClientHelper;
 use Alma\PrestaShop\Utils\Settings;
+use Alma\PrestaShop\Utils\SettingsCustomFields;
 
 function upgrade_module_2_0_0($module)
 {
@@ -75,7 +76,7 @@ function upgrade_module_2_0_0($module)
             }
 
             Configuration::deleteByName('ALMA_NOT_ELIGIBLE_CATEGORIES');
-            Settings::updateValue('ALMA_NOT_ELIGIBLE_CATEGORIES', Settings::getNonEligibleCategoriesMessage());
+            Settings::updateValue('ALMA_NOT_ELIGIBLE_CATEGORIES', SettingsCustomFields::getNonEligibleCategoriesMessage());
 
             Tools::clearCache();
         } catch (RequestError $e) {
