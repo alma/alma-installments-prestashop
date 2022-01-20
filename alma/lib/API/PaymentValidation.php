@@ -209,13 +209,13 @@ class PaymentValidation
 
             // Update payment's order reference
             $order = $this->getOrderByCartId((int) $cart->id);
-            $custom_data = $payment->custom_data;
-            $custom_data['id_order'] = $order->id;
+            $customData = $payment->custom_data;
+            $customData['id_order'] = $order->id;
 
             try {
                 $alma->payments->edit($payment->id, [
                     'payment' => [
-                        'custom_data' => $custom_data,
+                        'custom_data' => $customData,
                     ],
                 ]);
             } catch (RequestError $e) {
