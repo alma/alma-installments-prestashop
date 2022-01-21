@@ -43,7 +43,7 @@
     {else if $input.type == 'alma_switch'}
         {foreach $input.values.query as $value}
             {assign var=id_checkbox value=$input.name|cat:'_'|cat:$value[$input.values.id]}
-            <div class="checkbox{if isset($input.expand) && strtolower($input.expand.default) == 'show'} hidden{/if}">
+            <div class="alma_switch checkbox{if isset($input.expand) && strtolower($input.expand.default) == 'show'} hidden{/if}">
                 {strip}
                     <label class="switch" for="{$id_checkbox}">
                         <input type="checkbox" name="{$id_checkbox}" id="{$id_checkbox}" class="{if isset($input.class)}{$input.class}{/if}"{if isset($value.val)} value="{$value.val|escape:'html':'UTF-8'}"{/if}{if isset($fields_value[$id_checkbox]) && $fields_value[$id_checkbox]} checked="checked"{/if} />
