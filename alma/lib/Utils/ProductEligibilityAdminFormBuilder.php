@@ -47,20 +47,22 @@ class ProductEligibilityAdminFormBuilder extends AbstractAlmaAdminFormBuilder
 
     protected function configForm()
     {
+        $htmlContent = $this->module->l('This badge allows you to inform your customers of the availability of Alma\'s payment facilities right from the product page, which will help increase your conversion rate. For more details on its configuration or in case of problems, please consult', 'GetContentHookController');
+        $htmlContent .= ' <a href="https://docs.getalma.eu/docs/prestashop-alma-widget">';
+        $htmlContent .= $this->module->l('this documentation.', 'GetContentHookController');
+        $htmlContent .= '</a>';
+        $tpl = $this->context->smarty->createTemplate(
+            "{$this->module->local_path}views/templates/hook/sample_widget.tpl"
+        );
         return [
+           $this->inputHtml($tpl, $htmlContent),
            $this->inputAlmaSwitchForm(
                self::ALMA_SHOW_PRODUCT_ELIGIBILITY,
-               $this->module->l('Show product eligibility on details page', 'GetContentHookController'),
-               // phpcs:ignore
-               $this->module->l('Displays a badge with eligible Alma plans with installments details', 'GetContentHookController'),
-               $this->module->l('Display the product\'s eligibility', 'GetContentHookController')
+               $this->module->l('Display badge', 'GetContentHookController')
            ),
            $this->inputAlmaSwitchForm(
                self::ALMA_PRODUCT_WDGT_NOT_ELGBL,
-               $this->module->l('Display badge', 'GetContentHookController'),
-               // phpcs:ignore
-               $this->module->l('Displays a badge when product price is too high or tow low', 'GetContentHookController'),
-               $this->module->l('Display badge when the product is not eligible.', 'GetContentHookController')
+               $this->module->l('Display even if the product is not eligible', 'GetContentHookController')
            ),
            $this->inputRadioForm(
                self::ALMA_WIDGET_POSITION_CUSTOM,
@@ -140,6 +142,6 @@ class ProductEligibilityAdminFormBuilder extends AbstractAlmaAdminFormBuilder
 
     protected function getTitle()
     {
-        return $this->module->l('Eligibility on product pages', 'GetContentHookController');
+        return $this->module->l('Display the badge on product sheets', 'GetContentHookController');
     }
 }

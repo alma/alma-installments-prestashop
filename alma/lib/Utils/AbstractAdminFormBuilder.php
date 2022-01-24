@@ -173,17 +173,19 @@ abstract class AbstractAdminFormBuilder
      *
      * @return array inputTextForm
      */
-    protected function inputTextForm($name, $label, $desc, $placeholder = null, $required = false, $lang = false)
+    protected function inputTextForm($name, $label, $desc = null, $placeholder = null, $required = false, $lang = false)
     {
         $dataInput = [
             'name' => $name,
             'label' => $label,
-            'desc' => $desc,
             'type' => 'text',
             'size' => 75,
             'required' => $required,
         ];
 
+        if ($desc) {
+            $dataInput['desc'] = $desc;
+        }
         if ($placeholder) {
             $dataInput['placeholder'] = $placeholder;
         }

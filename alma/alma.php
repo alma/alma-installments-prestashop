@@ -321,8 +321,10 @@ class Alma extends PaymentModule
 
     public function hookDisplayBackOfficeHeader($params)
     {
+        $this->context->controller->setMedia();
         $this->context->controller->addCSS($this->_path . 'views/css/admin/_configure/helpers/form/form.css', 'all');
         $this->context->controller->addCSS($this->_path . 'views/css/admin/almaPage.css', 'all');
+        $this->context->controller->addJS($this->_path . 'views/js/admin/alma.js');
     }
 
     public function hookPaymentOptions($params)

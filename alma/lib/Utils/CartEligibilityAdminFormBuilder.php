@@ -40,24 +40,20 @@ class CartEligibilityAdminFormBuilder extends AbstractAlmaAdminFormBuilder
 
     protected function configForm()
     {
+        $htmlContent = $this->module->l('This badge allows you to inform your customers of the availability of Alma\'s payment facilities right from the product page, which will help increase your conversion rate. For more details on its configuration or in case of problems, please consult', 'GetContentHookController');
+        $htmlContent .= ' <a href="https://docs.getalma.eu/docs/prestashop-alma-widget">';
+        $htmlContent .= $this->module->l('this documentation.', 'GetContentHookController');
+        $htmlContent .= '</a>';
+
         return [
+            $this->inputHtml(null, $htmlContent),
             $this->inputAlmaSwitchForm(
                 self::ALMA_SHOW_ELIGIBILITY_MESSAGE,
-                $this->module->l('Show cart eligibility', 'GetContentHookController'),
-                $this->module->l(
-                    'Displays a badge with eligible Alma plans with installments details',
-                    'GetContentHookController'
-                ),
-                $this->module->l('Display the cart\'s eligibility.', 'GetContentHookController')
+                $this->module->l('Display badge', 'GetContentHookController')
             ),
             $this->inputAlmaSwitchForm(
                 self::ALMA_CART_WDGT_NOT_ELGBL,
-                $this->module->l('Display badge', 'GetContentHookController'),
-                $this->module->l(
-                    'Displays a badge when cart amount is too high or tow low',
-                    'GetContentHookController'
-                ),
-                $this->module->l('Display badge when the cart is not eligible.', 'GetContentHookController')
+                $this->module->l('Display even if the cart is not eligible', 'GetContentHookController')
             ),
             $this->inputRadioForm(
                 self::ALMA_CART_WIDGET_POSITION_CUSTOM,
@@ -79,6 +75,6 @@ class CartEligibilityAdminFormBuilder extends AbstractAlmaAdminFormBuilder
 
     protected function getTitle()
     {
-        return $this->module->l('Cart eligibility message', 'GetContentHookController');
+        return $this->module->l('Display the badge in the cart page', 'GetContentHookController');
     }
 }

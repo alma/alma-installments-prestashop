@@ -52,6 +52,11 @@ i.icon-alma{
     z-index: 1;
 }
 
+.alma--spacer{
+    clear: both;
+    color: #E2EAED;
+}
+
 /*PS1.6*/
 .panel-heading .alma-progress{
     margin-top: 7px;
