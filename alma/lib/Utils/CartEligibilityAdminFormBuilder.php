@@ -40,7 +40,7 @@ class CartEligibilityAdminFormBuilder extends AbstractAlmaAdminFormBuilder
 
     protected function configForm()
     {
-        $htmlContent = $this->module->l('This badge allows you to inform your customers of the availability of Alma\'s payment facilities right from the product page, which will help increase your conversion rate. For more details on its configuration or in case of problems, please consult', 'GetContentHookController');
+        $htmlContent = $this->module->l('This widget allows you to inform your customers of the availability of Alma\'s payment facilities right from the product page, which will help to increase your conversion rate. For more details on its configuration or in case of problems, please consult', 'GetContentHookController');
         $htmlContent .= ' <a href="https://docs.getalma.eu/docs/prestashop-alma-widget">';
         $htmlContent .= $this->module->l('this documentation.', 'GetContentHookController');
         $htmlContent .= '</a>';

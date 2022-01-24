@@ -41,7 +41,7 @@ class PaymentButtonAdminFormBuilder extends AbstractAlmaAdminFormBuilder
 
     protected function configForm()
     {
-        $htmlContent = $this->module->l('Modify the text displayed when choosing the payment method, it will adapt to the languages of your site.', 'GetContentHookController');
+        $htmlContent = $this->module->l('Edit the text displayed when choosing the payment method in your checkout. It will adapt to the languages of your site.', 'GetContentHookController');
         $tpl = $this->context->smarty->createTemplate(
             "{$this->module->local_path}views/templates/hook/sample_payment_button.tpl"
         );
