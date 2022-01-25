@@ -70,26 +70,26 @@ class PnxAdminFormBuilder extends AbstractAlmaAdminFormBuilder
             ),
             $this->inputNumberForm(
                 "ALMA_${key}_MIN_AMOUNT",
-                $this->module->l('Minimum amount (€)', 'GetContentHookController'),
-                $this->module->l('Minimum purchase amount to activate this plan', 'GetContentHookController'),
+                $this->module->l('Minimum amount (€)', 'PnxAdminFormBuilder'),
+                $this->module->l('Minimum purchase amount to activate this plan', 'PnxAdminFormBuilder'),
                 $minAmount,
                 $maxAmount,
                 "$tabId-content"
             ),
             $this->inputNumberForm(
                 "ALMA_${key}_MAX_AMOUNT",
-                $this->module->l('Maximum amount (€)', 'GetContentHookController'),
-                $this->module->l('Maximum purchase amount to activate this plan', 'GetContentHookController'),
+                $this->module->l('Maximum amount (€)', 'PnxAdminFormBuilder'),
+                $this->module->l('Maximum purchase amount to activate this plan', 'PnxAdminFormBuilder'),
                 $minAmount,
                 $maxAmount,
                 "$tabId-content"
             ),
             $this->inputNumberForm(
                 "ALMA_${key}_SORT_ORDER",
-                $this->module->l('Position', 'GetContentHookController'),
+                $this->module->l('Position', 'PnxAdminFormBuilder'),
                 $this->module->l(
                     'Use relative values to set the order on the checkout page',
-                    'GetContentHookController'
+                    'PnxAdminFormBuilder'
                 ),
                 null,
                 null,
@@ -169,7 +169,7 @@ class PnxAdminFormBuilder extends AbstractAlmaAdminFormBuilder
     {
         if ($feePlan->isPnXOnly()) {
             return sprintf(
-                $this->module->l('Enable %d-installment payments', 'GetContentHookController'),
+                $this->module->l('Enable %d-installment payments', 'PnxAdminFormBuilder'),
                 $feePlan->installments_count
             );
         }
@@ -177,7 +177,7 @@ class PnxAdminFormBuilder extends AbstractAlmaAdminFormBuilder
             // PrestaShop won't detect the string if the call to `l` is multiline
             // phpcs:ignore
             return sprintf(
-                $this->module->l('Enable deferred payments +%d days', 'GetContentHookController'),
+                $this->module->l('Enable deferred payments +%d days', 'PnxAdminFormBuilder'),
                 $duration
             );
         }
@@ -185,7 +185,7 @@ class PnxAdminFormBuilder extends AbstractAlmaAdminFormBuilder
         return sprintf(
         // PrestaShop won't detect the string if the call to `l` is multiline
         // phpcs:ignore
-            $this->module->l('Enable %d-installment payments +%d-deferred days', 'GetContentHookController'),
+            $this->module->l('Enable %d-installment payments +%d-deferred days', 'PnxAdminFormBuilder'),
             $feePlan->installments_count,
             $duration
         );
@@ -200,7 +200,7 @@ class PnxAdminFormBuilder extends AbstractAlmaAdminFormBuilder
     {
         if ($feePlan->isPnXOnly()) {
             return sprintf(
-                $this->module->l('%d-installment payments', 'GetContentHookController'),
+                $this->module->l('%d-installment payments', 'PnxAdminFormBuilder'),
                 $feePlan->installments_count
             );
         }
@@ -209,7 +209,7 @@ class PnxAdminFormBuilder extends AbstractAlmaAdminFormBuilder
             // PrestaShop won't detect the string if the call to `l` is multiline
             // phpcs:ignore
             return sprintf(
-                $this->module->l('Deferred payments + %d days', 'GetContentHookController'),
+                $this->module->l('Deferred payments + %d days', 'PnxAdminFormBuilder'),
                 $duration
             );
         }
@@ -217,7 +217,7 @@ class PnxAdminFormBuilder extends AbstractAlmaAdminFormBuilder
         // PrestaShop won't detect the string if the call to `l` is multiline
         // phpcs:ignore
         return sprintf(
-            $this->module->l('%d-installment payments + %d-deferred days', 'GetContentHookController'),
+            $this->module->l('%d-installment payments + %d-deferred days', 'PnxAdminFormBuilder'),
             $feePlan->installments_count,
             $duration
         );
@@ -225,7 +225,7 @@ class PnxAdminFormBuilder extends AbstractAlmaAdminFormBuilder
 
     protected function getTitle()
     {
-        return $this->module->l('Installments plans', 'GetContentHookController');
+        return $this->module->l('Installments plans', 'PnxAdminFormBuilder');
     }
 
     /**

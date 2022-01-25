@@ -48,7 +48,7 @@ class ExcludedCategoryAdminFormBuilder extends AbstractAlmaAdminFormBuilder
         $tpl->assign([
             'excludedCategories' => count($excludedCategoryNames) > 0
                 ? implode(', ', $excludedCategoryNames)
-                : $this->module->l('No excluded categories', 'GetContentHookController'),
+                : $this->module->l('No excluded categories', 'ExcludedCategoryAdminFormBuilder'),
             'excludedLink' => $this->context->link->getAdminLink('AdminAlmaCategories'),
         ]);
 
@@ -56,16 +56,16 @@ class ExcludedCategoryAdminFormBuilder extends AbstractAlmaAdminFormBuilder
             $this->inputHtml($tpl),
             $this->inputAlmaSwitchForm(
                 self::ALMA_CATEGORIES_WDGT_NOT_ELGBL,
-                $this->module->l('Display message', 'GetContentHookController'),
+                $this->module->l('Display message', 'ExcludedCategoryAdminFormBuilder'),
                 // phpcs:ignore
-                $this->module->l('Display the message below if the product is excluded from the category', 'GetContentHookController'),
-                $this->module->l('Display the message below if the product is excluded', 'GetContentHookController')
+                $this->module->l('Display the message below if the product is excluded from the category', 'ExcludedCategoryAdminFormBuilder'),
+                $this->module->l('Display the message below if the product is excluded', 'ExcludedCategoryAdminFormBuilder')
             ),
             $this->inputTextForm(
                 self::ALMA_NOT_ELIGIBLE_CATEGORIES,
-                $this->module->l('Excluded categories non-eligibility message ', 'GetContentHookController'),
+                $this->module->l('Excluded categories non-eligibility message ', 'ExcludedCategoryAdminFormBuilder'),
                 // phpcs:ignore
-                $this->module->l('Message displayed on an excluded product page or on the cart page if it contains an excluded product.', 'GetContentHookController'),
+                $this->module->l('Message displayed on an excluded product page or on the cart page if it contains an excluded product.', 'ExcludedCategoryAdminFormBuilder'),
                 null,
                 false,
                 true
@@ -75,6 +75,6 @@ class ExcludedCategoryAdminFormBuilder extends AbstractAlmaAdminFormBuilder
 
     protected function getTitle()
     {
-        return $this->module->l('Excluded categories', 'GetContentHookController');
+        return $this->module->l('Excluded categories', 'ExcludedCategoryAdminFormBuilder');
     }
 }

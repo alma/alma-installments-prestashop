@@ -40,41 +40,41 @@ class CartEligibilityAdminFormBuilder extends AbstractAlmaAdminFormBuilder
 
     protected function configForm()
     {
-        $htmlContent = $this->module->l('This widget allows you to inform your customers of the availability of Alma\'s payment facilities right from the product page, which will help to increase your conversion rate. For more details on its configuration or in case of problems, please consult', 'GetContentHookController');
+        $htmlContent = $this->module->l('This widget allows you to inform your customers of the availability of Alma\'s payment facilities right from the product page, which will help to increase your conversion rate. For more details on its configuration or in case of problems, please consult', 'CartEligibilityAdminFormBuilder');
         $htmlContent .= ' <a href="https://docs.getalma.eu/docs/prestashop-alma-widget">';
-        $htmlContent .= $this->module->l('this documentation.', 'GetContentHookController');
+        $htmlContent .= $this->module->l('this documentation.', 'CartEligibilityAdminFormBuilder');
         $htmlContent .= '</a>';
 
         return [
             $this->inputHtml(null, $htmlContent),
             $this->inputAlmaSwitchForm(
                 self::ALMA_SHOW_ELIGIBILITY_MESSAGE,
-                $this->module->l('Display badge', 'GetContentHookController')
+                $this->module->l('Display badge', 'CartEligibilityAdminFormBuilder')
             ),
             $this->inputAlmaSwitchForm(
                 self::ALMA_CART_WDGT_NOT_ELGBL,
-                $this->module->l('Display even if the cart is not eligible', 'GetContentHookController')
+                $this->module->l('Display even if the cart is not eligible', 'CartEligibilityAdminFormBuilder')
             ),
             $this->inputRadioForm(
                 self::ALMA_CART_WIDGET_POSITION_CUSTOM,
-                $this->module->l('Badge position', 'GetContentHookController'),
-                $this->module->l('Display badge after cart (by default)', 'GetContentHookController'),
-                $this->module->l('Display badge on custom css selector', 'GetContentHookController')
+                $this->module->l('Badge position', 'CartEligibilityAdminFormBuilder'),
+                $this->module->l('Display badge after cart (by default)', 'CartEligibilityAdminFormBuilder'),
+                $this->module->l('Display badge on custom css selector', 'CartEligibilityAdminFormBuilder')
             ),
             $this->inputTextForm(
                 self::ALMA_CART_WDGT_POS_SELECTOR,
-                $this->module->l('Display badge on custom css selector', 'GetContentHookController'),
+                $this->module->l('Display badge on custom css selector', 'CartEligibilityAdminFormBuilder'),
                 $this->module->l(
                     '%1$sAdvanced%2$s [Optional] Query selector for our scripts to display the badge on cart page',
-                    'GetContentHookController'
+                    'CartEligibilityAdminFormBuilder'
                 ),
-                $this->module->l('E.g. #id, .class, ...', 'GetContentHookController')
+                $this->module->l('E.g. #id, .class, ...', 'CartEligibilityAdminFormBuilder')
             ),
         ];
     }
 
     protected function getTitle()
     {
-        return $this->module->l('Display the badge in the cart page', 'GetContentHookController');
+        return $this->module->l('Display the badge in the cart page', 'CartEligibilityAdminFormBuilder');
     }
 }

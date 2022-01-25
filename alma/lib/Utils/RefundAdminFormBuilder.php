@@ -40,22 +40,22 @@ class RefundAdminFormBuilder extends AbstractAlmaAdminFormBuilder
 
     protected function configForm()
     {
-        $htmlContent = $this->module->l('If you usually refund orders by changing their state, activate this option and choose the state you want to use to trigger refunds on Alma payments', 'GetContentHookController');
-        $htmlContent2 = $this->module->l('With Alma, you can make your refunds directly from your PrestaShop back-office. Go to your order to find the new Alma section.', 'GetContentHookController');
+        $htmlContent = $this->module->l('If you usually refund orders by changing their state, activate this option and choose the state you want to use to trigger refunds on Alma payments', 'RefundAdminFormBuilder');
+        $htmlContent2 = $this->module->l('With Alma, you can make your refunds directly from your PrestaShop back-office. Go to your order to find the new Alma section.', 'RefundAdminFormBuilder');
         $htmlContent2 .= ' <a href="https://docs.getalma.eu/docs/prestashop-refund">';
-        $htmlContent2 .= $this->module->l('More information on how to use it.', 'GetContentHookController');
+        $htmlContent2 .= $this->module->l('More information on how to use it.', 'RefundAdminFormBuilder');
         $htmlContent2 .= '</a>';
         return [
             $this->inputHtml(null, $htmlContent),
             $this->inputHtml(null, $htmlContent2),
             $this->inputAlmaSwitchForm(
                 self::ALMA_STATE_REFUND_ENABLED,
-                $this->module->l('Activate refund by change state', 'GetContentHookController')
+                $this->module->l('Activate refund by change state', 'RefundAdminFormBuilder')
             ),
             $this->inputSelectForm(
                 self::ALMA_STATE_REFUND,
-                $this->module->l('Refund state order', 'GetContentHookController'),
-                $this->module->l('Your order state to sync refund with Alma', 'GetContentHookController'),
+                $this->module->l('Refund state order', 'RefundAdminFormBuilder'),
+                $this->module->l('Your order state to sync refund with Alma', 'RefundAdminFormBuilder'),
                 OrderState::getOrderStates($this->context->cookie->id_lang),
                 'id_order_state'
             ),
@@ -64,6 +64,6 @@ class RefundAdminFormBuilder extends AbstractAlmaAdminFormBuilder
 
     protected function getTitle()
     {
-        return $this->module->l('Refund with state change', 'GetContentHookController');
+        return $this->module->l('Refund with state change', 'RefundAdminFormBuilder');
     }
 }

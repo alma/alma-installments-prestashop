@@ -40,13 +40,13 @@ class DebugAdminFormBuilder extends AbstractAlmaAdminFormBuilder
         return [
             $this->inputAlmaSwitchForm(
                 self::ALMA_ACTIVATE_LOGGING,
-                $this->module->l('Activate logging', 'GetContentHookController')
+                $this->module->l('Activate logging', 'DebugAdminFormBuilder')
             ),
         ];
     }
 
     protected function getTitle()
     {
-        return $this->module->l('Debug options', 'GetContentHookController');
+        return $this->module->l('Debug options', 'DebugAdminFormBuilder');
     }
 }
