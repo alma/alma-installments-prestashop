@@ -47,10 +47,12 @@ class ProductEligibilityAdminFormBuilder extends AbstractAlmaAdminFormBuilder
 
     protected function configForm()
     {
-        $htmlContent = $this->module->l('This widget allows you to inform your customers of the availability of Alma\'s payment facilities right from the product page, which will help to increase your conversion rate. For more details on its configuration or in case of problems, please consult', 'ProductEligibilityAdminFormBuilder');
-        $htmlContent .= ' <a href="https://docs.getalma.eu/docs/prestashop-alma-widget">';
-        $htmlContent .= $this->module->l('this documentation.', 'ProductEligibilityAdminFormBuilder');
-        $htmlContent .= '</a>';
+        $htmlContent = sprintf(
+            // phpcs:ignore
+            $this->module->l('This widget allows you to inform your customers of the availability of Alma\'s payment facilities right from the product page, which will help to increase your conversion rate. For more details on its configuration or in case of problems, please consult %1$sthis documentation%2$s.', 'ProductEligibilityAdminFormBuilder'),
+            '<a href="https://docs.getalma.eu/docs/prestashop-alma-widget" target="_blank">',
+            '</a>'
+        );
         $tpl = $this->context->smarty->createTemplate(
             "{$this->module->local_path}views/templates/hook/sample_widget.tpl"
         );
@@ -58,7 +60,7 @@ class ProductEligibilityAdminFormBuilder extends AbstractAlmaAdminFormBuilder
            $this->inputHtml($tpl, $htmlContent),
            $this->inputAlmaSwitchForm(
                self::ALMA_SHOW_PRODUCT_ELIGIBILITY,
-               $this->module->l('Display badge', 'ProductEligibilityAdminFormBuilder')
+               $this->module->l('Display widget', 'ProductEligibilityAdminFormBuilder')
            ),
            $this->inputAlmaSwitchForm(
                self::ALMA_PRODUCT_WDGT_NOT_ELGBL,

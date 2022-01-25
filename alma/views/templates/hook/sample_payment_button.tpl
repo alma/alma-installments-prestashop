@@ -23,7 +23,7 @@
 
 <p class="row alma-sample-widget">
     <div class="col-lg-12">
-        <img src="/modules/alma/views/img/payment-button.png" class="img-responsive" alt="{l s='Payment button Alma' mod='alma'}" />
+        <img src="/modules/alma/views/img/payment-button.png" class="img-responsive" alt="{l s='Sample payment button Alma' mod='alma'}" />
         <p class="help-block">{l s='Example of title and description.' mod='alma'}</p>
     </div>
 </p>
