@@ -23,7 +23,7 @@
 
 <p class="row alma-sample-payment-button">
     <div class="col-lg-4">
-        <img src="{$imgPaymentButton}" class="img-responsive" alt="{l s='Sample payment button Alma' mod='alma'}" />
+        <img src="{$imgPaymentButton}" class="img-responsive alma--border" alt="{l s='Sample payment button Alma' mod='alma'}" />
         <p class="help-block">{l s='Example of title and description.' mod='alma'}</p>
     </div>
 </p>

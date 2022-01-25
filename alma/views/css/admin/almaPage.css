@@ -57,6 +57,10 @@ i.icon-alma{
     color: #E2EAED;
 }
 
+.alma--border{
+    border: solid 1px #E2EAED;
+}
+
 /*PS1.6*/
 .panel-heading .alma-progress{
     margin-top: 7px;

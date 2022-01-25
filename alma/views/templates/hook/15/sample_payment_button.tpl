@@ -23,7 +23,7 @@
 
 <p class="alma-sample-payment-button">
     <div style="width:50%;float:left;">
-        <img src="{$imgPaymentButton}" width="475" alt="{l s='Sample payment button Alma' mod='alma'}" />
+        <img src="{$imgPaymentButton}" style="padding:0;" class="alma--border" width="475" alt="{l s='Sample payment button Alma' mod='alma'}" />
         <p class="preference_description">{l s='Example of title and description.' mod='alma'}</p>
     </div>
 </p>
