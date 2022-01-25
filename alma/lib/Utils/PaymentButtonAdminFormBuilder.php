@@ -41,10 +41,21 @@ class PaymentButtonAdminFormBuilder extends AbstractAlmaAdminFormBuilder
 
     protected function configForm()
     {
+        $imgPaymentButton = '/modules/alma/views/img/payment-button-1.7.png';
+        $tplPaymentButton = 'sample_payment_button.tpl';
+        if (version_compare(_PS_VERSION_, '1.7', '<')) {
+            $imgPaymentButton = '/modules/alma/views/img/payment-button-1.6.png';
+        }
+        if (version_compare(_PS_VERSION_, '1.6', '<')) {
+            $tplPaymentButton = '15/sample_payment_button.tpl';
+        }
         $htmlContent = $this->module->l('Edit the text displayed when choosing the payment method in your checkout. It will adapt to the languages of your site.', 'PaymentButtonAdminFormBuilder');
         $tpl = $this->context->smarty->createTemplate(
-            "{$this->module->local_path}views/templates/hook/sample_payment_button.tpl"
+            "{$this->module->local_path}views/templates/hook/{$tplPaymentButton}"
         );
+        $tpl->assign([
+            'imgPaymentButton' => $imgPaymentButton,
+        ]);
 
         $return = [
             $this->inputHtml(null, $htmlContent),

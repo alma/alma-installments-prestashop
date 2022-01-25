@@ -227,6 +227,24 @@
                                                 {if isset($fields_value[$id_checkbox]) && $fields_value[$id_checkbox]}checked="checked"{/if} />
                                             <label for="{$id_checkbox}" class="t"><strong>{$value[$input.values.name]}</strong></label><br />
                                         {/foreach}
+                                    {elseif $input.type == 'alma_switch'}
+                                        {foreach $input.values.query as $value}
+                                            {assign var=id_checkbox value=$input.name|cat:'_'|cat:$value[$input.values.id]}
+                                            <div class="alma_switch checkbox{if isset($input.expand) && strtolower($input.expand.default) == 'show'} hidden{/if}">
+                                                {strip}
+                                                    <label class="t switch" for="{$id_checkbox}">
+                                                        <input type="checkbox"
+                                                            name="{$id_checkbox}"
+                                                            id="{$id_checkbox}"
+                                                            class="{if isset($input.class)}{$input.class}{/if}"
+                                                            {if isset($value.val)}value="{$value.val|escape:'htmlall':'UTF-8'}"{/if}
+                                                            {if isset($fields_value[$id_checkbox]) && $fields_value[$id_checkbox]}checked="checked"{/if} />
+                                                        <span class="slider round"></span>
+                                                    </label>
+                                                    <span class="switch-name">{$value[$input.values.name]}</span>
+                                                {/strip}
+                                            </div>
+                                        {/foreach}
                                     {elseif $input.type == 'file'}
                                         {if isset($input.display_image) && $input.display_image}
                                             {if isset($fields_value[$input.name].image) && $fields_value[$input.name].image}
@@ -331,7 +349,8 @@
                                     {/block}{* end block input *}
                                     {block name="description"}
                                         {if isset($input.desc) && !empty($input.desc)}
-                                            <p class="preference_description">
+                                        <div class="clear"></div>
+                                            <div class="preference_description">
                                                 {if is_array($input.desc)}
                                                     {foreach $input.desc as $p}
                                                         {if is_array($p)}
@@ -343,12 +362,12 @@
                                                 {else}
                                                     {$input.desc}
                                                 {/if}
-                                            </p>
+                                            </div>
                                         {/if}
                                     {/block}
                                     {if isset($input.lang) && isset($languages)}<div class="clear"></div>{/if}
-                                    </div>
                                     <div class="clear"></div>
+                                    </div>
                                 {/block}{* end block field *}
                                 {if $input.name == 'id_state'}
                                     </div>
@@ -418,6 +437,19 @@
                     {if isset($input.required) && $input.required } required="required" {/if}
                     {if isset($input.placeholder) && $input.placeholder } placeholder="{$input.placeholder}"{/if}
             />
+    {else if $input.type == 'alma_switch'}
+        {foreach $input.values.query as $value}
+            {assign var=id_checkbox value=$input.name|cat:'_'|cat:$value[$input.values.id]}
+            <div class="alma_switch checkbox{if isset($input.expand) && strtolower($input.expand.default) == 'show'} hidden{/if}">
+                {strip}
+                    <label class="switch" for="{$id_checkbox}">
+                        <input type="checkbox" name="{$id_checkbox}" id="{$id_checkbox}" class="{if isset($input.class)}{$input.class}{/if}"{if isset($value.val)} value="{$value.val|escape:'html':'UTF-8'}"{/if}{if isset($fields_value[$id_checkbox]) && $fields_value[$id_checkbox]} checked="checked"{/if} />
+                        <span class="slider round"></span>
+                    </label>
+                    <span class="switch-name">{$value[$input.values.name]}</span>
+                {/strip}
+            </div>
+        {/foreach}
     {else}
         {$smarty.block.parent}
     {/if}

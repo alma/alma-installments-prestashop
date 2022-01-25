@@ -21,10 +21,10 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  *}
 
-<p class="row alma-sample-payment-button">
-    <div class="col-lg-4">
-        <img src="{$imgPaymentButton}" class="img-responsive" alt="{l s='Sample payment button Alma' mod='alma'}" />
-        <p class="help-block">{l s='Example of title and description.' mod='alma'}</p>
+<p class="alma-sample-payment-button">
+    <div style="width:50%;float:left;">
+        <img src="{$imgPaymentButton}" width="475" alt="{l s='Sample payment button Alma' mod='alma'}" />
+        <p class="preference_description">{l s='Example of title and description.' mod='alma'}</p>
     </div>
 </p>
 

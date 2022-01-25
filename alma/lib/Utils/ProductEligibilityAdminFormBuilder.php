@@ -53,8 +53,12 @@ class ProductEligibilityAdminFormBuilder extends AbstractAlmaAdminFormBuilder
             '<a href="https://docs.getalma.eu/docs/prestashop-alma-widget" target="_blank">',
             '</a>'
         );
+        $tplWidget = 'sample_widget.tpl';
+        if (version_compare(_PS_VERSION_, '1.6', '<')) {
+            $tplWidget = '15/sample_widget.tpl';
+        }
         $tpl = $this->context->smarty->createTemplate(
-            "{$this->module->local_path}views/templates/hook/sample_widget.tpl"
+            "{$this->module->local_path}views/templates/hook/{$tplWidget}"
         );
         return [
            $this->inputHtml($tpl, $htmlContent),

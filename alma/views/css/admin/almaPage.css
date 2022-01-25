@@ -80,6 +80,12 @@ i.icon-alma{
 fieldset .form-alma.disabled::before{
     background-color: rgba(235, 237, 244, .7);
 }
+.form-group .margin-form .alma_switch label{
+    width: 55px;
+}
+.preference_description{
+    margin-top: 5px;
+}
 
 /*Switch*/
 .bootstrap .form-horizontal .checkbox.alma_switch{

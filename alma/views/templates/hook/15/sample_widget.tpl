@@ -21,10 +21,14 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  *}
 
-<p class="row alma-sample-payment-button">
-    <div class="col-lg-4">
-        <img src="{$imgPaymentButton}" class="img-responsive" alt="{l s='Sample payment button Alma' mod='alma'}" />
-        <p class="help-block">{l s='Example of title and description.' mod='alma'}</p>
+<p class="alma-sample-widget">
+    <div style="width:50%;float:left;">
+        <img src="/modules/alma/views/img/widget-available.png" width="368" alt="{l s='Sample widget Alma' mod='alma'}" />
+        <p class="preference_description">{l s='Badge when Alma payment is available for this product.' mod='alma'}</p>
+    </div>
+    <div style="width:50%;float:left;">
+        <img src="/modules/alma/views/img/widget-unavailable.png" width="368" alt="{l s='Sample widget Alma' mod='alma'}" />
+        <p class="preference_description">{l s='Badge when the product is not eligible for Alma payments.' mod='alma'}</p>
     </div>
 </p>
 
