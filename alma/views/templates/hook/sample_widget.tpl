@@ -23,11 +23,11 @@
 
 <p class="row alma-sample-widget">
     <div class="col-lg-6">
-        <img src="/modules/alma/views/img/widget-available.png" width="368" class="img-responsive" alt="{l s='Sample widget Alma' mod='alma'}" />
+        <img src="/modules/alma/views/img/widget-available.png" width="400" class="img-responsive" alt="{l s='Sample widget Alma' mod='alma'}" />
         <p class="help-block">{l s='Badge when Alma payment is available for this product.' mod='alma'}</p>
     </div>
     <div class="col-lg-6">
-        <img src="/modules/alma/views/img/widget-unavailable.png" width="368" class="img-responsive" alt="{l s='Sample widget Alma' mod='alma'}" />
+        <img src="/modules/alma/views/img/widget-unavailable.png" width="400" class="img-responsive" alt="{l s='Sample widget Alma' mod='alma'}" />
         <p class="help-block">{l s='Badge when the product is not eligible for Alma payments.' mod='alma'}</p>
     </div>
 </p>
