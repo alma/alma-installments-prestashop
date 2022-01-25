@@ -60,6 +60,7 @@ class ProductEligibilityAdminFormBuilder extends AbstractAlmaAdminFormBuilder
         $tpl = $this->context->smarty->createTemplate(
             "{$this->module->local_path}views/templates/hook/{$tplWidget}"
         );
+
         return [
            $this->inputHtml($tpl, $htmlContent),
            $this->inputAlmaSwitchForm(

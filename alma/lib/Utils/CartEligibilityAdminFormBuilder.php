@@ -69,8 +69,8 @@ class CartEligibilityAdminFormBuilder extends AbstractAlmaAdminFormBuilder
                 sprintf(
                  // phpcs:ignore
                  $this->module->l('%1$sAdvanced%2$s [Optional] Query selector for our scripts to display the badge on cart page', 'CartEligibilityAdminFormBuilder'),
-                   '<b>',
-                   '</b>'
+                    '<b>',
+                    '</b>'
                 ),
                 $this->module->l('E.g. #id, .class, ...', 'CartEligibilityAdminFormBuilder')
             ),

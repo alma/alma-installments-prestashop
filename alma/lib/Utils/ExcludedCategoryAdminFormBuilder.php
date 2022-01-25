@@ -59,6 +59,7 @@ class ExcludedCategoryAdminFormBuilder extends AbstractAlmaAdminFormBuilder
                 $this->module->l('Display message', 'ExcludedCategoryAdminFormBuilder'),
                 // phpcs:ignore
                 $this->module->l('Display the message below if the product is excluded from the category', 'ExcludedCategoryAdminFormBuilder'),
+                // phpcs:ignore
                 $this->module->l('Display the message below if the product is excluded', 'ExcludedCategoryAdminFormBuilder')
             ),
             $this->inputTextForm(

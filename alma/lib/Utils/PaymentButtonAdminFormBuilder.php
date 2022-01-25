@@ -49,6 +49,7 @@ class PaymentButtonAdminFormBuilder extends AbstractAlmaAdminFormBuilder
         if (version_compare(_PS_VERSION_, '1.6', '<')) {
             $tplPaymentButton = '15/sample_payment_button.tpl';
         }
+        // phpcs:ignore
         $htmlContent = $this->module->l('Edit the text displayed when choosing the payment method in your checkout. It will adapt to the languages of your site.', 'PaymentButtonAdminFormBuilder');
         $tpl = $this->context->smarty->createTemplate(
             "{$this->module->local_path}views/templates/hook/{$tplPaymentButton}"
@@ -60,6 +61,7 @@ class PaymentButtonAdminFormBuilder extends AbstractAlmaAdminFormBuilder
         $return = [
             $this->inputHtml(null, $htmlContent),
             $this->inputHtml($tpl),
+            // phpcs:ignore
             $this->inputHtml(null, "<h2>{$this->module->l('Payment by installment', 'PaymentButtonAdminFormBuilder')}</h2>"),
             $this->inputTextForm(
                 self::ALMA_PAYMENT_BUTTON_TITLE,
