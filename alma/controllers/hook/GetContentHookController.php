@@ -30,16 +30,16 @@ if (!defined('_PS_VERSION_')) {
 
 use Alma\API\RequestError;
 use Alma\PrestaShop\API\ClientHelper;
+use Alma\PrestaShop\Forms\ApiAdminFormBuilder;
+use Alma\PrestaShop\Forms\CartEligibilityAdminFormBuilder;
+use Alma\PrestaShop\Forms\DebugAdminFormBuilder;
+use Alma\PrestaShop\Forms\ExcludedCategoryAdminFormBuilder;
+use Alma\PrestaShop\Forms\PaymentButtonAdminFormBuilder;
+use Alma\PrestaShop\Forms\PnxAdminFormBuilder;
+use Alma\PrestaShop\Forms\ProductEligibilityAdminFormBuilder;
+use Alma\PrestaShop\Forms\RefundAdminFormBuilder;
 use Alma\PrestaShop\Hooks\AdminHookController;
-use Alma\PrestaShop\Utils\ApiAdminFormBuilder;
-use Alma\PrestaShop\Utils\CartEligibilityAdminFormBuilder;
-use Alma\PrestaShop\Utils\DebugAdminFormBuilder;
-use Alma\PrestaShop\Utils\ExcludedCategoryAdminFormBuilder;
 use Alma\PrestaShop\Utils\Logger;
-use Alma\PrestaShop\Utils\PaymentButtonAdminFormBuilder;
-use Alma\PrestaShop\Utils\PnxAdminFormBuilder;
-use Alma\PrestaShop\Utils\ProductEligibilityAdminFormBuilder;
-use Alma\PrestaShop\Utils\RefundAdminFormBuilder;
 use Alma\PrestaShop\Utils\Settings;
 use Alma\PrestaShop\Utils\SettingsCustomFields;
 use Configuration;
