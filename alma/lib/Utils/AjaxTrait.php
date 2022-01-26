@@ -1,7 +1,7 @@
 <?php
 
 /**
- * 2018-2021 Alma SAS
+ * 2018-2022 Alma SAS
  *
  * THE MIT LICENSE
  *
@@ -19,31 +19,36 @@
  * IN THE SOFTWARE.
  *
  * @author    Alma SAS <contact@getalma.eu>
- * @copyright 2018-2021 Alma SAS
+ * @copyright 2018-2022 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
-namespace Alma\PrestaShop\Model;
+namespace Alma\PrestaShop\Utils;
 
-use Order;
-use OrderPayment;
+use Tools;
 
 if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-class OrderData
+/**
+ * Trait AjaxTrait
+ *
+ * Error ajax return
+ */
+trait AjaxTrait
 {
-    public static function getCurrentOrderPayment(Order $order)
+    /**
+     * @param $msg
+     * @param $statusCode
+     */
+    protected function ajaxFail($msg = null, $statusCode = 500)
     {
-        if ('alma' != $order->module && 1 == $order->valid) {
-            return false;
-        }
-        $orderPayments = OrderPayment::getByOrderReference($order->reference);
-        if ($orderPayments && isset($orderPayments[0])) {
-            return $orderPayments[0];
-        }
+        header("X-PHP-Response-Code: $statusCode", true, $statusCode);
 
-        return false;
+        $json = ['error' => true, 'message' => $msg];
+        method_exists($this, 'ajaxDie')
+            ? $this->ajaxDie(json_encode($json))
+            : die(Tools::jsonEncode($json));
     }
 }

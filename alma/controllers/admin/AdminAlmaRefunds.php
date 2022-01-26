@@ -24,34 +24,22 @@
 
 use Alma\API\RequestError;
 use Alma\PrestaShop\API\ClientHelper;
+use Alma\PrestaShop\Utils\AjaxTrait;
 use Alma\PrestaShop\Utils\Logger;
+use Alma\PrestaShop\Utils\OrderDataTrait;
 
 class AdminAlmaRefundsController extends ModuleAdminController
 {
+    use AjaxTrait;
+    use OrderDataTrait;
+
     protected $json = true;
-
-    protected function ajaxFail($msg = null, $statusCode = 500)
-    {
-        header("X-PHP-Response-Code: $statusCode", true, $statusCode);
-
-        $json = ['error' => true, 'message' => $msg];
-        method_exists(get_parent_class($this), 'ajaxDie')
-            ? $this->ajaxDie(json_encode($json))
-            : die(Tools::jsonEncode($json));
-    }
 
     public function ajaxProcessRefund()
     {
         $refundType = Tools::getValue('refundType');
         $order = new Order(Tools::getValue('orderId'));
-
-        $orderPayment = $this->getCurrentOrderPayment($order);
-        if (!$orderPayment) {
-            $this->ajaxFail(
-                $this->module->l('Error: Could not find Alma transaction', 'AdminAlmaRefunds')
-            );
-        }
-
+        $orderPayment = $this->getOrderPaymentOrFail($order);
         $paymentId = $orderPayment->transaction_id;
 
         switch ($refundType) {
@@ -127,16 +115,6 @@ class AdminAlmaRefundsController extends ModuleAdminController
         method_exists(get_parent_class($this), 'ajaxDie')
             ? $this->ajaxDie(json_encode($json))
             : die(Tools::jsonEncode($json));
-    }
-
-    private function getCurrentOrderPayment(Order $order)
-    {
-        $orderPayments = OrderPayment::getByOrderReference($order->reference);
-        if ($orderPayments && isset($orderPayments[0])) {
-            return $orderPayments[0];
-        }
-
-        return false;
     }
 
     /**

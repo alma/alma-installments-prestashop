@@ -1,7 +1,7 @@
 <?php
 
 /**
- * 2018-2021 Alma SAS
+ * 2018-2022 Alma SAS
  *
  * THE MIT LICENSE
  *
@@ -19,7 +19,7 @@
  * IN THE SOFTWARE.
  *
  * @author    Alma SAS <contact@getalma.eu>
- * @copyright 2018-2021 Alma SAS
+ * @copyright 2018-2022 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
@@ -41,15 +41,12 @@ $_MODULE['<{alma}prestashop>adminalmacategories_30269022e9d8f51beaabb52e5d0de2b7
 $_MODULE['<{alma}prestashop>adminalmacategories_97b1d2407df2098b636c462aa766d028'] = 'Eligible Alma';
 $_MODULE['<{alma}prestashop>adminalmacategories_6da38e7cdb5552e79a4ec4e2c62f2b93'] = 'Activer Alma pour ces catégories';
 $_MODULE['<{alma}prestashop>adminalmacategories_1ef246272d910a217e66aff142f708ad'] = 'Désactiver Alma pour ces catégories';
-$_MODULE['<{alma}prestashop>adminalmarefunds_7960c85fd5916169fc5038a2192094f8'] = 'Erreur : La transaction Alma n\'a pas pu être récupérée';
 $_MODULE['<{alma}prestashop>adminalmarefunds_4ba820211f99849725468bd56fc50216'] = 'Erreur : Le montant renseigné est supérieur au montant maximum remboursable';
 $_MODULE['<{alma}prestashop>adminalmarefunds_69c00601627a9011bf5c4816abf00b5a'] = 'Il y a eu une erreur lors de l\'execution du remboursement';
 $_MODULE['<{alma}prestashop>adminalmarefunds_9bbf53faf470010110269d041cab1e9f'] = 'Le remboursement a été déclenché';
 $_MODULE['<{alma}prestashop>payment_2f9f52496706027b880bac2e3c9af1d8'] = 'Une erreur est survenue lors de la requête de paiement. Veuillez réessayer, ou contactez-nous si le problème persiste.';
 $_MODULE['<{alma}prestashop>payment_efa820507b1951ee5722003639b1a0b0'] = 'Le paiement en plusieurs fois Alma n\'est pas disponible pour cette devise';
 $_MODULE['<{alma}prestashop>validation_9d55a51cbc2d6cf7f9251b0cec59390e'] = 'Une erreur est survenue lors de la validation de votre paiement. Veuillez réessayer ou nous contacter si le problème persiste. ID Panier : %d';
-$_MODULE['<{alma}prestashop>displaypaymentreturnhookcontroller_7960c85fd5916169fc5038a2192094f8'] = 'Erreur : La transaction Alma n\'a pas pu être récupérée';
-$_MODULE['<{alma}prestashop>displayrefundshookcontroller_7960c85fd5916169fc5038a2192094f8'] = 'Erreur : La transaction Alma n\'a pas pu être récupérée';
 $_MODULE['<{alma}prestashop>paymentvalidation_efa820507b1951ee5722003639b1a0b0'] = 'Alma n\'est pas disponible dans cette devise';
 $_MODULE['<{alma}prestashop>paymentvalidation_1d879e270cfb195f257aab3116618d8b'] = 'Alma - Paiement +%d jours';
 $_MODULE['<{alma}prestashop>paymentvalidation_6f11098989b14063e0a4cfe362734850'] = 'Alma - Paiement en %d fois';
@@ -127,6 +124,7 @@ $_MODULE['<{alma}prestashop>refundadminformbuilder_49908a1beb86a417b6f77ed65cbf8
 $_MODULE['<{alma}prestashop>refundadminformbuilder_76d8f6f6704ea9de044aa669d133c500'] = 'État de commande du remboursement';
 $_MODULE['<{alma}prestashop>refundadminformbuilder_a2175c8178a92176b9810d330fbc0e9e'] = 'État de commande à synchroniser avec le remboursement Alma';
 $_MODULE['<{alma}prestashop>refundadminformbuilder_9d21f767a50ad583330024bce9afa2e1'] = 'Remboursement par changement d\'état';
+$_MODULE['<{alma}prestashop>orderdatatrait_7960c85fd5916169fc5038a2192094f8'] = 'Erreur : La transaction Alma n\'a pas pu être récupérée';
 $_MODULE['<{alma}prestashop>displaypaymentreturn_aca755511864a8c0038740357db865ab'] = 'Votre paiement avec Alma a été passé avec succès';
 $_MODULE['<{alma}prestashop>displaypaymentreturn_9b9b747500bf38015ecb1a12119d50cc'] = 'Référence de votre commande :';
 $_MODULE['<{alma}prestashop>displaypaymentreturn_709fa7b44d5d59d2802e7878e35453a9'] = 'Détail de votre paiement :';

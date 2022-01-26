@@ -30,13 +30,15 @@ if (!defined('_PS_VERSION_')) {
 
 use Alma\PrestaShop\API\ClientHelper;
 use Alma\PrestaShop\Hooks\AdminHookController;
+use Alma\PrestaShop\Utils\OrderDataTrait;
 use Currency;
 use Media;
 use Order;
-use OrderPayment;
 
 final class DisplayRefundsHookController extends AdminHookController
 {
+    use OrderDataTrait;
+
     /** @var Order */
     public $order;
 
@@ -57,15 +59,8 @@ final class DisplayRefundsHookController extends AdminHookController
             return false;
         }
 
-        $orderPayment = $this->getCurrentOrderPayment($order);
-        if (!$orderPayment) {
-            $this->ajaxFail(
-                $this->module->l('Error: Could not find Alma transaction', 'DisplayRefundsHookController')
-            );
-        }
-
+        $orderPayment = $this->getOrderPaymentOrFail($order);
         $paymentId = $orderPayment->transaction_id;
-
         $payment = $alma->payments->fetch($paymentId);
 
         if (is_callable('Media::getMediaPath')) {
@@ -136,15 +131,5 @@ final class DisplayRefundsHookController extends AdminHookController
         ]);
 
         return $tpl->fetch();
-    }
-
-    private function getCurrentOrderPayment(Order $order)
-    {
-        $orderPayments = OrderPayment::getByOrderReference($order->reference);
-        if ($orderPayments && isset($orderPayments[0])) {
-            return $orderPayments[0];
-        }
-
-        return false;
     }
 }
