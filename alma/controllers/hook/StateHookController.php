@@ -41,7 +41,7 @@ use PrestaShopException;
 final class StateHookController extends AdminHookController
 {
     use OrderDataTrait;
-    
+
     /**
      * @param $params
      *
