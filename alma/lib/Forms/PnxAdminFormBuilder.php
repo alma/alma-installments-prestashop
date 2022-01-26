@@ -1,6 +1,6 @@
 <?php
 /**
- * 2018-2021 Alma SAS
+ * 2018-2022 Alma SAS
  *
  * THE MIT LICENSE
  *
@@ -18,13 +18,14 @@
  * IN THE SOFTWARE.
  *
  * @author    Alma SAS <contact@getalma.eu>
- * @copyright 2018-2021 Alma SAS
+ * @copyright 2018-2022 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
-namespace Alma\PrestaShop\Utils;
+namespace Alma\PrestaShop\Forms;
 
 use Alma\API\Entities\FeePlan;
+use Alma\PrestaShop\Utils\Settings;
 
 if (!defined('_PS_VERSION_')) {
     exit;
