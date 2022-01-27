@@ -327,6 +327,8 @@ class AdminAlmaCategoriesController extends ModuleAdminController
     /**
      * AdminController::renderList() override.
      *
+     * @return string
+     *
      * @see AdminController::renderList()
      */
     public function renderList()
@@ -336,6 +338,11 @@ class AdminAlmaCategoriesController extends ModuleAdminController
         return parent::renderList();
     }
 
+    /**
+     * No button action is table list
+     *
+     * @return string
+     */
     public function displayVoidActionLink()
     {
         return '';
