@@ -90,6 +90,10 @@ fieldset .form-alma.disabled::before{
 .preference_description{
     margin-top: 5px;
 }
+.margin-form.input_html{
+    padding-left: 0;
+    clear: left;
+}
 
 /*Switch*/
 .bootstrap .form-horizontal .checkbox.alma_switch{

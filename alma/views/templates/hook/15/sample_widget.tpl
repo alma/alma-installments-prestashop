@@ -21,15 +21,15 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  *}
 
-<p class="alma-sample-widget">
+<div class="alma-sample-widget">
     <div style="width:50%;float:left;">
         <img src="/modules/alma/views/img/widget-available.png" width="400" alt="{l s='Sample widget Alma' mod='alma'}" />
-        <p class="preference_description">{l s='Badge when Alma payment is available for this product.' mod='alma'}</p>
+        <p class="preference_description">{l s='Widget when Alma payments are available for this product.' mod='alma'}</p>
     </div>
     <div style="width:50%;float:left;">
         <img src="/modules/alma/views/img/widget-unavailable.png" width="400" alt="{l s='Sample widget Alma' mod='alma'}" />
-        <p class="preference_description">{l s='Badge when the product is not eligible for Alma payments.' mod='alma'}</p>
+        <p class="preference_description">{l s='Widget when Alma payments are not available for this product.' mod='alma'}</p>
     </div>
-</p>
+</div>
 
 <hr class="alma--spacer" />

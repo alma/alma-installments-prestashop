@@ -59,16 +59,16 @@ class CartEligibilityAdminFormBuilder extends AbstractAlmaAdminFormBuilder
             ),
             $this->inputRadioForm(
                 self::ALMA_CART_WIDGET_POSITION_CUSTOM,
-                $this->module->l('Badge position', 'CartEligibilityAdminFormBuilder'),
-                $this->module->l('Display badge after cart (by default)', 'CartEligibilityAdminFormBuilder'),
-                $this->module->l('Display badge on custom css selector', 'CartEligibilityAdminFormBuilder')
+                $this->module->l('Widget position', 'CartEligibilityAdminFormBuilder'),
+                $this->module->l('Display widget after cart (by default)', 'CartEligibilityAdminFormBuilder'),
+                $this->module->l('Display widget on custom css selector', 'CartEligibilityAdminFormBuilder')
             ),
             $this->inputTextForm(
                 self::ALMA_CART_WDGT_POS_SELECTOR,
-                $this->module->l('Display badge on custom css selector', 'CartEligibilityAdminFormBuilder'),
+                $this->module->l('Display widget on custom css selector', 'CartEligibilityAdminFormBuilder'),
                 sprintf(
                  // phpcs:ignore
-                 $this->module->l('%1$sAdvanced%2$s [Optional] Query selector for our scripts to display the badge on cart page', 'CartEligibilityAdminFormBuilder'),
+                 $this->module->l('%1$sAdvanced%2$s [Optional] Query selector for our scripts to display the widget on cart page', 'CartEligibilityAdminFormBuilder'),
                     '<b>',
                     '</b>'
                 ),

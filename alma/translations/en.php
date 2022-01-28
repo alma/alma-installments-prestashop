@@ -1,7 +1,29 @@
 <?php
+/**
+ * 2018-2021 Alma SAS
+ *
+ * THE MIT LICENSE
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
+ * documentation files (the "Software"), to deal in the Software without restriction, including without limitation
+ * the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and
+ * to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+ * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the
+ * Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE
+ * WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
+ * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+ * IN THE SOFTWARE.
+ *
+ * @author    Alma SAS <contact@getalma.eu>
+ * @copyright 2018-2021 Alma SAS
+ * @license   https://opensource.org/licenses/MIT The MIT License
+ */
 
 global $_MODULE;
-$_MODULE = array();
+$_MODULE = [];
 $_MODULE['<{alma}prestashop>alma_d4b3f55d02c6448c36a233c1f1c27a18'] = '2x 3x 4x, D+15 or D+30 Alma - Payment in instalments and deferred';
 $_MODULE['<{alma}prestashop>alma_7f9c508fa226d3e72644403653115c29'] = 'Offer an easy and safe installments payments option to your customers';
 $_MODULE['<{alma}prestashop>alma_ce67a7d4b82bc360a17d25943924b388'] = 'Are you sure you want to deactivate Alma payments from your shop?';
@@ -39,10 +61,10 @@ $_MODULE['<{alma}prestashop>apiadminformbuilder_1d13f5970032b45327add3c337ac82ee
 $_MODULE['<{alma}prestashop>carteligibilityadminformbuilder_a2a52a9dd1864e2b995793bd67b8c6e5'] = 'This widget allows you to inform your customers of the availability of Alma\'s payment facilities right from the product page, which will help to increase your conversion rate. For more details on its configuration or in case of problems, please consult %1$sthis documentation%2$s.';
 $_MODULE['<{alma}prestashop>carteligibilityadminformbuilder_ac6329ea064b9212be7e442cb46bf68f'] = 'Display widget';
 $_MODULE['<{alma}prestashop>carteligibilityadminformbuilder_f18e8a0396c09ce7e167471f551ff536'] = 'Display even if the cart is not eligible';
-$_MODULE['<{alma}prestashop>carteligibilityadminformbuilder_49d8a171493de99a27f3a669c94d6954'] = 'Badge position';
-$_MODULE['<{alma}prestashop>carteligibilityadminformbuilder_7585570774ecf018af6ffb20b587e2a9'] = 'Display badge after cart (by default)';
-$_MODULE['<{alma}prestashop>carteligibilityadminformbuilder_15574f3d05437ffe709ff767607b4fd8'] = 'Display badge on custom css selector';
-$_MODULE['<{alma}prestashop>carteligibilityadminformbuilder_4de0aaff6698ae15ba4b87c10fcb2e6e'] = '%1$sAdvanced%2$s [Optional] Query selector for our scripts to display the badge on cart page';
+$_MODULE['<{alma}prestashop>carteligibilityadminformbuilder_95598f1b6de612e356fc53e785beae9c'] = 'Widget position';
+$_MODULE['<{alma}prestashop>carteligibilityadminformbuilder_3af1ce93bee80166f9f702b350f728d6'] = 'Display widget after cart (by default)';
+$_MODULE['<{alma}prestashop>carteligibilityadminformbuilder_dfabed543be2924010239d7baa3b2130'] = 'Display widget on custom css selector';
+$_MODULE['<{alma}prestashop>carteligibilityadminformbuilder_fe4c4f4eb547d6b95f5a23b12ed66577'] = '%1$sAdvanced%2$s [Optional] Query selector for our scripts to display the widget on cart page';
 $_MODULE['<{alma}prestashop>carteligibilityadminformbuilder_cc12a5229a16dced1984745e05872a94'] = 'E.g. #id, .class, ...';
 $_MODULE['<{alma}prestashop>carteligibilityadminformbuilder_24fbd1d7621f23cfb3682abe6eb77502'] = 'Display widget on cart page';
 $_MODULE['<{alma}prestashop>debugadminformbuilder_3132e398e6e7acace9290305a55a7d25'] = 'Activate logging';
@@ -54,7 +76,6 @@ $_MODULE['<{alma}prestashop>excludedcategoryadminformbuilder_f5e42a943a36e2a61ba
 $_MODULE['<{alma}prestashop>excludedcategoryadminformbuilder_41c2bdcbfb6ea702ac49667124a1652a'] = 'Excluded categories non-eligibility message';
 $_MODULE['<{alma}prestashop>excludedcategoryadminformbuilder_c4cea4750fb3ef077cbf2e1283c312ac'] = 'Message displayed on an excluded product page or on the cart page if it contains an excluded product.';
 $_MODULE['<{alma}prestashop>excludedcategoryadminformbuilder_36359547b09bdb31f46c419a0bd5807e'] = 'Excluded categories';
-$_MODULE['<{alma}prestashop>paymentbuttonadminformbuilder_1f956efd3d3772790153d1e9e95e64c5'] = 'Edit the text displayed when choosing the payment method in your checkout. It will adapt to the languages of your site.';
 $_MODULE['<{alma}prestashop>paymentbuttonadminformbuilder_31e7c98aed99f0e6851ab4055095cd5a'] = 'Payment by installment';
 $_MODULE['<{alma}prestashop>paymentbuttonadminformbuilder_b78a3223503896721cca1303f776159b'] = 'Title';
 $_MODULE['<{alma}prestashop>paymentbuttonadminformbuilder_b5a7adde1af5c87d7fd797b6245c2a39'] = 'Description';
@@ -79,10 +100,10 @@ $_MODULE['<{alma}prestashop>pnxadminformbuilder_8841cbed16fb69dda4d4812dcde78043
 $_MODULE['<{alma}prestashop>producteligibilityadminformbuilder_a2a52a9dd1864e2b995793bd67b8c6e5'] = 'This widget allows you to inform your customers of the availability of Alma\'s payment facilities right from the product page, which will help to increase your conversion rate. For more details on its configuration or in case of problems, please consult %1$sthis documentation%2$s.';
 $_MODULE['<{alma}prestashop>producteligibilityadminformbuilder_ac6329ea064b9212be7e442cb46bf68f'] = 'Display widget';
 $_MODULE['<{alma}prestashop>producteligibilityadminformbuilder_8af7a0384521c3351829ce6e626fc028'] = 'Display even if the product is not eligible';
-$_MODULE['<{alma}prestashop>producteligibilityadminformbuilder_49d8a171493de99a27f3a669c94d6954'] = 'Badge position';
-$_MODULE['<{alma}prestashop>producteligibilityadminformbuilder_8d0b357f88a05575256c7f59f59d26a6'] = 'Display badge after price (by default)';
-$_MODULE['<{alma}prestashop>producteligibilityadminformbuilder_15574f3d05437ffe709ff767607b4fd8'] = 'Display badge on custom css selector';
-$_MODULE['<{alma}prestashop>producteligibilityadminformbuilder_c7f90b0228ce0e09fe5dccd6342ec7d2'] = '%1$sAdvanced%2$s [Optional] Query selector for our scripts to display the badge on product page';
+$_MODULE['<{alma}prestashop>producteligibilityadminformbuilder_95598f1b6de612e356fc53e785beae9c'] = 'Widget position';
+$_MODULE['<{alma}prestashop>producteligibilityadminformbuilder_0b8ec60389280c9715ba1f0b11d60417'] = 'Display widget after price (by default)';
+$_MODULE['<{alma}prestashop>producteligibilityadminformbuilder_dfabed543be2924010239d7baa3b2130'] = 'Display widget on custom css selector';
+$_MODULE['<{alma}prestashop>producteligibilityadminformbuilder_27b94cd88153b87e93417bab7c246025'] = '%1$sAdvanced%2$s [Optional] Query selector for our scripts to display the widget on product page';
 $_MODULE['<{alma}prestashop>producteligibilityadminformbuilder_cc12a5229a16dced1984745e05872a94'] = 'E.g. #id, .class, ...';
 $_MODULE['<{alma}prestashop>producteligibilityadminformbuilder_e1d2be70aeea464e47df8c8b134d0e27'] = 'Product price query selector';
 $_MODULE['<{alma}prestashop>producteligibilityadminformbuilder_ee6623512506b3b7c31b7ae6a44450ec'] = '%1$sAdvanced%2$s Query selector for our scripts to correctly find the displayed price of a product';
@@ -194,11 +215,12 @@ $_MODULE['<{alma}prestashop>pnx_fees_44dee6709e953dae7c83fa4e5b23a82c'] = 'Custo
 $_MODULE['<{alma}prestashop>pnx_fees_7b58e78060e24470aeab5e97d9bb0165'] = 'Fees for %d-installment plan';
 $_MODULE['<{alma}prestashop>pnx_fees_02d4482d332e1aef3437cd61c9bcc624'] = 'Contact us';
 $_MODULE['<{alma}prestashop>pnx_fees_5532ee2e5ea88b613ccb38e9c88f9a77'] = 'if you think your sales volumes warrant better rates!';
+$_MODULE['<{alma}prestashop>sample_payment_button_1f956efd3d3772790153d1e9e95e64c5'] = 'Edit the text displayed when choosing the payment method in your checkout. It will adapt to the languages of your site.';
 $_MODULE['<{alma}prestashop>sample_payment_button_f3244aba99d8eb5ccaf1f3a6b8ad1a93'] = 'Sample payment button Alma';
 $_MODULE['<{alma}prestashop>sample_payment_button_9f04fe30d0288024643a1dd3074abe2e'] = 'Example of title and description.';
 $_MODULE['<{alma}prestashop>sample_widget_ee4d20be41f0955a9cb0a3b05a496972'] = 'Sample widget Alma';
-$_MODULE['<{alma}prestashop>sample_widget_7c5f718244b4f3baf1baa8856537b70f'] = 'Badge when Alma payment is available for this product.';
-$_MODULE['<{alma}prestashop>sample_widget_347eced986c6059919288e9676133a38'] = 'Badge when the product is not eligible for Alma payments.';
+$_MODULE['<{alma}prestashop>sample_widget_a54c98ce66641a5346707192d2ca86a6'] = 'Widget when Alma payments are available for this product.';
+$_MODULE['<{alma}prestashop>sample_widget_53b86cade31dfce70c3e02e012acb899'] = 'Widget when Alma payments are not available for this product.';
 $_MODULE['<{alma}prestashop>deferred_9088921432b295dfe6f02863b2dc0ff8'] = '0 € today then %1$s on %2$s';
 $_MODULE['<{alma}prestashop>deferred_304bcb1f18f0897c89c6a79cf0725af1'] = '(Including fees: %s)';
 $_MODULE['<{alma}prestashop>deferred_3acc62b245d8bc10f04d81f69d85b685'] = '(No additional fees)';

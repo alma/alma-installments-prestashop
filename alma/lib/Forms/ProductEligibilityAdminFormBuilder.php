@@ -73,17 +73,17 @@ class ProductEligibilityAdminFormBuilder extends AbstractAlmaAdminFormBuilder
            ),
            $this->inputRadioForm(
                self::ALMA_WIDGET_POSITION_CUSTOM,
-               $this->module->l('Badge position', 'ProductEligibilityAdminFormBuilder'),
-               $this->module->l('Display badge after price (by default)', 'ProductEligibilityAdminFormBuilder'),
-               $this->module->l('Display badge on custom css selector', 'ProductEligibilityAdminFormBuilder')
+               $this->module->l('Widget position', 'ProductEligibilityAdminFormBuilder'),
+               $this->module->l('Display widget after price (by default)', 'ProductEligibilityAdminFormBuilder'),
+               $this->module->l('Display widget on custom css selector', 'ProductEligibilityAdminFormBuilder')
            ),
            $this->inputTextForm(
                self::ALMA_WIDGET_POSITION_SELECTOR,
-               $this->module->l('Display badge on custom css selector', 'ProductEligibilityAdminFormBuilder'),
+               $this->module->l('Display widget on custom css selector', 'ProductEligibilityAdminFormBuilder'),
                sprintf(
                 // PrestaShop won't detect the string if the call to `l` is multiline
                 // phpcs:ignore
-                $this->module->l('%1$sAdvanced%2$s [Optional] Query selector for our scripts to display the badge on product page', 'ProductEligibilityAdminFormBuilder'),
+                $this->module->l('%1$sAdvanced%2$s [Optional] Query selector for our scripts to display the widget on product page', 'ProductEligibilityAdminFormBuilder'),
                    '<b>',
                    '</b>'
                ),

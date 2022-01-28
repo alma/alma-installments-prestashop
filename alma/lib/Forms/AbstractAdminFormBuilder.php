@@ -254,8 +254,10 @@ abstract class AbstractAdminFormBuilder
     {
         $dataInput = [
             'name' => null,
-            'label' => null,
+            'label' => false,
             'type' => 'html',
+            'form_group_class' => 'input_html',
+            'col' => 12
         ];
 
         if ($htmlContent) {

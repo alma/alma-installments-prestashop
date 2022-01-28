@@ -21,11 +21,12 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  *}
 
-<p class="alma-sample-payment-button">
+<p>{l s='Edit the text displayed when choosing the payment method in your checkout. It will adapt to the languages of your site.' mod='alma'}</p>
+<div class="alma-sample-payment-button">
     <div style="width:50%;float:left;">
-        <img src="{$imgPaymentButton}" style="padding:0;" class="alma--border" width="475" alt="{l s='Sample payment button Alma' mod='alma'}" />
+        <img src="{$imgPaymentButton}" style="padding:0;" class="alma--border" width="485" alt="{l s='Sample payment button Alma' mod='alma'}" />
         <p class="preference_description">{l s='Example of title and description.' mod='alma'}</p>
     </div>
-</p>
+</div>
 
 <hr class="alma--spacer" />
