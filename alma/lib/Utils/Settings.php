@@ -178,7 +178,7 @@ class Settings
         return (bool) (int) self::get('ALMA_CATEGORIES_WDGT_NOT_ELGBL', true);
     }
 
-    public static function activePlans($onlyPnx = false)
+    public static function activePlans()
     {
         $plans = [];
         $feePlans = json_decode(self::getFeePlans());
