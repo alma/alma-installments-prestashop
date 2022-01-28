@@ -47,6 +47,13 @@ final class DisplayRefundsHookController extends AdminHookController
         return parent::canRun();
     }
 
+    /**
+     * Run Hook for show block Refund in Order page if is payment Alma
+     *
+     * @param array $params
+     *
+     * @return null|string as the template fetched
+     */
     public function run($params)
     {
         $order = new Order($params['id_order']);
@@ -61,18 +68,12 @@ final class DisplayRefundsHookController extends AdminHookController
         }
         $payment = $alma->payments->fetch($paymentId);
 
-        if (is_callable('Media::getMediaPath')) {
-            $iconPath = Media::getMediaPath(_PS_MODULE_DIR_ . $this->module->name . '/views/img/logos/alma_tiny.svg');
-        } else {
-            $iconPath = $this->module->getPathUri() . '/views/img/logos/alma_tiny.svg';
-        }
-
         $refundData = null;
         $totalRefund = null;
         $percentRefund = null;
         $orderTotalPaid = $order->getOrdersTotalPaid();
         $fees = almaPriceFromCents($payment->customer_fee);
-        $ordersTotalAmount = $order->total_paid_tax_incl + $fees;
+        $paymentTotalAmount = $order->total_paid_tax_incl + $fees;
 
         //multi shipping
         $ordersId = null;
@@ -84,7 +85,7 @@ final class DisplayRefundsHookController extends AdminHookController
                 }
             }
             $ordersId = rtrim($ordersId, ',');
-            $ordersTotalAmount = $orderTotalPaid + $fees;
+            $paymentTotalAmount = $orderTotalPaid + $fees;
         }
 
         if ($payment->refunds) {
@@ -92,7 +93,7 @@ final class DisplayRefundsHookController extends AdminHookController
                 $totalRefund += $refund->amount;
             }
 
-            $percentRefund = (100 / $ordersTotalAmount) * almaPriceFromCents($totalRefund);
+            $percentRefund = (100 / $paymentTotalAmount) * almaPriceFromCents($totalRefund);
 
             $refundData = [
                 'totalRefundAmount' => almaFormatPrice($totalRefund, (int) $order->id_currency),
@@ -106,7 +107,7 @@ final class DisplayRefundsHookController extends AdminHookController
             'maxAmount' => almaFormatPrice(almaPriceToCents($order->total_paid_tax_incl), (int) $order->id_currency),
             'currencySymbol' => $currency->sign,
             'ordersId' => $ordersId,
-            'ordersTotalAmount' => almaFormatPrice(almaPriceToCents($ordersTotalAmount), (int) $order->id_currency),
+            'paymentTotalAmount' => almaFormatPrice(almaPriceToCents($paymentTotalAmount), (int) $order->id_currency),
         ];
         $wording = [
             'title' => $this->module->l('Alma refund', 'DisplayRefundsHookController'),
@@ -142,20 +143,12 @@ final class DisplayRefundsHookController extends AdminHookController
             'buttonRefund' => $this->module->l('Proceed the refund', 'DisplayRefundsHookController'),
         ];
 
-        if (version_compare(_PS_VERSION_, '1.6', '<')) {
-            $refundTpl = 'order_refund_ps15';
-        } elseif (version_compare(_PS_VERSION_, '1.7.7.0', '<')) {
-            $refundTpl = 'order_refund_bs3';
-        } else {
-            $refundTpl = 'order_refund_bs4';
-        }
-
         $tpl = $this->context->smarty->createTemplate(
-            "{$this->module->local_path}views/templates/hook/{$refundTpl}.tpl"
+            "{$this->module->local_path}views/templates/hook/" . $this->getTemplateName() . ".tpl"
         );
 
         $tpl->assign([
-            'iconPath' => $iconPath,
+            'iconPath' => $this->module->getPathUri() . '/views/img/logos/alma_tiny.svg',
             'wording' => $wording,
             'order' => $orderData,
             'refund' => $refundData,
@@ -163,5 +156,22 @@ final class DisplayRefundsHookController extends AdminHookController
         ]);
 
         return $tpl->fetch();
+    }
+
+    /**
+     * Get the name of file for template block refund order page
+     *
+     * @return string as template name
+     */
+    private function getTemplateName()
+    {
+        $refundTpl = 'order_refund_bs4';
+        if (version_compare(_PS_VERSION_, '1.6', '<')) {
+            $refundTpl = 'order_refund_ps15';
+        } elseif (version_compare(_PS_VERSION_, '1.7.7.0', '<')) {
+            $refundTpl = 'order_refund_bs3';
+        }
+
+        return $refundTpl;
     }
 }

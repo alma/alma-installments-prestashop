@@ -45,7 +45,7 @@
                         {$refund.totalRefundAmount|escape:'htmlall':'UTF-8'}
                     </td>
                     <td>
-                        {$order.ordersTotalAmount|escape:'htmlall':'UTF-8'}
+                        {$order.paymentTotalAmount|escape:'htmlall':'UTF-8'}
                     </td>
                     <td>
                         <img src="../img/admin/money.gif" />
