@@ -257,7 +257,7 @@ abstract class AbstractAdminFormBuilder
             'label' => false,
             'type' => 'html',
             'form_group_class' => 'input_html',
-            'col' => 12
+            'col' => 12,
         ];
 
         if ($htmlContent) {
