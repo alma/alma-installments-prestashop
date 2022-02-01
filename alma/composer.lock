@@ -4,20 +4,20 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "18edf319da64d57ff88eda3ce6c0cd60",
+    "content-hash": "fc2d2587b0c2a37c3c6b6f0a5cec57d3",
     "packages": [
         {
             "name": "alma/alma-php-client",
-            "version": "v1.3.1",
+            "version": "v1.4.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/alma/alma-php-client.git",
-                "reference": "01ff9acdd462f1f504b48ef5327c072487daf381"
+                "reference": "d53170244924e8aec09fc93394e694c46c12b413"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/alma/alma-php-client/zipball/01ff9acdd462f1f504b48ef5327c072487daf381",
-                "reference": "01ff9acdd462f1f504b48ef5327c072487daf381",
+                "url": "https://api.github.com/repos/alma/alma-php-client/zipball/d53170244924e8aec09fc93394e694c46c12b413",
+                "reference": "d53170244924e8aec09fc93394e694c46c12b413",
                 "shasum": ""
             },
             "require": {
@@ -54,9 +54,9 @@
             "description": "PHP API client for the Alma payments API",
             "support": {
                 "issues": "https://github.com/alma/alma-php-client/issues",
-                "source": "https://github.com/alma/alma-php-client/tree/v1.3.1"
+                "source": "https://github.com/alma/alma-php-client/tree/v1.4.0"
             },
-            "time": "2021-10-01T07:28:16+00:00"
+            "time": "2022-01-20T14:33:45+00:00"
         },
         {
             "name": "psr/log",

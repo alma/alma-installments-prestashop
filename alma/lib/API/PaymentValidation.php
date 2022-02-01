@@ -209,6 +209,19 @@ class PaymentValidation
 
             // Update payment's order reference
             $order = $this->getOrderByCartId((int) $cart->id);
+            $customData = $payment->custom_data;
+            $customData['id_order'] = $order->id;
+
+            try {
+                $alma->payments->edit($payment->id, [
+                    'payment' => [
+                        'custom_data' => $customData,
+                    ],
+                ]);
+            } catch (RequestError $e) {
+                $msg = "[Alma] Error updating order id {$order->id}: {$e->getMessage()}";
+                Logger::instance()->error($msg);
+            }
 
             try {
                 $alma->payments->addOrder($payment->id, [
