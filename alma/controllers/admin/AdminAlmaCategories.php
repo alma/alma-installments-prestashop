@@ -93,7 +93,7 @@ class AdminAlmaCategoriesController extends ModuleAdminController
         parent::init();
 
         $this->_select = (
-            'a.`id_category`, b.`name`, b.`description`, cpl.`name` as `parent`, a.`id_category` as `excluded`'
+            'a.`id_category`, b.`name`, b.`description`, b.`name` as `parent`, a.`id_category` as `excluded`'
         );
         $this->_use_found_rows = false;
 
@@ -104,8 +104,6 @@ class AdminAlmaCategoriesController extends ModuleAdminController
             $this->_join .= ' LEFT JOIN `' . _DB_PREFIX_ . 'category_shop` sa ON (a.`id_category` = sa.`id_category` ';
             $this->_join .= ' AND sa.id_shop = a.id_shop_default) ';
         }
-        $this->_join .= ' LEFT JOIN `' . _DB_PREFIX_ . 'category` cp ON (a.`id_parent` = cp.`id_category`)
-            LEFT JOIN `' . _DB_PREFIX_ . 'category_lang` cpl ON (cp.`id_category` = cpl.`id_category`) ';
 
         // we add restriction for shop
         if (Shop::getContext() == Shop::CONTEXT_SHOP && Shop::isFeatureActive()) {
@@ -116,8 +114,6 @@ class AdminAlmaCategoriesController extends ModuleAdminController
         if (Shop::isFeatureActive() && Shop::getContext() != Shop::CONTEXT_SHOP) {
             unset($this->fields_list['position']);
         }
-
-        $this->_group = 'GROUP BY a.`id_category`';
     }
 
     public function processFilter()
@@ -326,6 +322,30 @@ class AdminAlmaCategoriesController extends ModuleAdminController
         $this->initToolbar();
 
         return $this->renderList();
+    }
+
+    /**
+     * AdminController::renderList() override.
+     *
+     * @return string
+     *
+     * @see AdminController::renderList()
+     */
+    public function renderList()
+    {
+        $this->addRowAction('voidAction');
+
+        return parent::renderList();
+    }
+
+    /**
+     * No button action is table list
+     *
+     * @return string
+     */
+    public function displayVoidActionLink()
+    {
+        return '';
     }
 
     /**
