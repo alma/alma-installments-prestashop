@@ -48,15 +48,7 @@ final class DisplayRefundsHookController extends AdminHookController
     public function run($params)
     {
         $order = new Order($params['id_order']);
-        if ($order->module !== 'alma') {
-            return;
-        }
-
         $alma = ClientHelper::defaultInstance();
-        if (!$alma) {
-            return false;
-        }
-
         $orderPayment = $this->getCurrentOrderPayment($order);
         if (!$orderPayment) {
             $this->ajaxFail(
@@ -65,8 +57,8 @@ final class DisplayRefundsHookController extends AdminHookController
         }
 
         $paymentId = $orderPayment->transaction_id;
-        if (empty($paymentId)) {
-            return false;
+        if ($order->module !== 'alma' || !$alma || empty($paymentId)) {
+            return null;
         }
         
         $payment = $alma->payments->fetch($paymentId);
