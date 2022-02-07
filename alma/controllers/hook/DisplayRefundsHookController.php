@@ -65,7 +65,10 @@ final class DisplayRefundsHookController extends AdminHookController
         }
 
         $paymentId = $orderPayment->transaction_id;
-
+        if (empty($paymentId)) {
+            return false;
+        }
+        
         $payment = $alma->payments->fetch($paymentId);
 
         if (is_callable('Media::getMediaPath')) {
