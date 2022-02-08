@@ -50,17 +50,12 @@ final class DisplayRefundsHookController extends AdminHookController
     public function run($params)
     {
         $order = new Order($params['id_order']);
-        if ($order->module !== 'alma') {
-            return;
-        }
-
         $alma = ClientHelper::defaultInstance();
-        if (!$alma) {
-            return false;
-        }
-
         $orderPayment = $this->getOrderPaymentOrFail($order);
         $paymentId = $orderPayment->transaction_id;
+        if ($order->module !== 'alma' || !$alma || empty($paymentId)) {
+            return null;
+        }
         $payment = $alma->payments->fetch($paymentId);
 
         if (is_callable('Media::getMediaPath')) {
