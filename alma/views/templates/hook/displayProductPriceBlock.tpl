@@ -23,7 +23,7 @@
 
 {$containerId="alma-installments-{$productId}"}
 <div style="display:none">
-    <input type="hidden" id="alma-widget-config" value="{$widgetQuerySelectors|escape:'htmlall':'UTF-8'}" />
+    <input type="hidden" id="alma-widget-config" value='{$widgetQuerySelectors|escape:'htmlall':'UTF-8'}' />
 </div>
 
 <div class="alma-pp-container {$psVersion}">
