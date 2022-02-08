@@ -80,6 +80,8 @@ class PaymentData
 
         $countryShippingAddress = Country::getIsoById((int) $shippingAddress->id_country);
         $countryBillingAddress = Country::getIsoById((int) $billingAddress->id_country);
+        $countryShippingAddress = ($countryShippingAddress) ? $countryShippingAddress : '';
+        $countryBillingAddress = ($countryBillingAddress) ? $countryBillingAddress : '';
 
         $locale = $context->language->iso_code;
         if (property_exists($context->language, 'locale')) {
