@@ -36,6 +36,8 @@ if (!defined('ALMA_MODE_LIVE')) {
     define('ALMA_MODE_LIVE', 'live');
 }
 
+use Alma\PrestaShop\Forms\ExcludedCategoryAdminFormBuilder;
+use Alma\PrestaShop\Forms\PaymentButtonAdminFormBuilder;
 use Alma\PrestaShop\Model\CategoryAdapter;
 use Category;
 use Configuration;
@@ -49,7 +51,7 @@ class Settings
 {
     public static function l($str)
     {
-        return Translate::getModuleTranslation('alma', $str, 'settings');
+        return Translate::getModuleTranslation('alma', $str, SettingsCustomFields::SOURCECUSTOMFIELDS);
     }
 
     public static function get($configKey, $default = null)
@@ -85,11 +87,11 @@ class Settings
             'ALMA_TEST_API_KEY',
             'ALMA_SHOW_DISABLED_BUTTON',
             'ALMA_SHOW_ELIGIBILITY_MESSAGE',
-            SettingsCustomFields::ALMA_PAYMENT_BUTTON_TITLE,
-            SettingsCustomFields::ALMA_PAYMENT_BUTTON_DESC,
-            SettingsCustomFields::ALMA_DEFERRED_BUTTON_TITLE,
-            SettingsCustomFields::ALMA_DEFERRED_BUTTON_DESC,
-            SettingsCustomFields::ALMA_NOT_ELIGIBLE_CATEGORIES,
+            PaymentButtonAdminFormBuilder::ALMA_PAYMENT_BUTTON_TITLE,
+            PaymentButtonAdminFormBuilder::ALMA_PAYMENT_BUTTON_DESC,
+            PaymentButtonAdminFormBuilder::ALMA_DEFERRED_BUTTON_TITLE,
+            PaymentButtonAdminFormBuilder::ALMA_DEFERRED_BUTTON_DESC,
+            ExcludedCategoryAdminFormBuilder::ALMA_NOT_ELIGIBLE_CATEGORIES,
             'ALMA_STATE_REFUND',
             'ALMA_STATE_REFUND_ENABLED',
             'ALMA_EXCLUDED_CATEGORIES',
