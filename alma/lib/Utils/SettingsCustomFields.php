@@ -64,16 +64,21 @@ class SettingsCustomFields
     {
         $module = new Alma();
         $ALMA_PAYMENT_BUTTON_TITLE = $module->l('Pay in %d installments', self::SOURCECUSTOMFIELDS);
+        // phpcs:ignore
         $ALMA_PAYMENT_BUTTON_DESC = $module->l('Pay in %d monthly installments with your credit card.', self::SOURCECUSTOMFIELDS);
         $ALMA_DEFERRED_BUTTON_TITLE = $module->l('Buy now Pay in %d days', self::SOURCECUSTOMFIELDS);
+        // phpcs:ignore
         $ALMA_DEFERRED_BUTTON_DESC = $module->l('Buy now pay in %d days with your credit card.', self::SOURCECUSTOMFIELDS);
+        // phpcs:ignore
         $ALMA_NOT_ELIGIBLE_CATEGORIES = $module->l('Your cart is not eligible for payments with Alma.', self::SOURCECUSTOMFIELDS);
 
         return [
             PaymentButtonAdminFormBuilder::ALMA_PAYMENT_BUTTON_TITLE => 'Pay in %d installments',
+            // phpcs:ignore
             PaymentButtonAdminFormBuilder::ALMA_PAYMENT_BUTTON_DESC => 'Pay in %d monthly installments with your credit card.',
             PaymentButtonAdminFormBuilder::ALMA_DEFERRED_BUTTON_TITLE => 'Buy now Pay in %d days',
             PaymentButtonAdminFormBuilder::ALMA_DEFERRED_BUTTON_DESC => 'Buy now pay in %d days with your credit card.',
+            // phpcs:ignore
             ExcludedCategoryAdminFormBuilder::ALMA_NOT_ELIGIBLE_CATEGORIES => 'Your cart is not eligible for payments with Alma.',
         ];
     }
