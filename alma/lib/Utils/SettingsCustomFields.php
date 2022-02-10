@@ -63,14 +63,11 @@ class SettingsCustomFields
     public static function customFields()
     {
         $module = new Alma();
-        $ALMA_PAYMENT_BUTTON_TITLE = $module->l('Pay in %d installments', self::SOURCECUSTOMFIELDS);
-        // phpcs:ignore
-        $ALMA_PAYMENT_BUTTON_DESC = $module->l('Pay in %d monthly installments with your credit card.', self::SOURCECUSTOMFIELDS);
-        $ALMA_DEFERRED_BUTTON_TITLE = $module->l('Buy now Pay in %d days', self::SOURCECUSTOMFIELDS);
-        // phpcs:ignore
-        $ALMA_DEFERRED_BUTTON_DESC = $module->l('Buy now pay in %d days with your credit card.', self::SOURCECUSTOMFIELDS);
-        // phpcs:ignore
-        $ALMA_NOT_ELIGIBLE_CATEGORIES = $module->l('Your cart is not eligible for payments with Alma.', self::SOURCECUSTOMFIELDS);
+        $module->l('Pay in %d installments', self::SOURCECUSTOMFIELDS);
+        $module->l('Pay in %d monthly installments with your credit card.', self::SOURCECUSTOMFIELDS);
+        $module->l('Buy now Pay in %d days', self::SOURCECUSTOMFIELDS);
+        $module->l('Buy now pay in %d days with your credit card.', self::SOURCECUSTOMFIELDS);
+        $module->l('Your cart is not eligible for payments with Alma.', self::SOURCECUSTOMFIELDS);
 
         return [
             PaymentButtonAdminFormBuilder::ALMA_PAYMENT_BUTTON_TITLE => 'Pay in %d installments',
