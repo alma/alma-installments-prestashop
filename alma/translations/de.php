@@ -122,6 +122,11 @@ $_MODULE['<{alma}prestashop>refundadminformbuilder_76d8f6f6704ea9de044aa669d133c
 $_MODULE['<{alma}prestashop>refundadminformbuilder_a2175c8178a92176b9810d330fbc0e9e'] = 'Ihr Auftragsstatus zur Synchronisierung der Erstattung mit Alma';
 $_MODULE['<{alma}prestashop>refundadminformbuilder_9d21f767a50ad583330024bce9afa2e1'] = 'Erstattung mit Zustandsänderung';
 $_MODULE['<{alma}prestashop>orderdatatrait_7960c85fd5916169fc5038a2192094f8'] = 'Fehler: Alma-Transaktion konnte nicht gefunden werden';
+$_MODULE['<{alma}prestashop>settingscustomfields_300de0751d957421cc332ba21c43a598'] = 'Zahlung in %d Raten';
+$_MODULE['<{alma}prestashop>settingscustomfields_673742ef792de1da72351e0e40ff4b95'] = 'Zahlen Sie in %d monatlichen Raten mit Ihrer Kreditkarte.';
+$_MODULE['<{alma}prestashop>settingscustomfields_726c61fad46c135efb4198820e5484ba'] = 'Jetzt kaufen Bezahlen in %d Tagen';
+$_MODULE['<{alma}prestashop>settingscustomfields_72eeebc4fa7b487eda1e6a468f1c1b48'] = 'Kaufen Sie jetzt und zahlen Sie in %d Tagen mit Ihrer Kreditkarte.';
+$_MODULE['<{alma}prestashop>settingscustomfields_7a854e750fe5f3e7120020c7c20987d4'] = 'Ihr Warenkorb ist nicht für Zahlungen mit Alma geeignet.';
 $_MODULE['<{alma}prestashop>displaypaymentreturn_aca755511864a8c0038740357db865ab'] = 'Ihre Zahlung mit Alma war erfolgreich';
 $_MODULE['<{alma}prestashop>displaypaymentreturn_9b9b747500bf38015ecb1a12119d50cc'] = 'Nummer Ihrer Bestellung:';
 $_MODULE['<{alma}prestashop>displaypaymentreturn_709fa7b44d5d59d2802e7878e35453a9'] = 'Details zu Ihrer Zahlung:';
