@@ -22,7 +22,7 @@
  *}
  
 <div style="display:none">
-    <input type="hidden" id="alma-widget-config" value="{$widgetQuerySelectors|escape:'htmlall':'UTF-8'}" />
+    <input type="hidden" id="alma-widget-config" value='{$widgetQuerySelectors|escape:'htmlall':'UTF-8'}' />
 </div>
 {if $isExcluded}
     <div style="margin: 15px 0">
