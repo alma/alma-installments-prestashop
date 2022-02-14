@@ -1,5 +1,16 @@
 # Changelog
 
+## v2.5.0
+
+- Add more information on Prestashop features
+- Replacement of checkbox by toggle button
+- Add data order_id in custom_data
+- Fix list of excluded categories pagination of more than 50 items.
+- Fix if country returns false for eligibility endpoint
+- Fix order page with refund if payment_id is empty because you use webservice
+- Fix on bug through the 2.0.0 update file
+- Fix if quote not escape in template page for display widget
+
 ## v2.4.1
 
 -   Fixes escape validator Prestashop
