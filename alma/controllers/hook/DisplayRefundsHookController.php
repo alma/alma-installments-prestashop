@@ -1,6 +1,6 @@
 <?php
 /**
- * 2018-2021 Alma SAS
+ * 2018-2022 Alma SAS
  *
  * THE MIT LICENSE
  *
@@ -18,7 +18,7 @@
  * IN THE SOFTWARE.
  *
  * @author    Alma SAS <contact@getalma.eu>
- * @copyright 2018-2021 Alma SAS
+ * @copyright 2018-2022 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
@@ -30,13 +30,15 @@ if (!defined('_PS_VERSION_')) {
 
 use Alma\PrestaShop\API\ClientHelper;
 use Alma\PrestaShop\Hooks\AdminHookController;
+use Alma\PrestaShop\Utils\OrderDataTrait;
 use Currency;
 use Media;
 use Order;
-use OrderPayment;
 
 final class DisplayRefundsHookController extends AdminHookController
 {
+    use OrderDataTrait;
+
     /** @var Order */
     public $order;
 
@@ -48,24 +50,12 @@ final class DisplayRefundsHookController extends AdminHookController
     public function run($params)
     {
         $order = new Order($params['id_order']);
-        if ($order->module !== 'alma') {
-            return;
-        }
-
         $alma = ClientHelper::defaultInstance();
-        if (!$alma) {
-            return false;
-        }
-
-        $orderPayment = $this->getCurrentOrderPayment($order);
-        if (!$orderPayment) {
-            $this->ajaxFail(
-                $this->module->l('Error: Could not find Alma transaction', 'DisplayRefundsHookController')
-            );
-        }
-
+        $orderPayment = $this->getOrderPaymentOrFail($order);
         $paymentId = $orderPayment->transaction_id;
-
+        if ($order->module !== 'alma' || !$alma || empty($paymentId)) {
+            return null;
+        }
         $payment = $alma->payments->fetch($paymentId);
 
         if (is_callable('Media::getMediaPath')) {
@@ -115,6 +105,39 @@ final class DisplayRefundsHookController extends AdminHookController
             'ordersId' => $ordersId,
             'ordersTotalAmount' => almaFormatPrice(almaPriceToCents($ordersTotalAmount), (int) $order->id_currency),
         ];
+        $wording = [
+            'title' => $this->module->l('Alma refund', 'DisplayRefundsHookController'),
+            'description' => sprintf(
+                // phpcs:ignore
+                $this->module->l('Refund this order thanks to the Alma module. This will be applied in your Alma dashboard automatically. The maximum refundable amount includes client fees. %1$sSee documentation%2$s', 'DisplayRefundsHookController'),
+                '<a href="https://docs.getalma.eu/docs/prestashop-refund" target="_blank">',
+                '</a>'
+            ),
+            'labelTypeRefund' => $this->module->l('Refund type:', 'DisplayRefundsHookController'),
+            'labelRadioRefundOneOrder' => sprintf(
+                $this->module->l('Only this order (%s)', 'DisplayRefundsHookController'),
+                $orderData['maxAmount']
+            ),
+            'labelRadioRefundAllOrder' => $this->module->l('Refund the entire order', 'DisplayRefundsHookController'),
+            'labelRadioRefundAllOrderInfoId' => sprintf(
+                // phpcs:ignore
+                $this->module->l('Refund this order (id: %1$d) and all those linked to the same payment (id: %2$s)', 'DisplayRefundsHookController'),
+                $orderData['id'],
+                $orderData['ordersId']
+            ),
+            'labelRadioRefundAllOrderInfoAmount' => sprintf(
+                $this->module->l('Total amount: %s', 'DisplayRefundsHookController'),
+                $orderData['ordersTotalAmount']
+            ),
+            'labelRadioRefundTotalAmout' => $this->module->l('Total amount', 'DisplayRefundsHookController'),
+            'labelRadioRefundPartial' => $this->module->l('Partial', 'DisplayRefundsHookController'),
+            'labelAmoutRefundPartial' => sprintf(
+                $this->module->l('Amount (Max. %s):', 'DisplayRefundsHookController'),
+                $orderData['ordersTotalAmount']
+            ),
+            'placeholderInputRefundPartial' => $this->module->l('Amount to refund...', 'DisplayRefundsHookController'),
+            'buttonRefund' => $this->module->l('Proceed the refund', 'DisplayRefundsHookController'),
+        ];
 
         if (version_compare(_PS_VERSION_, '1.6', '<')) {
             $refundTpl = 'order_refund_ps15';
@@ -130,21 +153,12 @@ final class DisplayRefundsHookController extends AdminHookController
 
         $tpl->assign([
             'iconPath' => $iconPath,
+            'wording' => $wording,
             'order' => $orderData,
             'refund' => $refundData,
             'actionUrl' => $this->context->link->getAdminLink('AdminAlmaRefunds'),
         ]);
 
         return $tpl->fetch();
-    }
-
-    private function getCurrentOrderPayment(Order $order)
-    {
-        $orderPayments = OrderPayment::getByOrderReference($order->reference);
-        if ($orderPayments && isset($orderPayments[0])) {
-            return $orderPayments[0];
-        }
-
-        return false;
     }
 }

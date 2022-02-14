@@ -1,5 +1,5 @@
 {*
- * 2018-2021 Alma SAS
+ * 2018-2022 Alma SAS
  *
  * THE MIT LICENSE
  *
@@ -17,7 +17,7 @@
  * IN THE SOFTWARE.
  *
  * @author    Alma SAS <contact@getalma.eu>
- * @copyright 2018-2021 Alma SAS
+ * @copyright 2018-2022 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  *}
 
@@ -27,7 +27,7 @@
 <fieldset>
     <legend>
         <img src="{$iconPath|escape:'htmlall':'UTF-8'}"/>
-        {l s='Alma refund' mod='alma'}
+        {$wording.title}
     </legend>
     <form id="alma-refund"  method="POST" action="{$actionUrl|escape:'htmlall':'UTF-8'}" class="defaultForm form-horizontal form-alma {if $refund.percentRefund >= 100}disabled{/if}">
         <input type="hidden" class="alma" name="orderId" required value="{$order.id|escape:'htmlall':'UTF-8'}" />
@@ -54,46 +54,45 @@
 	        </tbody>
 	    </table>
         <p>
-            {l s='Refund this order thanks to the Alma module. This will be applied in your Alma dashboard automatically. The maximum refundable amount includes client fees.' mod='alma'}
-            <a href="https://docs.getalma.eu/docs/prestashop-refund" target="_blank">{l s='See documentation' mod='alma'}</a>
+            {$wording.description}
         </p>
         <div class="clear"></div>
-        <label>{l s='Refund type:' mod='alma'}</label>
+        <label>{$wording.labelTypeRefund}</label>
         <div class="margin-form">
             {if $order.ordersId}
                 <input type="radio" autocomplete="off" class="refundType" name="refundType" value="partial_multi" />
-                <label>{l s='Only this order (%s)' sprintf=$order.maxAmount mod='alma'}</label>
+                <label>{$wording.labelRadioRefundOneOrder}</label>
                 <div class="clear"></div>
             {/if} 
             <input type="radio" autocomplete="off" name="refundType" value="total" checked="checked"/>
             <label>
                 {if $order.ordersId}
-                    {l s='Refund the entire order' mod='alma'}
+                    {$wording.labelRadioRefundAllOrder}
                     <br>
-                    <i>{l s='Refund this order (id: %1$d) and all those linked to the same payment (id: %2$s)' sprintf=array($order.id, $order.ordersId) mod='alma'}
+                    <i>{$wording.labelRadioRefundAllOrderInfoId}
                     <br>
-                    {l s='Total amount: %s' sprintf=$order.ordersTotalAmount mod='alma'}
+                    {$wording.labelRadioRefundAllOrderInfoAmount}
                     </i>
                 {else}
-                    {l s='Total amount' mod='alma'}
+                    {$wording.labelRadioRefundTotalAmout}
                 {/if}
             </label>
             <div class="clear"></div>
             <input type="radio" autocomplete="off" name="refundType" value="partial" />
-            <label>{l s='Partial' mod='alma'}</label>
+            <label>{$wording.labelRadioRefundPartial}</label>
             <div class="clear"></div>
         </div>
         <div style="display:none;" id="amountDisplay">
             <label>
-                {l s='Amount (Max. %s):' sprintf=$order.ordersTotalAmount mod='alma'}
+                {$wording.labelAmoutRefundPartial}
             </label>
             <div class="margin-form">
-                <input type="text" autocomplete="off" class="alma-input-number" id="amount" value="" name="amount" placeholder="{l s='Amount to refund...' mod='alma'}" />
+                <input type="text" autocomplete="off" class="alma-input-number" id="amount" value="" name="amount" placeholder="{$wording.placeholderInputRefundPartial}" />
             </div>
         </div>  
         <div class="clear"></div>
         <div class="margin-form">
-            <input type="submit" class="button" value="{l s='Proceed the refund' mod='alma'}" />
+            <input type="submit" class="button" value="{$wording.buttonRefund}" />
         </div>
     </form>
 </fieldset>

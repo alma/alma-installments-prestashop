@@ -1,6 +1,6 @@
 <?php
 /**
- * 2018-2021 Alma SAS
+ * 2018-2022 Alma SAS
  *
  * THE MIT LICENSE
  *
@@ -18,7 +18,7 @@
  * IN THE SOFTWARE.
  *
  * @author    Alma SAS <contact@getalma.eu>
- * @copyright 2018-2021 Alma SAS
+ * @copyright 2018-2022 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
@@ -32,14 +32,16 @@ use Alma\API\RequestError;
 use Alma\PrestaShop\API\ClientHelper;
 use Alma\PrestaShop\Hooks\AdminHookController;
 use Alma\PrestaShop\Utils\Logger;
+use Alma\PrestaShop\Utils\OrderDataTrait;
 use Alma\PrestaShop\Utils\Settings;
 use Order;
-use OrderPayment;
 use PrestaShopDatabaseException;
 use PrestaShopException;
 
 final class StateHookController extends AdminHookController
 {
+    use OrderDataTrait;
+
     /**
      * @param $params
      *
@@ -54,7 +56,7 @@ final class StateHookController extends AdminHookController
 
         $order = new Order($params['id_order']);
         $newStatus = $params['newOrderStatus'];
-        if (!$order_payment = $this->getCurrentOrderPayment($order)) {
+        if (!$order_payment = $this->getOrderPaymentOrFail($order)) {
             return;
         }
 
@@ -74,18 +76,5 @@ final class StateHookController extends AdminHookController
                 return;
             }
         }
-    }
-
-    private function getCurrentOrderPayment(Order $order)
-    {
-        if ('alma' != $order->module && 1 == $order->valid) {
-            return false;
-        }
-        $order_payments = OrderPayment::getByOrderReference($order->reference);
-        if ($order_payments && isset($order_payments[0])) {
-            return $order_payments[0];
-        }
-
-        return false;
     }
 }

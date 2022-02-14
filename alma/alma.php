@@ -1,6 +1,6 @@
 <?php
 /**
- * 2018-2021 Alma SAS
+ * 2018-2022 Alma SAS
  *
  * THE MIT LICENSE
  *
@@ -18,7 +18,7 @@
  * IN THE SOFTWARE.
  *
  * @author    Alma SAS <contact@getalma.eu>
- * @copyright 2018-2021 Alma SAS
+ * @copyright 2018-2022 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
@@ -321,8 +321,10 @@ class Alma extends PaymentModule
 
     public function hookDisplayBackOfficeHeader($params)
     {
+        $this->context->controller->setMedia();
         $this->context->controller->addCSS($this->_path . 'views/css/admin/_configure/helpers/form/form.css', 'all');
         $this->context->controller->addCSS($this->_path . 'views/css/admin/almaPage.css', 'all');
+        $this->context->controller->addJS($this->_path . 'views/js/admin/alma.js');
     }
 
     public function hookPaymentOptions($params)

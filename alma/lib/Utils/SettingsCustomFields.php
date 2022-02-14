@@ -1,6 +1,6 @@
 <?php
 /**
- * 2018-2021 Alma SAS
+ * 2018-2022 Alma SAS
  *
  * THE MIT LICENSE
  *
@@ -18,7 +18,7 @@
  * IN THE SOFTWARE.
  *
  * @author    Alma SAS <contact@getalma.eu>
- * @copyright 2018-2021 Alma SAS
+ * @copyright 2018-2022 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
@@ -28,15 +28,17 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
+use Alma;
+use Alma\PrestaShop\Forms\ExcludedCategoryAdminFormBuilder;
+use Alma\PrestaShop\Forms\PaymentButtonAdminFormBuilder;
 use Language;
 
+/**
+ * Class SettingsCustomFields
+ */
 class SettingsCustomFields
 {
-    const ALMA_PAYMENT_BUTTON_TITLE = 'ALMA_PAYMENT_BUTTON_TITLE';
-    const ALMA_PAYMENT_BUTTON_DESC = 'ALMA_PAYMENT_BUTTON_DESC';
-    const ALMA_DEFERRED_BUTTON_TITLE = 'ALMA_DEFERRED_BUTTON_TITLE';
-    const ALMA_DEFERRED_BUTTON_DESC = 'ALMA_DEFERRED_BUTTON_DESC';
-    const ALMA_NOT_ELIGIBLE_CATEGORIES = 'ALMA_NOT_ELIGIBLE_CATEGORIES';
+    const SOURCECUSTOMFIELDS = 'SettingsCustomFields';
 
     /**
      * Init default custom fileds in ps_configuration table
@@ -47,7 +49,7 @@ class SettingsCustomFields
     {
         $languages = Language::getLanguages(false);
 
-        foreach (self::customFields() as $keyConfig => $string) {
+        foreach (self::customFields() as $keyConfig) {
             // phpcs:ignore
             Settings::updateValue($keyConfig, json_encode(self::getAllLangCustomFieldByKeyConfig($keyConfig, $languages)));
         }
@@ -60,12 +62,21 @@ class SettingsCustomFields
      */
     public static function customFields()
     {
+        $module = new Alma();
+        $module->l('Pay in %d installments', self::SOURCECUSTOMFIELDS);
+        $module->l('Pay in %d monthly installments with your credit card.', self::SOURCECUSTOMFIELDS);
+        $module->l('Buy now Pay in %d days', self::SOURCECUSTOMFIELDS);
+        $module->l('Buy now pay in %d days with your credit card.', self::SOURCECUSTOMFIELDS);
+        $module->l('Your cart is not eligible for payments with Alma.', self::SOURCECUSTOMFIELDS);
+
         return [
-            self::ALMA_PAYMENT_BUTTON_TITLE => 'Pay in %d installments',
-            self::ALMA_PAYMENT_BUTTON_DESC => 'Pay in %d monthly installments with your credit card.',
-            self::ALMA_DEFERRED_BUTTON_TITLE => 'Buy now Pay in %d days',
-            self::ALMA_DEFERRED_BUTTON_DESC => 'Buy now pay in %d days with your credit card.',
-            self::ALMA_NOT_ELIGIBLE_CATEGORIES => 'Your cart is not eligible for payments with Alma.',
+            PaymentButtonAdminFormBuilder::ALMA_PAYMENT_BUTTON_TITLE => 'Pay in %d installments',
+            // phpcs:ignore
+            PaymentButtonAdminFormBuilder::ALMA_PAYMENT_BUTTON_DESC => 'Pay in %d monthly installments with your credit card.',
+            PaymentButtonAdminFormBuilder::ALMA_DEFERRED_BUTTON_TITLE => 'Buy now Pay in %d days',
+            PaymentButtonAdminFormBuilder::ALMA_DEFERRED_BUTTON_DESC => 'Buy now pay in %d days with your credit card.',
+            // phpcs:ignore
+            ExcludedCategoryAdminFormBuilder::ALMA_NOT_ELIGIBLE_CATEGORIES => 'Your cart is not eligible for payments with Alma.',
         ];
     }
 
@@ -83,7 +94,7 @@ class SettingsCustomFields
             $return[$language['id_lang']] = [
                 'locale' => $language['iso_code'],
                 // phpcs:ignore
-                'string' => LocaleHelper::getModuleTranslation(self::customFields()[$keyConfig], 'settings', $language['iso_code']),
+                'string' => LocaleHelper::getModuleTranslation(self::customFields()[$keyConfig], self::SOURCECUSTOMFIELDS, $language['iso_code']),
             ];
         }
 
@@ -128,7 +139,7 @@ class SettingsCustomFields
             foreach ($languages as $lang) {
                 if (!array_key_exists($lang['id_lang'], $arrayFields)) {
                     // phpcs:ignore
-                    $arrayFields[$lang['id_lang']] = LocaleHelper::getModuleTranslation(self::customFields()[$keyConfig], 'settings', $lang['iso_code']);
+                    $arrayFields[$lang['id_lang']] = LocaleHelper::getModuleTranslation(self::customFields()[$keyConfig], self::SOURCECUSTOMFIELDS, $lang['iso_code']);
                 }
             }
         }
@@ -143,7 +154,7 @@ class SettingsCustomFields
      */
     public static function getPaymentButtonTitle()
     {
-        return self::aggregateAllLanguagesCustomFields(self::ALMA_PAYMENT_BUTTON_TITLE);
+        return self::aggregateAllLanguagesCustomFields(PaymentButtonAdminFormBuilder::ALMA_PAYMENT_BUTTON_TITLE);
     }
 
     /**
@@ -165,7 +176,7 @@ class SettingsCustomFields
      */
     public static function getPaymentButtonDescription()
     {
-        return self::aggregateAllLanguagesCustomFields(self::ALMA_PAYMENT_BUTTON_DESC);
+        return self::aggregateAllLanguagesCustomFields(PaymentButtonAdminFormBuilder::ALMA_PAYMENT_BUTTON_DESC);
     }
 
     /**
@@ -187,7 +198,7 @@ class SettingsCustomFields
      */
     public static function getPaymentButtonTitleDeferred()
     {
-        return self::aggregateAllLanguagesCustomFields(self::ALMA_DEFERRED_BUTTON_TITLE);
+        return self::aggregateAllLanguagesCustomFields(PaymentButtonAdminFormBuilder::ALMA_DEFERRED_BUTTON_TITLE);
     }
 
     /**
@@ -209,7 +220,7 @@ class SettingsCustomFields
      */
     public static function getPaymentButtonDescriptionDeferred()
     {
-        return self::aggregateAllLanguagesCustomFields(self::ALMA_DEFERRED_BUTTON_DESC);
+        return self::aggregateAllLanguagesCustomFields(PaymentButtonAdminFormBuilder::ALMA_DEFERRED_BUTTON_DESC);
     }
 
     /**
@@ -231,7 +242,7 @@ class SettingsCustomFields
      */
     public static function getNonEligibleCategoriesMessage()
     {
-        return self::aggregateAllLanguagesCustomFields(self::ALMA_NOT_ELIGIBLE_CATEGORIES);
+        return self::aggregateAllLanguagesCustomFields(ExcludedCategoryAdminFormBuilder::ALMA_NOT_ELIGIBLE_CATEGORIES);
     }
 
     /**

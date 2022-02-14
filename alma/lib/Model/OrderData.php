@@ -1,7 +1,7 @@
 <?php
 
 /**
- * 2018-2021 Alma SAS
+ * 2018-2022 Alma SAS
  *
  * THE MIT LICENSE
  *
@@ -19,7 +19,7 @@
  * IN THE SOFTWARE.
  *
  * @author    Alma SAS <contact@getalma.eu>
- * @copyright 2018-2021 Alma SAS
+ * @copyright 2018-2022 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
@@ -36,6 +36,9 @@ class OrderData
 {
     public static function getCurrentOrderPayment(Order $order)
     {
+        if ('alma' != $order->module && 1 == $order->valid) {
+            return false;
+        }
         $orderPayments = OrderPayment::getByOrderReference($order->reference);
         if ($orderPayments && isset($orderPayments[0])) {
             return $orderPayments[0];

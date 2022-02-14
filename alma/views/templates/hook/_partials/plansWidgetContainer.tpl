@@ -1,5 +1,5 @@
 {*
- * 2018-2021 Alma SAS
+ * 2018-2022 Alma SAS
  *
  * THE MIT LICENSE
  *
@@ -17,9 +17,9 @@
  * IN THE SOFTWARE.
  *
  * @author    Alma SAS <contact@getalma.eu>
- * @copyright 2018-2021 Alma SAS
+ * @copyright 2018-2022 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  *}
 
-<div id="{$containerId}" class="alma-widget-container" data-settings="{$settings|almaJsonEncode|escape:'htmlall':'UTF-8'}"></div>
+<div id="{$containerId}" class="alma-widget-container" data-settings='{$settings|almaJsonEncode|escape:'htmlall':'UTF-8'}'></div>
 <script type="text/javascript">window.__alma_refreshWidgets && __alma_refreshWidgets();</script>

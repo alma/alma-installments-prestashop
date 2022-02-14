@@ -1,6 +1,6 @@
 <?php
 /**
- * 2018-2021 Alma SAS
+ * 2018-2022 Alma SAS
  *
  * THE MIT LICENSE
  *
@@ -18,7 +18,7 @@
  * IN THE SOFTWARE.
  *
  * @author    Alma SAS <contact@getalma.eu>
- * @copyright 2018-2021 Alma SAS
+ * @copyright 2018-2022 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
@@ -209,6 +209,19 @@ class PaymentValidation
 
             // Update payment's order reference
             $order = $this->getOrderByCartId((int) $cart->id);
+            $customData = $payment->custom_data;
+            $customData['id_order'] = $order->id;
+
+            try {
+                $alma->payments->edit($payment->id, [
+                    'payment' => [
+                        'custom_data' => $customData,
+                    ],
+                ]);
+            } catch (RequestError $e) {
+                $msg = "[Alma] Error updating order id {$order->id}: {$e->getMessage()}";
+                Logger::instance()->error($msg);
+            }
 
             try {
                 $alma->payments->addOrder($payment->id, [

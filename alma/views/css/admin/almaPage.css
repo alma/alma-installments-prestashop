@@ -52,6 +52,15 @@ i.icon-alma{
     z-index: 1;
 }
 
+.alma--spacer{
+    clear: both;
+    color: #E2EAED;
+}
+
+.alma--border{
+    border: solid 1px #E2EAED;
+}
+
 /*PS1.6*/
 .panel-heading .alma-progress{
     margin-top: 7px;
@@ -74,4 +83,71 @@ i.icon-alma{
 }
 fieldset .form-alma.disabled::before{
     background-color: rgba(235, 237, 244, .7);
+}
+.form-group .margin-form .alma_switch label{
+    width: 55px;
+}
+.preference_description{
+    margin-top: 5px;
+}
+.margin-form.input_html{
+    padding-left: 0;
+    clear: left;
+}
+
+/*Switch*/
+.bootstrap .form-horizontal .checkbox.alma_switch{
+    padding-top: 4px;
+}
+.bootstrap label.switch{
+    display: flex;
+    align-items: center;
+    padding-left: 10px;
+    height: 25px;
+}
+
+.switch input[type=checkbox]{
+	height: 0;
+	width: 0;
+	visibility: hidden;
+}
+
+.switch .slider {
+	cursor: pointer;
+	text-indent: -9999px;
+	width: 45px;
+	height: 25px;
+	background: grey;
+	display: block;
+	border-radius: 100px;
+	position: relative;
+    margin-right: 20px;
+}
+
+.switch .slider:after {
+	content: '';
+	position: absolute;
+	top: 2px;
+	left: 2px;
+	width: 21px;
+	height: 21px;
+	background: #fff;
+	border-radius: 21px;
+	transition: 0.3s;
+}
+
+.switch input:checked + .slider {
+	background: #00425d;
+}
+
+.switch input:checked + .slider:after {
+	left: calc(100% - 2px);
+	transform: translateX(-100%);
+}
+
+.switch .slider:active:after {
+	width: 35px;
+}
+.bootstrap .prestashop-switch .slide-button::after {
+    top: 49%;
 }

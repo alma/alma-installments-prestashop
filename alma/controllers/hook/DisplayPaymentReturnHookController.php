@@ -1,6 +1,6 @@
 <?php
 /**
- * 2018-2021 Alma SAS
+ * 2018-2022 Alma SAS
  *
  * THE MIT LICENSE
  *
@@ -18,7 +18,7 @@
  * IN THE SOFTWARE.
  *
  * @author    Alma SAS <contact@getalma.eu>
- * @copyright 2018-2021 Alma SAS
+ * @copyright 2018-2022 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
@@ -32,22 +32,19 @@ use Alma\API\RequestError;
 use Alma\PrestaShop\API\ClientHelper;
 use Alma\PrestaShop\API\PaymentValidationError;
 use Alma\PrestaShop\Hooks\FrontendHookController;
-use Alma\PrestaShop\Model\OrderData;
 use Alma\PrestaShop\Utils\Logger;
+use Alma\PrestaShop\Utils\OrderDataTrait;
 
 final class DisplayPaymentReturnHookController extends FrontendHookController
 {
+    use OrderDataTrait;
+
     public function run($params)
     {
         $this->context->controller->addCSS($this->module->_path . 'views/css/alma.css', 'all');
 
         $order = array_key_exists('objOrder', $params) ? $params['objOrder'] : $params['order'];
-        $orderPayment = OrderData::getCurrentOrderPayment($order);
-        if (!$orderPayment) {
-            $this->ajaxFail(
-                $this->module->l('Error: Could not find Alma transaction', 'DisplayPaymentReturnHookController')
-            );
-        }
+        $orderPayment = $this->getOrderPaymentOrFail($order);
         $alma = ClientHelper::defaultInstance();
         $almaPaymentId = $orderPayment->transaction_id;
 

@@ -1,7 +1,7 @@
 <?php
 
 /**
- * 2018-2021 Alma SAS
+ * 2018-2022 Alma SAS
  *
  * THE MIT LICENSE
  *
@@ -19,7 +19,7 @@
  * IN THE SOFTWARE.
  *
  * @author    Alma SAS <contact@getalma.eu>
- * @copyright 2018-2021 Alma SAS
+ * @copyright 2018-2022 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
@@ -80,6 +80,8 @@ class PaymentData
 
         $countryShippingAddress = Country::getIsoById((int) $shippingAddress->id_country);
         $countryBillingAddress = Country::getIsoById((int) $billingAddress->id_country);
+        $countryShippingAddress = ($countryShippingAddress) ? $countryShippingAddress : '';
+        $countryBillingAddress = ($countryBillingAddress) ? $countryBillingAddress : '';
 
         $locale = $context->language->iso_code;
         if (property_exists($context->language, 'locale')) {
