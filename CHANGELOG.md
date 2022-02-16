@@ -1,5 +1,9 @@
 # Changelog
 
+## v2.5.1
+
+- Fix order page if is not alma payment
+
 ## v2.5.0
 
 - Add more information on Prestashop features
