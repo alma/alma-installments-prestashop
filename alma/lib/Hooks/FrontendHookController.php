@@ -36,11 +36,12 @@ abstract class FrontendHookController extends HookController
     public function canRun()
     {
         $isLive = Settings::getActiveMode() === ALMA_MODE_LIVE;
+        $isAlmapayStore = $_SERVER['HTTP_HOST'] === 'almapay.store';
 
         // Front controllers can run if the module is properly configured ...
         return Settings::isFullyConfigured()
-            // ... and the plugin is in LIVE mode, or the visitor is an admin
-            && ($isLive || $this->loggedAsEmployee())
+            // ... and the plugin is in LIVE mode, or the visitor is an admin or the website is almapay.store
+            && ($isLive || $this->loggedAsEmployee() || $isAlmapayStore)
             // ... and the current shop's currency is EUR
             && in_array(Tools::strtoupper($this->context->currency->iso_code), $this->module->limited_currencies);
     }
