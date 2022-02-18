@@ -56,7 +56,7 @@ final class StateHookController extends AdminHookController
 
         $order = new Order($params['id_order']);
         $newStatus = $params['newOrderStatus'];
-        if (!$order_payment = $this->getOrderPaymentOrFail($order)) {
+        if ($order->module !== 'alma' || !$order_payment = $this->getOrderPaymentOrFail($order)) {
             return;
         }
 
