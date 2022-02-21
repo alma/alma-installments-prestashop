@@ -1,5 +1,11 @@
 # Changelog
 
+## v2.5.2
+
+- Fix an error if you change order status with refund option enabled
+- Fix no show widget if controller return php_self false
+- Fix warning in return excluded categories
+
 ## v2.5.1
 
 - Fix order page if is not alma payment
