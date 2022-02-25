@@ -33,12 +33,20 @@ class AdminAlmaRefundsController extends ModuleAdminController
     use AjaxTrait;
     use OrderDataTrait;
 
+    /**
+     * If set to true, page content and messages will be encoded to JSON before responding to AJAX request.
+     *
+     * @var bool
+     * @override
+     */
     protected $json = true;
 
     /**
-     * Make refund over ajax request
+     * Make refund over ajax request and display json on std output
      *
-     * @return string as json object
+     * @return void
+     * @throws PrestaShopDatabaseException
+     * @throws PrestaShopException
      */
     public function ajaxProcessRefund()
     {
@@ -113,7 +121,7 @@ class AdminAlmaRefundsController extends ModuleAdminController
             }
         }
 
-        $json = [
+        $jsonReturn = [
             'success' => true,
             'message' => $this->module->l('Refund has been processed', 'AdminAlmaRefunds'),
             'paymentData' => $refundResult,
@@ -125,8 +133,8 @@ class AdminAlmaRefundsController extends ModuleAdminController
         ];
 
         method_exists(get_parent_class($this), 'ajaxDie')
-            ? $this->ajaxDie(json_encode($json))
-            : die(Tools::jsonEncode($json));
+            ? $this->ajaxDie(json_encode($jsonReturn))
+            : die(Tools::jsonEncode($jsonReturn));
     }
 
     /**
