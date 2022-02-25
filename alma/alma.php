@@ -78,13 +78,18 @@ class Alma extends PaymentModule
         }
     }
 
-    public function install()
+    /**
+     * Check parent install result then add log errors if any
+     *
+     * @param $coreInstall
+     *
+     * @return bool as result of parent::install() method
+     */
+    private function checkCoreInstall($coreInstall)
     {
-        $Logger = Alma\PrestaShop\Utils\Logger::loggerClass();
-
-        $core_install = parent::install();
-        if (!$core_install) {
-            $Logger::addLog("Alma: Core module install failed (returned {$core_install})", 3);
+        if (!$coreInstall) {
+            $Logger = Alma\PrestaShop\Utils\Logger::loggerClass();
+            $Logger::addLog("Alma: Core module install failed (returned {$coreInstall})", 3);
 
             if (count($this->_errors) > 0) {
                 $errors = implode(', ', $this->_errors);
@@ -94,10 +99,42 @@ class Alma extends PaymentModule
             return false;
         }
 
-        if (!$this->checkDependencies()) {
+        return true;
+    }
+
+    /**
+     * Insert module into datable.
+     *
+     * @override
+     */
+    public function install()
+    {
+
+        $coreInstall = parent::install();
+
+        if (!$this->checkCoreInstall($coreInstall) ||
+            !$this->checkDependencies() ||
+            !$this->registerHooks()) {
             return false;
         }
 
+        Tools::clearCache();
+
+        // Enable Alma payment for all installed carriers in PrestaShop 1.7+
+        if (version_compare(_PS_VERSION_, '1.7', '>=')) {
+            $this->updateCarriersWithAlma();
+        }
+
+        return $this->installTabs();
+    }
+
+    /**
+     * Try to register mandatory hooks
+     *
+     * @return bool as false if one registration fail
+     */
+    private function registerHooks()
+    {
         $commonHooks = [
             'header',
             'displayBackOfficeHeader',
@@ -129,14 +166,7 @@ class Alma extends PaymentModule
             }
         }
 
-        Tools::clearCache();
-
-        // Enable Alma payment for all installed carriers in PrestaShop 1.7+
-        if (version_compare(_PS_VERSION_, '1.7', '>=')) {
-            $this->updateCarriersWithAlma();
-        }
-
-        return $this->installTabs();
+        return true;
     }
 
     private function updateCarriersWithAlma()
@@ -169,6 +199,11 @@ class Alma extends PaymentModule
         return $this->runHookController('displayProductPriceBlock', $params);
     }
 
+    /**
+     * Check php lib dependencies and versions
+     *
+     * @return bool
+     */
     private function checkDependencies()
     {
         $result = true;
