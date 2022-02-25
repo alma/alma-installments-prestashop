@@ -35,6 +35,11 @@ class AdminAlmaRefundsController extends ModuleAdminController
 
     protected $json = true;
 
+    /**
+     * Make refund over ajax request
+     *
+     * @return string as json object
+     */
     public function ajaxProcessRefund()
     {
         $refundType = Tools::getValue('refundType');
@@ -61,6 +66,13 @@ class AdminAlmaRefundsController extends ModuleAdminController
             case 'total':
                 $isTotal = true;
                 $amount = $order->getOrdersTotalPaid();
+            default :
+                $msg = sprintf(
+                    $this->module->l('Error: unknow refund type (%s)', 'AdminAlmaRefunds'),
+                    $refundType
+                );
+                Logger::instance()->error($msg);
+                $this->ajaxFail($msg, 400);
         }
 
         $refundResult = false;
