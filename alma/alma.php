@@ -273,6 +273,17 @@ class Alma extends PaymentModule
             && $this->uninstallTab('alma');
     }
 
+    /**
+     * Add Alma in backoffice menu
+     *
+     * @param string $class class controller
+     * @param string $name tab title
+     * @param null|string $parent parent class name
+     * @param null|int $position order in menu
+     * @param null|string $icon fontAwesome class icon
+     *
+     * @return bool if save succefuly
+     */
     private function installTab($class, $name, $parent = null, $position = null, $icon = null)
     {
         $tab = Tab::getInstanceFromClassName($class);
@@ -288,17 +299,14 @@ class Alma extends PaymentModule
             $tab->name[$lang['id_lang']] = $name;
         }
 
+        $tab->id_parent = 0;
         if ($parent) {
-            if (version_compare(_PS_VERSION_, '1.7', '>=')) {
-                if ($icon) {
-                    $tab->icon = $icon;
-                }
+            if (version_compare(_PS_VERSION_, '1.7', '>=') && $icon) {
+                $tab->icon = $icon;
             }
 
             $parentTab = Tab::getInstanceFromClassName($parent);
             $tab->id_parent = $parentTab->id;
-        } else {
-            $tab->id_parent = 0;
         }
 
         $tab->module = $this->name;
