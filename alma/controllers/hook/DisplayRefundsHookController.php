@@ -28,11 +28,12 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
+use Alma\API\RequestError;
 use Alma\PrestaShop\API\ClientHelper;
 use Alma\PrestaShop\Hooks\AdminHookController;
+use Alma\PrestaShop\Utils\Logger;
 use Alma\PrestaShop\Utils\OrderDataTrait;
 use Currency;
-use Media;
 use Order;
 
 final class DisplayRefundsHookController extends AdminHookController
@@ -66,7 +67,12 @@ final class DisplayRefundsHookController extends AdminHookController
         if (empty($paymentId)) {
             return null;
         }
-        $payment = $alma->payments->fetch($paymentId);
+        try {
+            $payment = $alma->payments->fetch($paymentId);
+        } catch(RequestError $e) {
+            Logger::instance()->warning("[Alma] can't get payment with this payment_id : $paymentId");
+            return null;
+        }
 
         $refundData = null;
         $totalRefund = null;
