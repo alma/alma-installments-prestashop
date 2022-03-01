@@ -173,7 +173,7 @@ final class DisplayRefundsHookController extends AdminHookController
         $orderPayment = $this->getOrderPaymentOrFail($order);
         $paymentId = $orderPayment->transaction_id;
         if (empty($paymentId)) {
-            throw new PaymentNotFoundError('[Alma] paymentId doesn\'t exist');
+            throw new PaymentNotFoundError("[Alma] paymentId doesn't exist");
         }
         try {
             return $alma->payments->fetch($paymentId);
