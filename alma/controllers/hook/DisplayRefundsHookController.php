@@ -52,31 +52,6 @@ final class DisplayRefundsHookController extends AdminHookController
     /**
      * Run Hook for show block Refund in Order page if is payment Alma
      *
-     * @param Order $order
-     *
-     * @return Payment
-     */
-    private function getPayment($order)
-    {
-        $alma = ClientHelper::defaultInstance();
-        if ($order->module !== 'alma' || !$alma) {
-            throw new PaymentNotFoundError('Alma is not available');
-        }
-        $orderPayment = $this->getOrderPaymentOrFail($order);
-        $paymentId = $orderPayment->transaction_id;
-        if (empty($paymentId)) {
-            throw new PaymentNotFoundError('paymentId doesn\'t exist');
-        }
-        try {
-            return $alma->payments->fetch($paymentId);
-        } catch(RequestError $e) {
-            throw new PaymentNotFoundError("can't get payment with this payment_id : $paymentId");
-        }
-    }
-
-    /**
-     * Run Hook for show block Refund in Order page if is payment Alma
-     *
      * @param array $params
      *
      * @return null|string as the template fetched
@@ -88,7 +63,7 @@ final class DisplayRefundsHookController extends AdminHookController
             $payment = $this->getPayment($order);
         } catch (PaymentNotFoundError $e) {
             // if we can't have the payment, log why and return null
-            Logger::instance()->warning($e->getMessage());
+            Logger::instance()->debug($e->getMessage());
             return null;
         }
 
@@ -180,6 +155,31 @@ final class DisplayRefundsHookController extends AdminHookController
         ]);
 
         return $tpl->fetch();
+    }
+
+    /**
+     * Run Hook for show block Refund in Order page if is payment Alma
+     *
+     * @param Order $order
+     *
+     * @return Payment
+     */
+    private function getPayment($order)
+    {
+        $alma = ClientHelper::defaultInstance();
+        if ($order->module !== 'alma' || !$alma) {
+            throw new PaymentNotFoundError('Alma is not available');
+        }
+        $orderPayment = $this->getOrderPaymentOrFail($order);
+        $paymentId = $orderPayment->transaction_id;
+        if (empty($paymentId)) {
+            throw new PaymentNotFoundError('[Alma] paymentId doesn\'t exist');
+        }
+        try {
+            return $alma->payments->fetch($paymentId);
+        } catch(RequestError $e) {
+            throw new PaymentNotFoundError("[Alma] Can't get payment with this payment_id : $paymentId");
+        }
     }
 
     /**
