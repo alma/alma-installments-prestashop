@@ -28,11 +28,13 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
+use Alma\API\RequestError;
 use Alma\PrestaShop\API\ClientHelper;
+use Alma\PrestaShop\API\PaymentNotFoundError;
 use Alma\PrestaShop\Hooks\AdminHookController;
+use Alma\PrestaShop\Utils\Logger;
 use Alma\PrestaShop\Utils\OrderDataTrait;
 use Currency;
-use Media;
 use Order;
 
 final class DisplayRefundsHookController extends AdminHookController
@@ -57,16 +59,13 @@ final class DisplayRefundsHookController extends AdminHookController
     public function run($params)
     {
         $order = new Order($params['id_order']);
-        $alma = ClientHelper::defaultInstance();
-        if ($order->module !== 'alma' || !$alma) {
+        try {
+            $payment = $this->getPayment($order);
+        } catch (PaymentNotFoundError $e) {
+            // if we can't have the payment, log why and return null
+            Logger::instance()->debug($e->getMessage());
             return null;
         }
-        $orderPayment = $this->getOrderPaymentOrFail($order);
-        $paymentId = $orderPayment->transaction_id;
-        if (empty($paymentId)) {
-            return null;
-        }
-        $payment = $alma->payments->fetch($paymentId);
 
         $refundData = null;
         $totalRefund = null;
@@ -156,6 +155,31 @@ final class DisplayRefundsHookController extends AdminHookController
         ]);
 
         return $tpl->fetch();
+    }
+
+    /**
+     * Run Hook for show block Refund in Order page if is payment Alma
+     *
+     * @param Order $order
+     *
+     * @return Payment
+     */
+    private function getPayment($order)
+    {
+        $alma = ClientHelper::defaultInstance();
+        if ($order->module !== 'alma' || !$alma) {
+            throw new PaymentNotFoundError('Alma is not available');
+        }
+        $orderPayment = $this->getOrderPaymentOrFail($order);
+        $paymentId = $orderPayment->transaction_id;
+        if (empty($paymentId)) {
+            throw new PaymentNotFoundError("[Alma] paymentId doesn't exist");
+        }
+        try {
+            return $alma->payments->fetch($paymentId);
+        } catch(RequestError $e) {
+            throw new PaymentNotFoundError("[Alma] Can't get payment with this payment_id : $paymentId");
+        }
     }
 
     /**
