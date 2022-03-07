@@ -34,12 +34,12 @@
             },
             "type": "library",
             "autoload": {
-                "psr-4": {
-                    "Alma\\API\\": "src/"
-                },
                 "files": [
                     "src/lib/array.php"
-                ]
+                ],
+                "psr-4": {
+                    "Alma\\API\\": "src/"
+                }
             },
             "notification-url": "https://packagist.org/downloads/",
             "license": [

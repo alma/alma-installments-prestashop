@@ -45,6 +45,7 @@ class AdminAlmaRefundsController extends ModuleAdminController
      * Make refund over ajax request and display json on std output
      *
      * @return void
+     *
      * @throws PrestaShopDatabaseException
      * @throws PrestaShopException
      */
@@ -74,7 +75,8 @@ class AdminAlmaRefundsController extends ModuleAdminController
             case 'total':
                 $isTotal = true;
                 $amount = $order->getOrdersTotalPaid();
-            default :
+                // no break
+            default:
                 $msg = sprintf(
                     $this->module->l('Error: unknow refund type (%s)', 'AdminAlmaRefunds'),
                     $refundType

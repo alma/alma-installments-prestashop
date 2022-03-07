@@ -109,7 +109,6 @@ class Alma extends PaymentModule
      */
     public function install()
     {
-
         $coreInstall = parent::install();
 
         if (!$this->checkCoreInstall($coreInstall) ||
@@ -278,9 +277,9 @@ class Alma extends PaymentModule
      *
      * @param string $class class controller
      * @param string $name tab title
-     * @param null|string $parent parent class name
-     * @param null|int $position order in menu
-     * @param null|string $icon fontAwesome class icon
+     * @param string|null $parent parent class name
+     * @param int|null $position order in menu
+     * @param string|null $icon fontAwesome class icon
      *
      * @return bool if save succefuly
      */

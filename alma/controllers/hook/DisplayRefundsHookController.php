@@ -54,7 +54,7 @@ final class DisplayRefundsHookController extends AdminHookController
      *
      * @param array $params
      *
-     * @return null|string as the template fetched
+     * @return string|null as the template fetched
      */
     public function run($params)
     {
@@ -64,6 +64,7 @@ final class DisplayRefundsHookController extends AdminHookController
         } catch (PaymentNotFoundError $e) {
             // if we can't have the payment, log why and return null
             Logger::instance()->debug($e->getMessage());
+
             return null;
         }
 
@@ -143,7 +144,7 @@ final class DisplayRefundsHookController extends AdminHookController
         ];
 
         $tpl = $this->context->smarty->createTemplate(
-            "{$this->module->local_path}views/templates/hook/" . $this->getTemplateName() . ".tpl"
+            "{$this->module->local_path}views/templates/hook/" . $this->getTemplateName() . '.tpl'
         );
 
         $tpl->assign([
@@ -177,7 +178,7 @@ final class DisplayRefundsHookController extends AdminHookController
         }
         try {
             return $alma->payments->fetch($paymentId);
-        } catch(RequestError $e) {
+        } catch (RequestError $e) {
             throw new PaymentNotFoundError("[Alma] Can't get payment with this payment_id : $paymentId");
         }
     }
