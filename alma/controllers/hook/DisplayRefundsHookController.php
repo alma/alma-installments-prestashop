@@ -131,13 +131,13 @@ final class DisplayRefundsHookController extends AdminHookController
             ),
             'labelRadioRefundAllOrderInfoAmount' => sprintf(
                 $this->module->l('Total amount: %s', 'DisplayRefundsHookController'),
-                $orderData['ordersTotalAmount']
+                $orderData['paymentTotalAmount']
             ),
             'labelRadioRefundTotalAmout' => $this->module->l('Total amount', 'DisplayRefundsHookController'),
             'labelRadioRefundPartial' => $this->module->l('Partial', 'DisplayRefundsHookController'),
             'labelAmoutRefundPartial' => sprintf(
                 $this->module->l('Amount (Max. %s):', 'DisplayRefundsHookController'),
-                $orderData['ordersTotalAmount']
+                $orderData['paymentTotalAmount']
             ),
             'placeholderInputRefundPartial' => $this->module->l('Amount to refund...', 'DisplayRefundsHookController'),
             'buttonRefund' => $this->module->l('Proceed the refund', 'DisplayRefundsHookController'),
