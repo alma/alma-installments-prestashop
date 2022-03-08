@@ -1,5 +1,11 @@
 # Changelog
 
+## v2.5.3
+
+- Fix config form block hidden by default in other module
+- Fix order page is broken if show orders Test in Live mode
+- Fix refund in order page from Prestashop 1.6 and 1.5
+
 ## v2.5.2
 
 - Fix an error if you change order status with refund option enabled
