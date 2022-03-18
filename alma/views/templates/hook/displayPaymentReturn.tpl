@@ -21,6 +21,7 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  *}
 
+{if $payment}
 <section class="order-confirmation">
     <div class="alma-confirmation--logo">
         <img src="/modules/alma/views/img/logos/logo_alma.svg" alt="Alma" />
@@ -67,3 +68,4 @@
         {l s='We appreciate your business' mod='alma'}
     </p>
 </section>
+{/if}

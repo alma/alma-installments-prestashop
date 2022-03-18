@@ -389,13 +389,21 @@ class Alma extends PaymentModule
     // Deprecated for version 1.7
     public function hookDisplayPaymentReturn($params)
     {
-        return $this->runHookController('displayPaymentReturn', $params);
+        try {
+            return $this->runHookController('displayPaymentReturn', $params);
+        } catch (Exception $e) {
+            return '';
+        }
     }
 
     // New name of displayPaymentReturn hook for 1.7
     public function hookPaymentReturn($params)
     {
-        return $this->runHookController('displayPaymentReturn', $params);
+        try {
+            return $this->runHookController('displayPaymentReturn', $params);
+        } catch (Exception $e) {
+            return '';
+        }
     }
 
     public function hookDisplayShoppingCartFooter($params)
