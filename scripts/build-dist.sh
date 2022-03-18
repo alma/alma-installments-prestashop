@@ -6,7 +6,8 @@
 DIR=$(pwd)
 
 mkdir -p ./tmp/build/alma
-cp -r ./alma/* ./tmp/build/alma
+cp -r CHANGELOG.md ./alma/* ./tmp/build/alma
+
 
 mkdir ./dist
 
