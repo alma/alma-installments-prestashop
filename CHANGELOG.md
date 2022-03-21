@@ -2,7 +2,7 @@
 
 ## v2.6.0
 
-- Payment at shipping QA in merchant
+- Payment at shipping
 
 ## v2.5.3
 

@@ -187,18 +187,18 @@ final class PaymentOptionsHookController extends FrontendHookController
      * @param string $ctaText
      * @param string $action
      * @param bool $isDeferred
-     * @param int $value
+     * @param int $valueBNPL
      *
      * @return PaymentOption
      */
-    private function createPaymentOption($forEUComplianceModule, $ctaText, $action, $isDeferred, $value)
+    private function createPaymentOption($forEUComplianceModule, $ctaText, $action, $isDeferred, $valueBNPL)
     {
         $baseDir = _PS_MODULE_DIR_ . $this->module->name;
 
         if ($isDeferred) {
-            $logoName = "${value}j_logo.svg";
+            $logoName = "${valueBNPL}j_logo.svg";
         } else {
-            $logoName = "p${value}x_logo.svg";
+            $logoName = "p${valueBNPL}x_logo.svg";
         }
 
         if ($forEUComplianceModule) {
