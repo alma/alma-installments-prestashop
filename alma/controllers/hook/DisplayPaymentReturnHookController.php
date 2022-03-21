@@ -30,8 +30,7 @@ if (!defined('_PS_VERSION_')) {
 
 use Alma\API\RequestError;
 use Alma\PrestaShop\API\ClientHelper;
-use Alma\PrestaShop\API\PaymentValidationError;
-use Alma\PrestaShop\Controllers\Hook\Exception\RenderPaymentException;
+use Alma\PrestaShop\Exception\RenderPaymentException;
 use Alma\PrestaShop\Hooks\FrontendHookController;
 use Alma\PrestaShop\Utils\Logger;
 use Alma\PrestaShop\Utils\OrderDataTrait;
@@ -59,7 +58,7 @@ final class DisplayPaymentReturnHookController extends FrontendHookController
                 $payment = $alma->payments->fetch($almaPaymentId);
             } catch (RequestError $e) {
                 Logger::instance()->error("[Alma] Error fetching payment with ID {$almaPaymentId}: {$e->getMessage()}");
-                throw new PaymentValidationError(null, $e->getMessage());
+                throw new RenderPaymentException($e->getMessage());
             }
         }
 

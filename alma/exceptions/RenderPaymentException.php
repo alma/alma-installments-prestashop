@@ -22,13 +22,9 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
-namespace Alma\PrestaShop\Controllers\Hook\Exception;
+namespace Alma\PrestaShop\Exception;
 
 use Exception;
-
-if (!defined('_PS_VERSION_')) {
-    exit;
-}
 
 class RenderPaymentException extends Exception
 {
