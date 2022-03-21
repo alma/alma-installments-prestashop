@@ -36,14 +36,24 @@
         {l s='Details for your payment:' mod='alma'} <b>{$payment_order->payment_method|escape:'htmlall':'UTF-8'}</b>
     </p>
     <div class="alma-fee-plan--block">
-    {foreach from=$payment->payment_plan item=plan name=counter}
+    {foreach from=$payment->payment_plan item=plan key=k name=counter}
         <span class="alma-fee-plan--description">
             <span class="alma-fee-plan--date">
+            {if $payment->deferred_trigger}
+                {if $smarty.foreach.counter.iteration === 1}
+                    {l s='Today' mod='alma'}
+                {elseif $smarty.foreach.counter.iteration === 2}
+                    {l s='At shipping' mod='alma'}
+                {else}
+                    {l s='%s month later' sprintf=[$plan->time_delta_from_start['months']] mod='alma'}
+                {/if}
+            {else}
                 {if $smarty.foreach.counter.iteration === 1}
                     {l s='Today' mod='alma'}
                 {else}
                     {dateFormat date=$plan->due_date|date_format:"%Y-%m-%d" full=0}
                 {/if}
+            {/if}
             </span>
             <span class="alma-fee-plan--amount">
                 {almaFormatPrice cents=$plan->purchase_amount + $plan->customer_fee}

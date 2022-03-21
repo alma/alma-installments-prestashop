@@ -35,6 +35,7 @@ use Alma\PrestaShop\Forms\CartEligibilityAdminFormBuilder;
 use Alma\PrestaShop\Forms\DebugAdminFormBuilder;
 use Alma\PrestaShop\Forms\ExcludedCategoryAdminFormBuilder;
 use Alma\PrestaShop\Forms\PaymentButtonAdminFormBuilder;
+use Alma\PrestaShop\Forms\PaymentOnTriggeringAdminFormBuilder;
 use Alma\PrestaShop\Forms\PnxAdminFormBuilder;
 use Alma\PrestaShop\Forms\ProductEligibilityAdminFormBuilder;
 use Alma\PrestaShop\Forms\RefundAdminFormBuilder;
@@ -101,6 +102,7 @@ final class GetContentHookController extends AdminHookController
                     $almaPlans[$key]['enabled'] = 1;
                     $almaPlans[$key]['min'] = $feePlan->min_purchase_amount;
                     $almaPlans[$key]['max'] = $feePlan->max_purchase_amount;
+                    $almaPlans[$key]['deferred_trigger_limit_days'] = $feePlan->deferred_trigger_limit_days;
                     $almaPlans[$key]['order'] = 1;
                     Settings::updateValue('ALMA_FEE_PLANS', json_encode($almaPlans));
                     break;
@@ -211,6 +213,15 @@ final class GetContentHookController extends AdminHookController
             $isStateRefundEnabled = (bool) Tools::getValue('ALMA_STATE_REFUND_ENABLED_ON');
             Settings::updateValue('ALMA_STATE_REFUND_ENABLED', $isStateRefundEnabled);
 
+            $idStatePaymentTrigger = Tools::getValue('ALMA_STATE_TRIGGER');
+            Settings::updateValue('ALMA_STATE_TRIGGER', $idStatePaymentTrigger);
+
+            $isStatePaymentTriggerEnabled = (bool) Tools::getValue('ALMA_PAYMENT_ON_TRIGGERING_ENABLED_ON');
+            Settings::updateValue('ALMA_PAYMENT_ON_TRIGGERING_ENABLED', $isStatePaymentTriggerEnabled);
+
+            $descriptionPaymentTrigger = Tools::getValue('ALMA_DESCRIPTION_TRIGGER');
+            Settings::updateValue('ALMA_DESCRIPTION_TRIGGER', $descriptionPaymentTrigger);
+
             $activateLogging = (bool) Tools::getValue('ALMA_ACTIVATE_LOGGING_ON');
             Settings::updateValue('ALMA_ACTIVATE_LOGGING', $activateLogging);
 
@@ -291,6 +302,7 @@ final class GetContentHookController extends AdminHookController
                         $almaPlans[$key]['enabled'] = '0';
                         $almaPlans[$key]['min'] = $feePlan->min_purchase_amount;
                         $almaPlans[$key]['max'] = $feePlan->max_purchase_amount;
+                        $almaPlans[$key]['deferred_trigger_limit_days'] = $feePlan->deferred_trigger_limit_days;
                         $almaPlans[$key]['order'] = (int) $position;
                         ++$position;
                     } else {
@@ -298,6 +310,7 @@ final class GetContentHookController extends AdminHookController
                         $almaPlans[$key]['enabled'] = $enablePlan ? '1' : '0';
                         $almaPlans[$key]['min'] = almaPriceToCents($min);
                         $almaPlans[$key]['max'] = almaPriceToCents($max);
+                        $almaPlans[$key]['deferred_trigger_limit_days'] = $feePlan->deferred_trigger_limit_days;
                         $almaPlans[$key]['order'] = (int) Tools::getValue("ALMA_${key}_SORT_ORDER");
                     }
                 }
@@ -448,6 +461,8 @@ final class GetContentHookController extends AdminHookController
         $productBuilder = new ProductEligibilityAdminFormBuilder($this->module, $this->context, $iconPath);
         $excludedBuilder = new ExcludedCategoryAdminFormBuilder($this->module, $this->context, $iconPath);
         $refundBuilder = new RefundAdminFormBuilder($this->module, $this->context, $iconPath);
+        // phpcs:ignore
+        $triggerBuilder = new PaymentOnTriggeringAdminFormBuilder($this->module, $this->context, $iconPath, ['feePlans' => $feePlansOrdered]);
         $paymentBuilder = new PaymentButtonAdminFormBuilder($this->module, $this->context, $iconPath);
         $debugBuilder = new DebugAdminFormBuilder($this->module, $this->context, $iconPath);
 
@@ -462,6 +477,7 @@ final class GetContentHookController extends AdminHookController
             $fieldsForms[] = $paymentBuilder->build();
             $fieldsForms[] = $excludedBuilder->build();
             $fieldsForms[] = $refundBuilder->build();
+            $fieldsForms[] = $triggerBuilder->build();
         }
         $fieldsForms[] = $apiBuilder->build();
         $fieldsForms[] = $debugBuilder->build();
@@ -501,6 +517,9 @@ final class GetContentHookController extends AdminHookController
             'ALMA_ACTIVATE_LOGGING_ON' => (bool) Settings::canLog(),
             'ALMA_STATE_REFUND' => Settings::getRefundState(),
             'ALMA_STATE_REFUND_ENABLED_ON' => Settings::isRefundEnabledByState(),
+            'ALMA_STATE_TRIGGER' => Settings::getPaymentTriggerState(),
+            'ALMA_PAYMENT_ON_TRIGGERING_ENABLED_ON' => Settings::isPaymentTriggerEnabledByState(),
+            'ALMA_DESCRIPTION_TRIGGER' => Settings::getKeyDescriptionPaymentTrigger(),
             'ALMA_NOT_ELIGIBLE_CATEGORIES' => SettingsCustomFields::getNonEligibleCategoriesMessage(),
             'ALMA_SHOW_PRODUCT_ELIGIBILITY_ON' => Settings::showProductEligibility(),
             'ALMA_PRODUCT_PRICE_SELECTOR' => Settings::getProductPriceQuerySelector(),

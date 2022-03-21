@@ -34,11 +34,19 @@ use Alma\PrestaShop\Model\CartData;
 use Alma\PrestaShop\Utils\Settings;
 use Alma\PrestaShop\Utils\SettingsCustomFields;
 use Cart;
+use Language;
 use Media;
 use Tools;
 
 final class DisplayPaymentHookController extends FrontendHookController
 {
+    /**
+     * Payment option for Hook DisplayPayment (Prestashop 1.6)
+     *
+     * @param array $params
+     *
+     * @return string
+     */
     public function run($params)
     {
         // Check if some products in cart are in the excludes listing
@@ -63,8 +71,8 @@ final class DisplayPaymentHookController extends FrontendHookController
         );
 
         foreach ($installmentPlans as $plan) {
-            $n = $plan->installmentsCount;
-            $key = "general_{$n}_{$plan->deferredDays}_{$plan->deferredMonths}";
+            $installment = $plan->installmentsCount;
+            $key = "general_{$installment}_{$plan->deferredDays}_{$plan->deferredMonths}";
             $plans = $plan->paymentPlan;
             $disabled = false;
             $creditInfo = [
@@ -74,17 +82,20 @@ final class DisplayPaymentHookController extends FrontendHookController
                 'taeg' => $plan->annualInterestRate,
             ];
 
-            if (Settings::isDeferred($plan)) {
-                if ($n == 1) {
-                    if (!$plan->isEligible && $feePlans->$key->enabled && Settings::showDisabledButton()) {
-                        $disabled = true;
-                        $plans = null;
-                    } elseif (!$plan->isEligible) {
-                        continue;
-                    }
-                    $duration = Settings::getDuration($plan);
-                    $logo = $this->getAlmaLogo(true, $duration);
-                    $paymentOption = [
+            $isDeferred = Settings::isDeferred($plan);
+            $isInstallmentAccordingToDeferred = $isDeferred ? $installment === 1 : $installment !== 1;
+
+            if ($isInstallmentAccordingToDeferred) {
+                if (!$plan->isEligible && $feePlans->$key->enabled && Settings::showDisabledButton()) {
+                    $disabled = true;
+                    $plans = null;
+                } elseif (!$plan->isEligible) {
+                    continue;
+                }
+                $duration = Settings::getDuration($plan);
+                $valueLogo = $isDeferred ? $duration : $installment;
+                $logo = $this->getAlmaLogo($isDeferred, $valueLogo);
+                $paymentOption = [
                     'link' => $this->context->link->getModuleLink(
                         $this->module->name,
                         'payment',
@@ -92,58 +103,73 @@ final class DisplayPaymentHookController extends FrontendHookController
                         true
                     ),
                     'disabled' => $disabled,
-                    'duration' => $duration,
-                    'key' => $key,
-                    'pnx' => $n,
+                    'pnx' => $installment,
                     'logo' => $logo,
                     'plans' => $plans,
-                    'isDeferred' => true,
-                    'text' => sprintf(SettingsCustomFields::getPaymentButtonTitleDeferredByLang($idLang), $duration),
                     // phpcs:ignore
-                    'desc' => sprintf(SettingsCustomFields::getPaymentButtonDescriptionDeferredByLang($idLang), $duration),
+                    'installmentText' => $this->getInstallmentText($plans, $idLang, Settings::isDeferredTriggerLimitDays($feePlans, $key)),
+                    'deferred_trigger_limit_days' => $feePlans->$key->deferred_trigger_limit_days,
+                    'isDeferred' => $isDeferred,
+                    'text' => sprintf(SettingsCustomFields::getPaymentButtonTitleByLang($idLang), $installment),
+                    'desc' => sprintf(SettingsCustomFields::getPaymentButtonDescriptionByLang($idLang), $installment),
                     'creditInfo' => $creditInfo,
-                    ];
-                    $paymentOptions[$key] = $paymentOption;
-                    $sortOptions[$key] = $feePlans->$key->order;
+                ];
+                if ($isDeferred) {
+                    $paymentOption['duration'] = $duration;
+                    $paymentOption['key'] = $key;
+                    // phpcs:ignore
+                    $paymentOption['text'] = sprintf(SettingsCustomFields::getPaymentButtonTitleDeferredByLang($idLang), $duration);
+                    // phpcs:ignore
+                    $paymentOption['desc'] = sprintf(SettingsCustomFields::getPaymentButtonDescriptionDeferredByLang($idLang), $duration);
                 }
-            } else {
-                if ($n != 1) {
-                    if (!$plan->isEligible && $feePlans->$key->enabled && Settings::showDisabledButton()) {
-                        $disabled = true;
-                        $plans = null;
-                    } elseif (!$plan->isEligible) {
-                        continue;
-                    }
-                    $logo = $this->getAlmaLogo(false, $n);
-                    $paymentOption = [
-                        'link' => $this->context->link->getModuleLink(
-                            $this->module->name,
-                            'payment',
-                            ['key' => $key],
-                            true
-                        ),
-                        'disabled' => $disabled,
-                        'plans' => $plans,
-                        'pnx' => $n,
-                        'logo' => $logo,
-                        'isDeferred' => false,
-                        'text' => sprintf(SettingsCustomFields::getPaymentButtonTitleByLang($idLang), $n),
-                        'desc' => sprintf(SettingsCustomFields::getPaymentButtonDescriptionByLang($idLang), $n),
-                        'creditInfo' => $creditInfo,
-                    ];
-                    $paymentOptions[$key] = $paymentOption;
-                    $sortOptions[$key] = $feePlans->$key->order;
-                }
+                $paymentOptions[$key] = $paymentOption;
+                $sortOptions[$key] = $feePlans->$key->order;
             }
         }
 
         asort($sortOptions);
         $payment = [];
-        foreach ($sortOptions as $key => $option) {
+        foreach (array_keys($sortOptions) as $key) {
             $payment[] = $paymentOptions[$key];
         }
 
         return $this->displayAlmaPaymentOption($payment);
+    }
+
+    /**
+     * Text of one liner installment
+     *
+     * @param array $plans
+     * @param int $idLang
+     *
+     * @return string text one liner option
+     */
+    private function getInstallmentText($plans, $idLang, $isDeferredTriggerLimitDays) {
+        $nbPlans = count($plans);
+        $locale = Language::getIsoById($idLang);
+
+        if ($isDeferredTriggerLimitDays) {
+            return sprintf(
+                $this->module->l('%1$s then %2$d x %3$s', 'DisplayPaymentHookController'),
+                // phpcs:ignore
+                almaFormatPrice($plans[0]['total_amount']) . ' ' . SettingsCustomFields::getDescriptionPaymentTriggerByLang($idLang),
+                $nbPlans - 1,
+                almaFormatPrice($plans[1]['total_amount'])
+            );
+        }
+        if ($nbPlans > 1) {
+            return sprintf(
+                $this->module->l('%1$s today then %2$d x %3$s', 'DisplayPaymentHookController'),
+                almaFormatPrice($plans[0]['total_amount']),
+                $nbPlans - 1,
+                almaFormatPrice($plans[1]['total_amount'])
+            );
+        }
+        return sprintf(
+            $this->module->l('0 € today then %1$s on %2$s', 'DisplayPaymentHookController'),
+            almaFormatPrice($plans[0]['purchase_amount'] + $plans[0]['customer_fee']),
+            getDateFormat($locale, $plans[0]['due_date'])
+        );
     }
 
     private function displayAlmaPaymentOption($paymentOption)

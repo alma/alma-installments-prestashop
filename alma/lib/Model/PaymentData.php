@@ -31,6 +31,8 @@ if (!defined('_PS_VERSION_')) {
 
 use Address;
 use Alma\PrestaShop\Utils\Logger;
+use Alma\PrestaShop\Utils\Settings;
+use Alma\PrestaShop\Utils\SettingsCustomFields;
 use Cart;
 use Context;
 use Country;
@@ -99,7 +101,7 @@ class PaymentData
                     'installments_count' => $plan['installmentsCount'],
                     'deferred_days' => $plan['deferredDays'],
                     'deferred_months' => $plan['deferredMonths'],
-            ];
+                ];
             }
 
             return [
@@ -168,7 +170,7 @@ class PaymentData
         $customerData['state_province'] = State::getNameById((int) $idStateBilling);
         $customerData['country'] = Country::getIsoById((int) $billingAddress->id_country);
 
-        return [
+        $dataPayment = [
             'payment' => [
                 'installments_count' => $feePlans['installmentsCount'],
                 'deferred_days' => $feePlans['deferredDays'],
@@ -205,5 +207,13 @@ class PaymentData
             ],
             'customer' => $customerData,
         ];
+
+        if (Settings::isDeferredTriggerLimitDays($feePlans)) {
+            $dataPayment['payment']['deferred'] = "trigger";
+            // phpcs:ignore
+            $dataPayment['payment']['deferred_description'] = SettingsCustomFields::getDescriptionPaymentTriggerByLang($context->language->id);
+        }
+
+        return $dataPayment;
     }
 }

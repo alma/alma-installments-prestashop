@@ -138,3 +138,26 @@ function almaFormatPrice($cents, $id_currency = null)
 
     return $formattedPrice;
 }
+
+/**
+ * format date by locale
+ *
+ * @param string $locale
+ * @param int $timestamp
+ *
+ * @return string date
+ */
+function getDateFormat($locale, $timestamp)
+{
+    try {
+        $formatter = new IntlDateFormatter($locale, IntlDateFormatter::MEDIUM, IntlDateFormatter::NONE);
+        if ($formatter === null) {
+            throw new IntlException(intl_get_error_message());
+        }
+    
+        return $formatter->format($timestamp);
+    } catch (IntlException $e){
+        $date = new DateTime($timestamp);
+        return $date->format('m/d/Y');
+    }
+}

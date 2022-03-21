@@ -26,6 +26,6 @@ namespace Alma\PrestaShop\API;
 
 use Exception;
 
-class PaymentNotFoundError extends Exception
+class PaymentNotFoundException extends Exception
 {
 }
