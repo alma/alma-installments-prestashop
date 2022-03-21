@@ -1,5 +1,9 @@
 # Changelog
 
+## v2.6.0
+
+- Payment at shipping QA in merchant
+
 ## v2.5.3
 
 - Fix config form block hidden by default in other module
