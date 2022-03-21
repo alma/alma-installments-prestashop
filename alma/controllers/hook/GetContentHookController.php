@@ -39,6 +39,7 @@ use Alma\PrestaShop\Forms\PaymentOnTriggeringAdminFormBuilder;
 use Alma\PrestaShop\Forms\PnxAdminFormBuilder;
 use Alma\PrestaShop\Forms\ProductEligibilityAdminFormBuilder;
 use Alma\PrestaShop\Forms\RefundAdminFormBuilder;
+use Alma\PrestaShop\Forms\ShareOfCheckoutAdminFormBuilder;
 use Alma\PrestaShop\Hooks\AdminHookController;
 use Alma\PrestaShop\Utils\Logger;
 use Alma\PrestaShop\Utils\Settings;
@@ -235,6 +236,10 @@ final class GetContentHookController extends AdminHookController
 
             $activateLogging = (bool) Tools::getValue('ALMA_ACTIVATE_LOGGING_ON');
             Settings::updateValue('ALMA_ACTIVATE_LOGGING', $activateLogging);
+
+            $activateShareOfCheckout = (bool) Tools::getValue('ALMA_ACTIVATE_SHARE_OF_CHECKOUT_ON');
+            // phpcs:ignore
+            Settings::updateValue(ShareOfCheckoutAdminFormBuilder::ALMA_ACTIVATE_SHARE_OF_CHECKOUT, $activateShareOfCheckout);
 
             if ($merchant) {
                 // First validate that plans boundaries are correctly set
@@ -480,6 +485,7 @@ final class GetContentHookController extends AdminHookController
         $triggerBuilder = new PaymentOnTriggeringAdminFormBuilder($this->module, $this->context, $iconPath, ['feePlans' => $feePlansOrdered]);
         $paymentBuilder = new PaymentButtonAdminFormBuilder($this->module, $this->context, $iconPath);
         $debugBuilder = new DebugAdminFormBuilder($this->module, $this->context, $iconPath);
+        $shareOfCheckoutBuilder = new ShareOfCheckoutAdminFormBuilder($this->module, $this->context, $iconPath);
 
         $fieldsForms = [];
 
@@ -496,6 +502,7 @@ final class GetContentHookController extends AdminHookController
         }
         $fieldsForms[] = $apiBuilder->build();
         $fieldsForms[] = $debugBuilder->build();
+        $fieldsForms[] = $shareOfCheckoutBuilder->build();
 
         $helper = new HelperForm();
         $helper->module = $this->module;
@@ -532,6 +539,7 @@ final class GetContentHookController extends AdminHookController
             'ALMA_PRODUCT_WDGT_NOT_ELGBL_ON' => Settings::showProductWidgetIfNotEligible(),
             'ALMA_CATEGORIES_WDGT_NOT_ELGBL_ON' => Settings::showCategoriesWidgetIfNotEligible(),
             'ALMA_ACTIVATE_LOGGING_ON' => (bool) Settings::canLog(),
+            'ALMA_ACTIVATE_SHARE_OF_CHECKOUT_ON' => (bool) Settings::canShareOfCheckout(),
             'ALMA_STATE_REFUND' => Settings::getRefundState(),
             'ALMA_STATE_REFUND_ENABLED_ON' => Settings::isRefundEnabledByState(),
             'ALMA_STATE_TRIGGER' => Settings::getPaymentTriggerState(),
