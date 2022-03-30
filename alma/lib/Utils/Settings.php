@@ -111,6 +111,7 @@ class Settings
             'ALMA_PAYMENT_ON_TRIGGERING_ENABLED',
             PaymentOnTriggeringAdminFormBuilder::ALMA_DESCRIPTION_TRIGGER,
             'ALMA_ACTIVATE_FRAGMENT',
+            FragmentAdminFormBuilder::ALMA_ACTIVATE_FRAGMENT,
             'ALMA_EXCLUDED_CATEGORIES',
             'ALMA_SHOW_PRODUCT_ELIGIBILITY',
             'ALMA_FEE_PLANS',
