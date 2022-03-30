@@ -238,8 +238,13 @@ final class GetContentHookController extends AdminHookController
             Settings::updateValue('ALMA_ACTIVATE_LOGGING', $activateLogging);
 
             $activateShareOfCheckout = (bool) Tools::getValue('ALMA_ACTIVATE_SHARE_OF_CHECKOUT_ON');
+            $dateShareOfCheckout = Tools::getValue('ALMA_SHARE_OF_CHECKOUT_DATE');
             // phpcs:ignore
             Settings::updateValue(ShareOfCheckoutAdminFormBuilder::ALMA_ACTIVATE_SHARE_OF_CHECKOUT, $activateShareOfCheckout);
+            Settings::updateValue(ShareOfCheckoutAdminFormBuilder::ALMA_SHARE_OF_CHECKOUT_DATE, $dateShareOfCheckout);
+            if (!Settings::canShareOfCheckout()) {
+                Settings::updateValue(ShareOfCheckoutAdminFormBuilder::ALMA_SHARE_OF_CHECKOUT_DATE, '');
+            }
 
             if ($merchant) {
                 // First validate that plans boundaries are correctly set
@@ -540,6 +545,7 @@ final class GetContentHookController extends AdminHookController
             'ALMA_CATEGORIES_WDGT_NOT_ELGBL_ON' => Settings::showCategoriesWidgetIfNotEligible(),
             'ALMA_ACTIVATE_LOGGING_ON' => (bool) Settings::canLog(),
             'ALMA_ACTIVATE_SHARE_OF_CHECKOUT_ON' => (bool) Settings::canShareOfCheckout(),
+            'ALMA_SHARE_OF_CHECKOUT_DATE' => Settings::dateShareOfCheckout(),
             'ALMA_STATE_REFUND' => Settings::getRefundState(),
             'ALMA_STATE_REFUND_ENABLED_ON' => Settings::isRefundEnabledByState(),
             'ALMA_STATE_TRIGGER' => Settings::getPaymentTriggerState(),

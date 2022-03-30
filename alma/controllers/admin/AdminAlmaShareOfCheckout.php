@@ -22,6 +22,8 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
+use Alma\PrestaShop\Forms\ShareOfCheckoutAdminFormBuilder;
+use Alma\PrestaShop\Utils\Settings;
 use PrestaShop\PrestaShop\Adapter\Entity\Order;
 
 class AdminAlmaShareOfCheckoutController extends ModuleAdminController
@@ -30,6 +32,11 @@ class AdminAlmaShareOfCheckoutController extends ModuleAdminController
     public const TOTAL_AMOUNT_KEY = "total_amount";
     public const CURRENCY_KEY = "currency";
     public const PAYMENT_METHOD_KEY = "payment_method_name";
+
+    public function initContent()
+    {
+        $this->getPayload();
+    }
 
     public function getTotalOrders()
     {
@@ -55,12 +62,23 @@ class AdminAlmaShareOfCheckoutController extends ModuleAdminController
 
     public function getOrderIds()
     {
+        $orderIds = [];
+        $statesPayed = [2, 3, 4, 5, 9];
         $order = new Order();
+        $orderIdsByDate = $order->getOrdersIdByDate($this->getFromDate(), $this->getToDate());
+        foreach($orderIdsByDate as $orderId) {
+            $currentOrder = new Order($orderId);
+            if (in_array((int) $currentOrder->current_state, $statesPayed)) {
+                $orderIds[] = $currentOrder->id;
+            }
+        }
 
-        return $order->getOrdersIdByDate($this->getFromDate(), $this->getToDate());
+        var_dump($orderIds);
+
+        return $orderIds;
     }
 
-    public function getTotalCheckouts()
+    public function getTotalPaymentMethods()
     {
         $ordersByCheckout = [];
 
@@ -102,12 +120,17 @@ class AdminAlmaShareOfCheckoutController extends ModuleAdminController
 
     public function getFromDate()
     {
-        return '2022-03-18';
+        return $this->dateToday();
     }
 
     public function getToDate()
     {
-        return '2022-03-18';
+        return $this->dateToday();
+    }
+
+    public function dateToday()
+    {
+        return $today = date("Y-m-d");
     }
 
     /**
@@ -121,7 +144,7 @@ class AdminAlmaShareOfCheckoutController extends ModuleAdminController
             "start_time"=> $this->getFromDate(),
             "end_time"  => $this->getToDate(),
             "orders"    => $this->getTotalOrders(),
-            "checkouts" => $this->getTotalCheckouts()
+            "payment_methods" => $this->getTotalPaymentMethods()
         ];
     }
 }

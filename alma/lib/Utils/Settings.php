@@ -84,6 +84,7 @@ class Settings
             'ALMA_FULLY_CONFIGURED',
             'ALMA_ACTIVATE_LOGGING',
             ShareOfCheckoutAdminFormBuilder::ALMA_ACTIVATE_SHARE_OF_CHECKOUT,
+            ShareOfCheckoutAdminFormBuilder::ALMA_SHARE_OF_CHECKOUT_DATE,
             'ALMA_API_MODE',
             'ALMA_MERCHANT_ID',
             'ALMA_LIVE_API_KEY',
@@ -140,6 +141,14 @@ class Settings
     public static function canShareOfCheckout()
     {
         return (bool) (int) self::get(ShareOfCheckoutAdminFormBuilder::ALMA_ACTIVATE_SHARE_OF_CHECKOUT, false);
+    }
+
+    public static function dateShareOfCheckout()
+    {
+        return date('Y-m-d');
+        if (!self::canShareOfCheckout()) {
+            return '';
+        }
     }
 
     public static function getActiveMode()
