@@ -37,6 +37,7 @@ if (!defined('ALMA_MODE_LIVE')) {
 }
 
 use Alma\PrestaShop\Forms\ExcludedCategoryAdminFormBuilder;
+use Alma\PrestaShop\Forms\FragmentAdminFormBuilder;
 use Alma\PrestaShop\Forms\PaymentButtonAdminFormBuilder;
 use Alma\PrestaShop\Forms\PaymentOnTriggeringAdminFormBuilder;
 use Alma\PrestaShop\Forms\ShareOfCheckoutAdminFormBuilder;
@@ -105,7 +106,7 @@ class Settings
             'ALMA_STATE_TRIGGER',
             'ALMA_PAYMENT_ON_TRIGGERING_ENABLED',
             PaymentOnTriggeringAdminFormBuilder::ALMA_DESCRIPTION_TRIGGER,
-            'ALMA_ACTIVATE_FRAGMENT',
+            FragmentAdminFormBuilder::ALMA_ACTIVATE_FRAGMENT,
             'ALMA_EXCLUDED_CATEGORIES',
             'ALMA_SHOW_PRODUCT_ELIGIBILITY',
             'ALMA_FEE_PLANS',
