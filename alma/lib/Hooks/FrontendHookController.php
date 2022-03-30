@@ -36,7 +36,7 @@ abstract class FrontendHookController extends HookController
     public function canRun()
     {
         $isLive = Settings::getActiveMode() === ALMA_MODE_LIVE;
-        $isAlmapayStore = $_SERVER['HTTP_HOST'] === 'almapay.store';
+        $isAlmapayStore = strpos($_SERVER['HTTP_HOST'], 'almapay.store') !== false;
 
         // Front controllers can run if the module is properly configured ...
         return Settings::isFullyConfigured()
