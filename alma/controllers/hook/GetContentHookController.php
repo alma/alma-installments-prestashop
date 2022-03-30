@@ -250,15 +250,6 @@ final class GetContentHookController extends AdminHookController
             $activateFragment = (bool) Tools::getValue('ALMA_ACTIVATE_FRAGMENT_ON');
             Settings::updateValue('ALMA_ACTIVATE_FRAGMENT', $activateFragment);
 
-            $idStatePaymentTrigger = Tools::getValue('ALMA_STATE_TRIGGER');
-            Settings::updateValue('ALMA_STATE_TRIGGER', $idStatePaymentTrigger);
-
-            $isStatePaymentTriggerEnabled = (bool) Tools::getValue('ALMA_PAYMENT_ON_TRIGGERING_ENABLED_ON');
-            Settings::updateValue('ALMA_PAYMENT_ON_TRIGGERING_ENABLED', $isStatePaymentTriggerEnabled);
-
-            $descriptionPaymentTrigger = Tools::getValue('ALMA_DESCRIPTION_TRIGGER');
-            Settings::updateValue('ALMA_DESCRIPTION_TRIGGER', $descriptionPaymentTrigger);
-
             $activateLogging = (bool) Tools::getValue('ALMA_ACTIVATE_LOGGING_ON');
             Settings::updateValue('ALMA_ACTIVATE_LOGGING', $activateLogging);
 
@@ -528,6 +519,7 @@ final class GetContentHookController extends AdminHookController
             $fieldsForms[] = $triggerBuilder->build();
             $fieldsForms[] = $fragmentBuilder->build();
             $fieldsForms[] = $triggerBuilder->build();
+            $fieldsForms[] = $fragmentBuilder->build();
         }
 
         $fieldsForms[] = $apiBuilder->build();
