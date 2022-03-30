@@ -23,7 +23,6 @@
  */
 
 use Alma\PrestaShop\Forms\ShareOfCheckoutAdminFormBuilder;
-use Alma\PrestaShop\Utils\Settings;
 use PrestaShop\PrestaShop\Adapter\Entity\Order;
 
 class AdminAlmaShareOfCheckoutController extends ModuleAdminController
@@ -38,6 +37,11 @@ class AdminAlmaShareOfCheckoutController extends ModuleAdminController
         $this->getPayload();
     }
 
+    /**
+     * Total Orders to send
+     *
+     * @return array
+     */
     public function getTotalOrders()
     {
         $ordersByCurrency = [];
@@ -60,12 +64,19 @@ class AdminAlmaShareOfCheckoutController extends ModuleAdminController
         return array_values($ordersByCurrency);
     }
 
+    /**
+     * Order Ids validated by date
+     *
+     * @return array
+     */
     public function getOrderIds()
     {
+        if (empty($this->getFromDate()) || empty($this->getToDate())) {
+            return [];
+        }
         $orderIds = [];
         $statesPayed = [2, 3, 4, 5, 9];
-        $order = new Order();
-        $orderIdsByDate = $order->getOrdersIdByDate($this->getFromDate(), $this->getToDate());
+        $orderIdsByDate = self::getOrdersIdByDate($this->getFromDate(), $this->getToDate());
         foreach($orderIdsByDate as $orderId) {
             $currentOrder = new Order($orderId);
             if (in_array((int) $currentOrder->current_state, $statesPayed)) {
@@ -73,11 +84,14 @@ class AdminAlmaShareOfCheckoutController extends ModuleAdminController
             }
         }
 
-        var_dump($orderIds);
-
         return $orderIds;
     }
 
+    /**
+     * Payment methods to send
+     *
+     * @return array
+     */
     public function getTotalPaymentMethods()
     {
         $ordersByCheckout = [];
@@ -109,6 +123,12 @@ class AdminAlmaShareOfCheckoutController extends ModuleAdminController
         return array_values($ordersByCheckout);
     }
 
+    /**
+     * Array structure to send
+     *
+     * @param array $currency
+     * @return array
+     */
     private function initOrderResult($currency)
     {
         return [
@@ -118,19 +138,65 @@ class AdminAlmaShareOfCheckoutController extends ModuleAdminController
         ];
     }
 
+    /**
+     * Date From
+     *
+     * @return string
+     */
     public function getFromDate()
     {
-        return $this->dateToday();
+        return $this->activatedDate();
     }
 
+    /**
+     * Date To
+     *
+     * @return string
+     */
     public function getToDate()
     {
-        return $this->dateToday();
+        return $this->activatedDate();
     }
 
-    public function dateToday()
+    /**
+     * Date to send for Share of Checkout
+     *
+     * @return string
+     */
+    public function activatedDate()
     {
-        return $today = date("Y-m-d");
+        $dateToSend = date("Y-m-d", strtotime("-1 days"));
+        $today = date("Y-m-d");
+        $activatedDate = Configuration::get(ShareOfCheckoutAdminFormBuilder::ALMA_SHARE_OF_CHECKOUT_DATE);
+        if (empty($activatedDate) || $activatedDate >= $today){
+            $dateToSend = '';
+        }
+
+        return $dateToSend;
+    }
+
+    /**
+     * Order by date
+     *
+     * @param string $date_from
+     * @param string $date_to
+     * @return array
+     */
+    public static function getOrdersIdByDate($date_from, $date_to)
+    {
+        $sql = 'SELECT `id_order`
+                FROM `' . _DB_PREFIX_ . 'orders`
+                WHERE DATE_ADD(date_add, INTERVAL -1 DAY) <= \'' . pSQL($date_to) . '\'
+                AND date_add >= \'' . pSQL($date_from) . '\'
+                    ' . Shop::addSqlRestriction();
+        $result = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS($sql);
+
+        $orders = [];
+        foreach ($result as $order) {
+            $orders[] = (int) $order['id_order'];
+        }
+
+        return $orders;
     }
 
     /**
