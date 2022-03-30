@@ -22,6 +22,7 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
+use Alma\PrestaShop\API\ClientHelper;
 use Alma\PrestaShop\Forms\ShareOfCheckoutAdminFormBuilder;
 use PrestaShop\PrestaShop\Adapter\Entity\Order;
 
@@ -32,9 +33,16 @@ class AdminAlmaShareOfCheckoutController extends ModuleAdminController
     public const CURRENCY_KEY = "currency";
     public const PAYMENT_METHOD_KEY = "payment_method_name";
 
-    public function initContent()
+    /**
+     * Process endpoint Share of Checkout
+     *
+     * @return void
+     */
+    public function postProcess()
     {
-        $this->getPayload();
+        $alma = ClientHelper::defaultInstance();
+
+        $shareOfCheckout = $alma->shareOfCheckout->share(json_encode($this->getPayload()));
     }
 
     /**
