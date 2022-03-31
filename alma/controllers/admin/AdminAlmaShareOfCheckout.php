@@ -22,8 +22,10 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
+use Alma\API\RequestError;
 use Alma\PrestaShop\API\ClientHelper;
 use Alma\PrestaShop\Forms\ShareOfCheckoutAdminFormBuilder;
+use Alma\PrestaShop\Utils\Logger;
 use PrestaShop\PrestaShop\Adapter\Entity\Order;
 
 class AdminAlmaShareOfCheckoutController extends ModuleAdminController
@@ -41,9 +43,30 @@ class AdminAlmaShareOfCheckoutController extends ModuleAdminController
     public function postProcess()
     {
         var_dump(json_encode($this->getPayload()));
+    }
+
+    public function getLastShareOfCheckout()
+    {
         $alma = ClientHelper::defaultInstance();
 
-        // $shareOfCheckout = $alma->shareOfCheckout->share(json_encode($this->getPayload()));
+        try {
+            $shareOfCheckout = $alma->shareOfCheckout->getLastUpdateDate();
+        } catch (RequestError $e) {
+            Logger::instance()->error($e->getMessage());
+        }
+
+        return $shareOfCheckout;
+    }
+
+    public function putSharereOfCheckout()
+    {
+        $alma = ClientHelper::defaultInstance();
+
+        try {
+            $alma->shareOfCheckout->share(json_encode($this->getPayload()));
+        } catch (RequestError $e) {
+            Logger::instance()->error($e->getMessage());
+        }
     }
 
     /**
