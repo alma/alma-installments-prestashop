@@ -45,6 +45,11 @@ class AdminAlmaShareOfCheckoutController extends ModuleAdminController
         var_dump(json_encode($this->getPayload()));
     }
 
+    /**
+     * Get last Share of Checkout
+     *
+     * @return object
+     */
     public function getLastShareOfCheckout()
     {
         $alma = ClientHelper::defaultInstance();
@@ -58,7 +63,7 @@ class AdminAlmaShareOfCheckoutController extends ModuleAdminController
         return $shareOfCheckout;
     }
 
-    public function putSharereOfCheckout()
+    public function putShareOfCheckout()
     {
         $alma = ClientHelper::defaultInstance();
 
@@ -173,12 +178,31 @@ class AdminAlmaShareOfCheckoutController extends ModuleAdminController
     }
 
     /**
+     * Date today
+     *
+     * @return string
+     */
+    public function getDateToday()
+    {
+        $date = new DateTime();
+
+        return $date->getTimestamp();
+    }
+
+    /**
      * Date From
      *
      * @return string
      */
     public function getFromDate()
     {
+        $today = self::getDateToday();
+        $todayInDate = date('Y-m-d', $today);
+        $lastTimestampShareOfCheckout = self::getLastShareOfCheckout()->end_time;
+        $lastDateShareOfCheckout = date('Y-m-d', $lastTimestampShareOfCheckout);
+        if ($lastDateShareOfCheckout < $todayInDate) {
+            return strtotime('+1 day', $lastTimestampShareOfCheckout);
+        }
         return $this->activatedDate();
     }
 
@@ -199,11 +223,12 @@ class AdminAlmaShareOfCheckoutController extends ModuleAdminController
      */
     public function activatedDate()
     {
-        $date = new DateTime();
-        $today = $date->getTimestamp();
+        $today = self::getDateToday();
+        $todayInDate = date('Y-m-d', $today);
         $dateToSend = strtotime('-1 day', $today);
-        $activatedDate = Configuration::get(ShareOfCheckoutAdminFormBuilder::ALMA_SHARE_OF_CHECKOUT_DATE);
-        if (empty($activatedDate) || $activatedDate >= $today){
+        $activatedTimestamp = Configuration::get(ShareOfCheckoutAdminFormBuilder::ALMA_SHARE_OF_CHECKOUT_DATE);
+        $activatedDate = date('Y-m-d', $activatedTimestamp);
+        if (empty($activatedTimestamp) || $activatedDate >= $todayInDate){
             $dateToSend = '';
         }
 
