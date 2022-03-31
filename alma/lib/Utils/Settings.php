@@ -43,6 +43,7 @@ use Alma\PrestaShop\Forms\ShareOfCheckoutAdminFormBuilder;
 use Alma\PrestaShop\Model\CategoryAdapter;
 use Category;
 use Configuration;
+use DateTime;
 use Language;
 use Product;
 use Shop;
@@ -145,10 +146,12 @@ class Settings
 
     public static function dateShareOfCheckout()
     {
-        return date('Y-m-d');
+        $date = new DateTime();
         if (!self::canShareOfCheckout()) {
             return '';
         }
+        
+        return $date->getTimestamp();
     }
 
     public static function getActiveMode()

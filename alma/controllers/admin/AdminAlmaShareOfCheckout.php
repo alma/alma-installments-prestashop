@@ -40,9 +40,10 @@ class AdminAlmaShareOfCheckoutController extends ModuleAdminController
      */
     public function postProcess()
     {
+        var_dump(json_encode($this->getPayload()));
         $alma = ClientHelper::defaultInstance();
 
-        $shareOfCheckout = $alma->shareOfCheckout->share(json_encode($this->getPayload()));
+        // $shareOfCheckout = $alma->shareOfCheckout->share(json_encode($this->getPayload()));
     }
 
     /**
@@ -84,7 +85,9 @@ class AdminAlmaShareOfCheckoutController extends ModuleAdminController
         }
         $orderIds = [];
         $statesPayed = [2, 3, 4, 5, 9];
-        $orderIdsByDate = self::getOrdersIdByDate($this->getFromDate(), $this->getToDate());
+        $dateFrom = date('Y-m-d', $this->getFromDate());
+        $dateTo = date('Y-m-d', $this->getToDate());
+        $orderIdsByDate = self::getOrdersIdByDate($dateFrom, $dateTo);
         foreach($orderIdsByDate as $orderId) {
             $currentOrder = new Order($orderId);
             if (in_array((int) $currentOrder->current_state, $statesPayed)) {
@@ -173,8 +176,9 @@ class AdminAlmaShareOfCheckoutController extends ModuleAdminController
      */
     public function activatedDate()
     {
-        $dateToSend = date("Y-m-d", strtotime("-1 days"));
-        $today = date("Y-m-d");
+        $date = new DateTime();
+        $today = $date->getTimestamp();
+        $dateToSend = strtotime('-1 day', $today);
         $activatedDate = Configuration::get(ShareOfCheckoutAdminFormBuilder::ALMA_SHARE_OF_CHECKOUT_DATE);
         if (empty($activatedDate) || $activatedDate >= $today){
             $dateToSend = '';
