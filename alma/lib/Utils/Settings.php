@@ -107,6 +107,9 @@ class Settings
             'ALMA_PAYMENT_ON_TRIGGERING_ENABLED',
             PaymentOnTriggeringAdminFormBuilder::ALMA_DESCRIPTION_TRIGGER,
             FragmentAdminFormBuilder::ALMA_ACTIVATE_FRAGMENT,
+            'ALMA_STATE_TRIGGER',
+            'ALMA_PAYMENT_ON_TRIGGERING_ENABLED',
+            PaymentOnTriggeringAdminFormBuilder::ALMA_DESCRIPTION_TRIGGER,
             'ALMA_EXCLUDED_CATEGORIES',
             'ALMA_SHOW_PRODUCT_ELIGIBILITY',
             'ALMA_FEE_PLANS',
@@ -318,6 +321,17 @@ class Settings
     public static function activateFragment()
     {
         return (bool) (int) self::get('ALMA_ACTIVATE_FRAGMENT', false);
+    }
+
+    /**
+     * Get key description payment trigger
+     *
+     * @return string
+     */
+    public static function getKeyDescriptionPaymentTrigger()
+    {
+        // phpcs:ignore
+        return self::get('ALMA_DESCRIPTION_TRIGGER', PaymentOnTriggeringAdminFormBuilder::ALMA_DESCRIPTION_TRIGGER_AT_SHIPPING);
     }
 
     public static function activePlans()
@@ -580,6 +594,24 @@ class Settings
         } else {
             return 0 < $plan->deferredDays || 0 < $plan->deferredMonths;
         }
+    }
+    
+    /**
+     * Check if is deferred trigger by value in feeplans and enabled in config
+     *
+     * @param object $feePlans
+     * @param string|null $key
+     * @return boolean
+     */
+    public static function isDeferredTriggerLimitDays($feePlans, $key = null)
+    {
+        if (!empty($key)) {
+            $isDeferredTriggerLimitDay = !empty($feePlans->$key->deferred_trigger_limit_days);
+        } else {
+            $isDeferredTriggerLimitDay = !empty($feePlans['deferred_trigger_limit_days']);
+        }
+        
+        return $isDeferredTriggerLimitDay && Settings::isPaymentTriggerEnabledByState();
     }
 
     /**
