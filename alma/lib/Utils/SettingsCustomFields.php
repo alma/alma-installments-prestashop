@@ -50,9 +50,10 @@ class SettingsCustomFields
     {
         $languages = Language::getLanguages(false);
 
-        foreach (self::customFields() as $keyConfig) {
+        $keysCustomFields = array_keys(self::customFields());
+        foreach ($keysCustomFields as $keyCustomFields) {
             // phpcs:ignore
-            Settings::updateValue($keyConfig, json_encode(self::getAllLangCustomFieldByKeyConfig($keyConfig, $languages)));
+            Settings::updateValue($keyCustomFields, json_encode(self::getAllLangCustomFieldByKeyConfig($keyCustomFields, $languages)));
         }
     }
 
