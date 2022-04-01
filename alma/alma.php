@@ -30,10 +30,7 @@ if (!defined('_PS_VERSION_')) {
 
 require_once _PS_MODULE_DIR_ . 'alma/vendor/autoload.php';
 require_once _PS_MODULE_DIR_ . 'alma/lib/Utils/smarty.php';
-if (version_compare(_PS_VERSION_, '1.7', '<')) {
-    require_once _PS_MODULE_DIR_ . 'alma/AlmaAutoloader.php';
-    AlmaAutoloader::autoload();
-}
+require_once _PS_MODULE_DIR_ . 'alma/AlmaTraitAutoloader.php';
 
 
 class Alma extends PaymentModule
