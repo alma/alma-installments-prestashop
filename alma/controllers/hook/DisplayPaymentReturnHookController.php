@@ -30,7 +30,7 @@ if (!defined('_PS_VERSION_')) {
 
 use Alma\API\RequestError;
 use Alma\PrestaShop\API\ClientHelper;
-use Alma\PrestaShop\API\PaymentValidationError;
+use Alma\PrestaShop\Exception\RenderPaymentException;
 use Alma\PrestaShop\Hooks\FrontendHookController;
 use Alma\PrestaShop\Utils\Logger;
 use Alma\PrestaShop\Utils\OrderDataTrait;
@@ -43,16 +43,23 @@ final class DisplayPaymentReturnHookController extends FrontendHookController
     {
         $this->context->controller->addCSS($this->module->_path . 'views/css/alma.css', 'all');
 
+        $payment = null;
         $order = array_key_exists('objOrder', $params) ? $params['objOrder'] : $params['order'];
         $orderPayment = $this->getOrderPaymentOrFail($order);
-        $alma = ClientHelper::defaultInstance();
         $almaPaymentId = $orderPayment->transaction_id;
-
-        try {
-            $payment = $alma->payments->fetch($almaPaymentId);
-        } catch (RequestError $e) {
-            Logger::instance()->error("[Alma] Error fetching payment with ID {$almaPaymentId}: {$e->getMessage()}");
-            throw new PaymentValidationError(null, $e->getMessage());
+        if (!$almaPaymentId) {
+            $msg = '[Alma] Payment_id not found';
+            Logger::instance()->error($msg);
+            throw new RenderPaymentException($msg);
+        }
+        $alma = ClientHelper::defaultInstance();
+        if ($alma) {
+            try {
+                $payment = $alma->payments->fetch($almaPaymentId);
+            } catch (RequestError $e) {
+                Logger::instance()->error("[Alma] Error fetching payment with ID {$almaPaymentId}: {$e->getMessage()}");
+                throw new RenderPaymentException($e->getMessage());
+            }
         }
 
         $this->context->smarty->assign([
