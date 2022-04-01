@@ -96,15 +96,15 @@ class AlmaAutoloader {
         } else {
             // PEAR-like class name
             $classPath = $class;
-            $className = $class;
+            $className = '';
         }
 
 		if (
 			strpos($className, 'Trait') !== false
-			&& strpos($classPath, 'Alma\\PrestaShop') === 0
+			&& strpos($classPath, 'Alma/PrestaShop') === 0
 			) {
 				$classPath = str_replace("\\","/", substr($classPath, 16));
-				$this->load_file(_PS_MODULE_DIR_ . 'alma/lib/' . $classPath . '.php' );
+				$this->load_file(_PS_MODULE_DIR_ . 'alma/lib/' . $classPath . $className . '.php' );
 		}
 	}
 }
