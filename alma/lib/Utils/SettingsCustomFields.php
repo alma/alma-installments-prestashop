@@ -260,4 +260,34 @@ class SettingsCustomFields
 
         return $arrayDescriptionPaymentTriggerByLang[$idLang];
     }
+
+    /**
+     * Get custom description payment trigger
+     *
+     * @return string
+     */
+    public static function getDescriptionPaymentTrigger()
+    {
+        $languages = Language::getLanguages(false);
+        //phpcs:ignore
+        $defaultField = self::getAllLangCustomFieldByKeyConfig(PaymentOnTriggeringAdminFormBuilder::ALMA_DESCRIPTION_TRIGGER, $languages);
+
+        foreach($defaultField as $key => $field) {
+            $return[$key] = $field['string'];
+        }
+
+        return $return;
+    }
+
+    /**
+     * Get custom description payment trigger by id lang
+     *
+     * @param int $idLang
+     *
+     * @return string
+     */
+    public static function getDescriptionPaymentTriggerByLang($idLang)
+    {
+        return self::getDescriptionPaymentTrigger()[$idLang];
+    }
 }

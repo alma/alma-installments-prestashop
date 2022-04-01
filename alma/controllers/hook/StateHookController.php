@@ -86,6 +86,7 @@ final class StateHookController extends AdminHookController
         if (!$alma) {
             return;
         }
+
         $id_payment = $order_payment->transaction_id;
         $id_state_refund = Settings::getRefundState();
         $id_state_payment_trigger = Settings::getPaymentTriggerState();
