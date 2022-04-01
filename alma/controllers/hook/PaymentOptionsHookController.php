@@ -34,12 +34,20 @@ use Alma\PrestaShop\Model\CartData;
 use Alma\PrestaShop\Utils\Settings;
 use Alma\PrestaShop\Utils\SettingsCustomFields;
 use Cart;
+use Language;
 use Media;
 use PrestaShop\PrestaShop\Core\Payment\PaymentOption;
 use Tools;
 
 final class PaymentOptionsHookController extends FrontendHookController
 {
+    /**
+     * Payment option for Hook PaymentOption (Prestashop 1.7)
+     *
+     * @param array $params
+     *
+     * @return string
+     */
     public function run($params)
     {
         //  Check if some products in cart are in the excludes listing
@@ -50,8 +58,8 @@ final class PaymentOptionsHookController extends FrontendHookController
         }
 
         $installmentPlans = EligibilityHelper::eligibilityCheck($this->context);
-
         $idLang = $this->context->language->id;
+        $locale = Language::getIsoById($idLang);
 
         if (empty($installmentPlans)) {
             return [];
@@ -88,93 +96,109 @@ final class PaymentOptionsHookController extends FrontendHookController
                 'totalCredit' => $plan->customerTotalCostAmount + $totalCart,
                 'taeg' => $plan->annualInterestRate,
             ];
-            if (Settings::isDeferred($plan)) {
-                if ($n == 1) {
-                    $duration = Settings::getDuration($plan);
-                    $paymentOptionDeferred = $this->createPaymentOption(
-                        $forEUComplianceModule,
-                        sprintf(SettingsCustomFields::getPaymentButtonTitleDeferredByLang($idLang), $duration),
-                        $this->context->link->getModuleLink(
-                            $this->module->name,
-                            'payment',
-                            ['key' => $key],
-                            true
-                        ),
-                        true,
-                        $duration
-                    );
-                    if (!$forEUComplianceModule) {
-                        $this->context->smarty->assign([
-                            // phpcs:ignore
-                            'desc' => sprintf(SettingsCustomFields::getPaymentButtonDescriptionDeferredByLang($idLang), $duration),
-                            'plans' => (array) $plans,
-                            'apiMode' => Settings::getActiveMode(),
-                            'merchantId' => Settings::getMerchantId(),
-                            'first' => $first,
-                            'creditInfo' => $creditInfo,
-                        ]);
-                        $template = $this->context->smarty->fetch(
-                            "module:{$this->module->name}/views/templates/hook/payment_button_deferred.tpl"
-                        );
-                        $paymentOptionDeferred->setAdditionalInformation($template);
-                    }
-                    $sortOptions[$key] = $feePlans->$key->order;
-                    $paymentOptions[$key] = $paymentOptionDeferred;
+
+            foreach ($plans as $keyPlan => $paymentPlan) {
+                $plans[$keyPlan]['human_date'] = getDateFormat($locale, $paymentPlan['due_date']);
+                if ($keyPlan === 0) {
+                    $plans[$keyPlan]['human_date'] = $this->module->l('Today', 'PaymentOptionsHookController');
                 }
-            } else {
-                if ($n != 1) {
-                    $paymentOptionPnx = $this->createPaymentOption(
-                        $forEUComplianceModule,
-                        sprintf(SettingsCustomFields::getPaymentButtonTitleByLang($idLang), $n),
-                        $this->context->link->getModuleLink(
-                            $this->module->name,
-                            'payment',
-                            ['key' => $key],
-                            true
-                        ),
-                        false,
-                        $n
+                if (Settings::isDeferredTriggerLimitDays($feePlans, $key)) {
+                    $plans[$keyPlan]['human_date'] = sprintf(
+                        $this->module->l('%s month later', 'PaymentOptionsHookController'),
+                        $keyPlan
                     );
-
-                    if (!$forEUComplianceModule) {
-                        $this->context->smarty->assign([
-                            'desc' => sprintf(SettingsCustomFields::getPaymentButtonDescriptionByLang($idLang), $n),
-                            'plans' => (array) $plans,
-                            'apiMode' => Settings::getActiveMode(),
-                            'merchantId' => Settings::getMerchantId(),
-                            'first' => $first,
-                            'creditInfo' => $creditInfo,
-                        ]);
-
-                        $template = $this->context->smarty->fetch(
-                            "module:{$this->module->name}/views/templates/hook/payment_button_pnx.tpl"
-                        );
-
-                        $paymentOptionPnx->setAdditionalInformation($template);
+                    if ($keyPlan === 0) {
+                        // phpcs:ignore
+                        $plans[$keyPlan]['human_date'] = SettingsCustomFields::getDescriptionPaymentTriggerByLang($idLang);
                     }
-                    $sortOptions[$key] = $feePlans->$key->order;
-                    $paymentOptions[$key] = $paymentOptionPnx;
                 }
+            }
+            $isDeferred = Settings::isDeferred($plan);
+            $duration = Settings::getDuration($plan);
+            $isInstallmentAccordingToDeferred = $n !== 1;
+            $fileTemplate = 'payment_button_pnx.tpl';
+            $valueBNPL = $n;
+            $textPaymentButton = sprintf(SettingsCustomFields::getPaymentButtonTitleByLang($idLang), $n);
+            $descPaymentButton = sprintf(SettingsCustomFields::getPaymentButtonDescriptionByLang($idLang), $n);
+            if ($isDeferred) {
+                $isInstallmentAccordingToDeferred = $n === 1;
+                $fileTemplate = 'payment_button_deferred.tpl';
+                $valueBNPL = $duration;
+                // phpcs:ignore
+                $textPaymentButton = sprintf(SettingsCustomFields::getPaymentButtonTitleDeferredByLang($idLang), $duration);
+                // phpcs:ignore
+                $descPaymentButton = sprintf(SettingsCustomFields::getPaymentButtonDescriptionDeferredByLang($idLang), $duration);
+            }
+
+            if ($isInstallmentAccordingToDeferred) {
+                $paymentOption = $this->createPaymentOption(
+                    $forEUComplianceModule,
+                    $textPaymentButton,
+                    $this->context->link->getModuleLink(
+                        $this->module->name,
+                        'payment',
+                        ['key' => $key],
+                        true
+                    ),
+                    $isDeferred,
+                    $valueBNPL
+                );
+                if (!$forEUComplianceModule) {
+                    $templateVar = [
+                        'desc' => $descPaymentButton,
+                        'plans' => (array) $plans,
+                        'deferred_trigger_limit_days' => $feePlans->$key->deferred_trigger_limit_days,
+                        'apiMode' => Settings::getActiveMode(),
+                        'merchantId' => Settings::getMerchantId(),
+                        'first' => $first,
+                        'creditInfo' => $creditInfo,
+                    ];
+                    if ($isDeferred) {
+                        $templateVar['installmentText'] = sprintf(
+                            $this->module->l('0 € today then %1$s on %2$s', 'PaymentOptionsHookController'),
+                            almaFormatPrice($plans[0]['purchase_amount'] + $plans[0]['customer_fee']),
+                            getDateFormat($locale, $plans[0]['due_date'])
+                        );
+                    }
+                    $this->context->smarty->assign($templateVar);
+                    $template = $this->context->smarty->fetch(
+                        "module:{$this->module->name}/views/templates/hook/{$fileTemplate}"
+                    );
+                    $paymentOption->setAdditionalInformation($template);
+                }
+                $sortOptions[$key] = $feePlans->$key->order;
+                $paymentOptions[$key] = $paymentOption;
             }
         }
 
         asort($sortOptions);
         $payment = [];
-        foreach ($sortOptions as $key => $option) {
+        foreach (array_keys($sortOptions) as $key) {
             $payment[] = $paymentOptions[$key];
         }
 
         return $payment;
     }
 
-    private function createPaymentOption($forEUComplianceModule, $ctaText, $action, $deferred, $value)
+    /**
+     * Create Payment option
+     *
+     * @param bool $forEUComplianceModule
+     * @param string $ctaText
+     * @param string $action
+     * @param bool $isDeferred
+     * @param int $valueBNPL
+     *
+     * @return PaymentOption
+     */
+    private function createPaymentOption($forEUComplianceModule, $ctaText, $action, $isDeferred, $valueBNPL)
     {
         $baseDir = _PS_MODULE_DIR_ . $this->module->name;
 
-        if ($deferred) {
-            $logoName = "${value}j_logo.svg";
+        if ($isDeferred) {
+            $logoName = "${valueBNPL}j_logo.svg";
         } else {
-            $logoName = "p${value}x_logo.svg";
+            $logoName = "p${valueBNPL}x_logo.svg";
         }
 
         if ($forEUComplianceModule) {

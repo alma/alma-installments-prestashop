@@ -38,6 +38,7 @@ if (!defined('ALMA_MODE_LIVE')) {
 
 use Alma\PrestaShop\Forms\ExcludedCategoryAdminFormBuilder;
 use Alma\PrestaShop\Forms\PaymentButtonAdminFormBuilder;
+use Alma\PrestaShop\Forms\PaymentOnTriggeringAdminFormBuilder;
 use Alma\PrestaShop\Model\CategoryAdapter;
 use Category;
 use Configuration;
@@ -94,6 +95,9 @@ class Settings
             ExcludedCategoryAdminFormBuilder::ALMA_NOT_ELIGIBLE_CATEGORIES,
             'ALMA_STATE_REFUND',
             'ALMA_STATE_REFUND_ENABLED',
+            'ALMA_STATE_TRIGGER',
+            'ALMA_PAYMENT_ON_TRIGGERING_ENABLED',
+            PaymentOnTriggeringAdminFormBuilder::ALMA_DESCRIPTION_TRIGGER,
             'ALMA_EXCLUDED_CATEGORIES',
             'ALMA_SHOW_PRODUCT_ELIGIBILITY',
             'ALMA_FEE_PLANS',
@@ -178,6 +182,17 @@ class Settings
         return (bool) (int) self::get('ALMA_CATEGORIES_WDGT_NOT_ELGBL', true);
     }
 
+    /**
+     * Get key description payment trigger
+     *
+     * @return string
+     */
+    public static function getKeyDescriptionPaymentTrigger()
+    {
+        // phpcs:ignore
+        return self::get('ALMA_DESCRIPTION_TRIGGER', PaymentOnTriggeringAdminFormBuilder::ALMA_DESCRIPTION_TRIGGER_AT_SHIPPING);
+    }
+
     public static function activePlans()
     {
         $plans = [];
@@ -225,6 +240,16 @@ class Settings
     public static function isRefundEnabledByState()
     {
         return (bool) self::get('ALMA_STATE_REFUND_ENABLED', 0);
+    }
+
+    public static function getPaymentTriggerState()
+    {
+        return (int) self::get('ALMA_STATE_TRIGGER', 4);
+    }
+    
+    public static function isPaymentTriggerEnabledByState()
+    {
+        return (bool) self::get('ALMA_PAYMENT_ON_TRIGGERING_ENABLED', 0);
     }
 
     public static function getExcludedCategories()
@@ -429,6 +454,24 @@ class Settings
             return 0 < $plan->deferredDays || 0 < $plan->deferredMonths;
         }
     }
+    
+    /**
+     * Check if is deferred trigger by value in feeplans and enabled in config
+     *
+     * @param object $feePlans
+     * @param string|null $key
+     * @return boolean
+     */
+    public static function isDeferredTriggerLimitDays($feePlans, $key = null)
+    {
+        if (!empty($key)) {
+            $isDeferredTriggerLimitDay = !empty($feePlans->$key->deferred_trigger_limit_days);
+        } else {
+            $isDeferredTriggerLimitDay = !empty($feePlans['deferred_trigger_limit_days']);
+        }
+        
+        return $isDeferredTriggerLimitDay && Settings::isPaymentTriggerEnabledByState();
+    }
 
     public static function getDuration($plan)
     {
@@ -439,14 +482,28 @@ class Settings
         }
     }
 
+    /**
+     * Fee plan from key
+     *
+     * @param string $key
+     * 
+     * @return array feePlans
+     */
     public static function getDataFromKey($key)
     {
+        $feePlans = json_decode(self::getFeePlans());
         preg_match("/general_(\d*)_(\d*)_(\d*)/", $key, $data);
 
-        return [
+        $dataFromKey = [
             'installmentsCount' => (int) $data[1],
             'deferredDays' => (int) $data[2],
             'deferredMonths' => (int) $data[3],
         ];
+
+        if (isset($feePlans->$key->deferred_trigger_limit_days)) {
+            $dataFromKey['deferred_trigger_limit_days'] = (int) $feePlans->$key->deferred_trigger_limit_days;
+        }
+
+        return $dataFromKey;
     }
 }

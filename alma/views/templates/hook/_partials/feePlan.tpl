@@ -33,7 +33,7 @@
 {if $oneLiner}
     <span class="alma-fee-plan--description">
         {almaDisplayHtml}
-            {l s='%1$s today then %2$d x %3$s' sprintf=[$firstAmount, $installmentsCount - 1, $nextAmounts] mod='alma'}
+            {$installmentText}
         {/almaDisplayHtml}
 
         {if 4 > $installmentsCount}
@@ -102,14 +102,10 @@
         </strong>
         <br>        
     {else}
-        {foreach from=$plans item=v name=counter}
+        {foreach from=$plans item=v key=k name=counter}
             <span class="alma-fee-plan--description">
                 <span class="alma-fee-plan--date">
-                    {if $smarty.foreach.counter.iteration === 1}
-                        {l s='Today' mod='alma'}
-                    {else}
-                        {dateFormat date=$v.due_date|date_format:"%Y-%m-%d" full=0}
-                    {/if}
+                    {$v.human_date}
                 </span>
                 <span class="alma-fee-plan--amount">
                     {almaFormatPrice cents=$v.total_amount}

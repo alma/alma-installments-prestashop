@@ -31,6 +31,7 @@ if (!defined('_PS_VERSION_')) {
 use Alma;
 use Alma\PrestaShop\Forms\ExcludedCategoryAdminFormBuilder;
 use Alma\PrestaShop\Forms\PaymentButtonAdminFormBuilder;
+use Alma\PrestaShop\Forms\PaymentOnTriggeringAdminFormBuilder;
 use Language;
 
 /**
@@ -68,6 +69,7 @@ class SettingsCustomFields
         $module->l('Buy now Pay in %d days', self::SOURCECUSTOMFIELDS);
         $module->l('Buy now pay in %d days with your credit card.', self::SOURCECUSTOMFIELDS);
         $module->l('Your cart is not eligible for payments with Alma.', self::SOURCECUSTOMFIELDS);
+        $module->l('At shipping', self::SOURCECUSTOMFIELDS);
 
         return [
             PaymentButtonAdminFormBuilder::ALMA_PAYMENT_BUTTON_TITLE => 'Pay in %d installments',
@@ -77,6 +79,7 @@ class SettingsCustomFields
             PaymentButtonAdminFormBuilder::ALMA_DEFERRED_BUTTON_DESC => 'Buy now pay in %d days with your credit card.',
             // phpcs:ignore
             ExcludedCategoryAdminFormBuilder::ALMA_NOT_ELIGIBLE_CATEGORIES => 'Your cart is not eligible for payments with Alma.',
+            PaymentOnTriggeringAdminFormBuilder::ALMA_DESCRIPTION_TRIGGER => 'At shipping',
         ];
     }
 
@@ -255,5 +258,35 @@ class SettingsCustomFields
     public static function getNonEligibleCategoriesMessageByLang($idLang)
     {
         return self::getNonEligibleCategoriesMessage()[$idLang];
+    }
+
+    /**
+     * Get custom description payment trigger
+     *
+     * @return string
+     */
+    public static function getDescriptionPaymentTrigger()
+    {
+        $languages = Language::getLanguages(false);
+        //phpcs:ignore
+        $defaultField = self::getAllLangCustomFieldByKeyConfig(PaymentOnTriggeringAdminFormBuilder::ALMA_DESCRIPTION_TRIGGER, $languages);
+
+        foreach($defaultField as $key => $field) {
+            $return[$key] = $field['string'];
+        }
+
+        return $return;
+    }
+
+    /**
+     * Get custom description payment trigger by id lang
+     *
+     * @param int $idLang
+     *
+     * @return string
+     */
+    public static function getDescriptionPaymentTriggerByLang($idLang)
+    {
+        return self::getDescriptionPaymentTrigger()[$idLang];
     }
 }

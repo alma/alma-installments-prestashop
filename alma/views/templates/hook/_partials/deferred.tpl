@@ -22,11 +22,9 @@
  *}
 
 
-{capture assign='amount'}{almaFormatPrice cents=$plans[0].purchase_amount + $plans[0].customer_fee}{/capture}
-{capture assign='due_date'}{dateFormat date=$plans[0].due_date|date_format:"%Y-%m-%d" full=0}{/capture}
 {capture assign='fees'}{almaFormatPrice cents=$plans[0].customer_fee}{/capture}
 <span class="alma-deferred--description">
-    {l s='0 € today then %1$s on %2$s' sprintf=[$amount,$due_date] mod='alma'}
+    {$installmentText}
     <br>
     <small>
         {if $plans[0].customer_fee > 0}

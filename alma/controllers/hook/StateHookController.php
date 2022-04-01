@@ -43,6 +43,7 @@ final class StateHookController extends AdminHookController
     use OrderDataTrait;
 
     /**
+     * Execute refund or trigger payment on change state
      * @param $params
      *
      * @throws PrestaShopDatabaseException
@@ -50,31 +51,82 @@ final class StateHookController extends AdminHookController
      */
     public function run($params)
     {
-        if (!Settings::isRefundEnabledByState()) {
-            return;
-        }
-
         $order = new Order($params['id_order']);
         $newStatus = $params['newOrderStatus'];
         if ($order->module !== 'alma' || !$order_payment = $this->getOrderPaymentOrFail($order)) {
             return;
         }
-
+        $alma = ClientHelper::defaultInstance();
+        if (!$alma) {
+            return;
+        }
         $id_payment = $order_payment->transaction_id;
-        if ($newStatus->id == Settings::getRefundState()) {
-            $alma = ClientHelper::defaultInstance();
-            if (!$alma) {
-                return;
-            }
+        $id_state_refund = Settings::getRefundState();
+        $id_state_payment_trigger = Settings::getPaymentTriggerState();
 
-            try {
-                $alma->payments->refund($id_payment, true);
-            } catch (RequestError $e) {
-                $msg = "[Alma] ERROR when creating refund for Order {$order->id}: {$e->getMessage()}";
-                Logger::instance()->error($msg);
-
+        switch ($newStatus->id) {
+            case $id_state_refund:
+                $msg = "[Alma] Option refund disabled: hook will not be triggered on {$id_state_refund} refund state";
+                if (Settings::isRefundEnabledByState()) {
+                    $msg = "[Alma] Option refund enabled: hook will be triggered on {$id_state_refund} refund state";
+                    $this->refund($alma, $id_payment, $order);
+                }
+                Logger::instance()->info($msg);
+                break;
+            case $id_state_payment_trigger:
+                // phpcs:ignore
+                $msg = "[Alma] Option PaymentTrigger disabled: hook will not be triggered on {$id_state_payment_trigger} refund state";
+                if (Settings::isPaymentTriggerEnabledByState()) {
+                    // phpcs:ignore
+                    $msg = "[Alma] Option PaymentTrigger enabled: hook will be triggered on {$id_state_payment_trigger} refund state";
+                    $this->triggerPayment($alma, $id_payment, $order);
+                }
+                Logger::instance()->info($msg);
+                break;
+            default :
                 return;
-            }
+        }
+    }
+
+    /**
+     * Query Refund
+     *
+     * @param ClientHelper $alma
+     * @param string $id_payment
+     * @param Order $order
+     *
+     * @return void
+     */
+    private function refund($alma, $id_payment, $order)
+    {
+        try {
+            $alma->payments->refund($id_payment, true);
+        } catch (RequestError $e) {
+            $msg = "[Alma] ERROR when creating refund for Order {$order->id}: {$e->getMessage()}";
+            Logger::instance()->error($msg);
+
+            return;
+        }
+    }
+
+    /**
+     * Query Trigger Payment
+     *
+     * @param ClientHelper $alma
+     * @param string $id_payment
+     * @param Order $order
+     *
+     * @return void
+     */
+    private function triggerPayment($alma, $id_payment, $order)
+    {
+        try {
+            $alma->payments->trigger($id_payment);
+        } catch (RequestError $e) {
+            $msg = "[Alma] ERROR when creating trigger for Order {$order->id}: {$e->getMessage()}";
+            Logger::instance()->error($msg);
+
+            return;
         }
     }
 }

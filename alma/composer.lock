@@ -4,41 +4,40 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "fc2d2587b0c2a37c3c6b6f0a5cec57d3",
+    "content-hash": "684e2d51a981841d452e80d1618777c1",
     "packages": [
         {
             "name": "alma/alma-php-client",
-            "version": "v1.4.0",
+            "version": "v1.5.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/alma/alma-php-client.git",
-                "reference": "d53170244924e8aec09fc93394e694c46c12b413"
+                "reference": "2455c849f8ceec266130c53108295b6c652f6f40"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/alma/alma-php-client/zipball/d53170244924e8aec09fc93394e694c46c12b413",
-                "reference": "d53170244924e8aec09fc93394e694c46c12b413",
+                "url": "https://api.github.com/repos/alma/alma-php-client/zipball/2455c849f8ceec266130c53108295b6c652f6f40",
+                "reference": "2455c849f8ceec266130c53108295b6c652f6f40",
                 "shasum": ""
             },
             "require": {
                 "ext-curl": "*",
                 "ext-json": "*",
+                "php": ">=5.6",
                 "psr/log": "^1.1"
             },
             "require-dev": {
                 "dealerdirect/phpcodesniffer-composer-installer": "^0.5.0",
                 "phpcompatibility/php-compatibility": "^9.0",
-                "phpunit/phpunit": "^8",
+                "phpunit/phpunit": "*",
                 "roave/security-advisories": "@dev",
                 "squizlabs/php_codesniffer": "^3.3"
             },
             "type": "library",
             "autoload": {
-                "files": [
-                    "src/lib/array.php"
-                ],
                 "psr-4": {
-                    "Alma\\API\\": "src/"
+                    "Alma\\API\\": "src/",
+                    "Alma\\API\\Tests\\": "tests/"
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
@@ -54,9 +53,9 @@
             "description": "PHP API client for the Alma payments API",
             "support": {
                 "issues": "https://github.com/alma/alma-php-client/issues",
-                "source": "https://github.com/alma/alma-php-client/tree/v1.4.0"
+                "source": "https://github.com/alma/alma-php-client/tree/v1.5.4"
             },
-            "time": "2022-01-20T14:33:45+00:00"
+            "time": "2022-03-11T17:09:16+00:00"
         },
         {
             "name": "psr/log",

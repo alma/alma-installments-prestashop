@@ -1,4 +1,5 @@
 <?php
+
 /**
  * 2018-2022 Alma SAS
  *
@@ -39,56 +40,14 @@ class EligibilityHelper
 {
     public static function eligibilityCheck($context)
     {
-        $eligibilities = [];
-        $activePlans = [];
         $almaEligibilities = [];
         $purchaseAmount = almaPriceToCents($context->cart->getOrderTotal(true, Cart::BOTH));
-        $alma = ClientHelper::defaultInstance();
-        if (!$alma) {
-            Logger::instance()->error('Cannot check cart eligibility: no API client');
+        $alma = self::checkClientInstance();
+        $feePlans = self::checkFeePlans();
+        $eligibilities = self::getNotEligibleFeePlans($feePlans, $purchaseAmount);
+        $activePlans = self::getEligibleFeePlans($feePlans, $purchaseAmount);
+        $paymentData = self::checkPaymentData($context, $activePlans);
 
-            return [];
-        }
-
-        $feePlans = json_decode(Settings::getFeePlans());
-
-        if (!$feePlans) {
-            return [];
-        }
-
-        foreach ($feePlans as $key => $feePlan) {
-            $getDataFromKey = Settings::getDataFromKey($key);
-
-            if (1 == $feePlan->enabled) {
-                if ($purchaseAmount < $feePlan->min
-                || $purchaseAmount > $feePlan->max) {
-                    $eligibility = new Eligibility(
-                        [
-                            'installments_count' => $getDataFromKey['installmentsCount'],
-                            'deferred_days' => $getDataFromKey['deferredDays'],
-                            'deferred_months' => $getDataFromKey['deferredMonths'],
-                            'eligible' => false,
-                            'constraints' => [
-                                'purchase_amount' => [
-                                    'minimum' => $feePlan->min,
-                                    'maximum' => $feePlan->max,
-                                ],
-                            ],
-                        ]
-                    );
-                    $eligibilities[] = $eligibility;
-                } else {
-                    $activePlans[] = $getDataFromKey;
-                }
-            }
-        }
-
-        $paymentData = PaymentData::dataFromCart($context->cart, $context, $activePlans);
-        if (!$paymentData) {
-            Logger::instance()->error('Cannot check cart eligibility: no data extracted from cart');
-
-            return [];
-        }
         try {
             if (!empty($activePlans)) {
                 $almaEligibilities = $alma->payments->eligibility($paymentData);
@@ -107,5 +66,96 @@ class EligibilityHelper
         });
 
         return $eligibilities;
+    }
+
+    private static function checkClientInstance()
+    {
+        $alma = ClientHelper::defaultInstance();
+        if (!$alma) {
+            Logger::instance()->error('Cannot check cart eligibility: no API client');
+
+            return [];
+        }
+
+        return $alma;
+    }
+
+    private static function checkFeePlans()
+    {
+        $feePlans = array_filter((array) json_decode(Settings::getFeePlans()), function ($feePlan) {
+            return $feePlan->enabled == 1;
+        });
+
+        if (!$feePlans) {
+            return [];
+        }
+
+        return $feePlans;
+    }
+
+    private static function checkPaymentData($context, $activePlans)
+    {
+        $paymentData = PaymentData::dataFromCart($context->cart, $context, $activePlans);
+
+        if (!$paymentData) {
+            Logger::instance()->error('Cannot check cart eligibility: no data extracted from cart');
+
+            return [];
+        }
+
+        return $paymentData;
+    }
+
+    private static function getNotEligibleFeePlans($feePlans, $purchaseAmount)
+    {
+        $eligibilities = [];
+
+        foreach ($feePlans as $key => $feePlan) {
+            $getDataFromKey = Settings::getDataFromKey($key);
+
+            if (
+                $purchaseAmount < $feePlan->min
+                || $purchaseAmount > $feePlan->max
+            ) {
+                $eligibility = new Eligibility(
+                    [
+                        'installments_count' => $getDataFromKey['installmentsCount'],
+                        'deferred_days' => $getDataFromKey['deferredDays'],
+                        'deferred_months' => $getDataFromKey['deferredMonths'],
+                        'eligible' => false,
+                        'constraints' => [
+                            'purchase_amount' => [
+                                'minimum' => $feePlan->min,
+                                'maximum' => $feePlan->max,
+                            ],
+                        ],
+                    ]
+                );
+                if (isset($getDataFromKey['deferred_trigger_limit_days'])) {
+                    $eligibility->deferred_trigger_limit_days = $getDataFromKey['deferred_trigger_limit_days'];
+                }
+                $eligibilities[] = $eligibility;
+            }
+        }
+
+        return $eligibilities;
+    }
+
+    private static function getEligibleFeePlans($feePlans, $purchaseAmount)
+    {
+        $activePlans = [];
+
+        foreach ($feePlans as $key => $feePlan) {
+            $getDataFromKey = Settings::getDataFromKey($key);
+
+            if (
+                $purchaseAmount > $feePlan->min
+                || $purchaseAmount < $feePlan->max
+            ) {
+                $activePlans[] = $getDataFromKey;
+            }
+        }
+
+        return $activePlans;
     }
 }

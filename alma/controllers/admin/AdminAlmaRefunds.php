@@ -81,7 +81,7 @@ class AdminAlmaRefundsController extends ModuleAdminController
             case 'total':
                 $isTotal = true;
                 $amount = $order->getOrdersTotalPaid();
-                // no break
+                break;
             default:
                 $msg = sprintf(
                     $this->module->l('Error: unknow refund type (%s)', 'AdminAlmaRefunds'),
