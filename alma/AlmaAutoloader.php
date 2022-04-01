@@ -88,12 +88,23 @@ class AlmaAutoloader {
 	 * @param string $class as class name.
 	 */
 	public function load_class( $class ) {
-		$knownTrait = [
-			'Alma\\PrestaShop\\Utils\\AjaxTrait' => 'alma/lib/Utils/AjaxTrait.php',
-			'Alma\\PrestaShop\\Utils\\OrderDataTrait' => 'alma/lib/Utils/OrderDataTrait.php'
-		];
-		if (isset($knownTrait[$class])) {
-			$this->load_file(_PS_MODULE_DIR_ . $knownTrait[$class]);
+		$pos = strrpos($class, '\\');
+        if (false !== $pos) {
+            // namespaced class name
+            $classPath = str_replace('\\', \DIRECTORY_SEPARATOR, substr($class, 0, $pos)).\DIRECTORY_SEPARATOR;
+            $className = substr($class, $pos + 1);
+        } else {
+            // PEAR-like class name
+            $classPath = $class;
+            $className = $class;
+        }
+
+		if (
+			strpos($className, 'Trait') !== false
+			&& strpos($classPath, 'Alma\\PrestaShop') === 0
+			) {
+				$classPath = str_replace("\\","/", substr($classPath, 16));
+				$this->load_file(_PS_MODULE_DIR_ . 'alma/lib/' . $classPath . '.php' );
 		}
 	}
 }
