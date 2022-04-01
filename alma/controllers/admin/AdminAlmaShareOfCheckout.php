@@ -196,12 +196,16 @@ class AdminAlmaShareOfCheckoutController extends ModuleAdminController
      */
     public function getFromDate()
     {
-        $today = self::getDateToday();
-        $todayInDate = date('Y-m-d', $today);
-        $lastTimestampShareOfCheckout = self::getLastShareOfCheckout()->end_time;
-        $lastDateShareOfCheckout = date('Y-m-d', $lastTimestampShareOfCheckout);
-        if ($lastDateShareOfCheckout < $todayInDate) {
-            return strtotime('+1 day', $lastTimestampShareOfCheckout);
+        $getLastShareOfCheckout = self::getLastShareOfCheckout();
+        // TODO : check if $getLastShareOfCheckout or $getLastShareOfCheckout->end_time is null
+        if (!empty($getLastShareOfCheckout)) {
+            $today = self::getDateToday();
+            $todayInDate = date('Y-m-d', $today);
+            $lastTimestampShareOfCheckout = $getLastShareOfCheckout->end_time;
+            $lastDateShareOfCheckout = date('Y-m-d', $lastTimestampShareOfCheckout);
+            if ($lastDateShareOfCheckout < $todayInDate) {
+                return strtotime('+1 day', $lastTimestampShareOfCheckout);
+            }
         }
         return $this->activatedDate();
     }

@@ -12,12 +12,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/alma/alma-php-client.git",
-                "reference": "326ada57c7de9d22e1ec117fb629926be93a9328"
+                "reference": "a6d55820e58d1af65424129de772505bc75e5d86"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/alma/alma-php-client/zipball/326ada57c7de9d22e1ec117fb629926be93a9328",
-                "reference": "326ada57c7de9d22e1ec117fb629926be93a9328",
+                "url": "https://api.github.com/repos/alma/alma-php-client/zipball/a6d55820e58d1af65424129de772505bc75e5d86",
+                "reference": "a6d55820e58d1af65424129de772505bc75e5d86",
                 "shasum": ""
             },
             "require": {
@@ -55,7 +55,7 @@
                 "issues": "https://github.com/alma/alma-php-client/issues",
                 "source": "https://github.com/alma/alma-php-client/tree/feature/share-of-checkout"
             },
-            "time": "2022-03-29T14:26:42+00:00"
+            "time": "2022-03-31T11:43:06+00:00"
         },
         {
             "name": "psr/log",
