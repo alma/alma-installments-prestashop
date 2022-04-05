@@ -4,20 +4,20 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "100055c2e0e883697b51b3f7c0f88688",
+    "content-hash": "be619aee2187392d15c7bb8d416f007c",
     "packages": [
         {
             "name": "alma/alma-php-client",
-            "version": "dev-feature/share-of-checkout",
+            "version": "v1.6.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/alma/alma-php-client.git",
-                "reference": "a6d55820e58d1af65424129de772505bc75e5d86"
+                "reference": "19d481bf8e2eb1bc7e4c25306464f05fa3fd3b02"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/alma/alma-php-client/zipball/a6d55820e58d1af65424129de772505bc75e5d86",
-                "reference": "a6d55820e58d1af65424129de772505bc75e5d86",
+                "url": "https://api.github.com/repos/alma/alma-php-client/zipball/19d481bf8e2eb1bc7e4c25306464f05fa3fd3b02",
+                "reference": "19d481bf8e2eb1bc7e4c25306464f05fa3fd3b02",
                 "shasum": ""
             },
             "require": {
@@ -53,9 +53,9 @@
             "description": "PHP API client for the Alma payments API",
             "support": {
                 "issues": "https://github.com/alma/alma-php-client/issues",
-                "source": "https://github.com/alma/alma-php-client/tree/feature/share-of-checkout"
+                "source": "https://github.com/alma/alma-php-client/tree/v1.6.0"
             },
-            "time": "2022-03-31T11:43:06+00:00"
+            "time": "2022-04-05T16:24:22+00:00"
         },
         {
             "name": "psr/log",
@@ -111,12 +111,10 @@
     "packages-dev": [],
     "aliases": [],
     "minimum-stability": "dev",
-    "stability-flags": {
-        "alma/alma-php-client": 20
-    },
+    "stability-flags": [],
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": [],
     "platform-dev": [],
-    "plugin-api-version": "2.1.0"
+    "plugin-api-version": "2.3.0"
 }
