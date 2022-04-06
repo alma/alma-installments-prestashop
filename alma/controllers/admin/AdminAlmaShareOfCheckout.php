@@ -25,157 +25,29 @@
 use Alma\API\RequestError;
 use Alma\PrestaShop\API\ClientHelper;
 use Alma\PrestaShop\Forms\ShareOfCheckoutAdminFormBuilder;
+use Alma\PrestaShop\Utils\DateHelper;
 use Alma\PrestaShop\Utils\Logger;
+use Alma\PrestaShop\Utils\Settings;
 use PrestaShop\PrestaShop\Adapter\Entity\Order;
 
 class AdminAlmaShareOfCheckoutController extends ModuleAdminController
 {
-    public const TOTAL_COUNT_KEY = "total_order_count";
-    public const TOTAL_AMOUNT_KEY = "total_amount";
-    public const CURRENCY_KEY = "currency";
-    public const PAYMENT_METHOD_KEY = "payment_method_name";
-
-    /**
-     * Process endpoint Share of Checkout
-     *
-     * @return void
-     */
-    public function postProcess()
+    public function __construct()
     {
-        var_dump(json_encode($this->getPayload()));
+        $this->startTime = null;
+        $this->endTime = null;
     }
 
-    /**
-     * Get last Share of Checkout
-     *
-     * @return object
-     */
-    public function getLastShareOfCheckout()
-    {
-        $alma = ClientHelper::defaultInstance();
-
-        try {
-            $shareOfCheckout = $alma->shareOfCheckout->getLastUpdateDate();
-        } catch (RequestError $e) {
-            Logger::instance()->error($e->getMessage());
-        }
-
-        return $shareOfCheckout;
-    }
-
-    public function putShareOfCheckout()
-    {
-        $alma = ClientHelper::defaultInstance();
-
-        try {
-            $alma->shareOfCheckout->share(json_encode($this->getPayload()));
-        } catch (RequestError $e) {
-            Logger::instance()->error($e->getMessage());
-        }
-    }
-
-    /**
-     * Total Orders to send
-     *
-     * @return array
-     */
-    public function getTotalOrders()
-    {
-        $ordersByCurrency = [];
-        $count = 0;
-
-        foreach ($this->getOrderIds() as $orderId) {
-            $order = new Order($orderId);
-            $currency = new Currency();
-            $isoCodeCurrency = $currency->getIsoCodeById($order->id_currency);
-
-            if (!isset($ordersByCurrency[$isoCodeCurrency])){
-                $ordersByCurrency[$isoCodeCurrency] = $this->initOrderResult($isoCodeCurrency);
-            }
-
-            $ordersByCurrency[$isoCodeCurrency][self::TOTAL_COUNT_KEY] = ++$count;
-            // phpcs:ignore
-            $ordersByCurrency[$isoCodeCurrency][self::TOTAL_AMOUNT_KEY] += almaPriceToCents($order->total_paid_tax_incl);
-        }
-
-        return array_values($ordersByCurrency);
-    }
-
-    /**
-     * Order Ids validated by date
-     *
-     * @return array
-     */
-    public function getOrderIds()
-    {
-        if (empty($this->getFromDate()) || empty($this->getToDate())) {
-            return [];
-        }
-        $orderIds = [];
-        $statesPayed = [2, 3, 4, 5, 9];
-        $dateFrom = date('Y-m-d', $this->getFromDate());
-        $dateTo = date('Y-m-d', $this->getToDate());
-        $orderIdsByDate = self::getOrdersIdByDate($dateFrom, $dateTo);
-        foreach($orderIdsByDate as $orderId) {
-            $currentOrder = new Order($orderId);
-            if (in_array((int) $currentOrder->current_state, $statesPayed)) {
-                $orderIds[] = $currentOrder->id;
-            }
-        }
-
-        return $orderIds;
-    }
-
-    /**
-     * Payment methods to send
-     *
-     * @return array
-     */
-    public function getTotalPaymentMethods()
-    {
-        $ordersByCheckout = [];
-
-        foreach ($this->getOrderIds() as $orderId) {
-            $order = new Order($orderId);
-            $currency = new Currency();
-            $paymentMethod = $order->module;
-            $isoCodeCurrency = $currency->getIsoCodeById($order->id_currency);
-
-            if(!isset($ordersByCheckout[$paymentMethod])){
-                $ordersByCheckout[$paymentMethod]=['orders'=>[]];
-            }
-
-            if(!isset($ordersByCheckout[$paymentMethod]['orders'][$isoCodeCurrency])){
-                // phpcs:ignore
-                $ordersByCheckout[$paymentMethod]['orders'][$isoCodeCurrency] = $this->initOrderResult($isoCodeCurrency);
-            }
-
-            $ordersByCheckout[$paymentMethod][self::PAYMENT_METHOD_KEY] = $paymentMethod;
-            // phpcs:ignore
-            $ordersByCheckout[$paymentMethod]['orders'][$isoCodeCurrency][self::TOTAL_AMOUNT_KEY] += almaPriceToCents($order->total_paid_tax_incl);
-            $ordersByCheckout[$paymentMethod]['orders'][$isoCodeCurrency][self::TOTAL_COUNT_KEY] ++;
-        }
-        foreach ($ordersByCheckout as $paymentKey => $paymentMethodOrders) {
-            $ordersByCheckout[$paymentKey]['orders']= array_values($paymentMethodOrders['orders']);
-        }
-
-        return array_values($ordersByCheckout);
-    }
-
-    /**
-     * Array structure to send
-     *
-     * @param array $currency
-     * @return array
-     */
-    private function initOrderResult($currency)
-    {
-        return [
-            self::TOTAL_AMOUNT_KEY => 0,
-            self::TOTAL_COUNT_KEY => 0,
-            self::CURRENCY_KEY => $currency
-        ];
-    }
+    // /**
+    //  * Process endpoint Share of Checkout
+    //  *
+    //  * @return void
+    //  */
+    // public function postProcess()
+    // {
+    //     // var_dump(json_encode($this->getPayload()));
+    //     $this->cronShareDays();
+    // }
 
     /**
      * Date today
@@ -196,7 +68,7 @@ class AdminAlmaShareOfCheckoutController extends ModuleAdminController
      */
     public function getFromDate()
     {
-        $getLastShareOfCheckout = self::getLastShareOfCheckout();
+        // $getLastShareOfCheckout = self::getLastShareOfCheckout();
         // TODO : check if $getLastShareOfCheckout or $getLastShareOfCheckout->end_time is null
         if (!empty($getLastShareOfCheckout)) {
             $today = self::getDateToday();
@@ -229,52 +101,14 @@ class AdminAlmaShareOfCheckoutController extends ModuleAdminController
     {
         $today = self::getDateToday();
         $todayInDate = date('Y-m-d', $today);
-        $dateToSend = strtotime('-1 day', $today);
+        $dateToSend = $today;
+        // $dateToSend = strtotime('-1 day', $today);
         $activatedTimestamp = Configuration::get(ShareOfCheckoutAdminFormBuilder::ALMA_SHARE_OF_CHECKOUT_DATE);
         $activatedDate = date('Y-m-d', $activatedTimestamp);
-        if (empty($activatedTimestamp) || $activatedDate >= $todayInDate){
-            $dateToSend = '';
-        }
+        // if (empty($activatedTimestamp) || $activatedDate >= $todayInDate){
+        //     $dateToSend = '';
+        // }
 
         return $dateToSend;
-    }
-
-    /**
-     * Order by date
-     *
-     * @param string $date_from
-     * @param string $date_to
-     * @return array
-     */
-    public static function getOrdersIdByDate($date_from, $date_to)
-    {
-        $sql = 'SELECT `id_order`
-                FROM `' . _DB_PREFIX_ . 'orders`
-                WHERE DATE_ADD(date_add, INTERVAL -1 DAY) <= \'' . pSQL($date_to) . '\'
-                AND date_add >= \'' . pSQL($date_from) . '\'
-                    ' . Shop::addSqlRestriction();
-        $result = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS($sql);
-
-        $orders = [];
-        foreach ($result as $order) {
-            $orders[] = (int) $order['id_order'];
-        }
-
-        return $orders;
-    }
-
-    /**
-     * Payload Share of Checkout
-     *
-     * @return array
-     */
-    public function getPayload()
-    {
-        return [
-            "start_time"=> $this->getFromDate(),
-            "end_time"  => $this->getToDate(),
-            "orders"    => $this->getTotalOrders(),
-            "payment_methods" => $this->getTotalPaymentMethods()
-        ];
     }
 }
