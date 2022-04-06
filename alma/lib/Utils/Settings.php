@@ -147,6 +147,7 @@ class Settings
     public static function dateShareOfCheckout()
     {
         $date = new DateTime();
+        //TODO: If first activation option don't save the date
         if (!self::canShareOfCheckout()) {
             return '';
         }

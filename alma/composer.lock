@@ -105,7 +105,9 @@
     "packages-dev": [],
     "aliases": [],
     "minimum-stability": "dev",
-    "stability-flags": [],
+    "stability-flags": {
+        "alma/alma-php-client": 20
+    },
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": [],
