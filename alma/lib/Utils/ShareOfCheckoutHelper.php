@@ -83,8 +83,8 @@ class ShareOfCheckoutHelper
         $DatesToShare = DateHelper::getDatesInInterval($lastUpdateDate,$shareOfCheckoutEnabledDate);
         foreach ($DatesToShare as $date) {
             try {
-                self::setShareOfCheckoutFromDate($date);
-                self::putDay();
+                $this->setShareOfCheckoutFromDate($date);
+                $this->putDay();
             } catch (RequestError $e) {
                 Logger::instance()->info('Share of checkout error - end of process - message : ' . $e->getMessage());
                 return;
@@ -303,8 +303,8 @@ class ShareOfCheckoutHelper
     public function getPayload()
     {
         return [
-            "start_time"=> $this->getShareOfCheckoutFromDate(),
-            "end_time"  => $this->getShareOfCheckoutToDate(),
+            "start_time"=> strtotime($this->getShareOfCheckoutFromDate()),
+            "end_time"  => strtotime($this->getShareOfCheckoutToDate()),
             "orders"    => $this->getTotalOrders(),
             "payment_methods" => $this->getTotalPaymentMethods()
         ];

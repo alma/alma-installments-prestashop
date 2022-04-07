@@ -46,9 +46,8 @@ class DateHelper
      */
     public static function getDatesInInterval($from,$shareOfCheckoutEnabledDate,$to = null)
     {
-        var_dump($from);
-        var_dump($shareOfCheckoutEnabledDate);
-        die;
+        $from = date('Y-m-d', $from);
+        $shareOfCheckoutEnabledDate = date('Y-m-d', $shareOfCheckoutEnabledDate);
         if(!isset($to)){
             $to = strtotime('-1 day');
         }

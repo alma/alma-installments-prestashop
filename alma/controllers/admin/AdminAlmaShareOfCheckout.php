@@ -32,6 +32,7 @@ use PrestaShop\PrestaShop\Adapter\Entity\Order;
 
 class AdminAlmaShareOfCheckoutController extends ModuleAdminController
 {
+    // TODO : File to delete 
     public function __construct()
     {
         $this->startTime = null;
