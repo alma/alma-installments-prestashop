@@ -46,7 +46,11 @@
                 {elseif $smarty.foreach.counter.iteration === 2}
                     {l s='At shipping' mod='alma'}
                 {else}
-                    {l s='%s month later' sprintf=[$plan->time_delta_from_start['months']] mod='alma'}
+                    {assign var='nb_installment_month' value=$plan->time_delta_from_start['months']}
+                    {if $plan->time_delta_from_start['days'] >= 30 && $plan->time_delta_from_start['months'] == 0}
+                        {assign var='nb_installment_month' value='1'}
+                    {/if}
+                    {l s='%s month later' sprintf=[$nb_installment_month] mod='alma'}
                 {/if}
             {else}
                 {if $smarty.foreach.counter.iteration === 1}
