@@ -154,10 +154,11 @@ function getDateFormat($locale, $timestamp)
         if ($formatter === null) {
             throw new IntlException(intl_get_error_message());
         }
-    
+
         return $formatter->format($timestamp);
-    } catch (IntlException $e){
+    } catch (IntlException $e) {
         $date = new DateTime($timestamp);
+
         return $date->format('m/d/Y');
     }
 }

@@ -30,8 +30,8 @@ use Alma\PrestaShop\Utils\OrderDataTrait;
 
 // TODO: Autoloader Trait Automatically
 if (version_compare(_PS_VERSION_, '1.7', '<')) {
-    require_once(_PS_MODULE_DIR_ . 'alma/lib/Utils/AjaxTrait.php');
-    require_once(_PS_MODULE_DIR_ . 'alma/lib/Utils/OrderDataTrait.php');
+    require_once _PS_MODULE_DIR_ . 'alma/lib/Utils/AjaxTrait.php';
+    require_once _PS_MODULE_DIR_ . 'alma/lib/Utils/OrderDataTrait.php';
 }
 class AdminAlmaRefundsController extends ModuleAdminController
 {

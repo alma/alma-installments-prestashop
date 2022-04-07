@@ -44,6 +44,7 @@ final class StateHookController extends AdminHookController
 
     /**
      * Execute refund or trigger payment on change state
+     *
      * @param $params
      *
      * @throws PrestaShopDatabaseException
@@ -83,7 +84,7 @@ final class StateHookController extends AdminHookController
                 }
                 Logger::instance()->info($msg);
                 break;
-            default :
+            default:
                 return;
         }
     }
