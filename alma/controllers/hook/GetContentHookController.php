@@ -435,12 +435,13 @@ final class GetContentHookController extends AdminHookController
             $extraMessage = $this->module->display($this->module->file, 'getContent.tpl');
         }
 
+        $feePlansOrdered = [];
+        $installmentsPlans = [];
         if ($merchant) {
             $feePlans = $this->getFeePlans();
             $installmentsPlans = json_decode(Settings::getFeePlans());
 
             // sort fee plans by pnx then by pay later duration
-            $feePlansOrdered = [];
             $feePlanDeferred = [];
             foreach ($feePlans as $feePlan) {
                 if (!Settings::isDeferred($feePlan)) {
