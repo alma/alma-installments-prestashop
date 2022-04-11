@@ -347,8 +347,8 @@ class Alma extends PaymentModule
             'AdminModules',
             true,
             [],
-            ['configure' => 'alma', 'module_name' => 'alma', 'tab_module' => 'payments_gateways']
-        ) . '&configure=alma&module_name=alma&tab_module=payments_gateways';
+            ['configure' => $this->name, 'module_name' => $this->name, 'tab_module' => $this->tab]
+        ) . '&configure=' . $this->name . '&module_name=' . $this->name . '&tab_module=' . $this->tab;
 
         Tools::redirectAdmin($location);
     }

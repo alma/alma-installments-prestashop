@@ -32,8 +32,10 @@ class AdminAlmaConfigController extends ModuleAdminController
             'AdminModules',
             true,
             [],
-            ['configure' => 'alma', 'module_name' => 'alma', 'tab_module' => 'payments_gateways']
-        ) . '&configure=alma&module_name=alma&tab_module=payments_gateways';
+            //phpcs:ignore
+            ['configure' => $this->module->name, 'module_name' => $this->module->name, 'tab_module' => $this->module->tab]
+        //phpcs:ignore
+        ) . '&configure=' . $this->module->name . '&module_name=' . $this->module->name . '&tab_module=' . $this->module->tab;
 
         Tools::redirectAdmin($location);
     }
