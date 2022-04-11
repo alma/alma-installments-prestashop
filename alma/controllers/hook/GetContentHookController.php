@@ -570,6 +570,9 @@ final class GetContentHookController extends AdminHookController
 
     private function assignSmartyAlertClasses($level = 'danger')
     {
+        $token = Tools::getAdminTokenLite('AdminModules');
+        $href = $this->context->link->getAdminLink('AdminParentModulesSf', $token);
+
         if (version_compare(_PS_VERSION_, '1.6', '<')) {
             $this->context->smarty->assign([
                 'validation_error_classes' => 'alert',
@@ -581,6 +584,20 @@ final class GetContentHookController extends AdminHookController
                 'validation_error_classes' => "alert alert-$level",
                 'tip_classes' => 'alert alert-info',
                 'success_classes' => 'alert alert-success',
+                'breadcrumbs2' => [
+                    'container' => [
+                        'name' => $this->module->l('Modules'),
+                        'href' => $href,
+                    ],
+                    'tab' => [
+                        'name' => $this->module->l('Module Manager '),
+                        'href' => $href,
+                    ],
+                ],
+                'quick_access_current_link_name' => $this->module->l('Module Manager - List'),
+                'quick_access_current_link_icon' => 'icon-AdminParentModulesSf',
+                'token' => $token,
+                'host_mode' => 0,
             ]);
         }
     }
