@@ -41,8 +41,11 @@ class CartEligibilityAdminFormBuilder extends AbstractAlmaAdminFormBuilder
     protected function configForm()
     {
         $htmlContent = sprintf(
-            // phpcs:ignore
-            $this->module->l('This widget allows you to inform your customers of the availability of Alma\'s payment facilities right from the product page, which will help to increase your conversion rate. For more details on its configuration or in case of problems, please consult %1$sthis documentation%2$s.', 'CartEligibilityAdminFormBuilder'),
+            $this->module->l(
+                // phpcs:ignore Generic.Files.LineLength
+                'This widget allows you to inform your customers of the availability of Alma\'s payment facilities right from the product page, which will help to increase your conversion rate. For more details on its configuration or in case of problems, please consult %1$sthis documentation%2$s.',
+                'CartEligibilityAdminFormBuilder'
+            ),
             '<a href="https://docs.getalma.eu/docs/prestashop-alma-widget" target="_blank">',
             '</a>'
         );
@@ -67,8 +70,10 @@ class CartEligibilityAdminFormBuilder extends AbstractAlmaAdminFormBuilder
                 self::ALMA_CART_WDGT_POS_SELECTOR,
                 $this->module->l('Display widget on custom css selector', 'CartEligibilityAdminFormBuilder'),
                 sprintf(
-                 // phpcs:ignore
-                 $this->module->l('%1$sAdvanced%2$s [Optional] Query selector for our scripts to display the widget on cart page', 'CartEligibilityAdminFormBuilder'),
+                    $this->module->l(
+                        '%1$sAdvanced%2$s [Optional] Query selector for our scripts to display the widget on cart page',
+                        'CartEligibilityAdminFormBuilder'
+                    ),
                     '<b>',
                     '</b>'
                 ),

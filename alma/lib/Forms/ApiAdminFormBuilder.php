@@ -45,8 +45,10 @@ class ApiAdminFormBuilder extends AbstractAlmaAdminFormBuilder
             $this->inputSelectForm(
                 self::ALMA_API_MODE,
                 $this->module->l('API Mode', 'ApiAdminFormBuilder'),
-                // phpcs:ignore
-                $this->module->l('Use Test mode until you are ready to take real orders with Alma. In Test mode, only admins can see Alma on cart/checkout pages.', 'ApiAdminFormBuilder'),
+                $this->module->l(
+                    'Use Test mode until you are ready to take real orders with Alma. In Test mode, only admins can see Alma on cart/checkout pages.',
+                    'ApiAdminFormBuilder'
+                ),
                 [
                     ['api_mode' => ALMA_MODE_LIVE, 'name' => 'Live'],
                     ['api_mode' => ALMA_MODE_TEST, 'name' => 'Test'],
@@ -59,7 +61,6 @@ class ApiAdminFormBuilder extends AbstractAlmaAdminFormBuilder
                 $this->module->l('Not required for Test mode', 'ApiAdminFormBuilder') .
                     ' – ' .
                     sprintf(
-                        // phpcs:ignore
                         $this->module->l('You can find your Live API key on %1$syour Alma dashboard%2$s', 'ApiAdminFormBuilder'),
                         '<a href="https://dashboard.getalma.eu/api" target="_blank">',
                         '</a>'
@@ -71,7 +72,6 @@ class ApiAdminFormBuilder extends AbstractAlmaAdminFormBuilder
                 $this->module->l('Not required for Live mode', 'ApiAdminFormBuilder') .
                     ' – ' .
                     sprintf(
-                        // phpcs:ignore
                         $this->module->l('You can find your Test API key on %1$syour sandbox dashboard%2$s', 'ApiAdminFormBuilder'),
                         '<a href="https://dashboard.sandbox.getalma.eu/api" target="_blank">',
                         '</a>'

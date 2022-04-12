@@ -1,7 +1,4 @@
 <?php
-
-use Alma\PrestaShop\Utils\LinkHelper;
-
 /**
  * 2018-2022 Alma SAS
  *
@@ -24,6 +21,8 @@ use Alma\PrestaShop\Utils\LinkHelper;
  * @copyright 2018-2022 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
+
+use Alma\PrestaShop\Utils\LinkHelper;
 
 class AdminAlmaConfigController extends ModuleAdminController
 {

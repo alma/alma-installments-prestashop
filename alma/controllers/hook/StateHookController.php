@@ -75,10 +75,8 @@ final class StateHookController extends AdminHookController
                 Logger::instance()->info($msg);
                 break;
             case $id_state_payment_trigger:
-                // phpcs:ignore
                 $msg = "[Alma] Option PaymentTrigger disabled: hook will not be triggered on {$id_state_payment_trigger} refund state";
                 if (Settings::isPaymentTriggerEnabledByState()) {
-                    // phpcs:ignore
                     $msg = "[Alma] Option PaymentTrigger enabled: hook will be triggered on {$id_state_payment_trigger} refund state";
                     $this->triggerPayment($alma, $id_payment, $order);
                 }

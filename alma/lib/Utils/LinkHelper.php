@@ -46,7 +46,7 @@ class LinkHelper
     public static function getAdminLinkAlmaDashboard()
     {
         $module = Module::getInstanceByName('alma');
-        
+
         return Context::getContext()->link->getAdminLink(
             'AdminModules',
             true,

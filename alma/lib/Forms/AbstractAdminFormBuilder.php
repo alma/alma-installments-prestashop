@@ -69,7 +69,6 @@ abstract class AbstractAdminFormBuilder
      *
      * @return array inputSwitchForm
      */
-    // phpcs:ignore
     protected function inputSwitchForm($name, $label, $labelOn = 'Yes', $labelOff = 'No', $desc = null, $form_group_class = null)
     {
         $dataInput = [

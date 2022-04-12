@@ -45,8 +45,10 @@ class AlmaValidationModuleFrontController extends ModuleFrontController
     {
         if (!$msg) {
             $msg = sprintf(
-                // phpcs:ignore
-                $this->module->l('There was an error while validating your payment. Please try again or contact us if the problem persists. Cart ID: %d', 'validation'),
+                $this->module->l(
+                    'There was an error while validating your payment. Please try again or contact us if the problem persists. Cart ID: %d',
+                    'validation'
+                ),
                 (int) $cart ? $cart->id : -1
             );
         }
