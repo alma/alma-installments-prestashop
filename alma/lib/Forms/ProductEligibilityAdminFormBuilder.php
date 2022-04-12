@@ -137,13 +137,13 @@ class ProductEligibilityAdminFormBuilder extends AbstractAlmaAdminFormBuilder
                 self::ALMA_PRODUCT_COLOR_PICK_SELECTOR,
                 $this->module->l('Product color picker query selector', 'ProductEligibilityAdminFormBuilder'),
                 sprintf(
-                // PrestaShop won't detect the string if the call to `l` is multiline
-                $this->module->l(
-                    '%1$sAdvanced%2$s Query selector for our scripts to correctly find the chosen color option of a product',
-                    'ProductEligibilityAdminFormBuilder'
-                ),
-                '<b>',
-                '</b>'
+                    // PrestaShop won't detect the string if the call to `l` is multiline
+                    $this->module->l(
+                        '%1$sAdvanced%2$s Query selector for our scripts to correctly find the chosen color option of a product',
+                        'ProductEligibilityAdminFormBuilder'
+                    ),
+                    '<b>',
+                    '</b>'
                 )
             ),
             $this->inputTextForm(

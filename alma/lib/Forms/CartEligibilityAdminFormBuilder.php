@@ -70,9 +70,9 @@ class CartEligibilityAdminFormBuilder extends AbstractAlmaAdminFormBuilder
                 self::ALMA_CART_WDGT_POS_SELECTOR,
                 $this->module->l('Display widget on custom css selector', 'CartEligibilityAdminFormBuilder'),
                 sprintf(
-                 $this->module->l(
-                     '%1$sAdvanced%2$s [Optional] Query selector for our scripts to display the widget on cart page',
-                     'CartEligibilityAdminFormBuilder'
+                    $this->module->l(
+                        '%1$sAdvanced%2$s [Optional] Query selector for our scripts to display the widget on cart page',
+                        'CartEligibilityAdminFormBuilder'
                     ),
                     '<b>',
                     '</b>'
