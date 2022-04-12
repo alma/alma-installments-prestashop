@@ -112,8 +112,11 @@ final class DisplayRefundsHookController extends AdminHookController
         $wording = [
             'title' => $this->module->l('Alma refund', 'DisplayRefundsHookController'),
             'description' => sprintf(
-                // phpcs:ignore
-                $this->module->l('Refund this order thanks to the Alma module. This will be applied in your Alma dashboard automatically. The maximum refundable amount includes client fees. %1$sSee documentation%2$s', 'DisplayRefundsHookController'),
+                $this->module->l(
+                    // phpcs:ignore Generic.Files.LineLength
+                    'Refund this order thanks to the Alma module. This will be applied in your Alma dashboard automatically. The maximum refundable amount includes client fees. %1$sSee documentation%2$s',
+                    'DisplayRefundsHookController'
+                ),
                 '<a href="https://docs.getalma.eu/docs/prestashop-refund" target="_blank">',
                 '</a>'
             ),
@@ -124,7 +127,6 @@ final class DisplayRefundsHookController extends AdminHookController
             ),
             'labelRadioRefundAllOrder' => $this->module->l('Refund the entire order', 'DisplayRefundsHookController'),
             'labelRadioRefundAllOrderInfoId' => sprintf(
-                // phpcs:ignore
                 $this->module->l('Refund this order (id: %1$d) and all those linked to the same payment (id: %2$s)', 'DisplayRefundsHookController'),
                 $orderData['id'],
                 $orderData['ordersId']

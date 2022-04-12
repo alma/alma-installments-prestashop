@@ -108,7 +108,6 @@ final class PaymentOptionsHookController extends FrontendHookController
                         $keyPlan
                     );
                     if ($keyPlan === 0) {
-                        // phpcs:ignore
                         $plans[$keyPlan]['human_date'] = SettingsCustomFields::getDescriptionPaymentTriggerByLang($idLang);
                     }
                 }
@@ -124,9 +123,7 @@ final class PaymentOptionsHookController extends FrontendHookController
                 $isInstallmentAccordingToDeferred = $n === 1;
                 $fileTemplate = 'payment_button_deferred.tpl';
                 $valueBNPL = $duration;
-                // phpcs:ignore
                 $textPaymentButton = sprintf(SettingsCustomFields::getPaymentButtonTitleDeferredByLang($idLang), $duration);
-                // phpcs:ignore
                 $descPaymentButton = sprintf(SettingsCustomFields::getPaymentButtonDescriptionDeferredByLang($idLang), $duration);
             }
 

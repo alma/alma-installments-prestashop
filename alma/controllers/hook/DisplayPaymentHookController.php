@@ -106,7 +106,6 @@ final class DisplayPaymentHookController extends FrontendHookController
                     'pnx' => $installment,
                     'logo' => $logo,
                     'plans' => $plans,
-                    // phpcs:ignore
                     'installmentText' => $this->getInstallmentText($plans, $idLang, Settings::isDeferredTriggerLimitDays($feePlans, $key)),
                     'deferred_trigger_limit_days' => $feePlans->$key->deferred_trigger_limit_days,
                     'isDeferred' => $isDeferred,
@@ -117,9 +116,7 @@ final class DisplayPaymentHookController extends FrontendHookController
                 if ($isDeferred) {
                     $paymentOption['duration'] = $duration;
                     $paymentOption['key'] = $key;
-                    // phpcs:ignore
                     $paymentOption['text'] = sprintf(SettingsCustomFields::getPaymentButtonTitleDeferredByLang($idLang), $duration);
-                    // phpcs:ignore
                     $paymentOption['desc'] = sprintf(SettingsCustomFields::getPaymentButtonDescriptionDeferredByLang($idLang), $duration);
                 }
                 $paymentOptions[$key] = $paymentOption;
@@ -152,7 +149,6 @@ final class DisplayPaymentHookController extends FrontendHookController
         if ($isDeferredTriggerLimitDays) {
             return sprintf(
                 $this->module->l('%1$s then %2$d x %3$s', 'DisplayPaymentHookController'),
-                // phpcs:ignore
                 almaFormatPrice($plans[0]['total_amount']) . ' ' . SettingsCustomFields::getDescriptionPaymentTriggerByLang($idLang),
                 $nbPlans - 1,
                 almaFormatPrice($plans[1]['total_amount'])

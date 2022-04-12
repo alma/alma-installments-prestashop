@@ -43,11 +43,16 @@ class PaymentOnTriggeringAdminFormBuilder extends AbstractAlmaAdminFormBuilder
 
     protected function configForm()
     {
-        // phpcs:ignore
-        $htmlContent = $this->module->l('This option is available only for Alma payment in 2x, 3x and 4x. When it\'s turned on, your clients will pay the first installment at the order status change. When your client order on your website, Alma will only ask for a payment authorization. Only status handled by Alma are available in the menu below. Please contact Alma if you need us to add another status.', 'PaymentOnTriggeringAdminFormBuilder');
+        $htmlContent = $this->module->l(
+            // phpcs:ignore Generic.Files.LineLength
+            'This option is available only for Alma payment in 2x, 3x and 4x. When it\'s turned on, your clients will pay the first installment at the order status change. When your client order on your website, Alma will only ask for a payment authorization. Only status handled by Alma are available in the menu below. Please contact Alma if you need us to add another status.',
+            'PaymentOnTriggeringAdminFormBuilder'
+        );
         $htmlContentDisabled = sprintf(
-            // phpcs:ignore
-            $this->module->l('If you are interested in this feature, please get closer to your Alma contact or by sending an email to %1$ssupport@getalma.eu%2$s.', 'PaymentOnTriggeringAdminFormBuilder'),
+            $this->module->l(
+                'If you are interested in this feature, please get closer to your Alma contact or by sending an email to %1$ssupport@getalma.eu%2$s.',
+                'PaymentOnTriggeringAdminFormBuilder'
+            ),
             '<a href="mailto:support@getalma.eu" target="_blank">',
             '</a>'
         );
@@ -81,7 +86,6 @@ class PaymentOnTriggeringAdminFormBuilder extends AbstractAlmaAdminFormBuilder
             $this->inputSelectForm(
                 self::ALMA_DESCRIPTION_TRIGGER,
                 $this->module->l('Trigger typology', 'PaymentOnTriggeringAdminFormBuilder'),
-                // phpcs:ignore
                 $this->module->l('Text that will appear in the payments schedule and in the customer\'s payment authorization email.', 'ApiAdminFormBuilder'),
                 $query,
                 'description_trigger'
