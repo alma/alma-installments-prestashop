@@ -1,7 +1,4 @@
 <?php
-
-use Alma\PrestaShop\Utils\LinkHelper;
-
 /**
  * 2018-2022 Alma SAS
  *
@@ -25,14 +22,38 @@ use Alma\PrestaShop\Utils\LinkHelper;
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
-class AdminAlmaConfigController extends ModuleAdminController
-{
-    public function init()
-    {
-        parent::init();
-        // Simply redirect to the default module's configuration page
-        $location = LinkHelper::getAdminLinkAlmaDashboard();
+namespace Alma\PrestaShop\Utils;
 
-        Tools::redirectAdmin($location);
+use Context;
+use Module;
+
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
+/**
+ * Class LinkHelper.
+ *
+ * Link of Module
+ */
+class LinkHelper
+{
+    /**
+     * Link Dashboard Alma module
+     *
+     * @return string
+     */
+    public static function getAdminLinkAlmaDashboard()
+    {
+        $module = Module::getInstanceByName('alma');
+        
+        return Context::getContext()->link->getAdminLink(
+            'AdminModules',
+            true,
+            [],
+            //phpcs:ignore
+            ['configure' => $module->name, 'module_name' => $module->name, 'tab_module' => $module->tab]
+        //phpcs:ignore
+        ) . '&configure=' . $module->name . '&module_name=' . $module->name . '&tab_module=' . $module->tab;
     }
 }
