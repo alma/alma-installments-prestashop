@@ -51,9 +51,7 @@ class LinkHelper
             'AdminModules',
             true,
             [],
-            //phpcs:ignore
             ['configure' => $module->name, 'module_name' => $module->name, 'tab_module' => $module->tab]
-        //phpcs:ignore
         ) . '&configure=' . $module->name . '&module_name=' . $module->name . '&tab_module=' . $module->tab;
     }
 }
