@@ -35,7 +35,7 @@ use Alma\PrestaShop\Hooks\FrontendHookController;
 use Alma\PrestaShop\Utils\Logger;
 use Alma\PrestaShop\Utils\OrderDataTrait;
 
-final class DisplayPaymentReturnHookController extends FrontendHookController
+class DisplayPaymentReturnHookController extends FrontendHookController
 {
     use OrderDataTrait;
 

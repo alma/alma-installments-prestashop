@@ -35,7 +35,7 @@ use Alma\PrestaShop\Utils\SettingsCustomFields;
 use Product;
 use Tools;
 
-final class DisplayProductPriceBlockHookController extends FrontendHookController
+class DisplayProductPriceBlockHookController extends FrontendHookController
 {
     public function canRun()
     {

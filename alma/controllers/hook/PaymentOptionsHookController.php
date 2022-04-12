@@ -39,7 +39,7 @@ use Media;
 use PrestaShop\PrestaShop\Core\Payment\PaymentOption;
 use Tools;
 
-final class PaymentOptionsHookController extends FrontendHookController
+class PaymentOptionsHookController extends FrontendHookController
 {
     /**
      * Payment option for Hook PaymentOption (Prestashop 1.7)

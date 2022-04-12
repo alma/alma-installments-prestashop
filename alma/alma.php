@@ -332,6 +332,13 @@ class Alma extends PaymentModule
 
         require_once dirname(__FILE__) . "/controllers/hook/${hookName}HookController.php";
         $ControllerName = "Alma\PrestaShop\Controllers\Hook\\${hookName}HookController";
+
+        // check if override exist for hook controllers
+        if (file_exists(dirname(__FILE__) . "/../../override/modules/alma/controllers/hook/${hookName}HookController.php")) {
+            require_once dirname(__FILE__) . "/../../override/modules/alma/controllers/hook/${hookName}HookController.php";
+            $ControllerName = "Alma\PrestaShop\Controllers\Hook\\${hookName}HookControllerOverride";
+        }
+
         $controller = new $ControllerName($this);
 
         if ($controller->canRun()) {
