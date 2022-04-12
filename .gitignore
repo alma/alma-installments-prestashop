@@ -1,5 +1,6 @@
 alma/vendor
 alma/config*.xml
+alma/composer.lock
 .php_cs.cache
 dist
 tmp
