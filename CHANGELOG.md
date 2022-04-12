@@ -1,5 +1,9 @@
 # Changelog
 
+## v2.10.0
+
+- Share of Checkout
+
 ## v2.9.0
 
 - Enriched data for risk algorithm improvements
@@ -27,6 +31,10 @@
 - Fix page payment return if you uncheck validation order
 
 ## v2.6.3
+
+- Fixed an error at the state change at the command
+
+## v2.6.2
 
 - Fixed widget in version 2.8.0
 
