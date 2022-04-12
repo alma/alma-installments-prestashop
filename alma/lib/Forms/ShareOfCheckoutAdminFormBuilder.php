@@ -45,7 +45,7 @@ class ShareOfCheckoutAdminFormBuilder extends AbstractAlmaAdminFormBuilder
             ),
             $this->inputHiddenForm(
                 self::ALMA_SHARE_OF_CHECKOUT_DATE
-            )
+            ),
         ];
     }
 

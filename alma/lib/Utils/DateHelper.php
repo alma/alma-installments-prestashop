@@ -24,9 +24,6 @@
 
 namespace Alma\PrestaShop\Utils;
 
-use Context;
-use Tools;
-
 if (!defined('_PS_VERSION_')) {
     exit;
 }
@@ -42,22 +39,24 @@ class DateHelper
      * @param $from
      * @param $shareOfCheckoutEnabledDate
      * @param $to
+     *
      * @return array
      */
-    public static function getDatesInInterval($from,$shareOfCheckoutEnabledDate,$to = null)
+    public static function getDatesInInterval($from, $shareOfCheckoutEnabledDate, $to = null)
     {
         $from = date('Y-m-d', $from);
         $shareOfCheckoutEnabledDate = date('Y-m-d', $shareOfCheckoutEnabledDate);
-        if(!isset($to)){
+        if (!isset($to)) {
             $to = strtotime('-1 day');
         }
         $datesInInterval = [];
-        $startTimestamp = strtotime('+1 day',strtotime($from));
-        for ($i = $startTimestamp; $i <= $to ; $i = strtotime('+1 day', $i)) {
-            if($i >= strtotime($shareOfCheckoutEnabledDate)){
-                $datesInInterval[] = date('Y-m-d',$i);
+        $startTimestamp = strtotime('+1 day', strtotime($from));
+        for ($i = $startTimestamp; $i <= $to; $i = strtotime('+1 day', $i)) {
+            if ($i >= strtotime($shareOfCheckoutEnabledDate)) {
+                $datesInInterval[] = date('Y-m-d', $i);
             }
         }
+
         return $datesInInterval;
     }
 }

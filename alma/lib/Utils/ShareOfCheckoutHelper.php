@@ -44,10 +44,10 @@ if (!defined('_PS_VERSION_')) {
  */
 class ShareOfCheckoutHelper
 {
-    const TOTAL_COUNT_KEY = "total_order_count";
-    const TOTAL_AMOUNT_KEY = "total_amount";
-    const CURRENCY_KEY = "currency";
-    const PAYMENT_METHOD_KEY = "payment_method_name";
+    const TOTAL_COUNT_KEY = 'total_order_count';
+    const TOTAL_AMOUNT_KEY = 'total_amount';
+    const CURRENCY_KEY = 'currency';
+    const PAYMENT_METHOD_KEY = 'payment_method_name';
 
     /**
      * @var null
@@ -62,14 +62,16 @@ class ShareOfCheckoutHelper
     {
         ini_set('max_execution_time', 30);
 
-        if(!Settings::canShareOfCheckout()){
+        if (!Settings::canShareOfCheckout()) {
             Logger::instance()->info('Share Of Checkout is not enabled');
+
             return;
         }
         $shareOfCheckoutEnabledDate = Configuration::get(ShareOfCheckoutAdminFormBuilder::ALMA_SHARE_OF_CHECKOUT_DATE);
 
-        if($shareOfCheckoutEnabledDate ==''){
+        if ($shareOfCheckoutEnabledDate == '') {
             Logger::instance()->info('No enable date in config');
+
             return;
         }
 
@@ -77,16 +79,18 @@ class ShareOfCheckoutHelper
             $lastUpdateDate = self::getLastShareOfCheckout();
         } catch (RequestError $e) {
             Logger::instance()->info('Get Last Update Date error - end of process - message : ' . $e->getMessage());
+
             return;
         }
 
-        $DatesToShare = DateHelper::getDatesInInterval($lastUpdateDate,$shareOfCheckoutEnabledDate);
+        $DatesToShare = DateHelper::getDatesInInterval($lastUpdateDate, $shareOfCheckoutEnabledDate);
         foreach ($DatesToShare as $date) {
             try {
                 $this->setShareOfCheckoutFromDate($date);
                 $this->putDay();
             } catch (RequestError $e) {
                 Logger::instance()->info('Share of checkout error - end of process - message : ' . $e->getMessage());
+
                 return;
             }
         }
@@ -95,8 +99,9 @@ class ShareOfCheckoutHelper
     public function putDay()
     {
         $alma = ClientHelper::defaultInstance();
-        if (!$alma){
+        if (!$alma) {
             Logger::instance()->error('Cannot put share of checkout: no API client');
+
             return;
         }
 
@@ -116,11 +121,11 @@ class ShareOfCheckoutHelper
     {
         $lastDateShareOfCheckout = null;
         $alma = ClientHelper::defaultInstance();
-        if (!$alma){
+        if (!$alma) {
             Logger::instance()->error('Cannot get last date share of checkout: no API client');
+
             return;
         }
-        
 
         try {
             $lastDateShareOfCheckout = $alma->shareOfCheckout->getLastUpdateDate();
@@ -146,7 +151,7 @@ class ShareOfCheckoutHelper
             $currency = new Currency();
             $isoCodeCurrency = $currency->getIsoCodeById($order->id_currency);
 
-            if (!isset($ordersByCurrency[$isoCodeCurrency])){
+            if (!isset($ordersByCurrency[$isoCodeCurrency])) {
                 $ordersByCurrency[$isoCodeCurrency] = $this->initOrderResult($isoCodeCurrency);
             }
 
@@ -173,11 +178,11 @@ class ShareOfCheckoutHelper
             $paymentMethod = $order->module;
             $isoCodeCurrency = $currency->getIsoCodeById($order->id_currency);
 
-            if(!isset($ordersByCheckout[$paymentMethod])){
-                $ordersByCheckout[$paymentMethod]=['orders'=>[]];
+            if (!isset($ordersByCheckout[$paymentMethod])) {
+                $ordersByCheckout[$paymentMethod] = ['orders' => []];
             }
 
-            if(!isset($ordersByCheckout[$paymentMethod]['orders'][$isoCodeCurrency])){
+            if (!isset($ordersByCheckout[$paymentMethod]['orders'][$isoCodeCurrency])) {
                 // phpcs:ignore
                 $ordersByCheckout[$paymentMethod]['orders'][$isoCodeCurrency] = $this->initOrderResult($isoCodeCurrency);
             }
@@ -185,10 +190,10 @@ class ShareOfCheckoutHelper
             $ordersByCheckout[$paymentMethod][self::PAYMENT_METHOD_KEY] = $paymentMethod;
             // phpcs:ignore
             $ordersByCheckout[$paymentMethod]['orders'][$isoCodeCurrency][self::TOTAL_AMOUNT_KEY] += almaPriceToCents($order->total_paid_tax_incl);
-            $ordersByCheckout[$paymentMethod]['orders'][$isoCodeCurrency][self::TOTAL_COUNT_KEY] ++;
+            ++$ordersByCheckout[$paymentMethod]['orders'][$isoCodeCurrency][self::TOTAL_COUNT_KEY];
         }
         foreach ($ordersByCheckout as $paymentKey => $paymentMethodOrders) {
-            $ordersByCheckout[$paymentKey]['orders']= array_values($paymentMethodOrders['orders']);
+            $ordersByCheckout[$paymentKey]['orders'] = array_values($paymentMethodOrders['orders']);
         }
 
         return array_values($ordersByCheckout);
@@ -198,6 +203,7 @@ class ShareOfCheckoutHelper
      * Array structure to send
      *
      * @param array $currency
+     *
      * @return array
      */
     private function initOrderResult($currency)
@@ -205,7 +211,7 @@ class ShareOfCheckoutHelper
         return [
             self::TOTAL_AMOUNT_KEY => 0,
             self::TOTAL_COUNT_KEY => 0,
-            self::CURRENCY_KEY => $currency
+            self::CURRENCY_KEY => $currency,
         ];
     }
 
@@ -219,7 +225,7 @@ class ShareOfCheckoutHelper
         $orderIds = [];
         $statesPayed = [2, 3, 4, 5, 9];
         $orderIdsByDate = self::getOrdersIdByDate($this->startTime, $this->endTime);
-        foreach($orderIdsByDate as $orderId) {
+        foreach ($orderIdsByDate as $orderId) {
             $currentOrder = new Order($orderId);
             if (in_array((int) $currentOrder->current_state, $statesPayed)) {
                 $orderIds[] = $currentOrder->id;
@@ -234,6 +240,7 @@ class ShareOfCheckoutHelper
      *
      * @param string $date_from
      * @param string $date_to
+     *
      * @return array
      */
     public static function getOrdersIdByDate($date_from, $date_to)
@@ -255,21 +262,23 @@ class ShareOfCheckoutHelper
 
     /**
      * @param $startTime
+     *
      * @return void
      */
     public function setShareOfCheckoutFromDate($startTime)
     {
-        $this->startTime = $startTime.' 00:00:00';
+        $this->startTime = $startTime . ' 00:00:00';
         $this->setShareOfCheckoutToDate($startTime);
     }
 
     /**
      * @param $endTime
+     *
      * @return void
      */
     public function setShareOfCheckoutToDate($endTime)
     {
-        $this->endTime = $endTime.' 23:59:59';
+        $this->endTime = $endTime . ' 23:59:59';
     }
 
     /**
@@ -277,11 +286,11 @@ class ShareOfCheckoutHelper
      */
     private function getShareOfCheckoutFromDate()
     {
-        if(isset($this->startTime)){
+        if (isset($this->startTime)) {
             return $this->startTime;
         }
 
-        return date('Y-m-d',strtotime('yesterday')).' 00:00:00';
+        return date('Y-m-d', strtotime('yesterday')) . ' 00:00:00';
     }
 
     /**
@@ -289,10 +298,11 @@ class ShareOfCheckoutHelper
      */
     private function getShareOfCheckoutToDate()
     {
-        if(isset($this->endTime)){
+        if (isset($this->endTime)) {
             return $this->endTime;
         }
-        return date('Y-m-d',strtotime('yesterday')).' 23:59:59';
+
+        return date('Y-m-d', strtotime('yesterday')) . ' 23:59:59';
     }
 
     /**
@@ -303,10 +313,10 @@ class ShareOfCheckoutHelper
     public function getPayload()
     {
         return [
-            "start_time"=> strtotime($this->getShareOfCheckoutFromDate()),
-            "end_time"  => strtotime($this->getShareOfCheckoutToDate()),
-            "orders"    => $this->getTotalOrders(),
-            "payment_methods" => $this->getTotalPaymentMethods()
+            'start_time' => strtotime($this->getShareOfCheckoutFromDate()),
+            'end_time' => strtotime($this->getShareOfCheckoutToDate()),
+            'orders' => $this->getTotalOrders(),
+            'payment_methods' => $this->getTotalPaymentMethods(),
         ];
     }
 }

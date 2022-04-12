@@ -151,7 +151,7 @@ class Settings
         if (!self::canShareOfCheckout()) {
             return '';
         }
-        
+
         return $date->getTimestamp();
     }
 

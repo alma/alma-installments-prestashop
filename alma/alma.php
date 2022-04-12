@@ -452,7 +452,8 @@ class Alma extends PaymentModule
     /**
      * Hook action crontab
      */
-    public function hookActionCronJob() {
+    public function hookActionCronJob()
+    {
         Logger::instance()->info('Test Cron');
         $shareOfCheckout = new ShareOfCheckoutHelper();
         $shareOfCheckout->shareDays();
@@ -461,13 +462,14 @@ class Alma extends PaymentModule
     /**
      * Frequency of Cron at 4 a.m. every day
      */
-    public function getCronFrequency() {
-        return array(
+    public function getCronFrequency()
+    {
+        return [
             // 'hour' => 4,
             'hour' => -1,
-            'day' => -1, 
+            'day' => -1,
             'month' => -1,
-            'day_of_week' => -1
-        );
+            'day_of_week' => -1,
+        ];
     }
 }
