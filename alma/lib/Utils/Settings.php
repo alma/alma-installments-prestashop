@@ -246,7 +246,7 @@ class Settings
     {
         return (int) self::get('ALMA_STATE_TRIGGER', 4);
     }
-    
+
     public static function isPaymentTriggerEnabledByState()
     {
         return (bool) self::get('ALMA_PAYMENT_ON_TRIGGERING_ENABLED', 0);
@@ -454,13 +454,14 @@ class Settings
             return 0 < $plan->deferredDays || 0 < $plan->deferredMonths;
         }
     }
-    
+
     /**
      * Check if is deferred trigger by value in feeplans and enabled in config
      *
      * @param object $feePlans
      * @param string|null $key
-     * @return boolean
+     *
+     * @return bool
      */
     public static function isDeferredTriggerLimitDays($feePlans, $key = null)
     {
@@ -469,7 +470,7 @@ class Settings
         } else {
             $isDeferredTriggerLimitDay = !empty($feePlans['deferred_trigger_limit_days']);
         }
-        
+
         return $isDeferredTriggerLimitDay && Settings::isPaymentTriggerEnabledByState();
     }
 
@@ -486,7 +487,7 @@ class Settings
      * Fee plan from key
      *
      * @param string $key
-     * 
+     *
      * @return array feePlans
      */
     public static function getDataFromKey($key)

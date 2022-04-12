@@ -272,7 +272,7 @@ class SettingsCustomFields
         //phpcs:ignore
         $defaultField = self::getAllLangCustomFieldByKeyConfig(PaymentOnTriggeringAdminFormBuilder::ALMA_DESCRIPTION_TRIGGER, $languages);
 
-        foreach($defaultField as $key => $field) {
+        foreach ($defaultField as $key => $field) {
             $return[$key] = $field['string'];
         }
 

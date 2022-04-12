@@ -144,7 +144,8 @@ final class DisplayPaymentHookController extends FrontendHookController
      *
      * @return string text one liner option
      */
-    private function getInstallmentText($plans, $idLang, $isDeferredTriggerLimitDays) {
+    private function getInstallmentText($plans, $idLang, $isDeferredTriggerLimitDays)
+    {
         $nbPlans = count($plans);
         $locale = Language::getIsoById($idLang);
 
@@ -165,6 +166,7 @@ final class DisplayPaymentHookController extends FrontendHookController
                 almaFormatPrice($plans[1]['total_amount'])
             );
         }
+
         return sprintf(
             $this->module->l('0 € today then %1$s on %2$s', 'DisplayPaymentHookController'),
             almaFormatPrice($plans[0]['purchase_amount'] + $plans[0]['customer_fee']),

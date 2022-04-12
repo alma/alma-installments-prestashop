@@ -24,7 +24,6 @@
 
 namespace Alma\PrestaShop\Forms;
 
-use Alma\PrestaShop\Utils\Settings;
 use Alma\PrestaShop\Utils\SettingsCustomFields;
 use OrderState;
 
@@ -54,10 +53,11 @@ class PaymentOnTriggeringAdminFormBuilder extends AbstractAlmaAdminFormBuilder
         );
 
         $feePlans = $this->config['feePlans'];
-        $isTrigger = array_filter($feePlans, function($plans) {
+        $isTrigger = array_filter($feePlans, function ($plans) {
             if (!empty($plans->deferred_trigger_limit_days)) {
                 return $plans->installments_count;
             }
+
             return false;
         });
 
@@ -69,7 +69,7 @@ class PaymentOnTriggeringAdminFormBuilder extends AbstractAlmaAdminFormBuilder
 
         $query[] = [
             'description_trigger' => self::ALMA_DESCRIPTION_TRIGGER_AT_SHIPPING,
-            'name' => SettingsCustomFields::getDescriptionPaymentTriggerByLang($this->context->language->id)
+            'name' => SettingsCustomFields::getDescriptionPaymentTriggerByLang($this->context->language->id),
         ];
 
         return [
