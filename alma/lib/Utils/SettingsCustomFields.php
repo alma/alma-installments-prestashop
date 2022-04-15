@@ -64,18 +64,20 @@ class SettingsCustomFields
     public static function customFields()
     {
         $module = new Alma();
-        $module->l('Pay in %d installments', self::SOURCECUSTOMFIELDS);
-        $module->l('Pay in %d monthly installments with your credit card.', self::SOURCECUSTOMFIELDS);
-        $module->l('Buy now Pay in %d days', self::SOURCECUSTOMFIELDS);
-        $module->l('Buy now pay in %d days with your credit card.', self::SOURCECUSTOMFIELDS);
+        $module->l('Pay in installments with Alma', self::SOURCECUSTOMFIELDS);
+        $module->l('Buy now, Pay later with Alma', self::SOURCECUSTOMFIELDS);
+        $module->l('Spread your payments with Alma', self::SOURCECUSTOMFIELDS);
+        $module->l('Fast and secure payment by credit card.', self::SOURCECUSTOMFIELDS);
         $module->l('Your cart is not eligible for payments with Alma.', self::SOURCECUSTOMFIELDS);
         $module->l('At shipping', self::SOURCECUSTOMFIELDS);
 
         return [
-            PaymentButtonAdminFormBuilder::ALMA_PAYMENT_BUTTON_TITLE => 'Pay in %d installments',
-            PaymentButtonAdminFormBuilder::ALMA_PAYMENT_BUTTON_DESC => 'Pay in %d monthly installments with your credit card.',
-            PaymentButtonAdminFormBuilder::ALMA_DEFERRED_BUTTON_TITLE => 'Buy now Pay in %d days',
-            PaymentButtonAdminFormBuilder::ALMA_DEFERRED_BUTTON_DESC => 'Buy now pay in %d days with your credit card.',
+            PaymentButtonAdminFormBuilder::ALMA_PNX_BUTTON_TITLE => 'Pay in installments with Alma',
+            PaymentButtonAdminFormBuilder::ALMA_PNX_BUTTON_DESC => 'Fast and secure payment by credit card.',
+            PaymentButtonAdminFormBuilder::ALMA_DEFERRED_BUTTON_TITLE => 'Buy now, Pay later with Alma',
+            PaymentButtonAdminFormBuilder::ALMA_DEFERRED_BUTTON_DESC => 'Fast and secure payment by credit card.',
+            PaymentButtonAdminFormBuilder::ALMA_PNX_AIR_BUTTON_TITLE => 'Spread your payments with Alma',
+            PaymentButtonAdminFormBuilder::ALMA_PNX_AIR_BUTTON_DESC => 'Fast and secure payment by credit card.',
             ExcludedCategoryAdminFormBuilder::ALMA_NOT_ELIGIBLE_CATEGORIES => 'Your cart is not eligible for payments with Alma.',
             PaymentOnTriggeringAdminFormBuilder::ALMA_DESCRIPTION_TRIGGER => 'At shipping',
         ];
@@ -155,9 +157,9 @@ class SettingsCustomFields
      *
      * @return array
      */
-    public static function getPaymentButtonTitle()
+    public static function getPnxButtonTitle()
     {
-        return self::aggregateAllLanguagesCustomFields(PaymentButtonAdminFormBuilder::ALMA_PAYMENT_BUTTON_TITLE);
+        return self::aggregateAllLanguagesCustomFields(PaymentButtonAdminFormBuilder::ALMA_PNX_BUTTON_TITLE);
     }
 
     /**
@@ -167,9 +169,9 @@ class SettingsCustomFields
      *
      * @return string
      */
-    public static function getPaymentButtonTitleByLang($idLang)
+    public static function getPnxButtonTitleByLang($idLang)
     {
-        return self::getPaymentButtonTitle()[$idLang];
+        return self::getPnxButtonTitle()[$idLang];
     }
 
     /**
@@ -177,9 +179,9 @@ class SettingsCustomFields
      *
      * @return array
      */
-    public static function getPaymentButtonDescription()
+    public static function getPnxButtonDescription()
     {
-        return self::aggregateAllLanguagesCustomFields(PaymentButtonAdminFormBuilder::ALMA_PAYMENT_BUTTON_DESC);
+        return self::aggregateAllLanguagesCustomFields(PaymentButtonAdminFormBuilder::ALMA_PNX_BUTTON_DESC);
     }
 
     /**
@@ -189,9 +191,9 @@ class SettingsCustomFields
      *
      * @return string
      */
-    public static function getPaymentButtonDescriptionByLang($idLang)
+    public static function getPnxButtonDescriptionByLang($idLang)
     {
-        return self::getPaymentButtonDescription()[$idLang];
+        return self::getPnxButtonDescription()[$idLang];
     }
 
     /**
@@ -236,6 +238,50 @@ class SettingsCustomFields
     public static function getPaymentButtonDescriptionDeferredByLang($idLang)
     {
         return self::getPaymentButtonDescriptionDeferred()[$idLang];
+    }
+
+    /**
+     * Get array custom titles button
+     *
+     * @return array
+     */
+    public static function getPnxAirButtonTitle()
+    {
+        return self::aggregateAllLanguagesCustomFields(PaymentButtonAdminFormBuilder::ALMA_PNX_AIR_BUTTON_TITLE);
+    }
+
+    /**
+     * Get custom title button by id lang
+     *
+     * @param int $idLang
+     *
+     * @return string
+     */
+    public static function getPnxAirButtonTitleByLang($idLang)
+    {
+        return self::getPnxAirButtonTitle()[$idLang];
+    }
+
+    /**
+     * Get array custom description button
+     *
+     * @return array
+     */
+    public static function getPnxAirButtonDescription()
+    {
+        return self::aggregateAllLanguagesCustomFields(PaymentButtonAdminFormBuilder::ALMA_PNX_AIR_BUTTON_DESC);
+    }
+
+    /**
+     * Get custom description button by id lang
+     *
+     * @param int $idLang
+     *
+     * @return string
+     */
+    public static function getPnxAirButtonDescriptionByLang($idLang)
+    {
+        return self::getPnxAirButtonDescription()[$idLang];
     }
 
     /**

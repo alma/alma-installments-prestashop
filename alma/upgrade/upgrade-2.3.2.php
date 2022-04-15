@@ -30,6 +30,8 @@ include_once _PS_MODULE_DIR_ . 'alma/vendor/autoload.php';
 
 use Alma\API\RequestError;
 use Alma\PrestaShop\API\ClientHelper;
+use Alma\PrestaShop\Forms\ExcludedCategoryAdminFormBuilder;
+use Alma\PrestaShop\Forms\PaymentButtonAdminFormBuilder;
 use Alma\PrestaShop\Utils\Settings;
 use Alma\PrestaShop\Utils\SettingsCustomFields;
 
@@ -43,11 +45,11 @@ function upgrade_module_2_3_2($module)
         }
 
         $configKeys = [
-            'ALMA_PAYMENT_BUTTON_TITLE',
-            'ALMA_PAYMENT_BUTTON_DESC',
-            'ALMA_DEFERRED_BUTTON_TITLE',
-            'ALMA_DEFERRED_BUTTON_DESC',
-            'ALMA_NOT_ELIGIBLE_CATEGORIES',
+            PaymentButtonAdminFormBuilder::ALMA_PNX_BUTTON_TITLE,
+            PaymentButtonAdminFormBuilder::ALMA_PNX_BUTTON_DESC,
+            PaymentButtonAdminFormBuilder::ALMA_DEFERRED_BUTTON_TITLE,
+            PaymentButtonAdminFormBuilder::ALMA_DEFERRED_BUTTON_DESC,
+            ExcludedCategoryAdminFormBuilder::ALMA_NOT_ELIGIBLE_CATEGORIES,
         ];
 
         try {

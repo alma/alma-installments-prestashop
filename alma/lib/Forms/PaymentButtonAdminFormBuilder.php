@@ -33,10 +33,12 @@ if (!defined('_PS_VERSION_')) {
  */
 class PaymentButtonAdminFormBuilder extends AbstractAlmaAdminFormBuilder
 {
-    const ALMA_PAYMENT_BUTTON_TITLE = 'ALMA_PAYMENT_BUTTON_TITLE';
-    const ALMA_PAYMENT_BUTTON_DESC = 'ALMA_PAYMENT_BUTTON_DESC';
+    const ALMA_PNX_BUTTON_TITLE = 'ALMA_PNX_BUTTON_TITLE';
+    const ALMA_PNX_BUTTON_DESC = 'ALMA_PNX_BUTTON_DESC';
     const ALMA_DEFERRED_BUTTON_TITLE = 'ALMA_DEFERRED_BUTTON_TITLE';
     const ALMA_DEFERRED_BUTTON_DESC = 'ALMA_DEFERRED_BUTTON_DESC';
+    const ALMA_PNX_AIR_BUTTON_TITLE = 'ALMA_PNX_AIR_BUTTON_TITLE';
+    const ALMA_PNX_AIR_BUTTON_DESC = 'ALMA_PNX_AIR_BUTTON_DESC';
     const ALMA_SHOW_DISABLED_BUTTON = 'ALMA_SHOW_DISABLED_BUTTON';
 
     protected function configForm()
@@ -58,9 +60,9 @@ class PaymentButtonAdminFormBuilder extends AbstractAlmaAdminFormBuilder
 
         $return = [
             $this->inputHtml($tpl),
-            $this->inputHtml(null, "<h2>{$this->module->l('Payment by installment', 'PaymentButtonAdminFormBuilder')}</h2>"),
+            $this->inputHtml(null, "<h2>{$this->module->l('Payments in 2, 3 and 4 installments', 'PaymentButtonAdminFormBuilder')}</h2>"),
             $this->inputTextForm(
-                self::ALMA_PAYMENT_BUTTON_TITLE,
+                self::ALMA_PNX_BUTTON_TITLE,
                 $this->module->l('Title', 'PaymentButtonAdminFormBuilder'),
                 null,
                 null,
@@ -68,14 +70,14 @@ class PaymentButtonAdminFormBuilder extends AbstractAlmaAdminFormBuilder
                 true
             ),
             $this->inputTextForm(
-                self::ALMA_PAYMENT_BUTTON_DESC,
+                self::ALMA_PNX_BUTTON_DESC,
                 $this->module->l('Description', 'PaymentButtonAdminFormBuilder'),
                 null,
                 null,
                 true,
                 true
             ),
-            $this->inputHtml(null, "<h2>{$this->module->l('Defered payment', 'PaymentButtonAdminFormBuilder')}</h2>"),
+            $this->inputHtml(null, "<h2>{$this->module->l('Defered payments', 'PaymentButtonAdminFormBuilder')}</h2>"),
             $this->inputTextForm(
                 self::ALMA_DEFERRED_BUTTON_TITLE,
                 $this->module->l('Title', 'PaymentButtonAdminFormBuilder'),
@@ -86,6 +88,23 @@ class PaymentButtonAdminFormBuilder extends AbstractAlmaAdminFormBuilder
             ),
             $this->inputTextForm(
                 self::ALMA_DEFERRED_BUTTON_DESC,
+                $this->module->l('Description', 'PaymentButtonAdminFormBuilder'),
+                null,
+                null,
+                true,
+                true
+            ),
+            $this->inputHtml(null, "<h2>{$this->module->l('Payments in more than 4 installments', 'PaymentButtonAdminFormBuilder')}</h2>"),
+            $this->inputTextForm(
+                self::ALMA_PNX_AIR_BUTTON_TITLE,
+                $this->module->l('Title', 'PaymentButtonAdminFormBuilder'),
+                null,
+                null,
+                true,
+                true
+            ),
+            $this->inputTextForm(
+                self::ALMA_PNX_AIR_BUTTON_DESC,
                 $this->module->l('Description', 'PaymentButtonAdminFormBuilder'),
                 null,
                 null,

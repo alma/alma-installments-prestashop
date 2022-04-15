@@ -35,7 +35,7 @@ use Alma\PrestaShop\Forms\PaymentButtonAdminFormBuilder;
 use Alma\PrestaShop\Utils\Settings;
 use Alma\PrestaShop\Utils\SettingsCustomFields;
 
-function upgrade_module_2_3_0($module)
+function upgrade_module_next($module)
 {
     if (Settings::isFullyConfigured()) {
         $alma = ClientHelper::defaultInstance();
@@ -44,17 +44,14 @@ function upgrade_module_2_3_0($module)
             return true;
         }
 
-        $configKeys = [
-            PaymentButtonAdminFormBuilder::ALMA_PNX_BUTTON_TITLE,
-            PaymentButtonAdminFormBuilder::ALMA_PNX_BUTTON_DESC,
-            PaymentButtonAdminFormBuilder::ALMA_DEFERRED_BUTTON_TITLE,
-            PaymentButtonAdminFormBuilder::ALMA_DEFERRED_BUTTON_DESC,
-            ExcludedCategoryAdminFormBuilder::ALMA_NOT_ELIGIBLE_CATEGORIES,
+        $deleteKeys = [
+            'ALMA_PAYMENT_BUTTON_TITLE',
+            'ALMA_PAYMENT_BUTTON_DESC',
         ];
 
         try {
-            foreach ($configKeys as $configKey) {
-                Configuration::deleteByName($configKey);
+            foreach ($deleteKeys as $deleteKey) {
+                Configuration::deleteByName($deleteKey);
             }
 
             SettingsCustomFields::initCustomFields();
