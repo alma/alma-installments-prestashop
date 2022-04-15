@@ -269,7 +269,6 @@ class SettingsCustomFields
     public static function getDescriptionPaymentTrigger()
     {
         $languages = Language::getLanguages(false);
-        //phpcs:ignore
         $defaultField = self::getAllLangCustomFieldByKeyConfig(PaymentOnTriggeringAdminFormBuilder::ALMA_DESCRIPTION_TRIGGER, $languages);
 
         foreach($defaultField as $key => $field) {
