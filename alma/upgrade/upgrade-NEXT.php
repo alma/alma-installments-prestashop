@@ -33,7 +33,7 @@ use Alma\PrestaShop\API\ClientHelper;
 use Alma\PrestaShop\Utils\Settings;
 use Alma\PrestaShop\Utils\SettingsCustomFields;
 
-function upgrade_module_next($module)
+function upgrade_module_next()
 {
     if (Settings::isFullyConfigured()) {
         $alma = ClientHelper::defaultInstance();
