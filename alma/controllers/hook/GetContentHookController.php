@@ -455,14 +455,17 @@ final class GetContentHookController extends AdminHookController
             $feePlansOrdered = array_merge($feePlansOrdered, $feePlanDeferred);
         }
 
-        // phpcs:ignore
-        $pnxBuilder = new PnxAdminFormBuilder($this->module, $this->context, $iconPath, ['feePlans' => $feePlansOrdered, 'installmentsPlans' => $installmentsPlans]);
+        $pnxBuilder = new PnxAdminFormBuilder(
+            $this->module,
+            $this->context,
+            $iconPath,
+            ['feePlans' => $feePlansOrdered, 'installmentsPlans' => $installmentsPlans]
+        );
         $apiBuilder = new ApiAdminFormBuilder($this->module, $this->context, $iconPath, ['needsAPIKey' => $needsKeys]);
         $cartBuilder = new CartEligibilityAdminFormBuilder($this->module, $this->context, $iconPath);
         $productBuilder = new ProductEligibilityAdminFormBuilder($this->module, $this->context, $iconPath);
         $excludedBuilder = new ExcludedCategoryAdminFormBuilder($this->module, $this->context, $iconPath);
         $refundBuilder = new RefundAdminFormBuilder($this->module, $this->context, $iconPath);
-        // phpcs:ignore
         $triggerBuilder = new PaymentOnTriggeringAdminFormBuilder($this->module, $this->context, $iconPath, ['feePlans' => $feePlansOrdered]);
         $paymentBuilder = new PaymentButtonAdminFormBuilder($this->module, $this->context, $iconPath);
         $debugBuilder = new DebugAdminFormBuilder($this->module, $this->context, $iconPath);

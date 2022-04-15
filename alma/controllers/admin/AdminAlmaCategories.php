@@ -182,7 +182,6 @@ class AdminAlmaCategoriesController extends ModuleAdminController
 
         foreach ($filters as $key => $value) {
             /* Extracting filters from $_POST on key filter_ */
-            // phpcs:ignore
             if (
                 $value != null
                 && !strncmp($key, $prefix . $this->list_id . 'Filter_', 7 + Tools::strlen($prefix . $this->list_id))

@@ -58,7 +58,6 @@ class PaymentButtonAdminFormBuilder extends AbstractAlmaAdminFormBuilder
 
         $return = [
             $this->inputHtml($tpl),
-            // phpcs:ignore
             $this->inputHtml(null, "<h2>{$this->module->l('Payment by installment', 'PaymentButtonAdminFormBuilder')}</h2>"),
             $this->inputTextForm(
                 self::ALMA_PAYMENT_BUTTON_TITLE,

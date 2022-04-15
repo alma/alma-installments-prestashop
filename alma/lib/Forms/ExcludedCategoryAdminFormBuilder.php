@@ -59,16 +59,16 @@ class ExcludedCategoryAdminFormBuilder extends AbstractAlmaAdminFormBuilder
             $this->inputAlmaSwitchForm(
                 self::ALMA_CATEGORIES_WDGT_NOT_ELGBL,
                 $this->module->l('Display message', 'ExcludedCategoryAdminFormBuilder'),
-                // phpcs:ignore
                 $this->module->l('Display the message below if the product is excluded from the category', 'ExcludedCategoryAdminFormBuilder'),
-                // phpcs:ignore
                 $this->module->l('Display the message below if the product is excluded', 'ExcludedCategoryAdminFormBuilder')
             ),
             $this->inputTextForm(
                 self::ALMA_NOT_ELIGIBLE_CATEGORIES,
                 $this->module->l('Excluded categories non-eligibility message ', 'ExcludedCategoryAdminFormBuilder'),
-                // phpcs:ignore
-                $this->module->l('Message displayed on an excluded product page or on the cart page if it contains an excluded product.', 'ExcludedCategoryAdminFormBuilder'),
+                $this->module->l(
+                    'Message displayed on an excluded product page or on the cart page if it contains an excluded product.',
+                    'ExcludedCategoryAdminFormBuilder'
+                ),
                 null,
                 false,
                 true

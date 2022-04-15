@@ -52,7 +52,6 @@ class SettingsCustomFields
 
         $keysCustomFields = array_keys(self::customFields());
         foreach ($keysCustomFields as $keyCustomFields) {
-            // phpcs:ignore
             Settings::updateValue($keyCustomFields, json_encode(self::getAllLangCustomFieldByKeyConfig($keyCustomFields, $languages)));
         }
     }
@@ -74,11 +73,9 @@ class SettingsCustomFields
 
         return [
             PaymentButtonAdminFormBuilder::ALMA_PAYMENT_BUTTON_TITLE => 'Pay in %d installments',
-            // phpcs:ignore
             PaymentButtonAdminFormBuilder::ALMA_PAYMENT_BUTTON_DESC => 'Pay in %d monthly installments with your credit card.',
             PaymentButtonAdminFormBuilder::ALMA_DEFERRED_BUTTON_TITLE => 'Buy now Pay in %d days',
             PaymentButtonAdminFormBuilder::ALMA_DEFERRED_BUTTON_DESC => 'Buy now pay in %d days with your credit card.',
-            // phpcs:ignore
             ExcludedCategoryAdminFormBuilder::ALMA_NOT_ELIGIBLE_CATEGORIES => 'Your cart is not eligible for payments with Alma.',
             PaymentOnTriggeringAdminFormBuilder::ALMA_DESCRIPTION_TRIGGER => 'At shipping',
         ];
@@ -97,7 +94,6 @@ class SettingsCustomFields
         foreach ($languages as $language) {
             $return[$language['id_lang']] = [
                 'locale' => $language['iso_code'],
-                // phpcs:ignore
                 'string' => LocaleHelper::getModuleTranslation(self::customFields()[$keyConfig], self::SOURCECUSTOMFIELDS, $language['iso_code']),
             ];
         }
@@ -142,8 +138,11 @@ class SettingsCustomFields
         if ($countArrayFields < $countLanguages) {
             foreach ($languages as $lang) {
                 if (!array_key_exists($lang['id_lang'], $arrayFields)) {
-                    // phpcs:ignore
-                    $arrayFields[$lang['id_lang']] = LocaleHelper::getModuleTranslation(self::customFields()[$keyConfig], self::SOURCECUSTOMFIELDS, $lang['iso_code']);
+                    $arrayFields[$lang['id_lang']] = LocaleHelper::getModuleTranslation(
+                        self::customFields()[$keyConfig],
+                        self::SOURCECUSTOMFIELDS,
+                        $lang['iso_code']
+                    );
                 }
             }
         }
@@ -269,7 +268,6 @@ class SettingsCustomFields
     public static function getDescriptionPaymentTrigger()
     {
         $languages = Language::getLanguages(false);
-        //phpcs:ignore
         $defaultField = self::getAllLangCustomFieldByKeyConfig(PaymentOnTriggeringAdminFormBuilder::ALMA_DESCRIPTION_TRIGGER, $languages);
 
         foreach ($defaultField as $key => $field) {

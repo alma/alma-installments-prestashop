@@ -76,7 +76,6 @@ function upgrade_module_2_0_0($module)
             }
 
             Configuration::deleteByName('ALMA_NOT_ELIGIBLE_CATEGORIES');
-            // phpcs:ignore
             Settings::updateValue('ALMA_NOT_ELIGIBLE_CATEGORIES', SettingsCustomFields::getNonEligibleCategoriesMessage());
 
             Tools::clearCache();

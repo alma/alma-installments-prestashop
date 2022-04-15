@@ -176,7 +176,6 @@ class PnxAdminFormBuilder extends AbstractAlmaAdminFormBuilder
         }
         if ($feePlan->isPayLaterOnly()) {
             // PrestaShop won't detect the string if the call to `l` is multiline
-            // phpcs:ignore
             return sprintf(
                 $this->module->l('Enable deferred payments +%d days', 'PnxAdminFormBuilder'),
                 $duration
@@ -185,7 +184,6 @@ class PnxAdminFormBuilder extends AbstractAlmaAdminFormBuilder
 
         return sprintf(
         // PrestaShop won't detect the string if the call to `l` is multiline
-        // phpcs:ignore
             $this->module->l('Enable %d-installment payments +%d-deferred days', 'PnxAdminFormBuilder'),
             $feePlan->installments_count,
             $duration
@@ -208,7 +206,6 @@ class PnxAdminFormBuilder extends AbstractAlmaAdminFormBuilder
 
         if ($feePlan->isPayLaterOnly()) {
             // PrestaShop won't detect the string if the call to `l` is multiline
-            // phpcs:ignore
             return sprintf(
                 $this->module->l('Deferred payments + %d days', 'PnxAdminFormBuilder'),
                 $duration
@@ -216,7 +213,6 @@ class PnxAdminFormBuilder extends AbstractAlmaAdminFormBuilder
         }
 
         // PrestaShop won't detect the string if the call to `l` is multiline
-        // phpcs:ignore
         return sprintf(
             $this->module->l('%d-installment payments + %d-deferred days', 'PnxAdminFormBuilder'),
             $feePlan->installments_count,

@@ -189,7 +189,6 @@ class Settings
      */
     public static function getKeyDescriptionPaymentTrigger()
     {
-        // phpcs:ignore
         return self::get('ALMA_DESCRIPTION_TRIGGER', PaymentOnTriggeringAdminFormBuilder::ALMA_DESCRIPTION_TRIGGER_AT_SHIPPING);
     }
 
