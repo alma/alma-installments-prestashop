@@ -38,7 +38,7 @@ use Language;
 use Media;
 use Tools;
 
-final class DisplayPaymentHookController extends FrontendHookController
+class DisplayPaymentHookController extends FrontendHookController
 {
     /**
      * Payment option for Hook DisplayPayment (Prestashop 1.6)

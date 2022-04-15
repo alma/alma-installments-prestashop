@@ -31,7 +31,7 @@ if (!defined('_PS_VERSION_')) {
 use Alma\PrestaShop\Hooks\FrontendHookController;
 use Alma\PrestaShop\Utils\Settings;
 
-final class FrontHeaderHookController extends FrontendHookController
+class FrontHeaderHookController extends FrontendHookController
 {
     public function run($params)
     {

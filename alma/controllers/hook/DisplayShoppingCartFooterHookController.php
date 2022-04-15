@@ -37,7 +37,7 @@ use Alma\PrestaShop\Utils\SettingsCustomFields;
 use Cart;
 use Media;
 
-final class DisplayShoppingCartFooterHookController extends FrontendHookController
+class DisplayShoppingCartFooterHookController extends FrontendHookController
 {
     public function canRun()
     {
