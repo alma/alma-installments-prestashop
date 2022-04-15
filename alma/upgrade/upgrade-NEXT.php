@@ -30,8 +30,6 @@ include_once _PS_MODULE_DIR_ . 'alma/vendor/autoload.php';
 
 use Alma\API\RequestError;
 use Alma\PrestaShop\API\ClientHelper;
-use Alma\PrestaShop\Forms\ExcludedCategoryAdminFormBuilder;
-use Alma\PrestaShop\Forms\PaymentButtonAdminFormBuilder;
 use Alma\PrestaShop\Utils\Settings;
 use Alma\PrestaShop\Utils\SettingsCustomFields;
 
