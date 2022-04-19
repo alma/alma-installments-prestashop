@@ -28,90 +28,73 @@
  * @package AlmaTraitAutoloader
  */
 
-if (!defined('_PS_VERSION_')) {
-    exit;
-}
-
-if (version_compare(_PS_VERSION_, '1.7', '<')) {
+class AlmaTraitAutoloader {
 	/**
-	 * Alma Autoloader.
-	 * In PS-1.6 and lower, the autoloader wasn't able to process Trait properly
-	 * This autoloader is only here to fill that need.
+	 * Singleton (autoloader is loaded if instance is populated)
+	 *
+	 * @var AlmaTraitAutoloader
 	 */
-	class AlmaTraitAutoloader {
-		/**
-		 * Singleton (autoloader is loaded if instance is populated)
-		 *
-		 * @var AlmaTraitAutoloader
-		 */
-		private static $instance;
+	private static $instance;
 
-		/**
-		 * The Constructor.
-		 *
-		 * @throws Exception If sp_autoload_register fail.
-		 */
-		public function __construct() {
-			if ( function_exists( '__autoload' ) ) {
-				spl_autoload_register( '__autoload' );
-			}
-
-			spl_autoload_register( array( $this, 'load_class' ) );
+	/**
+	 * The Constructor.
+	 *
+	 * @throws Exception If sp_autoload_register fail.
+	 */
+	public function __construct() {
+		if ( function_exists( '__autoload' ) ) {
+			spl_autoload_register( '__autoload' );
 		}
 
-		/**
-		 * Initialise auto loading
-		 */
-		public static function autoload() {
-			if ( ! self::$instance ) {
-				self::$instance = new self();
-			}
-		}
+		spl_autoload_register( array( $this, 'load_class' ) );
+	}
 
-
-		/**
-		 * Include a class file.
-		 *
-		 * @param string $path as php file path.
-		 *
-		 * @return bool successful or not
-		 */
-		private function load_file( $path ) {
-			if ( $path && is_readable( $path ) ) {
-				include_once $path;
-			}
-		}
-
-		/**
-		 * Auto-load Trait on demand.
-		 *
-		 * @param string $class as class name.
-		 */
-		public function load_class( $class ) {
-			$pos = strrpos($class, '\\');
-			if (false !== $pos) {
-				if (version_compare(_PS_VERSION_, '1.7', '<')) {
-					require_once _PS_MODULE_DIR_ . 'alma/AlmaTraitAutoloader.php';
-					AlmaTraitAutoloader::autoload();
-				}
-				// namespaced class name
-				$classPath = str_replace('\\', \DIRECTORY_SEPARATOR, substr($class, 0, $pos)).\DIRECTORY_SEPARATOR;
-				$className = substr($class, $pos + 1);
-			} else {
-				// PEAR-like class name
-				$classPath = $class;
-				$className = '';
-			}
-
-			if (
-				strpos($className, 'Trait') !== false
-				&& strpos($classPath, 'Alma/PrestaShop') === 0
-				) {
-					$classPath = str_replace("\\","/", substr($classPath, 16));
-					$this->load_file(_PS_MODULE_DIR_ . 'alma/lib/' . $classPath . $className . '.php' );
-			}
+	/**
+	 * Initialise auto loading
+	 */
+	public static function autoload() {
+		if ( ! self::$instance ) {
+			self::$instance = new self();
 		}
 	}
 
-    AlmaTraitAutoloader::autoload();
+
+	/**
+	 * Include a class file.
+	 *
+	 * @param string $path as php file path.
+	 *
+	 * @return bool successful or not
+	 */
+	private function load_file( $path ) {
+		if ( $path && is_readable( $path ) ) {
+			include_once $path;
+		}
+	}
+
+	/**
+	 * Auto-load Trait on demand.
+	 *
+	 * @param string $class as class name.
+	 */
+	public function load_class( $class ) {
+		$pos = strrpos($class, '\\');
+		if (false !== $pos) {
+			// namespaced class name
+			$classPath = str_replace('\\', \DIRECTORY_SEPARATOR, substr($class, 0, $pos)).\DIRECTORY_SEPARATOR;
+			$className = substr($class, $pos + 1);
+		} else {
+			// PEAR-like class name
+			$classPath = $class;
+			$className = '';
+		}
+
+		if (
+			strpos($className, 'Trait') !== false
+			&& strpos($classPath, 'Alma/PrestaShop') === 0
+			) {
+				$classPath = str_replace("\\","/", substr($classPath, 16));
+				$this->load_file(_PS_MODULE_DIR_ . 'alma/lib/' . $classPath . $className . '.php' );
+		}
+	}
 }

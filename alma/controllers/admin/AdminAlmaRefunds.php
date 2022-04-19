@@ -32,7 +32,7 @@ use Alma\PrestaShop\Utils\OrderDataTrait;
  * Ajax controllers don't have any global entrypoint on the module side
  * So we have to include our Trait autoloader here.
  */
-require_once _PS_MODULE_DIR_ . 'alma/AlmaTraitAutoloader.php';
+require_once _PS_MODULE_DIR_ . 'alma/autoloader.php';
 
 class AdminAlmaRefundsController extends ModuleAdminController
 {
