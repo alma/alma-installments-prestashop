@@ -57,6 +57,10 @@ class SettingsCustomFields
      */
     public static function getPnxButtonTitleByLang($idLang)
     {
+        if (empty($idLang)) {
+            return CustomFieldsHelper::customFields()[PaymentButtonAdminFormBuilder::ALMA_PNX_BUTTON_TITLE];
+        }
+
         return self::getPnxButtonTitle()[$idLang];
     }
 
@@ -79,6 +83,10 @@ class SettingsCustomFields
      */
     public static function getPnxButtonDescriptionByLang($idLang)
     {
+        if (empty($idLang)) {
+            return CustomFieldsHelper::customFields()[PaymentButtonAdminFormBuilder::ALMA_PNX_BUTTON_DESC];
+        }
+
         return self::getPnxButtonDescription()[$idLang];
     }
 
@@ -101,6 +109,10 @@ class SettingsCustomFields
      */
     public static function getPaymentButtonTitleDeferredByLang($idLang)
     {
+        if (empty($idLang)) {
+            return CustomFieldsHelper::customFields()[PaymentButtonAdminFormBuilder::ALMA_DEFERRED_BUTTON_TITLE];
+        }
+
         return self::getPaymentButtonTitleDeferred()[$idLang];
     }
 
@@ -123,6 +135,10 @@ class SettingsCustomFields
      */
     public static function getPaymentButtonDescriptionDeferredByLang($idLang)
     {
+        if (empty($idLang)) {
+            return CustomFieldsHelper::customFields()[PaymentButtonAdminFormBuilder::ALMA_DEFERRED_BUTTON_DESC];
+        }
+
         return self::getPaymentButtonDescriptionDeferred()[$idLang];
     }
 
@@ -145,6 +161,10 @@ class SettingsCustomFields
      */
     public static function getPnxAirButtonTitleByLang($idLang)
     {
+        if (empty($idLang)) {
+            return CustomFieldsHelper::customFields()[PaymentButtonAdminFormBuilder::ALMA_PNX_AIR_BUTTON_TITLE];
+        }
+
         return self::getPnxAirButtonTitle()[$idLang];
     }
 
@@ -167,6 +187,10 @@ class SettingsCustomFields
      */
     public static function getPnxAirButtonDescriptionByLang($idLang)
     {
+        if (empty($idLang)) {
+            return CustomFieldsHelper::customFields()[PaymentButtonAdminFormBuilder::ALMA_PNX_AIR_BUTTON_DESC];
+        }
+
         return self::getPnxAirButtonDescription()[$idLang];
     }
 
@@ -189,6 +213,10 @@ class SettingsCustomFields
      */
     public static function getNonEligibleCategoriesMessageByLang($idLang)
     {
+        if (empty($idLang)) {
+            return CustomFieldsHelper::customFields()[ExcludedCategoryAdminFormBuilder::ALMA_NOT_ELIGIBLE_CATEGORIES];
+        }
+
         return self::getNonEligibleCategoriesMessage()[$idLang];
     }
 
@@ -218,6 +246,10 @@ class SettingsCustomFields
      */
     public static function getDescriptionPaymentTriggerByLang($idLang)
     {
+        if (empty($idLang)) {
+            return CustomFieldsHelper::customFields()[PaymentOnTriggeringAdminFormBuilder::ALMA_DESCRIPTION_TRIGGER];
+        }
+
         return self::getDescriptionPaymentTrigger()[$idLang];
     }
 }

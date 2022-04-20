@@ -39,7 +39,7 @@ use Language;
  */
 class CustomFieldsHelper
 {
-    const SOURCECUSTOMFIELDS = 'CustomFieldsHelper';
+    const SOURCE_CUSTOM_FIELDS = 'CustomFieldsHelper';
 
     /**
      * Init default custom fileds in ps_configuration table
@@ -63,23 +63,23 @@ class CustomFieldsHelper
      */
     public static function customFields()
     {
-        $TextButtonDescription = 'Fast and secure payment by credit card.';
+        $textButtonDescription = 'Fast and secure payment by credit card.';
 
         $module = new Alma();
-        $module->l('Pay in installments with Alma', self::SOURCECUSTOMFIELDS);
-        $module->l('Buy now, Pay later with Alma', self::SOURCECUSTOMFIELDS);
-        $module->l('Spread your payments with Alma', self::SOURCECUSTOMFIELDS);
-        $module->l('Fast and secure payment by credit card.', self::SOURCECUSTOMFIELDS);
-        $module->l('Your cart is not eligible for payments with Alma.', self::SOURCECUSTOMFIELDS);
-        $module->l('At shipping', self::SOURCECUSTOMFIELDS);
+        $module->l('Pay in installments with Alma', self::SOURCE_CUSTOM_FIELDS);
+        $module->l('Buy now, Pay later with Alma', self::SOURCE_CUSTOM_FIELDS);
+        $module->l('Spread your payments with Alma', self::SOURCE_CUSTOM_FIELDS);
+        $module->l('Fast and secure payment by credit card.', self::SOURCE_CUSTOM_FIELDS);
+        $module->l('Your cart is not eligible for payments with Alma.', self::SOURCE_CUSTOM_FIELDS);
+        $module->l('At shipping', self::SOURCE_CUSTOM_FIELDS);
 
         return [
             PaymentButtonAdminFormBuilder::ALMA_PNX_BUTTON_TITLE => 'Pay in installments with Alma',
-            PaymentButtonAdminFormBuilder::ALMA_PNX_BUTTON_DESC => $TextButtonDescription,
+            PaymentButtonAdminFormBuilder::ALMA_PNX_BUTTON_DESC => $textButtonDescription,
             PaymentButtonAdminFormBuilder::ALMA_DEFERRED_BUTTON_TITLE => 'Buy now, Pay later with Alma',
-            PaymentButtonAdminFormBuilder::ALMA_DEFERRED_BUTTON_DESC => $TextButtonDescription,
+            PaymentButtonAdminFormBuilder::ALMA_DEFERRED_BUTTON_DESC => $textButtonDescription,
             PaymentButtonAdminFormBuilder::ALMA_PNX_AIR_BUTTON_TITLE => 'Spread your payments with Alma',
-            PaymentButtonAdminFormBuilder::ALMA_PNX_AIR_BUTTON_DESC => $TextButtonDescription,
+            PaymentButtonAdminFormBuilder::ALMA_PNX_AIR_BUTTON_DESC => $textButtonDescription,
             ExcludedCategoryAdminFormBuilder::ALMA_NOT_ELIGIBLE_CATEGORIES => 'Your cart is not eligible for payments with Alma.',
             PaymentOnTriggeringAdminFormBuilder::ALMA_DESCRIPTION_TRIGGER => 'At shipping',
         ];
@@ -98,7 +98,7 @@ class CustomFieldsHelper
         foreach ($languages as $language) {
             $return[$language['id_lang']] = [
                 'locale' => $language['iso_code'],
-                'string' => LocaleHelper::getModuleTranslation(self::customFields()[$keyConfig], self::SOURCECUSTOMFIELDS, $language['iso_code']),
+                'string' => LocaleHelper::getModuleTranslation(self::customFields()[$keyConfig], self::SOURCE_CUSTOM_FIELDS, $language['iso_code']),
             ];
         }
 
@@ -144,7 +144,7 @@ class CustomFieldsHelper
                 if (!array_key_exists($lang['id_lang'], $arrayFields)) {
                     $arrayFields[$lang['id_lang']] = LocaleHelper::getModuleTranslation(
                         self::customFields()[$keyConfig],
-                        self::SOURCECUSTOMFIELDS,
+                        self::SOURCE_CUSTOM_FIELDS,
                         $lang['iso_code']
                     );
                 }

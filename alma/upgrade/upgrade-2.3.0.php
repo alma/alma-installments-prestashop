@@ -32,8 +32,8 @@ use Alma\API\RequestError;
 use Alma\PrestaShop\API\ClientHelper;
 use Alma\PrestaShop\Forms\ExcludedCategoryAdminFormBuilder;
 use Alma\PrestaShop\Forms\PaymentButtonAdminFormBuilder;
+use Alma\PrestaShop\Utils\CustomFieldsHelper;
 use Alma\PrestaShop\Utils\Settings;
-use Alma\PrestaShop\Utils\SettingsCustomFields;
 
 function upgrade_module_2_3_0($module)
 {
@@ -57,7 +57,7 @@ function upgrade_module_2_3_0($module)
                 Configuration::deleteByName($configKey);
             }
 
-            SettingsCustomFields::initCustomFields();
+            CustomFieldsHelper::initCustomFields();
         } catch (RequestError $e) {
             return true;
         }

@@ -52,7 +52,7 @@ class Settings
 {
     public static function l($str)
     {
-        return Translate::getModuleTranslation('alma', $str, SettingsCustomFields::SOURCECUSTOMFIELDS);
+        return Translate::getModuleTranslation('alma', $str, CustomFieldsHelper::SOURCE_CUSTOM_FIELDS);
     }
 
     public static function get($configKey, $default = null)
