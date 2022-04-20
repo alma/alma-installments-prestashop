@@ -57,11 +57,12 @@ class SettingsCustomFields
      */
     public static function getPnxButtonTitleByLang($idLang)
     {
-        if (!array_key_exists($idLang, self::getPnxButtonTitle())) {
+        $arrayPnxButtonTitleByLang = self::getPnxButtonTitle();
+        if (!array_key_exists($idLang, $arrayPnxButtonTitleByLang)) {
             return CustomFieldsHelper::customFields()[PaymentButtonAdminFormBuilder::ALMA_PNX_BUTTON_TITLE];
         }
 
-        return self::getPnxButtonTitle()[$idLang];
+        return $arrayPnxButtonTitleByLang[$idLang];
     }
 
     /**
@@ -83,11 +84,12 @@ class SettingsCustomFields
      */
     public static function getPnxButtonDescriptionByLang($idLang)
     {
-        if (!array_key_exists($idLang, self::getPnxButtonDescription())) {
+        $arrayPnxButtonDescriptionByLang = self::getPnxButtonDescription();
+        if (!array_key_exists($idLang, $arrayPnxButtonDescriptionByLang)) {
             return CustomFieldsHelper::customFields()[PaymentButtonAdminFormBuilder::ALMA_PNX_BUTTON_DESC];
         }
 
-        return self::getPnxButtonDescription()[$idLang];
+        return $arrayPnxButtonDescriptionByLang[$idLang];
     }
 
     /**
@@ -109,11 +111,12 @@ class SettingsCustomFields
      */
     public static function getPaymentButtonTitleDeferredByLang($idLang)
     {
-        if (!array_key_exists($idLang, self::getPaymentButtonTitleDeferred())) {
+        $arrayPaymentButtonTitleDeferredByLang = self::getPaymentButtonTitleDeferred();
+        if (!array_key_exists($idLang, $arrayPaymentButtonTitleDeferredByLang)) {
             return CustomFieldsHelper::customFields()[PaymentButtonAdminFormBuilder::ALMA_DEFERRED_BUTTON_TITLE];
         }
 
-        return self::getPaymentButtonTitleDeferred()[$idLang];
+        return $arrayPaymentButtonTitleDeferredByLang[$idLang];
     }
 
     /**
@@ -135,11 +138,12 @@ class SettingsCustomFields
      */
     public static function getPaymentButtonDescriptionDeferredByLang($idLang)
     {
-        if (!array_key_exists($idLang, self::getPaymentButtonDescriptionDeferred())) {
+        $arrayPaymentButtonDescriptionDeferredByLang = self::getPaymentButtonDescriptionDeferred();
+        if (!array_key_exists($idLang, $arrayPaymentButtonDescriptionDeferredByLang)) {
             return CustomFieldsHelper::customFields()[PaymentButtonAdminFormBuilder::ALMA_DEFERRED_BUTTON_DESC];
         }
 
-        return self::getPaymentButtonDescriptionDeferred()[$idLang];
+        return $arrayPaymentButtonDescriptionDeferredByLang[$idLang];
     }
 
     /**
@@ -161,11 +165,12 @@ class SettingsCustomFields
      */
     public static function getPnxAirButtonTitleByLang($idLang)
     {
-        if (!array_key_exists($idLang, self::getPnxAirButtonTitle())) {
+        $arrayPnxAirButtonTitleByLang = self::getPnxAirButtonTitle();
+        if (!array_key_exists($idLang, $arrayPnxAirButtonTitleByLang)) {
             return CustomFieldsHelper::customFields()[PaymentButtonAdminFormBuilder::ALMA_PNX_AIR_BUTTON_TITLE];
         }
 
-        return self::getPnxAirButtonTitle()[$idLang];
+        return $arrayPnxAirButtonTitleByLang[$idLang];
     }
 
     /**
@@ -187,11 +192,12 @@ class SettingsCustomFields
      */
     public static function getPnxAirButtonDescriptionByLang($idLang)
     {
-        if (!array_key_exists($idLang, self::getPnxAirButtonDescription())) {
+        $arrayPnxAirButtonDescriptionByLang = self::getPnxAirButtonDescription();
+        if (!array_key_exists($idLang, $arrayPnxAirButtonDescriptionByLang)) {
             return CustomFieldsHelper::customFields()[PaymentButtonAdminFormBuilder::ALMA_PNX_AIR_BUTTON_DESC];
         }
 
-        return self::getPnxAirButtonDescription()[$idLang];
+        return $arrayPnxAirButtonDescriptionByLang[$idLang];
     }
 
     /**
@@ -213,11 +219,12 @@ class SettingsCustomFields
      */
     public static function getNonEligibleCategoriesMessageByLang($idLang)
     {
-        if (!array_key_exists($idLang, self::getNonEligibleCategoriesMessage())) {
+        $arrayNonEligibleCategoriesMessageByLang = self::getNonEligibleCategoriesMessage();
+        if (!array_key_exists($idLang, $arrayNonEligibleCategoriesMessageByLang)) {
             return CustomFieldsHelper::customFields()[ExcludedCategoryAdminFormBuilder::ALMA_NOT_ELIGIBLE_CATEGORIES];
         }
 
-        return self::getNonEligibleCategoriesMessage()[$idLang];
+        return $arrayNonEligibleCategoriesMessageByLang[$idLang];
     }
 
     /**
@@ -246,10 +253,11 @@ class SettingsCustomFields
      */
     public static function getDescriptionPaymentTriggerByLang($idLang)
     {
-        if (!array_key_exists($idLang, self::getDescriptionPaymentTrigger())) {
+        $arrayDescriptionPaymentTriggerByLang = self::getDescriptionPaymentTrigger();
+        if (!array_key_exists($idLang, $arrayDescriptionPaymentTriggerByLang)) {
             return CustomFieldsHelper::customFields()[PaymentOnTriggeringAdminFormBuilder::ALMA_DESCRIPTION_TRIGGER];
         }
 
-        return self::getDescriptionPaymentTrigger()[$idLang];
+        return $arrayDescriptionPaymentTriggerByLang[$idLang];
     }
 }
