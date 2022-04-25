@@ -36,7 +36,7 @@
             {$installmentText}
         {/almaDisplayHtml}
 
-        {if 4 > $installmentsCount}
+        {if 4 >= $installmentsCount}
             <br>
             <small>
                 {if $plans[0].customer_fee > 0}
