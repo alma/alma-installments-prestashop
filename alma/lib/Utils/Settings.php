@@ -52,7 +52,7 @@ class Settings
 {
     public static function l($str)
     {
-        return Translate::getModuleTranslation('alma', $str, SettingsCustomFields::SOURCECUSTOMFIELDS);
+        return Translate::getModuleTranslation('alma', $str, CustomFieldsHelper::SOURCE_CUSTOM_FIELDS);
     }
 
     public static function get($configKey, $default = null)
@@ -88,10 +88,12 @@ class Settings
             'ALMA_TEST_API_KEY',
             'ALMA_SHOW_DISABLED_BUTTON',
             'ALMA_SHOW_ELIGIBILITY_MESSAGE',
-            PaymentButtonAdminFormBuilder::ALMA_PAYMENT_BUTTON_TITLE,
-            PaymentButtonAdminFormBuilder::ALMA_PAYMENT_BUTTON_DESC,
+            PaymentButtonAdminFormBuilder::ALMA_PNX_BUTTON_TITLE,
+            PaymentButtonAdminFormBuilder::ALMA_PNX_BUTTON_DESC,
             PaymentButtonAdminFormBuilder::ALMA_DEFERRED_BUTTON_TITLE,
             PaymentButtonAdminFormBuilder::ALMA_DEFERRED_BUTTON_DESC,
+            PaymentButtonAdminFormBuilder::ALMA_PNX_AIR_BUTTON_TITLE,
+            PaymentButtonAdminFormBuilder::ALMA_PNX_AIR_BUTTON_DESC,
             ExcludedCategoryAdminFormBuilder::ALMA_NOT_ELIGIBLE_CATEGORIES,
             'ALMA_STATE_REFUND',
             'ALMA_STATE_REFUND_ENABLED',

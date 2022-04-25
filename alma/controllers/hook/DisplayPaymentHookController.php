@@ -109,10 +109,14 @@ class DisplayPaymentHookController extends FrontendHookController
                     'installmentText' => $this->getInstallmentText($plans, $idLang, Settings::isDeferredTriggerLimitDays($feePlans, $key)),
                     'deferred_trigger_limit_days' => $feePlans->$key->deferred_trigger_limit_days,
                     'isDeferred' => $isDeferred,
-                    'text' => sprintf(SettingsCustomFields::getPaymentButtonTitleByLang($idLang), $installment),
-                    'desc' => sprintf(SettingsCustomFields::getPaymentButtonDescriptionByLang($idLang), $installment),
+                    'text' => sprintf(SettingsCustomFields::getPnxButtonTitleByLang($idLang), $installment),
+                    'desc' => sprintf(SettingsCustomFields::getPnxButtonDescriptionByLang($idLang), $installment),
                     'creditInfo' => $creditInfo,
                 ];
+                if ($installment > 4) {
+                    $paymentOption['text'] = sprintf(SettingsCustomFields::getPnxAirButtonTitleByLang($idLang), $installment);
+                    $paymentOption['desc'] = sprintf(SettingsCustomFields::getPnxAirButtonDescriptionByLang($idLang), $installment);
+                }
                 if ($isDeferred) {
                     $paymentOption['duration'] = $duration;
                     $paymentOption['key'] = $key;

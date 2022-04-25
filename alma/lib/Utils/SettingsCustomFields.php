@@ -28,7 +28,6 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-use Alma;
 use Alma\PrestaShop\Forms\ExcludedCategoryAdminFormBuilder;
 use Alma\PrestaShop\Forms\PaymentButtonAdminFormBuilder;
 use Alma\PrestaShop\Forms\PaymentOnTriggeringAdminFormBuilder;
@@ -39,125 +38,14 @@ use Language;
  */
 class SettingsCustomFields
 {
-    const SOURCECUSTOMFIELDS = 'SettingsCustomFields';
-
-    /**
-     * Init default custom fileds in ps_configuration table
-     *
-     * @return void
-     */
-    public static function initCustomFields()
-    {
-        $languages = Language::getLanguages(false);
-
-        $keysCustomFields = array_keys(self::customFields());
-        foreach ($keysCustomFields as $keyCustomFields) {
-            Settings::updateValue($keyCustomFields, json_encode(self::getAllLangCustomFieldByKeyConfig($keyCustomFields, $languages)));
-        }
-    }
-
-    /**
-     * Default custom fields
-     *
-     * @return array
-     */
-    public static function customFields()
-    {
-        $module = new Alma();
-        $module->l('Pay in %d installments', self::SOURCECUSTOMFIELDS);
-        $module->l('Pay in %d monthly installments with your credit card.', self::SOURCECUSTOMFIELDS);
-        $module->l('Buy now Pay in %d days', self::SOURCECUSTOMFIELDS);
-        $module->l('Buy now pay in %d days with your credit card.', self::SOURCECUSTOMFIELDS);
-        $module->l('Your cart is not eligible for payments with Alma.', self::SOURCECUSTOMFIELDS);
-        $module->l('At shipping', self::SOURCECUSTOMFIELDS);
-
-        return [
-            PaymentButtonAdminFormBuilder::ALMA_PAYMENT_BUTTON_TITLE => 'Pay in %d installments',
-            PaymentButtonAdminFormBuilder::ALMA_PAYMENT_BUTTON_DESC => 'Pay in %d monthly installments with your credit card.',
-            PaymentButtonAdminFormBuilder::ALMA_DEFERRED_BUTTON_TITLE => 'Buy now Pay in %d days',
-            PaymentButtonAdminFormBuilder::ALMA_DEFERRED_BUTTON_DESC => 'Buy now pay in %d days with your credit card.',
-            ExcludedCategoryAdminFormBuilder::ALMA_NOT_ELIGIBLE_CATEGORIES => 'Your cart is not eligible for payments with Alma.',
-            PaymentOnTriggeringAdminFormBuilder::ALMA_DESCRIPTION_TRIGGER => 'At shipping',
-        ];
-    }
-
-    /**
-     * Get all languages custom field by key config
-     *
-     * @param string $keyConfig
-     * @param array $languages
-     *
-     * @return array
-     */
-    public static function getAllLangCustomFieldByKeyConfig($keyConfig, $languages)
-    {
-        foreach ($languages as $language) {
-            $return[$language['id_lang']] = [
-                'locale' => $language['iso_code'],
-                'string' => LocaleHelper::getModuleTranslation(self::customFields()[$keyConfig], self::SOURCECUSTOMFIELDS, $language['iso_code']),
-            ];
-        }
-
-        return $return;
-    }
-
-    /**
-     * Traitment for format array custom fields for read in front
-     *
-     * @param string $keyConfig
-     * @param array $languages
-     *
-     * @return array
-     */
-    public static function getCustomFieldByKeyConfig($keyConfig, $languages)
-    {
-        $defaultField = self::getAllLangCustomFieldByKeyConfig($keyConfig, $languages);
-
-        $allLangField = json_decode(Settings::get($keyConfig, json_encode($defaultField)), true);
-        foreach ($allLangField as $key => $field) {
-            $return[$key] = $field['string'];
-        }
-
-        return $return;
-    }
-
-    /**
-     * Aggregate all languages if missing for custom fields
-     *
-     * @param string $keyConfig
-     *
-     * @return array
-     */
-    public static function aggregateAllLanguagesCustomFields($keyConfig)
-    {
-        $languages = Language::getLanguages(false);
-        $arrayFields = self::getCustomFieldByKeyConfig($keyConfig, $languages);
-        $countArrayFields = count($arrayFields);
-        $countLanguages = count($languages);
-
-        if ($countArrayFields < $countLanguages) {
-            foreach ($languages as $lang) {
-                if (!array_key_exists($lang['id_lang'], $arrayFields)) {
-                    $arrayFields[$lang['id_lang']] = LocaleHelper::getModuleTranslation(
-                        self::customFields()[$keyConfig],
-                        self::SOURCECUSTOMFIELDS,
-                        $lang['iso_code']
-                    );
-                }
-            }
-        }
-
-        return $arrayFields;
-    }
-
     /**
      * Get array custom titles button
      *
      * @return array
      */
-    public static function getPaymentButtonTitle()
+    public static function getPnxButtonTitle()
     {
-        return self::aggregateAllLanguagesCustomFields(PaymentButtonAdminFormBuilder::ALMA_PAYMENT_BUTTON_TITLE);
+        return CustomFieldsHelper::aggregateAllLanguagesCustomFields(PaymentButtonAdminFormBuilder::ALMA_PNX_BUTTON_TITLE);
     }
 
     /**
@@ -167,9 +55,14 @@ class SettingsCustomFields
      *
      * @return string
      */
-    public static function getPaymentButtonTitleByLang($idLang)
+    public static function getPnxButtonTitleByLang($idLang)
     {
-        return self::getPaymentButtonTitle()[$idLang];
+        $arrayPnxButtonTitleByLang = self::getPnxButtonTitle();
+        if (!array_key_exists($idLang, $arrayPnxButtonTitleByLang)) {
+            return CustomFieldsHelper::customFields()[PaymentButtonAdminFormBuilder::ALMA_PNX_BUTTON_TITLE];
+        }
+
+        return $arrayPnxButtonTitleByLang[$idLang];
     }
 
     /**
@@ -177,9 +70,9 @@ class SettingsCustomFields
      *
      * @return array
      */
-    public static function getPaymentButtonDescription()
+    public static function getPnxButtonDescription()
     {
-        return self::aggregateAllLanguagesCustomFields(PaymentButtonAdminFormBuilder::ALMA_PAYMENT_BUTTON_DESC);
+        return CustomFieldsHelper::aggregateAllLanguagesCustomFields(PaymentButtonAdminFormBuilder::ALMA_PNX_BUTTON_DESC);
     }
 
     /**
@@ -189,9 +82,14 @@ class SettingsCustomFields
      *
      * @return string
      */
-    public static function getPaymentButtonDescriptionByLang($idLang)
+    public static function getPnxButtonDescriptionByLang($idLang)
     {
-        return self::getPaymentButtonDescription()[$idLang];
+        $arrayPnxButtonDescriptionByLang = self::getPnxButtonDescription();
+        if (!array_key_exists($idLang, $arrayPnxButtonDescriptionByLang)) {
+            return CustomFieldsHelper::customFields()[PaymentButtonAdminFormBuilder::ALMA_PNX_BUTTON_DESC];
+        }
+
+        return $arrayPnxButtonDescriptionByLang[$idLang];
     }
 
     /**
@@ -201,7 +99,7 @@ class SettingsCustomFields
      */
     public static function getPaymentButtonTitleDeferred()
     {
-        return self::aggregateAllLanguagesCustomFields(PaymentButtonAdminFormBuilder::ALMA_DEFERRED_BUTTON_TITLE);
+        return CustomFieldsHelper::aggregateAllLanguagesCustomFields(PaymentButtonAdminFormBuilder::ALMA_DEFERRED_BUTTON_TITLE);
     }
 
     /**
@@ -213,7 +111,12 @@ class SettingsCustomFields
      */
     public static function getPaymentButtonTitleDeferredByLang($idLang)
     {
-        return self::getPaymentButtonTitleDeferred()[$idLang];
+        $arrayPaymentButtonTitleDeferredByLang = self::getPaymentButtonTitleDeferred();
+        if (!array_key_exists($idLang, $arrayPaymentButtonTitleDeferredByLang)) {
+            return CustomFieldsHelper::customFields()[PaymentButtonAdminFormBuilder::ALMA_DEFERRED_BUTTON_TITLE];
+        }
+
+        return $arrayPaymentButtonTitleDeferredByLang[$idLang];
     }
 
     /**
@@ -223,7 +126,7 @@ class SettingsCustomFields
      */
     public static function getPaymentButtonDescriptionDeferred()
     {
-        return self::aggregateAllLanguagesCustomFields(PaymentButtonAdminFormBuilder::ALMA_DEFERRED_BUTTON_DESC);
+        return CustomFieldsHelper::aggregateAllLanguagesCustomFields(PaymentButtonAdminFormBuilder::ALMA_DEFERRED_BUTTON_DESC);
     }
 
     /**
@@ -235,7 +138,66 @@ class SettingsCustomFields
      */
     public static function getPaymentButtonDescriptionDeferredByLang($idLang)
     {
-        return self::getPaymentButtonDescriptionDeferred()[$idLang];
+        $arrayPaymentButtonDescriptionDeferredByLang = self::getPaymentButtonDescriptionDeferred();
+        if (!array_key_exists($idLang, $arrayPaymentButtonDescriptionDeferredByLang)) {
+            return CustomFieldsHelper::customFields()[PaymentButtonAdminFormBuilder::ALMA_DEFERRED_BUTTON_DESC];
+        }
+
+        return $arrayPaymentButtonDescriptionDeferredByLang[$idLang];
+    }
+
+    /**
+     * Get array custom titles button
+     *
+     * @return array
+     */
+    public static function getPnxAirButtonTitle()
+    {
+        return CustomFieldsHelper::aggregateAllLanguagesCustomFields(PaymentButtonAdminFormBuilder::ALMA_PNX_AIR_BUTTON_TITLE);
+    }
+
+    /**
+     * Get custom title button by id lang
+     *
+     * @param int $idLang
+     *
+     * @return string
+     */
+    public static function getPnxAirButtonTitleByLang($idLang)
+    {
+        $arrayPnxAirButtonTitleByLang = self::getPnxAirButtonTitle();
+        if (!array_key_exists($idLang, $arrayPnxAirButtonTitleByLang)) {
+            return CustomFieldsHelper::customFields()[PaymentButtonAdminFormBuilder::ALMA_PNX_AIR_BUTTON_TITLE];
+        }
+
+        return $arrayPnxAirButtonTitleByLang[$idLang];
+    }
+
+    /**
+     * Get array custom description button
+     *
+     * @return array
+     */
+    public static function getPnxAirButtonDescription()
+    {
+        return CustomFieldsHelper::aggregateAllLanguagesCustomFields(PaymentButtonAdminFormBuilder::ALMA_PNX_AIR_BUTTON_DESC);
+    }
+
+    /**
+     * Get custom description button by id lang
+     *
+     * @param int $idLang
+     *
+     * @return string
+     */
+    public static function getPnxAirButtonDescriptionByLang($idLang)
+    {
+        $arrayPnxAirButtonDescriptionByLang = self::getPnxAirButtonDescription();
+        if (!array_key_exists($idLang, $arrayPnxAirButtonDescriptionByLang)) {
+            return CustomFieldsHelper::customFields()[PaymentButtonAdminFormBuilder::ALMA_PNX_AIR_BUTTON_DESC];
+        }
+
+        return $arrayPnxAirButtonDescriptionByLang[$idLang];
     }
 
     /**
@@ -245,7 +207,7 @@ class SettingsCustomFields
      */
     public static function getNonEligibleCategoriesMessage()
     {
-        return self::aggregateAllLanguagesCustomFields(ExcludedCategoryAdminFormBuilder::ALMA_NOT_ELIGIBLE_CATEGORIES);
+        return CustomFieldsHelper::aggregateAllLanguagesCustomFields(ExcludedCategoryAdminFormBuilder::ALMA_NOT_ELIGIBLE_CATEGORIES);
     }
 
     /**
@@ -257,18 +219,23 @@ class SettingsCustomFields
      */
     public static function getNonEligibleCategoriesMessageByLang($idLang)
     {
-        return self::getNonEligibleCategoriesMessage()[$idLang];
+        $arrayNonEligibleCategoriesMessageByLang = self::getNonEligibleCategoriesMessage();
+        if (!array_key_exists($idLang, $arrayNonEligibleCategoriesMessageByLang)) {
+            return CustomFieldsHelper::customFields()[ExcludedCategoryAdminFormBuilder::ALMA_NOT_ELIGIBLE_CATEGORIES];
+        }
+
+        return $arrayNonEligibleCategoriesMessageByLang[$idLang];
     }
 
     /**
      * Get custom description payment trigger
      *
-     * @return string
+     * @return array
      */
     public static function getDescriptionPaymentTrigger()
     {
         $languages = Language::getLanguages(false);
-        $defaultField = self::getAllLangCustomFieldByKeyConfig(PaymentOnTriggeringAdminFormBuilder::ALMA_DESCRIPTION_TRIGGER, $languages);
+        $defaultField = CustomFieldsHelper::getAllLangCustomFieldByKeyConfig(PaymentOnTriggeringAdminFormBuilder::ALMA_DESCRIPTION_TRIGGER, $languages);
 
         foreach ($defaultField as $key => $field) {
             $return[$key] = $field['string'];
@@ -286,6 +253,11 @@ class SettingsCustomFields
      */
     public static function getDescriptionPaymentTriggerByLang($idLang)
     {
-        return self::getDescriptionPaymentTrigger()[$idLang];
+        $arrayDescriptionPaymentTriggerByLang = self::getDescriptionPaymentTrigger();
+        if (!array_key_exists($idLang, $arrayDescriptionPaymentTriggerByLang)) {
+            return CustomFieldsHelper::customFields()[PaymentOnTriggeringAdminFormBuilder::ALMA_DESCRIPTION_TRIGGER];
+        }
+
+        return $arrayDescriptionPaymentTriggerByLang[$idLang];
     }
 }

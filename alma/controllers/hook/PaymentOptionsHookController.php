@@ -87,8 +87,8 @@ class PaymentOptionsHookController extends FrontendHookController
             $first = 1 == $i;
             ++$i;
 
-            $n = $plan->installmentsCount;
-            $key = "general_{$n}_{$plan->deferredDays}_{$plan->deferredMonths}";
+            $installment = $plan->installmentsCount;
+            $key = "general_{$installment}_{$plan->deferredDays}_{$plan->deferredMonths}";
             $plans = $plan->paymentPlan;
             $creditInfo = [
                 'totalCart' => $totalCart,
@@ -114,13 +114,17 @@ class PaymentOptionsHookController extends FrontendHookController
             }
             $isDeferred = Settings::isDeferred($plan);
             $duration = Settings::getDuration($plan);
-            $isInstallmentAccordingToDeferred = $n !== 1;
+            $isInstallmentAccordingToDeferred = $installment !== 1;
             $fileTemplate = 'payment_button_pnx.tpl';
-            $valueBNPL = $n;
-            $textPaymentButton = sprintf(SettingsCustomFields::getPaymentButtonTitleByLang($idLang), $n);
-            $descPaymentButton = sprintf(SettingsCustomFields::getPaymentButtonDescriptionByLang($idLang), $n);
+            $valueBNPL = $installment;
+            $textPaymentButton = sprintf(SettingsCustomFields::getPnxButtonTitleByLang($idLang), $installment);
+            $descPaymentButton = sprintf(SettingsCustomFields::getPnxButtonDescriptionByLang($idLang), $installment);
+            if ($installment > 4) {
+                $textPaymentButton = sprintf(SettingsCustomFields::getPnxAirButtonTitleByLang($idLang), $installment);
+                $descPaymentButton = sprintf(SettingsCustomFields::getPnxAirButtonDescriptionByLang($idLang), $installment);
+            }
             if ($isDeferred) {
-                $isInstallmentAccordingToDeferred = $n === 1;
+                $isInstallmentAccordingToDeferred = $installment === 1;
                 $fileTemplate = 'payment_button_deferred.tpl';
                 $valueBNPL = $duration;
                 $textPaymentButton = sprintf(SettingsCustomFields::getPaymentButtonTitleDeferredByLang($idLang), $duration);
