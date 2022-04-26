@@ -65,10 +65,8 @@ class ExcludedCategoryAdminFormBuilder extends AbstractAlmaAdminFormBuilder
             $this->inputTextForm(
                 self::ALMA_NOT_ELIGIBLE_CATEGORIES,
                 $this->module->l('Excluded categories non-eligibility message ', 'ExcludedCategoryAdminFormBuilder'),
-                $this->module->l(
-                    'Message displayed on an excluded product page or on the cart page if it contains an excluded product.',
-                    'ExcludedCategoryAdminFormBuilder'
-                ),
+                // phpcs:ignore Generic.Files.LineLength
+                $this->module->l('Message displayed on an excluded product page or on the cart page if it contains an excluded product.', 'ExcludedCategoryAdminFormBuilder'),
                 null,
                 false,
                 true
