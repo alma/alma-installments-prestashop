@@ -1,26 +1,4 @@
 <?php
-/**
- * 2018-2022 Alma SAS
- *
- * THE MIT LICENSE
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
- * documentation files (the "Software"), to deal in the Software without restriction, including without limitation
- * the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and
- * to permit persons to whom the Software is furnished to do so, subject to the following conditions:
- * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the
- * Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE
- * WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
- * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
- * IN THE SOFTWARE.
- *
- * @author    Alma SAS <contact@getalma.eu>
- * @copyright 2018-2022 Alma SAS
- * @license   https://opensource.org/licenses/MIT The MIT License
- */
 
 global $_MODULE;
 $_MODULE = [];
@@ -98,7 +76,7 @@ $_MODULE['<{alma}prestashop>excludedcategoryadminformbuilder_36359547b09bdb31f46
 $_MODULE['<{alma}prestashop>paymentbuttonadminformbuilder_bd348b62a28c8a1ff9932c0dfb8b53a9'] = 'Payments in 2, 3 and 4 installments';
 $_MODULE['<{alma}prestashop>paymentbuttonadminformbuilder_b78a3223503896721cca1303f776159b'] = 'Title';
 $_MODULE['<{alma}prestashop>paymentbuttonadminformbuilder_b5a7adde1af5c87d7fd797b6245c2a39'] = 'Description';
-$_MODULE['<{alma}prestashop>paymentbuttonadminformbuilder_9368cddd13bda8bae42b608335c493aa'] = 'Defered payments';
+$_MODULE['<{alma}prestashop>paymentbuttonadminformbuilder_f253e6ecb1d145ce02bd31c383dbad3c'] = 'Deferred payments';
 $_MODULE['<{alma}prestashop>paymentbuttonadminformbuilder_1bb665a61ac795bdc55e2a503fa824f5'] = 'Payments in more than 4 installments';
 $_MODULE['<{alma}prestashop>paymentbuttonadminformbuilder_1ff5f75cf29d7dfd4689a155c4996acb'] = 'When Alma is not available...';
 $_MODULE['<{alma}prestashop>paymentbuttonadminformbuilder_312b74149761f30bdcb38460993c8c6a'] = 'Hide payment button';

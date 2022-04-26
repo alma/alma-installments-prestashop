@@ -77,7 +77,7 @@ class PaymentButtonAdminFormBuilder extends AbstractAlmaAdminFormBuilder
                 true,
                 true
             ),
-            $this->inputHtml(null, "<h2>{$this->module->l('Defered payments', 'PaymentButtonAdminFormBuilder')}</h2>"),
+            $this->inputHtml(null, "<h2>{$this->module->l('Deferred payments', 'PaymentButtonAdminFormBuilder')}</h2>"),
             $this->inputTextForm(
                 self::ALMA_DEFERRED_BUTTON_TITLE,
                 $this->module->l('Title', 'PaymentButtonAdminFormBuilder'),

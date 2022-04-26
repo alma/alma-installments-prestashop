@@ -95,7 +95,7 @@ $_MODULE['<{alma}prestashop>excludedcategoryadminformbuilder_36359547b09bdb31f46
 $_MODULE['<{alma}prestashop>paymentbuttonadminformbuilder_bd348b62a28c8a1ff9932c0dfb8b53a9'] = 'Paiement en 2, 3 et 4 versements';
 $_MODULE['<{alma}prestashop>paymentbuttonadminformbuilder_b78a3223503896721cca1303f776159b'] = 'Titre';
 $_MODULE['<{alma}prestashop>paymentbuttonadminformbuilder_b5a7adde1af5c87d7fd797b6245c2a39'] = 'Description';
-$_MODULE['<{alma}prestashop>paymentbuttonadminformbuilder_9368cddd13bda8bae42b608335c493aa'] = 'Paiement différé';
+$_MODULE['<{alma}prestashop>paymentbuttonadminformbuilder_f253e6ecb1d145ce02bd31c383dbad3c'] = 'Paiement différé';
 $_MODULE['<{alma}prestashop>paymentbuttonadminformbuilder_1bb665a61ac795bdc55e2a503fa824f5'] = 'Paiement en plus de 4 versements';
 $_MODULE['<{alma}prestashop>paymentbuttonadminformbuilder_1ff5f75cf29d7dfd4689a155c4996acb'] = 'Lorsqu\'Alma n\'est pas disponible...';
 $_MODULE['<{alma}prestashop>paymentbuttonadminformbuilder_312b74149761f30bdcb38460993c8c6a'] = 'Cacher le bouton de paiement';
