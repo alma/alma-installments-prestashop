@@ -126,12 +126,12 @@ class ShippingData
         ];
     }
 
-    private static function isExpressShipping()
+    private static function isExpressShipping($carrierInfo)
     {
         return null;
     }
 
-    private static function isPickupShipping()
+    private static function isPickupShipping($carrierInfo)
     {
         return null;
     }
