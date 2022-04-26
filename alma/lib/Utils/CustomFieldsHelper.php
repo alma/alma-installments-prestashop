@@ -63,6 +63,7 @@ class CustomFieldsHelper
      */
     public static function customFields()
     {
+        $textPnxButtonTitle = 'Pay in %d installments';
         $textButtonDescription = 'Fast and secure payment by credit card.';
 
         $module = new Alma();
@@ -73,11 +74,11 @@ class CustomFieldsHelper
         $module->l('At shipping', self::SOURCE_CUSTOM_FIELDS);
 
         return [
-            PaymentButtonAdminFormBuilder::ALMA_PNX_BUTTON_TITLE => 'Pay in %d installments',
+            PaymentButtonAdminFormBuilder::ALMA_PNX_BUTTON_TITLE => $textPnxButtonTitle,
             PaymentButtonAdminFormBuilder::ALMA_PNX_BUTTON_DESC => $textButtonDescription,
             PaymentButtonAdminFormBuilder::ALMA_DEFERRED_BUTTON_TITLE => 'Buy now Pay in %d days',
             PaymentButtonAdminFormBuilder::ALMA_DEFERRED_BUTTON_DESC => $textButtonDescription,
-            PaymentButtonAdminFormBuilder::ALMA_PNX_AIR_BUTTON_TITLE => 'Pay in %d installments',
+            PaymentButtonAdminFormBuilder::ALMA_PNX_AIR_BUTTON_TITLE => $textPnxButtonTitle,
             PaymentButtonAdminFormBuilder::ALMA_PNX_AIR_BUTTON_DESC => $textButtonDescription,
             ExcludedCategoryAdminFormBuilder::ALMA_NOT_ELIGIBLE_CATEGORIES => 'Your cart is not eligible for payments with Alma.',
             PaymentOnTriggeringAdminFormBuilder::ALMA_DESCRIPTION_TRIGGER => 'At shipping',
