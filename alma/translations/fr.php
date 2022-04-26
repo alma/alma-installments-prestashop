@@ -58,8 +58,11 @@ $_MODULE['<{alma}prestashop>displayrefundshookcontroller_44ffd38a6dea695cbe2b34e
 $_MODULE['<{alma}prestashop>displayrefundshookcontroller_88d0b8b8a18adb1a2d0e05d3c766743f'] = 'Montant (Max. %s) :';
 $_MODULE['<{alma}prestashop>displayrefundshookcontroller_6036af1bc6455aea1332546921cae25b'] = 'Montant à rembourser';
 $_MODULE['<{alma}prestashop>displayrefundshookcontroller_becd29bb1a0004cdfc177e9bb117e56f'] = 'Procéder au remboursement';
+$_MODULE['<{alma}prestashop>getcontenthookcontroller_bf17ac149e2e7a530c677e9bd51d3fd2'] = 'Modules';
+$_MODULE['<{alma}prestashop>getcontenthookcontroller_f805369aef0b94a941a131e9a2b72ab5'] = 'Gestionnaire de module';
+$_MODULE['<{alma}prestashop>getcontenthookcontroller_c6e24f81cb99e08c3d56b191c00aea28'] = 'Gestionnaire de module - Liste';
 $_MODULE['<{alma}prestashop>paymentoptionshookcontroller_1dd1c5fb7f25cd41b291d43a89e3aefd'] = 'Aujourd\'hui';
-$_MODULE['<{alma}prestashop>paymentoptionshookcontroller_9bbd94e0a507283ae202812ea1bd6f20'] = '%s mois après';
+$_MODULE['<{alma}prestashop>paymentoptionshookcontroller_9bbd94e0a507283ae202812ea1bd6f20'] = 'Dans %s mois';
 $_MODULE['<{alma}prestashop>paymentoptionshookcontroller_9088921432b295dfe6f02863b2dc0ff8'] = '0 € aujourd\'hui puis %1$s le %2$s';
 $_MODULE['<{alma}prestashop>paymentvalidation_efa820507b1951ee5722003639b1a0b0'] = 'Alma n\'est pas disponible dans cette devise';
 $_MODULE['<{alma}prestashop>paymentvalidation_1d879e270cfb195f257aab3116618d8b'] = 'Alma - Paiement +%d jours';
@@ -156,7 +159,7 @@ $_MODULE['<{alma}prestashop>displaypaymentreturn_9b9b747500bf38015ecb1a12119d50c
 $_MODULE['<{alma}prestashop>displaypaymentreturn_709fa7b44d5d59d2802e7878e35453a9'] = 'Détail de votre paiement :';
 $_MODULE['<{alma}prestashop>displaypaymentreturn_1dd1c5fb7f25cd41b291d43a89e3aefd'] = 'Aujourd\'hui';
 $_MODULE['<{alma}prestashop>displaypaymentreturn_6ed45ebd72fcca0fc0c271128e9d7b7b'] = 'À l\'expédition';
-$_MODULE['<{alma}prestashop>displaypaymentreturn_9bbd94e0a507283ae202812ea1bd6f20'] = '%s mois après';
+$_MODULE['<{alma}prestashop>displaypaymentreturn_9bbd94e0a507283ae202812ea1bd6f20'] = 'Dans %s mois';
 $_MODULE['<{alma}prestashop>displaypaymentreturn_304bcb1f18f0897c89c6a79cf0725af1'] = '(Frais inclus : %s)';
 $_MODULE['<{alma}prestashop>displaypaymentreturn_d61c09b6ad630202a5f4f57df12c9d65'] = 'Vous devriez bientôt recevoir un email de confirmation.';
 $_MODULE['<{alma}prestashop>displaypaymentreturn_47f0ca55ca88fc5d8f3d6984c2dd30bc'] = 'Pour voir l\'avancée de vos échéances, changer de carte bancaire ou payer en anticipé à tout moment :';
