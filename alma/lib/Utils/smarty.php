@@ -24,7 +24,7 @@
 
 $smarty = Context::getContext()->smarty;
 
-function smarty_prefilter_almaDisplayHtml($source, $template)
+function smarty_prefilter_almaDisplayHtml($source)
 {
     return preg_replace(
         ['/{almaDisplayHtml}/', '/{\/almaDisplayHtml}/'],
@@ -44,7 +44,7 @@ $smarty->registerFilter('pre', 'smarty_prefilter_almaDisplayHtml');
  *
  * @return string
  */
-function smarty_function_almaFormatPrice($params, $smarty)
+function smarty_function_almaFormatPrice($params)
 {
     return almaFormatPrice($params['cents'], isset($params['currency']) ? $params['currency'] : null);
 }

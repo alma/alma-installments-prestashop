@@ -47,7 +47,7 @@ class FrontHeaderHookController extends FrontendHookController
         return $content;
     }
 
-    private function handleOrderPage($params)
+    private function handleOrderPage()
     {
         $this->context->controller->addCSS($this->module->_path . 'views/css/alma.css', 'all');
         $this->context->controller->addJS($this->module->_path . 'views/js/alma_error.js');
@@ -70,7 +70,7 @@ class FrontHeaderHookController extends FrontendHookController
         return $this->handleOrderPage($params);
     }
 
-    private function injectAlmaAssets($params)
+    private function injectAlmaAssets()
     {
         $widgetsCssUrl = 'https://cdn.jsdelivr.net/npm/@alma/widgets@2.x/dist/widgets.min.css';
         $widgetsJsUrl = 'https://cdn.jsdelivr.net/npm/@alma/widgets@2.x/dist/widgets.umd.js';

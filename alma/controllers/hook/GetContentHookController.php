@@ -625,7 +625,7 @@ final class GetContentHookController extends AdminHookController
         return $key == '' || $key == null;
     }
 
-    public function run($params)
+    public function run()
     {
         $messages = '';
         $this->assignSmartyAlertClasses();

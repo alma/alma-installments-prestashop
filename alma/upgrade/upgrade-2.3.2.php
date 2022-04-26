@@ -35,7 +35,7 @@ use Alma\PrestaShop\Forms\PaymentButtonAdminFormBuilder;
 use Alma\PrestaShop\Utils\CustomFieldsHelper;
 use Alma\PrestaShop\Utils\Settings;
 
-function upgrade_module_2_3_2($module)
+function upgrade_module_2_3_2()
 {
     if (Settings::isFullyConfigured()) {
         $alma = ClientHelper::defaultInstance();

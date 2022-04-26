@@ -27,7 +27,7 @@ if (!defined('_PS_VERSION_')) {
 }
 
 if (version_compare(_PS_VERSION_, '1.7', '<')) {
-	require_once _PS_MODULE_DIR_ . 'alma/AlmaTraitAutoloader.php';
+    require_once _PS_MODULE_DIR_ . 'alma/AlmaTraitAutoloader.php';
 
     AlmaTraitAutoloader::autoload();
 }

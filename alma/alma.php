@@ -33,7 +33,6 @@ require_once _PS_MODULE_DIR_ . 'alma/vendor/autoload.php';
 require_once _PS_MODULE_DIR_ . 'alma/lib/Utils/smarty.php';
 require_once _PS_MODULE_DIR_ . 'alma/autoloader.php';
 
-
 class Alma extends PaymentModule
 {
     const VERSION = '2.5.3';
@@ -367,7 +366,7 @@ class Alma extends PaymentModule
         return $this->runHookController('frontHeader', $params);
     }
 
-    public function hookDisplayBackOfficeHeader($params)
+    public function hookDisplayBackOfficeHeader()
     {
         $this->context->controller->setMedia();
         $this->context->controller->addCSS($this->_path . 'views/css/admin/_configure/helpers/form/form.css', 'all');
