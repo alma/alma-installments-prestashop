@@ -28,11 +28,12 @@ use Alma\PrestaShop\Utils\AjaxTrait;
 use Alma\PrestaShop\Utils\Logger;
 use Alma\PrestaShop\Utils\OrderDataTrait;
 
-// TODO: Autoloader Trait Automatically
-if (version_compare(_PS_VERSION_, '1.7', '<')) {
-    require_once(_PS_MODULE_DIR_ . 'alma/lib/Utils/AjaxTrait.php');
-    require_once(_PS_MODULE_DIR_ . 'alma/lib/Utils/OrderDataTrait.php');
-}
+/*
+ * Ajax controllers don't have any global entrypoint on the module side
+ * So we have to include our Trait autoloader here.
+ */
+require_once _PS_MODULE_DIR_ . 'alma/autoloader.php';
+
 class AdminAlmaRefundsController extends ModuleAdminController
 {
     use AjaxTrait, OrderDataTrait {
