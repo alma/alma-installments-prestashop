@@ -48,11 +48,8 @@ class ProductEligibilityAdminFormBuilder extends AbstractAlmaAdminFormBuilder
     protected function configForm()
     {
         $htmlContent = sprintf(
-            $this->module->l(
-                // phpcs:ignore Generic.Files.LineLength
-                'This widget allows you to inform your customers of the availability of Alma\'s payment facilities right from the product page, which will help to increase your conversion rate. For more details on its configuration or in case of problems, please consult %1$sthis documentation%2$s.',
-                'ProductEligibilityAdminFormBuilder'
-            ),
+            // phpcs:ignore Generic.Files.LineLength
+            $this->module->l('This widget allows you to inform your customers of the availability of Alma\'s payment facilities right from the product page, which will help to increase your conversion rate. For more details on its configuration or in case of problems, please consult %1$sthis documentation%2$s.', 'ProductEligibilityAdminFormBuilder'),
             '<a href="https://docs.getalma.eu/docs/prestashop-alma-widget" target="_blank">',
             '</a>'
         );
@@ -85,10 +82,8 @@ class ProductEligibilityAdminFormBuilder extends AbstractAlmaAdminFormBuilder
                 $this->module->l('Display widget on custom css selector', 'ProductEligibilityAdminFormBuilder'),
                 sprintf(
                     // PrestaShop won't detect the string if the call to `l` is multiline
-                    $this->module->l(
-                        '%1$sAdvanced%2$s [Optional] Query selector for our scripts to display the widget on product page',
-                        'ProductEligibilityAdminFormBuilder'
-                    ),
+                    // phpcs:ignore Generic.Files.LineLength
+                    $this->module->l('%1$sAdvanced%2$s [Optional] Query selector for our scripts to display the widget on product page', 'ProductEligibilityAdminFormBuilder'),
                     '<b>',
                     '</b>'
                 ),
@@ -99,10 +94,8 @@ class ProductEligibilityAdminFormBuilder extends AbstractAlmaAdminFormBuilder
                 $this->module->l('Product price query selector', 'ProductEligibilityAdminFormBuilder'),
                 sprintf(
                     // PrestaShop won't detect the string if the call to `l` is multiline
-                    $this->module->l(
-                        '%1$sAdvanced%2$s Query selector for our scripts to correctly find the displayed price of a product',
-                        'ProductEligibilityAdminFormBuilder'
-                    ),
+                    // phpcs:ignore Generic.Files.LineLength
+                    $this->module->l('%1$sAdvanced%2$s Query selector for our scripts to correctly find the displayed price of a product', 'ProductEligibilityAdminFormBuilder'),
                     '<b>',
                     '</b>'
                 )
@@ -112,10 +105,8 @@ class ProductEligibilityAdminFormBuilder extends AbstractAlmaAdminFormBuilder
                 $this->module->l('Product attribute dropdown query selector', 'ProductEligibilityAdminFormBuilder'),
                 sprintf(
                     // PrestaShop won't detect the string if the call to `l` is multiline
-                    $this->module->l(
-                        '%1$sAdvanced%2$s Query selector for our scripts to correctly find the selected attributes of a product combination',
-                        'ProductEligibilityAdminFormBuilder'
-                    ),
+                    // phpcs:ignore Generic.Files.LineLength
+                    $this->module->l('%1$sAdvanced%2$s Query selector for our scripts to correctly find the selected attributes of a product combination', 'ProductEligibilityAdminFormBuilder'),
                     '<b>',
                     '</b>'
                 )
@@ -125,10 +116,8 @@ class ProductEligibilityAdminFormBuilder extends AbstractAlmaAdminFormBuilder
                 $this->module->l('Product attribute radio button query selector', 'ProductEligibilityAdminFormBuilder'),
                 sprintf(
                     // PrestaShop won't detect the string if the call to `l` is multiline
-                    $this->module->l(
-                        '%1$sAdvanced%2$s Query selector for our scripts to correctly find the selected attributes of a product combination',
-                        'ProductEligibilityAdminFormBuilder'
-                    ),
+                    // phpcs:ignore Generic.Files.LineLength
+                    $this->module->l('%1$sAdvanced%2$s Query selector for our scripts to correctly find the selected attributes of a product combination', 'ProductEligibilityAdminFormBuilder'),
                     '<b>',
                     '</b>'
                 )
@@ -138,10 +127,8 @@ class ProductEligibilityAdminFormBuilder extends AbstractAlmaAdminFormBuilder
                 $this->module->l('Product color picker query selector', 'ProductEligibilityAdminFormBuilder'),
                 sprintf(
                     // PrestaShop won't detect the string if the call to `l` is multiline
-                    $this->module->l(
-                        '%1$sAdvanced%2$s Query selector for our scripts to correctly find the chosen color option of a product',
-                        'ProductEligibilityAdminFormBuilder'
-                    ),
+                    // phpcs:ignore Generic.Files.LineLength
+                    $this->module->l('%1$sAdvanced%2$s Query selector for our scripts to correctly find the chosen color option of a product', 'ProductEligibilityAdminFormBuilder'),
                     '<b>',
                     '</b>'
                 )
@@ -151,10 +138,8 @@ class ProductEligibilityAdminFormBuilder extends AbstractAlmaAdminFormBuilder
                 $this->module->l('Product quantity query selector', 'ProductEligibilityAdminFormBuilder'),
                 sprintf(
                     // PrestaShop won't detect the string if the call to `l` is multiline
-                    $this->module->l(
-                        '%1$sAdvanced%2$s Query selector for our scripts to correctly find the wanted quantity of a product',
-                        'ProductEligibilityAdminFormBuilder'
-                    ),
+                    // phpcs:ignore Generic.Files.LineLength
+                    $this->module->l('%1$sAdvanced%2$s Query selector for our scripts to correctly find the wanted quantity of a product', 'ProductEligibilityAdminFormBuilder'),
                     '<b>',
                     '</b>'
                 )

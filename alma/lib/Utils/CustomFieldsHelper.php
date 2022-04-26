@@ -63,22 +63,22 @@ class CustomFieldsHelper
      */
     public static function customFields()
     {
+        $textPnxButtonTitle = 'Pay in %d installments';
         $textButtonDescription = 'Fast and secure payment by credit card.';
 
         $module = new Alma();
-        $module->l('Pay in installments with Alma', self::SOURCE_CUSTOM_FIELDS);
-        $module->l('Buy now, Pay later with Alma', self::SOURCE_CUSTOM_FIELDS);
-        $module->l('Spread your payments with Alma', self::SOURCE_CUSTOM_FIELDS);
+        $module->l('Pay in %d installments', self::SOURCE_CUSTOM_FIELDS);
+        $module->l('Buy now Pay in %d days', self::SOURCE_CUSTOM_FIELDS);
         $module->l('Fast and secure payment by credit card.', self::SOURCE_CUSTOM_FIELDS);
         $module->l('Your cart is not eligible for payments with Alma.', self::SOURCE_CUSTOM_FIELDS);
         $module->l('At shipping', self::SOURCE_CUSTOM_FIELDS);
 
         return [
-            PaymentButtonAdminFormBuilder::ALMA_PNX_BUTTON_TITLE => 'Pay in installments with Alma',
+            PaymentButtonAdminFormBuilder::ALMA_PNX_BUTTON_TITLE => $textPnxButtonTitle,
             PaymentButtonAdminFormBuilder::ALMA_PNX_BUTTON_DESC => $textButtonDescription,
-            PaymentButtonAdminFormBuilder::ALMA_DEFERRED_BUTTON_TITLE => 'Buy now, Pay later with Alma',
+            PaymentButtonAdminFormBuilder::ALMA_DEFERRED_BUTTON_TITLE => 'Buy now Pay in %d days',
             PaymentButtonAdminFormBuilder::ALMA_DEFERRED_BUTTON_DESC => $textButtonDescription,
-            PaymentButtonAdminFormBuilder::ALMA_PNX_AIR_BUTTON_TITLE => 'Spread your payments with Alma',
+            PaymentButtonAdminFormBuilder::ALMA_PNX_AIR_BUTTON_TITLE => $textPnxButtonTitle,
             PaymentButtonAdminFormBuilder::ALMA_PNX_AIR_BUTTON_DESC => $textButtonDescription,
             ExcludedCategoryAdminFormBuilder::ALMA_NOT_ELIGIBLE_CATEGORIES => 'Your cart is not eligible for payments with Alma.',
             PaymentOnTriggeringAdminFormBuilder::ALMA_DESCRIPTION_TRIGGER => 'At shipping',

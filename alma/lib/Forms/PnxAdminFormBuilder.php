@@ -88,10 +88,7 @@ class PnxAdminFormBuilder extends AbstractAlmaAdminFormBuilder
             $this->inputNumberForm(
                 "ALMA_${key}_SORT_ORDER",
                 $this->module->l('Position', 'PnxAdminFormBuilder'),
-                $this->module->l(
-                    'Use relative values to set the order on the checkout page',
-                    'PnxAdminFormBuilder'
-                ),
+                $this->module->l('Use relative values to set the order on the checkout page', 'PnxAdminFormBuilder'),
                 null,
                 null,
                 "$tabId-content"
