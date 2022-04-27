@@ -2,7 +2,15 @@
 
 ## v2.6.0
 
-- Payment at shipping
+- Now you can pay upon trigger with Alma in Prestashop !
+- You can differentiate the Alma title and description texts on Prestashop checkout between payment p>4 and p<4
+- Our installment dates formats are now adapted according to the language
+- You can now override our functions located in the lib folder for better customization based on the native Prestashop override
+- Fixed warning messages after installing our module in debug mode
+- Fixed display fees in installment for p4x
+- Fixed amount fees with customer interest in confirmation page displayed after payment
+- Fixed CSS switch so as not to impact the other modules
+- Fixed error when update the module
 
 ## v2.5.3
 
