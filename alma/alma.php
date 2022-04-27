@@ -33,7 +33,6 @@ require_once _PS_MODULE_DIR_ . 'alma/vendor/autoload.php';
 require_once _PS_MODULE_DIR_ . 'alma/lib/Utils/smarty.php';
 require_once _PS_MODULE_DIR_ . 'alma/autoloader.php';
 
-
 class Alma extends PaymentModule
 {
     const VERSION = '2.5.3';

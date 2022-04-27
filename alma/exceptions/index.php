@@ -22,46 +22,10 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
-if (!defined('_PS_VERSION_')) {
-    exit;
-}
-
-include_once _PS_MODULE_DIR_ . 'alma/vendor/autoload.php';
-
-use Alma\API\RequestError;
-use Alma\PrestaShop\API\ClientHelper;
-use Alma\PrestaShop\Forms\ExcludedCategoryAdminFormBuilder;
-use Alma\PrestaShop\Forms\PaymentButtonAdminFormBuilder;
-use Alma\PrestaShop\Utils\CustomFieldsHelper;
-use Alma\PrestaShop\Utils\Settings;
-
-function upgrade_module_2_3_2()
-{
-    if (Settings::isFullyConfigured()) {
-        $alma = ClientHelper::defaultInstance();
-
-        if (!$alma) {
-            return true;
-        }
-
-        $configKeys = [
-            PaymentButtonAdminFormBuilder::ALMA_PNX_BUTTON_TITLE,
-            PaymentButtonAdminFormBuilder::ALMA_PNX_BUTTON_DESC,
-            PaymentButtonAdminFormBuilder::ALMA_DEFERRED_BUTTON_TITLE,
-            PaymentButtonAdminFormBuilder::ALMA_DEFERRED_BUTTON_DESC,
-            ExcludedCategoryAdminFormBuilder::ALMA_NOT_ELIGIBLE_CATEGORIES,
-        ];
-
-        try {
-            foreach ($configKeys as $configKey) {
-                Configuration::deleteByName($configKey);
-            }
-
-            CustomFieldsHelper::initCustomFields();
-        } catch (RequestError $e) {
-            return true;
-        }
-    }
-
-    return true;
-}
+header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
+header('Last-Modified: ' . gmdate('D, d M Y H:i:s') . ' GMT');
+header('Cache-Control: no-store, no-cache, must-revalidate');
+header('Cache-Control: post-check=0, pre-check=0', false);
+header('Pragma: no-cache');
+header('Location: ../');
+exit;
