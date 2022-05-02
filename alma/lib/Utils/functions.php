@@ -150,7 +150,7 @@ function almaFormatPrice($cents, $id_currency = null)
 function getDateFormat($locale, $timestamp)
 {
     try {
-        if(!class_exists(IntlDateFormatter::class)) {
+        if (!class_exists(IntlDateFormatter::class)) {
             throw new IntlException('IntlDateFormatter: is not available');
         }
         $formatter = new IntlDateFormatter($locale, IntlDateFormatter::MEDIUM, IntlDateFormatter::NONE);
