@@ -151,7 +151,7 @@ function getDateFormat($locale, $timestamp)
 {
     try {
         if (!class_exists(IntlDateFormatter::class)) {
-            throw new IntlException('IntlDateFormatter: is not available');
+            throw new Exception('IntlDateFormatter: is not available');
         }
         $formatter = new IntlDateFormatter($locale, IntlDateFormatter::MEDIUM, IntlDateFormatter::NONE);
         if ($formatter === null) {
@@ -159,10 +159,21 @@ function getDateFormat($locale, $timestamp)
         }
 
         return $formatter->format($timestamp);
-    } catch (IntlException $e) {
-        $date = new DateTime();
-        $date->setTimestamp($timestamp);
-
-        return $date->format('d/m/Y');
+    } catch (Exception $e) {
+        return getFrenchDateFormat($timestamp);
     }
+}
+
+/**
+ * fallback for when IntlDateFormatter is not available
+ *
+ * @param string $timestamp
+ * @return string
+ */
+function getFrenchDateFormat($timestamp)
+{
+    $date = new DateTime();
+    $date->setTimestamp($timestamp);
+
+    return $date->format('d/m/Y');
 }
