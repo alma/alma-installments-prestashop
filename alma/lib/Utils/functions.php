@@ -150,6 +150,9 @@ function almaFormatPrice($cents, $id_currency = null)
 function getDateFormat($locale, $timestamp)
 {
     try {
+        if(!class_exists(IntlDateFormatter::class)) {
+            throw new IntlException('IntlDateFormatter: is not available');
+        }
         $formatter = new IntlDateFormatter($locale, IntlDateFormatter::MEDIUM, IntlDateFormatter::NONE);
         if ($formatter === null) {
             throw new IntlException(intl_get_error_message());
@@ -159,6 +162,6 @@ function getDateFormat($locale, $timestamp)
     } catch (IntlException $e) {
         $date = new DateTime($timestamp);
 
-        return $date->format('m/d/Y');
+        return $date->format('d/m/Y');
     }
 }
