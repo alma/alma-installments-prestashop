@@ -168,6 +168,7 @@ function getDateFormat($locale, $timestamp)
  * fallback for when IntlDateFormatter is not available
  *
  * @param string $timestamp
+ *
  * @return string
  */
 function getFrenchDateFormat($timestamp)
