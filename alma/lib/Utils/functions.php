@@ -160,7 +160,8 @@ function getDateFormat($locale, $timestamp)
 
         return $formatter->format($timestamp);
     } catch (IntlException $e) {
-        $date = new DateTime($timestamp);
+        $date = new DateTime();
+        $date->setTimestamp($timestamp);
 
         return $date->format('d/m/Y');
     }
