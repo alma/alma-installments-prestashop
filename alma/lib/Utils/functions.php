@@ -150,18 +150,15 @@ function almaFormatPrice($cents, $id_currency = null)
 function getDateFormat($locale, $timestamp)
 {
     try {
-        if (!class_exists(IntlDateFormatter::class)) {
-            return getFrenchDateFormat($timestamp);
+        if (class_exists(IntlDateFormatter::class)) {
+            $formatter = new IntlDateFormatter($locale, IntlDateFormatter::MEDIUM, IntlDateFormatter::NONE);
+            return $formatter->format($timestamp);
         }
-        $formatter = new IntlDateFormatter($locale, IntlDateFormatter::MEDIUM, IntlDateFormatter::NONE);
-        if ($formatter === null) {
-            throw new IntlException(intl_get_error_message());
-        }
-
-        return $formatter->format($timestamp);
     } catch (Exception $e) {
-        return getFrenchDateFormat($timestamp);
+        // do what you want or nothing
     }
+
+    return getFrenchDateFormat($timestamp);
 }
 
 /**
