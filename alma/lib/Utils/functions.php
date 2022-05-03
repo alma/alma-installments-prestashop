@@ -155,7 +155,7 @@ function getDateFormat($locale, $timestamp)
             return $formatter->format($timestamp);
         }
     } catch (Exception $e) {
-        // do what you want or nothing
+        throw new Exception('IntlDateFormatter is not available');
     }
 
     return getFrenchDateFormat($timestamp);
