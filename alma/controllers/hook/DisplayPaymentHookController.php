@@ -70,9 +70,11 @@ class DisplayPaymentHookController extends FrontendHookController
             Tools::ps_round((float) $this->context->cart->getOrderTotal(true, Cart::BOTH), 2)
         );
 
+        var_dump(count($installmentPlans));
         foreach ($installmentPlans as $plan) {
             $installment = $plan->installmentsCount;
             $key = "general_{$installment}_{$plan->deferredDays}_{$plan->deferredMonths}";
+            var_dump($key);
             $plans = $plan->paymentPlan;
             $disabled = false;
             $creditInfo = [
@@ -86,7 +88,9 @@ class DisplayPaymentHookController extends FrontendHookController
             $isInstallmentAccordingToDeferred = $isDeferred ? $installment === 1 : $installment !== 1;
 
             if ($isInstallmentAccordingToDeferred) {
-                if (!$plan->isEligible && $feePlans->$key->enabled && Settings::showDisabledButton()) {
+                if ($paymentOptions[$key]['disabled'] === true) {
+                    continue;
+                } elseif (!$plan->isEligible && $feePlans->$key->enabled && Settings::showDisabledButton()) {
                     $disabled = true;
                     $plans = null;
                 } elseif (!$plan->isEligible) {
