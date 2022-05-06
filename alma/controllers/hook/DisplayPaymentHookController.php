@@ -86,9 +86,10 @@ class DisplayPaymentHookController extends FrontendHookController
             $isInstallmentAccordingToDeferred = $isDeferred ? $installment === 1 : $installment !== 1;
 
             if ($isInstallmentAccordingToDeferred) {
-                if ($paymentOptions[$key]['disabled'] === true) {
+                if (isset($paymentOptions[$key]) && isset($paymentOptions[$key]['disabled']) && $paymentOptions[$key]['disabled'] === true) {
                     continue;
-                } elseif (!$plan->isEligible && $feePlans->$key->enabled && Settings::showDisabledButton()) {
+                }
+                if (!$plan->isEligible && $feePlans->$key->enabled && Settings::showDisabledButton()) {
                     $disabled = true;
                     $plans = null;
                 } elseif (!$plan->isEligible) {
