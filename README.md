@@ -5,9 +5,9 @@ This plugin adds a new payment method to PrestaShop 1.5.6.2+, which allows you t
 
 ## ⚠️ Restricted availability
 
-🇫🇷Pour le moment, Alma n'est disponible qu'aux marchands **français** avec lesquels nous pouvons interagir. Vous pouvez [créer votre compte](https://dashboard.getalma.eu) librement, mais devez nous contacter pour l'activer et commencer à accepter des paiements.
+🇫🇷Pour le moment, Alma n'est disponible qu'aux marchands **français, espagnols, belges, allemands, italiens, autrichiens, irlandais, luxembourgeois et néerlandais** avec lesquels nous pouvons interagir. Vous pouvez [créer votre compte](https://dashboard.getalma.eu) librement, mais devez nous contacter pour l'activer et commencer à accepter des paiements.
 
-🇬🇧For the moment, Alma is only available to **french** merchants with whom we can communicate. You can [create your account](https://dashboard.getalma.eu) freely, but you must contact us to have it activated and to start accepting payments.
+🇬🇧For the moment, Alma is only available to **french, spanish, belgian, german, italian, austrian, irish, luxembourg and dutch** merchants with whom we can communicate. You can [create your account](https://dashboard.getalma.eu) freely, but you must contact us to have it activated and to start accepting payments.
 
 
 ## Description
