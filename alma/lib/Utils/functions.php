@@ -150,15 +150,28 @@ function almaFormatPrice($cents, $id_currency = null)
 function getDateFormat($locale, $timestamp)
 {
     try {
-        $formatter = new IntlDateFormatter($locale, IntlDateFormatter::MEDIUM, IntlDateFormatter::NONE);
-        if ($formatter === null) {
-            throw new IntlException(intl_get_error_message());
+        if (class_exists(IntlDateFormatter::class)) {
+            $formatter = new IntlDateFormatter($locale, IntlDateFormatter::MEDIUM, IntlDateFormatter::NONE);
+            return $formatter->format($timestamp);
         }
-
-        return $formatter->format($timestamp);
-    } catch (IntlException $e) {
-        $date = new DateTime($timestamp);
-
-        return $date->format('m/d/Y');
+    } catch (Exception $e) {
+        // We don't need to deal with this Exception because a fallback exists in default return statement
     }
+
+    return getFrenchDateFormat($timestamp);
+}
+
+/**
+ * fallback for when IntlDateFormatter is not available
+ *
+ * @param string $timestamp
+ *
+ * @return string
+ */
+function getFrenchDateFormat($timestamp)
+{
+    $date = new DateTime();
+    $date->setTimestamp($timestamp);
+
+    return $date->format('d/m/Y');
 }
