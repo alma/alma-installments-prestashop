@@ -1,5 +1,11 @@
 # Changelog
 
+## v2.6.1
+
+- Fixed at the installation of the module if you had php 5.6
+- Fixed if you were not using the Class intl php on your server
+- Fixed the disable of the payment option if not eligible
+
 ## v2.6.0
 
 - Now you can pay upon trigger with Alma in Prestashop !

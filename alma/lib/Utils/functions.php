@@ -152,6 +152,7 @@ function getDateFormat($locale, $timestamp)
     try {
         if (class_exists(IntlDateFormatter::class)) {
             $formatter = new IntlDateFormatter($locale, IntlDateFormatter::MEDIUM, IntlDateFormatter::NONE);
+
             return $formatter->format($timestamp);
         }
     } catch (Exception $e) {
