@@ -1,0 +1,49 @@
+---
+name: Launch e2e Test
+on:
+  push:
+    branches: 
+      - "master"
+  pull_request:
+    branches:
+      - master
+  workflow_dispatch:
+
+jobs:
+  test:
+    strategy:
+      matrix:
+        version:
+        - 1.7.8.3
+        - 1.6.1.23
+    runs-on: ubuntu-latest
+    steps:
+    - name: Get only last part of branch name in $BUILD_VERSION env var
+      run:  |
+        VERSION=${{ matrix.version }}
+        echo "SLUG_VERSION=${VERSION//./-}" >> $GITHUB_ENV
+
+    - uses: LouisBrunner/checks-action@v1.2.0
+      id: e2e_status
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+        name: E2E Test (${{ matrix.version }})
+        status: "in_progress"
+
+    - name: Invoke e2e workflow with inputs
+      uses: benc-uk/workflow-dispatch@v1
+      with:
+        workflow: Deploy to k8s integrations cluster
+        token: ${{ secrets.INFRA_WORKFLOW_TRIGGER_TOKEN }}
+        repo: 'alma/integration-infrastructure'
+        ref: 'feat/ci'
+        inputs: >
+          {
+            "name": "e2e-${{ github.run_id }}-prestashop-${{ env.SLUG_VERSION }}",
+            "alma_plugin_repository": "${{ github.repository }}",
+            "alma_plugin_branch": "${{ github.head_ref || github.ref_name }}",
+            "cms": "prestashop-${{ matrix.version }}",
+            "db": "mysql-5.7",
+            "e2e": "true",
+            "e2e_check_id": "${{ steps.e2e_status.outputs.check_id }}"
+          }
