@@ -1,5 +1,5 @@
 ---
-name: Launch e2e Test
+name: E2E Test
 on:
   push:
     branches: 
@@ -10,7 +10,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  test:
+  launch:
     strategy:
       matrix:
         version:
@@ -18,7 +18,7 @@ jobs:
         - 1.6.1.23
     runs-on: ubuntu-latest
     steps:
-    - name: Get only last part of branch name in $BUILD_VERSION env var
+    - name: Get only last part of branch name in $SLUG_VERSION env var
       run:  |
         VERSION=${{ matrix.version }}
         echo "SLUG_VERSION=${VERSION//./-}" >> $GITHUB_ENV
@@ -27,7 +27,7 @@ jobs:
       id: e2e_status
       with:
         token: ${{ secrets.GITHUB_TOKEN }}
-        name: E2E Test (${{ matrix.version }})
+        name: results (${{ matrix.version }})
         status: "in_progress"
 
     - name: Invoke e2e workflow with inputs
