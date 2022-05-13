@@ -26,4 +26,4 @@ jobs:
         token: ${{ secrets.GITHUB_TOKEN }}
         check_id: ${{ github.event.inputs.check_id }}
         conclusion: ${{ github.event.inputs.conclusion }}
-        details_url: ${{ github.event.inputs.details_url }}
+        details_url: ${{ github.event.inputs.details_url }} # details_urls is not working with GITHUB_TOKEN we should use an app token: https://github.com/LouisBrunner/checks-action/issues/18#issuecomment-1027122151
