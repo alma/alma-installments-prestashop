@@ -1,0 +1,29 @@
+---
+name: Update e2e Test results
+on:
+  workflow_dispatch:
+    inputs:
+      check_id:
+        type: string
+        description: ID of the check to update with e2e results
+        required: true
+      conclusion:
+        type: string
+        description: test results
+        required: true
+      details_url:
+        type: string
+        description: URL of e2e test run
+        required: false
+
+jobs:
+  update-test-results:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: LouisBrunner/checks-action@v1.2.0
+      if: always()
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+        check_id: ${{ github.event.inputs.check_id }}
+        conclusion: ${{ github.event.inputs.conclusion }}
+        details_url: ${{ github.event.inputs.details_url }}
