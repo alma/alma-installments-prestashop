@@ -22,8 +22,8 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
-use Alma\PrestaShop\Exception\RenderPaymentException;
 use Alma\PrestaShop\Utils\LinkHelper;
+use Alma\PrestaShop\Exceptions\RenderPaymentException;
 
 if (!defined('_PS_VERSION_')) {
     exit;

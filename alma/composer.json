@@ -8,7 +8,8 @@
     "autoload": {
         "psr-4": {
             "Alma\\PrestaShop\\": ["lib/", "."],
-            "Alma\\PrestaShop\\Controllers\\Hook\\": "controllers/hook/"
+            "Alma\\PrestaShop\\Controllers\\Hook\\": "controllers/hook/",
+            "Alma\\PrestaShop\\Exceptions\\": "exceptions/"
         },
         "files": [
             "lib/Utils/functions.php"
