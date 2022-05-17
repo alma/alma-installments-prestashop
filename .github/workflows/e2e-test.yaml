@@ -36,7 +36,7 @@ jobs:
         workflow: Deploy CMS
         token: ${{ secrets.INFRA_WORKFLOW_TRIGGER_TOKEN }}
         repo: 'alma/integration-infrastructure'
-        ref: 'feat/ci'
+        ref: 'main'
         inputs: >
           {
             "name": "e2e-${{ github.run_id }}-prestashop-${{ env.SLUG_VERSION }}",
