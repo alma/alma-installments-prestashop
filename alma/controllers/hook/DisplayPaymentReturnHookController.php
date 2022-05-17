@@ -29,11 +29,11 @@ if (!defined('_PS_VERSION_')) {
 }
 
 use Alma\API\RequestError;
-use Alma\PrestaShop\Utils\Logger;
 use Alma\PrestaShop\API\ClientHelper;
-use Alma\PrestaShop\Utils\OrderDataTrait;
-use Alma\PrestaShop\Hooks\FrontendHookController;
 use Alma\PrestaShop\Exceptions\RenderPaymentException;
+use Alma\PrestaShop\Hooks\FrontendHookController;
+use Alma\PrestaShop\Utils\Logger;
+use Alma\PrestaShop\Utils\OrderDataTrait;
 
 class DisplayPaymentReturnHookController extends FrontendHookController
 {
