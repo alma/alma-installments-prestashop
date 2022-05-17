@@ -275,9 +275,9 @@ final class GetContentHookController extends AdminHookController
                     $deferred_days = $feePlan->deferred_days;
                     $deferred_months = $feePlan->deferred_months;
                     $key = Settings::keyForFeePlan($feePlan);
-                    if (1 == $n && !Settings::isDeferred($feePlan)) {
-                        continue;
-                    }
+                    // if (1 == $n && !Settings::isDeferred($feePlan)) {
+                    //     continue;
+                    // }
                     if (1 != $n && Settings::isDeferred($feePlan)) {
                         continue;
                     }
@@ -319,9 +319,9 @@ final class GetContentHookController extends AdminHookController
                     $n = $feePlan->installments_count;
                     $key = Settings::keyForFeePlan($feePlan);
 
-                    if (1 == $n && !Settings::isDeferred($feePlan)) {
-                        continue;
-                    }
+                    // if (1 == $n && !Settings::isDeferred($feePlan)) {
+                    //     continue;
+                    // }
 
                     if (1 != $n && Settings::isDeferred($feePlan)) {
                         continue;
@@ -613,13 +613,13 @@ final class GetContentHookController extends AdminHookController
         ];
 
         if ($merchant) {
-            $i = 2;
+            $i = 1;
             foreach ($feePlans as $feePlan) {
                 $key = Settings::keyForFeePlan($feePlan);
-                if ((1 == $feePlan->installments_count && !Settings::isDeferred($feePlan))
-                    || !$feePlan->allowed) {
-                    continue;
-                }
+                // if ((1 == $feePlan->installments_count && !Settings::isDeferred($feePlan))
+                //     || !$feePlan->allowed) {
+                //     continue;
+                // }
 
                 $helper->fields_value["ALMA_{$key}_ENABLED_ON"] = isset($installmentsPlans->$key->enabled)
                     ? $installmentsPlans->$key->enabled

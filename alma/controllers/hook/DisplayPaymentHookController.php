@@ -83,7 +83,8 @@ class DisplayPaymentHookController extends FrontendHookController
             ];
 
             $isDeferred = Settings::isDeferred($plan);
-            $isInstallmentAccordingToDeferred = $isDeferred ? $installment === 1 : $installment !== 1;
+            // $isInstallmentAccordingToDeferred = $isDeferred ? $installment === 1 : $installment !== 1;
+            $isInstallmentAccordingToDeferred = $isDeferred ? $plan->deferredDays !== 0 && $plan->deferredMonths !== 0 :  $plan->deferredDays === 0 && $plan->deferredMonths === 0;
 
             if ($isInstallmentAccordingToDeferred) {
                 if (!$plan->isEligible && $feePlans->$key->enabled && Settings::showDisabledButton()) {

@@ -106,9 +106,9 @@ class PnxAdminFormBuilder extends AbstractAlmaAdminFormBuilder
         /** @var FeePlan $feePlan */
         foreach ($this->config['feePlans'] as $feePlan) {
             $tabId = $key = $feePlan->getPlanKey();
-            if (!$feePlan->isPayLaterOnly() && !$feePlan->isPnXOnly()) {
-                continue;
-            }
+            // if (!$feePlan->isPayLaterOnly() && !$feePlan->isPnXOnly()) {
+            //     continue;
+            // }
 
             if (!$feePlan->allowed) {
                 $this->disableFeePlan($key, $installmentsPlans);
