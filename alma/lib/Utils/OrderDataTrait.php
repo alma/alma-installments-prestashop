@@ -24,6 +24,7 @@
 
 namespace Alma\PrestaShop\Utils;
 
+use Alma\PrestaShop\Exceptions\RenderPaymentException;
 use Alma\PrestaShop\Model\OrderData;
 
 if (!defined('_PS_VERSION_')) {
@@ -40,13 +41,15 @@ trait OrderDataTrait
     /**
      * @param $order
      */
-    protected function getOrderPaymentOrFail($order)
+    protected function getOrderPaymentOrFail($order, $ajax = true)
     {
         $orderPayment = OrderData::getCurrentOrderPayment($order);
         if (!$orderPayment) {
-            $this->ajaxFail(
-                $this->module->l('Error: Could not find Alma transaction', 'OrderDataTrait')
-            );
+            $msg = $this->module->l('Error: Could not find Alma transaction', 'OrderDataTrait');
+            if ($ajax) {
+                $this->ajaxFail($msg);
+            }
+            throw new RenderPaymentException($msg);
         }
 
         return $orderPayment;

@@ -45,7 +45,7 @@ class DisplayPaymentReturnHookController extends FrontendHookController
 
         $payment = null;
         $order = array_key_exists('objOrder', $params) ? $params['objOrder'] : $params['order'];
-        $orderPayment = $this->getOrderPaymentOrFail($order);
+        $orderPayment = $this->getOrderPaymentOrFail($order, false);
         $almaPaymentId = $orderPayment->transaction_id;
         if (!$almaPaymentId) {
             $msg = '[Alma] Payment_id not found';
