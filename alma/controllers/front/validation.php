@@ -29,7 +29,6 @@ if (!defined('_PS_VERSION_')) {
 use Alma\PrestaShop\API\PaymentValidation;
 use Alma\PrestaShop\API\PaymentValidationError;
 use Alma\PrestaShop\Utils\Logger;
-use Psr\Log\LogLevel;
 
 class AlmaValidationModuleFrontController extends ModuleFrontController
 {
@@ -66,13 +65,13 @@ class AlmaValidationModuleFrontController extends ModuleFrontController
         $validator = new PaymentValidation($this->context, $this->module);
 
         try {
-            Logger::log(LogLevel::DEBUG, 'payment_validate');
+            Logger::instance()->debug('payment_validate');
             $redirect_to = $validator->validatePayment($paymentId);
         } catch (PaymentValidationError $e) {
-            Logger::log(LogLevel::ERROR, 'payment_validation_error - Message : ' . $e->getMessage());
+            Logger::instance()->error('payment_validation_error - Message : ' . $e->getMessage());
             $redirect_to = $this->fail($e->cart, $e->getMessage());
         } catch (Exception $e) {
-            Logger::log(LogLevel::ERROR, 'payment_error - Message : ' . $e->getMessage());
+            Logger::instance()->error('payment_error - Message : ' . $e->getMessage());
             $redirect_to = $this->fail(null, $e->getMessage());
         }
 
