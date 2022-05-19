@@ -34,6 +34,7 @@ use Alma\PrestaShop\Hooks\AdminHookController;
 use Alma\PrestaShop\Utils\Logger;
 use Alma\PrestaShop\Utils\OrderDataTrait;
 use Alma\PrestaShop\Utils\Settings;
+use Configuration;
 use Order;
 use PrestaShopDatabaseException;
 use PrestaShopException;
@@ -54,7 +55,11 @@ final class StateHookController extends AdminHookController
     {
         $order = new Order($params['id_order']);
         $newStatus = $params['newOrderStatus'];
-        if ($order->module !== 'alma' || !$order_payment = $this->getOrderPaymentOrFail($order)) {
+        $ajax = true;
+        if ($newStatus->id == Configuration::get('PS_OS_PAYMENT')) {
+            $ajax = false;
+        }
+        if ($order->module !== 'alma' || !$order_payment = $this->getOrderPaymentOrFail($order, $ajax)) {
             return;
         }
         $alma = ClientHelper::defaultInstance();
