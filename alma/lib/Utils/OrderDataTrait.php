@@ -43,8 +43,9 @@ trait OrderDataTrait
      */
     protected function getOrderPaymentOrFail($order, $ajax = true)
     {
-        $orderPayment = OrderData::getCurrentOrderPayment($order);
-        if (!$orderPayment) {
+        try {
+            $orderPayment = OrderData::getCurrentOrderPayment($order);
+        } catch (RenderPaymentException $e) {
             $msg = $this->module->l('Error: Could not find Alma transaction', 'OrderDataTrait');
             if ($ajax) {
                 $this->ajaxFail($msg);
