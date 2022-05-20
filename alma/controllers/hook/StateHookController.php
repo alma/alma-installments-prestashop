@@ -31,6 +31,7 @@ if (!defined('_PS_VERSION_')) {
 use Alma\API\RequestError;
 use Alma\PrestaShop\API\ClientHelper;
 use Alma\PrestaShop\Hooks\AdminHookController;
+use Alma\PrestaShop\Model\OrderData;
 use Alma\PrestaShop\Utils\Logger;
 use Alma\PrestaShop\Utils\OrderDataTrait;
 use Alma\PrestaShop\Utils\Settings;
@@ -55,11 +56,12 @@ final class StateHookController extends AdminHookController
     {
         $order = new Order($params['id_order']);
         $newStatus = $params['newOrderStatus'];
-        $ajax = true;
         if ($newStatus->id == Configuration::get('PS_OS_PAYMENT')) {
-            $ajax = false;
+            $order_payment = OrderData::getCurrentOrderPayment($order);
+        } else {
+            $order_payment = $this->getOrderPaymentOrFail($order);
         }
-        if ($order->module !== 'alma' || !$order_payment = $this->getOrderPaymentOrFail($order, $ajax)) {
+        if ($order->module !== 'alma' || !$order_payment) {
             return;
         }
         $alma = ClientHelper::defaultInstance();

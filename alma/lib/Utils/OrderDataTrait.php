@@ -41,16 +41,13 @@ trait OrderDataTrait
     /**
      * @param $order
      */
-    protected function getOrderPaymentOrFail($order, $ajax = true)
+    protected function getOrderPaymentOrFail($order)
     {
-        try {
-            $orderPayment = OrderData::getCurrentOrderPayment($order);
-        } catch (RenderPaymentException $e) {
-            $msg = $this->module->l('Error: Could not find Alma transaction', 'OrderDataTrait');
-            if ($ajax) {
-                $this->ajaxFail($msg);
-            }
-            throw new RenderPaymentException($msg);
+        $orderPayment = OrderData::getCurrentOrderPayment($order);
+        if (!$orderPayment) {
+            $this->ajaxFail(
+                $this->module->l('Error: Could not find Alma transaction', 'OrderDataTrait')
+            );
         }
 
         return $orderPayment;
