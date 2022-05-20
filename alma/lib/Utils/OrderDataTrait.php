@@ -24,7 +24,6 @@
 
 namespace Alma\PrestaShop\Utils;
 
-use Alma\PrestaShop\Exceptions\RenderPaymentException;
 use Alma\PrestaShop\Model\OrderData;
 
 if (!defined('_PS_VERSION_')) {
