@@ -43,9 +43,9 @@ jobs:
             "alma_plugin_repository": "${{ github.repository }}",
             "alma_plugin_branch": "${{ github.head_ref || github.ref_name }}",
             "cms": "prestashop-${{ matrix.version }}",
-            "db": "mysql-5.7",
             "e2e": "true",
-            "e2e_check_id": "${{ steps.e2e_status.outputs.check_id }}"
+            "e2e_check_id": "${{ steps.e2e_status.outputs.check_id }}",
+            "e2e_update_status_app_installation_id": "1337"
           }
 
     - uses: LouisBrunner/checks-action@v1.2.0
