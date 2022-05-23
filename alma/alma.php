@@ -397,7 +397,8 @@ class Alma extends PaymentModule
         try {
             return $this->runHookController('displayPaymentReturn', $params);
         } catch (RenderPaymentException $e) {
-            return '';
+            $module = Module::getInstanceByName('alma');
+            return $module->display($module->file, 'displayPaymentReturn.tpl');
         }
     }
 
