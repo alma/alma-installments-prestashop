@@ -442,19 +442,12 @@ class Alma extends PaymentModule
         return $this->runHookController('state', $params);
     }
 
-    public function hookActionAdminControllerInitAfter($params)
-    {
-        Logger::instance()->info('ActionAdminControllerInitAfter');
-        $shareOfCheckout = new ShareOfCheckoutHelper();
-        $shareOfCheckout->shareDays();
-    }
-
     /**
      * Hook action crontab
      */
     public function hookActionCronJob()
     {
-        Logger::instance()->info('Test Cron');
+        Logger::instance()->info('Cron Task exec');
         $shareOfCheckout = new ShareOfCheckoutHelper();
         $shareOfCheckout->shareDays();
     }
