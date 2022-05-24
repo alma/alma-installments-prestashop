@@ -504,10 +504,10 @@ final class GetContentHookController extends AdminHookController
             $fieldsForms[] = $excludedBuilder->build();
             $fieldsForms[] = $refundBuilder->build();
             $fieldsForms[] = $triggerBuilder->build();
+            $fieldsForms[] = $shareOfCheckoutBuilder->build();
         }
         $fieldsForms[] = $apiBuilder->build();
         $fieldsForms[] = $debugBuilder->build();
-        $fieldsForms[] = $shareOfCheckoutBuilder->build();
 
         $helper = new HelperForm();
         $helper->module = $this->module;
