@@ -52,6 +52,7 @@ class ShareOfCheckoutAdminFormBuilder extends AbstractAlmaAdminFormBuilder
                 $this->inputHtml(null, $htmlCronJobDisabled),
             ];
         }
+
         return [
             $this->inputAlmaSwitchForm(
                 self::ALMA_ACTIVATE_SHARE_OF_CHECKOUT,
