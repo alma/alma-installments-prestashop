@@ -22,7 +22,7 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
-namespace Alma\PrestaShop\Exception;
+namespace Alma\PrestaShop\Exceptions;
 
 use Exception;
 

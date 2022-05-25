@@ -22,7 +22,7 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
-use Alma\PrestaShop\Exception\RenderPaymentException;
+use Alma\PrestaShop\Exceptions\RenderPaymentException;
 use Alma\PrestaShop\Utils\LinkHelper;
 
 if (!defined('_PS_VERSION_')) {
@@ -397,7 +397,9 @@ class Alma extends PaymentModule
         try {
             return $this->runHookController('displayPaymentReturn', $params);
         } catch (RenderPaymentException $e) {
-            return '';
+            $module = Module::getInstanceByName('alma');
+
+            return $module->display($module->file, 'displayPaymentReturn.tpl');
         }
     }
 
