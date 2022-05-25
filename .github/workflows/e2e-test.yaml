@@ -23,11 +23,19 @@ jobs:
         VERSION=${{ matrix.version }}
         echo "SLUG_VERSION=${VERSION//./-}" >> $GITHUB_ENV
 
+    - name: Generate token
+      id: generate_token
+      uses: tibdex/github-app-token@v1
+      continue-on-error: true
+      with:
+        app_id: ${{ secrets.ALMA_UPDATE_CHECKS_APP_ID }}
+        private_key: ${{ secrets.ALMA_UPDATE_CHECKS_APP_PEM }}
+
     - uses: LouisBrunner/checks-action@v1.2.0
       id: e2e_status
       with:
-        token: ${{ secrets.GITHUB_TOKEN }}
-        name: results (${{ matrix.version }})
+        token: ${{ steps.generate_token.outputs.token }}
+        name: E2E Test / result (${{ matrix.version }})
         status: "in_progress"
 
     - name: Invoke e2e workflow with inputs
@@ -44,13 +52,12 @@ jobs:
             "alma_plugin_branch": "${{ github.head_ref || github.ref_name }}",
             "cms": "prestashop-${{ matrix.version }}",
             "e2e": "true",
-            "e2e_check_id": "${{ steps.e2e_status.outputs.check_id }}",
-            "e2e_update_status_app_installation_id": "1337"
+            "e2e_check_id": "${{ steps.e2e_status.outputs.check_id }}"
           }
 
     - uses: LouisBrunner/checks-action@v1.2.0
       if: failure()
       with:
-        token: ${{ secrets.GITHUB_TOKEN }}
+        token: ${{ steps.generate_token.outputs.token }}
         check_id: ${{ steps.e2e_status.outputs.check_id }}
         conclusion: failure
