@@ -48,7 +48,7 @@ $_MODULE['<{alma}prestashop>displaypaymenthookcontroller_afd8ac1c65e1519d6a890e5
 $_MODULE['<{alma}prestashop>displaypaymenthookcontroller_bc69b42c4bd339154f9025f3299ad146'] = '%1$s today then %2$d x %3$s';
 $_MODULE['<{alma}prestashop>displaypaymenthookcontroller_9088921432b295dfe6f02863b2dc0ff8'] = '0 € today then %1$s on %2$s';
 $_MODULE['<{alma}prestashop>displayrefundshookcontroller_db13e38ee45ff954199d15a509508f57'] = 'Alma refund';
-$_MODULE['<{alma}prestashop>displayrefundshookcontroller_cbf27bbd125aebc6081da0e1b702dcaf'] = 'Refund this order thanks to the Alma module. This will be applied in your Alma dashboard automatically. The maximum refundable amount includes client fees. %1$sSee documentation%2$s';
+$_MODULE['<{alma}prestashop>displayrefundshookcontroller_8de0f743a6b84c2c69e42f07b7dddef4'] = 'Refund this order thanks to the Alma module. This will be applied in your Alma dashboard automatically. %1$sSee documentation%2$s';
 $_MODULE['<{alma}prestashop>displayrefundshookcontroller_3f20b5130f65e1287ba5b3e341e542f9'] = 'Refund type:';
 $_MODULE['<{alma}prestashop>displayrefundshookcontroller_7eefad58341b7a853ac151fdfeb9a5ce'] = 'Only this order (%s)';
 $_MODULE['<{alma}prestashop>displayrefundshookcontroller_c84ddaf35ec7947a5a2e291f3ff991ce'] = 'Refund the entire order';

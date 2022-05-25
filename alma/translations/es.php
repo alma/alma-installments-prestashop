@@ -48,7 +48,7 @@ $_MODULE['<{alma}prestashop>displaypaymenthookcontroller_afd8ac1c65e1519d6a890e5
 $_MODULE['<{alma}prestashop>displaypaymenthookcontroller_bc69b42c4bd339154f9025f3299ad146'] = '%1$s hoy entonces %2$d x %3$s';
 $_MODULE['<{alma}prestashop>displaypaymenthookcontroller_9088921432b295dfe6f02863b2dc0ff8'] = '0 € hoy entonces %1$s en %2$s';
 $_MODULE['<{alma}prestashop>displayrefundshookcontroller_db13e38ee45ff954199d15a509508f57'] = 'Reembolso de Alma';
-$_MODULE['<{alma}prestashop>displayrefundshookcontroller_cbf27bbd125aebc6081da0e1b702dcaf'] = 'Reembolsa este pedido a través del módulo de Alma. Se sincronizará con tu panel de control de Alma de forma automática. El importe reembolsable incluirá cualquier coste que debiera pagar el cliente. %1$sVer documentación%2$s';
+$_MODULE['<{alma}prestashop>displayrefundshookcontroller_8de0f743a6b84c2c69e42f07b7dddef4'] = 'Reembolsa este pedido a través del módulo de Alma. Se sincronizará con tu panel de control de Alma de forma automática. %1$sVer documentación%2$s';
 $_MODULE['<{alma}prestashop>displayrefundshookcontroller_3f20b5130f65e1287ba5b3e341e542f9'] = 'Tipo de reembolso';
 $_MODULE['<{alma}prestashop>displayrefundshookcontroller_7eefad58341b7a853ac151fdfeb9a5ce'] = 'Solo este pedido (%s)';
 $_MODULE['<{alma}prestashop>displayrefundshookcontroller_c84ddaf35ec7947a5a2e291f3ff991ce'] = 'Reembolsar el pedido completo';

@@ -48,7 +48,7 @@ $_MODULE['<{alma}prestashop>displaypaymenthookcontroller_afd8ac1c65e1519d6a890e5
 $_MODULE['<{alma}prestashop>displaypaymenthookcontroller_bc69b42c4bd339154f9025f3299ad146'] = '%1$s heute dann %2$d x %3$s';
 $_MODULE['<{alma}prestashop>displaypaymenthookcontroller_9088921432b295dfe6f02863b2dc0ff8'] = '0 € heute dann %1$s am %2$s';
 $_MODULE['<{alma}prestashop>displayrefundshookcontroller_db13e38ee45ff954199d15a509508f57'] = 'Alma-Erstattung';
-$_MODULE['<{alma}prestashop>displayrefundshookcontroller_cbf27bbd125aebc6081da0e1b702dcaf'] = 'Erstattet diesen Auftrag dank des Alma-Moduls. Dies wird automatisch in Ihrem Alma-Dashboard durchgeführt. Der maximal erstattungsfähige Betrag umfasst die Kundengebühren. %1$sSiehe Dokumentation%2$s';
+$_MODULE['<{alma}prestashop>displayrefundshookcontroller_8de0f743a6b84c2c69e42f07b7dddef4'] = 'Erstattet diesen Auftrag dank des Alma-Moduls. Dies wird automatisch in Ihrem Alma-Dashboard durchgeführt. %1$sSiehe Dokumentation%2$s';
 $_MODULE['<{alma}prestashop>displayrefundshookcontroller_3f20b5130f65e1287ba5b3e341e542f9'] = 'Art der Erstattung:';
 $_MODULE['<{alma}prestashop>displayrefundshookcontroller_7eefad58341b7a853ac151fdfeb9a5ce'] = 'Nur dieser Auftrag (%s)';
 $_MODULE['<{alma}prestashop>displayrefundshookcontroller_c84ddaf35ec7947a5a2e291f3ff991ce'] = 'Erstattung der gesamten Bestellung';
