@@ -48,6 +48,7 @@ $_MODULE['<{alma}prestashop>displaypaymenthookcontroller_afd8ac1c65e1519d6a890e5
 $_MODULE['<{alma}prestashop>displaypaymenthookcontroller_bc69b42c4bd339154f9025f3299ad146'] = '%1$s hoy entonces %2$d x %3$s';
 $_MODULE['<{alma}prestashop>displaypaymenthookcontroller_9088921432b295dfe6f02863b2dc0ff8'] = '0 € hoy entonces %1$s en %2$s';
 $_MODULE['<{alma}prestashop>displayrefundshookcontroller_db13e38ee45ff954199d15a509508f57'] = 'Reembolso de Alma';
+$_MODULE['<{alma}prestashop>displayrefundshookcontroller_cbf27bbd125aebc6081da0e1b702dcaf'] = 'Reembolsa este pedido a través del módulo de Alma. Se sincronizará con tu panel de control de Alma de forma automática. El importe reembolsable incluirá cualquier coste que debiera pagar el cliente. %1$sVer documentación%2$s';
 $_MODULE['<{alma}prestashop>displayrefundshookcontroller_3f20b5130f65e1287ba5b3e341e542f9'] = 'Tipo de reembolso';
 $_MODULE['<{alma}prestashop>displayrefundshookcontroller_7eefad58341b7a853ac151fdfeb9a5ce'] = 'Solo este pedido (%s)';
 $_MODULE['<{alma}prestashop>displayrefundshookcontroller_c84ddaf35ec7947a5a2e291f3ff991ce'] = 'Reembolsar el pedido completo';
@@ -104,13 +105,13 @@ $_MODULE['<{alma}prestashop>paymentbuttonadminformbuilder_1ff5f75cf29d7dfd4689a1
 $_MODULE['<{alma}prestashop>paymentbuttonadminformbuilder_312b74149761f30bdcb38460993c8c6a'] = 'Ocultar el botón de pago';
 $_MODULE['<{alma}prestashop>paymentbuttonadminformbuilder_1592c10d9ef86441918f678ec6e6d79a'] = 'Mostrar el botón de pago, desactivado';
 $_MODULE['<{alma}prestashop>paymentbuttonadminformbuilder_039b5313d8eacb12b7520d4e31c5053d'] = 'Configuración de la forma de pago';
-$_MODULE['<{alma}prestashop>paymentontriggeringadminformbuilder_ca4c631f2d5ce4d541428c762db48420'] = 'Esta opción está disponible sólo para el pago de Alma en 2x, 3x y 4x. Cuando está activada, sus clientes pagarán la primera cuota en el cambio de estado del pedido. Cuando su cliente ordena en su sitio web, Alma sólo pedirá una autorización de pago. Sólo el estado manejado por Alma está disponible en el menú de abajo. Por favor, póngase en contacto con Alma si necesita que añadamos otro estado.';
+$_MODULE['<{alma}prestashop>paymentontriggeringadminformbuilder_ca4c631f2d5ce4d541428c762db48420'] = 'Esta opción está disponible sólo para el pago de Alma en 2x, 3x y 4x. Cuando está activado, tus clientes pagarán la primera cuota en el cambio de estado del pedido. Cuando tu cliente ordene en tu sitio web, Alma sólo pedirá una autorización de pago. Sólo el estado manejado por Alma está disponible en el menú de abajo. Por favor, ponte en contacto con Alma si necesitas que añadamos otro estado.';
 $_MODULE['<{alma}prestashop>paymentontriggeringadminformbuilder_a8342cdac86a954821e7d6b895dac2a2'] = 'Si estás interesado en esta función, acércate a tu contacto de Alma o enviando un correo electrónico a %1$ssupport@getalma.eu%2$s.';
-$_MODULE['<{alma}prestashop>paymentontriggeringadminformbuilder_5088db8667a6e4c03ef8d01445beff15'] = 'Activar el pago al activarse';
-$_MODULE['<{alma}prestashop>paymentontriggeringadminformbuilder_8ca7557011effffde8da6e2a8563e9bf'] = 'Tipología de disparos';
+$_MODULE['<{alma}prestashop>paymentontriggeringadminformbuilder_5088db8667a6e4c03ef8d01445beff15'] = 'Activar el pago al cumplirse el evento';
+$_MODULE['<{alma}prestashop>paymentontriggeringadminformbuilder_8ca7557011effffde8da6e2a8563e9bf'] = 'Tipos de eventos';
 $_MODULE['<{alma}prestashop>paymentontriggeringadminformbuilder_a8f3e94cfb811b49c487a4960ca8ecd6'] = 'Texto que aparecerá en el calendario de pagos y en el correo electrónico de autorización de pago del cliente.';
 $_MODULE['<{alma}prestashop>paymentontriggeringadminformbuilder_0b615773ccd71a3edf763aef1972cd54'] = 'Estado del pedido que desencadena el primer pago';
-$_MODULE['<{alma}prestashop>paymentontriggeringadminformbuilder_2bb066f0ab5e9ab82b731cd70e817af8'] = 'Pago en el momento de la activación';
+$_MODULE['<{alma}prestashop>paymentontriggeringadminformbuilder_2bb066f0ab5e9ab82b731cd70e817af8'] = 'Pago tras el cumplimiento de un evento';
 $_MODULE['<{alma}prestashop>pnxadminformbuilder_d504e870a0b1c384090207ca30b7a558'] = 'Importe mínimo (€)';
 $_MODULE['<{alma}prestashop>pnxadminformbuilder_f1b557392c6a71b77a2752b67700c43d'] = 'Importe mínimo de compra para activar';
 $_MODULE['<{alma}prestashop>pnxadminformbuilder_c86bcf847758c12df1f6344fda4de53b'] = 'Importe máximo (€)';
