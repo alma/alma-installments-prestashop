@@ -72,8 +72,8 @@ final class DisplayRefundsHookController extends AdminHookController
         $totalRefund = null;
         $percentRefund = null;
         $orderTotalPaid = $order->getOrdersTotalPaid();
-        $fees = almaPriceFromCents($payment->customer_fee);
-        $paymentTotalAmount = $order->total_paid_tax_incl + $fees;
+        // $fees = almaPriceFromCents($payment->customer_fee);
+        $paymentTotalAmount = $order->total_paid_tax_incl;
 
         //multi shipping
         $ordersId = null;
@@ -85,7 +85,7 @@ final class DisplayRefundsHookController extends AdminHookController
                 }
             }
             $ordersId = rtrim($ordersId, ',');
-            $paymentTotalAmount = $orderTotalPaid + $fees;
+            $paymentTotalAmount = $orderTotalPaid;
         }
 
         if ($payment->refunds) {

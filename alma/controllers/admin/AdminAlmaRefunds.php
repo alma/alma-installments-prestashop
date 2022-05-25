@@ -80,7 +80,7 @@ class AdminAlmaRefundsController extends ModuleAdminController
                 }
                 break;
             case 'total':
-                $isTotal = true;
+                $isTotal = false;
                 $amount = $order->getOrdersTotalPaid();
                 break;
             default:
@@ -110,8 +110,8 @@ class AdminAlmaRefundsController extends ModuleAdminController
                 $this->module->l('There was an error while processing the refund', 'AdminAlmaRefunds')
             );
         } else {
-            $fees = $refundResult->customer_fee;
-            $totalOrder = $refundResult->purchase_amount + $fees;
+            //$fees = $refundResult->customer_fee;
+            $totalOrder = $refundResult->purchase_amount;
             $totalOrderAmount = almaFormatPrice($totalOrder, (int) $order->id_currency);
             foreach ($refundResult->refunds as $refund) {
                 $totalRefund += $refund->amount;
