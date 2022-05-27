@@ -110,7 +110,6 @@ class AdminAlmaRefundsController extends ModuleAdminController
                 $this->module->l('There was an error while processing the refund', 'AdminAlmaRefunds')
             );
         } else {
-            //$fees = $refundResult->customer_fee;
             $totalOrder = $refundResult->purchase_amount;
             $totalOrderAmount = almaFormatPrice($totalOrder, (int) $order->id_currency);
             foreach ($refundResult->refunds as $refund) {
