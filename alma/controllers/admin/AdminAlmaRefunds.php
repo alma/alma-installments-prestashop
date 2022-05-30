@@ -65,11 +65,9 @@ class AdminAlmaRefundsController extends ModuleAdminController
 
         switch ($refundType) {
             case 'partial_multi':
-                $isTotal = false;
                 $amount = $order->total_paid_tax_incl;
                 break;
             case 'partial':
-                $isTotal = false;
                 $amount = str_replace(',', '.', Tools::getValue('amount'));
 
                 if ($amount > $order->getOrdersTotalPaid()) {
@@ -80,7 +78,6 @@ class AdminAlmaRefundsController extends ModuleAdminController
                 }
                 break;
             case 'total':
-                $isTotal = false;
                 $amount = $order->getOrdersTotalPaid();
                 break;
             default:
@@ -99,7 +96,7 @@ class AdminAlmaRefundsController extends ModuleAdminController
         $totalOrder = null;
         $totalOrderAmount = null;
         try {
-            $refundResult = $this->runRefund($paymentId, $amount, $isTotal);
+            $refundResult = $this->runRefund($paymentId, $amount, false);
         } catch (RequestError $e) {
             $msg = "[Alma] ERROR when creating refund for Order {$order->id}: {$e->getMessage()}";
             Logger::instance()->error($msg);
@@ -119,7 +116,7 @@ class AdminAlmaRefundsController extends ModuleAdminController
             $percentRefund = (100 / $totalOrder) * $totalRefund;
         }
 
-        if ($isTotal) {
+        if ($totalOrder == $totalRefund) {
             $orders = Order::getByReference($order->reference);
             foreach ($orders as $o) {
                 $current_order_state = $o->getCurrentOrderState();
