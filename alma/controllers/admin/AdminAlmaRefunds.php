@@ -63,7 +63,8 @@ class AdminAlmaRefundsController extends ModuleAdminController
         $orderPayment = $this->getOrderPaymentOrFail($order);
         $paymentId = $orderPayment->transaction_id;
 
-        list($isTotal, $amount) = $this->getDataRefundByType($refundType, $order);
+        $isTotal = $this->isTotalRefund($refundType);
+        $amount = $this->getRefundAmount($refundType, $order);
 
         $refundResult = false;
         $percentRefund = null;
@@ -95,7 +96,7 @@ class AdminAlmaRefundsController extends ModuleAdminController
         $percentRefund = (100 / $totalOrder) * $totalRefund;
 
         if ($isTotal) {
-            $this->changeOrderStatusToRefund($order);
+            $this->setOrdersAsRefund($order);
         }
 
         $jsonReturn = [
@@ -133,7 +134,14 @@ class AdminAlmaRefundsController extends ModuleAdminController
         return $alma->payments->refund($paymentId, $isTotal, almaPriceToCents($amount));
     }
 
-    private function changeOrderStatusToRefund($order)
+    /**
+     * Change Order status if refund is total
+     *
+     * @param Order $order
+     *
+     * @return void
+     */
+    private function setOrdersAsRefund($order)
     {
         $orders = Order::getByReference($order->reference);
         foreach ($orders as $o) {
@@ -144,15 +152,37 @@ class AdminAlmaRefundsController extends ModuleAdminController
         }
     }
 
-    private function getDataRefundByType($refundType, $order)
+    /**
+     * Bool if refund is total
+     *
+     * @param string $refundType
+     *
+     * @return boolean
+     */
+    private function isTotalRefund($refundType)
+    {
+        if ($refundType == 'total') {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Amount of refund
+     *
+     * @param string $refundType
+     * @param Order $order
+     *
+     * @return float
+     */
+    private function getRefundAmount($refundType, $order)
     {
         switch ($refundType) {
             case 'partial_multi':
-                $isTotal = false;
                 $amount = $order->total_paid_tax_incl;
                 break;
             case 'partial':
-                $isTotal = false;
                 $amount = str_replace(',', '.', Tools::getValue('amount'));
 
                 if ($amount > $order->getOrdersTotalPaid()) {
@@ -163,7 +193,6 @@ class AdminAlmaRefundsController extends ModuleAdminController
                 }
                 break;
             case 'total':
-                $isTotal = true;
                 $amount = $order->getOrdersTotalPaid();
                 break;
             default:
@@ -175,9 +204,6 @@ class AdminAlmaRefundsController extends ModuleAdminController
                 $this->ajaxFail($msg, 400);
         }
 
-        return [
-            $isTotal,
-            $amount,
-        ];
+        return $amount;
     }
 }
