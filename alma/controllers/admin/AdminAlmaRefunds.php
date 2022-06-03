@@ -67,11 +67,6 @@ class AdminAlmaRefundsController extends ModuleAdminController
         $amount = $this->getRefundAmount($refundType, $order);
 
         $refundResult = false;
-        $percentRefund = null;
-        $totalRefund = null;
-        $totalRefundAmount = null;
-        $totalOrder = null;
-        $totalOrderAmount = null;
         try {
             $refundResult = $this->runRefund($paymentId, $amount, $isTotal);
         } catch (RequestError $e) {
@@ -84,16 +79,12 @@ class AdminAlmaRefundsController extends ModuleAdminController
                 $this->module->l('There was an error while processing the refund', 'AdminAlmaRefunds')
             );
         }
-        $totalOrder = $refundResult->purchase_amount;
-        $totalOrderAmount = almaFormatPrice($totalOrder, (int) $order->id_currency);
-        foreach ($refundResult->refunds as $refund) {
-            $totalRefund += $refund->amount;
-        }
-        if ($totalRefund > $totalOrder) {
-            $totalRefund = $totalOrder;
-        }
-        $totalRefundAmount = almaFormatPrice($totalRefund, (int) $order->id_currency);
-        $percentRefund = (100 / $totalOrder) * $totalRefund;
+        $intTotalOrder = $refundResult->purchase_amount;
+        $idCurrency = (int) $order->id_currency;
+        $totalOrderAmount = almaFormatPrice($intTotalOrder, $idCurrency);
+        $intTotalRefund = $this->buildTotalRefund($refundResult->refunds, $intTotalOrder);
+        $totalRefundAmount = almaFormatPrice($intTotalRefund, $idCurrency);
+        $percentRefund = almaCalculatePercentage($intTotalRefund, $intTotalOrder);
 
         if ($isTotal) {
             $this->setOrdersAsRefund($order);
@@ -104,9 +95,9 @@ class AdminAlmaRefundsController extends ModuleAdminController
             'message' => $this->module->l('Refund has been processed', 'AdminAlmaRefunds'),
             'paymentData' => $refundResult,
             'percentRefund' => $percentRefund,
-            'totalRefund' => $totalRefund,
+            'totalRefund' => $intTotalRefund,
             'totalRefundAmount' => $totalRefundAmount,
-            'totalOrder' => $totalOrder,
+            'totalOrder' => $intTotalOrder,
             'totalOrderAmount' => $totalOrderAmount,
         ];
 
@@ -205,5 +196,27 @@ class AdminAlmaRefundsController extends ModuleAdminController
         }
 
         return $amount;
+    }
+
+    /**
+     * Calculate total refund
+     *
+     * @param array $arrayRefunds
+     * @param int $totalOrder
+     *
+     * @return int
+     */
+    private function buildTotalRefund($arrayRefunds, $totalOrder)
+    {
+        $totalRefund = 0;
+
+        foreach ($arrayRefunds as $refund) {
+            $totalRefund += $refund->amount;
+        }
+        if ($totalRefund > $totalOrder) {
+            $totalRefund = $totalOrder;
+        }
+
+        return $totalRefund;
     }
 }
