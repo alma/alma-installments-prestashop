@@ -1,5 +1,9 @@
 # Changelog
 
+## v2.6.2
+
+- Fixed widget in version 2.8.0
+
 ## v2.6.1
 
 - Fixed at the installation of the module if you had php 5.6
