@@ -27,9 +27,8 @@ use Alma\PrestaShop\Utils\ShareOfCheckoutHelper;
 
 class AdminAlmaShareOfCheckoutController extends ModuleAdminController
 {
-    public function init()
+    public function ajaxProcessShareOfCheckout()
     {
-        parent::init();
         Logger::instance()->info('Exec Share Of Checkout Manually');
         $shareOfCheckout = new ShareOfCheckoutHelper();
         $shareOfCheckout->shareDays();
