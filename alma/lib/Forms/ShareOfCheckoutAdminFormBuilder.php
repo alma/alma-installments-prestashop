@@ -56,7 +56,9 @@ class ShareOfCheckoutAdminFormBuilder extends AbstractAlmaAdminFormBuilder
         return [
             $this->inputAlmaSwitchForm(
                 self::ALMA_ACTIVATE_SHARE_OF_CHECKOUT,
-                $this->module->l('Activate Share of checkout', 'ShareOfCheckoutAdminFormBuilder')
+                $this->module->l('Merchant data sharing', 'ShareOfCheckoutAdminFormBuilder'),
+                // phpcs:ignore Generic.Files.LineLength
+                $this->module->l('We enable Alma to anonymously retrieve, analyse the usage of our payment methods and share with me insights in order to increase my overall performance.', 'ShareOfCheckoutAdminFormBuilder')
             ),
             $this->inputHiddenForm(
                 self::ALMA_SHARE_OF_CHECKOUT_DATE
@@ -66,6 +68,6 @@ class ShareOfCheckoutAdminFormBuilder extends AbstractAlmaAdminFormBuilder
 
     protected function getTitle()
     {
-        return $this->module->l('Share of checkout options', 'ShareOfCheckoutAdminFormBuilder');
+        return $this->module->l('Merchant data sharing', 'ShareOfCheckoutAdminFormBuilder');
     }
 }
