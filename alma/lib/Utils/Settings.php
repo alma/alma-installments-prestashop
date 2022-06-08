@@ -141,7 +141,7 @@ class Settings
 
     public static function canShareOfCheckout()
     {
-        return (bool) (int) self::get(ShareOfCheckoutAdminFormBuilder::ALMA_ACTIVATE_SHARE_OF_CHECKOUT, false);
+        return (bool) (int) self::get(ShareOfCheckoutAdminFormBuilder::ALMA_ACTIVATE_SHARE_OF_CHECKOUT, true);
     }
 
     public static function dateShareOfCheckout()
