@@ -44,8 +44,8 @@ if (!defined('_PS_VERSION_')) {
  */
 class ShareOfCheckoutHelper
 {
-    const TOTAL_COUNT_KEY = 'total_order_count';
-    const TOTAL_AMOUNT_KEY = 'total_amount';
+    const TOTAL_COUNT_KEY = 'order_count';
+    const TOTAL_AMOUNT_KEY = 'amount';
     const CURRENCY_KEY = 'currency';
     const PAYMENT_METHOD_KEY = 'payment_method_name';
 
@@ -148,8 +148,7 @@ class ShareOfCheckoutHelper
 
         foreach ($this->getOrderIds() as $orderId) {
             $order = new Order($orderId);
-            $currency = new Currency();
-            $isoCodeCurrency = $currency->getIsoCodeById($order->id_currency);
+            $isoCodeCurrency = $this->getIsoCodeById($order->id_currency);
 
             if (!isset($ordersByCurrency[$isoCodeCurrency])) {
                 $ordersByCurrency[$isoCodeCurrency] = $this->initOrderResult($isoCodeCurrency);
@@ -174,9 +173,8 @@ class ShareOfCheckoutHelper
 
         foreach ($this->getOrderIds() as $orderId) {
             $order = new Order($orderId);
-            $currency = new Currency();
             $paymentMethod = $order->module;
-            $isoCodeCurrency = $currency->getIsoCodeById($order->id_currency);
+            $isoCodeCurrency = $this->getIsoCodeById($order->id_currency);
 
             if (!isset($ordersByCheckout[$paymentMethod])) {
                 $ordersByCheckout[$paymentMethod] = ['orders' => []];
@@ -303,6 +301,23 @@ class ShareOfCheckoutHelper
         }
 
         return date('Y-m-d', strtotime('yesterday')) . ' 23:59:59';
+    }
+
+    /**
+     * Get Currency ISO Code by ID
+     *
+     * @param string $id
+     *
+     * @return string
+     */
+    private function getIsoCodeById($id)
+    {
+        $currency = new Currency();
+        if (method_exists(get_parent_class($currency), 'getIsoCodeById')) {
+            return $currency->getIsoCodeById($id);
+        }
+
+        return $currency->getCurrency($id)['iso_code'];
     }
 
     /**
