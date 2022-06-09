@@ -1,5 +1,9 @@
 # Changelog
 
+## v2.6.3
+
+- Fixed an error at the state change at the command
+
 ## v2.6.2
 
 - Fixed widget in version 2.8.0
