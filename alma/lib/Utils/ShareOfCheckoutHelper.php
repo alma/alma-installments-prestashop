@@ -128,7 +128,7 @@ class ShareOfCheckoutHelper
         }
 
         try {
-            $lastDateShareOfCheckout = $alma->shareOfCheckout->getLastUpdateDate();
+            $lastDateShareOfCheckout = $alma->shareOfCheckout->getLastUpdateDates();
             //TODO : See format get date share of checkout
             return $lastDateShareOfCheckout;
         } catch (RequestError $e) {
