@@ -56,10 +56,10 @@ final class StateHookController extends AdminHookController
     {
         $order = new Order($params['id_order']);
         $newStatus = $params['newOrderStatus'];
-        if ($newStatus->id == Configuration::get('PS_OS_PAYMENT')) {
-            $order_payment = OrderData::getCurrentOrderPayment($order);
-        } else {
+        if ($newStatus->id == Configuration::get('PS_OS_REFUND')) {
             $order_payment = $this->getOrderPaymentOrFail($order);
+        } else {
+            $order_payment = OrderData::getCurrentOrderPayment($order);
         }
         if ($order->module !== 'alma' || !$order_payment) {
             return;
