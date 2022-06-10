@@ -22,12 +22,32 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
+use Alma\API\RequestError;
+use Alma\PrestaShop\API\ClientHelper;
+use Alma\PrestaShop\Forms\ShareOfCheckoutAdminFormBuilder;
+use Alma\PrestaShop\Utils\Settings;
+
 if (!defined('_PS_VERSION_')) {
     exit;
 }
 
 function upgrade_module_next($module)
 {
+    if (Settings::isFullyConfigured()) {
+        $alma = ClientHelper::defaultInstance();
+
+        if (!$alma) {
+            return true;
+        }
+
+        try {
+            Settings::updateValue(ShareOfCheckoutAdminFormBuilder::ALMA_ACTIVATE_SHARE_OF_CHECKOUT, (bool) Settings::canShareOfCheckout());
+            Settings::updateValue(ShareOfCheckoutAdminFormBuilder::ALMA_SHARE_OF_CHECKOUT_DATE, Settings::dateShareOfCheckout());
+        } catch (RequestError $e) {
+            return true;
+        }
+    }
+
     $module->registerHook('actionCronJob');
 
     return $module->uninstallTabs() && $module->installTabs();
