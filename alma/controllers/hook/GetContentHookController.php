@@ -109,6 +109,9 @@ final class GetContentHookController extends AdminHookController
                     break;
                 }
             }
+
+            Settings::updateValue(ShareOfCheckoutAdminFormBuilder::ALMA_ACTIVATE_SHARE_OF_CHECKOUT, (bool) Settings::canShareOfCheckout());
+            Settings::updateValue(ShareOfCheckoutAdminFormBuilder::ALMA_SHARE_OF_CHECKOUT_DATE, Settings::dateShareOfCheckout());
         }
 
         // Get languages are active
