@@ -76,15 +76,14 @@ class ShareOfCheckoutHelper
         }
 
         try {
-            $lastUpdateDate = self::getLastShareOfCheckout();
+            $lastShareOfCheckout = self::getLastShareOfCheckout();
         } catch (RequestError $e) {
             Logger::instance()->info('Get Last Update Date error - end of process - message : ' . $e->getMessage());
 
             return;
         }
 
-        $DatesToShare = DateHelper::getDatesInInterval($lastUpdateDate, $shareOfCheckoutEnabledDate);
-        foreach ($DatesToShare as $date) {
+        foreach (DateHelper::getDatesInInterval($lastShareOfCheckout['end_time'], $shareOfCheckoutEnabledDate) as $date) {
             try {
                 $this->setShareOfCheckoutFromDate($date);
                 $this->putDay();
@@ -115,24 +114,23 @@ class ShareOfCheckoutHelper
     /**
      * Get last Share of Checkout
      *
-     * @return object
+     * @return array|null
      */
     public function getLastShareOfCheckout()
     {
-        $lastDateShareOfCheckout = null;
         $alma = ClientHelper::defaultInstance();
         if (!$alma) {
             Logger::instance()->error('Cannot get last date share of checkout: no API client');
 
-            return;
+            return null;
         }
 
         try {
-            $lastDateShareOfCheckout = $alma->shareOfCheckout->getLastUpdateDates();
-            //TODO : See format get date share of checkout
-            return $lastDateShareOfCheckout;
+            return $alma->shareOfCheckout->getLastUpdateDates();
         } catch (RequestError $e) {
             Logger::instance()->error('Cannot get last date share of checkout: ' . $e->getMessage());
+
+            return null;
         }
     }
 

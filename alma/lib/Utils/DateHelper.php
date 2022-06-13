@@ -36,27 +36,35 @@ if (!defined('_PS_VERSION_')) {
 class DateHelper
 {
     /**
-     * @param $from
-     * @param $shareOfCheckoutEnabledDate
-     * @param $to
+     * @param int $from timestamp
+     * @param int $first timestamp
      *
-     * @return array
+     * @return array|string[]
      */
-    public static function getDatesInInterval($from, $shareOfCheckoutEnabledDate, $to = null)
+    public static function getDatesInInterval($from, $first)
     {
-        $from = date('Y-m-d', $from);
-        $shareOfCheckoutEnabledDate = date('Y-m-d', $shareOfCheckoutEnabledDate);
-        if (!isset($to)) {
-            $to = strtotime('-1 day');
-        }
+        $to = strtotime('-1 day');
         $datesInInterval = [];
-        $startTimestamp = strtotime('+1 day', strtotime($from));
+        $startTimestamp = strtotime('+1 day', self::extractTimestampWithoutTime($from));
+        $firstWithoutTime = self::extractTimestampWithoutTime($first);
         for ($i = $startTimestamp; $i <= $to; $i = strtotime('+1 day', $i)) {
-            if ($i >= strtotime($shareOfCheckoutEnabledDate)) {
+            if ($i >= $firstWithoutTime) {
                 $datesInInterval[] = date('Y-m-d', $i);
             }
         }
 
         return $datesInInterval;
+    }
+
+    /**
+     * extract timestamp without minutes
+     *
+     * @param int $timestamp
+     *
+     * @return int
+     */
+    private static function extractTimestampWithoutTime($timestamp)
+    {
+        return strtotime(date('Y-m-d', $timestamp));
     }
 }
