@@ -44,8 +44,10 @@ if (!defined('_PS_VERSION_')) {
  */
 class ShareOfCheckoutHelper
 {
-    const TOTAL_COUNT_KEY = 'order_count';
-    const TOTAL_AMOUNT_KEY = 'amount';
+    const TOTAL_COUNT_KEY = 'total_order_count';
+    const TOTAL_AMOUNT_KEY = 'total_amount';
+    const COUNT_KEY = 'order_count';
+    const AMOUNT_KEY = 'amount';
     const CURRENCY_KEY = 'currency';
     const PAYMENT_METHOD_KEY = 'payment_method_name';
 
@@ -149,7 +151,7 @@ class ShareOfCheckoutHelper
             $isoCodeCurrency = $this->getIsoCodeById($order->id_currency);
 
             if (!isset($ordersByCurrency[$isoCodeCurrency])) {
-                $ordersByCurrency[$isoCodeCurrency] = $this->initOrderResult($isoCodeCurrency);
+                $ordersByCurrency[$isoCodeCurrency] = $this->initTotalOrderResult($isoCodeCurrency);
             }
 
             $ordersByCurrency[$isoCodeCurrency][self::TOTAL_COUNT_KEY] = ++$count;
@@ -185,8 +187,8 @@ class ShareOfCheckoutHelper
 
             $ordersByCheckout[$paymentMethod][self::PAYMENT_METHOD_KEY] = $paymentMethod;
             // phpcs:ignore
-            $ordersByCheckout[$paymentMethod]['orders'][$isoCodeCurrency][self::TOTAL_AMOUNT_KEY] += almaPriceToCents($order->total_paid_tax_incl);
-            ++$ordersByCheckout[$paymentMethod]['orders'][$isoCodeCurrency][self::TOTAL_COUNT_KEY];
+            $ordersByCheckout[$paymentMethod]['orders'][$isoCodeCurrency][self::AMOUNT_KEY] += almaPriceToCents($order->total_paid_tax_incl);
+            ++$ordersByCheckout[$paymentMethod]['orders'][$isoCodeCurrency][self::COUNT_KEY];
         }
         foreach ($ordersByCheckout as $paymentKey => $paymentMethodOrders) {
             $ordersByCheckout[$paymentKey]['orders'] = array_values($paymentMethodOrders['orders']);
@@ -196,7 +198,23 @@ class ShareOfCheckoutHelper
     }
 
     /**
-     * Array structure to send
+     * Array structure to send total orders
+     *
+     * @param array $currency
+     *
+     * @return array
+     */
+    private function initTotalOrderResult($currency)
+    {
+        return [
+            self::TOTAL_AMOUNT_KEY => 0,
+            self::TOTAL_COUNT_KEY => 0,
+            self::CURRENCY_KEY => $currency,
+        ];
+    }
+
+    /**
+     * Array structure to send payment method orders
      *
      * @param array $currency
      *
@@ -205,8 +223,8 @@ class ShareOfCheckoutHelper
     private function initOrderResult($currency)
     {
         return [
-            self::TOTAL_AMOUNT_KEY => 0,
-            self::TOTAL_COUNT_KEY => 0,
+            self::AMOUNT_KEY => 0,
+            self::COUNT_KEY => 0,
             self::CURRENCY_KEY => $currency,
         ];
     }
