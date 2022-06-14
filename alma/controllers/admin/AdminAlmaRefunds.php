@@ -175,7 +175,7 @@ class AdminAlmaRefundsController extends ModuleAdminController
                 $amount = $order->total_paid_tax_incl;
                 break;
             case 'partial':
-                $amount = str_replace(',', '.', Tools::getValue('amount'));
+                $amount = floatval(str_replace(',', '.', Tools::getValue('amount')));
 
                 if ($amount > $order->getOrdersTotalPaid()) {
                     $this->ajaxFail(
