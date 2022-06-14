@@ -27,6 +27,7 @@ use Alma\PrestaShop\API\ClientHelper;
 use Alma\PrestaShop\Utils\AjaxTrait;
 use Alma\PrestaShop\Utils\Logger;
 use Alma\PrestaShop\Utils\OrderDataTrait;
+use Alma\PrestaShop\Utils\RefundHelper;
 
 /*
  * Ajax controllers don't have any global entrypoint on the module side
@@ -82,7 +83,7 @@ class AdminAlmaRefundsController extends ModuleAdminController
         $intTotalOrder = $refundResult->purchase_amount;
         $idCurrency = (int) $order->id_currency;
         $totalOrderAmount = almaFormatPrice($intTotalOrder, $idCurrency);
-        $intTotalRefund = $this->buildTotalRefund($refundResult->refunds, $intTotalOrder);
+        $intTotalRefund = RefundHelper::buildTotalRefund($refundResult->refunds, $intTotalOrder);
         $totalRefundAmount = almaFormatPrice($intTotalRefund, $idCurrency);
         $percentRefund = almaCalculatePercentage($intTotalRefund, $intTotalOrder);
 
@@ -196,27 +197,5 @@ class AdminAlmaRefundsController extends ModuleAdminController
         }
 
         return $amount;
-    }
-
-    /**
-     * Calculate total refund
-     *
-     * @param array $arrayRefunds
-     * @param int $totalOrder
-     *
-     * @return int
-     */
-    private function buildTotalRefund($arrayRefunds, $totalOrder)
-    {
-        $totalRefund = 0;
-
-        foreach ($arrayRefunds as $refund) {
-            $totalRefund += $refund->amount;
-        }
-        if ($totalRefund > $totalOrder) {
-            $totalRefund = $totalOrder;
-        }
-
-        return $totalRefund;
     }
 }

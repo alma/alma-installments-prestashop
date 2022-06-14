@@ -34,6 +34,7 @@ use Alma\PrestaShop\API\PaymentNotFoundException;
 use Alma\PrestaShop\Hooks\AdminHookController;
 use Alma\PrestaShop\Utils\Logger;
 use Alma\PrestaShop\Utils\OrderDataTrait;
+use Alma\PrestaShop\Utils\RefundHelper;
 use Currency;
 use Order;
 
@@ -69,7 +70,7 @@ final class DisplayRefundsHookController extends AdminHookController
         }
 
         $refundData = null;
-        $totalRefund = null;
+        $totalRefundInCents = null;
         $percentRefund = null;
         $orderTotalPaid = $order->getOrdersTotalPaid();
         $paymentTotalAmount = $order->total_paid_tax_incl;
@@ -88,18 +89,12 @@ final class DisplayRefundsHookController extends AdminHookController
         }
 
         if ($payment->refunds) {
-            foreach ($payment->refunds as $refund) {
-                $totalRefund += $refund->amount;
-            }
-            $totalOrder = almaPriceToCents($paymentTotalAmount);
-            if ($totalRefund > $totalOrder) {
-                $totalRefund = $totalOrder;
-            }
-
-            $percentRefund = (100 / $paymentTotalAmount) * almaPriceFromCents($totalRefund);
+            $totalOrderInCents = almaPriceToCents($paymentTotalAmount);
+            $totalRefundInCents = RefundHelper::buildTotalRefund($payment->refunds, $totalOrderInCents);
+            $percentRefund = almaCalculatePercentage($totalRefundInCents, $totalOrderInCents);
 
             $refundData = [
-                'totalRefundAmount' => almaFormatPrice($totalRefund, (int) $order->id_currency),
+                'totalRefundAmount' => almaFormatPrice($totalRefundInCents, (int) $order->id_currency),
                 'percentRefund' => $percentRefund,
             ];
         }
