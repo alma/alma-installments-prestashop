@@ -42,10 +42,10 @@
             <tbody>
                 <tr>
                     <td class="refundAmount">
-                        {$refund.totalRefundAmount|escape:'htmlall':'UTF-8'}
+                        {$refund.totalRefundPrice|escape:'htmlall':'UTF-8'}
                     </td>
                     <td>
-                        {$order.paymentTotalAmount|escape:'htmlall':'UTF-8'}
+                        {$order.paymentTotalPrice|escape:'htmlall':'UTF-8'}
                     </td>
                     <td>
                         <img src="../img/admin/money.gif" />

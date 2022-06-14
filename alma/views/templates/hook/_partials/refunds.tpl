@@ -62,13 +62,13 @@
                         $('.alma-progress').show();
                         $('.alma-progress .progress-bar').attr('aria-valuenow', data.percentRefund)
                         .width(data.percentRefund + '%')
-                        .html(data.totalRefundAmount + ' / ' + data.totalOrderAmount);
+                        .html(data.totalRefundPrice + ' / ' + data.totalOrderPrice);
                     }
                     if ($('.alma-table-refund').length > 0) {
                         $('.alma-table-refund').show();
-                        $('.alma-table-refund .refundAmount').html(data.totalRefundAmount);
+                        $('.alma-table-refund .refundAmount').html(data.totalRefundPrice);
                     }
-                    if (data.totalRefund >= data.totalOrder) {
+                    if (data.totalRefundAmount >= data.totalOrderAmount) {
                         $form.addClass('disabled')
                     };
                 })

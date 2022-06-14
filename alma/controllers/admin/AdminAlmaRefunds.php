@@ -80,12 +80,12 @@ class AdminAlmaRefundsController extends ModuleAdminController
                 $this->module->l('There was an error while processing the refund', 'AdminAlmaRefunds')
             );
         }
-        $intTotalOrder = $refundResult->purchase_amount;
+        $totalOrderAmount = $refundResult->purchase_amount;
         $idCurrency = (int) $order->id_currency;
-        $totalOrderAmount = almaFormatPrice($intTotalOrder, $idCurrency);
-        $intTotalRefund = RefundHelper::buildTotalRefund($refundResult->refunds, $intTotalOrder);
-        $totalRefundAmount = almaFormatPrice($intTotalRefund, $idCurrency);
-        $percentRefund = almaCalculatePercentage($intTotalRefund, $intTotalOrder);
+        $totalOrderPrice = almaFormatPrice($totalOrderAmount, $idCurrency);
+        $totalRefundAmount = RefundHelper::buildTotalRefund($refundResult->refunds, $totalOrderAmount);
+        $totalRefundPrice = almaFormatPrice($totalRefundAmount, $idCurrency);
+        $percentRefund = almaCalculatePercentage($totalRefundAmount, $totalOrderAmount);
 
         if ($isTotal) {
             $this->setOrdersAsRefund($order);
@@ -96,10 +96,10 @@ class AdminAlmaRefundsController extends ModuleAdminController
             'message' => $this->module->l('Refund has been processed', 'AdminAlmaRefunds'),
             'paymentData' => $refundResult,
             'percentRefund' => $percentRefund,
-            'totalRefund' => $intTotalRefund,
             'totalRefundAmount' => $totalRefundAmount,
-            'totalOrder' => $intTotalOrder,
+            'totalRefundPrice' => $totalRefundPrice,
             'totalOrderAmount' => $totalOrderAmount,
+            'totalOrderPrice' => $totalOrderPrice,
         ];
 
         method_exists(get_parent_class($this), 'ajaxDie')
