@@ -153,7 +153,7 @@ function almaCalculatePercentage($number, $total)
         return 0;
     }
 
-    return ($number / $total) * 100;
+    return round(($number / $total) * 100, 2);
 }
 
 /**
