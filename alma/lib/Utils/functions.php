@@ -149,7 +149,7 @@ function almaFormatPrice($cents, $id_currency = null)
  */
 function almaCalculatePercentage($number, $total)
 {
-    if ($total == 0) {
+    if (!is_numeric($total) || $total == 0) {
         return 0;
     }
 
