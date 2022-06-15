@@ -56,6 +56,11 @@ class DateHelper
         return $datesInInterval;
     }
 
+    public static function isSameDay($today, $day)
+    {
+        return (self::extractTimestampWithoutTime($today) != self::extractTimestampWithoutTime($day)) ? false : true;
+    }
+
     /**
      * extract timestamp without minutes
      *

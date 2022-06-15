@@ -40,19 +40,6 @@ class ShareOfCheckoutAdminFormBuilder extends AbstractAlmaAdminFormBuilder
 
     protected function configForm()
     {
-        $htmlCronJobDisabled = sprintf(
-            // phpcs:ignore Generic.Files.LineLength
-            $this->module->l('To use the share of checkout feature you need to download the native Cron module for Prestashop. %1$sSee the module%2$s.', 'PaymentOnTriggeringAdminFormBuilder'),
-            '<a href="https://addons.prestashop.com/fr/outils-administration/17412-cron-tasks-manager.html" target="_blank">',
-            '</a>'
-        );
-
-        if (!Module::isEnabled('cronjobs')) {
-            return [
-                $this->inputHtml(null, $htmlCronJobDisabled),
-            ];
-        }
-
         return [
             $this->inputAlmaSwitchForm(
                 self::ALMA_ACTIVATE_SHARE_OF_CHECKOUT,

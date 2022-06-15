@@ -23,8 +23,10 @@
  */
 
 use Alma\PrestaShop\Exceptions\RenderPaymentException;
+use Alma\PrestaShop\Utils\DateHelper;
 use Alma\PrestaShop\Utils\LinkHelper;
 use Alma\PrestaShop\Utils\Logger;
+use Alma\PrestaShop\Utils\Settings;
 use Alma\PrestaShop\Utils\ShareOfCheckoutHelper;
 
 if (!defined('_PS_VERSION_')) {
@@ -145,7 +147,6 @@ class Alma extends PaymentModule
             'displayShoppingCartFooter',
             'actionOrderStatusPostUpdate',
             'actionAdminControllerInitAfter',
-            'actionCronJob',
         ];
 
         if (version_compare(_PS_VERSION_, '1.7.7.0', '>=')) {
@@ -443,26 +444,17 @@ class Alma extends PaymentModule
     }
 
     /**
-     * Hook action crontab
+     * Hook action AdminControllerInitAfter for pseudo cron
      */
-    public function hookActionCronJob()
+    public function hookActionAdminControllerInitAfter()
     {
-        Logger::instance()->info('Cron Task exec');
-        $shareOfCheckout = new ShareOfCheckoutHelper();
-        $shareOfCheckout->shareDays();
-    }
-
-    /**
-     * Frequency of Cron at 4 a.m. every day
-     */
-    public function getCronFrequency()
-    {
-        return [
-            // 'hour' => 4,
-            'hour' => -1,
-            'day' => -1,
-            'month' => -1,
-            'day_of_week' => -1,
-        ];
+        $date = new DateTime();
+        
+        if (!DateHelper::isSameDay($date, Configuration::get('ALMA_CRONTASK'))) {
+            Logger::instance()->info('Pseudo Cron Task exec');
+            Settings::updateValue('ALMA_CRONTASK', $date->getTimestamp());
+            $shareOfCheckout = new ShareOfCheckoutHelper();
+            $shareOfCheckout->shareDays();
+        }
     }
 }

@@ -40,15 +40,18 @@ function upgrade_module_next($module)
             return true;
         }
 
+        $date = new DateTime();
+
         try {
             Settings::updateValue(ShareOfCheckoutAdminFormBuilder::ALMA_ACTIVATE_SHARE_OF_CHECKOUT, (bool) Settings::canShareOfCheckout());
             Settings::updateValue(ShareOfCheckoutAdminFormBuilder::ALMA_SHARE_OF_CHECKOUT_DATE, Settings::dateShareOfCheckout());
+            Settings::updateValue('ALMA_CRONTASK', $date->getTimestamp());
         } catch (RequestError $e) {
             return true;
         }
     }
 
-    $module->registerHook('actionCronJob');
+    $module->registerHook('actionAdminControllerInitAfter');
 
     return $module->uninstallTabs() && $module->installTabs();
 }

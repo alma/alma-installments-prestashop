@@ -242,7 +242,7 @@ final class GetContentHookController extends AdminHookController
 
             $activateShareOfCheckout = (bool) Tools::getValue('ALMA_ACTIVATE_SHARE_OF_CHECKOUT_ON');
             $dateShareOfCheckout = Tools::getValue('ALMA_SHARE_OF_CHECKOUT_DATE');
-            // phpcs:ignore
+
             Settings::updateValue(ShareOfCheckoutAdminFormBuilder::ALMA_ACTIVATE_SHARE_OF_CHECKOUT, $activateShareOfCheckout);
             Settings::updateValue(ShareOfCheckoutAdminFormBuilder::ALMA_SHARE_OF_CHECKOUT_DATE, $dateShareOfCheckout);
             if (!Settings::canShareOfCheckout()) {
