@@ -449,7 +449,7 @@ class Alma extends PaymentModule
     public function hookActionAdminControllerInitAfter()
     {
         $date = new DateTime();
-        
+
         if (!DateHelper::isSameDay($date, Configuration::get('ALMA_CRONTASK'))) {
             Logger::instance()->info('Pseudo Cron Task exec');
             Settings::updateValue('ALMA_CRONTASK', $date->getTimestamp());

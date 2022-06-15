@@ -24,8 +24,6 @@
 
 namespace Alma\PrestaShop\Forms;
 
-use Module;
-
 if (!defined('_PS_VERSION_')) {
     exit;
 }
