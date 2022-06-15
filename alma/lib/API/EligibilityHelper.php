@@ -153,7 +153,7 @@ class EligibilityHelper
 
             if (
                 $purchaseAmount > $feePlan->min
-                || $purchaseAmount < $feePlan->max
+                && $purchaseAmount < $feePlan->max
             ) {
                 $activePlans[] = $getDataFromKey;
             }
