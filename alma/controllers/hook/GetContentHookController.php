@@ -45,6 +45,7 @@ use Alma\PrestaShop\Utils\Logger;
 use Alma\PrestaShop\Utils\Settings;
 use Alma\PrestaShop\Utils\SettingsCustomFields;
 use Configuration;
+use DateTime;
 use HelperForm;
 use Media;
 use Tools;
@@ -243,9 +244,14 @@ final class GetContentHookController extends AdminHookController
             $activateShareOfCheckout = (bool) Tools::getValue('ALMA_ACTIVATE_SHARE_OF_CHECKOUT_ON');
             $dateShareOfCheckout = Tools::getValue('ALMA_SHARE_OF_CHECKOUT_DATE');
 
+            if (empty($dateShareOfCheckout) && $activateShareOfCheckout) {
+                $date = new DateTime();
+                $dateShareOfCheckout = $date->getTimestamp();
+            }
+
             Settings::updateValue(ShareOfCheckoutAdminFormBuilder::ALMA_ACTIVATE_SHARE_OF_CHECKOUT, $activateShareOfCheckout);
             Settings::updateValue(ShareOfCheckoutAdminFormBuilder::ALMA_SHARE_OF_CHECKOUT_DATE, $dateShareOfCheckout);
-            if (!Settings::canShareOfCheckout()) {
+            if (!$activateShareOfCheckout) {
                 Settings::updateValue(ShareOfCheckoutAdminFormBuilder::ALMA_SHARE_OF_CHECKOUT_DATE, '');
             }
 
