@@ -107,7 +107,7 @@ class ShareOfCheckoutHelper
         }
 
         try {
-            $alma->shareOfCheckout->share(json_encode($this->getPayload()));
+            $alma->shareOfCheckout->share($this->getPayload());
         } catch (RequestError $e) {
             Logger::instance()->error('AdminAlmaShareOfCheckout::share error get message :' . $e->getMessage());
         }

@@ -56,9 +56,17 @@ class DateHelper
         return $datesInInterval;
     }
 
+    /**
+     * check if is the same date without time
+     *
+     * @param int $today timestamp
+     * @param int $day timestamp
+     *
+     * @return boolean
+     */
     public static function isSameDay($today, $day)
     {
-        return (self::extractTimestampWithoutTime($today) != self::extractTimestampWithoutTime($day)) ? false : true;
+        return (self::extractDateWithoutTime($today) != self::extractDateWithoutTime($day)) ? false : true;
     }
 
     /**
@@ -71,5 +79,17 @@ class DateHelper
     private static function extractTimestampWithoutTime($timestamp)
     {
         return strtotime(date('Y-m-d', $timestamp));
+    }
+
+    /**
+     * extract date without time by timestamp
+     *
+     * @param int $timestamp
+     *
+     * @return string
+     */
+    private static function extractDateWithoutTime($timestamp)
+    {
+        return date('Y-m-d', $timestamp);
     }
 }

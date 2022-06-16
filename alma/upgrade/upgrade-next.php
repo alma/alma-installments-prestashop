@@ -51,7 +51,7 @@ function upgrade_module_next($module)
         }
     }
 
-    $module->registerHook('actionAdminControllerInitAfter');
+    $module->registerHook('displayAdminAfterHeader');
 
     return $module->uninstallTabs() && $module->installTabs();
 }
