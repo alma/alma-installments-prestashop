@@ -62,7 +62,7 @@ class DateHelper
      * @param int $today timestamp
      * @param int $day timestamp
      *
-     * @return boolean
+     * @return bool
      */
     public static function isSameDay($today, $day)
     {
