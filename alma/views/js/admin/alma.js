@@ -54,7 +54,9 @@
                 controller: 'AdminAlmaShareOfCheckout',
                 action: 'ShareOfCheckout',
                 token: token
-            }
+            },
+            async   : true,
+			cache   : false
         });
     })
 })(jQuery);
