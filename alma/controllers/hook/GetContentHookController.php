@@ -45,7 +45,6 @@ use Alma\PrestaShop\Utils\Logger;
 use Alma\PrestaShop\Utils\Settings;
 use Alma\PrestaShop\Utils\SettingsCustomFields;
 use Configuration;
-use DateTime;
 use HelperForm;
 use Media;
 use Tools;
