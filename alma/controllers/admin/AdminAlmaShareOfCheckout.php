@@ -22,15 +22,23 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
+use Alma\PrestaShop\Utils\DateHelper;
 use Alma\PrestaShop\Utils\Logger;
+use Alma\PrestaShop\Utils\Settings;
 use Alma\PrestaShop\Utils\ShareOfCheckoutHelper;
 
 class AdminAlmaShareOfCheckoutController extends ModuleAdminController
 {
     public function ajaxProcessShareOfCheckout()
     {
-        Logger::instance()->info('Exec Share Of Checkout Manually');
-        $shareOfCheckout = new ShareOfCheckoutHelper();
-        $shareOfCheckout->shareDays();
+        $date = new DateTime();
+        $timestamp = $date->getTimestamp();
+
+        if (!DateHelper::isSameDay($timestamp, Configuration::get('ALMA_CRONTASK'))) {
+            Logger::instance()->info('Exec Share Of Checkout Manually ' . $timestamp);
+            $shareOfCheckout = new ShareOfCheckoutHelper();
+            $shareOfCheckout->shareDays();
+            Settings::updateValue('ALMA_CRONTASK', $timestamp);
+        }
     }
 }
