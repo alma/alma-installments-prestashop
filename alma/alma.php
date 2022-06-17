@@ -23,7 +23,11 @@
  */
 
 use Alma\PrestaShop\Exceptions\RenderPaymentException;
+use Alma\PrestaShop\Utils\DateHelper;
 use Alma\PrestaShop\Utils\LinkHelper;
+use Alma\PrestaShop\Utils\Logger;
+use Alma\PrestaShop\Utils\Settings;
+use Alma\PrestaShop\Utils\ShareOfCheckoutHelper;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -142,6 +146,7 @@ class Alma extends PaymentModule
             'displayBackOfficeHeader',
             'displayShoppingCartFooter',
             'actionOrderStatusPostUpdate',
+            'displayAdminAfterHeader',
         ];
 
         if (version_compare(_PS_VERSION_, '1.7.7.0', '>=')) {
@@ -436,5 +441,21 @@ class Alma extends PaymentModule
     public function hookActionOrderStatusPostUpdate($params)
     {
         return $this->runHookController('state', $params);
+    }
+
+    /**
+     * Hook action AdminControllerInitAfter for pseudo cron
+     */
+    public function hookDisplayAdminAfterHeader()
+    {
+        $date = new DateTime();
+        $timestamp = $date->getTimestamp();
+
+        if (!DateHelper::isSameDay($timestamp, Configuration::get('ALMA_CRONTASK'))) {
+            Logger::instance()->info('Pseudo Cron Task exec to ' . $timestamp);
+            $shareOfCheckout = new ShareOfCheckoutHelper();
+            $shareOfCheckout->shareDays();
+            Settings::updateValue('ALMA_CRONTASK', $timestamp);
+        }
     }
 }
