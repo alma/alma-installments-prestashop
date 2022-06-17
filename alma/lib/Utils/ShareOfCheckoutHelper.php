@@ -130,6 +130,11 @@ class ShareOfCheckoutHelper
         try {
             return $alma->shareOfCheckout->getLastUpdateDates();
         } catch (RequestError $e) {
+            if ($e->response->responseCode == '404') {
+                Logger::instance()->info('First send to Share of checkout');
+
+                return date('Y-m-d', strtotime('-1 day'));
+            }
             Logger::instance()->error('Cannot get last date share of checkout: ' . $e->getMessage());
 
             return null;
