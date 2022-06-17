@@ -64,18 +64,9 @@ class ShareOfCheckoutHelper
     {
         ini_set('max_execution_time', 30);
 
-        if (!Settings::canShareOfCheckout()) {
-            Logger::instance()->info('Share Of Checkout is not enabled');
-
-            return;
-        }
+        self::ifCanShareOfCheckout();
         $shareOfCheckoutEnabledDate = Configuration::get(ShareOfCheckoutAdminFormBuilder::ALMA_SHARE_OF_CHECKOUT_DATE);
-
-        if ($shareOfCheckoutEnabledDate == '') {
-            Logger::instance()->info('No enable date in config');
-
-            return;
-        }
+        self::ifShareOfCheckoutEnabledDate($shareOfCheckoutEnabledDate);
 
         try {
             $lastShareOfCheckout = self::getLastShareOfCheckout();
@@ -354,5 +345,35 @@ class ShareOfCheckoutHelper
             'orders' => $this->getTotalOrders(),
             'payment_methods' => $this->getTotalPaymentMethods(),
         ];
+    }
+
+    /**
+     * check if ShareOfCheckout is enabled
+     *
+     * @return void
+     */
+    private function ifCanShareOfCheckout()
+    {
+        if (!Settings::canShareOfCheckout()) {
+            Logger::instance()->info('Share Of Checkout is not enabled');
+
+            return;
+        }
+    }
+
+    /**
+     * check if shareOfCheckout enabled date
+     *
+     * @param int $shareOfCheckoutEnabledDate timestamp
+     *
+     * @return void
+     */
+    private function ifShareOfCheckoutEnabledDate($shareOfCheckoutEnabledDate)
+    {
+        if ($shareOfCheckoutEnabledDate == '') {
+            Logger::instance()->info('No enable date in config');
+
+            return;
+        }
     }
 }
