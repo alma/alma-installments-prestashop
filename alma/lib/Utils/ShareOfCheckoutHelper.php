@@ -237,11 +237,11 @@ class ShareOfCheckoutHelper
     public function getOrderIds()
     {
         $orderIds = [];
-        $statesPayed = [2, 3, 4, 5, 9];
+        $defaultStatesExcluded = [6, 7, 8];
         $orderIdsByDate = self::getOrdersIdByDate($this->startTime, $this->endTime);
         foreach ($orderIdsByDate as $orderId) {
             $currentOrder = new Order($orderId);
-            if (in_array((int) $currentOrder->current_state, $statesPayed)) {
+            if (!in_array((int) $currentOrder->current_state, $defaultStatesExcluded)) {
                 $orderIds[] = $currentOrder->id;
             }
         }
