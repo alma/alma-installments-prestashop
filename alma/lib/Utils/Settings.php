@@ -149,10 +149,6 @@ class Settings
     {
         $date = new DateTime();
 
-        if (!self::canShareOfCheckout()) {
-            return '';
-        }
-
         return $date->getTimestamp();
     }
 

@@ -242,11 +242,11 @@ final class GetContentHookController extends AdminHookController
             Settings::updateValue('ALMA_ACTIVATE_LOGGING', $activateLogging);
 
             $activateShareOfCheckout = (bool) Tools::getValue('ALMA_ACTIVATE_SHARE_OF_CHECKOUT_ON');
-            $dateShareOfCheckout = Tools::getValue('ALMA_SHARE_OF_CHECKOUT_DATE');
+            $configurationDateShareOfCheckout = Configuration::get(ShareOfCheckoutAdminFormBuilder::ALMA_SHARE_OF_CHECKOUT_DATE);
+            $dateShareOfCheckout = Tools::getValue(ShareOfCheckoutAdminFormBuilder::ALMA_SHARE_OF_CHECKOUT_DATE);
 
-            if (empty($dateShareOfCheckout) && $activateShareOfCheckout) {
-                $date = new DateTime();
-                $dateShareOfCheckout = $date->getTimestamp();
+            if (isset($configurationDateShareOfCheckout) && $activateShareOfCheckout) {
+                $dateShareOfCheckout = $configurationDateShareOfCheckout;
             }
 
             Settings::updateValue(ShareOfCheckoutAdminFormBuilder::ALMA_ACTIVATE_SHARE_OF_CHECKOUT, $activateShareOfCheckout);
