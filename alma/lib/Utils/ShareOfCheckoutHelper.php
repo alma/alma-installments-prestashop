@@ -62,29 +62,20 @@ class ShareOfCheckoutHelper
 
     public function shareDays()
     {
-        ini_set('max_execution_time', 30);
-
-        self::ifCanShareOfCheckout();
         $shareOfCheckoutEnabledDate = Configuration::get(ShareOfCheckoutAdminFormBuilder::ALMA_SHARE_OF_CHECKOUT_DATE);
-        self::ifShareOfCheckoutEnabledDate($shareOfCheckoutEnabledDate);
+
+        if (!$this->isShareOfCheckoutUsable($shareOfCheckoutEnabledDate)) {
+            return ;
+        }
 
         try {
             $lastShareOfCheckout = self::getLastShareOfCheckout();
-        } catch (RequestError $e) {
-            Logger::instance()->info('Get Last Update Date error - end of process - message : ' . $e->getMessage());
-
-            return;
-        }
-
-        foreach (DateHelper::getDatesInInterval($lastShareOfCheckout['end_time'], $shareOfCheckoutEnabledDate) as $date) {
-            try {
+            foreach (DateHelper::getDatesInInterval($lastShareOfCheckout['end_time'], $shareOfCheckoutEnabledDate) as $date) {
                 $this->setShareOfCheckoutFromDate($date);
                 $this->putDay();
-            } catch (RequestError $e) {
-                Logger::instance()->info('Share of checkout error - end of process - message : ' . $e->getMessage());
-
-                return;
             }
+        } catch (RequestError $e) {
+            Logger::instance()->info('Get Last Update Date error - end of process - message : ' . $e->getMessage());
         }
     }
 
@@ -348,32 +339,25 @@ class ShareOfCheckoutHelper
     }
 
     /**
-     * check if ShareOfCheckout is enabled
-     *
-     * @return void
-     */
-    private function ifCanShareOfCheckout()
-    {
-        if (!Settings::canShareOfCheckout()) {
-            Logger::instance()->info('Share Of Checkout is not enabled');
-
-            return;
-        }
-    }
-
-    /**
      * check if shareOfCheckout enabled date
      *
      * @param int $shareOfCheckoutEnabledDate timestamp
      *
-     * @return void
+     * @return bool
      */
-    private function ifShareOfCheckoutEnabledDate($shareOfCheckoutEnabledDate)
+    private function isShareOfCheckoutUsable($shareOfCheckoutEnabledDate): bool
     {
+        if (!Settings::canShareOfCheckout()) {
+            Logger::instance()->info('Share Of Checkout is not enabled');
+
+            return false;
+        }
+
         if ($shareOfCheckoutEnabledDate == '') {
             Logger::instance()->info('No enable date in config');
 
-            return;
+            return false;
         }
+        return true;
     }
 }
