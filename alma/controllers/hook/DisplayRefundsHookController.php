@@ -34,6 +34,7 @@ use Alma\PrestaShop\API\PaymentNotFoundException;
 use Alma\PrestaShop\Hooks\AdminHookController;
 use Alma\PrestaShop\Utils\Logger;
 use Alma\PrestaShop\Utils\OrderDataTrait;
+use Alma\PrestaShop\Utils\RefundHelper;
 use Currency;
 use Order;
 
@@ -69,11 +70,10 @@ final class DisplayRefundsHookController extends AdminHookController
         }
 
         $refundData = null;
-        $totalRefund = null;
+        $totalRefundInCents = null;
         $percentRefund = null;
         $orderTotalPaid = $order->getOrdersTotalPaid();
-        $fees = almaPriceFromCents($payment->customer_fee);
-        $paymentTotalAmount = $order->total_paid_tax_incl + $fees;
+        $paymentTotalAmount = $order->total_paid_tax_incl;
 
         //multi shipping
         $ordersId = null;
@@ -85,18 +85,16 @@ final class DisplayRefundsHookController extends AdminHookController
                 }
             }
             $ordersId = rtrim($ordersId, ',');
-            $paymentTotalAmount = $orderTotalPaid + $fees;
+            $paymentTotalAmount = $orderTotalPaid;
         }
 
+        $totalOrderInCents = almaPriceToCents($paymentTotalAmount);
         if ($payment->refunds) {
-            foreach ($payment->refunds as $refund) {
-                $totalRefund += $refund->amount;
-            }
-
-            $percentRefund = (100 / $paymentTotalAmount) * almaPriceFromCents($totalRefund);
+            $totalRefundInCents = RefundHelper::buildTotalRefund($payment->refunds, $totalOrderInCents);
+            $percentRefund = almaCalculatePercentage($totalRefundInCents, $totalOrderInCents);
 
             $refundData = [
-                'totalRefundAmount' => almaFormatPrice($totalRefund, (int) $order->id_currency),
+                'totalRefundPrice' => almaFormatPrice($totalRefundInCents, (int) $order->id_currency),
                 'percentRefund' => $percentRefund,
             ];
         }
@@ -107,7 +105,7 @@ final class DisplayRefundsHookController extends AdminHookController
             'maxAmount' => almaFormatPrice(almaPriceToCents($order->total_paid_tax_incl), (int) $order->id_currency),
             'currencySymbol' => $currency->sign,
             'ordersId' => $ordersId,
-            'paymentTotalAmount' => almaFormatPrice(almaPriceToCents($paymentTotalAmount), (int) $order->id_currency),
+            'paymentTotalPrice' => almaFormatPrice($totalOrderInCents, (int) $order->id_currency),
         ];
         $wording = [
             'title' => $this->module->l('Alma refund', 'DisplayRefundsHookController'),
@@ -133,13 +131,13 @@ final class DisplayRefundsHookController extends AdminHookController
             ),
             'labelRadioRefundAllOrderInfoAmount' => sprintf(
                 $this->module->l('Total amount: %s', 'DisplayRefundsHookController'),
-                $orderData['paymentTotalAmount']
+                $orderData['paymentTotalPrice']
             ),
             'labelRadioRefundTotalAmout' => $this->module->l('Total amount', 'DisplayRefundsHookController'),
             'labelRadioRefundPartial' => $this->module->l('Partial', 'DisplayRefundsHookController'),
             'labelAmoutRefundPartial' => sprintf(
                 $this->module->l('Amount (Max. %s):', 'DisplayRefundsHookController'),
-                $orderData['paymentTotalAmount']
+                $orderData['paymentTotalPrice']
             ),
             'placeholderInputRefundPartial' => $this->module->l('Amount to refund...', 'DisplayRefundsHookController'),
             'buttonRefund' => $this->module->l('Proceed the refund', 'DisplayRefundsHookController'),

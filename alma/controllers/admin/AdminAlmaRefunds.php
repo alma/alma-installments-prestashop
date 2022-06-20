@@ -27,6 +27,7 @@ use Alma\PrestaShop\API\ClientHelper;
 use Alma\PrestaShop\Utils\AjaxTrait;
 use Alma\PrestaShop\Utils\Logger;
 use Alma\PrestaShop\Utils\OrderDataTrait;
+use Alma\PrestaShop\Utils\RefundHelper;
 
 /*
  * Ajax controllers don't have any global entrypoint on the module side
@@ -63,41 +64,10 @@ class AdminAlmaRefundsController extends ModuleAdminController
         $orderPayment = $this->getOrderPaymentOrFail($order);
         $paymentId = $orderPayment->transaction_id;
 
-        switch ($refundType) {
-            case 'partial_multi':
-                $isTotal = false;
-                $amount = $order->total_paid_tax_incl;
-                break;
-            case 'partial':
-                $isTotal = false;
-                $amount = str_replace(',', '.', Tools::getValue('amount'));
-
-                if ($amount > $order->getOrdersTotalPaid()) {
-                    $this->ajaxFail(
-                        $this->module->l('Error: Amount is higher than maximum refundable', 'AdminAlmaRefunds'),
-                        400
-                    );
-                }
-                break;
-            case 'total':
-                $isTotal = true;
-                $amount = $order->getOrdersTotalPaid();
-                break;
-            default:
-                $msg = sprintf(
-                    $this->module->l('Error: unknow refund type (%s)', 'AdminAlmaRefunds'),
-                    $refundType
-                );
-                Logger::instance()->error($msg);
-                $this->ajaxFail($msg, 400);
-        }
+        $isTotal = $this->isTotalRefund($refundType);
+        $amount = $this->getRefundAmount($refundType, $order);
 
         $refundResult = false;
-        $percentRefund = null;
-        $totalRefund = null;
-        $totalRefundAmount = null;
-        $totalOrder = null;
-        $totalOrderAmount = null;
         try {
             $refundResult = $this->runRefund($paymentId, $amount, $isTotal);
         } catch (RequestError $e) {
@@ -109,25 +79,16 @@ class AdminAlmaRefundsController extends ModuleAdminController
             $this->ajaxFail(
                 $this->module->l('There was an error while processing the refund', 'AdminAlmaRefunds')
             );
-        } else {
-            $fees = $refundResult->customer_fee;
-            $totalOrder = $refundResult->purchase_amount + $fees;
-            $totalOrderAmount = almaFormatPrice($totalOrder, (int) $order->id_currency);
-            foreach ($refundResult->refunds as $refund) {
-                $totalRefund += $refund->amount;
-            }
-            $totalRefundAmount = almaFormatPrice($totalRefund, (int) $order->id_currency);
-            $percentRefund = (100 / $totalOrder) * $totalRefund;
         }
+        $totalOrderAmount = $refundResult->purchase_amount;
+        $idCurrency = (int) $order->id_currency;
+        $totalOrderPrice = almaFormatPrice($totalOrderAmount, $idCurrency);
+        $totalRefundAmount = RefundHelper::buildTotalRefund($refundResult->refunds, $totalOrderAmount);
+        $totalRefundPrice = almaFormatPrice($totalRefundAmount, $idCurrency);
+        $percentRefund = almaCalculatePercentage($totalRefundAmount, $totalOrderAmount);
 
         if ($isTotal) {
-            $orders = Order::getByReference($order->reference);
-            foreach ($orders as $o) {
-                $current_order_state = $o->getCurrentOrderState();
-                if ($current_order_state->id !== (int) Configuration::get('PS_OS_REFUND')) {
-                    $o->setCurrentState(Configuration::get('PS_OS_REFUND'));
-                }
-            }
+            $this->setOrdersAsRefund($order);
         }
 
         $jsonReturn = [
@@ -135,10 +96,10 @@ class AdminAlmaRefundsController extends ModuleAdminController
             'message' => $this->module->l('Refund has been processed', 'AdminAlmaRefunds'),
             'paymentData' => $refundResult,
             'percentRefund' => $percentRefund,
-            'totalRefund' => $totalRefund,
             'totalRefundAmount' => $totalRefundAmount,
-            'totalOrder' => $totalOrder,
+            'totalRefundPrice' => $totalRefundPrice,
             'totalOrderAmount' => $totalOrderAmount,
+            'totalOrderPrice' => $totalOrderPrice,
         ];
 
         method_exists(get_parent_class($this), 'ajaxDie')
@@ -163,5 +124,78 @@ class AdminAlmaRefundsController extends ModuleAdminController
         }
 
         return $alma->payments->refund($paymentId, $isTotal, almaPriceToCents($amount));
+    }
+
+    /**
+     * Change Order status if refund is total
+     *
+     * @param Order $order
+     *
+     * @return void
+     */
+    private function setOrdersAsRefund($order)
+    {
+        $orders = Order::getByReference($order->reference);
+        foreach ($orders as $o) {
+            $current_order_state = $o->getCurrentOrderState();
+            if ($current_order_state->id !== (int) Configuration::get('PS_OS_REFUND')) {
+                $o->setCurrentState(Configuration::get('PS_OS_REFUND'));
+            }
+        }
+    }
+
+    /**
+     * Bool if refund is total
+     *
+     * @param string $refundType
+     *
+     * @return boolean
+     */
+    private function isTotalRefund($refundType)
+    {
+        if ($refundType == 'total') {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Amount of refund
+     *
+     * @param string $refundType
+     * @param Order $order
+     *
+     * @return float
+     */
+    private function getRefundAmount($refundType, $order)
+    {
+        switch ($refundType) {
+            case 'partial_multi':
+                $amount = $order->total_paid_tax_incl;
+                break;
+            case 'partial':
+                $amount = floatval(str_replace(',', '.', Tools::getValue('amount')));
+
+                if ($amount > $order->getOrdersTotalPaid()) {
+                    $this->ajaxFail(
+                        $this->module->l('Error: Amount is higher than maximum refundable', 'AdminAlmaRefunds'),
+                        400
+                    );
+                }
+                break;
+            case 'total':
+                $amount = $order->getOrdersTotalPaid();
+                break;
+            default:
+                $msg = sprintf(
+                    $this->module->l('Error: unknow refund type (%s)', 'AdminAlmaRefunds'),
+                    $refundType
+                );
+                Logger::instance()->error($msg);
+                $this->ajaxFail($msg, 400);
+        }
+
+        return $amount;
     }
 }

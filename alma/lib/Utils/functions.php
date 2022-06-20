@@ -140,6 +140,23 @@ function almaFormatPrice($cents, $id_currency = null)
 }
 
 /**
+ * Calculate percentage number by total
+ *
+ * @param int $number
+ * @param int $total
+ *
+ * @return float
+ */
+function almaCalculatePercentage($number, $total)
+{
+    if (!is_numeric($total) || $total == 0) {
+        return 0;
+    }
+
+    return round(($number / $total) * 100, 2);
+}
+
+/**
  * format date by locale
  *
  * @param string $locale
