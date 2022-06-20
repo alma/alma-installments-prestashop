@@ -347,7 +347,7 @@ class ShareOfCheckoutHelper
      *
      * @return bool
      */
-    private function isShareOfCheckoutUsable($shareOfCheckoutEnabledDate): bool
+    private function isShareOfCheckoutUsable($shareOfCheckoutEnabledDate)
     {
         if (!Settings::canShareOfCheckout()) {
             Logger::instance()->info('Share Of Checkout is not enabled');
