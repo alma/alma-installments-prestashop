@@ -170,6 +170,11 @@ class PaymentData
         $customerData['state_province'] = State::getNameById((int) $idStateBilling);
         $customerData['country'] = Country::getIsoById((int) $billingAddress->id_country);
 
+        if ($billingAddress->company) {
+            $customerData['is_business'] = true;
+            $customerData['business_name'] = $billingAddress->company;
+        }
+
         $dataPayment = [
             'payment' => [
                 'installments_count' => $feePlans['installmentsCount'],
