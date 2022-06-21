@@ -111,7 +111,7 @@ final class GetContentHookController extends AdminHookController
             }
 
             Settings::updateValue(ShareOfCheckoutAdminFormBuilder::ALMA_ACTIVATE_SHARE_OF_CHECKOUT, (bool) Settings::canShareOfCheckout());
-            Settings::updateValue(ShareOfCheckoutAdminFormBuilder::ALMA_SHARE_OF_CHECKOUT_DATE, Settings::dateShareOfCheckout());
+            Settings::updateValue(ShareOfCheckoutAdminFormBuilder::ALMA_SHARE_OF_CHECKOUT_DATE, Settings::getCurrentTimestamp());
         }
 
         // Get languages are active
@@ -553,7 +553,7 @@ final class GetContentHookController extends AdminHookController
             'ALMA_CATEGORIES_WDGT_NOT_ELGBL_ON' => Settings::showCategoriesWidgetIfNotEligible(),
             'ALMA_ACTIVATE_LOGGING_ON' => (bool) Settings::canLog(),
             'ALMA_ACTIVATE_SHARE_OF_CHECKOUT_ON' => (bool) Settings::canShareOfCheckout(),
-            'ALMA_SHARE_OF_CHECKOUT_DATE' => Settings::dateShareOfCheckout(),
+            'ALMA_SHARE_OF_CHECKOUT_DATE' => Settings::getCurrentTimestamp(),
             'ALMA_STATE_REFUND' => Settings::getRefundState(),
             'ALMA_STATE_REFUND_ENABLED_ON' => Settings::isRefundEnabledByState(),
             'ALMA_STATE_TRIGGER' => Settings::getPaymentTriggerState(),

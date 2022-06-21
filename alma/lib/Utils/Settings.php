@@ -145,7 +145,7 @@ class Settings
         return boolval(self::get(ShareOfCheckoutAdminFormBuilder::ALMA_ACTIVATE_SHARE_OF_CHECKOUT, true));
     }
 
-    public static function dateShareOfCheckout()
+    public static function getCurrentTimestamp()
     {
         $date = new DateTime();
 
