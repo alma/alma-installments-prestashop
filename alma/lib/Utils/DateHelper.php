@@ -66,7 +66,7 @@ class DateHelper
      */
     public static function isSameDay($today, $day)
     {
-        return (self::extractDateWithoutTime($today) != self::extractDateWithoutTime($day)) ? false : true;
+        return self::extractDateWithoutTime($today) === self::extractDateWithoutTime($day);
     }
 
     /**
