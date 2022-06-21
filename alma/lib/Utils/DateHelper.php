@@ -78,7 +78,7 @@ class DateHelper
      */
     private static function extractTimestampWithoutTime($timestamp)
     {
-        return strtotime(extractDateWithoutTime($timestamp));
+        return strtotime(self::extractDateWithoutTime($timestamp));
     }
 
     /**
