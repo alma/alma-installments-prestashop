@@ -287,7 +287,7 @@ class ShareOfCheckoutHelper
     /**
      * @return string
      */
-    private function getStartDate()
+    private function getStartDateTime()
     {
         if (isset($this->startDate)) {
             return $this->startDate;
@@ -299,7 +299,7 @@ class ShareOfCheckoutHelper
     /**
      * @return string
      */
-    private function getEndDate()
+    private function getEndDateTime()
     {
         if (isset($this->endDate)) {
             return $this->endDate;
@@ -333,8 +333,8 @@ class ShareOfCheckoutHelper
     public function getPayload()
     {
         return [
-            'start_time' => strtotime($this->getStartDate()),
-            'end_time' => strtotime($this->getEndDate()),
+            'start_time' => strtotime($this->getStartDateTime()),
+            'end_time' => strtotime($this->getEndDateTime()),
             'orders' => $this->getTotalOrders(),
             'payment_methods' => $this->getTotalPaymentMethods(),
         ];
