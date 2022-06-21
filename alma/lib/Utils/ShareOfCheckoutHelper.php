@@ -54,11 +54,11 @@ class ShareOfCheckoutHelper
     /**
      * @var null
      */
-    private $startTime;
+    private $startDate;
     /**
      * @var null
      */
-    private $endTime;
+    private $endDate;
 
     public function shareDays()
     {
@@ -71,7 +71,7 @@ class ShareOfCheckoutHelper
         try {
             $lastShareOfCheckout = self::getLastShareOfCheckout();
             foreach (DateHelper::getDatesInInterval($lastShareOfCheckout['end_time'], $shareOfCheckoutEnabledDate) as $date) {
-                $this->setShareOfCheckoutFromDate($date);
+                $this->setStartDate($date);
                 $this->putDay();
             }
         } catch (RequestError $e) {
@@ -227,7 +227,7 @@ class ShareOfCheckoutHelper
     {
         $orderIds = [];
         $defaultStatesExcluded = [6, 7, 8];
-        $orderIdsByDate = self::getOrdersIdByDate($this->startTime, $this->endTime);
+        $orderIdsByDate = self::getOrdersIdByDate($this->startDate, $this->endDate);
         foreach ($orderIdsByDate as $orderId) {
             $currentOrder = new Order($orderId);
             if (!in_array((int) $currentOrder->current_state, $defaultStatesExcluded)) {
@@ -241,17 +241,17 @@ class ShareOfCheckoutHelper
     /**
      * Order by date
      *
-     * @param string $date_from
-     * @param string $date_to
+     * @param string $date_start
+     * @param string $date_end
      *
      * @return array
      */
-    public static function getOrdersIdByDate($date_from, $date_to)
+    public static function getOrdersIdByDate($date_start, $date_end)
     {
         $sql = 'SELECT `id_order`
                 FROM `' . _DB_PREFIX_ . 'orders`
-                WHERE date_add >= \'' . pSQL($date_from) . '\'
-                AND date_add <= \'' . pSQL($date_to) . '\'
+                WHERE date_add >= \'' . pSQL($date_start) . '\'
+                AND date_add <= \'' . pSQL($date_end) . '\'
                     ' . Shop::addSqlRestriction();
         $result = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS($sql);
 
@@ -264,33 +264,33 @@ class ShareOfCheckoutHelper
     }
 
     /**
-     * @param $startTime
+     * @param string $startDate
      *
      * @return void
      */
-    public function setShareOfCheckoutFromDate($startTime)
+    public function setStartDate($startDate)
     {
-        $this->startTime = $startTime . ' 00:00:00';
-        $this->setShareOfCheckoutToDate($startTime);
+        $this->startDate = $startDate . ' 00:00:00';
+        $this->setEndDate($startDate);
     }
 
     /**
-     * @param $endTime
+     * @param string $endDate
      *
      * @return void
      */
-    public function setShareOfCheckoutToDate($endTime)
+    public function setEndDate($endDate)
     {
-        $this->endTime = $endTime . ' 23:59:59';
+        $this->endDate = $endDate . ' 23:59:59';
     }
 
     /**
      * @return string
      */
-    private function getShareOfCheckoutFromDate()
+    private function getStartDate()
     {
-        if (isset($this->startTime)) {
-            return $this->startTime;
+        if (isset($this->startDate)) {
+            return $this->startDate;
         }
 
         return date('Y-m-d', strtotime('yesterday')) . ' 00:00:00';
@@ -299,10 +299,10 @@ class ShareOfCheckoutHelper
     /**
      * @return string
      */
-    private function getShareOfCheckoutToDate()
+    private function getEndDate()
     {
-        if (isset($this->endTime)) {
-            return $this->endTime;
+        if (isset($this->endDate)) {
+            return $this->endDate;
         }
 
         return date('Y-m-d', strtotime('yesterday')) . ' 23:59:59';
@@ -333,8 +333,8 @@ class ShareOfCheckoutHelper
     public function getPayload()
     {
         return [
-            'start_time' => strtotime($this->getShareOfCheckoutFromDate()),
-            'end_time' => strtotime($this->getShareOfCheckoutToDate()),
+            'start_time' => strtotime($this->getStartDate()),
+            'end_time' => strtotime($this->getEndDate()),
             'orders' => $this->getTotalOrders(),
             'payment_methods' => $this->getTotalPaymentMethods(),
         ];
