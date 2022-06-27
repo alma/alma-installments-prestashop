@@ -83,7 +83,7 @@ class EligibilityHelper
         return $alma;
     }
 
-    private static function checkFeePlans()
+    public static function checkFeePlans()
     {
         $feePlans = array_filter((array) json_decode(Settings::getFeePlans()), function ($feePlan) {
             return $feePlan->enabled == 1;
@@ -144,7 +144,7 @@ class EligibilityHelper
         return $eligibilities;
     }
 
-    private static function getEligibleFeePlans($feePlans, $purchaseAmount)
+    public static function getEligibleFeePlans($feePlans, $purchaseAmount)
     {
         $activePlans = [];
 
