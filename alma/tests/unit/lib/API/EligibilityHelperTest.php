@@ -25,32 +25,120 @@
 
 namespace Alma\PrestaShop\Tests\Unit\Lib\Api;
 
+use Alma\API\Endpoints\Results\Eligibility;
+use Alma\PrestaShop\API\ClientHelper;
 use PHPUnit\Framework\TestCase;
 use Alma\PrestaShop\API\EligibilityHelper;
+use Alma\PrestaShop\Model\PaymentData;
+use Cart;
 use Context;
+use Language;
 use Mockery;
 
 class EligibilityHelperTest extends TestCase
 {
     /**
-     * @test
-     *
-     * @return void
+     * Return input to test testEligibilityCheck
+     * @return array[]
      */
-    public function testEligibilityCheck()
-    {
-        $contextMock = Mockery::mock(Context::class);
-        $result = [];
+    public function getEligibilityData() {
+        $dataEligibility = [
+            'eligible' => true,
+            'reasons' => NULL,
+            'constraints' => NULL,
+            'payment_plan' => [
+                [
+                    'customer_fee' => 61,
+                    'customer_interest' => 0,
+                    'due_date' => 1656429874,
+                    'purchase_amount' => 1701,
+                    'total_amount' => 1762,
+                ],
+                [
+                    'customer_fee' => 0,
+                    'customer_interest' => 0,
+                    'due_date' => 1659021874,
+                    'purchase_amount' => 1699,
+                    'total_amount' => 1699,
+                ],
+                [
+                    'customer_fee' => 0,
+                    'customer_interest' => 0,
+                    'due_date' => 1661700274,
+                    'purchase_amount' => 1699,
+                    'total_amount' => 1699,
+                ]
+            ],
+            'installments_count' => 3,
+            'deferred_days' => 0,
+            'deferred_months' => 0,
+            'customer_total_cost_amount' => 61,
+            'customer_total_cost_bps' => 120,
+            'annual_interest_rate' => NULL,
+        ];
 
-        $eligibility = EligibilityHelper::eligibilityCheck($contextMock);
-        $this->assertEquals($result, $eligibility);
+        $expectedEligibility = new Eligibility($dataEligibility);
+
+        return [
+            'purchase amount eligible in p3x' => [
+                //data
+                [
+                    'purchase_amount' => 5099,
+                    'queries' => [
+                        [
+                            'purchase_amount' => 5099,
+                            'installments_count' => 3,
+                            'deferred_days' => 0,
+                            'deferred_months' => 0
+                        ]
+                    ],
+                    'shipping_address' => [
+                        'country' => 'FR'
+                    ],
+                    'billing_address' => [
+                        'country' => 'FR'
+                    ],
+                    'locale' => 'en'
+                ], 
+                //data expected
+                [
+                    $expectedEligibility
+                ]
+            ]
+        ];
     }
 
-    public function testGetEligibleFeePlansWithEligibleData()
+    /**
+     * @test
+     * @dataProvider getEligibilityData
+     * @return void
+     */
+    public function testEligibilityCheck($data, $expected)
     {
-        $feePlans = Mockery::mock(EligibilityHelper::checkFeePlans());
-        $purchaseAmount = 10000;
-        $result = [];
-        $this->assertEquals($result, EligibilityHelper::getEligibleFeePlans($feePlans, $purchaseAmount));
+        $clientMock = Mockery::mock(ClientHelper::class);
+        $clientMock->shouldReceive('defaultInstance')->andReturn($_ENV['ALMA_API_KEY']);
+        $clientMock->shouldReceive('createInstance');
+
+        $eligibilityHelper = Mockery::mock(EligibilityHelper::class)->shouldAllowMockingProtectedMethods()->makePartial();
+
+        $contextMock = Mockery::mock(Context::class);
+        $contextMock->cart = Mockery::mock(Cart::class);
+        $contextMock->cart->shouldReceive('getOrderTotal')->andReturn(almaPriceFromCents($data['purchase_amount']));
+        $contextMock->cart->id_address_delivery = 5;
+        $contextMock->cart->id_address_invoice = 5;
+        $contextMock->language = Mockery::mock(Language::class);
+        $contextMock->language->iso_code = 'en';
+
+        $paymentDataMock = Mockery::mock(PaymentData::class);
+        $paymentDataMock->shouldReceive('dataFromCart')->andReturn($data);
+
+        $eligibility = $eligibilityHelper->eligibilityCheck($contextMock);
+        $expectedPaymentPlan = $expected[0]->getPaymentPlan();
+        foreach ($eligibility[0]->getPaymentPlan() as $key => $paymentPlan) {
+            $expectedPaymentPlan[$key]['due_date'] = $paymentPlan['due_date'];
+        }
+        $expected[0]->setPaymentPlan($expectedPaymentPlan);
+
+        $this->assertEquals($expected, $eligibility);
     }
 }
