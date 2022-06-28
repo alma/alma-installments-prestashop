@@ -13,8 +13,8 @@
         "psr-4": {
             "Alma\\PrestaShop\\": ["lib/", "."],
             "Alma\\PrestaShop\\Controllers\\Hook\\": "controllers/hook/",
-            "Alma\\PrestaShop\\Tests\\": "exceptions/",
-            "Alma\\PrestaShop\\Exceptions\\": "tests/"
+            "Alma\\PrestaShop\\Tests\\": "tests/",
+            "Alma\\PrestaShop\\Exceptions\\": "exceptions/"
         },
         "files": [
             "lib/Utils/functions.php"

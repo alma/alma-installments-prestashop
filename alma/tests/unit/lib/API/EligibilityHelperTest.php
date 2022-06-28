@@ -23,7 +23,7 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
-namespace Alma\PrestaShop\Tests\Unit;
+namespace Alma\PrestaShop\Tests\Unit\Lib\Api;
 
 use PHPUnit\Framework\TestCase;
 use Alma\PrestaShop\API\EligibilityHelper;
@@ -41,7 +41,9 @@ class EligibilityHelperTest extends TestCase
     {
         $contextMock = Mockery::mock(Context::class);
         $result = [];
-        $this->assertEquals($result, EligibilityHelper::eligibilityCheck($contextMock));
+
+        $eligibility = EligibilityHelper::eligibilityCheck($contextMock);
+        $this->assertEquals($result, $eligibility);
     }
 
     public function testGetEligibleFeePlansWithEligibleData()
