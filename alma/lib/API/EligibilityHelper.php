@@ -134,9 +134,6 @@ class EligibilityHelper
                         ],
                     ]
                 );
-                if (isset($getDataFromKey['deferred_trigger_limit_days'])) {
-                    $eligibility->deferred_trigger_limit_days = $getDataFromKey['deferred_trigger_limit_days'];
-                }
                 $eligibilities[] = $eligibility;
             }
         }

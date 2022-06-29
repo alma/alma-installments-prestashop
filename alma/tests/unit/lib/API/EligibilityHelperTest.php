@@ -42,7 +42,7 @@ class EligibilityHelperTest extends TestCase
      * @return array[]
      */
     public function getEligibilityData() {
-        $dataEligibility = [
+        $dataAmountEligibe = [
             'eligible' => true,
             'reasons' => NULL,
             'constraints' => NULL,
@@ -77,7 +77,26 @@ class EligibilityHelperTest extends TestCase
             'annual_interest_rate' => NULL,
         ];
 
-        $expectedEligibility = new Eligibility($dataEligibility);
+        $dataAmountNotEligibe = [
+            'eligible' => false,
+            'reasons' => NULL,
+            'constraints' => [
+                'purchase_amount' => [
+                    'minimum' => 5000,
+                    'maximum' => 300000,
+                ]
+            ],
+            'payment_plan' => NULL,
+            'installments_count' => 3,
+            'deferred_days' => 0,
+            'deferred_months' => 0,
+            'customer_total_cost_amount' => NULL,
+            'customer_total_cost_bps' => NULL,
+            'annual_interest_rate' => NULL,
+        ];
+
+        $expectedAmountEligibe = new Eligibility($dataAmountEligibe);
+        $expectedAmountNotEligibe = new Eligibility($dataAmountNotEligibe);
 
         return [
             'purchase amount eligible in p3x' => [
@@ -102,7 +121,32 @@ class EligibilityHelperTest extends TestCase
                 ], 
                 //data expected
                 [
-                    $expectedEligibility
+                    $expectedAmountEligibe
+                ]
+            ],
+            'purchase amount not eligible in p3x' => [
+                //data
+                [
+                    'purchase_amount' => 2600,
+                    'queries' => [
+                        [
+                            'purchase_amount' => 2600,
+                            'installments_count' => 3,
+                            'deferred_days' => 0,
+                            'deferred_months' => 0
+                        ]
+                    ],
+                    'shipping_address' => [
+                        'country' => 'FR'
+                    ],
+                    'billing_address' => [
+                        'country' => 'FR'
+                    ],
+                    'locale' => 'en'
+                ], 
+                //data expected
+                [
+                    $expectedAmountNotEligibe
                 ]
             ]
         ];
@@ -134,8 +178,11 @@ class EligibilityHelperTest extends TestCase
 
         $eligibility = $eligibilityHelper->eligibilityCheck($contextMock);
         $expectedPaymentPlan = $expected[0]->getPaymentPlan();
-        foreach ($eligibility[0]->getPaymentPlan() as $key => $paymentPlan) {
-            $expectedPaymentPlan[$key]['due_date'] = $paymentPlan['due_date'];
+        $eligibilityPaymentPlan = $eligibility[0]->getPaymentPlan();
+        if (count($eligibilityPaymentPlan) > 0) {
+            foreach ($eligibilityPaymentPlan as $key => $paymentPlan) {
+                $expectedPaymentPlan[$key]['due_date'] = $paymentPlan['due_date'];
+            }
         }
         $expected[0]->setPaymentPlan($expectedPaymentPlan);
 
