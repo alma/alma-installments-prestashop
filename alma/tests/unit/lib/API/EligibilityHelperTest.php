@@ -95,8 +95,8 @@ class EligibilityHelperTest extends TestCase
             'annual_interest_rate' => NULL,
         ];
 
-        $expectedAmountEligibe = new Eligibility($dataAmountEligibe);
-        $expectedAmountNotEligibe = new Eligibility($dataAmountNotEligibe);
+        $expectedAmountEligibe[] = new Eligibility($dataAmountEligibe);
+        $expectedAmountNotEligibe[] = new Eligibility($dataAmountNotEligibe);
 
         return [
             'purchase amount eligible in p3x' => [
@@ -120,9 +120,7 @@ class EligibilityHelperTest extends TestCase
                     'locale' => 'en'
                 ], 
                 //data expected
-                [
-                    $expectedAmountEligibe
-                ]
+                $expectedAmountEligibe
             ],
             'purchase amount not eligible in p3x' => [
                 //data
@@ -145,9 +143,7 @@ class EligibilityHelperTest extends TestCase
                     'locale' => 'en'
                 ], 
                 //data expected
-                [
-                    $expectedAmountNotEligibe
-                ]
+                $expectedAmountNotEligibe
             ]
         ];
     }
