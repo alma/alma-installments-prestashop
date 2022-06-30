@@ -30,6 +30,7 @@ include_once _PS_MODULE_DIR_ . 'alma/vendor/autoload.php';
 
 use Alma\API\RequestError;
 use Alma\PrestaShop\API\ClientHelper;
+use Alma\PrestaShop\Utils\Logger;
 use Alma\PrestaShop\Utils\Settings;
 
 function upgrade_module_1_4_0($module)
@@ -45,6 +46,7 @@ function upgrade_module_1_4_0($module)
         try {
             $merchant = $alma->merchants->me();
         } catch (RequestError $e) {
+            Logger::instance()->error("[Alma] ERROR upgrade v1.4.0: {$e->getMessage()}");
             return true;
         }
 

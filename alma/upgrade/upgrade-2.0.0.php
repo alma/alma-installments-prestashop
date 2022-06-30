@@ -30,6 +30,7 @@ include_once _PS_MODULE_DIR_ . 'alma/vendor/autoload.php';
 
 use Alma\API\RequestError;
 use Alma\PrestaShop\API\ClientHelper;
+use Alma\PrestaShop\Utils\Logger;
 use Alma\PrestaShop\Utils\Settings;
 use Alma\PrestaShop\Utils\SettingsCustomFields;
 
@@ -80,6 +81,7 @@ function upgrade_module_2_0_0()
 
             Tools::clearCache();
         } catch (RequestError $e) {
+            Logger::instance()->error("[Alma] ERROR upgrade v2.0.0: {$e->getMessage()}");
             return true;
         }
     }
