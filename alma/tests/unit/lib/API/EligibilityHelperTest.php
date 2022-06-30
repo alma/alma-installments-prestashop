@@ -95,8 +95,8 @@ class EligibilityHelperTest extends TestCase
             'annual_interest_rate' => NULL,
         ];
 
-        $expectedAmountEligibe[] = new Eligibility($dataAmountEligibe);
-        $expectedAmountNotEligibe[] = new Eligibility($dataAmountNotEligibe);
+        $expectedAmountEligibe = new Eligibility($dataAmountEligibe);
+        $expectedAmountNotEligibe = new Eligibility($dataAmountNotEligibe);
 
         return [
             'purchase amount eligible in p3x' => [
@@ -153,7 +153,7 @@ class EligibilityHelperTest extends TestCase
      * @dataProvider eligibilityDataProvider
      * @return void
      */
-    public function testEligibilityCheck($data, $expected)
+    public function testEligibilityCheck(array $eligibilityData, Eligibility $expectedEligibility)
     {
         $clientMock = Mockery::mock(ClientHelper::class);
         $clientMock->shouldReceive('defaultInstance')->andReturn($_ENV['ALMA_API_KEY']);
@@ -163,25 +163,25 @@ class EligibilityHelperTest extends TestCase
 
         $contextMock = Mockery::mock(Context::class);
         $contextMock->cart = Mockery::mock(Cart::class);
-        $contextMock->cart->shouldReceive('getOrderTotal')->andReturn(almaPriceFromCents($data['purchase_amount']));
+        $contextMock->cart->shouldReceive('getOrderTotal')->andReturn(almaPriceFromCents($eligibilityData['purchase_amount']));
         $contextMock->cart->id_address_delivery = 5;
         $contextMock->cart->id_address_invoice = 5;
         $contextMock->language = Mockery::mock(Language::class);
         $contextMock->language->iso_code = 'en';
 
         $paymentDataMock = Mockery::mock(PaymentData::class);
-        $paymentDataMock->shouldReceive('dataFromCart')->andReturn($data);
+        $paymentDataMock->shouldReceive('dataFromCart')->andReturn($eligibilityData);
 
         $eligibility = $eligibilityHelper->eligibilityCheck($contextMock);
-        $expectedPaymentPlan = $expected[0]->getPaymentPlan();
+        $expectedPaymentPlan = $expectedEligibility->getPaymentPlan();
         $eligibilityPaymentPlan = $eligibility[0]->getPaymentPlan();
         if (count($eligibilityPaymentPlan) > 0) {
             foreach ($eligibilityPaymentPlan as $key => $paymentPlan) {
                 $expectedPaymentPlan[$key]['due_date'] = $paymentPlan['due_date'];
             }
         }
-        $expected[0]->setPaymentPlan($expectedPaymentPlan);
+        $expectedEligibility->setPaymentPlan($expectedPaymentPlan);
 
-        $this->assertEquals($expected, $eligibility);
+        $this->assertEquals($expectedEligibility, $eligibility[0]);
     }
 }
