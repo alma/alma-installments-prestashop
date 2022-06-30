@@ -154,7 +154,7 @@ class EligibilityHelperTest extends TestCase
 
     /**
      * @test
-     * @dataProvider getEligibilityData
+     * @dataProvider eligibilityDataProvider
      * @return void
      */
     public function testEligibilityCheck($data, $expected)
