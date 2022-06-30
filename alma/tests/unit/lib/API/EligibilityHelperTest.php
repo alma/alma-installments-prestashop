@@ -41,7 +41,7 @@ class EligibilityHelperTest extends TestCase
      * Return input to test testEligibilityCheck
      * @return array[]
      */
-    public function getEligibilityData() {
+    public function eligibilityDataProvider() {
         $dataAmountEligibe = [
             'eligible' => true,
             'reasons' => NULL,
