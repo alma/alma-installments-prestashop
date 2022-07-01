@@ -2,6 +2,10 @@
     "name": "alma/alma-instalments-prestashop",
     "description": "Payment method module to integrate Alma in PrestaShop",
     "type": "library",
+    "require-dev": {
+        "phpunit/phpunit": "*",
+        "mockery/mockery": "^1.3"
+    },
     "require": {
         "alma/alma-php-client": "^1.7.1"
     },
@@ -9,6 +13,7 @@
         "psr-4": {
             "Alma\\PrestaShop\\": ["lib/", "."],
             "Alma\\PrestaShop\\Controllers\\Hook\\": "controllers/hook/",
+            "Alma\\PrestaShop\\Tests\\": "tests/",
             "Alma\\PrestaShop\\Exceptions\\": "exceptions/"
         },
         "files": [

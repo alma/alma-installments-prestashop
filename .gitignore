@@ -1,6 +1,7 @@
 alma/vendor
 alma/config*.xml
 alma/composer.lock
+alma/phpunit.xml
 .php_cs.cache
 dist
 tmp
@@ -9,3 +10,4 @@ prestashop*
 tools/vendor
 .vscode
 .dccache
+.phpunit.result.cache
