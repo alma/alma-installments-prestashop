@@ -20,3 +20,13 @@ to launch test :
 ```
 ./vendor/bin/phpunit
 ```
+
+to launch integration test :
+```
+./vendor/bin/phpunit --testsuite 'Alma Installment Prestashop Integration Test Suite'
+```
+
+to launch unit test :
+```
+./vendor/bin/phpunit --testsuite 'Alma Installment Prestashop Unit Test Suite'
+```
