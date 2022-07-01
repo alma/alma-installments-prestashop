@@ -23,6 +23,7 @@
  */
 
 use Alma\PrestaShop\Exceptions\RenderPaymentException;
+use Alma\PrestaShop\ShareOfCheckout\OrderHelper;
 use Alma\PrestaShop\Utils\DateHelper;
 use Alma\PrestaShop\Utils\LinkHelper;
 use Alma\PrestaShop\Utils\Logger;
@@ -453,7 +454,7 @@ class Alma extends PaymentModule
 
         if (!DateHelper::isSameDay($timestamp, Configuration::get('ALMA_CRONTASK'))) {
             Logger::instance()->info('Pseudo Cron Task exec to ' . $timestamp);
-            $shareOfCheckout = new ShareOfCheckoutHelper();
+            $shareOfCheckout = new ShareOfCheckoutHelper(new OrderHelper());
             $shareOfCheckout->shareDays();
             Settings::updateValue('ALMA_CRONTASK', $timestamp);
         }

@@ -27,6 +27,7 @@ namespace Alma\PrestaShop\Utils;
 use Alma\API\RequestError;
 use Alma\PrestaShop\API\ClientHelper;
 use Alma\PrestaShop\Forms\ShareOfCheckoutAdminFormBuilder;
+use Alma\PrestaShop\ShareOfCheckout\OrderHelper;
 use Configuration;
 use Currency;
 use Db;
@@ -51,6 +52,13 @@ class ShareOfCheckoutHelper
     const CURRENCY_KEY = 'currency';
     const PAYMENT_METHOD_KEY = 'payment_method_name';
 
+    public function __construct(
+        OrderHelper $orderHelper
+    )
+    {
+        $this->orderHelper = $orderHelper;
+    }
+
     /**
      * @var null
      */
@@ -62,21 +70,22 @@ class ShareOfCheckoutHelper
 
     public function shareDays()
     {
-        $shareOfCheckoutEnabledDate = Configuration::get(ShareOfCheckoutAdminFormBuilder::ALMA_SHARE_OF_CHECKOUT_DATE);
-
-        if (!$this->isShareOfCheckoutUsable($shareOfCheckoutEnabledDate)) {
+        $shareOfCheckoutEnabledDate = $this->getEnabledDate();
+        if (!Settings::canShareOfCheckout() || empty($shareOfCheckoutEnabledDate)) {
+            Logger::instance()->info('Share Of Checkout is disabled or invalide date');
             return ;
         }
-
         try {
-            $lastShareOfCheckout = self::getLastShareOfCheckout();
-            foreach (DateHelper::getDatesInInterval($lastShareOfCheckout['end_time'], $shareOfCheckoutEnabledDate) as $date) {
+            $lastShareOfCheckout = $this->getLastShareOfCheckout();
+            foreach ($this->getDatesInInterval($lastShareOfCheckout, $shareOfCheckoutEnabledDate) as $date) {
                 $this->setStartDate($date);
                 $this->putDay();
             }
         } catch (RequestError $e) {
             Logger::instance()->info('Get Last Update Date error - end of process - message : ' . $e->getMessage());
+            return;
         }
+        return true;
     }
 
     public function putDay()
@@ -116,13 +125,14 @@ class ShareOfCheckoutHelper
                 Logger::instance()->info('First send to Share of checkout');
 
                 $lastDate = date('Y-m-d', strtotime('-1 day'));
+                return $lastDate;
             }
             Logger::instance()->error('Cannot get last date share of checkout: ' . $e->getMessage());
 
             return null;
         }
 
-        return $lastDate;
+        return $lastDate['end_time'];
     }
 
     /**
@@ -341,25 +351,18 @@ class ShareOfCheckoutHelper
     }
 
     /**
-     * check if shareOfCheckout enabled date
-     *
-     * @param int $shareOfCheckoutEnabledDate timestamp
-     *
-     * @return bool
+     * @return string|false 
      */
-    private function isShareOfCheckoutUsable($shareOfCheckoutEnabledDate)
+    protected function getEnabledDate()
     {
-        if (!Settings::canShareOfCheckout()) {
-            Logger::instance()->info('Share Of Checkout is not enabled');
+        return Configuration::get(ShareOfCheckoutAdminFormBuilder::ALMA_SHARE_OF_CHECKOUT_DATE);
+    }
 
-            return false;
-        }
-
-        if ($shareOfCheckoutEnabledDate == '') {
-            Logger::instance()->info('No enable date in config');
-
-            return false;
-        }
-        return true;
+    /**
+     * @return array 
+     */
+    protected function getDatesInInterval($lastShareOfCheckout, $shareOfCheckoutEnabledDate)
+    {
+        return DateHelper::getDatesInInterval($lastShareOfCheckout, $shareOfCheckoutEnabledDate);
     }
 }
