@@ -16,7 +16,7 @@ Place yourself in the alma module folder
 cd modules/alma/
 ```
 
-to launch unit test :
+to launch test :
 ```
 ./vendor/bin/phpunit
 ```
