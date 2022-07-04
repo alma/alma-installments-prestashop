@@ -24,11 +24,11 @@
 
 use Alma\PrestaShop\Exceptions\RenderPaymentException;
 use Alma\PrestaShop\ShareOfCheckout\OrderHelper;
+use Alma\PrestaShop\ShareOfCheckout\ShareOfCheckoutHelper;
 use Alma\PrestaShop\Utils\DateHelper;
 use Alma\PrestaShop\Utils\LinkHelper;
 use Alma\PrestaShop\Utils\Logger;
 use Alma\PrestaShop\Utils\Settings;
-use Alma\PrestaShop\Utils\ShareOfCheckoutHelper;
 
 if (!defined('_PS_VERSION_')) {
     exit;

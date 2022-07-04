@@ -26,64 +26,233 @@
 namespace Alma\PrestaShop\Tests\Unit\Lib\ShareOfCheckout;
 
 use Alma\PrestaShop\ShareOfCheckout\OrderHelper;
+use Alma\PrestaShop\ShareOfCheckout\ShareOfCheckoutHelper;
 use PHPUnit\Framework\TestCase;
-use Alma\PrestaShop\Utils\ShareOfCheckoutHelper;
 use Mockery;
+use Order;
 
 class ShareOfCheckoutHelperTest extends TestCase
 {
+
+    protected function setUp()
+    {
+        $this->orderHelperMock = Mockery::mock(OrderHelper::class);
+    }
+
+
     /**
      * @dataProvider dateErrorDataProvider
      * @return void
      */
     public function testShareDaysNoDate($dateErrorData)
     {
-        $shareOfCheckoutHelperMock = Mockery::mock(ShareOfCheckoutHelper::class)->shouldAllowMockingProtectedMethods()->makePartial();
+        $shareOfCheckoutHelperMock = Mockery::mock(ShareOfCheckoutHelper::class, [$this->orderHelperMock])->shouldAllowMockingProtectedMethods()->makePartial();
         $shareOfCheckoutHelperMock->shouldReceive('getEnabledDate')->andReturn($dateErrorData);
         $this->assertNull($shareOfCheckoutHelperMock->shareDays());
     }
 
     public function testShareDaysReturnTrueWithValidTimestamp()
     {
-        $shareOfCheckoutHelperMock = Mockery::mock(ShareOfCheckoutHelper::class)->shouldAllowMockingProtectedMethods()->makePartial();
+        $this->orderHelperMock->shouldReceive('resetOrderList');
+        $shareOfCheckoutHelperMock = Mockery::mock(ShareOfCheckoutHelper::class, [$this->orderHelperMock])->shouldAllowMockingProtectedMethods()->makePartial();
         $shareOfCheckoutHelperMock->shouldReceive('getEnabledDate')->andReturn('1654041601');
         $shareOfCheckoutHelperMock->shouldReceive('getDatesInInterval')->andReturn(['2022-01-01','2022-01-03']);
         $shareOfCheckoutHelperMock->shouldReceive('putDay');
         $this->assertTrue($shareOfCheckoutHelperMock->shareDays());
     }
 
-    public function testGetPayload()
+    /**
+     * test get Payload
+     * @dataProvider ordersGetPayload
+     *
+     * @return void
+     */
+    public function testGetPayload($ordersMock, $expectedPayload)
     {
         $orderHelperMock = Mockery::mock(OrderHelper::class);
-        // $orderHelperMock->current_state = 6;
-        $orderHelperMock->shouldReceive('getOrdersByDate')->andReturn($orderHelperMock);
-        $orderHelperMock->getOrdersByDate('2022-01-01');
+        $orderHelperMock->shouldReceive('getOrdersByDate')->andReturn($ordersMock);
+
         $shareOfCheckoutHelper = new ShareOfCheckoutHelper($orderHelperMock);
-        // $shareOfCheckoutHelper->setStartDate('2022-01-01');
+        $shareOfCheckoutHelper->setStartDate('2022-01-01');
         $payload = $shareOfCheckoutHelper->getPayload();
-       
-        $expectedPayload = [
-            'start_time' => '1640991600',
-            'end_time' => '1641077999',
-            'orders' => [],
-            'payment_methods' => [],
-        ];
 
         $this->assertEquals($expectedPayload, $payload);
     }
 
-    public function testGetTotalPaymentMethods()
+    /**
+     * test Payment methods
+     * @dataProvider ordersTotalPaymentMethods
+     *
+     * @return void
+     */
+    public function testGetTotalPaymentMethods($ordersMock, $expectedTotalPaymentMethods)
     {   
         $orderHelperMock = Mockery::mock(OrderHelper::class);
-        $orderHelperMock->current_state = 6;
-        $orderHelperMock->shouldReceive('getOrdersByDate')->andReturn($orderHelperMock);
-        $shareOfCheckoutHelperMock = Mockery::mock(ShareOfCheckoutHelper::class);
-        // $shareOfCheckoutHelper = new ShareOfCheckoutHelper($orderHelperMock);
-        $shareOfCheckoutHelperMock->shouldReceive('getTotalPaymentMethods')->andReturn();
-        // $getTotalPaymentMethods = $shareOfCheckoutHelper->getTotalPaymentMethods();
-        $this->assertEquals([], $shareOfCheckoutHelper);
+        $orderHelperMock->shouldReceive('getOrdersByDate')->andReturn($ordersMock);
+        
+        $shareOfCheckoutHelper = new ShareOfCheckoutHelper($orderHelperMock);
+        $getTotalPaymentMethods = $shareOfCheckoutHelper->getTotalPaymentMethods();
+        $this->assertEquals($expectedTotalPaymentMethods, $getTotalPaymentMethods);
     }
 
+    /**
+     * test Payment methods
+     * @dataProvider ordersTotalOrders
+     *
+     * @return void
+     */
+    public function testGetTotalOrders($ordersMock, $expectedTotalOrders)
+    {   
+        $orderHelperMock = Mockery::mock(OrderHelper::class);
+        $orderHelperMock->shouldReceive('getOrdersByDate')->andReturn($ordersMock);
+        
+        $shareOfCheckoutHelper = new ShareOfCheckoutHelper($orderHelperMock);
+        $getTotalOrders = $shareOfCheckoutHelper->getTotalOrders();
+        $this->assertEquals($expectedTotalOrders, $getTotalOrders);
+    }
+
+    public function ordersTotalOrders() {
+        $expectedTotalOrders = [
+            [
+                "total_order_count" => 2,
+                "total_amount" => 15500,
+                "currency" => "EUR"
+            ],
+            [
+                "total_order_count" => 2,
+                "total_amount" => 30000,
+                "currency" => "USD"
+            ]
+        ];
+
+        return [
+            'order total orders' => [
+                self::orders(),
+                $expectedTotalOrders
+            ]
+        ];
+    }
+
+    public function ordersTotalPaymentMethods() {
+        $expectedTotalPaymentMethods = [
+            [
+                "payment_method_name" => "alma",
+                "orders" => [
+                    [
+                        "order_count" => 2,
+                        "amount" => 15500,
+                        "currency" => "EUR"
+                    ],
+                    [
+                        "order_count" => 1,
+                        "amount" => 10000,
+                        "currency" => "USD"
+                    ]
+                ]
+            ],
+            [
+                "payment_method_name" => "paypal",
+                "orders" => [
+                    [
+                        "order_count" => 1,
+                        "amount" => 20000,
+                        "currency" => "USD"
+                    ]
+                ]
+            ]
+        ];
+
+        return [
+            'order total payment methods' => [
+                self::orders(),
+                $expectedTotalPaymentMethods
+            ]
+        ];
+    }
+
+    public function ordersGetPayload()
+    {
+        $expectedPayload = [
+            'start_time' => 1640991600,
+            'end_time' => 1641077999,
+            'orders' => [
+                [
+                    "total_order_count"=> 2,
+                    "total_amount"=> 15500,
+                    "currency"=> "EUR"
+                ],
+                [
+                    "total_order_count"=> 2,
+                    "total_amount"=> 30000,
+                    "currency"=> "USD"
+                ]
+            ],
+            'payment_methods' => [
+                [
+                    "payment_method_name" => "alma",
+                    "orders" => [
+                        [
+                            "order_count" => 2,
+                            "amount" => 15500,
+                            "currency" => "EUR"
+                        ],
+                        [
+                            "order_count" => 1,
+                            "amount" => 10000,
+                            "currency" => "USD"
+                        ]
+                    ]
+                ],
+                [
+                    "payment_method_name" => "paypal",
+                    "orders" => [
+                        [
+                            "order_count" => 1,
+                            "amount" => 20000,
+                            "currency" => "USD"
+                        ]
+                    ]
+                ]
+            ],
+        ];
+
+        return [
+            'order get payload' => [
+                self::orders(),
+                $expectedPayload
+            ]
+        ];
+    }
+
+    public function orders()
+    {
+        $order1 = Mockery::mock(Order::class);
+        $order1->id_currency = 1;
+        $order1->total_paid_tax_incl = 100.00;
+        $order1->module = 'alma';
+        
+        $order2 = Mockery::mock(Order::class);
+        $order2->id_currency = 2;
+        $order2->total_paid_tax_incl = 200.00;
+        $order2->module = 'paypal';
+
+        $order3 = Mockery::mock(Order::class);
+        $order3->id_currency = 1;
+        $order3->total_paid_tax_incl = 55.00;
+        $order3->module = 'alma';
+
+        $order4 = Mockery::mock(Order::class);
+        $order4->id_currency = 2;
+        $order4->total_paid_tax_incl = 100.00;
+        $order4->module = 'alma';
+
+        return [
+            $order1,
+            $order2,
+            $order3,
+            $order4
+        ];
+    }
 
     public function dateErrorDataProvider()
     {

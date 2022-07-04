@@ -22,17 +22,17 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
-namespace Alma\PrestaShop\Utils;
+namespace Alma\PrestaShop\ShareOfCheckout;
 
 use Alma\API\RequestError;
 use Alma\PrestaShop\API\ClientHelper;
 use Alma\PrestaShop\Forms\ShareOfCheckoutAdminFormBuilder;
 use Alma\PrestaShop\ShareOfCheckout\OrderHelper;
+use Alma\PrestaShop\Utils\DateHelper;
+use Alma\PrestaShop\Utils\Logger;
+use Alma\PrestaShop\Utils\Settings;
 use Configuration;
 use Currency;
-use Db;
-use Order;
-use Shop;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -144,7 +144,6 @@ class ShareOfCheckoutHelper
     public function getTotalOrders()
     {
         $ordersByCurrency = [];
-        $count = 0;
 
         foreach ($this->orderHelper->getOrdersByDate($this->startDate, $this->endDate) as $order) {
             $isoCodeCurrency = $this->getIsoCodeById($order->id_currency);
@@ -153,7 +152,7 @@ class ShareOfCheckoutHelper
                 $ordersByCurrency[$isoCodeCurrency] = $this->initTotalOrderResult($isoCodeCurrency);
             }
 
-            $ordersByCurrency[$isoCodeCurrency][self::TOTAL_COUNT_KEY] = ++$count;
+            $ordersByCurrency[$isoCodeCurrency][self::TOTAL_COUNT_KEY]++;
             $ordersByCurrency[$isoCodeCurrency][self::TOTAL_AMOUNT_KEY] += almaPriceToCents($order->total_paid_tax_incl);
         }
 
