@@ -454,7 +454,8 @@ class Alma extends PaymentModule
 
         if (!DateHelper::isSameDay($timestamp, Configuration::get('ALMA_CRONTASK'))) {
             Logger::instance()->info('Pseudo Cron Task exec to ' . $timestamp);
-            $shareOfCheckout = new ShareOfCheckoutHelper(new OrderHelper());
+            $orderHelper  = new OrderHelper();
+            $shareOfCheckout = new ShareOfCheckoutHelper($orderHelper);
             $shareOfCheckout->shareDays();
             Settings::updateValue('ALMA_CRONTASK', $timestamp);
         }

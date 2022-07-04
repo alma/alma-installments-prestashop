@@ -80,6 +80,7 @@ class ShareOfCheckoutHelper
             foreach ($this->getDatesInInterval($lastShareOfCheckout, $shareOfCheckoutEnabledDate) as $date) {
                 $this->setStartDate($date);
                 $this->putDay();
+                $this->orderHelper->resetOrderList();
             }
         } catch (RequestError $e) {
             Logger::instance()->info('Get Last Update Date error - end of process - message : ' . $e->getMessage());
@@ -145,8 +146,7 @@ class ShareOfCheckoutHelper
         $ordersByCurrency = [];
         $count = 0;
 
-        foreach ($this->getOrderIds() as $orderId) {
-            $order = new Order($orderId);
+        foreach ($this->orderHelper->getOrdersByDate($this->startDate, $this->endDate) as $order) {
             $isoCodeCurrency = $this->getIsoCodeById($order->id_currency);
 
             if (!isset($ordersByCurrency[$isoCodeCurrency])) {
@@ -154,7 +154,6 @@ class ShareOfCheckoutHelper
             }
 
             $ordersByCurrency[$isoCodeCurrency][self::TOTAL_COUNT_KEY] = ++$count;
-            // phpcs:ignore
             $ordersByCurrency[$isoCodeCurrency][self::TOTAL_AMOUNT_KEY] += almaPriceToCents($order->total_paid_tax_incl);
         }
 
@@ -170,8 +169,7 @@ class ShareOfCheckoutHelper
     {
         $ordersByCheckout = [];
 
-        foreach ($this->getOrderIds() as $orderId) {
-            $order = new Order($orderId);
+        foreach ($this->orderHelper->getOrdersByDate($this->startDate, $this->endDate) as $order) {
             $paymentMethod = $order->module;
             $isoCodeCurrency = $this->getIsoCodeById($order->id_currency);
 
@@ -180,12 +178,10 @@ class ShareOfCheckoutHelper
             }
 
             if (!isset($ordersByCheckout[$paymentMethod]['orders'][$isoCodeCurrency])) {
-                // phpcs:ignore
                 $ordersByCheckout[$paymentMethod]['orders'][$isoCodeCurrency] = $this->initOrderResult($isoCodeCurrency);
             }
 
             $ordersByCheckout[$paymentMethod][self::PAYMENT_METHOD_KEY] = $paymentMethod;
-            // phpcs:ignore
             $ordersByCheckout[$paymentMethod]['orders'][$isoCodeCurrency][self::AMOUNT_KEY] += almaPriceToCents($order->total_paid_tax_incl);
             ++$ordersByCheckout[$paymentMethod]['orders'][$isoCodeCurrency][self::COUNT_KEY];
         }
@@ -226,51 +222,6 @@ class ShareOfCheckoutHelper
             self::COUNT_KEY => 0,
             self::CURRENCY_KEY => $currency,
         ];
-    }
-
-    /**
-     * Order Ids validated by date
-     *
-     * @return array
-     */
-    public function getOrderIds()
-    {
-        $orderIds = [];
-        $defaultStatesExcluded = [6, 7, 8];
-        $orderIdsByDate = self::getOrdersIdByDate($this->startDate, $this->endDate);
-        foreach ($orderIdsByDate as $orderId) {
-            $currentOrder = new Order($orderId);
-            if (!in_array((int) $currentOrder->current_state, $defaultStatesExcluded)) {
-                $orderIds[] = $currentOrder->id;
-            }
-        }
-
-        return $orderIds;
-    }
-
-    /**
-     * Order by date
-     *
-     * @param string $date_start
-     * @param string $date_end
-     *
-     * @return array
-     */
-    public static function getOrdersIdByDate($date_start, $date_end)
-    {
-        $sql = 'SELECT `id_order`
-                FROM `' . _DB_PREFIX_ . 'orders`
-                WHERE date_add >= \'' . pSQL($date_start) . '\'
-                AND date_add <= \'' . pSQL($date_end) . '\'
-                    ' . Shop::addSqlRestriction();
-        $result = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS($sql);
-
-        $orders = [];
-        foreach ($result as $order) {
-            $orders[] = (int) $order['id_order'];
-        }
-
-        return $orders;
     }
 
     /**

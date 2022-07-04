@@ -25,7 +25,7 @@
 
 namespace Alma\PrestaShop\Tests\Unit\Lib\ShareOfCheckout;
 
-use Alma\PrestaShop\Utils\OrderHelper;
+use Alma\PrestaShop\ShareOfCheckout\OrderHelper;
 use PHPUnit\Framework\TestCase;
 use Alma\PrestaShop\Utils\ShareOfCheckoutHelper;
 use Mockery;
@@ -55,8 +55,11 @@ class ShareOfCheckoutHelperTest extends TestCase
     public function testGetPayload()
     {
         $orderHelperMock = Mockery::mock(OrderHelper::class);
+        // $orderHelperMock->current_state = 6;
+        $orderHelperMock->shouldReceive('getOrdersByDate')->andReturn($orderHelperMock);
+        $orderHelperMock->getOrdersByDate('2022-01-01');
         $shareOfCheckoutHelper = new ShareOfCheckoutHelper($orderHelperMock);
-        $shareOfCheckoutHelper->setStartDate('2022-01-01');
+        // $shareOfCheckoutHelper->setStartDate('2022-01-01');
         $payload = $shareOfCheckoutHelper->getPayload();
        
         $expectedPayload = [
@@ -72,10 +75,13 @@ class ShareOfCheckoutHelperTest extends TestCase
     public function testGetTotalPaymentMethods()
     {   
         $orderHelperMock = Mockery::mock(OrderHelper::class);
-        $orderHelperMock->shouldReceive('getOrders')->andReturn([]);
-        $shareOfCheckoutHelper = new ShareOfCheckoutHelper($orderHelperMock);
-        $getTotalPaymentMethods = $shareOfCheckoutHelper->getTotalPaymentMethods();
-        $this->assertEquals([], $getTotalPaymentMethods);
+        $orderHelperMock->current_state = 6;
+        $orderHelperMock->shouldReceive('getOrdersByDate')->andReturn($orderHelperMock);
+        $shareOfCheckoutHelperMock = Mockery::mock(ShareOfCheckoutHelper::class);
+        // $shareOfCheckoutHelper = new ShareOfCheckoutHelper($orderHelperMock);
+        $shareOfCheckoutHelperMock->shouldReceive('getTotalPaymentMethods')->andReturn();
+        // $getTotalPaymentMethods = $shareOfCheckoutHelper->getTotalPaymentMethods();
+        $this->assertEquals([], $shareOfCheckoutHelper);
     }
 
 

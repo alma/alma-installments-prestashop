@@ -24,9 +24,15 @@
 
 namespace Alma\PrestaShop\ShareOfCheckout;
 
+use Alma\PrestaShop\Utils\Logger;
+use Db;
+use Order;
+use Shop;
+
 if (!defined('_PS_VERSION_')) {
     exit;
 }
+
 
 /**
  * Class OrderHelper.
@@ -35,5 +41,73 @@ if (!defined('_PS_VERSION_')) {
  */
 class OrderHelper
 {
+    /**
+     * @var array
+     */
+    public $defaultStatesExcluded;
+    
+    /**
+     * @var array
+     */
+    private $orders;
+    
+    function __construct()
+    {
+        $this->defaultStatesExcluded = [6, 7, 8];
+        $this->orders = [];
+    }
 
+    /**
+     * Order Ids validated by date
+     *
+     * @param string $startDate
+     * @param string $endDate
+     * 
+     * @return Order[]
+     */
+    public function getOrdersByDate($startDate, $endDate)
+    {
+        if (!empty($this->orders)){
+            return $this->orders;
+        }
+        $orders = [];
+        $orderIdsByDate = $this->getOrdersIdByDate($startDate, $endDate);
+        foreach ($orderIdsByDate as $orderId) {
+            $currentOrder = new Order($orderId);
+            $orders[] = $currentOrder;
+        }
+        $this->orders = $orders;
+
+        return $orders;
+    }
+
+    /**
+     * Order by date
+     *
+     * @param string $startDate
+     * @param string $endDate
+     *
+     * @return array
+     */
+    public function getOrdersIdByDate($startDate, $endDate)
+    {
+        $sql = 'SELECT `id_order`
+                FROM `' . _DB_PREFIX_ . 'orders`
+                WHERE date_add >= \'' . pSQL($startDate) . '\'
+                AND date_add <= \'' . pSQL($endDate) . '\'
+                AND current_state NOT IN (' . implode(", ", $this->defaultStatesExcluded) . ')
+                    ' . Shop::addSqlRestriction();
+        $result = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS($sql);
+        $orderIds = [];
+        foreach ($result as $order) {
+            $orderIds[] = (int) $order['id_order'];
+        }
+
+        return $orderIds;
+    }
+
+    public function resetOrderList()
+    {
+        $this->orders = [];
+    }
 }
