@@ -25,21 +25,9 @@
 
 namespace Alma\PrestaShop\Tests\Unit\Lib\ShareOfCheckout;
 
-use Alma\PrestaShop\ShareOfCheckout\OrderHelper;
 use PHPUnit\Framework\TestCase;
-use Mockery;
 
 class OrderHelperTest extends TestCase
 {
-    public function testGetOrdersIdByDate()
-    {
-        $order = new OrderHelper();
-        $order->getOrdersIdByDate('2022-06-29 00:00:00', '2022-06-29 23:59:59');
-    }
-
-    public function testGetOrdersByDate()
-    {
-        $order = new OrderHelper();
-        $order->getOrdersByDate('2022-06-29 00:00:00', '2022-06-29 23:59:59');
-    }
+    
 }
