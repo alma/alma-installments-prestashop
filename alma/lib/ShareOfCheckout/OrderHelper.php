@@ -24,7 +24,6 @@
 
 namespace Alma\PrestaShop\ShareOfCheckout;
 
-use Alma\PrestaShop\Utils\Logger;
 use Db;
 use Order;
 use Shop;
@@ -70,15 +69,15 @@ class OrderHelper
         if (!empty($this->orders)){
             return $this->orders;
         }
-        $orders = [];
+        $newOrders = [];
         $orderIdsByDate = $this->getOrdersIdByDate($startDate, $endDate);
         foreach ($orderIdsByDate as $orderId) {
             $currentOrder = new Order($orderId);
-            $orders[] = $currentOrder;
+            $newOrders[] = $currentOrder;
         }
-        $this->orders = $orders;
+        $this->orders = $newOrders;
 
-        return $orders;
+        return $newOrders;
     }
 
     /**
