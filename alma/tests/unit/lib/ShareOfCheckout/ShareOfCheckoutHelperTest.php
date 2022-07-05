@@ -226,32 +226,39 @@ class ShareOfCheckoutHelperTest extends TestCase
 
     public function orders()
     {
-        $order1 = Mockery::mock(Order::class);
-        $order1->id_currency = 1;
-        $order1->total_paid_tax_incl = 100.00;
-        $order1->module = 'alma';
-        
-        $order2 = Mockery::mock(Order::class);
-        $order2->id_currency = 2;
-        $order2->total_paid_tax_incl = 200.00;
-        $order2->module = 'paypal';
-
-        $order3 = Mockery::mock(Order::class);
-        $order3->id_currency = 1;
-        $order3->total_paid_tax_incl = 55.00;
-        $order3->module = 'alma';
-
-        $order4 = Mockery::mock(Order::class);
-        $order4->id_currency = 2;
-        $order4->total_paid_tax_incl = 100.00;
-        $order4->module = 'alma';
-
-        return [
-            $order1,
-            $order2,
-            $order3,
-            $order4
+        $ordersMock = [];
+        $ordersFactory = [
+            [
+                'id_currency' => 1,
+                'total_paid_tax_incl' => 100.00,
+                'module' => 'alma',
+            ],
+            [
+                'id_currency' => 2,
+                'total_paid_tax_incl' => 200.00,
+                'module' => 'paypal',
+            ],
+            [
+                'id_currency' => 1,
+                'total_paid_tax_incl' => 55.00,
+                'module' => 'alma',
+            ],
+            [
+                'id_currency' => 2,
+                'total_paid_tax_incl' => 100.00,
+                'module' => 'alma',
+            ],
         ];
+
+        foreach($ordersFactory as $orderFactory) {
+            $orderMock = Mockery::mock(Order::class);
+            $orderMock->id_currency = $orderFactory['id_currency'];
+            $orderMock->total_paid_tax_incl = $orderFactory['total_paid_tax_incl'];
+            $orderMock->module = $orderFactory['module'];
+            $ordersMock[] = $orderMock;
+        }
+
+        return $ordersMock;
     }
 
     public function dateErrorDataProvider()
