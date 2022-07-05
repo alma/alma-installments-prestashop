@@ -33,6 +33,8 @@ use Order;
 
 class ShareOfCheckoutHelperTest extends TestCase
 {
+    const EUR_CURRENCY_CODE = 1;
+    const USD_CURRENCY_CODE = 2;
 
     protected function setUp()
     {
@@ -229,22 +231,22 @@ class ShareOfCheckoutHelperTest extends TestCase
         $ordersMock = [];
         $ordersFactory = [
             [
-                'id_currency' => 1,
+                'id_currency' => self::EUR_CURRENCY_CODE,
                 'total_paid_tax_incl' => 100.00,
                 'module' => 'alma',
             ],
             [
-                'id_currency' => 2,
+                'id_currency' => self::USD_CURRENCY_CODE,
                 'total_paid_tax_incl' => 200.00,
                 'module' => 'paypal',
             ],
             [
-                'id_currency' => 1,
+                'id_currency' => self::EUR_CURRENCY_CODE,
                 'total_paid_tax_incl' => 55.00,
                 'module' => 'alma',
             ],
             [
-                'id_currency' => 2,
+                'id_currency' => self::USD_CURRENCY_CODE,
                 'total_paid_tax_incl' => 100.00,
                 'module' => 'alma',
             ],
