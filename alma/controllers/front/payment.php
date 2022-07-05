@@ -28,6 +28,7 @@ if (!defined('_PS_VERSION_')) {
 use Alma\API\RequestError;
 use Alma\PrestaShop\API\ClientHelper;
 use Alma\PrestaShop\Model\PaymentData;
+use Alma\PrestaShop\Utils\CartDataHelper;
 use Alma\PrestaShop\Utils\Logger;
 use Alma\PrestaShop\Utils\Settings;
 
@@ -104,9 +105,12 @@ class AlmaPaymentModuleFrontController extends ModuleFrontController
         $key = Tools::getValue('key', 'general_3_0_0');
         $feePlans = json_decode(Settings::getFeePlans());
         $dataFromKey = Settings::getDataFromKey($key);
-
+        
         $cart = $this->context->cart;
         $data = PaymentData::dataFromCart($cart, $this->context, $dataFromKey, true);
+        $dataObject = new CartDataHelper($cart, $this->context, $dataFromKey);
+        var_dump($dataObject->paymentData());
+        exit;
         $alma = ClientHelper::defaultInstance();
 
         if (!$data || !$alma) {
