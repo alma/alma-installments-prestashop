@@ -25,12 +25,5 @@
 {capture assign='fees'}{almaFormatPrice cents=$plans[0].customer_fee}{/capture}
 <span class="alma-deferred--description">
     {$installmentText}
-    <br>
-    <small>
-        {if $plans[0].customer_fee > 0}
-            {l s='(Including fees: %s)' sprintf=[$fees] mod='alma'}
-        {else}
-            {l s='(No additional fees)' mod='alma'}
-        {/if}
-    </small>
+    {include file="modules/alma/views/templates/hook/_partials/fees.tpl" customer_fee=$plans[0].customer_fee fees=$fees}
 </span>
