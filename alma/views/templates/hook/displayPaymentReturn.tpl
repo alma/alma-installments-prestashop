@@ -27,10 +27,10 @@
         <img src="/modules/alma/views/img/logos/logo_alma.svg" alt="Alma" />
     </div>
     <h2>
-        {l s='Your payment with Alma was successful' mod='alma'}
+        {$wording.paymentAlmaSuccessful}
     </h2>
     <h3>
-        {l s='Here is your order reference:' mod='alma'} {$order_reference|escape:'htmlall':'UTF-8'}
+        {$wording.orderReference}
     </h3>
 
     <p>

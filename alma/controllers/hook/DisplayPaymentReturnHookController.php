@@ -68,10 +68,41 @@ class DisplayPaymentReturnHookController extends FrontendHookController
             }
         }
 
+        $wording = [
+            'paymentAlmaSuccessful' => $this->module->l('Your payment with Alma was successful', 'DisplayPaymentReturnHookController'),
+            'orderReference' => sprintf(
+                $this->module->l('Here is your order reference: %1$d', 'DisplayPaymentReturnHookController'),
+                $order->reference
+            ),
+            'detailsPayment' => sprintf(
+                $this->module->l('Details for your payment: %1$d', 'DisplayPaymentReturnHookController'),
+                $orderPayment->payment_method
+            ),
+            'today' => $this->module->l('Today', 'DisplayPaymentReturnHookController'),
+            'atShipping' => $this->module->l('At shipping', 'DisplayPaymentReturnHookController'),
+            'youReceiveConfirmationEmail' => $this->module->l('You should receive a confirmation email shortly', 'DisplayPaymentReturnHookController'),
+            'toFollowPaymentLinkAlma' => sprintf(
+                // phpcs:ignore Generic.Files.LineLength
+                $this->module->l('To check your payment\'s progress, change you card or pay in advance: %1$sclick here%2$s', 'DisplayPaymentReturnHookController'),
+                // phpcs:ignore Generic.Files.LineLength
+                '<a href="' . $payment->url . '" target="_blank" title="' . $this->module->l('follow its deadlines', 'DisplayPaymentReturnHookController') . '">',
+                '</a>'
+            ),
+            'weAppreciateBusiness' => $this->module->l('We appreciate your business', 'DisplayPaymentReturnHookController'),
+        ];
+
+        foreach($payment->payment_plan as $plan) {
+            $plan->textIncludinfFees = sprintf(
+                $this->module->l('(Including fees: %1$d)', 'DisplayPaymentReturnHookController'),
+                $plan->customer_fee
+            );
+        }
+
         $this->context->smarty->assign([
             'order_reference' => $order->reference,
             'payment_order' => $orderPayment,
             'payment' => $payment,
+            'wording' => $wording,
         ]);
 
         return $this->module->display($this->module->file, 'displayPaymentReturn.tpl');
