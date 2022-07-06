@@ -35,9 +35,8 @@
             });
     
             function initMoreOption(selector, selectorNotHide, selectorInput) {
-                if ($(selector).length == 0) {
-                    var idSelector = selector.split('_')[1];
-                    selector = selector + '_' + idSelector;
+                if ($(selector).length === 0) {
+                    selector = selector + '_' + selector.split('_')[1];
                 }
                 $(selector + ' ' + selectorNotHide).hide();
                 if ($(selectorInput).prop("checked")) {
