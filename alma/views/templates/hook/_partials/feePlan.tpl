@@ -39,11 +39,7 @@
         {if 4 >= $installmentsCount}
             <br>
             <small>
-                {if $plans[0].customer_fee > 0}
-                    {l s='(Including fees: %s)' sprintf=[$fees] mod='alma'}
-                {else}
-                    {l s='(No additional fees)' mod='alma'}
-                {/if}
+                {$textIncludingFees}
             </small>
         {/if}
     </span>
@@ -112,7 +108,7 @@
                     {if $v.customer_fee > 0}
                         {capture assign='fees'}{almaFormatPrice cents=$plans[0].customer_fee}{/capture}
                         <small style="display: block">
-                            {l s='(Including fees: %s)' sprintf=[$fees] mod='alma'}
+                            {$v.textIncludingFees}
                         </small>
                     {/if}
                 </span>

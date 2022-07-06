@@ -34,7 +34,7 @@
     </h3>
 
     <p>
-        {l s='Details for your payment:' mod='alma'} <b>{$payment_order->payment_method|escape:'htmlall':'UTF-8'}</b>
+        {$wording.detailsPayment}
     </p>
     <div class="alma-fee-plan--block">
     {foreach from=$payment->payment_plan item=plan key=k name=counter}
@@ -42,9 +42,9 @@
             <span class="alma-fee-plan--date">
             {if $payment->deferred_trigger}
                 {if $smarty.foreach.counter.iteration === 1}
-                    {l s='Today' mod='alma'}
+                    {$wording.today}
                 {elseif $smarty.foreach.counter.iteration === 2}
-                    {l s='At shipping' mod='alma'}
+                    {$wording.atShipping}
                 {else}
                     {assign var='nb_installment_month' value=$plan->time_delta_from_start['months']}
                     {if $plan->time_delta_from_start['days'] >= 30 && $plan->time_delta_from_start['months'] == 0}
@@ -65,7 +65,7 @@
                 {if $plan->customer_fee > 0}
                     {capture assign='fees'}{almaFormatPrice cents=$payment->payment_plan[0]->customer_fee}{/capture}
                     <small style="display: block">
-                        {l s='(Including fees: %s)' sprintf=[$fees] mod='alma'}
+                        {$plan->textIncludinfFees}
                     </small>
                 {/if}
             </span>
@@ -73,13 +73,13 @@
     {/foreach}
     </div>
     <p>
-        {l s='You should receive a confirmation email shortly' mod='alma'}
+        {$wording.youReceiveConfirmationEmail}
     </p>
     <p>
-        {l s='To check your payment\'s progress, change you card or pay in advance:' mod='alma'} <a href="{$payment->url|escape:'htmlall':'UTF-8'}" target="_blank" title="{l s='follow its deadlines' mod='alma'}">{l s='click here' mod='alma'}</a>
+        {$wording.toFollowPaymentLinkAlma}
     </p>
     <p>
-        {l s='We appreciate your business' mod='alma'}
+        {$wording.weAppreciateBusiness}
     </p>
 </section>
 {/if}

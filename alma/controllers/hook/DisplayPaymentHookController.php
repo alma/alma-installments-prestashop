@@ -82,6 +82,16 @@ class DisplayPaymentHookController extends FrontendHookController
                 'taeg' => $plan->annualInterestRate,
             ];
 
+            foreach ($plans as $keyPlan => $paymentPlan) {
+                $plans[$keyPlan]['textIncludingFees'] = $this->module->l('(No additional fees)', 'DisplayPaymentHookController');
+                if ($paymentPlan['customer_fee'] > 0) {
+                    $plans[$keyPlan]['textIncludingFees'] = sprintf(
+                        $this->module->l('(Including fees: %1$s)', 'DisplayPaymentHookController'),
+                        almaFormatPrice($paymentPlan['customer_fee'])
+                    );
+                }
+            }
+
             $isDeferred = Settings::isDeferred($plan);
             $isInstallmentAccordingToDeferred = $isDeferred ? $installment === 1 : $installment !== 1;
 
@@ -112,6 +122,7 @@ class DisplayPaymentHookController extends FrontendHookController
                     'text' => sprintf(SettingsCustomFields::getPnxButtonTitleByLang($idLang), $installment),
                     'desc' => sprintf(SettingsCustomFields::getPnxButtonDescriptionByLang($idLang), $installment),
                     'creditInfo' => $creditInfo,
+                    'textIncludingFees' => $this->getTextIncludingFees($plans[0]['customer_fee'])
                 ];
                 if ($installment > 4) {
                     $paymentOption['text'] = sprintf(SettingsCustomFields::getPnxAirButtonTitleByLang($idLang), $installment);
@@ -135,6 +146,14 @@ class DisplayPaymentHookController extends FrontendHookController
         }
 
         return $this->displayAlmaPaymentOption($payment);
+    }
+
+    private function getTextIncludingFees($fees)
+    {
+        return sprintf(
+            $this->module->l('(Including fees: %1$s)', 'DisplayPaymentHookController'),
+            almaFormatPrice($fees)
+        );
     }
 
     /**

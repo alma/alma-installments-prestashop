@@ -27,10 +27,6 @@
     {$installmentText}
     <br>
     <small>
-        {if $plans[0].customer_fee > 0}
-            {l s='(Including fees: %s)' sprintf=[$fees] mod='alma'}
-        {else}
-            {l s='(No additional fees)' mod='alma'}
-        {/if}
+        {$plans[0].textIncludingFees}
     </small>
 </span>

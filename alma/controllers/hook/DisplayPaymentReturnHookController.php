@@ -71,12 +71,14 @@ class DisplayPaymentReturnHookController extends FrontendHookController
         $wording = [
             'paymentAlmaSuccessful' => $this->module->l('Your payment with Alma was successful', 'DisplayPaymentReturnHookController'),
             'orderReference' => sprintf(
-                $this->module->l('Here is your order reference: %1$d', 'DisplayPaymentReturnHookController'),
+                $this->module->l('Here is your order reference: %1$s', 'DisplayPaymentReturnHookController'),
                 $order->reference
             ),
             'detailsPayment' => sprintf(
-                $this->module->l('Details for your payment: %1$d', 'DisplayPaymentReturnHookController'),
-                $orderPayment->payment_method
+                $this->module->l('Details for your payment: %1$s%2$s%3$s', 'DisplayPaymentReturnHookController'),
+                '<b>',
+                $orderPayment->payment_method,
+                '</b>'
             ),
             'today' => $this->module->l('Today', 'DisplayPaymentReturnHookController'),
             'atShipping' => $this->module->l('At shipping', 'DisplayPaymentReturnHookController'),
@@ -93,8 +95,8 @@ class DisplayPaymentReturnHookController extends FrontendHookController
 
         foreach($payment->payment_plan as $plan) {
             $plan->textIncludinfFees = sprintf(
-                $this->module->l('(Including fees: %1$d)', 'DisplayPaymentReturnHookController'),
-                $plan->customer_fee
+                $this->module->l('(Including fees: %1$s)', 'DisplayPaymentReturnHookController'),
+                almaFormatPrice($plan->customer_fee)
             );
         }
 

@@ -111,6 +111,13 @@ class PaymentOptionsHookController extends FrontendHookController
                         $plans[$keyPlan]['human_date'] = SettingsCustomFields::getDescriptionPaymentTriggerByLang($idLang);
                     }
                 }
+                $plans[$keyPlan]['textIncludingFees'] = $this->module->l('(No additional fees)', 'PaymentOptionsHookController');
+                if ($paymentPlan['customer_fee'] > 0) {
+                    $plans[$keyPlan]['textIncludingFees'] = sprintf(
+                        $this->module->l('(Including fees: %1$s)', 'PaymentOptionsHookController'),
+                        almaFormatPrice($paymentPlan['customer_fee'])
+                    );
+                }
             }
             $isDeferred = Settings::isDeferred($plan);
             $duration = Settings::getDuration($plan);
@@ -153,6 +160,7 @@ class PaymentOptionsHookController extends FrontendHookController
                         'merchantId' => Settings::getMerchantId(),
                         'first' => $first,
                         'creditInfo' => $creditInfo,
+                        'textIncludingFees' => $this->getTextIncludingFees($plans[0]['customer_fee']),
                     ];
                     if ($isDeferred) {
                         $templateVar['installmentText'] = sprintf(
@@ -179,6 +187,19 @@ class PaymentOptionsHookController extends FrontendHookController
         }
 
         return $payment;
+    }
+
+    private function getTextIncludingFees($fees)
+    {
+        $textFees = $this->module->l('(No additional fees)', 'PaymentOptionsHookController');
+        if ($fees > 0) {
+            $textFees = sprintf(
+                $this->module->l('(Including fees: %1$s)', 'PaymentOptionsHookController'),
+                almaFormatPrice($fees)
+            );
+        }
+
+        return $textFees;
     }
 
     /**

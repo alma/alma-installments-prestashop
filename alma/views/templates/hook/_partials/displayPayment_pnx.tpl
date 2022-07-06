@@ -61,7 +61,7 @@
                             {/if}
 
                             <span class="alma-button--fee-plans">
-                                {include file="modules/alma/views/templates/hook/_partials/feePlan.tpl" plans=$option.plans installmentText=$option.installmentText deferred_trigger_limit_days=$option.deferred_trigger_limit_days creditInfo=$option.creditInfo oneLiner=true}
+                                {include file="modules/alma/views/templates/hook/_partials/feePlan.tpl" plans=$option.plans installmentText=$option.installmentText textIncludingFees=$option.textIncludingFees deferred_trigger_limit_days=$option.deferred_trigger_limit_days creditInfo=$option.creditInfo oneLiner=true}
                             </span>
                         </span>
                     </a>
