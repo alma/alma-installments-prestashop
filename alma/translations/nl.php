@@ -48,6 +48,7 @@ $_MODULE['<{alma}prestashop>displaypaymenthookcontroller_afd8ac1c65e1519d6a890e5
 $_MODULE['<{alma}prestashop>displaypaymenthookcontroller_bc69b42c4bd339154f9025f3299ad146'] = '%1$s vandaag dan %2$d x %3$s';
 $_MODULE['<{alma}prestashop>displaypaymenthookcontroller_9088921432b295dfe6f02863b2dc0ff8'] = '0 € vandaag dan %1$s op %2$s';
 $_MODULE['<{alma}prestashop>displayrefundshookcontroller_db13e38ee45ff954199d15a509508f57'] = 'Alma terugbetaling';
+$_MODULE['<{alma}prestashop>displayrefundshookcontroller_8de0f743a6b84c2c69e42f07b7dddef4'] = 'Betaal deze bestelling terug met de Alma module. Dit wordt automatisch in uw Alma dashboard toegepast. %1$sZie documentatie%2$s';
 $_MODULE['<{alma}prestashop>displayrefundshookcontroller_3f20b5130f65e1287ba5b3e341e542f9'] = 'Type terugbetaling:';
 $_MODULE['<{alma}prestashop>displayrefundshookcontroller_7eefad58341b7a853ac151fdfeb9a5ce'] = 'Alleen deze bestelling (%s)';
 $_MODULE['<{alma}prestashop>displayrefundshookcontroller_c84ddaf35ec7947a5a2e291f3ff991ce'] = 'Betaal de volledige bestelling terug';
