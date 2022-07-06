@@ -54,7 +54,7 @@
                 {/if}
             {else}
                 {if $smarty.foreach.counter.iteration === 1}
-                    {l s='Today' mod='alma'}
+                    {$wording.today}
                 {else}
                     {dateFormat date=$plan->due_date|date_format:"%Y-%m-%d" full=0}
                 {/if}
