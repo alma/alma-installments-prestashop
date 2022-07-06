@@ -169,7 +169,6 @@ $_MODULE['<{alma}prestashop>customfieldshelper_7a854e750fe5f3e7120020c7c20987d4'
 $_MODULE['<{alma}prestashop>customfieldshelper_6ed45ebd72fcca0fc0c271128e9d7b7b'] = 'À l\'expédition';
 $_MODULE['<{alma}prestashop>orderdatatrait_7960c85fd5916169fc5038a2192094f8'] = 'Erreur : La transaction Alma n\'a pas pu être récupérée';
 $_MODULE['<{alma}prestashop>displaypaymentreturn_9bbd94e0a507283ae202812ea1bd6f20'] = 'Dans %s mois';
-$_MODULE['<{alma}prestashop>displaypaymentreturn_1dd1c5fb7f25cd41b291d43a89e3aefd'] = 'Aujourd\'hui';
 $_MODULE['<{alma}prestashop>excludedcategories_ebb1e29b7a24f7244361d8c9bef5cafd'] = 'Certains produits (cartes cadeau, clés de licence, logiciels, armes, ...) ne peuvent pas être vendus avec Alma, comme indiqué dans %snos CGV%s (voir le paragraphe Exclusions).';
 $_MODULE['<{alma}prestashop>excludedcategories_2b02fe17f294da7167110f5df2b72fc0'] = 'Si vous vendez de tels produits, vous devez configurer le module Alma pour qu\'il soit désactivé lorsque vos clients les consultent ou les achètent.';
 $_MODULE['<{alma}prestashop>excludedcategories_eeecfb6e26e4e102986292a543d37542'] = 'Utilisez %1$s%2$sla page d\'exclusion de catégories%3$s%4$s pour vous confomer à ces restrictions.';

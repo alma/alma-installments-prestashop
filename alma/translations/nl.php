@@ -169,7 +169,6 @@ $_MODULE['<{alma}prestashop>customfieldshelper_7a854e750fe5f3e7120020c7c20987d4'
 $_MODULE['<{alma}prestashop>customfieldshelper_6ed45ebd72fcca0fc0c271128e9d7b7b'] = 'Bij verzending';
 $_MODULE['<{alma}prestashop>orderdatatrait_7960c85fd5916169fc5038a2192094f8'] = 'Fout: Kon Alma transactie niet vinden';
 $_MODULE['<{alma}prestashop>displaypaymentreturn_9bbd94e0a507283ae202812ea1bd6f20'] = '%s maand later';
-$_MODULE['<{alma}prestashop>displaypaymentreturn_1dd1c5fb7f25cd41b291d43a89e3aefd'] = 'Vandaag';
 $_MODULE['<{alma}prestashop>excludedcategories_ebb1e29b7a24f7244361d8c9bef5cafd'] = 'Bepaalde producten (geschenkbonnen, licentiesleutels, software, wapens, ...)kunnen niet worden gekocht met Alma, zoals vermeld in %sonze verkoopvoorwaarden%s (zie paragraaf Uitsluitingen).';
 $_MODULE['<{alma}prestashop>excludedcategories_2b02fe17f294da7167110f5df2b72fc0'] = 'Als u dergelijke producten verkoopt, moet u de Alma module zodanig configureren dat deze gedeactiveerd wordt wanneer klanten ze bekijken of kopen. ';
 $_MODULE['<{alma}prestashop>excludedcategories_eeecfb6e26e4e102986292a543d37542'] = 'Gebruik%1$s%2$de pagina voor uitsluiting van categorieën%3$s%4$s om aan deze beperkingen te voldoen.';

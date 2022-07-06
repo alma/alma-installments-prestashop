@@ -169,7 +169,6 @@ $_MODULE['<{alma}prestashop>customfieldshelper_7a854e750fe5f3e7120020c7c20987d4'
 $_MODULE['<{alma}prestashop>customfieldshelper_6ed45ebd72fcca0fc0c271128e9d7b7b'] = 'Beim Versand';
 $_MODULE['<{alma}prestashop>orderdatatrait_7960c85fd5916169fc5038a2192094f8'] = 'Fehler: Alma-Transaktion konnte nicht gefunden werden';
 $_MODULE['<{alma}prestashop>displaypaymentreturn_9bbd94e0a507283ae202812ea1bd6f20'] = '%s Monat später';
-$_MODULE['<{alma}prestashop>displaypaymentreturn_1dd1c5fb7f25cd41b291d43a89e3aefd'] = 'Heute';
 $_MODULE['<{alma}prestashop>excludedcategories_ebb1e29b7a24f7244361d8c9bef5cafd'] = 'Wie in %sunseren AGB%s im Abschnitt „Ausschlüsse” angegeben, können bestimmte Produkte (Geschenkkarten, Lizenzschlüssel, Software, Waffen usw.) nicht mit Alma verkauft werden.';
 $_MODULE['<{alma}prestashop>excludedcategories_2b02fe17f294da7167110f5df2b72fc0'] = 'Wenn Sie solche Produkte verkaufen, müssen Sie das Alma-Modul so konfigurieren, dass es deaktiviert wird, wenn Ihre Kunden die Produkte aufrufen oder kaufen.';
 $_MODULE['<{alma}prestashop>excludedcategories_eeecfb6e26e4e102986292a543d37542'] = 'Verwenden Sie %1$s%2$sauf der Seite mit den ausgeschlossenen Kategorien%3$s%4$s, um sich diesen Einschränkungen anzupassen.';
