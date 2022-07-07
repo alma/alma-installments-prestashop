@@ -65,7 +65,7 @@
                 {if $plan->customer_fee > 0}
                     {capture assign='fees'}{almaFormatPrice cents=$payment->payment_plan[0]->customer_fee}{/capture}
                     <small style="display: block">
-                        {l s='(Including fees: %s)' sprintf=[$fees] mod='alma'}
+                        {include file="modules/alma/views/templates/hook/_partials/customerFees.tpl" fees=$fees}
                     </small>
                 {/if}
             </span>
