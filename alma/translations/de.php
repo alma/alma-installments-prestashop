@@ -39,10 +39,10 @@ $_MODULE['<{alma}prestashop>adminalmacategories_30269022e9d8f51beaabb52e5d0de2b7
 $_MODULE['<{alma}prestashop>adminalmacategories_97b1d2407df2098b636c462aa766d028'] = 'Für Alma berechtigt';
 $_MODULE['<{alma}prestashop>adminalmacategories_6da38e7cdb5552e79a4ec4e2c62f2b93'] = 'Alma für diese Kategorien aktivieren';
 $_MODULE['<{alma}prestashop>adminalmacategories_1ef246272d910a217e66aff142f708ad'] = 'Alma für diese Kategorien deaktivieren';
-$_MODULE['<{alma}prestashop>adminalmarefunds_4ba820211f99849725468bd56fc50216'] = 'Fehler: Betrag ist höher als der maximal erstattungsfähige Betrag';
-$_MODULE['<{alma}prestashop>adminalmarefunds_01dedb61eca449d9075cc314cc4151d7'] = 'Fehler: Unbekannter Erstattungstyp (%s)';
 $_MODULE['<{alma}prestashop>adminalmarefunds_69c00601627a9011bf5c4816abf00b5a'] = 'Bei der Bearbeitung der Erstattung ist ein Fehler aufgetreten';
 $_MODULE['<{alma}prestashop>adminalmarefunds_9bbf53faf470010110269d041cab1e9f'] = 'Die Erstattung wurde bearbeitet';
+$_MODULE['<{alma}prestashop>adminalmarefunds_4ba820211f99849725468bd56fc50216'] = 'Fehler: Betrag ist höher als der maximal erstattungsfähige Betrag';
+$_MODULE['<{alma}prestashop>adminalmarefunds_01dedb61eca449d9075cc314cc4151d7'] = 'Fehler: Unbekannter Erstattungstyp (%s)';
 $_MODULE['<{alma}prestashop>payment_efa820507b1951ee5722003639b1a0b0'] = 'Die Ratenzahlung mit Alma ist in dieser Währung nicht möglich';
 $_MODULE['<{alma}prestashop>displaypaymenthookcontroller_afd8ac1c65e1519d6a890e5f98558a52'] = '%1$s dann %2$d x %3$s';
 $_MODULE['<{alma}prestashop>displaypaymenthookcontroller_bc69b42c4bd339154f9025f3299ad146'] = '%1$s heute dann %2$d x %3$s';
@@ -98,7 +98,7 @@ $_MODULE['<{alma}prestashop>excludedcategoryadminformbuilder_36359547b09bdb31f46
 $_MODULE['<{alma}prestashop>paymentbuttonadminformbuilder_bd348b62a28c8a1ff9932c0dfb8b53a9'] = 'Zahlungen in 2, 3 und 4 Raten';
 $_MODULE['<{alma}prestashop>paymentbuttonadminformbuilder_b78a3223503896721cca1303f776159b'] = 'Titel';
 $_MODULE['<{alma}prestashop>paymentbuttonadminformbuilder_b5a7adde1af5c87d7fd797b6245c2a39'] = 'Beschreibung';
-$_MODULE['<{alma}prestashop>paymentbuttonadminformbuilder_f253e6ecb1d145ce02bd31c383dbad3c'] = 'Aufgeschobene Zahlungen';
+$_MODULE['<{alma}prestashop>paymentbuttonadminformbuilder_f253e6ecb1d145ce02bd31c383dbad3c'] = 'Aufgeschobene Zahlung';
 $_MODULE['<{alma}prestashop>paymentbuttonadminformbuilder_1bb665a61ac795bdc55e2a503fa824f5'] = 'Zahlungen in mehr als 4 Raten';
 $_MODULE['<{alma}prestashop>paymentbuttonadminformbuilder_1ff5f75cf29d7dfd4689a155c4996acb'] = 'Wenn Alma nicht verfügbar ist...';
 $_MODULE['<{alma}prestashop>paymentbuttonadminformbuilder_312b74149761f30bdcb38460993c8c6a'] = 'Schaltfläche "Zahlung ausblenden';
@@ -160,7 +160,6 @@ $_MODULE['<{alma}prestashop>displaypaymentreturn_709fa7b44d5d59d2802e7878e35453a
 $_MODULE['<{alma}prestashop>displaypaymentreturn_1dd1c5fb7f25cd41b291d43a89e3aefd'] = 'Heute';
 $_MODULE['<{alma}prestashop>displaypaymentreturn_6ed45ebd72fcca0fc0c271128e9d7b7b'] = 'Beim Versand';
 $_MODULE['<{alma}prestashop>displaypaymentreturn_9bbd94e0a507283ae202812ea1bd6f20'] = '%s Monat später';
-$_MODULE['<{alma}prestashop>displaypaymentreturn_304bcb1f18f0897c89c6a79cf0725af1'] = '(inklusive Gebühren: %s)';
 $_MODULE['<{alma}prestashop>displaypaymentreturn_d61c09b6ad630202a5f4f57df12c9d65'] = 'Sie erhalten in Kürze eine Bestätigungs-E-Mail.';
 $_MODULE['<{alma}prestashop>displaypaymentreturn_47f0ca55ca88fc5d8f3d6984c2dd30bc'] = 'Um den Fortschritt Ihrer Zahlung zu überprüfen, wechseln Sie zu Karte oder Vorkasse:';
 $_MODULE['<{alma}prestashop>displaypaymentreturn_51f745e831355683181d4b287d354eed'] = 'Beachten Sie die Fristen';
@@ -216,15 +215,13 @@ $_MODULE['<{alma}prestashop>sample_payment_button_9f04fe30d0288024643a1dd3074abe
 $_MODULE['<{alma}prestashop>sample_widget_ee4d20be41f0955a9cb0a3b05a496972'] = 'Beispiel-Widget Alma';
 $_MODULE['<{alma}prestashop>sample_widget_a54c98ce66641a5346707192d2ca86a6'] = 'Widget, wenn Alma-Zahlungen für dieses Produkt verfügbar sind.';
 $_MODULE['<{alma}prestashop>sample_widget_53b86cade31dfce70c3e02e012acb899'] = 'Widget, wenn Alma-Zahlungen für dieses Produkt nicht verfügbar sind.';
-$_MODULE['<{alma}prestashop>deferred_304bcb1f18f0897c89c6a79cf0725af1'] = '(inklusive Gebühren: %s)';
-$_MODULE['<{alma}prestashop>deferred_3acc62b245d8bc10f04d81f69d85b685'] = '(ohne Gebühren)';
+$_MODULE['<{alma}prestashop>customerfees_304bcb1f18f0897c89c6a79cf0725af1'] = '(inklusive Gebühren: %s)';
 $_MODULE['<{alma}prestashop>displaypayment_deferred_905dbe578ba7a221e637203026fdb986'] = 'Alma Zahlungsaufschub ist für diese Bestellung nicht verfügbar';
 $_MODULE['<{alma}prestashop>displaypayment_pnx_22f0189423433ab0e055b91d98970e5f'] = 'Die Ratenzahlung mit Alma ist bei dieser Bestellung nicht möglich';
 $_MODULE['<{alma}prestashop>feeplan_64408fc092e84b9eb352626a0bcbbdf7'] = 'Jährlicher Zinssatz:';
 $_MODULE['<{alma}prestashop>feeplan_ae9a134243362e66fef28a6b2e8a77c4'] = 'Ihr Warenkorb:';
 $_MODULE['<{alma}prestashop>feeplan_d63a8fbc00567ee4b9640d1284b16e7b'] = 'Kreditgebühren:';
 $_MODULE['<{alma}prestashop>feeplan_96b0141273eabab320119c467cdcaf17'] = 'Gesamt';
-$_MODULE['<{alma}prestashop>feeplan_304bcb1f18f0897c89c6a79cf0725af1'] = '(inklusive Gebühren: %s)';
-$_MODULE['<{alma}prestashop>feeplan_3acc62b245d8bc10f04d81f69d85b685'] = '(ohne Gebühren)';
 $_MODULE['<{alma}prestashop>feeplan_9c8a7900448628ee2978be9a3945d148'] = 'Ihr Guthaben';
 $_MODULE['<{alma}prestashop>feeplan_bc69b42c4bd339154f9025f3299ad146'] = '%1$s heute, dann %2$s am %3$s';
+$_MODULE['<{alma}prestashop>fees_3acc62b245d8bc10f04d81f69d85b685'] = '(ohne Gebühren)';
