@@ -377,10 +377,10 @@
                         {/foreach}
                         {hook h='displayAdminForm' fieldset=$f}
                         {if isset($name_controller)}
-                            {capture name=hookName assign=hookName}display{$name_controller|ucfirst}Form{/capture}
+                            {capture name=hookName assign=hookName}display{$name_controller|ucfirst|escape:'htmlall':'UTF-8'}Form{/capture}
                             {hook h=$hookName fieldset=$f}
                         {elseif isset($smarty.get.controller)}
-                            {capture name=hookName assign=hookName}display{$smarty.get.controller|ucfirst|htmlentities}Form{/capture}
+                            {capture name=hookName assign=hookName}display{$smarty.get.controller|ucfirst|escape:'htmlall':'UTF-8'}Form{/capture}
                             {hook h=$hookName fieldset=$f}
                         {/if}
                     </div>
