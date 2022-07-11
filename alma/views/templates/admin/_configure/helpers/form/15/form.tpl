@@ -250,9 +250,9 @@
                                             {if isset($fields_value[$input.name].image) && $fields_value[$input.name].image}
                                                 <div id="image">
                                                     {$fields_value[$input.name].image}
-                                                    <p align="center">{l s='File size'} {$fields_value[$input.name].size}{l s='kb'}</p>
+                                                    <p align="center">{l s='File size' mod='alma'} {$fields_value[$input.name].size}{l s='kb' mod='alma'}</p>
                                                     <a href="{$current}&{$identifier}={$form_id}&token={$token}&deleteImage=1">
-                                                        <img src="../img/admin/delete.gif" alt="{l s='Delete'}" /> {l s='Delete'}
+                                                        <img src="../img/admin/delete.gif" alt="{l s='Delete' mod='alma'}" /> {l s='Delete' mod='alma'}
                                                     </a>
                                                 </div><br />
                                             {/if}
@@ -285,21 +285,21 @@
                                                 {if $key == 'months'}
                                                     {*
                                                         This comment is useful to the translator tools /!\ do not remove them
-                                                        {l s='January'}
-                                                        {l s='February'}
-                                                        {l s='March'}
-                                                        {l s='April'}
-                                                        {l s='May'}
-                                                        {l s='June'}
-                                                        {l s='July'}
-                                                        {l s='August'}
-                                                        {l s='September'}
-                                                        {l s='October'}
-                                                        {l s='November'}
-                                                        {l s='December'}
+                                                        {l s='January' mod='alma'}
+                                                        {l s='February' mod='alma'}
+                                                        {l s='March' mod='alma'}
+                                                        {l s='April' mod='alma'}
+                                                        {l s='May' mod='alma'}
+                                                        {l s='June' mod='alma'}
+                                                        {l s='July' mod='alma'}
+                                                        {l s='August' mod='alma'}
+                                                        {l s='September' mod='alma'}
+                                                        {l s='October' mod='alma'}
+                                                        {l s='November' mod='alma'}
+                                                        {l s='December' mod='alma'}
                                                     *}
                                                     {foreach $select as $k => $v}
-                                                        <option value="{$k}" {if $k == $fields_value[$key]}selected="selected"{/if}>{l s=$v}</option>
+                                                        <option value="{$k}" {if $k == $fields_value[$key]}selected="selected"{/if}>{l s=$v mod='alma'}</option>
                                                     {/foreach}
                                                 {else}
                                                     {foreach $select as $v}
@@ -411,7 +411,7 @@
                 {block name="other_input"}{/block}
             {/foreach}
             {if $required_fields}
-                <div class="small"><sup>*</sup> {l s='Required field'}</div>
+                <div class="small"><sup>*</sup> {l s='Required field' mod='alma'}</div>
             {/if}
         </fieldset>
         {block name="other_fieldsets"}{/block}
