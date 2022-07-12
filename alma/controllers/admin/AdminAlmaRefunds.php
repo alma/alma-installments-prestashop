@@ -149,7 +149,7 @@ class AdminAlmaRefundsController extends ModuleAdminController
      *
      * @param string $refundType
      *
-     * @return boolean
+     * @return bool
      */
     private function isTotalRefund($refundType)
     {

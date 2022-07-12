@@ -25,59 +25,60 @@
 
 namespace Alma\PrestaShop\Tests\Unit\Lib\Api;
 
-use PHPUnit\Framework\TestCase;
 use Alma\PrestaShop\API\EligibilityHelper;
 use Cart;
 use Context;
 use Language;
 use Mockery;
+use PHPUnit\Framework\TestCase;
 
 class EligibilityHelperTest extends TestCase
 {
     /**
      * Return input to integration test testEligibilityCheck
+     *
      * @return array[]
      */
-    public function eligibilityDataProvider() {
+    public function eligibilityDataProvider()
+    {
         return [
             'purchase amount eligible' => [
                 // cart amount Data
                 [
-                    'cart_amount' => 50.99
+                    'cart_amount' => 50.99,
                 ],
                 //data expected
                 [
-                    'eligible' => true
-                ]
+                    'eligible' => true,
+                ],
             ],
             'purchase min amount not eligible' => [
                 // cart amount Data
                 [
-                    'cart_amount' => 26.00
+                    'cart_amount' => 26.00,
                 ],
                 //data expected
                 [
-                    'eligible' => false
-                ]
+                    'eligible' => false,
+                ],
             ],
             'purchase max amount not eligible' => [
                 // cart amount Data
                 [
-                    'cart_amount' => 4000.00
+                    'cart_amount' => 4000.00,
                 ],
                 //data expected
                 [
-                    'eligible' => false
-                ]
-            ]
+                    'eligible' => false,
+                ],
+            ],
         ];
     }
 
     /**
      * @test
      * @dataProvider eligibilityDataProvider
-     * @param array $cartData
-     * @param array $expectedEligibility
+     *
      * @return void
      */
     public function testEligibilityCheck(array $cartData, array $expectedEligibility)
