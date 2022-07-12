@@ -33,6 +33,7 @@ use Alma\PrestaShop\API\ClientHelper;
 use Alma\PrestaShop\Forms\ExcludedCategoryAdminFormBuilder;
 use Alma\PrestaShop\Forms\PaymentButtonAdminFormBuilder;
 use Alma\PrestaShop\Utils\CustomFieldsHelper;
+use Alma\PrestaShop\Utils\Logger;
 use Alma\PrestaShop\Utils\Settings;
 
 function upgrade_module_2_3_0()
@@ -59,6 +60,7 @@ function upgrade_module_2_3_0()
 
             CustomFieldsHelper::initCustomFields();
         } catch (RequestError $e) {
+            Logger::instance()->error("[Alma] ERROR upgrade v2.3.0: {$e->getMessage()}");
             return true;
         }
     }

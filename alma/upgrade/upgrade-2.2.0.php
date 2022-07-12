@@ -30,6 +30,7 @@ include_once _PS_MODULE_DIR_ . 'alma/vendor/autoload.php';
 
 use Alma\API\RequestError;
 use Alma\PrestaShop\API\ClientHelper;
+use Alma\PrestaShop\Utils\Logger;
 use Alma\PrestaShop\Utils\Settings;
 
 function upgrade_module_2_2_0()
@@ -44,6 +45,7 @@ function upgrade_module_2_2_0()
         try {
             Settings::updateValue('ALMA_CATEGORIES_WDGT_NOT_ELGBL', Settings::showCategoriesWidgetIfNotEligible());
         } catch (RequestError $e) {
+            Logger::instance()->error("[Alma] ERROR upgrade v2.2.0: {$e->getMessage()}");
             return true;
         }
     }

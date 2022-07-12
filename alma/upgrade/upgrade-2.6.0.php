@@ -31,6 +31,7 @@ include_once _PS_MODULE_DIR_ . 'alma/vendor/autoload.php';
 use Alma\API\RequestError;
 use Alma\PrestaShop\API\ClientHelper;
 use Alma\PrestaShop\Utils\CustomFieldsHelper;
+use Alma\PrestaShop\Utils\Logger;
 use Alma\PrestaShop\Utils\Settings;
 
 function upgrade_module_2_6_0()
@@ -54,6 +55,7 @@ function upgrade_module_2_6_0()
 
             CustomFieldsHelper::initCustomFields();
         } catch (RequestError $e) {
+            Logger::instance()->error("[Alma] ERROR upgrade v2.6.0: {$e->getMessage()}");
             return true;
         }
     }
