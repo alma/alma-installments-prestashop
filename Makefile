@@ -27,3 +27,11 @@ lint-fix: install-tools
 .PHONY: php-compatibililty
 php-compatibility: install-tools
 	./tools/vendor/bin/phpcs -p alma --standard=PHPCompatibility -s --runtime-set testVersion 5.5-8.0 --ignore=\*/vendor/\*
+
+.PHONY: crowdin-download
+crowdin-download:
+	crowdin download
+
+.PHONY: crowdin-upload
+crowdin-upload:
+	crowdin upload sources
