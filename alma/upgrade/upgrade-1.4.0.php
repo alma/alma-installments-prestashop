@@ -47,6 +47,7 @@ function upgrade_module_1_4_0($module)
             $merchant = $alma->merchants->me();
         } catch (RequestError $e) {
             Logger::instance()->error("[Alma] ERROR upgrade v1.4.0: {$e->getMessage()}");
+
             return true;
         }
 
