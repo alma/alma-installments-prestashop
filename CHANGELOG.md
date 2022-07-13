@@ -1,6 +1,14 @@
 # Changelog
 
-## v2.6.2
+## v2.7.0
+
+- Add Portuguese language
+- Add B2B compatibility
+- Fix refund customer fees
+- Fix hidden payment button if payment is not eligible in PS 1.6
+- Fix page payment return if you uncheck validation order
+
+## v2.6.3
 
 - Fixed widget in version 2.8.0
 
