@@ -398,6 +398,9 @@ class Alma extends PaymentModule
             return $this->runHookController('displayPaymentReturn', $params);
         } catch (RenderPaymentException $e) {
             $module = Module::getInstanceByName('alma');
+            $this->context->smarty->assign([
+                'payment' => null,
+            ]);
 
             return $module->display($module->file, 'displayPaymentReturn.tpl');
         }
