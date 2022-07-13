@@ -82,6 +82,7 @@ function upgrade_module_2_0_0()
             Tools::clearCache();
         } catch (RequestError $e) {
             Logger::instance()->error("[Alma] ERROR upgrade v2.0.0: {$e->getMessage()}");
+
             return true;
         }
     }

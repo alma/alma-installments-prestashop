@@ -56,6 +56,7 @@ function upgrade_module_2_6_0()
             CustomFieldsHelper::initCustomFields();
         } catch (RequestError $e) {
             Logger::instance()->error("[Alma] ERROR upgrade v2.6.0: {$e->getMessage()}");
+
             return true;
         }
     }

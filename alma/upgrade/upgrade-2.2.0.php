@@ -46,6 +46,7 @@ function upgrade_module_2_2_0()
             Settings::updateValue('ALMA_CATEGORIES_WDGT_NOT_ELGBL', Settings::showCategoriesWidgetIfNotEligible());
         } catch (RequestError $e) {
             Logger::instance()->error("[Alma] ERROR upgrade v2.2.0: {$e->getMessage()}");
+
             return true;
         }
     }
