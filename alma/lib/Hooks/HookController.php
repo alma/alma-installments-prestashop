@@ -31,6 +31,7 @@ use Cookie;
 use Employee;
 use Tools;
 use Validate;
+use WebserviceKey;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -66,6 +67,13 @@ abstract class HookController
             && (!isset($cookie->remote_addr)
                 || $cookie->remote_addr == ip2long(Tools::getRemoteAddr())
                 || !Configuration::get('PS_COOKIE_CHECKIP'));
+    }
+
+    protected function isKnowApiUser()
+    {
+        $tokenApi = $_SERVER['PHP_AUTH_USER'];
+        
+        return WebserviceKey::keyExists($tokenApi);
     }
 
     abstract public function run($params);

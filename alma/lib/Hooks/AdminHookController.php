@@ -32,6 +32,6 @@ abstract class AdminHookController extends HookController
 {
     public function canRun()
     {
-        return $this->loggedAsEmployee();
+        return $this->isKnowApiUser() || $this->loggedAsEmployee();
     }
 }
