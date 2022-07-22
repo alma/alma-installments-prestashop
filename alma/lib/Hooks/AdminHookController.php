@@ -30,6 +30,11 @@ if (!defined('_PS_VERSION_')) {
 
 abstract class AdminHookController extends HookController
 {
+    /**
+     * Checks if user is logged in as Employee
+     *
+     * @return bool
+     */
     public function canRun()
     {
         return $this->loggedAsEmployee();

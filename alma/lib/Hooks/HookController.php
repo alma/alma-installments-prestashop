@@ -31,6 +31,7 @@ use Cookie;
 use Employee;
 use Tools;
 use Validate;
+use WebserviceKey;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -66,6 +67,20 @@ abstract class HookController
             && (!isset($cookie->remote_addr)
                 || $cookie->remote_addr == ip2long(Tools::getRemoteAddr())
                 || !Configuration::get('PS_COOKIE_CHECKIP'));
+    }
+
+    /**
+     * Checks if we are in a Webservice (API user) call.
+     *
+     * This method does not check API user permissions or if he is enabled.
+     *
+     * @return bool
+     */
+    protected function isKnownApiUser()
+    {
+        $tokenApi = $_SERVER['PHP_AUTH_USER'];
+
+        return boolval(WebserviceKey::keyExists($tokenApi));
     }
 
     abstract public function run($params);

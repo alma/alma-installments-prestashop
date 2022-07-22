@@ -28,6 +28,7 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
+use Alma\API\Client;
 use Alma\API\RequestError;
 use Alma\PrestaShop\API\ClientHelper;
 use Alma\PrestaShop\Hooks\AdminHookController;
@@ -43,6 +44,20 @@ use PrestaShopException;
 final class StateHookController extends AdminHookController
 {
     use OrderDataTrait;
+
+    /**
+     * Checks if user is logged in as Employee or is an API Webservice call
+     *
+     * When we check if is an API user, we assume that the API user has already
+     * the good rights because when canRun is called, actions linked to the hook
+     * were already well authenticated by PrestaShop.
+     *
+     * @return bool
+     */
+    public function canRun()
+    {
+        return parent::canRun() || $this->isKnownApiUser();
+    }
 
     /**
      * Execute refund or trigger payment on change state
@@ -97,7 +112,7 @@ final class StateHookController extends AdminHookController
     /**
      * Query Refund
      *
-     * @param ClientHelper $alma
+     * @param Client $alma
      * @param string $id_payment
      * @param Order $order
      *
@@ -118,7 +133,7 @@ final class StateHookController extends AdminHookController
     /**
      * Query Trigger Payment
      *
-     * @param ClientHelper $alma
+     * @param Client $alma
      * @param string $id_payment
      * @param Order $order
      *
