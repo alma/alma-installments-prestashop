@@ -1,5 +1,9 @@
 # Changelog
 
+## v2.7.1
+
+- Fix execution StateHookController even if called from the Prestashop Webservice
+
 ## v2.7.0
 
 - Add Portuguese language

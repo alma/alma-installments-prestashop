@@ -55,6 +55,7 @@ final class DisplayRefundsHookController extends AdminHookController
      * @param array $params
      *
      * @return string|null as the template fetched
+     *
      * @throws PrestaShopDatabaseException
      * @throws PrestaShopException
      * @throws SmartyException
@@ -166,6 +167,7 @@ final class DisplayRefundsHookController extends AdminHookController
      * @param Order $order
      *
      * @return Payment
+     *
      * @throws PaymentNotFoundException
      */
     private function getPayment($order)
