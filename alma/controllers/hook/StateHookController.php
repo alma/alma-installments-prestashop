@@ -28,6 +28,7 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
+use Alma\API\Client;
 use Alma\API\RequestError;
 use Alma\PrestaShop\API\ClientHelper;
 use Alma\PrestaShop\Hooks\AdminHookController;
@@ -97,7 +98,7 @@ final class StateHookController extends AdminHookController
     /**
      * Query Refund
      *
-     * @param ClientHelper $alma
+     * @param Client $alma
      * @param string $id_payment
      * @param Order $order
      *
@@ -118,7 +119,7 @@ final class StateHookController extends AdminHookController
     /**
      * Query Trigger Payment
      *
-     * @param ClientHelper $alma
+     * @param Client $alma
      * @param string $id_payment
      * @param Order $order
      *

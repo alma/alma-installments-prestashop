@@ -28,6 +28,7 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
+use Alma\API\Entities\Payment;
 use Alma\API\RequestError;
 use Alma\PrestaShop\API\ClientHelper;
 use Alma\PrestaShop\API\PaymentNotFoundException;
@@ -37,6 +38,9 @@ use Alma\PrestaShop\Utils\OrderDataTrait;
 use Alma\PrestaShop\Utils\RefundHelper;
 use Currency;
 use Order;
+use PrestaShopDatabaseException;
+use PrestaShopException;
+use SmartyException;
 
 final class DisplayRefundsHookController extends AdminHookController
 {
@@ -45,17 +49,15 @@ final class DisplayRefundsHookController extends AdminHookController
     /** @var Order */
     public $order;
 
-    public function canRun()
-    {
-        return parent::canRun();
-    }
-
     /**
      * Run Hook for show block Refund in Order page if is payment Alma
      *
      * @param array $params
      *
      * @return string|null as the template fetched
+     * @throws PrestaShopDatabaseException
+     * @throws PrestaShopException
+     * @throws SmartyException
      */
     public function run($params)
     {
@@ -159,11 +161,12 @@ final class DisplayRefundsHookController extends AdminHookController
     }
 
     /**
-     * Run Hook for show block Refund in Order page if is payment Alma
+     * Runs Hook for show block Refund in Order page if is payment Alma.
      *
      * @param Order $order
      *
      * @return Payment
+     * @throws PaymentNotFoundException
      */
     private function getPayment($order)
     {
