@@ -69,11 +69,18 @@ abstract class HookController
                 || !Configuration::get('PS_COOKIE_CHECKIP'));
     }
 
-    protected function isKnowApiUser()
+    /**
+     * Checks if we are in a Webservice (API user) call.
+     *
+     * This method does not check API user permissions or if he is enabled.
+     *
+     * @return bool
+     */
+    protected function isKnownApiUser()
     {
         $tokenApi = $_SERVER['PHP_AUTH_USER'];
-        
-        return WebserviceKey::keyExists($tokenApi);
+
+        return boolval(WebserviceKey::keyExists($tokenApi));
     }
 
     abstract public function run($params);
