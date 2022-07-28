@@ -518,8 +518,6 @@ final class GetContentHookController extends AdminHookController
         if (Settings::isPaymentTriggerEnabledByState()) {
             $fieldsForms[] = $triggerBuilder->build();
             $fieldsForms[] = $fragmentBuilder->build();
-            $fieldsForms[] = $triggerBuilder->build();
-            $fieldsForms[] = $fragmentBuilder->build();
         }
 
         $fieldsForms[] = $apiBuilder->build();
