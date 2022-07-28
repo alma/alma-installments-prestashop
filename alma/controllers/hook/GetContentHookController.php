@@ -516,8 +516,6 @@ final class GetContentHookController extends AdminHookController
             $fieldsForms[] = $shareOfCheckoutBuilder->build();
             $fieldsForms[] = $triggerBuilder->build();
             $fieldsForms[] = $fragmentBuilder->build();
-            $fieldsForms[] = $triggerBuilder->build();
-            $fieldsForms[] = $fragmentBuilder->build();
         }
         $fieldsForms[] = $apiBuilder->build();
         $fieldsForms[] = $debugBuilder->build();
