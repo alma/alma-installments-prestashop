@@ -69,10 +69,10 @@ class AlmaIpnModuleFrontController extends ModuleFrontController
         try {
             $validator->validatePayment($paymentId);
         } catch (PaymentValidationError $e) {
-            Logger::instance()->error('payment_validation_error - Message : ' . $e->getMessage());
+            Logger::instance()->error('ipn payment_validation_error - Message : ' . $e->getMessage());
             $this->fail($e->getMessage());
         } catch (Exception $e) {
-            Logger::instance()->error('payment_error - Message : ' . $e->getMessage());
+            Logger::instance()->error('ipn payment_error - Message : ' . $e->getMessage());
             $this->fail($e->getMessage());
         }
 

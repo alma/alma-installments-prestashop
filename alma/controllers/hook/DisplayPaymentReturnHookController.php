@@ -63,7 +63,7 @@ class DisplayPaymentReturnHookController extends FrontendHookController
             try {
                 $payment = $alma->payments->fetch($almaPaymentId);
             } catch (RequestError $e) {
-                Logger::instance()->error("[Alma] Error fetching payment with ID {$almaPaymentId}: {$e->getMessage()}");
+                Logger::instance()->error("[Alma] DisplayPaymentReturn Error fetching payment with ID {$almaPaymentId}: {$e->getMessage()}");
                 throw new RenderPaymentException($e->getMessage());
             }
         }
