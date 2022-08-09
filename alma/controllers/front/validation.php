@@ -65,7 +65,6 @@ class AlmaValidationModuleFrontController extends ModuleFrontController
         $validator = new PaymentValidation($this->context, $this->module);
 
         try {
-            Logger::instance()->debug('payment_validate');
             $redirect_to = $validator->validatePayment($paymentId);
         } catch (PaymentValidationError $e) {
             Logger::instance()->error('payment_validation_error - Message : ' . $e->getMessage());
