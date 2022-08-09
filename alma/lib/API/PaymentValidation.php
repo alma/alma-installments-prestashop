@@ -90,7 +90,7 @@ class PaymentValidation
         try {
             $payment = $alma->payments->fetch($almaPaymentId);
         } catch (RequestError $e) {
-            Logger::instance()->error("[Alma] Error fetching payment with ID {$almaPaymentId}: {$e->getMessage()}");
+            Logger::instance()->error("[Alma] PaymentValidation Error fetching payment with ID {$almaPaymentId}: {$e->getMessage()}");
             throw new PaymentValidationError(null, $e->getMessage());
         }
 
