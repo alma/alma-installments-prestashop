@@ -1,5 +1,10 @@
 # Changelog
 
+## v2.7.2
+
+- Fix widget style in classic theme Prestashop 1.7
+- Fix translation on the widget
+
 ## v2.7.1
 
 - Fix execution StateHookController even if called from the Prestashop Webservice
