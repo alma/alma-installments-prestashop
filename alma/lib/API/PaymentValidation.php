@@ -77,7 +77,7 @@ class PaymentValidation
      *
      * @return string URL to redirect the customer to
      *
-     * @throws PaymentValidationError|PrestaShopException|Exception
+     * @throws PaymentValidationError
      */
     public function validatePayment($almaPaymentId)
     {
@@ -138,7 +138,13 @@ class PaymentValidation
         }
 
         if (!$cart->OrderExists()) {
-            $cartTotals = (float) Tools::ps_round((float) $cart->getOrderTotal(true, Cart::BOTH), 2);
+            try {
+                $cartTotals = (float) Tools::ps_round((float) $cart->getOrderTotal(true, Cart::BOTH), 2);
+            } catch (Exception $e) {
+                Logger::instance()->warning(
+                    "[Alma] Payment validation error with cart total. {$e->getMessage()}"
+                );
+            }
 
             if (abs($payment->purchase_amount - almaPriceToCents($cartTotals)) > 2) {
                 $reason = Payment::FRAUD_AMOUNT_MISMATCH;
@@ -193,18 +199,22 @@ class PaymentValidation
                 );
             }
 
-            // Place order
-            $this->module->validateOrder(
-                (int) $cart->id,
-                Configuration::get('PS_OS_PAYMENT'),
-                almaPriceFromCents($payment->purchase_amount),
-                $paymentMode,
-                null,
-                $extraVars,
-                (int) $cart->id_currency,
-                false,
-                $customer->secure_key
-            );
+            try {
+                // Place order
+                $this->module->validateOrder(
+                    (int) $cart->id,
+                    Configuration::get('PS_OS_PAYMENT'),
+                    almaPriceFromCents($payment->purchase_amount),
+                    $paymentMode,
+                    null,
+                    $extraVars,
+                    (int) $cart->id_currency,
+                    false,
+                    $customer->secure_key
+                );
+            } catch (PrestaShopException $e) {
+                Logger::instance()->warning("[Alma] Error validation Order: {$e->getMessage()}");
+            }
 
             // Update payment's order reference
             $order = $this->getOrderByCartId((int) $cart->id);
@@ -250,8 +260,6 @@ class PaymentValidation
      * @param $cartId
      *
      * @return OrderCore|null
-     *
-     * @throws PrestaShopException
      */
     private function getOrderByCartId($cartId)
     {

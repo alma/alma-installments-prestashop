@@ -72,9 +72,6 @@ class AlmaIpnModuleFrontController extends ModuleFrontController
         } catch (PaymentValidationError $e) {
             Logger::instance()->error('ipn payment_validation_error - Message : ' . $e->getMessage());
             $this->fail($e->getMessage());
-        } catch (Exception $e) {
-            Logger::instance()->error('ipn payment_error - Message : ' . $e->getMessage());
-            $this->fail($e->getMessage());
         }
 
         $this->ajaxDie(json_encode(['success' => true]));
