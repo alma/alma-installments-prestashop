@@ -464,6 +464,17 @@ final class GetContentHookController extends AdminHookController
             $extraMessage = $this->module->display($this->module->file, 'getContent.tpl');
         }
 
+        //TODO: Need API for check if is first shareOfCheckout or not
+        $firstTimeShareOfCheckout = true;
+        if ($firstTimeShareOfCheckout) {
+            $this->context->smarty->assign([
+                'share_of_checkout' => true
+        ]);
+
+            $this->assignSmartyAlertClasses();
+            $extraMessage = $this->module->display($this->module->file, 'getContent.tpl');
+        }
+
         $feePlansOrdered = [];
         $installmentsPlans = [];
         if ($merchant) {

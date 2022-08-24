@@ -151,3 +151,52 @@ fieldset .form-alma.disabled::before{
 .bootstrap .prestashop-switch .slide-button::after {
     top: 49%;
 }
+
+.bootstrap .alma.alert {
+    padding-left: 180px;
+    background-repeat: no-repeat;
+    background-position: 35px 35px;
+    background-image: url('/modules/alma/views/img/logos/logo_alma.svg');
+    box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.08);
+    border-radius: 4px;
+}
+
+.bootstrap .alma.alert, .bootstrap .alma.alert * {
+    font-family: 'Eina04-Bold';
+}
+
+.bootstrap .alma.alert .h2, .bootstrap .alma.alert h2 {
+    font-size: 24px;
+}
+
+.bootstrap .alma.alert.alert-info {
+    background-color: #E9F4FF;
+    border: 1px solid #E1E4E6;
+    color: #00425D;
+    font-size: 16px;
+}
+
+.bootstrap .alma.alert.alert-info:before {
+    content: '';
+}
+
+.bootstrap .alma.alert.alert-info a {
+    color: #00425D;
+    text-decoration: underline;
+}
+
+.bootstrap .alma.alert .btn {
+    padding: 8px 16px;
+    border: 2px solid transparent;
+    border-radius: 4px;
+}
+.bootstrap .alma.alert .btn.btn-default {
+    background: #FFFFFF;
+    border-color: #00425D;
+    color: #00425D;
+}
+.bootstrap .alma.alert .btn.btn-primary {
+    background: #00425D;
+    border-color: #00425D;
+    color: #FFFFFF;
+}

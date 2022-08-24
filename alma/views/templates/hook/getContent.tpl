@@ -125,6 +125,24 @@
             En cas de problème, contactez-nous par email à <a href="mailto:support@getalma.eu">support@getalma.eu</a>
         </p>
     </div>
+{elseif isset($share_of_checkout)}
+    <div class="alma {$tip_classes|escape:'htmlall':'UTF-8'}">
+        <div class="row">
+            <h2>{l s='Increase your performance & get insights !' mod='alma'}</h2>
+            <p>
+                {l s='By accepting this option, enable Alma to analyse the usage of your payment methods, [1]get more informations to perform[/1] and share this data with you. You can [2]unsubscribe and erase your data[/2] at any moment.' tags=['<b>', '<a href="">'] mod='alma'}
+            </p>
+            <p>
+                {l s='[1]Know more about collected data[/1]' tags=['<a href="" class="accordion">'] mod='alma'}
+            </p>
+        </div>
+        <div class="row">
+            <p>
+                <a class="btn btn-default" href="">{l s='Reject' mod='alma'}</a>
+                <a class="btn btn-primary" href="">{l s='Accept' mod='alma'}</a>
+            </p>
+        </div>
+    </div>
 {else}
     <div class="{$success_classes|escape:'htmlall':'UTF-8'}">
         {l s='Settings successfully updated' mod='alma'}
