@@ -38,24 +38,12 @@ class ShareOfCheckoutAdminFormBuilder extends AbstractAlmaAdminFormBuilder
 
     protected function configForm()
     {
+        $tpl = $this->context->smarty->createTemplate(
+            "{$this->module->local_path}views/templates/hook/_partials/shareOfCheckout.tpl"
+        );
+
         return [
-            $this->inputHtml(
-                null,
-                // phpcs:ignore Generic.Files.LineLength
-                sprintf(
-                    $this->module->l('By accepting this option, enable Alma to analyse the usage of your payment methods, get more informations to perform and share this data with you. You can %1$serase your data%2$s at any moment.', 'ShareOfCheckoutAdminFormBuilder'),
-                    '<a href="mailto:support@getalma.eu">',
-                    '</a>'
-                ),
-            ),
-            $this->inputHtml(
-                null,
-                sprintf(
-                    $this->module->l('%1$sKnow more about collected data >%2$s', 'ShareOfCheckoutAdminFormBuilder'),
-                    '<a href="">',
-                    '</a>'
-                ),
-            ),
+            $this->inputHtml($tpl),
             $this->inputAlmaSwitchForm(
                 self::ALMA_ACTIVATE_SHARE_OF_CHECKOUT,
                 $this->module->l('Activate your data settings', 'ShareOfCheckoutAdminFormBuilder')
