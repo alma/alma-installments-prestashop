@@ -161,7 +161,7 @@ fieldset .form-alma.disabled::before{
     border-radius: 4px;
 }
 
-.bootstrap .alma.alert, .bootstrap .alma.alert * {
+.bootstrap .alma.alert, .bootstrap .alma.alert h2 {
     font-family: 'Eina04-Bold';
 }
 
@@ -180,7 +180,7 @@ fieldset .form-alma.disabled::before{
     content: '';
 }
 
-.bootstrap .alma.alert.alert-info a {
+.bootstrap .alma.alert.alert-info a:not(.btn) {
     color: #00425D;
     text-decoration: underline;
 }
@@ -189,6 +189,7 @@ fieldset .form-alma.disabled::before{
     padding: 8px 16px;
     border: 2px solid transparent;
     border-radius: 4px;
+    text-transform: uppercase;
 }
 .bootstrap .alma.alert .btn.btn-default {
     background: #FFFFFF;
@@ -199,4 +200,19 @@ fieldset .form-alma.disabled::before{
     background: #00425D;
     border-color: #00425D;
     color: #FFFFFF;
+}
+
+.link-collapse .material-icons{
+    font-size: 16px;
+    position: relative;
+    top: 3px;
+}
+.link-collapse .material-icons.down{
+    display: none;
+}
+.link-collapse.collapsed .material-icons.down{
+    display: inline-block;
+}
+.link-collapse.collapsed .material-icons.up{
+    display: none;
 }

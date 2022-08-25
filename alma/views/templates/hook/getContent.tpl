@@ -133,8 +133,24 @@
                 {l s='By accepting this option, enable Alma to analyse the usage of your payment methods, [1]get more informations to perform[/1] and share this data with you. You can [2]unsubscribe and erase your data[/2] at any moment.' tags=['<b>', '<a href="">'] mod='alma'}
             </p>
             <p>
-                {l s='[1]Know more about collected data[/1]' tags=['<a href="" class="accordion">'] mod='alma'}
+                <a data-toggle="collapse" href="#collapseModalSoc" role="button" aria-expanded="false" aria-controls="collapseModalSoc" class="link-collapse collapsed">
+                    {l s='Know more about collected data' mod='alma'}
+                    <i class="material-icons down">
+                        keyboard_arrow_down
+                    </i>
+                    <i class="material-icons up">
+                        keyboard_arrow_up
+                    </i>
+                </a>
             </p>
+            <div class="collapse" id="collapseModalSoc">
+                <div class="card card-body">
+                    <ul>
+                        <li>{l s='total quantity of orders, amounts and currencies' mod='alma'}</li>
+                        <li>{l s='payment provider for each order' mod='alma'}</li>
+                    </ul>
+                </div>
+            </div>
         </div>
         <div class="row">
             <p>

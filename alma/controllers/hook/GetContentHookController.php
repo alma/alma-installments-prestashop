@@ -506,10 +506,10 @@ final class GetContentHookController extends AdminHookController
         $productBuilder = new ProductEligibilityAdminFormBuilder($this->module, $this->context, $iconPath);
         $excludedBuilder = new ExcludedCategoryAdminFormBuilder($this->module, $this->context, $iconPath);
         $refundBuilder = new RefundAdminFormBuilder($this->module, $this->context, $iconPath);
+        $shareOfCheckoutBuilder = new ShareOfCheckoutAdminFormBuilder($this->module, $this->context, $iconPath);
         $triggerBuilder = new PaymentOnTriggeringAdminFormBuilder($this->module, $this->context, $iconPath, ['feePlans' => $feePlansOrdered]);
         $paymentBuilder = new PaymentButtonAdminFormBuilder($this->module, $this->context, $iconPath);
         $debugBuilder = new DebugAdminFormBuilder($this->module, $this->context, $iconPath);
-        $shareOfCheckoutBuilder = new ShareOfCheckoutAdminFormBuilder($this->module, $this->context, $iconPath);
 
         $fieldsForms = [];
 
@@ -522,8 +522,8 @@ final class GetContentHookController extends AdminHookController
             $fieldsForms[] = $paymentBuilder->build();
             $fieldsForms[] = $excludedBuilder->build();
             $fieldsForms[] = $refundBuilder->build();
-            $fieldsForms[] = $triggerBuilder->build();
             $fieldsForms[] = $shareOfCheckoutBuilder->build();
+            $fieldsForms[] = $triggerBuilder->build();
         }
         $fieldsForms[] = $apiBuilder->build();
         $fieldsForms[] = $debugBuilder->build();

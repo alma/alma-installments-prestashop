@@ -39,11 +39,26 @@ class ShareOfCheckoutAdminFormBuilder extends AbstractAlmaAdminFormBuilder
     protected function configForm()
     {
         return [
+            $this->inputHtml(
+                null,
+                // phpcs:ignore Generic.Files.LineLength
+                sprintf(
+                    $this->module->l('By accepting this option, enable Alma to analyse the usage of your payment methods, get more informations to perform and share this data with you. You can %1$serase your data%2$s at any moment.', 'ShareOfCheckoutAdminFormBuilder'),
+                    '<a href="mailto:support@getalma.eu">',
+                    '</a>'
+                ),
+            ),
+            $this->inputHtml(
+                null,
+                sprintf(
+                    $this->module->l('%1$sKnow more about collected data >%2$s', 'ShareOfCheckoutAdminFormBuilder'),
+                    '<a href="">',
+                    '</a>'
+                ),
+            ),
             $this->inputAlmaSwitchForm(
                 self::ALMA_ACTIVATE_SHARE_OF_CHECKOUT,
-                $this->module->l('Merchant data sharing', 'ShareOfCheckoutAdminFormBuilder'),
-                // phpcs:ignore Generic.Files.LineLength
-                $this->module->l('We enable Alma to anonymously retrieve, analyse the usage of our payment methods and share with me insights in order to increase my overall performance.', 'ShareOfCheckoutAdminFormBuilder')
+                $this->module->l('Activate your data settings', 'ShareOfCheckoutAdminFormBuilder')
             ),
             $this->inputHiddenForm(
                 self::ALMA_SHARE_OF_CHECKOUT_DATE
@@ -53,6 +68,6 @@ class ShareOfCheckoutAdminFormBuilder extends AbstractAlmaAdminFormBuilder
 
     protected function getTitle()
     {
-        return $this->module->l('Merchant data sharing', 'ShareOfCheckoutAdminFormBuilder');
+        return $this->module->l('Increase your performance & get insights', 'ShareOfCheckoutAdminFormBuilder');
     }
 }
