@@ -205,3 +205,60 @@ p.payment_module a.disable-arrow-icon {
     float: right;
     font-weight: normal;
 }
+
+.alma.reinsurance.list li{
+    position: relative;
+    font-family: 'Eina04-Bold';
+    display: inline-block;
+    background-color: #E7F8FA;
+    background-repeat: no-repeat;
+    background-position: 7px center;
+    padding: 5px 10px 5px 25px;
+    color: #00425D;
+    border-radius: 100px;
+    cursor: pointer;
+    margin-left: 15px;
+}
+.alma.reinsurance.list li:first-child{
+    margin-left: 0;
+}
+.alma.reinsurance.list li:hover p{
+    display: block;
+}
+.alma.reinsurance.list li.lightning{
+    background-image: url('/modules/alma/views/img/icon-lightning.svg');
+}
+.alma.reinsurance.list li.coins{
+    background-image: url('/modules/alma/views/img/icon-coins.svg');
+}
+.alma.reinsurance.list li.check{
+    background-image: url('/modules/alma/views/img/icon-check.svg');
+}
+.alma.reinsurance.list li p{
+    display: none;
+    position: absolute;
+    left: 0;
+    top: 30px;
+    color: #00425D;
+    background: #FFFFFF;
+    box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.08);
+    border-radius: 4px;
+    padding: 16px;
+    width: 400px;
+    z-index: 99;
+}
+.alma.reinsurance.list li:last-child p{
+    left: auto;
+    right: 0;
+}
+
+@media (max-width: 767px) {
+    .alma.reinsurance.list li{
+        display: block;
+        margin-bottom: 10px;
+        margin-left: 0;
+    }
+    .alma.reinsurance.list li:last-child p{
+        left: 0;
+    }
+}
