@@ -164,12 +164,12 @@ fieldset .form-alma.disabled::before{
 }
 
 .bootstrap .alma.alert h2, .bootstrap .alma.alert .btn {
-    font-family: 'Eina04-Bold';
+    font-family: 'Eina04-Bold', sans-serif;
     font-weight: 400;
 }
 
 .bootstrap .alma.alert{
-    font-family: 'Public-Sans';
+    font-family: 'Public-Sans', sans-serif;
 }
 .bootstrap .alma.alert b{
     font-weight: 700;
