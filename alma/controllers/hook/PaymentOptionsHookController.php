@@ -153,6 +153,7 @@ class PaymentOptionsHookController extends FrontendHookController
                         'merchantId' => Settings::getMerchantId(),
                         'first' => $first,
                         'creditInfo' => $creditInfo,
+                        'showReinsurance' => Settings::showReinsurance(),
                     ];
                     if ($isDeferred) {
                         $templateVar['installmentText'] = sprintf(

@@ -1,4 +1,5 @@
-{*
+<?php
+/**
  * 2018-2022 Alma SAS
  *
  * THE MIT LICENSE
@@ -19,14 +20,33 @@
  * @author    Alma SAS <contact@getalma.eu>
  * @copyright 2018-2022 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
- *}
+ */
 
-<div class="alma-fee-plan--block">
-    <p>
-        {$desc|escape:'htmlall':'UTF-8'}
-    </p>
-    {if $showReinsurance}
-        {include file="modules/alma/views/templates/hook/_partials/reinsurrance.tpl"}
-    {/if}
-    {include file="modules/alma/views/templates/hook/_partials/feePlan.tpl" plans=$plans creditInfo=$creditInfo oneLiner=false}    
-</div>
+namespace Alma\PrestaShop\Forms;
+
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
+/**
+ * Class FeaturesAdminFormBuilder
+ */
+class FeaturesAdminFormBuilder extends AbstractAlmaAdminFormBuilder
+{
+    const ALMA_ACTIVATE_REINSURANCE = 'ALMA_ACTIVATE_REINSURANCE';
+
+    protected function configForm()
+    {
+        return [
+            $this->inputAlmaSwitchForm(
+                self::ALMA_ACTIVATE_REINSURANCE,
+                $this->module->l('Display Alma reinsurance elements in checkout', 'FeaturesAdminFormBuilder')
+            ),
+        ];
+    }
+
+    protected function getTitle()
+    {
+        return $this->module->l('Experimental features', 'FeaturesAdminFormBuilder');
+    }
+}

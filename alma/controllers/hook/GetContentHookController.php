@@ -34,6 +34,7 @@ use Alma\PrestaShop\Forms\ApiAdminFormBuilder;
 use Alma\PrestaShop\Forms\CartEligibilityAdminFormBuilder;
 use Alma\PrestaShop\Forms\DebugAdminFormBuilder;
 use Alma\PrestaShop\Forms\ExcludedCategoryAdminFormBuilder;
+use Alma\PrestaShop\Forms\FeaturesAdminFormBuilder;
 use Alma\PrestaShop\Forms\PaymentButtonAdminFormBuilder;
 use Alma\PrestaShop\Forms\PaymentOnTriggeringAdminFormBuilder;
 use Alma\PrestaShop\Forms\PnxAdminFormBuilder;
@@ -235,6 +236,9 @@ final class GetContentHookController extends AdminHookController
 
             $activateLogging = (bool) Tools::getValue('ALMA_ACTIVATE_LOGGING_ON');
             Settings::updateValue('ALMA_ACTIVATE_LOGGING', $activateLogging);
+
+            $activateReinsurance = (bool) Tools::getValue('ALMA_ACTIVATE_REINSURANCE_ON');
+            Settings::updateValue('ALMA_ACTIVATE_REINSURANCE', $activateReinsurance);
 
             if ($merchant) {
                 // First validate that plans boundaries are correctly set
@@ -480,6 +484,7 @@ final class GetContentHookController extends AdminHookController
         $triggerBuilder = new PaymentOnTriggeringAdminFormBuilder($this->module, $this->context, $iconPath, ['feePlans' => $feePlansOrdered]);
         $paymentBuilder = new PaymentButtonAdminFormBuilder($this->module, $this->context, $iconPath);
         $debugBuilder = new DebugAdminFormBuilder($this->module, $this->context, $iconPath);
+        $featuresBuilder = new FeaturesAdminFormBuilder($this->module, $this->context, $iconPath);
 
         $fieldsForms = [];
 
@@ -496,6 +501,7 @@ final class GetContentHookController extends AdminHookController
         }
         $fieldsForms[] = $apiBuilder->build();
         $fieldsForms[] = $debugBuilder->build();
+        $fieldsForms[] = $featuresBuilder->build();
 
         $helper = new HelperForm();
         $helper->module = $this->module;
@@ -532,6 +538,7 @@ final class GetContentHookController extends AdminHookController
             'ALMA_PRODUCT_WDGT_NOT_ELGBL_ON' => Settings::showProductWidgetIfNotEligible(),
             'ALMA_CATEGORIES_WDGT_NOT_ELGBL_ON' => Settings::showCategoriesWidgetIfNotEligible(),
             'ALMA_ACTIVATE_LOGGING_ON' => (bool) Settings::canLog(),
+            'ALMA_ACTIVATE_REINSURANCE_ON' => (bool) Settings::showReinsurance(),
             'ALMA_STATE_REFUND' => Settings::getRefundState(),
             'ALMA_STATE_REFUND_ENABLED_ON' => Settings::isRefundEnabledByState(),
             'ALMA_STATE_TRIGGER' => Settings::getPaymentTriggerState(),
