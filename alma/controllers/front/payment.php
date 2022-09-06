@@ -107,10 +107,8 @@ class AlmaPaymentModuleFrontController extends ModuleFrontController
         $dataFromKey = Settings::getDataFromKey($key);
         
         $cart = $this->context->cart;
-        $data = PaymentData::dataFromCart($cart, $this->context, $dataFromKey, true);
-        $dataObject = new CartDataHelper($cart, $this->context, $dataFromKey);
-        var_dump($dataObject->paymentData());
-        exit;
+        $CartData = new CartDataHelper($cart, $this->context, $dataFromKey);
+        $data = $CartData->paymentData();
         $alma = ClientHelper::defaultInstance();
 
         if (!$data || !$alma) {
