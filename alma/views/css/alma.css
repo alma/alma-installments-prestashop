@@ -21,6 +21,8 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
+@import url('fonts.css');
+
 .payment_module .alma-button img {
     vertical-align: middle;
     cursor: pointer;
@@ -208,7 +210,6 @@ p.payment_module a.disable-arrow-icon {
 
 .alma.reinsurance.list li{
     position: relative;
-    font-family: 'Eina04-Bold';
     display: inline-block;
     background-color: #E7F8FA;
     background-repeat: no-repeat;
@@ -219,10 +220,14 @@ p.payment_module a.disable-arrow-icon {
     cursor: pointer;
     margin-left: 15px;
 }
+.alma.reinsurance.list li span{
+    font-family: 'Eina04-Bold';
+    font-size: .75rem;
+}
 .alma.reinsurance.list li:first-child{
     margin-left: 0;
 }
-.alma.reinsurance.list li:hover p{
+.alma.reinsurance.list li:hover .tip{
     display: block;
 }
 .alma.reinsurance.list li.lightning{
@@ -234,8 +239,9 @@ p.payment_module a.disable-arrow-icon {
 .alma.reinsurance.list li.check{
     background-image: url('/modules/alma/views/img/icon-check.svg');
 }
-.alma.reinsurance.list li p{
+.alma.reinsurance.list li .tip{
     display: none;
+    font-family: 'Public-Sans';
     position: absolute;
     left: 0;
     top: 30px;
@@ -247,7 +253,7 @@ p.payment_module a.disable-arrow-icon {
     width: 400px;
     z-index: 99;
 }
-.alma.reinsurance.list li:last-child p{
+.alma.reinsurance.list li:last-child .tip{
     left: auto;
     right: 0;
 }
@@ -258,7 +264,7 @@ p.payment_module a.disable-arrow-icon {
         margin-bottom: 10px;
         margin-left: 0;
     }
-    .alma.reinsurance.list li:last-child p{
+    .alma.reinsurance.list li:last-child .tip{
         left: 0;
     }
 }

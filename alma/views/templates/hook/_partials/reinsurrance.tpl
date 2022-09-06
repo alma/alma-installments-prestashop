@@ -23,20 +23,20 @@
 
 <ul class="alma reinsurance list">
     <li class="lightning">
-        {l s='Fast and without surprises' mod='alma'}
-        <p>
+        <span>{l s='Fast and without surprises' mod='alma'}</span>
+        <p class="tip">
             {l s='Payment validated in a few minutes. You know exactly what you pay.' mod='alma'}
         </p>
     </li>
     <li class="coins">
-        {l s='At your own pace' mod='alma'}
-        <p>
+        <span>{l s='At your own pace' mod='alma'}</span>
+        <p class="tip">
             {l s='Pay your installments in advance or later free of charge. Control your budget to buy with confidence.' mod='alma'}
         </p>
     </li>
     <li class="check">
-        {l s='100% secure' mod='alma'}
-        <p>
+        <span>{l s='100% secure' mod='alma'}</span>
+        <p class="tip">
             {l s='All your personal data is encrypted and your banking information is protected.' mod='alma'}
         </p>
     </li>

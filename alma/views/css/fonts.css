@@ -1,0 +1,15 @@
+@font-face {
+    font-family: 'Eina04-Bold';
+    src: url('../fonts/Eina04-Bold.woff') format('woff'),
+         url('../fonts/Eina04-Bold.eot') format('eot');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Public-Sans';
+    src: url('../fonts/PublicSans-VariableFont_wght.woff2') format('woff2'),
+         url('../fonts/PublicSans-VariableFont_wght.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
