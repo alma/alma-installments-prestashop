@@ -278,8 +278,6 @@ class CartDataHelper
 
     private function getPurchaseAmount()
     {
-        $purchaseAmount = (float) Tools::ps_round((float) $this->cart->getOrderTotal(true, Cart::BOTH), 2);
-
-        return $purchaseAmount;
+        return (float) Tools::ps_round((float) $this->cart->getOrderTotal(true, Cart::BOTH), 2);
     } 
 }
