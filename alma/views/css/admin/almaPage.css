@@ -1,3 +1,5 @@
+@import url('../fonts.css');
+
 .icon-alma:before{    
     /* content: "\f05e"; */
     content: "";
@@ -161,8 +163,16 @@ fieldset .form-alma.disabled::before{
     border-radius: 4px;
 }
 
-.bootstrap .alma.alert, .bootstrap .alma.alert h2 {
+.bootstrap .alma.alert h2, .bootstrap .alma.alert .btn {
     font-family: 'Eina04-Bold';
+    font-weight: 400;
+}
+
+.bootstrap .alma.alert{
+    font-family: 'Public-Sans';
+}
+.bootstrap .alma.alert b{
+    font-weight: 700;
 }
 
 .bootstrap .alma.alert .h2, .bootstrap .alma.alert h2 {
@@ -186,7 +196,8 @@ fieldset .form-alma.disabled::before{
 }
 
 .bootstrap .alma.alert .btn {
-    padding: 8px 16px;
+    line-height: 1;
+    padding: 12px 16px;
     border: 2px solid transparent;
     border-radius: 4px;
     text-transform: uppercase;
