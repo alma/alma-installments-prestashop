@@ -25,5 +25,8 @@
     <p>
         {$desc|escape:'htmlall':'UTF-8'}
     </p>
+    {if $showReinsurance}
+        {include file="modules/alma/views/templates/hook/_partials/reinsurrance.tpl"}
+    {/if}
     {include file="modules/alma/views/templates/hook/_partials/deferred.tpl" plans=$plans}
 </div>

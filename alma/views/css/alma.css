@@ -264,6 +264,9 @@ p.payment_module a.disable-arrow-icon {
         margin-bottom: 10px;
         margin-left: 0;
     }
+    .alma.reinsurance.list li .tip{
+        width: 100%;
+    }
     .alma.reinsurance.list li:last-child .tip{
         left: 0;
     }
