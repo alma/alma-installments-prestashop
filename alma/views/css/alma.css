@@ -242,6 +242,7 @@ p.payment_module a.disable-arrow-icon {
 .alma.reinsurance.list li .tip{
     display: none;
     font-family: 'Public-Sans', sans-serif;
+    font-weight: 400;
     position: absolute;
     left: 0;
     top: 30px;
