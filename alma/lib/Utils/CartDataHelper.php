@@ -58,6 +58,11 @@ class CartDataHelper
         $this->customer = $this->getCustomer();
     }
 
+    /**
+     * Return data for eligibility
+     *
+     * @return array eligibilityData
+     */
     public function eligibilityData()
     {
         return [
@@ -73,6 +78,11 @@ class CartDataHelper
         ];
     }
 
+    /**
+     * Return data for payment
+     *
+     * @return array paymentData
+     */
     public function paymentData()
     {
         return [
@@ -114,6 +124,11 @@ class CartDataHelper
         ];
     }
 
+    /**
+     * Get array data customer
+     *
+     * @return array getCustomerData
+     */
     private function getCustomerData()
     {
         return [
@@ -129,6 +144,11 @@ class CartDataHelper
         ];
     }
 
+    /**
+     * Get birthday date
+     *
+     * @return string|null
+     */
     private function getBirthday()
     {
         $birthday = $this->customer->birthday;
@@ -139,6 +159,11 @@ class CartDataHelper
         return $birthday;
     }
 
+    /**
+     * Get addresses of customer Prestashop
+     *
+     * @return array getCustomerAddresses
+     */
     private function getCustomerAddresses()
     {
         if (version_compare(_PS_VERSION_, '1.5.4.0', '<')) {
@@ -146,9 +171,15 @@ class CartDataHelper
         } else {
             $idLang = $this->customer->id_lang;
         }
+
         return $this->customer->getAddresses($idLang);
     }
 
+    /**
+     * Get addresses of customer for Alma
+     *
+     * @return array getAddressesData
+     */
     private function getAddressesData()
     {
         $addresses = [];
@@ -167,6 +198,11 @@ class CartDataHelper
         return $addresses;
     }
 
+    /**
+     * get phone between info customer and addresses customer
+     *
+     * @return string
+     */
     private function getPhone()
     {
         $phone = null;
@@ -191,6 +227,11 @@ class CartDataHelper
         return $phone;
     }
 
+    /**
+     * Get customer
+     *
+     * @return Customer
+     */
     private function getCustomer()
     {
         if ($this->cart->id_customer) {
@@ -209,22 +250,44 @@ class CartDataHelper
         return $this->context->customer;
     }
 
+    /**
+     * Get information cart (item and discount)
+     *
+     * @return array getCartInfo
+     */
     private function getCartInfo()
     {
         return CartData::cartInfo($this->cart);
     }
 
+    /**
+     * Get shipping data
+     *
+     * @return array getShippingData
+     */
     private function getShippingData()
     {
         return ShippingData::shippingInfo($this->cart);
     }
 
+    /**
+     * Get state of province
+     *
+     * @param string $type
+     * @return string|null
+     */
     private function getStateProvince($type)
     {
         $idStateShipping = $this->getCartAddressByType($type)->id_state;
 
         return $idStateShipping > 0 ? State::getNameById((int) $idStateShipping) : null;
     }
+
+    /**
+     * Get locale
+     *
+     * @return string
+     */
     private function getLocale()
     {
         $locale = $this->context->language->iso_code;
@@ -236,6 +299,12 @@ class CartDataHelper
         return $locale;
     }
 
+    /**
+     * Get address of cart by type
+     *
+     * @param string $type
+     * @return Address
+     */
     private function getCartAddressByType($type)
     {
         if ($type == 'shipping') {
@@ -247,6 +316,12 @@ class CartDataHelper
         return $address;
     }
 
+    /**
+     * Get country address by type
+     *
+     * @param string $type
+     * @return string
+     */
     private function getCountryAddressByType($type)
     {
         $countryAddress = '';
@@ -260,6 +335,11 @@ class CartDataHelper
         return $countryAddress;
     }
 
+    /**
+     * Get array of plan alma
+     *
+     * @return array getQueries
+     */
     private function getQueries()
     {
         $queries = [];
@@ -276,6 +356,11 @@ class CartDataHelper
         return $queries;
     }
 
+    /**
+     * Get amount of purchase
+     *
+     * @return float
+     */
     private function getPurchaseAmount()
     {
         return (float) Tools::ps_round((float) $this->cart->getOrderTotal(true, Cart::BOTH), 2);
