@@ -155,6 +155,8 @@ fieldset .form-alma.disabled::before{
 }
 
 .bootstrap .alma.alert {
+    font-family: 'Public-Sans', sans-serif;
+    font-weight: 300;
     padding-left: 180px;
     background-repeat: no-repeat;
     background-position: 35px 35px;
@@ -168,11 +170,8 @@ fieldset .form-alma.disabled::before{
     font-weight: 400;
 }
 
-.bootstrap .alma.alert{
-    font-family: 'Public-Sans', sans-serif;
-}
 .bootstrap .alma.alert b{
-    font-weight: 700;
+    font-weight: 600;
 }
 
 .bootstrap .alma.alert .h2, .bootstrap .alma.alert h2 {
