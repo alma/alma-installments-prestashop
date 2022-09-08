@@ -67,7 +67,7 @@ class CartDataHelper
     {
         return [
             'purchase_amount' => almaPriceToCents($this->getPurchaseAmount()),
-            'queries' => $this->getQueries(),
+            'queries' => $this->getEligibilityQueries(),
             'shipping_address' => [
                 'country' => $this->getCountryAddressByType('shipping'),
             ],
@@ -135,7 +135,7 @@ class CartDataHelper
             'first_name' => $this->customer->firstname,
             'last_name' => $this->customer->lastname,
             'email' => $this->customer->email,
-            'birth_date' => $this->getBirthday(),
+            'birth_date' => $this->getCustomerBirthday(),
             'addresses' => $this->getAddressesData(),
             'phone' => $this->getPhone(),
             'country' => $this->getCountryAddressByType('billing'),
@@ -149,7 +149,7 @@ class CartDataHelper
      *
      * @return string|null
      */
-    private function getBirthday()
+    private function getCustomerBirthday()
     {
         $birthday = $this->customer->birthday;
         if ($birthday == '0000-00-00') {
@@ -290,13 +290,11 @@ class CartDataHelper
      */
     private function getLocale()
     {
-        $locale = $this->context->language->iso_code;
-
         if (property_exists($this->context->language, 'locale')) {
-            $locale = $this->context->language->locale;
+            return $this->context->language->locale;
         }
 
-        return $locale;
+        return $this->context->language->iso_code;
     }
 
     /**
@@ -338,9 +336,9 @@ class CartDataHelper
     /**
      * Get array of plan alma
      *
-     * @return array getQueries
+     * @return array getEligibilityQueries
      */
-    private function getQueries()
+    private function getEligibilityQueries()
     {
         $queries = [];
 

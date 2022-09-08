@@ -105,10 +105,10 @@ class AlmaPaymentModuleFrontController extends ModuleFrontController
         $key = Tools::getValue('key', 'general_3_0_0');
         $feePlans = json_decode(Settings::getFeePlans());
         $dataFromKey = Settings::getDataFromKey($key);
-        
+
         $cart = $this->context->cart;
-        $CartData = new CartDataHelper($cart, $this->context, $dataFromKey);
-        $data = $CartData->paymentData();
+        $cartData = new CartDataHelper($cart, $this->context, $dataFromKey);
+        $data = $cartData->paymentData();
         $alma = ClientHelper::defaultInstance();
 
         if (!$data || !$alma) {
