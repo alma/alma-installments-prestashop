@@ -35,6 +35,11 @@ class FeaturesAdminFormBuilder extends AbstractAlmaAdminFormBuilder
 {
     const ALMA_ACTIVATE_REINSURANCE = 'ALMA_ACTIVATE_REINSURANCE';
 
+    /**
+     * Form builder
+     *
+     * @return array
+     */
     protected function configForm()
     {
         return [

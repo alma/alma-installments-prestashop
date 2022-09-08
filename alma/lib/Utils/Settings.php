@@ -136,6 +136,11 @@ class Settings
         return (bool) (int) self::get('ALMA_ACTIVATE_LOGGING', false);
     }
 
+    /**
+     * Get Config option Reinsurance
+     *
+     * @return bool
+     */
     public static function showReinsurance()
     {
         return (bool) (int) self::get('ALMA_ACTIVATE_REINSURANCE', false);
