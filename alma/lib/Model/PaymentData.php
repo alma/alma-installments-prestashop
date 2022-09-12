@@ -29,9 +29,11 @@ if (!defined('_PS_VERSION_')) {
 }
 
 use Address;
+use Alma\API\Endpoints\Orders;
 use Alma\PrestaShop\Utils\Logger;
 use Alma\PrestaShop\Utils\Settings;
 use Alma\PrestaShop\Utils\SettingsCustomFields;
+use Carrier;
 use Cart;
 use Context;
 use Country;
@@ -169,6 +171,26 @@ class PaymentData
             $customerData['is_business'] = true;
             $customerData['business_name'] = $billingAddress->company;
         }
+
+        $carrier = new CarrierHelper($context);
+
+        $websiteCustomerDetails = [
+            'new_customer' => self::getNewCustomer($customer->id),
+            'is_guest' => (bool) $customer->is_guest,
+            'created' => strtotime($customer->date_add),
+            'current_order' => [
+                'purchase_amount' => almaPriceToCents($purchaseAmount),
+                'payment_method' => 'alma',
+                'shipping_method' => $carrier->getNameCarrierById($cart->id_carrier),
+                'items' => CartData::cartItems($cart),
+            ],
+            'previous_orders' => [
+                CartData::previousCartOrdered($customer->id, $cart->id),
+            ]
+        ];
+
+        var_dump($websiteCustomerDetails);
+        exit();
 
         $dataPayment = [
             'website_customer_details' => self::buildWebsiteCustomerDetails($context, $customer, $cart, $purchaseAmount),
