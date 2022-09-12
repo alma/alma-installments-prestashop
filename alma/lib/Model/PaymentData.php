@@ -30,14 +30,17 @@ if (!defined('_PS_VERSION_')) {
 }
 
 use Address;
+use Alma\API\Endpoints\Orders;
 use Alma\PrestaShop\Utils\Logger;
 use Alma\PrestaShop\Utils\Settings;
 use Alma\PrestaShop\Utils\SettingsCustomFields;
+use Carrier;
 use Cart;
 use Context;
 use Country;
 use Customer;
 use Exception;
+use PrestaShop\PrestaShop\Adapter\Entity\Order;
 use State;
 use Tools;
 use Validate;
@@ -175,7 +178,28 @@ class PaymentData
             $customerData['business_name'] = $billingAddress->company;
         }
 
+        $carrier = new CarrierHelper($context);
+
+        $websiteCustomerDetails = [
+            'new_customer' => self::getNewCustomer($customer->id),
+            'is_guest' => (bool) $customer->is_guest,
+            'created' => strtotime($customer->date_add),
+            'current_order' => [
+                'purchase_amount' => almaPriceToCents($purchaseAmount),
+                'payment_method' => 'alma',
+                'shipping_method' => $carrier->getNameCarrierById($cart->id_carrier),
+                'items' => CartData::cartItems($cart),
+            ],
+            'previous_orders' => [
+                CartData::previousCartOrdered($customer->id, $cart->id),
+            ]
+        ];
+
+        var_dump($websiteCustomerDetails);
+        exit();
+
         $dataPayment = [
+            'website_customer_details' => $websiteCustomerDetails,
             'payment' => [
                 'installments_count' => $feePlans['installmentsCount'],
                 'deferred_days' => $feePlans['deferredDays'],
@@ -219,5 +243,25 @@ class PaymentData
         }
 
         return $dataPayment;
+    }
+
+    private function getNewCustomer($idCustomer)
+    {
+        if (Order::getCustomerNbOrders($idCustomer) > 0) {
+            return false;
+        }
+
+        return true;
+    }
+
+    private function getNameCarrier($idCarrier, $context)
+    {
+        $carriers = Carrier::getCarriers($context->language->id);
+
+        $currentCarrier = array_filter($carriers, function($carrier) use ($idCarrier) {
+            return $carrier['id_carrier'] == $idCarrier;
+        });
+
+        return array_shift($currentCarrier)['name'];
     }
 }
