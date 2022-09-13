@@ -115,4 +115,24 @@ class CartHelper
 
         return $orders;
     }
+
+    /**
+     * Get ids cart ordered by customer id with limit (default = 10)
+     *
+     * @param int $idCustomer
+     * @param int $currentIdCart
+     * @param integer $limit
+     * @return array
+     */
+    private function getCartIdsByCustomerWithLimit($idCustomer, $limit = 10)
+    {
+        $idsCart = [];
+        $orders = Order::getCustomerOrders($idCustomer);
+
+        foreach ($orders as $order) {
+            $idsCart[] = $order['id_cart'];
+        }
+
+        return array_slice($idsCart, 0, $limit);
+    }
 }
