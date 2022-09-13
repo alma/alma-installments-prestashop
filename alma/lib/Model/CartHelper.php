@@ -27,6 +27,7 @@ namespace Alma\PrestaShop\Model;
 
 use Cart;
 use Context;
+use Order;
 use Tools;
 
 if (!defined('_PS_VERSION_')) {
@@ -51,22 +52,15 @@ class CartHelper
      * @param int $idCustomer
      * @return array
      */
-    public function previousCartOrdered($idCustomer, $currentIdCart)
+    public function previousCartOrdered($idCustomer)
     {
         $cartsData = [];
-        $idsCart = [];
-        $carts = Cart::getCustomerCarts($idCustomer);
-        foreach ($carts as $cart) {
-            if ($cart['id_cart'] != $currentIdCart) {
-                $idsCart[] = $cart['id_cart'];
-            }
-        }
+        $idsCart = $this->getCartIdsByCustomerWithLimit($idCustomer);
+        
         $carrier = new CarrierHelper($this->context);
         foreach($idsCart as $idCart) {
             $cart = new Cart((int) $idCart);
-
             $purchaseAmount = (float) Tools::ps_round((float) $cart->getOrderTotal(true, Cart::BOTH), 2);
-
             $cartsData[] = [
                 'purchase_amount' => almaPriceToCents($purchaseAmount),
                 'payment_method' => 'alma',
@@ -76,5 +70,25 @@ class CartHelper
         }
         
         return $cartsData;
+    }
+
+    /**
+     * Get ids cart ordered by customer id with limit (default = 10)
+     *
+     * @param int $idCustomer
+     * @param int $currentIdCart
+     * @param integer $limit
+     * @return array
+     */
+    private function getCartIdsByCustomerWithLimit($idCustomer, $limit = 10)
+    {
+        $idsCart = [];
+        $orders = Order::getCustomerOrders($idCustomer);
+
+        foreach ($orders as $order) {
+            $idsCart[] = $order['id_cart'];
+        }
+
+        return array_slice($idsCart, 0, $limit);
     }
 }

@@ -192,12 +192,9 @@ class PaymentData
                 'items' => CartData::cartItems($cart),
             ],
             'previous_orders' => [
-                $cartHelper->previousCartOrdered($customer->id, $cart->id),
-            ]
+                $cartHelper->previousCartOrdered($customer->id),
+            ],
         ];
-
-        var_dump($websiteCustomerDetails);
-        exit();
 
         $dataPayment = [
             'website_customer_details' => $websiteCustomerDetails,
