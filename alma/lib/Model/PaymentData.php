@@ -251,15 +251,4 @@ class PaymentData
 
         return true;
     }
-
-    private function getNameCarrier($idCarrier, $context)
-    {
-        $carriers = Carrier::getCarriers($context->language->id);
-
-        $currentCarrier = array_filter($carriers, function($carrier) use ($idCarrier) {
-            return $carrier['id_carrier'] == $idCarrier;
-        });
-
-        return array_shift($currentCarrier)['name'];
-    }
 }
