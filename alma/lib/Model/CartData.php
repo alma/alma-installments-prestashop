@@ -74,37 +74,6 @@ class CartData
     }
 
     /**
-     * Previous cart items of the customer
-     *
-     * @param int $idCustomer
-     * @return array
-     */
-    public static function previousCartOrdered($idCustomer, $currentIdCart)
-    {
-        $cartsData = [];
-        $idsCart = [];
-        $carts = Cart::getCustomerCarts($idCustomer);
-        foreach ($carts as $cart) {
-            if ($cart['id_cart'] != $currentIdCart) {
-                $idsCart[] = $cart['id_cart'];
-            }
-        }
-        $carrier = new CarrierHelper(Context::getContext());
-        foreach($idsCart as $idCart) {
-            $cart = new Cart((int) $idCart);
-
-            $cartsData[] = [
-                'purchase_amount' => (float) Tools::ps_round((float) $cart->getOrderTotal(true, Cart::BOTH), 2),
-                'payment_method' => 'alma',
-                'shipping_method' => $carrier->getNameCarrierById($cart->id_carrier),
-                'items' => self::getCartItems($cart),
-            ];
-        }
-        
-        return $cartsData;
-    }
-
-    /**
      * @param Cart $cart
      *
      * @return bool|mixed
