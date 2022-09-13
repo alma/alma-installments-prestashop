@@ -178,7 +178,8 @@ class PaymentData
             $customerData['business_name'] = $billingAddress->company;
         }
 
-        $carrier = new CarrierHelper($context);
+        $carrierHelper = new CarrierHelper($context);
+        $cartHelper = new CartHelper($context);
 
         $websiteCustomerDetails = [
             'new_customer' => self::getNewCustomer($customer->id),
@@ -187,11 +188,11 @@ class PaymentData
             'current_order' => [
                 'purchase_amount' => almaPriceToCents($purchaseAmount),
                 'payment_method' => 'alma',
-                'shipping_method' => $carrier->getNameCarrierById($cart->id_carrier),
+                'shipping_method' => $carrierHelper->getNameCarrierById($cart->id_carrier),
                 'items' => CartData::cartItems($cart),
             ],
             'previous_orders' => [
-                CartData::previousCartOrdered($customer->id, $cart->id),
+                $cartHelper->previousCartOrdered($customer->id, $cart->id),
             ]
         ];
 
