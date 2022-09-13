@@ -29,11 +29,9 @@ if (!defined('_PS_VERSION_')) {
 }
 
 use Address;
-use Alma\API\Endpoints\Orders;
 use Alma\PrestaShop\Utils\Logger;
 use Alma\PrestaShop\Utils\Settings;
 use Alma\PrestaShop\Utils\SettingsCustomFields;
-use Carrier;
 use Cart;
 use Context;
 use Country;
