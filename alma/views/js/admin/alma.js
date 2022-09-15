@@ -23,6 +23,16 @@
 
 (function ($) {
     $(function () {
+        if ($('.alma.alert.alert-info').length > 0) {
+            $('.accept-soc').on('click', function() {
+                $('#ALMA_ACTIVATE_SHARE_OF_CHECKOUT_ON').prop('checked', true);
+                $(this).parents('.alma.alert.alert-info').hide();
+            });
+            $('.reject-soc').on('click', function() {                
+                $('#ALMA_ACTIVATE_SHARE_OF_CHECKOUT_ON').prop('checked', false);
+                $(this).parents('.alma.alert.alert-info').hide();
+            });
+        }
         if ($('#alma_config_form').length > 0) {
             initMoreOption('#fieldset_1', '.form-group:not(:nth-child(1)):not(:nth-child(2))', '#ALMA_SHOW_PRODUCT_ELIGIBILITY_ON');
             initMoreOption('#fieldset_2', '.form-group:not(:nth-child(1)):not(:nth-child(2))', '#ALMA_SHOW_ELIGIBILITY_MESSAGE_ON');

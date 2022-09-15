@@ -130,7 +130,7 @@
         <div class="row">
             <h2>{l s='Increase your performance & get insights !' mod='alma'}</h2>
             <p>
-                {l s='By accepting this option, enable Alma to analyse the usage of your payment methods, [1]get more informations to perform[/1] and share this data with you. You can [2]unsubscribe and erase your data[/2] at any moment.' tags=['<b>', '<a href="mailto:support@getalma.eu">'] mod='alma'}
+                {l s='By accepting this option, enable Alma to analyse the usage of your payment methods, [1]get more information to perform[/1] and share this data with you. You can [2]unsubscribe and erase your data[/2] at any moment.' tags=['<b>', '<a href="mailto:support@getalma.eu">'] mod='alma'}
             </p>
             <p>
                 <a data-toggle="collapse" href="#collapseModalSoc" role="button" aria-expanded="false" aria-controls="collapseModalSoc" class="link-collapse collapsed">
@@ -148,14 +148,15 @@
                     <ul>
                         <li>{l s='total quantity of orders, amounts and currencies' mod='alma'}</li>
                         <li>{l s='payment provider for each order' mod='alma'}</li>
+                        <li>{l s='customers order history' mod='alma'}</li>
                     </ul>
                 </div>
             </div>
         </div>
         <div class="row">
             <p>
-                <a class="btn btn-default" href="">{l s='Reject' mod='alma'}</a>
-                <a class="btn btn-primary" href="">{l s='Accept' mod='alma'}</a>
+                <a class="btn btn-default reject-soc" href="#">{l s='Reject' mod='alma'}</a>
+                <a class="btn btn-primary accept-soc" href="#">{l s='Accept' mod='alma'}</a>
             </p>
         </div>
     </div>
