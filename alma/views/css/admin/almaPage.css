@@ -212,17 +212,12 @@ fieldset .form-alma.disabled::before{
     color: #FFFFFF;
 }
 
-.link-collapse .material-icons{
-    font-size: 16px;
-    position: relative;
-    top: 3px;
-}
-.link-collapse .material-icons.down{
+.link-collapse .icon-chevron-down{
     display: none;
 }
-.link-collapse.collapsed .material-icons.down{
+.link-collapse.collapsed .icon-chevron-down{
     display: inline-block;
 }
-.link-collapse.collapsed .material-icons.up{
+.link-collapse.collapsed .icon-chevron-up{
     display: none;
 }

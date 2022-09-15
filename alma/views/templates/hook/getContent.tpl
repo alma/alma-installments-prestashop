@@ -135,12 +135,8 @@
             <p>
                 <a data-toggle="collapse" href="#collapseModalSoc" role="button" aria-expanded="false" aria-controls="collapseModalSoc" class="link-collapse collapsed">
                     {l s='Know more about collected data' mod='alma'}
-                    <i class="material-icons down">
-                        keyboard_arrow_down
-                    </i>
-                    <i class="material-icons up">
-                        keyboard_arrow_up
-                    </i>
+                    <i class="icon icon-chevron-down"></i>
+                    <i class="icon icon-chevron-up"></i>
                 </a>
             </p>
             <div class="collapse" id="collapseModalSoc">
