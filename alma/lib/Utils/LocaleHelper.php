@@ -159,4 +159,18 @@ class LocaleHelper
 
         return $ret;
     }
+
+    /**
+     * Get locale
+     *
+     * @return string
+     */
+    public static function getLocale()
+    {
+        if (property_exists(Context::getContext()->language, 'locale')) {
+            return Context::getContext()->language->locale;
+        }
+
+        return Context::getContext()->language->iso_code;
+    }
 }

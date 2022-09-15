@@ -27,9 +27,8 @@ if (!defined('_PS_VERSION_')) {
 
 use Alma\API\RequestError;
 use Alma\PrestaShop\API\ClientHelper;
-use Alma\PrestaShop\Model\PaymentData;
-use Alma\PrestaShop\Utils\CartDataHelper;
 use Alma\PrestaShop\Utils\Logger;
+use Alma\PrestaShop\Utils\PaymentDataHelper;
 use Alma\PrestaShop\Utils\Settings;
 
 class AlmaPaymentModuleFrontController extends ModuleFrontController
@@ -102,12 +101,12 @@ class AlmaPaymentModuleFrontController extends ModuleFrontController
             return;
         }
 
-        $key = Tools::getValue('key', 'general_3_0_0');
+        $feePlanKey = Tools::getValue('key', 'general_3_0_0');
         $feePlans = json_decode(Settings::getFeePlans());
-        $dataFromKey = Settings::getDataFromKey($key);
+        $feePlanSettings = Settings::getDataFromKey($feePlanKey);
 
         $cart = $this->context->cart;
-        $cartData = new CartDataHelper($cart, $this->context, $dataFromKey);
+        $cartData = new PaymentDataHelper($cart, $this->context, $feePlanSettings);
         $data = $cartData->paymentData();
         $alma = ClientHelper::defaultInstance();
 
@@ -118,9 +117,9 @@ class AlmaPaymentModuleFrontController extends ModuleFrontController
         }
 
         // Check that the selected installments count is indeed enabled
-        $disabled = !$feePlans->$key->enabled
-            || $feePlans->$key->min > $data['payment']['purchase_amount']
-            || $feePlans->$key->max < $data['payment']['purchase_amount'];
+        $disabled = !$feePlans->$feePlanKey->enabled
+            || $feePlans->$feePlanKey->min > $data['payment']['purchase_amount']
+            || $feePlans->$feePlanKey->max < $data['payment']['purchase_amount'];
 
         if ($disabled) {
             $this->genericErrorAndRedirect();

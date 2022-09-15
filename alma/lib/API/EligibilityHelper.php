@@ -30,7 +30,7 @@ if (!defined('_PS_VERSION_')) {
 
 use Alma\API\Endpoints\Results\Eligibility;
 use Alma\API\RequestError;
-use Alma\PrestaShop\Model\PaymentData;
+use Alma\PrestaShop\Utils\EligibilityDataHelper;
 use Alma\PrestaShop\Utils\Logger;
 use Alma\PrestaShop\Utils\Settings;
 use Cart;
@@ -97,7 +97,8 @@ class EligibilityHelper
 
     private static function checkPaymentData($context, $activePlans)
     {
-        $paymentData = PaymentData::dataFromCart($context->cart, $context, $activePlans);
+        $eligibilityDataHelper = new EligibilityDataHelper($context->cart, $activePlans);
+        $paymentData = $eligibilityDataHelper->getData();
 
         if (!$paymentData) {
             Logger::instance()->error('Cannot check cart eligibility: no data extracted from cart');

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * 2018-2022 Alma SAS
  *
@@ -24,60 +25,49 @@
 
 namespace Alma\PrestaShop\Model;
 
+use Alma\PrestaShop\Utils\Logger;
+use Cart;
 use Context;
-use PrestaShopDatabaseException;
+use Customer;
+use Validate;
 
 if (!defined('_PS_VERSION_')) {
     exit;
 }
 
 /**
- * Class CarrierHelper
+ * Class CustomerData
  */
-class CarrierHelper
+class CustomerData
 {
-    const UNKNOWN_CARRIER = 'Unknown';
-    /** @var Context */
-    private $context;
-    /** @var CarrierData */
-    private $carrierData;
-
-    public function __construct(Context $context)
-    {
+    public function __construct(
+        Context $context,
+        Cart $cart
+    ) {
         $this->context = $context;
-        $this->carrierData = new CarrierData();
+        $this->cart = $cart;
     }
 
     /**
-     * Get name Carrier by id carrier
+     * Get customer
      *
-     * @param int $idCarrier
-     *
-     * @return string
+     * @return Customer
      */
-    public function getParentCarrierNameById($idCarrier)
+    public function get()
     {
-        try {
-            $carriers = $this->carrierData->getCarriers();
-        } catch (PrestaShopDatabaseException $e) {
-            return self::UNKNOWN_CARRIER;
-        }
+        if ($this->cart->id_customer) {
+            $customer = new Customer($this->cart->id_customer);
+            if (!Validate::isLoadedObject($customer)) {
+                Logger::instance()->error(
+                    "[Alma] Error loading Customer {$this->cart->id_customer} from Cart {$this->cart->id}"
+                );
 
-        foreach ($carriers as $carrier) {
-            if ($carrier['id_carrier'] == $idCarrier) {
-                if ($carrier['id_reference'] == $idCarrier) {
-                    return $carrier['name'];
-                }
-
-                $carrierName = $this->getParentCarrierNameById($carrier['id_reference']);
-                if ($carrierName === self::UNKNOWN_CARRIER) {
-                    return $carrier['name'];
-                }
-
-                return $carrierName;
+                return null;
             }
+
+            return $customer;
         }
 
-        return self::UNKNOWN_CARRIER;
+        return $this->context->customer;
     }
 }

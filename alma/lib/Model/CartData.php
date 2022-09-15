@@ -66,6 +66,7 @@ class CartData
      * Item of Current Cart
      *
      * @param Cart $cart
+     *
      * @return array
      */
     public static function cartItems($cart)
@@ -353,5 +354,29 @@ class CartData
         $excludedListing = Settings::getExcludedCategories();
 
         return array_intersect($cartProductsCategories, $excludedListing);
+    }
+
+    /**
+     * Get amount of purchase
+     *
+     * @param Cart $cart
+     *
+     * @return float
+     */
+    public static function getPurchaseAmount($cart)
+    {
+        return (float) Tools::ps_round((float) $cart->getOrderTotal(true, Cart::BOTH), 2);
+    }
+
+    /**
+     * Get amount of purchase in cent
+     *
+     * @param Cart $cart
+     *
+     * @return int
+     */
+    public static function getPurchaseAmountInCent($cart)
+    {
+        return (int) almaPriceToCents(self::getPurchaseAmount($cart));
     }
 }
