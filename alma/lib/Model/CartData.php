@@ -63,17 +63,6 @@ class CartData
     }
 
     /**
-     * Item of Current Cart
-     *
-     * @param Cart $cart
-     * @return array
-     */
-    public static function cartItems($cart)
-    {
-        return self::getCartItems($cart);
-    }
-
-    /**
      * @param Cart $cart
      *
      * @return bool|mixed

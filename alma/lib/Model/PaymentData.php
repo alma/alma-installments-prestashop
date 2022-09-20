@@ -176,26 +176,8 @@ class PaymentData
             $customerData['business_name'] = $billingAddress->company;
         }
 
-        $carrierHelper = new CarrierHelper($context);
-        $cartHelper = new CartHelper($context);
-
-        $websiteCustomerDetails = [
-            'new_customer' => self::getNewCustomer($customer->id),
-            'is_guest' => (bool) $customer->is_guest,
-            'created' => strtotime($customer->date_add),
-            'current_order' => [
-                'purchase_amount' => almaPriceToCents($purchaseAmount),
-                'payment_method' => 'alma',
-                'shipping_method' => $carrierHelper->getNameCarrierById($cart->id_carrier),
-                'items' => CartData::cartItems($cart),
-            ],
-            'previous_orders' => [
-                $cartHelper->previousCartOrdered($customer->id),
-            ],
-        ];
-
         $dataPayment = [
-            'website_customer_details' => $websiteCustomerDetails,
+            'website_customer_details' => self::buildWebsiteCustomerDetails($context, $customer, $cart, $purchaseAmount),
             'payment' => [
                 'installments_count' => $feePlans['installmentsCount'],
                 'deferred_days' => $feePlans['deferredDays'],
@@ -241,12 +223,33 @@ class PaymentData
         return $dataPayment;
     }
 
-    private function getNewCustomer($idCustomer)
+    private function isNewCustomer($idCustomer)
     {
         if (Order::getCustomerNbOrders($idCustomer) > 0) {
             return false;
         }
 
         return true;
+    }
+
+    private function buildWebsiteCustomerDetails($context, $customer, $cart, $purchaseAmount)
+    {
+        $carrierHelper = new CarrierHelper($context);
+        $cartHelper = new CartHelper($context);
+
+        return [
+            'new_customer' => self::isNewCustomer($customer->id),
+            'is_guest' => (bool) $customer->is_guest,
+            'created' => strtotime($customer->date_add),
+            'current_order' => [
+                'purchase_amount' => almaPriceToCents($purchaseAmount),
+                'payment_method' => 'alma',
+                'shipping_method' => $carrierHelper->getNameCarrierById($cart->id_carrier),
+                'items' => CartData::getCartItems($cart),
+            ],
+            'previous_orders' => [
+                $cartHelper->previousCartOrdered($customer->id),
+            ],
+        ];
     }
 }
