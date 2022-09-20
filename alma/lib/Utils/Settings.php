@@ -82,6 +82,7 @@ class Settings
         $configKeys = [
             'ALMA_FULLY_CONFIGURED',
             'ALMA_ACTIVATE_LOGGING',
+            'ALMA_ACTIVATE_POPIN_NOTIFY',
             'ALMA_API_MODE',
             'ALMA_MERCHANT_ID',
             'ALMA_LIVE_API_KEY',
@@ -133,6 +134,11 @@ class Settings
     public static function canLog()
     {
         return (bool) (int) self::get('ALMA_ACTIVATE_LOGGING', false);
+    }
+
+    public static function notifyPopinCustomer()
+    {
+        return (bool) (int) self::get('ALMA_ACTIVATE_POPIN_NOTIFY', false);
     }
 
     public static function getActiveMode()

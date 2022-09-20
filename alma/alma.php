@@ -142,6 +142,7 @@ class Alma extends PaymentModule
             'displayBackOfficeHeader',
             'displayShoppingCartFooter',
             'actionOrderStatusPostUpdate',
+            'displayFooter',
         ];
 
         if (version_compare(_PS_VERSION_, '1.7.7.0', '>=')) {
@@ -434,5 +435,10 @@ class Alma extends PaymentModule
     public function hookActionOrderStatusPostUpdate($params)
     {
         return $this->runHookController('state', $params);
+    }
+
+    public function hookDisplayFooter($params)
+    {
+        return $this->runHookController('displayFooter', $params);
     }
 }

@@ -23,3 +23,11 @@
 .alma-widget-root.alma-howItWorks > div {
     z-index: 99999 !important;
 }
+
+.popin-alma{
+    position: fixed;
+    bottom: 10px;
+    right: 10px;
+    border: solid 2px red;
+    padding: 30px;
+}
