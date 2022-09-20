@@ -98,15 +98,15 @@ class EligibilityHelper
     private static function checkPaymentData($context, $activePlans)
     {
         $eligibilityDataHelper = new EligibilityDataHelper($context->cart, $activePlans);
-        $paymentData = $eligibilityDataHelper->getData();
+        $eligibilityData = $eligibilityDataHelper->getData();
 
-        if (!$paymentData) {
+        if (!$eligibilityData) {
             Logger::instance()->error('Cannot check cart eligibility: no data extracted from cart');
 
             return [];
         }
 
-        return $paymentData;
+        return $eligibilityData;
     }
 
     private static function getNotEligibleFeePlans($feePlans, $purchaseAmount)
