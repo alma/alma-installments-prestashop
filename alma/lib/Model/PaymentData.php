@@ -38,7 +38,7 @@ use Context;
 use Country;
 use Customer;
 use Exception;
-use PrestaShop\PrestaShop\Adapter\Entity\Order;
+use Order;
 use State;
 use Tools;
 use Validate;
@@ -223,7 +223,7 @@ class PaymentData
         return $dataPayment;
     }
 
-    private function isNewCustomer($idCustomer)
+    private static function isNewCustomer($idCustomer)
     {
         if (Order::getCustomerNbOrders($idCustomer) > 0) {
             return false;
@@ -232,7 +232,7 @@ class PaymentData
         return true;
     }
 
-    private function buildWebsiteCustomerDetails($context, $customer, $cart, $purchaseAmount)
+    private static function buildWebsiteCustomerDetails($context, $customer, $cart, $purchaseAmount)
     {
         $carrierHelper = new CarrierHelper($context);
         $cartHelper = new CartHelper($context);
