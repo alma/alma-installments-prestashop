@@ -42,17 +42,27 @@ if (!defined('_PS_VERSION_')) {
  */
 class PaymentDataHelper
 {
+    /** @var float Purchase amount */
+    private $purchaseAmout;
+
+    /**
+     * Payment Data Helper
+     *
+     * @param Cart $cart
+     * @param Context $context
+     * @param array $feePlan
+     */
     public function __construct(
         Cart $cart,
         Context $context,
         array $feePlan
     ) {
-        $customerData = new CustomerData($context, $cart);
-
         $this->cart = $cart;
         $this->context = $context;
         $this->feePlan = $feePlan;
-        $this->customer = $customerData->get();
+        $this->customer = CartData::getCustomer($cart, $context);
+        $this->addressData = new AddressData($this->cart);
+        $this->customerHelper = new CustomerHelper($this->customer, $context, $cart);
     }
 
     /**
@@ -62,14 +72,11 @@ class PaymentDataHelper
      */
     public function paymentData()
     {
-        $purchase_amout = CartData::getPurchaseAmount($this->cart);
-        $addressData = new AddressData($this->cart);
-        $customerHelper = new CustomerHelper($this->customer, $this->context, $this->cart);
-        $shippingAddress = $addressData->getShippingAddress();
-        $billingAddress = $addressData->getBillingAddress();
+        $shippingAddress = $this->addressData->getShippingAddress();
+        $billingAddress = $this->addressData->getBillingAddress();
 
-        $dataPayment = [
-            'website_customer_details' => $customerHelper->getWebsiteDetails(),
+        $paymentData = [
+            'website_customer_details' => $this->customerHelper->getWebsiteDetails(),
             'payment' => [
                 'installments_count' => $this->feePlan['installmentsCount'],
                 'deferred_days' => $this->feePlan['deferredDays'],
@@ -82,9 +89,9 @@ class PaymentDataHelper
                     'line1' => $shippingAddress->address1,
                     'postal_code' => $shippingAddress->postcode,
                     'city' => $shippingAddress->city,
-                    'country' => $addressData->getShippingCountry(),
+                    'country' => $this->addressData->getShippingCountry(),
                     'county_sublocality' => null,
-                    'state_province' => $addressData->getShippingStateProvince(),
+                    'state_province' => $this->addressData->getShippingStateProvinceName(),
                 ],
                 'shipping_info' => ShippingData::shippingInfo($this->cart),
                 'cart' => CartData::cartInfo($this->cart),
@@ -92,26 +99,40 @@ class PaymentDataHelper
                     'line1' => $billingAddress->address1,
                     'postal_code' => $billingAddress->postcode,
                     'city' => $billingAddress->city,
-                    'country' => $addressData->getBillingCountry(),
+                    'country' => $this->addressData->getBillingCountry(),
                     'county_sublocality' => null,
-                    'state_province' => $addressData->getBillingStateProvince(),
+                    'state_province' => $this->addressData->getBillingStateProvinceName(),
                 ],
                 'custom_data' => [
                     'cart_id' => $this->cart->id,
-                    'purchase_amount_new_conversion_func' => almaPriceToCents_str($purchase_amout),
-                    'cart_totals' => $purchase_amout,
-                    'cart_totals_high_precision' => number_format($purchase_amout, 16),
+                    'purchase_amount_new_conversion_func' => almaPriceToCents_str($this->getPurchaseAmount()),
+                    'cart_totals' => $this->getPurchaseAmount(),
+                    'cart_totals_high_precision' => number_format($this->getPurchaseAmount(), 16),
                 ],
                 'locale' => LocaleHelper::getLocale(),
             ],
-            'customer' => $customerHelper->getData(),
+            'customer' => $this->customerHelper->getData(),
         ];
 
         if (Settings::isDeferredTriggerLimitDays($this->feePlan)) {
-            $dataPayment['payment']['deferred'] = 'trigger';
-            $dataPayment['payment']['deferred_description'] = SettingsCustomFields::getDescriptionPaymentTriggerByLang($this->context->language->id);
+            $paymentData['payment']['deferred'] = 'trigger';
+            $paymentData['payment']['deferred_description'] = SettingsCustomFields::getDescriptionPaymentTriggerByLang($this->context->language->id);
         }
 
-        return $dataPayment;
+        return $paymentData;
+    }
+
+    /**
+     * Get Purchase Amount
+     *
+     * @return float
+     */
+    private function getPurchaseAmount()
+    {
+        if (!$this->purchaseAmout) {
+            $this->purchaseAmout = CartData::getPurchaseAmount($this->cart);
+        }
+
+        return $this->purchaseAmout;
     }
 }

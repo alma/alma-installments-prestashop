@@ -27,6 +27,7 @@ namespace Alma\PrestaShop\Utils;
 use Alma\PrestaShop\Model\AddressData;
 use Alma\PrestaShop\Model\CarrierData;
 use Alma\PrestaShop\Model\CartData;
+use Alma\PrestaShop\Model\CustomerData;
 use Cart;
 use Context;
 use Country;
@@ -44,6 +45,13 @@ if (!defined('_PS_VERSION_')) {
  */
 class CustomerHelper
 {
+    /**
+     * Customer Helper construct
+     *
+     * @param Customer $customer
+     * @param Context $context
+     * @param Cart $cart
+     */
     public function __construct(
         Customer $customer,
         Context $context,
@@ -52,6 +60,10 @@ class CustomerHelper
         $this->customer = $customer;
         $this->context = $context;
         $this->cart = $cart;
+        $this->addressData = new AddressData($cart);
+        $this->customerData = new CustomerData($context, $customer);
+        $this->carrierData = new CarrierData($context);
+        $this->customerOrderHelper = new CustomerOrderHelper($context, $customer);
     }
 
     /**
@@ -61,55 +73,40 @@ class CustomerHelper
      */
     public function getData()
     {
-        $addressData = new AddressData($this->cart);
-
         return [
             'first_name' => $this->customer->firstname,
             'last_name' => $this->customer->lastname,
             'email' => $this->customer->email,
-            'birth_date' => $this->getBirthday(),
+            'birth_date' => $this->customerData->getBirthday(),
             'addresses' => $this->getAddressesData(),
             'phone' => $this->getPhone(),
-            'country' => $addressData->getBillingCountry(),
+            'country' => $this->addressData->getBillingCountry(),
             'county_sublocality' => null,
-            'state_province' => $addressData->getBillingStateProvince(),
+            'state_province' => $this->addressData->getBillingStateProvinceName(),
         ];
     }
 
+    /**
+     * Detail customer for risk
+     *
+     * @return array
+     */
     public function getWebsiteDetails()
     {
-        $carrierData = new CarrierData($this->context);
-        $customerOrderHelper = new CustomerOrderHelper($this->context);
-
         return [
-            'new_customer' => $this->isNew($this->customer->id),
+            'new_customer' => $this->customerData->isNew($this->customer->id),
             'is_guest' => (bool) $this->customer->is_guest,
             'created' => strtotime($this->customer->date_add),
             'current_order' => [
                 'purchase_amount' => CartData::getPurchaseAmountInCent($this->cart),
                 'payment_method' => 'alma',
-                'shipping_method' => $carrierData->getNameById($this->cart->id_carrier),
-                'items' => CartData::cartItems($this->cart),
+                'shipping_method' => $this->carrierData->getNameById($this->cart->id_carrier),
+                'items' => CartData::getCartItems($this->cart),
             ],
             'previous_orders' => [
-                $customerOrderHelper->previous($this->customer->id),
+                $this->customerOrderHelper->previousOrders($this->customer->id),
             ],
         ];
-    }
-
-    /**
-     * Get birthday date
-     *
-     * @return string|null
-     */
-    private function getBirthday()
-    {
-        $birthday = $this->customer->birthday;
-        if ($birthday == '0000-00-00') {
-            return null;
-        }
-
-        return $birthday;
     }
 
     /**
@@ -121,7 +118,7 @@ class CustomerHelper
     {
         $addresses = [];
 
-        foreach ($this->getCustomerAddresses() as $address) {
+        foreach ($this->customerData->getAddresses() as $address) {
             array_push($addresses, [
                 'line1' => $address['address1'],
                 'postal_code' => $address['postcode'],
@@ -136,64 +133,18 @@ class CustomerHelper
     }
 
     /**
-     * Get addresses of customer Prestashop
-     *
-     * @return array getCustomerAddresses
-     */
-    private function getCustomerAddresses()
-    {
-        if (version_compare(_PS_VERSION_, '1.5.4.0', '<')) {
-            $idLang = $this->context->language->id;
-        } else {
-            $idLang = $this->customer->id_lang;
-        }
-
-        return $this->customer->getAddresses($idLang);
-    }
-
-    /**
-     * get phone between info customer and addresses customer
+     * Get phone between info customer and addresses customer
      *
      * @return string
      */
     private function getPhone()
     {
-        $phone = null;
-        $addressData = new AddressData($this->cart);
-        $shippingAddress = $addressData->getShippingAddress();
-
-        if ($shippingAddress->phone) {
-            $phone = $shippingAddress->phone;
-        } elseif ($shippingAddress->phone_mobile) {
-            $phone = $shippingAddress->phone_mobile;
-        }
+        $phone = $this->addressData->getShippingPhone();
 
         if (is_null($phone)) {
-            foreach ($this->getCustomerAddresses() as $address) {
-                if ($address['phone']) {
-                    $phone = $address['phone'];
-                } elseif ($address['phone_mobile']) {
-                    $phone = $address['phone_mobile'];
-                }
-            }
+            $phone = $this->customerData->getPhone();
         }
 
         return $phone;
-    }
-
-    /**
-     * If is new customer or not
-     *
-     * @param int $idCustomer
-     *
-     * @return bool
-     */
-    private function isNew($idCustomer)
-    {
-        if (Order::getCustomerNbOrders($idCustomer) > 0) {
-            return false;
-        }
-
-        return true;
     }
 }

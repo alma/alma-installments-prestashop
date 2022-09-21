@@ -25,11 +25,10 @@
 
 namespace Alma\PrestaShop\Model;
 
-use Alma\PrestaShop\Utils\Logger;
 use Cart;
 use Context;
 use Customer;
-use Validate;
+use Order;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -40,34 +39,104 @@ if (!defined('_PS_VERSION_')) {
  */
 class CustomerData
 {
+    /**
+     * Customer Data construct
+     *
+     * @param Context $context
+     * @param Customer $customer
+     */
     public function __construct(
         Context $context,
-        Cart $cart
+        Customer $customer
     ) {
         $this->context = $context;
-        $this->cart = $cart;
+        $this->customer = $customer;
     }
 
     /**
-     * Get customer
+     * Get addresses
      *
-     * @return Customer
+     * @return array getAddresses
      */
-    public function get()
+    public function getAddresses()
     {
-        if ($this->cart->id_customer) {
-            $customer = new Customer($this->cart->id_customer);
-            if (!Validate::isLoadedObject($customer)) {
-                Logger::instance()->error(
-                    "[Alma] Error loading Customer {$this->cart->id_customer} from Cart {$this->cart->id}"
-                );
-
-                return null;
-            }
-
-            return $customer;
+        if (version_compare(_PS_VERSION_, '1.5.4.0', '<')) {
+            $idLang = $this->context->language->id;
+        } else {
+            $idLang = $this->customer->id_lang;
         }
 
-        return $this->context->customer;
+        return $this->customer->getAddresses($idLang);
+    }
+
+    /**
+     * Get birthday date
+     *
+     * @return string|null
+     */
+    public function getBirthday()
+    {
+        $birthday = $this->customer->birthday;
+        if ($birthday == '0000-00-00') {
+            return null;
+        }
+
+        return $birthday;
+    }
+
+    /**
+     * If is new customer or not
+     *
+     * @param int $idCustomer
+     *
+     * @return bool
+     */
+    public function isNew($idCustomer)
+    {
+        return Order::getCustomerNbOrders($idCustomer) === 0;
+    }
+
+    /**
+     * Get phone customer
+     *
+     * @return string
+     */
+    public function getPhone()
+    {
+        $phone = null;
+
+        foreach ($this->getAddresses() as $address) {
+            if ($address['phone']) {
+                $phone = $address['phone'];
+            } elseif ($address['phone_mobile']) {
+                $phone = $address['phone_mobile'];
+            }
+        }
+
+        return $phone;
+    }
+
+    /**
+     * Get ids cart ordered by customer id with limit (default = 10)
+     *
+     * @param int $idCustomer
+     * @param int $limit Limits the list of carts returned.
+     *
+     * @return array
+     */
+    public function getCarts($idCustomer, $limit = 10)
+    {
+        $carts = [];
+        $orders = Order::getCustomerOrders($idCustomer);
+        $i = 0;
+
+        foreach ($orders as $order) {
+            $carts[] = new Cart($order['id_cart']);
+
+            $i++;
+            if ($i == $limit) break;
+        }
+
+        return $carts;
     }
 }

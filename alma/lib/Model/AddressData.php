@@ -40,14 +40,32 @@ if (!defined('_PS_VERSION_')) {
  */
 class AddressData
 {
+    /** @var Cart Cart */
     private $cart;
+
+    /** @var Address Address of shipping */
     private $shippingAddress;
+
+    /** @var Address Address of billing */
     private $billingAddress;
+
+    /** @var string Country of shipping */
     private $countryShipping;
+
+    /** @var string Country of billing */
     private $countryBilling;
-    private $stateProvinceShipping;
+
+    /** @var string|null State Province of shippîng */
+    private $shippingStateProvinceName;
+
+    /** @var string|null State Province of billing */
     private $stateProvinceBilling;
 
+    /**
+     * Address Data construct
+     *
+     * @param Cart $cart
+     */
     public function __construct(
         Cart $cart
     ) {
@@ -115,13 +133,13 @@ class AddressData
      *
      * @return string|null
      */
-    public function getShippingStateProvince()
+    public function getShippingStateProvinceName()
     {
-        if (!$this->stateProvinceShipping) {
-            $this->stateProvinceShipping = $this->getShippingAddress()->id_state;
+        if (is_null($this->shippingStateProvinceName) && $this->getShippingAddress()->id_state > 0) {
+            $this->shippingStateProvinceName = State::getNameById((int) $this->getShippingAddress()->id_state);
         }
 
-        return $this->stateProvinceShipping > 0 ? State::getNameById((int) $this->stateProvinceShipping) : null;
+        return $this->shippingStateProvinceName;
     }
 
     /**
@@ -129,12 +147,31 @@ class AddressData
      *
      * @return string|null
      */
-    public function getBillingStateProvince()
+    public function getBillingStateProvinceName()
     {
-        if (!$this->stateProvinceBilling) {
-            $this->stateProvinceBilling = $this->getBillingAddress()->id_state;
+        if (is_null($this->billingStateProvinceName) && $this->getBillingAddress()->id_state > 0) {
+            $this->billingStateProvinceName = State::getNameById((int) $this->getBillingAddress()->id_state);
         }
 
-        return $this->stateProvinceBilling > 0 ? State::getNameById((int) $this->stateProvinceBilling) : null;
+        return $this->billingStateProvinceName;
+    }
+
+    /**
+     * get phone addresses customer
+     *
+     * @return string
+     */
+    public function getShippingPhone()
+    {
+        $phone = null;
+        $shippingAddress = $this->getShippingAddress();
+
+        if ($shippingAddress->phone) {
+            $phone = $shippingAddress->phone;
+        } elseif ($shippingAddress->phone_mobile) {
+            $phone = $shippingAddress->phone_mobile;
+        }
+
+        return $phone;
     }
 }

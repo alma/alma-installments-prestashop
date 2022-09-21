@@ -28,11 +28,13 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
+use Alma\PrestaShop\Utils\Logger;
 use Alma\PrestaShop\Utils\Settings;
 use Cart;
 use CartRule;
 use Configuration;
 use Context;
+use Customer;
 use Db;
 use DbQuery;
 use ImageType;
@@ -41,6 +43,7 @@ use PrestaShopException;
 use Product;
 use TaxConfiguration;
 use Tools;
+use Validate;
 
 class CartData
 {
@@ -60,18 +63,6 @@ class CartData
             'items' => self::getCartItems($cart),
             'discounts' => self::getCartDiscounts($cart),
         ];
-    }
-
-    /**
-     * Item of Current Cart
-     *
-     * @param Cart $cart
-     *
-     * @return array
-     */
-    public static function cartItems($cart)
-    {
-        return self::getCartItems($cart);
     }
 
     /**
@@ -378,5 +369,28 @@ class CartData
     public static function getPurchaseAmountInCent($cart)
     {
         return (int) almaPriceToCents(self::getPurchaseAmount($cart));
+    }
+
+    /**
+     * Get customer
+     *
+     * @return Customer
+     */
+    public static function getCustomer($cart, $context)
+    {
+        if ($cart->id_customer) {
+            $customer = new Customer($cart->id_customer);
+            if (!Validate::isLoadedObject($customer)) {
+                Logger::instance()->error(
+                    "[Alma] Error loading Customer {$cart->id_customer} from Cart {$cart->id}"
+                );
+
+                return null;
+            }
+
+            return $customer;
+        }
+
+        return $context->customer;
     }
 }

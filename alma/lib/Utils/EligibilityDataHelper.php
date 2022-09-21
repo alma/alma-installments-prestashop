@@ -39,6 +39,12 @@ if (!defined('_PS_VERSION_')) {
  */
 class EligibilityDataHelper
 {
+    /**
+     * EligibilityData Helper
+     *
+     * @param Cart $cart
+     * @param array $feePlans
+     */
     public function __construct(
         Cart $cart,
         array $feePlans

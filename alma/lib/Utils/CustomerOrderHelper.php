@@ -26,11 +26,10 @@ namespace Alma\PrestaShop\Utils;
 
 use Alma\PrestaShop\Model\CarrierData;
 use Alma\PrestaShop\Model\CartData;
+use Alma\PrestaShop\Model\CustomerData;
 use Cart;
 use Context;
-use Exception;
-use PrestaShopDatabaseException;
-use PrestaShopException;
+use Customer;
 use Tools;
 
 if (!defined('_PS_VERSION_')) {
@@ -42,12 +41,19 @@ if (!defined('_PS_VERSION_')) {
  */
 class CustomerOrderHelper
 {
-    /** @var Context */
-    private $context;
-
-    public function __construct(Context $context)
-    {
+    /**
+     * CustomerOrder Helper construct
+     *
+     * @param Context $context
+     * @param Customer $customer
+     */
+    public function __construct(
+        Context $context,
+        Customer $customer
+    ) {
         $this->context = $context;
+        $this->customer = $customer;
+        $this->customerData = new CustomerData($context, $customer);
     }
 
     /**
@@ -57,15 +63,14 @@ class CustomerOrderHelper
      *
      * @return array
      */
-    public function previous($idCustomer)
+    public function previousOrders($idCustomer)
     {
         $cartsData = [];
-        $idsCart = $this->getCartIdsByCustomerIdWithLimit($idCustomer);
+        $carts = $this->customerData->getCarts($idCustomer);
 
         $carrier = new CarrierData($this->context);
-        foreach ($idsCart as $idCart) {
-            $cart = new Cart((int) $idCart);
-            $purchaseAmount = (float) Tools::ps_round((float) $cart->getOrderTotal(true, Cart::BOTH), 2);
+        foreach ($carts as $cart) {
+            $purchaseAmount = CartData::getPurchaseAmount($cart);
             $cartsData[] = [
                 'purchase_amount' => almaPriceToCents($purchaseAmount),
                 'payment_method' => 'alma',
@@ -75,26 +80,5 @@ class CustomerOrderHelper
         }
 
         return $cartsData;
-    }
-
-    /**
-     * Get ids cart ordered by customer id with limit (default = 10)
-     *
-     * @param int $idCustomer
-     * @param int $currentIdCart
-     * @param int $limit
-     *
-     * @return array
-     */
-    private function getCartIdsByCustomerIdWithLimit($idCustomer, $limit = 10)
-    {
-        $idsCart = [];
-        $orders = Order::getCustomerOrders($idCustomer);
-
-        foreach ($orders as $order) {
-            $idsCart[] = $order['id_cart'];
-        }
-
-        return array_slice($idsCart, 0, $limit);
     }
 }
