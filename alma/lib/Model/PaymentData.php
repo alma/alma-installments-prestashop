@@ -45,6 +45,8 @@ use Validate;
 
 class PaymentData
 {
+    const PAYMENT_METHOD = 'alma';
+
     /**
      * @param Cart $cart
      * @param Context $context
@@ -243,7 +245,7 @@ class PaymentData
             'created' => strtotime($customer->date_add),
             'current_order' => [
                 'purchase_amount' => almaPriceToCents($purchaseAmount),
-                'payment_method' => 'alma',
+                'payment_method' => self::PAYMENT_METHOD,
                 'shipping_method' => $carrierHelper->getNameCarrierById($cart->id_carrier),
                 'items' => CartData::getCartItems($cart),
             ],

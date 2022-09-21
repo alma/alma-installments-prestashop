@@ -63,7 +63,7 @@ class CartHelper
             $purchaseAmount = (float) Tools::ps_round((float) $cart->getOrderTotal(true, Cart::BOTH), 2);
             $cartsData[] = [
                 'purchase_amount' => almaPriceToCents($purchaseAmount),
-                'payment_method' => 'alma',
+                'payment_method' => PaymentData::PAYMENT_METHOD,
                 'shipping_method' => $carrier->getNameCarrierById($cart->id_carrier),
                 'items' => CartData::getCartItems($cart),
             ];
