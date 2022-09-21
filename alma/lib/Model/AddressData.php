@@ -59,7 +59,7 @@ class AddressData
     private $shippingStateProvinceName;
 
     /** @var string|null State Province of billing */
-    private $stateProvinceBilling;
+    private $billingStateProvinceName;
 
     /**
      * Address Data construct

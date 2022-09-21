@@ -116,6 +116,7 @@ class PaymentDataHelper
 
         if (Settings::isDeferredTriggerLimitDays($this->feePlan)) {
             $paymentData['payment']['deferred'] = 'trigger';
+            // phpcs:ignore Generic.Files.LineLength
             $paymentData['payment']['deferred_description'] = SettingsCustomFields::getDescriptionPaymentTriggerByLang($this->context->language->id);
         }
 

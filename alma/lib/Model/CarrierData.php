@@ -22,67 +22,66 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
- namespace Alma\PrestaShop\Model;
+namespace Alma\PrestaShop\Model;
 
- use Carrier;
- use Context;
- 
- if (!defined('_PS_VERSION_')) {
-     exit;
- }
- 
- /**
-  * Class CarrierData
-  */
- class CarrierData
- {
-     /** @var Carrier Carrier */
-     private $carriers;
- 
-     /** @var Context Context */
-     private $context;
- 
-     /**
-      * Carrier Data construct
-      *
-      * @param Context $context
-      */
-     public function __construct(
-         Context $context
-     ) {
-         $this->context = $context;
-     }
- 
-     /**
-      * Get name Carrier by id carrier
-      *
-      * @param int $idCarrier
-      *
-      * @return string
-      */
-     public function getNameById($idCarrier)
-     {
-         foreach ($this->getCarriers() as $carrier) {
-             if ($carrier['id_carrier'] == $idCarrier) {
-                 return $carrier['name'];
-             }
-         }
- 
-         return null;
-     }
- 
-     /**
-      * get Carriers
-      *
-      * @return Carrier
-      */
-     private function getCarriers()
-     {
-         if (!$this->carriers) {
-             $this->carriers = Carrier::getCarriers($this->context->language->id);
-         }
- 
-         return $this->carriers;
-     }
- }
- 
+use Carrier;
+use Context;
+
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
+/**
+ * Class CarrierData
+ */
+class CarrierData
+{
+    /** @var Carrier Carrier */
+    private $carriers;
+
+    /** @var Context Context */
+    private $context;
+
+    /**
+     * Carrier Data construct
+     *
+     * @param Context $context
+     */
+    public function __construct(
+        Context $context
+    ) {
+        $this->context = $context;
+    }
+
+    /**
+     * Get name Carrier by id carrier
+     *
+     * @param int $idCarrier
+     *
+     * @return string
+     */
+    public function getNameById($idCarrier)
+    {
+        foreach ($this->getCarriers() as $carrier) {
+            if ($carrier['id_carrier'] == $idCarrier) {
+                return $carrier['name'];
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * get Carriers
+     *
+     * @return Carrier
+     */
+    private function getCarriers()
+    {
+        if (!$this->carriers) {
+            $this->carriers = Carrier::getCarriers($this->context->language->id);
+        }
+
+        return $this->carriers;
+    }
+}

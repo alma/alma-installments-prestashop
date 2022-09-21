@@ -134,7 +134,7 @@ class CustomerData
             $carts[] = new Cart($order['id_cart']);
 
             $i++;
-            if ($i == $limit) break;
+            if ($i == $limit) { break; }
         }
 
         return $carts;
