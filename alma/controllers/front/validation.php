@@ -62,19 +62,19 @@ class AlmaValidationModuleFrontController extends ModuleFrontController
         $validator = new PaymentValidation($this->context, $this->module);
 
         try {
-            $redirect_to = $validator->validatePayment($paymentId);
+            $redirectTo = $validator->validatePayment($paymentId);
         } catch (PaymentValidationError $e) {
             Logger::instance()->error('payment_validation_error - Message : ' . $e->getMessage());
-            $redirect_to = $this->fail($e->cart, $e->getMessage());
+            $redirectTo = $this->fail($e->cart, $e->getMessage());
         } catch (Exception $e) {
             Logger::instance()->error('payment_error - Message : ' . $e->getMessage());
-            $redirect_to = $this->fail(null, $e->getMessage());
+            $redirectTo = $this->fail(null, $e->getMessage());
         }
 
         if (is_callable([$this, 'setRedirectAfter'])) {
-            $this->setRedirectAfter($redirect_to);
+            $this->setRedirectAfter($redirectTo);
         } else {
-            Tools::redirect($redirect_to);
+            Tools::redirect($redirectTo);
         }
     }
 }
