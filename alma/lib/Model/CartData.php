@@ -115,7 +115,7 @@ class CartData
             $link = Context::getContext()->link;
 
             $manufacturerName = isset($productRow['manufacturer_name']) ? $productRow['manufacturer_name'] : null;
-            if (!$manufacturerName and isset($productsDetails[$pid])) {
+            if (!$manufacturerName && isset($productsDetails[$pid])) {
                 $manufacturerName = $productsDetails[$pid]['manufacturer_name'];
             }
 
