@@ -114,9 +114,9 @@ class CartData
             $pid = (int) $product->id;
             $link = Context::getContext()->link;
 
-            $manufacturer_name = isset($productRow['manufacturer_name']) ? $productRow['manufacturer_name'] : null;
-            if (!$manufacturer_name and isset($productsDetails[$pid])) {
-                $manufacturer_name = $productsDetails[$pid]['manufacturer_name'];
+            $manufacturerName = isset($productRow['manufacturer_name']) ? $productRow['manufacturer_name'] : null;
+            if (!$manufacturerName and isset($productsDetails[$pid])) {
+                $manufacturerName = $productsDetails[$pid]['manufacturer_name'];
             }
 
             $unitPrice = self::includeTaxes($cart) ? (float) $productRow['price_wt'] : (float) $productRow['price'];
@@ -142,7 +142,7 @@ class CartData
 
             $data = [
                 'sku' => $productRow['reference'],
-                'vendor' => $manufacturer_name,
+                'vendor' => $manufacturerName,
                 'title' => $productRow['name'],
                 'variant_title' => null,
                 'quantity' => (int) $productRow['cart_quantity'],
