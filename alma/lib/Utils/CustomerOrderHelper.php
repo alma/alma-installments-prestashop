@@ -41,6 +41,12 @@ if (!defined('_PS_VERSION_')) {
  */
 class CustomerOrderHelper
 {
+    /** @var Context $context */
+    private $context;
+
+    /** @var CustomerData $customerData */
+    private $customerData;
+
     /**
      * CustomerOrder Helper construct
      *
@@ -52,7 +58,6 @@ class CustomerOrderHelper
         Customer $customer
     ) {
         $this->context = $context;
-        $this->customer = $customer;
         $this->customerData = new CustomerData($context, $customer);
     }
 

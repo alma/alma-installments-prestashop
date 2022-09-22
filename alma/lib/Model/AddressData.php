@@ -50,16 +50,19 @@ class AddressData
     private $billingAddress;
 
     /** @var string Country of shipping */
-    private $countryShipping;
+    private $shippingCountry;
 
     /** @var string Country of billing */
-    private $countryBilling;
+    private $billingCountry;
 
     /** @var string|null State Province of shippîng */
     private $shippingStateProvinceName;
 
     /** @var string|null State Province of billing */
     private $billingStateProvinceName;
+
+    /** @var string Phone of shipping */
+    private $shippingPhone = null;
 
     /**
      * Address Data construct
@@ -107,11 +110,11 @@ class AddressData
      */
     public function getShippingCountry()
     {
-        if (!$this->countryShipping) {
-            $this->countryShipping = Country::getIsoById($this->getShippingAddress()->id_country);
+        if (!$this->shippingCountry) {
+            $this->shippingCountry = Country::getIsoById($this->getShippingAddress()->id_country);
         }
 
-        return $this->countryShipping;
+        return $this->shippingCountry;
     }
 
     /**
@@ -121,11 +124,11 @@ class AddressData
      */
     public function getBillingCountry()
     {
-        if (!$this->countryBilling) {
-            $this->countryBilling = Country::getIsoById($this->getBillingAddress()->id_country);
+        if (!$this->billingCountry) {
+            $this->billingCountry = Country::getIsoById($this->getBillingAddress()->id_country);
         }
 
-        return $this->countryBilling;
+        return $this->billingCountry;
     }
 
     /**
@@ -157,21 +160,22 @@ class AddressData
     }
 
     /**
-     * get phone addresses customer
+     * Get phone addresses customer
      *
      * @return string
      */
     public function getShippingPhone()
     {
-        $phone = null;
-        $shippingAddress = $this->getShippingAddress();
-
-        if ($shippingAddress->phone) {
-            $phone = $shippingAddress->phone;
-        } elseif ($shippingAddress->phone_mobile) {
-            $phone = $shippingAddress->phone_mobile;
+        if (is_null($this->shippingPhone)) {
+            $shippingAddress = $this->getShippingAddress();
+    
+            if ($shippingAddress->phone) {
+                $this->shippingPhone = $shippingAddress->phone;
+            } elseif ($shippingAddress->phone_mobile) {
+                $this->shippingPhone = $shippingAddress->phone_mobile;
+            }
         }
 
-        return $phone;
+        return $this->shippingPhone;
     }
 }

@@ -45,6 +45,24 @@ if (!defined('_PS_VERSION_')) {
  */
 class CustomerHelper
 {
+    /** @var Customer $customer */
+    private $customer;
+
+    /** @var Cart $cart */
+    private $cart;
+
+    /** @var AddressData $addressData */
+    private $addressData;
+
+    /** @var CustomerData $customerData */
+    private $customerData;
+
+    /** @var CarrierData $carrierData */
+    private $carrierData;
+
+    /** @var CustomerOrderHelper $customerOrderHelper */
+    private $customerOrderHelper;
+
     /**
      * Customer Helper construct
      *
@@ -58,7 +76,6 @@ class CustomerHelper
         Cart $cart
     ) {
         $this->customer = $customer;
-        $this->context = $context;
         $this->cart = $cart;
         $this->addressData = new AddressData($cart);
         $this->customerData = new CustomerData($context, $customer);

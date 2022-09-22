@@ -39,6 +39,9 @@ if (!defined('_PS_VERSION_')) {
  */
 class CustomerData
 {
+    /** @var string Phone of customer */
+    private $phone = null;
+
     /**
      * Customer Data construct
      *
@@ -103,17 +106,19 @@ class CustomerData
      */
     public function getPhone()
     {
-        $phone = null;
-
-        foreach ($this->getAddresses() as $address) {
-            if ($address['phone']) {
-                $phone = $address['phone'];
-            } elseif ($address['phone_mobile']) {
-                $phone = $address['phone_mobile'];
+        if (is_null($this->phone)) {
+            foreach ($this->getAddresses() as $address) {
+                if ($address['phone']) {
+                    $phone = $address['phone'];
+                } elseif ($address['phone_mobile']) {
+                    $phone = $address['phone_mobile'];
+                }
+    
+                if (isset($phone)) { break; }
             }
         }
 
-        return $phone;
+        return $this->phone;
     }
 
     /**
