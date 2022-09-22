@@ -168,9 +168,9 @@ class CartData
             ];
 
             if (isset($productRow['id_product_attribute']) && (int) $productRow['id_product_attribute']) {
-                $unique_id = "$pid-{$productRow['id_product_attribute']}";
+                $uniqueId = "$pid-{$productRow['id_product_attribute']}";
 
-                if ($combinationName = $combinationsNames[$unique_id]) {
+                if ($combinationName = $combinationsNames[$uniqueId]) {
                     $data['variant_title'] = $combinationName;
                 }
             }
