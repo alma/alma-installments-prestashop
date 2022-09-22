@@ -55,12 +55,12 @@ class LocaleHelper
             $currencyFormat = Context::getContext()->currency->format;
 
             switch ($currencyFormat) {
-                case 1: 		// X0,000.00
-                case 4:			// 0,000.00X
-                case 5:			// 0'000.00X
+                case 1: // X0,000.00
+                case 4: // 0,000.00X
+                case 5: // 0'000.00X
                     return '.';
-                case 2:			// 0 000,00X
-                case 3:			// X0.000,00
+                case 2: // 0 000,00X
+                case 3: // X0.000,00
                     return ',';
             }
         } elseif (version_compare(_PS_VERSION_, '1.7.6', '<')) {
@@ -84,14 +84,14 @@ class LocaleHelper
             $currencyFormat = Context::getContext()->currency->format;
 
             switch ($currencyFormat) {
-                case 1: 		// X0,000.00
-                case 4:			// 0,000.00X
+                case 1: // X0,000.00
+                case 4: // 0,000.00X
                     return ',';
-                case 2:			// 0 000,00X
+                case 2: // 0 000,00X
                     return ' ';
-                case 3:			// X0.000,00
+                case 3: // X0.000,00
                     return '.';
-                case 5:			// 0'000.00X
+                case 5: // 0'000.00X
                     return "'";
             }
         } elseif (version_compare(_PS_VERSION_, '1.7.6', '<')) {
