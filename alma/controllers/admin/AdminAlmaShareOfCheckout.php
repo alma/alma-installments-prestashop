@@ -25,7 +25,7 @@
 use Alma\PrestaShop\Utils\DateHelper;
 use Alma\PrestaShop\Utils\Logger;
 use Alma\PrestaShop\Utils\Settings;
-use Alma\PrestaShop\Utils\ShareOfCheckoutHelper;
+use Alma\PrestaShop\ShareOfCheckout\ShareOfCheckoutHelper;
 
 class AdminAlmaShareOfCheckoutController extends ModuleAdminController
 {
