@@ -116,7 +116,7 @@ class CustomerData
                     $this->phone = $address['phone_mobile'];
 
                     return $this->phone;
-                }    
+                }
             }
         }
 
