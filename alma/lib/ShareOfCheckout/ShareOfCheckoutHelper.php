@@ -194,12 +194,28 @@ class ShareOfCheckoutHelper
         return array_values($ordersByCheckout);
     }
 
-    public function isConsent()
+    public function addConsent()
     {
         $alma = ClientHelper::defaultInstance();
         if ($alma) {
             try {
                 $alma->shareOfCheckout->addConsent();
+            } catch (RequestError $e) {
+                $msg = 'Impossible to save the Share of Checkout settings, please try again later';
+                Logger::instance()->error($msg);
+                throw new ShareOfCheckoutException($msg);
+            }
+        }
+
+        return null;
+    }
+
+    public function removeConsent()
+    {
+        $alma = ClientHelper::defaultInstance();
+        if ($alma) {
+            try {
+                $alma->shareOfCheckout->removeConsent();
             } catch (RequestError $e) {
                 $msg = 'Impossible to save the Share of Checkout settings, please try again later';
                 Logger::instance()->error($msg);

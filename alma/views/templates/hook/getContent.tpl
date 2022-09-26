@@ -127,7 +127,7 @@
             En cas de problème, contactez-nous par email à <a href="mailto:support@getalma.eu">support@getalma.eu</a>
         </p>
     </div>
-{elseif isset($share_of_checkout)}
+{elseif isset($share_of_checkout) && $share_of_checkout}
     <div class="alma {$tip_classes|escape:'htmlall':'UTF-8'}">
         <div class="row">
             <h2>{l s='Increase your performance & get insights !' mod='alma'}</h2>
