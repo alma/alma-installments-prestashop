@@ -26,6 +26,7 @@ namespace Alma\PrestaShop\ShareOfCheckout;
 
 use Alma\API\RequestError;
 use Alma\PrestaShop\API\ClientHelper;
+use Alma\PrestaShop\ShareOfCheckout\ShareOfCheckoutException;
 use Alma\PrestaShop\Forms\ShareOfCheckoutAdminFormBuilder;
 use Alma\PrestaShop\ShareOfCheckout\OrderHelper;
 use Alma\PrestaShop\Utils\DateHelper;
@@ -191,6 +192,22 @@ class ShareOfCheckoutHelper
         }
 
         return array_values($ordersByCheckout);
+    }
+
+    public function isConsent()
+    {
+        $alma = ClientHelper::defaultInstance();
+        if ($alma) {
+            try {
+                $alma->shareOfCheckout->addConsent();
+            } catch (RequestError $e) {
+                $msg = 'Impossible to save the Share of Checkout settings, please try again later';
+                Logger::instance()->error($msg);
+                throw new ShareOfCheckoutException($msg);
+            }
+        }
+
+        return null;
     }
 
     /**

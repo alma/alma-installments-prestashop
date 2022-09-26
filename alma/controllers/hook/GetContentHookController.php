@@ -41,6 +41,9 @@ use Alma\PrestaShop\Forms\ProductEligibilityAdminFormBuilder;
 use Alma\PrestaShop\Forms\RefundAdminFormBuilder;
 use Alma\PrestaShop\Forms\ShareOfCheckoutAdminFormBuilder;
 use Alma\PrestaShop\Hooks\AdminHookController;
+use Alma\PrestaShop\ShareOfCheckout\OrderHelper;
+use Alma\PrestaShop\ShareOfCheckout\ShareOfCheckoutException;
+use Alma\PrestaShop\ShareOfCheckout\ShareOfCheckoutHelper;
 use Alma\PrestaShop\Utils\Logger;
 use Alma\PrestaShop\Utils\Settings;
 use Alma\PrestaShop\Utils\SettingsCustomFields;
@@ -53,6 +56,8 @@ final class GetContentHookController extends AdminHookController
 {
     public function processConfiguration()
     {
+        $validationError = null;
+        
         if (!Tools::isSubmit('alma_config_form')) {
             return null;
         }
@@ -109,9 +114,6 @@ final class GetContentHookController extends AdminHookController
                     break;
                 }
             }
-
-            Settings::updateValue(ShareOfCheckoutAdminFormBuilder::ALMA_ACTIVATE_SHARE_OF_CHECKOUT, (bool) Settings::canShareOfCheckout());
-            Settings::updateValue(ShareOfCheckoutAdminFormBuilder::ALMA_SHARE_OF_CHECKOUT_DATE, Settings::getCurrentTimestamp());
         }
 
         // Get languages are active
@@ -248,10 +250,20 @@ final class GetContentHookController extends AdminHookController
                 $dateShareOfCheckout = $configurationDateShareOfCheckout;
             }
 
-            Settings::updateValue(ShareOfCheckoutAdminFormBuilder::ALMA_ACTIVATE_SHARE_OF_CHECKOUT, $activateShareOfCheckout);
-            Settings::updateValue(ShareOfCheckoutAdminFormBuilder::ALMA_SHARE_OF_CHECKOUT_DATE, $dateShareOfCheckout);
-            if (!$activateShareOfCheckout) {
-                Settings::updateValue(ShareOfCheckoutAdminFormBuilder::ALMA_SHARE_OF_CHECKOUT_DATE, '');
+            $orderHelper  = new OrderHelper();
+            $shareOfCheckoutHelper = new ShareOfCheckoutHelper($orderHelper);
+
+            try {
+                $shareOfCheckoutHelper->isConsent();
+                Settings::updateValue(ShareOfCheckoutAdminFormBuilder::ALMA_ACTIVATE_SHARE_OF_CHECKOUT, $activateShareOfCheckout);
+                Settings::updateValue(ShareOfCheckoutAdminFormBuilder::ALMA_SHARE_OF_CHECKOUT_DATE, $dateShareOfCheckout);
+
+                if (!$activateShareOfCheckout) {
+                    Settings::updateValue(ShareOfCheckoutAdminFormBuilder::ALMA_SHARE_OF_CHECKOUT_DATE, '');
+                }
+            } catch (ShareOfCheckoutException $e) {
+                $validationError = 'soc_api_error';
+                $this->context->smarty->assign('validation_error', $validationError);
             }
 
             if ($merchant) {
@@ -355,7 +367,9 @@ final class GetContentHookController extends AdminHookController
             return $credentialsError['message'];
         }
 
-        $this->context->smarty->clearAssign('validation_error');
+        if (!$validationError) {
+            $this->context->smarty->clearAssign('validation_error');
+        }
 
         return $this->module->display($this->module->file, 'getContent.tpl');
     }
