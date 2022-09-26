@@ -39,6 +39,12 @@ if (!defined('_PS_VERSION_')) {
  */
 class CustomerData
 {
+    /** @var Context $context */
+    private $context;
+
+    /** @var Customer $customer */
+    private $customer;
+
     /** @var string Phone of customer */
     private $phone = null;
 
