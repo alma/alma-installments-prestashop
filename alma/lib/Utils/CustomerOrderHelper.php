@@ -27,10 +27,8 @@ namespace Alma\PrestaShop\Utils;
 use Alma\PrestaShop\Model\CarrierData;
 use Alma\PrestaShop\Model\CartData;
 use Alma\PrestaShop\Model\CustomerData;
-use Cart;
 use Context;
 use Customer;
-use Tools;
 
 if (!defined('_PS_VERSION_')) {
     exit;

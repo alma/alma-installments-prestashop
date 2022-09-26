@@ -100,21 +100,23 @@ class CustomerData
     }
 
     /**
-     * Get phone customer
+     * Get customer's phone number
      *
-     * @return string
+     * @return null|string
      */
     public function getPhone()
     {
         if (is_null($this->phone)) {
             foreach ($this->getAddresses() as $address) {
                 if ($address['phone']) {
-                    $phone = $address['phone'];
+                    $this->phone = $address['phone'];
+
+                    return $this->phone;
                 } elseif ($address['phone_mobile']) {
-                    $phone = $address['phone_mobile'];
-                }
-    
-                if (isset($phone)) { break; }
+                    $this->phone = $address['phone_mobile'];
+
+                    return $this->phone;
+                }    
             }
         }
 

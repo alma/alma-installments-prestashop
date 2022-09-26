@@ -42,8 +42,26 @@ if (!defined('_PS_VERSION_')) {
  */
 class PaymentDataHelper
 {
+    /** @var Cart $cart */
+    private $cart;
+
+    /** @var Context $context */
+    private $context;
+
+    /** @var array $feePlan */
+    private $feePlan;
+
+    /** @var Customer $customer */
+    private $customer;
+
+    /** @var AddressData $addressData */
+    private $addressData;
+
+    /** @var CustomerHelper $customerHelper */
+    private $customerHelper;
+
     /** @var float Purchase amount */
-    private $purchaseAmout;
+    private $purchaseAmout = null;
 
     /**
      * Payment Data Helper

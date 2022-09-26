@@ -39,6 +39,15 @@ if (!defined('_PS_VERSION_')) {
  */
 class EligibilityDataHelper
 {
+    /** @var Cart $cart */
+    private $cart;
+
+    /** @var array $feePlans */
+    private $feePlans;
+
+    /** @var AddressData $addressData */
+    private $addressData;
+
     /**
      * EligibilityData Helper
      *
@@ -51,6 +60,7 @@ class EligibilityDataHelper
     ) {
         $this->cart = $cart;
         $this->feePlans = $feePlans;
+        $this->addressData = new AddressData($this->cart);
     }
 
     /**
@@ -60,16 +70,14 @@ class EligibilityDataHelper
      */
     public function getData()
     {
-        $addressData = new AddressData($this->cart);
-
         return [
             'purchase_amount' => CartData::getPurchaseAmountInCent($this->cart),
             'queries' => $this->getQueries(),
             'shipping_address' => [
-                'country' => $addressData->getShippingCountry(),
+                'country' => $this->addressData->getShippingCountry(),
             ],
             'billing_address' => [
-                'country' => $addressData->getBillingCountry(),
+                'country' => $this->addressData->getBillingCountry(),
             ],
             'locale' => LocaleHelper::getLocale(),
         ];
