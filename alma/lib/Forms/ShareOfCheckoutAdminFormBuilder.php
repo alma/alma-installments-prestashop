@@ -48,9 +48,6 @@ class ShareOfCheckoutAdminFormBuilder extends AbstractAlmaAdminFormBuilder
                 self::ALMA_ACTIVATE_SHARE_OF_CHECKOUT,
                 $this->module->l('Activate your data settings', 'ShareOfCheckoutAdminFormBuilder')
             ),
-            $this->inputHiddenForm(
-                self::ALMA_SHARE_OF_CHECKOUT_DATE
-            ),
         ];
     }
 
