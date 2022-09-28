@@ -134,11 +134,11 @@
         window.__alma_refreshWidgets = refreshWidgets;
 
         if ($('.alma.notify-popin').length > 0) {
-            var notifyPopin = $('.alma.notify-popin');
+            let notifyPopin = $('.alma.notify-popin');
             $(document).scroll(function() {
                 notifyPopin.show().animate({
                     opacity: 1,
-                }, 100, "easeOutBack");
+                }, 50, "easeOutBack");
             });
             notifyPopin.find('.alma-open').on('click', function(e) {
                 e.preventDefault();
@@ -156,7 +156,7 @@
             });
         }
         if ($('.alma.banner-notify-popin').length > 0) {
-            var bannerNotifyPopin = $('.alma.banner-notify-popin');
+            let bannerNotifyPopin = $('.alma.banner-notify-popin');
             bannerNotifyPopin.find('a.alma-close').on('click', function(e) {
                 e.preventDefault();
                 $('.alma.banner-notify-popin').animate({

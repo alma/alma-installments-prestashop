@@ -133,11 +133,11 @@
 
 .alma.reinsurance.list li{
     margin-top: 40px;
-}
-.alma.reinsurance.list li{
     margin-bottom: 30px;
 }
 .alma.reinsurance.list li span{
+    font-family: 'Eina04-Bold', sans-serif;
+    font-size: .75rem;
     display: inline-block;
     background-color: #E7F8FA;
     background-repeat: no-repeat;
@@ -146,10 +146,6 @@
     color: #00425D;
     border-radius: 100px;
     margin-bottom: 10px;
-}
-.alma.reinsurance.list li span{
-    font-family: 'Eina04-Bold', sans-serif;
-    font-size: .75rem;
 }
 .alma.reinsurance.list li.lightning span{
     background-image: url('/modules/alma/views/img/icon-lightning.svg');

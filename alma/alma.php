@@ -91,12 +91,12 @@ class Alma extends PaymentModule
     private function checkCoreInstall($coreInstall)
     {
         if (!$coreInstall) {
-            $Logger = Alma\PrestaShop\Utils\Logger::loggerClass();
-            $Logger::addLog("Alma: Core module install failed (returned {$coreInstall})", 3);
+            $logger = Alma\PrestaShop\Utils\Logger::loggerClass();
+            $logger::addLog("Alma: Core module install failed (returned {$coreInstall})", 3);
 
             if (count($this->_errors) > 0) {
                 $errors = implode(', ', $this->_errors);
-                $Logger::addLog("Alma: module install errors: {$errors})", 3);
+                $logger::addLog("Alma: module install errors: {$errors})", 3);
             }
 
             return false;
@@ -174,17 +174,17 @@ class Alma extends PaymentModule
 
     private function updateCarriersWithAlma()
     {
-        $id_module = $this->id;
-        $id_shop = (int) $this->context->shop->id;
-        $id_lang = $this->context->language->id;
-        $carriers = Carrier::getCarriers($id_lang, false, false, false, null, Carrier::ALL_CARRIERS);
+        $idModule = $this->id;
+        $idShop = (int) $this->context->shop->id;
+        $idLang = $this->context->language->id;
+        $carriers = Carrier::getCarriers($idLang, false, false, false, null, Carrier::ALL_CARRIERS);
         $values = null;
         foreach ($carriers as $carrier) {
-            $values .= "({$id_module},{$id_shop},{$carrier['id_reference']}),";
+            $values .= "({$idModule},{$idShop},{$carrier['id_reference']}),";
         }
         $values = rtrim($values, ',');
         Db::getInstance()->execute(
-            'DELETE FROM `' . _DB_PREFIX_ . 'module_carrier` WHERE `id_module` = ' . $id_module
+            'DELETE FROM `' . _DB_PREFIX_ . 'module_carrier` WHERE `id_module` = ' . $idModule
         );
         Db::getInstance()->execute(
             'INSERT INTO `' . _DB_PREFIX_ . 'module_carrier` (`id_module`, `id_shop`, `id_reference`) VALUES ' . $values
@@ -220,21 +220,21 @@ class Alma extends PaymentModule
             $this->_errors[] = $this->l('Alma requires the JSON PHP extension.', 'alma');
         }
 
-        $openssl_exception = $this->l('Alma requires OpenSSL >= 1.0.1', 'alma');
+        $opensslException = $this->l('Alma requires OpenSSL >= 1.0.1', 'alma');
         if (!defined('OPENSSL_VERSION_TEXT')) {
             $result = false;
-            $this->_errors[] = $openssl_exception;
+            $this->_errors[] = $opensslException;
         }
 
         preg_match('/^(?:Libre|Open)SSL ([\d.]+)/', OPENSSL_VERSION_TEXT, $matches);
         if (empty($matches[1])) {
             $result = false;
-            $this->_errors[] = $openssl_exception;
+            $this->_errors[] = $opensslException;
         }
 
         if (!version_compare($matches[1], '1.0.1', '>=')) {
             $result = false;
-            $this->_errors[] = $openssl_exception;
+            $this->_errors[] = $opensslException;
         }
 
         return $result;
@@ -332,15 +332,15 @@ class Alma extends PaymentModule
         $hookName = Tools::ucfirst(preg_replace('/[^a-zA-Z0-9]/', '', $hookName));
 
         require_once dirname(__FILE__) . "/controllers/hook/${hookName}HookController.php";
-        $ControllerName = "Alma\PrestaShop\Controllers\Hook\\${hookName}HookController";
+        $controllerName = "Alma\PrestaShop\Controllers\Hook\\${hookName}HookController";
 
         // check if override exist for hook controllers
         if (file_exists(dirname(__FILE__) . "/../../override/modules/alma/controllers/hook/${hookName}HookController.php")) {
             require_once dirname(__FILE__) . "/../../override/modules/alma/controllers/hook/${hookName}HookController.php";
-            $ControllerName = "Alma\PrestaShop\Controllers\Hook\\${hookName}HookControllerOverride";
+            $controllerName = "Alma\PrestaShop\Controllers\Hook\\${hookName}HookControllerOverride";
         }
 
-        $controller = new $ControllerName($this);
+        $controller = new $controllerName($this);
 
         if ($controller->canRun()) {
             return $controller->run($params);

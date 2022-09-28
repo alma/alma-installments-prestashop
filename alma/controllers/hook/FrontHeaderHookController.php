@@ -129,8 +129,8 @@ class FrontHeaderHookController extends FrontendHookController
                 // with the new registerJavascript method, and the deprecated addJS method had been changed to be just a
                 // proxy to registerJavascript...
                 $content .= <<<TAG
-					<link rel="stylesheet" href="$widgetsCssUrl">
-					<script src="$widgetsJsUrl"></script>
+                    <link rel="stylesheet" href="$widgetsCssUrl">
+                    <script src="$widgetsJsUrl"></script>
 TAG;
             }
         }
