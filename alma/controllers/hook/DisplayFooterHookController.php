@@ -46,8 +46,8 @@ class DisplayFooterHookController extends FrontendHookController
     {
         $feePlans = json_decode(Settings::getFeePlans());
         $enablePlans = [];
-        foreach($feePlans as $key => $plan) {
-            if ($plan->enabled == "1") {
+        foreach ($feePlans as $key => $plan) {
+            if ($plan->enabled == '1') {
                 $enablePlans[] = Settings::getDataFromKey($key)['installmentsCount'];
             }
         }
