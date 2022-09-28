@@ -44,7 +44,7 @@ function almaPriceToCents($price)
  *
  * @return int
  */
-function almaPriceToCents_str($price)
+function almaPriceToCentsStr($price)
 {
     $priceStr = (string) $price;
     $parts = explode('.', $priceStr);
@@ -97,18 +97,18 @@ function almaSvgDataUrl($svg)
 
 /**
  * @param int $cents Price to be formatted, in cents (will be converted to currency's base)
- * @param int|null $id_currency
+ * @param int|null $idCurrency
  *
  * @return string The formatted price, using the current locale and provided or current currency
  */
-function almaFormatPrice($cents, $id_currency = null)
+function almaFormatPrice($cents, $idCurrency = null)
 {
     $legacy = version_compare(_PS_VERSION_, '1.7.6.0', '<');
     $currency = Context::getContext()->currency;
     $price = almaPriceFromCents($cents);
 
-    if ($id_currency) {
-        $currency = Currency::getCurrencyInstance((int) $id_currency);
+    if ($idCurrency) {
+        $currency = Currency::getCurrencyInstance((int) $idCurrency);
         if (!Validate::isLoadedObject($currency)) {
             $currency = Context::getContext()->currency;
         }

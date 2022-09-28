@@ -47,7 +47,7 @@ class DisplayFooterHookController extends FrontendHookController
         $psVersion = getPsVersion();
         $feePlans = json_decode(Settings::getFeePlans(), true);
         $installmentPlans = [];
-        $enablePlans = array_filter($feePlans, function($plan) {
+        $enablePlans = array_filter($feePlans, function ($plan) {
             return $plan['enabled'] == '1';
         });
         foreach ($enablePlans as $key => $plan) {

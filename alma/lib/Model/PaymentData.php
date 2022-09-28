@@ -201,7 +201,7 @@ class PaymentData
                 ],
                 'custom_data' => [
                     'cart_id' => $cart->id,
-                    'purchase_amount_new_conversion_func' => almaPriceToCents_str($purchaseAmount),
+                    'purchase_amount_new_conversion_func' => almaPriceToCentsStr($purchaseAmount),
                     'cart_totals' => $purchaseAmount,
                     'cart_totals_high_precision' => number_format($purchaseAmount, 16),
                     'poc' => [
