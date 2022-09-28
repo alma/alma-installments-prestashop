@@ -44,6 +44,17 @@ class DisplayFooterHookController extends FrontendHookController
 
     public function run($params)
     {
+        $feePlans = json_decode(Settings::getFeePlans());
+        $enablePlans = [];
+        foreach($feePlans as $key => $plan) {
+            if ($plan->enabled == "1") {
+                $enablePlans[] = Settings::getDataFromKey($key)['installmentsCount'];
+            }
+        }
+        $this->context->smarty->assign([
+            'plans' => $enablePlans,
+        ]);
+
         return $this->module->display($this->module->file, 'popin_payment_option.tpl');
     }
 }

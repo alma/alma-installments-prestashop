@@ -1,3 +1,5 @@
+@import url('fonts.css');
+
 .alma-pp-container.ps17 div {
     margin-bottom: initial;
 }
@@ -24,10 +26,158 @@
     z-index: 99999 !important;
 }
 
-.popin-alma{
+.icon-p3x{
+    background-repeat: no-repeat;
+    background-position: center;
+    background-image: url('/modules/alma/views/img/icon-p3x.svg');
+}
+.icon-pastille{
+    float: left;
+    width: 32px;
+    height: 32px;
+    background-color: #fff;
+    border-radius: 100%;
+    padding: 8px 6px;
+    margin-right: 16px;
+}
+
+.alma .alma-close{
+    position: absolute;
+    top: 7px;
+    right: 7px;
+    text-align: center;
+    font-size: 1.7rem;
+    font-weight: 700;
+    padding: 2px;
+    z-index: 999;
+}
+.alma .alma-close i{
+    opacity: 1;
+    font-size: 1.2rem;
+}
+
+.alma.installment-plan.list{
+    font-family: 'Eina04-Bold', sans-serif;
+    margin-top: 15px;
+    margin-bottom: 15px;
+}
+.alma.installment-plan.list li{
+    display: inline-block;
+    border: 1px solid #E1E4E6;
+    border-radius: 8px;
+    padding: 6px 17px;
+    color: #00425D;
+    height: 32px;
+    margin-left: 8px;
+}
+.alma.installment-plan.list li:first-child{
+    margin-left: 0;
+}
+
+.alma.banner-notify-popin{
+    z-index: 9999;
+    display: none;
     position: fixed;
-    bottom: 10px;
-    right: 10px;
-    border: solid 2px red;
-    padding: 30px;
+    bottom: -600px;
+    right: 60px;
+    padding: 16px;
+    background-color: #fff;
+    box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.15);
+    border-radius: 4px;
+}
+.alma.banner-notify-popin .alma-close{
+    color: #fff;
+    background-color: #00425D;
+    border-radius: 100%;
+    width: 24px;
+    height: 24px;
+    top: 15px;
+    right: 15px;
+}
+.alma.banner-notify-popin .alma-close i{
+    color: #fff;
+}
+.alma.banner-notify-popin h3{
+    color: #00425E;
+    font-size: 18px;
+}
+.alma.notify-popin{
+    display: none;
+    opacity: 0;
+    font-family: 'Eina04-Bold', sans-serif;
+    color: #00425E;
+    z-index: 99;
+    position: fixed;
+    bottom: 30px;
+    right: 60px;
+    padding: 12px;
+    background-color: #EBF2FA;
+    box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.15);
+    border-radius: 4px;
+    width: 566px;
+    cursor: pointer;
+}
+.alma.notify-popin h3{
+    margin-top: 0;
+    font-size: 16px;
+    font-weight: 500;
+}
+.alma.notify-popin .alma-close i{
+    color: #00425E;
+}
+.alma.notify-popin .alma-open a{
+    font-family: 'Eina04-Regular', sans-serif;
+    color: #00425E !important;
+    text-decoration: underline;
+}
+
+.alma.reinsurance.list li{
+    margin-top: 40px;
+}
+.alma.reinsurance.list li{
+    margin-bottom: 30px;
+}
+.alma.reinsurance.list li span{
+    display: inline-block;
+    background-color: #E7F8FA;
+    background-repeat: no-repeat;
+    background-position: 7px center;
+    padding: 5px 10px 5px 25px;
+    color: #00425D;
+    border-radius: 100px;
+    margin-bottom: 10px;
+}
+.alma.reinsurance.list li span{
+    font-family: 'Eina04-Bold', sans-serif;
+    font-size: .75rem;
+}
+.alma.reinsurance.list li.lightning span{
+    background-image: url('/modules/alma/views/img/icon-lightning.svg');
+}
+.alma.reinsurance.list li.coins span{
+    background-image: url('/modules/alma/views/img/icon-coins.svg');
+}
+.alma.reinsurance.list li.check span{
+    background-image: url('/modules/alma/views/img/icon-check.svg');
+}
+.alma.reinsurance.list li .tip{
+    font-family: 'Public-Sans', sans-serif;
+    font-weight: 400;
+    color: #00425D;
+}
+
+@media (max-width: 767px) {
+    .alma.notify-popin{
+        bottom: 20px;
+        left: 3%;
+        width: 94%;
+    }
+    .alma.notify-popin h3{
+        padding-right: 20px;
+    }
+    .alma.banner-notify-popin{
+        bottom: 10px;
+        left: 3%;
+        width: 94%;
+    }
 }

@@ -1,0 +1,26 @@
+@font-face {
+    font-family: 'Eina04-Bold';
+    src: url('../fonts/Eina04-Bold.ttf') format('ttf'),
+         url('../fonts/Eina04-Bold.svg') format('svg'),
+         url('../fonts/Eina04-Bold.woff') format('woff'),
+         url('../fonts/Eina04-Bold.eot') format('eot');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Eina04-Regular';
+    src: url('../fonts/Eina04-Regular.ttf') format('ttf'),
+         url('../fonts/Eina04-Regular.svg') format('svg'),
+         url('../fonts/Eina04-Regular.woff') format('woff'),
+         url('../fonts/Eina04-Regular.eot') format('eot');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Public-Sans';
+    src: url('../fonts/Public-Sans.ttf') format('ttf');
+    font-weight: normal;
+    font-style: normal;
+}

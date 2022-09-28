@@ -132,5 +132,39 @@
         }
 
         window.__alma_refreshWidgets = refreshWidgets;
+
+        if ($('.alma.notify-popin').length > 0) {
+            var notifyPopin = $('.alma.notify-popin');
+            $(document).scroll(function() {
+                notifyPopin.show().animate({
+                    opacity: 1,
+                }, 100, "easeOutBack");
+            });
+            notifyPopin.find('.alma-open').on('click', function(e) {
+                e.preventDefault();
+                $('.alma.banner-notify-popin').show().animate({
+                    bottom: '30px',                    
+                }, 800, "easeOutBack");
+            });
+            notifyPopin.find('a.alma-close').on('click', function(e) {
+                e.preventDefault();
+                notifyPopin.animate({
+                    bottom: '-100px',                    
+                }, 800, "easeOutBack", function() {
+                    notifyPopin.hide();
+                });
+            });
+        }
+        if ($('.alma.banner-notify-popin').length > 0) {
+            var bannerNotifyPopin = $('.alma.banner-notify-popin');
+            bannerNotifyPopin.find('a.alma-close').on('click', function(e) {
+                e.preventDefault();
+                $('.alma.banner-notify-popin').animate({
+                    bottom: '-600px',
+                }, 800, "easeOutBack", function() {
+                    bannerNotifyPopin.hide();
+                });
+            });
+        }
     });
 })(jQuery);
