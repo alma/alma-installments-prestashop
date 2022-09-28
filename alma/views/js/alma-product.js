@@ -138,7 +138,7 @@
             $(document).scroll(function() {
                 notifyPopin.show().animate({
                     opacity: 1,
-                }, 50, "easeOutBack");
+                }, 80, "easeOutBack");
             });
             notifyPopin.find('.alma-open').on('click', function(e) {
                 e.preventDefault();

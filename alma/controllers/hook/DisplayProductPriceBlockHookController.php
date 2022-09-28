@@ -109,12 +109,7 @@ class DisplayProductPriceBlockHookController extends FrontendHookController
             $refreshPrice = $productAttributeId === null;
         }
 
-        $psVersion = 'ps15';
-        if (version_compare(_PS_VERSION_, '1.7', '>=')) {
-            $psVersion = 'ps17';
-        } elseif (version_compare(_PS_VERSION_, '1.6', '>=')) {
-            $psVersion = 'ps16';
-        }
+        $psVersion = getPsVersion();
 
         $activePlans = Settings::activePlans();
 

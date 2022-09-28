@@ -193,3 +193,20 @@ function getFrenchDateFormat($timestamp)
 
     return $date->format('d/m/Y');
 }
+
+/**
+ * Get Prestashop Version
+ *
+ * @return string
+ */
+function getPsVersion()
+{
+    $psVersion = 'ps15';
+    if (version_compare(_PS_VERSION_, '1.7', '>=')) {
+        $psVersion = 'ps17';
+    } elseif (version_compare(_PS_VERSION_, '1.6', '>=')) {
+        $psVersion = 'ps16';
+    }
+
+    return $psVersion;
+}

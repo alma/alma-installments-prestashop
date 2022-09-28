@@ -44,15 +44,31 @@ class DisplayFooterHookController extends FrontendHookController
 
     public function run($params)
     {
-        $feePlans = json_decode(Settings::getFeePlans());
-        $enablePlans = [];
-        foreach ($feePlans as $key => $plan) {
-            if ($plan->enabled == '1') {
-                $enablePlans[] = Settings::getDataFromKey($key)['installmentsCount'];
+        $psVersion = getPsVersion();
+        $feePlans = json_decode(Settings::getFeePlans(), true);
+        $installmentPlans = [];
+        $enablePlans = array_filter($feePlans, function($plan) {
+            return $plan['enabled'] == '1';
+        });
+        foreach ($enablePlans as $key => $plan) {
+            $installmentPlan = Settings::getDataFromKey($key);
+            if ($installmentPlan['installmentsCount'] == '1' && $installmentPlan['deferredDays'] > 0) {
+                $installmentPlans[] = sprintf(
+                    $this->module->l('D+%1$s', 'DisplayFooterHookController'),
+                    $installmentPlan['deferredDays']
+                );
+            } elseif ($installmentPlan['installmentsCount'] == '1' && $installmentPlan['deferredMonths'] > 0) {
+                $installmentPlans[] = sprintf(
+                    $this->module->l('M+%1$s', 'DisplayFooterHookController'),
+                    $installmentPlan['deferredMonths']
+                );
+            } else {
+                $installmentPlans[] = $installmentPlan['installmentsCount'] . 'x';
             }
         }
         $this->context->smarty->assign([
-            'plans' => $enablePlans,
+            'installmentPlans' => $installmentPlans,
+            'psVersion' => $psVersion,
         ]);
 
         return $this->module->display($this->module->file, 'popin_payment_option.tpl');

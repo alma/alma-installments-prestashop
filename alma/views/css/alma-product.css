@@ -55,6 +55,9 @@
     opacity: 1;
     font-size: 1.2rem;
 }
+.alma.ps15 i.material-icons, .alma.ps16 i.material-icons{
+    display: none;
+}
 
 .alma.installment-plan.list{
     font-family: 'Eina04-Bold', sans-serif;
@@ -84,6 +87,7 @@
     background-color: #fff;
     box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.15);
     border-radius: 4px;
+    max-width: 566px;
 }
 .alma.banner-notify-popin .alma-close{
     color: #fff;
@@ -137,7 +141,7 @@
 }
 .alma.reinsurance.list li span{
     font-family: 'Eina04-Bold', sans-serif;
-    font-size: .75rem;
+    font-size: 14px;
     display: inline-block;
     background-color: #E7F8FA;
     background-repeat: no-repeat;
@@ -159,6 +163,7 @@
 .alma.reinsurance.list li .tip{
     font-family: 'Public-Sans', sans-serif;
     font-weight: 400;
+    font-size: 14px;
     color: #00425D;
 }
 

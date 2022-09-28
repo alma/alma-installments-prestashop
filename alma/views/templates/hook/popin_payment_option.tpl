@@ -21,23 +21,23 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  *}
 
-<div class='alma notify-popin'>
+<div class='alma notify-popin {$psVersion}'>
     <a href='#' class='alma-close'><i class="icon icon-times"></i><i class="material-icons close">close</i></a>
     <div class='alma-open'>
         <div class='icon-pastille icon-p3x'></div>
-        <h3>Payez en plusieurs fois sans frais avec Alma !</h3>
-        <a href='#'>En savoir plus</a>
+        <h3>{l s='Pay in 3x or 4x without fees with Alma.' mod='alma'}</h3>
+        <a href='#'>{l s='See more' mod='alma'}</a>
     </div>
 </div>
-<div class='alma banner-notify-popin'>
+<div class='alma banner-notify-popin {$psVersion}'>
     <a href='#' class='alma-close'><i class="icon icon-times"></i><i class="material-icons close">close</i></a>
     <div class='logo-alma'><img src='/modules/alma/views/img/logos/alma_payment_logos.svg' alt='Alma' width='45' /></div>
     <ul class='alma installment-plan list'>
-        {foreach from=$plans item=plan}
-            <li>{$plan}x</li>
+        {foreach from=$installmentPlans item=plan}
+            <li>{$plan}</li>
         {/foreach}
     </ul>
-    <h3>Payez en plusieurs fois sans frais avec Alma !</h3>
+    <h3>{l s='Pay in 3x or 4x without fees with Alma.' mod='alma'}</h3>
 
     <ul class="alma reinsurance list">
         <li class="lightning">

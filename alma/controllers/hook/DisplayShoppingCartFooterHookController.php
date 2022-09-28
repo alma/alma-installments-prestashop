@@ -88,16 +88,7 @@ class DisplayShoppingCartFooterHookController extends FrontendHookController
             $logo = $this->module->getPathUri() . '/views/img/logos/logo_alma.svg';
         }
 
-        // need ps verions && refresh price
-        $psVersion = '1.7';
-        $refreshPrice = true;
-        if (version_compare(_PS_VERSION_, '1.7', '<')) {
-            $psVersion = '1.6';
-            $refreshPrice = false;
-            if (version_compare(_PS_VERSION_, '1.6', '<')) {
-                $psVersion = '1.5';
-            }
-        }
+        $psVersion = getPsVersion();
 
         if ($isEligible) {
             $this->context->smarty->assign([
@@ -109,7 +100,7 @@ class DisplayShoppingCartFooterHookController extends FrontendHookController
                     'apiMode' => Settings::getActiveMode(),
                     'amount' => $cartTotal,
                     'plans' => $activePlans,
-                    'refreshPrice' => $refreshPrice,
+                    'refreshPrice' => (version_compare(_PS_VERSION_, '1.7', '<')) ? false : true,
                     'decimalSeparator' => LocaleHelper::decimalSeparator(),
                     'thousandSeparator' => LocaleHelper::thousandSeparator(),
                     'psVersion' => $psVersion,
