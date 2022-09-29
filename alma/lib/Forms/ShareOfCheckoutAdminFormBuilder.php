@@ -46,7 +46,7 @@ class ShareOfCheckoutAdminFormBuilder extends AbstractAlmaAdminFormBuilder
             $this->inputHtml($tpl),
             $this->inputAlmaSwitchForm(
                 self::ALMA_ACTIVATE_SHARE_OF_CHECKOUT,
-                $this->module->l('Activate your data settings', 'ShareOfCheckoutAdminFormBuilder')
+                $this->module->l('Activate your data sharing settings', 'ShareOfCheckoutAdminFormBuilder')
             ),
         ];
     }
