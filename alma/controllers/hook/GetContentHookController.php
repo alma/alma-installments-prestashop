@@ -456,7 +456,6 @@ final class GetContentHookController extends AdminHookController
         }
 
         $this->assignSmartyAlertClasses();
-        $extraMessage = $this->module->display($this->module->file, 'getContent.tpl');
 
         $feePlansOrdered = [];
         $installmentsPlans = [];
