@@ -23,16 +23,23 @@
 
 (function ($) {
     $(function () {
-        if ($('.alma.alert.alert-info').length > 0) {
-            $('.accept-soc').on('click', function() {
-                $('#ALMA_ACTIVATE_SHARE_OF_CHECKOUT_ON').prop('checked', true);
-                $(this).parents('.alma.alert.alert-info').hide();
-                $('#alma_config_form').submit();
-            });
-            $('.reject-soc').on('click', function() {                
-                $('#ALMA_ACTIVATE_SHARE_OF_CHECKOUT_ON').prop('checked', false);
-                $(this).parents('.alma.alert.alert-info').hide();
-                $('#alma_config_form').submit();
+        if ($('.alma.share-of-checkout').length > 0) {
+            $('.btn-share-of-checkout').on('click', function() {
+                $.ajax({
+                    type: 'POST',
+                    url: 'ajax-tab.php',
+                    dataType: 'json',
+                    data: {
+                        ajax: true,
+                        controller: 'AdminAlmaShareOfCheckout',
+                        action: 'SettingShareOfCheckout',
+                        token: $(this).attr('data-token'),
+                        share: $(this).attr('data-share')
+                    },
+                    async   : true,
+                    cache   : false
+                });
+                $(this).parents('.alma.share-of-checkout').hide();
             });
         }
         if ($('#alma_config_form').length > 0) {

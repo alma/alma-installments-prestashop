@@ -22,34 +22,44 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
-use Alma\PrestaShop\Forms\ShareOfCheckoutAdminFormBuilder;
+namespace Alma\PrestaShop\Controllers\Hook;
+
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
+use Alma\PrestaShop\Hooks\FrontendHookController;
 use Alma\PrestaShop\ShareOfCheckout\OrderHelper;
+use Alma\PrestaShop\ShareOfCheckout\ShareOfCheckoutHelper;
 use Alma\PrestaShop\Utils\DateHelper;
 use Alma\PrestaShop\Utils\Logger;
 use Alma\PrestaShop\Utils\Settings;
-use Alma\PrestaShop\ShareOfCheckout\ShareOfCheckoutHelper;
+use Configuration;
+use Context;
+use DateTime;
+use Tools;
 
-class AdminAlmaShareOfCheckoutController extends ModuleAdminController
+class DisplayAdminAfterHeaderHookController extends FrontendHookController
 {
-    public function ajaxProcessShareOfCheckout()
+    public function run($params)
     {
         $date = new DateTime();
         $timestamp = $date->getTimestamp();
 
         if (!DateHelper::isSameDay($timestamp, Configuration::get('ALMA_CRONTASK'))) {
-            Logger::instance()->info('Exec Share Of Checkout Manually ' . $timestamp);
+            Logger::instance()->info('Pseudo Cron Task exec to ' . $timestamp);
             $orderHelper  = new OrderHelper();
-            $shareOfCheckoutHelper = new ShareOfCheckoutHelper($orderHelper);
-            $shareOfCheckoutHelper->shareDays();
+            $shareOfCheckout = new ShareOfCheckoutHelper($orderHelper);
+            $shareOfCheckout->shareDays();
             Settings::updateValue('ALMA_CRONTASK', $timestamp);
         }
-    }
 
-    public function ajaxProcessSettingShareOfCheckout()
-    {
-        $orderHelper  = new OrderHelper();
-        $shareOfCheckoutHelper = new ShareOfCheckoutHelper($orderHelper);
+        if (Settings::isShareOfCheckoutSetting() === false) {
+            $this->context->smarty->assign([
+                'token' => Tools::getAdminTokenLite('AdminAlmaShareOfCheckout'),
+            ]);
 
-        $shareOfCheckoutHelper->handleCheckoutConsent('share');
+            return $this->module->display($this->module->file, 'notificationShareOfCheckout.tpl');
+        }
     }
 }

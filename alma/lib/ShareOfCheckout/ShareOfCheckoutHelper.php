@@ -34,6 +34,7 @@ use Alma\PrestaShop\Utils\Logger;
 use Alma\PrestaShop\Utils\Settings;
 use Configuration;
 use Currency;
+use Tools;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -224,6 +225,33 @@ class ShareOfCheckoutHelper
         }
 
         return null;
+    }
+
+    /**
+     * handle the activation of Share of Checkout feature
+     *
+     * @return void
+     */
+    public function handleCheckoutConsent($attributeForActivation) {
+        $userWantToActivateSOC = (bool) Tools::getValue($attributeForActivation);
+        $isSOCActivated = Configuration::get(ShareOfCheckoutAdminFormBuilder::ALMA_ACTIVATE_SHARE_OF_CHECKOUT);
+
+        try {
+            if ($userWantToActivateSOC && !$isSOCActivated) {
+                // we need to activate share of checkout 
+                $this->addConsent();
+                Settings::updateValue(ShareOfCheckoutAdminFormBuilder::ALMA_ACTIVATE_SHARE_OF_CHECKOUT, true);
+                Settings::updateValue(ShareOfCheckoutAdminFormBuilder::ALMA_SHARE_OF_CHECKOUT_DATE,  Settings::getCurrentTimestamp());
+            }
+            if (!$userWantToActivateSOC && $isSOCActivated) {
+                // we need to desactivate share of checkout 
+                $this->removeConsent();
+                Settings::updateValue(ShareOfCheckoutAdminFormBuilder::ALMA_ACTIVATE_SHARE_OF_CHECKOUT, '');
+                Settings::updateValue(ShareOfCheckoutAdminFormBuilder::ALMA_SHARE_OF_CHECKOUT_DATE,  NULL);
+            }
+        } catch (ShareOfCheckoutException $e) {
+            $this->context->smarty->assign('validation_error', 'soc_api_error');
+        }
     }
 
     /**

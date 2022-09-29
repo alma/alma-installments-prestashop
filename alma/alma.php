@@ -447,17 +447,8 @@ class Alma extends PaymentModule
     /**
      * Hook action AdminControllerInitAfter for pseudo cron
      */
-    public function hookDisplayAdminAfterHeader()
+    public function hookDisplayAdminAfterHeader($params)
     {
-        $date = new DateTime();
-        $timestamp = $date->getTimestamp();
-
-        if (!DateHelper::isSameDay($timestamp, Configuration::get('ALMA_CRONTASK'))) {
-            Logger::instance()->info('Pseudo Cron Task exec to ' . $timestamp);
-            $orderHelper  = new OrderHelper();
-            $shareOfCheckout = new ShareOfCheckoutHelper($orderHelper);
-            $shareOfCheckout->shareDays();
-            Settings::updateValue('ALMA_CRONTASK', $timestamp);
-        }
+        return $this->runHookController('displayAdminAfterHeader', $params);
     }
 }

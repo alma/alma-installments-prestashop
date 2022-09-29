@@ -240,7 +240,10 @@ final class GetContentHookController extends AdminHookController
             $activateLogging = (bool) Tools::getValue('ALMA_ACTIVATE_LOGGING_ON');
             Settings::updateValue('ALMA_ACTIVATE_LOGGING', $activateLogging);
 
-            $this->handleCheckoutConsent();
+            $orderHelper = new OrderHelper();
+            $shareOfCheckoutHelper = new ShareOfCheckoutHelper($orderHelper);
+
+            $shareOfCheckoutHelper->handleCheckoutConsent('ALMA_ACTIVATE_SHARE_OF_CHECKOUT_ON');
 
             if ($merchant) {
                 // First validate that plans boundaries are correctly set
@@ -343,6 +346,8 @@ final class GetContentHookController extends AdminHookController
             return $credentialsError['message'];
         }
 
+        $this->context->smarty->clearAssign('validation_error');
+
         return $this->module->display($this->module->file, 'getContent.tpl');
     }
 
@@ -399,36 +404,6 @@ final class GetContentHookController extends AdminHookController
         return null;
     }
 
-    /**
-     * handle the activation of Share of Checkout feature
-     *
-     * @return void
-     */
-    private function handleCheckoutConsent() {
-        $userWantToActivateSOC = (bool) Tools::getValue('ALMA_ACTIVATE_SHARE_OF_CHECKOUT_ON');
-        $isSOCActivated = Configuration::get(ShareOfCheckoutAdminFormBuilder::ALMA_ACTIVATE_SHARE_OF_CHECKOUT);
-
-        $orderHelper  = new OrderHelper();
-        $shareOfCheckoutHelper = new ShareOfCheckoutHelper($orderHelper);
-
-        try {
-            if ($userWantToActivateSOC && !$isSOCActivated) {
-                // we need to activate share of checkout 
-                $shareOfCheckoutHelper->addConsent();
-                Settings::updateValue(ShareOfCheckoutAdminFormBuilder::ALMA_ACTIVATE_SHARE_OF_CHECKOUT, True);
-                Settings::updateValue(ShareOfCheckoutAdminFormBuilder::ALMA_SHARE_OF_CHECKOUT_DATE,  Settings::getCurrentTimestamp());
-            }
-            if (!$userWantToActivateSOC && $isSOCActivated) {
-                // we need to desactivate share of checkout 
-                $shareOfCheckoutHelper->removeConsent();
-                Settings::updateValue(ShareOfCheckoutAdminFormBuilder::ALMA_ACTIVATE_SHARE_OF_CHECKOUT, NULL);
-                Settings::updateValue(ShareOfCheckoutAdminFormBuilder::ALMA_SHARE_OF_CHECKOUT_DATE,  NULL);
-            }
-        } catch (ShareOfCheckoutException $e) {
-            $this->context->smarty->assign('validation_error', 'soc_api_error');
-        }
-    }
-
     private function getMerchant()
     {
         $alma = ClientHelper::defaultInstance();
@@ -480,10 +455,6 @@ final class GetContentHookController extends AdminHookController
             $extraMessage = $this->module->display($this->module->file, 'getContent.tpl');
         }
 
-        $this->context->smarty->assign([
-            'share_of_checkout' => !Settings::canShareOfCheckout(),
-        ]);
-
         $this->assignSmartyAlertClasses();
         $extraMessage = $this->module->display($this->module->file, 'getContent.tpl');
 
@@ -534,7 +505,9 @@ final class GetContentHookController extends AdminHookController
             $fieldsForms[] = $paymentBuilder->build();
             $fieldsForms[] = $excludedBuilder->build();
             $fieldsForms[] = $refundBuilder->build();
-            $fieldsForms[] = $shareOfCheckoutBuilder->build();
+            if (Settings::isShareOfCheckoutSetting() !== false) {
+                $fieldsForms[] = $shareOfCheckoutBuilder->build();
+            }
             $fieldsForms[] = $triggerBuilder->build();
         }
         $fieldsForms[] = $apiBuilder->build();
