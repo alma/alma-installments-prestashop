@@ -22,7 +22,6 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
-use Alma\PrestaShop\Forms\ShareOfCheckoutAdminFormBuilder;
 use Alma\PrestaShop\ShareOfCheckout\OrderHelper;
 use Alma\PrestaShop\Utils\DateHelper;
 use Alma\PrestaShop\Utils\Logger;

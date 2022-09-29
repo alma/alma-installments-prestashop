@@ -35,12 +35,26 @@ use Alma\PrestaShop\Utils\DateHelper;
 use Alma\PrestaShop\Utils\Logger;
 use Alma\PrestaShop\Utils\Settings;
 use Configuration;
-use Context;
 use DateTime;
 use Tools;
 
 class DisplayAdminAfterHeaderHookController extends FrontendHookController
 {
+    public function canRun()
+    {
+        return parent::canRun() &&
+            (Tools::strtolower($this->currentControllerName()) == 'admindashboard' ||
+            Tools::strtolower($this->currentControllerName()) == 'adminpsmbomodule' ||
+            Tools::strtolower($this->currentControllerName()) == 'adminmodulesnotifications' ||
+            Tools::strtolower($this->currentControllerName()) == 'adminmodulesupdates' ||
+            Tools::strtolower($this->currentControllerName()) == 'adminpsmboaddons' ||
+            Tools::strtolower($this->currentControllerName()) == 'adminmodulesmanage' ||
+            Tools::strtolower($this->currentControllerName()) == 'adminalmacategories' ||
+            Tools::getValue('configure') == 'alma' ||
+            Tools::getValue('module_name') == 'alma') &&
+            Settings::getMerchantId() != null;
+    }
+
     public function run($params)
     {
         $date = new DateTime();
@@ -49,8 +63,8 @@ class DisplayAdminAfterHeaderHookController extends FrontendHookController
         if (!DateHelper::isSameDay($timestamp, Configuration::get('ALMA_CRONTASK'))) {
             Logger::instance()->info('Pseudo Cron Task exec to ' . $timestamp);
             $orderHelper  = new OrderHelper();
-            $shareOfCheckout = new ShareOfCheckoutHelper($orderHelper);
-            $shareOfCheckout->shareDays();
+            $shareOfCheckoutHelper = new ShareOfCheckoutHelper($orderHelper);
+            $shareOfCheckoutHelper->shareDays();
             Settings::updateValue('ALMA_CRONTASK', $timestamp);
         }
 
