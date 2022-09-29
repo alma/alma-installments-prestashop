@@ -50,7 +50,7 @@ class OrderHelper
      */
     private $orders;
     
-    function __construct()
+    public function __construct()
     {
         $this->defaultStatesExcluded = [6, 7, 8];
         $this->orders = [];
