@@ -189,6 +189,11 @@ fieldset .form-alma.disabled::before{
     content: '';
 }
 
+.bootstrap .alma.alert ul {
+    list-style-type: disc;
+    padding-left: 40px;
+}
+
 .bootstrap .alma.alert.alert-info a:not(.btn) {
     color: #00425D;
     text-decoration: underline;
