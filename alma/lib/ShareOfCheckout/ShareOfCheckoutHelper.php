@@ -232,22 +232,23 @@ class ShareOfCheckoutHelper
      *
      * @return void
      */
-    public function handleCheckoutConsent($attributeForActivation) {
+    public function handleCheckoutConsent($attributeForActivation)
+    {
         $userWantToActivateSOC = (bool) Tools::getValue($attributeForActivation);
         $isSOCActivated = Configuration::get(ShareOfCheckoutAdminFormBuilder::ALMA_ACTIVATE_SHARE_OF_CHECKOUT);
 
         try {
             if ($userWantToActivateSOC && !$isSOCActivated) {
-                // we need to activate share of checkout 
+                // we need to activate share of checkout
                 $this->addConsent();
                 Settings::updateValue(ShareOfCheckoutAdminFormBuilder::ALMA_ACTIVATE_SHARE_OF_CHECKOUT, true);
-                Settings::updateValue(ShareOfCheckoutAdminFormBuilder::ALMA_SHARE_OF_CHECKOUT_DATE,  Settings::getCurrentTimestamp());
+                Settings::updateValue(ShareOfCheckoutAdminFormBuilder::ALMA_SHARE_OF_CHECKOUT_DATE, Settings::getCurrentTimestamp());
             }
             if (!$userWantToActivateSOC && $isSOCActivated) {
-                // we need to desactivate share of checkout 
+                // we need to desactivate share of checkout
                 $this->removeConsent();
                 Settings::updateValue(ShareOfCheckoutAdminFormBuilder::ALMA_ACTIVATE_SHARE_OF_CHECKOUT, '');
-                Settings::updateValue(ShareOfCheckoutAdminFormBuilder::ALMA_SHARE_OF_CHECKOUT_DATE,  NULL);
+                Settings::updateValue(ShareOfCheckoutAdminFormBuilder::ALMA_SHARE_OF_CHECKOUT_DATE, null);
             }
         } catch (ShareOfCheckoutException $e) {
             $this->context->smarty->assign('validation_error', 'soc_api_error');
@@ -364,7 +365,7 @@ class ShareOfCheckoutHelper
     }
 
     /**
-     * @return string|false 
+     * @return string|false
      */
     protected function getEnabledDate()
     {
@@ -372,7 +373,7 @@ class ShareOfCheckoutHelper
     }
 
     /**
-     * @return array 
+     * @return array
      */
     protected function getDatesInInterval($lastShareOfCheckout, $shareOfCheckoutEnabledDate)
     {

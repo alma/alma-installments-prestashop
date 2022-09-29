@@ -61,12 +61,12 @@ class OrderHelper
      *
      * @param string $startDate
      * @param string $endDate
-     * 
+     *
      * @return Order[]
      */
     public function getOrdersByDate($startDate, $endDate)
     {
-        if (!empty($this->orders)){
+        if (!empty($this->orders)) {
             return $this->orders;
         }
         $newOrders = [];

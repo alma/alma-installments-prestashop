@@ -88,7 +88,7 @@ class ShareOfCheckoutHelperTest extends TestCase
      * @return void
      */
     public function testGetTotalPaymentMethods($ordersMock, $expectedTotalPaymentMethods)
-    {   
+    {
         $orderHelperMock = Mockery::mock(OrderHelper::class);
         $orderHelperMock->shouldReceive('getOrdersByDate')->andReturn($ordersMock);
         
@@ -104,7 +104,7 @@ class ShareOfCheckoutHelperTest extends TestCase
      * @return void
      */
     public function testGetTotalOrders($ordersMock, $expectedTotalOrders)
-    {   
+    {
         $orderHelperMock = Mockery::mock(OrderHelper::class);
         $orderHelperMock->shouldReceive('getOrdersByDate')->andReturn($ordersMock);
         
@@ -113,7 +113,8 @@ class ShareOfCheckoutHelperTest extends TestCase
         $this->assertEquals($expectedTotalOrders, $getTotalOrders);
     }
 
-    public function ordersTotalOrders() {
+    public function ordersTotalOrders()
+    {
         $expectedTotalOrders = [
             [
                 "total_order_count" => 2,
@@ -135,7 +136,8 @@ class ShareOfCheckoutHelperTest extends TestCase
         ];
     }
 
-    public function ordersTotalPaymentMethods() {
+    public function ordersTotalPaymentMethods()
+    {
         $expectedTotalPaymentMethods = [
             [
                 "payment_method_name" => "alma",
@@ -252,7 +254,7 @@ class ShareOfCheckoutHelperTest extends TestCase
             ],
         ];
 
-        foreach($ordersFactory as $orderFactory) {
+        foreach ($ordersFactory as $orderFactory) {
             $orderMock = Mockery::mock(Order::class);
             $orderMock->id_currency = $orderFactory['id_currency'];
             $orderMock->total_paid_tax_incl = $orderFactory['total_paid_tax_incl'];
