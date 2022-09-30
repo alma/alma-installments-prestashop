@@ -42,6 +42,8 @@ class DisplayAdminAfterHeaderHookController extends FrontendHookController
 {
     public function canRun()
     {
+        $isLive = Settings::getActiveMode() === ALMA_MODE_LIVE;
+
         return parent::canRun() &&
             (Tools::strtolower($this->currentControllerName()) == 'admindashboard' ||
             Tools::strtolower($this->currentControllerName()) == 'adminpsmbomodule' ||
@@ -52,6 +54,7 @@ class DisplayAdminAfterHeaderHookController extends FrontendHookController
             Tools::strtolower($this->currentControllerName()) == 'adminalmacategories' ||
             Tools::getValue('configure') == 'alma' ||
             Tools::getValue('module_name') == 'alma') &&
+            $isLive &&
             Settings::getMerchantId() != null;
     }
 

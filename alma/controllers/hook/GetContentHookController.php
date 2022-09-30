@@ -504,7 +504,7 @@ final class GetContentHookController extends AdminHookController
             $fieldsForms[] = $paymentBuilder->build();
             $fieldsForms[] = $excludedBuilder->build();
             $fieldsForms[] = $refundBuilder->build();
-            if (Settings::isShareOfCheckoutSetting() !== false) {
+            if (Settings::isShareOfCheckoutSetting() !== false && Settings::getActiveMode() === ALMA_MODE_LIVE) {
                 $fieldsForms[] = $shareOfCheckoutBuilder->build();
             }
             $fieldsForms[] = $triggerBuilder->build();
