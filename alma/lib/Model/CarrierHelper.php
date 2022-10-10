@@ -54,7 +54,7 @@ class CarrierHelper
     {
         $carriers = Carrier::getCarriers($this->context->language->id);
 
-        $currentCarrier = array_filter($carriers, function($carrier) use ($idCarrier) {
+        $currentCarrier = array_filter($carriers, function ($carrier) use ($idCarrier) {
             return $carrier['id_carrier'] == $idCarrier;
         });
 

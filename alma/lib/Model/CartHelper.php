@@ -58,7 +58,7 @@ class CartHelper
         $orders = $this->getOrdersByCustomerWithLimit($idCustomer);
         
         $carrier = new CarrierHelper($this->context);
-        foreach($orders as $order) {
+        foreach ($orders as $order) {
             $cart = new Cart((int) $order['id_cart']);
             $purchaseAmount = (float) Tools::ps_round((float) $cart->getOrderTotal(true, Cart::BOTH), 2);
             $ordersData[] = [
