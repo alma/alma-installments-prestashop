@@ -63,7 +63,7 @@ class CartHelper
             $purchaseAmount = (float) Tools::ps_round((float) $cart->getOrderTotal(true, Cart::BOTH), 2);
             $ordersData[] = [
                 'purchase_amount' => almaPriceToCents($purchaseAmount),
-                'payment_method' => $order['payment_method'],
+                'payment_method' => $order['payment'],
                 'shipping_method' => $carrier->getNameCarrierById($cart->id_carrier),
                 'items' => CartData::getCartItems($cart),
             ];
@@ -81,17 +81,8 @@ class CartHelper
      */
     private function getOrdersByCustomerWithLimit($idCustomer, $limit = 10)
     {
-        $filteredOrders = [];
         $orders = Order::getCustomerOrders($idCustomer);
 
-        foreach ($orders as $order) {
-            $filteredOrders[] = [
-                'id_order' => $order['id_order'],
-                'id_cart' => $order['id_cart'],
-                'payment_method' => $order['payment']
-            ];
-        }
-
-        return array_slice($filteredOrders, 0, $limit);
+        return array_slice($orders, 0, $limit);
     }
 }
