@@ -39,8 +39,7 @@ class OrderStateHelper
 {
     public function __construct(
         Context $context
-    )
-    {
+    ) {
         $this->context = $context;
     }
 

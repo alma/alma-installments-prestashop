@@ -39,8 +39,7 @@ class CarrierHelper
 {
     public function __construct(
         Context $context
-    )
-    {
+    ) {
         $this->context = $context;
     }
 
@@ -48,6 +47,7 @@ class CarrierHelper
      * Get name Carrier by id carrier
      *
      * @param int $idCarrier
+     *
      * @return string
      */
     public function getNameCarrierById($idCarrier)

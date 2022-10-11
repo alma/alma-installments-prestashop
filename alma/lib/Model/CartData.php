@@ -40,7 +40,6 @@ use PrestaShopDatabaseException;
 use PrestaShopException;
 use Product;
 use TaxConfiguration;
-use Tools;
 
 class CartData
 {

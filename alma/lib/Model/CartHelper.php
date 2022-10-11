@@ -28,7 +28,6 @@ namespace Alma\PrestaShop\Model;
 use Cart;
 use Context;
 use Order;
-use OrderState;
 use Tools;
 
 if (!defined('_PS_VERSION_')) {
@@ -42,8 +41,7 @@ class CartHelper
 {
     public function __construct(
         Context $context
-    )
-    {
+    ) {
         $this->context = $context;
     }
 
@@ -51,6 +49,7 @@ class CartHelper
      * Previous cart items of the customer
      *
      * @param int $idCustomer
+     *
      * @return array
      */
     public function previousCartOrdered($idCustomer)
@@ -58,7 +57,7 @@ class CartHelper
         $ordersData = [];
         $orders = $this->getOrdersByCustomerWithLimit($idCustomer);
         $orderStateHelper = new OrderStateHelper($this->context);
-        
+
         $carrier = new CarrierHelper($this->context);
         foreach ($orders as $order) {
             $cart = new Cart((int) $order['id_cart']);
@@ -80,7 +79,8 @@ class CartHelper
      * Get ids order by customer id with limit (default = 10)
      *
      * @param int $idCustomer
-     * @param integer $limit
+     * @param int $limit
+     *
      * @return array
      */
     private function getOrdersByCustomerWithLimit($idCustomer, $limit = 10)
