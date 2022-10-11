@@ -25,20 +25,17 @@
 
 namespace Alma\PrestaShop\Model;
 
-use Cart;
 use Context;
-use Order;
 use OrderState;
-use Tools;
 
 if (!defined('_PS_VERSION_')) {
     exit;
 }
 
 /**
- * Class CartHelper
+ * Class OrderStateHelper
  */
-class CartHelper
+class OrderStateHelper
 {
     public function __construct(
         Context $context
@@ -47,46 +44,14 @@ class CartHelper
         $this->context = $context;
     }
 
-    /**
-     * Previous cart items of the customer
-     *
-     * @param int $idCustomer
-     * @return array
-     */
-    public function previousCartOrdered($idCustomer)
+    public function getNameById($idOrderState)
     {
-        $ordersData = [];
-        $orders = $this->getOrdersByCustomerWithLimit($idCustomer);
-        $orderStateHelper = new OrderStateHelper($this->context);
-        
-        $carrier = new CarrierHelper($this->context);
-        foreach ($orders as $order) {
-            $cart = new Cart((int) $order['id_cart']);
-            $purchaseAmount = (float) Tools::ps_round((float) $cart->getOrderTotal(true, Cart::BOTH), 2);
+        $orderStates = OrderState::getOrderStates($this->context->language->id);
 
-            $ordersData[] = [
-                'purchase_amount' => almaPriceToCents($purchaseAmount),
-                'payment_method' => $order['payment'],
-                'current_state' => $orderStateHelper->getNameById($order['current_state']),
-                'shipping_method' => $carrier->getNameCarrierById($cart->id_carrier),
-                'items' => CartData::getCartItems($cart),
-            ];
-        }
+        $state = array_filter($orderStates, function ($orderState) use ($idOrderState) {
+            return $orderState['id_order_state'] == $idOrderState;
+        });
 
-        return $ordersData;
-    }
-
-    /**
-     * Get ids order by customer id with limit (default = 10)
-     *
-     * @param int $idCustomer
-     * @param integer $limit
-     * @return array
-     */
-    private function getOrdersByCustomerWithLimit($idCustomer, $limit = 10)
-    {
-        $orders = Order::getCustomerOrders($idCustomer);
-
-        return array_slice($orders, 0, $limit);
+        return array_values($state)[0]['name'];
     }
 }
