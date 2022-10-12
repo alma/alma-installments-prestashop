@@ -41,7 +41,7 @@ class AdminAlmaExportDataForRiskController extends ModuleAdminController
             $this->actionExportDataForRisk();
             die;
         }
-        
+
         $link = $this->context->link->getAdminLink('AdminAlmaExportDataForRisk') . '&action=ExportDataForRisk';
         $smarty = $this->context->smarty;
         $smarty->assign('linkExportDataForRisk', $link);
@@ -51,8 +51,8 @@ class AdminAlmaExportDataForRiskController extends ModuleAdminController
     public function actionExportDataForRisk()
     {
         $array = Db::getInstance()->executeS($this->sql(), $array = true, $use_cache = 1);
+        $this->download_send_headers('data_export_' . date('Y-m-d') . '.csv');
 
-        $this->download_send_headers("data_export_" . date("Y-m-d") . ".csv");
         return $this->export_csv($array);
     }
 
@@ -62,7 +62,7 @@ class AdminAlmaExportDataForRiskController extends ModuleAdminController
             return null;
         }
         ob_start();
-        $df = fopen("php://output", 'w');
+        $df = fopen('php://output', 'w');
         fputcsv($df, array_keys(reset($array)));
         foreach ($array as $row) {
             fputcsv($df, $row);
@@ -71,22 +71,23 @@ class AdminAlmaExportDataForRiskController extends ModuleAdminController
         // return ob_get_clean();
     }
 
-    private function download_send_headers($filename) {
+    private function download_send_headers($filename)
+    {
         // disable caching
-        $now = gmdate("D, d M Y H:i:s");
-        header("Expires: Tue, 03 Jul 2099 06:00:00 GMT");
-        header("Cache-Control: max-age=0, no-cache, must-revalidate, proxy-revalidate");
-        header("Last-Modified: {$now} GMT");
-    
-        // force download  
-        header("Content-Type: application/force-download");
-        header("Content-Type: application/octet-stream");
-        header("Content-Type: application/download");
+        $now = gmdate('D, d M Y H:i:s');
+        header('Expires: Tue, 03 Jul 2099 06:00:00 GMT');
+        header('Cache-Control: max-age=0, no-cache, must-revalidate, proxy-revalidate');
+        header('Last-Modified: {$now} GMT');
+
+        // force download
+        header('Content-Type: application/force-download');
+        header('Content-Type: application/octet-stream');
+        header('Content-Type: application/download');
         header('Content-Type: text/x-csv');
-    
+
         // disposition / encoding on response body
-        header("Content-Disposition: attachment;filename={$filename}");
-        header("Content-Transfer-Encoding: binary");
+        header('Content-Disposition: attachment;filename={$filename}');
+        header('Content-Transfer-Encoding: binary');
     }
 
     private function sql()
