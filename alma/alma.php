@@ -264,12 +264,14 @@ class Alma extends PaymentModule
         return $this->installTab('alma', 'Alma')
             && $this->installTab('AdminAlmaConfig', $this->l('Configuration'), 'alma', 1, 'tune')
             && $this->installTab('AdminAlmaCategories', $this->l('Excluded categories'), 'alma', 2, 'not_interested')
+            && $this->installTab('AdminAlmaExportDataForRisk', $this->l('Export Data for Risk'), 'alma', 2, 'file_download')
             && $this->installTab('AdminAlmaRefunds', false, 'alma');
     }
 
     public function uninstallTabs()
     {
         return $this->uninstallTab('AdminAlmaCategories')
+            && $this->uninstallTab('AdminAlmaExportDataForRisk')
             && $this->uninstallTab('AdminAlmaRefunds')
             && $this->uninstallTab('AdminAlmaConfig')
             && $this->uninstallTab('alma');
