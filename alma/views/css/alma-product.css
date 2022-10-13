@@ -126,6 +126,14 @@
     opacity: 1;
     animation-name: displayNotifyPopin;
     animation-duration: .2s;
+    animation-timing-function: ease-in;
+}
+.alma.notify-popin.displayed.sendDown{
+    bottom: -100px;
+    opacity: 0;
+    animation-name: sendDownNotifyPopin;
+    animation-duration: .4s;
+    animation-timing-function: ease-in-out;
 }
 .alma.notify-popin h3{
     margin-top: 0;
@@ -198,4 +206,24 @@
         display: block;
         opacity: 1;
     }
-  }
+}
+
+@keyframes sendDownNotifyPopin {
+    0% {
+        display: block;
+        opacity: 1;
+        bottom: 30px;
+    }
+    10% {
+        bottom: 40px;
+    }
+    99% {
+        display: block;
+        opacity: 1;
+        display: -100px;
+    }
+    100% {
+        display: none;
+        opacity: 0;
+    }
+}

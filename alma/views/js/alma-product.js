@@ -135,22 +135,28 @@
 
         if ($('.alma.notify-popin').length > 0) {
             let notifyPopin = $('.alma.notify-popin');
-            $(document).scroll(function() {
-                notifyPopin.addClass('displayed');
+            $(window).scroll(function () {
+                let scrollTop = $(window).scrollTop();
+                let heightWindow = window.innerHeight;
+                if (scrollTop > heightWindow) {
+                    notifyPopin.addClass('displayed');
+                }
             });
             notifyPopin.find('.alma-open').on('click', function(e) {
                 e.preventDefault();
+                notifyPopin.addClass('sendDown');
                 $('.alma.banner-notify-popin').show().animate({
                     bottom: '30px',                    
                 }, 800, "easeOutBack");
             });
             notifyPopin.find('a.alma-close').on('click', function(e) {
                 e.preventDefault();
-                notifyPopin.animate({
-                    bottom: '-100px',                    
-                }, 800, "easeOutBack", function() {
-                    notifyPopin.hide();
-                });
+                notifyPopin.addClass('sendDown');
+                // notifyPopin.animate({
+                //     bottom: '-100px',                    
+                // }, 800, "easeOutBack", function() {
+                //     notifyPopin.hide();
+                // });
             });
         }
         if ($('.alma.banner-notify-popin').length > 0) {
