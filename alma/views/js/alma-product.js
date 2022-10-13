@@ -136,9 +136,7 @@
         if ($('.alma.notify-popin').length > 0) {
             let notifyPopin = $('.alma.notify-popin');
             $(document).scroll(function() {
-                notifyPopin.show().animate({
-                    opacity: 1,
-                }, 80, "easeOutBack");
+                notifyPopin.addClass('displayed');
             });
             notifyPopin.find('.alma-open').on('click', function(e) {
                 e.preventDefault();
