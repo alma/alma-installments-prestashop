@@ -44,21 +44,20 @@ class AdminAlmaExportDataForRiskController extends ModuleAdminController
 
         $link = $this->context->link->getAdminLink('AdminAlmaExportDataForRisk') . '&action=ExportDataForRisk';
         $this->context->smarty->assign('linkExportDataForRisk', $link);
-        // return $this->module->display($this->module->file, 'dataforriskexport.tpl');
         $this->setTemplate('dataforriskexport.tpl');
     }
 
     public function actionExportDataForRisk()
     {
         $array = Db::getInstance()->executeS($this->sql(), $array = true, $use_cache = 1);
-        $this->download_send_headers('data_export_' . date('Y-m-d') . '.csv');
+        $this->downloadSendHeaders('data_export_' . date('Y-m-d') . '.csv');
 
-        return $this->export_csv($array);
+        return $this->exportCsv($array);
     }
 
-    private function export_csv(array $array)
+    private function exportCsv(array $array)
     {
-        if (count($array) == 0) {
+        if (empty($array)) {
             return null;
         }
         ob_start();
@@ -68,16 +67,15 @@ class AdminAlmaExportDataForRiskController extends ModuleAdminController
             fputcsv($df, $row);
         }
         fclose($df);
-        // return ob_get_clean();
     }
 
-    private function download_send_headers($filename)
+    private function downloadSendHeaders($filename)
     {
         // disable caching
         $now = gmdate('D, d M Y H:i:s');
         header('Expires: Tue, 03 Jul 2099 06:00:00 GMT');
         header('Cache-Control: max-age=0, no-cache, must-revalidate, proxy-revalidate');
-        header('Last-Modified: {$now} GMT');
+        header("Last-Modified: {$now} GMT");
 
         // force download
         header('Content-Type: application/force-download');
@@ -143,24 +141,24 @@ class AdminAlmaExportDataForRiskController extends ModuleAdminController
         WHERE catlan.id_lang = 1
         AND osl.id_lang = 1
         AND c.alma_payment_count >= 1
-        GROUP BY 
-            c.date_add, 
-            o.date_add, 
-            c.is_guest, 
-            o.reference, 
-            o.total_paid_tax_incl, 
-            o.payment, 
-            osl.name, 
-            op.transaction_id, 
-            cur.iso_code, 
-            car.name, 
-            p.reference, 
-            m.name, 
-            od.product_name, 
-            od.product_quantity, 
-            od.product_price, 
-            od.total_price_tax_incl, 
-            basket.gift, 
+        GROUP BY
+            c.date_add,
+            o.date_add,
+            c.is_guest,
+            o.reference,
+            o.total_paid_tax_incl,
+            o.payment,
+            osl.name,
+            op.transaction_id,
+            cur.iso_code,
+            car.name,
+            p.reference,
+            m.name,
+            od.product_name,
+            od.product_quantity,
+            od.product_price,
+            od.total_price_tax_incl,
+            basket.gift,
             p.is_virtual
         ) AS dt;";
     }
