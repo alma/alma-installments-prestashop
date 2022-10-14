@@ -152,11 +152,6 @@
             notifyPopin.find('a.alma-close').on('click', function(e) {
                 e.preventDefault();
                 notifyPopin.addClass('sendDown');
-                // notifyPopin.animate({
-                //     bottom: '-100px',                    
-                // }, 800, "easeOutBack", function() {
-                //     notifyPopin.hide();
-                // });
             });
         }
         if ($('.alma.banner-notify-popin').length > 0) {
