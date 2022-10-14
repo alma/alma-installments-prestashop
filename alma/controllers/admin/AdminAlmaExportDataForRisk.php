@@ -43,8 +43,8 @@ class AdminAlmaExportDataForRiskController extends ModuleAdminController
         }
 
         $link = $this->context->link->getAdminLink('AdminAlmaExportDataForRisk') . '&action=ExportDataForRisk';
-        $smarty = $this->context->smarty;
-        $smarty->assign('linkExportDataForRisk', $link);
+        $this->context->smarty->assign('linkExportDataForRisk', $link);
+        // return $this->module->display($this->module->file, 'dataforriskexport.tpl');
         $this->setTemplate('dataforriskexport.tpl');
     }
 
@@ -86,7 +86,7 @@ class AdminAlmaExportDataForRiskController extends ModuleAdminController
         header('Content-Type: text/x-csv');
 
         // disposition / encoding on response body
-        header('Content-Disposition: attachment;filename={$filename}');
+        header("Content-Disposition: attachment;filename={$filename}");
         header('Content-Transfer-Encoding: binary');
     }
 

@@ -1,1 +1,0 @@
-<a href='{$linkExportDataForRisk}' class='btn btn-large btn-primary'>Export Data For Risk</a>
