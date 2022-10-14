@@ -51,20 +51,7 @@ class DisplayFooterHookController extends FrontendHookController
             return $plan['enabled'] == '1';
         });
         foreach ($enablePlans as $key => $plan) {
-            $installmentPlan = Settings::getDataFromKey($key);
-            if ($installmentPlan['installmentsCount'] == '1' && $installmentPlan['deferredDays'] > 0) {
-                $installmentPlans[] = sprintf(
-                    $this->module->l('D+%1$s', 'DisplayFooterHookController'),
-                    $installmentPlan['deferredDays']
-                );
-            } elseif ($installmentPlan['installmentsCount'] == '1' && $installmentPlan['deferredMonths'] > 0) {
-                $installmentPlans[] = sprintf(
-                    $this->module->l('M+%1$s', 'DisplayFooterHookController'),
-                    $installmentPlan['deferredMonths']
-                );
-            } else {
-                $installmentPlans[] = $installmentPlan['installmentsCount'] . 'x';
-            }
+            $installmentPlans[] = $this->textInstallmentPlans($key);
         }
         $this->context->smarty->assign([
             'installmentPlans' => $installmentPlans,
@@ -72,5 +59,25 @@ class DisplayFooterHookController extends FrontendHookController
         ]);
 
         return $this->module->display($this->module->file, 'popin_payment_option.tpl');
+    }
+
+    private function textInstallmentPlans($key)
+    {
+        $installmentPlan = Settings::getDataFromKey($key);
+
+        if ($installmentPlan['installmentsCount'] == '1' && $installmentPlan['deferredDays'] > 0) {
+            return sprintf(
+                $this->module->l('D+%1$s', 'DisplayFooterHookController'),
+                $installmentPlan['deferredDays']
+            );
+        }
+        if ($installmentPlan['installmentsCount'] == '1' && $installmentPlan['deferredMonths'] > 0) {
+            return sprintf(
+                $this->module->l('M+%1$s', 'DisplayFooterHookController'),
+                $installmentPlan['deferredMonths']
+            );
+        }
+
+        return $installmentPlan['installmentsCount'] . 'x';
     }
 }
