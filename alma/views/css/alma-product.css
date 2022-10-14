@@ -220,7 +220,7 @@
     99% {
         display: block;
         opacity: 1;
-        display: -100px;
+        bottom: -100px;
     }
     100% {
         display: none;
