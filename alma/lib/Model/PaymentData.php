@@ -205,7 +205,7 @@ class PaymentData
                     'cart_totals' => $purchaseAmount,
                     'cart_totals_high_precision' => number_format($purchaseAmount, 16),
                     'poc' => [
-                        'data-for-risk',
+                        'category-popin'
                     ],
                 ],
                 'locale' => $locale,
