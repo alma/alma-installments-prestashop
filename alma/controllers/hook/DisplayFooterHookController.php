@@ -37,7 +37,7 @@ class DisplayFooterHookController extends FrontendHookController
     public function canRun()
     {
         return parent::canRun() &&
-            (Tools::strtolower($this->currentControllerName()) == 'product' || Tools::strtolower($this->currentControllerName()) == 'category') &&
+            (Tools::strtolower($this->currentControllerName()) == 'search' || Tools::strtolower($this->currentControllerName()) == 'category') &&
             Settings::notifyPopinCustomer() &&
             Settings::getMerchantId() != null;
     }

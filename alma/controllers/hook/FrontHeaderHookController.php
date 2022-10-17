@@ -95,8 +95,13 @@ class FrontHeaderHookController extends FrontendHookController
                 $controller->addCSS($this->module->_path . $productCssPath);
                 $controller->addJS($widgetsJsUrl);
                 $controller->addJS($this->module->_path . $cartScriptPath);
-            } elseif (Settings::showProductEligibility()
-                && ($controller->php_self == 'product' || 'ProductController' == get_class($controller) || $controller->php_self == 'category')) {
+            } elseif (Settings::showProductEligibility() &&
+                (
+                    $controller->php_self == 'product' ||
+                    'ProductController' == get_class($controller) ||
+                    $controller->php_self == 'category' ||
+                    $controller->php_self == 'search'
+                )) {
                 // Product widget
                 if (version_compare(_PS_VERSION_, '1.5.6.2', '<')) {
                     $content .= '<link rel="stylesheet" href="' . $widgetsCssUrl . '">';
