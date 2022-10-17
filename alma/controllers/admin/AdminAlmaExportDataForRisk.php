@@ -49,7 +49,12 @@ class AdminAlmaExportDataForRiskController extends ModuleAdminController
 
     public function actionExportDataForRisk()
     {
-        $array = Db::getInstance()->executeS($this->sql(), $array = true, $use_cache = 1);
+        $idsCustomerAlma = [];
+        $rCustomersAlma = Db::getInstance()->executeS($this->sqlCustomerAlma(), $array = true, $use_cache = 1);
+        foreach ($rCustomersAlma as $idCustomer) {
+            $idsCustomerAlma[] = $idCustomer['id_customer'];
+        }
+        $array = Db::getInstance()->executeS($this->sqlNoWith($idsCustomerAlma), $array = true, $use_cache = 1);
         $this->downloadSendHeaders('data_export_' . date('Y-m-d') . '.csv');
 
         return $this->exportCsv($array);
@@ -161,5 +166,75 @@ class AdminAlmaExportDataForRiskController extends ModuleAdminController
             basket.gift,
             p.is_virtual
         ) AS dt;";
+    }
+
+    private function sqlNoWith($idsCustomerAlma)
+    {
+        return 'SELECT
+            c.date_add as customer_created_at,
+            o.date_add as order_created_at,
+            c.is_guest,
+            o.reference as order_reference,
+            o.total_paid_tax_incl as purchase_amount,
+            o.payment as payment_method,
+            osl.name as current_state,
+            op.transaction_id as alma_payment_id,
+            cur.iso_code as currency,
+            car.name as shipping_method,
+            p.reference as item_sku,
+            m.name as item_vendor,
+            od.product_name as item_title,
+            od.product_quantity as item_quantity,
+            od.product_price as item_unit_price,
+            od.total_price_tax_incl as item_line_price,
+            basket.gift as basket_is_gift,
+            GROUP_CONCAT(catlan.name) as item_categories,
+            p.is_virtual as item_is_virtual
+        FROM
+            ps_customer                 AS c
+            JOIN ps_orders              AS o      ON o.id_customer = c.id_customer
+            LEFT JOIN ps_order_payment  AS op     ON op.order_reference = o.reference
+            JOIN ps_currency            AS cur    ON cur.id_currency = o.id_currency
+            JOIN ps_carrier             AS car    ON car.id_carrier = o.id_carrier
+            JOIN ps_order_detail        AS od     ON od.id_order = o.id_order
+            JOIN ps_product             AS p      ON p.id_product = od.product_id
+            JOIN ps_manufacturer        AS m      ON m.id_manufacturer = p.id_manufacturer
+            JOIN ps_cart                AS basket ON basket.id_cart = o.id_cart
+            JOIN ps_category_product    AS catpro ON catpro.id_product = p.id_product
+            JOIN ps_category_lang       AS catlan ON catlan.id_category = catpro.id_category
+            JOIN ps_order_state_lang    AS osl    ON osl.id_order_state = o.current_state
+        WHERE catlan.id_lang = 1
+        AND osl.id_lang = 1
+        AND c.id_customer IN (' . implode(',', $idsCustomerAlma) . ')
+        GROUP BY
+            c.date_add,
+            o.date_add,
+            c.is_guest,
+            o.reference,
+            o.total_paid_tax_incl,
+            o.payment,
+            osl.name,
+            op.transaction_id,
+            cur.iso_code,
+            car.name,
+            p.reference,
+            m.name,
+            od.product_name,
+            od.product_quantity,
+            od.product_price,
+            od.total_price_tax_incl,
+            basket.gift,
+            p.is_virtual;';
+    }
+
+    private function sqlCustomerAlma()
+    {
+        return "SELECT
+            c.id_customer
+        FROM
+            ps_customer                 AS c
+            JOIN ps_orders              AS o      ON o.id_customer = c.id_customer AND o.payment like 'Alma%'
+        GROUP BY
+            c.id_customer;";
     }
 }
