@@ -1,5 +1,9 @@
 # Changelog
 
+## v2.9.1
+
+- POC : Add Popin about payment option
+
 ## v2.9.0
 
 - Enriched data for risk algorithm improvements
