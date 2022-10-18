@@ -173,6 +173,7 @@ class AdminAlmaExportDataForRiskController extends ModuleAdminController
         return 'SELECT
             c.date_add as customer_created_at,
             o.date_add as order_created_at,
+            c.id_customer as id_customer,
             c.is_guest,
             o.reference as order_reference,
             o.total_paid_tax_incl as purchase_amount,
@@ -209,6 +210,7 @@ class AdminAlmaExportDataForRiskController extends ModuleAdminController
         GROUP BY
             c.date_add,
             o.date_add,
+            c.id_customer,
             c.is_guest,
             o.reference,
             o.total_paid_tax_incl,
