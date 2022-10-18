@@ -233,21 +233,23 @@ class ShareOfCheckoutHelper
     /**
      * handle the activation of Share of Checkout feature
      *
+     * @param string $consentAttribute
+     *
      * @return void
      */
-    public function handleCheckoutConsent($attributeForActivation)
+    public function handleCheckoutConsent($consentAttribute)
     {
-        $userWantToActivateSOC = (bool) Tools::getValue($attributeForActivation);
+        $isUserConsent = (bool) Tools::getValue($consentAttribute);
         $isSOCActivated = Configuration::get(ShareOfCheckoutAdminFormBuilder::ALMA_ACTIVATE_SHARE_OF_CHECKOUT);
 
         try {
-            if ($userWantToActivateSOC && !$isSOCActivated) {
+            if ($isUserConsent && !$isSOCActivated) {
                 // we need to activate share of checkout
                 $this->addConsent();
                 Settings::updateValue(ShareOfCheckoutAdminFormBuilder::ALMA_ACTIVATE_SHARE_OF_CHECKOUT, true);
                 Settings::updateValue(ShareOfCheckoutAdminFormBuilder::ALMA_SHARE_OF_CHECKOUT_DATE, Settings::getCurrentTimestamp());
             }
-            if (!$userWantToActivateSOC && $isSOCActivated) {
+            if (!$isUserConsent && $isSOCActivated) {
                 // we need to desactivate share of checkout
                 $this->removeConsent();
                 Settings::updateValue(ShareOfCheckoutAdminFormBuilder::ALMA_ACTIVATE_SHARE_OF_CHECKOUT, '');
