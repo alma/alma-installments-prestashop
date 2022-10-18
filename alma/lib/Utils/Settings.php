@@ -86,7 +86,7 @@ class Settings
             'ALMA_ACTIVATE_LOGGING',
             ShareOfCheckoutAdminFormBuilder::ALMA_ACTIVATE_SHARE_OF_CHECKOUT,
             ShareOfCheckoutAdminFormBuilder::ALMA_SHARE_OF_CHECKOUT_DATE,
-            'ALMA_CRONTASK',
+            'ALMA_SOC_CRON_TASK',
             'ALMA_API_MODE',
             'ALMA_MERCHANT_ID',
             'ALMA_LIVE_API_KEY',

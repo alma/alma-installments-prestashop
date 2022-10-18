@@ -63,12 +63,12 @@ class DisplayAdminAfterHeaderHookController extends FrontendHookController
         $date = new DateTime();
         $timestamp = $date->getTimestamp();
 
-        if (!DateHelper::isSameDay($timestamp, Configuration::get('ALMA_CRONTASK'))) {
+        if (!DateHelper::isSameDay($timestamp, Configuration::get('ALMA_SOC_CRON_TASK'))) {
             Logger::instance()->info('Pseudo Cron Task exec to ' . $timestamp);
             $orderHelper  = new OrderHelper();
             $shareOfCheckoutHelper = new ShareOfCheckoutHelper($orderHelper);
             $shareOfCheckoutHelper->shareDays();
-            Settings::updateValue('ALMA_CRONTASK', $timestamp);
+            Settings::updateValue('ALMA_SOC_CRON_TASK', $timestamp);
         }
 
         if (Settings::isShareOfCheckoutSetting() === false) {
