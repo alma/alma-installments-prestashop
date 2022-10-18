@@ -45,14 +45,14 @@
         if ($('#alma_config_form').length > 0) {
             initMoreOption('#fieldset_1', '.form-group:not(:nth-child(1)):not(:nth-child(2))', '#ALMA_SHOW_PRODUCT_ELIGIBILITY_ON');
             initMoreOption('#fieldset_2', '.form-group:not(:nth-child(1)):not(:nth-child(2))', '#ALMA_SHOW_ELIGIBILITY_MESSAGE_ON');
-    
+
             $('#ALMA_SHOW_PRODUCT_ELIGIBILITY_ON').on('click', function() {
                 initMoreOption('#fieldset_1', '.form-group:not(:nth-child(1)):not(:nth-child(2))', '#' + $(this)[0].id);
             });
             $('#ALMA_SHOW_ELIGIBILITY_MESSAGE_ON').on('click', function() {
                 initMoreOption('#fieldset_2', '.form-group:not(:nth-child(1)):not(:nth-child(2))', '#' + $(this)[0].id);
             });
-    
+
             function initMoreOption(selector, selectorNotHide, selectorInput) {
                 if ($(selector).length === 0) {
                     selector = selector + '_' + selector.split('_')[1];
@@ -75,7 +75,7 @@
                 token: token
             },
             async   : true,
-			cache   : false
+            cache   : false
         });
     })
 })(jQuery);
