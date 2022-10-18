@@ -50,7 +50,7 @@ class ShareOfCheckoutHelperTest extends TestCase
     {
         $shareOfCheckoutHelperMock = Mockery::mock(ShareOfCheckoutHelper::class, [$this->orderHelperMock])->shouldAllowMockingProtectedMethods()->makePartial();
         $shareOfCheckoutHelperMock->shouldReceive('getEnabledDate')->andReturn($dateErrorData);
-        $this->assertNull($shareOfCheckoutHelperMock->shareDays());
+        $this->assertFalse($shareOfCheckoutHelperMock->shareDays());
     }
 
     public function testShareDaysReturnTrueWithValidTimestamp()
@@ -91,7 +91,7 @@ class ShareOfCheckoutHelperTest extends TestCase
     {
         $orderHelperMock = Mockery::mock(OrderHelper::class);
         $orderHelperMock->shouldReceive('getOrdersByDate')->andReturn($ordersMock);
-        
+
         $shareOfCheckoutHelper = new ShareOfCheckoutHelper($orderHelperMock);
         $getTotalPaymentMethods = $shareOfCheckoutHelper->getTotalPaymentMethods();
         $this->assertEquals($expectedTotalPaymentMethods, $getTotalPaymentMethods);
@@ -107,7 +107,7 @@ class ShareOfCheckoutHelperTest extends TestCase
     {
         $orderHelperMock = Mockery::mock(OrderHelper::class);
         $orderHelperMock->shouldReceive('getOrdersByDate')->andReturn($ordersMock);
-        
+
         $shareOfCheckoutHelper = new ShareOfCheckoutHelper($orderHelperMock);
         $getTotalOrders = $shareOfCheckoutHelper->getTotalOrders();
         $this->assertEquals($expectedTotalOrders, $getTotalOrders);
@@ -271,11 +271,17 @@ class ShareOfCheckoutHelperTest extends TestCase
             'Date is false' => [
                 'date' => false
             ],
+            'Date is true' => [
+                'date' => true
+            ],
             'Date is empty' => [
                 'date' => ''
             ],
             'Date is 0' => [
                 'date' => 0
+            ],
+            'Date is invalid string' => [
+                'date' => 'invalid date string here'
             ],
         ];
     }

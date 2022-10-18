@@ -70,12 +70,15 @@ class ShareOfCheckoutHelper
      */
     private $endDate;
 
+    /**
+     * @return bool
+     */
     public function shareDays()
     {
         $shareOfCheckoutEnabledDate = $this->getEnabledDate();
         if (!Settings::canShareOfCheckout() || empty($shareOfCheckoutEnabledDate)) {
             Logger::instance()->info('Share Of Checkout is disabled or invalide date');
-            return null;
+            return false;
         }
         try {
             $lastShareOfCheckout = $this->getLastShareOfCheckout();
@@ -86,7 +89,7 @@ class ShareOfCheckoutHelper
             }
         } catch (RequestError $e) {
             Logger::instance()->info('Get Last Update Date error - end of process - message : ' . $e->getMessage());
-            return null;
+            return false;
         }
 
         return true;
