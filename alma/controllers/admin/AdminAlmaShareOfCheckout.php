@@ -50,6 +50,6 @@ class AdminAlmaShareOfCheckoutController extends ModuleAdminController
         $orderHelper  = new OrderHelper();
         $shareOfCheckoutHelper = new ShareOfCheckoutHelper($orderHelper);
 
-        $shareOfCheckoutHelper->handleCheckoutConsent('share');
+        $shareOfCheckoutHelper->handleCheckoutConsent('consent');
     }
 }

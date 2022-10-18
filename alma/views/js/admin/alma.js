@@ -34,7 +34,7 @@
                         controller: 'AdminAlmaShareOfCheckout',
                         action: 'SettingShareOfCheckout',
                         token: $(this).attr('data-token'),
-                        share: $(this).attr('data-share')
+                        consent: $(this).attr('data-consent')
                     },
                     async   : true,
                     cache   : false
