@@ -36,8 +36,10 @@ if (!defined('_PS_VERSION_')) {
 class DateHelper
 {
     /**
+     * Gets all dates Y-m-d formatted since $from to today-1day while dates are >= $first
+     *
      * @param int $from timestamp
-     * @param int $first timestamp
+     * @param int $first timestamp limit to the first
      *
      * @return array|string[]
      */

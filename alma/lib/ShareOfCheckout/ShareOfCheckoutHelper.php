@@ -113,7 +113,7 @@ class ShareOfCheckoutHelper
     /**
      * Get last Share of Checkout
      *
-     * @return array|null
+     * @return int
      */
     public function getLastShareOfCheckout()
     {
@@ -121,25 +121,21 @@ class ShareOfCheckoutHelper
         if (!$alma) {
             Logger::instance()->error('Cannot get last date share of checkout: no API client');
 
-            return null;
+            return strtotime('-1 day');
         }
 
         try {
-            $lastDate = $alma->shareOfCheckout->getLastUpdateDates();
+            $lastDateUpdateDates = $alma->shareOfCheckout->getLastUpdateDates();
         } catch (RequestError $e) {
             Logger::instance()->error('Cannot get last date share of checkout: ' . $e->getMessage());
 
-            $lastDate = null;
             if ($e->response->responseCode == '404') {
                 Logger::instance()->info('First send to Share of checkout');
-
-                $lastDate = date('Y-m-d', strtotime('-1 day'));
             }
-
-            return strtotime($lastDate);
+            return strtotime('-1 day');
         }
 
-        return strtotime($lastDate['end_time']);
+        return (int)$lastDateUpdateDates['end_time'];
     }
 
     /**
