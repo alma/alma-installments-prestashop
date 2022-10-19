@@ -32,7 +32,6 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-
 /**
  * Class OrderHelper.
  *
@@ -44,12 +43,12 @@ class OrderHelper
      * @var array
      */
     public $defaultStatesExcluded;
-    
+
     /**
      * @var array
      */
     private $orders;
-    
+
     public function __construct()
     {
         $this->defaultStatesExcluded = [6, 7, 8];
@@ -94,7 +93,7 @@ class OrderHelper
                 FROM `' . _DB_PREFIX_ . 'orders`
                 WHERE date_add >= \'' . pSQL($startDate) . '\'
                 AND date_add <= \'' . pSQL($endDate) . '\'
-                AND current_state NOT IN (' . implode(", ", $this->defaultStatesExcluded) . ')
+                AND current_state NOT IN (' . implode(', ', $this->defaultStatesExcluded) . ')
                     ' . Shop::addSqlRestriction();
         $result = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS($sql);
         $orderIds = [];

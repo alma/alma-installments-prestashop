@@ -29,13 +29,7 @@ if (!defined('_PS_VERSION_')) {
 }
 
 use Alma\PrestaShop\Hooks\FrontendHookController;
-use Alma\PrestaShop\ShareOfCheckout\OrderHelper;
-use Alma\PrestaShop\ShareOfCheckout\ShareOfCheckoutHelper;
-use Alma\PrestaShop\Utils\DateHelper;
-use Alma\PrestaShop\Utils\Logger;
 use Alma\PrestaShop\Utils\Settings;
-use Configuration;
-use DateTime;
 use Tools;
 
 class DisplayAdminAfterHeaderHookController extends FrontendHookController

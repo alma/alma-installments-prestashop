@@ -27,9 +27,9 @@ namespace Alma\PrestaShop\Tests\Unit\Lib\ShareOfCheckout;
 
 use Alma\PrestaShop\ShareOfCheckout\OrderHelper;
 use Alma\PrestaShop\ShareOfCheckout\ShareOfCheckoutHelper;
-use PHPUnit\Framework\TestCase;
 use Mockery;
 use Order;
+use PHPUnit\Framework\TestCase;
 
 class ShareOfCheckoutHelperTest extends TestCase
 {
@@ -41,9 +41,9 @@ class ShareOfCheckoutHelperTest extends TestCase
         $this->orderHelperMock = Mockery::mock(OrderHelper::class);
     }
 
-
     /**
      * @dataProvider dateErrorDataProvider
+     *
      * @return void
      */
     public function testShareDaysNoDate($dateErrorData)
@@ -58,13 +58,14 @@ class ShareOfCheckoutHelperTest extends TestCase
         $this->orderHelperMock->shouldReceive('resetOrderList');
         $shareOfCheckoutHelperMock = Mockery::mock(ShareOfCheckoutHelper::class, [$this->orderHelperMock])->shouldAllowMockingProtectedMethods()->makePartial();
         $shareOfCheckoutHelperMock->shouldReceive('getEnabledDate')->andReturn('1654041601');
-        $shareOfCheckoutHelperMock->shouldReceive('getDatesInInterval')->andReturn(['2022-01-01','2022-01-03']);
+        $shareOfCheckoutHelperMock->shouldReceive('getDatesInInterval')->andReturn(['2022-01-01', '2022-01-03']);
         $shareOfCheckoutHelperMock->shouldReceive('putDay');
         $this->assertTrue($shareOfCheckoutHelperMock->shareDays());
     }
 
     /**
      * test get Payload
+     *
      * @dataProvider ordersGetPayload
      *
      * @return void
@@ -83,6 +84,7 @@ class ShareOfCheckoutHelperTest extends TestCase
 
     /**
      * test Payment methods
+     *
      * @dataProvider ordersTotalPaymentMethods
      *
      * @return void
@@ -99,6 +101,7 @@ class ShareOfCheckoutHelperTest extends TestCase
 
     /**
      * test Payment methods
+     *
      * @dataProvider ordersTotalOrders
      *
      * @return void
@@ -117,22 +120,22 @@ class ShareOfCheckoutHelperTest extends TestCase
     {
         $expectedTotalOrders = [
             [
-                "total_order_count" => 2,
-                "total_amount" => 15500,
-                "currency" => "EUR"
+                'total_order_count' => 2,
+                'total_amount' => 15500,
+                'currency' => 'EUR',
             ],
             [
-                "total_order_count" => 2,
-                "total_amount" => 30000,
-                "currency" => "USD"
-            ]
+                'total_order_count' => 2,
+                'total_amount' => 30000,
+                'currency' => 'USD',
+            ],
         ];
 
         return [
             'order total orders' => [
                 self::orders(),
-                $expectedTotalOrders
-            ]
+                $expectedTotalOrders,
+            ],
         ];
     }
 
@@ -140,37 +143,37 @@ class ShareOfCheckoutHelperTest extends TestCase
     {
         $expectedTotalPaymentMethods = [
             [
-                "payment_method_name" => "alma",
-                "orders" => [
+                'payment_method_name' => 'alma',
+                'orders' => [
                     [
-                        "order_count" => 2,
-                        "amount" => 15500,
-                        "currency" => "EUR"
+                        'order_count' => 2,
+                        'amount' => 15500,
+                        'currency' => 'EUR',
                     ],
                     [
-                        "order_count" => 1,
-                        "amount" => 10000,
-                        "currency" => "USD"
-                    ]
-                ]
+                        'order_count' => 1,
+                        'amount' => 10000,
+                        'currency' => 'USD',
+                    ],
+                ],
             ],
             [
-                "payment_method_name" => "paypal",
-                "orders" => [
+                'payment_method_name' => 'paypal',
+                'orders' => [
                     [
-                        "order_count" => 1,
-                        "amount" => 20000,
-                        "currency" => "USD"
-                    ]
-                ]
-            ]
+                        'order_count' => 1,
+                        'amount' => 20000,
+                        'currency' => 'USD',
+                    ],
+                ],
+            ],
         ];
 
         return [
             'order total payment methods' => [
                 self::orders(),
-                $expectedTotalPaymentMethods
-            ]
+                $expectedTotalPaymentMethods,
+            ],
         ];
     }
 
@@ -181,50 +184,50 @@ class ShareOfCheckoutHelperTest extends TestCase
             'end_time' => 1641077999,
             'orders' => [
                 [
-                    "total_order_count"=> 2,
-                    "total_amount"=> 15500,
-                    "currency"=> "EUR"
+                    'total_order_count' => 2,
+                    'total_amount' => 15500,
+                    'currency' => 'EUR',
                 ],
                 [
-                    "total_order_count"=> 2,
-                    "total_amount"=> 30000,
-                    "currency"=> "USD"
-                ]
+                    'total_order_count' => 2,
+                    'total_amount' => 30000,
+                    'currency' => 'USD',
+                ],
             ],
             'payment_methods' => [
                 [
-                    "payment_method_name" => "alma",
-                    "orders" => [
+                    'payment_method_name' => 'alma',
+                    'orders' => [
                         [
-                            "order_count" => 2,
-                            "amount" => 15500,
-                            "currency" => "EUR"
+                            'order_count' => 2,
+                            'amount' => 15500,
+                            'currency' => 'EUR',
                         ],
                         [
-                            "order_count" => 1,
-                            "amount" => 10000,
-                            "currency" => "USD"
-                        ]
-                    ]
+                            'order_count' => 1,
+                            'amount' => 10000,
+                            'currency' => 'USD',
+                        ],
+                    ],
                 ],
                 [
-                    "payment_method_name" => "paypal",
-                    "orders" => [
+                    'payment_method_name' => 'paypal',
+                    'orders' => [
                         [
-                            "order_count" => 1,
-                            "amount" => 20000,
-                            "currency" => "USD"
-                        ]
-                    ]
-                ]
+                            'order_count' => 1,
+                            'amount' => 20000,
+                            'currency' => 'USD',
+                        ],
+                    ],
+                ],
             ],
         ];
 
         return [
             'order get payload' => [
                 self::orders(),
-                $expectedPayload
-            ]
+                $expectedPayload,
+            ],
         ];
     }
 
@@ -269,19 +272,19 @@ class ShareOfCheckoutHelperTest extends TestCase
     {
         return [
             'Date is false' => [
-                'date' => false
+                'date' => false,
             ],
             'Date is true' => [
-                'date' => true
+                'date' => true,
             ],
             'Date is empty' => [
-                'date' => ''
+                'date' => '',
             ],
             'Date is 0' => [
-                'date' => 0
+                'date' => 0,
             ],
             'Date is invalid string' => [
-                'date' => 'invalid date string here'
+                'date' => 'invalid date string here',
             ],
         ];
     }

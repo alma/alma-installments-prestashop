@@ -42,7 +42,6 @@ use Alma\PrestaShop\Forms\RefundAdminFormBuilder;
 use Alma\PrestaShop\Forms\ShareOfCheckoutAdminFormBuilder;
 use Alma\PrestaShop\Hooks\AdminHookController;
 use Alma\PrestaShop\ShareOfCheckout\OrderHelper;
-use Alma\PrestaShop\ShareOfCheckout\ShareOfCheckoutException;
 use Alma\PrestaShop\ShareOfCheckout\ShareOfCheckoutHelper;
 use Alma\PrestaShop\Utils\Logger;
 use Alma\PrestaShop\Utils\Settings;
@@ -55,7 +54,7 @@ use Tools;
 final class GetContentHookController extends AdminHookController
 {
     public function processConfiguration()
-    {        
+    {
         if (!Tools::isSubmit('alma_config_form')) {
             return null;
         }

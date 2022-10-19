@@ -26,9 +26,7 @@ namespace Alma\PrestaShop\ShareOfCheckout;
 
 use Alma\API\RequestError;
 use Alma\PrestaShop\API\ClientHelper;
-use Alma\PrestaShop\ShareOfCheckout\ShareOfCheckoutException;
 use Alma\PrestaShop\Forms\ShareOfCheckoutAdminFormBuilder;
-use Alma\PrestaShop\ShareOfCheckout\OrderHelper;
 use Alma\PrestaShop\Utils\DateHelper;
 use Alma\PrestaShop\Utils\Logger;
 use Alma\PrestaShop\Utils\Settings;
@@ -56,8 +54,7 @@ class ShareOfCheckoutHelper
 
     public function __construct(
         OrderHelper $orderHelper
-    )
-    {
+    ) {
         $this->orderHelper = $orderHelper;
     }
 
@@ -78,6 +75,7 @@ class ShareOfCheckoutHelper
         $shareOfCheckoutEnabledDate = $this->getEnabledDate();
         if (!Settings::canShareOfCheckout() || empty($shareOfCheckoutEnabledDate)) {
             Logger::instance()->info('Share Of Checkout is disabled or invalide date');
+
             return false;
         }
         try {
@@ -89,6 +87,7 @@ class ShareOfCheckoutHelper
             }
         } catch (RequestError $e) {
             Logger::instance()->info('Get Last Update Date error - end of process - message : ' . $e->getMessage());
+
             return false;
         }
 
@@ -159,7 +158,7 @@ class ShareOfCheckoutHelper
                 $ordersByCurrency[$isoCodeCurrency] = $this->initTotalOrderResult($isoCodeCurrency);
             }
 
-            $ordersByCurrency[$isoCodeCurrency][self::TOTAL_COUNT_KEY]++;
+            ++$ordersByCurrency[$isoCodeCurrency][self::TOTAL_COUNT_KEY];
             $ordersByCurrency[$isoCodeCurrency][self::TOTAL_AMOUNT_KEY] += almaPriceToCents($order->total_paid_tax_incl);
         }
 

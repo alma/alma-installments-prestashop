@@ -23,16 +23,13 @@
  */
 
 use Alma\PrestaShop\ShareOfCheckout\OrderHelper;
-use Alma\PrestaShop\Utils\DateHelper;
-use Alma\PrestaShop\Utils\Logger;
-use Alma\PrestaShop\Utils\Settings;
 use Alma\PrestaShop\ShareOfCheckout\ShareOfCheckoutHelper;
 
 class AdminAlmaShareOfCheckoutController extends ModuleAdminController
 {
     public function ajaxProcessConsentShareOfCheckout()
     {
-        $orderHelper  = new OrderHelper();
+        $orderHelper = new OrderHelper();
         $shareOfCheckoutHelper = new ShareOfCheckoutHelper($orderHelper);
 
         $shareOfCheckoutHelper->handleCheckoutConsent('consent');

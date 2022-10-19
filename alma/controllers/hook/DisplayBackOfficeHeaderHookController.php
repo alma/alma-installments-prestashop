@@ -58,7 +58,7 @@ class DisplayBackOfficeHeaderHookController extends FrontendHookController
 
         if (!DateHelper::isSameDay($timestamp, Configuration::get('ALMA_SOC_CRON_TASK'))) {
             Logger::instance()->info('Pseudo Cron Task exec to ' . $timestamp);
-            $orderHelper  = new OrderHelper();
+            $orderHelper = new OrderHelper();
             $shareOfCheckoutHelper = new ShareOfCheckoutHelper($orderHelper);
             $shareOfCheckoutHelper->shareDays();
             Settings::updateValue('ALMA_SOC_CRON_TASK', $timestamp);
