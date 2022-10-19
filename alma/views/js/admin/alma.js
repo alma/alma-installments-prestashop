@@ -32,14 +32,21 @@
                     data: {
                         ajax: true,
                         controller: 'AdminAlmaShareOfCheckout',
-                        action: 'SettingShareOfCheckout',
+                        action: 'ConsentShareOfCheckout',
                         token: $(this).attr('data-token'),
                         consent: $(this).attr('data-consent')
                     },
                     async   : true,
                     cache   : false
+                })
+                .success(function() {
+                    $('.alma.share-of-checkout').hide();
+                })
+                .error(function(e) {
+                    if (e.status != 200) {
+                        $('.alma.share-of-checkout').after('<div class="alert alert-danger">' + e.statusText + '</div>');
+                    }
                 });
-                $(this).parents('.alma.share-of-checkout').hide();
             });
         }
         if ($('#alma_config_form').length > 0) {
@@ -63,19 +70,5 @@
                 }
             }
         }
-
-        $.ajax({
-            type: 'POST',
-            url: 'ajax-tab.php',
-            dataType: 'json',
-            data: {
-                ajax: true,
-                controller: 'AdminAlmaShareOfCheckout',
-                action: 'ShareOfCheckout',
-                token: token
-            },
-            async   : true,
-            cache   : false
-        });
     })
 })(jQuery);

@@ -36,33 +36,9 @@ use Alma\PrestaShop\Utils\Logger;
 use Alma\PrestaShop\Utils\Settings;
 use Configuration;
 use DateTime;
-use Tools;
 
-class DisplayAdminAfterHeaderHookController extends FrontendHookController
+class DisplayBackOfficeHeaderHookController extends FrontendHookController
 {
-    /**
-     * Condition to run the Controller
-     *
-     * @return bool
-     */
-    public function canRun()
-    {
-        $isLive = Settings::getActiveMode() === ALMA_MODE_LIVE;
-
-        return parent::canRun() &&
-            (Tools::strtolower($this->currentControllerName()) == 'admindashboard' ||
-            Tools::strtolower($this->currentControllerName()) == 'adminpsmbomodule' ||
-            Tools::strtolower($this->currentControllerName()) == 'adminmodulesnotifications' ||
-            Tools::strtolower($this->currentControllerName()) == 'adminmodulesupdates' ||
-            Tools::strtolower($this->currentControllerName()) == 'adminpsmboaddons' ||
-            Tools::strtolower($this->currentControllerName()) == 'adminmodulesmanage' ||
-            Tools::strtolower($this->currentControllerName()) == 'adminalmacategories' ||
-            Tools::getValue('configure') == 'alma' ||
-            Tools::getValue('module_name') == 'alma') &&
-            $isLive &&
-            Settings::getMerchantId() != null;
-    }
-
     /**
      * Run Controller
      *
@@ -72,12 +48,20 @@ class DisplayAdminAfterHeaderHookController extends FrontendHookController
      */
     public function run($params)
     {
-        if (Settings::isShareOfCheckoutSetting() === false) {
-            $this->context->smarty->assign([
-                'token' => Tools::getAdminTokenLite('AdminAlmaShareOfCheckout'),
-            ]);
+        $this->context->controller->setMedia();
+        $this->context->controller->addCSS($this->module->_path . 'views/css/admin/_configure/helpers/form/form.css', 'all');
+        $this->context->controller->addCSS($this->module->_path . 'views/css/admin/almaPage.css', 'all');
+        $this->context->controller->addJS($this->module->_path . 'views/js/admin/alma.js');
 
-            return $this->module->display($this->module->file, 'notificationShareOfCheckout.tpl');
+        $date = new DateTime();
+        $timestamp = $date->getTimestamp();
+
+        if (!DateHelper::isSameDay($timestamp, Configuration::get('ALMA_SOC_CRON_TASK'))) {
+            Logger::instance()->info('Pseudo Cron Task exec to ' . $timestamp);
+            $orderHelper  = new OrderHelper();
+            $shareOfCheckoutHelper = new ShareOfCheckoutHelper($orderHelper);
+            $shareOfCheckoutHelper->shareDays();
+            Settings::updateValue('ALMA_SOC_CRON_TASK', $timestamp);
         }
     }
 }

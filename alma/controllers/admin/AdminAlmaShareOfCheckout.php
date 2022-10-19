@@ -30,26 +30,15 @@ use Alma\PrestaShop\ShareOfCheckout\ShareOfCheckoutHelper;
 
 class AdminAlmaShareOfCheckoutController extends ModuleAdminController
 {
-
-    public function ajaxProcessShareOfCheckout()
-    {
-        $date = new DateTime();
-        $timestamp = $date->getTimestamp();
-
-        if (!DateHelper::isSameDay($timestamp, Configuration::get('ALMA_SOC_CRON_TASK'))) {
-            Logger::instance()->info('Exec Share Of Checkout Manually ' . $timestamp);
-            $orderHelper  = new OrderHelper();
-            $shareOfCheckoutHelper = new ShareOfCheckoutHelper($orderHelper);
-            $shareOfCheckoutHelper->shareDays();
-            Settings::updateValue('ALMA_SOC_CRON_TASK', $timestamp);
-        }
-    }
-
-    public function ajaxProcessSettingShareOfCheckout()
+    public function ajaxProcessConsentShareOfCheckout()
     {
         $orderHelper  = new OrderHelper();
         $shareOfCheckoutHelper = new ShareOfCheckoutHelper($orderHelper);
 
         $shareOfCheckoutHelper->handleCheckoutConsent('consent');
+
+        method_exists(get_parent_class($this), 'ajaxDie')
+            ? $this->ajaxDie(json_encode(true))
+            : die(Tools::jsonEncode(true));
     }
 }

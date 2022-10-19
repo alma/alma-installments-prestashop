@@ -376,10 +376,7 @@ class Alma extends PaymentModule
 
     public function hookDisplayBackOfficeHeader($params)
     {
-        $this->context->controller->setMedia();
-        $this->context->controller->addCSS($this->_path . 'views/css/admin/_configure/helpers/form/form.css', 'all');
-        $this->context->controller->addCSS($this->_path . 'views/css/admin/almaPage.css', 'all');
-        $this->context->controller->addJS($this->_path . 'views/js/admin/alma.js');
+        return $this->runHookController('displayBackOfficeHeader', $params);
     }
 
     public function hookPaymentOptions($params)
@@ -445,7 +442,7 @@ class Alma extends PaymentModule
     }
 
     /**
-     * Hook action AdminControllerInitAfter for pseudo cron
+     * Hook action DisplayAdminAfterHeader
      */
     public function hookDisplayAdminAfterHeader($params)
     {

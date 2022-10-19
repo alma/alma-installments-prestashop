@@ -137,10 +137,10 @@ class ShareOfCheckoutHelper
                 $lastDate = date('Y-m-d', strtotime('-1 day'));
             }
 
-            return $lastDate;
+            return strtotime($lastDate);
         }
 
-        return $lastDate['end_time'];
+        return strtotime($lastDate['end_time']);
     }
 
     /**
