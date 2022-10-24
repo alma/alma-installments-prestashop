@@ -138,11 +138,11 @@ class PaymentValidation
         }
 
         if (!$cart->OrderExists()) {
-            $cartTotals = (float) Tools::ps_round((float) $cart->getOrderTotal(true, Cart::BOTH), 2);
+            $cartTotals = (float) Tools::ps_round((float) $this->getCartTotals($cart, $customer), 2);
 
             if (abs($payment->purchase_amount - almaPriceToCents($cartTotals)) > 2) {
                 $reason = Payment::FRAUD_AMOUNT_MISMATCH;
-                $reason .= ' - ' . $cart->getOrderTotal(true, Cart::BOTH) . ' * 100 vs ' . $payment->purchase_amount;
+                $reason .= ' - ' . $cartTotals . ' * 100 vs ' . $payment->purchase_amount;
 
                 try {
                     $alma->payments->flagAsPotentialFraud($almaPaymentId, $reason);
@@ -263,4 +263,26 @@ class PaymentValidation
             return new Order($orderId);
         }
     }
+
+	/**
+	 * We have to temporary update the customer object
+	 * in context to prevent amount_mismatch error
+	 * When calculating cart amount from an IPN call
+	 * @param Cart $cart
+	 * @param Customer $cart
+	 * @return float
+	 */
+	private function getCartTotals($cart, $customer)
+	{
+		if ((int)$this->context->customer->id === (int)$customer->id) {
+			return $cart->getOrderTotal(true, Cart::BOTH);
+		}
+
+		$ipnCustomer = $this->context->customer;
+		$this->context->customer = $customer;
+		$cartTotals = $cart->getOrderTotal(true, Cart::BOTH);
+		$this->context->customer = $ipnCustomer;
+
+		return $cartTotals;
+	}
 }
