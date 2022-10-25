@@ -47,7 +47,7 @@ class DateHelper
     {
         $to = strtotime('-1 day');
         $datesInInterval = [];
-        $startTimestamp = strtotime('+1 day', self::extractTimestampWithoutTime($from));
+        $startTimestamp = self::extractTimestampWithoutTime($from);
         $firstWithoutTime = self::extractTimestampWithoutTime($first);
         for ($i = $startTimestamp; $i <= $to; $i = strtotime('+1 day', $i)) {
             if ($i >= $firstWithoutTime) {
