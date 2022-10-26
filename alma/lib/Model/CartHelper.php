@@ -65,6 +65,7 @@ class CartHelper
 
             $ordersData[] = [
                 'purchase_amount' => almaPriceToCents($purchaseAmount),
+                'created_at' => $order['date_add'],
                 'payment_method' => $order['payment'],
                 'current_state' => $orderStateHelper->getNameById($order['current_state']),
                 'shipping_method' => $carrier->getNameCarrierById($cart->id_carrier),

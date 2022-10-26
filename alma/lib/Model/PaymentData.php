@@ -245,7 +245,7 @@ class PaymentData
         return [
             'new_customer' => self::isNewCustomer($customer->id),
             'is_guest' => (bool) $customer->is_guest,
-            'created' => strtotime($customer->date_add),
+            'created_at' => $customer->date_add,
             'current_order' => [
                 'purchase_amount' => almaPriceToCents($purchaseAmount),
                 'payment_method' => self::PAYMENT_METHOD,
