@@ -245,9 +245,10 @@ class PaymentData
         return [
             'new_customer' => self::isNewCustomer($customer->id),
             'is_guest' => (bool) $customer->is_guest,
-            'created_at' => $customer->date_add,
+            'created' => strtotime($customer->date_add),
             'current_order' => [
                 'purchase_amount' => almaPriceToCents($purchaseAmount),
+                'created' => strtotime($cart->date_add),
                 'payment_method' => self::PAYMENT_METHOD,
                 'shipping_method' => $carrierHelper->getNameCarrierById($cart->id_carrier),
                 'items' => CartData::getCartItems($cart),
