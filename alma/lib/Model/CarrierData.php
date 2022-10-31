@@ -48,16 +48,11 @@ class CarrierData
         $sql = '
 		SELECT c.*, cl.delay
 		FROM `' . _DB_PREFIX_ . 'carrier` c
-		LEFT JOIN `' . _DB_PREFIX_ . 'carrier_lang` cl ON (c.`id_carrier` = cl.`id_carrier` AND cl.`id_lang` = ' . (int) $id_lang . Shop::addSqlRestrictionOnLang('cl') . ')
+		LEFT JOIN `' . _DB_PREFIX_ . 'carrier_lang` cl ON (c.`id_carrier` = cl.`id_carrier` AND cl.`id_lang` = '
+         . (int) $id_lang . Shop::addSqlRestrictionOnLang('cl') . ')
 		LEFT JOIN `' . _DB_PREFIX_ . 'carrier_zone` cz ON (cz.`id_carrier` = c.`id_carrier`)';
 
-        $cache_id = 'Carrier::getCarriers_' . md5($sql);
-        if (!Cache::isStored($cache_id)) {
-            $carriers = Db::getInstance()->executeS($sql);
-            Cache::store($cache_id, $carriers);
-        } else {
-            $carriers = Cache::retrieve($cache_id);
-        }
+        $carriers = Db::getInstance()->executeS($sql);
 
         foreach ($carriers as $key => $carrier) {
             if ($carrier['name'] == '0') {
