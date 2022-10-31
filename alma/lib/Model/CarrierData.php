@@ -25,38 +25,46 @@
 
 namespace Alma\PrestaShop\Model;
 
-use Context;
+use Cache;
+use Carrier;
+use Db;
+use Shop;
 
 if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-/**
- * Class CarrierHelper
- */
-class CarrierHelper
+class CarrierData
 {
-    public function __construct(
-        Context $context
-    ) {
-        $this->context = $context;
-    }
-
     /**
-     * Get name Carrier by id carrier
+     * Get all carriers in a given language.
      *
-     * @param int $idCarrier
+     * @param int $id_lang Language id
      *
-     * @return string
+     * @return array Carriers
      */
-    public function getNameCarrierById($idCarrier)
+    public static function getCarriers($id_lang)
     {
-        $carriers = CarrierData::getCarriers($this->context->language->id);
+        $sql = '
+		SELECT c.*, cl.delay
+		FROM `' . _DB_PREFIX_ . 'carrier` c
+		LEFT JOIN `' . _DB_PREFIX_ . 'carrier_lang` cl ON (c.`id_carrier` = cl.`id_carrier` AND cl.`id_lang` = ' . (int) $id_lang . Shop::addSqlRestrictionOnLang('cl') . ')
+		LEFT JOIN `' . _DB_PREFIX_ . 'carrier_zone` cz ON (cz.`id_carrier` = c.`id_carrier`)';
 
-        $currentCarrier = array_filter($carriers, function ($carrier) use ($idCarrier) {
-            return $carrier['id_carrier'] == $idCarrier;
-        });
+        $cache_id = 'Carrier::getCarriers_' . md5($sql);
+        if (!Cache::isStored($cache_id)) {
+            $carriers = Db::getInstance()->executeS($sql);
+            Cache::store($cache_id, $carriers);
+        } else {
+            $carriers = Cache::retrieve($cache_id);
+        }
 
-        return array_shift($currentCarrier)['name'];
+        foreach ($carriers as $key => $carrier) {
+            if ($carrier['name'] == '0') {
+                $carriers[$key]['name'] = Carrier::getCarrierNameFromShopName();
+            }
+        }
+
+        return $carriers;
     }
 }

@@ -63,14 +63,12 @@ class CartHelper
         foreach ($orders as $order) {
             $cart = new Cart((int) $order['id_cart']);
             $purchaseAmount = (float) Tools::ps_round((float) $cart->getOrderTotal(true, Cart::BOTH), 2);
-            $orderHelper = new Order($order['id_order']);
-            $orderPayments = $orderHelper->getOrderPayments();
 
             $ordersData[] = [
                 'purchase_amount' => almaPriceToCents($purchaseAmount),
                 'created' => strtotime($order['date_add']),
                 'payment_method' => $order['payment'],
-                'alma_payment_external_id' => $orderPayments[0]->transaction_id,
+                'alma_payment_external_id' => $order['transaction_id'],
                 'current_state' => $orderStateHelper->getNameById($order['current_state']),
                 'shipping_method' => $carrier->getNameCarrierById($cart->id_carrier),
                 'items' => CartData::getCartItems($cart),
@@ -90,7 +88,7 @@ class CartHelper
      */
     private function getOrdersByCustomerWithLimit($idCustomer, $limit = 10)
     {
-        $orders = Order::getCustomerOrders($idCustomer);
+        $orders = OrderData::getCustomerOrders($idCustomer);
 
         return array_slice($orders, 0, $limit);
     }
