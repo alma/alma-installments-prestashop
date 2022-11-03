@@ -27,8 +27,6 @@ namespace Alma\PrestaShop\Model;
 
 use Cart;
 use Context;
-use Order;
-use OrderPayment;
 use Tools;
 
 if (!defined('_PS_VERSION_')) {

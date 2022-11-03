@@ -25,7 +25,6 @@
 
 namespace Alma\PrestaShop\Model;
 
-use Cache;
 use Carrier;
 use Db;
 use Shop;
