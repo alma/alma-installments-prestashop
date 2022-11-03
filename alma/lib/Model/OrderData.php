@@ -61,7 +61,10 @@ class OrderData
         $res = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS('
         SELECT o.*,
           (SELECT SUM(od.`product_quantity`) FROM `' . _DB_PREFIX_ . 'order_detail` od WHERE od.`id_order` = o.`id_order`) nb_products,
-          (SELECT op.`transaction_id` FROM `' . _DB_PREFIX_ . 'order_payment` op WHERE op.`order_reference` = o.`reference`) transaction_id
+          (SELECT op.`transaction_id` 
+            FROM `' . _DB_PREFIX_ . 'order_payment` op 
+            WHERE op.`order_reference` = o.`reference` 
+            AND o.`module` = "alma") transaction_id
         FROM `' . _DB_PREFIX_ . 'orders` o
         WHERE o.`id_customer` = ' . (int) $idCustomer .
             Shop::addSqlRestriction(Shop::SHARE_ORDER) . '
