@@ -26,6 +26,7 @@ namespace Alma\PrestaShop\ShareOfCheckout;
 
 use Alma\API\RequestError;
 use Alma\PrestaShop\API\ClientHelper;
+use Alma\PrestaShop\Forms\ApiAdminFormBuilder;
 use Alma\PrestaShop\Forms\ShareOfCheckoutAdminFormBuilder;
 use Alma\PrestaShop\Utils\DateHelper;
 use Alma\PrestaShop\Utils\Logger;
@@ -249,6 +250,24 @@ class ShareOfCheckoutHelper
                 $this->removeConsent();
                 Settings::updateValue(ShareOfCheckoutAdminFormBuilder::ALMA_ACTIVATE_SHARE_OF_CHECKOUT, '');
                 Settings::updateValue(ShareOfCheckoutAdminFormBuilder::ALMA_SHARE_OF_CHECKOUT_DATE, null);
+            }
+        } catch (ShareOfCheckoutException $e) {
+            $this->context->smarty->assign('validation_error', 'soc_api_error');
+        }
+    }
+
+    /**
+     * reset the activation of Share of Checkout feature
+     *
+     * @return void
+     */
+    public function resetShareOfCheckoutConsent()
+    {
+        try {
+            if (Tools::getValue(ApiAdminFormBuilder::ALMA_LIVE_API_KEY) !== Settings::getLiveKey()) {
+                $this->removeConsent();
+                Configuration::deleteByName(ShareOfCheckoutAdminFormBuilder::ALMA_ACTIVATE_SHARE_OF_CHECKOUT);
+                Configuration::deleteByName(ShareOfCheckoutAdminFormBuilder::ALMA_SHARE_OF_CHECKOUT_DATE);
             }
         } catch (ShareOfCheckoutException $e) {
             $this->context->smarty->assign('validation_error', 'soc_api_error');

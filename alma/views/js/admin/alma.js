@@ -49,6 +49,9 @@
                 });
             });
         }
+        if ($('.soc_hidden').length > 0) {
+            $('.soc_hidden').parents('.panel').hide();
+        }
         if ($('#alma_config_form').length > 0) {
             initMoreOption('#fieldset_1', '.form-group:not(:nth-child(1)):not(:nth-child(2))', '#ALMA_SHOW_PRODUCT_ELIGIBILITY_ON');
             initMoreOption('#fieldset_2', '.form-group:not(:nth-child(1)):not(:nth-child(2))', '#ALMA_SHOW_ELIGIBILITY_MESSAGE_ON');

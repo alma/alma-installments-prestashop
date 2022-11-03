@@ -279,13 +279,19 @@ abstract class AbstractAdminFormBuilder
      *
      * @return array inputHiddenForm
      */
-    protected function inputHiddenForm($name)
+    protected function inputHiddenForm($name, $form_group_class = null)
     {
-        return [
+        $dataInput = [
             'name' => $name,
             'label' => null,
             'type' => 'hidden',
         ];
+
+        if ($form_group_class) {
+            $dataInput['form_group_class'] = $form_group_class;
+        }
+
+        return $dataInput;
     }
 
     /**

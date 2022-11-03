@@ -81,6 +81,15 @@ final class GetContentHookController extends AdminHookController
             return $credentialsError['message'];
         }
 
+        $orderHelper = new OrderHelper();
+        $shareOfCheckoutHelper = new ShareOfCheckoutHelper($orderHelper);
+
+        if ($liveKey !== Settings::getLiveKey()) {
+            $shareOfCheckoutHelper->resetShareOfCheckoutConsent();
+        } else {
+            $shareOfCheckoutHelper->handleCheckoutConsent('ALMA_ACTIVATE_SHARE_OF_CHECKOUT_ON');
+        }
+
         // Down here, we know the provided API keys are correct (at least the one for the chosen API mode)
         Settings::updateValue('ALMA_LIVE_API_KEY', $liveKey);
         Settings::updateValue('ALMA_TEST_API_KEY', $testKey);
@@ -238,11 +247,6 @@ final class GetContentHookController extends AdminHookController
 
             $activateLogging = (bool) Tools::getValue('ALMA_ACTIVATE_LOGGING_ON');
             Settings::updateValue('ALMA_ACTIVATE_LOGGING', $activateLogging);
-
-            $orderHelper = new OrderHelper();
-            $shareOfCheckoutHelper = new ShareOfCheckoutHelper($orderHelper);
-
-            $shareOfCheckoutHelper->handleCheckoutConsent('ALMA_ACTIVATE_SHARE_OF_CHECKOUT_ON');
 
             if ($merchant) {
                 // First validate that plans boundaries are correctly set
@@ -503,9 +507,7 @@ final class GetContentHookController extends AdminHookController
             $fieldsForms[] = $paymentBuilder->build();
             $fieldsForms[] = $excludedBuilder->build();
             $fieldsForms[] = $refundBuilder->build();
-            if (Settings::isShareOfCheckoutSetting() !== false && Settings::getActiveMode() === ALMA_MODE_LIVE) {
-                $fieldsForms[] = $shareOfCheckoutBuilder->build();
-            }
+            $fieldsForms[] = $shareOfCheckoutBuilder->build();
             $fieldsForms[] = $triggerBuilder->build();
         }
         $fieldsForms[] = $apiBuilder->build();
