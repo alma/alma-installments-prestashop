@@ -137,7 +137,7 @@ fieldset .form-alma.disabled::before{
 }
 
 .alma_switch .switch input:checked + .slider {
-	background: #00425d;
+	background: #FA5022;
 }
 
 .alma_switch .switch input:checked + .slider:after {
