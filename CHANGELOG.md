@@ -1,5 +1,10 @@
 # Changelog
 
+## v2.8.0
+
+- New Alma branding 2022
+- Add logo D+45
+
 ## v2.7.2
 
 - Fix widget style in classic theme Prestashop 1.7
