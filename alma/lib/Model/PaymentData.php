@@ -250,7 +250,7 @@ class PaymentData
                 'purchase_amount' => almaPriceToCents($purchaseAmount),
                 'created' => strtotime($cart->date_add),
                 'payment_method' => self::PAYMENT_METHOD,
-                'shipping_method' => $carrierHelper->getNameCarrierById($cart->id_carrier),
+                'shipping_method' => $carrierHelper->getParentCarrierNameById($cart->id_carrier),
                 'items' => CartData::getCartItems($cart),
             ],
             'previous_orders' => [

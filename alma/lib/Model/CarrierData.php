@@ -27,6 +27,9 @@ namespace Alma\PrestaShop\Model;
 
 use Carrier;
 use Db;
+use mysqli_result;
+use PDOStatement;
+use PrestaShopDatabaseException;
 use Shop;
 
 if (!defined('_PS_VERSION_')) {
@@ -35,30 +38,35 @@ if (!defined('_PS_VERSION_')) {
 
 class CarrierData
 {
+    /** @var array */
+    private $carriers = [];
+
     /**
      * Get all carriers in a given language.
      *
-     * @param int $id_lang Language id
-     *
      * @return array Carriers
+     * @throws PrestaShopDatabaseException
      */
-    public static function getCarriers($id_lang)
+    public function getCarriers()
     {
-        $sql = '
-		SELECT c.*, cl.delay
-		FROM `' . _DB_PREFIX_ . 'carrier` c
-		LEFT JOIN `' . _DB_PREFIX_ . 'carrier_lang` cl ON (c.`id_carrier` = cl.`id_carrier` AND cl.`id_lang` = '
-         . (int) $id_lang . Shop::addSqlRestrictionOnLang('cl') . ')
-		LEFT JOIN `' . _DB_PREFIX_ . 'carrier_zone` cz ON (cz.`id_carrier` = c.`id_carrier`)';
+        if (!$this->carriers) {
+            $sql      = '
+            SELECT
+                c.id_carrier,
+                c.id_reference,
+                c.name,
+            FROM
+                `' . _DB_PREFIX_ . 'carrier` c
+            ';
+            $this->carriers = Db::getInstance()->executeS($sql);
 
-        $carriers = Db::getInstance()->executeS($sql);
-
-        foreach ($carriers as $key => $carrier) {
-            if ($carrier['name'] == '0') {
-                $carriers[$key]['name'] = Carrier::getCarrierNameFromShopName();
+            foreach ($this->carriers as $key => $carrier) {
+                if ($carrier['name'] == '0') {
+                    $this->carriers[$key]['name'] = Carrier::getCarrierNameFromShopName();
+                }
             }
         }
 
-        return $carriers;
+        return $this->carriers;
     }
 }

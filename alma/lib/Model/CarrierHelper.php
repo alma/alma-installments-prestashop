@@ -26,6 +26,7 @@
 namespace Alma\PrestaShop\Model;
 
 use Context;
+use PrestaShopDatabaseException;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -36,10 +37,16 @@ if (!defined('_PS_VERSION_')) {
  */
 class CarrierHelper
 {
-    public function __construct(
-        Context $context
-    ) {
+    const UNKNOWN_CARRIER = 'Unknown';
+    /** @var Context */
+    private $context;
+    /** @var CarrierData */
+    private $carrierData;
+
+    public function __construct(Context $context)
+    {
         $this->context = $context;
+        $this->carrierData = new CarrierData();
     }
 
     /**
@@ -49,14 +56,28 @@ class CarrierHelper
      *
      * @return string
      */
-    public function getNameCarrierById($idCarrier)
+    public function getParentCarrierNameById($idCarrier)
     {
-        $carriers = CarrierData::getCarriers($this->context->language->id);
+        try {
+            $carriers = $this->carrierData->getCarriers();
+        } catch (PrestaShopDatabaseException $e) {
+            return self::UNKNOWN_CARRIER;
+        }
 
-        $currentCarrier = array_filter($carriers, function ($carrier) use ($idCarrier) {
-            return $carrier['id_carrier'] == $idCarrier;
-        });
+        foreach ($carriers as $carrier) {
+            if ($carrier['id_carrier'] == $idCarrier) {
+                if ($carrier['id_reference'] == $idCarrier) {
+                    return $carrier['name'];
+                }
 
-        return array_shift($currentCarrier)['name'];
+                $carrier_name = $this->getParentCarrierNameById($carrier['id_reference']);
+                if ($carrier_name === self::UNKNOWN_CARRIER) {
+                    return $carrier['name'];
+                }
+                return $carrier_name;
+            }
+        }
+
+        return self::UNKNOWN_CARRIER;
     }
 }

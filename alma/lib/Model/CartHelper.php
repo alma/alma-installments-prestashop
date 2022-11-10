@@ -68,7 +68,7 @@ class CartHelper
                 'payment_method' => $order['payment'],
                 'alma_payment_external_id' => $order['transaction_id'],
                 'current_state' => $orderStateHelper->getNameById($order['current_state']),
-                'shipping_method' => $carrier->getNameCarrierById($cart->id_carrier),
+                'shipping_method' => $carrier->getParentCarrierNameById($cart->id_carrier),
                 'items' => CartData::getCartItems($cart),
             ];
         }
