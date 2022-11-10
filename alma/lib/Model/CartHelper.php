@@ -27,6 +27,9 @@ namespace Alma\PrestaShop\Model;
 
 use Cart;
 use Context;
+use Exception;
+use PrestaShopDatabaseException;
+use PrestaShopException;
 use Tools;
 
 if (!defined('_PS_VERSION_')) {
@@ -38,9 +41,11 @@ if (!defined('_PS_VERSION_')) {
  */
 class CartHelper
 {
-    public function __construct(
-        Context $context
-    ) {
+    /** @var Context */
+    private $context;
+
+    public function __construct(Context $context)
+    {
         $this->context = $context;
     }
 
@@ -54,22 +59,32 @@ class CartHelper
     public function previousCartOrdered($idCustomer)
     {
         $ordersData = [];
-        $orders = $this->getOrdersByCustomerWithLimit($idCustomer);
+        $orders = $this->getOrdersByCustomer($idCustomer, 10);
         $orderStateHelper = new OrderStateHelper($this->context);
 
         $carrier = new CarrierHelper($this->context);
         foreach ($orders as $order) {
             $cart = new Cart((int) $order['id_cart']);
-            $purchaseAmount = (float) Tools::ps_round((float) $cart->getOrderTotal(true, Cart::BOTH), 2);
+            $purchaseAmount = -1;
+            try {
+                $purchaseAmount = Tools::ps_round((float) $cart->getOrderTotal(), 2);
+            } catch (Exception $e) {
+            }
 
+            $cartItems = [];
+            try {
+                $cartItems = CartData::getCartItems($cart);
+            } catch (PrestaShopDatabaseException $e) {
+            } catch (PrestaShopException $e) {
+            }
             $ordersData[] = [
                 'purchase_amount' => almaPriceToCents($purchaseAmount),
                 'created' => strtotime($order['date_add']),
                 'payment_method' => $order['payment'],
-                'alma_payment_external_id' => $order['transaction_id'],
+                'alma_payment_external_id' => $order['module'] === 'alma' ? $order['transaction_id'] : null,
                 'current_state' => $orderStateHelper->getNameById($order['current_state']),
                 'shipping_method' => $carrier->getParentCarrierNameById($cart->id_carrier),
-                'items' => CartData::getCartItems($cart),
+                'items' => $cartItems,
             ];
         }
 
@@ -84,10 +99,14 @@ class CartHelper
      *
      * @return array
      */
-    private function getOrdersByCustomerWithLimit($idCustomer, $limit = 10)
+    private function getOrdersByCustomer($idCustomer, $limit)
     {
-        $orders = OrderData::getCustomerOrders($idCustomer);
+        try {
+            $orders = OrderData::getCustomerOrders($idCustomer, $limit);
+        } catch (PrestaShopDatabaseException $e) {
+            return [];
+        }
 
-        return array_slice($orders, 0, $limit);
+        return $orders;
     }
 }

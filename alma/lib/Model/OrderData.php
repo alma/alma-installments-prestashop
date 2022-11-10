@@ -28,6 +28,7 @@ namespace Alma\PrestaShop\Model;
 use Db;
 use Order;
 use OrderPayment;
+use PrestaShopDatabaseException;
 use Shop;
 
 if (!defined('_PS_VERSION_')) {
@@ -53,23 +54,31 @@ class OrderData
      * Get customer orders.
      *
      * @param int $idCustomer Customer id
+     * @param int $limit
      *
      * @return array Customer orders
+     * @throws PrestaShopDatabaseException
      */
-    public static function getCustomerOrders($idCustomer)
+    public static function getCustomerOrders($idCustomer, $limit)
     {
         $res = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS('
-        SELECT o.*,
-          (SELECT SUM(od.`product_quantity`) FROM `' . _DB_PREFIX_ . 'order_detail` od WHERE od.`id_order` = o.`id_order`) nb_products,
-          (SELECT op.`transaction_id` 
-            FROM `' . _DB_PREFIX_ . 'order_payment` op 
-            WHERE op.`order_reference` = o.`reference` 
-            AND o.`module` = "alma") transaction_id
-        FROM `' . _DB_PREFIX_ . 'orders` o
-        WHERE o.`id_customer` = ' . (int) $idCustomer .
+        SELECT
+            o.id_cart,
+            o.date_add,
+            o.payment,
+            o.current_state,
+            o.module,
+            op.transaction_id
+        FROM
+            `' . _DB_PREFIX_ . 'orders` o
+            LEFT JOIN `' . _DB_PREFIX_ . 'order_payment` op ON op.`order_reference` = o.`reference`
+        WHERE
+            o.`id_customer` = ' . (int) $idCustomer .
             Shop::addSqlRestriction(Shop::SHARE_ORDER) . '
-        GROUP BY o.`id_order`
-        ORDER BY o.`date_add` DESC');
+        ORDER BY
+            o.`date_add` DESC
+        LIMIT ' . (int) $limit
+        );
 
         if (!$res) {
             return [];
