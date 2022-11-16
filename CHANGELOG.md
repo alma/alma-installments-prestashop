@@ -1,5 +1,9 @@
 # Changelog
 
+## v2.9.0
+
+- Data for Risk added in payment
+
 ## v2.8.0
 
 - New Alma branding 2022

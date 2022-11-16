@@ -25,66 +25,46 @@
 
 namespace Alma\PrestaShop\Model;
 
+use Carrier;
 use Db;
-use Order;
-use OrderPayment;
 use PrestaShopDatabaseException;
-use Shop;
 
 if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-class OrderData
+class CarrierData
 {
-    public static function getCurrentOrderPayment(Order $order)
-    {
-        if ('alma' != $order->module && 1 == $order->valid) {
-            return false;
-        }
-        $orderPayments = OrderPayment::getByOrderReference($order->reference);
-        if ($orderPayments && isset($orderPayments[0])) {
-            return $orderPayments[0];
-        }
-
-        return false;
-    }
+    /** @var array */
+    private $carriers = [];
 
     /**
-     * Get customer orders.
+     * Get all carriers in a given language.
      *
-     * @param int $idCustomer Customer id
-     * @param int $limit
-     *
-     * @return array Customer orders
+     * @return array Carriers
      *
      * @throws PrestaShopDatabaseException
      */
-    public static function getCustomerOrders($idCustomer, $limit)
+    public function getCarriers()
     {
-        $res = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
-            'SELECT
-                o.id_cart,
-                o.date_add,
-                o.payment,
-                o.current_state,
-                o.module,
-                op.transaction_id
+        if (!$this->carriers) {
+            $sql = '
+            SELECT
+                c.id_carrier,
+                c.id_reference,
+                c.name
             FROM
-                `' . _DB_PREFIX_ . 'orders` o
-                LEFT JOIN `' . _DB_PREFIX_ . 'order_payment` op ON op.`order_reference` = o.`reference`
-            WHERE
-                o.`id_customer` = ' . (int) $idCustomer .
-                Shop::addSqlRestriction(Shop::SHARE_ORDER) . '
-            ORDER BY
-                o.`date_add` DESC
-            LIMIT ' . (int) $limit
-        );
+                `' . _DB_PREFIX_ . 'carrier` c
+            ';
+            $this->carriers = Db::getInstance()->executeS($sql);
 
-        if (!$res) {
-            return [];
+            foreach ($this->carriers as $key => $carrier) {
+                if ($carrier['name'] == '0') {
+                    $this->carriers[$key]['name'] = Carrier::getCarrierNameFromShopName();
+                }
+            }
         }
 
-        return $res;
+        return $this->carriers;
     }
 }

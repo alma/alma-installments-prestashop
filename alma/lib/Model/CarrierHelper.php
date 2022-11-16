@@ -25,66 +25,60 @@
 
 namespace Alma\PrestaShop\Model;
 
-use Db;
-use Order;
-use OrderPayment;
+use Context;
 use PrestaShopDatabaseException;
-use Shop;
 
 if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-class OrderData
+/**
+ * Class CarrierHelper
+ */
+class CarrierHelper
 {
-    public static function getCurrentOrderPayment(Order $order)
-    {
-        if ('alma' != $order->module && 1 == $order->valid) {
-            return false;
-        }
-        $orderPayments = OrderPayment::getByOrderReference($order->reference);
-        if ($orderPayments && isset($orderPayments[0])) {
-            return $orderPayments[0];
-        }
+    const UNKNOWN_CARRIER = 'Unknown';
+    /** @var Context */
+    private $context;
+    /** @var CarrierData */
+    private $carrierData;
 
-        return false;
+    public function __construct(Context $context)
+    {
+        $this->context = $context;
+        $this->carrierData = new CarrierData();
     }
 
     /**
-     * Get customer orders.
+     * Get name Carrier by id carrier
      *
-     * @param int $idCustomer Customer id
-     * @param int $limit
+     * @param int $idCarrier
      *
-     * @return array Customer orders
-     *
-     * @throws PrestaShopDatabaseException
+     * @return string
      */
-    public static function getCustomerOrders($idCustomer, $limit)
+    public function getParentCarrierNameById($idCarrier)
     {
-        $res = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
-            'SELECT
-                o.id_cart,
-                o.date_add,
-                o.payment,
-                o.current_state,
-                o.module,
-                op.transaction_id
-            FROM
-                `' . _DB_PREFIX_ . 'orders` o
-                LEFT JOIN `' . _DB_PREFIX_ . 'order_payment` op ON op.`order_reference` = o.`reference`
-            WHERE
-                o.`id_customer` = ' . (int) $idCustomer .
-                Shop::addSqlRestriction(Shop::SHARE_ORDER) . '
-            ORDER BY
-                o.`date_add` DESC
-            LIMIT ' . (int) $limit
-        );
-
-        if (!$res) {
-            return [];
+        try {
+            $carriers = $this->carrierData->getCarriers();
+        } catch (PrestaShopDatabaseException $e) {
+            return self::UNKNOWN_CARRIER;
         }
 
-        return $res;
+        foreach ($carriers as $carrier) {
+            if ($carrier['id_carrier'] == $idCarrier) {
+                if ($carrier['id_reference'] == $idCarrier) {
+                    return $carrier['name'];
+                }
+
+                $carrierName = $this->getParentCarrierNameById($carrier['id_reference']);
+                if ($carrierName === self::UNKNOWN_CARRIER) {
+                    return $carrier['name'];
+                }
+
+                return $carrierName;
+            }
+        }
+
+        return self::UNKNOWN_CARRIER;
     }
 }

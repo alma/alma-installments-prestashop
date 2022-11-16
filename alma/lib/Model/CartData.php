@@ -94,7 +94,7 @@ class CartData
      * @throws PrestaShopDatabaseException
      * @throws PrestaShopException
      */
-    private static function getCartItems($cart)
+    public static function getCartItems($cart)
     {
         $items = [];
 
