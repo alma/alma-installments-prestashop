@@ -27,10 +27,7 @@ namespace Alma\PrestaShop\Model;
 
 use Carrier;
 use Db;
-use mysqli_result;
-use PDOStatement;
 use PrestaShopDatabaseException;
-use Shop;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -45,12 +42,13 @@ class CarrierData
      * Get all carriers in a given language.
      *
      * @return array Carriers
+     *
      * @throws PrestaShopDatabaseException
      */
     public function getCarriers()
     {
         if (!$this->carriers) {
-            $sql      = '
+            $sql = '
             SELECT
                 c.id_carrier,
                 c.id_reference,

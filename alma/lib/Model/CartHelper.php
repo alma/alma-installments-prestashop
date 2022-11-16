@@ -70,7 +70,7 @@ class CartHelper
             try {
                 $purchaseAmount = Tools::ps_round((float) $cart->getOrderTotal(), 2);
             } catch (Exception $e) {
-                $msg = "[Alma] purchase amount for previous cart ordered no found";
+                $msg = '[Alma] purchase amount for previous cart ordered no found';
                 Logger::instance()->warning($msg);
             }
 
@@ -78,10 +78,10 @@ class CartHelper
             try {
                 $cartItems = CartData::getCartItems($cart);
             } catch (PrestaShopDatabaseException $e) {
-                $msg = "[Alma] cart items for previous cart ordered no found";
+                $msg = '[Alma] cart items for previous cart ordered no found';
                 Logger::instance()->warning($msg);
             } catch (PrestaShopException $e) {
-                $msg = "[Alma] cart items for previous cart ordered no found";
+                $msg = '[Alma] cart items for previous cart ordered no found';
                 Logger::instance()->warning($msg);
             }
             $ordersData[] = [

@@ -74,6 +74,7 @@ class CarrierHelper
                 if ($carrierName === self::UNKNOWN_CARRIER) {
                     return $carrier['name'];
                 }
+
                 return $carrierName;
             }
         }
