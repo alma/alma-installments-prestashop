@@ -31,7 +31,7 @@ include_once _PS_MODULE_DIR_ . 'alma/vendor/autoload.php';
 use Alma\PrestaShop\API\ClientHelper;
 use Alma\PrestaShop\Utils\Settings;
 
-function upgrade_module_2_7_3($module)
+function upgrade_module_2_9_1($module)
 {
     if (Settings::isFullyConfigured()) {
         $alma = ClientHelper::defaultInstance();
