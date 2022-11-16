@@ -82,17 +82,14 @@ class PaymentData
 
         $shippingAddress = new Address((int) $cart->id_address_delivery);
         $billingAddress = new Address((int) $cart->id_address_invoice);
-
         $countryShippingAddress = Country::getIsoById((int) $shippingAddress->id_country);
         $countryBillingAddress = Country::getIsoById((int) $billingAddress->id_country);
         $countryShippingAddress = ($countryShippingAddress) ? $countryShippingAddress : '';
         $countryBillingAddress = ($countryBillingAddress) ? $countryBillingAddress : '';
-
         $locale = $context->language->iso_code;
         if (property_exists($context->language, 'locale')) {
             $locale = $context->language->locale;
         }
-
         $purchaseAmount = (float) Tools::ps_round((float) $cart->getOrderTotal(true, Cart::BOTH), 2);
 
         /* Eligibility Endpoint V2 */

@@ -70,11 +70,11 @@ class CarrierHelper
                     return $carrier['name'];
                 }
 
-                $carrier_name = $this->getParentCarrierNameById($carrier['id_reference']);
-                if ($carrier_name === self::UNKNOWN_CARRIER) {
+                $carrierName = $this->getParentCarrierNameById($carrier['id_reference']);
+                if ($carrierName === self::UNKNOWN_CARRIER) {
                     return $carrier['name'];
                 }
-                return $carrier_name;
+                return $carrierName;
             }
         }
 

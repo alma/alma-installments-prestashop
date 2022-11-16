@@ -25,6 +25,7 @@
 
 namespace Alma\PrestaShop\Model;
 
+use Alma\PrestaShop\Utils\Logger;
 use Cart;
 use Context;
 use Exception;
@@ -69,13 +70,19 @@ class CartHelper
             try {
                 $purchaseAmount = Tools::ps_round((float) $cart->getOrderTotal(), 2);
             } catch (Exception $e) {
+                $msg = "[Alma] purchase amount for previous cart ordered no found";
+                Logger::instance()->warning($msg);
             }
 
             $cartItems = [];
             try {
                 $cartItems = CartData::getCartItems($cart);
             } catch (PrestaShopDatabaseException $e) {
+                $msg = "[Alma] cart items for previous cart ordered no found";
+                Logger::instance()->warning($msg);
             } catch (PrestaShopException $e) {
+                $msg = "[Alma] cart items for previous cart ordered no found";
+                Logger::instance()->warning($msg);
             }
             $ordersData[] = [
                 'purchase_amount' => almaPriceToCents($purchaseAmount),
