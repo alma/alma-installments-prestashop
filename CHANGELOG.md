@@ -2,7 +2,7 @@
 
 ## v2.9.0
 
-- Data for Risk added in payment
+- Enriched data for risk algorithm improvements
 
 ## v2.8.0
 
