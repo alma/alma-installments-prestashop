@@ -54,7 +54,7 @@ class CarrierData
             SELECT
                 c.id_carrier,
                 c.id_reference,
-                c.name,
+                c.name
             FROM
                 `' . _DB_PREFIX_ . 'carrier` c
             ';
