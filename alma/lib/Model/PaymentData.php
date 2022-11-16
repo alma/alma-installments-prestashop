@@ -63,18 +63,14 @@ class PaymentData
             $cart->id_address_delivery == 0 ||
             $cart->id_address_invoice == 0
         )) {
-            Logger::instance()->warning(
-                "[Alma] Missing Customer ID or Delivery/Billing address ID for Cart {$cart->id}"
-            );
+            Logger::instance()->warning("[Alma] Missing Customer ID or Delivery/Billing address ID for Cart {$cart->id}");
         }
 
         $customer = null;
         if ($cart->id_customer) {
             $customer = new Customer($cart->id_customer);
             if (!Validate::isLoadedObject($customer)) {
-                Logger::instance()->error(
-                    "[Alma] Error loading Customer {$cart->id_customer} from Cart {$cart->id}"
-                );
+                Logger::instance()->error("[Alma] Error loading Customer {$cart->id_customer} from Cart {$cart->id}");
 
                 return null;
             }
