@@ -23,15 +23,15 @@
 
 <div class='alma notify-popin {$psVersion}'>
     <a href='#' class='alma-close'><i class="icon icon-times"></i><i class="material-icons close">close</i></a>
+    <div class='icon-pastille icon-p3x'></div>
     <div class='alma-open'>
-        <div class='icon-pastille icon-p3x'></div>
         <h3>{l s='Pay in 3x or 4x without fees with Alma.' mod='alma'}</h3>
         <a href='#'>{l s='See more' mod='alma'}</a>
     </div>
 </div>
 <div class='alma banner-notify-popin {$psVersion}'>
     <a href='#' class='alma-close'><i class="icon icon-times"></i><i class="material-icons close">close</i></a>
-    <div class='logo-alma'><img src='/modules/alma/views/img/logos/alma_payment_logos.svg' alt='Alma' width='45' /></div>
+    <div class='logo-alma'><img src='/modules/alma/views/img/logos/alma_payment_logos.svg' alt='Alma' width='64' /></div>
     <ul class='alma installment-plan list'>
         {foreach from=$installmentPlans item=plan}
             <li>{$plan}</li>

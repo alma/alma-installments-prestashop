@@ -1,26 +1,29 @@
 @font-face {
-    font-family: 'Eina04-Bold';
-    src: url('../fonts/Eina04-Bold.ttf') format('ttf'),
-         url('../fonts/Eina04-Bold.svg') format('svg'),
-         url('../fonts/Eina04-Bold.woff') format('woff'),
-         url('../fonts/Eina04-Bold.eot') format('eot');
+    font-family: 'Venn-Regular';
+    src: url('../fonts/Venn-Regular.ttf') format('ttf'),
+         url('../fonts/Venn-Regular.eot') format('eot'),
+         url('../fonts/Venn-Regular.woff') format('woff'),
+         url('../fonts/Venn-Regular.woff2') format('woff2');
     font-weight: normal;
     font-style: normal;
 }
 
 @font-face {
-    font-family: 'Eina04-Regular';
-    src: url('../fonts/Eina04-Regular.ttf') format('ttf'),
-         url('../fonts/Eina04-Regular.svg') format('svg'),
-         url('../fonts/Eina04-Regular.woff') format('woff'),
-         url('../fonts/Eina04-Regular.eot') format('eot');
+    font-family: 'Venn-Bold';
+    src: url('../fonts/Venn-Bold.ttf') format('ttf'),
+         url('../fonts/Venn-Bold.eot') format('eot'),
+         url('../fonts/Venn-Bold.woff') format('woff'),
+         url('../fonts/Venn-Bold.woff2') format('woff2');
     font-weight: normal;
     font-style: normal;
 }
 
 @font-face {
-    font-family: 'Public-Sans';
-    src: url('../fonts/Public-Sans.ttf') format('ttf');
+    font-family: 'ArgentCF-DemiBold';
+    src: url('../fonts/ArgentCF-DemiBold.ttf') format('ttf'),
+         url('../fonts/ArgentCF-DemiBold.eot') format('eot'),
+         url('../fonts/ArgentCF-DemiBold.woff') format('woff'),
+         url('../fonts/ArgentCF-DemiBold.woff2') format('woff2');
     font-weight: normal;
     font-style: normal;
 }
