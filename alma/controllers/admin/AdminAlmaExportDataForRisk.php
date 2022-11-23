@@ -102,9 +102,9 @@ class AdminAlmaExportDataForRiskController extends ModuleAdminController
                 cust.is_guest,
                 count(op.transaction_id) as alma_payment_count
             FROM
-                ps_customer                 AS cust
-                JOIN ps_orders              AS o      ON o.id_customer = cust.id_customer AND o.payment like 'Alma%'
-                LEFT JOIN ps_order_payment  AS op     ON op.order_reference = o.reference
+                " . _DB_PREFIX_ . "customer                 AS cust
+                JOIN " . _DB_PREFIX_ . "orders              AS o      ON o.id_customer = cust.id_customer AND o.payment like 'Alma%'
+                LEFT JOIN " . _DB_PREFIX_ . "order_payment  AS op     ON op.order_reference = o.reference
             GROUP BY
                 cust.id_customer,
                 cust.date_add,
@@ -132,17 +132,17 @@ class AdminAlmaExportDataForRiskController extends ModuleAdminController
             p.is_virtual as item_is_virtual
         FROM
             tmp_customer                AS c
-            JOIN ps_orders              AS o      ON o.id_customer = c.id_customer
-            LEFT JOIN ps_order_payment  AS op     ON op.order_reference = o.reference
-            JOIN ps_currency            AS cur    ON cur.id_currency = o.id_currency
-            JOIN ps_carrier             AS car    ON car.id_carrier = o.id_carrier
-            JOIN ps_order_detail        AS od     ON od.id_order = o.id_order
-            JOIN ps_product             AS p      ON p.id_product = od.product_id
-            JOIN ps_manufacturer        AS m      ON m.id_manufacturer = p.id_manufacturer
-            JOIN ps_cart                AS basket ON basket.id_cart = o.id_cart
-            JOIN ps_category_product    AS catpro ON catpro.id_product = p.id_product
-            JOIN ps_category_lang       AS catlan ON catlan.id_category = catpro.id_category
-            JOIN ps_order_state_lang    AS osl    ON osl.id_order_state = o.current_state
+            JOIN " . _DB_PREFIX_ . "orders              AS o      ON o.id_customer = c.id_customer
+            LEFT JOIN " . _DB_PREFIX_ . "order_payment  AS op     ON op.order_reference = o.reference
+            JOIN " . _DB_PREFIX_ . "currency            AS cur    ON cur.id_currency = o.id_currency
+            JOIN " . _DB_PREFIX_ . "carrier             AS car    ON car.id_carrier = o.id_carrier
+            JOIN " . _DB_PREFIX_ . "order_detail        AS od     ON od.id_order = o.id_order
+            JOIN " . _DB_PREFIX_ . "product             AS p      ON p.id_product = od.product_id
+            JOIN " . _DB_PREFIX_ . "manufacturer        AS m      ON m.id_manufacturer = p.id_manufacturer
+            JOIN " . _DB_PREFIX_ . "cart                AS basket ON basket.id_cart = o.id_cart
+            JOIN " . _DB_PREFIX_ . "category_product    AS catpro ON catpro.id_product = p.id_product
+            JOIN " . _DB_PREFIX_ . "category_lang       AS catlan ON catlan.id_category = catpro.id_category
+            JOIN " . _DB_PREFIX_ . "order_state_lang    AS osl    ON osl.id_order_state = o.current_state
         WHERE catlan.id_lang = 1
         AND osl.id_lang = 1
         AND c.alma_payment_count >= 1
@@ -192,18 +192,18 @@ class AdminAlmaExportDataForRiskController extends ModuleAdminController
             GROUP_CONCAT(catlan.name) as item_categories,
             p.is_virtual as item_is_virtual
         FROM
-            ps_customer                 AS c
-            JOIN ps_orders              AS o      ON o.id_customer = c.id_customer
-            LEFT JOIN ps_order_payment  AS op     ON op.order_reference = o.reference
-            JOIN ps_currency            AS cur    ON cur.id_currency = o.id_currency
-            JOIN ps_carrier             AS car    ON car.id_carrier = o.id_carrier
-            JOIN ps_order_detail        AS od     ON od.id_order = o.id_order
-            JOIN ps_product             AS p      ON p.id_product = od.product_id
-            JOIN ps_manufacturer        AS m      ON m.id_manufacturer = p.id_manufacturer
-            JOIN ps_cart                AS basket ON basket.id_cart = o.id_cart
-            JOIN ps_category_product    AS catpro ON catpro.id_product = p.id_product
-            JOIN ps_category_lang       AS catlan ON catlan.id_category = catpro.id_category
-            JOIN ps_order_state_lang    AS osl    ON osl.id_order_state = o.current_state
+            ' . _DB_PREFIX_ . 'customer                 AS c
+            JOIN ' . _DB_PREFIX_ . 'orders              AS o      ON o.id_customer = c.id_customer
+            LEFT JOIN ' . _DB_PREFIX_ . 'order_payment  AS op     ON op.order_reference = o.reference
+            JOIN ' . _DB_PREFIX_ . 'currency            AS cur    ON cur.id_currency = o.id_currency
+            JOIN ' . _DB_PREFIX_ . 'carrier             AS car    ON car.id_carrier = o.id_carrier
+            JOIN ' . _DB_PREFIX_ . 'order_detail        AS od     ON od.id_order = o.id_order
+            JOIN ' . _DB_PREFIX_ . 'product             AS p      ON p.id_product = od.product_id
+            JOIN ' . _DB_PREFIX_ . 'manufacturer        AS m      ON m.id_manufacturer = p.id_manufacturer
+            JOIN ' . _DB_PREFIX_ . 'cart                AS basket ON basket.id_cart = o.id_cart
+            JOIN ' . _DB_PREFIX_ . 'category_product    AS catpro ON catpro.id_product = p.id_product
+            JOIN ' . _DB_PREFIX_ . 'category_lang       AS catlan ON catlan.id_category = catpro.id_category
+            JOIN ' . _DB_PREFIX_ . 'order_state_lang    AS osl    ON osl.id_order_state = o.current_state
         WHERE catlan.id_lang = 1
         AND osl.id_lang = 1
         AND c.id_customer IN (' . implode(',', $idsCustomerAlma) . ')
@@ -234,8 +234,8 @@ class AdminAlmaExportDataForRiskController extends ModuleAdminController
         return "SELECT
             c.id_customer
         FROM
-            ps_customer                 AS c
-            JOIN ps_orders              AS o      ON o.id_customer = c.id_customer AND o.payment like 'Alma%'
+            " . _DB_PREFIX_ . "customer                 AS c
+            JOIN " . _DB_PREFIX_ . "orders              AS o      ON o.id_customer = c.id_customer AND o.payment like 'Alma%'
         GROUP BY
             c.id_customer;";
     }
