@@ -182,7 +182,7 @@ class AdminAlmaExportDataForRiskController extends ModuleAdminController
             op.transaction_id as alma_payment_id,
             cur.iso_code as currency,
             car.name as shipping_method,
-            p.reference as item_sku,
+            od.product_reference as item_sku,
             m.name as item_vendor,
             od.product_name as item_title,
             od.product_quantity as item_quantity,
@@ -193,18 +193,18 @@ class AdminAlmaExportDataForRiskController extends ModuleAdminController
             p.is_virtual as item_is_virtual
         FROM
             ' . _DB_PREFIX_ . 'customer                 AS c
-            JOIN ' . _DB_PREFIX_ . 'orders              AS o      ON o.id_customer = c.id_customer
+            LEFT JOIN ' . _DB_PREFIX_ . 'orders              AS o      ON o.id_customer = c.id_customer
             LEFT JOIN ' . _DB_PREFIX_ . 'order_payment  AS op     ON op.order_reference = o.reference
-            JOIN ' . _DB_PREFIX_ . 'currency            AS cur    ON cur.id_currency = o.id_currency
-            JOIN ' . _DB_PREFIX_ . 'carrier             AS car    ON car.id_carrier = o.id_carrier
-            JOIN ' . _DB_PREFIX_ . 'order_detail        AS od     ON od.id_order = o.id_order
-            JOIN ' . _DB_PREFIX_ . 'product             AS p      ON p.id_product = od.product_id
-            JOIN ' . _DB_PREFIX_ . 'manufacturer        AS m      ON m.id_manufacturer = p.id_manufacturer
-            JOIN ' . _DB_PREFIX_ . 'cart                AS basket ON basket.id_cart = o.id_cart
-            JOIN ' . _DB_PREFIX_ . 'category_product    AS catpro ON catpro.id_product = p.id_product
-            JOIN ' . _DB_PREFIX_ . 'category_lang       AS catlan ON catlan.id_category = catpro.id_category
-            JOIN ' . _DB_PREFIX_ . 'order_state_lang    AS osl    ON osl.id_order_state = o.current_state
-        WHERE catlan.id_lang = 1
+            LEFT JOIN ' . _DB_PREFIX_ . 'currency            AS cur    ON cur.id_currency = o.id_currency
+            LEFT JOIN ' . _DB_PREFIX_ . 'carrier             AS car    ON car.id_carrier = o.id_carrier
+            LEFT JOIN ' . _DB_PREFIX_ . 'order_detail        AS od     ON od.id_order = o.id_order
+            LEFT JOIN ' . _DB_PREFIX_ . 'product             AS p      ON p.id_product = od.product_id
+            LEFT JOIN ' . _DB_PREFIX_ . 'manufacturer        AS m      ON m.id_manufacturer = p.id_manufacturer
+            LEFT JOIN ' . _DB_PREFIX_ . 'cart                AS basket ON basket.id_cart = o.id_cart
+            LEFT JOIN ' . _DB_PREFIX_ . 'category_product    AS catpro ON catpro.id_product = p.id_product
+            LEFT JOIN ' . _DB_PREFIX_ . 'category_lang       AS catlan ON catlan.id_category = catpro.id_category
+            LEFT JOIN ' . _DB_PREFIX_ . 'order_state_lang    AS osl    ON osl.id_order_state = o.current_state
+        WHERE (catlan.id_lang = 1 OR catlan.id_lang IS NULL)
         AND osl.id_lang = 1
         AND c.id_customer IN (' . implode(',', $idsCustomerAlma) . ')
         GROUP BY
@@ -219,7 +219,7 @@ class AdminAlmaExportDataForRiskController extends ModuleAdminController
             op.transaction_id,
             cur.iso_code,
             car.name,
-            p.reference,
+            od.product_reference,
             m.name,
             od.product_name,
             od.product_quantity,
