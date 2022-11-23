@@ -35,7 +35,7 @@ require_once _PS_MODULE_DIR_ . 'alma/autoloader.php';
 
 class Alma extends PaymentModule
 {
-    const VERSION = '2.9.0';
+    const VERSION = '2.9.1';
 
     public $_path;
     public $local_path;
@@ -50,7 +50,7 @@ class Alma extends PaymentModule
     {
         $this->name = 'alma';
         $this->tab = 'payments_gateways';
-        $this->version = '2.9.0';
+        $this->version = '2.9.1';
         $this->author = 'Alma';
         $this->need_instance = false;
         $this->bootstrap = true;
@@ -264,12 +264,14 @@ class Alma extends PaymentModule
         return $this->installTab('alma', 'Alma')
             && $this->installTab('AdminAlmaConfig', $this->l('Configuration'), 'alma', 1, 'tune')
             && $this->installTab('AdminAlmaCategories', $this->l('Excluded categories'), 'alma', 2, 'not_interested')
+            && $this->installTab('AdminAlmaExportDataForRisk', $this->l('Export Data for Risk'), 'alma', 2, 'file_download')
             && $this->installTab('AdminAlmaRefunds', false, 'alma');
     }
 
     public function uninstallTabs()
     {
         return $this->uninstallTab('AdminAlmaCategories')
+            && $this->uninstallTab('AdminAlmaExportDataForRisk')
             && $this->uninstallTab('AdminAlmaRefunds')
             && $this->uninstallTab('AdminAlmaConfig')
             && $this->uninstallTab('alma');
