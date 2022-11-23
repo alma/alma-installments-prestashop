@@ -40,10 +40,8 @@ class RefundAdminFormBuilder extends AbstractAlmaAdminFormBuilder
 
     protected function configForm()
     {
-        // phpcs:ignore Generic.Files.LineLength
         $htmlContent = $this->module->l('If you usually refund orders by changing their state, activate this option and choose the state you want to use to trigger refunds on Alma payments', 'RefundAdminFormBuilder');
         $htmlContent2 = sprintf(
-            // phpcs:ignore Generic.Files.LineLength
             $this->module->l('With Alma, you can make your refunds directly from your PrestaShop back-office. Go to your order to find the new Alma section. %1$sMore information on how to use it.%2$s', 'RefundAdminFormBuilder'),
             '<a href="https://docs.getalma.eu/docs/prestashop-refund" target="_blank">',
             '</a>'

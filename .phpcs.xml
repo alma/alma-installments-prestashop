@@ -15,8 +15,8 @@
 
  <rule ref="Generic.Files.LineLength">
   <properties>
-   <property name="lineLimit" value="160"/>
-   <property name="absoluteLineLimit" value="160"/>
+   <property name="lineLimit" value="520"/>
+   <property name="absoluteLineLimit" value="520"/>
   </properties>
  </rule>
 
