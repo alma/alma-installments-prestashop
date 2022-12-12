@@ -88,12 +88,12 @@ class Alma extends PaymentModule
     private function checkCoreInstall($coreInstall)
     {
         if (!$coreInstall) {
-            $Logger = \Alma\PrestaShop\Utils\Logger::loggerClass();
-            $Logger::addLog("Alma: Core module install failed (returned {$coreInstall})", 3);
+            $logger = \Alma\PrestaShop\Utils\Logger::loggerClass();
+            $logger::addLog("Alma: Core module install failed (returned {$coreInstall})", 3);
 
             if (count($this->_errors) > 0) {
                 $errors = implode(', ', $this->_errors);
-                $Logger::addLog("Alma: module install errors: {$errors})", 3);
+                $logger::addLog("Alma: module install errors: {$errors})", 3);
             }
 
             return false;
