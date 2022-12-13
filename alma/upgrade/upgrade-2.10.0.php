@@ -31,7 +31,7 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-function upgrade_module_next($module)
+function upgrade_module_2_10_0($module)
 {
     if (Settings::isFullyConfigured()) {
         $alma = ClientHelper::defaultInstance();
