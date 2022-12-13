@@ -133,10 +133,11 @@ class ShareOfCheckoutHelper
             if ($e->response->responseCode == '404') {
                 Logger::instance()->info('First send to Share of checkout');
             }
+
             return strtotime('-1 day');
         }
 
-        return (int)$lastDateUpdateDates['end_time'];
+        return (int) $lastDateUpdateDates['end_time'];
     }
 
     /**
