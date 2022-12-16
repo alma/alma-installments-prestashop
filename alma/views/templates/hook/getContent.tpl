@@ -91,6 +91,8 @@
             {else}
                 {l s='Maximum amount for %1$d-installment plan must be within %2$d and %3$d.' sprintf=array($n, $min, $max) mod='alma'}
             {/if}
+        {elseif $validation_error == 'soc_api_error'}
+            {l s='Impossible to save the Share of Checkout settings, please try again later' mod='alma'}
         {else}
             {$validation_error|escape:'htmlall':'UTF-8'}
         {/if}

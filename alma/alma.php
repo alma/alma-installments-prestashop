@@ -139,6 +139,7 @@ class Alma extends PaymentModule
             'displayBackOfficeHeader',
             'displayShoppingCartFooter',
             'actionOrderStatusPostUpdate',
+            'displayAdminAfterHeader',
         ];
 
         if (version_compare(_PS_VERSION_, '1.7.7.0', '>=')) {
@@ -261,7 +262,8 @@ class Alma extends PaymentModule
         return $this->installTab('alma', 'Alma')
             && $this->installTab('AdminAlmaConfig', $this->l('Configuration'), 'alma', 1, 'tune')
             && $this->installTab('AdminAlmaCategories', $this->l('Excluded categories'), 'alma', 2, 'not_interested')
-            && $this->installTab('AdminAlmaRefunds', false, 'alma');
+            && $this->installTab('AdminAlmaRefunds', false, 'alma')
+            && $this->installTab('AdminAlmaShareOfCheckout', false, 'alma');
     }
 
     public function uninstallTabs()
@@ -269,6 +271,7 @@ class Alma extends PaymentModule
         return $this->uninstallTab('AdminAlmaCategories')
             && $this->uninstallTab('AdminAlmaRefunds')
             && $this->uninstallTab('AdminAlmaConfig')
+            && $this->uninstallTab('AdminAlmaShareOfCheckout')
             && $this->uninstallTab('alma');
     }
 
@@ -365,10 +368,7 @@ class Alma extends PaymentModule
 
     public function hookDisplayBackOfficeHeader($params)
     {
-        $this->context->controller->setMedia();
-        $this->context->controller->addCSS($this->_path . 'views/css/admin/_configure/helpers/form/form.css', 'all');
-        $this->context->controller->addCSS($this->_path . 'views/css/admin/almaPage.css', 'all');
-        $this->context->controller->addJS($this->_path . 'views/js/admin/alma.js');
+        return $this->runHookController('displayBackOfficeHeader', $params);
     }
 
     public function hookPaymentOptions($params)
@@ -431,5 +431,13 @@ class Alma extends PaymentModule
     public function hookActionOrderStatusPostUpdate($params)
     {
         return $this->runHookController('state', $params);
+    }
+
+    /**
+     * Hook action DisplayAdminAfterHeader
+     */
+    public function hookDisplayAdminAfterHeader($params)
+    {
+        return $this->runHookController('displayAdminAfterHeader', $params);
     }
 }

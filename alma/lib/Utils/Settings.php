@@ -39,9 +39,11 @@ if (!defined('ALMA_MODE_LIVE')) {
 use Alma\PrestaShop\Forms\ExcludedCategoryAdminFormBuilder;
 use Alma\PrestaShop\Forms\PaymentButtonAdminFormBuilder;
 use Alma\PrestaShop\Forms\PaymentOnTriggeringAdminFormBuilder;
+use Alma\PrestaShop\Forms\ShareOfCheckoutAdminFormBuilder;
 use Alma\PrestaShop\Model\CategoryAdapter;
 use Category;
 use Configuration;
+use DateTime;
 use Language;
 use Product;
 use Shop;
@@ -82,6 +84,9 @@ class Settings
         $configKeys = [
             'ALMA_FULLY_CONFIGURED',
             'ALMA_ACTIVATE_LOGGING',
+            ShareOfCheckoutAdminFormBuilder::ALMA_ACTIVATE_SHARE_OF_CHECKOUT,
+            ShareOfCheckoutAdminFormBuilder::ALMA_SHARE_OF_CHECKOUT_DATE,
+            'ALMA_SOC_CRON_TASK',
             'ALMA_API_MODE',
             'ALMA_MERCHANT_ID',
             'ALMA_LIVE_API_KEY',
@@ -133,6 +138,23 @@ class Settings
     public static function canLog()
     {
         return (bool) (int) self::get('ALMA_ACTIVATE_LOGGING', false);
+    }
+
+    public static function canShareOfCheckout()
+    {
+        return boolval(self::get(ShareOfCheckoutAdminFormBuilder::ALMA_ACTIVATE_SHARE_OF_CHECKOUT, false));
+    }
+
+    public static function isShareOfCheckoutSetting()
+    {
+        return Configuration::get(ShareOfCheckoutAdminFormBuilder::ALMA_ACTIVATE_SHARE_OF_CHECKOUT);
+    }
+
+    public static function getCurrentTimestamp()
+    {
+        $date = new DateTime();
+
+        return $date->getTimestamp();
     }
 
     public static function getActiveMode()

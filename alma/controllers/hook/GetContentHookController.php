@@ -39,7 +39,10 @@ use Alma\PrestaShop\Forms\PaymentOnTriggeringAdminFormBuilder;
 use Alma\PrestaShop\Forms\PnxAdminFormBuilder;
 use Alma\PrestaShop\Forms\ProductEligibilityAdminFormBuilder;
 use Alma\PrestaShop\Forms\RefundAdminFormBuilder;
+use Alma\PrestaShop\Forms\ShareOfCheckoutAdminFormBuilder;
 use Alma\PrestaShop\Hooks\AdminHookController;
+use Alma\PrestaShop\ShareOfCheckout\OrderHelper;
+use Alma\PrestaShop\ShareOfCheckout\ShareOfCheckoutHelper;
 use Alma\PrestaShop\Utils\Logger;
 use Alma\PrestaShop\Utils\Settings;
 use Alma\PrestaShop\Utils\SettingsCustomFields;
@@ -76,6 +79,15 @@ final class GetContentHookController extends AdminHookController
 
         if ($credentialsError && array_key_exists('error', $credentialsError)) {
             return $credentialsError['message'];
+        }
+
+        $orderHelper = new OrderHelper();
+        $shareOfCheckoutHelper = new ShareOfCheckoutHelper($orderHelper);
+
+        if ($liveKey !== Settings::getLiveKey()) {
+            $shareOfCheckoutHelper->resetShareOfCheckoutConsent();
+        } else {
+            $shareOfCheckoutHelper->handleCheckoutConsent('ALMA_ACTIVATE_SHARE_OF_CHECKOUT_ON');
         }
 
         // Down here, we know the provided API keys are correct (at least the one for the chosen API mode)
@@ -446,6 +458,8 @@ final class GetContentHookController extends AdminHookController
             $extraMessage = $this->module->display($this->module->file, 'getContent.tpl');
         }
 
+        $this->assignSmartyAlertClasses();
+
         $feePlansOrdered = [];
         $installmentsPlans = [];
         if ($merchant) {
@@ -477,6 +491,7 @@ final class GetContentHookController extends AdminHookController
         $productBuilder = new ProductEligibilityAdminFormBuilder($this->module, $this->context, $iconPath);
         $excludedBuilder = new ExcludedCategoryAdminFormBuilder($this->module, $this->context, $iconPath);
         $refundBuilder = new RefundAdminFormBuilder($this->module, $this->context, $iconPath);
+        $shareOfCheckoutBuilder = new ShareOfCheckoutAdminFormBuilder($this->module, $this->context, $iconPath);
         $triggerBuilder = new PaymentOnTriggeringAdminFormBuilder($this->module, $this->context, $iconPath, ['feePlans' => $feePlansOrdered]);
         $paymentBuilder = new PaymentButtonAdminFormBuilder($this->module, $this->context, $iconPath);
         $debugBuilder = new DebugAdminFormBuilder($this->module, $this->context, $iconPath);
@@ -492,6 +507,7 @@ final class GetContentHookController extends AdminHookController
             $fieldsForms[] = $paymentBuilder->build();
             $fieldsForms[] = $excludedBuilder->build();
             $fieldsForms[] = $refundBuilder->build();
+            $fieldsForms[] = $shareOfCheckoutBuilder->build();
             $fieldsForms[] = $triggerBuilder->build();
         }
         $fieldsForms[] = $apiBuilder->build();
@@ -532,6 +548,8 @@ final class GetContentHookController extends AdminHookController
             'ALMA_PRODUCT_WDGT_NOT_ELGBL_ON' => Settings::showProductWidgetIfNotEligible(),
             'ALMA_CATEGORIES_WDGT_NOT_ELGBL_ON' => Settings::showCategoriesWidgetIfNotEligible(),
             'ALMA_ACTIVATE_LOGGING_ON' => (bool) Settings::canLog(),
+            'ALMA_ACTIVATE_SHARE_OF_CHECKOUT_ON' => (bool) Settings::canShareOfCheckout(),
+            'ALMA_SHARE_OF_CHECKOUT_DATE' => Settings::getCurrentTimestamp(),
             'ALMA_STATE_REFUND' => Settings::getRefundState(),
             'ALMA_STATE_REFUND_ENABLED_ON' => Settings::isRefundEnabledByState(),
             'ALMA_STATE_TRIGGER' => Settings::getPaymentTriggerState(),
