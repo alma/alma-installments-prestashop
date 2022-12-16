@@ -6,7 +6,7 @@ on:
       - "master"
   pull_request:
     branches:
-      - master
+      - "master"
   workflow_dispatch:
 
 jobs:
@@ -43,12 +43,13 @@ jobs:
       with:
         workflow: Deploy CMS
         token: ${{ secrets.INFRA_WORKFLOW_TRIGGER_TOKEN }}
-        repo: 'alma/integration-infrastructure'
-        ref: 'main'
+        repo: "alma/integration-infrastructure"
+        ref: "main"
         inputs: >
           {
             "name": "e2e-${{ github.run_id }}",
             "alma_plugin_branch": "${{ github.head_ref || github.ref_name }}",
+            "alma_plugin_test_branch" : "main",
             "cms": "prestashop-${{ matrix.version }}",
             "e2e": "true",
             "e2e_check_id": "${{ steps.e2e_status.outputs.check_id }}"

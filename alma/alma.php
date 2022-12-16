@@ -22,9 +22,6 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
-use Alma\PrestaShop\Exceptions\RenderPaymentException;
-use Alma\PrestaShop\Utils\LinkHelper;
-
 if (!defined('_PS_VERSION_')) {
     exit;
 }
@@ -91,12 +88,12 @@ class Alma extends PaymentModule
     private function checkCoreInstall($coreInstall)
     {
         if (!$coreInstall) {
-            $Logger = Alma\PrestaShop\Utils\Logger::loggerClass();
-            $Logger::addLog("Alma: Core module install failed (returned {$coreInstall})", 3);
+            $logger = \Alma\PrestaShop\Utils\Logger::loggerClass();
+            $logger::addLog("Alma: Core module install failed (returned {$coreInstall})", 3);
 
             if (count($this->_errors) > 0) {
                 $errors = implode(', ', $this->_errors);
-                $Logger::addLog("Alma: module install errors: {$errors})", 3);
+                $logger::addLog("Alma: module install errors: {$errors})", 3);
             }
 
             return false;
@@ -242,7 +239,7 @@ class Alma extends PaymentModule
 
     public function uninstall()
     {
-        $result = parent::uninstall() && Alma\PrestaShop\Utils\Settings::deleteAllValues();
+        $result = parent::uninstall() && \Alma\PrestaShop\Utils\Settings::deleteAllValues();
 
         $paymentModuleConf = [
             'CONF_ALMA_FIXED',
@@ -354,7 +351,7 @@ class Alma extends PaymentModule
     public function viewAccess()
     {
         // Simply redirect to the default module's configuration page
-        $location = LinkHelper::getAdminLinkAlmaDashboard();
+        $location = \Alma\PrestaShop\Utils\LinkHelper::getAdminLinkAlmaDashboard();
 
         Tools::redirectAdmin($location);
     }
@@ -396,7 +393,7 @@ class Alma extends PaymentModule
     {
         try {
             return $this->runHookController('displayPaymentReturn', $params);
-        } catch (RenderPaymentException $e) {
+        } catch (\Alma\PrestaShop\Exceptions\RenderPaymentException $e) {
             $module = Module::getInstanceByName('alma');
             $this->context->smarty->assign([
                 'payment' => null,
@@ -411,7 +408,7 @@ class Alma extends PaymentModule
     {
         try {
             return $this->runHookController('displayPaymentReturn', $params);
-        } catch (RenderPaymentException $e) {
+        } catch (\Alma\PrestaShop\Exceptions\RenderPaymentException $e) {
             return '';
         }
     }
