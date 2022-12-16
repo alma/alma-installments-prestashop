@@ -23,7 +23,7 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
-namespace Alma\PrestaShop\Tests\Unit\Lib\Api;
+namespace Alma\PrestaShop\Tests\integration\lib\API;
 
 use Alma\PrestaShop\API\EligibilityHelper;
 use Cart;
