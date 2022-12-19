@@ -197,13 +197,13 @@ class PaymentOptionsHookController extends FrontendHookController
         $baseDir = _PS_MODULE_DIR_ . $this->module->name;
 
         if ($isDeferred) {
-            $logoName = "${valueBNPL}j_logo.svg";
+            $logoName = "{$valueBNPL}j_logo.svg";
         } else {
-            $logoName = "p${valueBNPL}x_logo.svg";
+            $logoName = "p{$valueBNPL}x_logo.svg";
         }
 
         if ($forEUComplianceModule) {
-            $logo = Media::getMediaPath("${baseDir}/views/img/logos/alma_payment_logos_tiny.svg");
+            $logo = Media::getMediaPath("{$baseDir}/views/img/logos/alma_payment_logos_tiny.svg");
             $paymentOption = [
                 'cta_text' => $ctaText,
                 'action' => $action,
@@ -211,7 +211,7 @@ class PaymentOptionsHookController extends FrontendHookController
             ];
         } else {
             $paymentOption = new PaymentOption();
-            $logo = Media::getMediaPath("${baseDir}/views/img/logos/${logoName}");
+            $logo = Media::getMediaPath("${baseDir}/views/img/logos/{$logoName}");
             $paymentOption
                 ->setModuleName($this->module->name)
                 ->setCallToActionText($ctaText)

@@ -36,7 +36,7 @@ class FrontHeaderHookController extends FrontendHookController
     public function run($params)
     {
         $controllerName = $this->currentControllerName();
-        $handler = [$this, "handle${controllerName}Page"];
+        $handler = [$this, "handle{$controllerName}Page"];
 
         $content = $this->injectAlmaAssets($params);
 
