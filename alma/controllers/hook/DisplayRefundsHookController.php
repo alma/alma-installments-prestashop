@@ -78,7 +78,7 @@ final class DisplayRefundsHookController extends AdminHookController
         $orderTotalPaid = $order->getOrdersTotalPaid();
         $paymentTotalAmount = $order->total_paid_tax_incl;
 
-        //multi shipping
+        // multi shipping
         $ordersId = null;
         if ($orderTotalPaid > $order->total_paid_tax_incl) {
             $orders = Order::getByReference($order->reference);
