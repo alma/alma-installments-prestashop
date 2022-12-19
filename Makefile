@@ -32,6 +32,10 @@ php-compatibility: install-tools
 autoindex:
 	./tools/vendor/bin/autoindex prestashop:add:index alma/
 
+.PHONY: remove-blank-line-index
+remove-blank-line-index:
+	./scripts/remove-blank-line-index.sh
+
 .PHONY: crowdin-download
 crowdin-download:
 	crowdin download
