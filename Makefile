@@ -28,6 +28,10 @@ lint-fix: install-tools
 php-compatibility: install-tools
 	./tools/vendor/bin/phpcs -p alma --standard=PHPCompatibility -s --runtime-set testVersion 5.5-8.0 --ignore=\*/vendor/\*
 
+.PHONY: autoindex
+autoindex:
+	./tools/vendor/bin/autoindex prestashop:add:index alma/
+
 .PHONY: crowdin-download
 crowdin-download:
 	crowdin download
