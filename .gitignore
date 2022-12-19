@@ -8,6 +8,7 @@ tmp
 prestashop*
 **/.DS_Store
 tools/vendor
-.vscode
+.vscode/
+.idea/
 .dccache
 .phpunit.result.cache
