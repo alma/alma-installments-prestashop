@@ -83,10 +83,11 @@ class FrontHeaderHookController extends FrontendHookController
 
         if (version_compare(_PS_VERSION_, '1.7', '<')) {
             // Cart widget
-            if (Settings::showEligibilityMessage() &&
-                    ($controller->php_self == 'order' && $controller->step == 0 || $controller->php_self == 'order-opc')
-                    && (isset($controller->nbProducts) && $controller->nbProducts != 0)
-                ) {
+            if (
+                Settings::showEligibilityMessage()
+                && ($controller->php_self == 'order' && $controller->step == 0 || $controller->php_self == 'order-opc')
+                && (isset($controller->nbProducts) && $controller->nbProducts != 0)
+            ) {
                 if (version_compare(_PS_VERSION_, '1.5.6.2', '<')) {
                     $content .= '<link rel="stylesheet" href="' . $widgetsCssUrl . '">';
                 } else {
