@@ -47,7 +47,7 @@ class AlmaIpnModuleFrontController extends ModuleFrontController
         } elseif (method_exists(get_parent_class(get_parent_class($this)), 'ajaxDie')) {
             parent::ajaxDie($value);
         } else {
-            die($value);
+            exit($value);
         }
     }
 

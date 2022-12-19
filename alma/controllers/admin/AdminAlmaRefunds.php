@@ -104,7 +104,7 @@ class AdminAlmaRefundsController extends ModuleAdminController
 
         method_exists(get_parent_class($this), 'ajaxDie')
             ? $this->ajaxDie(json_encode($jsonReturn))
-            : die(Tools::jsonEncode($jsonReturn));
+            : exit(Tools::jsonEncode($jsonReturn));
     }
 
     /**
@@ -112,7 +112,7 @@ class AdminAlmaRefundsController extends ModuleAdminController
      * @param float $amount
      * @param bool $isTotal
      *
-     * @return bool | Payment
+     * @return bool|Payment
      *
      * @throws RequestError
      */
