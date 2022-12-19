@@ -21,7 +21,6 @@
  * @copyright 2018-2022 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
-
 global $_MODULE;
 $_MODULE = [];
 $_MODULE['<{alma}prestashop>alma_d4b3f55d02c6448c36a233c1f1c27a18'] = '2x 3x 4x, D+15 ou D+30 Alma - Pagamento em prestações e em diferido';
