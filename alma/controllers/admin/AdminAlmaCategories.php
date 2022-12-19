@@ -92,9 +92,7 @@ class AdminAlmaCategoriesController extends ModuleAdminController
     {
         parent::init();
 
-        $this->_select = (
-            'a.`id_category`, b.`name`, b.`description`, b.`name` as `parent`, a.`id_category` as `excluded`'
-        );
+        $this->_select = 'a.`id_category`, b.`name`, b.`description`, b.`name` as `parent`, a.`id_category` as `excluded`';
         $this->_use_found_rows = false;
 
         if (Shop::getContext() == Shop::CONTEXT_SHOP) {
@@ -193,9 +191,9 @@ class AdminAlmaCategoriesController extends ModuleAdminController
 
                 if ($field = $this->filterToField($key, $filter)) {
                     if (array_key_exists('filter_type', $field)) {
-                        $type = ($field['filter_type']);
+                        $type = $field['filter_type'];
                     } else {
-                        $type = ((array_key_exists('type', $field) ? $field['type'] : false));
+                        $type = array_key_exists('type', $field) ? $field['type'] : false;
                     }
                     if (($type == 'date' || $type == 'datetime') && is_string($value)) {
                         $value = json_decode($value, true);
@@ -244,35 +242,35 @@ class AdminAlmaCategoriesController extends ModuleAdminController
                         $alias = ($definition && !empty($definition['fields'][$filter]['shop'])) ? 'sa' : 'a';
 
                         if ($type == 'int' || $type == 'bool') {
-                            if (($check_key || $key == '`active`')) {
+                            if ($check_key || $key == '`active`') {
                                 $sql_filter .= ($alias . '.') . pSQL($key) . ' = ' . (int) $value . ' ';
                             } else {
-                                $sql_filter .= ('') . pSQL($key) . ' = ' . (int) $value . ' ';
+                                $sql_filter .= '' . pSQL($key) . ' = ' . (int) $value . ' ';
                             }
                         } elseif ($type == 'decimal') {
                             if ($check_key) {
                                 $sql_filter .= ($alias . '.') . pSQL($key) . ' = ' . (float) $value . ' ';
                             } else {
-                                $sql_filter .= ('') . pSQL($key) . ' = ' . (float) $value . ' ';
+                                $sql_filter .= '' . pSQL($key) . ' = ' . (float) $value . ' ';
                             }
                         } elseif ($type == 'select') {
                             if ($check_key) {
                                 $sql_filter .= ($alias . '.') . pSQL($key) . ' = \'' . pSQL($value) . '\' ';
                             } else {
-                                $sql_filter .= ('') . pSQL($key) . ' = \'' . pSQL($value) . '\' ';
+                                $sql_filter .= '' . pSQL($key) . ' = \'' . pSQL($value) . '\' ';
                             }
                         } elseif ($type == 'price') {
                             $value = (float) str_replace(',', '.', $value);
                             if ($check_key) {
                                 $sql_filter .= ($alias . '.') . pSQL($key) . ' = ' . pSQL(trim($value)) . ' ';
                             } else {
-                                $sql_filter .= ('') . pSQL($key) . ' = ' . pSQL(trim($value)) . ' ';
+                                $sql_filter .= '' . pSQL($key) . ' = ' . pSQL(trim($value)) . ' ';
                             }
                         } else {
                             if ($check_key) {
                                 $sql_filter .= ($alias . '.') . pSQL($key) . ' LIKE \'%' . pSQL(trim($value)) . '%\' ';
                             } else {
-                                $sql_filter .= ('') . pSQL($key) . ' LIKE \'%' . pSQL(trim($value)) . '%\' ';
+                                $sql_filter .= '' . pSQL($key) . ' LIKE \'%' . pSQL(trim($value)) . '%\' ';
                             }
                         }
                     }

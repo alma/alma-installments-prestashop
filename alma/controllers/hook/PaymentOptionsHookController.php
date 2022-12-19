@@ -211,7 +211,7 @@ class PaymentOptionsHookController extends FrontendHookController
             ];
         } else {
             $paymentOption = new PaymentOption();
-            $logo = Media::getMediaPath("${baseDir}/views/img/logos/{$logoName}");
+            $logo = Media::getMediaPath("{$baseDir}/views/img/logos/{$logoName}");
             $paymentOption
                 ->setModuleName($this->module->name)
                 ->setCallToActionText($ctaText)
