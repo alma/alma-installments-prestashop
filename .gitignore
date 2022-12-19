@@ -9,5 +9,6 @@ prestashop*
 **/.DS_Store
 tools/vendor
 .vscode
+.idea
 .dccache
 .phpunit.result.cache
