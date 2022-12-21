@@ -254,9 +254,9 @@ class ShareOfCheckoutHelper
      */
     public function handleCheckoutConsent($consentAttribute)
     {
-        $userConsent = Tools::getValue($consentAttribute);
-
         try {
+            $userConsent = Tools::getValue($consentAttribute);
+
             if (Settings::isShareOfCheckoutSetting()) {
                 $this->setConsent($userConsent);
             } else {
