@@ -87,7 +87,7 @@ final class GetContentHookController extends AdminHookController
         if ($liveKey !== Settings::getLiveKey()) {
             $shareOfCheckoutHelper->resetShareOfCheckoutConsent();
         } else {
-            $shareOfCheckoutHelper->handleCheckoutConsent(ShareOfCheckoutAdminFormBuilder::ALMA_ACTIVATE_SHARE_OF_CHECKOUT . '_ON');
+            $shareOfCheckoutHelper->handleCheckoutConsent(ShareOfCheckoutAdminFormBuilder::ALMA_SHARE_OF_CHECKOUT_STATE . '_ON');
         }
 
         // Down here, we know the provided API keys are correct (at least the one for the chosen API mode)
@@ -548,7 +548,7 @@ final class GetContentHookController extends AdminHookController
             'ALMA_PRODUCT_WDGT_NOT_ELGBL_ON' => Settings::showProductWidgetIfNotEligible(),
             'ALMA_CATEGORIES_WDGT_NOT_ELGBL_ON' => Settings::showCategoriesWidgetIfNotEligible(),
             'ALMA_ACTIVATE_LOGGING_ON' => (bool) Settings::canLog(),
-            'ALMA_ACTIVATE_SHARE_OF_CHECKOUT_ON' => Settings::canShareOfCheckout(),
+            'ALMA_SHARE_OF_CHECKOUT_STATE_ON' => Settings::getShareOfChekcoutStatus(),
             'ALMA_SHARE_OF_CHECKOUT_DATE' => Settings::getCurrentTimestamp(),
             'ALMA_STATE_REFUND' => Settings::getRefundState(),
             'ALMA_STATE_REFUND_ENABLED_ON' => Settings::isRefundEnabledByState(),

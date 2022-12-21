@@ -84,7 +84,7 @@ class Settings
         $configKeys = [
             'ALMA_FULLY_CONFIGURED',
             'ALMA_ACTIVATE_LOGGING',
-            ShareOfCheckoutAdminFormBuilder::ALMA_ACTIVATE_SHARE_OF_CHECKOUT,
+            ShareOfCheckoutAdminFormBuilder::ALMA_SHARE_OF_CHECKOUT_STATE,
             ShareOfCheckoutAdminFormBuilder::ALMA_SHARE_OF_CHECKOUT_DATE,
             'ALMA_SOC_CRON_TASK',
             'ALMA_API_MODE',
@@ -141,13 +141,13 @@ class Settings
     }
 
     /**
-     * Get value ALMA_ACTIVATE_SHARE_OF_CHECKOUT
+     * Get value ALMA_SHARE_OF_CHECKOUT_STATE
      *
      * @return string
      */
-    public static function canShareOfCheckout()
+    public static function getShareOfChekcoutStatus()
     {
-        return self::get(ShareOfCheckoutAdminFormBuilder::ALMA_ACTIVATE_SHARE_OF_CHECKOUT, ShareOfCheckoutAdminFormBuilder::ALMA_SHARE_OF_CHECKOUT_CONSENT_NO_ANSWER);
+        return self::get(ShareOfCheckoutAdminFormBuilder::ALMA_SHARE_OF_CHECKOUT_STATE, ShareOfCheckoutAdminFormBuilder::ALMA_SHARE_OF_CHECKOUT_CONSENT_UNSET);
     }
 
     /**
@@ -157,7 +157,7 @@ class Settings
      */
     public static function isShareOfCheckoutNoAnswered()
     {
-        return Configuration::get(ShareOfCheckoutAdminFormBuilder::ALMA_ACTIVATE_SHARE_OF_CHECKOUT) == ShareOfCheckoutAdminFormBuilder::ALMA_SHARE_OF_CHECKOUT_CONSENT_NO_ANSWER;
+        return Configuration::get(ShareOfCheckoutAdminFormBuilder::ALMA_SHARE_OF_CHECKOUT_STATE) == ShareOfCheckoutAdminFormBuilder::ALMA_SHARE_OF_CHECKOUT_CONSENT_UNSET;
     }
 
     /**
@@ -167,7 +167,19 @@ class Settings
      */
     public static function isShareOfCheckoutSetting()
     {
-        return !(Configuration::get(ShareOfCheckoutAdminFormBuilder::ALMA_ACTIVATE_SHARE_OF_CHECKOUT) === false);
+        return !(Configuration::get(ShareOfCheckoutAdminFormBuilder::ALMA_SHARE_OF_CHECKOUT_STATE) === false);
+    }
+
+    /**
+     * Get true if need to hide SoC form
+     *
+     * @return bool
+     */
+    public static function shouldShareOfCheckoutHiddenForm()
+    {
+        return (Settings::isShareOfCheckoutNoAnswered() && Settings::getActiveMode() === ALMA_MODE_LIVE)
+                || (!Settings::isShareOfCheckoutSetting() && Settings::getActiveMode() === ALMA_MODE_LIVE)
+                || Settings::getActiveMode() !== ALMA_MODE_LIVE;
     }
 
     /**
