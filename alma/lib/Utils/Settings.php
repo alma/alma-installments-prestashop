@@ -140,26 +140,51 @@ class Settings
         return (bool) (int) self::get('ALMA_ACTIVATE_LOGGING', false);
     }
 
+    /**
+     * Get value ALMA_ACTIVATE_SHARE_OF_CHECKOUT
+     *
+     * @return string
+     */
     public static function canShareOfCheckout()
     {
         return self::get(ShareOfCheckoutAdminFormBuilder::ALMA_ACTIVATE_SHARE_OF_CHECKOUT, ShareOfCheckoutAdminFormBuilder::ALMA_SHARE_OF_CHECKOUT_CONSENT_NO_ANSWER);
     }
 
+    /**
+     * Get true if the consent SoC isn't aswered
+     *
+     * @return bool
+     */
     public static function isShareOfCheckoutNoAnswered()
     {
         return Configuration::get(ShareOfCheckoutAdminFormBuilder::ALMA_ACTIVATE_SHARE_OF_CHECKOUT) == ShareOfCheckoutAdminFormBuilder::ALMA_SHARE_OF_CHECKOUT_CONSENT_NO_ANSWER;
     }
 
+    /**
+     * Get true if the settings SoC isn't saved
+     *
+     * @return bool
+     */
     public static function isShareOfCheckoutSetting()
     {
         return !(Configuration::get(ShareOfCheckoutAdminFormBuilder::ALMA_ACTIVATE_SHARE_OF_CHECKOUT) === false);
     }
 
+    /**
+     * Get the date of consent SoC in Prestashop database
+     *
+     * @return int|null
+     */
     public static function getTimeConsentShareOfCheckout()
     {
         return self::get(ShareOfCheckoutAdminFormBuilder::ALMA_SHARE_OF_CHECKOUT_DATE, '');
     }
 
+    /**
+     * Get current timestamp
+     *
+     * @return int
+     */
     public static function getCurrentTimestamp()
     {
         $date = new DateTime();
@@ -167,11 +192,21 @@ class Settings
         return $date->getTimestamp();
     }
 
+    /**
+     * Get API mode saved in Prestashop database
+     *
+     * @return string
+     */
     public static function getActiveMode()
     {
         return self::get('ALMA_API_MODE', ALMA_MODE_TEST);
     }
 
+    /**
+     * Get API key of mode selected
+     *
+     * @return string
+     */
     public static function getActiveAPIKey()
     {
         if (self::getActiveMode() == ALMA_MODE_LIVE) {
@@ -181,36 +216,71 @@ class Settings
         }
     }
 
+    /**
+     * Get API key Live
+     *
+     * @return string|null
+     */
     public static function getLiveKey()
     {
         return self::get('ALMA_LIVE_API_KEY', '');
     }
 
+    /**
+     * Get API key Test
+     *
+     * @return string|null
+     */
     public static function getTestKey()
     {
         return self::get('ALMA_TEST_API_KEY', '');
     }
 
+    /**
+     * Get value ALMA_SHOW_DISABLED_BUTTON
+     *
+     * @return bool
+     */
     public static function showDisabledButton()
     {
         return (bool) (int) self::get('ALMA_SHOW_DISABLED_BUTTON', true);
     }
 
+    /**
+     * Get value ALMA_SHOW_ELIGIBILITY_MESSAGE
+     *
+     * @return bool
+     */
     public static function showEligibilityMessage()
     {
         return (bool) (int) self::get('ALMA_SHOW_ELIGIBILITY_MESSAGE', true);
     }
 
+    /**
+     * Get value ALMA_CART_WDGT_NOT_ELGBL
+     *
+     * @return bool
+     */
     public static function showCartWidgetIfNotEligible()
     {
         return (bool) (int) self::get('ALMA_CART_WDGT_NOT_ELGBL', true);
     }
 
+    /**
+     * Get value ALMA_PRODUCT_WDGT_NOT_ELGBL
+     *
+     * @return bool
+     */
     public static function showProductWidgetIfNotEligible()
     {
         return (bool) (int) self::get('ALMA_PRODUCT_WDGT_NOT_ELGBL', true);
     }
 
+    /**
+     * Get value ALMA_CATEGORIES_WDGT_NOT_ELGBL
+     *
+     * @return bool
+     */
     public static function showCategoriesWidgetIfNotEligible()
     {
         return (bool) (int) self::get('ALMA_CATEGORIES_WDGT_NOT_ELGBL', true);

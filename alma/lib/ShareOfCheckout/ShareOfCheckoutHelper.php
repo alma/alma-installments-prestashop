@@ -74,7 +74,10 @@ class ShareOfCheckoutHelper
     public function shareDays()
     {
         $shareOfCheckoutEnabledDate = $this->getEnabledDate();
-        if (Settings::canShareOfCheckout() == ShareOfCheckoutAdminFormBuilder::ALMA_SHARE_OF_CHECKOUT_CONSENT_NO || empty($shareOfCheckoutEnabledDate)) {
+        if (
+            Settings::canShareOfCheckout() == ShareOfCheckoutAdminFormBuilder::ALMA_SHARE_OF_CHECKOUT_CONSENT_NO
+            || empty($shareOfCheckoutEnabledDate)
+        ) {
             Logger::instance()->info('Share Of Checkout is disabled or invalide date');
 
             return false;
@@ -95,6 +98,11 @@ class ShareOfCheckoutHelper
         return true;
     }
 
+    /**
+     * Put Payload to Share of Checkout
+     *
+     * @return void
+     */
     public function putDay()
     {
         $alma = ClientHelper::defaultInstance();
@@ -195,6 +203,11 @@ class ShareOfCheckoutHelper
         return array_values($ordersByCheckout);
     }
 
+    /**
+     * POST add consent Alma endpoint
+     *
+     * @return void|null
+     */
     public function addConsent()
     {
         $alma = ClientHelper::defaultInstance();
@@ -211,6 +224,11 @@ class ShareOfCheckoutHelper
         return null;
     }
 
+    /**
+     * DELETE consent Alma endpoint
+     *
+     * @return void|null
+     */
     public function removeConsent()
     {
         $alma = ClientHelper::defaultInstance();
@@ -237,25 +255,10 @@ class ShareOfCheckoutHelper
     public function handleCheckoutConsent($consentAttribute)
     {
         $userConsent = Tools::getValue($consentAttribute);
-        $timeConsent = Settings::getCurrentTimestamp();
-        
-        if (Settings::getTimeConsentShareOfCheckout()) {
-            $timeConsent = Settings::getTimeConsentShareOfCheckout();
-        }
 
         try {
             if (Settings::isShareOfCheckoutSetting()) {
-                if ($userConsent == ShareOfCheckoutAdminFormBuilder::ALMA_SHARE_OF_CHECKOUT_CONSENT_YES) {
-                    // we need to activate share of checkout
-                    $this->addConsent();
-                    Settings::updateValue(ShareOfCheckoutAdminFormBuilder::ALMA_ACTIVATE_SHARE_OF_CHECKOUT, ShareOfCheckoutAdminFormBuilder::ALMA_SHARE_OF_CHECKOUT_CONSENT_YES);
-                    Settings::updateValue(ShareOfCheckoutAdminFormBuilder::ALMA_SHARE_OF_CHECKOUT_DATE, $timeConsent);
-                } else {
-                    // we need to desactivate share of checkout
-                    $this->removeConsent();
-                    Settings::updateValue(ShareOfCheckoutAdminFormBuilder::ALMA_ACTIVATE_SHARE_OF_CHECKOUT, ShareOfCheckoutAdminFormBuilder::ALMA_SHARE_OF_CHECKOUT_CONSENT_NO);
-                    Settings::updateValue(ShareOfCheckoutAdminFormBuilder::ALMA_SHARE_OF_CHECKOUT_DATE, null);
-                }
+                $this->setConsent($userConsent);
             } else {
                 Settings::updateValue(ShareOfCheckoutAdminFormBuilder::ALMA_ACTIVATE_SHARE_OF_CHECKOUT, Settings::canShareOfCheckout());
                 Settings::updateValue(ShareOfCheckoutAdminFormBuilder::ALMA_SHARE_OF_CHECKOUT_DATE, Settings::getTimeConsentShareOfCheckout());
@@ -280,6 +283,34 @@ class ShareOfCheckoutHelper
             }
         } catch (ShareOfCheckoutException $e) {
             $this->context->smarty->assign('validation_error', 'soc_api_error');
+        }
+    }
+
+    /**
+     * Set the consent
+     *
+     * @param string $userConsent
+     *
+     * @return void
+     */
+    private function setConsent($userConsent)
+    {
+        $timeConsent = Settings::getCurrentTimestamp();
+        
+        if (Settings::getTimeConsentShareOfCheckout()) {
+            $timeConsent = Settings::getTimeConsentShareOfCheckout();
+        }
+
+        if ($userConsent == ShareOfCheckoutAdminFormBuilder::ALMA_SHARE_OF_CHECKOUT_CONSENT_YES) {
+            // we need to activate share of checkout
+            $this->addConsent();
+            Settings::updateValue(ShareOfCheckoutAdminFormBuilder::ALMA_ACTIVATE_SHARE_OF_CHECKOUT, ShareOfCheckoutAdminFormBuilder::ALMA_SHARE_OF_CHECKOUT_CONSENT_YES);
+            Settings::updateValue(ShareOfCheckoutAdminFormBuilder::ALMA_SHARE_OF_CHECKOUT_DATE, $timeConsent);
+        } else {
+            // we need to desactivate share of checkout
+            $this->removeConsent();
+            Settings::updateValue(ShareOfCheckoutAdminFormBuilder::ALMA_ACTIVATE_SHARE_OF_CHECKOUT, ShareOfCheckoutAdminFormBuilder::ALMA_SHARE_OF_CHECKOUT_CONSENT_NO);
+            Settings::updateValue(ShareOfCheckoutAdminFormBuilder::ALMA_SHARE_OF_CHECKOUT_DATE, null);
         }
     }
 
