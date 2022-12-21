@@ -71,12 +71,15 @@ final class StateHookController extends AdminHookController
     {
         $order = new Order($params['id_order']);
         $newStatus = $params['newOrderStatus'];
+        if ($order->module !== 'alma') {
+            return;
+        }
         if ($newStatus->id == Configuration::get('PS_OS_REFUND')) {
             $order_payment = $this->getOrderPaymentOrFail($order);
         } else {
             $order_payment = OrderData::getCurrentOrderPayment($order);
         }
-        if ($order->module !== 'alma' || !$order_payment) {
+        if (!$order_payment) {
             return;
         }
         $alma = ClientHelper::defaultInstance();
