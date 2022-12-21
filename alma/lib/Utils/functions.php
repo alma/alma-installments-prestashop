@@ -34,7 +34,7 @@ use PrestaShop\PrestaShop\Core\Localization\Exception\LocalizationException;
  */
 function almaPriceToCents($price)
 {
-    return (int) (round($price * 100));
+    return (int) round($price * 100);
 }
 
 /**

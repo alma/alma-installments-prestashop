@@ -21,7 +21,6 @@
  * @copyright 2018-2022 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
-
 require '../../config/config.inc.php';
 
 require 'alma.php';

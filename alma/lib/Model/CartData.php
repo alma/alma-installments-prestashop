@@ -131,9 +131,9 @@ class CartData
             );
 
             if (isset($productRow['is_virtual'])) {
-                $requiresShipping = !(bool) ($productRow['is_virtual']);
+                $requiresShipping = !(bool) $productRow['is_virtual'];
             } else {
-                $requiresShipping = !(bool) ($productsDetails[$pid]['is_virtual']);
+                $requiresShipping = !(bool) $productsDetails[$pid]['is_virtual'];
             }
 
             $data = [

@@ -63,14 +63,14 @@ class PnxAdminFormBuilder extends AbstractAlmaAdminFormBuilder
         return [
             $this->inputHtml($tpl, null, "$tabId-content"),
             $this->inputAlmaSwitchForm(
-                "ALMA_${key}_ENABLED",
+                "ALMA_{$key}_ENABLED",
                 $this->getLabel($feePlan, $duration),
                 null,
                 null,
                 "$tabId-content"
             ),
             $this->inputNumberForm(
-                "ALMA_${key}_MIN_AMOUNT",
+                "ALMA_{$key}_MIN_AMOUNT",
                 $this->module->l('Minimum amount (€)', 'PnxAdminFormBuilder'),
                 $this->module->l('Minimum purchase amount to activate this plan', 'PnxAdminFormBuilder'),
                 $minAmount,
@@ -78,7 +78,7 @@ class PnxAdminFormBuilder extends AbstractAlmaAdminFormBuilder
                 "$tabId-content"
             ),
             $this->inputNumberForm(
-                "ALMA_${key}_MAX_AMOUNT",
+                "ALMA_{$key}_MAX_AMOUNT",
                 $this->module->l('Maximum amount (€)', 'PnxAdminFormBuilder'),
                 $this->module->l('Maximum purchase amount to activate this plan', 'PnxAdminFormBuilder'),
                 $minAmount,
@@ -86,7 +86,7 @@ class PnxAdminFormBuilder extends AbstractAlmaAdminFormBuilder
                 "$tabId-content"
             ),
             $this->inputNumberForm(
-                "ALMA_${key}_SORT_ORDER",
+                "ALMA_{$key}_SORT_ORDER",
                 $this->module->l('Position', 'PnxAdminFormBuilder'),
                 $this->module->l('Use relative values to set the order on the checkout page', 'PnxAdminFormBuilder'),
                 null,
@@ -172,15 +172,15 @@ class PnxAdminFormBuilder extends AbstractAlmaAdminFormBuilder
             );
         }
         if ($feePlan->isPayLaterOnly()) {
-            // PrestaShop won't detect the string if the call to `l` is multiline
             return sprintf(
+                // PrestaShop won't detect the string if the call to `l` is multiline
                 $this->module->l('Enable deferred payments +%d days', 'PnxAdminFormBuilder'),
                 $duration
             );
         }
 
         return sprintf(
-        // PrestaShop won't detect the string if the call to `l` is multiline
+            // PrestaShop won't detect the string if the call to `l` is multiline
             $this->module->l('Enable %d-installment payments +%d-deferred days', 'PnxAdminFormBuilder'),
             $feePlan->installments_count,
             $duration

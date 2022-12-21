@@ -36,6 +36,6 @@ class AdminAlmaShareOfCheckoutController extends ModuleAdminController
 
         method_exists(get_parent_class($this), 'ajaxDie')
             ? $this->ajaxDie(json_encode(true))
-            : die(Tools::jsonEncode(true));
+            : exit(Tools::jsonEncode(true));
     }
 }

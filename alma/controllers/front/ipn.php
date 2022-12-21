@@ -21,7 +21,6 @@
  * @copyright 2018-2022 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
-
 if (!defined('_PS_VERSION_')) {
     exit;
 }
@@ -48,7 +47,7 @@ class AlmaIpnModuleFrontController extends ModuleFrontController
         } elseif (method_exists(get_parent_class(get_parent_class($this)), 'ajaxDie')) {
             parent::ajaxDie($value);
         } else {
-            die($value);
+            exit($value);
         }
     }
 
