@@ -75,7 +75,7 @@ class ShareOfCheckoutHelper
     {
         $shareOfCheckoutEnabledDate = $this->getEnabledDate();
         if (
-            Settings::getShareOfChekcoutStatus() == ShareOfCheckoutAdminFormBuilder::ALMA_SHARE_OF_CHECKOUT_CONSENT_NO
+            Settings::getShareOfChekcoutStatus() === ShareOfCheckoutAdminFormBuilder::ALMA_SHARE_OF_CHECKOUT_CONSENT_NO
             || empty($shareOfCheckoutEnabledDate)
         ) {
             Logger::instance()->info('Share Of Checkout is disabled or invalide date');
