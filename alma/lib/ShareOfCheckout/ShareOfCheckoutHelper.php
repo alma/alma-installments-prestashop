@@ -295,23 +295,41 @@ class ShareOfCheckoutHelper
      */
     private function setConsent($userConsent)
     {
+        if ($userConsent == ShareOfCheckoutAdminFormBuilder::ALMA_SHARE_OF_CHECKOUT_CONSENT_YES) {
+            return $this->setAcceptConsent();
+        }
+
+        return $this->setRefuseConsent();
+    }
+
+    /**
+     * Set Accept Consent
+     *
+     * @return void
+     */
+    private function setAcceptConsent()
+    {
         $timeConsent = Settings::getCurrentTimestamp();
-        
+
         if (Settings::getTimeConsentShareOfCheckout()) {
             $timeConsent = Settings::getTimeConsentShareOfCheckout();
         }
 
-        if ($userConsent == ShareOfCheckoutAdminFormBuilder::ALMA_SHARE_OF_CHECKOUT_CONSENT_YES) {
-            // we need to activate share of checkout
-            $this->addConsent();
-            Settings::updateValue(ShareOfCheckoutAdminFormBuilder::ALMA_SHARE_OF_CHECKOUT_STATE, ShareOfCheckoutAdminFormBuilder::ALMA_SHARE_OF_CHECKOUT_CONSENT_YES);
-            Settings::updateValue(ShareOfCheckoutAdminFormBuilder::ALMA_SHARE_OF_CHECKOUT_DATE, $timeConsent);
-        } else {
-            // we need to desactivate share of checkout
-            $this->removeConsent();
-            Settings::updateValue(ShareOfCheckoutAdminFormBuilder::ALMA_SHARE_OF_CHECKOUT_STATE, ShareOfCheckoutAdminFormBuilder::ALMA_SHARE_OF_CHECKOUT_CONSENT_NO);
-            Settings::updateValue(ShareOfCheckoutAdminFormBuilder::ALMA_SHARE_OF_CHECKOUT_DATE, null);
-        }
+        $this->addConsent();
+        Settings::updateValue(ShareOfCheckoutAdminFormBuilder::ALMA_SHARE_OF_CHECKOUT_STATE, ShareOfCheckoutAdminFormBuilder::ALMA_SHARE_OF_CHECKOUT_CONSENT_YES);
+        Settings::updateValue(ShareOfCheckoutAdminFormBuilder::ALMA_SHARE_OF_CHECKOUT_DATE, $timeConsent);
+    }
+
+    /**
+     * Set refuse consent
+     *
+     * @return void
+     */
+    private function setRefuseConsent()
+    {
+        $this->removeConsent();
+        Settings::updateValue(ShareOfCheckoutAdminFormBuilder::ALMA_SHARE_OF_CHECKOUT_STATE, ShareOfCheckoutAdminFormBuilder::ALMA_SHARE_OF_CHECKOUT_CONSENT_NO);
+        Settings::updateValue(ShareOfCheckoutAdminFormBuilder::ALMA_SHARE_OF_CHECKOUT_DATE, null);
     }
 
     /**
