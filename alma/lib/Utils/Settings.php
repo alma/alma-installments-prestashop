@@ -142,12 +142,22 @@ class Settings
 
     public static function canShareOfCheckout()
     {
-        return boolval(self::get(ShareOfCheckoutAdminFormBuilder::ALMA_ACTIVATE_SHARE_OF_CHECKOUT, false));
+        return self::get(ShareOfCheckoutAdminFormBuilder::ALMA_ACTIVATE_SHARE_OF_CHECKOUT, ShareOfCheckoutAdminFormBuilder::ALMA_SHARE_OF_CHECKOUT_CONSENT_NO_ANSWER);
+    }
+
+    public static function isShareOfCheckoutNoAnswered()
+    {
+        return Configuration::get(ShareOfCheckoutAdminFormBuilder::ALMA_ACTIVATE_SHARE_OF_CHECKOUT) == ShareOfCheckoutAdminFormBuilder::ALMA_SHARE_OF_CHECKOUT_CONSENT_NO_ANSWER;
     }
 
     public static function isShareOfCheckoutSetting()
     {
-        return Configuration::get(ShareOfCheckoutAdminFormBuilder::ALMA_ACTIVATE_SHARE_OF_CHECKOUT);
+        return !(Configuration::get(ShareOfCheckoutAdminFormBuilder::ALMA_ACTIVATE_SHARE_OF_CHECKOUT) === false);
+    }
+
+    public static function getTimeConsentShareOfCheckout()
+    {
+        return self::get(ShareOfCheckoutAdminFormBuilder::ALMA_SHARE_OF_CHECKOUT_DATE, '');
     }
 
     public static function getCurrentTimestamp()

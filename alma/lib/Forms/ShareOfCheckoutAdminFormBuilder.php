@@ -37,6 +37,9 @@ class ShareOfCheckoutAdminFormBuilder extends AbstractAlmaAdminFormBuilder
 {
     const ALMA_ACTIVATE_SHARE_OF_CHECKOUT = 'ALMA_ACTIVATE_SHARE_OF_CHECKOUT';
     const ALMA_SHARE_OF_CHECKOUT_DATE = 'ALMA_SHARE_OF_CHECKOUT_DATE';
+    const ALMA_SHARE_OF_CHECKOUT_CONSENT_NO_ANSWER = 'no_answer';
+    const ALMA_SHARE_OF_CHECKOUT_CONSENT_YES = '1';
+    const ALMA_SHARE_OF_CHECKOUT_CONSENT_NO = '0';
 
     protected function configForm()
     {
@@ -44,7 +47,11 @@ class ShareOfCheckoutAdminFormBuilder extends AbstractAlmaAdminFormBuilder
             "{$this->module->local_path}views/templates/hook/_partials/shareOfCheckout.tpl"
         );
 
-        if ((Settings::isShareOfCheckoutSetting() === false && Settings::getActiveMode() === ALMA_MODE_LIVE) || Settings::getActiveMode() !== ALMA_MODE_LIVE) {
+        if (
+            (Settings::isShareOfCheckoutNoAnswered() && Settings::getActiveMode() === ALMA_MODE_LIVE)
+            || (!Settings::isShareOfCheckoutSetting() && Settings::getActiveMode() === ALMA_MODE_LIVE)
+            || Settings::getActiveMode() !== ALMA_MODE_LIVE
+        ) {
             return [
                 $this->inputHiddenForm(
                     self::ALMA_ACTIVATE_SHARE_OF_CHECKOUT . '_ON',

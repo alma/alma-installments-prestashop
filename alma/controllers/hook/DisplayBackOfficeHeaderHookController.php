@@ -40,6 +40,16 @@ use DateTime;
 class DisplayBackOfficeHeaderHookController extends FrontendHookController
 {
     /**
+     * Condition to run the Controller
+     *
+     * @return bool
+     */
+    public function canRun()
+    {
+        return true;
+    }
+
+    /**
      * Run Controller
      *
      * @param array $params
