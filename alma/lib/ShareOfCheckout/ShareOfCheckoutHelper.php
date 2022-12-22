@@ -254,18 +254,18 @@ class ShareOfCheckoutHelper
     {
         $userConsent = Tools::getValue($consentAttribute);
 
-        if (Settings::isShareOfCheckoutSetting()) {
-            try {
-                $this->setConsent($userConsent);
-            } catch (ShareOfCheckoutException $e) {
-                $this->context->smarty->assign('validation_error', 'soc_api_error');
-            }
+        if ($userConsent === ShareOfCheckoutAdminFormBuilder::ALMA_SHARE_OF_CHECKOUT_CONSENT_UNSET || !Settings::isShareOfCheckoutSetting()) {
+            Settings::updateValue(ShareOfCheckoutAdminFormBuilder::ALMA_SHARE_OF_CHECKOUT_STATE, Settings::getShareOfChekcoutStatus());
+            Settings::updateValue(ShareOfCheckoutAdminFormBuilder::ALMA_SHARE_OF_CHECKOUT_DATE, Settings::getTimeConsentShareOfCheckout());
 
             return;
         }
 
-        Settings::updateValue(ShareOfCheckoutAdminFormBuilder::ALMA_SHARE_OF_CHECKOUT_STATE, Settings::getShareOfChekcoutStatus());
-        Settings::updateValue(ShareOfCheckoutAdminFormBuilder::ALMA_SHARE_OF_CHECKOUT_DATE, Settings::getTimeConsentShareOfCheckout());
+        try {
+            $this->setConsent($userConsent);
+        } catch (ShareOfCheckoutException $e) {
+            $this->context->smarty->assign('validation_error', 'soc_api_error');
+        }
     }
 
     /**
