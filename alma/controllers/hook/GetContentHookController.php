@@ -87,6 +87,7 @@ final class GetContentHookController extends AdminHookController
         if ($liveKey !== Settings::getLiveKey()) {
             $shareOfCheckoutHelper->resetShareOfCheckoutConsent();
         } else {
+            // Prestashop FormBuilder adds `_ON` after name in the switch
             $shareOfCheckoutHelper->handleCheckoutConsent(ShareOfCheckoutAdminFormBuilder::ALMA_SHARE_OF_CHECKOUT_STATE . '_ON');
         }
 

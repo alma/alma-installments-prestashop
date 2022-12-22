@@ -206,7 +206,8 @@ class ShareOfCheckoutHelper
     /**
      * POST add consent Alma endpoint
      *
-     * @return void|null
+     * @return void
+     * @throws ShareOfCheckoutException
      */
     public function addConsent()
     {
@@ -220,14 +221,13 @@ class ShareOfCheckoutHelper
                 throw new ShareOfCheckoutException($msg);
             }
         }
-
-        return null;
     }
 
     /**
      * DELETE consent Alma endpoint
      *
-     * @return void|null
+     * @return void
+     * @throws ShareOfCheckoutException
      */
     public function removeConsent()
     {
@@ -241,8 +241,6 @@ class ShareOfCheckoutHelper
                 throw new ShareOfCheckoutException($msg);
             }
         }
-
-        return null;
     }
 
     /**
@@ -254,18 +252,20 @@ class ShareOfCheckoutHelper
      */
     public function handleCheckoutConsent($consentAttribute)
     {
-        try {
-            $userConsent = Tools::getValue($consentAttribute);
+        $userConsent = Tools::getValue($consentAttribute);
 
-            if (Settings::isShareOfCheckoutSetting()) {
+        if (Settings::isShareOfCheckoutSetting()) {
+            try {
                 $this->setConsent($userConsent);
-            } else {
-                Settings::updateValue(ShareOfCheckoutAdminFormBuilder::ALMA_SHARE_OF_CHECKOUT_STATE, Settings::getShareOfChekcoutStatus());
-                Settings::updateValue(ShareOfCheckoutAdminFormBuilder::ALMA_SHARE_OF_CHECKOUT_DATE, Settings::getTimeConsentShareOfCheckout());
+            } catch (ShareOfCheckoutException $e) {
+                $this->context->smarty->assign('validation_error', 'soc_api_error');
             }
-        } catch (ShareOfCheckoutException $e) {
-            $this->context->smarty->assign('validation_error', 'soc_api_error');
+
+            return;
         }
+
+        Settings::updateValue(ShareOfCheckoutAdminFormBuilder::ALMA_SHARE_OF_CHECKOUT_STATE, Settings::getShareOfChekcoutStatus());
+        Settings::updateValue(ShareOfCheckoutAdminFormBuilder::ALMA_SHARE_OF_CHECKOUT_DATE, Settings::getTimeConsentShareOfCheckout());
     }
 
     /**
@@ -292,20 +292,24 @@ class ShareOfCheckoutHelper
      * @param string $userConsent
      *
      * @return void
+     * @throws ShareOfCheckoutException
      */
     private function setConsent($userConsent)
     {
         if ($userConsent == ShareOfCheckoutAdminFormBuilder::ALMA_SHARE_OF_CHECKOUT_CONSENT_YES) {
-            return $this->setAcceptConsent();
+            $this->setAcceptConsent();
+
+            return;
         }
 
-        return $this->setRefuseConsent();
+        $this->setRefuseConsent();
     }
 
     /**
      * Set Accept Consent
      *
      * @return void
+     * @throws ShareOfCheckoutException
      */
     private function setAcceptConsent()
     {
@@ -324,6 +328,7 @@ class ShareOfCheckoutHelper
      * Set refuse consent
      *
      * @return void
+     * @throws ShareOfCheckoutException
      */
     private function setRefuseConsent()
     {

@@ -175,7 +175,7 @@ class Settings
      *
      * @return bool
      */
-    public static function shouldShareOfCheckoutHiddenForm()
+    public static function shouldHideShareOfCheckoutForm()
     {
         return (Settings::isShareOfCheckoutNoAnswered() && Settings::getActiveMode() === ALMA_MODE_LIVE)
                 || (!Settings::isShareOfCheckoutSetting() && Settings::getActiveMode() === ALMA_MODE_LIVE)

@@ -47,9 +47,10 @@ class ShareOfCheckoutAdminFormBuilder extends AbstractAlmaAdminFormBuilder
             "{$this->module->local_path}views/templates/hook/_partials/shareOfCheckout.tpl"
         );
 
-        if (Settings::shouldShareOfCheckoutHiddenForm()) {
+        if (Settings::shouldHideShareOfCheckoutForm()) {
             return [
                 $this->inputHiddenForm(
+                    // Prestashop FormBuilder adds `_ON` after name in the switch
                     self::ALMA_SHARE_OF_CHECKOUT_STATE . '_ON',
                     'soc_hidden'
                 ),
