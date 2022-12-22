@@ -35,8 +35,11 @@ if (!defined('_PS_VERSION_')) {
  */
 class ShareOfCheckoutAdminFormBuilder extends AbstractAlmaAdminFormBuilder
 {
-    const ALMA_ACTIVATE_SHARE_OF_CHECKOUT = 'ALMA_ACTIVATE_SHARE_OF_CHECKOUT';
+    const ALMA_SHARE_OF_CHECKOUT_STATE = 'ALMA_SHARE_OF_CHECKOUT_STATE';
     const ALMA_SHARE_OF_CHECKOUT_DATE = 'ALMA_SHARE_OF_CHECKOUT_DATE';
+    const ALMA_SHARE_OF_CHECKOUT_CONSENT_UNSET = 'unset';
+    const ALMA_SHARE_OF_CHECKOUT_CONSENT_YES = '1';
+    const ALMA_SHARE_OF_CHECKOUT_CONSENT_NO = '0';
 
     protected function configForm()
     {
@@ -44,10 +47,11 @@ class ShareOfCheckoutAdminFormBuilder extends AbstractAlmaAdminFormBuilder
             "{$this->module->local_path}views/templates/hook/_partials/shareOfCheckout.tpl"
         );
 
-        if ((Settings::isShareOfCheckoutSetting() === false && Settings::getActiveMode() === ALMA_MODE_LIVE) || Settings::getActiveMode() !== ALMA_MODE_LIVE) {
+        if (Settings::shouldHideShareOfCheckoutForm()) {
             return [
                 $this->inputHiddenForm(
-                    self::ALMA_ACTIVATE_SHARE_OF_CHECKOUT . '_ON',
+                    // Prestashop FormBuilder adds `_ON` after name in the switch
+                    self::ALMA_SHARE_OF_CHECKOUT_STATE . '_ON',
                     'soc_hidden'
                 ),
             ];
@@ -56,7 +60,7 @@ class ShareOfCheckoutAdminFormBuilder extends AbstractAlmaAdminFormBuilder
         return [
             $this->inputHtml($tpl),
             $this->inputAlmaSwitchForm(
-                self::ALMA_ACTIVATE_SHARE_OF_CHECKOUT,
+                self::ALMA_SHARE_OF_CHECKOUT_STATE,
                 $this->module->l('Activate your data sharing settings', 'ShareOfCheckoutAdminFormBuilder')
             ),
         ];

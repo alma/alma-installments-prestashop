@@ -66,7 +66,7 @@ class DisplayAdminAfterHeaderHookController extends FrontendHookController
      */
     public function run($params)
     {
-        if (Settings::isShareOfCheckoutSetting() === false) {
+        if (Settings::isShareOfCheckoutNoAnswered() || !Settings::isShareOfCheckoutSetting()) {
             $this->context->smarty->assign([
                 'token' => Tools::getAdminTokenLite('AdminAlmaShareOfCheckout'),
             ]);

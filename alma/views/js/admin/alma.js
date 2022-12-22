@@ -41,6 +41,7 @@
                 })
                 .success(function() {
                     $('.alma.share-of-checkout').hide();
+                    location.reload();
                 })
                 .error(function(e) {
                     if (e.status != 200) {

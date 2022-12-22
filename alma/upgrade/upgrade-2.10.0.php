@@ -43,7 +43,7 @@ function upgrade_module_2_10_0($module)
         $date = new DateTime();
 
         try {
-            Settings::updateValue(ShareOfCheckoutAdminFormBuilder::ALMA_ACTIVATE_SHARE_OF_CHECKOUT, (bool) Settings::canShareOfCheckout());
+            Settings::updateValue(ShareOfCheckoutAdminFormBuilder::ALMA_SHARE_OF_CHECKOUT_STATE, Settings::getShareOfChekcoutStatus());
             Settings::updateValue(ShareOfCheckoutAdminFormBuilder::ALMA_SHARE_OF_CHECKOUT_DATE, Settings::getCurrentTimestamp());
             Settings::updateValue('ALMA_SOC_CRON_TASK', $date->getTimestamp());
         } catch (RequestError $e) {
