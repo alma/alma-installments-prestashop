@@ -1,5 +1,5 @@
-Alma Installments for PrestaShop
-===================================
+Alma Installments for PrestaShop !
+==================================
 
 This plugin adds a new payment method to PrestaShop 1.5.6.2+, which allows you to offer installments payments to your customer using Alma.
 
