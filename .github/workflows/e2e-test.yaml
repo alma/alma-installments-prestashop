@@ -1,9 +1,6 @@
 ---
 name: E2E Test
 on:
-  push:
-    branches:
-      - "master"
   pull_request:
     branches:
       - "master"
@@ -52,7 +49,8 @@ jobs:
             "alma_plugin_test_branch" : "main",
             "cms": "prestashop-${{ matrix.version }}",
             "e2e": "true",
-            "e2e_check_id": "${{ steps.e2e_status.outputs.check_id }}"
+            "e2e_check_id": "${{ steps.e2e_status.outputs.check_id }}",
+            "e2e_check_origin" : "${{ github.repository }}"
           }
 
     - uses: LouisBrunner/checks-action@v1.5.0
