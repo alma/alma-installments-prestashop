@@ -83,8 +83,8 @@ class ShareOfCheckoutHelper
             return false;
         }
         try {
-            $lastShareOfCheckout = $this->getLastShareOfCheckout();
-            foreach ($this->getDatesInInterval($lastShareOfCheckout, $shareOfCheckoutEnabledDate) as $date) {
+            $startShareOfCheckout = $this->getStartShareOfCheckout();
+            foreach ($this->getDatesInInterval($startShareOfCheckout, $shareOfCheckoutEnabledDate) as $date) {
                 $this->setStartDate($date);
                 $this->putDay();
                 $this->orderHelper->resetOrderList();
@@ -124,7 +124,7 @@ class ShareOfCheckoutHelper
      *
      * @return int
      */
-    public function getLastShareOfCheckout()
+    public function getStartShareOfCheckout()
     {
         $alma = ClientHelper::defaultInstance();
         if (!$alma) {
@@ -134,7 +134,7 @@ class ShareOfCheckoutHelper
         }
 
         try {
-            $lastDateUpdateDates = $alma->shareOfCheckout->getLastUpdateDates();
+            $startDateUpdateDates = strtotime('+1 day', $alma->shareOfCheckout->getLastUpdateDates());
         } catch (RequestError $e) {
             Logger::instance()->error('Cannot get last date share of checkout: ' . $e->getMessage());
 
@@ -145,7 +145,7 @@ class ShareOfCheckoutHelper
             return strtotime('-1 day');
         }
 
-        return (int) $lastDateUpdateDates['end_time'];
+        return (int) $startDateUpdateDates['end_time'];
     }
 
     /**
