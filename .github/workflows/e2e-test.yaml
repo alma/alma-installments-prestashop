@@ -50,7 +50,7 @@ jobs:
             "cms": "prestashop-${{ matrix.version }}",
             "e2e": "true",
             "e2e_check_id": "${{ steps.e2e_status.outputs.check_id }}",
-            "e2e_check_origin" : "${{ github.event.repository.name }}"
+            "e2e_check_origin" : "${{ env.GITHUB_REPOSITORY }}"
           }
 
     - uses: LouisBrunner/checks-action@v1.5.0
