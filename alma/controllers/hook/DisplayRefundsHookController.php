@@ -67,7 +67,7 @@ final class DisplayRefundsHookController extends AdminHookController
             $payment = $this->getPayment($order);
         } catch (PaymentNotFoundException $e) {
             // if we can't have the payment, log why and return null
-            Logger::instance()->debug($e->getMessage());
+            Logger::instance()->warning('[Alma] DisplayRefounds Error - ' . $e->getMessage());
 
             return null;
         }
