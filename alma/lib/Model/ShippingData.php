@@ -116,16 +116,10 @@ class ShippingData
      */
     private static function shippingInfoData($carrier, $carrierInfo)
     {
-        $title = $carrier->delay;
-
-        if (is_array($title)) {
-            $title = implode(', ', $title);
-        }
-
         return [
             'amount' => almaPriceToCents((float) $carrierInfo['price_with_tax']),
             'carrier' => $carrier->name,
-            'title' => $title,
+            'title' => (is_array($carrier->delay)) ? implode(', ', $carrier->delay) : $carrier->delay,
             'express_delivery' => self::isExpressShipping($carrierInfo),
             'pickup_delivery' => self::isPickupShipping($carrierInfo),
         ];
