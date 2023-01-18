@@ -21,7 +21,6 @@
  * @copyright 2018-2022 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
-
 global $_MODULE;
 $_MODULE = [];
 $_MODULE['<{alma}prestashop>alma_d4b3f55d02c6448c36a233c1f1c27a18'] = '2x 3x 4x, D+15 or D+30 Alma - Payment in instalments and deferred';
@@ -48,6 +47,7 @@ $_MODULE['<{alma}prestashop>displaypaymenthookcontroller_afd8ac1c65e1519d6a890e5
 $_MODULE['<{alma}prestashop>displaypaymenthookcontroller_bc69b42c4bd339154f9025f3299ad146'] = '%1$s today then %2$d x %3$s';
 $_MODULE['<{alma}prestashop>displaypaymenthookcontroller_9088921432b295dfe6f02863b2dc0ff8'] = '0 € today then %1$s on %2$s';
 $_MODULE['<{alma}prestashop>displayrefundshookcontroller_db13e38ee45ff954199d15a509508f57'] = 'Alma refund';
+$_MODULE['<{alma}prestashop>displayrefundshookcontroller_cbf27bbd125aebc6081da0e1b702dcaf'] = 'Refund this order thanks to the Alma module. This will be applied in your Alma dashboard automatically. The maximum refundable amount includes client fees. %1$sSee documentation%2$s';
 $_MODULE['<{alma}prestashop>displayrefundshookcontroller_3f20b5130f65e1287ba5b3e341e542f9'] = 'Refund type:';
 $_MODULE['<{alma}prestashop>displayrefundshookcontroller_7eefad58341b7a853ac151fdfeb9a5ce'] = 'Only this order (%s)';
 $_MODULE['<{alma}prestashop>displayrefundshookcontroller_c84ddaf35ec7947a5a2e291f3ff991ce'] = 'Refund the entire order';
@@ -148,6 +148,8 @@ $_MODULE['<{alma}prestashop>refundadminformbuilder_49908a1beb86a417b6f77ed65cbf8
 $_MODULE['<{alma}prestashop>refundadminformbuilder_76d8f6f6704ea9de044aa669d133c500'] = 'Refund state order';
 $_MODULE['<{alma}prestashop>refundadminformbuilder_a2175c8178a92176b9810d330fbc0e9e'] = 'Your order state to sync refund with Alma';
 $_MODULE['<{alma}prestashop>refundadminformbuilder_9d21f767a50ad583330024bce9afa2e1'] = 'Refund with state change';
+$_MODULE['<{alma}prestashop>shareofcheckoutadminformbuilder_6e8f64880a74e62ac2ba57bed59fbbaf'] = 'Activate your data sharing settings';
+$_MODULE['<{alma}prestashop>shareofcheckoutadminformbuilder_c1a238cd82a8997cf32426ef561772b2'] = 'Increase your performance & get insights';
 $_MODULE['<{alma}prestashop>customfieldshelper_300de0751d957421cc332ba21c43a598'] = 'Pay in %d installments';
 $_MODULE['<{alma}prestashop>customfieldshelper_726c61fad46c135efb4198820e5484ba'] = 'Buy now Pay in %d days';
 $_MODULE['<{alma}prestashop>customfieldshelper_82d2b98eb8f9388d13766a9367096499'] = 'Fast and secure payment by credit card.';
@@ -206,6 +208,7 @@ $_MODULE['<{alma}prestashop>getcontent_1f6c47dd9eb3469c7afd7bf99fbb8dbb'] = 'Min
 $_MODULE['<{alma}prestashop>getcontent_a4978be2e8b36124fd4505f7e7f2aa3f'] = 'Maximum amount for deferred %1$d days plan must be within %2$d and %3$d.';
 $_MODULE['<{alma}prestashop>getcontent_b47a7c1526a093a0afe5f28bdeb5face'] = 'Maximum amount for deferred %1$d months plan must be within %2$d and %3$d.';
 $_MODULE['<{alma}prestashop>getcontent_8c10d3b0970a247fc554062dc9055fd1'] = 'Maximum amount for %1$d-installment plan must be within %2$d and %3$d.';
+$_MODULE['<{alma}prestashop>getcontent_84b96a3ca61f4425b3fd56534a89a653'] = 'Impossible to save the Share of Checkout settings, please try again later';
 $_MODULE['<{alma}prestashop>getcontent_2d4a12c50532eb37b1a827fe310070c3'] = 'Thanks for installing Alma!';
 $_MODULE['<{alma}prestashop>getcontent_bbea702c04c766345509aa28d60812ad'] = 'You need to create an Alma account before proceeding.';
 $_MODULE['<{alma}prestashop>getcontent_bc2323832922e12693c983c2e2d63cc0'] = 'Read our getting started guide';
@@ -213,6 +216,13 @@ $_MODULE['<{alma}prestashop>getcontent_8e51eafe439b0adfecc2dc209c2efb15'] = 'You
 $_MODULE['<{alma}prestashop>getcontent_1e6898bbd6a44041932ac84cbda13bd7'] = 'You can find your Live API key in %1$syour Alma dashboard%2$s';
 $_MODULE['<{alma}prestashop>getcontent_689c39b29a6d91e6dff728a7762cbc9e'] = 'To use the Test mode, you need your Test API key from %1$syour sandbox dasboard%2$s';
 $_MODULE['<{alma}prestashop>getcontent_7f40d377cc4942c4f0d6e75a736f8445'] = 'Settings successfully updated';
+$_MODULE['<{alma}prestashop>notificationshareofcheckout_a6b0ef107f0d278df612764187bbdece'] = ' Increase your performance & get insights !';
+$_MODULE['<{alma}prestashop>notificationshareofcheckout_5b64cb0849dd12ea528c04f2fe66ae4d'] = 'By accepting this option, you enable Alma to analyse the usage of your payment methods, [1]get more information to perform[/1] and share this data with you. You can [2]unsubscribe and erase your data[/2] at any moment.';
+$_MODULE['<{alma}prestashop>notificationshareofcheckout_50396a07824c89e694c1c76c3cb23a01'] = 'Know more about collected data';
+$_MODULE['<{alma}prestashop>notificationshareofcheckout_19d6ea64f6810fa5329fcaa438cd9f4b'] = 'total quantity of orders, amounts and currencies';
+$_MODULE['<{alma}prestashop>notificationshareofcheckout_28515fa383208fc73e01ab440f053fb0'] = 'payment provider for each order';
+$_MODULE['<{alma}prestashop>notificationshareofcheckout_d98ac12774fca5c3cbaffe276840c55f'] = 'Reject';
+$_MODULE['<{alma}prestashop>notificationshareofcheckout_c4408d335012a56ff58937d78050efad'] = 'Accept';
 $_MODULE['<{alma}prestashop>order_refund_ps15_cbb3ab577b705e328991986e35218f50'] = 'Amount refunded';
 $_MODULE['<{alma}prestashop>order_refund_ps15_96b0141273eabab320119c467cdcaf17'] = 'Total';
 $_MODULE['<{alma}prestashop>pnx_fees_4e2f4fa3e1ee06a189998bdf3748658e'] = 'You can offer deferred payments for amounts between %d€ and %d€.';
@@ -241,3 +251,7 @@ $_MODULE['<{alma}prestashop>feeplan_96b0141273eabab320119c467cdcaf17'] = 'Total'
 $_MODULE['<{alma}prestashop>feeplan_9c8a7900448628ee2978be9a3945d148'] = 'Your credit';
 $_MODULE['<{alma}prestashop>feeplan_bc69b42c4bd339154f9025f3299ad146'] = '%1$s today then %2$d x %3$s';
 $_MODULE['<{alma}prestashop>fees_3acc62b245d8bc10f04d81f69d85b685'] = '(No additional fees)';
+$_MODULE['<{alma}prestashop>shareofcheckout_98e056fc52b8e67882401819edb249f0'] = 'By accepting this option, you enable Alma to analyse the usage of your payment methods, get more information to perform and share this data with you. You can [1]erase your data[/1] at any moment.';
+$_MODULE['<{alma}prestashop>shareofcheckout_50396a07824c89e694c1c76c3cb23a01'] = 'Know more about collected data';
+$_MODULE['<{alma}prestashop>shareofcheckout_19d6ea64f6810fa5329fcaa438cd9f4b'] = 'total quantity of orders, amounts and currencies';
+$_MODULE['<{alma}prestashop>shareofcheckout_28515fa383208fc73e01ab440f053fb0'] = 'payment provider for each order';

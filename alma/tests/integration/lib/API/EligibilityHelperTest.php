@@ -1,5 +1,4 @@
 <?php
-
 /**
  * 2018-2022 Alma SAS
  *
@@ -23,7 +22,7 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
-namespace Alma\PrestaShop\Tests\Unit\Lib\Api;
+namespace Alma\PrestaShop\Tests\integration\lib\API;
 
 use Alma\PrestaShop\API\EligibilityHelper;
 use Cart;
@@ -47,7 +46,7 @@ class EligibilityHelperTest extends TestCase
                 [
                     'cart_amount' => 50.99,
                 ],
-                //data expected
+                // data expected
                 [
                     'eligible' => true,
                 ],
@@ -57,7 +56,7 @@ class EligibilityHelperTest extends TestCase
                 [
                     'cart_amount' => 26.00,
                 ],
-                //data expected
+                // data expected
                 [
                     'eligible' => false,
                 ],
@@ -67,7 +66,7 @@ class EligibilityHelperTest extends TestCase
                 [
                     'cart_amount' => 4000.00,
                 ],
-                //data expected
+                // data expected
                 [
                     'eligible' => false,
                 ],

@@ -21,10 +21,6 @@
  * @copyright 2018-2022 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
-
-use Alma\PrestaShop\Exceptions\RenderPaymentException;
-use Alma\PrestaShop\Utils\LinkHelper;
-
 if (!defined('_PS_VERSION_')) {
     exit;
 }
@@ -35,7 +31,7 @@ require_once _PS_MODULE_DIR_ . 'alma/autoloader.php';
 
 class Alma extends PaymentModule
 {
-    const VERSION = '2.7.2';
+    const VERSION = '2.9.0';
 
     public $_path;
     public $local_path;
@@ -50,7 +46,7 @@ class Alma extends PaymentModule
     {
         $this->name = 'alma';
         $this->tab = 'payments_gateways';
-        $this->version = '2.7.2';
+        $this->version = '2.9.0';
         $this->author = 'Alma';
         $this->need_instance = false;
         $this->bootstrap = true;
@@ -62,9 +58,11 @@ class Alma extends PaymentModule
 
         $this->limited_currencies = ['EUR'];
 
-        $version = explode('.', _PS_VERSION_);
-        $version[3] = (int) $version[3] + 1;
-        $version = implode('.', $version);
+        $version = _PS_VERSION_;
+        // Need to anticipate Fix bug #PSCFV-10990 Prestashop : https://github.com/PrestaShop/PrestaShop/commit/c69688cc1107e053aa2297fdcb40c70c08fa135f
+        if (version_compare(_PS_VERSION_, '1.5.6.1', '<')) {
+            $version = substr_replace($version, substr($version, -1) + 1, -1);
+        }
 
         $this->ps_versions_compliancy = ['min' => '1.5.3.1', 'max' => $version];
 
@@ -91,12 +89,12 @@ class Alma extends PaymentModule
     private function checkCoreInstall($coreInstall)
     {
         if (!$coreInstall) {
-            $Logger = Alma\PrestaShop\Utils\Logger::loggerClass();
-            $Logger::addLog("Alma: Core module install failed (returned {$coreInstall})", 3);
+            $logger = \Alma\PrestaShop\Utils\Logger::loggerClass();
+            $logger::addLog("Alma: Core module install failed (returned {$coreInstall})", 3);
 
             if (count($this->_errors) > 0) {
                 $errors = implode(', ', $this->_errors);
-                $Logger::addLog("Alma: module install errors: {$errors})", 3);
+                $logger::addLog("Alma: module install errors: {$errors})", 3);
             }
 
             return false;
@@ -142,6 +140,7 @@ class Alma extends PaymentModule
             'displayBackOfficeHeader',
             'displayShoppingCartFooter',
             'actionOrderStatusPostUpdate',
+            'displayAdminAfterHeader',
         ];
 
         if (version_compare(_PS_VERSION_, '1.7.7.0', '>=')) {
@@ -241,7 +240,7 @@ class Alma extends PaymentModule
 
     public function uninstall()
     {
-        $result = parent::uninstall() && Alma\PrestaShop\Utils\Settings::deleteAllValues();
+        $result = parent::uninstall() && \Alma\PrestaShop\Utils\Settings::deleteAllValues();
 
         $paymentModuleConf = [
             'CONF_ALMA_FIXED',
@@ -264,7 +263,8 @@ class Alma extends PaymentModule
         return $this->installTab('alma', 'Alma')
             && $this->installTab('AdminAlmaConfig', $this->l('Configuration'), 'alma', 1, 'tune')
             && $this->installTab('AdminAlmaCategories', $this->l('Excluded categories'), 'alma', 2, 'not_interested')
-            && $this->installTab('AdminAlmaRefunds', false, 'alma');
+            && $this->installTab('AdminAlmaRefunds', false, 'alma')
+            && $this->installTab('AdminAlmaShareOfCheckout', false, 'alma');
     }
 
     public function uninstallTabs()
@@ -272,6 +272,7 @@ class Alma extends PaymentModule
         return $this->uninstallTab('AdminAlmaCategories')
             && $this->uninstallTab('AdminAlmaRefunds')
             && $this->uninstallTab('AdminAlmaConfig')
+            && $this->uninstallTab('AdminAlmaShareOfCheckout')
             && $this->uninstallTab('alma');
     }
 
@@ -330,13 +331,13 @@ class Alma extends PaymentModule
     {
         $hookName = Tools::ucfirst(preg_replace('/[^a-zA-Z0-9]/', '', $hookName));
 
-        require_once dirname(__FILE__) . "/controllers/hook/${hookName}HookController.php";
-        $ControllerName = "Alma\PrestaShop\Controllers\Hook\\${hookName}HookController";
+        require_once dirname(__FILE__) . "/controllers/hook/{$hookName}HookController.php";
+        $ControllerName = "Alma\PrestaShop\Controllers\Hook\\{$hookName}HookController";
 
         // check if override exist for hook controllers
-        if (file_exists(dirname(__FILE__) . "/../../override/modules/alma/controllers/hook/${hookName}HookController.php")) {
-            require_once dirname(__FILE__) . "/../../override/modules/alma/controllers/hook/${hookName}HookController.php";
-            $ControllerName = "Alma\PrestaShop\Controllers\Hook\\${hookName}HookControllerOverride";
+        if (file_exists(dirname(__FILE__) . "/../../override/modules/alma/controllers/hook/{$hookName}HookController.php")) {
+            require_once dirname(__FILE__) . "/../../override/modules/alma/controllers/hook/{$hookName}HookController.php";
+            $ControllerName = "Alma\PrestaShop\Controllers\Hook\\{$hookName}HookControllerOverride";
         }
 
         $controller = new $ControllerName($this);
@@ -351,7 +352,7 @@ class Alma extends PaymentModule
     public function viewAccess()
     {
         // Simply redirect to the default module's configuration page
-        $location = LinkHelper::getAdminLinkAlmaDashboard();
+        $location = \Alma\PrestaShop\Utils\LinkHelper::getAdminLinkAlmaDashboard();
 
         Tools::redirectAdmin($location);
     }
@@ -368,10 +369,7 @@ class Alma extends PaymentModule
 
     public function hookDisplayBackOfficeHeader($params)
     {
-        $this->context->controller->setMedia();
-        $this->context->controller->addCSS($this->_path . 'views/css/admin/_configure/helpers/form/form.css', 'all');
-        $this->context->controller->addCSS($this->_path . 'views/css/admin/almaPage.css', 'all');
-        $this->context->controller->addJS($this->_path . 'views/js/admin/alma.js');
+        return $this->runHookController('displayBackOfficeHeader', $params);
     }
 
     public function hookPaymentOptions($params)
@@ -396,7 +394,7 @@ class Alma extends PaymentModule
     {
         try {
             return $this->runHookController('displayPaymentReturn', $params);
-        } catch (RenderPaymentException $e) {
+        } catch (\Alma\PrestaShop\Exceptions\RenderPaymentException $e) {
             $module = Module::getInstanceByName('alma');
             $this->context->smarty->assign([
                 'payment' => null,
@@ -411,7 +409,7 @@ class Alma extends PaymentModule
     {
         try {
             return $this->runHookController('displayPaymentReturn', $params);
-        } catch (RenderPaymentException $e) {
+        } catch (\Alma\PrestaShop\Exceptions\RenderPaymentException $e) {
             return '';
         }
     }
@@ -434,5 +432,13 @@ class Alma extends PaymentModule
     public function hookActionOrderStatusPostUpdate($params)
     {
         return $this->runHookController('state', $params);
+    }
+
+    /**
+     * Hook action DisplayAdminAfterHeader
+     */
+    public function hookDisplayAdminAfterHeader($params)
+    {
+        return $this->runHookController('displayAdminAfterHeader', $params);
     }
 }

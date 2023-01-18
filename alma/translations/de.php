@@ -21,7 +21,6 @@
  * @copyright 2018-2022 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
-
 global $_MODULE;
 $_MODULE = [];
 $_MODULE['<{alma}prestashop>alma_d4b3f55d02c6448c36a233c1f1c27a18'] = '2x 3x 4x, D+15 oder D+30 Alma – Ratenzahlung und Zahlungsaufschub';
@@ -43,11 +42,14 @@ $_MODULE['<{alma}prestashop>adminalmarefunds_69c00601627a9011bf5c4816abf00b5a'] 
 $_MODULE['<{alma}prestashop>adminalmarefunds_9bbf53faf470010110269d041cab1e9f'] = 'Die Erstattung wurde bearbeitet';
 $_MODULE['<{alma}prestashop>adminalmarefunds_4ba820211f99849725468bd56fc50216'] = 'Fehler: Betrag ist höher als der maximal erstattungsfähige Betrag';
 $_MODULE['<{alma}prestashop>adminalmarefunds_01dedb61eca449d9075cc314cc4151d7'] = 'Fehler: Unbekannter Erstattungstyp (%s)';
+$_MODULE['<{alma}prestashop>payment_2f9f52496706027b880bac2e3c9af1d8'] = 'Bei der Zahlungsanforderung ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut oder kontaktieren Sie uns, falls das Problem weiter besteht.';
 $_MODULE['<{alma}prestashop>payment_efa820507b1951ee5722003639b1a0b0'] = 'Die Ratenzahlung mit Alma ist in dieser Währung nicht möglich';
+$_MODULE['<{alma}prestashop>validation_9d55a51cbc2d6cf7f9251b0cec59390e'] = 'Bei der Bestätigung Ihrer Zahlung ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut oder kontaktieren Sie uns, falls das Problem weiter besteht. Warenkorb-ID: %d';
 $_MODULE['<{alma}prestashop>displaypaymenthookcontroller_afd8ac1c65e1519d6a890e5f98558a52'] = '%1$s dann %2$d x %3$s';
 $_MODULE['<{alma}prestashop>displaypaymenthookcontroller_bc69b42c4bd339154f9025f3299ad146'] = '%1$s heute dann %2$d x %3$s';
 $_MODULE['<{alma}prestashop>displaypaymenthookcontroller_9088921432b295dfe6f02863b2dc0ff8'] = '0 € heute dann %1$s am %2$s';
 $_MODULE['<{alma}prestashop>displayrefundshookcontroller_db13e38ee45ff954199d15a509508f57'] = 'Alma-Erstattung';
+$_MODULE['<{alma}prestashop>displayrefundshookcontroller_cbf27bbd125aebc6081da0e1b702dcaf'] = 'Erstattet diesen Auftrag dank des Alma-Moduls. Dies wird automatisch in Ihrem Alma-Dashboard durchgeführt. Der maximal erstattungsfähige Betrag umfasst die Kundengebühren. %1$sSiehe Dokumentation%2$s';
 $_MODULE['<{alma}prestashop>displayrefundshookcontroller_3f20b5130f65e1287ba5b3e341e542f9'] = 'Art der Erstattung:';
 $_MODULE['<{alma}prestashop>displayrefundshookcontroller_7eefad58341b7a853ac151fdfeb9a5ce'] = 'Nur dieser Auftrag (%s)';
 $_MODULE['<{alma}prestashop>displayrefundshookcontroller_c84ddaf35ec7947a5a2e291f3ff991ce'] = 'Erstattung der gesamten Bestellung';
@@ -154,6 +156,22 @@ $_MODULE['<{alma}prestashop>customfieldshelper_82d2b98eb8f9388d13766a9367096499'
 $_MODULE['<{alma}prestashop>customfieldshelper_7a854e750fe5f3e7120020c7c20987d4'] = 'Ihr Warenkorb ist nicht für Zahlungen mit Alma geeignet.';
 $_MODULE['<{alma}prestashop>customfieldshelper_6ed45ebd72fcca0fc0c271128e9d7b7b'] = 'Beim Versand';
 $_MODULE['<{alma}prestashop>orderdatatrait_7960c85fd5916169fc5038a2192094f8'] = 'Fehler: Alma-Transaktion konnte nicht gefunden werden';
+$_MODULE['<{alma}prestashop>form_1908624a0bca678cd26b99bfd405324e'] = 'Größe der Datei';
+$_MODULE['<{alma}prestashop>form_ba34ea40525a4379add785228e37fe86'] = 'kb';
+$_MODULE['<{alma}prestashop>form_f2a6c498fb90ee345d997f888fce3b18'] = 'Löschen';
+$_MODULE['<{alma}prestashop>form_86f5978d9b80124f509bdb71786e929e'] = 'Januar';
+$_MODULE['<{alma}prestashop>form_659e59f062c75f81259d22786d6c44aa'] = 'Februar';
+$_MODULE['<{alma}prestashop>form_fa3e5edac607a88d8fd7ecb9d6d67424'] = 'März';
+$_MODULE['<{alma}prestashop>form_3fcf026bbfffb63fb24b8de9d0446949'] = 'April';
+$_MODULE['<{alma}prestashop>form_195fbb57ffe7449796d23466085ce6d8'] = 'Mai';
+$_MODULE['<{alma}prestashop>form_688937ccaf2a2b0c45a1c9bbba09698d'] = 'Juni';
+$_MODULE['<{alma}prestashop>form_1b539f6f34e8503c97f6d3421346b63c'] = 'Juli';
+$_MODULE['<{alma}prestashop>form_41ba70891fb6f39327d8ccb9b1dafb84'] = 'August';
+$_MODULE['<{alma}prestashop>form_cc5d90569e1c8313c2b1c2aab1401174'] = 'September';
+$_MODULE['<{alma}prestashop>form_eca60ae8611369fe28a02e2ab8c5d12e'] = 'Oktober';
+$_MODULE['<{alma}prestashop>form_7e823b37564da492ca1629b4732289a8'] = 'November';
+$_MODULE['<{alma}prestashop>form_82331503174acbae012b2004f6431fa5'] = 'Dezember';
+$_MODULE['<{alma}prestashop>form_19f823c6453c2b1ffd09cb715214813d'] = 'Erforderliches Feld';
 $_MODULE['<{alma}prestashop>displaypaymentreturn_aca755511864a8c0038740357db865ab'] = 'Ihre Zahlung mit Alma war erfolgreich';
 $_MODULE['<{alma}prestashop>displaypaymentreturn_9b9b747500bf38015ecb1a12119d50cc'] = 'Nummer Ihrer Bestellung:';
 $_MODULE['<{alma}prestashop>displaypaymentreturn_709fa7b44d5d59d2802e7878e35453a9'] = 'Details zu Ihrer Zahlung:';

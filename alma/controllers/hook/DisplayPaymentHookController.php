@@ -191,17 +191,17 @@ class DisplayPaymentHookController extends FrontendHookController
     private function getAlmaLogo($isDeferred, $value)
     {
         if ($isDeferred) {
-            $logoName = "${value}j_logo.svg";
+            $logoName = "{$value}j_logo.svg";
         } else {
-            $logoName = "p${value}x_logo.svg";
+            $logoName = "p{$value}x_logo.svg";
         }
 
         if (is_callable('Media::getMediaPath')) {
             $logo = Media::getMediaPath(
-                _PS_MODULE_DIR_ . $this->module->name . "/views/img/logos/${logoName}"
+                _PS_MODULE_DIR_ . $this->module->name . "/views/img/logos/{$logoName}"
             );
         } else {
-            $logo = $this->module->getPathUri() . "/views/img/logos/${logoName}";
+            $logo = $this->module->getPathUri() . "/views/img/logos/{$logoName}";
         }
 
         return $logo;

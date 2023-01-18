@@ -48,6 +48,6 @@ trait AjaxTrait
         $json = ['error' => true, 'message' => $msg];
         method_exists($this, 'ajaxDie')
             ? $this->ajaxDie(json_encode($json))
-            : die(Tools::jsonEncode($json));
+            : exit(Tools::jsonEncode($json));
     }
 }

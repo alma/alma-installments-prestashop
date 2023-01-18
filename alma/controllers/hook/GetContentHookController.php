@@ -39,7 +39,10 @@ use Alma\PrestaShop\Forms\PaymentOnTriggeringAdminFormBuilder;
 use Alma\PrestaShop\Forms\PnxAdminFormBuilder;
 use Alma\PrestaShop\Forms\ProductEligibilityAdminFormBuilder;
 use Alma\PrestaShop\Forms\RefundAdminFormBuilder;
+use Alma\PrestaShop\Forms\ShareOfCheckoutAdminFormBuilder;
 use Alma\PrestaShop\Hooks\AdminHookController;
+use Alma\PrestaShop\ShareOfCheckout\OrderHelper;
+use Alma\PrestaShop\ShareOfCheckout\ShareOfCheckoutHelper;
 use Alma\PrestaShop\Utils\Logger;
 use Alma\PrestaShop\Utils\Settings;
 use Alma\PrestaShop\Utils\SettingsCustomFields;
@@ -76,6 +79,16 @@ final class GetContentHookController extends AdminHookController
 
         if ($credentialsError && array_key_exists('error', $credentialsError)) {
             return $credentialsError['message'];
+        }
+
+        $orderHelper = new OrderHelper();
+        $shareOfCheckoutHelper = new ShareOfCheckoutHelper($orderHelper);
+
+        if ($liveKey !== Settings::getLiveKey()) {
+            $shareOfCheckoutHelper->resetShareOfCheckoutConsent();
+        } else {
+            // Prestashop FormBuilder adds `_ON` after name in the switch
+            $shareOfCheckoutHelper->handleCheckoutConsent(ShareOfCheckoutAdminFormBuilder::ALMA_SHARE_OF_CHECKOUT_STATE . '_ON');
         }
 
         // Down here, we know the provided API keys are correct (at least the one for the chosen API mode)
@@ -250,9 +263,9 @@ final class GetContentHookController extends AdminHookController
                     if (1 != $n && Settings::isDeferred($feePlan)) {
                         continue;
                     }
-                    $min = almaPriceToCents((int) Tools::getValue("ALMA_${key}_MIN_AMOUNT"));
-                    $max = almaPriceToCents((int) Tools::getValue("ALMA_${key}_MAX_AMOUNT"));
-                    $enablePlan = (bool) Tools::getValue("ALMA_${key}_ENABLED_ON");
+                    $min = almaPriceToCents((int) Tools::getValue("ALMA_{$key}_MIN_AMOUNT"));
+                    $max = almaPriceToCents((int) Tools::getValue("ALMA_{$key}_MAX_AMOUNT"));
+                    $enablePlan = (bool) Tools::getValue("ALMA_{$key}_ENABLED_ON");
 
                     if ($enablePlan && !($min >= $feePlan->min_purchase_amount &&
                         $min <= min($max, $feePlan->max_purchase_amount))) {
@@ -296,9 +309,9 @@ final class GetContentHookController extends AdminHookController
                         continue;
                     }
 
-                    $min = (int) Tools::getValue("ALMA_${key}_MIN_AMOUNT");
-                    $max = (int) Tools::getValue("ALMA_${key}_MAX_AMOUNT");
-                    $order = (int) Tools::getValue("ALMA_${key}_SORT_ORDER");
+                    $min = (int) Tools::getValue("ALMA_{$key}_MIN_AMOUNT");
+                    $max = (int) Tools::getValue("ALMA_{$key}_MAX_AMOUNT");
+                    $order = (int) Tools::getValue("ALMA_{$key}_SORT_ORDER");
 
                     // In case merchant inverted min & max values, correct it
                     if ($min > $max) {
@@ -309,7 +322,7 @@ final class GetContentHookController extends AdminHookController
 
                     // in case of difference between sandbox and production feeplans
                     if (0 == $min && 0 == $max && 0 == $order) {
-                        $enablePlan = (bool) Tools::getValue("ALMA_${key}_ENABLED_ON");
+                        $enablePlan = (bool) Tools::getValue("ALMA_{$key}_ENABLED_ON");
                         $almaPlans[$key]['enabled'] = '0';
                         $almaPlans[$key]['min'] = $feePlan->min_purchase_amount;
                         $almaPlans[$key]['max'] = $feePlan->max_purchase_amount;
@@ -317,12 +330,12 @@ final class GetContentHookController extends AdminHookController
                         $almaPlans[$key]['order'] = (int) $position;
                         ++$position;
                     } else {
-                        $enablePlan = (bool) Tools::getValue("ALMA_${key}_ENABLED_ON");
+                        $enablePlan = (bool) Tools::getValue("ALMA_{$key}_ENABLED_ON");
                         $almaPlans[$key]['enabled'] = $enablePlan ? '1' : '0';
                         $almaPlans[$key]['min'] = almaPriceToCents($min);
                         $almaPlans[$key]['max'] = almaPriceToCents($max);
                         $almaPlans[$key]['deferred_trigger_limit_days'] = $feePlan->deferred_trigger_limit_days;
-                        $almaPlans[$key]['order'] = (int) Tools::getValue("ALMA_${key}_SORT_ORDER");
+                        $almaPlans[$key]['order'] = (int) Tools::getValue("ALMA_{$key}_SORT_ORDER");
                     }
                 }
 
@@ -446,6 +459,8 @@ final class GetContentHookController extends AdminHookController
             $extraMessage = $this->module->display($this->module->file, 'getContent.tpl');
         }
 
+        $this->assignSmartyAlertClasses();
+
         $feePlansOrdered = [];
         $installmentsPlans = [];
         if ($merchant) {
@@ -477,6 +492,7 @@ final class GetContentHookController extends AdminHookController
         $productBuilder = new ProductEligibilityAdminFormBuilder($this->module, $this->context, $iconPath);
         $excludedBuilder = new ExcludedCategoryAdminFormBuilder($this->module, $this->context, $iconPath);
         $refundBuilder = new RefundAdminFormBuilder($this->module, $this->context, $iconPath);
+        $shareOfCheckoutBuilder = new ShareOfCheckoutAdminFormBuilder($this->module, $this->context, $iconPath);
         $triggerBuilder = new PaymentOnTriggeringAdminFormBuilder($this->module, $this->context, $iconPath, ['feePlans' => $feePlansOrdered]);
         $paymentBuilder = new PaymentButtonAdminFormBuilder($this->module, $this->context, $iconPath);
         $debugBuilder = new DebugAdminFormBuilder($this->module, $this->context, $iconPath);
@@ -492,6 +508,7 @@ final class GetContentHookController extends AdminHookController
             $fieldsForms[] = $paymentBuilder->build();
             $fieldsForms[] = $excludedBuilder->build();
             $fieldsForms[] = $refundBuilder->build();
+            $fieldsForms[] = $shareOfCheckoutBuilder->build();
             $fieldsForms[] = $triggerBuilder->build();
         }
         $fieldsForms[] = $apiBuilder->build();
@@ -532,6 +549,8 @@ final class GetContentHookController extends AdminHookController
             'ALMA_PRODUCT_WDGT_NOT_ELGBL_ON' => Settings::showProductWidgetIfNotEligible(),
             'ALMA_CATEGORIES_WDGT_NOT_ELGBL_ON' => Settings::showCategoriesWidgetIfNotEligible(),
             'ALMA_ACTIVATE_LOGGING_ON' => (bool) Settings::canLog(),
+            'ALMA_SHARE_OF_CHECKOUT_STATE_ON' => Settings::getShareOfChekcoutStatus(),
+            'ALMA_SHARE_OF_CHECKOUT_DATE' => Settings::getCurrentTimestamp(),
             'ALMA_STATE_REFUND' => Settings::getRefundState(),
             'ALMA_STATE_REFUND_ENABLED_ON' => Settings::isRefundEnabledByState(),
             'ALMA_STATE_TRIGGER' => Settings::getPaymentTriggerState(),
@@ -560,21 +579,21 @@ final class GetContentHookController extends AdminHookController
                     continue;
                 }
 
-                $helper->fields_value["ALMA_${key}_ENABLED_ON"] = isset($installmentsPlans->$key->enabled)
+                $helper->fields_value["ALMA_{$key}_ENABLED_ON"] = isset($installmentsPlans->$key->enabled)
                     ? $installmentsPlans->$key->enabled
                     : 0;
                 $minAmount = isset($installmentsPlans->$key->min)
                     ? $installmentsPlans->$key->min
                     : $feePlan->min_purchase_amount;
-                $helper->fields_value["ALMA_${key}_MIN_AMOUNT"] = (int) almaPriceFromCents($minAmount);
+                $helper->fields_value["ALMA_{$key}_MIN_AMOUNT"] = (int) almaPriceFromCents($minAmount);
                 $maxAmount = isset($installmentsPlans->$key->max)
                     ? $installmentsPlans->$key->max
                     : $feePlan->max_purchase_amount;
-                $helper->fields_value["ALMA_${key}_MAX_AMOUNT"] = (int) almaPriceFromCents($maxAmount);
+                $helper->fields_value["ALMA_{$key}_MAX_AMOUNT"] = (int) almaPriceFromCents($maxAmount);
                 $order = isset($installmentsPlans->$key->order)
                     ? $installmentsPlans->$key->order
                     : $i;
-                $helper->fields_value["ALMA_${key}_SORT_ORDER"] = $order;
+                $helper->fields_value["ALMA_{$key}_SORT_ORDER"] = $order;
                 ++$i;
             }
         }

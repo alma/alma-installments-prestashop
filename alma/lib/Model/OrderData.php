@@ -1,5 +1,4 @@
 <?php
-
 /**
  * 2018-2022 Alma SAS
  *
@@ -25,8 +24,11 @@
 
 namespace Alma\PrestaShop\Model;
 
+use Db;
 use Order;
 use OrderPayment;
+use PrestaShopDatabaseException;
+use Shop;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -45,5 +47,43 @@ class OrderData
         }
 
         return false;
+    }
+
+    /**
+     * Get customer orders.
+     *
+     * @param int $idCustomer Customer id
+     * @param int $limit
+     *
+     * @return array Customer orders
+     *
+     * @throws PrestaShopDatabaseException
+     */
+    public static function getCustomerOrders($idCustomer, $limit)
+    {
+        $res = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+            'SELECT
+                o.id_cart,
+                o.date_add,
+                o.payment,
+                o.current_state,
+                o.module,
+                op.transaction_id
+            FROM
+                `' . _DB_PREFIX_ . 'orders` o
+                LEFT JOIN `' . _DB_PREFIX_ . 'order_payment` op ON op.`order_reference` = o.`reference`
+            WHERE
+                o.`id_customer` = ' . (int) $idCustomer .
+                Shop::addSqlRestriction(Shop::SHARE_ORDER) . '
+            ORDER BY
+                o.`date_add` DESC
+            LIMIT ' . (int) $limit
+        );
+
+        if (!$res) {
+            return [];
+        }
+
+        return $res;
     }
 }

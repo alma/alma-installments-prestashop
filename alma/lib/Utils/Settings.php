@@ -39,9 +39,11 @@ if (!defined('ALMA_MODE_LIVE')) {
 use Alma\PrestaShop\Forms\ExcludedCategoryAdminFormBuilder;
 use Alma\PrestaShop\Forms\PaymentButtonAdminFormBuilder;
 use Alma\PrestaShop\Forms\PaymentOnTriggeringAdminFormBuilder;
+use Alma\PrestaShop\Forms\ShareOfCheckoutAdminFormBuilder;
 use Alma\PrestaShop\Model\CategoryAdapter;
 use Category;
 use Configuration;
+use DateTime;
 use Language;
 use Product;
 use Shop;
@@ -82,6 +84,9 @@ class Settings
         $configKeys = [
             'ALMA_FULLY_CONFIGURED',
             'ALMA_ACTIVATE_LOGGING',
+            ShareOfCheckoutAdminFormBuilder::ALMA_SHARE_OF_CHECKOUT_STATE,
+            ShareOfCheckoutAdminFormBuilder::ALMA_SHARE_OF_CHECKOUT_DATE,
+            'ALMA_SOC_CRON_TASK',
             'ALMA_API_MODE',
             'ALMA_MERCHANT_ID',
             'ALMA_LIVE_API_KEY',
@@ -135,11 +140,85 @@ class Settings
         return (bool) (int) self::get('ALMA_ACTIVATE_LOGGING', false);
     }
 
+    /**
+     * Get value ALMA_SHARE_OF_CHECKOUT_STATE
+     *
+     * @return string
+     */
+    public static function getShareOfChekcoutStatus()
+    {
+        return self::get(ShareOfCheckoutAdminFormBuilder::ALMA_SHARE_OF_CHECKOUT_STATE, ShareOfCheckoutAdminFormBuilder::ALMA_SHARE_OF_CHECKOUT_CONSENT_UNSET);
+    }
+
+    /**
+     * Get true if the consent SoC isn't aswered
+     *
+     * @return bool
+     */
+    public static function isShareOfCheckoutNoAnswered()
+    {
+        return Configuration::get(ShareOfCheckoutAdminFormBuilder::ALMA_SHARE_OF_CHECKOUT_STATE) == ShareOfCheckoutAdminFormBuilder::ALMA_SHARE_OF_CHECKOUT_CONSENT_UNSET;
+    }
+
+    /**
+     * Get true if the settings SoC isn't saved
+     *
+     * @return bool
+     */
+    public static function isShareOfCheckoutSetting()
+    {
+        return !(Configuration::get(ShareOfCheckoutAdminFormBuilder::ALMA_SHARE_OF_CHECKOUT_STATE) === false);
+    }
+
+    /**
+     * Get true if need to hide SoC form
+     *
+     * @return bool
+     */
+    public static function shouldHideShareOfCheckoutForm()
+    {
+        return (Settings::isShareOfCheckoutNoAnswered() && Settings::getActiveMode() === ALMA_MODE_LIVE)
+                || (!Settings::isShareOfCheckoutSetting() && Settings::getActiveMode() === ALMA_MODE_LIVE)
+                || Settings::getActiveMode() !== ALMA_MODE_LIVE;
+    }
+
+    /**
+     * Get the date of consent SoC in Prestashop database
+     *
+     * @return int|null
+     */
+    public static function getTimeConsentShareOfCheckout()
+    {
+        return self::get(ShareOfCheckoutAdminFormBuilder::ALMA_SHARE_OF_CHECKOUT_DATE, '');
+    }
+
+    /**
+     * Get current timestamp
+     *
+     * @return int
+     */
+    public static function getCurrentTimestamp()
+    {
+        $date = new DateTime();
+
+        return $date->getTimestamp();
+    }
+
+    /**
+     * Get API mode saved in Prestashop database
+     *
+     * @return string
+     */
     public static function getActiveMode()
     {
         return self::get('ALMA_API_MODE', ALMA_MODE_TEST);
     }
 
+    /**
+     * Get API key of mode selected
+     *
+     * @return string
+     */
     public static function getActiveAPIKey()
     {
         if (self::getActiveMode() == ALMA_MODE_LIVE) {
@@ -149,36 +228,71 @@ class Settings
         }
     }
 
+    /**
+     * Get API key Live
+     *
+     * @return string|null
+     */
     public static function getLiveKey()
     {
         return self::get('ALMA_LIVE_API_KEY', '');
     }
 
+    /**
+     * Get API key Test
+     *
+     * @return string|null
+     */
     public static function getTestKey()
     {
         return self::get('ALMA_TEST_API_KEY', '');
     }
 
+    /**
+     * Get value ALMA_SHOW_DISABLED_BUTTON
+     *
+     * @return bool
+     */
     public static function showDisabledButton()
     {
         return (bool) (int) self::get('ALMA_SHOW_DISABLED_BUTTON', true);
     }
 
+    /**
+     * Get value ALMA_SHOW_ELIGIBILITY_MESSAGE
+     *
+     * @return bool
+     */
     public static function showEligibilityMessage()
     {
         return (bool) (int) self::get('ALMA_SHOW_ELIGIBILITY_MESSAGE', true);
     }
 
+    /**
+     * Get value ALMA_CART_WDGT_NOT_ELGBL
+     *
+     * @return bool
+     */
     public static function showCartWidgetIfNotEligible()
     {
         return (bool) (int) self::get('ALMA_CART_WDGT_NOT_ELGBL', true);
     }
 
+    /**
+     * Get value ALMA_PRODUCT_WDGT_NOT_ELGBL
+     *
+     * @return bool
+     */
     public static function showProductWidgetIfNotEligible()
     {
         return (bool) (int) self::get('ALMA_PRODUCT_WDGT_NOT_ELGBL', true);
     }
 
+    /**
+     * Get value ALMA_CATEGORIES_WDGT_NOT_ELGBL
+     *
+     * @return bool
+     */
     public static function showCategoriesWidgetIfNotEligible()
     {
         return (bool) (int) self::get('ALMA_CATEGORIES_WDGT_NOT_ELGBL', true);

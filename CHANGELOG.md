@@ -1,5 +1,18 @@
 # Changelog
 
+## v2.10.0
+
+- Share of Checkout
+
+## v2.9.0
+
+- Enriched data for risk algorithm improvements
+
+## v2.8.0
+
+- New Alma branding 2022
+- Add logo D+45
+
 ## v2.7.2
 
 - Fix widget style in classic theme Prestashop 1.7
@@ -18,6 +31,10 @@
 - Fix page payment return if you uncheck validation order
 
 ## v2.6.3
+
+- Fixed an error at the state change at the command
+
+## v2.6.2
 
 - Fixed widget in version 2.8.0
 

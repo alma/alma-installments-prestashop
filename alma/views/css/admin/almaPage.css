@@ -1,3 +1,5 @@
+@import url('../fonts.css');
+
 .icon-alma:before{    
     /* content: "\f05e"; */
     content: "";
@@ -137,7 +139,7 @@ fieldset .form-alma.disabled::before{
 }
 
 .alma_switch .switch input:checked + .slider {
-	background: #00425d;
+	background: #FA5022;
 }
 
 .alma_switch .switch input:checked + .slider:after {
@@ -150,4 +152,77 @@ fieldset .form-alma.disabled::before{
 }
 .bootstrap .prestashop-switch .slide-button::after {
     top: 49%;
+}
+
+.bootstrap .alma.alert {
+    font-family: 'Public-Sans', sans-serif;
+    font-weight: 300;
+    padding-left: 180px;
+    background-repeat: no-repeat;
+    background-position: 35px 35px;
+    background-image: url('/modules/alma/views/img/logos/logo_alma.svg');
+    box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.08);
+    border-radius: 4px;
+}
+
+.bootstrap .alma.alert h2, .bootstrap .alma.alert .btn {
+    font-family: 'Eina04-Bold', sans-serif;
+    font-weight: 400;
+}
+
+.bootstrap .alma.alert b{
+    font-weight: 600;
+}
+
+.bootstrap .alma.alert .h2, .bootstrap .alma.alert h2 {
+    font-size: 24px;
+}
+
+.bootstrap .alma.alert.alert-info {
+    background-color: #E9F4FF;
+    border: 1px solid #E1E4E6;
+    color: #00425D;
+    font-size: 16px;
+}
+
+.bootstrap .alma.alert.alert-info:before {
+    content: '';
+}
+
+.bootstrap .alma.alert ul {
+    list-style-type: disc;
+    padding-left: 40px;
+}
+
+.bootstrap .alma.alert.alert-info a:not(.btn) {
+    color: #00425D;
+    text-decoration: underline;
+}
+
+.bootstrap .alma.alert .btn {
+    line-height: 1;
+    padding: 12px 16px;
+    border: 2px solid transparent;
+    border-radius: 4px;
+    text-transform: uppercase;
+}
+.bootstrap .alma.alert .btn.btn-default {
+    background: #FFFFFF;
+    border-color: #00425D;
+    color: #00425D;
+}
+.bootstrap .alma.alert .btn.btn-primary {
+    background: #00425D;
+    border-color: #00425D;
+    color: #FFFFFF;
+}
+
+.link-collapse .icon-chevron-down{
+    display: none;
+}
+.link-collapse.collapsed .icon-chevron-down{
+    display: inline-block;
+}
+.link-collapse.collapsed .icon-chevron-up{
+    display: none;
 }

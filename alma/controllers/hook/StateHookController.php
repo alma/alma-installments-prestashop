@@ -71,12 +71,15 @@ final class StateHookController extends AdminHookController
     {
         $order = new Order($params['id_order']);
         $newStatus = $params['newOrderStatus'];
+        if ($order->module !== 'alma') {
+            return;
+        }
         if ($newStatus->id == Configuration::get('PS_OS_REFUND')) {
             $order_payment = $this->getOrderPaymentOrFail($order);
         } else {
             $order_payment = OrderData::getCurrentOrderPayment($order);
         }
-        if ($order->module !== 'alma' || !$order_payment) {
+        if (!$order_payment) {
             return;
         }
         $alma = ClientHelper::defaultInstance();
@@ -89,20 +92,14 @@ final class StateHookController extends AdminHookController
 
         switch ($newStatus->id) {
             case $id_state_refund:
-                $msg = "[Alma] Option refund disabled: hook will not be triggered on {$id_state_refund} refund state";
                 if (Settings::isRefundEnabledByState()) {
-                    $msg = "[Alma] Option refund enabled: hook will be triggered on {$id_state_refund} refund state";
                     $this->refund($alma, $id_payment, $order);
                 }
-                Logger::instance()->info($msg);
                 break;
             case $id_state_payment_trigger:
-                $msg = "[Alma] Option PaymentTrigger disabled: hook will not be triggered on {$id_state_payment_trigger} refund state";
                 if (Settings::isPaymentTriggerEnabledByState()) {
-                    $msg = "[Alma] Option PaymentTrigger enabled: hook will be triggered on {$id_state_payment_trigger} refund state";
                     $this->triggerPayment($alma, $id_payment, $order);
                 }
-                Logger::instance()->info($msg);
                 break;
             default:
                 return;

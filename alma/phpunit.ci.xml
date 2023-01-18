@@ -11,6 +11,11 @@
          stopOnFailure               = "true">
 
     <testsuites>
+        <testsuite name="Alma Installment Prestashop Unit Test Suite">
+            <directory>tests/unit</directory>
+        </testsuite>
+    </testsuites>
+    <testsuites>
         <testsuite name="Alma Installment Prestashop Integration Test Suite">
             <directory>tests/integration</directory>
         </testsuite>

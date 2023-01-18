@@ -1,5 +1,4 @@
 <?php
-
 /**
  * 2018-2022 Alma SAS
  *
@@ -38,12 +37,15 @@ use Context;
 use Country;
 use Customer;
 use Exception;
+use Order;
 use State;
 use Tools;
 use Validate;
 
 class PaymentData
 {
+    const PAYMENT_METHOD = 'alma';
+
     /**
      * @param Cart $cart
      * @param Context $context
@@ -60,18 +62,14 @@ class PaymentData
             $cart->id_address_delivery == 0 ||
             $cart->id_address_invoice == 0
         )) {
-            Logger::instance()->warning(
-                "[Alma] Missing Customer ID or Delivery/Billing address ID for Cart {$cart->id}"
-            );
+            Logger::instance()->warning("[Alma] Missing Customer ID or Delivery/Billing address ID for Cart {$cart->id}");
         }
 
         $customer = null;
         if ($cart->id_customer) {
             $customer = new Customer($cart->id_customer);
             if (!Validate::isLoadedObject($customer)) {
-                Logger::instance()->error(
-                    "[Alma] Error loading Customer {$cart->id_customer} from Cart {$cart->id}"
-                );
+                Logger::instance()->error("[Alma] Error loading Customer {$cart->id_customer} from Cart {$cart->id}");
 
                 return null;
             }
@@ -79,17 +77,14 @@ class PaymentData
 
         $shippingAddress = new Address((int) $cart->id_address_delivery);
         $billingAddress = new Address((int) $cart->id_address_invoice);
-
         $countryShippingAddress = Country::getIsoById((int) $shippingAddress->id_country);
         $countryBillingAddress = Country::getIsoById((int) $billingAddress->id_country);
         $countryShippingAddress = ($countryShippingAddress) ? $countryShippingAddress : '';
         $countryBillingAddress = ($countryBillingAddress) ? $countryBillingAddress : '';
-
         $locale = $context->language->iso_code;
         if (property_exists($context->language, 'locale')) {
             $locale = $context->language->locale;
         }
-
         $purchaseAmount = (float) Tools::ps_round((float) $cart->getOrderTotal(true, Cart::BOTH), 2);
 
         /* Eligibility Endpoint V2 */
@@ -176,6 +171,7 @@ class PaymentData
         }
 
         $dataPayment = [
+            'website_customer_details' => self::buildWebsiteCustomerDetails($context, $customer, $cart, $purchaseAmount),
             'payment' => [
                 'installments_count' => $feePlans['installmentsCount'],
                 'deferred_days' => $feePlans['deferredDays'],
@@ -207,6 +203,9 @@ class PaymentData
                     'purchase_amount_new_conversion_func' => almaPriceToCents_str($purchaseAmount),
                     'cart_totals' => $purchaseAmount,
                     'cart_totals_high_precision' => number_format($purchaseAmount, 16),
+                    'poc' => [
+                        'data-for-risk',
+                    ],
                 ],
                 'locale' => $locale,
             ],
@@ -219,5 +218,36 @@ class PaymentData
         }
 
         return $dataPayment;
+    }
+
+    private static function isNewCustomer($idCustomer)
+    {
+        if (Order::getCustomerNbOrders($idCustomer) > 0) {
+            return false;
+        }
+
+        return true;
+    }
+
+    private static function buildWebsiteCustomerDetails($context, $customer, $cart, $purchaseAmount)
+    {
+        $carrierHelper = new CarrierHelper($context);
+        $cartHelper = new CartHelper($context);
+
+        return [
+            'new_customer' => self::isNewCustomer($customer->id),
+            'is_guest' => (bool) $customer->is_guest,
+            'created' => strtotime($customer->date_add),
+            'current_order' => [
+                'purchase_amount' => almaPriceToCents($purchaseAmount),
+                'created' => strtotime($cart->date_add),
+                'payment_method' => self::PAYMENT_METHOD,
+                'shipping_method' => $carrierHelper->getParentCarrierNameById($cart->id_carrier),
+                'items' => CartData::getCartItems($cart),
+            ],
+            'previous_orders' => [
+                $cartHelper->previousCartOrdered($customer->id),
+            ],
+        ];
     }
 }

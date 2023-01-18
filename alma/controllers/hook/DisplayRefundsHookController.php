@@ -67,7 +67,7 @@ final class DisplayRefundsHookController extends AdminHookController
             $payment = $this->getPayment($order);
         } catch (PaymentNotFoundException $e) {
             // if we can't have the payment, log why and return null
-            Logger::instance()->debug($e->getMessage());
+            Logger::instance()->warning('[Alma] DisplayRefounds Error - ' . $e->getMessage());
 
             return null;
         }
@@ -78,7 +78,7 @@ final class DisplayRefundsHookController extends AdminHookController
         $orderTotalPaid = $order->getOrdersTotalPaid();
         $paymentTotalAmount = $order->total_paid_tax_incl;
 
-        //multi shipping
+        // multi shipping
         $ordersId = null;
         if ($orderTotalPaid > $order->total_paid_tax_incl) {
             $orders = Order::getByReference($order->reference);
@@ -113,11 +113,7 @@ final class DisplayRefundsHookController extends AdminHookController
         $wording = [
             'title' => $this->module->l('Alma refund', 'DisplayRefundsHookController'),
             'description' => sprintf(
-                $this->module->l(
-                    // phpcs:ignore Generic.Files.LineLength
-                    'Refund this order thanks to the Alma module. This will be applied in your Alma dashboard automatically. The maximum refundable amount includes client fees. %1$sSee documentation%2$s',
-                    'DisplayRefundsHookController'
-                ),
+                $this->module->l('Refund this order thanks to the Alma module. This will be applied in your Alma dashboard automatically. The maximum refundable amount includes client fees. %1$sSee documentation%2$s', 'DisplayRefundsHookController'),
                 '<a href="https://docs.getalma.eu/docs/prestashop-refund" target="_blank">',
                 '</a>'
             ),

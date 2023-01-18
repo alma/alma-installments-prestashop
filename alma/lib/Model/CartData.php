@@ -94,7 +94,7 @@ class CartData
      * @throws PrestaShopDatabaseException
      * @throws PrestaShopException
      */
-    private static function getCartItems($cart)
+    public static function getCartItems($cart)
     {
         $items = [];
 
@@ -131,9 +131,9 @@ class CartData
             );
 
             if (isset($productRow['is_virtual'])) {
-                $requiresShipping = !(bool) ($productRow['is_virtual']);
+                $requiresShipping = !(bool) $productRow['is_virtual'];
             } else {
-                $requiresShipping = !(bool) ($productsDetails[$pid]['is_virtual']);
+                $requiresShipping = !(bool) $productsDetails[$pid]['is_virtual'];
             }
 
             $data = [

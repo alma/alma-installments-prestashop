@@ -36,7 +36,7 @@ class FrontHeaderHookController extends FrontendHookController
     public function run($params)
     {
         $controllerName = $this->currentControllerName();
-        $handler = [$this, "handle${controllerName}Page"];
+        $handler = [$this, "handle{$controllerName}Page"];
 
         $content = $this->injectAlmaAssets($params);
 
@@ -72,8 +72,8 @@ class FrontHeaderHookController extends FrontendHookController
 
     private function injectAlmaAssets($params)
     {
-        $widgetsCssUrl = 'https://cdn.jsdelivr.net/npm/@alma/widgets@2.12.2/dist/widgets.min.css';
-        $widgetsJsUrl = 'https://cdn.jsdelivr.net/npm/@alma/widgets@2.12.2/dist/widgets.umd.js';
+        $widgetsCssUrl = 'https://cdn.jsdelivr.net/npm/@alma/widgets@3.x.x/dist/widgets.min.css';
+        $widgetsJsUrl = 'https://cdn.jsdelivr.net/npm/@alma/widgets@3.x.x/dist/widgets.umd.js';
         $productScriptPath = 'views/js/alma-product.js';
         $productCssPath = 'views/css/alma-product.css';
         $cartScriptPath = 'views/js/alma-cart.js';
@@ -83,10 +83,11 @@ class FrontHeaderHookController extends FrontendHookController
 
         if (version_compare(_PS_VERSION_, '1.7', '<')) {
             // Cart widget
-            if (Settings::showEligibilityMessage() &&
-                    ($controller->php_self == 'order' && $controller->step == 0 || $controller->php_self == 'order-opc')
-                    && (isset($controller->nbProducts) && $controller->nbProducts != 0)
-                ) {
+            if (
+                Settings::showEligibilityMessage()
+                && ($controller->php_self == 'order' && $controller->step == 0 || $controller->php_self == 'order-opc')
+                && (isset($controller->nbProducts) && $controller->nbProducts != 0)
+            ) {
                 if (version_compare(_PS_VERSION_, '1.5.6.2', '<')) {
                     $content .= '<link rel="stylesheet" href="' . $widgetsCssUrl . '">';
                 } else {

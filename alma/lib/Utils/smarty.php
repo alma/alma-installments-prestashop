@@ -21,7 +21,6 @@
  * @copyright 2018-2022 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
-
 $smarty = Context::getContext()->smarty;
 
 function smarty_prefilter_almaDisplayHtml($source, $template)

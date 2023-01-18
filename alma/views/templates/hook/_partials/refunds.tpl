@@ -21,7 +21,6 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  *}
 
-
 <script type="text/javascript">
     $(function () {
         var $form = $('form#alma-refund');

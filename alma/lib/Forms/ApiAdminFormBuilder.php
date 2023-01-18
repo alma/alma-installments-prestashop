@@ -45,7 +45,6 @@ class ApiAdminFormBuilder extends AbstractAlmaAdminFormBuilder
             $this->inputSelectForm(
                 self::ALMA_API_MODE,
                 $this->module->l('API Mode', 'ApiAdminFormBuilder'),
-                // phpcs:ignore Generic.Files.LineLength
                 $this->module->l('Use Test mode until you are ready to take real orders with Alma. In Test mode, only admins can see Alma on cart/checkout pages.', 'ApiAdminFormBuilder'),
                 [
                     ['api_mode' => ALMA_MODE_LIVE, 'name' => 'Live'],

@@ -21,7 +21,6 @@
  * @copyright 2018-2022 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
-
 if (!defined('_PS_VERSION_')) {
     exit;
 }
@@ -65,7 +64,6 @@ class AlmaValidationModuleFrontController extends ModuleFrontController
         $validator = new PaymentValidation($this->context, $this->module);
 
         try {
-            Logger::instance()->debug('payment_validate');
             $redirect_to = $validator->validatePayment($paymentId);
         } catch (PaymentValidationError $e) {
             Logger::instance()->error('payment_validation_error - Message : ' . $e->getMessage());
