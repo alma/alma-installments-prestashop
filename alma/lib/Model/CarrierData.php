@@ -25,6 +25,7 @@
 namespace Alma\PrestaShop\Model;
 
 use Carrier;
+use Configuration;
 use Db;
 use PrestaShopDatabaseException;
 
@@ -59,7 +60,7 @@ class CarrierData
 
             foreach ($this->carriers as $key => $carrier) {
                 if ($carrier['name'] == '0') {
-                    $this->carriers[$key]['name'] = Carrier::getCarrierNameFromShopName();
+                    $this->carriers[$key]['name'] = Configuration::get('PS_SHOP_NAME');
                 }
             }
         }
