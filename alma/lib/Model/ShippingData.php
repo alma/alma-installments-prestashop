@@ -119,7 +119,7 @@ class ShippingData
         return [
             'amount' => almaPriceToCents((float) $carrierInfo['price_with_tax']),
             'carrier' => $carrier->name,
-            'title' => $carrier->delay,
+            'title' => (is_array($carrier->delay)) ? implode(', ', $carrier->delay) : $carrier->delay,
             'express_delivery' => self::isExpressShipping($carrierInfo),
             'pickup_delivery' => self::isPickupShipping($carrierInfo),
         ];
