@@ -58,9 +58,11 @@ class Alma extends PaymentModule
 
         $this->limited_currencies = ['EUR'];
 
-        $version = explode('.', _PS_VERSION_);
-        $version[3] = (int) $version[3] + 1;
-        $version = implode('.', $version);
+        $version = _PS_VERSION_;
+        // Need to anticipate Fix bug #PSCFV-10990 Prestashop : https://github.com/PrestaShop/PrestaShop/commit/c69688cc1107e053aa2297fdcb40c70c08fa135f
+        if (version_compare(_PS_VERSION_, '1.5.6.1', '<')) {
+            $version = substr_replace($version, substr($version, -1) + 1, -1);
+        }
 
         $this->ps_versions_compliancy = ['min' => '1.5.3.1', 'max' => $version];
 
