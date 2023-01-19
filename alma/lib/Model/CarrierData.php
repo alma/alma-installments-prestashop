@@ -24,7 +24,6 @@
 
 namespace Alma\PrestaShop\Model;
 
-use Carrier;
 use Configuration;
 use Db;
 use PrestaShopDatabaseException;
