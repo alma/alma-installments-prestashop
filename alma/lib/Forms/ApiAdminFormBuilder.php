@@ -52,7 +52,7 @@ class ApiAdminFormBuilder extends AbstractAlmaAdminFormBuilder
                 ],
                 'api_mode'
             ),
-            $this->inputTextForm(
+            $this->inputSecretForm(
                 self::ALMA_LIVE_API_KEY,
                 $this->module->l('Live API key', 'ApiAdminFormBuilder'),
                 $this->module->l('Not required for Test mode', 'ApiAdminFormBuilder') .
@@ -63,7 +63,7 @@ class ApiAdminFormBuilder extends AbstractAlmaAdminFormBuilder
                         '</a>'
                     )
             ),
-            $this->inputTextForm(
+            $this->inputSecretForm(
                 self::ALMA_TEST_API_KEY,
                 $this->module->l('Test API key', 'ApiAdminFormBuilder'),
                 $this->module->l('Not required for Live mode', 'ApiAdminFormBuilder') .

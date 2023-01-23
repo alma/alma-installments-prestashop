@@ -43,6 +43,7 @@ use Alma\PrestaShop\Forms\ShareOfCheckoutAdminFormBuilder;
 use Alma\PrestaShop\Hooks\AdminHookController;
 use Alma\PrestaShop\ShareOfCheckout\OrderHelper;
 use Alma\PrestaShop\ShareOfCheckout\ShareOfCheckoutHelper;
+use Alma\PrestaShop\Utils\ApiKeyHelper;
 use Alma\PrestaShop\Utils\Logger;
 use Alma\PrestaShop\Utils\Settings;
 use Alma\PrestaShop\Utils\SettingsCustomFields;
@@ -66,8 +67,8 @@ final class GetContentHookController extends AdminHookController
         Settings::updateValue('ALMA_API_MODE', $apiMode);
 
         // Get & check provided API keys
-        $liveKey = trim(Tools::getValue('ALMA_LIVE_API_KEY'));
-        $testKey = trim(Tools::getValue('ALMA_TEST_API_KEY'));
+        $liveKey = trim(Tools::getValue(ApiAdminFormBuilder::ALMA_LIVE_API_KEY));
+        $testKey = trim(Tools::getValue(ApiAdminFormBuilder::ALMA_TEST_API_KEY));
 
         if ((empty($liveKey) && $apiMode == ALMA_MODE_LIVE) || (empty($testKey) && $apiMode == ALMA_MODE_TEST)) {
             $this->context->smarty->assign('validation_error', "missing_key_for_{$apiMode}_mode");
@@ -75,8 +76,10 @@ final class GetContentHookController extends AdminHookController
             return $this->module->display($this->module->file, 'getContent.tpl');
         }
 
-        $credentialsError = $this->credentialsError($apiMode, $liveKey, $testKey);
-
+        $credentialsError = null;
+        if (($liveKey != ApiKeyHelper::OBCUR_VALUE && $apiMode == ALMA_MODE_LIVE) || ($testKey != ApiKeyHelper::OBCUR_VALUE && $apiMode == ALMA_MODE_TEST)) {
+            $credentialsError = $this->credentialsError($apiMode, $liveKey, $testKey);
+        }
         if ($credentialsError && array_key_exists('error', $credentialsError)) {
             return $credentialsError['message'];
         }
@@ -92,8 +95,9 @@ final class GetContentHookController extends AdminHookController
         }
 
         // Down here, we know the provided API keys are correct (at least the one for the chosen API mode)
-        Settings::updateValue('ALMA_LIVE_API_KEY', $liveKey);
-        Settings::updateValue('ALMA_TEST_API_KEY', $testKey);
+        $apiKey = new ApiKeyHelper();
+        $apiKey->setLiveApiKey($liveKey);
+        $apiKey->setTestApiKey($testKey);
 
         // Try to get merchant from configured API key/mode
         $merchant = $this->getMerchant();
@@ -361,7 +365,7 @@ final class GetContentHookController extends AdminHookController
 
         foreach ($modes as $mode) {
             $key = ($mode == ALMA_MODE_LIVE ? $liveKey : $testKey);
-            if (!$key) {
+            if (!$key || $key == ApiKeyHelper::OBCUR_VALUE) {
                 continue;
             }
 
