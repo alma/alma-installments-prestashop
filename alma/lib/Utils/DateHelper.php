@@ -55,6 +55,8 @@ class DateHelper
             }
         }
 
+        Logger::instance()->info('[ALMA] First date : ' . $firstWithoutTime);
+        Logger::instance()->info('[ALMA] Interval date : ' . json_encode($datesInInterval));
         return $datesInInterval;
     }
 
