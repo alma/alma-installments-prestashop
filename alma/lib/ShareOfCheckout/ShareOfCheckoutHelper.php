@@ -138,9 +138,7 @@ class ShareOfCheckoutHelper
 
         try {
             $startDateUpdateDates = $alma->shareOfCheckout->getLastUpdateDates();
-            Logger::instance()->info('Get last update date Soc json : ' . $alma->shareOfCheckout->getLastUpdateDates());
-            Logger::instance()->info('Get last update date Soc json_decode : ' . json_decode($alma->shareOfCheckout->getLastUpdateDates()));
-            Logger::instance()->info('Get last update date Soc : ' . json_encode($startDateUpdateDates));
+            Logger::instance()->info('[ALMA] Get last update date Soc : ' . json_encode($startDateUpdateDates));
         } catch (RequestError $e) {
             Logger::instance()->error('Cannot get last date share of checkout: ' . $e->getMessage());
 
