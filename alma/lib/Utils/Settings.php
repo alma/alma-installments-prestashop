@@ -241,8 +241,13 @@ class Settings
      */
     public static function getLiveKey()
     {
+        $apiKey = self::get(ApiAdminFormBuilder::ALMA_LIVE_API_KEY, null);
+        if (str_contains($apiKey, ApiKeyHelper::BEGIN_LIVE_API_KEY)) {
+            return $apiKey;
+        }
+
         $encryption = new EncryptionHelper();
-        return $encryption->decrypt(self::get(ApiAdminFormBuilder::ALMA_LIVE_API_KEY, ''));
+        return $encryption->decrypt($apiKey);
     }
 
     /**
@@ -252,8 +257,13 @@ class Settings
      */
     public static function getTestKey()
     {
+        $apiKey = self::get(ApiAdminFormBuilder::ALMA_TEST_API_KEY, null);
+        if (str_contains($apiKey, ApiKeyHelper::BEGIN_TEST_API_KEY)) {
+            return $apiKey;
+        }
+
         $encryption = new EncryptionHelper();
-        return $encryption->decrypt(self::get(ApiAdminFormBuilder::ALMA_TEST_API_KEY, ''));
+        return $encryption->decrypt($apiKey);
     }
 
     /**

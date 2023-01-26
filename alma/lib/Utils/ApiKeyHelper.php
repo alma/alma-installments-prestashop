@@ -39,6 +39,20 @@ if (!defined('_PS_VERSION_')) {
 class ApiKeyHelper
 {
     const OBCUR_VALUE = '*****';
+    const BEGIN_LIVE_API_KEY = 'sk_live_';
+    const BEGIN_TEST_API_KEY = 'sk_test_';
+
+    /** @var EncryptionHelper $encryptionHelper */
+    private $encryptionHelper;
+
+    /**
+     * ApiKey Helper construct
+     */
+    public function __construct()
+    {
+        $this->encryptionHelper = new EncryptionHelper();
+    }
+
     /**
      * Get api key
      *
@@ -61,9 +75,8 @@ class ApiKeyHelper
      */
     public function setLiveApiKey($apiKey)
     {
-        $encryption = new EncryptionHelper();
         if ($apiKey != self::OBCUR_VALUE) {
-            Settings::updateValue(ApiAdminFormBuilder::ALMA_LIVE_API_KEY, $encryption->encrypt($apiKey));
+            Settings::updateValue(ApiAdminFormBuilder::ALMA_LIVE_API_KEY, $this->encryptionHelper->encrypt($apiKey));
         }
     }
 
@@ -77,9 +90,8 @@ class ApiKeyHelper
      */
     public function setTestApiKey($apiKey)
     {
-        $encryption = new EncryptionHelper();
         if ($apiKey != self::OBCUR_VALUE) {
-            Settings::updateValue(ApiAdminFormBuilder::ALMA_TEST_API_KEY, $encryption->encrypt($apiKey));
+            Settings::updateValue(ApiAdminFormBuilder::ALMA_TEST_API_KEY, $this->encryptionHelper->encrypt($apiKey));
         }
     }
 }

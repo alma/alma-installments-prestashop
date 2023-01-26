@@ -24,6 +24,8 @@
 
 namespace Alma\PrestaShop\Forms;
 
+use Alma\PrestaShop\Utils\ApiKeyHelper;
+
 if (!defined('_PS_VERSION_')) {
     exit;
 }
@@ -201,7 +203,7 @@ abstract class AbstractAdminFormBuilder
      *
      * @return array inputTextForm
      */
-    protected function inputSecretForm($name, $label, $desc = null, $placeholder = null, $required = false, $lang = false)
+    protected function inputSecretForm($name, $label, $desc = null, $placeholder = ApiKeyHelper::OBCUR_VALUE, $required = false, $lang = false)
     {
         $dataInput = [
             'name' => $name,

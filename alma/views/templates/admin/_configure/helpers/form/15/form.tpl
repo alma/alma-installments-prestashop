@@ -283,7 +283,7 @@
                                             name="{$input.name}"
                                             size="{$input.size}"
                                             class="{if isset($input.class)}{$input.class}{/if}"
-                                            value="{if !empty($value_text)}*****{/if}"
+                                            value="{if !empty($value_text)}{$input.placeholder|escape:'htmlall':'UTF-8'}{/if}"
                                             {if isset($input.autocomplete) && !$input.autocomplete}autocomplete="off"{/if} />
                                     {elseif $input.type == 'birthday'}
                                         {foreach $input.options as $key => $select}

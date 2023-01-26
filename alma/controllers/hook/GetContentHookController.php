@@ -54,6 +54,21 @@ use Tools;
 
 final class GetContentHookController extends AdminHookController
 {
+    /** @var ApiKeyHelper $apiKeyHelper */
+    private $apiKeyHelper;
+
+    /** @var Alma */
+    protected $module;
+
+    /**
+     * GetContentHook Controller construct
+     */
+    public function __construct($module)
+    {
+        $this->apiKeyHelper = new ApiKeyHelper();
+        parent::__construct($module);
+    }
+
     public function processConfiguration()
     {
         if (!Tools::isSubmit('alma_config_form')) {
@@ -95,9 +110,8 @@ final class GetContentHookController extends AdminHookController
         }
 
         // Down here, we know the provided API keys are correct (at least the one for the chosen API mode)
-        $apiKey = new ApiKeyHelper();
-        $apiKey->setLiveApiKey($liveKey);
-        $apiKey->setTestApiKey($testKey);
+        $this->apiKeyHelper->setLiveApiKey($liveKey);
+        $this->apiKeyHelper->setTestApiKey($testKey);
 
         // Try to get merchant from configured API key/mode
         $merchant = $this->getMerchant();
