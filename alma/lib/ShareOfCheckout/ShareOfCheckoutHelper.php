@@ -84,10 +84,7 @@ class ShareOfCheckoutHelper
         }
         try {
             $startShareOfCheckout = $this->getStartShareOfCheckout();
-            Logger::instance()->info('[ALMA] Date Start Share of Checkout : ' . $startShareOfCheckout);
-            Logger::instance()->info('[ALMA] Share of Checkout Enable date: ' . $shareOfCheckoutEnabledDate);
             foreach ($this->getDatesInInterval($startShareOfCheckout, $shareOfCheckoutEnabledDate) as $date) {
-                Logger::instance()->info('[ALMA] Date puted to SoC : ' . $date);
                 $this->setStartDate($date);
                 $this->putDay();
                 $this->orderHelper->resetOrderList();
@@ -138,7 +135,6 @@ class ShareOfCheckoutHelper
 
         try {
             $startDateUpdateDates = $alma->shareOfCheckout->getLastUpdateDates();
-            Logger::instance()->info('[ALMA] Get last update date Soc : ' . json_encode($startDateUpdateDates));
         } catch (RequestError $e) {
             Logger::instance()->error('Cannot get last date share of checkout: ' . $e->getMessage());
 
