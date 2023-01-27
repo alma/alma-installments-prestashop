@@ -134,7 +134,7 @@ class ShareOfCheckoutHelper
         }
 
         try {
-            $startDateUpdateDates = strtotime('+1 day', $alma->shareOfCheckout->getLastUpdateDates());
+            $startDateUpdateDates = $alma->shareOfCheckout->getLastUpdateDates();
         } catch (RequestError $e) {
             Logger::instance()->error('Cannot get last date share of checkout: ' . $e->getMessage());
 
@@ -145,7 +145,7 @@ class ShareOfCheckoutHelper
             return strtotime('-1 day');
         }
 
-        return (int) $startDateUpdateDates['end_time'];
+        return (int) strtotime('+1 day', $startDateUpdateDates['end_time']);
     }
 
     /**
