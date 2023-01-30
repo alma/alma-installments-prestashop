@@ -75,9 +75,7 @@ class ApiKeyHelper
      */
     public function setLiveApiKey($apiKey)
     {
-        if ($apiKey != self::OBCUR_VALUE) {
-            Settings::updateValue(ApiAdminFormBuilder::ALMA_LIVE_API_KEY, $this->encryptionHelper->encrypt($apiKey));
-        }
+        Settings::updateValue(ApiAdminFormBuilder::ALMA_LIVE_API_KEY, $this->encryptionHelper->encrypt($apiKey));
     }
 
     /**
@@ -90,8 +88,6 @@ class ApiKeyHelper
      */
     public function setTestApiKey($apiKey)
     {
-        if ($apiKey != self::OBCUR_VALUE) {
-            Settings::updateValue(ApiAdminFormBuilder::ALMA_TEST_API_KEY, $this->encryptionHelper->encrypt($apiKey));
-        }
+        Settings::updateValue(ApiAdminFormBuilder::ALMA_TEST_API_KEY, $this->encryptionHelper->encrypt($apiKey));
     }
 }

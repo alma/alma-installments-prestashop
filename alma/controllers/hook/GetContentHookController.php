@@ -110,8 +110,8 @@ final class GetContentHookController extends AdminHookController
         }
 
         // Down here, we know the provided API keys are correct (at least the one for the chosen API mode)
-        $this->apiKeyHelper->setLiveApiKey($liveKey);
-        $this->apiKeyHelper->setTestApiKey($testKey);
+        $this->setKeyIfValueIsNotObscur($liveKey, ALMA_MODE_LIVE);
+        $this->setKeyIfValueIsNotObscur($testKey, ALMA_MODE_TEST);
 
         // Try to get merchant from configured API key/mode
         $merchant = $this->getMerchant();
@@ -371,6 +371,27 @@ final class GetContentHookController extends AdminHookController
         $this->context->smarty->clearAssign('validation_error');
 
         return $this->module->display($this->module->file, 'getContent.tpl');
+    }
+
+    /**
+     * Check if Api key are obscur
+     *
+     * @param string $apiKey
+     * @param string $mode
+     *
+     * @return void|null
+     */
+    private function setKeyIfValueIsNotObscur($apiKey, $mode)
+    {
+        if ($apiKey == ApiKeyHelper::OBCUR_VALUE) {
+            return null;
+        }
+
+        if ($mode == ALMA_MODE_LIVE) {
+            $this->apiKeyHelper->setLiveApiKey($apiKey);
+        } elseif ($mode == ALMA_MODE_TEST) {
+            $this->apiKeyHelper->setTestApiKey($apiKey);
+        }
     }
 
     private function credentialsError($apiMode, $liveKey, $testKey)
