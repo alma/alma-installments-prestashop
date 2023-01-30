@@ -493,7 +493,7 @@ final class GetContentHookController extends AdminHookController
         $excludedBuilder = new ExcludedCategoryAdminFormBuilder($this->module, $this->context, $iconPath);
         $refundBuilder = new RefundAdminFormBuilder($this->module, $this->context, $iconPath);
         $shareOfCheckoutBuilder = new ShareOfCheckoutAdminFormBuilder($this->module, $this->context, $iconPath);
-        $triggerBuilder = new PaymentOnTriggeringAdminFormBuilder($this->module, $this->context, $iconPath, ['feePlans' => $feePlansOrdered]);
+        $triggerBuilder = new PaymentOnTriggeringAdminFormBuilder($this->module, $this->context, $iconPath);
         $paymentBuilder = new PaymentButtonAdminFormBuilder($this->module, $this->context, $iconPath);
         $debugBuilder = new DebugAdminFormBuilder($this->module, $this->context, $iconPath);
 
@@ -509,8 +509,11 @@ final class GetContentHookController extends AdminHookController
             $fieldsForms[] = $excludedBuilder->build();
             $fieldsForms[] = $refundBuilder->build();
             $fieldsForms[] = $shareOfCheckoutBuilder->build();
+        }
+        if ($this->paymentUponTriggerIsActive($feePlansOrdered)) {
             $fieldsForms[] = $triggerBuilder->build();
         }
+
         $fieldsForms[] = $apiBuilder->build();
         $fieldsForms[] = $debugBuilder->build();
 
@@ -601,6 +604,24 @@ final class GetContentHookController extends AdminHookController
         $helper->languages = $this->context->controller->getLanguages();
 
         return $extraMessage . $helper->generateForm($fieldsForms);
+    }
+
+    /**
+     * Check if Payment Uppon Trigger is active
+     *
+     * @param array $feePlans
+     *
+     * @return array|bool
+     */
+    private function paymentUponTriggerIsActive($feePlans)
+    {
+        return array_filter($feePlans, function ($plans) {
+            if (!empty($plans->deferred_trigger_limit_days)) {
+                return $plans->installments_count;
+            }
+
+            return false;
+        });
     }
 
     private function assignSmartyAlertClasses($level = 'danger')
