@@ -61,10 +61,7 @@ class AlmaPaymentModuleFrontController extends ModuleFrontController
     private function genericErrorAndRedirect()
     {
         // `l` method call isn't detected by translation tool if multiline
-        $msg = $this->module->l(
-            'There was an error while generating your payment request. Please try again later or contact us if the problem persists.',
-            'payment'
-        );
+        $msg = $this->module->l('There was an error while generating your payment request. Please try again later or contact us if the problem persists.', 'payment');
         $this->context->cookie->__set('alma_error', $msg);
         Tools::redirect('index.php?controller=order&step=1');
     }
