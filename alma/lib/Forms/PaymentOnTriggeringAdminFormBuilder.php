@@ -54,7 +54,11 @@ class PaymentOnTriggeringAdminFormBuilder extends AbstractAlmaAdminFormBuilder
             $this->inputHtml(null, $htmlContent),
             $this->inputAlmaSwitchForm(
                 self::ALMA_PAYMENT_ON_TRIGGERING_ENABLED,
-                $this->module->l('Activate the payment upon trigger', 'PaymentOnTriggeringAdminFormBuilder')
+                $this->module->l('Activate the payment upon trigger', 'PaymentOnTriggeringAdminFormBuilder'),
+                null,
+                null,
+                null,
+                true
             ),
             $this->inputSelectForm(
                 self::ALMA_DESCRIPTION_TRIGGER,

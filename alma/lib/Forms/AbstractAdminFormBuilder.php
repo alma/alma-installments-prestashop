@@ -106,12 +106,13 @@ abstract class AbstractAdminFormBuilder
      *
      * @return array inputSwitchForm
      */
-    protected function inputAlmaSwitchForm($name, $label, $desc = null, $helpDesc = null, $form_group_class = null)
+    protected function inputAlmaSwitchForm($name, $label, $desc = null, $helpDesc = null, $form_group_class = null, $readonly = false)
     {
         $dataInput = [
             'name' => $name,
             'label' => $label,
             'type' => 'alma_switch',
+            'readonly' => $readonly,
             'values' => [
                 'id' => 'id',
                 'name' => 'label',

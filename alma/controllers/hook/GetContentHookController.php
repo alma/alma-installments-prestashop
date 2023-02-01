@@ -515,7 +515,7 @@ final class GetContentHookController extends AdminHookController
             $fieldsForms[] = $refundBuilder->build();
             $fieldsForms[] = $shareOfCheckoutBuilder->build();
         }
-        if ($this->paymentUponTriggerIsActive($feePlansOrdered)) {
+        if (Settings::isPaymentTriggerEnabledByState()) {
             $fieldsForms[] = $triggerBuilder->build();
             $fieldsForms[] = $fragmentBuilder->build();
         }
@@ -611,24 +611,6 @@ final class GetContentHookController extends AdminHookController
         $helper->languages = $this->context->controller->getLanguages();
 
         return $extraMessage . $helper->generateForm($fieldsForms);
-    }
-
-    /**
-     * Check if Payment Uppon Trigger is active
-     *
-     * @param array $feePlans
-     *
-     * @return array|bool
-     */
-    private function paymentUponTriggerIsActive($feePlans)
-    {
-        return array_filter($feePlans, function ($plans) {
-            if (!empty($plans->deferred_trigger_limit_days)) {
-                return $plans->installments_count;
-            }
-
-            return false;
-        });
     }
 
     private function assignSmartyAlertClasses($level = 'danger')
