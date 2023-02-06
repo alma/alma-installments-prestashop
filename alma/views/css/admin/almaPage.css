@@ -98,6 +98,12 @@ fieldset .form-alma.disabled::before{
 }
 
 /*Switch*/
+.bootstrap .form-horizontal .checkbox.alma_switch.readonly{
+    opacity: .5;
+}
+.alma_switch.readonly .switch, .alma_switch.readonly .switch .slider{
+    cursor: default;
+}
 .bootstrap .form-horizontal .checkbox.alma_switch{
     padding-top: 4px;
 }
