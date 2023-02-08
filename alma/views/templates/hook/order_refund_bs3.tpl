@@ -33,11 +33,13 @@
                 {$wording.title}
             </div>
             <div class="col-sm-6">
-                <div class="progress alma-progress" {if !$refund}style="display:none"{/if}>
-                    <div class="progress-bar" role="progressbar" aria-valuenow="{$refund.percentRefund|escape:'htmlall':'UTF-8'}" aria-valuemin="0" aria-valuemax="100" style="width: {$refund.percentRefund|escape:'htmlall':'UTF-8'}%;">
-                        {$refund.totalRefundPrice|escape:'htmlall':'UTF-8'} / {$order.paymentTotalPrice|escape:'htmlall':'UTF-8'}
+                {if $refund.percentRefund > 0}
+                    <div class="progress alma-progress" {if !$refund}style="display:none"{/if}>
+                        <div class="progress-bar" role="progressbar" aria-valuenow="{$refund.percentRefund|escape:'htmlall':'UTF-8'}" aria-valuemin="0" aria-valuemax="100" style="width: {$refund.percentRefund|escape:'htmlall':'UTF-8'}%;">
+                            {$refund.totalRefundPrice|escape:'htmlall':'UTF-8'} / {$order.paymentTotalPrice|escape:'htmlall':'UTF-8'}
+                        </div>
                     </div>
-                </div>
+                {/if}
             </div>
         </div>
         <div class="form-wrapper">
