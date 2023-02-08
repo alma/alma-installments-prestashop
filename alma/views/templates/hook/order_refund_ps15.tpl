@@ -31,28 +31,30 @@
     </legend>
     <form id="alma-refund"  method="POST" action="{$actionUrl|escape:'htmlall':'UTF-8'}" class="defaultForm form-horizontal form-alma {if $refund.percentRefund >= 100}disabled{/if}">
         <input type="hidden" class="alma" name="orderId" required value="{$order.id|escape:'htmlall':'UTF-8'}" />
-        <table cellspacing="0" cellpadding="0" class="table tableDnD alma-table-refund" style="float:right; {if !$refund}display:none;{/if}">
-            <thead>
-            <tr> 
-                <th>{l s='Amount refunded' mod='alma'}</th>
-                <th>{l s='Total' mod='alma'}</th>
-                <th></th>
-            </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td class="refundAmount">
-                        {$refund.totalRefundPrice|escape:'htmlall':'UTF-8'}
-                    </td>
-                    <td>
-                        {$order.paymentTotalPrice|escape:'htmlall':'UTF-8'}
-                    </td>
-                    <td>
-                        <img src="../img/admin/money.gif" />
-                    </td>
+        {if $refund.percentRefund > 0}
+            <table cellspacing="0" cellpadding="0" class="table tableDnD alma-table-refund" style="float:right; {if !$refund}display:none;{/if}">
+                <thead>
+                <tr> 
+                    <th>{l s='Amount refunded' mod='alma'}</th>
+                    <th>{l s='Total' mod='alma'}</th>
+                    <th></th>
                 </tr>
-	        </tbody>
-	    </table>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="refundAmount">
+                            {$refund.totalRefundPrice|escape:'htmlall':'UTF-8'}
+                        </td>
+                        <td>
+                            {$order.paymentTotalPrice|escape:'htmlall':'UTF-8'}
+                        </td>
+                        <td>
+                            <img src="../img/admin/money.gif" />
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        {/if}
         <p>
             {$wording.description}
         </p>
