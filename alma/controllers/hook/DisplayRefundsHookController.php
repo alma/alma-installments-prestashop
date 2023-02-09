@@ -72,7 +72,10 @@ final class DisplayRefundsHookController extends AdminHookController
             return null;
         }
 
-        $refundData = null;
+        $refundData = [
+            'totalRefundPrice' => 0,
+            'percentRefund' => 0,
+        ];
         $totalRefundInCents = null;
         $percentRefund = null;
         $orderTotalPaid = $order->getOrdersTotalPaid();

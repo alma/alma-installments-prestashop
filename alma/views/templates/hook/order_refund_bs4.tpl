@@ -34,9 +34,11 @@
                 </h3>
             </div>
             <div class="col-md-6">
-                <div class="progress alma-progress" style="height: 20px; {if !$refund}display:none{/if}">
-                    <div class="progress-bar" role="progressbar" style="line-height: 10px;width: {$refund.percentRefund|escape:'htmlall':'UTF-8'}%" aria-valuenow="{$refund.percentRefund|escape:'htmlall':'UTF-8'}" aria-valuemin="0" aria-valuemax="100">{$refund.totalRefundPrice|escape:'htmlall':'UTF-8'} / {$order.paymentTotalPrice|escape:'htmlall':'UTF-8'}</div>
-                </div>
+                {if $refund.percentRefund > 0}
+                    <div class="progress alma-progress" style="height: 20px; {if !$refund}display:none{/if}">
+                        <div class="progress-bar" role="progressbar" style="line-height: 10px;width: {$refund.percentRefund|escape:'htmlall':'UTF-8'}%" aria-valuenow="{$refund.percentRefund|escape:'htmlall':'UTF-8'}" aria-valuemin="0" aria-valuemax="100">{$refund.totalRefundPrice|escape:'htmlall':'UTF-8'} / {$order.paymentTotalPrice|escape:'htmlall':'UTF-8'}</div>
+                    </div>
+                {/if}
             </div>
         </div>
     </div>
