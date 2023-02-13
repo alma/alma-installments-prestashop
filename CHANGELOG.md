@@ -2,7 +2,13 @@
 
 ## v2.10.0
 
-- Share of Checkout
+- Optimise your performance with insights on share of checkout
+- Alma module is now compatible with Prestashop 8
+- Updated translations
+- Fix installing our module on PrestaShop 1.6
+- Fix refund status for non-Alma payments
+- Fix payment error in Prestashop 1.5.3.1
+- Fix payment error for when shippingInfo is an array
 
 ## v2.9.0
 

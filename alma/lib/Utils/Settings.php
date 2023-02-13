@@ -148,8 +148,7 @@ class Settings
     public static function getShareOfChekcoutStatus()
     {
         $default = ShareOfCheckoutAdminFormBuilder::ALMA_SHARE_OF_CHECKOUT_CONSENT_UNSET;
-        if (version_compare(_PS_VERSION_, '1.6', '<'))
-        {
+        if (version_compare(_PS_VERSION_, '1.6', '<')) {
             $default = ShareOfCheckoutAdminFormBuilder::ALMA_SHARE_OF_CHECKOUT_CONSENT_NO;
         }
 
