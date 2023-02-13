@@ -1,5 +1,5 @@
  {*
- * 2018-2022 Alma SAS
+ * 2018-2023 Alma SAS
  *
  * THE MIT LICENSE
  *
@@ -17,10 +17,9 @@
  * IN THE SOFTWARE.
  *
  * @author    Alma SAS <contact@getalma.eu>
- * @copyright 2018-2022 Alma SAS
+ * @copyright 2018-2023 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  *}
- 
  <p>{l s='By accepting this option, you enable Alma to analyse the usage of your payment methods, get more information to perform and share this data with you. You can [1]erase your data[/1] at any moment.' tags=['<a href="mailto:support@getalma.eu">'] mod='alma'}</p>
  <p>
     <a data-toggle="collapse" href="#collapseModalSocOption" role="button" aria-expanded="false" aria-controls="collapseModalSocOption" class="link-collapse collapsed">
