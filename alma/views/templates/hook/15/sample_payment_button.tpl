@@ -1,5 +1,5 @@
 {*
- * 2018-2022 Alma SAS
+ * 2018-2023 Alma SAS
  *
  * THE MIT LICENSE
  *
@@ -17,10 +17,9 @@
  * IN THE SOFTWARE.
  *
  * @author    Alma SAS <contact@getalma.eu>
- * @copyright 2018-2022 Alma SAS
+ * @copyright 2018-2023 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  *}
-
 <p>{l s='Edit the text displayed when choosing the payment method in your checkout. It will adapt to the languages of your site.' mod='alma'}</p>
 <div class="alma-sample-payment-button">
     <div style="width:50%;float:left;">
