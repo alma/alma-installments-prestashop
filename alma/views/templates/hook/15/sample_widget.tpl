@@ -1,5 +1,5 @@
 {*
- * 2018-2022 Alma SAS
+ * 2018-2023 Alma SAS
  *
  * THE MIT LICENSE
  *
@@ -17,10 +17,9 @@
  * IN THE SOFTWARE.
  *
  * @author    Alma SAS <contact@getalma.eu>
- * @copyright 2018-2022 Alma SAS
+ * @copyright 2018-2023 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  *}
-
 <div class="alma-sample-widget">
     <div style="width:50%;float:left;">
         <img src="/modules/alma/views/img/widget-available.png" width="400" alt="{l s='Sample widget Alma' mod='alma'}" />

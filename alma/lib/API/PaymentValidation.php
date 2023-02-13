@@ -1,6 +1,6 @@
 <?php
 /**
- * 2018-2022 Alma SAS
+ * 2018-2023 Alma SAS
  *
  * THE MIT LICENSE
  *
@@ -18,7 +18,7 @@
  * IN THE SOFTWARE.
  *
  * @author    Alma SAS <contact@getalma.eu>
- * @copyright 2018-2022 Alma SAS
+ * @copyright 2018-2023 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
@@ -272,25 +272,27 @@ class PaymentValidation
         }
     }
 
-	/**
-	 * We have to temporary update the customer object
-	 * in context to prevent amount_mismatch error
-	 * When calculating cart amount from an IPN call
-	 * @param Cart $cart
-	 * @param Customer $cart
-	 * @return float
-	 */
-	private function getCartTotals($cart, $customer)
-	{
-		if ((int)$this->context->customer->id === (int)$customer->id) {
-			return $cart->getOrderTotal(true, Cart::BOTH);
-		}
+    /**
+     * We have to temporary update the customer object
+     * in context to prevent amount_mismatch error
+     * When calculating cart amount from an IPN call
+     *
+     * @param Cart $cart
+     * @param Customer $cart
+     *
+     * @return float
+     */
+    private function getCartTotals($cart, $customer)
+    {
+        if ((int) $this->context->customer->id === (int) $customer->id) {
+            return $cart->getOrderTotal(true, Cart::BOTH);
+        }
 
-		$ipnCustomer = $this->context->customer;
-		$this->context->customer = $customer;
-		$cartTotals = $cart->getOrderTotal(true, Cart::BOTH);
-		$this->context->customer = $ipnCustomer;
+        $ipnCustomer = $this->context->customer;
+        $this->context->customer = $customer;
+        $cartTotals = $cart->getOrderTotal(true, Cart::BOTH);
+        $this->context->customer = $ipnCustomer;
 
-		return $cartTotals;
-	}
+        return $cartTotals;
+    }
 }
