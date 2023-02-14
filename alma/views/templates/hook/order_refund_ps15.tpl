@@ -55,7 +55,7 @@
             </table>
         {/if}
         <p>
-            {$wording.description|escape:'htmlall':'UTF-8'}
+            {$wording.description}
         </p>
         <div class="clear"></div>
         <label>{$wording.labelTypeRefund|escape:'htmlall':'UTF-8'}</label>

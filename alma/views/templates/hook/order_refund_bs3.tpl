@@ -44,7 +44,7 @@
         <div class="form-wrapper">
             <div class="form-group">
                 <p class="col-lg-12">
-                    {$wording.description|escape:'htmlall':'UTF-8'}
+                    {$wording.description}
                 </p>
             </div>
             <div class="form-group">

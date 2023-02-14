@@ -47,7 +47,7 @@
             <div class="row">
                 <div class="col">
                     <p>
-                        {$wording.description|escape:'htmlall':'UTF-8'}
+                        {$wording.description}
                     </p>
                 </div>
             </div>
