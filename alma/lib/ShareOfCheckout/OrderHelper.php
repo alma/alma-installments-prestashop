@@ -93,7 +93,7 @@ class OrderHelper
                 FROM `' . _DB_PREFIX_ . 'orders`
                 WHERE date_add >= \'' . pSQL($startDate) . '\'
                 AND date_add <= \'' . pSQL($endDate) . '\'
-                AND current_state NOT IN (' . implode(', ', $this->defaultStatesExcluded) . ')
+                AND current_state NOT IN (' . implode(', ', array_map('intval', $this->defaultStatesExcluded)) . ')
                     ' . Shop::addSqlRestriction();
         $result = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS($sql);
         $orderIds = [];
