@@ -81,52 +81,52 @@ class DisplayPaymentHookController extends FrontendHookController
                 'totalCredit' => $plan->customerTotalCostAmount + $totalCart,
                 'taeg' => $plan->annualInterestRate,
             ];
-
             $isDeferred = Settings::isDeferred($plan);
-            // $isInstallmentAccordingToDeferred = $isDeferred ? $installment === 1 : $installment !== 1;
-            $isInstallmentAccordingToDeferred = $isDeferred ? $plan->deferredDays !== 0 && $plan->deferredMonths !== 0 :  $plan->deferredDays === 0 && $plan->deferredMonths === 0;
+            $isPayNow = $installment === 1;
 
-            if ($isInstallmentAccordingToDeferred) {
-                if (!$plan->isEligible && $feePlans->$key->enabled && Settings::showDisabledButton()) {
-                    $disabled = true;
-                    $plans = null;
-                } elseif (!$plan->isEligible) {
-                    continue;
-                }
-                $duration = Settings::getDuration($plan);
-                $valueLogo = $isDeferred ? $duration : $installment;
-                $logo = $this->getAlmaLogo($isDeferred, $valueLogo);
-                $paymentOption = [
-                    'link' => $this->context->link->getModuleLink(
-                        $this->module->name,
-                        'payment',
-                        ['key' => $key],
-                        true
-                    ),
-                    'disabled' => $disabled,
-                    'pnx' => $installment,
-                    'logo' => $logo,
-                    'plans' => $plans,
-                    'installmentText' => $this->getInstallmentText($plans, $idLang, Settings::isDeferredTriggerLimitDays($feePlans, $key)),
-                    'deferred_trigger_limit_days' => $feePlans->$key->deferred_trigger_limit_days,
-                    'isDeferred' => $isDeferred,
-                    'text' => sprintf(SettingsCustomFields::getPnxButtonTitleByLang($idLang), $installment),
-                    'desc' => sprintf(SettingsCustomFields::getPnxButtonDescriptionByLang($idLang), $installment),
-                    'creditInfo' => $creditInfo,
-                ];
-                if ($installment > 4) {
-                    $paymentOption['text'] = sprintf(SettingsCustomFields::getPnxAirButtonTitleByLang($idLang), $installment);
-                    $paymentOption['desc'] = sprintf(SettingsCustomFields::getPnxAirButtonDescriptionByLang($idLang), $installment);
-                }
-                if ($isDeferred) {
-                    $paymentOption['duration'] = $duration;
-                    $paymentOption['key'] = $key;
-                    $paymentOption['text'] = sprintf(SettingsCustomFields::getPaymentButtonTitleDeferredByLang($idLang), $duration);
-                    $paymentOption['desc'] = sprintf(SettingsCustomFields::getPaymentButtonDescriptionDeferredByLang($idLang), $duration);
-                }
-                $paymentOptions[$key] = $paymentOption;
-                $sortOptions[$key] = $feePlans->$key->order;
+            if (!$plan->isEligible && $feePlans->$key->enabled && Settings::showDisabledButton()) {
+                $disabled = true;
+                $plans = null;
+            } elseif (!$plan->isEligible) {
+                continue;
             }
+            $duration = Settings::getDuration($plan);
+            $valueLogo = $isDeferred ? $duration : $installment;
+            $logo = $this->getAlmaLogo($isDeferred, $valueLogo);
+            $paymentOption = [
+                'link' => $this->context->link->getModuleLink(
+                    $this->module->name,
+                    'payment',
+                    ['key' => $key],
+                    true
+                ),
+                'disabled' => $disabled,
+                'pnx' => $installment,
+                'logo' => $logo,
+                'plans' => $plans,
+                'installmentText' => $this->getInstallmentText($plans, $idLang, Settings::isDeferredTriggerLimitDays($feePlans, $key), $isDeferred),
+                'deferred_trigger_limit_days' => $feePlans->$key->deferred_trigger_limit_days,
+                'isDeferred' => $isDeferred,
+                'text' => sprintf(SettingsCustomFields::getPnxButtonTitleByLang($idLang), $installment),
+                'desc' => sprintf(SettingsCustomFields::getPnxButtonDescriptionByLang($idLang), $installment),
+                'creditInfo' => $creditInfo,
+            ];
+            if ($installment > 4) {
+                $paymentOption['text'] = sprintf(SettingsCustomFields::getPnxAirButtonTitleByLang($idLang), $installment);
+                $paymentOption['desc'] = sprintf(SettingsCustomFields::getPnxAirButtonDescriptionByLang($idLang), $installment);
+            }
+            if ($isDeferred) {
+                $paymentOption['duration'] = $duration;
+                $paymentOption['key'] = $key;
+                $paymentOption['text'] = sprintf(SettingsCustomFields::getPaymentButtonTitleDeferredByLang($idLang), $duration);
+                $paymentOption['desc'] = sprintf(SettingsCustomFields::getPaymentButtonDescriptionDeferredByLang($idLang), $duration);
+            }
+            if (!$isDeferred && $isPayNow) {
+                $paymentOption['text'] = SettingsCustomFields::getPayNowButtonTitleByLang($idLang);
+                $paymentOption['desc'] = SettingsCustomFields::getPayNowButtonDescriptionByLang($idLang);
+            }
+            $paymentOptions[$key] = $paymentOption;
+            $sortOptions[$key] = $feePlans->$key->order;
         }
 
         asort($sortOptions);
@@ -146,7 +146,7 @@ class DisplayPaymentHookController extends FrontendHookController
      *
      * @return string text one liner option
      */
-    private function getInstallmentText($plans, $idLang, $isDeferredTriggerLimitDays)
+    private function getInstallmentText($plans, $idLang, $isDeferredTriggerLimitDays, $isDeferred)
     {
         $nbPlans = count($plans);
         $locale = Language::getIsoById($idLang);
@@ -166,6 +166,9 @@ class DisplayPaymentHookController extends FrontendHookController
                 $nbPlans - 1,
                 almaFormatPrice($plans[1]['total_amount'])
             );
+        }
+        if ($nbPlans === 1 && !$isDeferred) {
+            return '';
         }
 
         return sprintf(

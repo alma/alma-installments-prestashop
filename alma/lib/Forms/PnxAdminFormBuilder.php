@@ -106,9 +106,6 @@ class PnxAdminFormBuilder extends AbstractAlmaAdminFormBuilder
         /** @var FeePlan $feePlan */
         foreach ($this->config['feePlans'] as $feePlan) {
             $tabId = $key = $feePlan->getPlanKey();
-            // if (!$feePlan->isPayLaterOnly() && !$feePlan->isPnXOnly()) {
-            //     continue;
-            // }
 
             if (!$feePlan->allowed) {
                 $this->disableFeePlan($key, $installmentsPlans);
@@ -178,6 +175,9 @@ class PnxAdminFormBuilder extends AbstractAlmaAdminFormBuilder
                 $duration
             );
         }
+        if ($feePlan->isPayNow()) {
+            return $this->module->l('Enable pay now', 'PnxAdminFormBuilder');
+        }
 
         return sprintf(
             // PrestaShop won't detect the string if the call to `l` is multiline
@@ -207,6 +207,10 @@ class PnxAdminFormBuilder extends AbstractAlmaAdminFormBuilder
                 $this->module->l('Deferred payments + %d days', 'PnxAdminFormBuilder'),
                 $duration
             );
+        }
+
+        if ($feePlan->isPayNow()) {
+            return $this->module->l('Pay now', 'PnxAdminFormBuilder');
         }
 
         // PrestaShop won't detect the string if the call to `l` is multiline

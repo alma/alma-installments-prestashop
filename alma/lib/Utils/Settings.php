@@ -94,6 +94,8 @@ class Settings
             'ALMA_TEST_API_KEY',
             'ALMA_SHOW_DISABLED_BUTTON',
             'ALMA_SHOW_ELIGIBILITY_MESSAGE',
+            PaymentButtonAdminFormBuilder::ALMA_PAY_NOW_BUTTON_TITLE,
+            PaymentButtonAdminFormBuilder::ALMA_PAY_NOW_BUTTON_DESC,
             PaymentButtonAdminFormBuilder::ALMA_PNX_BUTTON_TITLE,
             PaymentButtonAdminFormBuilder::ALMA_PNX_BUTTON_DESC,
             PaymentButtonAdminFormBuilder::ALMA_DEFERRED_BUTTON_TITLE,

@@ -145,16 +145,24 @@ final class GetContentHookController extends AdminHookController
         $languages = $this->context->controller->getLanguages();
 
         if (!$apiOnly) {
+            $titlesPayNow = [];
             $titles = [];
             $titlesDeferred = [];
+            $titlesCredit = [];
+            $descriptionsPayNow = [];
             $descriptions = [];
             $descriptionsDeferred = [];
+            $descriptionsCredit = [];
             $nonEligibleCategoriesMsg = [];
             foreach ($languages as $language) {
                 $locale = $language['iso_code'];
                 if (array_key_exists('locale', $language)) {
                     $locale = $language['locale'];
                 }
+                $titlesPayNow[$language['id_lang']] = [
+                    'locale' => $locale,
+                    'string' => Tools::getValue(PaymentButtonAdminFormBuilder::ALMA_PAY_NOW_BUTTON_TITLE . '_' . $language['id_lang']),
+                ];
                 $titles[$language['id_lang']] = [
                     'locale' => $locale,
                     'string' => Tools::getValue(PaymentButtonAdminFormBuilder::ALMA_PNX_BUTTON_TITLE . '_' . $language['id_lang']),
@@ -166,6 +174,10 @@ final class GetContentHookController extends AdminHookController
                 $titlesCredit[$language['id_lang']] = [
                     'locale' => $locale,
                     'string' => Tools::getValue(PaymentButtonAdminFormBuilder::ALMA_PNX_AIR_BUTTON_TITLE . '_' . $language['id_lang']),
+                ];
+                $descriptionsPayNow[$language['id_lang']] = [
+                    'locale' => $locale,
+                    'string' => Tools::getValue(PaymentButtonAdminFormBuilder::ALMA_PAY_NOW_BUTTON_DESC . '_' . $language['id_lang']),
                 ];
                 $descriptions[$language['id_lang']] = [
                     'locale' => $locale,
@@ -184,10 +196,15 @@ final class GetContentHookController extends AdminHookController
                     'string' => Tools::getValue(ExcludedCategoryAdminFormBuilder::ALMA_NOT_ELIGIBLE_CATEGORIES . '_' . $language['id_lang']),
                 ];
 
-                if (empty($titles[$language['id_lang']]['string'])
-                    || empty($descriptions[$language['id_lang']]['string'])
+                if (
+                    empty($titles[$language['id_lang']]['string'])
+                    || empty($titlesPayNow[$language['id_lang']]['string'])
                     || empty($titlesDeferred[$language['id_lang']]['string'])
+                    || empty($titlesCredit[$language['id_lang']]['string'])
+                    || empty($descriptionsPayNow[$language['id_lang']]['string'])
+                    || empty($descriptions[$language['id_lang']]['string'])
                     || empty($descriptionsDeferred[$language['id_lang']]['string'])
+                    || empty($descriptionsCredit[$language['id_lang']]['string'])
                 ) {
                     $this->context->smarty->assign('validation_error', 'missing_required_setting');
 
@@ -229,6 +246,9 @@ final class GetContentHookController extends AdminHookController
 
             $cartWidgetPositionQuerySelector = Tools::getValue('ALMA_CART_WDGT_POS_SELECTOR');
             Settings::updateValue('ALMA_CART_WDGT_POS_SELECTOR', $cartWidgetPositionQuerySelector);
+
+            Settings::updateValue(PaymentButtonAdminFormBuilder::ALMA_PAY_NOW_BUTTON_TITLE, json_encode($titlesPayNow));
+            Settings::updateValue(PaymentButtonAdminFormBuilder::ALMA_PAY_NOW_BUTTON_DESC, json_encode($descriptionsPayNow));
 
             Settings::updateValue(PaymentButtonAdminFormBuilder::ALMA_PNX_BUTTON_TITLE, json_encode($titles));
             Settings::updateValue(PaymentButtonAdminFormBuilder::ALMA_PNX_BUTTON_DESC, json_encode($descriptions));
@@ -579,6 +599,8 @@ final class GetContentHookController extends AdminHookController
             'ALMA_LIVE_API_KEY' => Settings::getLiveKey(),
             'ALMA_TEST_API_KEY' => Settings::getTestKey(),
             'ALMA_API_MODE' => Settings::getActiveMode(),
+            PaymentButtonAdminFormBuilder::ALMA_PAY_NOW_BUTTON_TITLE => SettingsCustomFields::getPayNowButtonTitle(),
+            PaymentButtonAdminFormBuilder::ALMA_PAY_NOW_BUTTON_DESC => SettingsCustomFields::getPayNowButtonDescription(),
             PaymentButtonAdminFormBuilder::ALMA_PNX_BUTTON_TITLE => SettingsCustomFields::getPnxButtonTitle(),
             PaymentButtonAdminFormBuilder::ALMA_PNX_BUTTON_DESC => SettingsCustomFields::getPnxButtonDescription(),
             PaymentButtonAdminFormBuilder::ALMA_DEFERRED_BUTTON_TITLE => SettingsCustomFields::getPaymentButtonTitleDeferred(),
