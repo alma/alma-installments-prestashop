@@ -29,7 +29,7 @@
             <div class="col-md-6">
                 <h3 class="card-header-title">
                     <img src="{$iconPath|escape:'htmlall':'UTF-8'}"/>
-                    {$wording.title}
+                    {$wording.title|escape:'htmlall':'UTF-8'}
                 </h3>
             </div>
             <div class="col-md-6">
@@ -47,20 +47,20 @@
             <div class="row">
                 <div class="col">
                     <p>
-                        {$wording.description}
+                        {$wording.description|escape:'htmlall':'UTF-8'}
                     </p>
                 </div>
             </div>
             <div class="form-group row">
                 <label class='control-label text-right col-lg-4'>                
-                    <span class="text-danger">*</span> {$wording.labelTypeRefund}
+                    <span class="text-danger">*</span> {$wording.labelTypeRefund|escape:'htmlall':'UTF-8'}
                 </label>                
                 <div class="col-sm">
                     {if $order.ordersId}
                         <div class="radio t">
                             <label>
                                 <input type="radio" autocomplete="off" class="refundType form-check-input" name="refundType" value="partial_multi" />                            
-                                {$wording.labelRadioRefundOneOrder}
+                                {$wording.labelRadioRefundOneOrder|escape:'htmlall':'UTF-8'}
                             </label>
                         </div>
                     {/if}
@@ -68,26 +68,26 @@
                         <label>
                             <input type="radio" autocomplete="off" class="refundType form-check-input" id="total" name="refundType" value="total" checked="checked"/>
                             {if $order.ordersId}
-                                {$wording.labelRadioRefundAllOrder}<br />
-                                <i>{$wording.labelRadioRefundAllOrderInfoId}<br />
-                                {$wording.labelRadioRefundAllOrderInfoAmount}
+                                {$wording.labelRadioRefundAllOrder|escape:'htmlall':'UTF-8'}<br />
+                                <i>{$wording.labelRadioRefundAllOrderInfoId|escape:'htmlall':'UTF-8'}<br />
+                                {$wording.labelRadioRefundAllOrderInfoAmount|escape:'htmlall':'UTF-8'}
                                 </i>
                             {else}
-                                {$wording.labelRadioRefundTotalAmout}
+                                {$wording.labelRadioRefundTotalAmout|escape:'htmlall':'UTF-8'}
                             {/if}
                         </label>
                     </div>
                     <div class="radio t">
                         <label>
                             <input type="radio" autocomplete="off" class="refundType form-check-input" name="refundType" value="partial"/>
-                            {$wording.labelRadioRefundPartial}
+                            {$wording.labelRadioRefundPartial|escape:'htmlall':'UTF-8'}
                         </label>
                     </div>
                 </div>
             </div>
             <div class="form-group row" id="amountDisplay" style="display: none">
                 <label class='control-label text-right col-lg-4' for="amount">
-                    <span class="text-danger">*</span> {$wording.labelAmoutRefundPartial}
+                    <span class="text-danger">*</span> {$wording.labelAmoutRefundPartial|escape:'htmlall':'UTF-8'}
                 </label>
                 <div class="col-sm">
                     <div class="input-group">
@@ -97,7 +97,7 @@
                             name="amount" 
                             autocomplete="off" 
                             id="amount" 
-                            placeholder="{$wording.placeholderInputRefundPartial}"
+                            placeholder="{$wording.placeholderInputRefundPartial|escape:'htmlall':'UTF-8'}"
                         />
                         <div class="input-group-append">
                             <div class="input-group-text">{$order.currencySymbol|escape:'htmlall':'UTF-8'}</div>
@@ -107,7 +107,7 @@
             </div>
             <div class="text-right">
             <button type="submit" class="button btn btn-primary button-medium pull-right">
-                <span>{$wording.buttonRefund}</button>
+                <span>{$wording.buttonRefund|escape:'htmlall':'UTF-8'}</button>
         </div>
         </form>
     </div>
