@@ -44,8 +44,8 @@
     </div>
     <div class="row">
         <p>
-            <a class="btn btn-default btn-share-of-checkout" data-consent='0' data-token='{$token}' href="#">{l s='Reject' mod='alma'}</a>
-            <a class="btn btn-primary btn-share-of-checkout" data-consent='1' data-token='{$token}' href="#">{l s='Accept' mod='alma'}</a>
+            <a class="btn btn-default btn-share-of-checkout" data-consent='0' data-token='{$token|escape:'htmlall':'UTF-8'}' href="#">{l s='Reject' mod='alma'}</a>
+            <a class="btn btn-primary btn-share-of-checkout" data-consent='1' data-token='{$token|escape:'htmlall':'UTF-8'}' href="#">{l s='Accept' mod='alma'}</a>
         </p>
     </div>
 </div>

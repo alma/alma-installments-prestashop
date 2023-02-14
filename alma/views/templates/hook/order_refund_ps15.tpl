@@ -26,7 +26,7 @@
 <fieldset>
     <legend>
         <img src="{$iconPath|escape:'htmlall':'UTF-8'}"/>
-        {$wording.title}
+        {$wording.title|escape:'htmlall':'UTF-8'}
     </legend>
     <form id="alma-refund"  method="POST" action="{$actionUrl|escape:'htmlall':'UTF-8'}" class="defaultForm form-horizontal form-alma {if $refund.percentRefund >= 100}disabled{/if}">
         <input type="hidden" class="alma" name="orderId" required value="{$order.id|escape:'htmlall':'UTF-8'}" />
@@ -58,42 +58,42 @@
             {$wording.description}
         </p>
         <div class="clear"></div>
-        <label>{$wording.labelTypeRefund}</label>
+        <label>{$wording.labelTypeRefund|escape:'htmlall':'UTF-8'}</label>
         <div class="margin-form">
             {if $order.ordersId}
                 <input type="radio" autocomplete="off" class="refundType" name="refundType" value="partial_multi" />
-                <label>{$wording.labelRadioRefundOneOrder}</label>
+                <label>{$wording.labelRadioRefundOneOrder|escape:'htmlall':'UTF-8'}</label>
                 <div class="clear"></div>
             {/if} 
             <input type="radio" autocomplete="off" name="refundType" value="total" checked="checked"/>
             <label>
                 {if $order.ordersId}
-                    {$wording.labelRadioRefundAllOrder}
+                    {$wording.labelRadioRefundAllOrder|escape:'htmlall':'UTF-8'}
                     <br>
-                    <i>{$wording.labelRadioRefundAllOrderInfoId}
+                    <i>{$wording.labelRadioRefundAllOrderInfoId|escape:'htmlall':'UTF-8'}
                     <br>
-                    {$wording.labelRadioRefundAllOrderInfoAmount}
+                    {$wording.labelRadioRefundAllOrderInfoAmount|escape:'htmlall':'UTF-8'}
                     </i>
                 {else}
-                    {$wording.labelRadioRefundTotalAmout}
+                    {$wording.labelRadioRefundTotalAmout|escape:'htmlall':'UTF-8'}
                 {/if}
             </label>
             <div class="clear"></div>
             <input type="radio" autocomplete="off" name="refundType" value="partial" />
-            <label>{$wording.labelRadioRefundPartial}</label>
+            <label>{$wording.labelRadioRefundPartial|escape:'htmlall':'UTF-8'}</label>
             <div class="clear"></div>
         </div>
         <div style="display:none;" id="amountDisplay">
             <label>
-                {$wording.labelAmoutRefundPartial}
+                {$wording.labelAmoutRefundPartial|escape:'htmlall':'UTF-8'}
             </label>
             <div class="margin-form">
-                <input type="text" autocomplete="off" class="alma-input-number" id="amount" value="" name="amount" placeholder="{$wording.placeholderInputRefundPartial}" />
+                <input type="text" autocomplete="off" class="alma-input-number" id="amount" value="" name="amount" placeholder="{$wording.placeholderInputRefundPartial|escape:'htmlall':'UTF-8'}" />
             </div>
         </div>  
         <div class="clear"></div>
         <div class="margin-form">
-            <input type="submit" class="button" value="{$wording.buttonRefund}" />
+            <input type="submit" class="button" value="{$wording.buttonRefund|escape:'htmlall':'UTF-8'}" />
         </div>
     </form>
 </fieldset>

@@ -29,7 +29,7 @@
         <div class="panel-heading row">
             <div class="col-sm-6">
                 <img src="{$iconPath|escape:'htmlall':'UTF-8'}"/>
-                {$wording.title}
+                {$wording.title|escape:'htmlall':'UTF-8'}
             </div>
             <div class="col-sm-6">
                 {if $refund.percentRefund > 0}
@@ -48,13 +48,13 @@
                 </p>
             </div>
             <div class="form-group">
-                <label class="control-label col-lg-2 required"> {$wording.labelTypeRefund}</label>
+                <label class="control-label col-lg-2 required"> {$wording.labelTypeRefund|escape:'htmlall':'UTF-8'}</label>
                 <div class="col-lg-10">
                     {if $order.ordersId}
                         <div class="radio t">
                             <label>
                                 <input type="radio" class="refundType" name="refundType" value="partial_multi" />                            
-                                {$wording.labelRadioRefundOneOrder}
+                                {$wording.labelRadioRefundOneOrder|escape:'htmlall':'UTF-8'}
                             </label>
                         </div>
                     {/if}
@@ -62,14 +62,14 @@
                         <label>
                             <input type="radio" class="refundType" name="refundType" value="total" checked="checked"/>
                             {if $order.ordersId}
-                                {$wording.labelRadioRefundAllOrder}
+                                {$wording.labelRadioRefundAllOrder|escape:'htmlall':'UTF-8'}
                                 <br>
-                                <i>{$wording.labelRadioRefundAllOrderInfoId}
+                                <i>{$wording.labelRadioRefundAllOrderInfoId|escape:'htmlall':'UTF-8'}
                                 <br>
-                                {$wording.labelRadioRefundAllOrderInfoAmount}
+                                {$wording.labelRadioRefundAllOrderInfoAmount|escape:'htmlall':'UTF-8'}
                                 </i>
                             {else}
-                                {$wording.labelRadioRefundTotalAmout}
+                                {$wording.labelRadioRefundTotalAmout|escape:'htmlall':'UTF-8'}
                             {/if}
 
                         </label>
@@ -77,25 +77,25 @@
                     <div class="radio t">
                         <label>
                             <input type="radio" class="refundType" name="refundType" value="partial"/>
-                            {$wording.labelRadioRefundPartial}
+                            {$wording.labelRadioRefundPartial|escape:'htmlall':'UTF-8'}
                         </label>
                     </div>
                 </div>
             </div>
             <div class="form-group" id="amountDisplay" style="display: none">
-                <label class="control-label col-lg-2 required"> {$wording.labelAmoutRefundPartial}</label>
+                <label class="control-label col-lg-2 required"> {$wording.labelAmoutRefundPartial|escape:'htmlall':'UTF-8'}</label>
                 <div class="col-lg-2">
                     <div class="input-group">
                         <span class="input-group-addon">{$order.currencySymbol|escape:'htmlall':'UTF-8'}</span>
                         <input type="text" class="alma" value="" name="amount"
-                               placeholder="{$wording.placeholderInputRefundPartial}"/>
+                               placeholder="{$wording.placeholderInputRefundPartial|escape:'htmlall':'UTF-8'}"/>
                     </div>
                 </div>
             </div>
         </div>
         <div class="panel-footer clear">
             <button type="submit" class="button btn btn-primary button-medium pull-right">
-                <span>{$wording.buttonRefund}</button>
+                <span>{$wording.buttonRefund|escape:'htmlall':'UTF-8'}</button>
         </div>
     </div>
 </form>
