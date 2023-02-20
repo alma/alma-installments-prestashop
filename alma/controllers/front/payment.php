@@ -48,7 +48,7 @@ class AlmaPaymentModuleFrontController extends ModuleFrontController
         $json = ['error' => true, 'message' => $msg];
         method_exists(get_parent_class($this), 'ajaxDie')
             ? $this->ajaxDie(json_encode($json))
-            : die(Tools::jsonEncode($json));
+            : exit(Tools::jsonEncode($json));
     }
 
     private function checkCurrency()
@@ -136,7 +136,7 @@ class AlmaPaymentModuleFrontController extends ModuleFrontController
         if ($data['payment']['installments_count'] <= 4 && Settings::activateFragment()) {
             method_exists(get_parent_class($this), 'ajaxDie')
             ? $this->ajaxDie(json_encode($data))
-            : die(Tools::jsonEncode($data));
+            : exit(Tools::jsonEncode($data));
         }
 
         try {

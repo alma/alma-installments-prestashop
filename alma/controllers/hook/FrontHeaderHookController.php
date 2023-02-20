@@ -89,12 +89,12 @@ class FrontHeaderHookController extends FrontendHookController
             if (($controller->php_self == 'order' && $controller->step == 3) || $controller->php_self == 'order-opc') {
                 $controller->addJS($fragmentsJsUrl);
                 $controller->addJS($this->module->_path . $fragmentsScriptPath);
-            }
-            // Cart widget
-            elseif (Settings::showEligibilityMessage() &&
-                    ($controller->php_self == 'order' && $controller->step == 0 || $controller->php_self == 'order-opc')
-                    && (isset($controller->nbProducts) && $controller->nbProducts != 0)
-                ) {
+            } elseif (
+                Settings::showEligibilityMessage() &&
+                ($controller->php_self == 'order' && $controller->step == 0 || $controller->php_self == 'order-opc')
+                && (isset($controller->nbProducts) && $controller->nbProducts != 0)
+            ) {
+                 // Cart widget
                 if (version_compare(_PS_VERSION_, '1.5.6.2', '<')) {
                     $content .= '<link rel="stylesheet" href="' . $widgetsCssUrl . '">';
                 } else {
