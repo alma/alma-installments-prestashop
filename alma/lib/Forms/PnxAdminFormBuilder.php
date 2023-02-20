@@ -176,7 +176,10 @@ class PnxAdminFormBuilder extends AbstractAlmaAdminFormBuilder
             );
         }
         if ($feePlan->isPayNow()) {
-            return $this->module->l('Enable pay now', 'PnxAdminFormBuilder');
+            return sprintf(
+                $this->module->l('Enable %d-installment payment', 'PnxAdminFormBuilder'),
+                $feePlan->installments_count
+            );
         }
 
         return sprintf(
@@ -194,7 +197,7 @@ class PnxAdminFormBuilder extends AbstractAlmaAdminFormBuilder
      */
     protected function getTabTitle(FeePlan $feePlan, $duration)
     {
-        if ($feePlan->isPnXOnly()) {
+        if ($feePlan->isPnXOnly() || $feePlan->isPayNow()) {
             return sprintf(
                 $this->module->l('%d-installment payments', 'PnxAdminFormBuilder'),
                 $feePlan->installments_count
@@ -207,10 +210,6 @@ class PnxAdminFormBuilder extends AbstractAlmaAdminFormBuilder
                 $this->module->l('Deferred payments + %d days', 'PnxAdminFormBuilder'),
                 $duration
             );
-        }
-
-        if ($feePlan->isPayNow()) {
-            return $this->module->l('Pay now', 'PnxAdminFormBuilder');
         }
 
         // PrestaShop won't detect the string if the call to `l` is multiline

@@ -99,7 +99,7 @@ $_MODULE['<{alma}prestashop>excludedcategoryadminformbuilder_f5e42a943a36e2a61ba
 $_MODULE['<{alma}prestashop>excludedcategoryadminformbuilder_41c2bdcbfb6ea702ac49667124a1652a'] = 'Excluded categories non-eligibility message';
 $_MODULE['<{alma}prestashop>excludedcategoryadminformbuilder_c4cea4750fb3ef077cbf2e1283c312ac'] = 'Message displayed on an excluded product page or on the cart page if it contains an excluded product.';
 $_MODULE['<{alma}prestashop>excludedcategoryadminformbuilder_36359547b09bdb31f46c419a0bd5807e'] = 'Excluded categories';
-$_MODULE['<{alma}prestashop>paymentbuttonadminformbuilder_13b41fc4cf6b6d03e38dfdf7f6c9185c'] = 'Immediate payment';
+$_MODULE['<{alma}prestashop>paymentbuttonadminformbuilder_8bd4837a76cf443ab523a51895e23c36'] = 'Pay now';
 $_MODULE['<{alma}prestashop>paymentbuttonadminformbuilder_b78a3223503896721cca1303f776159b'] = 'Title';
 $_MODULE['<{alma}prestashop>paymentbuttonadminformbuilder_b5a7adde1af5c87d7fd797b6245c2a39'] = 'Description';
 $_MODULE['<{alma}prestashop>paymentbuttonadminformbuilder_bd348b62a28c8a1ff9932c0dfb8b53a9'] = 'Payments in 2, 3 and 4 installments';
@@ -123,6 +123,7 @@ $_MODULE['<{alma}prestashop>pnxadminformbuilder_52f5e0bc3859bc5f5e25130b6c7e8881
 $_MODULE['<{alma}prestashop>pnxadminformbuilder_471efc56e22a91e31c909a7d7044dc8e'] = 'Use relative values to set the order on the checkout page';
 $_MODULE['<{alma}prestashop>pnxadminformbuilder_200b9884c24938888bc2462029b5241d'] = 'Enable %d-installment payments';
 $_MODULE['<{alma}prestashop>pnxadminformbuilder_203cf2399ac7e381d5e3f50e9af16981'] = 'Enable deferred payments +%d days';
+$_MODULE['<{alma}prestashop>pnxadminformbuilder_f5a4d13703abb4aae723766b859a24c1'] = 'Enable %d-installment payment';
 $_MODULE['<{alma}prestashop>pnxadminformbuilder_1cc27a7dd338c415c7ec905916039fdb'] = 'Enable %d-installment payments +%d-deferred days';
 $_MODULE['<{alma}prestashop>pnxadminformbuilder_445b31fd41d49bfa07607421c51fe814'] = '%d-installment payments';
 $_MODULE['<{alma}prestashop>pnxadminformbuilder_00a67585074c0f91b2446943f30f8c33'] = 'Deferred payments + %d days';
