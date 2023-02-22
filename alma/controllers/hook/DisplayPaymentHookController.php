@@ -84,11 +84,13 @@ class DisplayPaymentHookController extends FrontendHookController
             $isDeferred = Settings::isDeferred($plan);
             $isPayNow = $installment === 1;
 
-            if (!$plan->isEligible && $feePlans->$key->enabled && Settings::showDisabledButton()) {
-                $disabled = true;
-                $plans = null;
-            } elseif (!$plan->isEligible) {
-                continue;
+            if (!$plan->isEligible) {
+                if ($feePlans->$key->enabled && Settings::showDisabledButton()) {
+                    $disabled = true;
+                    $plans = null;
+                } else {
+                    continue;
+                }
             }
             $duration = Settings::getDuration($plan);
             $valueLogo = $isDeferred ? $duration : $installment;
