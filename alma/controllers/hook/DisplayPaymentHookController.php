@@ -31,6 +31,7 @@ if (!defined('_PS_VERSION_')) {
 use Alma\PrestaShop\API\EligibilityHelper;
 use Alma\PrestaShop\Hooks\FrontendHookController;
 use Alma\PrestaShop\Model\CartData;
+use Alma\PrestaShop\Utils\PlanHelper;
 use Alma\PrestaShop\Utils\Settings;
 use Alma\PrestaShop\Utils\SettingsCustomFields;
 use Cart;
@@ -82,7 +83,7 @@ class DisplayPaymentHookController extends FrontendHookController
                 'taeg' => $plan->annualInterestRate,
             ];
             $isDeferred = Settings::isDeferred($plan);
-            $isPayNow = $installment === 1;
+            $isPayNow = $key === PlanHelper::ALMA_KEY_PAYNOW;
 
             if (!$plan->isEligible) {
                 if ($feePlans->$key->enabled && Settings::showDisabledButton()) {
@@ -106,7 +107,7 @@ class DisplayPaymentHookController extends FrontendHookController
                 'pnx' => $installment,
                 'logo' => $logo,
                 'plans' => $plans,
-                'installmentText' => $this->getInstallmentText($plans, $idLang, Settings::isDeferredTriggerLimitDays($feePlans, $key), $isDeferred),
+                'installmentText' => $this->getInstallmentText($plans, $idLang, Settings::isDeferredTriggerLimitDays($feePlans, $key), $isPayNow),
                 'deferred_trigger_limit_days' => $feePlans->$key->deferred_trigger_limit_days,
                 'isDeferred' => $isDeferred,
                 'text' => sprintf(SettingsCustomFields::getPnxButtonTitleByLang($idLang), $installment),
@@ -123,7 +124,7 @@ class DisplayPaymentHookController extends FrontendHookController
                 $paymentOption['text'] = sprintf(SettingsCustomFields::getPaymentButtonTitleDeferredByLang($idLang), $duration);
                 $paymentOption['desc'] = sprintf(SettingsCustomFields::getPaymentButtonDescriptionDeferredByLang($idLang), $duration);
             }
-            if (!$isDeferred && $isPayNow) {
+            if ($isPayNow) {
                 $paymentOption['text'] = SettingsCustomFields::getPayNowButtonTitleByLang($idLang);
                 $paymentOption['desc'] = SettingsCustomFields::getPayNowButtonDescriptionByLang($idLang);
             }
@@ -148,7 +149,7 @@ class DisplayPaymentHookController extends FrontendHookController
      *
      * @return string text one liner option
      */
-    private function getInstallmentText($plans, $idLang, $isDeferredTriggerLimitDays, $isDeferred)
+    private function getInstallmentText($plans, $idLang, $isDeferredTriggerLimitDays, $isPayNow)
     {
         $nbPlans = count($plans);
         $locale = Language::getIsoById($idLang);
@@ -169,7 +170,7 @@ class DisplayPaymentHookController extends FrontendHookController
                 almaFormatPrice($plans[1]['total_amount'])
             );
         }
-        if ($nbPlans === 1 && !$isDeferred) {
+        if ($isPayNow) {
             return '';
         }
 

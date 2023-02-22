@@ -23,7 +23,7 @@
  */
 global $_MODULE;
 $_MODULE = [];
-$_MODULE['<{alma}prestashop>alma_d4b3f55d02c6448c36a233c1f1c27a18'] = '2x 3x 4x, D+15 oder D+30 Alma – Ratenzahlung und Zahlungsaufschub';
+$_MODULE['<{alma}prestashop>alma_d4b3f55d02c6448c36a233c1f1c27a18'] = '1x 2x 3x 4x, D+15 oder D+30 Alma – Ratenzahlung und Zahlungsaufschub';
 $_MODULE['<{alma}prestashop>alma_7f9c508fa226d3e72644403653115c29'] = 'Verkaufen Sie mehr, indem Sie die Zufriedenheit Ihrer Kunden erhöhen! Sichern Sie Ihre Liquidität mit Alma, der einfachen und garantierten Ratenzahlung';
 $_MODULE['<{alma}prestashop>alma_ce67a7d4b82bc360a17d25943924b388'] = 'Sind Sie sicher, dass Sie die Alma-Zahlungen in Ihrem Shop deaktivieren möchten?';
 $_MODULE['<{alma}prestashop>alma_7bab99339291e7eea710b4a998e663de'] = 'Alma erfordert die PHP-cURL-Erweiterung';

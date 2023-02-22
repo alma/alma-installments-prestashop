@@ -31,6 +31,7 @@ if (!defined('_PS_VERSION_')) {
 use Alma\PrestaShop\API\EligibilityHelper;
 use Alma\PrestaShop\Hooks\FrontendHookController;
 use Alma\PrestaShop\Model\CartData;
+use Alma\PrestaShop\Utils\PlanHelper;
 use Alma\PrestaShop\Utils\Settings;
 use Alma\PrestaShop\Utils\SettingsCustomFields;
 use Cart;
@@ -114,7 +115,7 @@ class PaymentOptionsHookController extends FrontendHookController
             }
             $isDeferred = Settings::isDeferred($plan);
             $duration = Settings::getDuration($plan);
-            $isPayNow = $installment === 1;
+            $isPayNow = $key === PlanHelper::ALMA_KEY_PAYNOW;
             $fileTemplate = 'payment_button_pnx.tpl';
             $valueBNPL = $installment;
             $textPaymentButton = sprintf(SettingsCustomFields::getPnxButtonTitleByLang($idLang), $installment);
@@ -129,7 +130,7 @@ class PaymentOptionsHookController extends FrontendHookController
                 $textPaymentButton = sprintf(SettingsCustomFields::getPaymentButtonTitleDeferredByLang($idLang), $duration);
                 $descPaymentButton = sprintf(SettingsCustomFields::getPaymentButtonDescriptionDeferredByLang($idLang), $duration);
             }
-            if (!$isDeferred && $isPayNow) {
+            if ($isPayNow) {
                 $textPaymentButton = SettingsCustomFields::getPayNowButtonTitleByLang($idLang);
                 $descPaymentButton = SettingsCustomFields::getPayNowButtonDescriptionByLang($idLang);
             }

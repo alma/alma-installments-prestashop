@@ -23,7 +23,7 @@
  */
 global $_MODULE;
 $_MODULE = [];
-$_MODULE['<{alma}prestashop>alma_d4b3f55d02c6448c36a233c1f1c27a18'] = '2x 3x 4x, D+15 o D+30 Alma — Pago a plazos y diferido con Alma';
+$_MODULE['<{alma}prestashop>alma_d4b3f55d02c6448c36a233c1f1c27a18'] = '1x 2x 3x 4x, D+15 o D+30 Alma — Pago a plazos y diferido con Alma';
 $_MODULE['<{alma}prestashop>alma_7f9c508fa226d3e72644403653115c29'] = '¡Vende más y aumenta la satisfacción de tus Clientes! Asegura tus ventas con Alma, el pago aplazado, simple y garantizado';
 $_MODULE['<{alma}prestashop>alma_ce67a7d4b82bc360a17d25943924b388'] = '¿Estás seguro/a de que quieres desactivar el pagos aplazado con Alma de tu tienda?';
 $_MODULE['<{alma}prestashop>alma_7bab99339291e7eea710b4a998e663de'] = 'Alma requiere la extensión PHP CURL.';
