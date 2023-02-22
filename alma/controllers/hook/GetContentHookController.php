@@ -622,7 +622,7 @@ final class GetContentHookController extends AdminHookController
         ];
 
         if ($merchant) {
-            $i = 1;
+            $sortOrder = 1;
             foreach ($feePlans as $feePlan) {
                 $key = Settings::keyForFeePlan($feePlan);
 
@@ -639,9 +639,9 @@ final class GetContentHookController extends AdminHookController
                 $helper->fields_value["ALMA_{$key}_MAX_AMOUNT"] = (int) almaPriceFromCents($maxAmount);
                 $order = isset($installmentsPlans->$key->order)
                     ? $installmentsPlans->$key->order
-                    : $i;
+                    : $sortOrder;
                 $helper->fields_value["ALMA_{$key}_SORT_ORDER"] = $order;
-                ++$i;
+                ++$sortOrder;
             }
         }
 
