@@ -186,8 +186,6 @@ class PaymentValidation
 
             $extraVars = ['transaction_id' => $payment->id];
 
-            // why ?
-            // $installmentCount = count($payment->payment_plan);
             $installmentCount = $payment->installments_count;
 
             if (Settings::isDeferred($payment)) {
@@ -197,10 +195,14 @@ class PaymentValidation
                     $days
                 );
             } else {
-                $paymentMode = sprintf(
-                    $this->module->l('Alma - %d monthly installments', 'paymentvalidation'),
-                    $installmentCount
-                );
+                if ($installmentCount === 1) {
+                    $paymentMode = $this->module->l('Alma - Pay now', 'paymentvalidation');
+                } else {
+                    $paymentMode = sprintf(
+                        $this->module->l('Alma - %d monthly installments', 'paymentvalidation'),
+                        $installmentCount
+                    );
+                }
             }
 
             try {
