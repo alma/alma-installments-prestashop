@@ -145,7 +145,7 @@ final class GetContentHookController extends AdminHookController
         $languages = $this->context->controller->getLanguages();
 
         if (!$apiOnly) {
-            $titlesPayNow =  $titles = $titlesDeferred = $titlesCredit = [];
+            $titlesPayNow = $titles = $titlesDeferred = $titlesCredit = [];
             $descriptionsPayNow = $descriptions = $descriptionsDeferred = $descriptionsCredit = [];
             $nonEligibleCategoriesMsg = [];
             foreach ($languages as $language) {
