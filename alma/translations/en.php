@@ -69,6 +69,8 @@ $_MODULE['<{alma}prestashop>paymentoptionshookcontroller_9088921432b295dfe6f0286
 $_MODULE['<{alma}prestashop>paymentvalidation_efa820507b1951ee5722003639b1a0b0'] = 'Alma Monthly Installments are not available for this currency';
 $_MODULE['<{alma}prestashop>paymentvalidation_1d879e270cfb195f257aab3116618d8b'] = 'Alma - +%d days payment';
 $_MODULE['<{alma}prestashop>paymentvalidation_6f11098989b14063e0a4cfe362734850'] = 'Alma - %d monthly installments';
+$_MODULE['<{alma}prestashop>refundhelper_446ae76a36687f9dbc62430e7006ca91'] = 'We regret to inform you that there was an issue during the payment process, your Alma payment will be fully refunded. Please retry your payment to complete your order.';
+$_MODULE['<{alma}prestashop>refundhelper_4abd2319eb67bf91be977131e403cc8e'] = 'We apologize for the inconvenience, but there was an issue during the payment process, and we were unable to refund your Alma payment. To fix this, we kindly ask you to contact our support team with your payment reference: \"%s\". Our team will be happy to assist you in ensuring that you receive your full refund. Thank you for your cooperation.';
 $_MODULE['<{alma}prestashop>abstractalmaadminformbuilder_c9cc8cce247e49bae79f15173ce97354'] = 'Save';
 $_MODULE['<{alma}prestashop>apiadminformbuilder_fe1d478b2e434b92277b47f0cf62e040'] = 'API Mode';
 $_MODULE['<{alma}prestashop>apiadminformbuilder_0e95e5facc2cad62d6458c65164c4455'] = 'Use Test mode until you are ready to take real orders with Alma. In Test mode, only admins can see Alma on cart/checkout pages.';
@@ -107,7 +109,6 @@ $_MODULE['<{alma}prestashop>paymentbuttonadminformbuilder_312b74149761f30bdcb384
 $_MODULE['<{alma}prestashop>paymentbuttonadminformbuilder_1592c10d9ef86441918f678ec6e6d79a'] = 'Display payment button, disabled';
 $_MODULE['<{alma}prestashop>paymentbuttonadminformbuilder_039b5313d8eacb12b7520d4e31c5053d'] = 'Payment method configuration';
 $_MODULE['<{alma}prestashop>paymentontriggeringadminformbuilder_ca4c631f2d5ce4d541428c762db48420'] = 'This option is available only for Alma payment in 2x, 3x and 4x. When it\'s turned on, your clients will pay the first installment at the order status change. When your client order on your website, Alma will only ask for a payment authorization. Only status handled by Alma are available in the menu below. Please contact Alma if you need us to add another status.';
-$_MODULE['<{alma}prestashop>paymentontriggeringadminformbuilder_a8342cdac86a954821e7d6b895dac2a2'] = 'If you are interested in this feature, please get closer to your Alma contact or by sending an email to %1$ssupport@getalma.eu%2$s.';
 $_MODULE['<{alma}prestashop>paymentontriggeringadminformbuilder_5088db8667a6e4c03ef8d01445beff15'] = 'Activate the payment upon trigger';
 $_MODULE['<{alma}prestashop>paymentontriggeringadminformbuilder_8ca7557011effffde8da6e2a8563e9bf'] = 'Trigger typology';
 $_MODULE['<{alma}prestashop>paymentontriggeringadminformbuilder_a8f3e94cfb811b49c487a4960ca8ecd6'] = 'Text that will appear in the payments schedule and in the customer\'s payment authorization email.';
