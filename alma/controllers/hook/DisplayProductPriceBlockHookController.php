@@ -51,7 +51,7 @@ class DisplayProductPriceBlockHookController extends FrontendHookController
             if (version_compare(_PS_VERSION_, '1.7', '>')) {
                 $skip = $params['type'] === 'price' || (!in_array($params['type'], ['price', 'after_price']));
             } elseif (version_compare(_PS_VERSION_, '1.6', '>')) {
-                $skip = $params['type'] !== 'weight';
+                $skip = $params['type'] !== 'after_price';
             } else {
                 $skip = !in_array($params['type'], ['price', 'after_price']);
             }
@@ -107,6 +107,10 @@ class DisplayProductPriceBlockHookController extends FrontendHookController
             // Being able to use `quantity_wanted` here means we don't have to reload price on the front-end
             $price *= $quantity;
             $refreshPrice = $productAttributeId === null;
+        }
+
+        if (Tools::getValue('id_product') != $productId) {
+            return null;
         }
 
         $psVersion = 'ps15';
