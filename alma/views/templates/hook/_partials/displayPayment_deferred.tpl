@@ -35,7 +35,7 @@
                                 <br>
                                 <span class="alma-button--description">{$option.desc|escape:'htmlall':'UTF-8'}</span>
                             {/if}
-                            <br><br>                                
+                            <br><br>
                             {l s='Alma Deferred Payment is not available for this order' mod='alma'}
                         </span>
                     </span>
@@ -61,7 +61,7 @@
                             <span class="alma-button--fee-plans">
                                 {include file="modules/alma/views/templates/hook/_partials/deferred.tpl" plans=$option.plans installmentText=$option.installmentText creditInfo=$option.creditInfo oneLiner=true}
                             </span>
-                        </span>      
+                        </span>
                     </a>
                 </p>
             </div>

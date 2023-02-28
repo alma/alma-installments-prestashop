@@ -23,6 +23,6 @@
 <div class="alma-fee-plan--block">
     <p>
         {$desc|escape:'htmlall':'UTF-8'}
-    </p>    
-    {include file="modules/alma/views/templates/hook/_partials/feePlan.tpl" plans=$plans creditInfo=$creditInfo oneLiner=false}    
+    </p>
+    {include file="modules/alma/views/templates/hook/_partials/feePlan.tpl" plans=$plans creditInfo=$creditInfo oneLiner=false}
 </div>

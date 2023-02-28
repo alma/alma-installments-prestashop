@@ -27,7 +27,6 @@
 {capture assign='total'}{l s='Total' mod='alma'}{/capture}
 {capture assign='firstAmount'}{almaFormatPrice cents=$plans[0].total_amount}{/capture}
 {capture assign='fees'}{almaFormatPrice cents=$plans[0].customer_fee}{/capture}
-{capture assign='nextAmounts'}{almaFormatPrice cents=$plans[1].total_amount}{/capture}
 
 {if $oneLiner}
     <span class="alma-fee-plan--description">
@@ -58,17 +57,18 @@
             <span class="alma-credit-desc-right">{$creditInfo.taeg / 100}%</span>
         </span>
         <br>
-        <span class="alma-fee-plan--description">            
+        <span class="alma-fee-plan--description">
             <span style="float:left;"><b>{$total}</b></span>
             <span style="float:right;"><b>{almaFormatPrice cents=$creditInfo.totalCredit}</b></span>
         </span>
     {/if}
 {else}
-    {if 4 < $installmentsCount}        
+    {if 4 < $installmentsCount}
+        {capture assign='nextAmounts'}{almaFormatPrice cents=$plans[1].total_amount}{/capture}
         <span>
         {almaDisplayHtml}
             {l s='%1$s today then %2$d x %3$s' sprintf=[$firstAmount, $installmentsCount - 1, $nextAmounts] mod='alma'}
-        {/almaDisplayHtml}        
+        {/almaDisplayHtml}
         </span>
         <br>
         <br>
@@ -86,12 +86,12 @@
             <span class="alma-fee-plan--amount">{$creditInfo.taeg / 100}%</span>
         </span>
         <strong>
-        <span class="alma-fee-plan--description">            
+        <span class="alma-fee-plan--description">
                 <span class="alma-fee-plan--date">{$total}</span>
-                <span class="alma-fee-plan--amount">{almaFormatPrice cents=$creditInfo.totalCredit}</span>            
+                <span class="alma-fee-plan--amount">{almaFormatPrice cents=$creditInfo.totalCredit}</span>
         </span>
         </strong>
-        <br>        
+        <br>
     {else}
         {foreach from=$plans item=v key=k name=counter}
             <span class="alma-fee-plan--description">
