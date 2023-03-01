@@ -160,7 +160,7 @@ class PaymentValidation
                     "[Alma] Payment validation error for Cart {$cart->id}: Purchase amount mismatch!"
                 );
 
-                $refund = new RefundHelper($payment->id, $this->module, $cart);
+                $refund = new RefundHelper($this->module, $cart, $payment->id);
                 $refund->forMismatch();
 
                 throw new PaymentValidationError($cart, Payment::FRAUD_AMOUNT_MISMATCH);

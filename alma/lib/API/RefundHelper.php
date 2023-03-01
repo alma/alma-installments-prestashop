@@ -31,22 +31,42 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
+/**
+ * Class RefundHelper.
+ *
+ * Use for refund
+ */
 class RefundHelper
 {
-    /** @var int */
-    private $paymentId;
-    /** @var PaymentModule */
+    /** @var Alma */
     private $module;
     /** @var Cart */
     private $cart;
+    /** @var int */
+    private $paymentId;
 
-    public function __construct($paymentId, $module, $cart)
+    /**
+     * construct RefundHelper
+     *
+     * @param Alma $module
+     * @param Cart $cart
+     * @param int $paymentId
+     */
+    public function __construct($module, $cart, $paymentId)
     {
-        $this->paymentId = $paymentId;
         $this->module = $module;
         $this->cart = $cart;
+        $this->paymentId = $paymentId;
     }
 
+    /**
+     * Refund for Mismatch
+     *
+     * @return void
+     *
+     * @throws RefundException
+     * @throws PaymentValidationError
+     */
     public function forMismatch()
     {
         $alma = ClientHelper::defaultInstance();
