@@ -34,7 +34,7 @@
     {/if}
 {/foreach}
 {if $activateFragment}
-<div id="almaFragments" data-apimode="{$apiMode}" data-merchantid="{$merchantId}" data-activatefragment="{$activateFragment}"></div>
+<div id="alma-inpage" data-apimode="{$apiMode}" data-merchantid="{$merchantId}" data-activatefragment="{$activateFragment}"></div>
 <script type="text/javascript">
     (function($) {
         $(function() {                       

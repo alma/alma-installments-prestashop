@@ -640,6 +640,6 @@ class Settings
 
     public static function getFragmentsJsUrl()
     {
-        return 'https://cdn.jsdelivr.net/npm/@alma/fragments@1.x/dist/alma-fragments.umd.js';
+        return 'https://cdn.jsdelivr.net/npm/@alma/in-page@1.x/dist/index.umd.js';
     }
 }

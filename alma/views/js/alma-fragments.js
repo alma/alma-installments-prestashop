@@ -42,17 +42,20 @@ window.onload = function () {
     };
 
     almaPay = function (paymentData) {
-        const fragments = new Alma.Fragments($("#almaFragments").data("merchantid"), {
-            mode: $("#almaFragments").data("apimode"),
+        const inPage = new Alma.InPage.initialize(paymentData.id, {
+            environment: $("#alma-inpage").data("apimode"),
         });
+        console.log(paymentData.id);
+        console.log(inPage);
 
-        fragments.createPaymentForm(paymentData).mount("#alma-payment");
+        inPage.mount("#alma-payment");
         $("html, body").animate(
             {
                 scrollTop: $("#alma-payment").offset().top,
             },
             4500
         );
+        inPage.startPayment();
     };
 
     processAlmaPayment = function (url) {
@@ -65,15 +68,15 @@ window.onload = function () {
                 action: "payment",
             },
         })
-            .done(function (data) {
-                almaPay(data);
+            .done(function (paymentData) {
+                almaPay(paymentData);
             })
             .fail(function () {
                 window.location.href = "index.php?controller=order&step=1";
             });
     };
 
-    if ($("#almaFragments").length != 0) {
+    if ($("#alma-inpage").length != 0) {
         $('input[name="payment-option"]').change(function () {
             $("#alma-payment").remove();
         });
@@ -92,7 +95,7 @@ window.onload = function () {
                 url.indexOf("module/alma/payment") != -1 ||
                 url.indexOf("module=alma") != -1
             ) {
-                if (getInstallmentByUrl(url) <= 4 && $("#almaFragments").data("activatefragment")) {
+                if (getInstallmentByUrl(url) <= 4 && $("#alma-inpage").data("activatefragment")) {
                     e.preventDefault();
 
                     $("#payment-confirmation").after(

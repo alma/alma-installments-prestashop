@@ -133,11 +133,7 @@ class AlmaPaymentModuleFrontController extends ModuleFrontController
             return;
         }
 
-        if ($data['payment']['installments_count'] <= 4 && Settings::activateFragment()) {
-            method_exists(get_parent_class($this), 'ajaxDie')
-            ? $this->ajaxDie(json_encode($data))
-            : exit(Tools::jsonEncode($data));
-        }
+        
 
         try {
             $payment = $alma->payments->create($data);
@@ -147,6 +143,12 @@ class AlmaPaymentModuleFrontController extends ModuleFrontController
             $this->genericErrorAndRedirect();
 
             return;
+        }
+        
+        if ($data['payment']['installments_count'] <= 4 && Settings::activateFragment()) {
+            method_exists(get_parent_class($this), 'ajaxDie')
+            ? $this->ajaxDie(json_encode($payment))
+            : exit(Tools::jsonEncode($payment));
         }
 
         Tools::redirect($payment->url);

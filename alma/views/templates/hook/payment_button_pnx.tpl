@@ -27,5 +27,5 @@
     {include file="modules/alma/views/templates/hook/_partials/feePlan.tpl" plans=$plans creditInfo=$creditInfo oneLiner=false}    
 </div>
 {if $first}
-    <div id="almaFragments" data-apimode="{$apiMode}" data-merchantid="{$merchantId}" data-activatefragment="{$activateFragment}"></div>    
+    <div id="alma-inpage" data-apimode="{$apiMode}" data-merchantid="{$merchantId}" data-activatefragment="{$activateFragment}"></div>    
 {/if}
