@@ -42,6 +42,8 @@ class RefundHelper
     private $module;
     /** @var Cart */
     private $cart;
+    /** @var ClientHelper */
+    private $almaClient;
     /** @var int */
     private $paymentId;
 
@@ -56,6 +58,7 @@ class RefundHelper
     {
         $this->module = $module;
         $this->cart = $cart;
+        $this->almaClient = new ClientHelper();
         $this->paymentId = $paymentId;
     }
 
@@ -69,16 +72,9 @@ class RefundHelper
      */
     public function forMismatch()
     {
-        $alma = ClientHelper::defaultInstance();
-        if (!$alma) {
-            $msg = '[Alma] Error instantiating Alma API Client for Refund';
-            Logger::instance()->error($msg);
-            throw new RefundException($msg);
-        }
-
         try {
-            $alma->payments->fullRefund($this->paymentId);
             $msgRefund = $this->module->l('We regret to inform you that there was an issue during the payment process, your Alma payment will be fully refunded. Please retry your payment to complete your order.', 'refundhelper');
+            $this->fullRefund();
         } catch (RefundException $e) {
             Logger::instance()->error('[Alma] RefundMismatch Error - ' . $e->getMessage());
             $msgRefund = sprintf(
@@ -88,5 +84,19 @@ class RefundHelper
         }
 
         throw new PaymentValidationError($this->cart, $msgRefund);
+    }
+
+    /**
+     * Make fullRefund
+     *
+     * @return void
+     */
+    public function fullRefund()
+    {
+        try {
+            $this->almaClient->getAlmaClient()->payments->fullRefund($this->paymentId);
+        } catch (RefundException $e) {
+            Logger::instance()->error('[Alma] fullRefund Error - ' . $e->getMessage());
+        }
     }
 }
