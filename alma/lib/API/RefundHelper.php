@@ -74,7 +74,7 @@ class RefundHelper
     {
         try {
             $msgRefund = $this->module->l('We regret to inform you that there was an issue during the payment process, your Alma payment will be fully refunded. Please retry your payment to complete your order.', 'refundhelper');
-            $this->fullRefund();
+            $this->fullRefund($this->paymentId, '', 'Refund after Mismatch - cart ID : ' . $this->cart->id);
         } catch (RefundException $e) {
             Logger::instance()->error('[Alma] RefundMismatch Error - ' . $e->getMessage());
             $msgRefund = sprintf(
@@ -91,10 +91,10 @@ class RefundHelper
      *
      * @return void
      */
-    public function fullRefund()
+    public function fullRefund($id, $merchantReference = "", $comment = "")
     {
         try {
-            $this->almaClient->getAlmaClient()->payments->fullRefund($this->paymentId);
+            $this->almaClient->getAlmaClient()->payments->fullRefund($id, $merchantReference, $comment);
         } catch (RefundException $e) {
             Logger::instance()->error('[Alma] fullRefund Error - ' . $e->getMessage());
         }
