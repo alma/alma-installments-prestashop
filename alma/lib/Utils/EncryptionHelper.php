@@ -60,7 +60,7 @@ class EncryptionHelper
 
             return $phpEncrypt->encrypt($plaintext);
         } elseif (class_exists('Rijndael')) {
-            $rijndael = new Rijndael($this->cookieKey);
+            $rijndael = new Rijndael(_RIJNDAEL_KEY_, _RIJNDAEL_IV_);
 
             return $rijndael->encrypt($plaintext);
         }
@@ -75,7 +75,7 @@ class EncryptionHelper
 
             return $phpEncrypt->decrypt($cipherText);
         } elseif (class_exists('Rijndael')) {
-            $rijndael = new Rijndael($this->cookieKey);
+            $rijndael = new Rijndael(_RIJNDAEL_KEY_, _RIJNDAEL_IV_);
 
             return $rijndael->decrypt($cipherText);
         }
