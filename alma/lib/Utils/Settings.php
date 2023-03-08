@@ -242,7 +242,7 @@ class Settings
     public static function getLiveKey()
     {
         $apiKey = self::get(ApiAdminFormBuilder::ALMA_LIVE_API_KEY, null);
-        if (str_contains($apiKey, ApiKeyHelper::BEGIN_LIVE_API_KEY)) {
+        if (strpos($apiKey, ApiKeyHelper::BEGIN_LIVE_API_KEY) !== false) {
             return $apiKey;
         }
 
@@ -258,7 +258,7 @@ class Settings
     public static function getTestKey()
     {
         $apiKey = self::get(ApiAdminFormBuilder::ALMA_TEST_API_KEY, null);
-        if (str_contains($apiKey, ApiKeyHelper::BEGIN_TEST_API_KEY)) {
+        if (strpos($apiKey, ApiKeyHelper::BEGIN_TEST_API_KEY) !== false) {
             return $apiKey;
         }
 
