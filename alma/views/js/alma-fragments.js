@@ -45,8 +45,6 @@ window.onload = function () {
         const inPage = new Alma.InPage.initialize(paymentData.id, {
             environment: $("#alma-inpage").data("apimode"),
         });
-        console.log(paymentData.id);
-        console.log(inPage);
 
         inPage.mount("#alma-payment");
         $("html, body").animate(
@@ -55,7 +53,9 @@ window.onload = function () {
             },
             4500
         );
-        inPage.startPayment();
+        setTimeout(function() {
+            inPage.startPayment();
+        }, 1000);
     };
 
     processAlmaPayment = function (url) {
