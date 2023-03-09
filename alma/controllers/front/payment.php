@@ -133,8 +133,6 @@ class AlmaPaymentModuleFrontController extends ModuleFrontController
             return;
         }
 
-        
-
         try {
             $payment = $alma->payments->create($data);
         } catch (RequestError $e) {
@@ -144,8 +142,8 @@ class AlmaPaymentModuleFrontController extends ModuleFrontController
 
             return;
         }
-        
-        if ($data['payment']['installments_count'] <= 4 && Settings::activateFragment()) {
+
+        if (Settings::activateFragment()) {
             method_exists(get_parent_class($this), 'ajaxDie')
             ? $this->ajaxDie(json_encode($payment))
             : exit(Tools::jsonEncode($payment));

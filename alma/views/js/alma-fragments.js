@@ -68,12 +68,12 @@ window.onload = function () {
                 action: "payment",
             },
         })
-            .done(function (paymentData) {
-                almaPay(paymentData);
-            })
-            .fail(function () {
-                window.location.href = "index.php?controller=order&step=1";
-            });
+        .done(function (paymentData) {
+            almaPay(paymentData);
+        })
+        .fail(function () {
+            window.location.href = "index.php?controller=order&step=1";
+        });
     };
 
     if ($("#alma-inpage").length != 0) {
@@ -95,7 +95,7 @@ window.onload = function () {
                 url.indexOf("module/alma/payment") != -1 ||
                 url.indexOf("module=alma") != -1
             ) {
-                if (getInstallmentByUrl(url) <= 4 && $("#alma-inpage").data("activatefragment")) {
+                if ($("#alma-inpage").data("activatefragment")) {
                     e.preventDefault();
 
                     $("#payment-confirmation").after(
