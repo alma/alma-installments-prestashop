@@ -51,17 +51,15 @@
             });
         
             $(".alma-fragments-pnx").click(function (e) {
-                if (getInstallmentByUrl(this.href) <= 4) {
-                    e.preventDefault();
-                    $(".display-fragment").remove();
-                    $(this)
-                        .parent()
-                        .parent()
-                        .after(
-                            '<div id="alma-payment" class="col-xs-12 display-fragment"></div>'
-                        );
-                    processAlmaPayment(this.href);
-                }
+                e.preventDefault();
+                $(".display-fragment").remove();
+                $(this)
+                    .parent()
+                    .parent()
+                    .after(
+                        '<div id="alma-payment" class="col-xs-12 display-fragment"></div>'
+                    );
+                processAlmaPayment(this.href);
             });
         });
     })(jQuery);
