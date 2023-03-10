@@ -26,6 +26,7 @@ namespace Alma\PrestaShop\API;
 
 use Alma\PrestaShop\Utils\Logger;
 use Cart;
+use \Exception;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -70,7 +71,7 @@ class RefundHelper
      * @throws RefundException
      * @throws PaymentValidationError
      */
-    public function forMismatch()
+    public function mismatchFullRefund()
     {
         try {
             $msgRefund = $this->module->l('We regret to inform you that there was an issue during the payment process, your Alma payment will be fully refunded. Please retry your payment to complete your order.', 'refundhelper');
@@ -78,8 +79,8 @@ class RefundHelper
         } catch (RefundException $e) {
             Logger::instance()->error('[Alma] RefundMismatch Error - ' . $e->getMessage());
             $msgRefund = sprintf(
-                $this->module->l('We apologize for the inconvenience, but there was an issue during the payment process, and we were unable to refund your Alma payment. To fix this, we kindly ask you to contact our support team with your payment reference: "%s". Our team will be happy to assist you in ensuring that you receive your full refund. Thank you for your cooperation.', 'refundhelper'),
-                $this->paymentId
+                $this->module->l('We apologize for the inconvenience, but there was an issue during the payment process, and we were unable to refund your Alma payment. To fix this, we kindly ask you to contact our support team with your payment reference: %s. Our team will be happy to assist you in ensuring that you receive your full refund. Thank you for your cooperation.', 'refundhelper'),
+                $e->getPaymentId()
             );
         }
 
@@ -89,14 +90,21 @@ class RefundHelper
     /**
      * Make fullRefund
      *
+     * @param $id
+     * @param string $merchantReference
+     * @param string $comment
      * @return void
+     *
+     * @throws RefundException
      */
     public function fullRefund($id, $merchantReference = "", $comment = "")
     {
         try {
             $this->almaClient->getAlmaClient()->payments->fullRefund($id, $merchantReference, $comment);
-        } catch (RefundException $e) {
+        } catch (Exception $e) {
             Logger::instance()->error('[Alma] fullRefund Error - ' . $e->getMessage());
+
+            throw new RefundException($id, $e->getMessage(), $e);
         }
     }
 }

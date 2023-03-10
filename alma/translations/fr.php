@@ -1,28 +1,7 @@
 <?php
-/**
- * 2018-2023 Alma SAS
- *
- * THE MIT LICENSE
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
- * documentation files (the "Software"), to deal in the Software without restriction, including without limitation
- * the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and
- * to permit persons to whom the Software is furnished to do so, subject to the following conditions:
- * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the
- * Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE
- * WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
- * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
- * IN THE SOFTWARE.
- *
- * @author    Alma SAS <contact@getalma.eu>
- * @copyright 2018-2023 Alma SAS
- * @license   https://opensource.org/licenses/MIT The MIT License
- */
+
 global $_MODULE;
-$_MODULE = [];
+$_MODULE = array();
 $_MODULE['<{alma}prestashop>alma_d4b3f55d02c6448c36a233c1f1c27a18'] = ' 2x 3x 4x, J+15 ou J+30 Alma — Paiement en plusieurs fois et différé';
 $_MODULE['<{alma}prestashop>alma_7f9c508fa226d3e72644403653115c29'] = 'Boostez vos ventes en installant Alma ! C\'est simple et garanti, votre trésorerie est sécurisée. 0 engagement, 0 abonnement, 0 risque.';
 $_MODULE['<{alma}prestashop>alma_ce67a7d4b82bc360a17d25943924b388'] = 'Voulez-vous vraiment supprimer les paiements Alma de votre boutique ?';
@@ -68,7 +47,7 @@ $_MODULE['<{alma}prestashop>paymentvalidation_efa820507b1951ee5722003639b1a0b0']
 $_MODULE['<{alma}prestashop>paymentvalidation_1d879e270cfb195f257aab3116618d8b'] = 'Alma - Paiement +%d jours';
 $_MODULE['<{alma}prestashop>paymentvalidation_6f11098989b14063e0a4cfe362734850'] = 'Alma - Paiement en %d fois';
 $_MODULE['<{alma}prestashop>refundhelper_446ae76a36687f9dbc62430e7006ca91'] = 'Nous regrettons de vous informer qu\'un problème est survenu lors du processus de paiement, votre paiement Alma sera entièrement remboursé. Nous vous invitons à réessayer votre paiement afin de finaliser votre commande. ';
-$_MODULE['<{alma}prestashop>refundhelper_4abd2319eb67bf91be977131e403cc8e'] = 'Nous nous excusons pour le désagrément causé, il y a eu un problème lors du processus de paiement et nous n\'avons pas été en mesure de vous rembourser votre paiement Alma. Pour résoudre ce problème, nous vous invitons à contacter notre équipe de support en fournissant votre référence de paiement: \"%s\", afin d’obtenir votre remboursement complet.';
+$_MODULE['<{alma}prestashop>refundhelper_448edd2d5c593906afa202847b8d79c0'] = 'Nous nous excusons pour le désagrément causé, il y a eu un problème lors du processus de paiement et nous n\'avons pas été en mesure de vous rembourser votre paiement Alma. Pour résoudre ce problème, nous vous invitons à contacter notre équipe de support en fournissant votre référence de paiement: %s, afin d’obtenir votre remboursement complet.';
 $_MODULE['<{alma}prestashop>abstractalmaadminformbuilder_c9cc8cce247e49bae79f15173ce97354'] = 'Enregistrer';
 $_MODULE['<{alma}prestashop>apiadminformbuilder_fe1d478b2e434b92277b47f0cf62e040'] = 'Mode de l\'API';
 $_MODULE['<{alma}prestashop>apiadminformbuilder_0e95e5facc2cad62d6458c65164c4455'] = 'Utilisez le mode Test jusqu’à ce que vous soyez prêt(e) à accepter des commandes avec Alma. En mode Test, seuls les administrateurs voient Alma sur les pages de panier/validation de commande.';
