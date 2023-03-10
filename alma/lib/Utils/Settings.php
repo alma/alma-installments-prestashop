@@ -229,9 +229,9 @@ class Settings
     {
         if (self::getActiveMode() == ALMA_MODE_LIVE) {
             return self::getLiveKey();
-        } else {
-            return self::getTestKey();
         }
+
+        return self::getTestKey();
     }
 
     /**

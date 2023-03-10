@@ -24,6 +24,7 @@
 
 namespace Alma\PrestaShop\Utils;
 
+use Exception;
 use PhpEncryption;
 use Rijndael;
 
@@ -53,13 +54,18 @@ class EncryptionHelper
         }
     }
 
+    /**
+     * @param $plaintext
+     * @return mixed|string
+     */
     public function encrypt($plaintext)
     {
         if (class_exists('PhpEncryption')) {
             $phpEncrypt = new PhpEncryption($this->cookieKey);
 
             return $phpEncrypt->encrypt($plaintext);
-        } elseif (class_exists('Rijndael')) {
+        }
+        if (class_exists('Rijndael')) {
             $rijndael = new Rijndael(_RIJNDAEL_KEY_, _RIJNDAEL_IV_);
 
             return $rijndael->encrypt($plaintext);
@@ -68,13 +74,19 @@ class EncryptionHelper
         return $plaintext;
     }
 
+    /**
+     * @param $cipherText
+     * @return bool|mixed|string
+     * @throws Exception
+     */
     public function decrypt($cipherText)
     {
         if (class_exists('PhpEncryption')) {
             $phpEncrypt = new PhpEncryption($this->cookieKey);
 
             return $phpEncrypt->decrypt($cipherText);
-        } elseif (class_exists('Rijndael')) {
+        }
+        if (class_exists('Rijndael')) {
             $rijndael = new Rijndael(_RIJNDAEL_KEY_, _RIJNDAEL_IV_);
 
             return $rijndael->decrypt($cipherText);

@@ -32,6 +32,9 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
+/**
+ * @return true
+ */
 function upgrade_module_2_12_0()
 {
     if (Settings::isFullyConfigured()) {

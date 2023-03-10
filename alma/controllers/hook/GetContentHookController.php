@@ -383,13 +383,13 @@ final class GetContentHookController extends AdminHookController
      */
     private function setKeyIfValueIsNotObscur($apiKey, $mode)
     {
-        if ($apiKey == ApiKeyHelper::OBCUR_VALUE) {
+        if ($apiKey === ApiKeyHelper::OBCUR_VALUE) {
             return null;
         }
 
-        if ($mode == ALMA_MODE_LIVE) {
+        if ($mode === ALMA_MODE_LIVE) {
             $this->apiKeyHelper->setLiveApiKey($apiKey);
-        } elseif ($mode == ALMA_MODE_TEST) {
+        } elseif ($mode === ALMA_MODE_TEST) {
             $this->apiKeyHelper->setTestApiKey($apiKey);
         }
     }
@@ -400,7 +400,7 @@ final class GetContentHookController extends AdminHookController
 
         foreach ($modes as $mode) {
             $key = ($mode == ALMA_MODE_LIVE ? $liveKey : $testKey);
-            if (!$key || $key == ApiKeyHelper::OBCUR_VALUE) {
+            if (!$key || $key === ApiKeyHelper::OBCUR_VALUE) {
                 continue;
             }
 
