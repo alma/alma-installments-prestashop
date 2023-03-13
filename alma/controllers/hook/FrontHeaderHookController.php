@@ -77,17 +77,22 @@ class FrontHeaderHookController extends FrontendHookController
         $productScriptPath = 'views/js/alma-product.js';
         $productCssPath = 'views/css/alma-product.css';
         $cartScriptPath = 'views/js/alma-cart.js';
+        $fragmentsScriptPath = 'views/js/alma-fragments.js';
+        $fragmentsJsUrl = Settings::getFragmentsJsUrl();
 
         $controller = $this->context->controller;
         $content = null;
 
         if (version_compare(_PS_VERSION_, '1.7', '<')) {
-            // Cart widget
-            if (
-                Settings::showEligibilityMessage()
+            if (($controller->php_self == 'order' && $controller->step == 3) || $controller->php_self == 'order-opc') {
+                // InPage
+                $controller->addJS($fragmentsJsUrl);
+                $controller->addJS($this->module->_path . $fragmentsScriptPath);
+            } elseif (Settings::showEligibilityMessage()
                 && ($controller->php_self == 'order' && $controller->step == 0 || $controller->php_self == 'order-opc')
                 && (isset($controller->nbProducts) && $controller->nbProducts != 0)
             ) {
+                // Cart widget
                 if (version_compare(_PS_VERSION_, '1.5.6.2', '<')) {
                     $content .= '<link rel="stylesheet" href="' . $widgetsCssUrl . '">';
                 } else {
@@ -114,7 +119,15 @@ class FrontHeaderHookController extends FrontendHookController
             $cssPath = "modules/$moduleName/$productCssPath";
             $cartScriptPath = "modules/$moduleName/$cartScriptPath";
 
-            if ($controller->php_self == 'cart' && Settings::showEligibilityMessage()) {
+            $fragmentsScriptPath = "modules/$moduleName/$fragmentsScriptPath";
+
+            if ($controller->php_self == 'order') {
+                $controller->registerJavascript(
+                    'alma-fragments-script',
+                    $fragmentsScriptPath,
+                    ['priority' => 1000, 'position' => 'head']
+                );
+            } elseif ($controller->php_self == 'cart' && Settings::showEligibilityMessage()) {
                 $controller->registerStylesheet('alma-product-css', $cssPath);
                 $controller->registerJavascript('alma-cart-script', $cartScriptPath, ['priority' => 1000]);
             } else {
@@ -123,16 +136,30 @@ class FrontHeaderHookController extends FrontendHookController
             }
 
             if (version_compare(_PS_VERSION_, '1.7.0.2', '>=')) {
-                $controller->registerStylesheet('alma-remote-widgets-css', $widgetsCssUrl, ['server' => 'remote']);
-                $controller->registerJavascript('alma-remote-widgets-js', $widgetsJsUrl, ['server' => 'remote']);
+                if ($controller->php_self == 'order') {
+                    $controller->registerJavascript(
+                        'alma-remote-fragments-js',
+                        $fragmentsJsUrl,
+                        ['server' => 'remote', 'position' => 'head']
+                    );
+                } else {
+                    $controller->registerStylesheet('alma-remote-widgets-css', $widgetsCssUrl, ['server' => 'remote']);
+                    $controller->registerJavascript('alma-remote-widgets-js', $widgetsJsUrl, ['server' => 'remote']);
+                }
             } else {
                 // For versions 1.7.0.0 and 1.7.0.1, it was impossible to register a remote script via FrontController
                 // with the new registerJavascript method, and the deprecated addJS method had been changed to be just a
                 // proxy to registerJavascript...
-                $content .= <<<TAG
+                if ($controller->php_self == 'order') {
+                    $content .= <<<TAG
+                    <script scr="$fragmentsJsUrl"></script>
+TAG;
+                } else {
+                    $content .= <<<TAG
 					<link rel="stylesheet" href="$widgetsCssUrl">
 					<script src="$widgetsJsUrl"></script>
 TAG;
+                }
             }
         }
 

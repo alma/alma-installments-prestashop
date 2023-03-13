@@ -47,13 +47,13 @@ class PaymentData
     const PAYMENT_METHOD = 'alma';
 
     /**
-     * @param Cart $cart
-     * @param Context $context
-     * @param array $feePlans
-     *
+     * @param $cart
+     * @param $context
+     * @param $feePlans
+     * @param $forPayment
      * @return array|null
-     *
-     * @throws Exception
+     * @throws \PrestaShopDatabaseException
+     * @throws \PrestaShopException
      */
     public static function dataFromCart($cart, $context, $feePlans, $forPayment = false)
     {

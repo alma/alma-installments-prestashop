@@ -37,6 +37,7 @@ if (!defined('ALMA_MODE_LIVE')) {
 }
 
 use Alma\PrestaShop\Forms\ExcludedCategoryAdminFormBuilder;
+use Alma\PrestaShop\Forms\FragmentAdminFormBuilder;
 use Alma\PrestaShop\Forms\PaymentButtonAdminFormBuilder;
 use Alma\PrestaShop\Forms\PaymentOnTriggeringAdminFormBuilder;
 use Alma\PrestaShop\Forms\ShareOfCheckoutAdminFormBuilder;
@@ -100,6 +101,7 @@ class Settings
             PaymentButtonAdminFormBuilder::ALMA_PNX_AIR_BUTTON_TITLE,
             PaymentButtonAdminFormBuilder::ALMA_PNX_AIR_BUTTON_DESC,
             ExcludedCategoryAdminFormBuilder::ALMA_NOT_ELIGIBLE_CATEGORIES,
+            FragmentAdminFormBuilder::ALMA_ACTIVATE_FRAGMENT,
             'ALMA_STATE_REFUND',
             'ALMA_STATE_REFUND_ENABLED',
             'ALMA_STATE_TRIGGER',
@@ -311,6 +313,14 @@ class Settings
     public static function getKeyDescriptionPaymentTrigger()
     {
         return self::get('ALMA_DESCRIPTION_TRIGGER', PaymentOnTriggeringAdminFormBuilder::ALMA_DESCRIPTION_TRIGGER_AT_SHIPPING);
+    }
+
+    /**
+     * @return bool
+     */
+    public static function activateFragment()
+    {
+        return (bool) (int) self::get(FragmentAdminFormBuilder::ALMA_ACTIVATE_FRAGMENT, false);
     }
 
     public static function activePlans()
@@ -626,5 +636,13 @@ class Settings
         }
 
         return $dataFromKey;
+    }
+
+    /**
+     * @return string
+     */
+    public static function getFragmentsJsUrl()
+    {
+        return 'https://cdn.jsdelivr.net/npm/@alma/in-page@1.x/dist/index.umd.js';
     }
 }

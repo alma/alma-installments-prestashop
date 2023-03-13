@@ -1,4 +1,5 @@
-{*
+<?php
+/**
  * 2018-2023 Alma SAS
  *
  * THE MIT LICENSE
@@ -19,13 +20,35 @@
  * @author    Alma SAS <contact@getalma.eu>
  * @copyright 2018-2023 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
- *}
-<div class="alma-fee-plan--block">
-    <p>
-        {$desc|escape:'htmlall':'UTF-8'}
-    </p>
-    {include file="modules/alma/views/templates/hook/_partials/deferred.tpl" plans=$plans}
-</div>
-{if $first}
-    <div id="alma-inpage" data-apimode="{$apiMode}" data-merchantid="{$merchantId}" data-activatefragment="{$activateFragment}"></div>
-{/if}
+ */
+
+namespace Alma\PrestaShop\Forms;
+
+if (!defined('_PS_VERSION_')) {
+exit;
+}
+
+/**
+* Class FragmentAdminFormBuilder
+*/
+class FragmentAdminFormBuilder extends AbstractAlmaAdminFormBuilder
+{
+    const ALMA_ACTIVATE_FRAGMENT = 'ALMA_ACTIVATE_FRAGMENT';
+
+    protected function configForm()
+    {
+        return [
+            $this->inputAlmaSwitchForm(
+                self::ALMA_ACTIVATE_FRAGMENT,
+                $this->module->l('Activate in-page checkout', 'FragmentAdminFormBuilder'),
+                $this->module->l('Activate this setting if you want a in-page checkout', 'FragmentAdminFormBuilder'),
+                $this->module->l('The checkout in-page in your own website', 'FragmentAdminFormBuilder')
+            ),
+        ];
+    }
+
+    protected function getTitle()
+    {
+        return $this->module->l('In-page checkout', 'FragmentAdminFormBuilder');
+    }
+}
