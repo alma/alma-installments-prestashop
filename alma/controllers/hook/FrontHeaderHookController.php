@@ -152,7 +152,7 @@ class FrontHeaderHookController extends FrontendHookController
                 // proxy to registerJavascript...
                 if ($controller->php_self == 'order') {
                     $content .= <<<TAG
-                    <script scr="$fragmentsJsUrl"></script>
+                    <script src="$fragmentsJsUrl"></script>
 TAG;
                 } else {
                     $content .= <<<TAG

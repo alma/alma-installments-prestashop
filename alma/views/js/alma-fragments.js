@@ -56,7 +56,7 @@ processAlmaPayment = function (url) {
 };
 
 almaInPageOnload = function() {
-    if ($("#alma-inpage").length != 0) {
+    if ($("#alma-inpage").length !== 0) {
         $('input[name="payment-option"]').change(function () {
             $("#alma-payment").remove();
         });
@@ -72,8 +72,8 @@ almaInPageOnload = function() {
             url = $(this).attr("action");
 
             if (
-                url.indexOf("module/alma/payment") != -1 ||
-                url.indexOf("module=alma") != -1
+                url.indexOf("module/alma/payment") !== -1 ||
+                url.indexOf("module=alma") !== -1
             ) {
                 if ($("#alma-inpage").data("activatefragment")) {
                     e.preventDefault();
