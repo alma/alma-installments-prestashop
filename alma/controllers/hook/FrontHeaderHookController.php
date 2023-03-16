@@ -84,7 +84,10 @@ class FrontHeaderHookController extends FrontendHookController
         $content = null;
 
         if (version_compare(_PS_VERSION_, '1.7', '<')) {
-            if (($controller->php_self == 'order' && $controller->step == 3) || $controller->php_self == 'order-opc') {
+            if (
+                ($controller->php_self == 'order' && $controller->step == 3) ||
+                $controller->php_self == 'order-opc'
+            ) {
                 // InPage
                 $controller->addJS($fragmentsJsUrl);
                 $controller->addJS($this->module->_path . $fragmentsScriptPath);

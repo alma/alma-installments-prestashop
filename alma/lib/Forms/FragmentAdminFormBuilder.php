@@ -35,6 +35,9 @@ class FragmentAdminFormBuilder extends AbstractAlmaAdminFormBuilder
 {
     const ALMA_ACTIVATE_FRAGMENT = 'ALMA_ACTIVATE_FRAGMENT';
 
+    /**
+     * @return array
+     */
     protected function configForm()
     {
         return [
@@ -47,6 +50,9 @@ class FragmentAdminFormBuilder extends AbstractAlmaAdminFormBuilder
         ];
     }
 
+    /**
+     * @return string
+     */
     protected function getTitle()
     {
         return $this->module->l('In-page checkout', 'FragmentAdminFormBuilder');

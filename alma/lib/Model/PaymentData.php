@@ -36,7 +36,6 @@ use Cart;
 use Context;
 use Country;
 use Customer;
-use Exception;
 use Order;
 use State;
 use Tools;
@@ -47,10 +46,10 @@ class PaymentData
     const PAYMENT_METHOD = 'alma';
 
     /**
-     * @param $cart
-     * @param $context
-     * @param $feePlans
-     * @param $forPayment
+     * @param Cart $cart
+     * @param Context $context
+     * @param array $feePlans
+     * @param bool $forPayment
      * @return array|null
      * @throws \PrestaShopDatabaseException
      * @throws \PrestaShopException
@@ -144,14 +143,14 @@ class PaymentData
             $addresses = $customer->getAddresses($customer->id_lang);
         }
         foreach ($addresses as $address) {
-            array_push($customerData['addresses'], [
+            $customerData['addresses'][] = [
                 'line1' => $address['address1'],
                 'postal_code' => $address['postcode'],
                 'city' => $address['city'],
-                'country' => Country::getIsoById((int) $address['id_country']),
+                'country' => Country::getIsoById((int)$address['id_country']),
                 'county_sublocality' => null,
                 'state_province' => $address['state'],
-            ]);
+            ];
 
             if (is_null($customerData['phone']) && $address['phone']) {
                 $customerData['phone'] = $address['phone'];

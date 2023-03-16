@@ -28,8 +28,6 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-use Alma\PrestaShop\API\PaymentValidationError;
-use Matrix\Exception;
 use Psr\Log\AbstractLogger;
 use Psr\Log\LogLevel;
 
