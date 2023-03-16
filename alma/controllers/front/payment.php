@@ -39,6 +39,9 @@ class AlmaPaymentModuleFrontController extends ModuleFrontController
         AjaxTrait::ajaxFail insteadof OrderDataTrait;
     }
 
+    /**
+     * @var bool
+     */
     public $ssl = true;
 
     public function __construct()
@@ -47,6 +50,9 @@ class AlmaPaymentModuleFrontController extends ModuleFrontController
         $this->context = Context::getContext();
     }
 
+    /**
+     * @return bool
+     */
     private function checkCurrency()
     {
         $currencyOrder = new Currency($this->context->cart->id_currency);
@@ -76,6 +82,11 @@ class AlmaPaymentModuleFrontController extends ModuleFrontController
         $this->ajaxFail();
     }
 
+    /**
+     * @return void
+     * @throws PrestaShopDatabaseException
+     * @throws PrestaShopException
+     */
     public function postProcess()
     {
         // Check if cart exists and all fields are set
@@ -143,7 +154,7 @@ class AlmaPaymentModuleFrontController extends ModuleFrontController
             return;
         }
 
-        if (Settings::activateFragment()) {
+        if (Settings::isFragmentEnabled()) {
             method_exists(get_parent_class($this), 'ajaxDie')
                 ? $this->ajaxDie(json_encode($payment))
                 : exit(Tools::jsonEncode($payment));

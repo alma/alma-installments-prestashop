@@ -27,5 +27,5 @@
     {include file="modules/alma/views/templates/hook/_partials/deferred.tpl" plans=$plans}
 </div>
 {if $first}
-    <div id="alma-inpage" data-apimode="{$apiMode}" data-merchantid="{$merchantId}" data-activatefragment="{$activateFragment}"></div>
+    <div id="alma-inpage" data-apimode="{$apiMode}" data-merchantid="{$merchantId}" data-isfragmentenabled="{$isFragmentEnabled}"></div>
 {/if}

@@ -75,7 +75,7 @@ almaInPageOnload = function() {
                 url.indexOf("module/alma/payment") !== -1 ||
                 url.indexOf("module=alma") !== -1
             ) {
-                if ($("#alma-inpage").data("activatefragment")) {
+                if ($("#alma-inpage").data("isfragmentenabled")) {
                     e.preventDefault();
 
                     $("#payment-confirmation").after(

@@ -151,7 +151,7 @@ class PaymentOptionsHookController extends FrontendHookController
                         'deferred_trigger_limit_days' => $feePlans->$key->deferred_trigger_limit_days,
                         'apiMode' => strtoupper(Settings::getActiveMode()),
                         'merchantId' => Settings::getMerchantId(),
-                        'activateFragment' => Settings::activateFragment(),
+                        'isFragmentEnabled' => Settings::isFragmentEnabled(),
                         'first' => $first,
                         'creditInfo' => $creditInfo,
                     ];
