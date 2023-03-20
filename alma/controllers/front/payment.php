@@ -28,16 +28,13 @@ if (!defined('_PS_VERSION_')) {
 use Alma\API\RequestError;
 use Alma\PrestaShop\API\ClientHelper;
 use Alma\PrestaShop\Model\PaymentData;
-use Alma\PrestaShop\Utils\AjaxTrait;
 use Alma\PrestaShop\Utils\Logger;
 use Alma\PrestaShop\Utils\OrderDataTrait;
 use Alma\PrestaShop\Utils\Settings;
 
 class AlmaPaymentModuleFrontController extends ModuleFrontController
 {
-    use AjaxTrait, OrderDataTrait {
-        AjaxTrait::ajaxFail insteadof OrderDataTrait;
-    }
+    use OrderDataTrait ;
 
     /**
      * @var bool
@@ -154,12 +151,10 @@ class AlmaPaymentModuleFrontController extends ModuleFrontController
             return;
         }
 
-        if (Settings::isFragmentEnabled()) {
-            method_exists(get_parent_class($this), 'ajaxDie')
-                ? $this->ajaxDie(json_encode($payment))
-                : exit(Tools::jsonEncode($payment));
+        if ($data['payment']['installments_count'] <= 4 && Settings::isFragmentEnabled()) {
+            $this->selectAjaxRenderMethod($payment);
+        } else {
+            Tools::redirect($payment->url);
         }
-
-        Tools::redirect($payment->url);
     }
 }

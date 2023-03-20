@@ -38,16 +38,35 @@ if (!defined('_PS_VERSION_')) {
 trait AjaxTrait
 {
     /**
+     * Echoes output value and exit
+     * @param $json
+     * @return void
+     * @throws \PrestaShopException
+     */
+    protected function selectAjaxRenderMethod($json)
+    {
+        if (version_compare(_PS_VERSION_, '1.7.5.0', '>=')) {
+            Logger::instance()->info('AjaxRender');
+            return $this->ajaxRender(json_encode($json));
+        }
+        if (version_compare(_PS_VERSION_, '1.6.0.12', '>=')) {
+            Logger::instance()->info('AjaxDie');
+            $this->ajaxDie(json_encode($json));
+            return;
+        }
+        Logger::instance()->info('Ajax Exit');
+        exit(Tools::jsonEncode($json));
+    }
+
+    /**
      * @param $msg
-     * @param $statusCode
+     * @param int $statusCode
+     * @throws \PrestaShopException
      */
     protected function ajaxFail($msg = null, $statusCode = 500)
     {
         header("X-PHP-Response-Code: $statusCode", true, $statusCode);
-
         $json = ['error' => true, 'message' => $msg];
-        method_exists($this, 'ajaxDie')
-            ? $this->ajaxDie(json_encode($json))
-            : exit(Tools::jsonEncode($json));
+        $this->selectAjaxRenderMethod($json);
     }
 }

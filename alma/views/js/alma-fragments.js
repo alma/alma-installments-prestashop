@@ -24,7 +24,6 @@ almaPay = function (paymentData) {
     const inPage = new Alma.InPage.initialize(paymentData.id, {
         environment: $("#alma-inpage").data("apimode"),
     });
-
     inPage.mount("#alma-payment");
     $("html, body").animate(
         {

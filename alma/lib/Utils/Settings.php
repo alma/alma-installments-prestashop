@@ -637,12 +637,4 @@ class Settings
 
         return $dataFromKey;
     }
-
-    /**
-     * @return string
-     */
-    public static function getFragmentsJsUrl()
-    {
-        return 'https://cdn.jsdelivr.net/npm/@alma/in-page@1.x.x/dist/index.umd.js';
-    }
 }
