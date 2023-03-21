@@ -39,7 +39,7 @@
         {/if}
     </span>
 
-    {if 4 < $installmentsCount}
+    {if $installmentsCount > 4}
         <br><br>
         <strong>{l s='Your credit' mod='alma'}</strong>
         <br>
@@ -64,7 +64,7 @@
         </span>
     {/if}
 {else}
-    {if 4 < $installmentsCount}        
+    {if $installmentsCount > 4}
         <span>
         {almaDisplayHtml}
             {l s='%1$s today then %2$d x %3$s' sprintf=[$firstAmount, $installmentsCount - 1, $nextAmounts] mod='alma'}

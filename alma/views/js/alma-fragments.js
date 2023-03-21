@@ -20,23 +20,25 @@
  * @copyright 2018-2023 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
-almaPay = function (paymentData) {
+almaPay = function (paymentData, paymentOptionId) {
+    console.log(paymentData.id);
     const inPage = new Alma.InPage.initialize(paymentData.id, {
-        environment: $("#alma-inpage").data("apimode"),
+        environment: $('#alma-inpage-' + paymentOptionId).data("apimode"),
     });
-    inPage.mount("#alma-payment");
+    inPage.mount('#alma-inpage-' + paymentOptionId);
     $("html, body").animate(
         {
-            scrollTop: $("#alma-payment").offset().top,
+            scrollTop: $('#alma-inpage-' + paymentOptionId).offset().top,
         },
         4500
     );
-    setTimeout(function() {
+    $('#payment-' + paymentOptionId + '-form').submit(function (e) {
+        e.preventDefault();
         inPage.startPayment();
-    }, 1000);
+    });
 };
 
-processAlmaPayment = function (url) {
+processAlmaPayment = function (url, paymentOptionId) {
     $.ajax({
         type: "POST",
         url: url,
@@ -46,42 +48,34 @@ processAlmaPayment = function (url) {
             action: "payment",
         },
     })
-        .done(function (paymentData) {
-            almaPay(paymentData);
-        })
-        .fail(function () {
-            window.location.href = "index.php?controller=order&step=1";
-        });
+    .done(function (paymentData) {
+        almaPay(paymentData, paymentOptionId);
+    })
+    .fail(function () {
+        window.location.href = "index.php?controller=order&step=1";
+    });
+};
+
+isAlmaPayment = function (url) {
+    return url.indexOf("module/alma/payment") !== -1 || url.indexOf("module=alma") !== -1;
 };
 
 almaInPageOnload = function() {
-    if ($("#alma-inpage").length !== 0) {
-        $('input[name="payment-option"]').change(function () {
-            $("#alma-payment").remove();
-        });
-
-        $(".ps-shown-by-js").click(function () {
-            if ($(this).is(":not(:checked)")) {
-                $("#alma-payment").remove();
-            }
-        });
-
+    if ($(".alma-inpage").length !== 0) {
         // PS 1.7 : paymentOptions
-        $(".js-payment-option-form form").submit(function (e) {
-            url = $(this).attr("action");
+        $(".ps-shown-by-js").click(function () {
+            let paymentOptionId = $(this).attr('id');
+            $('#' + paymentOptionId + '-additional-information .alma-inpage').attr('id', 'alma-inpage-' + paymentOptionId);
+            let blockIframeInPage = $('#alma-inpage-' + paymentOptionId);
+            if (blockIframeInPage.data("isfragmentenabled")) {
+                let url = $('#pay-with-' + paymentOptionId + '-form form').attr("action");
 
-            if (
-                url.indexOf("module/alma/payment") !== -1 ||
-                url.indexOf("module=alma") !== -1
-            ) {
-                if ($("#alma-inpage").data("isfragmentenabled")) {
-                    e.preventDefault();
-
-                    $("#payment-confirmation").after(
-                        '<div id="alma-payment"></div>'
-                    );
-                    processAlmaPayment(url);
+                if (isAlmaPayment(url)) {
+                    processAlmaPayment(url, paymentOptionId);
                 }
+            }
+            if ($(this).is(":not(:checked)")) {
+                blockIframeInPage.remove();
             }
         });
     }

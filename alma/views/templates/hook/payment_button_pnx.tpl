@@ -23,9 +23,10 @@
 <div class="alma-fee-plan--block">
     <p>
         {$desc|escape:'htmlall':'UTF-8'}
-    </p>    
-    {include file="modules/alma/views/templates/hook/_partials/feePlan.tpl" plans=$plans creditInfo=$creditInfo oneLiner=false}    
+    </p>
+    {if $isFragmentEnabled}
+        <div class="alma-inpage" data-apimode="{$apiMode}" data-merchantid="{$merchantId}" data-isfragmentenabled="{$isFragmentEnabled}"></div>
+    {else}
+        {include file="modules/alma/views/templates/hook/_partials/feePlan.tpl" plans=$plans creditInfo=$creditInfo oneLiner=false}
+    {/if}
 </div>
-{if $first}
-    <div id="alma-inpage" data-apimode="{$apiMode}" data-merchantid="{$merchantId}" data-isfragmentenabled="{$isFragmentEnabled}"></div>
-{/if}
