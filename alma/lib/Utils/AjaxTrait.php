@@ -41,19 +41,15 @@ trait AjaxTrait
     /**
      * Echoes output value and exit
      * @param $json
-     * @return void|null
+     * @return void
      * @throws PrestaShopException
      */
     protected function selectAjaxRenderMethod($json)
     {
         if (version_compare(_PS_VERSION_, '1.7.5.0', '>=')) {
-            Logger::instance()->info('AjaxRender');
-
             return $this->ajaxRender(json_encode($json));
         }
         if (version_compare(_PS_VERSION_, '1.6.0.12', '>=')) {
-            Logger::instance()->info('AjaxDie');
-
             return $this->ajaxDie(json_encode($json));
         }
         Logger::instance()->info('Ajax Exit');
