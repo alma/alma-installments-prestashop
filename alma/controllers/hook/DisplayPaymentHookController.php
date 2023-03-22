@@ -70,7 +70,7 @@ class DisplayPaymentHookController extends FrontendHookController
             Tools::ps_round((float) $this->context->cart->getOrderTotal(true, Cart::BOTH), 2)
         );
 
-        foreach ($installmentPlans as $plan) {
+        foreach ($installmentPlans as $keyPlan => $plan) {
             $installment = $plan->installmentsCount;
             $key = "general_{$installment}_{$plan->deferredDays}_{$plan->deferredMonths}";
             $plans = $plan->paymentPlan;
@@ -112,16 +112,20 @@ class DisplayPaymentHookController extends FrontendHookController
                     'text' => sprintf(SettingsCustomFields::getPnxButtonTitleByLang($idLang), $installment),
                     'desc' => sprintf(SettingsCustomFields::getPnxButtonDescriptionByLang($idLang), $installment),
                     'creditInfo' => $creditInfo,
+                    'isInPageEnabled' => Settings::isInPageEnabled(),
+                    'paymentOptionKey' => $keyPlan,
                 ];
                 if ($installment > 4) {
                     $paymentOption['text'] = sprintf(SettingsCustomFields::getPnxAirButtonTitleByLang($idLang), $installment);
                     $paymentOption['desc'] = sprintf(SettingsCustomFields::getPnxAirButtonDescriptionByLang($idLang), $installment);
+                    $paymentOption['isInPageEnabled'] = false;
                 }
                 if ($isDeferred) {
                     $paymentOption['duration'] = $duration;
                     $paymentOption['key'] = $key;
                     $paymentOption['text'] = sprintf(SettingsCustomFields::getPaymentButtonTitleDeferredByLang($idLang), $duration);
                     $paymentOption['desc'] = sprintf(SettingsCustomFields::getPaymentButtonDescriptionDeferredByLang($idLang), $duration);
+                    $paymentOption['isInPageEnabled'] = false;
                 }
                 $paymentOptions[$key] = $paymentOption;
                 $sortOptions[$key] = $feePlans->$key->order;
@@ -138,12 +142,12 @@ class DisplayPaymentHookController extends FrontendHookController
     }
 
     /**
-     * Text of one liner installment
+     * Text of one-liner installment
      *
      * @param array $plans
      * @param int $idLang
      *
-     * @return string text one liner option
+     * @return string text one-liner option
      */
     private function getInstallmentText($plans, $idLang, $isDeferredTriggerLimitDays)
     {
@@ -182,7 +186,6 @@ class DisplayPaymentHookController extends FrontendHookController
                 'old_prestashop_version' => version_compare(_PS_VERSION_, '1.6', '<'),
                 'apiMode' => strtoupper(Settings::getActiveMode()),
                 'merchantId' => Settings::getMerchantId(),
-                'isInPageEnabled' => Settings::isInPageEnabled(),
             ]
         );
 

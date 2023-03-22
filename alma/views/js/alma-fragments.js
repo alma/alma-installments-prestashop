@@ -23,6 +23,10 @@
 const almaPay = function (paymentData, paymentOptionId) {
     const inPage = new Alma.InPage.initialize(paymentData.id, {
         environment: $('#alma-inpage-' + paymentOptionId).data("apimode"),
+        onUserCloseModal: () => {
+            inPage.unmount();
+            $('.ps-shown-by-js').prop('checked', false);
+        },
     });
     inPage.mount('#alma-inpage-' + paymentOptionId);
     $("html, body").animate(
@@ -31,14 +35,19 @@ const almaPay = function (paymentData, paymentOptionId) {
         },
         4500
     );
-    $('#payment-' + paymentOptionId + '-form').submit(function (e) {
-        e.preventDefault();
-        inPage.startPayment();
-    });
-    $('.custom-radio .ps-shown-by-js').on('change', function () {
-        $('.custom-checkbox .ps-shown-by-js').prop('checked', false);
-        inPage.unmount();
-    });
+    // Prestashop 1.7+
+    if ($('#payment-' + paymentOptionId + '-form').length !== 0) {
+        $('#payment-' + paymentOptionId + '-form').submit(function (e) {
+            e.preventDefault();
+            inPage.startPayment();
+        });
+    }
+    // Prestashop 1.6-
+    if ($('.alma-inpage-ps16').length !== 0) {
+        setTimeout(function() {
+            inPage.startPayment();
+        }, 10);
+    }
 };
 
 const processAlmaPayment = function (url, paymentOptionId) {
@@ -76,6 +85,16 @@ const almaInPageOnload = function() {
                 if (isAlmaPayment(url)) {
                     processAlmaPayment(url, paymentOptionId);
                 }
+            }
+        });
+    }
+    if ($('.alma-inpage-ps16').length !== 0) {
+        $(".alma-inpage-ps16").click(function (e) {
+            let paymentOptionId = $(this).attr('id');
+            let blockIframeInPage = $('#alma-inpage-' + paymentOptionId);
+            if (blockIframeInPage.length !== 0 && blockIframeInPage.data("isinpageenabled")) {
+                e.preventDefault();
+                processAlmaPayment(this.href, paymentOptionId);
             }
         });
     }
