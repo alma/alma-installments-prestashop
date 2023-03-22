@@ -318,7 +318,7 @@ class Settings
     /**
      * @return bool
      */
-    public static function isFragmentEnabled()
+    public static function isInPageEnabled()
     {
         return (bool) (int) self::get(FragmentAdminFormBuilder::ALMA_ACTIVATE_FRAGMENT, false);
     }

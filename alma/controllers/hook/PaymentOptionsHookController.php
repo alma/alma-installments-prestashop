@@ -96,6 +96,7 @@ class PaymentOptionsHookController extends FrontendHookController
                 'totalCredit' => $plan->customerTotalCostAmount + $totalCart,
                 'taeg' => $plan->annualInterestRate,
             ];
+            $isInPageEnabled = Settings::isInPageEnabled();
 
             foreach ($plans as $keyPlan => $paymentPlan) {
                 $plans[$keyPlan]['human_date'] = getDateFormat($locale, $paymentPlan['due_date']);
@@ -122,6 +123,7 @@ class PaymentOptionsHookController extends FrontendHookController
             if ($installment > 4) {
                 $textPaymentButton = sprintf(SettingsCustomFields::getPnxAirButtonTitleByLang($idLang), $installment);
                 $descPaymentButton = sprintf(SettingsCustomFields::getPnxAirButtonDescriptionByLang($idLang), $installment);
+                $isInPageEnabled = false;
             }
             if ($isDeferred) {
                 $isInstallmentAccordingToDeferred = $installment === 1;
@@ -129,6 +131,7 @@ class PaymentOptionsHookController extends FrontendHookController
                 $valueBNPL = $duration;
                 $textPaymentButton = sprintf(SettingsCustomFields::getPaymentButtonTitleDeferredByLang($idLang), $duration);
                 $descPaymentButton = sprintf(SettingsCustomFields::getPaymentButtonDescriptionDeferredByLang($idLang), $duration);
+                $isInPageEnabled = false;
             }
 
             if ($isInstallmentAccordingToDeferred) {
@@ -151,7 +154,7 @@ class PaymentOptionsHookController extends FrontendHookController
                         'deferred_trigger_limit_days' => $feePlans->$key->deferred_trigger_limit_days,
                         'apiMode' => strtoupper(Settings::getActiveMode()),
                         'merchantId' => Settings::getMerchantId(),
-                        'isFragmentEnabled' => Settings::isFragmentEnabled(),
+                        'isInPageEnabled' => $isInPageEnabled,
                         'first' => $first,
                         'creditInfo' => $creditInfo,
                     ];

@@ -219,6 +219,15 @@ class PaymentData
         return $dataPayment;
     }
 
+    /**
+     * @param $paymentData
+     * @return bool
+     */
+    public static function isPnXOnly($paymentData)
+    {
+        return $paymentData['payment']['installments_count'] > 1 && $paymentData['payment']['installments_count'] <= 4 && ($paymentData['payment']['deferred_days'] === 0 && $paymentData['payment']['deferred_months'] === 0);
+    }
+
     private static function isNewCustomer($idCustomer)
     {
         if (Order::getCustomerNbOrders($idCustomer) > 0) {

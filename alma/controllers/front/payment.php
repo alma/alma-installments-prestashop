@@ -151,7 +151,7 @@ class AlmaPaymentModuleFrontController extends ModuleFrontController
             return;
         }
 
-        if ($data['payment']['installments_count'] <= 4 && Settings::isFragmentEnabled()) {
+        if (PaymentData::isPnXOnly($data) && Settings::isInPageEnabled()) {
             $this->selectAjaxRenderMethod($payment);
         } else {
             Tools::redirect($payment->url);

@@ -24,8 +24,9 @@
     <p>
         {$desc|escape:'htmlall':'UTF-8'}
     </p>
-    {include file="modules/alma/views/templates/hook/_partials/deferred.tpl" plans=$plans}
+    {if $isInPageEnabled}
+        <div class="alma-inpage" data-apimode="{$apiMode}" data-merchantid="{$merchantId}" data-isinpageenabled="{$isInPageEnabled}"></div>
+    {else}
+        {include file="modules/alma/views/templates/hook/_partials/deferred.tpl" plans=$plans}
+    {/if}
 </div>
-{if $first}
-    <div id="alma-inpage" data-apimode="{$apiMode}" data-merchantid="{$merchantId}" data-isfragmentenabled="{$isFragmentEnabled}"></div>
-{/if}

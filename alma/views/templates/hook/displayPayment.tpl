@@ -33,8 +33,8 @@
         {include file="modules/alma/views/templates/hook/_partials/displayPayment_pnx.tpl" plans=$option.plans installmentText=$option.installmentText deferred_trigger_limit_days=$option.deferred_trigger_limit_days creditInfo=$option.creditInfo iconDisplay=$iconDisplay almaButton=$almaButton}
     {/if}
 {/foreach}
-{if $isFragmentEnabled}
-    <div id="alma-inpage" data-apimode="{$apiMode}" data-merchantid="{$merchantId}" data-isfragmentenabled="{$isFragmentEnabled}"></div>
+{if $isInPageEnabled}
+    <div id="alma-inpage" data-apimode="{$apiMode}" data-merchantid="{$merchantId}" data-isinpageenabled="{$isInPageEnabled}"></div>
     <script type="text/javascript">
         (function($) {
             $(function() {

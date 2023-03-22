@@ -21,7 +21,6 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 almaPay = function (paymentData, paymentOptionId) {
-    console.log(paymentData.id);
     const inPage = new Alma.InPage.initialize(paymentData.id, {
         environment: $('#alma-inpage-' + paymentOptionId).data("apimode"),
     });
@@ -35,6 +34,10 @@ almaPay = function (paymentData, paymentOptionId) {
     $('#payment-' + paymentOptionId + '-form').submit(function (e) {
         e.preventDefault();
         inPage.startPayment();
+    });
+    $('.custom-radio .ps-shown-by-js').on('change', function () {
+        $('.custom-checkbox .ps-shown-by-js').prop('checked', false);
+        inPage.unmount();
     });
 };
 
@@ -67,15 +70,12 @@ almaInPageOnload = function() {
             let paymentOptionId = $(this).attr('id');
             $('#' + paymentOptionId + '-additional-information .alma-inpage').attr('id', 'alma-inpage-' + paymentOptionId);
             let blockIframeInPage = $('#alma-inpage-' + paymentOptionId);
-            if (blockIframeInPage.data("isfragmentenabled")) {
+            if (blockIframeInPage.length !==0 && blockIframeInPage.data("isinpageenabled")) {
                 let url = $('#pay-with-' + paymentOptionId + '-form form').attr("action");
 
                 if (isAlmaPayment(url)) {
                     processAlmaPayment(url, paymentOptionId);
                 }
-            }
-            if ($(this).is(":not(:checked)")) {
-                blockIframeInPage.remove();
             }
         });
     }

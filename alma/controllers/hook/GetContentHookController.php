@@ -247,8 +247,8 @@ final class GetContentHookController extends AdminHookController
             $descriptionPaymentTrigger = Tools::getValue('ALMA_DESCRIPTION_TRIGGER');
             Settings::updateValue('ALMA_DESCRIPTION_TRIGGER', $descriptionPaymentTrigger);
 
-            $isFragmentEnabled = (bool) Tools::getValue(FragmentAdminFormBuilder::ALMA_ACTIVATE_FRAGMENT . '_ON');
-            Settings::updateValue(FragmentAdminFormBuilder::ALMA_ACTIVATE_FRAGMENT, $isFragmentEnabled);
+            $isInPageEnabled = (bool) Tools::getValue(FragmentAdminFormBuilder::ALMA_ACTIVATE_FRAGMENT . '_ON');
+            Settings::updateValue(FragmentAdminFormBuilder::ALMA_ACTIVATE_FRAGMENT, $isInPageEnabled);
 
             $activateLogging = (bool) Tools::getValue('ALMA_ACTIVATE_LOGGING_ON');
             Settings::updateValue('ALMA_ACTIVATE_LOGGING', $activateLogging);
@@ -552,7 +552,7 @@ final class GetContentHookController extends AdminHookController
             PaymentButtonAdminFormBuilder::ALMA_DEFERRED_BUTTON_DESC => SettingsCustomFields::getPaymentButtonDescriptionDeferred(),
             PaymentButtonAdminFormBuilder::ALMA_PNX_AIR_BUTTON_TITLE => SettingsCustomFields::getPnxAirButtonTitle(),
             PaymentButtonAdminFormBuilder::ALMA_PNX_AIR_BUTTON_DESC => SettingsCustomFields::getPnxAirButtonDescription(),
-            FragmentAdminFormBuilder::ALMA_ACTIVATE_FRAGMENT . '_ON' => Settings::isFragmentEnabled(),
+            FragmentAdminFormBuilder::ALMA_ACTIVATE_FRAGMENT . '_ON' => Settings::isInPageEnabled(),
             'ALMA_SHOW_DISABLED_BUTTON' => Settings::showDisabledButton(),
             'ALMA_SHOW_ELIGIBILITY_MESSAGE_ON' => Settings::showEligibilityMessage(),
             'ALMA_CART_WDGT_NOT_ELGBL_ON' => Settings::showCartWidgetIfNotEligible(),
