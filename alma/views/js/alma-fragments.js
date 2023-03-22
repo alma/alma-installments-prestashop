@@ -20,7 +20,7 @@
  * @copyright 2018-2023 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
-almaPay = function (paymentData, paymentOptionId) {
+const almaPay = function (paymentData, paymentOptionId) {
     const inPage = new Alma.InPage.initialize(paymentData.id, {
         environment: $('#alma-inpage-' + paymentOptionId).data("apimode"),
     });
@@ -41,7 +41,7 @@ almaPay = function (paymentData, paymentOptionId) {
     });
 };
 
-processAlmaPayment = function (url, paymentOptionId) {
+const processAlmaPayment = function (url, paymentOptionId) {
     $.ajax({
         type: "POST",
         url: url,
@@ -59,11 +59,11 @@ processAlmaPayment = function (url, paymentOptionId) {
     });
 };
 
-isAlmaPayment = function (url) {
+const isAlmaPayment = function (url) {
     return url.indexOf("module/alma/payment") !== -1 || url.indexOf("module=alma") !== -1;
 };
 
-almaInPageOnload = function() {
+const almaInPageOnload = function() {
     if ($(".alma-inpage").length !== 0) {
         // PS 1.7 : paymentOptions
         $(".ps-shown-by-js").click(function () {
