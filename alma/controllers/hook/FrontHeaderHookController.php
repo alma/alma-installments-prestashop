@@ -181,7 +181,6 @@ class FrontHeaderHookController extends FrontendHookController
         $content = null;
 
         if ($this->displayWidgetOnCartPage() || $this->displayWidgetOnProductPage()) {
-
             if (version_compare(_PS_VERSION_, '1.7', '<')) {
                 $this->controller->addJS(self::WIDGETS_JS_URL);
                 $this->controller->addJS($this->module->_path . self::PRODUCT_SCRIPT_PATH);
@@ -245,7 +244,10 @@ TAG;
             if (version_compare(_PS_VERSION_, '1.7', '<')) {
                 $this->controller->addJS(self::INPAGE_JS_URL);
                 $this->controller->addJS($this->module->_path . self::INPAGE_SCRIPT_PATH);
-                $this->controller->removeJS($this->module->_path . self::WIDGETS_JS_URL);
+
+                if (version_compare(_PS_VERSION_, '1.6.0.2', '>')) {
+                    $this->controller->removeJS($this->module->_path . self::WIDGETS_JS_URL);
+                }
             }
             if (version_compare(_PS_VERSION_, '1.7.0.0', '>=')) {
                 $this->controller->registerJavascript(
