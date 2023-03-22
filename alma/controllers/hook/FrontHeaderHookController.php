@@ -79,7 +79,7 @@ class FrontHeaderHookController extends FrontendHookController
         $handler = [$this, "handle{$controllerName}Page"];
 
         $content = $this->assetsWidgets();
-        if (Settings::isFragmentEnabled()) {
+        if (Settings::isInPageEnabled()) {
             $content .= $this->assetsInPage();
         }
 
@@ -136,6 +136,20 @@ class FrontHeaderHookController extends FrontendHookController
         return $this->controller->php_self == 'cart';
     }
 
+    /**
+     * @return bool
+     */
+    private function iAmInPaymentPage()
+    {
+        // Step is available on Prestashop < 1.7
+        if (version_compare(_PS_VERSION_, '1.7', '<')) {
+            return ($this->controller->php_self == 'order' && $this->controller->step == 3) ||
+                $this->controller->php_self == 'order-opc';
+        }
+
+        return $this->controller->php_self == 'order';
+    }
+
     private function handleOrderPage($params)
     {
         $this->context->controller->addCSS($this->module->_path . 'views/css/alma.css', 'all');
@@ -157,69 +171,6 @@ class FrontHeaderHookController extends FrontendHookController
     private function handleOrderOpcPage($params)
     {
         return $this->handleOrderPage($params);
-    }
-
-    /**
-     * @return string|null
-     */
-    private function injectAlmaAssets()
-    {
-        $content = null;
-
-        if (version_compare(_PS_VERSION_, '1.7', '<')) {
-            if (Settings::showEligibilityMessage()
-                && ($this->controller->php_self == 'order' && $this->controller->step == 0 || $this->controller->php_self == 'order-opc')
-                && (isset($this->controller->nbProducts) && $this->controller->nbProducts != 0)
-            ) {
-                // Cart widget
-                if (version_compare(_PS_VERSION_, '1.5.6.2', '<')) {
-                    $content .= '<link rel="stylesheet" href="' . self::WIDGETS_CSS_URL . '">';
-                } else {
-                    $this->controller->addCSS(self::WIDGETS_CSS_URL);
-                }
-                $this->controller->addCSS($this->module->_path . self::PRODUCT_CSS_PATH);
-                $this->controller->addJS(self::WIDGETS_JS_URL);
-                $this->controller->addJS($this->module->_path . self::CART_SCRIPT_PATH);
-            } elseif (Settings::showProductEligibility()
-                && ($this->controller->php_self == 'product' || 'ProductController' == get_class($this->controller))) {
-                // Product widget
-                if (version_compare(_PS_VERSION_, '1.5.6.2', '<')) {
-                    $content .= '<link rel="stylesheet" href="' . self::WIDGETS_CSS_URL . '">';
-                } else {
-                    $this->controller->addCSS(self::WIDGETS_CSS_URL);
-                }
-                $this->controller->addCSS($this->module->_path . self::PRODUCT_CSS_PATH);
-                $this->controller->addJS(self::WIDGETS_JS_URL);
-                $this->controller->addJS($this->module->_path . self::PRODUCT_SCRIPT_PATH);
-            }
-        } else {
-            $scriptPath = "modules/$this->moduleName/" . self::PRODUCT_SCRIPT_PATH;
-            $cssPath = "modules/$this->moduleName/" . self::PRODUCT_CSS_PATH;
-            $cartScriptPath = "modules/$this->moduleName/" . self::CART_SCRIPT_PATH;
-
-            if ($this->controller->php_self == 'cart' && Settings::showEligibilityMessage()) {
-                $this->controller->registerStylesheet(self::ID_PRODUCT_CSS, $cssPath);
-                $this->controller->registerJavascript(self::ID_CART_SCRIPT, $cartScriptPath, ['priority' => 1000]);
-            } else {
-                $this->controller->registerStylesheet(self::ID_PRODUCT_CSS, $cssPath);
-                $this->controller->registerJavascript(self::ID_PRODUCT_SCRIPT, $scriptPath, ['priority' => 1000]);
-            }
-
-            if (version_compare(_PS_VERSION_, '1.7.0.2', '>=')) {
-                $this->controller->registerStylesheet(self::ID_WIDGETS_CSS, self::WIDGETS_CSS_URL, ['server' => 'remote']);
-                $this->controller->registerJavascript(self::ID_WIDGETS_JS, self::WIDGETS_JS_URL, ['server' => 'remote']);
-            } else {
-                // For versions 1.7.0.0 and 1.7.0.1, it was impossible to register a remote script via FrontController
-                // with the new registerJavascript method, and the deprecated addJS method had been changed to be just a
-                // proxy to registerJavascript...
-                $content .= <<<TAG
-                <link rel="stylesheet" href="{${self::WIDGETS_CSS_URL}}">
-                <script src="{${self::WIDGETS_JS_URL}}"></script>
-TAG;
-            }
-        }
-
-        return $content;
     }
 
     /**
@@ -268,9 +219,9 @@ TAG;
                     // For versions 1.7.0.0 and 1.7.0.1, it was impossible to register a remote script via FrontController
                     // with the new registerJavascript method, and the deprecated addJS method had been changed to be just a
                     // proxy to registerJavascript...
-                    $content = <<<TAG
-                <link rel="stylesheet" href="{${self::WIDGETS_CSS_URL}}">
-                <script src="{${self::WIDGETS_JS_URL}}"></script>
+                    $content .= <<<TAG
+                    <link rel="stylesheet" href="{${self::WIDGETS_CSS_URL}}">
+                    <script src="{${self::WIDGETS_JS_URL}}"></script>
 TAG;
                 }
                 if (version_compare(_PS_VERSION_, '1.7.0.2', '>=')) {
@@ -279,6 +230,7 @@ TAG;
                 }
             }
         }
+
         return $content;
     }
 
@@ -289,20 +241,27 @@ TAG;
     {
         $content = null;
 
-        if ($this->controller->php_self == 'order' || $this->controller->php_self == 'order-opc') {
+        if ($this->iAmInPaymentPage()) {
             if (version_compare(_PS_VERSION_, '1.7', '<')) {
-                if ($this->controller->step == 3) {
-                    $this->controller->addJS(self::INPAGE_JS_URL);
-                    $this->controller->addJS($this->module->_path . self::INPAGE_SCRIPT_PATH);
-                    $this->controller->removeJS($this->module->_path . self::WIDGETS_JS_URL);
-                }
-            } else {
+                $this->controller->addJS(self::INPAGE_JS_URL);
+                $this->controller->addJS($this->module->_path . self::INPAGE_SCRIPT_PATH);
+                $this->controller->removeJS($this->module->_path . self::WIDGETS_JS_URL);
+            }
+            if (version_compare(_PS_VERSION_, '1.7.0.0', '>=')) {
                 $this->controller->registerJavascript(
                     self::ID_INPAGE_SCRIPT,
                     "modules/$this->moduleName/" . self::INPAGE_SCRIPT_PATH,
                     ['priority' => 1000, 'position' => 'head']
                 );
 
+                if (version_compare(_PS_VERSION_, '1.7.0.2', '<')) {
+                    // For versions 1.7.0.0 and 1.7.0.1, it was impossible to register a remote script via FrontController
+                    // with the new registerJavascript method, and the deprecated addJS method had been changed to be just a
+                    // proxy to registerJavascript...
+                    $content .= <<<TAG
+                    <script src="{${self::INPAGE_JS_URL}}"></script>
+TAG;
+                }
                 if (version_compare(_PS_VERSION_, '1.7.0.2', '>=')) {
                     $this->controller->registerJavascript(
                         self::ID_INPAGE_JS,
@@ -310,10 +269,6 @@ TAG;
                         ['server' => 'remote', 'position' => 'head']
                     );
                     $this->controller->unregisterJavascript(self::ID_WIDGETS_JS);
-                } else {
-                    $content .= <<<TAG
-                    <script src="{${self::INPAGE_JS_URL}}"></script>
-TAG;
                 }
             }
         }
