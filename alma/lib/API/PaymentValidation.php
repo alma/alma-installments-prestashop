@@ -77,7 +77,10 @@ class PaymentValidation
      *
      * @return string URL to redirect the customer to
      *
+     * @return string
      * @throws PaymentValidationError
+     * @throws PrestaShopException
+     * @throws RefundException
      */
     public function validatePayment($almaPaymentId)
     {
@@ -160,7 +163,8 @@ class PaymentValidation
                     "[Alma] Payment validation error for Cart {$cart->id}: Purchase amount mismatch!"
                 );
 
-                throw new PaymentValidationError($cart, Payment::FRAUD_AMOUNT_MISMATCH);
+                $refundHelper = new RefundHelper($this->module, $cart, $payment->id);
+                $refundHelper->mismatchFullRefund();
             }
 
             $firstInstalment = $payment->payment_plan[0];
