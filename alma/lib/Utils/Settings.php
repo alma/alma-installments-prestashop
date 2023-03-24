@@ -562,6 +562,27 @@ class Settings
         );
     }
 
+    /**
+     * @param $plan
+     * @return string
+     */
+    public static function keyForInstallmentPlan($plan)
+    {
+        return self::key(
+            'general',
+            intval($plan->installmentsCount),
+            intval($plan->deferredDays),
+            intval($plan->deferredMonths)
+        );
+    }
+
+    /**
+     * @param $planKind
+     * @param $installmentsCount
+     * @param $deferredDays
+     * @param $deferredMonths
+     * @return string
+     */
     private static function key(
         $planKind,
         $installmentsCount,

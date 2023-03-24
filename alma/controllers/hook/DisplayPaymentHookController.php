@@ -72,7 +72,7 @@ class DisplayPaymentHookController extends FrontendHookController
 
         foreach ($installmentPlans as $keyPlan => $plan) {
             $installment = $plan->installmentsCount;
-            $key = "general_{$installment}_{$plan->deferredDays}_{$plan->deferredMonths}";
+            $key = Settings::keyForInstallmentPlan($plan);
             $plans = $plan->paymentPlan;
             $disabled = false;
             $creditInfo = [

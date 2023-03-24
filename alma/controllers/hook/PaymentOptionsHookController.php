@@ -88,7 +88,7 @@ class PaymentOptionsHookController extends FrontendHookController
             ++$i;
 
             $installment = $plan->installmentsCount;
-            $key = "general_{$installment}_{$plan->deferredDays}_{$plan->deferredMonths}";
+            $key = Settings::keyForInstallmentPlan($plan);
             $plans = $plan->paymentPlan;
             $creditInfo = [
                 'totalCart' => $totalCart,
