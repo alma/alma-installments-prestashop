@@ -36,8 +36,8 @@ const almaPay = function (paymentData, paymentOptionId) {
         4500
     );
     // Prestashop 1.7+
-    if ($('#payment-' + paymentOptionId + '-form').length !== 0) {
-        $('#payment-' + paymentOptionId + '-form').submit(function (e) {
+    if ($('#pay-with-' + paymentOptionId + '-form').length !== 0) {
+        $('#pay-with-' + paymentOptionId + '-form form').submit(function (e) {
             e.preventDefault();
             inPage.startPayment();
         });
