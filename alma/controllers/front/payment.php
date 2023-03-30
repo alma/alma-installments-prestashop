@@ -152,6 +152,7 @@ class AlmaPaymentModuleFrontController extends ModuleFrontController
         }
 
         if (PaymentData::isPnXOnly($data) && Settings::isInPageEnabled()) {
+            $payment->origin = 'online_in_page';
             $this->selectAjaxRenderMethod($payment);
         } else {
             Tools::redirect($payment->url);

@@ -21,12 +21,18 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 const almaPay = function (paymentData, paymentOptionId) {
+    let showPayButton = false;
+    // Prestashop 1.6-
+    if ($('.alma-inpage-ps16').length !== 0) {
+        showPayButton = true;
+    }
     const inPage = new Alma.InPage.initialize(paymentData.id, {
         environment: $('#alma-inpage-' + paymentOptionId).data("apimode"),
         onUserCloseModal: () => {
             inPage.unmount();
             $('.ps-shown-by-js').prop('checked', false);
         },
+        showPayButton: showPayButton,
     });
     inPage.mount('#alma-inpage-' + paymentOptionId);
     $("html, body").animate(
@@ -41,12 +47,6 @@ const almaPay = function (paymentData, paymentOptionId) {
             e.preventDefault();
             inPage.startPayment();
         });
-    }
-    // Prestashop 1.6-
-    if ($('.alma-inpage-ps16').length !== 0) {
-        setTimeout(function() {
-            inPage.startPayment();
-        }, 10);
     }
 };
 
