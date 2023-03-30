@@ -78,7 +78,7 @@ abstract class HookController
      */
     protected function isKnownApiUser()
     {
-        $tokenApi = $_SERVER['PHP_AUTH_USER'];
+        $tokenApi = isset($_SERVER['PHP_AUTH_USER']) ? $_SERVER['PHP_AUTH_USER'] : false;
 
         return boolval(WebserviceKey::keyExists($tokenApi));
     }
