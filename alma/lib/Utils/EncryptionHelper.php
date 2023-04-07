@@ -38,7 +38,7 @@ if (!defined('_PS_VERSION_')) {
  * Use for method date
  */
 class EncryptionHelper
-{    
+{
     /** @var string $cookieKey */
     private $cookieKey;
 
