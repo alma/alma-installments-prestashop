@@ -38,7 +38,7 @@ if (!defined('_PS_VERSION_')) {
  */
 class ApiKeyHelper
 {
-    const OBCUR_VALUE = '*****';
+    const OBCUR_VALUE = '********************************';
     const BEGIN_LIVE_API_KEY = 'sk_live_';
     const BEGIN_TEST_API_KEY = 'sk_test_';
 
