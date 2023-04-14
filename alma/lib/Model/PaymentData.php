@@ -216,6 +216,10 @@ class PaymentData
             $dataPayment['payment']['deferred_description'] = SettingsCustomFields::getDescriptionPaymentTriggerByLang($context->language->id);
         }
 
+        if (self::isInPage($dataPayment)) {
+            $dataPayment['payment']['origin'] = 'online_in_page';
+        }
+
         return $dataPayment;
     }
 
@@ -226,6 +230,15 @@ class PaymentData
     public static function isPnXOnly($paymentData)
     {
         return $paymentData['payment']['installments_count'] > 1 && $paymentData['payment']['installments_count'] <= 4 && ($paymentData['payment']['deferred_days'] === 0 && $paymentData['payment']['deferred_months'] === 0);
+    }
+
+    /**
+     * @param $dataPayment
+     * @return bool
+     */
+    public static function isInPage($dataPayment)
+    {
+        return self::isPnXOnly($dataPayment) && Settings::isInPageEnabled();
     }
 
     private static function isNewCustomer($idCustomer)
