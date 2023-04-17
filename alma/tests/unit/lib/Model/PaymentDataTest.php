@@ -31,6 +31,7 @@ use Customer;
 use Language;
 use PHPUnit\Framework\TestCase;
 use Cart;
+use PrestaShop\PrestaShop\Core\Domain\Cart\QueryResult\CartForOrderCreation\CartProduct;
 use Product;
 
 class PaymentDataTest extends TestCase
@@ -38,25 +39,27 @@ class PaymentDataTest extends TestCase
     public function testdataFromCart()
     {
         $expectedDataPayment = [];
+        $address = $this->createMock(Address::class);
+        $address->id = 1;
+        $address->id_customer = 1;
+        $address->address1 = '1 rue de Rivoli';
         $product = $this->createMock(Product::class);
         $product->id = 1;
+        $product->name = 'Product Test';
+        $summaryDetailsMock = ['products' => [], 'gift_products'=>[]];
         $cart = $this->createMock(Cart::class);
+        $cart->method('getSummaryDetails')->willReturn($summaryDetailsMock);
         $cart->id_customer = 1;
         $cart->id_address_delivery = 1;
         $cart->id_address_invoice = 1;
-        //$cart->setProductCustomizedDatas();
-        var_dump($cart);
         $context = $this->createMock(Context::class);
         $language = $this->createMock(Language::class);
         $language->iso_code = 'fr';
         $context->language = $language;
         $customer = $this->createMock(Customer::class);
         $customer->firstname = 'Benjamin';
+        $customer->id = 1;
         $context->customer = $customer;
-        $address = $this->createMock(Address::class);
-        $address->id = 1;
-        $address->id_customer = 1;
-        $address->address1 = "1 rue de Rivoli";
         $feePlans = [];
         $returnData = PaymentData::dataFromCart($cart, $context, $feePlans,true);
 
