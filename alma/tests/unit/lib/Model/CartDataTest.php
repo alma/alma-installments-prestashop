@@ -24,52 +24,24 @@
 
 namespace Alma\PrestaShop\Tests\Unit\Lib\Model;
 
-use Address;
-use Alma\PrestaShop\Model\PaymentData;
-use Context;
-use Customer;
-use Language;
-use PHPUnit\Framework\TestCase;
+use Alma\PrestaShop\Model\CartData;
 use Cart;
-use PrestaShop\PrestaShop\Core\Domain\Cart\QueryResult\CartForOrderCreation\CartProduct;
+use PHPUnit\Framework\TestCase;
 use Product;
 
-class PaymentDataTest extends TestCase
+class CartDataTest extends TestCase
 {
-    /**
-     * @return void
-     * @throws \Exception
-     */
-    public function testdataFromCart()
+    public function testGetCartItems()
     {
-        $this->markTestSkipped(
-            'Need refacto'
-        );
-        $expectedDataPayment = [];
-        $address = $this->createMock(Address::class);
-        $address->id = 1;
-        $address->id_customer = 1;
-        $address->address1 = '1 rue de Rivoli';
+        $expectedItems = [];
+        $cart = $this->createMock(Cart::class);
         $product = $this->createMock(Product::class);
         $product->id = 1;
         $product->name = 'Product Test';
-        $summaryDetailsMock = ['products' => [], 'gift_products'=>[]];
-        $cart = $this->createMock(Cart::class);
-        $cart->method('getSummaryDetails')->willReturn($summaryDetailsMock);
-        $cart->id_customer = 1;
-        $cart->id_address_delivery = 1;
-        $cart->id_address_invoice = 1;
-        $context = $this->createMock(Context::class);
-        $language = $this->createMock(Language::class);
-        $language->iso_code = 'fr';
-        $context->language = $language;
-        $customer = $this->createMock(Customer::class);
-        $customer->firstname = 'Benjamin';
-        $customer->id = 1;
-        $context->customer = $customer;
-        $feePlans = [];
-        $returnData = PaymentData::dataFromCart($cart, $context, $feePlans,true);
 
-        $this->assertEquals($expectedDataPayment, $returnData);
+        $summaryDetailsMock = ['products' => [$product], 'gift_products'=>[]];
+        $cart->method('getSummaryDetails')->willReturn($summaryDetailsMock);
+        $returnItems = CartData::getCartItems($cart);
+        $this->assertEquals($expectedItems, $returnItems);
     }
 }
