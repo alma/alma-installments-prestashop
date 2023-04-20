@@ -1,5 +1,9 @@
 # Changelog
 
+## v2.11.1
+
+- POC : In-Page
+
 ## v2.11.0
 
 - Unification of the widget hook per product page and for Prestashop 1.6
