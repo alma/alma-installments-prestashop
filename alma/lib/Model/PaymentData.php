@@ -233,6 +233,7 @@ class PaymentData
     {
         $carrierHelper = new CarrierHelper($context);
         $cartHelper = new CartHelper($context);
+        $productHelper = new ProductHelper();
 
         return [
             'new_customer' => self::isNewCustomer($customer->id),
@@ -241,9 +242,9 @@ class PaymentData
             'current_order' => [
                 'purchase_amount' => almaPriceToCents($purchaseAmount),
                 'created' => strtotime($cart->date_add),
-                'payment_method' => self::PAYMENT_METHOD,
+                'payment_method' => PaymentData::PAYMENT_METHOD,
                 'shipping_method' => $carrierHelper->getParentCarrierNameById($cart->id_carrier),
-                'items' => CartData::getCartItems($cart),
+                'items' => CartData::getCartItems($cart, $productHelper),
             ],
             'previous_orders' => [
                 $cartHelper->previousCartOrdered($customer->id),

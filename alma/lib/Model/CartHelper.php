@@ -61,6 +61,7 @@ class CartHelper
         $ordersData = [];
         $orders = $this->getOrdersByCustomer($idCustomer, 10);
         $orderStateHelper = new OrderStateHelper($this->context);
+        $productHelper = new ProductHelper();
 
         $carrier = new CarrierHelper($this->context);
         foreach ($orders as $order) {
@@ -75,7 +76,7 @@ class CartHelper
 
             $cartItems = [];
             try {
-                $cartItems = CartData::getCartItems($cart);
+                $cartItems = CartData::getCartItems($cart, $productHelper);
             } catch (PrestaShopDatabaseException $e) {
                 $msg = '[Alma] cart items for previous cart ordered no found';
                 Logger::instance()->warning($msg);

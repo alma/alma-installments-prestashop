@@ -36,6 +36,9 @@ class CartDataTest extends TestCase
         $expectedItems = [];
         $cart = $this->createMock(Cart::class);
         $product = $this->createMock(Product::class);
+        $productHelper = $this->createMock(ProductHelper::class);
+        $productHelper->method('getProductsCombinations')->willReturn( ["1-1" => "Color - White, Size - S"]);
+        $product->id = 1;
         $product->id_product = 1;
         $product->name = 'Product Test';
         $product->price_wt = 280.000000;
@@ -46,11 +49,8 @@ class CartDataTest extends TestCase
         $product->cart_quantity = 1;
         $product->id_product_attribute = 1;
 
-        $combinationsNamesMock = ["1-1" => "Color - White, Size - S"];
-
         $summaryDetailsMock = ['products' => [(array) $product], 'gift_products'=>[]];
         $cart->method('getSummaryDetails')->willReturn($summaryDetailsMock);
-        $cart->method('getProductsCombinations')->willReturn($combinationsNamesMock);
         $returnItems = CartData::getCartItems($cart);
         $this->assertEquals($expectedItems, $returnItems);
     }

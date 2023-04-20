@@ -55,8 +55,9 @@ class CartData
      */
     public static function cartInfo($cart)
     {
+        $productHelper = new ProductHelper();
         return [
-            'items' => self::getCartItems($cart),
+            'items' => self::getCartItems($cart, $productHelper),
             'discounts' => self::getCartDiscounts($cart),
         ];
     }
@@ -94,14 +95,14 @@ class CartData
      * @throws PrestaShopDatabaseException
      * @throws PrestaShopException
      */
-    public static function getCartItems($cart)
+    public static function getCartItems($cart, $productHelper)
     {
         $items = [];
 
         $summaryDetails = $cart->getSummaryDetails($cart->id_lang, true);
         $products = array_merge($summaryDetails['products'], $summaryDetails['gift_products']);
         $productsDetails = self::getProductsDetails($products);
-        $combinationsNames = self::getProductsCombinations($cart, $products);
+        $combinationsNames = $productHelper->getProductsCombinations($cart, $products);
 
         foreach ($products as $productRow) {
             $product = new Product(null, false, $cart->id_lang);
@@ -222,79 +223,6 @@ class CartData
         }
 
         return $productsDetails;
-    }
-
-    /**
-     * @param Cart $cart
-     * @param array $products
-     *
-     * @return array
-     *
-     * @throws PrestaShopException
-     */
-    private static function getProductsCombinations($cart, $products)
-    {
-        $sql = new DbQuery();
-        $sql->select('CONCAT(p.`id_product`, "-", pa.`id_product_attribute`) as `unique_id`');
-
-        $combinationName = new DbQuery();
-        $combinationName->select('GROUP_CONCAT(DISTINCT CONCAT(agl.`name`, " - ", al.`name`) SEPARATOR ", ")');
-        $combinationName->from('product_attribute', 'pa2');
-        $combinationName->innerJoin(
-            'product_attribute_combination',
-            'pac',
-            'pac.`id_product_attribute` = pa2.`id_product_attribute`'
-        );
-        $combinationName->innerJoin('attribute', 'a', 'a.`id_attribute` = pac.`id_attribute`');
-        $combinationName->innerJoin(
-            'attribute_lang',
-            'al',
-            'a.id_attribute = al.id_attribute AND al.`id_lang` = ' . $cart->id_lang
-        );
-        $combinationName->innerJoin('attribute_group', 'ag', 'ag.`id_attribute_group` = a.`id_attribute_group`');
-        $combinationName->innerJoin(
-            'attribute_group_lang',
-            'agl',
-            'ag.`id_attribute_group` = agl.`id_attribute_group` AND agl.`id_lang` = ' . $cart->id_lang
-        );
-        $combinationName->where(
-            'pa2.`id_product` = p.`id_product` AND pa2.`id_product_attribute` = pa.`id_product_attribute`'
-        );
-
-        /* @noinspection PhpUnhandledExceptionInspection */
-        $sql->select("({$combinationName->build()}) as combination_name");
-
-        $sql->from('product', 'p');
-        $sql->innerJoin('product_attribute', 'pa', 'pa.`id_product` = p.`id_product`');
-
-        // DbQuery::where joins all where clauses with `) AND (` so for ORs we need a fully built where condition
-        $where = '';
-        $op = '';
-        foreach ($products as $productRow) {
-            if (!isset($productRow['id_product_attribute']) || !(int) $productRow['id_product_attribute']) {
-                continue;
-            }
-
-            $where .= "{$op}(p.`id_product` = {$productRow['id_product']}";
-            $where .= " AND pa.`id_product_attribute` = {$productRow['id_product_attribute']})";
-            $op = ' OR ';
-        }
-        $sql->where($where);
-
-        $db = Db::getInstance();
-        $combinationsNames = [];
-
-        try {
-            $results = $db->query($sql);
-        } catch (PrestaShopDatabaseException $e) {
-            return $combinationsNames;
-        }
-
-        while ($result = $db->nextRow($results)) {
-            $combinationsNames[$result['unique_id']] = $result['combination_name'];
-        }
-
-        return $combinationsNames;
     }
 
     /**
