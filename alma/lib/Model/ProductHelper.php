@@ -25,8 +25,10 @@
 namespace Alma\PrestaShop\Model;
 
 use Cart;
+use Context;
 use Db;
 use DbQuery;
+use ImageType;
 use PrestaShopDatabaseException;
 use PrestaShopException;
 
@@ -112,5 +114,84 @@ class ProductHelper
         }
 
         return $combinationsNames;
+    }
+
+    /**
+     * @param array $products
+     * @return array
+     */
+    public function getProductsDetails($products)
+    {
+        $sql = new DbQuery();
+        $sql->select('p.`id_product`, p.`is_virtual`, m.`name` as manufacturer_name');
+        $sql->from('product', 'p');
+        $sql->innerJoin('manufacturer', 'm', 'm.`id_manufacturer` = p.`id_manufacturer`');
+
+        $in = [];
+        foreach ($products as $productRow) {
+            $in[] = $productRow['id_product'];
+        }
+
+        $in = implode(', ', $in);
+        $sql->where("p.`id_product` IN ({$in})");
+
+        $db = Db::getInstance();
+        $productsDetails = [];
+
+        try {
+            $results = $db->query($sql);
+        } catch (PrestaShopDatabaseException $e) {
+            return $productsDetails;
+        }
+
+        if ($results !== false) {
+            while ($result = $db->nextRow($results)) {
+                $productsDetails[(int) $result['id_product']] = $result;
+            }
+        }
+
+        return $productsDetails;
+    }
+
+    /**
+     * @param $productRow
+     * @return string
+     */
+    public function getImageLink($productRow)
+    {
+        $link = Context::getContext()->link;
+
+        return $link->getImageLink(
+            $productRow['link_rewrite'],
+            $productRow['id_image'],
+            self::getFormattedImageTypeName('large')
+        );
+    }
+
+    public function getProductLink($product, $productRow, $cart)
+    {
+        $link = Context::getContext()->link;
+
+        return $link->getProductLink(
+            $product,
+            $productRow['link_rewrite'],
+            $productRow['category'],
+            null,
+            $cart->id_lang,
+            $cart->id_shop,
+            $productRow['id_product_attribute'],
+            false,
+            false,
+            true
+        );
+    }
+
+    private static function getFormattedImageTypeName($name)
+    {
+        if (version_compare(_PS_VERSION_, '1.7', '>=')) {
+            return ImageType::getFormattedName($name);
+        } else {
+            return ImageType::getFormatedName($name);
+        }
     }
 }

@@ -32,10 +32,6 @@ use Alma\PrestaShop\Utils\Settings;
 use Cart;
 use CartRule;
 use Configuration;
-use Context;
-use Db;
-use DbQuery;
-use ImageType;
 use PrestaShopDatabaseException;
 use PrestaShopException;
 use Product;
@@ -101,18 +97,15 @@ class CartData
 
         $summaryDetails = $cart->getSummaryDetails($cart->id_lang, true);
         $products = array_merge($summaryDetails['products'], $summaryDetails['gift_products']);
-        $productsDetails = self::getProductsDetails($products);
+        $productsDetails = $productHelper->getProductsDetails($products);
         $combinationsNames = $productHelper->getProductsCombinations($cart, $products);
 
         foreach ($products as $productRow) {
             $product = new Product(null, false, $cart->id_lang);
             $product->hydrate($productRow);
-
             $pid = (int) $product->id;
-            $link = Context::getContext()->link;
-
             $manufacturer_name = isset($productRow['manufacturer_name']) ? $productRow['manufacturer_name'] : null;
-            if (!$manufacturer_name and isset($productsDetails[$pid])) {
+            if (!$manufacturer_name && isset($productsDetails[$pid])) {
                 $manufacturer_name = $productsDetails[$pid]['manufacturer_name'];
             }
 
@@ -125,11 +118,7 @@ class CartData
                 $isGift = isset($productRow['is_gift']) ? (bool) $productRow['is_gift'] : null;
             }
 
-            $pictureUrl = $link->getImageLink(
-                $productRow['link_rewrite'],
-                $productRow['id_image'],
-                self::getFormattedImageTypeName('large')
-            );
+            $pictureUrl = $productHelper->getImageLink($productRow);
 
             if (isset($productRow['is_virtual'])) {
                 $requiresShipping = !(bool) $productRow['is_virtual'];
@@ -147,18 +136,7 @@ class CartData
                 'line_price' => almaPriceToCents($linePrice),
                 'is_gift' => $isGift,
                 'categories' => [$productRow['category']],
-                'url' => $link->getProductLink(
-                    $product,
-                    $productRow['link_rewrite'],
-                    $productRow['category'],
-                    null,
-                    $cart->id_lang,
-                    $cart->id_shop,
-                    $productRow['id_product_attribute'],
-                    false,
-                    false,
-                    true
-                ),
+                'url' => $productHelper->getProductLink($product, $productRow, $cart),
                 'picture_url' => $pictureUrl,
                 'requires_shipping' => $requiresShipping,
                 'taxes_included' => self::includeTaxes($cart),
@@ -176,53 +154,6 @@ class CartData
         }
 
         return $items;
-    }
-
-    private static function getFormattedImageTypeName($name)
-    {
-        if (version_compare(_PS_VERSION_, '1.7', '>=')) {
-            return ImageType::getFormattedName($name);
-        } else {
-            return ImageType::getFormatedName($name);
-        }
-    }
-
-    /**
-     * @param array $products
-     *
-     * @return array
-     */
-    private static function getProductsDetails($products)
-    {
-        $sql = new DbQuery();
-        $sql->select('p.`id_product`, p.`is_virtual`, m.`name` as manufacturer_name');
-        $sql->from('product', 'p');
-        $sql->innerJoin('manufacturer', 'm', 'm.`id_manufacturer` = p.`id_manufacturer`');
-
-        $in = [];
-        foreach ($products as $productRow) {
-            $in[] = $productRow['id_product'];
-        }
-
-        $in = implode(', ', $in);
-        $sql->where("p.`id_product` IN ({$in})");
-
-        $db = Db::getInstance();
-        $productsDetails = [];
-
-        try {
-            $results = $db->query($sql);
-        } catch (PrestaShopDatabaseException $e) {
-            return $productsDetails;
-        }
-
-        if ($results !== false) {
-            while ($result = $db->nextRow($results)) {
-                $productsDetails[(int) $result['id_product']] = $result;
-            }
-        }
-
-        return $productsDetails;
     }
 
     /**
