@@ -115,7 +115,7 @@ class CartData
             if (isset($productRow['gift'])) {
                 $isGift = (bool) $productRow['gift'];
             } else {
-                $isGift = isset($productRow['is_gift']) ? (bool) $productRow['is_gift'] : null;
+                $isGift = isset($productRow['is_gift']) && (bool)$productRow['is_gift'];
             }
 
             $pictureUrl = $productHelper->getImageLink($productRow);

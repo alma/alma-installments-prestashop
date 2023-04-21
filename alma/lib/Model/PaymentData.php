@@ -189,7 +189,6 @@ class PaymentData
                     'state_province' => $idStateShipping > 0 ? State::getNameById((int) $idStateShipping) : '',
                 ],
                 'shipping_info' => ShippingData::shippingInfo($cart),
-                'cart' => CartData::cartInfo($cart),
                 'billing_address' => [
                     'line1' => $billingAddress->address1,
                     'postal_code' => $billingAddress->postcode,
@@ -215,6 +214,9 @@ class PaymentData
         if (Settings::isDeferredTriggerLimitDays($feePlans)) {
             $dataPayment['payment']['deferred'] = 'trigger';
             $dataPayment['payment']['deferred_description'] = SettingsCustomFields::getDescriptionPaymentTriggerByLang($context->language->id);
+        }
+        if ($feePlans['installmentsCount'] > 4) {
+            $dataPayment['payment']['cart'] = CartData::cartInfo($cart);
         }
 
         return $dataPayment;

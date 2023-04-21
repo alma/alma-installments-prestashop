@@ -75,32 +75,48 @@ class CartDataTest extends TestCase
             'Two products in cart' => [
                 'items' => [
                     $this->getProduct(1, 1),
-                    $this->getProduct(3, 2),
+                    $this->getProduct(3, 2)
                 ],
                 'result' => [
                     $this->expectedProduct(1, 1),
                     $this->expectedProduct(3, 2)
                 ]
             ],
-            'Three products in cart' => [
+            'Virtual products in cart' => [
                 'items' => [
-                    $this->getProduct(1, 1),
-                    $this->getProduct(3, 2),
-                    $this->getProduct(2, 4)
+                    $this->getProduct(4, 8, false, true)
                 ],
                 'result' => [
-                    $this->expectedProduct(1, 1),
-                    $this->expectedProduct(3, 2),
-                    $this->expectedProduct(2, 4)
+                    $this->expectedProduct(4, 8)
                 ]
             ],
+            'Gift products in cart' => [
+                'items' => [
+                    $this->getProduct(2, 4, true, false)
+                ],
+                'result' => [
+                    $this->expectedProduct(2, 4, true)
+                ]
+            ],
+            'Virtual products in cart and Simple product' => [
+                'items' => [
+                    $this->getProduct(4, 8, false, true),
+                    $this->getProduct(1, 1),
+
+                ],
+                'result' => [
+                    $this->expectedProduct(4, 8),
+                    $this->expectedProduct(1, 1),
+
+                ]
+            ]
         ];
     }
 
     /**
      * @return array
      */
-    public function getProduct($id, $idProductAttribute)
+    public function getProduct($id, $idProductAttribute, $isGift = false, $isVirtual = false)
     {
         $product = $this->createMock(Product::class);
         $product->id = $id;
@@ -108,11 +124,15 @@ class CartDataTest extends TestCase
         $product->reference = 'test_' . $id;
         $product->name = 'Product ' . $id;
         $product->category = 'category_test';
-        $product->is_gift = false;
+        if ($isGift) {
+            $product->is_gift = true;
+        }
         $product->price_wt = 280.000000;
         $product->price = 280.000000;
         $product->total_wt = 280.000000;
-        $product->is_virtual = false;
+        if ($isVirtual) {
+            $product->is_virtual = $isVirtual;
+        }
         $product->cart_quantity = 1;
         $product->id_product_attribute = $idProductAttribute;
 
@@ -122,7 +142,7 @@ class CartDataTest extends TestCase
     /**
      * @return array
      */
-    public function expectedProduct($id, $idProductAttribute)
+    public function expectedProduct($id, $idProductAttribute, $isGift = false)
     {
         $vendor = $this->getVendor();
         $combination = $this->getCombinations();
@@ -136,11 +156,11 @@ class CartDataTest extends TestCase
             "quantity" => 1,
             "unit_price" => 28000,
             "line_price" => 28000,
-            "is_gift" => false,
+            "is_gift" => $isGift,
             "categories" => ["category_test"],
             "url" => "http://prestashop-a-1-7-8-7.local.test/1-1-product_test.html#/1-size-s/8-color-white",
             "picture_url" => "http://prestashop-a-1-7-8-7.local.test/1-large_default/product_test.jpg",
-            "requires_shipping" => true,
+            "requires_shipping" => !$vendor[$id]['is_virtual'],
             "taxes_included" => true
         ];
     }
@@ -152,19 +172,24 @@ class CartDataTest extends TestCase
     {
         return [
             "1" => [
-                "id_product" => "1",
-                "is_virtual" => "0",
+                "id_product" => 1,
+                "is_virtual" => false,
                 "manufacturer_name" => "Manufacturer Test"
             ],
             "2" => [
-                "id_product" => "2",
-                "is_virtual" => "0",
-                "manufacturer_name" => "Toto Design"
+                "id_product" => 2,
+                "is_virtual" => false,
+                "manufacturer_name" => "Gift Product"
             ],
             "3" => [
-                "id_product" => "3",
-                "is_virtual" => "0",
+                "id_product" => 3,
+                "is_virtual" => false,
                 "manufacturer_name" => "Studio Design"
+            ],
+            "4" => [
+                "id_product" => 4,
+                "is_virtual" => true,
+                "manufacturer_name" => "Virtual Product"
             ]
         ];
     }
@@ -177,7 +202,8 @@ class CartDataTest extends TestCase
         return [
             "1-1" => "Color - White, Size - S",
             "2-4" => "Color - White, Size - L",
-            "3-2" => "Color - Black, Size - S"
+            "3-2" => "Color - Black, Size - S",
+            "4-8" => "Storage - 1Go"
         ];
     }
 }
