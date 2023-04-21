@@ -90,6 +90,9 @@ class DisplayProductPriceBlockHookController extends FrontendHookController
             } else {
                 $quantity = max((int) $productParams['minimal_quantity'], (int) $productParams['quantity_wanted']);
             }
+            if ($quantity === 0) {
+                $quantity = 1;
+            }
 
             $price = almaPriceToCents(
                 Product::getPriceStatic(

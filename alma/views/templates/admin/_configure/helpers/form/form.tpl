@@ -57,6 +57,14 @@
                 {/strip}
             </div>
         {/foreach}
+    {else if $input.type == 'secret'}
+        {assign var='value_text' value=$fields_value[$input.name]}
+        <input type="password"
+            name="{$input.name}"
+            size="{$input.size}"
+            class="{if isset($input.class)}{$input.class}{/if}"
+            value="{if !empty($value_text)}{$input.placeholder|escape:'htmlall':'UTF-8'}{/if}"
+            {if isset($input.autocomplete) && !$input.autocomplete}autocomplete="off"{/if} />
     {else}
         {$smarty.block.parent}
     {/if}
