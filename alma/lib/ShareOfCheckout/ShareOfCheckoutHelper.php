@@ -28,6 +28,7 @@ use Alma\API\RequestError;
 use Alma\PrestaShop\API\ClientHelper;
 use Alma\PrestaShop\Forms\ApiAdminFormBuilder;
 use Alma\PrestaShop\Forms\ShareOfCheckoutAdminFormBuilder;
+use Alma\PrestaShop\Utils\ApiKeyHelper;
 use Alma\PrestaShop\Utils\DateHelper;
 use Alma\PrestaShop\Utils\Logger;
 use Alma\PrestaShop\Utils\Settings;
@@ -276,7 +277,7 @@ class ShareOfCheckoutHelper
     public function resetShareOfCheckoutConsent()
     {
         try {
-            if (Tools::getValue(ApiAdminFormBuilder::ALMA_LIVE_API_KEY) !== Settings::getLiveKey()) {
+            if (Tools::getValue(ApiAdminFormBuilder::ALMA_LIVE_API_KEY) !== Settings::getLiveKey() && Tools::getValue(ApiAdminFormBuilder::ALMA_LIVE_API_KEY) !== ApiKeyHelper::OBCUR_VALUE) {
                 $this->removeConsent();
                 Configuration::deleteByName(ShareOfCheckoutAdminFormBuilder::ALMA_SHARE_OF_CHECKOUT_STATE);
                 Configuration::deleteByName(ShareOfCheckoutAdminFormBuilder::ALMA_SHARE_OF_CHECKOUT_DATE);

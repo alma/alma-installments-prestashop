@@ -36,6 +36,7 @@ if (!defined('ALMA_MODE_LIVE')) {
     define('ALMA_MODE_LIVE', 'live');
 }
 
+use Alma\PrestaShop\Forms\ApiAdminFormBuilder;
 use Alma\PrestaShop\Forms\ExcludedCategoryAdminFormBuilder;
 use Alma\PrestaShop\Forms\FragmentAdminFormBuilder;
 use Alma\PrestaShop\Forms\PaymentButtonAdminFormBuilder;
@@ -229,10 +230,10 @@ class Settings
     public static function getActiveAPIKey()
     {
         if (self::getActiveMode() == ALMA_MODE_LIVE) {
-            return self::get('ALMA_LIVE_API_KEY');
-        } else {
-            return self::get('ALMA_TEST_API_KEY');
+            return self::getLiveKey();
         }
+
+        return self::getTestKey();
     }
 
     /**
@@ -242,7 +243,13 @@ class Settings
      */
     public static function getLiveKey()
     {
-        return self::get('ALMA_LIVE_API_KEY', '');
+        $apiKey = self::get(ApiAdminFormBuilder::ALMA_LIVE_API_KEY, null);
+        if (strpos($apiKey, ApiKeyHelper::BEGIN_LIVE_API_KEY) !== false) {
+            return $apiKey;
+        }
+
+        $encryption = new EncryptionHelper();
+        return $encryption->decrypt($apiKey);
     }
 
     /**
@@ -252,7 +259,13 @@ class Settings
      */
     public static function getTestKey()
     {
-        return self::get('ALMA_TEST_API_KEY', '');
+        $apiKey = self::get(ApiAdminFormBuilder::ALMA_TEST_API_KEY, null);
+        if (strpos($apiKey, ApiKeyHelper::BEGIN_TEST_API_KEY) !== false) {
+            return $apiKey;
+        }
+
+        $encryption = new EncryptionHelper();
+        return $encryption->decrypt($apiKey);
     }
 
     /**
