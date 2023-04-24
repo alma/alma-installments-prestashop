@@ -253,7 +253,7 @@ TAG;
                 $this->controller->registerJavascript(
                     self::ID_INPAGE_SCRIPT,
                     "modules/$this->moduleName/" . self::INPAGE_SCRIPT_PATH,
-                    ['priority' => 1000, 'position' => 'head']
+                    ['priority' => 1000]
                 );
 
                 if (version_compare(_PS_VERSION_, '1.7.0.2', '<')) {
@@ -268,7 +268,7 @@ TAG;
                     $this->controller->registerJavascript(
                         self::ID_INPAGE_JS,
                         self::INPAGE_JS_URL,
-                        ['server' => 'remote', 'position' => 'head']
+                        ['server' => 'remote']
                     );
                     $this->controller->unregisterJavascript(self::ID_WIDGETS_JS);
                 }
