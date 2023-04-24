@@ -26,7 +26,7 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-function upgrade_module_2_11_1()
+function upgrade_module_2_12_1()
 {
     if (version_compare(_PS_VERSION_, '1.5.5.0', '<')) {
         Tools::clearCache();

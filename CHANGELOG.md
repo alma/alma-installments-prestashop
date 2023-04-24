@@ -1,8 +1,15 @@
 # Changelog
 
-## v2.11.1
+## v2.12.1
 
 - POC : In-Page
+
+## v2.12.0
+
+- Encryption API_KEY Alma
+- Add process automatic refund after mismatch
+- Fix widget doesn't display if quantity is 0
+- Fix error PHP_AUTH_USER HookController
 
 ## v2.11.0
 
