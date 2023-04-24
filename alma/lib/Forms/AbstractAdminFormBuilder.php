@@ -231,13 +231,14 @@ abstract class AbstractAdminFormBuilder
      *
      * @return array inputNumberForm
      */
-    protected function inputNumberForm($name, $label, $desc, $min = null, $max = null, $form_group_class = null)
+    protected function inputNumberForm($name, $label, $desc, $min = null, $max = null, $form_group_class = null, $readonly = false)
     {
         $dataInput = [
             'name' => $name,
             'label' => $label,
             'desc' => $desc,
             'type' => 'number',
+            'readonly' => $readonly,
         ];
 
         if ($form_group_class) {
