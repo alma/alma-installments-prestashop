@@ -97,11 +97,16 @@ class PaymentOptionsHookController extends FrontendHookController
                 'totalCredit' => $plan->customerTotalCostAmount + $totalCart,
                 'taeg' => $plan->annualInterestRate,
             ];
+            $isPayNow = $key === PlanHelper::ALMA_KEY_PAYNOW;
 
             foreach ($plans as $keyPlan => $paymentPlan) {
                 $plans[$keyPlan]['human_date'] = getDateFormat($locale, $paymentPlan['due_date']);
                 if ($keyPlan === 0) {
                     $plans[$keyPlan]['human_date'] = $this->module->l('Today', 'PaymentOptionsHookController');
+                }
+
+                if ($isPayNow) {
+                    $plans[$keyPlan]['human_date'] = $this->module->l('Total', 'PaymentOptionsHookController');
                 }
                 if (Settings::isDeferredTriggerLimitDays($feePlans, $key)) {
                     $plans[$keyPlan]['human_date'] = sprintf(
@@ -115,7 +120,6 @@ class PaymentOptionsHookController extends FrontendHookController
             }
             $isDeferred = Settings::isDeferred($plan);
             $duration = Settings::getDuration($plan);
-            $isPayNow = $key === PlanHelper::ALMA_KEY_PAYNOW;
             $fileTemplate = 'payment_button_pnx.tpl';
             $valueBNPL = $installment;
             $textPaymentButton = sprintf(SettingsCustomFields::getPnxButtonTitleByLang($idLang), $installment);

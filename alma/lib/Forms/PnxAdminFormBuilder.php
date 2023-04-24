@@ -60,6 +60,11 @@ class PnxAdminFormBuilder extends AbstractAlmaAdminFormBuilder
             ]
         );
 
+        $readonly = false;
+        if ($feePlan->isPayNow()) {
+            $readonly = true;
+        }
+
         return [
             $this->inputHtml($tpl, null, "$tabId-content"),
             $this->inputAlmaSwitchForm(
@@ -75,7 +80,8 @@ class PnxAdminFormBuilder extends AbstractAlmaAdminFormBuilder
                 $this->module->l('Minimum purchase amount to activate this plan', 'PnxAdminFormBuilder'),
                 $minAmount,
                 $maxAmount,
-                "$tabId-content"
+                "$tabId-content",
+                $readonly
             ),
             $this->inputNumberForm(
                 "ALMA_{$key}_MAX_AMOUNT",
