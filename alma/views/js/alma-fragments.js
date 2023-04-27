@@ -42,10 +42,11 @@ const almaPay = function (paymentData, paymentOptionId) {
         4500
     );
     // Prestashop 1.7+
-    if ($('#pay-with-' + paymentOptionId + '-form').length !== 0) {
-        $('#pay-with-' + paymentOptionId + '-form form').submit(function (e) {
+    if ($('#payment-confirmation').length !== 0) {
+        $('#payment-confirmation').on('click', function(e) {
             e.preventDefault();
             inPage.startPayment();
+            return false;
         });
     }
 };
