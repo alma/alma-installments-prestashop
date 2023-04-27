@@ -205,3 +205,30 @@ p.payment_module a.disable-arrow-icon {
     float: right;
     font-weight: normal;
 }
+
+.loadingIndicator {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.loadingIndicator > svg {
+    animation: bounce 1.7s ease infinite;
+}
+
+@keyframes bounce {
+    60% {
+        transform: scale(1); }
+
+    70% {
+        transform: scale(0.7); }
+
+    80% {
+        transform: scale(1); }
+
+    85% {
+        transform: scale(0.95); }
+
+    100% {
+        transform: scale(1); }
+}
