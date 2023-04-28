@@ -62,6 +62,7 @@ $_MODULE['<{alma}prestashop>getcontenthookcontroller_bf17ac149e2e7a530c677e9bd51
 $_MODULE['<{alma}prestashop>getcontenthookcontroller_f805369aef0b94a941a131e9a2b72ab5'] = 'Gestionnaire de module';
 $_MODULE['<{alma}prestashop>getcontenthookcontroller_c6e24f81cb99e08c3d56b191c00aea28'] = 'Gestionnaire de module - Liste';
 $_MODULE['<{alma}prestashop>paymentoptionshookcontroller_1dd1c5fb7f25cd41b291d43a89e3aefd'] = 'Aujourd\'hui';
+$_MODULE['<{alma}prestashop>paymentoptionshookcontroller_96b0141273eabab320119c467cdcaf17'] = 'Total';
 $_MODULE['<{alma}prestashop>paymentoptionshookcontroller_9bbd94e0a507283ae202812ea1bd6f20'] = 'Dans %s mois';
 $_MODULE['<{alma}prestashop>paymentoptionshookcontroller_9088921432b295dfe6f02863b2dc0ff8'] = '0 € aujourd\'hui puis %1$s le %2$s';
 $_MODULE['<{alma}prestashop>paymentvalidation_efa820507b1951ee5722003639b1a0b0'] = 'Alma n\'est pas disponible dans cette devise';
@@ -122,8 +123,9 @@ $_MODULE['<{alma}prestashop>pnxadminformbuilder_52f5e0bc3859bc5f5e25130b6c7e8881
 $_MODULE['<{alma}prestashop>pnxadminformbuilder_471efc56e22a91e31c909a7d7044dc8e'] = 'Utilisez des valeurs relatives pour ordonner les choix sur votre page de paiement';
 $_MODULE['<{alma}prestashop>pnxadminformbuilder_200b9884c24938888bc2462029b5241d'] = 'Activer les paiements en %d fois';
 $_MODULE['<{alma}prestashop>pnxadminformbuilder_203cf2399ac7e381d5e3f50e9af16981'] = 'Activer les paiements à J+%d';
-$_MODULE['<{alma}prestashop>pnxadminformbuilder_f5a4d13703abb4aae723766b859a24c1'] = 'Activer le paiement en %d fois';
+$_MODULE['<{alma}prestashop>pnxadminformbuilder_d3031c512b31f2a2b9bc7fb786c94fba'] = 'Activer le paiement immédiat';
 $_MODULE['<{alma}prestashop>pnxadminformbuilder_1cc27a7dd338c415c7ec905916039fdb'] = 'Activer les paiements en %d fois +%d jours différés';
+$_MODULE['<{alma}prestashop>pnxadminformbuilder_8bd4837a76cf443ab523a51895e23c36'] = 'Paiement immédiat';
 $_MODULE['<{alma}prestashop>pnxadminformbuilder_445b31fd41d49bfa07607421c51fe814'] = 'Paiement en %d fois';
 $_MODULE['<{alma}prestashop>pnxadminformbuilder_00a67585074c0f91b2446943f30f8c33'] = 'Paiement différé + %d jours';
 $_MODULE['<{alma}prestashop>pnxadminformbuilder_1414abef78f33ed4e9cfd75624b1f0b7'] = 'Paiement en %d fois +%d jours différés';

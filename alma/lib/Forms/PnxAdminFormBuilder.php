@@ -183,7 +183,7 @@ class PnxAdminFormBuilder extends AbstractAlmaAdminFormBuilder
         }
         if ($feePlan->isPayNow()) {
             return sprintf(
-                $this->module->l('Enable %d-installment payment', 'PnxAdminFormBuilder'),
+                $this->module->l('Enable pay now', 'PnxAdminFormBuilder'),
                 $feePlan->installments_count
             );
         }
@@ -203,7 +203,14 @@ class PnxAdminFormBuilder extends AbstractAlmaAdminFormBuilder
      */
     protected function getTabTitle(FeePlan $feePlan, $duration)
     {
-        if ($feePlan->isPnXOnly() || $feePlan->isPayNow()) {
+        if ($feePlan->isPayNow()) {
+            return sprintf(
+                $this->module->l('Pay now', 'PnxAdminFormBuilder'),
+                $feePlan->installments_count
+            );
+        }
+
+        if ($feePlan->isPnXOnly()) {
             return sprintf(
                 $this->module->l('%d-installment payments', 'PnxAdminFormBuilder'),
                 $feePlan->installments_count

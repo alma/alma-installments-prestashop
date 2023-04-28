@@ -232,3 +232,9 @@ fieldset .form-alma.disabled::before{
 .link-collapse.collapsed .icon-chevron-up{
     display: none;
 }
+
+#alma_config_form input[readonly] {
+    color: #999;
+    border: 1px solid #b5bdc0;
+    background-color: #ddd;
+}

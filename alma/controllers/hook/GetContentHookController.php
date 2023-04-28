@@ -632,7 +632,7 @@ final class GetContentHookController extends AdminHookController
                 $minAmount = isset($installmentsPlans->$key->min)
                     ? $installmentsPlans->$key->min
                     : $feePlan->min_purchase_amount;
-                $helper->fields_value["ALMA_{$key}_MIN_AMOUNT"] = (int) almaPriceFromCents($minAmount);
+                $helper->fields_value["ALMA_{$key}_MIN_AMOUNT"] = (int) round(almaPriceFromCents($minAmount));
                 $maxAmount = isset($installmentsPlans->$key->max)
                     ? $installmentsPlans->$key->max
                     : $feePlan->max_purchase_amount;
