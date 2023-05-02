@@ -68,7 +68,7 @@ class PaymentDataTest extends TestCase
         $customer->id = 1;
         $context->customer = $customer;
         $feePlans = [];
-        $returnData = PaymentData::dataFromCart($cart, $context, $feePlans,true);
+        $returnData = PaymentData::dataFromCart($cart, $context, $feePlans, true);
 
         $this->assertEquals($expectedDataPayment, $returnData);
     }
