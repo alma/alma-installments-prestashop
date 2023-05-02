@@ -168,6 +168,13 @@ class ProductHelper
         );
     }
 
+    /**
+     * @param $product
+     * @param $productRow
+     * @param $cart
+     * @return string
+     * @throws PrestaShopException
+     */
     public function getProductLink($product, $productRow, $cart)
     {
         $link = Context::getContext()->link;
@@ -186,12 +193,16 @@ class ProductHelper
         );
     }
 
+    /**
+     * @param $name
+     * @return string
+     */
     private static function getFormattedImageTypeName($name)
     {
         if (version_compare(_PS_VERSION_, '1.7', '>=')) {
             return ImageType::getFormattedName($name);
-        } else {
-            return ImageType::getFormatedName($name);
         }
+
+        return ImageType::getFormatedName($name);
     }
 }
