@@ -24,6 +24,7 @@
 
 namespace Alma\PrestaShop\Model;
 
+use Alma\PrestaShop\Repositories\ProductRepository;
 use Alma\PrestaShop\Utils\Logger;
 use Cart;
 use Context;
@@ -62,6 +63,7 @@ class CartHelper
         $orders = $this->getOrdersByCustomer($idCustomer, 10);
         $orderStateHelper = new OrderStateHelper($this->context);
         $productHelper = new ProductHelper();
+        $productRepository = new ProductRepository();
 
         $carrier = new CarrierHelper($this->context);
         foreach ($orders as $order) {
@@ -76,7 +78,7 @@ class CartHelper
 
             $cartItems = [];
             try {
-                $cartItems = CartData::getCartItems($cart, $productHelper);
+                $cartItems = CartData::getCartItems($cart, $productHelper, $productRepository);
             } catch (PrestaShopDatabaseException $e) {
                 $msg = '[Alma] cart items for previous cart ordered no found';
                 Logger::instance()->warning($msg);

@@ -44,117 +44,7 @@ if (!defined('_PS_VERSION_')) {
 class ProductHelper
 {
     /**
-     * @param Cart $cart
-     * @param array $products
-     *
-     * @return array
-     *
-     * @throws PrestaShopException
-     */
-    public function getProductsCombinations($cart, $products)
-    {
-        $sql = new DbQuery();
-        $sql->select('CONCAT(p.`id_product`, "-", pa.`id_product_attribute`) as `unique_id`');
-
-        $combinationName = new DbQuery();
-        $combinationName->select('GROUP_CONCAT(DISTINCT CONCAT(agl.`name`, " - ", al.`name`) SEPARATOR ", ")');
-        $combinationName->from('product_attribute', 'pa2');
-        $combinationName->innerJoin(
-            'product_attribute_combination',
-            'pac',
-            'pac.`id_product_attribute` = pa2.`id_product_attribute`'
-        );
-        $combinationName->innerJoin('attribute', 'a', 'a.`id_attribute` = pac.`id_attribute`');
-        $combinationName->innerJoin(
-            'attribute_lang',
-            'al',
-            'a.id_attribute = al.id_attribute AND al.`id_lang` = ' . $cart->id_lang
-        );
-        $combinationName->innerJoin('attribute_group', 'ag', 'ag.`id_attribute_group` = a.`id_attribute_group`');
-        $combinationName->innerJoin(
-            'attribute_group_lang',
-            'agl',
-            'ag.`id_attribute_group` = agl.`id_attribute_group` AND agl.`id_lang` = ' . $cart->id_lang
-        );
-        $combinationName->where(
-            'pa2.`id_product` = p.`id_product` AND pa2.`id_product_attribute` = pa.`id_product_attribute`'
-        );
-
-        /* @noinspection PhpUnhandledExceptionInspection */
-        $sql->select("({$combinationName->build()}) as combination_name");
-
-        $sql->from('product', 'p');
-        $sql->innerJoin('product_attribute', 'pa', 'pa.`id_product` = p.`id_product`');
-
-        // DbQuery::where joins all where clauses with `) AND (` so for ORs we need a fully built where condition
-        $where = '';
-        $op = '';
-        foreach ($products as $productRow) {
-            if (!isset($productRow['id_product_attribute']) || !(int) $productRow['id_product_attribute']) {
-                continue;
-            }
-
-            $where .= "{$op}(p.`id_product` = {$productRow['id_product']}";
-            $where .= " AND pa.`id_product_attribute` = {$productRow['id_product_attribute']})";
-            $op = ' OR ';
-        }
-        $sql->where($where);
-
-        $db = Db::getInstance();
-        $combinationsNames = [];
-
-        try {
-            $results = $db->query($sql);
-        } catch (PrestaShopDatabaseException $e) {
-            return $combinationsNames;
-        }
-
-        while ($result = $db->nextRow($results)) {
-            $combinationsNames[$result['unique_id']] = $result['combination_name'];
-        }
-
-        return $combinationsNames;
-    }
-
-    /**
-     * @param array $products
-     * @return array
-     */
-    public function getProductsDetails($products)
-    {
-        $sql = new DbQuery();
-        $sql->select('p.`id_product`, p.`is_virtual`, m.`name` as manufacturer_name');
-        $sql->from('product', 'p');
-        $sql->innerJoin('manufacturer', 'm', 'm.`id_manufacturer` = p.`id_manufacturer`');
-
-        $in = [];
-        foreach ($products as $productRow) {
-            $in[] = $productRow['id_product'];
-        }
-
-        $in = implode(', ', $in);
-        $sql->where("p.`id_product` IN ({$in})");
-
-        $db = Db::getInstance();
-        $productsDetails = [];
-
-        try {
-            $results = $db->query($sql);
-        } catch (PrestaShopDatabaseException $e) {
-            return $productsDetails;
-        }
-
-        if ($results !== false) {
-            while ($result = $db->nextRow($results)) {
-                $productsDetails[(int) $result['id_product']] = $result;
-            }
-        }
-
-        return $productsDetails;
-    }
-
-    /**
-     * @param $productRow
+     * @param array $productRow
      * @return string
      */
     public function getImageLink($productRow)
@@ -170,8 +60,8 @@ class ProductHelper
 
     /**
      * @param $product
-     * @param $productRow
-     * @param $cart
+     * @param array $productRow
+     * @param Cart $cart
      * @return string
      * @throws PrestaShopException
      */
@@ -194,7 +84,7 @@ class ProductHelper
     }
 
     /**
-     * @param $name
+     * @param string $name
      * @return string
      */
     private static function getFormattedImageTypeName($name)

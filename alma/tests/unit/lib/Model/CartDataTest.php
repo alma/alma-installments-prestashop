@@ -26,6 +26,7 @@ namespace Alma\PrestaShop\Tests\Unit\Lib\Model;
 
 use Alma\PrestaShop\Model\CartData;
 use Alma\PrestaShop\Model\ProductHelper;
+use Alma\PrestaShop\Repositories\ProductRepository;
 use Cart;
 use PHPUnit\Framework\TestCase;
 use Product;
@@ -41,15 +42,18 @@ class CartDataTest extends TestCase
     public function testGetCartItems($items, $expected)
     {
         $cart = $this->createMock(Cart::class);
+        $productRepository = $this->createMock(ProductRepository::class);
+        $productRepository->method('getProductsCombinations')->willReturn($this->getCombinations());
+        $productRepository->method('getProductsDetails')->willReturn($this->getVendor());
+
         $productHelper = $this->createMock(ProductHelper::class);
-        $productHelper->method('getProductsCombinations')->willReturn($this->getCombinations());
         $productHelper->method('getImageLink')->willReturn('http://prestashop-a-1-7-8-7.local.test/1-large_default/product_test.jpg');
         $productHelper->method('getProductLink')->willReturn('http://prestashop-a-1-7-8-7.local.test/1-1-product_test.html#/1-size-s/8-color-white');
-        $productHelper->method('getProductsDetails')->willReturn($this->getVendor());
+
 
         $summaryDetailsMock = ['products' => $items, 'gift_products'=>[]];
         $cart->method('getSummaryDetails')->willReturn($summaryDetailsMock);
-        $returnItems = CartData::getCartItems($cart, $productHelper);
+        $returnItems = CartData::getCartItems($cart, $productHelper, $productRepository);
         $this->assertEquals($expected, $returnItems);
     }
 

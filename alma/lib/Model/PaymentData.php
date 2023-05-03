@@ -29,6 +29,7 @@ if (!defined('_PS_VERSION_')) {
 }
 
 use Address;
+use Alma\PrestaShop\Repositories\ProductRepository;
 use Alma\PrestaShop\Utils\Logger;
 use Alma\PrestaShop\Utils\Settings;
 use Alma\PrestaShop\Utils\SettingsCustomFields;
@@ -236,6 +237,7 @@ class PaymentData
         $carrierHelper = new CarrierHelper($context);
         $cartHelper = new CartHelper($context);
         $productHelper = new ProductHelper();
+        $productRepository = new ProductRepository();
 
         return [
             'new_customer' => self::isNewCustomer($customer->id),
@@ -246,7 +248,7 @@ class PaymentData
                 'created' => strtotime($cart->date_add),
                 'payment_method' => PaymentData::PAYMENT_METHOD,
                 'shipping_method' => $carrierHelper->getParentCarrierNameById($cart->id_carrier),
-                'items' => CartData::getCartItems($cart, $productHelper),
+                'items' => CartData::getCartItems($cart, $productHelper, $productRepository),
             ],
             'previous_orders' => [
                 $cartHelper->previousCartOrdered($customer->id),

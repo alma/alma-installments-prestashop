@@ -28,6 +28,7 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
+use Alma\PrestaShop\Repositories\ProductRepository;
 use Alma\PrestaShop\Utils\Settings;
 use Cart;
 use CartRule;
@@ -52,8 +53,10 @@ class CartData
     public static function cartInfo($cart)
     {
         $productHelper = new ProductHelper();
+        $productRepository = new ProductRepository();
+
         return [
-            'items' => self::getCartItems($cart, $productHelper),
+            'items' => self::getCartItems($cart, $productHelper,$productRepository),
             'discounts' => self::getCartDiscounts($cart),
         ];
     }
@@ -85,20 +88,22 @@ class CartData
 
     /**
      * @param Cart $cart
-     *
+     * @param  ProductHelper $productHelper
+     * @param  ProductRepository $productRepository
      * @return array of items
      *
      * @throws PrestaShopDatabaseException
      * @throws PrestaShopException
      */
-    public static function getCartItems($cart, $productHelper)
+    public static function getCartItems($cart, $productHelper, $productRepository)
     {
         $items = [];
 
+
         $summaryDetails = $cart->getSummaryDetails($cart->id_lang, true);
         $products = array_merge($summaryDetails['products'], $summaryDetails['gift_products']);
-        $productsDetails = $productHelper->getProductsDetails($products);
-        $combinationsNames = $productHelper->getProductsCombinations($cart, $products);
+        $productsDetails = $productRepository->getProductsDetails($products);
+        $combinationsNames = $productRepository->getProductsCombinations($cart, $products);
 
         foreach ($products as $productRow) {
             $product = new Product(null, false, $cart->id_lang);
@@ -143,10 +148,10 @@ class CartData
             ];
 
             if (isset($productRow['id_product_attribute']) && (int) $productRow['id_product_attribute']) {
-                $unique_id = "$pid-{$productRow['id_product_attribute']}";
+                $uniqueId = "$pid-{$productRow['id_product_attribute']}";
 
-                if ($combinationName = $combinationsNames[$unique_id]) {
-                    $data['variant_title'] = $combinationName;
+                if (isset($combinationsNames[$uniqueId])) {
+                    $data['variant_title'] = $combinationsNames[$uniqueId];
                 }
             }
 
