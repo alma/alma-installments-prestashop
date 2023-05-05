@@ -68,7 +68,7 @@ const isAlmaPayment = function (url) {
 };
 
 const almaInPageOnload = function() {
-    let loading = "<div class='loadingIndicator'><img src='/modules/alma/views/img/loading-a-logo-alma.svg' alt='Loading' /></div>";
+    let loading = "<div class='loadingIndicator'><img src='https://cdn.almapay.com/img/animated-logo-a.svg' alt='Loading' /></div>";
     if ($(".alma-inpage").length !== 0) {
         // PS 1.7 : paymentOptions
         $(".ps-shown-by-js").click(function () {
