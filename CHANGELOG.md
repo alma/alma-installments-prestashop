@@ -1,5 +1,13 @@
 # Changelog
 
+## v2.12.0
+
+- Add more lisibility to error mismatch and automatic refund
+- Add encryption API_KEY
+- Data basket shared only for credit
+- Fix to display widget if quantity is 0
+- Fix error in Hook Controller
+
 ## v2.11.0
 
 - Unification of the widget hook per product page and for Prestashop 1.6
