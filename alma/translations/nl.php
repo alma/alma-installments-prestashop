@@ -42,9 +42,9 @@ $_MODULE['<{alma}prestashop>adminalmarefunds_69c00601627a9011bf5c4816abf00b5a'] 
 $_MODULE['<{alma}prestashop>adminalmarefunds_9bbf53faf470010110269d041cab1e9f'] = 'Terugbetaling is verwerkt';
 $_MODULE['<{alma}prestashop>adminalmarefunds_4ba820211f99849725468bd56fc50216'] = 'Fout: bedrag is hoger dan maximaal terug te betalen';
 $_MODULE['<{alma}prestashop>adminalmarefunds_01dedb61eca449d9075cc314cc4151d7'] = 'Fout: onbekend type restitutie (%s)';
-$_MODULE['<{alma}prestashop>payment_2f9f52496706027b880bac2e3c9af1d8'] = 'Er is iets fout gegaan bij de betalingsopdracht. Probeert u het opnieuw of neem contact met ons op als het probleem blijft bestaan.';
+$_MODULE['<{alma}prestashop>payment_2f9f52496706027b880bac2e3c9af1d8'] = 'Er is iets fout gegaan bij de betaalopdracht. Probeer het opnieuw of neem contact met ons op als het probleem zich blijft voordoen.';
 $_MODULE['<{alma}prestashop>payment_efa820507b1951ee5722003639b1a0b0'] = 'Gespreide betaling van Alma is niet beschikbaar voor deze valuta';
-$_MODULE['<{alma}prestashop>validation_9d55a51cbc2d6cf7f9251b0cec59390e'] = 'Er is iets fout gegaan bij de bevestiging van uw betaling. Probeert u het opnieuw of neem contact met ons op als het probleem blijft bestaan. ID winkelmandje: %d';
+$_MODULE['<{alma}prestashop>validation_9d55a51cbc2d6cf7f9251b0cec59390e'] = 'Er is iets fout gegaan bij de bevestiging van de betaling. Probeer het opnieuw of neem contact met ons op als het probleem zich blijft voordoen. ID winkelmandje: %d';
 $_MODULE['<{alma}prestashop>displaypaymenthookcontroller_afd8ac1c65e1519d6a890e5f98558a52'] = '%1$s dan %2$d x %3$s';
 $_MODULE['<{alma}prestashop>displaypaymenthookcontroller_bc69b42c4bd339154f9025f3299ad146'] = '%1$s vandaag dan %2$d x %3$s';
 $_MODULE['<{alma}prestashop>displaypaymenthookcontroller_9088921432b295dfe6f02863b2dc0ff8'] = '0 € vandaag dan %1$s op %2$s';
@@ -69,8 +69,8 @@ $_MODULE['<{alma}prestashop>paymentoptionshookcontroller_9088921432b295dfe6f0286
 $_MODULE['<{alma}prestashop>paymentvalidation_efa820507b1951ee5722003639b1a0b0'] = 'Gespreide betaling van Alma is niet beschikbaar voor deze valuta';
 $_MODULE['<{alma}prestashop>paymentvalidation_1d879e270cfb195f257aab3116618d8b'] = 'Alma - +%d dagen betaling';
 $_MODULE['<{alma}prestashop>paymentvalidation_6f11098989b14063e0a4cfe362734850'] = 'Alma - Betalen in %d keer';
-$_MODULE['<{alma}prestashop>refundhelper_446ae76a36687f9dbc62430e7006ca91'] = 'Het spijt ons u te moeten informeren dat er een probleem was tijdens het betalingsproces, uw Alma-betaling zal volledig worden terugbetaald. Probeer uw betaling opnieuw om uw bestelling te voltooien.';
-$_MODULE['<{alma}prestashop>refundhelper_448edd2d5c593906afa202847b8d79c0'] = 'Onze excuses voor het ongemak, maar er was een probleem tijdens het betalingsproces, en we konden uw Alma-betaling niet terugbetalen. Om dit op te lossen, vragen wij u vriendelijk contact op te nemen met ons support team met uw betalingsreferentie: %s. Ons team zal u graag helpen om ervoor te zorgen dat u uw volledige terugbetaling ontvangt. Bedankt voor uw medewerking.';
+$_MODULE['<{alma}prestashop>refundhelper_446ae76a36687f9dbc62430e7006ca91'] = 'Het spijt ons je te moeten informeren dat er een probleem opgetreden is tijdens het betaalproces, jouw Alma-betaling zal volledig worden terugbetaald. Probeer de betaling opnieuw om je bestelling te voltooien.';
+$_MODULE['<{alma}prestashop>refundhelper_448edd2d5c593906afa202847b8d79c0'] = 'Onze excuses voor het ongemak, maar er was een probleem tijdens het betaalproces, en we konden jouw Alma-betaling niet terugbetalen. Om dit op te lossen, willen we je vriendelijk verzoeken contact op te nemen met ons support team met jouw betaalreferentie: %s. Ons team zal je helpen om ervoor te zorgen dat je de volledige terugbetaling ontvangt. Bedankt voor je medewerking.';
 $_MODULE['<{alma}prestashop>abstractalmaadminformbuilder_c9cc8cce247e49bae79f15173ce97354'] = 'Save';
 $_MODULE['<{alma}prestashop>apiadminformbuilder_fe1d478b2e434b92277b47f0cf62e040'] = 'API-modus';
 $_MODULE['<{alma}prestashop>apiadminformbuilder_0e95e5facc2cad62d6458c65164c4455'] = 'Gebruik de Testmodus totdat u klaar bent om echte bestellingen te doen met Alma. In Testmodus kunnen alleen admins Alma zien op de winkelwagen/checkout pagina\'s.';
