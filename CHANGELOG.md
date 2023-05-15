@@ -2,10 +2,10 @@
 
 ## v2.12.0
 
-- Add more lisibility to error mismatch and automatic refund
-- Add encryption API_KEY
-- Data basket shared only for credit
-- Fix to display widget if quantity is 0
+- Refund process clarified for order/payment mismatch error
+- Add encrypted API_KEY
+- Gather cart data for credit payments
+- Fix widget display if quantity is 0
 - Fix error in Hook Controller
 
 ## v2.11.0
