@@ -42,7 +42,7 @@ class ApiKeyHelper
     const BEGIN_LIVE_API_KEY = 'sk_live_';
     const BEGIN_TEST_API_KEY = 'sk_test_';
 
-    /** @var EncryptionHelper $encryptionHelper */
+    /** @var EncryptionHelper */
     private $encryptionHelper;
 
     /**

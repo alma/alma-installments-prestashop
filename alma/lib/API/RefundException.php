@@ -24,7 +24,7 @@
 
 namespace Alma\PrestaShop\API;
 
-use \Exception;
+use Exception;
 
 class RefundException extends Exception
 {
@@ -41,7 +41,7 @@ class RefundException extends Exception
     public function __construct($idPayment, $message = '', $previous = null)
     {
         $this->paymentId = $idPayment;
-        parent::__construct($message,0 ,$previous);
+        parent::__construct($message, 0, $previous);
     }
 
     /**
