@@ -42,7 +42,9 @@ $_MODULE['<{alma}prestashop>adminalmarefunds_69c00601627a9011bf5c4816abf00b5a'] 
 $_MODULE['<{alma}prestashop>adminalmarefunds_9bbf53faf470010110269d041cab1e9f'] = 'Die Erstattung wurde bearbeitet';
 $_MODULE['<{alma}prestashop>adminalmarefunds_4ba820211f99849725468bd56fc50216'] = 'Fehler: Betrag ist höher als der maximal erstattungsfähige Betrag';
 $_MODULE['<{alma}prestashop>adminalmarefunds_01dedb61eca449d9075cc314cc4151d7'] = 'Fehler: Unbekannter Erstattungstyp (%s)';
+$_MODULE['<{alma}prestashop>payment_2f9f52496706027b880bac2e3c9af1d8'] = 'Bei der Zahlungsanforderung ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut oder kontaktieren Sie uns, falls das Problem weiter besteht.';
 $_MODULE['<{alma}prestashop>payment_efa820507b1951ee5722003639b1a0b0'] = 'Die Ratenzahlung mit Alma ist in dieser Währung nicht möglich';
+$_MODULE['<{alma}prestashop>validation_9d55a51cbc2d6cf7f9251b0cec59390e'] = 'Bei der Bestätigung Ihrer Zahlung ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut oder kontaktieren Sie uns, falls das Problem weiter besteht. Warenkorb-ID: %d';
 $_MODULE['<{alma}prestashop>displaypaymenthookcontroller_afd8ac1c65e1519d6a890e5f98558a52'] = '%1$s dann %2$d x %3$s';
 $_MODULE['<{alma}prestashop>displaypaymenthookcontroller_bc69b42c4bd339154f9025f3299ad146'] = '%1$s heute dann %2$d x %3$s';
 $_MODULE['<{alma}prestashop>displaypaymenthookcontroller_9088921432b295dfe6f02863b2dc0ff8'] = '0 € heute dann %1$s am %2$s';
@@ -67,6 +69,8 @@ $_MODULE['<{alma}prestashop>paymentoptionshookcontroller_9088921432b295dfe6f0286
 $_MODULE['<{alma}prestashop>paymentvalidation_efa820507b1951ee5722003639b1a0b0'] = 'Die Ratenzahlung mit Alma ist in dieser Währung nicht möglich';
 $_MODULE['<{alma}prestashop>paymentvalidation_1d879e270cfb195f257aab3116618d8b'] = 'Alma - +%d Tage Zahlungsfrist';
 $_MODULE['<{alma}prestashop>paymentvalidation_6f11098989b14063e0a4cfe362734850'] = 'Alma – Zahlung in %d Raten';
+$_MODULE['<{alma}prestashop>refundhelper_446ae76a36687f9dbc62430e7006ca91'] = 'Wir bedauern, Ihnen mitteilen zu müssen, dass während des Zahlungsvorgangs ein Problem aufgetreten ist. Ihre Zahlung an Alma wird vollständig zurückerstattet. Bitte versuchen Sie Ihre Zahlung erneut, um Ihre Bestellung abzuschließen.';
+$_MODULE['<{alma}prestashop>refundhelper_448edd2d5c593906afa202847b8d79c0'] = 'Wir entschuldigen uns für die Unannehmlichkeiten, aber es gab ein Problem während des Zahlungsprozesses, und wir waren nicht in der Lage, Ihre Alma Zahlung zu erstatten. Um dieses Problem zu beheben, bitten wir Sie, unser Support-Team unter Angabe Ihrer Zahlungsreferenz zu kontaktieren: %s. Unser Team wird Ihnen gerne behilflich sein, um sicherzustellen, dass Sie die volle Rückerstattung erhalten. Wir danken Ihnen für Ihre Mitarbeit.';
 $_MODULE['<{alma}prestashop>abstractalmaadminformbuilder_c9cc8cce247e49bae79f15173ce97354'] = 'Speichern Sie';
 $_MODULE['<{alma}prestashop>apiadminformbuilder_fe1d478b2e434b92277b47f0cf62e040'] = 'API-Modus';
 $_MODULE['<{alma}prestashop>apiadminformbuilder_0e95e5facc2cad62d6458c65164c4455'] = 'Verwenden Sie den Testmodus, bis Sie bereit sind, echte Bestellungen mit Alma entgegenzunehmen. Im Testmodus können nur Administratoren Alma auf den Warenkorb-/Kassenseiten sehen.';
@@ -105,7 +109,6 @@ $_MODULE['<{alma}prestashop>paymentbuttonadminformbuilder_312b74149761f30bdcb384
 $_MODULE['<{alma}prestashop>paymentbuttonadminformbuilder_1592c10d9ef86441918f678ec6e6d79a'] = 'Zahlungstaste anzeigen, deaktiviert';
 $_MODULE['<{alma}prestashop>paymentbuttonadminformbuilder_039b5313d8eacb12b7520d4e31c5053d'] = 'Konfiguration der Zahlungsmethode';
 $_MODULE['<{alma}prestashop>paymentontriggeringadminformbuilder_ca4c631f2d5ce4d541428c762db48420'] = 'Diese Option ist nur für die Alma-Zahlungsarten 2x, 3x und 4x verfügbar. Wenn diese Option aktiviert ist, zahlen Ihre Kunden die erste Rate bei der Änderung des Bestellstatus. Wenn Ihr Kunde auf Ihrer Website bestellt, fragt Alma nur nach einer Zahlungsautorisierung. Nur die von Alma bearbeiteten Status sind im untenstehenden Menü verfügbar. Bitte kontaktieren Sie Alma, wenn Sie einen anderen Status hinzufügen möchten.';
-$_MODULE['<{alma}prestashop>paymentontriggeringadminformbuilder_a8342cdac86a954821e7d6b895dac2a2'] = 'Wenn Sie an dieser Funktion interessiert sind, wenden Sie sich bitte an Ihren Alma-Kontakt oder senden Sie eine E-Mail an %1$ssupport@getalma.eu%2$s.';
 $_MODULE['<{alma}prestashop>paymentontriggeringadminformbuilder_5088db8667a6e4c03ef8d01445beff15'] = 'Aktivieren Sie die Zahlung bei Auslösung';
 $_MODULE['<{alma}prestashop>paymentontriggeringadminformbuilder_8ca7557011effffde8da6e2a8563e9bf'] = 'Auslöser-Typologie';
 $_MODULE['<{alma}prestashop>paymentontriggeringadminformbuilder_a8f3e94cfb811b49c487a4960ca8ecd6'] = 'Text, der im Zahlungsplan und in der E-Mail mit der Zahlungsgenehmigung des Kunden erscheinen wird.';
