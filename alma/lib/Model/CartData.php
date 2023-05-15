@@ -56,7 +56,7 @@ class CartData
         $productRepository = new ProductRepository();
 
         return [
-            'items' => self::getCartItems($cart, $productHelper,$productRepository),
+            'items' => self::getCartItems($cart, $productHelper, $productRepository),
             'discounts' => self::getCartDiscounts($cart),
         ];
     }
@@ -88,8 +88,8 @@ class CartData
 
     /**
      * @param Cart $cart
-     * @param  ProductHelper $productHelper
-     * @param  ProductRepository $productRepository
+     * @param ProductHelper $productHelper
+     * @param ProductRepository $productRepository
      * @return array of items
      *
      * @throws PrestaShopDatabaseException
@@ -98,7 +98,6 @@ class CartData
     public static function getCartItems($cart, $productHelper, $productRepository)
     {
         $items = [];
-
 
         $summaryDetails = $cart->getSummaryDetails($cart->id_lang, true);
         $products = array_merge($summaryDetails['products'], $summaryDetails['gift_products']);
@@ -120,7 +119,7 @@ class CartData
             if (isset($productRow['gift'])) {
                 $isGift = (bool) $productRow['gift'];
             } else {
-                $isGift = isset($productRow['is_gift']) && (bool)$productRow['is_gift'];
+                $isGift = isset($productRow['is_gift']) && (bool) $productRow['is_gift'];
             }
 
             $pictureUrl = $productHelper->getImageLink($productRow);

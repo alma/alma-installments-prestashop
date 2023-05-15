@@ -152,5 +152,4 @@ class ProductRepository
 
         return $productsDetails;
     }
-
 }
