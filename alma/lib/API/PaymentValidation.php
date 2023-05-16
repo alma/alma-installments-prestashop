@@ -76,8 +76,6 @@ class PaymentValidation
      * @param $almaPaymentId
      *
      * @return string URL to redirect the customer to
-     *
-     * @return string
      * @throws PaymentValidationError
      * @throws PrestaShopException
      * @throws RefundException

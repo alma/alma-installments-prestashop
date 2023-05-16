@@ -26,12 +26,11 @@ namespace Alma\PrestaShop\Tests\Unit\Lib\Model;
 
 use Address;
 use Alma\PrestaShop\Model\PaymentData;
+use Cart;
 use Context;
 use Customer;
 use Language;
 use PHPUnit\Framework\TestCase;
-use Cart;
-use PrestaShop\PrestaShop\Core\Domain\Cart\QueryResult\CartForOrderCreation\CartProduct;
 use Product;
 
 class PaymentDataTest extends TestCase
@@ -53,7 +52,7 @@ class PaymentDataTest extends TestCase
         $product = $this->createMock(Product::class);
         $product->id = 1;
         $product->name = 'Product Test';
-        $summaryDetailsMock = ['products' => [], 'gift_products'=>[]];
+        $summaryDetailsMock = ['products' => [], 'gift_products' => []];
         $cart = $this->createMock(Cart::class);
         $cart->method('getSummaryDetails')->willReturn($summaryDetailsMock);
         $cart->id_customer = 1;

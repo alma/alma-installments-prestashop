@@ -50,8 +50,7 @@ class CartDataTest extends TestCase
         $productHelper->method('getImageLink')->willReturn('http://prestashop-a-1-7-8-7.local.test/1-large_default/product_test.jpg');
         $productHelper->method('getProductLink')->willReturn('http://prestashop-a-1-7-8-7.local.test/1-1-product_test.html#/1-size-s/8-color-white');
 
-
-        $summaryDetailsMock = ['products' => $items, 'gift_products'=>[]];
+        $summaryDetailsMock = ['products' => $items, 'gift_products' => []];
         $cart->method('getSummaryDetails')->willReturn($summaryDetailsMock);
         $returnItems = CartData::getCartItems($cart, $productHelper, $productRepository);
         $this->assertEquals($expected, $returnItems);
@@ -62,11 +61,10 @@ class CartDataTest extends TestCase
      */
     public function productsDataProvider()
     {
-
         return [
             'Zero product in cart' => [
                 'items' => [],
-                'result' => []
+                'result' => [],
             ],
             'One product in cart' => [
                 'items' => [
@@ -74,46 +72,44 @@ class CartDataTest extends TestCase
                 ],
                 'result' => [
                     $this->expectedProduct(1, 1),
-                ]
+                ],
             ],
             'Two products in cart' => [
                 'items' => [
                     $this->getProduct(1, 1),
-                    $this->getProduct(3, 2)
+                    $this->getProduct(3, 2),
                 ],
                 'result' => [
                     $this->expectedProduct(1, 1),
-                    $this->expectedProduct(3, 2)
-                ]
+                    $this->expectedProduct(3, 2),
+                ],
             ],
             'Virtual products in cart' => [
                 'items' => [
-                    $this->getProduct(4, 8, false, true)
+                    $this->getProduct(4, 8, false, true),
                 ],
                 'result' => [
-                    $this->expectedProduct(4, 8)
-                ]
+                    $this->expectedProduct(4, 8),
+                ],
             ],
             'Gift products in cart' => [
                 'items' => [
-                    $this->getProduct(2, 4, true, false)
+                    $this->getProduct(2, 4, true, false),
                 ],
                 'result' => [
-                    $this->expectedProduct(2, 4, true)
-                ]
+                    $this->expectedProduct(2, 4, true),
+                ],
             ],
             'Virtual products in cart and Simple product' => [
                 'items' => [
                     $this->getProduct(4, 8, false, true),
                     $this->getProduct(1, 1),
-
                 ],
                 'result' => [
                     $this->expectedProduct(4, 8),
                     $this->expectedProduct(1, 1),
-
-                ]
-            ]
+                ],
+            ],
         ];
     }
 
@@ -150,22 +146,22 @@ class CartDataTest extends TestCase
     {
         $vendor = $this->getVendor();
         $combination = $this->getCombinations();
-        $keyCombination = $id . "-" . $idProductAttribute;
+        $keyCombination = $id . '-' . $idProductAttribute;
 
         return [
-            "sku" => "test_" . $id,
-            "vendor" => $vendor[$id]["manufacturer_name"],
-            "title" => "Product " . $id,
-            "variant_title" => $combination[$keyCombination],
-            "quantity" => 1,
-            "unit_price" => 28000,
-            "line_price" => 28000,
-            "is_gift" => $isGift,
-            "categories" => ["category_test"],
-            "url" => "http://prestashop-a-1-7-8-7.local.test/1-1-product_test.html#/1-size-s/8-color-white",
-            "picture_url" => "http://prestashop-a-1-7-8-7.local.test/1-large_default/product_test.jpg",
-            "requires_shipping" => !$vendor[$id]['is_virtual'],
-            "taxes_included" => true
+            'sku' => 'test_' . $id,
+            'vendor' => $vendor[$id]['manufacturer_name'],
+            'title' => 'Product ' . $id,
+            'variant_title' => $combination[$keyCombination],
+            'quantity' => 1,
+            'unit_price' => 28000,
+            'line_price' => 28000,
+            'is_gift' => $isGift,
+            'categories' => ['category_test'],
+            'url' => 'http://prestashop-a-1-7-8-7.local.test/1-1-product_test.html#/1-size-s/8-color-white',
+            'picture_url' => 'http://prestashop-a-1-7-8-7.local.test/1-large_default/product_test.jpg',
+            'requires_shipping' => !$vendor[$id]['is_virtual'],
+            'taxes_included' => true,
         ];
     }
 
@@ -175,26 +171,26 @@ class CartDataTest extends TestCase
     public function getVendor()
     {
         return [
-            "1" => [
-                "id_product" => 1,
-                "is_virtual" => false,
-                "manufacturer_name" => "Manufacturer Test"
+            '1' => [
+                'id_product' => 1,
+                'is_virtual' => false,
+                'manufacturer_name' => 'Manufacturer Test',
             ],
-            "2" => [
-                "id_product" => 2,
-                "is_virtual" => false,
-                "manufacturer_name" => "Gift Product"
+            '2' => [
+                'id_product' => 2,
+                'is_virtual' => false,
+                'manufacturer_name' => 'Gift Product',
             ],
-            "3" => [
-                "id_product" => 3,
-                "is_virtual" => false,
-                "manufacturer_name" => "Studio Design"
+            '3' => [
+                'id_product' => 3,
+                'is_virtual' => false,
+                'manufacturer_name' => 'Studio Design',
             ],
-            "4" => [
-                "id_product" => 4,
-                "is_virtual" => true,
-                "manufacturer_name" => "Virtual Product"
-            ]
+            '4' => [
+                'id_product' => 4,
+                'is_virtual' => true,
+                'manufacturer_name' => 'Virtual Product',
+            ],
         ];
     }
 
@@ -204,10 +200,10 @@ class CartDataTest extends TestCase
     public function getCombinations()
     {
         return [
-            "1-1" => "Color - White, Size - S",
-            "2-4" => "Color - White, Size - L",
-            "3-2" => "Color - Black, Size - S",
-            "4-8" => "Storage - 1Go"
+            '1-1' => 'Color - White, Size - S',
+            '2-4' => 'Color - White, Size - L',
+            '3-2' => 'Color - Black, Size - S',
+            '4-8' => 'Storage - 1Go',
         ];
     }
 }

@@ -26,10 +26,7 @@ namespace Alma\PrestaShop\Model;
 
 use Cart;
 use Context;
-use Db;
-use DbQuery;
 use ImageType;
-use PrestaShopDatabaseException;
 use PrestaShopException;
 
 if (!defined('_PS_VERSION_')) {

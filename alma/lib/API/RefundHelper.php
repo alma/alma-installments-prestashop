@@ -26,7 +26,7 @@ namespace Alma\PrestaShop\API;
 
 use Alma\PrestaShop\Utils\Logger;
 use Cart;
-use \Exception;
+use Exception;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -97,7 +97,7 @@ class RefundHelper
      *
      * @throws RefundException
      */
-    public function fullRefund($id, $merchantReference = "", $comment = "")
+    public function fullRefund($id, $merchantReference = '', $comment = '')
     {
         try {
             $this->almaClient->getAlmaClient()->payments->fullRefund($id, $merchantReference, $comment);

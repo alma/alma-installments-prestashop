@@ -39,7 +39,7 @@ if (!defined('_PS_VERSION_')) {
  */
 class EncryptionHelper
 {
-    /** @var string $cookieKey */
+    /** @var string */
     private $cookieKey;
 
     /**
