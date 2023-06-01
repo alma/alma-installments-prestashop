@@ -29,6 +29,7 @@ if (!defined('_PS_VERSION_')) {
 }
 
 use Address;
+use Alma\PrestaShop\Repositories\ProductRepository;
 use Alma\PrestaShop\Utils\Logger;
 use Alma\PrestaShop\Utils\Settings;
 use Alma\PrestaShop\Utils\SettingsCustomFields;
@@ -188,7 +189,6 @@ class PaymentData
                     'state_province' => $idStateShipping > 0 ? State::getNameById((int) $idStateShipping) : '',
                 ],
                 'shipping_info' => ShippingData::shippingInfo($cart),
-                'cart' => CartData::cartInfo($cart),
                 'billing_address' => [
                     'line1' => $billingAddress->address1,
                     'postal_code' => $billingAddress->postcode,
@@ -214,6 +214,9 @@ class PaymentData
         if (Settings::isDeferredTriggerLimitDays($feePlans)) {
             $dataPayment['payment']['deferred'] = 'trigger';
             $dataPayment['payment']['deferred_description'] = SettingsCustomFields::getDescriptionPaymentTriggerByLang($context->language->id);
+        }
+        if ($feePlans['installmentsCount'] > 4) {
+            $dataPayment['payment']['cart'] = CartData::cartInfo($cart);
         }
 
         if (self::isInPage($dataPayment)) {
@@ -254,6 +257,8 @@ class PaymentData
     {
         $carrierHelper = new CarrierHelper($context);
         $cartHelper = new CartHelper($context);
+        $productHelper = new ProductHelper();
+        $productRepository = new ProductRepository();
 
         return [
             'new_customer' => self::isNewCustomer($customer->id),
@@ -262,9 +267,9 @@ class PaymentData
             'current_order' => [
                 'purchase_amount' => almaPriceToCents($purchaseAmount),
                 'created' => strtotime($cart->date_add),
-                'payment_method' => self::PAYMENT_METHOD,
+                'payment_method' => PaymentData::PAYMENT_METHOD,
                 'shipping_method' => $carrierHelper->getParentCarrierNameById($cart->id_carrier),
-                'items' => CartData::getCartItems($cart),
+                'items' => CartData::getCartItems($cart, $productHelper, $productRepository),
             ],
             'previous_orders' => [
                 $cartHelper->previousCartOrdered($customer->id),

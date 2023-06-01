@@ -1,6 +1,6 @@
 <?php
 /**
- * 2018-2022 Alma SAS
+ * 2018-2023 Alma SAS
  *
  * THE MIT LICENSE
  *
@@ -18,76 +18,78 @@
  * IN THE SOFTWARE.
  *
  * @author    Alma SAS <contact@getalma.eu>
- * @copyright 2018-2022 Alma SAS
+ * @copyright 2018-2023 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
-namespace Alma\PrestaShop\Utils;
+namespace Alma\PrestaShop\Model;
 
-use Alma\PrestaShop\Forms\ApiAdminFormBuilder;
-use Tools;
+use Cart;
+use Context;
+use ImageType;
+use PrestaShopException;
 
 if (!defined('_PS_VERSION_')) {
     exit;
 }
 
 /**
- * Class ApiKeyHelper.
+ * Class ProductHelper.
  *
- * Use for method date
+ * Use for Product
  */
-class ApiKeyHelper
+class ProductHelper
 {
-    const OBCUR_VALUE = '********************************';
-    const BEGIN_LIVE_API_KEY = 'sk_live_';
-    const BEGIN_TEST_API_KEY = 'sk_test_';
-
-    /** @var EncryptionHelper */
-    private $encryptionHelper;
-
     /**
-     * ApiKey Helper construct
-     */
-    public function __construct()
-    {
-        $this->encryptionHelper = new EncryptionHelper();
-    }
-
-    /**
-     * Get api key
-     *
-     * @param string $keyMode
-     *
+     * @param array $productRow
      * @return string
      */
-    public function getValueApiKey($keyMode)
+    public function getImageLink($productRow)
     {
-        return trim(Tools::getValue($keyMode));
+        $link = Context::getContext()->link;
+
+        return $link->getImageLink(
+            $productRow['link_rewrite'],
+            $productRow['id_image'],
+            self::getFormattedImageTypeName('large')
+        );
     }
 
     /**
-     * Set encrypted live api key
-     *
-     * @param string $keyMode
-     * @param string $apiKey
-     *
-     * @return void
+     * @param $product
+     * @param array $productRow
+     * @param Cart $cart
+     * @return string
+     * @throws PrestaShopException
      */
-    public function setLiveApiKey($apiKey)
+    public function getProductLink($product, $productRow, $cart)
     {
-        Settings::updateValue(ApiAdminFormBuilder::ALMA_LIVE_API_KEY, $this->encryptionHelper->encrypt($apiKey));
+        $link = Context::getContext()->link;
+
+        return $link->getProductLink(
+            $product,
+            $productRow['link_rewrite'],
+            $productRow['category'],
+            null,
+            $cart->id_lang,
+            $cart->id_shop,
+            $productRow['id_product_attribute'],
+            false,
+            false,
+            true
+        );
     }
 
     /**
-     * Set encrypted test api key
-     *
-     * @param string $keyMode
-     * @param string $apiKey
-     *
-     * @return void
+     * @param string $name
+     * @return string
      */
-    public function setTestApiKey($apiKey)
+    private static function getFormattedImageTypeName($name)
     {
-        Settings::updateValue(ApiAdminFormBuilder::ALMA_TEST_API_KEY, $this->encryptionHelper->encrypt($apiKey));
+        if (version_compare(_PS_VERSION_, '1.7', '>=')) {
+            return ImageType::getFormattedName($name);
+        }
+
+        return ImageType::getFormatedName($name);
     }
 }

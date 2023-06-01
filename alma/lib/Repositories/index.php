@@ -21,34 +21,10 @@
  * @copyright 2018-2023 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
-
-namespace Alma\PrestaShop\API;
-
-use Exception;
-
-class RefundException extends Exception
-{
-    /**
-     * @var string
-     */
-    protected $paymentId;
-
-    /**
-     * @param $idPayment
-     * @param $message
-     * @param $previous
-     */
-    public function __construct($idPayment, $message = '', $previous = null)
-    {
-        $this->paymentId = $idPayment;
-        parent::__construct($message, 0, $previous);
-    }
-
-    /**
-     * @return string
-     */
-    public function getPaymentId()
-    {
-        return $this->paymentId;
-    }
-}
+header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
+header('Last-Modified: ' . gmdate('D, d M Y H:i:s') . ' GMT');
+header('Cache-Control: no-store, no-cache, must-revalidate');
+header('Cache-Control: post-check=0, pre-check=0', false);
+header('Pragma: no-cache');
+header('Location: ../');
+exit;

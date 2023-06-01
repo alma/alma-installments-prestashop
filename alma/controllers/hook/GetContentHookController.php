@@ -55,7 +55,7 @@ use Tools;
 
 final class GetContentHookController extends AdminHookController
 {
-    /** @var ApiKeyHelper $apiKeyHelper */
+    /** @var ApiKeyHelper */
     private $apiKeyHelper;
 
     /** @var Alma */

@@ -2,14 +2,15 @@
 
 ## v2.12.1
 
-- POC : In-Page
+- Beta In-Page
 
 ## v2.12.0
 
-- Encryption API_KEY Alma
-- Add process automatic refund after mismatch
-- Fix widget doesn't display if quantity is 0
-- Fix error PHP_AUTH_USER HookController
+- Refund process clarified for order/payment mismatch error
+- Add encrypted API_KEY
+- Gather cart data for credit payments
+- Fix widget display if quantity is 0
+- Fix error in Hook Controller
 
 ## v2.11.0
 

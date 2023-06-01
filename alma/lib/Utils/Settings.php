@@ -46,6 +46,7 @@ use Alma\PrestaShop\Model\CategoryAdapter;
 use Category;
 use Configuration;
 use DateTime;
+use Exception;
 use Language;
 use Product;
 use Shop;
@@ -226,6 +227,7 @@ class Settings
      * Get API key of mode selected
      *
      * @return string
+     * @throws Exception
      */
     public static function getActiveAPIKey()
     {
@@ -240,10 +242,14 @@ class Settings
      * Get API key Live
      *
      * @return string|null
+     * @throws Exception
      */
     public static function getLiveKey()
     {
         $apiKey = self::get(ApiAdminFormBuilder::ALMA_LIVE_API_KEY, null);
+        if (!$apiKey) {
+            return false;
+        }
         if (strpos($apiKey, ApiKeyHelper::BEGIN_LIVE_API_KEY) !== false) {
             return $apiKey;
         }
@@ -256,10 +262,14 @@ class Settings
      * Get API key Test
      *
      * @return string|null
+     * @throws Exception
      */
     public static function getTestKey()
     {
         $apiKey = self::get(ApiAdminFormBuilder::ALMA_TEST_API_KEY, null);
+        if (!$apiKey) {
+            return false;
+        }
         if (strpos($apiKey, ApiKeyHelper::BEGIN_TEST_API_KEY) !== false) {
             return $apiKey;
         }

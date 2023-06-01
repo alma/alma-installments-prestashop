@@ -28,14 +28,11 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
+use Alma\PrestaShop\Repositories\ProductRepository;
 use Alma\PrestaShop\Utils\Settings;
 use Cart;
 use CartRule;
 use Configuration;
-use Context;
-use Db;
-use DbQuery;
-use ImageType;
 use PrestaShopDatabaseException;
 use PrestaShopException;
 use Product;
@@ -55,8 +52,11 @@ class CartData
      */
     public static function cartInfo($cart)
     {
+        $productHelper = new ProductHelper();
+        $productRepository = new ProductRepository();
+
         return [
-            'items' => self::getCartItems($cart),
+            'items' => self::getCartItems($cart, $productHelper, $productRepository),
             'discounts' => self::getCartDiscounts($cart),
         ];
     }
@@ -88,31 +88,29 @@ class CartData
 
     /**
      * @param Cart $cart
-     *
+     * @param ProductHelper $productHelper
+     * @param ProductRepository $productRepository
      * @return array of items
      *
      * @throws PrestaShopDatabaseException
      * @throws PrestaShopException
      */
-    public static function getCartItems($cart)
+    public static function getCartItems($cart, $productHelper, $productRepository)
     {
         $items = [];
 
         $summaryDetails = $cart->getSummaryDetails($cart->id_lang, true);
         $products = array_merge($summaryDetails['products'], $summaryDetails['gift_products']);
-        $productsDetails = self::getProductsDetails($products);
-        $combinationsNames = self::getProductsCombinations($cart, $products);
+        $productsDetails = $productRepository->getProductsDetails($products);
+        $combinationsNames = $productRepository->getProductsCombinations($cart, $products);
 
         foreach ($products as $productRow) {
             $product = new Product(null, false, $cart->id_lang);
             $product->hydrate($productRow);
-
             $pid = (int) $product->id;
-            $link = Context::getContext()->link;
-
-            $manufacturer_name = isset($productRow['manufacturer_name']) ? $productRow['manufacturer_name'] : null;
-            if (!$manufacturer_name and isset($productsDetails[$pid])) {
-                $manufacturer_name = $productsDetails[$pid]['manufacturer_name'];
+            $manufacturerName = isset($productRow['manufacturer_name']) ? $productRow['manufacturer_name'] : null;
+            if (!$manufacturerName && isset($productsDetails[$pid])) {
+                $manufacturerName = $productsDetails[$pid]['manufacturer_name'];
             }
 
             $unitPrice = self::includeTaxes($cart) ? (float) $productRow['price_wt'] : (float) $productRow['price'];
@@ -121,14 +119,10 @@ class CartData
             if (isset($productRow['gift'])) {
                 $isGift = (bool) $productRow['gift'];
             } else {
-                $isGift = isset($productRow['is_gift']) ? (bool) $productRow['is_gift'] : null;
+                $isGift = isset($productRow['is_gift']) && (bool) $productRow['is_gift'];
             }
 
-            $pictureUrl = $link->getImageLink(
-                $productRow['link_rewrite'],
-                $productRow['id_image'],
-                self::getFormattedImageTypeName('large')
-            );
+            $pictureUrl = $productHelper->getImageLink($productRow);
 
             if (isset($productRow['is_virtual'])) {
                 $requiresShipping = !(bool) $productRow['is_virtual'];
@@ -138,7 +132,7 @@ class CartData
 
             $data = [
                 'sku' => $productRow['reference'],
-                'vendor' => $manufacturer_name,
+                'vendor' => $manufacturerName,
                 'title' => $productRow['name'],
                 'variant_title' => null,
                 'quantity' => (int) $productRow['cart_quantity'],
@@ -146,28 +140,17 @@ class CartData
                 'line_price' => almaPriceToCents($linePrice),
                 'is_gift' => $isGift,
                 'categories' => [$productRow['category']],
-                'url' => $link->getProductLink(
-                    $product,
-                    $productRow['link_rewrite'],
-                    $productRow['category'],
-                    null,
-                    $cart->id_lang,
-                    $cart->id_shop,
-                    $productRow['id_product_attribute'],
-                    false,
-                    false,
-                    true
-                ),
+                'url' => $productHelper->getProductLink($product, $productRow, $cart),
                 'picture_url' => $pictureUrl,
                 'requires_shipping' => $requiresShipping,
                 'taxes_included' => self::includeTaxes($cart),
             ];
 
             if (isset($productRow['id_product_attribute']) && (int) $productRow['id_product_attribute']) {
-                $unique_id = "$pid-{$productRow['id_product_attribute']}";
+                $uniqueId = "$pid-{$productRow['id_product_attribute']}";
 
-                if ($combinationName = $combinationsNames[$unique_id]) {
-                    $data['variant_title'] = $combinationName;
+                if (isset($combinationsNames[$uniqueId])) {
+                    $data['variant_title'] = $combinationsNames[$uniqueId];
                 }
             }
 
@@ -175,126 +158,6 @@ class CartData
         }
 
         return $items;
-    }
-
-    private static function getFormattedImageTypeName($name)
-    {
-        if (version_compare(_PS_VERSION_, '1.7', '>=')) {
-            return ImageType::getFormattedName($name);
-        } else {
-            return ImageType::getFormatedName($name);
-        }
-    }
-
-    /**
-     * @param array $products
-     *
-     * @return array
-     */
-    private static function getProductsDetails($products)
-    {
-        $sql = new DbQuery();
-        $sql->select('p.`id_product`, p.`is_virtual`, m.`name` as manufacturer_name');
-        $sql->from('product', 'p');
-        $sql->innerJoin('manufacturer', 'm', 'm.`id_manufacturer` = p.`id_manufacturer`');
-
-        $in = [];
-        foreach ($products as $productRow) {
-            $in[] = $productRow['id_product'];
-        }
-
-        $in = implode(', ', $in);
-        $sql->where("p.`id_product` IN ({$in})");
-
-        $db = Db::getInstance();
-        $productsDetails = [];
-
-        try {
-            $results = $db->query($sql);
-        } catch (PrestaShopDatabaseException $e) {
-            return $productsDetails;
-        }
-
-        if ($results !== false) {
-            while ($result = $db->nextRow($results)) {
-                $productsDetails[(int) $result['id_product']] = $result;
-            }
-        }
-
-        return $productsDetails;
-    }
-
-    /**
-     * @param Cart $cart
-     * @param array $products
-     *
-     * @return array
-     *
-     * @throws PrestaShopException
-     */
-    private static function getProductsCombinations($cart, $products)
-    {
-        $sql = new DbQuery();
-        $sql->select('CONCAT(p.`id_product`, "-", pa.`id_product_attribute`) as `unique_id`');
-
-        $combinationName = new DbQuery();
-        $combinationName->select('GROUP_CONCAT(DISTINCT CONCAT(agl.`name`, " - ", al.`name`) SEPARATOR ", ")');
-        $combinationName->from('product_attribute', 'pa2');
-        $combinationName->innerJoin(
-            'product_attribute_combination',
-            'pac',
-            'pac.`id_product_attribute` = pa2.`id_product_attribute`'
-        );
-        $combinationName->innerJoin('attribute', 'a', 'a.`id_attribute` = pac.`id_attribute`');
-        $combinationName->innerJoin(
-            'attribute_lang',
-            'al',
-            'a.id_attribute = al.id_attribute AND al.`id_lang` = ' . $cart->id_lang
-        );
-        $combinationName->innerJoin('attribute_group', 'ag', 'ag.`id_attribute_group` = a.`id_attribute_group`');
-        $combinationName->innerJoin(
-            'attribute_group_lang',
-            'agl',
-            'ag.`id_attribute_group` = agl.`id_attribute_group` AND agl.`id_lang` = ' . $cart->id_lang
-        );
-        $combinationName->where(
-            'pa2.`id_product` = p.`id_product` AND pa2.`id_product_attribute` = pa.`id_product_attribute`'
-        );
-
-        /* @noinspection PhpUnhandledExceptionInspection */
-        $sql->select("({$combinationName->build()}) as combination_name");
-
-        $sql->from('product', 'p');
-        $sql->innerJoin('product_attribute', 'pa', 'pa.`id_product` = p.`id_product`');
-
-        // DbQuery::where joins all where clauses with `) AND (` so for ORs we need a fully built where condition
-        $where = '';
-        $op = '';
-        foreach ($products as $productRow) {
-            if (!isset($productRow['id_product_attribute']) || !(int) $productRow['id_product_attribute']) {
-                continue;
-            }
-
-            $where .= "{$op}(p.`id_product` = {$productRow['id_product']}";
-            $where .= " AND pa.`id_product_attribute` = {$productRow['id_product_attribute']})";
-            $op = ' OR ';
-        }
-        $sql->where($where);
-
-        $db = Db::getInstance();
-        $combinationsNames = [];
-
-        try {
-            $results = $db->query($sql);
-        } catch (PrestaShopDatabaseException $e) {
-            return $combinationsNames;
-        }
-
-        while ($result = $db->nextRow($results)) {
-            $combinationsNames[$result['unique_id']] = $result['combination_name'];
-        }
-
-        return $combinationsNames;
     }
 
     /**
