@@ -21,6 +21,9 @@
  * @copyright 2018-2023 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
+
+use Alma\PrestaShop\Model\HookHelper;
+
 if (!defined('_PS_VERSION_')) {
     exit;
 }
@@ -31,7 +34,7 @@ require_once _PS_MODULE_DIR_ . 'alma/autoloader.php';
 
 class Alma extends PaymentModule
 {
-    const VERSION = '2.12.0';
+    const VERSION = '2.12.1';
 
     public $_path;
     public $local_path;
@@ -42,11 +45,31 @@ class Alma extends PaymentModule
     /** @var string[] */
     public $limited_currencies;
 
+    /**
+     * @var HookHelper
+     */
+    public $hook;
+
+    /**
+     * @var true
+     */
+    public $bootstrap;
+
+    /**
+     * @var int
+     */
+    private $is_eu_compatible;
+
+    /**
+     * @var string
+     */
+    public $confirmUninstall;
+
     public function __construct()
     {
         $this->name = 'alma';
         $this->tab = 'payments_gateways';
-        $this->version = '2.12.0';
+        $this->version = '2.12.1';
         $this->author = 'Alma';
         $this->need_instance = false;
         $this->bootstrap = true;
@@ -77,6 +100,8 @@ class Alma extends PaymentModule
         if (version_compare(_PS_VERSION_, '1.5.0.1', '<')) {
             $this->local_path = _PS_MODULE_DIR_ . $this->name . '/';
         }
+
+        $this->hook = new HookHelper();
     }
 
     /**
@@ -131,40 +156,14 @@ class Alma extends PaymentModule
     /**
      * Try to register mandatory hooks
      *
-     * @return bool as false if one registration fail
+     * @return bool
      */
     private function registerHooks()
     {
-        $commonHooks = [
-            'header',
-            'displayBackOfficeHeader',
-            'displayShoppingCartFooter',
-            'actionOrderStatusPostUpdate',
-            'displayAdminAfterHeader',
-        ];
+        $hooks = $this->hook->almaRegisterHooks();
 
-        if (version_compare(_PS_VERSION_, '1.7.7.0', '>=')) {
-            $displayAdminOrderHooks = ['displayAdminOrderMain'];
-        } else {
-            $displayAdminOrderHooks = ['displayAdminOrder'];
-        }
-
-        if (version_compare(_PS_VERSION_, '1.7', '>=')) {
-            $paymentHooks = ['paymentOptions', 'paymentReturn'];
-        } else {
-            $paymentHooks = ['displayPayment', 'displayPaymentEU', 'displayPaymentReturn'];
-        }
-
-        if (version_compare(_PS_VERSION_, '1.6', '>=')) {
-            $productHooks = ['displayProductPriceBlock'];
-        } else {
-            $productHooks = ['displayProductButtons'];
-        }
-
-        foreach (array_merge($commonHooks, $paymentHooks, $productHooks, $displayAdminOrderHooks) as $hook) {
-            if (!$this->registerHook($hook)) {
-                return false;
-            }
+        foreach ($hooks as $hook) {
+            $this->registerHook($hook);
         }
 
         return true;
