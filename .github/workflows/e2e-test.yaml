@@ -35,13 +35,22 @@ jobs:
         name: E2E Test / result (${{ matrix.version }})
         status: "in_progress"
 
+    - name: Generate Github token for integration-infrastructure repo
+      id: generate_github_token_integration_infrastructure
+      uses: tibdex/github-app-token@v1
+      with:
+        app_id: ${{ secrets.ALMA_WF_TRIGGER_APP_ID }}
+        private_key: ${{ secrets.ALMA_WF_TRIGGER_APP_PEM }}
+        installation_id: ${{ secrets.ALMA_WF_TRIGGER_INSTALLATION_ID }}
+        repository: alma/integration-infrastructure
+
     - name: Invoke e2e workflow with inputs
       uses: benc-uk/workflow-dispatch@v1.2.2
       with:
         workflow: Deploy CMS
-        token: ${{ secrets.INFRA_WORKFLOW_TRIGGER_TOKEN }}
-        repo: "alma/integration-infrastructure"
-        ref: "main"
+        token: ${{ steps.generate_github_token_integration_infrastructure.outputs.token }}
+        repo: alma/integration-infrastructure
+        ref: main
         inputs: >
           {
             "name": "e2e-${{ github.run_id }}",
