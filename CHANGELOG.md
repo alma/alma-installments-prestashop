@@ -1,7 +1,8 @@
 # Changelog
 
-## v2.12.1
+## v2.13.0
 
+- Pay now with Alma
 - Fix : attach Alma hooks depending on the Prestashop version
 
 ## v2.12.0
