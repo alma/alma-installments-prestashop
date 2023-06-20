@@ -42,7 +42,9 @@ $_MODULE['<{alma}prestashop>adminalmarefunds_69c00601627a9011bf5c4816abf00b5a'] 
 $_MODULE['<{alma}prestashop>adminalmarefunds_9bbf53faf470010110269d041cab1e9f'] = 'El reembolso se ha procesado';
 $_MODULE['<{alma}prestashop>adminalmarefunds_4ba820211f99849725468bd56fc50216'] = 'Error: El importe es mayor que el máximo reembolsable';
 $_MODULE['<{alma}prestashop>adminalmarefunds_01dedb61eca449d9075cc314cc4151d7'] = 'Error: tipo de reembolso desconocido (%s)';
+$_MODULE['<{alma}prestashop>payment_2f9f52496706027b880bac2e3c9af1d8'] = 'Se ha producido un error al buscar el pago. Inténtalo de nuevo o ponte en contacto con nosotros si el problema persiste.';
 $_MODULE['<{alma}prestashop>payment_efa820507b1951ee5722003639b1a0b0'] = 'El pago aplazado con Alma no está disponible para esta divisa';
+$_MODULE['<{alma}prestashop>validation_9d55a51cbc2d6cf7f9251b0cec59390e'] = 'Se ha producido un error durante la validación de tu pago. Vuelve a intentarlo o ponte en contacto con nosotros si el problema persiste. ID compra: %d';
 $_MODULE['<{alma}prestashop>displaypaymenthookcontroller_afd8ac1c65e1519d6a890e5f98558a52'] = '%1$s entonces %2$d x %3$s';
 $_MODULE['<{alma}prestashop>displaypaymenthookcontroller_bc69b42c4bd339154f9025f3299ad146'] = '%1$s hoy después %2$d x %3$s';
 $_MODULE['<{alma}prestashop>displaypaymenthookcontroller_9088921432b295dfe6f02863b2dc0ff8'] = '0 € hoy después %1$s en %2$s';
@@ -67,6 +69,8 @@ $_MODULE['<{alma}prestashop>paymentoptionshookcontroller_9088921432b295dfe6f0286
 $_MODULE['<{alma}prestashop>paymentvalidation_efa820507b1951ee5722003639b1a0b0'] = 'El pago aplazado con Alma no está disponible para esta divisa';
 $_MODULE['<{alma}prestashop>paymentvalidation_1d879e270cfb195f257aab3116618d8b'] = 'Alma - Pago en +%d días';
 $_MODULE['<{alma}prestashop>paymentvalidation_6f11098989b14063e0a4cfe362734850'] = 'Alma - Pago en %d plazos';
+$_MODULE['<{alma}prestashop>refundhelper_446ae76a36687f9dbc62430e7006ca91'] = 'Lamentamos informarle que hubo un problema durante el proceso de pago, su pago Alma será reembolsado en su totalidad. Por favor, vuelva a intentar su pago para completar su pedido.';
+$_MODULE['<{alma}prestashop>refundhelper_448edd2d5c593906afa202847b8d79c0'] = 'Disculpe las molestias, pero se ha producido un problema durante el proceso de pago y no hemos podido reembolsarle su pago de Alma. Para solucionarlo, le rogamos que se ponga en contacto con nuestro equipo de soporte indicando su referencia de pago: %s. Nuestro equipo estará encantado de ayudarle a recibir el reembolso íntegro. Gracias por su colaboración.';
 $_MODULE['<{alma}prestashop>abstractalmaadminformbuilder_c9cc8cce247e49bae79f15173ce97354'] = 'Guardar';
 $_MODULE['<{alma}prestashop>apiadminformbuilder_fe1d478b2e434b92277b47f0cf62e040'] = 'Modo API';
 $_MODULE['<{alma}prestashop>apiadminformbuilder_0e95e5facc2cad62d6458c65164c4455'] = 'Utiliza el modo de prueba hasta que estés listo/a para recibir pedidos reales con Alma. En el modo de prueba, sólo los administradores pueden ver Alma en las páginas de carrito/compra.';
@@ -105,7 +109,6 @@ $_MODULE['<{alma}prestashop>paymentbuttonadminformbuilder_312b74149761f30bdcb384
 $_MODULE['<{alma}prestashop>paymentbuttonadminformbuilder_1592c10d9ef86441918f678ec6e6d79a'] = 'Mostrar el botón de pago, desactivado';
 $_MODULE['<{alma}prestashop>paymentbuttonadminformbuilder_039b5313d8eacb12b7520d4e31c5053d'] = 'Configuración de la forma de pago';
 $_MODULE['<{alma}prestashop>paymentontriggeringadminformbuilder_ca4c631f2d5ce4d541428c762db48420'] = 'Esta opción está disponible sólo para el pago de Alma en 2x, 3x y 4x. Cuando está activado, tus clientes pagarán la primera cuota en el cambio de estado del pedido. Cuando tu cliente ordene en tu sitio web, Alma sólo pedirá una autorización de pago. Sólo el estado manejado por Alma está disponible en el menú de abajo. Por favor, ponte en contacto con Alma si necesitas que añadamos otro estado.';
-$_MODULE['<{alma}prestashop>paymentontriggeringadminformbuilder_a8342cdac86a954821e7d6b895dac2a2'] = 'Si estás interesado en esta función, ponte en contacto con tu agente asignado de Alma o envia un correo electrónico a %1$ssupport@getalma.eu%2$s.';
 $_MODULE['<{alma}prestashop>paymentontriggeringadminformbuilder_5088db8667a6e4c03ef8d01445beff15'] = 'Activar el pago al cumplirse el evento';
 $_MODULE['<{alma}prestashop>paymentontriggeringadminformbuilder_8ca7557011effffde8da6e2a8563e9bf'] = 'Tipos de eventos';
 $_MODULE['<{alma}prestashop>paymentontriggeringadminformbuilder_a8f3e94cfb811b49c487a4960ca8ecd6'] = 'Texto que aparecerá en el calendario de pagos y en el correo electrónico de autorización de pago del cliente.';

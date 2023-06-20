@@ -42,7 +42,9 @@ $_MODULE['<{alma}prestashop>adminalmarefunds_69c00601627a9011bf5c4816abf00b5a'] 
 $_MODULE['<{alma}prestashop>adminalmarefunds_9bbf53faf470010110269d041cab1e9f'] = 'O reembolso foi processado';
 $_MODULE['<{alma}prestashop>adminalmarefunds_4ba820211f99849725468bd56fc50216'] = 'Erro: o montante é superior ao montante máximo reembolsável';
 $_MODULE['<{alma}prestashop>adminalmarefunds_01dedb61eca449d9075cc314cc4151d7'] = 'Erro: tipo de reembolso desconhecido (%s)';
+$_MODULE['<{alma}prestashop>payment_2f9f52496706027b880bac2e3c9af1d8'] = 'Ocorreu um erro ao gerar o seu pagamento. Por favor, tente novamente mais tarde ou contate-nos se o problema persistir.';
 $_MODULE['<{alma}prestashop>payment_efa820507b1951ee5722003639b1a0b0'] = 'As prestações mensais através da Alma não estão disponíveis para esta moeda';
+$_MODULE['<{alma}prestashop>validation_9d55a51cbc2d6cf7f9251b0cec59390e'] = 'Ocorreu um erro ao validar o seu pagamento. Por favor tente novamente mais tarde ou contate-nos se o problema persistir. ID do cesto: %d';
 $_MODULE['<{alma}prestashop>displaypaymenthookcontroller_afd8ac1c65e1519d6a890e5f98558a52'] = '%1$s e depois %2$d x %3$s';
 $_MODULE['<{alma}prestashop>displaypaymenthookcontroller_bc69b42c4bd339154f9025f3299ad146'] = '%1$s hoje, e depois %2$d x %3$s';
 $_MODULE['<{alma}prestashop>displaypaymenthookcontroller_9088921432b295dfe6f02863b2dc0ff8'] = '0€ hoje, e depois %1$s em %2$s';
@@ -67,6 +69,8 @@ $_MODULE['<{alma}prestashop>paymentoptionshookcontroller_9088921432b295dfe6f0286
 $_MODULE['<{alma}prestashop>paymentvalidation_efa820507b1951ee5722003639b1a0b0'] = 'As prestações mensais através da Alma não estão disponíveis para esta moeda';
 $_MODULE['<{alma}prestashop>paymentvalidation_1d879e270cfb195f257aab3116618d8b'] = 'Alma - +%d dias de pagamento';
 $_MODULE['<{alma}prestashop>paymentvalidation_6f11098989b14063e0a4cfe362734850'] = 'Alma - %d prestações mensais';
+$_MODULE['<{alma}prestashop>refundhelper_446ae76a36687f9dbc62430e7006ca91'] = 'Lamentamos informar que houve um problema durante o processo de pagamento, o seu pagamento Alma será totalmente reembolsado. Por favor, tente novamente efectuar o pagamento para concluir a sua encomenda.';
+$_MODULE['<{alma}prestashop>refundhelper_448edd2d5c593906afa202847b8d79c0'] = 'Pedimos desculpa pelo incómodo, mas houve um problema durante o processo de pagamento e não foi possível reembolsar o seu pagamento Alma. Para resolver este problema, pedimos-lhe que contacte a nossa equipa de apoio com a sua referência de pagamento: %s. A nossa equipa terá todo o prazer em ajudá-lo a garantir que recebe o seu reembolso total. Agradecemos a sua colaboração.';
 $_MODULE['<{alma}prestashop>abstractalmaadminformbuilder_c9cc8cce247e49bae79f15173ce97354'] = 'Guardar';
 $_MODULE['<{alma}prestashop>apiadminformbuilder_fe1d478b2e434b92277b47f0cf62e040'] = 'Modo API';
 $_MODULE['<{alma}prestashop>apiadminformbuilder_0e95e5facc2cad62d6458c65164c4455'] = 'Utilize o modo <b>teste</b> até poder receber encomendas reais através da Alma.<br>No modo <b>teste</b>, apenas os administradores podem ver a Alma nas páginas do cesto/checkout.';
@@ -105,7 +109,6 @@ $_MODULE['<{alma}prestashop>paymentbuttonadminformbuilder_312b74149761f30bdcb384
 $_MODULE['<{alma}prestashop>paymentbuttonadminformbuilder_1592c10d9ef86441918f678ec6e6d79a'] = 'Exibir o botão de pagamento, desativado';
 $_MODULE['<{alma}prestashop>paymentbuttonadminformbuilder_039b5313d8eacb12b7520d4e31c5053d'] = 'Configuração do método de pagamento';
 $_MODULE['<{alma}prestashop>paymentontriggeringadminformbuilder_ca4c631f2d5ce4d541428c762db48420'] = 'Esta opção está disponível apenas para pagamento através da Alma em 2x, 3x e 4x. Quando estiver ativa, os seus clientes pagarão a primeira prestação na alteração do estádio da encomenda. Quando o cliente encomendar no seu site, a Alma apenas pedirá uma autorização de pagamento. Apenas os estádios geridos pela Alma estão disponíveis no menu abaixo. Por favor, contate a Alma se precisar que adicionemos outro estádio.';
-$_MODULE['<{alma}prestashop>paymentontriggeringadminformbuilder_a8342cdac86a954821e7d6b895dac2a2'] = 'Se está interessado(a) nesta funcionalidade, por favor, contate a Alma ou envie um e-mail para o endereço %1$ssupport@getalma.eu%2$s.';
 $_MODULE['<{alma}prestashop>paymentontriggeringadminformbuilder_5088db8667a6e4c03ef8d01445beff15'] = 'Ativar o pagamento automático';
 $_MODULE['<{alma}prestashop>paymentontriggeringadminformbuilder_8ca7557011effffde8da6e2a8563e9bf'] = 'Tipologia do pagamento automático';
 $_MODULE['<{alma}prestashop>paymentontriggeringadminformbuilder_a8f3e94cfb811b49c487a4960ca8ecd6'] = 'Texto que irá aparecer no plano de pagamentos e no e-mail de autorização de pagamento do cliente.';
