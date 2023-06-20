@@ -1,5 +1,9 @@
 # Changelog
 
+## v2.12.1
+
+- Fix : attach Alma hooks depending on the Prestashop version
+
 ## v2.12.0
 
 - Refund process clarified for order/payment mismatch error
