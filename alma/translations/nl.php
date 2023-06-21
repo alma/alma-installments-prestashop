@@ -23,7 +23,7 @@
  */
 global $_MODULE;
 $_MODULE = [];
-$_MODULE['<{alma}prestashop>alma_c407a14c73b61d727c55a42fb531f2e3'] = '1x 2x 3x 4x, D+15 of D+30 Alma - Betalen in termijnen en uitgestelde betalingen met Alma';
+$_MODULE['<{alma}prestashop>alma_c407a14c73b61d727c55a42fb531f2e3'] = '1x 2x 3x 4x, D+15 of D+30 Alma - Betaling in termijnen en uitgesteld';
 $_MODULE['<{alma}prestashop>alma_7f9c508fa226d3e72644403653115c29'] = 'Verkoop meer door uw klanttevredenheid een boost te geven! Verzeker uw inkomsten met Alma, eenvoudig en gegarandeerd gespreid betalen';
 $_MODULE['<{alma}prestashop>alma_ce67a7d4b82bc360a17d25943924b388'] = 'Wilt u echt gespreid betalen van Alma uit uw winkel verwijderen?';
 $_MODULE['<{alma}prestashop>alma_7bab99339291e7eea710b4a998e663de'] = 'Voor Alma is een PHP cURL extensie nodig.';
@@ -64,10 +64,12 @@ $_MODULE['<{alma}prestashop>getcontenthookcontroller_bf17ac149e2e7a530c677e9bd51
 $_MODULE['<{alma}prestashop>getcontenthookcontroller_f805369aef0b94a941a131e9a2b72ab5'] = 'Module Manager';
 $_MODULE['<{alma}prestashop>getcontenthookcontroller_c6e24f81cb99e08c3d56b191c00aea28'] = 'Module Manager - Lijst';
 $_MODULE['<{alma}prestashop>paymentoptionshookcontroller_1dd1c5fb7f25cd41b291d43a89e3aefd'] = 'Vandaag';
+$_MODULE['<{alma}prestashop>paymentoptionshookcontroller_96b0141273eabab320119c467cdcaf17'] = 'Totaal';
 $_MODULE['<{alma}prestashop>paymentoptionshookcontroller_9bbd94e0a507283ae202812ea1bd6f20'] = '%s maand later';
 $_MODULE['<{alma}prestashop>paymentoptionshookcontroller_9088921432b295dfe6f02863b2dc0ff8'] = '0 € vandaag dan %1$s op %2$s';
 $_MODULE['<{alma}prestashop>paymentvalidation_efa820507b1951ee5722003639b1a0b0'] = 'Gespreide betaling van Alma is niet beschikbaar voor deze valuta';
 $_MODULE['<{alma}prestashop>paymentvalidation_1d879e270cfb195f257aab3116618d8b'] = 'Alma - +%d dagen betaling';
+$_MODULE['<{alma}prestashop>paymentvalidation_2ea09287a94f2bc88b459fc7d5a31b6b'] = 'Alma - Nu betalen';
 $_MODULE['<{alma}prestashop>paymentvalidation_6f11098989b14063e0a4cfe362734850'] = 'Alma - Betalen in %d keer';
 $_MODULE['<{alma}prestashop>refundhelper_446ae76a36687f9dbc62430e7006ca91'] = 'Het spijt ons je te moeten informeren dat er een probleem opgetreden is tijdens het betaalproces, jouw Alma-betaling zal volledig worden terugbetaald. Probeer de betaling opnieuw om je bestelling te voltooien.';
 $_MODULE['<{alma}prestashop>refundhelper_448edd2d5c593906afa202847b8d79c0'] = 'Onze excuses voor het ongemak, maar er was een probleem tijdens het betaalproces, en we konden jouw Alma-betaling niet terugbetalen. Om dit op te lossen, willen we je vriendelijk verzoeken contact op te nemen met ons support team met jouw betaalreferentie: %s. Ons team zal je helpen om ervoor te zorgen dat je de volledige terugbetaling ontvangt. Bedankt voor je medewerking.';
@@ -99,9 +101,10 @@ $_MODULE['<{alma}prestashop>excludedcategoryadminformbuilder_f5e42a943a36e2a61ba
 $_MODULE['<{alma}prestashop>excludedcategoryadminformbuilder_41c2bdcbfb6ea702ac49667124a1652a'] = 'Uitgesloten categorieën niet in aanmerking komend bericht';
 $_MODULE['<{alma}prestashop>excludedcategoryadminformbuilder_c4cea4750fb3ef077cbf2e1283c312ac'] = 'Bericht dat wordt weergegeven op een uitgesloten productpagina of op de winkelwagenpagina als deze een uitgesloten product bevat.';
 $_MODULE['<{alma}prestashop>excludedcategoryadminformbuilder_36359547b09bdb31f46c419a0bd5807e'] = 'Uitgesloten categorieën';
-$_MODULE['<{alma}prestashop>paymentbuttonadminformbuilder_bd348b62a28c8a1ff9932c0dfb8b53a9'] = 'Betalingen in 2, 3 en 4 termijnen';
+$_MODULE['<{alma}prestashop>paymentbuttonadminformbuilder_8bd4837a76cf443ab523a51895e23c36'] = 'Nu betalen';
 $_MODULE['<{alma}prestashop>paymentbuttonadminformbuilder_b78a3223503896721cca1303f776159b'] = 'Titel';
 $_MODULE['<{alma}prestashop>paymentbuttonadminformbuilder_b5a7adde1af5c87d7fd797b6245c2a39'] = 'Beschrijving';
+$_MODULE['<{alma}prestashop>paymentbuttonadminformbuilder_bd348b62a28c8a1ff9932c0dfb8b53a9'] = 'Betalingen in 2, 3 en 4 termijnen';
 $_MODULE['<{alma}prestashop>paymentbuttonadminformbuilder_f253e6ecb1d145ce02bd31c383dbad3c'] = 'Uitgestelde betalingen';
 $_MODULE['<{alma}prestashop>paymentbuttonadminformbuilder_1bb665a61ac795bdc55e2a503fa824f5'] = 'Betalingen in meer dan 4 termijnen';
 $_MODULE['<{alma}prestashop>paymentbuttonadminformbuilder_1ff5f75cf29d7dfd4689a155c4996acb'] = 'Als Alma niet beschikbaar is...';
@@ -122,7 +125,9 @@ $_MODULE['<{alma}prestashop>pnxadminformbuilder_52f5e0bc3859bc5f5e25130b6c7e8881
 $_MODULE['<{alma}prestashop>pnxadminformbuilder_471efc56e22a91e31c909a7d7044dc8e'] = 'Gebruik relatieve waarden om de volgorde op de afrekenpagina in te stellen';
 $_MODULE['<{alma}prestashop>pnxadminformbuilder_200b9884c24938888bc2462029b5241d'] = 'Inschakelen %d-installatie betalingen';
 $_MODULE['<{alma}prestashop>pnxadminformbuilder_203cf2399ac7e381d5e3f50e9af16981'] = 'Uitgestelde betalingen inschakelen%d dagen';
+$_MODULE['<{alma}prestashop>pnxadminformbuilder_d3031c512b31f2a2b9bc7fb786c94fba'] = 'Nu betalen inschakelen';
 $_MODULE['<{alma}prestashop>pnxadminformbuilder_1cc27a7dd338c415c7ec905916039fdb'] = 'Inschakelen %d-uitgestelde betalingen%d-uitgestelde dagen';
+$_MODULE['<{alma}prestashop>pnxadminformbuilder_8bd4837a76cf443ab523a51895e23c36'] = 'Nu betalen';
 $_MODULE['<{alma}prestashop>pnxadminformbuilder_445b31fd41d49bfa07607421c51fe814'] = '%d-betalingen';
 $_MODULE['<{alma}prestashop>pnxadminformbuilder_00a67585074c0f91b2446943f30f8c33'] = 'Uitgestelde betalingen %d dagen';
 $_MODULE['<{alma}prestashop>pnxadminformbuilder_1414abef78f33ed4e9cfd75624b1f0b7'] = '%d-uitgestelde betalingen %d-uitgestelde dagen';
@@ -153,6 +158,7 @@ $_MODULE['<{alma}prestashop>refundadminformbuilder_a2175c8178a92176b9810d330fbc0
 $_MODULE['<{alma}prestashop>refundadminformbuilder_9d21f767a50ad583330024bce9afa2e1'] = 'Terugbetaling met verandering van toestand';
 $_MODULE['<{alma}prestashop>shareofcheckoutadminformbuilder_6e8f64880a74e62ac2ba57bed59fbbaf'] = 'Activeer de instellingen voor het delen van gegevens';
 $_MODULE['<{alma}prestashop>shareofcheckoutadminformbuilder_c1a238cd82a8997cf32426ef561772b2'] = 'Verhoog je prestaties & krijg inzichten';
+$_MODULE['<{alma}prestashop>customfieldshelper_8bd4837a76cf443ab523a51895e23c36'] = 'Nu betalen';
 $_MODULE['<{alma}prestashop>customfieldshelper_300de0751d957421cc332ba21c43a598'] = 'Betalen in %d termijnen';
 $_MODULE['<{alma}prestashop>customfieldshelper_726c61fad46c135efb4198820e5484ba'] = 'Koop nu Betaal in %d dagen';
 $_MODULE['<{alma}prestashop>customfieldshelper_82d2b98eb8f9388d13766a9367096499'] = 'Snelle en veilige betaling met creditcard.';

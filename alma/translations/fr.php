@@ -69,7 +69,7 @@ $_MODULE['<{alma}prestashop>paymentoptionshookcontroller_9bbd94e0a507283ae202812
 $_MODULE['<{alma}prestashop>paymentoptionshookcontroller_9088921432b295dfe6f02863b2dc0ff8'] = '0 € aujourd\'hui puis %1$s le %2$s';
 $_MODULE['<{alma}prestashop>paymentvalidation_efa820507b1951ee5722003639b1a0b0'] = 'Alma n\'est pas disponible dans cette devise';
 $_MODULE['<{alma}prestashop>paymentvalidation_1d879e270cfb195f257aab3116618d8b'] = 'Alma - Paiement +%d jours';
-$_MODULE['<{alma}prestashop>paymentvalidation_2ea09287a94f2bc88b459fc7d5a31b6b'] = 'Alma - Payez maintenant';
+$_MODULE['<{alma}prestashop>paymentvalidation_2ea09287a94f2bc88b459fc7d5a31b6b'] = 'Alma - Payer maintenant';
 $_MODULE['<{alma}prestashop>paymentvalidation_6f11098989b14063e0a4cfe362734850'] = 'Alma - Paiement en %d fois';
 $_MODULE['<{alma}prestashop>refundhelper_446ae76a36687f9dbc62430e7006ca91'] = 'Nous avons le regret de vous informer qu\'il y a eu un problème lors du processus de paiement, votre paiement Alma sera entièrement remboursé. Veuillez réessayer votre paiement pour terminer votre commande.';
 $_MODULE['<{alma}prestashop>refundhelper_448edd2d5c593906afa202847b8d79c0'] = 'Nous nous excusons pour la gêne occasionnée, mais il y a eu un problème pendant le processus de paiement, et nous n\'avons pas été en mesure de vous rembourser votre paiement Alma. Pour résoudre ce problème, nous vous demandons de contacter notre équipe d\'assistance en indiquant la référence de votre paiement : %s. Notre équipe sera heureuse de vous aider à obtenir le remboursement intégral de votre paiement. Nous vous remercions de votre coopération.';
@@ -101,7 +101,7 @@ $_MODULE['<{alma}prestashop>excludedcategoryadminformbuilder_f5e42a943a36e2a61ba
 $_MODULE['<{alma}prestashop>excludedcategoryadminformbuilder_41c2bdcbfb6ea702ac49667124a1652a'] = 'Message de non-éligibilité pour catégories exclues';
 $_MODULE['<{alma}prestashop>excludedcategoryadminformbuilder_c4cea4750fb3ef077cbf2e1283c312ac'] = 'Message affiché sur les pages de produits exclus ou sur la page du panier s\'il contient un produit exclus';
 $_MODULE['<{alma}prestashop>excludedcategoryadminformbuilder_36359547b09bdb31f46c419a0bd5807e'] = 'Catégories exclues';
-$_MODULE['<{alma}prestashop>paymentbuttonadminformbuilder_8bd4837a76cf443ab523a51895e23c36'] = 'Payez maintenant';
+$_MODULE['<{alma}prestashop>paymentbuttonadminformbuilder_8bd4837a76cf443ab523a51895e23c36'] = 'Payer maintenant';
 $_MODULE['<{alma}prestashop>paymentbuttonadminformbuilder_b78a3223503896721cca1303f776159b'] = 'Titre';
 $_MODULE['<{alma}prestashop>paymentbuttonadminformbuilder_b5a7adde1af5c87d7fd797b6245c2a39'] = 'Description';
 $_MODULE['<{alma}prestashop>paymentbuttonadminformbuilder_bd348b62a28c8a1ff9932c0dfb8b53a9'] = 'Paiement en 2, 3 et 4 versements';
@@ -158,7 +158,7 @@ $_MODULE['<{alma}prestashop>refundadminformbuilder_a2175c8178a92176b9810d330fbc0
 $_MODULE['<{alma}prestashop>refundadminformbuilder_9d21f767a50ad583330024bce9afa2e1'] = 'Remboursement par changement d\'état';
 $_MODULE['<{alma}prestashop>shareofcheckoutadminformbuilder_6e8f64880a74e62ac2ba57bed59fbbaf'] = 'Activez vos paramètres de partage des données';
 $_MODULE['<{alma}prestashop>shareofcheckoutadminformbuilder_c1a238cd82a8997cf32426ef561772b2'] = 'Améliorez vos performances et obtenez des informations';
-$_MODULE['<{alma}prestashop>customfieldshelper_8bd4837a76cf443ab523a51895e23c36'] = 'Payez maintenant';
+$_MODULE['<{alma}prestashop>customfieldshelper_8bd4837a76cf443ab523a51895e23c36'] = 'Payer maintenant';
 $_MODULE['<{alma}prestashop>customfieldshelper_300de0751d957421cc332ba21c43a598'] = 'Payer en %d fois';
 $_MODULE['<{alma}prestashop>customfieldshelper_726c61fad46c135efb4198820e5484ba'] = 'Payer dans %d jours';
 $_MODULE['<{alma}prestashop>customfieldshelper_82d2b98eb8f9388d13766a9367096499'] = 'Paiement rapide et sécurisé, par carte bancaire.';

@@ -23,7 +23,7 @@
  */
 global $_MODULE;
 $_MODULE = [];
-$_MODULE['<{alma}prestashop>alma_c407a14c73b61d727c55a42fb531f2e3'] = '1x 2x 3x 4x, D+15 oder D+30 Alma – Ratenzahlung und Zahlungsaufschub';
+$_MODULE['<{alma}prestashop>alma_c407a14c73b61d727c55a42fb531f2e3'] = '1x 2x 3x 4x, D+15 oder D+30 Alma - Ratenzahlung und Aufschub';
 $_MODULE['<{alma}prestashop>alma_7f9c508fa226d3e72644403653115c29'] = 'Verkaufen Sie mehr, indem Sie die Zufriedenheit Ihrer Kunden erhöhen! Sichern Sie Ihre Liquidität mit Alma, der einfachen und garantierten Ratenzahlung';
 $_MODULE['<{alma}prestashop>alma_ce67a7d4b82bc360a17d25943924b388'] = 'Sind Sie sicher, dass Sie die Alma-Zahlungen in Ihrem Shop deaktivieren möchten?';
 $_MODULE['<{alma}prestashop>alma_7bab99339291e7eea710b4a998e663de'] = 'Alma erfordert die PHP-cURL-Erweiterung';
@@ -64,10 +64,12 @@ $_MODULE['<{alma}prestashop>getcontenthookcontroller_bf17ac149e2e7a530c677e9bd51
 $_MODULE['<{alma}prestashop>getcontenthookcontroller_f805369aef0b94a941a131e9a2b72ab5'] = 'Modul-Manager';
 $_MODULE['<{alma}prestashop>getcontenthookcontroller_c6e24f81cb99e08c3d56b191c00aea28'] = 'Modul-Manager - Liste';
 $_MODULE['<{alma}prestashop>paymentoptionshookcontroller_1dd1c5fb7f25cd41b291d43a89e3aefd'] = 'Heute';
+$_MODULE['<{alma}prestashop>paymentoptionshookcontroller_96b0141273eabab320119c467cdcaf17'] = 'Insgesamt';
 $_MODULE['<{alma}prestashop>paymentoptionshookcontroller_9bbd94e0a507283ae202812ea1bd6f20'] = '%s Monat später';
 $_MODULE['<{alma}prestashop>paymentoptionshookcontroller_9088921432b295dfe6f02863b2dc0ff8'] = '0 € heute dann %1$s am %2$s';
 $_MODULE['<{alma}prestashop>paymentvalidation_efa820507b1951ee5722003639b1a0b0'] = 'Die Ratenzahlung mit Alma ist in dieser Währung nicht möglich';
 $_MODULE['<{alma}prestashop>paymentvalidation_1d879e270cfb195f257aab3116618d8b'] = 'Alma - +%d Tage Zahlungsfrist';
+$_MODULE['<{alma}prestashop>paymentvalidation_2ea09287a94f2bc88b459fc7d5a31b6b'] = 'Alma - Jetzt bezahlen';
 $_MODULE['<{alma}prestashop>paymentvalidation_6f11098989b14063e0a4cfe362734850'] = 'Alma – Zahlung in %d Raten';
 $_MODULE['<{alma}prestashop>refundhelper_446ae76a36687f9dbc62430e7006ca91'] = 'Leider gab es ein Problem während des Zahlungsvorgangs. Ihre Zahlung an Alma wird vollständig zurückerstattet. Bitte versuchen Sie Ihre Zahlung erneut, um Ihre Bestellung abzuschließen.';
 $_MODULE['<{alma}prestashop>refundhelper_448edd2d5c593906afa202847b8d79c0'] = 'Wir bitten um Entschuldigung für die Unannehmlichkeiten, leider gab es ein Problem während des Zahlungsvorgangs, die Rückerstattung Ihrer Alma Zahlung war nicht möglich. Um dieses Problem zu lösen, bitten wir Sie, unser Support-Team mit Ihrer Zahlungsreferenz zu kontaktieren: %s. Unser Team wird Sie gerne unterstützen, damit Sie Ihre volle Rückerstattung erhalten. Vielen Dank für Ihre Mitarbeit.';
@@ -99,9 +101,10 @@ $_MODULE['<{alma}prestashop>excludedcategoryadminformbuilder_f5e42a943a36e2a61ba
 $_MODULE['<{alma}prestashop>excludedcategoryadminformbuilder_41c2bdcbfb6ea702ac49667124a1652a'] = 'Ausgeschlossene Kategorien Meldung der Nicht-Zulässigkeit';
 $_MODULE['<{alma}prestashop>excludedcategoryadminformbuilder_c4cea4750fb3ef077cbf2e1283c312ac'] = 'Meldung, die auf einer Seite mit einem ausgeschlossenen Produkt oder auf der Seite mit dem Einkaufswagen angezeigt wird, wenn dieser ein ausgeschlossenes Produkt enthält.';
 $_MODULE['<{alma}prestashop>excludedcategoryadminformbuilder_36359547b09bdb31f46c419a0bd5807e'] = 'Ausgeschlossene Kategorien';
-$_MODULE['<{alma}prestashop>paymentbuttonadminformbuilder_bd348b62a28c8a1ff9932c0dfb8b53a9'] = 'Zahlungen in 2, 3 und 4 Raten';
+$_MODULE['<{alma}prestashop>paymentbuttonadminformbuilder_8bd4837a76cf443ab523a51895e23c36'] = 'Jetzt bezahlen';
 $_MODULE['<{alma}prestashop>paymentbuttonadminformbuilder_b78a3223503896721cca1303f776159b'] = 'Titel';
 $_MODULE['<{alma}prestashop>paymentbuttonadminformbuilder_b5a7adde1af5c87d7fd797b6245c2a39'] = 'Beschreibung';
+$_MODULE['<{alma}prestashop>paymentbuttonadminformbuilder_bd348b62a28c8a1ff9932c0dfb8b53a9'] = 'Zahlungen in 2, 3 und 4 Raten';
 $_MODULE['<{alma}prestashop>paymentbuttonadminformbuilder_f253e6ecb1d145ce02bd31c383dbad3c'] = 'Aufgeschobene Zahlung';
 $_MODULE['<{alma}prestashop>paymentbuttonadminformbuilder_1bb665a61ac795bdc55e2a503fa824f5'] = 'Zahlungen in mehr als 4 Raten';
 $_MODULE['<{alma}prestashop>paymentbuttonadminformbuilder_1ff5f75cf29d7dfd4689a155c4996acb'] = 'Wenn Alma nicht verfügbar ist...';
@@ -122,7 +125,9 @@ $_MODULE['<{alma}prestashop>pnxadminformbuilder_52f5e0bc3859bc5f5e25130b6c7e8881
 $_MODULE['<{alma}prestashop>pnxadminformbuilder_471efc56e22a91e31c909a7d7044dc8e'] = 'Verwenden Sie relative Werte, um die Reihenfolge auf der Checkout-Seite festzulegen';
 $_MODULE['<{alma}prestashop>pnxadminformbuilder_200b9884c24938888bc2462029b5241d'] = 'Freigabe von %d-Ratenzahlungen';
 $_MODULE['<{alma}prestashop>pnxadminformbuilder_203cf2399ac7e381d5e3f50e9af16981'] = 'Aufgeschobene Zahlungen aktivieren%d Tage';
+$_MODULE['<{alma}prestashop>pnxadminformbuilder_d3031c512b31f2a2b9bc7fb786c94fba'] = 'Jetzt bezahlen aktivieren';
 $_MODULE['<{alma}prestashop>pnxadminformbuilder_1cc27a7dd338c415c7ec905916039fdb'] = 'Aktivieren %d-Ratenzahlungen%d-aufgeschobene Tage';
+$_MODULE['<{alma}prestashop>pnxadminformbuilder_8bd4837a76cf443ab523a51895e23c36'] = 'Jetzt bezahlen';
 $_MODULE['<{alma}prestashop>pnxadminformbuilder_445b31fd41d49bfa07607421c51fe814'] = '%d-Ratenzahlungen';
 $_MODULE['<{alma}prestashop>pnxadminformbuilder_00a67585074c0f91b2446943f30f8c33'] = 'Aufgeschobene Zahlungen %d Tage';
 $_MODULE['<{alma}prestashop>pnxadminformbuilder_1414abef78f33ed4e9cfd75624b1f0b7'] = '%d-Ratenzahlungen %d-aufgeschobene Tage';
@@ -153,6 +158,7 @@ $_MODULE['<{alma}prestashop>refundadminformbuilder_a2175c8178a92176b9810d330fbc0
 $_MODULE['<{alma}prestashop>refundadminformbuilder_9d21f767a50ad583330024bce9afa2e1'] = 'Erstattung mit Zustandsänderung';
 $_MODULE['<{alma}prestashop>shareofcheckoutadminformbuilder_6e8f64880a74e62ac2ba57bed59fbbaf'] = 'Aktivieren Sie Ihre Datenfreigabeeinstellungen';
 $_MODULE['<{alma}prestashop>shareofcheckoutadminformbuilder_c1a238cd82a8997cf32426ef561772b2'] = 'Steigern Sie Ihre Leistung und erhalten Sie Einblicke';
+$_MODULE['<{alma}prestashop>customfieldshelper_8bd4837a76cf443ab523a51895e23c36'] = 'Jetzt bezahlen';
 $_MODULE['<{alma}prestashop>customfieldshelper_300de0751d957421cc332ba21c43a598'] = 'Zahlung in %d Raten';
 $_MODULE['<{alma}prestashop>customfieldshelper_726c61fad46c135efb4198820e5484ba'] = 'Jetzt kaufen Bezahlen in %d Tagen';
 $_MODULE['<{alma}prestashop>customfieldshelper_82d2b98eb8f9388d13766a9367096499'] = 'Schnelle und sichere Zahlung per Kreditkarte.';
