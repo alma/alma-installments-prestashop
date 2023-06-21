@@ -31,6 +31,7 @@ if (!defined('_PS_VERSION_')) {
 use Alma\PrestaShop\API\EligibilityHelper;
 use Alma\PrestaShop\Hooks\FrontendHookController;
 use Alma\PrestaShop\Model\CartData;
+use Alma\PrestaShop\Utils\PlanHelper;
 use Alma\PrestaShop\Utils\Settings;
 use Alma\PrestaShop\Utils\SettingsCustomFields;
 use Cart;
@@ -96,11 +97,16 @@ class PaymentOptionsHookController extends FrontendHookController
                 'totalCredit' => $plan->customerTotalCostAmount + $totalCart,
                 'taeg' => $plan->annualInterestRate,
             ];
+            $isPayNow = $key === PlanHelper::ALMA_KEY_PAYNOW;
 
             foreach ($plans as $keyPlan => $paymentPlan) {
                 $plans[$keyPlan]['human_date'] = getDateFormat($locale, $paymentPlan['due_date']);
                 if ($keyPlan === 0) {
                     $plans[$keyPlan]['human_date'] = $this->module->l('Today', 'PaymentOptionsHookController');
+                }
+
+                if ($isPayNow) {
+                    $plans[$keyPlan]['human_date'] = $this->module->l('Total', 'PaymentOptionsHookController');
                 }
                 if (Settings::isDeferredTriggerLimitDays($feePlans, $key)) {
                     $plans[$keyPlan]['human_date'] = sprintf(
@@ -114,7 +120,6 @@ class PaymentOptionsHookController extends FrontendHookController
             }
             $isDeferred = Settings::isDeferred($plan);
             $duration = Settings::getDuration($plan);
-            $isInstallmentAccordingToDeferred = $installment !== 1;
             $fileTemplate = 'payment_button_pnx.tpl';
             $valueBNPL = $installment;
             $textPaymentButton = sprintf(SettingsCustomFields::getPnxButtonTitleByLang($idLang), $installment);
@@ -124,52 +129,53 @@ class PaymentOptionsHookController extends FrontendHookController
                 $descPaymentButton = sprintf(SettingsCustomFields::getPnxAirButtonDescriptionByLang($idLang), $installment);
             }
             if ($isDeferred) {
-                $isInstallmentAccordingToDeferred = $installment === 1;
                 $fileTemplate = 'payment_button_deferred.tpl';
                 $valueBNPL = $duration;
                 $textPaymentButton = sprintf(SettingsCustomFields::getPaymentButtonTitleDeferredByLang($idLang), $duration);
                 $descPaymentButton = sprintf(SettingsCustomFields::getPaymentButtonDescriptionDeferredByLang($idLang), $duration);
             }
-
-            if ($isInstallmentAccordingToDeferred) {
-                $paymentOption = $this->createPaymentOption(
-                    $forEUComplianceModule,
-                    $textPaymentButton,
-                    $this->context->link->getModuleLink(
-                        $this->module->name,
-                        'payment',
-                        ['key' => $key],
-                        true
-                    ),
-                    $isDeferred,
-                    $valueBNPL
-                );
-                if (!$forEUComplianceModule) {
-                    $templateVar = [
-                        'desc' => $descPaymentButton,
-                        'plans' => (array) $plans,
-                        'deferred_trigger_limit_days' => $feePlans->$key->deferred_trigger_limit_days,
-                        'apiMode' => Settings::getActiveMode(),
-                        'merchantId' => Settings::getMerchantId(),
-                        'first' => $first,
-                        'creditInfo' => $creditInfo,
-                    ];
-                    if ($isDeferred) {
-                        $templateVar['installmentText'] = sprintf(
-                            $this->module->l('0 € today then %1$s on %2$s', 'PaymentOptionsHookController'),
-                            almaFormatPrice($plans[0]['purchase_amount'] + $plans[0]['customer_fee']),
-                            getDateFormat($locale, $plans[0]['due_date'])
-                        );
-                    }
-                    $this->context->smarty->assign($templateVar);
-                    $template = $this->context->smarty->fetch(
-                        "module:{$this->module->name}/views/templates/hook/{$fileTemplate}"
-                    );
-                    $paymentOption->setAdditionalInformation($template);
-                }
-                $sortOptions[$key] = $feePlans->$key->order;
-                $paymentOptions[$key] = $paymentOption;
+            if ($isPayNow) {
+                $textPaymentButton = SettingsCustomFields::getPayNowButtonTitleByLang($idLang);
+                $descPaymentButton = SettingsCustomFields::getPayNowButtonDescriptionByLang($idLang);
             }
+
+            $paymentOption = $this->createPaymentOption(
+                $forEUComplianceModule,
+                $textPaymentButton,
+                $this->context->link->getModuleLink(
+                    $this->module->name,
+                    'payment',
+                    ['key' => $key],
+                    true
+                ),
+                $isDeferred,
+                $valueBNPL
+            );
+            if (!$forEUComplianceModule) {
+                $templateVar = [
+                    'desc' => $descPaymentButton,
+                    'plans' => (array) $plans,
+                    'deferred_trigger_limit_days' => $feePlans->$key->deferred_trigger_limit_days,
+                    'apiMode' => Settings::getActiveMode(),
+                    'merchantId' => Settings::getMerchantId(),
+                    'first' => $first,
+                    'creditInfo' => $creditInfo,
+                ];
+                if ($isDeferred) {
+                    $templateVar['installmentText'] = sprintf(
+                        $this->module->l('0 € today then %1$s on %2$s', 'PaymentOptionsHookController'),
+                        almaFormatPrice($plans[0]['purchase_amount'] + $plans[0]['customer_fee']),
+                        getDateFormat($locale, $plans[0]['due_date'])
+                    );
+                }
+                $this->context->smarty->assign($templateVar);
+                $template = $this->context->smarty->fetch(
+                    "module:{$this->module->name}/views/templates/hook/{$fileTemplate}"
+                );
+                $paymentOption->setAdditionalInformation($template);
+            }
+            $sortOptions[$key] = $feePlans->$key->order;
+            $paymentOptions[$key] = $paymentOption;
         }
 
         asort($sortOptions);

@@ -151,6 +151,60 @@ class SettingsCustomFields
      *
      * @return array
      */
+    public static function getPayNowButtonTitle()
+    {
+        return CustomFieldsHelper::aggregateAllLanguagesCustomFields(PaymentButtonAdminFormBuilder::ALMA_PAY_NOW_BUTTON_TITLE);
+    }
+
+    /**
+     * Get custom title button by id lang
+     *
+     * @param int $idLang
+     *
+     * @return string
+     */
+    public static function getPayNowButtonTitleByLang($idLang)
+    {
+        $arrayPayNowButtonTitleByLang = self::getPayNowButtonTitle();
+        if (!array_key_exists($idLang, $arrayPayNowButtonTitleByLang)) {
+            return CustomFieldsHelper::customFields()[PaymentButtonAdminFormBuilder::ALMA_PAY_NOW_BUTTON_TITLE];
+        }
+
+        return $arrayPayNowButtonTitleByLang[$idLang];
+    }
+
+    /**
+     * Get array custom description button
+     *
+     * @return array
+     */
+    public static function getPayNowButtonDescription()
+    {
+        return CustomFieldsHelper::aggregateAllLanguagesCustomFields(PaymentButtonAdminFormBuilder::ALMA_PAY_NOW_BUTTON_DESC);
+    }
+
+    /**
+     * Get custom description button by id lang
+     *
+     * @param int $idLang
+     *
+     * @return string
+     */
+    public static function getPayNowButtonDescriptionByLang($idLang)
+    {
+        $arrayPayNowButtonDescriptionByLang = self::getPayNowButtonDescription();
+        if (!array_key_exists($idLang, $arrayPayNowButtonDescriptionByLang)) {
+            return CustomFieldsHelper::customFields()[PaymentButtonAdminFormBuilder::ALMA_PAY_NOW_BUTTON_DESC];
+        }
+
+        return $arrayPayNowButtonDescriptionByLang[$idLang];
+    }
+
+    /**
+     * Get array custom titles button
+     *
+     * @return array
+     */
     public static function getPnxAirButtonTitle()
     {
         return CustomFieldsHelper::aggregateAllLanguagesCustomFields(PaymentButtonAdminFormBuilder::ALMA_PNX_AIR_BUTTON_TITLE);

@@ -34,7 +34,7 @@ require_once _PS_MODULE_DIR_ . 'alma/autoloader.php';
 
 class Alma extends PaymentModule
 {
-    const VERSION = '2.12.1';
+    const VERSION = '2.13.0';
 
     public $_path;
     public $local_path;
@@ -69,7 +69,7 @@ class Alma extends PaymentModule
     {
         $this->name = 'alma';
         $this->tab = 'payments_gateways';
-        $this->version = '2.12.1';
+        $this->version = '2.13.0';
         $this->author = 'Alma';
         $this->need_instance = false;
         $this->bootstrap = true;
@@ -91,7 +91,7 @@ class Alma extends PaymentModule
 
         parent::__construct();
 
-        $this->displayName = $this->l('2x 3x 4x, D+15 or D+30 Alma - Payment in instalments and deferred', 'alma');
+        $this->displayName = $this->l('1x 2x 3x 4x, D+15 or D+30 Alma - Payment in instalments and deferred', 'alma');
         $this->description = $this->l('Offer an easy and safe installments payments option to your customers', 'alma');
         $this->confirmUninstall = $this->l('Are you sure you want to deactivate Alma payments from your shop?', 'alma');
 

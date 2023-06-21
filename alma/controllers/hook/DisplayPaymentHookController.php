@@ -31,6 +31,7 @@ if (!defined('_PS_VERSION_')) {
 use Alma\PrestaShop\API\EligibilityHelper;
 use Alma\PrestaShop\Hooks\FrontendHookController;
 use Alma\PrestaShop\Model\CartData;
+use Alma\PrestaShop\Utils\PlanHelper;
 use Alma\PrestaShop\Utils\Settings;
 use Alma\PrestaShop\Utils\SettingsCustomFields;
 use Cart;
@@ -81,51 +82,54 @@ class DisplayPaymentHookController extends FrontendHookController
                 'totalCredit' => $plan->customerTotalCostAmount + $totalCart,
                 'taeg' => $plan->annualInterestRate,
             ];
-
             $isDeferred = Settings::isDeferred($plan);
-            $isInstallmentAccordingToDeferred = $isDeferred ? $installment === 1 : $installment !== 1;
+            $isPayNow = $key === PlanHelper::ALMA_KEY_PAYNOW;
 
-            if ($isInstallmentAccordingToDeferred) {
-                if (!$plan->isEligible && $feePlans->$key->enabled && Settings::showDisabledButton()) {
+            if (!$plan->isEligible) {
+                if ($feePlans->$key->enabled && Settings::showDisabledButton()) {
                     $disabled = true;
                     $plans = null;
-                } elseif (!$plan->isEligible) {
+                } else {
                     continue;
                 }
-                $duration = Settings::getDuration($plan);
-                $valueLogo = $isDeferred ? $duration : $installment;
-                $logo = $this->getAlmaLogo($isDeferred, $valueLogo);
-                $paymentOption = [
-                    'link' => $this->context->link->getModuleLink(
-                        $this->module->name,
-                        'payment',
-                        ['key' => $key],
-                        true
-                    ),
-                    'disabled' => $disabled,
-                    'pnx' => $installment,
-                    'logo' => $logo,
-                    'plans' => $plans,
-                    'installmentText' => $this->getInstallmentText($plans, $idLang, Settings::isDeferredTriggerLimitDays($feePlans, $key)),
-                    'deferred_trigger_limit_days' => $feePlans->$key->deferred_trigger_limit_days,
-                    'isDeferred' => $isDeferred,
-                    'text' => sprintf(SettingsCustomFields::getPnxButtonTitleByLang($idLang), $installment),
-                    'desc' => sprintf(SettingsCustomFields::getPnxButtonDescriptionByLang($idLang), $installment),
-                    'creditInfo' => $creditInfo,
-                ];
-                if ($installment > 4) {
-                    $paymentOption['text'] = sprintf(SettingsCustomFields::getPnxAirButtonTitleByLang($idLang), $installment);
-                    $paymentOption['desc'] = sprintf(SettingsCustomFields::getPnxAirButtonDescriptionByLang($idLang), $installment);
-                }
-                if ($isDeferred) {
-                    $paymentOption['duration'] = $duration;
-                    $paymentOption['key'] = $key;
-                    $paymentOption['text'] = sprintf(SettingsCustomFields::getPaymentButtonTitleDeferredByLang($idLang), $duration);
-                    $paymentOption['desc'] = sprintf(SettingsCustomFields::getPaymentButtonDescriptionDeferredByLang($idLang), $duration);
-                }
-                $paymentOptions[$key] = $paymentOption;
-                $sortOptions[$key] = $feePlans->$key->order;
             }
+            $duration = Settings::getDuration($plan);
+            $valueLogo = $isDeferred ? $duration : $installment;
+            $logo = $this->getAlmaLogo($isDeferred, $valueLogo);
+            $paymentOption = [
+                'link' => $this->context->link->getModuleLink(
+                    $this->module->name,
+                    'payment',
+                    ['key' => $key],
+                    true
+                ),
+                'disabled' => $disabled,
+                'pnx' => $installment,
+                'logo' => $logo,
+                'plans' => $plans,
+                'installmentText' => $this->getInstallmentText($plans, $idLang, Settings::isDeferredTriggerLimitDays($feePlans, $key), $isPayNow),
+                'deferred_trigger_limit_days' => $feePlans->$key->deferred_trigger_limit_days,
+                'isDeferred' => $isDeferred,
+                'text' => sprintf(SettingsCustomFields::getPnxButtonTitleByLang($idLang), $installment),
+                'desc' => sprintf(SettingsCustomFields::getPnxButtonDescriptionByLang($idLang), $installment),
+                'creditInfo' => $creditInfo,
+            ];
+            if ($installment > 4) {
+                $paymentOption['text'] = sprintf(SettingsCustomFields::getPnxAirButtonTitleByLang($idLang), $installment);
+                $paymentOption['desc'] = sprintf(SettingsCustomFields::getPnxAirButtonDescriptionByLang($idLang), $installment);
+            }
+            if ($isDeferred) {
+                $paymentOption['duration'] = $duration;
+                $paymentOption['key'] = $key;
+                $paymentOption['text'] = sprintf(SettingsCustomFields::getPaymentButtonTitleDeferredByLang($idLang), $duration);
+                $paymentOption['desc'] = sprintf(SettingsCustomFields::getPaymentButtonDescriptionDeferredByLang($idLang), $duration);
+            }
+            if ($isPayNow) {
+                $paymentOption['text'] = SettingsCustomFields::getPayNowButtonTitleByLang($idLang);
+                $paymentOption['desc'] = SettingsCustomFields::getPayNowButtonDescriptionByLang($idLang);
+            }
+            $paymentOptions[$key] = $paymentOption;
+            $sortOptions[$key] = $feePlans->$key->order;
         }
 
         asort($sortOptions);
@@ -145,7 +149,7 @@ class DisplayPaymentHookController extends FrontendHookController
      *
      * @return string text one liner option
      */
-    private function getInstallmentText($plans, $idLang, $isDeferredTriggerLimitDays)
+    private function getInstallmentText($plans, $idLang, $isDeferredTriggerLimitDays, $isPayNow)
     {
         $nbPlans = count($plans);
         $locale = Language::getIsoById($idLang);
@@ -165,6 +169,9 @@ class DisplayPaymentHookController extends FrontendHookController
                 $nbPlans - 1,
                 almaFormatPrice($plans[1]['total_amount'])
             );
+        }
+        if ($isPayNow) {
+            return '';
         }
 
         return sprintf(

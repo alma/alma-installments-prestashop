@@ -60,6 +60,11 @@ class PnxAdminFormBuilder extends AbstractAlmaAdminFormBuilder
             ]
         );
 
+        $readonly = false;
+        if ($feePlan->isPayNow()) {
+            $readonly = true;
+        }
+
         return [
             $this->inputHtml($tpl, null, "$tabId-content"),
             $this->inputAlmaSwitchForm(
@@ -75,7 +80,8 @@ class PnxAdminFormBuilder extends AbstractAlmaAdminFormBuilder
                 $this->module->l('Minimum purchase amount to activate this plan', 'PnxAdminFormBuilder'),
                 $minAmount,
                 $maxAmount,
-                "$tabId-content"
+                "$tabId-content",
+                $readonly
             ),
             $this->inputNumberForm(
                 "ALMA_{$key}_MAX_AMOUNT",
@@ -106,9 +112,6 @@ class PnxAdminFormBuilder extends AbstractAlmaAdminFormBuilder
         /** @var FeePlan $feePlan */
         foreach ($this->config['feePlans'] as $feePlan) {
             $tabId = $key = $feePlan->getPlanKey();
-            if (!$feePlan->isPayLaterOnly() && !$feePlan->isPnXOnly()) {
-                continue;
-            }
 
             if (!$feePlan->allowed) {
                 $this->disableFeePlan($key, $installmentsPlans);
@@ -178,6 +181,12 @@ class PnxAdminFormBuilder extends AbstractAlmaAdminFormBuilder
                 $duration
             );
         }
+        if ($feePlan->isPayNow()) {
+            return sprintf(
+                $this->module->l('Enable pay now', 'PnxAdminFormBuilder'),
+                $feePlan->installments_count
+            );
+        }
 
         return sprintf(
             // PrestaShop won't detect the string if the call to `l` is multiline
@@ -194,6 +203,13 @@ class PnxAdminFormBuilder extends AbstractAlmaAdminFormBuilder
      */
     protected function getTabTitle(FeePlan $feePlan, $duration)
     {
+        if ($feePlan->isPayNow()) {
+            return sprintf(
+                $this->module->l('Pay now', 'PnxAdminFormBuilder'),
+                $feePlan->installments_count
+            );
+        }
+
         if ($feePlan->isPnXOnly()) {
             return sprintf(
                 $this->module->l('%d-installment payments', 'PnxAdminFormBuilder'),

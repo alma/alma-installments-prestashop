@@ -1,4 +1,5 @@
-{*
+<?php
+/**
  * 2018-2023 Alma SAS
  *
  * THE MIT LICENSE
@@ -19,10 +20,18 @@
  * @author    Alma SAS <contact@getalma.eu>
  * @copyright 2018-2023 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
- *}
-<div class="alma-fee-plan--block">
-    <p>
-        {$desc|escape:'htmlall':'UTF-8'}
-    </p>
-    {include file="modules/alma/views/templates/hook/_partials/feePlan.tpl" plans=$plans creditInfo=$creditInfo oneLiner=false}
-</div>
+ */
+
+namespace Alma\PrestaShop\Utils;
+
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
+/**
+ * Class PlanHelper
+ */
+class PlanHelper
+{
+    const ALMA_KEY_PAYNOW = 'general_1_0_0';
+}
