@@ -47,9 +47,9 @@ class HookHelper
     }
 
     /**
-     * @var array The alma hooks
+     * @var array
      */
-    protected static $almaHooks = array(
+    protected static $almaHooks = [
         'header',
         'Header',
         'displayHeader',
@@ -66,12 +66,12 @@ class HookHelper
         'displayPaymentReturn',
         'displayProductPriceBlock', // >= 1.6
         'displayProductButtons',
-    );
+    ];
 
     /**
      * Get the hooks
      *
-     * @return array The completed hooks.
+     * @return array The completed hooks
      */
     protected function getAlmaHooks()
     {
@@ -92,23 +92,27 @@ class HookHelper
     /**
      * Generate array of hooks to inject
      *
-     * @param string $hookName The hook name.
-     * @param array $almaHooks The alma hooks.
+     * @param string $hookName The hook name
+     * @param array $almaHooks The alma hooks
+     *
      * @return array
      */
     protected function addHooks($hookName, $almaHooks)
     {
         switch ($hookName) {
-            case 'displayHeader' :
+            case 'displayHeader':
                 $oldHooks = ['header', 'Header'];
+
                 break;
-            case 'displayAdminOrderMain' :
+            case 'displayAdminOrderMain':
                 $oldHooks = ['displayAdminOrder'];
+
                 break;
-            case 'displayProductPriceBlock' :
+            case 'displayProductPriceBlock':
                 $oldHooks = ['displayProductButtons'];
+
                 break;
-            default :
+            default:
                 Logger::instance()->warning(sprintf('[Alma] Unknown hook name : %s', $hookName));
                 return $almaHooks;
         }
@@ -117,7 +121,7 @@ class HookHelper
     }
 
     /**
-     * Register the alma hooks.
+     * Register the alma hooks
      *
      * @return array
      */
