@@ -2,8 +2,8 @@
 name: E2E Test
 on:
   pull_request:
-    branches:
-      - "master"
+    branches: ["master"]
+    types: ["opened", "synchronize", "reopened",  "ready_for_review"]
   workflow_dispatch:
 
 jobs:
@@ -14,6 +14,7 @@ jobs:
         - 1.7.8.7
         #- 1.7.7.5
     runs-on: ubuntu-latest
+    if: github.event.pull_request.draft == false
     steps:
     - name: Get only last part of branch name in $SLUG_VERSION env var
       run:  |
