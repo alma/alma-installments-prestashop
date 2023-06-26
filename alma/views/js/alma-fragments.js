@@ -30,7 +30,7 @@ const almaPay = function (paymentData, paymentOptionId) {
         environment: $('#alma-inpage-' + paymentOptionId).data("apimode"),
         onUserCloseModal: () => {
             inPage.unmount();
-            $('.ps-shown-by-js').prop('checked', false);
+            $('.ps-shown-by-js[type=checkbox]').prop('checked', false);
         },
         showPayButton: showPayButton,
     });
@@ -71,7 +71,10 @@ const almaInPageOnload = function() {
     let loading = "<div class='loadingIndicator'><img src='https://cdn.almapay.com/img/animated-logo-a.svg' alt='Loading' /></div>";
     if ($(".alma-inpage").length !== 0) {
         // PS 1.7 : paymentOptions
-        $(".ps-shown-by-js").click(function () {
+        $("input.ps-shown-by-js[data-module-name!=alma]:not([type=checkbox])").click(function () {
+            $('#payment-confirmation').unbind();
+        });
+        $("input.ps-shown-by-js[data-module-name=alma]").click(function () {
             let paymentOptionId = $(this).attr('id');
             $('#' + paymentOptionId + '-additional-information .alma-inpage').attr('id', 'alma-inpage-' + paymentOptionId);
             let blockIframeInPage = $('#alma-inpage-' + paymentOptionId);
