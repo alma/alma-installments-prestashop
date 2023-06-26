@@ -1,7 +1,7 @@
 <?php
 
 $header = <<<TXT
-2018-2023 Alma SAS
+2018-2023 Alma SAS.
 
 THE MIT LICENSE
 
@@ -45,7 +45,7 @@ return PhpCsFixer\Config::create()
         'header_comment' => [
             'comment_type'=> 'PHPDoc',
             'header' => $header,
-            'separate' => 'bottom',
+            'separate' => 'none',
         ],
         'cast_spaces' => [
             'space' => 'single',

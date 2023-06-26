@@ -1,6 +1,6 @@
 <?php
 /**
- * 2018-2023 Alma SAS
+ * 2018-2023 Alma SAS.
  *
  * THE MIT LICENSE
  *
@@ -21,7 +21,6 @@
  * @copyright 2018-2023 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
-
 namespace Alma\PrestaShop\API;
 
 use Alma\Api\Entities\Instalment;
@@ -76,6 +75,7 @@ class PaymentValidation
      * @param $almaPaymentId
      *
      * @return string URL to redirect the customer to
+     *
      * @throws PaymentValidationError
      * @throws PrestaShopException
      * @throws RefundException
