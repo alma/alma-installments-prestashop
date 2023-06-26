@@ -175,7 +175,7 @@ class Settings
      */
     public static function isShareOfCheckoutSetting()
     {
-        return !(false === Configuration::get(ShareOfCheckoutAdminFormBuilder::ALMA_SHARE_OF_CHECKOUT_STATE));
+        return false !== Configuration::get(ShareOfCheckoutAdminFormBuilder::ALMA_SHARE_OF_CHECKOUT_STATE);
     }
 
     /**
