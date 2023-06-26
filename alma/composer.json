@@ -33,8 +33,10 @@
         }
     ],
     "minimum-stability": "dev",
-    "scripts": {
-        "phpcs": "vendor/bin/phpcs --standard=.phpcs.xml .",
-        "phpcbf": "vendor/bin/phpcbf --standard=.phpcs.xml ."
+    "repositories": {
+        "alma/alma-php-client": {
+            "type": "path",
+            "url": "/app/alma/alma-php-client"
+        }
     }
 }
