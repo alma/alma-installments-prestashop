@@ -1,6 +1,6 @@
 <?php
 /**
- * 2018-2023 Alma SAS
+ * 2018-2023 Alma SAS.
  *
  * THE MIT LICENSE
  *
@@ -21,7 +21,6 @@
  * @copyright 2018-2023 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
-
 namespace Alma\PrestaShop\Model;
 
 use Context;
@@ -32,7 +31,7 @@ if (!defined('_PS_VERSION_')) {
 }
 
 /**
- * Class CarrierHelper
+ * Class CarrierHelper.
  */
 class CarrierHelper
 {
@@ -49,7 +48,7 @@ class CarrierHelper
     }
 
     /**
-     * Get name Carrier by id carrier
+     * Get name Carrier by id carrier.
      *
      * @param int $idCarrier
      *
@@ -70,7 +69,7 @@ class CarrierHelper
                 }
 
                 $carrierName = $this->getParentCarrierNameById($carrier['id_reference']);
-                if ($carrierName === self::UNKNOWN_CARRIER) {
+                if (self::UNKNOWN_CARRIER === $carrierName) {
                     return $carrier['name'];
                 }
 

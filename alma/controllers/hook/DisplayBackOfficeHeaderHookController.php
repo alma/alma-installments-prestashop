@@ -1,6 +1,6 @@
 <?php
 /**
- * 2018-2023 Alma SAS
+ * 2018-2023 Alma SAS.
  *
  * THE MIT LICENSE
  *
@@ -21,7 +21,6 @@
  * @copyright 2018-2023 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
-
 namespace Alma\PrestaShop\Controllers\Hook;
 
 if (!defined('_PS_VERSION_')) {
@@ -40,7 +39,7 @@ use DateTime;
 class DisplayBackOfficeHeaderHookController extends FrontendHookController
 {
     /**
-     * Condition to run the Controller
+     * Condition to run the Controller.
      *
      * @return bool
      */
@@ -50,7 +49,7 @@ class DisplayBackOfficeHeaderHookController extends FrontendHookController
     }
 
     /**
-     * Run Controller
+     * Run Controller.
      *
      * @param array $params
      *

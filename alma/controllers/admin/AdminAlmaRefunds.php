@@ -1,6 +1,6 @@
 <?php
 /**
- * 2018-2023 Alma SAS
+ * 2018-2023 Alma SAS.
  *
  * THE MIT LICENSE
  *
@@ -21,7 +21,6 @@
  * @copyright 2018-2023 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
-
 use Alma\API\RequestError;
 use Alma\PrestaShop\API\ClientHelper;
 use Alma\PrestaShop\Utils\AjaxTrait;
@@ -50,7 +49,7 @@ class AdminAlmaRefundsController extends ModuleAdminController
     protected $json = true;
 
     /**
-     * Make refund over ajax request and display json on std output
+     * Make refund over ajax request and display json on std output.
      *
      * @return void
      *
@@ -75,7 +74,7 @@ class AdminAlmaRefundsController extends ModuleAdminController
             Logger::instance()->error($msg);
         }
 
-        if ($refundResult === false) {
+        if (false === $refundResult) {
             $this->ajaxFail(
                 $this->module->l('There was an error while processing the refund', 'AdminAlmaRefunds')
             );
@@ -127,7 +126,7 @@ class AdminAlmaRefundsController extends ModuleAdminController
     }
 
     /**
-     * Change Order status if refund is total
+     * Change Order status if refund is total.
      *
      * @param Order $order
      *
@@ -145,7 +144,7 @@ class AdminAlmaRefundsController extends ModuleAdminController
     }
 
     /**
-     * Bool if refund is total
+     * Bool if refund is total.
      *
      * @param string $refundType
      *
@@ -153,7 +152,7 @@ class AdminAlmaRefundsController extends ModuleAdminController
      */
     private function isTotalRefund($refundType)
     {
-        if ($refundType == 'total') {
+        if ('total' == $refundType) {
             return true;
         }
 
@@ -161,7 +160,7 @@ class AdminAlmaRefundsController extends ModuleAdminController
     }
 
     /**
-     * Amount of refund
+     * Amount of refund.
      *
      * @param string $refundType
      * @param Order $order

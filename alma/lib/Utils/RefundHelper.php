@@ -1,6 +1,6 @@
 <?php
 /**
- * 2018-2023 Alma SAS
+ * 2018-2023 Alma SAS.
  *
  * THE MIT LICENSE
  *
@@ -21,7 +21,6 @@
  * @copyright 2018-2023 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
-
 namespace Alma\PrestaShop\Utils;
 
 if (!defined('_PS_VERSION_')) {
@@ -29,12 +28,12 @@ if (!defined('_PS_VERSION_')) {
 }
 
 /**
- * Class RefundHelper
+ * Class RefundHelper.
  */
 class RefundHelper
 {
     /**
-     * Calculate total refund
+     * Calculate total refund.
      *
      * @param array $arrayRefunds
      * @param int $totalOrder

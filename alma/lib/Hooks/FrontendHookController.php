@@ -1,6 +1,6 @@
 <?php
 /**
- * 2018-2023 Alma SAS
+ * 2018-2023 Alma SAS.
  *
  * THE MIT LICENSE
  *
@@ -21,7 +21,6 @@
  * @copyright 2018-2023 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
-
 namespace Alma\PrestaShop\Hooks;
 
 if (!defined('_PS_VERSION_')) {
@@ -35,7 +34,7 @@ abstract class FrontendHookController extends HookController
 {
     public function canRun()
     {
-        $isLive = Settings::getActiveMode() === ALMA_MODE_LIVE;
+        $isLive = ALMA_MODE_LIVE === Settings::getActiveMode();
 
         // Front controllers can run if the module is properly configured ...
         return Settings::isFullyConfigured()

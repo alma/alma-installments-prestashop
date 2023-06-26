@@ -1,6 +1,6 @@
 <?php
 /**
- * 2018-2023 Alma SAS
+ * 2018-2023 Alma SAS.
  *
  * THE MIT LICENSE
  *
@@ -21,12 +21,11 @@
  * @copyright 2018-2023 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
-
 use Alma\PrestaShop\Utils\Logger;
 use PrestaShop\PrestaShop\Core\Localization\Exception\LocalizationException;
 
 /**
- * Converts a float price to its integer cents value, used by the API
+ * Converts a float price to its integer cents value, used by the API.
  *
  * @param $price float
  *
@@ -38,7 +37,7 @@ function almaPriceToCents($price)
 }
 
 /**
- * Same as above but with a string-based implementation, to try and kill the rounding problems subject for good
+ * Same as above but with a string-based implementation, to try and kill the rounding problems subject for good.
  *
  * @param $price float The price to convert to cents
  *
@@ -49,9 +48,9 @@ function almaPriceToCents_str($price)
     $priceStr = (string) $price;
     $parts = explode('.', $priceStr);
 
-    if (count($parts) == 1) {
+    if (1 == count($parts)) {
         $parts[] = '00';
-    } elseif (Tools::strlen($parts[1]) == 1) {
+    } elseif (1 == Tools::strlen($parts[1])) {
         $parts[1] .= '0';
     } elseif (Tools::strlen($parts[1]) > 2) {
         $parts[1] = Tools::substr($parts[1], 0, 2);
@@ -61,7 +60,7 @@ function almaPriceToCents_str($price)
 }
 
 /**
- * Converts an integer price in cents to a float price in the used currency units
+ * Converts an integer price in cents to a float price in the used currency units.
  *
  * @param $price int
  *
@@ -84,7 +83,7 @@ function almaSvgDataUrl($svg)
     if (!array_key_exists($svg, $_dataUrlCache)) {
         $content = file_get_contents($svg);
 
-        if ($content === false) {
+        if (false === $content) {
             return '';
         }
 
@@ -140,7 +139,7 @@ function almaFormatPrice($cents, $id_currency = null)
 }
 
 /**
- * Calculate percentage number by total
+ * Calculate percentage number by total.
  *
  * @param int $number
  * @param int $total
@@ -149,7 +148,7 @@ function almaFormatPrice($cents, $id_currency = null)
  */
 function almaCalculatePercentage($number, $total)
 {
-    if (!is_numeric($total) || $total == 0) {
+    if (!is_numeric($total) || 0 == $total) {
         return 0;
     }
 
@@ -157,7 +156,7 @@ function almaCalculatePercentage($number, $total)
 }
 
 /**
- * format date by locale
+ * format date by locale.
  *
  * @param string $locale
  * @param int $timestamp
@@ -180,7 +179,7 @@ function getDateFormat($locale, $timestamp)
 }
 
 /**
- * fallback for when IntlDateFormatter is not available
+ * fallback for when IntlDateFormatter is not available.
  *
  * @param string $timestamp
  *

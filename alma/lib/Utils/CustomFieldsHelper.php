@@ -1,6 +1,6 @@
 <?php
 /**
- * 2018-2023 Alma SAS
+ * 2018-2023 Alma SAS.
  *
  * THE MIT LICENSE
  *
@@ -21,7 +21,6 @@
  * @copyright 2018-2023 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
-
 namespace Alma\PrestaShop\Utils;
 
 if (!defined('_PS_VERSION_')) {
@@ -35,14 +34,14 @@ use Alma\PrestaShop\Forms\PaymentOnTriggeringAdminFormBuilder;
 use Language;
 
 /**
- * Class CustomFieldsHelper
+ * Class CustomFieldsHelper.
  */
 class CustomFieldsHelper
 {
     const SOURCE_CUSTOM_FIELDS = 'CustomFieldsHelper';
 
     /**
-     * Init default custom fileds in ps_configuration table
+     * Init default custom fileds in ps_configuration table.
      *
      * @return void
      */
@@ -57,7 +56,7 @@ class CustomFieldsHelper
     }
 
     /**
-     * Default custom fields
+     * Default custom fields.
      *
      * @return array
      */
@@ -90,7 +89,7 @@ class CustomFieldsHelper
     }
 
     /**
-     * Get all languages custom field by key config
+     * Get all languages custom field by key config.
      *
      * @param string $keyConfig
      * @param array $languages
@@ -110,7 +109,7 @@ class CustomFieldsHelper
     }
 
     /**
-     * Traitment for format array custom fields for read in front
+     * Traitment for format array custom fields for read in front.
      *
      * @param string $keyConfig
      * @param array $languages
@@ -130,7 +129,7 @@ class CustomFieldsHelper
     }
 
     /**
-     * Aggregate all languages if missing for custom fields
+     * Aggregate all languages if missing for custom fields.
      *
      * @param string $keyConfig
      *

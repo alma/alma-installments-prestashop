@@ -1,6 +1,6 @@
 <?php
 /**
- * 2018-2023 Alma SAS
+ * 2018-2023 Alma SAS.
  *
  * THE MIT LICENSE
  *
@@ -21,7 +21,6 @@
  * @copyright 2018-2023 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
-
 namespace Alma\PrestaShop\Model;
 
 use Alma\PrestaShop\Repositories\ProductRepository;
@@ -38,7 +37,7 @@ if (!defined('_PS_VERSION_')) {
 }
 
 /**
- * Class CartHelper
+ * Class CartHelper.
  */
 class CartHelper
 {
@@ -51,7 +50,7 @@ class CartHelper
     }
 
     /**
-     * Previous cart items of the customer
+     * Previous cart items of the customer.
      *
      * @param int $idCustomer
      *
@@ -90,7 +89,7 @@ class CartHelper
                 'purchase_amount' => almaPriceToCents($purchaseAmount),
                 'created' => strtotime($order['date_add']),
                 'payment_method' => $order['payment'],
-                'alma_payment_external_id' => $order['module'] === 'alma' ? $order['transaction_id'] : null,
+                'alma_payment_external_id' => 'alma' === $order['module'] ? $order['transaction_id'] : null,
                 'current_state' => $orderStateHelper->getNameById($order['current_state']),
                 'shipping_method' => $carrier->getParentCarrierNameById($cart->id_carrier),
                 'items' => $cartItems,
@@ -101,7 +100,7 @@ class CartHelper
     }
 
     /**
-     * Get ids order by customer id with limit (default = 10)
+     * Get ids order by customer id with limit (default = 10).
      *
      * @param int $idCustomer
      * @param int $limit

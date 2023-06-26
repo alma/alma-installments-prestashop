@@ -1,6 +1,6 @@
 <?php
 /**
- * 2018-2023 Alma SAS
+ * 2018-2023 Alma SAS.
  *
  * THE MIT LICENSE
  *
@@ -21,7 +21,6 @@
  * @copyright 2018-2023 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
-
 namespace Alma\PrestaShop\Utils;
 
 if (!defined('_PS_VERSION_')) {
@@ -145,7 +144,7 @@ class Settings
     }
 
     /**
-     * Get value ALMA_SHARE_OF_CHECKOUT_STATE
+     * Get value ALMA_SHARE_OF_CHECKOUT_STATE.
      *
      * @return string
      */
@@ -160,39 +159,39 @@ class Settings
     }
 
     /**
-     * Get true if the consent SoC isn't aswered
+     * Get true if the consent SoC isn't aswered.
      *
      * @return bool
      */
     public static function isShareOfCheckoutNoAnswered()
     {
-        return Configuration::get(ShareOfCheckoutAdminFormBuilder::ALMA_SHARE_OF_CHECKOUT_STATE) == ShareOfCheckoutAdminFormBuilder::ALMA_SHARE_OF_CHECKOUT_CONSENT_UNSET;
+        return ShareOfCheckoutAdminFormBuilder::ALMA_SHARE_OF_CHECKOUT_CONSENT_UNSET == Configuration::get(ShareOfCheckoutAdminFormBuilder::ALMA_SHARE_OF_CHECKOUT_STATE);
     }
 
     /**
-     * Get true if the settings SoC isn't saved
+     * Get true if the settings SoC isn't saved.
      *
      * @return bool
      */
     public static function isShareOfCheckoutSetting()
     {
-        return !(Configuration::get(ShareOfCheckoutAdminFormBuilder::ALMA_SHARE_OF_CHECKOUT_STATE) === false);
+        return !(false === Configuration::get(ShareOfCheckoutAdminFormBuilder::ALMA_SHARE_OF_CHECKOUT_STATE));
     }
 
     /**
-     * Get true if need to hide SoC form
+     * Get true if need to hide SoC form.
      *
      * @return bool
      */
     public static function shouldHideShareOfCheckoutForm()
     {
-        return (Settings::isShareOfCheckoutNoAnswered() && Settings::getActiveMode() === ALMA_MODE_LIVE)
-                || (!Settings::isShareOfCheckoutSetting() && Settings::getActiveMode() === ALMA_MODE_LIVE)
-                || Settings::getActiveMode() !== ALMA_MODE_LIVE;
+        return (Settings::isShareOfCheckoutNoAnswered() && ALMA_MODE_LIVE === Settings::getActiveMode())
+                || (!Settings::isShareOfCheckoutSetting() && ALMA_MODE_LIVE === Settings::getActiveMode())
+                || ALMA_MODE_LIVE !== Settings::getActiveMode();
     }
 
     /**
-     * Get the date of consent SoC in Prestashop database
+     * Get the date of consent SoC in Prestashop database.
      *
      * @return int|null
      */
@@ -202,7 +201,7 @@ class Settings
     }
 
     /**
-     * Get current timestamp
+     * Get current timestamp.
      *
      * @return int
      */
@@ -214,7 +213,7 @@ class Settings
     }
 
     /**
-     * Get API mode saved in Prestashop database
+     * Get API mode saved in Prestashop database.
      *
      * @return string
      */
@@ -224,14 +223,15 @@ class Settings
     }
 
     /**
-     * Get API key of mode selected
+     * Get API key of mode selected.
      *
      * @return string
+     *
      * @throws Exception
      */
     public static function getActiveAPIKey()
     {
-        if (self::getActiveMode() == ALMA_MODE_LIVE) {
+        if (ALMA_MODE_LIVE == self::getActiveMode()) {
             return self::getLiveKey();
         }
 
@@ -239,9 +239,10 @@ class Settings
     }
 
     /**
-     * Get API key Live
+     * Get API key Live.
      *
      * @return string|null
+     *
      * @throws Exception
      */
     public static function getLiveKey()
@@ -250,18 +251,20 @@ class Settings
         if (!$apiKey) {
             return false;
         }
-        if (strpos($apiKey, ApiKeyHelper::BEGIN_LIVE_API_KEY) !== false) {
+        if (false !== strpos($apiKey, ApiKeyHelper::BEGIN_LIVE_API_KEY)) {
             return $apiKey;
         }
 
         $encryption = new EncryptionHelper();
+
         return $encryption->decrypt($apiKey);
     }
 
     /**
-     * Get API key Test
+     * Get API key Test.
      *
      * @return string|null
+     *
      * @throws Exception
      */
     public static function getTestKey()
@@ -270,16 +273,17 @@ class Settings
         if (!$apiKey) {
             return false;
         }
-        if (strpos($apiKey, ApiKeyHelper::BEGIN_TEST_API_KEY) !== false) {
+        if (false !== strpos($apiKey, ApiKeyHelper::BEGIN_TEST_API_KEY)) {
             return $apiKey;
         }
 
         $encryption = new EncryptionHelper();
+
         return $encryption->decrypt($apiKey);
     }
 
     /**
-     * Get value ALMA_SHOW_DISABLED_BUTTON
+     * Get value ALMA_SHOW_DISABLED_BUTTON.
      *
      * @return bool
      */
@@ -289,7 +293,7 @@ class Settings
     }
 
     /**
-     * Get value ALMA_SHOW_ELIGIBILITY_MESSAGE
+     * Get value ALMA_SHOW_ELIGIBILITY_MESSAGE.
      *
      * @return bool
      */
@@ -299,7 +303,7 @@ class Settings
     }
 
     /**
-     * Get value ALMA_CART_WDGT_NOT_ELGBL
+     * Get value ALMA_CART_WDGT_NOT_ELGBL.
      *
      * @return bool
      */
@@ -309,7 +313,7 @@ class Settings
     }
 
     /**
-     * Get value ALMA_PRODUCT_WDGT_NOT_ELGBL
+     * Get value ALMA_PRODUCT_WDGT_NOT_ELGBL.
      *
      * @return bool
      */
@@ -319,7 +323,7 @@ class Settings
     }
 
     /**
-     * Get value ALMA_CATEGORIES_WDGT_NOT_ELGBL
+     * Get value ALMA_CATEGORIES_WDGT_NOT_ELGBL.
      *
      * @return bool
      */
@@ -329,7 +333,7 @@ class Settings
     }
 
     /**
-     * Get key description payment trigger
+     * Get key description payment trigger.
      *
      * @return string
      */
@@ -360,7 +364,7 @@ class Settings
     }
 
     /**
-     * Get locale by id_lang with condition NL for widget (provisional)
+     * Get locale by id_lang with condition NL for widget (provisional).
      *
      * @param int $idLang
      *
@@ -370,7 +374,7 @@ class Settings
     {
         $locale = Language::getIsoById($idLang);
 
-        if ($locale == 'nl') {
+        if ('nl' == $locale) {
             $locale = 'nl-NL';
         }
 
@@ -463,7 +467,7 @@ class Settings
     }
 
     /**
-     * Update ALMA_EXCLUDED_CATEGORIES value
+     * Update ALMA_EXCLUDED_CATEGORIES value.
      *
      * @param array $categories
      *
@@ -601,7 +605,7 @@ class Settings
     }
 
     /**
-     * Check if is deferred trigger by value in feeplans and enabled in config
+     * Check if is deferred trigger by value in feeplans and enabled in config.
      *
      * @param object $feePlans
      * @param string|null $key
@@ -629,7 +633,7 @@ class Settings
     }
 
     /**
-     * Fee plan from key
+     * Fee plan from key.
      *
      * @param string $key
      *

@@ -1,6 +1,6 @@
 <?php
 /**
- * 2018-2023 Alma SAS
+ * 2018-2023 Alma SAS.
  *
  * THE MIT LICENSE
  *
@@ -21,7 +21,6 @@
  * @copyright 2018-2023 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
-
 namespace Alma\PrestaShop\ShareOfCheckout;
 
 use Db;
@@ -56,7 +55,7 @@ class OrderHelper
     }
 
     /**
-     * Order Ids validated by date
+     * Order Ids validated by date.
      *
      * @param string $startDate
      * @param string $endDate
@@ -80,7 +79,7 @@ class OrderHelper
     }
 
     /**
-     * Order by date
+     * Order by date.
      *
      * @param string $startDate
      * @param string $endDate

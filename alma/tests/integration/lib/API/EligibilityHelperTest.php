@@ -1,6 +1,6 @@
 <?php
 /**
- * 2018-2023 Alma SAS
+ * 2018-2023 Alma SAS.
  *
  * THE MIT LICENSE
  *
@@ -21,7 +21,6 @@
  * @copyright 2018-2023 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
-
 namespace Alma\PrestaShop\Tests\integration\lib\API;
 
 use Alma\PrestaShop\API\EligibilityHelper;
@@ -34,7 +33,7 @@ use PHPUnit\Framework\TestCase;
 class EligibilityHelperTest extends TestCase
 {
     /**
-     * Return input to integration test testEligibilityCheck
+     * Return input to integration test testEligibilityCheck.
      *
      * @return array[]
      */

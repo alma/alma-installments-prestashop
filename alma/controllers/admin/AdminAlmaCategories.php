@@ -1,6 +1,6 @@
 <?php
 /**
- * 2018-2023 Alma SAS
+ * 2018-2023 Alma SAS.
  *
  * THE MIT LICENSE
  *
@@ -21,7 +21,6 @@
  * @copyright 2018-2023 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
-
 use Alma\PrestaShop\Utils\Settings;
 
 class AdminAlmaCategoriesController extends ModuleAdminController
@@ -95,7 +94,7 @@ class AdminAlmaCategoriesController extends ModuleAdminController
         $this->_select = 'a.`id_category`, b.`name`, b.`description`, b.`name` as `parent`, a.`id_category` as `excluded`';
         $this->_use_found_rows = false;
 
-        if (Shop::getContext() == Shop::CONTEXT_SHOP) {
+        if (Shop::CONTEXT_SHOP == Shop::getContext()) {
             $this->_join .= ' LEFT JOIN `' . _DB_PREFIX_ . 'category_shop` sa ON (a.`id_category` = sa.`id_category`';
             $this->_join .= ' AND sa.id_shop = ' . (int) $this->context->shop->id . ') ';
         } else {
@@ -104,12 +103,12 @@ class AdminAlmaCategoriesController extends ModuleAdminController
         }
 
         // we add restriction for shop
-        if (Shop::getContext() == Shop::CONTEXT_SHOP && Shop::isFeatureActive()) {
+        if (Shop::CONTEXT_SHOP == Shop::getContext() && Shop::isFeatureActive()) {
             $this->_where = ' AND sa.`id_shop` = ' . (int) Context::getContext()->shop->id;
         }
 
         // if we are not in a shop context, we remove the position column
-        if (Shop::isFeatureActive() && Shop::getContext() != Shop::CONTEXT_SHOP) {
+        if (Shop::isFeatureActive() && Shop::CONTEXT_SHOP != Shop::getContext()) {
             unset($this->fields_list['position']);
         }
     }
@@ -134,29 +133,29 @@ class AdminAlmaCategoriesController extends ModuleAdminController
 
         if (isset($this->list_id)) {
             foreach ($_POST as $key => $value) {
-                if ($value === '') {
+                if ('' === $value) {
                     unset($this->context->cookie->{$prefix . $key});
-                } elseif (stripos($key, $this->list_id . 'Filter_') === 0) {
+                } elseif (0 === stripos($key, $this->list_id . 'Filter_')) {
                     $this->context->cookie->{$prefix . $key} = !is_array($value) ? $value : json_encode($value);
-                } elseif (stripos($key, 'submitFilter') === 0) {
+                } elseif (0 === stripos($key, 'submitFilter')) {
                     $this->context->cookie->$key = !is_array($value) ? $value : json_encode($value);
                 }
             }
 
             foreach ($_GET as $key => $value) {
-                if (stripos($key, $this->list_id . 'Filter_') === 0) {
+                if (0 === stripos($key, $this->list_id . 'Filter_')) {
                     $this->context->cookie->{$prefix . $key} = !is_array($value) ? $value : json_encode($value);
-                } elseif (stripos($key, 'submitFilter') === 0) {
+                } elseif (0 === stripos($key, 'submitFilter')) {
                     $this->context->cookie->$key = !is_array($value) ? $value : json_encode($value);
                 }
-                if (stripos($key, $this->list_id . 'Orderby') === 0 && Validate::isOrderBy($value)) {
-                    if ($value === '' || $value == $this->_defaultOrderBy) {
+                if (0 === stripos($key, $this->list_id . 'Orderby') && Validate::isOrderBy($value)) {
+                    if ('' === $value || $value == $this->_defaultOrderBy) {
                         unset($this->context->cookie->{$prefix . $key});
                     } else {
                         $this->context->cookie->{$prefix . $key} = $value;
                     }
-                } elseif (stripos($key, $this->list_id . 'Orderway') === 0 && Validate::isOrderWay($value)) {
-                    if ($value === '' || $value == $this->_defaultOrderWay) {
+                } elseif (0 === stripos($key, $this->list_id . 'Orderway') && Validate::isOrderWay($value)) {
+                    if ('' === $value || $value == $this->_defaultOrderWay) {
                         unset($this->context->cookie->{$prefix . $key});
                     } else {
                         $this->context->cookie->{$prefix . $key} = $value;
@@ -181,7 +180,7 @@ class AdminAlmaCategoriesController extends ModuleAdminController
         foreach ($filters as $key => $value) {
             /* Extracting filters from $_POST on key filter_ */
             if (
-                $value != null
+                null != $value
                 && !strncmp($key, $prefix . $this->list_id . 'Filter_', 7 + Tools::strlen($prefix . $this->list_id))
             ) {
                 $key = Tools::substr($key, 7 + Tools::strlen($prefix . $this->list_id));
@@ -195,7 +194,7 @@ class AdminAlmaCategoriesController extends ModuleAdminController
                     } else {
                         $type = array_key_exists('type', $field) ? $field['type'] : false;
                     }
-                    if (($type == 'date' || $type == 'datetime') && is_string($value)) {
+                    if (('date' == $type || 'datetime' == $type) && is_string($value)) {
                         $value = json_decode($value, true);
                     }
                     $key = isset($tmp_tab[1]) ? $tmp_tab[0] . '.`' . $tmp_tab[1] . '`' : '`' . $tmp_tab[0] . '`';
@@ -241,25 +240,25 @@ class AdminAlmaCategoriesController extends ModuleAdminController
                         $check_key = ($key == $this->identifier || $key == '`' . $this->identifier . '`');
                         $alias = ($definition && !empty($definition['fields'][$filter]['shop'])) ? 'sa' : 'a';
 
-                        if ($type == 'int' || $type == 'bool') {
-                            if ($check_key || $key == '`active`') {
+                        if ('int' == $type || 'bool' == $type) {
+                            if ($check_key || '`active`' == $key) {
                                 $sql_filter .= ($alias . '.') . pSQL($key) . ' = ' . (int) $value . ' ';
                             } else {
                                 $sql_filter .= '' . pSQL($key) . ' = ' . (int) $value . ' ';
                             }
-                        } elseif ($type == 'decimal') {
+                        } elseif ('decimal' == $type) {
                             if ($check_key) {
                                 $sql_filter .= ($alias . '.') . pSQL($key) . ' = ' . (float) $value . ' ';
                             } else {
                                 $sql_filter .= '' . pSQL($key) . ' = ' . (float) $value . ' ';
                             }
-                        } elseif ($type == 'select') {
+                        } elseif ('select' == $type) {
                             if ($check_key) {
                                 $sql_filter .= ($alias . '.') . pSQL($key) . ' = \'' . pSQL($value) . '\' ';
                             } else {
                                 $sql_filter .= '' . pSQL($key) . ' = \'' . pSQL($value) . '\' ';
                             }
-                        } elseif ($type == 'price') {
+                        } elseif ('price' == $type) {
                             $value = (float) str_replace(',', '.', $value);
                             if ($check_key) {
                                 $sql_filter .= ($alias . '.') . pSQL($key) . ' = ' . pSQL(trim($value)) . ' ';
@@ -336,7 +335,7 @@ class AdminAlmaCategoriesController extends ModuleAdminController
     }
 
     /**
-     * No button action is table list
+     * No button action is table list.
      *
      * @return string
      */
@@ -346,7 +345,7 @@ class AdminAlmaCategoriesController extends ModuleAdminController
     }
 
     /**
-     * processBulkEnable REMOVE Excluded Categories from ALMA_EXCLUDED_CATEGORIES
+     * processBulkEnable REMOVE Excluded Categories from ALMA_EXCLUDED_CATEGORIES.
      *
      * @return void
      */
@@ -365,7 +364,7 @@ class AdminAlmaCategoriesController extends ModuleAdminController
     }
 
     /**
-     * processBulkEnable INSERT Excluded Categories in ALMA_EXCLUDED_CATEGORIES
+     * processBulkEnable INSERT Excluded Categories in ALMA_EXCLUDED_CATEGORIES.
      *
      * @return void
      */

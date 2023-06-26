@@ -1,6 +1,6 @@
 <?php
 /**
- * 2018-2023 Alma SAS
+ * 2018-2023 Alma SAS.
  *
  * THE MIT LICENSE
  *
@@ -21,7 +21,6 @@
  * @copyright 2018-2023 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
-
 namespace Alma\PrestaShop\API;
 
 if (!defined('_PS_VERSION_')) {
@@ -71,7 +70,7 @@ class ClientHelper
     }
 
     /**
-     * Check Alma client
+     * Check Alma client.
      *
      * @return Client
      */

@@ -1,6 +1,6 @@
 <?php
 /**
- * 2018-2023 Alma SAS
+ * 2018-2023 Alma SAS.
  *
  * THE MIT LICENSE
  *
@@ -21,7 +21,6 @@
  * @copyright 2018-2023 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
-
 use Alma\PrestaShop\Model\HookHelper;
 
 if (!defined('_PS_VERSION_')) {
@@ -105,7 +104,7 @@ class Alma extends PaymentModule
     }
 
     /**
-     * Check parent install result then add log errors if any
+     * Check parent install result then add log errors if any.
      *
      * @param $coreInstall
      *
@@ -154,7 +153,7 @@ class Alma extends PaymentModule
     }
 
     /**
-     * Try to register mandatory hooks
+     * Try to register mandatory hooks.
      *
      * @return bool
      */
@@ -200,7 +199,7 @@ class Alma extends PaymentModule
     }
 
     /**
-     * Check php lib dependencies and versions
+     * Check php lib dependencies and versions.
      *
      * @return bool
      */
@@ -276,7 +275,7 @@ class Alma extends PaymentModule
     }
 
     /**
-     * Add Alma in backoffice menu
+     * Add Alma in backoffice menu.
      *
      * @param string $class class controller
      * @param string $name tab title
@@ -289,7 +288,7 @@ class Alma extends PaymentModule
     private function installTab($class, $name, $parent = null, $position = null, $icon = null)
     {
         $tab = Tab::getInstanceFromClassName($class);
-        $tab->active = $name !== false;
+        $tab->active = false !== $name;
         $tab->class_name = $class;
         $tab->name = [];
 
@@ -434,7 +433,7 @@ class Alma extends PaymentModule
     }
 
     /**
-     * Hook action DisplayAdminAfterHeader
+     * Hook action DisplayAdminAfterHeader.
      */
     public function hookDisplayAdminAfterHeader($params)
     {

@@ -1,6 +1,6 @@
 <?php
 /**
- * 2018-2023 Alma SAS
+ * 2018-2023 Alma SAS.
  *
  * THE MIT LICENSE
  *
@@ -21,7 +21,6 @@
  * @copyright 2018-2023 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
-
 namespace Alma\PrestaShop\Hooks;
 
 if (!defined('_PS_VERSION_')) {
@@ -31,7 +30,7 @@ if (!defined('_PS_VERSION_')) {
 abstract class AdminHookController extends HookController
 {
     /**
-     * Checks if user is logged in as Employee
+     * Checks if user is logged in as Employee.
      *
      * @return bool
      */

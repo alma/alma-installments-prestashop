@@ -1,6 +1,6 @@
 <?php
 /**
- * 2018-2023 Alma SAS
+ * 2018-2023 Alma SAS.
  *
  * THE MIT LICENSE
  *
@@ -21,7 +21,6 @@
  * @copyright 2018-2023 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
-
 namespace Alma\PrestaShop\Controllers\Hook;
 
 if (!defined('_PS_VERSION_')) {
@@ -35,30 +34,30 @@ use Tools;
 class DisplayAdminAfterHeaderHookController extends FrontendHookController
 {
     /**
-     * Condition to run the Controller
+     * Condition to run the Controller.
      *
      * @return bool
      */
     public function canRun()
     {
-        $isLive = Settings::getActiveMode() === ALMA_MODE_LIVE;
+        $isLive = ALMA_MODE_LIVE === Settings::getActiveMode();
 
         return parent::canRun() &&
-            (Tools::strtolower($this->currentControllerName()) == 'admindashboard' ||
-            Tools::strtolower($this->currentControllerName()) == 'adminpsmbomodule' ||
-            Tools::strtolower($this->currentControllerName()) == 'adminmodulesnotifications' ||
-            Tools::strtolower($this->currentControllerName()) == 'adminmodulesupdates' ||
-            Tools::strtolower($this->currentControllerName()) == 'adminpsmboaddons' ||
-            Tools::strtolower($this->currentControllerName()) == 'adminmodulesmanage' ||
-            Tools::strtolower($this->currentControllerName()) == 'adminalmacategories' ||
-            Tools::getValue('configure') == 'alma' ||
-            Tools::getValue('module_name') == 'alma') &&
+            ('admindashboard' == Tools::strtolower($this->currentControllerName()) ||
+            'adminpsmbomodule' == Tools::strtolower($this->currentControllerName()) ||
+            'adminmodulesnotifications' == Tools::strtolower($this->currentControllerName()) ||
+            'adminmodulesupdates' == Tools::strtolower($this->currentControllerName()) ||
+            'adminpsmboaddons' == Tools::strtolower($this->currentControllerName()) ||
+            'adminmodulesmanage' == Tools::strtolower($this->currentControllerName()) ||
+            'adminalmacategories' == Tools::strtolower($this->currentControllerName()) ||
+            'alma' == Tools::getValue('configure') ||
+            'alma' == Tools::getValue('module_name')) &&
             $isLive &&
-            Settings::getMerchantId() != null;
+            null != Settings::getMerchantId();
     }
 
     /**
-     * Run Controller
+     * Run Controller.
      *
      * @param array $params
      *

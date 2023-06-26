@@ -1,6 +1,6 @@
 <?php
 /**
- * 2018-2023 Alma SAS
+ * 2018-2023 Alma SAS.
  *
  * THE MIT LICENSE
  *
@@ -21,7 +21,6 @@
  * @copyright 2018-2023 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
-
 namespace Alma\PrestaShop\Forms;
 
 use Alma\PrestaShop\Utils\SettingsCustomFields;
@@ -32,7 +31,7 @@ if (!defined('_PS_VERSION_')) {
 }
 
 /**
- * Class PaymentOnTriggeringAdminFormBuilder
+ * Class PaymentOnTriggeringAdminFormBuilder.
  */
 class PaymentOnTriggeringAdminFormBuilder extends AbstractAlmaAdminFormBuilder
 {

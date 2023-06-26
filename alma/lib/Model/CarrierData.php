@@ -1,6 +1,6 @@
 <?php
 /**
- * 2018-2023 Alma SAS
+ * 2018-2023 Alma SAS.
  *
  * THE MIT LICENSE
  *
@@ -21,7 +21,6 @@
  * @copyright 2018-2023 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
-
 namespace Alma\PrestaShop\Model;
 
 use Configuration;
@@ -58,7 +57,7 @@ class CarrierData
             $this->carriers = Db::getInstance()->executeS($sql);
 
             foreach ($this->carriers as $key => $carrier) {
-                if ($carrier['name'] == '0') {
+                if ('0' == $carrier['name']) {
                     $this->carriers[$key]['name'] = Configuration::get('PS_SHOP_NAME');
                 }
             }

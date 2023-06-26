@@ -1,6 +1,6 @@
 <?php
 /**
- * 2018-2023 Alma SAS
+ * 2018-2023 Alma SAS.
  *
  * THE MIT LICENSE
  *
@@ -21,7 +21,6 @@
  * @copyright 2018-2023 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
-
 namespace Alma\PrestaShop\ShareOfCheckout;
 
 use Alma\API\RequestError;
@@ -76,7 +75,7 @@ class ShareOfCheckoutHelper
     {
         $shareOfCheckoutEnabledDate = $this->getEnabledDate();
         if (
-            Settings::getShareOfChekcoutStatus() === ShareOfCheckoutAdminFormBuilder::ALMA_SHARE_OF_CHECKOUT_CONSENT_NO
+            ShareOfCheckoutAdminFormBuilder::ALMA_SHARE_OF_CHECKOUT_CONSENT_NO === Settings::getShareOfChekcoutStatus()
             || empty($shareOfCheckoutEnabledDate)
         ) {
             Logger::instance()->info('Share Of Checkout is disabled or invalide date');
@@ -100,7 +99,7 @@ class ShareOfCheckoutHelper
     }
 
     /**
-     * Put Payload to Share of Checkout
+     * Put Payload to Share of Checkout.
      *
      * @return void
      */
@@ -121,7 +120,7 @@ class ShareOfCheckoutHelper
     }
 
     /**
-     * Get last Share of Checkout
+     * Get last Share of Checkout.
      *
      * @return int
      */
@@ -139,7 +138,7 @@ class ShareOfCheckoutHelper
         } catch (RequestError $e) {
             Logger::instance()->error('Cannot get last date share of checkout: ' . $e->getMessage());
 
-            if ($e->response->responseCode == '404') {
+            if ('404' == $e->response->responseCode) {
                 Logger::instance()->info('First send to Share of checkout');
             }
 
@@ -150,7 +149,7 @@ class ShareOfCheckoutHelper
     }
 
     /**
-     * Total Orders to send
+     * Total Orders to send.
      *
      * @return array
      */
@@ -173,7 +172,7 @@ class ShareOfCheckoutHelper
     }
 
     /**
-     * Payment methods to send
+     * Payment methods to send.
      *
      * @return array
      */
@@ -205,9 +204,10 @@ class ShareOfCheckoutHelper
     }
 
     /**
-     * POST add consent Alma endpoint
+     * POST add consent Alma endpoint.
      *
      * @return void
+     *
      * @throws ShareOfCheckoutException
      */
     public function addConsent()
@@ -225,9 +225,10 @@ class ShareOfCheckoutHelper
     }
 
     /**
-     * DELETE consent Alma endpoint
+     * DELETE consent Alma endpoint.
      *
      * @return void
+     *
      * @throws ShareOfCheckoutException
      */
     public function removeConsent()
@@ -245,7 +246,7 @@ class ShareOfCheckoutHelper
     }
 
     /**
-     * handle the activation of Share of Checkout feature
+     * handle the activation of Share of Checkout feature.
      *
      * @param string $consentAttribute
      *
@@ -255,7 +256,7 @@ class ShareOfCheckoutHelper
     {
         $userConsent = Tools::getValue($consentAttribute);
 
-        if ($userConsent === ShareOfCheckoutAdminFormBuilder::ALMA_SHARE_OF_CHECKOUT_CONSENT_UNSET || !Settings::isShareOfCheckoutSetting()) {
+        if (ShareOfCheckoutAdminFormBuilder::ALMA_SHARE_OF_CHECKOUT_CONSENT_UNSET === $userConsent || !Settings::isShareOfCheckoutSetting()) {
             Settings::updateValue(ShareOfCheckoutAdminFormBuilder::ALMA_SHARE_OF_CHECKOUT_STATE, Settings::getShareOfChekcoutStatus());
             Settings::updateValue(ShareOfCheckoutAdminFormBuilder::ALMA_SHARE_OF_CHECKOUT_DATE, Settings::getTimeConsentShareOfCheckout());
 
@@ -270,14 +271,14 @@ class ShareOfCheckoutHelper
     }
 
     /**
-     * reset the activation of Share of Checkout feature
+     * reset the activation of Share of Checkout feature.
      *
      * @return void
      */
     public function resetShareOfCheckoutConsent()
     {
         try {
-            if (Tools::getValue(ApiAdminFormBuilder::ALMA_LIVE_API_KEY) !== Settings::getLiveKey() && Tools::getValue(ApiAdminFormBuilder::ALMA_LIVE_API_KEY) !== ApiKeyHelper::OBCUR_VALUE) {
+            if (Tools::getValue(ApiAdminFormBuilder::ALMA_LIVE_API_KEY) !== Settings::getLiveKey() && ApiKeyHelper::OBCUR_VALUE !== Tools::getValue(ApiAdminFormBuilder::ALMA_LIVE_API_KEY)) {
                 $this->removeConsent();
                 Configuration::deleteByName(ShareOfCheckoutAdminFormBuilder::ALMA_SHARE_OF_CHECKOUT_STATE);
                 Configuration::deleteByName(ShareOfCheckoutAdminFormBuilder::ALMA_SHARE_OF_CHECKOUT_DATE);
@@ -288,16 +289,17 @@ class ShareOfCheckoutHelper
     }
 
     /**
-     * Set the consent
+     * Set the consent.
      *
      * @param string $userConsent
      *
      * @return void
+     *
      * @throws ShareOfCheckoutException
      */
     private function setConsent($userConsent)
     {
-        if ($userConsent == ShareOfCheckoutAdminFormBuilder::ALMA_SHARE_OF_CHECKOUT_CONSENT_YES) {
+        if (ShareOfCheckoutAdminFormBuilder::ALMA_SHARE_OF_CHECKOUT_CONSENT_YES == $userConsent) {
             $this->setAcceptConsent();
 
             return;
@@ -307,9 +309,10 @@ class ShareOfCheckoutHelper
     }
 
     /**
-     * Set Accept Consent
+     * Set Accept Consent.
      *
      * @return void
+     *
      * @throws ShareOfCheckoutException
      */
     private function setAcceptConsent()
@@ -326,9 +329,10 @@ class ShareOfCheckoutHelper
     }
 
     /**
-     * Set refuse consent
+     * Set refuse consent.
      *
      * @return void
+     *
      * @throws ShareOfCheckoutException
      */
     private function setRefuseConsent()
@@ -339,7 +343,7 @@ class ShareOfCheckoutHelper
     }
 
     /**
-     * Array structure to send total orders
+     * Array structure to send total orders.
      *
      * @param array $currency
      *
@@ -355,7 +359,7 @@ class ShareOfCheckoutHelper
     }
 
     /**
-     * Array structure to send payment method orders
+     * Array structure to send payment method orders.
      *
      * @param array $currency
      *
@@ -416,7 +420,7 @@ class ShareOfCheckoutHelper
     }
 
     /**
-     * Get Currency ISO Code by ID
+     * Get Currency ISO Code by ID.
      *
      * @param string $id
      *
@@ -433,7 +437,7 @@ class ShareOfCheckoutHelper
     }
 
     /**
-     * Payload Share of Checkout
+     * Payload Share of Checkout.
      *
      * @return array
      */

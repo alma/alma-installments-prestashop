@@ -1,6 +1,6 @@
 <?php
 /**
- * 2018-2023 Alma SAS
+ * 2018-2023 Alma SAS.
  *
  * THE MIT LICENSE
  *
@@ -21,7 +21,6 @@
  * @copyright 2018-2023 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
-
 namespace Alma\PrestaShop\Model;
 
 if (!defined('_PS_VERSION_')) {
@@ -43,12 +42,12 @@ class ShippingData
         $addressId = $cart->id_address_delivery;
 
         $deliveryOption = $cart->getDeliveryOption(null, true);
-        if ($deliveryOption === false) {
+        if (false === $deliveryOption) {
             $deliveryOption = $cart->getDeliveryOption();
         }
 
         // We don't have any shipping information for the shipping address
-        if ($deliveryOption === false || !isset($deliveryOption[$addressId])) {
+        if (false === $deliveryOption || !isset($deliveryOption[$addressId])) {
             return null;
         }
 

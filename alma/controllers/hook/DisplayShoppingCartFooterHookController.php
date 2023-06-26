@@ -1,6 +1,6 @@
 <?php
 /**
- * 2018-2023 Alma SAS
+ * 2018-2023 Alma SAS.
  *
  * THE MIT LICENSE
  *
@@ -21,7 +21,6 @@
  * @copyright 2018-2023 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
-
 namespace Alma\PrestaShop\Controllers\Hook;
 
 if (!defined('_PS_VERSION_')) {
@@ -64,7 +63,7 @@ class DisplayShoppingCartFooterHookController extends FrontendHookController
             $installmentPlans = EligibilityHelper::eligibilityCheck($this->context);
             $isEligible = false;
             foreach ($installmentPlans as $plan) {
-                if ($plan->installmentsCount !== 1 && $plan->isEligible) {
+                if (1 !== $plan->installmentsCount && $plan->isEligible) {
                     $isEligible = true;
                     break;
                 }

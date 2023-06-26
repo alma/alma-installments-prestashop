@@ -1,6 +1,6 @@
 <?php
 /**
- * 2018-2023 Alma SAS
+ * 2018-2023 Alma SAS.
  *
  * THE MIT LICENSE
  *
@@ -21,7 +21,6 @@
  * @copyright 2018-2023 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
-
 namespace Alma\PrestaShop\Controllers\Hook;
 
 if (!defined('_PS_VERSION_')) {
@@ -85,8 +84,8 @@ class FrontHeaderHookController extends FrontendHookController
             // Cart widget
             if (
                 Settings::showEligibilityMessage()
-                && ($controller->php_self == 'order' && $controller->step == 0 || $controller->php_self == 'order-opc')
-                && (isset($controller->nbProducts) && $controller->nbProducts != 0)
+                && ('order' == $controller->php_self && 0 == $controller->step || 'order-opc' == $controller->php_self)
+                && (isset($controller->nbProducts) && 0 != $controller->nbProducts)
             ) {
                 if (version_compare(_PS_VERSION_, '1.5.6.2', '<')) {
                     $content .= '<link rel="stylesheet" href="' . $widgetsCssUrl . '">';
@@ -97,7 +96,7 @@ class FrontHeaderHookController extends FrontendHookController
                 $controller->addJS($widgetsJsUrl);
                 $controller->addJS($this->module->_path . $cartScriptPath);
             } elseif (Settings::showProductEligibility()
-                && ($controller->php_self == 'product' || 'ProductController' == get_class($controller))) {
+                && ('product' == $controller->php_self || 'ProductController' == get_class($controller))) {
                 // Product widget
                 if (version_compare(_PS_VERSION_, '1.5.6.2', '<')) {
                     $content .= '<link rel="stylesheet" href="' . $widgetsCssUrl . '">';
@@ -114,7 +113,7 @@ class FrontHeaderHookController extends FrontendHookController
             $cssPath = "modules/$moduleName/$productCssPath";
             $cartScriptPath = "modules/$moduleName/$cartScriptPath";
 
-            if ($controller->php_self == 'cart' && Settings::showEligibilityMessage()) {
+            if ('cart' == $controller->php_self && Settings::showEligibilityMessage()) {
                 $controller->registerStylesheet('alma-product-css', $cssPath);
                 $controller->registerJavascript('alma-cart-script', $cartScriptPath, ['priority' => 1000]);
             } else {

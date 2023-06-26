@@ -1,6 +1,6 @@
 <?php
 /**
- * 2018-2023 Alma SAS
+ * 2018-2023 Alma SAS.
  *
  * THE MIT LICENSE
  *
@@ -21,7 +21,6 @@
  * @copyright 2018-2023 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
-
 namespace Alma\PrestaShop\Repositories;
 
 use Cart;
@@ -42,7 +41,7 @@ if (!defined('_PS_VERSION_')) {
 class ProductRepository
 {
     /**
-     * Get the product combinations
+     * Get the product combinations.
      *
      * @param Cart $cart
      * @param array $products
@@ -118,6 +117,7 @@ class ProductRepository
 
     /**
      * @param array $products
+     *
      * @return array
      */
     public function getProductsDetails($products)
@@ -144,7 +144,7 @@ class ProductRepository
             return $productsDetails;
         }
 
-        if ($results !== false) {
+        if (false !== $results) {
             while ($result = $db->nextRow($results)) {
                 $productsDetails[(int) $result['id_product']] = $result;
             }

@@ -1,6 +1,6 @@
 <?php
 /**
- * 2018-2023 Alma SAS
+ * 2018-2023 Alma SAS.
  *
  * THE MIT LICENSE
  *
@@ -21,7 +21,6 @@
  * @copyright 2018-2023 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
-
 namespace Alma\PrestaShop\Tests\Unit\Lib\ShareOfCheckout;
 
 use Alma\PrestaShop\ShareOfCheckout\OrderHelper;
@@ -63,7 +62,7 @@ class ShareOfCheckoutHelperTest extends TestCase
     }
 
     /**
-     * test get Payload
+     * test get Payload.
      *
      * @dataProvider ordersGetPayload
      *
@@ -82,7 +81,7 @@ class ShareOfCheckoutHelperTest extends TestCase
     }
 
     /**
-     * test Payment methods
+     * test Payment methods.
      *
      * @dataProvider ordersTotalPaymentMethods
      *
@@ -99,7 +98,7 @@ class ShareOfCheckoutHelperTest extends TestCase
     }
 
     /**
-     * test Payment methods
+     * test Payment methods.
      *
      * @dataProvider ordersTotalOrders
      *

@@ -1,6 +1,6 @@
 <?php
 /**
- * 2018-2023 Alma SAS
+ * 2018-2023 Alma SAS.
  *
  * THE MIT LICENSE
  *
@@ -21,7 +21,6 @@
  * @copyright 2018-2023 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
-
 namespace Alma\PrestaShop\Utils;
 
 use Context;
@@ -110,7 +109,7 @@ class LocaleHelper
     }
 
     /**
-     * Get translation by file iso if exist
+     * Get translation by file iso if exist.
      *
      * @param array $string
      * @param string $source

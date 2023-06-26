@@ -1,6 +1,6 @@
 <?php
 /**
- * 2018-2023 Alma SAS
+ * 2018-2023 Alma SAS.
  *
  * THE MIT LICENSE
  *
@@ -21,7 +21,6 @@
  * @copyright 2018-2023 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
-
 namespace Alma\PrestaShop\Controllers\Hook;
 
 if (!defined('_PS_VERSION_')) {
@@ -61,7 +60,7 @@ final class GetContentHookController extends AdminHookController
     protected $module;
 
     /**
-     * GetContentHook Controller construct
+     * GetContentHook Controller construct.
      */
     public function __construct($module)
     {
@@ -85,14 +84,14 @@ final class GetContentHookController extends AdminHookController
         $liveKey = trim(Tools::getValue(ApiAdminFormBuilder::ALMA_LIVE_API_KEY));
         $testKey = trim(Tools::getValue(ApiAdminFormBuilder::ALMA_TEST_API_KEY));
 
-        if ((empty($liveKey) && $apiMode == ALMA_MODE_LIVE) || (empty($testKey) && $apiMode == ALMA_MODE_TEST)) {
+        if ((empty($liveKey) && ALMA_MODE_LIVE == $apiMode) || (empty($testKey) && ALMA_MODE_TEST == $apiMode)) {
             $this->context->smarty->assign('validation_error', "missing_key_for_{$apiMode}_mode");
 
             return $this->module->display($this->module->file, 'getContent.tpl');
         }
 
         $credentialsError = null;
-        if (($liveKey != ApiKeyHelper::OBCUR_VALUE && $apiMode == ALMA_MODE_LIVE) || ($testKey != ApiKeyHelper::OBCUR_VALUE && $apiMode == ALMA_MODE_TEST)) {
+        if ((ApiKeyHelper::OBCUR_VALUE != $liveKey && ALMA_MODE_LIVE == $apiMode) || (ApiKeyHelper::OBCUR_VALUE != $testKey && ALMA_MODE_TEST == $apiMode)) {
             $credentialsError = $this->credentialsError($apiMode, $liveKey, $testKey);
         }
         if ($credentialsError && array_key_exists('error', $credentialsError)) {
@@ -381,7 +380,7 @@ final class GetContentHookController extends AdminHookController
     }
 
     /**
-     * Check if Api key are obscur
+     * Check if Api key are obscur.
      *
      * @param string $apiKey
      * @param string $mode
@@ -390,13 +389,13 @@ final class GetContentHookController extends AdminHookController
      */
     private function setKeyIfValueIsNotObscur($apiKey, $mode)
     {
-        if ($apiKey === ApiKeyHelper::OBCUR_VALUE) {
+        if (ApiKeyHelper::OBCUR_VALUE === $apiKey) {
             return;
         }
 
-        if ($mode === ALMA_MODE_LIVE) {
+        if (ALMA_MODE_LIVE === $mode) {
             $this->apiKeyHelper->setLiveApiKey($apiKey);
-        } elseif ($mode === ALMA_MODE_TEST) {
+        } elseif (ALMA_MODE_TEST === $mode) {
             $this->apiKeyHelper->setTestApiKey($apiKey);
         }
     }
@@ -406,8 +405,8 @@ final class GetContentHookController extends AdminHookController
         $modes = [ALMA_MODE_TEST, ALMA_MODE_LIVE];
 
         foreach ($modes as $mode) {
-            $key = ($mode == ALMA_MODE_LIVE ? $liveKey : $testKey);
-            if (!$key || $key === ApiKeyHelper::OBCUR_VALUE) {
+            $key = (ALMA_MODE_LIVE == $mode ? $liveKey : $testKey);
+            if (!$key || ApiKeyHelper::OBCUR_VALUE === $key) {
                 continue;
             }
 
@@ -423,7 +422,7 @@ final class GetContentHookController extends AdminHookController
             try {
                 $merchant = $alma->merchants->me();
             } catch (RequestError $e) {
-                if ($e->response && $e->response->responseCode === 401) {
+                if ($e->response && 401 === $e->response->responseCode) {
                     $this->context->smarty->assign('validation_error', "{$mode}_authentication_error");
 
                     $errorMessage = $this->module->display($this->module->file, 'getContent.tpl');
@@ -688,7 +687,7 @@ final class GetContentHookController extends AdminHookController
     {
         $key = trim(Settings::getActiveAPIKey());
 
-        return $key == '' || $key == null;
+        return '' == $key || null == $key;
     }
 
     public function run($params)

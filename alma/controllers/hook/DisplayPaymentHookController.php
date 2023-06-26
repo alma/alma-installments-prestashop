@@ -1,6 +1,6 @@
 <?php
 /**
- * 2018-2023 Alma SAS
+ * 2018-2023 Alma SAS.
  *
  * THE MIT LICENSE
  *
@@ -21,7 +21,6 @@
  * @copyright 2018-2023 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
-
 namespace Alma\PrestaShop\Controllers\Hook;
 
 if (!defined('_PS_VERSION_')) {
@@ -42,7 +41,7 @@ use Tools;
 class DisplayPaymentHookController extends FrontendHookController
 {
     /**
-     * Payment option for Hook DisplayPayment (Prestashop 1.6)
+     * Payment option for Hook DisplayPayment (Prestashop 1.6).
      *
      * @param array $params
      *
@@ -83,7 +82,7 @@ class DisplayPaymentHookController extends FrontendHookController
                 'taeg' => $plan->annualInterestRate,
             ];
             $isDeferred = Settings::isDeferred($plan);
-            $isPayNow = $key === PlanHelper::ALMA_KEY_PAYNOW;
+            $isPayNow = PlanHelper::ALMA_KEY_PAYNOW === $key;
 
             if (!$plan->isEligible) {
                 if ($feePlans->$key->enabled && Settings::showDisabledButton()) {
@@ -142,7 +141,7 @@ class DisplayPaymentHookController extends FrontendHookController
     }
 
     /**
-     * Text of one liner installment
+     * Text of one liner installment.
      *
      * @param array $plans
      * @param int $idLang

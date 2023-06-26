@@ -1,6 +1,6 @@
 <?php
 /**
- * 2018-2023 Alma SAS
+ * 2018-2023 Alma SAS.
  *
  * THE MIT LICENSE
  *
@@ -21,7 +21,6 @@
  * @copyright 2018-2023 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
-
 namespace Alma\PrestaShop\Forms;
 
 use Alma\API\Entities\FeePlan;
@@ -32,7 +31,7 @@ if (!defined('_PS_VERSION_')) {
 }
 
 /**
- * Class PnxAdminFormBuilder
+ * Class PnxAdminFormBuilder.
  */
 class PnxAdminFormBuilder extends AbstractAlmaAdminFormBuilder
 {
@@ -248,6 +247,6 @@ class PnxAdminFormBuilder extends AbstractAlmaAdminFormBuilder
     {
         $enable = isset($installmentsPlans->$key->enabled) ? $installmentsPlans->$key->enabled : 0;
 
-        return $enable == 1;
+        return 1 == $enable;
     }
 }

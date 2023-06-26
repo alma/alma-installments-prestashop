@@ -1,6 +1,6 @@
 <?php
 /**
- * 2018-2023 Alma SAS
+ * 2018-2023 Alma SAS.
  *
  * THE MIT LICENSE
  *
@@ -21,7 +21,6 @@
  * @copyright 2018-2023 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
-
 namespace Alma\PrestaShop\Controllers\Hook;
 
 if (!defined('_PS_VERSION_')) {
@@ -50,7 +49,7 @@ final class DisplayRefundsHookController extends AdminHookController
     public $order;
 
     /**
-     * Run Hook for show block Refund in Order page if is payment Alma
+     * Run Hook for show block Refund in Order page if is payment Alma.
      *
      * @param array $params
      *
@@ -172,7 +171,7 @@ final class DisplayRefundsHookController extends AdminHookController
     private function getPayment($order)
     {
         $alma = ClientHelper::defaultInstance();
-        if ($order->module !== 'alma' || !$alma) {
+        if ('alma' !== $order->module || !$alma) {
             throw new PaymentNotFoundException('Alma is not available');
         }
         $orderPayment = $this->getOrderPaymentOrFail($order);
@@ -188,7 +187,7 @@ final class DisplayRefundsHookController extends AdminHookController
     }
 
     /**
-     * Get the name of file for template block refund order page
+     * Get the name of file for template block refund order page.
      *
      * @return string as template name
      */

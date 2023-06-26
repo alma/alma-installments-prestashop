@@ -1,6 +1,6 @@
 <?php
 /**
- * 2018-2023 Alma SAS
+ * 2018-2023 Alma SAS.
  *
  * THE MIT LICENSE
  *
@@ -21,7 +21,6 @@
  * @copyright 2018-2023 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
-
 namespace Alma\PrestaShop\Controllers\Hook;
 
 if (!defined('_PS_VERSION_')) {
@@ -40,18 +39,18 @@ class DisplayProductPriceBlockHookController extends FrontendHookController
     public function canRun()
     {
         return parent::canRun() &&
-            Tools::strtolower($this->currentControllerName()) == 'product' &&
+            'product' == Tools::strtolower($this->currentControllerName()) &&
             Settings::showProductEligibility() &&
-            Settings::getMerchantId() != null;
+            null != Settings::getMerchantId();
     }
 
     public function run($params)
     {
         if (array_key_exists('type', $params)) {
             if (version_compare(_PS_VERSION_, '1.7', '>')) {
-                $skip = $params['type'] === 'price' || (!in_array($params['type'], ['price', 'after_price']));
+                $skip = 'price' === $params['type'] || (!in_array($params['type'], ['price', 'after_price']));
             } elseif (version_compare(_PS_VERSION_, '1.6', '>')) {
-                $skip = $params['type'] !== 'after_price';
+                $skip = 'after_price' !== $params['type'];
             } else {
                 $skip = !in_array($params['type'], ['price', 'after_price']);
             }
@@ -90,7 +89,7 @@ class DisplayProductPriceBlockHookController extends FrontendHookController
             } else {
                 $quantity = max((int) $productParams['minimal_quantity'], (int) $productParams['quantity_wanted']);
             }
-            if ($quantity === 0) {
+            if (0 === $quantity) {
                 $quantity = 1;
             }
 
@@ -109,7 +108,7 @@ class DisplayProductPriceBlockHookController extends FrontendHookController
 
             // Being able to use `quantity_wanted` here means we don't have to reload price on the front-end
             $price *= $quantity;
-            $refreshPrice = $productAttributeId === null;
+            $refreshPrice = null === $productAttributeId;
         }
 
         if (Tools::getValue('id_product') != $productId) {

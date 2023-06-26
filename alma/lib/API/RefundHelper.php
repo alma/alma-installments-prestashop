@@ -1,6 +1,6 @@
 <?php
 /**
- * 2018-2023 Alma SAS
+ * 2018-2023 Alma SAS.
  *
  * THE MIT LICENSE
  *
@@ -21,7 +21,6 @@
  * @copyright 2018-2023 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
-
 namespace Alma\PrestaShop\API;
 
 use Alma\PrestaShop\Utils\Logger;
@@ -49,7 +48,7 @@ class RefundHelper
     private $paymentId;
 
     /**
-     * construct RefundHelper
+     * construct RefundHelper.
      *
      * @param Alma $module
      * @param Cart $cart
@@ -64,7 +63,7 @@ class RefundHelper
     }
 
     /**
-     * Refund for Mismatch
+     * Refund for Mismatch.
      *
      * @return void
      *
@@ -88,11 +87,12 @@ class RefundHelper
     }
 
     /**
-     * Make fullRefund
+     * Make fullRefund.
      *
      * @param $id
      * @param string $merchantReference
      * @param string $comment
+     *
      * @return void
      *
      * @throws RefundException

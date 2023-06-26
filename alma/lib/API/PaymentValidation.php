@@ -1,6 +1,6 @@
 <?php
 /**
- * 2018-2023 Alma SAS
+ * 2018-2023 Alma SAS.
  *
  * THE MIT LICENSE
  *
@@ -21,7 +21,6 @@
  * @copyright 2018-2023 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
-
 namespace Alma\PrestaShop\API;
 
 use Alma\Api\Entities\Instalment;
@@ -76,6 +75,7 @@ class PaymentValidation
      * @param $almaPaymentId
      *
      * @return string URL to redirect the customer to
+     *
      * @throws PaymentValidationError
      * @throws PrestaShopException
      * @throws RefundException
@@ -97,7 +97,7 @@ class PaymentValidation
 
         // Check if cart exists and all fields are set
         $cart = new Cart($payment->custom_data['cart_id']);
-        if (!$cart || $cart->id_customer == 0 || $cart->id_address_delivery == 0 || $cart->id_address_invoice == 0) {
+        if (!$cart || 0 == $cart->id_customer || 0 == $cart->id_address_delivery || 0 == $cart->id_address_invoice) {
             Logger::instance()->error("[Alma] Payment validation error: Cart {$cart->id} does not look valid.");
             throw new PaymentValidationError($cart, 'cart_invalid');
         }
@@ -167,7 +167,7 @@ class PaymentValidation
 
             $firstInstalment = $payment->payment_plan[0];
             if (!in_array($payment->state, [Payment::STATE_IN_PROGRESS, Payment::STATE_PAID])
-                || $firstInstalment->state !== Instalment::STATE_PAID
+                || Instalment::STATE_PAID !== $firstInstalment->state
             ) {
                 try {
                     $alma->payments->flagAsPotentialFraud($almaPaymentId, Payment::FRAUD_STATE_ERROR);
@@ -193,7 +193,7 @@ class PaymentValidation
                     $days
                 );
             } else {
-                if ($installmentCount === 1) {
+                if (1 === $installmentCount) {
                     $paymentMode = $this->module->l('Alma - Pay now', 'paymentvalidation');
                 } else {
                     $paymentMode = sprintf(
@@ -279,7 +279,7 @@ class PaymentValidation
     /**
      * We have to temporary update the customer object
      * in context to prevent amount_mismatch error
-     * When calculating cart amount from an IPN call
+     * When calculating cart amount from an IPN call.
      *
      * @param Cart $cart
      * @param Customer $cart

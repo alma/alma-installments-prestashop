@@ -1,6 +1,6 @@
 <?php
 /**
- * 2018-2023 Alma SAS
+ * 2018-2023 Alma SAS.
  *
  * THE MIT LICENSE
  *
@@ -21,7 +21,6 @@
  * @copyright 2018-2023 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
-
 namespace Alma\PrestaShop\Controllers\Hook;
 
 if (!defined('_PS_VERSION_')) {
@@ -46,7 +45,7 @@ final class StateHookController extends AdminHookController
     use OrderDataTrait;
 
     /**
-     * Checks if user is logged in as Employee or is an API Webservice call
+     * Checks if user is logged in as Employee or is an API Webservice call.
      *
      * When we check if is an API user, we assume that the API user has already
      * the good rights because when canRun is called, actions linked to the hook
@@ -60,7 +59,7 @@ final class StateHookController extends AdminHookController
     }
 
     /**
-     * Execute refund or trigger payment on change state
+     * Execute refund or trigger payment on change state.
      *
      * @param $params
      *
@@ -71,7 +70,7 @@ final class StateHookController extends AdminHookController
     {
         $order = new Order($params['id_order']);
         $newStatus = $params['newOrderStatus'];
-        if ($order->module !== 'alma') {
+        if ('alma' !== $order->module) {
             return;
         }
         if ($newStatus->id == Configuration::get('PS_OS_REFUND')) {
@@ -107,7 +106,7 @@ final class StateHookController extends AdminHookController
     }
 
     /**
-     * Query Refund
+     * Query Refund.
      *
      * @param Client $alma
      * @param string $id_payment
@@ -128,7 +127,7 @@ final class StateHookController extends AdminHookController
     }
 
     /**
-     * Query Trigger Payment
+     * Query Trigger Payment.
      *
      * @param Client $alma
      * @param string $id_payment

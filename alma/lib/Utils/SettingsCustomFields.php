@@ -1,6 +1,6 @@
 <?php
 /**
- * 2018-2023 Alma SAS
+ * 2018-2023 Alma SAS.
  *
  * THE MIT LICENSE
  *
@@ -21,7 +21,6 @@
  * @copyright 2018-2023 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
-
 namespace Alma\PrestaShop\Utils;
 
 if (!defined('_PS_VERSION_')) {
@@ -34,12 +33,12 @@ use Alma\PrestaShop\Forms\PaymentOnTriggeringAdminFormBuilder;
 use Language;
 
 /**
- * Class SettingsCustomFields
+ * Class SettingsCustomFields.
  */
 class SettingsCustomFields
 {
     /**
-     * Get array custom titles button
+     * Get array custom titles button.
      *
      * @return array
      */
@@ -49,7 +48,7 @@ class SettingsCustomFields
     }
 
     /**
-     * Get custom title button by id lang
+     * Get custom title button by id lang.
      *
      * @param int $idLang
      *
@@ -66,7 +65,7 @@ class SettingsCustomFields
     }
 
     /**
-     * Get array custom description button
+     * Get array custom description button.
      *
      * @return array
      */
@@ -76,7 +75,7 @@ class SettingsCustomFields
     }
 
     /**
-     * Get custom description button by id lang
+     * Get custom description button by id lang.
      *
      * @param int $idLang
      *
@@ -93,7 +92,7 @@ class SettingsCustomFields
     }
 
     /**
-     * Get array custom title deferred button
+     * Get array custom title deferred button.
      *
      * @return array
      */
@@ -103,7 +102,7 @@ class SettingsCustomFields
     }
 
     /**
-     * Get custom title deferred button by id lang
+     * Get custom title deferred button by id lang.
      *
      * @param int $idLang
      *
@@ -120,7 +119,7 @@ class SettingsCustomFields
     }
 
     /**
-     * Get array custom description deferred button
+     * Get array custom description deferred button.
      *
      * @return array
      */
@@ -130,7 +129,7 @@ class SettingsCustomFields
     }
 
     /**
-     * Get custom description deferred button by id lang
+     * Get custom description deferred button by id lang.
      *
      * @param int $idLang
      *
@@ -147,7 +146,7 @@ class SettingsCustomFields
     }
 
     /**
-     * Get array custom titles button
+     * Get array custom titles button.
      *
      * @return array
      */
@@ -157,7 +156,7 @@ class SettingsCustomFields
     }
 
     /**
-     * Get custom title button by id lang
+     * Get custom title button by id lang.
      *
      * @param int $idLang
      *
@@ -174,7 +173,7 @@ class SettingsCustomFields
     }
 
     /**
-     * Get array custom description button
+     * Get array custom description button.
      *
      * @return array
      */
@@ -184,7 +183,7 @@ class SettingsCustomFields
     }
 
     /**
-     * Get custom description button by id lang
+     * Get custom description button by id lang.
      *
      * @param int $idLang
      *
@@ -201,7 +200,7 @@ class SettingsCustomFields
     }
 
     /**
-     * Get array custom titles button
+     * Get array custom titles button.
      *
      * @return array
      */
@@ -211,7 +210,7 @@ class SettingsCustomFields
     }
 
     /**
-     * Get custom title button by id lang
+     * Get custom title button by id lang.
      *
      * @param int $idLang
      *
@@ -228,7 +227,7 @@ class SettingsCustomFields
     }
 
     /**
-     * Get array custom description button
+     * Get array custom description button.
      *
      * @return array
      */
@@ -238,7 +237,7 @@ class SettingsCustomFields
     }
 
     /**
-     * Get custom description button by id lang
+     * Get custom description button by id lang.
      *
      * @param int $idLang
      *
@@ -255,7 +254,7 @@ class SettingsCustomFields
     }
 
     /**
-     * Get array custom no eligible categories message
+     * Get array custom no eligible categories message.
      *
      * @return array
      */
@@ -265,7 +264,7 @@ class SettingsCustomFields
     }
 
     /**
-     * Get custom no eligible categories message by id lang
+     * Get custom no eligible categories message by id lang.
      *
      * @param int $idLang
      *
@@ -282,7 +281,7 @@ class SettingsCustomFields
     }
 
     /**
-     * Get custom description payment trigger
+     * Get custom description payment trigger.
      *
      * @return array
      */
@@ -299,7 +298,7 @@ class SettingsCustomFields
     }
 
     /**
-     * Get custom description payment trigger by id lang
+     * Get custom description payment trigger by id lang.
      *
      * @param int $idLang
      *

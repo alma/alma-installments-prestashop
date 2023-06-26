@@ -1,6 +1,6 @@
 <?php
 /**
- * 2018-2023 Alma SAS
+ * 2018-2023 Alma SAS.
  *
  * THE MIT LICENSE
  *
@@ -21,7 +21,6 @@
  * @copyright 2018-2023 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
-
 namespace Alma\PrestaShop\Utils;
 
 use Context;
@@ -39,7 +38,7 @@ if (!defined('_PS_VERSION_')) {
 class LinkHelper
 {
     /**
-     * Link Dashboard Alma module
+     * Link Dashboard Alma module.
      *
      * @return string
      */

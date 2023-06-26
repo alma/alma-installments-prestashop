@@ -1,6 +1,6 @@
 <?php
 /**
- * 2018-2023 Alma SAS
+ * 2018-2023 Alma SAS.
  *
  * THE MIT LICENSE
  *
@@ -21,7 +21,6 @@
  * @copyright 2018-2023 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
-
 namespace Alma\PrestaShop\Model;
 
 if (!defined('_PS_VERSION_')) {
@@ -59,9 +58,9 @@ class PaymentData
     public static function dataFromCart($cart, $context, $feePlans, $forPayment = false)
     {
         if ($forPayment && (
-            $cart->id_customer == 0 ||
-            $cart->id_address_delivery == 0 ||
-            $cart->id_address_invoice == 0
+            0 == $cart->id_customer ||
+            0 == $cart->id_address_delivery ||
+            0 == $cart->id_address_invoice
         )) {
             Logger::instance()->warning("[Alma] Missing Customer ID or Delivery/Billing address ID for Cart {$cart->id}");
         }
@@ -129,7 +128,7 @@ class PaymentData
             'state_province' => null,
         ];
 
-        if ($customerData['birth_date'] == '0000-00-00') {
+        if ('0000-00-00' == $customerData['birth_date']) {
             $customerData['birth_date'] = null;
         }
 

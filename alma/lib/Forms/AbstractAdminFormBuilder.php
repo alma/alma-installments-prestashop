@@ -1,6 +1,6 @@
 <?php
 /**
- * 2018-2023 Alma SAS
+ * 2018-2023 Alma SAS.
  *
  * THE MIT LICENSE
  *
@@ -21,7 +21,6 @@
  * @copyright 2018-2023 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
-
 namespace Alma\PrestaShop\Forms;
 
 use Alma\PrestaShop\Utils\ApiKeyHelper;
@@ -51,7 +50,7 @@ abstract class AbstractAdminFormBuilder
     }
 
     /**
-     * Form Configuration
+     * Form Configuration.
      *
      * @return array built form
      */
@@ -67,7 +66,7 @@ abstract class AbstractAdminFormBuilder
     }
 
     /**
-     * Input Switch Form Configuration
+     * Input Switch Form Configuration.
      *
      * @return array inputSwitchForm
      */
@@ -104,7 +103,7 @@ abstract class AbstractAdminFormBuilder
     }
 
     /**
-     * Input Switch Form Configuration
+     * Input Switch Form Configuration.
      *
      * @return array inputSwitchForm
      */
@@ -143,7 +142,7 @@ abstract class AbstractAdminFormBuilder
     }
 
     /**
-     * Input Radio Form Configuration
+     * Input Radio Form Configuration.
      *
      * @return array inputRadioForm
      */
@@ -171,7 +170,7 @@ abstract class AbstractAdminFormBuilder
     }
 
     /**
-     * Input Text Form Configuration
+     * Input Text Form Configuration.
      *
      * @return array inputTextForm
      */
@@ -199,7 +198,7 @@ abstract class AbstractAdminFormBuilder
     }
 
     /**
-     * Input Text Form Configuration
+     * Input Text Form Configuration.
      *
      * @return array inputTextForm
      */
@@ -227,7 +226,7 @@ abstract class AbstractAdminFormBuilder
     }
 
     /**
-     * Input Number Form Configuration
+     * Input Number Form Configuration.
      *
      * @return array inputNumberForm
      */
@@ -256,7 +255,7 @@ abstract class AbstractAdminFormBuilder
     }
 
     /**
-     * Input Select Form Configuration
+     * Input Select Form Configuration.
      *
      * @return array inputSelectForm
      */
@@ -277,7 +276,7 @@ abstract class AbstractAdminFormBuilder
     }
 
     /**
-     * Input Html Configuration
+     * Input Html Configuration.
      *
      * @return array inputHtml
      */
@@ -307,7 +306,7 @@ abstract class AbstractAdminFormBuilder
     }
 
     /**
-     * Input Hidden Configuration
+     * Input Hidden Configuration.
      *
      * @return array inputHiddenForm
      */
@@ -327,7 +326,7 @@ abstract class AbstractAdminFormBuilder
     }
 
     /**
-     * Legend Form Configuration
+     * Legend Form Configuration.
      *
      * @return array legendForm
      */

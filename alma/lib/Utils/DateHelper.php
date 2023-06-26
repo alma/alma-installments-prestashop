@@ -1,6 +1,6 @@
 <?php
 /**
- * 2018-2023 Alma SAS
+ * 2018-2023 Alma SAS.
  *
  * THE MIT LICENSE
  *
@@ -21,7 +21,6 @@
  * @copyright 2018-2023 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
-
 namespace Alma\PrestaShop\Utils;
 
 if (!defined('_PS_VERSION_')) {
@@ -36,7 +35,7 @@ if (!defined('_PS_VERSION_')) {
 class DateHelper
 {
     /**
-     * Gets all dates Y-m-d formatted since $from to today-1day while dates are >= $first
+     * Gets all dates Y-m-d formatted since $from to today-1day while dates are >= $first.
      *
      * @param int $from timestamp
      * @param int $first timestamp limit to the first
@@ -59,7 +58,7 @@ class DateHelper
     }
 
     /**
-     * check if is the same date without time
+     * check if is the same date without time.
      *
      * @param int $today timestamp
      * @param int $day timestamp
@@ -72,7 +71,7 @@ class DateHelper
     }
 
     /**
-     * extract timestamp without minutes
+     * extract timestamp without minutes.
      *
      * @param int $timestamp
      *
@@ -84,7 +83,7 @@ class DateHelper
     }
 
     /**
-     * extract date without time by timestamp
+     * extract date without time by timestamp.
      *
      * @param int $timestamp
      *

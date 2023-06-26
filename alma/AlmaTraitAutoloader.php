@@ -1,6 +1,6 @@
 <?php
 /**
- * 2018-2023 Alma SAS
+ * 2018-2023 Alma SAS.
  *
  * THE MIT LICENSE
  *
@@ -21,14 +21,13 @@
  * @copyright 2018-2023 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
-
 /**
- * Alma Trait Autoloader
+ * Alma Trait Autoloader.
  */
 class AlmaTraitAutoloader
 {
     /**
-     * Singleton (autoloader is loaded if instance is populated)
+     * Singleton (autoloader is loaded if instance is populated).
      *
      * @var AlmaTraitAutoloader
      */
@@ -49,7 +48,7 @@ class AlmaTraitAutoloader
     }
 
     /**
-     * Initialise auto loading
+     * Initialise auto loading.
      */
     public static function autoload()
     {
@@ -91,8 +90,8 @@ class AlmaTraitAutoloader
         }
 
         if (
-            strpos($className, 'Trait') !== false
-            && strpos($classPath, 'Alma/PrestaShop') === 0
+            false !== strpos($className, 'Trait')
+            && 0 === strpos($classPath, 'Alma/PrestaShop')
         ) {
             $classPath = str_replace('\\', '/', substr($classPath, 16));
             $this->load_file(_PS_MODULE_DIR_ . 'alma/lib/' . $classPath . $className . '.php');

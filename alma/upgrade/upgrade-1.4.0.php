@@ -1,6 +1,6 @@
 <?php
 /**
- * 2018-2023 Alma SAS
+ * 2018-2023 Alma SAS.
  *
  * THE MIT LICENSE
  *
@@ -56,7 +56,7 @@ function upgrade_module_1_4_0($module)
     // Default value for the display of our order confirmation page has changed; make sure we don't suddenly start
     // showing it on shops that had not changed the value and thus were not displaying it.
     $currentValue = Settings::get('ALMA_DISPLAY_ORDER_CONFIRMATION');
-    if ($currentValue === null) {
+    if (null === $currentValue) {
         Settings::updateValue('ALMA_DISPLAY_ORDER_CONFIRMATION', '0');
     }
 
