@@ -32,11 +32,5 @@
             "email": "olivier.lance@getalma.eu"
         }
     ],
-    "minimum-stability": "dev",
-    "repositories": {
-        "alma/alma-php-client": {
-            "type": "path",
-            "url": "/app/alma/alma-php-client"
-        }
-    }
+    "minimum-stability": "dev"
 }
