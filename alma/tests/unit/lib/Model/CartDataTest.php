@@ -1,6 +1,6 @@
 <?php
 /**
- * 2018-2023 Alma SAS
+ * 2018-2023 Alma SAS.
  *
  * THE MIT LICENSE
  *
@@ -21,7 +21,6 @@
  * @copyright 2018-2023 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
-
 namespace Alma\PrestaShop\Tests\Unit\Lib\Model;
 
 use Alma\PrestaShop\Model\CartData;
@@ -35,7 +34,9 @@ class CartDataTest extends TestCase
 {
     /**
      * @dataProvider productsDataProvider
+     *
      * @return void
+     *
      * @throws \PrestaShopDatabaseException
      * @throws \PrestaShopException
      */

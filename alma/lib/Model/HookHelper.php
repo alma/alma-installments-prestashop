@@ -1,6 +1,6 @@
 <?php
 /**
- * 2018-2023 Alma SAS
+ * 2018-2023 Alma SAS.
  *
  * THE MIT LICENSE
  *
@@ -21,7 +21,6 @@
  * @copyright 2018-2023 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
-
 namespace Alma\PrestaShop\Model;
 
 use Alma\PrestaShop\Utils\Logger;
@@ -114,6 +113,7 @@ class HookHelper
                 break;
             default:
                 Logger::instance()->warning(sprintf('[Alma] Unknown hook name : %s', $hookName));
+
                 return $almaHooks;
         }
 
