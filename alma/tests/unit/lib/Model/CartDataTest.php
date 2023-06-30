@@ -47,8 +47,8 @@ class CartDataTest extends TestCase
         $productRepository->method('getProductsDetails')->willReturn($this->getVendor());
 
         $productHelper = $this->createMock(ProductHelper::class);
-        $productHelper->method('getImageLink')->willReturn('http://prestashop-a-1-7-8-7.local.test/1-large_default/product_test.jpg');
-        $productHelper->method('getProductLink')->willReturn('http://prestashop-a-1-7-8-7.local.test/1-1-product_test.html#/1-size-s/8-color-white');
+        $productHelper->method('getImageLink')->willReturn('https://prestashop-a-1-7-8-7.local.test/1-large_default/product_test.jpg');
+        $productHelper->method('getProductLink')->willReturn('https://prestashop-a-1-7-8-7.local.test/1-1-product_test.html#/1-size-s/8-color-white');
 
         $summaryDetailsMock = ['products' => $items, 'gift_products' => []];
         $cart->method('getSummaryDetails')->willReturn($summaryDetailsMock);
@@ -158,8 +158,8 @@ class CartDataTest extends TestCase
             'line_price' => 28000,
             'is_gift' => $isGift,
             'categories' => ['category_test'],
-            'url' => 'http://prestashop-a-1-7-8-7.local.test/1-1-product_test.html#/1-size-s/8-color-white',
-            'picture_url' => 'http://prestashop-a-1-7-8-7.local.test/1-large_default/product_test.jpg',
+            'url' => 'https://prestashop-a-1-7-8-7.local.test/1-1-product_test.html#/1-size-s/8-color-white',
+            'picture_url' => 'https://prestashop-a-1-7-8-7.local.test/1-large_default/product_test.jpg',
             'requires_shipping' => !$vendor[$id]['is_virtual'],
             'taxes_included' => true,
         ];
