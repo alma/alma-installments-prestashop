@@ -1,6 +1,6 @@
 <?php
 /**
- * 2018-2023 Alma SAS
+ * 2018-2023 Alma SAS.
  *
  * THE MIT LICENSE
  *
@@ -21,7 +21,6 @@
  * @copyright 2018-2023 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
-
 namespace Alma\PrestaShop\Model;
 
 if (!defined('_PS_VERSION_')) {
@@ -51,7 +50,9 @@ class PaymentData
      * @param Context $context
      * @param array $feePlans
      * @param bool $forPayment
+     *
      * @return array|null
+     *
      * @throws \PrestaShopDatabaseException
      * @throws \PrestaShopException
      */
@@ -148,7 +149,7 @@ class PaymentData
                 'line1' => $address['address1'],
                 'postal_code' => $address['postcode'],
                 'city' => $address['city'],
-                'country' => Country::getIsoById((int)$address['id_country']),
+                'country' => Country::getIsoById((int) $address['id_country']),
                 'county_sublocality' => null,
                 'state_province' => $address['state'],
             ];
@@ -228,6 +229,7 @@ class PaymentData
 
     /**
      * @param $paymentData
+     *
      * @return bool
      */
     public static function isPnXOnly($paymentData)
@@ -237,6 +239,7 @@ class PaymentData
 
     /**
      * @param $dataPayment
+     *
      * @return bool
      */
     public static function isInPage($dataPayment)

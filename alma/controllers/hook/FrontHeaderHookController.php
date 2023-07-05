@@ -1,6 +1,6 @@
 <?php
 /**
- * 2018-2023 Alma SAS
+ * 2018-2023 Alma SAS.
  *
  * THE MIT LICENSE
  *
@@ -21,7 +21,6 @@
  * @copyright 2018-2023 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
-
 namespace Alma\PrestaShop\Controllers\Hook;
 
 if (!defined('_PS_VERSION_')) {
@@ -71,6 +70,7 @@ class FrontHeaderHookController extends FrontendHookController
 
     /**
      * @param $params
+     *
      * @return string
      */
     public function run($params)
@@ -111,7 +111,7 @@ class FrontHeaderHookController extends FrontendHookController
      */
     private function iAmInProductPage()
     {
-        return ($this->controller->php_self == 'product' || 'ProductController' == get_class($this->controller));
+        return $this->controller->php_self == 'product' || 'ProductController' == get_class($this->controller);
     }
 
     /**

@@ -8,7 +8,7 @@ clean:
 
 .PHONY: install-tools
 install-tools:
-	composer install --working-dir=tools
+	composer install --no-dev --optimize-autoloader --working-dir=tools
 
 .PHONY: update-tools
 update-tools: install-tools

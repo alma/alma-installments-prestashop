@@ -8,6 +8,7 @@ tmp
 prestashop*
 **/.DS_Store
 tools/vendor
+tools/composer.lock
 .vscode/
 .idea/
 .dccache

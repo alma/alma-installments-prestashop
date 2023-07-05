@@ -1,9 +1,13 @@
 {
     "scripts": {
-        "post-install-cmd": "\"vendor/bin/phpcs\" --config-set installed_paths tools/vendor/phpcompatibility/php-compatibility",
-        "post-update-cmd" : "\"vendor/bin/phpcs\" --config-set installed_paths tools/vendor/phpcompatibility/php-compatibility"
+        "post-install-cmd": "vendor/bin/phpcs --config-set installed_paths tools/vendor/phpcompatibility/php-compatibility",
+        "post-update-cmd" : "vendor/bin/phpcs --config-set installed_paths tools/vendor/phpcompatibility/php-compatibility",
+        "php-cs-fixer": "php-cs-fixer fix --using-cache=no --config=./../.php_cs.dist ./../alma/",
+        "phpcs": "vendor/bin/phpcs --standard=./../.phpcs.xml ./../alma/",
+        "phpcbf": "vendor/bin/phpcbf --standard=./../.phpcs.xml ./../alma/"
     },
-    "require-dev": {
+    "require": {
+        "php": "^5.6 || ~7.0 || ~7.1 || ~7.2 || ~7.3 || ~7.4 || ~8.0 || ~8.1",
         "friendsofphp/php-cs-fixer": "^2.16",
         "prestashop/autoindex": "^1.0",
         "squizlabs/php_codesniffer": "3.*",

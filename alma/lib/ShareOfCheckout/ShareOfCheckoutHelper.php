@@ -1,6 +1,6 @@
 <?php
 /**
- * 2018-2023 Alma SAS
+ * 2018-2023 Alma SAS.
  *
  * THE MIT LICENSE
  *
@@ -21,7 +21,6 @@
  * @copyright 2018-2023 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
-
 namespace Alma\PrestaShop\ShareOfCheckout;
 
 use Alma\API\RequestError;
@@ -208,6 +207,7 @@ class ShareOfCheckoutHelper
      * POST add consent Alma endpoint
      *
      * @return void
+     *
      * @throws ShareOfCheckoutException
      */
     public function addConsent()
@@ -228,6 +228,7 @@ class ShareOfCheckoutHelper
      * DELETE consent Alma endpoint
      *
      * @return void
+     *
      * @throws ShareOfCheckoutException
      */
     public function removeConsent()
@@ -293,6 +294,7 @@ class ShareOfCheckoutHelper
      * @param string $userConsent
      *
      * @return void
+     *
      * @throws ShareOfCheckoutException
      */
     private function setConsent($userConsent)
@@ -310,6 +312,7 @@ class ShareOfCheckoutHelper
      * Set Accept Consent
      *
      * @return void
+     *
      * @throws ShareOfCheckoutException
      */
     private function setAcceptConsent()
@@ -329,6 +332,7 @@ class ShareOfCheckoutHelper
      * Set refuse consent
      *
      * @return void
+     *
      * @throws ShareOfCheckoutException
      */
     private function setRefuseConsent()

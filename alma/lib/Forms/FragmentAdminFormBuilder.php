@@ -1,6 +1,6 @@
 <?php
 /**
- * 2018-2023 Alma SAS
+ * 2018-2023 Alma SAS.
  *
  * THE MIT LICENSE
  *
@@ -21,16 +21,15 @@
  * @copyright 2018-2023 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
-
 namespace Alma\PrestaShop\Forms;
 
 if (!defined('_PS_VERSION_')) {
-exit;
+    exit;
 }
 
 /**
-* Class FragmentAdminFormBuilder
-*/
+ * Class FragmentAdminFormBuilder
+ */
 class FragmentAdminFormBuilder extends AbstractAlmaAdminFormBuilder
 {
     const ALMA_ACTIVATE_FRAGMENT = 'ALMA_ACTIVATE_FRAGMENT';

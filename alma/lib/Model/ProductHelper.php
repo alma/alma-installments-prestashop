@@ -1,6 +1,6 @@
 <?php
 /**
- * 2018-2023 Alma SAS
+ * 2018-2023 Alma SAS.
  *
  * THE MIT LICENSE
  *
@@ -21,7 +21,6 @@
  * @copyright 2018-2023 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
-
 namespace Alma\PrestaShop\Model;
 
 use Cart;
@@ -42,6 +41,7 @@ class ProductHelper
 {
     /**
      * @param array $productRow
+     *
      * @return string
      */
     public function getImageLink($productRow)
@@ -59,7 +59,9 @@ class ProductHelper
      * @param $product
      * @param array $productRow
      * @param Cart $cart
+     *
      * @return string
+     *
      * @throws PrestaShopException
      */
     public function getProductLink($product, $productRow, $cart)
@@ -82,6 +84,7 @@ class ProductHelper
 
     /**
      * @param string $name
+     *
      * @return string
      */
     private static function getFormattedImageTypeName($name)

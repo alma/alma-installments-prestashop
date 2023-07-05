@@ -1,6 +1,6 @@
 <?php
 /**
- * 2018-2023 Alma SAS
+ * 2018-2023 Alma SAS.
  *
  * THE MIT LICENSE
  *
@@ -21,7 +21,6 @@
  * @copyright 2018-2023 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
-
 namespace Alma\PrestaShop\Utils;
 
 if (!defined('_PS_VERSION_')) {
@@ -227,6 +226,7 @@ class Settings
      * Get API key of mode selected
      *
      * @return string
+     *
      * @throws Exception
      */
     public static function getActiveAPIKey()
@@ -242,6 +242,7 @@ class Settings
      * Get API key Live
      *
      * @return string|null
+     *
      * @throws Exception
      */
     public static function getLiveKey()
@@ -255,6 +256,7 @@ class Settings
         }
 
         $encryption = new EncryptionHelper();
+
         return $encryption->decrypt($apiKey);
     }
 
@@ -262,6 +264,7 @@ class Settings
      * Get API key Test
      *
      * @return string|null
+     *
      * @throws Exception
      */
     public static function getTestKey()
@@ -275,6 +278,7 @@ class Settings
         }
 
         $encryption = new EncryptionHelper();
+
         return $encryption->decrypt($apiKey);
     }
 
@@ -587,6 +591,7 @@ class Settings
 
     /**
      * @param $plan
+     *
      * @return string
      */
     public static function keyForInstallmentPlan($plan)
@@ -604,6 +609,7 @@ class Settings
      * @param $installmentsCount
      * @param $deferredDays
      * @param $deferredMonths
+     *
      * @return string
      */
     private static function key(

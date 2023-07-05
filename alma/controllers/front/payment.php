@@ -1,6 +1,6 @@
 <?php
 /**
- * 2018-2023 Alma SAS
+ * 2018-2023 Alma SAS.
  *
  * THE MIT LICENSE
  *
@@ -34,7 +34,7 @@ use Alma\PrestaShop\Utils\Settings;
 
 class AlmaPaymentModuleFrontController extends ModuleFrontController
 {
-    use OrderDataTrait ;
+    use OrderDataTrait;
 
     /**
      * @var bool
@@ -69,6 +69,7 @@ class AlmaPaymentModuleFrontController extends ModuleFrontController
 
     /**
      * @return void
+     *
      * @throws Exception
      */
     private function genericErrorAndRedirect()
@@ -81,6 +82,7 @@ class AlmaPaymentModuleFrontController extends ModuleFrontController
 
     /**
      * @return void
+     *
      * @throws PrestaShopDatabaseException
      * @throws PrestaShopException
      */

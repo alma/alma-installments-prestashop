@@ -1,6 +1,6 @@
 <?php
 /**
- * 2018-2023 Alma SAS
+ * 2018-2023 Alma SAS.
  *
  * THE MIT LICENSE
  *
@@ -21,7 +21,6 @@
  * @copyright 2018-2023 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
-
 namespace Alma\PrestaShop\Utils;
 
 use PrestaShopException;
@@ -40,8 +39,11 @@ trait AjaxTrait
 {
     /**
      * Echoes output value and exit
+     *
      * @param $json
+     *
      * @return void
+     *
      * @throws PrestaShopException
      */
     protected function selectAjaxRenderMethod($json)
@@ -59,6 +61,7 @@ trait AjaxTrait
     /**
      * @param $msg
      * @param int $statusCode
+     *
      * @throws PrestaShopException
      */
     protected function ajaxFail($msg = null, $statusCode = 500)
