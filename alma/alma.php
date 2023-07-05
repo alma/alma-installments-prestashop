@@ -21,19 +21,15 @@
  * @copyright 2018-2023 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
-use Alma\PrestaShop\Model\HookHelper;
-
 if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-require_once _PS_MODULE_DIR_ . 'alma/vendor/autoload.php';
-require_once _PS_MODULE_DIR_ . 'alma/lib/Utils/smarty.php';
-require_once _PS_MODULE_DIR_ . 'alma/autoloader.php';
+require_once _PS_MODULE_DIR_ . 'alma/vendor/autoload.php';  // Autoload here for the module definition
 
 class Alma extends PaymentModule
 {
-    const VERSION = '2.13.0';
+    const VERSION = '3.0.0';
 
     public $_path;
     public $local_path;
@@ -68,7 +64,7 @@ class Alma extends PaymentModule
     {
         $this->name = 'alma';
         $this->tab = 'payments_gateways';
-        $this->version = '2.13.0';
+        $this->version = '3.0.0';
         $this->author = 'Alma';
         $this->need_instance = false;
         $this->bootstrap = true;
@@ -100,11 +96,11 @@ class Alma extends PaymentModule
             $this->local_path = _PS_MODULE_DIR_ . $this->name . '/';
         }
 
-        $this->hook = new HookHelper();
+        $this->hook = new \Alma\PrestaShop\Helpers\HookHelper();
     }
 
     /**
-     * Check parent install result then add log errors if any
+     * Check parent install result then add log errors if any.
      *
      * @param $coreInstall
      *
@@ -113,7 +109,7 @@ class Alma extends PaymentModule
     private function checkCoreInstall($coreInstall)
     {
         if (!$coreInstall) {
-            $logger = \Alma\PrestaShop\Utils\Logger::loggerClass();
+            $logger = \Alma\PrestaShop\Logger::loggerClass();
             $logger::addLog("Alma: Core module install failed (returned {$coreInstall})", 3);
 
             if (count($this->_errors) > 0) {
@@ -153,7 +149,7 @@ class Alma extends PaymentModule
     }
 
     /**
-     * Try to register mandatory hooks
+     * Try to register mandatory hooks.
      *
      * @return bool
      */
@@ -168,6 +164,9 @@ class Alma extends PaymentModule
         return true;
     }
 
+    /**
+     * @return void
+     */
     private function updateCarriersWithAlma()
     {
         $id_module = $this->id;
@@ -187,19 +186,56 @@ class Alma extends PaymentModule
         );
     }
 
+    /**
+     * @return void
+     */
+    protected function requireAlmaAutoload()
+    {
+        // And the autoload here to make our Composer classes available everywhere!
+        require_once _PS_MODULE_DIR_ . 'alma/lib/smarty.php';
+        require_once _PS_MODULE_DIR_ . 'alma/vendor/autoload.php';
+    }
+
+    /**
+     * @return void
+     */
+    public function hookActionAdminControllerInitBefore()
+    {
+        $this->requireAlmaAutoload();
+    }
+
+    /**
+     * @return void
+     */
+    public function hookModuleRoutes()
+    {
+        $this->requireAlmaAutoload();
+    }
+
+    /**
+     * @param $params
+     *
+     * @return mixed|null
+     */
     public function hookDisplayProductPriceBlock($params)
     {
         return $this->runHookController('displayProductPriceBlock', $params);
     }
 
-    // displayProductButtons is registered on PrestaShop 1.5 only, as displayProductPriceBlock wasn't available then
+    /**
+     * displayProductButtons is registered on PrestaShop 1.5 only, as displayProductPriceBlock wasn't available then.
+     *
+     * @param $params
+     *
+     * @return mixed|null
+     */
     public function hookDisplayProductButtons($params)
     {
         return $this->runHookController('displayProductPriceBlock', $params);
     }
 
     /**
-     * Check php lib dependencies and versions
+     * Check php lib dependencies and versions.
      *
      * @return bool
      */
@@ -216,29 +252,32 @@ class Alma extends PaymentModule
             $this->_errors[] = $this->l('Alma requires the JSON PHP extension.', 'alma');
         }
 
-        $openssl_exception = $this->l('Alma requires OpenSSL >= 1.0.1', 'alma');
+        $opensslException = $this->l('Alma requires OpenSSL >= 1.0.1', 'alma');
         if (!defined('OPENSSL_VERSION_TEXT')) {
             $result = false;
-            $this->_errors[] = $openssl_exception;
+            $this->_errors[] = $opensslException;
         }
 
         preg_match('/^(?:Libre|Open)SSL ([\d.]+)/', OPENSSL_VERSION_TEXT, $matches);
         if (empty($matches[1])) {
             $result = false;
-            $this->_errors[] = $openssl_exception;
+            $this->_errors[] = $opensslException;
         }
 
         if (!version_compare($matches[1], '1.0.1', '>=')) {
             $result = false;
-            $this->_errors[] = $openssl_exception;
+            $this->_errors[] = $opensslException;
         }
 
         return $result;
     }
 
+    /**
+     * @return bool
+     */
     public function uninstall()
     {
-        $result = parent::uninstall() && \Alma\PrestaShop\Utils\Settings::deleteAllValues();
+        $result = parent::uninstall() && \Alma\PrestaShop\Helpers\SettingsHelper::deleteAllValues();
 
         $paymentModuleConf = [
             'CONF_ALMA_FIXED',
@@ -256,26 +295,79 @@ class Alma extends PaymentModule
         return $result && $this->uninstallTabs();
     }
 
-    public function installTabs()
+    /**
+     * @return array[]
+     */
+    protected function dataTabs()
     {
-        return $this->installTab('alma', 'Alma')
-            && $this->installTab('AdminAlmaConfig', $this->l('Configuration'), 'alma', 1, 'tune')
-            && $this->installTab('AdminAlmaCategories', $this->l('Excluded categories'), 'alma', 2, 'not_interested')
-            && $this->installTab('AdminAlmaRefunds', false, 'alma')
-            && $this->installTab('AdminAlmaShareOfCheckout', false, 'alma');
-    }
-
-    public function uninstallTabs()
-    {
-        return $this->uninstallTab('AdminAlmaCategories')
-            && $this->uninstallTab('AdminAlmaRefunds')
-            && $this->uninstallTab('AdminAlmaConfig')
-            && $this->uninstallTab('AdminAlmaShareOfCheckout')
-            && $this->uninstallTab('alma');
+        return [
+            'alma' => [
+                'name' => 'Alma',
+                'parent' => null,
+                'position' => null,
+                'icon' => null,
+            ],
+            'AdminAlmaConfig' => [
+                'name' => $this->l('Configuration'),
+                'parent' => 'alma',
+                'position' => 1,
+                'icon' => 'tune',
+            ],
+            'AdminAlmaCategories' => [
+                'name' => $this->l('Excluded categories'),
+                'parent' => 'alma',
+                'position' => 2,
+                'icon' => 'not_interested',
+            ],
+            'AdminAlmaRefunds' => [
+                'name' => false,
+                'parent' => 'alma',
+                'position' => null,
+                'icon' => null,
+            ],
+            'AdminAlmaShareOfCheckout' => [
+                'name' => false,
+                'parent' => 'alma',
+                'position' => null,
+                'icon' => null,
+            ],
+        ];
     }
 
     /**
-     * Add Alma in backoffice menu
+     * @return bool
+     */
+    public function installTabs()
+    {
+        $allTableAreActivated = true;
+
+        foreach ($this->dataTabs() as $class => $dataTab) {
+            if (!$this->installTab($class, $dataTab['name'], $dataTab['parent'], $dataTab['position'], $dataTab['icon'])) {
+                $allTableAreActivated = false;
+            }
+        }
+
+        return $allTableAreActivated;
+    }
+
+    /**
+     * @return bool
+     */
+    public function uninstallTabs()
+    {
+        $allTableAreActivated = true;
+
+        foreach ($this->dataTabs() as $class => $dataTab) {
+            if (!$this->uninstallTab($class)) {
+                $allTableAreActivated = false;
+            }
+        }
+
+        return $allTableAreActivated;
+    }
+
+    /**
+     * Add Alma in backoffice menu.
      *
      * @param string $class class controller
      * @param string $name tab title
@@ -283,12 +375,12 @@ class Alma extends PaymentModule
      * @param int|null $position order in menu
      * @param string|null $icon fontAwesome class icon
      *
-     * @return bool if save succefuly
+     * @return bool if save successfully
      */
     private function installTab($class, $name, $parent = null, $position = null, $icon = null)
     {
         $tab = Tab::getInstanceFromClassName($class);
-        $tab->active = $name !== false;
+        $tab->active = false !== $name;
         $tab->class_name = $class;
         $tab->name = [];
 
@@ -350,7 +442,7 @@ class Alma extends PaymentModule
     public function viewAccess()
     {
         // Simply redirect to the default module's configuration page
-        $location = \Alma\PrestaShop\Utils\LinkHelper::getAdminLinkAlmaDashboard();
+        $location = \Alma\PrestaShop\Helpers\LinkHelper::getAdminLinkAlmaDashboard();
 
         Tools::redirectAdmin($location);
     }
@@ -433,7 +525,7 @@ class Alma extends PaymentModule
     }
 
     /**
-     * Hook action DisplayAdminAfterHeader
+     * Hook action DisplayAdminAfterHeader.
      */
     public function hookDisplayAdminAfterHeader($params)
     {

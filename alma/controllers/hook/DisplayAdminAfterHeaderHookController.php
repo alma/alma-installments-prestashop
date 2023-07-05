@@ -27,8 +27,8 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
+use Alma\PrestaShop\Helpers\SettingsHelper;
 use Alma\PrestaShop\Hooks\FrontendHookController;
-use Alma\PrestaShop\Utils\Settings;
 use Tools;
 
 class DisplayAdminAfterHeaderHookController extends FrontendHookController
@@ -40,7 +40,7 @@ class DisplayAdminAfterHeaderHookController extends FrontendHookController
      */
     public function canRun()
     {
-        $isLive = Settings::getActiveMode() === ALMA_MODE_LIVE;
+        $isLive = SettingsHelper::getActiveMode() === ALMA_MODE_LIVE;
 
         return parent::canRun() &&
             (Tools::strtolower($this->currentControllerName()) == 'admindashboard' ||
@@ -53,7 +53,7 @@ class DisplayAdminAfterHeaderHookController extends FrontendHookController
             Tools::getValue('configure') == 'alma' ||
             Tools::getValue('module_name') == 'alma') &&
             $isLive &&
-            Settings::getMerchantId() != null;
+            SettingsHelper::getMerchantId() != null;
     }
 
     /**
@@ -65,7 +65,7 @@ class DisplayAdminAfterHeaderHookController extends FrontendHookController
      */
     public function run($params)
     {
-        if (Settings::isShareOfCheckoutNoAnswered() || !Settings::isShareOfCheckoutSetting()) {
+        if (SettingsHelper::isShareOfCheckoutNoAnswered() || !SettingsHelper::isShareOfCheckoutSetting()) {
             $this->context->smarty->assign([
                 'token' => Tools::getAdminTokenLite('AdminAlmaShareOfCheckout'),
             ]);

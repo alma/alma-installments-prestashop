@@ -27,8 +27,10 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
+use Alma\PrestaShop\Helpers\PriceHelper;
+use Alma\PrestaShop\Helpers\ProductHelper;
+use Alma\PrestaShop\Helpers\SettingsHelper;
 use Alma\PrestaShop\Repositories\ProductRepository;
-use Alma\PrestaShop\Utils\Settings;
 use Cart;
 use CartRule;
 use Configuration;
@@ -55,7 +57,7 @@ class CartData
         $productRepository = new ProductRepository();
 
         return [
-            'items' => self::getCartItems($cart, $productHelper, $productRepository),
+            'items' => static::getCartItems($cart, $productHelper, $productRepository),
             'discounts' => self::getCartDiscounts($cart),
         ];
     }
@@ -136,8 +138,8 @@ class CartData
                 'title' => $productRow['name'],
                 'variant_title' => null,
                 'quantity' => (int) $productRow['cart_quantity'],
-                'unit_price' => almaPriceToCents($unitPrice),
-                'line_price' => almaPriceToCents($linePrice),
+                'unit_price' => PriceHelper::convertPriceToCents($unitPrice),
+                'line_price' => PriceHelper::convertPriceToCents($linePrice),
                 'is_gift' => $isGift,
                 'categories' => [$productRow['category']],
                 'url' => $productHelper->getProductLink($product, $productRow, $cart),
@@ -174,7 +176,7 @@ class CartData
             $amount = self::includeTaxes($cart) ? (float) $cartRule['value_real'] : (float) $cartRule['value_tax_exc'];
             $discounts[] = [
                 'title' => isset($cartRule['name']) ? $cartRule['name'] : $cartRule['description'],
-                'amount' => almaPriceToCents($amount),
+                'amount' => PriceHelper::convertPriceToCents($amount),
             ];
         }
 
@@ -201,7 +203,7 @@ class CartData
             }
         }
 
-        $excludedListing = Settings::getExcludedCategories();
+        $excludedListing = SettingsHelper::getExcludedCategories();
 
         return array_intersect($cartProductsCategories, $excludedListing);
     }

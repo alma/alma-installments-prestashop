@@ -24,7 +24,8 @@
 namespace Alma\PrestaShop\Forms;
 
 use Alma\API\Entities\FeePlan;
-use Alma\PrestaShop\Utils\Settings;
+use Alma\PrestaShop\Helpers\PriceHelper;
+use Alma\PrestaShop\Helpers\SettingsHelper;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -44,8 +45,8 @@ class PnxAdminFormBuilder extends AbstractAlmaAdminFormBuilder
     {
         $tabId = $key = $feePlan->getPlanKey();
 
-        $minAmount = (int) almaPriceFromCents($feePlan->min_purchase_amount);
-        $maxAmount = (int) almaPriceFromCents($feePlan->max_purchase_amount);
+        $minAmount = (int) PriceHelper::convertPriceFromCents($feePlan->min_purchase_amount);
+        $maxAmount = (int) PriceHelper::convertPriceFromCents($feePlan->max_purchase_amount);
 
         $tpl = $this->context->smarty->createTemplate(
             "{$this->module->local_path}views/templates/hook/pnx_fees.tpl"
@@ -116,7 +117,7 @@ class PnxAdminFormBuilder extends AbstractAlmaAdminFormBuilder
                 $this->disableFeePlan($key, $installmentsPlans);
                 continue;
             }
-            $duration = Settings::getDuration($feePlan);
+            $duration = SettingsHelper::getDuration($feePlan);
             $return = array_merge($return, $this->buildPnxForm($feePlan, $duration));
             $pnxTabs[$tabId] = '❌ ';
             if ($this->isEnabled($key, $installmentsPlans)) {
@@ -157,7 +158,7 @@ class PnxAdminFormBuilder extends AbstractAlmaAdminFormBuilder
     protected function disableFeePlan($key, $installmentsPlans)
     {
         unset($installmentsPlans->$key);
-        Settings::updateValue('ALMA_FEE_PLANS', json_encode($installmentsPlans));
+        SettingsHelper::updateValue('ALMA_FEE_PLANS', json_encode($installmentsPlans));
     }
 
     /**

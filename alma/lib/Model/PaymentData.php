@@ -29,10 +29,15 @@ if (!defined('_PS_VERSION_')) {
 
 use Address;
 use Alma\API\Lib\PaymentValidator;
+use Alma\PrestaShop\Helpers\CarrierHelper;
+use Alma\PrestaShop\Helpers\CartHelper;
+use Alma\PrestaShop\Helpers\PriceHelper;
+use Alma\PrestaShop\Helpers\ProductHelper;
+use Alma\PrestaShop\Helpers\SettingsCustomFieldsHelper;
+use Alma\PrestaShop\Helpers\SettingsHelper;
+use Alma\PrestaShop\Logger;
 use Alma\PrestaShop\Repositories\ProductRepository;
-use Alma\PrestaShop\Utils\Logger;
-use Alma\PrestaShop\Utils\Settings;
-use Alma\PrestaShop\Utils\SettingsCustomFields;
+use Context;
 use Cart;
 use Country;
 use Customer;
@@ -49,11 +54,10 @@ class PaymentData
      * @param Cart $cart
      * @param Context $context
      * @param array $feePlans
-     * @param $forPayment
+     * @param bool $forPayment
      *
      * @return array|null
      *
-     * @throws \Alma\API\ParamsError
      * @throws \PrestaShopDatabaseException
      * @throws \PrestaShopException
      */
@@ -94,7 +98,7 @@ class PaymentData
             $queries = [];
             foreach ($feePlans as $plan) {
                 $queries[] = [
-                    'purchase_amount' => almaPriceToCents($purchaseAmount),
+                    'purchase_amount' => PriceHelper::convertPriceToCents($purchaseAmount),
                     'installments_count' => $plan['installmentsCount'],
                     'deferred_days' => $plan['deferredDays'],
                     'deferred_months' => $plan['deferredMonths'],
@@ -102,7 +106,7 @@ class PaymentData
             }
 
             return [
-                'purchase_amount' => almaPriceToCents($purchaseAmount),
+                'purchase_amount' => PriceHelper::convertPriceToCents($purchaseAmount),
                 'queries' => $queries,
                 'shipping_address' => [
                     'country' => $countryShippingAddress,
@@ -136,8 +140,10 @@ class PaymentData
 
         if ($shippingAddress->phone) {
             $customerData['phone'] = $shippingAddress->phone;
-        } elseif ($shippingAddress->phone_mobile) {
-            $customerData['phone'] = $shippingAddress->phone_mobile;
+        } else {
+            if ($shippingAddress->phone_mobile) {
+                $customerData['phone'] = $shippingAddress->phone_mobile;
+            }
         }
 
         if (version_compare(_PS_VERSION_, '1.5.4.0', '<')) {
@@ -146,19 +152,21 @@ class PaymentData
             $addresses = $customer->getAddresses($customer->id_lang);
         }
         foreach ($addresses as $address) {
-            array_push($customerData['addresses'], [
+            $customerData['addresses'][] = [
                 'line1' => $address['address1'],
                 'postal_code' => $address['postcode'],
                 'city' => $address['city'],
                 'country' => Country::getIsoById((int) $address['id_country']),
                 'county_sublocality' => null,
                 'state_province' => $address['state'],
-            ]);
+            ];
 
             if (is_null($customerData['phone']) && $address['phone']) {
                 $customerData['phone'] = $address['phone'];
-            } elseif (is_null($customerData['phone']) && $address['phone_mobile']) {
-                $customerData['phone'] = $address['phone_mobile'];
+            } else {
+                if (is_null($customerData['phone']) && $address['phone_mobile']) {
+                    $customerData['phone'] = $address['phone_mobile'];
+                }
             }
         }
 
@@ -178,7 +186,7 @@ class PaymentData
                 'installments_count' => $feePlans['installmentsCount'],
                 'deferred_days' => $feePlans['deferredDays'],
                 'deferred_months' => $feePlans['deferredMonths'],
-                'purchase_amount' => almaPriceToCents($purchaseAmount),
+                'purchase_amount' => PriceHelper::convertPriceToCents($purchaseAmount),
                 'customer_cancel_url' => $context->link->getPageLink('order'),
                 'return_url' => $context->link->getModuleLink('alma', 'validation'),
                 'ipn_callback_url' => $context->link->getModuleLink('alma', 'ipn'),
@@ -201,7 +209,7 @@ class PaymentData
                 ],
                 'custom_data' => [
                     'cart_id' => $cart->id,
-                    'purchase_amount_new_conversion_func' => almaPriceToCents_str($purchaseAmount),
+                    'purchase_amount_new_conversion_func' => PriceHelper::convertPriceToCentsStr($purchaseAmount),
                     'cart_totals' => $purchaseAmount,
                     'cart_totals_high_precision' => number_format($purchaseAmount, 16),
                     'poc' => [
@@ -213,17 +221,51 @@ class PaymentData
             'customer' => $customerData,
         ];
 
-        if (Settings::isDeferredTriggerLimitDays($feePlans)) {
+        if (SettingsHelper::isDeferredTriggerLimitDays($feePlans)) {
             $dataPayment['payment']['deferred'] = 'trigger';
-            $dataPayment['payment']['deferred_description'] = SettingsCustomFields::getDescriptionPaymentTriggerByLang($context->language->id);
+            $dataPayment['payment']['deferred_description'] = SettingsCustomFieldsHelper::getDescriptionPaymentTriggerByLang($context->language->id);
         }
         if ($feePlans['installmentsCount'] > 4) {
             $dataPayment['payment']['cart'] = CartData::cartInfo($cart);
         }
 
+        if (static::isInPage($dataPayment)) {
+            $dataPayment['payment']['origin'] = 'online_in_page';
+        }
+
         PaymentValidator::checkPurchaseAmount($dataPayment);
 
         return $dataPayment;
+    }
+
+    /**
+     * @param $paymentData
+     *
+     * @return bool
+     */
+    public static function isPnXOnly($paymentData)
+    {
+        return $paymentData['payment']['installments_count'] > 1 && $paymentData['payment']['installments_count'] <= 4 && ($paymentData['payment']['deferred_days'] === 0 && $paymentData['payment']['deferred_months'] === 0);
+    }
+
+    /**
+     * @param $paymentData
+     *
+     * @return bool
+     */
+    public static function isPayNow($paymentData)
+    {
+        return $paymentData['payment']['installments_count'] === 1 && (0 === $paymentData['payment']['deferred_days'] && 0 === $paymentData['payment']['deferred_months']);
+    }
+
+    /**
+     * @param $dataPayment
+     *
+     * @return bool
+     */
+    public static function isInPage($dataPayment)
+    {
+        return (static::isPnXOnly($dataPayment) || static::isPayNow($dataPayment)) && SettingsHelper::isInPageEnabled();
     }
 
     private static function isNewCustomer($idCustomer)
@@ -247,7 +289,7 @@ class PaymentData
             'is_guest' => (bool) $customer->is_guest,
             'created' => strtotime($customer->date_add),
             'current_order' => [
-                'purchase_amount' => almaPriceToCents($purchaseAmount),
+                'purchase_amount' => PriceHelper::convertPriceToCents($purchaseAmount),
                 'created' => strtotime($cart->date_add),
                 'payment_method' => PaymentData::PAYMENT_METHOD,
                 'shipping_method' => $carrierHelper->getParentCarrierNameById($cart->id_carrier),

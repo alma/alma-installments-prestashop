@@ -29,12 +29,13 @@ if (!defined('_PS_VERSION_')) {
 
 use Alma\API\Entities\Payment;
 use Alma\API\RequestError;
-use Alma\PrestaShop\API\ClientHelper;
-use Alma\PrestaShop\API\PaymentNotFoundException;
+use Alma\PrestaShop\Exceptions\PaymentNotFoundException;
+use Alma\PrestaShop\Helpers\ClientHelper;
+use Alma\PrestaShop\Helpers\OrderHelper;
+use Alma\PrestaShop\Helpers\PriceHelper;
+use Alma\PrestaShop\Helpers\RefundHelper;
 use Alma\PrestaShop\Hooks\AdminHookController;
-use Alma\PrestaShop\Utils\Logger;
-use Alma\PrestaShop\Utils\OrderDataTrait;
-use Alma\PrestaShop\Utils\RefundHelper;
+use Alma\PrestaShop\Logger;
 use Currency;
 use Order;
 use PrestaShopDatabaseException;
@@ -43,8 +44,6 @@ use SmartyException;
 
 final class DisplayRefundsHookController extends AdminHookController
 {
-    use OrderDataTrait;
-
     /** @var Order */
     public $order;
 
@@ -93,13 +92,13 @@ final class DisplayRefundsHookController extends AdminHookController
             $paymentTotalAmount = $orderTotalPaid;
         }
 
-        $totalOrderInCents = almaPriceToCents($paymentTotalAmount);
+        $totalOrderInCents = PriceHelper::convertPriceToCents($paymentTotalAmount);
         if ($payment->refunds) {
             $totalRefundInCents = RefundHelper::buildTotalRefund($payment->refunds, $totalOrderInCents);
-            $percentRefund = almaCalculatePercentage($totalRefundInCents, $totalOrderInCents);
+            $percentRefund = PriceHelper::calculatePercentage($totalRefundInCents, $totalOrderInCents);
 
             $refundData = [
-                'totalRefundPrice' => almaFormatPrice($totalRefundInCents, (int) $order->id_currency),
+                'totalRefundPrice' => PriceHelper::formatPriceToCentsByCurrencyId($totalRefundInCents, (int) $order->id_currency),
                 'percentRefund' => $percentRefund,
             ];
         }
@@ -107,10 +106,10 @@ final class DisplayRefundsHookController extends AdminHookController
         $currency = new Currency($order->id_currency);
         $orderData = [
             'id' => $order->id,
-            'maxAmount' => almaFormatPrice(almaPriceToCents($order->total_paid_tax_incl), (int) $order->id_currency),
+            'maxAmount' => PriceHelper::formatPriceToCentsByCurrencyId(PriceHelper::convertPriceToCents($order->total_paid_tax_incl), (int) $order->id_currency),
             'currencySymbol' => $currency->sign,
             'ordersId' => $ordersId,
-            'paymentTotalPrice' => almaFormatPrice($totalOrderInCents, (int) $order->id_currency),
+            'paymentTotalPrice' => PriceHelper::formatPriceToCentsByCurrencyId($totalOrderInCents, (int) $order->id_currency),
         ];
         $wording = [
             'title' => $this->module->l('Alma refund', 'DisplayRefundsHookController'),
@@ -174,7 +173,8 @@ final class DisplayRefundsHookController extends AdminHookController
         if ($order->module !== 'alma' || !$alma) {
             throw new PaymentNotFoundException('Alma is not available');
         }
-        $orderPayment = $this->getOrderPaymentOrFail($order);
+        $orderHelper = new OrderHelper();
+        $orderPayment = $orderHelper->getOrderPaymentOrFail($order);
         $paymentId = $orderPayment->transaction_id;
         if (empty($paymentId)) {
             throw new PaymentNotFoundException("[Alma] paymentId doesn't exist");
@@ -193,13 +193,13 @@ final class DisplayRefundsHookController extends AdminHookController
      */
     private function getTemplateName()
     {
-        $refundTpl = 'order_refund_bs4';
         if (version_compare(_PS_VERSION_, '1.6', '<')) {
-            $refundTpl = 'order_refund_ps15';
-        } elseif (version_compare(_PS_VERSION_, '1.7.7.0', '<')) {
-            $refundTpl = 'order_refund_bs3';
+            return 'order_refund_ps15';
+        }
+        if (version_compare(_PS_VERSION_, '1.7.7.0', '<')) {
+            return 'order_refund_bs3';
         }
 
-        return $refundTpl;
+        return 'order_refund_bs4';
     }
 }

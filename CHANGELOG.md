@@ -1,8 +1,11 @@
 # Changelog
 
-- feat: improve purchaseAmount verification
+## v3.0.0
+
+- feat: In-Page payment
+- feat: Improve purchaseAmount verification
 - fix: SEPA payment
-- fix: http return code for mismatch for IPN
+- fix: Change HTTP return code for mismatch for IPN
 
 ## v2.13.0
 

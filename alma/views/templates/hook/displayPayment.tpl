@@ -28,8 +28,8 @@
 {/if}
 {foreach from=$options item=option}
     {if $option.isDeferred}
-        {include file="modules/alma/views/templates/hook/_partials/displayPayment_deferred.tpl" plans=$option.plans installmentText=$option.installmentText deferred_trigger_limit_days=$option.deferred_trigger_limit_days creditInfo=$option.creditInfo iconDisplay=$iconDisplay almaButton=$almaButton}
+        {include file="modules/alma/views/templates/hook/_partials/displayPayment_deferred.tpl" plans=$option.plans installmentText=$option.installmentText deferred_trigger_limit_days=$option.deferred_trigger_limit_days creditInfo=$option.creditInfo iconDisplay=$iconDisplay almaButton=$almaButton apiMode=$apiMode merchantId=$merchantId}
     {else}
-        {include file="modules/alma/views/templates/hook/_partials/displayPayment_pnx.tpl" plans=$option.plans installmentText=$option.installmentText deferred_trigger_limit_days=$option.deferred_trigger_limit_days creditInfo=$option.creditInfo iconDisplay=$iconDisplay almaButton=$almaButton}
+        {include file="modules/alma/views/templates/hook/_partials/displayPayment_pnx.tpl" plans=$option.plans installmentText=$option.installmentText deferred_trigger_limit_days=$option.deferred_trigger_limit_days creditInfo=$option.creditInfo iconDisplay=$iconDisplay almaButton=$almaButton apiMode=$apiMode merchantId=$merchantId}
     {/if}
 {/foreach}

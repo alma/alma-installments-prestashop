@@ -23,8 +23,8 @@
  */
 namespace Alma\PrestaShop\Tests\Unit\Lib\ShareOfCheckout;
 
-use Alma\PrestaShop\ShareOfCheckout\OrderHelper;
-use Alma\PrestaShop\ShareOfCheckout\ShareOfCheckoutHelper;
+use Alma\PrestaShop\Helpers\OrderHelper;
+use Alma\PrestaShop\Helpers\ShareOfCheckoutHelper;
 use Mockery;
 use Order;
 use PHPUnit\Framework\TestCase;
@@ -131,7 +131,7 @@ class ShareOfCheckoutHelperTest extends TestCase
 
         return [
             'order total orders' => [
-                self::orders(),
+                static::orders(),
                 $expectedTotalOrders,
             ],
         ];
@@ -169,7 +169,7 @@ class ShareOfCheckoutHelperTest extends TestCase
 
         return [
             'order total payment methods' => [
-                self::orders(),
+                static::orders(),
                 $expectedTotalPaymentMethods,
             ],
         ];
@@ -223,7 +223,7 @@ class ShareOfCheckoutHelperTest extends TestCase
 
         return [
             'order get payload' => [
-                self::orders(),
+                static::orders(),
                 $expectedPayload,
             ],
         ];

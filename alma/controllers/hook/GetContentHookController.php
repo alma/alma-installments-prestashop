@@ -28,24 +28,28 @@ if (!defined('_PS_VERSION_')) {
 }
 
 use Alma\API\RequestError;
-use Alma\PrestaShop\API\ClientHelper;
+use Alma\PrestaShop\Exceptions\MissingParameterException;
 use Alma\PrestaShop\Forms\ApiAdminFormBuilder;
 use Alma\PrestaShop\Forms\CartEligibilityAdminFormBuilder;
 use Alma\PrestaShop\Forms\DebugAdminFormBuilder;
 use Alma\PrestaShop\Forms\ExcludedCategoryAdminFormBuilder;
+use Alma\PrestaShop\Forms\FragmentAdminFormBuilder;
 use Alma\PrestaShop\Forms\PaymentButtonAdminFormBuilder;
 use Alma\PrestaShop\Forms\PaymentOnTriggeringAdminFormBuilder;
 use Alma\PrestaShop\Forms\PnxAdminFormBuilder;
 use Alma\PrestaShop\Forms\ProductEligibilityAdminFormBuilder;
 use Alma\PrestaShop\Forms\RefundAdminFormBuilder;
 use Alma\PrestaShop\Forms\ShareOfCheckoutAdminFormBuilder;
+use Alma\PrestaShop\Helpers\ApiKeyHelper;
+use Alma\PrestaShop\Helpers\ClientHelper;
+use Alma\PrestaShop\Helpers\ConstantsHelper;
+use Alma\PrestaShop\Helpers\OrderHelper;
+use Alma\PrestaShop\Helpers\PriceHelper;
+use Alma\PrestaShop\Helpers\SettingsCustomFieldsHelper;
+use Alma\PrestaShop\Helpers\SettingsHelper;
+use Alma\PrestaShop\Helpers\ShareOfCheckoutHelper;
 use Alma\PrestaShop\Hooks\AdminHookController;
-use Alma\PrestaShop\ShareOfCheckout\OrderHelper;
-use Alma\PrestaShop\ShareOfCheckout\ShareOfCheckoutHelper;
-use Alma\PrestaShop\Utils\ApiKeyHelper;
-use Alma\PrestaShop\Utils\Logger;
-use Alma\PrestaShop\Utils\Settings;
-use Alma\PrestaShop\Utils\SettingsCustomFields;
+use Alma\PrestaShop\Logger;
 use Configuration;
 use HelperForm;
 use Media;
@@ -60,7 +64,35 @@ final class GetContentHookController extends AdminHookController
     protected $module;
 
     /**
-     * GetContentHook Controller construct
+     *  @var array KEY_CONFIG
+     */
+    const KEY_CONFIG = [
+        'ALMA_SHOW_ELIGIBILITY_MESSAGE_ON' => 'test_bool',
+        'ALMA_SHOW_PRODUCT_ELIGIBILITY' => 'test_bool',
+        'ALMA_CART_WDGT_NOT_ELGBL_ON' => 'cast_bool',
+        'ALMA_PRODUCT_WDGT_NOT_ELGBL_ON' => 'cast_bool',
+        'ALMA_CATEGORIES_WDGT_NOT_ELGBL_ON' => 'cast_bool',
+        'ALMA_WIDGET_POSITION_CUSTOM' => 'cast_bool',
+        'ALMA_SHOW_DISABLED_BUTTON' => 'cast_bool',
+        'ALMA_CART_WIDGET_POSITION_CUSTOM' => 'cast_bool',
+        'ALMA_STATE_REFUND_ENABLED_ON' => 'cast_bool',
+        'ALMA_PAYMENT_ON_TRIGGERING_ENABLED_ON' => 'cast_bool',
+        FragmentAdminFormBuilder::ALMA_ACTIVATE_FRAGMENT . '_ON' => 'cast_bool',
+        'ALMA_ACTIVATE_LOGGING_ON' => 'cast_bool',
+        'ALMA_PRODUCT_PRICE_SELECTOR' => 'none',
+        'ALMA_WIDGET_POSITION_SELECTOR' => 'none',
+        'ALMA_PRODUCT_ATTR_SELECTOR' => 'none',
+        'ALMA_PRODUCT_ATTR_RADIO_SELECTOR' => 'none',
+        'ALMA_PRODUCT_COLOR_PICK_SELECTOR' => 'none',
+        'ALMA_PRODUCT_QUANTITY_SELECTOR' => 'none',
+        'ALMA_CART_WDGT_POS_SELECTOR' => 'none',
+        'ALMA_STATE_REFUND' => 'none',
+        'ALMA_STATE_TRIGGER' => 'none',
+        'ALMA_DESCRIPTION_TRIGGER' => 'none',
+    ];
+
+    /**
+     * GetContentHook Controller construct.
      */
     public function __construct($module)
     {
@@ -68,6 +100,11 @@ final class GetContentHookController extends AdminHookController
         parent::__construct($module);
     }
 
+    /**
+     * @return mixed|null
+     *
+     * @throws \Exception
+     */
     public function processConfiguration()
     {
         if (!Tools::isSubmit('alma_config_form')) {
@@ -75,37 +112,53 @@ final class GetContentHookController extends AdminHookController
         }
 
         // Consider the plugin as fully configured only when everything goes well
-        Settings::updateValue('ALMA_FULLY_CONFIGURED', '0');
+        $this->updateSettingsValue('ALMA_FULLY_CONFIGURED', '0');
 
+        $oldApiMode = SettingsHelper::getActiveMode();
         $apiMode = Tools::getValue('ALMA_API_MODE');
-        Settings::updateValue('ALMA_API_MODE', $apiMode);
+        $this->updateSettingsValue('ALMA_API_MODE', $apiMode);
 
         // Get & check provided API keys
         $liveKey = trim(Tools::getValue(ApiAdminFormBuilder::ALMA_LIVE_API_KEY));
         $testKey = trim(Tools::getValue(ApiAdminFormBuilder::ALMA_TEST_API_KEY));
 
-        if ((empty($liveKey) && $apiMode == ALMA_MODE_LIVE) || (empty($testKey) && $apiMode == ALMA_MODE_TEST)) {
+        if ((empty($liveKey) && ALMA_MODE_LIVE == $apiMode) || (empty($testKey) && ALMA_MODE_TEST == $apiMode)) {
             $this->context->smarty->assign('validation_error', "missing_key_for_{$apiMode}_mode");
 
             return $this->module->display($this->module->file, 'getContent.tpl');
         }
 
         $credentialsError = null;
-        if (($liveKey != ApiKeyHelper::OBCUR_VALUE && $apiMode == ALMA_MODE_LIVE) || ($testKey != ApiKeyHelper::OBCUR_VALUE && $apiMode == ALMA_MODE_TEST)) {
+
+        if ((ConstantsHelper::OBSCURE_VALUE != $liveKey && ALMA_MODE_LIVE == $apiMode)
+            || (ConstantsHelper::OBSCURE_VALUE != $testKey && ALMA_MODE_TEST == $apiMode)
+        ) {
             $credentialsError = $this->credentialsError($apiMode, $liveKey, $testKey);
         }
-        if ($credentialsError && array_key_exists('error', $credentialsError)) {
+
+        if ($credentialsError
+            && array_key_exists('error', $credentialsError)
+        ) {
             return $credentialsError['message'];
         }
 
         $orderHelper = new OrderHelper();
         $shareOfCheckoutHelper = new ShareOfCheckoutHelper($orderHelper);
 
-        if ($liveKey !== Settings::getLiveKey()) {
+        if ($liveKey !== SettingsHelper::getLiveKey()
+            && ConstantsHelper::OBSCURE_VALUE !== $liveKey
+        ) {
             $shareOfCheckoutHelper->resetShareOfCheckoutConsent();
         } else {
             // Prestashop FormBuilder adds `_ON` after name in the switch
-            $shareOfCheckoutHelper->handleCheckoutConsent(ShareOfCheckoutAdminFormBuilder::ALMA_SHARE_OF_CHECKOUT_STATE . '_ON');
+            if (
+                true === SettingsHelper::isShareOfCheckoutAnswered()
+                && $oldApiMode === $apiMode
+            ) {
+                $shareOfCheckoutHelper->handleCheckoutConsent(
+                    ShareOfCheckoutAdminFormBuilder::ALMA_SHARE_OF_CHECKOUT_STATE . '_ON'
+                );
+            }
         }
 
         // Down here, we know the provided API keys are correct (at least the one for the chosen API mode)
@@ -117,7 +170,7 @@ final class GetContentHookController extends AdminHookController
 
         if ($merchant) {
             // Save merchant API ID for widgets usage on frontend
-            Settings::updateValue('ALMA_MERCHANT_ID', $merchant->id);
+            $this->updateSettingsValue('ALMA_MERCHANT_ID', $merchant->id);
         }
 
         $apiOnly = Tools::getValue('_api_only');
@@ -126,197 +179,84 @@ final class GetContentHookController extends AdminHookController
             $feePlans = $this->getFeePlans();
             foreach ($feePlans as $feePlan) {
                 $n = $feePlan->installments_count;
-                if (3 == $n && !Settings::isDeferred($feePlan)) {
-                    $key = Settings::keyForFeePlan($feePlan);
+                if (3 == $n && !SettingsHelper::isDeferred($feePlan)) {
+                    $key = SettingsHelper::keyForFeePlan($feePlan);
                     $almaPlans = [];
                     $almaPlans[$key]['enabled'] = 1;
                     $almaPlans[$key]['min'] = $feePlan->min_purchase_amount;
                     $almaPlans[$key]['max'] = $feePlan->max_purchase_amount;
                     $almaPlans[$key]['deferred_trigger_limit_days'] = $feePlan->deferred_trigger_limit_days;
                     $almaPlans[$key]['order'] = 1;
-                    Settings::updateValue('ALMA_FEE_PLANS', json_encode($almaPlans));
+                    $this->updateSettingsValue('ALMA_FEE_PLANS', $almaPlans);
                     break;
                 }
             }
         }
 
-        // Get languages are active
-        $languages = $this->context->controller->getLanguages();
-
         if (!$apiOnly) {
-            $titlesPayNow = $titles = $titlesDeferred = $titlesCredit = [];
-            $descriptionsPayNow = $descriptions = $descriptionsDeferred = $descriptionsCredit = [];
-            $nonEligibleCategoriesMsg = [];
-            foreach ($languages as $language) {
-                $locale = $language['iso_code'];
-                if (array_key_exists('locale', $language)) {
-                    $locale = $language['locale'];
-                }
-                $titlesPayNow[$language['id_lang']] = [
-                    'locale' => $locale,
-                    'string' => Tools::getValue(PaymentButtonAdminFormBuilder::ALMA_PAY_NOW_BUTTON_TITLE . '_' . $language['id_lang']),
-                ];
-                $titles[$language['id_lang']] = [
-                    'locale' => $locale,
-                    'string' => Tools::getValue(PaymentButtonAdminFormBuilder::ALMA_PNX_BUTTON_TITLE . '_' . $language['id_lang']),
-                ];
-                $titlesDeferred[$language['id_lang']] = [
-                    'locale' => $locale,
-                    'string' => Tools::getValue(PaymentButtonAdminFormBuilder::ALMA_DEFERRED_BUTTON_TITLE . '_' . $language['id_lang']),
-                ];
-                $titlesCredit[$language['id_lang']] = [
-                    'locale' => $locale,
-                    'string' => Tools::getValue(PaymentButtonAdminFormBuilder::ALMA_PNX_AIR_BUTTON_TITLE . '_' . $language['id_lang']),
-                ];
-                $descriptionsPayNow[$language['id_lang']] = [
-                    'locale' => $locale,
-                    'string' => Tools::getValue(PaymentButtonAdminFormBuilder::ALMA_PAY_NOW_BUTTON_DESC . '_' . $language['id_lang']),
-                ];
-                $descriptions[$language['id_lang']] = [
-                    'locale' => $locale,
-                    'string' => Tools::getValue(PaymentButtonAdminFormBuilder::ALMA_PNX_BUTTON_DESC . '_' . $language['id_lang']),
-                ];
-                $descriptionsDeferred[$language['id_lang']] = [
-                    'locale' => $locale,
-                    'string' => Tools::getValue(PaymentButtonAdminFormBuilder::ALMA_DEFERRED_BUTTON_DESC . '_' . $language['id_lang']),
-                ];
-                $descriptionsCredit[$language['id_lang']] = [
-                    'locale' => $locale,
-                    'string' => Tools::getValue(PaymentButtonAdminFormBuilder::ALMA_PNX_AIR_BUTTON_DESC . '_' . $language['id_lang']),
-                ];
-                $nonEligibleCategoriesMsg[$language['id_lang']] = [
-                    'locale' => $locale,
-                    'string' => Tools::getValue(ExcludedCategoryAdminFormBuilder::ALMA_NOT_ELIGIBLE_CATEGORIES . '_' . $language['id_lang']),
-                ];
+            try {
+                $this->saveCustomFieldsValues();
+            } catch (MissingParameterException $e) {
+                $this->context->smarty->assign('validation_error', 'missing_required_setting');
+                Logger::instance()->error($e->getMessage());
 
-                if (
-                    empty($titles[$language['id_lang']]['string'])
-                    || empty($titlesPayNow[$language['id_lang']]['string'])
-                    || empty($titlesDeferred[$language['id_lang']]['string'])
-                    || empty($titlesCredit[$language['id_lang']]['string'])
-                    || empty($descriptionsPayNow[$language['id_lang']]['string'])
-                    || empty($descriptions[$language['id_lang']]['string'])
-                    || empty($descriptionsDeferred[$language['id_lang']]['string'])
-                    || empty($descriptionsCredit[$language['id_lang']]['string'])
-                ) {
-                    $this->context->smarty->assign('validation_error', 'missing_required_setting');
-
-                    return $this->module->display($this->module->file, 'getContent.tpl');
-                }
+                return $this->module->display($this->module->file, 'getContent.tpl');
             }
 
-            $showEligibility = (bool) Tools::getValue('ALMA_SHOW_ELIGIBILITY_MESSAGE_ON');
-            $showCartEligibilityNotEligible = (bool) Tools::getValue('ALMA_CART_WDGT_NOT_ELGBL_ON');
-            $showProductEligibilityNotEligible = (bool) Tools::getValue('ALMA_PRODUCT_WDGT_NOT_ELGBL_ON');
-            $showCategoriesEligibilityNotEligible = (bool) Tools::getValue('ALMA_CATEGORIES_WDGT_NOT_ELGBL_ON');
-
-            $showProductEligibility = (bool) Tools::getValue('ALMA_SHOW_PRODUCT_ELIGIBILITY_ON');
-            Settings::updateValue('ALMA_SHOW_PRODUCT_ELIGIBILITY', $showProductEligibility ? '1' : '0');
-
-            $productPriceQuerySelector = Tools::getValue('ALMA_PRODUCT_PRICE_SELECTOR');
-            Settings::updateValue('ALMA_PRODUCT_PRICE_SELECTOR', $productPriceQuerySelector);
-
-            $widgetCustomPosition = (bool) Tools::getValue('ALMA_WIDGET_POSITION_CUSTOM');
-            Settings::updateValue('ALMA_WIDGET_POSITION_CUSTOM', $widgetCustomPosition);
-
-            $productWidgetPositionQuerySelector = Tools::getValue('ALMA_WIDGET_POSITION_SELECTOR');
-            Settings::updateValue('ALMA_WIDGET_POSITION_SELECTOR', $productWidgetPositionQuerySelector);
-
-            $productAttrQuerySelector = Tools::getValue('ALMA_PRODUCT_ATTR_SELECTOR');
-            Settings::updateValue('ALMA_PRODUCT_ATTR_SELECTOR', $productAttrQuerySelector);
-
-            $productAttrRadioQuerySelector = Tools::getValue('ALMA_PRODUCT_ATTR_RADIO_SELECTOR');
-            Settings::updateValue('ALMA_PRODUCT_ATTR_RADIO_SELECTOR', $productAttrRadioQuerySelector);
-
-            $productColorPickQuerySelector = Tools::getValue('ALMA_PRODUCT_COLOR_PICK_SELECTOR');
-            Settings::updateValue('ALMA_PRODUCT_COLOR_PICK_SELECTOR', $productColorPickQuerySelector);
-
-            $productQuantityQuerySelector = Tools::getValue('ALMA_PRODUCT_QUANTITY_SELECTOR');
-            Settings::updateValue('ALMA_PRODUCT_QUANTITY_SELECTOR', $productQuantityQuerySelector);
-
-            $cartWidgetCustomPosition = (bool) Tools::getValue('ALMA_CART_WIDGET_POSITION_CUSTOM');
-            Settings::updateValue('ALMA_CART_WIDGET_POSITION_CUSTOM', $cartWidgetCustomPosition);
-
-            $cartWidgetPositionQuerySelector = Tools::getValue('ALMA_CART_WDGT_POS_SELECTOR');
-            Settings::updateValue('ALMA_CART_WDGT_POS_SELECTOR', $cartWidgetPositionQuerySelector);
-
-            Settings::updateValue(PaymentButtonAdminFormBuilder::ALMA_PAY_NOW_BUTTON_TITLE, json_encode($titlesPayNow));
-            Settings::updateValue(PaymentButtonAdminFormBuilder::ALMA_PAY_NOW_BUTTON_DESC, json_encode($descriptionsPayNow));
-
-            Settings::updateValue(PaymentButtonAdminFormBuilder::ALMA_PNX_BUTTON_TITLE, json_encode($titles));
-            Settings::updateValue(PaymentButtonAdminFormBuilder::ALMA_PNX_BUTTON_DESC, json_encode($descriptions));
-
-            Settings::updateValue(PaymentButtonAdminFormBuilder::ALMA_DEFERRED_BUTTON_TITLE, json_encode($titlesDeferred));
-            Settings::updateValue(PaymentButtonAdminFormBuilder::ALMA_DEFERRED_BUTTON_DESC, json_encode($descriptionsDeferred));
-
-            Settings::updateValue(PaymentButtonAdminFormBuilder::ALMA_PNX_AIR_BUTTON_TITLE, json_encode($titlesCredit));
-            Settings::updateValue(PaymentButtonAdminFormBuilder::ALMA_PNX_AIR_BUTTON_DESC, json_encode($descriptionsCredit));
-
-            $showDisabledButton = (bool) Tools::getValue('ALMA_SHOW_DISABLED_BUTTON');
-            Settings::updateValue('ALMA_SHOW_DISABLED_BUTTON', $showDisabledButton);
-
-            Settings::updateValue('ALMA_SHOW_ELIGIBILITY_MESSAGE', $showEligibility ? '1' : '0');
-            Settings::updateValue('ALMA_NOT_ELIGIBLE_CATEGORIES', json_encode($nonEligibleCategoriesMsg));
-
-            Settings::updateValue('ALMA_CART_WDGT_NOT_ELGBL', $showCartEligibilityNotEligible);
-            Settings::updateValue('ALMA_PRODUCT_WDGT_NOT_ELGBL', $showProductEligibilityNotEligible);
-            Settings::updateValue('ALMA_CATEGORIES_WDGT_NOT_ELGBL', $showCategoriesEligibilityNotEligible);
-
-            $idStateRefund = Tools::getValue('ALMA_STATE_REFUND');
-            Settings::updateValue('ALMA_STATE_REFUND', $idStateRefund);
-
-            $isStateRefundEnabled = (bool) Tools::getValue('ALMA_STATE_REFUND_ENABLED_ON');
-            Settings::updateValue('ALMA_STATE_REFUND_ENABLED', $isStateRefundEnabled);
-
-            $idStatePaymentTrigger = Tools::getValue('ALMA_STATE_TRIGGER');
-            Settings::updateValue('ALMA_STATE_TRIGGER', $idStatePaymentTrigger);
-
-            $isStatePaymentTriggerEnabled = (bool) Tools::getValue('ALMA_PAYMENT_ON_TRIGGERING_ENABLED_ON');
-            Settings::updateValue('ALMA_PAYMENT_ON_TRIGGERING_ENABLED', $isStatePaymentTriggerEnabled);
-
-            $descriptionPaymentTrigger = Tools::getValue('ALMA_DESCRIPTION_TRIGGER');
-            Settings::updateValue('ALMA_DESCRIPTION_TRIGGER', $descriptionPaymentTrigger);
-
-            $activateLogging = (bool) Tools::getValue('ALMA_ACTIVATE_LOGGING_ON');
-            Settings::updateValue('ALMA_ACTIVATE_LOGGING', $activateLogging);
+            $this->saveConfigValues();
 
             if ($merchant) {
                 // First validate that plans boundaries are correctly set
                 $feePlans = $this->getFeePlans();
+
                 foreach ($feePlans as $feePlan) {
                     $n = $feePlan->installments_count;
                     $deferred_days = $feePlan->deferred_days;
                     $deferred_months = $feePlan->deferred_months;
-                    $key = Settings::keyForFeePlan($feePlan);
-                    if (1 != $n && Settings::isDeferred($feePlan)) {
+                    $key = SettingsHelper::keyForFeePlan($feePlan);
+
+                    if (1 != $n && SettingsHelper::isDeferred($feePlan)) {
                         continue;
                     }
-                    $min = almaPriceToCents((int) Tools::getValue("ALMA_{$key}_MIN_AMOUNT"));
-                    $max = almaPriceToCents((int) Tools::getValue("ALMA_{$key}_MAX_AMOUNT"));
+
+                    $min = PriceHelper::convertPriceToCents((int) Tools::getValue("ALMA_{$key}_MIN_AMOUNT"));
+                    $max = PriceHelper::convertPriceToCents((int) Tools::getValue("ALMA_{$key}_MAX_AMOUNT"));
+
                     $enablePlan = (bool) Tools::getValue("ALMA_{$key}_ENABLED_ON");
 
-                    if ($enablePlan && !($min >= $feePlan->min_purchase_amount &&
-                        $min <= min($max, $feePlan->max_purchase_amount))) {
+                    if ($enablePlan
+                        &&
+                        !(
+                            $min >= $feePlan->min_purchase_amount
+                            && $min <= min($max, $feePlan->max_purchase_amount)
+                        )
+                    ) {
                         $this->context->smarty->assign([
                             'validation_error' => 'pnx_min_amount',
                             'n' => $n,
                             'deferred_days' => $deferred_days,
                             'deferred_months' => $deferred_months,
-                            'min' => almaPriceFromCents($feePlan->min_purchase_amount),
-                            'max' => almaPriceFromCents(min($max, $feePlan->max_purchase_amount)),
+                            'min' => PriceHelper::convertPriceFromCents($feePlan->min_purchase_amount),
+                            'max' => PriceHelper::convertPriceFromCents(min($max, $feePlan->max_purchase_amount)),
                         ]);
 
                         return $this->module->display($this->module->file, 'getContent.tpl');
                     }
 
-                    if ($enablePlan && !($max >= $min && $max <= $feePlan->max_purchase_amount)) {
+                    if ($enablePlan
+                        &&
+                        !(
+                            $max >= $min
+                            && $max <= $feePlan->max_purchase_amount
+                        )
+                    ) {
                         $this->context->smarty->assign([
                             'validation_error' => 'pnx_max_amount',
                             'n' => $n,
                             'deferred_days' => $deferred_days,
                             'deferred_months' => $deferred_months,
-                            'min' => almaPriceFromCents($min),
-                            'max' => almaPriceFromCents($feePlan->max_purchase_amount),
+                            'min' => PriceHelper::convertPriceFromCents($min),
+                            'max' => PriceHelper::convertPriceFromCents($feePlan->max_purchase_amount),
                         ]);
 
                         return $this->module->display($this->module->file, 'getContent.tpl');
@@ -325,11 +265,12 @@ final class GetContentHookController extends AdminHookController
 
                 $almaPlans = [];
                 $position = 1;
+
                 foreach ($feePlans as $feePlan) {
                     $n = $feePlan->installments_count;
-                    $key = Settings::keyForFeePlan($feePlan);
+                    $key = SettingsHelper::keyForFeePlan($feePlan);
 
-                    if (1 != $n && Settings::isDeferred($feePlan)) {
+                    if (1 != $n && SettingsHelper::isDeferred($feePlan)) {
                         continue;
                     }
 
@@ -345,8 +286,10 @@ final class GetContentHookController extends AdminHookController
                     }
 
                     // in case of difference between sandbox and production feeplans
-                    if (0 == $min && 0 == $max && 0 == $order) {
-                        $enablePlan = (bool) Tools::getValue("ALMA_{$key}_ENABLED_ON");
+                    if (0 == $min
+                        && 0 == $max
+                        && 0 == $order
+                    ) {
                         $almaPlans[$key]['enabled'] = '0';
                         $almaPlans[$key]['min'] = $feePlan->min_purchase_amount;
                         $almaPlans[$key]['max'] = $feePlan->max_purchase_amount;
@@ -356,21 +299,23 @@ final class GetContentHookController extends AdminHookController
                     } else {
                         $enablePlan = (bool) Tools::getValue("ALMA_{$key}_ENABLED_ON");
                         $almaPlans[$key]['enabled'] = $enablePlan ? '1' : '0';
-                        $almaPlans[$key]['min'] = almaPriceToCents($min);
-                        $almaPlans[$key]['max'] = almaPriceToCents($max);
+                        $almaPlans[$key]['min'] = PriceHelper::convertPriceToCents($min);
+                        $almaPlans[$key]['max'] = PriceHelper::convertPriceToCents($max);
                         $almaPlans[$key]['deferred_trigger_limit_days'] = $feePlan->deferred_trigger_limit_days;
                         $almaPlans[$key]['order'] = (int) Tools::getValue("ALMA_{$key}_SORT_ORDER");
                     }
                 }
 
-                Settings::updateValue('ALMA_FEE_PLANS', json_encode($almaPlans));
+                $this->updateSettingsValue('ALMA_FEE_PLANS', $almaPlans);
             }
         }
 
         // At this point, consider things are sufficiently configured to be usable
-        Settings::updateValue('ALMA_FULLY_CONFIGURED', '1');
+        $this->updateSettingsValue('ALMA_FULLY_CONFIGURED', '1');
 
-        if ($credentialsError && array_key_exists('warning', $credentialsError)) {
+        if ($credentialsError
+            && array_key_exists('warning', $credentialsError)
+        ) {
             return $credentialsError['message'];
         }
 
@@ -380,7 +325,7 @@ final class GetContentHookController extends AdminHookController
     }
 
     /**
-     * Check if Api key are obscur
+     * Check if Api key are obscur.
      *
      * @param string $apiKey
      * @param string $mode
@@ -389,13 +334,13 @@ final class GetContentHookController extends AdminHookController
      */
     private function setKeyIfValueIsNotObscur($apiKey, $mode)
     {
-        if ($apiKey === ApiKeyHelper::OBCUR_VALUE) {
+        if (ConstantsHelper::OBSCURE_VALUE === $apiKey) {
             return;
         }
 
-        if ($mode === ALMA_MODE_LIVE) {
+        if (ALMA_MODE_LIVE === $mode) {
             $this->apiKeyHelper->setLiveApiKey($apiKey);
-        } elseif ($mode === ALMA_MODE_TEST) {
+        } else {
             $this->apiKeyHelper->setTestApiKey($apiKey);
         }
     }
@@ -405,8 +350,8 @@ final class GetContentHookController extends AdminHookController
         $modes = [ALMA_MODE_TEST, ALMA_MODE_LIVE];
 
         foreach ($modes as $mode) {
-            $key = ($mode == ALMA_MODE_LIVE ? $liveKey : $testKey);
-            if (!$key || $key === ApiKeyHelper::OBCUR_VALUE) {
+            $key = (ALMA_MODE_LIVE == $mode ? $liveKey : $testKey);
+            if (!$key || ConstantsHelper::OBSCURE_VALUE === $key) {
                 continue;
             }
 
@@ -422,7 +367,7 @@ final class GetContentHookController extends AdminHookController
             try {
                 $merchant = $alma->merchants->me();
             } catch (RequestError $e) {
-                if ($e->response && $e->response->responseCode === 401) {
+                if ($e->response && 401 === $e->response->responseCode) {
                     $this->context->smarty->assign('validation_error', "{$mode}_authentication_error");
 
                     $errorMessage = $this->module->display($this->module->file, 'getContent.tpl');
@@ -510,15 +455,15 @@ final class GetContentHookController extends AdminHookController
         $installmentsPlans = [];
         if ($merchant) {
             $feePlans = $this->getFeePlans();
-            $installmentsPlans = json_decode(Settings::getFeePlans());
+            $installmentsPlans = json_decode(SettingsHelper::getFeePlans());
 
             // sort fee plans by pnx then by pay later duration
             $feePlanDeferred = [];
             foreach ($feePlans as $feePlan) {
-                if (!Settings::isDeferred($feePlan)) {
+                if (!SettingsHelper::isDeferred($feePlan)) {
                     $feePlansOrdered[$feePlan->installments_count] = $feePlan;
                 } else {
-                    $duration = Settings::getDuration($feePlan);
+                    $duration = SettingsHelper::getDuration($feePlan);
                     $feePlanDeferred[$feePlan->installments_count . $duration] = $feePlan;
                 }
             }
@@ -532,14 +477,18 @@ final class GetContentHookController extends AdminHookController
             $iconPath,
             ['feePlans' => $feePlansOrdered, 'installmentsPlans' => $installmentsPlans]
         );
+        $shouldDisplayShareOfCheckoutForm = !SettingsHelper::shouldHideShareOfCheckoutForm();
         $apiBuilder = new ApiAdminFormBuilder($this->module, $this->context, $iconPath, ['needsAPIKey' => $needsKeys]);
         $cartBuilder = new CartEligibilityAdminFormBuilder($this->module, $this->context, $iconPath);
         $productBuilder = new ProductEligibilityAdminFormBuilder($this->module, $this->context, $iconPath);
         $excludedBuilder = new ExcludedCategoryAdminFormBuilder($this->module, $this->context, $iconPath);
         $refundBuilder = new RefundAdminFormBuilder($this->module, $this->context, $iconPath);
-        $shareOfCheckoutBuilder = new ShareOfCheckoutAdminFormBuilder($this->module, $this->context, $iconPath);
+        if ($shouldDisplayShareOfCheckoutForm) {
+            $shareOfCheckoutBuilder = new ShareOfCheckoutAdminFormBuilder($this->module, $this->context, $iconPath);
+        }
         $triggerBuilder = new PaymentOnTriggeringAdminFormBuilder($this->module, $this->context, $iconPath);
         $paymentBuilder = new PaymentButtonAdminFormBuilder($this->module, $this->context, $iconPath);
+        $fragmentBuilder = new FragmentAdminFormBuilder($this->module, $this->context, $iconPath);
         $debugBuilder = new DebugAdminFormBuilder($this->module, $this->context, $iconPath);
 
         $fieldsForms = [];
@@ -553,9 +502,12 @@ final class GetContentHookController extends AdminHookController
             $fieldsForms[] = $paymentBuilder->build();
             $fieldsForms[] = $excludedBuilder->build();
             $fieldsForms[] = $refundBuilder->build();
-            $fieldsForms[] = $shareOfCheckoutBuilder->build();
+            if ($shouldDisplayShareOfCheckoutForm) {
+                $fieldsForms[] = $shareOfCheckoutBuilder->build();
+            }
+            $fieldsForms[] = $fragmentBuilder->build();
         }
-        if (Settings::isPaymentTriggerEnabledByState()) {
+        if (SettingsHelper::isPaymentTriggerEnabledByState()) {
             $fieldsForms[] = $triggerBuilder->build();
         }
 
@@ -582,48 +534,49 @@ final class GetContentHookController extends AdminHookController
         $helper->token = Tools::getAdminTokenLite('AdminModules');
 
         $helper->fields_value = [
-            'ALMA_LIVE_API_KEY' => Settings::getLiveKey(),
-            'ALMA_TEST_API_KEY' => Settings::getTestKey(),
-            'ALMA_API_MODE' => Settings::getActiveMode(),
-            PaymentButtonAdminFormBuilder::ALMA_PAY_NOW_BUTTON_TITLE => SettingsCustomFields::getPayNowButtonTitle(),
-            PaymentButtonAdminFormBuilder::ALMA_PAY_NOW_BUTTON_DESC => SettingsCustomFields::getPayNowButtonDescription(),
-            PaymentButtonAdminFormBuilder::ALMA_PNX_BUTTON_TITLE => SettingsCustomFields::getPnxButtonTitle(),
-            PaymentButtonAdminFormBuilder::ALMA_PNX_BUTTON_DESC => SettingsCustomFields::getPnxButtonDescription(),
-            PaymentButtonAdminFormBuilder::ALMA_DEFERRED_BUTTON_TITLE => SettingsCustomFields::getPaymentButtonTitleDeferred(),
-            PaymentButtonAdminFormBuilder::ALMA_DEFERRED_BUTTON_DESC => SettingsCustomFields::getPaymentButtonDescriptionDeferred(),
-            PaymentButtonAdminFormBuilder::ALMA_PNX_AIR_BUTTON_TITLE => SettingsCustomFields::getPnxAirButtonTitle(),
-            PaymentButtonAdminFormBuilder::ALMA_PNX_AIR_BUTTON_DESC => SettingsCustomFields::getPnxAirButtonDescription(),
-            'ALMA_SHOW_DISABLED_BUTTON' => Settings::showDisabledButton(),
-            'ALMA_SHOW_ELIGIBILITY_MESSAGE_ON' => Settings::showEligibilityMessage(),
-            'ALMA_CART_WDGT_NOT_ELGBL_ON' => Settings::showCartWidgetIfNotEligible(),
-            'ALMA_PRODUCT_WDGT_NOT_ELGBL_ON' => Settings::showProductWidgetIfNotEligible(),
-            'ALMA_CATEGORIES_WDGT_NOT_ELGBL_ON' => Settings::showCategoriesWidgetIfNotEligible(),
-            'ALMA_ACTIVATE_LOGGING_ON' => (bool) Settings::canLog(),
-            'ALMA_SHARE_OF_CHECKOUT_STATE_ON' => Settings::getShareOfChekcoutStatus(),
-            'ALMA_SHARE_OF_CHECKOUT_DATE' => Settings::getCurrentTimestamp(),
-            'ALMA_STATE_REFUND' => Settings::getRefundState(),
-            'ALMA_STATE_REFUND_ENABLED_ON' => Settings::isRefundEnabledByState(),
-            'ALMA_STATE_TRIGGER' => Settings::getPaymentTriggerState(),
-            'ALMA_PAYMENT_ON_TRIGGERING_ENABLED_ON' => Settings::isPaymentTriggerEnabledByState(),
-            'ALMA_DESCRIPTION_TRIGGER' => Settings::getKeyDescriptionPaymentTrigger(),
-            'ALMA_NOT_ELIGIBLE_CATEGORIES' => SettingsCustomFields::getNonEligibleCategoriesMessage(),
-            'ALMA_SHOW_PRODUCT_ELIGIBILITY_ON' => Settings::showProductEligibility(),
-            'ALMA_PRODUCT_PRICE_SELECTOR' => Settings::getProductPriceQuerySelector(),
-            'ALMA_WIDGET_POSITION_SELECTOR' => Settings::getProductWidgetPositionQuerySelector(),
-            'ALMA_WIDGET_POSITION_CUSTOM' => Settings::isWidgetCustomPosition(),
-            'ALMA_CART_WDGT_POS_SELECTOR' => Settings::getCartWidgetPositionQuerySelector(),
-            'ALMA_CART_WIDGET_POSITION_CUSTOM' => Settings::isCartWidgetCustomPosition(),
-            'ALMA_PRODUCT_ATTR_SELECTOR' => Settings::getProductAttrQuerySelector(),
-            'ALMA_PRODUCT_ATTR_RADIO_SELECTOR' => Settings::getProductAttrRadioQuerySelector(),
-            'ALMA_PRODUCT_COLOR_PICK_SELECTOR' => Settings::getProductColorPickQuerySelector(),
-            'ALMA_PRODUCT_QUANTITY_SELECTOR' => Settings::getProductQuantityQuerySelector(),
+            'ALMA_LIVE_API_KEY' => SettingsHelper::getLiveKey(),
+            'ALMA_TEST_API_KEY' => SettingsHelper::getTestKey(),
+            'ALMA_API_MODE' => SettingsHelper::getActiveMode(),
+            PaymentButtonAdminFormBuilder::ALMA_PAY_NOW_BUTTON_TITLE => SettingsCustomFieldsHelper::getPayNowButtonTitle(),
+            PaymentButtonAdminFormBuilder::ALMA_PAY_NOW_BUTTON_DESC => SettingsCustomFieldsHelper::getPayNowButtonDescription(),
+            PaymentButtonAdminFormBuilder::ALMA_PNX_BUTTON_TITLE => SettingsCustomFieldsHelper::getPnxButtonTitle(),
+            PaymentButtonAdminFormBuilder::ALMA_PNX_BUTTON_DESC => SettingsCustomFieldsHelper::getPnxButtonDescription(),
+            PaymentButtonAdminFormBuilder::ALMA_DEFERRED_BUTTON_TITLE => SettingsCustomFieldsHelper::getPaymentButtonTitleDeferred(),
+            PaymentButtonAdminFormBuilder::ALMA_DEFERRED_BUTTON_DESC => SettingsCustomFieldsHelper::getPaymentButtonDescriptionDeferred(),
+            PaymentButtonAdminFormBuilder::ALMA_PNX_AIR_BUTTON_TITLE => SettingsCustomFieldsHelper::getPnxAirButtonTitle(),
+            PaymentButtonAdminFormBuilder::ALMA_PNX_AIR_BUTTON_DESC => SettingsCustomFieldsHelper::getPnxAirButtonDescription(),
+            FragmentAdminFormBuilder::ALMA_ACTIVATE_FRAGMENT . '_ON' => SettingsHelper::isInPageEnabled(),
+            'ALMA_SHOW_DISABLED_BUTTON' => SettingsHelper::showDisabledButton(),
+            'ALMA_SHOW_ELIGIBILITY_MESSAGE_ON' => SettingsHelper::showEligibilityMessage(),
+            'ALMA_CART_WDGT_NOT_ELGBL_ON' => SettingsHelper::showCartWidgetIfNotEligible(),
+            'ALMA_PRODUCT_WDGT_NOT_ELGBL_ON' => SettingsHelper::showProductWidgetIfNotEligible(),
+            'ALMA_CATEGORIES_WDGT_NOT_ELGBL_ON' => SettingsHelper::showCategoriesWidgetIfNotEligible(),
+            'ALMA_ACTIVATE_LOGGING_ON' => (bool) SettingsHelper::canLog(),
+            'ALMA_SHARE_OF_CHECKOUT_STATE_ON' => SettingsHelper::getShareOfCheckoutStatus(),
+            'ALMA_SHARE_OF_CHECKOUT_DATE' => SettingsHelper::getCurrentTimestamp(),
+            'ALMA_STATE_REFUND' => SettingsHelper::getRefundState(),
+            'ALMA_STATE_REFUND_ENABLED_ON' => SettingsHelper::isRefundEnabledByState(),
+            'ALMA_STATE_TRIGGER' => SettingsHelper::getPaymentTriggerState(),
+            'ALMA_PAYMENT_ON_TRIGGERING_ENABLED_ON' => SettingsHelper::isPaymentTriggerEnabledByState(),
+            'ALMA_DESCRIPTION_TRIGGER' => SettingsHelper::getKeyDescriptionPaymentTrigger(),
+            'ALMA_NOT_ELIGIBLE_CATEGORIES' => SettingsCustomFieldsHelper::getNonEligibleCategoriesMessage(),
+            'ALMA_SHOW_PRODUCT_ELIGIBILITY_ON' => SettingsHelper::showProductEligibility(),
+            'ALMA_PRODUCT_PRICE_SELECTOR' => SettingsHelper::getProductPriceQuerySelector(),
+            'ALMA_WIDGET_POSITION_SELECTOR' => SettingsHelper::getProductWidgetPositionQuerySelector(),
+            'ALMA_WIDGET_POSITION_CUSTOM' => SettingsHelper::isWidgetCustomPosition(),
+            'ALMA_CART_WDGT_POS_SELECTOR' => SettingsHelper::getCartWidgetPositionQuerySelector(),
+            'ALMA_CART_WIDGET_POSITION_CUSTOM' => SettingsHelper::isCartWidgetCustomPosition(),
+            'ALMA_PRODUCT_ATTR_SELECTOR' => SettingsHelper::getProductAttrQuerySelector(),
+            'ALMA_PRODUCT_ATTR_RADIO_SELECTOR' => SettingsHelper::getProductAttrRadioQuerySelector(),
+            'ALMA_PRODUCT_COLOR_PICK_SELECTOR' => SettingsHelper::getProductColorPickQuerySelector(),
+            'ALMA_PRODUCT_QUANTITY_SELECTOR' => SettingsHelper::getProductQuantityQuerySelector(),
             '_api_only' => true,
         ];
 
         if ($merchant) {
             $sortOrder = 1;
             foreach ($feePlans as $feePlan) {
-                $key = Settings::keyForFeePlan($feePlan);
+                $key = SettingsHelper::keyForFeePlan($feePlan);
 
                 $helper->fields_value["ALMA_{$key}_ENABLED_ON"] = isset($installmentsPlans->$key->enabled)
                     ? $installmentsPlans->$key->enabled
@@ -631,11 +584,13 @@ final class GetContentHookController extends AdminHookController
                 $minAmount = isset($installmentsPlans->$key->min)
                     ? $installmentsPlans->$key->min
                     : $feePlan->min_purchase_amount;
-                $helper->fields_value["ALMA_{$key}_MIN_AMOUNT"] = (int) round(almaPriceFromCents($minAmount));
+                $helper->fields_value["ALMA_{$key}_MIN_AMOUNT"] = (int) round(
+                    PriceHelper::convertPriceFromCents($minAmount)
+                );
                 $maxAmount = isset($installmentsPlans->$key->max)
                     ? $installmentsPlans->$key->max
                     : $feePlan->max_purchase_amount;
-                $helper->fields_value["ALMA_{$key}_MAX_AMOUNT"] = (int) almaPriceFromCents($maxAmount);
+                $helper->fields_value["ALMA_{$key}_MAX_AMOUNT"] = (int) PriceHelper::convertPriceFromCents($maxAmount);
                 $order = isset($installmentsPlans->$key->order)
                     ? $installmentsPlans->$key->order
                     : $sortOrder;
@@ -685,32 +640,142 @@ final class GetContentHookController extends AdminHookController
 
     public function needsAPIKey()
     {
-        $key = trim(Settings::getActiveAPIKey());
+        $key = trim(SettingsHelper::getActiveAPIKey());
 
-        return $key == '' || $key == null;
+        return '' == $key || null == $key;
     }
 
     public function run($params)
     {
-        $messages = '';
         $this->assignSmartyAlertClasses();
 
         if (Tools::isSubmit('alma_config_form')) {
             $messages = $this->processConfiguration();
         } elseif (!$this->needsAPIKey()) {
             $messages = $this->credentialsError(
-                Settings::getActiveMode(),
-                Settings::getLiveKey(),
-                Settings::getTestKey()
+                SettingsHelper::getActiveMode(),
+                SettingsHelper::getLiveKey(),
+                SettingsHelper::getTestKey()
             );
 
             if ($messages) {
                 $messages = $messages['message'];
             }
+        } else {
+            $messages = '';
         }
 
         $htmlForm = $this->renderForm();
 
         return $messages . $htmlForm;
+    }
+
+    /**
+     * @param int $languageId
+     * @param string $locale
+     * @param string $keyForm
+     *
+     * @return array
+     *
+     * @throws MissingParameterException
+     */
+    protected function getLocaleAndString($languageId, $locale, $keyForm)
+    {
+        $result = [
+            'locale' => $locale,
+            'string' => Tools::getValue(sprintf('%s_%s', $keyForm, $languageId)),
+        ];
+
+        if (empty($result['string'])) {
+            throw new MissingParameterException($locale, $keyForm, $languageId);
+        }
+
+        return $result;
+    }
+
+    /**
+     * @param array $languages
+     *
+     * @return void
+     *
+     * @throws MissingParameterException
+     */
+    protected function saveCustomFieldsValues()
+    {
+        // Get languages are active
+        $languages = $this->context->controller->getLanguages();
+
+        $titlesPayNow = $titles = $titlesDeferred = $titlesCredit = $descriptionsPayNow = $descriptions = $descriptionsDeferred = $descriptionsCredit = $nonEligibleCategoriesMsg = [];
+
+        foreach ($languages as $language) {
+            $locale = $language['iso_code'];
+            $languageId = $language['id_lang'];
+
+            if (array_key_exists('locale', $language)) {
+                $locale = $language['locale'];
+            }
+
+            $titlesPayNow[$languageId] = $this->getLocaleAndString(
+                $languageId,
+                $locale,
+                PaymentButtonAdminFormBuilder::ALMA_PAY_NOW_BUTTON_TITLE
+            );
+            $titles[$languageId] = $this->getLocaleAndString($languageId, $locale, PaymentButtonAdminFormBuilder::ALMA_PNX_BUTTON_TITLE);
+            $titlesDeferred[$languageId] = $this->getLocaleAndString($languageId, $locale, PaymentButtonAdminFormBuilder::ALMA_DEFERRED_BUTTON_TITLE);
+            $titlesCredit[$languageId] = $this->getLocaleAndString($languageId, $locale, PaymentButtonAdminFormBuilder::ALMA_PNX_AIR_BUTTON_TITLE);
+            $descriptionsPayNow[$languageId] = $this->getLocaleAndString($languageId, $locale, PaymentButtonAdminFormBuilder::ALMA_PAY_NOW_BUTTON_DESC);
+            $descriptions[$languageId] = $this->getLocaleAndString($languageId, $locale, PaymentButtonAdminFormBuilder::ALMA_PNX_BUTTON_DESC);
+            $descriptionsDeferred[$languageId] = $this->getLocaleAndString($languageId, $locale, PaymentButtonAdminFormBuilder::ALMA_DEFERRED_BUTTON_DESC);
+            $descriptionsCredit[$languageId] = $this->getLocaleAndString($languageId, $locale, PaymentButtonAdminFormBuilder::ALMA_PNX_AIR_BUTTON_DESC);
+            $nonEligibleCategoriesMsg[$languageId] = $this->getLocaleAndString($languageId, $locale, ExcludedCategoryAdminFormBuilder::ALMA_NOT_ELIGIBLE_CATEGORIES);
+        }
+
+        $this->updateSettingsValue(PaymentButtonAdminFormBuilder::ALMA_PNX_BUTTON_TITLE, $titles);
+        $this->updateSettingsValue(PaymentButtonAdminFormBuilder::ALMA_DEFERRED_BUTTON_TITLE, $titlesDeferred);
+        $this->updateSettingsValue(PaymentButtonAdminFormBuilder::ALMA_PNX_AIR_BUTTON_TITLE, $titlesCredit);
+        $this->updateSettingsValue(PaymentButtonAdminFormBuilder::ALMA_PAY_NOW_BUTTON_TITLE, $titlesPayNow);
+        $this->updateSettingsValue(PaymentButtonAdminFormBuilder::ALMA_PNX_BUTTON_DESC, $descriptions);
+        $this->updateSettingsValue(PaymentButtonAdminFormBuilder::ALMA_DEFERRED_BUTTON_DESC, $descriptionsDeferred);
+        $this->updateSettingsValue(PaymentButtonAdminFormBuilder::ALMA_PNX_AIR_BUTTON_DESC, $descriptionsCredit);
+        $this->updateSettingsValue(PaymentButtonAdminFormBuilder::ALMA_PAY_NOW_BUTTON_DESC, $descriptionsPayNow);
+        $this->updateSettingsValue('ALMA_NOT_ELIGIBLE_CATEGORIES', $nonEligibleCategoriesMsg);
+    }
+
+    /**
+     * @param string $configKey
+     * @param array|string $value
+     *
+     * @return void
+     */
+    protected function updateSettingsValue($configKey, $value)
+    {
+        if (is_array($value)) {
+            $value = json_encode($value);
+        }
+
+        SettingsHelper::updateValue($configKey, $value);
+    }
+
+    /**
+     * @return void
+     */
+    protected function saveConfigValues()
+    {
+        foreach (self::KEY_CONFIG as $key => $type) {
+            $value = Tools::getValue($key);
+
+            switch ($type) {
+                case 'test_bool':
+                    $value = $value ? '1' : '0';
+                    break;
+                case 'cast_bool':
+                    $value = (bool) $value;
+                    break;
+                default:
+                    break;
+            }
+
+            $this->updateSettingsValue($key, $value);
+        }
     }
 }

@@ -23,8 +23,6 @@
  */
 namespace Alma\PrestaShop\Exceptions;
 
-use Exception;
-
-class RenderPaymentException extends Exception
+class RenderPaymentException extends AlmaException
 {
 }

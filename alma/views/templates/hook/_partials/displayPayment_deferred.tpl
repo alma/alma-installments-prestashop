@@ -48,7 +48,7 @@
         <div class="row">
             <div class="col-xs-12">
                 <p class="payment_module">
-                    <a href="{$option.link}" class="alma-fragments-deferred {$almaButton} {$iconDisplay}">
+                    <a href="{$option.link}" class="{if $option.isInPageEnabled}alma-inpage ps16{/if} {$almaButton} {$iconDisplay}" id="payment-option-{$option.paymentOptionKey}">
                         <span class="alma-button--logo">
                             <img src="{$option.logo|escape:'htmlall':'UTF-8'}" alt="Alma">
                         </span>
@@ -65,6 +65,9 @@
                     </a>
                 </p>
             </div>
+            {if $option.isInPageEnabled}
+                <div id="alma-inpage-payment-option-{$option.paymentOptionKey}" class="alma-inpage-payment-options" data-apimode="{$apiMode}" data-merchantid="{$merchantId}" data-isinpageenabled="{$option.isInPageEnabled}" data-installment="{$option.pnx}" data-purchaseamount="{$creditInfo.totalCart}" data-locale="{$option.locale}"></div>
+            {/if}
         </div>
     {/if}    
 {/if}

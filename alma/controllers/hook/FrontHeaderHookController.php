@@ -27,17 +27,48 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
+use Alma\PrestaShop\Helpers\ConstantsHelper;
+use Alma\PrestaShop\Helpers\SettingsHelper;
 use Alma\PrestaShop\Hooks\FrontendHookController;
-use Alma\PrestaShop\Utils\Settings;
+use FrontController;
 
 class FrontHeaderHookController extends FrontendHookController
 {
+    /**
+     * @var FrontController
+     */
+    private $controller;
+
+    /**
+     * @var int|mixed|string|null
+     */
+    private $moduleName;
+
+    /**
+     * @param $module
+     */
+    public function __construct($module)
+    {
+        parent::__construct($module);
+        $this->controller = $this->context->controller;
+        $this->moduleName = $this->module->name;
+    }
+
+    /**
+     * @param $params
+     *
+     * @return string
+     */
     public function run($params)
     {
         $controllerName = $this->currentControllerName();
         $handler = [$this, "handle{$controllerName}Page"];
 
-        $content = $this->injectAlmaAssets($params);
+        $content = $this->assetsWidgets();
+
+        if (SettingsHelper::isInPageEnabled()) {
+            $content .= $this->assetsInPage();
+        }
 
         if (is_callable($handler)) {
             return $content . call_user_func_array($handler, [$params]);
@@ -46,7 +77,74 @@ class FrontHeaderHookController extends FrontendHookController
         return $content;
     }
 
-    private function handleOrderPage($params)
+    /**
+     * @return bool
+     */
+    public function displayWidgetOnProductPage()
+    {
+        return SettingsHelper::showProductEligibility() && $this->iAmInProductPage();
+    }
+
+    /**
+     * @return bool
+     */
+    private function displayWidgetOnCartPage()
+    {
+        return SettingsHelper::showEligibilityMessage() && $this->iAmInCartPage() && $this->cartIsNotEmpty();
+    }
+
+    /**
+     * @return bool
+     */
+    private function iAmInProductPage()
+    {
+        return 'product' == $this->controller->php_self || 'ProductController' == get_class($this->controller);
+    }
+
+    /**
+     * @return bool
+     */
+    private function cartIsNotEmpty()
+    {
+        return !empty($this->context->cart->getProducts());
+    }
+
+    /**
+     * @return bool
+     */
+    private function iAmInCartPage()
+    {
+        // Step is available on Prestashop < 1.7
+        if (version_compare(_PS_VERSION_, '1.7', '<')) {
+            return ('order' == $this->controller->php_self && 0 == $this->controller->step) ||
+                'order-opc' == $this->controller->php_self;
+        }
+
+        return 'cart' == $this->controller->php_self;
+    }
+
+    /**
+     * @return bool
+     */
+    private function iAmInPaymentPage()
+    {
+        // Step is available on Prestashop < 1.7
+        if (version_compare(_PS_VERSION_, '1.7', '<')) {
+            return ('order' == $this->controller->php_self && 3 == $this->controller->step) ||
+                'order-opc' == $this->controller->php_self;
+        }
+
+        return 'order' == $this->controller->php_self;
+    }
+
+    /**
+     * (we are not sure that this function is still called).
+     *
+     * @param $params
+     *
+     * @return false|string|null
+     */
+    private function handleOrderOpcPage($params)
     {
         $this->context->controller->addCSS($this->module->_path . 'views/css/alma.css', 'all');
         $this->context->controller->addJS($this->module->_path . 'views/js/alma_error.js');
@@ -64,74 +162,138 @@ class FrontHeaderHookController extends FrontendHookController
         return null;
     }
 
-    private function handleOrderOpcPage($params)
+    /**
+     * @return string
+     */
+    private function assetsWidgets()
     {
-        return $this->handleOrderPage($params);
+        if (
+            $this->displayWidgetOnCartPage()
+            || $this->displayWidgetOnProductPage()
+        ) {
+            if (version_compare(_PS_VERSION_, '1.7', '<')) {
+                return $this->manageAssetVersionForPrestashopBefore17();
+            }
+
+            if (version_compare(_PS_VERSION_, '1.7.0.0', '>=')) {
+                return $this->manageAssetVersionForPrestashopAfter17();
+            }
+        }
+
+        return '';
     }
 
-    private function injectAlmaAssets($params)
+    /**
+     * Manage assets for Prestashop Before 1.7.
+     *
+     * @return string
+     */
+    protected function manageAssetVersionForPrestashopBefore17()
     {
-        $widgetsCssUrl = 'https://cdn.jsdelivr.net/npm/@alma/widgets@3.x.x/dist/widgets.min.css';
-        $widgetsJsUrl = 'https://cdn.jsdelivr.net/npm/@alma/widgets@3.x.x/dist/widgets.umd.js';
-        $productScriptPath = 'views/js/alma-product.js';
-        $productCssPath = 'views/css/alma-product.css';
-        $cartScriptPath = 'views/js/alma-cart.js';
+        $content = '';
 
-        $controller = $this->context->controller;
+        $this->controller->addJS(ConstantsHelper::WIDGETS_JS_URL);
+        $this->controller->addJS($this->module->_path . ConstantsHelper::PRODUCT_SCRIPT_PATH);
+
+        if ($this->displayWidgetOnCartPage()) {
+            $this->controller->addJS($this->module->_path . ConstantsHelper::CART_SCRIPT_PATH);
+        }
+
+        if ($this->displayWidgetOnProductPage()) {
+            $this->controller->addCSS($this->module->_path . ConstantsHelper::PRODUCT_CSS_PATH);
+        }
+
+        if (version_compare(_PS_VERSION_, '1.5.6.2', '<')) {
+            $content = '<link rel="stylesheet" href="' . ConstantsHelper::WIDGETS_CSS_URL . '">';
+        }
+
+        if (version_compare(_PS_VERSION_, '1.5.6.2', '>=')) {
+            $this->controller->addCSS(ConstantsHelper::WIDGETS_CSS_URL);
+        }
+
+        return $content;
+    }
+
+    /**
+     * Manage assets for Prestashop after 1.7
+     *
+     * @return string
+     */
+    protected function manageAssetVersionForPrestashopAfter17()
+    {
+        $content = '';
+
+        $scriptPath = "modules/$this->moduleName/" . ConstantsHelper::PRODUCT_SCRIPT_PATH;
+        $cssPath = "modules/$this->moduleName/" . ConstantsHelper::PRODUCT_CSS_PATH;
+        $cartScriptPath = "modules/$this->moduleName/" . ConstantsHelper::CART_SCRIPT_PATH;
+
+        $this->controller->registerStylesheet(ConstantsHelper::PRODUCT_CSS_ID, $cssPath);
+
+        if ($this->displayWidgetOnCartPage()) {
+            $this->controller->registerJavascript(ConstantsHelper::CART_SCRIPT_ID, $cartScriptPath, ['priority' => 1000]);
+        }
+
+        if ($this->displayWidgetOnProductPage()) {
+            $this->controller->registerJavascript(ConstantsHelper::PRODUCT_SCRIPT_ID, $scriptPath, ['priority' => 1000]);
+        }
+
+        if (version_compare(_PS_VERSION_, ConstantsHelper::PRESTASHOP_VERSION_1_7_0_2, '<')) {
+            // For versions 1.7.0.0 and 1.7.0.1, it was impossible to register a remote script via FrontController
+            // with the new registerJavascript method, and the deprecated addJS method had been changed to be just a
+            // proxy to registerJavascript...
+            $content = <<<TAG
+                    <link rel="stylesheet" href="{${ConstantsHelper::WIDGETS_CSS_URL}}">
+                    <script src="{${ConstantsHelper::WIDGETS_JS_URL}}"></script>
+TAG;
+        }
+
+        if (version_compare(_PS_VERSION_, ConstantsHelper::PRESTASHOP_VERSION_1_7_0_2, '>=')) {
+            $this->controller->registerStylesheet(ConstantsHelper::WIDGETS_CSS_ID, ConstantsHelper::WIDGETS_CSS_URL, ['server' => 'remote']);
+            $this->controller->registerJavascript(ConstantsHelper::WIDGETS_JS_ID, ConstantsHelper::WIDGETS_JS_URL, ['server' => 'remote']);
+        }
+
+        return $content;
+    }
+
+    /**
+     * @return string|null
+     */
+    private function assetsInPage()
+    {
         $content = null;
 
-        if (version_compare(_PS_VERSION_, '1.7', '<')) {
-            // Cart widget
-            if (
-                Settings::showEligibilityMessage()
-                && ($controller->php_self == 'order' && $controller->step == 0 || $controller->php_self == 'order-opc')
-                && (isset($controller->nbProducts) && $controller->nbProducts != 0)
-            ) {
-                if (version_compare(_PS_VERSION_, '1.5.6.2', '<')) {
-                    $content .= '<link rel="stylesheet" href="' . $widgetsCssUrl . '">';
-                } else {
-                    $controller->addCSS($widgetsCssUrl);
-                }
-                $controller->addCSS($this->module->_path . $productCssPath);
-                $controller->addJS($widgetsJsUrl);
-                $controller->addJS($this->module->_path . $cartScriptPath);
-            } elseif (Settings::showProductEligibility()
-                && ($controller->php_self == 'product' || 'ProductController' == get_class($controller))) {
-                // Product widget
-                if (version_compare(_PS_VERSION_, '1.5.6.2', '<')) {
-                    $content .= '<link rel="stylesheet" href="' . $widgetsCssUrl . '">';
-                } else {
-                    $controller->addCSS($widgetsCssUrl);
-                }
-                $controller->addCSS($this->module->_path . $productCssPath);
-                $controller->addJS($widgetsJsUrl);
-                $controller->addJS($this->module->_path . $productScriptPath);
-            }
-        } else {
-            $moduleName = $this->module->name;
-            $scriptPath = "modules/$moduleName/$productScriptPath";
-            $cssPath = "modules/$moduleName/$productCssPath";
-            $cartScriptPath = "modules/$moduleName/$cartScriptPath";
+        if ($this->iAmInPaymentPage()) {
+            if (version_compare(_PS_VERSION_, '1.7', '<')) {
+                $this->controller->addJS(ConstantsHelper::INPAGE_JS_URL);
+                $this->controller->addJS($this->module->_path . ConstantsHelper::INPAGE_SCRIPT_PATH);
 
-            if ($controller->php_self == 'cart' && Settings::showEligibilityMessage()) {
-                $controller->registerStylesheet('alma-product-css', $cssPath);
-                $controller->registerJavascript('alma-cart-script', $cartScriptPath, ['priority' => 1000]);
-            } else {
-                $controller->registerStylesheet('alma-product-css', $cssPath);
-                $controller->registerJavascript('alma-product-script', $scriptPath, ['priority' => 1000]);
+                if (version_compare(_PS_VERSION_, '1.6.0.2', '>')) {
+                    $this->controller->removeJS($this->module->_path . ConstantsHelper::WIDGETS_JS_URL);
+                }
             }
+            if (version_compare(_PS_VERSION_, '1.7.0.0', '>=')) {
+                $this->controller->registerJavascript(
+                    ConstantsHelper::INPAGE_SCRIPT_ID,
+                    "modules/$this->moduleName/" . ConstantsHelper::INPAGE_SCRIPT_PATH,
+                    ['priority' => 1000]
+                );
 
-            if (version_compare(_PS_VERSION_, '1.7.0.2', '>=')) {
-                $controller->registerStylesheet('alma-remote-widgets-css', $widgetsCssUrl, ['server' => 'remote']);
-                $controller->registerJavascript('alma-remote-widgets-js', $widgetsJsUrl, ['server' => 'remote']);
-            } else {
-                // For versions 1.7.0.0 and 1.7.0.1, it was impossible to register a remote script via FrontController
-                // with the new registerJavascript method, and the deprecated addJS method had been changed to be just a
-                // proxy to registerJavascript...
-                $content .= <<<TAG
-					<link rel="stylesheet" href="$widgetsCssUrl">
-					<script src="$widgetsJsUrl"></script>
+                if (version_compare(_PS_VERSION_, ConstantsHelper::PRESTASHOP_VERSION_1_7_0_2, '<')) {
+                    // For versions 1.7.0.0 and 1.7.0.1, it was impossible to register a remote script via FrontController
+                    // with the new registerJavascript method, and the deprecated addJS method had been changed to be just a
+                    // proxy to registerJavascript...
+                    $content .= <<<TAG
+                    <script src="{${ConstantsHelper::INPAGE_JS_URL}}"></script>
 TAG;
+                }
+                if (version_compare(_PS_VERSION_, ConstantsHelper::PRESTASHOP_VERSION_1_7_0_2, '>=')) {
+                    $this->controller->registerJavascript(
+                        ConstantsHelper::INPAGE_JS_ID,
+                        ConstantsHelper::INPAGE_JS_URL,
+                        ['server' => 'remote']
+                    );
+                    $this->controller->unregisterJavascript(ConstantsHelper::WIDGETS_JS_ID);
+                }
             }
         }
 

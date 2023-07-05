@@ -28,14 +28,14 @@ if (!defined('_PS_VERSION_')) {
 include_once _PS_MODULE_DIR_ . 'alma/vendor/autoload.php';
 
 use Alma\API\RequestError;
-use Alma\PrestaShop\API\ClientHelper;
-use Alma\PrestaShop\Utils\Logger;
-use Alma\PrestaShop\Utils\Settings;
-use Alma\PrestaShop\Utils\SettingsCustomFields;
+use Alma\PrestaShop\Helpers\ClientHelper;
+use Alma\PrestaShop\Helpers\SettingsCustomFieldsHelper;
+use Alma\PrestaShop\Helpers\SettingsHelper;
+use Alma\PrestaShop\Logger;
 
 function upgrade_module_2_0_0()
 {
-    if (Settings::isFullyConfigured()) {
+    if (SettingsHelper::isFullyConfigured()) {
         $alma = ClientHelper::defaultInstance();
 
         if (!$alma) {
@@ -64,19 +64,19 @@ function upgrade_module_2_0_0()
             $almaPlans = [];
             for ($i = 2; $i <= 4; ++$i) {
                 $key = "general_{$i}_0_0";
-                $almaPlans[$key]['enabled'] = Settings::get("ALMA_P{$i}X_ENABLED", 0);
-                $almaPlans[$key]['min'] = Settings::get("ALMA_P{$i}X_MIN_AMOUNT", 100);
-                $almaPlans[$key]['max'] = Settings::get("ALMA_P{$i}X_MAX_AMOUNT", 500);
-                $almaPlans[$key]['order'] = Settings::get("ALMA_P{$i}X_SORT_ORDER", $i);
+                $almaPlans[$key]['enabled'] = SettingsHelper::get("ALMA_P{$i}X_ENABLED", 0);
+                $almaPlans[$key]['min'] = SettingsHelper::get("ALMA_P{$i}X_MIN_AMOUNT", 100);
+                $almaPlans[$key]['max'] = SettingsHelper::get("ALMA_P{$i}X_MAX_AMOUNT", 500);
+                $almaPlans[$key]['order'] = SettingsHelper::get("ALMA_P{$i}X_SORT_ORDER", $i);
             }
-            Settings::updateValue('ALMA_FEE_PLANS', json_encode($almaPlans));
+            SettingsHelper::updateValue('ALMA_FEE_PLANS', json_encode($almaPlans));
 
             foreach ($configKeys as $configKey) {
                 Configuration::deleteByName($configKey);
             }
 
             Configuration::deleteByName('ALMA_NOT_ELIGIBLE_CATEGORIES');
-            Settings::updateValue('ALMA_NOT_ELIGIBLE_CATEGORIES', SettingsCustomFields::getNonEligibleCategoriesMessage());
+            SettingsHelper::updateValue('ALMA_NOT_ELIGIBLE_CATEGORIES', SettingsCustomFieldsHelper::getNonEligibleCategoriesMessage());
 
             Tools::clearCache();
         } catch (RequestError $e) {

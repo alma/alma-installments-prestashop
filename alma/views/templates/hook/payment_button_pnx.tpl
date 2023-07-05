@@ -24,5 +24,9 @@
     <p>
         {$desc|escape:'htmlall':'UTF-8'}
     </p>
-    {include file="modules/alma/views/templates/hook/_partials/feePlan.tpl" plans=$plans creditInfo=$creditInfo oneLiner=false}
+    {if $isInPageEnabled}
+        <div class="alma-inpage" data-apimode="{$apiMode}" data-merchantid="{$merchantId}" data-isinpageenabled="{$isInPageEnabled}" data-installment="{$installment}" data-purchaseamount="{$creditInfo.totalCart}" data-locale="{$locale}"></div>
+    {else}
+        {include file="modules/alma/views/templates/hook/_partials/feePlan.tpl" plans=$plans creditInfo=$creditInfo oneLiner=false}
+    {/if}
 </div>
