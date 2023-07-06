@@ -76,9 +76,8 @@ class PaymentValidation
      *
      * @return string URL to redirect the customer to
      *
+     * @throws MismatchException
      * @throws PaymentValidationError
-     * @throws PrestaShopException
-     * @throws RefundException
      */
     public function validatePayment($almaPaymentId)
     {

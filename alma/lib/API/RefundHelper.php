@@ -67,8 +67,7 @@ class RefundHelper
      *
      * @return void
      *
-     * @throws RefundException
-     * @throws PaymentValidationError
+     * @throws MismatchException
      */
     public function mismatchFullRefund()
     {
@@ -83,7 +82,7 @@ class RefundHelper
             );
         }
 
-        throw new PaymentValidationError($this->cart, $msgRefund);
+        throw new MismatchException($msgRefund);
     }
 
     /**

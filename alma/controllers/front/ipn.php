@@ -25,6 +25,7 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
+use Alma\PrestaShop\API\MismatchException;
 use Alma\PrestaShop\API\PaymentValidation;
 use Alma\PrestaShop\API\PaymentValidationError;
 use Alma\PrestaShop\Utils\Logger;
@@ -39,6 +40,15 @@ class AlmaIpnModuleFrontController extends ModuleFrontController
         $this->context = Context::getContext();
     }
 
+    /**
+     * @param $value
+     * @param $controller
+     * @param $method
+     *
+     * @return void
+     *
+     * @throws PrestaShopException
+     */
     public function ajaxDie($value = null, $controller = null, $method = null)
     {
         if (method_exists(get_parent_class(get_parent_class($this)), 'ajaxRender')) {
@@ -51,12 +61,30 @@ class AlmaIpnModuleFrontController extends ModuleFrontController
         }
     }
 
-    private function fail($msg = null)
+    /**
+     * @param $msg
+     * @param bool $addErrorHeader
+     *
+     * @return void
+     *
+     * @throws PrestaShopException
+     */
+    private function fail($msg = null, $addErrorHeader = true)
     {
-        header('X-PHP-Response-Code: 500', true, 500);
+        if ($addErrorHeader) {
+            header('X-PHP-Response-Code: 500', true, 500);
+        }
+
         $this->ajaxDie(json_encode(['error' => $msg]));
     }
 
+    /**
+     * Return result after payment
+     *
+     * @return void
+     *
+     * @throws PrestaShopException
+     */
     public function postProcess()
     {
         parent::postProcess();
@@ -71,6 +99,9 @@ class AlmaIpnModuleFrontController extends ModuleFrontController
         } catch (PaymentValidationError $e) {
             Logger::instance()->error('ipn payment_validation_error - Message : ' . $e->getMessage());
             $this->fail($e->getMessage());
+        } catch (MismatchException $e) {
+            Logger::instance()->error('ipn payment_validation_mismatch_error - Message : ' . $e->getMessage());
+            $this->fail($e->getMessage(), false);
         }
 
         $this->ajaxDie(json_encode(['success' => true]));
