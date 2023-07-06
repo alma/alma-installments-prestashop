@@ -48,13 +48,22 @@ class PaymentValidation
     /** @var PaymentModule */
     private $module;
 
+    /**
+     * @param $context
+     * @param $module
+     */
     public function __construct($context, $module)
     {
         $this->context = $context;
         $this->module = $module;
     }
 
-    private function checkCurrency()
+    /**
+     * Check if currency is valid
+     *
+     * @return bool
+     */
+    private function isValidCurrency()
     {
         $currencyOrder = new Currency($this->context->cart->id_currency);
         $currenciesModule = $this->module->getCurrency($this->context->cart->id_currency);
@@ -96,7 +105,7 @@ class PaymentValidation
 
         // Check if cart exists and all fields are set
         $cart = new Cart($payment->custom_data['cart_id']);
-        if (!$cart || $cart->id_customer == 0 || $cart->id_address_delivery == 0 || $cart->id_address_invoice == 0) {
+        if (!$cart || 0 == $cart->id_customer || 0 == $cart->id_address_delivery || 0 == $cart->id_address_invoice) {
             Logger::instance()->error("[Alma] Payment validation error: Cart {$cart->id} does not look valid.");
             throw new PaymentValidationError($cart, 'cart_invalid');
         }
@@ -121,7 +130,7 @@ class PaymentValidation
             throw new PaymentValidationError($cart, 'disabled_module');
         }
 
-        if (!$this->checkCurrency()) {
+        if (!$this->isValidCurrency()) {
             Logger::instance()->error("[Alma] Payment validation error for Cart {$cart->id}: currency mismatch.");
             $msg = $this->module->l('Alma Monthly Installments are not available for this currency', 'paymentvalidation');
             throw new PaymentValidationError($cart, $msg);
@@ -160,13 +169,14 @@ class PaymentValidation
                     "[Alma] Payment validation error for Cart {$cart->id}: Purchase amount mismatch!"
                 );
 
-                $refundHelper = new RefundHelper($this->module, $cart, $payment->id);
+                $clientHelper = new ClientHelper();
+                $refundHelper = new RefundHelper($this->module, $cart, $payment->id, $clientHelper);
                 $refundHelper->mismatchFullRefund();
             }
 
             $firstInstalment = $payment->payment_plan[0];
             if (!in_array($payment->state, [Payment::STATE_IN_PROGRESS, Payment::STATE_PAID])
-                || $firstInstalment->state !== Instalment::STATE_PAID
+                || Instalment::STATE_PAID !== $firstInstalment->state
             ) {
                 try {
                     $alma->payments->flagAsPotentialFraud($almaPaymentId, Payment::FRAUD_STATE_ERROR);
@@ -192,7 +202,7 @@ class PaymentValidation
                     $days
                 );
             } else {
-                if ($installmentCount === 1) {
+                if (1 === $installmentCount) {
                     $paymentMode = $this->module->l('Alma - Pay now', 'paymentvalidation');
                 } else {
                     $paymentMode = sprintf(
@@ -278,7 +288,7 @@ class PaymentValidation
     /**
      * We have to temporary update the customer object
      * in context to prevent amount_mismatch error
-     * When calculating cart amount from an IPN call
+     * When calculating cart amount from an IPN call.
      *
      * @param Cart $cart
      * @param Customer $cart

@@ -23,6 +23,7 @@
  */
 namespace Alma\PrestaShop\API;
 
+use Alma;
 use Alma\PrestaShop\Utils\Logger;
 use Cart;
 use Exception;
@@ -53,13 +54,14 @@ class RefundHelper
      * @param Alma $module
      * @param Cart $cart
      * @param int $paymentId
+     * @param ClientHelper $clientHelper
      */
-    public function __construct($module, $cart, $paymentId)
+    public function __construct($module, $cart, $paymentId, $clientHelper)
     {
         $this->module = $module;
         $this->cart = $cart;
-        $this->almaClient = new ClientHelper();
         $this->paymentId = $paymentId;
+        $this->almaClient = $clientHelper;
     }
 
     /**

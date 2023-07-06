@@ -30,10 +30,16 @@ use Alma\PrestaShop\API\PaymentValidation;
 use Alma\PrestaShop\API\PaymentValidationError;
 use Alma\PrestaShop\Utils\Logger;
 
+/**
+ * AlmaIpnModuleFrontController
+ */
 class AlmaIpnModuleFrontController extends ModuleFrontController
 {
     public $ssl = true;
 
+    /**
+     * IPN constructor
+     */
     public function __construct()
     {
         parent::__construct();
