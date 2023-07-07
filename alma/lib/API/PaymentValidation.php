@@ -175,9 +175,7 @@ class PaymentValidation
             }
 
             $firstInstalment = $payment->payment_plan[0];
-            if (!in_array($payment->state, [Payment::STATE_IN_PROGRESS, Payment::STATE_PAID])
-                || Instalment::STATE_PAID !== $firstInstalment->state
-            ) {
+            if (!in_array($payment->state, [Payment::STATE_IN_PROGRESS, Payment::STATE_PAID])) {
                 try {
                     $alma->payments->flagAsPotentialFraud($almaPaymentId, Payment::FRAUD_STATE_ERROR);
                 } catch (RequestError $e) {
