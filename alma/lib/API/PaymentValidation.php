@@ -23,7 +23,6 @@
  */
 namespace Alma\PrestaShop\API;
 
-use Alma\Api\Entities\Instalment;
 use Alma\API\Entities\Payment;
 use Alma\API\RequestError;
 use Alma\PrestaShop\Utils\Logger;

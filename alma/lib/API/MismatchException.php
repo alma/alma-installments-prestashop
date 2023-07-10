@@ -30,15 +30,5 @@ use Exception;
  */
 class MismatchException extends Exception
 {
-    /**
-     * Construct Mismatch Exception
-     *
-     * @param $message
-     * @param $code
-     * @param $previous
-     */
-    public function __construct($message, $code = 0, $previous = null)
-    {
-        parent::__construct($message, $code, $previous);
-    }
+
 }
