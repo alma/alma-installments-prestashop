@@ -30,5 +30,4 @@ use Exception;
  */
 class MismatchException extends Exception
 {
-
 }
