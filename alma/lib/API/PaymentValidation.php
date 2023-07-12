@@ -138,8 +138,7 @@ class PaymentValidation
         $customer = new Customer($cart->id_customer);
         if (!Validate::isLoadedObject($customer)) {
             Logger::instance()->error(
-                "[Alma] Payment validation error for Cart {$cart->id}: " .
-                "cannot load Customer {$cart->id_customer}"
+                "[Alma] Payment validation error for Cart {$cart->id}: cannot load Customer {$cart->id_customer}"
             );
 
             throw new PaymentValidationError($cart, 'cannot load customer');
