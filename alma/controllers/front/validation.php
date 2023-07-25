@@ -53,6 +53,9 @@ class AlmaValidationModuleFrontController extends ModuleFrontController
         return 'index.php?controller=order&step=1';
     }
 
+    /**
+     * @return void
+     */
     public function postProcess()
     {
         parent::postProcess();

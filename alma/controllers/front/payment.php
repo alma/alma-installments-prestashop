@@ -25,7 +25,6 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-use Alma\API\RequestError;
 use Alma\PrestaShop\API\ClientHelper;
 use Alma\PrestaShop\Model\PaymentData;
 use Alma\PrestaShop\Utils\Logger;
@@ -68,64 +67,64 @@ class AlmaPaymentModuleFrontController extends ModuleFrontController
 
     public function postProcess()
     {
-        // Check if cart exists and all fields are set
-        if (!$this->module->active) {
-            Tools::redirect('index.php?controller=order&step=1');
-
-            return;
-        }
-
-        // Check if module is enabled
-        $authorized = false;
-        foreach (Module::getPaymentModules() as $module) {
-            if ($module['name'] == $this->module->name) {
-                $authorized = true;
-            }
-        }
-
-        if (!$authorized) {
-            Logger::instance()->warning('[Alma] Not authorized!');
-            Tools::redirect('index.php?controller=order&step=1');
-
-            return;
-        }
-
-        if (!$this->checkCurrency()) {
-            $msg = $this->module->l('Alma Monthly Installments are not available for this currency', 'payment');
-            $this->context->cookie->__set('alma_error', $msg);
-            Tools::redirect('index.php?controller=order&step=1');
-
-            return;
-        }
-
-        $key = Tools::getValue('key', 'general_3_0_0');
-        $feePlans = json_decode(Settings::getFeePlans());
-        $dataFromKey = Settings::getDataFromKey($key);
-
-        $cart = $this->context->cart;
-        $data = PaymentData::dataFromCart($cart, $this->context, $dataFromKey, true);
-        $alma = ClientHelper::defaultInstance();
-
-        if (!$data || !$alma) {
-            $this->genericErrorAndRedirect();
-
-            return;
-        }
-
-        // Check that the selected installments count is indeed enabled
-        $disabled = !$feePlans->$key->enabled
-            || $feePlans->$key->min > $data['payment']['purchase_amount']
-            || $feePlans->$key->max < $data['payment']['purchase_amount'];
-
-        if ($disabled) {
-            $this->genericErrorAndRedirect();
-
-            return;
-        }
-
         try {
+            // Check if cart exists and all fields are set
+            if (!$this->module->active) {
+                Tools::redirect('index.php?controller=order&step=1');
+
+                return;
+            }
+
+            // Check if module is enabled
+            $authorized = false;
+            foreach (Module::getPaymentModules() as $module) {
+                if ($module['name'] == $this->module->name) {
+                    $authorized = true;
+                }
+            }
+
+            if (!$authorized) {
+                Logger::instance()->warning('[Alma] Not authorized!');
+                Tools::redirect('index.php?controller=order&step=1');
+
+                return;
+            }
+
+            if (!$this->checkCurrency()) {
+                $msg = $this->module->l('Alma Monthly Installments are not available for this currency', 'payment');
+                $this->context->cookie->__set('alma_error', $msg);
+                Tools::redirect('index.php?controller=order&step=1');
+
+                return;
+            }
+
+            $key = Tools::getValue('key', 'general_3_0_0');
+            $feePlans = json_decode(Settings::getFeePlans());
+            $dataFromKey = Settings::getDataFromKey($key);
+
+            $cart = $this->context->cart;
+            $data = PaymentData::dataFromCart($cart, $this->context, $dataFromKey, true);
+            $alma = ClientHelper::defaultInstance();
+
+            if (!$data || !$alma) {
+                $this->genericErrorAndRedirect();
+
+                return;
+            }
+
+            // Check that the selected installments count is indeed enabled
+            $disabled = !$feePlans->$key->enabled
+                || $feePlans->$key->min > $data['payment']['purchase_amount']
+                || $feePlans->$key->max < $data['payment']['purchase_amount'];
+
+            if ($disabled) {
+                $this->genericErrorAndRedirect();
+
+                return;
+            }
+
             $payment = $alma->payments->create($data);
-        } catch (RequestError $e) {
+        } catch (Exception $e) {
             $msg = "[Alma] ERROR when creating payment for Cart {$cart->id}: {$e->getMessage()}";
             Logger::instance()->error($msg);
             $this->genericErrorAndRedirect();

@@ -1,5 +1,9 @@
 # Changelog
 
+- feat: improve purchaseAmount verification
+- fix: SEPA payment
+- fix: http return code for mismatch for IPN
+
 ## v2.13.0
 
 - Pay now with Alma

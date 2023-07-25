@@ -68,6 +68,10 @@ return PhpCsFixer\Config::create()
         'self_accessor' => false,
         'yoda_style' => null,
         //'non_printable_character' => true,
+        //'braces' => array(
+        //    'position_after_anonymous_constructs' => 'next',
+        //    'position_after_control_structures' => 'next',
+        //),
     ])
     ->setFinder($finder)
     ->setCacheFile(__DIR__ . '/tmp/.php_cs.cache');

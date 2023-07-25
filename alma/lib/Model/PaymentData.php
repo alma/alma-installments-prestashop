@@ -28,15 +28,14 @@ if (!defined('_PS_VERSION_')) {
 }
 
 use Address;
+use Alma\API\Lib\PaymentValidator;
 use Alma\PrestaShop\Repositories\ProductRepository;
 use Alma\PrestaShop\Utils\Logger;
 use Alma\PrestaShop\Utils\Settings;
 use Alma\PrestaShop\Utils\SettingsCustomFields;
 use Cart;
-use Context;
 use Country;
 use Customer;
-use Exception;
 use Order;
 use State;
 use Tools;
@@ -50,17 +49,20 @@ class PaymentData
      * @param Cart $cart
      * @param Context $context
      * @param array $feePlans
+     * @param $forPayment
      *
      * @return array|null
      *
-     * @throws Exception
+     * @throws \Alma\API\ParamsError
+     * @throws \PrestaShopDatabaseException
+     * @throws \PrestaShopException
      */
     public static function dataFromCart($cart, $context, $feePlans, $forPayment = false)
     {
         if ($forPayment && (
-            $cart->id_customer == 0 ||
-            $cart->id_address_delivery == 0 ||
-            $cart->id_address_invoice == 0
+            0 == $cart->id_customer ||
+            0 == $cart->id_address_delivery ||
+            0 == $cart->id_address_invoice
         )) {
             Logger::instance()->warning("[Alma] Missing Customer ID or Delivery/Billing address ID for Cart {$cart->id}");
         }
@@ -128,7 +130,7 @@ class PaymentData
             'state_province' => null,
         ];
 
-        if ($customerData['birth_date'] == '0000-00-00') {
+        if ('0000-00-00' == $customerData['birth_date']) {
             $customerData['birth_date'] = null;
         }
 
@@ -218,6 +220,8 @@ class PaymentData
         if ($feePlans['installmentsCount'] > 4) {
             $dataPayment['payment']['cart'] = CartData::cartInfo($cart);
         }
+
+        PaymentValidator::checkPurchaseAmount($dataPayment);
 
         return $dataPayment;
     }
