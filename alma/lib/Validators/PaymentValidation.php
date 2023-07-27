@@ -25,7 +25,6 @@ namespace Alma\PrestaShop\Validators;
 
 use Alma\API\Entities\Payment;
 use Alma\API\RequestError;
-use Alma\PrestaShop\Exceptions\RefundException;
 use Alma\PrestaShop\Helpers\ClientHelper;
 use Alma\PrestaShop\Helpers\PriceHelper;
 use Alma\PrestaShop\Helpers\RefundHelper;

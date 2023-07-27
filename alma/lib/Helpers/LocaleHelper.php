@@ -24,8 +24,8 @@
 namespace Alma\PrestaShop\Helpers;
 
 use Context;
-use Language;
 use Exception;
+use Language;
 use Tools;
 
 if (!defined('_PS_VERSION_')) {
