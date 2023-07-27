@@ -31,12 +31,6 @@ use Alma\PrestaShop\Logger;
 use Alma\PrestaShop\Traits\AjaxTrait;
 use PrestaShop\PrestaShop\Core\Localization\Exception\LocalizationException;
 
-/*
- * Ajax controllers don't have any global entrypoint on the module side
- * So we have to include our Trait autoloader here.
- */
-require_once _PS_MODULE_DIR_ . 'alma/autoloader.php';
-
 class AdminAlmaRefundsController extends ModuleAdminController
 {
     use AjaxTrait;

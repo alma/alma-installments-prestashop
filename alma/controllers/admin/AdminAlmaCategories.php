@@ -293,6 +293,7 @@ class AdminAlmaCategoriesController extends ModuleAdminController
         $id_lang_shop = false
     ) {
         parent::getList($id_lang, $order_by, $order_way, $start, $limit, $id_lang_shop);
+
         if (1 === $this->excludeFilter) {
             foreach ($this->_list as $k => $list) {
                 foreach (static::$excludedCategories as $excluded) {
@@ -304,7 +305,7 @@ class AdminAlmaCategoriesController extends ModuleAdminController
         } elseif (0 === $this->excludeFilter) {
             $tmp = [];
             foreach (static::$excludedCategories as $excluded) {
-                foreach ($this->_list as $k => $list) {
+                foreach ($this->_list as $list) {
                     if ($list['id_category'] === $excluded) {
                         $tmp[] = $list;
                     }

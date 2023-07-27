@@ -29,6 +29,7 @@ if (!defined('_PS_VERSION_')) {
 
 use Address;
 use Alma\API\Lib\PaymentValidator;
+use Alma\API\ParamsError;
 use Alma\PrestaShop\Helpers\CarrierHelper;
 use Alma\PrestaShop\Helpers\CartHelper;
 use Alma\PrestaShop\Helpers\PriceHelper;
@@ -58,16 +59,20 @@ class PaymentData
      *
      * @return array|null
      *
+     * @throws ParamsError
      * @throws \PrestaShopDatabaseException
      * @throws \PrestaShopException
      */
     public static function dataFromCart($cart, $context, $feePlans, $forPayment = false)
     {
-        if ($forPayment && (
-            0 == $cart->id_customer ||
-            0 == $cart->id_address_delivery ||
-            0 == $cart->id_address_invoice
-        )) {
+        if (
+            $forPayment
+            && (
+                0 == $cart->id_customer
+                || 0 == $cart->id_address_delivery
+                || 0 == $cart->id_address_invoice
+            )
+        ) {
             Logger::instance()->warning("[Alma] Missing Customer ID or Delivery/Billing address ID for Cart {$cart->id}");
         }
 
@@ -245,7 +250,7 @@ class PaymentData
      */
     public static function isPnXOnly($paymentData)
     {
-        return $paymentData['payment']['installments_count'] > 1 && $paymentData['payment']['installments_count'] <= 4 && ($paymentData['payment']['deferred_days'] === 0 && $paymentData['payment']['deferred_months'] === 0);
+        return $paymentData['payment']['installments_count'] > 1 && $paymentData['payment']['installments_count'] <= 4 && (0 === $paymentData['payment']['deferred_days'] && 0 === $paymentData['payment']['deferred_months']);
     }
 
     /**

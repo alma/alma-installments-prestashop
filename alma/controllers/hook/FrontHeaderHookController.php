@@ -144,7 +144,7 @@ class FrontHeaderHookController extends FrontendHookController
      *
      * @return false|string|null
      */
-    private function handleOrderOpcPage($params)
+    private function handleOrderPage($params)
     {
         $this->context->controller->addCSS($this->module->_path . 'views/css/alma.css', 'all');
         $this->context->controller->addJS($this->module->_path . 'views/js/alma_error.js');
@@ -160,6 +160,11 @@ class FrontHeaderHookController extends FrontendHookController
         }
 
         return null;
+    }
+
+    private function handleOrderOpcPage($params)
+    {
+        return $this->handleOrderPage($params);
     }
 
     /**

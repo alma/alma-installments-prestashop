@@ -68,7 +68,7 @@ final class GetContentHookController extends AdminHookController
      */
     const KEY_CONFIG = [
         'ALMA_SHOW_ELIGIBILITY_MESSAGE_ON' => 'test_bool',
-        'ALMA_SHOW_PRODUCT_ELIGIBILITY' => 'test_bool',
+        'ALMA_SHOW_PRODUCT_ELIGIBILITY_ON' => 'test_bool',
         'ALMA_CART_WDGT_NOT_ELGBL_ON' => 'cast_bool',
         'ALMA_PRODUCT_WDGT_NOT_ELGBL_ON' => 'cast_bool',
         'ALMA_CATEGORIES_WDGT_NOT_ELGBL_ON' => 'cast_bool',
