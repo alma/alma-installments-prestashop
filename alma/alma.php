@@ -25,7 +25,8 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-require_once _PS_MODULE_DIR_ . 'alma/vendor/autoload.php';  // Autoload here for the module definition
+// Autoload here for the module definition
+require_once _PS_MODULE_DIR_ . 'alma/vendor/autoload.php';
 
 class Alma extends PaymentModule
 {
