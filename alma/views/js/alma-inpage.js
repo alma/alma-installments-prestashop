@@ -37,11 +37,11 @@ window.onload = function () {
         let url = form.attr("action");
         form.on('submit', function (e) {
             e.preventDefault();
-            ajaxPayment(url, inPage);
+            ajaxPayment(url, inPage, paymentOptionId);
         });
     };
 
-    const ajaxPayment = function (url, inPage) {
+    const ajaxPayment = function (url, inPage, paymentOptionId) {
         if (isAlmaPayment(url)) {
             $.ajax({
                 type: "POST",
@@ -59,6 +59,7 @@ window.onload = function () {
                             onUserCloseModal: () => {
                                 let selectorCheckboxPs17 = $('.ps-shown-by-js[type=checkbox]');
                                 if (selectorCheckboxPs17.length > 0) {
+                                    $('#' + paymentOptionId).prop('checked', false);
                                     selectorCheckboxPs17.prop('checked', false);
                                 }
                                 inPage.unmount();
@@ -102,7 +103,7 @@ window.onload = function () {
                     environment: selectorSetting.data("apimode"),
                     selector: selectorIframeInPage,
                     onIntegratedPayButtonClicked : () => {
-                        ajaxPayment(url, inPage);
+                        ajaxPayment(url, inPage, paymentOptionId);
                     }
                 }
             );
