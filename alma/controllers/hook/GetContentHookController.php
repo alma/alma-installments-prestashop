@@ -27,6 +27,7 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
+use Alma\API\Entities\Merchant;
 use Alma\API\RequestError;
 use Alma\PrestaShop\Exceptions\MissingParameterException;
 use Alma\PrestaShop\Forms\ApiAdminFormBuilder;
@@ -40,6 +41,7 @@ use Alma\PrestaShop\Forms\PnxAdminFormBuilder;
 use Alma\PrestaShop\Forms\ProductEligibilityAdminFormBuilder;
 use Alma\PrestaShop\Forms\RefundAdminFormBuilder;
 use Alma\PrestaShop\Forms\ShareOfCheckoutAdminFormBuilder;
+use Alma\PrestaShop\Helpers\ApiHelper;
 use Alma\PrestaShop\Helpers\ApiKeyHelper;
 use Alma\PrestaShop\Helpers\ClientHelper;
 use Alma\PrestaShop\Helpers\ConstantsHelper;
@@ -151,8 +153,7 @@ final class GetContentHookController extends AdminHookController
             $shareOfCheckoutHelper->resetShareOfCheckoutConsent();
         } else {
             // Prestashop FormBuilder adds `_ON` after name in the switch
-            if (
-                true === SettingsHelper::isShareOfCheckoutAnswered()
+            if (true === SettingsHelper::isShareOfCheckoutAnswered()
                 && $oldApiMode === $apiMode
             ) {
                 $shareOfCheckoutHelper->handleCheckoutConsent(
@@ -166,7 +167,19 @@ final class GetContentHookController extends AdminHookController
         $this->setKeyIfValueIsNotObscur($testKey, ALMA_MODE_TEST);
 
         // Try to get merchant from configured API key/mode
-        $merchant = $this->getMerchant();
+        try {
+            $merchant = ApiHelper::getMerchant($this->module);
+        } catch (\Exception $e) {
+            $this->context->smarty->assign(
+                [
+                    'validation_error' => 'custom_error',
+                    'validation_message' => $e->getMessage(),
+                ]
+            );
+            Logger::instance()->error($e->getMessage());
+
+            return $this->module->display($this->module->file, 'getContent.tpl');
+        }
 
         if ($merchant) {
             // Save merchant API ID for widgets usage on frontend
@@ -364,53 +377,25 @@ final class GetContentHookController extends AdminHookController
                 return ['error' => true, 'message' => $errorMessage];
             }
 
+            // Try to get merchant from configured API key/mode
             try {
-                $merchant = $alma->merchants->me();
-            } catch (RequestError $e) {
-                if ($e->response && 401 === $e->response->responseCode) {
-                    $this->context->smarty->assign('validation_error', "{$mode}_authentication_error");
-
-                    $errorMessage = $this->module->display($this->module->file, 'getContent.tpl');
-
-                    return ['error' => true, 'message' => $errorMessage];
-                } else {
-                    Logger::instance()->error('Error while fetching merchant status: ' . $e->getMessage());
-
-                    $this->context->smarty->assign('validation_error', 'api_request_error');
-                    $this->context->smarty->assign('error', $e->getMessage());
-
-                    $errorMessage = $this->module->display($this->module->file, 'getContent.tpl');
-
-                    return ['error' => true, 'message' => $errorMessage];
-                }
-            }
-
-            if (!$merchant->can_create_payments) {
-                $this->context->smarty->assign('validation_error', "inactive_{$mode}_account");
-                $this->assignSmartyAlertClasses($apiMode == $mode ? 'danger' : 'warning');
+                ApiHelper::getMerchant($this->module, $alma);
+            } catch (\Exception $e) {
+                $this->context->smarty->assign(
+                    [
+                        'validation_error' => 'custom_error',
+                        'validation_message' => $e->getMessage(),
+                    ]
+                );
+                Logger::instance()->error($e->getMessage());
 
                 $errorMessage = $this->module->display($this->module->file, 'getContent.tpl');
 
-                return ['warning' => true, 'message' => $errorMessage];
+                return ['error' => true, 'message' => $errorMessage];
             }
         }
 
         return null;
-    }
-
-    private function getMerchant()
-    {
-        $alma = ClientHelper::defaultInstance();
-
-        if (!$alma) {
-            return null;
-        }
-
-        try {
-            return $alma->merchants->me();
-        } catch (RequestError $e) {
-            return null;
-        }
     }
 
     private function getFeePlans()
@@ -431,7 +416,13 @@ final class GetContentHookController extends AdminHookController
     public function renderForm()
     {
         $needsKeys = $this->needsAPIKey();
-        $merchant = $this->getMerchant();
+        // Try to get merchant from configured API key/mode
+        $merchant = null;
+        try {
+            $merchant = ApiHelper::getMerchant($this->module);
+        } catch (\Exception $e) {
+            Logger::instance()->error($e->getMessage());
+        }
 
         if (is_callable('Media::getMediaPath')) {
             $iconPath = Media::getMediaPath(_PS_MODULE_DIR_ . $this->module->name . '/views/img/logos/alma_tiny.svg');
@@ -478,6 +469,7 @@ final class GetContentHookController extends AdminHookController
             ['feePlans' => $feePlansOrdered, 'installmentsPlans' => $installmentsPlans]
         );
         $shouldDisplayShareOfCheckoutForm = !SettingsHelper::shouldHideShareOfCheckoutForm();
+        $shouldDisplayInpageForm = SettingsHelper::isInpageAllowed();
         $apiBuilder = new ApiAdminFormBuilder($this->module, $this->context, $iconPath, ['needsAPIKey' => $needsKeys]);
         $cartBuilder = new CartEligibilityAdminFormBuilder($this->module, $this->context, $iconPath);
         $productBuilder = new ProductEligibilityAdminFormBuilder($this->module, $this->context, $iconPath);
@@ -488,7 +480,9 @@ final class GetContentHookController extends AdminHookController
         }
         $triggerBuilder = new PaymentOnTriggeringAdminFormBuilder($this->module, $this->context, $iconPath);
         $paymentBuilder = new PaymentButtonAdminFormBuilder($this->module, $this->context, $iconPath);
-        $fragmentBuilder = new FragmentAdminFormBuilder($this->module, $this->context, $iconPath);
+        if ($shouldDisplayInpageForm) {
+            $fragmentBuilder = new FragmentAdminFormBuilder($this->module, $this->context, $iconPath);
+        }
         $debugBuilder = new DebugAdminFormBuilder($this->module, $this->context, $iconPath);
 
         $fieldsForms = [];
@@ -505,7 +499,9 @@ final class GetContentHookController extends AdminHookController
             if ($shouldDisplayShareOfCheckoutForm) {
                 $fieldsForms[] = $shareOfCheckoutBuilder->build();
             }
-            $fieldsForms[] = $fragmentBuilder->build();
+            if ($shouldDisplayInpageForm) {
+                $fieldsForms[] = $fragmentBuilder->build();
+            }
         }
         if (SettingsHelper::isPaymentTriggerEnabledByState()) {
             $fieldsForms[] = $triggerBuilder->build();

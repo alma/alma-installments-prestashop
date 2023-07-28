@@ -154,6 +154,7 @@ class SettingsHelper
             'ALMA_CART_WDGT_NOT_ELGBL',
             'ALMA_PRODUCT_WDGT_NOT_ELGBL',
             'ALMA_CATEGORIES_WDGT_NOT_ELGBL',
+            ConstantsHelper::ALMA_ALLOW_INPAGE,
         ];
 
         foreach ($configKeys as $configKey) {
@@ -275,6 +276,14 @@ class SettingsHelper
         $date = new DateTime();
 
         return $date->getTimestamp();
+    }
+
+    /**
+     * @return bool
+     */
+    public static function isInpageAllowed()
+    {
+        return (bool) static::get(ConstantsHelper::ALMA_ALLOW_INPAGE, 0);
     }
 
     /**
@@ -819,5 +828,9 @@ class SettingsHelper
         }
 
         return $dataFromKey;
+    }
+
+    public static function setFeatureFlagOnUpgrade()
+    {
     }
 }
