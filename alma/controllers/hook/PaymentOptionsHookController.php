@@ -90,7 +90,6 @@ class PaymentOptionsHookController extends FrontendHookController
                 continue;
             }
 
-            // call almaFragments once
             $first = 1 == $countIteration;
             ++$countIteration;
 

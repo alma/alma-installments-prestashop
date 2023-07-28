@@ -33,7 +33,7 @@ use Alma\PrestaShop\Forms\ApiAdminFormBuilder;
 use Alma\PrestaShop\Forms\CartEligibilityAdminFormBuilder;
 use Alma\PrestaShop\Forms\DebugAdminFormBuilder;
 use Alma\PrestaShop\Forms\ExcludedCategoryAdminFormBuilder;
-use Alma\PrestaShop\Forms\FragmentAdminFormBuilder;
+use Alma\PrestaShop\Forms\InpageAdminFormBuilder;
 use Alma\PrestaShop\Forms\PaymentButtonAdminFormBuilder;
 use Alma\PrestaShop\Forms\PaymentOnTriggeringAdminFormBuilder;
 use Alma\PrestaShop\Forms\PnxAdminFormBuilder;
@@ -77,7 +77,7 @@ final class GetContentHookController extends AdminHookController
         'ALMA_CART_WIDGET_POSITION_CUSTOM' => 'cast_bool',
         'ALMA_STATE_REFUND_ENABLED_ON' => 'cast_bool',
         'ALMA_PAYMENT_ON_TRIGGERING_ENABLED_ON' => 'cast_bool',
-        FragmentAdminFormBuilder::ALMA_ACTIVATE_FRAGMENT . '_ON' => 'cast_bool',
+        InpageAdminFormBuilder::ALMA_ACTIVATE_INPAGE . '_ON' => 'cast_bool',
         'ALMA_ACTIVATE_LOGGING_ON' => 'cast_bool',
         'ALMA_PRODUCT_PRICE_SELECTOR' => 'none',
         'ALMA_WIDGET_POSITION_SELECTOR' => 'none',
@@ -488,7 +488,7 @@ final class GetContentHookController extends AdminHookController
         }
         $triggerBuilder = new PaymentOnTriggeringAdminFormBuilder($this->module, $this->context, $iconPath);
         $paymentBuilder = new PaymentButtonAdminFormBuilder($this->module, $this->context, $iconPath);
-        $fragmentBuilder = new FragmentAdminFormBuilder($this->module, $this->context, $iconPath);
+        $inpageBuilder = new InpageAdminFormBuilder($this->module, $this->context, $iconPath);
         $debugBuilder = new DebugAdminFormBuilder($this->module, $this->context, $iconPath);
 
         $fieldsForms = [];
@@ -505,7 +505,7 @@ final class GetContentHookController extends AdminHookController
             if ($shouldDisplayShareOfCheckoutForm) {
                 $fieldsForms[] = $shareOfCheckoutBuilder->build();
             }
-            $fieldsForms[] = $fragmentBuilder->build();
+            $fieldsForms[] = $inpageBuilder->build();
         }
         if (SettingsHelper::isPaymentTriggerEnabledByState()) {
             $fieldsForms[] = $triggerBuilder->build();
@@ -545,7 +545,7 @@ final class GetContentHookController extends AdminHookController
             PaymentButtonAdminFormBuilder::ALMA_DEFERRED_BUTTON_DESC => SettingsCustomFieldsHelper::getPaymentButtonDescriptionDeferred(),
             PaymentButtonAdminFormBuilder::ALMA_PNX_AIR_BUTTON_TITLE => SettingsCustomFieldsHelper::getPnxAirButtonTitle(),
             PaymentButtonAdminFormBuilder::ALMA_PNX_AIR_BUTTON_DESC => SettingsCustomFieldsHelper::getPnxAirButtonDescription(),
-            FragmentAdminFormBuilder::ALMA_ACTIVATE_FRAGMENT . '_ON' => SettingsHelper::isInPageEnabled(),
+            InpageAdminFormBuilder::ALMA_ACTIVATE_INPAGE . '_ON' => SettingsHelper::isInPageEnabled(),
             'ALMA_SHOW_DISABLED_BUTTON' => SettingsHelper::showDisabledButton(),
             'ALMA_SHOW_ELIGIBILITY_MESSAGE_ON' => SettingsHelper::showEligibilityMessage(),
             'ALMA_CART_WDGT_NOT_ELGBL_ON' => SettingsHelper::showCartWidgetIfNotEligible(),

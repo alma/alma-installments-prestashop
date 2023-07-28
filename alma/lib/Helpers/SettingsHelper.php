@@ -37,7 +37,7 @@ if (!defined('ALMA_MODE_LIVE')) {
 
 use Alma\PrestaShop\Forms\ApiAdminFormBuilder;
 use Alma\PrestaShop\Forms\ExcludedCategoryAdminFormBuilder;
-use Alma\PrestaShop\Forms\FragmentAdminFormBuilder;
+use Alma\PrestaShop\Forms\InpageAdminFormBuilder;
 use Alma\PrestaShop\Forms\PaymentButtonAdminFormBuilder;
 use Alma\PrestaShop\Forms\PaymentOnTriggeringAdminFormBuilder;
 use Alma\PrestaShop\Forms\ShareOfCheckoutAdminFormBuilder;
@@ -133,7 +133,7 @@ class SettingsHelper
             PaymentButtonAdminFormBuilder::ALMA_PNX_AIR_BUTTON_TITLE,
             PaymentButtonAdminFormBuilder::ALMA_PNX_AIR_BUTTON_DESC,
             ExcludedCategoryAdminFormBuilder::ALMA_NOT_ELIGIBLE_CATEGORIES,
-            FragmentAdminFormBuilder::ALMA_ACTIVATE_FRAGMENT,
+            InpageAdminFormBuilder::ALMA_ACTIVATE_INPAGE,
             'ALMA_STATE_REFUND',
             'ALMA_STATE_REFUND_ENABLED',
             'ALMA_STATE_TRIGGER',
@@ -417,7 +417,7 @@ class SettingsHelper
      */
     public static function isInPageEnabled()
     {
-        return (bool) (int) static::get(FragmentAdminFormBuilder::ALMA_ACTIVATE_FRAGMENT . '_ON', false);
+        return (bool) (int) static::get(InpageAdminFormBuilder::ALMA_ACTIVATE_INPAGE . '_ON', false);
     }
 
     /**
