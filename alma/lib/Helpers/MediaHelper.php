@@ -21,26 +21,32 @@
  * @copyright 2018-2023 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
-namespace Alma\PrestaShop\Exceptions;
+namespace Alma\PrestaShop\Helpers;
 
-use Alma\PrestaShop\Helpers\LinkHelper;
-use Alma\PrestaShop\Helpers\SettingsHelper;
+use Media;
 
-class WrongCredentialsException extends AlmaException
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
+/**
+ * Class MediaHelper.
+ *
+ * Use for Media
+ */
+class MediaHelper
 {
     /**
-     * Constructor.
-     *
      * @param object $module
+     *
+     * @return string
      */
-    public function __construct($module)
+    public static function getIconPathAlmaTiny($module)
     {
-        $message = sprintf(
-            $module->l('Could not connect to Alma using your API keys.<br>Please double check your keys on your %s Alma dashboard %s.', 'WrongCredentialsException'),
-            sprintf('<a href="%1$s" target="_blank">', LinkHelper::getAlmaDashboardUrl(SettingsHelper::getActiveMode(), 'api')),
-            '</a>'
-        );
+        if (is_callable('Media::getMediaPath')) {
+            return Media::getMediaPath(_PS_MODULE_DIR_ . $module->name . '/views/img/logos/alma_tiny.svg');
+        }
 
-        parent::__construct($message);
+        return $module->getPathUri() . '/views/img/logos/alma_tiny.svg';
     }
 }

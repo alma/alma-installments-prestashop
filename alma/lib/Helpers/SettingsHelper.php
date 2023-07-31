@@ -792,7 +792,7 @@ class SettingsHelper
     }
 
     /**
-     * @param Alma\API\Entities\FeePlan $plan
+     * @param \Alma\API\Entities\FeePlan $plan
      *
      * @return float|int
      */
@@ -828,9 +828,5 @@ class SettingsHelper
         }
 
         return $dataFromKey;
-    }
-
-    public static function setFeatureFlagOnUpgrade()
-    {
     }
 }

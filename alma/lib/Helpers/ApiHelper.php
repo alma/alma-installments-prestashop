@@ -27,6 +27,7 @@ use Alma\API\Entities\Merchant;
 use Alma\PrestaShop\Exceptions\ActivationException;
 use Alma\PrestaShop\Exceptions\ApiMerchantsException;
 use Alma\PrestaShop\Exceptions\WrongCredentialsException;
+use Alma\PrestaShop\Forms\InpageAdminFormBuilder;
 
 class ApiHelper
 {
@@ -78,6 +79,17 @@ class ApiHelper
      */
     protected static function saveFeatureFlag($merchant, $merchantKey, $configKey)
     {
-        SettingsHelper::updateValue($configKey, (int) $merchant->$merchantKey);
+        $value = 1;
+
+        if (property_exists($merchant, $merchantKey)) {
+            $value = (int) $merchant->$merchantKey;
+        }
+
+        SettingsHelper::updateValue($configKey, $value);
+
+        // If Inpage not allowed we ensure that inpage is deactivated in database
+        if (0 === $value) {
+            SettingsHelper::updateValue(InpageAdminFormBuilder::ALMA_ACTIVATE_INPAGE, $value);
+        }
     }
 }

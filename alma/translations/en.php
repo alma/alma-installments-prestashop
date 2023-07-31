@@ -41,7 +41,7 @@ $_MODULE['<{alma}prestashop>adminalmacategories_1ef246272d910a217e66aff142f708ad
 $_MODULE['<{alma}prestashop>adminalmarefunds_69c00601627a9011bf5c4816abf00b5a'] = 'There was an error while processing the refund';
 $_MODULE['<{alma}prestashop>adminalmarefunds_9bbf53faf470010110269d041cab1e9f'] = 'Refund has been processed';
 $_MODULE['<{alma}prestashop>adminalmarefunds_4ba820211f99849725468bd56fc50216'] = 'Error: Amount is higher than maximum refundable';
-$_MODULE['<{alma}prestashop>adminalmarefunds_01dedb61eca449d9075cc314cc4151d7'] = 'Error: unknow refund type (%s)';
+$_MODULE['<{alma}prestashop>adminalmarefunds_dde9188155937e885e5f5b002e6dcb39'] = 'Error: unknown refund type (%s)';
 $_MODULE['<{alma}prestashop>payment_2f9f52496706027b880bac2e3c9af1d8'] = 'There was an error while generating your payment request. Please try again later or contact us if the problem persists.';
 $_MODULE['<{alma}prestashop>payment_efa820507b1951ee5722003639b1a0b0'] = 'Alma Monthly Installments are not available for this currency';
 $_MODULE['<{alma}prestashop>validation_9d55a51cbc2d6cf7f9251b0cec59390e'] = 'There was an error while validating your payment. Please try again or contact us if the problem persists. Cart ID: %d';
@@ -67,12 +67,7 @@ $_MODULE['<{alma}prestashop>paymentoptionshookcontroller_1dd1c5fb7f25cd41b291d43
 $_MODULE['<{alma}prestashop>paymentoptionshookcontroller_96b0141273eabab320119c467cdcaf17'] = 'Total';
 $_MODULE['<{alma}prestashop>paymentoptionshookcontroller_9bbd94e0a507283ae202812ea1bd6f20'] = '%s month later';
 $_MODULE['<{alma}prestashop>paymentoptionshookcontroller_9088921432b295dfe6f02863b2dc0ff8'] = '0 € today then %1$s on %2$s';
-$_MODULE['<{alma}prestashop>paymentvalidation_efa820507b1951ee5722003639b1a0b0'] = 'Alma Monthly Installments are not available for this currency';
-$_MODULE['<{alma}prestashop>paymentvalidation_1d879e270cfb195f257aab3116618d8b'] = 'Alma - +%d days payment';
-$_MODULE['<{alma}prestashop>paymentvalidation_2ea09287a94f2bc88b459fc7d5a31b6b'] = 'Alma - Pay now';
-$_MODULE['<{alma}prestashop>paymentvalidation_6f11098989b14063e0a4cfe362734850'] = 'Alma - %d monthly installments';
-$_MODULE['<{alma}prestashop>refundhelper_446ae76a36687f9dbc62430e7006ca91'] = 'We regret to inform you that there was an issue during the payment process, your Alma payment will be fully refunded. Please retry your payment to complete your order.';
-$_MODULE['<{alma}prestashop>refundhelper_448edd2d5c593906afa202847b8d79c0'] = 'We apologize for the inconvenience, but there was an issue during the payment process, and we were unable to refund your Alma payment. To fix this, we kindly ask you to contact our support team with your payment reference: %s. Our team will be happy to assist you in ensuring that you receive your full refund. Thank you for your cooperation.';
+$_MODULE['<{alma}prestashop>wrongcredentialsexception_9c2a0378c6c1a5fbb47a5d4546caa1c9'] = 'Could not connect to Alma using your API keys. Please double check your keys on your %s Alma dashboard %s.';
 $_MODULE['<{alma}prestashop>abstractalmaadminformbuilder_c9cc8cce247e49bae79f15173ce97354'] = 'Save';
 $_MODULE['<{alma}prestashop>apiadminformbuilder_fe1d478b2e434b92277b47f0cf62e040'] = 'API Mode';
 $_MODULE['<{alma}prestashop>apiadminformbuilder_0e95e5facc2cad62d6458c65164c4455'] = 'Use Test mode until you are ready to take real orders with Alma. In Test mode, only admins can see Alma on cart/checkout pages.';
@@ -101,6 +96,10 @@ $_MODULE['<{alma}prestashop>excludedcategoryadminformbuilder_f5e42a943a36e2a61ba
 $_MODULE['<{alma}prestashop>excludedcategoryadminformbuilder_41c2bdcbfb6ea702ac49667124a1652a'] = 'Excluded categories non-eligibility message';
 $_MODULE['<{alma}prestashop>excludedcategoryadminformbuilder_c4cea4750fb3ef077cbf2e1283c312ac'] = 'Message displayed on an excluded product page or on the cart page if it contains an excluded product.';
 $_MODULE['<{alma}prestashop>excludedcategoryadminformbuilder_36359547b09bdb31f46c419a0bd5807e'] = 'Excluded categories';
+$_MODULE['<{alma}prestashop>inpageadminformbuilder_2420ebe02d61c738479f399a97e1cf18'] = 'Activate in-page checkout';
+$_MODULE['<{alma}prestashop>inpageadminformbuilder_bf3b980c4aa11b5fca4cc3096f50e0b8'] = 'Activate in-page checkout for Pay Now, P2X, P3X and P4X';
+$_MODULE['<{alma}prestashop>inpageadminformbuilder_220a4f39147308a2160f7abc4d00ae43'] = 'The checkout in-page in your own website';
+$_MODULE['<{alma}prestashop>inpageadminformbuilder_6de24747c86085e597f6b38d4d1d01a4'] = 'In-page checkout';
 $_MODULE['<{alma}prestashop>paymentbuttonadminformbuilder_8bd4837a76cf443ab523a51895e23c36'] = 'Pay now';
 $_MODULE['<{alma}prestashop>paymentbuttonadminformbuilder_b78a3223503896721cca1303f776159b'] = 'Title';
 $_MODULE['<{alma}prestashop>paymentbuttonadminformbuilder_b5a7adde1af5c87d7fd797b6245c2a39'] = 'Description';
@@ -158,6 +157,7 @@ $_MODULE['<{alma}prestashop>refundadminformbuilder_a2175c8178a92176b9810d330fbc0
 $_MODULE['<{alma}prestashop>refundadminformbuilder_9d21f767a50ad583330024bce9afa2e1'] = 'Refund with state change';
 $_MODULE['<{alma}prestashop>shareofcheckoutadminformbuilder_6e8f64880a74e62ac2ba57bed59fbbaf'] = 'Activate your data sharing settings';
 $_MODULE['<{alma}prestashop>shareofcheckoutadminformbuilder_c1a238cd82a8997cf32426ef561772b2'] = 'Increase your performance & get insights';
+$_MODULE['<{alma}prestashop>apihelper_fc610b81ff31f9d969ddb659cd8248c1'] = 'Alma encountered an error when fetching merchant status, please check your api keys or retry later.';
 $_MODULE['<{alma}prestashop>customfieldshelper_2c53dea2326232a2d867ddd1d2206aa0'] = 'Pay now by credit card';
 $_MODULE['<{alma}prestashop>customfieldshelper_300de0751d957421cc332ba21c43a598'] = 'Pay in %d installments';
 $_MODULE['<{alma}prestashop>customfieldshelper_726c61fad46c135efb4198820e5484ba'] = 'Buy now Pay in %d days';
@@ -165,7 +165,13 @@ $_MODULE['<{alma}prestashop>customfieldshelper_82d2b98eb8f9388d13766a9367096499'
 $_MODULE['<{alma}prestashop>customfieldshelper_4f05e285f22aa8b5d8f88f302c1633c1'] = 'Fast and secure payments.';
 $_MODULE['<{alma}prestashop>customfieldshelper_7a854e750fe5f3e7120020c7c20987d4'] = 'Your cart is not eligible for payments with Alma.';
 $_MODULE['<{alma}prestashop>customfieldshelper_6ed45ebd72fcca0fc0c271128e9d7b7b'] = 'At shipping';
-$_MODULE['<{alma}prestashop>orderdatatrait_7960c85fd5916169fc5038a2192094f8'] = 'Error: Could not find Alma transaction';
+$_MODULE['<{alma}prestashop>orderhelper_7960c85fd5916169fc5038a2192094f8'] = 'Error: Could not find Alma transaction';
+$_MODULE['<{alma}prestashop>refundhelper_446ae76a36687f9dbc62430e7006ca91'] = 'We regret to inform you that there was an issue during the payment process, your Alma payment will be fully refunded. Please retry your payment to complete your order.';
+$_MODULE['<{alma}prestashop>refundhelper_448edd2d5c593906afa202847b8d79c0'] = 'We apologize for the inconvenience, but there was an issue during the payment process, and we were unable to refund your Alma payment. To fix this, we kindly ask you to contact our support team with your payment reference: %s. Our team will be happy to assist you in ensuring that you receive your full refund. Thank you for your cooperation.';
+$_MODULE['<{alma}prestashop>paymentvalidation_efa820507b1951ee5722003639b1a0b0'] = 'Alma Monthly Installments are not available for this currency';
+$_MODULE['<{alma}prestashop>paymentvalidation_1d879e270cfb195f257aab3116618d8b'] = 'Alma - +%d days payment';
+$_MODULE['<{alma}prestashop>paymentvalidation_2ea09287a94f2bc88b459fc7d5a31b6b'] = 'Alma - Pay now';
+$_MODULE['<{alma}prestashop>paymentvalidation_6f11098989b14063e0a4cfe362734850'] = 'Alma - %d monthly installments';
 $_MODULE['<{alma}prestashop>form_1908624a0bca678cd26b99bfd405324e'] = 'File size';
 $_MODULE['<{alma}prestashop>form_ba34ea40525a4379add785228e37fe86'] = 'kb';
 $_MODULE['<{alma}prestashop>form_f2a6c498fb90ee345d997f888fce3b18'] = 'Delete';
