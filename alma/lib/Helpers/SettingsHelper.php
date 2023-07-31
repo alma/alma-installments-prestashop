@@ -176,7 +176,7 @@ class SettingsHelper
      */
     public static function canLog()
     {
-        return (bool) (int) static::get('ALMA_ACTIVATE_LOGGING_ON', false);
+        return (bool) (int) static::get('ALMA_ACTIVATE_LOGGING', false);
     }
 
     /**
@@ -366,7 +366,7 @@ class SettingsHelper
      */
     public static function showEligibilityMessage()
     {
-        return (bool) (int) static::get('ALMA_SHOW_ELIGIBILITY_MESSAGE_ON', true);
+        return (bool) (int) static::get('ALMA_SHOW_ELIGIBILITY_MESSAGE', true);
     }
 
     /**
@@ -376,7 +376,7 @@ class SettingsHelper
      */
     public static function showCartWidgetIfNotEligible()
     {
-        return (bool) (int) static::get('ALMA_CART_WDGT_NOT_ELGBL_ON', true);
+        return (bool) (int) static::get('ALMA_CART_WDGT_NOT_ELGBL', true);
     }
 
     /**
@@ -386,7 +386,7 @@ class SettingsHelper
      */
     public static function showProductWidgetIfNotEligible()
     {
-        return (bool) (int) static::get('ALMA_PRODUCT_WDGT_NOT_ELGBL_ON', true);
+        return (bool) (int) static::get('ALMA_PRODUCT_WDGT_NOT_ELGBL', true);
     }
 
     /**
@@ -396,7 +396,7 @@ class SettingsHelper
      */
     public static function showCategoriesWidgetIfNotEligible()
     {
-        return (bool) (int) static::get('ALMA_CATEGORIES_WDGT_NOT_ELGBL_ON', true);
+        return (bool) (int) static::get('ALMA_CATEGORIES_WDGT_NOT_ELGBL', true);
     }
 
     /**
@@ -417,7 +417,7 @@ class SettingsHelper
      */
     public static function isInPageEnabled()
     {
-        return (bool) (int) static::get(InpageAdminFormBuilder::ALMA_ACTIVATE_INPAGE . '_ON', false);
+        return (bool) (int) static::get(InpageAdminFormBuilder::ALMA_ACTIVATE_INPAGE, false);
     }
 
     /**
@@ -459,7 +459,7 @@ class SettingsHelper
      */
     public static function isRefundEnabledByState()
     {
-        return (bool) static::get('ALMA_STATE_REFUND_ENABLED_ON', 0);
+        return (bool) static::get('ALMA_STATE_REFUND_ENABLED', 0);
     }
 
     /**
@@ -605,7 +605,7 @@ class SettingsHelper
      */
     public static function showProductEligibility()
     {
-        return (bool) static::get('ALMA_SHOW_PRODUCT_ELIGIBILITY_ON', 1);
+        return (bool) static::get('ALMA_SHOW_PRODUCT_ELIGIBILITY', 1);
     }
 
     /**

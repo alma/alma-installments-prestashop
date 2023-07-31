@@ -67,18 +67,45 @@ final class GetContentHookController extends AdminHookController
      *  @var array KEY_CONFIG
      */
     const KEY_CONFIG = [
-        'ALMA_SHOW_ELIGIBILITY_MESSAGE_ON' => 'test_bool',
-        'ALMA_SHOW_PRODUCT_ELIGIBILITY_ON' => 'test_bool',
-        'ALMA_CART_WDGT_NOT_ELGBL_ON' => 'cast_bool',
-        'ALMA_PRODUCT_WDGT_NOT_ELGBL_ON' => 'cast_bool',
-        'ALMA_CATEGORIES_WDGT_NOT_ELGBL_ON' => 'cast_bool',
+        'ALMA_SHOW_ELIGIBILITY_MESSAGE' => [
+            'action' => 'test_bool',
+            'suffix' => '_ON',
+        ],
+        'ALMA_SHOW_PRODUCT_ELIGIBILITY' => [
+            'action' => 'test_bool',
+            'suffix' => '_ON',
+        ],
+        'ALMA_CART_WDGT_NOT_ELGBL' => [
+            'action' => 'cast_bool',
+            'suffix' => '_ON',
+        ],
+        'ALMA_PRODUCT_WDGT_NOT_ELGBL' => [
+            'action' => 'cast_bool',
+            'suffix' => '_ON',
+        ],
+        'ALMA_CATEGORIES_WDGT_NOT_ELGBL' => [
+            'action' => 'cast_bool',
+            'suffix' => '_ON',
+        ],
+        'ALMA_STATE_REFUND_ENABLED' => [
+            'action' => 'cast_bool',
+            'suffix' => '_ON',
+        ],
+        'ALMA_PAYMENT_ON_TRIGGERING_ENABLED' => [
+            'action' => 'cast_bool',
+            'suffix' => '_ON',
+        ],
+        InpageAdminFormBuilder::ALMA_ACTIVATE_INPAGE => [
+            'action' => 'cast_bool',
+            'suffix' => '_ON',
+        ],
+        'ALMA_ACTIVATE_LOGGING' => [
+            'action' => 'cast_bool',
+            'suffix' => '_ON',
+        ],
         'ALMA_WIDGET_POSITION_CUSTOM' => 'cast_bool',
         'ALMA_SHOW_DISABLED_BUTTON' => 'cast_bool',
         'ALMA_CART_WIDGET_POSITION_CUSTOM' => 'cast_bool',
-        'ALMA_STATE_REFUND_ENABLED_ON' => 'cast_bool',
-        'ALMA_PAYMENT_ON_TRIGGERING_ENABLED_ON' => 'cast_bool',
-        InpageAdminFormBuilder::ALMA_ACTIVATE_INPAGE . '_ON' => 'cast_bool',
-        'ALMA_ACTIVATE_LOGGING_ON' => 'cast_bool',
         'ALMA_PRODUCT_PRICE_SELECTOR' => 'none',
         'ALMA_WIDGET_POSITION_SELECTOR' => 'none',
         'ALMA_PRODUCT_ATTR_SELECTOR' => 'none',
@@ -761,8 +788,16 @@ final class GetContentHookController extends AdminHookController
      */
     protected function saveConfigValues()
     {
-        foreach (self::KEY_CONFIG as $key => $type) {
-            $value = Tools::getValue($key);
+        foreach (self::KEY_CONFIG as $key => $conditions) {
+            $type = $conditions;
+            $searchKey = $key;
+
+            if (is_array($conditions)) {
+                $searchKey = $key . $conditions['suffix'];
+                $type = $conditions['action'];
+            }
+
+            $value = Tools::getValue($searchKey);
 
             switch ($type) {
                 case 'test_bool':
