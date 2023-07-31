@@ -28,14 +28,14 @@ if (!defined('_PS_VERSION_')) {
 include_once _PS_MODULE_DIR_ . 'alma/vendor/autoload.php';
 
 use Alma\API\RequestError;
-use Alma\PrestaShop\API\ClientHelper;
-use Alma\PrestaShop\Utils\Logger;
-use Alma\PrestaShop\Utils\Settings;
+use Alma\PrestaShop\Helpers\ClientHelper;
+use Alma\PrestaShop\Helpers\SettingsHelper;
+use Alma\PrestaShop\Logger;
 
 function upgrade_module_1_4_0($module)
 {
     // If module has already been configured, get the merchant's API ID from Alma's API
-    if (Settings::isFullyConfigured()) {
+    if (SettingsHelper::isFullyConfigured()) {
         $alma = ClientHelper::defaultInstance();
 
         if (!$alma) {
@@ -50,14 +50,14 @@ function upgrade_module_1_4_0($module)
             return true;
         }
 
-        Settings::updateValue('ALMA_MERCHANT_ID', $merchant->id);
+        SettingsHelper::updateValue('ALMA_MERCHANT_ID', $merchant->id);
     }
 
     // Default value for the display of our order confirmation page has changed; make sure we don't suddenly start
     // showing it on shops that had not changed the value and thus were not displaying it.
-    $currentValue = Settings::get('ALMA_DISPLAY_ORDER_CONFIRMATION');
+    $currentValue = SettingsHelper::get('ALMA_DISPLAY_ORDER_CONFIRMATION');
     if ($currentValue === null) {
-        Settings::updateValue('ALMA_DISPLAY_ORDER_CONFIRMATION', '0');
+        SettingsHelper::updateValue('ALMA_DISPLAY_ORDER_CONFIRMATION', '0');
     }
 
     return $module->installTabs();

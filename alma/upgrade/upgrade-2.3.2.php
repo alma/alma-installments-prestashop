@@ -28,16 +28,16 @@ if (!defined('_PS_VERSION_')) {
 include_once _PS_MODULE_DIR_ . 'alma/vendor/autoload.php';
 
 use Alma\API\RequestError;
-use Alma\PrestaShop\API\ClientHelper;
 use Alma\PrestaShop\Forms\ExcludedCategoryAdminFormBuilder;
 use Alma\PrestaShop\Forms\PaymentButtonAdminFormBuilder;
-use Alma\PrestaShop\Utils\CustomFieldsHelper;
-use Alma\PrestaShop\Utils\Logger;
-use Alma\PrestaShop\Utils\Settings;
+use Alma\PrestaShop\Helpers\ClientHelper;
+use Alma\PrestaShop\Helpers\CustomFieldsHelper;
+use Alma\PrestaShop\Helpers\SettingsHelper;
+use Alma\PrestaShop\Logger;
 
 function upgrade_module_2_3_2()
 {
-    if (Settings::isFullyConfigured()) {
+    if (SettingsHelper::isFullyConfigured()) {
         $alma = ClientHelper::defaultInstance();
 
         if (!$alma) {

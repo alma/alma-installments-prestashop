@@ -27,17 +27,17 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-use Alma\PrestaShop\Utils\Settings;
+use Alma\PrestaShop\Helpers\SettingsHelper;
 use Tools;
 
 abstract class FrontendHookController extends HookController
 {
     public function canRun()
     {
-        $isLive = Settings::getActiveMode() === ALMA_MODE_LIVE;
+        $isLive = SettingsHelper::getActiveMode() === ALMA_MODE_LIVE;
 
         // Front controllers can run if the module is properly configured ...
-        return Settings::isFullyConfigured()
+        return SettingsHelper::isFullyConfigured()
             // ... and the plugin is in LIVE mode, or the visitor is an admin
             && ($isLive || $this->loggedAsEmployee())
             // ... and the current shop's currency is EUR

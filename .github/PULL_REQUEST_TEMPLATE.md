@@ -2,7 +2,7 @@
 
 <!-- Describe here the reason for change, and provide a link to the corresponding ClickUp task or Sentry issue. -->
 
-[ClickUp task](https://app.clickup.com/20427503/v/b/4-32476982-2/CLICKUP_ISSUE_ID)
+[Linear task](https://linear.app/almapay/issue/MPP-LINEAR_ISSUE_ID)
 
 ### Code changes
 

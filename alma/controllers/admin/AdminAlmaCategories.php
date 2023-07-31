@@ -21,7 +21,7 @@
  * @copyright 2018-2023 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
-use Alma\PrestaShop\Utils\Settings;
+use Alma\PrestaShop\Helpers\SettingsHelper;
 
 class AdminAlmaCategoriesController extends ModuleAdminController
 {
@@ -84,7 +84,7 @@ class AdminAlmaCategoriesController extends ModuleAdminController
             ],
         ];
 
-        self::$excludedCategories = Settings::getExcludedCategories();
+        static::$excludedCategories = SettingsHelper::getExcludedCategories();
     }
 
     public function init()
@@ -137,16 +137,20 @@ class AdminAlmaCategoriesController extends ModuleAdminController
                     unset($this->context->cookie->{$prefix . $key});
                 } elseif (stripos($key, $this->list_id . 'Filter_') === 0) {
                     $this->context->cookie->{$prefix . $key} = !is_array($value) ? $value : json_encode($value);
-                } elseif (stripos($key, 'submitFilter') === 0) {
-                    $this->context->cookie->$key = !is_array($value) ? $value : json_encode($value);
+                } else {
+                    if (stripos($key, 'submitFilter') === 0) {
+                        $this->context->cookie->$key = !is_array($value) ? $value : json_encode($value);
+                    }
                 }
             }
 
             foreach ($_GET as $key => $value) {
                 if (stripos($key, $this->list_id . 'Filter_') === 0) {
                     $this->context->cookie->{$prefix . $key} = !is_array($value) ? $value : json_encode($value);
-                } elseif (stripos($key, 'submitFilter') === 0) {
-                    $this->context->cookie->$key = !is_array($value) ? $value : json_encode($value);
+                } else {
+                    if (stripos($key, 'submitFilter') === 0) {
+                        $this->context->cookie->$key = !is_array($value) ? $value : json_encode($value);
+                    }
                 }
                 if (stripos($key, $this->list_id . 'Orderby') === 0 && Validate::isOrderBy($value)) {
                     if ($value === '' || $value == $this->_defaultOrderBy) {
@@ -154,11 +158,13 @@ class AdminAlmaCategoriesController extends ModuleAdminController
                     } else {
                         $this->context->cookie->{$prefix . $key} = $value;
                     }
-                } elseif (stripos($key, $this->list_id . 'Orderway') === 0 && Validate::isOrderWay($value)) {
-                    if ($value === '' || $value == $this->_defaultOrderWay) {
-                        unset($this->context->cookie->{$prefix . $key});
-                    } else {
-                        $this->context->cookie->{$prefix . $key} = $value;
+                } else {
+                    if (stripos($key, $this->list_id . 'Orderway') === 0 && Validate::isOrderWay($value)) {
+                        if ($value === '' || $value == $this->_defaultOrderWay) {
+                            unset($this->context->cookie->{$prefix . $key});
+                        } else {
+                            $this->context->cookie->{$prefix . $key} = $value;
+                        }
                     }
                 }
             }
@@ -287,9 +293,10 @@ class AdminAlmaCategoriesController extends ModuleAdminController
         $id_lang_shop = false
     ) {
         parent::getList($id_lang, $order_by, $order_way, $start, $limit, $id_lang_shop);
+
         if (1 === $this->excludeFilter) {
             foreach ($this->_list as $k => $list) {
-                foreach (self::$excludedCategories as $excluded) {
+                foreach (static::$excludedCategories as $excluded) {
                     if ($list['id_category'] === $excluded) {
                         unset($this->_list[$k]);
                     }
@@ -297,8 +304,8 @@ class AdminAlmaCategoriesController extends ModuleAdminController
             }
         } elseif (0 === $this->excludeFilter) {
             $tmp = [];
-            foreach (self::$excludedCategories as $excluded) {
-                foreach ($this->_list as $k => $list) {
+            foreach (static::$excludedCategories as $excluded) {
+                foreach ($this->_list as $list) {
                     if ($list['id_category'] === $excluded) {
                         $tmp[] = $list;
                     }
@@ -355,7 +362,7 @@ class AdminAlmaCategoriesController extends ModuleAdminController
             $category = new Category((int) $id_category);
 
             if (Validate::isLoadedObject($category)) {
-                Settings::removeExcludedCategories((int) $id_category);
+                SettingsHelper::removeExcludedCategories((int) $id_category);
             }
         }
 
@@ -374,7 +381,7 @@ class AdminAlmaCategoriesController extends ModuleAdminController
             $category = new Category((int) $id_category);
 
             if (Validate::isLoadedObject($category)) {
-                Settings::addExcludedCategories((int) $id_category);
+                SettingsHelper::addExcludedCategories((int) $id_category);
             }
         }
 
@@ -384,7 +391,7 @@ class AdminAlmaCategoriesController extends ModuleAdminController
 
     public static function getExcluded($id_category)
     {
-        if (in_array($id_category, self::$excludedCategories)) {
+        if (in_array($id_category, static::$excludedCategories)) {
             if (version_compare(_PS_VERSION_, '1.6', '>=')) {
                 return '<i class="icon-ban text-danger"></i>';
             }

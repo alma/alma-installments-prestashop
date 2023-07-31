@@ -23,8 +23,6 @@
  */
 namespace Alma\PrestaShop\Forms;
 
-use Alma\PrestaShop\Utils\Settings;
-
 if (!defined('_PS_VERSION_')) {
     exit;
 }
@@ -45,16 +43,6 @@ class ShareOfCheckoutAdminFormBuilder extends AbstractAlmaAdminFormBuilder
         $tpl = $this->context->smarty->createTemplate(
             "{$this->module->local_path}views/templates/hook/_partials/shareOfCheckout.tpl"
         );
-
-        if (Settings::shouldHideShareOfCheckoutForm()) {
-            return [
-                $this->inputHiddenForm(
-                    // Prestashop FormBuilder adds `_ON` after name in the switch
-                    self::ALMA_SHARE_OF_CHECKOUT_STATE . '_ON',
-                    'soc_hidden'
-                ),
-            ];
-        }
 
         return [
             $this->inputHtml($tpl),

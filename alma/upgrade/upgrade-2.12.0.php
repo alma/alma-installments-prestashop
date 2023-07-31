@@ -22,10 +22,10 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 use Alma\API\RequestError;
-use Alma\PrestaShop\API\ClientHelper;
 use Alma\PrestaShop\Forms\ApiAdminFormBuilder;
-use Alma\PrestaShop\Utils\ApiKeyHelper;
-use Alma\PrestaShop\Utils\Settings;
+use Alma\PrestaShop\Helpers\ApiKeyHelper;
+use Alma\PrestaShop\Helpers\ClientHelper;
+use Alma\PrestaShop\Helpers\SettingsHelper;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -36,7 +36,7 @@ if (!defined('_PS_VERSION_')) {
  */
 function upgrade_module_2_12_0()
 {
-    if (Settings::isFullyConfigured()) {
+    if (SettingsHelper::isFullyConfigured()) {
         $alma = ClientHelper::defaultInstance();
 
         if (!$alma) {
@@ -46,8 +46,8 @@ function upgrade_module_2_12_0()
         $apiKeyHelper = new ApiKeyHelper();
 
         try {
-            $apiKeyHelper->setLiveApiKey(Settings::get(ApiAdminFormBuilder::ALMA_LIVE_API_KEY, null));
-            $apiKeyHelper->setTestApiKey(Settings::get(ApiAdminFormBuilder::ALMA_TEST_API_KEY, null));
+            $apiKeyHelper->setLiveApiKey(SettingsHelper::get(ApiAdminFormBuilder::ALMA_LIVE_API_KEY, null));
+            $apiKeyHelper->setTestApiKey(SettingsHelper::get(ApiAdminFormBuilder::ALMA_TEST_API_KEY, null));
         } catch (RequestError $e) {
             return true;
         }

@@ -25,9 +25,9 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-use Alma\PrestaShop\API\PaymentValidation;
-use Alma\PrestaShop\API\PaymentValidationError;
-use Alma\PrestaShop\Utils\Logger;
+use Alma\PrestaShop\Logger;
+use Alma\PrestaShop\Validators\PaymentValidation;
+use Alma\PrestaShop\Validators\PaymentValidationError;
 
 class AlmaValidationModuleFrontController extends ModuleFrontController
 {

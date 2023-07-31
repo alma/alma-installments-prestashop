@@ -26,15 +26,19 @@ if (!defined('_PS_VERSION_')) {
 }
 
 use Alma\PrestaShop\API\MismatchException;
-use Alma\PrestaShop\API\PaymentValidation;
-use Alma\PrestaShop\API\PaymentValidationError;
-use Alma\PrestaShop\Utils\Logger;
+use Alma\PrestaShop\Exceptions\RefundException;
+use Alma\PrestaShop\Logger;
+use Alma\PrestaShop\Traits\AjaxTrait;
+use Alma\PrestaShop\Validators\PaymentValidation;
+use Alma\PrestaShop\Validators\PaymentValidationError;
 
 /**
  * AlmaIpnModuleFrontController
  */
 class AlmaIpnModuleFrontController extends ModuleFrontController
 {
+    use AjaxTrait;
+
     public $ssl = true;
 
     /**
@@ -47,49 +51,11 @@ class AlmaIpnModuleFrontController extends ModuleFrontController
     }
 
     /**
-     * @param $value
-     * @param $controller
-     * @param $method
-     *
      * @return void
      *
      * @throws PrestaShopException
-     */
-    public function ajaxDie($value = null, $controller = null, $method = null)
-    {
-        if (method_exists(get_parent_class(get_parent_class($this)), 'ajaxRender')) {
-            parent::ajaxRender($value);
-            exit;
-        } elseif (method_exists(get_parent_class(get_parent_class($this)), 'ajaxDie')) {
-            parent::ajaxDie($value);
-        } else {
-            exit($value);
-        }
-    }
-
-    /**
-     * @param $msg
-     * @param bool $addErrorHeader
-     *
-     * @return void
-     *
-     * @throws PrestaShopException
-     */
-    private function fail($msg = null, $addErrorHeader = true)
-    {
-        if ($addErrorHeader) {
-            header('X-PHP-Response-Code: 500', true, 500);
-        }
-
-        $this->ajaxDie(json_encode(['error' => $msg]));
-    }
-
-    /**
-     * Return result after payment
-     *
-     * @return void
-     *
-     * @throws PrestaShopException
+     * @throws RefundException
+     * @throws MismatchException
      */
     public function postProcess()
     {
@@ -104,12 +70,12 @@ class AlmaIpnModuleFrontController extends ModuleFrontController
             $validator->validatePayment($paymentId);
         } catch (PaymentValidationError $e) {
             Logger::instance()->error('ipn payment_validation_error - Message : ' . $e->getMessage());
-            $this->fail($e->getMessage());
+            $this->ajaxRenderAndExit(json_encode(['error' => $e->getMessage()]), 500);
         } catch (MismatchException $e) {
             Logger::instance()->error('ipn payment_validation_mismatch_error - Message : ' . $e->getMessage());
-            $this->fail($e->getMessage(), false);
+            $this->ajaxRenderAndExit(json_encode(['error' => $e->getMessage()]), 200);
         }
 
-        $this->ajaxDie(json_encode(['success' => true]));
+        $this->ajaxRenderAndExit(json_encode(['success' => true]));
     }
 }

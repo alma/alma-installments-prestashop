@@ -22,9 +22,9 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 use Alma\API\RequestError;
-use Alma\PrestaShop\API\ClientHelper;
 use Alma\PrestaShop\Forms\ShareOfCheckoutAdminFormBuilder;
-use Alma\PrestaShop\Utils\Settings;
+use Alma\PrestaShop\Helpers\ClientHelper;
+use Alma\PrestaShop\Helpers\SettingsHelper;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -32,7 +32,7 @@ if (!defined('_PS_VERSION_')) {
 
 function upgrade_module_2_10_0($module)
 {
-    if (Settings::isFullyConfigured()) {
+    if (SettingsHelper::isFullyConfigured()) {
         $alma = ClientHelper::defaultInstance();
 
         if (!$alma) {
@@ -42,9 +42,9 @@ function upgrade_module_2_10_0($module)
         $date = new DateTime();
 
         try {
-            Settings::updateValue(ShareOfCheckoutAdminFormBuilder::ALMA_SHARE_OF_CHECKOUT_STATE, Settings::getShareOfChekcoutStatus());
-            Settings::updateValue(ShareOfCheckoutAdminFormBuilder::ALMA_SHARE_OF_CHECKOUT_DATE, Settings::getCurrentTimestamp());
-            Settings::updateValue('ALMA_SOC_CRON_TASK', $date->getTimestamp());
+            SettingsHelper::updateValue(ShareOfCheckoutAdminFormBuilder::ALMA_SHARE_OF_CHECKOUT_STATE, SettingsHelper::getShareOfCheckoutStatus());
+            SettingsHelper::updateValue(ShareOfCheckoutAdminFormBuilder::ALMA_SHARE_OF_CHECKOUT_DATE, SettingsHelper::getCurrentTimestamp());
+            SettingsHelper::updateValue('ALMA_SOC_CRON_TASK', $date->getTimestamp());
         } catch (RequestError $e) {
             return true;
         }

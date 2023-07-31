@@ -23,7 +23,7 @@
  */
 namespace Alma\PrestaShop\Forms;
 
-use Alma\PrestaShop\Utils\ApiKeyHelper;
+use Alma\PrestaShop\Helpers\ConstantsHelper;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -70,7 +70,7 @@ abstract class AbstractAdminFormBuilder
      *
      * @return array inputSwitchForm
      */
-    protected function inputSwitchForm($name, $label, $labelOn = 'Yes', $labelOff = 'No', $desc = null, $form_group_class = null)
+    protected function inputSwitchForm($name, $label, $labelOn = 'Yes', $labelOff = 'No', $desc = null, $formGroupClass = null)
     {
         $dataInput = [
             'name' => $name,
@@ -91,8 +91,8 @@ abstract class AbstractAdminFormBuilder
             ],
         ];
 
-        if ($form_group_class) {
-            $dataInput['form_group_class'] = $form_group_class;
+        if ($formGroupClass) {
+            $dataInput['form_group_class'] = $formGroupClass;
         }
 
         if ($desc) {
@@ -107,7 +107,7 @@ abstract class AbstractAdminFormBuilder
      *
      * @return array inputSwitchForm
      */
-    protected function inputAlmaSwitchForm($name, $label, $desc = null, $helpDesc = null, $form_group_class = null, $readonly = false)
+    protected function inputAlmaSwitchForm($name, $label, $desc = null, $helpDesc = null, $formGroupClass = null, $readonly = false)
     {
         $dataInput = [
             'name' => $name,
@@ -127,8 +127,8 @@ abstract class AbstractAdminFormBuilder
             ],
         ];
 
-        if ($form_group_class) {
-            $dataInput['form_group_class'] = $form_group_class;
+        if ($formGroupClass) {
+            $dataInput['form_group_class'] = $formGroupClass;
         }
 
         if ($desc) {
@@ -202,7 +202,7 @@ abstract class AbstractAdminFormBuilder
      *
      * @return array inputTextForm
      */
-    protected function inputSecretForm($name, $label, $desc = null, $placeholder = ApiKeyHelper::OBCUR_VALUE, $required = false, $lang = false)
+    protected function inputSecretForm($name, $label, $desc = null, $placeholder = ConstantsHelper::OBSCURE_VALUE, $required = false, $lang = false)
     {
         $dataInput = [
             'name' => $name,
@@ -215,9 +215,11 @@ abstract class AbstractAdminFormBuilder
         if ($desc) {
             $dataInput['desc'] = $desc;
         }
+
         if ($placeholder) {
             $dataInput['placeholder'] = $placeholder;
         }
+
         if ($lang) {
             $dataInput['lang'] = $lang;
         }
@@ -230,7 +232,7 @@ abstract class AbstractAdminFormBuilder
      *
      * @return array inputNumberForm
      */
-    protected function inputNumberForm($name, $label, $desc, $min = null, $max = null, $form_group_class = null, $readonly = false)
+    protected function inputNumberForm($name, $label, $desc, $min = null, $max = null, $formGroupClass = null, $readonly = false)
     {
         $dataInput = [
             'name' => $name,
@@ -240,8 +242,8 @@ abstract class AbstractAdminFormBuilder
             'readonly' => $readonly,
         ];
 
-        if ($form_group_class) {
-            $dataInput['form_group_class'] = $form_group_class;
+        if ($formGroupClass) {
+            $dataInput['form_group_class'] = $formGroupClass;
         }
 
         if ($min) {
@@ -280,7 +282,7 @@ abstract class AbstractAdminFormBuilder
      *
      * @return array inputHtml
      */
-    protected function inputHtml($tpl = null, $htmlContent = null, $form_group_class = null)
+    protected function inputHtml($tpl = null, $htmlContent = null, $formGroupClass = null)
     {
         $dataInput = [
             'name' => null,
@@ -298,8 +300,8 @@ abstract class AbstractAdminFormBuilder
             $dataInput['desc'] = $tpl->fetch();
         }
 
-        if ($form_group_class) {
-            $dataInput['form_group_class'] = $form_group_class;
+        if ($formGroupClass) {
+            $dataInput['form_group_class'] = $formGroupClass;
         }
 
         return $dataInput;
@@ -310,7 +312,7 @@ abstract class AbstractAdminFormBuilder
      *
      * @return array inputHiddenForm
      */
-    protected function inputHiddenForm($name, $form_group_class = null)
+    protected function inputHiddenForm($name, $formGroupClass = null)
     {
         $dataInput = [
             'name' => $name,
@@ -318,8 +320,8 @@ abstract class AbstractAdminFormBuilder
             'type' => 'hidden',
         ];
 
-        if ($form_group_class) {
-            $dataInput['form_group_class'] = $form_group_class;
+        if ($formGroupClass) {
+            $dataInput['form_group_class'] = $formGroupClass;
         }
 
         return $dataInput;
