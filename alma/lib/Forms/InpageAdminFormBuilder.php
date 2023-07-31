@@ -28,11 +28,11 @@ if (!defined('_PS_VERSION_')) {
 }
 
 /**
- * Class FragmentAdminFormBuilder
+ * Class InpageAdminFormBuilder
  */
-class FragmentAdminFormBuilder extends AbstractAlmaAdminFormBuilder
+class InpageAdminFormBuilder extends AbstractAlmaAdminFormBuilder
 {
-    const ALMA_ACTIVATE_FRAGMENT = 'ALMA_ACTIVATE_FRAGMENT';
+    const ALMA_ACTIVATE_INPAGE = 'ALMA_ACTIVATE_INPAGE';
 
     /**
      * @return array
@@ -41,10 +41,10 @@ class FragmentAdminFormBuilder extends AbstractAlmaAdminFormBuilder
     {
         return [
             $this->inputAlmaSwitchForm(
-                self::ALMA_ACTIVATE_FRAGMENT,
-                $this->module->l('Activate in-page checkout', 'FragmentAdminFormBuilder'),
-                $this->module->l('Activate in-page checkout for Pay Now, P2X, P3X and P4X', 'FragmentAdminFormBuilder'),
-                $this->module->l('The checkout in-page in your own website', 'FragmentAdminFormBuilder')
+                self::ALMA_ACTIVATE_INPAGE,
+                $this->module->l('Activate in-page checkout', 'InpageAdminFormBuilder'),
+                $this->module->l('Activate in-page checkout for Pay Now, P2X, P3X and P4X', 'InpageAdminFormBuilder'),
+                $this->module->l('The checkout in-page in your own website', 'InpageAdminFormBuilder')
             ),
         ];
     }
@@ -54,6 +54,6 @@ class FragmentAdminFormBuilder extends AbstractAlmaAdminFormBuilder
      */
     protected function getTitle()
     {
-        return $this->module->l('In-page checkout', 'FragmentAdminFormBuilder');
+        return $this->module->l('In-page checkout', 'InpageAdminFormBuilder');
     }
 }

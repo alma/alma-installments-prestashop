@@ -36,7 +36,7 @@ class ConstantsHelper
     const PRODUCT_SCRIPT_PATH = 'views/js/alma-product.js';
     const PRODUCT_CSS_PATH = 'views/css/alma-product.css';
     const CART_SCRIPT_PATH = 'views/js/alma-cart.js';
-    const INPAGE_JS_ID = 'alma-remote-fragments-js';
+    const INPAGE_JS_ID = 'alma-remote-inpage-js';
     const INPAGE_SCRIPT_ID = 'alma-inpage-script';
     const WIDGETS_JS_ID = 'alma-remote-widgets-js';
     const WIDGETS_CSS_ID = 'alma-remote-widgets-css';

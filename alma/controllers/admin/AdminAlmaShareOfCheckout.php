@@ -37,7 +37,6 @@ class AdminAlmaShareOfCheckoutController extends ModuleAdminController
 
         $shareOfCheckoutHelper->handleCheckoutConsent('consent');
 
-        // ?? pk encoder un true
-        $this->ajaxRenderAndExit(json_encode(true));
+        $this->ajaxRenderAndExit(true);
     }
 }

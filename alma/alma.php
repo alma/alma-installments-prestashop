@@ -154,7 +154,7 @@ class Alma extends PaymentModule
      *
      * @return bool
      */
-    private function registerHooks()
+    public function registerHooks()
     {
         $hooks = $this->hook->almaRegisterHooks();
 

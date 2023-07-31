@@ -29,8 +29,7 @@ if (!defined('_PS_VERSION_')) {
 
 function upgrade_module_3_0_0($module)
 {
-    $module->registerHook('moduleRoutes');
-    $module->registerHook('actionAdminControllerInitBefore');
+    $module->registerHooks();
 
     try {
         \Alma\PrestaShop\Helpers\ApiHelper::getMerchant($module);
