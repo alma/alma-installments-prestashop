@@ -23,35 +23,30 @@
  */
 namespace Alma\PrestaShop\Helpers;
 
+use Media;
+
 if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-class ConstantsHelper
+/**
+ * Class MediaHelper.
+ *
+ * Use for Media
+ */
+class MediaHelper
 {
-    const INPAGE_SCRIPT_PATH = 'views/js/alma-inpage.js';
-    const INPAGE_JS_URL = 'https://cdn.jsdelivr.net/npm/@alma/in-page@2.x.x/dist/index.umd.js';
-    const WIDGETS_CSS_URL = 'https://cdn.jsdelivr.net/npm/@alma/widgets@3.x.x/dist/widgets.min.css';
-    const WIDGETS_JS_URL = 'https://cdn.jsdelivr.net/npm/@alma/widgets@3.x.x/dist/widgets.umd.js';
-    const PRODUCT_SCRIPT_PATH = 'views/js/alma-product.js';
-    const PRODUCT_CSS_PATH = 'views/css/alma-product.css';
-    const CART_SCRIPT_PATH = 'views/js/alma-cart.js';
-    const INPAGE_JS_ID = 'alma-remote-inpage-js';
-    const INPAGE_SCRIPT_ID = 'alma-inpage-script';
-    const WIDGETS_JS_ID = 'alma-remote-widgets-js';
-    const WIDGETS_CSS_ID = 'alma-remote-widgets-css';
-    const PRODUCT_CSS_ID = 'alma-product-css';
-    const PRODUCT_SCRIPT_ID = 'alma-product-script';
-    const CART_SCRIPT_ID = 'alma-cart-script';
-    const PRESTASHOP_VERSION_1_7_0_2 = '1.7.0.2';
+    /**
+     * @param object $module
+     *
+     * @return string
+     */
+    public static function getIconPathAlmaTiny($module)
+    {
+        if (is_callable('Media::getMediaPath')) {
+            return Media::getMediaPath(_PS_MODULE_DIR_ . $module->name . '/views/img/logos/alma_tiny.svg');
+        }
 
-    const OBSCURE_VALUE = '********************************';
-    const BEGIN_LIVE_API_KEY = 'sk_live_';
-    const BEGIN_TEST_API_KEY = 'sk_test_';
-
-    const SOURCE_CUSTOM_FIELDS = 'CustomFieldsHelper';
-
-    const ALMA_KEY_PAYNOW = 'general_1_0_0';
-
-    const ALMA_ALLOW_INPAGE = 'ALMA_ALLOW_INPAGE';
+        return $module->getPathUri() . '/views/img/logos/alma_tiny.svg';
+    }
 }

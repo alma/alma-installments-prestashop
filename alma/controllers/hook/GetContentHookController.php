@@ -27,6 +27,7 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
+use Alma\API\Entities\Merchant;
 use Alma\API\RequestError;
 use Alma\PrestaShop\Exceptions\MissingParameterException;
 use Alma\PrestaShop\Forms\ApiAdminFormBuilder;
@@ -40,9 +41,11 @@ use Alma\PrestaShop\Forms\PnxAdminFormBuilder;
 use Alma\PrestaShop\Forms\ProductEligibilityAdminFormBuilder;
 use Alma\PrestaShop\Forms\RefundAdminFormBuilder;
 use Alma\PrestaShop\Forms\ShareOfCheckoutAdminFormBuilder;
+use Alma\PrestaShop\Helpers\ApiHelper;
 use Alma\PrestaShop\Helpers\ApiKeyHelper;
 use Alma\PrestaShop\Helpers\ClientHelper;
 use Alma\PrestaShop\Helpers\ConstantsHelper;
+use Alma\PrestaShop\Helpers\MediaHelper;
 use Alma\PrestaShop\Helpers\OrderHelper;
 use Alma\PrestaShop\Helpers\PriceHelper;
 use Alma\PrestaShop\Helpers\SettingsCustomFieldsHelper;
@@ -52,7 +55,6 @@ use Alma\PrestaShop\Hooks\AdminHookController;
 use Alma\PrestaShop\Logger;
 use Configuration;
 use HelperForm;
-use Media;
 use Tools;
 
 final class GetContentHookController extends AdminHookController
@@ -160,7 +162,7 @@ final class GetContentHookController extends AdminHookController
         if ((ConstantsHelper::OBSCURE_VALUE != $liveKey && ALMA_MODE_LIVE == $apiMode)
             || (ConstantsHelper::OBSCURE_VALUE != $testKey && ALMA_MODE_TEST == $apiMode)
         ) {
-            $credentialsError = $this->credentialsError($apiMode, $liveKey, $testKey);
+            $credentialsError = $this->credentialsError($liveKey, $testKey);
         }
 
         if ($credentialsError
@@ -193,7 +195,19 @@ final class GetContentHookController extends AdminHookController
         $this->setKeyIfValueIsNotObscur($testKey, ALMA_MODE_TEST);
 
         // Try to get merchant from configured API key/mode
-        $merchant = $this->getMerchant();
+        try {
+            $merchant = ApiHelper::getMerchant($this->module);
+        } catch (\Exception $e) {
+            $this->context->smarty->assign(
+                [
+                    'validation_error' => 'custom_error',
+                    'validation_message' => $e->getMessage(),
+                ]
+            );
+            Logger::instance()->error($e->getMessage());
+
+            return $this->module->display($this->module->file, 'getContent.tpl');
+        }
 
         if ($merchant) {
             // Save merchant API ID for widgets usage on frontend
@@ -372,7 +386,13 @@ final class GetContentHookController extends AdminHookController
         }
     }
 
-    private function credentialsError($apiMode, $liveKey, $testKey)
+    /**
+     * @param $liveKey
+     * @param $testKey
+     *
+     * @return array|null
+     */
+    private function credentialsError($liveKey, $testKey)
     {
         $modes = [ALMA_MODE_TEST, ALMA_MODE_LIVE];
 
@@ -391,55 +411,30 @@ final class GetContentHookController extends AdminHookController
                 return ['error' => true, 'message' => $errorMessage];
             }
 
+            // Try to get merchant from configured API key/mode
             try {
-                $merchant = $alma->merchants->me();
-            } catch (RequestError $e) {
-                if ($e->response && 401 === $e->response->responseCode) {
-                    $this->context->smarty->assign('validation_error', "{$mode}_authentication_error");
-
-                    $errorMessage = $this->module->display($this->module->file, 'getContent.tpl');
-
-                    return ['error' => true, 'message' => $errorMessage];
-                } else {
-                    Logger::instance()->error('Error while fetching merchant status: ' . $e->getMessage());
-
-                    $this->context->smarty->assign('validation_error', 'api_request_error');
-                    $this->context->smarty->assign('error', $e->getMessage());
-
-                    $errorMessage = $this->module->display($this->module->file, 'getContent.tpl');
-
-                    return ['error' => true, 'message' => $errorMessage];
-                }
-            }
-
-            if (!$merchant->can_create_payments) {
-                $this->context->smarty->assign('validation_error', "inactive_{$mode}_account");
-                $this->assignSmartyAlertClasses($apiMode == $mode ? 'danger' : 'warning');
+                ApiHelper::getMerchant($this->module, $alma);
+            } catch (\Exception $e) {
+                $this->context->smarty->assign(
+                    [
+                        'validation_error' => 'custom_error',
+                        'validation_message' => $e->getMessage(),
+                    ]
+                );
+                Logger::instance()->error($e->getMessage());
 
                 $errorMessage = $this->module->display($this->module->file, 'getContent.tpl');
 
-                return ['warning' => true, 'message' => $errorMessage];
+                return ['error' => true, 'message' => $errorMessage];
             }
         }
 
         return null;
     }
 
-    private function getMerchant()
-    {
-        $alma = ClientHelper::defaultInstance();
-
-        if (!$alma) {
-            return null;
-        }
-
-        try {
-            return $alma->merchants->me();
-        } catch (RequestError $e) {
-            return null;
-        }
-    }
-
+    /**
+     * @return array|null
+     */
     private function getFeePlans()
     {
         $alma = ClientHelper::defaultInstance();
@@ -455,19 +450,29 @@ final class GetContentHookController extends AdminHookController
         }
     }
 
+    /**
+     * @return string
+     *
+     * @throws \Exception
+     */
     public function renderForm()
     {
-        $needsKeys = $this->needsAPIKey();
-        $merchant = $this->getMerchant();
+        // Try to get merchant from configured API key/mode
+        $merchant = null;
 
-        if (is_callable('Media::getMediaPath')) {
-            $iconPath = Media::getMediaPath(_PS_MODULE_DIR_ . $this->module->name . '/views/img/logos/alma_tiny.svg');
-        } else {
-            $iconPath = $this->module->getPathUri() . '/views/img/logos/alma_tiny.svg';
+        try {
+            $merchant = ApiHelper::getMerchant($this->module);
+        } catch (\Exception $e) {
+            Logger::instance()->error($e->getMessage());
         }
 
         $extraMessage = null;
-        if ($needsKeys && !Tools::isSubmit('alma_config_form')) {
+
+        $needsKeys = $this->needsAPIKey();
+
+        if ($needsKeys
+            && !Tools::isSubmit('alma_config_form')
+        ) {
             $this->context->smarty->clearAllAssign();
 
             $this->assignSmartyAlertClasses();
@@ -478,68 +483,11 @@ final class GetContentHookController extends AdminHookController
 
         $this->assignSmartyAlertClasses();
 
-        $feePlansOrdered = [];
-        $installmentsPlans = [];
-        if ($merchant) {
-            $feePlans = $this->getFeePlans();
-            $installmentsPlans = json_decode(SettingsHelper::getFeePlans());
+        $feePlans = $this->getFeePlans();
 
-            // sort fee plans by pnx then by pay later duration
-            $feePlanDeferred = [];
-            foreach ($feePlans as $feePlan) {
-                if (!SettingsHelper::isDeferred($feePlan)) {
-                    $feePlansOrdered[$feePlan->installments_count] = $feePlan;
-                } else {
-                    $duration = SettingsHelper::getDuration($feePlan);
-                    $feePlanDeferred[$feePlan->installments_count . $duration] = $feePlan;
-                }
-            }
-            ksort($feePlanDeferred);
-            $feePlansOrdered = array_merge($feePlansOrdered, $feePlanDeferred);
-        }
+        list($feePlansOrdered, $installmentsPlans) = $this->getPlansForForms($feePlans, $merchant);
 
-        $pnxBuilder = new PnxAdminFormBuilder(
-            $this->module,
-            $this->context,
-            $iconPath,
-            ['feePlans' => $feePlansOrdered, 'installmentsPlans' => $installmentsPlans]
-        );
-        $shouldDisplayShareOfCheckoutForm = !SettingsHelper::shouldHideShareOfCheckoutForm();
-        $apiBuilder = new ApiAdminFormBuilder($this->module, $this->context, $iconPath, ['needsAPIKey' => $needsKeys]);
-        $cartBuilder = new CartEligibilityAdminFormBuilder($this->module, $this->context, $iconPath);
-        $productBuilder = new ProductEligibilityAdminFormBuilder($this->module, $this->context, $iconPath);
-        $excludedBuilder = new ExcludedCategoryAdminFormBuilder($this->module, $this->context, $iconPath);
-        $refundBuilder = new RefundAdminFormBuilder($this->module, $this->context, $iconPath);
-        if ($shouldDisplayShareOfCheckoutForm) {
-            $shareOfCheckoutBuilder = new ShareOfCheckoutAdminFormBuilder($this->module, $this->context, $iconPath);
-        }
-        $triggerBuilder = new PaymentOnTriggeringAdminFormBuilder($this->module, $this->context, $iconPath);
-        $paymentBuilder = new PaymentButtonAdminFormBuilder($this->module, $this->context, $iconPath);
-        $inpageBuilder = new InpageAdminFormBuilder($this->module, $this->context, $iconPath);
-        $debugBuilder = new DebugAdminFormBuilder($this->module, $this->context, $iconPath);
-
-        $fieldsForms = [];
-
-        if (!$needsKeys) {
-            if ($pnxBuilder) {
-                $fieldsForms[] = $pnxBuilder->build();
-            }
-            $fieldsForms[] = $productBuilder->build();
-            $fieldsForms[] = $cartBuilder->build();
-            $fieldsForms[] = $paymentBuilder->build();
-            $fieldsForms[] = $excludedBuilder->build();
-            $fieldsForms[] = $refundBuilder->build();
-            if ($shouldDisplayShareOfCheckoutForm) {
-                $fieldsForms[] = $shareOfCheckoutBuilder->build();
-            }
-            $fieldsForms[] = $inpageBuilder->build();
-        }
-        if (SettingsHelper::isPaymentTriggerEnabledByState()) {
-            $fieldsForms[] = $triggerBuilder->build();
-        }
-
-        $fieldsForms[] = $apiBuilder->build();
-        $fieldsForms[] = $debugBuilder->build();
+        $fieldsForms = $this->buildForms($needsKeys, $feePlansOrdered, $installmentsPlans);
 
         $helper = new HelperForm();
         $helper->module = $this->module;
@@ -560,7 +508,116 @@ final class GetContentHookController extends AdminHookController
 
         $helper->token = Tools::getAdminTokenLite('AdminModules');
 
-        $helper->fields_value = [
+        $helper->fields_value = $this->getFieldsValueForForm();
+
+        if ($merchant) {
+            $sortOrder = 1;
+            foreach ($feePlans as $feePlan) {
+                $key = SettingsHelper::keyForFeePlan($feePlan);
+
+                $helper->fields_value["ALMA_{$key}_ENABLED_ON"] = isset($installmentsPlans->$key->enabled)
+                    ? $installmentsPlans->$key->enabled
+                    : 0;
+
+                $minAmount = isset($installmentsPlans->$key->min)
+                    ? $installmentsPlans->$key->min
+                    : $feePlan->min_purchase_amount;
+
+                $helper->fields_value["ALMA_{$key}_MIN_AMOUNT"] = (int) round(
+                    PriceHelper::convertPriceFromCents($minAmount)
+                );
+                $maxAmount = isset($installmentsPlans->$key->max)
+                    ? $installmentsPlans->$key->max
+                    : $feePlan->max_purchase_amount;
+
+                $helper->fields_value["ALMA_{$key}_MAX_AMOUNT"] = (int) PriceHelper::convertPriceFromCents($maxAmount);
+
+                $order = isset($installmentsPlans->$key->order)
+                    ? $installmentsPlans->$key->order
+                    : $sortOrder;
+
+                $helper->fields_value["ALMA_{$key}_SORT_ORDER"] = $order;
+
+                ++$sortOrder;
+            }
+        }
+
+        $helper->languages = $this->context->controller->getLanguages();
+
+        return $extraMessage . $helper->generateForm($fieldsForms);
+    }
+
+    /**
+     * @param boolean$needsKeys
+     * @param array $feePlansOrdered
+     * @param array $installmentsPlans
+     *
+     * @return array
+     */
+    protected function buildForms($needsKeys, $feePlansOrdered, $installmentsPlans)
+    {
+        $iconPath = MediaHelper::getIconPathAlmaTiny($this->module);
+        $fieldsForms = [];
+
+        if (!$needsKeys) {
+            $pnxBuilder = new PnxAdminFormBuilder(
+                $this->module,
+                $this->context,
+                $iconPath,
+                ['feePlans' => $feePlansOrdered, 'installmentsPlans' => $installmentsPlans]
+            );
+            if ($pnxBuilder) {
+                $fieldsForms[] = $pnxBuilder->build();
+            }
+
+            $productBuilder = new ProductEligibilityAdminFormBuilder($this->module, $this->context, $iconPath);
+            $fieldsForms[] = $productBuilder->build();
+
+            $cartBuilder = new CartEligibilityAdminFormBuilder($this->module, $this->context, $iconPath);
+            $fieldsForms[] = $cartBuilder->build();
+
+            $paymentBuilder = new PaymentButtonAdminFormBuilder($this->module, $this->context, $iconPath);
+            $fieldsForms[] = $paymentBuilder->build();
+
+            $excludedBuilder = new ExcludedCategoryAdminFormBuilder($this->module, $this->context, $iconPath);
+            $fieldsForms[] = $excludedBuilder->build();
+
+            $refundBuilder = new RefundAdminFormBuilder($this->module, $this->context, $iconPath);
+            $fieldsForms[] = $refundBuilder->build();
+
+            if (!SettingsHelper::shouldHideShareOfCheckoutForm()) {
+                $shareOfCheckoutBuilder = new ShareOfCheckoutAdminFormBuilder($this->module, $this->context, $iconPath);
+                $fieldsForms[] = $shareOfCheckoutBuilder->build();
+            }
+
+            if (SettingsHelper::isInpageAllowed()) {
+                $inpageBuilder = new InpageAdminFormBuilder($this->module, $this->context, $iconPath);
+                $fieldsForms[] = $inpageBuilder->build();
+            }
+        }
+
+        if (SettingsHelper::isPaymentTriggerEnabledByState()) {
+            $triggerBuilder = new PaymentOnTriggeringAdminFormBuilder($this->module, $this->context, $iconPath);
+            $fieldsForms[] = $triggerBuilder->build();
+        }
+
+        $apiBuilder = new ApiAdminFormBuilder($this->module, $this->context, $iconPath, ['needsAPIKey' => $needsKeys]);
+        $fieldsForms[] = $apiBuilder->build();
+
+        $debugBuilder = new DebugAdminFormBuilder($this->module, $this->context, $iconPath);
+        $fieldsForms[] = $debugBuilder->build();
+
+        return $fieldsForms;
+    }
+
+    /**
+     * @return array
+     *
+     * @throws \Exception
+     */
+    protected function getFieldsValueForForm()
+    {
+        return [
             'ALMA_LIVE_API_KEY' => SettingsHelper::getLiveKey(),
             'ALMA_TEST_API_KEY' => SettingsHelper::getTestKey(),
             'ALMA_API_MODE' => SettingsHelper::getActiveMode(),
@@ -599,36 +656,40 @@ final class GetContentHookController extends AdminHookController
             'ALMA_PRODUCT_QUANTITY_SELECTOR' => SettingsHelper::getProductQuantityQuerySelector(),
             '_api_only' => true,
         ];
+    }
+
+    /**
+     * @param array|null $feePlans
+     * @param Merchant|null $merchant
+     *
+     * @return array
+     */
+    protected function getPlansForForms($feePlans, $merchant = null)
+    {
+        $feePlansOrdered = [];
+        $installmentsPlans = [];
 
         if ($merchant) {
-            $sortOrder = 1;
-            foreach ($feePlans as $feePlan) {
-                $key = SettingsHelper::keyForFeePlan($feePlan);
+            $installmentsPlans = json_decode(SettingsHelper::getFeePlans());
 
-                $helper->fields_value["ALMA_{$key}_ENABLED_ON"] = isset($installmentsPlans->$key->enabled)
-                    ? $installmentsPlans->$key->enabled
-                    : 0;
-                $minAmount = isset($installmentsPlans->$key->min)
-                    ? $installmentsPlans->$key->min
-                    : $feePlan->min_purchase_amount;
-                $helper->fields_value["ALMA_{$key}_MIN_AMOUNT"] = (int) round(
-                    PriceHelper::convertPriceFromCents($minAmount)
-                );
-                $maxAmount = isset($installmentsPlans->$key->max)
-                    ? $installmentsPlans->$key->max
-                    : $feePlan->max_purchase_amount;
-                $helper->fields_value["ALMA_{$key}_MAX_AMOUNT"] = (int) PriceHelper::convertPriceFromCents($maxAmount);
-                $order = isset($installmentsPlans->$key->order)
-                    ? $installmentsPlans->$key->order
-                    : $sortOrder;
-                $helper->fields_value["ALMA_{$key}_SORT_ORDER"] = $order;
-                ++$sortOrder;
+            // sort fee plans by pnx then by pay later duration
+            $feePlanDeferred = [];
+
+            foreach ($feePlans as $feePlan) {
+                if (!SettingsHelper::isDeferred($feePlan)) {
+                    $feePlansOrdered[$feePlan->installments_count] = $feePlan;
+                    continue;
+                }
+
+                $duration = SettingsHelper::getDuration($feePlan);
+                $feePlanDeferred[$feePlan->installments_count . $duration] = $feePlan;
             }
+
+            ksort($feePlanDeferred);
+            $feePlansOrdered = array_merge($feePlansOrdered, $feePlanDeferred);
         }
 
-        $helper->languages = $this->context->controller->getLanguages();
-
-        return $extraMessage . $helper->generateForm($fieldsForms);
+        return [$feePlansOrdered, $installmentsPlans];
     }
 
     private function assignSmartyAlertClasses($level = 'danger')
@@ -665,6 +726,11 @@ final class GetContentHookController extends AdminHookController
         }
     }
 
+    /**
+     * @return bool
+     *
+     * @throws \Exception
+     */
     public function needsAPIKey()
     {
         $key = trim(SettingsHelper::getActiveAPIKey());
@@ -672,6 +738,13 @@ final class GetContentHookController extends AdminHookController
         return '' == $key || null == $key;
     }
 
+    /**
+     * @param $params
+     *
+     * @return string
+     *
+     * @throws \Exception
+     */
     public function run($params)
     {
         $this->assignSmartyAlertClasses();
@@ -680,7 +753,6 @@ final class GetContentHookController extends AdminHookController
             $messages = $this->processConfiguration();
         } elseif (!$this->needsAPIKey()) {
             $messages = $this->credentialsError(
-                SettingsHelper::getActiveMode(),
                 SettingsHelper::getLiveKey(),
                 SettingsHelper::getTestKey()
             );

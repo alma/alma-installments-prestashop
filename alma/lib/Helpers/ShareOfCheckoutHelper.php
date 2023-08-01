@@ -29,6 +29,7 @@ use Alma\PrestaShop\Forms\ApiAdminFormBuilder;
 use Alma\PrestaShop\Forms\ShareOfCheckoutAdminFormBuilder;
 use Alma\PrestaShop\Logger;
 use Configuration;
+use Context;
 use Currency;
 use Tools;
 
@@ -50,10 +51,16 @@ class ShareOfCheckoutHelper
     const CURRENCY_KEY = 'currency';
     const PAYMENT_METHOD_KEY = 'payment_method_name';
 
+    /**
+     * @var Context
+     */
+    protected $context;
+
     public function __construct(
         OrderHelper $orderHelper
     ) {
         $this->orderHelper = $orderHelper;
+        $this->context = Context::getContext();
     }
 
     /**
@@ -72,7 +79,7 @@ class ShareOfCheckoutHelper
     {
         $shareOfCheckoutEnabledDate = $this->getEnabledDate();
         if (
-            SettingsHelper::getShareOfCheckoutStatus() === ShareOfCheckoutAdminFormBuilder::ALMA_SHARE_OF_CHECKOUT_CONSENT_NO
+            ShareOfCheckoutAdminFormBuilder::ALMA_SHARE_OF_CHECKOUT_CONSENT_NO === SettingsHelper::getShareOfCheckoutStatus()
             || empty($shareOfCheckoutEnabledDate)
         ) {
             Logger::instance()->info('Share Of Checkout is disabled or invalide date');
@@ -96,7 +103,7 @@ class ShareOfCheckoutHelper
     }
 
     /**
-     * Put Payload to Share of Checkout
+     * Put Payload to Share of Checkout.
      *
      * @return void
      */
@@ -117,7 +124,7 @@ class ShareOfCheckoutHelper
     }
 
     /**
-     * Get last Share of Checkout
+     * Get last Share of Checkout.
      *
      * @return int
      */
@@ -135,7 +142,7 @@ class ShareOfCheckoutHelper
         } catch (RequestError $e) {
             Logger::instance()->error('Cannot get last date share of checkout: ' . $e->getMessage());
 
-            if ($e->response->responseCode == '404') {
+            if ('404' == $e->response->responseCode) {
                 Logger::instance()->info('First send to Share of checkout');
             }
 
@@ -146,7 +153,7 @@ class ShareOfCheckoutHelper
     }
 
     /**
-     * Total Orders to send
+     * Total Orders to send.
      *
      * @return array
      */
@@ -169,7 +176,7 @@ class ShareOfCheckoutHelper
     }
 
     /**
-     * Payment methods to send
+     * Payment methods to send.
      *
      * @return array
      */
@@ -201,7 +208,7 @@ class ShareOfCheckoutHelper
     }
 
     /**
-     * POST add consent Alma endpoint
+     * POST add consent Alma endpoint.
      *
      * @return void
      *
@@ -222,7 +229,7 @@ class ShareOfCheckoutHelper
     }
 
     /**
-     * DELETE consent Alma endpoint
+     * DELETE consent Alma endpoint.
      *
      * @return void
      *
@@ -243,7 +250,7 @@ class ShareOfCheckoutHelper
     }
 
     /**
-     * handle the activation of Share of Checkout feature
+     * handle the activation of Share of Checkout feature.
      *
      * @param string $consentAttribute
      *
@@ -270,16 +277,18 @@ class ShareOfCheckoutHelper
     }
 
     /**
-     * reset the activation of Share of Checkout feature
+     * reset the activation of Share of Checkout feature.
      *
      * @return void
+     *
+     * @throws \Exception
      */
     public function resetShareOfCheckoutConsent()
     {
         try {
             if (
                 Tools::getValue(ApiAdminFormBuilder::ALMA_LIVE_API_KEY) !== SettingsHelper::getLiveKey()
-                && Tools::getValue(ApiAdminFormBuilder::ALMA_LIVE_API_KEY) !== ConstantsHelper::OBSCURE_VALUE
+                && ConstantsHelper::OBSCURE_VALUE !== Tools::getValue(ApiAdminFormBuilder::ALMA_LIVE_API_KEY)
             ) {
                 $this->removeConsent();
                 Configuration::deleteByName(ShareOfCheckoutAdminFormBuilder::ALMA_SHARE_OF_CHECKOUT_STATE);
@@ -291,7 +300,7 @@ class ShareOfCheckoutHelper
     }
 
     /**
-     * Set the consent
+     * Set the consent.
      *
      * @param string $userConsent
      *
@@ -301,7 +310,7 @@ class ShareOfCheckoutHelper
      */
     private function setConsent($userConsent)
     {
-        if ($userConsent == ShareOfCheckoutAdminFormBuilder::ALMA_SHARE_OF_CHECKOUT_CONSENT_YES) {
+        if (ShareOfCheckoutAdminFormBuilder::ALMA_SHARE_OF_CHECKOUT_CONSENT_YES == $userConsent) {
             $this->setAcceptConsent();
 
             return;
@@ -311,7 +320,7 @@ class ShareOfCheckoutHelper
     }
 
     /**
-     * Set Accept Consent
+     * Set Accept Consent.
      *
      * @return void
      *
@@ -334,7 +343,7 @@ class ShareOfCheckoutHelper
     }
 
     /**
-     * Set refuse consent
+     * Set refuse consent.
      *
      * @return void
      *
@@ -351,7 +360,7 @@ class ShareOfCheckoutHelper
     }
 
     /**
-     * Array structure to send total orders
+     * Array structure to send total orders.
      *
      * @param array $currency
      *
@@ -367,7 +376,7 @@ class ShareOfCheckoutHelper
     }
 
     /**
-     * Array structure to send payment method orders
+     * Array structure to send payment method orders.
      *
      * @param array $currency
      *
@@ -428,7 +437,7 @@ class ShareOfCheckoutHelper
     }
 
     /**
-     * Get Currency ISO Code by ID
+     * Get Currency ISO Code by ID.
      *
      * @param string $id
      *
@@ -445,7 +454,7 @@ class ShareOfCheckoutHelper
     }
 
     /**
-     * Payload Share of Checkout
+     * Payload Share of Checkout.
      *
      * @return array
      */

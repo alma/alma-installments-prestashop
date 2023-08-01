@@ -21,38 +21,25 @@
  * @copyright 2018-2023 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
-use Alma\PrestaShop\Helpers\ConstantsHelper;
+namespace Alma\PrestaShop\Exceptions;
 
-if (!defined('_PS_VERSION_')) {
-    exit;
-}
+use Alma\PrestaShop\Helpers\LinkHelper;
+use Alma\PrestaShop\Helpers\SettingsHelper;
 
-function upgrade_module_3_0_0($module)
+class ActivationException extends AlmaException
 {
-    $module->registerHooks();
+    /**
+     * Constructor.
+     *
+     * @param object $module
+     */
+    public function __construct($module)
+    {
+        $message = sprintf(
+            $module - l('Your Alma account needs to be activated before you can use Alma on your shop.<br>Go to your <a href="%1$s" target="_blank">Alma dashboard</a> to activate your account.<br><a href="#">Refresh</a> the page when ready.', 'ActivationException'),
+            LinkHelper::getAlmaDashboardUrl(SettingsHelper::getActiveMode(), 'settings')
+        );
 
-    try {
-        \Alma\PrestaShop\Helpers\ApiHelper::getMerchant($module);
-    } catch (\Exception $e) {
+        parent::__construct($message);
     }
-
-    if (version_compare(_PS_VERSION_, '1.5.5.0', '<')) {
-        Tools::clearCache();
-
-        return $module->uninstallTabs() && $module->installTabs();
-    }
-
-    if (version_compare(_PS_VERSION_, ConstantsHelper::PRESTASHOP_VERSION_1_7_0_2, '<=')) {
-        Tools::clearSmartyCache();
-        if (version_compare(_PS_VERSION_, '1.6.0.2', '>')) {
-            Tools::clearXMLCache();
-        }
-
-        return $module->uninstallTabs() && $module->installTabs();
-    }
-
-    Tools::clearAllCache();
-    Tools::clearXMLCache();
-
-    return $module->uninstallTabs() && $module->installTabs();
 }

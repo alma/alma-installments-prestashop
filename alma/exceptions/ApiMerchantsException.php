@@ -21,38 +21,8 @@
  * @copyright 2018-2023 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
-use Alma\PrestaShop\Helpers\ConstantsHelper;
+namespace Alma\PrestaShop\Exceptions;
 
-if (!defined('_PS_VERSION_')) {
-    exit;
-}
-
-function upgrade_module_3_0_0($module)
+class ApiMerchantsException extends AlmaException
 {
-    $module->registerHooks();
-
-    try {
-        \Alma\PrestaShop\Helpers\ApiHelper::getMerchant($module);
-    } catch (\Exception $e) {
-    }
-
-    if (version_compare(_PS_VERSION_, '1.5.5.0', '<')) {
-        Tools::clearCache();
-
-        return $module->uninstallTabs() && $module->installTabs();
-    }
-
-    if (version_compare(_PS_VERSION_, ConstantsHelper::PRESTASHOP_VERSION_1_7_0_2, '<=')) {
-        Tools::clearSmartyCache();
-        if (version_compare(_PS_VERSION_, '1.6.0.2', '>')) {
-            Tools::clearXMLCache();
-        }
-
-        return $module->uninstallTabs() && $module->installTabs();
-    }
-
-    Tools::clearAllCache();
-    Tools::clearXMLCache();
-
-    return $module->uninstallTabs() && $module->installTabs();
 }

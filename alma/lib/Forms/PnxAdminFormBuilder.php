@@ -118,7 +118,9 @@ class PnxAdminFormBuilder extends AbstractAlmaAdminFormBuilder
                 continue;
             }
             $duration = SettingsHelper::getDuration($feePlan);
+
             $return = array_merge($return, $this->buildPnxForm($feePlan, $duration));
+
             $pnxTabs[$tabId] = '❌ ';
             if ($this->isEnabled($key, $installmentsPlans)) {
                 $pnxTabs[$tabId] = '✅ ';
