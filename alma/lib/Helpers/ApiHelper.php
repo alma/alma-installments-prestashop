@@ -82,14 +82,14 @@ class ApiHelper
         $value = 1;
 
         if (property_exists($merchant, $merchantKey)) {
-            $value = (int) $merchant->$merchantKey;
+            $value = $merchant->$merchantKey;
         }
 
-        SettingsHelper::updateValue($configKey, $value);
+        SettingsHelper::updateValue($configKey, (int) $value);
 
         // If Inpage not allowed we ensure that inpage is deactivated in database
         if (0 === $value) {
-            SettingsHelper::updateValue(InpageAdminFormBuilder::ALMA_ACTIVATE_INPAGE, $value);
+            SettingsHelper::updateValue(InpageAdminFormBuilder::ALMA_ACTIVATE_INPAGE, (int) $value);
         }
     }
 }
