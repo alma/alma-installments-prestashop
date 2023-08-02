@@ -21,7 +21,10 @@
  * @copyright 2018-2023 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
+use Alma\PrestaShop\Forms\InpageAdminFormBuilder;
+use Alma\PrestaShop\Helpers\ApiHelper;
 use Alma\PrestaShop\Helpers\ConstantsHelper;
+use Alma\PrestaShop\Helpers\SettingsHelper;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -32,9 +35,15 @@ function upgrade_module_3_0_0($module)
     $module->registerHooks();
 
     try {
-        \Alma\PrestaShop\Helpers\ApiHelper::getMerchant($module);
+        ApiHelper::getMerchant($module);
     } catch (\Exception $e) {
     }
+
+    // Migration value option of In-Page v1 to In-Page v2
+    SettingsHelper::updateValue(
+        InpageAdminFormBuilder::ALMA_ACTIVATE_INPAGE,
+        Configuration::get('ALMA_ACTIVATE_FRAGMENT')
+    );
 
     if (version_compare(_PS_VERSION_, '1.5.5.0', '<')) {
         Tools::clearCache();
