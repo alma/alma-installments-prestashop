@@ -40,9 +40,11 @@ function upgrade_module_3_0_0($module)
     } catch (\Exception $e) {
     }
 
-    if (Configuration::get('ALMA_ACTIVATE_FRAGMENT') == 1) {
-        SettingsHelper::updateValue(InpageAdminFormBuilder::ALMA_ACTIVATE_INPAGE, 1);
-    }
+    // Migration value option of In-Page v1 to In-Page v2
+    SettingsHelper::updateValue(
+        InpageAdminFormBuilder::ALMA_ACTIVATE_INPAGE,
+        Configuration::get('ALMA_ACTIVATE_FRAGMENT')
+    );
 
     if (version_compare(_PS_VERSION_, '1.5.5.0', '<')) {
         Tools::clearCache();
