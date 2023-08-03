@@ -65,7 +65,7 @@ class CustomFieldsHelper
         $textPnxButtonTitle = 'Pay in %d installments';
         $textButtonDescription = 'Fast and secure payment by credit card.';
 
-        $module = new Alma();
+        $module = new \Alma();
         $module->l('Pay now by credit card', ConstantsHelper::SOURCE_CUSTOM_FIELDS);
         $module->l('Pay in %d installments', ConstantsHelper::SOURCE_CUSTOM_FIELDS);
         $module->l('Buy now Pay in %d days', ConstantsHelper::SOURCE_CUSTOM_FIELDS);

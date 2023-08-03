@@ -28,6 +28,7 @@ if (!defined('_PS_VERSION_')) {
 }
 
 use Alma\API\Client;
+use Alma\PrestaShop\Exceptions\ClientException;
 use Alma\PrestaShop\Logger;
 
 class ClientHelper
@@ -58,7 +59,7 @@ class ClientHelper
             ]);
 
             $alma->addUserAgentComponent('PrestaShop', _PS_VERSION_);
-            $alma->addUserAgentComponent('Alma for PrestaShop', Alma::VERSION);
+            $alma->addUserAgentComponent('Alma for PrestaShop', \Alma::VERSION);
         } catch (\Exception $e) {
             Logger::instance()->error('Error creating Alma API client: ' . $e->getMessage());
         }
@@ -70,6 +71,7 @@ class ClientHelper
      * Check Alma client
      *
      * @return Client
+     * @throws ClientException
      */
     public function getAlmaClient()
     {
