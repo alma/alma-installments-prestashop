@@ -37,12 +37,18 @@ window.onload = function () {
         let url = form.attr("action");
         form.on('submit', function (e) {
             e.preventDefault();
-            ajaxPayment(url, inPage, paymentOptionId);
+            ajaxPayment(url, inPage);
         });
     };
 
-    const ajaxPayment = function (url, inPage, paymentOptionId) {
+    const addLoader = function () {
+        let loading = "<div class='loadingIndicator'><img src='https://cdn.almapay.com/img/animated-logo-a.svg' alt='Loading' /></div>";
+        $( "body" ).append( "<div class='alma-loader--wrapper'>" + loading + "</div>" );
+    };
+
+    const ajaxPayment = function (url, inPage) {
         if (isAlmaPayment(url)) {
+            addLoader();
             $.ajax({
                 type: "POST",
                 url: url,
@@ -59,10 +65,9 @@ window.onload = function () {
                             onUserCloseModal: () => {
                                 let selectorCheckboxPs17 = $('.ps-shown-by-js[type=checkbox]');
                                 if (selectorCheckboxPs17.length > 0) {
-                                    $('#' + paymentOptionId).prop('checked', false);
                                     selectorCheckboxPs17.prop('checked', false);
                                 }
-                                inPage.unmount();
+                                $('.alma-loader--wrapper').remove();
                             }
                         }
                     );
@@ -90,7 +95,9 @@ window.onload = function () {
         let purchaseAmount = selectorSetting.data('purchaseamount');
         let locale = selectorSetting.data('locale');
 
-        const selectorIframeInPage = createsSelectorIframeInPage(selectorSetting, paymentOptionId);
+        selectorSetting.attr('id', 'alma-inpage-' + paymentOptionId);
+
+        let selectorIframeInPage = '#alma-inpage-' + paymentOptionId;
 
         if (showPayButton) {
             // No refactor inPage is use in callback function 1.6
@@ -103,7 +110,7 @@ window.onload = function () {
                     environment: selectorSetting.data("apimode"),
                     selector: selectorIframeInPage,
                     onIntegratedPayButtonClicked : () => {
-                        ajaxPayment(url, inPage, paymentOptionId);
+                        ajaxPayment(url, inPage);
                     }
                 }
             );
@@ -166,16 +173,6 @@ window.onload = function () {
 
             createIframe(paymentOptionId, selectorSetting, showPayButton, url);
         });
-    }
-
-    const createsSelectorIframeInPage = function (selectorSetting, paymentOptionId) {
-        let loading = "<div class='loadingIndicator'><img src='https://cdn.almapay.com/img/animated-logo-a.svg' alt='Loading' /></div>";
-
-        selectorSetting.attr('id', 'alma-inpage-' + paymentOptionId);
-        let selectorIframeInPage = '#alma-inpage-' + paymentOptionId;
-        $(selectorIframeInPage).html(loading);
-
-        return selectorIframeInPage;
     }
 
     almaInPageOnload();
