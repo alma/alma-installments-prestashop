@@ -27,6 +27,7 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
+use Alma\PrestaShop\Helpers\PriceHelper;
 use Carrier;
 use Cart;
 
@@ -116,7 +117,7 @@ class ShippingData
     private static function shippingInfoData($carrier, $carrierInfo)
     {
         return [
-            'amount' => almaPriceToCents((float) $carrierInfo['price_with_tax']),
+            'amount' => PriceHelper::convertPriceToCents((float) $carrierInfo['price_with_tax']),
             'carrier' => $carrier->name,
             'title' => (is_array($carrier->delay)) ? implode(', ', $carrier->delay) : (string) $carrier->delay,
             'express_delivery' => self::isExpressShipping($carrierInfo),

@@ -23,7 +23,7 @@
  */
 namespace Alma\PrestaShop\Forms;
 
-use Alma\PrestaShop\Utils\Settings;
+use Alma\PrestaShop\Helpers\SettingsHelper;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -44,7 +44,7 @@ class ExcludedCategoryAdminFormBuilder extends AbstractAlmaAdminFormBuilder
             "{$this->module->local_path}views/templates/hook/excludedCategories.tpl"
         );
 
-        $excludedCategoryNames = Settings::getExcludedCategoryNames();
+        $excludedCategoryNames = SettingsHelper::getExcludedCategoryNames();
 
         $tpl->assign([
             'excludedCategories' => count($excludedCategoryNames) > 0

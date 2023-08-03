@@ -27,12 +27,12 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
+use Alma\PrestaShop\Helpers\DateHelper;
+use Alma\PrestaShop\Helpers\OrderHelper;
+use Alma\PrestaShop\Helpers\SettingsHelper;
+use Alma\PrestaShop\Helpers\ShareOfCheckoutHelper;
 use Alma\PrestaShop\Hooks\FrontendHookController;
-use Alma\PrestaShop\ShareOfCheckout\OrderHelper;
-use Alma\PrestaShop\ShareOfCheckout\ShareOfCheckoutHelper;
-use Alma\PrestaShop\Utils\DateHelper;
-use Alma\PrestaShop\Utils\Logger;
-use Alma\PrestaShop\Utils\Settings;
+use Alma\PrestaShop\Logger;
 use Configuration;
 use DateTime;
 
@@ -70,7 +70,7 @@ class DisplayBackOfficeHeaderHookController extends FrontendHookController
             $orderHelper = new OrderHelper();
             $shareOfCheckoutHelper = new ShareOfCheckoutHelper($orderHelper);
             $shareOfCheckoutHelper->shareDays();
-            Settings::updateValue('ALMA_SOC_CRON_TASK', $timestamp);
+            SettingsHelper::updateValue('ALMA_SOC_CRON_TASK', $timestamp);
         }
     }
 }

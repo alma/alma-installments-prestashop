@@ -28,17 +28,14 @@ if (!defined('_PS_VERSION_')) {
 }
 
 use Alma\API\RequestError;
-use Alma\PrestaShop\API\ClientHelper;
 use Alma\PrestaShop\Exceptions\RenderPaymentException;
+use Alma\PrestaShop\Helpers\ClientHelper;
 use Alma\PrestaShop\Hooks\FrontendHookController;
+use Alma\PrestaShop\Logger;
 use Alma\PrestaShop\Model\OrderData;
-use Alma\PrestaShop\Utils\Logger;
-use Alma\PrestaShop\Utils\OrderDataTrait;
 
 class DisplayPaymentReturnHookController extends FrontendHookController
 {
-    use OrderDataTrait;
-
     public function run($params)
     {
         $this->context->controller->addCSS($this->module->_path . 'views/css/alma.css', 'all');

@@ -29,12 +29,12 @@ if (!defined('_PS_VERSION_')) {
 
 use Alma\API\Client;
 use Alma\API\RequestError;
-use Alma\PrestaShop\API\ClientHelper;
+use Alma\PrestaShop\Helpers\ClientHelper;
+use Alma\PrestaShop\Helpers\OrderHelper;
+use Alma\PrestaShop\Helpers\SettingsHelper;
 use Alma\PrestaShop\Hooks\AdminHookController;
+use Alma\PrestaShop\Logger;
 use Alma\PrestaShop\Model\OrderData;
-use Alma\PrestaShop\Utils\Logger;
-use Alma\PrestaShop\Utils\OrderDataTrait;
-use Alma\PrestaShop\Utils\Settings;
 use Configuration;
 use Order;
 use PrestaShopDatabaseException;
@@ -42,8 +42,6 @@ use PrestaShopException;
 
 final class StateHookController extends AdminHookController
 {
-    use OrderDataTrait;
-
     /**
      * Checks if user is logged in as Employee or is an API Webservice call
      *
@@ -74,34 +72,35 @@ final class StateHookController extends AdminHookController
             return;
         }
         if ($newStatus->id == Configuration::get('PS_OS_REFUND')) {
-            $order_payment = $this->getOrderPaymentOrFail($order);
+            $orderHelper = new OrderHelper();
+            $orderPayment = $orderHelper->getOrderPaymentOrFail($order);
         } else {
-            $order_payment = OrderData::getCurrentOrderPayment($order);
+            $orderPayment = OrderData::getCurrentOrderPayment($order);
         }
-        if (!$order_payment) {
+        if (!$orderPayment) {
             return;
         }
         $alma = ClientHelper::defaultInstance();
         if (!$alma) {
             return;
         }
-        $id_payment = $order_payment->transaction_id;
-        $id_state_refund = Settings::getRefundState();
-        $id_state_payment_trigger = Settings::getPaymentTriggerState();
+        $idPayment = $orderPayment->transaction_id;
+        $idStateRefund = SettingsHelper::getRefundState();
+        $idStatePaymentTrigger = SettingsHelper::getPaymentTriggerState();
 
         switch ($newStatus->id) {
-            case $id_state_refund:
-                if (Settings::isRefundEnabledByState()) {
-                    $this->refund($alma, $id_payment, $order);
+            case $idStateRefund:
+                if (SettingsHelper::isRefundEnabledByState()) {
+                    $this->refund($alma, $idPayment, $order);
                 }
                 break;
-            case $id_state_payment_trigger:
-                if (Settings::isPaymentTriggerEnabledByState()) {
-                    $this->triggerPayment($alma, $id_payment, $order);
+            case $idStatePaymentTrigger:
+                if (SettingsHelper::isPaymentTriggerEnabledByState()) {
+                    $this->triggerPayment($alma, $idPayment, $order);
                 }
                 break;
             default:
-                return;
+                break;
         }
     }
 
@@ -109,15 +108,15 @@ final class StateHookController extends AdminHookController
      * Query Refund
      *
      * @param Client $alma
-     * @param string $id_payment
+     * @param string $idPayment
      * @param Order $order
      *
      * @return void
      */
-    private function refund($alma, $id_payment, $order)
+    private function refund($alma, $idPayment, $order)
     {
         try {
-            $alma->payments->refund($id_payment, true);
+            $alma->payments->refund($idPayment, true);
         } catch (RequestError $e) {
             $msg = "[Alma] ERROR when creating refund for Order {$order->id}: {$e->getMessage()}";
             Logger::instance()->error($msg);
@@ -130,15 +129,15 @@ final class StateHookController extends AdminHookController
      * Query Trigger Payment
      *
      * @param Client $alma
-     * @param string $id_payment
+     * @param string $idPayment
      * @param Order $order
      *
      * @return void
      */
-    private function triggerPayment($alma, $id_payment, $order)
+    private function triggerPayment($alma, $idPayment, $order)
     {
         try {
-            $alma->payments->trigger($id_payment);
+            $alma->payments->trigger($idPayment);
         } catch (RequestError $e) {
             $msg = "[Alma] ERROR when creating trigger for Order {$order->id}: {$e->getMessage()}";
             Logger::instance()->error($msg);

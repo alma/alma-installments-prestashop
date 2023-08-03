@@ -21,20 +21,22 @@
  * @copyright 2018-2023 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
-use Alma\PrestaShop\ShareOfCheckout\OrderHelper;
-use Alma\PrestaShop\ShareOfCheckout\ShareOfCheckoutHelper;
-
 class AdminAlmaShareOfCheckoutController extends ModuleAdminController
 {
+    use Alma\PrestaShop\Traits\AjaxTrait;
+
+    /**
+     * @return void
+     *
+     * @throws PrestaShopException
+     */
     public function ajaxProcessConsentShareOfCheckout()
     {
-        $orderHelper = new OrderHelper();
-        $shareOfCheckoutHelper = new ShareOfCheckoutHelper($orderHelper);
+        $orderHelper = new Alma\PrestaShop\Helpers\OrderHelper();
+        $shareOfCheckoutHelper = new Alma\PrestaShop\Helpers\ShareOfCheckoutHelper($orderHelper);
 
         $shareOfCheckoutHelper->handleCheckoutConsent('consent');
 
-        method_exists(get_parent_class($this), 'ajaxDie')
-            ? $this->ajaxDie(json_encode(true))
-            : exit(Tools::jsonEncode(true));
+        $this->ajaxRenderAndExit(true);
     }
 }

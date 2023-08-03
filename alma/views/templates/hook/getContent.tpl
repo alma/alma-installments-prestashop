@@ -92,6 +92,8 @@
             {/if}
         {elseif $validation_error == 'soc_api_error'}
             {l s='Impossible to save the Share of Checkout settings, please try again later' mod='alma'}
+        {elseif $validation_error == 'custom_error' && isset($validation_message)}
+            {$validation_message|escape:'htmlall':'UTF-8'}
         {else}
             {$validation_error|escape:'htmlall':'UTF-8'}
         {/if}

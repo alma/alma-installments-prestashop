@@ -8,29 +8,32 @@
     },
     "require": {
         "php": "^5.6 || ~7.0 || ~7.1 || ~7.2 || ~7.3 || ~7.4 || ~8.0 || ~8.1",
-        "alma/alma-php-client": "^1.10.0"
+        "alma/alma-php-client": "^1.11.1",
+        "ext-json": "*",
+        "ext-openssl": "*"
     },
     "autoload": {
-        "psr-4": {
-            "Alma\\PrestaShop\\": ["lib/", "."],
-            "Alma\\PrestaShop\\Controllers\\Hook\\": "controllers/hook/",
-            "Alma\\PrestaShop\\Tests\\": "tests/",
-            "Alma\\PrestaShop\\Exceptions\\": "exceptions/"
-        },
         "files": [
-            "lib/Utils/functions.php"
-        ]
+            "lib/smarty.php"
+        ],
+        "psr-4": {
+            "Alma\\PrestaShop\\": [
+                "lib/",
+                "."
+            ],
+            "Alma\\PrestaShop\\Controllers\\Hook\\": "controllers/hook/",
+            "Alma\\PrestaShop\\Exceptions\\": "exceptions/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Alma\\PrestaShop\\Tests\\": "tests/"
+        }
     },
     "config": {
         "prepend-autoloader": false,
         "optimize-autoloader": true
     },
     "license": "MIT",
-    "authors": [
-        {
-            "name": "Olivier Lance",
-            "email": "olivier.lance@getalma.eu"
-        }
-    ],
     "minimum-stability": "dev"
 }

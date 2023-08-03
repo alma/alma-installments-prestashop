@@ -23,7 +23,7 @@
  */
 namespace Alma\PrestaShop\Forms;
 
-use Alma\PrestaShop\Utils\SettingsCustomFields;
+use Alma\PrestaShop\Helpers\SettingsCustomFieldsHelper;
 use OrderState;
 
 if (!defined('_PS_VERSION_')) {
@@ -46,7 +46,7 @@ class PaymentOnTriggeringAdminFormBuilder extends AbstractAlmaAdminFormBuilder
 
         $query[] = [
             'description_trigger' => self::ALMA_DESCRIPTION_TRIGGER_AT_SHIPPING,
-            'name' => SettingsCustomFields::getDescriptionPaymentTriggerByLang($this->context->language->id),
+            'name' => SettingsCustomFieldsHelper::getDescriptionPaymentTriggerByLang($this->context->language->id),
         ];
 
         return [

@@ -23,7 +23,7 @@
  */
 namespace Alma\PrestaShop\Tests\integration\lib\API;
 
-use Alma\PrestaShop\API\EligibilityHelper;
+use Alma\PrestaShop\Helpers\EligibilityHelper;
 use Cart;
 use Context;
 use Language;

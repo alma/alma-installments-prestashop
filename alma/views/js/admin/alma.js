@@ -23,7 +23,8 @@
 (function ($) {
     $(function () {
         if ($('.alma.share-of-checkout').length > 0) {
-            $('.btn-share-of-checkout').on('click', function() {
+            $('.btn-share-of-checkout').on('click', function(event) {
+                event.preventDefault();
                 $.ajax({
                     type: 'POST',
                     url: 'ajax-tab.php',
@@ -35,13 +36,11 @@
                         token: $(this).attr('data-token'),
                         consent: $(this).attr('data-consent')
                     },
-                    async   : true,
-                    cache   : false
                 })
                 .success(function() {
                     $('.alma.share-of-checkout').hide();
-                    location.reload();
                 })
+
                 .error(function(e) {
                     if (e.status != 200) {
                         $('.alma.share-of-checkout').after('<div class="alert alert-danger">' + e.statusText + '</div>');

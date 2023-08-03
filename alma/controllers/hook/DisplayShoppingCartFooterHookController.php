@@ -27,12 +27,13 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-use Alma\PrestaShop\API\EligibilityHelper;
+use Alma\PrestaShop\Helpers\EligibilityHelper;
+use Alma\PrestaShop\Helpers\LocaleHelper;
+use Alma\PrestaShop\Helpers\PriceHelper;
+use Alma\PrestaShop\Helpers\SettingsCustomFieldsHelper;
+use Alma\PrestaShop\Helpers\SettingsHelper;
 use Alma\PrestaShop\Hooks\FrontendHookController;
 use Alma\PrestaShop\Model\CartData;
-use Alma\PrestaShop\Utils\LocaleHelper;
-use Alma\PrestaShop\Utils\Settings;
-use Alma\PrestaShop\Utils\SettingsCustomFields;
 use Cart;
 use Media;
 
@@ -40,26 +41,26 @@ class DisplayShoppingCartFooterHookController extends FrontendHookController
 {
     public function canRun()
     {
-        return parent::canRun() && Settings::showEligibilityMessage();
+        return parent::canRun() && SettingsHelper::showEligibilityMessage();
     }
 
     public function run($params)
     {
         $eligibilityMsg = null;
 
-        $activePlans = Settings::activePlans();
+        $activePlans = SettingsHelper::activePlans();
 
-        $locale = Settings::localeByIdLangForWidget($this->context->language->id);
+        $locale = LocaleHelper::localeByIdLangForWidget($this->context->language->id);
 
         if (!$activePlans) {
             return;
         }
 
         $cart = $this->context->cart;
-        $cartTotal = almaPriceToCents((float) $cart->getOrderTotal(true, Cart::BOTH));
+        $cartTotal = PriceHelper::convertPriceToCents((float) $cart->getOrderTotal(true, Cart::BOTH));
 
         $isEligible = true;
-        if (!Settings::showCartWidgetIfNotEligible()) {
+        if (!SettingsHelper::showCartWidgetIfNotEligible()) {
             $installmentPlans = EligibilityHelper::eligibilityCheck($this->context);
             $isEligible = false;
             foreach ($installmentPlans as $plan) {
@@ -74,9 +75,9 @@ class DisplayShoppingCartFooterHookController extends FrontendHookController
         $isExcluded = false;
         $diff = CartData::getCartExclusion($params['cart']);
         if (!empty($diff)) {
-            $eligibilityMsg = SettingsCustomFields::getNonEligibleCategoriesMessageByLang($this->context->language->id);
+            $eligibilityMsg = SettingsCustomFieldsHelper::getNonEligibleCategoriesMessageByLang($this->context->language->id);
             $isExcluded = true;
-            if (!Settings::showCategoriesWidgetIfNotEligible()) {
+            if (!SettingsHelper::showCategoriesWidgetIfNotEligible()) {
                 $isEligible = false;
             }
         }
@@ -104,25 +105,25 @@ class DisplayShoppingCartFooterHookController extends FrontendHookController
                 'logo' => $logo,
                 'isExcluded' => $isExcluded,
                 'settings' => [
-                    'merchantId' => Settings::getMerchantId(),
-                    'apiMode' => Settings::getActiveMode(),
+                    'merchantId' => SettingsHelper::getMerchantId(),
+                    'apiMode' => SettingsHelper::getActiveMode(),
                     'amount' => $cartTotal,
                     'plans' => $activePlans,
                     'refreshPrice' => $refreshPrice,
                     'decimalSeparator' => LocaleHelper::decimalSeparator(),
                     'thousandSeparator' => LocaleHelper::thousandSeparator(),
                     'psVersion' => $psVersion,
-                    'showIfNotEligible' => Settings::showCartWidgetIfNotEligible(),
+                    'showIfNotEligible' => SettingsHelper::showCartWidgetIfNotEligible(),
                     'locale' => $locale,
                 ],
                 'widgetQuerySelectors' => json_encode([
-                    'price' => Settings::getProductPriceQuerySelector(),
-                    'attrSelect' => Settings::getProductAttrQuerySelector(),
-                    'attrRadio' => Settings::getProductAttrRadioQuerySelector(),
-                    'colorPick' => Settings::getProductColorPickQuerySelector(),
-                    'quantity' => Settings::getProductQuantityQuerySelector(),
-                    'isCartCustom' => Settings::isCartWidgetCustomPosition(),
-                    'cartPosition' => Settings::getCartWidgetPositionQuerySelector(),
+                    'price' => SettingsHelper::getProductPriceQuerySelector(),
+                    'attrSelect' => SettingsHelper::getProductAttrQuerySelector(),
+                    'attrRadio' => SettingsHelper::getProductAttrRadioQuerySelector(),
+                    'colorPick' => SettingsHelper::getProductColorPickQuerySelector(),
+                    'quantity' => SettingsHelper::getProductQuantityQuerySelector(),
+                    'isCartCustom' => SettingsHelper::isCartWidgetCustomPosition(),
+                    'cartPosition' => SettingsHelper::getCartWidgetPositionQuerySelector(),
                     ]),
             ]);
 
