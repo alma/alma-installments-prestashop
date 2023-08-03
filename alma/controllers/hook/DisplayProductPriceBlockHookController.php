@@ -33,17 +33,15 @@ use Alma\PrestaShop\Helpers\PriceHelper;
 use Alma\PrestaShop\Helpers\SettingsCustomFieldsHelper;
 use Alma\PrestaShop\Helpers\SettingsHelper;
 use Alma\PrestaShop\Hooks\FrontendHookController;
-use Product;
-use Tools;
 
 class DisplayProductPriceBlockHookController extends FrontendHookController
 {
     public function canRun()
     {
-        return parent::canRun() &&
-            Tools::strtolower($this->currentControllerName()) == 'product' &&
-            SettingsHelper::showProductEligibility() &&
-            SettingsHelper::getMerchantId() != null;
+        return parent::canRun()
+            && \Tools::strtolower($this->currentControllerName()) == 'product'
+            && SettingsHelper::showProductEligibility()
+            && SettingsHelper::getMerchantId() != null;
     }
 
     public function run($params)
@@ -62,8 +60,8 @@ class DisplayProductPriceBlockHookController extends FrontendHookController
             }
         }
 
-        /* @var Product $product */
-        if (isset($params['product']) && $params['product'] instanceof Product) {
+        /* @var \Product $product */
+        if (isset($params['product']) && $params['product'] instanceof \Product) {
             $product = $params['product'];
             $price = PriceHelper::convertPriceToCents($product->getPrice(true));
             $productId = $product->id;
@@ -76,7 +74,7 @@ class DisplayProductPriceBlockHookController extends FrontendHookController
 
             $productId = isset($productParams['id_product'])
                 ? $productParams['id_product']
-                : Tools::getValue('id_product');
+                : \Tools::getValue('id_product');
 
             $productAttributeId = isset($productParams['id_product_attribute'])
                 ? $productParams['id_product_attribute']
@@ -96,7 +94,7 @@ class DisplayProductPriceBlockHookController extends FrontendHookController
             }
 
             $price = PriceHelper::convertPriceToCents(
-                Product::getPriceStatic(
+                \Product::getPriceStatic(
                     $productId,
                     true,
                     $productAttributeId,
@@ -113,7 +111,7 @@ class DisplayProductPriceBlockHookController extends FrontendHookController
             $refreshPrice = $productAttributeId === null;
         }
 
-        if (Tools::getValue('id_product') != $productId) {
+        if (\Tools::getValue('id_product') != $productId) {
             return null;
         }
 

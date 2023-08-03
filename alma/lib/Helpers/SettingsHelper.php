@@ -41,14 +41,6 @@ use Alma\PrestaShop\Forms\InpageAdminFormBuilder;
 use Alma\PrestaShop\Forms\PaymentButtonAdminFormBuilder;
 use Alma\PrestaShop\Forms\PaymentOnTriggeringAdminFormBuilder;
 use Alma\PrestaShop\Forms\ShareOfCheckoutAdminFormBuilder;
-use Category;
-use Configuration;
-use DateTime;
-use Exception;
-use Product;
-use Shop;
-use Tools;
-use Translate;
 
 /**
  * Settings.
@@ -64,7 +56,7 @@ class SettingsHelper
      */
     public static function l($str)
     {
-        return Translate::getModuleTranslation('alma', $str, ConstantsHelper::SOURCE_CUSTOM_FIELDS);
+        return \Translate::getModuleTranslation('alma', $str, ConstantsHelper::SOURCE_CUSTOM_FIELDS);
     }
 
     /**
@@ -77,13 +69,13 @@ class SettingsHelper
      */
     public static function get($configKey, $default = null)
     {
-        $idShop = Shop::getContextShopID(true);
-        $idShopGroup = Shop::getContextShopGroupID(true);
+        $idShop = \Shop::getContextShopID(true);
+        $idShopGroup = \Shop::getContextShopGroupID(true);
 
-        $value = Configuration::get($configKey, null, $idShopGroup, $idShop, $default);
+        $value = \Configuration::get($configKey, null, $idShopGroup, $idShop, $default);
 
         // Configuration::get in PrestaShop 1.5 doesn't have a default argument, so we handle it here
-        if (!$value && !Configuration::hasKey($configKey, null, $idShopGroup, $idShop)) {
+        if (!$value && !\Configuration::hasKey($configKey, null, $idShopGroup, $idShop)) {
             $value = $default;
         }
 
@@ -100,9 +92,9 @@ class SettingsHelper
      */
     public static function updateValue($configKey, $value)
     {
-        $idShop = Shop::getContextShopID(true);
-        $idShopGroup = Shop::getContextShopGroupID(true);
-        Configuration::updateValue($configKey, $value, false, $idShopGroup, $idShop);
+        $idShop = \Shop::getContextShopID(true);
+        $idShopGroup = \Shop::getContextShopGroupID(true);
+        \Configuration::updateValue($configKey, $value, false, $idShopGroup, $idShop);
     }
 
     /**
@@ -158,7 +150,7 @@ class SettingsHelper
         ];
 
         foreach ($configKeys as $configKey) {
-            Configuration::deleteByName($configKey);
+            \Configuration::deleteByName($configKey);
         }
 
         return true;
@@ -203,7 +195,7 @@ class SettingsHelper
      */
     public static function isShareOfCheckoutNoAnswered()
     {
-        return ShareOfCheckoutAdminFormBuilder::ALMA_SHARE_OF_CHECKOUT_CONSENT_UNSET == Configuration::get(
+        return ShareOfCheckoutAdminFormBuilder::ALMA_SHARE_OF_CHECKOUT_CONSENT_UNSET == \Configuration::get(
             ShareOfCheckoutAdminFormBuilder::ALMA_SHARE_OF_CHECKOUT_STATE
         );
     }
@@ -215,7 +207,7 @@ class SettingsHelper
      */
     public static function isShareOfCheckoutAnswered()
     {
-        $state = Configuration::get(
+        $state = \Configuration::get(
             ShareOfCheckoutAdminFormBuilder::ALMA_SHARE_OF_CHECKOUT_STATE,
             null,
             null,
@@ -241,7 +233,7 @@ class SettingsHelper
      */
     public static function isShareOfCheckoutSetting()
     {
-        return !(false === Configuration::get(ShareOfCheckoutAdminFormBuilder::ALMA_SHARE_OF_CHECKOUT_STATE));
+        return !(false === \Configuration::get(ShareOfCheckoutAdminFormBuilder::ALMA_SHARE_OF_CHECKOUT_STATE));
     }
 
     /**
@@ -273,7 +265,7 @@ class SettingsHelper
      */
     public static function getCurrentTimestamp()
     {
-        $date = new DateTime();
+        $date = new \DateTime();
 
         return $date->getTimestamp();
     }
@@ -301,7 +293,7 @@ class SettingsHelper
      *
      * @return string
      *
-     * @throws Exception
+     * @throws \Exception
      */
     public static function getActiveAPIKey()
     {
@@ -317,7 +309,7 @@ class SettingsHelper
      *
      * @return string|null
      *
-     * @throws Exception
+     * @throws \Exception
      */
     public static function getLiveKey()
     {
@@ -341,7 +333,7 @@ class SettingsHelper
      *
      * @return string|null
      *
-     * @throws Exception
+     * @throws \Exception
      */
     public static function getTestKey()
     {
@@ -515,7 +507,7 @@ class SettingsHelper
             return [];
         }
 
-        $categories = Category::getCategories(
+        $categories = \Category::getCategories(
             false,
             false,
             false,
@@ -585,7 +577,7 @@ class SettingsHelper
     private static function updateExcludedCategories($categories)
     {
         if (version_compare(_PS_VERSION_, '1.7', '<')) {
-            $categories = Tools::jsonEncode($categories);
+            $categories = \Tools::jsonEncode($categories);
         } else {
             $categories = json_encode($categories);
         }
@@ -606,7 +598,7 @@ class SettingsHelper
             $excludedCategories[] = ['id_category' => (int) $categoryId];
         }
 
-        return Product::idIsOnCategoryId($productId, $excludedCategories);
+        return \Product::idIsOnCategoryId($productId, $excludedCategories);
     }
 
     /**

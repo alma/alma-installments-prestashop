@@ -23,11 +23,6 @@
  */
 namespace Alma\PrestaShop\Helpers;
 
-use Cart;
-use Context;
-use ImageType;
-use PrestaShopException;
-
 if (!defined('_PS_VERSION_')) {
     exit;
 }
@@ -46,7 +41,7 @@ class ProductHelper
      */
     public function getImageLink($productRow)
     {
-        $link = Context::getContext()->link;
+        $link = \Context::getContext()->link;
 
         return $link->getImageLink(
             $productRow['link_rewrite'],
@@ -58,15 +53,15 @@ class ProductHelper
     /**
      * @param $product
      * @param array $productRow
-     * @param Cart $cart
+     * @param \Cart $cart
      *
      * @return string
      *
-     * @throws PrestaShopException
+     * @throws \PrestaShopException
      */
     public function getProductLink($product, $productRow, $cart)
     {
-        $link = Context::getContext()->link;
+        $link = \Context::getContext()->link;
 
         return $link->getProductLink(
             $product,
@@ -90,9 +85,9 @@ class ProductHelper
     private static function getFormattedImageTypeName($name)
     {
         if (version_compare(_PS_VERSION_, '1.7', '>=')) {
-            return ImageType::getFormattedName($name);
+            return \ImageType::getFormattedName($name);
         }
 
-        return ImageType::getFormatedName($name);
+        return \ImageType::getFormatedName($name);
     }
 }

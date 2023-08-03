@@ -27,8 +27,6 @@ use Alma\PrestaShop\API\MismatchException;
 use Alma\PrestaShop\Exceptions\RefundException;
 use Alma\PrestaShop\Logger;
 use Alma\PrestaShop\Validators\PaymentValidationError;
-use Cart;
-use Exception;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -43,7 +41,7 @@ class RefundHelper
 {
     /** @var Alma */
     private $module;
-    /** @var Cart */
+    /** @var \Cart */
     private $cart;
     /** @var ClientHelper */
     private $almaClient;
@@ -54,7 +52,7 @@ class RefundHelper
      * construct RefundHelper
      *
      * @param Alma $module
-     * @param Cart $cart
+     * @param \Cart $cart
      * @param int $paymentId
      * @param ClientHelper $clientHelper
      */
@@ -106,7 +104,7 @@ class RefundHelper
     {
         try {
             $this->almaClient->getAlmaClient()->payments->fullRefund($id, $merchantReference, $comment);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             Logger::instance()->error('[Alma] fullRefund Error - ' . $e->getMessage());
 
             throw new RefundException($id, $e->getMessage(), $e);

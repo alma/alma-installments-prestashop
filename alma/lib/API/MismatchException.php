@@ -23,11 +23,9 @@
  */
 namespace Alma\PrestaShop\API;
 
-use Exception;
-
 /**
  * MismatchException
  */
-class MismatchException extends Exception
+class MismatchException extends \Exception
 {
 }

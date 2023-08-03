@@ -23,9 +23,6 @@
  */
 namespace Alma\PrestaShop\Helpers;
 
-use Context;
-use OrderState;
-
 if (!defined('_PS_VERSION_')) {
     exit;
 }
@@ -35,15 +32,14 @@ if (!defined('_PS_VERSION_')) {
  */
 class OrderStateHelper
 {
-    public function __construct(
-        Context $context
-    ) {
+    public function __construct($context)
+    {
         $this->context = $context;
     }
 
     public function getNameById($idOrderState)
     {
-        $orderStates = OrderState::getOrderStates($this->context->language->id);
+        $orderStates = \OrderState::getOrderStates($this->context->language->id);
 
         $state = array_filter($orderStates, function ($orderState) use ($idOrderState) {
             return $orderState['id_order_state'] == $idOrderState;

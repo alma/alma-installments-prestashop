@@ -34,8 +34,6 @@ use Alma\PrestaShop\Helpers\SettingsCustomFieldsHelper;
 use Alma\PrestaShop\Helpers\SettingsHelper;
 use Alma\PrestaShop\Hooks\FrontendHookController;
 use Alma\PrestaShop\Model\CartData;
-use Cart;
-use Media;
 
 class DisplayShoppingCartFooterHookController extends FrontendHookController
 {
@@ -57,7 +55,7 @@ class DisplayShoppingCartFooterHookController extends FrontendHookController
         }
 
         $cart = $this->context->cart;
-        $cartTotal = PriceHelper::convertPriceToCents((float) $cart->getOrderTotal(true, Cart::BOTH));
+        $cartTotal = PriceHelper::convertPriceToCents((float) $cart->getOrderTotal(true, \Cart::BOTH));
 
         $isEligible = true;
         if (!SettingsHelper::showCartWidgetIfNotEligible()) {
@@ -82,8 +80,8 @@ class DisplayShoppingCartFooterHookController extends FrontendHookController
             }
         }
 
-        if (is_callable('Media::getMediaPath')) {
-            $logo = Media::getMediaPath(_PS_MODULE_DIR_ . $this->module->name . '/views/img/logos/logo_alma.svg');
+        if (is_callable('\Media::getMediaPath')) {
+            $logo = \Media::getMediaPath(_PS_MODULE_DIR_ . $this->module->name . '/views/img/logos/logo_alma.svg');
         } else {
             $logo = $this->module->getPathUri() . '/views/img/logos/logo_alma.svg';
         }

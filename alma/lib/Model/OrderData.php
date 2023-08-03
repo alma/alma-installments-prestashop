@@ -23,24 +23,18 @@
  */
 namespace Alma\PrestaShop\Model;
 
-use Db;
-use Order;
-use OrderPayment;
-use PrestaShopDatabaseException;
-use Shop;
-
 if (!defined('_PS_VERSION_')) {
     exit;
 }
 
 class OrderData
 {
-    public static function getCurrentOrderPayment(Order $order)
+    public static function getCurrentOrderPayment(\Order $order)
     {
         if ('alma' != $order->module && 1 == $order->valid) {
             return false;
         }
-        $orderPayments = OrderPayment::getByOrderReference($order->reference);
+        $orderPayments = \OrderPayment::getByOrderReference($order->reference);
         if ($orderPayments && isset($orderPayments[0])) {
             return $orderPayments[0];
         }
@@ -56,11 +50,11 @@ class OrderData
      *
      * @return array Customer orders
      *
-     * @throws PrestaShopDatabaseException
+     * @throws \PrestaShopDatabaseException
      */
     public static function getCustomerOrders($idCustomer, $limit)
     {
-        $res = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+        $res = \Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
             'SELECT
                 o.id_cart,
                 o.date_add,
@@ -72,8 +66,8 @@ class OrderData
                 `' . _DB_PREFIX_ . 'orders` o
                 LEFT JOIN `' . _DB_PREFIX_ . 'order_payment` op ON op.`order_reference` = o.`reference`
             WHERE
-                o.`id_customer` = ' . (int) $idCustomer .
-                Shop::addSqlRestriction(Shop::SHARE_ORDER) . '
+                o.`id_customer` = ' . (int) $idCustomer
+                . \Shop::addSqlRestriction(\Shop::SHARE_ORDER) . '
             ORDER BY
                 o.`date_add` DESC
             LIMIT ' . (int) $limit

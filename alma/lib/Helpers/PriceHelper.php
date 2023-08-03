@@ -24,11 +24,6 @@
 namespace Alma\PrestaShop\Helpers;
 
 use Alma\PrestaShop\Logger;
-use Context;
-use Currency;
-use PrestaShop\PrestaShop\Core\Localization\Exception\LocalizationException;
-use Tools;
-use Validate;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -62,11 +57,11 @@ class PriceHelper
 
         if (count($parts) == 1) {
             $parts[] = '00';
-        } elseif (Tools::strlen($parts[1]) == 1) {
+        } elseif (\Tools::strlen($parts[1]) == 1) {
             $parts[1] .= '0';
         } else {
-            if (Tools::strlen($parts[1]) > 2) {
-                $parts[1] = Tools::substr($parts[1], 0, 2);
+            if (\Tools::strlen($parts[1]) > 2) {
+                $parts[1] = \Tools::substr($parts[1], 0, 2);
             }
         }
 
@@ -91,19 +86,19 @@ class PriceHelper
      *
      * @return string The formatted price, using the current locale and provided or current currency
      *
-     * @throws LocalizationException
+     * @throws \PrestaShop\PrestaShop\Core\Localization\Exception\LocalizationException
      */
     public static function formatPriceToCentsByCurrencyId($cents, $idCurrency = null)
     {
         $legacy = version_compare(_PS_VERSION_, '1.7.6.0', '<');
-        $currency = Context::getContext()->currency;
+        $currency = \Context::getContext()->currency;
         $price = PriceHelper::convertPriceFromCents($cents);
 
         if ($idCurrency) {
-            $currency = Currency::getCurrencyInstance((int) $idCurrency);
+            $currency = \Currency::getCurrencyInstance((int) $idCurrency);
 
-            if (!Validate::isLoadedObject($currency)) {
-                $currency = Context::getContext()->currency;
+            if (!\Validate::isLoadedObject($currency)) {
+                $currency = \Context::getContext()->currency;
             }
         }
 
@@ -112,21 +107,21 @@ class PriceHelper
 
         try {
             if ($legacy) {
-                $formattedPrice = Tools::displayPrice($price, $currency);
+                $formattedPrice = \Tools::displayPrice($price, $currency);
             } else {
-                $locale = Context::getContext()->currentLocale;
+                $locale = \Context::getContext()->currentLocale;
 
                 try {
                     $formattedPrice = $locale->formatPrice($price, $currency->iso_code);
-                } catch (LocalizationException $e) {
-                    // Catch LocalizationException at this level too, so that we can fallback to Tools::displayPrice if it
+                } catch (\PrestaShop\PrestaShop\Core\Localization\Exception\LocalizationException $e) {
+                    // Catch LocalizationException at this level too, so that we can fallback to \Tools::displayPrice if it
                     // still exists. If it, itself, throws a LocalizationException, it will be caught by the outer catch.
-                    if (method_exists('Tools', 'displayPrice')) {
-                        $formattedPrice = Tools::displayPrice($price, $currency);
+                    if (method_exists('\Tools', 'displayPrice')) {
+                        $formattedPrice = \Tools::displayPrice($price, $currency);
                     }
                 }
             }
-        } catch (LocalizationException $e) {
+        } catch (\Exception $e) {
             Logger::instance()->warning("Price localization error: $e");
         }
 

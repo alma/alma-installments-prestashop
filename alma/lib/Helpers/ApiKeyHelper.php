@@ -24,7 +24,6 @@
 namespace Alma\PrestaShop\Helpers;
 
 use Alma\PrestaShop\Forms\ApiAdminFormBuilder;
-use Tools;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -59,7 +58,7 @@ class ApiKeyHelper
      */
     public function getValueApiKey($keyMode)
     {
-        return trim(Tools::getValue($keyMode));
+        return trim(\Tools::getValue($keyMode));
     }
 
     /**

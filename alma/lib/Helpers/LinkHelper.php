@@ -23,9 +23,6 @@
  */
 namespace Alma\PrestaShop\Helpers;
 
-use Context;
-use Module;
-
 if (!defined('_PS_VERSION_')) {
     exit;
 }
@@ -44,9 +41,9 @@ class LinkHelper
      */
     public static function getAdminLinkAlmaDashboard()
     {
-        $module = Module::getInstanceByName('alma');
+        $module = \Module::getInstanceByName('alma');
 
-        return Context::getContext()->link->getAdminLink(
+        return \Context::getContext()->link->getAdminLink(
             'AdminModules',
             true,
             [],

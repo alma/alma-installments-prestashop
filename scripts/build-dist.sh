@@ -9,6 +9,7 @@ mkdir -p ./tmp/build/alma
 cp CHANGELOG.md ./alma/
 cp -r CHANGELOG.md ./alma/* ./tmp/build/alma
 rm -f ./tmp/build/alma/composer.lock
+rm -rf ./tmp/build/alma/tests
 
 mkdir ./dist
 

@@ -31,14 +31,13 @@ use Alma\API\Endpoints\Results\Eligibility;
 use Alma\API\RequestError;
 use Alma\PrestaShop\Logger;
 use Alma\PrestaShop\Model\PaymentData;
-use Cart;
 
 class EligibilityHelper
 {
     public static function eligibilityCheck($context)
     {
         $almaEligibilities = [];
-        $purchaseAmount = PriceHelper::convertPriceToCents($context->cart->getOrderTotal(true, Cart::BOTH));
+        $purchaseAmount = PriceHelper::convertPriceToCents($context->cart->getOrderTotal(true, \Cart::BOTH));
         $alma = self::checkClientInstance();
         $feePlans = self::checkFeePlans();
         $eligibilities = self::getNotEligibleFeePlans($feePlans, $purchaseAmount);

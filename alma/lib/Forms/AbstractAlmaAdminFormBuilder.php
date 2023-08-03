@@ -27,9 +27,6 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-use Alma;
-use Context;
-
 /**
  * Class AbstractAlmaAdminFormBuilder
  */
@@ -41,7 +38,7 @@ abstract class AbstractAlmaAdminFormBuilder extends AbstractAdminFormBuilder
     protected $module;
 
     /**
-     * @var Context
+     * @var \Context
      */
     protected $context;
     protected $config;
@@ -50,7 +47,7 @@ abstract class AbstractAlmaAdminFormBuilder extends AbstractAdminFormBuilder
      * @param string $image
      * @param array $config
      */
-    public function __construct(Alma $module, Context $context, $image, $config = [])
+    public function __construct($module, $context, $image, $config = [])
     {
         $this->module = $module;
         $this->context = $context;

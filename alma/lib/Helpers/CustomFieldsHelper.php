@@ -27,11 +27,9 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-use Alma;
 use Alma\PrestaShop\Forms\ExcludedCategoryAdminFormBuilder;
 use Alma\PrestaShop\Forms\PaymentButtonAdminFormBuilder;
 use Alma\PrestaShop\Forms\PaymentOnTriggeringAdminFormBuilder;
-use Language;
 
 /**
  * Class CustomFieldsHelper
@@ -45,7 +43,7 @@ class CustomFieldsHelper
      */
     public static function initCustomFields()
     {
-        $languages = Language::getLanguages(false);
+        $languages = \Language::getLanguages(false);
 
         $keysCustomFields = array_keys(static::customFields());
 
@@ -147,7 +145,7 @@ class CustomFieldsHelper
      */
     public static function aggregateAllLanguagesCustomFields($keyConfig)
     {
-        $languages = Language::getLanguages(false);
+        $languages = \Language::getLanguages(false);
         $arrayFields = static::getCustomFieldByKeyConfig($keyConfig, $languages);
 
         if (count($arrayFields) < count($languages)) {

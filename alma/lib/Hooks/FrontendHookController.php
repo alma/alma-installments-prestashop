@@ -28,7 +28,6 @@ if (!defined('_PS_VERSION_')) {
 }
 
 use Alma\PrestaShop\Helpers\SettingsHelper;
-use Tools;
 
 abstract class FrontendHookController extends HookController
 {
@@ -41,6 +40,6 @@ abstract class FrontendHookController extends HookController
             // ... and the plugin is in LIVE mode, or the visitor is an admin
             && ($isLive || $this->loggedAsEmployee())
             // ... and the current shop's currency is EUR
-            && in_array(Tools::strtoupper($this->context->currency->iso_code), $this->module->limited_currencies);
+            && in_array(\Tools::strtoupper($this->context->currency->iso_code), $this->module->limited_currencies);
     }
 }

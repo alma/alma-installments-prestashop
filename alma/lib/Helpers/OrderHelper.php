@@ -25,10 +25,6 @@ namespace Alma\PrestaShop\Helpers;
 
 use Alma\PrestaShop\Model\OrderData;
 use Alma\PrestaShop\Traits\AjaxTrait;
-use Db;
-use Order;
-use PrestaShopException;
-use Shop;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -65,7 +61,7 @@ class OrderHelper
      * @param string $startDate
      * @param string $endDate
      *
-     * @return Order[]
+     * @return \Order[]
      */
     public function getOrdersByDate($startDate, $endDate)
     {
@@ -75,7 +71,7 @@ class OrderHelper
         $newOrders = [];
         $orderIdsByDate = $this->getOrdersIdByDate($startDate, $endDate);
         foreach ($orderIdsByDate as $orderId) {
-            $currentOrder = new Order($orderId);
+            $currentOrder = new \Order($orderId);
             $newOrders[] = $currentOrder;
         }
         $this->orders = $newOrders;
@@ -98,8 +94,8 @@ class OrderHelper
                 WHERE date_add >= \'' . pSQL($startDate) . '\'
                 AND date_add <= \'' . pSQL($endDate) . '\'
                 AND current_state NOT IN (' . implode(', ', array_map('intval', $this->defaultStatesExcluded)) . ')
-                    ' . Shop::addSqlRestriction();
-        $result = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS($sql);
+                    ' . \Shop::addSqlRestriction();
+        $result = \Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS($sql);
         $orderIds = [];
         foreach ($result as $order) {
             $orderIds[] = (int) $order['id_order'];
@@ -121,7 +117,7 @@ class OrderHelper
      *
      * @return false|mixed
      *
-     * @throws PrestaShopException
+     * @throws \PrestaShopException
      */
     public function getOrderPaymentOrFail($order)
     {

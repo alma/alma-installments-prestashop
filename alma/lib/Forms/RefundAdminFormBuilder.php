@@ -23,8 +23,6 @@
  */
 namespace Alma\PrestaShop\Forms;
 
-use OrderState;
-
 if (!defined('_PS_VERSION_')) {
     exit;
 }
@@ -57,7 +55,7 @@ class RefundAdminFormBuilder extends AbstractAlmaAdminFormBuilder
                 self::ALMA_STATE_REFUND,
                 $this->module->l('Refund state order', 'RefundAdminFormBuilder'),
                 $this->module->l('Your order state to sync refund with Alma', 'RefundAdminFormBuilder'),
-                OrderState::getOrderStates($this->context->cookie->id_lang),
+                \OrderState::getOrderStates($this->context->cookie->id_lang),
                 'id_order_state'
             ),
         ];

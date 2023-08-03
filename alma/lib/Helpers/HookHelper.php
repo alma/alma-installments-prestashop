@@ -23,8 +23,6 @@
  */
 namespace Alma\PrestaShop\Helpers;
 
-use Hook;
-
 if (!defined('_PS_VERSION_')) {
     exit;
 }
@@ -41,7 +39,7 @@ class HookHelper
 
     public function __construct()
     {
-        $this->hooks = Hook::getHooks();
+        $this->hooks = \Hook::getHooks();
     }
 
     /**

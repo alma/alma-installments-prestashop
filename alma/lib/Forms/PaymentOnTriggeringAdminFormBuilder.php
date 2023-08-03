@@ -24,7 +24,6 @@
 namespace Alma\PrestaShop\Forms;
 
 use Alma\PrestaShop\Helpers\SettingsCustomFieldsHelper;
-use OrderState;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -70,7 +69,7 @@ class PaymentOnTriggeringAdminFormBuilder extends AbstractAlmaAdminFormBuilder
                 self::ALMA_STATE_TRIGGER,
                 $this->module->l('Order status that triggers the first payment', 'PaymentOnTriggeringAdminFormBuilder'),
                 '',
-                OrderState::getOrderStates($this->context->cookie->id_lang),
+                \OrderState::getOrderStates($this->context->cookie->id_lang),
                 'id_order_state'
             ),
         ];

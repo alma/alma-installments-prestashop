@@ -53,9 +53,6 @@ use Alma\PrestaShop\Helpers\SettingsHelper;
 use Alma\PrestaShop\Helpers\ShareOfCheckoutHelper;
 use Alma\PrestaShop\Hooks\AdminHookController;
 use Alma\PrestaShop\Logger;
-use Configuration;
-use HelperForm;
-use Tools;
 
 final class GetContentHookController extends AdminHookController
 {
@@ -66,7 +63,7 @@ final class GetContentHookController extends AdminHookController
     protected $module;
 
     /**
-     *  @var array KEY_CONFIG
+     * @var array
      */
     const KEY_CONFIG = [
         'ALMA_SHOW_ELIGIBILITY_MESSAGE' => [
@@ -136,7 +133,7 @@ final class GetContentHookController extends AdminHookController
      */
     public function processConfiguration()
     {
-        if (!Tools::isSubmit('alma_config_form')) {
+        if (!\Tools::isSubmit('alma_config_form')) {
             return null;
         }
 
@@ -144,12 +141,12 @@ final class GetContentHookController extends AdminHookController
         $this->updateSettingsValue('ALMA_FULLY_CONFIGURED', '0');
 
         $oldApiMode = SettingsHelper::getActiveMode();
-        $apiMode = Tools::getValue('ALMA_API_MODE');
+        $apiMode = \Tools::getValue('ALMA_API_MODE');
         $this->updateSettingsValue('ALMA_API_MODE', $apiMode);
 
         // Get & check provided API keys
-        $liveKey = trim(Tools::getValue(ApiAdminFormBuilder::ALMA_LIVE_API_KEY));
-        $testKey = trim(Tools::getValue(ApiAdminFormBuilder::ALMA_TEST_API_KEY));
+        $liveKey = trim(\Tools::getValue(ApiAdminFormBuilder::ALMA_LIVE_API_KEY));
+        $testKey = trim(\Tools::getValue(ApiAdminFormBuilder::ALMA_TEST_API_KEY));
 
         if ((empty($liveKey) && ALMA_MODE_LIVE == $apiMode) || (empty($testKey) && ALMA_MODE_TEST == $apiMode)) {
             $this->context->smarty->assign('validation_error', "missing_key_for_{$apiMode}_mode");
@@ -214,7 +211,7 @@ final class GetContentHookController extends AdminHookController
             $this->updateSettingsValue('ALMA_MERCHANT_ID', $merchant->id);
         }
 
-        $apiOnly = Tools::getValue('_api_only');
+        $apiOnly = \Tools::getValue('_api_only');
 
         if ($apiOnly && $merchant) {
             $feePlans = $this->getFeePlans();
@@ -260,14 +257,13 @@ final class GetContentHookController extends AdminHookController
                         continue;
                     }
 
-                    $min = PriceHelper::convertPriceToCents((int) Tools::getValue("ALMA_{$key}_MIN_AMOUNT"));
-                    $max = PriceHelper::convertPriceToCents((int) Tools::getValue("ALMA_{$key}_MAX_AMOUNT"));
+                    $min = PriceHelper::convertPriceToCents((int) \Tools::getValue("ALMA_{$key}_MIN_AMOUNT"));
+                    $max = PriceHelper::convertPriceToCents((int) \Tools::getValue("ALMA_{$key}_MAX_AMOUNT"));
 
-                    $enablePlan = (bool) Tools::getValue("ALMA_{$key}_ENABLED_ON");
+                    $enablePlan = (bool) \Tools::getValue("ALMA_{$key}_ENABLED_ON");
 
                     if ($enablePlan
-                        &&
-                        !(
+                        && !(
                             $min >= $feePlan->min_purchase_amount
                             && $min <= min($max, $feePlan->max_purchase_amount)
                         )
@@ -285,8 +281,7 @@ final class GetContentHookController extends AdminHookController
                     }
 
                     if ($enablePlan
-                        &&
-                        !(
+                        && !(
                             $max >= $min
                             && $max <= $feePlan->max_purchase_amount
                         )
@@ -315,9 +310,9 @@ final class GetContentHookController extends AdminHookController
                         continue;
                     }
 
-                    $min = (int) Tools::getValue("ALMA_{$key}_MIN_AMOUNT");
-                    $max = (int) Tools::getValue("ALMA_{$key}_MAX_AMOUNT");
-                    $order = (int) Tools::getValue("ALMA_{$key}_SORT_ORDER");
+                    $min = (int) \Tools::getValue("ALMA_{$key}_MIN_AMOUNT");
+                    $max = (int) \Tools::getValue("ALMA_{$key}_MAX_AMOUNT");
+                    $order = (int) \Tools::getValue("ALMA_{$key}_SORT_ORDER");
 
                     // In case merchant inverted min & max values, correct it
                     if ($min > $max) {
@@ -338,12 +333,12 @@ final class GetContentHookController extends AdminHookController
                         $almaPlans[$key]['order'] = (int) $position;
                         ++$position;
                     } else {
-                        $enablePlan = (bool) Tools::getValue("ALMA_{$key}_ENABLED_ON");
+                        $enablePlan = (bool) \Tools::getValue("ALMA_{$key}_ENABLED_ON");
                         $almaPlans[$key]['enabled'] = $enablePlan ? '1' : '0';
                         $almaPlans[$key]['min'] = PriceHelper::convertPriceToCents($min);
                         $almaPlans[$key]['max'] = PriceHelper::convertPriceToCents($max);
                         $almaPlans[$key]['deferred_trigger_limit_days'] = $feePlan->deferred_trigger_limit_days;
-                        $almaPlans[$key]['order'] = (int) Tools::getValue("ALMA_{$key}_SORT_ORDER");
+                        $almaPlans[$key]['order'] = (int) \Tools::getValue("ALMA_{$key}_SORT_ORDER");
                     }
                 }
 
@@ -471,7 +466,7 @@ final class GetContentHookController extends AdminHookController
         $needsKeys = $this->needsAPIKey();
 
         if ($needsKeys
-            && !Tools::isSubmit('alma_config_form')
+            && !\Tools::isSubmit('alma_config_form')
         ) {
             $this->context->smarty->clearAllAssign();
 
@@ -489,11 +484,11 @@ final class GetContentHookController extends AdminHookController
 
         $fieldsForms = $this->buildForms($needsKeys, $feePlansOrdered, $installmentsPlans);
 
-        $helper = new HelperForm();
+        $helper = new \HelperForm();
         $helper->module = $this->module;
         $helper->table = 'alma_config';
-        $helper->default_form_language = (int) Configuration::get('PS_LANG_DEFAULT');
-        $helper->allow_employee_form_lang = (int) Configuration::get('PS_BO_ALLOW_EMPLOYEE_FORM_LANG');
+        $helper->default_form_language = (int) \Configuration::get('PS_LANG_DEFAULT');
+        $helper->allow_employee_form_lang = (int) \Configuration::get('PS_BO_ALLOW_EMPLOYEE_FORM_LANG');
         $helper->submit_action = 'alma_config_form';
 
         if (version_compare(_PS_VERSION_, '1.6', '<')) {
@@ -501,12 +496,12 @@ final class GetContentHookController extends AdminHookController
             $this->context->controller->addCss(_MODULE_DIR_ . $this->module->name . '/views/css/admin/tabs.css');
         }
 
-        $helper->currentIndex = $this->context->link->getAdminLink('AdminModules', false) .
-            '&configure=' . $this->module->name .
-            '&tab_module=' . $this->module->tab .
-            '&module_name=' . $this->module->name;
+        $helper->currentIndex = $this->context->link->getAdminLink('AdminModules', false)
+            . '&configure=' . $this->module->name
+            . '&tab_module=' . $this->module->tab
+            . '&module_name=' . $this->module->name;
 
-        $helper->token = Tools::getAdminTokenLite('AdminModules');
+        $helper->token = \Tools::getAdminTokenLite('AdminModules');
 
         $helper->fields_value = $this->getFieldsValueForForm();
 
@@ -548,7 +543,7 @@ final class GetContentHookController extends AdminHookController
     }
 
     /**
-     * @param boolean$needsKeys
+     * @param bool $needsKeys
      * @param array $feePlansOrdered
      * @param array $installmentsPlans
      *
@@ -694,7 +689,7 @@ final class GetContentHookController extends AdminHookController
 
     private function assignSmartyAlertClasses($level = 'danger')
     {
-        $token = Tools::getAdminTokenLite('AdminModules');
+        $token = \Tools::getAdminTokenLite('AdminModules');
         $href = $this->context->link->getAdminLink('AdminParentModulesSf', $token);
 
         if (version_compare(_PS_VERSION_, '1.6', '<')) {
@@ -749,7 +744,7 @@ final class GetContentHookController extends AdminHookController
     {
         $this->assignSmartyAlertClasses();
 
-        if (Tools::isSubmit('alma_config_form')) {
+        if (\Tools::isSubmit('alma_config_form')) {
             $messages = $this->processConfiguration();
         } elseif (!$this->needsAPIKey()) {
             $messages = $this->credentialsError(
@@ -782,7 +777,7 @@ final class GetContentHookController extends AdminHookController
     {
         $result = [
             'locale' => $locale,
-            'string' => Tools::getValue(sprintf('%s_%s', $keyForm, $languageId)),
+            'string' => \Tools::getValue(sprintf('%s_%s', $keyForm, $languageId)),
         ];
 
         if (empty($result['string'])) {
@@ -869,7 +864,7 @@ final class GetContentHookController extends AdminHookController
                 $type = $conditions['action'];
             }
 
-            $value = Tools::getValue($searchKey);
+            $value = \Tools::getValue($searchKey);
 
             switch ($type) {
                 case 'test_bool':

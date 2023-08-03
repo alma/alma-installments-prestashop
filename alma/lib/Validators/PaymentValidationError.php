@@ -23,9 +23,7 @@
  */
 namespace Alma\PrestaShop\Validators;
 
-use Exception;
-
-class PaymentValidationError extends Exception
+class PaymentValidationError extends \Exception
 {
     public $cart;
 

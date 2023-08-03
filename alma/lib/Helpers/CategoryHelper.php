@@ -23,10 +23,6 @@
  */
 namespace Alma\PrestaShop\Helpers;
 
-use Category;
-use Exception;
-use Validate;
-
 if (!defined('_PS_VERSION_')) {
     exit;
 }
@@ -39,7 +35,7 @@ class CategoryHelper
     private $idCategory;
 
     /**
-     * @var Category
+     * @var \Category
      */
     private $category;
 
@@ -52,7 +48,7 @@ class CategoryHelper
     {
         try {
             return new CategoryHelper($idCategory);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return null;
         }
     }
@@ -62,15 +58,15 @@ class CategoryHelper
      *
      * @param $idCategory int ID of the PrestaShop Category to load
      *
-     * @throws Exception
+     * @throws \Exception
      */
     public function __construct($idCategory)
     {
         $this->idCategory = $idCategory;
-        $this->category = new Category($idCategory);
+        $this->category = new \Category($idCategory);
 
-        if (!Validate::isLoadedObject($this->category)) {
-            throw new Exception("Could not load Category with id $idCategory");
+        if (!\Validate::isLoadedObject($this->category)) {
+            throw new \Exception("Could not load Category with id $idCategory");
         }
     }
 

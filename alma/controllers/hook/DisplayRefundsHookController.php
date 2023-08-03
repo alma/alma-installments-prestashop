@@ -36,15 +36,10 @@ use Alma\PrestaShop\Helpers\PriceHelper;
 use Alma\PrestaShop\Helpers\RefundHelper;
 use Alma\PrestaShop\Hooks\AdminHookController;
 use Alma\PrestaShop\Logger;
-use Currency;
-use Order;
-use PrestaShopDatabaseException;
-use PrestaShopException;
-use SmartyException;
 
 final class DisplayRefundsHookController extends AdminHookController
 {
-    /** @var Order */
+    /** @var \Order */
     public $order;
 
     /**
@@ -54,13 +49,13 @@ final class DisplayRefundsHookController extends AdminHookController
      *
      * @return string|null as the template fetched
      *
-     * @throws PrestaShopDatabaseException
-     * @throws PrestaShopException
-     * @throws SmartyException
+     * @throws \PrestaShopDatabaseException
+     * @throws \PrestaShopException
+     * @throws \SmartyException
      */
     public function run($params)
     {
-        $order = new Order($params['id_order']);
+        $order = new \Order($params['id_order']);
         try {
             $payment = $this->getPayment($order);
         } catch (PaymentNotFoundException $e) {
@@ -82,7 +77,7 @@ final class DisplayRefundsHookController extends AdminHookController
         // multi shipping
         $ordersId = null;
         if ($orderTotalPaid > $order->total_paid_tax_incl) {
-            $orders = Order::getByReference($order->reference);
+            $orders = \Order::getByReference($order->reference);
             foreach ($orders as $o) {
                 if ($o->id != $order->id) {
                     $ordersId .= "{$o->id},";
@@ -103,7 +98,7 @@ final class DisplayRefundsHookController extends AdminHookController
             ];
         }
 
-        $currency = new Currency($order->id_currency);
+        $currency = new \Currency($order->id_currency);
         $orderData = [
             'id' => $order->id,
             'maxAmount' => PriceHelper::formatPriceToCentsByCurrencyId(PriceHelper::convertPriceToCents($order->total_paid_tax_incl), (int) $order->id_currency),
@@ -161,7 +156,7 @@ final class DisplayRefundsHookController extends AdminHookController
     /**
      * Runs Hook for show block Refund in Order page if is payment Alma.
      *
-     * @param Order $order
+     * @param \Order $order
      *
      * @return Payment
      *

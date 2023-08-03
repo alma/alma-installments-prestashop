@@ -23,8 +23,6 @@
  */
 namespace Alma\PrestaShop\Exceptions;
 
-use Exception;
-
-class AlmaException extends Exception
+class AlmaException extends \Exception
 {
 }

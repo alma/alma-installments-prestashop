@@ -72,6 +72,9 @@ return PhpCsFixer\Config::create()
         //    'position_after_anonymous_constructs' => 'next',
         //    'position_after_control_structures' => 'next',
         //),
+        'operator_linebreak' => [
+            'position' => 'beginning'
+        ]
     ])
     ->setFinder($finder)
     ->setCacheFile(__DIR__ . '/tmp/.php_cs.cache');
