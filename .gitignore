@@ -13,3 +13,4 @@ tools/composer.lock
 .idea/
 .dccache
 .phpunit.result.cache
+/alma/.php-cs-fixer.cache
