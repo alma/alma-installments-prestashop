@@ -21,17 +21,16 @@
  * @copyright 2018-2023 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
+
 namespace Alma\PrestaShop\Helpers;
 
 if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-use Alma;
 use Alma\PrestaShop\Forms\ExcludedCategoryAdminFormBuilder;
 use Alma\PrestaShop\Forms\PaymentButtonAdminFormBuilder;
 use Alma\PrestaShop\Forms\PaymentOnTriggeringAdminFormBuilder;
-use Language;
 
 /**
  * Class CustomFieldsHelper
@@ -45,7 +44,7 @@ class CustomFieldsHelper
      */
     public static function initCustomFields()
     {
-        $languages = Language::getLanguages(false);
+        $languages = \Language::getLanguages(false);
 
         $keysCustomFields = array_keys(static::customFields());
 
@@ -67,7 +66,7 @@ class CustomFieldsHelper
         $textPnxButtonTitle = 'Pay in %d installments';
         $textButtonDescription = 'Fast and secure payment by credit card.';
 
-        $module = new Alma();
+        $module = new \Alma();
         $module->l('Pay now by credit card', ConstantsHelper::SOURCE_CUSTOM_FIELDS);
         $module->l('Pay in %d installments', ConstantsHelper::SOURCE_CUSTOM_FIELDS);
         $module->l('Buy now Pay in %d days', ConstantsHelper::SOURCE_CUSTOM_FIELDS);
@@ -147,7 +146,7 @@ class CustomFieldsHelper
      */
     public static function aggregateAllLanguagesCustomFields($keyConfig)
     {
-        $languages = Language::getLanguages(false);
+        $languages = \Language::getLanguages(false);
         $arrayFields = static::getCustomFieldByKeyConfig($keyConfig, $languages);
 
         if (count($arrayFields) < count($languages)) {

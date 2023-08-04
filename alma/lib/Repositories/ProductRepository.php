@@ -21,13 +21,8 @@
  * @copyright 2018-2023 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
-namespace Alma\PrestaShop\Repositories;
 
-use Cart;
-use Db;
-use DbQuery;
-use PrestaShopDatabaseException;
-use PrestaShopException;
+namespace Alma\PrestaShop\Repositories;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -43,19 +38,19 @@ class ProductRepository
     /**
      * Get the product combinations
      *
-     * @param Cart $cart
+     * @param \Cart $cart
      * @param array $products
      *
      * @return array
      *
-     * @throws PrestaShopException
+     * @throws \PrestaShopException
      */
     public function getProductsCombinations($cart, $products)
     {
-        $sql = new DbQuery();
+        $sql = new \DbQuery();
         $sql->select('CONCAT(p.`id_product`, "-", pa.`id_product_attribute`) as `unique_id`');
 
-        $combinationName = new DbQuery();
+        $combinationName = new \DbQuery();
         $combinationName->select('GROUP_CONCAT(DISTINCT CONCAT(agl.`name`, " - ", al.`name`) SEPARATOR ", ")');
         $combinationName->from('product_attribute', 'pa2');
         $combinationName->innerJoin(
@@ -99,12 +94,12 @@ class ProductRepository
         }
         $sql->where($where);
 
-        $db = Db::getInstance();
+        $db = \Db::getInstance();
         $combinationsNames = [];
 
         try {
             $results = $db->query($sql);
-        } catch (PrestaShopDatabaseException $e) {
+        } catch (\PrestaShopDatabaseException $e) {
             return $combinationsNames;
         }
 
@@ -122,7 +117,7 @@ class ProductRepository
      */
     public function getProductsDetails($products)
     {
-        $sql = new DbQuery();
+        $sql = new \DbQuery();
         $sql->select('p.`id_product`, p.`is_virtual`, m.`name` as manufacturer_name');
         $sql->from('product', 'p');
         $sql->innerJoin('manufacturer', 'm', 'm.`id_manufacturer` = p.`id_manufacturer`');
@@ -135,12 +130,12 @@ class ProductRepository
         $in = implode(', ', $in);
         $sql->where("p.`id_product` IN ({$in})");
 
-        $db = Db::getInstance();
+        $db = \Db::getInstance();
         $productsDetails = [];
 
         try {
             $results = $db->query($sql);
-        } catch (PrestaShopDatabaseException $e) {
+        } catch (\PrestaShopDatabaseException $e) {
             return $productsDetails;
         }
 

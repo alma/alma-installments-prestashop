@@ -21,13 +21,13 @@
  * @copyright 2018-2023 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
+
 namespace Alma\PrestaShop\Model;
 
 if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-use Address;
 use Alma\API\Lib\PaymentValidator;
 use Alma\API\ParamsError;
 use Alma\PrestaShop\Helpers\CarrierHelper;
@@ -38,22 +38,14 @@ use Alma\PrestaShop\Helpers\SettingsCustomFieldsHelper;
 use Alma\PrestaShop\Helpers\SettingsHelper;
 use Alma\PrestaShop\Logger;
 use Alma\PrestaShop\Repositories\ProductRepository;
-use Cart;
-use Context;
-use Country;
-use Customer;
-use Order;
-use State;
-use Tools;
-use Validate;
 
 class PaymentData
 {
     const PAYMENT_METHOD = 'alma';
 
     /**
-     * @param Cart $cart
-     * @param Context $context
+     * @param \Cart $cart
+     * @param \Context $context
      * @param array $feePlans
      * @param bool $forPayment
      *
@@ -78,25 +70,25 @@ class PaymentData
 
         $customer = null;
         if ($cart->id_customer) {
-            $customer = new Customer($cart->id_customer);
-            if (!Validate::isLoadedObject($customer)) {
+            $customer = new \Customer($cart->id_customer);
+            if (!\Validate::isLoadedObject($customer)) {
                 Logger::instance()->error("[Alma] Error loading Customer {$cart->id_customer} from Cart {$cart->id}");
 
                 return null;
             }
         }
 
-        $shippingAddress = new Address((int) $cart->id_address_delivery);
-        $billingAddress = new Address((int) $cart->id_address_invoice);
-        $countryShippingAddress = Country::getIsoById((int) $shippingAddress->id_country);
-        $countryBillingAddress = Country::getIsoById((int) $billingAddress->id_country);
+        $shippingAddress = new \Address((int) $cart->id_address_delivery);
+        $billingAddress = new \Address((int) $cart->id_address_invoice);
+        $countryShippingAddress = \Country::getIsoById((int) $shippingAddress->id_country);
+        $countryBillingAddress = \Country::getIsoById((int) $billingAddress->id_country);
         $countryShippingAddress = ($countryShippingAddress) ? $countryShippingAddress : '';
         $countryBillingAddress = ($countryBillingAddress) ? $countryBillingAddress : '';
         $locale = $context->language->iso_code;
         if (property_exists($context->language, 'locale')) {
             $locale = $context->language->locale;
         }
-        $purchaseAmount = (float) Tools::ps_round((float) $cart->getOrderTotal(true, Cart::BOTH), 2);
+        $purchaseAmount = (float) \Tools::ps_round((float) $cart->getOrderTotal(true, \Cart::BOTH), 2);
 
         /* Eligibility Endpoint V2 */
         if (!$forPayment) {
@@ -161,7 +153,7 @@ class PaymentData
                 'line1' => $address['address1'],
                 'postal_code' => $address['postcode'],
                 'city' => $address['city'],
-                'country' => Country::getIsoById((int) $address['id_country']),
+                'country' => \Country::getIsoById((int) $address['id_country']),
                 'county_sublocality' => null,
                 'state_province' => $address['state'],
             ];
@@ -177,8 +169,8 @@ class PaymentData
 
         $idStateShipping = $shippingAddress->id_state;
         $idStateBilling = $billingAddress->id_state;
-        $customerData['state_province'] = State::getNameById((int) $idStateBilling);
-        $customerData['country'] = Country::getIsoById((int) $billingAddress->id_country);
+        $customerData['state_province'] = \State::getNameById((int) $idStateBilling);
+        $customerData['country'] = \Country::getIsoById((int) $billingAddress->id_country);
 
         if ($billingAddress->company) {
             $customerData['is_business'] = true;
@@ -201,7 +193,7 @@ class PaymentData
                     'city' => $shippingAddress->city,
                     'country' => $countryShippingAddress,
                     'county_sublocality' => null,
-                    'state_province' => $idStateShipping > 0 ? State::getNameById((int) $idStateShipping) : '',
+                    'state_province' => $idStateShipping > 0 ? \State::getNameById((int) $idStateShipping) : '',
                 ],
                 'shipping_info' => ShippingData::shippingInfo($cart),
                 'billing_address' => [
@@ -275,7 +267,7 @@ class PaymentData
 
     private static function isNewCustomer($idCustomer)
     {
-        if (Order::getCustomerNbOrders($idCustomer) > 0) {
+        if (\Order::getCustomerNbOrders($idCustomer) > 0) {
             return false;
         }
 

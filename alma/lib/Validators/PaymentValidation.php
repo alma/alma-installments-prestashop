@@ -21,6 +21,7 @@
  * @copyright 2018-2023 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
+
 namespace Alma\PrestaShop\Validators;
 
 use Alma\API\Entities\Payment;
@@ -30,24 +31,12 @@ use Alma\PrestaShop\Helpers\PriceHelper;
 use Alma\PrestaShop\Helpers\RefundHelper;
 use Alma\PrestaShop\Helpers\SettingsHelper;
 use Alma\PrestaShop\Logger;
-use Cart;
-use Configuration;
-use Context;
-use Currency;
-use Customer;
-use Exception;
-use Order;
-use OrderCore;
-use PaymentModule;
-use PrestaShopException;
-use Tools;
-use Validate;
 
 class PaymentValidation
 {
-    /** @var Context */
+    /** @var \Context */
     private $context;
-    /** @var PaymentModule */
+    /** @var \PaymentModule */
     private $module;
 
     /**
@@ -67,7 +56,7 @@ class PaymentValidation
      */
     private function isValidCurrency()
     {
-        $currencyOrder = new Currency($this->context->cart->id_currency);
+        $currencyOrder = new \Currency($this->context->cart->id_currency);
         $currenciesModule = $this->module->getCurrency($this->context->cart->id_currency);
 
         // Check if cart currency is one of the enabled currencies
@@ -106,7 +95,7 @@ class PaymentValidation
         }
 
         // Check if cart exists and all fields are set
-        $cart = new Cart($payment->custom_data['cart_id']);
+        $cart = new \Cart($payment->custom_data['cart_id']);
         if (!$cart || 0 == $cart->id_customer || 0 == $cart->id_address_delivery || 0 == $cart->id_address_invoice) {
             Logger::instance()->error("[Alma] Payment validation error: Cart {$cart->id} does not look valid.");
             throw new PaymentValidationError($cart, 'cart_invalid');
@@ -119,7 +108,7 @@ class PaymentValidation
 
         // Check if module is enabled
         $authorized = false;
-        foreach (PaymentModule::getInstalledPaymentModules() as $module) {
+        foreach (\PaymentModule::getInstalledPaymentModules() as $module) {
             if ($module['name'] == $this->module->name) {
                 $authorized = true;
             }
@@ -138,8 +127,8 @@ class PaymentValidation
             throw new PaymentValidationError($cart, $msg);
         }
 
-        $customer = new Customer($cart->id_customer);
-        if (!Validate::isLoadedObject($customer)) {
+        $customer = new \Customer($cart->id_customer);
+        if (!\Validate::isLoadedObject($customer)) {
             Logger::instance()->error(
                 "[Alma] Payment validation error for Cart {$cart->id}: cannot load Customer {$cart->id_customer}"
             );
@@ -149,8 +138,8 @@ class PaymentValidation
 
         if (!$cart->OrderExists()) {
             try {
-                $cartTotals = (float) Tools::ps_round((float) $this->getCartTotals($cart, $customer), 2);
-            } catch (Exception $e) {
+                $cartTotals = (float) \Tools::ps_round((float) $this->getCartTotals($cart, $customer), 2);
+            } catch (\Exception $e) {
                 Logger::instance()->warning(
                     "[Alma] Payment validation error with cart total. {$e->getMessage()}"
                 );
@@ -215,7 +204,7 @@ class PaymentValidation
                 // Place order
                 $this->module->validateOrder(
                     (int) $cart->id,
-                    Configuration::get('PS_OS_PAYMENT'),
+                    \Configuration::get('PS_OS_PAYMENT'),
                     PriceHelper::convertPriceFromCents($payment->purchase_amount),
                     $paymentMode,
                     null,
@@ -224,7 +213,7 @@ class PaymentValidation
                     false,
                     $customer->secure_key
                 );
-            } catch (PrestaShopException $e) {
+            } catch (\PrestaShopException $e) {
                 Logger::instance()->warning("[Alma] Error validation Order: {$e->getMessage()}");
             }
 
@@ -260,27 +249,27 @@ class PaymentValidation
             $extraRedirectArgs = "&recover_cart={$cart->id}&token_cart={$tokenCart}";
         }
 
-        return $this->context->link->getPageLink('order-confirmation', true) .
-            '?id_cart=' . (int) $cart->id .
-            '&id_module=' . (int) $this->module->id .
-            '&id_order=' . (int) $this->module->currentOrder .
-            '&key=' . $customer->secure_key .
-            $extraRedirectArgs;
+        return $this->context->link->getPageLink('order-confirmation', true)
+            . '?id_cart=' . (int) $cart->id
+            . '&id_module=' . (int) $this->module->id
+            . '&id_order=' . (int) $this->module->currentOrder
+            . '&key=' . $customer->secure_key
+            . $extraRedirectArgs;
     }
 
     /**
      * @param $cartId
      *
-     * @return OrderCore|null
+     * @return \OrderCore|null
      */
     private function getOrderByCartId($cartId)
     {
-        if (is_callable(['Order', 'getByCartId'])) {
-            return Order::getByCartId((int) $cartId);
+        if (is_callable(['\Order', 'getByCartId'])) {
+            return \Order::getByCartId((int) $cartId);
         } else {
-            $orderId = (int) Order::getOrderByCartId((int) $cartId);
+            $orderId = (int) \Order::getOrderByCartId((int) $cartId);
 
-            return new Order($orderId);
+            return new \Order($orderId);
         }
     }
 
@@ -289,20 +278,20 @@ class PaymentValidation
      * in context to prevent amount_mismatch error
      * When calculating cart amount from an IPN call.
      *
-     * @param Cart $cart
-     * @param Customer $cart
+     * @param \Cart $cart
+     * @param \Customer $cart
      *
      * @return float
      */
     private function getCartTotals($cart, $customer)
     {
         if ((int) $this->context->customer->id === (int) $customer->id) {
-            return $cart->getOrderTotal(true, Cart::BOTH);
+            return $cart->getOrderTotal(true, \Cart::BOTH);
         }
 
         $ipnCustomer = $this->context->customer;
         $this->context->customer = $customer;
-        $cartTotals = $cart->getOrderTotal(true, Cart::BOTH);
+        $cartTotals = $cart->getOrderTotal(true, \Cart::BOTH);
         $this->context->customer = $ipnCustomer;
 
         return $cartTotals;

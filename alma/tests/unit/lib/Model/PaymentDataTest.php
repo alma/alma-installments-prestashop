@@ -21,6 +21,7 @@
  * @copyright 2018-2023 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
+
 namespace Alma\PrestaShop\Tests\Unit\Lib\Model;
 
 use Address;
@@ -28,6 +29,7 @@ use Alma\PrestaShop\Model\PaymentData;
 use Cart;
 use Context;
 use Customer;
+use Exception;
 use Language;
 use PHPUnit\Framework\TestCase;
 use Product;
@@ -37,7 +39,7 @@ class PaymentDataTest extends TestCase
     /**
      * @return void
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function testdataFromCart()
     {

@@ -21,6 +21,7 @@
  * @copyright 2018-2023 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
+
 namespace Alma\PrestaShop\Controllers\Hook;
 
 if (!defined('_PS_VERSION_')) {
@@ -30,12 +31,11 @@ if (!defined('_PS_VERSION_')) {
 use Alma\PrestaShop\Helpers\ConstantsHelper;
 use Alma\PrestaShop\Helpers\SettingsHelper;
 use Alma\PrestaShop\Hooks\FrontendHookController;
-use FrontController;
 
 class FrontHeaderHookController extends FrontendHookController
 {
     /**
-     * @var FrontController
+     * @var \FrontController
      */
     private $controller;
 
@@ -116,8 +116,8 @@ class FrontHeaderHookController extends FrontendHookController
     {
         // Step is available on Prestashop < 1.7
         if (version_compare(_PS_VERSION_, '1.7', '<')) {
-            return ('order' == $this->controller->php_self && 0 == $this->controller->step) ||
-                'order-opc' == $this->controller->php_self;
+            return ('order' == $this->controller->php_self && 0 == $this->controller->step)
+                || 'order-opc' == $this->controller->php_self;
         }
 
         return 'cart' == $this->controller->php_self;
@@ -130,8 +130,8 @@ class FrontHeaderHookController extends FrontendHookController
     {
         // Step is available on Prestashop < 1.7
         if (version_compare(_PS_VERSION_, '1.7', '<')) {
-            return ('order' == $this->controller->php_self && 3 == $this->controller->step) ||
-                'order-opc' == $this->controller->php_self;
+            return ('order' == $this->controller->php_self && 3 == $this->controller->step)
+                || 'order-opc' == $this->controller->php_self;
         }
 
         return 'order' == $this->controller->php_self;

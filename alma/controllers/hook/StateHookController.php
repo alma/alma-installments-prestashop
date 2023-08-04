@@ -21,6 +21,7 @@
  * @copyright 2018-2023 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
+
 namespace Alma\PrestaShop\Controllers\Hook;
 
 if (!defined('_PS_VERSION_')) {
@@ -35,10 +36,6 @@ use Alma\PrestaShop\Helpers\SettingsHelper;
 use Alma\PrestaShop\Hooks\AdminHookController;
 use Alma\PrestaShop\Logger;
 use Alma\PrestaShop\Model\OrderData;
-use Configuration;
-use Order;
-use PrestaShopDatabaseException;
-use PrestaShopException;
 
 final class StateHookController extends AdminHookController
 {
@@ -61,17 +58,17 @@ final class StateHookController extends AdminHookController
      *
      * @param $params
      *
-     * @throws PrestaShopDatabaseException
-     * @throws PrestaShopException
+     * @throws \PrestaShopDatabaseException
+     * @throws \PrestaShopException
      */
     public function run($params)
     {
-        $order = new Order($params['id_order']);
+        $order = new \Order($params['id_order']);
         $newStatus = $params['newOrderStatus'];
         if ($order->module !== 'alma') {
             return;
         }
-        if ($newStatus->id == Configuration::get('PS_OS_REFUND')) {
+        if ($newStatus->id == \Configuration::get('PS_OS_REFUND')) {
             $orderHelper = new OrderHelper();
             $orderPayment = $orderHelper->getOrderPaymentOrFail($order);
         } else {
@@ -109,7 +106,7 @@ final class StateHookController extends AdminHookController
      *
      * @param Client $alma
      * @param string $idPayment
-     * @param Order $order
+     * @param \Order $order
      *
      * @return void
      */
@@ -130,7 +127,7 @@ final class StateHookController extends AdminHookController
      *
      * @param Client $alma
      * @param string $idPayment
-     * @param Order $order
+     * @param \Order $order
      *
      * @return void
      */

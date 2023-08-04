@@ -21,6 +21,7 @@
  * @copyright 2018-2023 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
+
 namespace Alma\PrestaShop\Helpers;
 
 use Alma\API\RequestError;
@@ -28,10 +29,6 @@ use Alma\PrestaShop\Exceptions\ShareOfCheckoutException;
 use Alma\PrestaShop\Forms\ApiAdminFormBuilder;
 use Alma\PrestaShop\Forms\ShareOfCheckoutAdminFormBuilder;
 use Alma\PrestaShop\Logger;
-use Configuration;
-use Context;
-use Currency;
-use Tools;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -52,15 +49,14 @@ class ShareOfCheckoutHelper
     const PAYMENT_METHOD_KEY = 'payment_method_name';
 
     /**
-     * @var Context
+     * @var \Context
      */
     protected $context;
 
-    public function __construct(
-        OrderHelper $orderHelper
-    ) {
+    public function __construct($orderHelper)
+    {
         $this->orderHelper = $orderHelper;
-        $this->context = Context::getContext();
+        $this->context = \Context::getContext();
     }
 
     /**
@@ -258,7 +254,7 @@ class ShareOfCheckoutHelper
      */
     public function handleCheckoutConsent($consentAttribute)
     {
-        $userConsent = Tools::getValue($consentAttribute);
+        $userConsent = \Tools::getValue($consentAttribute);
 
         SettingsHelper::updateValue(
             ShareOfCheckoutAdminFormBuilder::ALMA_SHARE_OF_CHECKOUT_STATE,
@@ -287,12 +283,12 @@ class ShareOfCheckoutHelper
     {
         try {
             if (
-                Tools::getValue(ApiAdminFormBuilder::ALMA_LIVE_API_KEY) !== SettingsHelper::getLiveKey()
-                && ConstantsHelper::OBSCURE_VALUE !== Tools::getValue(ApiAdminFormBuilder::ALMA_LIVE_API_KEY)
+                \Tools::getValue(ApiAdminFormBuilder::ALMA_LIVE_API_KEY) !== SettingsHelper::getLiveKey()
+                && ConstantsHelper::OBSCURE_VALUE !== \Tools::getValue(ApiAdminFormBuilder::ALMA_LIVE_API_KEY)
             ) {
                 $this->removeConsent();
-                Configuration::deleteByName(ShareOfCheckoutAdminFormBuilder::ALMA_SHARE_OF_CHECKOUT_STATE);
-                Configuration::deleteByName(ShareOfCheckoutAdminFormBuilder::ALMA_SHARE_OF_CHECKOUT_DATE);
+                \Configuration::deleteByName(ShareOfCheckoutAdminFormBuilder::ALMA_SHARE_OF_CHECKOUT_STATE);
+                \Configuration::deleteByName(ShareOfCheckoutAdminFormBuilder::ALMA_SHARE_OF_CHECKOUT_DATE);
             }
         } catch (ShareOfCheckoutException $e) {
             $this->context->smarty->assign('validation_error', 'soc_api_error');
@@ -445,7 +441,7 @@ class ShareOfCheckoutHelper
      */
     private function getIsoCodeById($id)
     {
-        $currency = new Currency();
+        $currency = new \Currency();
         if (method_exists(get_parent_class($currency), 'getIsoCodeById')) {
             return $currency->getIsoCodeById($id);
         }
@@ -473,7 +469,7 @@ class ShareOfCheckoutHelper
      */
     protected function getEnabledDate()
     {
-        return Configuration::get(ShareOfCheckoutAdminFormBuilder::ALMA_SHARE_OF_CHECKOUT_DATE);
+        return \Configuration::get(ShareOfCheckoutAdminFormBuilder::ALMA_SHARE_OF_CHECKOUT_DATE);
     }
 
     /**

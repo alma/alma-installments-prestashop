@@ -21,6 +21,7 @@
  * @copyright 2018-2023 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
+
 namespace Alma\PrestaShop\Controllers\Hook;
 
 if (!defined('_PS_VERSION_')) {
@@ -34,8 +35,6 @@ use Alma\PrestaShop\Helpers\SettingsCustomFieldsHelper;
 use Alma\PrestaShop\Helpers\SettingsHelper;
 use Alma\PrestaShop\Hooks\FrontendHookController;
 use Alma\PrestaShop\Model\CartData;
-use Cart;
-use Media;
 
 class DisplayShoppingCartFooterHookController extends FrontendHookController
 {
@@ -57,7 +56,7 @@ class DisplayShoppingCartFooterHookController extends FrontendHookController
         }
 
         $cart = $this->context->cart;
-        $cartTotal = PriceHelper::convertPriceToCents((float) $cart->getOrderTotal(true, Cart::BOTH));
+        $cartTotal = PriceHelper::convertPriceToCents((float) $cart->getOrderTotal(true, \Cart::BOTH));
 
         $isEligible = true;
         if (!SettingsHelper::showCartWidgetIfNotEligible()) {
@@ -82,8 +81,8 @@ class DisplayShoppingCartFooterHookController extends FrontendHookController
             }
         }
 
-        if (is_callable('Media::getMediaPath')) {
-            $logo = Media::getMediaPath(_PS_MODULE_DIR_ . $this->module->name . '/views/img/logos/logo_alma.svg');
+        if (is_callable('\Media::getMediaPath')) {
+            $logo = \Media::getMediaPath(_PS_MODULE_DIR_ . $this->module->name . '/views/img/logos/logo_alma.svg');
         } else {
             $logo = $this->module->getPathUri() . '/views/img/logos/logo_alma.svg';
         }

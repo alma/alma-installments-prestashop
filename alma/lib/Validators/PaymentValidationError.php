@@ -21,11 +21,10 @@
  * @copyright 2018-2023 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
+
 namespace Alma\PrestaShop\Validators;
 
-use Exception;
-
-class PaymentValidationError extends Exception
+class PaymentValidationError extends \Exception
 {
     public $cart;
 

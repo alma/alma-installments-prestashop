@@ -21,12 +21,8 @@
  * @copyright 2018-2023 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
-namespace Alma\PrestaShop\Helpers;
 
-use Context;
-use Exception;
-use Language;
-use Tools;
+namespace Alma\PrestaShop\Helpers;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -50,40 +46,35 @@ class LocaleHelper
      *
      * @return string The decimal separator used for the current context (locale)
      *
-     * @throws Exception
+     * @throws \Exception
      */
     public static function decimalSeparator()
     {
         if (version_compare(_PS_VERSION_, '1.7', '<')) {
-            $currencyFormat = Context::getContext()->currency->format;
+            $currencyFormat = \Context::getContext()->currency->format;
 
             switch ($currencyFormat) {
-                // X0,000.00
-                case 1:
-                    // 0,000.00X
-                case 4:
-                // 0'000.00X
-                case 5:
+                case 1: // "X0,000.00"
+                case 4: // "0,000.00X"
+                case 5: // "0'000.00X"
                     return '.';
-                // 0 000,00X
-                case 2:
-                // X0.000,00
-                case 3:
+                case 2: // "0 000,00X"
+                case 3: // "X0.000,00"
                     return ',';
                 default:
-                    throw new Exception(sprintf('Currency format not supported %s', $currencyFormat));
+                    throw new \Exception(sprintf('Currency format not supported %s', $currencyFormat));
             }
         }
 
         if (version_compare(_PS_VERSION_, '1.7.6', '<')) {
-            $cldr = Tools::getCldr(Context::getContext());
+            $cldr = \Tools::getCldr(\Context::getContext());
             $culture = $cldr->getCulture();
             $locale = $cldr->getRepository()->locales[$culture];
 
             return $locale['numbers']['symbols-numberSystem-latn']['decimal'];
         }
 
-        $currentLocale = Context::getContext()->getCurrentLocale();
+        $currentLocale = \Context::getContext()->getCurrentLocale();
         $numberSpec = $currentLocale->getNumberSpecification();
         $symbols = $numberSpec->getSymbolsByNumberingSystem('latn');
 
@@ -93,42 +84,37 @@ class LocaleHelper
     /**
      * @return mixed|string
      *
-     * @throws Exception
+     * @throws \Exception
      */
     public static function thousandSeparator()
     {
         if (version_compare(_PS_VERSION_, '1.7', '<')) {
-            $currencyFormat = Context::getContext()->currency->format;
+            $currencyFormat = \Context::getContext()->currency->format;
 
             switch ($currencyFormat) {
-                // X0,000.00
-                case 1:
-                // 0,000.00X
-                case 4:
+                case 1: // "X0,000.00"
+                case 4: // "0,000.00X"
                     return ',';
-                // 0 000,00X
-                case 2:
+                case 2: // "0 000,00X"
                     return ' ';
-                // X0.000,00
-                case 3:
+                case 3: // "X0.000,00"
                     return '.';
-                // 0'000.00X
-                case 5:
+                case 5: // "0'000.00X"
                     return "'";
                 default:
-                    throw new Exception(sprintf('Currency format not supported %s', $currencyFormat));
+                    throw new \Exception(sprintf('Currency format not supported %s', $currencyFormat));
             }
         }
 
         if (version_compare(_PS_VERSION_, '1.7.6', '<')) {
-            $cldr = Tools::getCldr(Context::getContext());
+            $cldr = \Tools::getCldr(\Context::getContext());
             $culture = $cldr->getCulture();
             $locale = $cldr->getRepository()->locales[$culture];
 
             return $locale['numbers']['symbols-numberSystem-latn']['group'];
         }
 
-        $currentLocale = Context::getContext()->getCurrentLocale();
+        $currentLocale = \Context::getContext()->getCurrentLocale();
         $numberSpec = $currentLocale->getNumberSpecification();
         $symbols = $numberSpec->getSymbolsByNumberingSystem('latn');
 
@@ -195,7 +181,7 @@ class LocaleHelper
      */
     public static function localeByIdLangForWidget($idLang)
     {
-        $locale = Language::getIsoById($idLang);
+        $locale = \Language::getIsoById($idLang);
 
         if ('nl' == $locale) {
             $locale = 'nl-NL';

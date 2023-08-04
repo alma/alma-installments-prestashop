@@ -21,6 +21,7 @@
  * @copyright 2018-2023 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
+
 namespace Alma\PrestaShop\Tests\Unit\Lib\Model;
 
 use Alma\PrestaShop\Helpers\ProductHelper;
@@ -28,6 +29,8 @@ use Alma\PrestaShop\Model\CartData;
 use Alma\PrestaShop\Repositories\ProductRepository;
 use Cart;
 use PHPUnit\Framework\TestCase;
+use PrestaShopDatabaseException;
+use PrestaShopException;
 use Product;
 
 class CartDataTest extends TestCase
@@ -37,8 +40,8 @@ class CartDataTest extends TestCase
      *
      * @return void
      *
-     * @throws \PrestaShopDatabaseException
-     * @throws \PrestaShopException
+     * @throws PrestaShopDatabaseException
+     * @throws PrestaShopException
      */
     public function testGetCartItems($items, $expected)
     {

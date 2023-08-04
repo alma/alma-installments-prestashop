@@ -21,6 +21,7 @@
  * @copyright 2018-2023 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
+
 namespace Alma\PrestaShop\Controllers\Hook;
 
 if (!defined('_PS_VERSION_')) {
@@ -33,8 +34,6 @@ use Alma\PrestaShop\Helpers\SettingsHelper;
 use Alma\PrestaShop\Helpers\ShareOfCheckoutHelper;
 use Alma\PrestaShop\Hooks\FrontendHookController;
 use Alma\PrestaShop\Logger;
-use Configuration;
-use DateTime;
 
 class DisplayBackOfficeHeaderHookController extends FrontendHookController
 {
@@ -62,10 +61,10 @@ class DisplayBackOfficeHeaderHookController extends FrontendHookController
         $this->context->controller->addCSS($this->module->_path . 'views/css/admin/almaPage.css', 'all');
         $this->context->controller->addJS($this->module->_path . 'views/js/admin/alma.js');
 
-        $date = new DateTime();
+        $date = new \DateTime();
         $timestamp = $date->getTimestamp();
 
-        if (!DateHelper::isSameDay($timestamp, Configuration::get('ALMA_SOC_CRON_TASK'))) {
+        if (!DateHelper::isSameDay($timestamp, \Configuration::get('ALMA_SOC_CRON_TASK'))) {
             Logger::instance()->info('Pseudo Cron Task exec to ' . $timestamp);
             $orderHelper = new OrderHelper();
             $shareOfCheckoutHelper = new ShareOfCheckoutHelper($orderHelper);

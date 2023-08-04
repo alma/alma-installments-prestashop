@@ -21,9 +21,8 @@
  * @copyright 2018-2023 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
-namespace Alma\PrestaShop\Helpers;
 
-use Hook;
+namespace Alma\PrestaShop\Helpers;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -41,7 +40,7 @@ class HookHelper
 
     public function __construct()
     {
-        $this->hooks = Hook::getHooks();
+        $this->hooks = \Hook::getHooks();
     }
 
     /**

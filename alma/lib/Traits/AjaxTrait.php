@@ -21,10 +21,8 @@
  * @copyright 2018-2023 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
-namespace Alma\PrestaShop\Traits;
 
-use PrestaShopException;
-use Tools;
+namespace Alma\PrestaShop\Traits;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -47,7 +45,7 @@ trait AjaxTrait
      *
      * @return void
      *
-     * @throws PrestaShopException
+     * @throws \PrestaShopException
      */
     protected function ajaxRenderAndExit($value = null, $responseCode = null, $controller = null, $method = null)
     {
@@ -72,7 +70,7 @@ trait AjaxTrait
      *
      * @return void
      *
-     * @throws PrestaShopException
+     * @throws \PrestaShopException
      */
     protected function ajaxFailAndDie($msg = null, $statusCode = 500)
     {
@@ -89,12 +87,12 @@ trait AjaxTrait
      *
      * @return void
      *
-     * @throws PrestaShopException
+     * @throws \PrestaShopException
      */
     protected function renderAndExit($value = null, $controller = null, $method = null)
     {
         $this->ajaxRender($value, $controller, $method);
-        exit();
+        exit;
     }
 
     /**
@@ -104,6 +102,6 @@ trait AjaxTrait
      */
     protected function ajaxRenderBefore16012($value)
     {
-        exit(Tools::jsonEncode($value));
+        exit(\Tools::jsonEncode($value));
     }
 }

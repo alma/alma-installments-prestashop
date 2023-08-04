@@ -21,11 +21,8 @@
  * @copyright 2018-2023 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
-namespace Alma\PrestaShop\Model;
 
-use Configuration;
-use Db;
-use PrestaShopDatabaseException;
+namespace Alma\PrestaShop\Model;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -41,7 +38,7 @@ class CarrierData
      *
      * @return array Carriers
      *
-     * @throws PrestaShopDatabaseException
+     * @throws \PrestaShopDatabaseException
      */
     public function getCarriers()
     {
@@ -54,11 +51,11 @@ class CarrierData
             FROM
                 `' . _DB_PREFIX_ . 'carrier` c
             ';
-            $this->carriers = Db::getInstance()->executeS($sql);
+            $this->carriers = \Db::getInstance()->executeS($sql);
 
             foreach ($this->carriers as $key => $carrier) {
                 if ($carrier['name'] == '0') {
-                    $this->carriers[$key]['name'] = Configuration::get('PS_SHOP_NAME');
+                    $this->carriers[$key]['name'] = \Configuration::get('PS_SHOP_NAME');
                 }
             }
         }

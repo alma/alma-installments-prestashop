@@ -21,6 +21,7 @@
  * @copyright 2018-2023 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
+
 namespace Alma\PrestaShop\Model;
 
 if (!defined('_PS_VERSION_')) {
@@ -28,13 +29,11 @@ if (!defined('_PS_VERSION_')) {
 }
 
 use Alma\PrestaShop\Helpers\PriceHelper;
-use Carrier;
-use Cart;
 
 class ShippingData
 {
     /**
-     * @param Cart $cart
+     * @param \Cart $cart
      *
      * @return array|null
      */
@@ -74,8 +73,8 @@ class ShippingData
         $shippingInfo = ['selected_options' => []];
         foreach ($carrierIdArray as $carrierId) {
             $carrierInfo = $deliveryOptionList[$addressId][$carriersListKey]['carrier_list'][$carrierId];
-            /** @var Carrier $carrier */
-            $carrier = new Carrier($carrierId, $cart->id_lang);
+            /** @var \Carrier $carrier */
+            $carrier = new \Carrier($carrierId, $cart->id_lang);
             if (!$carrier) {
                 continue;
             }
@@ -85,7 +84,7 @@ class ShippingData
         $knownOptions = [];
         foreach ($deliveryOptionList[$addressId] as $carriers) {
             foreach ($carriers['carrier_list'] as $id => $carrierOptionInfo) {
-                $carrierOption = new Carrier($id, $cart->id_lang);
+                $carrierOption = new \Carrier($id, $cart->id_lang);
                 if (!$carrierOption) {
                     continue;
                 }
@@ -109,7 +108,7 @@ class ShippingData
     }
 
     /**
-     * @param Carrier $carrier
+     * @param \Carrier $carrier
      * @param array $carrierInfo
      *
      * @return array

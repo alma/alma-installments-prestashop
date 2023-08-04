@@ -21,10 +21,9 @@
  * @copyright 2018-2023 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
+
 namespace Alma\PrestaShop\Exceptions;
 
-use Exception;
-
-class AlmaException extends Exception
+class AlmaException extends \Exception
 {
 }

@@ -9,6 +9,7 @@ mkdir -p ./tmp/build/alma
 cp CHANGELOG.md ./alma/
 cp -r CHANGELOG.md ./alma/* ./tmp/build/alma
 rm -f ./tmp/build/alma/composer.lock
+rm -rf ./tmp/build/alma/tests
 
 mkdir ./dist
 
@@ -18,7 +19,7 @@ rm -rf vendor config.xml config_*.xml
 composer install --no-dev --optimize-autoloader
 composer dump-autoload --optimize
 
-"$DIR/tools/vendor/bin/autoindex" prestashop:add:index
+"$DIR/alma/vendor/bin/autoindex" prestashop:add:index
 
 cd ..
 

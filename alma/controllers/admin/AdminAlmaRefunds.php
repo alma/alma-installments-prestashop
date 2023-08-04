@@ -29,7 +29,6 @@ use Alma\PrestaShop\Helpers\PriceHelper;
 use Alma\PrestaShop\Helpers\RefundHelper;
 use Alma\PrestaShop\Logger;
 use Alma\PrestaShop\Traits\AjaxTrait;
-use PrestaShop\PrestaShop\Core\Localization\Exception\LocalizationException;
 
 class AdminAlmaRefundsController extends ModuleAdminController
 {
@@ -50,7 +49,6 @@ class AdminAlmaRefundsController extends ModuleAdminController
      *
      * @throws PrestaShopDatabaseException
      * @throws PrestaShopException
-     * @throws LocalizationException
      */
     public function ajaxProcessRefund()
     {
