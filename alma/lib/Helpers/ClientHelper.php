@@ -21,6 +21,7 @@
  * @copyright 2018-2023 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
+
 namespace Alma\PrestaShop\Helpers;
 
 if (!defined('_PS_VERSION_')) {
@@ -71,6 +72,7 @@ class ClientHelper
      * Check Alma client
      *
      * @return Client
+     *
      * @throws ClientException
      */
     public function getAlmaClient()

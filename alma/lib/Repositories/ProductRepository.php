@@ -21,6 +21,7 @@
  * @copyright 2018-2023 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
+
 namespace Alma\PrestaShop\Repositories;
 
 if (!defined('_PS_VERSION_')) {

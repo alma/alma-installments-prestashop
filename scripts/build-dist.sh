@@ -19,7 +19,7 @@ rm -rf vendor config.xml config_*.xml
 composer install --no-dev --optimize-autoloader
 composer dump-autoload --optimize
 
-"$DIR/tools/vendor/bin/autoindex" prestashop:add:index
+"$DIR/alma/vendor/bin/autoindex" prestashop:add:index
 
 cd ..
 
