@@ -22,7 +22,7 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
-namespace Alma\PrestaShop\Tests\Unit\Lib\ShareOfCheckout;
+namespace Alma\PrestaShop\Tests\Unit\Helper;
 
 use Alma\PrestaShop\Helpers\OrderHelper;
 use Alma\PrestaShop\Helpers\ShareOfCheckoutHelper;

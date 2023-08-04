@@ -468,7 +468,7 @@ class ShareOfCheckoutHelper
     /**
      * @return string|false
      */
-    protected function getEnabledDate()
+    public function getEnabledDate()
     {
         return \Configuration::get(ShareOfCheckoutAdminFormBuilder::ALMA_SHARE_OF_CHECKOUT_DATE);
     }
@@ -476,7 +476,7 @@ class ShareOfCheckoutHelper
     /**
      * @return array
      */
-    protected function getDatesInInterval($lastShareOfCheckout, $shareOfCheckoutEnabledDate)
+    public function getDatesInInterval($lastShareOfCheckout, $shareOfCheckoutEnabledDate)
     {
         return DateHelper::getDatesInInterval($lastShareOfCheckout, $shareOfCheckoutEnabledDate);
     }
