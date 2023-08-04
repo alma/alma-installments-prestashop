@@ -52,7 +52,8 @@ class ShareOfCheckoutHelper
      */
     protected $context;
 
-    public function __construct($orderHelper) {
+    public function __construct($orderHelper)
+    {
         $this->orderHelper = $orderHelper;
         $this->context = \Context::getContext();
     }
