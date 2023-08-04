@@ -40,7 +40,7 @@ class CarrierHelper
     /** @var CarrierData */
     private $carrierData;
 
-    public function __construct(\Context $context)
+    public function __construct($context)
     {
         $this->context = $context;
         $this->carrierData = new CarrierData();

@@ -40,7 +40,7 @@ class CartHelper
     /** @var \Context */
     private $context;
 
-    public function __construct(\Context $context)
+    public function __construct($context)
     {
         $this->context = $context;
     }

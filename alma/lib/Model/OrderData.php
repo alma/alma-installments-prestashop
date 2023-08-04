@@ -29,7 +29,7 @@ if (!defined('_PS_VERSION_')) {
 
 class OrderData
 {
-    public static function getCurrentOrderPayment(\Order $order)
+    public static function getCurrentOrderPayment($order)
     {
         if ('alma' != $order->module && 1 == $order->valid) {
             return false;
