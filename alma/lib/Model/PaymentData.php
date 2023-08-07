@@ -184,7 +184,7 @@ class PaymentData
                 'deferred_days' => $feePlans['deferredDays'],
                 'deferred_months' => $feePlans['deferredMonths'],
                 'purchase_amount' => PriceHelper::convertPriceToCents($purchaseAmount),
-                'customer_cancel_url' => $context->link->getPageLink('order'),
+                'customer_cancel_url' => $context->link->getPageLink('order&step=3'),
                 'return_url' => $context->link->getModuleLink('alma', 'validation'),
                 'ipn_callback_url' => $context->link->getModuleLink('alma', 'ipn'),
                 'shipping_address' => [
