@@ -21,6 +21,7 @@
  * @copyright 2018-2023 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
+
 namespace Alma\PrestaShop\Forms;
 
 use Alma\API\Entities\FeePlan;
@@ -41,7 +42,7 @@ class PnxAdminFormBuilder extends AbstractAlmaAdminFormBuilder
      *
      * @return array
      */
-    protected function buildPnxForm(FeePlan $feePlan, $duration)
+    protected function buildPnxForm($feePlan, $duration)
     {
         $tabId = $key = $feePlan->getPlanKey();
 
@@ -168,7 +169,7 @@ class PnxAdminFormBuilder extends AbstractAlmaAdminFormBuilder
      *
      * @return string
      */
-    private function getLabel(FeePlan $feePlan, $duration)
+    private function getLabel($feePlan, $duration)
     {
         if ($feePlan->isPnXOnly()) {
             return sprintf(
@@ -203,7 +204,7 @@ class PnxAdminFormBuilder extends AbstractAlmaAdminFormBuilder
      *
      * @return string
      */
-    protected function getTabTitle(FeePlan $feePlan, $duration)
+    protected function getTabTitle($feePlan, $duration)
     {
         if ($feePlan->isPayNow()) {
             return sprintf(

@@ -21,6 +21,7 @@
  * @copyright 2018-2023 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
+
 namespace Alma\PrestaShop\Controllers\Hook;
 
 if (!defined('_PS_VERSION_')) {
@@ -29,7 +30,6 @@ if (!defined('_PS_VERSION_')) {
 
 use Alma\PrestaShop\Helpers\SettingsHelper;
 use Alma\PrestaShop\Hooks\FrontendHookController;
-use Tools;
 
 class DisplayAdminAfterHeaderHookController extends FrontendHookController
 {
@@ -42,18 +42,18 @@ class DisplayAdminAfterHeaderHookController extends FrontendHookController
     {
         $isLive = SettingsHelper::getActiveMode() === ALMA_MODE_LIVE;
 
-        return parent::canRun() &&
-            (Tools::strtolower($this->currentControllerName()) == 'admindashboard' ||
-            Tools::strtolower($this->currentControllerName()) == 'adminpsmbomodule' ||
-            Tools::strtolower($this->currentControllerName()) == 'adminmodulesnotifications' ||
-            Tools::strtolower($this->currentControllerName()) == 'adminmodulesupdates' ||
-            Tools::strtolower($this->currentControllerName()) == 'adminpsmboaddons' ||
-            Tools::strtolower($this->currentControllerName()) == 'adminmodulesmanage' ||
-            Tools::strtolower($this->currentControllerName()) == 'adminalmacategories' ||
-            Tools::getValue('configure') == 'alma' ||
-            Tools::getValue('module_name') == 'alma') &&
-            $isLive &&
-            SettingsHelper::getMerchantId() != null;
+        return parent::canRun()
+            && (\Tools::strtolower($this->currentControllerName()) == 'admindashboard'
+            || \Tools::strtolower($this->currentControllerName()) == 'adminpsmbomodule'
+            || \Tools::strtolower($this->currentControllerName()) == 'adminmodulesnotifications'
+            || \Tools::strtolower($this->currentControllerName()) == 'adminmodulesupdates'
+            || \Tools::strtolower($this->currentControllerName()) == 'adminpsmboaddons'
+            || \Tools::strtolower($this->currentControllerName()) == 'adminmodulesmanage'
+            || \Tools::strtolower($this->currentControllerName()) == 'adminalmacategories'
+            || \Tools::getValue('configure') == 'alma'
+            || \Tools::getValue('module_name') == 'alma')
+            && $isLive
+            && SettingsHelper::getMerchantId() != null;
     }
 
     /**
@@ -67,7 +67,7 @@ class DisplayAdminAfterHeaderHookController extends FrontendHookController
     {
         if (SettingsHelper::isShareOfCheckoutNoAnswered() || !SettingsHelper::isShareOfCheckoutSetting()) {
             $this->context->smarty->assign([
-                'token' => Tools::getAdminTokenLite('AdminAlmaShareOfCheckout'),
+                'token' => \Tools::getAdminTokenLite('AdminAlmaShareOfCheckout'),
             ]);
 
             return $this->module->display($this->module->file, 'notificationShareOfCheckout.tpl');

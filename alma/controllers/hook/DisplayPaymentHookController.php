@@ -21,6 +21,7 @@
  * @copyright 2018-2023 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
+
 namespace Alma\PrestaShop\Controllers\Hook;
 
 if (!defined('_PS_VERSION_')) {
@@ -36,10 +37,6 @@ use Alma\PrestaShop\Helpers\SettingsCustomFieldsHelper;
 use Alma\PrestaShop\Helpers\SettingsHelper;
 use Alma\PrestaShop\Hooks\FrontendHookController;
 use Alma\PrestaShop\Model\CartData;
-use Cart;
-use Language;
-use Media;
-use Tools;
 
 class DisplayPaymentHookController extends FrontendHookController
 {
@@ -71,7 +68,7 @@ class DisplayPaymentHookController extends FrontendHookController
         $paymentOptions = [];
         $sortOptions = [];
         $totalCart = (float) PriceHelper::convertPriceToCents(
-            Tools::ps_round((float) $this->context->cart->getOrderTotal(true, Cart::BOTH), 2)
+            \Tools::ps_round((float) $this->context->cart->getOrderTotal(true, \Cart::BOTH), 2)
         );
 
         foreach ($installmentPlans as $keyPlan => $plan) {
@@ -162,7 +159,7 @@ class DisplayPaymentHookController extends FrontendHookController
     private function getInstallmentText($plans, $idLang, $isDeferredTriggerLimitDays, $isPayNow)
     {
         $nbPlans = count($plans);
-        $locale = Language::getIsoById($idLang);
+        $locale = \Language::getIsoById($idLang);
 
         if ($isDeferredTriggerLimitDays) {
             return sprintf(
@@ -213,8 +210,8 @@ class DisplayPaymentHookController extends FrontendHookController
             $logoName = "{$value}j_logo.svg";
         }
 
-        if (is_callable('Media::getMediaPath')) {
-            $logo = Media::getMediaPath(
+        if (is_callable('\Media::getMediaPath')) {
+            $logo = \Media::getMediaPath(
                 _PS_MODULE_DIR_ . $this->module->name . "/views/img/logos/{$logoName}"
             );
         } else {

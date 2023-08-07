@@ -133,9 +133,9 @@ class Alma extends PaymentModule
     {
         $coreInstall = parent::install();
 
-        if (!$this->checkCoreInstall($coreInstall) ||
-            !$this->checkDependencies() ||
-            !$this->registerHooks()) {
+        if (!$this->checkCoreInstall($coreInstall)
+            || !$this->checkDependencies()
+            || !$this->registerHooks()) {
             return false;
         }
 

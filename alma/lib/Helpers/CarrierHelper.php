@@ -21,11 +21,10 @@
  * @copyright 2018-2023 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
+
 namespace Alma\PrestaShop\Helpers;
 
 use Alma\PrestaShop\Model\CarrierData;
-use Context;
-use PrestaShopDatabaseException;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -37,12 +36,12 @@ if (!defined('_PS_VERSION_')) {
 class CarrierHelper
 {
     const UNKNOWN_CARRIER = 'Unknown';
-    /** @var Context */
+    /** @var \Context */
     private $context;
     /** @var CarrierData */
     private $carrierData;
 
-    public function __construct(Context $context)
+    public function __construct($context)
     {
         $this->context = $context;
         $this->carrierData = new CarrierData();
@@ -59,7 +58,7 @@ class CarrierHelper
     {
         try {
             $carriers = $this->carrierData->getCarriers();
-        } catch (PrestaShopDatabaseException $e) {
+        } catch (\PrestaShopDatabaseException $e) {
             return self::UNKNOWN_CARRIER;
         }
 

@@ -21,6 +21,7 @@
  * @copyright 2018-2023 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
+
 namespace Alma\PrestaShop\Helpers;
 
 if (!defined('_PS_VERSION_')) {
@@ -31,14 +32,13 @@ use Alma\API\Endpoints\Results\Eligibility;
 use Alma\API\RequestError;
 use Alma\PrestaShop\Logger;
 use Alma\PrestaShop\Model\PaymentData;
-use Cart;
 
 class EligibilityHelper
 {
     public static function eligibilityCheck($context)
     {
         $almaEligibilities = [];
-        $purchaseAmount = PriceHelper::convertPriceToCents($context->cart->getOrderTotal(true, Cart::BOTH));
+        $purchaseAmount = PriceHelper::convertPriceToCents($context->cart->getOrderTotal(true, \Cart::BOTH));
         $alma = self::checkClientInstance();
         $feePlans = self::checkFeePlans();
         $eligibilities = self::getNotEligibleFeePlans($feePlans, $purchaseAmount);

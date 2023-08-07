@@ -21,6 +21,7 @@
  * @copyright 2018-2023 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
+
 namespace Alma\PrestaShop\Model;
 
 if (!defined('_PS_VERSION_')) {
@@ -31,25 +32,18 @@ use Alma\PrestaShop\Helpers\PriceHelper;
 use Alma\PrestaShop\Helpers\ProductHelper;
 use Alma\PrestaShop\Helpers\SettingsHelper;
 use Alma\PrestaShop\Repositories\ProductRepository;
-use Cart;
-use CartRule;
-use Configuration;
-use PrestaShopDatabaseException;
-use PrestaShopException;
-use Product;
-use TaxConfiguration;
 
 class CartData
 {
     private static $taxCalculationMethod = [];
 
     /**
-     * @param Cart $cart
+     * @param \Cart $cart
      *
      * @return array
      *
-     * @throws PrestaShopDatabaseException
-     * @throws PrestaShopException
+     * @throws \PrestaShopDatabaseException
+     * @throws \PrestaShopException
      */
     public static function cartInfo($cart)
     {
@@ -63,24 +57,24 @@ class CartData
     }
 
     /**
-     * @param Cart $cart
+     * @param \Cart $cart
      *
      * @return bool|mixed
      */
     private static function includeTaxes($cart)
     {
         if (version_compare(_PS_VERSION_, '1.7', '>=')) {
-            $taxConfiguration = new TaxConfiguration();
+            $taxConfiguration = new \TaxConfiguration();
 
             return $taxConfiguration->includeTaxes();
         } else {
-            if (!Configuration::get('PS_TAX')) {
+            if (!\Configuration::get('PS_TAX')) {
                 return false;
             }
 
             $idCustomer = (int) $cart->id_customer;
             if (!array_key_exists($idCustomer, self::$taxCalculationMethod)) {
-                self::$taxCalculationMethod[$idCustomer] = !Product::getTaxCalculationMethod($idCustomer);
+                self::$taxCalculationMethod[$idCustomer] = !\Product::getTaxCalculationMethod($idCustomer);
             }
 
             return self::$taxCalculationMethod[$idCustomer];
@@ -88,14 +82,14 @@ class CartData
     }
 
     /**
-     * @param Cart $cart
+     * @param \Cart $cart
      * @param ProductHelper $productHelper
      * @param ProductRepository $productRepository
      *
      * @return array of items
      *
-     * @throws PrestaShopDatabaseException
-     * @throws PrestaShopException
+     * @throws \PrestaShopDatabaseException
+     * @throws \PrestaShopException
      */
     public static function getCartItems($cart, $productHelper, $productRepository)
     {
@@ -107,7 +101,7 @@ class CartData
         $combinationsNames = $productRepository->getProductsCombinations($cart, $products);
 
         foreach ($products as $productRow) {
-            $product = new Product(null, false, $cart->id_lang);
+            $product = new \Product(null, false, $cart->id_lang);
             $product->hydrate($productRow);
             $pid = (int) $product->id;
             $manufacturerName = isset($productRow['manufacturer_name']) ? $productRow['manufacturer_name'] : null;
@@ -163,14 +157,14 @@ class CartData
     }
 
     /**
-     * @param Cart $cart
+     * @param \Cart $cart
      *
      * @return array of discount items
      */
     private static function getCartDiscounts($cart)
     {
         $discounts = [];
-        $cartRules = $cart->getCartRules(CartRule::FILTER_ACTION_ALL, false);
+        $cartRules = $cart->getCartRules(\CartRule::FILTER_ACTION_ALL, false);
 
         foreach ($cartRules as $cartRule) {
             $amount = self::includeTaxes($cart) ? (float) $cartRule['value_real'] : (float) $cartRule['value_tax_exc'];
@@ -186,7 +180,7 @@ class CartData
     /**
      * Check if some products in cart are in the excluded listing
      *
-     * @param Cart $cart
+     * @param \Cart $cart
      *
      * @return array
      */
@@ -197,7 +191,7 @@ class CartData
         $cartProductsCategories = [];
 
         foreach ($products as $p) {
-            $productCategories = Product::getProductCategories((int) $p['id_product']);
+            $productCategories = \Product::getProductCategories((int) $p['id_product']);
             foreach ($productCategories as $cat) {
                 $cartProductsCategories[] = $cat;
             }

@@ -21,18 +21,13 @@
  * @copyright 2018-2023 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
+
 namespace Alma\PrestaShop\Helpers;
 
 use Alma\PrestaShop\Logger;
 use Alma\PrestaShop\Model\CartData;
 use Alma\PrestaShop\Model\OrderData;
 use Alma\PrestaShop\Repositories\ProductRepository;
-use Cart;
-use Context;
-use Exception;
-use PrestaShopDatabaseException;
-use PrestaShopException;
-use Tools;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -43,10 +38,10 @@ if (!defined('_PS_VERSION_')) {
  */
 class CartHelper
 {
-    /** @var Context */
+    /** @var \Context */
     private $context;
 
-    public function __construct(Context $context)
+    public function __construct($context)
     {
         $this->context = $context;
     }
@@ -68,11 +63,11 @@ class CartHelper
 
         $carrier = new CarrierHelper($this->context);
         foreach ($orders as $order) {
-            $cart = new Cart((int) $order['id_cart']);
+            $cart = new \Cart((int) $order['id_cart']);
             $purchaseAmount = -1;
             try {
-                $purchaseAmount = Tools::ps_round((float) $cart->getOrderTotal(), 2);
-            } catch (Exception $e) {
+                $purchaseAmount = \Tools::ps_round((float) $cart->getOrderTotal(), 2);
+            } catch (\Exception $e) {
                 $msg = '[Alma] purchase amount for previous cart ordered no found';
                 Logger::instance()->warning($msg);
             }
@@ -80,10 +75,10 @@ class CartHelper
             $cartItems = [];
             try {
                 $cartItems = CartData::getCartItems($cart, $productHelper, $productRepository);
-            } catch (PrestaShopDatabaseException $e) {
+            } catch (\PrestaShopDatabaseException $e) {
                 $msg = '[Alma] cart items for previous cart ordered no found';
                 Logger::instance()->warning($msg);
-            } catch (PrestaShopException $e) {
+            } catch (\PrestaShopException $e) {
                 $msg = '[Alma] cart items for previous cart ordered no found';
                 Logger::instance()->warning($msg);
             }
@@ -113,7 +108,7 @@ class CartHelper
     {
         try {
             $orders = OrderData::getCustomerOrders($idCustomer, $limit);
-        } catch (PrestaShopDatabaseException $e) {
+        } catch (\PrestaShopDatabaseException $e) {
             return [];
         }
 

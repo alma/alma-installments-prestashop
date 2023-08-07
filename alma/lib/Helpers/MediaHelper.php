@@ -21,9 +21,8 @@
  * @copyright 2018-2023 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
-namespace Alma\PrestaShop\Helpers;
 
-use Media;
+namespace Alma\PrestaShop\Helpers;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -43,8 +42,8 @@ class MediaHelper
      */
     public static function getIconPathAlmaTiny($module)
     {
-        if (is_callable('Media::getMediaPath')) {
-            return Media::getMediaPath(_PS_MODULE_DIR_ . $module->name . '/views/img/logos/alma_tiny.svg');
+        if (is_callable('\Media::getMediaPath')) {
+            return \Media::getMediaPath(_PS_MODULE_DIR_ . $module->name . '/views/img/logos/alma_tiny.svg');
         }
 
         return $module->getPathUri() . '/views/img/logos/alma_tiny.svg';

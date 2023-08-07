@@ -21,13 +21,12 @@
  * @copyright 2018-2023 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
-namespace Alma\PrestaShop\API;
 
-use Exception;
+namespace Alma\PrestaShop\API;
 
 /**
  * MismatchException
  */
-class MismatchException extends Exception
+class MismatchException extends \Exception
 {
 }

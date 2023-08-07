@@ -26,7 +26,7 @@ use Alma\PrestaShop\Helpers\SettingsHelper;
 class AdminAlmaCategoriesController extends ModuleAdminController
 {
     public static $excludedCategories = [];
-    private $excludeFilter = null;
+    private $excludeFilter;
 
     public function __construct()
     {

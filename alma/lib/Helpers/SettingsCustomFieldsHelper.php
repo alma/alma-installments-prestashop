@@ -21,6 +21,7 @@
  * @copyright 2018-2023 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
+
 namespace Alma\PrestaShop\Helpers;
 
 if (!defined('_PS_VERSION_')) {
@@ -30,7 +31,6 @@ if (!defined('_PS_VERSION_')) {
 use Alma\PrestaShop\Forms\ExcludedCategoryAdminFormBuilder;
 use Alma\PrestaShop\Forms\PaymentButtonAdminFormBuilder;
 use Alma\PrestaShop\Forms\PaymentOnTriggeringAdminFormBuilder;
-use Language;
 
 /**
  * Class SettingsCustomFields
@@ -287,7 +287,7 @@ class SettingsCustomFieldsHelper
      */
     public static function getDescriptionPaymentTrigger()
     {
-        $languages = Language::getLanguages(false);
+        $languages = \Language::getLanguages(false);
         $defaultField = CustomFieldsHelper::getAllLangCustomFieldByKeyConfig(PaymentOnTriggeringAdminFormBuilder::ALMA_DESCRIPTION_TRIGGER, $languages);
 
         foreach ($defaultField as $key => $field) {

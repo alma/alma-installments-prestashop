@@ -21,6 +21,7 @@
  * @copyright 2018-2023 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
+
 namespace Alma\PrestaShop\Controllers\Hook;
 
 if (!defined('_PS_VERSION_')) {
@@ -36,12 +37,8 @@ use Alma\PrestaShop\Helpers\SettingsCustomFieldsHelper;
 use Alma\PrestaShop\Helpers\SettingsHelper;
 use Alma\PrestaShop\Hooks\FrontendHookController;
 use Alma\PrestaShop\Model\CartData;
-use Cart;
-use Media;
 use PrestaShop\PrestaShop\Core\Localization\Exception\LocalizationException;
 use PrestaShop\PrestaShop\Core\Payment\PaymentOption;
-use SmartyException;
-use Tools;
 
 class PaymentOptionsHookController extends FrontendHookController
 {
@@ -53,7 +50,7 @@ class PaymentOptionsHookController extends FrontendHookController
      * @return array
      *
      * @throws LocalizationException
-     * @throws SmartyException
+     * @throws \SmartyException
      */
     public function run($params)
     {
@@ -82,7 +79,7 @@ class PaymentOptionsHookController extends FrontendHookController
         $feePlans = json_decode(SettingsHelper::getFeePlans());
         $countIteration = 1;
         $totalCart = (float) PriceHelper::convertPriceToCents(
-            Tools::ps_round((float) $this->context->cart->getOrderTotal(true, Cart::BOTH), 2)
+            \Tools::ps_round((float) $this->context->cart->getOrderTotal(true, \Cart::BOTH), 2)
         );
 
         foreach ($installmentPlans as $plan) {
@@ -221,7 +218,7 @@ class PaymentOptionsHookController extends FrontendHookController
         }
 
         if ($forEUComplianceModule) {
-            $logo = Media::getMediaPath("{$baseDir}/views/img/logos/alma_payment_logos_tiny.svg");
+            $logo = \Media::getMediaPath("{$baseDir}/views/img/logos/alma_payment_logos_tiny.svg");
             $paymentOption = [
                 'cta_text' => $ctaText,
                 'action' => $action,
@@ -229,7 +226,7 @@ class PaymentOptionsHookController extends FrontendHookController
             ];
         } else {
             $paymentOption = new PaymentOption();
-            $logo = Media::getMediaPath("{$baseDir}/views/img/logos/{$logoName}");
+            $logo = \Media::getMediaPath("{$baseDir}/views/img/logos/{$logoName}");
             $paymentOption
                 ->setModuleName($this->module->name)
                 ->setCallToActionText($ctaText)

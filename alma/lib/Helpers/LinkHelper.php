@@ -21,10 +21,8 @@
  * @copyright 2018-2023 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
-namespace Alma\PrestaShop\Helpers;
 
-use Context;
-use Module;
+namespace Alma\PrestaShop\Helpers;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -44,9 +42,9 @@ class LinkHelper
      */
     public static function getAdminLinkAlmaDashboard()
     {
-        $module = Module::getInstanceByName('alma');
+        $module = \Module::getInstanceByName('alma');
 
-        return Context::getContext()->link->getAdminLink(
+        return \Context::getContext()->link->getAdminLink(
             'AdminModules',
             true,
             [],

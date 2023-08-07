@@ -21,16 +21,8 @@
  * @copyright 2018-2023 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
-namespace Alma\PrestaShop\Hooks;
 
-use Alma;
-use Configuration;
-use Context;
-use Cookie;
-use Employee;
-use Tools;
-use Validate;
-use WebserviceKey;
+namespace Alma\PrestaShop\Hooks;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -41,7 +33,7 @@ abstract class HookController
     /** @var Alma */
     protected $module;
 
-    /** @var Context */
+    /** @var \Context */
     protected $context;
 
     /**
@@ -52,20 +44,20 @@ abstract class HookController
     public function __construct($module)
     {
         $this->module = $module;
-        $this->context = Context::getContext();
+        $this->context = \Context::getContext();
     }
 
     protected function loggedAsEmployee()
     {
-        $cookie = new Cookie('psAdmin', '', (int) Configuration::get('PS_COOKIE_LIFETIME_BO'));
+        $cookie = new \Cookie('psAdmin', '', (int) \Configuration::get('PS_COOKIE_LIFETIME_BO'));
         $cookie->disallowWriting();
-        $employee = new Employee((int) $cookie->id_employee);
+        $employee = new \Employee((int) $cookie->id_employee);
 
-        return Validate::isLoadedObject($employee)
+        return \Validate::isLoadedObject($employee)
             && $employee->checkPassword((int) $cookie->id_employee, $cookie->passwd)
             && (!isset($cookie->remote_addr)
-                || $cookie->remote_addr == ip2long(Tools::getRemoteAddr())
-                || !Configuration::get('PS_COOKIE_CHECKIP'));
+                || $cookie->remote_addr == ip2long(\Tools::getRemoteAddr())
+                || !\Configuration::get('PS_COOKIE_CHECKIP'));
     }
 
     /**
@@ -79,7 +71,7 @@ abstract class HookController
     {
         $tokenApi = isset($_SERVER['PHP_AUTH_USER']) ? $_SERVER['PHP_AUTH_USER'] : false;
 
-        return boolval(WebserviceKey::keyExists($tokenApi));
+        return boolval(\WebserviceKey::keyExists($tokenApi));
     }
 
     abstract public function run($params);
