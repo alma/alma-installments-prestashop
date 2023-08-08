@@ -43,7 +43,10 @@ class ShareOfCheckoutHelperTest extends TestCase
     /**
      * @dataProvider dateErrorDataProvider
      *
+     * @param $dateErrorData
      * @return void
+     * @throws \PrestaShopDatabaseException
+     * @throws \PrestaShopException
      */
     public function testShareDaysNoDate($dateErrorData)
     {
@@ -52,6 +55,11 @@ class ShareOfCheckoutHelperTest extends TestCase
         $this->assertFalse($shareOfCheckoutHelperMock->shareDays());
     }
 
+    /**
+     * @return void
+     * @throws \PrestaShopDatabaseException
+     * @throws \PrestaShopException
+     */
     public function testShareDaysReturnTrueWithValidTimestamp()
     {
         $this->orderHelperMock->shouldReceive('resetOrderList');
@@ -67,7 +75,11 @@ class ShareOfCheckoutHelperTest extends TestCase
      *
      * @dataProvider ordersGetPayload
      *
+     * @param $ordersMock
+     * @param $expectedPayload
      * @return void
+     * @throws \PrestaShopDatabaseException
+     * @throws \PrestaShopException
      */
     public function testGetPayload($ordersMock, $expectedPayload)
     {
@@ -103,7 +115,11 @@ class ShareOfCheckoutHelperTest extends TestCase
      *
      * @dataProvider ordersTotalOrders
      *
+     * @param $ordersMock
+     * @param $expectedTotalOrders
      * @return void
+     * @throws \PrestaShopDatabaseException
+     * @throws \PrestaShopException
      */
     public function testGetTotalOrders($ordersMock, $expectedTotalOrders)
     {
@@ -115,6 +131,9 @@ class ShareOfCheckoutHelperTest extends TestCase
         $this->assertEquals($expectedTotalOrders, $getTotalOrders);
     }
 
+    /**
+     * @return array[]
+     */
     public function ordersTotalOrders()
     {
         $expectedTotalOrders = [
@@ -138,6 +157,9 @@ class ShareOfCheckoutHelperTest extends TestCase
         ];
     }
 
+    /**
+     * @return array[]
+     */
     public function ordersTotalPaymentMethods()
     {
         $expectedTotalPaymentMethods = [
@@ -176,6 +198,9 @@ class ShareOfCheckoutHelperTest extends TestCase
         ];
     }
 
+    /**
+     * @return array[]
+     */
     public function ordersGetPayload()
     {
         $expectedPayload = [
@@ -230,6 +255,9 @@ class ShareOfCheckoutHelperTest extends TestCase
         ];
     }
 
+    /**
+     * @return array
+     */
     public function orders()
     {
         $ordersMock = [];
@@ -267,6 +295,9 @@ class ShareOfCheckoutHelperTest extends TestCase
         return $ordersMock;
     }
 
+    /**
+     * @return array
+     */
     public function dateErrorDataProvider()
     {
         return [

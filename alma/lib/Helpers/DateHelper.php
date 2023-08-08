@@ -133,4 +133,16 @@ class DateHelper
 
         return $date->format('d/m/Y');
     }
+
+    /**
+     * @param string|int $timestamp
+     *
+     * @return bool
+     */
+    public static function isValidTimeStamp($timestamp)
+    {
+        return ((string) (int) $timestamp === $timestamp)
+            && ($timestamp <= PHP_INT_MAX)
+            && ($timestamp >= ~PHP_INT_MAX);
+    }
 }
