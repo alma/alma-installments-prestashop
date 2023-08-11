@@ -1,5 +1,13 @@
 # Changelog
 
+## v3.0.2
+
+- fix: issue modal In-Page with jQuery noConflict
+
+## v3.0.1
+
+- fix: Compatibility from PHP5.6
+
 ## v3.0.0
 
 - feat: In-Page payment
