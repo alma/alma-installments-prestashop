@@ -22,7 +22,7 @@
  */
 
 let inPage = undefined;
-var $otherJqueryVersion = jQuery.noConflict(true) // stock in $otherJqueryVersion the oldest jquery version
+var $otherJqueryVersion = jQuery.noConflict() // stock in $otherJqueryVersion the oldest jquery version
 
 if(undefined === $) // case of there is only one js version
 {
