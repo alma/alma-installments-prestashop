@@ -1,5 +1,9 @@
 # Changelog
 
+## v3.0.3
+
+- fix: issue modal In-Page on Prestashop before 16.0.12
+
 ## v3.0.2
 
 - fix: issue modal In-Page with jQuery noConflict
