@@ -22,7 +22,7 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
-namespace Alma\PrestaShop\Tests\Unit\Lib\Model;
+namespace Alma\PrestaShop\Tests\Unit\Model;
 
 use Alma\PrestaShop\Helpers\ProductHelper;
 use Alma\PrestaShop\Model\CartData;
