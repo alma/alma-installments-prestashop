@@ -62,20 +62,20 @@ repos:
 #          - stylelint-config-standard@32.0.0
 #          - stylelint-prettier@3.0.0
 
-#  - repo: https://github.com/returntocorp/semgrep
-#    rev: v1.27.0
-#    hooks:
-#      - id: semgrep
-#        args:
-#          - --error
-#          - --config
-#          - semgrep/rules/
-#          - --metrics
-#          - "off"
-#          - --quiet
-#          - --disable-version-check
-#          - --skip-unknown-extensions
-#        pass_filenames: false # Passing files explicitely override semgremignore
+  - repo: https://github.com/returntocorp/semgrep
+    rev: v1.27.0
+    hooks:
+      - id: semgrep
+        args:
+          - --error
+          - --config
+          - semgrep/rules/
+          - --metrics
+          - "off"
+          - --quiet
+          - --disable-version-check
+          - --skip-unknown-extensions
+        pass_filenames: false # Passing files explicitely override semgremignore
 
   - repo: https://github.com/alma/pre-commit-hooks
     rev: 1.1.2
