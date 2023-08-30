@@ -50,7 +50,6 @@ class HookHelper
         'moduleRoutes' => 'all',
         'actionAdminControllerInitBefore' => 'all',
         'header' => 'all',
-        'Header' => 'all',
         'displayHeader' => 'all',
         'displayBackOfficeHeader' => 'all',
         'displayShoppingCartFooter' => 'all',
