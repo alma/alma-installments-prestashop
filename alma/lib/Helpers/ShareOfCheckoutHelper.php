@@ -70,6 +70,7 @@ class ShareOfCheckoutHelper
 
     /**
      * @return bool
+     *
      * @throws \PrestaShopDatabaseException
      * @throws \PrestaShopException
      */
@@ -105,6 +106,7 @@ class ShareOfCheckoutHelper
      * Put Payload to Share of Checkout.
      *
      * @return void
+     *
      * @throws \PrestaShopDatabaseException
      * @throws \PrestaShopException
      */
@@ -157,6 +159,7 @@ class ShareOfCheckoutHelper
      * Total Orders to send.
      *
      * @return array
+     *
      * @throws \PrestaShopDatabaseException
      * @throws \PrestaShopException
      */
@@ -444,7 +447,7 @@ class ShareOfCheckoutHelper
      *
      * @param string $id
      *
-     * @return array|bool|object|null|string
+     * @return array|bool|object|string|null
      */
     private function getIsoCodeById($id)
     {
@@ -460,6 +463,7 @@ class ShareOfCheckoutHelper
      * Payload Share of Checkout.
      *
      * @return array
+     *
      * @throws \PrestaShopDatabaseException
      * @throws \PrestaShopException
      */

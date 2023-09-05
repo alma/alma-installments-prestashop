@@ -63,6 +63,7 @@ class OrderHelper
      * @param string $endDate
      *
      * @return \Order[]
+     *
      * @throws \PrestaShopDatabaseException
      * @throws \PrestaShopException
      */
@@ -89,6 +90,7 @@ class OrderHelper
      * @param string $endDate
      *
      * @return array
+     *
      * @throws \PrestaShopDatabaseException
      */
     public function getOrdersIdByDate($startDate, $endDate)

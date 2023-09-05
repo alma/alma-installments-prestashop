@@ -44,7 +44,9 @@ class ShareOfCheckoutHelperTest extends TestCase
      * @dataProvider dateErrorDataProvider
      *
      * @param $dateErrorData
+     *
      * @return void
+     *
      * @throws \PrestaShopDatabaseException
      * @throws \PrestaShopException
      */
@@ -57,6 +59,7 @@ class ShareOfCheckoutHelperTest extends TestCase
 
     /**
      * @return void
+     *
      * @throws \PrestaShopDatabaseException
      * @throws \PrestaShopException
      */
@@ -77,7 +80,9 @@ class ShareOfCheckoutHelperTest extends TestCase
      *
      * @param $ordersMock
      * @param $expectedPayload
+     *
      * @return void
+     *
      * @throws \PrestaShopDatabaseException
      * @throws \PrestaShopException
      */
@@ -117,7 +122,9 @@ class ShareOfCheckoutHelperTest extends TestCase
      *
      * @param $ordersMock
      * @param $expectedTotalOrders
+     *
      * @return void
+     *
      * @throws \PrestaShopDatabaseException
      * @throws \PrestaShopException
      */
