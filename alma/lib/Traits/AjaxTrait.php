@@ -102,6 +102,6 @@ trait AjaxTrait
      */
     protected function ajaxRenderBefore16012($value)
     {
-        exit(\Tools::jsonEncode($value));
+        exit($value);
     }
 }
