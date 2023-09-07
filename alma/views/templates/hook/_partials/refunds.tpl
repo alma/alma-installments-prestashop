@@ -68,14 +68,15 @@
                     }
                     if (data.totalRefundAmount >= data.totalOrderAmount) {
                         $form.addClass('disabled')
-                    };
+                    }
                 })
                 .fail(function (data) {
                     var jsondata = JSON.parse(data.responseText);                    
                     $('.alma-danger').html(jsondata.message).show();
                 })
                 .always(function(){
-                    $($form.find('[type=submit]')).attr("disabled", false);
+                    $($form.find('[type=submit]')).attr('disabled', false);
+                    $($form.find('input[id=amount]')).val('');
                 });
 
                 return false;

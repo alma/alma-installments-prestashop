@@ -3,6 +3,7 @@
 ## v3.0.3
 
 - fix: issue modal In-Page on Prestashop before 16.0.12
+- fix: Clear the partial refund amount after a partial refund
 
 ## v3.0.2
 
