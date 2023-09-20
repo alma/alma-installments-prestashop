@@ -4,6 +4,7 @@
 
 - fix: issue modal In-Page on Prestashop before 16.0.12
 - fix: Clear the partial refund amount after a partial refund
+- fix: issue error when merchant not allow to create payments
 
 ## v3.0.2
 
