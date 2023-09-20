@@ -83,12 +83,11 @@
                 </div>
             </div>
             <div class="form-group" id="amountDisplay" style="display: none">
-                <label class="control-label col-lg-2 required"> {$wording.labelAmoutRefundPartial|escape:'htmlall':'UTF-8'}</label>
+                <label class="control-label col-lg-2 required" for="amount"> {$wording.labelAmoutRefundPartial|escape:'htmlall':'UTF-8'}</label>
                 <div class="col-lg-2">
                     <div class="input-group">
                         <span class="input-group-addon">{$order.currencySymbol|escape:'htmlall':'UTF-8'}</span>
-                        <input type="text" class="alma" value="" name="amount"
-                               placeholder="{$wording.placeholderInputRefundPartial|escape:'htmlall':'UTF-8'}"/>
+                        <input type="text" class="alma" value="" name="amount" id="amount" placeholder="{$wording.placeholderInputRefundPartial|escape:'htmlall':'UTF-8'}"/>
                     </div>
                 </div>
             </div>

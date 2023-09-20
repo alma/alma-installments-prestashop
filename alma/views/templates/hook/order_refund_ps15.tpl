@@ -84,7 +84,7 @@
             <div class="clear"></div>
         </div>
         <div style="display:none;" id="amountDisplay">
-            <label>
+            <label for="amount">
                 {$wording.labelAmoutRefundPartial|escape:'htmlall':'UTF-8'}
             </label>
             <div class="margin-form">
