@@ -67,7 +67,11 @@ $_MODULE['<{alma}prestashop>paymentoptionshookcontroller_1dd1c5fb7f25cd41b291d43
 $_MODULE['<{alma}prestashop>paymentoptionshookcontroller_96b0141273eabab320119c467cdcaf17'] = 'Total';
 $_MODULE['<{alma}prestashop>paymentoptionshookcontroller_9bbd94e0a507283ae202812ea1bd6f20'] = '%s month later';
 $_MODULE['<{alma}prestashop>paymentoptionshookcontroller_9088921432b295dfe6f02863b2dc0ff8'] = '0 € today then %1$s on %2$s';
-$_MODULE['<{alma}prestashop>wrongcredentialsexception_9c2a0378c6c1a5fbb47a5d4546caa1c9'] = 'Could not connect to Alma using your API keys. Please double check your keys on your %s Alma dashboard %s.';
+$_MODULE['<{alma}prestashop>activationexception_775ab97c1b3d6e302ff6c35731e221fc'] = 'Your Alma account needs to be activated before you can use Alma on your shop.';
+$_MODULE['<{alma}prestashop>activationexception_29078267ae901ff90213dc0960ad24c2'] = 'Go to your %1$sAlma dashboard%2$s to activate your account.';
+$_MODULE['<{alma}prestashop>activationexception_aabe795eef98c70dab6d990341398cec'] = '%1$sRefresh%2$s the page when ready.';
+$_MODULE['<{alma}prestashop>wrongcredentialsexception_cc76de47de858ac2fa2964f534ecfdfb'] = 'Could not connect to Alma using your API keys.';
+$_MODULE['<{alma}prestashop>wrongcredentialsexception_733b6ddadc31fd97174b0cfe69b584c9'] = 'Please double check your keys on your %1$sAlma dashboard%2$s.';
 $_MODULE['<{alma}prestashop>abstractalmaadminformbuilder_c9cc8cce247e49bae79f15173ce97354'] = 'Save';
 $_MODULE['<{alma}prestashop>apiadminformbuilder_fe1d478b2e434b92277b47f0cf62e040'] = 'API Mode';
 $_MODULE['<{alma}prestashop>apiadminformbuilder_0e95e5facc2cad62d6458c65164c4455'] = 'Use Test mode until you are ready to take real orders with Alma. In Test mode, only admins can see Alma on cart/checkout pages.';
