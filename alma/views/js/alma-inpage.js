@@ -31,14 +31,28 @@ if(undefined === $) // case of there is only one js version
 }
 
 window.onload = function () {
+    const checkoutEvents = [];
+
+    const removeCheckoutEvents = function () {
+        let event = checkoutEvents.shift();
+        while (event) {
+            $('#payment-confirmation button').off('click', event);
+            event = checkoutEvents.shift();
+        }
+    }
 
     const processAlmaPayment = function (paymentOptionId, inPage) {
         let form = $('#pay-with-' + paymentOptionId + '-form form');
         let url = form.attr("action");
-        form.on('submit', function (e) {
+
+        const eventAlma = function (e) {
             e.preventDefault();
+            e.stopPropagation();
             ajaxPayment(url, inPage);
-        });
+        };
+
+        checkoutEvents.push(eventAlma);
+        $('#payment-confirmation button').on('click', eventAlma);
     };
 
     const addLoader = function () {
@@ -139,23 +153,23 @@ window.onload = function () {
         }
 
         //Prestashop 1.7+
-        $("input.ps-shown-by-js[data-module-name=alma]").click(function () {
-            let paymentOptionId = $(this).attr('id');
-            let selectorSetting = $('#' + paymentOptionId + '-additional-information .alma-inpage');
-            let showPayButton = false;
-            let installmentButton = selectorSetting.data('installment');
-            if (installmentButton === 1) {
-                selectorSetting.hide();
+        $("input.ps-shown-by-js[name=payment-option]").click(function () {
+            removeCheckoutEvents();
+            if (inPage !== undefined) {
+                inPage.unmount();
             }
-
-            if (selectorSetting.length > 0) {
-                if( inPage !== undefined) {
-                    inPage.unmount();
+            if ($(this).data('module-name') === 'alma') {
+                let paymentOptionId = $(this).attr('id');
+                let selectorSetting = $('#' + paymentOptionId + '-additional-information .alma-inpage');
+                let showPayButton = false;
+                let installmentButton = selectorSetting.data('installment');
+                if (installmentButton === 1) {
+                    selectorSetting.hide();
                 }
-
-                inPage = createIframe(paymentOptionId, selectorSetting, showPayButton);
-
-                processAlmaPayment(paymentOptionId, inPage);
+                if (selectorSetting.length > 0) {
+                    inPage = createIframe(paymentOptionId, selectorSetting, showPayButton);
+                    processAlmaPayment(paymentOptionId, inPage);
+                }
             }
         });
 
