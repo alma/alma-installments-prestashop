@@ -89,6 +89,19 @@ window.onload = function () {
         return url.indexOf("module/alma/payment") !== -1 || url.indexOf("module=alma") !== -1;
     };
 
+    const getURLParameter = function(sUrl, sParam)
+    {
+        var sURLVariables = sUrl.split('?');
+        for (var i = 0; i < sURLVariables.length; i++)
+        {
+            var sParameterName = sURLVariables[i].split('=');
+            if (sParameterName[0] == sParam)
+            {
+                return decodeURIComponent(sParameterName[1]);
+            }
+        }
+    };
+
     const createIframe = function (paymentOptionId, selectorSetting, showPayButton, url = '') {
         let merchantId = selectorSetting.data('merchantid');
         let installment = selectorSetting.data('installment');
@@ -130,13 +143,42 @@ window.onload = function () {
         );
     }
 
-    const almaInPageOnload = function () {
-        if ($(".alma-inpage").length === 0) {
+    const checkClassInDomInPage = function () {
+        let hasPaymentAlma = false;
+        $('input.ps-shown-by-js[name=payment-option]').each(function() {
+            if ($(this).data('module-name') === 'alma') {
+                hasPaymentAlma = true;
+                return false;
+            }
+        });
+        let hasPaymentAlmaInPagePnx = false;
+        $('.js-payment-option-form.ps-hidden').each(function() {
+            let url = $(this).find('form').attr('action');
+            let keyActive = getURLParameter(url, 'key');
+            let keyPnx = [
+                'general_1_0_0',
+                'general_2_0_0',
+                'general_3_0_0',
+                'general_4_0_0'
+            ]
+            if (jQuery.inArray(keyActive, keyPnx) >= 0) {
+                hasPaymentAlmaInPagePnx = true;
+            }
+        });
+
+        let hasPaymentAlmaInPage = $(".alma-inpage").length === 0;
+        let almaInPageIsEligible = hasPaymentAlma && hasPaymentAlmaInPagePnx && hasPaymentAlmaInPage;
+
+        if (almaInPageIsEligible) {
             $('<div class="alert alert-danger">Error : .alma-inpage class not found in DOM</div>').insertAfter('.payment-options');
             $('<div class="alert alert-danger">Error : .alma-inpage class not found in DOM</div>').insertBefore('#HOOK_PAYMENT');
             console.log('No alma-inpage class found in DOM');
             return
         }
+    }
+
+    const almaInPageOnload = function () {
+        checkClassInDomInPage();
 
         //Prestashop 1.7+
         $("input.ps-shown-by-js[data-module-name=alma]").click(function () {
