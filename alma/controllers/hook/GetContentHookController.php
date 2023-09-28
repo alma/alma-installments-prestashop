@@ -395,9 +395,9 @@ final class GetContentHookController extends AdminHookController
         foreach ($modes as $mode) {
             $key = (ALMA_MODE_LIVE == $mode ? $liveKey : $testKey);
             if (
-                !$key ||
-                ConstantsHelper::OBSCURE_VALUE === $key ||
-                SettingsHelper::getActiveMode() !== $mode
+                !$key
+                || ConstantsHelper::OBSCURE_VALUE === $key
+                || SettingsHelper::getActiveMode() !== $mode
             ) {
                 continue;
             }
