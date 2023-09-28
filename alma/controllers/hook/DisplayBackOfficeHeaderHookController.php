@@ -53,6 +53,9 @@ class DisplayBackOfficeHeaderHookController extends FrontendHookController
      * @param array $params
      *
      * @return void
+     *
+     * @throws \PrestaShopDatabaseException
+     * @throws \PrestaShopException
      */
     public function run($params)
     {

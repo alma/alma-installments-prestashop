@@ -70,6 +70,9 @@ class ShareOfCheckoutHelper
 
     /**
      * @return bool
+     *
+     * @throws \PrestaShopDatabaseException
+     * @throws \PrestaShopException
      */
     public function shareDays()
     {
@@ -77,6 +80,7 @@ class ShareOfCheckoutHelper
         if (
             ShareOfCheckoutAdminFormBuilder::ALMA_SHARE_OF_CHECKOUT_CONSENT_NO === SettingsHelper::getShareOfCheckoutStatus()
             || empty($shareOfCheckoutEnabledDate)
+            || !DateHelper::isValidTimeStamp($shareOfCheckoutEnabledDate)
         ) {
             Logger::instance()->info('Share Of Checkout is disabled or invalide date');
 
@@ -102,6 +106,9 @@ class ShareOfCheckoutHelper
      * Put Payload to Share of Checkout.
      *
      * @return void
+     *
+     * @throws \PrestaShopDatabaseException
+     * @throws \PrestaShopException
      */
     public function putDay()
     {
@@ -152,6 +159,9 @@ class ShareOfCheckoutHelper
      * Total Orders to send.
      *
      * @return array
+     *
+     * @throws \PrestaShopDatabaseException
+     * @throws \PrestaShopException
      */
     public function getTotalOrders()
     {
@@ -437,7 +447,7 @@ class ShareOfCheckoutHelper
      *
      * @param string $id
      *
-     * @return string
+     * @return array|bool|object|string|null
      */
     private function getIsoCodeById($id)
     {
@@ -453,6 +463,9 @@ class ShareOfCheckoutHelper
      * Payload Share of Checkout.
      *
      * @return array
+     *
+     * @throws \PrestaShopDatabaseException
+     * @throws \PrestaShopException
      */
     public function getPayload()
     {
@@ -467,7 +480,7 @@ class ShareOfCheckoutHelper
     /**
      * @return string|false
      */
-    protected function getEnabledDate()
+    public function getEnabledDate()
     {
         return \Configuration::get(ShareOfCheckoutAdminFormBuilder::ALMA_SHARE_OF_CHECKOUT_DATE);
     }
@@ -475,7 +488,7 @@ class ShareOfCheckoutHelper
     /**
      * @return array
      */
-    protected function getDatesInInterval($lastShareOfCheckout, $shareOfCheckoutEnabledDate)
+    public function getDatesInInterval($lastShareOfCheckout, $shareOfCheckoutEnabledDate)
     {
         return DateHelper::getDatesInInterval($lastShareOfCheckout, $shareOfCheckoutEnabledDate);
     }

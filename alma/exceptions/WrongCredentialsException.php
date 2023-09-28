@@ -36,9 +36,10 @@ class WrongCredentialsException extends AlmaException
      */
     public function __construct($module)
     {
-        $message = sprintf(
-            $module->l('Could not connect to Alma using your API keys.<br>Please double check your keys on your %s Alma dashboard %s.', 'WrongCredentialsException'),
-            sprintf('<a href="%1$s" target="_blank">', LinkHelper::getAlmaDashboardUrl(SettingsHelper::getActiveMode(), 'api')),
+        $message = $module->l('Could not connect to Alma using your API keys.', 'WrongCredentialsException')
+        . sprintf(
+            $module->l('Please double check your keys on your %1$sAlma dashboard%2$s.', 'WrongCredentialsException'),
+            '<a href="' . LinkHelper::getAlmaDashboardUrl(SettingsHelper::getActiveMode(), 'api') . '" target="_blank">',
             '</a>'
         );
 

@@ -1,5 +1,12 @@
 # Changelog
 
+## v3.0.3
+
+- fix: Change event system for In-Page on Prestashop 1.7+
+- fix: Issue modal In-Page on Prestashop before 16.0.12
+- fix: Clear the partial refund amount after a partial refund
+- fix: Issue error when merchant not allow to create payments
+
 ## v3.0.2
 
 - fix: issue modal In-Page with jQuery noConflict

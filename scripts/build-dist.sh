@@ -16,7 +16,7 @@ mkdir ./dist
 cd ./tmp/build/alma || exit
 
 rm -rf vendor config.xml config_*.xml
-/opt/homebrew/Cellar/php@5.6/5.6.40_8/bin/php /usr/local/bin/composer install --no-dev --optimize-autoloader
+/opt/homebrew/Cellar/php@5.6/5.6.40_9/bin/php /usr/local/bin/composer install --no-dev --optimize-autoloader
 composer dump-autoload --optimize
 
 "$DIR/alma/vendor/bin/autoindex" prestashop:add:index

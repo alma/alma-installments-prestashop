@@ -36,9 +36,16 @@ class ActivationException extends AlmaException
      */
     public function __construct($module)
     {
-        $message = sprintf(
-            $module - l('Your Alma account needs to be activated before you can use Alma on your shop.<br>Go to your <a href="%1$s" target="_blank">Alma dashboard</a> to activate your account.<br><a href="#">Refresh</a> the page when ready.', 'ActivationException'),
-            LinkHelper::getAlmaDashboardUrl(SettingsHelper::getActiveMode(), 'settings')
+        $message = $module->l('Your Alma account needs to be activated before you can use Alma on your shop.', 'ActivationException')
+        . sprintf(
+            $module->l('Go to your %1$sAlma dashboard%2$s to activate your account.', 'ActivationException'),
+            '<a href="' . LinkHelper::getAlmaDashboardUrl(SettingsHelper::getActiveMode(), 'settings') . '" target="_blank">',
+            '</a>'
+        )
+        . sprintf(
+            $module->l('%1$sRefresh%2$s the page when ready.', 'ActivationException'),
+            '<a href="#">',
+            '</a>'
         );
 
         parent::__construct($message);
