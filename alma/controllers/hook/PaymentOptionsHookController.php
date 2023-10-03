@@ -159,6 +159,7 @@ class PaymentOptionsHookController extends FrontendHookController
             );
             if (!$forEUComplianceModule) {
                 $templateVar = [
+                    'keyPlan' => $installment . '-' . $duration,
                     'desc' => $descPaymentButton,
                     'plans' => (array) $plans,
                     'deferred_trigger_limit_days' => $feePlans->$key->deferred_trigger_limit_days,
@@ -182,6 +183,11 @@ class PaymentOptionsHookController extends FrontendHookController
                     "module:{$this->module->name}/views/templates/hook/{$fileTemplate}"
                 );
                 $paymentOption->setAdditionalInformation($template);
+                if ($isInPageEnabled) {
+                    $paymentOption->setForm($this->context->smarty->fetch(
+                        "module:{$this->module->name}/views/templates/front/payment_form.tpl"
+                    ));
+                }
             }
             $sortOptions[$key] = $feePlans->$key->order;
             $paymentOptions[$key] = $paymentOption;
