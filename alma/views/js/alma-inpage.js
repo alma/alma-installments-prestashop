@@ -65,18 +65,20 @@ function onloadAlma() {
 
     //Prestashop 1.6-
     let paymentButtonPs16 = document.querySelector(".alma-inpage.ps16");
-    paymentButtonPs16.addEventListener('click', function (e) {
-        e.preventDefault();
-        let paymentOptionId = this.getAttribute('id');
-        let url = this.getAttribute('href');
-        let settingInpage = document.querySelector('#alma-inpage-' + paymentOptionId);
+    if (paymentButtonPs16) {
+        paymentButtonPs16.addEventListener('click', function (e) {
+            e.preventDefault();
+            let paymentOptionId = this.getAttribute('id');
+            let url = this.getAttribute('href');
+            let settingInpage = document.querySelector('#alma-inpage-' + paymentOptionId);
 
-        if( inPage !== undefined) {
-            inPage.unmount();
-        }
+            if( inPage !== undefined) {
+                inPage.unmount();
+            }
 
-        createIframe(settingInpage, true, url);
-    });
+            createIframe(settingInpage, true, url);
+        });
+    }
 }
 
 function createIframe(formSetting, showPayButton = false, url = '') {
