@@ -38,7 +38,7 @@ function onloadAlma() {
             let paymentOptionId = input.getAttribute('id');
             let blockForm = document.querySelector('#pay-with-' + paymentOptionId + '-form');
             let formInpage = blockForm.querySelector('.alma-inpage');
-            removeCheckoutEvents(paymentButton);
+            removeCheckoutEvents();
             if (inPage !== undefined) {
                 inPage.unmount();
             }
@@ -136,6 +136,7 @@ async function ajaxPayment(url, inPage) {
                             checkboxTermsOfService.checked = false;
                         }
                         document.querySelector('.alma-loader--wrapper').remove();
+                        removeCheckoutEvents();
                         onloadAlma();
                     }
                 }
@@ -154,10 +155,10 @@ async function ajaxPayment(url, inPage) {
     }
 }
 
-function removeCheckoutEvents(paymentButton) {
+function removeCheckoutEvents() {
     let event = checkoutEvents.shift();
     while (event) {
-        paymentButton.removeEventListener('click', event);
+        document.querySelector('#payment-confirmation button').removeEventListener('click', event);
         event = checkoutEvents.shift();
     }
 }
