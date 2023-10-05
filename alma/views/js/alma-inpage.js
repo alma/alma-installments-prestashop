@@ -64,9 +64,9 @@ function onloadAlma() {
     });
 
     //Prestashop 1.6-
-    let paymentButtonPs16 = document.querySelector(".alma-inpage.ps16");
-    if (paymentButtonPs16) {
-        paymentButtonPs16.addEventListener('click', function (e) {
+    let paymentButtonsPs16 = document.querySelectorAll(".alma-inpage.ps16");
+    paymentButtonsPs16.forEach(function (button) {
+        button.addEventListener('click', function (e) {
             e.preventDefault();
             let paymentOptionId = this.getAttribute('id');
             let url = this.getAttribute('href');
@@ -78,7 +78,7 @@ function onloadAlma() {
 
             createIframe(settingInpage, true, url);
         });
-    }
+    });
 }
 
 function createIframe(formSetting, showPayButton = false, url = '') {
