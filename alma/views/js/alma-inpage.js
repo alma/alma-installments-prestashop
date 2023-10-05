@@ -22,11 +22,11 @@
  */
 
 let inPage = undefined;
-let checkoutEvents = [];
+let paymentButtonEvents = [];
 
-$(function() {
+window.onload = () => {
     onloadAlma();
-});
+};
 
 function onloadAlma() {
     let radioButtons = document.querySelectorAll('input[name="payment-option"][data-module-name=alma]');
@@ -38,26 +38,26 @@ function onloadAlma() {
             let paymentOptionId = input.getAttribute('id');
             let blockForm = document.querySelector('#pay-with-' + paymentOptionId + '-form');
             let formInpage = blockForm.querySelector('.alma-inpage');
-            removeCheckoutEvents();
+            removeAlmaEventsFromPaymentButton();
             if (inPage !== undefined) {
                 inPage.unmount();
             }
-            let installment = formInpage.dataset.installment;
-            if (installment === '1') {
-                blockForm.hidden = true;
-            }
             if (this.dataset.moduleName === 'alma' && this.checked && formInpage) {
+                let installment = formInpage.dataset.installment;
+                if (installment === '1') {
+                    blockForm.hidden = true;
+                }
                 let url = formInpage.dataset.action;
 
                 inPage = createIframe(formInpage);
 
-                const eventAlma = function (e) {
+                const eventAlma = async function (e) {
                     e.preventDefault();
                     e.stopPropagation();
-                    ajaxPayment(url, inPage);
+                    await createPayment(url, inPage);
                 };
 
-                checkoutEvents.push(eventAlma);
+                paymentButtonEvents.push(eventAlma);
                 paymentButton.addEventListener('click', eventAlma);
             }
         });
@@ -81,13 +81,13 @@ function onloadAlma() {
     });
 }
 
-function createIframe(formSetting, showPayButton = false, url = '') {
-    let merchantId = formSetting.dataset.merchantid;
-    let installment = formSetting.dataset.installment;
-    let purchaseAmount = formSetting.dataset.purchaseamount;
-    let locale = formSetting.dataset.locale;
+function createIframe(form, showPayButton = false, url = '') {
+    let merchantId = form.dataset.merchantid;
+    let installment = form.dataset.installment;
+    let purchaseAmount = form.dataset.purchaseamount;
+    let locale = form.dataset.locale;
 
-    let selectorIframeInPage = formSetting.querySelector('.alma-inpage-iframe');
+    let selectorIframeInPage = form.querySelector('.alma-inpage-iframe');
 
     if (showPayButton) {
         // No refactor inPage is use in callback function 1.6
@@ -97,10 +97,10 @@ function createIframe(formSetting, showPayButton = false, url = '') {
                 amountInCents: purchaseAmount,
                 installmentsCount: installment,
                 locale: locale,
-                environment: formSetting.dataset.apimode,
+                environment: form.dataset.apimode,
                 selector: selectorIframeInPage.getAttribute('id'),
-                onIntegratedPayButtonClicked : () => {
-                    ajaxPayment(url, inPage);
+                onIntegratedPayButtonClicked : async () => {
+                    await createPayment(url, inPage);
                 }
             }
         );
@@ -114,18 +114,18 @@ function createIframe(formSetting, showPayButton = false, url = '') {
             amountInCents: purchaseAmount,
             installmentsCount: installment,
             locale: locale,
-            environment: formSetting.dataset.apimode,
+            environment: form.dataset.apimode,
             selector: selectorIframeInPage.getAttribute('id'),
         }
     );
 }
 
-async function ajaxPayment(url, inPage) {
+async function createPayment(url, inPage) {
     if (isAlmaPayment(url)) {
         addLoader();
         try {
-            let ajaxInPageResponse = await fetch(url);
-            let paymentData = await ajaxInPageResponse.json();
+            let response = await fetch(url);
+            let paymentData = await response.json();
 
             inPage.startPayment(
                 {
@@ -136,7 +136,7 @@ async function ajaxPayment(url, inPage) {
                             checkboxTermsOfService.checked = false;
                         }
                         document.querySelector('.alma-loader--wrapper').remove();
-                        removeCheckoutEvents();
+                        removeAlmaEventsFromPaymentButton();
                         onloadAlma();
                     }
                 }
@@ -155,22 +155,22 @@ async function ajaxPayment(url, inPage) {
     }
 }
 
-function removeCheckoutEvents() {
-    let event = checkoutEvents.shift();
+function removeAlmaEventsFromPaymentButton() {
+    let event = paymentButtonEvents.shift();
     while (event) {
         document.querySelector('#payment-confirmation button').removeEventListener('click', event);
-        event = checkoutEvents.shift();
+        event = paymentButtonEvents.shift();
     }
 }
 
 function addLoader() {
-    let loading = document.createElement('div');
-    loading.classList.add('loadingIndicator');
-    loading.innerHTML = '<img src="https://cdn.almapay.com/img/animated-logo-a.svg" alt="Loading" />';
     let loader = document.createElement('div');
-    loader.classList.add('alma-loader--wrapper');
-    loader.appendChild(loading);
-    document.body.appendChild(loader);
+    loader.classList.add('loadingIndicator');
+    loader.innerHTML = '<img src="https://cdn.almapay.com/img/animated-logo-a.svg" alt="Loading" />';
+    let wrapperLoader = document.createElement('div');
+    wrapperLoader.classList.add('alma-loader--wrapper');
+    wrapperLoader.appendChild(loader);
+    document.body.appendChild(wrapperLoader);
 }
 
 function isAlmaPayment(url) {
