@@ -163,8 +163,13 @@ function removeCheckoutEvents(paymentButton) {
 }
 
 function addLoader() {
-    let loading = "<div class='loadingIndicator'><img src='https://cdn.almapay.com/img/animated-logo-a.svg' alt='Loading' /></div>";
-    document.body.innerHTML += "<div class='alma-loader--wrapper'>" + loading + "</div>";
+    let loading = document.createElement('div');
+    loading.classList.add('loadingIndicator');
+    loading.innerHTML = '<img src="https://cdn.almapay.com/img/animated-logo-a.svg" alt="Loading" />';
+    let loader = document.createElement('div');
+    loader.classList.add('alma-loader--wrapper');
+    loader.appendChild(loading);
+    document.body.appendChild(loader);
 }
 
 function isAlmaPayment(url) {
