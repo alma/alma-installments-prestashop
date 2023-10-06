@@ -2,7 +2,7 @@
 
 ## v3.0.4
 
-- fix: In-Page - Now we use the setForm in payment option and refactoring in full Javascript code
+- fix: In-Page: Now we use the setForm in payment option and refactoring in full Javascript code
 
 ## v3.0.3
 
