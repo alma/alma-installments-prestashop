@@ -1,8 +1,8 @@
 # Changelog
 
-## v3.0.4
+## v3.1.0
 
-- fix: In-Page: Now we use the setForm in payment option and refactoring in full Javascript code
+- feat: In-Page: Now we use the setForm in payment option and refactoring in full Javascript code
 
 ## v3.0.3
 
