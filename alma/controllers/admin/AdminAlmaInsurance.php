@@ -21,48 +21,19 @@
  * @copyright 2018-2023 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
-use Alma\PrestaShop\Forms\InpageAdminFormBuilder;
-use Alma\PrestaShop\Helpers\ApiHelper;
-use Alma\PrestaShop\Helpers\ConstantsHelper;
-use Alma\PrestaShop\Helpers\SettingsHelper;
 
-if (!defined('_PS_VERSION_')) {
-    exit;
-}
-
-function upgrade_module_3_0_0($module)
+class AdminAlmaInsuranceController extends ModuleAdminController
 {
-    $module->registerHooks();
-
-    try {
-        $apiHelper = new ApiHelper();
-        $apiHelper->getMerchant($module);
-    } catch (\Exception $e) {
+    /**
+     * @return void
+     * @throws SmartyException
+     */
+    public function initContent()
+    {
+        parent::initContent();
+        $content = $this->context->smarty->fetch(_PS_MODULE_DIR_ . 'alma/views/templates/admin/insurance.tpl');
+        $this->context->smarty->assign(array(
+            'content' => $this->content . $content,
+        ));
     }
-
-    // Migration value option of In-Page v1 to In-Page v2
-    SettingsHelper::updateValue(
-        InpageAdminFormBuilder::ALMA_ACTIVATE_INPAGE,
-        Configuration::get('ALMA_ACTIVATE_FRAGMENT')
-    );
-
-    if (version_compare(_PS_VERSION_, '1.5.5.0', '<')) {
-        Tools::clearCache();
-
-        return $module->uninstallTabs() && $module->installTabs();
-    }
-
-    if (version_compare(_PS_VERSION_, ConstantsHelper::PRESTASHOP_VERSION_1_7_0_2, '<=')) {
-        Tools::clearSmartyCache();
-        if (version_compare(_PS_VERSION_, '1.6.0.2', '>')) {
-            Tools::clearXMLCache();
-        }
-
-        return $module->uninstallTabs() && $module->installTabs();
-    }
-
-    Tools::clearAllCache();
-    Tools::clearXMLCache();
-
-    return $module->uninstallTabs() && $module->installTabs();
 }

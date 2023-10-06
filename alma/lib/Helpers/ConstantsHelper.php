@@ -30,6 +30,7 @@ if (!defined('_PS_VERSION_')) {
 
 class ConstantsHelper
 {
+    const ALMA_MODULE_NAME = 'alma';
     const INPAGE_SCRIPT_PATH = 'views/js/alma-inpage.js';
     const INPAGE_JS_URL = 'https://cdn.jsdelivr.net/npm/@alma/in-page@2.x.x/dist/index.umd.js';
     const WIDGETS_CSS_URL = 'https://cdn.jsdelivr.net/npm/@alma/widgets@3.x.x/dist/widgets.min.css';
@@ -55,4 +56,10 @@ class ConstantsHelper
     const ALMA_KEY_PAYNOW = 'general_1_0_0';
 
     const ALMA_ALLOW_INPAGE = 'ALMA_ALLOW_INPAGE';
+
+    const ALMA_ALLOW_INSURANCE = 'ALMA_ALLOW_INSURANCE';
+
+    const ALMA_ACTIVATE_INSURANCE = 'ALMA_ACTIVATE_INSURANCE';
+
+    const BO_CONTROLLER_INSURANCE_CLASSNAME = 'AdminAlmaInsurance';
 }

@@ -148,6 +148,7 @@ class SettingsHelper
             'ALMA_PRODUCT_WDGT_NOT_ELGBL',
             'ALMA_CATEGORIES_WDGT_NOT_ELGBL',
             ConstantsHelper::ALMA_ALLOW_INPAGE,
+            ConstantsHelper::ALMA_ALLOW_INSURANCE,
         ];
 
         foreach ($configKeys as $configKey) {

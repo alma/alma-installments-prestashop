@@ -29,17 +29,32 @@ use Alma\PrestaShop\Exceptions\ActivationException;
 use Alma\PrestaShop\Exceptions\ApiMerchantsException;
 use Alma\PrestaShop\Exceptions\WrongCredentialsException;
 use Alma\PrestaShop\Forms\InpageAdminFormBuilder;
+use Alma\PrestaShop\Helpers\Admin\InsuranceHelper;
 
 class ApiHelper
 {
     /**
+     * @var InsuranceHelper $insuranceHelper
+     */
+    protected $insuranceHelper;
+
+
+    public function __construct()
+    {
+        $this->insuranceHelper = new InsuranceHelper();
+    }
+
+    /**
+     * @param $module
+     * @param null $alma
      * @return Merchant|null
      *
      * @throws ActivationException
      * @throws ApiMerchantsException
      * @throws WrongCredentialsException
+     * @throws \PrestaShopException
      */
-    public static function getMerchant($module, $alma = null)
+    public function getMerchant($module, $alma = null)
     {
         if (!$alma) {
             $alma = ClientHelper::defaultInstance();
@@ -66,9 +81,33 @@ class ApiHelper
             throw new ActivationException($module);
         }
 
-        static::saveFeatureFlag($merchant, 'cms_allow_inpage', ConstantsHelper::ALMA_ALLOW_INPAGE);
+        $this->saveFeatureFlag(
+            $merchant,
+            'cms_allow_inpage',
+            ConstantsHelper::ALMA_ALLOW_INPAGE,
+            InpageAdminFormBuilder::ALMA_ACTIVATE_INPAGE
+        );
+
+        $this->handleInsuranceFlag($module, $merchant);
 
         return $merchant;
+    }
+
+    /**
+     * @param $module
+     * @param $merchant
+     * @return void
+     * @throws \PrestaShopException
+     */
+    protected function handleInsuranceFlag($module, $merchant) {
+        $isAllowInsurance = $this->saveFeatureFlag(
+            $merchant,
+            'cms_insurance',
+            ConstantsHelper::ALMA_ALLOW_INSURANCE,
+            ConstantsHelper::ALMA_ACTIVATE_INSURANCE
+        );
+
+        $this->insuranceHelper->handleBOMenu($module, $isAllowInsurance);
     }
 
     /**
@@ -76,9 +115,9 @@ class ApiHelper
      * @param string $merchantKey
      * @param string $configKey
      *
-     * @return void
+     * @return integer
      */
-    protected static function saveFeatureFlag($merchant, $merchantKey, $configKey)
+    protected function saveFeatureFlag($merchant, $merchantKey, $configKey, $formSettingName)
     {
         $value = 1;
 
@@ -90,7 +129,9 @@ class ApiHelper
 
         // If Inpage not allowed we ensure that inpage is deactivated in database
         if (0 === $value) {
-            SettingsHelper::updateValue(InpageAdminFormBuilder::ALMA_ACTIVATE_INPAGE, (int) $value);
+            SettingsHelper::updateValue($formSettingName, (int) $value);
         }
+
+        return (int) $value;
     }
 }
