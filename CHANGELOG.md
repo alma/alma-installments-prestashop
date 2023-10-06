@@ -1,5 +1,9 @@
 # Changelog
 
+## v3.0.4
+
+- fix: In-Page: Now we use the setForm in payment option and refactoring in full Javascript code
+
 ## v3.0.3
 
 - fix: Change event system for In-Page on Prestashop 1.7+

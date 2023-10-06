@@ -22,215 +22,157 @@
  */
 
 let inPage = undefined;
-var $otherJqueryVersion = jQuery.noConflict() // stock in $otherJqueryVersion the oldest jquery version
+let paymentButtonEvents = [];
 
-if(undefined === $) // case of there is only one js version
-{
-    var $ = $otherJqueryVersion;
-    $otherJqueryVersion = undefined; // we destroy the second version
-}
+window.onload = () => {
+    onloadAlma();
+};
 
-window.onload = function () {
-    const checkoutEvents = [];
+function onloadAlma() {
+    let radioButtons = document.querySelectorAll('input[name="payment-option"][data-module-name=alma]');
+    let paymentButton = document.querySelector('#payment-confirmation button');
 
-    const removeCheckoutEvents = function () {
-        let event = checkoutEvents.shift();
-        while (event) {
-            $('#payment-confirmation button').off('click', event);
-            event = checkoutEvents.shift();
-        }
-    }
-
-    const processAlmaPayment = function (paymentOptionId, inPage) {
-        let form = $('#pay-with-' + paymentOptionId + '-form form');
-        let url = form.attr("action");
-
-        const eventAlma = function (e) {
-            e.preventDefault();
-            e.stopPropagation();
-            ajaxPayment(url, inPage);
-        };
-
-        checkoutEvents.push(eventAlma);
-        $('#payment-confirmation button').on('click', eventAlma);
-    };
-
-    const addLoader = function () {
-        let loading = "<div class='loadingIndicator'><img src='https://cdn.almapay.com/img/animated-logo-a.svg' alt='Loading' /></div>";
-        $( "body" ).append( "<div class='alma-loader--wrapper'>" + loading + "</div>" );
-    };
-
-    const ajaxPayment = function (url, inPage) {
-        if (isAlmaPayment(url)) {
-            addLoader();
-            $.ajax({
-                type: "POST",
-                url: url,
-                dataType: "json",
-                data: {
-                    ajax: true,
-                    action: "payment",
-                },
-            })
-                .done(function (paymentData) {
-                    inPage.startPayment(
-                        {
-                            paymentId: paymentData.id,
-                            onUserCloseModal: () => {
-                                let selectorCheckboxPs17 = $('.ps-shown-by-js[type=checkbox]');
-                                if (selectorCheckboxPs17.length > 0) {
-                                    selectorCheckboxPs17.prop('checked', false);
-                                }
-                                $('.alma-loader--wrapper').remove();
-                            }
-                        }
-                    );
-                })
-                .fail(function () {
-                    let pathnameUrl = window.location.pathname;
-                    let urlError = "/order";
-
-                    if (pathnameUrl === '/index.php') {
-                        urlError = "/index.php?controller=order";
-                    }
-
-                    window.location.href = urlError;
-                });
-        }
-    }
-
-    const isAlmaPayment = function (url) {
-        return url.indexOf("module/alma/payment") !== -1 || url.indexOf("module=alma") !== -1;
-    };
-
-    const getURLParameter = function(sUrl, sParam)
-    {
-        var sURLVariables = sUrl.split('?');
-        for (var i = 0; i < sURLVariables.length; i++)
-        {
-            var sParameterName = sURLVariables[i].split('=');
-            if (sParameterName[0] == sParam)
-            {
-                return decodeURIComponent(sParameterName[1]);
-            }
-        }
-    };
-
-    const createIframe = function (paymentOptionId, selectorSetting, showPayButton, url = '') {
-        let merchantId = selectorSetting.data('merchantid');
-        let installment = selectorSetting.data('installment');
-        let purchaseAmount = selectorSetting.data('purchaseamount');
-        let locale = selectorSetting.data('locale');
-
-        selectorSetting.attr('id', 'alma-inpage-' + paymentOptionId);
-
-        let selectorIframeInPage = '#alma-inpage-' + paymentOptionId;
-
-        if (showPayButton) {
-            // No refactor inPage is use in callback function 1.6
-            inPage = Alma.InPage.initialize(
-                {
-                    merchantId: merchantId,
-                    amountInCents: purchaseAmount,
-                    installmentsCount: installment,
-                    locale: locale,
-                    environment: selectorSetting.data("apimode"),
-                    selector: selectorIframeInPage,
-                    onIntegratedPayButtonClicked : () => {
-                        ajaxPayment(url, inPage);
-                    }
-                }
-            );
-
-            return inPage;
-        }
-
-        return Alma.InPage.initialize(
-            {
-                merchantId: merchantId,
-                amountInCents: purchaseAmount,
-                installmentsCount: installment,
-                locale: locale,
-                environment: selectorSetting.data("apimode"),
-                selector: selectorIframeInPage,
-            }
-        );
-    }
-
-    const checkClassInDomInPage = function () {
-        let hasPaymentAlma = false;
-        $('input.ps-shown-by-js[name=payment-option]').each(function() {
-            if ($(this).data('module-name') === 'alma') {
-                hasPaymentAlma = true;
-                return false;
-            }
-        });
-        let hasPaymentAlmaInPagePnx = false;
-        $('.js-payment-option-form.ps-hidden').each(function() {
-            let url = $(this).find('form').attr('action');
-            let keyActive = getURLParameter(url, 'key');
-            let keyPnx = [
-                'general_1_0_0',
-                'general_2_0_0',
-                'general_3_0_0',
-                'general_4_0_0'
-            ]
-            if (jQuery.inArray(keyActive, keyPnx) >= 0) {
-                hasPaymentAlmaInPagePnx = true;
-            }
-        });
-
-        let hasPaymentAlmaInPage = $(".alma-inpage").length === 0;
-        let almaInPageIsEligible = hasPaymentAlma && hasPaymentAlmaInPagePnx && hasPaymentAlmaInPage;
-
-        if (almaInPageIsEligible) {
-            $('<div class="alert alert-danger">Error : .alma-inpage class not found in DOM</div>').insertAfter('.payment-options');
-            $('<div class="alert alert-danger">Error : .alma-inpage class not found in DOM</div>').insertBefore('#HOOK_PAYMENT');
-            console.log('No alma-inpage class found in DOM');
-            return
-        }
-    }
-
-    const almaInPageOnload = function () {
-        checkClassInDomInPage();
-
-        //Prestashop 1.7+
-        $("input.ps-shown-by-js[name=payment-option]").click(function () {
-            removeCheckoutEvents();
+    //Prestashop 1.7+
+    radioButtons.forEach(function (input) {
+        input.addEventListener("change", function () {
+            let paymentOptionId = input.getAttribute('id');
+            let blockForm = document.querySelector('#pay-with-' + paymentOptionId + '-form');
+            let formInpage = blockForm.querySelector('.alma-inpage');
+            removeAlmaEventsFromPaymentButton();
             if (inPage !== undefined) {
                 inPage.unmount();
             }
-            if ($(this).data('module-name') === 'alma') {
-                let paymentOptionId = $(this).attr('id');
-                let selectorSetting = $('#' + paymentOptionId + '-additional-information .alma-inpage');
-                let showPayButton = false;
-                let installmentButton = selectorSetting.data('installment');
-                if (installmentButton === 1) {
-                    selectorSetting.hide();
+            if (this.dataset.moduleName === 'alma' && this.checked && formInpage) {
+                let installment = formInpage.dataset.installment;
+                if (installment === '1') {
+                    blockForm.hidden = true;
                 }
-                if (selectorSetting.length > 0) {
-                    inPage = createIframe(paymentOptionId, selectorSetting, showPayButton);
-                    processAlmaPayment(paymentOptionId, inPage);
-                }
+                let url = formInpage.dataset.action;
+
+                inPage = createIframe(formInpage);
+
+                const eventAlma = async function (e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    await createPayment(url, inPage);
+                };
+
+                paymentButtonEvents.push(eventAlma);
+                paymentButton.addEventListener('click', eventAlma);
             }
         });
+    });
 
-        //Prestashop 1.6-
-        $(".alma-inpage.ps16").click(function (e) {
+    //Prestashop 1.6-
+    let paymentButtonsPs16 = document.querySelectorAll(".alma-inpage.ps16");
+    paymentButtonsPs16.forEach(function (button) {
+        button.addEventListener('click', function (e) {
             e.preventDefault();
-            let paymentOptionId = $(this).attr('id');
-            let selectorSetting = $('#alma-inpage-' + paymentOptionId);
-            let showPayButton = true;
-            let url = $('#' + paymentOptionId).attr('href');
+            let paymentOptionId = this.getAttribute('id');
+            let url = this.getAttribute('href');
+            let settingInpage = document.querySelector('#alma-inpage-' + paymentOptionId);
 
             if( inPage !== undefined) {
                 inPage.unmount();
             }
 
-            createIframe(paymentOptionId, selectorSetting, showPayButton, url);
+            createIframe(settingInpage, true, url);
         });
+    });
+}
+
+function createIframe(form, showPayButton = false, url = '') {
+    let merchantId = form.dataset.merchantid;
+    let installment = form.dataset.installment;
+    let purchaseAmount = form.dataset.purchaseamount;
+    let locale = form.dataset.locale;
+
+    let selectorIframeInPage = form.querySelector('.alma-inpage-iframe');
+
+    if (showPayButton) {
+        // No refactor inPage is use in callback function 1.6
+        inPage = Alma.InPage.initialize(
+            {
+                merchantId: merchantId,
+                amountInCents: purchaseAmount,
+                installmentsCount: installment,
+                locale: locale,
+                environment: form.dataset.apimode,
+                selector: selectorIframeInPage.getAttribute('id'),
+                onIntegratedPayButtonClicked : async () => {
+                    await createPayment(url, inPage);
+                }
+            }
+        );
+
+        return inPage;
     }
 
-    almaInPageOnload();
-};
+    return Alma.InPage.initialize(
+        {
+            merchantId: merchantId,
+            amountInCents: purchaseAmount,
+            installmentsCount: installment,
+            locale: locale,
+            environment: form.dataset.apimode,
+            selector: selectorIframeInPage.getAttribute('id'),
+        }
+    );
+}
 
+async function createPayment(url, inPage) {
+    if (isAlmaPayment(url)) {
+        addLoader();
+        try {
+            let response = await fetch(url);
+            let paymentData = await response.json();
+
+            inPage.startPayment(
+                {
+                    paymentId: paymentData.id,
+                    onUserCloseModal: () => {
+                        let checkboxTermsOfService = document.querySelector('.ps-shown-by-js[type=checkbox]');
+                        if (checkboxTermsOfService !== null) {
+                            checkboxTermsOfService.checked = false;
+                        }
+                        document.querySelector('.alma-loader--wrapper').remove();
+                        removeAlmaEventsFromPaymentButton();
+                        onloadAlma();
+                    }
+                }
+            );
+        } catch(e) {
+            console.log(e);
+            let pathnameUrl = window.location.pathname;
+            let urlError = "/order";
+
+            if (pathnameUrl === '/index.php') {
+                urlError = "/index.php?controller=order";
+            }
+
+            window.location.href = urlError;
+        }
+    }
+}
+
+function removeAlmaEventsFromPaymentButton() {
+    let event = paymentButtonEvents.shift();
+    while (event) {
+        document.querySelector('#payment-confirmation button').removeEventListener('click', event);
+        event = paymentButtonEvents.shift();
+    }
+}
+
+function addLoader() {
+    let loader = document.createElement('div');
+    loader.classList.add('loadingIndicator');
+    loader.innerHTML = '<img src="https://cdn.almapay.com/img/animated-logo-a.svg" alt="Loading" />';
+    let wrapperLoader = document.createElement('div');
+    wrapperLoader.classList.add('alma-loader--wrapper');
+    wrapperLoader.appendChild(loader);
+    document.body.appendChild(wrapperLoader);
+}
+
+function isAlmaPayment(url) {
+    return url.indexOf("module/alma/payment") !== -1 || url.indexOf("module=alma") !== -1;
+}
