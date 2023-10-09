@@ -36,4 +36,12 @@ class AdminAlmaInsuranceController extends ModuleAdminController
             'content' => $this->content . $content,
         ));
     }
+
+    public function ajaxProcessInsurance()
+    {
+        $this->ajaxRender(json_encode([
+            'success' => true,
+        ]));
+        exit;
+    }
 }
