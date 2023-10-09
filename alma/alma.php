@@ -61,9 +61,14 @@ class Alma extends PaymentModule
      */
     public $confirmUninstall;
 
+    /**
+     * @var \Alma\PrestaShop\Helpers\Admin\TabsHelper
+     */
+    private $tabsHelper;
+
     public function __construct()
     {
-        $this->name = 'alma';
+        $this->name = \Alma\PrestaShop\Helpers\ConstantsHelper::ALMA_MODULE_NAME;
         $this->tab = 'payments_gateways';
         $this->version = '3.1.0';
         $this->author = 'Alma';
@@ -98,6 +103,7 @@ class Alma extends PaymentModule
         }
 
         $this->hook = new \Alma\PrestaShop\Helpers\HookHelper();
+        $this->tabsHelper = new \Alma\PrestaShop\Helpers\Admin\TabsHelper();
     }
 
     /**
@@ -343,7 +349,14 @@ class Alma extends PaymentModule
         $allTableAreActivated = true;
 
         foreach ($this->dataTabs() as $class => $dataTab) {
-            if (!$this->installTab($class, $dataTab['name'], $dataTab['parent'], $dataTab['position'], $dataTab['icon'])) {
+            if (!$this->tabsHelper->installTab(
+                $this->name,
+                $class,
+                $dataTab['name'],
+                $dataTab['parent'],
+                $dataTab['position'],
+                $dataTab['icon']
+            )) {
                 $allTableAreActivated = false;
             }
         }
@@ -353,69 +366,19 @@ class Alma extends PaymentModule
 
     /**
      * @return bool
+     * @throws PrestaShopException
      */
     public function uninstallTabs()
     {
         $allTableAreActivated = true;
 
         foreach ($this->dataTabs() as $class => $dataTab) {
-            if (!$this->uninstallTab($class)) {
+            if (!$this->tabsHelper->uninstallTab($class)) {
                 $allTableAreActivated = false;
             }
         }
 
         return $allTableAreActivated;
-    }
-
-    /**
-     * Add Alma in backoffice menu.
-     *
-     * @param string $class class controller
-     * @param string $name tab title
-     * @param string|null $parent parent class name
-     * @param int|null $position order in menu
-     * @param string|null $icon fontAwesome class icon
-     *
-     * @return bool if save successfully
-     */
-    private function installTab($class, $name, $parent = null, $position = null, $icon = null)
-    {
-        $tab = Tab::getInstanceFromClassName($class);
-        $tab->active = false !== $name;
-        $tab->class_name = $class;
-        $tab->name = [];
-
-        if ($position) {
-            $tab->position = $position;
-        }
-
-        foreach (Language::getLanguages(true) as $lang) {
-            $tab->name[$lang['id_lang']] = $name;
-        }
-
-        $tab->id_parent = 0;
-        if ($parent) {
-            if (version_compare(_PS_VERSION_, '1.7', '>=') && $icon) {
-                $tab->icon = $icon;
-            }
-
-            $parentTab = Tab::getInstanceFromClassName($parent);
-            $tab->id_parent = $parentTab->id;
-        }
-
-        $tab->module = $this->name;
-
-        return $tab->save();
-    }
-
-    private function uninstallTab($class)
-    {
-        $tab = Tab::getInstanceFromClassName($class);
-        if (!Validate::isLoadedObject($tab)) {
-            return true;
-        }
-
-        return $tab->delete();
     }
 
     private function runHookController($hookName, $params)
