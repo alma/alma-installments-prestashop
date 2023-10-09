@@ -1,0 +1,1 @@
+<div class="alma-widget-insurance">Almasurance</div>

@@ -55,6 +55,7 @@ class HookHelper
         'displayShoppingCartFooter' => 'all',
         'actionOrderStatusPostUpdate' => 'all',
         'displayAdminAfterHeader' => 'all',
+        'displayReassurance' => 'all',
         'displayAdminOrderMain' => [
             'version' => '1.7.7.0',
             'operand' => '>=',

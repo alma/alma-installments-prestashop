@@ -29,6 +29,7 @@ if (!defined('_PS_VERSION_')) {
 }
 
 use Alma\PrestaShop\Helpers\ConstantsHelper;
+use Alma\PrestaShop\Helpers\InsuranceHelper;
 use Alma\PrestaShop\Helpers\SettingsHelper;
 use Alma\PrestaShop\Hooks\FrontendHookController;
 
@@ -45,6 +46,11 @@ class FrontHeaderHookController extends FrontendHookController
     private $moduleName;
 
     /**
+     * @var InsuranceHelper
+     */
+    protected $insuranceHelper;
+
+    /**
      * @param $module
      */
     public function __construct($module)
@@ -52,6 +58,7 @@ class FrontHeaderHookController extends FrontendHookController
         parent::__construct($module);
         $this->controller = $this->context->controller;
         $this->moduleName = $this->module->name;
+        $this->insuranceHelper = new InsuranceHelper();
     }
 
     /**
@@ -231,6 +238,13 @@ class FrontHeaderHookController extends FrontendHookController
         $scriptPath = "modules/$this->moduleName/" . ConstantsHelper::PRODUCT_SCRIPT_PATH;
         $cssPath = "modules/$this->moduleName/" . ConstantsHelper::PRODUCT_CSS_PATH;
         $cartScriptPath = "modules/$this->moduleName/" . ConstantsHelper::CART_SCRIPT_PATH;
+
+        if ($this->insuranceHelper->isInsuranceAllowedInProductPage()) {
+            $this->controller->registerStylesheet(
+                ConstantsHelper::INSURANCE_PRODUCT_CSS_ID,
+                "modules/$this->moduleName/" . ConstantsHelper::INSURANCE_PRODUCT_CSS_PATH
+            );
+        }
 
         $this->controller->registerStylesheet(ConstantsHelper::PRODUCT_CSS_ID, $cssPath);
 
