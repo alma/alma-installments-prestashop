@@ -32,7 +32,7 @@ use Alma\PrestaShop\Helpers\InsuranceHelper;
 use Alma\PrestaShop\Helpers\SettingsHelper;
 use Alma\PrestaShop\Hooks\FrontendHookController;
 
-class DisplayReassuranceHookController extends FrontendHookController
+class DisplayProductActionsHookController extends FrontendHookController
 {
     /** @var Alma */
     protected $module;
@@ -68,6 +68,6 @@ class DisplayReassuranceHookController extends FrontendHookController
      */
     public function run($params)
     {
-        return $this->module->display($this->module->file, 'displayReassurance.tpl');
+        return $this->module->display($this->module->file, 'displayProductActions.tpl');
     }
 }

@@ -55,7 +55,6 @@ class HookHelper
         'displayShoppingCartFooter' => 'all',
         'actionOrderStatusPostUpdate' => 'all',
         'displayAdminAfterHeader' => 'all',
-        'displayReassurance' => 'all',
         'displayAdminOrderMain' => [
             'version' => '1.7.7.0',
             'operand' => '>=',
@@ -89,9 +88,13 @@ class HookHelper
             'operand' => '>=',
         ],
         'displayProductButtons' => [
-            'version' => '1.6',
-            'operand' => '<',
+            'version' => '1.7.6',
+            'operand' => '<'
         ],
+        'displayProductActions' => [
+            'version' => '1.7.6',
+            'operand' => '>='
+        ]
     ];
 
     /**
