@@ -238,3 +238,9 @@ fieldset .form-alma.disabled::before{
     border: 1px solid #b5bdc0;
     background-color: #ddd;
 }
+
+.alma-insurance-iframe{
+    border: 0;
+    padding: 0;
+    margin: 0;
+}

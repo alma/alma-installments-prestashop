@@ -24,6 +24,12 @@
 
 class AdminAlmaInsuranceController extends ModuleAdminController
 {
+    public function __construct()
+    {
+        $this->bootstrap = true;
+        parent::__construct();
+    }
+
     /**
      * @return void
      * @throws SmartyException

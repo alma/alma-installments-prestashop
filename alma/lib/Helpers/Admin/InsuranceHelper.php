@@ -35,7 +35,7 @@ class InsuranceHelper
      */
     protected static $tabInsuranceDescription = [
         'position' => 3,
-        'icon' => 'not_interested',
+        'icon' => 'security',
     ];
 
     /**
