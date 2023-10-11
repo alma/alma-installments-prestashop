@@ -1,5 +1,5 @@
 <div class="alma-widget-insurance">
-    <iframe id="alma-widget-insurance" src="https://poc-iframe.dev.almapay.com/inPageWidget.html"></iframe>
+    <iframe id="alma-widget-insurance" src="https://poc-iframe.dev.almapay.com/almaProductInPageWidget.html"></iframe>
     <div id="modal"></div>
 </div>
 <script type="module" src="https://poc-iframe.dev.almapay.com/openInPageModal.js"></script>

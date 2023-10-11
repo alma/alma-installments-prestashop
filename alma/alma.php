@@ -248,6 +248,8 @@ class Alma extends PaymentModule
     }
 
     /**
+     * Hook the template below the add to cart button
+     *
      * @param $params
      * @return mixed|null
      */

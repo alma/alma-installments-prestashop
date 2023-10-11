@@ -89,11 +89,11 @@ class HookHelper
         ],
         'displayProductButtons' => [
             'version' => '1.7.6',
-            'operand' => '<'
+            'operand' => '<',
         ],
         'displayProductActions' => [
             'version' => '1.7.6',
-            'operand' => '>='
+            'operand' => '>=',
         ]
     ];
 
