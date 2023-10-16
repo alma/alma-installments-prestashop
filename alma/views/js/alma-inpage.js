@@ -50,7 +50,7 @@ function onloadAlma() {
 
                 inPage = createAlmaIframe(formInpage);
 
-                mapPaymentButtonToAlmaPaymentCreation();
+                mapPaymentButtonToAlmaPaymentCreation(url, inPage);
             }
         });
     });
@@ -112,7 +112,7 @@ function createAlmaIframe(form, showPayButton = false, url = '') {
     );
 }
 
-function mapPaymentButtonToAlmaPaymentCreation() {
+function mapPaymentButtonToAlmaPaymentCreation(url, inPage) {
     let paymentButton = document.querySelector('#payment-confirmation button');
 
     const eventAlma = async function (e) {
