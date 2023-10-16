@@ -30,7 +30,6 @@ window.onload = () => {
 
 function onloadAlma() {
     let radioButtons = document.querySelectorAll('input[name="payment-option"][data-module-name=alma]');
-    let paymentButton = document.querySelector('#payment-confirmation button');
 
     //Prestashop 1.7+
     radioButtons.forEach(function (input) {
@@ -49,16 +48,9 @@ function onloadAlma() {
                 }
                 let url = formInpage.dataset.action;
 
-                inPage = createIframe(formInpage);
+                inPage = createAlmaIframe(formInpage);
 
-                const eventAlma = async function (e) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    await createPayment(url, inPage);
-                };
-
-                paymentButtonEvents.push(eventAlma);
-                paymentButton.addEventListener('click', eventAlma);
+                mapPaymentButtonToAlmaPaymentCreation();
             }
         });
     });
@@ -76,12 +68,12 @@ function onloadAlma() {
                 inPage.unmount();
             }
 
-            createIframe(settingInpage, true, url);
+            createAlmaIframe(settingInpage, true, url);
         });
     });
 }
 
-function createIframe(form, showPayButton = false, url = '') {
+function createAlmaIframe(form, showPayButton = false, url = '') {
     let merchantId = form.dataset.merchantid;
     let installment = form.dataset.installment;
     let purchaseAmount = form.dataset.purchaseamount;
@@ -90,7 +82,7 @@ function createIframe(form, showPayButton = false, url = '') {
     let selectorIframeInPage = form.querySelector('.alma-inpage-iframe');
 
     if (showPayButton) {
-        // No refactor inPage is use in callback function 1.6
+        // We couldn't refactor. inPage is used in callback function 1.6
         inPage = Alma.InPage.initialize(
             {
                 merchantId: merchantId,
@@ -120,9 +112,22 @@ function createIframe(form, showPayButton = false, url = '') {
     );
 }
 
+function mapPaymentButtonToAlmaPaymentCreation() {
+    let paymentButton = document.querySelector('#payment-confirmation button');
+
+    const eventAlma = async function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        await createPayment(url, inPage);
+    };
+
+    paymentButtonEvents.push(eventAlma);
+    paymentButton.addEventListener('click', eventAlma);
+}
+
 async function createPayment(url, inPage) {
     if (isAlmaPayment(url)) {
-        addLoader();
+        displayLoader();
         try {
             let response = await fetch(url);
             let paymentData = await response.json();
@@ -163,7 +168,7 @@ function removeAlmaEventsFromPaymentButton() {
     }
 }
 
-function addLoader() {
+function displayLoader() {
     let loader = document.createElement('div');
     loader.classList.add('loadingIndicator');
     loader.innerHTML = '<img src="https://cdn.almapay.com/img/animated-logo-a.svg" alt="Loading" />';
