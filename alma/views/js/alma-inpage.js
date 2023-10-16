@@ -24,9 +24,9 @@
 let inPage = undefined;
 let paymentButtonEvents = [];
 
-window.onload = () => {
+window.addEventListener("load", function() {
     onloadAlma();
-};
+});
 
 function onloadAlma() {
     let radioButtons = document.querySelectorAll('input[name="payment-option"][data-module-name=alma]');
