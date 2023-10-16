@@ -50,7 +50,7 @@ function onloadAlma() {
 
                 inPage = createAlmaIframe(formInpage);
 
-                mapPaymentButtonToAlmaPaymentCreation(url, inPage);
+                mapPaymentButtonToAlmaPaymentCreation(url, inPage, input);
             }
         });
     });
@@ -112,20 +112,20 @@ function createAlmaIframe(form, showPayButton = false, url = '') {
     );
 }
 
-function mapPaymentButtonToAlmaPaymentCreation(url, inPage) {
+function mapPaymentButtonToAlmaPaymentCreation(url, inPage, input) {
     let paymentButton = document.querySelector('#payment-confirmation button');
 
     const eventAlma = async function (e) {
         e.preventDefault();
         e.stopPropagation();
-        await createPayment(url, inPage);
+        await createPayment(url, inPage, input);
     };
 
     paymentButtonEvents.push(eventAlma);
     paymentButton.addEventListener('click', eventAlma);
 }
 
-async function createPayment(url, inPage) {
+async function createPayment(url, inPage, input = null) {
     if (isAlmaPayment(url)) {
         displayLoader();
         try {
@@ -141,6 +141,10 @@ async function createPayment(url, inPage) {
                             checkboxTermsOfService.checked = false;
                         }
                         document.querySelector('.alma-loader--wrapper').remove();
+                        if (input) {
+                            input.checked = false
+                            inPage.unmount();
+                        }
                         removeAlmaEventsFromPaymentButton();
                         onloadAlma();
                     }
