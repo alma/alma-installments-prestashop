@@ -82,7 +82,6 @@ function createAlmaIframe(form, showPayButton = false, url = '') {
     let selectorIframeInPage = form.querySelector('.alma-inpage-iframe');
 
     if (showPayButton) {
-        // We couldn't refactor. inPage is used in callback function 1.6
         inPage = Alma.InPage.initialize(
             {
                 merchantId: merchantId,
