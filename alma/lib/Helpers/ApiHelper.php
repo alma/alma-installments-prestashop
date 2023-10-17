@@ -34,10 +34,9 @@ use Alma\PrestaShop\Helpers\Admin\InsuranceHelper;
 class ApiHelper
 {
     /**
-     * @var InsuranceHelper $insuranceHelper
+     * @var InsuranceHelper
      */
     protected $insuranceHelper;
-
 
     public function __construct()
     {
@@ -47,6 +46,7 @@ class ApiHelper
     /**
      * @param $module
      * @param null $alma
+     *
      * @return Merchant|null
      *
      * @throws ActivationException
@@ -96,10 +96,13 @@ class ApiHelper
     /**
      * @param $module
      * @param $merchant
+     *
      * @return void
+     *
      * @throws \PrestaShopException
      */
-    protected function handleInsuranceFlag($module, $merchant) {
+    protected function handleInsuranceFlag($module, $merchant)
+    {
         $isAllowInsurance = $this->saveFeatureFlag(
             $merchant,
             'cms_insurance',
@@ -116,7 +119,7 @@ class ApiHelper
      * @param string $merchantKey
      * @param string $configKey
      *
-     * @return integer
+     * @return int
      */
     protected function saveFeatureFlag($merchant, $merchantKey, $configKey, $formSettingName)
     {

@@ -24,15 +24,14 @@
 
 namespace Alma\PrestaShop\Helpers\Admin;
 
+use Alma\PrestaShop\Helpers\ConfigurationHelper;
 use Alma\PrestaShop\Helpers\ConstantsHelper;
-use Alma\PrestaShop\Helpers\SettingsHelper;
 use PrestaShop\PrestaShop\Adapter\Entity\Tab;
 
 class InsuranceHelper
 {
     /**
      * @var array
-     *
      */
     protected static $tabInsuranceDescription = [
         'position' => 3,
@@ -40,27 +39,41 @@ class InsuranceHelper
     ];
 
     /**
+     * Insurance form fields for mapping
+     *
+     * @var string[]
+     */
+    public static $fieldsDbInsuranceToIframeParamNames = [
+        ConstantsHelper::ALMA_ACTIVATE_INSURANCE => 'is_insurance_activated',
+        ConstantsHelper::ALMA_SHOW_INSURANCE_WIDGET_PRODUCT => 'is_insurance_on_product_page_activated',
+        ConstantsHelper::ALMA_SHOW_INSURANCE_WIDGET_CART => 'is_insurance_on_cart_page_activated',
+        ConstantsHelper::ALMA_SHOW_INSURANCE_POPUP_CART => 'is_add_to_cart_popup_insurance_activated',
+    ];
+
+    /**
      * @var TabsHelper
      */
     private $tabsHelper;
-
     /**
-     * @var SettingsHelper
+     * @var ConfigurationHelper
      */
-    private $settingsHelper;
+    private $configurationHelper;
 
     public function __construct()
     {
         $this->tabsHelper = new TabsHelper();
-        $this->settingsHelper = new SettingsHelper();
+        $this->configurationHelper = new ConfigurationHelper();
     }
 
     /**
      * @param int $isAllowInsurance
+     *
      * @return bool|null
+     *
      * @throws \PrestaShopException
      */
-    public function handleBOMenu($module, $isAllowInsurance) {
+    public function handleBOMenu($module, $isAllowInsurance)
+    {
         /**
          * @var Tab|object $tab
          */
@@ -96,19 +109,20 @@ class InsuranceHelper
      * Instantiate default db values if insurance is activated or remove it
      *
      * @param bool $isAllowInsurance
+     *
      * @return void
      */
     public function handleDefaultInsuranceFieldValues($isAllowInsurance)
     {
-        $isAlmaInsuranceActivated = $this->settingsHelper->hasKey(ConstantsHelper::ALMA_ACTIVATE_INSURANCE);
+        $isAlmaInsuranceActivated = $this->configurationHelper->hasKey(ConstantsHelper::ALMA_ACTIVATE_INSURANCE);
 
-        // If insurance is allowed and do not exists in db
+        // If insurance is allowed and do not exist in db
         if (
             $isAllowInsurance
             && !$isAlmaInsuranceActivated
         ) {
             foreach (ConstantsHelper::$fieldsBoInsurance as $configKey) {
-                $this->settingsHelper->updateValueV2($configKey, 0);
+                $this->configurationHelper->updateValue($configKey, 0);
             }
         }
 
@@ -117,7 +131,34 @@ class InsuranceHelper
             !$isAllowInsurance
             && $isAlmaInsuranceActivated
         ) {
-            $this->settingsHelper->deleteByNames(ConstantsHelper::$fieldsBoInsurance);
+            $this->configurationHelper->deleteByNames(ConstantsHelper::$fieldsBoInsurance);
         }
+    }
+
+    /**
+     * @return string
+     */
+    public function constructIframeUrlWithParams()
+    {
+        return sprintf(
+            '%s?%s',
+            ConstantsHelper::BO_URL_IFRAME_CONFIGURATION_INSURANCE,
+            http_build_query($this->mapDbFieldsWithIframeParams())
+        );
+    }
+
+    /**
+     * @return mixed
+     */
+    public function mapDbFieldsWithIframeParams()
+    {
+        $mapParams = [];
+        $fieldsBoInsurance = $this->configurationHelper->getMultiple(ConstantsHelper::$fieldsBoInsurance);
+
+        foreach ($fieldsBoInsurance as $fieldName => $fieldValue) {
+            $mapParams[self::$fieldsDbInsuranceToIframeParamNames[$fieldName]] = (bool) $fieldValue ? 'true' : 'false';
+        }
+
+        return $mapParams;
     }
 }

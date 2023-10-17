@@ -84,23 +84,10 @@ class SettingsHelper
     }
 
     /**
-     * Check if the key exists in database
-     *
-     * @param string $configKey
-     * @return bool
-     */
-    public function hasKey($configKey)
-    {
-        $idShop = \Shop::getContextShopID(true);
-        $idShopGroup = \Shop::getContextShopGroupID(true);
-
-        return \Configuration::hasKey($configKey, null, $idShopGroup, $idShop);
-    }
-
-    /**
      * Update value in config.
      *
-     * @deprecated use updateValueV2
+     * @deprecated use ConfigurationHelper::updateValue
+     *
      * @param string $configKey
      * @param string $value
      *
@@ -111,46 +98,6 @@ class SettingsHelper
         $idShop = \Shop::getContextShopID(true);
         $idShopGroup = \Shop::getContextShopGroupID(true);
         \Configuration::updateValue($configKey, $value, false, $idShopGroup, $idShop);
-    }
-
-    /**
-     * Update value in config.
-     *
-     * @param string $configKey
-     * @param string $value
-     *
-     * @return bool
-     */
-    public function updateValueV2($configKey, $value)
-    {
-        $idShop = \Shop::getContextShopID(true);
-        $idShopGroup = \Shop::getContextShopGroupID(true);
-
-        return \Configuration::updateValue($configKey, $value, false, $idShopGroup, $idShop);
-    }
-
-    /**
-     * Delete the key in database
-     *
-     * @param $configKey
-     * @return void
-     */
-    public function deleteByName($configKey)
-    {
-        \Configuration::deleteByName($configKey);
-    }
-
-    /**
-     * Delete the keys in database
-     *
-     * @param array $configKeys
-     * @return void
-     */
-    public function deleteByNames($configKeys)
-    {
-        foreach ($configKeys as $configKey) {
-            $this->deleteByName($configKey);
-        }
     }
 
     /**

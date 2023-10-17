@@ -22,32 +22,39 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
+use Alma\PrestaShop\Helpers\Admin\InsuranceHelper;
+
 class AdminAlmaInsuranceController extends ModuleAdminController
 {
+    /**
+     * @var InsuranceHelper
+     */
+    private $insuranceHelper;
+
     public function __construct()
     {
         $this->bootstrap = true;
+        $this->insuranceHelper = new InsuranceHelper();
         parent::__construct();
     }
 
     /**
      * @return void
+     *
      * @throws SmartyException
      */
     public function initContent()
     {
         parent::initContent();
-        $content = $this->context->smarty->fetch(_PS_MODULE_DIR_ . 'alma/views/templates/admin/insurance.tpl');
-        $this->context->smarty->assign(array(
-            'content' => $this->content . $content,
-        ));
-    }
 
-    public function ajaxProcessInsurance()
-    {
-        $this->ajaxRender(json_encode([
-            'success' => true,
-        ]));
-        exit;
+        $this->context->smarty->assign([
+            'iframeUrl' => $this->insuranceHelper->constructIframeUrlWithParams(),
+        ]);
+
+        $content = $this->context->smarty->fetch(_PS_MODULE_DIR_ . 'alma/views/templates/admin/insurance.tpl');
+
+        $this->context->smarty->assign([
+            'content' => $this->content . $content,
+        ]);
     }
 }

@@ -37,6 +37,7 @@ class TabsHelper
      * @param null $icon fontAwesome class icon
      *
      * @return bool if save successfully
+     *
      * @throws \PrestaShopException
      */
     public function installTab($moduleName, $class, $name, $parent = null, $position = null, $icon = null)
@@ -66,13 +67,14 @@ class TabsHelper
 
         $tab->module = $moduleName;
 
-
         return $tab->save();
     }
 
     /**
      * @params string $class
+     *
      * @return bool
+     *
      * @throws \PrestaShopException
      */
     public function uninstallTab($class)
