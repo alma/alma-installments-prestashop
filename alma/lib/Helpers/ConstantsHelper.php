@@ -60,6 +60,22 @@ class ConstantsHelper
     const ALMA_ALLOW_INSURANCE = 'ALMA_ALLOW_INSURANCE';
 
     const ALMA_ACTIVATE_INSURANCE = 'ALMA_ACTIVATE_INSURANCE';
+    const ALMA_SHOW_INSURANCE_WIDGET_PRODUCT = 'ALMA_SHOW_INSURANCE_WIDGET_PRODUCT';
+    const ALMA_SHOW_INSURANCE_WIDGET_CART = 'ALMA_SHOW_INSURANCE_WIDGET_CART';
+    const ALMA_SHOW_INSURANCE_POPUP_CART = 'ALMA_SHOW_INSURANCE_POPUP_CART';
 
     const BO_CONTROLLER_INSURANCE_CLASSNAME = 'AdminAlmaInsurance';
+    const BO_URL_IFRAME_CONFIGURATION_INSURANCE = 'https://poc-iframe.dev.almapay.com/almaBackOfficeConfiguration.html';
+
+    /**
+     * Insurance form fields
+     *
+     * @var string[]
+     */
+    public static $fieldsBoInsurance = [
+        self::ALMA_ACTIVATE_INSURANCE,
+        self::ALMA_SHOW_INSURANCE_WIDGET_PRODUCT,
+        self::ALMA_SHOW_INSURANCE_WIDGET_CART,
+        self::ALMA_SHOW_INSURANCE_POPUP_CART,
+    ];
 }

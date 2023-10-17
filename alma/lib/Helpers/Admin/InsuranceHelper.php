@@ -25,6 +25,7 @@
 namespace Alma\PrestaShop\Helpers\Admin;
 
 use Alma\PrestaShop\Helpers\ConstantsHelper;
+use Alma\PrestaShop\Helpers\SettingsHelper;
 use PrestaShop\PrestaShop\Adapter\Entity\Tab;
 
 class InsuranceHelper
@@ -43,9 +44,15 @@ class InsuranceHelper
      */
     private $tabsHelper;
 
+    /**
+     * @var SettingsHelper
+     */
+    private $settingsHelper;
+
     public function __construct()
     {
         $this->tabsHelper = new TabsHelper();
+        $this->settingsHelper = new SettingsHelper();
     }
 
     /**
@@ -83,5 +90,34 @@ class InsuranceHelper
         }
 
         return null;
+    }
+
+    /**
+     * Instantiate default db values if insurance is activated or remove it
+     *
+     * @param bool $isAllowInsurance
+     * @return void
+     */
+    public function handleDefaultInsuranceFieldValues($isAllowInsurance)
+    {
+        $isAlmaInsuranceActivated = $this->settingsHelper->hasKey(ConstantsHelper::ALMA_ACTIVATE_INSURANCE);
+
+        // If insurance is allowed and do not exists in db
+        if (
+            $isAllowInsurance
+            && !$isAlmaInsuranceActivated
+        ) {
+            foreach (ConstantsHelper::$fieldsBoInsurance as $configKey) {
+                $this->settingsHelper->updateValueV2($configKey, 0);
+            }
+        }
+
+        // If insurance is not allowed and exists in db
+        if (
+            !$isAllowInsurance
+            && $isAlmaInsuranceActivated
+        ) {
+            $this->settingsHelper->deleteByNames(ConstantsHelper::$fieldsBoInsurance);
+        }
     }
 }

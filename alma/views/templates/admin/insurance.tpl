@@ -6,7 +6,7 @@
 
         <div class="form-group">
             <div class="alma--insurance-iframe">
-                <iframe id="config-alma-iframe" class="alma-insurance-iframe" width="100%" height="100%" src="https://poc-iframe.dev.almapay.com/backOffice.html?option1=true"></iframe>
+                <iframe id="config-alma-iframe" class="alma-insurance-iframe" width="100%" height="100%" src="{Alma\PrestaShop\Helpers\ConstantsHelper::BO_URL_IFRAME_CONFIGURATION_INSURANCE}"></iframe>
             </div>
         </div>
     </div><!-- /.form-wrapper -->

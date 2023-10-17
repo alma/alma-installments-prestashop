@@ -108,6 +108,7 @@ class ApiHelper
         );
 
         $this->insuranceHelper->handleBOMenu($module, $isAllowInsurance);
+        $this->insuranceHelper->handleDefaultInsuranceFieldValues($isAllowInsurance);
     }
 
     /**
