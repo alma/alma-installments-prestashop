@@ -24,6 +24,7 @@
 
 namespace Alma\PrestaShop\Helpers\Admin;
 
+use Alma\PrestaShop\Exceptions\WrongParamsException;
 use Alma\PrestaShop\Helpers\ConfigurationHelper;
 use Alma\PrestaShop\Helpers\ConstantsHelper;
 use PrestaShop\PrestaShop\Adapter\Entity\Tab;
@@ -137,6 +138,8 @@ class InsuranceHelper
 
     /**
      * @return string
+     *
+     * @throws \PrestaShopException
      */
     public function constructIframeUrlWithParams()
     {
@@ -148,17 +151,57 @@ class InsuranceHelper
     }
 
     /**
-     * @return mixed
+     * @return array
+     *
+     * @throws \PrestaShopException
      */
-    public function mapDbFieldsWithIframeParams()
+    protected function mapDbFieldsWithIframeParams()
     {
         $mapParams = [];
         $fieldsBoInsurance = $this->configurationHelper->getMultiple(ConstantsHelper::$fieldsBoInsurance);
 
         foreach ($fieldsBoInsurance as $fieldName => $fieldValue) {
-            $mapParams[self::$fieldsDbInsuranceToIframeParamNames[$fieldName]] = (bool) $fieldValue ? 'true' : 'false';
+            $configKey = static::$fieldsDbInsuranceToIframeParamNames[$fieldName];
+            $mapParams[$configKey] = (bool) $fieldValue ? 'true' : 'false';
         }
 
         return $mapParams;
+    }
+
+    /**
+     * @param array $configKeys
+     * @param array $dbFields
+     *
+     * @return void
+     */
+    protected function saveBOFormValues($configKeys, $dbFields)
+    {
+        foreach ($configKeys as $configKey => $configValue) {
+            $this->configurationHelper->updateValue(
+                $dbFields[$configKey],
+                (int) filter_var($configValue, FILTER_VALIDATE_BOOLEAN)
+            );
+        }
+    }
+
+    /**
+     * @param array $config
+     * @param \Alma $module
+     *
+     * @return void
+     *
+     * @throws WrongParamsException
+     */
+    public function saveConfigInsurance($config, $module)
+    {
+        $dbFields = array_flip(static::$fieldsDbInsuranceToIframeParamNames);
+        $diffKeysArray = array_diff_key($config, $dbFields);
+
+        if (!empty($diffKeysArray)) {
+            header('HTTP/1.1 401 Unauthorized request');
+            throw new WrongParamsException($module, $diffKeysArray);
+        }
+
+        $this->saveBOFormValues($config, $dbFields);
     }
 }

@@ -44,7 +44,6 @@ class ConfigurationHelper
      */
     public function getMultiple($keys, $idLang = null, $idShopGroup = null, $idShop = null)
     {
-        // @todo verify in PS 1.5
         return \Configuration::getMultiple($keys, $idLang, $idShopGroup, $idShop);
     }
 
