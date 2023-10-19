@@ -20,18 +20,13 @@
 </div>
 
 <script type="module">
-    const almaGetInsuranceConfigurationData = () => {
-        const almaInsuranceIframe = document.getElementById('config-alma-iframe').contentWindow;
-        almaInsuranceIframe.postMessage('send_alma_data_insurance_config', '*')
-    }
-
-    // TODO : fix the multiple request
+    let currentResolve
 
     let save = document.getElementById('alma_config_form_submit_btn');
     save.addEventListener('click', async () => {
-        window.getData = almaGetInsuranceConfigurationData();
-        window.addEventListener('message', (e) => {
-            if (e.origin === 'https://poc-iframe.dev.almapay.com') {
+        let messageCallback = (e) => {
+            if (currentResolve) {
+                currentResolve(e.data)
                 $.ajax({
                     type: 'POST',
                     url: 'ajax-tab.php',
@@ -54,12 +49,21 @@
                         }
                     });
             }
-        });
+        }
 
+        const almaGetInsuranceConfigurationData = () => {
+            const iframe = document.getElementById('config-alma-iframe').contentWindow
+
+            const promise = new Promise((resolve) => {
+                currentResolve = resolve
+                iframe.postMessage('send value', '*')
+                window.addEventListener('message', messageCallback)
+            }).then((data) => {
+                currentResolve = null
+                window.removeEventListener('message', messageCallback)
+            })
+        }
+        window.getData = almaGetInsuranceConfigurationData
         almaGetInsuranceConfigurationData()
     });
-
-
-
-
 </script>

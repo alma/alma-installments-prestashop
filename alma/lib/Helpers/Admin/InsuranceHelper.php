@@ -27,7 +27,6 @@ namespace Alma\PrestaShop\Helpers\Admin;
 use Alma\PrestaShop\Exceptions\WrongParamsException;
 use Alma\PrestaShop\Helpers\ConfigurationHelper;
 use Alma\PrestaShop\Helpers\ConstantsHelper;
-use PrestaShop\PrestaShop\Adapter\Entity\Tab;
 
 class InsuranceHelper
 {
@@ -54,11 +53,11 @@ class InsuranceHelper
     /**
      * @var TabsHelper
      */
-    private $tabsHelper;
+    public $tabsHelper;
     /**
      * @var ConfigurationHelper
      */
-    private $configurationHelper;
+    public $configurationHelper;
 
     public function __construct()
     {
@@ -75,11 +74,7 @@ class InsuranceHelper
      */
     public function handleBOMenu($module, $isAllowInsurance)
     {
-        /**
-         * @var Tab|object $tab
-         */
-        $tab = \Tab::getInstanceFromClassName(ConstantsHelper::BO_CONTROLLER_INSURANCE_CLASSNAME);
-
+        $tab = $this->tabsHelper->getInstanceFromClassName(ConstantsHelper::BO_CONTROLLER_INSURANCE_CLASSNAME);
         // Remove tab if the tab exists and we are not allowed to have it
         if (
             $tab->id
