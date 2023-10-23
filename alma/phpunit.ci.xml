@@ -15,5 +15,12 @@
             <directory>tests</directory>
         </testsuite>
     </testsuites>
-
+    <logging>
+        <log type="coverage-clover" target="./build/logs/clover.xml"/>
+    </logging>
+    <filter>
+        <whitelist addUncoveredFilesFromWhitelist="true">
+            <directory>./tests/Unit/Helper/</directory>
+        </whitelist>
+    </filter>
 </phpunit>
