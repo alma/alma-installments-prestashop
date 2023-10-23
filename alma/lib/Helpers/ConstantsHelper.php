@@ -66,6 +66,7 @@ class ConstantsHelper
 
     const BO_CONTROLLER_INSURANCE_CLASSNAME = 'AdminAlmaInsurance';
     const BO_URL_IFRAME_CONFIGURATION_INSURANCE = 'https://protect.staging.almapay.com/almaBackOfficeConfiguration.html';
+    const DOMAIN_URL_INSURANCE = 'https://protect.staging.almapay.com';
 
     /**
      * Insurance form fields
