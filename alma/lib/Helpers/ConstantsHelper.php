@@ -65,8 +65,8 @@ class ConstantsHelper
     const ALMA_SHOW_INSURANCE_POPUP_CART = 'ALMA_SHOW_INSURANCE_POPUP_CART';
 
     const BO_CONTROLLER_INSURANCE_CLASSNAME = 'AdminAlmaInsurance';
-    const BO_URL_IFRAME_CONFIGURATION_INSURANCE = 'https://protect.staging.almapay.com/almaBackOfficeConfiguration.html';
     const DOMAIN_URL_INSURANCE = 'https://protect.staging.almapay.com';
+    const BO_URL_IFRAME_CONFIGURATION_INSURANCE = self::DOMAIN_URL_INSURANCE . '/almaBackOfficeConfiguration.html';
 
     /**
      * Insurance form fields
