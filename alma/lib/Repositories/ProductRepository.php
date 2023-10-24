@@ -147,4 +147,21 @@ class ProductRepository
 
         return $productsDetails;
     }
+
+    /**
+     * @param string $reference
+     * @param int $id_lang
+     * @return false|string
+     */
+    public function getProductIdByReference($reference, $id_lang =1)
+    {
+        return \Db::getInstance()->getValue('SELECT p.id_product
+                FROM `' . _DB_PREFIX_ . 'product` p
+                ' . \Shop::addSqlAssociation('product', 'p') . '
+                LEFT JOIN `' . _DB_PREFIX_ . 'product_lang` pl ON (p.`id_product` = pl.`id_product` )
+                LEFT JOIN `' . _DB_PREFIX_ . 'manufacturer` m ON (m.`id_manufacturer` = p.`id_manufacturer`)
+                LEFT JOIN `' . _DB_PREFIX_ . 'supplier` s ON (s.`id_supplier` = p.`id_supplier`) 
+                WHERE pl.`id_lang` = ' . (int) $id_lang . '
+                AND p.reference="' . (string) $reference .'"');
+    }
 }

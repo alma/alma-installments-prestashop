@@ -22,17 +22,10 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
-namespace Alma\PrestaShop\Helpers;
+namespace Alma\PrestaShop\Exceptions;
 
-class InsuranceHelper
+class InsuranceNotFoundException extends \Exception
 {
-    /**
-     * @return bool
-     */
-    public function isInsuranceAllowedInProductPage()
-    {
-        return (bool) (int) SettingsHelper::get(ConstantsHelper::ALMA_SHOW_INSURANCE_WIDGET_PRODUCT, false)
-            && (bool) (int) SettingsHelper::get(ConstantsHelper::ALMA_ALLOW_INSURANCE, false)
-            && (bool) (int) SettingsHelper::get(ConstantsHelper::ALMA_ACTIVATE_INSURANCE, false);
-    }
+
+
 }

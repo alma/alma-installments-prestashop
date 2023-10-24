@@ -94,7 +94,9 @@ class HookHelper
         'displayProductActions' => [
             'version' => '1.7.6',
             'operand' => '>=',
-        ]
+        ],
+        'actionCartSave' => 'all',
+        'actionValidateOrder' => 'all'
     ];
 
     /**
