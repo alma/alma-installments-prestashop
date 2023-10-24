@@ -24,6 +24,8 @@
 
 namespace Alma\PrestaShop\Helpers\Admin;
 
+use PrestaShop\PrestaShop\Adapter\Entity\Tab;
+
 class TabsHelper
 {
     /**
@@ -37,11 +39,10 @@ class TabsHelper
      * @param null $icon fontAwesome class icon
      *
      * @return bool if save successfully
-     * @throws \PrestaShopException
      */
     public function installTab($moduleName, $class, $name, $parent = null, $position = null, $icon = null)
     {
-        $tab = \Tab::getInstanceFromClassName($class);
+        $tab = $this->getInstanceFromClassName($class);
         $tab->active = false !== $name;
         $tab->class_name = $class;
         $tab->name = [];
@@ -60,28 +61,42 @@ class TabsHelper
                 $tab->icon = $icon;
             }
 
-            $parentTab = \Tab::getInstanceFromClassName($parent);
+            $parentTab = $this->getInstanceFromClassName($parent);
             $tab->id_parent = $parentTab->id;
         }
 
         $tab->module = $moduleName;
-
 
         return $tab->save();
     }
 
     /**
      * @params string $class
+     *
      * @return bool
+     *
      * @throws \PrestaShopException
      */
     public function uninstallTab($class)
     {
-        $tab = \Tab::getInstanceFromClassName($class);
+        $tab = $this->getInstanceFromClassName($class);
         if (!\Validate::isLoadedObject($tab)) {
             return true;
         }
 
         return $tab->delete();
+    }
+
+    /**
+     * @param string $className
+     *
+     * @return \Tab
+     */
+    public function getInstanceFromClassName($className)
+    {
+        /*
+         * @var Tab|object $tab
+         */
+        return \Tab::getInstanceFromClassName($className);
     }
 }

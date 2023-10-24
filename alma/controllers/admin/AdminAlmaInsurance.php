@@ -22,18 +22,80 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
+use Alma\PrestaShop\Helpers\Admin\InsuranceHelper;
+use Alma\PrestaShop\Helpers\ConfigurationHelper;
+use Alma\PrestaShop\Logger;
+use Alma\PrestaShop\Traits\AjaxTrait;
+
 class AdminAlmaInsuranceController extends ModuleAdminController
 {
+    use AjaxTrait;
+
+    /**
+     * @var InsuranceHelper
+     */
+    private $insuranceHelper;
+    /**
+     * @var ConfigurationHelper
+     */
+    private $configurationHelper;
+
+    public function __construct()
+    {
+        $this->bootstrap = true;
+        $this->insuranceHelper = new InsuranceHelper();
+        $this->configurationHelper = new ConfigurationHelper();
+        parent::__construct();
+    }
+
     /**
      * @return void
+     *
+     * @throws PrestaShopException
      * @throws SmartyException
      */
     public function initContent()
     {
         parent::initContent();
+
+        $this->context->smarty->assign([
+            'iframeUrl' => $this->insuranceHelper->constructIframeUrlWithParams(),
+            'token' => \Tools::getAdminTokenLite('AdminAlmaInsurance'),
+        ]);
+
         $content = $this->context->smarty->fetch(_PS_MODULE_DIR_ . 'alma/views/templates/admin/insurance.tpl');
-        $this->context->smarty->assign(array(
+
+        $this->context->smarty->assign([
             'content' => $this->content . $content,
-        ));
+        ]);
+    }
+
+    /**
+     * @return void
+     *
+     * @throws PrestaShopException
+     */
+    public function ajaxProcessSaveConfigInsurance()
+    {
+        try {
+            $config = Tools::getValue('config');
+
+            $this->insuranceHelper->saveConfigInsurance($config, $this->module);
+
+            $this->ajaxRenderAndExit(json_encode([
+                    'success' => true,
+                    'message' => $this->module->l('Your configuration has been saved'),
+                ])
+            );
+        } catch (\Exception $e) {
+            Logger::instance()->error('Error creating Alma configuration insurance: ' . $e->getMessage());
+            $this->ajaxRenderAndExit(json_encode([
+                    'error' => [
+                        'msg' => $this->module->l('Error creating Alma configuration insurance: ' . $e->getMessage()),
+                        'code' => $e->getCode(),
+                    ],
+                ])
+            );
+        }
     }
 }
