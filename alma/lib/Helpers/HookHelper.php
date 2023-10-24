@@ -88,9 +88,13 @@ class HookHelper
             'operand' => '>=',
         ],
         'displayProductButtons' => [
-            'version' => '1.6',
+            'version' => '1.7.6',
             'operand' => '<',
         ],
+        'displayProductActions' => [
+            'version' => '1.7.6',
+            'operand' => '>=',
+        ]
     ];
 
     /**

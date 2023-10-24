@@ -37,12 +37,14 @@ class ConstantsHelper
     const WIDGETS_JS_URL = 'https://cdn.jsdelivr.net/npm/@alma/widgets@3.x.x/dist/widgets.umd.js';
     const PRODUCT_SCRIPT_PATH = 'views/js/alma-product.js';
     const PRODUCT_CSS_PATH = 'views/css/alma-product.css';
+    const INSURANCE_PRODUCT_CSS_PATH = 'views/css/alma-insurance.css';
     const CART_SCRIPT_PATH = 'views/js/alma-cart.js';
     const INPAGE_JS_ID = 'alma-remote-inpage-js';
     const INPAGE_SCRIPT_ID = 'alma-inpage-script';
     const WIDGETS_JS_ID = 'alma-remote-widgets-js';
     const WIDGETS_CSS_ID = 'alma-remote-widgets-css';
     const PRODUCT_CSS_ID = 'alma-product-css';
+    const INSURANCE_PRODUCT_CSS_ID = 'alma-product-insurance-css';
     const PRODUCT_SCRIPT_ID = 'alma-product-script';
     const CART_SCRIPT_ID = 'alma-cart-script';
     const PRESTASHOP_VERSION_1_7_0_2 = '1.7.0.2';
@@ -65,6 +67,7 @@ class ConstantsHelper
     const ALMA_SHOW_INSURANCE_POPUP_CART = 'ALMA_SHOW_INSURANCE_POPUP_CART';
 
     const BO_CONTROLLER_INSURANCE_CLASSNAME = 'AdminAlmaInsurance';
+    const ALMA_DISPLAY_INSURANCE_ON_PRODUCT_PAGE = 'ALMA_DISPLAY_INSURANCE_ON_PRODUCT_PAGE';
     const DOMAIN_URL_INSURANCE = 'https://protect.staging.almapay.com';
     const BO_URL_IFRAME_CONFIGURATION_INSURANCE = self::DOMAIN_URL_INSURANCE . '/almaBackOfficeConfiguration.html';
 
