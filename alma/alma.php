@@ -343,6 +343,8 @@ class Alma extends PaymentModule
 
     /**
      * @return bool
+     *
+     * @throws PrestaShopException
      */
     public function installTabs()
     {
@@ -366,6 +368,7 @@ class Alma extends PaymentModule
 
     /**
      * @return bool
+     *
      * @throws PrestaShopException
      */
     public function uninstallTabs()

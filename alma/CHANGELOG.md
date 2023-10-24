@@ -2,7 +2,7 @@
 
 ## v3.1.0
 
-- feat: In-Page: Now we use the setForm in payment option. We also refactored the code to vanilla Javascript (we don't use Jquery anymore)```
+- feat: In-Page: Now we use the setForm in payment option and refactored to vanilla Javascript (we don't use Jquery anymore)```
 
 ## v3.0.3
 

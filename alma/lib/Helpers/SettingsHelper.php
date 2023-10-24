@@ -86,6 +86,8 @@ class SettingsHelper
     /**
      * Update value in config.
      *
+     * @deprecated use ConfigurationHelper::updateValue
+     *
      * @param string $configKey
      * @param string $value
      *
@@ -149,6 +151,10 @@ class SettingsHelper
             'ALMA_CATEGORIES_WDGT_NOT_ELGBL',
             ConstantsHelper::ALMA_ALLOW_INPAGE,
             ConstantsHelper::ALMA_ALLOW_INSURANCE,
+            ConstantsHelper::ALMA_ACTIVATE_INSURANCE,
+            ConstantsHelper::ALMA_SHOW_INSURANCE_WIDGET_PRODUCT,
+            ConstantsHelper::ALMA_SHOW_INSURANCE_WIDGET_CART,
+            ConstantsHelper::ALMA_SHOW_INSURANCE_POPUP_CART,
         ];
 
         foreach ($configKeys as $configKey) {

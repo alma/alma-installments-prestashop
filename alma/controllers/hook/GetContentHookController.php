@@ -58,7 +58,7 @@ use Alma\PrestaShop\Logger;
 final class GetContentHookController extends AdminHookController
 {
     /**
-     * @var ApiHelper $apiHelper
+     * @var ApiHelper
      */
     protected $apiHelper;
 

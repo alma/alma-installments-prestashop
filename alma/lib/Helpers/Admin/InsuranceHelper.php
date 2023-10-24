@@ -24,41 +24,57 @@
 
 namespace Alma\PrestaShop\Helpers\Admin;
 
+use Alma\PrestaShop\Exceptions\WrongParamsException;
+use Alma\PrestaShop\Helpers\ConfigurationHelper;
 use Alma\PrestaShop\Helpers\ConstantsHelper;
-use PrestaShop\PrestaShop\Adapter\Entity\Tab;
 
 class InsuranceHelper
 {
     /**
      * @var array
-     *
      */
     protected static $tabInsuranceDescription = [
         'position' => 3,
-        'icon' => 'not_interested',
+        'icon' => 'security',
+    ];
+
+    /**
+     * Insurance form fields for mapping
+     *
+     * @var string[]
+     */
+    public static $fieldsDbInsuranceToIframeParamNames = [
+        ConstantsHelper::ALMA_ACTIVATE_INSURANCE => 'is_insurance_activated',
+        ConstantsHelper::ALMA_SHOW_INSURANCE_WIDGET_PRODUCT => 'is_insurance_on_product_page_activated',
+        ConstantsHelper::ALMA_SHOW_INSURANCE_WIDGET_CART => 'is_insurance_on_cart_page_activated',
+        ConstantsHelper::ALMA_SHOW_INSURANCE_POPUP_CART => 'is_add_to_cart_popup_insurance_activated',
     ];
 
     /**
      * @var TabsHelper
      */
-    private $tabsHelper;
+    public $tabsHelper;
+    /**
+     * @var ConfigurationHelper
+     */
+    public $configurationHelper;
 
     public function __construct()
     {
         $this->tabsHelper = new TabsHelper();
+        $this->configurationHelper = new ConfigurationHelper();
     }
 
     /**
      * @param int $isAllowInsurance
+     *
      * @return bool|null
+     *
      * @throws \PrestaShopException
      */
-    public function handleBOMenu($module, $isAllowInsurance) {
-        /**
-         * @var Tab|object $tab
-         */
-        $tab = \Tab::getInstanceFromClassName(ConstantsHelper::BO_CONTROLLER_INSURANCE_CLASSNAME);
-
+    public function handleBOMenu($module, $isAllowInsurance)
+    {
+        $tab = $this->tabsHelper->getInstanceFromClassName(ConstantsHelper::BO_CONTROLLER_INSURANCE_CLASSNAME);
         // Remove tab if the tab exists and we are not allowed to have it
         if (
             $tab->id
@@ -83,5 +99,104 @@ class InsuranceHelper
         }
 
         return null;
+    }
+
+    /**
+     * Instantiate default db values if insurance is activated or remove it
+     *
+     * @param bool $isAllowInsurance
+     *
+     * @return void
+     */
+    public function handleDefaultInsuranceFieldValues($isAllowInsurance)
+    {
+        $isAlmaInsuranceActivated = $this->configurationHelper->hasKey(ConstantsHelper::ALMA_ACTIVATE_INSURANCE);
+
+        // If insurance is allowed and do not exist in db
+        if (
+            $isAllowInsurance
+            && !$isAlmaInsuranceActivated
+        ) {
+            foreach (ConstantsHelper::$fieldsBoInsurance as $configKey) {
+                $this->configurationHelper->updateValue($configKey, 0);
+            }
+        }
+
+        // If insurance is not allowed and exists in db
+        if (
+            !$isAllowInsurance
+            && $isAlmaInsuranceActivated
+        ) {
+            $this->configurationHelper->deleteByNames(ConstantsHelper::$fieldsBoInsurance);
+        }
+    }
+
+    /**
+     * @return string
+     *
+     * @throws \PrestaShopException
+     */
+    public function constructIframeUrlWithParams()
+    {
+        return sprintf(
+            '%s?%s',
+            ConstantsHelper::BO_URL_IFRAME_CONFIGURATION_INSURANCE,
+            http_build_query($this->mapDbFieldsWithIframeParams())
+        );
+    }
+
+    /**
+     * @return array
+     *
+     * @throws \PrestaShopException
+     */
+    protected function mapDbFieldsWithIframeParams()
+    {
+        $mapParams = [];
+        $fieldsBoInsurance = $this->configurationHelper->getMultiple(ConstantsHelper::$fieldsBoInsurance);
+
+        foreach ($fieldsBoInsurance as $fieldName => $fieldValue) {
+            $configKey = static::$fieldsDbInsuranceToIframeParamNames[$fieldName];
+            $mapParams[$configKey] = (bool) $fieldValue ? 'true' : 'false';
+        }
+
+        return $mapParams;
+    }
+
+    /**
+     * @param array $configKeys
+     * @param array $dbFields
+     *
+     * @return void
+     */
+    protected function saveBOFormValues($configKeys, $dbFields)
+    {
+        foreach ($configKeys as $configKey => $configValue) {
+            $this->configurationHelper->updateValue(
+                $dbFields[$configKey],
+                (int) filter_var($configValue, FILTER_VALIDATE_BOOLEAN)
+            );
+        }
+    }
+
+    /**
+     * @param array $config
+     * @param \Alma $module
+     *
+     * @return void
+     *
+     * @throws WrongParamsException
+     */
+    public function saveConfigInsurance($config, $module)
+    {
+        $dbFields = array_flip(static::$fieldsDbInsuranceToIframeParamNames);
+        $diffKeysArray = array_diff_key($config, $dbFields);
+
+        if (!empty($diffKeysArray)) {
+            header('HTTP/1.1 401 Unauthorized request');
+            throw new WrongParamsException($module, $diffKeysArray);
+        }
+
+        $this->saveBOFormValues($config, $dbFields);
     }
 }
