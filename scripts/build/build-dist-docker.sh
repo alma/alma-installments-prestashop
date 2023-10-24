@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
 
 # Build alma.zip from the module's source directory
-# Should be run from the project's source
 
 SRC_DIR=$(pwd)
 BUILD_DIR="/tmp/build/alma"
