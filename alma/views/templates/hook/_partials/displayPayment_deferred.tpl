@@ -66,7 +66,16 @@
                 </p>
             </div>
             {if $option.isInPageEnabled}
-                <div id="alma-inpage-payment-option-{$option.paymentOptionKey|escape:'htmlall':'UTF-8'}" class="alma-inpage-payment-options" data-apimode="{$apiMode|escape:'htmlall':'UTF-8'}" data-merchantid="{$merchantId|escape:'htmlall':'UTF-8'}" data-isinpageenabled="{$option.isInPageEnabled|escape:'htmlall':'UTF-8'}" data-installment="{$option.pnx|escape:'htmlall':'UTF-8'}" data-purchaseamount="{$creditInfo.totalCart|escape:'htmlall':'UTF-8'}" data-locale="{$option.locale|escape:'htmlall':'UTF-8'}"></div>
+                <div id="alma-inpage-payment-option-{$option.paymentOptionKey|escape:'htmlall':'UTF-8'}"
+                     class="alma-inpage-payment-options"
+                     data-apimode="{$apiMode|escape:'htmlall':'UTF-8'}"
+                     data-merchantid="{$merchantId|escape:'htmlall':'UTF-8'}"
+                     data-isinpageenabled="{$option.isInPageEnabled|escape:'htmlall':'UTF-8'}"
+                     data-installment="{$option.pnx|escape:'htmlall':'UTF-8'}"
+                     data-purchaseamount="{$creditInfo.totalCart|escape:'htmlall':'UTF-8'}"
+                     data-locale="{$option.locale|escape:'htmlall':'UTF-8'}">
+                    <div id="alma-inpage-iframe-plan-{$option.paymentOptionKey|escape:'htmlall':'UTF-8'}" class="alma-inpage-iframe"></div>
+                </div>
             {/if}
         </div>
     {/if}    
