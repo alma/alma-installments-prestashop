@@ -21,13 +21,14 @@
  * @copyright 2018-2023 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
-if (!defined('_PS_VERSION_')) {
-    exit;
-}
 
 use Alma\PrestaShop\Logger;
 use Alma\PrestaShop\Validators\PaymentValidation;
 use Alma\PrestaShop\Validators\PaymentValidationError;
+
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
 
 class AlmaValidationModuleFrontController extends ModuleFrontController
 {

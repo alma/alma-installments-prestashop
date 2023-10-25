@@ -27,6 +27,10 @@ namespace Alma\PrestaShop\Exceptions;
 use Alma\PrestaShop\Helpers\LinkHelper;
 use Alma\PrestaShop\Helpers\SettingsHelper;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class ActivationException extends AlmaException
 {
     /**

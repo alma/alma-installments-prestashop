@@ -23,6 +23,10 @@
  */
 use Alma\PrestaShop\Helpers\LinkHelper;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class AdminAlmaConfigController extends ModuleAdminController
 {
     public function init()
