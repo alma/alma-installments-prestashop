@@ -24,11 +24,11 @@
 
 namespace Alma\PrestaShop\Hooks;
 
+use Alma\PrestaShop\Helpers\SettingsHelper;
+
 if (!defined('_PS_VERSION_')) {
     exit;
 }
-
-use Alma\PrestaShop\Helpers\SettingsHelper;
 
 abstract class FrontendHookController extends HookController
 {

@@ -24,14 +24,14 @@
 
 namespace Alma\PrestaShop\Helpers;
 
-if (!defined('_PS_VERSION_')) {
-    exit;
-}
-
 use Alma\API\Endpoints\Results\Eligibility;
 use Alma\API\RequestError;
 use Alma\PrestaShop\Logger;
 use Alma\PrestaShop\Model\PaymentData;
+
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
 
 class EligibilityHelper
 {

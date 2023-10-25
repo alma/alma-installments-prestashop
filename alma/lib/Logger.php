@@ -24,13 +24,13 @@
 
 namespace Alma\PrestaShop;
 
-if (!defined('_PS_VERSION_')) {
-    exit;
-}
-
 use Alma\PrestaShop\Helpers\SettingsHelper;
 use Psr\Log\AbstractLogger;
 use Psr\Log\LogLevel;
+
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
 
 class Logger extends AbstractLogger
 {

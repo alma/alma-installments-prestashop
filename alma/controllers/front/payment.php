@@ -21,9 +21,6 @@
  * @copyright 2018-2023 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
-if (!defined('_PS_VERSION_')) {
-    exit;
-}
 
 use Alma\API\ParamsError;
 use Alma\PrestaShop\Helpers\ClientHelper;
@@ -31,6 +28,10 @@ use Alma\PrestaShop\Helpers\SettingsHelper;
 use Alma\PrestaShop\Logger;
 use Alma\PrestaShop\Model\PaymentData;
 use Alma\PrestaShop\Traits\AjaxTrait;
+
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
 
 class AlmaPaymentModuleFrontController extends ModuleFrontController
 {

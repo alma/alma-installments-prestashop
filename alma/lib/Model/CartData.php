@@ -24,14 +24,14 @@
 
 namespace Alma\PrestaShop\Model;
 
-if (!defined('_PS_VERSION_')) {
-    exit;
-}
-
 use Alma\PrestaShop\Helpers\PriceHelper;
 use Alma\PrestaShop\Helpers\ProductHelper;
 use Alma\PrestaShop\Helpers\SettingsHelper;
 use Alma\PrestaShop\Repositories\ProductRepository;
+
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
 
 class CartData
 {
