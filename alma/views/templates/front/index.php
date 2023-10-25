@@ -1,5 +1,6 @@
-{*
- * 2018-2023 Alma SAS
+<?php
+/**
+ * 2018-2023 Alma SAS.
  *
  * THE MIT LICENSE
  *
@@ -19,14 +20,11 @@
  * @author    Alma SAS <contact@getalma.eu>
  * @copyright 2018-2023 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
- *}
-<form id="alma-inpage-plan-{$keyPlan|escape:'htmlall':'UTF-8'}" class="alma-inpage"
-      data-action="{$action}"
-      data-apimode="{$apiMode|escape:'htmlall':'UTF-8'}"
-      data-merchantid="{$merchantId|escape:'htmlall':'UTF-8'}"
-      data-isinpageenabled="{$isInPageEnabled|escape:'htmlall':'UTF-8'}"
-      data-installment="{$installment|escape:'htmlall':'UTF-8'}"
-      data-purchaseamount="{$creditInfo.totalCart|escape:'htmlall':'UTF-8'}"
-      data-locale="{$locale|escape:'htmlall':'UTF-8'}">
-    <div id="alma-inpage-iframe-plan-{$keyPlan|escape:'htmlall':'UTF-8'}" class="alma-inpage-iframe"></div>
-</form>
+ */
+header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
+header('Last-Modified: ' . gmdate('D, d M Y H:i:s') . ' GMT');
+header('Cache-Control: no-store, no-cache, must-revalidate');
+header('Cache-Control: post-check=0, pre-check=0', false);
+header('Pragma: no-cache');
+header('Location: ../');
+exit;
