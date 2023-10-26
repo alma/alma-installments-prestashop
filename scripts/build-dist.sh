@@ -7,9 +7,12 @@ DIR=$(pwd)
 
 mkdir -p ./tmp/build/alma
 cp CHANGELOG.md ./alma/
-cp -r CHANGELOG.md ./alma/* ./tmp/build/alma
+cp -r ./alma/* ./tmp/build/alma
+cp ./alma/.htaccess ./tmp/build/alma/
 rm -f ./tmp/build/alma/composer.lock
 rm -rf ./tmp/build/alma/tests
+rm -rf ./tmp/build/alma/phpunit.ci.xml
+rm -rf ./tmp/build/alma/phpunit.dist.xml
 
 mkdir ./dist
 
@@ -23,6 +26,7 @@ composer dump-autoload --optimize
 
 cd ..
 
-zip -9 -r "$DIR/dist/alma.zip" alma --exclude  "*/.*" "*/build.sh" "*/dist" "*/docker*"
+zip -9 -r "$DIR/dist/alma.zip" alma --exclude "*/*/.*" "*/build.sh" "*/dist" "*/docker*"
 
 rm -rf "$DIR/tmp/build"
+rm -rf "$DIR/alma/CHANGELOG.md"
