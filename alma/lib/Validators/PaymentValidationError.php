@@ -24,6 +24,10 @@
 
 namespace Alma\PrestaShop\Validators;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class PaymentValidationError extends \Exception
 {
     public $cart;
