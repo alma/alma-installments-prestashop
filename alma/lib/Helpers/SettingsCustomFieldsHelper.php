@@ -24,13 +24,13 @@
 
 namespace Alma\PrestaShop\Helpers;
 
-if (!defined('_PS_VERSION_')) {
-    exit;
-}
-
 use Alma\PrestaShop\Forms\ExcludedCategoryAdminFormBuilder;
 use Alma\PrestaShop\Forms\PaymentButtonAdminFormBuilder;
 use Alma\PrestaShop\Forms\PaymentOnTriggeringAdminFormBuilder;
+
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
 
 /**
  * Class SettingsCustomFields

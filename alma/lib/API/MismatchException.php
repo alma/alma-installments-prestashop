@@ -24,6 +24,10 @@
 
 namespace Alma\PrestaShop\API;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 /**
  * MismatchException
  */

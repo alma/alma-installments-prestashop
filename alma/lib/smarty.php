@@ -21,6 +21,10 @@
  * @copyright 2018-2023 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 if (class_exists('\Context')) {
     $smarty = \Context::getContext()->smarty;
 

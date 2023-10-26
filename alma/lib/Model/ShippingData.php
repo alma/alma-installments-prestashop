@@ -24,11 +24,11 @@
 
 namespace Alma\PrestaShop\Model;
 
+use Alma\PrestaShop\Helpers\PriceHelper;
+
 if (!defined('_PS_VERSION_')) {
     exit;
 }
-
-use Alma\PrestaShop\Helpers\PriceHelper;
 
 class ShippingData
 {
