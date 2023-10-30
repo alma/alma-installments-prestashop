@@ -85,12 +85,15 @@ class ActionCartSaveHookController extends FrontendHookController
      */
     public function run($params)
     {
-        if(
-            isset($_POST['alma_insurance_price'])
-            && $_POST['alma_insurance_price'] != 'none'
-        ) {
+        $alma_insurance_data = \Tools::getValue('alma_insurance_price', 'none');
+
+        if($alma_insurance_data != 'none') {
+            if($alma_insurance_data == 'toto') {
+                var_dump($this->context->cart->getLastProduct());      die;
+            }
+
             try {
-                $this->addInsuranceToCart($_POST['alma_insurance_price']);
+                $this->addInsuranceToCart($alma_insurance_data);
             } catch (\Exception $e) {
                 // @todo Log the error + front message
             }
@@ -138,7 +141,7 @@ class ActionCartSaveHookController extends FrontendHookController
         \StockAvailableCore::setQuantity($defaultInsuranceProduct->id, $combination->id, 1, $this->context->shop->id);
 
         // We reset the data
-        $_POST['alma_insurance_price']  = 'none';
+        $_POST['alma_insurance_price']  = 'toto';
 
         // Add the insurance to the cart
         $this->addInsuranceAndAssociation(
@@ -169,7 +172,7 @@ class ActionCartSaveHookController extends FrontendHookController
             $product['id_product'],
             $this->context->shop->id,
             $product['id_product_attribute'],
-            $_POST['id_customization'],
+            \Tools::getValue('id_customization', 0),
             $defaultInsuranceProductId,
             $insuranceAttributeId,
             $insurancePrice
