@@ -89,17 +89,26 @@ class ActionCartSaveHookController extends FrontendHookController
             isset($_POST['alma_insurance_price'])
             && $_POST['alma_insurance_price'] != 'none'
         ) {
-            $this->addInsuranceToCart($_POST['alma_insurance_price']);
+            try {
+                $this->addInsuranceToCart($_POST['alma_insurance_price']);
+            } catch (\Exception $e) {
+                // @todo Log the error + front message
+            }
         }
 
         // @todo suppression
     }
 
+    /**
+     * @param string $insuranceData
+     * @return void
+     * @throws InsuranceNotFoundException
+     */
     protected function addInsuranceToCart($insuranceData)
     {
         // @todo Check elibilibilty
 
-        // This code is temporary until the product widget is done
+        // @todo This code is temporary until the product widget is done
         $values = explode('-', $insuranceData);
         $insurancePrice = $values[0];
         $insuranceName = $values[1];
@@ -107,8 +116,10 @@ class ActionCartSaveHookController extends FrontendHookController
 
         // Get the default product insurance
         $defaultInsuranceProduct = $this->insuranceHelper->getDefaultInsuranceProduct($this->context->language->id);
+
         // Get the default group attribute id
         $attributeGroupId =  $this->insuranceHelper->getInsuranceAttributeGroupId($this->context->language->id);
+
         // Get or create the attribute (type of insurance choose)
         $insuranceAttributeId = $this->insuranceHelper->createOrGetInsuranceAttributeId(
             $insuranceName,
@@ -130,17 +141,36 @@ class ActionCartSaveHookController extends FrontendHookController
         $_POST['alma_insurance_price']  = 'none';
 
         // Add the insurance to the cart
-        $this->context->cart->updateQty(1, $defaultInsuranceProduct->id, $combination->id);
+        $this->addInsuranceAndAssociation(
+            $defaultInsuranceProduct->id,
+            $combination->id,
+            $insuranceAttributeId,
+            $insurancePrice
+        );
+    }
+
+    /**
+     * @param int $defaultInsuranceProductId
+     * @param int $combinationId
+     * @param int $insuranceAttributeId
+     * @param float $insurancePrice
+     * @return void
+     */
+    protected function addInsuranceAndAssociation($defaultInsuranceProductId, $combinationId, $insuranceAttributeId, $insurancePrice)
+    {
+        // Add to cart
+        $this->context->cart->updateQty(1, $defaultInsuranceProductId, $combinationId);
 
         $product = $this->context->cart->getLastProduct();
 
+        // Add association between the product and the insurance
         $this->almaInsuranceProductRepository->add(
             $this->context->cart->id,
             $product['id_product'],
             $this->context->shop->id,
             $product['id_product_attribute'],
             $_POST['id_customization'],
-            $defaultInsuranceProduct->id,
+            $defaultInsuranceProductId,
             $insuranceAttributeId,
             $insurancePrice
         );
