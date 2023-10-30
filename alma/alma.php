@@ -251,11 +251,36 @@ class Alma extends PaymentModule
      * Hook the template below the add to cart button
      *
      * @param $params
+     *
      * @return mixed|null
      */
     public function hookDisplayProductActions($params)
     {
         return $this->runHookController('displayProductActions', $params);
+    }
+
+    /**
+     * Hook action after add cart
+     *
+     * @param $params
+     *
+     * @return mixed|null
+     */
+    public function hookActionCartSave($params)
+    {
+        return $this->runHookController('actionCartSave', $params);
+    }
+
+    /**
+     * Hook action after validate order
+     *
+     * @param $params
+     *
+     * @return mixed|null
+     */
+    public function hookActionValidateOrder($params)
+    {
+        return $this->runHookController('actionValidateOrder', $params);
     }
 
     /**

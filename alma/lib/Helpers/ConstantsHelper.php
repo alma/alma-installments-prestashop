@@ -67,9 +67,11 @@ class ConstantsHelper
     const ALMA_SHOW_INSURANCE_POPUP_CART = 'ALMA_SHOW_INSURANCE_POPUP_CART';
 
     const BO_CONTROLLER_INSURANCE_CLASSNAME = 'AdminAlmaInsurance';
-    const ALMA_DISPLAY_INSURANCE_ON_PRODUCT_PAGE = 'ALMA_DISPLAY_INSURANCE_ON_PRODUCT_PAGE';
     const DOMAIN_URL_INSURANCE = 'https://protect.staging.almapay.com';
     const BO_URL_IFRAME_CONFIGURATION_INSURANCE = self::DOMAIN_URL_INSURANCE . '/almaBackOfficeConfiguration.html';
+
+    const ALMA_INSURANCE_PRODUCT_REFERENCE = 'alma-insurance-poc';
+    const ALMA_INSURANCE_ATTRIBUTE_NAME = 'Alma Insurance (DO NOT REMOVE)';
 
     /**
      * Insurance form fields

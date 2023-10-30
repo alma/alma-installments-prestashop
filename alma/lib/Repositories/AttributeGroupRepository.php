@@ -22,17 +22,37 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
-namespace Alma\PrestaShop\Helpers;
+namespace Alma\PrestaShop\Repositories;
 
-class InsuranceHelper
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
+/**
+ * Class AttributeGroupRepository.
+ *
+ * Use for Product
+ */
+class AttributeGroupRepository
 {
     /**
-     * @return bool
+     * @param string $reference
+     * @param int $idLang
+     * @return false|string
      */
-    public function isInsuranceAllowedInProductPage()
+    public function getAttributeIdByName($name, $idLang =1)
     {
-        return (bool) (int) SettingsHelper::get(ConstantsHelper::ALMA_SHOW_INSURANCE_WIDGET_PRODUCT, false)
-            && (bool) (int) SettingsHelper::get(ConstantsHelper::ALMA_ALLOW_INSURANCE, false)
-            && (bool) (int) SettingsHelper::get(ConstantsHelper::ALMA_ACTIVATE_INSURANCE, false);
-    }
+        if (!\Combination::isFeatureActive()) {
+            return [];
+        }
+
+        return \Db::getInstance()->getValue('
+			SELECT agl.id_attribute_group 
+			FROM `' . _DB_PREFIX_ . 'attribute_group` ag
+			' . \Shop::addSqlAssociation('attribute_group', 'ag') . '
+			LEFT JOIN `' . _DB_PREFIX_ . 'attribute_group_lang` agl
+				ON (ag.`id_attribute_group` = agl.`id_attribute_group` AND `id_lang` = ' . (int) $idLang . ')
+            where agl.`name` = "' . $name. '" 
+		');
+	}
 }

@@ -28,47 +28,62 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-use Alma\PrestaShop\Helpers\InsuranceHelper;
-use Alma\PrestaShop\Helpers\SettingsHelper;
+use Alma\PrestaShop\Exceptions\InsuranceNotFoundException;
 use Alma\PrestaShop\Hooks\FrontendHookController;
+use Alma\PrestaShop\Repositories\AlmaInsuranceProductRepository;
+use Alma\PrestaShop\Repositories\ProductRepository;
+use Alma\PrestaShop\Helpers\ConstantsHelper;
+use Alma\PrestaShop\Repositories\AttributeGroupRepository;
+use Alma\PrestaShop\Repositories\AttributeRepository;
 
-class DisplayProductActionsHookController extends FrontendHookController
+class ActionValidateOrderHookController extends FrontendHookController
 {
-    /** @var Alma */
-    protected $module;
 
     /**
-     * @var InsuranceHelper
+     * @var AttributeGroupRepository
      */
-    protected $insuranceHelper;
+    protected $attributeGroupRepository;
 
     /**
-     * @param $module
+     * @var AttributeRepository
      */
+    protected $attributeRepository;
+
+    /**
+     * @var AlmaInsuranceProductRepository
+     */
+    protected $almaInsuranceProductRepository;
+
     public function __construct($module)
     {
-        $this->insuranceHelper = new InsuranceHelper();
         parent::__construct($module);
+        $this->almaInsuranceProductRepository = new AlmaInsuranceProductRepository();
     }
 
     /**
-     * @return bool
-     */
-    public function canRun()
-    {
-        return parent::canRun()
-            && \Tools::strtolower($this->currentControllerName()) == 'product'
-            && $this->insuranceHelper->isInsuranceAllowedInProductPage()
-            && SettingsHelper::getMerchantId() != null;
-    }
-
-    /**
-     * @param $params
+     * Run Controller
      *
-     * @return mixed
+     * @param array $params
+     *
+     * @return void
      */
     public function run($params)
     {
-        return $this->module->display($this->module->file, 'displayProductActions.tpl');
+        $order = $params['order'];
+        $cart = $params['cart'];
+
+        $ids = $this->almaInsuranceProductRepository->getIdsByCartIdAndShop($cart->id, $this->context->shop->id);
+
+        $idsToUpdate = array();
+
+        foreach ($ids as $data) {
+            $idsToUpdate[] = $data['id'];
+        }
+
+        if(count($ids) > 0) {
+            $this->almaInsuranceProductRepository->updateAssociationsOrderId($order->id, $idsToUpdate);
+        }
+
     }
+
 }

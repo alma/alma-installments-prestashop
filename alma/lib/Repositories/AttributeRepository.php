@@ -22,17 +22,46 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
-namespace Alma\PrestaShop\Helpers;
+namespace Alma\PrestaShop\Repositories;
 
-class InsuranceHelper
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
+/**
+ * Class AttributeRepository.
+ *
+ * Use for Product
+ */
+class AttributeRepository
 {
     /**
-     * @return bool
+     * @param string $name
+     * @param int $idGroup
+     * @param int $idLang
+     * @return array
      */
-    public function isInsuranceAllowedInProductPage()
+    public function getAttributeIdByNameAndGroup($name, $idGroup, $idLang =1)
     {
-        return (bool) (int) SettingsHelper::get(ConstantsHelper::ALMA_SHOW_INSURANCE_WIDGET_PRODUCT, false)
-            && (bool) (int) SettingsHelper::get(ConstantsHelper::ALMA_ALLOW_INSURANCE, false)
-            && (bool) (int) SettingsHelper::get(ConstantsHelper::ALMA_ACTIVATE_INSURANCE, false);
-    }
+
+        if (!\Combination::isFeatureActive()) {
+            return [];
+        }
+
+        return \Db::getInstance()->getValue('
+			SELECT a.`id_attribute`
+			FROM `' . _DB_PREFIX_ . 'attribute_group` ag
+			LEFT JOIN `' . _DB_PREFIX_ . 'attribute_group_lang` agl
+				ON (ag.`id_attribute_group` = agl.`id_attribute_group` AND agl.`id_lang` = ' . (int) $idLang . ')
+			LEFT JOIN `' . _DB_PREFIX_ . 'attribute` a
+				ON a.`id_attribute_group` = ag.`id_attribute_group`
+			LEFT JOIN `' . _DB_PREFIX_ . 'attribute_lang` al
+				ON (a.`id_attribute` = al.`id_attribute` AND al.`id_lang` = ' . (int) $idLang . ')
+			' . \Shop::addSqlAssociation('attribute_group', 'ag') . '
+			' . \Shop::addSqlAssociation('attribute', 'a') . '
+			where  al.`name` = "'.$name.'" 
+			and agl.id_attribute_group   = "'. (int) $idGroup.'" 
+			ORDER BY agl.`name` ASC, a.`position` ASC
+		');
+	}
 }
