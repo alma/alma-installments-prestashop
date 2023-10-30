@@ -124,7 +124,7 @@ class ActionCartSaveHookController extends FrontendHookController
                 /**
                  * @var \AttributeCore $testNewAttribute
                  */
-                $insuranceAttribute = new \Attribute();
+                $insuranceAttribute = new \AttributeCore();
 
                 $insuranceAttribute->name = \PrestaShop\PrestaShop\Adapter\Import\ImportDataFormatter::createMultiLangField($insuranceName);
                 $insuranceAttribute->id_attribute_group = $attributeGroupId;
