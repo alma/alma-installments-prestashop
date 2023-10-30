@@ -96,7 +96,7 @@ class HookHelper
             'operand' => '>=',
         ],
         'actionCartSave' => 'all',
-        'actionValidateOrder' => 'all'
+        'actionValidateOrder' => 'all',
     ];
 
     /**

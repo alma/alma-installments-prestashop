@@ -26,6 +26,4 @@ namespace Alma\PrestaShop\Exceptions;
 
 class InsuranceNotFoundException extends \Exception
 {
-
-
 }

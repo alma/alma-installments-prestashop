@@ -28,17 +28,13 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-use Alma\PrestaShop\Exceptions\InsuranceNotFoundException;
 use Alma\PrestaShop\Hooks\FrontendHookController;
 use Alma\PrestaShop\Repositories\AlmaInsuranceProductRepository;
-use Alma\PrestaShop\Repositories\ProductRepository;
-use Alma\PrestaShop\Helpers\ConstantsHelper;
 use Alma\PrestaShop\Repositories\AttributeGroupRepository;
 use Alma\PrestaShop\Repositories\AttributeRepository;
 
 class ActionValidateOrderHookController extends FrontendHookController
 {
-
     /**
      * @var AttributeGroupRepository
      */
@@ -74,16 +70,14 @@ class ActionValidateOrderHookController extends FrontendHookController
 
         $ids = $this->almaInsuranceProductRepository->getIdsByCartIdAndShop($cart->id, $this->context->shop->id);
 
-        $idsToUpdate = array();
+        $idsToUpdate = [];
 
         foreach ($ids as $data) {
             $idsToUpdate[] = $data['id'];
         }
 
-        if(count($ids) > 0) {
+        if (count($ids) > 0) {
             $this->almaInsuranceProductRepository->updateAssociationsOrderId($order->id, $idsToUpdate);
         }
-
     }
-
 }

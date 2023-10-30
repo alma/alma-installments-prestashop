@@ -58,7 +58,7 @@ class InsuranceHelperTest extends TestCase
         $this->tabWithId->id = 1;
         $this->tabWithoutId = new \Tab();
         $this->tabHelper = $this->createMock(TabsHelper::class);
-        $this->insuranceHelper = new InsuranceHelper();
+        $this->insuranceHelper = new InsuranceHelper($this->module);
         $this->insuranceHelper->tabsHelper = $this->tabHelper;
         $this->configurationHelperMock = $this->createMock(ConfigurationHelper::class);
         $this->insuranceHelper->configurationHelper = $this->configurationHelperMock;
@@ -198,7 +198,7 @@ class InsuranceHelperTest extends TestCase
             'is_insurance_on_product_page_activated' => '1',
             'is_insurance_on_cart_page_activated' => '0',
             'is_add_to_cart_popup_insurance_activated' => '1',
-        ], $this->module);
+        ]);
     }
 
     /**
@@ -219,7 +219,7 @@ class InsuranceHelperTest extends TestCase
             'is_insurance_on_cart_page_activated' => '0',
             'is_add_to_cart_popup_insurance_activated' => '1',
             'key_false' => '0',
-        ], $this->module);
+        ]);
     }
 
     /**

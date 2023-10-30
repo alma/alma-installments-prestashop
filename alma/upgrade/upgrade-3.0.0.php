@@ -35,8 +35,8 @@ function upgrade_module_3_0_0($module)
     $module->registerHooks();
 
     try {
-        $apiHelper = new ApiHelper();
-        $apiHelper->getMerchant($module);
+        $apiHelper = new ApiHelper($module);
+        $apiHelper->getMerchant();
     } catch (\Exception $e) {
     }
 

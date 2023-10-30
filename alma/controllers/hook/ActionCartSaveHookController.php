@@ -29,16 +29,15 @@ if (!defined('_PS_VERSION_')) {
 }
 
 use Alma\PrestaShop\Exceptions\InsuranceNotFoundException;
+use Alma\PrestaShop\Helpers\ConstantsHelper;
 use Alma\PrestaShop\Hooks\FrontendHookController;
 use Alma\PrestaShop\Repositories\AlmaInsuranceProductRepository;
-use Alma\PrestaShop\Repositories\ProductRepository;
-use Alma\PrestaShop\Helpers\ConstantsHelper;
 use Alma\PrestaShop\Repositories\AttributeGroupRepository;
 use Alma\PrestaShop\Repositories\AttributeRepository;
+use Alma\PrestaShop\Repositories\ProductRepository;
 
 class ActionCartSaveHookController extends FrontendHookController
 {
-
     /**
      * @var \Alma\PrestaShop\Repositories\ProductRepository
      */
@@ -78,7 +77,7 @@ class ActionCartSaveHookController extends FrontendHookController
      */
     public function run($params)
     {
-        if(
+        if (
             isset($_POST['alma_insurance_price'])
             && $_POST['alma_insurance_price'] != 'none'
         ) {
@@ -94,7 +93,7 @@ class ActionCartSaveHookController extends FrontendHookController
                 $this->context->language->id
             );
 
-            if(!$insuranceProductId) {
+            if (!$insuranceProductId) {
                 // @todo la recréer ? envoyer un message
                 throw new InsuranceNotFoundException();
             }
@@ -102,14 +101,14 @@ class ActionCartSaveHookController extends FrontendHookController
             /**
              * @var \ProductCore $defaultInsuranceProduct
              */
-            $defaultInsuranceProduct = new \Product((int)$insuranceProductId);
+            $defaultInsuranceProduct = new \Product((int) $insuranceProductId);
 
             $attributeGroupId = $this->attributeGroupRepository->getAttributeIdByName(
                 ConstantsHelper::ALMA_INSURANCE_ATTRIBUTE_NAME,
                 $this->context->language->id
             );
 
-            if(!$attributeGroupId) {
+            if (!$attributeGroupId) {
                 // @todo la recréer ? envoyer un message
                 throw new InsuranceNotFoundException();
             }
@@ -120,11 +119,11 @@ class ActionCartSaveHookController extends FrontendHookController
                 $this->context->language->id
             );
 
-            if(!$insuranceAttributeId) {
+            if (!$insuranceAttributeId) {
                 /**
                  * @var \AttributeCore $testNewAttribute
                  */
-                $insuranceAttribute = new \Attribute();
+                $insuranceAttribute = new \AttributeCore();
 
                 $insuranceAttribute->name = \PrestaShop\PrestaShop\Adapter\Import\ImportDataFormatter::createMultiLangField($insuranceName);
                 $insuranceAttribute->id_attribute_group = $attributeGroupId;
@@ -138,9 +137,9 @@ class ActionCartSaveHookController extends FrontendHookController
             /**
              * @var \CombinationCore $combinaison
              */
-            $idProductAttribute =   \CombinationCore::getIdByReference($insuranceProductId, $insuranceName );
+            $idProductAttribute = \CombinationCore::getIdByReference($insuranceProductId, $insuranceName);
 
-            if(! $idProductAttribute) {
+            if (!$idProductAttribute) {
                 $idProductAttribute = $defaultInsuranceProduct->addCombinationEntity(
                     $insurancePrice,
                     $insurancePrice,
@@ -156,12 +155,12 @@ class ActionCartSaveHookController extends FrontendHookController
                 );
             }
 
-            $combinaison = new \CombinationCore((int)$idProductAttribute);
-            $combinaison->setAttributes(array($insuranceAttributeId));
+            $combinaison = new \CombinationCore((int) $idProductAttribute);
+            $combinaison->setAttributes([$insuranceAttributeId]);
 
             \StockAvailable::setQuantity($defaultInsuranceProduct->id, $idProductAttribute, 1, $this->context->shop->id);
 
-            $_POST['alma_insurance_price']  = 'none';
+            $_POST['alma_insurance_price'] = 'none';
 
             $this->context->cart->updateQty(1, $defaultInsuranceProduct->id, $idProductAttribute);
 
@@ -179,9 +178,8 @@ class ActionCartSaveHookController extends FrontendHookController
             );
         }
 
-        $_POST['alma_insurance_price']  = 'none';
+        $_POST['alma_insurance_price'] = 'none';
 
         // @todo suppression
     }
-
 }

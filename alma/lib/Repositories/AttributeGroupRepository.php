@@ -38,9 +38,10 @@ class AttributeGroupRepository
     /**
      * @param string $reference
      * @param int $idLang
+     *
      * @return false|string
      */
-    public function getAttributeIdByName($name, $idLang =1)
+    public function getAttributeIdByName($name, $idLang = 1)
     {
         if (!\Combination::isFeatureActive()) {
             return [];
@@ -51,8 +52,7 @@ class AttributeGroupRepository
 			FROM `' . _DB_PREFIX_ . 'attribute_group` ag
 			' . \Shop::addSqlAssociation('attribute_group', 'ag') . '
 			LEFT JOIN `' . _DB_PREFIX_ . 'attribute_group_lang` agl
-				ON (ag.`id_attribute_group` = agl.`id_attribute_group` AND `id_lang` = ' . (int) $idLang . ')
-            where agl.`name` = "' . $name. '" 
-		');
-	}
+			ON (ag.`id_attribute_group` = agl.`id_attribute_group` AND `id_lang` = ' . (int) $idLang . ')
+            WHERE agl.`name` = "' . $name . '"');
+    }
 }

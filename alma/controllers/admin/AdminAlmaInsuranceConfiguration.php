@@ -21,13 +21,17 @@
  * @copyright 2018-2023 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
 
 use Alma\PrestaShop\Helpers\Admin\InsuranceHelper;
 use Alma\PrestaShop\Helpers\ConfigurationHelper;
+use Alma\PrestaShop\Helpers\ConstantsHelper;
 use Alma\PrestaShop\Logger;
 use Alma\PrestaShop\Traits\AjaxTrait;
 
-class AdminAlmaInsuranceController extends ModuleAdminController
+class AdminAlmaInsuranceConfigurationController extends ModuleAdminController
 {
     use AjaxTrait;
 
@@ -43,7 +47,7 @@ class AdminAlmaInsuranceController extends ModuleAdminController
     public function __construct()
     {
         $this->bootstrap = true;
-        $this->insuranceHelper = new InsuranceHelper();
+        $this->insuranceHelper = new InsuranceHelper($this->module);
         $this->configurationHelper = new ConfigurationHelper();
         parent::__construct();
     }
@@ -60,7 +64,7 @@ class AdminAlmaInsuranceController extends ModuleAdminController
 
         $this->context->smarty->assign([
             'iframeUrl' => $this->insuranceHelper->constructIframeUrlWithParams(),
-            'token' => \Tools::getAdminTokenLite('AdminAlmaInsurance'),
+            'token' => \Tools::getAdminTokenLite(ConstantsHelper::BO_CONTROLLER_INSURANCE_CONFIGURATION_CLASSNAME),
         ]);
 
         $content = $this->context->smarty->fetch(_PS_MODULE_DIR_ . 'alma/views/templates/admin/insurance.tpl');
@@ -80,7 +84,7 @@ class AdminAlmaInsuranceController extends ModuleAdminController
         try {
             $config = Tools::getValue('config');
 
-            $this->insuranceHelper->saveConfigInsurance($config, $this->module);
+            $this->insuranceHelper->saveConfigInsurance($config);
 
             $this->ajaxRenderAndExit(json_encode([
                     'success' => true,

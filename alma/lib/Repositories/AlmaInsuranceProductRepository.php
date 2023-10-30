@@ -35,9 +35,9 @@ if (!defined('_PS_VERSION_')) {
  */
 class AlmaInsuranceProductRepository
 {
-    public function add($idCart, $idProduct, $idShop, $idProductAttribute, $idCustomization, $idProductInsurance,  $isProductAttributeInsurance, $assurancePrice)
+    public function add($idCart, $idProduct, $idShop, $idProductAttribute, $idCustomization, $idProductInsurance, $isProductAttributeInsurance, $assurancePrice)
     {
-        if (!\Db::getInstance()->insert('alma_insurance_product',  [
+        if (!\Db::getInstance()->insert('alma_insurance_product', [
             'id_cart' => $idCart,
             'id_product' => $idProduct,
             'id_shop' => $idShop,
@@ -45,7 +45,7 @@ class AlmaInsuranceProductRepository
             'id_customization' => $idCustomization,
             'id_product_insurance' => $idProductInsurance,
             'id_product_attribute_insurance' => $isProductAttributeInsurance,
-            'price' => $assurancePrice
+            'price' => $assurancePrice,
         ])) {
             return false;
         }
@@ -53,19 +53,19 @@ class AlmaInsuranceProductRepository
         return true;
     }
 
-
     /**
      * @param int $cartId
      * @param int $shopId
+     *
      * @return mixed
      */
-    public function getIdsByCartIdAndShop($cartId, $shopId) {
+    public function getIdsByCartIdAndShop($cartId, $shopId)
+    {
         $sql = '
             SELECT `id_alma_insurance_product` as id
             FROM `' . _DB_PREFIX_ . 'alma_insurance_product` aip
             WHERE aip.`id_cart` = ' . (int) $cartId . '
             AND aip.`id_shop` = ' . (int) $shopId;
-
 
         return \Db::getInstance()->executeS($sql);
     }
@@ -73,6 +73,7 @@ class AlmaInsuranceProductRepository
     /**
      * @param int $orderId
      * @param array $idsToUpdate
+     *
      * @return bool
      */
     public function updateAssociationsOrderId($orderId, $idsToUpdate)
@@ -81,11 +82,12 @@ class AlmaInsuranceProductRepository
             !\Db::getInstance()->execute(
                 'UPDATE `' . _DB_PREFIX_ . 'alma_insurance_product` 
                 SET `id_order` =' . (int) $orderId . ' 
-                WHERE `id_alma_insurance_product` IN (' . implode(',', $idsToUpdate). ')'
+                WHERE `id_alma_insurance_product` IN (' . implode(',', $idsToUpdate) . ')'
             )
         ) {
             return false;
         }
+
         return true;
     }
 }
