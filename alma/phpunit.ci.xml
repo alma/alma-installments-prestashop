@@ -16,4 +16,13 @@
         </testsuite>
     </testsuites>
 
+    <filter>
+        <whitelist includeUncoveredFilesFromWhitelist="true">
+            <directory>../alma</directory>
+            <exclude>
+                <directory>../alma/vendor</directory>
+            </exclude>
+        </whitelist>
+    </filter>
+
 </phpunit>

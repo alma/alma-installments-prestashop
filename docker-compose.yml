@@ -14,7 +14,13 @@ services:
       - "./tmp/db_data:/var/lib/mysql"
 
   prestashop:
-    image: prestashop/prestashop:1.6.1.23
+    build:
+      context: .
+      args:
+        # We are not using version 8.x for now, as this will install with PHP 8.x.
+        # This will then require a PHPUnit version that will be too high, requiring
+        # updating prestashop/autoindex.
+        PLATFORM_VERSION: 1.7.8.7
     environment:
       - DB_SERVER=mysql
       - DB_NAME=prestashop
@@ -32,8 +38,11 @@ services:
       - PS_FOLDER_INSTALL=alminstall
       - ADMIN_MAIL=admin@test.prestashop.com
       - ADMIN_PASSWD=test2test
+    depends_on:
+      - mysql
     ports:
       - "8080:80"
     volumes:
       - ./alma:/var/www/html/modules/alma
+      - /var/www/html/modules/alma/vendor # do not mount vendor inside container
       - ./docker/php-customization.ini:/usr/local/etc/php/conf.d/php-customization.ini
