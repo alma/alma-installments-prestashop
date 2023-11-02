@@ -12,6 +12,16 @@ services:
       - 3307:3306
     volumes:
       - "./tmp/db_data:/var/lib/mysql"
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "mysqladmin",
+          "ping",
+          "-p$$MYSQL_ROOT_PASSWORD"
+        ]
+      timeout: 10s
+      retries: 10
 
   prestashop:
     build:
@@ -39,7 +49,8 @@ services:
       - ADMIN_MAIL=admin@test.prestashop.com
       - ADMIN_PASSWD=test2test
     depends_on:
-      - mysql
+      mysql:
+        condition: service_healthy
     ports:
       - "8080:80"
     volumes:
