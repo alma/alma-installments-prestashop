@@ -1,5 +1,9 @@
 # Changelog
 
+## v3.1.1
+
+- hotfix: Pay now is broken if In-Page is disabled
+
 ## v3.1.0
 
 - feat: In-Page: Now we use the setForm in payment option and refactored to vanilla Javascript (we don't use Jquery anymore)
