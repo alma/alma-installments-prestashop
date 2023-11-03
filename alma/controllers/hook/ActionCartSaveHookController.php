@@ -154,10 +154,12 @@ class ActionCartSaveHookController extends FrontendHookController
                     '',
                     0
                 );
+
+                $combinaison = new \CombinationCore((int)$idProductAttribute);
+                $combinaison->setAttributes(array($insuranceAttributeId));
             }
 
-            $combinaison = new \CombinationCore((int)$idProductAttribute);
-            $combinaison->setAttributes(array($insuranceAttributeId));
+
 
             \StockAvailable::setQuantity($defaultInsuranceProduct->id, $idProductAttribute, 1, $this->context->shop->id);
 
