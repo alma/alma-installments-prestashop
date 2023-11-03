@@ -32,6 +32,10 @@ use Alma\PrestaShop\Helpers\RefundHelper;
 use Alma\PrestaShop\Helpers\SettingsHelper;
 use Alma\PrestaShop\Logger;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class PaymentValidation
 {
     /** @var \Context */

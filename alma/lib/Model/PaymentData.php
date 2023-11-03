@@ -24,10 +24,6 @@
 
 namespace Alma\PrestaShop\Model;
 
-if (!defined('_PS_VERSION_')) {
-    exit;
-}
-
 use Alma\API\Lib\PaymentValidator;
 use Alma\API\ParamsError;
 use Alma\PrestaShop\Helpers\CarrierHelper;
@@ -38,6 +34,10 @@ use Alma\PrestaShop\Helpers\SettingsCustomFieldsHelper;
 use Alma\PrestaShop\Helpers\SettingsHelper;
 use Alma\PrestaShop\Logger;
 use Alma\PrestaShop\Repositories\ProductRepository;
+
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
 
 class PaymentData
 {
