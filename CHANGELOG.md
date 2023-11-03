@@ -2,7 +2,7 @@
 
 ## v3.1.1
 
-- fix: Pay now if In-Page is disabled
+- hotfix: Pay now is broken if In-Page is disabled
 
 ## v3.1.0
 
