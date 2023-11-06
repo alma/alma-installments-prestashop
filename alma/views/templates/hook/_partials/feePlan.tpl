@@ -27,7 +27,9 @@
 {capture assign='total'}{l s='Total' mod='alma'}{/capture}
 {capture assign='firstAmount'}{almaFormatPrice cents=$plans[0].total_amount}{/capture}
 {capture assign='fees'}{almaFormatPrice cents=$plans[0].customer_fee}{/capture}
-{capture assign='nextAmounts'}{almaFormatPrice cents=$plans[1].total_amount}{/capture}
+{if $installmentsCount > 1}
+    {capture assign='nextAmounts'}{almaFormatPrice cents=$plans[1].total_amount}{/capture}
+{/if}
 
 {if $oneLiner}
     <span class="alma-fee-plan--description">

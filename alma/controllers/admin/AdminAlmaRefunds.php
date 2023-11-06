@@ -30,6 +30,10 @@ use Alma\PrestaShop\Helpers\RefundHelper;
 use Alma\PrestaShop\Logger;
 use Alma\PrestaShop\Traits\AjaxTrait;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class AdminAlmaRefundsController extends ModuleAdminController
 {
     use AjaxTrait;

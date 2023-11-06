@@ -142,7 +142,6 @@ class PaymentOptionsHookController extends FrontendHookController
             if ($isPayNow) {
                 $textPaymentButton = SettingsCustomFieldsHelper::getPayNowButtonTitleByLang($idLang);
                 $descPaymentButton = SettingsCustomFieldsHelper::getPayNowButtonDescriptionByLang($idLang);
-                $isInPageEnabled = true;
             }
 
             $action = $this->context->link->getModuleLink(

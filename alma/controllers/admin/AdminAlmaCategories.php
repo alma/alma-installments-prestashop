@@ -23,6 +23,10 @@
  */
 use Alma\PrestaShop\Helpers\SettingsHelper;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class AdminAlmaCategoriesController extends ModuleAdminController
 {
     public static $excludedCategories = [];

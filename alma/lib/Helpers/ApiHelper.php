@@ -31,6 +31,10 @@ use Alma\PrestaShop\Exceptions\WrongCredentialsException;
 use Alma\PrestaShop\Forms\InpageAdminFormBuilder;
 use Alma\PrestaShop\Helpers\Admin\InsuranceHelper;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class ApiHelper
 {
     /**
