@@ -27,4 +27,54 @@ if (!defined('_PS_VERSION_')) {
 
 class AdminAlmaInsuranceOrdersController extends ModuleAdminController
 {
+    /**
+     * @throws PrestaShopException
+     */
+    public function __construct()
+    {
+        $this->table = 'alma_insurance_product';
+        $this->context = Context::getContext();
+
+        $this->bootstrap = true;
+        parent::__construct();
+
+        $this->fields_list = [
+            'id_order' => [
+                'title' => $this->module->l('Id Order'),
+                'type' => 'text',
+            ],
+            'id_product' => [
+                'title' => $this->module->l('Id Product'),
+                'type' => 'text',
+            ],
+            'id_shop' => [
+                'title' => $this->module->l('Id Shop'),
+                'type' => 'text',
+            ],
+            'id_product_attribute' => [
+                'title' => $this->module->l('Id Product Attribute'),
+                'type' => 'text',
+            ],
+            'id_customization' => [
+                'title' => $this->module->l('Id Customization'),
+                'type' => 'text',
+            ],
+            'id_product_insurance' => [
+                'title' => $this->module->l('Id Product Insurance'),
+                'type' => 'text',
+            ],
+            'id_product_attribute_insurance' => [
+                'title' => $this->module->l('Id Product Attribute Insurance'),
+                'type' => 'text',
+            ],
+            'price' => [
+                'title' => $this->module->l('Price'),
+                'type' => 'text',
+            ],
+            'date_add' => [
+                'title' => $this->module->l('Date'),
+                'type' => 'text',
+            ],
+        ];
+    }
 }
