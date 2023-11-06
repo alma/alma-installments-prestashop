@@ -24,6 +24,7 @@
 
 namespace Alma\PrestaShop\Helpers\Admin;
 
+use Alma\PrestaShop\Helpers\ConstantsHelper;
 use PrestaShop\PrestaShop\Adapter\Entity\Tab;
 
 class TabsHelper
@@ -71,6 +72,32 @@ class TabsHelper
     }
 
     /**
+     * @param $tabs
+     * @param $module
+     *
+     * @return bool
+     */
+    public function installTabs($tabs)
+    {
+        $allTableAreActivated = true;
+
+        foreach ($tabs as $class => $dataTab) {
+            if (!$this->installTab(
+                ConstantsHelper::ALMA_MODULE_NAME,
+                $class,
+                $dataTab['name'],
+                $dataTab['parent'],
+                $dataTab['position'],
+                $dataTab['icon']
+            )) {
+                $allTableAreActivated = false;
+            }
+        }
+
+        return $allTableAreActivated;
+    }
+
+    /**
      * @params string $class
      *
      * @return bool
@@ -85,6 +112,26 @@ class TabsHelper
         }
 
         return $tab->delete();
+    }
+
+    /**
+     * @param $tabs
+     *
+     * @return bool
+     *
+     * @throws \PrestaShopException
+     */
+    public function uninstallTabs($tabs)
+    {
+        $allTableAreActivated = true;
+
+        foreach ($tabs as $class => $dataTab) {
+            if (!$this->uninstallTab($class)) {
+                $allTableAreActivated = false;
+            }
+        }
+
+        return $allTableAreActivated;
     }
 
     /**

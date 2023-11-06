@@ -31,14 +31,6 @@ use Alma\PrestaShop\Helpers\ConstantsHelper;
 class InsuranceHelper
 {
     /**
-     * @var array
-     */
-    protected static $tabInsuranceDescription = [
-        'position' => 3,
-        'icon' => 'security',
-    ];
-
-    /**
      * Insurance form fields for mapping
      *
      * @var string[]
@@ -58,11 +50,43 @@ class InsuranceHelper
      * @var ConfigurationHelper
      */
     public $configurationHelper;
+    /**
+     * @var mixed
+     */
+    private $module;
 
-    public function __construct()
+    public function __construct($module)
     {
+        $this->module = $module;
         $this->tabsHelper = new TabsHelper();
         $this->configurationHelper = new ConfigurationHelper();
+    }
+
+    /**
+     * @return array[]
+     */
+    protected function tabsInsuranceDescription()
+    {
+        return [
+            ConstantsHelper::BO_CONTROLLER_INSURANCE_CLASSNAME => [
+                'name' => $this->module->l('Insurance'),
+                'parent' => ConstantsHelper::ALMA_MODULE_NAME,
+                'position' => 3,
+                'icon' => 'security',
+            ],
+            ConstantsHelper::BO_CONTROLLER_INSURANCE_CONFIGURATION_CLASSNAME => [
+                'name' => $this->module->l('Configuration'),
+                'parent' => ConstantsHelper::BO_CONTROLLER_INSURANCE_CLASSNAME,
+                'position' => 1,
+                'icon' => 'tune',
+            ],
+            ConstantsHelper::BO_CONTROLLER_INSURANCE_ORDERS_CLASSNAME => [
+                'name' => $this->module->l('Orders'),
+                'parent' => ConstantsHelper::BO_CONTROLLER_INSURANCE_CLASSNAME,
+                'position' => 2,
+                'icon' => 'shopping_basket',
+            ],
+        ];
     }
 
     /**
@@ -72,7 +96,7 @@ class InsuranceHelper
      *
      * @throws \PrestaShopException
      */
-    public function handleBOMenu($module, $isAllowInsurance)
+    public function handleBOMenu($isAllowInsurance)
     {
         $tab = $this->tabsHelper->getInstanceFromClassName(ConstantsHelper::BO_CONTROLLER_INSURANCE_CLASSNAME);
         // Remove tab if the tab exists and we are not allowed to have it
@@ -80,7 +104,7 @@ class InsuranceHelper
             $tab->id
             && !$isAllowInsurance
         ) {
-            return $this->tabsHelper->uninstallTab(ConstantsHelper::BO_CONTROLLER_INSURANCE_CLASSNAME);
+            $this->tabsHelper->uninstallTabs($this->tabsInsuranceDescription());
         }
 
         // Add tab if the tab not exists and we are allowed to have it
@@ -88,14 +112,7 @@ class InsuranceHelper
             !$tab->id
             && $isAllowInsurance
         ) {
-            return $this->tabsHelper->installTab(
-                ConstantsHelper::ALMA_MODULE_NAME,
-                ConstantsHelper::BO_CONTROLLER_INSURANCE_CLASSNAME,
-                $module->l('Insurance'),
-                ConstantsHelper::ALMA_MODULE_NAME,
-                static::$tabInsuranceDescription['position'],
-                static::$tabInsuranceDescription['icon']
-            );
+            $this->tabsHelper->installTabs($this->tabsInsuranceDescription());
         }
 
         return null;
@@ -187,14 +204,14 @@ class InsuranceHelper
      *
      * @throws WrongParamsException
      */
-    public function saveConfigInsurance($config, $module)
+    public function saveConfigInsurance($config)
     {
         $dbFields = array_flip(static::$fieldsDbInsuranceToIframeParamNames);
         $diffKeysArray = array_diff_key($config, $dbFields);
 
         if (!empty($diffKeysArray)) {
             header('HTTP/1.1 401 Unauthorized request');
-            throw new WrongParamsException($module, $diffKeysArray);
+            throw new WrongParamsException($this->module, $diffKeysArray);
         }
 
         $this->saveBOFormValues($config, $dbFields);

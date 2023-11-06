@@ -41,14 +41,21 @@ class ApiHelper
      * @var InsuranceHelper
      */
     protected $insuranceHelper;
-
-    public function __construct()
-    {
-        $this->insuranceHelper = new InsuranceHelper();
-    }
+    /**
+     * @var mixed
+     */
+    private $module;
 
     /**
      * @param $module
+     */
+    public function __construct($module)
+    {
+        $this->module = $module;
+        $this->insuranceHelper = new InsuranceHelper($module);
+    }
+
+    /**
      * @param null $alma
      *
      * @return Merchant|null
@@ -58,7 +65,7 @@ class ApiHelper
      * @throws WrongCredentialsException
      * @throws \PrestaShopException
      */
-    public function getMerchant($module, $alma = null)
+    public function getMerchant($alma = null)
     {
         if (!$alma) {
             $alma = ClientHelper::defaultInstance();
@@ -70,19 +77,19 @@ class ApiHelper
 
         try {
             /**
-             * @var \Alma\API\Entities\Merchant $merchant
+             * @var Merchant $merchant
              */
             $merchant = $alma->merchants->me();
         } catch (\Exception $e) {
             if ($e->response && 401 === $e->response->responseCode) {
-                throw new WrongCredentialsException($module);
+                throw new WrongCredentialsException($this->module);
             }
 
-            throw new ApiMerchantsException($module->l('Alma encountered an error when fetching merchant status, please check your api keys or retry later.', 'GetContentHookController'), $e->getCode(), $e);
+            throw new ApiMerchantsException($this->module->l('Alma encountered an error when fetching merchant status, please check your api keys or retry later.', 'GetContentHookController'), $e->getCode(), $e);
         }
 
         if (!$merchant->can_create_payments) {
-            throw new ActivationException($module);
+            throw new ActivationException($this->module);
         }
 
         $this->saveFeatureFlag(
@@ -92,20 +99,19 @@ class ApiHelper
             InpageAdminFormBuilder::ALMA_ACTIVATE_INPAGE
         );
 
-        $this->handleInsuranceFlag($module, $merchant);
+        $this->handleInsuranceFlag($merchant);
 
         return $merchant;
     }
 
     /**
-     * @param $module
      * @param $merchant
      *
      * @return void
      *
      * @throws \PrestaShopException
      */
-    protected function handleInsuranceFlag($module, $merchant)
+    protected function handleInsuranceFlag($merchant)
     {
         $isAllowInsurance = $this->saveFeatureFlag(
             $merchant,
@@ -114,12 +120,12 @@ class ApiHelper
             ConstantsHelper::ALMA_ACTIVATE_INSURANCE
         );
 
-        $this->insuranceHelper->handleBOMenu($module, $isAllowInsurance);
+        $this->insuranceHelper->handleBOMenu($isAllowInsurance);
         $this->insuranceHelper->handleDefaultInsuranceFieldValues($isAllowInsurance);
     }
 
     /**
-     * @param \Alma\API\Entities\Merchant $merchant
+     * @param Merchant $merchant
      * @param string $merchantKey
      * @param string $configKey
      *

@@ -21,6 +21,9 @@
  * @copyright 2018-2023 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
+
+use Alma\PrestaShop\Helpers\Admin\TabsHelper;
+
 if (!defined('_PS_VERSION_')) {
     exit;
 }
@@ -62,7 +65,7 @@ class Alma extends PaymentModule
     public $confirmUninstall;
 
     /**
-     * @var \Alma\PrestaShop\Helpers\Admin\TabsHelper
+     * @var TabsHelper
      */
     private $tabsHelper;
 
@@ -103,7 +106,46 @@ class Alma extends PaymentModule
         }
 
         $this->hook = new \Alma\PrestaShop\Helpers\HookHelper();
-        $this->tabsHelper = new \Alma\PrestaShop\Helpers\Admin\TabsHelper();
+        $this->tabsHelper = new TabsHelper();
+    }
+
+    /**
+     * @return array[]
+     */
+    protected function dataTabs()
+    {
+        return [
+            'alma' => [
+                'name' => 'Alma',
+                'parent' => null,
+                'position' => null,
+                'icon' => null,
+            ],
+            'AdminAlmaConfig' => [
+                'name' => $this->l('Configuration'),
+                'parent' => 'alma',
+                'position' => 1,
+                'icon' => 'tune',
+            ],
+            'AdminAlmaCategories' => [
+                'name' => $this->l('Excluded categories'),
+                'parent' => 'alma',
+                'position' => 2,
+                'icon' => 'not_interested',
+            ],
+            'AdminAlmaRefunds' => [
+                'name' => false,
+                'parent' => 'alma',
+                'position' => null,
+                'icon' => null,
+            ],
+            'AdminAlmaShareOfCheckout' => [
+                'name' => false,
+                'parent' => 'alma',
+                'position' => null,
+                'icon' => null,
+            ],
+        ];
     }
 
     /**
@@ -152,7 +194,32 @@ class Alma extends PaymentModule
             $this->updateCarriersWithAlma();
         }
 
-        return $this->installTabs();
+        return $this->tabsHelper->installTabs($this->dataTabs());
+    }
+
+    /**
+     * @return bool
+     *
+     * @throws PrestaShopException
+     */
+    public function uninstall()
+    {
+        $result = parent::uninstall() && \Alma\PrestaShop\Helpers\SettingsHelper::deleteAllValues();
+
+        $paymentModuleConf = [
+            'CONF_ALMA_FIXED',
+            'CONF_ALMA_VAR',
+            'CONF_ALMA_FIXED_FOREIGN',
+            'CONF_ALMA_VAR_FOREIGN',
+        ];
+
+        foreach ($paymentModuleConf as $configKey) {
+            if (Configuration::hasKey($configKey)) {
+                $result = $result && Configuration::deleteByName($configKey);
+            }
+        }
+
+        return $result && $this->tabsHelper->uninstallTabs($this->dataTabs());
     }
 
     /**
@@ -319,111 +386,6 @@ class Alma extends PaymentModule
         }
 
         return $result;
-    }
-
-    /**
-     * @return bool
-     */
-    public function uninstall()
-    {
-        $result = parent::uninstall() && \Alma\PrestaShop\Helpers\SettingsHelper::deleteAllValues();
-
-        $paymentModuleConf = [
-            'CONF_ALMA_FIXED',
-            'CONF_ALMA_VAR',
-            'CONF_ALMA_FIXED_FOREIGN',
-            'CONF_ALMA_VAR_FOREIGN',
-        ];
-
-        foreach ($paymentModuleConf as $configKey) {
-            if (Configuration::hasKey($configKey)) {
-                $result = $result && Configuration::deleteByName($configKey);
-            }
-        }
-
-        return $result && $this->uninstallTabs();
-    }
-
-    /**
-     * @return array[]
-     */
-    protected function dataTabs()
-    {
-        return [
-            'alma' => [
-                'name' => 'Alma',
-                'parent' => null,
-                'position' => null,
-                'icon' => null,
-            ],
-            'AdminAlmaConfig' => [
-                'name' => $this->l('Configuration'),
-                'parent' => 'alma',
-                'position' => 1,
-                'icon' => 'tune',
-            ],
-            'AdminAlmaCategories' => [
-                'name' => $this->l('Excluded categories'),
-                'parent' => 'alma',
-                'position' => 2,
-                'icon' => 'not_interested',
-            ],
-            'AdminAlmaRefunds' => [
-                'name' => false,
-                'parent' => 'alma',
-                'position' => null,
-                'icon' => null,
-            ],
-            'AdminAlmaShareOfCheckout' => [
-                'name' => false,
-                'parent' => 'alma',
-                'position' => null,
-                'icon' => null,
-            ],
-        ];
-    }
-
-    /**
-     * @return bool
-     *
-     * @throws PrestaShopException
-     */
-    public function installTabs()
-    {
-        $allTableAreActivated = true;
-
-        foreach ($this->dataTabs() as $class => $dataTab) {
-            if (!$this->tabsHelper->installTab(
-                $this->name,
-                $class,
-                $dataTab['name'],
-                $dataTab['parent'],
-                $dataTab['position'],
-                $dataTab['icon']
-            )) {
-                $allTableAreActivated = false;
-            }
-        }
-
-        return $allTableAreActivated;
-    }
-
-    /**
-     * @return bool
-     *
-     * @throws PrestaShopException
-     */
-    public function uninstallTabs()
-    {
-        $allTableAreActivated = true;
-
-        foreach ($this->dataTabs() as $class => $dataTab) {
-            if (!$this->tabsHelper->uninstallTab($class)) {
-                $allTableAreActivated = false;
-            }
-        }
-
-        return $allTableAreActivated;
     }
 
     private function runHookController($hookName, $params)

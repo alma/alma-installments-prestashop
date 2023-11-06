@@ -32,7 +32,7 @@
                     dataType: 'json',
                     data: {
                         ajax: true,
-                        controller: 'AdminAlmaInsurance',
+                        controller: '{Alma\PrestaShop\Helpers\ConstantsHelper::BO_CONTROLLER_INSURANCE_CONFIGURATION_CLASSNAME}',
                         action: 'SaveConfigInsurance',
                         token: '{$token}',
                         config: e.data
