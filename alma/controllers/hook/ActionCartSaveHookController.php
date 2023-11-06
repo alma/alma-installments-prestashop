@@ -80,13 +80,13 @@ class ActionCartSaveHookController extends FrontendHookController
         if (
             isset($_POST['alma_insurance_price'])
             && $_POST['alma_insurance_price'] != 'none'
+            && isset($_POST['alma_insurance_name'])
+            && $_POST['alma_insurance_name'] != 'none'
         ) {
             // @todo Check elibilibilty
 
-            $value = $_POST['alma_insurance_price'];
-            $values = explode('-', $value);
-            $insurancePrice = $values[0];
-            $insuranceName = $values[1];
+            $insurancePrice = $_POST['alma_insurance_price'];
+            $insuranceName = $_POST['alma_insurance_name'];
 
             $insuranceProductId = $this->productRepository->getProductIdByReference(
                 ConstantsHelper::ALMA_INSURANCE_PRODUCT_REFERENCE,

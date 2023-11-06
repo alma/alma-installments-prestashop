@@ -131,5 +131,40 @@
         }
 
         window.__alma_refreshWidgets = refreshWidgets;
+
+        //Insurance Script
+        let currentResolve;
+        let selectedAlmaInsurance = null;
+
+        window.addEventListener('message', (e) => {
+            if (e.data.type === 'buttonClicked') {
+                selectedAlmaInsurance = e.data.buttonText;
+                addInputsInsurance(selectedAlmaInsurance);
+            } else if (currentResolve) {
+                currentResolve(e.data);
+            }
+        });
+
+        function addInputsInsurance(selectedAlmaInsurance) {
+            let formAddToCart = document.getElementById('add-to-cart-or-refresh');
+
+            handleInput('alma_insurance_price', selectedAlmaInsurance.option.price, formAddToCart);
+            handleInput('alma_insurance_name', selectedAlmaInsurance.name, formAddToCart);
+        }
+
+        function handleInput(inputName, value, form) {
+            let elementInput = document.getElementById(inputName);
+            if(elementInput == null) {
+                let input = document.createElement('input');
+                input.setAttribute('value', value);
+                input.setAttribute('name', inputName);
+                input.setAttribute('id', inputName);
+                input.setAttribute('type', 'hidden');
+
+                form.prepend(input);
+            }  else {
+                elementInput.setAttribute('value', value);
+            }
+        }
     });
 })(jQuery);
