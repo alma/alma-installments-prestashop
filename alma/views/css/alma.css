@@ -206,6 +206,10 @@ p.payment_module a.disable-arrow-icon {
     font-weight: normal;
 }
 
+/**
+-- In-Page
+*/
+
 .alma-loader--wrapper {
     position: fixed;
     left: 0;
@@ -224,4 +228,71 @@ p.payment_module a.disable-arrow-icon {
     align-items: center;
     justify-content: center;
     height: 100%;
+}
+
+a.alma-inpage.ps16.loading::after {
+    content:  "";
+    background: #ccc;
+    opacity: .3;
+}
+
+a.alma-inpage.ps16.loading {
+    height: fit-content;
+    display: flex;
+    column-gap: 6px;
+}
+
+.alma-loader-dot-container {
+    height: fit-content;
+    display: flex;
+    column-gap: 6px;
+}
+
+.dot {
+    width: 8px;
+    height: 8px;
+    background-color: #ff0000;
+    border-radius: 50%;
+}
+
+.one {
+    animation: change-color 1.34s normal 0.1s infinite, bounce 1.34s linear 0s infinite;
+}
+
+.two {
+    animation: change-color 1.34s normal 0.34s infinite, bounce 1.34s linear 0.24s infinite;
+}
+
+.three {
+    animation: change-color 1.34s normal 0.58s infinite, bounce 1.34s linear 0.48s infinite;
+}
+
+@keyframes bounce {
+    0%,
+    40%,
+    63%,
+    100% {
+        transform: translateY(0);
+    }
+
+    26% {
+        transform: translateY(-7px);
+    }
+
+    47% {
+        transform: translateY(1px);
+    }
+}
+
+@keyframes change-color {
+    0%,
+    13%,
+    63%,
+    100% {
+        background-color: #ff0000;
+    }
+
+    40% {
+        background-color: #ff5147;
+    }
 }

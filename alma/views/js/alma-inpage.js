@@ -24,7 +24,18 @@
 let inPage = undefined;
 let paymentButtonEvents = [];
 
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('document.addEventListener DOMContentLoaded');
+});
+
+(function() {
+    console.log('direct function');
+})();
+
+console.log('no load');
+
 window.addEventListener("load", function() {
+    console.log('window.addEventListener load');
     onloadAlma();
 });
 

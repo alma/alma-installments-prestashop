@@ -48,7 +48,7 @@
         <div class="row">
             <div class="col-xs-12">
                 <p class="payment_module">
-                    <a href="{$option.link}" class="{if $option.isInPageEnabled}alma-inpage ps16{/if} {$almaButton} {$iconDisplay}" id="payment-option-{$option.paymentOptionKey}">
+                    <a href="{$option.link}" class="{if $option.isInPageEnabled}alma-inpage ps16 loading{/if} {$almaButton} {$iconDisplay}" id="payment-option-{$option.paymentOptionKey}">
                         <span class="alma-button--logo">
                             <img src="{$option.logo|escape:'htmlall':'UTF-8'}" alt="Alma">
                         </span>
