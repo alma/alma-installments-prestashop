@@ -1,5 +1,9 @@
 # Changelog
 
+## v3.1.2
+
+- fix: Add loader payment button on Prestashop 1.6 before loading In-Page
+
 ## v3.1.1
 
 - hotfix: Pay now is broken if In-Page is disabled
