@@ -1,9 +1,14 @@
+.product-quantity {
+    flex-wrap: wrap;
+}
+
 .alma-widget-insurance{
-    display: block;
     width: 100%;
 }
 #alma-widget-insurance{
     border: 0;
     padding: 0;
     margin: 0;
+    width: 100%;
+    height: 100%;
 }
