@@ -139,11 +139,51 @@
         window.addEventListener('message', (e) => {
             if (e.data.type === 'buttonClicked') {
                 selectedAlmaInsurance = e.data.buttonText;
-                addInputsInsurance(selectedAlmaInsurance);
+                //addInputsInsurance(selectedAlmaInsurance);
+                addCustomizationProduct(selectedAlmaInsurance);
+                saveCustomization();
             } else if (currentResolve) {
                 currentResolve(e.data);
             }
         });
+
+       //setCustomizationFieldInsurance('none');
+        //setInputInsurance();
+
+        function setInputInsurance() {
+            let customizationFields = document.querySelectorAll('.product-customization-item');
+            customizationFields.forEach((field) => {
+                let message = field.querySelector('.customization-message label');
+
+            });
+        }
+
+        function setCustomizationFieldInsurance(value, update = false) {
+            let customizationFields = document.querySelectorAll('.product-customization-item');
+            customizationFields.forEach((field) => {
+                let label = field.querySelector('label');
+                let message = field.querySelector('.customization-message label');
+                if (label.textContent == 'insurance_by_alma') {
+                    field.querySelector('textarea').value = value;
+                    if (message) {
+                        field.querySelector('textarea').value = message.textContent;
+
+                    }
+                    if (update) {
+                        field.querySelector('textarea').value = value;
+                    }
+                }
+            });
+        }
+
+        function addCustomizationProduct(selectedAlmaInsurance) {
+            let value = "insuranceName:" + selectedAlmaInsurance.name + "||insurancePrice:" + selectedAlmaInsurance.option.price ;
+            setCustomizationFieldInsurance(value, true);
+        }
+
+        function saveCustomization() {
+            document.getElementsByName('submitCustomizedData')[0].click();
+        }
 
         function addInputsInsurance(selectedAlmaInsurance) {
             let formAddToCart = document.getElementById('add-to-cart-or-refresh');

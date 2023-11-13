@@ -65,7 +65,7 @@ class ActionValidateOrderHookController extends FrontendHookController
      */
     public function run($params)
     {
-        $order = $params['order'];
+      /**  $order = $params['order'];
         $cart = $params['cart'];
 
         $ids = $this->almaInsuranceProductRepository->getIdsByCartIdAndShop($cart->id, $this->context->shop->id);
@@ -78,6 +78,6 @@ class ActionValidateOrderHookController extends FrontendHookController
 
         if (count($ids) > 0) {
             $this->almaInsuranceProductRepository->updateAssociationsOrderId($order->id, $idsToUpdate);
-        }
+        }**/
     }
 }

@@ -75,6 +75,8 @@ class ConstantsHelper
     const ALMA_INSURANCE_PRODUCT_REFERENCE = 'alma-insurance-poc';
     const ALMA_INSURANCE_ATTRIBUTE_NAME = 'Alma Insurance (DO NOT REMOVE)';
 
+    const ALMA_INSURANCE_CUSTOMIZATION_NAME = 'insurance_by_alma';
+
     /**
      * Insurance form fields
      *

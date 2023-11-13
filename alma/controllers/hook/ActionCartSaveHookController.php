@@ -77,16 +77,13 @@ class ActionCartSaveHookController extends FrontendHookController
      */
     public function run($params)
     {
-        if (
-            isset($_POST['alma_insurance_price'])
-            && $_POST['alma_insurance_price'] != 'none'
-            && isset($_POST['alma_insurance_name'])
-            && $_POST['alma_insurance_name'] != 'none'
-        ) {
-            // @todo Check elibilibilty
 
-            $insurancePrice = $_POST['alma_insurance_price'];
-            $insuranceName = $_POST['alma_insurance_name'];
+        if(
+            $this->context->cart->getLastProduct()
+            && 1 == \Tools::getValue('add')
+        ) {
+            // @todo gestion de la quantité
+            $productArray = $this->getLastProduct();
 
             $insuranceProductId = $this->productRepository->getProductIdByReference(
                 ConstantsHelper::ALMA_INSURANCE_PRODUCT_REFERENCE,
@@ -98,75 +95,113 @@ class ActionCartSaveHookController extends FrontendHookController
                 throw new InsuranceNotFoundException();
             }
 
-            /**
-             * @var \ProductCore $defaultInsuranceProduct
-             */
-            $defaultInsuranceProduct = new \Product((int) $insuranceProductId);
+            if($productArray['id_product'] != $insuranceProductId) {
+                $product = new \Product((int)$productArray['id_product'], false, null, $productArray['id_shop']);
 
-            $attributeGroupId = $this->attributeGroupRepository->getAttributeIdByName(
-                ConstantsHelper::ALMA_INSURANCE_ATTRIBUTE_NAME,
-                $this->context->language->id
-            );
+                $customizationFields = $product->getCustomizationFields($this->context->language->id, $productArray['id_shop']);
 
-            if (!$attributeGroupId) {
-                // @todo la recréer ? envoyer un message
-                throw new InsuranceNotFoundException();
+                $hasInsuranceCustom = false;
+
+                if (is_array($customizationFields)) {
+                    foreach ($customizationFields as $customizationField) {
+                        if ($customizationField['name'] === ConstantsHelper::ALMA_INSURANCE_CUSTOMIZATION_NAME) {
+                            $hasInsuranceCustom = true;
+                            $customizationFieldId = $customizationField['id_customization_field'];
+                            break;
+                        }
+                    }
+                }
+
+                if ($hasInsuranceCustom) {
+                    $result = $this->getCustomizationValue($productArray['id_customization'], $customizationFieldId);
+                    $resultArray = explode('||', $result['value']);
+
+                    foreach ($resultArray as $details) {
+                        $detailsArray = explode(':', $details);
+                        if ($detailsArray[0] == 'insuranceName') {
+                            $insuranceName = $detailsArray[1];
+                        }
+
+                        if ($detailsArray[0] == 'insurancePrice') {
+                            $insurancePrice = $detailsArray[1];
+                        }
+                    }
+
+
+                    /**
+                     * @var \ProductCore $defaultInsuranceProduct
+                     */
+                    $defaultInsuranceProduct = new \Product((int)$insuranceProductId);
+
+                    $attributeGroupId = $this->attributeGroupRepository->getAttributeIdByName(
+                        ConstantsHelper::ALMA_INSURANCE_ATTRIBUTE_NAME,
+                        $this->context->language->id
+                    );
+
+                    if (!$attributeGroupId) {
+                        // @todo la recréer ? envoyer un message
+                        throw new InsuranceNotFoundException();
+                    }
+
+                    $insuranceAttributeId = $this->attributeRepository->getAttributeIdByNameAndGroup(
+                        $insuranceName,
+                        $attributeGroupId,
+                        $this->context->language->id
+                    );
+
+                    if (!$insuranceAttributeId) {
+                        /**
+                         * @var \AttributeCore $testNewAttribute
+                         */
+                        $insuranceAttribute = new \AttributeCore();
+
+                        $insuranceAttribute->name = \PrestaShop\PrestaShop\Adapter\Import\ImportDataFormatter::createMultiLangField($insuranceName);
+                        $insuranceAttribute->id_attribute_group = $attributeGroupId;
+                        $insuranceAttribute->add();
+
+                        $insuranceAttributeId = $insuranceAttribute->id;
+                    }
+
+                    // Check if the combination already exists
+
+                    /**
+                     * @var \CombinationCore $combinaison
+                     */
+                    $idProductAttribute = \CombinationCore::getIdByReference($insuranceProductId, $insuranceName);
+
+                    if (!$idProductAttribute) {
+                        $idProductAttribute = $defaultInsuranceProduct->addCombinationEntity(
+                            $insurancePrice,
+                            $insurancePrice,
+                            0,
+                            1,
+                            0,
+                            1,
+                            0,
+                            $insuranceName,
+                            0,
+                            '',
+                            0
+                        );
+                        $combinaison = new \CombinationCore((int)$idProductAttribute);
+                        $combinaison->setAttributes([$insuranceAttributeId]);
+                    }
+
+
+                    \StockAvailable::setQuantity($defaultInsuranceProduct->id, $idProductAttribute, 1, $this->context->shop->id);
+var_dump($defaultInsuranceProduct->id);
+var_dump($idProductAttribute);
+                   $success =  $this->context->cart->updateQty(1, $defaultInsuranceProduct->id, $idProductAttribute);
+                   var_dump($success);
+
+                 //   $this->updateCustomizationValue($productArray['id_customization'], $customizationFieldId, 'TOUHOU');
+                }
             }
+        }
 
-            $insuranceAttributeId = $this->attributeRepository->getAttributeIdByNameAndGroup(
-                $insuranceName,
-                $attributeGroupId,
-                $this->context->language->id
-            );
 
-            if (!$insuranceAttributeId) {
-                /**
-                 * @var \AttributeCore $testNewAttribute
-                 */
-                $insuranceAttribute = new \AttributeCore();
 
-                $insuranceAttribute->name = \PrestaShop\PrestaShop\Adapter\Import\ImportDataFormatter::createMultiLangField($insuranceName);
-                $insuranceAttribute->id_attribute_group = $attributeGroupId;
-                $insuranceAttribute->add();
-
-                $insuranceAttributeId = $insuranceAttribute->id;
-            }
-
-            // Check if the combination already exists
-
-            /**
-             * @var \CombinationCore $combinaison
-             */
-            $idProductAttribute = \CombinationCore::getIdByReference($insuranceProductId, $insuranceName);
-
-            if (!$idProductAttribute) {
-                $idProductAttribute = $defaultInsuranceProduct->addCombinationEntity(
-                    $insurancePrice,
-                    $insurancePrice,
-                    0,
-                    1,
-                    0,
-                    1,
-                    0,
-                    $insuranceName,
-                    0,
-                    '',
-                    0
-                );
-
-                $combinaison = new \CombinationCore((int) $idProductAttribute);
-                $combinaison->setAttributes([$insuranceAttributeId]);
-            }
-
-            \StockAvailable::setQuantity($defaultInsuranceProduct->id, $idProductAttribute, 1, $this->context->shop->id);
-
-            $_POST['alma_insurance_price'] = 'none';
-
-            $this->context->cart->updateQty(1, $defaultInsuranceProduct->id, $idProductAttribute);
-
-            $product = $this->context->cart->getLastProduct();
-
-            $this->almaInsuranceProductRepository->add(
+           /** $this->almaInsuranceProductRepository->add(
                 $this->context->cart->id,
                 $product['id_product'],
                 $this->context->shop->id,
@@ -175,11 +210,52 @@ class ActionCartSaveHookController extends FrontendHookController
                 $insuranceProductId,
                 $insuranceAttributeId,
                 $insurancePrice
-            );
-        }
+            );**/
+
+      /**  }
 
         $_POST['alma_insurance_price'] = 'none';
-
+**/
         // @todo suppression
     }
+
+    public function updateCustomizationValue($idCustomization, $index, $value)
+    {
+        $sql = '
+            UPDATE `' . _DB_PREFIX_ . 'customized_data`
+            SET `value` = " '. $value. '" 
+            WHERE `id_customization` = ' . (int) $idCustomization . '
+            AND `type` = 1 
+            AND `index` = ' . (int) $index  ;
+
+        return  \Db::getInstance()->execute($sql);
+    }
+
+    public function getCustomizationValue($idCustomization, $index)
+    {
+        $sql = '
+            SELECT `id_customization`, `type`, `index`, `value`
+            FROM `' . _DB_PREFIX_ . 'customized_data`
+            WHERE `id_customization` = ' . (int) $idCustomization . '
+            AND `type` = 1 
+            AND `index` = ' . (int) $index  ;
+
+        return  \Db::getInstance()->getRow($sql);
+    }
+    /**
+     * Get last Product in Cart.
+     *
+     * @return bool|mixed Database result
+     */
+    public function getLastProduct()
+    {
+        $sql = '
+            SELECT `id_product`, `id_product_attribute`, id_shop, id_customization
+            FROM `' . _DB_PREFIX_ . 'cart_product`
+            WHERE `id_cart` = ' . (int) $this->context->cart->id . '
+            ORDER BY `date_add` DESC';
+
+        return  \Db::getInstance()->getRow($sql);
+    }
+
 }
