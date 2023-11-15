@@ -22,7 +22,6 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
-use Alma\PrestaShop\Helpers\Admin\TabsHelper;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -45,7 +44,7 @@ class Alma extends PaymentModule
     public $limited_currencies;
 
     /**
-     * @var HookHelper
+     * @var Alma\PrestaShop\Helpers\HookHelper
      */
     public $hook;
 
@@ -65,9 +64,13 @@ class Alma extends PaymentModule
     public $confirmUninstall;
 
     /**
-     * @var TabsHelper
+     * @var Alma\PrestaShop\Helpers\Admin\TabsHelper
      */
     private $tabsHelper;
+    /**
+     * @var Alma\PrestaShop\Helpers\Admin\InsuranceHelper
+     */
+    private $adminInsuranceHelper;
 
     public function __construct()
     {
@@ -106,7 +109,8 @@ class Alma extends PaymentModule
         }
 
         $this->hook = new \Alma\PrestaShop\Helpers\HookHelper();
-        $this->tabsHelper = new TabsHelper();
+        $this->tabsHelper = new \Alma\PrestaShop\Helpers\Admin\TabsHelper();
+        $this->adminInsuranceHelper = new \Alma\PrestaShop\Helpers\Admin\InsuranceHelper($this);
     }
 
     /**
@@ -176,6 +180,7 @@ class Alma extends PaymentModule
      * Insert module into datable.
      *
      * @override
+     * @return bool
      */
     public function install()
     {
@@ -194,23 +199,17 @@ class Alma extends PaymentModule
             $this->updateCarriersWithAlma();
         }
 
-        // @TODO : To be clear
-        $sql = 'CREATE TABLE `ps_alma_insurance_product` (
-  `id_alma_insurance_product` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `id_cart` int(10) unsigned NOT NULL,
-  `id_product` int(10) unsigned NOT NULL,
-  `id_shop` int(10) unsigned NOT NULL DEFAULT 1,
-  `id_product_attribute` int(10) unsigned NOT NULL DEFAULT 0,
-  `id_customization` int(10) unsigned NOT NULL DEFAULT 0,
-  `id_product_insurance` int(10) unsigned NOT NULL,
-  `id_product_attribute_insurance` int(10) unsigned NOT NULL,
-  `id_order` int(10) unsigned NULL,
-  `price` decimal(20,6) NOT NULL DEFAULT 0.000000,
-  `date_add` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
-   PRIMARY KEY (`id_alma_insurance_product`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci';
+        try {
+            $this->adminInsuranceHelper->initInsurance();
+        } catch (PrestaShopDatabaseException $e) {
+            \Alma\PrestaShop\Logger::instance()->error('[Alma] The init Insurance has not been created');
 
-        \Db::getInstance()->execute($sql);
+            return false;
+        } catch (PrestaShopException $e) {
+            \Alma\PrestaShop\Logger::instance()->error('[Alma] The init Insurance has not been created');
+
+            return false;
+        }
 
         return $this->tabsHelper->installTabs($this->dataTabs());
     }

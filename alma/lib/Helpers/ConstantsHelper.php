@@ -72,8 +72,12 @@ class ConstantsHelper
     const DOMAIN_URL_INSURANCE = 'https://protect.staging.almapay.com';
     const BO_URL_IFRAME_CONFIGURATION_INSURANCE = self::DOMAIN_URL_INSURANCE . '/almaBackOfficeConfiguration.html';
 
+    const ALMA_INSURANCE_PRODUCT_NAME = 'Insurance by Alma';
     const ALMA_INSURANCE_PRODUCT_REFERENCE = 'alma-insurance-poc';
     const ALMA_INSURANCE_ATTRIBUTE_NAME = 'Alma Insurance (DO NOT REMOVE)';
+    const ALMA_INSURANCE_ATTRIBUTE_PUBLIC_NAME = 'My Insurance';
+    const ALMA_INSURANCE_DEFAULT_CATEGORY = 1;
+    const ALMA_INSURANCE_PRODUCT_IMAGE_URL = _PS_MODULE_DIR_ . self::ALMA_MODULE_NAME . '/views/img/alma-insurance.jpg';
 
     /**
      * Insurance form fields
