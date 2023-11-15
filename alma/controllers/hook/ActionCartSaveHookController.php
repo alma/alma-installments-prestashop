@@ -83,7 +83,7 @@ class ActionCartSaveHookController extends FrontendHookController
             && 1 == \Tools::getValue('add')
         ) {
             // @todo gestion de la quantité
-            $productArray = $this->getLastProduct();
+            $lastProductAddInCart = $this->getLastProduct();
 
             $insuranceProductId = $this->productRepository->getProductIdByReference(
                 ConstantsHelper::ALMA_INSURANCE_PRODUCT_REFERENCE,
@@ -95,10 +95,19 @@ class ActionCartSaveHookController extends FrontendHookController
                 throw new InsuranceNotFoundException();
             }
 
-            if($productArray['id_product'] != $insuranceProductId) {
-                $product = new \Product((int)$productArray['id_product'], false, null, $productArray['id_shop']);
+            if(
+                $lastProductAddInCart['id_product'] != $insuranceProductId
+                && (
+                    !isset($this->context->cookie->lastProductAdded)
+                    ||  $this->context->cookie->lastProductAdded !== 'insurance'
+                )
+            ) {
+                $product = new \Product((int)\Tools::getValue('id_product'), false, null, $this->context->shop->id);
 
-                $customizationFields = $product->getCustomizationFields($this->context->language->id, $productArray['id_shop']);
+                $customizationFields = $product->getCustomizationFields(
+                    $this->context->language->id,
+                    $this->context->shop->id
+                );
 
                 $hasInsuranceCustom = false;
 
@@ -106,14 +115,18 @@ class ActionCartSaveHookController extends FrontendHookController
                     foreach ($customizationFields as $customizationField) {
                         if ($customizationField['name'] === ConstantsHelper::ALMA_INSURANCE_CUSTOMIZATION_NAME) {
                             $hasInsuranceCustom = true;
-                            $customizationFieldId = $customizationField['id_customization_field'];
+                            $almaInsuranceCustomizationFieldId = $customizationField['id_customization_field'];
                             break;
                         }
                     }
                 }
 
                 if ($hasInsuranceCustom) {
-                    $result = $this->getCustomizationValue($productArray['id_customization'], $customizationFieldId);
+                    $result = $this->getCustomizationValue(
+                        \Tools::getValue('id_customization'),
+                        $almaInsuranceCustomizationFieldId
+                    );
+
                     $resultArray = explode('||', $result['value']);
 
                     foreach ($resultArray as $details) {
@@ -188,13 +201,26 @@ class ActionCartSaveHookController extends FrontendHookController
                     }
 
 
-                    \StockAvailable::setQuantity($defaultInsuranceProduct->id, $idProductAttribute, 1, $this->context->shop->id);
-var_dump($defaultInsuranceProduct->id);
-var_dump($idProductAttribute);
-                   $success =  $this->context->cart->updateQty(1, $defaultInsuranceProduct->id, $idProductAttribute);
-                   var_dump($success);
+                    \StockAvailable::setQuantity(
+                        $defaultInsuranceProduct->id,
+                        $idProductAttribute,
+                        \Tools::getValue('qty'),
+                        $this->context->shop->id
+                    );
 
-                 //   $this->updateCustomizationValue($productArray['id_customization'], $customizationFieldId, 'TOUHOU');
+                    $this->context->cart->updateQty(
+                        \Tools::getValue('qty'),
+                        $defaultInsuranceProduct->id,
+                        $idProductAttribute
+                    );
+
+                    $this->updateCustomizationValue(
+                        \Tools::getValue('id_customization'),
+                        $almaInsuranceCustomizationFieldId,
+                        'TOUHOU'
+                    );
+
+                    $this->context->cookie->lastProductAdded = 'insurance';
                 }
             }
         }
