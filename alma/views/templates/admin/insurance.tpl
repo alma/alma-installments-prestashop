@@ -7,8 +7,8 @@
     </div>
     <div class="form-wrapper">
         <div class="form-group">
-            <div class="alma--insurance-iframe">
-                <iframe id="config-alma-iframe" class="alma-insurance-iframe" width="100%" height="100%" src="{$iframeUrl}"></iframe>
+            <div class="alma--insurance-bo-form">
+                <iframe id="config-alma-iframe" class="alma-insurance-iframe" src="{$iframeUrl}"></iframe>
             </div>
         </div>
     </div><!-- /.form-wrapper -->
