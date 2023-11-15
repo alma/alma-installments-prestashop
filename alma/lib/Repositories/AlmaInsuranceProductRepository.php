@@ -24,6 +24,8 @@
 
 namespace Alma\PrestaShop\Repositories;
 
+use Alma\PrestaShop\Helpers\ConstantsHelper;
+
 if (!defined('_PS_VERSION_')) {
     exit;
 }
@@ -89,5 +91,22 @@ class AlmaInsuranceProductRepository
         }
 
         return true;
+    }
+
+    /**
+     * @param int $idShop
+     * @param int $idCart
+     * @return array|bool|object|null
+     */
+    public function getNbInsuranceByCart($idShop, $idCart)
+    {
+        $sql = '
+            select count(`id_alma_insurance_product`) as nbInsurance 
+            from `' . _DB_PREFIX_ . 'alma_insurance_product`
+            where id_cart = ' . (int) $idCart. '
+            and id_shop = ' . (int)$idShop . '
+        ';
+
+        return  \Db::getInstance()->getRow($sql);
     }
 }
