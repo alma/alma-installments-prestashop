@@ -198,8 +198,6 @@ class InsuranceHelper
 
     /**
      * @param array $config
-     * @param \Alma $module
-     *
      * @return void
      *
      * @throws WrongParamsException

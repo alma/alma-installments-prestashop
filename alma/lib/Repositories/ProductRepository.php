@@ -24,6 +24,10 @@
 
 namespace Alma\PrestaShop\Repositories;
 
+use Alma\PrestaShop\Helpers\ConstantsHelper;
+use Alma\PrestaShop\Helpers\LocaleHelper;
+use PrestaShop\PrestaShop\Adapter\Import\ImportDataFormatter;
+
 if (!defined('_PS_VERSION_')) {
     exit;
 }
@@ -35,6 +39,18 @@ if (!defined('_PS_VERSION_')) {
  */
 class ProductRepository
 {
+    const PRODUCT_TYPE_COMBINATIONS = 'combinations';
+    const VISIBILITY_NONE = 'none';
+    /**
+     * @var LocaleHelper
+     */
+    private $localeHelper;
+
+    public function __construct()
+    {
+        $this->localeHelper = new LocaleHelper();
+    }
+
     /**
      * Get the product combinations
      *
@@ -164,5 +180,28 @@ class ProductRepository
                 LEFT JOIN `' . _DB_PREFIX_ . 'supplier` s ON (s.`id_supplier` = p.`id_supplier`) 
                 WHERE pl.`id_lang` = ' . (int) $id_lang . '
                 AND p.reference="' . (string) $reference . '"');
+    }
+
+    /**
+     * @return \ProductCore
+     * @throws \PrestaShopDatabaseException
+     * @throws \PrestaShopException
+     */
+    public function createInsuranceProduct()
+    {
+        /**
+         * @var \ProductCore $product
+         */
+        $product = new \Product();
+        $product->name = $this->localeHelper->createMultiLangField(ConstantsHelper::ALMA_INSURANCE_PRODUCT_NAME);
+        $product->reference = ConstantsHelper::ALMA_INSURANCE_PRODUCT_REFERENCE;
+        $product->link_rewrite = $this->localeHelper->createMultiLangField(\Tools::str2url(ConstantsHelper::ALMA_INSURANCE_PRODUCT_NAME));
+        $product->id_category_default = ConstantsHelper::ALMA_INSURANCE_DEFAULT_CATEGORY;
+        $product->product_type = self::PRODUCT_TYPE_COMBINATIONS;
+        $product->visibility = self::VISIBILITY_NONE;
+        $product->addToCategories(ConstantsHelper::ALMA_INSURANCE_DEFAULT_CATEGORY);
+        $product->add();
+
+        return $product;
     }
 }

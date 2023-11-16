@@ -27,9 +27,12 @@ namespace Alma\PrestaShop\Helpers;
 use Alma\API\Entities\Merchant;
 use Alma\PrestaShop\Exceptions\ActivationException;
 use Alma\PrestaShop\Exceptions\ApiMerchantsException;
+use Alma\PrestaShop\Exceptions\InsuranceInstallException;
 use Alma\PrestaShop\Exceptions\WrongCredentialsException;
 use Alma\PrestaShop\Forms\InpageAdminFormBuilder;
 use Alma\PrestaShop\Helpers\Admin\InsuranceHelper;
+use Alma\PrestaShop\Services\InsuranceService;
+use Alma\PrestaShop\Logger;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -45,6 +48,14 @@ class ApiHelper
      * @var mixed
      */
     private $module;
+    /**
+     * @var InsuranceService
+     */
+    private $insuranceService;
+    /**
+     * @var ConfigurationHelper
+     */
+    private $configurationHelper;
 
     /**
      * @param $module
@@ -53,6 +64,8 @@ class ApiHelper
     {
         $this->module = $module;
         $this->insuranceHelper = new InsuranceHelper($module);
+        $this->insuranceService = new InsuranceService();
+        $this->configurationHelper = new ConfigurationHelper();
     }
 
     /**
@@ -105,23 +118,35 @@ class ApiHelper
     }
 
     /**
-     * @param $merchant
-     *
+     * @param Merchant $merchant
      * @return void
-     *
      * @throws \PrestaShopException
      */
     protected function handleInsuranceFlag($merchant)
     {
-        $isAllowInsurance = $this->saveFeatureFlag(
-            $merchant,
-            'cms_insurance',
-            ConstantsHelper::ALMA_ALLOW_INSURANCE,
-            ConstantsHelper::ALMA_ACTIVATE_INSURANCE
-        );
+        try {
+            $isAllowInsurance = $this->saveFeatureFlag(
+                $merchant,
+                'cms_insurance',
+                ConstantsHelper::ALMA_ALLOW_INSURANCE,
+                ConstantsHelper::ALMA_ACTIVATE_INSURANCE
+            );
 
-        $this->insuranceHelper->handleBOMenu($isAllowInsurance);
-        $this->insuranceHelper->handleDefaultInsuranceFieldValues($isAllowInsurance);
+            if ($isAllowInsurance) {
+                $this->insuranceService->installDefaultData();
+            }
+
+            $this->insuranceHelper->handleBOMenu($isAllowInsurance);
+            $this->insuranceHelper->handleDefaultInsuranceFieldValues($isAllowInsurance);
+        } catch (InsuranceInstallException $e) {
+            Logger::instance()->error(
+                sprintf(
+                    '[Alma] Installation of exception has failed, message "%s", trace "%s"',
+                    $e->getMessage(),
+                    $e->getTraceAsString()
+                )
+            );
+        }
     }
 
     /**
@@ -139,11 +164,11 @@ class ApiHelper
             $value = $merchant->$merchantKey;
         }
 
-        SettingsHelper::updateValue($configKey, (int) $value);
+        $this->configurationHelper->updateValue($configKey, (int) $value);
 
-        // If Inpage not allowed we ensure that inpage is deactivated in database
+        // If Inpage not allowed we need to ensure that inpage is deactivated in database
         if (0 === $value) {
-            SettingsHelper::updateValue($formSettingName, (int) $value);
+            $this->configurationHelper->updateValue($formSettingName, $value);
         }
 
         return (int) $value;
