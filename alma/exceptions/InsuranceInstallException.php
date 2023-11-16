@@ -24,6 +24,6 @@
 
 namespace Alma\PrestaShop\Exceptions;
 
-class InsuranceInitException extends \Exception
+class InsuranceInstallException extends AlmaException
 {
 }

@@ -199,18 +199,6 @@ class Alma extends PaymentModule
             $this->updateCarriersWithAlma();
         }
 
-        try {
-            $this->adminInsuranceHelper->initInsurance();
-        } catch (PrestaShopDatabaseException $e) {
-            \Alma\PrestaShop\Logger::instance()->error('[Alma] The init Insurance has not been created');
-
-            return false;
-        } catch (PrestaShopException $e) {
-            \Alma\PrestaShop\Logger::instance()->error('[Alma] The init Insurance has not been created');
-
-            return false;
-        }
-
         return $this->tabsHelper->installTabs($this->dataTabs());
     }
 

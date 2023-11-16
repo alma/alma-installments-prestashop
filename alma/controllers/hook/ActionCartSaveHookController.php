@@ -30,6 +30,7 @@ if (!defined('_PS_VERSION_')) {
 
 use Alma\PrestaShop\Exceptions\InsuranceNotFoundException;
 use Alma\PrestaShop\Helpers\ConstantsHelper;
+use Alma\PrestaShop\Helpers\LocaleHelper;
 use Alma\PrestaShop\Hooks\FrontendHookController;
 use Alma\PrestaShop\Repositories\AlmaInsuranceProductRepository;
 use Alma\PrestaShop\Repositories\AttributeGroupRepository;
@@ -57,6 +58,10 @@ class ActionCartSaveHookController extends FrontendHookController
      * @var AlmaInsuranceProductRepository
      */
     protected $almaInsuranceProductRepository;
+    /**
+     * @var LocaleHelper
+     */
+    private $localeHelper;
 
     public function __construct($module)
     {
@@ -66,6 +71,7 @@ class ActionCartSaveHookController extends FrontendHookController
         $this->attributeGroupRepository = new AttributeGroupRepository();
         $this->attributeRepository = new AttributeRepository();
         $this->almaInsuranceProductRepository = new AlmaInsuranceProductRepository();
+        $this->localeHelper = new LocaleHelper();
     }
 
     /**
@@ -125,7 +131,7 @@ class ActionCartSaveHookController extends FrontendHookController
                  */
                 $insuranceAttribute = new \AttributeCore();
 
-                $insuranceAttribute->name = \PrestaShop\PrestaShop\Adapter\Import\ImportDataFormatter::createMultiLangField($insuranceName);
+                $insuranceAttribute->name = $this->localeHelper->createMultiLangField($insuranceName);
                 $insuranceAttribute->id_attribute_group = $attributeGroupId;
                 $insuranceAttribute->add();
 

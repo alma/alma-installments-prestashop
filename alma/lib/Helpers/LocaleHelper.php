@@ -189,4 +189,23 @@ class LocaleHelper
 
         return $locale;
     }
+
+    /**
+     * Create a multilang field.
+     * Same function as \PrestaShop\PrestaShop\Adapter\Import\ImportDataFormatter()->createMultiLangField()
+     *
+     * @param string $field
+     *
+     * @return array
+     */
+    public function createMultiLangField($field)
+    {
+        $result = [];
+
+        foreach (\Language::getIDs(false) as $languageId) {
+            $result[$languageId] = $field;
+        }
+
+        return $result;
+    }
 }

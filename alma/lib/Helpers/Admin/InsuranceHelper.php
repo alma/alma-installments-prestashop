@@ -24,13 +24,9 @@
 
 namespace Alma\PrestaShop\Helpers\Admin;
 
-use Alma\PrestaShop\Exceptions\InsuranceInitException;
 use Alma\PrestaShop\Exceptions\WrongParamsException;
 use Alma\PrestaShop\Helpers\ConfigurationHelper;
 use Alma\PrestaShop\Helpers\ConstantsHelper;
-use Alma\PrestaShop\Logger;
-use Alma\PrestaShop\Repositories\AttributeGroupRepository;
-use Alma\PrestaShop\Repositories\ProductRepository;
 
 class InsuranceHelper
 {
@@ -58,23 +54,12 @@ class InsuranceHelper
      * @var mixed
      */
     private $module;
-    /**
-     * @var ProductRepository
-     */
-    private $productRepository;
-    /**
-     * @var AttributeGroupRepository
-     */
-    private $attributeGroupRepository;
 
     public function __construct($module)
     {
         $this->module = $module;
-        $this->context = \Context::getContext();
         $this->tabsHelper = new TabsHelper();
         $this->configurationHelper = new ConfigurationHelper();
-        $this->productRepository = new ProductRepository();
-        $this->attributeGroupRepository = new AttributeGroupRepository();
     }
 
     /**
@@ -228,157 +213,5 @@ class InsuranceHelper
         }
 
         $this->saveBOFormValues($config, $dbFields);
-    }
-
-    /**
-     * Init Default data for Insurance.
-     * @return void
-     * @throws \PrestaShopDatabaseException
-     * @throws \PrestaShopException
-     */
-    public function initInsurance()
-    {
-        $this->installDB();
-        $this->createInsuranceProductIfNotExist();
-        $this->createAttributeGroupIfNotExist();
-    }
-
-    /**
-     * @return void
-     */
-    protected function installDB()
-    {
-        $sql = 'CREATE TABLE IF NOT EXISTS `' . _DB_PREFIX_ . 'alma_insurance_product` (
-          `id_alma_insurance_product` int(10) unsigned NOT NULL AUTO_INCREMENT,
-          `id_cart` int(10) unsigned NOT NULL,
-          `id_product` int(10) unsigned NOT NULL,
-          `id_shop` int(10) unsigned NOT NULL DEFAULT 1,
-          `id_product_attribute` int(10) unsigned NOT NULL DEFAULT 0,
-          `id_customization` int(10) unsigned NOT NULL DEFAULT 0,
-          `id_product_insurance` int(10) unsigned NOT NULL,
-          `id_product_attribute_insurance` int(10) unsigned NOT NULL,
-          `id_order` int(10) unsigned NULL,
-          `price` decimal(20,6) NOT NULL DEFAULT 0.000000,
-          `date_add` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
-           PRIMARY KEY (`id_alma_insurance_product`)
-        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci';
-
-        \Db::getInstance()->execute($sql);
-    }
-
-    /**
-     * Create the default Insurance product
-     * @return void
-     * @throws \PrestaShopDatabaseException
-     * @throws \PrestaShopException
-     */
-    protected function createInsuranceProductIfNotExist()
-    {
-        $insuranceProduct = $this->productRepository->getProductIdByReference(
-            ConstantsHelper::ALMA_INSURANCE_PRODUCT_REFERENCE,
-            $this->context->language->id
-        );
-
-        if (!$insuranceProduct) {
-            try {
-                $product = new \Product();
-                $product->name = $this->createMultiLangField(utf8_encode(ConstantsHelper::ALMA_INSURANCE_PRODUCT_NAME));
-                $product->reference = ConstantsHelper::ALMA_INSURANCE_PRODUCT_REFERENCE;
-                $product->link_rewrite = $this->createMultiLangField(\Tools::str2url(ConstantsHelper::ALMA_INSURANCE_PRODUCT_NAME));
-                $product->id_category_default = ConstantsHelper::ALMA_INSURANCE_DEFAULT_CATEGORY;
-                $product->product_type = 'combinations';
-                $product->visibility = 'none';
-                $product->addToCategories(ConstantsHelper::ALMA_INSURANCE_DEFAULT_CATEGORY);
-                $product->add();
-
-                $shops = \Shop::getShops(true, null, true);
-                $image = new \Image();
-                $image->id_product = $product->id;
-                $image->cover = true;
-                if (($image->validateFields(false, true)) === true && ($image->validateFieldsLang(false, true)) === true && $image->add()) {
-                    $image->associateTo($shops);
-                    if (!$this->uploadImage($product->id, $image->id, ConstantsHelper::ALMA_INSURANCE_PRODUCT_IMAGE_URL)) {
-                        $image->delete();
-                    }
-                }
-            } catch (InsuranceInitException $e) {
-                Logger::instance()->error('[Alma] The insurance product has not been created');
-            }
-        }
-    }
-
-    /**
-     * Create the default Insurance attribute group
-     * @return void
-     * @throws \PrestaShopDatabaseException
-     * @throws \PrestaShopException
-     */
-    protected function createAttributeGroupIfNotExist()
-    {
-        $insuranceAttributeGroup = $this->attributeGroupRepository->getAttributeIdByName(
-            ConstantsHelper::ALMA_INSURANCE_ATTRIBUTE_NAME,
-            $this->context->language->id
-        );
-
-        if (!$insuranceAttributeGroup) {
-            try {
-                $attributeGroup = new \AttributeGroup();
-                $attributeGroup->group_type = 'select';
-                $attributeGroup->name = $this->createMultiLangField(utf8_encode(ConstantsHelper::ALMA_INSURANCE_ATTRIBUTE_NAME));
-                $attributeGroup->public_name = $this->createMultiLangField(utf8_encode(ConstantsHelper::ALMA_INSURANCE_ATTRIBUTE_PUBLIC_NAME));
-                $attributeGroup->add();
-            } catch (InsuranceInitException $e) {
-                Logger::instance()->error('[Alma] The insurance attribute group has not been created');
-            }
-        }
-    }
-
-    /**
-     * @param $idEntity
-     * @param $idImage
-     * @param $imgUrl
-     * @return bool
-     * @throws \PrestaShopDatabaseException
-     * @throws \PrestaShopException
-     */
-    protected function uploadImage($idEntity, $idImage = null, $imgUrl)
-    {
-        $tmpFile = tempnam(_PS_TMP_IMG_DIR_, 'ps_import');
-        $watermarkTypes = explode(',', \Configuration::get('WATERMARK_TYPES'));
-        $imageObj = new \Image((int)$idImage);
-        $path = $imageObj->getPathForCreation();
-        $imgUrl = str_replace(' ', '%20', trim($imgUrl));
-        // Evaluate the memory required to resize the image: if it's too big we can't resize it.
-        if (!\ImageManager::checkImageMemoryLimit($imgUrl)) {
-            return false;
-        }
-        if (@copy($imgUrl, $tmpFile)) {
-            \ImageManager::resize($tmpFile, $path . '.jpg');
-            $imagesTypes = \ImageType::getImagesTypes('products');
-            foreach ($imagesTypes as $imageType) {
-                \ImageManager::resize($tmpFile, $path . '-' . stripslashes($imageType['name']) . '.jpg', $imageType['width'], $imageType['height']);
-                if (in_array($imageType['id_image_type'], $watermarkTypes)) {
-                    \Hook::exec('actionWatermark', array('id_image' => $idImage, 'id_product' => $idEntity));
-                }
-            }
-        } else {
-            unlink($tmpFile);
-            return false;
-        }
-        unlink($tmpFile);
-        return true;
-    }
-
-    /**
-     * @param $field
-     * @return array
-     */
-    protected function createMultiLangField($field)
-    {
-        $res = array();
-        foreach (\Language::getIDs(false) as $idLang) {
-            $res[$idLang] = $field;
-        }
-        return $res;
     }
 }
