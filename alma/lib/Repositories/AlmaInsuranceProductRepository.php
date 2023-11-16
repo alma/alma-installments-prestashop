@@ -109,4 +109,27 @@ class AlmaInsuranceProductRepository
 
         return  \Db::getInstance()->getRow($sql);
     }
+
+    /**
+     * @return bool
+     */
+    public function createTable()
+    {
+        $sql = 'CREATE TABLE IF NOT EXISTS `' . _DB_PREFIX_ . 'alma_insurance_product` (
+          `id_alma_insurance_product` int(10) unsigned NOT NULL AUTO_INCREMENT,
+          `id_cart` int(10) unsigned NOT NULL,
+          `id_product` int(10) unsigned NOT NULL,
+          `id_shop` int(10) unsigned NOT NULL DEFAULT 1,
+          `id_product_attribute` int(10) unsigned NOT NULL DEFAULT 0,
+          `id_customization` int(10) unsigned NOT NULL DEFAULT 0,
+          `id_product_insurance` int(10) unsigned NOT NULL,
+          `id_product_attribute_insurance` int(10) unsigned NOT NULL,
+          `id_order` int(10) unsigned NULL,
+          `price` decimal(20,6) NOT NULL DEFAULT 0.000000,
+          `date_add` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+           PRIMARY KEY (`id_alma_insurance_product`)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci';
+
+        return \Db::getInstance()->execute($sql);
+    }
 }

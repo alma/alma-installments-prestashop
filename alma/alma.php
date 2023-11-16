@@ -22,7 +22,6 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
-use Alma\PrestaShop\Helpers\Admin\TabsHelper;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -45,7 +44,7 @@ class Alma extends PaymentModule
     public $limited_currencies;
 
     /**
-     * @var HookHelper
+     * @var Alma\PrestaShop\Helpers\HookHelper
      */
     public $hook;
 
@@ -65,9 +64,13 @@ class Alma extends PaymentModule
     public $confirmUninstall;
 
     /**
-     * @var TabsHelper
+     * @var Alma\PrestaShop\Helpers\Admin\TabsHelper
      */
     private $tabsHelper;
+    /**
+     * @var Alma\PrestaShop\Helpers\Admin\InsuranceHelper
+     */
+    private $adminInsuranceHelper;
 
     public function __construct()
     {
@@ -106,7 +109,8 @@ class Alma extends PaymentModule
         }
 
         $this->hook = new \Alma\PrestaShop\Helpers\HookHelper();
-        $this->tabsHelper = new TabsHelper();
+        $this->tabsHelper = new \Alma\PrestaShop\Helpers\Admin\TabsHelper();
+        $this->adminInsuranceHelper = new \Alma\PrestaShop\Helpers\Admin\InsuranceHelper($this);
     }
 
     /**
@@ -176,6 +180,7 @@ class Alma extends PaymentModule
      * Insert module into datable.
      *
      * @override
+     * @return bool
      */
     public function install()
     {

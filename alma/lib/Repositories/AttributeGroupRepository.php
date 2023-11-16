@@ -24,6 +24,10 @@
 
 namespace Alma\PrestaShop\Repositories;
 
+use Alma\PrestaShop\Helpers\ConstantsHelper;
+use Alma\PrestaShop\Helpers\LocaleHelper;
+use PrestaShop\PrestaShop\Adapter\Import\ImportDataFormatter;
+
 if (!defined('_PS_VERSION_')) {
     exit;
 }
@@ -35,8 +39,19 @@ if (!defined('_PS_VERSION_')) {
  */
 class AttributeGroupRepository
 {
+    const GROUP_TYPE_SELECT = 'select';
     /**
-     * @param string $reference
+     * @var LocaleHelper
+     */
+    private $localeHelper;
+
+    public function __construct()
+    {
+        $this->localeHelper = new LocaleHelper();
+    }
+
+    /**
+     * @param $name
      * @param int $idLang
      *
      * @return false|string
@@ -54,5 +69,22 @@ class AttributeGroupRepository
 			LEFT JOIN `' . _DB_PREFIX_ . 'attribute_group_lang` agl
 			ON (ag.`id_attribute_group` = agl.`id_attribute_group` AND `id_lang` = ' . (int) $idLang . ')
             WHERE agl.`name` = "' . $name . '"');
+    }
+
+    /**
+     * @return void
+     * @throws \PrestaShopDatabaseException
+     * @throws \PrestaShopException
+     */
+    public function createInsuranceAttributeGroup()
+    {
+        /**
+         * @var \AttributeGroupCore $attributeGroup
+         */
+        $attributeGroup = new \AttributeGroup();
+        $attributeGroup->group_type = self::GROUP_TYPE_SELECT;
+        $attributeGroup->name = $this->localeHelper->createMultiLangField(ConstantsHelper::ALMA_INSURANCE_ATTRIBUTE_NAME);
+        $attributeGroup->public_name = $this->localeHelper->createMultiLangField(ConstantsHelper::ALMA_INSURANCE_ATTRIBUTE_PUBLIC_NAME);
+        $attributeGroup->add();
     }
 }
