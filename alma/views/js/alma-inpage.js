@@ -26,11 +26,15 @@ let paymentButtonEvents = [];
 
 window.addEventListener("load", function() {
     onloadAlma();
+    window.__alma_refreshInpage = onloadAlma;
 });
 
 function removeLoaderButtonPayment(button) {
     button.classList.remove('disabled', 'loading');
-    button.querySelector('.alma-loader-dot-container').remove();
+    let dots = button.querySelector('.alma-loader-dot-container');
+    if (dots) {
+        dots.remove();
+    }
 }
 
 function onloadAlma() {

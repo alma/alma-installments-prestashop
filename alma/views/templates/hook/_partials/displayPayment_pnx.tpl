@@ -72,6 +72,7 @@
                             </span>
                         </span>
                     </a>
+                    <script type="text/javascript">window.__alma_refreshInpage && __alma_refreshInpage();</script>
                 </p>
             </div>
             {if $option.isInPageEnabled}
