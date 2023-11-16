@@ -166,5 +166,35 @@
                 elementInput.setAttribute('value', value);
             }
         }
+
+        // For Insurance, we need to create a customization of the product but this customization should be filled automatically
+        // And should not be displayed for the customer to see
+        function hideInsuranceCustomization() {
+            // First, we find the customization section in the DOM (note: based on className, it's not really stable)
+            const customizationSection = document.getElementsByClassName("product-customization")[0]
+            let customizationItems = undefined
+            if (customizationSection) {
+                // If the customization section exists, we look for the list elements inside
+                customizationItems = customizationSection.getElementsByTagName('li')
+            }
+            // If there is only 1 list element, and if this element includes our insurance_by_alma customization
+            if (customizationItems && customizationItems.length === 1 && customizationItems[0].innerText.includes('insurance_by_alma')) {
+                // Then, we can hide the whole customization section
+                customizationSection.style.display = "none"
+            }
+            // If there are more than 1 list element as customization, it means that the items has others customization that should be displayed
+            if (customizationItems && customizationItems.length > 1) {
+                // So we need to target and hide only our insurance_by_alma customization
+                 for (let i= 0; i < customizationItems.length; i++) {
+                     // If one of the customization listed includes or insurance
+                     if (customizationItems[i].innerText.includes('insurance_by_alma')) {
+                         // Then we remove only the customization listed and keep the other ones
+                         customizationItems[i].style.display = 'none'
+                     }
+                 }
+
+            }
+        }
+        hideInsuranceCustomization()
     });
 })(jQuery);
