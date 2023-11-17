@@ -92,5 +92,19 @@
             refreshWidgets();
             window.__alma_refreshWidgets = refreshWidgets;
         }
+
+        //Insurance Cart
+        let itemsCart = document.querySelectorAll('.cart-items .cart-item');
+        itemsCart.forEach((item) => {
+            let dataProduct = item.querySelector('.alma-data-product');
+            let actionsInsuranceProduct = dataProduct.querySelector('.actions-alma-insurance-product');
+            let isAlmaInsuranceProduct = parseInt(dataProduct.dataset.isAlmaInsurance);
+            console.log(isAlmaInsuranceProduct);
+            if (!isAlmaInsuranceProduct) {
+                console.log(actionsInsuranceProduct);
+                actionsInsuranceProduct.style.display = 'block';
+                item.append(actionsInsuranceProduct);
+            }
+        })
     });
 })(jQuery);

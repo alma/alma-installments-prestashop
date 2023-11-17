@@ -27,6 +27,7 @@ namespace Alma\PrestaShop\Controllers\Hook;
 use Alma\PrestaShop\Helpers\InsuranceHelper;
 use Alma\PrestaShop\Helpers\SettingsHelper;
 use Alma\PrestaShop\Hooks\FrontendHookController;
+use PrestaShop\Module\FacetedSearch\Hook\Product;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -67,6 +68,27 @@ class DisplayCartExtraProductActionsHookController extends FrontendHookControlle
      */
     public function run($params)
     {
+        /**
+         * @var \Product $product
+         */
+        $product = $params['product'];
+        /**
+         * @var \Cart $cart
+         */
+        $cart = $params['cart'];
+        $insuranceProductNames = [
+            'Vol + casse',
+            'Vol',
+            'Casse',
+            'Maintenance',
+        ];
+
+        $this->context->smarty->assign([
+            'idProduct' => $product->id,
+            'reference' => $product->reference,
+            'idCart' => $cart->id,
+            'isAlmaInsurance' => in_array($product->reference, $insuranceProductNames) ? 1 : 0,
+        ]);
         return $this->module->display($this->module->file, 'displayCartExtraProductActions.tpl');
     }
 }
