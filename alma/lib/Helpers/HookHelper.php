@@ -97,6 +97,7 @@ class HookHelper
         ],
         'actionCartSave' => 'all',
         'actionValidateOrder' => 'all',
+        'displayCartExtraProductActions' => 'all',
     ];
 
     /**
