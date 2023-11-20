@@ -209,7 +209,7 @@
 
         // For Insurance, we need to create a customization of the product but this customization should be filled automatically
         // And should not be displayed for the customer to see
-        function hideInsuranceCustomization() {
+      /**  function hideInsuranceCustomization() {
             // First, we find the customization section in the DOM (note: based on className, it's not really stable)
             const customizationSection = document.getElementsByClassName("product-customization")[0]
             let customizationItems = undefined
@@ -235,6 +235,6 @@
 
             }
         }
-        hideInsuranceCustomization()
+        hideInsuranceCustomization()**/
     });
 })(jQuery);

@@ -85,9 +85,9 @@ class ActionCartSaveHookController extends FrontendHookController
     {
         if (
             1 == \Tools::getValue('add')
-            && 0 != \Tools::getValue('id_customization')
+            && 'update' == \Tools::getValue('action')
         ) {
-            $lastProductAddInCart = $this->getLastProduct();
+            $productArray = $this->context->cart->getLastProduct();
 
             $insuranceProductId = $this->productRepository->getProductIdByReference(
                 ConstantsHelper::ALMA_INSURANCE_PRODUCT_REFERENCE,
@@ -100,9 +100,9 @@ class ActionCartSaveHookController extends FrontendHookController
             }
 
             if (
-                $lastProductAddInCart['id_product'] != $insuranceProductId
+                $productArray['id_product'] != $insuranceProductId
             ) {
-                $product = new \Product((int)\Tools::getValue('id_product'), false, null, $this->context->shop->id);
+                $product = new \Product((int)$productArray['id_product'] , false, null, $this->context->shop->id);
 
                 $customizationFields = $product->getCustomizationFields(
                     $this->context->language->id,
@@ -121,170 +121,166 @@ class ActionCartSaveHookController extends FrontendHookController
                     }
                 }
 
-                $nbProductsWithInsuranceInCart = $this->getNbProductWithInsuranceInCart()['nbProductsWithInsurance'];
-                $nbInsuranceAssociated = $this->almaInsuranceProductRepository->getNbInsuranceByCart(
-                    $this->context->shop->id,
-                    $this->context->cart->id
-                )['nbInsurance'];
-
-                if (null == $nbProductsWithInsuranceInCart) {
-                    $nbProductsWithInsuranceInCart = 0;
-                }
+                // $nbProductsWithInsuranceInCart = $this->getNbProductWithInsuranceInCart()['nbProductsWithInsurance'];
+                /** $nbInsuranceAssociated = $this->almaInsuranceProductRepository->getNbInsuranceByCart(
+                 * $this->context->shop->id,
+                 * $this->context->cart->id
+                 * )['nbInsurance'];
+                 *
+                 * if (null == $nbProductsWithInsuranceInCart) {
+                 * $nbProductsWithInsuranceInCart = 0;
+                 * }**/
 
 
                 if (
                     $hasInsuranceCustom
-            //        && $nbProductsWithInsuranceInCart == ($nbInsuranceAssociated + \Tools::getValue('qty'))
+                    //        && $nbProductsWithInsuranceInCart == ($nbInsuranceAssociated + \Tools::getValue('qty'))
                 ) {
 
-                    $result = $this->getCustomizationValue(
-                        \Tools::getValue('id_customization'),
+                    $resultCustomization = $this->getCustomizationValue(
+                        $productArray,
                         $almaInsuranceCustomizationFieldId
                     );
 
-                    $resultArray = explode('||', $result['value']);
+                     if($resultCustomization) {
+                         $resultArray = explode('||', $resultCustomization['value']);
 
-                    foreach ($resultArray as $details) {
-                        $detailsArray = explode(':', $details);
-                        if ($detailsArray[0] == 'insuranceName') {
-                            $insuranceName = $detailsArray[1];
-                        }
+                         foreach ($resultArray as $details) {
+                             $detailsArray = explode(':', $details);
+                             if ($detailsArray[0] == 'insuranceName') {
+                                 $insuranceName = $detailsArray[1];
+                             }
 
-                        if ($detailsArray[0] == 'insurancePrice') {
-                            $insurancePrice = $detailsArray[1];
-                        }
-                    }
+                             if ($detailsArray[0] == 'insurancePrice') {
+                                 $insurancePrice = $detailsArray[1];
+                             }
+                         }
 
-                    /**
-                     * @var \ProductCore $defaultInsuranceProduct
-                     */
-                    $defaultInsuranceProduct = new \Product((int)$insuranceProductId);
-
-                    $attributeGroupId = $this->attributeGroupRepository->getAttributeIdByName(
-                        ConstantsHelper::ALMA_INSURANCE_ATTRIBUTE_NAME,
-                        $this->context->language->id
-                    );
-
-                    if (!$attributeGroupId) {
-                        // @todo la recréer ? envoyer un message
-                        throw new InsuranceNotFoundException();
-                    }
-
-                    $insuranceAttributeId = $this->attributeRepository->getAttributeIdByNameAndGroup(
-                        $insuranceName,
-                        $attributeGroupId,
-                        $this->context->language->id
-                    );
-
-                    if (!$insuranceAttributeId) {
                         /**
-                         * @var \AttributeCore $testNewAttribute
+                         * @var \ProductCore $defaultInsuranceProduct
                          */
-                        $insuranceAttribute = new \AttributeCore();
+                        $defaultInsuranceProduct = new \Product((int)$insuranceProductId);
 
-                        $insuranceAttribute->name = $this->localeHelper->createMultiLangField($insuranceName);
-                        $insuranceAttribute->id_attribute_group = $attributeGroupId;
-                        $insuranceAttribute->add();
-
-                        $insuranceAttributeId = $insuranceAttribute->id;
-                    }
-
-                    // Check if the combination already exists
-
-                    /**
-                     * @var \CombinationCore $combinaison
-                     */
-                    $idInsuranceProductAttribute = \CombinationCore::getIdByReference($insuranceProductId, $insuranceName);
-
-                    if (!$idInsuranceProductAttribute) {
-                        $idInsuranceProductAttribute = $defaultInsuranceProduct->addCombinationEntity(
-                            $insurancePrice,
-                            $insurancePrice,
-                            0,
-                            1,
-                            0,
-                            1,
-                            0,
-                            $insuranceName,
-                            0,
-                            '',
-                            0
+                        $attributeGroupId = $this->attributeGroupRepository->getAttributeIdByName(
+                            ConstantsHelper::ALMA_INSURANCE_ATTRIBUTE_NAME,
+                            $this->context->language->id
                         );
-                        $combinaison = new \CombinationCore((int)$idInsuranceProductAttribute);
-                        $combinaison->setAttributes([$insuranceAttributeId]);
-                    }
-                    // ? id adress delivery
-                    $sql = '
-                    SELECT `quantity`
-                    FROM `' . _DB_PREFIX_ . 'cart_product`
-                    WHERE `id_cart` = ' . (int)$this->context->cart->id . '
-                    and `id_product` = ' . (int)$insuranceProductId . '
-                    and `id_product_attribute` = ' . (int)$idInsuranceProductAttribute;
 
-                    $resultQuantity = \Db::getInstance()->getRow($sql);
+                        if (!$attributeGroupId) {
+                            // @todo la recréer ? envoyer un message
+                            throw new InsuranceNotFoundException();
+                        }
 
-                    if (!$resultQuantity) {
+                        $insuranceAttributeId = $this->attributeRepository->getAttributeIdByNameAndGroup(
+                            $insuranceName,
+                            $attributeGroupId,
+                            $this->context->language->id
+                        );
+
+                        if (!$insuranceAttributeId) {
+                            /**
+                             * @var \AttributeCore $testNewAttribute
+                             */
+                            $insuranceAttribute = new \AttributeCore();
+
+                            $insuranceAttribute->name = $this->localeHelper->createMultiLangField($insuranceName);
+                            $insuranceAttribute->id_attribute_group = $attributeGroupId;
+                            $insuranceAttribute->add();
+
+                            $insuranceAttributeId = $insuranceAttribute->id;
+                        }
+
+                        // Check if the combination already exists
+
+                        /**
+                         * @var \CombinationCore $combinaison
+                         */
+                        $idInsuranceProductAttribute = \CombinationCore::getIdByReference($insuranceProductId, $insuranceName);
+
+                        if (!$idInsuranceProductAttribute) {
+                            $idInsuranceProductAttribute = $defaultInsuranceProduct->addCombinationEntity(
+                                $insurancePrice,
+                                $insurancePrice,
+                                0,
+                                1,
+                                0,
+                                1,
+                                0,
+                                $insuranceName,
+                                0,
+                                '',
+                                0
+                            );
+                            $combinaison = new \CombinationCore((int)$idInsuranceProductAttribute);
+                            $combinaison->setAttributes([$insuranceAttributeId]);
+                        }
+
+                        // ? id adress delivery
                         $sql = '
-                    insert into `' . _DB_PREFIX_ . 'cart_product` 
-                     (`id_cart`, `id_product`,`id_product_attribute`, `id_customization`, `quantity`, `id_address_delivery`, `date_add`)
-                    values ( 
-                     ' . (int)$this->context->cart->id . ' ,
-                     ' . (int)$insuranceProductId . ' ,
-                     ' . (int)$idInsuranceProductAttribute . ',
-                     0,
-                      ' . (int) \Tools::getValue('qty'). ',
-                           ' . (int)$this->context->cart->id_address_delivery . ',
-                           NOW()
-                      )';
+                        SELECT `quantity`
+                        FROM `' . _DB_PREFIX_ . 'cart_product`
+                        WHERE `id_cart` = ' . (int)$this->context->cart->id . '
+                        and `id_product` = ' . (int)$insuranceProductId . '
+                        and `id_product_attribute` = ' . (int)$idInsuranceProductAttribute;
 
-                        \Db::getInstance()->execute($sql);
-                    } else {
-                        $quantity = $resultQuantity['quantity'] + \Tools::getValue('qty');
+                        $resultQuantity = \Db::getInstance()->getRow($sql);
+                        
+                        if (!$resultQuantity) {
+                            $sql = '
+                        insert into `' . _DB_PREFIX_ . 'cart_product`
+                         (`id_cart`, `id_product`,`id_product_attribute`, `id_customization`, `quantity`, `id_address_delivery`, `date_add`)
+                        values (
+                         ' . (int)$this->context->cart->id . ' ,
+                         ' . (int)$insuranceProductId . ' ,
+                         ' . (int)$idInsuranceProductAttribute . ',
+                         0,
+                          ' . (int)\Tools::getValue('qty') . ',
+                               ' . (int)$this->context->cart->id_address_delivery . ',
+                               NOW()
+                          )';
 
-                        $sql = '
-                        update `' . _DB_PREFIX_ . 'cart_product` 
-                        SET quantity =   ' . (int) $quantity. '
-                        WHERE
-                        `id_cart` =     ' . (int)$this->context->cart->id . ' 
-                        AND `id_product` =      ' . (int)$insuranceProductId . ' 
-                        AND `id_product_attribute` =  ' . (int)$idInsuranceProductAttribute . ' 
-                        AND `id_customization` = 0
-                        AND `id_address_delivery` = ' . (int)$this->context->cart->id_address_delivery;
+                            \Db::getInstance()->execute($sql);
+                        } else {
+                            $quantity = $resultQuantity['quantity'] + \Tools::getValue('qty');
 
-                         \Db::getInstance()->execute($sql);
+                            $sql = '
+                            update `' . _DB_PREFIX_ . 'cart_product`
+                            SET quantity =   ' . (int)$quantity . '
+                            WHERE
+                            `id_cart` =     ' . (int)$this->context->cart->id . '
+                            AND `id_product` =      ' . (int)$insuranceProductId . '
+                            AND `id_product_attribute` =  ' . (int)$idInsuranceProductAttribute . '
+                            AND `id_customization` = 0
+                            AND `id_address_delivery` = ' . (int)$this->context->cart->id_address_delivery;
+
+                            \Db::getInstance()->execute($sql);
+                        }
+
+                     /**   \StockAvailable::setQuantity(
+                            $defaultInsuranceProduct->id,
+                            $idInsuranceProductAttribute,
+                            \Tools::getValue('qty'),
+                            $this->context->shop->id
+                        );**/
+
+
+                       /* $this->updateCustomizationValue(
+                            \Tools::getValue('id_customization'),
+                            $almaInsuranceCustomizationFieldId,
+                            'TOUHOU'
+                        );**/
+
+                        $this->almaInsuranceProductRepository->add(
+                             $this->context->cart->id,
+                             \Tools::getValue('id_product'),
+                             $this->context->shop->id,
+                             \Tools::getValue('id_product_attribute'),
+                             \Tools::getValue('id_customization'),
+                             $insuranceProductId,
+                             $insuranceAttributeId,
+                             $insurancePrice
+                         );
                     }
-
-                    \StockAvailable::setQuantity(
-                        $defaultInsuranceProduct->id,
-                      $idInsuranceProductAttribute,
-                      \Tools::getValue('qty'),
-                      $this->context->shop->id
-                      );
-
-       /**             $this->context->cart->updateQty(
-                        \Tools::getValue('qty'),
-                        $defaultInsuranceProduct->id,
-                        $idInsuranceProductAttribute
-                    );**/
-
-
-                 /**   $this->updateCustomizationValue(
-                        \Tools::getValue('id_customization'),
-                        $almaInsuranceCustomizationFieldId,
-                        'TOUHOU'
-                    );**/
-
-                    $this->almaInsuranceProductRepository->add(
-                        $this->context->cart->id,
-                        \Tools::getValue('id_product'),
-                        $this->context->shop->id,
-                        \Tools::getValue('id_product_attribute'),
-                        \Tools::getValue('id_customization'),
-                        $insuranceProductId,
-                        $insuranceAttributeId,
-                        $insurancePrice
-                    );
-
                 }
             }
         }
@@ -303,14 +299,27 @@ class ActionCartSaveHookController extends FrontendHookController
         return \Db::getInstance()->execute($sql);
     }
 
-    public function getCustomizationValue($idCustomization, $index)
+    public function getCustomizationValue($product, $index)
     {
-        $sql = '
-            SELECT `id_customization`, `type`, `index`, `value`
+        if(0 == \Tools::getValue('id_customization')) {
+            $sql = '
+            select cd.`value`, c.`id_customization` 
+            from `' . _DB_PREFIX_ . 'customization` c
+            join `' . _DB_PREFIX_ . 'customized_data` cd on cd.`id_customization` = c.`id_customization`
+            where c.`id_cart` = ' . (int)$this->context->cart->id . '
+            and c.`id_product`  = ' . (int)$product['id_product'] . '
+            and c.`id_product_attribute`  = ' . (int)$product['id_product_attribute'] . '
+            and c.`id_address_delivery`  = ' . $this->context->cart->id_address_delivery . '
+            and cd.`type` = 1
+            and cd.`index`  = ' . (int)$index;
+        } else {
+            $sql = '
+            SELECT `value`, `id_customization` 
             FROM `' . _DB_PREFIX_ . 'customized_data`
-            WHERE `id_customization` = ' . (int)$idCustomization . '
+            WHERE `id_customization` = ' . (int)\Tools::getValue('id_customization') . '
             AND `type` = 1 
             AND `index` = ' . (int)$index;
+        }
 
         return \Db::getInstance()->getRow($sql);
     }
