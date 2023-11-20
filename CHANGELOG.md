@@ -1,5 +1,9 @@
 # Changelog
 
+## v3.1.2
+
+- hotfix: Select payment In-Page without open the modal and try to pay with other payment method
+
 ## v3.1.1
 
 - hotfix: Pay now is broken if In-Page is disabled
