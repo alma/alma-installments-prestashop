@@ -24,10 +24,14 @@
 
 namespace Alma\PrestaShop\Controllers\Hook;
 
+use Alma\PrestaShop\Exceptions\InsuranceNotFoundException;
+use Alma\PrestaShop\Helpers\ConstantsHelper;
 use Alma\PrestaShop\Helpers\InsuranceHelper;
 use Alma\PrestaShop\Helpers\SettingsHelper;
 use Alma\PrestaShop\Hooks\FrontendHookController;
-use PrestaShop\Module\FacetedSearch\Hook\Product;
+use Alma\PrestaShop\Repositories\AlmaInsuranceProductRepository;
+use Alma\PrestaShop\Repositories\ProductRepository;
+use PrestaShop\PrestaShop\Core\Domain\Product\AttributeGroup\Attribute\QueryResult\Attribute;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -44,11 +48,23 @@ class DisplayCartExtraProductActionsHookController extends FrontendHookControlle
     protected $insuranceHelper;
 
     /**
+     * @var ProductRepository
+     */
+    protected $productRepository;
+
+    /**
+     * @var AlmaInsuranceProductRepository
+     */
+    protected $almaInsuranceProductRepository;
+
+    /**
      * @param $module
      */
     public function __construct($module)
     {
         $this->insuranceHelper = new InsuranceHelper();
+        $this->productRepository = new ProductRepository();
+        $this->almaInsuranceProductRepository = new AlmaInsuranceProductRepository();
         parent::__construct($module);
     }
 
@@ -68,27 +84,57 @@ class DisplayCartExtraProductActionsHookController extends FrontendHookControlle
      */
     public function run($params)
     {
+
         /**
-         * @var \Product $product
+         * @var \ProductCore $product
          */
         $product = $params['product'];
+
         /**
-         * @var \Cart $cart
+         * @var \CartCore $cart
          */
         $cart = $params['cart'];
-        $insuranceProductNames = [
-            'Vol + casse',
-            'Vol',
-            'Casse',
-            'Maintenance',
-        ];
 
-        $this->context->smarty->assign([
-            'idProduct' => $product->id,
-            'reference' => $product->reference,
-            'idCart' => $cart->id,
-            'isAlmaInsurance' => in_array($product->reference, $insuranceProductNames) ? 1 : 0,
-        ]);
-        return $this->module->display($this->module->file, 'displayCartExtraProductActions.tpl');
+        $insuranceProductId = $this->productRepository->getProductIdByReference(
+            ConstantsHelper::ALMA_INSURANCE_PRODUCT_REFERENCE,
+            $this->context->language->id
+        );
+
+        if (!$insuranceProductId) {
+            // @todo la recréer ? envoyer un message
+            throw new InsuranceNotFoundException();
+        }
+
+        $resultInsurance = [];
+
+        if($product->id !== $insuranceProductId){
+            $almaInsurances = $this->almaInsuranceProductRepository->getIdsByCartIdAndShopAndProduct(
+                $product,
+                $cart->id,
+                $this->context->shop->id
+            );
+
+            foreach ($almaInsurances as $almaInsurance) {
+                $almaInsuranceProduct = new \ProductCore((int)$almaInsurance['id_product_insurance']);
+                $almaProductAttribute = new \AttributeCore((int)$almaInsurance['id_product_attribute_insurance']);
+                $resultInsurance[$almaInsurance['id_alma_insurance_product']] = [
+                    'insuranceProduct' => $almaInsuranceProduct,
+                    'insuranceProductAttribute' => $almaProductAttribute,
+                    'price' => $almaInsurance['price']
+                ];
+            }
+
+        }{
+            $this->context->smarty->assign([
+                'idCart' => $cart->id,
+                'idLanguage' => $this->context->language->id,
+                'nbProductWithoutInsurance' => $product->quantity - count($resultInsurance),
+                'product' => $product,
+                'associatedInsurances' => $resultInsurance,
+                'isAlmaInsurance' => $product->id === $insuranceProductId ? 1 : 0,
+            ]);
+
+            return $this->module->display($this->module->file, 'displayCartExtraProductActions.tpl');
+        }
     }
 }

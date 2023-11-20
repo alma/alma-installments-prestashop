@@ -99,11 +99,16 @@
             let dataProduct = item.querySelector('.alma-data-product');
             let actionsInsuranceProduct = dataProduct.querySelector('.actions-alma-insurance-product');
             let isAlmaInsuranceProduct = parseInt(dataProduct.dataset.isAlmaInsurance);
-            console.log(isAlmaInsuranceProduct);
-            if (!isAlmaInsuranceProduct) {
-                console.log(actionsInsuranceProduct);
+            let noInsuranceAssociated = parseInt(dataProduct.dataset.noInsuranceAssociated);
+            if (!isAlmaInsuranceProduct && noInsuranceAssociated) {
                 actionsInsuranceProduct.style.display = 'block';
                 item.append(actionsInsuranceProduct);
+                let formQty = item.querySelector('.qty');
+                formQty.querySelector('input').readOnly = true;
+                formQty.querySelector('.input-group-btn-vertical').remove();
+            }
+            if (isAlmaInsuranceProduct) {
+                item.remove();
             }
         })
     });
