@@ -35,7 +35,18 @@ if (!defined('_PS_VERSION_')) {
  */
 class AlmaInsuranceProductRepository
 {
-    public function add($idCart, $idProduct, $idShop, $idProductAttribute, $idCustomization, $idProductInsurance, $isProductAttributeInsurance, $assurancePrice)
+    /**
+     * @param int $idCart
+     * @param int $idProduct
+     * @param int $idShop
+     * @param int $idProductAttribute
+     * @param int $idCustomization
+     * @param int $idProductInsurance
+     * @param int $idProductAttributeInsurance
+     * @param float $assurancePrice
+     * @return bool
+     */
+    public function add($idCart, $idProduct, $idShop, $idProductAttribute, $idCustomization, $idProductInsurance, $idProductAttributeInsurance, $assurancePrice)
     {
         if (!\Db::getInstance()->insert('alma_insurance_product', [
             'id_cart' => $idCart,
@@ -44,7 +55,7 @@ class AlmaInsuranceProductRepository
             'id_product_attribute' => $idProductAttribute,
             'id_customization' => $idCustomization,
             'id_product_insurance' => $idProductInsurance,
-            'id_product_attribute_insurance' => $isProductAttributeInsurance,
+            'id_product_attribute_insurance' => $idProductAttributeInsurance,
             'price' => $assurancePrice,
         ])) {
             return false;
@@ -62,7 +73,7 @@ class AlmaInsuranceProductRepository
     public function getIdsByCartIdAndShop($cartId, $shopId)
     {
         $sql = '
-            SELECT `id_alma_insurance_product` as id
+            SELECT `id_alma_insurance_product` as idps_cart_product
             FROM `' . _DB_PREFIX_ . 'alma_insurance_product` aip
             WHERE aip.`id_cart` = ' . (int) $cartId . '
             AND aip.`id_shop` = ' . (int) $shopId;

@@ -184,8 +184,6 @@ class ProductRepository
 
     /**
      * @return \ProductCore
-     * @throws \PrestaShopDatabaseException
-     * @throws \PrestaShopException
      */
     public function createInsuranceProduct()
     {
@@ -203,5 +201,14 @@ class ProductRepository
         $product->add();
 
         return $product;
+    }
+
+    /**
+     * @param int $idProduct
+     * @return \ProductCore
+     */
+    public function getProduct($idProduct)
+    {
+        return new \Product((int)$idProduct);
     }
 }

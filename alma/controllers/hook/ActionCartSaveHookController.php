@@ -28,50 +28,22 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-use Alma\PrestaShop\Exceptions\InsuranceNotFoundException;
-use Alma\PrestaShop\Helpers\ConstantsHelper;
-use Alma\PrestaShop\Helpers\LocaleHelper;
 use Alma\PrestaShop\Hooks\FrontendHookController;
-use Alma\PrestaShop\Repositories\AlmaInsuranceProductRepository;
-use Alma\PrestaShop\Repositories\AttributeGroupRepository;
-use Alma\PrestaShop\Repositories\AttributeRepository;
-use Alma\PrestaShop\Repositories\ProductRepository;
+use Alma\PrestaShop\Services\InsuranceProductService;
 
 class ActionCartSaveHookController extends FrontendHookController
 {
     /**
-     * @var \Alma\PrestaShop\Repositories\ProductRepository
+     * @var InsuranceProductService
      */
-    protected $productRepository;
+    private $insuranceProductService;
 
-    /**
-     * @var AttributeGroupRepository
-     */
-    protected $attributeGroupRepository;
-
-    /**
-     * @var AttributeRepository
-     */
-    protected $attributeRepository;
-
-    /**
-     * @var AlmaInsuranceProductRepository
-     */
-    protected $almaInsuranceProductRepository;
-    /**
-     * @var LocaleHelper
-     */
-    private $localeHelper;
 
     public function __construct($module)
     {
         parent::__construct($module);
 
-        $this->productRepository = new ProductRepository();
-        $this->attributeGroupRepository = new AttributeGroupRepository();
-        $this->attributeRepository = new AttributeRepository();
-        $this->almaInsuranceProductRepository = new AlmaInsuranceProductRepository();
-        $this->localeHelper = new LocaleHelper();
+        $this->insuranceProductService = new InsuranceProductService();
     }
 
     /**
@@ -83,124 +55,31 @@ class ActionCartSaveHookController extends FrontendHookController
      */
     public function run($params)
     {
-        if (
-            isset($_POST['alma_insurance_price'])
-            && $_POST['alma_insurance_price'] != 'none'
-            && isset($_POST['alma_insurance_name'])
-            && $_POST['alma_insurance_name'] != 'none'
-            && 1 == \Tools::getValue('add')
-            && 'update' == \Tools::getValue('action')
-        ) {
-
-            $idProduct = \Tools::getValue('id_product');
-            $idProductAttribute = 0;
-            if (\Tools::getIsset('group')) {
-                $idProductAttribute = (int)\Product::getIdProductAttributeByIdAttributes(
-                    $idProduct,
-                    \Tools::getValue('group')
-                );
-            }
-
-            // @todo Check elibilibilty
-
-            $insurancePrice = $_POST['alma_insurance_price'];
-            $insuranceName = $_POST['alma_insurance_name'];
-
-            $insuranceProductId = $this->productRepository->getProductIdByReference(
-                ConstantsHelper::ALMA_INSURANCE_PRODUCT_REFERENCE,
-                $this->context->language->id
-            );
-
-            if (!$insuranceProductId) {
-                // @todo la recréer ? envoyer un message
-                throw new InsuranceNotFoundException();
-            }
-            if (
-                $idProduct!= $insuranceProductId
-            ) {
-                /**
-                 * @var \ProductCore $defaultInsuranceProduct
-                 */
-                $defaultInsuranceProduct = new \Product((int)$insuranceProductId);
-
-                $attributeGroupId = $this->attributeGroupRepository->getAttributeIdByName(
-                    ConstantsHelper::ALMA_INSURANCE_ATTRIBUTE_NAME,
-                    $this->context->language->id
-                );
-
-                if (!$attributeGroupId) {
-                    // @todo la recréer ? envoyer un message
-                    throw new InsuranceNotFoundException();
-                }
-
-                $insuranceAttributeId = $this->attributeRepository->getAttributeIdByNameAndGroup(
-                    $insuranceName,
-                    $attributeGroupId,
-                    $this->context->language->id
-                );
-
-                if (!$insuranceAttributeId) {
-                    /**
-                     * @var \AttributeCore $testNewAttribute
-                     */
-                    $insuranceAttribute = new \AttributeCore();
-
-                    $insuranceAttribute->name = $this->localeHelper->createMultiLangField($insuranceName);
-                    $insuranceAttribute->id_attribute_group = $attributeGroupId;
-                    $insuranceAttribute->add();
-
-                    $insuranceAttributeId = $insuranceAttribute->id;
-                }
-
-                // Check if the combination already exists
-
-                /**
-                 * @var \CombinationCore $combinaison
-                 */
-                $idProductAttributeInsurance = \CombinationCore::getIdByReference($insuranceProductId, $insuranceName);
-
-                if (!$idProductAttributeInsurance) {
-                    $idProductAttributeInsurance = $defaultInsuranceProduct->addCombinationEntity(
-                        $insurancePrice,
-                        $insurancePrice,
-                        0,
-                        1,
-                        0,
-                        1,
-                        0,
-                        $insuranceName,
-                        0,
-                        '',
-                        0
-                    );
-
-                    $combinaison = new \CombinationCore((int)$idProductAttributeInsurance);
-                    $combinaison->setAttributes([$insuranceAttributeId]);
-                }
-
-                \StockAvailable::setQuantity($defaultInsuranceProduct->id, $idProductAttributeInsurance, 1, $this->context->shop->id);
-
-                $_POST['alma_insurance_price'] = 'none';
-
-                $this->context->cart->updateQty(\Tools::getValue('qty'), $defaultInsuranceProduct->id, $idProductAttributeInsurance);
-
-                for ($nbQuantity = 1; $nbQuantity <= \Tools::getValue('qty'); $nbQuantity++) {
-                    $this->almaInsuranceProductRepository->add(
-                        $this->context->cart->id,
-                        $idProduct,
-                        $this->context->shop->id,
-                        $idProductAttribute,
-                        \Tools::getValue('id_customization'), // @todo when 0 but customization
-                        $insuranceProductId,
-                        $insuranceAttributeId,
-                        $insurancePrice
-                    );
-                }
-            }
-        }
-
-        $_POST['alma_insurance_price'] = 'none';
+        $this->handleProductInsurance();
 
         // @todo suppression
     }
+
+    /**
+     * @return void
+     */
+    public function handleProductInsurance()
+    {
+        if (
+            \Tools::getIsset('alma_insurance_price')
+            && \Tools::getIsset('alma_insurance_name')
+            && 1 == \Tools::getValue('add')
+            && 'update' == \Tools::getValue('action')
+        ) {
+            $this->insuranceProductService->handleProductInsurance(
+                \Tools::getValue('id_product'),
+                \Tools::getValue('alma_insurance_price'),
+                \Tools::getValue('alma_insurance_name'),
+                \Tools::getValue('qty'),
+                \Tools::getValue('id_customization'),
+                true
+            );
+        }
+    }
+
 }
