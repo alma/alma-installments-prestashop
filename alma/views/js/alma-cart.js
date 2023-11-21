@@ -100,6 +100,50 @@
             prestashop.on("updatedCart", onloadInsuranceItemCartAlma);
         }
     });
+
+     $('.alma-remove-product').on( "click", function(e) {
+         e.preventDefault();
+         $.ajax({
+             type: 'POST',
+             url: $(this).attr("data-link"),
+             dataType: 'json',
+             data: {
+                 ajax: true,
+                 token: $(this).attr('data-token'),
+                 product_id: $(this).attr("data-product-id"),
+                 attribute_id: $(this).attr("data-product-attribute-id"),
+                 customization_id: $(this).attr("data-product-customization-id"),
+             },
+         })
+             .success(function() {
+                 location.reload();
+             })
+
+             .error(function(e) {
+                 location.reload();
+             });
+     });
+
+     $('.alma-remove-association').on( "click", function(e) {
+         e.preventDefault();
+         $.ajax({
+             type: 'POST',
+             url: $(this).attr("data-link"),
+             dataType: 'json',
+             data: {
+                 ajax: true,
+                 token: $(this).attr('data-token'),
+                 alma_insurance_product_id: $(this).attr("data-alma-association-id")
+             },
+         })
+             .success(function() {
+                 location.reload();
+             })
+
+             .error(function(e) {
+                 location.reload();
+             });
+     });
 })(jQuery);
 
 // Insurance

@@ -97,12 +97,12 @@ class InsuranceProductService
      * @param int $idProductToAssociate
      * @param int $idProductAttributeToAssocation
      * @param float $price
+     * @param int $idAddressDelivery
      * @return void
      */
-    public function addAssociations($quantity, $idProduct, $idProductAttribute, $idCustomization, $idProductToAssociate, $idProductAttributeToAssocation, $price)
+    public function addAssociations($quantity, $idProduct, $idProductAttribute, $idCustomization, $idProductToAssociate, $idProductAttributeToAssocation, $price, $idAddressDelivery)
     {
         for ($nbQuantity = 1; $nbQuantity <= $quantity; $nbQuantity++) {
-            var_dump('add association');
             $this->almaInsuranceProductRepository->add(
                 $this->context->cart->id,
                 $idProduct,
@@ -111,7 +111,8 @@ class InsuranceProductService
                 $idCustomization,
                 $idProductToAssociate,
                 $idProductAttributeToAssocation,
-                $price
+                $price,
+                $idAddressDelivery
             );
         }
     }
@@ -134,7 +135,6 @@ class InsuranceProductService
         $insuranceAttributeGroupId = $this->attributeGroupProductService->getIdAttributeGroupByName(
             ConstantsHelper::ALMA_INSURANCE_ATTRIBUTE_NAME
         );
-
         $insuranceAttributeId = $this->attributeProductService->getAttributeId(
             $insuranceName,
             $insuranceAttributeGroupId
@@ -148,12 +148,15 @@ class InsuranceProductService
             $insurancePrice
         );
 
+
         if($destroyPost) {
             $_POST['alma_insurance_price'] = null;
             $_POST['alma_insurance_name'] = null;
         }
 
-        $this->context->cart->updateQty($quantity, $insuranceProduct->id, $idProductAttributeInsurance);
+        \StockAvailable::setQuantity($insuranceProduct->id, $idProductAttributeInsurance, 1, $this->context->shop->id);
+
+        $this->context->cart->updateQty($quantity, $insuranceProduct->id, $idProductAttributeInsurance, false,'up', 0, null, true, true);
 
         $this->addAssociations(
             $quantity,
@@ -161,8 +164,9 @@ class InsuranceProductService
             $idProductAttribute,
             $idCustomization,
             $insuranceProduct->id,
-            $insuranceAttributeId,
-            $insurancePrice
+            $idProductAttributeInsurance,
+            $insurancePrice,
+            $this->context->cart->id_address_delivery
         );
     }
 

@@ -80,7 +80,7 @@ class Alma extends PaymentModule
         $this->author = 'Alma';
         $this->need_instance = false;
         $this->bootstrap = true;
-        $this->controllers = ['payment', 'validation', 'ipn'];
+        $this->controllers = ['payment', 'validation', 'ipn', 'insurance'];
         $this->is_eu_compatible = 1;
         $this->currencies = true;
         $this->currencies_mode = 'checkbox';
@@ -460,6 +460,15 @@ class Alma extends PaymentModule
         return $this->runHookController('displayPayment', $params);
     }
 
+    public function hookDeleteProductInCartAfter($params)
+    {
+        return $this->hookActionObjectProductInCartDeleteAfter($params);
+    }
+
+    public function hookActionObjectProductInCartDeleteAfter($params)
+    {
+        return $this->runHookController('actionObjectProductInCartDeleteAfter', $params);
+    }
     // Deprecated for version 1.7
     public function hookDisplayPaymentReturn($params)
     {

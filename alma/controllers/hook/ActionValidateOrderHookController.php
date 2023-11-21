@@ -36,16 +36,6 @@ use Alma\PrestaShop\Repositories\AttributeRepository;
 class ActionValidateOrderHookController extends FrontendHookController
 {
     /**
-     * @var AttributeGroupRepository
-     */
-    protected $attributeGroupRepository;
-
-    /**
-     * @var AttributeRepository
-     */
-    protected $attributeRepository;
-
-    /**
      * @var AlmaInsuranceProductRepository
      */
     protected $almaInsuranceProductRepository;
@@ -56,6 +46,7 @@ class ActionValidateOrderHookController extends FrontendHookController
         $this->almaInsuranceProductRepository = new AlmaInsuranceProductRepository();
     }
 
+    // @todo veridy insurance
     /**
      * Run Controller
      *
@@ -65,10 +56,21 @@ class ActionValidateOrderHookController extends FrontendHookController
      */
     public function run($params)
     {
+        /**
+         * @var \OrderCore $order
+         */
         $order = $params['order'];
+
+        /**
+         * @var \CartCore $cart
+         */
         $cart = $params['cart'];
 
-        $ids = $this->almaInsuranceProductRepository->getIdsByCartIdAndShop($cart->id, $this->context->shop->id);
+        $ids = $this->almaInsuranceProductRepository->getIdsByCartIdAndShop(
+            $cart->id,
+            $this->context->shop->id,
+            $cart->id_address_delivery
+        );
 
         $idsToUpdate = [];
 

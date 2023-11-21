@@ -141,4 +141,39 @@ class InsuranceService
         $this->createProductIfNotExists();
         $this->createAttributeGroupIfNotExists();
     }
+
+    /**
+     * @param array $params
+     * @return void
+     */
+    public function deleteAllLinkedInsuranceProducts($params)
+    {
+        /**
+         * @var \ContextCore $context
+         */
+        $context = \Context::getContext();
+
+        $allInsurancesLinked = $this->almaInsuranceProductRepository->getAllByProduct(
+            $params['id_cart'],
+            $params['id_product'],
+            $params['id_product_attribute'],
+            $params['customization_id'],
+            $context->cart->id_address_delivery,
+            $context->shop->id
+        );
+
+        foreach ($allInsurancesLinked as $insuranceLinked) {
+            // Delete insurance in cart
+            $context->cart->updateQty(
+                1,
+                $insuranceLinked['id_product_insurance'],
+                $insuranceLinked['id_product_attribute_insurance'],
+                0,
+                'down'
+            );
+
+            // Delete association
+            $this->almaInsuranceProductRepository->deleteById($insuranceLinked['id_alma_insurance_product']);
+        }
+    }
 }

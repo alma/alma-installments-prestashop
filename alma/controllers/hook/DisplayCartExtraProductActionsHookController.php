@@ -57,6 +57,8 @@ class DisplayCartExtraProductActionsHookController extends FrontendHookControlle
      */
     protected $almaInsuranceProductRepository;
 
+    // @todo verify insurance
+
     /**
      * @param $module
      */
@@ -111,7 +113,8 @@ class DisplayCartExtraProductActionsHookController extends FrontendHookControlle
             $almaInsurances = $this->almaInsuranceProductRepository->getIdsByCartIdAndShopAndProduct(
                 $product,
                 $cart->id,
-                $this->context->shop->id
+                $this->context->shop->id,
+                $this->context->cart->id_address_delivery
             );
 
             foreach ($almaInsurances as $almaInsurance) {
@@ -125,6 +128,15 @@ class DisplayCartExtraProductActionsHookController extends FrontendHookControlle
             }
 
         }{
+        // Create a link with the good path
+        /**
+         * @var \LinkCore $link
+         */
+        $link = new \Link;
+
+        $ajaxLinkRemoveProduct = $link->getModuleLink('alma','insurance', ["action" => "removeProductFromCart"]);
+        $ajaxLinkRemoveAssociation = $link->getModuleLink('alma','insurance', ["action" => "removeAssociation"]);
+
             $this->context->smarty->assign([
                 'idCart' => $cart->id,
                 'idLanguage' => $this->context->language->id,
@@ -132,6 +144,8 @@ class DisplayCartExtraProductActionsHookController extends FrontendHookControlle
                 'product' => $product,
                 'associatedInsurances' => $resultInsurance,
                 'isAlmaInsurance' => $product->id === $insuranceProductId ? 1 : 0,
+                'ajaxLinkAlmaRemoveProduct' => $ajaxLinkRemoveProduct,
+                'ajaxLinkAlmaRemoveAssociation' => $ajaxLinkRemoveAssociation
             ]);
 
             return $this->module->display($this->module->file, 'displayCartExtraProductActions.tpl');

@@ -28,33 +28,23 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-use Alma\PrestaShop\Helpers\SettingsHelper;
 use Alma\PrestaShop\Hooks\FrontendHookController;
 use Alma\PrestaShop\Services\InsuranceProductService;
+use Alma\PrestaShop\Services\InsuranceService;
 
-class ActionCartSaveHookController extends FrontendHookController
+class ActionObjectProductInCartDeleteAfterHookController extends FrontendHookController
 {
+    // @todo verify insurance
     /**
-     * @var InsuranceProductService
+     * @var InsuranceService
      */
-    private $insuranceProductService;
-
-    public function canRun()
-    {
-        // @todo verify insurance
-        $isLive = SettingsHelper::getActiveMode() === ALMA_MODE_LIVE;
-
-        // Front controllers can run if the module is properly configured ...
-        return SettingsHelper::isFullyConfigured()
-            // ... and the plugin is in LIVE mode, or the visitor is an admin
-            && ($isLive || $this->loggedAsEmployee());
-    }
+    protected $insuranceService;
 
     public function __construct($module)
     {
         parent::__construct($module);
 
-        $this->insuranceProductService = new InsuranceProductService();
+        $this->insuranceService = new InsuranceService();
     }
 
     /**
@@ -66,32 +56,6 @@ class ActionCartSaveHookController extends FrontendHookController
      */
     public function run($params)
     {
-        $this->handleProductInsurance();
-
-        // @todo suppression
+        $this->insuranceService->deleteAllLinkedInsuranceProducts($params);
     }
-
-    /**
-     * @return void
-     */
-    public function handleProductInsurance()
-    {
-        if (
-            \Tools::getIsset('alma_insurance_price')
-            && \Tools::getIsset('alma_insurance_name')
-            && 1 == \Tools::getValue('add')
-            && 'update' == \Tools::getValue('action')
-            &&   in_array(\Tools::strtoupper(\Context::getContext()->currency->iso_code), $this->module->limited_currencies)
-        ) {
-            $this->insuranceProductService->handleProductInsurance(
-                \Tools::getValue('id_product'),
-                \Tools::getValue('alma_insurance_price'),
-                \Tools::getValue('alma_insurance_name'),
-                \Tools::getValue('qty'),
-                \Tools::getValue('id_customization'),
-                true
-            );
-        }
-    }
-
 }

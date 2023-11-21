@@ -13,7 +13,11 @@
     height: 170px;
 }
 .actions-alma-insurance-product{
-    border: solid 1px #ee8c4d;
+    border: outset #ee8c4d;
+    width: 95%;
+    float:right;
+    margin-top:10px;
+    margin-bottom:10px;
 }
 .actions-alma-insurance-product .row:first-child{
     padding-top: 0;
