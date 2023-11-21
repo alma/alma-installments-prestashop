@@ -331,9 +331,26 @@ class Alma extends PaymentModule
         return $this->runHookController('displayProductActions', $params);
     }
 
+    /**
+     * Hook the template below the product item near to the delete button
+     *
+     * @param $params
+     * @return mixed|null
+     */
     public function hookDisplayCartExtraProductActions($params)
     {
         return $this->runHookController('displayCartExtraProductActions', $params);
+    }
+
+    /**
+     * Hook to add terms and conditions
+     *
+     * @param $params
+     * @return mixed|null
+     */
+    public function hookTermsAndConditions($params)
+    {
+        return $this->runHookController('termsAndConditions', $params);
     }
 
     /**
