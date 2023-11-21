@@ -138,10 +138,10 @@
             prestashop.on(
                 'updateProduct',
                 function (event) {
-                    // @TODO : send to the widget when the input insurance are removed
-                    removeInputInsurance();
                     if(typeof event.selectedAlmaInsurance !== 'undefined' && event.selectedAlmaInsurance !== null) {
                         addInputsInsurance(event.selectedAlmaInsurance);
+                    } else {
+                        removeInsurance();
                     }
                 }
             );
@@ -187,7 +187,14 @@ function handleInput(inputName, value, form) {
     }
 }
 
-function removeInputInsurance() {
+function removeInsurance() {
+    const almaInsuranceConfigIframeElement = document.getElementById('alma-widget-insurance')
+    const almaInsuranceConfigIframe =
+        almaInsuranceConfigIframeElement instanceof HTMLIFrameElement
+            ? almaInsuranceConfigIframeElement.contentWindow
+            : null;
+    almaInsuranceConfigIframe?.postMessage({ type: 'dataSentBackToWidget', data: null }, '*');
+
     let inputsInsurance = document.getElementById('add-to-cart-or-refresh').querySelectorAll('.alma_insurance_input');
     inputsInsurance.forEach((input) => {
         input.remove();
