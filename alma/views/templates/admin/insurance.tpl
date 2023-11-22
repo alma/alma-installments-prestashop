@@ -24,7 +24,7 @@
     let save = document.getElementById('alma_config_form_submit_btn');
     save.addEventListener('click', async () => {
         let messageCallback = (e) => {
-            if (currentResolve && e.origin === '{Alma\PrestaShop\Helpers\ConstantsHelper::DOMAIN_URL_INSURANCE}') {
+            if (currentResolve && e.origin === '{$domainUrl}') {
                 currentResolve(e.data)
                 $.ajax({
                     type: 'POST',

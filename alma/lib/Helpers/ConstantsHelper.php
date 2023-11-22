@@ -69,8 +69,9 @@ class ConstantsHelper
     const BO_CONTROLLER_INSURANCE_CLASSNAME = 'AdminAlmaInsurance';
     const BO_CONTROLLER_INSURANCE_CONFIGURATION_CLASSNAME = 'AdminAlmaInsuranceConfiguration';
     const BO_CONTROLLER_INSURANCE_ORDERS_CLASSNAME = 'AdminAlmaInsuranceOrders';
-    const DOMAIN_URL_INSURANCE = 'https://protect.staging.almapay.com';
-    const BO_URL_IFRAME_CONFIGURATION_INSURANCE = self::DOMAIN_URL_INSURANCE . '/almaBackOfficeConfiguration.html';
+    const DOMAIN_URL_INSURANCE_TEST = 'https://protect.sandbox.almapay.com';
+    const DOMAIN_URL_INSURANCE_LIVE = 'https://protect.almapay.com';
+    const BO_IFRAME_CONFIGURATION_INSURANCE_PATH = '/almaBackOfficeConfiguration.html';
 
     const ALMA_INSURANCE_PRODUCT_NAME = 'Insurance by Alma';
     const ALMA_INSURANCE_PRODUCT_REFERENCE = 'alma-insurance';

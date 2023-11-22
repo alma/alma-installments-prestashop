@@ -27,6 +27,7 @@ namespace Alma\PrestaShop\Helpers\Admin;
 use Alma\PrestaShop\Exceptions\WrongParamsException;
 use Alma\PrestaShop\Helpers\ConfigurationHelper;
 use Alma\PrestaShop\Helpers\ConstantsHelper;
+use Alma\PrestaShop\Helpers\SettingsHelper;
 
 class InsuranceHelper
 {
@@ -150,6 +151,18 @@ class InsuranceHelper
 
     /**
      * @return string
+     */
+    public function envUrl()
+    {
+        if (SettingsHelper::getActiveMode() === ALMA_MODE_LIVE) {
+            return ConstantsHelper::DOMAIN_URL_INSURANCE_LIVE;
+        }
+
+        return ConstantsHelper::DOMAIN_URL_INSURANCE_TEST;
+    }
+
+    /**
+     * @return string
      *
      * @throws \PrestaShopException
      */
@@ -157,7 +170,7 @@ class InsuranceHelper
     {
         return sprintf(
             '%s?%s',
-            ConstantsHelper::BO_URL_IFRAME_CONFIGURATION_INSURANCE,
+            $this->envUrl() . ConstantsHelper::BO_IFRAME_CONFIGURATION_INSURANCE_PATH,
             http_build_query($this->mapDbFieldsWithIframeParams())
         );
     }
@@ -167,7 +180,7 @@ class InsuranceHelper
      *
      * @throws \PrestaShopException
      */
-    protected function mapDbFieldsWithIframeParams()
+    public function mapDbFieldsWithIframeParams()
     {
         $mapParams = [];
         $fieldsBoInsurance = $this->configurationHelper->getMultiple(ConstantsHelper::$fieldsBoInsurance);
