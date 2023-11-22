@@ -61,6 +61,11 @@ class InsuranceProductService
      */
     protected $attributeProductService;
 
+    /**
+     * @var InsuranceService 
+     */
+    protected $insuranceService;
+
     public function __construct()
     {
         $this->productRepository = new ProductRepository();
@@ -69,24 +74,7 @@ class InsuranceProductService
         $this->attributeGroupProductService = new AttributeGroupProductService();
         $this->attributeProductService = new AttributeProductService();
         $this->combinationProductAttributeService = new CombinationProductAttributeService();
-
-    }
-
-    /**
-     * @return \Product|\ProductCore
-     */
-    public function getProductInsurance()
-    {
-        $insuranceProductId = $this->productRepository->getProductIdByReference(
-            ConstantsHelper::ALMA_INSURANCE_PRODUCT_REFERENCE,
-            $this->context->language->id
-        );
-
-        if (!$insuranceProductId) {
-            return $this->productRepository->createInsuranceProduct();
-        }
-
-        return $this->productRepository->getProduct($insuranceProductId);
+        $this->insuranceService = new InsuranceService();
     }
 
     /**
@@ -145,7 +133,8 @@ class InsuranceProductService
             $insuranceProduct,
             $insuranceAttributeId,
             $insuranceName,
-            $insurancePrice
+            $insurancePrice,
+            $this->context->shop->id
         );
 
 
@@ -153,8 +142,6 @@ class InsuranceProductService
             $_POST['alma_insurance_price'] = null;
             $_POST['alma_insurance_name'] = null;
         }
-
-        \StockAvailable::setQuantity($insuranceProduct->id, $idProductAttributeInsurance, 1, $this->context->shop->id);
 
         $this->context->cart->updateQty($quantity, $insuranceProduct->id, $idProductAttributeInsurance, false,'up', 0, null, true, true);
 
@@ -178,11 +165,12 @@ class InsuranceProductService
      * @param int $idCustomization
      * @param bool $destroyPost
      * @return void
+     * @throws \Alma\PrestaShop\Exceptions\InsuranceInstallException
      */
     public function handleProductInsurance($idProduct, $insurancePrice, $insuranceName, $quantity, $idCustomization, $destroyPost = true)
     {
         // @todo Check elibilibilty
-        $insuranceProduct = $this->getProductInsurance();
+        $insuranceProduct = $this->insuranceService->createProductIfNotExists();
 
         if ($idProduct !== $insuranceProduct->id) {
             $this->addInsuranceProduct($idProduct, $insuranceProduct, $insurancePrice, $insuranceName, $quantity, $idCustomization, $destroyPost);

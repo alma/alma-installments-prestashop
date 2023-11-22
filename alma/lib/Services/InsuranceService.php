@@ -65,17 +65,18 @@ class InsuranceService
 
     /**
      * Create the default Insurance product
-     * @return void
+     *
+     * @return \ProductCore|void
      * @throws InsuranceInstallException
      */
     public function createProductIfNotExists()
     {
-        $insuranceProduct = $this->productRepository->getProductIdByReference(
+        $insuranceProductId = $this->productRepository->getProductIdByReference(
             ConstantsHelper::ALMA_INSURANCE_PRODUCT_REFERENCE,
             $this->context->language->id
         );
 
-        if (!$insuranceProduct) {
+        if (!$insuranceProductId) {
             try {
                 $insuranceProduct = $this->productRepository->createInsuranceProduct();
                 $shops = \Shop::getShops(true, null, true);
@@ -85,6 +86,8 @@ class InsuranceService
                     $shops,
                     ConstantsHelper::ALMA_INSURANCE_PRODUCT_IMAGE_URL
                 );
+
+                return $insuranceProduct;
             } catch (\Exception $e) {
                 Logger::instance()->error(
                     sprintf(
@@ -97,6 +100,8 @@ class InsuranceService
                 throw new InsuranceInstallException();
             }
         }
+
+        return $this->productRepository->getProduct($insuranceProductId);
     }
 
     /**
