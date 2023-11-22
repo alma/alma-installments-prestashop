@@ -60,6 +60,7 @@ $_MODULE['<{alma}prestashop>displayrefundshookcontroller_44ffd38a6dea695cbe2b34e
 $_MODULE['<{alma}prestashop>displayrefundshookcontroller_88d0b8b8a18adb1a2d0e05d3c766743f'] = 'Montant (Max. %s) :';
 $_MODULE['<{alma}prestashop>displayrefundshookcontroller_6036af1bc6455aea1332546921cae25b'] = 'Montant à rembourser';
 $_MODULE['<{alma}prestashop>displayrefundshookcontroller_becd29bb1a0004cdfc177e9bb117e56f'] = 'Procéder au remboursement';
+$_MODULE['<{alma}prestashop>termsandconditionshookcontroller_15455b9d26104fc75cdf3f6c47cdd3ab'] = 'J\'accepte de souscrire à la protection Alma et je confirme avoir lu, accepté et enregistré les conditions générales figurant dans la notice d\'information, ainsi que le document d\'information sur le produit d\'assurance. J\'accepte de recevoir par voie électronique des informations contractuelles, en vue de les conserver sur un support durable.';
 $_MODULE['<{alma}prestashop>getcontenthookcontroller_bf17ac149e2e7a530c677e9bd51d3fd2'] = 'Modules';
 $_MODULE['<{alma}prestashop>getcontenthookcontroller_f805369aef0b94a941a131e9a2b72ab5'] = 'Gestionnaire de module';
 $_MODULE['<{alma}prestashop>getcontenthookcontroller_c6e24f81cb99e08c3d56b191c00aea28'] = 'Gestionnaire de module - Liste';

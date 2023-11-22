@@ -81,6 +81,7 @@ class DisplayCartExtraProductActionsHookController extends FrontendHookControlle
     /**
      * @param $params
      * @return mixed
+     * @throws InsuranceNotFoundException
      */
     public function run($params)
     {
