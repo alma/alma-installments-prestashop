@@ -24,6 +24,8 @@
 
 namespace Alma\PrestaShop\Helpers;
 
+use PrestaShop\PrestaShop\Adapter\Shop\Context;
+
 class InsuranceHelper
 {
     /**
@@ -44,4 +46,5 @@ class InsuranceHelper
         return (bool) (int) SettingsHelper::get(ConstantsHelper::ALMA_ALLOW_INSURANCE, false)
             && (bool) (int) SettingsHelper::get(ConstantsHelper::ALMA_ACTIVATE_INSURANCE, false);
     }
+
 }

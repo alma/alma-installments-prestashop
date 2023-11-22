@@ -27,6 +27,7 @@ namespace Alma\PrestaShop\Controllers\Hook;
 use Alma\PrestaShop\Helpers\InsuranceHelper;
 use Alma\PrestaShop\Helpers\SettingsHelper;
 use Alma\PrestaShop\Hooks\FrontendHookController;
+use Alma\PrestaShop\Services\InsuranceService;
 use PrestaShop\PrestaShop\Core\Checkout\TermsAndConditions;
 
 if (!defined('_PS_VERSION_')) {
@@ -44,11 +45,17 @@ class TermsAndConditionsHookController extends FrontendHookController
     protected $insuranceHelper;
 
     /**
+     * @var InsuranceService
+     */
+    protected $insuranceService;
+
+    /**
      * @param $module
      */
     public function __construct($module)
     {
         $this->insuranceHelper = new InsuranceHelper();
+        $this->insuranceService = new InsuranceService();
         parent::__construct($module);
     }
 
@@ -59,7 +66,8 @@ class TermsAndConditionsHookController extends FrontendHookController
     {
         return parent::canRun()
             && SettingsHelper::showEligibilityMessage()
-            && $this->insuranceHelper->isInsuranceAllowedInProductPage();
+            && $this->insuranceHelper->isInsuranceActivated()
+            && $this->insuranceService->hasInsuranceInCart();
     }
 
     /**

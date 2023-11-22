@@ -42,7 +42,7 @@ class InsuranceService
      */
     protected $imageService;
     /**
-     * @var \Context|null
+     * @var \ContextCore
      */
     protected $context;
     /**
@@ -180,5 +180,23 @@ class InsuranceService
             // Delete association
             $this->almaInsuranceProductRepository->deleteById($insuranceLinked['id_alma_insurance_product']);
         }
+    }
+
+    /**
+     * @return bool
+     */
+    public function hasInsuranceInCart()
+    {
+        $idsInsurances = $this->almaInsuranceProductRepository->getIdsByCartIdAndShop(
+            $this->context->cart->id,
+            $this->context->shop->id,
+            $this->context->cart->id_address_delivery
+        );
+
+        if(count($idsInsurances) > 0 ) {
+            return true;
+        }
+
+        return false;
     }
 }
