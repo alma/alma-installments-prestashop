@@ -57,8 +57,6 @@ class DisplayCartExtraProductActionsHookController extends FrontendHookControlle
      */
     protected $almaInsuranceProductRepository;
 
-    // @todo verify insurance
-
     /**
      * @param $module
      */
@@ -119,7 +117,7 @@ class DisplayCartExtraProductActionsHookController extends FrontendHookControlle
 
             foreach ($almaInsurances as $almaInsurance) {
                 $almaInsuranceProduct = new \ProductCore((int)$almaInsurance['id_product_insurance']);
-                $almaProductAttribute = new \AttributeCore((int)$almaInsurance['id_product_attribute_insurance']);
+                $almaProductAttribute = new \CombinationCore((int)$almaInsurance['id_product_attribute_insurance']);
                 $resultInsurance[$almaInsurance['id_alma_insurance_product']] = [
                     'insuranceProduct' => $almaInsuranceProduct,
                     'insuranceProductAttribute' => $almaProductAttribute,

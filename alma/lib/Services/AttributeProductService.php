@@ -24,9 +24,7 @@
 
 namespace Alma\PrestaShop\Services;
 
-use Alma\PrestaShop\Helpers\ConstantsHelper;
 use Alma\PrestaShop\Helpers\LocaleHelper;
-use Alma\PrestaShop\Repositories\AttributeGroupRepository;
 use Alma\PrestaShop\Repositories\AttributeRepository;
 
 class AttributeProductService

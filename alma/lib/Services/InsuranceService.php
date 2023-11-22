@@ -36,23 +36,23 @@ class InsuranceService
     /**
      * @var ProductRepository
      */
-    private $productRepository;
+    protected $productRepository;
     /**
      * @var ImageService
      */
-    private $imageService;
+    protected $imageService;
     /**
      * @var \Context|null
      */
-    private $context;
+    protected $context;
     /**
      * @var AttributeGroupRepository
      */
-    private $attributeGroupRepository;
+    protected $attributeGroupRepository;
     /**
      * @var AlmaInsuranceProductRepository
      */
-    private $almaInsuranceProductRepository;
+    protected $almaInsuranceProductRepository;
 
     public function __construct()
     {

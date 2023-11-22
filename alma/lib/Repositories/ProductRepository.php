@@ -26,7 +26,6 @@ namespace Alma\PrestaShop\Repositories;
 
 use Alma\PrestaShop\Helpers\ConstantsHelper;
 use Alma\PrestaShop\Helpers\LocaleHelper;
-use PrestaShop\PrestaShop\Adapter\Import\ImportDataFormatter;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -41,10 +40,11 @@ class ProductRepository
 {
     const PRODUCT_TYPE_COMBINATIONS = 'combinations';
     const VISIBILITY_NONE = 'none';
+
     /**
      * @var LocaleHelper
      */
-    private $localeHelper;
+    protected $localeHelper;
 
     public function __construct()
     {

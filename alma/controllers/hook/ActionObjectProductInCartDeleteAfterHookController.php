@@ -28,23 +28,34 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
+use Alma\PrestaShop\Helpers\InsuranceHelper;
 use Alma\PrestaShop\Hooks\FrontendHookController;
 use Alma\PrestaShop\Services\InsuranceProductService;
 use Alma\PrestaShop\Services\InsuranceService;
 
 class ActionObjectProductInCartDeleteAfterHookController extends FrontendHookController
 {
-    // @todo verify insurance
     /**
      * @var InsuranceService
      */
     protected $insuranceService;
+
+    /**
+     * @var InsuranceHelper
+     */
+    protected $insuranceHelper;
 
     public function __construct($module)
     {
         parent::__construct($module);
 
         $this->insuranceService = new InsuranceService();
+        $this->insuranceHelper = new InsuranceHelper();
+    }
+
+    public function canRun()
+    {
+        return parent::canRun() && $this->insuranceHelper->isInsuranceActivated();
     }
 
     /**

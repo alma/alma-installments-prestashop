@@ -44,7 +44,7 @@
                 </div>
                 <div class="product-line-info">
                     <strong>
-                        {$associatedInsurance.insuranceProductAttribute->getFieldByLang('name', $idLanguage)|escape:'htmlall':'UTF-8'}
+                        {$associatedInsurance.insuranceProductAttribute->reference|escape:'htmlall':'UTF-8'}
                     </strong>
                 </div>
                 <div class="product-line-info product-price h5">

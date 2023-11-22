@@ -100,7 +100,7 @@
             prestashop.on("updatedCart", onloadInsuranceItemCartAlma);
         }
     });
-
+    
      $('.alma-remove-product').on( "click", function(e) {
          e.preventDefault();
          $.ajax({

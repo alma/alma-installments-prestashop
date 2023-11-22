@@ -24,8 +24,19 @@
 
 namespace Alma\PrestaShop\Services;
 
+use Alma\PrestaShop\Repositories\CombinationRepository;
+
 class CombinationProductAttributeService
 {
+    /**
+     * @var CombinationRepository
+     */
+    protected $combinationRepository;
+
+    public function __construct()
+    {
+        $this->combinationRepository = new CombinationRepository();
+    }
     /**
      * @param \ProductCore$product
      * @param int $attributeId
@@ -38,7 +49,7 @@ class CombinationProductAttributeService
         /**
          * @var \CombinationCore $combinaison
          */
-        $idProductAttributeInsurance = \CombinationCore::getIdByReference($product->id, $reference);
+        $idProductAttributeInsurance = $this->combinationRepository->getIdByReference($product->id, $reference);
 
         if (!$idProductAttributeInsurance) {
             $idProductAttributeInsurance = $product->addCombinationEntity(

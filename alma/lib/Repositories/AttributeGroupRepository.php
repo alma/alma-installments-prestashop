@@ -26,7 +26,6 @@ namespace Alma\PrestaShop\Repositories;
 
 use Alma\PrestaShop\Helpers\ConstantsHelper;
 use Alma\PrestaShop\Helpers\LocaleHelper;
-use PrestaShop\PrestaShop\Adapter\Import\ImportDataFormatter;
 
 if (!defined('_PS_VERSION_')) {
     exit;

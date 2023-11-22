@@ -22,43 +22,40 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
-namespace Alma\PrestaShop\Services;
+namespace Alma\PrestaShop\Repositories;
 
-use Alma\PrestaShop\Repositories\AttributeGroupRepository;
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
 
-class AttributeGroupProductService
+/**
+ * Class AlmaInsuranceProductRepository.
+ *
+ * Use for Product
+ */
+class CombinationRepository
 {
-    /**
-     * @var \ContextCore
-     */
-    protected $context;
 
     /**
-     * @var AttributeGroupRepository
+     * For a given product_attribute reference, returns the corresponding id.
+     *
+     * @param int $idProduct
+     * @param string $reference
+     *
+     * @return int id
      */
-    protected $attributeGroupRepository;
-
-    public function __construct() {
-        $this->context = \Context::getContext();
-        $this->attributeGroupRepository = new AttributeGroupRepository();
-    }
-
-    /**
-     * @param string $name
-     * @return int
-     */
-    public function getIdAttributeGroupByName($name)
+    public function getIdByReference($idProduct, $reference)
     {
-        $attributeGroupId = $this->attributeGroupRepository->getAttributeIdByName(
-            $name,
-            $this->context->language->id
-        );
-
-        if (!$attributeGroupId) {
-            $attributeGroup = $this->attributeGroupRepository->createInsuranceAttributeGroup();
-            $attributeGroupId = $attributeGroup->id;
+        if (empty($reference)) {
+            return 0;
         }
 
-        return $attributeGroupId;
+        $query = new \DbQuery();
+        $query->select('pa.id_product_attribute');
+        $query->from('product_attribute', 'pa');
+        $query->where('pa.reference = "' . (string) $reference . '"');
+        $query->where('pa.id_product = ' . (int)$idProduct);
+
+        return \Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue($query);
     }
 }
