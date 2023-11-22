@@ -103,6 +103,7 @@
     
      $('.alma-remove-product').on( "click", function(e) {
          e.preventDefault();
+         addLoaderDot(e);
          $.ajax({
              type: 'POST',
              url: $(this).attr("data-link"),
@@ -126,6 +127,7 @@
 
      $('.alma-remove-association').on( "click", function(e) {
          e.preventDefault();
+         addLoaderDot(e);
          $.ajax({
              type: 'POST',
              url: $(this).attr("data-link"),
@@ -169,4 +171,28 @@ function onloadInsuranceItemCartAlma() {
             item.remove();
         }
     });
+}
+
+function addLoaderDot(e) {
+    let actionAlmaInsuranceProduct = e.currentTarget.closest('.actions-alma-insurance-product');
+    actionAlmaInsuranceProduct.classList.add('loading');
+    actionAlmaInsuranceProduct.append(createLoaderDot());
+}
+
+function createLoaderDot() {
+    let containerDot = document.createElement('span');
+    containerDot.classList.add('alma-loader-dot-container');
+
+    let arrayDots = [
+        'one',
+        'two',
+        'three',
+    ];
+    arrayDots.forEach((key) => {
+        let dot = document.createElement('span');
+        dot.classList.add('dot', key)
+        containerDot.appendChild(dot);
+    });
+
+    return containerDot;
 }
