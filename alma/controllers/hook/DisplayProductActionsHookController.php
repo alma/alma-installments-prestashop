@@ -28,6 +28,8 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
+use Alma\PrestaShop\Helpers\Admin\InsuranceHelper as AdminInsuranceHelper;
+use Alma\PrestaShop\Helpers\ConstantsHelper;
 use Alma\PrestaShop\Helpers\InsuranceHelper;
 use Alma\PrestaShop\Helpers\SettingsHelper;
 use Alma\PrestaShop\Hooks\FrontendHookController;
@@ -48,6 +50,7 @@ class DisplayProductActionsHookController extends FrontendHookController
     public function __construct($module)
     {
         $this->insuranceHelper = new InsuranceHelper();
+        $this->adminInsuranceHelper = new AdminInsuranceHelper($module);
         parent::__construct($module);
     }
 
@@ -69,6 +72,11 @@ class DisplayProductActionsHookController extends FrontendHookController
      */
     public function run($params)
     {
+        $this->context->smarty->assign([
+            'iframeUrl' => $this->adminInsuranceHelper->envUrl() . ConstantsHelper::FO_IFRAME_WIDGET_INSURANCE_PATH,
+            'scriptModalUrl' => $this->adminInsuranceHelper->envUrl() . ConstantsHelper::SCRIPT_MODAL_WIDGET_INSURANCE_PATH,
+        ]);
+
         return $this->module->display($this->module->file, 'displayProductActions.tpl');
     }
 }
