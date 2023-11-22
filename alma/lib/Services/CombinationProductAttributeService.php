@@ -42,9 +42,11 @@ class CombinationProductAttributeService
      * @param int $attributeId
      * @param string $reference
      * @param float $price
+     * @param int $outOfStock See \StockAvailable::out_of_stock
+     * @param int $shopId
      * @return int
      */
-    public function manageCombination($product, $attributeId, $reference, $price)
+    public function manageCombination($product, $attributeId, $reference, $price, $shopId = 1, $outOfStock = 1)
     {
         /**
          * @var \CombinationCore $combinaison
@@ -68,8 +70,34 @@ class CombinationProductAttributeService
 
             $combination = new \CombinationCore((int)$idProductAttributeInsurance);
             $combination->setAttributes([$attributeId]);
+
+            $this->manageStocks(
+                $product->id,
+                $outOfStock,
+                $idProductAttributeInsurance,
+                $shopId
+            );
         }
 
         return $idProductAttributeInsurance;
+    }
+
+    public function manageStocks($productId, $outOfStock, $shopId, $idProductAttributeInsurance)
+    {
+        if (version_compare(_PS_VERSION_, '1.7.8', '>=')) {
+            \StockAvailable::setProductOutOfStock(
+                $productId,
+                $outOfStock,
+                $idProductAttributeInsurance,
+                $shopId
+            );
+        } else {
+            \StockAvailable::setProductDependsOnStock(
+                $productId,
+                $outOfStock == 1 ? false : true,
+                $shopId,
+                $idProductAttributeInsurance
+            );
+        }
     }
 }

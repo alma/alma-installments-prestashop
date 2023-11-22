@@ -101,7 +101,6 @@ class DisplayCartExtraProductActionsHookController extends FrontendHookControlle
         );
 
         if (!$insuranceProductId) {
-            // @todo la recréer ? envoyer un message
             throw new InsuranceNotFoundException();
         }
 

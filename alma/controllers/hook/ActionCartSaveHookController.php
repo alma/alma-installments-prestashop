@@ -81,6 +81,7 @@ class ActionCartSaveHookController extends FrontendHookController
 
     /**
      * @return void
+     * @throws \Alma\PrestaShop\Exceptions\InsuranceInstallException
      */
     public function handleProductInsurance()
     {

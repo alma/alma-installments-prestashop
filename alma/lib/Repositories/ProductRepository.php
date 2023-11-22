@@ -197,8 +197,25 @@ class ProductRepository
         $product->id_category_default = ConstantsHelper::ALMA_INSURANCE_DEFAULT_CATEGORY;
         $product->product_type = self::PRODUCT_TYPE_COMBINATIONS;
         $product->visibility = self::VISIBILITY_NONE;
+
+        if (version_compare(_PS_VERSION_, '1.7.8', '<')) {
+            $product->out_of_stock = 1;
+        }
+
         $product->addToCategories(ConstantsHelper::ALMA_INSURANCE_DEFAULT_CATEGORY);
         $product->add();
+
+        if (version_compare(_PS_VERSION_, '1.7.8', '>=')) {
+            \StockAvailable::setProductOutOfStock(
+                $product->id,
+                1
+            );
+        } else {
+            \StockAvailable::setProductDependsOnStock(
+                $product->id,
+                false
+            );
+        }
 
         return $product;
     }
