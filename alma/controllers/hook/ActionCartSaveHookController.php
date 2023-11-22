@@ -64,6 +64,7 @@ class ActionCartSaveHookController extends FrontendHookController
         parent::__construct($module);
 
         $this->insuranceProductService = new InsuranceProductService();
+        $this->insuranceHelper = new InsuranceHelper();
     }
 
     /**

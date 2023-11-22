@@ -50,6 +50,7 @@ class ActionValidateOrderHookController extends FrontendHookController
     {
         parent::__construct($module);
         $this->almaInsuranceProductRepository = new AlmaInsuranceProductRepository();
+        $this->insuranceHelper = new InsuranceHelper();
     }
 
    public function canRun()
