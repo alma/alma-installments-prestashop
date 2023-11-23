@@ -26,7 +26,6 @@ namespace Alma\PrestaShop\Repositories;
 
 use Alma\PrestaShop\Helpers\ConstantsHelper;
 use Alma\PrestaShop\Helpers\LocaleHelper;
-use PrestaShop\PrestaShop\Adapter\Import\ImportDataFormatter;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -41,10 +40,11 @@ class ProductRepository
 {
     const PRODUCT_TYPE_COMBINATIONS = 'combinations';
     const VISIBILITY_NONE = 'none';
+
     /**
      * @var LocaleHelper
      */
-    private $localeHelper;
+    protected $localeHelper;
 
     public function __construct()
     {
@@ -184,8 +184,6 @@ class ProductRepository
 
     /**
      * @return \ProductCore
-     * @throws \PrestaShopDatabaseException
-     * @throws \PrestaShopException
      */
     public function createInsuranceProduct()
     {
@@ -199,9 +197,35 @@ class ProductRepository
         $product->id_category_default = ConstantsHelper::ALMA_INSURANCE_DEFAULT_CATEGORY;
         $product->product_type = self::PRODUCT_TYPE_COMBINATIONS;
         $product->visibility = self::VISIBILITY_NONE;
+
+        if (version_compare(_PS_VERSION_, '1.7.8', '<')) {
+            $product->out_of_stock = 1;
+        }
+
         $product->addToCategories(ConstantsHelper::ALMA_INSURANCE_DEFAULT_CATEGORY);
         $product->add();
 
+        if (version_compare(_PS_VERSION_, '1.7.8', '>=')) {
+            \StockAvailable::setProductOutOfStock(
+                $product->id,
+                1
+            );
+        } else {
+            \StockAvailable::setProductDependsOnStock(
+                $product->id,
+                false
+            );
+        }
+
         return $product;
+    }
+
+    /**
+     * @param int $idProduct
+     * @return \ProductCore
+     */
+    public function getProduct($idProduct)
+    {
+        return new \Product((int)$idProduct);
     }
 }

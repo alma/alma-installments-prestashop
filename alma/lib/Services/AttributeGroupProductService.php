@@ -22,29 +22,43 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
-namespace Alma\PrestaShop\Helpers;
+namespace Alma\PrestaShop\Services;
 
-use PrestaShop\PrestaShop\Adapter\Shop\Context;
+use Alma\PrestaShop\Repositories\AttributeGroupRepository;
 
-class InsuranceHelper
+class AttributeGroupProductService
 {
     /**
-     * @return bool
+     * @var \ContextCore
      */
-    public function isInsuranceAllowedInProductPage()
-    {
-        return (bool) (int) SettingsHelper::get(ConstantsHelper::ALMA_SHOW_INSURANCE_WIDGET_PRODUCT, false)
-            && (bool) (int) SettingsHelper::get(ConstantsHelper::ALMA_ALLOW_INSURANCE, false)
-            && (bool) (int) SettingsHelper::get(ConstantsHelper::ALMA_ACTIVATE_INSURANCE, false);
+    protected $context;
+
+    /**
+     * @var AttributeGroupRepository
+     */
+    protected $attributeGroupRepository;
+
+    public function __construct() {
+        $this->context = \Context::getContext();
+        $this->attributeGroupRepository = new AttributeGroupRepository();
     }
 
     /**
-     * @return bool
+     * @param string $name
+     * @return int
      */
-    public function isInsuranceActivated()
+    public function getIdAttributeGroupByName($name)
     {
-        return (bool) (int) SettingsHelper::get(ConstantsHelper::ALMA_ALLOW_INSURANCE, false)
-            && (bool) (int) SettingsHelper::get(ConstantsHelper::ALMA_ACTIVATE_INSURANCE, false);
-    }
+        $attributeGroupId = $this->attributeGroupRepository->getAttributeIdByName(
+            $name,
+            $this->context->language->id
+        );
 
+        if (!$attributeGroupId) {
+            $attributeGroup = $this->attributeGroupRepository->createInsuranceAttributeGroup();
+            $attributeGroupId = $attributeGroup->id;
+        }
+
+        return $attributeGroupId;
+    }
 }

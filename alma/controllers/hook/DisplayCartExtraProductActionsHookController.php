@@ -81,6 +81,7 @@ class DisplayCartExtraProductActionsHookController extends FrontendHookControlle
     /**
      * @param $params
      * @return mixed
+     * @throws InsuranceNotFoundException
      */
     public function run($params)
     {
@@ -101,7 +102,6 @@ class DisplayCartExtraProductActionsHookController extends FrontendHookControlle
         );
 
         if (!$insuranceProductId) {
-            // @todo la recréer ? envoyer un message
             throw new InsuranceNotFoundException();
         }
 
@@ -116,7 +116,7 @@ class DisplayCartExtraProductActionsHookController extends FrontendHookControlle
 
             foreach ($almaInsurances as $almaInsurance) {
                 $almaInsuranceProduct = new \ProductCore((int)$almaInsurance['id_product_insurance']);
-                $almaProductAttribute = new \AttributeCore((int)$almaInsurance['id_product_attribute_insurance']);
+                $almaProductAttribute = new \CombinationCore((int)$almaInsurance['id_product_attribute_insurance']);
                 $resultInsurance[$almaInsurance['id_alma_insurance_product']] = [
                     'insuranceProduct' => $almaInsuranceProduct,
                     'insuranceProductAttribute' => $almaProductAttribute,
@@ -125,6 +125,15 @@ class DisplayCartExtraProductActionsHookController extends FrontendHookControlle
             }
 
         }{
+        // Create a link with the good path
+        /**
+         * @var \LinkCore $link
+         */
+        $link = new \Link;
+
+        $ajaxLinkRemoveProduct = $link->getModuleLink('alma','insurance', ["action" => "removeProductFromCart"]);
+        $ajaxLinkRemoveAssociation = $link->getModuleLink('alma','insurance', ["action" => "removeAssociation"]);
+
             $this->context->smarty->assign([
                 'idCart' => $cart->id,
                 'idLanguage' => $this->context->language->id,
@@ -132,6 +141,8 @@ class DisplayCartExtraProductActionsHookController extends FrontendHookControlle
                 'product' => $product,
                 'associatedInsurances' => $resultInsurance,
                 'isAlmaInsurance' => $product->id === $insuranceProductId ? 1 : 0,
+                'ajaxLinkAlmaRemoveProduct' => $ajaxLinkRemoveProduct,
+                'ajaxLinkAlmaRemoveAssociation' => $ajaxLinkRemoveAssociation
             ]);
 
             return $this->module->display($this->module->file, 'displayCartExtraProductActions.tpl');

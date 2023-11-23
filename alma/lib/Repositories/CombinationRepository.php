@@ -22,29 +22,40 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
-namespace Alma\PrestaShop\Helpers;
+namespace Alma\PrestaShop\Repositories;
 
-use PrestaShop\PrestaShop\Adapter\Shop\Context;
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
 
-class InsuranceHelper
+/**
+ * Class AlmaInsuranceProductRepository.
+ *
+ * Use for Product
+ */
+class CombinationRepository
 {
-    /**
-     * @return bool
-     */
-    public function isInsuranceAllowedInProductPage()
-    {
-        return (bool) (int) SettingsHelper::get(ConstantsHelper::ALMA_SHOW_INSURANCE_WIDGET_PRODUCT, false)
-            && (bool) (int) SettingsHelper::get(ConstantsHelper::ALMA_ALLOW_INSURANCE, false)
-            && (bool) (int) SettingsHelper::get(ConstantsHelper::ALMA_ACTIVATE_INSURANCE, false);
-    }
 
     /**
-     * @return bool
+     * For a given product_attribute reference, returns the corresponding id.
+     *
+     * @param int $idProduct
+     * @param string $reference
+     *
+     * @return int id
      */
-    public function isInsuranceActivated()
+    public function getIdByReference($idProduct, $reference)
     {
-        return (bool) (int) SettingsHelper::get(ConstantsHelper::ALMA_ALLOW_INSURANCE, false)
-            && (bool) (int) SettingsHelper::get(ConstantsHelper::ALMA_ACTIVATE_INSURANCE, false);
-    }
+        if (empty($reference)) {
+            return 0;
+        }
 
+        $query = new \DbQuery();
+        $query->select('pa.id_product_attribute');
+        $query->from('product_attribute', 'pa');
+        $query->where('pa.reference = "' . (string) $reference . '"');
+        $query->where('pa.id_product = ' . (int)$idProduct);
+
+        return \Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue($query);
+    }
 }

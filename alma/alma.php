@@ -80,7 +80,7 @@ class Alma extends PaymentModule
         $this->author = 'Alma';
         $this->need_instance = false;
         $this->bootstrap = true;
-        $this->controllers = ['payment', 'validation', 'ipn'];
+        $this->controllers = ['payment', 'validation', 'ipn', 'insurance'];
         $this->is_eu_compatible = 1;
         $this->currencies = true;
         $this->currencies_mode = 'checkbox';
@@ -331,9 +331,26 @@ class Alma extends PaymentModule
         return $this->runHookController('displayProductActions', $params);
     }
 
+    /**
+     * Hook the template below the product item near to the delete button
+     *
+     * @param $params
+     * @return mixed|null
+     */
     public function hookDisplayCartExtraProductActions($params)
     {
         return $this->runHookController('displayCartExtraProductActions', $params);
+    }
+
+    /**
+     * Hook to add terms and conditions
+     *
+     * @param $params
+     * @return mixed|null
+     */
+    public function hookTermsAndConditions($params)
+    {
+        return $this->runHookController('termsAndConditions', $params);
     }
 
     /**
@@ -460,6 +477,15 @@ class Alma extends PaymentModule
         return $this->runHookController('displayPayment', $params);
     }
 
+    public function hookDeleteProductInCartAfter($params)
+    {
+        return $this->hookActionObjectProductInCartDeleteAfter($params);
+    }
+
+    public function hookActionObjectProductInCartDeleteAfter($params)
+    {
+        return $this->runHookController('actionObjectProductInCartDeleteAfter', $params);
+    }
     // Deprecated for version 1.7
     public function hookDisplayPaymentReturn($params)
     {

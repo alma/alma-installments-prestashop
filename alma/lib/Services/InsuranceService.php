@@ -36,23 +36,23 @@ class InsuranceService
     /**
      * @var ProductRepository
      */
-    private $productRepository;
+    protected $productRepository;
     /**
      * @var ImageService
      */
-    private $imageService;
+    protected $imageService;
     /**
-     * @var \Context|null
+     * @var \ContextCore
      */
-    private $context;
+    protected $context;
     /**
      * @var AttributeGroupRepository
      */
-    private $attributeGroupRepository;
+    protected $attributeGroupRepository;
     /**
      * @var AlmaInsuranceProductRepository
      */
-    private $almaInsuranceProductRepository;
+    protected $almaInsuranceProductRepository;
 
     public function __construct()
     {
@@ -65,17 +65,18 @@ class InsuranceService
 
     /**
      * Create the default Insurance product
-     * @return void
+     *
+     * @return \ProductCore|void
      * @throws InsuranceInstallException
      */
     public function createProductIfNotExists()
     {
-        $insuranceProduct = $this->productRepository->getProductIdByReference(
+        $insuranceProductId = $this->productRepository->getProductIdByReference(
             ConstantsHelper::ALMA_INSURANCE_PRODUCT_REFERENCE,
             $this->context->language->id
         );
 
-        if (!$insuranceProduct) {
+        if (!$insuranceProductId) {
             try {
                 $insuranceProduct = $this->productRepository->createInsuranceProduct();
                 $shops = \Shop::getShops(true, null, true);
@@ -85,6 +86,8 @@ class InsuranceService
                     $shops,
                     ConstantsHelper::ALMA_INSURANCE_PRODUCT_IMAGE_URL
                 );
+
+                return $insuranceProduct;
             } catch (\Exception $e) {
                 Logger::instance()->error(
                     sprintf(
@@ -97,6 +100,8 @@ class InsuranceService
                 throw new InsuranceInstallException();
             }
         }
+
+        return $this->productRepository->getProduct($insuranceProductId);
     }
 
     /**
@@ -140,5 +145,56 @@ class InsuranceService
 
         $this->createProductIfNotExists();
         $this->createAttributeGroupIfNotExists();
+    }
+
+    /**
+     * @param array $params
+     * @return void
+     */
+    public function deleteAllLinkedInsuranceProducts($params)
+    {
+        /**
+         * @var \ContextCore $context
+         */
+        $context = \Context::getContext();
+
+        $allInsurancesLinked = $this->almaInsuranceProductRepository->getAllByProduct(
+            $params['id_cart'],
+            $params['id_product'],
+            $params['id_product_attribute'],
+            $params['customization_id'],
+            $context->shop->id
+        );
+
+        foreach ($allInsurancesLinked as $insuranceLinked) {
+            // Delete insurance in cart
+            $context->cart->updateQty(
+                1,
+                $insuranceLinked['id_product_insurance'],
+                $insuranceLinked['id_product_attribute_insurance'],
+                0,
+                'down'
+            );
+
+            // Delete association
+            $this->almaInsuranceProductRepository->deleteById($insuranceLinked['id_alma_insurance_product']);
+        }
+    }
+
+    /**
+     * @return bool
+     */
+    public function hasInsuranceInCart()
+    {
+        $idsInsurances = $this->almaInsuranceProductRepository->getIdsByCartIdAndShop(
+            $this->context->cart->id,
+            $this->context->shop->id
+        );
+
+        if(count($idsInsurances) > 0 ) {
+            return true;
+        }
+
+        return false;
     }
 }

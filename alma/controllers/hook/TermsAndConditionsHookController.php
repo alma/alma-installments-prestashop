@@ -24,72 +24,65 @@
 
 namespace Alma\PrestaShop\Controllers\Hook;
 
+use Alma\PrestaShop\Helpers\InsuranceHelper;
+use Alma\PrestaShop\Helpers\SettingsHelper;
+use Alma\PrestaShop\Hooks\FrontendHookController;
+use Alma\PrestaShop\Services\InsuranceService;
+use PrestaShop\PrestaShop\Core\Checkout\TermsAndConditions;
+
 if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-use Alma\PrestaShop\Helpers\InsuranceHelper;
-use Alma\PrestaShop\Hooks\FrontendHookController;
-use Alma\PrestaShop\Repositories\AlmaInsuranceProductRepository;
-use Alma\PrestaShop\Repositories\AttributeGroupRepository;
-use Alma\PrestaShop\Repositories\AttributeRepository;
-
-class ActionValidateOrderHookController extends FrontendHookController
+class TermsAndConditionsHookController extends FrontendHookController
 {
-    /**
-     * @var AlmaInsuranceProductRepository
-     */
-    protected $almaInsuranceProductRepository;
+    /** @var Alma */
+    protected $module;
 
     /**
      * @var InsuranceHelper
      */
     protected $insuranceHelper;
 
-    public function __construct($module)
-    {
-        parent::__construct($module);
-        $this->almaInsuranceProductRepository = new AlmaInsuranceProductRepository();
-        $this->insuranceHelper = new InsuranceHelper();
-    }
-
-   public function canRun()
-   {
-       return parent::canRun() && $this->insuranceHelper->isInsuranceActivated();
-   }
+    /**
+     * @var InsuranceService
+     */
+    protected $insuranceService;
 
     /**
-     * Run Controller
-     *
-     * @param array $params
-     *
-     * @return void
+     * @param $module
+     */
+    public function __construct($module)
+    {
+        $this->insuranceHelper = new InsuranceHelper();
+        $this->insuranceService = new InsuranceService();
+        parent::__construct($module);
+    }
+
+    /**
+     * @return bool
+     */
+    public function canRun()
+    {
+        return parent::canRun()
+            && $this->insuranceHelper->isInsuranceActivated()
+            && $this->insuranceService->hasInsuranceInCart();
+    }
+
+    /**
+     * @param $params
+     * @return array
      */
     public function run($params)
     {
-        /**
-         * @var \OrderCore $order
-         */
-        $order = $params['order'];
+        $returnedTermsAndConditions = [];
+        $termsAndConditions = new TermsAndConditions();
 
-        /**
-         * @var \CartCore $cart
-         */
-        $cart = $params['cart'];
+        $termsAndConditions
+            ->setText($this->module->l('By accepting to subscribe to Alma insurance, I confirm my thorough review, acceptance, and retention of the general terms outlined in the information booklet and the insurance product details. Additionally, I consent to receiving contractual information by e-mail for the purpose of securely storing it in a durable format.'))
+            ->setIdentifier('terms-and-conditions-alma-insurance');
+        $returnedTermsAndConditions[] = $termsAndConditions;
 
-        $ids = $this->almaInsuranceProductRepository->getIdsByCartIdAndShop(
-            $cart->id,
-            $this->context->shop->id
-        );
-
-        $idsToUpdate = [];
-
-        foreach ($ids as $data) {
-            $idsToUpdate[] = $data['id'];
-        }
-
-        if (count($ids) > 0) {
-            $this->almaInsuranceProductRepository->updateAssociationsOrderId($order->id, $idsToUpdate);
-        }
+        return $returnedTermsAndConditions;
     }
 }

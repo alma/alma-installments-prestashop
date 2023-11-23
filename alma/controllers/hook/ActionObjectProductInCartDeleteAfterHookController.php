@@ -30,16 +30,15 @@ if (!defined('_PS_VERSION_')) {
 
 use Alma\PrestaShop\Helpers\InsuranceHelper;
 use Alma\PrestaShop\Hooks\FrontendHookController;
-use Alma\PrestaShop\Repositories\AlmaInsuranceProductRepository;
-use Alma\PrestaShop\Repositories\AttributeGroupRepository;
-use Alma\PrestaShop\Repositories\AttributeRepository;
+use Alma\PrestaShop\Services\InsuranceProductService;
+use Alma\PrestaShop\Services\InsuranceService;
 
-class ActionValidateOrderHookController extends FrontendHookController
+class ActionObjectProductInCartDeleteAfterHookController extends FrontendHookController
 {
     /**
-     * @var AlmaInsuranceProductRepository
+     * @var InsuranceService
      */
-    protected $almaInsuranceProductRepository;
+    protected $insuranceService;
 
     /**
      * @var InsuranceHelper
@@ -49,14 +48,15 @@ class ActionValidateOrderHookController extends FrontendHookController
     public function __construct($module)
     {
         parent::__construct($module);
-        $this->almaInsuranceProductRepository = new AlmaInsuranceProductRepository();
+
+        $this->insuranceService = new InsuranceService();
         $this->insuranceHelper = new InsuranceHelper();
     }
 
-   public function canRun()
-   {
-       return parent::canRun() && $this->insuranceHelper->isInsuranceActivated();
-   }
+    public function canRun()
+    {
+        return parent::canRun() && $this->insuranceHelper->isInsuranceActivated();
+    }
 
     /**
      * Run Controller
@@ -67,29 +67,6 @@ class ActionValidateOrderHookController extends FrontendHookController
      */
     public function run($params)
     {
-        /**
-         * @var \OrderCore $order
-         */
-        $order = $params['order'];
-
-        /**
-         * @var \CartCore $cart
-         */
-        $cart = $params['cart'];
-
-        $ids = $this->almaInsuranceProductRepository->getIdsByCartIdAndShop(
-            $cart->id,
-            $this->context->shop->id
-        );
-
-        $idsToUpdate = [];
-
-        foreach ($ids as $data) {
-            $idsToUpdate[] = $data['id'];
-        }
-
-        if (count($ids) > 0) {
-            $this->almaInsuranceProductRepository->updateAssociationsOrderId($order->id, $idsToUpdate);
-        }
+        $this->insuranceService->deleteAllLinkedInsuranceProducts($params);
     }
 }
