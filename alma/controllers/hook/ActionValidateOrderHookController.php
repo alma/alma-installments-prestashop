@@ -79,8 +79,7 @@ class ActionValidateOrderHookController extends FrontendHookController
 
         $ids = $this->almaInsuranceProductRepository->getIdsByCartIdAndShop(
             $cart->id,
-            $this->context->shop->id,
-            $cart->id_address_delivery
+            $this->context->shop->id
         );
 
         $idsToUpdate = [];

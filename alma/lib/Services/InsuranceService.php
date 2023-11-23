@@ -163,7 +163,6 @@ class InsuranceService
             $params['id_product'],
             $params['id_product_attribute'],
             $params['customization_id'],
-            $context->cart->id_address_delivery,
             $context->shop->id
         );
 
@@ -189,8 +188,7 @@ class InsuranceService
     {
         $idsInsurances = $this->almaInsuranceProductRepository->getIdsByCartIdAndShop(
             $this->context->cart->id,
-            $this->context->shop->id,
-            $this->context->cart->id_address_delivery
+            $this->context->shop->id
         );
 
         if(count($idsInsurances) > 0 ) {

@@ -65,7 +65,6 @@ class TermsAndConditionsHookController extends FrontendHookController
     public function canRun()
     {
         return parent::canRun()
-            && SettingsHelper::showEligibilityMessage()
             && $this->insuranceHelper->isInsuranceActivated()
             && $this->insuranceService->hasInsuranceInCart();
     }

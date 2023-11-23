@@ -72,13 +72,12 @@ class AlmaInsuranceProductRepository
      *
      * @return mixed
      */
-    public function getIdsByCartIdAndShop($cartId, $shopId, $addressDeliveryId)
+    public function getIdsByCartIdAndShop($cartId, $shopId)
     {
         $sql = '
             SELECT `id_alma_insurance_product` as id
             FROM `' . _DB_PREFIX_ . 'alma_insurance_product` aip
             WHERE aip.`id_cart` = ' . (int)$cartId . '
-            AND aip.`id_address_delivery` = ' . (int)$addressDeliveryId. ' 
             AND aip.`id_shop` = ' . (int)$shopId;
 
         return \Db::getInstance()->executeS($sql);
@@ -92,7 +91,7 @@ class AlmaInsuranceProductRepository
      *
      * @return mixed
      */
-    public function getIdsByCartIdAndShopAndProduct($product, $cartId, $shopId, $addressDeliveryId)
+    public function getIdsByCartIdAndShopAndProduct($product, $cartId, $shopId)
     {
         $sql = '
             SELECT `id_alma_insurance_product`,
@@ -104,7 +103,6 @@ class AlmaInsuranceProductRepository
             AND aip.`id_product` = ' . (int)$product->id . '
             AND aip.`id_product_attribute` = ' . (int)$product->id_product_attribute . '
             AND aip.`id_customization` = ' . (int)$product->id_customization . ' 
-             AND aip.`id_address_delivery` = ' . (int)$addressDeliveryId. ' 
             AND aip.`id_shop` = ' . (int)$shopId;
 
         return \Db::getInstance()->executeS($sql);
@@ -188,11 +186,10 @@ class AlmaInsuranceProductRepository
      * @param int $idProduct
      * @param int $idProductAttribute
      * @param int $customizationId
-     * @param int $idAddressDelivery
      * @param int $idShop
      * @return array
      */
-    public function getAllByProduct($idCart, $idProduct, $idProductAttribute, $customizationId, $idAddressDelivery, $idShop)
+    public function getAllByProduct($idCart, $idProduct, $idProductAttribute, $customizationId, $idShop)
     {
         $sql = '
             SELECT `id_alma_insurance_product`,
@@ -203,7 +200,6 @@ class AlmaInsuranceProductRepository
             AND aip.`id_product` = ' . (int)$idProduct. '
             AND aip.`id_product_attribute` = ' . (int)$idProductAttribute . '
             AND aip.`id_customization` = ' . (int)$customizationId. '
-            AND aip.`id_address_delivery` = ' . (int)$idAddressDelivery. ' 
             AND aip.`id_shop` = ' . (int) $idShop;
 
         return \Db::getInstance()->executeS($sql);

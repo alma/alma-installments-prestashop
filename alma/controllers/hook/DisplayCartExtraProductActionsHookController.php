@@ -111,8 +111,7 @@ class DisplayCartExtraProductActionsHookController extends FrontendHookControlle
             $almaInsurances = $this->almaInsuranceProductRepository->getIdsByCartIdAndShopAndProduct(
                 $product,
                 $cart->id,
-                $this->context->shop->id,
-                $this->context->cart->id_address_delivery
+                $this->context->shop->id
             );
 
             foreach ($almaInsurances as $almaInsurance) {
