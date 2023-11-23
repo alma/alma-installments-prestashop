@@ -47,11 +47,5 @@
         "php-compatibility": "vendor/bin/phpcs -p . --standard=PHPCompatibility -s --runtime-set testVersion 5.6-8.1 --ignore=\\*/vendor/\\*"
     },
     "license": "MIT",
-    "minimum-stability": "dev",
-    "repositories": {
-        "alma/alma-php-client": {
-            "type": "path",
-            "url": "/app/alma/alma-php-client"
-        }
-    }
+    "minimum-stability": "dev"
 }
