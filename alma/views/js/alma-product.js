@@ -138,10 +138,16 @@
             prestashop.on(
                 'updateProduct',
                 function (event) {
+                    let modalIsClosed = false;
+                    if (event.event !== undefined) {
+                        modalIsClosed = event.event.namespace === 'bs.modal' && event.event.type === 'hidden';
+                    }
+                    if (modalIsClosed) {
+                        removeInsurance();
+                    }
+
                     if(typeof event.selectedAlmaInsurance !== 'undefined' && event.selectedAlmaInsurance !== null) {
                         addInputsInsurance(event.selectedAlmaInsurance);
-                    } else {
-                        removeInsurance();
                     }
                 }
             );
