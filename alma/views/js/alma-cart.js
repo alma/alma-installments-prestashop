@@ -162,6 +162,9 @@ function onloadInsuranceItemCartAlma() {
         if (!isAlmaInsuranceProduct && noInsuranceAssociated) {
             actionsInsuranceProduct.style.display = 'block';
             item.append(actionsInsuranceProduct);
+            let clearfix = document.createElement('div');
+            clearfix.classList.add('clearfix');
+            item.append(clearfix);
             let formQty = item.querySelector('.qty');
 
             formQty.querySelector('input').readOnly = true;

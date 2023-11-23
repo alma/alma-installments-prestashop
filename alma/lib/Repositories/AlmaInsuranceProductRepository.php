@@ -46,6 +46,7 @@ class AlmaInsuranceProductRepository
      * @param float $assurancePrice
      * @param int $idAddressDelivery
      * @return bool
+     * @throws \PrestaShopDatabaseException
      */
     public function add($idCart, $idProduct, $idShop, $idProductAttribute, $idCustomization, $idProductInsurance, $idProductAttributeInsurance, $assurancePrice, $idAddressDelivery)
     {
@@ -71,6 +72,7 @@ class AlmaInsuranceProductRepository
      * @param int $shopId
      *
      * @return mixed
+     * @throws \PrestaShopDatabaseException
      */
     public function getIdsByCartIdAndShop($cartId, $shopId)
     {
@@ -87,9 +89,8 @@ class AlmaInsuranceProductRepository
      * @param \ProductCore $product
      * @param int $cartId
      * @param int $shopId
-     * @param int $addressDeliveryId
-     *
      * @return mixed
+     * @throws \PrestaShopDatabaseException
      */
     public function getIdsByCartIdAndShopAndProduct($product, $cartId, $shopId)
     {
@@ -188,6 +189,7 @@ class AlmaInsuranceProductRepository
      * @param int $customizationId
      * @param int $idShop
      * @return array
+     * @throws \PrestaShopDatabaseException
      */
     public function getAllByProduct($idCart, $idProduct, $idProductAttribute, $customizationId, $idShop)
     {
