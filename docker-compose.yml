@@ -2,7 +2,7 @@ version: '3'
 
 services:
   mysql:
-    image: mysql:5.5
+    image: mysql:8.2
     environment:
       - MYSQL_ROOT_PASSWORD=admin
       - MYSQL_DATABASE=prestashop
@@ -53,6 +53,7 @@ services:
         condition: service_healthy
     ports:
       - "8080:80"
+    # platform: linux/x86_64
     volumes:
       - ./alma:/var/www/html/modules/alma
       - /var/www/html/modules/alma/vendor # do not mount vendor inside container
