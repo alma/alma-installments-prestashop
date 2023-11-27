@@ -58,6 +58,9 @@ class AlmaInsuranceModuleFrontController extends ModuleFrontController
                     case 'removeAssociation' :
                         $this->removeAssociation($context);
                         $this->ajaxRenderAndExit(json_encode(['success' => true]));
+                    case 'addToCartPS16' :
+                     //   $this->removeAssociation($context);
+                        $this->ajaxRenderAndExit(json_encode(['success' => true]));
                     default:
                         throw new AlmaException(sprintf('Action unknown : %s', Tools::getValue('action')));
                 }

@@ -107,12 +107,29 @@ class DisplayCartExtraProductActionsHookController extends FrontendHookControlle
 
         $resultInsurance = [];
 
-        if($product->id !== $insuranceProductId){
-            $almaInsurances = $this->almaInsuranceProductRepository->getIdsByCartIdAndShopAndProduct(
-                $product,
-                $cart->id,
-                $this->context->shop->id
-            );
+        // Presta 1.6
+        if (version_compare(_PS_VERSION_, '1.7', '<')) {
+            $idProduct = $product['id_product'];
+            $productQuantity = $product['quantity'];
+        } else {
+            $idProduct = $product->id;
+            $productQuantity = $product->quantity;
+        }
+
+        if($idProduct !== $insuranceProductId){
+            if (version_compare(_PS_VERSION_, '1.7', '<')) {
+                $almaInsurances = $this->almaInsuranceProductRepository->getIdsByCartIdAndShopAndProductBefore17(
+                    $product,
+                    $cart->id,
+                    $this->context->shop->id
+                );
+            } else {
+                $almaInsurances = $this->almaInsuranceProductRepository->getIdsByCartIdAndShopAndProduct(
+                    $product,
+                    $cart->id,
+                    $this->context->shop->id
+                );
+            }
 
             foreach ($almaInsurances as $almaInsurance) {
                 $almaInsuranceProduct = new \ProductCore((int)$almaInsurance['id_product_insurance']);
@@ -137,10 +154,10 @@ class DisplayCartExtraProductActionsHookController extends FrontendHookControlle
             $this->context->smarty->assign([
                 'idCart' => $cart->id,
                 'idLanguage' => $this->context->language->id,
-                'nbProductWithoutInsurance' => $product->quantity - count($resultInsurance),
+                'nbProductWithoutInsurance' => $productQuantity - count($resultInsurance),
                 'product' => $product,
                 'associatedInsurances' => $resultInsurance,
-                'isAlmaInsurance' => $product->id === $insuranceProductId ? 1 : 0,
+                'isAlmaInsurance' => $idProduct === $insuranceProductId ? 1 : 0,
                 'ajaxLinkAlmaRemoveProduct' => $ajaxLinkRemoveProduct,
                 'ajaxLinkAlmaRemoveAssociation' => $ajaxLinkRemoveAssociation
             ]);

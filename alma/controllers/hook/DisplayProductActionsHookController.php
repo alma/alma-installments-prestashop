@@ -69,6 +69,26 @@ class DisplayProductActionsHookController extends FrontendHookController
      */
     public function run($params)
     {
+        $addToCartLink = '';
+
+        if (version_compare(_PS_VERSION_, '1.7', '<')) {
+
+            /**
+             * @var \LinkCore $link
+             */
+            $link = new \Link;
+            $ajaxAddToCart = $link->getModuleLink('alma', 'insurance', ["action" => "addToCartPS16"]);
+            $addToCartLink = ' data-link16="' . $ajaxAddToCart . '" data-token="'.\Tools::getToken(false).'" ';
+        }
+
+        $this->context->smarty->assign([
+            'addToCartLink' => $addToCartLink
+        ]);
+
+
+        {
         return $this->module->display($this->module->file, 'displayProductActions.tpl');
     }
+}
+
 }

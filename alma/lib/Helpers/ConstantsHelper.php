@@ -36,6 +36,8 @@ class ConstantsHelper
     const WIDGETS_CSS_URL = 'https://cdn.jsdelivr.net/npm/@alma/widgets@3.x.x/dist/widgets.min.css';
     const WIDGETS_JS_URL = 'https://cdn.jsdelivr.net/npm/@alma/widgets@3.x.x/dist/widgets.umd.js';
     const PRODUCT_SCRIPT_PATH = 'views/js/alma-product.js';
+    const PRODUCT_INSURANCE_SCRIPT_PATH = 'views/js/alma-product-insurance.js';
+    const PRODUCT_INSURANCE_16_SCRIPT_PATH = 'views/js/alma-product-insurance16.js';
     const PRODUCT_CSS_PATH = 'views/css/alma-product.css';
     const INSURANCE_PRODUCT_CSS_PATH = 'views/css/alma-insurance.css';
     const CART_SCRIPT_PATH = 'views/js/alma-cart.js';

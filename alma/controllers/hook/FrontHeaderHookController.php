@@ -207,6 +207,10 @@ class FrontHeaderHookController extends FrontendHookController
         $this->controller->addJS(ConstantsHelper::WIDGETS_JS_URL);
         $this->controller->addJS($this->module->_path . ConstantsHelper::PRODUCT_SCRIPT_PATH);
 
+        if($this->insuranceHelper->isInsuranceAllowedInProductPage()) {
+            $this->controller->addJS($this->module->_path . ConstantsHelper::PRODUCT_INSURANCE_16_SCRIPT_PATH);
+        }
+
         if ($this->displayWidgetOnCartPage()) {
             $this->controller->addJS($this->module->_path . ConstantsHelper::CART_SCRIPT_PATH);
         }
@@ -240,6 +244,8 @@ class FrontHeaderHookController extends FrontendHookController
         $cartScriptPath = "modules/$this->moduleName/" . ConstantsHelper::CART_SCRIPT_PATH;
 
         if ($this->insuranceHelper->isInsuranceAllowedInProductPage()) {
+            $this->controller->addJS($this->module->_path . ConstantsHelper::PRODUCT_INSURANCE_16_SCRIPT_PATH);
+
             $this->controller->registerStylesheet(
                 ConstantsHelper::INSURANCE_PRODUCT_CSS_ID,
                 "modules/$this->moduleName/" . ConstantsHelper::INSURANCE_PRODUCT_CSS_PATH
