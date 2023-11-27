@@ -65,17 +65,8 @@ class AttributeProductService
        );
 
        if (!$insuranceAttributeId) {
-           if (version_compare(_PS_VERSION_, '8.0', '<')) {
-               /**
-                * @var \AttributeCore $insuranceAttribute
-                */
-               $insuranceAttribute = new \AttributeCore();
-           } else {
-               /**
-                * @var \ProductAttributeCore $insuranceAttribute
-                */
-               $insuranceAttribute = new \ProductAttributeCore();
-           }
+
+           $insuranceAttribute = $this->getProductAttributeObject();
 
            $insuranceAttribute->name = $this->localeHelper->createMultiLangField($name);
            $insuranceAttribute->id_attribute_group = $attributeGroupId;
@@ -87,6 +78,23 @@ class AttributeProductService
        return $insuranceAttributeId;
    }
 
+    /**
+     * @return \AttributeCore|\ProductAttributeCore
+     */
+   public function getProductAttributeObject()
+   {
+       if (version_compare(_PS_VERSION_, '8.0', '<')) {
+           /**
+            * @var \AttributeCore $insuranceAttribute
+            */
+           return new \AttributeCore();
+       }
+
+       /**
+        * @var \ProductAttributeCore $insuranceAttribute
+        */
+       return new \ProductAttributeCore();
+   }
     /**
      * @param int $idProduct
      * @return int
