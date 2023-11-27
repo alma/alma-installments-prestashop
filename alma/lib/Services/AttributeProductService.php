@@ -65,10 +65,17 @@ class AttributeProductService
        );
 
        if (!$insuranceAttributeId) {
-           /**
-            * @var \AttributeCore $testNewAttribute
-            */
-           $insuranceAttribute = new \AttributeCore();
+           if (version_compare(_PS_VERSION_, '8.0', '<')) {
+               /**
+                * @var \AttributeCore $insuranceAttribute
+                */
+               $insuranceAttribute = new \AttributeCore();
+           } else {
+               /**
+                * @var \ProductAttributeCore $insuranceAttribute
+                */
+               $insuranceAttribute = new \ProductAttributeCore();
+           }
 
            $insuranceAttribute->name = $this->localeHelper->createMultiLangField($name);
            $insuranceAttribute->id_attribute_group = $attributeGroupId;
