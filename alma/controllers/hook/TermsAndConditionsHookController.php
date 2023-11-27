@@ -25,7 +25,6 @@
 namespace Alma\PrestaShop\Controllers\Hook;
 
 use Alma\PrestaShop\Helpers\InsuranceHelper;
-use Alma\PrestaShop\Helpers\SettingsHelper;
 use Alma\PrestaShop\Hooks\FrontendHookController;
 use Alma\PrestaShop\Services\InsuranceService;
 use PrestaShop\PrestaShop\Core\Checkout\TermsAndConditions;
@@ -79,7 +78,7 @@ class TermsAndConditionsHookController extends FrontendHookController
         $termsAndConditions = new TermsAndConditions();
 
         $termsAndConditions
-            ->setText($this->module->l('By accepting to subscribe to Alma insurance, I confirm my thorough review, acceptance, and retention of the general terms outlined in the information booklet and the insurance product details. Additionally, I consent to receiving contractual information by e-mail for the purpose of securely storing it in a durable format.'))
+            ->setText($this->module->l('By accepting to subscribe to Alma insurance, I confirm my thorough review, acceptance, and retention of the general terms outlined in the information booklet and the insurance product details. Additionally, I consent to receiving contractual information by e-mail for the purpose of securely storing it in a durable format.', 'TermsAndConditionsHookController'))
             ->setIdentifier('terms-and-conditions-alma-insurance');
         $returnedTermsAndConditions[] = $termsAndConditions;
 

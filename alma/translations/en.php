@@ -126,6 +126,7 @@ $_MODULE['<{alma}prestashop>producteligibilityadminformbuilder_97cadaaeae5141e73
 $_MODULE['<{alma}prestashop>producteligibilityadminformbuilder_500cde25580890603dc759aac02ff085'] = 'Display widget on product page';
 $_MODULE['<{alma}prestashop>debugadminformbuilder_3132e398e6e7acace9290305a55a7d25'] = 'Activate logging';
 $_MODULE['<{alma}prestashop>debugadminformbuilder_1bd879809ceec8809db58ca2f12965bc'] = 'Debug options';
+$_MODULE['<{alma}prestashop>attributegrouprepository_ebe173959cfb44d5646fd3b379490b79'] = 'My Insurance';
 $_MODULE['<{alma}prestashop>paymentvalidation_efa820507b1951ee5722003639b1a0b0'] = 'Alma Monthly Installments are not available for this currency';
 $_MODULE['<{alma}prestashop>paymentvalidation_1d879e270cfb195f257aab3116618d8b'] = 'Alma - +%d days payment';
 $_MODULE['<{alma}prestashop>paymentvalidation_2ea09287a94f2bc88b459fc7d5a31b6b'] = 'Alma - Pay now';
