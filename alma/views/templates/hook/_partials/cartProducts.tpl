@@ -1,7 +1,7 @@
 <div class="row py-1">
-    <div class="col-md-11">
+    <div class="col-md-11 row">
 
-        <div class="product-line-grid-left col-md-2 col-xs-6">
+        <div class="product-line-grid-left col-md-3 col-xs-6">
             <span class="product-image media-middle" style="height:50px;">
                 {if $product.default_image}
                     <img src="{$product.default_image.bySize.cart_default.url}" alt="{$product.name|escape:'quotes'}" loading="lazy">
@@ -34,11 +34,11 @@
                  </span>
             </div>
             <div class="product-line-grid-left col-md-2 col-xs-6">
-                    <span class="product-image media-middle" style="height:50px;">
-                        <img src="/modules/alma/views/img/alma-insurance.jpg">
-                    </span>
+                <span class="product-image media-middle" style="height:50px;">
+                    <img src="{$associatedInsurances[$idAlmaInsuranceProduct]['urlImage']}" alt="{$associatedInsurances[$idAlmaInsuranceProduct]['name']}" loading="lazy">
+                </span>
             </div>
-            <div class="product-line-grid-left col-md-4 col-xs-12">
+            <div class="product-line-grid-left col-md-3 col-xs-12">
                 <div class="product-line-info">
                 {$associatedInsurance.insuranceProduct->getFieldByLang('name', $idLanguage)|escape:'htmlall':'UTF-8'}
                 </div>
