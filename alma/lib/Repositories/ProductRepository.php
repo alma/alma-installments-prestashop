@@ -200,7 +200,7 @@ class ProductRepository
         $product->visibility = self::VISIBILITY_NONE;
 
         if (version_compare(_PS_VERSION_, '1.7.8', '<')) {
-            $product->out_of_stock = 2;
+            $product->out_of_stock = 1;
         }
 
         $product->addToCategories(ConstantsHelper::ALMA_INSURANCE_DEFAULT_CATEGORY);

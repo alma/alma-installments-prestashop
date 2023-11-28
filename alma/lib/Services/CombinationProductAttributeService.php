@@ -74,8 +74,8 @@ class CombinationProductAttributeService
             $this->manageStocks(
                 $product->id,
                 $outOfStock,
-                $idProductAttributeInsurance,
-                $shopId
+                $shopId,
+                $idProductAttributeInsurance
             );
         }
 
