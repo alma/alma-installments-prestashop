@@ -1,0 +1,20 @@
+name: Continuous Integration
+
+on:
+  push:
+  pull_request:
+    branches:
+      - main
+      - develop
+  workflow_dispatch:
+
+jobs:
+  tests:
+
+    runs-on: ubuntu-22.04
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Run unit tests
+      run: make test
