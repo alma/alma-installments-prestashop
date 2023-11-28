@@ -111,9 +111,11 @@ class DisplayCartExtraProductActionsHookController extends FrontendHookControlle
         if (version_compare(_PS_VERSION_, '1.7', '<')) {
             $idProduct = $product['id_product'];
             $productQuantity = $product['quantity'];
+            $template = 'displayCartExtraProductActions16.tpl';
         } else {
             $idProduct = $product->id;
             $productQuantity = $product->quantity;
+            $template = 'displayCartExtraProductActions.tpl';
         }
 
         if($idProduct !== $insuranceProductId){
@@ -159,10 +161,11 @@ class DisplayCartExtraProductActionsHookController extends FrontendHookControlle
                 'associatedInsurances' => $resultInsurance,
                 'isAlmaInsurance' => $idProduct === $insuranceProductId ? 1 : 0,
                 'ajaxLinkAlmaRemoveProduct' => $ajaxLinkRemoveProduct,
-                'ajaxLinkAlmaRemoveAssociation' => $ajaxLinkRemoveAssociation
+                'ajaxLinkAlmaRemoveAssociation' => $ajaxLinkRemoveAssociation,
+                'token' => \Tools::getToken(false)
             ]);
 
-            return $this->module->display($this->module->file, 'displayCartExtraProductActions.tpl');
+            return $this->module->display($this->module->file, $template);
         }
     }
 }

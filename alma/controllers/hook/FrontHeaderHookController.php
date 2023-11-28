@@ -215,6 +215,10 @@ class FrontHeaderHookController extends FrontendHookController
             $this->controller->addJS($this->module->_path . ConstantsHelper::CART_SCRIPT_PATH);
         }
 
+        if($this->insuranceHelper->isInsuranceActivated()) {
+            $this->controller->addJS($this->module->_path . ConstantsHelper::CART_INSURANCE_16_SCRIPT_PATH);
+        }
+
         if ($this->displayWidgetOnProductPage()) {
             $this->controller->addCSS($this->module->_path . ConstantsHelper::PRODUCT_CSS_PATH);
         }
@@ -244,7 +248,7 @@ class FrontHeaderHookController extends FrontendHookController
         $cartScriptPath = "modules/$this->moduleName/" . ConstantsHelper::CART_SCRIPT_PATH;
 
         if ($this->insuranceHelper->isInsuranceAllowedInProductPage()) {
-            $this->controller->addJS($this->module->_path . ConstantsHelper::PRODUCT_INSURANCE_16_SCRIPT_PATH);
+            $this->controller->addJS($this->module->_path . ConstantsHelper::PRODUCT_INSURANCE_SCRIPT_PATH);
 
             $this->controller->registerStylesheet(
                 ConstantsHelper::INSURANCE_PRODUCT_CSS_ID,
@@ -256,6 +260,10 @@ class FrontHeaderHookController extends FrontendHookController
 
         if ($this->displayWidgetOnCartPage()) {
             $this->controller->registerJavascript(ConstantsHelper::CART_SCRIPT_ID, $cartScriptPath, ['priority' => 1000]);
+        }
+
+        if($this->insuranceHelper->isInsuranceActivated()) {
+            $this->controller->addJS($this->module->_path . ConstantsHelper::CART_INSURANCE_SCRIPT_PATH);
         }
 
         if ($this->displayWidgetOnProductPage()) {

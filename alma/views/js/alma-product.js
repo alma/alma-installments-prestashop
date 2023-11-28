@@ -132,25 +132,5 @@
 
         window.__alma_refreshWidgets = refreshWidgets;
 
-        //Insurance
-        onloadAddInsuranceInputOnProductAlma();
-        if (typeof prestashop !== 'undefined') {
-            prestashop.on(
-                'updateProduct',
-                function (event) {
-                    let modalIsClosed = false;
-                    if (event.event !== undefined) {
-                        modalIsClosed = event.event.namespace === 'bs.modal' && event.event.type === 'hidden';
-                    }
-                    if (modalIsClosed) {
-                        removeInsurance();
-                    }
-
-                    if(typeof event.selectedAlmaInsurance !== 'undefined' && event.selectedAlmaInsurance !== null) {
-                        addInputsInsurance(event.selectedAlmaInsurance);
-                    }
-                }
-            );
-        }
     });
 })(jQuery);

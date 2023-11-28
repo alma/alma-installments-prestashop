@@ -53,11 +53,16 @@ class InsuranceService
      * @var AlmaInsuranceProductRepository
      */
     protected $almaInsuranceProductRepository;
+    /**
+     * @var CartService
+     */
+    protected $cartService;
 
     public function __construct()
     {
         $this->productRepository = new ProductRepository();
         $this->imageService = new ImageService();
+        $this->cartService = new CartService();
         $this->context = \Context::getContext();
         $this->attributeGroupRepository = new AttributeGroupRepository();
         $this->almaInsuranceProductRepository = new AlmaInsuranceProductRepository();
@@ -153,6 +158,7 @@ class InsuranceService
      */
     public function deleteAllLinkedInsuranceProducts($params)
     {
+
         /**
          * @var \ContextCore $context
          */
@@ -167,14 +173,24 @@ class InsuranceService
         );
 
         foreach ($allInsurancesLinked as $insuranceLinked) {
-            // Delete insurance in cart
-            $context->cart->updateQty(
-                1,
-                $insuranceLinked['id_product_insurance'],
-                $insuranceLinked['id_product_attribute_insurance'],
-                0,
-                'down'
-            );
+            if (version_compare(_PS_VERSION_, '1.7', '>=')) {
+                // Delete insurance in cart
+                $context->cart->updateQty(
+                    1,
+                    $insuranceLinked['id_product_insurance'],
+                    $insuranceLinked['id_product_attribute_insurance'],
+                    0,
+                    'down'
+                );
+            } else {
+                $this->cartService->updateQty(
+                    1,
+                    $insuranceLinked['id_product_insurance'],
+                    $insuranceLinked['id_product_attribute_insurance'],
+                    0,
+                    'down'
+                );
+            }
 
             // Delete association
             $this->almaInsuranceProductRepository->deleteById($insuranceLinked['id_alma_insurance_product']);

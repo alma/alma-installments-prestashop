@@ -104,13 +104,13 @@ $(document).off('click', '#add_to_cart').on('click', '#add_to_cart', function(e)
         null != document.getElementById('alma_insurance_name')
         && null != document.getElementById('alma_insurance_price')
     ) {
-       var almaUrl = document.getElementById('alma-widget-insurance-product-page').getAttribute('data-link16')
+        var almaUrl = document.getElementById('alma-widget-insurance-product-page').getAttribute('data-link16')
         var almaToken = document.getElementById('alma-widget-insurance-product-page').getAttribute('data-token')
         var productId = document.getElementById('product_page_product_id').value;
         var productAttributeId = document.getElementById('idCombination').value;
         var qty = document.getElementById('quantity_wanted').value;
         var insuranceName = document.getElementById('alma_insurance_name').value;
-        var insurancePrice = document.getElementById('alma_insurance_name').value;
+        var insurancePrice = document.getElementById('alma_insurance_price').value;
 
 
         $.ajax({
@@ -120,11 +120,11 @@ $(document).off('click', '#add_to_cart').on('click', '#add_to_cart', function(e)
             data: {
                 ajax: true,
                 token : almaToken,
-                productId : productId,
-                productAttributeId : productAttributeId,
+                id_product : productId,
+                id_product_attribute : productAttributeId,
                 qty : qty,
-                insuranceName : insuranceName,
-                insurancePrice : insurancePrice,
+                alma_insurance_name : insuranceName,
+                alma_insurance_price : insurancePrice,
             },
         })
             .success(function () {

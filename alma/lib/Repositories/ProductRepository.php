@@ -195,11 +195,12 @@ class ProductRepository
         $product->reference = ConstantsHelper::ALMA_INSURANCE_PRODUCT_REFERENCE;
         $product->link_rewrite = $this->localeHelper->createMultiLangField(\Tools::str2url(ConstantsHelper::ALMA_INSURANCE_PRODUCT_NAME));
         $product->id_category_default = ConstantsHelper::ALMA_INSURANCE_DEFAULT_CATEGORY;
+        // @todo add categorie for 1.3
         $product->product_type = self::PRODUCT_TYPE_COMBINATIONS;
         $product->visibility = self::VISIBILITY_NONE;
 
         if (version_compare(_PS_VERSION_, '1.7.8', '<')) {
-            $product->out_of_stock = 1;
+            $product->out_of_stock = 2;
         }
 
         $product->addToCategories(ConstantsHelper::ALMA_INSURANCE_DEFAULT_CATEGORY);
