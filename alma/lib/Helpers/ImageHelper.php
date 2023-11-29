@@ -79,4 +79,18 @@ class ImageHelper
             );
         }
     }
+
+    /**
+     * @param string $name
+     *
+     * @return string
+     */
+    public function getFormattedImageTypeName($name)
+    {
+        if (version_compare(_PS_VERSION_, '1.7', '>=')) {
+            return \ImageType::getFormattedName($name);
+        }
+
+        return \ImageType::getFormatedName($name);
+    }
 }
