@@ -26,16 +26,9 @@ namespace Alma\PrestaShop\Services;
 
 use Alma\PrestaShop\Helpers\ConstantsHelper;
 use Alma\PrestaShop\Repositories\AlmaInsuranceProductRepository;
-use Alma\PrestaShop\Repositories\ProductRepository;
 
 class InsuranceProductService
 {
-
-    /**
-     * @var ProductRepository
-     */
-    protected $productRepository;
-
     /**
      * @var \ContextCore
      */
@@ -68,7 +61,6 @@ class InsuranceProductService
 
     public function __construct()
     {
-        $this->productRepository = new ProductRepository();
         $this->context = \Context::getContext();
         $this->almaInsuranceProductRepository = new AlmaInsuranceProductRepository();
         $this->attributeGroupProductService = new AttributeGroupProductService();
