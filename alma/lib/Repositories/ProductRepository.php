@@ -188,14 +188,26 @@ class ProductRepository
     public function createInsuranceProduct()
     {
         /**
+         * @var \ContextCore $context
+         */
+        $context = \Context::getContext();
+
+        $categories =  \Category::getRootCategories($context->language->id);
+
+        if(isset($categories[0]['id_category'])) {
+            $id_root = $categories[0]['id_category'];
+        } else {
+            $id_root = $context->shop->id_category;
+        }
+
+        /*
          * @var \ProductCore $product
          */
         $product = new \Product();
         $product->name = $this->localeHelper->createMultiLangField(ConstantsHelper::ALMA_INSURANCE_PRODUCT_NAME);
         $product->reference = ConstantsHelper::ALMA_INSURANCE_PRODUCT_REFERENCE;
         $product->link_rewrite = $this->localeHelper->createMultiLangField(\Tools::str2url(ConstantsHelper::ALMA_INSURANCE_PRODUCT_NAME));
-        $product->id_category_default = ConstantsHelper::ALMA_INSURANCE_DEFAULT_CATEGORY;
-        // @todo add categorie for 1.3
+        $product->id_category_default = $id_root;
         $product->product_type = self::PRODUCT_TYPE_COMBINATIONS;
         $product->visibility = self::VISIBILITY_NONE;
 
@@ -203,15 +215,16 @@ class ProductRepository
             $product->out_of_stock = 1;
         }
 
-        $product->addToCategories(ConstantsHelper::ALMA_INSURANCE_DEFAULT_CATEGORY);
         $product->add();
 
-        if (version_compare(_PS_VERSION_, '1.7.8', '>=')) {
-            \StockAvailable::setProductOutOfStock(
-                $product->id,
-                1
-            );
-        } else {
+        $product->addToCategories($id_root);
+        
+        \StockAvailable::setProductOutOfStock(
+            $product->id,
+            1
+        );
+
+        if (version_compare(_PS_VERSION_, '1.7.8', '<')) {
             \StockAvailable::setProductDependsOnStock(
                 $product->id,
                 false

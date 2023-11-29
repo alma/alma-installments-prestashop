@@ -84,14 +84,14 @@ class CombinationProductAttributeService
 
     public function manageStocks($productId, $outOfStock, $shopId, $idProductAttributeInsurance)
     {
-        if (version_compare(_PS_VERSION_, '1.7.8', '>=')) {
-            \StockAvailable::setProductOutOfStock(
-                $productId,
-                $outOfStock,
-                $idProductAttributeInsurance,
-                $shopId
-            );
-        } else {
+        \StockAvailable::setProductOutOfStock(
+            $productId,
+            $outOfStock,
+            $shopId,
+            $idProductAttributeInsurance
+        );
+
+        if (version_compare(_PS_VERSION_, '1.7.8', '<')) {
             \StockAvailable::setProductDependsOnStock(
                 $productId,
                 $outOfStock == 1 ? false : true,
