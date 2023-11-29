@@ -89,7 +89,7 @@ class FrontHeaderHookController extends FrontendHookController
      */
     public function displayWidgetOnProductPage()
     {
-        return SettingsHelper::showProductEligibility() && $this->iAmInProductPage();
+        return SettingsHelper::showProductEligibility() && ($this->iAmInProductPage() || $this->iAmInHomePage());
     }
 
     /**
@@ -106,6 +106,14 @@ class FrontHeaderHookController extends FrontendHookController
     private function iAmInProductPage()
     {
         return 'product' == $this->controller->php_self || 'ProductController' == get_class($this->controller);
+    }
+
+    /**
+     * @return bool
+     */
+    private function iAmInHomePage()
+    {
+        return 'index' == $this->controller->php_self || 'IndexController' == get_class($this->controller);
     }
 
     /**

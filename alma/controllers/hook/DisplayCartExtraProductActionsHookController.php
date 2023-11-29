@@ -26,6 +26,7 @@ namespace Alma\PrestaShop\Controllers\Hook;
 
 use Alma\PrestaShop\Exceptions\InsuranceNotFoundException;
 use Alma\PrestaShop\Helpers\ConstantsHelper;
+use Alma\PrestaShop\Helpers\ImageHelper;
 use Alma\PrestaShop\Helpers\InsuranceHelper;
 use Alma\PrestaShop\Helpers\SettingsHelper;
 use Alma\PrestaShop\Hooks\FrontendHookController;
@@ -56,6 +57,14 @@ class DisplayCartExtraProductActionsHookController extends FrontendHookControlle
      * @var AlmaInsuranceProductRepository
      */
     protected $almaInsuranceProductRepository;
+    /**
+     * @var ImageHelper
+     */
+    protected $imageHelper;
+    /**
+     * @var \Link
+     */
+    protected $link;
 
     /**
      * @param $module
@@ -65,6 +74,8 @@ class DisplayCartExtraProductActionsHookController extends FrontendHookControlle
         $this->insuranceHelper = new InsuranceHelper();
         $this->productRepository = new ProductRepository();
         $this->almaInsuranceProductRepository = new AlmaInsuranceProductRepository();
+        $this->imageHelper = new ImageHelper();
+        $this->link = new \Link;
         parent::__construct($module);
     }
 
@@ -136,22 +147,24 @@ class DisplayCartExtraProductActionsHookController extends FrontendHookControlle
             foreach ($almaInsurances as $almaInsurance) {
                 $almaInsuranceProduct = new \ProductCore((int)$almaInsurance['id_product_insurance']);
                 $almaProductAttribute = new \CombinationCore((int)$almaInsurance['id_product_attribute_insurance']);
+                $idImage = $almaInsuranceProduct->getImages($this->context->language->id)[0]['id_image'];
+                $linkRewrite = $almaInsuranceProduct->link_rewrite[$this->context->language->id];
                 $resultInsurance[$almaInsurance['id_alma_insurance_product']] = [
                     'insuranceProduct' => $almaInsuranceProduct,
                     'insuranceProductAttribute' => $almaProductAttribute,
-                    'price' => $almaInsurance['price']
+                    'price' => $almaInsurance['price'],
+                    'name' => $almaInsuranceProduct->name[$this->context->language->id],
+                    'urlImage' => '//' . $this->link->getImageLink(
+                        $linkRewrite,
+                        $idImage,
+                        $this->imageHelper->getFormattedImageTypeName('cart')
+                    ),
                 ];
             }
-
         }{
-        // Create a link with the good path
-        /**
-         * @var \LinkCore $link
-         */
-        $link = new \Link;
 
-        $ajaxLinkRemoveProduct = $link->getModuleLink('alma','insurance', ["action" => "removeProductFromCart"]);
-        $ajaxLinkRemoveAssociation = $link->getModuleLink('alma','insurance', ["action" => "removeAssociation"]);
+        $ajaxLinkRemoveProduct = $this->link->getModuleLink('alma', 'insurance', ["action" => "removeProductFromCart"]);
+        $ajaxLinkRemoveAssociation = $this->link->getModuleLink('alma', 'insurance', ["action" => "removeAssociation"]);
 
             $this->context->smarty->assign([
                 'idCart' => $cart->id,

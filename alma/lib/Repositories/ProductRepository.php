@@ -45,10 +45,15 @@ class ProductRepository
      * @var LocaleHelper
      */
     protected $localeHelper;
+    /**
+     * @var \Module
+     */
+    private $module;
 
     public function __construct()
     {
         $this->localeHelper = new LocaleHelper();
+        $this->module = \Module::getInstanceByName(ConstantsHelper::ALMA_MODULE_NAME);
     }
 
     /**
@@ -184,6 +189,8 @@ class ProductRepository
 
     /**
      * @return \ProductCore
+     * @throws \PrestaShopDatabaseException
+     * @throws \PrestaShopException
      */
     public function createInsuranceProduct()
     {
@@ -203,10 +210,11 @@ class ProductRepository
         /*
          * @var \ProductCore $product
          */
+        $insuranceProductName = $this->module->l(ConstantsHelper::ALMA_INSURANCE_PRODUCT_NAME, 'ProductRepository');
         $product = new \Product();
-        $product->name = $this->localeHelper->createMultiLangField(ConstantsHelper::ALMA_INSURANCE_PRODUCT_NAME);
+        $product->name = $this->localeHelper->createMultiLangField($insuranceProductName);
         $product->reference = ConstantsHelper::ALMA_INSURANCE_PRODUCT_REFERENCE;
-        $product->link_rewrite = $this->localeHelper->createMultiLangField(\Tools::str2url(ConstantsHelper::ALMA_INSURANCE_PRODUCT_NAME));
+        $product->link_rewrite = $this->localeHelper->createMultiLangField(\Tools::str2url($insuranceProductName));
         $product->id_category_default = $id_root;
         $product->product_type = self::PRODUCT_TYPE_COMBINATIONS;
         $product->visibility = self::VISIBILITY_NONE;
@@ -218,7 +226,7 @@ class ProductRepository
         $product->add();
 
         $product->addToCategories($id_root);
-        
+
         \StockAvailable::setProductOutOfStock(
             $product->id,
             1
