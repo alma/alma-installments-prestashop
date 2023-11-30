@@ -48,7 +48,14 @@
         <div class="row">
             <div class="col-xs-12">
                 <p class="payment_module">
-                    <a href="{$option.link}" class="{if $option.isInPageEnabled}alma-inpage ps16{/if} {$almaButton} {$iconDisplay}" id="payment-option-{$option.paymentOptionKey}">
+                    <a href="{$option.link}" class="{if $option.isInPageEnabled}alma-inpage ps16 loading disabled{/if} {$almaButton} {$iconDisplay}" id="payment-option-{$option.paymentOptionKey}">
+                        {if $option.isInPageEnabled}
+                            <span class="alma-loader-dot-container">
+                                <span class="dot one"></span>
+                                <span class="dot two"></span>
+                                <span class="dot three"></span>
+                            </span>
+                        {/if}
                         <span class="alma-button--logo">
                             <img src="{$option.logo|escape:'htmlall':'UTF-8'}" alt="Alma">
                         </span>
@@ -63,6 +70,7 @@
                             </span>
                         </span>
                     </a>
+                    <script type="text/javascript">window.__alma_refreshInpage && __alma_refreshInpage();</script>
                 </p>
             </div>
             {if $option.isInPageEnabled}

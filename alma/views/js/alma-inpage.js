@@ -26,7 +26,16 @@ let paymentButtonEvents = [];
 
 window.addEventListener("load", function() {
     onloadAlma();
+    window.__alma_refreshInpage = onloadAlma;
 });
+
+function removeLoaderButtonPayment(button) {
+    button.classList.remove('disabled', 'loading');
+    let dots = button.querySelector('.alma-loader-dot-container');
+    if (dots) {
+        dots.remove();
+    }
+}
 
 function onloadAlma() {
     let radioButtons = document.querySelectorAll('input[name="payment-option"]');
@@ -59,6 +68,7 @@ function onloadAlma() {
     //Prestashop 1.6-
     let paymentButtonsPs16 = document.querySelectorAll(".alma-inpage.ps16");
     paymentButtonsPs16.forEach(function (button) {
+        removeLoaderButtonPayment(button);
         button.addEventListener('click', function (e) {
             e.preventDefault();
             let paymentOptionId = this.getAttribute('id');
