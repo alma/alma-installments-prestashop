@@ -92,5 +92,4 @@
                 <i class="icon-trash"></i>
             </a></td>
     {/if}
-
 </tr>
