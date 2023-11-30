@@ -2,6 +2,7 @@
 
 ## v3.1.2
 
+- hotfix: Select payment In-Page without open the modal and try to pay with other payment method
 - fix: Add loader payment button on Prestashop 1.6 before loading In-Page
 
 ## v3.1.1
