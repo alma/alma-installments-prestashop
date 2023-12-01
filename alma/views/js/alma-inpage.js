@@ -26,31 +26,41 @@ let paymentButtonEvents = [];
 
 window.addEventListener("load", function() {
     onloadAlma();
+    window.__alma_refreshInpage = onloadAlma;
 });
 
+function removeLoaderButtonPayment(button) {
+    button.classList.remove('disabled', 'loading');
+    let dots = button.querySelector('.alma-loader-dot-container');
+    if (dots) {
+        dots.remove();
+    }
+}
+
 function onloadAlma() {
-    let radioButtons = document.querySelectorAll('input[name="payment-option"][data-module-name=alma]');
+    let radioButtons = document.querySelectorAll('input[name="payment-option"]');
 
     //Prestashop 1.7+
     radioButtons.forEach(function (input) {
         input.addEventListener("change", function () {
             let paymentOptionId = input.getAttribute('id');
             let blockForm = document.querySelector('#pay-with-' + paymentOptionId + '-form');
-            let formInpage = blockForm.querySelector('.alma-inpage');
             removeAlmaEventsFromPaymentButton();
             if (inPage !== undefined) {
                 inPage.unmount();
             }
-            if (this.dataset.moduleName === 'alma' && this.checked && formInpage) {
-                let installment = formInpage.dataset.installment;
-                if (installment === '1') {
-                    blockForm.hidden = true;
+            if (this.dataset.moduleName === 'alma') {
+                let formInpage = blockForm.querySelector('.alma-inpage');
+                if (this.checked && formInpage) {
+                    let installment = formInpage.dataset.installment;
+                    if (installment === '1') {
+                        blockForm.hidden = true;
+                    }
+                    let url = formInpage.dataset.action;
+
+                    inPage = createAlmaIframe(formInpage);
+                    mapPaymentButtonToAlmaPaymentCreation(url, inPage, input);
                 }
-                let url = formInpage.dataset.action;
-
-                inPage = createAlmaIframe(formInpage);
-
-                mapPaymentButtonToAlmaPaymentCreation(url, inPage, input);
             }
         });
     });
@@ -58,6 +68,7 @@ function onloadAlma() {
     //Prestashop 1.6-
     let paymentButtonsPs16 = document.querySelectorAll(".alma-inpage.ps16");
     paymentButtonsPs16.forEach(function (button) {
+        removeLoaderButtonPayment(button);
         button.addEventListener('click', function (e) {
             e.preventDefault();
             let paymentOptionId = this.getAttribute('id');
