@@ -175,7 +175,8 @@ class DisplayCartExtraProductActionsHookController extends FrontendHookControlle
                 'isAlmaInsurance' => $idProduct === $insuranceProductId ? 1 : 0,
                 'ajaxLinkAlmaRemoveProduct' => $ajaxLinkRemoveProduct,
                 'ajaxLinkAlmaRemoveAssociation' => $ajaxLinkRemoveAssociation,
-                'token' => \Tools::getToken(false)
+                'token' => \Tools::getToken(false),
+                'idProduct' => $idProduct
             ]);
 
             return $this->module->display($this->module->file, $template);

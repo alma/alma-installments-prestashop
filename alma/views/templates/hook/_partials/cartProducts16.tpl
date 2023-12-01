@@ -23,14 +23,15 @@
 *  International Registered Trademark & Property of PrestaShop SA
 *}
 <tr>
-    <td class="cart_product">
+    <td class="">
         <a href="{$link->getProductLink($product.id_product, $product.link_rewrite, $product.category, null, null, $product.id_shop, $product.id_product_attribute, false, false, true)|escape:'html':'UTF-8'}">
-            <img src="{$link->getImageLink($product.link_rewrite, $product.id_image, 'small_default')|escape:'html':'UTF-8'}" alt="{$product.name|escape:'html':'UTF-8'}" {if isset($smallSize)}width="{$smallSize.width}" height="{$smallSize.height}" {/if} /></a>
+            <img src="{$link->getImageLink($product.link_rewrite, $product.id_image, 'small_default')|escape:'html':'UTF-8'}" alt="{$product.name|escape:'html':'UTF-8'}" {if isset($smallSize)}width="{$smallSize.width/2}" height="{$smallSize.height/2}" {/if} /></a>
     </td>
-    <td class="cart_description">
-        {capture name=sep} : {/capture}
-        {capture}{l s=' : '}{/capture}
-        <p class="product-name"><a href="{$link->getProductLink($product.id_product, $product.link_rewrite, $product.category, null, null, $product.id_shop, $product.id_product_attribute, false, false, true)|escape:'html':'UTF-8'}">{$product.name|escape:'html':'UTF-8'}</a></p>
+    <td class="">
+        <p class="">
+            <b>
+                <a href="{$link->getProductLink($product.id_product, $product.link_rewrite, $product.category, null, null, $product.id_shop, $product.id_product_attribute, false, false, true)|escape:'html':'UTF-8'}">{$product.name|escape:'html':'UTF-8'}</a></p>
+        </b>
         <ul class="price text-right" >
             {if !empty($product.gift)}
                 <li class="gift-icon">{l s='Gift!'}</li>
@@ -49,14 +50,17 @@
         <td>
             <img src="/modules/alma/views/img/add-circle.svg">
         </td>
-        <td class="cart_product">
-            <img src="/modules/alma/views/img/alma-insurance.jpg" {if isset($smallSize)}width="{$smallSize.width}" height="{$smallSize.height}" {/if} />
+        <td class="">
+            <img src="/modules/alma/views/img/alma-insurance.jpg" {if isset($smallSize)}width="{$smallSize.width/1.5}" height="{$smallSize.height/1.5}" {/if} />
         </td>
-        <td class="cart_description">
-            {capture name=sep} : {/capture}
-            {capture}{l s=' : '}{/capture}
-            <p class="product-name">
+        <td class="">
+            <p class="">
+                <b>
                 {$associatedInsurance.insuranceProduct->getFieldByLang('name', $idLanguage)|escape:'htmlall':'UTF-8'}
+                </b>
+                <br>
+                {$associatedInsurance.insuranceProductAttribute->reference|escape:'htmlall':'UTF-8'}
+
             </p>
             <ul class="price text-right">
 

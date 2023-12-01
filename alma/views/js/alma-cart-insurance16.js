@@ -25,15 +25,9 @@
 
         // Insurance
         onloadInsuranceItemCartAlma();
-        // Reload item cart for Prestashop 1.7+ when quantity change
-        //if (window.prestashop != null && window.prestashop.on != null) {
-          //  prestashop.on("updatedCart", onloadInsuranceItemCartAlma);
-        //}
     });
 
      $(document).off('click', '.alma-remove-product').on('click', '.alma-remove-product', function(e){
-    // $('.alma-remove-product').on( "click", function(e) {
-         console.log('ezaeza')
          e.preventDefault();
          addLoaderDot(e);
          $.ajax({
@@ -58,7 +52,6 @@
      });
 
      $(document).off('click', '.alma-remove-association').on('click', '.alma-remove-association', function(e){
-         console.log('oto')
          e.preventDefault();
          addLoaderDot(e);
          $.ajax({
@@ -79,29 +72,26 @@
                  location.reload();
              });
      });
-})(jQuery);
+
+ })(jQuery);
 
 // Insurance
 // ** Display extra info for insurance under the item product on cart **
 function onloadInsuranceItemCartAlma() {
-    let itemsCart = document.querySelectorAll('.cart-items .cart-item');
+    let itemsCart = document.querySelectorAll('#cart_summary .cart_item');
 
     itemsCart.forEach((item) => {
-        let dataProduct = item.querySelector('.alma-data-product');
+        let dataProduct = item.querySelector('.alma-data-cart-product-insurance');
         let actionsInsuranceProduct = dataProduct.querySelector('.actions-alma-insurance-product');
         let isAlmaInsuranceProduct = parseInt(dataProduct.dataset.isAlmaInsurance);
         let noInsuranceAssociated = parseInt(dataProduct.dataset.noInsuranceAssociated);
 
         if (!isAlmaInsuranceProduct && noInsuranceAssociated) {
             actionsInsuranceProduct.style.display = 'block';
-            item.append(actionsInsuranceProduct);
-            let clearfix = document.createElement('div');
-            clearfix.classList.add('clearfix');
-            item.append(clearfix);
-            let formQty = item.querySelector('.qty');
 
-            formQty.querySelector('input').readOnly = true;
-            formQty.querySelector('.input-group-btn-vertical').remove();
+            let formQty = item.querySelector('.cart_quantity');
+            formQty.querySelector('.cart_quantity_input').readOnly = true;
+            formQty.querySelector('.cart_quantity_button').remove();
         }
         if (isAlmaInsuranceProduct) {
             item.remove();

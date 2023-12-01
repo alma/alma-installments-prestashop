@@ -80,4 +80,17 @@ class CartProductRepository
 						LIMIT 1'
         );
     }
+
+    /**
+     * @param int $idProduct
+     * @param int $idCart
+     * @return false|string|null
+     */
+    public function hasProductInCart($idProduct, $idCart)
+    {
+       return  \Db::getInstance()->getValue('SELECT distinct(`id_product`)
+            FROM `' . _DB_PREFIX_ . 'cart_product`
+            where `id_cart` =' . (int)$idCart . '
+            AND `id_product` = ' . (int)$idProduct );
+    }
 }
