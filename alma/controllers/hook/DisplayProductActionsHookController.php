@@ -69,6 +69,7 @@ class DisplayProductActionsHookController extends FrontendHookController
     public function run($params)
     {
         $addToCartLink = '';
+        $oldPSVersion = false;
 
         if (version_compare(_PS_VERSION_, '1.7', '<')) {
 
@@ -78,10 +79,13 @@ class DisplayProductActionsHookController extends FrontendHookController
             $link = new \Link;
             $ajaxAddToCart = $link->getModuleLink('alma', 'insurance', ["action" => "addToCartPS16"]);
             $addToCartLink = ' data-link16="' . $ajaxAddToCart . '" data-token="'.\Tools::getToken(false).'" ';
+            $oldPSVersion = true;
+
         }
 
         $this->context->smarty->assign([
-            'addToCartLink' => $addToCartLink
+            'addToCartLink' => $addToCartLink,
+            'oldPSVersion' => $oldPSVersion
         ]);
 
 
