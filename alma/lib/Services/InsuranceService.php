@@ -202,6 +202,7 @@ class InsuranceService
      */
     public function hasInsuranceInCart()
     {
+
         $idsInsurances = $this->almaInsuranceProductRepository->getIdsByCartIdAndShop(
             $this->context->cart->id,
             $this->context->shop->id

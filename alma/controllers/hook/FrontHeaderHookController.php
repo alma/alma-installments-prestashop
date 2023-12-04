@@ -202,6 +202,7 @@ class FrontHeaderHookController extends FrontendHookController
      */
     private function assetsWidgets()
     {
+        $content = '';
         if (version_compare(_PS_VERSION_, '1.7', '<')) {
             $this->controller->addJS($this->module->_path . ConstantsHelper::INSURANCE_16_SCRIPT_PATH);
 
@@ -212,6 +213,16 @@ class FrontHeaderHookController extends FrontendHookController
             ) {
                 $this->controller->addJS($this->module->_path . ConstantsHelper::ORDER_INSURANCE_16_SCRIPT_PATH);
             }
+
+            if(
+                $this->insuranceHelper->isInsuranceActivated()
+                && $this->insuranceHelper->hasInsuranceInCart()
+            ) {
+                $this->controller->addJS($this->module->_path . ConstantsHelper::MINI_CART_INSURANCE_16_SCRIPT_PATH);
+                $text = $this->module->l('To manage your purchases with Assurance, please go to the checkout page.');
+                $content .= '<input type="hidden" value="'. $text. '" id="alma-mini-cart-insurance-message">';
+
+            }
         }
 
         if (
@@ -219,15 +230,15 @@ class FrontHeaderHookController extends FrontendHookController
             || $this->displayWidgetOnProductPage()
         ) {
             if (version_compare(_PS_VERSION_, '1.7', '<')) {
-                return $this->manageAssetVersionForPrestashopBefore17();
+                $content .=  $this->manageAssetVersionForPrestashopBefore17();
             }
 
             if (version_compare(_PS_VERSION_, '1.7.0.0', '>=')) {
-                return $this->manageAssetVersionForPrestashopAfter17();
+                $content .=  $this->manageAssetVersionForPrestashopAfter17();
             }
         }
 
-        return '';
+        return $content;
     }
 
     /**
@@ -252,16 +263,6 @@ class FrontHeaderHookController extends FrontendHookController
 
         if($this->insuranceHelper->isInsuranceActivated() && $this->iAmInCartPage() && $this->cartIsNotEmpty()) {
             $this->controller->addJS($this->module->_path . ConstantsHelper::CART_INSURANCE_16_SCRIPT_PATH);
-        }
-
-        if(
-            $this->insuranceHelper->isInsuranceActivated()
-            && $this->insuranceHelper->hasInsuranceInCart()
-        ) {
-            $this->controller->addJS($this->module->_path . ConstantsHelper::MINI_CART_INSURANCE_16_SCRIPT_PATH);
-            $text = $this->module->l('To manage your purchases with Assurance, please go to the checkout page.');
-            $content .= '<input type="hidden" value="'. $text. '" id="alma-mini-cart-insurance-message">';
-
         }
 
         if ($this->displayWidgetOnProductPage()) {
