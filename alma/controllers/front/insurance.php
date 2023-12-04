@@ -25,7 +25,8 @@
 use Alma\PrestaShop\Logger;
 use Alma\PrestaShop\Traits\AjaxTrait;
 use Alma\PrestaShop\Exceptions\AlmaException;
-use \Alma\PrestaShop\Repositories\AlmaInsuranceProductRepository;
+use Alma\PrestaShop\Repositories\AlmaInsuranceProductRepository;
+use Alma\PrestaShop\Services\InsuranceProductService;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -33,6 +34,15 @@ if (!defined('_PS_VERSION_')) {
 class AlmaInsuranceModuleFrontController extends ModuleFrontController
 {
     use AjaxTrait;
+
+    protected $insuranceProductService;
+
+    public function __construct()
+    {
+        parent::__construct();
+
+        $this->insuranceProductService = new InsuranceProductService();
+    }
 
     public function initContent()
     {
@@ -57,6 +67,16 @@ class AlmaInsuranceModuleFrontController extends ModuleFrontController
                         $this->ajaxRenderAndExit(json_encode(['success' => true]));
                     case 'removeAssociation' :
                         $this->removeAssociation($context);
+                        $this->ajaxRenderAndExit(json_encode(['success' => true]));
+                    case 'addToCartPS16' :
+                        $this->insuranceProductService->handleAddingProductInsurance(
+                            \Tools::getValue('id_product'),
+                            \Tools::getValue('alma_insurance_price'),
+                            \Tools::getValue('alma_insurance_name'),
+                            \Tools::getValue('qty'),
+                            0,
+                            \Tools::getValue('id_product_attribute')
+                        );
                         $this->ajaxRenderAndExit(json_encode(['success' => true]));
                     default:
                         throw new AlmaException(sprintf('Action unknown : %s', Tools::getValue('action')));

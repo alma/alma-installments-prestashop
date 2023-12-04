@@ -67,6 +67,38 @@ class InsuranceHelper
      */
     protected function tabsInsuranceDescription()
     {
+        if (version_compare(_PS_VERSION_, '1.7', '>=')) {
+            return $this->tabsInsuranceDescriptionAfter17();
+        }
+
+        return $this->tabsInsuranceDescriptionBefore17();
+    }
+    /**
+     * @return array[]
+     */
+    public function tabsInsuranceDescriptionBefore17()
+    {
+        return [
+            ConstantsHelper::BO_CONTROLLER_INSURANCE_CONFIGURATION_CLASSNAME => [
+                'name' => $this->module->l('Insurance Configuration'),
+                'parent' => ConstantsHelper::ALMA_MODULE_NAME,
+                'position' => 3,
+                'icon' => 'security',
+            ],
+            ConstantsHelper::BO_CONTROLLER_INSURANCE_ORDERS_CLASSNAME => [
+                'name' => $this->module->l('Insurance Orders'),
+                'parent' => ConstantsHelper::ALMA_MODULE_NAME,
+                'position' => 4,
+                'icon' => 'shopping_basket',
+            ],
+        ];
+    }
+
+    /**
+     * @return array[]
+     */
+    public function tabsInsuranceDescriptionAfter17()
+    {
         return [
             ConstantsHelper::BO_CONTROLLER_INSURANCE_CLASSNAME => [
                 'name' => $this->module->l('Insurance'),

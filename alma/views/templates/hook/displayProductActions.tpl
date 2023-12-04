@@ -1,4 +1,4 @@
-<div class="alma-widget-insurance">
+<div class="alma-widget-insurance"  id="alma-widget-insurance-product-page" {$addToCartLink}>
     <iframe id="alma-widget-insurance" src="https://protect.staging.almapay.com/almaProductInPageWidget.html"></iframe>
     <div id="alma-insurance-modal"></div>
 </div>

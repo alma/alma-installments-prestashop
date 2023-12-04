@@ -36,9 +36,15 @@ class ConstantsHelper
     const WIDGETS_CSS_URL = 'https://cdn.jsdelivr.net/npm/@alma/widgets@3.x.x/dist/widgets.min.css';
     const WIDGETS_JS_URL = 'https://cdn.jsdelivr.net/npm/@alma/widgets@3.x.x/dist/widgets.umd.js';
     const PRODUCT_SCRIPT_PATH = 'views/js/alma-product.js';
+    const PRODUCT_INSURANCE_SCRIPT_PATH = 'views/js/alma-product-insurance.js';
+    const PRODUCT_INSURANCE_16_SCRIPT_PATH = 'views/js/alma-product-insurance16.js';
     const PRODUCT_CSS_PATH = 'views/css/alma-product.css';
     const INSURANCE_PRODUCT_CSS_PATH = 'views/css/alma-insurance.css';
     const CART_SCRIPT_PATH = 'views/js/alma-cart.js';
+
+    const CART_INSURANCE_SCRIPT_PATH = 'views/js/alma-cart-insurance.js';
+    const CART_INSURANCE_16_SCRIPT_PATH = 'views/js/alma-cart-insurance16.js';
+    const MINI_CART_INSURANCE_16_SCRIPT_PATH = 'views/js/alma-mini-cart-insurance16.js';
     const INPAGE_JS_ID = 'alma-remote-inpage-js';
     const INPAGE_SCRIPT_ID = 'alma-inpage-script';
     const WIDGETS_JS_ID = 'alma-remote-widgets-js';
@@ -76,7 +82,7 @@ class ConstantsHelper
     const ALMA_INSURANCE_PRODUCT_REFERENCE = 'alma-insurance';
     const ALMA_INSURANCE_ATTRIBUTE_NAME = 'Alma Insurance (DO NOT REMOVE)';
     const ALMA_INSURANCE_ATTRIBUTE_PUBLIC_NAME = 'My Insurance';
-    const ALMA_INSURANCE_DEFAULT_CATEGORY = 1;
+
     const ALMA_INSURANCE_PRODUCT_IMAGE_URL = _PS_MODULE_DIR_ . self::ALMA_MODULE_NAME . '/views/img/alma-insurance.jpg';
 
     /**

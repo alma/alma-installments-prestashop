@@ -28,6 +28,7 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
+use Alma\PrestaShop\Helpers\ConstantsHelper;
 use Alma\PrestaShop\Helpers\InsuranceHelper;
 use Alma\PrestaShop\Helpers\SettingsHelper;
 use Alma\PrestaShop\Hooks\FrontendHookController;
@@ -76,23 +77,25 @@ class ActionCartSaveHookController extends FrontendHookController
      */
     public function run($params)
     {
-        $this->handleProductInsurance();
+        $this->handleAddingProductInsurance();
+        $this->handleRemoveInsuranceProduct();
     }
 
     /**
      * @return void
      * @throws \Alma\PrestaShop\Exceptions\InsuranceInstallException
      */
-    public function handleProductInsurance()
+    public function handleAddingProductInsurance()
     {
         if (
-            \Tools::getIsset('alma_insurance_price')
+            version_compare(_PS_VERSION_, '1.7', '>=')
+            && \Tools::getIsset('alma_insurance_price')
             && \Tools::getIsset('alma_insurance_name')
             && 1 == \Tools::getValue('add')
             && 'update' == \Tools::getValue('action')
             &&  in_array(\Tools::strtoupper(\Context::getContext()->currency->iso_code), $this->module->limited_currencies)
         ) {
-            $this->insuranceProductService->handleProductInsurance(
+            $this->insuranceProductService->handleAddingProductInsurance(
                 \Tools::getValue('id_product'),
                 \Tools::getValue('alma_insurance_price'),
                 \Tools::getValue('alma_insurance_name'),
@@ -102,4 +105,17 @@ class ActionCartSaveHookController extends FrontendHookController
         }
     }
 
+    public function handleRemoveInsuranceProduct()
+    {
+        if (
+            version_compare(_PS_VERSION_, '1.7', '<')
+            &&  'cart' == \Tools::getValue('controller')
+            && \Tools::getValue('delete')
+        ) {
+            $this->insuranceProductService->handleRemovingProductInsurance(
+                \Tools::getValue('id_product'),
+                \Tools::getValue('ipa')
+            );
+        }
+    }
 }

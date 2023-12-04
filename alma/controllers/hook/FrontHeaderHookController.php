@@ -215,8 +215,26 @@ class FrontHeaderHookController extends FrontendHookController
         $this->controller->addJS(ConstantsHelper::WIDGETS_JS_URL);
         $this->controller->addJS($this->module->_path . ConstantsHelper::PRODUCT_SCRIPT_PATH);
 
+        if($this->insuranceHelper->isInsuranceAllowedInProductPage()) {
+            $this->controller->addJS($this->module->_path . ConstantsHelper::PRODUCT_INSURANCE_16_SCRIPT_PATH);
+        }
+
         if ($this->displayWidgetOnCartPage()) {
             $this->controller->addJS($this->module->_path . ConstantsHelper::CART_SCRIPT_PATH);
+        }
+
+        if($this->insuranceHelper->isInsuranceActivated() && $this->iAmInCartPage() && $this->cartIsNotEmpty()) {
+            $this->controller->addJS($this->module->_path . ConstantsHelper::CART_INSURANCE_16_SCRIPT_PATH);
+        }
+
+        if(
+            $this->insuranceHelper->isInsuranceActivated()
+            && $this->insuranceHelper->hasInsuranceInCart()
+        ) {
+            $this->controller->addJS($this->module->_path . ConstantsHelper::MINI_CART_INSURANCE_16_SCRIPT_PATH);
+            $text = $this->module->l('To manage your purchases with Assurance, please go to the checkout page.');
+            $content .= '<input type="hidden" value="'. $text. '" id="alma-mini-cart-insurance-message">';
+
         }
 
         if ($this->displayWidgetOnProductPage()) {
@@ -224,7 +242,7 @@ class FrontHeaderHookController extends FrontendHookController
         }
 
         if (version_compare(_PS_VERSION_, '1.5.6.2', '<')) {
-            $content = '<link rel="stylesheet" href="' . ConstantsHelper::WIDGETS_CSS_URL . '">';
+            $content .= '<link rel="stylesheet" href="' . ConstantsHelper::WIDGETS_CSS_URL . '">';
         }
 
         if (version_compare(_PS_VERSION_, '1.5.6.2', '>=')) {
@@ -247,7 +265,9 @@ class FrontHeaderHookController extends FrontendHookController
         $cssPath = "modules/$this->moduleName/" . ConstantsHelper::PRODUCT_CSS_PATH;
         $cartScriptPath = "modules/$this->moduleName/" . ConstantsHelper::CART_SCRIPT_PATH;
 
-        if ($this->insuranceHelper->isInsuranceAllowedInProductPage()) {
+        if ($this->insuranceHelper->isInsuranceAllowedInProductPage()  && ($this->iAmInProductPage() || $this->iAmInHomePage())) {
+            $this->controller->addJS($this->module->_path . ConstantsHelper::PRODUCT_INSURANCE_SCRIPT_PATH);
+
             $this->controller->registerStylesheet(
                 ConstantsHelper::INSURANCE_PRODUCT_CSS_ID,
                 "modules/$this->moduleName/" . ConstantsHelper::INSURANCE_PRODUCT_CSS_PATH
@@ -258,6 +278,14 @@ class FrontHeaderHookController extends FrontendHookController
 
         if ($this->displayWidgetOnCartPage()) {
             $this->controller->registerJavascript(ConstantsHelper::CART_SCRIPT_ID, $cartScriptPath, ['priority' => 1000]);
+        }
+
+        if(
+            $this->insuranceHelper->isInsuranceActivated()
+            && $this->iAmInCartPage()
+            && $this->cartIsNotEmpty()
+        ) {
+            $this->controller->addJS($this->module->_path . ConstantsHelper::CART_INSURANCE_SCRIPT_PATH);
         }
 
         if ($this->displayWidgetOnProductPage()) {

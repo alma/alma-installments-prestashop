@@ -103,7 +103,7 @@ class HookHelper
             'version' => '1.7.1',
             'operand' => '<',
         ],
-        'actionCartSave' => 'all',
+        'actionCartSave'  => 'all',
         'actionValidateOrder' => 'all',
         'displayCartExtraProductActions' => 'all',
         'termsAndConditions' => 'all',

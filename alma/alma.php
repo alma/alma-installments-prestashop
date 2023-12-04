@@ -23,6 +23,8 @@
  */
 
 
+use Alma\PrestaShop\Helpers\ConstantsHelper;
+
 if (!defined('_PS_VERSION_')) {
     exit;
 }
@@ -148,7 +150,7 @@ class Alma extends PaymentModule
                 'parent' => 'alma',
                 'position' => null,
                 'icon' => null,
-            ],
+            ]
         ];
     }
 

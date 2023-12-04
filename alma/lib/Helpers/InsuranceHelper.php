@@ -24,18 +24,39 @@
 
 namespace Alma\PrestaShop\Helpers;
 
+use Alma\PrestaShop\Repositories\CartProductRepository;
+use Alma\PrestaShop\Repositories\ProductRepository;
 use PrestaShop\PrestaShop\Adapter\Shop\Context;
 
 class InsuranceHelper
 {
     /**
+     * @var CartProductRepository
+     */
+    public $cartProductRepository;
+
+    /**
+     * @var ProductRepository
+     */
+    public $productRepository;
+
+    /**
+     *
+     */
+    public function __construct()
+    {
+        $this->cartProductRepository = new CartProductRepository();
+        $this->productRepository = new ProductRepository();
+    }
+
+    /**
      * @return bool
      */
     public function isInsuranceAllowedInProductPage()
     {
-        return (bool) (int) SettingsHelper::get(ConstantsHelper::ALMA_SHOW_INSURANCE_WIDGET_PRODUCT, false)
-            && (bool) (int) SettingsHelper::get(ConstantsHelper::ALMA_ALLOW_INSURANCE, false)
-            && (bool) (int) SettingsHelper::get(ConstantsHelper::ALMA_ACTIVATE_INSURANCE, false);
+        return (bool)(int)SettingsHelper::get(ConstantsHelper::ALMA_SHOW_INSURANCE_WIDGET_PRODUCT, false)
+            && (bool)(int)SettingsHelper::get(ConstantsHelper::ALMA_ALLOW_INSURANCE, false)
+            && (bool)(int)SettingsHelper::get(ConstantsHelper::ALMA_ACTIVATE_INSURANCE, false);
     }
 
     /**
@@ -43,8 +64,28 @@ class InsuranceHelper
      */
     public function isInsuranceActivated()
     {
-        return (bool) (int) SettingsHelper::get(ConstantsHelper::ALMA_ALLOW_INSURANCE, false)
-            && (bool) (int) SettingsHelper::get(ConstantsHelper::ALMA_ACTIVATE_INSURANCE, false);
+        return (bool)(int)SettingsHelper::get(ConstantsHelper::ALMA_ALLOW_INSURANCE, false)
+            && (bool)(int)SettingsHelper::get(ConstantsHelper::ALMA_ACTIVATE_INSURANCE, false);
+    }
+
+    /**
+     * @return bool
+     */
+    public function hasInsuranceInCart()
+    {
+        $idInsuranceProduct = $this->productRepository->getProductIdByReference(ConstantsHelper::ALMA_INSURANCE_PRODUCT_REFERENCE);
+
+        if (!$idInsuranceProduct) {
+            return false;
+        }
+
+        /**
+         * @var \ContextCore $context
+         */
+        $context = \Context::getContext();
+        $idProduct = $this->cartProductRepository->hasProductInCart($idInsuranceProduct, $context->cart->id);
+
+        return (bool)$idProduct;
     }
 
 }
