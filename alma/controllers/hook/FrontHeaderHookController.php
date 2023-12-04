@@ -187,6 +187,10 @@ class FrontHeaderHookController extends FrontendHookController
      */
     private function assetsWidgets()
     {
+        if (version_compare(_PS_VERSION_, '1.7', '<')) {
+            $this->controller->addJS($this->module->_path . ConstantsHelper::INSURANCE_16_SCRIPT_PATH);
+        }
+
         if (
             $this->displayWidgetOnCartPage()
             || $this->displayWidgetOnProductPage()
