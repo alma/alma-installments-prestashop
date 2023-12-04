@@ -26,6 +26,49 @@
         //Insurance
         onloadAddInsuranceInputOnProductAlma();
 
+        $(document).off('click', '#add_to_cart').on('click', '#add_to_cart', function(e){
+            e.preventDefault();
+
+            if(
+                null != document.getElementById('alma_insurance_name')
+                && null != document.getElementById('alma_insurance_price')
+            ) {
+                var almaUrl = document.getElementById('alma-widget-insurance-product-page').getAttribute('data-link16')
+                var almaToken = document.getElementById('alma-widget-insurance-product-page').getAttribute('data-token')
+                var productId = document.getElementById('product_page_product_id').value;
+                var productAttributeId = document.getElementById('idCombination').value;
+                var qty = document.getElementById('quantity_wanted').value;
+                var insuranceName = document.getElementById('alma_insurance_name').value;
+                var insurancePrice = document.getElementById('alma_insurance_price').value;
+
+
+                $.ajax({
+                    type: 'POST',
+                    url: almaUrl,
+                    dataType: 'json',
+                    data: {
+                        ajax: true,
+                        token : almaToken,
+                        id_product : productId,
+                        id_product_attribute : productAttributeId,
+                        qty : qty,
+                        alma_insurance_name : insuranceName,
+                        alma_insurance_price : insurancePrice,
+                    },
+                })
+                    .success(function () {
+                        removeInsurance();
+                    })
+
+                    .error(function (e) {
+                    });
+            }
+
+        });
+
+        $(document).on('click', '#layer_cart .cross, #layer_cart .continue, .layer_cart_overlay', function(e) {
+            location.reload();
+        });
     });
 
 
@@ -103,46 +146,3 @@ function removeInsurance() {
     document.getElementById('alma_insurance_name').remove();
     document.getElementById('alma_insurance_price').remove();
 }
-$(document).off('click', '#add_to_cart').on('click', '#add_to_cart', function(e){
-    e.preventDefault();
-
-    if(
-        null != document.getElementById('alma_insurance_name')
-        && null != document.getElementById('alma_insurance_price')
-    ) {
-        var almaUrl = document.getElementById('alma-widget-insurance-product-page').getAttribute('data-link16')
-        var almaToken = document.getElementById('alma-widget-insurance-product-page').getAttribute('data-token')
-        var productId = document.getElementById('product_page_product_id').value;
-        var productAttributeId = document.getElementById('idCombination').value;
-        var qty = document.getElementById('quantity_wanted').value;
-        var insuranceName = document.getElementById('alma_insurance_name').value;
-        var insurancePrice = document.getElementById('alma_insurance_price').value;
-
-
-        $.ajax({
-            type: 'POST',
-            url: almaUrl,
-            dataType: 'json',
-            data: {
-                ajax: true,
-                token : almaToken,
-                id_product : productId,
-                id_product_attribute : productAttributeId,
-                qty : qty,
-                alma_insurance_name : insuranceName,
-                alma_insurance_price : insurancePrice,
-            },
-        })
-            .success(function () {
-                removeInsurance();
-            })
-
-            .error(function (e) {
-            });
-    }
-
-});
-
-$(document).on('click', '#layer_cart .cross, #layer_cart .continue, .layer_cart_overlay', function(e) {
-    location.reload();
-});
