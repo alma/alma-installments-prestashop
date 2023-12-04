@@ -203,23 +203,16 @@ class FrontHeaderHookController extends FrontendHookController
     private function assetsWidgets()
     {
         $content = '';
-        if (
-            version_compare(_PS_VERSION_, '1.7', '<')
-            &&  $this->insuranceHelper->isInsuranceActivated()
-        ) {
-            $this->controller->addJS($this->module->_path . ConstantsHelper::INSURANCE_16_SCRIPT_PATH);
 
-            if($this->insuranceHelper->hasInsuranceInCart()) {
-                $this->controller->addJS($this->module->_path . ConstantsHelper::MINI_CART_INSURANCE_16_SCRIPT_PATH);
-                $text = $this->module->l('To manage your purchases with Assurance, please go to the checkout page.');
-                $content .= '<input type="hidden" value="'. $text. '" id="alma-mini-cart-insurance-message">';
-
-                if( $this->iAmInOrderPage()) {
-                    $this->controller->addJS($this->module->_path . ConstantsHelper::ORDER_INSURANCE_16_SCRIPT_PATH);
-
-                }
+        // Insurance Assets
+        if( $this->insuranceHelper->isInsuranceActivated()) {
+            if (version_compare(_PS_VERSION_, '1.7', '<')) {
+                $content .= $this->manageInsuranceAssetsBefore17();
+            } else {
+                $this->manageInsuranceAssetsAfter17();
             }
         }
+
 
         if (
             $this->displayWidgetOnCartPage()
@@ -238,6 +231,38 @@ class FrontHeaderHookController extends FrontendHookController
     }
 
     /**
+     * @return string
+     */
+    protected function manageInsuranceAssetsBefore17()
+    {
+        $content = '';
+
+        $this->controller->addJS($this->module->_path . ConstantsHelper::INSURANCE_16_SCRIPT_PATH);
+
+        if($this->insuranceHelper->hasInsuranceInCart()) {
+            $this->controller->addJS($this->module->_path . ConstantsHelper::MINI_CART_INSURANCE_16_SCRIPT_PATH);
+            $text = $this->module->l('To manage your purchases with Assurance, please go to the checkout page.');
+            $content .= '<input type="hidden" value="'. $text. '" id="alma-mini-cart-insurance-message">';
+
+            if( $this->iAmInOrderPage()) {
+                $this->controller->addJS($this->module->_path . ConstantsHelper::ORDER_INSURANCE_16_SCRIPT_PATH);
+            }
+
+            if($this->iAmInCartPage()) {
+                $this->controller->addJS($this->module->_path . ConstantsHelper::CART_INSURANCE_16_SCRIPT_PATH);
+            }
+        }
+
+        if (
+            $this->insuranceHelper->isInsuranceAllowedInProductPage()
+            && $this->iAmInProductPage()
+        ) {
+            $this->controller->addJS($this->module->_path . ConstantsHelper::PRODUCT_INSURANCE_16_SCRIPT_PATH);
+        }
+
+        return $content;
+    }
+    /**
      * Manage assets for Prestashop Before 1.7.
      *
      * @return string
@@ -249,16 +274,8 @@ class FrontHeaderHookController extends FrontendHookController
         $this->controller->addJS(ConstantsHelper::WIDGETS_JS_URL);
         $this->controller->addJS($this->module->_path . ConstantsHelper::PRODUCT_SCRIPT_PATH);
 
-        if ($this->insuranceHelper->isInsuranceAllowedInProductPage()) {
-            $this->controller->addJS($this->module->_path . ConstantsHelper::PRODUCT_INSURANCE_16_SCRIPT_PATH);
-        }
-
         if ($this->displayWidgetOnCartPage()) {
             $this->controller->addJS($this->module->_path . ConstantsHelper::CART_SCRIPT_PATH);
-        }
-
-        if($this->insuranceHelper->isInsuranceActivated() && $this->iAmInCartPage() && $this->cartIsNotEmpty()) {
-            $this->controller->addJS($this->module->_path . ConstantsHelper::CART_INSURANCE_16_SCRIPT_PATH);
         }
 
         if ($this->displayWidgetOnProductPage()) {
@@ -276,6 +293,29 @@ class FrontHeaderHookController extends FrontendHookController
         return $content;
     }
 
+    public function manageInsuranceAssetsAfter17()
+    {
+        if (
+            $this->insuranceHelper->isInsuranceAllowedInProductPage()
+            && $this->iAmInProductPage()
+        ) {
+            $this->controller->addJS($this->module->_path . ConstantsHelper::PRODUCT_INSURANCE_SCRIPT_PATH);
+
+            $this->controller->registerStylesheet(
+                ConstantsHelper::INSURANCE_PRODUCT_CSS_ID,
+                "modules/$this->moduleName/" . ConstantsHelper::INSURANCE_PRODUCT_CSS_PATH
+            );
+        }
+
+
+        if(
+            $this->iAmInCartPage()
+            && $this->cartIsNotEmpty()
+        ) {
+            $this->controller->addJS($this->module->_path . ConstantsHelper::CART_INSURANCE_SCRIPT_PATH);
+        }
+
+    }
     /**
      * Manage assets for Prestashop after 1.7
      *
@@ -289,27 +329,11 @@ class FrontHeaderHookController extends FrontendHookController
         $cssPath = "modules/$this->moduleName/" . ConstantsHelper::PRODUCT_CSS_PATH;
         $cartScriptPath = "modules/$this->moduleName/" . ConstantsHelper::CART_SCRIPT_PATH;
 
-        if ($this->insuranceHelper->isInsuranceAllowedInProductPage()  && ($this->iAmInProductPage() || $this->iAmInHomePage())) {
-            $this->controller->addJS($this->module->_path . ConstantsHelper::PRODUCT_INSURANCE_SCRIPT_PATH);
-
-            $this->controller->registerStylesheet(
-                ConstantsHelper::INSURANCE_PRODUCT_CSS_ID,
-                "modules/$this->moduleName/" . ConstantsHelper::INSURANCE_PRODUCT_CSS_PATH
-            );
-        }
 
         $this->controller->registerStylesheet(ConstantsHelper::PRODUCT_CSS_ID, $cssPath);
 
         if ($this->displayWidgetOnCartPage()) {
             $this->controller->registerJavascript(ConstantsHelper::CART_SCRIPT_ID, $cartScriptPath, ['priority' => 1000]);
-        }
-
-        if(
-            $this->insuranceHelper->isInsuranceActivated()
-            && $this->iAmInCartPage()
-            && $this->cartIsNotEmpty()
-        ) {
-            $this->controller->addJS($this->module->_path . ConstantsHelper::CART_INSURANCE_SCRIPT_PATH);
         }
 
         if ($this->displayWidgetOnProductPage()) {
