@@ -107,6 +107,10 @@ class HookHelper
         'actionValidateOrder' => 'all',
         'displayCartExtraProductActions' => 'all',
         'termsAndConditions' => 'all',
+        'displayBeforeCarrier' =>  [
+            'version' => '1.7',
+            'operand' => '<',
+        ]
     ];
 
     /**
