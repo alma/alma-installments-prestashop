@@ -203,21 +203,20 @@ class FrontHeaderHookController extends FrontendHookController
     private function assetsWidgets()
     {
         $content = '';
-        if (version_compare(_PS_VERSION_, '1.7', '<')) {
+        if (
+            version_compare(_PS_VERSION_, '1.7', '<')
+            &&  $this->insuranceHelper->isInsuranceActivated()
+        ) {
             $this->controller->addJS($this->module->_path . ConstantsHelper::INSURANCE_16_SCRIPT_PATH);
 
             if(
                 $this->iAmInOrderPage()
-                && $this->insuranceHelper->isInsuranceActivated()
                 && $this->insuranceService->hasInsuranceInCart()
             ) {
                 $this->controller->addJS($this->module->_path . ConstantsHelper::ORDER_INSURANCE_16_SCRIPT_PATH);
             }
 
-            if(
-                $this->insuranceHelper->isInsuranceActivated()
-                && $this->insuranceHelper->hasInsuranceInCart()
-            ) {
+            if($this->insuranceHelper->hasInsuranceInCart()) {
                 $this->controller->addJS($this->module->_path . ConstantsHelper::MINI_CART_INSURANCE_16_SCRIPT_PATH);
                 $text = $this->module->l('To manage your purchases with Assurance, please go to the checkout page.');
                 $content .= '<input type="hidden" value="'. $text. '" id="alma-mini-cart-insurance-message">';
