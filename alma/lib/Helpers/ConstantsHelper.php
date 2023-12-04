@@ -44,6 +44,7 @@ class ConstantsHelper
 
     const CART_INSURANCE_SCRIPT_PATH = 'views/js/alma-cart-insurance.js';
     const CART_INSURANCE_16_SCRIPT_PATH = 'views/js/alma-cart-insurance16.js';
+    const MINI_CART_INSURANCE_16_SCRIPT_PATH = 'views/js/alma-mini-cart-insurance16.js';
     const INPAGE_JS_ID = 'alma-remote-inpage-js';
     const INPAGE_SCRIPT_ID = 'alma-inpage-script';
     const WIDGETS_JS_ID = 'alma-remote-widgets-js';

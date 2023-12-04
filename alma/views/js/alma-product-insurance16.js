@@ -25,7 +25,10 @@
     $(function () {
         //Insurance
         onloadAddInsuranceInputOnProductAlma();
+
     });
+
+
 
 })(jQuery);
 
@@ -49,6 +52,12 @@ function updateProduct(event) {
 // Insurance
 // ** Add input insurance in form to add to cart **
 function onloadAddInsuranceInputOnProductAlma() {
+    $(document).off('click', '.quick-view').on('click', '.quick-view', function(e){
+        e.preventDefault();
+
+        $('#alma-widget-insurance-product-page').hide();
+    });
+
     let currentResolve;
     let selectedAlmaInsurance = null;
     window.addEventListener('message', (e) => {
@@ -91,11 +100,8 @@ function removeInsurance() {
             ? almaInsuranceConfigIframeElement.contentWindow
             : null;
     almaInsuranceConfigIframe?.postMessage({ type: 'dataSentBackToWidget', data: null }, '*');
-
-    let inputsInsurance = document.getElementById('add-to-cart-or-refresh').querySelectorAll('.alma_insurance_input');
-    inputsInsurance.forEach((input) => {
-        input.remove();
-    });
+    document.getElementById('alma_insurance_name').remove();
+    document.getElementById('alma_insurance_price').remove();
 }
 $(document).off('click', '#add_to_cart').on('click', '#add_to_cart', function(e){
     e.preventDefault();
@@ -128,12 +134,15 @@ $(document).off('click', '#add_to_cart').on('click', '#add_to_cart', function(e)
             },
         })
             .success(function () {
-                console.log("success")
+                removeInsurance();
             })
 
             .error(function (e) {
-                console.log("failure")
             });
     }
 
+});
+
+$(document).on('click', '#layer_cart .cross, #layer_cart .continue, .layer_cart_overlay', function(e) {
+    location.reload();
 });

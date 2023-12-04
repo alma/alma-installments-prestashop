@@ -26,6 +26,7 @@ namespace Alma\PrestaShop\Services;
 
 use Alma\PrestaShop\Helpers\ConstantsHelper;
 use Alma\PrestaShop\Repositories\AlmaInsuranceProductRepository;
+use Alma\PrestaShop\Repositories\ProductRepository;
 
 class InsuranceProductService
 {
@@ -64,6 +65,11 @@ class InsuranceProductService
      */
     protected $cartService;
 
+    /**
+     * @var ProductRepository
+     */
+    protected $productRepository;
+
     public function __construct()
     {
         $this->context = \Context::getContext();
@@ -73,6 +79,7 @@ class InsuranceProductService
         $this->combinationProductAttributeService = new CombinationProductAttributeService();
         $this->insuranceService = new InsuranceService();
         $this->cartService = new CartService();
+        $this->productRepository = new ProductRepository();
     }
 
     /**
@@ -185,6 +192,11 @@ class InsuranceProductService
         }
     }
 
+    /**
+     * @param int $idProduct
+     * @param int $idProductAttribute
+     * @return void
+     */
     public function handleRemovingProductInsurance($idProduct, $idProductAttribute)
     {
         $insuranceProductId = $this->productRepository->getProductIdByReference(

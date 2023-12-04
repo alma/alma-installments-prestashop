@@ -1,13 +1,12 @@
-<div class="alma-data-product"
-     data-reference="{$product->reference}"
-     data-id-product="{$product->id}"
+<div class="alma-data-cart-product-insurance"
+     data-id-product="{$productId}"
      data-id-cart="{$idCart}"
      data-is-alma-insurance="{$isAlmaInsurance}"
      data-no-insurance-associated="{$associatedInsurances|count}"
 >
 
-    <div class="actions-alma-insurance-product container"   >
-        <table>
+    <div class="actions-alma-insurance-product container" style="display:none;"   >
+        <table style ="border: 1px solid #d6d4d4;border-collapse: collapse;">
         {foreach from=$associatedInsurances item=associatedInsurance key=idAlmaInsuranceProduct}
             {include file="modules/alma/views/templates/hook/_partials/cartProducts16.tpl" hasInsurance='1'}
         {/foreach}
