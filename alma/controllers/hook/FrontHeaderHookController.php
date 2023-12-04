@@ -32,6 +32,7 @@ use Alma\PrestaShop\Helpers\ConstantsHelper;
 use Alma\PrestaShop\Helpers\InsuranceHelper;
 use Alma\PrestaShop\Helpers\SettingsHelper;
 use Alma\PrestaShop\Hooks\FrontendHookController;
+use Alma\PrestaShop\Services\InsuranceService;
 
 class FrontHeaderHookController extends FrontendHookController
 {
@@ -51,6 +52,11 @@ class FrontHeaderHookController extends FrontendHookController
     protected $insuranceHelper;
 
     /**
+     * @var InsuranceService
+     */
+    protected $insuranceService;
+
+    /**
      * @param $module
      */
     public function __construct($module)
@@ -59,6 +65,7 @@ class FrontHeaderHookController extends FrontendHookController
         $this->controller = $this->context->controller;
         $this->moduleName = $this->module->name;
         $this->insuranceHelper = new InsuranceHelper();
+        $this->insuranceService = new InsuranceService();
     }
 
     /**
@@ -106,6 +113,14 @@ class FrontHeaderHookController extends FrontendHookController
     private function iAmInProductPage()
     {
         return 'product' == $this->controller->php_self || 'ProductController' == get_class($this->controller);
+    }
+
+    /**
+     * @return bool
+     */
+    protected function iAmInOrderPage()
+    {
+        return 'order' == $this->controller->php_self || 'OrderController' == get_class($this->controller);
     }
 
     /**
@@ -189,6 +204,14 @@ class FrontHeaderHookController extends FrontendHookController
     {
         if (version_compare(_PS_VERSION_, '1.7', '<')) {
             $this->controller->addJS($this->module->_path . ConstantsHelper::INSURANCE_16_SCRIPT_PATH);
+
+            if(
+                $this->iAmInOrderPage()
+                && $this->insuranceHelper->isInsuranceActivated()
+                && $this->insuranceService->hasInsuranceInCart()
+            ) {
+                $this->controller->addJS($this->module->_path . ConstantsHelper::ORDER_INSURANCE_16_SCRIPT_PATH);
+            }
         }
 
         if (
