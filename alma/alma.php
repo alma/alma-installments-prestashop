@@ -82,7 +82,14 @@ class Alma extends PaymentModule
         $this->author = 'Alma';
         $this->need_instance = false;
         $this->bootstrap = true;
-        $this->controllers = ['payment', 'validation', 'ipn', 'insurance'];
+        $controllers = ['payment', 'validation', 'ipn'];
+
+        if (version_compare(_PS_VERSION_, '1.6', '>=')) {
+            $controllers[] = 'insurance';
+        }
+
+        $this->controllers = $controllers;
+
         $this->is_eu_compatible = 1;
         $this->currencies = true;
         $this->currencies_mode = 'checkbox';

@@ -112,7 +112,9 @@ class ApiHelper
             InpageAdminFormBuilder::ALMA_ACTIVATE_INPAGE
         );
 
-        $this->handleInsuranceFlag($merchant);
+        if (version_compare(_PS_VERSION_, '1.6', '>=')) {
+            $this->handleInsuranceFlag($merchant);
+        }
 
         return $merchant;
     }

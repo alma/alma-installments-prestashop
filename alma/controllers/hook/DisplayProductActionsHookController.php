@@ -58,8 +58,7 @@ class DisplayProductActionsHookController extends FrontendHookController
     {
         return parent::canRun()
             && \Tools::strtolower($this->currentControllerName()) == 'product'
-            && $this->insuranceHelper->isInsuranceAllowedInProductPage()
-            && SettingsHelper::getMerchantId() != null;
+            && $this->insuranceHelper->isInsuranceAllowedInProductPage();
     }
 
     /**
