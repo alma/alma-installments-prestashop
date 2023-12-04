@@ -215,7 +215,7 @@ class FrontHeaderHookController extends FrontendHookController
         $this->controller->addJS(ConstantsHelper::WIDGETS_JS_URL);
         $this->controller->addJS($this->module->_path . ConstantsHelper::PRODUCT_SCRIPT_PATH);
 
-        if($this->insuranceHelper->isInsuranceAllowedInProductPage()) {
+        if ($this->insuranceHelper->isInsuranceAllowedInProductPage()) {
             $this->controller->addJS($this->module->_path . ConstantsHelper::PRODUCT_INSURANCE_16_SCRIPT_PATH);
         }
 

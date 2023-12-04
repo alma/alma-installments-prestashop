@@ -85,7 +85,6 @@ class DisplayCartExtraProductActionsHookController extends FrontendHookControlle
     public function canRun()
     {
         return parent::canRun()
-            && SettingsHelper::showEligibilityMessage()
             && $this->insuranceHelper->isInsuranceAllowedInProductPage();
     }
 

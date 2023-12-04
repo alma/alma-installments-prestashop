@@ -54,9 +54,10 @@ class InsuranceHelper
      */
     public function isInsuranceAllowedInProductPage()
     {
-        return (bool)(int)SettingsHelper::get(ConstantsHelper::ALMA_SHOW_INSURANCE_WIDGET_PRODUCT, false)
-            && (bool)(int)SettingsHelper::get(ConstantsHelper::ALMA_ALLOW_INSURANCE, false)
-            && (bool)(int)SettingsHelper::get(ConstantsHelper::ALMA_ACTIVATE_INSURANCE, false);
+        return (bool) version_compare(_PS_VERSION_, '1.6', '>=')
+            && (bool) (int) SettingsHelper::get(ConstantsHelper::ALMA_SHOW_INSURANCE_WIDGET_PRODUCT, false)
+            && (bool) (int) SettingsHelper::get(ConstantsHelper::ALMA_ALLOW_INSURANCE, false)
+            && (bool) (int) SettingsHelper::get(ConstantsHelper::ALMA_ACTIVATE_INSURANCE, false);
     }
 
     /**
@@ -64,8 +65,9 @@ class InsuranceHelper
      */
     public function isInsuranceActivated()
     {
-        return (bool)(int)SettingsHelper::get(ConstantsHelper::ALMA_ALLOW_INSURANCE, false)
-            && (bool)(int)SettingsHelper::get(ConstantsHelper::ALMA_ACTIVATE_INSURANCE, false);
+        return  (bool) version_compare(_PS_VERSION_, '1.6', '>=')
+            && (bool) (int) SettingsHelper::get(ConstantsHelper::ALMA_ALLOW_INSURANCE, false)
+            && (bool) (int) SettingsHelper::get(ConstantsHelper::ALMA_ACTIVATE_INSURANCE, false);
     }
 
     /**
