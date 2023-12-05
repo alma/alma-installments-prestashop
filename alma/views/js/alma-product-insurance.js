@@ -67,6 +67,34 @@
                 }
             );
         }
+
+
+        const btn = document.querySelector(".add-to-cart");
+        const savedBtn = btn.cloneNode(true);
+
+        let fakeButton = document.createElement('div');
+        fakeButton.setAttribute('class', 'btn btn-primary add-to-cart');
+        fakeButton.setAttribute('type', 'text');
+        fakeButton.setAttribute('value', btn.value);
+        var content = document.createTextNode(btn.value);
+        btn.before(fakeButton);
+
+        if (btn.hasChildNodes()) {
+            let children = btn.childNodes;
+
+            for (const node of children) {
+                let clone = node.cloneNode(true);
+                fakeButton.appendChild(clone);
+
+            }
+        }
+
+        btn.remove();
+        fakeButton.addEventListener("click", function (e) {
+            console.log('la');
+            openModal("popupModal");
+        });
+
     });
 })(jQuery);
 
