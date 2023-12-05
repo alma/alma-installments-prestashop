@@ -108,7 +108,7 @@ function handleInput(inputName, value, form) {
 }
 
 function removeInsurance() {
-    const almaInsuranceConfigIframeElement = document.getElementById('alma-widget-insurance')
+    const almaInsuranceConfigIframeElement = document.getElementById('product-alma-iframe')
     const almaInsuranceConfigIframe =
         almaInsuranceConfigIframeElement instanceof HTMLIFrameElement
             ? almaInsuranceConfigIframeElement.contentWindow
