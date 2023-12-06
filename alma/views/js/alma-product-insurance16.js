@@ -95,6 +95,7 @@ function updateProduct(event) {
 // Insurance
 // ** Add input insurance in form to add to cart **
 function onloadAddInsuranceInputOnProductAlma() {
+    // To hide insurance widget on a quick view product
     $(document).off('click', '.quick-view').on('click', '.quick-view', function(e){
         e.preventDefault();
 

@@ -48,6 +48,8 @@
 (function ($) {
     $(function () {
         //Insurance
+        let choiseOk = false;
+
         onloadAddInsuranceInputOnProductAlma();
         if (typeof prestashop !== 'undefined') {
             prestashop.on(
@@ -67,6 +69,18 @@
                 }
             );
         }
+        let addToCart = document.querySelector('.add-to-cart');
+        addToCart.addEventListener("click", function (event) {
+            console.log(choiseOk);
+            if (!choiseOk) {
+                event.preventDefault();
+                event.stopPropagation();
+                openModal('popupModal');
+                console.log(openModal('popupModal'));
+                console.log('add to cart');
+                choiseOk = true;
+            }
+        });
     });
 })(jQuery);
 
@@ -89,6 +103,8 @@ function addInputsInsurance(selectedAlmaInsurance) {
 
     handleInput('alma_insurance_price', selectedAlmaInsurance.option.price, formAddToCart);
     handleInput('alma_insurance_name', selectedAlmaInsurance.name, formAddToCart);
+    let addToCart = document.querySelector('.add-to-cart');
+    addToCart.click();
 }
 
 function handleInput(inputName, value, form) {
