@@ -95,9 +95,22 @@ class HookHelper
             'version' => '1.7.6',
             'operand' => '>=',
         ],
-        'actionCartSave' => 'all',
+        'actionObjectProductInCartDeleteAfter' => [
+            'version' => '1.7.1',
+            'operand' => '>=',
+        ],
+        'actionDeleteProductInCartAfter' => [
+            'version' => '1.7.1',
+            'operand' => '<',
+        ],
+        'actionCartSave'  => 'all',
         'actionValidateOrder' => 'all',
         'displayCartExtraProductActions' => 'all',
+        'termsAndConditions' => 'all',
+        'displayBeforeCarrier' =>  [
+            'version' => '1.7',
+            'operand' => '<',
+        ]
     ];
 
     /**

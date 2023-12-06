@@ -23,6 +23,8 @@
  */
 
 
+use Alma\PrestaShop\Helpers\ConstantsHelper;
+
 if (!defined('_PS_VERSION_')) {
     exit;
 }
@@ -32,7 +34,7 @@ require_once _PS_MODULE_DIR_ . 'alma/vendor/autoload.php';
 
 class Alma extends PaymentModule
 {
-    const VERSION = '3.1.1';
+    const VERSION = '3.1.2';
 
     public $_path;
     public $local_path;
@@ -76,11 +78,18 @@ class Alma extends PaymentModule
     {
         $this->name = \Alma\PrestaShop\Helpers\ConstantsHelper::ALMA_MODULE_NAME;
         $this->tab = 'payments_gateways';
-        $this->version = '3.1.1';
+        $this->version = '3.1.2';
         $this->author = 'Alma';
         $this->need_instance = false;
         $this->bootstrap = true;
-        $this->controllers = ['payment', 'validation', 'ipn'];
+        $controllers = ['payment', 'validation', 'ipn'];
+
+        if (version_compare(_PS_VERSION_, '1.6', '>=')) {
+            $controllers[] = 'insurance';
+        }
+
+        $this->controllers = $controllers;
+
         $this->is_eu_compatible = 1;
         $this->currencies = true;
         $this->currencies_mode = 'checkbox';
@@ -148,7 +157,7 @@ class Alma extends PaymentModule
                 'parent' => 'alma',
                 'position' => null,
                 'icon' => null,
-            ],
+            ]
         ];
     }
 
@@ -302,6 +311,16 @@ class Alma extends PaymentModule
     }
 
     /**
+     * @param $params
+     *
+     * @return mixed|null
+     */
+    public function hookDisplayBeforeCarrier($params)
+    {
+        return $this->runHookController('displayBeforeCarrier', $params);
+    }
+
+    /**
      * displayProductButtons is registered on PrestaShop 1.5 only, as displayProductPriceBlock wasn't available then.
      *
      * @param $params
@@ -331,9 +350,26 @@ class Alma extends PaymentModule
         return $this->runHookController('displayProductActions', $params);
     }
 
+    /**
+     * Hook the template below the product item near to the delete button
+     *
+     * @param $params
+     * @return mixed|null
+     */
     public function hookDisplayCartExtraProductActions($params)
     {
         return $this->runHookController('displayCartExtraProductActions', $params);
+    }
+
+    /**
+     * Hook to add terms and conditions
+     *
+     * @param $params
+     * @return mixed|null
+     */
+    public function hookTermsAndConditions($params)
+    {
+        return $this->runHookController('termsAndConditions', $params);
     }
 
     /**
@@ -460,6 +496,15 @@ class Alma extends PaymentModule
         return $this->runHookController('displayPayment', $params);
     }
 
+    public function hookDeleteProductInCartAfter($params)
+    {
+        return $this->hookActionObjectProductInCartDeleteAfter($params);
+    }
+
+    public function hookActionObjectProductInCartDeleteAfter($params)
+    {
+        return $this->runHookController('actionObjectProductInCartDeleteAfter', $params);
+    }
     // Deprecated for version 1.7
     public function hookDisplayPaymentReturn($params)
     {

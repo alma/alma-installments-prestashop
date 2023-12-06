@@ -22,25 +22,40 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
-namespace Alma\PrestaShop\Hooks;
-
-use Alma\PrestaShop\Helpers\SettingsHelper;
+namespace Alma\PrestaShop\Repositories;
 
 if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-abstract class FrontendHookController extends HookController
+/**
+ * Class AlmaInsuranceProductRepository.
+ *
+ * Use for Product
+ */
+class CombinationRepository
 {
-    public function canRun()
-    {
-        $isLive = SettingsHelper::getActiveMode() === ALMA_MODE_LIVE;
 
-        // Front controllers can run if the module is properly configured ...
-        return SettingsHelper::isFullyConfigured()
-            // ... and the plugin is in LIVE mode, or the visitor is an admin
-            && ($isLive || $this->loggedAsEmployee())
-            // ... and the current shop's currency is EUR
-            && in_array(\Tools::strtoupper(\Context::getContext()->currency->iso_code), $this->module->limited_currencies);
+    /**
+     * For a given product_attribute reference, returns the corresponding id.
+     *
+     * @param int $idProduct
+     * @param string $reference
+     *
+     * @return int id
+     */
+    public function getIdByReference($idProduct, $reference)
+    {
+        if (empty($reference)) {
+            return 0;
+        }
+
+        $query = new \DbQuery();
+        $query->select('pa.id_product_attribute');
+        $query->from('product_attribute', 'pa');
+        $query->where('pa.reference = "' . (string) $reference . '"');
+        $query->where('pa.id_product = ' . (int)$idProduct);
+
+        return \Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue($query);
     }
 }

@@ -1,6 +1,5 @@
-<?php
 /**
- * 2018-2023 Alma SAS.
+ * 2018-2023 Alma SAS
  *
  * THE MIT LICENSE
  *
@@ -21,26 +20,24 @@
  * @copyright 2018-2023 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
+ (function ($) {
+    $(function () {
 
-namespace Alma\PrestaShop\Hooks;
+        function iniFrame() {
+            if (window.self !== window.top) {
+                // !== the operator checks if the operands are
+                // have not the same value or not equal type
+                window.self.onload = function(e){
+                    if(document.getElementById('alma-widget-insurance-product-page')) {
+                        document.getElementById('alma-widget-insurance-product-page').remove();
+                    }
+                }
+            }
+        }
 
-use Alma\PrestaShop\Helpers\SettingsHelper;
+        iniFrame();
+    });
 
-if (!defined('_PS_VERSION_')) {
-    exit;
-}
+ })(jQuery);
 
-abstract class FrontendHookController extends HookController
-{
-    public function canRun()
-    {
-        $isLive = SettingsHelper::getActiveMode() === ALMA_MODE_LIVE;
 
-        // Front controllers can run if the module is properly configured ...
-        return SettingsHelper::isFullyConfigured()
-            // ... and the plugin is in LIVE mode, or the visitor is an admin
-            && ($isLive || $this->loggedAsEmployee())
-            // ... and the current shop's currency is EUR
-            && in_array(\Tools::strtoupper(\Context::getContext()->currency->iso_code), $this->module->limited_currencies);
-    }
-}

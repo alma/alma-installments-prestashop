@@ -93,36 +93,7 @@
             window.__alma_refreshWidgets = refreshWidgets;
         }
 
-        // Insurance
-        onloadInsuranceItemCartAlma();
-        // Reload item cart for Prestashop 1.7+ when quantity change
-        if (window.prestashop != null && window.prestashop.on != null) {
-            prestashop.on("updatedCart", onloadInsuranceItemCartAlma);
-        }
     });
+
+
 })(jQuery);
-
-// Insurance
-// ** Display extra info for insurance under the item product on cart **
-function onloadInsuranceItemCartAlma() {
-    let itemsCart = document.querySelectorAll('.cart-items .cart-item');
-
-    itemsCart.forEach((item) => {
-        let dataProduct = item.querySelector('.alma-data-product');
-        let actionsInsuranceProduct = dataProduct.querySelector('.actions-alma-insurance-product');
-        let isAlmaInsuranceProduct = parseInt(dataProduct.dataset.isAlmaInsurance);
-        let noInsuranceAssociated = parseInt(dataProduct.dataset.noInsuranceAssociated);
-
-        if (!isAlmaInsuranceProduct && noInsuranceAssociated) {
-            actionsInsuranceProduct.style.display = 'block';
-            item.append(actionsInsuranceProduct);
-            let formQty = item.querySelector('.qty');
-
-            formQty.querySelector('input').readOnly = true;
-            formQty.querySelector('.input-group-btn-vertical').remove();
-        }
-        if (isAlmaInsuranceProduct) {
-            item.remove();
-        }
-    });
-}

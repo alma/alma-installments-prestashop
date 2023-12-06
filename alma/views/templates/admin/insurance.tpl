@@ -24,7 +24,7 @@
     let save = document.getElementById('alma_config_form_submit_btn');
     save.addEventListener('click', async () => {
         let messageCallback = (e) => {
-            if (currentResolve && e.origin === '{$domainUrl}') {
+            if (currentResolve && e.origin === '{$domainInsuranceUrl}') {
                 currentResolve(e.data)
                 $.ajax({
                     type: 'POST',
@@ -32,7 +32,7 @@
                     dataType: 'json',
                     data: {
                         ajax: true,
-                        controller: '{Alma\PrestaShop\Helpers\ConstantsHelper::BO_CONTROLLER_INSURANCE_CONFIGURATION_CLASSNAME}',
+                        controller: '{$insuranceConfigurationController}',
                         action: 'SaveConfigInsurance',
                         token: '{$token}',
                         config: e.data

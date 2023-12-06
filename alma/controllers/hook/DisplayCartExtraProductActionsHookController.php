@@ -26,6 +26,7 @@ namespace Alma\PrestaShop\Controllers\Hook;
 
 use Alma\PrestaShop\Exceptions\InsuranceNotFoundException;
 use Alma\PrestaShop\Helpers\ConstantsHelper;
+use Alma\PrestaShop\Helpers\ImageHelper;
 use Alma\PrestaShop\Helpers\InsuranceHelper;
 use Alma\PrestaShop\Helpers\SettingsHelper;
 use Alma\PrestaShop\Hooks\FrontendHookController;
@@ -56,6 +57,14 @@ class DisplayCartExtraProductActionsHookController extends FrontendHookControlle
      * @var AlmaInsuranceProductRepository
      */
     protected $almaInsuranceProductRepository;
+    /**
+     * @var ImageHelper
+     */
+    protected $imageHelper;
+    /**
+     * @var \Link
+     */
+    protected $link;
 
     /**
      * @param $module
@@ -65,6 +74,8 @@ class DisplayCartExtraProductActionsHookController extends FrontendHookControlle
         $this->insuranceHelper = new InsuranceHelper();
         $this->productRepository = new ProductRepository();
         $this->almaInsuranceProductRepository = new AlmaInsuranceProductRepository();
+        $this->imageHelper = new ImageHelper();
+        $this->link = new \Link;
         parent::__construct($module);
     }
 
@@ -74,13 +85,13 @@ class DisplayCartExtraProductActionsHookController extends FrontendHookControlle
     public function canRun()
     {
         return parent::canRun()
-            && SettingsHelper::showEligibilityMessage()
             && $this->insuranceHelper->isInsuranceAllowedInProductPage();
     }
 
     /**
      * @param $params
      * @return mixed
+     * @throws InsuranceNotFoundException
      */
     public function run($params)
     {
@@ -101,40 +112,73 @@ class DisplayCartExtraProductActionsHookController extends FrontendHookControlle
         );
 
         if (!$insuranceProductId) {
-            // @todo la recréer ? envoyer un message
             throw new InsuranceNotFoundException();
         }
 
         $resultInsurance = [];
 
-        if($product->id !== $insuranceProductId){
-            $almaInsurances = $this->almaInsuranceProductRepository->getIdsByCartIdAndShopAndProduct(
-                $product,
-                $cart->id,
-                $this->context->shop->id
-            );
+        // Presta 1.6
+        if (version_compare(_PS_VERSION_, '1.7', '<')) {
+            $idProduct = $product['id_product'];
+            $productQuantity = $product['quantity'];
+            $template = 'displayCartExtraProductActions16.tpl';
+        } else {
+            $idProduct = $product->id;
+            $productQuantity = $product->quantity;
+            $template = 'displayCartExtraProductActions.tpl';
+        }
+
+        if($idProduct !== $insuranceProductId){
+            if (version_compare(_PS_VERSION_, '1.7', '<')) {
+                $almaInsurances = $this->almaInsuranceProductRepository->getIdsByCartIdAndShopAndProductBefore17(
+                    $product,
+                    $cart->id,
+                    $this->context->shop->id
+                );
+            } else {
+                $almaInsurances = $this->almaInsuranceProductRepository->getIdsByCartIdAndShopAndProduct(
+                    $product,
+                    $cart->id,
+                    $this->context->shop->id
+                );
+            }
 
             foreach ($almaInsurances as $almaInsurance) {
                 $almaInsuranceProduct = new \ProductCore((int)$almaInsurance['id_product_insurance']);
-                $almaProductAttribute = new \AttributeCore((int)$almaInsurance['id_product_attribute_insurance']);
+                $almaProductAttribute = new \CombinationCore((int)$almaInsurance['id_product_attribute_insurance']);
+                $idImage = $almaInsuranceProduct->getImages($this->context->language->id)[0]['id_image'];
+                $linkRewrite = $almaInsuranceProduct->link_rewrite[$this->context->language->id];
                 $resultInsurance[$almaInsurance['id_alma_insurance_product']] = [
                     'insuranceProduct' => $almaInsuranceProduct,
                     'insuranceProductAttribute' => $almaProductAttribute,
-                    'price' => $almaInsurance['price']
+                    'price' => $almaInsurance['price'],
+                    'name' => $almaInsuranceProduct->name[$this->context->language->id],
+                    'urlImage' => '//' . $this->link->getImageLink(
+                        $linkRewrite,
+                        $idImage,
+                        $this->imageHelper->getFormattedImageTypeName('cart')
+                    ),
                 ];
             }
-
         }{
+
+        $ajaxLinkRemoveProduct = $this->link->getModuleLink('alma', 'insurance', ["action" => "removeProductFromCart"]);
+        $ajaxLinkRemoveAssociation = $this->link->getModuleLink('alma', 'insurance', ["action" => "removeAssociation"]);
+
             $this->context->smarty->assign([
                 'idCart' => $cart->id,
                 'idLanguage' => $this->context->language->id,
-                'nbProductWithoutInsurance' => $product->quantity - count($resultInsurance),
+                'nbProductWithoutInsurance' => $productQuantity - count($resultInsurance),
                 'product' => $product,
                 'associatedInsurances' => $resultInsurance,
-                'isAlmaInsurance' => $product->id === $insuranceProductId ? 1 : 0,
+                'isAlmaInsurance' => $idProduct === $insuranceProductId ? 1 : 0,
+                'ajaxLinkAlmaRemoveProduct' => $ajaxLinkRemoveProduct,
+                'ajaxLinkAlmaRemoveAssociation' => $ajaxLinkRemoveAssociation,
+                'token' => \Tools::getToken(false),
+                'idProduct' => $idProduct
             ]);
 
-            return $this->module->display($this->module->file, 'displayCartExtraProductActions.tpl');
+            return $this->module->display($this->module->file, $template);
         }
     }
 }

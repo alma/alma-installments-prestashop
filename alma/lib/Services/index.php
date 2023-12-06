@@ -21,26 +21,10 @@
  * @copyright 2018-2023 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
-
-namespace Alma\PrestaShop\Hooks;
-
-use Alma\PrestaShop\Helpers\SettingsHelper;
-
-if (!defined('_PS_VERSION_')) {
-    exit;
-}
-
-abstract class FrontendHookController extends HookController
-{
-    public function canRun()
-    {
-        $isLive = SettingsHelper::getActiveMode() === ALMA_MODE_LIVE;
-
-        // Front controllers can run if the module is properly configured ...
-        return SettingsHelper::isFullyConfigured()
-            // ... and the plugin is in LIVE mode, or the visitor is an admin
-            && ($isLive || $this->loggedAsEmployee())
-            // ... and the current shop's currency is EUR
-            && in_array(\Tools::strtoupper(\Context::getContext()->currency->iso_code), $this->module->limited_currencies);
-    }
-}
+header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
+header('Last-Modified: ' . gmdate('D, d M Y H:i:s') . ' GMT');
+header('Cache-Control: no-store, no-cache, must-revalidate');
+header('Cache-Control: post-check=0, pre-check=0', false);
+header('Pragma: no-cache');
+header('Location: ../');
+exit;

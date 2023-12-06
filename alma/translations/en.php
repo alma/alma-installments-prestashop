@@ -126,6 +126,7 @@ $_MODULE['<{alma}prestashop>producteligibilityadminformbuilder_97cadaaeae5141e73
 $_MODULE['<{alma}prestashop>producteligibilityadminformbuilder_500cde25580890603dc759aac02ff085'] = 'Display widget on product page';
 $_MODULE['<{alma}prestashop>debugadminformbuilder_3132e398e6e7acace9290305a55a7d25'] = 'Activate logging';
 $_MODULE['<{alma}prestashop>debugadminformbuilder_1bd879809ceec8809db58ca2f12965bc'] = 'Debug options';
+$_MODULE['<{alma}prestashop>attributegrouprepository_ebe173959cfb44d5646fd3b379490b79'] = 'My Insurance';
 $_MODULE['<{alma}prestashop>paymentvalidation_efa820507b1951ee5722003639b1a0b0'] = 'Alma Monthly Installments are not available for this currency';
 $_MODULE['<{alma}prestashop>paymentvalidation_1d879e270cfb195f257aab3116618d8b'] = 'Alma - +%d days payment';
 $_MODULE['<{alma}prestashop>paymentvalidation_2ea09287a94f2bc88b459fc7d5a31b6b'] = 'Alma - Pay now';
@@ -171,6 +172,7 @@ $_MODULE['<{alma}prestashop>displayrefundshookcontroller_44ffd38a6dea695cbe2b34e
 $_MODULE['<{alma}prestashop>displayrefundshookcontroller_88d0b8b8a18adb1a2d0e05d3c766743f'] = 'Amount (Max. %s):';
 $_MODULE['<{alma}prestashop>displayrefundshookcontroller_6036af1bc6455aea1332546921cae25b'] = 'Amount to refund...';
 $_MODULE['<{alma}prestashop>displayrefundshookcontroller_becd29bb1a0004cdfc177e9bb117e56f'] = 'Proceed the refund';
+$_MODULE['<{alma}prestashop>termsandconditionshookcontroller_15455b9d26104fc75cdf3f6c47cdd3ab'] = 'By accepting to subscribe to Alma insurance, I confirm my thorough review, acceptance, and retention of the general terms outlined in the information booklet and the insurance product details. Additionally, I consent to receiving contractual information by e-mail for the purpose of securely storing it in a durable format.';
 $_MODULE['<{alma}prestashop>getcontenthookcontroller_bf17ac149e2e7a530c677e9bd51d3fd2'] = 'Modules';
 $_MODULE['<{alma}prestashop>getcontenthookcontroller_f805369aef0b94a941a131e9a2b72ab5'] = 'Module Manager';
 $_MODULE['<{alma}prestashop>getcontenthookcontroller_c6e24f81cb99e08c3d56b191c00aea28'] = 'Module Manager - List';

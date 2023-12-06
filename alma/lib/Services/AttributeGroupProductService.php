@@ -22,25 +22,43 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
-namespace Alma\PrestaShop\Hooks;
+namespace Alma\PrestaShop\Services;
 
-use Alma\PrestaShop\Helpers\SettingsHelper;
+use Alma\PrestaShop\Repositories\AttributeGroupRepository;
 
-if (!defined('_PS_VERSION_')) {
-    exit;
-}
-
-abstract class FrontendHookController extends HookController
+class AttributeGroupProductService
 {
-    public function canRun()
-    {
-        $isLive = SettingsHelper::getActiveMode() === ALMA_MODE_LIVE;
+    /**
+     * @var \ContextCore
+     */
+    protected $context;
 
-        // Front controllers can run if the module is properly configured ...
-        return SettingsHelper::isFullyConfigured()
-            // ... and the plugin is in LIVE mode, or the visitor is an admin
-            && ($isLive || $this->loggedAsEmployee())
-            // ... and the current shop's currency is EUR
-            && in_array(\Tools::strtoupper(\Context::getContext()->currency->iso_code), $this->module->limited_currencies);
+    /**
+     * @var AttributeGroupRepository
+     */
+    protected $attributeGroupRepository;
+
+    public function __construct() {
+        $this->context = \Context::getContext();
+        $this->attributeGroupRepository = new AttributeGroupRepository();
+    }
+
+    /**
+     * @param string $name
+     * @return int
+     */
+    public function getIdAttributeGroupByName($name)
+    {
+        $attributeGroupId = $this->attributeGroupRepository->getAttributeIdByName(
+            $name,
+            $this->context->language->id
+        );
+
+        if (!$attributeGroupId) {
+            $attributeGroup = $this->attributeGroupRepository->createInsuranceAttributeGroup();
+            $attributeGroupId = $attributeGroup->id;
+        }
+
+        return $attributeGroupId;
     }
 }

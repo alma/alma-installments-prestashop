@@ -1,6 +1,5 @@
-<?php
 /**
- * 2018-2023 Alma SAS.
+ * 2018-2023 Alma SAS
  *
  * THE MIT LICENSE
  *
@@ -21,26 +20,32 @@
  * @copyright 2018-2023 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
+ (function ($) {
+    $(function () {
 
-namespace Alma\PrestaShop\Hooks;
+        let itemsCart = document.querySelectorAll('.ajax_cart_block_remove_link');
 
-use Alma\PrestaShop\Helpers\SettingsHelper;
+        itemsCart.forEach((item) => {
+            item.remove();
+        });
 
-if (!defined('_PS_VERSION_')) {
-    exit;
-}
+        let itemsCartNames = document.querySelectorAll('.cart_block_product_name');
 
-abstract class FrontendHookController extends HookController
-{
-    public function canRun()
-    {
-        $isLive = SettingsHelper::getActiveMode() === ALMA_MODE_LIVE;
+        itemsCartNames.forEach((item) => {
+            item.href = '#';
+        });
 
-        // Front controllers can run if the module is properly configured ...
-        return SettingsHelper::isFullyConfigured()
-            // ... and the plugin is in LIVE mode, or the visitor is an admin
-            && ($isLive || $this->loggedAsEmployee())
-            // ... and the current shop's currency is EUR
-            && in_array(\Tools::strtoupper(\Context::getContext()->currency->iso_code), $this->module->limited_currencies);
-    }
-}
+
+        buttonOrder = document.querySelector('.products');
+        if(buttonOrder) {
+            let message = document.createElement('div');
+            message.style = "margin:10px";
+            let p = document.createElement('p');
+            p.innerHTML = document.getElementById('alma-mini-cart-insurance-message').value;
+            buttonOrder.append(message);
+            message.append(p);
+        }
+
+    });
+
+})(jQuery);

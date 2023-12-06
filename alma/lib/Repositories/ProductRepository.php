@@ -26,7 +26,6 @@ namespace Alma\PrestaShop\Repositories;
 
 use Alma\PrestaShop\Helpers\ConstantsHelper;
 use Alma\PrestaShop\Helpers\LocaleHelper;
-use PrestaShop\PrestaShop\Adapter\Import\ImportDataFormatter;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -41,14 +40,20 @@ class ProductRepository
 {
     const PRODUCT_TYPE_COMBINATIONS = 'combinations';
     const VISIBILITY_NONE = 'none';
+
     /**
      * @var LocaleHelper
      */
-    private $localeHelper;
+    protected $localeHelper;
+    /**
+     * @var \Module
+     */
+    private $module;
 
     public function __construct()
     {
         $this->localeHelper = new LocaleHelper();
+        $this->module = \Module::getInstanceByName(ConstantsHelper::ALMA_MODULE_NAME);
     }
 
     /**
@@ -190,18 +195,59 @@ class ProductRepository
     public function createInsuranceProduct()
     {
         /**
+         * @var \ContextCore $context
+         */
+        $context = \Context::getContext();
+
+        $categories =  \Category::getRootCategories($context->language->id);
+
+        if(isset($categories[0]['id_category'])) {
+            $id_root = $categories[0]['id_category'];
+        } else {
+            $id_root = $context->shop->id_category;
+        }
+
+        /*
          * @var \ProductCore $product
          */
+        $insuranceProductName = $this->module->l(ConstantsHelper::ALMA_INSURANCE_PRODUCT_NAME, 'ProductRepository');
         $product = new \Product();
-        $product->name = $this->localeHelper->createMultiLangField(ConstantsHelper::ALMA_INSURANCE_PRODUCT_NAME);
+        $product->name = $this->localeHelper->createMultiLangField($insuranceProductName);
         $product->reference = ConstantsHelper::ALMA_INSURANCE_PRODUCT_REFERENCE;
-        $product->link_rewrite = $this->localeHelper->createMultiLangField(\Tools::str2url(ConstantsHelper::ALMA_INSURANCE_PRODUCT_NAME));
-        $product->id_category_default = ConstantsHelper::ALMA_INSURANCE_DEFAULT_CATEGORY;
+        $product->link_rewrite = $this->localeHelper->createMultiLangField(\Tools::str2url($insuranceProductName));
+        $product->id_category_default = $id_root;
         $product->product_type = self::PRODUCT_TYPE_COMBINATIONS;
         $product->visibility = self::VISIBILITY_NONE;
-        $product->addToCategories(ConstantsHelper::ALMA_INSURANCE_DEFAULT_CATEGORY);
+
+        if (version_compare(_PS_VERSION_, '1.7.8', '<')) {
+            $product->out_of_stock = 1;
+        }
+
         $product->add();
 
+        $product->addToCategories($id_root);
+
+        \StockAvailable::setProductOutOfStock(
+            $product->id,
+            1
+        );
+
+        if (version_compare(_PS_VERSION_, '1.7.8', '<')) {
+            \StockAvailable::setProductDependsOnStock(
+                $product->id,
+                false
+            );
+        }
+
         return $product;
+    }
+
+    /**
+     * @param int $idProduct
+     * @return \ProductCore
+     */
+    public function getProduct($idProduct)
+    {
+        return new \Product((int)$idProduct);
     }
 }

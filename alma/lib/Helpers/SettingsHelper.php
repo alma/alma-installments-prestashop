@@ -622,7 +622,7 @@ class SettingsHelper
      */
     public static function getProductPriceQuerySelector()
     {
-        return static::get('ALMA_PRODUCT_PRICE_SELECTOR', '[itemprop=price],#our_price_display');
+        return static::get('ALMA_PRODUCT_PRICE_SELECTOR', '[itemprop=price],#our_price_display,.modal-body .current-price-value');
     }
 
     /**

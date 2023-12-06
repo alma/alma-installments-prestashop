@@ -61,8 +61,7 @@ class DisplayProductActionsHookController extends FrontendHookController
     {
         return parent::canRun()
             && \Tools::strtolower($this->currentControllerName()) == 'product'
-            && $this->insuranceHelper->isInsuranceAllowedInProductPage()
-            && SettingsHelper::getMerchantId() != null;
+            && $this->insuranceHelper->isInsuranceAllowedInProductPage();
     }
 
     /**
@@ -72,7 +71,24 @@ class DisplayProductActionsHookController extends FrontendHookController
      */
     public function run($params)
     {
+        $addToCartLink = '';
+        $oldPSVersion = false;
+
+        if (version_compare(_PS_VERSION_, '1.7', '<')) {
+
+            /**
+             * @var \LinkCore $link
+             */
+            $link = new \Link;
+            $ajaxAddToCart = $link->getModuleLink('alma', 'insurance', ["action" => "addToCartPS16"]);
+            $addToCartLink = ' data-link16="' . $ajaxAddToCart . '" data-token="'.\Tools::getToken(false).'" ';
+            $oldPSVersion = true;
+
+        }
+
         $this->context->smarty->assign([
+            'addToCartLink' => $addToCartLink,
+            'oldPSVersion' => $oldPSVersion,
             'iframeUrl' => $this->adminInsuranceHelper->envUrl() . ConstantsHelper::FO_IFRAME_WIDGET_INSURANCE_PATH,
             'scriptModalUrl' => $this->adminInsuranceHelper->envUrl() . ConstantsHelper::SCRIPT_MODAL_WIDGET_INSURANCE_PATH,
         ]);
