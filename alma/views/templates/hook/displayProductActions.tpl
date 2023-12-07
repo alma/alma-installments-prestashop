@@ -1,5 +1,5 @@
 {if isset($layout) || $oldPSVersion == 1}
-    <div class="alma-widget-insurance"  id="alma-widget-insurance-product-page" data-alma-insurance-settings="{$settingsInsurance}" {$addToCartLink}>
+    <div class="alma-widget-insurance" id="alma-widget-insurance-product-page" data-alma-insurance-settings="{$settingsInsurance}" {$addToCartLink}>
         <iframe id="product-alma-iframe" src="{$iframeUrl}"></iframe>
         <div id="alma-insurance-modal"></div>
     </div>
