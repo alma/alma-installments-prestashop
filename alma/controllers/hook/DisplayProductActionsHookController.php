@@ -31,7 +31,6 @@ if (!defined('_PS_VERSION_')) {
 use Alma\PrestaShop\Helpers\Admin\InsuranceHelper as AdminInsuranceHelper;
 use Alma\PrestaShop\Helpers\ConstantsHelper;
 use Alma\PrestaShop\Helpers\InsuranceHelper;
-use Alma\PrestaShop\Helpers\SettingsHelper;
 use Alma\PrestaShop\Hooks\FrontendHookController;
 
 class DisplayProductActionsHookController extends FrontendHookController
@@ -43,6 +42,10 @@ class DisplayProductActionsHookController extends FrontendHookController
      * @var InsuranceHelper
      */
     protected $insuranceHelper;
+    /**
+     * @var AdminInsuranceHelper
+     */
+    private $adminInsuranceHelper;
 
     /**
      * @param $module
@@ -68,11 +71,13 @@ class DisplayProductActionsHookController extends FrontendHookController
      * @param $params
      *
      * @return mixed
+     * @throws \PrestaShopException
      */
     public function run($params)
     {
         $addToCartLink = '';
         $oldPSVersion = false;
+        $settings = json_encode($this->adminInsuranceHelper->mapDbFieldsWithIframeParams());
 
         if (version_compare(_PS_VERSION_, '1.7', '<')) {
 
@@ -89,6 +94,7 @@ class DisplayProductActionsHookController extends FrontendHookController
         $this->context->smarty->assign([
             'addToCartLink' => $addToCartLink,
             'oldPSVersion' => $oldPSVersion,
+            'settingsInsurance' => $settings,
             'iframeUrl' => $this->adminInsuranceHelper->envUrl() . ConstantsHelper::FO_IFRAME_WIDGET_INSURANCE_PATH,
             'scriptModalUrl' => $this->adminInsuranceHelper->envUrl() . ConstantsHelper::SCRIPT_MODAL_WIDGET_INSURANCE_PATH,
         ]);
