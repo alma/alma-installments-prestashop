@@ -48,7 +48,6 @@ let addToCartFlow = false;
                     }
                     if (addToCartFlow) {
                         addToCart.click();
-                        resetInsurance();
                         insuranceSelected = false;
                         addToCartFlow = false;
                     }
@@ -107,13 +106,17 @@ function handleInput(inputName, value, form) {
 }
 
 function removeInsurance() {
+    // TODO : Can Remove if the resetInsurance works
     const almaInsuranceConfigIframeElement = document.getElementById('product-alma-iframe')
     const almaInsuranceConfigIframe =
         almaInsuranceConfigIframeElement instanceof HTMLIFrameElement
             ? almaInsuranceConfigIframeElement.contentWindow
             : null;
     almaInsuranceConfigIframe?.postMessage({ type: 'dataSentBackToWidget', data: null }, '*');
+    // Jusqu'à là
 
+    // TODO : Active when the resetInsurance();
+    // resetInsurance();
     let inputsInsurance = document.getElementById('add-to-cart-or-refresh').querySelectorAll('.alma_insurance_input');
     inputsInsurance.forEach((input) => {
         input.remove();
