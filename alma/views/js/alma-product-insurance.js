@@ -20,50 +20,44 @@
  * @copyright 2018-2023 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
+const settings = JSON.parse(document.querySelector('#alma-widget-insurance-product-page').dataset.almaInsuranceSettings);
+let insuranceSelected = false;
+let selectedAlmaInsurance = null;
+let addToCartFlow = false;
 
-// Insurance
-
-/**
- * 2018-2023 Alma SAS
- *
- * THE MIT LICENSE
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
- * documentation files (the "Software"), to deal in the Software without restriction, including without limitation
- * the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and
- * to permit persons to whom the Software is furnished to do so, subject to the following conditions:
- * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the
- * Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE
- * WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
- * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
- * IN THE SOFTWARE.
- *
- * @author    Alma SAS <contact@getalma.eu>
- * @copyright 2018-2023 Alma SAS
- * @license   https://opensource.org/licenses/MIT The MIT License
- */
 (function ($) {
     $(function () {
         //Insurance
         onloadAddInsuranceInputOnProductAlma();
+        openModalOnAddToCart();
         if (typeof prestashop !== 'undefined') {
             prestashop.on(
                 'updateProduct',
                 function (event) {
+                    let addToCart = document.querySelector('.add-to-cart');
                     let modalIsClosed = false;
+
                     if (event.event !== undefined) {
                         modalIsClosed = event.event.namespace === 'bs.modal' && event.event.type === 'hidden';
                     }
                     if (modalIsClosed) {
                         removeInsurance();
                     }
-
-                    if(typeof event.selectedAlmaInsurance !== 'undefined' && event.selectedAlmaInsurance !== null) {
+                    if(typeof event.selectedAlmaInsurance !== 'undefined' && event.selectedAlmaInsurance !== null ) {
+                        insuranceSelected = true;
                         addInputsInsurance(event.selectedAlmaInsurance);
                     }
+                    if (addToCartFlow) {
+                        addToCart.click();
+                        insuranceSelected = false;
+                        addToCartFlow = false;
+                    }
+                }
+            );
+            prestashop.on(
+                'updatedProduct',
+                function () {
+                    openModalOnAddToCart();
                 }
             );
         }
@@ -73,9 +67,10 @@
 // ** Add input insurance in form to add to cart **
 function onloadAddInsuranceInputOnProductAlma() {
     let currentResolve;
-    let selectedAlmaInsurance = null;
+
     window.addEventListener('message', (e) => {
         if (e.data.type === 'getSelectedInsuranceData') {
+            insuranceSelected = true;
             selectedAlmaInsurance = e.data.selectedInsuranceData;
             prestashop.emit('updateProduct', {selectedAlmaInsurance: selectedAlmaInsurance});
         } else if (currentResolve) {
@@ -108,15 +103,26 @@ function handleInput(inputName, value, form) {
 }
 
 function removeInsurance() {
-    const almaInsuranceConfigIframeElement = document.getElementById('product-alma-iframe')
-    const almaInsuranceConfigIframe =
-        almaInsuranceConfigIframeElement instanceof HTMLIFrameElement
-            ? almaInsuranceConfigIframeElement.contentWindow
-            : null;
-    almaInsuranceConfigIframe?.postMessage({ type: 'dataSentBackToWidget', data: null }, '*');
-
+    resetInsurance();
+    insuranceSelected = false;
     let inputsInsurance = document.getElementById('add-to-cart-or-refresh').querySelectorAll('.alma_insurance_input');
     inputsInsurance.forEach((input) => {
         input.remove();
     });
+}
+
+function openModalOnAddToCart() {
+    if (settings.is_add_to_cart_popup_insurance_activated === 'true') {
+        let addToCart = document.querySelector('.add-to-cart');
+        addToCart.addEventListener("click", function (event) {
+            if (!insuranceSelected) {
+                event.preventDefault();
+                event.stopPropagation();
+                openModal('popupModal');
+                insuranceSelected = true;
+                addToCartFlow = true;
+            }
+            insuranceSelected = false;
+        });
+    }
 }
