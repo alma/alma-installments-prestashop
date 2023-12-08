@@ -29,6 +29,7 @@ let addToCartFlow = false;
     $(function () {
         //Insurance
         onloadAddInsuranceInputOnProductAlma();
+        openModalOnAddToCart();
         if (typeof prestashop !== 'undefined') {
             prestashop.on(
                 'updateProduct',
@@ -53,8 +54,6 @@ let addToCartFlow = false;
                     }
                 }
             );
-        }
-        if (typeof prestashop !== 'undefined') {
             prestashop.on(
                 'updatedProduct',
                 function () {
@@ -62,7 +61,6 @@ let addToCartFlow = false;
                 }
             );
         }
-        openModalOnAddToCart();
     });
 })(jQuery);
 
