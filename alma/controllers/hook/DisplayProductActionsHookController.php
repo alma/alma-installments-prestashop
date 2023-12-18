@@ -31,6 +31,8 @@ if (!defined('_PS_VERSION_')) {
 use Alma\PrestaShop\Helpers\Admin\InsuranceHelper as AdminInsuranceHelper;
 use Alma\PrestaShop\Helpers\ConstantsHelper;
 use Alma\PrestaShop\Helpers\InsuranceHelper;
+use Alma\PrestaShop\Helpers\PriceHelper;
+use Alma\PrestaShop\Helpers\SettingsHelper;
 use Alma\PrestaShop\Hooks\FrontendHookController;
 
 class DisplayProductActionsHookController extends FrontendHookController
@@ -79,8 +81,53 @@ class DisplayProductActionsHookController extends FrontendHookController
         $oldPSVersion = false;
         $settings = json_encode($this->adminInsuranceHelper->mapDbFieldsWithIframeParams());
 
-        if (version_compare(_PS_VERSION_, '1.7', '<')) {
+        // TODO : need to be refactor
+        /**
+         * @var \Product $product
+         */
+        $productParams = isset($params['product']) ? $params['product'] : [];
 
+        $productId = isset($productParams['id_product'])
+            ? $productParams['id_product']
+            : \Tools::getValue('id_product');
+
+        $productAttributeId = isset($productParams['id_product_attribute'])
+            ? $productParams['id_product_attribute']
+            : null;
+
+        $cmsReference = $productId . '-' . $productAttributeId;
+
+        if (!isset($productParams['quantity_wanted']) && !isset($productParams['minimal_quantity'])) {
+            $quantity = 1;
+        } elseif (!isset($productParams['quantity_wanted'])) {
+            $quantity = (int) $productParams['minimal_quantity'];
+        } elseif (!isset($productParams['minimal_quantity'])) {
+            $quantity = (int) $productParams['quantity_wanted'];
+        } else {
+            $quantity = max((int) $productParams['minimal_quantity'], (int) $productParams['quantity_wanted']);
+        }
+        if ($quantity === 0) {
+            $quantity = 1;
+        }
+
+        $price = PriceHelper::convertPriceToCents(
+            \Product::getPriceStatic(
+                $productId,
+                true,
+                $productAttributeId,
+                6,
+                null,
+                false,
+                true,
+                $quantity
+            )
+        );
+
+        // Being able to use `quantity_wanted` here means we don't have to reload price on the front-end
+        $price *= $quantity;
+        // END REFACTO
+
+        if (version_compare(_PS_VERSION_, '1.7', '<')) {
             /**
              * @var \LinkCore $link
              */
@@ -88,14 +135,13 @@ class DisplayProductActionsHookController extends FrontendHookController
             $ajaxAddToCart = $link->getModuleLink('alma', 'insurance', ["action" => "addToCartPS16"]);
             $addToCartLink = ' data-link16="' . $ajaxAddToCart . '" data-token="'.\Tools::getToken(false).'" ';
             $oldPSVersion = true;
-
         }
 
         $this->context->smarty->assign([
             'addToCartLink' => $addToCartLink,
             'oldPSVersion' => $oldPSVersion,
             'settingsInsurance' => $settings,
-            'iframeUrl' => $this->adminInsuranceHelper->envUrl() . ConstantsHelper::FO_IFRAME_WIDGET_INSURANCE_PATH,
+            'iframeUrl' => $this->adminInsuranceHelper->envUrl() . ConstantsHelper::FO_IFRAME_WIDGET_INSURANCE_PATH . '?cms_reference=' . $cmsReference . '&product_price='.$price.'&merchant_id='.SettingsHelper::getMerchantId(),
             'scriptModalUrl' => $this->adminInsuranceHelper->envUrl() . ConstantsHelper::SCRIPT_MODAL_WIDGET_INSURANCE_PATH,
         ]);
 

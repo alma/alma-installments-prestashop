@@ -81,7 +81,7 @@ class ConstantsHelper
     const DOMAIN_URL_INSURANCE_LIVE = 'https://protect.almapay.com';
     const BO_IFRAME_CONFIGURATION_INSURANCE_PATH = '/almaBackOfficeConfiguration.html';
     const FO_IFRAME_WIDGET_INSURANCE_PATH = '/almaProductInPageWidget.html';
-    const SCRIPT_MODAL_WIDGET_INSURANCE_PATH = '/openInPageModal.js';
+    const SCRIPT_MODAL_WIDGET_INSURANCE_PATH = '/displayModal.js';
 
     const ALMA_INSURANCE_PRODUCT_NAME = 'Insurance by Alma';
     const ALMA_INSURANCE_PRODUCT_REFERENCE = 'alma-insurance';

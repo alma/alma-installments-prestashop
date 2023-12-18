@@ -34,6 +34,12 @@ let addToCartFlow = false;
             prestashop.on(
                 'updateProduct',
                 function (event) {
+                    // TODO : need to update quantity with data on setting
+                    getproductDataForApiCall(
+                        '1-2',
+                        10000,
+                        'merchant_11xYpZ53ixKeHdcZ3PsBziZDEUbIK7JUoU',
+                        2);
                     let addToCart = document.querySelector('.add-to-cart');
                     let modalIsClosed = false;
 
@@ -69,6 +75,9 @@ function onloadAddInsuranceInputOnProductAlma() {
     let currentResolve;
 
     window.addEventListener('message', (e) => {
+        if (e.data.type === 'almaEligibilityAnswer') {
+            console.log('almaEligibilityAnswer', e.data);
+        }
         if (e.data.type === 'getSelectedInsuranceData') {
             insuranceSelected = true;
             selectedAlmaInsurance = e.data.selectedInsuranceData;
