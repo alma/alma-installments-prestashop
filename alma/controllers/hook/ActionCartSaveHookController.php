@@ -89,16 +89,14 @@ class ActionCartSaveHookController extends FrontendHookController
     {
         if (
             version_compare(_PS_VERSION_, '1.7', '>=')
-            && \Tools::getIsset('alma_insurance_price')
-            && \Tools::getIsset('alma_insurance_name')
+            && \Tools::getIsset('alma_id_insurance_contract')
             && 1 == \Tools::getValue('add')
             && 'update' == \Tools::getValue('action')
             &&  in_array(\Tools::strtoupper(\Context::getContext()->currency->iso_code), $this->module->limited_currencies)
         ) {
             $this->insuranceProductService->handleAddingProductInsurance(
                 \Tools::getValue('id_product'),
-                \Tools::getValue('alma_insurance_price'),
-                \Tools::getValue('alma_insurance_name'),
+                \Tools::getValue('alma_id_insurance_contract'),
                 \Tools::getValue('qty'),
                 \Tools::getValue('id_customization')
             );

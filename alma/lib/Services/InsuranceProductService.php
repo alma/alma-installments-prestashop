@@ -149,8 +149,7 @@ class InsuranceProductService
 
 
         if($destroyPost) {
-            $_POST['alma_insurance_price'] = null;
-            $_POST['alma_insurance_name'] = null;
+            $_POST['alma_id_insurance_contract'] = null;
         }
 
         if (version_compare(_PS_VERSION_, '1.7', '>=')) {

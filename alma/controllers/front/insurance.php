@@ -71,8 +71,7 @@ class AlmaInsuranceModuleFrontController extends ModuleFrontController
                     case 'addToCartPS16' :
                         $this->insuranceProductService->handleAddingProductInsurance(
                             \Tools::getValue('id_product'),
-                            \Tools::getValue('alma_insurance_price'),
-                            \Tools::getValue('alma_insurance_name'),
+                            \Tools::getValue('alma_id_insurance_contract'),
                             \Tools::getValue('qty'),
                             0,
                             \Tools::getValue('id_product_attribute')

@@ -34,12 +34,6 @@ let addToCartFlow = false;
             prestashop.on(
                 'updateProduct',
                 function (event) {
-                    // TODO : need to update quantity with data on setting
-                    getproductDataForApiCall(
-                        '1-2',
-                        10000,
-                        'merchant_11xYpZ53ixKeHdcZ3PsBziZDEUbIK7JUoU',
-                        2);
                     let addToCart = document.querySelector('.add-to-cart');
                     let modalIsClosed = false;
 
@@ -62,7 +56,8 @@ let addToCartFlow = false;
             );
             prestashop.on(
                 'updatedProduct',
-                function () {
+                function (event) {
+                    refreshWidget(event);
                     openModalOnAddToCart();
                 }
             );
@@ -88,11 +83,21 @@ function onloadAddInsuranceInputOnProductAlma() {
     });
 }
 
+function refreshWidget(event) {
+    let quantity = document.getElementById('quantity_wanted').value;
+    let productId = document.getElementById('product_page_product_id').value;
+
+    getproductDataForApiCall(
+        productId + '-' + event.id_product_attribute,
+        settings.product_price,
+        settings.merchant_id,
+        quantity);
+}
+
 function addInputsInsurance(selectedAlmaInsurance) {
     let formAddToCart = document.getElementById('add-to-cart-or-refresh');
 
-    handleInput('alma_insurance_price', selectedAlmaInsurance.option.price, formAddToCart);
-    handleInput('alma_insurance_name', selectedAlmaInsurance.name, formAddToCart);
+    handleInput('alma_id_insurance_contract', selectedAlmaInsurance.insuranceContractId, formAddToCart);
 }
 
 function handleInput(inputName, value, form) {

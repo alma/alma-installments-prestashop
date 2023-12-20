@@ -91,4 +91,42 @@ class ProductHelper
 
         return \ImageType::getFormatedName($name);
     }
+
+    /**
+     * @param $productId
+     * @param $productAttributeId
+     * @param $quantity
+     * @return float
+     */
+    public function getPriceStatic($productId, $productAttributeId, $quantity = 1)
+    {
+        return \Product::getPriceStatic(
+            $productId,
+            true,
+            $productAttributeId,
+            6,
+            null,
+            false,
+            true,
+            $quantity
+        );
+    }
+
+    public function getQuantity($productParams)
+    {
+        if (!isset($productParams['quantity_wanted']) && !isset($productParams['minimal_quantity'])) {
+            $quantity = 1;
+        } elseif (!isset($productParams['quantity_wanted'])) {
+            $quantity = (int) $productParams['minimal_quantity'];
+        } elseif (!isset($productParams['minimal_quantity'])) {
+            $quantity = (int) $productParams['quantity_wanted'];
+        } else {
+            $quantity = max((int) $productParams['minimal_quantity'], (int) $productParams['quantity_wanted']);
+        }
+        if ($quantity === 0) {
+            $quantity = 1;
+        }
+
+        return $quantity;
+    }
 }
