@@ -97,14 +97,14 @@ class DisplayProductActionsHookController extends FrontendHookController
             : null;
 
         $cmsReference = $productId . '-' . $productAttributeId;
-        $price = PriceHelper::convertPriceToCents(
-            $this->productHelper->getPriceStatic($productId, $productAttributeId)
-        );
+
+        $regularPrice = $this->productHelper->getRegularPrice($productId, $productAttributeId);
+        $regularPriceInCents = PriceHelper::convertPriceToCents($regularPrice);
 
         $merchantId = SettingsHelper::getMerchantId();
         $addToCartLink = '';
         $oldPSVersion = false;
-        $settings = $this->handleSettings($cmsReference, $price, $merchantId);
+        $settings = $this->handleSettings($merchantId);
 
         if (version_compare(_PS_VERSION_, '1.7', '<')) {
             $link = new \Link;
@@ -117,7 +117,7 @@ class DisplayProductActionsHookController extends FrontendHookController
             'addToCartLink' => $addToCartLink,
             'oldPSVersion' => $oldPSVersion,
             'settingsInsurance' => $settings,
-            'iframeUrl' => $this->adminInsuranceHelper->envUrl() . ConstantsHelper::FO_IFRAME_WIDGET_INSURANCE_PATH . '?cms_reference=' . $cmsReference . '&product_price=' . $price . '&merchant_id=' . $merchantId,
+            'iframeUrl' => $this->adminInsuranceHelper->envUrl() . ConstantsHelper::FO_IFRAME_WIDGET_INSURANCE_PATH . '?cms_reference=' . $cmsReference . '&product_price=' . $regularPriceInCents . '&merchant_id=' . $merchantId,
             'scriptModalUrl' => $this->adminInsuranceHelper->envUrl() . ConstantsHelper::SCRIPT_MODAL_WIDGET_INSURANCE_PATH,
         ]);
 
@@ -128,11 +128,9 @@ class DisplayProductActionsHookController extends FrontendHookController
      * @return false|string
      * @throws \PrestaShopException
      */
-    private function handleSettings($cmsReference, $price, $merchantId)
+    private function handleSettings($merchantId)
     {
         $settings = $this->adminInsuranceHelper->mapDbFieldsWithIframeParams();
-        $settings['cms_reference'] = $cmsReference;
-        $settings['product_price'] = $price;
         $settings['merchant_id'] = $merchantId;
 
         return json_encode($settings);

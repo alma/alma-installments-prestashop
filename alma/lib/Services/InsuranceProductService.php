@@ -24,7 +24,16 @@
 
 namespace Alma\PrestaShop\Services;
 
+use Alma\API\Client;
+use Alma\API\Exceptions\ParamsException;
+use Alma\API\RequestError;
+use Alma\PrestaShop\Exceptions\AlmaException;
+use Alma\PrestaShop\Exceptions\InsuranceInstallException;
+use Alma\PrestaShop\Helpers\ClientHelper;
 use Alma\PrestaShop\Helpers\ConstantsHelper;
+use Alma\PrestaShop\Helpers\PriceHelper;
+use Alma\PrestaShop\Helpers\ProductHelper;
+use Alma\PrestaShop\Logger;
 use Alma\PrestaShop\Repositories\AlmaInsuranceProductRepository;
 use Alma\PrestaShop\Repositories\ProductRepository;
 
@@ -56,7 +65,7 @@ class InsuranceProductService
     protected $attributeProductService;
 
     /**
-     * @var InsuranceService 
+     * @var InsuranceService
      */
     protected $insuranceService;
 
@@ -69,6 +78,14 @@ class InsuranceProductService
      * @var ProductRepository
      */
     protected $productRepository;
+    /**
+     * @var Client|mixed|null
+     */
+    protected $alma;
+    /**
+     * @var ProductHelper
+     */
+    protected $productHelper;
 
     public function __construct()
     {
@@ -80,6 +97,8 @@ class InsuranceProductService
         $this->insuranceService = new InsuranceService();
         $this->cartService = new CartService();
         $this->productRepository = new ProductRepository();
+        $this->alma = ClientHelper::defaultInstance();
+        $this->productHelper = new ProductHelper();
     }
 
     /**
@@ -92,8 +111,18 @@ class InsuranceProductService
      * @param float $price
      * @param int $idAddressDelivery
      * @return void
+     * @throws \PrestaShopDatabaseException
      */
-    public function addAssociations($quantity, $idProduct, $idProductAttribute, $idCustomization, $idProductToAssociate, $idProductAttributeToAssocation, $price, $idAddressDelivery)
+    public function addAssociations(
+        $quantity,
+        $idProduct,
+        $idProductAttribute,
+        $idCustomization,
+        $idProductToAssociate,
+        $idProductAttributeToAssocation,
+        $price,
+        $idAddressDelivery
+    )
     {
         for ($nbQuantity = 1; $nbQuantity <= $quantity; $nbQuantity++) {
             $this->almaInsuranceProductRepository->add(
@@ -121,6 +150,9 @@ class InsuranceProductService
      * @param int $idProductAttibutePS16
      * @param bool $destroyPost
      * @return void
+     * @throws AlmaException
+     * @throws \PrestaShopDatabaseException
+     * @throws \PrestaShopException
      */
     public function addInsuranceProduct($idProduct, $insuranceProduct, $insurancePrice, $insuranceName, $quantity, $idCustomization, $idProductAttibutePS16 = 0, $destroyPost = true)
     {
@@ -147,8 +179,7 @@ class InsuranceProductService
             $this->context->shop->id
         );
 
-
-        if($destroyPost) {
+        if ($destroyPost) {
             $_POST['alma_id_insurance_contract'] = null;
         }
 
@@ -171,23 +202,43 @@ class InsuranceProductService
     }
 
     /**
-     * @param int $idProduct
-     * @param float $insurancePrice
-     * @param string $insuranceName
-     * @param int $quantity
-     * @param int $idCustomization
-     * @param int $idProductAttibutePS16
-     * @param bool $destroyPost
-     * @return void
-     * @throws \Alma\PrestaShop\Exceptions\InsuranceInstallException
+     * @param $idProduct
+     * @param $insuranceContractId
+     * @param $quantity
+     * @param $idCustomization
+     * @param $idProductAttributePS16
+     * @param $destroyPost
+     * @return void|null
+     * @throws AlmaException
+     * @throws InsuranceInstallException
+     * @throws \PrestaShopDatabaseException
+     * @throws \PrestaShopException
      */
-    public function handleAddingProductInsurance($idProduct, $insurancePrice, $insuranceName, $quantity, $idCustomization,  $idProductAttibutePS16 = 0, $destroyPost = true)
+    public function handleAddingProductInsurance($idProduct, $insuranceContractId, $quantity, $idCustomization, $idProductAttributePS16 = 0, $destroyPost = true)
     {
-        // @todo Check elibilibilty
+        if (!$this->alma) {
+            return null;
+        }
+
+        $idProductAttribute = $this->attributeProductService->getIdProductAttributeFromPost($idProduct);
+        $cmsReference = $idProduct . '-' . $idProductAttribute;
+        $regularPrice = $this->productHelper->getRegularPrice($idProduct, $idProductAttribute);
+        $regularPriceInCents = PriceHelper::convertPriceToCents($regularPrice);
+
+        try {
+            $insuranceContract = $this->alma->insurance->getInsuranceContract($insuranceContractId, $cmsReference, $regularPriceInCents);
+        } catch (RequestError $e) {
+            $msg = "[Alma] ERROR when get insurance contract with id ={$insuranceContractId}, cms reference = {$cmsReference}, product price = {$regularPriceInCents}: {$e->getMessage()}";
+            Logger::instance()->error($msg);
+        } catch (ParamsException $e) {
+            Logger::instance()->error($e->getMessage());
+        }
+
         $insuranceProduct = $this->insuranceService->createProductIfNotExists();
+        $insurancePriceToFloat = PriceHelper::convertPriceFromCents($insuranceContract->getPrice());
 
         if ($idProduct !== $insuranceProduct->id) {
-            $this->addInsuranceProduct($idProduct, $insuranceProduct, $insurancePrice, $insuranceName, $quantity, $idCustomization, $idProductAttibutePS16, $destroyPost);
+            $this->addInsuranceProduct($idProduct, $insuranceProduct, $insurancePriceToFloat, $insuranceContract->getName(), $quantity, $idCustomization, $idProductAttributePS16, $destroyPost);
         }
     }
 

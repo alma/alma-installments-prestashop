@@ -49,7 +49,7 @@
                 </div>
                 <div class="product-line-info product-price h5">
                     <div class="current-price">
-                        <span class="price">{$associatedInsurance.price|number_format} €</span>
+                        <span class="price">{$associatedInsurance.price|number_format:2:".":","} €</span>
                     </div>
                 </div>
             </div>

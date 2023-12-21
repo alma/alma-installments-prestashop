@@ -95,9 +95,11 @@ class AttributeProductService
         */
        return new \ProductAttributeCore();
    }
+
     /**
      * @param int $idProduct
      * @return int
+     * @throws \PrestaShopException
      */
     public function getIdProductAttributeFromPost($idProduct)
     {

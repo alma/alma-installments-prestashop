@@ -28,8 +28,9 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-use Alma\PrestaShop\Helpers\ConstantsHelper;
+use Alma\PrestaShop\Exceptions\InsuranceInstallException;
 use Alma\PrestaShop\Helpers\InsuranceHelper;
+use Alma\PrestaShop\Helpers\ProductHelper;
 use Alma\PrestaShop\Helpers\SettingsHelper;
 use Alma\PrestaShop\Hooks\FrontendHookController;
 use Alma\PrestaShop\Services\InsuranceProductService;
@@ -45,6 +46,10 @@ class ActionCartSaveHookController extends FrontendHookController
      * @var InsuranceHelper
      */
     protected $insuranceHelper;
+    /**
+     * @var ProductHelper
+     */
+    protected $productHelper;
 
     public function canRun()
     {
@@ -66,6 +71,7 @@ class ActionCartSaveHookController extends FrontendHookController
 
         $this->insuranceProductService = new InsuranceProductService();
         $this->insuranceHelper = new InsuranceHelper();
+        $this->productHelper = new ProductHelper();
     }
 
     /**
@@ -74,6 +80,7 @@ class ActionCartSaveHookController extends FrontendHookController
      * @param array $params
      *
      * @return void
+     * @throws InsuranceInstallException
      */
     public function run($params)
     {
@@ -83,7 +90,7 @@ class ActionCartSaveHookController extends FrontendHookController
 
     /**
      * @return void
-     * @throws \Alma\PrestaShop\Exceptions\InsuranceInstallException
+     * @throws InsuranceInstallException
      */
     public function handleAddingProductInsurance()
     {

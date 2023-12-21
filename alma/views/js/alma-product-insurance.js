@@ -24,6 +24,7 @@ const settings = JSON.parse(document.querySelector('#alma-widget-insurance-produ
 let insuranceSelected = false;
 let selectedAlmaInsurance = null;
 let addToCartFlow = false;
+let productDetails = null;
 
 (function ($) {
     $(function () {
@@ -40,7 +41,7 @@ let addToCartFlow = false;
                     if (event.event !== undefined) {
                         modalIsClosed = event.event.namespace === 'bs.modal' && event.event.type === 'hidden';
                     }
-                    if (modalIsClosed) {
+                    if (modalIsClosed || event.eventType === 'updatedProductQuantity' || event.eventType === 'updatedProductCombination') {
                         removeInsurance();
                     }
                     if(typeof event.selectedAlmaInsurance !== 'undefined' && event.selectedAlmaInsurance !== null ) {
@@ -56,8 +57,10 @@ let addToCartFlow = false;
             );
             prestashop.on(
                 'updatedProduct',
-                function (event) {
-                    refreshWidget(event);
+                function () {
+                    productDetails = JSON.parse(document.getElementById('product-details').dataset.product);
+
+                    refreshWidget();
                     openModalOnAddToCart();
                 }
             );
@@ -71,7 +74,8 @@ function onloadAddInsuranceInputOnProductAlma() {
 
     window.addEventListener('message', (e) => {
         if (e.data.type === 'almaEligibilityAnswer') {
-            console.log('almaEligibilityAnswer', e.data);
+            let heightIframe = e.data.widgetSize.height + 25;
+            document.getElementById('product-alma-iframe').style.height = heightIframe + "px";
         }
         if (e.data.type === 'getSelectedInsuranceData') {
             insuranceSelected = true;
@@ -83,15 +87,16 @@ function onloadAddInsuranceInputOnProductAlma() {
     });
 }
 
-function refreshWidget(event) {
-    let quantity = document.getElementById('quantity_wanted').value;
-    let productId = document.getElementById('product_page_product_id').value;
+function refreshWidget() {
+    let cmsReference = productDetails.id_product + '-' + productDetails.id_product_attribute;
+    let regularPriceToCents = productDetails.price_without_reduction * 100;
 
     getproductDataForApiCall(
-        productId + '-' + event.id_product_attribute,
-        settings.product_price,
+        cmsReference,
+        regularPriceToCents,
         settings.merchant_id,
-        quantity);
+        productDetails.quantity_wanted
+    );
 }
 
 function addInputsInsurance(selectedAlmaInsurance) {

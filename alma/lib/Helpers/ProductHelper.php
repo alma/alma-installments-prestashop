@@ -112,6 +112,26 @@ class ProductHelper
         );
     }
 
+    /**
+     * @param $productId
+     * @param $productAttributeId
+     * @return float|int
+     */
+    public function getRegularPrice($productId, $productAttributeId)
+    {
+        $product = new \Product((int) $productId);
+        $combination = new \Combination($productAttributeId);
+
+        $combinationPrice = $combination->price;
+        $productRegularPrice = $product->price;
+
+        return $combinationPrice + $productRegularPrice;
+    }
+
+    /**
+     * @param $productParams
+     * @return int|mixed
+     */
     public function getQuantity($productParams)
     {
         if (!isset($productParams['quantity_wanted']) && !isset($productParams['minimal_quantity'])) {
