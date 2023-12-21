@@ -154,7 +154,16 @@ class InsuranceProductService
      * @throws \PrestaShopDatabaseException
      * @throws \PrestaShopException
      */
-    public function addInsuranceProduct($idProduct, $insuranceProduct, $insurancePrice, $insuranceName, $quantity, $idCustomization, $idProductAttibutePS16 = 0, $destroyPost = true)
+    public function addInsuranceProduct(
+        $idProduct,
+        $insuranceProduct,
+        $insurancePrice,
+        $insuranceName,
+        $quantity,
+        $idCustomization,
+        $idProductAttibutePS16 = 0,
+        $destroyPost = true
+    )
     {
         if (version_compare(_PS_VERSION_, '1.7', '>=')) {
             $idProductAttribute = $this->attributeProductService->getIdProductAttributeFromPost($idProduct);
