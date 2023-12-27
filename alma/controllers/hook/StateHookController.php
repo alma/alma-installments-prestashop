@@ -29,13 +29,23 @@ if (!defined('_PS_VERSION_')) {
 }
 
 use Alma\API\Client;
+use Alma\API\Entities\Insurance\Subscriber;
+use Alma\API\Entities\Insurance\Subscription;
+use Alma\API\Exceptions\ParamsException;
 use Alma\API\RequestError;
+use Alma\PrestaShop\Exceptions\OrderException;
+use Alma\PrestaShop\Helpers\Admin\InsuranceHelper;
 use Alma\PrestaShop\Helpers\ClientHelper;
 use Alma\PrestaShop\Helpers\OrderHelper;
+use Alma\PrestaShop\Helpers\ProductHelper;
 use Alma\PrestaShop\Helpers\SettingsHelper;
 use Alma\PrestaShop\Hooks\AdminHookController;
 use Alma\PrestaShop\Logger;
+use Alma\PrestaShop\Model\CartData;
 use Alma\PrestaShop\Model\OrderData;
+use Alma\PrestaShop\Repositories\AlmaInsuranceProductRepository;
+use Alma\PrestaShop\Repositories\ProductRepository;
+use Alma\PrestaShop\Services\InsuranceService;
 
 final class StateHookController extends AdminHookController
 {
@@ -56,45 +66,51 @@ final class StateHookController extends AdminHookController
     /**
      * Execute refund or trigger payment on change state
      *
-     * @param $params
+     * @param array $params
      *
+     * @throws OrderException
+     * @throws ParamsException
      * @throws \PrestaShopDatabaseException
      * @throws \PrestaShopException
      */
     public function run($params)
     {
-        $order = new \Order($params['id_order']);
-        $newStatus = $params['newOrderStatus'];
-        if ($order->module !== 'alma') {
-            return;
-        }
-        if ($newStatus->id == \Configuration::get('PS_OS_REFUND')) {
-            $orderHelper = new OrderHelper();
-            $orderPayment = $orderHelper->getOrderPaymentOrFail($order);
-        } else {
-            $orderPayment = OrderData::getCurrentOrderPayment($order);
-        }
-        if (!$orderPayment) {
-            return;
-        }
         $alma = ClientHelper::defaultInstance();
         if (!$alma) {
             return;
         }
-        $idPayment = $orderPayment->transaction_id;
+
+        $order = new \Order($params['id_order']);
+        $newStatus = $params['newOrderStatus'];
+        $isReturnAjaxError = $newStatus->id == \Configuration::get('PS_OS_REFUND');
+
+        $orderHelper = new OrderHelper();
+
         $idStateRefund = SettingsHelper::getRefundState();
         $idStatePaymentTrigger = SettingsHelper::getPaymentTriggerState();
+        $idStatePayed = 2;
 
         switch ($newStatus->id) {
             case $idStateRefund:
+                $orderPayment = $orderHelper->getOrderPaymentOrFail($order, $isReturnAjaxError);
+                $idPayment = $orderPayment->transaction_id;
+                $orderHelper->checkOrderAlma($order);
                 if (SettingsHelper::isRefundEnabledByState()) {
                     $this->refund($alma, $idPayment, $order);
                 }
                 break;
             case $idStatePaymentTrigger:
+                $orderPayment = $orderHelper->getOrderPaymentOrFail($order, $isReturnAjaxError);
+                $idPayment = $orderPayment->transaction_id;
+                $orderHelper->checkOrderAlma($order);
                 if (SettingsHelper::isPaymentTriggerEnabledByState()) {
                     $this->triggerPayment($alma, $idPayment, $order);
                 }
+                break;
+            case $idStatePayed:
+                $orderPayment = $orderHelper->getOrderPayment($order);
+                $idPayment = $orderPayment->transaction_id;
+                $this->triggerInsuranceSubscription($alma, $idPayment, $order);
                 break;
             default:
                 break;
@@ -137,6 +153,36 @@ final class StateHookController extends AdminHookController
             $alma->payments->trigger($idPayment);
         } catch (RequestError $e) {
             $msg = "[Alma] ERROR when creating trigger for Order {$order->id}: {$e->getMessage()}";
+            Logger::instance()->error($msg);
+
+            return;
+        }
+    }
+
+    /**
+     * @param Client $alma
+     * @param string $idPayment
+     * @param \Order $order
+     *
+     * @return void
+     *
+     * @throws ParamsException
+     * @throws \PrestaShopDatabaseException
+     */
+    private function triggerInsuranceSubscription($alma, $idPayment, $order)
+    {
+        $almaInsuranceProductRepository = new AlmaInsuranceProductRepository();
+        $insuranceContracts = $almaInsuranceProductRepository->getContractsInfosByCartIdAndShopId($order->id_cart, $order->id_shop);
+
+        $cart = new \Cart((int) $order->id_cart);
+
+        $insuranceService = new InsuranceService();
+        $subscriptionData = $insuranceService->createSubscriptionData($insuranceContracts, $cart);
+
+        try {
+            $alma->insurance->subscription($subscriptionData, $idPayment);
+        } catch (RequestError $e) {
+            $msg = "[Alma] ERROR when creating subscription insurance for Order {$order->id}: {$e->getMessage()}";
             Logger::instance()->error($msg);
 
             return;

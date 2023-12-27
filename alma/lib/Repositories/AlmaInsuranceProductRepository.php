@@ -45,10 +45,22 @@ class AlmaInsuranceProductRepository
      * @param int $idProductAttributeInsurance
      * @param float $assurancePrice
      * @param int $idAddressDelivery
+     * @param string $insuranceContractInfos
      * @return bool
      * @throws \PrestaShopDatabaseException
      */
-    public function add($idCart, $idProduct, $idShop, $idProductAttribute, $idCustomization, $idProductInsurance, $idProductAttributeInsurance, $assurancePrice, $idAddressDelivery)
+    public function add(
+        $idCart,
+        $idProduct,
+        $idShop,
+        $idProductAttribute,
+        $idCustomization,
+        $idProductInsurance,
+        $idProductAttributeInsurance,
+        $assurancePrice,
+        $idAddressDelivery,
+        $insuranceContractInfos
+    )
     {
         if (!\Db::getInstance()->insert('alma_insurance_product', [
             'id_cart' => $idCart,
@@ -59,7 +71,8 @@ class AlmaInsuranceProductRepository
             'id_product_insurance' => $idProductInsurance,
             'id_product_attribute_insurance' => $idProductAttributeInsurance,
             'price' => $assurancePrice,
-            'id_address_delivery' => $idAddressDelivery
+            'id_address_delivery' => $idAddressDelivery,
+            'insurance_contract_infos' => $insuranceContractInfos
         ])) {
             return false;
         }
@@ -199,6 +212,7 @@ class AlmaInsuranceProductRepository
           `id_address_delivery` int(10) unsigned NOT NULL,
           `id_order` int(10) unsigned NULL,
           `price` decimal(20,6) NOT NULL DEFAULT 0.000000,
+          `insurance_contract_infos` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
           `date_add` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
            PRIMARY KEY (`id_alma_insurance_product`)
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci';
@@ -227,6 +241,24 @@ class AlmaInsuranceProductRepository
             AND aip.`id_product_attribute` = ' . (int)$idProductAttribute . '
             AND aip.`id_customization` = ' . (int)$customizationId. '
             AND aip.`id_shop` = ' . (int) $idShop;
+
+        return \Db::getInstance()->executeS($sql);
+    }
+
+    /**
+     * @param $idCart
+     * @param $idShop
+     * @return array
+     * @throws \PrestaShopDatabaseException
+     */
+    public function getContractsInfosByCartIdAndShopId($idCart, $idShop)
+    {
+        $sql = '
+            SELECT `id_alma_insurance_product`,
+                   `insurance_contract_infos`
+            FROM `' . _DB_PREFIX_ . 'alma_insurance_product` aip
+            WHERE aip.`id_cart` = ' . (int)$idCart . '
+            AND aip.`id_shop` = ' . (int)$idShop;
 
         return \Db::getInstance()->executeS($sql);
     }

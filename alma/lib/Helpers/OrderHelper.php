@@ -24,6 +24,8 @@
 
 namespace Alma\PrestaShop\Helpers;
 
+use Alma\PrestaShop\Exceptions\OrderException;
+use Alma\PrestaShop\Logger;
 use Alma\PrestaShop\Model\OrderData;
 use Alma\PrestaShop\Traits\AjaxTrait;
 
@@ -49,6 +51,7 @@ class OrderHelper
      * @var array
      */
     private $orders;
+    private $module;
 
     public function __construct()
     {
@@ -120,20 +123,53 @@ class OrderHelper
 
     /**
      * @param $order
-     *
-     * @return false|mixed
+     * @param bool $ajaxReturn
+     * @return false|\OrderPayment
      *
      * @throws \PrestaShopException
+     * @throws OrderException
      */
-    public function getOrderPaymentOrFail($order)
+    public function getOrderPaymentOrFail($order, $ajaxReturn = false)
     {
         $orderPayment = OrderData::getCurrentOrderPayment($order);
         if (!$orderPayment) {
-            $this->ajaxRenderAndExit(
-                $this->module->l('Error: Could not find Alma transaction', 'OrderDataTrait')
-            );
+            if ($ajaxReturn) {
+                $this->ajaxRenderAndExit(
+                    $this->module->l('Error: Could not find Alma transaction', 'OrderDataTrait')
+                );
+            }
+
+            $msg = '[Alma] orderPayment not found';
+            Logger::instance()->error($msg);
+            throw new OrderException($msg);
         }
 
         return $orderPayment;
+    }
+
+    /**
+     * @param \Order $order
+     * @return false|\OrderPayment
+     */
+    public function getOrderPayment($order)
+    {
+        $orderPayments = \OrderPayment::getByOrderReference($order->reference);
+        if ($orderPayments && isset($orderPayments[0])) {
+            return $orderPayments[0];
+        }
+
+        return false;
+    }
+
+    /**
+     * @throws OrderException
+     */
+    public function checkOrderAlma($order)
+    {
+        if ($order->module !== 'alma') {
+            $msg = "[Alma] This order id #{$order->id} is not an order Alma";
+            Logger::instance()->error($msg);
+            throw new OrderException($msg);
+        }
     }
 }

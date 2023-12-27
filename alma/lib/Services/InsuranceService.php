@@ -24,9 +24,13 @@
 
 namespace Alma\PrestaShop\Services;
 
+use Alma\API\Entities\Insurance\Subscriber;
+use Alma\API\Entities\Insurance\Subscription;
+use Alma\PrestaShop\Exceptions\AlmaException;
 use Alma\PrestaShop\Exceptions\InsuranceInstallException;
 use Alma\PrestaShop\Helpers\ConstantsHelper;
 use Alma\PrestaShop\Logger;
+use Alma\PrestaShop\Model\CustomerData;
 use Alma\PrestaShop\Repositories\AlmaInsuranceProductRepository;
 use Alma\PrestaShop\Repositories\AttributeGroupRepository;
 use Alma\PrestaShop\Repositories\ProductRepository;
@@ -155,6 +159,8 @@ class InsuranceService
     /**
      * @param array $params
      * @return void
+     * @throws AlmaException
+     * @throws \PrestaShopDatabaseException
      */
     public function deleteAllLinkedInsuranceProducts($params)
     {
@@ -199,6 +205,7 @@ class InsuranceService
 
     /**
      * @return bool
+     * @throws \PrestaShopDatabaseException
      */
     public function hasInsuranceInCart()
     {
@@ -213,5 +220,31 @@ class InsuranceService
         }
 
         return false;
+    }
+
+    /**
+     * @param array $insuranceContracts
+     * @param \Cart $cart
+     * @return array
+     */
+    public function createSubscriptionData($insuranceContracts, $cart)
+    {
+        $subscriptionData = [];
+
+        $customerService = new CustomerService($cart->id_customer, $cart->id_address_invoice);
+        var_dump($customerService->getSubscriber());
+        die;
+
+        foreach ($insuranceContracts as $insuranceContract) {
+            $insuranceContractInfos = json_decode($insuranceContract['insurance_contract_infos'], true);
+            $subscriptionData[] = new Subscription(
+                $insuranceContractInfos['insurance_contract_id'],
+                $insuranceContractInfos['cms_reference'],
+                $insuranceContractInfos['product_price'],
+                $customerService->getSubscriber()
+            );
+        }
+
+        return $subscriptionData;
     }
 }

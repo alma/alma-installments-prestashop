@@ -59,7 +59,7 @@ class AdminAlmaRefundsController extends ModuleAdminController
         $refundType = Tools::getValue('refundType');
         $order = new Order(Tools::getValue('orderId'));
         $orderHelper = new OrderHelper();
-        $orderPayment = $orderHelper->getOrderPaymentOrFail($order);
+        $orderPayment = $orderHelper->getOrderPaymentOrFail($order, true);
         $paymentId = $orderPayment->transaction_id;
 
         $isTotal = $this->isTotalRefund($refundType);
