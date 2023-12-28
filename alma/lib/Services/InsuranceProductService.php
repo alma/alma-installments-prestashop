@@ -37,6 +37,10 @@ use Alma\PrestaShop\Logger;
 use Alma\PrestaShop\Repositories\AlmaInsuranceProductRepository;
 use Alma\PrestaShop\Repositories\ProductRepository;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class InsuranceProductService
 {
     /**

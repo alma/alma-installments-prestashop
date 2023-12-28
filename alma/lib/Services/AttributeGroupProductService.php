@@ -26,6 +26,10 @@ namespace Alma\PrestaShop\Services;
 
 use Alma\PrestaShop\Repositories\AttributeGroupRepository;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class AttributeGroupProductService
 {
     /**

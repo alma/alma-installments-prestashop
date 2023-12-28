@@ -27,6 +27,10 @@ namespace Alma\PrestaShop\Services;
 use Alma\PrestaShop\Exceptions\AlmaException;
 use Alma\PrestaShop\Repositories\CartProductRepository;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class CartService
 {
 

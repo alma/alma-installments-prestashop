@@ -26,6 +26,10 @@ namespace Alma\PrestaShop\Services;
 
 use Alma\PrestaShop\Repositories\CombinationRepository;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class CombinationProductAttributeService
 {
     /**

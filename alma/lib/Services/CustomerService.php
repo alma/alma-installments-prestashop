@@ -28,6 +28,10 @@ use Alma\API\Entities\Insurance\Subscriber;
 use Alma\PrestaShop\Model\AddressData;
 use Alma\PrestaShop\Model\CustomerData;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class CustomerService
 {
     /**

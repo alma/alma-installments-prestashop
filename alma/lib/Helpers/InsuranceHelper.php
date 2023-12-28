@@ -28,6 +28,10 @@ use Alma\PrestaShop\Repositories\CartProductRepository;
 use Alma\PrestaShop\Repositories\ProductRepository;
 use PrestaShop\PrestaShop\Adapter\Shop\Context;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class InsuranceHelper
 {
     /**
