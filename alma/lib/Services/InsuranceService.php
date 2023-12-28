@@ -215,7 +215,7 @@ class InsuranceService
             $this->context->shop->id
         );
 
-        if(count($idsInsurances) > 0 ) {
+        if (count($idsInsurances) > 0) {
             return true;
         }
 
@@ -230,10 +230,7 @@ class InsuranceService
     public function createSubscriptionData($insuranceContracts, $cart)
     {
         $subscriptionData = [];
-
-        $customerService = new CustomerService($cart->id_customer, $cart->id_address_invoice);
-        var_dump($customerService->getSubscriber());
-        die;
+        $customerService = new CustomerService($cart->id_customer, $cart->id_address_invoice, $cart->id_address_delivery);
 
         foreach ($insuranceContracts as $insuranceContract) {
             $insuranceContractInfos = json_decode($insuranceContract['insurance_contract_infos'], true);

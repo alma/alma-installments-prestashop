@@ -48,12 +48,12 @@ class CustomerService
      * @param int $idShippingAddress
      * @param int $idBillingAddress
      */
-    public function __construct($idCustomer, $idShippingAddress, $idBillingAddress = null)
+    public function __construct($idCustomer, $idBillingAddress, $idShippingAddress = null)
     {
         $this->customer = new CustomerData((int) $idCustomer);
-        $this->shippingAddress = new AddressData((int) $idShippingAddress);
-        if ($idBillingAddress) {
-            $this->billingAddress = new AddressData((int) $idBillingAddress);
+        $this->billingAddress = new AddressData((int) $idBillingAddress);
+        if ($idShippingAddress) {
+            $this->shippingAddress = new AddressData((int) $idShippingAddress);
         }
     }
 
@@ -67,25 +67,28 @@ class CustomerService
             $this->getPhone(),
             $this->customer->getLastname(),
             $this->customer->getFirstname(),
-            'Address',
-            '',
-            '75000',
-            'Ici c Paris',
-            'France',
+            $this->getBillingAddressLine1(),
+            $this->getBillingAddressLine2(),
+            $this->getBillingZipCode(),
+            $this->getBillingCity(),
+            $this->getBillingCountry(),
             $this->customer->getBirthday()
         );
     }
 
     /**
+     * I guess the shipping phone number is the most serious one before billing
      * @return string|null
      */
     private function getPhone()
     {
-        if ($this->shippingAddress->getPhoneMobile()) {
-            return $this->shippingAddress->getPhoneMobile();
-        }
-        if ($this->shippingAddress->getPhone()) {
-            return $this->shippingAddress->getPhone();
+        if ($this->shippingAddress) {
+            if ($this->shippingAddress->getPhoneMobile()) {
+                return $this->shippingAddress->getPhoneMobile();
+            }
+            if ($this->shippingAddress->getPhone()) {
+                return $this->shippingAddress->getPhone();
+            }
         }
         if ($this->billingAddress->getPhoneMobile()) {
             return $this->billingAddress->getPhoneMobile();
@@ -95,5 +98,45 @@ class CustomerService
         }
 
         return null;
+    }
+
+    /**
+     * @return string
+     */
+    private function getBillingAddressLine1()
+    {
+        return $this->billingAddress->getAddressLine1();
+    }
+
+    /**
+     * @return string
+     */
+    private function getBillingAddressLine2()
+    {
+        return $this->billingAddress->getAddressLine2();
+    }
+
+    /**
+     * @return string
+     */
+    private function getBillingZipCode()
+    {
+        return $this->billingAddress->getZipCode();
+    }
+
+    /**
+     * @return string
+     */
+    private function getBillingCity()
+    {
+        return $this->billingAddress->getCity();
+    }
+
+    /**
+     * @return string
+     */
+    private function getBillingCountry()
+    {
+        return $this->billingAddress->getCountry();
     }
 }

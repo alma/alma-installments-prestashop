@@ -76,6 +76,10 @@ class CustomerData
      */
     public function getBirthday()
     {
+        if ($this->customer->birthday === '0000-00-00') {
+            return null;
+        }
+
         return $this->customer->birthday;
     }
 }

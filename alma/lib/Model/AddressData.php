@@ -50,6 +50,46 @@ class AddressData
     /**
      * @return string
      */
+    public function getAddressLine1()
+    {
+        return $this->address->address1;
+    }
+
+    /**
+     * @return string
+     */
+    public function getAddressLine2()
+    {
+        return $this->address->address2;
+    }
+
+    /**
+     * @return string
+     */
+    public function getZipCode()
+    {
+        return $this->address->postcode;
+    }
+
+    /**
+     * @return string
+     */
+    public function getCity()
+    {
+        return $this->address->city;
+    }
+
+    /**
+     * @return string
+     */
+    public function getCountry()
+    {
+        return $this->address->country;
+    }
+
+    /**
+     * @return string
+     */
     public function getPhone()
     {
         return $this->address->phone;
