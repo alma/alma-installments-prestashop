@@ -307,12 +307,16 @@ class FrontHeaderHookController extends FrontendHookController
             );
         }
 
-
-        if(
+        if (
             $this->iAmInCartPage()
             && $this->cartIsNotEmpty()
         ) {
             $this->controller->addJS($this->module->_path . ConstantsHelper::CART_INSURANCE_SCRIPT_PATH);
+
+            $this->controller->registerStylesheet(
+                ConstantsHelper::INSURANCE_PRODUCT_CSS_ID,
+                "modules/$this->moduleName/" . ConstantsHelper::INSURANCE_PRODUCT_CSS_PATH
+            );
         }
 
     }
