@@ -187,16 +187,18 @@ final class StateHookController extends AdminHookController
         $insuranceContracts = $this->almaInsuranceProductRepository->getContractsInfosByCartIdAndShopId($order->id_cart, $order->id_shop);
         $subscriptionData = $this->insuranceService->createSubscriptionData($insuranceContracts, $cart);
 
-        try {
-            $orderPayment = $this->orderHelper->getOrderPayment($order);
-            $idPayment = $orderPayment->transaction_id;
+        if (!empty($subscriptionData)) {
+            try {
+                $orderPayment = $this->orderHelper->getOrderPayment($order);
+                $idPayment = $orderPayment->transaction_id;
 
-            $this->alma->insurance->subscription($subscriptionData, $idPayment);
-        } catch (RequestError $e) {
-            $msg = "[Alma] ERROR when creating subscription insurance for Order {$order->id}: {$e->getMessage()}";
-            Logger::instance()->error($msg);
+                $this->alma->insurance->subscription($subscriptionData, $idPayment);
+            } catch (RequestError $e) {
+                $msg = "[Alma] ERROR when creating subscription insurance for Order {$order->id}: {$e->getMessage()}";
+                Logger::instance()->error($msg);
 
-            return;
+                return;
+            }
         }
     }
 }
