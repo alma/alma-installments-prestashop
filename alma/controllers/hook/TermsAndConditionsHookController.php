@@ -24,8 +24,13 @@
 
 namespace Alma\PrestaShop\Controllers\Hook;
 
+use Alma\API\Client;
+use Alma\API\Exceptions\ParamsException;
+use Alma\API\RequestError;
+use Alma\PrestaShop\Helpers\ClientHelper;
 use Alma\PrestaShop\Helpers\InsuranceHelper;
 use Alma\PrestaShop\Hooks\FrontendHookController;
+use Alma\PrestaShop\Repositories\AlmaInsuranceProductRepository;
 use Alma\PrestaShop\Services\InsuranceService;
 use PrestaShop\PrestaShop\Core\Checkout\TermsAndConditions;
 
@@ -47,6 +52,14 @@ class TermsAndConditionsHookController extends FrontendHookController
      * @var InsuranceService
      */
     protected $insuranceService;
+    /**
+     * @var AlmaInsuranceProductRepository
+     */
+    protected $almaInsuranceProductRepository;
+    /**
+     * @var TermsAndConditions
+     */
+    protected $termsAndConditions;
 
     /**
      * @param $module
@@ -55,11 +68,14 @@ class TermsAndConditionsHookController extends FrontendHookController
     {
         $this->insuranceHelper = new InsuranceHelper();
         $this->insuranceService = new InsuranceService();
+        $this->almaInsuranceProductRepository = new AlmaInsuranceProductRepository();
+        $this->termsAndConditions = new TermsAndConditions();
         parent::__construct($module);
     }
 
     /**
      * @return bool
+     * @throws \PrestaShopDatabaseException
      */
     public function canRun()
     {
@@ -71,16 +87,23 @@ class TermsAndConditionsHookController extends FrontendHookController
     /**
      * @param $params
      * @return array
+     * @throws ParamsException
+     * @throws RequestError
+     * @throws \PrestaShopDatabaseException
      */
     public function run($params)
     {
-        $returnedTermsAndConditions = [];
-        $termsAndConditions = new TermsAndConditions();
+        /**
+         * @var \Cart $cart
+         */
+        $cart = $params['cart'];
+        $insuranceContracts = $this->almaInsuranceProductRepository->getContractsInfosByCartIdAndShopId($cart->id, $cart->id_shop);
+        $termsAndConditionsInsurance = $this->insuranceService->createTextTermsAndConditions($insuranceContracts);
 
-        $termsAndConditions
-            ->setText($this->module->l('By accepting to subscribe to Alma insurance, I confirm my thorough review, acceptance, and retention of the general terms outlined in the information booklet and the insurance product details. Additionally, I consent to receiving contractual information by e-mail for the purpose of securely storing it in a durable format.', 'TermsAndConditionsHookController'))
+        // @TODO : Find an alternative about the modal on the click to the link
+        $returnedTermsAndConditions[] = $this->termsAndConditions
+            ->setText($termsAndConditionsInsurance['text'], $termsAndConditionsInsurance['link'])
             ->setIdentifier('terms-and-conditions-alma-insurance');
-        $returnedTermsAndConditions[] = $termsAndConditions;
 
         return $returnedTermsAndConditions;
     }

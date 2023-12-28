@@ -24,13 +24,15 @@
 
 namespace Alma\PrestaShop\Services;
 
-use Alma\API\Entities\Insurance\Subscriber;
+use Alma\API\Client;
 use Alma\API\Entities\Insurance\Subscription;
+use Alma\API\Exceptions\ParamsException;
+use Alma\API\RequestError;
 use Alma\PrestaShop\Exceptions\AlmaException;
 use Alma\PrestaShop\Exceptions\InsuranceInstallException;
+use Alma\PrestaShop\Helpers\ClientHelper;
 use Alma\PrestaShop\Helpers\ConstantsHelper;
 use Alma\PrestaShop\Logger;
-use Alma\PrestaShop\Model\CustomerData;
 use Alma\PrestaShop\Repositories\AlmaInsuranceProductRepository;
 use Alma\PrestaShop\Repositories\AttributeGroupRepository;
 use Alma\PrestaShop\Repositories\ProductRepository;
@@ -65,9 +67,15 @@ class InsuranceService
      * @var CartService
      */
     protected $cartService;
+    /**
+     * @var Client|mixed|null
+     */
+    protected $alma;
 
     public function __construct()
     {
+        $this->module = \Module::getInstanceByName(ConstantsHelper::ALMA_MODULE_NAME);
+        $this->alma = ClientHelper::defaultInstance();
         $this->productRepository = new ProductRepository();
         $this->imageService = new ImageService();
         $this->cartService = new CartService();
@@ -79,7 +87,7 @@ class InsuranceService
     /**
      * Create the default Insurance product
      *
-     * @return \ProductCore|void
+     * @return \ProductCore
      * @throws InsuranceInstallException
      */
     public function createProductIfNotExists()
@@ -247,5 +255,34 @@ class InsuranceService
         }
 
         return $subscriptionData;
+    }
+
+    /**
+     * @param array $insuranceContracts
+     * @return array
+     * @throws ParamsException
+     * @throws RequestError
+     */
+    public function createTextTermsAndConditions($insuranceContracts)
+    {
+        // @TODO : Need to define the logic about the loop of the documents
+        // @TODO : Maybe get the files info in the table alma_insurance_product in the field insurance_contract_infos ?
+        $files = [];
+        foreach ($insuranceContracts as $insuranceContract) {
+            $insuranceContractInfos = json_decode($insuranceContract['insurance_contract_infos'], true);
+            $files[] = $this->alma->insurance->getInsuranceContract(
+                $insuranceContractInfos['insurance_contract_id'],
+                $insuranceContractInfos['cms_reference'],
+                $insuranceContractInfos['product_price']
+            )->getFileByType('ipid-document');
+        }
+
+        return [
+            'text' => sprintf(
+                $this->module->l('By accepting to subscribe to [%s], I confirm my thorough review, acceptance, and retention of the general terms outlined in the information booklet and the insurance product details. Additionally, I consent to receiving contractual information by e-mail for the purpose of securely storing it in a durable format.', 'TermsAndConditionsHookController'),
+                $files[0]->getName()
+            ),
+            'link' => $files[0]->getPublicUrl()
+        ];
     }
 }
