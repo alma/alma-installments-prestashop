@@ -25,6 +25,7 @@ let insuranceSelected = false;
 let selectedAlmaInsurance = null;
 let addToCartFlow = false;
 let productDetails = null;
+let quantity = 1;
 
 (function ($) {
     $(function () {
@@ -41,7 +42,11 @@ let productDetails = null;
                     if (event.event !== undefined) {
                         modalIsClosed = event.event.namespace === 'bs.modal' && event.event.type === 'hidden';
                     }
-                    if (modalIsClosed || event.eventType === 'updatedProductQuantity' || event.eventType === 'updatedProductCombination') {
+                    if (event.eventType === 'updatedProductQuantity') {
+                        quantity = event.event.target.value;
+                        removeInsurance();
+                    }
+                    if (modalIsClosed || event.eventType === 'updatedProductCombination') {
                         removeInsurance();
                     }
                     if(typeof event.selectedAlmaInsurance !== 'undefined' && event.selectedAlmaInsurance !== null ) {
@@ -58,6 +63,7 @@ let productDetails = null;
             prestashop.on(
                 'updatedProduct',
                 function () {
+                    document.getElementById('quantity_wanted').value = quantity;
                     productDetails = JSON.parse(document.getElementById('product-details').dataset.product);
 
                     refreshWidget();
