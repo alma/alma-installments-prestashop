@@ -78,7 +78,13 @@
                             </div>
                         </div>
                         <div class="alma-action-item-insurance">
-                            <a href="#" class="alma-btn-remove-insurance">
+                            <a data-alma-association-id="{$idAlmaInsuranceProduct}"
+                               data-action="remove-insurance-product"
+                               data-token='{\Tools::getToken(false)|escape:'htmlall':'UTF-8'}'
+                               href="#"
+                               class="alma-remove-insurance-product"
+                               data-link='{$ajaxLinkRemoveInsuranceProduct|escape:'htmlall':'UTF-8'}'
+                            >
                                 {l s='Remove insurance' mod='alma'}
                             </a>
                         </div>

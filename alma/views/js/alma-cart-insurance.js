@@ -76,6 +76,28 @@
                  location.reload();
              });
      });
+
+     $('.alma-remove-insurance-product').on( "click", function(e) {
+         e.preventDefault();
+         addLoaderDot(e);
+         $.ajax({
+             type: 'POST',
+             url: $(this).attr("data-link"),
+             dataType: 'json',
+             data: {
+                 ajax: true,
+                 token: $(this).attr('data-token'),
+                 alma_insurance_product_id: $(this).attr("data-alma-association-id")
+             },
+         })
+             .success(function() {
+                 location.reload();
+             })
+
+             .error(function(e) {
+                 location.reload();
+             });
+     });
 })(jQuery);
 
 // Insurance
