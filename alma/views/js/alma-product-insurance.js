@@ -41,6 +41,7 @@ let quantity = 1;
 
                     if (event.event !== undefined) {
                         modalIsClosed = event.event.namespace === 'bs.modal' && event.event.type === 'hidden';
+                        quantity = 1;
                     }
                     if (event.eventType === 'updatedProductQuantity') {
                         quantity = event.event.target.value;
