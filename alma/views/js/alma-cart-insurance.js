@@ -120,6 +120,10 @@ function onloadInsuranceItemCartAlma() {
             let formQty = item.querySelector('.qty');
 
             formQty.querySelector('input').readOnly = true;
+            // Remove change number of input when you wheel (scroll) inside the input
+            formQty.querySelector('input').addEventListener('wheel', function (e) {
+                document.activeElement.blur();
+            });
             formQty.querySelector('.input-group-btn-vertical').remove();
         }
         if (isAlmaInsuranceProduct) {
