@@ -24,13 +24,14 @@
 
 namespace Alma\PrestaShop\Services;
 
-use Alma\API\Entities\Insurance\Subscriber;
 use Alma\API\Entities\Insurance\Subscription;
+use Alma\API\Exceptions\ParamsException;
+use Alma\API\RequestError;
 use Alma\PrestaShop\Exceptions\AlmaException;
 use Alma\PrestaShop\Exceptions\InsuranceInstallException;
+use Alma\PrestaShop\Exceptions\TermsAndConditionsException;
 use Alma\PrestaShop\Helpers\ConstantsHelper;
 use Alma\PrestaShop\Logger;
-use Alma\PrestaShop\Model\CustomerData;
 use Alma\PrestaShop\Repositories\AlmaInsuranceProductRepository;
 use Alma\PrestaShop\Repositories\AttributeGroupRepository;
 use Alma\PrestaShop\Repositories\ProductRepository;
@@ -65,21 +66,28 @@ class InsuranceService
      * @var CartService
      */
     protected $cartService;
+    /**
+     * @var InsuranceApiService
+     */
+    protected $insuranceApiService;
+
 
     public function __construct()
     {
+        $this->module = \Module::getInstanceByName(ConstantsHelper::ALMA_MODULE_NAME);
         $this->productRepository = new ProductRepository();
         $this->imageService = new ImageService();
         $this->cartService = new CartService();
         $this->context = \Context::getContext();
         $this->attributeGroupRepository = new AttributeGroupRepository();
         $this->almaInsuranceProductRepository = new AlmaInsuranceProductRepository();
+        $this->insuranceApiService = new InsuranceApiService();
     }
 
     /**
      * Create the default Insurance product
      *
-     * @return \ProductCore|void
+     * @return \ProductCore
      * @throws InsuranceInstallException
      */
     public function createProductIfNotExists()
@@ -247,5 +255,39 @@ class InsuranceService
         }
 
         return $subscriptionData;
+    }
+
+    /**
+     * @param  array $insuranceContracts
+     * @return array
+     * @throws TermsAndConditionsException
+     */
+    public function createTextTermsAndConditions($insuranceContracts)
+    {
+        $file = null;
+
+        foreach ($insuranceContracts as $insuranceContract) {
+            $insuranceContractInfos = json_decode($insuranceContract['insurance_contract_infos'], true);
+
+            $file = $this->insuranceApiService->getInsuranceContract(
+                $insuranceContractInfos['insurance_contract_id'],
+                $insuranceContractInfos['cms_reference'],
+                $insuranceContractInfos['product_price']
+            );
+
+            break;
+        }
+
+        if ($file) {
+            return [
+                'text' => sprintf(
+                    $this->module->l('By accepting to subscribe to [%s], I confirm my thorough review, acceptance, and retention of the general terms outlined in the information booklet and the insurance product details. Additionally, I consent to receiving contractual information by e-mail for the purpose of securely storing it in a durable format.', 'TermsAndConditionsHookController'),
+                    $file->getName()
+                ),
+                'link' => $file->getPublicUrl()
+            ];
+        }
+
+        throw new TermsAndConditionsException('An error occured when retrieving the file');
     }
 }
