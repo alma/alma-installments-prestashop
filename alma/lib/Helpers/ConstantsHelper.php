@@ -88,7 +88,7 @@ class ConstantsHelper
     const ALMA_INSURANCE_ATTRIBUTE_NAME = 'Alma Insurance (DO NOT REMOVE)';
     const ALMA_INSURANCE_ATTRIBUTE_PUBLIC_NAME = 'My Insurance';
 
-    const ALMA_INSURANCE_PRODUCT_IMAGE_URL = _PS_MODULE_DIR_ . self::ALMA_MODULE_NAME . '/views/img/alma-insurance.jpg';
+    const ALMA_INSURANCE_PRODUCT_IMAGE_URL = _PS_MODULE_DIR_ . self::ALMA_MODULE_NAME . '/views/img/alma-insurance.png';
 
     /**
      * Insurance form fields

@@ -26,6 +26,10 @@ namespace Alma\PrestaShop\Services;
 
 use Alma\PrestaShop\Helpers\ImageHelper;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class ImageService
 {
 

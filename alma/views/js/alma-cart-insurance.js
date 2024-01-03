@@ -76,6 +76,28 @@
                  location.reload();
              });
      });
+
+     $('.alma-remove-insurance-product').on( "click", function(e) {
+         e.preventDefault();
+         addLoaderDot(e);
+         $.ajax({
+             type: 'POST',
+             url: $(this).attr("data-link"),
+             dataType: 'json',
+             data: {
+                 ajax: true,
+                 token: $(this).attr('data-token'),
+                 alma_insurance_product_id: $(this).attr("data-alma-association-id")
+             },
+         })
+             .success(function() {
+                 location.reload();
+             })
+
+             .error(function(e) {
+                 location.reload();
+             });
+     });
 })(jQuery);
 
 // Insurance
@@ -98,6 +120,10 @@ function onloadInsuranceItemCartAlma() {
             let formQty = item.querySelector('.qty');
 
             formQty.querySelector('input').readOnly = true;
+            // Remove change number of input when you wheel (scroll) inside the input
+            formQty.querySelector('input').addEventListener('wheel', function (e) {
+                document.activeElement.blur();
+            });
             formQty.querySelector('.input-group-btn-vertical').remove();
         }
         if (isAlmaInsuranceProduct) {

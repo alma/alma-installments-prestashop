@@ -27,6 +27,10 @@ namespace Alma\PrestaShop\Services;
 use Alma\PrestaShop\Helpers\LocaleHelper;
 use Alma\PrestaShop\Repositories\AttributeRepository;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class AttributeProductService
 {
     /**

@@ -36,14 +36,22 @@ class AlmaInsuranceModuleFrontController extends ModuleFrontController
     use AjaxTrait;
 
     protected $insuranceProductService;
+    /**
+     * @var AlmaInsuranceProductRepository
+     */
+    protected $almaInsuranceProductRepository;
 
     public function __construct()
     {
         parent::__construct();
 
         $this->insuranceProductService = new InsuranceProductService();
+        $this->almaInsuranceProductRepository = new AlmaInsuranceProductRepository();
     }
 
+    /**
+     * @throws PrestaShopException
+     */
     public function initContent()
     {
         if (Tools::isSubmit('action')) {
@@ -61,13 +69,15 @@ class AlmaInsuranceModuleFrontController extends ModuleFrontController
                 $context = \Context::getContext();
 
                 switch (Tools::getValue('action')) {
-
                     case 'removeProductFromCart':
-                        $this->removeProductFromCart($context);
-                        $this->ajaxRenderAndExit(json_encode(['success' => true]));
+                        $this->ajaxRemoveProductFromCart($context);
+                        break;
                     case 'removeAssociation' :
-                        $this->removeAssociation($context);
-                        $this->ajaxRenderAndExit(json_encode(['success' => true]));
+                        $this->ajaxRemoveAssociationAndProducts($context);
+                        break;
+                    case 'removeInsuranceProduct' :
+                        $this->ajaxRemoveInsuranceProductAndAssociation($context);
+                        break;
                     case 'addToCartPS16' :
                         $this->insuranceProductService->handleAddingProductInsurance(
                             \Tools::getValue('id_product'),
@@ -76,7 +86,7 @@ class AlmaInsuranceModuleFrontController extends ModuleFrontController
                             0,
                             \Tools::getValue('id_product_attribute')
                         );
-                        $this->ajaxRenderAndExit(json_encode(['success' => true]));
+                        break;
                     default:
                         throw new AlmaException(sprintf('Action unknown : %s', Tools::getValue('action')));
                 }
@@ -94,52 +104,116 @@ class AlmaInsuranceModuleFrontController extends ModuleFrontController
     /**
      * @param \ContextCore $context
      * @return void
+     * @throws PrestaShopException
      */
-    public function removeProductFromCart($context)
+    public function ajaxRemoveProductFromCart($context)
     {
         $idProduct = \Tools::getValue('product_id');
         $idAttribute = \Tools::getValue('attribute_id');
         $idCustomization = \Tools::getValue('customization_id') == "" ? 0 :  \Tools::getValue('customization_id') ;
 
-        $context->cart->updateQty(
-            1,
+        $this->decreaseCartFromOneProduct(
+            $context,
             $idProduct,
             $idAttribute,
-            $idCustomization,
-            'down',
-            $context->cart->id_address_delivery
+            $idCustomization
         );
+
+        $this->ajaxRenderAndExit(json_encode(['success' => true]));
     }
 
     /**
      * @param \ContextCore $context
      * @return void
+     * @throws PrestaShopException
      */
-    public function removeAssociation($context) {
-        $idAlmaInsuranceProduct = \Tools::getValue('alma_insurance_product_id');
-
-        $almaInsuranceProductRepository = new AlmaInsuranceProductRepository();
-        $almaInsuranceProductAssociation = $almaInsuranceProductRepository->getById($idAlmaInsuranceProduct);
-
-        // Delete the association
-        $almaInsuranceProductRepository->deleteById($idAlmaInsuranceProduct);
+    public function ajaxRemoveAssociationAndProducts($context)
+    {
+        $almaInsuranceProductAssociation = $this->removeInsuranceProductAndAssociation($context);
 
         // Remove the product
-        $context->cart->updateQty(
-            1,
+        $this->decreaseCartFromOneProduct(
+            $context,
             $almaInsuranceProductAssociation['id_product'],
             $almaInsuranceProductAssociation['id_product_attribute'],
-            $almaInsuranceProductAssociation['id_customization'],
-            'down',
-            $context->cart->id_address_delivery
+            $almaInsuranceProductAssociation['id_customization']
         );
 
+        $this->ajaxRenderAndExit(json_encode(['success' => true]));
+    }
+
+    /**
+     * @param \ContextCore $context
+     * @return void
+     * @throws PrestaShopException
+     */
+    public function ajaxRemoveInsuranceProductAndAssociation($context)
+    {
+        $this->removeInsuranceProductAndAssociation($context);
+
+        $this->ajaxRenderAndExit(json_encode(['success' => true]));
+    }
+
+    /**
+     * @param \ContextCore $context
+     * @return array
+     */
+    protected function removeInsuranceProductAndAssociation($context)
+    {
+        $idAlmaInsuranceProduct = \Tools::getValue('alma_insurance_product_id');
+
+        // Delete the association
+       $associationData = $this->removeAssociation($idAlmaInsuranceProduct);
+
         // Remove the insurance Product
+        $this->removeInsuranceProduct($context, $associationData);
+
+        return $associationData;
+    }
+
+    /**
+     * @param int $idAlmaInsuranceProduct
+     * @return array
+     */
+    protected function removeAssociation($idAlmaInsuranceProduct)
+    {
+        $almaInsuranceProductAssociation = $this->almaInsuranceProductRepository->getById($idAlmaInsuranceProduct);
+
+        // Delete the association
+        $this->almaInsuranceProductRepository->deleteById($idAlmaInsuranceProduct);
+
+        return $almaInsuranceProductAssociation;
+    }
+
+    /**
+     * @param ContextCore $context
+     * @param array $product
+     * @return void
+     */
+    protected function removeInsuranceProduct($context, $product)
+    {
+        $this->decreaseCartFromOneProduct(
+            $context,
+            $product['id_product_insurance'],
+            $product['id_product_attribute_insurance']
+        );
+    }
+
+    /**
+     * @param \ContextCore $context
+     * @param int $idProduct
+     * @param int $idProductAttribute
+     * @param int $idCustomization
+     * @return void
+     */
+    protected function decreaseCartFromOneProduct($context, $idProduct, $idProductAttribute, $idCustomization = 0)
+    {
+        // Decrease one quantity of the product
         $context->cart->updateQty(
             1,
-            $almaInsuranceProductAssociation['id_product_insurance'],
-            $almaInsuranceProductAssociation['id_product_attribute_insurance'],
-            0,
+            $idProduct,
+            $idProductAttribute,
+            $idCustomization,
             'down',
             $context->cart->id_address_delivery
         );

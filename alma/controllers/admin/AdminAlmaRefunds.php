@@ -53,13 +53,14 @@ class AdminAlmaRefundsController extends ModuleAdminController
      *
      * @throws PrestaShopDatabaseException
      * @throws PrestaShopException
+     * @throws \Alma\PrestaShop\Exceptions\OrderException
      */
     public function ajaxProcessRefund()
     {
         $refundType = Tools::getValue('refundType');
         $order = new Order(Tools::getValue('orderId'));
         $orderHelper = new OrderHelper();
-        $orderPayment = $orderHelper->getOrderPaymentOrFail($order);
+        $orderPayment = $orderHelper->ajaxGetOrderPayment($order);
         $paymentId = $orderPayment->transaction_id;
 
         $isTotal = $this->isTotalRefund($refundType);

@@ -37,6 +37,10 @@ use Alma\PrestaShop\Logger;
 use Alma\PrestaShop\Repositories\AlmaInsuranceProductRepository;
 use Alma\PrestaShop\Repositories\ProductRepository;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class InsuranceProductService
 {
     /**
@@ -110,6 +114,7 @@ class InsuranceProductService
      * @param int $idProductAttributeToAssocation
      * @param float $price
      * @param int $idAddressDelivery
+     * @param string $insuranceContractInfos
      * @return void
      * @throws \PrestaShopDatabaseException
      */
@@ -121,7 +126,8 @@ class InsuranceProductService
         $idProductToAssociate,
         $idProductAttributeToAssocation,
         $price,
-        $idAddressDelivery
+        $idAddressDelivery,
+        $insuranceContractInfos
     )
     {
         for ($nbQuantity = 1; $nbQuantity <= $quantity; $nbQuantity++) {
@@ -134,7 +140,8 @@ class InsuranceProductService
                 $idProductToAssociate,
                 $idProductAttributeToAssocation,
                 $price,
-                $idAddressDelivery
+                $idAddressDelivery,
+                $insuranceContractInfos
             );
         }
     }
@@ -147,6 +154,7 @@ class InsuranceProductService
      * @param string $insuranceName
      * @param int $quantity
      * @param int $idCustomization
+     * @param string $insuranceContractInfos
      * @param int $idProductAttibutePS16
      * @param bool $destroyPost
      * @return void
@@ -161,6 +169,7 @@ class InsuranceProductService
         $insuranceName,
         $quantity,
         $idCustomization,
+        $insuranceContractInfos,
         $idProductAttibutePS16 = 0,
         $destroyPost = true
     )
@@ -206,7 +215,8 @@ class InsuranceProductService
             $insuranceProduct->id,
             $idProductAttributeInsurance,
             $insurancePrice,
-            $this->context->cart->id_address_delivery
+            $this->context->cart->id_address_delivery,
+            $insuranceContractInfos
         );
     }
 
@@ -246,8 +256,24 @@ class InsuranceProductService
         $insuranceProduct = $this->insuranceService->createProductIfNotExists();
         $insurancePriceToFloat = PriceHelper::convertPriceFromCents($insuranceContract->getPrice());
 
+        $insuranceContractInfos = [
+            'insurance_contract_id' => $insuranceContractId,
+            'cms_reference' => $cmsReference,
+            'product_price' => $regularPriceInCents,
+        ];
+
         if ($idProduct !== $insuranceProduct->id) {
-            $this->addInsuranceProduct($idProduct, $insuranceProduct, $insurancePriceToFloat, $insuranceContract->getName(), $quantity, $idCustomization, $idProductAttributePS16, $destroyPost);
+            $this->addInsuranceProduct(
+                $idProduct,
+                $insuranceProduct,
+                $insurancePriceToFloat,
+                $insuranceContract->getName(),
+                $quantity,
+                $idCustomization,
+                json_encode($insuranceContractInfos),
+                $idProductAttributePS16,
+                $destroyPost
+            );
         }
     }
 
