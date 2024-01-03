@@ -28,35 +28,15 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-class AddressData
+class AddressModel extends \AddressCore
 {
-    /**
-     * @var \Address
-     */
-    protected $address;
-
-    /**
-     * @param $idAddress
-     */
-    public function __construct($idAddress)
-    {
-        $this->address = new \Address((int) $idAddress);
-    }
-
-    /**
-     * @return \Address
-     */
-    public function getAddress()
-    {
-        return $this->address;
-    }
 
     /**
      * @return string
      */
     public function getAddressLine1()
     {
-        return $this->address->address1;
+        return $this->address1;
     }
 
     /**
@@ -64,7 +44,7 @@ class AddressData
      */
     public function getAddressLine2()
     {
-        return $this->address->address2;
+        return $this->address2;
     }
 
     /**
@@ -72,7 +52,7 @@ class AddressData
      */
     public function getZipCode()
     {
-        return $this->address->postcode;
+        return $this->postcode;
     }
 
     /**
@@ -80,7 +60,7 @@ class AddressData
      */
     public function getCity()
     {
-        return $this->address->city;
+        return $this->city;
     }
 
     /**
@@ -88,7 +68,7 @@ class AddressData
      */
     public function getCountry()
     {
-        return $this->address->country;
+        return $this->country;
     }
 
     /**
@@ -96,7 +76,7 @@ class AddressData
      */
     public function getPhone()
     {
-        return $this->address->phone;
+        return $this->phone;
     }
 
     /**
@@ -104,6 +84,6 @@ class AddressData
      */
     public function getPhoneMobile()
     {
-        return $this->address->phone_mobile;
+        return $this->phone_mobile;
     }
 }

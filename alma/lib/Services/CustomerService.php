@@ -25,8 +25,8 @@
 namespace Alma\PrestaShop\Services;
 
 use Alma\API\Entities\Insurance\Subscriber;
-use Alma\PrestaShop\Model\AddressData;
-use Alma\PrestaShop\Model\CustomerData;
+use Alma\PrestaShop\Model\AddressModel;
+use Alma\PrestaShop\Model\CustomerModel;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -35,15 +35,15 @@ if (!defined('_PS_VERSION_')) {
 class CustomerService
 {
     /**
-     * @var CustomerData
+     * @var CustomerModel
      */
     protected $customer;
     /**
-     * @var AddressData
+     * @var AddressModel
      */
     protected $shippingAddress;
     /**
-     * @var AddressData
+     * @var AddressModel
      */
     protected $billingAddress;
 
@@ -54,10 +54,11 @@ class CustomerService
      */
     public function __construct($idCustomer, $idBillingAddress, $idShippingAddress = null)
     {
-        $this->customer = new CustomerData((int) $idCustomer);
-        $this->billingAddress = new AddressData((int) $idBillingAddress);
+        $this->customer = new CustomerModel((int) $idCustomer);
+        $this->billingAddress = new AddressModel((int) $idBillingAddress);
+
         if ($idShippingAddress) {
-            $this->shippingAddress = new AddressData((int) $idShippingAddress);
+            $this->shippingAddress = new AddressModel((int) $idShippingAddress);
         }
     }
 
@@ -71,11 +72,11 @@ class CustomerService
             $this->getPhone(),
             $this->customer->getLastname(),
             $this->customer->getFirstname(),
-            $this->getBillingAddressLine1(),
-            $this->getBillingAddressLine2(),
-            $this->getBillingZipCode(),
-            $this->getBillingCity(),
-            $this->getBillingCountry(),
+            $this->billingAddress->getAddressLine1(),
+            $this->billingAddress->getAddressLine2(),
+            $this->billingAddress->getZipCode(),
+            $this->billingAddress->getCity(),
+            $this->billingAddress->getCountry(),
             $this->customer->getBirthday()
         );
     }
@@ -94,53 +95,15 @@ class CustomerService
                 return $this->shippingAddress->getPhone();
             }
         }
+
         if ($this->billingAddress->getPhoneMobile()) {
             return $this->billingAddress->getPhoneMobile();
         }
+
         if ($this->billingAddress->getPhone()) {
             return $this->billingAddress->getPhone();
         }
 
         return null;
-    }
-
-    /**
-     * @return string
-     */
-    private function getBillingAddressLine1()
-    {
-        return $this->billingAddress->getAddressLine1();
-    }
-
-    /**
-     * @return string
-     */
-    private function getBillingAddressLine2()
-    {
-        return $this->billingAddress->getAddressLine2();
-    }
-
-    /**
-     * @return string
-     */
-    private function getBillingZipCode()
-    {
-        return $this->billingAddress->getZipCode();
-    }
-
-    /**
-     * @return string
-     */
-    private function getBillingCity()
-    {
-        return $this->billingAddress->getCity();
-    }
-
-    /**
-     * @return string
-     */
-    private function getBillingCountry()
-    {
-        return $this->billingAddress->getCountry();
     }
 }

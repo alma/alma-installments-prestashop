@@ -246,12 +246,12 @@ class AlmaInsuranceProductRepository
     }
 
     /**
-     * @param $idCart
-     * @param $idShop
+     * @param int $idCart
+     * @param int $idShop
      * @return array
      * @throws \PrestaShopDatabaseException
      */
-    public function getContractsInfosByCartIdAndShopId($idCart, $idShop)
+    public function getContractsInfosByIdCartAndIdShop($idCart, $idShop)
     {
         $sql = '
             SELECT `id_alma_insurance_product`,

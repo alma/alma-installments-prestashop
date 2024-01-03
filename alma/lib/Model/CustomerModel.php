@@ -28,35 +28,14 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-class CustomerData
+class CustomerModel extends \CustomerCore
 {
-    /**
-     * @var \Customer
-     */
-    protected $customer;
-
-    /**
-     * @param $idCustomer
-     */
-    public function __construct($idCustomer)
-    {
-        $this->customer = new \Customer($idCustomer);
-    }
-
-    /**
-     * @return \Customer
-     */
-    public function getCustomer()
-    {
-        return $this->customer;
-    }
-
     /**
      * @return string
      */
     public function getLastname()
     {
-        return $this->customer->lastname;
+        return $this->lastname;
     }
 
     /**
@@ -64,7 +43,7 @@ class CustomerData
      */
     public function getFirstname()
     {
-        return $this->customer->firstname;
+        return $this->firstname;
     }
 
     /**
@@ -72,7 +51,7 @@ class CustomerData
      */
     public function getEmail()
     {
-        return $this->customer->email;
+        return $this->email;
     }
 
     /**
@@ -80,10 +59,10 @@ class CustomerData
      */
     public function getBirthday()
     {
-        if ($this->customer->birthday === '0000-00-00') {
+        if ($this->birthday === '0000-00-00') {
             return null;
         }
 
-        return $this->customer->birthday;
+        return $this->birthday;
     }
 }

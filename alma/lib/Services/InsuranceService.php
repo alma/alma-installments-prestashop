@@ -25,8 +25,6 @@
 namespace Alma\PrestaShop\Services;
 
 use Alma\API\Entities\Insurance\Subscription;
-use Alma\API\Exceptions\ParamsException;
-use Alma\API\RequestError;
 use Alma\PrestaShop\Exceptions\AlmaException;
 use Alma\PrestaShop\Exceptions\InsuranceInstallException;
 use Alma\PrestaShop\Exceptions\TermsAndConditionsException;

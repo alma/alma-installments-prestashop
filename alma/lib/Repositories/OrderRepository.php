@@ -22,27 +22,22 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
-namespace Alma\PrestaShop\Model;
+namespace Alma\PrestaShop\Repositories;
+
+use Alma\PrestaShop\Helpers\ConstantsHelper;
+use Alma\PrestaShop\Helpers\LocaleHelper;
 
 if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-class OrderData
+/**
+ * Class OrderRepository.
+ *
+ * Use for Orders
+ */
+class OrderRepository
 {
-    public static function getCurrentOrderPayment($order)
-    {
-        if ('alma' != $order->module && 1 == $order->valid) {
-            return false;
-        }
-        $orderPayments = \OrderPayment::getByOrderReference($order->reference);
-        if ($orderPayments && isset($orderPayments[0])) {
-            return $orderPayments[0];
-        }
-
-        return false;
-    }
-
     /**
      * Get customer orders.
      *
@@ -53,7 +48,7 @@ class OrderData
      *
      * @throws \PrestaShopDatabaseException
      */
-    public static function getCustomerOrders($idCustomer, $limit)
+    public function getCustomerOrders($idCustomer, $limit)
     {
         $res = \Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
             'SELECT
@@ -68,7 +63,7 @@ class OrderData
                 LEFT JOIN `' . _DB_PREFIX_ . 'order_payment` op ON op.`order_reference` = o.`reference`
             WHERE
                 o.`id_customer` = ' . (int) $idCustomer
-                . \Shop::addSqlRestriction(\Shop::SHARE_ORDER) . '
+            . \Shop::addSqlRestriction(\Shop::SHARE_ORDER) . '
             ORDER BY
                 o.`date_add` DESC
             LIMIT ' . (int) $limit

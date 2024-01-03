@@ -171,7 +171,7 @@ final class DisplayRefundsHookController extends AdminHookController
             throw new PaymentNotFoundException('Alma is not available');
         }
         $orderHelper = new OrderHelper();
-        $orderPayment = $orderHelper->getOrderPaymentOrFail($order, true);
+        $orderPayment = $orderHelper->ajaxGetOrderPayment($order);
         $paymentId = $orderPayment->transaction_id;
         if (empty($paymentId)) {
             throw new PaymentNotFoundException("[Alma] paymentId doesn't exist");

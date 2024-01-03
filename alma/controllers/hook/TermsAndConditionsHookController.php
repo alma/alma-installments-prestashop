@@ -92,7 +92,7 @@ class TermsAndConditionsHookController extends FrontendHookController
          * @var \Cart $cart
          */
         $cart = $params['cart'];
-        $insuranceContracts = $this->almaInsuranceProductRepository->getContractsInfosByCartIdAndShopId($cart->id, $cart->id_shop);
+        $insuranceContracts = $this->almaInsuranceProductRepository->getContractsInfosByIdCartAndIdShop($cart->id, $cart->id_shop);
 
         try {
             $termsAndConditionsInsurance = $this->insuranceService->createTextTermsAndConditions($insuranceContracts);

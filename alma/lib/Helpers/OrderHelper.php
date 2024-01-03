@@ -122,23 +122,15 @@ class OrderHelper
     }
 
     /**
-     * @param $order
-     * @param bool $ajaxReturn
-     * @return false|\OrderPayment
-     *
-     * @throws \PrestaShopException
+     * @param \Order $order
+     * @return mixed
      * @throws OrderException
      */
-    public function getOrderPaymentOrFail($order, $ajaxReturn = false)
+    public function getOrderPayment($order)
     {
-        $orderPayment = OrderData::getCurrentOrderPayment($order);
-        if (!$orderPayment) {
-            if ($ajaxReturn) {
-                $this->ajaxRenderAndExit(
-                    $this->module->l('Error: Could not find Alma transaction', 'OrderDataTrait')
-                );
-            }
+        $orderPayment = $this->getCurrentOrderPayment($order);
 
+        if (!$orderPayment) {
             $msg = '[Alma] orderPayment not found';
             Logger::instance()->error($msg);
             throw new OrderException($msg);
@@ -149,25 +141,60 @@ class OrderHelper
 
     /**
      * @param \Order $order
-     * @return false|\OrderPayment
+     * @return false|\OrderPayment|void
+     * @throws \PrestaShopException
      */
-    public function getOrderPayment($order)
+    public function ajaxGetOrderPayment($order)
     {
-        $orderPayments = \OrderPayment::getByOrderReference($order->reference);
-        if ($orderPayments && isset($orderPayments[0])) {
+        try {
+            return $this->getOrderPayment($order);
+        } catch (OrderException $e) {
+            $this->ajaxRenderAndExit(
+                $this->module->l('Error: Could not find Alma transaction', 'OrderHelper')
+            );
+        }
+    }
+
+
+    /**
+     * @param \Order $order
+     * @param bool $checkIsAlma
+     * @return false|mixed
+     */
+    public function getCurrentOrderPayment($order, $checkIsAlma = true)
+    {
+        if (
+            true === $checkIsAlma
+            && 'alma' != $order->module
+            && 1 == $order->valid
+        ) {
+            return false;
+        }
+
+        $orderPayments = $order->getOrderPayments();
+
+        if (
+            $orderPayments
+            && isset($orderPayments[0])
+        ) {
             return $orderPayments[0];
         }
 
         return false;
     }
 
+
     /**
      * @throws OrderException
      */
-    public function checkOrderAlma($order)
+    public function checkIfIsOrderAlma($order)
     {
         if ($order->module !== 'alma') {
-            $msg = "[Alma] This order id #{$order->id} is not an order Alma";
+            $msg = sprintf(
+                "[Alma] This order id #%s is not an order Alma",
+                $order->id
+            );
+
             Logger::instance()->error($msg);
             throw new OrderException($msg);
         }

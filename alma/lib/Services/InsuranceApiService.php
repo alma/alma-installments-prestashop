@@ -71,4 +71,29 @@ class InsuranceApiService
 
         return null;
     }
+
+
+    /**
+     * @param array $subscriptionData
+     * @param int $idTransaction
+     * @return mixed|null
+     */
+    public function subscribeInsurance($subscriptionData, $idTransaction)
+    {
+        try {
+            return $this->almaApiClient->insurance->subscription($subscriptionData, $idTransaction);
+        } catch (\Exception  $e) {
+            Logger::instance()->error(
+                sprintf(
+                    '[Alma] Impossible to subscribe insurance contract, message "%s", trace "%s", subscriptionData : "%s", idTransaction : "%s"',
+                    $e->getMessage(),
+                    $e->getTraceAsString(),
+                    json_encode($subscriptionData),
+                    $idTransaction
+                )
+            );
+        }
+
+        return null;
+    }
 }
