@@ -24,10 +24,7 @@
 
 namespace Alma\PrestaShop\Controllers\Hook;
 
-use Alma\API\Client;
-use Alma\API\Exceptions\ParamsException;
-use Alma\API\RequestError;
-use Alma\PrestaShop\Helpers\ClientHelper;
+use Alma\PrestaShop\Exceptions\TermsAndConditionsException;
 use Alma\PrestaShop\Helpers\InsuranceHelper;
 use Alma\PrestaShop\Hooks\FrontendHookController;
 use Alma\PrestaShop\Repositories\AlmaInsuranceProductRepository;
@@ -87,8 +84,6 @@ class TermsAndConditionsHookController extends FrontendHookController
     /**
      * @param $params
      * @return array
-     * @throws ParamsException
-     * @throws RequestError
      * @throws \PrestaShopDatabaseException
      */
     public function run($params)
@@ -98,13 +93,18 @@ class TermsAndConditionsHookController extends FrontendHookController
          */
         $cart = $params['cart'];
         $insuranceContracts = $this->almaInsuranceProductRepository->getContractsInfosByCartIdAndShopId($cart->id, $cart->id_shop);
-        $termsAndConditionsInsurance = $this->insuranceService->createTextTermsAndConditions($insuranceContracts);
 
-        // @TODO : Find an alternative about the modal on the click to the link
-        $returnedTermsAndConditions[] = $this->termsAndConditions
-            ->setText($termsAndConditionsInsurance['text'], $termsAndConditionsInsurance['link'])
-            ->setIdentifier('terms-and-conditions-alma-insurance');
+        try {
+            $termsAndConditionsInsurance = $this->insuranceService->createTextTermsAndConditions($insuranceContracts);
 
-        return $returnedTermsAndConditions;
+            // @TODO : Find an alternative about the modal on the click to the link
+            $returnedTermsAndConditions[] = $this->termsAndConditions
+                ->setText($termsAndConditionsInsurance['text'], $termsAndConditionsInsurance['link'])
+                ->setIdentifier('terms-and-conditions-alma-insurance');
+
+            return $returnedTermsAndConditions;
+        } catch (TermsAndConditionsException $e) {
+            // @todo Afficher error page or message and block the payment
+        }
     }
 }
