@@ -1,6 +1,7 @@
 .PHONY: dist
-dist: clean install-tools
-	./scripts/build-dist.sh
+dist: clean
+	docker build -t alma_prestashop_builder:latest scripts/build/
+	docker run --rm -u $(shell id -u):$(shell id -g) -w ${PWD} -v "${PWD}:${PWD}" alma_prestashop_builder:latest /bin/sh scripts/build/build-dist-docker.sh
 
 .PHONY: clean
 clean:

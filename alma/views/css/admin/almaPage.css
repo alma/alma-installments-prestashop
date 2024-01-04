@@ -160,7 +160,8 @@ fieldset .form-alma.disabled::before{
     top: 49%;
 }
 
-.bootstrap .alma.alert {
+.bootstrap .alma.alert,
+#main-div .alma.alert{
     font-family: 'Public-Sans', sans-serif;
     font-weight: 300;
     padding-left: 180px;
@@ -171,53 +172,64 @@ fieldset .form-alma.disabled::before{
     border-radius: 4px;
 }
 
-.bootstrap .alma.alert h2, .bootstrap .alma.alert .btn {
+.bootstrap .alma.alert h2, .bootstrap .alma.alert .btn,
+#main-div .alma.alert h2, #main-div .alma.alert .btn{
     font-family: 'Eina04-Bold', sans-serif;
     font-weight: 400;
 }
 
-.bootstrap .alma.alert b{
+.bootstrap .alma.alert b,
+#main-div .alma.alert b{
     font-weight: 600;
 }
 
-.bootstrap .alma.alert .h2, .bootstrap .alma.alert h2 {
+.bootstrap .alma.alert .h2, .bootstrap .alma.alert h2,
+#main-div .alma.alert .h2, #main-div .alma.alert h2{
     font-size: 24px;
 }
 
-.bootstrap .alma.alert.alert-info {
+.bootstrap .alma.alert.alert-info,
+#main-div .alma.alert.alert-info{
     background-color: #E9F4FF;
     border: 1px solid #E1E4E6;
     color: #00425D;
     font-size: 16px;
 }
 
-.bootstrap .alma.alert.alert-info:before {
+.bootstrap .alma.alert.alert-info:before,
+#main-div .alma.alert.alert-info:before{
     content: '';
 }
 
-.bootstrap .alma.alert ul {
+.bootstrap .alma.alert ul,
+#main-div .alma.alert ul{
     list-style-type: disc;
     padding-left: 40px;
 }
 
-.bootstrap .alma.alert.alert-info a:not(.btn) {
+.bootstrap .alma.alert.alert-info a:not(.btn),
+#main-div .alma.alert.alert-info a:not(.btn){
     color: #00425D;
     text-decoration: underline;
 }
 
-.bootstrap .alma.alert .btn {
+.bootstrap .alma.alert .btn,
+#main-div .alma.alert .btn{
     line-height: 1;
     padding: 12px 16px;
     border: 2px solid transparent;
     border-radius: 4px;
     text-transform: uppercase;
+    text-decoration: none;
 }
-.bootstrap .alma.alert .btn.btn-default {
+.bootstrap .alma.alert .btn.btn-default,
+#main-div .alma.alert .btn.btn-default{
     background: #FFFFFF;
     border-color: #00425D;
     color: #00425D;
 }
-.bootstrap .alma.alert .btn.btn-primary {
+.bootstrap .alma.alert .btn.btn-primary,
+#main-div .alma.alert .btn.btn-primary{
     background: #00425D;
     border-color: #00425D;
     color: #FFFFFF;
