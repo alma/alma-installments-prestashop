@@ -86,16 +86,24 @@ class DisplayProductActionsHookController extends FrontendHookController
         /**
          * @var \Product $product
          */
-        $productParams = isset($params['product']) ? $params['product'] : [];
+        if (version_compare(_PS_VERSION_, '1.7', '<')) {
+            $product = $params['product'];
 
-        $productId = isset($productParams['id_product'])
-            ? $productParams['id_product']
-            : \Tools::getValue('id_product');
+            $productId = $product->id;
 
-        $productAttributeId = isset($productParams['id_product_attribute'])
-            ? $productParams['id_product_attribute']
-            : null;
+            $productAttributeId = property_exists($product, 'id_product_attribute') ? $product->id_product_attribute : null;
+        } else {
+            $productParams = isset($params['product']) ? $params['product'] : [];
 
+            $productId = isset($productParams['id_product'])
+                ? $productParams['id_product']
+                : \Tools::getValue('id_product');
+
+            $productAttributeId = isset($productParams['id_product_attribute'])
+                ? $productParams['id_product_attribute']
+                : null;
+        }
+        
         $cmsReference = $productId . '-' . $productAttributeId;
 
         $regularPrice = $this->productHelper->getRegularPrice($productId, $productAttributeId);
