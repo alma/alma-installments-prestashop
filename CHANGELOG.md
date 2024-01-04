@@ -1,5 +1,9 @@
 # Changelog
 
+## v3.1.3
+
+- fix: CSS of Prestashop Switch button on Back-office setting
+
 ## v3.1.2
 
 - hotfix: Select payment In-Page without open the modal and try to pay with other payment method
