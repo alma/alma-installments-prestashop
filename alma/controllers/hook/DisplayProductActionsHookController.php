@@ -31,6 +31,9 @@ if (!defined('_PS_VERSION_')) {
 use Alma\PrestaShop\Helpers\Admin\InsuranceHelper as AdminInsuranceHelper;
 use Alma\PrestaShop\Helpers\ConstantsHelper;
 use Alma\PrestaShop\Helpers\InsuranceHelper;
+use Alma\PrestaShop\Helpers\PriceHelper;
+use Alma\PrestaShop\Helpers\ProductHelper;
+use Alma\PrestaShop\Helpers\SettingsHelper;
 use Alma\PrestaShop\Hooks\FrontendHookController;
 
 class DisplayProductActionsHookController extends FrontendHookController
@@ -45,7 +48,11 @@ class DisplayProductActionsHookController extends FrontendHookController
     /**
      * @var AdminInsuranceHelper
      */
-    private $adminInsuranceHelper;
+    protected $adminInsuranceHelper;
+    /**
+     * @var ProductHelper
+     */
+    protected $productHelper;
 
     /**
      * @param $module
@@ -54,6 +61,7 @@ class DisplayProductActionsHookController extends FrontendHookController
     {
         $this->insuranceHelper = new InsuranceHelper();
         $this->adminInsuranceHelper = new AdminInsuranceHelper($module);
+        $this->productHelper = new ProductHelper();
         parent::__construct($module);
     }
 
@@ -75,30 +83,75 @@ class DisplayProductActionsHookController extends FrontendHookController
      */
     public function run($params)
     {
+        /**
+         * @var \Product $product
+         */
+        if (version_compare(_PS_VERSION_, '1.7', '<')) {
+            $product = $params['product'];
+
+            $productId = $product->id;
+
+            $productAttributeId = property_exists($product, 'id_product_attribute') ? $product->id_product_attribute : null;
+        } else {
+            $productParams = isset($params['product']) ? $params['product'] : [];
+
+            $productId = isset($productParams['id_product'])
+                ? $productParams['id_product']
+                : \Tools::getValue('id_product');
+
+            $productAttributeId = isset($productParams['id_product_attribute'])
+                ? $productParams['id_product_attribute']
+                : null;
+        }
+        
+        $cmsReference = $productId . '-' . $productAttributeId;
+
+        $regularPrice = $this->productHelper->getRegularPrice($productId, $productAttributeId);
+        $regularPriceInCents = PriceHelper::convertPriceToCents($regularPrice);
+
+        $merchantId = SettingsHelper::getMerchantId();
         $addToCartLink = '';
         $oldPSVersion = false;
-        $settings = json_encode($this->adminInsuranceHelper->mapDbFieldsWithIframeParams());
+        $settings = $this->handleSettings($merchantId);
 
         if (version_compare(_PS_VERSION_, '1.7', '<')) {
-
-            /**
-             * @var \LinkCore $link
-             */
             $link = new \Link;
             $ajaxAddToCart = $link->getModuleLink('alma', 'insurance', ["action" => "addToCartPS16"]);
             $addToCartLink = ' data-link16="' . $ajaxAddToCart . '" data-token="'.\Tools::getToken(false).'" ';
             $oldPSVersion = true;
-
         }
 
         $this->context->smarty->assign([
             'addToCartLink' => $addToCartLink,
             'oldPSVersion' => $oldPSVersion,
             'settingsInsurance' => $settings,
-            'iframeUrl' => $this->adminInsuranceHelper->envUrl() . ConstantsHelper::FO_IFRAME_WIDGET_INSURANCE_PATH,
-            'scriptModalUrl' => $this->adminInsuranceHelper->envUrl() . ConstantsHelper::SCRIPT_MODAL_WIDGET_INSURANCE_PATH,
+            'iframeUrl' => sprintf(
+                "%s%s?cms_reference=%s&product_price=%s&merchant_id=%s",
+                $this->adminInsuranceHelper->envUrl(),
+                ConstantsHelper::FO_IFRAME_WIDGET_INSURANCE_PATH,
+                $cmsReference,
+                $regularPriceInCents,
+                $merchantId
+            ),
+            'scriptModalUrl' => sprintf(
+                "%s%s",
+                $this->adminInsuranceHelper->envUrl(),
+                ConstantsHelper::SCRIPT_MODAL_WIDGET_INSURANCE_PATH
+            ),
         ]);
 
         return $this->module->display($this->module->file, 'displayProductActions.tpl');
+    }
+
+    /**
+     * @return false|string
+     * @throws \PrestaShopException
+     */
+    private function handleSettings($merchantId)
+    {
+        $settings = $this->adminInsuranceHelper->mapDbFieldsWithIframeParams();
+        $settings['merchant_id'] = $merchantId;
+
+        return json_encode($settings);
     }
 }

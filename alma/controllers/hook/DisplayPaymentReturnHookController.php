@@ -29,26 +29,29 @@ if (!defined('_PS_VERSION_')) {
 }
 
 use Alma\API\RequestError;
+use Alma\PrestaShop\Exceptions\OrderException;
 use Alma\PrestaShop\Exceptions\RenderPaymentException;
 use Alma\PrestaShop\Helpers\ClientHelper;
+use Alma\PrestaShop\Helpers\OrderHelper;
 use Alma\PrestaShop\Hooks\FrontendHookController;
 use Alma\PrestaShop\Logger;
 use Alma\PrestaShop\Model\OrderData;
 
 class DisplayPaymentReturnHookController extends FrontendHookController
 {
+    /**
+     * @throws \PrestaShopException
+     * @throws RenderPaymentException
+     * @throws OrderException
+     */
     public function run($params)
     {
         $this->context->controller->addCSS($this->module->_path . 'views/css/alma.css', 'all');
 
         $payment = null;
         $order = array_key_exists('objOrder', $params) ? $params['objOrder'] : $params['order'];
-        $orderPayment = OrderData::getCurrentOrderPayment($order);
-        if (!$orderPayment) {
-            $msg = '[Alma] orderPayment not found';
-            Logger::instance()->error($msg);
-            throw new RenderPaymentException($msg);
-        }
+        $orderHelper = new OrderHelper();
+        $orderPayment = $orderHelper->getOrderPayment($order);
         $almaPaymentId = $orderPayment->transaction_id;
         if (!$almaPaymentId) {
             $msg = '[Alma] Payment_id not found';

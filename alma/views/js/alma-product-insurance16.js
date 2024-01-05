@@ -30,16 +30,14 @@
             e.preventDefault();
 
             if(
-                null != document.getElementById('alma_insurance_name')
-                && null != document.getElementById('alma_insurance_price')
+                null != document.getElementById('alma_id_insurance_contract')
             ) {
                 var almaUrl = document.getElementById('alma-widget-insurance-product-page').getAttribute('data-link16')
                 var almaToken = document.getElementById('alma-widget-insurance-product-page').getAttribute('data-token')
                 var productId = document.getElementById('product_page_product_id').value;
                 var productAttributeId = document.getElementById('idCombination').value;
                 var qty = document.getElementById('quantity_wanted').value;
-                var insuranceName = document.getElementById('alma_insurance_name').value;
-                var insurancePrice = document.getElementById('alma_insurance_price').value;
+                var insuranceContractId = document.getElementById('alma_id_insurance_contract').value;
 
 
                 $.ajax({
@@ -52,8 +50,7 @@
                         id_product : productId,
                         id_product_attribute : productAttributeId,
                         qty : qty,
-                        alma_insurance_name : insuranceName,
-                        alma_insurance_price : insurancePrice,
+                        alma_id_insurance_contract : insuranceContractId,
                     },
                 })
                     .success(function () {
@@ -117,8 +114,7 @@ function onloadAddInsuranceInputOnProductAlma() {
 function addInputsInsurance(selectedAlmaInsurance) {
     var formAddToCart = document.getElementById('buy_block');
 
-    handleInput('alma_insurance_price', selectedAlmaInsurance.option.price, formAddToCart);
-    handleInput('alma_insurance_name', selectedAlmaInsurance.name, formAddToCart);
+    handleInput('alma_id_insurance_contract', selectedAlmaInsurance.insuranceContractId, formAddToCart);
 }
 
 function handleInput(inputName, value, form) {
@@ -144,6 +140,5 @@ function removeInsurance() {
             ? almaInsuranceConfigIframeElement.contentWindow
             : null;
     almaInsuranceConfigIframe?.postMessage({ type: 'dataSentBackToWidget', data: null }, '*');
-    document.getElementById('alma_insurance_name').remove();
-    document.getElementById('alma_insurance_price').remove();
+    document.getElementById('alma_id_insurance_contract').remove();
 }

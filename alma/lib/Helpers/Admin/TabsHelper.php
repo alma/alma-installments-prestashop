@@ -27,6 +27,10 @@ namespace Alma\PrestaShop\Helpers\Admin;
 use Alma\PrestaShop\Helpers\ConstantsHelper;
 use PrestaShop\PrestaShop\Adapter\Entity\Tab;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class TabsHelper
 {
     /**

@@ -27,6 +27,7 @@ namespace Alma\PrestaShop\Helpers;
 use Alma\PrestaShop\Logger;
 use Alma\PrestaShop\Model\CartData;
 use Alma\PrestaShop\Model\OrderData;
+use Alma\PrestaShop\Repositories\OrderRepository;
 use Alma\PrestaShop\Repositories\ProductRepository;
 
 if (!defined('_PS_VERSION_')) {
@@ -40,10 +41,15 @@ class CartHelper
 {
     /** @var \Context */
     private $context;
+    /**
+     * @var OrderRepository
+     */
+    protected $orderRepository;
 
     public function __construct($context)
     {
         $this->context = $context;
+        $this->orderRepository = new OrderRepository();
     }
 
     /**
@@ -107,7 +113,7 @@ class CartHelper
     private function getOrdersByCustomer($idCustomer, $limit)
     {
         try {
-            $orders = OrderData::getCustomerOrders($idCustomer, $limit);
+            $orders = $this->orderRepository->getCustomerOrders($idCustomer, $limit);
         } catch (\PrestaShopDatabaseException $e) {
             return [];
         }

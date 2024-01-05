@@ -22,47 +22,57 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
-namespace Alma\PrestaShop\Services;
+namespace Alma\PrestaShop\Repositories;
 
-use Alma\PrestaShop\Repositories\AttributeGroupRepository;
+use Alma\PrestaShop\Helpers\ConstantsHelper;
+use Alma\PrestaShop\Helpers\LocaleHelper;
 
 if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-class AttributeGroupProductService
+/**
+ * Class OrderRepository.
+ *
+ * Use for Orders
+ */
+class OrderRepository
 {
     /**
-     * @var \ContextCore
+     * Get customer orders.
+     *
+     * @param int $idCustomer Customer id
+     * @param int $limit
+     *
+     * @return array Customer orders
+     *
+     * @throws \PrestaShopDatabaseException
      */
-    protected $context;
-
-    /**
-     * @var AttributeGroupRepository
-     */
-    protected $attributeGroupRepository;
-
-    public function __construct() {
-        $this->context = \Context::getContext();
-        $this->attributeGroupRepository = new AttributeGroupRepository();
-    }
-
-    /**
-     * @param string $name
-     * @return int
-     */
-    public function getIdAttributeGroupByName($name)
+    public function getCustomerOrders($idCustomer, $limit)
     {
-        $attributeGroupId = $this->attributeGroupRepository->getAttributeIdByName(
-            $name,
-            $this->context->language->id
+        $res = \Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
+            'SELECT
+                o.id_cart,
+                o.date_add,
+                o.payment,
+                o.current_state,
+                o.module,
+                op.transaction_id
+            FROM
+                `' . _DB_PREFIX_ . 'orders` o
+                LEFT JOIN `' . _DB_PREFIX_ . 'order_payment` op ON op.`order_reference` = o.`reference`
+            WHERE
+                o.`id_customer` = ' . (int) $idCustomer
+            . \Shop::addSqlRestriction(\Shop::SHARE_ORDER) . '
+            ORDER BY
+                o.`date_add` DESC
+            LIMIT ' . (int) $limit
         );
 
-        if (!$attributeGroupId) {
-            $attributeGroup = $this->attributeGroupRepository->createInsuranceAttributeGroup();
-            $attributeGroupId = $attributeGroup->id;
+        if (!$res) {
+            return [];
         }
 
-        return $attributeGroupId;
+        return $res;
     }
 }

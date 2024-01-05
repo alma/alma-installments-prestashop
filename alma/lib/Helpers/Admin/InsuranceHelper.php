@@ -29,6 +29,10 @@ use Alma\PrestaShop\Helpers\ConfigurationHelper;
 use Alma\PrestaShop\Helpers\ConstantsHelper;
 use Alma\PrestaShop\Helpers\SettingsHelper;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class InsuranceHelper
 {
     /**

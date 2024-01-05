@@ -24,6 +24,8 @@ const settings = JSON.parse(document.querySelector('#alma-widget-insurance-produ
 let insuranceSelected = false;
 let selectedAlmaInsurance = null;
 let addToCartFlow = false;
+let productDetails = null;
+let quantity = 1;
 
 (function ($) {
     $(function () {
@@ -39,8 +41,13 @@ let addToCartFlow = false;
 
                     if (event.event !== undefined) {
                         modalIsClosed = event.event.namespace === 'bs.modal' && event.event.type === 'hidden';
+                        quantity = 1;
                     }
-                    if (modalIsClosed) {
+                    if (event.eventType === 'updatedProductQuantity') {
+                        quantity = event.event.target.value;
+                        removeInsurance();
+                    }
+                    if (modalIsClosed || event.eventType === 'updatedProductCombination') {
                         removeInsurance();
                     }
                     if(typeof event.selectedAlmaInsurance !== 'undefined' && event.selectedAlmaInsurance !== null ) {
@@ -57,6 +64,10 @@ let addToCartFlow = false;
             prestashop.on(
                 'updatedProduct',
                 function () {
+                    document.getElementById('quantity_wanted').value = quantity;
+                    productDetails = JSON.parse(document.getElementById('product-details').dataset.product);
+
+                    refreshWidget();
                     openModalOnAddToCart();
                 }
             );
@@ -69,6 +80,10 @@ function onloadAddInsuranceInputOnProductAlma() {
     let currentResolve;
 
     window.addEventListener('message', (e) => {
+        if (e.data.type === 'almaEligibilityAnswer') {
+            let heightIframe = e.data.widgetSize.height + 25;
+            document.getElementById('product-alma-iframe').style.height = heightIframe + "px";
+        }
         if (e.data.type === 'getSelectedInsuranceData') {
             insuranceSelected = true;
             selectedAlmaInsurance = e.data.selectedInsuranceData;
@@ -79,11 +94,22 @@ function onloadAddInsuranceInputOnProductAlma() {
     });
 }
 
+function refreshWidget() {
+    let cmsReference = productDetails.id_product + '-' + productDetails.id_product_attribute;
+    let regularPriceToCents = productDetails.price_without_reduction * 100;
+
+    getproductDataForApiCall(
+        cmsReference,
+        regularPriceToCents,
+        settings.merchant_id,
+        productDetails.quantity_wanted
+    );
+}
+
 function addInputsInsurance(selectedAlmaInsurance) {
     let formAddToCart = document.getElementById('add-to-cart-or-refresh');
 
-    handleInput('alma_insurance_price', selectedAlmaInsurance.option.price, formAddToCart);
-    handleInput('alma_insurance_name', selectedAlmaInsurance.name, formAddToCart);
+    handleInput('alma_id_insurance_contract', selectedAlmaInsurance.insuranceContractId, formAddToCart);
 }
 
 function handleInput(inputName, value, form) {

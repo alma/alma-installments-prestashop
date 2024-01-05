@@ -28,56 +28,41 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-class OrderData
+class CustomerModel extends \CustomerCore
 {
-    public static function getCurrentOrderPayment($order)
+    /**
+     * @return string
+     */
+    public function getLastname()
     {
-        if ('alma' != $order->module && 1 == $order->valid) {
-            return false;
-        }
-        $orderPayments = \OrderPayment::getByOrderReference($order->reference);
-        if ($orderPayments && isset($orderPayments[0])) {
-            return $orderPayments[0];
-        }
-
-        return false;
+        return $this->lastname;
     }
 
     /**
-     * Get customer orders.
-     *
-     * @param int $idCustomer Customer id
-     * @param int $limit
-     *
-     * @return array Customer orders
-     *
-     * @throws \PrestaShopDatabaseException
+     * @return string
      */
-    public static function getCustomerOrders($idCustomer, $limit)
+    public function getFirstname()
     {
-        $res = \Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
-            'SELECT
-                o.id_cart,
-                o.date_add,
-                o.payment,
-                o.current_state,
-                o.module,
-                op.transaction_id
-            FROM
-                `' . _DB_PREFIX_ . 'orders` o
-                LEFT JOIN `' . _DB_PREFIX_ . 'order_payment` op ON op.`order_reference` = o.`reference`
-            WHERE
-                o.`id_customer` = ' . (int) $idCustomer
-                . \Shop::addSqlRestriction(\Shop::SHARE_ORDER) . '
-            ORDER BY
-                o.`date_add` DESC
-            LIMIT ' . (int) $limit
-        );
+        return $this->firstname;
+    }
 
-        if (!$res) {
-            return [];
+    /**
+     * @return string
+     */
+    public function getEmail()
+    {
+        return $this->email;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getBirthday()
+    {
+        if ($this->birthday === '0000-00-00') {
+            return null;
         }
 
-        return $res;
+        return $this->birthday;
     }
 }

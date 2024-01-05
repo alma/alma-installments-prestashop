@@ -24,12 +24,19 @@
 
 namespace Alma\PrestaShop\Services;
 
+use Alma\API\Entities\Insurance\Subscription;
+use Alma\PrestaShop\Exceptions\AlmaException;
 use Alma\PrestaShop\Exceptions\InsuranceInstallException;
+use Alma\PrestaShop\Exceptions\TermsAndConditionsException;
 use Alma\PrestaShop\Helpers\ConstantsHelper;
 use Alma\PrestaShop\Logger;
 use Alma\PrestaShop\Repositories\AlmaInsuranceProductRepository;
 use Alma\PrestaShop\Repositories\AttributeGroupRepository;
 use Alma\PrestaShop\Repositories\ProductRepository;
+
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
 
 class InsuranceService
 {
@@ -57,21 +64,28 @@ class InsuranceService
      * @var CartService
      */
     protected $cartService;
+    /**
+     * @var InsuranceApiService
+     */
+    protected $insuranceApiService;
+
 
     public function __construct()
     {
+        $this->module = \Module::getInstanceByName(ConstantsHelper::ALMA_MODULE_NAME);
         $this->productRepository = new ProductRepository();
         $this->imageService = new ImageService();
         $this->cartService = new CartService();
         $this->context = \Context::getContext();
         $this->attributeGroupRepository = new AttributeGroupRepository();
         $this->almaInsuranceProductRepository = new AlmaInsuranceProductRepository();
+        $this->insuranceApiService = new InsuranceApiService();
     }
 
     /**
      * Create the default Insurance product
      *
-     * @return \ProductCore|void
+     * @return \ProductCore
      * @throws InsuranceInstallException
      */
     public function createProductIfNotExists()
@@ -155,6 +169,8 @@ class InsuranceService
     /**
      * @param array $params
      * @return void
+     * @throws AlmaException
+     * @throws \PrestaShopDatabaseException
      */
     public function deleteAllLinkedInsuranceProducts($params)
     {
@@ -199,6 +215,7 @@ class InsuranceService
 
     /**
      * @return bool
+     * @throws \PrestaShopDatabaseException
      */
     public function hasInsuranceInCart()
     {
@@ -208,10 +225,67 @@ class InsuranceService
             $this->context->shop->id
         );
 
-        if(count($idsInsurances) > 0 ) {
+        if (count($idsInsurances) > 0) {
             return true;
         }
 
         return false;
+    }
+
+    /**
+     * @param array $insuranceContracts
+     * @param \Cart $cart
+     * @return array
+     */
+    public function createSubscriptionData($insuranceContracts, $cart)
+    {
+        $subscriptionData = [];
+        $customerService = new CustomerService($cart->id_customer, $cart->id_address_invoice, $cart->id_address_delivery);
+
+        foreach ($insuranceContracts as $insuranceContract) {
+            $insuranceContractInfos = json_decode($insuranceContract['insurance_contract_infos'], true);
+            $subscriptionData[] = new Subscription(
+                $insuranceContractInfos['insurance_contract_id'],
+                $insuranceContractInfos['cms_reference'],
+                $insuranceContractInfos['product_price'],
+                $customerService->getSubscriber()
+            );
+        }
+
+        return $subscriptionData;
+    }
+
+    /**
+     * @param  array $insuranceContracts
+     * @return array
+     * @throws TermsAndConditionsException
+     */
+    public function createTextTermsAndConditions($insuranceContracts)
+    {
+        $file = null;
+
+        foreach ($insuranceContracts as $insuranceContract) {
+            $insuranceContractInfos = json_decode($insuranceContract['insurance_contract_infos'], true);
+
+            $file = $this->insuranceApiService->getInsuranceContractFileByType(
+                $insuranceContractInfos['insurance_contract_id'],
+                $insuranceContractInfos['cms_reference'],
+                $insuranceContractInfos['product_price']
+            );
+
+            break;
+        }
+
+        if ($file) {
+            return [
+                'text' => sprintf(
+                    $this->module->l('By accepting to subscribe to [%s], I confirm my thorough review, acceptance, and retention of the general terms outlined in the information booklet and the insurance product details. Additionally, I consent to receiving contractual information by e-mail for the purpose of securely storing it in a durable format.', 'TermsAndConditionsHookController'),
+                    $file->getName()
+                ),
+                'link' => $file->getPublicUrl()
+            ];
+        }
+
+        throw new TermsAndConditionsException('An error occured when retrieving the file');
     }
 }
