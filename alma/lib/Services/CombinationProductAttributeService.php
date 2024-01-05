@@ -55,7 +55,7 @@ class CombinationProductAttributeService
         /**
          * @var \CombinationCore $combinaison
          */
-        $idProductAttributeInsurance = $this->combinationRepository->getIdByReference($product->id, $reference, $price);
+        $idProductAttributeInsurance = $this->combinationRepository->getIdByReferenceAndPrice($product->id, $reference, $price);
 
         if (!$idProductAttributeInsurance) {
             $idProductAttributeInsurance = $product->addCombinationEntity(

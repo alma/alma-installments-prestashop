@@ -125,8 +125,19 @@ class DisplayProductActionsHookController extends FrontendHookController
             'addToCartLink' => $addToCartLink,
             'oldPSVersion' => $oldPSVersion,
             'settingsInsurance' => $settings,
-            'iframeUrl' => $this->adminInsuranceHelper->envUrl() . ConstantsHelper::FO_IFRAME_WIDGET_INSURANCE_PATH . '?cms_reference=' . $cmsReference . '&product_price=' . $regularPriceInCents . '&merchant_id=' . $merchantId,
-            'scriptModalUrl' => $this->adminInsuranceHelper->envUrl() . ConstantsHelper::SCRIPT_MODAL_WIDGET_INSURANCE_PATH,
+            'iframeUrl' => sprintf(
+                "%s%s?cms_reference=%s&product_price=%s&merchant_id=%s",
+                $this->adminInsuranceHelper->envUrl(),
+                ConstantsHelper::FO_IFRAME_WIDGET_INSURANCE_PATH,
+                $cmsReference,
+                $regularPriceInCents,
+                $merchantId
+            ),
+            'scriptModalUrl' => sprintf(
+                "%s%s",
+                $this->adminInsuranceHelper->envUrl(),
+                ConstantsHelper::SCRIPT_MODAL_WIDGET_INSURANCE_PATH
+            ),
         ]);
 
         return $this->module->display($this->module->file, 'displayProductActions.tpl');

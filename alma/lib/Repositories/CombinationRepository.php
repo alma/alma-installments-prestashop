@@ -37,14 +37,14 @@ class CombinationRepository
 {
 
     /**
-     * For a given product_attribute reference, returns the corresponding id.
+     * For a given product_attribute reference and price, returns the corresponding id.
      *
      * @param int $idProduct
      * @param string $reference
-     *
+     * @param int $price
      * @return int id
      */
-    public function getIdByReference($idProduct, $reference, $price)
+    public function getIdByReferenceAndPrice($idProduct, $reference, $price)
     {
         if (empty($reference)) {
             return 0;

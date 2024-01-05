@@ -25,7 +25,10 @@
 namespace Alma\PrestaShop\Services;
 
 use Alma\API\Client;
+use Alma\API\Exceptions\MissingKeyException;
+use Alma\API\Exceptions\ParametersException;
 use Alma\API\Exceptions\ParamsException;
+use Alma\API\Exceptions\RequestException;
 use Alma\API\RequestError;
 use Alma\PrestaShop\Exceptions\AlmaException;
 use Alma\PrestaShop\Exceptions\InsuranceInstallException;
@@ -90,6 +93,10 @@ class InsuranceProductService
      * @var ProductHelper
      */
     protected $productHelper;
+    /**
+     * @var InsuranceApiService
+     */
+    protected $insuranceApiService;
 
     public function __construct()
     {
@@ -103,6 +110,7 @@ class InsuranceProductService
         $this->productRepository = new ProductRepository();
         $this->alma = ClientHelper::defaultInstance();
         $this->productHelper = new ProductHelper();
+        $this->insuranceApiService = new InsuranceApiService();
     }
 
     /**
@@ -221,83 +229,104 @@ class InsuranceProductService
     }
 
     /**
-     * @param $idProduct
-     * @param $insuranceContractId
-     * @param $quantity
-     * @param $idCustomization
-     * @param $idProductAttributePS16
-     * @param $destroyPost
-     * @return void|null
-     * @throws AlmaException
-     * @throws InsuranceInstallException
-     * @throws \PrestaShopDatabaseException
-     * @throws \PrestaShopException
+     * @param int $idProduct
+     * @param int $insuranceContractId
+     * @param int $quantity
+     * @param int $idCustomization
+     * @param int $idProductAttributePS16
+     * @param bool $destroyPost
+     * @return bool
      */
     public function handleAddingProductInsurance($idProduct, $insuranceContractId, $quantity, $idCustomization, $idProductAttributePS16 = 0, $destroyPost = true)
     {
-        if (!$this->alma) {
-            return null;
-        }
-
-        $idProductAttribute = $this->attributeProductService->getIdProductAttributeFromPost($idProduct);
-        $cmsReference = $idProduct . '-' . $idProductAttribute;
-        $regularPrice = $this->productHelper->getRegularPrice($idProduct, $idProductAttribute);
-        $regularPriceInCents = PriceHelper::convertPriceToCents($regularPrice);
-
         try {
-            $insuranceContract = $this->alma->insurance->getInsuranceContract($insuranceContractId, $cmsReference, $regularPriceInCents);
-        } catch (RequestError $e) {
-            $msg = "[Alma] ERROR when get insurance contract with id ={$insuranceContractId}, cms reference = {$cmsReference}, product price = {$regularPriceInCents}: {$e->getMessage()}";
-            Logger::instance()->error($msg);
-        } catch (ParamsException $e) {
-            Logger::instance()->error($e->getMessage());
-        }
-
-        $insuranceProduct = $this->insuranceService->createProductIfNotExists();
-        $insurancePriceToFloat = PriceHelper::convertPriceFromCents($insuranceContract->getPrice());
-
-        $insuranceContractInfos = [
-            'insurance_contract_id' => $insuranceContractId,
-            'cms_reference' => $cmsReference,
-            'product_price' => $regularPriceInCents,
-        ];
-
-        if ($idProduct !== $insuranceProduct->id) {
-            $this->addInsuranceProduct(
+            $idProductAttribute = $this->attributeProductService->getIdProductAttributeFromPost($idProduct);
+            $cmsReference = sprintf(
+                "%s-%s",
                 $idProduct,
-                $insuranceProduct,
-                $insurancePriceToFloat,
-                $insuranceContract->getName(),
-                $quantity,
-                $idCustomization,
-                json_encode($insuranceContractInfos),
-                $idProductAttributePS16,
-                $destroyPost
+                $idProductAttribute
             );
+            $regularPrice = $this->productHelper->getRegularPrice($idProduct, $idProductAttribute);
+            $regularPriceInCents = PriceHelper::convertPriceToCents($regularPrice);
+
+            $insuranceContract = $this->insuranceApiService->getInsuranceContract($insuranceContractId, $cmsReference, $regularPriceInCents);
+            if (null === $insuranceContract) {
+                return false;
+            }
+
+            $insuranceProduct = $this->insuranceService->createProductIfNotExists();
+
+            if ($idProduct !== $insuranceProduct->id) {
+                $this->addInsuranceProduct(
+                    $idProduct,
+                    $insuranceProduct,
+                    PriceHelper::convertPriceFromCents($insuranceContract->getPrice()),
+                    $insuranceContract->getName(),
+                    $quantity,
+                    $idCustomization,
+                    json_encode([
+                        'insurance_contract_id' => $insuranceContractId,
+                        'cms_reference' => $cmsReference,
+                        'product_price' => $regularPriceInCents,
+                    ]),
+                    $idProductAttributePS16,
+                    $destroyPost
+                );
+            }
+
+            return true;
+        } catch (\Exception $e)  {
+            Logger::instance()->error(
+                sprintf(
+                    '[Alma] An error occured when adding an insurance, InsuranceContratId : "%s", IdProduct : "%s", message "%s", trace "%s"',
+                    $insuranceContractId,
+                    $idProduct,
+                    $e->getMessage(),
+                    $e->getTraceAsString()
+                )
+            );
+
+            return false;
         }
     }
 
     /**
      * @param int $idProduct
      * @param int $idProductAttribute
-     * @return void
+     * @return bool
      */
     public function handleRemovingProductInsurance($idProduct, $idProductAttribute)
     {
-        $insuranceProductId = $this->productRepository->getProductIdByReference(
-            ConstantsHelper::ALMA_INSURANCE_PRODUCT_REFERENCE,
-            $this->context->language->id
-        );
+        try {
+            $insuranceProductId = $this->productRepository->getProductIdByReference(
+                ConstantsHelper::ALMA_INSURANCE_PRODUCT_REFERENCE,
+                $this->context->language->id
+            );
 
-        if($idProduct === $insuranceProductId) {
-            return;
+            if ($idProduct === $insuranceProductId) {
+                return true;
+            }
+
+            $this->insuranceService->deleteAllLinkedInsuranceProducts([
+                'id_cart' => $this->context->cart->id,
+                'id_product' => $idProduct,
+                'id_product_attribute' => $idProductAttribute,
+                'customization_id' => 0
+            ]);
+
+            return true;
+        } catch (\Exception $e) {
+            Logger::instance()->error(
+                sprintf(
+                    '[Alma] An error occurred when removed an insurance, productId : "%s", productAttributeId : "%s", message "%s", trace "%s"',
+                    $idProduct,
+                    $idProductAttribute,
+                    $e->getMessage(),
+                    $e->getTraceAsString()
+                )
+            );
+
+            return false;
         }
-
-        $this->insuranceService->deleteAllLinkedInsuranceProducts([
-            'id_cart' => $this->context->cart->id,
-            'id_product' => $idProduct,
-            'id_product_attribute' => $idProductAttribute,
-            'customization_id' => 0
-        ]);
     }
 }

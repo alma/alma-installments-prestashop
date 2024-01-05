@@ -267,7 +267,7 @@ class InsuranceService
         foreach ($insuranceContracts as $insuranceContract) {
             $insuranceContractInfos = json_decode($insuranceContract['insurance_contract_infos'], true);
 
-            $file = $this->insuranceApiService->getInsuranceContract(
+            $file = $this->insuranceApiService->getInsuranceContractFileByType(
                 $insuranceContractInfos['insurance_contract_id'],
                 $insuranceContractInfos['cms_reference'],
                 $insuranceContractInfos['product_price']

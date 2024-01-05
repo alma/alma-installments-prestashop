@@ -24,7 +24,13 @@
 
 namespace Alma\PrestaShop\Services;
 
+use Alma\API\Entities\Insurance\Contract;
 use Alma\API\Entities\Insurance\File;
+use Alma\API\Exceptions\MissingKeyException;
+use Alma\API\Exceptions\ParametersException;
+use Alma\API\Exceptions\ParamsException;
+use Alma\API\Exceptions\RequestException;
+use Alma\API\RequestError;
 use Alma\PrestaShop\Helpers\ClientHelper;
 use Alma\API\Client;
 use Alma\PrestaShop\Logger;
@@ -49,7 +55,35 @@ class InsuranceApiService
      * @param int $insuranceContractId
      * @param string $cmsReference
      * @param int $productPrice
+     * @param string $type
      * @return File|null
+     */
+    public function getInsuranceContractFileByType($insuranceContractId, $cmsReference, $productPrice, $type = 'ipid-document')
+    {
+        try {
+            return $this->almaApiClient->insurance->getInsuranceContract(
+                $insuranceContractId,
+                $cmsReference,
+                $productPrice
+            )->getFileByType($type);
+        } catch (\Exception  $e) {
+            Logger::instance()->error(
+                sprintf(
+                    '[Alma] Impossible to retrieve insurance contract file, message "%s", trace "%s"',
+                    $e->getMessage(),
+                    $e->getTraceAsString()
+                )
+            );
+        }
+
+        return null;
+    }
+
+    /**
+     * @param int $insuranceContractId
+     * @param string $cmsReference
+     * @param int $productPrice
+     * @return Contract|null
      */
     public function getInsuranceContract($insuranceContractId, $cmsReference, $productPrice)
     {
@@ -58,8 +92,8 @@ class InsuranceApiService
                 $insuranceContractId,
                 $cmsReference,
                 $productPrice
-            )->getFileByType('ipid-document');
-        } catch (\Exception  $e) {
+            );
+        } catch (\Exception $e) {
             Logger::instance()->error(
                 sprintf(
                     '[Alma] Impossible to retrieve insurance contract, message "%s", trace "%s"',
