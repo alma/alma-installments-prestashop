@@ -42,3 +42,8 @@ crowdin-download:
 .PHONY: crowdin-upload
 crowdin-upload:
 	crowdin upload sources
+
+.PHONY: test
+test:
+	docker compose build prestashop
+	docker compose run --rm prestashop ./vendor/bin/phpunit -c phpunit.ci.xml --coverage-text
