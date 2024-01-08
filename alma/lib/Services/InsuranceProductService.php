@@ -163,6 +163,7 @@ class InsuranceProductService
      * @param int $quantity
      * @param int $idCustomization
      * @param string $insuranceContractInfos
+     * @param null|\Cart $cart
      * @param int $idProductAttibutePS16
      * @param bool $destroyPost
      * @return void
@@ -178,6 +179,7 @@ class InsuranceProductService
         $quantity,
         $idCustomization,
         $insuranceContractInfos,
+        $cart = null,
         $idProductAttibutePS16 = 0,
         $destroyPost = true
     )
@@ -210,9 +212,17 @@ class InsuranceProductService
         }
 
         if (version_compare(_PS_VERSION_, '1.7', '>=')) {
-            $this->context->cart->updateQty($quantity, $insuranceProduct->id, $idProductAttributeInsurance, false, 'up', 0, null, true, true);
+            if (null === $this->context->cart) {
+                // There is a bug in some versions of Prestashop when adding a product on the cart and be sign-in and not having a default address
+                // In this case in the actionCartSaveHook, the cart in the context is null
+                $this->context->cart = $cart;
+                $this->cartService->updateQty($quantity, $insuranceProduct->id, $idProductAttributeInsurance, $cart, false, 'up', 0, null, true, true);
+            } else {
+                $this->context->cart->updateQty($quantity, $insuranceProduct->id, $idProductAttributeInsurance, false, 'up', 0, null, true, true);
+            }
         } else {
-            $this->cartService->updateQty($quantity, $insuranceProduct->id, $idProductAttributeInsurance, false, 'up', 0, null, true, true);
+            // In those version of prestashop there is no possibility to update the quantity on the cart object
+            $this->cartService->updateQty($quantity, $insuranceProduct->id, $idProductAttributeInsurance, null, false, 'up', 0, null, true, true);
         }
 
         $this->addAssociations(
@@ -233,11 +243,12 @@ class InsuranceProductService
      * @param int $insuranceContractId
      * @param int $quantity
      * @param int $idCustomization
+     * @param null|\Cart $cart
      * @param int $idProductAttributePS16
      * @param bool $destroyPost
      * @return bool
      */
-    public function handleAddingProductInsurance($idProduct, $insuranceContractId, $quantity, $idCustomization, $idProductAttributePS16 = 0, $destroyPost = true)
+    public function handleAddingProductInsurance($idProduct, $insuranceContractId, $quantity, $idCustomization, $cart = null, $idProductAttributePS16 = 0, $destroyPost = true)
     {
         try {
             $idProductAttribute = $this->attributeProductService->getIdProductAttributeFromPost($idProduct);
@@ -250,6 +261,7 @@ class InsuranceProductService
             $regularPriceInCents = PriceHelper::convertPriceToCents($regularPrice);
 
             $insuranceContract = $this->insuranceApiService->getInsuranceContract($insuranceContractId, $cmsReference, $regularPriceInCents);
+
             if (null === $insuranceContract) {
                 return false;
             }
@@ -269,6 +281,7 @@ class InsuranceProductService
                         'cms_reference' => $cmsReference,
                         'product_price' => $regularPriceInCents,
                     ]),
+                    $cart,
                     $idProductAttributePS16,
                     $destroyPost
                 );

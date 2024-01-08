@@ -84,28 +84,28 @@ class ActionCartSaveHookController extends FrontendHookController
      */
     public function run($params)
     {
-        $this->handleAddingProductInsurance();
+        $this->handleAddingProductInsurance($params['cart']);
         $this->handleRemoveInsuranceProduct();
     }
 
     /**
+     * @param \Cart $cart
      * @return void
-     * @throws InsuranceInstallException
      */
-    public function handleAddingProductInsurance()
+    public function handleAddingProductInsurance($cart)
     {
         if (
             version_compare(_PS_VERSION_, '1.7', '>=')
             && \Tools::getIsset('alma_id_insurance_contract')
             && 1 == \Tools::getValue('add')
             && 'update' == \Tools::getValue('action')
-            &&  in_array(\Tools::strtoupper(\Context::getContext()->currency->iso_code), $this->module->limited_currencies)
         ) {
             $this->insuranceProductService->handleAddingProductInsurance(
                 \Tools::getValue('id_product'),
                 \Tools::getValue('alma_id_insurance_contract'),
                 \Tools::getValue('qty'),
-                \Tools::getValue('id_customization')
+                \Tools::getValue('id_customization'),
+                $cart
             );
         }
     }
