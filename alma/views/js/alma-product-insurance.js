@@ -26,6 +26,7 @@ let selectedAlmaInsurance = null;
 let addToCartFlow = false;
 let productDetails = null;
 let quantity = 1;
+let isEligible = false;
 
 (function ($) {
     $(function () {
@@ -81,6 +82,10 @@ function onloadAddInsuranceInputOnProductAlma() {
 
     window.addEventListener('message', (e) => {
         if (e.data.type === 'almaEligibilityAnswer') {
+            if (e.data.eligibilityCallResponseStatus.response.eligibleProduct === true) {
+                isEligible = true;
+                prestashop.emit('updateProduct', {isEligible: isEligible});
+            }
             let heightIframe = e.data.widgetSize.height + 25;
             document.getElementById('product-alma-iframe').style.height = heightIframe + "px";
         }
@@ -138,7 +143,7 @@ function removeInsurance() {
 }
 
 function openModalOnAddToCart() {
-    if (settings.is_add_to_cart_popup_insurance_activated === 'true') {
+    if (settings.is_add_to_cart_popup_insurance_activated === 'true' && isEligible) {
         let addToCart = document.querySelector('.add-to-cart');
         addToCart.addEventListener("click", function (event) {
             if (!insuranceSelected) {
