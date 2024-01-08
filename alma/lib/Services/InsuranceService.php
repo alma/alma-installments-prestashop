@@ -203,6 +203,7 @@ class InsuranceService
                     1,
                     $insuranceLinked['id_product_insurance'],
                     $insuranceLinked['id_product_attribute_insurance'],
+                    null,
                     0,
                     'down'
                 );

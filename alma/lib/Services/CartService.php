@@ -50,10 +50,24 @@ class CartService
      * @param int $quantity Quantity to add (or substract)
      * @param int $idProduct Product ID
      * @param int $idProductAttribute Attribute ID if needed
+     * @param \Cart|null $cart Object Cart
+     * @param bool $idCustomization Customization ID if needed
      * @param string $operator Indicate if quantity must be increased or decreased
+     * @param int $idAddressDelivery Address Delivery ID if needed
+     * @param null $shop
+     * @return bool|int|void|null
+     * @throws AlmaException
      */
-    public function updateQty($quantity, $idProduct, $idProductAttribute = null, $idCustomization = false,
-                              $operator = 'up', $idAddressDelivery = 0, Shop $shop = null)
+    public function updateQty(
+        $quantity,
+        $idProduct,
+        $idProductAttribute = null,
+        $cart = null,
+        $idCustomization = false,
+        $operator = 'up',
+        $idAddressDelivery = 0,
+        $shop = null
+    )
     {
         /**
          * @var \ContextCore $context
@@ -64,14 +78,21 @@ class CartService
             $shop = $context->shop;
         }
 
-        $cart = $context->cart;
+        if (null !== $context->cart) {
+            $cart = $context->cart;
+        }
 
         if ($context->customer->id) {
-            if ($idAddressDelivery == 0 && (int)$cart->id_address_delivery) { // The $idAddressDelivery is null, use the cart delivery address
+            if (
+                $idAddressDelivery == 0
+                && (int)$cart->id_address_delivery
+            ) { // The $idAddressDelivery is null, use the cart delivery address
                 $idAddressDelivery = $cart->id_address_delivery;
             } elseif ($idAddressDelivery == 0) { // The $idAddressDelivery is null, get the default customer address
                 $idAddressDelivery = (int)\Address::getFirstCustomerAddressId((int)$context->customer->id);
             } elseif (!\Customer::customerHasAddress($context->customer->id, $idAddressDelivery)) { // The $idAddressDelivery must be linked with customer
+                $idAddressDelivery = 0;
+            } else {
                 $idAddressDelivery = 0;
             }
         }

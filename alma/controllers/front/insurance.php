@@ -84,6 +84,7 @@ class AlmaInsuranceModuleFrontController extends ModuleFrontController
                             \Tools::getValue('alma_id_insurance_contract'),
                             \Tools::getValue('qty'),
                             0,
+                            null,
                             \Tools::getValue('id_product_attribute')
                         );
 
