@@ -144,7 +144,7 @@ function openModalOnAddToCart() {
             if (!insuranceSelected) {
                 event.preventDefault();
                 event.stopPropagation();
-                openModal('popupModal');
+                openModal('popupModal', quantity);
                 insuranceSelected = true;
                 addToCartFlow = true;
             }
