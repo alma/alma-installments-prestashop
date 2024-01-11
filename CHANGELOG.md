@@ -1,5 +1,9 @@
 # Changelog
 
+## v3.1.3
+
+- feat: Remove merchant tag for in-page on Prestashop
+
 ## v3.1.2
 
 - hotfix: Select payment In-Page without open the modal and try to pay with other payment method
