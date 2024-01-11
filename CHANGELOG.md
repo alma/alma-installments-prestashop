@@ -3,6 +3,7 @@
 ## v3.1.3
 
 - feat: Remove merchant tag for in-page on Prestashop
+- fix: CSS of Prestashop Switch button on Back-office setting
 
 ## v3.1.2
 
