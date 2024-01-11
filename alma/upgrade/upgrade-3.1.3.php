@@ -21,55 +21,30 @@
  * @copyright 2018-2023 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
-
-namespace Alma\PrestaShop\Helpers;
-
-use Alma\API\Entities\Merchant;
-use Alma\PrestaShop\Exceptions\ActivationException;
-use Alma\PrestaShop\Exceptions\ApiMerchantsException;
-use Alma\PrestaShop\Exceptions\WrongCredentialsException;
-use Alma\PrestaShop\Forms\InpageAdminFormBuilder;
-
 if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-class ApiHelper
+use Alma\PrestaShop\Helpers\ClientHelper;
+use Alma\PrestaShop\Helpers\SettingsHelper;
+
+function upgrade_module_3_1_3()
 {
-    /**
-     * @return Merchant|null
-     *
-     * @throws ActivationException
-     * @throws ApiMerchantsException
-     * @throws WrongCredentialsException
-     */
-    public static function getMerchant($module, $alma = null)
-    {
-        if (!$alma) {
-            $alma = ClientHelper::defaultInstance();
-        }
+    if (SettingsHelper::isFullyConfigured()) {
+        $alma = ClientHelper::defaultInstance();
 
         if (!$alma) {
-            return null;
+            return true;
         }
 
-        try {
-            /**
-             * @var \Alma\API\Entities\Merchant $merchant
-             */
-            $merchant = $alma->merchants->me();
-        } catch (\Exception $e) {
-            if ($e->response && 401 === $e->response->responseCode) {
-                throw new WrongCredentialsException($module);
-            }
+        $deleteKeys = [
+            'ALMA_ALLOW_INPAGE',
+        ];
 
-            throw new ApiMerchantsException($module->l('Alma encountered an error when fetching merchant status, please check your api keys or retry later.', 'GetContentHookController'), $e->getCode(), $e);
+        foreach ($deleteKeys as $deleteKey) {
+            Configuration::deleteByName($deleteKey);
         }
-
-        if (!$merchant->can_create_payments) {
-            throw new ActivationException($module);
-        }
-
-        return $merchant;
     }
+
+    return true;
 }
