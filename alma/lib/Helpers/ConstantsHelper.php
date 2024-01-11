@@ -53,6 +53,4 @@ class ConstantsHelper
     const SOURCE_CUSTOM_FIELDS = 'CustomFieldsHelper';
 
     const ALMA_KEY_PAYNOW = 'general_1_0_0';
-
-    const ALMA_ALLOW_INPAGE = 'ALMA_ALLOW_INPAGE';
 }

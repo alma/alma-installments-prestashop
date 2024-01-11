@@ -156,9 +156,6 @@ fieldset .form-alma.disabled::before{
 .alma_switch .switch .slider:active:after {
 	width: 35px;
 }
-.bootstrap .prestashop-switch .slide-button::after {
-    top: 49%;
-}
 
 .bootstrap .alma.alert,
 #main-div .alma.alert{
