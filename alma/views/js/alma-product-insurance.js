@@ -55,6 +55,10 @@ let isEligible = false;
                         insuranceSelected = true;
                         addInputsInsurance(event.selectedAlmaInsurance);
                     }
+                    if (typeof event.selectedInsuranceData !== 'undefined' && event.selectedInsuranceData) {
+                        console.log('removeInputInsurance');
+                        removeInputInsurance();
+                    }
                     if (addToCartFlow) {
                         addToCart.click();
                         insuranceSelected = false;
@@ -92,7 +96,7 @@ function onloadAddInsuranceInputOnProductAlma() {
         if (e.data.type === 'getSelectedInsuranceData') {
             insuranceSelected = true;
             selectedAlmaInsurance = e.data.selectedInsuranceData;
-            prestashop.emit('updateProduct', {selectedAlmaInsurance: selectedAlmaInsurance});
+            prestashop.emit('updateProduct', {selectedAlmaInsurance: selectedAlmaInsurance, selectedInsuranceData: e.data.declinedInsurance});
         } else if (currentResolve) {
             currentResolve(e.data);
         }
@@ -136,6 +140,10 @@ function handleInput(inputName, value, form) {
 function removeInsurance() {
     resetInsurance();
     insuranceSelected = false;
+    removeInputInsurance();
+}
+
+function removeInputInsurance() {
     let inputsInsurance = document.getElementById('add-to-cart-or-refresh').querySelectorAll('.alma_insurance_input');
     inputsInsurance.forEach((input) => {
         input.remove();
