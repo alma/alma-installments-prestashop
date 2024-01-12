@@ -56,7 +56,6 @@ let isEligible = false;
                         addInputsInsurance(event.selectedAlmaInsurance);
                     }
                     if (typeof event.selectedInsuranceData !== 'undefined' && event.selectedInsuranceData) {
-                        console.log('removeInputInsurance');
                         removeInputInsurance();
                     }
                     if (addToCartFlow) {
