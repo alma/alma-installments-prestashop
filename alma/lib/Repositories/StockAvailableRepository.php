@@ -29,34 +29,28 @@ if (!defined('_PS_VERSION_')) {
 }
 
 /**
- * Class CombinationRepository.
+ * Class StockAvailableRepository.
  *
  * Use for Product
  */
-class CombinationRepository
+class StockAvailableRepository
 {
 
     /**
-     * For a given product_attribute reference and price, returns the corresponding id.
+     * Return the stock available for a given product id and attribute
      *
-     * @param int $idProduct
-     * @param string $reference
-     * @param int $price
-     * @return int id
+     * @param int $idProduct The product id
+     * @param int $idProductAttribute The product id attribute
+     * @return int
      */
-    public function getIdByReferenceAndPrice($idProduct, $reference, $price)
+    public function getQuantity($idProduct, $idProductAttribute)
     {
-        if (empty($reference)) {
-            return 0;
-        }
-
         $query = new \DbQuery();
-        $query->select('pa.id_product_attribute');
-        $query->from('product_attribute', 'pa');
-        $query->where('pa.id_product = ' . (int)$idProduct);
-        $query->where('pa.reference = "' . (string) $reference . '"');
-        $query->where('pa.price = ' . (float)$price);
+        $query->select('quantity');
+        $query->from('stock_available');
+        $query->where('id_product = ' . (int) $idProduct);
+        $query->where('id_product_attribute = ' . (int) $idProductAttribute);
 
-        return \Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue($query);
+        return (int) \Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue($query);
     }
 }

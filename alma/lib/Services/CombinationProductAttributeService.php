@@ -37,25 +37,37 @@ class CombinationProductAttributeService
      */
     protected $combinationRepository;
 
+    /**
+     * @var StockAvailableService
+     */
+    protected $stockAvailableService;
+
+
     public function __construct()
     {
         $this->combinationRepository = new CombinationRepository();
+        $this->stockAvailableService = new StockAvailableService();
     }
     /**
      * @param \ProductCore$product
      * @param int $attributeId
      * @param string $reference
      * @param float $price
-     * @param int $outOfStock See \StockAvailable::out_of_stock
+     * @param int $quantity
      * @param int $shopId
+     * @param int $outOfStock See \StockAvailable::out_of_stock
      * @return int
      */
-    public function manageCombination($product, $attributeId, $reference, $price, $shopId = 1, $outOfStock = 1)
+    public function manageCombination($product, $attributeId, $reference, $price, $quantity, $shopId = 1, $outOfStock = 1)
     {
         /**
          * @var \CombinationCore $combinaison
          */
-        $idProductAttributeInsurance = $this->combinationRepository->getIdByReferenceAndPrice($product->id, $reference, $price);
+        $idProductAttributeInsurance = $this->combinationRepository->getIdByReferenceAndPrice(
+            $product->id,
+            $reference,
+            $price
+        );
 
         if (!$idProductAttributeInsurance) {
             $idProductAttributeInsurance = $product->addCombinationEntity(
@@ -64,7 +76,7 @@ class CombinationProductAttributeService
                 0,
                 1,
                 0,
-                1,
+                $quantity,
                 0,
                 $reference,
                 0,
@@ -75,7 +87,7 @@ class CombinationProductAttributeService
             $combination = new \CombinationCore((int)$idProductAttributeInsurance);
             $combination->setAttributes([$attributeId]);
 
-            $this->manageStocks(
+            $this->stockAvailableService->createStocks(
                 $product->id,
                 $outOfStock,
                 $shopId,
@@ -83,25 +95,13 @@ class CombinationProductAttributeService
             );
         }
 
-        return $idProductAttributeInsurance;
-    }
-
-    public function manageStocks($productId, $outOfStock, $shopId, $idProductAttributeInsurance)
-    {
-        \StockAvailable::setProductOutOfStock(
-            $productId,
-            $outOfStock,
+        $this->stockAvailableService->updateStocks(
+            $product->id,
+            $quantity,
             $shopId,
             $idProductAttributeInsurance
         );
 
-        if (version_compare(_PS_VERSION_, '1.7.8', '<')) {
-            \StockAvailable::setProductDependsOnStock(
-                $productId,
-                $outOfStock == 1 ? false : true,
-                $shopId,
-                $idProductAttributeInsurance
-            );
-        }
+        return $idProductAttributeInsurance;
     }
 }
