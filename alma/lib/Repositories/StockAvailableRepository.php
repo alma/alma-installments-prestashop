@@ -43,14 +43,32 @@ class StockAvailableRepository
      * @param int $idProductAttribute The product id attribute
      * @return int
      */
-    public function getQuantity($idProduct, $idProductAttribute)
+    public function getQuantity($idProduct, $idProductAttribute, $shopId)
     {
         $query = new \DbQuery();
         $query->select('quantity');
         $query->from('stock_available');
         $query->where('id_product = ' . (int) $idProduct);
         $query->where('id_product_attribute = ' . (int) $idProductAttribute);
+        $query->where('id_shop = ' . (int) $shopId);
 
         return (int) \Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue($query);
+    }
+
+    /**
+     * Return the stock available for a given product id and attribute
+     *
+     * @param int $idProduct The product id
+     * @param int $idProductAttribute The product id attribute
+     * @return int
+     */
+    public function setQuantity($idProduct, int $idProductAttribute, $quantity, $shopId)
+    {
+        return \Db::getInstance()->execute('
+						UPDATE `' . _DB_PREFIX_ . 'stock_available`
+						SET `quantity` = ' . $quantity . ' 
+						WHERE `id_product` = ' . (int)$idProduct . ' 
+						AND `id_product_attribute` = ' . $idProductAttribute . ' 
+						AND `id_shop` = ' . (int)$shopId );
     }
 }

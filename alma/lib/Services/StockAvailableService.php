@@ -70,6 +70,7 @@ class StockAvailableService
                 $idProductAttributeInsurance
             );
         }
+
     }
 
     /**
@@ -81,10 +82,10 @@ class StockAvailableService
      */
     public function updateStocks($idProduct, $quantity, $shopId, $idProductAttributeInsurance)
     {
-        $oldQuantity = $this->stockAvailableRepository->getQuantity($idProduct, $idProductAttributeInsurance);
+        $oldQuantity = $this->stockAvailableRepository->getQuantity($idProduct, $idProductAttributeInsurance, $shopId);
 
         $quantity = $oldQuantity + $quantity;
 
-        \StockAvailable::setQuantity($idProduct, $idProductAttributeInsurance, $quantity, $shopId);
+       $this->stockAvailableRepository->setQuantity($idProduct, $idProductAttributeInsurance, $quantity, $shopId);
     }
 }
