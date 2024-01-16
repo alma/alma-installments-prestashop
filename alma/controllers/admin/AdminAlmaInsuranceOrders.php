@@ -27,6 +27,7 @@ if (!defined('_PS_VERSION_')) {
 
 class AdminAlmaInsuranceOrdersController extends ModuleAdminController
 {
+
     /**
      * @throws PrestaShopException
      */
@@ -43,38 +44,73 @@ class AdminAlmaInsuranceOrdersController extends ModuleAdminController
                 'title' => $this->module->l('Id Order'),
                 'type' => 'text',
             ],
-            'id_product' => [
-                'title' => $this->module->l('Id Product'),
+            'reference' => [
+                'title' => $this->module->l('Reference'),
                 'type' => 'text',
             ],
-            'id_shop' => [
-                'title' => $this->module->l('Id Shop'),
+            'status' => [
+                'title' => $this->module->l('Status'),
                 'type' => 'text',
             ],
-            'id_product_attribute' => [
-                'title' => $this->module->l('Id Product Attribute'),
+            'customer' => [
+                'title' => $this->module->l('Customer'),
                 'type' => 'text',
             ],
-            'id_customization' => [
-                'title' => $this->module->l('Id Customization'),
+            'nb_insurance' => [
+                'title' => $this->module->l('Nb Insurances'),
                 'type' => 'text',
             ],
-            'id_product_insurance' => [
-                'title' => $this->module->l('Id Product Insurance'),
-                'type' => 'text',
-            ],
-            'id_product_attribute_insurance' => [
-                'title' => $this->module->l('Id Product Attribute Insurance'),
-                'type' => 'text',
-            ],
-            'price' => [
-                'title' => $this->module->l('Price'),
-                'type' => 'text',
-            ],
-            'date_add' => [
+            'date' => [
                 'title' => $this->module->l('Date'),
                 'type' => 'text',
-            ],
+            ]
         ];
     }
+
+    /**
+     * @param int $id_lang
+     * @param string $orderBy
+     * @param string $orderWay
+     * @param int $start
+     * @param int $limit
+     * @param null $id_lang_shop
+     *
+     * @throws PrestaShopDatabaseException
+     * @throws PrestaShopException
+     *
+     * @deprecated
+     */
+    public function getList($id_lang, $orderBy = null, $orderWay = null, $start = 0, $limit = null, $id_lang_shop = null)
+    {
+        $orderBy = 'date_add';
+        $orderWay = 'DESC';
+
+        $this->_group = 'GROUP BY `id_order`';
+        $this->_where = ' AND `id_order` is NOT NULL ';
+        $this->_select = ' count(`id_order`) as nb_insurance ';
+
+
+        parent::getList($id_lang, $orderBy, $orderWay, $start, $limit, $this->context->shop->id);
+
+
+        foreach($this->_list as $key => $details)  {
+            foreach($details as $name => $value) {
+
+                /**
+                 * @var OrderCore $order
+                 */
+                $order = new \Order($details['id_order']);
+                $this->_list[$key]['reference'] = $order->reference;
+
+                $this->_list[$key]['status'] = $order->getCurrentStateFull($this->context->language->id)['name'];
+                /**
+                 * @var CustomerCore $customer
+                 */
+                $customer = $order->getCustomer();
+                $this->_list[$key]['customer'] = $customer->lastname . ' ' .  $customer->firstname;
+                $this->_list[$key]['date'] = $order->date_add;
+            }
+        }
+    }
+
 }
