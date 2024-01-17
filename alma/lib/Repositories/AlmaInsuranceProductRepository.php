@@ -161,6 +161,20 @@ class AlmaInsuranceProductRepository
     }
 
     /**
+     * @param int $orderId
+     * @return mixed
+     */
+    public function getByOrderId($id)
+    {
+        $sql = '
+            SELECT *
+            FROM `' . _DB_PREFIX_ . 'alma_insurance_product` aip
+            WHERE aip.`id_order` = ' . (int)$id;
+
+        return \Db::getInstance()->executeS($sql);
+    }
+
+    /**
      * @param int $id
      * @return bool
      */
@@ -213,6 +227,7 @@ class AlmaInsuranceProductRepository
           `id_order` int(10) unsigned NULL,
           `price` decimal(20,6) NOT NULL DEFAULT 0.000000,
           `insurance_contract_infos` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+          `product_name` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
           `date_add` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
            PRIMARY KEY (`id_alma_insurance_product`)
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci';

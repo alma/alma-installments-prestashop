@@ -123,6 +123,12 @@ class InsuranceHelper
                 'position' => 2,
                 'icon' => 'shopping_basket',
             ],
+            ConstantsHelper::BO_CONTROLLER_INSURANCE_ORDERS_DETAILS_CLASSNAME => [
+                'name' => false,
+                'parent' => ConstantsHelper::BO_CONTROLLER_INSURANCE_CLASSNAME,
+                'position' => null,
+                'icon' => null,
+            ]
         ];
     }
 

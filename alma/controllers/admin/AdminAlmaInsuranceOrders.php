@@ -27,6 +27,8 @@ if (!defined('_PS_VERSION_')) {
 
 class AdminAlmaInsuranceOrdersController extends ModuleAdminController
 {
+    protected $actions_available = ['test'];
+
 
     /**
      * @throws PrestaShopException
@@ -65,6 +67,18 @@ class AdminAlmaInsuranceOrdersController extends ModuleAdminController
                 'type' => 'text',
             ]
         ];
+    }
+
+    /**
+     * AdminController::renderList() override.
+     *
+     * @see AdminController::renderList()
+     */
+    public function renderList()
+    {
+        $this->addRowAction('test');
+
+        return parent::renderList();
     }
 
     /**
@@ -113,4 +127,40 @@ class AdminAlmaInsuranceOrdersController extends ModuleAdminController
         }
     }
 
+    public function initToolbarTitle()
+    {
+        parent::initToolbarTitle();
+
+            switch ($this->display) {
+                case '':
+                case 'list': //Titre pour le listing
+                    array_pop($this->toolbar_title);
+                    $this->toolbar_title[] = $this->module->l('Orders with Insurance');
+                    break;
+        }
+    }
+
+
+
+    public function displayTestLink($token = null, $id, $name = null)
+    {
+        $tpl = $this->createTemplate('helpers/list/list_action_edit.tpl');
+        $link = new LinkCore();
+        $linkToController = $link->getAdminLink(
+            'AdminAlmaInsuranceOrdersDetails',
+            true,
+            [],
+            [
+                'identifier' => $id
+            ]
+        );
+        $tpl->assign(array(
+            //'href' => 'index.php?controller=AdminAlmaInsuranceOrdersDetails&' . $this->identifier.'='.$id.'&update'.$this->table.'&token='.($token != null ? $token : $this->token),
+            'href' => $linkToController,
+            'action' => 'Test',
+            'id' => $id
+        ));
+
+        return $tpl->fetch();
+    }
 }
