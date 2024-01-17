@@ -49,7 +49,7 @@ class StockAvailableRepository
         $query->select('quantity');
         $query->from('stock_available');
         $query->where('id_product = ' . (int) $idProduct);
-        $query->where('id_product_attribute = ' . (int) $idProductAttribute);
+        $query->where('id_product_attribute = ' .  $idProductAttribute);
         $query->where('id_shop = ' . (int) $shopId);
 
         return (int) \Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue($query);
