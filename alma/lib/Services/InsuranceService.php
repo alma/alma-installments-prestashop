@@ -244,11 +244,10 @@ class InsuranceService
         $customerService = new CustomerService($cart->id_customer, $cart->id_address_invoice, $cart->id_address_delivery);
 
         foreach ($insuranceContracts as $insuranceContract) {
-            $insuranceContractInfos = json_decode($insuranceContract['insurance_contract_infos'], true);
             $subscriptionData[] = new Subscription(
-                $insuranceContractInfos['insurance_contract_id'],
-                $insuranceContractInfos['cms_reference'],
-                $insuranceContractInfos['product_price'],
+                $insuranceContract['insurance_contract_id'],
+                $insuranceContract['cms_reference'],
+                $insuranceContract['product_price'],
                 $customerService->getSubscriber()
             );
         }
@@ -266,12 +265,10 @@ class InsuranceService
         $file = null;
 
         foreach ($insuranceContracts as $insuranceContract) {
-            $insuranceContractInfos = json_decode($insuranceContract['insurance_contract_infos'], true);
-
             $file = $this->insuranceApiService->getInsuranceContractFileByType(
-                $insuranceContractInfos['insurance_contract_id'],
-                $insuranceContractInfos['cms_reference'],
-                $insuranceContractInfos['product_price']
+                $insuranceContract['insurance_contract_id'],
+                $insuranceContract['cms_reference'],
+                $insuranceContract['product_price']
             );
 
             break;
