@@ -82,10 +82,6 @@ class StockAvailableService
      */
     public function updateStocks($idProduct, $quantity, $shopId, $idProductAttributeInsurance)
     {
-        $oldQuantity = $this->stockAvailableRepository->getQuantity($idProduct, $idProductAttributeInsurance, $shopId);
-
-        $quantity = $oldQuantity + $quantity;
-
        $this->stockAvailableRepository->setQuantity($idProduct, $idProductAttributeInsurance, $quantity, $shopId);
     }
 }
