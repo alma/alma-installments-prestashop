@@ -204,6 +204,7 @@ class InsuranceProductService
             $insuranceAttributeId,
             $insuranceName,
             $insurancePrice,
+            $quantity,
             $this->context->shop->id
         );
 

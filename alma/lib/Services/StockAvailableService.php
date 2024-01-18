@@ -22,41 +22,66 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
-namespace Alma\PrestaShop\Repositories;
+namespace Alma\PrestaShop\Services;
+
+
+use Alma\PrestaShop\Repositories\StockAvailableRepository;
 
 if (!defined('_PS_VERSION_')) {
     exit;
 }
 
 /**
- * Class CombinationRepository.
  *
- * Use for Product
  */
-class CombinationRepository
+class StockAvailableService
 {
+    /**
+     * @var StockAvailableRepository
+     */
+    protected $stockAvailableRepository;
+
+    public function __construct()
+    {
+        $this->stockAvailableRepository = new StockAvailableRepository();
+    }
 
     /**
-     * For a given product_attribute reference and price, returns the corresponding id.
-     *
      * @param int $idProduct
-     * @param string $reference
-     * @param int $price
-     * @return int id
+     * @param bool $outOfStock
+     * @param int $shopId
+     * @param int $idProductAttributeInsurance
+     * @return void
      */
-    public function getIdByReferenceAndPrice($idProduct, $reference, $price)
+    public function createStocks($idProduct, $outOfStock, $shopId, $idProductAttributeInsurance)
     {
-        if (empty($reference)) {
-            return 0;
+        \StockAvailable::setProductOutOfStock(
+            $idProduct,
+            $outOfStock,
+            $shopId,
+            $idProductAttributeInsurance
+        );
+
+        if (version_compare(_PS_VERSION_, '1.7.8', '<')) {
+            \StockAvailable::setProductDependsOnStock(
+                $idProduct,
+                $outOfStock == 1 ? false : true,
+                $shopId,
+                $idProductAttributeInsurance
+            );
         }
 
-        $query = new \DbQuery();
-        $query->select('pa.id_product_attribute');
-        $query->from('product_attribute', 'pa');
-        $query->where('pa.id_product = ' . (int)$idProduct);
-        $query->where('pa.reference = "' . (string) $reference . '"');
-        $query->where('pa.price = ' . (float)$price);
+    }
 
-        return \Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue($query);
+    /**
+     * @param int $idProduct
+     * @param int $quantity
+     * @param int $shopId
+     * @param int $idProductAttributeInsurance
+     * @return void
+     */
+    public function updateStocks($idProduct, $quantity, $shopId, $idProductAttributeInsurance)
+    {
+       $this->stockAvailableRepository->setQuantity($idProduct, $idProductAttributeInsurance, $quantity, $shopId);
     }
 }
