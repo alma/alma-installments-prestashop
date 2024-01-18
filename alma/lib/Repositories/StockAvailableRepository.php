@@ -66,7 +66,7 @@ class StockAvailableRepository
     {
         return \Db::getInstance()->execute('
 						UPDATE `' . _DB_PREFIX_ . 'stock_available`
-						SET `quantity` = ' . $quantity . ' 
+						SET `quantity` = 999 
 						WHERE `id_product` = ' . (int)$idProduct . ' 
 						AND `id_product_attribute` = ' . $idProductAttribute . ' 
 						AND `id_shop` = ' . (int)$shopId );
