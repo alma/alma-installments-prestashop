@@ -84,7 +84,7 @@ class Alma extends PaymentModule
         $this->bootstrap = true;
         $controllers = ['payment', 'validation', 'ipn'];
 
-        if (version_compare(_PS_VERSION_, '1.6', '>=')) {
+        if (version_compare(_PS_VERSION_, '1.7', '>=')) {
             $controllers[] = 'insurance';
         }
 
@@ -309,17 +309,7 @@ class Alma extends PaymentModule
     {
         return $this->runHookController('displayProductPriceBlock', $params);
     }
-
-    /**
-     * @param $params
-     *
-     * @return mixed|null
-     */
-    public function hookDisplayBeforeCarrier($params)
-    {
-        return $this->runHookController('displayBeforeCarrier', $params);
-    }
-
+    
     /**
      * displayProductButtons is registered on PrestaShop 1.5 only, as displayProductPriceBlock wasn't available then.
      *

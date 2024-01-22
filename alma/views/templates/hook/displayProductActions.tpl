@@ -20,8 +20,8 @@
  * @copyright 2018-2023 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  *}
-{if isset($layout) || $oldPSVersion == 1}
-    <div class="alma-widget-insurance" id="alma-widget-insurance-product-page" data-alma-insurance-settings="{$settingsInsurance}" {$addToCartLink}>
+{if isset($layout)}
+    <div class="alma-widget-insurance" id="alma-widget-insurance-product-page" data-alma-insurance-settings="{$settingsInsurance}" >
         <iframe id="product-alma-iframe" src="{$iframeUrl}"></iframe>
         <div id="alma-insurance-modal"></div>
     </div>
