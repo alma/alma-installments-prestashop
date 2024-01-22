@@ -24,6 +24,8 @@
 
 namespace Alma\PrestaShop\Repositories;
 
+use Alma\PrestaShop\Helpers\SettingsHelper;
+
 if (!defined('_PS_VERSION_')) {
     exit;
 }
@@ -74,7 +76,8 @@ class AlmaInsuranceProductRepository
             'id_address_delivery' => $idAddressDelivery,
             'insurance_contract_id' => $insuranceContractInfos['insurance_contract_id'],
             'cms_reference' => $insuranceContractInfos['cms_reference'],
-            'product_price' => $insuranceContractInfos['product_price']
+            'product_price' => $insuranceContractInfos['product_price'],
+            'mode' => SettingsHelper::getActiveMode()
         ])) {
             return false;
         }
@@ -201,7 +204,6 @@ class AlmaInsuranceProductRepository
      */
     public function createTable()
     {
-        // @todo add index
         $sql = 'CREATE TABLE IF NOT EXISTS `' . _DB_PREFIX_ . 'alma_insurance_product` (
             `id_alma_insurance_product` int(10) unsigned NOT NULL AUTO_INCREMENT,
             `id_cart` int(10) unsigned NOT NULL,
@@ -224,7 +226,11 @@ class AlmaInsuranceProductRepository
             `reason_of_cancellation` text null,   
             `is_refunded` boolean default 0 null,
             `date_of_refund` datetime null,
-           PRIMARY KEY (`id_alma_insurance_product`)
+            `mode` varchar(255) not NULL,
+            PRIMARY KEY (`id_alma_insurance_product`) ,
+            index `ps_alma_insurance_product_cart_shop` (`id_cart`, `id_shop`),
+            index `ps_alma_insurance_product`  (`id_product`, `id_shop`, `id_product_attribute`, `id_customization`, `id_cart`) ,
+            constraint ps_alma_insurance_product_pk  unique (`subscription_id`)
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci';
 
         return \Db::getInstance()->execute($sql);

@@ -94,6 +94,8 @@ class InsuranceProduct extends \ObjectModel
     /** @var string Object refund date */
     public $date_of_refund;
 
+    /** @var string Live ou test */
+    public $mode;
 
     /**
      * @see ObjectModel::$definition
@@ -121,7 +123,8 @@ class InsuranceProduct extends \ObjectModel
             'date_of_cancellation' => ['type' => self::TYPE_DATE, 'validate' => 'isDate'],
             'reason_of_cancellation' => ['type' => self::TYPE_STRING],
             'is_refunded' => ['type' => self::TYPE_BOOL],
-            'date_of_refund' => ['type' => self::TYPE_DATE, 'validate' => 'isDate']
+            'date_of_refund' => ['type' => self::TYPE_DATE, 'validate' => 'isDate'],
+            'mode' => ['type' => self::TYPE_STRING]
         ],
     ];
 
