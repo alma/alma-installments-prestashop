@@ -284,6 +284,6 @@ class InsuranceService
             ];
         }
 
-        throw new TermsAndConditionsException('An error occured when retrieving the file');
+        throw new TermsAndConditionsException('An error occurred when retrieving the file');
     }
 }
