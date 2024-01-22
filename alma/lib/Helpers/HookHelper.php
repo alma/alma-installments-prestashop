@@ -106,11 +106,7 @@ class HookHelper
         'actionCartSave'  => 'all',
         'actionValidateOrder' => 'all',
         'displayCartExtraProductActions' => 'all',
-        'termsAndConditions' => 'all',
-        'displayBeforeCarrier' =>  [
-            'version' => '1.7',
-            'operand' => '<',
-        ]
+        'termsAndConditions' => 'all'
     ];
 
     /**
