@@ -205,12 +205,11 @@ class FrontHeaderHookController extends FrontendHookController
         $content = '';
 
         // Insurance Assets
-        if( $this->insuranceHelper->isInsuranceActivated()) {
-            if (version_compare(_PS_VERSION_, '1.7', '<')) {
-                $content .= $this->manageInsuranceAssetsBefore17();
-            } else {
-                $this->manageInsuranceAssetsAfter17();
-            }
+        if(
+            $this->insuranceHelper->isInsuranceActivated()
+            && version_compare(_PS_VERSION_, '1.7', '>=')
+        ) {
+            $this->manageInsuranceAssetsAfter17();
         }
 
 
