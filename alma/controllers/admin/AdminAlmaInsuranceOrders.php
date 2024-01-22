@@ -25,8 +25,12 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
+use \Alma\PrestaShop\Helpers\PriceHelper;
+
 class AdminAlmaInsuranceOrdersController extends ModuleAdminController
 {
+    protected $actions_available = [];
+
     /**
      * @throws PrestaShopException
      */
@@ -34,41 +38,48 @@ class AdminAlmaInsuranceOrdersController extends ModuleAdminController
     {
         $this->table = 'alma_insurance_product';
         $this->context = Context::getContext();
+        $this->list_no_link = true;
 
         $this->bootstrap = true;
         parent::__construct();
+
+        $this->meta_title = $this->module->l('Orders with insurance');
 
         $this->fields_list = [
             'id_order' => [
                 'title' => $this->module->l('Id Order'),
                 'type' => 'text',
             ],
-            'id_product' => [
-                'title' => $this->module->l('Id Product'),
+            'reference' => [
+                'title' => $this->module->l('Reference'),
                 'type' => 'text',
             ],
-            'id_shop' => [
-                'title' => $this->module->l('Id Shop'),
+            'status' => [
+                'title' => $this->module->l('Order Status'),
                 'type' => 'text',
             ],
-            'id_product_attribute' => [
-                'title' => $this->module->l('Id Product Attribute'),
+            'customer' => [
+                'title' => $this->module->l('Customer'),
                 'type' => 'text',
             ],
-            'id_customization' => [
-                'title' => $this->module->l('Id Customization'),
+            'product' => [
+                'title' => $this->module->l('Product'),
                 'type' => 'text',
             ],
-            'id_product_insurance' => [
-                'title' => $this->module->l('Id Product Insurance'),
+            'product_price' => [
+                'title' => $this->module->l('Product price'),
                 'type' => 'text',
             ],
-            'id_product_attribute_insurance' => [
-                'title' => $this->module->l('Id Product Attribute Insurance'),
+            'insurance_product' => [
+                'title' => $this->module->l('Insurance product'),
                 'type' => 'text',
             ],
             'price' => [
-                'title' => $this->module->l('Price'),
+                'title' => $this->module->l('Insurance product price'),
+                'type' => 'text',
+            ],
+            'insurance_contract_id' => [
+                'title' => $this->module->l('Insurance contract id'),
                 'type' => 'text',
             ],
             'date_add' => [
@@ -76,5 +87,95 @@ class AdminAlmaInsuranceOrdersController extends ModuleAdminController
                 'type' => 'text',
             ],
         ];
+    }
+
+    /**
+     * @param int $id_lang
+     * @param string $orderBy
+     * @param string $orderWay
+     * @param int $start
+     * @param int $limit
+     * @param null $id_lang_shop
+     *
+     * @throws PrestaShopDatabaseException
+     * @throws PrestaShopException
+     *
+     * @deprecated
+     */
+    public function getList($id_lang, $orderBy = null, $orderWay = null, $start = 0, $limit = null, $id_lang_shop = null)
+    {
+        $orderBy = 'date_add';
+        $orderWay = 'DESC';
+
+        $this->_where = ' AND `id_order` is NOT NULL ';
+
+
+        parent::getList($id_lang, $orderBy, $orderWay, $start, $limit, $this->context->shop->id);
+
+
+        foreach($this->_list as $key => $details)  {
+            /**
+             * @var OrderCore $order
+             */
+            $order = new \Order($details['id_order']);
+            $this->_list[$key]['reference'] = $order->reference;
+            $this->_list[$key]['status'] = $order->getCurrentStateFull($this->context->language->id)['name'];
+
+            /**
+             * @var CustomerCore $customer
+             */
+            $customer = $order->getCustomer();
+            $this->_list[$key]['customer'] = $customer->lastname . ' ' .  $customer->firstname;
+            $this->_list[$key]['date'] = $order->date_add;
+            $this->_list[$key]['product_price'] = PriceHelper::formatPriceToCentsByCurrencyId($details['product_price']);
+            $this->_list[$key]['price'] = PriceHelper::formatPriceToCentsByCurrencyId(
+                PriceHelper::convertPriceToCents($details['price'])
+            );
+
+
+            $this->_list[$key]['product'] = $this->getProductName(
+                $details['id_product'],
+                $details['id_product_attribute']
+            );
+
+            $this->_list[$key]['insurance_product'] = $this->getProductName(
+                $details['id_product_insurance'],
+                $details['id_product_attribute_insurance']
+            );
+        }
+    }
+
+    /**
+     * @param int $idProduct
+     * @param int $idProductAttribute
+     * @return string
+     */
+    protected function getProductName($idProduct, $idProductAttribute = null)
+    {
+        /**
+         * @var ProductCore $product
+         */
+        $product = new \Product($idProduct);
+        $productName = $product->name[$this->context->language->id];
+
+        if(null !== $idProductAttribute) {
+            /*
+             * @var CombinationCore $combinationProduct;
+             */
+            $combinationProduct = new \Combination($idProductAttribute);
+
+            $nameDetails = $combinationProduct->getAttributesName($this->context->language->id);
+            foreach ($nameDetails as $nameDetail) {
+                $productName .= ' - ' . $nameDetail['name'];
+            }
+        }
+
+        return $productName;
+    }
+
+    public function initToolbar() {
+        parent::initToolbar();
+
+        unset( $this->toolbar_btn['new'] );
     }
 }

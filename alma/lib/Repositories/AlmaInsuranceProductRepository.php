@@ -45,7 +45,7 @@ class AlmaInsuranceProductRepository
      * @param int $idProductAttributeInsurance
      * @param float $assurancePrice
      * @param int $idAddressDelivery
-     * @param string $insuranceContractInfos
+     * @param array $insuranceContractInfos
      * @return bool
      * @throws \PrestaShopDatabaseException
      */
@@ -72,7 +72,9 @@ class AlmaInsuranceProductRepository
             'id_product_attribute_insurance' => $idProductAttributeInsurance,
             'price' => $assurancePrice,
             'id_address_delivery' => $idAddressDelivery,
-            'insurance_contract_infos' => $insuranceContractInfos
+            'insurance_contract_id' => $insuranceContractInfos['insurance_contract_id'],
+            'cms_reference' => $insuranceContractInfos['cms_reference'],
+            'product_price' => $insuranceContractInfos['product_price']
         ])) {
             return false;
         }
@@ -212,7 +214,9 @@ class AlmaInsuranceProductRepository
           `id_address_delivery` int(10) unsigned NOT NULL,
           `id_order` int(10) unsigned NULL,
           `price` decimal(20,6) NOT NULL DEFAULT 0.000000,
-          `insurance_contract_infos` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+          `insurance_contract_id` varchar(255) NULL,
+          `cms_reference` varchar(255) NULL,
+          `product_price` int(10) unsigned NULL,
           `date_add` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
            PRIMARY KEY (`id_alma_insurance_product`)
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci';
@@ -254,8 +258,7 @@ class AlmaInsuranceProductRepository
     public function getContractsInfosByIdCartAndIdShop($idCart, $idShop)
     {
         $sql = '
-            SELECT `id_alma_insurance_product`,
-                   `insurance_contract_infos`
+            SELECT `id_alma_insurance_product`, `insurance_contract_id`, `cms_reference`, `product_price` 
             FROM `' . _DB_PREFIX_ . 'alma_insurance_product` aip
             WHERE aip.`id_cart` = ' . (int)$idCart . '
             AND aip.`id_shop` = ' . (int)$idShop;

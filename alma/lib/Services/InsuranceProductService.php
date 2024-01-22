@@ -122,7 +122,7 @@ class InsuranceProductService
      * @param int $idProductAttributeToAssocation
      * @param float $price
      * @param int $idAddressDelivery
-     * @param string $insuranceContractInfos
+     * @param array $insuranceContractInfos
      * @return void
      * @throws \PrestaShopDatabaseException
      */
@@ -162,7 +162,7 @@ class InsuranceProductService
      * @param string $insuranceName
      * @param int $quantity
      * @param int $idCustomization
-     * @param string $insuranceContractInfos
+     * @param array $insuranceContractInfos
      * @param null|\Cart $cart
      * @param int $idProductAttibutePS16
      * @param bool $destroyPost
@@ -277,11 +277,11 @@ class InsuranceProductService
                     $insuranceContract->getName(),
                     $quantity,
                     $idCustomization,
-                    json_encode([
+                    [
                         'insurance_contract_id' => $insuranceContractId,
                         'cms_reference' => $cmsReference,
                         'product_price' => $regularPriceInCents,
-                    ]),
+                    ],
                     $cart,
                     $idProductAttributePS16,
                     $destroyPost
