@@ -84,7 +84,7 @@ class Alma extends PaymentModule
         $this->bootstrap = true;
         $controllers = ['payment', 'validation', 'ipn'];
 
-        if (version_compare(_PS_VERSION_, '1.6', '>=')) {
+        if (version_compare(_PS_VERSION_, '1.7', '>=')) {
             $controllers[] = 'insurance';
         }
 

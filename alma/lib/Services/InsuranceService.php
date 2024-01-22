@@ -189,25 +189,14 @@ class InsuranceService
         );
 
         foreach ($allInsurancesLinked as $insuranceLinked) {
-            if (version_compare(_PS_VERSION_, '1.7', '>=')) {
-                // Delete insurance in cart
-                $context->cart->updateQty(
-                    1,
-                    $insuranceLinked['id_product_insurance'],
-                    $insuranceLinked['id_product_attribute_insurance'],
-                    0,
-                    'down'
-                );
-            } else {
-                $this->cartService->updateQty(
-                    1,
-                    $insuranceLinked['id_product_insurance'],
-                    $insuranceLinked['id_product_attribute_insurance'],
-                    null,
-                    0,
-                    'down'
-                );
-            }
+            // Delete insurance in cart
+            $context->cart->updateQty(
+                1,
+                $insuranceLinked['id_product_insurance'],
+                $insuranceLinked['id_product_attribute_insurance'],
+                0,
+                'down'
+            );
 
             // Delete association
             $this->almaInsuranceProductRepository->deleteById($insuranceLinked['id_alma_insurance_product']);
