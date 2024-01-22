@@ -31,6 +31,7 @@ use Alma\API\Exceptions\ParametersException;
 use Alma\API\Exceptions\ParamsException;
 use Alma\API\Exceptions\RequestException;
 use Alma\API\RequestError;
+use Alma\PrestaShop\Exceptions\InsuranceSubscriptionException;
 use Alma\PrestaShop\Helpers\ClientHelper;
 use Alma\API\Client;
 use Alma\PrestaShop\Logger;
@@ -110,7 +111,8 @@ class InsuranceApiService
     /**
      * @param array $subscriptionData
      * @param int $idTransaction
-     * @return mixed|null
+     * @return array
+     * @throws InsuranceSubscriptionException
      */
     public function subscribeInsurance($subscriptionData, $idTransaction)
     {
@@ -130,8 +132,9 @@ class InsuranceApiService
                     $idTransaction
                 )
             );
+
         }
 
-        return null;
+        throw new InsuranceSubscriptionException();
     }
 }

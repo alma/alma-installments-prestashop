@@ -33,6 +33,7 @@ use Alma\API\Exceptions\ParamsException;
 use Alma\API\RequestError;
 use Alma\PrestaShop\Exceptions\OrderException;
 use Alma\PrestaShop\Helpers\ClientHelper;
+use Alma\PrestaShop\Helpers\InsuranceHelper;
 use Alma\PrestaShop\Helpers\OrderHelper;
 use Alma\PrestaShop\Helpers\SettingsHelper;
 use Alma\PrestaShop\Hooks\AdminHookController;
@@ -54,12 +55,18 @@ final class StateHookController extends AdminHookController
      */
     protected $insuranceSubscriptionService;
 
+    /**
+     * @var InsuranceHelper
+     */
+    protected $insuranceHelper;
+
     public function __construct($module)
     {
         parent::__construct($module);
         $this->alma = ClientHelper::defaultInstance();
         $this->orderHelper = new OrderHelper();
         $this->insuranceSubscriptionService = new InsuranceSubscriptionService();
+        $this->insuranceHelper = new InsuranceHelper();
     }
 
     /**
@@ -80,10 +87,8 @@ final class StateHookController extends AdminHookController
      * Execute some trigger on change state (refund, payment, insurance)
      *
      * @param array $params
-     *
-     * @throws ParamsException
-     * @throws \PrestaShopDatabaseException
-     * @throws \PrestaShopException
+     * @return void
+     * @throws \Alma\PrestaShop\Exceptions\InsuranceSubscriptionException
      */
     public function run($params)
     {
@@ -91,6 +96,9 @@ final class StateHookController extends AdminHookController
             return;
         }
 
+        /**
+         * @var \OrderCore $order
+         */
         $order = new \Order($params['id_order']);
         $newStatus = $params['newOrderStatus'];
 
@@ -102,7 +110,9 @@ final class StateHookController extends AdminHookController
                 $this->triggerPayment($order);
                 break;
             case \Configuration::get('PS_OS_PAYMENT'):
-                $this->insuranceSubscriptionService->triggerInsuranceSubscription($order);
+                if($this->insuranceHelper->isInsuranceActivated()) {
+                    $this->insuranceSubscriptionService->triggerInsuranceSubscription($order);
+                }
                 break;
             default:
                 break;

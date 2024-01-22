@@ -24,6 +24,7 @@
 
 namespace Alma\PrestaShop\Services;
 
+use Alma\PrestaShop\Exceptions\InsuranceSubscriptionException;
 use Alma\PrestaShop\Helpers\OrderHelper;
 use Alma\PrestaShop\Model\InsuranceProduct;
 use Alma\PrestaShop\Repositories\AlmaInsuranceProductRepository;
@@ -68,7 +69,7 @@ class InsuranceSubscriptionService
     /**
      * @param \OrderCore $order
      * @return void
-     * @throws \PrestaShopDatabaseException
+     * @throws InsuranceSubscriptionException
      */
     public function triggerInsuranceSubscription($order)
     {
@@ -84,12 +85,21 @@ class InsuranceSubscriptionService
         if (!empty($subscriptionData)) {
             $orderPayment = $this->orderHelper->getCurrentOrderPayment($order, false);
 
-            // @todo exception
-            $subscriptions = $this->insuranceApiService->subscribeInsurance($subscriptionData, $orderPayment->transaction_id);
+            $subscriptions = $this->insuranceApiService->subscribeInsurance(
+                $subscriptionData,
+                $orderPayment->transaction_id
+            );
             $this->confirmSubscriptions($order->id_cart, $order->id_shop, $subscriptions);
         }
     }
 
+    /**
+     * @param int $orderId
+     * @param int $shopId
+     * @param array $subscriptions
+     * @return void
+     * @throws InsuranceSubscriptionException
+     */
     protected function confirmSubscriptions($orderId, $shopId, $subscriptions)
     {
         foreach($subscriptions as $subscriptionData){
@@ -97,6 +107,13 @@ class InsuranceSubscriptionService
         }
     }
 
+    /**
+     * @param int $orderId
+     * @param int $shopId
+     * @param array $subscription
+     * @return void
+     * @throws InsuranceSubscriptionException
+     */
     protected function confirmSubscription($orderId, $shopId, $subscription)
     {
 
@@ -106,8 +123,19 @@ class InsuranceSubscriptionService
             $subscription['contract_id'],
             $subscription['cms_reference']
         );
+
         if(!$almaInsuranceProduct) {
-            // @todo exectpion
+            throw new InsuranceSubscriptionException(
+                sprintf(
+                    'Data not found in db for subscription "%s", order id "%s", shop id "%s", contract id "%s", cms_reference "%s"',
+                    $subscription['subscription_id'],
+                    $orderId,
+                    $shopId,
+                    $subscription['contract_id'],
+                    $subscription['cms_reference']
+                )
+            );
+
         }
 
         $insuranceProduct = new InsuranceProduct($almaInsuranceProduct['id_alma_insurance_product']);
