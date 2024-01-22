@@ -72,18 +72,6 @@ class InsuranceHelper
      */
     protected function tabsInsuranceDescription()
     {
-        if (version_compare(_PS_VERSION_, '1.7', '>=')) {
-            return $this->tabsInsuranceDescriptionAfter17();
-        }
-    }
-    /**
-     * @return array[]
-     */
-    /**
-     * @return array[]
-     */
-    public function tabsInsuranceDescriptionAfter17()
-    {
         return [
             ConstantsHelper::BO_CONTROLLER_INSURANCE_CLASSNAME => [
                 'name' => $this->module->l('Insurance'),
@@ -105,6 +93,7 @@ class InsuranceHelper
             ],
         ];
     }
+
 
     /**
      * @param int $isAllowInsurance
