@@ -1,5 +1,14 @@
 # Changelog
 
+## v3.1.4
+
+- fix: Return for refunded payments
+
+## v3.1.3
+
+- feat: Remove merchant tag for in-page on Prestashop
+- fix: CSS of Prestashop Switch button on Back-office setting
+
 ## v3.1.2
 
 - hotfix: Select payment In-Page without open the modal and try to pay with other payment method
