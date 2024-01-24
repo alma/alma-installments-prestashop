@@ -65,8 +65,6 @@ class ConstantsHelper
 
     const ALMA_KEY_PAYNOW = 'general_1_0_0';
 
-    const ALMA_ALLOW_INPAGE = 'ALMA_ALLOW_INPAGE';
-
     const ALMA_ALLOW_INSURANCE = 'ALMA_ALLOW_INSURANCE';
 
     const ALMA_ACTIVATE_INSURANCE = 'ALMA_ACTIVATE_INSURANCE';
