@@ -1,5 +1,9 @@
 # Changelog
 
+## v3.1.4
+
+- fix: Return for refunded payments
+
 ## v3.1.3
 
 - feat: Remove merchant tag for in-page on Prestashop
