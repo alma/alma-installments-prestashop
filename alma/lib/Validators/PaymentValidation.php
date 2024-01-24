@@ -98,6 +98,13 @@ class PaymentValidation
             throw new PaymentValidationError(null, $e->getMessage());
         }
 
+        // Check refund in Alma Payment
+        if (count($payment->refunds) > 0) {
+            $alreadyRefundMessage = "[Alma] PaymentValidation Error payment already refund";
+            Logger::instance()->error($alreadyRefundMessage);
+            throw new PaymentValidationError(null, $alreadyRefundMessage);
+        }
+
         // Check if cart exists and all fields are set
         $cart = new \Cart($payment->custom_data['cart_id']);
         if (!$cart || 0 == $cart->id_customer || 0 == $cart->id_address_delivery || 0 == $cart->id_address_invoice) {
