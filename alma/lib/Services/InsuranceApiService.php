@@ -32,6 +32,7 @@ use Alma\API\Exceptions\ParamsException;
 use Alma\API\Exceptions\RequestException;
 use Alma\API\RequestError;
 use Alma\PrestaShop\Exceptions\InsuranceSubscriptionException;
+use Alma\PrestaShop\Helpers\CartHelper;
 use Alma\PrestaShop\Helpers\ClientHelper;
 use Alma\API\Client;
 use Alma\PrestaShop\Logger;
@@ -44,12 +45,23 @@ class InsuranceApiService
     protected $almaApiClient;
 
     /**
+     * @var \ContextCore
+     */
+    protected $context;
+
+    /**
+     * @var CartHelper
+     */
+    protected $cartHelper;
+
+    /**
      *
      */
     public function __construct()
     {
         $this->almaApiClient = ClientHelper::defaultInstance();
-
+        $this->context = \Context::getContext();
+        $this->cartHelper = new CartHelper();
     }
 
     /**
@@ -65,7 +77,9 @@ class InsuranceApiService
             return $this->almaApiClient->insurance->getInsuranceContract(
                 $insuranceContractId,
                 $cmsReference,
-                $productPrice
+                $productPrice,
+                $this->context->session->getId(),
+                $this->cartHelper->getCartIdFromContext()
             )->getFileByType($type);
         } catch (\Exception  $e) {
             Logger::instance()->error(
@@ -92,7 +106,9 @@ class InsuranceApiService
             return $this->almaApiClient->insurance->getInsuranceContract(
                 $insuranceContractId,
                 $cmsReference,
-                $productPrice
+                $productPrice,
+                $this->context->session->getId(),
+                $this->cartHelper->getCartIdFromContext()
             );
         } catch (\Exception $e) {
             Logger::instance()->error(
@@ -117,7 +133,12 @@ class InsuranceApiService
     public function subscribeInsurance($subscriptionData, $idTransaction)
     {
         try {
-          $result = $this->almaApiClient->insurance->subscription($subscriptionData, $idTransaction);
+          $result = $this->almaApiClient->insurance->subscription(
+              $subscriptionData,
+              $idTransaction,
+              $this->context->session->getId(),
+              $this->cartHelper->getCartIdFromContext()
+          );
 
           if(isset($result['subscriptions'])) {
               return $result['subscriptions'];

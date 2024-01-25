@@ -277,7 +277,7 @@ class PaymentData
     private static function buildWebsiteCustomerDetails($context, $customer, $cart, $purchaseAmount)
     {
         $carrierHelper = new CarrierHelper($context);
-        $cartHelper = new CartHelper($context);
+        $cartHelper = new CartHelper();
         $productHelper = new ProductHelper();
         $productRepository = new ProductRepository();
 
