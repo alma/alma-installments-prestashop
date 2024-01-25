@@ -82,8 +82,20 @@ class AdminAlmaInsuranceOrdersController extends ModuleAdminController
                 'title' => $this->module->l('Insurance contract id'),
                 'type' => 'text',
             ],
+            'subscription_id' => [
+                'title' => $this->module->l('Subscription id'),
+                'type' => 'text',
+            ],
+            'state' => [
+                'title' => $this->module->l('State'),
+                'type' => 'text',
+            ],
             'date_add' => [
                 'title' => $this->module->l('Date'),
+                'type' => 'text',
+            ],
+            'mode' => [
+                'title' => $this->module->l('Mode'),
                 'type' => 'text',
             ],
         ];

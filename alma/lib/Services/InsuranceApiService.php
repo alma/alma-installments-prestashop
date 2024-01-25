@@ -31,6 +31,7 @@ use Alma\API\Exceptions\ParametersException;
 use Alma\API\Exceptions\ParamsException;
 use Alma\API\Exceptions\RequestException;
 use Alma\API\RequestError;
+use Alma\PrestaShop\Exceptions\InsuranceSubscriptionException;
 use Alma\PrestaShop\Helpers\ClientHelper;
 use Alma\API\Client;
 use Alma\PrestaShop\Logger;
@@ -110,24 +111,30 @@ class InsuranceApiService
     /**
      * @param array $subscriptionData
      * @param int $idTransaction
-     * @return mixed|null
+     * @return array
+     * @throws InsuranceSubscriptionException
      */
     public function subscribeInsurance($subscriptionData, $idTransaction)
     {
         try {
-            return $this->almaApiClient->insurance->subscription($subscriptionData, $idTransaction);
+          $result = $this->almaApiClient->insurance->subscription($subscriptionData, $idTransaction);
+
+          if(isset($result['subscriptions'])) {
+              return $result['subscriptions'];
+          }
         } catch (\Exception  $e) {
             Logger::instance()->error(
                 sprintf(
-                    '[Alma] Impossible to subscribe insurance contract, message "%s", trace "%s", subscriptionData : "%s", idTransaction : "%s"',
+                    '[Alma] Error when subscribing insurance contract, message "%s", trace "%s", subscriptionData : "%s", idTransaction : "%s"',
                     $e->getMessage(),
                     $e->getTraceAsString(),
                     json_encode($subscriptionData),
                     $idTransaction
                 )
             );
+
         }
 
-        return null;
+        throw new InsuranceSubscriptionException();
     }
 }
