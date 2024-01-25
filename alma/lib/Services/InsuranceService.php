@@ -232,12 +232,19 @@ class InsuranceService
         $subscriptionData = [];
         $customerService = new CustomerService($cart->id_customer, $cart->id_address_invoice, $cart->id_address_delivery);
 
+        $cancelUrl = urldecode($this->context->link->getModuleLink(
+            $this->module->name,
+            'subscription',
+            ['action' => 'cancellation', 'sid' => ' {subscription_external_id}']
+        ));
+
         foreach ($insuranceContracts as $insuranceContract) {
             $subscriptionData[] = new Subscription(
                 $insuranceContract['insurance_contract_id'],
                 $insuranceContract['cms_reference'],
                 $insuranceContract['product_price'],
-                $customerService->getSubscriber()
+                $customerService->getSubscriber(),
+                $cancelUrl
             );
         }
 
