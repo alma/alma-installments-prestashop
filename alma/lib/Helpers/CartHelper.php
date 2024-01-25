@@ -39,19 +39,32 @@ if (!defined('_PS_VERSION_')) {
  */
 class CartHelper
 {
-    /** @var \Context */
+    /** @var \ContextCore */
     private $context;
     /**
      * @var OrderRepository
      */
     protected $orderRepository;
 
-    public function __construct($context)
+    public function __construct()
     {
-        $this->context = $context;
+        $this->context = \Context::getContext();
         $this->orderRepository = new OrderRepository();
     }
 
+    /**
+     * @return null/int
+     */
+    public function getCartIdFromContext()
+    {
+        $cartId = null;
+
+        if(isset($this->context->cart->id)) {
+            $cartId = $this->context->cart->id;
+        }
+
+        return $cartId;
+    }
     /**
      * Previous cart items of the customer
      *

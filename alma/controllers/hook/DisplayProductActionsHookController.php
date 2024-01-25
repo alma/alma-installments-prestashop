@@ -29,6 +29,7 @@ if (!defined('_PS_VERSION_')) {
 }
 
 use Alma\PrestaShop\Helpers\Admin\InsuranceHelper as AdminInsuranceHelper;
+use Alma\PrestaShop\Helpers\CartHelper;
 use Alma\PrestaShop\Helpers\ConstantsHelper;
 use Alma\PrestaShop\Helpers\InsuranceHelper;
 use Alma\PrestaShop\Helpers\PriceHelper;
@@ -55,6 +56,12 @@ class DisplayProductActionsHookController extends FrontendHookController
     protected $productHelper;
 
     /**
+     * @var CartHelper
+     */
+    protected $cartHelper;
+
+
+    /**
      * @param $module
      */
     public function __construct($module)
@@ -62,6 +69,8 @@ class DisplayProductActionsHookController extends FrontendHookController
         $this->insuranceHelper = new InsuranceHelper();
         $this->adminInsuranceHelper = new AdminInsuranceHelper($module);
         $this->productHelper = new ProductHelper();
+        $this->cartHelper = new CartHelper();
+
         parent::__construct($module);
     }
 
@@ -126,10 +135,12 @@ class DisplayProductActionsHookController extends FrontendHookController
      * @return false|string
      * @throws \PrestaShopException
      */
-    private function handleSettings($merchantId)
+    protected function handleSettings($merchantId)
     {
         $settings = $this->adminInsuranceHelper->mapDbFieldsWithIframeParams();
         $settings['merchant_id'] = $merchantId;
+        $settings['cart_id'] = $this->cartHelper->getCartIdFromContext();
+        $settings['session_id'] = $this->context->session->getId();
 
         return json_encode($settings);
     }

@@ -110,7 +110,9 @@ function refreshWidget() {
         cmsReference,
         regularPriceToCents,
         settings.merchant_id,
-        productDetails.quantity_wanted
+        productDetails.quantity_wanted,
+        settings.cart_id,
+        settings.session_id
     );
 }
 
