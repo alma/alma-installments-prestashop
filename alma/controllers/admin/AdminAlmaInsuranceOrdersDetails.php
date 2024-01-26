@@ -25,11 +25,11 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-use Alma\PrestaShop\Helpers\Admin\InsuranceHelper;
-use Alma\PrestaShop\Helpers\ConfigurationHelper;
 use Alma\PrestaShop\Helpers\ConstantsHelper;
-use Alma\PrestaShop\Logger;
 use Alma\PrestaShop\Traits\AjaxTrait;
+use Alma\PrestaShop\Helpers\PriceHelper;
+use Alma\PrestaShop\Helpers\ProductHelper;
+use Alma\PrestaShop\Repositories\AlmaInsuranceProductRepository;
 
 class AdminAlmaInsuranceOrdersDetailsController extends ModuleAdminController
 {
@@ -38,12 +38,17 @@ class AdminAlmaInsuranceOrdersDetailsController extends ModuleAdminController
     /**
      * @var \Alma\PrestaShop\Repositories\AlmaInsuranceProductRepository
      */
-    private $insuranceRepository;
+    protected $insuranceRepository;
+    protected $productHelper;
 
+    /**
+     *
+     */
     public function __construct()
     {
         $this->bootstrap = true;
-        $this->insuranceRepository = new \Alma\PrestaShop\Repositories\AlmaInsuranceProductRepository();
+        $this->insuranceRepository = new AlmaInsuranceProductRepository();
+        $this->productHelper = new ProductHelper();
 
         parent::__construct();
     }
@@ -58,17 +63,21 @@ class AdminAlmaInsuranceOrdersDetailsController extends ModuleAdminController
     {
         parent::initContent();
 
-        $data = $this->buildData();
 
-        $this->context->smarty->assign($data);
+        $this->context->smarty->assign($this->buildData());
 
-        $content = $this->context->smarty->fetch(_PS_MODULE_DIR_ . 'alma/views/templates/admin/insurance_order_details.tpl');
+        $content = $this->context->smarty->fetch(
+            _PS_MODULE_DIR_ . 'alma/views/templates/admin/insurance_order_details.tpl'
+        );
 
         $this->context->smarty->assign([
             'content' => $this->content . $content,
         ]);
     }
 
+    /**
+     * @return array
+     */
     public function buildData()
     {
         $data = [
@@ -76,20 +85,79 @@ class AdminAlmaInsuranceOrdersDetailsController extends ModuleAdminController
         ];
 
         $idLine = \Tools::getValue('identifier');
-        $order = $this->insuranceRepository->getById($idLine);
-        $orders = $this->insuranceRepository->getByOrderId($order['id_order']);
 
-        foreach($orders as $order)
-        {
-            $product = new \ProductCore($order['id_product']);
-            $productAttribute = null;
-            if(null !== $order['id_product_attribute']) {
-                $productAttribute = new \CombinationCore((int)$order['id_product_attribute']);
-            }
+        $subscriptionEntry = $this->insuranceRepository->getById($idLine);
+        $subscriptions = $this->insuranceRepository->getByOrderId($subscriptionEntry['id_order']);
 
-            $data['product_name'] = $product->name[$this->context->language->id];
-        }
+        /** @var OrderCore $order */
+        $order = new \Order($subscriptionEntry['id_order']);
+        $data['orderId'] = $order->id;
+        $data['orderReference'] = $order->reference;
+        $data['mode'] = $subscriptionEntry['mode'];
+        $data['orderDate'] = $order->date_add;
+        $data['firstName'] = $order->getCustomer()->firstname;
+        $data['lastName'] = $order->getCustomer()->lastname;
 
+        $data = $this->buildSubscriptions($subscriptions, $data);
+
+        $result['dataSubscriptions'] = json_encode($data);
+
+        return $result;
     }
 
+    /**
+     * @param array $subscriptions
+     * @param array $data
+     * @return array
+     */
+    public function buildSubscriptions($subscriptions, $data)
+    {
+        foreach($subscriptions as $subscription)
+        {
+            $dataSubscriptions = [];
+            $dataSubscriptions['id'] = $subscription['id_alma_insurance_product'];
+
+            /**
+             * @var ProductCore $product
+             */
+            $product = new \Product($subscription['id_product']);
+
+            $dataSubscriptions['productName'] =  $this->productHelper->getProductName(
+                $product,
+                $this->context->language->id,
+                $subscription['id_product_attribute']
+            );
+
+            /**
+             * @var ProductCore $insuranceProduct
+             */
+            $insuranceProduct = new \Product($subscription['id_product_insurance']);
+
+            $dataSubscriptions['insuranceName'] =  $this->productHelper->getProductName(
+                $insuranceProduct,
+                $this->context->language->id,
+                $subscription['id_product_attribute_insurance']
+            );
+
+            $dataSubscriptions['status'] = $subscription['state'];
+            $dataSubscriptions['productPrice'] = PriceHelper::convertPriceFromCents($subscription['product_price']);
+            $dataSubscriptions['insurancePrice'] = PriceHelper::convertPriceFromCents(
+                PriceHelper::convertPriceToCents($subscription['price'])
+            );
+            $dataSubscriptions['isRefunded']  = $subscription['is_refunded'];
+            $dataSubscriptions['reasonForCancellation']  = $subscription['reason_of_cancellation'];
+            $dataSubscriptions['dateOfCancellation']  = $subscription['date_of_cancellation'];
+
+            if('0000-00-00 00:00:00' === $dataSubscriptions['dateOfCancellation'] ) {
+                $dataSubscriptions['dateOfCancellation'] = '';
+            }
+
+            $dataSubscriptions['externalSubscriptionId']  = $subscription['subscription_id'];
+            $dataSubscriptions['urlOfProductImg']  =  '';
+
+            $data['cmsSubscriptions'][] = $dataSubscriptions;
+        }
+
+        return $data;
+    }
 }

@@ -25,11 +25,9 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-use \Alma\PrestaShop\Helpers\PriceHelper;
-
 class AdminAlmaInsuranceOrdersController extends ModuleAdminController
 {
-    protected $actions_available = ['test'];
+    protected $actions_available = ['show'];
 
 
     /**
@@ -85,7 +83,7 @@ class AdminAlmaInsuranceOrdersController extends ModuleAdminController
      */
     public function renderList()
     {
-        $this->addRowAction('test');
+        $this->addRowAction('show');
 
         return parent::renderList();
     }
@@ -113,41 +111,11 @@ class AdminAlmaInsuranceOrdersController extends ModuleAdminController
         $this->_select = ' count(`id_order`) as nb_insurance ';
 
 
-
         parent::getList($id_lang, $orderBy, $orderWay, $start, $limit, $this->context->shop->id);
 
-
         foreach($this->_list as $key => $details)  {
-            /**
-             * @var OrderCore $order
-             */
-         /**   $order = new \Order($details['id_order']);
-            $this->_list[$key]['reference'] = $order->reference;
-            $this->_list[$key]['status'] = $order->getCurrentStateFull($this->context->language->id)['name'];
 
-            /**
-             * @var CustomerCore $customer
-             */
-         /**   $customer = $order->getCustomer();
-            $this->_list[$key]['customer'] = $customer->lastname . ' ' .  $customer->firstname;
-            $this->_list[$key]['date'] = $order->date_add;
-            $this->_list[$key]['product_price'] = PriceHelper::formatPriceToCentsByCurrencyId($details['product_price']);
-            $this->_list[$key]['price'] = PriceHelper::formatPriceToCentsByCurrencyId(
-                PriceHelper::convertPriceToCents($details['price'])
-            );
-
-
-            $this->_list[$key]['product'] = $this->getProductName(
-                $details['id_product'],
-                $details['id_product_attribute']
-            );
-
-            $this->_list[$key]['insurance_product'] = $this->getProductName(
-                $details['id_product_insurance'],
-                $details['id_product_attribute_insurance']
-            );**/
-
-            foreach($details as $name => $value) {
+            foreach($details as $value) {
 
                 /**
                  * @var OrderCore $order
@@ -156,22 +124,30 @@ class AdminAlmaInsuranceOrdersController extends ModuleAdminController
                 $this->_list[$key]['reference'] = $order->reference;
 
                 $this->_list[$key]['status'] = $order->getCurrentStateFull($this->context->language->id)['name'];
+
                 /**
                  * @var CustomerCore $customer
                  */
                 $customer = $order->getCustomer();
-                $this->_list[$key]['customer'] = $customer->lastname . ' ' .  $customer->firstname;
+                $this->_list[$key]['customer'] = sprintf("%s %s", $customer->lastname, $customer->firstname);
                 $this->_list[$key]['date'] = $order->date_add;
             }
         }
     }
 
 
-
-    public function displayTestLink($token = null, $id, $name = null)
+    /**
+     * @param string $token
+     * @param int $id
+     * @param string $name
+     * @return mixed
+     */
+    public function displayShowLink($token = null, $id, $name = null)
     {
         $tpl = $this->createTemplate('helpers/list/list_action_edit.tpl');
+
         $link = new LinkCore();
+
         $linkToController = $link->getAdminLink(
             'AdminAlmaInsuranceOrdersDetails',
             true,
@@ -180,15 +156,16 @@ class AdminAlmaInsuranceOrdersController extends ModuleAdminController
                 'identifier' => $id
             ]
         );
+
         $tpl->assign(array(
-            //'href' => 'index.php?controller=AdminAlmaInsuranceOrdersDetails&' . $this->identifier.'='.$id.'&update'.$this->table.'&token='.($token != null ? $token : $this->token),
             'href' => $linkToController,
-            'action' => 'Test',
+            'action' => 'Show',
             'id' => $id
         ));
 
         return $tpl->fetch();
     }
+
     /**
      * @param int $idProduct
      * @param int $idProductAttribute
@@ -217,7 +194,11 @@ class AdminAlmaInsuranceOrdersController extends ModuleAdminController
         return $productName;
     }
 
-    public function initToolbar() {
+    /**
+     * @return void
+     */
+    public function initToolbar()
+    {
         parent::initToolbar();
 
         unset( $this->toolbar_btn['new'] );
