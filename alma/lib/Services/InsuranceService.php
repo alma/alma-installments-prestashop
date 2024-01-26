@@ -235,7 +235,7 @@ class InsuranceService
         $cancelUrl = urldecode($this->context->link->getModuleLink(
             $this->module->name,
             'subscription',
-            ['action' => 'cancellation', 'sid' => ' {subscription_external_id}']
+            ['action' => 'cancellation', 'sid' => '{subscription_external_id}']
         ));
 
         foreach ($insuranceContracts as $insuranceContract) {
