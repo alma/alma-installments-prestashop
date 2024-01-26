@@ -34,7 +34,7 @@ require_once _PS_MODULE_DIR_ . 'alma/vendor/autoload.php';
 
 class Alma extends PaymentModule
 {
-    const VERSION = '3.1.2';
+    const VERSION = '3.1.4';
 
     public $_path;
     public $local_path;
@@ -78,13 +78,13 @@ class Alma extends PaymentModule
     {
         $this->name = \Alma\PrestaShop\Helpers\ConstantsHelper::ALMA_MODULE_NAME;
         $this->tab = 'payments_gateways';
-        $this->version = '3.1.2';
+        $this->version = '3.1.4';
         $this->author = 'Alma';
         $this->need_instance = false;
         $this->bootstrap = true;
         $controllers = ['payment', 'validation', 'ipn'];
 
-        if (version_compare(_PS_VERSION_, '1.6', '>=')) {
+        if (version_compare(_PS_VERSION_, '1.7', '>=')) {
             $controllers[] = 'insurance';
         }
 
@@ -309,17 +309,7 @@ class Alma extends PaymentModule
     {
         return $this->runHookController('displayProductPriceBlock', $params);
     }
-
-    /**
-     * @param $params
-     *
-     * @return mixed|null
-     */
-    public function hookDisplayBeforeCarrier($params)
-    {
-        return $this->runHookController('displayBeforeCarrier', $params);
-    }
-
+    
     /**
      * displayProductButtons is registered on PrestaShop 1.5 only, as displayProductPriceBlock wasn't available then.
      *

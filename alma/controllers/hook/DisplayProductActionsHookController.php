@@ -29,6 +29,7 @@ if (!defined('_PS_VERSION_')) {
 }
 
 use Alma\PrestaShop\Helpers\Admin\InsuranceHelper as AdminInsuranceHelper;
+use Alma\PrestaShop\Helpers\CartHelper;
 use Alma\PrestaShop\Helpers\ConstantsHelper;
 use Alma\PrestaShop\Helpers\InsuranceHelper;
 use Alma\PrestaShop\Helpers\PriceHelper;
@@ -55,6 +56,12 @@ class DisplayProductActionsHookController extends FrontendHookController
     protected $productHelper;
 
     /**
+     * @var CartHelper
+     */
+    protected $cartHelper;
+
+
+    /**
      * @param $module
      */
     public function __construct($module)
@@ -62,6 +69,8 @@ class DisplayProductActionsHookController extends FrontendHookController
         $this->insuranceHelper = new InsuranceHelper();
         $this->adminInsuranceHelper = new AdminInsuranceHelper($module);
         $this->productHelper = new ProductHelper();
+        $this->cartHelper = new CartHelper();
+
         parent::__construct($module);
     }
 
@@ -83,26 +92,16 @@ class DisplayProductActionsHookController extends FrontendHookController
      */
     public function run($params)
     {
-        /**
-         * @var \Product $product
-         */
-        if (version_compare(_PS_VERSION_, '1.7', '<')) {
-            $product = $params['product'];
+        $productParams = isset($params['product']) ? $params['product'] : [];
 
-            $productId = $product->id;
+        $productId = isset($productParams['id_product'])
+            ? $productParams['id_product']
+            : \Tools::getValue('id_product');
 
-            $productAttributeId = property_exists($product, 'id_product_attribute') ? $product->id_product_attribute : null;
-        } else {
-            $productParams = isset($params['product']) ? $params['product'] : [];
+        $productAttributeId = isset($productParams['id_product_attribute'])
+            ? $productParams['id_product_attribute']
+            : null;
 
-            $productId = isset($productParams['id_product'])
-                ? $productParams['id_product']
-                : \Tools::getValue('id_product');
-
-            $productAttributeId = isset($productParams['id_product_attribute'])
-                ? $productParams['id_product_attribute']
-                : null;
-        }
         
         $cmsReference = $productId . '-' . $productAttributeId;
 
@@ -110,20 +109,9 @@ class DisplayProductActionsHookController extends FrontendHookController
         $regularPriceInCents = PriceHelper::convertPriceToCents($regularPrice);
 
         $merchantId = SettingsHelper::getMerchantId();
-        $addToCartLink = '';
-        $oldPSVersion = false;
         $settings = $this->handleSettings($merchantId);
 
-        if (version_compare(_PS_VERSION_, '1.7', '<')) {
-            $link = new \Link;
-            $ajaxAddToCart = $link->getModuleLink('alma', 'insurance', ["action" => "addToCartPS16"]);
-            $addToCartLink = ' data-link16="' . $ajaxAddToCart . '" data-token="'.\Tools::getToken(false).'" ';
-            $oldPSVersion = true;
-        }
-
         $this->context->smarty->assign([
-            'addToCartLink' => $addToCartLink,
-            'oldPSVersion' => $oldPSVersion,
             'settingsInsurance' => $settings,
             'iframeUrl' => sprintf(
                 "%s%s?cms_reference=%s&product_price=%s&merchant_id=%s",
@@ -147,10 +135,12 @@ class DisplayProductActionsHookController extends FrontendHookController
      * @return false|string
      * @throws \PrestaShopException
      */
-    private function handleSettings($merchantId)
+    protected function handleSettings($merchantId)
     {
         $settings = $this->adminInsuranceHelper->mapDbFieldsWithIframeParams();
         $settings['merchant_id'] = $merchantId;
+        $settings['cart_id'] = $this->cartHelper->getCartIdFromContext();
+        $settings['session_id'] = $this->context->session->getId();
 
         return json_encode($settings);
     }

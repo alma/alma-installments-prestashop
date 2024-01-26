@@ -596,10 +596,8 @@ final class GetContentHookController extends AdminHookController
                 $fieldsForms[] = $shareOfCheckoutBuilder->build();
             }
 
-            if (SettingsHelper::isInpageAllowed()) {
-                $inpageBuilder = new InpageAdminFormBuilder($this->module, $this->context, $iconPath);
-                $fieldsForms[] = $inpageBuilder->build();
-            }
+            $inpageBuilder = new InpageAdminFormBuilder($this->module, $this->context, $iconPath);
+            $fieldsForms[] = $inpageBuilder->build();
         }
 
         if (SettingsHelper::isPaymentTriggerEnabledByState()) {

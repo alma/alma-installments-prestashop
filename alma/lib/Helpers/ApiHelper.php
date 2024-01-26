@@ -105,14 +105,7 @@ class ApiHelper
             throw new ActivationException($this->module);
         }
 
-        $this->saveFeatureFlag(
-            $merchant,
-            'cms_allow_inpage',
-            ConstantsHelper::ALMA_ALLOW_INPAGE,
-            InpageAdminFormBuilder::ALMA_ACTIVATE_INPAGE
-        );
-
-        if (version_compare(_PS_VERSION_, '1.6', '>=')) {
+        if (version_compare(_PS_VERSION_, '1.7', '>=')) {
             $this->handleInsuranceFlag($merchant);
         }
 

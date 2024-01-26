@@ -78,20 +78,6 @@ class AlmaInsuranceModuleFrontController extends ModuleFrontController
                     case 'removeInsuranceProduct' :
                         $this->ajaxRemoveInsuranceProductAndAssociation($context);
                         break;
-                    case 'addToCartPS16' :
-                        $result = $this->insuranceProductService->handleAddingProductInsurance(
-                            \Tools::getValue('id_product'),
-                            \Tools::getValue('alma_id_insurance_contract'),
-                            \Tools::getValue('qty'),
-                            0,
-                            null,
-                            \Tools::getValue('id_product_attribute')
-                        );
-
-                        if (!$result) {
-                            $this->ajaxRenderAndExit(json_encode(['error' => 'An error occurred']), 500);
-                        }
-                        break;
                     default:
                         throw new AlmaException(sprintf('Action unknown : %s', Tools::getValue('action')));
                 }

@@ -157,7 +157,7 @@ class OrderHelper
 
 
     /**
-     * @param \Order $order
+     * @param \OrderCore $order
      * @param bool $checkIsAlma
      * @return false|mixed
      */

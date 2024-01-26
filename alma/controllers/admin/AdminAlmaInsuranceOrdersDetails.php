@@ -85,7 +85,6 @@ class AdminAlmaInsuranceOrdersDetailsController extends ModuleAdminController
             $productAttribute = null;
             if(null !== $order['id_product_attribute']) {
                 $productAttribute = new \CombinationCore((int)$order['id_product_attribute']);
-var_dump($productAttribute);die;
             }
 
             $data['product_name'] = $product->name[$this->context->language->id];

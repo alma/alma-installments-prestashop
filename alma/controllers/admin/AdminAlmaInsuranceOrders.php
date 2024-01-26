@@ -25,6 +25,8 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
+use \Alma\PrestaShop\Helpers\PriceHelper;
+
 class AdminAlmaInsuranceOrdersController extends ModuleAdminController
 {
     protected $actions_available = ['test'];
@@ -37,9 +39,12 @@ class AdminAlmaInsuranceOrdersController extends ModuleAdminController
     {
         $this->table = 'alma_insurance_product';
         $this->context = Context::getContext();
+        $this->list_no_link = true;
 
         $this->bootstrap = true;
         parent::__construct();
+
+        $this->meta_title = $this->module->l('Orders with insurance');
 
         $this->fields_list = [
             'id_order' => [
@@ -51,7 +56,7 @@ class AdminAlmaInsuranceOrdersController extends ModuleAdminController
                 'type' => 'text',
             ],
             'status' => [
-                'title' => $this->module->l('Status'),
+                'title' => $this->module->l('Order Status'),
                 'type' => 'text',
             ],
             'customer' => [
@@ -65,7 +70,11 @@ class AdminAlmaInsuranceOrdersController extends ModuleAdminController
             'date' => [
                 'title' => $this->module->l('Date'),
                 'type' => 'text',
-            ]
+            ],
+            'mode' => [
+                'title' => $this->module->l('Mode'),
+                'type' => 'text',
+            ],
         ];
     }
 
@@ -104,10 +113,40 @@ class AdminAlmaInsuranceOrdersController extends ModuleAdminController
         $this->_select = ' count(`id_order`) as nb_insurance ';
 
 
+
         parent::getList($id_lang, $orderBy, $orderWay, $start, $limit, $this->context->shop->id);
 
 
         foreach($this->_list as $key => $details)  {
+            /**
+             * @var OrderCore $order
+             */
+         /**   $order = new \Order($details['id_order']);
+            $this->_list[$key]['reference'] = $order->reference;
+            $this->_list[$key]['status'] = $order->getCurrentStateFull($this->context->language->id)['name'];
+
+            /**
+             * @var CustomerCore $customer
+             */
+         /**   $customer = $order->getCustomer();
+            $this->_list[$key]['customer'] = $customer->lastname . ' ' .  $customer->firstname;
+            $this->_list[$key]['date'] = $order->date_add;
+            $this->_list[$key]['product_price'] = PriceHelper::formatPriceToCentsByCurrencyId($details['product_price']);
+            $this->_list[$key]['price'] = PriceHelper::formatPriceToCentsByCurrencyId(
+                PriceHelper::convertPriceToCents($details['price'])
+            );
+
+
+            $this->_list[$key]['product'] = $this->getProductName(
+                $details['id_product'],
+                $details['id_product_attribute']
+            );
+
+            $this->_list[$key]['insurance_product'] = $this->getProductName(
+                $details['id_product_insurance'],
+                $details['id_product_attribute_insurance']
+            );**/
+
             foreach($details as $name => $value) {
 
                 /**
@@ -124,19 +163,6 @@ class AdminAlmaInsuranceOrdersController extends ModuleAdminController
                 $this->_list[$key]['customer'] = $customer->lastname . ' ' .  $customer->firstname;
                 $this->_list[$key]['date'] = $order->date_add;
             }
-        }
-    }
-
-    public function initToolbarTitle()
-    {
-        parent::initToolbarTitle();
-
-            switch ($this->display) {
-                case '':
-                case 'list': //Titre pour le listing
-                    array_pop($this->toolbar_title);
-                    $this->toolbar_title[] = $this->module->l('Orders with Insurance');
-                    break;
         }
     }
 
@@ -162,5 +188,38 @@ class AdminAlmaInsuranceOrdersController extends ModuleAdminController
         ));
 
         return $tpl->fetch();
+    }
+    /**
+     * @param int $idProduct
+     * @param int $idProductAttribute
+     * @return string
+     */
+    protected function getProductName($idProduct, $idProductAttribute = null)
+    {
+        /**
+         * @var ProductCore $product
+         */
+        $product = new \Product($idProduct);
+        $productName = $product->name[$this->context->language->id];
+
+        if(null !== $idProductAttribute) {
+            /*
+             * @var CombinationCore $combinationProduct;
+             */
+            $combinationProduct = new \Combination($idProductAttribute);
+
+            $nameDetails = $combinationProduct->getAttributesName($this->context->language->id);
+            foreach ($nameDetails as $nameDetail) {
+                $productName .= ' - ' . $nameDetail['name'];
+            }
+        }
+
+        return $productName;
+    }
+
+    public function initToolbar() {
+        parent::initToolbar();
+
+        unset( $this->toolbar_btn['new'] );
     }
 }

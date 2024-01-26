@@ -24,6 +24,8 @@
 
 namespace Alma\PrestaShop\Repositories;
 
+use Alma\PrestaShop\Helpers\SettingsHelper;
+
 if (!defined('_PS_VERSION_')) {
     exit;
 }
@@ -72,7 +74,10 @@ class AlmaInsuranceProductRepository
             'id_product_attribute_insurance' => $idProductAttributeInsurance,
             'price' => $assurancePrice,
             'id_address_delivery' => $idAddressDelivery,
-            'insurance_contract_infos' => $insuranceContractInfos
+            'insurance_contract_id' => $insuranceContractInfos['insurance_contract_id'],
+            'cms_reference' => $insuranceContractInfos['cms_reference'],
+            'product_price' => $insuranceContractInfos['product_price'],
+            'mode' => SettingsHelper::getActiveMode()
         ])) {
             return false;
         }
@@ -213,23 +218,33 @@ class AlmaInsuranceProductRepository
      */
     public function createTable()
     {
-        // @todo add index
         $sql = 'CREATE TABLE IF NOT EXISTS `' . _DB_PREFIX_ . 'alma_insurance_product` (
-          `id_alma_insurance_product` int(10) unsigned NOT NULL AUTO_INCREMENT,
-          `id_cart` int(10) unsigned NOT NULL,
-          `id_product` int(10) unsigned NOT NULL,
-          `id_shop` int(10) unsigned NOT NULL DEFAULT 1,
-          `id_product_attribute` int(10) unsigned NOT NULL DEFAULT 0,
-          `id_customization` int(10) unsigned NOT NULL DEFAULT 0,
-          `id_product_insurance` int(10) unsigned NOT NULL,
-          `id_product_attribute_insurance` int(10) unsigned NOT NULL,
-          `id_address_delivery` int(10) unsigned NOT NULL,
-          `id_order` int(10) unsigned NULL,
-          `price` decimal(20,6) NOT NULL DEFAULT 0.000000,
-          `insurance_contract_infos` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
-          `product_name` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
-          `date_add` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
-           PRIMARY KEY (`id_alma_insurance_product`)
+            `id_alma_insurance_product` int(10) unsigned NOT NULL AUTO_INCREMENT,
+            `id_cart` int(10) unsigned NOT NULL,
+            `id_product` int(10) unsigned NOT NULL,
+            `id_shop` int(10) unsigned NOT NULL DEFAULT 1,
+            `id_product_attribute` int(10) unsigned NOT NULL DEFAULT 0,
+            `id_customization` int(10) unsigned NOT NULL DEFAULT 0,
+            `id_product_insurance` int(10) unsigned NOT NULL,
+            `id_product_attribute_insurance` int(10) unsigned NOT NULL,
+            `id_address_delivery` int(10) unsigned NOT NULL,
+            `id_order` int(10) unsigned NULL,
+            `price` decimal(20,6) NOT NULL DEFAULT 0.000000,
+            `insurance_contract_id` varchar(255) NULL,
+            `cms_reference` varchar(255) NULL,
+            `product_price` int(10) unsigned NULL,
+            `date_add` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            `subscription_id` varchar(255) null,
+            `state` varchar(255) null,
+            `date_of_cancellation` datetime null,
+            `reason_of_cancellation` text null,   
+            `is_refunded` boolean default 0 null,
+            `date_of_refund` datetime null,
+            `mode` varchar(255) not NULL,
+            PRIMARY KEY (`id_alma_insurance_product`) ,
+            index `ps_alma_insurance_product_cart_shop` (`id_cart`, `id_shop`),
+            index `ps_alma_insurance_product`  (`id_product`, `id_shop`, `id_product_attribute`, `id_customization`, `id_cart`) ,
+            constraint ps_alma_insurance_product_pk  unique (`subscription_id`)
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci';
 
         return \Db::getInstance()->execute($sql);
@@ -269,12 +284,32 @@ class AlmaInsuranceProductRepository
     public function getContractsInfosByIdCartAndIdShop($idCart, $idShop)
     {
         $sql = '
-            SELECT `id_alma_insurance_product`,
-                   `insurance_contract_infos`
+            SELECT `id_alma_insurance_product`, `insurance_contract_id`, `cms_reference`, `product_price` 
             FROM `' . _DB_PREFIX_ . 'alma_insurance_product` aip
             WHERE aip.`id_cart` = ' . (int)$idCart . '
             AND aip.`id_shop` = ' . (int)$idShop;
 
         return \Db::getInstance()->executeS($sql);
+    }
+
+    /**
+     * @param int $orderId
+     * @param int $shopId
+     * @param string $contractId
+     * @param string $cmsReference
+     * @return array|null
+     */
+    public function findSubscriptionToActivate($orderId, $shopId, $contractId, $cmsReference)
+    {
+        $sql = '
+            SELECT `id_alma_insurance_product`
+            FROM `' . _DB_PREFIX_ . 'alma_insurance_product` 
+            WHERE `id_order` = ' . (int)$orderId. '
+            AND `insurance_contract_id` = "' . $contractId. '" 
+            AND `cms_reference` = "' . $cmsReference. '" 
+            AND `state` is NULL 
+            AND `id_shop` = ' . (int)$shopId;
+
+        return \Db::getInstance()->getRow($sql);
     }
 }

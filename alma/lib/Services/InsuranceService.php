@@ -189,25 +189,14 @@ class InsuranceService
         );
 
         foreach ($allInsurancesLinked as $insuranceLinked) {
-            if (version_compare(_PS_VERSION_, '1.7', '>=')) {
-                // Delete insurance in cart
-                $context->cart->updateQty(
-                    1,
-                    $insuranceLinked['id_product_insurance'],
-                    $insuranceLinked['id_product_attribute_insurance'],
-                    0,
-                    'down'
-                );
-            } else {
-                $this->cartService->updateQty(
-                    1,
-                    $insuranceLinked['id_product_insurance'],
-                    $insuranceLinked['id_product_attribute_insurance'],
-                    null,
-                    0,
-                    'down'
-                );
-            }
+            // Delete insurance in cart
+            $context->cart->updateQty(
+                1,
+                $insuranceLinked['id_product_insurance'],
+                $insuranceLinked['id_product_attribute_insurance'],
+                0,
+                'down'
+            );
 
             // Delete association
             $this->almaInsuranceProductRepository->deleteById($insuranceLinked['id_alma_insurance_product']);
@@ -244,11 +233,10 @@ class InsuranceService
         $customerService = new CustomerService($cart->id_customer, $cart->id_address_invoice, $cart->id_address_delivery);
 
         foreach ($insuranceContracts as $insuranceContract) {
-            $insuranceContractInfos = json_decode($insuranceContract['insurance_contract_infos'], true);
             $subscriptionData[] = new Subscription(
-                $insuranceContractInfos['insurance_contract_id'],
-                $insuranceContractInfos['cms_reference'],
-                $insuranceContractInfos['product_price'],
+                $insuranceContract['insurance_contract_id'],
+                $insuranceContract['cms_reference'],
+                $insuranceContract['product_price'],
                 $customerService->getSubscriber()
             );
         }
@@ -266,12 +254,10 @@ class InsuranceService
         $file = null;
 
         foreach ($insuranceContracts as $insuranceContract) {
-            $insuranceContractInfos = json_decode($insuranceContract['insurance_contract_infos'], true);
-
             $file = $this->insuranceApiService->getInsuranceContractFileByType(
-                $insuranceContractInfos['insurance_contract_id'],
-                $insuranceContractInfos['cms_reference'],
-                $insuranceContractInfos['product_price']
+                $insuranceContract['insurance_contract_id'],
+                $insuranceContract['cms_reference'],
+                $insuranceContract['product_price']
             );
 
             break;
@@ -287,6 +273,6 @@ class InsuranceService
             ];
         }
 
-        throw new TermsAndConditionsException('An error occured when retrieving the file');
+        throw new TermsAndConditionsException('An error occurred when retrieving the file');
     }
 }

@@ -1,5 +1,6 @@
+<?php
 /**
- * 2018-2023 Alma SAS
+ * 2018-2023 Alma SAS.
  *
  * THE MIT LICENSE
  *
@@ -20,32 +21,13 @@
  * @copyright 2018-2023 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
- (function ($) {
-    $(function () {
 
-        let itemsCart = document.querySelectorAll('.ajax_cart_block_remove_link');
+namespace Alma\PrestaShop\Exceptions;
 
-        itemsCart.forEach((item) => {
-            item.remove();
-        });
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
 
-        let itemsCartNames = document.querySelectorAll('.cart_block_product_name');
-
-        itemsCartNames.forEach((item) => {
-            item.href = '#';
-        });
-
-
-        buttonOrder = document.querySelector('.products');
-        if(buttonOrder) {
-            let message = document.createElement('div');
-            message.style = "margin:10px";
-            let p = document.createElement('p');
-            p.innerHTML = document.getElementById('alma-mini-cart-insurance-message').value;
-            buttonOrder.append(message);
-            message.append(p);
-        }
-
-    });
-
-})(jQuery);
+class InsuranceSubscriptionException extends AlmaException
+{
+}

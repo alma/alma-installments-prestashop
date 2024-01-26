@@ -117,31 +117,18 @@ class DisplayCartExtraProductActionsHookController extends FrontendHookControlle
 
         $resultInsurance = [];
 
-        // Presta 1.6
-        if (version_compare(_PS_VERSION_, '1.7', '<')) {
-            $idProduct = $product['id_product'];
-            $productQuantity = $product['quantity'];
-            $template = 'displayCartExtraProductActions16.tpl';
-        } else {
-            $idProduct = $product->id;
-            $productQuantity = $product->quantity;
-            $template = 'displayCartExtraProductActions.tpl';
-        }
 
-        if($idProduct !== $insuranceProductId){
-            if (version_compare(_PS_VERSION_, '1.7', '<')) {
-                $almaInsurances = $this->almaInsuranceProductRepository->getIdsByCartIdAndShopAndProductBefore17(
-                    $product,
-                    $cart->id,
-                    $this->context->shop->id
-                );
-            } else {
-                $almaInsurances = $this->almaInsuranceProductRepository->getIdsByCartIdAndShopAndProduct(
-                    $product,
-                    $cart->id,
-                    $this->context->shop->id
-                );
-            }
+        $idProduct = $product->id;
+        $productQuantity = $product->quantity;
+        $template = 'displayCartExtraProductActions.tpl';
+
+        if($idProduct !== $insuranceProductId) {
+
+            $almaInsurances = $this->almaInsuranceProductRepository->getIdsByCartIdAndShopAndProduct(
+                $product,
+                $cart->id,
+                $this->context->shop->id
+            );
 
             foreach ($almaInsurances as $almaInsurance) {
                 $almaInsuranceProduct = new \ProductCore((int)$almaInsurance['id_product_insurance']);
