@@ -27,12 +27,21 @@
     </div>
     <div class="form-wrapper">
         <div class="form-group">
-
+            <div class="alma--insurance-bo-form">
+                <iframe id="subscription-alma-iframe" class="alma-insurance-iframe" src="https://protect.staging.almapay.com/almaBackOfficeSubscriptions.html"></iframe>
+            </div>
         </div>
-    </div><!-- /.form-wrapper -->
+    </div>
     <div class="panel-footer">
         <button type="submit" value="1" id="alma_config_form_submit_btn" name="alma_config_form" class="button btn btn-default pull-right">
             <i class="process-icon-save"></i> {l s='Save' mod='alma'}
         </button>
     </div>
 </div>
+
+<div id="alma-insurance-modal"></div>
+
+
+<script type="module" src="https://protect.staging.almapay.com/displayModal.js"></script>
+
+<script type="module" src="http://prestashop-a-1-7-8-7.local.test/modules/alma/views/js/admin/alma-insurance-subscriptions.js"></script>

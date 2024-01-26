@@ -62,7 +62,8 @@ class DisplayBackOfficeHeaderHookController extends FrontendHookController
         $this->context->controller->setMedia();
         $this->context->controller->addCSS($this->module->_path . 'views/css/admin/_configure/helpers/form/form.css', 'all');
         $this->context->controller->addCSS($this->module->_path . 'views/css/admin/almaPage.css', 'all');
-        $this->context->controller->addJS($this->module->_path . 'views/js/admin/alma.js');
+
+        $this->context->controller->addJS($this->module->_path . 'views/js/admin/alma-insurance-subscriptions.js');
 
         $date = new \DateTime();
         $timestamp = $date->getTimestamp();
