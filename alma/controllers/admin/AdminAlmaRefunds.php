@@ -22,6 +22,8 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 use Alma\API\Entities\Payment;
+use Alma\API\Exceptions\ParametersException;
+use Alma\API\Exceptions\RequestException;
 use Alma\API\RequestError;
 use Alma\PrestaShop\Helpers\ClientHelper;
 use Alma\PrestaShop\Helpers\OrderHelper;
@@ -29,6 +31,7 @@ use Alma\PrestaShop\Helpers\PriceHelper;
 use Alma\PrestaShop\Helpers\RefundHelper;
 use Alma\PrestaShop\Logger;
 use Alma\PrestaShop\Traits\AjaxTrait;
+use PrestaShop\PrestaShop\Core\Localization\Exception\LocalizationException;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -51,8 +54,10 @@ class AdminAlmaRefundsController extends ModuleAdminController
      *
      * @return void
      *
+     * @throws LocalizationException
      * @throws PrestaShopDatabaseException
      * @throws PrestaShopException
+     * @throws RequestException
      */
     public function ajaxProcessRefund()
     {
@@ -108,7 +113,9 @@ class AdminAlmaRefundsController extends ModuleAdminController
      *
      * @return Payment|false
      *
+     * @throws PrestaShopException
      * @throws RequestError
+     * @throws RequestException
      */
     protected function runRefund($paymentId, $amount, $isTotal)
     {
@@ -117,7 +124,16 @@ class AdminAlmaRefundsController extends ModuleAdminController
             return false;
         }
 
-        return $alma->payments->refund($paymentId, $isTotal, PriceHelper::convertPriceToCents($amount));
+        try {
+            return $alma->payments->refund($paymentId, $isTotal, PriceHelper::convertPriceToCents($amount));
+        } catch (ParametersException $e) {
+            Logger::instance()->error(
+                sprintf('Message :%s - Trace: %s', $e->getMessage(), $e->getTraceAsString())
+            );
+            $this->ajaxFailAndDie(
+                $this->module->l($e->getMessage(), 'AdminAlmaRefunds')
+            );
+        }
     }
 
     /**
