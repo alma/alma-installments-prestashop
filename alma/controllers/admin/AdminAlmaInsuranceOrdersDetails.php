@@ -39,6 +39,10 @@ class AdminAlmaInsuranceOrdersDetailsController extends ModuleAdminController
      * @var \Alma\PrestaShop\Repositories\AlmaInsuranceProductRepository
      */
     protected $insuranceRepository;
+
+    /**
+     * @var ProductHelper 
+     */
     protected $productHelper;
 
     /**
