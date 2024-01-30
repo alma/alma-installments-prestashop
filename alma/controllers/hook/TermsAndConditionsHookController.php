@@ -99,7 +99,7 @@ class TermsAndConditionsHookController extends FrontendHookController
 
             // @TODO : Find an alternative about the modal on the click to the link
             $returnedTermsAndConditions[] = $this->termsAndConditions
-                ->setText($termsAndConditionsInsurance['text'], $termsAndConditionsInsurance['link'])
+                ->setText($termsAndConditionsInsurance['text'], $termsAndConditionsInsurance['link-notice'], $termsAndConditionsInsurance['link-ipid'], $termsAndConditionsInsurance['link-fic'])
                 ->setIdentifier('terms-and-conditions-alma-insurance');
 
             return $returnedTermsAndConditions;

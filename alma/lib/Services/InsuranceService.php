@@ -251,25 +251,33 @@ class InsuranceService
      */
     public function createTextTermsAndConditions($insuranceContracts)
     {
-        $file = null;
+        $files = null;
+        $name = '';
 
         foreach ($insuranceContracts as $insuranceContract) {
-            $file = $this->insuranceApiService->getInsuranceContractFileByType(
+            $files = $this->insuranceApiService->getInsuranceContractFiles(
                 $insuranceContract['insurance_contract_id'],
                 $insuranceContract['cms_reference'],
                 $insuranceContract['product_price']
             );
+            $name = $this->insuranceApiService->getInsuranceContract(
+                $insuranceContract['insurance_contract_id'],
+                $insuranceContract['cms_reference'],
+                $insuranceContract['product_price']
+            )->getName();
 
             break;
         }
 
-        if ($file) {
+        if ($files) {
             return [
                 'text' => sprintf(
-                    $this->module->l('By accepting to subscribe to [%s], I confirm my thorough review, acceptance, and retention of the general terms outlined in the information booklet and the insurance product details. Additionally, I consent to receiving contractual information by e-mail for the purpose of securely storing it in a durable format.', 'TermsAndConditionsHookController'),
-                    $file->getName()
+                    $this->module->l('I agree to subscribe to %s coverage, and I confirm that I have read, accepted, and saved the [information notice, which constitutes the general conditions], the [insurance product information document], and the [pre-contractual information and advice sheet] before finalising my purchase and subscribing to the insurance.', 'TermsAndConditionsHookController'),
+                    $name
                 ),
-                'link' => $file->getPublicUrl()
+                'link-notice' => $files['notice-document'],
+                'link-ipid' => $files['ipid-document'],
+                'link-fic' => $files['fic-document']
             ];
         }
 
