@@ -318,6 +318,12 @@ class FrontHeaderHookController extends FrontendHookController
             );
         }
 
+        if (
+            $this->insuranceHelper->isInsuranceAllowedInProductPage()
+            && $this->iAmInOrderPage()
+        ) {
+            $this->controller->addJS($this->module->_path . ConstantsHelper::ORDER_INSURANCE_SCRIPT_PATH);
+        }
     }
     /**
      * Manage assets for Prestashop after 1.7
