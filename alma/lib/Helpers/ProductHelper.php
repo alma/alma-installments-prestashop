@@ -149,4 +149,29 @@ class ProductHelper
 
         return $quantity;
     }
+
+    /**
+     * @param \ProductCore $product
+     * @param int $languageId
+     * @param int|null $idProductAttribute
+     * @return string
+     */
+    public function getProductName($product, $languageId, $idProductAttribute = null)
+    {
+        $productName = $product->name[$languageId];
+
+        if(null !== $idProductAttribute) {
+            /*
+             * @var CombinationCore $combinationProduct;
+             */
+            $combinationProduct = new \Combination($idProductAttribute);
+
+            $nameDetails = $combinationProduct->getAttributesName($languageId);
+            foreach ($nameDetails as $nameDetail) {
+                $productName .= ' - ' . $nameDetail['name'];
+            }
+        }
+
+        return htmlspecialchars($productName);
+    }
 }

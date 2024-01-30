@@ -241,6 +241,7 @@ class InsuranceProductService
     {
         try {
             $idProductAttribute = $this->attributeProductService->getIdProductAttributeFromPost($idProduct);
+
             $cmsReference = sprintf(
                 "%s-%s",
                 $idProduct,

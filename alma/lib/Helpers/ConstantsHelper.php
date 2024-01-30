@@ -74,6 +74,7 @@ class ConstantsHelper
 
     const BO_CONTROLLER_INSURANCE_CLASSNAME = 'AdminAlmaInsurance';
     const BO_CONTROLLER_INSURANCE_CONFIGURATION_CLASSNAME = 'AdminAlmaInsuranceConfiguration';
+    const BO_CONTROLLER_INSURANCE_ORDERS_DETAILS_CLASSNAME = 'AdminAlmaInsuranceOrdersDetails';
     const BO_CONTROLLER_INSURANCE_ORDERS_CLASSNAME = 'AdminAlmaInsuranceOrders';
     const DOMAIN_URL_INSURANCE_TEST = 'https://protect.sandbox.almapay.com';
     const DOMAIN_URL_INSURANCE_LIVE = 'https://protect.almapay.com';
