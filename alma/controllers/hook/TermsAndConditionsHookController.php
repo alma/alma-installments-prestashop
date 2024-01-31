@@ -24,9 +24,11 @@
 
 namespace Alma\PrestaShop\Controllers\Hook;
 
+use Alma\PrestaShop\Exceptions\InsuranceContractException;
 use Alma\PrestaShop\Exceptions\TermsAndConditionsException;
 use Alma\PrestaShop\Helpers\InsuranceHelper;
 use Alma\PrestaShop\Hooks\FrontendHookController;
+use Alma\PrestaShop\Logger;
 use Alma\PrestaShop\Repositories\AlmaInsuranceProductRepository;
 use Alma\PrestaShop\Services\InsuranceService;
 use PrestaShop\PrestaShop\Core\Checkout\TermsAndConditions;
@@ -97,14 +99,33 @@ class TermsAndConditionsHookController extends FrontendHookController
         try {
             $termsAndConditionsInsurance = $this->insuranceService->createTextTermsAndConditions($insuranceContracts);
 
-            // @TODO : Find an alternative about the modal on the click to the link
             $returnedTermsAndConditions[] = $this->termsAndConditions
                 ->setText($termsAndConditionsInsurance['text'], $termsAndConditionsInsurance['link-notice'], $termsAndConditionsInsurance['link-ipid'], $termsAndConditionsInsurance['link-fic'])
                 ->setIdentifier('terms-and-conditions-alma-insurance');
 
             return $returnedTermsAndConditions;
         } catch (TermsAndConditionsException $e) {
-            // @todo Afficher error page or message and block the payment
+            Logger::instance()->warning(
+                sprintf(
+                    '[Alma] Warning: The contract files are missing and a client could not accept terms and conditions, message "%s", trace "%s"',
+                    $e->getMessage(),
+                    $e->getTraceAsString()
+                )
+            );
+        } catch (InsuranceContractException $e) {
+            Logger::instance()->warning(
+                sprintf(
+                    '[Alma] Warning: Contract not found, message "%s", trace "%s"',
+                    $e->getMessage(),
+                    $e->getTraceAsString()
+                )
+            );
         }
+
+        $returnedTermsAndConditions[] = $this->termsAndConditions
+            ->setText($this->insuranceService->getTextTermsAndConditions())
+            ->setIdentifier('terms-and-conditions-alma-insurance');
+
+        return $returnedTermsAndConditions;
     }
 }
