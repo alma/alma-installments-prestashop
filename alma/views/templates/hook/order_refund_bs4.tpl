@@ -92,7 +92,8 @@
                 <div class="col-sm">
                     <div class="input-group">
                         <input 
-                            type="text" 
+                            type="number"
+                            step="0.01"
                             class="alma" 
                             name="amount" 
                             autocomplete="off" 
