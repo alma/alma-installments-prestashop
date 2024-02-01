@@ -88,7 +88,14 @@
                 {$wording.labelAmoutRefundPartial|escape:'htmlall':'UTF-8'}
             </label>
             <div class="margin-form">
-                <input type="text" autocomplete="off" class="alma-input-number" id="amount" value="" name="amount" placeholder="{$wording.placeholderInputRefundPartial|escape:'htmlall':'UTF-8'}" />
+                <input type="number"
+                       step="0.01"
+                       autocomplete="off"
+                       class="alma-input-number"
+                       id="amount"
+                       value=""
+                       name="amount"
+                       placeholder="{$wording.placeholderInputRefundPartial|escape:'htmlall':'UTF-8'}" />
             </div>
         </div>  
         <div class="clear"></div>
