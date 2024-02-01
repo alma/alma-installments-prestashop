@@ -87,7 +87,13 @@
                 <div class="col-lg-2">
                     <div class="input-group">
                         <span class="input-group-addon">{$order.currencySymbol|escape:'htmlall':'UTF-8'}</span>
-                        <input type="text" class="alma" value="" name="amount" id="amount" placeholder="{$wording.placeholderInputRefundPartial|escape:'htmlall':'UTF-8'}"/>
+                        <input type="number"
+                               step="0.01"
+                               class="alma"
+                               value=""
+                               name="amount"
+                               id="amount"
+                               placeholder="{$wording.placeholderInputRefundPartial|escape:'htmlall':'UTF-8'}"/>
                     </div>
                 </div>
             </div>
