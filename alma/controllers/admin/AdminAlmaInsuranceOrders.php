@@ -74,7 +74,7 @@ class AdminAlmaInsuranceOrdersController extends ModuleAdminController
                 'title' => $this->module->l('Insurance product'),
                 'type' => 'text',
             ],
-            'subscription_price' => [
+            'subscription_amount' => [
                 'title' => $this->module->l('Insurance Price'),
                 'type' => 'text',
             ],
@@ -82,7 +82,7 @@ class AdminAlmaInsuranceOrdersController extends ModuleAdminController
                 'title' => $this->module->l('Subscription Contract'),
                 'type' => 'text',
             ],
-            'state' => [
+            'subscription_state' => [
                 'title' => $this->module->l('State'),
                 'type' => 'text',
             ],
@@ -136,8 +136,8 @@ class AdminAlmaInsuranceOrdersController extends ModuleAdminController
             $this->_list[$key]['customer'] = $customer->lastname . ' ' .  $customer->firstname;
             $this->_list[$key]['date'] = $order->date_add;
             $this->_list[$key]['product_price'] = PriceHelper::formatPriceToCentsByCurrencyId($details['product_price']);
-            $this->_list[$key]['price'] = PriceHelper::formatPriceToCentsByCurrencyId(
-                PriceHelper::convertPriceToCents($details['price'])
+            $this->_list[$key]['subscription_amount'] = PriceHelper::formatPriceToCentsByCurrencyId(
+                PriceHelper::convertPriceToCents($details['subscription_amount'])
             );
 
 

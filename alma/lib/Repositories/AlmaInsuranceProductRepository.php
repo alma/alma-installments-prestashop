@@ -197,7 +197,7 @@ class AlmaInsuranceProductRepository
             `product_price` int(10) unsigned NULL,
             `date_add` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
             `subscription_id` varchar(255) null,
-            `subscription_price` int(10) unsigned NULL,
+            `subscription_amount` int(10) unsigned NULL,
             `subscription_broker_id` varchar(255) null,
             `state` varchar(255) null,
             `date_of_cancelation` datetime null,
