@@ -83,7 +83,7 @@ class InsuranceProduct extends \ObjectModel
     public $subscription_id;
 
     /** @var string Neat client insurance id */
-    public $broker_subscription_id;
+    public $subscription_broker_id;
 
 
     /** @var string Alma cms reference */
@@ -130,7 +130,7 @@ class InsuranceProduct extends \ObjectModel
             'date_add' => ['type' => self::TYPE_DATE, 'validate' => 'isDate'],
             'subscription_id' => ['type' => self::TYPE_STRING],
             'subscription_price' => ['type' => self::TYPE_FLOAT, 'validate' => 'isPrice'],
-            'broker_subscription_id' => ['type' => self::TYPE_STRING],
+            'subscription_broker_id' => ['type' => self::TYPE_STRING],
             'state' => ['type' => self::TYPE_STRING],
             'date_of_cancelation' => ['type' => self::TYPE_DATE, 'validate' => 'isDate'],
             'date_of_cancelation_request' => ['type' => self::TYPE_DATE, 'validate' => 'isDate'],

@@ -198,7 +198,7 @@ class AlmaInsuranceProductRepository
             `date_add` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
             `subscription_id` varchar(255) null,
             `subscription_price` int(10) unsigned NULL,
-            `broker_subscription_id` varchar(255) null,
+            `subscription_broker_id` varchar(255) null,
             `state` varchar(255) null,
             `date_of_cancelation` datetime null,
             `reason_of_cancelation` text null,   
@@ -209,9 +209,9 @@ class AlmaInsuranceProductRepository
             PRIMARY KEY (`id_alma_insurance_product`) ,
             index `ps_alma_insurance_product_cart_shop` (`id_cart`, `id_shop`),
             index `ps_alma_insurance_product`  (`id_product`, `id_shop`, `id_product_attribute`, `id_customization`, `id_cart`) ,
-            index `ps_broker_id`  (`broker_subscription_id`) ,
+            index `ps_broker_id`  (`subscription_broker_id`) ,
             constraint ps_alma_insurance_product_pk  unique (`subscription_id`) ,
-            constraint ps_alma_insurance_broker_pk  unique (`broker_subscription_id`)
+            constraint ps_alma_insurance_broker_pk  unique (`subscription_broker_id`)
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci';
 
         return \Db::getInstance()->execute($sql);
