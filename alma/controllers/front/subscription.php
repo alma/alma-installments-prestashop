@@ -22,11 +22,7 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
-use Alma\PrestaShop\Logger;
 use Alma\PrestaShop\Traits\AjaxTrait;
-use Alma\PrestaShop\Exceptions\AlmaException;
-use Alma\PrestaShop\Repositories\AlmaInsuranceProductRepository;
-use Alma\PrestaShop\Services\InsuranceProductService;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -48,10 +44,6 @@ class AlmaSubscriptionModuleFrontController extends ModuleFrontController
 
     /**
      * @return void
-     *
-     * @throws PrestaShopException
-     * @throws RefundException
-     * @throws MismatchException
      */
     public function postProcess()
     {
@@ -61,13 +53,18 @@ class AlmaSubscriptionModuleFrontController extends ModuleFrontController
 
         $action = Tools::getValue('action');
         $sid = Tools::getValue('sid');
+        $trace = Tools::getValue('trace');
 
         if(!$sid) {
-            $this->ajaxRenderAndExit(json_encode(['error' => 'Missing SID']), 500);
+            $this->ajaxRenderAndExit(json_encode(['error' => 'Missing Id']), 500);
+        }
+
+        if(!$trace) {
+            $this->ajaxRenderAndExit(json_encode(['error' => 'Missing secutiry token']), 500);
         }
 
         switch ($action) {
-            case  'cancellation' :
+            case  'update' :
                 $this->ajaxRenderAndExit(json_encode(['success' => true]));
             default :
                 $this->ajaxRenderAndExit(json_encode(['error' => 'Wrong action']), 500);
