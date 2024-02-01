@@ -1,5 +1,9 @@
 # Changelog
 
+## v3.1.5
+
+- fix: Add verification of number on type in amount field for refund
+
 ## v3.1.4
 
 - fix: Return for refunded payments
