@@ -25,7 +25,7 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-if (class_exists('\Context')) {
+if (class_exists('\Context') && php_sapi_name() != 'cli') {
     $smarty = \Context::getContext()->smarty;
 
     /**
