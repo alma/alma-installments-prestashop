@@ -89,6 +89,7 @@ class InsuranceSubscriptionService
                 $subscriptionData,
                 $orderPayment->transaction_id
             );
+
             $this->confirmSubscriptions($order->id_cart, $order->id_shop, $subscriptions);
         }
     }
@@ -139,14 +140,14 @@ class InsuranceSubscriptionService
         }
 
         $insuranceProduct = new InsuranceProduct($almaInsuranceProduct['id_alma_insurance_product']);
-        $insuranceProduct->subscription_id = $subscription['subscription_id'];
+        $insuranceProduct->subscription_id = $subscription['id'];
         
-        if(isset($subscription['subscription_broker_id'])) {
-            $insuranceProduct->subscription_broker_id = $subscription['subscription_broker_id'];
+        if(!empty($subscription['broker_subscription_id'])) {
+            $insuranceProduct->subscription_broker_id = $subscription['broker_subscription_id'];
         }
 
-        $insuranceProduct->subscription_amount = $subscription['subscription_amount'];
-        $insuranceProduct->subscription_state = $subscription['subscription_state'];
+        $insuranceProduct->subscription_amount = $subscription['amount'];
+        $insuranceProduct->subscription_state = $subscription['state'];
         $insuranceProduct->save();
     }
 
