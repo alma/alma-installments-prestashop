@@ -26,6 +26,7 @@ namespace Alma\PrestaShop\Services;
 
 use Alma\API\Entities\Insurance\Subscription;
 use Alma\PrestaShop\Exceptions\AlmaException;
+use Alma\PrestaShop\Exceptions\InsuranceContractException;
 use Alma\PrestaShop\Exceptions\InsuranceInstallException;
 use Alma\PrestaShop\Exceptions\TermsAndConditionsException;
 use Alma\PrestaShop\Helpers\ConstantsHelper;
@@ -245,34 +246,72 @@ class InsuranceService
     }
 
     /**
-     * @param  array $insuranceContracts
+     * @param array $insuranceContracts
      * @return array
+     * @throws InsuranceContractException
      * @throws TermsAndConditionsException
      */
     public function createTextTermsAndConditions($insuranceContracts)
     {
-        $file = null;
+        $files = [];
 
         foreach ($insuranceContracts as $insuranceContract) {
-            $file = $this->insuranceApiService->getInsuranceContractFileByType(
+            $files = $this->insuranceApiService->getInsuranceContractFiles(
                 $insuranceContract['insurance_contract_id'],
                 $insuranceContract['cms_reference'],
                 $insuranceContract['product_price']
             );
 
+            $name = $this->getInsuranceContractName($insuranceContract);
+
             break;
         }
 
-        if ($file) {
+        if (!empty($files)) {
             return [
-                'text' => sprintf(
-                    $this->module->l('By accepting to subscribe to [%s], I confirm my thorough review, acceptance, and retention of the general terms outlined in the information booklet and the insurance product details. Additionally, I consent to receiving contractual information by e-mail for the purpose of securely storing it in a durable format.', 'TermsAndConditionsHookController'),
-                    $file->getName()
-                ),
-                'link' => $file->getPublicUrl()
+                'text' => $this->getTextTermsAndConditions($name),
+                'link-notice' => $files['notice-document'],
+                'link-ipid' => $files['ipid-document'],
+                'link-fic' => $files['fic-document']
             ];
         }
 
-        throw new TermsAndConditionsException('An error occurred when retrieving the file');
+        throw new TermsAndConditionsException('An error occurred when retrieving the files');
+    }
+
+    /**
+     * @param string|null $name
+     * @return string
+     */
+    public function getTextTermsAndConditions($name = null)
+    {
+        if (null === $name) {
+            $name = $this->module->l('Alma insurance', 'InsuranceService');
+        }
+
+        return sprintf(
+            $this->module->l('I agree to subscribe to %s coverage, and I confirm that I have read, accepted, and saved the [information notice, which constitutes the general conditions], the [insurance product information document], and the [pre-contractual information and advice sheet] before finalising my purchase and subscribing to the insurance.', 'InsuranceService'),
+            $name
+        );
+    }
+
+    /**
+     * @param array $insuranceContract
+     * @return string
+     * @throws InsuranceContractException
+     */
+    protected function getInsuranceContractName($insuranceContract)
+    {
+        $contract = $this->insuranceApiService->getInsuranceContract(
+            $insuranceContract['insurance_contract_id'],
+            $insuranceContract['cms_reference'],
+            $insuranceContract['product_price']
+        );
+
+        if (null === $contract) {
+            throw new InsuranceContractException(sprintf('Contract not found: %s', json_encode($insuranceContract)));
+        }
+
+        return $contract->getName();
     }
 }
