@@ -32,8 +32,6 @@ if (!defined('_PS_VERSION_')) {
 
 class InsuranceProduct extends \ObjectModel
 {
-    const STATE_ACTIVE = 'active';
-
     /** @var int Id  */
     public $id_alma_insurance_product;
 
@@ -70,23 +68,33 @@ class InsuranceProduct extends \ObjectModel
     /** @var float Price of the product */
     public $product_price;
 
+    /** @var float Subscription price Neat */
+    public $subscription_amount;
+
     /** @var string Object creation date */
     public $date_add;
 
     /** @var string Object validity */
-    public $state;
+    public $subscription_state;
 
     /** @var string Neat insurance id */
     public $subscription_id;
+
+    /** @var string Neat client insurance id */
+    public $subscription_broker_id;
+
 
     /** @var string Alma cms reference */
     public $cms_reference;
 
     /** @var string Object cancellation date */
-    public $date_of_cancellation;
+    public $date_of_cancelation;
+
+    /** @var string Object request cancellation date */
+    public $date_of_cancelation_request;
 
     /** @var string reason of cancellation */
-    public $reason_of_cancellation;
+    public $reason_of_cancelation;
 
     /** @var bool Object refunded state */
     public $is_refunded;
@@ -119,9 +127,12 @@ class InsuranceProduct extends \ObjectModel
             'product_price' => ['type' => self::TYPE_FLOAT, 'validate' => 'isPrice'],
             'date_add' => ['type' => self::TYPE_DATE, 'validate' => 'isDate'],
             'subscription_id' => ['type' => self::TYPE_STRING],
-            'state' => ['type' => self::TYPE_STRING],
-            'date_of_cancellation' => ['type' => self::TYPE_DATE, 'validate' => 'isDate'],
-            'reason_of_cancellation' => ['type' => self::TYPE_STRING],
+            'subscription_amount' => ['type' => self::TYPE_FLOAT, 'validate' => 'isPrice'],
+            'subscription_broker_id' => ['type' => self::TYPE_STRING],
+            'subscription_state' => ['type' => self::TYPE_STRING],
+            'date_of_cancelation' => ['type' => self::TYPE_DATE, 'validate' => 'isDate'],
+            'date_of_cancelation_request' => ['type' => self::TYPE_DATE, 'validate' => 'isDate'],
+            'reason_of_cancelation' => ['type' => self::TYPE_STRING],
             'is_refunded' => ['type' => self::TYPE_BOOL],
             'date_of_refund' => ['type' => self::TYPE_DATE, 'validate' => 'isDate'],
             'mode' => ['type' => self::TYPE_STRING]

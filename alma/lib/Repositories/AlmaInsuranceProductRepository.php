@@ -235,16 +235,21 @@ class AlmaInsuranceProductRepository
             `product_price` int(10) unsigned NULL,
             `date_add` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
             `subscription_id` varchar(255) null,
-            `state` varchar(255) null,
-            `date_of_cancellation` datetime null,
-            `reason_of_cancellation` text null,   
+            `subscription_amount` int(10) unsigned NULL,
+            `subscription_broker_id` varchar(255) null,
+            `subscription_state` varchar(255) null,
+            `date_of_cancelation` datetime null,
+            `reason_of_cancelation` text null,   
             `is_refunded` boolean default 0 null,
             `date_of_refund` datetime null,
+            `date_of_cancelation_request` datetime null,
             `mode` varchar(255) not NULL,
             PRIMARY KEY (`id_alma_insurance_product`) ,
             index `ps_alma_insurance_product_cart_shop` (`id_cart`, `id_shop`),
             index `ps_alma_insurance_product`  (`id_product`, `id_shop`, `id_product_attribute`, `id_customization`, `id_cart`) ,
-            constraint ps_alma_insurance_product_pk  unique (`subscription_id`)
+            index `ps_broker_id`  (`subscription_broker_id`) ,
+            constraint ps_alma_insurance_product_pk  unique (`subscription_id`) ,
+            constraint ps_alma_insurance_broker_pk  unique (`subscription_broker_id`)
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci';
 
         return \Db::getInstance()->execute($sql);
@@ -307,7 +312,7 @@ class AlmaInsuranceProductRepository
             WHERE `id_order` = ' . (int)$orderId. '
             AND `insurance_contract_id` = "' . $contractId. '" 
             AND `cms_reference` = "' . $cmsReference. '" 
-            AND `state` is NULL 
+            AND `subscription_state` is NULL 
             AND `id_shop` = ' . (int)$shopId;
 
         return \Db::getInstance()->getRow($sql);
