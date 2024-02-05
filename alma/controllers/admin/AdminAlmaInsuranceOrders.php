@@ -25,6 +25,8 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
+use Alma\PrestaShop\Helpers\SettingsHelper;
+
 class AdminAlmaInsuranceOrdersController extends ModuleAdminController
 {
     protected $actions_available = ['show'];
@@ -108,6 +110,7 @@ class AdminAlmaInsuranceOrdersController extends ModuleAdminController
 
         $this->_group = 'GROUP BY `id_order`';
         $this->_where = ' AND `id_order` is NOT NULL ';
+        $this->_where = ' AND `mode` = "' . SettingsHelper::getActiveMode() . '"';
         $this->_select = ' count(`id_order`) as nb_insurance ';
 
 

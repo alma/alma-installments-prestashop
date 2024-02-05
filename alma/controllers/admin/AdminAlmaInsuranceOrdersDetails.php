@@ -143,21 +143,26 @@ class AdminAlmaInsuranceOrdersDetailsController extends ModuleAdminController
                 $subscription['id_product_attribute_insurance']
             );
 
-            $dataSubscriptions['status'] = $subscription['state'];
+            $dataSubscriptions['status'] = $subscription['subscription_state'];
             $dataSubscriptions['productPrice'] = PriceHelper::convertPriceFromCents($subscription['product_price']);
-            $dataSubscriptions['insurancePrice'] = PriceHelper::convertPriceFromCents(
+            $dataSubscriptions['subscriptionAmount'] = PriceHelper::convertPriceFromCents(
                 PriceHelper::convertPriceToCents($subscription['price'])
             );
             $dataSubscriptions['isRefunded']  = $subscription['is_refunded'];
-            $dataSubscriptions['reasonForCancellation']  = $subscription['reason_of_cancellation'];
-            $dataSubscriptions['dateOfCancellation']  = $subscription['date_of_cancellation'];
+            $dataSubscriptions['reasonForCancellation']  = $subscription['reason_of_cancelation'];
+            $dataSubscriptions['dateOfCancellation']  = $subscription['date_of_cancelation'];
 
             if('0000-00-00 00:00:00' === $dataSubscriptions['dateOfCancellation'] ) {
                 $dataSubscriptions['dateOfCancellation'] = '';
             }
 
-            $dataSubscriptions['externalSubscriptionId']  = $subscription['subscription_id'];
-            $dataSubscriptions['urlOfProductImg']  =  '';
+            $dataSubscriptions['dateOfCancelationRequest']  = $subscription['date_of_cancelation_request'];
+
+            if('0000-00-00 00:00:00' === $dataSubscriptions['dateOfCancelationRequest'] ) {
+                $dataSubscriptions['dateOfCancelationRequest'] = '';
+            }
+
+            $dataSubscriptions['subscriptionBrokerId']  = $subscription['subscription_broker_id'];
 
             $data['cmsSubscriptions'][] = $dataSubscriptions;
         }
