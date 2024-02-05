@@ -1,5 +1,9 @@
 # Changelog
 
+## v3.1.6
+
+- fix: Pay Now without inpage PS 1.5 / 1.6
+
 ## v3.1.5
 
 - fix: Add verification of number on type in amount field for refund
