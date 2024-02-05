@@ -1,5 +1,10 @@
 # Changelog
 
+## v3.1.6
+
+- fix: Pay Now without inpage PS 1.5 / 1.6
+- fix: ensure library is not invoked in CLI mode
+
 ## v3.1.5
 
 - fix: Add verification of number on type in amount field for refund

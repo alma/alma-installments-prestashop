@@ -65,26 +65,32 @@ class InsuranceApiService
     }
 
     /**
-     * @param int $insuranceContractId
-     * @param string $cmsReference
-     * @param int $productPrice
-     * @param string $type
-     * @return File|null
+     * @param $insuranceContractId
+     * @param $cmsReference
+     * @param $productPrice
+     * @return array|null
      */
-    public function getInsuranceContractFileByType($insuranceContractId, $cmsReference, $productPrice, $type = 'ipid-document')
+    public function getInsuranceContractFiles($insuranceContractId, $cmsReference, $productPrice)
     {
         try {
-            return $this->almaApiClient->insurance->getInsuranceContract(
+            $filesByType = [];
+            $files = $this->almaApiClient->insurance->getInsuranceContract(
                 $insuranceContractId,
                 $cmsReference,
                 $productPrice,
                 $this->context->session->getId(),
                 $this->cartHelper->getCartIdFromContext()
-            )->getFileByType($type);
+            )->getFiles();
+
+            foreach ($files as $file) {
+                $filesByType[$file->getType()] = $file->getPublicUrl();
+            }
+
+            return $filesByType;
         } catch (\Exception  $e) {
             Logger::instance()->error(
                 sprintf(
-                    '[Alma] Impossible to retrieve insurance contract file, message "%s", trace "%s"',
+                    '[Alma] Impossible to retrieve insurance contract files, message "%s", trace "%s"',
                     $e->getMessage(),
                     $e->getTraceAsString()
                 )
