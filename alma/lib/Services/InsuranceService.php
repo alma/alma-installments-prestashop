@@ -233,12 +233,23 @@ class InsuranceService
         $subscriptionData = [];
         $customerService = new CustomerService($cart->id_customer, $cart->id_address_invoice, $cart->id_address_delivery);
 
+        $callbackUrl = urldecode($this->context->link->getModuleLink(
+            $this->module->name,
+            'subscription',
+            [
+                'action' => 'update',
+                'sid' => '<subscription_external_id>',
+                'trace' => '<trace>',
+            ]
+        ));
+
         foreach ($insuranceContracts as $insuranceContract) {
             $subscriptionData[] = new Subscription(
                 $insuranceContract['insurance_contract_id'],
                 $insuranceContract['cms_reference'],
                 $insuranceContract['product_price'],
-                $customerService->getSubscriber()
+                $customerService->getSubscriber(),
+                $callbackUrl
             );
         }
 

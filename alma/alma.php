@@ -86,6 +86,7 @@ class Alma extends PaymentModule
 
         if (version_compare(_PS_VERSION_, '1.7', '>=')) {
             $controllers[] = 'insurance';
+            $controllers[] = 'subscription';
         }
 
         $this->controllers = $controllers;
