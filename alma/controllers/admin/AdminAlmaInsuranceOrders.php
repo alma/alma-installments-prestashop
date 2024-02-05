@@ -136,9 +136,7 @@ class AdminAlmaInsuranceOrdersController extends ModuleAdminController
             $this->_list[$key]['customer'] = $customer->lastname . ' ' .  $customer->firstname;
             $this->_list[$key]['date'] = $order->date_add;
             $this->_list[$key]['product_price'] = PriceHelper::formatPriceToCentsByCurrencyId($details['product_price']);
-            $this->_list[$key]['subscription_amount'] = PriceHelper::formatPriceToCentsByCurrencyId(
-                PriceHelper::convertPriceToCents($details['subscription_amount'])
-            );
+            $this->_list[$key]['subscription_amount'] = PriceHelper::formatPriceToCentsByCurrencyId($details['subscription_amount']);
 
 
             $this->_list[$key]['product'] = $this->getProductName(
