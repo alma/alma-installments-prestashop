@@ -133,7 +133,6 @@ class DisplayPaymentHookController extends FrontendHookController
             if ($isPayNow) {
                 $paymentOption['text'] = SettingsCustomFieldsHelper::getPayNowButtonTitleByLang($idLang);
                 $paymentOption['desc'] = SettingsCustomFieldsHelper::getPayNowButtonDescriptionByLang($idLang);
-                $paymentOption['isInPageEnabled'] = true;
             }
             $paymentOptions[$key] = $paymentOption;
             $sortOptions[$key] = $feePlans->$key->order;
