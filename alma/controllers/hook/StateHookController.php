@@ -29,7 +29,6 @@ if (!defined('_PS_VERSION_')) {
 }
 
 use Alma\API\Client;
-use Alma\API\Exceptions\ParamsException;
 use Alma\API\RequestError;
 use Alma\PrestaShop\Exceptions\OrderException;
 use Alma\PrestaShop\Helpers\ClientHelper;
@@ -110,12 +109,28 @@ final class StateHookController extends AdminHookController
                 $this->triggerPayment($order);
                 break;
             case \Configuration::get('PS_OS_PAYMENT'):
-                if($this->insuranceHelper->isInsuranceActivated()) {
-                    $this->insuranceSubscriptionService->triggerInsuranceSubscription($order);
-                }
+                $this->processInsurance($order);
                 break;
             default:
                 break;
+        }
+    }
+
+    /**
+     * @param \OrderCore $order
+     * @return void
+     */
+    protected function processInsurance($order)
+    {
+        try {
+            if (
+                $this->insuranceHelper->isInsuranceActivated()
+                && $this->insuranceHelper->canInsuranceSubscriptionBeTriggered($order)
+            ) {
+                $this->insuranceSubscriptionService->triggerInsuranceSubscription($order);
+            }
+        } catch (\Exception $e) {
+            Logger::instance()->error($e->getMessage(), $e->getTrace());
         }
     }
 
