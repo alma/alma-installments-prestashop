@@ -127,14 +127,7 @@ class InsuranceSubscriptionService
 
         if(!$almaInsuranceProduct) {
             throw new InsuranceSubscriptionException(
-                sprintf(
-                    'Data not found in db for subscription "%s", order id "%s", shop id "%s", contract id "%s", cms_reference "%s"',
-                    $subscription['subscription_id'],
-                    $orderId,
-                    $shopId,
-                    $subscription['contract_id'],
-                    $subscription['cms_reference']
-                )
+                sprintf('Data not found in db for subscription "%s"', json_encode($subscription))
             );
 
         }
