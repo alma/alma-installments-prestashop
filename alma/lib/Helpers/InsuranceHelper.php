@@ -89,7 +89,7 @@ class InsuranceHelper
     {
         $rowTriggered = $this->insuranceProductRepository->hasOrderBeenTriggered($order) ;
 
-        if($rowTriggered) {
+        if ($rowTriggered) {
             return false;
         }
 

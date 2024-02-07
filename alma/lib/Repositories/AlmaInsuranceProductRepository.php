@@ -291,8 +291,8 @@ class AlmaInsuranceProductRepository
             SELECT `id_alma_insurance_product` as id
             FROM `' . _DB_PREFIX_ . 'alma_insurance_product` aip
             WHERE aip.`id_cart` = ' . (int)$order->id_cart . '
-            AND aip.`subscription_state` IS NOT NULL 
-            AND aip.`id_order` = ' . (int)$order->id . ' 
+            AND aip.`subscription_state` IS NOT NULL
+            AND aip.`id_order` = ' . (int)$order->id . '
             AND aip.`id_shop` = ' . (int)$order->id_shop  ;
 
         return \Db::getInstance()->getRow($sql);
