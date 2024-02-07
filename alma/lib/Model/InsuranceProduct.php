@@ -130,11 +130,11 @@ class InsuranceProduct extends \ObjectModel
             'subscription_amount' => ['type' => self::TYPE_FLOAT, 'validate' => 'isPrice'],
             'subscription_broker_id' => ['type' => self::TYPE_STRING],
             'subscription_state' => ['type' => self::TYPE_STRING],
-            'date_of_cancelation' => ['type' => self::TYPE_DATE, 'validate' => 'isDate'],
-            'date_of_cancelation_request' => ['type' => self::TYPE_DATE, 'validate' => 'isDate'],
+            'date_of_cancelation' => ['type' => self::TYPE_DATE, 'validate'],
+            'date_of_cancelation_request' => ['type' => self::TYPE_DATE],
             'reason_of_cancelation' => ['type' => self::TYPE_STRING],
             'is_refunded' => ['type' => self::TYPE_BOOL],
-            'date_of_refund' => ['type' => self::TYPE_DATE, 'validate' => 'isDate'],
+            'date_of_refund' => ['type' => self::TYPE_DATE],
             'mode' => ['type' => self::TYPE_STRING]
         ],
     ];
