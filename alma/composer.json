@@ -1,24 +1,21 @@
 {
     "name": "alma/alma-instalments-prestashop",
     "description": "Payment method module to integrate Alma in PrestaShop",
-    "type": "library",
+    "type": "prestashop-module",
     "require-dev": {
         "phpunit/phpunit": "^5",
         "mockery/mockery": "^1.3",
         "phpcompatibility/php-compatibility": "10.x-dev",
-        "prestashop/php-dev-tools": "^3.16"
+        "prestashop/php-dev-tools": "^3.16",
+        "prestashop/autoindex": "^1.0.0"
     },
     "require": {
         "php": "^5.6 || ~7.0 || ~7.1 || ~7.2 || ~7.3 || ~7.4 || ~8.0 || ~8.1",
         "alma/alma-php-client": "^2.0.1",
         "ext-json": "*",
-        "ext-openssl": "*",
-        "prestashop/autoindex": "^1.0.0"
+        "ext-openssl": "*"
     },
     "autoload": {
-        "files": [
-            "lib/smarty.php"
-        ],
         "psr-4": {
             "Alma\\PrestaShop\\": [
                 "lib/",
@@ -44,6 +41,9 @@
         "php-cs": "php vendor/bin/php-cs-fixer fix --dry-run",
         "php-cs-fixer": "php vendor/bin/php-cs-fixer fix",
         "php-compatibility": "vendor/bin/phpcs -p . --standard=PHPCompatibility -s --runtime-set testVersion 5.6-8.1 --ignore=\\*/vendor/\\*"
+    },
+    "extra": {
+        "installer-name": "alma"
     },
     "license": "MIT",
     "minimum-stability": "dev"
