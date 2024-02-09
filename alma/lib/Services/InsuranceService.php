@@ -246,6 +246,7 @@ class InsuranceService
         foreach ($insuranceContracts as $insuranceContract) {
             $subscriptionData[] = new Subscription(
                 $insuranceContract['insurance_contract_id'],
+                $insuranceContract['price'],
                 $insuranceContract['cms_reference'],
                 $insuranceContract['product_price'],
                 $customerService->getSubscriber(),
