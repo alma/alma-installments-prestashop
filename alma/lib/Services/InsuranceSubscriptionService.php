@@ -70,6 +70,7 @@ class InsuranceSubscriptionService
      * @param \OrderCore $order
      * @return void
      * @throws InsuranceSubscriptionException
+     * @throws \PrestaShopDatabaseException
      */
     public function triggerInsuranceSubscription($order)
     {
