@@ -32,6 +32,10 @@ class AlmaSubscriptionModuleFrontController extends ModuleFrontController
     use AjaxTrait;
 
     public $ssl = true;
+    /**
+     * @var \Alma\PrestaShop\Helpers\ClientHelper
+     */
+    protected $phpClient;
 
     /**
      * IPN constructor
@@ -40,10 +44,22 @@ class AlmaSubscriptionModuleFrontController extends ModuleFrontController
     {
         parent::__construct();
         $this->context = Context::getContext();
+        $this->phpClient = new \Alma\PrestaShop\Helpers\ClientHelper();
+    }
+
+    /**
+     * Used for Unit Test
+     * @param $client
+     * @return void
+     */
+    public function setPhpClient($client)
+    {
+        $this->phpClient = $client;
     }
 
     /**
      * @return void
+     * @throws PrestaShopException
      */
     public function postProcess()
     {
@@ -56,6 +72,7 @@ class AlmaSubscriptionModuleFrontController extends ModuleFrontController
         $trace = Tools::getValue('trace');
 
         if(!$sid) {
+            // @TODO : Log error + throw error
             $this->ajaxRenderAndExit(json_encode(['error' => 'Missing Id']), 500);
         }
 
@@ -65,8 +82,14 @@ class AlmaSubscriptionModuleFrontController extends ModuleFrontController
 
         switch ($action) {
             case  'update' :
-                $this->ajaxRenderAndExit(json_encode(['success' => true]));
+                // @TODO : Get du subscription PHP Client
+                // @TODO : if error get subscription log error + throw error
+                // @TODO : if error check data in get subscription Log error + throw error
+                // @TODO : Update in database susbcription_state with the new state
+                // @TOTO : set notification order message with link to the order in the message
+                $this->ajaxRenderAndExit(json_encode(['success' => true]), 200);
             default :
+                // @TODO : Log error + throw error
                 $this->ajaxRenderAndExit(json_encode(['error' => 'Wrong action']), 500);
         }
     }
