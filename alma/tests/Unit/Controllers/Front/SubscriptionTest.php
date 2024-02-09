@@ -22,12 +22,12 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
-namespace Alma\PrestaShop\Tests\Unit\controllers\front;
+namespace Alma\PrestaShop\Tests\Unit\Controllers\Front;
 
 use AlmaSubscriptionModuleFrontController;
 use PHPUnit\Framework\TestCase;
 
-class subscriptionTest extends TestCase
+class SubscriptionTest extends TestCase
 {
     public function testThrowErrorIfNoSidOnTheCallBackUrl()
     {
