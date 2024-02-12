@@ -22,60 +22,12 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
-use Alma\PrestaShop\Helpers\ClientHelper;
-use Alma\PrestaShop\Helpers\SubscriptionHelper;
-use Alma\PrestaShop\Traits\AjaxTrait;
+namespace Alma\PrestaShop\Exceptions;
 
 if (!defined('_PS_VERSION_')) {
     exit;
 }
-class AlmaSubscriptionModuleFrontController extends ModuleFrontController
+
+class SubscriptionException extends AlmaException
 {
-    use AjaxTrait;
-
-    public $ssl = true;
-    /**
-     * @var ClientHelper
-     */
-    protected $phpClient;
-    /**
-     * @var SubscriptionHelper
-     */
-    protected $subscriptionHelper;
-
-    /**
-     * IPN constructor
-     */
-    public function __construct()
-    {
-        parent::__construct();
-        $this->context = Context::getContext();
-        $this->phpClient = ClientHelper::defaultInstance();
-        $this->subscriptionHelper = new SubscriptionHelper();
-    }
-
-    /**
-     * Used for Unit Test
-     * @param $client
-     * @return void
-     */
-    public function setPhpClient($client)
-    {
-        $this->phpClient = $client;
-    }
-
-    /**
-     * @return void
-     * @throws PrestaShopException
-     */
-    public function postProcess()
-    {
-        parent::postProcess();
-
-        $action = Tools::getValue('action');
-        $sid = Tools::getValue('sid');
-        $trace = Tools::getValue('trace');
-
-        $this->subscriptionHelper->postProcess($action, $sid, $trace);
-    }
 }

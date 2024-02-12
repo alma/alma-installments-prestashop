@@ -22,60 +22,58 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
+namespace Alma\PrestaShop\Tests\Unit\Helper;
+
+use Alma\API\RequestError;
+use Alma\PrestaShop\Exceptions\SubscriptionException;
 use Alma\PrestaShop\Helpers\ClientHelper;
 use Alma\PrestaShop\Helpers\SubscriptionHelper;
-use Alma\PrestaShop\Traits\AjaxTrait;
+use Alma\PrestaShop\Logger;
+use PHPUnit\Framework\TestCase;
 
-if (!defined('_PS_VERSION_')) {
-    exit;
-}
-class AlmaSubscriptionModuleFrontController extends ModuleFrontController
+class SubscriptionHelperTest extends TestCase
 {
-    use AjaxTrait;
-
-    public $ssl = true;
-    /**
-     * @var ClientHelper
-     */
-    protected $phpClient;
-    /**
-     * @var SubscriptionHelper
-     */
-    protected $subscriptionHelper;
-
-    /**
-     * IPN constructor
-     */
-    public function __construct()
+    public function setUp()
     {
-        parent::__construct();
-        $this->context = Context::getContext();
-        $this->phpClient = ClientHelper::defaultInstance();
         $this->subscriptionHelper = new SubscriptionHelper();
-    }
-
-    /**
-     * Used for Unit Test
-     * @param $client
-     * @return void
-     */
-    public function setPhpClient($client)
-    {
-        $this->phpClient = $client;
+        $this->phpClient = $this->createMock(ClientHelper::class);
     }
 
     /**
      * @return void
-     * @throws PrestaShopException
      */
-    public function postProcess()
+    public function testPostProcessMethodExists() {
+        $this->assertTrue(method_exists($this->subscriptionHelper, 'postProcess'));
+    }
+
+    /**
+     * @throws RequestError
+     * @throws SubscriptionException
+     * @throws \PrestaShopException
+     */
+    public function testThrowErrorIfNoSidOnTheCallBackUrl()
     {
-        parent::postProcess();
+        $action = 'update';
+        $sid = null;
+        $trace = '1234';
 
-        $action = Tools::getValue('action');
-        $sid = Tools::getValue('sid');
-        $trace = Tools::getValue('trace');
+        $this->expectException(SubscriptionException::class);
+        $this->subscriptionHelper->postProcess($action, $sid, $trace);
+    }
 
+    /**
+     * @throws SubscriptionException
+     * @throws RequestError
+     * @throws \PrestaShopException
+     */
+    public function testGetRequestIsCalled()
+    {
+        $action = 'update';
+        $sid = 'subscription_39lGsF0UdBfpjQ8UXdYvkX';
+        $trace = '1234';
+
+        $this->phpClient->expects($this->once())->method('getSubscription')->with(['id' => $sid]);
+        $this->subscriptionHelper->method('setPhpClient')->with($this->phpClient);
         $this->subscriptionHelper->postProcess($action, $sid, $trace);
     }
 }
