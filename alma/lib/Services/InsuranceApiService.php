@@ -26,6 +26,7 @@ namespace Alma\PrestaShop\Services;
 
 use Alma\API\Client;
 use Alma\API\Entities\Insurance\Contract;
+use Alma\API\RequestError;
 use Alma\PrestaShop\Exceptions\InsuranceSubscriptionException;
 use Alma\PrestaShop\Helpers\CartHelper;
 use Alma\PrestaShop\Helpers\ClientHelper;
@@ -135,12 +136,12 @@ class InsuranceApiService
     {
         try {
             $result = $this->almaApiClient->insurance->subscription(
-              $subscriptionData,
-              $order->id,
-              $idTransaction,
-              $this->context->session->getId(),
-              $this->cartHelper->getCartIdFromContext()
-          );
+                $subscriptionData,
+                $order->id,
+                $idTransaction,
+                $this->context->session->getId(),
+                $this->cartHelper->getCartIdFromContext()
+            );
 
             if (isset($result['subscriptions'])) {
                 return $result['subscriptions'];
@@ -158,5 +159,45 @@ class InsuranceApiService
         }
 
         throw new InsuranceSubscriptionException();
+    }
+
+    /**
+     * @param $insuranceContracts
+     * @param $cartId
+     *
+     * @return false|void
+     */
+    public function sendCmsReferenceSubscribedForTracking($insuranceContracts, $cartId)
+    {
+        $cmsReferences = [];
+
+        if (empty($insuranceContracts)) {
+            Logger::instance()->warning(
+                sprintf(
+                    '[Alma] No insurance contract to send, cartId: "%s"',
+                    $cartId
+                )
+            );
+
+            return false;
+        }
+
+        foreach ($insuranceContracts as $insuranceContract) {
+            $cmsReferences[] = $insuranceContract['cms_reference'];
+        }
+
+        try {
+            $this->almaApiClient->insurance->sendCustomerCart($cmsReferences, $cartId);
+        } catch (RequestError $e) {
+            Logger::instance()->error(
+                sprintf(
+                    '[Alma] Error while sending the cms_reference for tracking, message "%s", trace "%s", cmsReference : "%s", cartId: "%s"',
+                    $e->getMessage(),
+                    $e->getTraceAsString(),
+                    json_encode($cmsReferences),
+                    $cartId
+                )
+            );
+        }
     }
 }
