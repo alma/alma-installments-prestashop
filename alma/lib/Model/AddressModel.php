@@ -30,7 +30,6 @@ if (!defined('_PS_VERSION_')) {
 
 class AddressModel extends \AddressCore
 {
-
     /**
      * @return string
      */

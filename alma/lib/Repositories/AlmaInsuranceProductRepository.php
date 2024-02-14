@@ -45,10 +45,12 @@ class AlmaInsuranceProductRepository
      * @param int $idCustomization
      * @param int $idProductInsurance
      * @param int $idProductAttributeInsurance
-     * @param float $assurancePrice
+     * @param int $assurancePrice
      * @param int $idAddressDelivery
      * @param array $insuranceContractInfos
+     *
      * @return bool
+     *
      * @throws \PrestaShopDatabaseException
      */
     public function add(
@@ -62,8 +64,7 @@ class AlmaInsuranceProductRepository
         $assurancePrice,
         $idAddressDelivery,
         $insuranceContractInfos
-    )
-    {
+    ) {
         if (!\Db::getInstance()->insert('alma_insurance_product', [
             'id_cart' => $idCart,
             'id_product' => $idProduct,
@@ -77,7 +78,7 @@ class AlmaInsuranceProductRepository
             'insurance_contract_id' => $insuranceContractInfos['insurance_contract_id'],
             'cms_reference' => $insuranceContractInfos['cms_reference'],
             'product_price' => $insuranceContractInfos['product_price'],
-            'mode' => SettingsHelper::getActiveMode()
+            'mode' => SettingsHelper::getActiveMode(),
         ])) {
             return false;
         }
@@ -90,6 +91,7 @@ class AlmaInsuranceProductRepository
      * @param int $shopId
      *
      * @return mixed
+     *
      * @throws \PrestaShopDatabaseException
      */
     public function getIdsByCartIdAndShop($cartId, $shopId)
@@ -97,8 +99,8 @@ class AlmaInsuranceProductRepository
         $sql = '
             SELECT `id_alma_insurance_product` as id
             FROM `' . _DB_PREFIX_ . 'alma_insurance_product` aip
-            WHERE aip.`id_cart` = ' . (int)$cartId . '
-            AND aip.`id_shop` = ' . (int)$shopId;
+            WHERE aip.`id_cart` = ' . (int) $cartId . '
+            AND aip.`id_shop` = ' . (int) $shopId;
 
         return \Db::getInstance()->executeS($sql);
     }
@@ -107,7 +109,9 @@ class AlmaInsuranceProductRepository
      * @param \ProductCore $product
      * @param int $cartId
      * @param int $shopId
+     *
      * @return mixed
+     *
      * @throws \PrestaShopDatabaseException
      */
     public function getIdsByCartIdAndShopAndProduct($product, $cartId, $shopId)
@@ -118,17 +122,18 @@ class AlmaInsuranceProductRepository
                    `id_product_attribute_insurance`,
                    `price` 
             FROM `' . _DB_PREFIX_ . 'alma_insurance_product` aip
-            WHERE aip.`id_cart` = ' . (int)$cartId . '
-            AND aip.`id_product` = ' . (int)$product->id . '
-            AND aip.`id_product_attribute` = ' . (int)$product->id_product_attribute . '
-            AND aip.`id_customization` = ' . (int)$product->id_customization . ' 
-            AND aip.`id_shop` = ' . (int)$shopId;
+            WHERE aip.`id_cart` = ' . (int) $cartId . '
+            AND aip.`id_product` = ' . (int) $product->id . '
+            AND aip.`id_product_attribute` = ' . (int) $product->id_product_attribute . '
+            AND aip.`id_customization` = ' . (int) $product->id_customization . '
+            AND aip.`id_shop` = ' . (int) $shopId;
 
         return \Db::getInstance()->executeS($sql);
     }
 
     /**
      * @param int $id
+     *
      * @return mixed
      */
     public function getById($id)
@@ -136,21 +141,22 @@ class AlmaInsuranceProductRepository
         $sql = '
             SELECT *
             FROM `' . _DB_PREFIX_ . 'alma_insurance_product` aip
-            WHERE aip.`id_alma_insurance_product` = ' . (int)$id;
+            WHERE aip.`id_alma_insurance_product` = ' . (int) $id;
 
         return \Db::getInstance()->getRow($sql);
     }
 
     /**
      * @param int $id
+     *
      * @return bool
      */
     public function deleteById($id)
     {
         \Db::getInstance()->execute('
              DELETE 
-            FROM `' . _DB_PREFIX_ . 'alma_insurance_product` 
-            WHERE `id_alma_insurance_product` = ' . (int)$id
+            FROM `' . _DB_PREFIX_ . 'alma_insurance_product`
+            WHERE `id_alma_insurance_product` = ' . (int) $id
         );
     }
 
@@ -164,8 +170,8 @@ class AlmaInsuranceProductRepository
     {
         if (
             !\Db::getInstance()->execute(
-                'UPDATE `' . _DB_PREFIX_ . 'alma_insurance_product` 
-                SET `id_order` =' . (int)$orderId . ' 
+                'UPDATE `' . _DB_PREFIX_ . 'alma_insurance_product`
+                SET `id_order` =' . (int) $orderId . '
                 WHERE `id_alma_insurance_product` IN (' . implode(',', $idsToUpdate) . ')'
             )
         ) {
@@ -191,7 +197,7 @@ class AlmaInsuranceProductRepository
             `id_product_attribute_insurance` int(10) unsigned NOT NULL,
             `id_address_delivery` int(10) unsigned NOT NULL,
             `id_order` int(10) unsigned NULL,
-            `price` decimal(20,6) NOT NULL DEFAULT 0.000000,
+            `price` int(10) unsigned NULL,
             `insurance_contract_id` varchar(255) NULL,
             `cms_reference` varchar(255) NULL,
             `product_price` int(10) unsigned NULL,
@@ -223,7 +229,9 @@ class AlmaInsuranceProductRepository
      * @param int $idProductAttribute
      * @param int $customizationId
      * @param int $idShop
+     *
      * @return array
+     *
      * @throws \PrestaShopDatabaseException
      */
     public function getAllByProduct($idCart, $idProduct, $idProductAttribute, $customizationId, $idShop)
@@ -233,10 +241,10 @@ class AlmaInsuranceProductRepository
                    `id_product_insurance`,
                    `id_product_attribute_insurance`
             FROM `' . _DB_PREFIX_ . 'alma_insurance_product` aip
-            WHERE aip.`id_cart` = ' . (int)$idCart . '
-            AND aip.`id_product` = ' . (int)$idProduct. '
-            AND aip.`id_product_attribute` = ' . (int)$idProductAttribute . '
-            AND aip.`id_customization` = ' . (int)$customizationId. '
+            WHERE aip.`id_cart` = ' . (int) $idCart . '
+            AND aip.`id_product` = ' . (int) $idProduct . '
+            AND aip.`id_product_attribute` = ' . (int) $idProductAttribute . '
+            AND aip.`id_customization` = ' . (int) $customizationId . '
             AND aip.`id_shop` = ' . (int) $idShop;
 
         return \Db::getInstance()->executeS($sql);
@@ -245,16 +253,18 @@ class AlmaInsuranceProductRepository
     /**
      * @param int $idCart
      * @param int $idShop
+     *
      * @return array
+     *
      * @throws \PrestaShopDatabaseException
      */
     public function getContractsInfosByIdCartAndIdShop($idCart, $idShop)
     {
         $sql = '
-            SELECT `id_alma_insurance_product`, `insurance_contract_id`, `cms_reference`, `product_price` 
+            SELECT `id_alma_insurance_product`, `price`, `insurance_contract_id`, `cms_reference`, `product_price`
             FROM `' . _DB_PREFIX_ . 'alma_insurance_product` aip
-            WHERE aip.`id_cart` = ' . (int)$idCart . '
-            AND aip.`id_shop` = ' . (int)$idShop;
+            WHERE aip.`id_cart` = ' . (int) $idCart . '
+            AND aip.`id_shop` = ' . (int) $idShop;
 
         return \Db::getInstance()->executeS($sql);
     }
@@ -264,25 +274,26 @@ class AlmaInsuranceProductRepository
      * @param int $shopId
      * @param string $contractId
      * @param string $cmsReference
+     *
      * @return array|null
      */
     public function findSubscriptionToActivate($orderId, $shopId, $contractId, $cmsReference)
     {
         $sql = '
             SELECT `id_alma_insurance_product`
-            FROM `' . _DB_PREFIX_ . 'alma_insurance_product` 
-            WHERE `id_order` = ' . (int)$orderId. '
-            AND `insurance_contract_id` = "' . $contractId. '" 
-            AND `cms_reference` = "' . $cmsReference. '" 
-            AND `subscription_state` is NULL 
-            AND `id_shop` = ' . (int)$shopId;
+            FROM `' . _DB_PREFIX_ . 'alma_insurance_product`
+            WHERE `id_order` = ' . (int) $orderId . '
+            AND `insurance_contract_id` = "' . $contractId . '"
+            AND `cms_reference` = "' . $cmsReference . '"
+            AND `subscription_state` is NULL
+            AND `id_shop` = ' . (int) $shopId;
 
         return \Db::getInstance()->getRow($sql);
     }
 
-
     /**
      * @param \OrderCore$order
+     *
      * @return array|null
      */
     public function hasOrderBeenTriggered($order)
@@ -290,10 +301,10 @@ class AlmaInsuranceProductRepository
         $sql = '
             SELECT `id_alma_insurance_product` as id
             FROM `' . _DB_PREFIX_ . 'alma_insurance_product` aip
-            WHERE aip.`id_cart` = ' . (int)$order->id_cart . '
+            WHERE aip.`id_cart` = ' . (int) $order->id_cart . '
             AND aip.`subscription_state` IS NOT NULL
-            AND aip.`id_order` = ' . (int)$order->id . '
-            AND aip.`id_shop` = ' . (int)$order->id_shop  ;
+            AND aip.`id_order` = ' . (int) $order->id . '
+            AND aip.`id_shop` = ' . (int) $order->id_shop;
 
         return \Db::getInstance()->getRow($sql);
     }

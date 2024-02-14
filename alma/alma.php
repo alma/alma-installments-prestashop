@@ -21,10 +21,6 @@
  * @copyright 2018-2023 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
-
-
-use Alma\PrestaShop\Helpers\ConstantsHelper;
-
 if (!defined('_PS_VERSION_')) {
     exit;
 }
@@ -158,7 +154,7 @@ class Alma extends PaymentModule
                 'parent' => 'alma',
                 'position' => null,
                 'icon' => null,
-            ]
+            ],
         ];
     }
 
@@ -190,6 +186,7 @@ class Alma extends PaymentModule
      * Insert module into datable.
      *
      * @override
+     *
      * @return bool
      */
     public function install()
@@ -310,7 +307,7 @@ class Alma extends PaymentModule
     {
         return $this->runHookController('displayProductPriceBlock', $params);
     }
-    
+
     /**
      * displayProductButtons is registered on PrestaShop 1.5 only, as displayProductPriceBlock wasn't available then.
      *
@@ -345,6 +342,7 @@ class Alma extends PaymentModule
      * Hook the template below the product item near to the delete button
      *
      * @param $params
+     *
      * @return mixed|null
      */
     public function hookDisplayCartExtraProductActions($params)
@@ -356,6 +354,7 @@ class Alma extends PaymentModule
      * Hook to add terms and conditions
      *
      * @param $params
+     *
      * @return mixed|null
      */
     public function hookTermsAndConditions($params)
@@ -496,6 +495,7 @@ class Alma extends PaymentModule
     {
         return $this->runHookController('actionObjectProductInCartDeleteAfter', $params);
     }
+
     // Deprecated for version 1.7
     public function hookDisplayPaymentReturn($params)
     {

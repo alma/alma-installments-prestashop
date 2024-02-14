@@ -25,14 +25,13 @@
 
 namespace Alma\PrestaShop\Model;
 
-
 if (!defined('_PS_VERSION_')) {
     exit;
 }
 
 class InsuranceProduct extends \ObjectModel
 {
-    /** @var int Id  */
+    /** @var int Id */
     public $id_alma_insurance_product;
 
     /** @var int Id cart */
@@ -82,7 +81,6 @@ class InsuranceProduct extends \ObjectModel
 
     /** @var string Neat client insurance id */
     public $subscription_broker_id;
-
 
     /** @var string Alma cms reference */
     public $cms_reference;
@@ -135,8 +133,7 @@ class InsuranceProduct extends \ObjectModel
             'reason_of_cancelation' => ['type' => self::TYPE_STRING],
             'is_refunded' => ['type' => self::TYPE_BOOL],
             'date_of_refund' => ['type' => self::TYPE_DATE],
-            'mode' => ['type' => self::TYPE_STRING]
+            'mode' => ['type' => self::TYPE_STRING],
         ],
     ];
-
 }

@@ -77,6 +77,7 @@ class TabsHelper
 
     /**
      * @param $tabs
+     *
      * @return bool
      */
     public function installTabs($tabs)

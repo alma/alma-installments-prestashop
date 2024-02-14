@@ -35,7 +35,6 @@ use Alma\PrestaShop\Helpers\ClientHelper;
 use Alma\PrestaShop\Helpers\OrderHelper;
 use Alma\PrestaShop\Hooks\FrontendHookController;
 use Alma\PrestaShop\Logger;
-use Alma\PrestaShop\Model\OrderData;
 
 class DisplayPaymentReturnHookController extends FrontendHookController
 {

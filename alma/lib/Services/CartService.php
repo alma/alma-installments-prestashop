@@ -33,7 +33,6 @@ if (!defined('_PS_VERSION_')) {
 
 class CartService
 {
-
     /**
      * @var CartProductRepository
      */
@@ -55,7 +54,9 @@ class CartService
      * @param string $operator Indicate if quantity must be increased or decreased
      * @param int $idAddressDelivery Address Delivery ID if needed
      * @param null $shop
+     *
      * @return bool|int|void|null
+     *
      * @throws AlmaException
      */
     public function updateQty(
@@ -67,8 +68,7 @@ class CartService
         $operator = 'up',
         $idAddressDelivery = 0,
         $shop = null
-    )
-    {
+    ) {
         /**
          * @var \ContextCore $context
          */
@@ -85,11 +85,11 @@ class CartService
         if ($context->customer->id) {
             if (
                 $idAddressDelivery == 0
-                && (int)$cart->id_address_delivery
+                && (int) $cart->id_address_delivery
             ) { // The $idAddressDelivery is null, use the cart delivery address
                 $idAddressDelivery = $cart->id_address_delivery;
             } elseif ($idAddressDelivery == 0) { // The $idAddressDelivery is null, get the default customer address
-                $idAddressDelivery = (int)\Address::getFirstCustomerAddressId((int)$context->customer->id);
+                $idAddressDelivery = (int) \Address::getFirstCustomerAddressId((int) $context->customer->id);
             } elseif (!\Customer::customerHasAddress($context->customer->id, $idAddressDelivery)) { // The $idAddressDelivery must be linked with customer
                 $idAddressDelivery = 0;
             } else {
@@ -97,13 +97,13 @@ class CartService
             }
         }
 
-        $quantity = (int)$quantity;
-        $idProduct = (int)$idProduct;
-        $idProductAttribute = (int)$idProductAttribute;
+        $quantity = (int) $quantity;
+        $idProduct = (int) $idProduct;
+        $idProductAttribute = (int) $idProductAttribute;
         $product = new \Product($idProduct, false, \Configuration::get('PS_LANG_DEFAULT'), $shop->id);
 
         if ($idProductAttribute) {
-            $combination = new \Combination((int)$idProductAttribute);
+            $combination = new \Combination((int) $idProductAttribute);
             if ($combination->id_product != $idProduct) {
                 return false;
             }
@@ -113,34 +113,34 @@ class CartService
             throw new AlmaException(sprintf('The product does not exists %s', $idProduct));
         }
 
-        if ((int)$quantity <= 0) {
-            return $cart->deleteProduct($idProduct, $idProductAttribute, (int)$idCustomization, 0);
+        if ((int) $quantity <= 0) {
+            return $cart->deleteProduct($idProduct, $idProductAttribute, (int) $idCustomization, 0);
         }
         /* Check if the product is already in the cart */
-        $resultContainsProduct = $cart->containsProduct($idProduct, $idProductAttribute, (int)$idCustomization, (int)$idAddressDelivery);
+        $resultContainsProduct = $cart->containsProduct($idProduct, $idProductAttribute, (int) $idCustomization, (int) $idAddressDelivery);
 
         /* Update quantity if product already exist */
         if ($resultContainsProduct) {
             switch ($operator) {
                 case 'up':
-                    $newQty = (int)$resultContainsProduct['quantity'] + (int)$quantity;
-                    $qty = '+ ' . (int)$quantity;
+                    $newQty = (int) $resultContainsProduct['quantity'] + (int) $quantity;
+                    $qty = '+ ' . (int) $quantity;
                     break;
                 case 'down':
-                    $qty = '- ' . (int)$quantity;
-                    $newQty = (int)$resultContainsProduct['quantity'] - (int)$quantity;
+                    $qty = '- ' . (int) $quantity;
+                    $newQty = (int) $resultContainsProduct['quantity'] - (int) $quantity;
                     if ($newQty < 0) {
                         throw new AlmaException(sprintf('Quantity issue , Product %s, Qty %s', $idProduct, $newQty));
                     }
 
                     break;
-                default :
+                default:
                     throw new AlmaException(sprintf('Unknown operator %s', $operator));
             }
 
             /* Delete product from cart */
             if ($newQty <= 0) {
-                return $cart->deleteProduct((int)$idProduct, (int)$idProductAttribute, (int)$idCustomization, 0);
+                return $cart->deleteProduct((int) $idProduct, (int) $idProductAttribute, (int) $idCustomization, 0);
             }
 
             return $this->cartProductRepository->update(

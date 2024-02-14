@@ -24,16 +24,12 @@
 
 namespace Alma\PrestaShop\Services;
 
-
 use Alma\PrestaShop\Repositories\StockAvailableRepository;
 
 if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-/**
- *
- */
 class StockAvailableService
 {
     /**
@@ -51,6 +47,7 @@ class StockAvailableService
      * @param bool $outOfStock
      * @param int $shopId
      * @param int $idProductAttributeInsurance
+     *
      * @return void
      */
     public function createStocks($idProduct, $outOfStock, $shopId, $idProductAttributeInsurance)
@@ -70,7 +67,6 @@ class StockAvailableService
                 $idProductAttributeInsurance
             );
         }
-
     }
 
     /**
@@ -78,10 +74,11 @@ class StockAvailableService
      * @param int $quantity
      * @param int $shopId
      * @param int $idProductAttributeInsurance
+     *
      * @return void
      */
     public function updateStocks($idProduct, $quantity, $shopId, $idProductAttributeInsurance)
     {
-       $this->stockAvailableRepository->setQuantity($idProduct, $idProductAttributeInsurance, $quantity, $shopId);
+        $this->stockAvailableRepository->setQuantity($idProduct, $idProductAttributeInsurance, $quantity, $shopId);
     }
 }

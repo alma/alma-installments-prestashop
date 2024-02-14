@@ -55,18 +55,19 @@ class AlmaSubscriptionModuleFrontController extends ModuleFrontController
         $sid = Tools::getValue('sid');
         $trace = Tools::getValue('trace');
 
-        if(!$sid) {
+        if (!$sid) {
             $this->ajaxRenderAndExit(json_encode(['error' => 'Missing Id']), 500);
         }
 
-        if(!$trace) {
+        if (!$trace) {
             $this->ajaxRenderAndExit(json_encode(['error' => 'Missing secutiry token']), 500);
         }
 
         switch ($action) {
-            case  'update' :
+            case 'update':
                 $this->ajaxRenderAndExit(json_encode(['success' => true]));
-            default :
+                // no break
+            default:
                 $this->ajaxRenderAndExit(json_encode(['error' => 'Wrong action']), 500);
         }
     }

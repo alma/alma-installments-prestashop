@@ -48,8 +48,8 @@ class AttributeProductService
      */
     protected $localeHelper;
 
-
-    public function __construct() {
+    public function __construct()
+    {
         $this->context = \Context::getContext();
         $this->localeHelper = new LocaleHelper();
         $this->attributeRepository = new AttributeRepository();
@@ -58,51 +58,53 @@ class AttributeProductService
     /**
      * @param string $name
      * @param int $attributeGroupId
+     *
      * @return int
      */
-   public function getAttributeId($name, $attributeGroupId)
-   {
-       $insuranceAttributeId = $this->attributeRepository->getAttributeIdByNameAndGroup(
+    public function getAttributeId($name, $attributeGroupId)
+    {
+        $insuranceAttributeId = $this->attributeRepository->getAttributeIdByNameAndGroup(
            $name,
            $attributeGroupId,
            $this->context->language->id
        );
 
-       if (!$insuranceAttributeId) {
+        if (!$insuranceAttributeId) {
+            $insuranceAttribute = $this->getProductAttributeObject();
 
-           $insuranceAttribute = $this->getProductAttributeObject();
+            $insuranceAttribute->name = $this->localeHelper->createMultiLangField($name);
+            $insuranceAttribute->id_attribute_group = $attributeGroupId;
+            $insuranceAttribute->add();
 
-           $insuranceAttribute->name = $this->localeHelper->createMultiLangField($name);
-           $insuranceAttribute->id_attribute_group = $attributeGroupId;
-           $insuranceAttribute->add();
+            $insuranceAttributeId = $insuranceAttribute->id;
+        }
 
-           $insuranceAttributeId = $insuranceAttribute->id;
-       }
-
-       return $insuranceAttributeId;
-   }
+        return $insuranceAttributeId;
+    }
 
     /**
      * @return \AttributeCore|\ProductAttributeCore
      */
-   public function getProductAttributeObject()
-   {
-       if (version_compare(_PS_VERSION_, '8.0', '<')) {
-           /**
-            * @var \AttributeCore $insuranceAttribute
-            */
-           return new \AttributeCore();
-       }
+    public function getProductAttributeObject()
+    {
+        if (version_compare(_PS_VERSION_, '8.0', '<')) {
+            /*
+             * @var \AttributeCore $insuranceAttribute
+             */
+            return new \AttributeCore();
+        }
 
-       /**
-        * @var \ProductAttributeCore $insuranceAttribute
-        */
-       return new \ProductAttributeCore();
-   }
+        /*
+         * @var \ProductAttributeCore $insuranceAttribute
+         */
+        return new \ProductAttributeCore();
+    }
 
     /**
      * @param int $idProduct
+     *
      * @return int
+     *
      * @throws \PrestaShopException
      */
     public function getIdProductAttributeFromPost($idProduct)
@@ -110,7 +112,7 @@ class AttributeProductService
         $idProductAttribute = 0;
 
         if (\Tools::getIsset('group')) {
-            $idProductAttribute = (int)\Product::getIdProductAttributeByIdAttributes(
+            $idProductAttribute = (int) \Product::getIdProductAttributeByIdAttributes(
                 $idProduct,
                 \Tools::getValue('group')
             );

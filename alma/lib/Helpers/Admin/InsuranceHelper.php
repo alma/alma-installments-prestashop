@@ -94,7 +94,6 @@ class InsuranceHelper
         ];
     }
 
-
     /**
      * @param int $isAllowInsurance
      *
@@ -216,6 +215,7 @@ class InsuranceHelper
 
     /**
      * @param array $config
+     *
      * @return void
      *
      * @throws WrongParamsException

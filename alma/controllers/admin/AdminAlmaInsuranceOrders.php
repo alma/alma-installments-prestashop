@@ -25,7 +25,7 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-use \Alma\PrestaShop\Helpers\PriceHelper;
+use Alma\PrestaShop\Helpers\PriceHelper;
 
 class AdminAlmaInsuranceOrdersController extends ModuleAdminController
 {
@@ -117,11 +117,9 @@ class AdminAlmaInsuranceOrdersController extends ModuleAdminController
 
         $this->_where = ' AND `id_order` is NOT NULL ';
 
-
         parent::getList($id_lang, $orderBy, $orderWay, $start, $limit, $this->context->shop->id);
 
-
-        foreach($this->_list as $key => $details)  {
+        foreach ($this->_list as $key => $details) {
             /**
              * @var OrderCore $order
              */
@@ -133,13 +131,12 @@ class AdminAlmaInsuranceOrdersController extends ModuleAdminController
              * @var CustomerCore $customer
              */
             $customer = $order->getCustomer();
-            $this->_list[$key]['customer'] = $customer->lastname . ' ' .  $customer->firstname;
+            $this->_list[$key]['customer'] = $customer->lastname . ' ' . $customer->firstname;
             $this->_list[$key]['date'] = $order->date_add;
             $this->_list[$key]['product_price'] = PriceHelper::formatPriceToCentsByCurrencyId($details['product_price']);
             $this->_list[$key]['subscription_amount'] = PriceHelper::formatPriceToCentsByCurrencyId(
                 PriceHelper::convertPriceToCents($details['price'])
             );
-
 
             $this->_list[$key]['product'] = $this->getProductName(
                 $details['id_product'],
@@ -156,6 +153,7 @@ class AdminAlmaInsuranceOrdersController extends ModuleAdminController
     /**
      * @param int $idProduct
      * @param int $idProductAttribute
+     *
      * @return string
      */
     protected function getProductName($idProduct, $idProductAttribute = null)
@@ -166,7 +164,7 @@ class AdminAlmaInsuranceOrdersController extends ModuleAdminController
         $product = new \Product($idProduct);
         $productName = $product->name[$this->context->language->id];
 
-        if(null !== $idProductAttribute) {
+        if (null !== $idProductAttribute) {
             /*
              * @var CombinationCore $combinationProduct;
              */
@@ -181,9 +179,10 @@ class AdminAlmaInsuranceOrdersController extends ModuleAdminController
         return $productName;
     }
 
-    public function initToolbar() {
+    public function initToolbar()
+    {
         parent::initToolbar();
 
-        unset( $this->toolbar_btn['new'] );
+        unset($this->toolbar_btn['new']);
     }
 }

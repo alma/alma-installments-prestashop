@@ -30,5 +30,4 @@ if (!defined('_PS_VERSION_')) {
 
 class TermsAndConditionsException extends AlmaException
 {
-
 }

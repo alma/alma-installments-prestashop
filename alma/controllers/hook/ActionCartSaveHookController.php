@@ -80,6 +80,7 @@ class ActionCartSaveHookController extends FrontendHookController
      * @param array $params
      *
      * @return void
+     *
      * @throws InsuranceInstallException
      */
     public function run($params)
@@ -89,6 +90,7 @@ class ActionCartSaveHookController extends FrontendHookController
 
     /**
      * @param \Cart $cart
+     *
      * @return void
      */
     public function handleAddingProductInsurance($cart)

@@ -60,7 +60,6 @@ class DisplayProductActionsHookController extends FrontendHookController
      */
     protected $cartHelper;
 
-
     /**
      * @param $module
      */
@@ -88,6 +87,7 @@ class DisplayProductActionsHookController extends FrontendHookController
      * @param $params
      *
      * @return mixed
+     *
      * @throws \PrestaShopException
      */
     public function run($params)
@@ -102,7 +102,6 @@ class DisplayProductActionsHookController extends FrontendHookController
             ? $productParams['id_product_attribute']
             : null;
 
-        
         $cmsReference = $productId . '-' . $productAttributeId;
 
         $regularPrice = $this->productHelper->getRegularPrice($productId, $productAttributeId);
@@ -114,7 +113,7 @@ class DisplayProductActionsHookController extends FrontendHookController
         $this->context->smarty->assign([
             'settingsInsurance' => $settings,
             'iframeUrl' => sprintf(
-                "%s%s?cms_reference=%s&product_price=%s&merchant_id=%s&customer_session_id=%s&cart_id=%s",
+                '%s%s?cms_reference=%s&product_price=%s&merchant_id=%s&customer_session_id=%s&cart_id=%s',
                 $this->adminInsuranceHelper->envUrl(),
                 ConstantsHelper::FO_IFRAME_WIDGET_INSURANCE_PATH,
                 $cmsReference,
@@ -124,7 +123,7 @@ class DisplayProductActionsHookController extends FrontendHookController
                 $this->cartHelper->getCartIdFromContext()
             ),
             'scriptModalUrl' => sprintf(
-                "%s%s",
+                '%s%s',
                 $this->adminInsuranceHelper->envUrl(),
                 ConstantsHelper::SCRIPT_MODAL_WIDGET_INSURANCE_PATH
             ),
@@ -135,6 +134,7 @@ class DisplayProductActionsHookController extends FrontendHookController
 
     /**
      * @return false|string
+     *
      * @throws \PrestaShopException
      */
     protected function handleSettings($merchantId)

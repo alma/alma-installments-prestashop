@@ -26,7 +26,6 @@ namespace Alma\PrestaShop\Helpers;
 
 use Alma\PrestaShop\Exceptions\OrderException;
 use Alma\PrestaShop\Logger;
-use Alma\PrestaShop\Model\OrderData;
 use Alma\PrestaShop\Traits\AjaxTrait;
 
 if (!defined('_PS_VERSION_')) {
@@ -123,7 +122,9 @@ class OrderHelper
 
     /**
      * @param \Order $order
+     *
      * @return mixed
+     *
      * @throws OrderException
      */
     public function getOrderPayment($order)
@@ -141,7 +142,9 @@ class OrderHelper
 
     /**
      * @param \Order $order
+     *
      * @return false|\OrderPayment|void
+     *
      * @throws \PrestaShopException
      */
     public function ajaxGetOrderPayment($order)
@@ -155,10 +158,10 @@ class OrderHelper
         }
     }
 
-
     /**
      * @param \OrderCore $order
      * @param bool $checkIsAlma
+     *
      * @return false|mixed
      */
     public function getCurrentOrderPayment($order, $checkIsAlma = true)
@@ -183,7 +186,6 @@ class OrderHelper
         return false;
     }
 
-
     /**
      * @throws OrderException
      */
@@ -191,7 +193,7 @@ class OrderHelper
     {
         if ($order->module !== 'alma') {
             $msg = sprintf(
-                "[Alma] This order id #%s is not an order Alma",
+                '[Alma] This order id #%s is not an order Alma',
                 $order->id
             );
 
