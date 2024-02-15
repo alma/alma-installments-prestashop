@@ -30,6 +30,7 @@ use Alma\API\RequestError;
 use Alma\PrestaShop\Exceptions\InsuranceSubscriptionException;
 use Alma\PrestaShop\Helpers\CartHelper;
 use Alma\PrestaShop\Helpers\ClientHelper;
+use Alma\PrestaShop\Helpers\ProductHelper;
 use Alma\PrestaShop\Logger;
 
 class InsuranceApiService
@@ -48,12 +49,17 @@ class InsuranceApiService
      * @var CartHelper
      */
     protected $cartHelper;
+    /**
+     * @var ProductHelper
+     */
+    protected $productHelper;
 
     public function __construct()
     {
         $this->almaApiClient = ClientHelper::defaultInstance();
         $this->context = \Context::getContext();
         $this->cartHelper = new CartHelper();
+        $this->productHelper = new ProductHelper();
     }
 
     /**
@@ -162,32 +168,27 @@ class InsuranceApiService
     }
 
     /**
-     * @param $insuranceContracts
-     * @param $cartId
+     * @param $cart
      *
      * @return false|void
      */
-    public function sendCmsReferenceSubscribedForTracking($insuranceContracts, $cartId)
+    public function sendCmsReferenceSubscribedForTracking($cart)
     {
-        $cmsReferences = [];
+        $cmsReferences = $this->productHelper->getCmsReferencesByCart($cart);
 
-        if (empty($insuranceContracts)) {
+        if (empty($cmsReferences)) {
             Logger::instance()->warning(
                 sprintf(
-                    '[Alma] No insurance contract to send, cartId: "%s"',
-                    $cartId
+                    '[Alma] No cms reference returned, cart: "%s"',
+                    json_encode($cart)
                 )
             );
 
             return false;
         }
 
-        foreach ($insuranceContracts as $insuranceContract) {
-            $cmsReferences[] = $insuranceContract['cms_reference'];
-        }
-
         try {
-            $this->almaApiClient->insurance->sendCustomerCart($cmsReferences, $cartId);
+            $this->almaApiClient->insurance->sendCustomerCart($cmsReferences, $cart->id);
         } catch (RequestError $e) {
             Logger::instance()->error(
                 sprintf(
@@ -195,7 +196,7 @@ class InsuranceApiService
                     $e->getMessage(),
                     $e->getTraceAsString(),
                     json_encode($cmsReferences),
-                    $cartId
+                    $cart->id
                 )
             );
         }

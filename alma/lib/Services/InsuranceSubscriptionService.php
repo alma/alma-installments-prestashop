@@ -95,7 +95,7 @@ class InsuranceSubscriptionService
             );
 
             $this->confirmSubscriptions($order->id_cart, $order->id_shop, $subscriptions);
-            $this->insuranceApiService->sendCmsReferenceSubscribedForTracking($insuranceContracts, $cart->id);
+            $this->insuranceApiService->sendCmsReferenceSubscribedForTracking($cart);
         }
     }
 
