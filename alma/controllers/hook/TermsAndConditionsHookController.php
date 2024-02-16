@@ -24,7 +24,6 @@
 
 namespace Alma\PrestaShop\Controllers\Hook;
 
-use Alma\PrestaShop\Exceptions\InsuranceContractException;
 use Alma\PrestaShop\Exceptions\TermsAndConditionsException;
 use Alma\PrestaShop\Helpers\InsuranceHelper;
 use Alma\PrestaShop\Hooks\FrontendHookController;

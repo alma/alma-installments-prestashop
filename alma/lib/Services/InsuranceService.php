@@ -26,7 +26,6 @@ namespace Alma\PrestaShop\Services;
 
 use Alma\API\Entities\Insurance\Subscription;
 use Alma\PrestaShop\Exceptions\AlmaException;
-use Alma\PrestaShop\Exceptions\InsuranceContractException;
 use Alma\PrestaShop\Exceptions\InsuranceInstallException;
 use Alma\PrestaShop\Exceptions\TermsAndConditionsException;
 use Alma\PrestaShop\Helpers\ConstantsHelper;
@@ -266,6 +265,7 @@ class InsuranceService
      * @param array $insuranceContracts
      *
      * @return array
+     *
      * @throws TermsAndConditionsException
      */
     public function createTextTermsAndConditions($insuranceContracts)
