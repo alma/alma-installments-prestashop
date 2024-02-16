@@ -32,7 +32,6 @@ if (!defined('_PS_VERSION_')) {
 
 class ImageService
 {
-
     /**
      * @var \Image
      */
@@ -47,11 +46,14 @@ class ImageService
         $this->image = new \Image();
         $this->imageHelper = new ImageHelper();
     }
+
     /**
      * @param int $idProduct
      * @param []ShopCore $shops
      * @param string $urlImage
+     *
      * @return void
+     *
      * @throws \PrestaShopDatabaseException
      * @throws \PrestaShopException
      */
@@ -78,7 +80,9 @@ class ImageService
      * @param int $idModel
      * @param string $imgUrl
      * @param string $imageType
+     *
      * @return bool
+     *
      * @throws \PrestaShopDatabaseException
      * @throws \PrestaShopException
      */
@@ -99,10 +103,12 @@ class ImageService
             $this->imageHelper->resizeImages($tmpFile, $path, $image->id, $idModel, $imageType);
 
             unlink($tmpFile);
+
             return true;
         }
 
         unlink($tmpFile);
+
         return false;
     }
 }

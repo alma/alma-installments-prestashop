@@ -22,11 +22,11 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
-use Alma\PrestaShop\Logger;
-use Alma\PrestaShop\Traits\AjaxTrait;
 use Alma\PrestaShop\Exceptions\AlmaException;
+use Alma\PrestaShop\Logger;
 use Alma\PrestaShop\Repositories\AlmaInsuranceProductRepository;
 use Alma\PrestaShop\Services\InsuranceProductService;
+use Alma\PrestaShop\Traits\AjaxTrait;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -72,16 +72,16 @@ class AlmaInsuranceModuleFrontController extends ModuleFrontController
                     case 'removeProductFromCart':
                         $this->ajaxRemoveProductFromCart($context);
                         break;
-                    case 'removeAssociation' :
+                    case 'removeAssociation':
                         $this->ajaxRemoveAssociationAndProducts($context);
                         break;
-                    case 'removeInsuranceProduct' :
+                    case 'removeInsuranceProduct':
                         $this->ajaxRemoveInsuranceProductAndAssociation($context);
                         break;
                     default:
                         throw new AlmaException(sprintf('Action unknown : %s', Tools::getValue('action')));
                 }
-            }catch (\Exception $e) {
+            } catch (\Exception $e) {
                 Logger::instance()->error(sprintf(
                     'Message : %s - Trace : %s',
                     $e->getMessage(),
@@ -94,14 +94,16 @@ class AlmaInsuranceModuleFrontController extends ModuleFrontController
 
     /**
      * @param \ContextCore $context
+     *
      * @return void
+     *
      * @throws PrestaShopException
      */
     public function ajaxRemoveProductFromCart($context)
     {
         $idProduct = \Tools::getValue('product_id');
         $idAttribute = \Tools::getValue('attribute_id');
-        $idCustomization = \Tools::getValue('customization_id') == "" ? 0 :  \Tools::getValue('customization_id') ;
+        $idCustomization = \Tools::getValue('customization_id') == '' ? 0 : \Tools::getValue('customization_id');
 
         $this->decreaseCartFromOneProduct(
             $context,
@@ -115,7 +117,9 @@ class AlmaInsuranceModuleFrontController extends ModuleFrontController
 
     /**
      * @param \ContextCore $context
+     *
      * @return void
+     *
      * @throws PrestaShopException
      */
     public function ajaxRemoveAssociationAndProducts($context)
@@ -135,7 +139,9 @@ class AlmaInsuranceModuleFrontController extends ModuleFrontController
 
     /**
      * @param \ContextCore $context
+     *
      * @return void
+     *
      * @throws PrestaShopException
      */
     public function ajaxRemoveInsuranceProductAndAssociation($context)
@@ -147,6 +153,7 @@ class AlmaInsuranceModuleFrontController extends ModuleFrontController
 
     /**
      * @param \ContextCore $context
+     *
      * @return array
      */
     protected function removeInsuranceProductAndAssociation($context)
@@ -154,7 +161,7 @@ class AlmaInsuranceModuleFrontController extends ModuleFrontController
         $idAlmaInsuranceProduct = \Tools::getValue('alma_insurance_product_id');
 
         // Delete the association
-       $associationData = $this->removeAssociation($idAlmaInsuranceProduct);
+        $associationData = $this->removeAssociation($idAlmaInsuranceProduct);
 
         // Remove the insurance Product
         $this->removeInsuranceProduct($context, $associationData);
@@ -164,6 +171,7 @@ class AlmaInsuranceModuleFrontController extends ModuleFrontController
 
     /**
      * @param int $idAlmaInsuranceProduct
+     *
      * @return array
      */
     protected function removeAssociation($idAlmaInsuranceProduct)
@@ -179,6 +187,7 @@ class AlmaInsuranceModuleFrontController extends ModuleFrontController
     /**
      * @param ContextCore $context
      * @param array $product
+     *
      * @return void
      */
     protected function removeInsuranceProduct($context, $product)
@@ -195,6 +204,7 @@ class AlmaInsuranceModuleFrontController extends ModuleFrontController
      * @param int $idProduct
      * @param int $idProductAttribute
      * @param int $idCustomization
+     *
      * @return void
      */
     protected function decreaseCartFromOneProduct($context, $idProduct, $idProductAttribute, $idCustomization = 0)

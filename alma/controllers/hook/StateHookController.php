@@ -86,8 +86,11 @@ final class StateHookController extends AdminHookController
      * Execute some trigger on change state (refund, payment, insurance)
      *
      * @param array $params
+     *
      * @return void
-     * @throws \Alma\PrestaShop\Exceptions\InsuranceSubscriptionException
+     *
+     * @throws \PrestaShopDatabaseException
+     * @throws \PrestaShopException
      */
     public function run($params)
     {
@@ -95,9 +98,6 @@ final class StateHookController extends AdminHookController
             return;
         }
 
-        /**
-         * @var \OrderCore $order
-         */
         $order = new \Order($params['id_order']);
         $newStatus = $params['newOrderStatus'];
 
@@ -108,7 +108,7 @@ final class StateHookController extends AdminHookController
             case SettingsHelper::getPaymentTriggerState():
                 $this->triggerPayment($order);
                 break;
-            case \Configuration::get('PS_OS_PAYMENT'):
+            case (int) \Configuration::get('PS_OS_PAYMENT'):
                 $this->processInsurance($order);
                 break;
             default:
@@ -118,6 +118,7 @@ final class StateHookController extends AdminHookController
 
     /**
      * @param \OrderCore $order
+     *
      * @return void
      */
     protected function processInsurance($order)
@@ -140,6 +141,7 @@ final class StateHookController extends AdminHookController
      * @param \Order $order
      *
      * @return void
+     *
      * @throws \PrestaShopException
      */
     private function refund($order)
@@ -169,6 +171,7 @@ final class StateHookController extends AdminHookController
      * @param \Order $order
      *
      * @return void
+     *
      * @throws \PrestaShopException
      */
     private function triggerPayment($order)

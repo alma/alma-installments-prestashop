@@ -36,7 +36,9 @@ class ImageHelper
      * @param int $idImage
      * @param int $idModel
      * @param string $imageType
+     *
      * @return void
+     *
      * @throws \PrestaShopDatabaseException
      * @throws \PrestaShopException
      */
@@ -57,7 +59,9 @@ class ImageHelper
      * @param array $watermarkTypes
      * @param int $idImage
      * @param int $idModel
+     *
      * @return void
+     *
      * @throws \PrestaShopException
      */
     public function resizeImage($tmpFile, $path, $imageType, $watermarkTypes, $idImage, $idModel)
@@ -78,7 +82,7 @@ class ImageHelper
                 'actionWatermark',
                 [
                     'id_image' => $idImage,
-                    'id_product' => $idModel
+                    'id_product' => $idModel,
                 ]
             );
         }

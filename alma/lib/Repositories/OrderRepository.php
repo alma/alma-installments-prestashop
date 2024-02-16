@@ -24,9 +24,6 @@
 
 namespace Alma\PrestaShop\Repositories;
 
-use Alma\PrestaShop\Helpers\ConstantsHelper;
-use Alma\PrestaShop\Helpers\LocaleHelper;
-
 if (!defined('_PS_VERSION_')) {
     exit;
 }

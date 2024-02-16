@@ -26,7 +26,6 @@ namespace Alma\PrestaShop\Services;
 
 use Alma\API\Entities\Insurance\Subscription;
 use Alma\PrestaShop\Exceptions\AlmaException;
-use Alma\PrestaShop\Exceptions\InsuranceContractException;
 use Alma\PrestaShop\Exceptions\InsuranceInstallException;
 use Alma\PrestaShop\Exceptions\TermsAndConditionsException;
 use Alma\PrestaShop\Helpers\ConstantsHelper;
@@ -70,7 +69,6 @@ class InsuranceService
      */
     protected $insuranceApiService;
 
-
     public function __construct()
     {
         $this->module = \Module::getInstanceByName(ConstantsHelper::ALMA_MODULE_NAME);
@@ -87,6 +85,7 @@ class InsuranceService
      * Create the default Insurance product
      *
      * @return \ProductCore
+     *
      * @throws InsuranceInstallException
      */
     public function createProductIfNotExists()
@@ -126,7 +125,9 @@ class InsuranceService
 
     /**
      * Create the default Insurance attribute group
+     *
      * @return void
+     *
      * @throws InsuranceInstallException
      */
     public function createAttributeGroupIfNotExists()
@@ -155,6 +156,7 @@ class InsuranceService
 
     /**
      * @return void
+     *
      * @throws InsuranceInstallException
      */
     public function installDefaultData()
@@ -169,13 +171,14 @@ class InsuranceService
 
     /**
      * @param array $params
+     *
      * @return void
+     *
      * @throws AlmaException
      * @throws \PrestaShopDatabaseException
      */
     public function deleteAllLinkedInsuranceProducts($params)
     {
-
         /**
          * @var \ContextCore $context
          */
@@ -206,11 +209,11 @@ class InsuranceService
 
     /**
      * @return bool
+     *
      * @throws \PrestaShopDatabaseException
      */
     public function hasInsuranceInCart()
     {
-
         $idsInsurances = $this->almaInsuranceProductRepository->getIdsByCartIdAndShop(
             $this->context->cart->id,
             $this->context->shop->id
@@ -226,6 +229,7 @@ class InsuranceService
     /**
      * @param array $insuranceContracts
      * @param \Cart $cart
+     *
      * @return array
      */
     public function createSubscriptionData($insuranceContracts, $cart)
@@ -259,8 +263,9 @@ class InsuranceService
 
     /**
      * @param array $insuranceContracts
+     *
      * @return array
-     * @throws InsuranceContractException
+     *
      * @throws TermsAndConditionsException
      */
     public function createTextTermsAndConditions($insuranceContracts)
@@ -274,17 +279,15 @@ class InsuranceService
                 $insuranceContract['product_price']
             );
 
-            $name = $this->getInsuranceContractName($insuranceContract);
-
             break;
         }
 
         if (!empty($files)) {
             return [
-                'text' => $this->getTextTermsAndConditions($name),
+                'text' => $this->getTextTermsAndConditions(),
                 'link-notice' => $files['notice-document'],
                 'link-ipid' => $files['ipid-document'],
-                'link-fic' => $files['fic-document']
+                'link-fic' => $files['fic-document'],
             ];
         }
 
@@ -292,38 +295,10 @@ class InsuranceService
     }
 
     /**
-     * @param string|null $name
      * @return string
      */
-    public function getTextTermsAndConditions($name = null)
+    public function getTextTermsAndConditions()
     {
-        if (null === $name) {
-            $name = $this->module->l('Alma insurance', 'InsuranceService');
-        }
-
-        return sprintf(
-            $this->module->l('I agree to subscribe to %s coverage, and I confirm that I have read, accepted, and saved the [information notice, which constitutes the general conditions], the [insurance product information document], and the [pre-contractual information and advice sheet] before finalising my purchase and subscribing to the insurance.', 'InsuranceService'),
-            $name
-        );
-    }
-
-    /**
-     * @param array $insuranceContract
-     * @return string
-     * @throws InsuranceContractException
-     */
-    protected function getInsuranceContractName($insuranceContract)
-    {
-        $contract = $this->insuranceApiService->getInsuranceContract(
-            $insuranceContract['insurance_contract_id'],
-            $insuranceContract['cms_reference'],
-            $insuranceContract['product_price']
-        );
-
-        if (null === $contract) {
-            throw new InsuranceContractException(sprintf('Contract not found: %s', json_encode($insuranceContract)));
-        }
-
-        return $contract->getName();
+        return $this->module->l('I hereby acknowledge my acceptance to subscribe to the insurance offered by Alma. In doing so, I confirm that I have previously reviewed the [information notice, which constitutes the general conditions], the [insurance product information document], and the [pre-contractual information and advice sheet]. I ahead to it without reservation and agree to electronically sign the various documents forming my contract, if applicable. I expressly consent to the collection and use of my personal data for the purpose of subscribing to and managing my insurance contract(s).', 'InsuranceService');
     }
 }

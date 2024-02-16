@@ -96,10 +96,9 @@ class InsuranceHelper
                 'parent' => ConstantsHelper::BO_CONTROLLER_INSURANCE_CLASSNAME,
                 'position' => null,
                 'icon' => null,
-            ]
+            ],
         ];
     }
-
 
     /**
      * @param int $isAllowInsurance
@@ -222,6 +221,7 @@ class InsuranceHelper
 
     /**
      * @param array $config
+     *
      * @return void
      *
      * @throws WrongParamsException

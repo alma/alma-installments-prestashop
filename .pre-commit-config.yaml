@@ -82,4 +82,4 @@ repos:
     hooks:
       - id: check-branch-name
         args:
-          - "-r^((chore|ci|dependabot|devx|docs|feature|fix|hotfix|hotfix-backport|infra|other|perf|refactor|security|test)\/.+|(snyk)-.+|main|develop|insurance|HEAD)$$"
+          - "-r^((chore|ci|dependabot|devx|docs|feature|fix|hotfix|hotfix-backport|infra|other|perf|refactor|security|test)\/.+|(snyk)-.+|main|develop|insurance|insurance_refund|HEAD)$$"

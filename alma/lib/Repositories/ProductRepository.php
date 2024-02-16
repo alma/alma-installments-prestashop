@@ -189,6 +189,7 @@ class ProductRepository
 
     /**
      * @return \ProductCore
+     *
      * @throws \PrestaShopDatabaseException
      * @throws \PrestaShopException
      */
@@ -199,9 +200,9 @@ class ProductRepository
          */
         $context = \Context::getContext();
 
-        $categories =  \Category::getRootCategories($context->language->id);
+        $categories = \Category::getRootCategories($context->language->id);
 
-        if(isset($categories[0]['id_category'])) {
+        if (isset($categories[0]['id_category'])) {
             $id_root = $categories[0]['id_category'];
         } else {
             $id_root = $context->shop->id_category;
@@ -244,10 +245,11 @@ class ProductRepository
 
     /**
      * @param int $idProduct
+     *
      * @return \ProductCore
      */
     public function getProduct($idProduct)
     {
-        return new \Product((int)$idProduct);
+        return new \Product((int) $idProduct);
     }
 }
