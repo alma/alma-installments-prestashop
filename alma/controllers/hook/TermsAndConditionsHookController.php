@@ -115,14 +115,6 @@ class TermsAndConditionsHookController extends FrontendHookController
                     $e->getTraceAsString()
                 )
             );
-        } catch (InsuranceContractException $e) {
-            Logger::instance()->warning(
-                sprintf(
-                    '[Alma] Warning: Contract not found, message "%s", trace "%s"',
-                    $e->getMessage(),
-                    $e->getTraceAsString()
-                )
-            );
         }
 
         $returnedTermsAndConditions[] = $this->termsAndConditions
