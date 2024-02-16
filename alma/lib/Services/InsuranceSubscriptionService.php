@@ -144,10 +144,6 @@ class InsuranceSubscriptionService
         $insuranceProduct = new InsuranceProduct($almaInsuranceProduct['id_alma_insurance_product']);
         $insuranceProduct->subscription_id = $subscription['id'];
 
-        if (!empty($subscription['broker_subscription_id'])) {
-            $insuranceProduct->subscription_broker_id = $subscription['broker_subscription_id'];
-        }
-
         $insuranceProduct->subscription_amount = $subscription['amount'];
         $insuranceProduct->subscription_state = $subscription['state'];
         $insuranceProduct->save();
