@@ -35,13 +35,13 @@ if (!defined('_PS_VERSION_')) {
  */
 class CombinationRepository
 {
-
     /**
      * For a given product_attribute reference and price, returns the corresponding id.
      *
      * @param int $idProduct
      * @param string $reference
      * @param int $price
+     *
      * @return int id
      */
     public function getIdByReferenceAndPrice($idProduct, $reference, $price)
@@ -53,9 +53,9 @@ class CombinationRepository
         $query = new \DbQuery();
         $query->select('pa.id_product_attribute');
         $query->from('product_attribute', 'pa');
-        $query->where('pa.id_product = ' . (int)$idProduct);
+        $query->where('pa.id_product = ' . (int) $idProduct);
         $query->where('pa.reference = "' . (string) $reference . '"');
-        $query->where('pa.price = ' . (float)$price);
+        $query->where('pa.price = ' . (float) $price);
 
         return \Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue($query);
     }

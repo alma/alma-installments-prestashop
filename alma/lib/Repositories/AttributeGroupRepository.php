@@ -73,6 +73,7 @@ class AttributeGroupRepository
 
     /**
      * @return \AttributeGroupCore
+     *
      * @throws \PrestaShopDatabaseException
      * @throws \PrestaShopException
      */

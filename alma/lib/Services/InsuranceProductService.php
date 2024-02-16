@@ -25,13 +25,7 @@
 namespace Alma\PrestaShop\Services;
 
 use Alma\API\Client;
-use Alma\API\Exceptions\MissingKeyException;
-use Alma\API\Exceptions\ParametersException;
-use Alma\API\Exceptions\ParamsException;
-use Alma\API\Exceptions\RequestException;
-use Alma\API\RequestError;
 use Alma\PrestaShop\Exceptions\AlmaException;
-use Alma\PrestaShop\Exceptions\InsuranceInstallException;
 use Alma\PrestaShop\Helpers\ClientHelper;
 use Alma\PrestaShop\Helpers\ConstantsHelper;
 use Alma\PrestaShop\Helpers\PriceHelper;
@@ -123,7 +117,9 @@ class InsuranceProductService
      * @param float $price
      * @param int $idAddressDelivery
      * @param array $insuranceContractInfos
+     *
      * @return void
+     *
      * @throws \PrestaShopDatabaseException
      */
     public function addAssociations(
@@ -136,9 +132,8 @@ class InsuranceProductService
         $price,
         $idAddressDelivery,
         $insuranceContractInfos
-    )
-    {
-        for ($nbQuantity = 1; $nbQuantity <= $quantity; $nbQuantity++) {
+    ) {
+        for ($nbQuantity = 1; $nbQuantity <= $quantity; ++$nbQuantity) {
             $this->almaInsuranceProductRepository->add(
                 $this->context->cart->id,
                 $idProduct,
@@ -147,13 +142,12 @@ class InsuranceProductService
                 $idCustomization,
                 $idProductToAssociate,
                 $idProductAttributeToAssocation,
-                $price,
+                PriceHelper::convertPriceToCents($price),
                 $idAddressDelivery,
                 $insuranceContractInfos
             );
         }
     }
-
 
     /**
      * @param int $idProduct
@@ -163,9 +157,11 @@ class InsuranceProductService
      * @param int $quantity
      * @param int $idCustomization
      * @param array $insuranceContractInfos
-     * @param null|\Cart $cart
+     * @param \Cart|null $cart
      * @param bool $destroyPost
+     *
      * @return void
+     *
      * @throws AlmaException
      * @throws \PrestaShopDatabaseException
      * @throws \PrestaShopException
@@ -180,8 +176,7 @@ class InsuranceProductService
         $insuranceContractInfos,
         $cart = null,
         $destroyPost = true
-    )
-    {
+    ) {
         $idProductAttribute = $this->attributeProductService->getIdProductAttributeFromPost($idProduct);
 
         $insuranceAttributeGroupId = $this->attributeGroupProductService->getIdAttributeGroupByName(
@@ -233,8 +228,9 @@ class InsuranceProductService
      * @param int $insuranceContractId
      * @param int $quantity
      * @param int $idCustomization
-     * @param null|\Cart $cart
+     * @param \Cart|null $cart
      * @param bool $destroyPost
+     *
      * @return bool
      */
     public function handleAddingProductInsurance($idProduct, $insuranceContractId, $quantity, $idCustomization, $cart = null, $destroyPost = true)
@@ -242,7 +238,7 @@ class InsuranceProductService
         try {
             $idProductAttribute = $this->attributeProductService->getIdProductAttributeFromPost($idProduct);
             $cmsReference = sprintf(
-                "%s-%s",
+                '%s-%s',
                 $idProduct,
                 $idProductAttribute
             );
@@ -276,7 +272,7 @@ class InsuranceProductService
             }
 
             return true;
-        } catch (\Exception $e)  {
+        } catch (\Exception $e) {
             Logger::instance()->error(
                 sprintf(
                     '[Alma] An error occured when adding an insurance, InsuranceContratId : "%s", IdProduct : "%s", message "%s", trace "%s"',
@@ -294,6 +290,7 @@ class InsuranceProductService
     /**
      * @param int $idProduct
      * @param int $idProductAttribute
+     *
      * @return bool
      */
     public function handleRemovingProductInsurance($idProduct, $idProductAttribute)
@@ -312,7 +309,7 @@ class InsuranceProductService
                 'id_cart' => $this->context->cart->id,
                 'id_product' => $idProduct,
                 'id_product_attribute' => $idProductAttribute,
-                'customization_id' => 0
+                'customization_id' => 0,
             ]);
 
             return true;

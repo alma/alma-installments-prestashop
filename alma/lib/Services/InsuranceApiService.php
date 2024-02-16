@@ -24,17 +24,13 @@
 
 namespace Alma\PrestaShop\Services;
 
+use Alma\API\Client;
 use Alma\API\Entities\Insurance\Contract;
-use Alma\API\Entities\Insurance\File;
-use Alma\API\Exceptions\MissingKeyException;
-use Alma\API\Exceptions\ParametersException;
-use Alma\API\Exceptions\ParamsException;
-use Alma\API\Exceptions\RequestException;
 use Alma\API\RequestError;
 use Alma\PrestaShop\Exceptions\InsuranceSubscriptionException;
 use Alma\PrestaShop\Helpers\CartHelper;
 use Alma\PrestaShop\Helpers\ClientHelper;
-use Alma\API\Client;
+use Alma\PrestaShop\Helpers\ProductHelper;
 use Alma\PrestaShop\Logger;
 
 class InsuranceApiService
@@ -53,21 +49,24 @@ class InsuranceApiService
      * @var CartHelper
      */
     protected $cartHelper;
-
     /**
-     *
+     * @var ProductHelper
      */
+    protected $productHelper;
+
     public function __construct()
     {
         $this->almaApiClient = ClientHelper::defaultInstance();
         $this->context = \Context::getContext();
         $this->cartHelper = new CartHelper();
+        $this->productHelper = new ProductHelper();
     }
 
     /**
      * @param $insuranceContractId
      * @param $cmsReference
      * @param $productPrice
+     *
      * @return array|null
      */
     public function getInsuranceContractFiles($insuranceContractId, $cmsReference, $productPrice)
@@ -104,6 +103,7 @@ class InsuranceApiService
      * @param int $insuranceContractId
      * @param string $cmsReference
      * @param int $productPrice
+     *
      * @return Contract|null
      */
     public function getInsuranceContract($insuranceContractId, $cmsReference, $productPrice)
@@ -129,26 +129,29 @@ class InsuranceApiService
         return null;
     }
 
-
     /**
      * @param array $subscriptionData
+     * @param \OrderCore $order
      * @param int $idTransaction
+     *
      * @return array
+     *
      * @throws InsuranceSubscriptionException
      */
-    public function subscribeInsurance($subscriptionData, $idTransaction)
+    public function subscribeInsurance($subscriptionData, $order, $idTransaction)
     {
         try {
-          $result = $this->almaApiClient->insurance->subscription(
-              $subscriptionData,
-              $idTransaction,
-              $this->context->session->getId(),
-              $this->cartHelper->getCartIdFromContext()
-          );
+            $result = $this->almaApiClient->insurance->subscription(
+                $subscriptionData,
+                $order->id,
+                $idTransaction,
+                $this->context->session->getId(),
+                $this->cartHelper->getCartIdFromContext()
+            );
 
-          if(isset($result['subscriptions'])) {
-              return $result['subscriptions'];
-          }
+            if (isset($result['subscriptions'])) {
+                return $result['subscriptions'];
+            }
         } catch (\Exception  $e) {
             Logger::instance()->error(
                 sprintf(
@@ -159,9 +162,43 @@ class InsuranceApiService
                     $idTransaction
                 )
             );
-
         }
 
         throw new InsuranceSubscriptionException();
+    }
+
+    /**
+     * @param $cart
+     *
+     * @return false|void
+     */
+    public function sendCmsReferenceSubscribedForTracking($cart)
+    {
+        $cmsReferences = $this->productHelper->getCmsReferencesByCart($cart);
+
+        if (empty($cmsReferences)) {
+            Logger::instance()->warning(
+                sprintf(
+                    '[Alma] No cms reference returned, cart: "%s"',
+                    json_encode($cart)
+                )
+            );
+
+            return false;
+        }
+
+        try {
+            $this->almaApiClient->insurance->sendCustomerCart($cmsReferences, $cart->id);
+        } catch (RequestError $e) {
+            Logger::instance()->error(
+                sprintf(
+                    '[Alma] Error while sending the cms_reference for tracking, message "%s", trace "%s", cmsReference : "%s", cartId: "%s"',
+                    $e->getMessage(),
+                    $e->getTraceAsString(),
+                    json_encode($cmsReferences),
+                    $cart->id
+                )
+            );
+        }
     }
 }

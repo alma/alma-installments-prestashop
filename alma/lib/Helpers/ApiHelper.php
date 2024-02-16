@@ -29,10 +29,9 @@ use Alma\PrestaShop\Exceptions\ActivationException;
 use Alma\PrestaShop\Exceptions\ApiMerchantsException;
 use Alma\PrestaShop\Exceptions\InsuranceInstallException;
 use Alma\PrestaShop\Exceptions\WrongCredentialsException;
-use Alma\PrestaShop\Forms\InpageAdminFormBuilder;
 use Alma\PrestaShop\Helpers\Admin\InsuranceHelper;
-use Alma\PrestaShop\Services\InsuranceService;
 use Alma\PrestaShop\Logger;
+use Alma\PrestaShop\Services\InsuranceService;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -114,7 +113,9 @@ class ApiHelper
 
     /**
      * @param Merchant $merchant
+     *
      * @return void
+     *
      * @throws \PrestaShopException
      */
     protected function handleInsuranceFlag($merchant)

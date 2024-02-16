@@ -26,5 +26,4 @@ namespace Alma\PrestaShop\Exceptions;
 
 class InsuranceContractException extends AlmaException
 {
-
 }

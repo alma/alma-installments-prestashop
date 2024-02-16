@@ -42,13 +42,15 @@ class AttributeGroupProductService
      */
     protected $attributeGroupRepository;
 
-    public function __construct() {
+    public function __construct()
+    {
         $this->context = \Context::getContext();
         $this->attributeGroupRepository = new AttributeGroupRepository();
     }
 
     /**
      * @param string $name
+     *
      * @return int
      */
     public function getIdAttributeGroupByName($name)

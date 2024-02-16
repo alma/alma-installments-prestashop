@@ -65,12 +65,14 @@ class InsuranceSubscriptionService
         $this->insuranceApiService = new InsuranceApiService();
     }
 
-
     /**
      * @param \OrderCore $order
+     *
      * @return void
+     *
      * @throws InsuranceSubscriptionException
      * @throws \PrestaShopDatabaseException
+     * @throws \PrestaShopException
      */
     public function triggerInsuranceSubscription($order)
     {
@@ -88,10 +90,12 @@ class InsuranceSubscriptionService
 
             $subscriptions = $this->insuranceApiService->subscribeInsurance(
                 $subscriptionData,
+                $order,
                 $orderPayment->transaction_id
             );
 
             $this->confirmSubscriptions($order->id_cart, $order->id_shop, $subscriptions);
+            $this->insuranceApiService->sendCmsReferenceSubscribedForTracking($cart);
         }
     }
 
@@ -99,12 +103,16 @@ class InsuranceSubscriptionService
      * @param int $orderId
      * @param int $shopId
      * @param array $subscriptions
+     *
      * @return void
+     *
      * @throws InsuranceSubscriptionException
+     * @throws \PrestaShopDatabaseException
+     * @throws \PrestaShopException
      */
     protected function confirmSubscriptions($orderId, $shopId, $subscriptions)
     {
-        foreach($subscriptions as $subscriptionData){
+        foreach ($subscriptions as $subscriptionData) {
             $this->confirmSubscription($orderId, $shopId, $subscriptionData);
         }
     }
@@ -113,12 +121,15 @@ class InsuranceSubscriptionService
      * @param int $orderId
      * @param int $shopId
      * @param array $subscription
+     *
      * @return void
+     *
      * @throws InsuranceSubscriptionException
+     * @throws \PrestaShopDatabaseException
+     * @throws \PrestaShopException
      */
     protected function confirmSubscription($orderId, $shopId, $subscription)
     {
-
         $almaInsuranceProduct = $this->almaInsuranceProductRepository->findSubscriptionToActivate(
             $orderId,
             $shopId,
@@ -126,17 +137,14 @@ class InsuranceSubscriptionService
             $subscription['cms_reference']
         );
 
-        if(!$almaInsuranceProduct) {
-            throw new InsuranceSubscriptionException(
-                sprintf('Data not found in db for subscription "%s"', json_encode($subscription))
-            );
-
+        if (!$almaInsuranceProduct) {
+            throw new InsuranceSubscriptionException(sprintf('Data not found in db for subscription "%s"', json_encode($subscription)));
         }
 
         $insuranceProduct = new InsuranceProduct($almaInsuranceProduct['id_alma_insurance_product']);
         $insuranceProduct->subscription_id = $subscription['id'];
-        
-        if(!empty($subscription['broker_subscription_id'])) {
+
+        if (!empty($subscription['broker_subscription_id'])) {
             $insuranceProduct->subscription_broker_id = $subscription['broker_subscription_id'];
         }
 
@@ -144,5 +152,4 @@ class InsuranceSubscriptionService
         $insuranceProduct->subscription_state = $subscription['state'];
         $insuranceProduct->save();
     }
-
 }

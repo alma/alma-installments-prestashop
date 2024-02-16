@@ -96,6 +96,7 @@ class ProductHelper
      * @param $productId
      * @param $productAttributeId
      * @param $quantity
+     *
      * @return float
      */
     public function getPriceStatic($productId, $productAttributeId, $quantity = 1)
@@ -115,6 +116,7 @@ class ProductHelper
     /**
      * @param $productId
      * @param $productAttributeId
+     *
      * @return float|int
      */
     public function getRegularPrice($productId, $productAttributeId)
@@ -130,6 +132,7 @@ class ProductHelper
 
     /**
      * @param $productParams
+     *
      * @return int|mixed
      */
     public function getQuantity($productParams)
@@ -148,5 +151,28 @@ class ProductHelper
         }
 
         return $quantity;
+    }
+
+    /**
+     * @param \CartCore $cart
+     *
+     * @return array
+     */
+    public function getCmsReferencesByCart($cart)
+    {
+        $cmsReferences = [];
+
+        $products = $cart->getProducts();
+        foreach ($products as $product) {
+            for ($qty = 1; $qty <= $product['cart_quantity']; ++$qty) {
+                $cmsReferences[] = sprintf(
+                    '%s-%s',
+                    $product['id_product'],
+                    $product['id_product_attribute']
+                );
+            }
+        }
+
+        return $cmsReferences;
     }
 }

@@ -205,24 +205,23 @@ class FrontHeaderHookController extends FrontendHookController
         $content = '';
 
         // Insurance Assets
-        if(
+        if (
             $this->insuranceHelper->isInsuranceActivated()
             && version_compare(_PS_VERSION_, '1.7', '>=')
         ) {
             $this->manageInsuranceAssetsAfter17();
         }
 
-
         if (
             $this->displayWidgetOnCartPage()
             || $this->displayWidgetOnProductPage()
         ) {
             if (version_compare(_PS_VERSION_, '1.7', '<')) {
-                $content .=  $this->manageAssetVersionForPrestashopBefore17();
+                $content .= $this->manageAssetVersionForPrestashopBefore17();
             }
 
             if (version_compare(_PS_VERSION_, '1.7.0.0', '>=')) {
-                $content .=  $this->manageAssetVersionForPrestashopAfter17();
+                $content .= $this->manageAssetVersionForPrestashopAfter17();
             }
         }
 
@@ -238,16 +237,16 @@ class FrontHeaderHookController extends FrontendHookController
 
         $this->controller->addJS($this->module->_path . ConstantsHelper::INSURANCE_16_SCRIPT_PATH);
 
-        if($this->insuranceHelper->hasInsuranceInCart()) {
+        if ($this->insuranceHelper->hasInsuranceInCart()) {
             $this->controller->addJS($this->module->_path . ConstantsHelper::MINI_CART_INSURANCE_16_SCRIPT_PATH);
             $text = $this->module->l('To manage your purchases with Assurance, please go to the checkout page.');
-            $content .= '<input type="hidden" value="'. $text. '" id="alma-mini-cart-insurance-message">';
+            $content .= '<input type="hidden" value="' . $text . '" id="alma-mini-cart-insurance-message">';
 
-            if( $this->iAmInOrderPage()) {
+            if ($this->iAmInOrderPage()) {
                 $this->controller->addJS($this->module->_path . ConstantsHelper::ORDER_INSURANCE_16_SCRIPT_PATH);
             }
 
-            if($this->iAmInCartPage()) {
+            if ($this->iAmInCartPage()) {
                 $this->controller->addJS($this->module->_path . ConstantsHelper::CART_INSURANCE_16_SCRIPT_PATH);
             }
         }
@@ -261,6 +260,7 @@ class FrontHeaderHookController extends FrontendHookController
 
         return $content;
     }
+
     /**
      * Manage assets for Prestashop Before 1.7.
      *
@@ -325,6 +325,7 @@ class FrontHeaderHookController extends FrontendHookController
             $this->controller->addJS($this->module->_path . ConstantsHelper::ORDER_INSURANCE_SCRIPT_PATH);
         }
     }
+
     /**
      * Manage assets for Prestashop after 1.7
      *
@@ -337,7 +338,6 @@ class FrontHeaderHookController extends FrontendHookController
         $scriptPath = "modules/$this->moduleName/" . ConstantsHelper::PRODUCT_SCRIPT_PATH;
         $cssPath = "modules/$this->moduleName/" . ConstantsHelper::PRODUCT_CSS_PATH;
         $cartScriptPath = "modules/$this->moduleName/" . ConstantsHelper::CART_SCRIPT_PATH;
-
 
         $this->controller->registerStylesheet(ConstantsHelper::PRODUCT_CSS_ID, $cssPath);
 

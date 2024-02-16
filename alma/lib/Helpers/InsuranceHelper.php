@@ -24,9 +24,9 @@
 
 namespace Alma\PrestaShop\Helpers;
 
+use Alma\PrestaShop\Repositories\AlmaInsuranceProductRepository;
 use Alma\PrestaShop\Repositories\CartProductRepository;
 use Alma\PrestaShop\Repositories\ProductRepository;
-use Alma\PrestaShop\Repositories\AlmaInsuranceProductRepository;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -44,15 +44,11 @@ class InsuranceHelper
      */
     public $productRepository;
 
-
     /**
      * @var AlmaInsuranceProductRepository
      */
     public $insuranceProductRepository;
 
-    /**
-     *
-     */
     public function __construct()
     {
         $this->cartProductRepository = new CartProductRepository();
@@ -76,18 +72,19 @@ class InsuranceHelper
      */
     public function isInsuranceActivated()
     {
-        return  (bool) version_compare(_PS_VERSION_, '1.7', '>=')
+        return (bool) version_compare(_PS_VERSION_, '1.7', '>=')
             && (bool) (int) SettingsHelper::get(ConstantsHelper::ALMA_ALLOW_INSURANCE, false)
             && (bool) (int) SettingsHelper::get(ConstantsHelper::ALMA_ACTIVATE_INSURANCE, false);
     }
 
     /**
      * @param \OrderCore $order
-     * @return boolean
+     *
+     * @return bool
      */
     public function canInsuranceSubscriptionBeTriggered($order)
     {
-        $rowTriggered = $this->insuranceProductRepository->hasOrderBeenTriggered($order) ;
+        $rowTriggered = $this->insuranceProductRepository->hasOrderBeenTriggered($order);
 
         if ($rowTriggered) {
             return false;
@@ -95,7 +92,6 @@ class InsuranceHelper
 
         return true;
     }
-
 
     /**
      * @return bool
@@ -114,7 +110,6 @@ class InsuranceHelper
         $context = \Context::getContext();
         $idProduct = $this->cartProductRepository->hasProductInCart($idInsuranceProduct, $context->cart->id);
 
-        return (bool)$idProduct;
+        return (bool) $idProduct;
     }
-
 }

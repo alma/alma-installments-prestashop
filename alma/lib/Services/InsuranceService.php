@@ -70,7 +70,6 @@ class InsuranceService
      */
     protected $insuranceApiService;
 
-
     public function __construct()
     {
         $this->module = \Module::getInstanceByName(ConstantsHelper::ALMA_MODULE_NAME);
@@ -87,6 +86,7 @@ class InsuranceService
      * Create the default Insurance product
      *
      * @return \ProductCore
+     *
      * @throws InsuranceInstallException
      */
     public function createProductIfNotExists()
@@ -126,7 +126,9 @@ class InsuranceService
 
     /**
      * Create the default Insurance attribute group
+     *
      * @return void
+     *
      * @throws InsuranceInstallException
      */
     public function createAttributeGroupIfNotExists()
@@ -155,6 +157,7 @@ class InsuranceService
 
     /**
      * @return void
+     *
      * @throws InsuranceInstallException
      */
     public function installDefaultData()
@@ -169,13 +172,14 @@ class InsuranceService
 
     /**
      * @param array $params
+     *
      * @return void
+     *
      * @throws AlmaException
      * @throws \PrestaShopDatabaseException
      */
     public function deleteAllLinkedInsuranceProducts($params)
     {
-
         /**
          * @var \ContextCore $context
          */
@@ -206,11 +210,11 @@ class InsuranceService
 
     /**
      * @return bool
+     *
      * @throws \PrestaShopDatabaseException
      */
     public function hasInsuranceInCart()
     {
-
         $idsInsurances = $this->almaInsuranceProductRepository->getIdsByCartIdAndShop(
             $this->context->cart->id,
             $this->context->shop->id
@@ -226,6 +230,7 @@ class InsuranceService
     /**
      * @param array $insuranceContracts
      * @param \Cart $cart
+     *
      * @return array
      */
     public function createSubscriptionData($insuranceContracts, $cart)
@@ -259,6 +264,7 @@ class InsuranceService
 
     /**
      * @param array $insuranceContracts
+     *
      * @return array
      * @throws TermsAndConditionsException
      */
@@ -281,7 +287,7 @@ class InsuranceService
                 'text' => $this->getTextTermsAndConditions(),
                 'link-notice' => $files['notice-document'],
                 'link-ipid' => $files['ipid-document'],
-                'link-fic' => $files['fic-document']
+                'link-fic' => $files['fic-document'],
             ];
         }
 
