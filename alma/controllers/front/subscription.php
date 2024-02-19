@@ -56,21 +56,8 @@ class AlmaSubscriptionModuleFrontController extends ModuleFrontController
     {
         parent::__construct();
         $this->context = Context::getContext();
-        $this->phpClient = ClientHelper::defaultInstance();
         $this->subscriptionHelper = new SubscriptionHelper(new \Alma\PrestaShop\Repositories\AlmaInsuranceProductRepository());
         $this->insuranceApiService = new \Alma\PrestaShop\Services\InsuranceApiService();
-    }
-
-    /**
-     * Used for Unit Test
-     *
-     * @param $client
-     *
-     * @return void
-     */
-    public function setPhpClient($client)
-    {
-        $this->phpClient = $client;
     }
 
     /**
