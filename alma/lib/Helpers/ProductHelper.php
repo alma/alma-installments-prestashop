@@ -154,6 +154,29 @@ class ProductHelper
     }
 
     /**
+     * @param \CartCore $cart
+     *
+     * @return array
+     */
+    public function getCmsReferencesByCart($cart)
+    {
+        $cmsReferences = [];
+
+        $products = $cart->getProducts();
+        foreach ($products as $product) {
+            for ($qty = 1; $qty <= $product['cart_quantity']; ++$qty) {
+                $cmsReferences[] = sprintf(
+                    '%s-%s',
+                    $product['id_product'],
+                    $product['id_product_attribute']
+                );
+            }
+        }
+
+        return $cmsReferences;
+    }
+
+    /**
      * @param \ProductCore $product
      * @param int $languageId
      * @param int|null $idProductAttribute

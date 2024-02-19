@@ -45,7 +45,7 @@ class AlmaInsuranceProductRepository
      * @param int $idCustomization
      * @param int $idProductInsurance
      * @param int $idProductAttributeInsurance
-     * @param float $assurancePrice
+     * @param int $assurancePrice
      * @param int $idAddressDelivery
      * @param string $insuranceContractInfos
      *
@@ -260,7 +260,7 @@ class AlmaInsuranceProductRepository
             `id_product_attribute_insurance` int(10) unsigned NOT NULL,
             `id_address_delivery` int(10) unsigned NOT NULL,
             `id_order` int(10) unsigned NULL,
-            `price` decimal(20,6) NOT NULL DEFAULT 0.000000,
+            `price` int(10) unsigned NULL,
             `insurance_contract_id` varchar(255) NULL,
             `cms_reference` varchar(255) NULL,
             `product_price` int(10) unsigned NULL,
@@ -275,11 +275,11 @@ class AlmaInsuranceProductRepository
             `date_of_refund` datetime null,
             `date_of_cancelation_request` datetime null,
             `mode` varchar(255) not NULL,
-            PRIMARY KEY (`id_alma_insurance_product`) ,
+            PRIMARY KEY (`id_alma_insurance_product`),
             index `ps_alma_insurance_product_cart_shop` (`id_cart`, `id_shop`),
-            index `ps_alma_insurance_product`  (`id_product`, `id_shop`, `id_product_attribute`, `id_customization`, `id_cart`) ,
-            index `ps_broker_id`  (`subscription_broker_id`) ,
-            constraint ps_alma_insurance_product_pk  unique (`subscription_id`) ,
+            index `ps_alma_insurance_product` (`id_product`, `id_shop`, `id_product_attribute`, `id_customization`, `id_cart`),
+            index `ps_broker_id` (`subscription_broker_id`),
+            constraint ps_alma_insurance_product_pk  unique (`subscription_id`),
             constraint ps_alma_insurance_broker_pk  unique (`subscription_broker_id`)
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci';
 
@@ -324,7 +324,7 @@ class AlmaInsuranceProductRepository
     public function getContractsInfosByIdCartAndIdShop($idCart, $idShop)
     {
         $sql = '
-            SELECT `id_alma_insurance_product`, `insurance_contract_id`, `cms_reference`, `product_price` 
+            SELECT `id_alma_insurance_product`, `price`, `insurance_contract_id`, `cms_reference`, `product_price`
             FROM `' . _DB_PREFIX_ . 'alma_insurance_product` aip
             WHERE aip.`id_cart` = ' . (int) $idCart . '
             AND aip.`id_shop` = ' . (int) $idShop;
@@ -348,7 +348,7 @@ class AlmaInsuranceProductRepository
             WHERE `id_order` = ' . (int) $orderId . '
             AND `insurance_contract_id` = "' . $contractId . '"
             AND `cms_reference` = "' . $cmsReference . '"
-            AND `subscription_state` is NULL 
+            AND `subscription_state` is NULL
             AND `id_shop` = ' . (int) $shopId;
 
         return \Db::getInstance()->getRow($sql);

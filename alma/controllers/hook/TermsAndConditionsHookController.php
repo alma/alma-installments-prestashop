@@ -24,7 +24,6 @@
 
 namespace Alma\PrestaShop\Controllers\Hook;
 
-use Alma\PrestaShop\Exceptions\InsuranceContractException;
 use Alma\PrestaShop\Exceptions\TermsAndConditionsException;
 use Alma\PrestaShop\Helpers\InsuranceHelper;
 use Alma\PrestaShop\Hooks\FrontendHookController;
@@ -111,14 +110,6 @@ class TermsAndConditionsHookController extends FrontendHookController
             Logger::instance()->warning(
                 sprintf(
                     '[Alma] Warning: The contract files are missing and a client could not accept terms and conditions, message "%s", trace "%s"',
-                    $e->getMessage(),
-                    $e->getTraceAsString()
-                )
-            );
-        } catch (InsuranceContractException $e) {
-            Logger::instance()->warning(
-                sprintf(
-                    '[Alma] Warning: Contract not found, message "%s", trace "%s"',
                     $e->getMessage(),
                     $e->getTraceAsString()
                 )

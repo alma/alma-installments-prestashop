@@ -142,7 +142,7 @@ class InsuranceProductService
                 $idCustomization,
                 $idProductToAssociate,
                 $idProductAttributeToAssocation,
-                $price,
+                PriceHelper::convertPriceToCents($price),
                 $idAddressDelivery,
                 $insuranceContractInfos
             );

@@ -60,14 +60,16 @@ class StockAvailableRepository
      *
      * @param int $idProduct The product id
      * @param int $idProductAttribute The product id attribute
+     * @param $quantity
+     * @param $shopId
      *
-     * @return int
+     * @return bool
      */
     public function setQuantity($idProduct, $idProductAttribute, $quantity, $shopId)
     {
         return \Db::getInstance()->execute('
 						UPDATE `' . _DB_PREFIX_ . 'stock_available`
-						SET `quantity` = 999 
+						SET `quantity` = 999
 						WHERE `id_product` = ' . (int) $idProduct . '
 						AND `id_product_attribute` = ' . $idProductAttribute . '
 						AND `id_shop` = ' . (int) $shopId);

@@ -28,6 +28,7 @@ use Alma\PrestaShop\Exceptions\InsuranceNotFoundException;
 use Alma\PrestaShop\Helpers\ConstantsHelper;
 use Alma\PrestaShop\Helpers\ImageHelper;
 use Alma\PrestaShop\Helpers\InsuranceHelper;
+use Alma\PrestaShop\Helpers\PriceHelper;
 use Alma\PrestaShop\Hooks\FrontendHookController;
 use Alma\PrestaShop\Repositories\AlmaInsuranceProductRepository;
 use Alma\PrestaShop\Repositories\ProductRepository;
@@ -92,6 +93,7 @@ class DisplayCartExtraProductActionsHookController extends FrontendHookControlle
      * @return mixed
      *
      * @throws InsuranceNotFoundException
+     * @throws \PrestaShopDatabaseException
      */
     public function run($params)
     {
@@ -135,7 +137,7 @@ class DisplayCartExtraProductActionsHookController extends FrontendHookControlle
                 $resultInsurance[$almaInsurance['id_alma_insurance_product']] = [
                     'insuranceProduct' => $almaInsuranceProduct,
                     'insuranceProductAttribute' => $almaProductAttribute,
-                    'price' => $almaInsurance['price'],
+                    'price' => PriceHelper::convertPriceFromCents($almaInsurance['price']),
                     'name' => $almaInsuranceProduct->name[$this->context->language->id],
                     'urlImage' => '//' . $this->link->getImageLink(
                         $linkRewrite,

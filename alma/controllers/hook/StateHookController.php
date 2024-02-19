@@ -90,6 +90,8 @@ final class StateHookController extends AdminHookController
      * @return void
      *
      * @throws \Alma\PrestaShop\Exceptions\InsuranceSubscriptionException
+     * @throws \PrestaShopDatabaseException
+     * @throws \PrestaShopException
      */
     public function run($params)
     {
@@ -97,9 +99,6 @@ final class StateHookController extends AdminHookController
             return;
         }
 
-        /**
-         * @var \OrderCore $order
-         */
         $order = new \Order($params['id_order']);
         $newStatus = $params['newOrderStatus'];
 
@@ -110,7 +109,7 @@ final class StateHookController extends AdminHookController
             case SettingsHelper::getPaymentTriggerState():
                 $this->triggerPayment($order);
                 break;
-            case \Configuration::get('PS_OS_PAYMENT'):
+            case (int) \Configuration::get('PS_OS_PAYMENT'):
                 $this->processInsurance($order);
                 break;
             default:

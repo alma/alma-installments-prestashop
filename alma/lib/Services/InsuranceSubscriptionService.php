@@ -72,6 +72,7 @@ class InsuranceSubscriptionService
      *
      * @throws InsuranceSubscriptionException
      * @throws \PrestaShopDatabaseException
+     * @throws \PrestaShopException
      */
     public function triggerInsuranceSubscription($order)
     {
@@ -89,10 +90,12 @@ class InsuranceSubscriptionService
 
             $subscriptions = $this->insuranceApiService->subscribeInsurance(
                 $subscriptionData,
+                $order,
                 $orderPayment->transaction_id
             );
 
             $this->confirmSubscriptions($order->id_cart, $order->id_shop, $subscriptions);
+            $this->insuranceApiService->sendCmsReferenceSubscribedForTracking($cart);
         }
     }
 
@@ -104,6 +107,8 @@ class InsuranceSubscriptionService
      * @return void
      *
      * @throws InsuranceSubscriptionException
+     * @throws \PrestaShopDatabaseException
+     * @throws \PrestaShopException
      */
     protected function confirmSubscriptions($orderId, $shopId, $subscriptions)
     {
@@ -120,6 +125,8 @@ class InsuranceSubscriptionService
      * @return void
      *
      * @throws InsuranceSubscriptionException
+     * @throws \PrestaShopDatabaseException
+     * @throws \PrestaShopException
      */
     protected function confirmSubscription($orderId, $shopId, $subscription)
     {
