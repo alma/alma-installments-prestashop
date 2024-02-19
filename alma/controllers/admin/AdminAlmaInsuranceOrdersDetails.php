@@ -26,10 +26,10 @@ if (!defined('_PS_VERSION_')) {
 }
 
 use Alma\PrestaShop\Helpers\ConstantsHelper;
-use Alma\PrestaShop\Traits\AjaxTrait;
 use Alma\PrestaShop\Helpers\PriceHelper;
 use Alma\PrestaShop\Helpers\ProductHelper;
 use Alma\PrestaShop\Repositories\AlmaInsuranceProductRepository;
+use Alma\PrestaShop\Traits\AjaxTrait;
 
 class AdminAlmaInsuranceOrdersDetailsController extends ModuleAdminController
 {
@@ -41,13 +41,10 @@ class AdminAlmaInsuranceOrdersDetailsController extends ModuleAdminController
     protected $insuranceRepository;
 
     /**
-     * @var ProductHelper 
+     * @var ProductHelper
      */
     protected $productHelper;
 
-    /**
-     *
-     */
     public function __construct()
     {
         $this->bootstrap = true;
@@ -66,7 +63,6 @@ class AdminAlmaInsuranceOrdersDetailsController extends ModuleAdminController
     public function initContent()
     {
         parent::initContent();
-
 
         $this->context->smarty->assign($this->buildData());
 
@@ -112,12 +108,12 @@ class AdminAlmaInsuranceOrdersDetailsController extends ModuleAdminController
     /**
      * @param array $subscriptions
      * @param array $data
+     *
      * @return array
      */
     public function buildSubscriptions($subscriptions, $data)
     {
-        foreach($subscriptions as $subscription)
-        {
+        foreach ($subscriptions as $subscription) {
             $dataSubscriptions = [];
             $dataSubscriptions['id'] = $subscription['id_alma_insurance_product'];
 
@@ -126,7 +122,7 @@ class AdminAlmaInsuranceOrdersDetailsController extends ModuleAdminController
              */
             $product = new \Product($subscription['id_product']);
 
-            $dataSubscriptions['productName'] =  $this->productHelper->getProductName(
+            $dataSubscriptions['productName'] = $this->productHelper->getProductName(
                 $product,
                 $this->context->language->id,
                 $subscription['id_product_attribute']
@@ -137,7 +133,7 @@ class AdminAlmaInsuranceOrdersDetailsController extends ModuleAdminController
              */
             $insuranceProduct = new \Product($subscription['id_product_insurance']);
 
-            $dataSubscriptions['insuranceName'] =  $this->productHelper->getProductName(
+            $dataSubscriptions['insuranceName'] = $this->productHelper->getProductName(
                 $insuranceProduct,
                 $this->context->language->id,
                 $subscription['id_product_attribute_insurance']
@@ -148,21 +144,21 @@ class AdminAlmaInsuranceOrdersDetailsController extends ModuleAdminController
             $dataSubscriptions['subscriptionAmount'] = PriceHelper::convertPriceFromCents(
                 PriceHelper::convertPriceToCents($subscription['price'])
             );
-            $dataSubscriptions['isRefunded']  = $subscription['is_refunded'];
-            $dataSubscriptions['reasonForCancellation']  = $subscription['reason_of_cancelation'];
-            $dataSubscriptions['dateOfCancellation']  = $subscription['date_of_cancelation'];
+            $dataSubscriptions['isRefunded'] = $subscription['is_refunded'];
+            $dataSubscriptions['reasonForCancellation'] = $subscription['reason_of_cancelation'];
+            $dataSubscriptions['dateOfCancellation'] = $subscription['date_of_cancelation'];
 
-            if('0000-00-00 00:00:00' === $dataSubscriptions['dateOfCancellation'] ) {
+            if ('0000-00-00 00:00:00' === $dataSubscriptions['dateOfCancellation']) {
                 $dataSubscriptions['dateOfCancellation'] = '';
             }
 
-            $dataSubscriptions['dateOfCancelationRequest']  = $subscription['date_of_cancelation_request'];
+            $dataSubscriptions['dateOfCancelationRequest'] = $subscription['date_of_cancelation_request'];
 
-            if('0000-00-00 00:00:00' === $dataSubscriptions['dateOfCancelationRequest'] ) {
+            if ('0000-00-00 00:00:00' === $dataSubscriptions['dateOfCancelationRequest']) {
                 $dataSubscriptions['dateOfCancelationRequest'] = '';
             }
 
-            $dataSubscriptions['subscriptionBrokerId']  = $subscription['subscription_broker_id'];
+            $dataSubscriptions['subscriptionBrokerId'] = $subscription['subscription_broker_id'];
 
             $data['cmsSubscriptions'][] = $dataSubscriptions;
         }

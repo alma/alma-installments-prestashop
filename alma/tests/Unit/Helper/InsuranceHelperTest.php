@@ -74,6 +74,7 @@ class InsuranceHelperTest extends TestCase
      * @dataProvider dataTabsInsuranceDataProvider
      *
      * @param $tabsInsuranceDescription
+     *
      * @return void
      *
      * @throws \PrestaShopException
@@ -91,6 +92,7 @@ class InsuranceHelperTest extends TestCase
 
     /**
      * @dataProvider dataTabsInsuranceDataProvider
+     *
      * @return void
      *
      * @throws \PrestaShopException
@@ -264,8 +266,8 @@ class InsuranceHelperTest extends TestCase
                         'parent' => 'AdminAlmaInsurance',
                         'position' => null,
                         'icon' => null,
-                    ]
-                ]
+                    ],
+                ],
             ],
         ];
     }

@@ -30,7 +30,6 @@ if (!defined('_PS_VERSION_')) {
 
 use Alma\PrestaShop\Helpers\InsuranceHelper;
 use Alma\PrestaShop\Hooks\FrontendHookController;
-use Alma\PrestaShop\Services\InsuranceProductService;
 use Alma\PrestaShop\Services\InsuranceService;
 
 class ActionObjectProductInCartDeleteAfterHookController extends FrontendHookController

@@ -35,12 +35,12 @@ if (!defined('_PS_VERSION_')) {
  */
 class StockAvailableRepository
 {
-
     /**
      * Return the stock available for a given product id and attribute
      *
      * @param int $idProduct The product id
      * @param int $idProductAttribute The product id attribute
+     *
      * @return int
      */
     public function getQuantity($idProduct, $idProductAttribute, $shopId)
@@ -49,7 +49,7 @@ class StockAvailableRepository
         $query->select('quantity');
         $query->from('stock_available');
         $query->where('id_product = ' . (int) $idProduct);
-        $query->where('id_product_attribute = ' .  $idProductAttribute);
+        $query->where('id_product_attribute = ' . $idProductAttribute);
         $query->where('id_shop = ' . (int) $shopId);
 
         return (int) \Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue($query);
@@ -60,15 +60,16 @@ class StockAvailableRepository
      *
      * @param int $idProduct The product id
      * @param int $idProductAttribute The product id attribute
+     *
      * @return int
      */
-    public function setQuantity($idProduct, int $idProductAttribute, $quantity, $shopId)
+    public function setQuantity($idProduct, $idProductAttribute, $quantity, $shopId)
     {
         return \Db::getInstance()->execute('
 						UPDATE `' . _DB_PREFIX_ . 'stock_available`
 						SET `quantity` = 999 
-						WHERE `id_product` = ' . (int)$idProduct . ' 
-						AND `id_product_attribute` = ' . $idProductAttribute . ' 
-						AND `id_shop` = ' . (int)$shopId );
+						WHERE `id_product` = ' . (int) $idProduct . '
+						AND `id_product_attribute` = ' . $idProductAttribute . '
+						AND `id_shop` = ' . (int) $shopId);
     }
 }

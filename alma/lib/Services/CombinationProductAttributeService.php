@@ -42,12 +42,12 @@ class CombinationProductAttributeService
      */
     protected $stockAvailableService;
 
-
     public function __construct()
     {
         $this->combinationRepository = new CombinationRepository();
         $this->stockAvailableService = new StockAvailableService();
     }
+
     /**
      * @param \ProductCore$product
      * @param int $attributeId
@@ -56,6 +56,7 @@ class CombinationProductAttributeService
      * @param int $quantity
      * @param int $shopId
      * @param int $outOfStock See \StockAvailable::out_of_stock
+     *
      * @return int
      */
     public function manageCombination($product, $attributeId, $reference, $price, $quantity, $shopId = 1, $outOfStock = 1)
@@ -84,7 +85,7 @@ class CombinationProductAttributeService
                 0
             );
 
-            $combination = new \CombinationCore((int)$idProductAttributeInsurance);
+            $combination = new \CombinationCore((int) $idProductAttributeInsurance);
             $combination->setAttributes([$attributeId]);
 
             $this->stockAvailableService->createStocks(

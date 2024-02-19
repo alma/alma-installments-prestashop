@@ -35,7 +35,6 @@ if (!defined('_PS_VERSION_')) {
  */
 class CartProductRepository
 {
-
     /**
      * @param int $idProduct
      * @param int $idProductAttribute
@@ -43,20 +42,20 @@ class CartProductRepository
      * @param int $idAdressDelivery
      * @param int $idShop
      * @param int $quantity
+     *
      * @return int bool
      */
     public function add($idProduct, $idProductAttribute, $idCart, $idAdressDelivery, $idShop, $quantity)
     {
-        return \Db::getInstance()->insert('cart_product', array(
-            'id_product' => (int)$idProduct,
-            'id_product_attribute' => (int)$idProductAttribute,
-            'id_cart' => (int)$idCart,
-            'id_address_delivery' => (int)$idAdressDelivery,
+        return \Db::getInstance()->insert('cart_product', [
+            'id_product' => (int) $idProduct,
+            'id_product_attribute' => (int) $idProductAttribute,
+            'id_cart' => (int) $idCart,
+            'id_address_delivery' => (int) $idAdressDelivery,
             'id_shop' => $idShop,
-            'quantity' => (int)$quantity,
-            'date_add' => date('Y-m-d H:i:s')
-        ));
-
+            'quantity' => (int) $quantity,
+            'date_add' => date('Y-m-d H:i:s'),
+        ]);
     }
 
     /**
@@ -66,6 +65,7 @@ class CartProductRepository
      * @param int $idCart
      * @param int $isMultiAddressDelivery
      * @param int $idAddress
+     *
      * @return bool
      */
     public function update($quantity, $idProduct, $idProductAttribute, $idCart, $isMultiAddressDelivery, $idAddress)
@@ -73,10 +73,10 @@ class CartProductRepository
         return \Db::getInstance()->execute('
 						UPDATE `' . _DB_PREFIX_ . 'cart_product`
 						SET `quantity` = `quantity` ' . $quantity . ', `date_add` = NOW()
-						WHERE `id_product` = ' . (int)$idProduct .
-            (!empty($idProductAttribute) ? ' AND `id_product_attribute` = ' . (int)$idProductAttribute : '') . '
-						AND `id_cart` = ' . (int)$idCart . (\Configuration::get('PS_ALLOW_MULTISHIPPING') && $isMultiAddressDelivery ? ' 
-						AND `id_address_delivery` = ' . (int)$idAddress : '') . '
+						WHERE `id_product` = ' . (int) $idProduct .
+            (!empty($idProductAttribute) ? ' AND `id_product_attribute` = ' . (int) $idProductAttribute : '') . '
+						AND `id_cart` = ' . (int) $idCart . (\Configuration::get('PS_ALLOW_MULTISHIPPING') && $isMultiAddressDelivery ? '
+						AND `id_address_delivery` = ' . (int) $idAddress : '') . '
 						LIMIT 1'
         );
     }
@@ -84,13 +84,14 @@ class CartProductRepository
     /**
      * @param int $idProduct
      * @param int $idCart
+     *
      * @return false|string|null
      */
     public function hasProductInCart($idProduct, $idCart)
     {
-       return  \Db::getInstance()->getValue('SELECT distinct(`id_product`)
+        return \Db::getInstance()->getValue('SELECT distinct(`id_product`)
             FROM `' . _DB_PREFIX_ . 'cart_product`
-            where `id_cart` =' . (int)$idCart . '
-            AND `id_product` = ' . (int)$idProduct );
+            where `id_cart` =' . (int) $idCart . '
+            AND `id_product` = ' . (int) $idProduct);
     }
 }

@@ -83,6 +83,7 @@ class CustomerService
 
     /**
      * I guess the shipping phone number is the most serious one before billing
+     *
      * @return string|null
      */
     private function getPhone()

@@ -24,7 +24,6 @@
 
 namespace Alma\PrestaShop\Tests\Unit\Controllers\Front;
 
-use Alma\API\Entities\Insurance\Subscription;
 use Alma\PrestaShop\Controllers\Front\AlmaSubscriptionModuleFrontController;
 use Alma\PrestaShop\Exceptions\SubscriptionException;
 use PHPUnit\Framework\TestCase;
@@ -35,19 +34,18 @@ class SubscriptionTest extends TestCase
      * @throws \PrestaShopException
      * @throws \ReflectionException
      */
-
     public function testThrowErrorIfNoSidOnTheCallBackUrl()
     {
         // @TODO : I don't know if we can make test on Prestashop controllers, if not we can delete this file
         $this->assertTrue(true);
         /*
-        $Tools = $this->getMockClass('Tools', array('getValue'));
-        $almaSubscriptionModuleFrontController = new AlmaSubscriptionModuleFrontController();
-        $Tools::staticExpects($this->any())
-            ->method('getValue')
-            ->with($this->equalTo(null));
-        $almaSubscriptionModuleFrontController->postProcess();
-        $this->expectException(SubscriptionException::class);
+                $Tools = $this->getMockClass('Tools', array('getValue'));
+                $almaSubscriptionModuleFrontController = new AlmaSubscriptionModuleFrontController();
+                $Tools::staticExpects($this->any())
+                    ->method('getValue')
+                    ->with($this->equalTo(null));
+                $almaSubscriptionModuleFrontController->postProcess();
+                $this->expectException(SubscriptionException::class);
         */
     }
 }

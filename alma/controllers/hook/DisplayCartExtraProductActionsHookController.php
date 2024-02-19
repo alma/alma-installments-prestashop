@@ -28,11 +28,9 @@ use Alma\PrestaShop\Exceptions\InsuranceNotFoundException;
 use Alma\PrestaShop\Helpers\ConstantsHelper;
 use Alma\PrestaShop\Helpers\ImageHelper;
 use Alma\PrestaShop\Helpers\InsuranceHelper;
-use Alma\PrestaShop\Helpers\SettingsHelper;
 use Alma\PrestaShop\Hooks\FrontendHookController;
 use Alma\PrestaShop\Repositories\AlmaInsuranceProductRepository;
 use Alma\PrestaShop\Repositories\ProductRepository;
-use PrestaShop\PrestaShop\Core\Domain\Product\AttributeGroup\Attribute\QueryResult\Attribute;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -75,7 +73,7 @@ class DisplayCartExtraProductActionsHookController extends FrontendHookControlle
         $this->productRepository = new ProductRepository();
         $this->almaInsuranceProductRepository = new AlmaInsuranceProductRepository();
         $this->imageHelper = new ImageHelper();
-        $this->link = new \Link;
+        $this->link = new \Link();
         parent::__construct($module);
     }
 
@@ -90,12 +88,13 @@ class DisplayCartExtraProductActionsHookController extends FrontendHookControlle
 
     /**
      * @param $params
+     *
      * @return mixed
+     *
      * @throws InsuranceNotFoundException
      */
     public function run($params)
     {
-
         /**
          * @var \ProductCore $product
          */
@@ -117,13 +116,11 @@ class DisplayCartExtraProductActionsHookController extends FrontendHookControlle
 
         $resultInsurance = [];
 
-
         $idProduct = $product->id;
         $productQuantity = $product->quantity;
         $template = 'displayCartExtraProductActions.tpl';
 
-        if($idProduct !== $insuranceProductId) {
-
+        if ($idProduct !== $insuranceProductId) {
             $almaInsurances = $this->almaInsuranceProductRepository->getIdsByCartIdAndShopAndProduct(
                 $product,
                 $cart->id,
@@ -131,8 +128,8 @@ class DisplayCartExtraProductActionsHookController extends FrontendHookControlle
             );
 
             foreach ($almaInsurances as $almaInsurance) {
-                $almaInsuranceProduct = new \ProductCore((int)$almaInsurance['id_product_insurance']);
-                $almaProductAttribute = new \CombinationCore((int)$almaInsurance['id_product_attribute_insurance']);
+                $almaInsuranceProduct = new \ProductCore((int) $almaInsurance['id_product_insurance']);
+                $almaProductAttribute = new \CombinationCore((int) $almaInsurance['id_product_attribute_insurance']);
                 $idImage = $almaInsuranceProduct->getImages($this->context->language->id)[0]['id_image'];
                 $linkRewrite = $almaInsuranceProduct->link_rewrite[$this->context->language->id];
                 $resultInsurance[$almaInsurance['id_alma_insurance_product']] = [
@@ -147,13 +144,13 @@ class DisplayCartExtraProductActionsHookController extends FrontendHookControlle
                     ),
                 ];
             }
-        }{
+        }
 
-        $ajaxLinkRemoveProduct = $this->link->getModuleLink('alma', 'insurance', ["action" => "removeProductFromCart"]);
-        $ajaxLinkRemoveAssociation = $this->link->getModuleLink('alma', 'insurance', ["action" => "removeAssociation"]);
-        $ajaxLinkRemoveInsuranceProduct = $this->link->getModuleLink('alma', 'insurance', ["action" => "removeInsuranceProduct"]);
+        $ajaxLinkRemoveProduct = $this->link->getModuleLink('alma', 'insurance', ['action' => 'removeProductFromCart']);
+        $ajaxLinkRemoveAssociation = $this->link->getModuleLink('alma', 'insurance', ['action' => 'removeAssociation']);
+        $ajaxLinkRemoveInsuranceProduct = $this->link->getModuleLink('alma', 'insurance', ['action' => 'removeInsuranceProduct']);
 
-            $this->context->smarty->assign([
+        $this->context->smarty->assign([
                 'idCart' => $cart->id,
                 'idLanguage' => $this->context->language->id,
                 'nbProductWithoutInsurance' => $productQuantity - count($resultInsurance),
@@ -164,10 +161,9 @@ class DisplayCartExtraProductActionsHookController extends FrontendHookControlle
                 'ajaxLinkAlmaRemoveAssociation' => $ajaxLinkRemoveAssociation,
                 'ajaxLinkRemoveInsuranceProduct' => $ajaxLinkRemoveInsuranceProduct,
                 'token' => \Tools::getToken(false),
-                'idProduct' => $idProduct
+                'idProduct' => $idProduct,
             ]);
 
-            return $this->module->display($this->module->file, $template);
-        }
+        return $this->module->display($this->module->file, $template);
     }
 }

@@ -31,7 +31,6 @@ class AdminAlmaInsuranceOrdersController extends ModuleAdminController
 {
     protected $actions_available = ['show'];
 
-
     /**
      * @throws PrestaShopException
      */
@@ -113,13 +112,10 @@ class AdminAlmaInsuranceOrdersController extends ModuleAdminController
         $this->_where = ' AND `mode` = "' . SettingsHelper::getActiveMode() . '"';
         $this->_select = ' count(`id_order`) as nb_insurance ';
 
-
         parent::getList($id_lang, $orderBy, $orderWay, $start, $limit, $this->context->shop->id);
 
-        foreach($this->_list as $key => $details)  {
-
-            foreach($details as $value) {
-
+        foreach ($this->_list as $key => $details) {
+            foreach ($details as $value) {
                 /**
                  * @var OrderCore $order
                  */
@@ -132,20 +128,20 @@ class AdminAlmaInsuranceOrdersController extends ModuleAdminController
                  * @var CustomerCore $customer
                  */
                 $customer = $order->getCustomer();
-                $this->_list[$key]['customer'] = sprintf("%s %s", $customer->lastname, $customer->firstname);
+                $this->_list[$key]['customer'] = sprintf('%s %s', $customer->lastname, $customer->firstname);
                 $this->_list[$key]['date'] = $order->date_add;
             }
         }
     }
 
-
     /**
      * @param string $token
      * @param int $id
      * @param string $name
+     *
      * @return mixed
      */
-    public function displayShowLink($token = null, $id, $name = null)
+    public function displayShowLink($id, $token = null, $name = null)
     {
         $tpl = $this->createTemplate('helpers/list/list_action_edit.tpl');
 
@@ -156,15 +152,15 @@ class AdminAlmaInsuranceOrdersController extends ModuleAdminController
             true,
             [],
             [
-                'identifier' => $id
+                'identifier' => $id,
             ]
         );
 
-        $tpl->assign(array(
+        $tpl->assign([
             'href' => $linkToController,
             'action' => 'Show',
-            'id' => $id
-        ));
+            'id' => $id,
+        ]);
 
         return $tpl->fetch();
     }
@@ -172,6 +168,7 @@ class AdminAlmaInsuranceOrdersController extends ModuleAdminController
     /**
      * @param int $idProduct
      * @param int $idProductAttribute
+     *
      * @return string
      */
     protected function getProductName($idProduct, $idProductAttribute = null)
@@ -182,7 +179,7 @@ class AdminAlmaInsuranceOrdersController extends ModuleAdminController
         $product = new \Product($idProduct);
         $productName = $product->name[$this->context->language->id];
 
-        if(null !== $idProductAttribute) {
+        if (null !== $idProductAttribute) {
             /*
              * @var CombinationCore $combinationProduct;
              */
@@ -204,6 +201,6 @@ class AdminAlmaInsuranceOrdersController extends ModuleAdminController
     {
         parent::initToolbar();
 
-        unset( $this->toolbar_btn['new'] );
+        unset($this->toolbar_btn['new']);
     }
 }

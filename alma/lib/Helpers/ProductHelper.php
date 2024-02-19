@@ -96,6 +96,7 @@ class ProductHelper
      * @param $productId
      * @param $productAttributeId
      * @param $quantity
+     *
      * @return float
      */
     public function getPriceStatic($productId, $productAttributeId, $quantity = 1)
@@ -115,6 +116,7 @@ class ProductHelper
     /**
      * @param $productId
      * @param $productAttributeId
+     *
      * @return float|int
      */
     public function getRegularPrice($productId, $productAttributeId)
@@ -130,6 +132,7 @@ class ProductHelper
 
     /**
      * @param $productParams
+     *
      * @return int|mixed
      */
     public function getQuantity($productParams)
@@ -154,13 +157,14 @@ class ProductHelper
      * @param \ProductCore $product
      * @param int $languageId
      * @param int|null $idProductAttribute
+     *
      * @return string
      */
     public function getProductName($product, $languageId, $idProductAttribute = null)
     {
         $productName = $product->name[$languageId];
 
-        if(null !== $idProductAttribute) {
+        if (null !== $idProductAttribute) {
             /*
              * @var CombinationCore $combinationProduct;
              */
@@ -172,6 +176,6 @@ class ProductHelper
             }
         }
 
-        return htmlspecialchars($productName);
+        return htmlspecialchars($productName, ENT_NOQUOTES);
     }
 }

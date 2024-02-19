@@ -22,24 +22,23 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
-namespace Alma\PrestaShop\Tests\Unit\Helper;
+namespace Alma\PrestaShop\Tests\Unit\Services;
 
+use Alma\API\Client;
 use Alma\API\Endpoints\Insurance;
+use Alma\API\RequestError;
 use Alma\PrestaShop\Exceptions\SubscriptionException;
 use Alma\PrestaShop\Helpers\SubscriptionHelper;
 use Alma\PrestaShop\Repositories\AlmaInsuranceProductRepository;
+use Alma\PrestaShop\Services\InsuranceApiService;
 use PHPUnit\Framework\TestCase;
 
-class SubscriptionHelperTest extends TestCase
+class InsuranceApiServiceTest extends TestCase
 {
     /**
      * @var SubscriptionHelper
      */
-    private $subscriptionHelper;
-    /**
-     * @var Insurance|(Insurance&\PHPUnit\Framework\MockObject\MockObject)|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private $insuranceClientMock;
+    private $insuranceApiService;
     /**
      * @var AlmaInsuranceProductRepository|(AlmaInsuranceProductRepository&\PHPUnit\Framework\MockObject\MockObject)|\PHPUnit\Framework\MockObject\MockObject
      */
@@ -48,41 +47,47 @@ class SubscriptionHelperTest extends TestCase
     public function setUp()
     {
         $this->almaInsuranceProductRepository = $this->createMock(AlmaInsuranceProductRepository::class);
-        $this->subscriptionHelper = new SubscriptionHelper($this->almaInsuranceProductRepository);
+        $this->insuranceApiService = new InsuranceApiService();
+        $this->client = $this->createMock(Client::class);
     }
 
     /**
      * @return void
-     *
-     * @throws SubscriptionException
      */
-    public function testUpdatedSubscriptionExecutedOnceWithParam()
+    public function testPostProcessMethodExists()
     {
-        $subscriptionId = 'subscription_39lGsF0UdBfpjQ8UXdYvkX';
-        $status = 'started';
-        $subscriptionBrokerId = 'broker_id';
-        $this->almaInsuranceProductRepository->expects($this->once())
-            ->method('updateSubscription')
-            ->with($subscriptionId, $status, $subscriptionBrokerId)
-            ->willReturn(true);
-        $this->subscriptionHelper->updateSubscription($subscriptionId, $status, $subscriptionBrokerId);
+        $this->assertTrue(method_exists($this->insuranceApiService, 'getSubscriptionById'));
     }
 
     /**
-     * @return void
-     *
      * @throws SubscriptionException
      */
-    public function testThrowExceptionIfRequestToUpdateSubscriptionWrong()
+    public function testGetRequestIsCalledAndThrowSubscriptionExceptionIfApiThrowException()
     {
-        $subscriptionId = 'subscription_39lGsF0UdBfpjQ8UXdYvkX';
-        $status = 'started';
-        $subscriptionBrokerId = 'broker_id';
-        $this->almaInsuranceProductRepository->expects($this->once())
-            ->method('updateSubscription')
-            ->with($subscriptionId, $status, $subscriptionBrokerId)
-            ->willReturn(false);
+        $sid = 'subscription_39lGsF0UdBfpjQ8UXdYvkX';
+
+        $insuranceMock = $this->createMock(Insurance::class);
+        $insuranceMock->expects($this->once())->method('getSubscription')->with(['id' => $sid])->willThrowException(new RequestError('Request Error'));
+        $this->client->insurance = $insuranceMock;
         $this->expectException(SubscriptionException::class);
-        $this->subscriptionHelper->updateSubscription($subscriptionId, $status, $subscriptionBrokerId);
+        $this->insuranceApiService->setPhpClient($this->client);
+        $this->insuranceApiService->getSubscriptionById($sid);
+    }
+
+    /**
+     * @throws SubscriptionException
+     */
+    public function testGetRequestIsCalledAndReturnSubscriptionIfNoError()
+    {
+        $sid = 'subscription_39lGsF0UdBfpjQ8UXdYvkX';
+        $subscriptionArray = ['subscriptions' => [
+            ['id' => 'sub1'],
+        ]];
+        $insuranceMock = $this->createMock(Insurance::class);
+        $insuranceMock->expects($this->once())->method('getSubscription')->with(['id' => $sid])->willReturn($subscriptionArray);
+        $this->client->insurance = $insuranceMock;
+
+        $this->insuranceApiService->setPhpClient($this->client);
+        $this->assertEquals(['id' => 'sub1'], $this->insuranceApiService->getSubscriptionById($sid));
     }
 }

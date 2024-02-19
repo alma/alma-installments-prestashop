@@ -31,8 +31,6 @@ if (!defined('_PS_VERSION_')) {
 use Alma\PrestaShop\Helpers\InsuranceHelper;
 use Alma\PrestaShop\Hooks\FrontendHookController;
 use Alma\PrestaShop\Repositories\AlmaInsuranceProductRepository;
-use Alma\PrestaShop\Repositories\AttributeGroupRepository;
-use Alma\PrestaShop\Repositories\AttributeRepository;
 
 class ActionValidateOrderHookController extends FrontendHookController
 {
@@ -53,10 +51,10 @@ class ActionValidateOrderHookController extends FrontendHookController
         $this->insuranceHelper = new InsuranceHelper();
     }
 
-   public function canRun()
-   {
-       return parent::canRun() && $this->insuranceHelper->isInsuranceActivated();
-   }
+    public function canRun()
+    {
+        return parent::canRun() && $this->insuranceHelper->isInsuranceActivated();
+    }
 
     /**
      * Run Controller

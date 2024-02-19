@@ -24,17 +24,13 @@
 
 namespace Alma\PrestaShop\Services;
 
+use Alma\API\Client;
 use Alma\API\Entities\Insurance\Contract;
-use Alma\API\Entities\Insurance\File;
-use Alma\API\Exceptions\MissingKeyException;
-use Alma\API\Exceptions\ParametersException;
-use Alma\API\Exceptions\ParamsException;
-use Alma\API\Exceptions\RequestException;
-use Alma\API\RequestError;
+use Alma\API\Exceptions\AlmaException;
 use Alma\PrestaShop\Exceptions\InsuranceSubscriptionException;
+use Alma\PrestaShop\Exceptions\SubscriptionException;
 use Alma\PrestaShop\Helpers\CartHelper;
 use Alma\PrestaShop\Helpers\ClientHelper;
-use Alma\API\Client;
 use Alma\PrestaShop\Logger;
 
 class InsuranceApiService
@@ -54,9 +50,6 @@ class InsuranceApiService
      */
     protected $cartHelper;
 
-    /**
-     *
-     */
     public function __construct()
     {
         $this->almaApiClient = ClientHelper::defaultInstance();
@@ -65,9 +58,22 @@ class InsuranceApiService
     }
 
     /**
+     * Used for Unit Test
+     *
+     * @param $client
+     *
+     * @return void
+     */
+    public function setPhpClient($client)
+    {
+        $this->almaApiClient = $client;
+    }
+
+    /**
      * @param $insuranceContractId
      * @param $cmsReference
      * @param $productPrice
+     *
      * @return array|null
      */
     public function getInsuranceContractFiles($insuranceContractId, $cmsReference, $productPrice)
@@ -104,6 +110,7 @@ class InsuranceApiService
      * @param int $insuranceContractId
      * @param string $cmsReference
      * @param int $productPrice
+     *
      * @return Contract|null
      */
     public function getInsuranceContract($insuranceContractId, $cmsReference, $productPrice)
@@ -129,26 +136,27 @@ class InsuranceApiService
         return null;
     }
 
-
     /**
      * @param array $subscriptionData
      * @param int $idTransaction
+     *
      * @return array
+     *
      * @throws InsuranceSubscriptionException
      */
     public function subscribeInsurance($subscriptionData, $idTransaction)
     {
         try {
-          $result = $this->almaApiClient->insurance->subscription(
+            $result = $this->almaApiClient->insurance->subscription(
               $subscriptionData,
               $idTransaction,
               $this->context->session->getId(),
               $this->cartHelper->getCartIdFromContext()
           );
 
-          if(isset($result['subscriptions'])) {
-              return $result['subscriptions'];
-          }
+            if (isset($result['subscriptions'])) {
+                return $result['subscriptions'];
+            }
         } catch (\Exception  $e) {
             Logger::instance()->error(
                 sprintf(
@@ -159,9 +167,26 @@ class InsuranceApiService
                     $idTransaction
                 )
             );
-
         }
 
         throw new InsuranceSubscriptionException();
+    }
+
+    /**
+     * @param $sid
+     *
+     * @return array
+     *
+     * @throws SubscriptionException
+     */
+    public function getSubscriptionById($sid)
+    {
+        try {
+            $subscriptionArray = $this->almaApiClient->insurance->getSubscription(['id' => $sid]);
+
+            return $subscriptionArray['subscriptions'][0];
+        } catch (AlmaException $e) {
+            throw new SubscriptionException('Impossible to get subscription');
+        }
     }
 }

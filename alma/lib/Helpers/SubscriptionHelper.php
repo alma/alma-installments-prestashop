@@ -24,12 +24,8 @@
 
 namespace Alma\PrestaShop\Helpers;
 
-use Alma\API\Exceptions\ParametersException;
-use Alma\API\Exceptions\RequestException;
-use Alma\API\RequestError;
 use Alma\PrestaShop\Exceptions\SubscriptionException;
-use Alma\PrestaShop\Logger;
-use Alma\PrestaShop\Traits\AjaxTrait;
+use Alma\PrestaShop\Repositories\AlmaInsuranceProductRepository;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -40,67 +36,32 @@ if (!defined('_PS_VERSION_')) {
  */
 class SubscriptionHelper
 {
-    use AjaxTrait;
-
     /**
-     * @var ClientHelper
+     * @var AlmaInsuranceProductRepository|mixed|null
      */
-    protected $almaApiClient;
+    protected $almaInsuranceProductRepository;
 
-    public function __construct()
+    public function __construct($almaInsuranceProductRepository = null)
     {
-        $this->almaApiClient = ClientHelper::defaultInstance();
+        if (!$almaInsuranceProductRepository) {
+            $almaInsuranceProductRepository = new AlmaInsuranceProductRepository();
+        }
+        $this->almaInsuranceProductRepository = $almaInsuranceProductRepository;
     }
 
     /**
-     * Used for Unit Test
-     * @param $client
+     * @param string $subscriptionId
+     * @param string $status
+     * @param string $subscriptionBrokerId
+     *
      * @return void
-     */
-    public function setPhpClient($client)
-    {
-        $this->almaApiClient = $client;
-    }
-
-    /**
-     * @param $action
-     * @param $sid
-     * @param $trace
-     * @throws RequestError
+     *
      * @throws SubscriptionException
-     * @throws \PrestaShopException
      */
-    public function postProcess($action, $sid, $trace)
+    public function updateSubscription($subscriptionId, $status, $subscriptionBrokerId)
     {
-        if (!$sid) {
-            Logger::instance()->error('Sid is missing');
-            throw new SubscriptionException('Sid is missing');
-
-            $this->ajaxRenderAndExit(json_encode(['error' => 'Missing Id']), 500);
-        }
-
-        if (!$trace) {
-            $this->ajaxRenderAndExit(json_encode(['error' => 'Missing secutiry token']), 500);
-        }
-
-        switch ($action) {
-            case  'update' :
-                try {
-                    $subscription = $this->almaApiClient->insurance->getSubscription(['id' => $sid]);
-                } catch (ParametersException $e) {
-
-                } catch (RequestException $e) {
-
-                }
-                // @TODO : Get du subscription PHP Client
-                // @TODO : if error get subscription log error + throw error
-                // @TODO : if error check data in get subscription Log error + throw error
-                // @TODO : Update in database susbcription_state with the new state
-                // @TOTO : set notification order message with link to the order in the message
-                $this->ajaxRenderAndExit(json_encode(['success' => true]), 200);
-            default :
-                // @TODO : Log error + throw error
-                $this->ajaxRenderAndExit(json_encode(['error' => 'Wrong action']), 500);
+        if (!$this->almaInsuranceProductRepository->updateSubscription($subscriptionId, $status, $subscriptionBrokerId)) {
+            throw new SubscriptionException('Error to update DB Alma Insurance Product');
         }
     }
 }

@@ -26,7 +26,6 @@ namespace Alma\PrestaShop\Helpers;
 
 use Alma\PrestaShop\Logger;
 use Alma\PrestaShop\Model\CartData;
-use Alma\PrestaShop\Model\OrderData;
 use Alma\PrestaShop\Repositories\OrderRepository;
 use Alma\PrestaShop\Repositories\ProductRepository;
 
@@ -59,12 +58,13 @@ class CartHelper
     {
         $cartId = null;
 
-        if(isset($this->context->cart->id)) {
+        if (isset($this->context->cart->id)) {
             $cartId = $this->context->cart->id;
         }
 
         return $cartId;
     }
+
     /**
      * Previous cart items of the customer
      *

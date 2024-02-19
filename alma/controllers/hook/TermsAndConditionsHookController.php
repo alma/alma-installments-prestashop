@@ -74,6 +74,7 @@ class TermsAndConditionsHookController extends FrontendHookController
 
     /**
      * @return bool
+     *
      * @throws \PrestaShopDatabaseException
      */
     public function canRun()
@@ -85,7 +86,9 @@ class TermsAndConditionsHookController extends FrontendHookController
 
     /**
      * @param $params
+     *
      * @return array
+     *
      * @throws \PrestaShopDatabaseException
      */
     public function run($params)
