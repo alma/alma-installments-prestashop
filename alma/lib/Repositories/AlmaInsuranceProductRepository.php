@@ -173,9 +173,11 @@ class AlmaInsuranceProductRepository
     }
 
     /**
-     * @param int $orderId
+     * @param $id
      *
      * @return mixed
+     *
+     * @throws \PrestaShopDatabaseException
      */
     public function getByOrderId($id)
     {

@@ -77,6 +77,9 @@ class AdminAlmaInsuranceOrdersDetailsController extends ModuleAdminController
 
     /**
      * @return array
+     *
+     * @throws PrestaShopDatabaseException
+     * @throws PrestaShopException
      */
     public function buildData()
     {
