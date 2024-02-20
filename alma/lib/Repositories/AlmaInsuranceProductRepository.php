@@ -256,9 +256,7 @@ class AlmaInsuranceProductRepository
             PRIMARY KEY (`id_alma_insurance_product`),
             index `ps_alma_insurance_product_cart_shop` (`id_cart`, `id_shop`),
             index `ps_alma_insurance_product` (`id_product`, `id_shop`, `id_product_attribute`, `id_customization`, `id_cart`),
-            index `ps_broker_id` (`subscription_broker_id`),
-            constraint ps_alma_insurance_product_pk  unique (`subscription_id`),
-            constraint ps_alma_insurance_broker_pk  unique (`subscription_broker_id`)
+            index `ps_broker_id` (`subscription_broker_id`)
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci';
 
         return \Db::getInstance()->execute($sql);

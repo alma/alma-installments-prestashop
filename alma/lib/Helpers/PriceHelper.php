@@ -89,7 +89,7 @@ class PriceHelper
      *
      * @throws \PrestaShop\PrestaShop\Core\Localization\Exception\LocalizationException
      */
-    public static function formatPriceToCentsByCurrencyId($cents, $idCurrency = null)
+    public static function formatPriceFromCentsByCurrencyId($cents, $idCurrency = null)
     {
         $legacy = version_compare(_PS_VERSION_, '1.7.6.0', '<');
         $currency = \Context::getContext()->currency;
