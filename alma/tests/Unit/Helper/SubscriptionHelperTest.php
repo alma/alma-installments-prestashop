@@ -24,7 +24,6 @@
 
 namespace Alma\PrestaShop\Tests\Unit\Helper;
 
-use Alma\API\Endpoints\Insurance;
 use Alma\PrestaShop\Exceptions\SubscriptionException;
 use Alma\PrestaShop\Helpers\SubscriptionHelper;
 use Alma\PrestaShop\Repositories\AlmaInsuranceProductRepository;
@@ -36,10 +35,6 @@ class SubscriptionHelperTest extends TestCase
      * @var SubscriptionHelper
      */
     private $subscriptionHelper;
-    /**
-     * @var Insurance|(Insurance&\PHPUnit\Framework\MockObject\MockObject)|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private $insuranceClientMock;
     /**
      * @var AlmaInsuranceProductRepository|(AlmaInsuranceProductRepository&\PHPUnit\Framework\MockObject\MockObject)|\PHPUnit\Framework\MockObject\MockObject
      */
