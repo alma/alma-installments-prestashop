@@ -26,6 +26,7 @@ if (!defined('_PS_VERSION_')) {
 }
 
 use Alma\PrestaShop\Helpers\PriceHelper;
+use PrestaShop\PrestaShop\Core\Localization\Exception\LocalizationException;
 
 class AdminAlmaInsuranceOrdersController extends ModuleAdminController
 {
@@ -107,6 +108,7 @@ class AdminAlmaInsuranceOrdersController extends ModuleAdminController
      *
      * @throws PrestaShopDatabaseException
      * @throws PrestaShopException
+     * @throws LocalizationException
      *
      * @deprecated
      */
@@ -133,10 +135,8 @@ class AdminAlmaInsuranceOrdersController extends ModuleAdminController
             $customer = $order->getCustomer();
             $this->_list[$key]['customer'] = $customer->lastname . ' ' . $customer->firstname;
             $this->_list[$key]['date'] = $order->date_add;
-            $this->_list[$key]['product_price'] = PriceHelper::formatPriceToCentsByCurrencyId($details['product_price']);
-            $this->_list[$key]['subscription_amount'] = PriceHelper::formatPriceToCentsByCurrencyId(
-                PriceHelper::convertPriceToCents($details['price'])
-            );
+            $this->_list[$key]['product_price'] = PriceHelper::formatPriceFromCentsByCurrencyId($details['product_price']);
+            $this->_list[$key]['subscription_amount'] = PriceHelper::formatPriceFromCentsByCurrencyId($details['price']);
 
             $this->_list[$key]['product'] = $this->getProductName(
                 $details['id_product'],

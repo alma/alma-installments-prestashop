@@ -176,7 +176,7 @@ class PaymentOptionsHookController extends FrontendHookController
                 if ($isDeferred) {
                     $templateVar['installmentText'] = sprintf(
                         $this->module->l('0 € today then %1$s on %2$s', 'PaymentOptionsHookController'),
-                        PriceHelper::formatPriceToCentsByCurrencyId($plans[0]['purchase_amount'] + $plans[0]['customer_fee']),
+                        PriceHelper::formatPriceFromCentsByCurrencyId($plans[0]['purchase_amount'] + $plans[0]['customer_fee']),
                         DateHelper::getDateFormat($locale, $plans[0]['due_date'])
                     );
                 }
