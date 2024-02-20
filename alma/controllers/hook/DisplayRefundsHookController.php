@@ -94,7 +94,7 @@ final class DisplayRefundsHookController extends AdminHookController
             $percentRefund = PriceHelper::calculatePercentage($totalRefundInCents, $totalOrderInCents);
 
             $refundData = [
-                'totalRefundPrice' => PriceHelper::formatPriceToCentsByCurrencyId($totalRefundInCents, (int) $order->id_currency),
+                'totalRefundPrice' => PriceHelper::formatPriceFromCentsByCurrencyId($totalRefundInCents, (int) $order->id_currency),
                 'percentRefund' => $percentRefund,
             ];
         }
@@ -102,10 +102,10 @@ final class DisplayRefundsHookController extends AdminHookController
         $currency = new \Currency($order->id_currency);
         $orderData = [
             'id' => $order->id,
-            'maxAmount' => PriceHelper::formatPriceToCentsByCurrencyId(PriceHelper::convertPriceToCents($order->total_paid_tax_incl), (int) $order->id_currency),
+            'maxAmount' => PriceHelper::formatPriceFromCentsByCurrencyId(PriceHelper::convertPriceToCents($order->total_paid_tax_incl), (int) $order->id_currency),
             'currencySymbol' => $currency->sign,
             'ordersId' => $ordersId,
-            'paymentTotalPrice' => PriceHelper::formatPriceToCentsByCurrencyId($totalOrderInCents, (int) $order->id_currency),
+            'paymentTotalPrice' => PriceHelper::formatPriceFromCentsByCurrencyId($totalOrderInCents, (int) $order->id_currency),
         ];
         $wording = [
             'title' => $this->module->l('Alma refund', 'DisplayRefundsHookController'),
