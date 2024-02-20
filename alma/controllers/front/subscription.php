@@ -77,7 +77,6 @@ class AlmaSubscriptionModuleFrontController extends ModuleFrontController
         if (!$sid) {
             Logger::instance()->error('Sid is missing');
             throw new SubscriptionException('Sid is missing');
-            $this->ajaxRenderAndExit(json_encode(['error' => 'Missing Id']), 500);
         }
 
         if (!$trace) {
