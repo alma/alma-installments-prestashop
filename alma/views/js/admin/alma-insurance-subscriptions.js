@@ -36,17 +36,16 @@
             if (e.data.type === 'sendCancelSubscriptionToCms') {
                 console.log('Cancel subscription', e.data)
 
-                /* TODO : Make ajax controller cancellation
+                /* TODO : generate url in template */
                 $.ajax({
                     type: 'POST',
-                    url: 'ajax-tab.php',
+                    url: '/module/alma/cancellation?action=cancel',
                     dataType: 'json',
                     data: {
                         ajax: true,
-                        controller: 'AdminAlmaShareOfCheckout',
-                        action: 'ConsentShareOfCheckout',
+                        action: 'cancel',
                         token: $(this).attr('data-token'),
-                        consent: $(this).attr('data-consent')
+                        subscription_id: $(this).attr('data-subscription-id')
                     },
                 })
                 .success(function() {
@@ -55,7 +54,6 @@
                 .error(function(e) {
                     // Error
                 });
-                 */
             }
         })
 
