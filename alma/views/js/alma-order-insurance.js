@@ -22,7 +22,6 @@
  */
 var linkTermsAndConditionsInsurance = $('.js-terms[for="conditions_to_approve[terms-and-conditions-alma-insurance]"] a');
 linkTermsAndConditionsInsurance.each(function (i, link) {
-    $(link).off('click');
     $(link).on('click', function(e) {
         e.stopImmediatePropagation();
     });
