@@ -25,7 +25,6 @@
 namespace Alma\PrestaShop\Services;
 
 use Alma\API\Entities\Insurance\Subscription;
-use Alma\PrestaShop\Exceptions\AlmaException;
 use Alma\PrestaShop\Exceptions\InsuranceInstallException;
 use Alma\PrestaShop\Exceptions\TermsAndConditionsException;
 use Alma\PrestaShop\Helpers\ConstantsHelper;
@@ -174,7 +173,6 @@ class InsuranceService
      *
      * @return void
      *
-     * @throws AlmaException
      * @throws \PrestaShopDatabaseException
      */
     public function deleteAllLinkedInsuranceProducts($params)

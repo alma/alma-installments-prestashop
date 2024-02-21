@@ -26,8 +26,10 @@ namespace Alma\PrestaShop\Services;
 
 use Alma\API\Client;
 use Alma\API\Entities\Insurance\Contract;
+use Alma\API\Exceptions\AlmaException;
 use Alma\API\RequestError;
 use Alma\PrestaShop\Exceptions\InsuranceSubscriptionException;
+use Alma\PrestaShop\Exceptions\SubscriptionException;
 use Alma\PrestaShop\Helpers\CartHelper;
 use Alma\PrestaShop\Helpers\ClientHelper;
 use Alma\PrestaShop\Helpers\ProductHelper;
@@ -60,6 +62,18 @@ class InsuranceApiService
         $this->context = \Context::getContext();
         $this->cartHelper = new CartHelper();
         $this->productHelper = new ProductHelper();
+    }
+
+    /**
+     * Used for Unit Test
+     *
+     * @param $client
+     *
+     * @return void
+     */
+    public function setPhpClient($client)
+    {
+        $this->almaApiClient = $client;
     }
 
     /**
@@ -199,6 +213,24 @@ class InsuranceApiService
                     $cart->id
                 )
             );
+        }
+    }
+
+    /**
+     * @param $sid
+     *
+     * @return array
+     *
+     * @throws SubscriptionException
+     */
+    public function getSubscriptionById($sid)
+    {
+        try {
+            $subscriptionArray = $this->almaApiClient->insurance->getSubscription(['id' => $sid]);
+
+            return $subscriptionArray['subscriptions'][0];
+        } catch (AlmaException $e) {
+            throw new SubscriptionException('Impossible to get subscription');
         }
     }
 }

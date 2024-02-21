@@ -22,6 +22,11 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
+use Alma\PrestaShop\Exceptions\SubscriptionException;
+use Alma\PrestaShop\Helpers\SubscriptionHelper;
+use Alma\PrestaShop\Logger;
+use Alma\PrestaShop\Repositories\AlmaInsuranceProductRepository;
+use Alma\PrestaShop\Services\InsuranceApiService;
 use Alma\PrestaShop\Traits\AjaxTrait;
 
 if (!defined('_PS_VERSION_')) {
@@ -32,6 +37,14 @@ class AlmaSubscriptionModuleFrontController extends ModuleFrontController
     use AjaxTrait;
 
     public $ssl = true;
+    /**
+     * @var SubscriptionHelper
+     */
+    protected $subscriptionHelper;
+    /**
+     * @var InsuranceApiService
+     */
+    protected $insuranceApiService;
 
     /**
      * IPN constructor
@@ -40,35 +53,65 @@ class AlmaSubscriptionModuleFrontController extends ModuleFrontController
     {
         parent::__construct();
         $this->context = Context::getContext();
+        $this->subscriptionHelper = new SubscriptionHelper(new AlmaInsuranceProductRepository());
+        $this->insuranceApiService = new InsuranceApiService();
     }
 
     /**
      * @return void
+     *
+     * @throws PrestaShopException
      */
     public function postProcess()
     {
         parent::postProcess();
-
-        header('Content-Type: application/json');
 
         $action = Tools::getValue('action');
         $sid = Tools::getValue('sid');
         $trace = Tools::getValue('trace');
 
         if (!$sid) {
-            $this->ajaxRenderAndExit(json_encode(['error' => 'Missing Id']), 500);
+            $msg = $this->module->l('Subscription id is missing', 'subscription');
+            Logger::instance()->error($msg);
+            $this->ajaxRenderAndExit(json_encode(['error' => $msg]), 500);
         }
 
         if (!$trace) {
-            $this->ajaxRenderAndExit(json_encode(['error' => 'Missing secutiry token']), 500);
+            $this->ajaxRenderAndExit(
+                json_encode(
+                    ['error' => $this->module->l('Secutiry token is missing', 'subscription')]
+                ),
+                500
+            );
         }
 
+        $response = ['error' => false, 'message' => ''];
         switch ($action) {
             case 'update':
-                $this->ajaxRenderAndExit(json_encode(['success' => true]));
-                // no break
+                try {
+                    $subscriptionArray = $this->insuranceApiService->getSubscriptionById($sid);
+
+                    $this->subscriptionHelper->updateSubscription(
+                        $sid,
+                        $subscriptionArray['state'],
+                        $subscriptionArray['broker_subscription_id']
+                    );
+                } catch (SubscriptionException $e) {
+                    $response = ['error' => true, 'message' => $e->getMessage()];
+                }
+                break;
+                // @TOTO : set notification order message with link to the order in the message
             default:
-                $this->ajaxRenderAndExit(json_encode(['error' => 'Wrong action']), 500);
+                $response = [
+                    'error' => true,
+                    'message' => $this->module->l('Action is unknown', 'subscription'),
+                ];
         }
+
+        if (!$response['error']) {
+            $this->ajaxRenderAndExit(json_encode(['success' => true]), 200);
+        }
+
+        $this->ajaxRenderAndExit(json_encode(['error' => $response['message']]), 500);
     }
 }

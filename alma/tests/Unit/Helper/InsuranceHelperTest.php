@@ -71,47 +71,39 @@ class InsuranceHelperTest extends TestCase
     }
 
     /**
-     * @dataProvider dataTabInsuranceDataProvider
+     * @dataProvider dataTabsInsuranceDataProvider
      *
-     * @param $moduleName
-     * @param $class
-     * @param $name
-     * @param $parent
-     * @param $position
-     * @param $icon
+     * @param $tabsInsuranceDescription
      *
      * @return void
      *
      * @throws \PrestaShopException
      */
-    public function testTabInstalledWithAllowFlagAndTabNotInstalled($moduleName, $class, $name, $parent, $position, $icon)
+    public function testTabInstalledWithAllowFlagAndTabNotInstalled($tabsInsuranceDescription)
     {
-        $this->tabHelper->method('getInstanceFromClassName')->willReturn($this->tabWithoutId);
-        $this->tabHelper->method('installTab');
-        $this->tabHelper->expects($this->once())->method('installTab')->with(
-            $moduleName,
-            $class,
-            $name,
-            $parent,
-            $position,
-            $icon
+        $this->tabHelper->expects($this->once())->method('installTabs')->with(
+            $tabsInsuranceDescription
         );
+        $this->tabHelper->method('installTabs');
+        $this->tabHelper->method('getInstanceFromClassName')->willReturn($this->tabWithoutId);
 
-        $this->insuranceHelper->handleBOMenu($this->module, true);
+        $this->insuranceHelper->handleBOMenu(1);
     }
 
     /**
+     * @dataProvider dataTabsInsuranceDataProvider
+     *
      * @return void
      *
      * @throws \PrestaShopException
      */
-    public function testTabUninstalledWithDisallowFlagAndTabInstalled()
+    public function testTabUninstalledWithDisallowFlagAndTabInstalled($tabsInsuranceDescription)
     {
+        $this->tabHelper->expects($this->once())->method('uninstallTabs')->with($tabsInsuranceDescription);
+        $this->tabHelper->method('uninstallTabs');
         $this->tabHelper->method('getInstanceFromClassName')->willReturn($this->tabWithId);
-        $this->tabHelper->method('uninstallTab');
-        $this->tabHelper->expects($this->once())->method('uninstallTab')->with(ConstantsHelper::BO_CONTROLLER_INSURANCE_CLASSNAME);
 
-        $this->insuranceHelper->handleBOMenu($this->module, false);
+        $this->insuranceHelper->handleBOMenu(0);
     }
 
     /**
@@ -166,7 +158,7 @@ class InsuranceHelperTest extends TestCase
      */
     public function testConstructIframeUrlWithParams()
     {
-        $expected = 'https://protect.staging.almapay.com/almaBackOfficeConfiguration.html?is_insurance_activated=true&is_insurance_on_product_page_activated=false&is_insurance_on_cart_page_activated=false&is_add_to_cart_popup_insurance_activated=true';
+        $expected = 'https://protect.sandbox.almapay.com/almaBackOfficeConfiguration.html?is_insurance_activated=true&is_insurance_on_product_page_activated=false&is_insurance_on_cart_page_activated=false&is_add_to_cart_popup_insurance_activated=true';
 
         $this->configurationHelperMock->method('getMultiple')->willReturn([
             'ALMA_ACTIVATE_INSURANCE' => '1',
@@ -246,16 +238,36 @@ class InsuranceHelperTest extends TestCase
     /**
      * @return array
      */
-    public function dataTabInsuranceDataProvider()
+    public function dataTabsInsuranceDataProvider()
     {
         return [
-            'install tab' => [
-                'moduleName' => 'alma',
-                'class' => 'AdminAlmaInsurance',
-                'name' => null,
-                'parent' => 'alma',
-                'position' => 3,
-                'icon' => 'security',
+            'install tabs' => [
+                'tabsInsuranceDescription' => [
+                    'AdminAlmaInsurance' => [
+                        'name' => null,
+                        'parent' => 'alma',
+                        'position' => 3,
+                        'icon' => 'security',
+                    ],
+                    'AdminAlmaInsuranceConfiguration' => [
+                        'name' => null,
+                        'parent' => 'AdminAlmaInsurance',
+                        'position' => 1,
+                        'icon' => 'tune',
+                    ],
+                    'AdminAlmaInsuranceOrders' => [
+                        'name' => null,
+                        'parent' => 'AdminAlmaInsurance',
+                        'position' => 2,
+                        'icon' => 'shopping_basket',
+                    ],
+                    'AdminAlmaInsuranceOrdersDetails' => [
+                        'name' => false,
+                        'parent' => 'AdminAlmaInsurance',
+                        'position' => null,
+                        'icon' => null,
+                    ],
+                ],
             ],
         ];
     }

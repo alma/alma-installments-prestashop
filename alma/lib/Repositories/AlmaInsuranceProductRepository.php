@@ -173,9 +173,11 @@ class AlmaInsuranceProductRepository
     }
 
     /**
-     * @param int $orderId
+     * @param $id
      *
      * @return mixed
+     *
+     * @throws \PrestaShopDatabaseException
      */
     public function getByOrderId($id)
     {
@@ -214,6 +216,28 @@ class AlmaInsuranceProductRepository
                 'UPDATE `' . _DB_PREFIX_ . 'alma_insurance_product`
                 SET `id_order` =' . (int) $orderId . '
                 WHERE `id_alma_insurance_product` IN (' . implode(',', $idsToUpdate) . ')'
+            )
+        ) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * @param string $subscriptionId
+     * @param string $status
+     * @param string $subscriptionBrokerId
+     *
+     * @return bool
+     */
+    public function updateSubscription($subscriptionId, $status, $subscriptionBrokerId)
+    {
+        if (
+            !\Db::getInstance()->execute(
+                'UPDATE `' . _DB_PREFIX_ . 'alma_insurance_product`
+                SET `subscription_state` ="' . $status . '", `subscription_broker_id`= "' . $subscriptionBrokerId . '"
+                WHERE `subscription_id` ="' . $subscriptionId . '"'
             )
         ) {
             return false;
