@@ -23,10 +23,12 @@
  */
 
 use Alma\PrestaShop\Exceptions\SubscriptionException;
+use Alma\PrestaShop\Helpers\InsuranceHelper;
 use Alma\PrestaShop\Helpers\SubscriptionHelper;
 use Alma\PrestaShop\Logger;
 use Alma\PrestaShop\Repositories\AlmaInsuranceProductRepository;
 use Alma\PrestaShop\Services\InsuranceApiService;
+use Alma\PrestaShop\Services\InsuranceSubscriptionService;
 use Alma\PrestaShop\Traits\AjaxTrait;
 
 if (!defined('_PS_VERSION_')) {
@@ -45,6 +47,14 @@ class AlmaSubscriptionModuleFrontController extends ModuleFrontController
      * @var InsuranceApiService
      */
     protected $insuranceApiService;
+    /**
+     * @var InsuranceHelper
+     */
+    protected $insuranceHelper;
+    /**
+     * @var InsuranceSubscriptionService
+     */
+    protected $insuranceSubscriptionService;
 
     /**
      * IPN constructor
@@ -55,6 +65,8 @@ class AlmaSubscriptionModuleFrontController extends ModuleFrontController
         $this->context = Context::getContext();
         $this->subscriptionHelper = new SubscriptionHelper(new AlmaInsuranceProductRepository());
         $this->insuranceApiService = new InsuranceApiService();
+        $this->insuranceHelper = new InsuranceHelper();
+        $this->insuranceSubscriptionService = new InsuranceSubscriptionService();
     }
 
     /**
@@ -96,6 +108,13 @@ class AlmaSubscriptionModuleFrontController extends ModuleFrontController
                         $subscriptionArray['state'],
                         $subscriptionArray['broker_subscription_id']
                     );
+                    //@TODO : if status subscription if voided we send notification message order
+                    if ($subscriptionArray['state'] === 'voided') {
+                        // @TODO : get Order Id by subscription_id (Helper)
+                        $orderId = $this->insuranceHelper->getOrderIdBySubscriptionId($sid);
+                        // @TODO : send order and create message (Service)
+                        $this->insuranceSubscriptionService->addMessageInsurance();
+                    }
                 } catch (SubscriptionException $e) {
                     $response = ['error' => true, 'message' => $e->getMessage()];
                 }

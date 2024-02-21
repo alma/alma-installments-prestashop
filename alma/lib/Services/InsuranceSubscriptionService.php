@@ -148,4 +148,8 @@ class InsuranceSubscriptionService
         $insuranceProduct->subscription_state = $subscription['state'];
         $insuranceProduct->save();
     }
+
+    public function addMessageInsurance()
+    {
+    }
 }

@@ -112,4 +112,18 @@ class InsuranceHelper
 
         return (bool) $idProduct;
     }
+
+    /**
+     * @param $sid
+     *
+     * @return mixed
+     *
+     * @throws \PrestaShopDatabaseException
+     */
+    public function getOrderIdBySubscriptionId($sid)
+    {
+        $subscription = $this->insuranceProductRepository->getBySubscriptionId($sid);
+
+        return $subscription['id_order'];
+    }
 }

@@ -190,6 +190,23 @@ class AlmaInsuranceProductRepository
     }
 
     /**
+     * @param $id
+     *
+     * @return mixed
+     *
+     * @throws \PrestaShopDatabaseException
+     */
+    public function getBySubscriptionId($id)
+    {
+        $sql = '
+            SELECT *
+            FROM `' . _DB_PREFIX_ . 'alma_insurance_product` aip
+            WHERE aip.`subscription_id` = ' . (int) $id;
+
+        return \Db::getInstance()->executeS($sql);
+    }
+
+    /**
      * @param int $id
      *
      * @return bool
