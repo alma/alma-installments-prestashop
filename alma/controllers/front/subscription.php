@@ -64,7 +64,6 @@ class AlmaSubscriptionModuleFrontController extends ModuleFrontController
      * @return void
      *
      * @throws PrestaShopException
-     * @throws SubscriptionException
      */
     public function postProcess()
     {
@@ -75,12 +74,18 @@ class AlmaSubscriptionModuleFrontController extends ModuleFrontController
         $trace = Tools::getValue('trace');
 
         if (!$sid) {
-            Logger::instance()->error('Sid is missing');
-            throw new SubscriptionException('Sid is missing');
+            $msg = $this->module->l('Subscription id is missing', 'subscription');
+            Logger::instance()->error($msg);
+            $this->ajaxRenderAndExit(json_encode(['error' => $msg]), 500);
         }
 
         if (!$trace) {
-            $this->ajaxRenderAndExit(json_encode(['error' => 'Missing secutiry token']), 500);
+            $this->ajaxRenderAndExit(
+                json_encode(
+                    ['error' => $this->module->l('Secutiry token is missing', 'subscription')]
+                ),
+                500
+            );
         }
 
         $response = ['error' => false, 'message' => ''];
@@ -100,7 +105,10 @@ class AlmaSubscriptionModuleFrontController extends ModuleFrontController
                 break;
                 // @TOTO : set notification order message with link to the order in the message
             default:
-                $response = ['error' => true, 'message' => 'Action inconnu'];
+                $response = [
+                    'error' => true,
+                    'message' => $this->module->l('Action is unknown', 'subscription'),
+                ];
         }
 
         if (!$response['error']) {

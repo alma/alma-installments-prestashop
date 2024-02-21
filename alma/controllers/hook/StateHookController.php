@@ -29,6 +29,8 @@ if (!defined('_PS_VERSION_')) {
 }
 
 use Alma\API\Client;
+use Alma\API\Exceptions\ParametersException;
+use Alma\API\Exceptions\RequestException;
 use Alma\API\RequestError;
 use Alma\PrestaShop\Exceptions\OrderException;
 use Alma\PrestaShop\Helpers\ClientHelper;
@@ -89,7 +91,8 @@ final class StateHookController extends AdminHookController
      *
      * @return void
      *
-     * @throws \Alma\PrestaShop\Exceptions\InsuranceSubscriptionException
+     * @throws ParametersException
+     * @throws RequestException
      * @throws \PrestaShopDatabaseException
      * @throws \PrestaShopException
      */
@@ -143,6 +146,8 @@ final class StateHookController extends AdminHookController
      *
      * @return void
      *
+     * @throws ParametersException
+     * @throws RequestException
      * @throws \PrestaShopException
      */
     private function refund($order)
