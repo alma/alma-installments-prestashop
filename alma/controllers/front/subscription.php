@@ -25,6 +25,8 @@
 use Alma\PrestaShop\Exceptions\SubscriptionException;
 use Alma\PrestaShop\Helpers\SubscriptionHelper;
 use Alma\PrestaShop\Logger;
+use Alma\PrestaShop\Repositories\AlmaInsuranceProductRepository;
+use Alma\PrestaShop\Services\InsuranceApiService;
 use Alma\PrestaShop\Traits\AjaxTrait;
 
 if (!defined('_PS_VERSION_')) {
@@ -40,7 +42,7 @@ class AlmaSubscriptionModuleFrontController extends ModuleFrontController
      */
     protected $subscriptionHelper;
     /**
-     * @var \Alma\PrestaShop\Services\InsuranceApiService
+     * @var InsuranceApiService
      */
     protected $insuranceApiService;
 
@@ -51,8 +53,8 @@ class AlmaSubscriptionModuleFrontController extends ModuleFrontController
     {
         parent::__construct();
         $this->context = Context::getContext();
-        $this->subscriptionHelper = new SubscriptionHelper(new \Alma\PrestaShop\Repositories\AlmaInsuranceProductRepository());
-        $this->insuranceApiService = new \Alma\PrestaShop\Services\InsuranceApiService();
+        $this->subscriptionHelper = new SubscriptionHelper(new AlmaInsuranceProductRepository());
+        $this->insuranceApiService = new InsuranceApiService();
     }
 
     /**
