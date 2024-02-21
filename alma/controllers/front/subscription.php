@@ -23,7 +23,6 @@
  */
 
 use Alma\PrestaShop\Exceptions\SubscriptionException;
-use Alma\PrestaShop\Helpers\ClientHelper;
 use Alma\PrestaShop\Helpers\SubscriptionHelper;
 use Alma\PrestaShop\Logger;
 use Alma\PrestaShop\Traits\AjaxTrait;
@@ -36,10 +35,6 @@ class AlmaSubscriptionModuleFrontController extends ModuleFrontController
     use AjaxTrait;
 
     public $ssl = true;
-    /**
-     * @var ClientHelper
-     */
-    protected $phpClient;
     /**
      * @var SubscriptionHelper
      */
