@@ -20,13 +20,11 @@
  * @copyright 2018-2023 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
-window.addEventListener("load", function() {
-    let linkTermsAndConditionsInsurance = document.querySelectorAll('.js-terms[for="conditions_to_approve[terms-and-conditions-alma-insurance]"] a');
-
-    linkTermsAndConditionsInsurance.forEach(function (link) {
-        link.addEventListener('click', function(e) {
-            e.stopImmediatePropagation();
-        });
-        link.setAttribute('target', '_blank');
+var linkTermsAndConditionsInsurance = $('.js-terms[for="conditions_to_approve[terms-and-conditions-alma-insurance]"] a');
+linkTermsAndConditionsInsurance.each(function (i, link) {
+    $(link).off('click');
+    $(link).on('click', function(e) {
+        e.stopImmediatePropagation();
     });
+    $(link).attr('target', '_blank');
 });

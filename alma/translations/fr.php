@@ -26,7 +26,7 @@ $_MODULE = [];
 $_MODULE['<{alma}prestashop>alma_c407a14c73b61d727c55a42fb531f2e3'] = '1x 2x 3x 4x, J+15 ou J+30 Alma — Paiement en plusieurs fois et différé';
 $_MODULE['<{alma}prestashop>alma_7f9c508fa226d3e72644403653115c29'] = 'Boostez vos ventes en installant Alma ! C\'est simple et garanti, votre trésorerie est sécurisée. 0 engagement, 0 abonnement, 0 risque.';
 $_MODULE['<{alma}prestashop>alma_ce67a7d4b82bc360a17d25943924b388'] = 'Voulez-vous vraiment supprimer les paiements Alma de votre boutique ?';
-$_MODULE['<{alma}prestashop>alma_254f642527b45bc260048e30704edb39'] = 'Configuration';
+$_MODULE['<{alma}prestashop>alma_f1206f9fadc5ce41694f69129aecac26'] = 'Configuration';
 $_MODULE['<{alma}prestashop>alma_36359547b09bdb31f46c419a0bd5807e'] = 'Catégories exclues';
 $_MODULE['<{alma}prestashop>alma_7bab99339291e7eea710b4a998e663de'] = 'Alma nécessite l\'extension PHP cURL';
 $_MODULE['<{alma}prestashop>alma_fbb47375d2272bef79f5722a183bf1ec'] = 'Alma nécessite l\'extension PHP JSON';
@@ -142,7 +142,7 @@ $_MODULE['<{alma}prestashop>customfieldshelper_7a854e750fe5f3e7120020c7c20987d4'
 $_MODULE['<{alma}prestashop>customfieldshelper_6ed45ebd72fcca0fc0c271128e9d7b7b'] = 'À l\'expédition';
 $_MODULE['<{alma}prestashop>apihelper_fc610b81ff31f9d969ddb659cd8248c1'] = 'Alma a rencontré une erreur lors de la récupération du statut du marchand, veuillez vérifier vos clés d\'api ou réessayer plus tard.';
 $_MODULE['<{alma}prestashop>insurancehelper_eaff1bdf24fcffe0e14e29a1bff51a12'] = 'Assurance';
-$_MODULE['<{alma}prestashop>insurancehelper_254f642527b45bc260048e30704edb39'] = 'Configuration';
+$_MODULE['<{alma}prestashop>insurancehelper_f1206f9fadc5ce41694f69129aecac26'] = 'Configuration';
 $_MODULE['<{alma}prestashop>insurancehelper_7442e29d7d53e549b78d93c46b8cdcfc'] = 'Souscriptions';
 $_MODULE['<{alma}prestashop>insuranceservice_d87aee5118a62a7ff6c21e4ac31006c5'] = 'J\'atteste accepter de souscrire à l\'assurance proposée par Alma et avoir à cet effet avoir pris préalablement connaissance de la [fiche d\'informations et de conseil], du [document d\'information sur le produit d\'assurance] et de la [notice d\'information]. J\'y adhère sans réserve et accepte de signer électroniquement les différents documents constituant mon contrat, le cas échéant. Je consens expressément à la collecte et à l\'utilisation de mes données personnelles dans le cadre de la souscription et de la gestion de mon (ou de mes) contrat(s) d\'assurance.';
 $_MODULE['<{alma}prestashop>adminalmainsuranceconfiguration_b824200e9b8aca1fbb762d6566ff0cd7'] = 'Votre configuration a été sauvegardée';
