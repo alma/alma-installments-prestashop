@@ -50,9 +50,22 @@
                 })
                 .success(function() {
                     //Success
+                    // @toto : return ok for refund
+                    console.log('Success');
+                    console.log(e);
                 })
                 .error(function(e) {
                     // Error
+                    // @toto : return error
+                    console.log('Error');
+                    console.log(e.responseJSON.status);
+                    sendNotificationToIFrame([{subscriptionBrokerId:
+                        subscriptionData
+                        .cmsSubscriptions[0].subscriptionBrokerId,
+                        newStatus:
+                        e
+                        .responseJSON.status
+                    }])
                 });
             }
         })

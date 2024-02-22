@@ -26,6 +26,7 @@ namespace Alma\PrestaShop\Tests\Unit\Services;
 
 use Alma\API\Client;
 use Alma\API\Endpoints\Insurance;
+use Alma\API\Exceptions\InsuranceCancelPendingException;
 use Alma\API\Exceptions\RequestException;
 use Alma\API\RequestError;
 use Alma\PrestaShop\Exceptions\SubscriptionException;
@@ -102,10 +103,45 @@ class InsuranceApiServiceTest extends TestCase
         $sid = 'subscription_39lGsF0UdBfpjQ8UXdYvkX';
 
         $insuranceMock = $this->createMock(Insurance::class);
-        $insuranceMock->expects($this->once())->method('cancelSubscription')->with(['id' => $sid])->willThrowException(new RequestException('Request Error'));
+        $insuranceMock->expects($this->once())->method('cancelSubscription')->with($sid)->willThrowException(new RequestException('Request Error'));
         $this->client->insurance = $insuranceMock;
         $this->expectException(SubscriptionException::class);
         $this->insuranceApiService->setPhpClient($this->client);
         $this->insuranceApiService->cancelSubscription($sid);
+    }
+
+    /**
+     * Given a subscription id, the method should call the API to void the insurance and return the response 410
+     *
+     * @return void
+     *
+     * @throws SubscriptionException
+     */
+    public function testReturnPendingCancellationIfApiThrowInsuranceCancelPendingException()
+    {
+        $sid = 'subscription_39lGsF0UdBfpjQ8UXdYvkX';
+
+        $insuranceMock = $this->createMock(Insurance::class);
+        $insuranceMock->expects($this->once())->method('cancelSubscription')->with($sid)->willThrowException(new InsuranceCancelPendingException('Pending cancellation'));
+        $this->client->insurance = $insuranceMock;
+        $this->insuranceApiService->setPhpClient($this->client);
+        $this->assertEquals('pending_cancellation', $this->insuranceApiService->cancelSubscription($sid));
+    }
+
+    /**
+     * Given a subscription id, the method should call the API to void the insurance and return the response
+     *
+     * @throws SubscriptionException
+     */
+    public function testReturn200IfNoError()
+    {
+        $sid = 'subscription_39lGsF0UdBfpjQ8UXdYvkX';
+        $insuranceMock = $this->createMock(Insurance::class);
+        $insuranceMock->expects($this->once())->method('cancelSubscription')->with($sid);
+        $this->client->insurance = $insuranceMock;
+
+        $this->insuranceApiService->setPhpClient($this->client);
+        $this->insuranceApiService->cancelSubscription($sid);
+        //@TODO : Test assert return 200
     }
 }

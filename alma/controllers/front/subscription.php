@@ -109,7 +109,16 @@ class AlmaSubscriptionModuleFrontController extends ModuleFrontController
                         // Ooops! Token is not valid!
                         $this->ajaxRenderAndExit(json_encode(['error' => 'Invalid Token']), 401);
                     }
-                    $this->insuranceApiService->cancelSubscription($sid);
+                    try {
+                        $returnCancelSubscription = $this->insuranceApiService->cancelSubscription($sid);
+                        //@TODO : set database with (statys, reason , date_cancel, request_cancel_date)
+
+                        if ($returnCancelSubscription === 'pending_cancellation') {
+                            $this->ajaxRenderAndExit(json_encode(['error' => true, 'status' => $returnCancelSubscription, 'message' => 'Pending cancellation']), 410);
+                        }
+                    } catch (SubscriptionException $e) {
+                        $response = ['error' => true, 'message' => $e->getMessage()];
+                    }
                 }
                 break;
             default:

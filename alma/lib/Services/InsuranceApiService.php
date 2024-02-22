@@ -27,6 +27,7 @@ namespace Alma\PrestaShop\Services;
 use Alma\API\Client;
 use Alma\API\Entities\Insurance\Contract;
 use Alma\API\Exceptions\AlmaException;
+use Alma\API\Exceptions\InsuranceCancelPendingException;
 use Alma\API\RequestError;
 use Alma\PrestaShop\Exceptions\InsuranceSubscriptionException;
 use Alma\PrestaShop\Exceptions\SubscriptionException;
@@ -34,6 +35,7 @@ use Alma\PrestaShop\Helpers\CartHelper;
 use Alma\PrestaShop\Helpers\ClientHelper;
 use Alma\PrestaShop\Helpers\ProductHelper;
 use Alma\PrestaShop\Logger;
+use Alma\PrestaShop\Repositories\AlmaInsuranceProductRepository;
 
 class InsuranceApiService
 {
@@ -55,6 +57,10 @@ class InsuranceApiService
      * @var ProductHelper
      */
     protected $productHelper;
+    /**
+     * @var AlmaInsuranceProductRepository
+     */
+    protected $insuranceProductRepository;
 
     public function __construct()
     {
@@ -62,6 +68,7 @@ class InsuranceApiService
         $this->context = \Context::getContext();
         $this->cartHelper = new CartHelper();
         $this->productHelper = new ProductHelper();
+        $this->insuranceProductRepository = new AlmaInsuranceProductRepository();
     }
 
     /**
@@ -234,8 +241,21 @@ class InsuranceApiService
         }
     }
 
+    /**
+     * @param string $sid
+     *
+     * @return null
+     *
+     * @throws SubscriptionException
+     */
     public function cancelSubscription($sid)
     {
-        //@TODO : Endpoint void insurance
+        try {
+            return $this->almaApiClient->insurance->cancelSubscription($sid);
+        } catch (InsuranceCancelPendingException $e) {
+            return 'pending_cancellation';
+        } catch (AlmaException $e) {
+            throw new SubscriptionException('Impossible to cancel subscription');
+        }
     }
 }
