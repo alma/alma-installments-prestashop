@@ -233,4 +233,9 @@ class InsuranceApiService
             throw new SubscriptionException('Impossible to get subscription');
         }
     }
+
+    public function cancelSubscription($sid)
+    {
+        //@TODO : Endpoint void insurance
+    }
 }

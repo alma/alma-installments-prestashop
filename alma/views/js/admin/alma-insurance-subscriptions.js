@@ -36,16 +36,16 @@
             if (e.data.type === 'sendCancelSubscriptionToCms') {
                 console.log('Cancel subscription', e.data)
 
-                /* TODO : generate url in template */
                 $.ajax({
                     type: 'POST',
-                    url: '/module/alma/cancellation?action=cancel',
+                    url: subscriptionData.cancelUrl,
                     dataType: 'json',
                     data: {
                         ajax: true,
                         action: 'cancel',
-                        token: $(this).attr('data-token'),
-                        subscription_id: $(this).attr('data-subscription-id')
+                        token: subscriptionData.token,
+                        sid: subscriptionData.cmsSubscriptions[0].subscriptionId,
+                        trace: 'testtrace' // TODO: Add trace when is defined with Tech team
                     },
                 })
                 .success(function() {

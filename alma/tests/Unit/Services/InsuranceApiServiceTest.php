@@ -26,6 +26,7 @@ namespace Alma\PrestaShop\Tests\Unit\Services;
 
 use Alma\API\Client;
 use Alma\API\Endpoints\Insurance;
+use Alma\API\Exceptions\RequestException;
 use Alma\API\RequestError;
 use Alma\PrestaShop\Exceptions\SubscriptionException;
 use Alma\PrestaShop\Helpers\SubscriptionHelper;
@@ -89,5 +90,22 @@ class InsuranceApiServiceTest extends TestCase
 
         $this->insuranceApiService->setPhpClient($this->client);
         $this->assertEquals(['id' => 'sub1'], $this->insuranceApiService->getSubscriptionById($sid));
+    }
+
+    /**
+     * Given a subscription id, the method should call the API to void the insurance and return the response
+     *
+     * @return void
+     */
+    public function testGetRequestIsCalledToVoidInsuranceAndThrowSubscriptionExceptionIfApiThrowException()
+    {
+        $sid = 'subscription_39lGsF0UdBfpjQ8UXdYvkX';
+
+        $insuranceMock = $this->createMock(Insurance::class);
+        $insuranceMock->expects($this->once())->method('cancelSubscription')->with(['id' => $sid])->willThrowException(new RequestException('Request Error'));
+        $this->client->insurance = $insuranceMock;
+        $this->expectException(SubscriptionException::class);
+        $this->insuranceApiService->setPhpClient($this->client);
+        $this->insuranceApiService->cancelSubscription($sid);
     }
 }

@@ -23,6 +23,7 @@
  */
 
 use Alma\PrestaShop\Exceptions\SubscriptionException;
+use Alma\PrestaShop\Helpers\ConstantsHelper;
 use Alma\PrestaShop\Helpers\SubscriptionHelper;
 use Alma\PrestaShop\Logger;
 use Alma\PrestaShop\Repositories\AlmaInsuranceProductRepository;
@@ -79,7 +80,7 @@ class AlmaSubscriptionModuleFrontController extends ModuleFrontController
         if (!$trace) {
             $this->ajaxRenderAndExit(
                 json_encode(
-                    ['error' => $this->module->l('Secutiry token is missing', 'subscription')]
+                    ['error' => $this->module->l('Secutiry trace is missing', 'subscription')]
                 ),
                 500
             );
@@ -103,10 +104,12 @@ class AlmaSubscriptionModuleFrontController extends ModuleFrontController
                 // @TOTO : set notification order message with link to the order in the message
             case 'cancel':
                 if (Tools::isSubmit('action')) {
-                    if (!$this->isTokenValid()) {
+                    $tokenInsuranceDetail = Tools::getAdminToken(ConstantsHelper::BO_CONTROLLER_INSURANCE_ORDERS_DETAILS_CLASSNAME);
+                    if ($tokenInsuranceDetail !== Tools::getValue('token')) {
                         // Ooops! Token is not valid!
                         $this->ajaxRenderAndExit(json_encode(['error' => 'Invalid Token']), 401);
                     }
+                    $this->insuranceApiService->cancelSubscription($sid);
                 }
                 break;
             default:
