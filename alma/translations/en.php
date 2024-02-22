@@ -26,7 +26,7 @@ $_MODULE = [];
 $_MODULE['<{alma}prestashop>alma_c407a14c73b61d727c55a42fb531f2e3'] = '1x 2x 3x 4x, D+15 or D+30 Alma - Payment in instalments and deferred';
 $_MODULE['<{alma}prestashop>alma_7f9c508fa226d3e72644403653115c29'] = 'Offer an easy and safe installments payments option to your customers';
 $_MODULE['<{alma}prestashop>alma_ce67a7d4b82bc360a17d25943924b388'] = 'Are you sure you want to deactivate Alma payments from your shop?';
-$_MODULE['<{alma}prestashop>alma_254f642527b45bc260048e30704edb39'] = 'Configuration';
+$_MODULE['<{alma}prestashop>alma_f1206f9fadc5ce41694f69129aecac26'] = 'Configure';
 $_MODULE['<{alma}prestashop>alma_36359547b09bdb31f46c419a0bd5807e'] = 'Excluded categories';
 $_MODULE['<{alma}prestashop>alma_7bab99339291e7eea710b4a998e663de'] = 'Alma requires the CURL PHP extension.';
 $_MODULE['<{alma}prestashop>alma_fbb47375d2272bef79f5722a183bf1ec'] = 'Alma requires the JSON PHP extension.';
@@ -142,7 +142,7 @@ $_MODULE['<{alma}prestashop>customfieldshelper_7a854e750fe5f3e7120020c7c20987d4'
 $_MODULE['<{alma}prestashop>customfieldshelper_6ed45ebd72fcca0fc0c271128e9d7b7b'] = 'At shipping';
 $_MODULE['<{alma}prestashop>apihelper_fc610b81ff31f9d969ddb659cd8248c1'] = 'Alma encountered an error when fetching merchant status, please check your api keys or retry later.';
 $_MODULE['<{alma}prestashop>insurancehelper_eaff1bdf24fcffe0e14e29a1bff51a12'] = 'Insurance';
-$_MODULE['<{alma}prestashop>insurancehelper_254f642527b45bc260048e30704edb39'] = 'Configuration';
+$_MODULE['<{alma}prestashop>insurancehelper_f1206f9fadc5ce41694f69129aecac26'] = 'Configure';
 $_MODULE['<{alma}prestashop>insurancehelper_7442e29d7d53e549b78d93c46b8cdcfc'] = 'Orders';
 $_MODULE['<{alma}prestashop>insuranceservice_d87aee5118a62a7ff6c21e4ac31006c5'] = 'I hereby acknowledge my acceptance to subscribe to the insurance offered by Alma. In doing so, I confirm that I have previously reviewed the [information notice, which constitutes the general conditions], the [insurance product information document], and the [pre-contractual information and advice sheet]. I ahead to it without reservation and agree to electronically sign the various documents forming my contract, if applicable. I expressly consent to the collection and use of my personal data for the purpose of subscribing to and managing my insurance contract(s).';
 $_MODULE['<{alma}prestashop>adminalmainsuranceconfiguration_b824200e9b8aca1fbb762d6566ff0cd7'] = 'Your configuration has been saved';
