@@ -80,7 +80,7 @@ class InsuranceHelper
                 'icon' => 'security',
             ],
             ConstantsHelper::BO_CONTROLLER_INSURANCE_CONFIGURATION_CLASSNAME => [
-                'name' => $this->module->l('Configuration'),
+                'name' => $this->module->l('Configure'),
                 'parent' => ConstantsHelper::BO_CONTROLLER_INSURANCE_CLASSNAME,
                 'position' => 1,
                 'icon' => 'tune',
