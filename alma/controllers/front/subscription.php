@@ -102,11 +102,7 @@ class AlmaSubscriptionModuleFrontController extends ModuleFrontController
                 break;
                 // @TOTO : set notification order message with link to the order in the message
             case 'cancel':
-                var_dump('cancel initContent');
-
                 if (Tools::isSubmit('action')) {
-                    var_dump(Tools::isSubmit('action'));
-
                     if (!$this->isTokenValid()) {
                         // Ooops! Token is not valid!
                         $this->ajaxRenderAndExit(json_encode(['error' => 'Invalid Token']), 401);
