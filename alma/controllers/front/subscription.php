@@ -77,6 +77,7 @@ class AlmaSubscriptionModuleFrontController extends ModuleFrontController
             $this->ajaxRenderAndExit(json_encode(['error' => $msg]), 500);
         }
 
+        //@TODO : Check Trace only on the update subscription
         if (!$trace) {
             $this->ajaxRenderAndExit(
                 json_encode(
@@ -86,6 +87,7 @@ class AlmaSubscriptionModuleFrontController extends ModuleFrontController
             );
         }
 
+        //@TODO : Helper Subscription to return response
         $response = ['error' => false, 'message' => ''];
         switch ($action) {
             case 'update':
@@ -103,7 +105,9 @@ class AlmaSubscriptionModuleFrontController extends ModuleFrontController
                 break;
                 // @TOTO : set notification order message with link to the order in the message
             case 'cancel':
+                //@TODO : Helper subscription to cancel subscription
                 if (Tools::isSubmit('action')) {
+                    //@TODO : Helper token to check if token is valid
                     $tokenInsuranceDetail = Tools::getAdminToken(ConstantsHelper::BO_CONTROLLER_INSURANCE_ORDERS_DETAILS_CLASSNAME);
                     if ($tokenInsuranceDetail !== Tools::getValue('token')) {
                         // Ooops! Token is not valid!
@@ -111,7 +115,7 @@ class AlmaSubscriptionModuleFrontController extends ModuleFrontController
                     }
                     try {
                         $returnCancelSubscription = $this->insuranceApiService->cancelSubscription($sid);
-                        //@TODO : set database with (statys, reason , date_cancel, request_cancel_date)
+                        //@TODO : Service set database with (statys, reason , date_cancel, request_cancel_date)
 
                         if ($returnCancelSubscription === 'pending_cancellation') {
                             $this->ajaxRenderAndExit(json_encode(['error' => true, 'status' => $returnCancelSubscription, 'message' => 'Pending cancellation']), 410);

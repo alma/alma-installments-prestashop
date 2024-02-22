@@ -45,7 +45,7 @@
                         action: 'cancel',
                         token: subscriptionData.token,
                         sid: subscriptionData.cmsSubscriptions[0].subscriptionId,
-                        trace: 'testtrace' // TODO: Add trace when is defined with Tech team
+                        trace: 'testtrace' // TODO: Need to remove this after refactoring
                     },
                 })
                 .success(function() {
@@ -60,11 +60,8 @@
                     console.log('Error');
                     console.log(e.responseJSON.status);
                     sendNotificationToIFrame([{subscriptionBrokerId:
-                        subscriptionData
-                        .cmsSubscriptions[0].subscriptionBrokerId,
-                        newStatus:
-                        e
-                        .responseJSON.status
+                        subscriptionData.cmsSubscriptions[0].subscriptionBrokerId,
+                        newStatus: e.responseJSON.status
                     }])
                 });
             }

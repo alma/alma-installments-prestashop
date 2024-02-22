@@ -244,14 +244,14 @@ class InsuranceApiService
     /**
      * @param string $sid
      *
-     * @return null
+     * @return string|void
      *
      * @throws SubscriptionException
      */
     public function cancelSubscription($sid)
     {
         try {
-            return $this->almaApiClient->insurance->cancelSubscription($sid);
+            $this->almaApiClient->insurance->cancelSubscription($sid);
         } catch (InsuranceCancelPendingException $e) {
             return 'pending_cancellation';
         } catch (AlmaException $e) {
