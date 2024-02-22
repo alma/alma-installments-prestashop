@@ -133,7 +133,7 @@ class Alma extends PaymentModule
                 'icon' => null,
             ],
             'AdminAlmaConfig' => [
-                'name' => $this->l('Configuration'),
+                'name' => $this->l('Configure'),
                 'parent' => 'alma',
                 'position' => 1,
                 'icon' => 'tune',
