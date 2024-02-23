@@ -90,7 +90,7 @@ class SubscriptionHelper
     public function responseSubscriptionByAction($action, $sid, $trace)
     {
         $response = [
-            'response' => json_encode(['error' => false, 'message' => '']),
+            'response' => ['error' => false, 'message' => ''],
             'code' => 200,
         ];
 
@@ -98,10 +98,10 @@ class SubscriptionHelper
             case 'update':
                 if (!$trace) {
                     $response = [
-                        'response' => json_encode([
+                        'response' => [
                             'error' => true,
                             'message' => $this->module->l('Secutiry trace is missing', 'subscription'),
-                        ]),
+                        ],
                         'code' => 500,
                     ];
                 }
@@ -115,7 +115,7 @@ class SubscriptionHelper
                     );
                 } catch (SubscriptionException $e) {
                     $response = [
-                        'response' => json_encode(['error' => true, 'message' => $e->getMessage()]),
+                        'response' => ['error' => true, 'message' => $e->getMessage()],
                         'code' => 500,
                     ];
                 }
@@ -123,7 +123,10 @@ class SubscriptionHelper
             // @TOTO : set notification order message with link to the order in the message
             case 'cancel':
                 $response = [
-                    'response' => json_encode(['error' => 'Invalid Token']),
+                    'response' => [
+                        'error' => true,
+                        'message' => 'Invalid Token',
+                    ],
                     'code' => 401,
                 ];
 
@@ -136,10 +139,10 @@ class SubscriptionHelper
                 break;
             default:
                 $response = [
-                    'response' => json_encode([
+                    'response' => [
                         'error' => true,
                         'message' => $this->module->l('Action is unknown', 'subscription'),
-                        ]),
+                        ],
                     'code' => 500,
                 ];
         }
@@ -159,10 +162,10 @@ class SubscriptionHelper
             //@TODO : Service set database with (status, reason , date_cancel, request_cancel_date)
         } catch (SubscriptionException $e) {
             $response = [
-                'response' => json_encode([
+                'response' => [
                     'error' => true,
                     'message' => $e->getMessage(),
-                ]),
+                ],
                 'code' => 500,
             ];
         }

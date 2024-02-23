@@ -254,10 +254,10 @@ class InsuranceApiService
             $this->almaApiClient->insurance->cancelSubscription($sid);
         } catch (InsuranceCancelPendingException $e) {
             return [
-                'response' => json_encode([
+                'response' => [
                     'error' => true,
                     'message' => 'Pending cancellation',
-                ]),
+                ],
                 'code' => 410,
             ];
         } catch (AlmaException $e) {
