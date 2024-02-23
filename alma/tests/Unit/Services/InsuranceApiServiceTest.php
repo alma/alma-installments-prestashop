@@ -120,12 +120,15 @@ class InsuranceApiServiceTest extends TestCase
     public function testReturnPendingCancellationIfApiThrowInsuranceCancelPendingException()
     {
         $sid = 'subscription_39lGsF0UdBfpjQ8UXdYvkX';
-
         $insuranceMock = $this->createMock(Insurance::class);
-        $insuranceMock->expects($this->once())->method('cancelSubscription')->with($sid)->willThrowException(new InsuranceCancelPendingException('Pending cancellation'));
+        $insuranceMock->expects($this->once())
+            ->method('cancelSubscription')
+            ->with($sid)
+            ->willThrowException(new InsuranceCancelPendingException('Pending cancellation'));
         $this->client->insurance = $insuranceMock;
         $this->insuranceApiService->setPhpClient($this->client);
-        $this->assertEquals('pending_cancellation', $this->insuranceApiService->cancelSubscription($sid));
+        $this->expectException(SubscriptionException::class);
+        $this->insuranceApiService->cancelSubscription($sid);
     }
 
     /**

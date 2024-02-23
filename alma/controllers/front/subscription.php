@@ -40,10 +40,6 @@ class AlmaSubscriptionModuleFrontController extends ModuleFrontController
      * @var SubscriptionHelper
      */
     protected $subscriptionHelper;
-    /**
-     * @var InsuranceApiService
-     */
-    protected $insuranceApiService;
 
     /**
      * IPN constructor
@@ -54,9 +50,9 @@ class AlmaSubscriptionModuleFrontController extends ModuleFrontController
         $this->context = Context::getContext();
         $this->subscriptionHelper = new SubscriptionHelper(
             $this->module,
-            new AlmaInsuranceProductRepository()
+            new AlmaInsuranceProductRepository(),
+            new InsuranceApiService()
         );
-        $this->insuranceApiService = new InsuranceApiService();
     }
 
     /**
@@ -79,10 +75,6 @@ class AlmaSubscriptionModuleFrontController extends ModuleFrontController
         }
 
         $response = $this->subscriptionHelper->responseSubscriptionByAction($action, $sid, $trace);
-
-        if (!$response['response']['error']) {
-            $this->ajaxRenderAndExit(json_encode($response['response']), $response['code']);
-        }
 
         $this->ajaxRenderAndExit(json_encode($response['response']), $response['code']);
     }

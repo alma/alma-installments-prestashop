@@ -26,24 +26,43 @@ namespace Alma\PrestaShop\Tests\Unit\Helper;
 
 use Alma\PrestaShop\Exceptions\SubscriptionException;
 use Alma\PrestaShop\Helpers\SubscriptionHelper;
+use Alma\PrestaShop\Helpers\TokenHelper;
 use Alma\PrestaShop\Repositories\AlmaInsuranceProductRepository;
+use Alma\PrestaShop\Services\InsuranceApiService;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use PrestaShop\PrestaShop\Adapter\Module\Module;
 
 class SubscriptionHelperTest extends TestCase
 {
     /**
      * @var SubscriptionHelper
      */
-    private $subscriptionHelper;
+    protected $subscriptionHelper;
     /**
-     * @var AlmaInsuranceProductRepository|(AlmaInsuranceProductRepository&\PHPUnit\Framework\MockObject\MockObject)|\PHPUnit\Framework\MockObject\MockObject
+     * @var AlmaInsuranceProductRepository|(AlmaInsuranceProductRepository&MockObject)|MockObject
      */
-    private $almaInsuranceProductRepository;
+    protected $almaInsuranceProductRepository;
+    /**
+     * @var MockObject|Module|(Module&MockObject)
+     */
+    protected $module;
+    /**
+     * @var TokenHelper
+     */
+    protected $tokenHelper;
 
     public function setUp()
     {
         $this->almaInsuranceProductRepository = $this->createMock(AlmaInsuranceProductRepository::class);
-        $this->subscriptionHelper = new SubscriptionHelper($this->almaInsuranceProductRepository);
+        $this->insuranceApiService = $this->createMock(InsuranceApiService::class);
+        $this->module = $this->createMock(Module::class);
+        $this->tokenHelper = $this->createMock(TokenHelper::class);
+        $this->subscriptionHelper = new SubscriptionHelper(
+            $this->module,
+            $this->almaInsuranceProductRepository,
+            $this->insuranceApiService
+        );
     }
 
     /**
@@ -79,5 +98,52 @@ class SubscriptionHelperTest extends TestCase
             ->willReturn(false);
         $this->expectException(SubscriptionException::class);
         $this->subscriptionHelper->updateSubscription($subscriptionId, $status, $subscriptionBrokerId);
+    }
+
+    public function testIfActionIsCancelAndTokenIsValidUseOnceCancelSubscriptionMethod()
+    {
+        $action = 'cancel';
+        $sid = 'test';
+        $trace = 'trace';
+
+        //@TODO : Need to test once in method cancelSubscription
+        $this->tokenHelper->method('isAdminTokenValid')->willReturn(true);
+        /*
+         $this->tokenHelper->expects($this->once())
+            ->method('isAdminTokenValid')
+            ->with('AdminAlmaInsuranceOrdersDetails', 'token')
+            ->willReturn(true);
+         */
+        $this->subscriptionHelper->responseSubscriptionByAction($action, $sid, $trace);
+    }
+
+    public function testCallCancelSubscriptionOnceIfNoError()
+    {
+        $sid = 'subscription_39lGsF0UdBfpjQ8UXdYvkX';
+        $this->insuranceApiService->expects($this->once())
+            ->method('cancelSubscription')
+            ->with($sid);
+        $this->subscriptionHelper->cancelSubscription($sid);
+    }
+
+    public function testCallCancelSubscriptionExpectCancelPendingExceptionIfThrowSubscriptionException()
+    {
+        $sid = 'wrong_sid';
+        $expected = [
+            'response' => [
+                'error' => true,
+                'message' => 'Pending cancellation',
+            ],
+            'code' => 410,
+        ];
+
+        $this->insuranceApiService->expects($this->once())
+            ->method('cancelSubscription')
+            ->with($sid)
+            ->willThrowException(new SubscriptionException('Pending cancellation', 410));
+        $this->assertEquals(
+            $expected,
+            $this->subscriptionHelper->cancelSubscription($sid)
+        );
     }
 }

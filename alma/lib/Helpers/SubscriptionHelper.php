@@ -53,13 +53,17 @@ class SubscriptionHelper
 
     public function __construct(
         $module,
-        $almaInsuranceProductRepository = null
+        $almaInsuranceProductRepository = null,
+        $insuranceApiService = null
     ) {
         if (!$almaInsuranceProductRepository) {
             $almaInsuranceProductRepository = new AlmaInsuranceProductRepository();
         }
+        if (!$insuranceApiService) {
+            $insuranceApiService = new InsuranceApiService();
+        }
         $this->almaInsuranceProductRepository = $almaInsuranceProductRepository;
-        $this->insuranceApiService = new InsuranceApiService();
+        $this->insuranceApiService = $insuranceApiService;
         $this->module = $module;
         $this->tokenHelper = new TokenHelper();
     }
@@ -151,25 +155,23 @@ class SubscriptionHelper
     }
 
     /**
-     * @param $sid
+     * @param string $sid
      *
-     * @return array
+     * @return array|void
      */
-    private function cancelSubscription($sid)
+    public function cancelSubscription($sid)
     {
         try {
-            $response = $this->insuranceApiService->cancelSubscription($sid);
+            $this->insuranceApiService->cancelSubscription($sid);
             //@TODO : Service set database with (status, reason , date_cancel, request_cancel_date)
         } catch (SubscriptionException $e) {
-            $response = [
+            return [
                 'response' => [
                     'error' => true,
                     'message' => $e->getMessage(),
                 ],
-                'code' => 500,
+                'code' => $e->getCode(),
             ];
         }
-
-        return $response;
     }
 }

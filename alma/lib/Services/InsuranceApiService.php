@@ -244,7 +244,7 @@ class InsuranceApiService
     /**
      * @param string $sid
      *
-     * @return array|void
+     * @return void
      *
      * @throws SubscriptionException
      */
@@ -253,13 +253,7 @@ class InsuranceApiService
         try {
             $this->almaApiClient->insurance->cancelSubscription($sid);
         } catch (InsuranceCancelPendingException $e) {
-            return [
-                'response' => [
-                    'error' => true,
-                    'message' => 'Pending cancellation',
-                ],
-                'code' => 410,
-            ];
+            throw new SubscriptionException('Pending cancellation', 410);
         } catch (AlmaException $e) {
             throw new SubscriptionException('Impossible to cancel subscription');
         }

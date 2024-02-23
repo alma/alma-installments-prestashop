@@ -34,14 +34,18 @@ if (!defined('_PS_VERSION_')) {
 class TokenHelper
 {
     /**
-     * @param $string
-     * @param $keyValue
+     * @param string $string
+     * @param string $keyValue
      *
      * @return bool
      */
     public function isAdminTokenValid($string, $keyValue)
     {
-        if (\Tools::getAdminToken($string) === \Tools::getValue($keyValue)) {
+        if (
+            is_string($string) &&
+            is_string($keyValue) &&
+            \Tools::getAdminToken($string) === \Tools::getValue($keyValue)
+        ) {
             return true;
         }
 
