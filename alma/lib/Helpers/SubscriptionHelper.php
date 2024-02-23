@@ -26,6 +26,7 @@ namespace Alma\PrestaShop\Helpers;
 
 use Alma\PrestaShop\Exceptions\SubscriptionException;
 use Alma\PrestaShop\Repositories\AlmaInsuranceProductRepository;
+use Alma\PrestaShop\Services\InsuranceApiService;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -40,13 +41,27 @@ class SubscriptionHelper
      * @var AlmaInsuranceProductRepository|mixed|null
      */
     protected $almaInsuranceProductRepository;
+    /**
+     * @var InsuranceApiService
+     */
+    protected $insuranceApiService;
+    /**
+     * @var mixed
+     */
+    protected $module;
+    protected $tokenHelper;
 
-    public function __construct($almaInsuranceProductRepository = null)
-    {
+    public function __construct(
+        $module,
+        $almaInsuranceProductRepository = null
+    ) {
         if (!$almaInsuranceProductRepository) {
             $almaInsuranceProductRepository = new AlmaInsuranceProductRepository();
         }
         $this->almaInsuranceProductRepository = $almaInsuranceProductRepository;
+        $this->insuranceApiService = new InsuranceApiService();
+        $this->module = $module;
+        $this->tokenHelper = new TokenHelper();
     }
 
     /**
@@ -63,5 +78,95 @@ class SubscriptionHelper
         if (!$this->almaInsuranceProductRepository->updateSubscription($subscriptionId, $status, $subscriptionBrokerId)) {
             throw new SubscriptionException('Error to update DB Alma Insurance Product');
         }
+    }
+
+    /**
+     * @param $action
+     * @param $sid
+     * @param $trace
+     *
+     * @return array
+     */
+    public function responseSubscriptionByAction($action, $sid, $trace)
+    {
+        $response = [
+            'response' => json_encode(['error' => false, 'message' => '']),
+            'code' => 200,
+        ];
+
+        switch ($action) {
+            case 'update':
+                if (!$trace) {
+                    $response = [
+                        'response' => json_encode([
+                            'error' => true,
+                            'message' => $this->module->l('Secutiry trace is missing', 'subscription'),
+                        ]),
+                        'code' => 500,
+                    ];
+                }
+                try {
+                    $subscriptionArray = $this->insuranceApiService->getSubscriptionById($sid);
+
+                    $this->updateSubscription(
+                        $sid,
+                        $subscriptionArray['state'],
+                        $subscriptionArray['broker_subscription_id']
+                    );
+                } catch (SubscriptionException $e) {
+                    $response = [
+                        'response' => json_encode(['error' => true, 'message' => $e->getMessage()]),
+                        'code' => 500,
+                    ];
+                }
+                break;
+            // @TOTO : set notification order message with link to the order in the message
+            case 'cancel':
+                $response = [
+                    'response' => json_encode(['error' => 'Invalid Token']),
+                    'code' => 401,
+                ];
+
+                if ($this->tokenHelper->isAdminTokenValid(
+                    ConstantsHelper::BO_CONTROLLER_INSURANCE_ORDERS_DETAILS_CLASSNAME,
+                    'token'
+                )) {
+                    $response = $this->cancelSubscription($sid);
+                }
+                break;
+            default:
+                $response = [
+                    'response' => json_encode([
+                        'error' => true,
+                        'message' => $this->module->l('Action is unknown', 'subscription'),
+                        ]),
+                    'code' => 500,
+                ];
+        }
+
+        return $response;
+    }
+
+    /**
+     * @param $sid
+     *
+     * @return array
+     */
+    private function cancelSubscription($sid)
+    {
+        try {
+            $response = $this->insuranceApiService->cancelSubscription($sid);
+            //@TODO : Service set database with (status, reason , date_cancel, request_cancel_date)
+        } catch (SubscriptionException $e) {
+            $response = [
+                'response' => json_encode([
+                    'error' => true,
+                    'message' => $e->getMessage(),
+                ]),
+                'code' => 500,
+            ];
+        }
+
+        return $response;
     }
 }

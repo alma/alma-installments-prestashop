@@ -22,8 +22,6 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
-use Alma\PrestaShop\Exceptions\SubscriptionException;
-use Alma\PrestaShop\Helpers\ConstantsHelper;
 use Alma\PrestaShop\Helpers\SubscriptionHelper;
 use Alma\PrestaShop\Logger;
 use Alma\PrestaShop\Repositories\AlmaInsuranceProductRepository;
@@ -54,7 +52,10 @@ class AlmaSubscriptionModuleFrontController extends ModuleFrontController
     {
         parent::__construct();
         $this->context = Context::getContext();
-        $this->subscriptionHelper = new SubscriptionHelper(new AlmaInsuranceProductRepository());
+        $this->subscriptionHelper = new SubscriptionHelper(
+            $this->module,
+            new AlmaInsuranceProductRepository()
+        );
         $this->insuranceApiService = new InsuranceApiService();
     }
 
@@ -77,65 +78,12 @@ class AlmaSubscriptionModuleFrontController extends ModuleFrontController
             $this->ajaxRenderAndExit(json_encode(['error' => $msg]), 500);
         }
 
-        //@TODO : Check Trace only on the update subscription
-        if (!$trace) {
-            $this->ajaxRenderAndExit(
-                json_encode(
-                    ['error' => $this->module->l('Secutiry trace is missing', 'subscription')]
-                ),
-                500
-            );
+        $response = $this->subscriptionHelper->responseSubscriptionByAction($action, $sid, $trace);
+
+        if (!$response['response']['error']) {
+            $this->ajaxRenderAndExit($response['response'], $response['code']);
         }
 
-        //@TODO : Helper Subscription to return response
-        $response = ['error' => false, 'message' => ''];
-        switch ($action) {
-            case 'update':
-                try {
-                    $subscriptionArray = $this->insuranceApiService->getSubscriptionById($sid);
-
-                    $this->subscriptionHelper->updateSubscription(
-                        $sid,
-                        $subscriptionArray['state'],
-                        $subscriptionArray['broker_subscription_id']
-                    );
-                } catch (SubscriptionException $e) {
-                    $response = ['error' => true, 'message' => $e->getMessage()];
-                }
-                break;
-                // @TOTO : set notification order message with link to the order in the message
-            case 'cancel':
-                //@TODO : Helper subscription to cancel subscription
-                if (Tools::isSubmit('action')) {
-                    //@TODO : Helper token to check if token is valid
-                    $tokenInsuranceDetail = Tools::getAdminToken(ConstantsHelper::BO_CONTROLLER_INSURANCE_ORDERS_DETAILS_CLASSNAME);
-                    if ($tokenInsuranceDetail !== Tools::getValue('token')) {
-                        // Ooops! Token is not valid!
-                        $this->ajaxRenderAndExit(json_encode(['error' => 'Invalid Token']), 401);
-                    }
-                    try {
-                        $returnCancelSubscription = $this->insuranceApiService->cancelSubscription($sid);
-                        //@TODO : Service set database with (statys, reason , date_cancel, request_cancel_date)
-
-                        if ($returnCancelSubscription === 'pending_cancellation') {
-                            $this->ajaxRenderAndExit(json_encode(['error' => true, 'status' => $returnCancelSubscription, 'message' => 'Pending cancellation']), 410);
-                        }
-                    } catch (SubscriptionException $e) {
-                        $response = ['error' => true, 'message' => $e->getMessage()];
-                    }
-                }
-                break;
-            default:
-                $response = [
-                    'error' => true,
-                    'message' => $this->module->l('Action is unknown', 'subscription'),
-                ];
-        }
-
-        if (!$response['error']) {
-            $this->ajaxRenderAndExit(json_encode(['success' => true]), 200);
-        }
-
-        $this->ajaxRenderAndExit(json_encode(['error' => $response['message']]), 500);
+        $this->ajaxRenderAndExit($response['response'], $response['code']);
     }
 }
