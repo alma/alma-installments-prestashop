@@ -24,7 +24,9 @@
 
 namespace Alma\PrestaShop\Helpers;
 
+use Alma\PrestaShop\Exceptions\InsuranceSubscriptionException;
 use Alma\PrestaShop\Exceptions\SubscriptionException;
+use Alma\PrestaShop\Exceptions\TokenException;
 use Alma\PrestaShop\Repositories\AlmaInsuranceProductRepository;
 use Alma\PrestaShop\Services\InsuranceApiService;
 
@@ -46,132 +48,74 @@ class SubscriptionHelper
      */
     protected $insuranceApiService;
     /**
-     * @var mixed
+     * @var TokenHelper
      */
-    protected $module;
     protected $tokenHelper;
 
     public function __construct(
-        $module,
-        $almaInsuranceProductRepository = null,
-        $insuranceApiService = null
+        $almaInsuranceProductRepository,
+        $insuranceApiService,
+        $tokenHelper
     ) {
-        if (!$almaInsuranceProductRepository) {
-            $almaInsuranceProductRepository = new AlmaInsuranceProductRepository();
-        }
-        if (!$insuranceApiService) {
-            $insuranceApiService = new InsuranceApiService();
-        }
         $this->almaInsuranceProductRepository = $almaInsuranceProductRepository;
         $this->insuranceApiService = $insuranceApiService;
-        $this->module = $module;
-        $this->tokenHelper = new TokenHelper();
+        $this->tokenHelper = $tokenHelper;
     }
 
     /**
-     * @param string $subscriptionId
-     * @param string $status
-     * @param string $subscriptionBrokerId
+     * @param $sid
+     *
+     * @return void
+     *
+     * @throws TokenException
+     * @throws InsuranceSubscriptionException
+     */
+    public function cancelSubscriptionWithToken($sid)
+    {
+        if (!$this->tokenHelper->isAdminTokenValid(
+            ConstantsHelper::BO_CONTROLLER_INSURANCE_ORDERS_DETAILS_CLASSNAME,
+            'token'
+        )) {
+            throw new TokenException('Invalid Token', 401);
+        }
+
+        $this->insuranceApiService->cancelSubscription($sid);
+        //@TODO : Service set database with (status, reason , date_cancel, request_cancel_date)
+    }
+
+    /**
+     * @param string $trace
+     * @param string $sid
      *
      * @return void
      *
      * @throws SubscriptionException
      */
-    public function updateSubscription($subscriptionId, $status, $subscriptionBrokerId)
+    public function updateSubscriptionWithTrace($trace, $sid)
     {
-        if (!$this->almaInsuranceProductRepository->updateSubscription($subscriptionId, $status, $subscriptionBrokerId)) {
-            throw new SubscriptionException('Error to update DB Alma Insurance Product');
+        $this->isTraceValid($trace);
+
+        $subscriptionArray = $this->insuranceApiService->getSubscriptionById($sid);
+        if (
+            !$this->almaInsuranceProductRepository->updateSubscription(
+                $sid,
+                $subscriptionArray['state'],
+                $subscriptionArray['broker_subscription_id']
+            )
+        ) {
+            throw new SubscriptionException('Error to update DB Alma Insurance Product', 500);
         }
     }
 
     /**
-     * @param $action
-     * @param $sid
      * @param $trace
      *
-     * @return array
+     * @throws SubscriptionException
      */
-    public function responseSubscriptionByAction($action, $sid, $trace)
+    private function isTraceValid($trace)
     {
-        $response = [
-            'response' => ['error' => false, 'message' => ''],
-            'code' => 200,
-        ];
-
-        switch ($action) {
-            case 'update':
-                if (!$trace) {
-                    $response = [
-                        'response' => [
-                            'error' => true,
-                            'message' => $this->module->l('Secutiry trace is missing', 'subscription'),
-                        ],
-                        'code' => 500,
-                    ];
-                }
-                try {
-                    $subscriptionArray = $this->insuranceApiService->getSubscriptionById($sid);
-
-                    $this->updateSubscription(
-                        $sid,
-                        $subscriptionArray['state'],
-                        $subscriptionArray['broker_subscription_id']
-                    );
-                } catch (SubscriptionException $e) {
-                    $response = [
-                        'response' => ['error' => true, 'message' => $e->getMessage()],
-                        'code' => 500,
-                    ];
-                }
-                break;
-            // @TOTO : set notification order message with link to the order in the message
-            case 'cancel':
-                $response = [
-                    'response' => [
-                        'error' => true,
-                        'message' => 'Invalid Token',
-                    ],
-                    'code' => 401,
-                ];
-
-                if ($this->tokenHelper->isAdminTokenValid(
-                    ConstantsHelper::BO_CONTROLLER_INSURANCE_ORDERS_DETAILS_CLASSNAME,
-                    'token'
-                )) {
-                    $response = $this->cancelSubscription($sid);
-                }
-                break;
-            default:
-                $response = [
-                    'response' => [
-                        'error' => true,
-                        'message' => $this->module->l('Action is unknown', 'subscription'),
-                        ],
-                    'code' => 500,
-                ];
-        }
-
-        return $response;
-    }
-
-    /**
-     * @param string $sid
-     *
-     * @return array|void
-     */
-    public function cancelSubscription($sid)
-    {
-        try {
-            $this->insuranceApiService->cancelSubscription($sid);
-            //@TODO : Service set database with (status, reason , date_cancel, request_cancel_date)
-        } catch (SubscriptionException $e) {
-            return [
-                'response' => [
-                    'error' => true,
-                    'message' => $e->getMessage(),
-                ],
-                'code' => $e->getCode(),
-            ];
+        if (!is_string($trace) || empty($trace)) {
+            throw new SubscriptionException('Security trace is missing', 500);
         }
     }
 }

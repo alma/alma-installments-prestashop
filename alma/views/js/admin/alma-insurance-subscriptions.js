@@ -44,7 +44,8 @@
                         ajax: true,
                         action: 'cancel',
                         token: subscriptionData.token,
-                        sid: subscriptionData.cmsSubscriptions[0].subscriptionId
+                        sid: subscriptionData.cmsSubscriptions[0].subscriptionId,
+                        reason: subscriptionData.reasonContent
                     },
                 })
                 .success(function() {

@@ -29,6 +29,7 @@ use Alma\API\Endpoints\Insurance;
 use Alma\API\Exceptions\InsuranceCancelPendingException;
 use Alma\API\Exceptions\RequestException;
 use Alma\API\RequestError;
+use Alma\PrestaShop\Exceptions\InsuranceSubscriptionException;
 use Alma\PrestaShop\Exceptions\SubscriptionException;
 use Alma\PrestaShop\Helpers\SubscriptionHelper;
 use Alma\PrestaShop\Repositories\AlmaInsuranceProductRepository;
@@ -69,7 +70,10 @@ class InsuranceApiServiceTest extends TestCase
         $sid = 'subscription_39lGsF0UdBfpjQ8UXdYvkX';
 
         $insuranceMock = $this->createMock(Insurance::class);
-        $insuranceMock->expects($this->once())->method('getSubscription')->with(['id' => $sid])->willThrowException(new RequestError('Request Error'));
+        $insuranceMock->expects($this->once())
+            ->method('getSubscription')
+            ->with(['id' => $sid])
+            ->willThrowException(new RequestError('Request Error'));
         $this->client->insurance = $insuranceMock;
         $this->expectException(SubscriptionException::class);
         $this->insuranceApiService->setPhpClient($this->client);
@@ -86,7 +90,10 @@ class InsuranceApiServiceTest extends TestCase
             ['id' => 'sub1'],
         ]];
         $insuranceMock = $this->createMock(Insurance::class);
-        $insuranceMock->expects($this->once())->method('getSubscription')->with(['id' => $sid])->willReturn($subscriptionArray);
+        $insuranceMock->expects($this->once())
+            ->method('getSubscription')
+            ->with(['id' => $sid])
+            ->willReturn($subscriptionArray);
         $this->client->insurance = $insuranceMock;
 
         $this->insuranceApiService->setPhpClient($this->client);
@@ -97,15 +104,20 @@ class InsuranceApiServiceTest extends TestCase
      * Given a subscription id, the method should call the API to void the insurance and return the response
      *
      * @return void
+     *
+     * @throws InsuranceSubscriptionException
      */
     public function testGetRequestIsCalledToVoidInsuranceAndThrowSubscriptionExceptionIfApiThrowException()
     {
         $sid = 'subscription_39lGsF0UdBfpjQ8UXdYvkX';
 
         $insuranceMock = $this->createMock(Insurance::class);
-        $insuranceMock->expects($this->once())->method('cancelSubscription')->with($sid)->willThrowException(new RequestException('Request Error'));
+        $insuranceMock->expects($this->once())
+            ->method('cancelSubscription')
+            ->with($sid)
+            ->willThrowException(new RequestException('Request Error'));
         $this->client->insurance = $insuranceMock;
-        $this->expectException(SubscriptionException::class);
+        $this->expectException(InsuranceSubscriptionException::class);
         $this->insuranceApiService->setPhpClient($this->client);
         $this->insuranceApiService->cancelSubscription($sid);
     }
@@ -115,7 +127,7 @@ class InsuranceApiServiceTest extends TestCase
      *
      * @return void
      *
-     * @throws SubscriptionException
+     * @throws InsuranceSubscriptionException
      */
     public function testReturnPendingCancellationIfApiThrowInsuranceCancelPendingException()
     {
@@ -127,14 +139,14 @@ class InsuranceApiServiceTest extends TestCase
             ->willThrowException(new InsuranceCancelPendingException('Pending cancellation'));
         $this->client->insurance = $insuranceMock;
         $this->insuranceApiService->setPhpClient($this->client);
-        $this->expectException(SubscriptionException::class);
+        $this->expectException(InsuranceSubscriptionException::class);
         $this->insuranceApiService->cancelSubscription($sid);
     }
 
     /**
      * Given a subscription id, the method should call the API to void the insurance and return the response
      *
-     * @throws SubscriptionException
+     * @throws InsuranceSubscriptionException
      */
     public function testReturn200IfNoError()
     {

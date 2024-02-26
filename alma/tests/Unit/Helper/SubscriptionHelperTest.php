@@ -24,7 +24,9 @@
 
 namespace Alma\PrestaShop\Tests\Unit\Helper;
 
+use Alma\PrestaShop\Exceptions\InsuranceSubscriptionException;
 use Alma\PrestaShop\Exceptions\SubscriptionException;
+use Alma\PrestaShop\Exceptions\TokenException;
 use Alma\PrestaShop\Helpers\SubscriptionHelper;
 use Alma\PrestaShop\Helpers\TokenHelper;
 use Alma\PrestaShop\Repositories\AlmaInsuranceProductRepository;
@@ -51,6 +53,10 @@ class SubscriptionHelperTest extends TestCase
      * @var TokenHelper
      */
     protected $tokenHelper;
+    /**
+     * @var InsuranceApiService|(InsuranceApiService&MockObject)|MockObject
+     */
+    public $insuranceApiService;
 
     public function setUp()
     {
@@ -59,91 +65,222 @@ class SubscriptionHelperTest extends TestCase
         $this->module = $this->createMock(Module::class);
         $this->tokenHelper = $this->createMock(TokenHelper::class);
         $this->subscriptionHelper = new SubscriptionHelper(
-            $this->module,
             $this->almaInsuranceProductRepository,
-            $this->insuranceApiService
+            $this->insuranceApiService,
+            $this->tokenHelper
         );
     }
 
     /**
+     * Given a valid token, the method should pass in the method cancelSubscription once
+     *
      * @return void
      *
-     * @throws SubscriptionException
+     * @throws InsuranceSubscriptionException
+     * @throws TokenException
      */
-    public function testUpdatedSubscriptionExecutedOnceWithParam()
-    {
-        $subscriptionId = 'subscription_39lGsF0UdBfpjQ8UXdYvkX';
-        $status = 'started';
-        $subscriptionBrokerId = 'broker_id';
-        $this->almaInsuranceProductRepository->expects($this->once())
-            ->method('updateSubscription')
-            ->with($subscriptionId, $status, $subscriptionBrokerId)
-            ->willReturn(true);
-        $this->subscriptionHelper->updateSubscription($subscriptionId, $status, $subscriptionBrokerId);
-    }
-
-    /**
-     * @return void
-     *
-     * @throws SubscriptionException
-     */
-    public function testThrowExceptionIfRequestToUpdateSubscriptionWrong()
-    {
-        $subscriptionId = 'subscription_39lGsF0UdBfpjQ8UXdYvkX';
-        $status = 'started';
-        $subscriptionBrokerId = 'broker_id';
-        $this->almaInsuranceProductRepository->expects($this->once())
-            ->method('updateSubscription')
-            ->with($subscriptionId, $status, $subscriptionBrokerId)
-            ->willReturn(false);
-        $this->expectException(SubscriptionException::class);
-        $this->subscriptionHelper->updateSubscription($subscriptionId, $status, $subscriptionBrokerId);
-    }
-
-    public function testIfActionIsCancelAndTokenIsValidUseOnceCancelSubscriptionMethod()
-    {
-        $action = 'cancel';
-        $sid = 'test';
-        $trace = 'trace';
-
-        //@TODO : Need to test once in method cancelSubscription
-        $this->tokenHelper->method('isAdminTokenValid')->willReturn(true);
-        /*
-         $this->tokenHelper->expects($this->once())
-            ->method('isAdminTokenValid')
-            ->with('AdminAlmaInsuranceOrdersDetails', 'token')
-            ->willReturn(true);
-         */
-        $this->subscriptionHelper->responseSubscriptionByAction($action, $sid, $trace);
-    }
-
-    public function testCallCancelSubscriptionOnceIfNoError()
+    public function testGetCancelSubscriptionWithValidToken()
     {
         $sid = 'subscription_39lGsF0UdBfpjQ8UXdYvkX';
         $this->insuranceApiService->expects($this->once())
             ->method('cancelSubscription')
             ->with($sid);
-        $this->subscriptionHelper->cancelSubscription($sid);
+        // @TODO : Why we need to expect AdminAlmaInsuranceOrdersDetails if the test is unit
+        $this->tokenHelper->expects($this->once())->method('isAdminTokenValid')
+            ->with('AdminAlmaInsuranceOrdersDetails', 'token')
+            ->willReturn(true);
+        $this->subscriptionHelper->cancelSubscriptionWithToken($sid);
     }
 
-    public function testCallCancelSubscriptionExpectCancelPendingExceptionIfThrowSubscriptionException()
+    /**
+     * Given a valid token and cancelSubscription throw exception
+     *
+     * @return void
+     *
+     * @throws InsuranceSubscriptionException
+     * @throws TokenException
+     */
+    public function testGetCancelSubscriptionWithValidTokenAndThrowExpection()
     {
-        $sid = 'wrong_sid';
-        $expected = [
-            'response' => [
-                'error' => true,
-                'message' => 'Pending cancellation',
-            ],
-            'code' => 410,
-        ];
-
+        $sid = 'subscription_39lGsF0UdBfpjQ8UXdYvkX';
         $this->insuranceApiService->expects($this->once())
             ->method('cancelSubscription')
             ->with($sid)
-            ->willThrowException(new SubscriptionException('Pending cancellation', 410));
-        $this->assertEquals(
-            $expected,
-            $this->subscriptionHelper->cancelSubscription($sid)
-        );
+            ->willReturn(InsuranceSubscriptionException::class);
+        // @TODO : Why we need to expect AdminAlmaInsuranceOrdersDetails if the test is unit
+        $this->tokenHelper->expects($this->once())->method('isAdminTokenValid')
+            ->with('AdminAlmaInsuranceOrdersDetails', 'token')
+            ->willReturn(true);
+        $this->subscriptionHelper->cancelSubscriptionWithToken($sid);
+    }
+
+    /**
+     * Given a wrong token, the method should return an error
+     *
+     * @return void
+     *
+     * @throws InsuranceSubscriptionException
+     * @throws TokenException
+     */
+    public function testGetCancelSubscriptionReturnErrorIfTokenIsNotValid()
+    {
+        $sid = 'subscription_39lGsF0UdBfpjQ8UXdYvkX';
+        // @TODO : Why we need to expect AdminAlmaInsuranceOrdersDetails if the test is unit
+        $this->tokenHelper->expects($this->once())->method('isAdminTokenValid')
+            ->with('AdminAlmaInsuranceOrdersDetails', 'token')
+            ->willReturn(false);
+        $this->expectException(TokenException::class);
+        $this->subscriptionHelper->cancelSubscriptionWithToken($sid);
+    }
+
+    /**
+     * Given a wrong trace and throw exception
+     *
+     * @dataProvider traceWrongDataProvider
+     *
+     * @param $trace
+     *
+     * @return void
+     */
+    public function testUpdateSubscriptionInvalidTrace($trace)
+    {
+        $sid = 'subscription_39lGsF0UdBfpjQ8UXdYvkX';
+
+        $this->expectException(SubscriptionException::class);
+        $this->insuranceApiService->expects($this->never())->method('getSubscriptionById');
+        $this->subscriptionHelper->updateSubscriptionWithTrace($trace, $sid);
+    }
+
+    /**
+     * Given a valid trace, the method should pass in the method getSubscriptionById and updateSubscription once
+     *
+     * @throws SubscriptionException
+     */
+    public function testUpdateSubscriptionWithValidTrace()
+    {
+        $trace = 'toto';
+        $sid = 'subscription_39lGsF0UdBfpjQ8UXdYvkX';
+        $subscriptionArray = [
+            'state' => 'started',
+            'broker_subscription_id' => 'broker_id',
+        ];
+        $this->almaInsuranceProductRepository->expects($this->once())
+            ->method('updateSubscription')
+            ->with($sid, $subscriptionArray['state'], $subscriptionArray['broker_subscription_id'])
+            ->willReturn(true);
+        $this->insuranceApiService->expects($this->once())
+            ->method('getSubscriptionById')
+            ->with($sid)
+            ->willReturn($subscriptionArray);
+        $this->subscriptionHelper->updateSubscriptionWithTrace($trace, $sid);
+    }
+
+    /**
+     * Given a valid trace, the method should pass in the method getSubscriptionById and throw Exception and never update Subscription
+     *
+     * @return void
+     *
+     * @throws SubscriptionException
+     */
+    public function testUpdateSubscriptionWithValidTraceAndGetSubscriptionByIdThrowException()
+    {
+        $trace = 'toto';
+        $sid = 'subscription_39lGsF0UdBfpjQ8UXdYvkX';
+
+        $this->expectException(SubscriptionException::class);
+        $this->almaInsuranceProductRepository->expects($this->never())
+            ->method('updateSubscription');
+
+        $this->insuranceApiService->expects($this->once())
+            ->method('getSubscriptionById')
+            ->with($sid)
+            ->willThrowException(new SubscriptionException('Impossible to get subscription'));
+        $this->subscriptionHelper->updateSubscriptionWithTrace($trace, $sid);
+    }
+
+    /**
+     * Given a valid trace, the method should pass in the method getSubscriptionById and update Subscription with return false ans throw exception
+     *
+     * @return void
+     *
+     * @throws SubscriptionException
+     */
+    public function testUpdateSubscriptionWithValidTraceAndGetSubscriptionByIdAndUpdateSubscriptionFalse()
+    {
+        $trace = 'toto';
+        $sid = 'subscription_39lGsF0UdBfpjQ8UXdYvkX';
+        $subscriptionArray = [
+            'state' => 'started',
+            'broker_subscription_id' => 'broker_id',
+        ];
+        $this->expectException(SubscriptionException::class);
+        $this->almaInsuranceProductRepository->expects($this->once())
+            ->method('updateSubscription')
+            ->with($sid, $subscriptionArray['state'], $subscriptionArray['broker_subscription_id'])
+            ->willReturn(false);
+        $this->insuranceApiService->expects($this->once())
+            ->method('getSubscriptionById')
+            ->with($sid)
+            ->willReturn($subscriptionArray);
+        $this->subscriptionHelper->updateSubscriptionWithTrace($trace, $sid);
+    }
+
+    /**
+     * @return array
+     */
+    public function traceWrongDataProvider()
+    {
+        return [
+            'Test trace is empty' => [
+                'trace' => '',
+            ],
+            'Test trace is not a string' => [
+                'trace' => 123,
+            ],
+            'Test trace is an object' => [
+                'trace' => new \stdClass(),
+            ],
+            'Test trace is an array' => [
+                'trace' => ['toto'],
+            ],
+            'Test trace is an empty array' => [
+                'trace' => [],
+            ],
+        ];
+    }
+
+    /**
+     * @return array[]
+     */
+    public function cancelSubscriptionErrorDataProvider()
+    {
+        return [
+            'Test pending cancellation code 410' => [
+                'returnedThrowException' => [
+                    'message' => 'Pending cancellation',
+                    'code' => 410,
+                ],
+                'expected' => [
+                    'response' => [
+                        'error' => true,
+                        'message' => 'Pending cancellation',
+                    ],
+                    'code' => 410,
+                ],
+            ],
+            'Test error with code 500' => [
+                'returnedThrowException' => [
+                    'message' => 'Impossible to cancel subscription',
+                    'code' => 500,
+                ],
+                'expected' => [
+                    'response' => [
+                        'error' => true,
+                        'message' => 'Impossible to cancel subscription',
+                    ],
+                    'code' => 500,
+                ],
+            ],
+        ];
     }
 }

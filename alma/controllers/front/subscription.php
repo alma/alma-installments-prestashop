@@ -22,7 +22,11 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
+use Alma\PrestaShop\Exceptions\AlmaException;
+use Alma\PrestaShop\Exceptions\SubscriptionException;
+use Alma\PrestaShop\Exceptions\TokenException;
 use Alma\PrestaShop\Helpers\SubscriptionHelper;
+use Alma\PrestaShop\Helpers\TokenHelper;
 use Alma\PrestaShop\Logger;
 use Alma\PrestaShop\Repositories\AlmaInsuranceProductRepository;
 use Alma\PrestaShop\Services\InsuranceApiService;
@@ -49,9 +53,9 @@ class AlmaSubscriptionModuleFrontController extends ModuleFrontController
         parent::__construct();
         $this->context = Context::getContext();
         $this->subscriptionHelper = new SubscriptionHelper(
-            $this->module,
-            new AlmaInsuranceProductRepository(),
-            new InsuranceApiService()
+          new AlmaInsuranceProductRepository(),
+          new InsuranceApiService(),
+          new TokenHelper()
         );
     }
 
@@ -67,6 +71,7 @@ class AlmaSubscriptionModuleFrontController extends ModuleFrontController
         $action = Tools::getValue('action');
         $sid = Tools::getValue('sid');
         $trace = Tools::getValue('trace');
+        $reason = Tools::getValue('reason');
 
         if (!$sid) {
             $msg = $this->module->l('Subscription id is missing', 'subscription');
@@ -74,8 +79,72 @@ class AlmaSubscriptionModuleFrontController extends ModuleFrontController
             $this->ajaxRenderAndExit(json_encode(['error' => $msg]), 500);
         }
 
-        $response = $this->subscriptionHelper->responseSubscriptionByAction($action, $sid, $trace);
+        try {
+            $this->responseSubscriptionByAction($action, $sid, $trace);
+        } catch (AlmaException $e) {
+            Logger::instance()->error(json_encode($e));
+            $this->ajaxRenderAndExit(json_encode(['error' => $e->getMessage()]), $e->getCode());
+        } catch (PrestaShopException $e) {
+        }
+    }
 
-        $this->ajaxRenderAndExit(json_encode($response['response']), $response['code']);
+    /**
+     * @param $action
+     * @param $sid
+     * @param $trace
+     *
+     * @throws PrestaShopException
+     * @throws SubscriptionException
+     * @throws TokenException
+     * @throws \Alma\PrestaShop\Exceptions\InsuranceSubscriptionException
+     */
+    public function responseSubscriptionByAction($action, $sid, $trace)
+    {
+        switch ($action) {
+            case 'update':
+                $this->update($trace, $sid);
+                break;
+            case 'cancel':
+                $this->cancel($sid);
+                break;
+            default:
+                $this->ajaxRenderAndExit(
+                    json_encode([
+                        'error' => true,
+                        'message' => $this->module->l('Action is unknown', 'subscription'),
+                    ]),
+                    500
+                );
+            break;
+        }
+    }
+
+    /**
+     * @param $trace
+     * @param $sid
+     *
+     * @throws PrestaShopException
+     * @throws SubscriptionException
+     */
+    private function update($trace, $sid)
+    {
+        $this->subscriptionHelper->updateSubscriptionWithTrace($trace, $sid);
+        $this->ajaxRenderAndExit(json_encode(['error' => false, 'message' => '']), 200);
+    }
+
+    /**
+     * @param $sid
+     *
+     * @return void
+     *
+     * @throws PrestaShopException
+     * @throws TokenException
+     * @throws \Alma\PrestaShop\Exceptions\InsuranceSubscriptionException
+     */
+    private function cancel($sid)
+    {
+        $this->subscriptionHelper->cancelSubscriptionWithToken($sid);
+        // @TOTO : set notification order message with link to the order in the message
+        $this->ajaxRenderAndExit(json_encode(['error' => false, 'message' => '']), 200);
     }
 }
