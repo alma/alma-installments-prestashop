@@ -31,6 +31,7 @@ use Alma\PrestaShop\Helpers\SubscriptionHelper;
 use Alma\PrestaShop\Helpers\TokenHelper;
 use Alma\PrestaShop\Repositories\AlmaInsuranceProductRepository;
 use Alma\PrestaShop\Services\InsuranceApiService;
+use Alma\PrestaShop\Services\InsuranceSubscriptionService;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use PrestaShop\PrestaShop\Adapter\Module\Module;
@@ -56,7 +57,11 @@ class SubscriptionHelperTest extends TestCase
     /**
      * @var InsuranceApiService|(InsuranceApiService&MockObject)|MockObject
      */
-    public $insuranceApiService;
+    protected $insuranceApiService;
+    /**
+     * @var InsuranceSubscriptionException|(InsuranceSubscriptionException&MockObject)|MockObject
+     */
+    protected $insuranceSubscriptionService;
 
     public function setUp()
     {
@@ -64,10 +69,12 @@ class SubscriptionHelperTest extends TestCase
         $this->insuranceApiService = $this->createMock(InsuranceApiService::class);
         $this->module = $this->createMock(Module::class);
         $this->tokenHelper = $this->createMock(TokenHelper::class);
+        $this->insuranceSubscriptionService = $this->createMock(InsuranceSubscriptionService::class);
         $this->subscriptionHelper = new SubscriptionHelper(
             $this->almaInsuranceProductRepository,
             $this->insuranceApiService,
-            $this->tokenHelper
+            $this->tokenHelper,
+            $this->insuranceSubscriptionService
         );
     }
 
@@ -82,6 +89,11 @@ class SubscriptionHelperTest extends TestCase
     public function testGetCancelSubscriptionWithValidToken()
     {
         $sid = 'subscription_39lGsF0UdBfpjQ8UXdYvkX';
+        $state = 'pending_cancellation';
+        $reason = 'reason cancellation';
+        $this->insuranceSubscriptionService->expects($this->once())
+            ->method('setCancellation')
+            ->with($sid, $state, $reason);
         $this->insuranceApiService->expects($this->once())
             ->method('cancelSubscription')
             ->with($sid);
@@ -89,7 +101,7 @@ class SubscriptionHelperTest extends TestCase
         $this->tokenHelper->expects($this->once())->method('isAdminTokenValid')
             ->with('AdminAlmaInsuranceOrdersDetails', 'token')
             ->willReturn(true);
-        $this->subscriptionHelper->cancelSubscriptionWithToken($sid);
+        $this->subscriptionHelper->cancelSubscriptionWithToken($sid, $state, $reason);
     }
 
     /**
@@ -100,9 +112,11 @@ class SubscriptionHelperTest extends TestCase
      * @throws InsuranceSubscriptionException
      * @throws TokenException
      */
-    public function testGetCancelSubscriptionWithValidTokenAndThrowExpection()
+    public function testGetCancelSubscriptionWithValidTokenAndThrowException()
     {
         $sid = 'subscription_39lGsF0UdBfpjQ8UXdYvkX';
+        $state = 'pending_cancellation';
+        $reason = 'reason cancellation';
         $this->insuranceApiService->expects($this->once())
             ->method('cancelSubscription')
             ->with($sid)
@@ -111,7 +125,7 @@ class SubscriptionHelperTest extends TestCase
         $this->tokenHelper->expects($this->once())->method('isAdminTokenValid')
             ->with('AdminAlmaInsuranceOrdersDetails', 'token')
             ->willReturn(true);
-        $this->subscriptionHelper->cancelSubscriptionWithToken($sid);
+        $this->subscriptionHelper->cancelSubscriptionWithToken($sid, $state, $reason);
     }
 
     /**
@@ -125,12 +139,14 @@ class SubscriptionHelperTest extends TestCase
     public function testGetCancelSubscriptionReturnErrorIfTokenIsNotValid()
     {
         $sid = 'subscription_39lGsF0UdBfpjQ8UXdYvkX';
+        $state = 'pending_cancellation';
+        $reason = 'reason cancellation';
         // @TODO : Why we need to expect AdminAlmaInsuranceOrdersDetails if the test is unit
         $this->tokenHelper->expects($this->once())->method('isAdminTokenValid')
             ->with('AdminAlmaInsuranceOrdersDetails', 'token')
             ->willReturn(false);
         $this->expectException(TokenException::class);
-        $this->subscriptionHelper->cancelSubscriptionWithToken($sid);
+        $this->subscriptionHelper->cancelSubscriptionWithToken($sid, $state, $reason);
     }
 
     /**
@@ -148,7 +164,7 @@ class SubscriptionHelperTest extends TestCase
 
         $this->expectException(SubscriptionException::class);
         $this->insuranceApiService->expects($this->never())->method('getSubscriptionById');
-        $this->subscriptionHelper->updateSubscriptionWithTrace($trace, $sid);
+        $this->subscriptionHelper->updateSubscriptionWithTrace($sid, $trace);
     }
 
     /**
@@ -172,7 +188,7 @@ class SubscriptionHelperTest extends TestCase
             ->method('getSubscriptionById')
             ->with($sid)
             ->willReturn($subscriptionArray);
-        $this->subscriptionHelper->updateSubscriptionWithTrace($trace, $sid);
+        $this->subscriptionHelper->updateSubscriptionWithTrace($sid, $trace);
     }
 
     /**
@@ -195,7 +211,7 @@ class SubscriptionHelperTest extends TestCase
             ->method('getSubscriptionById')
             ->with($sid)
             ->willThrowException(new SubscriptionException('Impossible to get subscription'));
-        $this->subscriptionHelper->updateSubscriptionWithTrace($trace, $sid);
+        $this->subscriptionHelper->updateSubscriptionWithTrace($sid, $trace);
     }
 
     /**
@@ -222,7 +238,7 @@ class SubscriptionHelperTest extends TestCase
             ->method('getSubscriptionById')
             ->with($sid)
             ->willReturn($subscriptionArray);
-        $this->subscriptionHelper->updateSubscriptionWithTrace($trace, $sid);
+        $this->subscriptionHelper->updateSubscriptionWithTrace($sid, $trace);
     }
 
     /**

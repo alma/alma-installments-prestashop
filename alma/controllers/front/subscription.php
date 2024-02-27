@@ -23,13 +23,16 @@
  */
 
 use Alma\PrestaShop\Exceptions\AlmaException;
+use Alma\PrestaShop\Exceptions\InsuranceSubscriptionException;
 use Alma\PrestaShop\Exceptions\SubscriptionException;
 use Alma\PrestaShop\Exceptions\TokenException;
+use Alma\PrestaShop\Helpers\ConstantsHelper;
 use Alma\PrestaShop\Helpers\SubscriptionHelper;
 use Alma\PrestaShop\Helpers\TokenHelper;
 use Alma\PrestaShop\Logger;
 use Alma\PrestaShop\Repositories\AlmaInsuranceProductRepository;
 use Alma\PrestaShop\Services\InsuranceApiService;
+use Alma\PrestaShop\Services\InsuranceSubscriptionService;
 use Alma\PrestaShop\Traits\AjaxTrait;
 
 if (!defined('_PS_VERSION_')) {
@@ -55,7 +58,8 @@ class AlmaSubscriptionModuleFrontController extends ModuleFrontController
         $this->subscriptionHelper = new SubscriptionHelper(
           new AlmaInsuranceProductRepository(),
           new InsuranceApiService(),
-          new TokenHelper()
+          new TokenHelper(),
+          new InsuranceSubscriptionService()
         );
     }
 
@@ -80,7 +84,7 @@ class AlmaSubscriptionModuleFrontController extends ModuleFrontController
         }
 
         try {
-            $this->responseSubscriptionByAction($action, $sid, $trace);
+            $this->responseSubscriptionByAction($action, $sid, $trace, $reason);
         } catch (AlmaException $e) {
             Logger::instance()->error(json_encode($e));
             $this->ajaxRenderAndExit(json_encode(['error' => $e->getMessage()]), $e->getCode());
@@ -92,20 +96,21 @@ class AlmaSubscriptionModuleFrontController extends ModuleFrontController
      * @param $action
      * @param $sid
      * @param $trace
+     * @param $reason
      *
      * @throws PrestaShopException
      * @throws SubscriptionException
      * @throws TokenException
-     * @throws \Alma\PrestaShop\Exceptions\InsuranceSubscriptionException
+     * @throws InsuranceSubscriptionException
      */
-    public function responseSubscriptionByAction($action, $sid, $trace)
+    public function responseSubscriptionByAction($action, $sid, $trace, $reason)
     {
         switch ($action) {
             case 'update':
-                $this->update($trace, $sid);
+                $this->update($sid, $trace);
                 break;
             case 'cancel':
-                $this->cancel($sid);
+                $this->cancel($sid, $reason);
                 break;
             default:
                 $this->ajaxRenderAndExit(
@@ -126,25 +131,35 @@ class AlmaSubscriptionModuleFrontController extends ModuleFrontController
      * @throws PrestaShopException
      * @throws SubscriptionException
      */
-    private function update($trace, $sid)
+    private function update($sid, $trace)
     {
-        $this->subscriptionHelper->updateSubscriptionWithTrace($trace, $sid);
-        $this->ajaxRenderAndExit(json_encode(['error' => false, 'message' => '']), 200);
+        $this->subscriptionHelper->updateSubscriptionWithTrace($sid, $trace);
+        $this->ajaxRenderAndExit(json_encode(['success' => true]), 200);
     }
 
     /**
      * @param $sid
+     * @param $reason
      *
      * @return void
      *
+     * @throws InsuranceSubscriptionException
      * @throws PrestaShopException
      * @throws TokenException
-     * @throws \Alma\PrestaShop\Exceptions\InsuranceSubscriptionException
      */
-    private function cancel($sid)
+    private function cancel($sid, $reason)
     {
-        $this->subscriptionHelper->cancelSubscriptionWithToken($sid);
-        // @TOTO : set notification order message with link to the order in the message
-        $this->ajaxRenderAndExit(json_encode(['error' => false, 'message' => '']), 200);
+        $state = ConstantsHelper::ALMA_INSURANCE_STATUS_CANCELED;
+        $this->subscriptionHelper->cancelSubscriptionWithToken($sid, $state, $reason);
+        // @TODO : set notification order message with link to the order in the message
+        $this->ajaxRenderAndExit(
+            json_encode(
+                [
+                    'success' => true,
+                    'state' => $state,
+                ]
+            ),
+            200
+        );
     }
 }

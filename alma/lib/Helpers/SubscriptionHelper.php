@@ -29,6 +29,7 @@ use Alma\PrestaShop\Exceptions\SubscriptionException;
 use Alma\PrestaShop\Exceptions\TokenException;
 use Alma\PrestaShop\Repositories\AlmaInsuranceProductRepository;
 use Alma\PrestaShop\Services\InsuranceApiService;
+use Alma\PrestaShop\Services\InsuranceSubscriptionService;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -51,26 +52,34 @@ class SubscriptionHelper
      * @var TokenHelper
      */
     protected $tokenHelper;
+    /**
+     * @var InsuranceSubscriptionService
+     */
+    protected $insuranceSubscriptionService;
 
     public function __construct(
         $almaInsuranceProductRepository,
         $insuranceApiService,
-        $tokenHelper
+        $tokenHelper,
+        $insuranceSubscriptionService
     ) {
         $this->almaInsuranceProductRepository = $almaInsuranceProductRepository;
         $this->insuranceApiService = $insuranceApiService;
         $this->tokenHelper = $tokenHelper;
+        $this->insuranceSubscriptionService = $insuranceSubscriptionService;
     }
 
     /**
      * @param $sid
+     * @param $state
+     * @param $reason
      *
      * @return void
      *
-     * @throws TokenException
      * @throws InsuranceSubscriptionException
+     * @throws TokenException
      */
-    public function cancelSubscriptionWithToken($sid)
+    public function cancelSubscriptionWithToken($sid, $state, $reason)
     {
         if (!$this->tokenHelper->isAdminTokenValid(
             ConstantsHelper::BO_CONTROLLER_INSURANCE_ORDERS_DETAILS_CLASSNAME,
@@ -80,7 +89,7 @@ class SubscriptionHelper
         }
 
         $this->insuranceApiService->cancelSubscription($sid);
-        //@TODO : Service set database with (status, reason , date_cancel, request_cancel_date)
+        $this->insuranceSubscriptionService->setCancellation($sid, $state, $reason);
     }
 
     /**
@@ -91,7 +100,7 @@ class SubscriptionHelper
      *
      * @throws SubscriptionException
      */
-    public function updateSubscriptionWithTrace($trace, $sid)
+    public function updateSubscriptionWithTrace($sid, $trace)
     {
         $this->isTraceValid($trace);
 

@@ -34,7 +34,6 @@
 
         window.addEventListener('message', (e) => {
             if (e.data.type === 'sendCancelSubscriptionToCms') {
-                console.log('Cancel subscription', e.data)
 
                 $.ajax({
                     type: 'POST',
@@ -44,25 +43,17 @@
                         ajax: true,
                         action: 'cancel',
                         token: subscriptionData.token,
-                        sid: subscriptionData.cmsSubscriptions[0].subscriptionId,
-                        reason: subscriptionData.reasonContent
+                        sid: e.data.cmsSubscription.subscriptionId,
+                        reason: e.data.reasonContent
                     },
                 })
-                .success(function() {
-                    //Success
-                    // @toto : return ok for refund
-                    console.log('Success');
-                    console.log(e);
+                .success(function(result) {
+                    sendNotificationToIFrame([
+                        {subscriptionBrokerId: e.data.cmsSubscription.subscriptionBrokerId, newStatus: result.state},
+                    ])
                 })
-                .error(function(e) {
-                    // Error
-                    // @toto : return error
-                    console.log('Error');
-                    console.log(e.responseJSON.status);
-                    sendNotificationToIFrame([{subscriptionBrokerId:
-                        subscriptionData.cmsSubscriptions[0].subscriptionBrokerId,
-                        newStatus: e.responseJSON.status
-                    }])
+                .error(function(result) {
+                    console.log('Error', result)
                 });
             }
         })

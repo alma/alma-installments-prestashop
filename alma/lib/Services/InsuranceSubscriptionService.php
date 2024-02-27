@@ -148,4 +148,20 @@ class InsuranceSubscriptionService
         $insuranceProduct->subscription_state = $subscription['state'];
         $insuranceProduct->save();
     }
+
+    /**
+     * @param $sid
+     * @param $state
+     * @param $reason
+     *
+     * @return void
+     *
+     * @throws InsuranceSubscriptionException
+     */
+    public function setCancellation($sid, $state, $reason)
+    {
+        if (!$this->almaInsuranceProductRepository->updateSubscriptionForCancellation($sid, $state, $reason)) {
+            throw new InsuranceSubscriptionException('There is an issue to update the subscription in the database');
+        }
+    }
 }

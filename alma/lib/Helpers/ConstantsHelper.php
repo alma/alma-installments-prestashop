@@ -90,6 +90,12 @@ class ConstantsHelper
 
     const ALMA_INSURANCE_PRODUCT_IMAGE_URL = _PS_MODULE_DIR_ . self::ALMA_MODULE_NAME . '/views/img/alma-insurance.png';
 
+    const ALMA_INSURANCE_STATUS_STARTED = 'started';
+    const ALMA_INSURANCE_STATUS_FAILED = 'failed';
+    const ALMA_INSURANCE_STATUS_CANCELED = 'canceled';
+    const ALMA_INSURANCE_STATUS_PENDING = 'pending';
+    const ALMA_INSURANCE_STATUS_PENDING_CANCELLATION = 'pending_cancellation';
+
     /**
      * Insurance form fields
      *

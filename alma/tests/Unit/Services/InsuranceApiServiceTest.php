@@ -157,6 +157,5 @@ class InsuranceApiServiceTest extends TestCase
 
         $this->insuranceApiService->setPhpClient($this->client);
         $this->insuranceApiService->cancelSubscription($sid);
-        //@TODO : Test assert return 200
     }
 }
