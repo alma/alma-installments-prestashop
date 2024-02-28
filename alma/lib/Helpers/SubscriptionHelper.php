@@ -24,6 +24,7 @@
 
 namespace Alma\PrestaShop\Helpers;
 
+use Alma\PrestaShop\Exceptions\InsurancePendingCancellationException;
 use Alma\PrestaShop\Exceptions\InsuranceSubscriptionException;
 use Alma\PrestaShop\Exceptions\SubscriptionException;
 use Alma\PrestaShop\Exceptions\TokenException;
@@ -71,15 +72,14 @@ class SubscriptionHelper
 
     /**
      * @param $sid
-     * @param $state
-     * @param $reason
      *
      * @return void
      *
+     * @throws InsurancePendingCancellationException
      * @throws InsuranceSubscriptionException
      * @throws TokenException
      */
-    public function cancelSubscriptionWithToken($sid, $state, $reason)
+    public function cancelSubscriptionWithToken($sid)
     {
         if (!$this->tokenHelper->isAdminTokenValid(
             ConstantsHelper::BO_CONTROLLER_INSURANCE_ORDERS_DETAILS_CLASSNAME,
@@ -89,7 +89,6 @@ class SubscriptionHelper
         }
 
         $this->insuranceApiService->cancelSubscription($sid);
-        $this->insuranceSubscriptionService->setCancellation($sid, $state, $reason);
     }
 
     /**

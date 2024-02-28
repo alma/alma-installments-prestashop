@@ -50,10 +50,13 @@
                 .success(function(result) {
                     sendNotificationToIFrame([
                         {subscriptionBrokerId: e.data.cmsSubscription.subscriptionBrokerId, newStatus: result.state},
-                    ])
+                    ]);
                 })
                 .error(function(result) {
-                    console.log('Error', result)
+                    console.log('Error', result);
+                    sendNotificationToIFrame([
+                        {subscriptionBrokerId: e.data.cmsSubscription.subscriptionBrokerId, newStatus: result.responseJSON.state},
+                    ]);
                 });
             }
         })

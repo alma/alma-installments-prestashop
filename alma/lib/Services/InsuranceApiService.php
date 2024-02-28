@@ -29,6 +29,7 @@ use Alma\API\Entities\Insurance\Contract;
 use Alma\API\Exceptions\AlmaException;
 use Alma\API\Exceptions\InsuranceCancelPendingException;
 use Alma\API\RequestError;
+use Alma\PrestaShop\Exceptions\InsurancePendingCancellationException;
 use Alma\PrestaShop\Exceptions\InsuranceSubscriptionException;
 use Alma\PrestaShop\Exceptions\SubscriptionException;
 use Alma\PrestaShop\Helpers\CartHelper;
@@ -246,6 +247,7 @@ class InsuranceApiService
      *
      * @return void
      *
+     * @throws InsurancePendingCancellationException
      * @throws InsuranceSubscriptionException
      */
     public function cancelSubscription($sid)
@@ -253,7 +255,7 @@ class InsuranceApiService
         try {
             $this->almaApiClient->insurance->cancelSubscription($sid);
         } catch (InsuranceCancelPendingException $e) {
-            throw new InsuranceSubscriptionException('Pending cancellation', 410);
+            throw new InsurancePendingCancellationException('Pending cancellation', 410);
         } catch (AlmaException $e) {
             throw new InsuranceSubscriptionException('Impossible to cancel subscription', 500);
         }

@@ -89,11 +89,6 @@ class SubscriptionHelperTest extends TestCase
     public function testGetCancelSubscriptionWithValidToken()
     {
         $sid = 'subscription_39lGsF0UdBfpjQ8UXdYvkX';
-        $state = 'pending_cancellation';
-        $reason = 'reason cancellation';
-        $this->insuranceSubscriptionService->expects($this->once())
-            ->method('setCancellation')
-            ->with($sid, $state, $reason);
         $this->insuranceApiService->expects($this->once())
             ->method('cancelSubscription')
             ->with($sid);
@@ -101,7 +96,7 @@ class SubscriptionHelperTest extends TestCase
         $this->tokenHelper->expects($this->once())->method('isAdminTokenValid')
             ->with('AdminAlmaInsuranceOrdersDetails', 'token')
             ->willReturn(true);
-        $this->subscriptionHelper->cancelSubscriptionWithToken($sid, $state, $reason);
+        $this->subscriptionHelper->cancelSubscriptionWithToken($sid);
     }
 
     /**
@@ -115,8 +110,6 @@ class SubscriptionHelperTest extends TestCase
     public function testGetCancelSubscriptionWithValidTokenAndThrowException()
     {
         $sid = 'subscription_39lGsF0UdBfpjQ8UXdYvkX';
-        $state = 'pending_cancellation';
-        $reason = 'reason cancellation';
         $this->insuranceApiService->expects($this->once())
             ->method('cancelSubscription')
             ->with($sid)
@@ -125,7 +118,7 @@ class SubscriptionHelperTest extends TestCase
         $this->tokenHelper->expects($this->once())->method('isAdminTokenValid')
             ->with('AdminAlmaInsuranceOrdersDetails', 'token')
             ->willReturn(true);
-        $this->subscriptionHelper->cancelSubscriptionWithToken($sid, $state, $reason);
+        $this->subscriptionHelper->cancelSubscriptionWithToken($sid);
     }
 
     /**
