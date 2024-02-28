@@ -29,11 +29,13 @@ use Alma\API\Endpoints\Insurance;
 use Alma\API\Exceptions\InsuranceCancelPendingException;
 use Alma\API\Exceptions\RequestException;
 use Alma\API\RequestError;
+use Alma\PrestaShop\Exceptions\InsurancePendingCancellationException;
 use Alma\PrestaShop\Exceptions\InsuranceSubscriptionException;
 use Alma\PrestaShop\Exceptions\SubscriptionException;
 use Alma\PrestaShop\Helpers\SubscriptionHelper;
 use Alma\PrestaShop\Repositories\AlmaInsuranceProductRepository;
 use Alma\PrestaShop\Services\InsuranceApiService;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 class InsuranceApiServiceTest extends TestCase
@@ -43,7 +45,7 @@ class InsuranceApiServiceTest extends TestCase
      */
     private $insuranceApiService;
     /**
-     * @var AlmaInsuranceProductRepository|(AlmaInsuranceProductRepository&\PHPUnit\Framework\MockObject\MockObject)|\PHPUnit\Framework\MockObject\MockObject
+     * @var AlmaInsuranceProductRepository|(AlmaInsuranceProductRepository&MockObject)|MockObject
      */
     private $almaInsuranceProductRepository;
 
@@ -63,6 +65,10 @@ class InsuranceApiServiceTest extends TestCase
     }
 
     /**
+     * Given a subscription id,
+     * the method should call the API to get the subscription,
+     * who return an RequestError and we throw and SubscriptionException
+     *
      * @throws SubscriptionException
      */
     public function testGetRequestIsCalledAndThrowSubscriptionExceptionIfApiThrowException()
@@ -81,6 +87,8 @@ class InsuranceApiServiceTest extends TestCase
     }
 
     /**
+     * Given a subscription id, the method should call the API to get the subscription and return the response
+     *
      * @throws SubscriptionException
      */
     public function testGetRequestIsCalledAndReturnSubscriptionIfNoError()
@@ -101,10 +109,13 @@ class InsuranceApiServiceTest extends TestCase
     }
 
     /**
-     * Given a subscription id, the method should call the API to void the insurance and return the response
+     * Given a subscription id,
+     * the method should call the API to void the insurance and who return an RequestException
+     * then an InsuranceSubscriptionException is thrown
      *
      * @return void
      *
+     * @throws InsurancePendingCancellationException
      * @throws InsuranceSubscriptionException
      */
     public function testGetRequestIsCalledToVoidInsuranceAndThrowSubscriptionExceptionIfApiThrowException()
@@ -123,7 +134,9 @@ class InsuranceApiServiceTest extends TestCase
     }
 
     /**
-     * Given a subscription id, the method should call the API to void the insurance and return the response 410
+     * Given a subscription id,
+     * the method should call the API to void the insurance
+     * then an InsurancePendingCancellationException is thrown code 410
      *
      * @return void
      *
@@ -139,13 +152,16 @@ class InsuranceApiServiceTest extends TestCase
             ->willThrowException(new InsuranceCancelPendingException('Pending cancellation'));
         $this->client->insurance = $insuranceMock;
         $this->insuranceApiService->setPhpClient($this->client);
-        $this->expectException(InsuranceSubscriptionException::class);
+        $this->expectException(InsurancePendingCancellationException::class);
         $this->insuranceApiService->cancelSubscription($sid);
     }
 
     /**
-     * Given a subscription id, the method should call the API to void the insurance and return the response
+     * Given a subscription id,
+     * the method should call the API to void the insurance
+     * and return the response
      *
+     * @throws InsurancePendingCancellationException
      * @throws InsuranceSubscriptionException
      */
     public function testReturn200IfNoError()

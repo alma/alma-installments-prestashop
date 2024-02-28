@@ -24,9 +24,11 @@
 
 namespace Alma\PrestaShop\Tests\Unit\Helper;
 
+use Alma\PrestaShop\Exceptions\InsurancePendingCancellationException;
 use Alma\PrestaShop\Exceptions\InsuranceSubscriptionException;
 use Alma\PrestaShop\Exceptions\SubscriptionException;
 use Alma\PrestaShop\Exceptions\TokenException;
+use Alma\PrestaShop\Helpers\ConstantsHelper;
 use Alma\PrestaShop\Helpers\SubscriptionHelper;
 use Alma\PrestaShop\Helpers\TokenHelper;
 use Alma\PrestaShop\Repositories\AlmaInsuranceProductRepository;
@@ -85,6 +87,7 @@ class SubscriptionHelperTest extends TestCase
      *
      * @throws InsuranceSubscriptionException
      * @throws TokenException
+     * @throws InsurancePendingCancellationException
      */
     public function testGetCancelSubscriptionWithValidToken()
     {
@@ -92,9 +95,10 @@ class SubscriptionHelperTest extends TestCase
         $this->insuranceApiService->expects($this->once())
             ->method('cancelSubscription')
             ->with($sid);
-        // @TODO : Why we need to expect AdminAlmaInsuranceOrdersDetails if the test is unit
-        $this->tokenHelper->expects($this->once())->method('isAdminTokenValid')
-            ->with('AdminAlmaInsuranceOrdersDetails', 'token')
+
+        $this->tokenHelper->expects($this->once())
+            ->method('isAdminTokenValid')
+            ->with(ConstantsHelper::BO_CONTROLLER_INSURANCE_ORDERS_DETAILS_CLASSNAME, 'token')
             ->willReturn(true);
         $this->subscriptionHelper->cancelSubscriptionWithToken($sid);
     }
@@ -104,6 +108,7 @@ class SubscriptionHelperTest extends TestCase
      *
      * @return void
      *
+     * @throws InsurancePendingCancellationException
      * @throws InsuranceSubscriptionException
      * @throws TokenException
      */
@@ -114,9 +119,9 @@ class SubscriptionHelperTest extends TestCase
             ->method('cancelSubscription')
             ->with($sid)
             ->willReturn(InsuranceSubscriptionException::class);
-        // @TODO : Why we need to expect AdminAlmaInsuranceOrdersDetails if the test is unit
+
         $this->tokenHelper->expects($this->once())->method('isAdminTokenValid')
-            ->with('AdminAlmaInsuranceOrdersDetails', 'token')
+            ->with(ConstantsHelper::BO_CONTROLLER_INSURANCE_ORDERS_DETAILS_CLASSNAME, 'token')
             ->willReturn(true);
         $this->subscriptionHelper->cancelSubscriptionWithToken($sid);
     }
@@ -126,6 +131,7 @@ class SubscriptionHelperTest extends TestCase
      *
      * @return void
      *
+     * @throws InsurancePendingCancellationException
      * @throws InsuranceSubscriptionException
      * @throws TokenException
      */
@@ -134,9 +140,9 @@ class SubscriptionHelperTest extends TestCase
         $sid = 'subscription_39lGsF0UdBfpjQ8UXdYvkX';
         $state = 'pending_cancellation';
         $reason = 'reason cancellation';
-        // @TODO : Why we need to expect AdminAlmaInsuranceOrdersDetails if the test is unit
+
         $this->tokenHelper->expects($this->once())->method('isAdminTokenValid')
-            ->with('AdminAlmaInsuranceOrdersDetails', 'token')
+            ->with(ConstantsHelper::BO_CONTROLLER_INSURANCE_ORDERS_DETAILS_CLASSNAME, 'token')
             ->willReturn(false);
         $this->expectException(TokenException::class);
         $this->subscriptionHelper->cancelSubscriptionWithToken($sid, $state, $reason);
@@ -208,7 +214,7 @@ class SubscriptionHelperTest extends TestCase
     }
 
     /**
-     * Given a valid trace, the method should pass in the method getSubscriptionById and update Subscription with return false ans throw exception
+     * Given a valid trace, the method should pass in the method getSubscriptionById and update Subscription with return false and throw exception
      *
      * @return void
      *

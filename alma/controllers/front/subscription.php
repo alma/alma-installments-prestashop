@@ -26,7 +26,6 @@ use Alma\PrestaShop\Exceptions\AlmaException;
 use Alma\PrestaShop\Exceptions\InsurancePendingCancellationException;
 use Alma\PrestaShop\Exceptions\InsuranceSubscriptionException;
 use Alma\PrestaShop\Exceptions\SubscriptionException;
-use Alma\PrestaShop\Exceptions\TokenException;
 use Alma\PrestaShop\Helpers\ConstantsHelper;
 use Alma\PrestaShop\Helpers\SubscriptionHelper;
 use Alma\PrestaShop\Helpers\TokenHelper;
@@ -52,6 +51,10 @@ class AlmaSubscriptionModuleFrontController extends ModuleFrontController
      * @var InsuranceSubscriptionService
      */
     protected $insuranceSubscriptionService;
+    /**
+     * @var AlmaInsuranceProductRepository
+     */
+    protected $almaInsuranceProductRepository;
 
     /**
      * IPN constructor
@@ -60,12 +63,15 @@ class AlmaSubscriptionModuleFrontController extends ModuleFrontController
     {
         parent::__construct();
         $this->context = Context::getContext();
-        $this->insuranceSubscriptionService = new InsuranceSubscriptionService();
+        $this->almaInsuranceProductRepository = new AlmaInsuranceProductRepository();
+        $this->insuranceSubscriptionService = new InsuranceSubscriptionService(
+            $this->almaInsuranceProductRepository
+        );
         $this->subscriptionHelper = new SubscriptionHelper(
-          new AlmaInsuranceProductRepository(),
-          new InsuranceApiService(),
-          new TokenHelper(),
-          $this->insuranceSubscriptionService
+            $this->almaInsuranceProductRepository,
+            new InsuranceApiService(),
+            new TokenHelper(),
+            $this->insuranceSubscriptionService
         );
     }
 
@@ -112,7 +118,6 @@ class AlmaSubscriptionModuleFrontController extends ModuleFrontController
      * @throws InsuranceSubscriptionException
      * @throws PrestaShopException
      * @throws SubscriptionException
-     * @throws TokenException
      */
     public function responseSubscriptionByAction($action, $sid, $trace, $reason = '')
     {

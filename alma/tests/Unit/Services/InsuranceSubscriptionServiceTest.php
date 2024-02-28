@@ -46,8 +46,10 @@ class InsuranceSubscriptionServiceTest extends TestCase
      */
     public function setUp()
     {
-        $this->insuranceSubscriptionService = new InsuranceSubscriptionService();
         $this->almaInsuranceProductRepository = $this->createMock(AlmaInsuranceProductRepository::class);
+        $this->insuranceSubscriptionService = new InsuranceSubscriptionService(
+            $this->almaInsuranceProductRepository
+        );
     }
 
     /**

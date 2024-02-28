@@ -57,9 +57,13 @@ class InsuranceSubscriptionService
      */
     protected $context;
 
-    public function __construct()
-    {
-        $this->almaInsuranceProductRepository = new AlmaInsuranceProductRepository();
+    public function __construct(
+        $almaInsuranceProductRepository = null
+    ) {
+        if (!$almaInsuranceProductRepository) {
+            $almaInsuranceProductRepository = new AlmaInsuranceProductRepository();
+        }
+        $this->almaInsuranceProductRepository = $almaInsuranceProductRepository;
         $this->insuranceService = new InsuranceService();
         $this->orderHelper = new OrderHelper();
         $this->insuranceApiService = new InsuranceApiService();
