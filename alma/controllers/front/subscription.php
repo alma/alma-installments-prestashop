@@ -31,9 +31,12 @@ use Alma\PrestaShop\Helpers\SubscriptionHelper;
 use Alma\PrestaShop\Helpers\TokenHelper;
 use Alma\PrestaShop\Logger;
 use Alma\PrestaShop\Repositories\AlmaInsuranceProductRepository;
+use Alma\PrestaShop\Repositories\CustomerThreadRepository;
 use Alma\PrestaShop\Services\InsuranceApiService;
 use Alma\PrestaShop\Services\InsuranceSubscriptionService;
+use Alma\PrestaShop\Services\MessageOrderService;
 use Alma\PrestaShop\Traits\AjaxTrait;
+use PrestaShop\PrestaShop\Adapter\Entity\CustomerThread;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -55,6 +58,18 @@ class AlmaSubscriptionModuleFrontController extends ModuleFrontController
      * @var AlmaInsuranceProductRepository
      */
     protected $almaInsuranceProductRepository;
+    /**
+     * @var CustomerThreadRepository
+     */
+    protected $customerThreadRepository;
+    /**
+     * @var CustomerMessage
+     */
+    protected $customerMessage;
+    /**
+     * @var CustomerThread
+     */
+    protected $customerThread;
 
     /**
      * IPN constructor
@@ -64,6 +79,9 @@ class AlmaSubscriptionModuleFrontController extends ModuleFrontController
         parent::__construct();
         $this->context = Context::getContext();
         $this->almaInsuranceProductRepository = new AlmaInsuranceProductRepository();
+        $this->customerThread = new CustomerThread();
+        $this->customerMessage = new \CustomerMessage();
+        $this->customerThreadRepository = new CustomerThreadRepository();
         $this->insuranceSubscriptionService = new InsuranceSubscriptionService(
             $this->almaInsuranceProductRepository
         );
@@ -186,7 +204,9 @@ class AlmaSubscriptionModuleFrontController extends ModuleFrontController
                 'code' => $e->getCode(),
             ];
         }
-        // @TODO : set notification order message with link to the order in the message
+
+        // @TODO : check to send notification only if the subscription is canceled
+        $this->addMessageOrder($sid);
         $this->insuranceSubscriptionService->setCancellation(
             $sid,
             $response['state'],
@@ -194,5 +214,29 @@ class AlmaSubscriptionModuleFrontController extends ModuleFrontController
         );
 
         $this->ajaxRenderAndExit(json_encode($response), $response['code']);
+    }
+
+    /**
+     * @param $sid
+     *
+     * @return void
+     *
+     * @throws PrestaShopDatabaseException
+     * @throws PrestaShopException
+     */
+    public function addMessageOrder($sid)
+    {
+        $almaInsuranceProduct = $this->almaInsuranceProductRepository->getBySubscriptionId($sid);
+        $order = new Order($almaInsuranceProduct['id_order']);
+
+        $messageOrderService = new MessageOrderService(
+            $order->id_customer,
+            $this->context,
+            $this->customerThread,
+            $this->customerMessage,
+            $this->customerThreadRepository
+        );
+
+        $messageOrderService->insuranceCancelSubscription($order, $almaInsuranceProduct['id_product_insurance']);
     }
 }
