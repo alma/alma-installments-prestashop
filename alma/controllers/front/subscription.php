@@ -26,7 +26,7 @@ use Alma\PrestaShop\Exceptions\AlmaException;
 use Alma\PrestaShop\Exceptions\InsurancePendingCancellationException;
 use Alma\PrestaShop\Exceptions\InsuranceSubscriptionException;
 use Alma\PrestaShop\Exceptions\SubscriptionException;
-use Alma\PrestaShop\Helpers\ConstantsHelper;
+use Alma\PrestaShop\Helpers\InsuranceHelper;
 use Alma\PrestaShop\Helpers\SubscriptionHelper;
 use Alma\PrestaShop\Helpers\TokenHelper;
 use Alma\PrestaShop\Logger;
@@ -78,15 +78,16 @@ class AlmaSubscriptionModuleFrontController extends ModuleFrontController
     {
         parent::__construct();
         $this->context = Context::getContext();
-        $this->almaInsuranceProductRepository = new AlmaInsuranceProductRepository();
+        $almaInsuranceProductRepository = new AlmaInsuranceProductRepository();
         $this->customerThread = new CustomerThread();
         $this->customerMessage = new \CustomerMessage();
         $this->customerThreadRepository = new CustomerThreadRepository();
+
         $this->insuranceSubscriptionService = new InsuranceSubscriptionService(
-            $this->almaInsuranceProductRepository
+            $almaInsuranceProductRepository
         );
         $this->subscriptionHelper = new SubscriptionHelper(
-            $this->almaInsuranceProductRepository,
+            $almaInsuranceProductRepository,
             new InsuranceApiService(),
             new TokenHelper(),
             $this->insuranceSubscriptionService
@@ -186,7 +187,7 @@ class AlmaSubscriptionModuleFrontController extends ModuleFrontController
     {
         $response = [
             'success' => true,
-            'state' => ConstantsHelper::ALMA_INSURANCE_STATUS_CANCELED,
+            'state' => InsuranceHelper::ALMA_INSURANCE_STATUS_CANCELED,
             'code' => 200,
         ];
 
@@ -194,13 +195,13 @@ class AlmaSubscriptionModuleFrontController extends ModuleFrontController
             $this->subscriptionHelper->cancelSubscriptionWithToken($sid);
         } catch (InsurancePendingCancellationException $e) {
             Logger::instance()->error($e->getMessage(), $e->getTrace());
-            $response['state'] = ConstantsHelper::ALMA_INSURANCE_STATUS_PENDING_CANCELLATION;
+            $response['state'] = InsuranceHelper::ALMA_INSURANCE_STATUS_PENDING_CANCELLATION;
         } catch (AlmaException $e) {
             Logger::instance()->error($e->getMessage(), $e->getTrace());
             $response = [
                 'error' => true,
                 'message' => $this->module->l('Error to cancel subscription', 'subscription'),
-                'state' => ConstantsHelper::ALMA_INSURANCE_STATUS_FAILED,
+                'state' => InsuranceHelper::ALMA_INSURANCE_STATUS_FAILED,
                 'code' => $e->getCode(),
             ];
         }
