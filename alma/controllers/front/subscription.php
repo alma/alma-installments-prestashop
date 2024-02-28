@@ -78,7 +78,9 @@ class AlmaSubscriptionModuleFrontController extends ModuleFrontController
     /**
      * @return void
      *
+     * @throws InsuranceSubscriptionException
      * @throws PrestaShopException
+     * @throws SubscriptionException
      */
     public function postProcess()
     {
@@ -94,19 +96,8 @@ class AlmaSubscriptionModuleFrontController extends ModuleFrontController
             Logger::instance()->error($msg);
             $this->ajaxRenderAndExit(json_encode(['error' => $msg]), 500);
         }
-        try {
-            $this->responseSubscriptionByAction($action, $sid, $trace, $reason);
-        } catch (AlmaException $e) {
-            Logger::instance()->error(json_encode($e));
-            $this->ajaxRenderAndExit(
-                json_encode(
-                    [
-                        'error' => $e->getMessage(),
-                    ]
-                ),
-                $e->getCode()
-            );
-        }
+
+        $this->responseSubscriptionByAction($action, $sid, $trace, $reason);
     }
 
     /**
@@ -126,7 +117,7 @@ class AlmaSubscriptionModuleFrontController extends ModuleFrontController
                 $this->update($sid, $trace);
                 break;
             case 'cancel':
-                    $this->cancel($sid, $reason);
+                $this->cancel($sid, $reason);
                 break;
             default:
                 $this->ajaxRenderAndExit(
@@ -149,8 +140,22 @@ class AlmaSubscriptionModuleFrontController extends ModuleFrontController
      */
     private function update($sid, $trace)
     {
-        $this->subscriptionHelper->updateSubscriptionWithTrace($sid, $trace);
-        $this->ajaxRenderAndExit(json_encode(['success' => true]), 200);
+        $response = [
+            'success' => true,
+            'code' => 200,
+        ];
+
+        try {
+            $this->subscriptionHelper->updateSubscriptionWithTrace($sid, $trace);
+        } catch (SubscriptionException $e) {
+            $response = [
+                'error' => true,
+                'message' => $e->getMessage(),
+                'code' => $e->getCode(),
+            ];
+            Logger::instance()->error(json_encode($e->getMessage()));
+        }
+        $this->ajaxRenderAndExit(json_encode($response), $response['code']);
     }
 
     /**
@@ -174,12 +179,7 @@ class AlmaSubscriptionModuleFrontController extends ModuleFrontController
             $this->subscriptionHelper->cancelSubscriptionWithToken($sid);
         } catch (InsurancePendingCancellationException $e) {
             Logger::instance()->error($e->getMessage(), $e->getTrace());
-            $response = [
-                'error' => true,
-                'message' => $e->getMessage(),
-                'state' => ConstantsHelper::ALMA_INSURANCE_STATUS_PENDING_CANCELLATION,
-                'code' => $e->getCode(),
-            ];
+            $response['state'] = ConstantsHelper::ALMA_INSURANCE_STATUS_PENDING_CANCELLATION;
         } catch (AlmaException $e) {
             Logger::instance()->error($e->getMessage(), $e->getTrace());
             $response = [
