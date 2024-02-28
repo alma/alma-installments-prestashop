@@ -22,11 +22,17 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
+use Alma\PrestaShop\Exceptions\AlmaException;
+use Alma\PrestaShop\Exceptions\InsurancePendingCancellationException;
+use Alma\PrestaShop\Exceptions\InsuranceSubscriptionException;
 use Alma\PrestaShop\Exceptions\SubscriptionException;
+use Alma\PrestaShop\Helpers\InsuranceHelper;
 use Alma\PrestaShop\Helpers\SubscriptionHelper;
+use Alma\PrestaShop\Helpers\TokenHelper;
 use Alma\PrestaShop\Logger;
 use Alma\PrestaShop\Repositories\AlmaInsuranceProductRepository;
 use Alma\PrestaShop\Services\InsuranceApiService;
+use Alma\PrestaShop\Services\InsuranceSubscriptionService;
 use Alma\PrestaShop\Traits\AjaxTrait;
 
 if (!defined('_PS_VERSION_')) {
@@ -42,9 +48,9 @@ class AlmaSubscriptionModuleFrontController extends ModuleFrontController
      */
     protected $subscriptionHelper;
     /**
-     * @var InsuranceApiService
+     * @var InsuranceSubscriptionService
      */
-    protected $insuranceApiService;
+    protected $insuranceSubscriptionService;
 
     /**
      * IPN constructor
@@ -53,13 +59,22 @@ class AlmaSubscriptionModuleFrontController extends ModuleFrontController
     {
         parent::__construct();
         $this->context = Context::getContext();
-        $this->subscriptionHelper = new SubscriptionHelper(new AlmaInsuranceProductRepository());
-        $this->insuranceApiService = new InsuranceApiService();
+        $almaInsuranceProductRepository = new AlmaInsuranceProductRepository();
+        $this->insuranceSubscriptionService = new InsuranceSubscriptionService(
+            $almaInsuranceProductRepository
+        );
+        $this->subscriptionHelper = new SubscriptionHelper(
+            $almaInsuranceProductRepository,
+            new InsuranceApiService(),
+            new TokenHelper(),
+            $this->insuranceSubscriptionService
+        );
     }
 
     /**
      * @return void
      *
+     * @throws InsuranceSubscriptionException
      * @throws PrestaShopException
      */
     public function postProcess()
@@ -69,6 +84,7 @@ class AlmaSubscriptionModuleFrontController extends ModuleFrontController
         $action = Tools::getValue('action');
         $sid = Tools::getValue('sid');
         $trace = Tools::getValue('trace');
+        $reason = Tools::getValue('reason');
 
         if (!$sid) {
             $msg = $this->module->l('Subscription id is missing', 'subscription');
@@ -76,42 +92,103 @@ class AlmaSubscriptionModuleFrontController extends ModuleFrontController
             $this->ajaxRenderAndExit(json_encode(['error' => $msg]), 500);
         }
 
-        if (!$trace) {
-            $this->ajaxRenderAndExit(
-                json_encode(
-                    ['error' => $this->module->l('Secutiry token is missing', 'subscription')]
-                ),
-                500
-            );
-        }
+        $this->responseSubscriptionByAction($action, $sid, $trace, $reason);
+    }
 
-        $response = ['error' => false, 'message' => ''];
+    /**
+     * @param $action
+     * @param $sid
+     * @param $trace
+     * @param string $reason
+     *
+     * @throws InsuranceSubscriptionException
+     * @throws PrestaShopException
+     */
+    public function responseSubscriptionByAction($action, $sid, $trace, $reason = '')
+    {
         switch ($action) {
             case 'update':
-                try {
-                    $subscriptionArray = $this->insuranceApiService->getSubscriptionById($sid);
-
-                    $this->subscriptionHelper->updateSubscription(
-                        $sid,
-                        $subscriptionArray['state'],
-                        $subscriptionArray['broker_subscription_id']
-                    );
-                } catch (SubscriptionException $e) {
-                    $response = ['error' => true, 'message' => $e->getMessage()];
-                }
+                $this->update($sid, $trace);
                 break;
-                // @TOTO : set notification order message with link to the order in the message
+            case 'cancel':
+                $this->cancel($sid, $reason);
+                break;
             default:
-                $response = [
-                    'error' => true,
-                    'message' => $this->module->l('Action is unknown', 'subscription'),
-                ];
+                $this->ajaxRenderAndExit(
+                    json_encode([
+                        'error' => true,
+                        'message' => $this->module->l('Action is unknown', 'subscription'),
+                    ]),
+                    500
+                );
+            break;
         }
+    }
 
-        if (!$response['error']) {
-            $this->ajaxRenderAndExit(json_encode(['success' => true]), 200);
+    /**
+     * @param $sid
+     * @param $trace
+     *
+     * @throws PrestaShopException
+     */
+    private function update($sid, $trace)
+    {
+        $response = [
+            'success' => true,
+            'code' => 200,
+        ];
+
+        try {
+            $this->subscriptionHelper->updateSubscriptionWithTrace($sid, $trace);
+        } catch (SubscriptionException $e) {
+            $response = [
+                'error' => true,
+                'message' => $e->getMessage(),
+                'code' => $e->getCode(),
+            ];
+            Logger::instance()->error(json_encode($e->getMessage()));
         }
+        $this->ajaxRenderAndExit(json_encode($response), $response['code']);
+    }
 
-        $this->ajaxRenderAndExit(json_encode(['error' => $response['message']]), 500);
+    /**
+     * @param $sid
+     * @param $reason
+     *
+     * @return void
+     *
+     * @throws InsuranceSubscriptionException
+     * @throws PrestaShopException
+     */
+    private function cancel($sid, $reason)
+    {
+        $response = [
+            'success' => true,
+            'state' => InsuranceHelper::ALMA_INSURANCE_STATUS_CANCELED,
+            'code' => 200,
+        ];
+
+        try {
+            $this->subscriptionHelper->cancelSubscriptionWithToken($sid);
+        } catch (InsurancePendingCancellationException $e) {
+            Logger::instance()->error($e->getMessage(), $e->getTrace());
+            $response['state'] = InsuranceHelper::ALMA_INSURANCE_STATUS_PENDING_CANCELLATION;
+        } catch (AlmaException $e) {
+            Logger::instance()->error($e->getMessage(), $e->getTrace());
+            $response = [
+                'error' => true,
+                'message' => $this->module->l('Error to cancel subscription', 'subscription'),
+                'state' => InsuranceHelper::ALMA_INSURANCE_STATUS_FAILED,
+                'code' => $e->getCode(),
+            ];
+        }
+        // @TODO : set notification order message with link to the order in the message
+        $this->insuranceSubscriptionService->setCancellation(
+            $sid,
+            $response['state'],
+            $reason
+        );
+
+        $this->ajaxRenderAndExit(json_encode($response), $response['code']);
     }
 }

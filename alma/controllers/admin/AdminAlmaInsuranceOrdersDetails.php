@@ -84,7 +84,7 @@ class AdminAlmaInsuranceOrdersDetailsController extends ModuleAdminController
     public function buildData()
     {
         $data = [
-            'token' => \Tools::getAdminTokenLite(ConstantsHelper::BO_CONTROLLER_INSURANCE_ORDERS_DETAILS_CLASSNAME),
+            'token' => \Tools::getAdminToken(ConstantsHelper::BO_CONTROLLER_INSURANCE_ORDERS_DETAILS_CLASSNAME),
         ];
 
         $idLine = \Tools::getValue('identifier');
@@ -100,6 +100,7 @@ class AdminAlmaInsuranceOrdersDetailsController extends ModuleAdminController
         $data['orderDate'] = $order->date_add;
         $data['firstName'] = $order->getCustomer()->firstname;
         $data['lastName'] = $order->getCustomer()->lastname;
+        $data['cancelUrl'] = $this->context->link->getModuleLink('alma', 'subscription');
 
         $data = $this->buildSubscriptions($subscriptions, $data);
 
@@ -162,6 +163,7 @@ class AdminAlmaInsuranceOrdersDetailsController extends ModuleAdminController
             }
 
             $dataSubscriptions['subscriptionBrokerId'] = $subscription['subscription_broker_id'];
+            $dataSubscriptions['subscriptionId'] = $subscription['subscription_id'];
 
             $data['cmsSubscriptions'][] = $dataSubscriptions;
         }

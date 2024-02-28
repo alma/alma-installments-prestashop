@@ -24,8 +24,13 @@
 
 namespace Alma\PrestaShop\Helpers;
 
+use Alma\PrestaShop\Exceptions\InsurancePendingCancellationException;
+use Alma\PrestaShop\Exceptions\InsuranceSubscriptionException;
 use Alma\PrestaShop\Exceptions\SubscriptionException;
+use Alma\PrestaShop\Exceptions\TokenException;
 use Alma\PrestaShop\Repositories\AlmaInsuranceProductRepository;
+use Alma\PrestaShop\Services\InsuranceApiService;
+use Alma\PrestaShop\Services\InsuranceSubscriptionService;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -40,28 +45,85 @@ class SubscriptionHelper
      * @var AlmaInsuranceProductRepository|mixed|null
      */
     protected $almaInsuranceProductRepository;
+    /**
+     * @var InsuranceApiService
+     */
+    protected $insuranceApiService;
+    /**
+     * @var TokenHelper
+     */
+    protected $tokenHelper;
+    /**
+     * @var InsuranceSubscriptionService
+     */
+    protected $insuranceSubscriptionService;
 
-    public function __construct($almaInsuranceProductRepository = null)
-    {
-        if (!$almaInsuranceProductRepository) {
-            $almaInsuranceProductRepository = new AlmaInsuranceProductRepository();
-        }
+    public function __construct(
+        $almaInsuranceProductRepository,
+        $insuranceApiService,
+        $tokenHelper,
+        $insuranceSubscriptionService
+    ) {
         $this->almaInsuranceProductRepository = $almaInsuranceProductRepository;
+        $this->insuranceApiService = $insuranceApiService;
+        $this->tokenHelper = $tokenHelper;
+        $this->insuranceSubscriptionService = $insuranceSubscriptionService;
     }
 
     /**
-     * @param string $subscriptionId
-     * @param string $status
-     * @param string $subscriptionBrokerId
+     * @param $sid
+     *
+     * @return void
+     *
+     * @throws InsurancePendingCancellationException
+     * @throws InsuranceSubscriptionException
+     * @throws TokenException
+     */
+    public function cancelSubscriptionWithToken($sid)
+    {
+        if (!$this->tokenHelper->isAdminTokenValid(
+            ConstantsHelper::BO_CONTROLLER_INSURANCE_ORDERS_DETAILS_CLASSNAME,
+            'token'
+        )) {
+            throw new TokenException('Invalid Token', 401);
+        }
+
+        $this->insuranceApiService->cancelSubscription($sid);
+    }
+
+    /**
+     * @param string $trace
+     * @param string $sid
      *
      * @return void
      *
      * @throws SubscriptionException
      */
-    public function updateSubscription($subscriptionId, $status, $subscriptionBrokerId)
+    public function updateSubscriptionWithTrace($sid, $trace)
     {
-        if (!$this->almaInsuranceProductRepository->updateSubscription($subscriptionId, $status, $subscriptionBrokerId)) {
-            throw new SubscriptionException('Error to update DB Alma Insurance Product');
+        $this->isTraceValid($trace);
+
+        $subscriptionArray = $this->insuranceApiService->getSubscriptionById($sid);
+        if (
+            !$this->almaInsuranceProductRepository->updateSubscription(
+                $sid,
+                $subscriptionArray['state'],
+                $subscriptionArray['broker_subscription_id']
+            )
+        ) {
+            throw new SubscriptionException('Error to update DB Alma Insurance Product', 500);
+        }
+    }
+
+    /**
+     * @param $trace
+     *
+     * @throws SubscriptionException
+     */
+    private function isTraceValid($trace)
+    {
+        if (!is_string($trace) || empty($trace)) {
+            throw new SubscriptionException('Security trace is missing', 500);
         }
     }
 }

@@ -27,13 +27,16 @@ namespace Alma\PrestaShop\Services;
 use Alma\API\Client;
 use Alma\API\Entities\Insurance\Contract;
 use Alma\API\Exceptions\AlmaException;
+use Alma\API\Exceptions\InsuranceCancelPendingException;
 use Alma\API\RequestError;
+use Alma\PrestaShop\Exceptions\InsurancePendingCancellationException;
 use Alma\PrestaShop\Exceptions\InsuranceSubscriptionException;
 use Alma\PrestaShop\Exceptions\SubscriptionException;
 use Alma\PrestaShop\Helpers\CartHelper;
 use Alma\PrestaShop\Helpers\ClientHelper;
 use Alma\PrestaShop\Helpers\ProductHelper;
 use Alma\PrestaShop\Logger;
+use Alma\PrestaShop\Repositories\AlmaInsuranceProductRepository;
 
 class InsuranceApiService
 {
@@ -55,6 +58,10 @@ class InsuranceApiService
      * @var ProductHelper
      */
     protected $productHelper;
+    /**
+     * @var AlmaInsuranceProductRepository
+     */
+    protected $insuranceProductRepository;
 
     public function __construct()
     {
@@ -62,6 +69,7 @@ class InsuranceApiService
         $this->context = \Context::getContext();
         $this->cartHelper = new CartHelper();
         $this->productHelper = new ProductHelper();
+        $this->insuranceProductRepository = new AlmaInsuranceProductRepository();
     }
 
     /**
@@ -231,6 +239,25 @@ class InsuranceApiService
             return $subscriptionArray['subscriptions'][0];
         } catch (AlmaException $e) {
             throw new SubscriptionException('Impossible to get subscription');
+        }
+    }
+
+    /**
+     * @param string $sid
+     *
+     * @return void
+     *
+     * @throws InsurancePendingCancellationException
+     * @throws InsuranceSubscriptionException
+     */
+    public function cancelSubscription($sid)
+    {
+        try {
+            $this->almaApiClient->insurance->cancelSubscription($sid);
+        } catch (InsuranceCancelPendingException $e) {
+            throw new InsurancePendingCancellationException('Pending cancellation', 410);
+        } catch (AlmaException $e) {
+            throw new InsuranceSubscriptionException('Impossible to cancel subscription', 500);
         }
     }
 }

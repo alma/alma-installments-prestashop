@@ -371,4 +371,26 @@ class AlmaInsuranceProductRepository
 
         return \Db::getInstance()->getRow($sql);
     }
+
+    /**
+     * @param string $sid
+     * @param string $state
+     * @param string $reason
+     *
+     * @return bool
+     */
+    public function updateSubscriptionForCancellation($sid, $state, $reason)
+    {
+        if (
+            !\Db::getInstance()->execute(
+                'UPDATE `' . _DB_PREFIX_ . 'alma_insurance_product`
+                SET `subscription_state` ="' . $state . '", `reason_of_cancelation` = "' . $reason . '", `date_of_cancelation` = NOW(), `date_of_cancelation_request` = NOW()
+                WHERE `subscription_id` = "' . $sid . '"'
+            )
+        ) {
+            return false;
+        }
+
+        return true;
+    }
 }
