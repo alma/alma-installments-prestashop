@@ -34,6 +34,10 @@ if (!defined('_PS_VERSION_')) {
 
 class InsuranceHelper
 {
+    const ALMA_INSURANCE_STATUS_FAILED = 'failed';
+    const ALMA_INSURANCE_STATUS_CANCELED = 'canceled';
+    const ALMA_INSURANCE_STATUS_PENDING_CANCELLATION = 'pending_cancellation';
+
     /**
      * @var CartProductRepository
      */
