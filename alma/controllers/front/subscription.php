@@ -80,7 +80,6 @@ class AlmaSubscriptionModuleFrontController extends ModuleFrontController
      *
      * @throws InsuranceSubscriptionException
      * @throws PrestaShopException
-     * @throws SubscriptionException
      */
     public function postProcess()
     {
@@ -108,7 +107,6 @@ class AlmaSubscriptionModuleFrontController extends ModuleFrontController
      *
      * @throws InsuranceSubscriptionException
      * @throws PrestaShopException
-     * @throws SubscriptionException
      */
     public function responseSubscriptionByAction($action, $sid, $trace, $reason = '')
     {
@@ -132,11 +130,10 @@ class AlmaSubscriptionModuleFrontController extends ModuleFrontController
     }
 
     /**
-     * @param $trace
      * @param $sid
+     * @param $trace
      *
      * @throws PrestaShopException
-     * @throws SubscriptionException
      */
     private function update($sid, $trace)
     {
