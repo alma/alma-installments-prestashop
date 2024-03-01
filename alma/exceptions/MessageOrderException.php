@@ -22,23 +22,12 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
-namespace Alma\PrestaShop\Repositories;
-
-use Context;
+namespace Alma\PrestaShop\Exceptions;
 
 if (!defined('_PS_VERSION_')) {
     exit;
 }
-class CustomerThreadRepository
-{
-    public function getIdCustomerThreadByOrderId($orderId)
-    {
-        $sql = '
-            SELECT ct.`id_customer_thread`
-			FROM `' . _DB_PREFIX_ . 'customer_thread` ct
-			WHERE ct.`id_shop` = ' . (int) Context::getContext()->shop->id . '
-			AND ct.`id_order` = ' . (int) $orderId;
 
-        return \Db::getInstance()->getValue($sql);
-    }
+class MessageOrderException extends AlmaException
+{
 }

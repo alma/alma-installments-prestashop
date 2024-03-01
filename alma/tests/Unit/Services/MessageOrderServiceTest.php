@@ -24,9 +24,99 @@
 
 namespace Alma\PrestaShop\Tests\Unit\Services;
 
+use Alma\PrestaShop\Repositories\CustomerThreadRepository;
+use Alma\PrestaShop\Services\MessageOrderService;
+use PHPUnit\Framework\TestCase;
+
 class MessageOrderServiceTest extends TestCase
 {
+    /**
+     * @var MessageOrderService
+     */
+    protected $messageOrderService;
+
     public function setUp()
     {
+        $idCustomer = 1;
+        $this->context = $this->createMock(\Context::class);
+        $this->module = $this->createMock(\Module::class);
+        $this->customerThread = $this->createMock(\CustomerThread::class);
+        $this->customerMessage = $this->createMock(\CustomerMessage::class);
+        $this->customerThreadRepository = $this->createMock(CustomerThreadRepository::class);
+        $this->order = $this->createMock(\Order::class);
+        $this->context->language = $this->createMock(\Language::class);
+        $this->context->shop = $this->createMock(\Shop::class);
+
+        $this->messageOrderService = new MessageOrderService(
+            $idCustomer,
+            $this->context,
+            $this->module,
+            $this->customerThread,
+            $this->customerMessage,
+            $this->customerThreadRepository
+        );
+    }
+
+    /**
+     * Given the MessageOrderService info,
+     * we create a customer thread and add a customer message
+     *
+     * @return void
+     *
+     * @throws \PrestaShopDatabaseException
+     * @throws \PrestaShopException
+     */
+    public function testCreateCustomerThreadAndAddCustomerMessage()
+    {
+        $order = $this->order;
+        $order->id_customer = 1;
+        $order->id = 1;
+        $this->context->shop->id = 1;
+        $this->context->language->id = 1;
+        $idProductInsurance = 20;
+        $idCustomerThread = null;
+        $messageText = 'text message order test';
+
+        $this->customerMessage->expects($this->once())
+            ->method('add')
+            ->willReturn(true);
+        $this->customerThread->expects($this->once())
+            ->method('add')
+            ->willReturn(true);
+        $this->messageOrderService->insuranceCancelSubscription(
+            $order,
+            $idProductInsurance,
+            $idCustomerThread,
+            $messageText
+        );
+    }
+
+    /**
+     * @return void
+     *
+     * @throws \PrestaShopDatabaseException
+     * @throws \PrestaShopException
+     */
+    public function testUpdateCustomerThreadAndAddCustomerMessage()
+    {
+        $order = $this->order;
+        $order->id_customer = 1;
+        $order->id = 1;
+        $idProductInsurance = 20;
+        $idCustomerThread = 1;
+        $messageText = 'text message order test';
+
+        $this->customerMessage->expects($this->once())
+            ->method('add')
+            ->willReturn(true);
+        $this->customerThread->expects($this->once())
+            ->method('update')
+            ->willReturn(true);
+        $this->messageOrderService->insuranceCancelSubscription(
+            $order,
+            $idProductInsurance,
+            $idCustomerThread,
+            $messageText
+        );
     }
 }
