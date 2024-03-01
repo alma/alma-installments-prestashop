@@ -156,13 +156,14 @@ class AlmaSubscriptionModuleFrontController extends ModuleFrontController
      */
     private function update($sid, $trace)
     {
+        $state = '';
         $response = [
             'success' => true,
             'code' => 200,
         ];
 
         try {
-            $this->subscriptionHelper->updateSubscriptionWithTrace($sid, $trace);
+            $state = $this->subscriptionHelper->updateSubscriptionWithTrace($sid, $trace);
         } catch (SubscriptionException $e) {
             $response = [
                 'error' => true,
@@ -171,6 +172,11 @@ class AlmaSubscriptionModuleFrontController extends ModuleFrontController
             ];
             Logger::instance()->error(json_encode($e->getMessage()));
         }
+
+        if ($state === InsuranceHelper::ALMA_INSURANCE_STATUS_CANCELED) {
+            $this->addMessageOrder($sid);
+        }
+
         $this->ajaxRenderAndExit(json_encode($response), $response['code']);
     }
 
@@ -206,8 +212,9 @@ class AlmaSubscriptionModuleFrontController extends ModuleFrontController
             ];
         }
 
-        // @TODO : check to send notification only if the subscription is canceled
-        $this->addMessageOrder($sid);
+        if ($response['state'] === InsuranceHelper::ALMA_INSURANCE_STATUS_CANCELED) {
+            $this->addMessageOrder($sid);
+        }
         $this->insuranceSubscriptionService->setCancellation(
             $sid,
             $response['state'],
@@ -233,11 +240,12 @@ class AlmaSubscriptionModuleFrontController extends ModuleFrontController
         $messageOrderService = new MessageOrderService(
             $order->id_customer,
             $this->context,
+            $this->module,
             $this->customerThread,
             $this->customerMessage,
             $this->customerThreadRepository
         );
 
-        $messageOrderService->insuranceCancelSubscription($order, $almaInsuranceProduct['id_product_insurance']);
+        $messageOrderService->insuranceCancelSubscription($order, $almaInsuranceProduct);
     }
 }

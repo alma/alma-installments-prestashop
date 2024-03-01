@@ -95,7 +95,7 @@ class SubscriptionHelper
      * @param string $trace
      * @param string $sid
      *
-     * @return void
+     * @return mixed
      *
      * @throws SubscriptionException
      */
@@ -113,6 +113,8 @@ class SubscriptionHelper
         ) {
             throw new SubscriptionException('Error to update DB Alma Insurance Product', 500);
         }
+
+        return $subscriptionArray['state'];
     }
 
     /**

@@ -54,42 +54,55 @@ class MessageOrderService
      * @var \Context
      */
     protected $context;
+    /**
+     * @var \Alma
+     */
+    protected $module;
+    /**
+     * @var MessageOrderHelper
+     */
+    protected $messageOrderHelper;
 
     public function __construct(
         $idCustomer,
         $context,
+        $module,
         $customerThread,
         $customerMessage,
         $customerThreadRepository
     ) {
         $this->customer = new Customer($idCustomer);
         $this->context = $context;
+        $this->module = $module;
         $this->customerThread = $customerThread;
         $this->customerMessage = $customerMessage;
         $this->customerThreadRepository = $customerThreadRepository;
+        $this->messageOrderHelper = new MessageOrderHelper(
+            $this->context,
+            $this->module,
+            new InsuranceApiService()
+        );
     }
 
     /**
      * @param $order
-     * @param $idProductInsurance
+     * @param $almaInsuranceProduct
      *
      * @return void
      *
      * @throws \PrestaShopDatabaseException
      * @throws \PrestaShopException
      */
-    public function insuranceCancelSubscription($order, $idProductInsurance)
+    public function insuranceCancelSubscription($order, $almaInsuranceProduct)
     {
         $idCustomerThread = $this->customerThreadRepository->getIdCustomerThreadByOrderId($order->id);
-
-        // @TODO : add good message notification
-        $messageText = 'Message notification';
+        $messageText = $this->messageOrderHelper->getMessageForRefundInsurance($almaInsuranceProduct);
 
         if (!$idCustomerThread) {
             $this->customerThread->id_contact = 0;
             $this->customerThread->id_customer = (int) $order->id_customer;
             $this->customerThread->id_shop = (int) $this->context->shop->id;
-            $this->customerThread->id_product = $idProductInsurance;
+            $this->customerThread->id_product = $almaInsuranceProduct['id_product_insurance'];
             $this->customerThread->id_order = (int) $order->id;
             $this->customerThread->id_lang = (int) $this->context->language->id;
             $this->customerThread->email = $this->customer->email;
