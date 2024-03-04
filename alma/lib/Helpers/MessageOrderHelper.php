@@ -65,7 +65,7 @@ class MessageOrderHelper
      *
      * @throws MessageOrderException
      */
-    public function getMessageForRefundInsurance($almaInsuranceProduct)
+    public function getInsuranceCancelMessageRefundAllow($almaInsuranceProduct)
     {
         if (!is_array($almaInsuranceProduct)) {
             throw new MessageOrderException('The parameter $almaInsuranceProduct must be an array');

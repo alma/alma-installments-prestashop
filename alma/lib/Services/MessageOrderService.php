@@ -77,7 +77,7 @@ class MessageOrderService
 
     /**
      * @param $order
-     * @param $idProductInsurance
+     * @param $idProduct
      * @param $idCustomerThread
      * @param $messageText
      *
@@ -86,9 +86,9 @@ class MessageOrderService
      * @throws \PrestaShopDatabaseException
      * @throws \PrestaShopException
      */
-    public function insuranceCancelSubscription(
+    public function addCustomerMessageOnThread(
         $order,
-        $idProductInsurance,
+        $idProduct,
         $idCustomerThread,
         $messageText
     ) {
@@ -96,7 +96,7 @@ class MessageOrderService
             $this->customerThread->id_contact = 0;
             $this->customerThread->id_customer = (int) $order->id_customer;
             $this->customerThread->id_shop = (int) $this->context->shop->id;
-            $this->customerThread->id_product = $idProductInsurance;
+            $this->customerThread->id_product = $idProduct;
             $this->customerThread->id_order = (int) $order->id;
             $this->customerThread->id_lang = (int) $this->context->language->id;
             $this->customerThread->email = $this->customer->email;
