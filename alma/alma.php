@@ -364,6 +364,30 @@ class Alma extends PaymentModule
     }
 
     /**
+     * Hook to modify the order table
+     *
+     * @param $params
+     *
+     * @return mixed|null
+     */
+    public function hookActionOrderGridQueryBuilderModifier($params)
+    {
+        return $this->runHookController('actionOrderGridQueryBuilderModifier', $params);
+    }
+
+    /**
+     * Hook to modify the order table
+     *
+     * @param $params
+     *
+     * @return mixed|null
+     */
+    public function hookActionOrderGridDefinitionModifier($params)
+    {
+        return $this->runHookController('actionOrderGridDefinitionModifier', $params);
+    }
+
+    /**
      * Hook action after add cart
      *
      * @param $params
