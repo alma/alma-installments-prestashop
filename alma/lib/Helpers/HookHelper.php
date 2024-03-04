@@ -108,6 +108,14 @@ class HookHelper
         'displayCartExtraProductActions' => 'all',
         'termsAndConditions' => 'all',
         'actionOrderStatusUpdate' => 'all',
+        'actionOrderGridQueryBuilderModifier' => [
+            'version' => '1.7.7',
+            'operand' => '>=',
+        ],
+        'actionOrderGridDefinitionModifier' => [
+            'version' => '1.7.7',
+            'operand' => '>=',
+        ],
     ];
 
     /**
