@@ -26,17 +26,17 @@ let selectedAlmaInsurance = null;
 let addToCartFlow = false;
 let productDetails = null;
 let quantity = 1;
-let isEligible = false;
 
 (function ($) {
     $(function () {
         //Insurance
+        $("#rbutton'+i+'").attr("disabled","disabled");
         onloadAddInsuranceInputOnProductAlma();
-        openModalOnAddToCart();
         if (typeof prestashop !== 'undefined') {
             prestashop.on(
                 'updateProduct',
                 function (event) {
+                    console.log('updateProduct');
                     let addToCart = document.querySelector('.add-to-cart');
                     let modalIsClosed = false;
 
@@ -70,9 +70,8 @@ let isEligible = false;
                 function () {
                     document.getElementById('quantity_wanted').value = quantity;
                     productDetails = JSON.parse(document.getElementById('product-details').dataset.product);
-
                     refreshWidget();
-                    openModalOnAddToCart();
+                    addModalListenerToAddToCart();
                 }
             );
         }
@@ -86,11 +85,11 @@ function onloadAddInsuranceInputOnProductAlma() {
     window.addEventListener('message', (e) => {
         if (e.data.type === 'almaEligibilityAnswer') {
             if (e.data.eligibilityCallResponseStatus.response.eligibleProduct === true) {
-                isEligible = true;
-                prestashop.emit('updateProduct', {isEligible: isEligible});
+                addModalListenerToAddToCart();
+                let heightIframe = e.data.widgetSize.height;
+                document.getElementById('alma-widget-insurance-product-page').style.height = heightIframe + "px";
             }
-            let heightIframe = e.data.widgetSize.height + 25;
-            document.getElementById('product-alma-iframe').style.height = heightIframe + "px";
+            // remove spinner
         }
         if (e.data.type === 'getSelectedInsuranceData') {
             insuranceSelected = true;
@@ -151,8 +150,8 @@ function removeInputInsurance() {
     });
 }
 
-function openModalOnAddToCart() {
-    if (settings.is_add_to_cart_popup_insurance_activated === 'true' && isEligible) {
+function addModalListenerToAddToCart() {
+    if (settings.is_add_to_cart_popup_insurance_activated === 'true') {
         let addToCart = document.querySelector('.add-to-cart');
         addToCart.addEventListener("click", function (event) {
             if (!insuranceSelected) {
