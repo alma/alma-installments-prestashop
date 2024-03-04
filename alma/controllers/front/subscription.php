@@ -265,9 +265,9 @@ class AlmaSubscriptionModuleFrontController extends ModuleFrontController
             $this->customerThreadRepository
         );
 
-        $messageText = $this->messageOrderHelper->getMessageForRefundInsurance($almaInsuranceProduct);
+        $messageText = $this->messageOrderHelper->getInsuranceCancelMessageRefundAllow($almaInsuranceProduct);
 
-        $messageOrderService->insuranceCancelSubscription(
+        $messageOrderService->addCustomerMessageOnThread(
             $order,
             $almaInsuranceProduct['id_product_insurance'],
             $idCustomerThread,

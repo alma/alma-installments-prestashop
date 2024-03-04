@@ -83,7 +83,7 @@ class MessageOrderServiceTest extends TestCase
         $this->customerThread->expects($this->once())
             ->method('add')
             ->willReturn(true);
-        $this->messageOrderService->insuranceCancelSubscription(
+        $this->messageOrderService->addCustomerMessageOnThread(
             $order,
             $idProductInsurance,
             $idCustomerThread,
@@ -112,7 +112,7 @@ class MessageOrderServiceTest extends TestCase
         $this->customerThread->expects($this->once())
             ->method('update')
             ->willReturn(true);
-        $this->messageOrderService->insuranceCancelSubscription(
+        $this->messageOrderService->addCustomerMessageOnThread(
             $order,
             $idProductInsurance,
             $idCustomerThread,

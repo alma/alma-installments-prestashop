@@ -30,7 +30,6 @@ use Alma\PrestaShop\Helpers\MessageOrderHelper;
 use Alma\PrestaShop\Services\InsuranceApiService;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use PrestaShop\PrestaShop\Core\Localization\Exception\LocalizationException;
 
 class MessageOrderHelperTest extends TestCase
 {
@@ -72,7 +71,6 @@ class MessageOrderHelperTest extends TestCase
      * @return void
      *
      * @throws MessageOrderException
-     * @throws LocalizationException
      */
     public function testGetMessageForRefundWithRightData()
     {
@@ -130,7 +128,7 @@ class MessageOrderHelperTest extends TestCase
             $almaInsuranceProduct['cms_reference'],
             $almaInsuranceProduct['price']
         )->willReturn($this->insuranceContract);
-        $this->assertEquals($expected, $this->messageOrderHelper->getMessageForRefundInsurance($almaInsuranceProduct));
+        $this->assertEquals($expected, $this->messageOrderHelper->getInsuranceCancelMessageRefundAllow($almaInsuranceProduct));
     }
 
     /**
@@ -143,6 +141,6 @@ class MessageOrderHelperTest extends TestCase
     public function testGetMessageForRefundWithWrongData()
     {
         $this->expectException(MessageOrderException::class);
-        $this->messageOrderHelper->getMessageForRefundInsurance('string');
+        $this->messageOrderHelper->getInsuranceCancelMessageRefundAllow('string');
     }
 }
