@@ -393,4 +393,19 @@ class AlmaInsuranceProductRepository
 
         return true;
     }
+
+    /**
+     * @param string $id
+     *
+     * @return bool
+     */
+    public function getBySubscriptionId($id)
+    {
+        $sql = '
+            SELECT *
+            FROM `' . _DB_PREFIX_ . 'alma_insurance_product` aip
+            WHERE aip.`subscription_id` = "' . $id . '"';
+
+        return \Db::getInstance()->getRow($sql);
+    }
 }

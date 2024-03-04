@@ -25,15 +25,20 @@
 use Alma\PrestaShop\Exceptions\AlmaException;
 use Alma\PrestaShop\Exceptions\InsurancePendingCancellationException;
 use Alma\PrestaShop\Exceptions\InsuranceSubscriptionException;
+use Alma\PrestaShop\Exceptions\MessageOrderException;
 use Alma\PrestaShop\Exceptions\SubscriptionException;
 use Alma\PrestaShop\Helpers\InsuranceHelper;
+use Alma\PrestaShop\Helpers\MessageOrderHelper;
 use Alma\PrestaShop\Helpers\SubscriptionHelper;
 use Alma\PrestaShop\Helpers\TokenHelper;
 use Alma\PrestaShop\Logger;
 use Alma\PrestaShop\Repositories\AlmaInsuranceProductRepository;
+use Alma\PrestaShop\Repositories\CustomerThreadRepository;
 use Alma\PrestaShop\Services\InsuranceApiService;
 use Alma\PrestaShop\Services\InsuranceSubscriptionService;
+use Alma\PrestaShop\Services\MessageOrderService;
 use Alma\PrestaShop\Traits\AjaxTrait;
+use PrestaShop\PrestaShop\Adapter\Entity\CustomerThread;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -51,6 +56,26 @@ class AlmaSubscriptionModuleFrontController extends ModuleFrontController
      * @var InsuranceSubscriptionService
      */
     protected $insuranceSubscriptionService;
+    /**
+     * @var AlmaInsuranceProductRepository
+     */
+    protected $almaInsuranceProductRepository;
+    /**
+     * @var CustomerThreadRepository
+     */
+    protected $customerThreadRepository;
+    /**
+     * @var CustomerMessage
+     */
+    protected $customerMessage;
+    /**
+     * @var CustomerThread
+     */
+    protected $customerThread;
+    /**
+     * @var MessageOrderHelper
+     */
+    protected $messageOrderHelper;
 
     /**
      * IPN constructor
@@ -59,15 +84,25 @@ class AlmaSubscriptionModuleFrontController extends ModuleFrontController
     {
         parent::__construct();
         $this->context = Context::getContext();
-        $almaInsuranceProductRepository = new AlmaInsuranceProductRepository();
+        $this->almaInsuranceProductRepository = new AlmaInsuranceProductRepository();
+        $this->customerThread = new CustomerThread();
+        $this->customerMessage = new \CustomerMessage();
+        $this->customerThreadRepository = new CustomerThreadRepository();
+        $insuranceApiService = new InsuranceApiService();
+
         $this->insuranceSubscriptionService = new InsuranceSubscriptionService(
-            $almaInsuranceProductRepository
+            $this->almaInsuranceProductRepository
         );
         $this->subscriptionHelper = new SubscriptionHelper(
-            $almaInsuranceProductRepository,
-            new InsuranceApiService(),
+            $this->almaInsuranceProductRepository,
+            $insuranceApiService,
             new TokenHelper(),
             $this->insuranceSubscriptionService
+        );
+        $this->messageOrderHelper = new MessageOrderHelper(
+            $this->module,
+            $this->context,
+            $insuranceApiService
         );
     }
 
@@ -133,13 +168,14 @@ class AlmaSubscriptionModuleFrontController extends ModuleFrontController
      */
     private function update($sid, $trace)
     {
+        $state = '';
         $response = [
             'success' => true,
             'code' => 200,
         ];
 
         try {
-            $this->subscriptionHelper->updateSubscriptionWithTrace($sid, $trace);
+            $state = $this->subscriptionHelper->updateSubscriptionWithTrace($sid, $trace);
         } catch (SubscriptionException $e) {
             $response = [
                 'error' => true,
@@ -148,6 +184,11 @@ class AlmaSubscriptionModuleFrontController extends ModuleFrontController
             ];
             Logger::instance()->error(json_encode($e->getMessage()));
         }
+
+        if ($state === InsuranceHelper::ALMA_INSURANCE_STATUS_CANCELED) {
+            $this->addMessageOrder($sid);
+        }
+
         $this->ajaxRenderAndExit(json_encode($response), $response['code']);
     }
 
@@ -158,6 +199,8 @@ class AlmaSubscriptionModuleFrontController extends ModuleFrontController
      * @return void
      *
      * @throws InsuranceSubscriptionException
+     * @throws MessageOrderException
+     * @throws PrestaShopDatabaseException
      * @throws PrestaShopException
      */
     private function cancel($sid, $reason)
@@ -182,7 +225,10 @@ class AlmaSubscriptionModuleFrontController extends ModuleFrontController
                 'code' => $e->getCode(),
             ];
         }
-        // @TODO : set notification order message with link to the order in the message
+
+        if ($response['state'] === InsuranceHelper::ALMA_INSURANCE_STATUS_CANCELED) {
+            $this->addMessageOrder($sid);
+        }
         $this->insuranceSubscriptionService->setCancellation(
             $sid,
             $response['state'],
@@ -190,5 +236,42 @@ class AlmaSubscriptionModuleFrontController extends ModuleFrontController
         );
 
         $this->ajaxRenderAndExit(json_encode($response), $response['code']);
+    }
+
+    /**
+     * @param string $sid
+     *
+     * @return void
+     *
+     * @throws PrestaShopDatabaseException
+     * @throws PrestaShopException
+     * @throws MessageOrderException
+     */
+    public function addMessageOrder($sid)
+    {
+        $almaInsuranceProduct = $this->almaInsuranceProductRepository->getBySubscriptionId($sid);
+        $order = new Order($almaInsuranceProduct['id_order']);
+        $idCustomerThread = $this->customerThreadRepository->getIdCustomerThreadByOrderId($order->id);
+
+        if ($idCustomerThread) {
+            $this->customerThread = new CustomerThread($idCustomerThread);
+        }
+        $messageOrderService = new MessageOrderService(
+            $order->id_customer,
+            $this->context,
+            $this->module,
+            $this->customerThread,
+            $this->customerMessage,
+            $this->customerThreadRepository
+        );
+
+        $messageText = $this->messageOrderHelper->getInsuranceCancelMessageRefundAllow($almaInsuranceProduct);
+
+        $messageOrderService->addCustomerMessageOnThread(
+            $order,
+            $almaInsuranceProduct['id_product_insurance'],
+            $idCustomerThread,
+            $messageText
+        );
     }
 }
