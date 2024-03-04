@@ -20,7 +20,7 @@
  * @copyright 2018-2023 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  *}
-<div class="alert alert-warning">
+<div class="alma-insurance alert alert-warning">
     <div class="row">
         <h2>{l s='Remember to cancel insurance subscriptions before initiating a refund' mod='alma'}</h2>
         <p>
