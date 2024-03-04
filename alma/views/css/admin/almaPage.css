@@ -193,21 +193,8 @@ fieldset .form-alma.disabled::before{
     font-size: 16px;
 }
 
-.bootstrap .alma.alert.alert-warning,
-#main-div .alma.alert.alert-warning{
-    background-color: #fffbd3;
-    border: 1px solid #fab000;
-    color: #00425D;
-    font-size: 16px;
-}
-
-
 .bootstrap .alma.alert.alert-info:before,
 #main-div .alma.alert.alert-info:before{
-    content: '';
-}
-.bootstrap .alma.alert.alert-warning:before,
-#main-div .alma.alert.alert-warning:before{
     content: '';
 }
 
