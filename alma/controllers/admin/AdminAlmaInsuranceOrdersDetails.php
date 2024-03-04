@@ -105,6 +105,7 @@ class AdminAlmaInsuranceOrdersDetailsController extends ModuleAdminController
         $data = $this->buildSubscriptions($subscriptions, $data);
 
         $result['dataSubscriptions'] = json_encode($data);
+        $result['scriptUrl'] = $this->module->_path . 'views/js/admin/alma-insurance-subscriptions.js';
 
         return $result;
     }
