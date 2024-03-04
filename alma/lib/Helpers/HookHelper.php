@@ -124,6 +124,14 @@ class HookHelper
             'operand' => '>=',
         ],
         'actionOrderStatusUpdate' => 'all',
+        'actionOrderGridQueryBuilderModifier' => [
+            'version' => '1.7.7',
+            'operand' => '>=',
+        ],
+        'actionOrderGridDefinitionModifier' => [
+            'version' => '1.7.7',
+            'operand' => '>=',
+        ],
     ];
 
     /**
