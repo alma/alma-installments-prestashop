@@ -70,10 +70,14 @@ final class ActionOrderStatusBeforeUpdateHookController extends AdminHookControl
 
         switch ($newStatus->id) {
             case SettingsHelper::getRefundState():
-                $this->refund($order);
+                $this->modalConfirmationRefund($order);
                 break;
             default:
                 break;
         }
+    }
+
+    private function modalConfirmationRefund(\Order $order)
+    {
     }
 }
