@@ -107,6 +107,7 @@ class HookHelper
         'actionValidateOrder' => 'all',
         'displayCartExtraProductActions' => 'all',
         'termsAndConditions' => 'all',
+        'actionOrderStatusUpdate' => 'all',
     ];
 
     /**

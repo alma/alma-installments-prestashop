@@ -542,6 +542,11 @@ class Alma extends PaymentModule
         return $this->runHookController('state', $params);
     }
 
+    public function hookActionOrderStatusUpdate($params)
+    {
+        return $this->runHookController('actionOrderStatusBeforeUpdate', $params);
+    }
+
     /**
      * Hook action DisplayAdminAfterHeader.
      */
