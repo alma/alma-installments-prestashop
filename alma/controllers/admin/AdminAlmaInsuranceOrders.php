@@ -62,31 +62,11 @@ class AdminAlmaInsuranceOrdersController extends ModuleAdminController
                 'title' => $this->module->l('Customer'),
                 'type' => 'text',
             ],
-            'product' => [
-                'title' => $this->module->l('Product'),
+            'nb_insurance' => [
+                'title' => $this->module->l('Nb Insurances'),
                 'type' => 'text',
             ],
-            'product_price' => [
-                'title' => $this->module->l('Product price'),
-                'type' => 'text',
-            ],
-            'insurance_product' => [
-                'title' => $this->module->l('Insurance product'),
-                'type' => 'text',
-            ],
-            'subscription_amount' => [
-                'title' => $this->module->l('Insurance Price'),
-                'type' => 'text',
-            ],
-            'subscription_broker_id' => [
-                'title' => $this->module->l('Subscription Contract'),
-                'type' => 'text',
-            ],
-            'subscription_state' => [
-                'title' => $this->module->l('State'),
-                'type' => 'text',
-            ],
-            'date_add' => [
+            'date' => [
                 'title' => $this->module->l('Date'),
                 'type' => 'text',
             ],
@@ -168,7 +148,7 @@ class AdminAlmaInsuranceOrdersController extends ModuleAdminController
      *
      * @throws SmartyException
      */
-    public function displayShowLink($token, $id, $name)
+    public function displayShowLink($token = null , $id, $name = null)
     {
         $tpl = $this->createTemplate('helpers/list/list_action_edit.tpl');
 
