@@ -75,7 +75,6 @@
         }
 
         $('.js-choice-options .js-dropdown-item').each(function(i, e){
-            // TODO : data-confirm_modal="module-modal-confirm-ps_wirepayment-reset"
             $(e).attr("data-confirm_modal", "module-modal-confirm-refund-order-with-insurance")
 
             //console.log(e);
@@ -83,8 +82,6 @@
             $(e).on('click', function(e) {
                 e.stopImmediatePropagation();
                 e.preventDefault();
-
-                //$('#changeOrdersStatusModal').modal('show');
 
                 const updateConfirmModal = new window.ConfirmModal(
                     {
@@ -100,38 +97,41 @@
 
                     () => confirmAction('update', this),
                 );
-                console.log(updateConfirmModal);
 
                 updateConfirmModal.show();
-
-                confirmAction('update', this)
             });
 
         });
 
-        $(document).on('click', '.js-choice-options .js-dropdown-item', function(event) {
-            event.preventDefault();
-            const modal = $(`#${$(this).data('confirm_modal')}`);
-
-
-
-
-
-
-        })
-
         function confirmAction(action, element) {
-            const modal = $(`#${$(element).data('confirm_modal')}`);
+            const $parent = element.closest('.js-choice-options');
+            const url = $($parent).data('url');
 
-            if (modal.length !== 1) {
-                return true;
-            }
-
-            modal.first().modal('show');
-
-            return false; // do not allow a.href to reload the page. The confirm modal dialog will do it async if needed.
+            submitForm(url, element);
         }
 
+        /**
+         * Submits the form.
+         * @param {string} url
+         * @param {jQuery} $button
+         * @private
+         */
+        function submitForm(url, $button) {
+            const selectedStatusId = $($button).data('value');
+
+            const $form = $('<form>', {
+                action: url,
+                method: 'POST',
+            }).append(
+                $('<input>', {
+                    name: 'value',
+                    value: selectedStatusId,
+                    type: 'hidden',
+                }));
+
+            $form.appendTo('body');
+            $form.submit();
+        }
 
     })
 })(jQuery);
