@@ -165,7 +165,6 @@ fieldset .form-alma.disabled::before{
     background-repeat: no-repeat;
     background-position: 35px 35px;
     background-image: url('/modules/alma/views/img/logos/logo_alma.svg');
-    box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.08);
     border-radius: 4px;
 }
 

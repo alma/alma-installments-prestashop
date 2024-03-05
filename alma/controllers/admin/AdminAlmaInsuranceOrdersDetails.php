@@ -145,7 +145,7 @@ class AdminAlmaInsuranceOrdersDetailsController extends ModuleAdminController
             );
 
             $dataSubscriptions['status'] = $subscription['subscription_state'];
-            $dataSubscriptions['productPrice'] = PriceHelper::convertPriceFromCents($subscription['product_price']);
+            $dataSubscriptions['productPrice'] = $subscription['product_price'];
             $dataSubscriptions['subscriptionAmount'] = PriceHelper::convertPriceFromCents(
                 PriceHelper::convertPriceToCents($subscription['price'])
             );
