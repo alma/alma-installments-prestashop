@@ -400,6 +400,29 @@ class Alma extends PaymentModule
     }
 
     /**
+     * Hook to display notification on order page
+     *
+     * @param $params
+     *
+     * @return mixed|null
+     */
+    public function hookDisplayInvoice($params)
+    {
+        return $this->hookDisplayAdminOrderTop($params);
+    }
+
+    /**
+     * Hook to display notification on order page
+     *
+     * @param $params
+     *
+     * @return mixed|null
+     */
+    public function hookDisplayAdminOrderTop($params)
+    {
+        return $this->runHookController('displayAdminOrderTop', $params);
+    }
+    /**
      * Hook action after validate order
      *
      * @param $params

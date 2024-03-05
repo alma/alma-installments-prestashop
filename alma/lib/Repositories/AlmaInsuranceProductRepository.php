@@ -24,6 +24,7 @@
 
 namespace Alma\PrestaShop\Repositories;
 
+use Alma\API\Entities\Insurance\Subscription;
 use Alma\PrestaShop\Helpers\SettingsHelper;
 
 if (!defined('_PS_VERSION_')) {
@@ -407,5 +408,41 @@ class AlmaInsuranceProductRepository
             WHERE aip.`subscription_id` = "' . $id . '"';
 
         return \Db::getInstance()->getRow($sql);
+    }
+
+    /**
+     * @param int $orderId
+     * @param int $shopId
+     * @return array
+     */
+    public function canRefundOrder($orderId, $shopId)
+    {
+        $sql = '
+            SELECT count(`id_alma_insurance_product`) as nbNotCancelled
+            FROM `' . _DB_PREFIX_ . 'alma_insurance_product`
+            WHERE `id_order` = ' . (int) $orderId . '
+            AND `subscription_state` != "'. Subscription::STATE_CANCELLED .'" 
+            AND `id_shop` = ' . (int) $shopId;
+
+        return \Db::getInstance()->getRow($sql);
+    }
+
+    /**
+     * @param int $orderId
+     * @param int $shopId
+     *
+     * @return mixed
+     *
+     * @throws \PrestaShopDatabaseException
+     */
+    public function getIdByOrderId($orderId, $shopId)
+    {
+        $sql = '
+            SELECT `id_alma_insurance_product` as id
+            FROM `' . _DB_PREFIX_ . 'alma_insurance_product` aip
+            WHERE aip.`id_order` = ' . (int) $orderId . '
+            AND aip.`id_shop` = ' . (int) $shopId;
+
+        return \Db::getInstance()->executeS($sql);
     }
 }

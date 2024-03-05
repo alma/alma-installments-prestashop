@@ -20,24 +20,12 @@
  * @copyright 2018-2023 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  *}
-<div id="alma-insurance-modal"></div>
-<script type="module" src="https://protect.staging.almapay.com/displayModal.js"></script>
-
-<script type="text/javascript">
-    var dataSubscriptions = {$dataSubscriptions};
-</script>
-
-<div class="panel" id="fieldset_0">
-    <div class="panel-heading">
-        <img src="/modules/alma/views/img/logos/alma_tiny.svg" alt="{l s='Order details' mod='alma'}">{l s='Orders details' mod='alma'}
+<div class="alma-insurance alert alert-warning">
+    <div class="row">
+        <h2>{l s='Remember to cancel insurance subscriptions before initiating a refund' mod='alma'}</h2>
+        <p>
+            {$text|unescape:'html'}
+        </p>
     </div>
-    <div class="form-wrapper">
-        <div class="form-group">
-            <div class="alma--insurance-bo-form">
-                <iframe id="subscription-alma-iframe" class="alma-insurance-iframe" src="https://protect.staging.almapay.com/almaBackOfficeSubscriptions.html"></iframe>
-            </div>
-        </div>
-    </div>
+
 </div>
-
-<script type="module" src="{$scriptUrl}"></script>
