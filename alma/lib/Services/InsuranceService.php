@@ -240,7 +240,7 @@ class InsuranceService
             'subscription',
             [
                 'action' => 'update',
-                'sid' => '<subscription_external_id>',
+                'sid' => '<subscription_id>',
                 'trace' => '<trace>',
             ]
         ));
