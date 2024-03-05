@@ -422,6 +422,7 @@ class Alma extends PaymentModule
     {
         return $this->runHookController('displayAdminOrderTop', $params);
     }
+
     /**
      * Hook action after validate order
      *
