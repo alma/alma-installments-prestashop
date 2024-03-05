@@ -30,19 +30,15 @@ if (!defined('_PS_VERSION_')) {
 
 use Alma\PrestaShop\Exceptions\InsuranceInstallException;
 use Alma\PrestaShop\Helpers\InsuranceHelper;
-use Alma\PrestaShop\Helpers\ProductHelper;
 use Alma\PrestaShop\Helpers\SettingsHelper;
 use Alma\PrestaShop\Hooks\FrontendHookController;
-use Alma\PrestaShop\Services\InsuranceProductService;
 use PrestaShop\PrestaShop\Core\Grid\Column\Type\BooleanColumn;
-use PrestaShop\PrestaShop\Core\Grid\Column\Type\Common\ToggleColumn;
 use PrestaShop\PrestaShop\Core\Grid\Definition\GridDefinitionInterface;
 use PrestaShop\PrestaShop\Core\Grid\Filter\Filter;
 use PrestaShopBundle\Form\Admin\Type\YesAndNoChoiceType;
 
 class ActionOrderGridDefinitionModifierHookController extends FrontendHookController
 {
-
     public function canRun()
     {
         // Front controllers can run if the module is properly configured ...
@@ -84,7 +80,7 @@ class ActionOrderGridDefinitionModifierHookController extends FrontendHookContro
                     ->setOptions([
                         'field' => 'has_alma_insurance',
                         'true_name' => $this->module->l('Yes', 'actionordergriddefinitionmodifiercontroller'),
-                        'false_name' =>$this->module->l('No', 'actionordergriddefinitionmodifiercontroller'),
+                        'false_name' => $this->module->l('No', 'actionordergriddefinitionmodifiercontroller'),
                     ])
             )
         ;
@@ -93,6 +89,5 @@ class ActionOrderGridDefinitionModifierHookController extends FrontendHookContro
             (new Filter('has_alma_insurance', YesAndNoChoiceType::class))
                 ->setAssociatedColumn('has_alma_insurance')
         );
-
     }
 }

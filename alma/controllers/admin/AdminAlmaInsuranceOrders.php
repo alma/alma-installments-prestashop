@@ -136,7 +136,7 @@ class AdminAlmaInsuranceOrdersController extends ModuleAdminController
 
         foreach ($this->_list as $key => $details) {
             foreach ($details as $value) {
-                if(null === $details['id_order']) {
+                if (null === $details['id_order']) {
                     unset($this->_list[$key]);
                     continue;
                 }

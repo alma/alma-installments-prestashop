@@ -20,6 +20,7 @@
  * @copyright 2018-2023 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
+
 (function ($) {
     $(function () {
         if ($('.alma.share-of-checkout').length > 0) {
@@ -72,5 +73,65 @@
                 }
             }
         }
+
+        $('.js-choice-options .js-dropdown-item').each(function(i, e){
+            // TODO : data-confirm_modal="module-modal-confirm-ps_wirepayment-reset"
+            $(e).attr("data-confirm_modal", "module-modal-confirm-refund-order-with-insurance")
+
+            //console.log(e);
+            $(e).off('click');
+            $(e).on('click', function(e) {
+                e.stopImmediatePropagation();
+                e.preventDefault();
+
+                //$('#changeOrdersStatusModal').modal('show');
+
+                const updateConfirmModal = new window.ConfirmModal(
+                    {
+                        id: 'confirm-module-update-modal',
+                        confirmTitle: 'Confirmation refund insurance',
+                        closeButtonLabel: 'Close',
+                        confirmButtonLabel: 'Confirm',
+                        confirmButtonClass: 'btn-primary',
+                        confirmMessage: 'Are you sure to refund ?',
+                        closable: true,
+                        customButtons: [],
+                    },
+
+                    () => confirmAction('update', this),
+                );
+                console.log(updateConfirmModal);
+
+                updateConfirmModal.show();
+
+                confirmAction('update', this)
+            });
+
+        });
+
+        $(document).on('click', '.js-choice-options .js-dropdown-item', function(event) {
+            event.preventDefault();
+            const modal = $(`#${$(this).data('confirm_modal')}`);
+
+
+
+
+
+
+        })
+
+        function confirmAction(action, element) {
+            const modal = $(`#${$(element).data('confirm_modal')}`);
+
+            if (modal.length !== 1) {
+                return true;
+            }
+
+            modal.first().modal('show');
+
+            return false; // do not allow a.href to reload the page. The confirm modal dialog will do it async if needed.
+        }
+
+
     })
 })(jQuery);
