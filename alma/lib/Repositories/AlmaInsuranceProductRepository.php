@@ -413,6 +413,7 @@ class AlmaInsuranceProductRepository
     /**
      * @param int $orderId
      * @param int $shopId
+     *
      * @return array
      */
     public function canRefundOrder($orderId, $shopId)
@@ -421,7 +422,7 @@ class AlmaInsuranceProductRepository
             SELECT count(`id_alma_insurance_product`) as nbNotCancelled
             FROM `' . _DB_PREFIX_ . 'alma_insurance_product`
             WHERE `id_order` = ' . (int) $orderId . '
-            AND `subscription_state` != "'. Subscription::STATE_CANCELLED .'" 
+            AND `subscription_state` != "' . Subscription::STATE_CANCELLED . '"
             AND `id_shop` = ' . (int) $shopId;
 
         return \Db::getInstance()->getRow($sql);

@@ -302,6 +302,7 @@ class InsuranceService
 
     /**
      * @param \OrderCore $order
+     *
      * @return string
      */
     public function getLinkToOrderDetails($order)
