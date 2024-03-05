@@ -117,7 +117,7 @@ class AlmaSubscriptionModuleFrontController extends ModuleFrontController
         parent::postProcess();
 
         $action = Tools::getValue('action');
-        $sid = Tools::getValue('sid');
+        $sid = Tools::getValue('subscription_id');
         $trace = Tools::getValue('trace');
         $reason = Tools::getValue('reason');
 
