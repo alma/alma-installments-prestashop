@@ -316,7 +316,7 @@ class InsuranceService
             true,
             [],
             [
-                'identifier' => $almaInsuranceId,
+                'identifier' => $almaInsuranceId['id'],
             ]
         );
 

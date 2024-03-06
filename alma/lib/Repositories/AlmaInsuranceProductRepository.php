@@ -444,6 +444,6 @@ class AlmaInsuranceProductRepository
             WHERE aip.`id_order` = ' . (int) $orderId . '
             AND aip.`id_shop` = ' . (int) $shopId;
 
-        return \Db::getInstance()->executeS($sql);
+        return \Db::getInstance()->getRow($sql);
     }
 }
