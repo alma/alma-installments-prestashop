@@ -83,6 +83,8 @@ class ActionOrderGridQueryBuilderModifierHookController extends FrontendHookCont
             'aip.`id_order` = o.`id_order`'
         );
 
+        $searchQueryBuilder->groupBy('o.`id_order`');
+
         if ('has_alma_insurance' === $searchCriteria->getOrderBy()) {
             $searchQueryBuilder->orderBy('aip.`id_order`', $searchCriteria->getOrderWay());
         }

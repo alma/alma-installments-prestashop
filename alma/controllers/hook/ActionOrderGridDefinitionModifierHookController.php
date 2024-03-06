@@ -29,10 +29,10 @@ if (!defined('_PS_VERSION_')) {
 }
 
 use Alma\PrestaShop\Exceptions\InsuranceInstallException;
+use Alma\PrestaShop\Grid\Column\AlmaBooleanColumn;
 use Alma\PrestaShop\Helpers\InsuranceHelper;
 use Alma\PrestaShop\Helpers\SettingsHelper;
 use Alma\PrestaShop\Hooks\FrontendHookController;
-use PrestaShop\PrestaShop\Core\Grid\Column\Type\BooleanColumn;
 use PrestaShop\PrestaShop\Core\Grid\Definition\GridDefinitionInterface;
 use PrestaShop\PrestaShop\Core\Grid\Filter\Filter;
 use PrestaShopBundle\Form\Admin\Type\YesAndNoChoiceType;
@@ -75,7 +75,7 @@ class ActionOrderGridDefinitionModifierHookController extends FrontendHookContro
             ->getColumns()
             ->addAfter(
                 'date_add',
-                (new BooleanColumn('has_alma_insurance'))
+                (new AlmaBooleanColumn('has_alma_insurance'))
                     ->setName($this->module->l('Has Insurance', 'actionordergriddefinitionmodifiercontroller'))
                     ->setOptions([
                         'field' => 'has_alma_insurance',

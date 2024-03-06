@@ -29,6 +29,7 @@ if (!defined('_PS_VERSION_')) {
 }
 
 use Alma\PrestaShop\Helpers\DateHelper;
+use Alma\PrestaShop\Helpers\InsuranceHelper;
 use Alma\PrestaShop\Helpers\OrderHelper;
 use Alma\PrestaShop\Helpers\SettingsHelper;
 use Alma\PrestaShop\Helpers\ShareOfCheckoutHelper;
@@ -37,6 +38,17 @@ use Alma\PrestaShop\Logger;
 
 class DisplayBackOfficeHeaderHookController extends FrontendHookController
 {
+    /**
+     * @var InsuranceHelper
+     */
+    protected $insuranceHelper;
+
+    public function __construct($module)
+    {
+        parent::__construct($module);
+        $this->insuranceHelper = new InsuranceHelper();
+    }
+
     /**
      * Condition to run the Controller
      *
@@ -62,7 +74,10 @@ class DisplayBackOfficeHeaderHookController extends FrontendHookController
         $this->context->controller->setMedia();
         $this->context->controller->addCSS($this->module->_path . 'views/css/admin/_configure/helpers/form/form.css', 'all');
         $this->context->controller->addCSS($this->module->_path . 'views/css/admin/almaPage.css', 'all');
-        $this->context->controller->addJS($this->module->_path . 'views/js/admin/components/modal.js');
+        if ($this->insuranceHelper->isInsuranceActivated()) {
+            $this->context->controller->addJS($this->module->_path . 'views/js/admin/components/modal.js');
+            $this->context->controller->addJS($this->module->_path . 'views/js/admin/alma-insurance-orders.js');
+        }
         $this->context->controller->addJS($this->module->_path . 'views/js/admin/alma.js');
 
         $date = new \DateTime();
