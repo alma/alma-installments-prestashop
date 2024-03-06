@@ -45,11 +45,11 @@
             const updateConfirmModal = new window.ConfirmModal(
                 {
                     id: 'confirm-module-update-modal',
-                    confirmTitle: 'Confirmation refund insurance',
-                    closeButtonLabel: 'Close',
-                    confirmButtonLabel: 'Confirm',
+                    confirmTitle: 'Confirmation refund an order with insurance',
+                    closeButtonLabel: 'I forget it',
+                    confirmButtonLabel: 'I will do it',
                     confirmButtonClass: 'btn-primary',
-                    confirmMessage: 'Are you sure to refund ?',
+                    confirmMessage: 'There is an insurance in this order.<br />Have you voided the insurance before refunding ?',
                     closable: true,
                     customButtons: [],
                 },
