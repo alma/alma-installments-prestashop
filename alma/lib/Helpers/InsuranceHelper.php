@@ -119,13 +119,14 @@ class InsuranceHelper
 
     /**
      * @param \OrderCore $order
+     *
      * @return bool
      */
     public function canRefundOrder($order)
     {
         $result = $this->insuranceProductRepository->canRefundOrder($order->id, $order->id_shop);
 
-        if($result['nbNotCancelled'] > 0) {
+        if ($result['nbNotCancelled'] > 0) {
             return true;
         }
 

@@ -30,16 +30,13 @@ if (!defined('_PS_VERSION_')) {
 
 use Alma\PrestaShop\Exceptions\InsuranceInstallException;
 use Alma\PrestaShop\Helpers\InsuranceHelper;
-use Alma\PrestaShop\Helpers\ProductHelper;
 use Alma\PrestaShop\Helpers\SettingsHelper;
 use Alma\PrestaShop\Hooks\FrontendHookController;
-use Alma\PrestaShop\Services\InsuranceProductService;
 use PrestaShop\PrestaShop\Core\Foundation\Database\EntityManager\QueryBuilder;
 use PrestaShop\PrestaShop\Core\Search\Filters\OrderFilters;
 
 class ActionOrderGridQueryBuilderModifierHookController extends FrontendHookController
 {
-
     public function canRun()
     {
         // Front controllers can run if the module is properly configured ...
@@ -81,7 +78,7 @@ class ActionOrderGridQueryBuilderModifierHookController extends FrontendHookCont
 
         $searchQueryBuilder->leftJoin(
             'o',
-            '`'.   _DB_PREFIX_  .'alma_insurance_product`',
+            '`' . _DB_PREFIX_ . 'alma_insurance_product`',
             'aip',
             'aip.`id_order` = o.`id_order`'
         );

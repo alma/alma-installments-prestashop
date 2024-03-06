@@ -43,7 +43,7 @@
                         ajax: true,
                         action: 'cancel',
                         token: subscriptionData.token,
-                        sid: e.data.cmsSubscription.subscriptionId,
+                        subscription_id: e.data.cmsSubscription.subscriptionId,
                         reason: e.data.reasonContent
                     },
                 })

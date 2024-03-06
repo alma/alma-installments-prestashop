@@ -29,7 +29,6 @@ if (!defined('_PS_VERSION_')) {
 }
 
 use Alma\PrestaShop\Helpers\InsuranceHelper;
-use Alma\PrestaShop\Helpers\SettingsHelper;
 use Alma\PrestaShop\Hooks\FrontendHookController;
 use Alma\PrestaShop\Services\InsuranceService;
 
@@ -72,10 +71,10 @@ class DisplayAdminOrderTopHookController extends FrontendHookController
          */
         $order = new \Order($params['id_order']);
 
-        if($this->insuranceHelper->canRefundOrder($order)) {
+        if ($this->insuranceHelper->canRefundOrder($order)) {
             $link = $this->insuranceService->getLinkToOrderDetails($order);
 
-            $text =  sprintf(
+            $text = sprintf(
                     $this->module->l('This basket includes one or more insurance subscriptions. Make sure that the subscription(s) is canceled before proceeding with the refund. <a href="%s">Manage the cancellation directly here.</a>', 'displayadminordertophookcontroller'),
                     $link
             );
@@ -85,8 +84,8 @@ class DisplayAdminOrderTopHookController extends FrontendHookController
                     'text' => $text,
                 ]
             );
+
             return $this->module->display($this->module->file, 'displayAdminOrderTop.tpl');
         }
     }
-
 }

@@ -240,7 +240,7 @@ class InsuranceService
             'subscription',
             [
                 'action' => 'update',
-                'sid' => '<subscription_external_id>',
+                'subscription_id' => '<subscription_id>',
                 'trace' => '<trace>',
             ]
         ));
@@ -302,6 +302,7 @@ class InsuranceService
 
     /**
      * @param \OrderCore $order
+     *
      * @return string
      */
     public function getLinkToOrderDetails($order)
