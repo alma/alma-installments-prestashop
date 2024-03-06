@@ -171,13 +171,15 @@ fieldset .form-alma.disabled::before{
 
 .bootstrap .alma-insurance.alert,
 #main-div .alma-insurance.alert{
-    padding-left: 180px;
+    padding-left: 100px;
     background-repeat: no-repeat;
-    background-position: 35px;
+    background-position: 30px;
     background-image: url('/modules/alma/views/img/alma-insurance.png');
-    background-size: contain;
+    background-size: 60px;
     box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.08);
     border-radius: 4px;
+    line-height: 0px;
+    padding-bottom: 30px;
 }
 
 
