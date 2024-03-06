@@ -148,7 +148,7 @@ class AdminAlmaInsuranceOrdersController extends ModuleAdminController
      *
      * @throws SmartyException
      */
-    public function displayShowLink($token = null , $id, $name = null)
+    public function displayShowLink($token = null, $id, $name = null) // phpcs:ignore
     {
         $tpl = $this->createTemplate('helpers/list/list_action_edit.tpl');
 
