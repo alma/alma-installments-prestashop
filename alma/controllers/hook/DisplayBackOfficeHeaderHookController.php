@@ -74,10 +74,6 @@ class DisplayBackOfficeHeaderHookController extends FrontendHookController
         $this->context->controller->setMedia();
         $this->context->controller->addCSS($this->module->_path . 'views/css/admin/_configure/helpers/form/form.css', 'all');
         $this->context->controller->addCSS($this->module->_path . 'views/css/admin/almaPage.css', 'all');
-        if ($this->insuranceHelper->isInsuranceActivated()) {
-            $this->context->controller->addJS($this->module->_path . 'views/js/admin/components/modal.js');
-            $this->context->controller->addJS($this->module->_path . 'views/js/admin/alma-insurance-orders.js');
-        }
         $this->context->controller->addJS($this->module->_path . 'views/js/admin/alma.js');
 
         $date = new \DateTime();
@@ -89,6 +85,13 @@ class DisplayBackOfficeHeaderHookController extends FrontendHookController
             $shareOfCheckoutHelper = new ShareOfCheckoutHelper($orderHelper);
             $shareOfCheckoutHelper->shareDays();
             SettingsHelper::updateValue('ALMA_SOC_CRON_TASK', $timestamp);
+        }
+
+        if ($this->insuranceHelper->isInsuranceActivated()) {
+            $this->context->controller->addJS($this->module->_path . 'views/js/admin/components/modal.js');
+            $this->context->controller->addJS($this->module->_path . 'views/js/admin/alma-insurance-orders.js');
+
+            return $this->module->display($this->module->file, 'DisplayBackOfficeHeader.tpl');
         }
     }
 }
