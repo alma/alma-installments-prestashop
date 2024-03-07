@@ -57,9 +57,13 @@ class InsuranceSubscriptionService
      */
     protected $context;
 
-    public function __construct()
-    {
-        $this->almaInsuranceProductRepository = new AlmaInsuranceProductRepository();
+    public function __construct(
+        $almaInsuranceProductRepository = null
+    ) {
+        if (!$almaInsuranceProductRepository) {
+            $almaInsuranceProductRepository = new AlmaInsuranceProductRepository();
+        }
+        $this->almaInsuranceProductRepository = $almaInsuranceProductRepository;
         $this->insuranceService = new InsuranceService();
         $this->orderHelper = new OrderHelper();
         $this->insuranceApiService = new InsuranceApiService();
@@ -147,5 +151,21 @@ class InsuranceSubscriptionService
         $insuranceProduct->subscription_amount = $subscription['amount'];
         $insuranceProduct->subscription_state = $subscription['state'];
         $insuranceProduct->save();
+    }
+
+    /**
+     * @param $sid
+     * @param $state
+     * @param $reason
+     *
+     * @return void
+     *
+     * @throws InsuranceSubscriptionException
+     */
+    public function setCancellation($sid, $state, $reason)
+    {
+        if (!$this->almaInsuranceProductRepository->updateSubscriptionForCancellation($sid, $state, $reason)) {
+            throw new InsuranceSubscriptionException('There is an issue to update the subscription in the database');
+        }
     }
 }

@@ -83,6 +83,7 @@ class Alma extends PaymentModule
         if (version_compare(_PS_VERSION_, '1.7', '>=')) {
             $controllers[] = 'insurance';
             $controllers[] = 'subscription';
+            $controllers[] = 'cancellation';
         }
 
         $this->controllers = $controllers;
@@ -363,6 +364,30 @@ class Alma extends PaymentModule
     }
 
     /**
+     * Hook to modify the order table
+     *
+     * @param $params
+     *
+     * @return mixed|null
+     */
+    public function hookActionOrderGridQueryBuilderModifier($params)
+    {
+        return $this->runHookController('actionOrderGridQueryBuilderModifier', $params);
+    }
+
+    /**
+     * Hook to modify the order table
+     *
+     * @param $params
+     *
+     * @return mixed|null
+     */
+    public function hookActionOrderGridDefinitionModifier($params)
+    {
+        return $this->runHookController('actionOrderGridDefinitionModifier', $params);
+    }
+
+    /**
      * Hook action after add cart
      *
      * @param $params
@@ -372,6 +397,30 @@ class Alma extends PaymentModule
     public function hookActionCartSave($params)
     {
         return $this->runHookController('actionCartSave', $params);
+    }
+
+    /**
+     * Hook to display notification on order page
+     *
+     * @param $params
+     *
+     * @return mixed|null
+     */
+    public function hookDisplayInvoice($params)
+    {
+        return $this->hookDisplayAdminOrderTop($params);
+    }
+
+    /**
+     * Hook to display notification on order page
+     *
+     * @param $params
+     *
+     * @return mixed|null
+     */
+    public function hookDisplayAdminOrderTop($params)
+    {
+        return $this->runHookController('displayAdminOrderTop', $params);
     }
 
     /**

@@ -28,6 +28,7 @@ use Alma\PrestaShop\Exceptions\WrongParamsException;
 use Alma\PrestaShop\Helpers\ConfigurationHelper;
 use Alma\PrestaShop\Helpers\ConstantsHelper;
 use Alma\PrestaShop\Helpers\SettingsHelper;
+use Alma\PrestaShop\Repositories\AlmaInsuranceProductRepository;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -60,11 +61,17 @@ class InsuranceHelper
      */
     private $module;
 
+    /**
+     * @var AlmaInsuranceProductRepository
+     */
+    protected $almaInsuranceProductRepository;
+
     public function __construct($module)
     {
         $this->module = $module;
         $this->tabsHelper = new TabsHelper();
         $this->configurationHelper = new ConfigurationHelper();
+        $this->almaInsuranceProductRepository = new AlmaInsuranceProductRepository();
     }
 
     /**
@@ -90,6 +97,18 @@ class InsuranceHelper
                 'parent' => ConstantsHelper::BO_CONTROLLER_INSURANCE_CLASSNAME,
                 'position' => 2,
                 'icon' => 'shopping_basket',
+            ],
+            ConstantsHelper::BO_CONTROLLER_INSURANCE_ORDERS_DETAILS_CLASSNAME => [
+                'name' => false,
+                'parent' => ConstantsHelper::BO_CONTROLLER_INSURANCE_CLASSNAME,
+                'position' => null,
+                'icon' => null,
+            ],
+            ConstantsHelper::BO_CONTROLLER_INSURANCE_ORDERS_LIST_CLASSNAME => [
+                'name' => false,
+                'parent' => ConstantsHelper::BO_CONTROLLER_INSURANCE_CLASSNAME,
+                'position' => null,
+                'icon' => null,
             ],
         ];
     }

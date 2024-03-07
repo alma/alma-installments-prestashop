@@ -25,7 +25,6 @@
 namespace Alma\PrestaShop\Services;
 
 use Alma\API\Entities\Insurance\Subscription;
-use Alma\PrestaShop\Exceptions\AlmaException;
 use Alma\PrestaShop\Exceptions\InsuranceInstallException;
 use Alma\PrestaShop\Exceptions\TermsAndConditionsException;
 use Alma\PrestaShop\Helpers\ConstantsHelper;
@@ -174,7 +173,6 @@ class InsuranceService
      *
      * @return void
      *
-     * @throws AlmaException
      * @throws \PrestaShopDatabaseException
      */
     public function deleteAllLinkedInsuranceProducts($params)
@@ -242,7 +240,7 @@ class InsuranceService
             'subscription',
             [
                 'action' => 'update',
-                'sid' => '<subscription_external_id>',
+                'subscription_id' => '<subscription_id>',
                 'trace' => '<trace>',
             ]
         ));
@@ -300,5 +298,28 @@ class InsuranceService
     public function getTextTermsAndConditions()
     {
         return $this->module->l('I hereby acknowledge my acceptance to subscribe to the insurance offered by Alma. In doing so, I confirm that I have previously reviewed the [information notice, which constitutes the general conditions], the [insurance product information document], and the [pre-contractual information and advice sheet]. I ahead to it without reservation and agree to electronically sign the various documents forming my contract, if applicable. I expressly consent to the collection and use of my personal data for the purpose of subscribing to and managing my insurance contract(s).', 'InsuranceService');
+    }
+
+    /**
+     * @param \OrderCore $order
+     *
+     * @return string
+     */
+    public function getLinkToOrderDetails($order)
+    {
+        $almaInsuranceId = $this->almaInsuranceProductRepository->getIdByOrderId($order->id, $order->id_shop);
+
+        $link = new \LinkCore();
+
+        $linkToController = $link->getAdminLink(
+            'AdminAlmaInsuranceOrdersDetails',
+            true,
+            [],
+            [
+                'identifier' => $almaInsuranceId['id'],
+            ]
+        );
+
+        return $linkToController;
     }
 }

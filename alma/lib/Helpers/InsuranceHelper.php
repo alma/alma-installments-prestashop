@@ -34,6 +34,10 @@ if (!defined('_PS_VERSION_')) {
 
 class InsuranceHelper
 {
+    const ALMA_INSURANCE_STATUS_FAILED = 'failed';
+    const ALMA_INSURANCE_STATUS_CANCELED = 'canceled';
+    const ALMA_INSURANCE_STATUS_PENDING_CANCELLATION = 'pending_cancellation';
+
     /**
      * @var CartProductRepository
      */
@@ -48,12 +52,33 @@ class InsuranceHelper
      * @var AlmaInsuranceProductRepository
      */
     public $insuranceProductRepository;
+    /**
+     * @var \Context|null
+     */
+    protected $context;
 
-    public function __construct()
-    {
-        $this->cartProductRepository = new CartProductRepository();
-        $this->productRepository = new ProductRepository();
-        $this->insuranceProductRepository = new AlmaInsuranceProductRepository();
+    public function __construct(
+        $cartProductRepository = null,
+        $productRepository = null,
+        $insuranceProductRepository = null,
+        $context = null
+    ) {
+        if (!$cartProductRepository) {
+            $cartProductRepository = new CartProductRepository();
+        }
+        if (!$productRepository) {
+            $productRepository = new ProductRepository();
+        }
+        if (!$insuranceProductRepository) {
+            $insuranceProductRepository = new AlmaInsuranceProductRepository();
+        }
+        if (!$context) {
+            $context = \Context::getContext();
+        }
+        $this->cartProductRepository = $cartProductRepository;
+        $this->productRepository = $productRepository;
+        $this->insuranceProductRepository = $insuranceProductRepository;
+        $this->context = $context;
     }
 
     /**
@@ -104,12 +129,24 @@ class InsuranceHelper
             return false;
         }
 
-        /**
-         * @var \ContextCore $context
-         */
-        $context = \Context::getContext();
-        $idProduct = $this->cartProductRepository->hasProductInCart($idInsuranceProduct, $context->cart->id);
+        $idProduct = $this->cartProductRepository->hasProductInCart($idInsuranceProduct, $this->context->cart->id);
 
         return (bool) $idProduct;
+    }
+
+    /**
+     * @param \OrderCore $order
+     *
+     * @return bool
+     */
+    public function canRefundOrder($order)
+    {
+        $result = $this->insuranceProductRepository->canRefundOrder($order->id, $order->id_shop);
+
+        if ($result['nbNotCancelled'] > 0) {
+            return false;
+        }
+
+        return true;
     }
 }

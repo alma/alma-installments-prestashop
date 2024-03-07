@@ -21,7 +21,7 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  *}
 {if isset($layout)}
-    <div class="alma-widget-insurance" id="alma-widget-insurance-product-page" data-alma-insurance-settings="{$settingsInsurance}" >
+    <div class="alma-widget-insurance" id="alma-widget-insurance-product-page" data-alma-insurance-settings="{$settingsInsurance}" style="height: 0px" >
         <iframe id="product-alma-iframe" src="{$iframeUrl}"></iframe>
         <div id="alma-insurance-modal"></div>
     </div>

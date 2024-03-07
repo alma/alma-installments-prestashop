@@ -25,12 +25,11 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-use Alma\PrestaShop\Helpers\PriceHelper;
-use PrestaShop\PrestaShop\Core\Localization\Exception\LocalizationException;
+use Alma\PrestaShop\Helpers\SettingsHelper;
 
 class AdminAlmaInsuranceOrdersController extends ModuleAdminController
 {
-    protected $actions_available = [];
+    protected $actions_available = ['show'];
 
     /**
      * @throws PrestaShopException
@@ -63,31 +62,11 @@ class AdminAlmaInsuranceOrdersController extends ModuleAdminController
                 'title' => $this->module->l('Customer'),
                 'type' => 'text',
             ],
-            'product' => [
-                'title' => $this->module->l('Product'),
+            'nb_insurance' => [
+                'title' => $this->module->l('Nb Insurances'),
                 'type' => 'text',
             ],
-            'product_price' => [
-                'title' => $this->module->l('Product price'),
-                'type' => 'text',
-            ],
-            'insurance_product' => [
-                'title' => $this->module->l('Insurance product'),
-                'type' => 'text',
-            ],
-            'subscription_amount' => [
-                'title' => $this->module->l('Insurance Price'),
-                'type' => 'text',
-            ],
-            'subscription_broker_id' => [
-                'title' => $this->module->l('Subscription Contract'),
-                'type' => 'text',
-            ],
-            'subscription_state' => [
-                'title' => $this->module->l('State'),
-                'type' => 'text',
-            ],
-            'date_add' => [
+            'date' => [
                 'title' => $this->module->l('Date'),
                 'type' => 'text',
             ],
@@ -96,6 +75,18 @@ class AdminAlmaInsuranceOrdersController extends ModuleAdminController
                 'type' => 'text',
             ],
         ];
+    }
+
+    /**
+     * AdminController::renderList() override.
+     *
+     * @see AdminController::renderList()
+     */
+    public function renderList()
+    {
+        $this->addRowAction('show');
+
+        return parent::renderList();
     }
 
     /**
@@ -108,7 +99,6 @@ class AdminAlmaInsuranceOrdersController extends ModuleAdminController
      *
      * @throws PrestaShopDatabaseException
      * @throws PrestaShopException
-     * @throws LocalizationException
      *
      * @deprecated
      */
@@ -117,37 +107,69 @@ class AdminAlmaInsuranceOrdersController extends ModuleAdminController
         $orderBy = 'date_add';
         $orderWay = 'DESC';
 
+        $this->_group = 'GROUP BY `id_order`';
         $this->_where = ' AND `id_order` is NOT NULL ';
+        $this->_where = ' AND `mode` = "' . SettingsHelper::getActiveMode() . '"';
+        $this->_select = ' count(`id_order`) as nb_insurance ';
 
         parent::getList($id_lang, $orderBy, $orderWay, $start, $limit, $this->context->shop->id);
 
         foreach ($this->_list as $key => $details) {
-            /**
-             * @var OrderCore $order
-             */
-            $order = new \Order($details['id_order']);
-            $this->_list[$key]['reference'] = $order->reference;
-            $this->_list[$key]['status'] = $order->getCurrentStateFull($this->context->language->id)['name'];
+            foreach ($details as $value) {
+                if (null === $details['id_order']) {
+                    unset($this->_list[$key]);
+                    continue;
+                }
 
-            /**
-             * @var CustomerCore $customer
-             */
-            $customer = $order->getCustomer();
-            $this->_list[$key]['customer'] = $customer->lastname . ' ' . $customer->firstname;
-            $this->_list[$key]['date'] = $order->date_add;
-            $this->_list[$key]['product_price'] = PriceHelper::formatPriceFromCentsByCurrencyId($details['product_price']);
-            $this->_list[$key]['subscription_amount'] = PriceHelper::formatPriceFromCentsByCurrencyId($details['price']);
+                /**
+                 * @var OrderCore $order
+                 */
+                $order = new \Order($details['id_order']);
+                $this->_list[$key]['reference'] = $order->reference;
 
-            $this->_list[$key]['product'] = $this->getProductName(
-                $details['id_product'],
-                $details['id_product_attribute']
-            );
+                $this->_list[$key]['status'] = $order->getCurrentStateFull($this->context->language->id)['name'];
 
-            $this->_list[$key]['insurance_product'] = $this->getProductName(
-                $details['id_product_insurance'],
-                $details['id_product_attribute_insurance']
-            );
+                /**
+                 * @var CustomerCore $customer
+                 */
+                $customer = $order->getCustomer();
+                $this->_list[$key]['customer'] = sprintf('%s %s', $customer->lastname, $customer->firstname);
+                $this->_list[$key]['date'] = $order->date_add;
+            }
         }
+    }
+
+    /**
+     * @param int $id
+     * @param string $token
+     * @param string $name
+     *
+     * @return false|string
+     *
+     * @throws SmartyException
+     */
+    public function displayShowLink($token = null, $id, $name = null) // phpcs:ignore
+    {
+        $tpl = $this->createTemplate('helpers/list/list_action_edit.tpl');
+
+        $link = new LinkCore();
+
+        $linkToController = $link->getAdminLink(
+            'AdminAlmaInsuranceOrdersDetails',
+            true,
+            [],
+            [
+                'identifier' => $id,
+            ]
+        );
+
+        $tpl->assign([
+            'href' => $linkToController,
+            'action' => 'Show',
+            'id' => $id,
+        ]);
+
+        return $tpl->fetch();
     }
 
     /**
@@ -179,6 +201,9 @@ class AdminAlmaInsuranceOrdersController extends ModuleAdminController
         return $productName;
     }
 
+    /**
+     * @return void
+     */
     public function initToolbar()
     {
         parent::initToolbar();

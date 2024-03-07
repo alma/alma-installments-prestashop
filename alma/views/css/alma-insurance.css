@@ -77,7 +77,27 @@
 .three {
     animation: change-color 1.34s normal 0.58s infinite, bounce 1.34s linear 0.48s infinite;
 }
+.spinner {
+    vertical-align: middle;
+    margin-right: 5px;
+    width: 20px;
+    height: 20px;
+    border: 2px solid #FFF;
+    border-bottom-color: transparent;
+    border-radius: 50%;
+    display: inline-block;
+    box-sizing: border-box;
+    animation: rotation 1s linear infinite;
 
+}
+@keyframes rotation {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
 @keyframes bounce {
     0%,
     40%,

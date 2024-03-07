@@ -24,6 +24,7 @@
 
 namespace Alma\PrestaShop\Repositories;
 
+use Alma\API\Entities\Insurance\Subscription;
 use Alma\PrestaShop\Helpers\SettingsHelper;
 
 if (!defined('_PS_VERSION_')) {
@@ -47,7 +48,7 @@ class AlmaInsuranceProductRepository
      * @param int $idProductAttributeInsurance
      * @param int $assurancePrice
      * @param int $idAddressDelivery
-     * @param array $insuranceContractInfos
+     * @param string $insuranceContractInfos
      *
      * @return bool
      *
@@ -132,6 +133,32 @@ class AlmaInsuranceProductRepository
     }
 
     /**
+     * @param array $product
+     * @param int $cartId
+     * @param int $shopId
+     *
+     * @return mixed
+     *
+     * @throws \PrestaShopDatabaseException
+     */
+    public function getIdsByCartIdAndShopAndProductBefore17($product, $cartId, $shopId)
+    {
+        $sql = '
+            SELECT `id_alma_insurance_product`,
+                   `id_product_insurance`,
+                   `id_product_attribute_insurance`,
+                   `price` 
+            FROM `' . _DB_PREFIX_ . 'alma_insurance_product` aip
+            WHERE aip.`id_cart` = ' . (int) $cartId . '
+            AND aip.`id_product` = ' . (int) $product['id_product'] . '
+            AND aip.`id_product_attribute` = ' . (int) $product['id_product_attribute'] . '
+            AND aip.`id_customization` = ' . (int) $product['id_customization'] . '
+            AND aip.`id_shop` = ' . (int) $shopId;
+
+        return \Db::getInstance()->executeS($sql);
+    }
+
+    /**
      * @param int $id
      *
      * @return mixed
@@ -144,6 +171,23 @@ class AlmaInsuranceProductRepository
             WHERE aip.`id_alma_insurance_product` = ' . (int) $id;
 
         return \Db::getInstance()->getRow($sql);
+    }
+
+    /**
+     * @param $id
+     *
+     * @return mixed
+     *
+     * @throws \PrestaShopDatabaseException
+     */
+    public function getByOrderId($id)
+    {
+        $sql = '
+            SELECT *
+            FROM `' . _DB_PREFIX_ . 'alma_insurance_product` aip
+            WHERE aip.`id_order` = ' . (int) $id;
+
+        return \Db::getInstance()->executeS($sql);
     }
 
     /**
@@ -173,6 +217,28 @@ class AlmaInsuranceProductRepository
                 'UPDATE `' . _DB_PREFIX_ . 'alma_insurance_product`
                 SET `id_order` =' . (int) $orderId . '
                 WHERE `id_alma_insurance_product` IN (' . implode(',', $idsToUpdate) . ')'
+            )
+        ) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * @param string $subscriptionId
+     * @param string $status
+     * @param string $subscriptionBrokerId
+     *
+     * @return bool
+     */
+    public function updateSubscription($subscriptionId, $status, $subscriptionBrokerId)
+    {
+        if (
+            !\Db::getInstance()->execute(
+                'UPDATE `' . _DB_PREFIX_ . 'alma_insurance_product`
+                SET `subscription_state` ="' . $status . '", `subscription_broker_id`= "' . $subscriptionBrokerId . '"
+                WHERE `subscription_id` ="' . $subscriptionId . '"'
             )
         ) {
             return false;
@@ -303,6 +369,80 @@ class AlmaInsuranceProductRepository
             AND aip.`subscription_state` IS NOT NULL
             AND aip.`id_order` = ' . (int) $order->id . '
             AND aip.`id_shop` = ' . (int) $order->id_shop;
+
+        return \Db::getInstance()->getRow($sql);
+    }
+
+    /**
+     * @param string $sid
+     * @param string $state
+     * @param string $reason
+     *
+     * @return bool
+     */
+    public function updateSubscriptionForCancellation($sid, $state, $reason)
+    {
+        if (
+            !\Db::getInstance()->execute(
+                'UPDATE `' . _DB_PREFIX_ . 'alma_insurance_product`
+                SET `subscription_state` ="' . $state . '", `reason_of_cancelation` = "' . $reason . '", `date_of_cancelation` = NOW(), `date_of_cancelation_request` = NOW()
+                WHERE `subscription_id` = "' . $sid . '"'
+            )
+        ) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * @param string $id
+     *
+     * @return bool
+     */
+    public function getBySubscriptionId($id)
+    {
+        $sql = '
+            SELECT *
+            FROM `' . _DB_PREFIX_ . 'alma_insurance_product` aip
+            WHERE aip.`subscription_id` = "' . $id . '"';
+
+        return \Db::getInstance()->getRow($sql);
+    }
+
+    /**
+     * @param int $orderId
+     * @param int $shopId
+     *
+     * @return array
+     */
+    public function canRefundOrder($orderId, $shopId)
+    {
+        $sql = '
+            SELECT count(`id_alma_insurance_product`) as nbNotCancelled
+            FROM `' . _DB_PREFIX_ . 'alma_insurance_product`
+            WHERE `id_order` = ' . (int) $orderId . '
+            AND `subscription_state` != "' . Subscription::STATE_CANCELLED . '"
+            AND `id_shop` = ' . (int) $shopId;
+
+        return \Db::getInstance()->getRow($sql);
+    }
+
+    /**
+     * @param int $orderId
+     * @param int $shopId
+     *
+     * @return mixed
+     *
+     * @throws \PrestaShopDatabaseException
+     */
+    public function getIdByOrderId($orderId, $shopId)
+    {
+        $sql = '
+            SELECT `id_alma_insurance_product` as id
+            FROM `' . _DB_PREFIX_ . 'alma_insurance_product` aip
+            WHERE aip.`id_order` = ' . (int) $orderId . '
+            AND aip.`id_shop` = ' . (int) $shopId;
 
         return \Db::getInstance()->getRow($sql);
     }
