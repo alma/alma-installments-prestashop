@@ -24,250 +24,140 @@
 
 namespace Alma\PrestaShop\Tests\Unit\Helper;
 
-use Alma\PrestaShop\Exceptions\WrongParamsException;
-use Alma\PrestaShop\Helpers\Admin\InsuranceHelper;
-use Alma\PrestaShop\Helpers\Admin\TabsHelper;
-use Alma\PrestaShop\Helpers\ConfigurationHelper;
+use Alma\API\Entities\Order;
 use Alma\PrestaShop\Helpers\ConstantsHelper;
+use Alma\PrestaShop\Helpers\InsuranceHelper;
+use Alma\PrestaShop\Repositories\AlmaInsuranceProductRepository;
+use Alma\PrestaShop\Repositories\CartProductRepository;
+use Alma\PrestaShop\Repositories\ProductRepository;
 use PHPUnit\Framework\TestCase;
 
 class InsuranceHelperTest extends TestCase
 {
     /**
-     * @property $tabWithId
+     * @var InsuranceHelper
      */
-    protected $tabWithId;
-
+    protected $insuranceHelper;
     /**
-     * @property $tabWithoutId
+     * @var AlmaInsuranceProductRepository|(AlmaInsuranceProductRepository&\PHPUnit_Framework_MockObject_MockObject)|\PHPUnit_Framework_MockObject_MockObject
      */
-    protected $tabWithoutId;
-
+    protected $insuranceProductRepository;
     /**
-     * @property $configurationHelperMock
+     * @var ProductRepository|(ProductRepository&\PHPUnit_Framework_MockObject_MockObject)|\PHPUnit_Framework_MockObject_MockObject
      */
-    protected $configurationHelper;
+    protected $productRepository;
+    /**
+     * @var CartProductRepository|(CartProductRepository&\PHPUnit_Framework_MockObject_MockObject)|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $cartProductRepository;
 
     /**
      * @return void
      */
     protected function setUp()
     {
-        $this->module = $this->createMock(\Module::class);
-        $this->tabWithId = new \Tab();
-        $this->tabWithId->id = 1;
-        $this->tabWithoutId = new \Tab();
-        $this->tabHelper = $this->createMock(TabsHelper::class);
-        $this->insuranceHelper = new InsuranceHelper($this->module);
-        $this->insuranceHelper->tabsHelper = $this->tabHelper;
-        $this->configurationHelperMock = $this->createMock(ConfigurationHelper::class);
-        $this->insuranceHelper->configurationHelper = $this->configurationHelperMock;
-    }
-
-    protected function tearDown()
-    {
-        $this->tabHelper = null;
-        $this->insuranceHelper = null;
-    }
-
-    /**
-     * @dataProvider dataTabsInsuranceDataProvider
-     *
-     * @param $tabsInsuranceDescription
-     *
-     * @return void
-     *
-     * @throws \PrestaShopException
-     */
-    public function testTabInstalledWithAllowFlagAndTabNotInstalled($tabsInsuranceDescription)
-    {
-        $this->tabHelper->expects($this->once())->method('installTabs')->with(
-            $tabsInsuranceDescription
+        $this->cartProductRepository = $this->createMock(CartProductRepository::class);
+        $this->productRepository = $this->createMock(ProductRepository::class);
+        $this->insuranceProductRepository = $this->createMock(AlmaInsuranceProductRepository::class);
+        $this->context = $this->createMock(\Context::class);
+        $this->cart = $this->createMock(\Cart::class);
+        $this->context->cart = $this->cart;
+        $this->insuranceHelper = new InsuranceHelper(
+            $this->cartProductRepository,
+            $this->productRepository,
+            $this->insuranceProductRepository,
+            $this->context
         );
-        $this->tabHelper->method('installTabs');
-        $this->tabHelper->method('getInstanceFromClassName')->willReturn($this->tabWithoutId);
-
-        $this->insuranceHelper->handleBOMenu(1);
+        $this->order = $this->createMock(Order::class);
     }
 
     /**
-     * @dataProvider dataTabsInsuranceDataProvider
+     * Given an order with value up to zero we return false
      *
      * @return void
-     *
-     * @throws \PrestaShopException
      */
-    public function testTabUninstalledWithDisallowFlagAndTabInstalled($tabsInsuranceDescription)
+    public function testCanRefundOrderWithNbNotCancelledValueUpToZeroReturnFalse()
     {
-        $this->tabHelper->expects($this->once())->method('uninstallTabs')->with($tabsInsuranceDescription);
-        $this->tabHelper->method('uninstallTabs');
-        $this->tabHelper->method('getInstanceFromClassName')->willReturn($this->tabWithId);
+        $this->order->id = 1;
+        $this->order->id_shop = 1;
+        $this->insuranceProductRepository->expects($this->once())
+            ->method('canRefundOrder')
+            ->with($this->order->id, $this->order->id_shop)
+            ->willReturn([
+                'nbNotCancelled' => 1,
+            ]);
 
-        $this->insuranceHelper->handleBOMenu(0);
+        $this->assertFalse($this->insuranceHelper->canRefundOrder($this->order));
     }
 
     /**
-     * @dataProvider isAllowInsuranceDataProvider
-     *
-     * @param $isAllowInsurance
-     * @param $tab
-     *
-     * @return void
-     *
-     * @throws \PrestaShopException
-     */
-    public function testTabMethodNotCalledWithWrongParams($isAllowInsurance, $tab)
-    {
-        $this->tabHelper->method('getInstanceFromClassName')->willReturn($tab);
-
-        $this->tabHelper->expects($this->never())->method('installTab');
-        $this->tabHelper->expects($this->never())->method('uninstallTab');
-
-        $this->assertNull($this->insuranceHelper->handleBOMenu($this->module, $isAllowInsurance));
-    }
-
-    /**
-     * @return void
-     */
-    public function testUpdateValueIfFlagIsAllowAndInsuranceIsDisabled()
-    {
-        $this->configurationHelperMock->method('hasKey')->willReturn(false);
-        $this->configurationHelperMock->expects($this->exactly(4))->method('updateValue')->withConsecutive(
-            [ConstantsHelper::ALMA_ACTIVATE_INSURANCE, 0],
-            [ConstantsHelper::ALMA_SHOW_INSURANCE_WIDGET_PRODUCT, 0],
-            [ConstantsHelper::ALMA_SHOW_INSURANCE_WIDGET_CART, 0],
-            [ConstantsHelper::ALMA_SHOW_INSURANCE_POPUP_CART, 0]
-        );
-        $this->insuranceHelper->handleDefaultInsuranceFieldValues(true);
-    }
-
-    /**
-     * @return void
-     */
-    public function testDeleteByNamesIfFlagIsDisallowAndInsuranceIsAllow()
-    {
-        $this->configurationHelperMock->method('hasKey')->willReturn(true);
-        $this->configurationHelperMock->expects($this->once())->method('deleteByNames');
-        $this->insuranceHelper->handleDefaultInsuranceFieldValues(false);
-    }
-
-    /**
-     * @return void
-     *
-     * @throws \PrestaShopException
-     */
-    public function testConstructIframeUrlWithParams()
-    {
-        $expected = 'https://protect.sandbox.almapay.com/almaBackOfficeConfiguration.html?is_insurance_activated=true&is_insurance_on_product_page_activated=false&is_insurance_on_cart_page_activated=false&is_add_to_cart_popup_insurance_activated=true';
-
-        $this->configurationHelperMock->method('getMultiple')->willReturn([
-            'ALMA_ACTIVATE_INSURANCE' => '1',
-            'ALMA_SHOW_INSURANCE_WIDGET_PRODUCT' => '0',
-            'ALMA_SHOW_INSURANCE_WIDGET_CART' => '0',
-            'ALMA_SHOW_INSURANCE_POPUP_CART' => '1',
-        ]);
-        $actual = $this->insuranceHelper->constructIframeUrlWithParams();
-
-        $this->assertEquals($expected, $actual);
-    }
-
-    /**
-     * @return void
-     *
-     * @throws \Alma\PrestaShop\Exceptions\WrongParamsException
-     */
-    public function testSaveConfigInsurance()
-    {
-        $this->configurationHelperMock->method('updateValue');
-        $this->configurationHelperMock->expects($this->exactly(4))->method('updateValue')->withConsecutive(
-            [ConstantsHelper::ALMA_ACTIVATE_INSURANCE, 1],
-            [ConstantsHelper::ALMA_SHOW_INSURANCE_WIDGET_PRODUCT, 1],
-            [ConstantsHelper::ALMA_SHOW_INSURANCE_WIDGET_CART, 0],
-            [ConstantsHelper::ALMA_SHOW_INSURANCE_POPUP_CART, 1]
-        );
-        $this->insuranceHelper->saveConfigInsurance([
-            'is_insurance_activated' => '1',
-            'is_insurance_on_product_page_activated' => '1',
-            'is_insurance_on_cart_page_activated' => '0',
-            'is_add_to_cart_popup_insurance_activated' => '1',
-        ]);
-    }
-
-    /**
-     * @runInSeparateProcess
+     * Given an order with value zero we return true
      *
      * @return void
+     */
+    public function testCanRefundOrderWithNbNotCancelledValueZeroReturnTrue()
+    {
+        $this->order->id = 1;
+        $this->order->id_shop = 1;
+        $this->insuranceProductRepository->expects($this->once())
+            ->method('canRefundOrder')
+            ->with($this->order->id, $this->order->id_shop)
+            ->willReturn([
+                'nbNotCancelled' => 0,
+            ]);
+
+        $this->assertTrue($this->insuranceHelper->canRefundOrder($this->order));
+    }
+
+    /**
+     * Given a reference product we don't get an id insurance product and return false
      *
-     * @throws WrongParamsException
+     * @return void
      */
-    public function testDontSaveConfigInsuranceWithWrongKeysAndThrowException()
+    public function testHasInsuranceInCartWithNoIdInsuranceProductReturnFalse()
     {
-        $this->configurationHelperMock->method('updateValue');
-        $this->configurationHelperMock->expects($this->never())->method('updateValue');
-        $this->expectException(WrongParamsException::class);
-        $this->insuranceHelper->saveConfigInsurance([
-            'is_insurance_activated' => '1',
-            'is_insurance_on_product_page_activated' => '1',
-            'is_insurance_on_cart_page_activated' => '0',
-            'is_add_to_cart_popup_insurance_activated' => '1',
-            'key_false' => '0',
-        ]);
+        $this->productRepository->expects($this->once())
+            ->method('getProductIdByReference')
+            ->with(ConstantsHelper::ALMA_INSURANCE_PRODUCT_REFERENCE)
+            ->willReturn(null);
+        $this->assertFalse($this->insuranceHelper->hasInsuranceInCart());
     }
 
     /**
-     * @return array
+     * Given an id insurance product and a cart id we return bool if the product is in the cart
+     *
+     * @dataProvider cartWithOrWithoutInsuranceProduct
+     *
+     * @return void
      */
-    public function isAllowInsuranceDataProvider()
+    public function testHasInsuranceInCartWithIdInsuranceProductReturnBool($expected, $idProduct)
     {
-        $tabWithoutId = new \Tab();
-        $tabWithId = new \Tab();
-        $tabWithId->id = 1;
-
-        return [
-            'is allow' => [
-                'isAllowInsurance' => true,
-                'tab' => $tabWithId,
-            ],
-            'is disallow' => [
-                'isDisallowInsurance' => false,
-                'tab' => $tabWithoutId,
-            ],
-        ];
+        $this->context->cart->id = 1;
+        $idInsuranceProduct = 1;
+        $this->cartProductRepository->expects($this->once())
+            ->method('hasProductInCart')
+            ->with($idInsuranceProduct, $this->context->cart->id)
+            ->willReturn($idProduct);
+        $this->productRepository->expects($this->once())
+            ->method('getProductIdByReference')
+            ->with(ConstantsHelper::ALMA_INSURANCE_PRODUCT_REFERENCE)
+            ->willReturn($idInsuranceProduct);
+        $this->assertEquals($expected, $this->insuranceHelper->hasInsuranceInCart());
     }
 
     /**
-     * @return array
+     * @return array[]
      */
-    public function dataTabsInsuranceDataProvider()
+    public function cartWithOrWithoutInsuranceProduct()
     {
         return [
-            'install tabs' => [
-                'tabsInsuranceDescription' => [
-                    'AdminAlmaInsurance' => [
-                        'name' => null,
-                        'parent' => 'alma',
-                        'position' => 3,
-                        'icon' => 'security',
-                    ],
-                    'AdminAlmaInsuranceConfiguration' => [
-                        'name' => null,
-                        'parent' => 'AdminAlmaInsurance',
-                        'position' => 1,
-                        'icon' => 'tune',
-                    ],
-                    'AdminAlmaInsuranceOrders' => [
-                        'name' => null,
-                        'parent' => 'AdminAlmaInsurance',
-                        'position' => 2,
-                        'icon' => 'shopping_basket',
-                    ],
-                    'AdminAlmaInsuranceOrdersDetails' => [
-                        'name' => false,
-                        'parent' => 'AdminAlmaInsurance',
-                        'position' => null,
-                        'icon' => null,
-                    ],
-                ],
+            'cart with insurance product' => [
+                'expected' => true,
+                'idProduct' => 1,
+            ],
+            'cart without insurance product' => [
+                'expected' => false,
+                'idProduct' => null,
             ],
         ];
     }

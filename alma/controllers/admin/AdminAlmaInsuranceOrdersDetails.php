@@ -45,6 +45,11 @@ class AdminAlmaInsuranceOrdersDetailsController extends ModuleAdminController
      */
     protected $productHelper;
 
+    /**
+     * @var Alma
+     */
+    public $module;
+
     public function __construct()
     {
         $this->bootstrap = true;

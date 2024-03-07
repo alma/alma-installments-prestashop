@@ -1,5 +1,6 @@
-{*
- * 2018-2023 Alma SAS
+<?php
+/**
+ * 2018-2023 Alma SAS.
  *
  * THE MIT LICENSE
  *
@@ -19,25 +20,44 @@
  * @author    Alma SAS <contact@getalma.eu>
  * @copyright 2018-2023 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
- *}
-<div id="alma-insurance-modal"></div>
-<script type="module" src="https://protect.staging.almapay.com/displayModal.js"></script>
+ */
 
-<script type="text/javascript">
-    var dataSubscriptions = {$dataSubscriptions};
-</script>
+namespace Alma\Prestashop\Grid\Column;
 
-<div class="panel" id="fieldset_0">
-    <div class="panel-heading">
-        <img src="/modules/alma/views/img/logos/alma_tiny.svg" alt="{l s='Order details' mod='alma'}">{l s='Orders details' mod='alma'}
-    </div>
-    <div class="form-wrapper">
-        <div class="form-group">
-            <div class="alma--insurance-bo-form">
-                <iframe id="subscription-alma-iframe" class="alma-insurance-iframe" src="https://protect.staging.almapay.com/almaBackOfficeSubscriptions.html"></iframe>
-            </div>
-        </div>
-    </div>
-</div>
+use PrestaShop\PrestaShop\Core\Grid\Column\AbstractColumn;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
-<script type="text/javascript" src="{$scriptUrl}"></script>
+/**
+ * Boolean column allows adding boolean columns (Yes/No, On/Off and etc) to grid
+ */
+final class AlmaBooleanColumn extends AbstractColumn
+{
+    /**
+     * {@inheritdoc}
+     */
+    public function getType()
+    {
+        return 'alma_boolean';
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function configureOptions(OptionsResolver $resolver)
+    {
+        $resolver
+            ->setRequired([
+                'field',
+                'true_name',
+                'false_name',
+            ])
+            ->setDefaults([
+                'clickable' => false,
+            ])
+            ->setAllowedTypes('field', 'string')
+            ->setAllowedTypes('true_name', 'string')
+            ->setAllowedTypes('false_name', 'string')
+            ->setAllowedTypes('clickable', 'bool')
+        ;
+    }
+}

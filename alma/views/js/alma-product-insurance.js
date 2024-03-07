@@ -36,7 +36,6 @@ let quantity = 1;
             prestashop.on(
                 'updateProduct',
                 function (event) {
-                    console.log('updateProduct');
                     let addToCart = document.querySelector('.add-to-cart');
                     let modalIsClosed = false;
 

@@ -104,6 +104,12 @@ class InsuranceHelper
                 'position' => null,
                 'icon' => null,
             ],
+            ConstantsHelper::BO_CONTROLLER_INSURANCE_ORDERS_LIST_CLASSNAME => [
+                'name' => false,
+                'parent' => ConstantsHelper::BO_CONTROLLER_INSURANCE_CLASSNAME,
+                'position' => null,
+                'icon' => null,
+            ],
         ];
     }
 

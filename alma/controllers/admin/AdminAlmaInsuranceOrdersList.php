@@ -22,70 +22,62 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
-namespace Alma\PrestaShop\Controllers\Hook;
+use Alma\PrestaShop\Helpers\InsuranceHelper;
+use Alma\PrestaShop\Traits\AjaxTrait;
 
 if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-use Alma\PrestaShop\Helpers\InsuranceHelper;
-use Alma\PrestaShop\Hooks\FrontendHookController;
-use Alma\PrestaShop\Services\InsuranceService;
-
-class DisplayAdminOrderTopHookController extends FrontendHookController
+class AdminAlmaInsuranceOrdersListController extends ModuleAdminController
 {
+    use AjaxTrait;
+
     /**
      * @var InsuranceHelper
      */
     protected $insuranceHelper;
 
-    /**
-     * @var InsuranceService
-     */
-    protected $insuranceService;
+    protected $statusOrdersAccepted = [
+      7, // status refunded
+      15, // status partial refund
+      6, // status cancelled
+    ];
 
-    public function __construct($module)
+    public function __construct()
     {
-        parent::__construct($module);
+        parent::__construct();
 
+        $this->token = Tools::getAdminToken('AdminOrders' . (int) Tab::getIdFromClassName('AdminOrders') . (int) $this->context->employee->id);
         $this->insuranceHelper = new InsuranceHelper();
-        $this->insuranceService = new InsuranceService();
-    }
-
-    public function canRun()
-    {
-        return parent::canRun() && $this->insuranceHelper->isInsuranceActivated();
     }
 
     /**
-     * Run Controller
-     *
-     * @param array $params
-     *
      * @return void
+     *
+     * @throws PrestaShopException
      */
-    public function run($params)
+    public function ajaxProcessOrdersList()
     {
-        /**
-         * @var \OrderCore $order
-         */
-        $order = new \Order($params['id_order']);
+        try {
+            $order = new \Order(\Tools::getValue('orderId'));
+            $idStatus = \Tools::getValue('statusId');
 
-        if (!$this->insuranceHelper->canRefundOrder($order)) {
-            $link = $this->insuranceService->getLinkToOrderDetails($order);
+            $canRefundOrder = true;
 
-            $text = sprintf(
-                    $this->module->l('This basket includes one or more insurance subscriptions. Make sure that the subscription(s) is canceled before proceeding with the refund. <a href="%s">Manage the cancellation directly here.</a>', 'displayadminordertophookcontroller'),
-                    $link
-            );
+            if (in_array($idStatus, $this->statusOrdersAccepted)) {
+                $canRefundOrder = $this->insuranceHelper->canRefundOrder($order);
+            }
 
-            $this->context->smarty->assign(
-                [
-                    'text' => $text,
-                ]
-            );
-
-            return $this->module->display($this->module->file, 'displayAdminOrderTop.tpl');
+            $this->ajaxRenderAndExit(json_encode([
+                'success' => true,
+                'canRefund' => $canRefundOrder,
+            ]));
+        } catch (\Exception $e) {
+            $this->ajaxRenderAndExit(json_encode([
+                'success' => true,
+                'canRefund' => true,
+            ]));
         }
     }
 }
