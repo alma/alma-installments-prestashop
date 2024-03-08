@@ -169,15 +169,17 @@ function removeInputInsurance() {
 function addModalListenerToAddToCart() {
     if (settings.is_add_to_cart_popup_insurance_activated === 'true') {
         let addToCart = document.querySelector('.add-to-cart');
-        addToCart.addEventListener("click", function (event) {
-            if (!insuranceSelected) {
-                event.preventDefault();
-                event.stopPropagation();
-                openModal('popupModal', quantity);
-                insuranceSelected = true;
-                addToCartFlow = true;
-            }
-            insuranceSelected = false;
-        });
+        addToCart.removeEventListener("click",insuranceListener)
+        addToCart.addEventListener("click", insuranceListener);
     }
+}
+function insuranceListener(event) {
+        if (!insuranceSelected) {
+            event.preventDefault();
+            event.stopPropagation();
+            openModal('popupModal', quantity);
+            insuranceSelected = true;
+            addToCartFlow = true;
+        }
+        insuranceSelected = false;
 }
