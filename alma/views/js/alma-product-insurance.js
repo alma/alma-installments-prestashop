@@ -97,12 +97,14 @@ function onloadAddInsuranceInputOnProductAlma() {
 
     window.addEventListener('message', (e) => {
         if (e.data.type === 'almaEligibilityAnswer') {
+            btnLoaders('stop');
             if (e.data.eligibilityCallResponseStatus.response.eligibleProduct === true) {
-                btnLoaders('stop');
                 let heightIframe = e.data.widgetSize.height;
                 document.getElementById('alma-widget-insurance-product-page').style.height = heightIframe + "px";
+            } else {
+                let addToCart = document.querySelector('.add-to-cart');
+                addToCart.removeEventListener("click",insuranceListener)
             }
-            // remove spinner
         }
         if (e.data.type === 'getSelectedInsuranceData') {
             insuranceSelected = true;
