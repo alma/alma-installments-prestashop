@@ -25,6 +25,8 @@
 namespace Alma\PrestaShop\Services;
 
 use Alma\API\Entities\Insurance\Subscription;
+use Alma\API\Exceptions\MissingKeyException;
+use Alma\API\Lib\ArrayUtils;
 use Alma\PrestaShop\Exceptions\InsuranceInstallException;
 use Alma\PrestaShop\Exceptions\TermsAndConditionsException;
 use Alma\PrestaShop\Helpers\ConstantsHelper;
@@ -68,6 +70,11 @@ class InsuranceService
      */
     protected $insuranceApiService;
 
+    /**
+     * @var ArrayUtils
+     */
+    protected $arrayUtils;
+
     public function __construct()
     {
         $this->module = \Module::getInstanceByName(ConstantsHelper::ALMA_MODULE_NAME);
@@ -78,6 +85,7 @@ class InsuranceService
         $this->attributeGroupRepository = new AttributeGroupRepository();
         $this->almaInsuranceProductRepository = new AlmaInsuranceProductRepository();
         $this->insuranceApiService = new InsuranceApiService();
+        $this->arrayUtils = new ArrayUtils();
     }
 
     /**
@@ -265,6 +273,7 @@ class InsuranceService
      * @return array
      *
      * @throws TermsAndConditionsException
+     * @throws MissingKeyException
      */
     public function createTextTermsAndConditions($insuranceContracts)
     {
@@ -279,6 +288,8 @@ class InsuranceService
 
             break;
         }
+
+        $this->arrayUtils->checkMandatoryKeys(['notice-document', 'ipid-document', 'fic-document'], $files);
 
         if (!empty($files)) {
             return [
