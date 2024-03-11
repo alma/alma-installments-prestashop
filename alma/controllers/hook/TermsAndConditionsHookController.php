@@ -24,7 +24,7 @@
 
 namespace Alma\PrestaShop\Controllers\Hook;
 
-use Alma\PrestaShop\Exceptions\TermsAndConditionsException;
+use Alma\API\Exceptions\MissingKeyException;
 use Alma\PrestaShop\Helpers\InsuranceHelper;
 use Alma\PrestaShop\Hooks\FrontendHookController;
 use Alma\PrestaShop\Logger;
@@ -89,6 +89,7 @@ class TermsAndConditionsHookController extends FrontendHookController
      * @return array
      *
      * @throws \PrestaShopDatabaseException
+     * @throws MissingKeyException
      */
     public function run($params)
     {
@@ -106,7 +107,7 @@ class TermsAndConditionsHookController extends FrontendHookController
                 ->setIdentifier('terms-and-conditions-alma-insurance');
 
             return $returnedTermsAndConditions;
-        } catch (TermsAndConditionsException $e) {
+        } catch (\Exception $e) {
             Logger::instance()->warning(
                 sprintf(
                     '[Alma] Warning: The contract files are missing and a client could not accept terms and conditions, message "%s", trace "%s"',
