@@ -119,7 +119,9 @@ function onloadInsuranceItemCartAlma() {
             item.append(clearfix);
             let formQty = item.querySelector('.qty');
 
-            formQty.querySelector('input').readOnly = true;
+            formQty.querySelector('input').disabled = true
+
+
             // Remove change number of input when you wheel (scroll) inside the input
             formQty.querySelector('input').addEventListener('wheel', function (e) {
                 document.activeElement.blur();
