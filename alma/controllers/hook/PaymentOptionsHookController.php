@@ -137,7 +137,6 @@ class PaymentOptionsHookController extends FrontendHookController
                 $valueBNPL = $duration;
                 $textPaymentButton = sprintf(SettingsCustomFieldsHelper::getPaymentButtonTitleDeferredByLang($idLang), $duration);
                 $descPaymentButton = sprintf(SettingsCustomFieldsHelper::getPaymentButtonDescriptionDeferredByLang($idLang), $duration);
-                $isInPageEnabled = false;
             }
             if ($isPayNow) {
                 $textPaymentButton = SettingsCustomFieldsHelper::getPayNowButtonTitleByLang($idLang);
@@ -158,6 +157,7 @@ class PaymentOptionsHookController extends FrontendHookController
                 $isDeferred,
                 $valueBNPL
             );
+
             if (!$forEUComplianceModule) {
                 $templateVar = [
                     'keyPlan' => $installment . '-' . $duration,
@@ -171,6 +171,8 @@ class PaymentOptionsHookController extends FrontendHookController
                     'first' => $first,
                     'creditInfo' => $creditInfo,
                     'installment' => $installment,
+                    'deferredDays' => $plan->deferredDays,
+                    'deferredMonths' =>$plan->deferredMonths,
                     'locale' => $locale,
                 ];
                 if ($isDeferred) {

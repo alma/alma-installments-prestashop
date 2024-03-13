@@ -97,6 +97,7 @@ class DisplayPaymentHookController extends FrontendHookController
             $duration = SettingsHelper::getDuration($plan);
             $valueLogo = $isDeferred ? $duration : $installment;
             $logo = $this->getAlmaLogo($isDeferred, $valueLogo);
+           
             $paymentOption = [
                 'link' => $this->context->link->getModuleLink(
                     $this->module->name,
@@ -106,6 +107,8 @@ class DisplayPaymentHookController extends FrontendHookController
                 ),
                 'disabled' => $disabled,
                 'pnx' => $installment,
+                'deferredDays' => $plan->deferredDays,
+                'deferredMonths' =>$plan->deferredMonths,
                 'logo' => $logo,
                 'plans' => $plans,
                 'installmentText' => $this->getInstallmentText($plans, $idLang, SettingsHelper::isDeferredTriggerLimitDays($feePlans, $key), $isPayNow),
@@ -128,7 +131,6 @@ class DisplayPaymentHookController extends FrontendHookController
                 $paymentOption['key'] = $key;
                 $paymentOption['text'] = sprintf(SettingsCustomFieldsHelper::getPaymentButtonTitleDeferredByLang($idLang), $duration);
                 $paymentOption['desc'] = sprintf(SettingsCustomFieldsHelper::getPaymentButtonDescriptionDeferredByLang($idLang), $duration);
-                $paymentOption['isInPageEnabled'] = false;
             }
             if ($isPayNow) {
                 $paymentOption['text'] = SettingsCustomFieldsHelper::getPayNowButtonTitleByLang($idLang);
