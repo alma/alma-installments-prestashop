@@ -285,8 +285,8 @@ class ShareOfCheckoutHelper
         $paymentMethods = array();
 
         foreach ($paymentMethodsByCurrency as $paymentMethodName => $currency_values) {
-            $payment_method                        = array();
-            $payment_method['payment_method_name'] = $paymentMethodName;
+            $paymentMethod                        = array();
+            $paymentMethod['payment_method_name'] = $paymentMethodName;
             $orders                                = array();
 
             foreach ($currency_values as $currency => $values) {
@@ -297,8 +297,8 @@ class ShareOfCheckoutHelper
                 );
             }
 
-            $payment_method['orders'] = $orders;
-            $paymentMethods[]        = $payment_method;
+            $paymentMethod['orders'] = $orders;
+            $paymentMethods[]        = $paymentMethod;
         }
 
         return $paymentMethods;
