@@ -81,6 +81,7 @@ class ConstantsHelper
     const DOMAIN_URL_INSURANCE_TEST = 'https://protect.sandbox.almapay.com';
     const DOMAIN_URL_INSURANCE_LIVE = 'https://protect.almapay.com';
     const BO_IFRAME_CONFIGURATION_INSURANCE_PATH = '/almaBackOfficeConfiguration.html';
+    const BO_IFRAME_SUBSCRIPTION_INSURANCE_PATH = '/almaBackOfficeSubscriptions.html';
     const FO_IFRAME_WIDGET_INSURANCE_PATH = '/almaProductInPageWidget.html';
     const SCRIPT_MODAL_WIDGET_INSURANCE_PATH = '/displayModal.js';
 

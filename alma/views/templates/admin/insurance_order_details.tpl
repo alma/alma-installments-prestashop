@@ -21,7 +21,7 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  *}
 <div id="alma-insurance-modal"></div>
-<script type="module" src="https://protect.staging.almapay.com/displayModal.js"></script>
+<script type="module" src="{$modalScriptUrl}"></script>
 
 <script type="text/javascript">
     var dataSubscriptions = {$dataSubscriptions};
@@ -34,7 +34,7 @@
     <div class="form-wrapper">
         <div class="form-group">
             <div class="alma--insurance-bo-form">
-                <iframe id="subscription-alma-iframe" class="alma-insurance-iframe" src="https://protect.staging.almapay.com/almaBackOfficeSubscriptions.html"></iframe>
+                <iframe id="subscription-alma-iframe" class="alma-insurance-iframe" src="{$iframeUrl}"></iframe>
             </div>
         </div>
     </div>

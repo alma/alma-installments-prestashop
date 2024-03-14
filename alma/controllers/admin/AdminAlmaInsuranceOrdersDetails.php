@@ -25,6 +25,7 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
+use Alma\PrestaShop\Helpers\Admin\InsuranceHelper;
 use Alma\PrestaShop\Helpers\ConstantsHelper;
 use Alma\PrestaShop\Helpers\PriceHelper;
 use Alma\PrestaShop\Helpers\ProductHelper;
@@ -49,12 +50,17 @@ class AdminAlmaInsuranceOrdersDetailsController extends ModuleAdminController
      * @var Alma
      */
     public $module;
+    /**
+     * @var InsuranceHelper
+     */
+    protected $adminInsuranceHelper;
 
     public function __construct()
     {
         $this->bootstrap = true;
         $this->insuranceRepository = new AlmaInsuranceProductRepository();
         $this->productHelper = new ProductHelper();
+        $this->adminInsuranceHelper = new InsuranceHelper($this->module);
 
         parent::__construct();
     }
@@ -111,6 +117,8 @@ class AdminAlmaInsuranceOrdersDetailsController extends ModuleAdminController
 
         $result['dataSubscriptions'] = json_encode($data);
         $result['scriptUrl'] = $this->module->_path . 'views/js/admin/alma-insurance-subscriptions.js';
+        $result['modalScriptUrl'] = $this->adminInsuranceHelper->envUrl() . ConstantsHelper::SCRIPT_MODAL_WIDGET_INSURANCE_PATH;
+        $result['iframeUrl'] = $this->adminInsuranceHelper->envUrl() . ConstantsHelper::BO_IFRAME_SUBSCRIPTION_INSURANCE_PATH;
 
         return $result;
     }
