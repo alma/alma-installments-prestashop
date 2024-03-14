@@ -222,6 +222,7 @@ class PaymentData
             $dataPayment['payment']['deferred'] = 'trigger';
             $dataPayment['payment']['deferred_description'] = SettingsCustomFieldsHelper::getDescriptionPaymentTriggerByLang($context->language->id);
         }
+        
         if ($feePlans['installmentsCount'] > 4) {
             $dataPayment['payment']['cart'] = CartData::cartInfo($cart);
         }
@@ -240,9 +241,22 @@ class PaymentData
      *
      * @return bool
      */
+    public static function isPayLater($paymentData)
+    {
+        return $paymentData['payment']['deferred_days'] >= 1 || $paymentData['payment']['deferred_months'] >=1;
+    }
+
+
+    /**
+     * @param $paymentData
+     *
+     * @return bool
+     */
     public static function isPnXOnly($paymentData)
     {
-        return $paymentData['payment']['installments_count'] > 1 && $paymentData['payment']['installments_count'] <= 4 && (0 === $paymentData['payment']['deferred_days'] && 0 === $paymentData['payment']['deferred_months']);
+        return $paymentData['payment']['installments_count'] > 1
+            && $paymentData['payment']['installments_count'] <= 4
+            && (0 === $paymentData['payment']['deferred_days'] && 0 === $paymentData['payment']['deferred_months']);
     }
 
     /**
@@ -262,7 +276,11 @@ class PaymentData
      */
     public static function isInPage($dataPayment)
     {
-        return (static::isPnXOnly($dataPayment) || static::isPayNow($dataPayment)) && SettingsHelper::isInPageEnabled();
+        return (
+            static::isPnXOnly($dataPayment)
+            || static::isPayNow($dataPayment)
+            || static::isPayLater($dataPayment))
+            && SettingsHelper::isInPageEnabled();
     }
 
     private static function isNewCustomer($idCustomer)
