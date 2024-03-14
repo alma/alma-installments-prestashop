@@ -1,5 +1,7 @@
 # Changelog
 
+- fix: prevent soc to send data twice
+- 
 ## v3.1.6
 
 - fix: Pay Now without inpage PS 1.5 / 1.6
