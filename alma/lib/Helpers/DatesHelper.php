@@ -31,11 +31,9 @@ if (!defined('_PS_VERSION_')) {
 /**
  * Class DateHelper.
  *
- * @deprecated use DatesHelper instead
- *
  * Use for method date
  */
-class DateHelper
+class DatesHelper
 {
     /**
      * Gets all dates Y-m-d formatted since $from to today-1day while dates are >= $first
@@ -45,12 +43,12 @@ class DateHelper
      *
      * @return array|string[]
      */
-    public static function getDatesInInterval($from, $first)
+    public function getDatesInInterval($from, $first)
     {
         $to = strtotime('-1 day');
         $datesInInterval = [];
-        $startTimestamp = self::extractTimestampWithoutTime($from);
-        $firstWithoutTime = self::extractTimestampWithoutTime($first);
+        $startTimestamp = $this->extractTimestampWithoutTime($from);
+        $firstWithoutTime = $this->extractTimestampWithoutTime($first);
 
         for ($date = $startTimestamp; $date <= $to; $date = strtotime('+1 day', $date)) {
             if ($date >= $firstWithoutTime) {
@@ -70,9 +68,9 @@ class DateHelper
      *
      * @return bool
      */
-    public static function isSameDay($today, $day)
+    public function isSameDay($today, $day)
     {
-        return self::extractDateWithoutTime($today) === self::extractDateWithoutTime($day);
+        return $this->extractDateWithoutTime($today) === $this->extractDateWithoutTime($day);
     }
 
     /**
@@ -82,9 +80,9 @@ class DateHelper
      *
      * @return int
      */
-    private static function extractTimestampWithoutTime($timestamp)
+    private function extractTimestampWithoutTime($timestamp)
     {
-        return strtotime(self::extractDateWithoutTime($timestamp));
+        return strtotime($this->extractDateWithoutTime($timestamp));
     }
 
     /**
@@ -94,7 +92,7 @@ class DateHelper
      *
      * @return string
      */
-    private static function extractDateWithoutTime($timestamp)
+    private function extractDateWithoutTime($timestamp)
     {
         return date('Y-m-d', $timestamp);
     }
@@ -107,7 +105,7 @@ class DateHelper
      *
      * @return string date
      */
-    public static function getDateFormat($locale, $timestamp)
+    public function getDateFormat($locale, $timestamp)
     {
         try {
             if (class_exists(\IntlDateFormatter::class)) {
@@ -129,7 +127,7 @@ class DateHelper
      *
      * @return string
      */
-    protected static function getFrenchDateFormat($timestamp)
+    protected function getFrenchDateFormat($timestamp)
     {
         $date = new \DateTime();
         $date->setTimestamp($timestamp);
@@ -142,7 +140,7 @@ class DateHelper
      *
      * @return bool
      */
-    public static function isValidTimeStamp($timestamp)
+    public function isValidTimeStamp($timestamp)
     {
         return ((string) (int) $timestamp === $timestamp)
             && ($timestamp <= PHP_INT_MAX)

@@ -34,6 +34,7 @@ if (!defined('_PS_VERSION_')) {
 /**
  * Class OrderHelper.
  *
+ *
  * Use for Order
  */
 class OrderHelper
@@ -64,20 +65,21 @@ class OrderHelper
      *
      * @return \Order[]
      *
-     * @throws \PrestaShopDatabaseException
-     * @throws \PrestaShopException
      */
     public function getOrdersByDate($startDate, $endDate)
     {
         if (!empty($this->orders)) {
             return $this->orders;
         }
+
         $newOrders = [];
+
         $orderIdsByDate = $this->getOrdersIdByDate($startDate, $endDate);
+
         foreach ($orderIdsByDate as $orderId) {
-            $currentOrder = new \Order($orderId);
-            $newOrders[] = $currentOrder;
+            $newOrders[] =  new \Order($orderId);
         }
+
         $this->orders = $newOrders;
 
         return $newOrders;
@@ -88,10 +90,7 @@ class OrderHelper
      *
      * @param string $startDate
      * @param string $endDate
-     *
      * @return array
-     *
-     * @throws \PrestaShopDatabaseException
      */
     public function getOrdersIdByDate($startDate, $endDate)
     {
@@ -101,8 +100,11 @@ class OrderHelper
                 AND date_add <= \'' . pSQL($endDate) . '\'
                 AND current_state NOT IN (' . implode(', ', array_map('intval', $this->defaultStatesExcluded)) . ')
                     ' . \Shop::addSqlRestriction();
+
         $result = \Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS($sql);
+
         $orderIds = [];
+
         foreach ($result as $order) {
             $orderIds[] = (int) $order['id_order'];
         }
