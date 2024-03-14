@@ -256,7 +256,7 @@ class ShareOfCheckoutHelper
             $paymentMethod = $order->module;
             $isoCodeCurrency = $this->getIsoCodeById($order->id_currency);
 
-            if (!isset( $paymentMethodsByCurrency[$paymentMethod])) {
+            if (!isset($paymentMethodsByCurrency[$paymentMethod])) {
                 $paymentMethodsByCurrency[$paymentMethod] = array();
             }
             if (!isset( $paymentMethodsByCurrency[$paymentMethod][$isoCodeCurrency])) {
