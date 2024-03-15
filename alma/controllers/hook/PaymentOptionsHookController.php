@@ -172,7 +172,7 @@ class PaymentOptionsHookController extends FrontendHookController
                     'creditInfo' => $creditInfo,
                     'installment' => $installment,
                     'deferredDays' => $plan->deferredDays,
-                    'deferredMonths' =>$plan->deferredMonths,
+                    'deferredMonths' => $plan->deferredMonths,
                     'locale' => $locale,
                 ];
                 if ($isDeferred) {

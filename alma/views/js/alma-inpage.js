@@ -24,8 +24,6 @@
 let inPage = undefined;
 let paymentButtonEvents = [];
 
-onloadAlma();
-
 window.addEventListener("load", function() {
     onloadAlma();
     window.__alma_refreshInpage = onloadAlma;

@@ -222,7 +222,7 @@ class PaymentData
             $dataPayment['payment']['deferred'] = 'trigger';
             $dataPayment['payment']['deferred_description'] = SettingsCustomFieldsHelper::getDescriptionPaymentTriggerByLang($context->language->id);
         }
-        
+
         if ($feePlans['installmentsCount'] > 4) {
             $dataPayment['payment']['cart'] = CartData::cartInfo($cart);
         }
@@ -243,9 +243,8 @@ class PaymentData
      */
     public static function isPayLater($paymentData)
     {
-        return $paymentData['payment']['deferred_days'] >= 1 || $paymentData['payment']['deferred_months'] >=1;
+        return $paymentData['payment']['deferred_days'] >= 1 || $paymentData['payment']['deferred_months'] >= 1;
     }
-
 
     /**
      * @param $paymentData
