@@ -100,7 +100,7 @@ class PaymentValidation
 
         // Check refund in Alma Payment
         if (count($payment->refunds) > 0) {
-            $alreadyRefundMessage = "[Alma] PaymentValidation Error payment already refund";
+            $alreadyRefundMessage = '[Alma] PaymentValidation Error payment already refund';
             Logger::instance()->error($alreadyRefundMessage);
             throw new PaymentValidationError(null, $alreadyRefundMessage);
         }
