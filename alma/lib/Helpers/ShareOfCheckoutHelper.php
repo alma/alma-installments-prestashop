@@ -63,9 +63,9 @@ class ShareOfCheckoutHelper
     protected $orderHelper;
 
     /**
-     * @var DatesHelper
+     * @var DateHelper
      */
-    protected $datesHelper;
+    protected $dateHelper;
 
     /**
      * @param OrderHelper$orderHelper
@@ -75,7 +75,7 @@ class ShareOfCheckoutHelper
         $this->orderHelper = $orderHelper;
         $this->context = \Context::getContext();
         $this->almaClientHelper = new ClientHelper();
-        $this->datesHelper = new DatesHelper();
+        $this->dateHelper = new DateHelper();
     }
 
     /**
@@ -93,7 +93,7 @@ class ShareOfCheckoutHelper
             $date = new \DateTime();
             $timestamp = $date->getTimestamp();
 
-            if ($this->datesHelper->isSameDay($timestamp, $lastSharingDate)) {
+            if ($this->dateHelper->isSameDay($timestamp, $lastSharingDate)) {
                 // ongoing or already done , don't do anything !
                 return;
             }
@@ -158,7 +158,7 @@ class ShareOfCheckoutHelper
      */
     public function getDatesInInterval($startShareOfCheckout, $shareOfCheckoutEnabledDate)
     {
-        return $this->datesHelper->getDatesInInterval($startShareOfCheckout, $shareOfCheckoutEnabledDate);
+        return $this->dateHelper->getDatesInInterval($startShareOfCheckout, $shareOfCheckoutEnabledDate);
     }
 
     /**
@@ -171,7 +171,7 @@ class ShareOfCheckoutHelper
         if (
             ShareOfCheckoutAdminFormBuilder::ALMA_SHARE_OF_CHECKOUT_CONSENT_NO === SettingsHelper::getShareOfCheckoutStatus()
             || empty($shareOfCheckoutEnabledDate)
-            || !$this->datesHelper->isValidTimeStamp($shareOfCheckoutEnabledDate)
+            || !$this->dateHelper->isValidTimeStamp($shareOfCheckoutEnabledDate)
         ) {
             Logger::instance()->info('Share Of Checkout is disabled or invalide date');
 

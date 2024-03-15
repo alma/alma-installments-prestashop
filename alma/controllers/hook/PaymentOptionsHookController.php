@@ -43,6 +43,19 @@ use PrestaShop\PrestaShop\Core\Payment\PaymentOption;
 class PaymentOptionsHookController extends FrontendHookController
 {
     /**
+     * @var DateHelper
+     */
+    protected $dateHelper;
+
+    public function __construct()
+    {
+        parent::__construct();
+
+        $this->dateHelper = new DateHelper();
+    }
+
+
+    /**
      * Payment option for Hook PaymentOption (Prestashop 1.7).
      *
      * @param array $params
@@ -103,7 +116,7 @@ class PaymentOptionsHookController extends FrontendHookController
             $isInPageEnabled = SettingsHelper::isInPageEnabled();
 
             foreach ($plans as $keyPlan => $paymentPlan) {
-                $plans[$keyPlan]['human_date'] = DateHelper::getDateFormat($locale, $paymentPlan['due_date']);
+                $plans[$keyPlan]['human_date'] = $this->dateHelper->getDateFormat($locale, $paymentPlan['due_date']);
                 if (0 === $keyPlan) {
                     $plans[$keyPlan]['human_date'] = $this->module->l('Today', 'PaymentOptionsHookController');
                 }
@@ -177,7 +190,7 @@ class PaymentOptionsHookController extends FrontendHookController
                     $templateVar['installmentText'] = sprintf(
                         $this->module->l('0 € today then %1$s on %2$s', 'PaymentOptionsHookController'),
                         PriceHelper::formatPriceToCentsByCurrencyId($plans[0]['purchase_amount'] + $plans[0]['customer_fee']),
-                        DateHelper::getDateFormat($locale, $plans[0]['due_date'])
+                        $this->dateHelper->getDateFormat($locale, $plans[0]['due_date'])
                     );
                 }
                 $this->context->smarty->assign($templateVar);
