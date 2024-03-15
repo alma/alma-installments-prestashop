@@ -80,6 +80,7 @@ class ShareOfCheckoutHelper
 
     /**
      * @codeCoverageIgnore
+     *
      * @return void
      */
     public function sendSocData()
@@ -89,7 +90,6 @@ class ShareOfCheckoutHelper
         $lastSharingDate = \Configuration::get('ALMA_SOC_CRON_TASK');
 
         try {
-
             $date = new \DateTime();
             $timestamp = $date->getTimestamp();
 
@@ -101,7 +101,6 @@ class ShareOfCheckoutHelper
             SettingsHelper::updateValue('ALMA_SOC_CRON_TASK', $timestamp);
 
             $this->shareDays();
-
         } catch (\Exception $e) {
             SettingsHelper::updateValue('ALMA_SOC_CRON_TASK', $lastSharingDate);
 
@@ -118,6 +117,7 @@ class ShareOfCheckoutHelper
      * @codeCoverageIgnore
      *
      * @return void
+     *
      * @throws RequestError
      */
     public function shareDays()
@@ -136,12 +136,13 @@ class ShareOfCheckoutHelper
         }
     }
 
-
     /**
      * @codeCoverageIgnore
      *
      * @param array $payload
+     *
      * @return array
+     *
      * @throws RequestError
      */
     public function sendData($payload)
@@ -154,6 +155,7 @@ class ShareOfCheckoutHelper
      *
      * @param string $startShareOfCheckout
      * @param string$shareOfCheckoutEnabledDate
+     *
      * @return array|string[]
      */
     public function getDatesInInterval($startShareOfCheckout, $shareOfCheckoutEnabledDate)
@@ -181,11 +183,11 @@ class ShareOfCheckoutHelper
         return true;
     }
 
-
     /**
      * Get last Share of Checkout.
      *
      * @codeCoverageIgnore
+     *
      * @return int
      */
     public function getStartShareOfCheckout()
@@ -229,7 +231,7 @@ class ShareOfCheckoutHelper
                 ];
             }
 
-            $ordersByCurrency[$isoCodeCurrency]['total_order_count'] += 1;
+            ++$ordersByCurrency[$isoCodeCurrency]['total_order_count'];
             $ordersByCurrency[$isoCodeCurrency]['total_amount'] += PriceHelper::convertPriceToCents(
                 $order->total_paid_tax_incl
             );
@@ -242,13 +244,13 @@ class ShareOfCheckoutHelper
      * Payment methods to send.
      *
      * @param array $orders
-
+     *
      * @return array
      */
     public function getTotalPaymentMethods($orders)
     {
-        $paymentMethodsByCurrency = array();
-        
+        $paymentMethodsByCurrency = [];
+
         /**
          * @var \OrderCore $order
          */
@@ -257,16 +259,16 @@ class ShareOfCheckoutHelper
             $isoCodeCurrency = $this->getIsoCodeById($order->id_currency);
 
             if (!isset($paymentMethodsByCurrency[$paymentMethod])) {
-                $paymentMethodsByCurrency[$paymentMethod] = array();
+                $paymentMethodsByCurrency[$paymentMethod] = [];
             }
-            if (!isset( $paymentMethodsByCurrency[$paymentMethod][$isoCodeCurrency])) {
-                $paymentMethodsByCurrency[$paymentMethod][$isoCodeCurrency] = array(
+            if (!isset($paymentMethodsByCurrency[$paymentMethod][$isoCodeCurrency])) {
+                $paymentMethodsByCurrency[$paymentMethod][$isoCodeCurrency] = [
                     'order_count' => 0,
-                    'amount'      => 0,
-                );
+                    'amount' => 0,
+                ];
             }
-            
-            $paymentMethodsByCurrency[$paymentMethod][$isoCodeCurrency]['order_count'] += 1;
+
+            ++$paymentMethodsByCurrency[$paymentMethod][$isoCodeCurrency]['order_count'];
 
             $paymentMethodsByCurrency[$paymentMethod][$isoCodeCurrency]['amount'] += PriceHelper::convertPriceToCents(
                 $order->total_paid_tax_incl
@@ -278,27 +280,28 @@ class ShareOfCheckoutHelper
 
     /**
      * @param array $paymentMethodsByCurrency
+     *
      * @return array
      */
     protected function orderTotalPaymentMethods($paymentMethodsByCurrency)
     {
-        $paymentMethods = array();
+        $paymentMethods = [];
 
         foreach ($paymentMethodsByCurrency as $paymentMethodName => $currency_values) {
-            $paymentMethod                        = array();
+            $paymentMethod = [];
             $paymentMethod['payment_method_name'] = $paymentMethodName;
-            $orders                                = array();
+            $orders = [];
 
             foreach ($currency_values as $currency => $values) {
-                $orders[] = array(
+                $orders[] = [
                     'order_count' => $values['order_count'],
-                    'amount'      => $values['amount'],
-                    'currency'    => $currency,
-                );
+                    'amount' => $values['amount'],
+                    'currency' => $currency,
+                ];
             }
 
             $paymentMethod['orders'] = $orders;
-            $paymentMethods[]        = $paymentMethod;
+            $paymentMethods[] = $paymentMethod;
         }
 
         return $paymentMethods;
@@ -456,7 +459,6 @@ class ShareOfCheckoutHelper
         SettingsHelper::updateValue(ShareOfCheckoutAdminFormBuilder::ALMA_SHARE_OF_CHECKOUT_DATE, null);
     }
 
-
     /**
      * Get Currency ISO Code by ID.
      *
@@ -477,6 +479,7 @@ class ShareOfCheckoutHelper
 
     /**
      * Payload Share of Checkout.
+     *
      * @param string $date
      *
      * @return array

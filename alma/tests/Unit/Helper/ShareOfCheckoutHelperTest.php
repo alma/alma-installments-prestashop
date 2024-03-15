@@ -49,7 +49,6 @@ class ShareOfCheckoutHelperTest extends TestCase
      * @param $expectedPayload
      *
      * @return void
-     *
      */
     public function testGetPayload($ordersMock, $expectedPayload)
     {
@@ -88,7 +87,6 @@ class ShareOfCheckoutHelperTest extends TestCase
      * @param $expectedTotalOrders
      *
      * @return void
-     *
      */
     public function testGetTotalOrders($ordersMock, $expectedTotalOrders)
     {

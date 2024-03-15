@@ -47,13 +47,12 @@ class PaymentOptionsHookController extends FrontendHookController
      */
     protected $dateHelper;
 
-    public function __construct()
+    public function __construct($module)
     {
-        parent::__construct();
+        parent::__construct($module);
 
         $this->dateHelper = new DateHelper();
     }
-
 
     /**
      * Payment option for Hook PaymentOption (Prestashop 1.7).

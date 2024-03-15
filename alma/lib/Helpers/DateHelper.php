@@ -31,7 +31,6 @@ if (!defined('_PS_VERSION_')) {
 /**
  * Class DateHelper.
  *
- *
  * Use for method date
  */
 class DateHelper
@@ -96,7 +95,6 @@ class DateHelper
     {
         return date('Y-m-d', $timestamp);
     }
-
 
     /**
      * format date by locale

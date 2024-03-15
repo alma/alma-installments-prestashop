@@ -30,7 +30,6 @@ if (!defined('_PS_VERSION_')) {
 
 use Alma\PrestaShop\Helpers\ConstantsHelper;
 use Alma\PrestaShop\Helpers\DateHelper;
-use Alma\PrestaShop\Helpers\DatesHelper;
 use Alma\PrestaShop\Helpers\EligibilityHelper;
 use Alma\PrestaShop\Helpers\LocaleHelper;
 use Alma\PrestaShop\Helpers\PriceHelper;
@@ -41,15 +40,14 @@ use Alma\PrestaShop\Model\CartData;
 
 class DisplayPaymentHookController extends FrontendHookController
 {
-
     /**
      * @var DateHelper
      */
     protected $dateHelper;
 
-    public function __construct()
+    public function __construct($module)
     {
-        parent::__construct();
+        parent::__construct($module);
 
         $this->dateHelper = new DateHelper();
     }

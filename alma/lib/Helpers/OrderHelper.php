@@ -34,7 +34,6 @@ if (!defined('_PS_VERSION_')) {
 /**
  * Class OrderHelper.
  *
- *
  * Use for Order
  */
 class OrderHelper
@@ -64,7 +63,6 @@ class OrderHelper
      * @param string $endDate
      *
      * @return \Order[]
-     *
      */
     public function getOrdersByDate($startDate, $endDate)
     {
@@ -77,7 +75,7 @@ class OrderHelper
         $orderIdsByDate = $this->getOrdersIdByDate($startDate, $endDate);
 
         foreach ($orderIdsByDate as $orderId) {
-            $newOrders[] =  new \Order($orderId);
+            $newOrders[] = new \Order($orderId);
         }
 
         $this->orders = $newOrders;
@@ -90,6 +88,7 @@ class OrderHelper
      *
      * @param string $startDate
      * @param string $endDate
+     *
      * @return array
      */
     public function getOrdersIdByDate($startDate, $endDate)

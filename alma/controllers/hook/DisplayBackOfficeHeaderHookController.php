@@ -28,12 +28,9 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-use Alma\PrestaShop\Helpers\DateHelper;
 use Alma\PrestaShop\Helpers\OrderHelper;
-use Alma\PrestaShop\Helpers\SettingsHelper;
 use Alma\PrestaShop\Helpers\ShareOfCheckoutHelper;
 use Alma\PrestaShop\Hooks\FrontendHookController;
-use Alma\PrestaShop\Logger;
 
 class DisplayBackOfficeHeaderHookController extends FrontendHookController
 {
@@ -42,15 +39,12 @@ class DisplayBackOfficeHeaderHookController extends FrontendHookController
      */
     protected $socHelper;
 
-    /**
-     *
-     */
-    public function __construct()
+    public function __construct($module)
     {
         $orderHelper = new OrderHelper();
         $this->socHelper = new ShareOfCheckoutHelper($orderHelper);
 
-        parent::__construct();
+        parent::__construct($module);
     }
 
     /**
@@ -79,7 +73,6 @@ class DisplayBackOfficeHeaderHookController extends FrontendHookController
         $this->context->controller->addCSS($this->module->_path . 'views/css/admin/_configure/helpers/form/form.css', 'all');
         $this->context->controller->addCSS($this->module->_path . 'views/css/admin/almaPage.css', 'all');
         $this->context->controller->addJS($this->module->_path . 'views/js/admin/alma.js');
-
 
         if ($this->socHelper->isSocActivated()) {
             $this->socHelper->sendSocData();

@@ -28,7 +28,6 @@ use Alma\API\Entities\Merchant;
 use Alma\PrestaShop\Exceptions\ActivationException;
 use Alma\PrestaShop\Exceptions\ApiMerchantsException;
 use Alma\PrestaShop\Exceptions\WrongCredentialsException;
-use Alma\PrestaShop\Forms\InpageAdminFormBuilder;
 
 if (!defined('_PS_VERSION_')) {
     exit;
