@@ -35,7 +35,17 @@ if (!defined('_PS_VERSION_')) {
 
 class EligibilityHelper
 {
-    public static function eligibilityCheck($context)
+    /**
+     * @var PaymentData
+     */
+    protected $paymentData;
+
+    public function __construct()
+    {
+        $this->paymentData = new PaymentData();
+    }
+
+    public function eligibilityCheck($context)
     {
         $almaEligibilities = [];
         $purchaseAmount = PriceHelper::convertPriceToCents($context->cart->getOrderTotal(true, \Cart::BOTH));
@@ -43,7 +53,7 @@ class EligibilityHelper
         $feePlans = self::checkFeePlans();
         $eligibilities = self::getNotEligibleFeePlans($feePlans, $purchaseAmount);
         $activePlans = self::getEligibleFeePlans($feePlans, $purchaseAmount);
-        $paymentData = self::checkPaymentData($context, $activePlans);
+        $paymentData = $this->checkPaymentData($context, $activePlans);
 
         try {
             if (!empty($activePlans)) {
@@ -93,9 +103,9 @@ class EligibilityHelper
         return $feePlans;
     }
 
-    private static function checkPaymentData($context, $activePlans)
+    private function checkPaymentData($context, $activePlans)
     {
-        $paymentData = PaymentData::dataFromCart($context->cart, $context, $activePlans);
+        $paymentData = $this->paymentData->dataFromCart($context->cart, $context, $activePlans);
 
         if (!$paymentData) {
             Logger::instance()->error('Cannot check cart eligibility: no data extracted from cart');

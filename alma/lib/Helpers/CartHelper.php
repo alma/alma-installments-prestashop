@@ -45,10 +45,16 @@ class CartHelper
      */
     protected $orderRepository;
 
+    /**
+     * @var ToolsHelper
+     */
+    protected $toolsHelper;
+
     public function __construct()
     {
         $this->context = \Context::getContext();
         $this->orderRepository = new OrderRepository();
+        $this->toolsHelper = new ToolsHelper();
     }
 
     /**
@@ -85,7 +91,7 @@ class CartHelper
             $cart = new \Cart((int) $order['id_cart']);
             $purchaseAmount = -1;
             try {
-                $purchaseAmount = \Tools::ps_round((float) $cart->getOrderTotal(), 2);
+                $purchaseAmount = $this->toolsHelper->psRound((float) $cart->getOrderTotal(), 2);
             } catch (\Exception $e) {
                 $msg = '[Alma] purchase amount for previous cart ordered no found';
                 Logger::instance()->warning($msg);

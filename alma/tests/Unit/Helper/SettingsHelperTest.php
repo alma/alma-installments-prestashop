@@ -58,6 +58,17 @@ class SettingsHelperTest extends TestCase
         $duration = $this->settingsHelper->getDuration($plan);
 
         $this->assertEquals('15', $duration);
+
+        $plan = new FeePlan(
+            [
+                'deferred_days' => 15,
+                'deferred_months' => 2
+            ]
+        );
+
+        $duration = $this->settingsHelper->getDuration($plan);
+
+        $this->assertEquals('75', $duration);
     }
 
     /**
@@ -75,5 +86,16 @@ class SettingsHelperTest extends TestCase
         $duration = $this->settingsHelper->getDuration($plan);
 
         $this->assertEquals('30', $duration);
+
+        $plan = new FeePlan(
+            [
+                'deferredDays' => 15,
+                'deferredMonths' => 1
+            ]
+        );
+
+        $duration = $this->settingsHelper->getDuration($plan);
+
+        $this->assertEquals('45', $duration);
     }
 }
