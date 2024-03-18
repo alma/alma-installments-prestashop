@@ -46,9 +46,14 @@ class DisplayPaymentHookController extends FrontendHookController
      */
     protected $localeHelper;
 
-    public function __construct()
+    /**
+     * HookController constructor.
+     *
+     * @param $module Alma
+     */
+    public function __construct($module)
     {
-        parent::__construct();
+        parent::__construct($module);
 
         $this->localeHelper = new LocaleHelper(new LanguageHelper());
     }
