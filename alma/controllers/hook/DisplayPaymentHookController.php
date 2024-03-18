@@ -52,6 +52,7 @@ class DisplayPaymentHookController extends FrontendHookController
      */
     protected $settingsHelper;
 
+
     /**
      * @var ToolsHelper
      */
@@ -120,7 +121,7 @@ class DisplayPaymentHookController extends FrontendHookController
                 'taeg' => $plan->annualInterestRate,
             ];
 
-            $isDeferred = SettingsHelper::isDeferred($plan);
+            $isDeferred = $this->settingsHelper->isDeferred($plan);
             $isPayNow = ConstantsHelper::ALMA_KEY_PAYNOW === $key;
 
             if (!$plan->isEligible) {

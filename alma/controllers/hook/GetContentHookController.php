@@ -225,7 +225,11 @@ final class GetContentHookController extends AdminHookController
             $feePlans = $this->getFeePlans();
             foreach ($feePlans as $feePlan) {
                 $n = $feePlan->installments_count;
-                if (3 == $n && !SettingsHelper::isDeferred($feePlan)) {
+
+                if (
+                    3 == $n
+                    && !$this->settingsHelper->isDeferred($feePlan)
+                ) {
                     $key = SettingsHelper::keyForFeePlan($feePlan);
                     $almaPlans = [];
                     $almaPlans[$key]['enabled'] = 1;
@@ -261,7 +265,7 @@ final class GetContentHookController extends AdminHookController
                     $deferred_months = $feePlan->deferred_months;
                     $key = SettingsHelper::keyForFeePlan($feePlan);
 
-                    if (1 != $n && SettingsHelper::isDeferred($feePlan)) {
+                    if (1 != $n && $this->settingsHelper->isDeferred($feePlan)) {
                         continue;
                     }
 
@@ -314,7 +318,7 @@ final class GetContentHookController extends AdminHookController
                     $n = $feePlan->installments_count;
                     $key = SettingsHelper::keyForFeePlan($feePlan);
 
-                    if (1 != $n && SettingsHelper::isDeferred($feePlan)) {
+                    if (1 != $n && $this->settingsHelper->isDeferred($feePlan)) {
                         continue;
                     }
 
@@ -681,7 +685,7 @@ final class GetContentHookController extends AdminHookController
             $feePlanDeferred = [];
 
             foreach ($feePlans as $feePlan) {
-                if (!SettingsHelper::isDeferred($feePlan)) {
+                if (!$this->settingsHelper->isDeferred($feePlan)) {
                     $feePlansOrdered[$feePlan->installments_count] = $feePlan;
                     continue;
                 }
