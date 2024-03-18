@@ -58,6 +58,7 @@ class PaymentData
     protected $settingsHelper;
 
 
+
     public function __construct()
     {
         $this->toolsHelper = new ToolsHelper();
