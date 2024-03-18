@@ -44,6 +44,11 @@ class PaymentValidation
     private $module;
 
     /**
+     * @var SettingsHelper
+     */
+    protected $settingsHelper;
+
+    /**
      * @param $context
      * @param $module
      */
@@ -51,6 +56,7 @@ class PaymentValidation
     {
         $this->context = $context;
         $this->module = $module;
+        $this->settingsHelper = new SettingsHelper();
     }
 
     /**
@@ -195,7 +201,7 @@ class PaymentValidation
             $installmentCount = $payment->installments_count;
 
             if (SettingsHelper::isDeferred($payment)) {
-                $days = SettingsHelper::getDuration($payment);
+                $days = $this->settingsHelper->getDuration($payment);
                 $paymentMode = sprintf(
                     $this->module->l('Alma - +%d days payment', 'paymentvalidation'),
                     $days

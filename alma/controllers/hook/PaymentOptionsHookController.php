@@ -43,6 +43,24 @@ use PrestaShop\PrestaShop\Core\Payment\PaymentOption;
 class PaymentOptionsHookController extends FrontendHookController
 {
     /**
+     * @var SettingsHelper
+     */
+    protected $settingsHelper;
+
+    /**
+     * HookController constructor.
+     *
+     * @param $module Alma
+     */
+    public function __construct($module)
+    {
+        parent::__construct($module);
+
+        $this->settingsHelper = new SettingsHelper();
+    }
+
+
+    /**
      * Payment option for Hook PaymentOption (Prestashop 1.7).
      *
      * @param array $params
@@ -122,7 +140,7 @@ class PaymentOptionsHookController extends FrontendHookController
                 }
             }
             $isDeferred = SettingsHelper::isDeferred($plan);
-            $duration = SettingsHelper::getDuration($plan);
+            $duration = $this->settingsHelper->getDuration($plan);
             $fileTemplate = 'payment_button_pnx.tpl';
             $valueBNPL = $installment;
             $textPaymentButton = sprintf(SettingsCustomFieldsHelper::getPnxButtonTitleByLang($idLang), $installment);
