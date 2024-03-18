@@ -64,6 +64,11 @@ final class GetContentHookController extends AdminHookController
     protected $module;
 
     /**
+     * @var SettingsHelper
+     */
+    protected $settingsHelper;
+
+    /**
      * @var array
      */
     const KEY_CONFIG = [
@@ -124,6 +129,8 @@ final class GetContentHookController extends AdminHookController
     public function __construct($module)
     {
         $this->apiKeyHelper = new ApiKeyHelper();
+        $this->settingsHelper = new SettingsHelper();
+
         parent::__construct($module);
     }
 
@@ -679,7 +686,7 @@ final class GetContentHookController extends AdminHookController
                     continue;
                 }
 
-                $duration = SettingsHelper::getDuration($feePlan);
+                $duration = $this->settingsHelper->getDuration($feePlan);
                 $feePlanDeferred[$feePlan->installments_count . $duration] = $feePlan;
             }
 

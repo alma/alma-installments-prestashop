@@ -21,6 +21,7 @@
             <directory>../alma</directory>
             <exclude>
                 <directory>../alma/vendor</directory>
+                <directory>../alma/tests</directory>
             </exclude>
         </whitelist>
     </filter>

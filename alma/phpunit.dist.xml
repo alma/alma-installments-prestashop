@@ -15,9 +15,15 @@
             <directory>tests</directory>
         </testsuite>
     </testsuites>
-    <php>
-        <env name="ALMA_API_KEY" value="sk_test_xxxxxxxxxxxxxxxxxxxxxxxx"/>
-        <env name="ALMA_API_ROOT" value="alma.api.url.eu"/>
-    </php>
+
+    <filter>
+        <whitelist includeUncoveredFilesFromWhitelist="true">
+            <directory>../alma</directory>
+            <exclude>
+                <directory>../alma/vendor</directory>
+                <directory>../alma/tests</directory>
+            </exclude>
+        </whitelist>
+    </filter>
 
 </phpunit>

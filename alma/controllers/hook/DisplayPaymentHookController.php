@@ -41,6 +41,23 @@ use Alma\PrestaShop\Model\CartData;
 class DisplayPaymentHookController extends FrontendHookController
 {
     /**
+     * @var SettingsHelper
+     */
+    protected $settingsHelper;
+
+    /**
+     * HookController constructor.
+     *
+     * @param $module Alma
+     */
+    public function __construct($module)
+    {
+        parent::__construct($module);
+
+        $this->settingsHelper = new SettingsHelper();
+    }
+
+    /**
      * Payment option for Hook DisplayPayment (Prestashop 1.6).
      *
      * @param array $params
@@ -94,7 +111,7 @@ class DisplayPaymentHookController extends FrontendHookController
                     continue;
                 }
             }
-            $duration = SettingsHelper::getDuration($plan);
+            $duration = $this->settingsHelper->getDuration($plan);
             $valueLogo = $isDeferred ? $duration : $installment;
             $logo = $this->getAlmaLogo($isDeferred, $valueLogo);
 
