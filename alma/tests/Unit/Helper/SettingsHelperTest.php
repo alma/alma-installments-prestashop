@@ -382,4 +382,31 @@ class SettingsHelperTest extends TestCase
 
         $this->assertEquals('pos_1_15_2', $result);
     }
+
+    public function testGetExcludedCategories()
+    {
+        $settingsHelperMock = $this->getSettingsHelperMockForIsPaymentTriggerEnabledByState('ALMA_EXCLUDED_CATEGORIES');
+        $settingsHelperMock->shouldReceive('getKey')->with('ALMA_EXCLUDED_CATEGORIES')->andReturn(null);
+
+        $result = $settingsHelperMock->getExcludedCategories();
+        $this->assertEquals([], $result);
+
+        $settingsHelperMock = $this->getSettingsHelperMockForIsPaymentTriggerEnabledByState('ALMA_EXCLUDED_CATEGORIES');
+        $settingsHelperMock->shouldReceive('getKey')->with('ALMA_EXCLUDED_CATEGORIES')->andReturn('null');
+
+        $result = $settingsHelperMock->getExcludedCategories();
+        $this->assertEquals([], $result);
+
+        $settingsHelperMock = $this->getSettingsHelperMockForIsPaymentTriggerEnabledByState('ALMA_EXCLUDED_CATEGORIES');
+        $settingsHelperMock->shouldReceive('getKey')->with('ALMA_EXCLUDED_CATEGORIES')->andReturn('["cate1","cate2"]');
+        $result = $settingsHelperMock->getExcludedCategories();
+
+        $this->assertEquals(['cate1', 'cate2'], $result);
+
+        $settingsHelperMock = $this->getSettingsHelperMockForIsPaymentTriggerEnabledByState('ALMA_EXCLUDED_CATEGORIES');
+        $settingsHelperMock->shouldReceive('getKey')->with('ALMA_EXCLUDED_CATEGORIES')->andReturn('["cate1""WrongJSON"]');
+        $result = $settingsHelperMock->getExcludedCategories();
+
+        $this->assertEquals([], $result);
+    }
 }
