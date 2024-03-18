@@ -345,4 +345,41 @@ class SettingsHelperTest extends TestCase
 
         return \Mockery::mock(SettingsHelper::class, [$shopHelperMock, $configurationHelperMock])->shouldAllowMockingProtectedMethods()->makePartial();
     }
+
+    public function testKey()
+    {
+        $result = $this->settingsHelper->key('general', '1', '15', '0');
+        $this->assertEquals('general_1_15_0', $result);
+    }
+
+    public function testKeyForInstallmentPlan()
+    {
+        $plan = new FeePlan(
+            [
+                'installmentsCount' => 1,
+                'deferredDays' => 15,
+                'deferredMonths' => 2
+            ]
+        );
+
+        $result = $this->settingsHelper->keyForInstallmentPlan($plan);
+
+        $this->assertEquals('general_1_15_2', $result);
+    }
+
+    public function testKeyForFeePlan()
+    {
+        $plan = new FeePlan(
+            [
+                'kind' => 'pos',
+                'installments_count' => 1,
+                'deferred_days' => 15,
+                'deferred_months' => 2
+            ]
+        );
+
+        $result = $this->settingsHelper->keyForFeePlan($plan);
+
+        $this->assertEquals('pos_1_15_2', $result);
+    }
 }

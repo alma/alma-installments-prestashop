@@ -125,7 +125,7 @@ class PaymentOptionsHookController extends FrontendHookController
             ++$countIteration;
 
             $installment = $plan->installmentsCount;
-            $key = SettingsHelper::keyForInstallmentPlan($plan);
+            $key = $this->settingsHelper->keyForInstallmentPlan($plan);
             $plans = $plan->paymentPlan;
             $creditInfo = [
                 'totalCart' => $totalCart,
