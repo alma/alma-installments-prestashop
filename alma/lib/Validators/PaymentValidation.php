@@ -200,7 +200,7 @@ class PaymentValidation
 
             $installmentCount = $payment->installments_count;
 
-            if (SettingsHelper::isDeferred($payment)) {
+            if ($this->settingsHelper->isDeferred($payment)) {
                 $days = $this->settingsHelper->getDuration($payment);
                 $paymentMode = sprintf(
                     $this->module->l('Alma - +%d days payment', 'paymentvalidation'),

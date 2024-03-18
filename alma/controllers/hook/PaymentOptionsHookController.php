@@ -140,7 +140,7 @@ class PaymentOptionsHookController extends FrontendHookController
                     }
                 }
             }
-            $isDeferred = SettingsHelper::isDeferred($plan);
+            $isDeferred = $this->settingsHelper->isDeferred($plan);
             $duration = $this->settingsHelper->getDuration($plan);
             $fileTemplate = 'payment_button_pnx.tpl';
             $valueBNPL = $installment;

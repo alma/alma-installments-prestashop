@@ -743,11 +743,11 @@ class SettingsHelper
     }
 
     /**
-     * @param Alma\API\Entities\FeePlan $plan
+     * @param \Alma\API\Entities\FeePlan $plan
      *
      * @return bool
      */
-    public static function isDeferred($plan)
+    public function isDeferred($plan)
     {
         if (isset($plan->deferred_days)) {
             return 0 < $plan->deferred_days || 0 < $plan->deferred_months;
