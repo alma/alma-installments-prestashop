@@ -238,7 +238,7 @@ final class GetContentHookController extends AdminHookController
                     3 == $n
                     && !$this->settingsHelper->isDeferred($feePlan)
                 ) {
-                    $key = SettingsHelper::keyForFeePlan($feePlan);
+                    $key = $this->settingsHelper->keyForFeePlan($feePlan);
                     $almaPlans = [];
                     $almaPlans[$key]['enabled'] = 1;
                     $almaPlans[$key]['min'] = $feePlan->min_purchase_amount;
@@ -271,7 +271,7 @@ final class GetContentHookController extends AdminHookController
                     $n = $feePlan->installments_count;
                     $deferred_days = $feePlan->deferred_days;
                     $deferred_months = $feePlan->deferred_months;
-                    $key = SettingsHelper::keyForFeePlan($feePlan);
+                    $key = $this->settingsHelper->keyForFeePlan($feePlan);
 
                     if (1 != $n && $this->settingsHelper->isDeferred($feePlan)) {
                         continue;
@@ -324,7 +324,7 @@ final class GetContentHookController extends AdminHookController
 
                 foreach ($feePlans as $feePlan) {
                     $n = $feePlan->installments_count;
-                    $key = SettingsHelper::keyForFeePlan($feePlan);
+                    $key = $this->settingsHelper->keyForFeePlan($feePlan);
 
                     if (1 != $n && $this->settingsHelper->isDeferred($feePlan)) {
                         continue;
@@ -532,7 +532,7 @@ final class GetContentHookController extends AdminHookController
         if ($merchant) {
             $sortOrder = 1;
             foreach ($feePlans as $feePlan) {
-                $key = SettingsHelper::keyForFeePlan($feePlan);
+                $key = $this->settingsHelper->keyForFeePlan($feePlan);
 
                 $helper->fields_value["ALMA_{$key}_ENABLED_ON"] = isset($installmentsPlans->$key->enabled)
                     ? $installmentsPlans->$key->enabled
