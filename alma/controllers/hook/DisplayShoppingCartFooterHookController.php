@@ -45,6 +45,11 @@ class DisplayShoppingCartFooterHookController extends FrontendHookController
     protected $localeHelper;
 
     /**
+     * @var EligibilityHelper
+     */
+    protected $eligibilityHelper;
+
+    /**
      * HookController constructor.
      *
      * @param $module Alma
@@ -53,8 +58,8 @@ class DisplayShoppingCartFooterHookController extends FrontendHookController
     {
         parent::__construct($module);
 
-
         $this->localeHelper = new LocaleHelper(new LanguageHelper());
+        $this->eligibilityHelper = new EligibilityHelper();
     }
 
     public function canRun()
@@ -79,7 +84,7 @@ class DisplayShoppingCartFooterHookController extends FrontendHookController
 
         $isEligible = true;
         if (!SettingsHelper::showCartWidgetIfNotEligible()) {
-            $installmentPlans = EligibilityHelper::eligibilityCheck($this->context);
+            $installmentPlans = $this->eligibilityHelper->eligibilityCheck($this->context);
             $isEligible = false;
             foreach ($installmentPlans as $plan) {
                 if ($plan->installmentsCount !== 1 && $plan->isEligible) {

@@ -30,6 +30,7 @@ use Alma\PrestaShop\Helpers\ClientHelper;
 use Alma\PrestaShop\Helpers\PriceHelper;
 use Alma\PrestaShop\Helpers\RefundHelper;
 use Alma\PrestaShop\Helpers\SettingsHelper;
+use Alma\PrestaShop\Helpers\ToolsHelper;
 use Alma\PrestaShop\Logger;
 
 if (!defined('_PS_VERSION_')) {
@@ -49,6 +50,11 @@ class PaymentValidation
     protected $settingsHelper;
 
     /**
+     * @var ToolsHelper
+     */
+    protected $toolsHelper;
+
+    /**
      * @param $context
      * @param $module
      */
@@ -57,6 +63,7 @@ class PaymentValidation
         $this->context = $context;
         $this->module = $module;
         $this->settingsHelper = new SettingsHelper();
+        $this->toolsHelper = new ToolsHelper();
     }
 
     /**
@@ -155,7 +162,7 @@ class PaymentValidation
 
         if (!$cart->OrderExists()) {
             try {
-                $cartTotals = (float) \Tools::ps_round((float) $this->getCartTotals($cart, $customer), 2);
+                $cartTotals = $this->toolsHelper->psRound((float) $this->getCartTotals($cart, $customer), 2);
             } catch (\Exception $e) {
                 Logger::instance()->warning(
                     "[Alma] Payment validation error with cart total. {$e->getMessage()}"

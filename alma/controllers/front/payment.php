@@ -42,10 +42,16 @@ class AlmaPaymentModuleFrontController extends ModuleFrontController
      */
     public $ssl = true;
 
+    /**
+     * @var PaymentData
+     */
+    protected $paymentData;
+
     public function __construct()
     {
         parent::__construct();
         $this->context = Context::getContext();
+        $this->paymentData = new PaymentData();
     }
 
     /**
@@ -120,7 +126,7 @@ class AlmaPaymentModuleFrontController extends ModuleFrontController
             $dataFromKey = SettingsHelper::getDataFromKey($key);
 
             $cart = $this->context->cart;
-            $data = PaymentData::dataFromCart($cart, $this->context, $dataFromKey, true);
+            $data = $this->paymentData->dataFromCart($cart, $this->context, $dataFromKey, true);
             $alma = ClientHelper::defaultInstance();
 
             if (!$data || !$alma) {
