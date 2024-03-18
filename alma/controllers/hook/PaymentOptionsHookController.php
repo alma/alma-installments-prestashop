@@ -145,7 +145,7 @@ class PaymentOptionsHookController extends FrontendHookController
                 if ($isPayNow) {
                     $plans[$keyPlan]['human_date'] = $this->module->l('Total', 'PaymentOptionsHookController');
                 }
-                if (SettingsHelper::isDeferredTriggerLimitDays($feePlans, $key)) {
+                if ($this->settingsHelper->isDeferredTriggerLimitDays($feePlans, $key)) {
                     $plans[$keyPlan]['human_date'] = sprintf(
                         $this->module->l('%s month later', 'PaymentOptionsHookController'),
                         $keyPlan
