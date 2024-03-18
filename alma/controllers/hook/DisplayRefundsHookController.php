@@ -56,102 +56,108 @@ final class DisplayRefundsHookController extends AdminHookController
      */
     public function run($params)
     {
-        $order = new \Order($params['id_order']);
         try {
-            $payment = $this->getPayment($order);
-        } catch (PaymentNotFoundException $e) {
-            // if we can't have the payment, log why and return null
-            Logger::instance()->warning('[Alma] DisplayRefounds Error - ' . $e->getMessage());
+            $order = new \Order($params['id_order']);
+            try {
+                $payment = $this->getPayment($order);
+            } catch (PaymentNotFoundException $e) {
+                // if we can't have the payment, log why and return null
+                Logger::instance()->warning('[Alma] DisplayRefounds Error - ' . $e->getMessage());
+
+                return null;
+            }
+
+            $refundData = [
+                'totalRefundPrice' => 0,
+                'percentRefund' => 0,
+            ];
+            $totalRefundInCents = null;
+            $percentRefund = null;
+            $orderTotalPaid = $order->getOrdersTotalPaid();
+            $paymentTotalAmount = $order->total_paid_tax_incl;
+
+            // multi shipping
+            $ordersId = null;
+            if ($orderTotalPaid > $order->total_paid_tax_incl) {
+                $orders = \Order::getByReference($order->reference);
+                foreach ($orders as $o) {
+                    if ($o->id != $order->id) {
+                        $ordersId .= "{$o->id},";
+                    }
+                }
+                $ordersId = rtrim($ordersId, ',');
+                $paymentTotalAmount = $orderTotalPaid;
+            }
+
+            $totalOrderInCents = PriceHelper::convertPriceToCents($paymentTotalAmount);
+            if ($payment->refunds) {
+                $totalRefundInCents = RefundHelper::buildTotalRefund($payment->refunds, $totalOrderInCents);
+                $percentRefund = PriceHelper::calculatePercentage($totalRefundInCents, $totalOrderInCents);
+
+                $refundData = [
+                    'totalRefundPrice' => PriceHelper::formatPriceToCentsByCurrencyId($totalRefundInCents, (int) $order->id_currency),
+                    'percentRefund' => $percentRefund,
+                ];
+            }
+
+            $currency = new \Currency($order->id_currency);
+            $orderData = [
+                'id' => $order->id,
+                'maxAmount' => PriceHelper::formatPriceToCentsByCurrencyId(PriceHelper::convertPriceToCents($order->total_paid_tax_incl), (int) $order->id_currency),
+                'currencySymbol' => $currency->sign,
+                'ordersId' => $ordersId,
+                'paymentTotalPrice' => PriceHelper::formatPriceToCentsByCurrencyId($totalOrderInCents, (int) $order->id_currency),
+            ];
+            $wording = [
+                'title' => $this->module->l('Alma refund', 'DisplayRefundsHookController'),
+                'description' => sprintf(
+                    $this->module->l('Refund this order thanks to the Alma module. This will be applied in your Alma dashboard automatically. The maximum refundable amount includes client fees. %1$sSee documentation%2$s', 'DisplayRefundsHookController'),
+                    '<a href="https://docs.getalma.eu/docs/prestashop-refund" target="_blank">',
+                    '</a>'
+                ),
+                'labelTypeRefund' => $this->module->l('Refund type:', 'DisplayRefundsHookController'),
+                'labelRadioRefundOneOrder' => sprintf(
+                    $this->module->l('Only this order (%s)', 'DisplayRefundsHookController'),
+                    $orderData['maxAmount']
+                ),
+                'labelRadioRefundAllOrder' => $this->module->l('Refund the entire order', 'DisplayRefundsHookController'),
+                'labelRadioRefundAllOrderInfoId' => sprintf(
+                    $this->module->l('Refund this order (id: %1$d) and all those linked to the same payment (id: %2$s)', 'DisplayRefundsHookController'),
+                    $orderData['id'],
+                    $orderData['ordersId']
+                ),
+                'labelRadioRefundAllOrderInfoAmount' => sprintf(
+                    $this->module->l('Total amount: %s', 'DisplayRefundsHookController'),
+                    $orderData['paymentTotalPrice']
+                ),
+                'labelRadioRefundTotalAmout' => $this->module->l('Total amount', 'DisplayRefundsHookController'),
+                'labelRadioRefundPartial' => $this->module->l('Partial', 'DisplayRefundsHookController'),
+                'labelAmoutRefundPartial' => sprintf(
+                    $this->module->l('Amount (Max. %s):', 'DisplayRefundsHookController'),
+                    $orderData['paymentTotalPrice']
+                ),
+                'placeholderInputRefundPartial' => $this->module->l('Amount to refund...', 'DisplayRefundsHookController'),
+                'buttonRefund' => $this->module->l('Proceed the refund', 'DisplayRefundsHookController'),
+            ];
+
+            $tpl = $this->context->smarty->createTemplate(
+                "{$this->module->local_path}views/templates/hook/" . $this->getTemplateName() . '.tpl'
+            );
+
+            $tpl->assign([
+                'iconPath' => $this->module->getPathUri() . '/views/img/logos/alma_tiny.svg',
+                'wording' => $wording,
+                'order' => $orderData,
+                'refund' => $refundData,
+                'actionUrl' => $this->context->link->getAdminLink('AdminAlmaRefunds'),
+            ]);
+
+            return $tpl->fetch();
+        } catch (\Exception $e) {
+            Logger::instance()->error("[Alma] DisplayRefunds Error: {$e->getMessage()}");
 
             return null;
         }
-
-        $refundData = [
-            'totalRefundPrice' => 0,
-            'percentRefund' => 0,
-        ];
-        $totalRefundInCents = null;
-        $percentRefund = null;
-        $orderTotalPaid = $order->getOrdersTotalPaid();
-        $paymentTotalAmount = $order->total_paid_tax_incl;
-
-        // multi shipping
-        $ordersId = null;
-        if ($orderTotalPaid > $order->total_paid_tax_incl) {
-            $orders = \Order::getByReference($order->reference);
-            foreach ($orders as $o) {
-                if ($o->id != $order->id) {
-                    $ordersId .= "{$o->id},";
-                }
-            }
-            $ordersId = rtrim($ordersId, ',');
-            $paymentTotalAmount = $orderTotalPaid;
-        }
-
-        $totalOrderInCents = PriceHelper::convertPriceToCents($paymentTotalAmount);
-        if ($payment->refunds) {
-            $totalRefundInCents = RefundHelper::buildTotalRefund($payment->refunds, $totalOrderInCents);
-            $percentRefund = PriceHelper::calculatePercentage($totalRefundInCents, $totalOrderInCents);
-
-            $refundData = [
-                'totalRefundPrice' => PriceHelper::formatPriceToCentsByCurrencyId($totalRefundInCents, (int) $order->id_currency),
-                'percentRefund' => $percentRefund,
-            ];
-        }
-
-        $currency = new \Currency($order->id_currency);
-        $orderData = [
-            'id' => $order->id,
-            'maxAmount' => PriceHelper::formatPriceToCentsByCurrencyId(PriceHelper::convertPriceToCents($order->total_paid_tax_incl), (int) $order->id_currency),
-            'currencySymbol' => $currency->sign,
-            'ordersId' => $ordersId,
-            'paymentTotalPrice' => PriceHelper::formatPriceToCentsByCurrencyId($totalOrderInCents, (int) $order->id_currency),
-        ];
-        $wording = [
-            'title' => $this->module->l('Alma refund', 'DisplayRefundsHookController'),
-            'description' => sprintf(
-                $this->module->l('Refund this order thanks to the Alma module. This will be applied in your Alma dashboard automatically. The maximum refundable amount includes client fees. %1$sSee documentation%2$s', 'DisplayRefundsHookController'),
-                '<a href="https://docs.getalma.eu/docs/prestashop-refund" target="_blank">',
-                '</a>'
-            ),
-            'labelTypeRefund' => $this->module->l('Refund type:', 'DisplayRefundsHookController'),
-            'labelRadioRefundOneOrder' => sprintf(
-                $this->module->l('Only this order (%s)', 'DisplayRefundsHookController'),
-                $orderData['maxAmount']
-            ),
-            'labelRadioRefundAllOrder' => $this->module->l('Refund the entire order', 'DisplayRefundsHookController'),
-            'labelRadioRefundAllOrderInfoId' => sprintf(
-                $this->module->l('Refund this order (id: %1$d) and all those linked to the same payment (id: %2$s)', 'DisplayRefundsHookController'),
-                $orderData['id'],
-                $orderData['ordersId']
-            ),
-            'labelRadioRefundAllOrderInfoAmount' => sprintf(
-                $this->module->l('Total amount: %s', 'DisplayRefundsHookController'),
-                $orderData['paymentTotalPrice']
-            ),
-            'labelRadioRefundTotalAmout' => $this->module->l('Total amount', 'DisplayRefundsHookController'),
-            'labelRadioRefundPartial' => $this->module->l('Partial', 'DisplayRefundsHookController'),
-            'labelAmoutRefundPartial' => sprintf(
-                $this->module->l('Amount (Max. %s):', 'DisplayRefundsHookController'),
-                $orderData['paymentTotalPrice']
-            ),
-            'placeholderInputRefundPartial' => $this->module->l('Amount to refund...', 'DisplayRefundsHookController'),
-            'buttonRefund' => $this->module->l('Proceed the refund', 'DisplayRefundsHookController'),
-        ];
-
-        $tpl = $this->context->smarty->createTemplate(
-            "{$this->module->local_path}views/templates/hook/" . $this->getTemplateName() . '.tpl'
-        );
-
-        $tpl->assign([
-            'iconPath' => $this->module->getPathUri() . '/views/img/logos/alma_tiny.svg',
-            'wording' => $wording,
-            'order' => $orderData,
-            'refund' => $refundData,
-            'actionUrl' => $this->context->link->getAdminLink('AdminAlmaRefunds'),
-        ]);
-
-        return $tpl->fetch();
     }
 
     /**

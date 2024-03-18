@@ -21,6 +21,9 @@
  * @copyright 2018-2023 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
+
+use Alma\PrestaShop\Logger;
+
 if (!defined('_PS_VERSION_')) {
     exit;
 }
@@ -32,15 +35,20 @@ class AdminAlmaShareOfCheckoutController extends ModuleAdminController
     /**
      * @return void
      *
-     * @throws PrestaShopException
+     * @throws \PrestaShopException
      */
     public function ajaxProcessConsentShareOfCheckout()
     {
-        $orderHelper = new Alma\PrestaShop\Helpers\OrderHelper();
-        $shareOfCheckoutHelper = new Alma\PrestaShop\Helpers\ShareOfCheckoutHelper($orderHelper);
+        try {
+            $orderHelper = new Alma\PrestaShop\Helpers\OrderHelper();
+            $shareOfCheckoutHelper = new Alma\PrestaShop\Helpers\ShareOfCheckoutHelper($orderHelper);
 
-        $shareOfCheckoutHelper->handleCheckoutConsent('consent');
+            $shareOfCheckoutHelper->handleCheckoutConsent('consent');
 
-        $this->ajaxRenderAndExit(true);
+            $this->ajaxRenderAndExit(true);
+        } catch (Exception $e) {
+            Logger::instance()->error("[Alma] Error AdminAlmaShareOfCheckout {$e->getMessage()}");
+            $this->ajaxRenderAndExit(false);
+        }
     }
 }

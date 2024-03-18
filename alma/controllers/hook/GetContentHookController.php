@@ -752,26 +752,32 @@ final class GetContentHookController extends AdminHookController
      */
     public function run($params)
     {
-        $this->assignSmartyAlertClasses();
+        try {
+            $this->assignSmartyAlertClasses();
 
-        if (\Tools::isSubmit('alma_config_form')) {
-            $messages = $this->processConfiguration();
-        } elseif (!$this->needsAPIKey()) {
-            $messages = $this->credentialsError(
-                SettingsHelper::getLiveKey(),
-                SettingsHelper::getTestKey()
-            );
+            if (\Tools::isSubmit('alma_config_form')) {
+                $messages = $this->processConfiguration();
+            } elseif (!$this->needsAPIKey()) {
+                $messages = $this->credentialsError(
+                    SettingsHelper::getLiveKey(),
+                    SettingsHelper::getTestKey()
+                );
 
-            if ($messages) {
-                $messages = $messages['message'];
+                if ($messages) {
+                    $messages = $messages['message'];
+                }
+            } else {
+                $messages = '';
             }
-        } else {
-            $messages = '';
+
+            $htmlForm = $this->renderForm();
+
+            return $messages . $htmlForm;
+        } catch (\Exception $e) {
+            Logger::instance()->error("[Alma] GetContentHookController Error: {$e->getMessage()}");
+
+            return '';
         }
-
-        $htmlForm = $this->renderForm();
-
-        return $messages . $htmlForm;
     }
 
     /**

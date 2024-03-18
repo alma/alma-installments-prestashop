@@ -30,7 +30,6 @@ use PHPUnit\Framework\TestCase;
 
 class SettingsHelperTest extends TestCase
 {
-
     /**
      * @var SettingsHelper
      */
@@ -51,7 +50,7 @@ class SettingsHelperTest extends TestCase
         $plan = new FeePlan(
             [
                 'deferred_days' => 15,
-                'deferred_months' => 0
+                'deferred_months' => 0,
             ]
         );
 
@@ -68,7 +67,7 @@ class SettingsHelperTest extends TestCase
         $plan = new FeePlan(
             [
                 'deferredDays' => 0,
-                'deferredMonths' => 1
+                'deferredMonths' => 1,
             ]
         );
 

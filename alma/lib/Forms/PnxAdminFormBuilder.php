@@ -42,7 +42,6 @@ class PnxAdminFormBuilder extends AbstractAlmaAdminFormBuilder
      */
     protected $settingsHelper;
 
-
     public function __construct($module, $context, $image, $config = [])
     {
         parent::__construct($module, $context, $image, $config);

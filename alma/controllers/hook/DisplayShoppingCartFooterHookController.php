@@ -35,6 +35,7 @@ use Alma\PrestaShop\Helpers\PriceHelper;
 use Alma\PrestaShop\Helpers\SettingsCustomFieldsHelper;
 use Alma\PrestaShop\Helpers\SettingsHelper;
 use Alma\PrestaShop\Hooks\FrontendHookController;
+use Alma\PrestaShop\Logger;
 use Alma\PrestaShop\Model\CartData;
 
 class DisplayShoppingCartFooterHookController extends FrontendHookController
@@ -53,7 +54,6 @@ class DisplayShoppingCartFooterHookController extends FrontendHookController
     {
         parent::__construct($module);
 
-
         $this->localeHelper = new LocaleHelper(new LanguageHelper());
     }
 
@@ -62,90 +62,99 @@ class DisplayShoppingCartFooterHookController extends FrontendHookController
         return parent::canRun() && SettingsHelper::showEligibilityMessage();
     }
 
+    /**
+     * @param $params
+     *
+     * @return void
+     */
     public function run($params)
     {
-        $eligibilityMsg = null;
+        try {
+            $eligibilityMsg = null;
 
-        $activePlans = SettingsHelper::activePlans();
+            $activePlans = SettingsHelper::activePlans();
 
-        $locale = $this->localeHelper->getLocaleByIdLangForWidget($this->context->language->id);
+            $locale = $this->localeHelper->getLocaleByIdLangForWidget($this->context->language->id);
 
-        if (!$activePlans) {
-            return;
-        }
+            if (!$activePlans) {
+                return;
+            }
 
-        $cart = $this->context->cart;
-        $cartTotal = PriceHelper::convertPriceToCents((float) $cart->getOrderTotal(true, \Cart::BOTH));
+            $cart = $this->context->cart;
+            $cartTotal = PriceHelper::convertPriceToCents((float) $cart->getOrderTotal(true, \Cart::BOTH));
 
-        $isEligible = true;
-        if (!SettingsHelper::showCartWidgetIfNotEligible()) {
-            $installmentPlans = EligibilityHelper::eligibilityCheck($this->context);
-            $isEligible = false;
-            foreach ($installmentPlans as $plan) {
-                if ($plan->installmentsCount !== 1 && $plan->isEligible) {
-                    $isEligible = true;
-                    break;
+            $isEligible = true;
+            if (!SettingsHelper::showCartWidgetIfNotEligible()) {
+                $installmentPlans = EligibilityHelper::eligibilityCheck($this->context);
+                $isEligible = false;
+                foreach ($installmentPlans as $plan) {
+                    if ($plan->installmentsCount !== 1 && $plan->isEligible) {
+                        $isEligible = true;
+                        break;
+                    }
                 }
             }
-        }
 
-        // Check if some products in cart are in the excludes listing
-        $isExcluded = false;
-        $diff = CartData::getCartExclusion($params['cart']);
-        if (!empty($diff)) {
-            $eligibilityMsg = SettingsCustomFieldsHelper::getNonEligibleCategoriesMessageByLang($this->context->language->id);
-            $isExcluded = true;
-            if (!SettingsHelper::showCategoriesWidgetIfNotEligible()) {
-                $isEligible = false;
+            // Check if some products in cart are in the excludes listing
+            $isExcluded = false;
+            $diff = CartData::getCartExclusion($params['cart']);
+            if (!empty($diff)) {
+                $eligibilityMsg = SettingsCustomFieldsHelper::getNonEligibleCategoriesMessageByLang($this->context->language->id);
+                $isExcluded = true;
+                if (!SettingsHelper::showCategoriesWidgetIfNotEligible()) {
+                    $isEligible = false;
+                }
             }
-        }
 
-        if (is_callable('\Media::getMediaPath')) {
-            $logo = \Media::getMediaPath(_PS_MODULE_DIR_ . $this->module->name . '/views/img/logos/logo_alma.svg');
-        } else {
-            $logo = $this->module->getPathUri() . '/views/img/logos/logo_alma.svg';
-        }
-
-        // need ps verions && refresh price
-        $psVersion = '1.7';
-        $refreshPrice = true;
-        if (version_compare(_PS_VERSION_, '1.7', '<')) {
-            $psVersion = '1.6';
-            $refreshPrice = false;
-            if (version_compare(_PS_VERSION_, '1.6', '<')) {
-                $psVersion = '1.5';
+            if (is_callable('\Media::getMediaPath')) {
+                $logo = \Media::getMediaPath(_PS_MODULE_DIR_ . $this->module->name . '/views/img/logos/logo_alma.svg');
+            } else {
+                $logo = $this->module->getPathUri() . '/views/img/logos/logo_alma.svg';
             }
-        }
 
-        if ($isEligible) {
-            $this->context->smarty->assign([
-                'eligibility_msg' => $eligibilityMsg,
-                'logo' => $logo,
-                'isExcluded' => $isExcluded,
-                'settings' => [
-                    'merchantId' => SettingsHelper::getMerchantId(),
-                    'apiMode' => SettingsHelper::getActiveMode(),
-                    'amount' => $cartTotal,
-                    'plans' => $activePlans,
-                    'refreshPrice' => $refreshPrice,
-                    'decimalSeparator' => LocaleHelper::decimalSeparator(),
-                    'thousandSeparator' => LocaleHelper::thousandSeparator(),
-                    'psVersion' => $psVersion,
-                    'showIfNotEligible' => SettingsHelper::showCartWidgetIfNotEligible(),
-                    'locale' => $locale,
-                ],
-                'widgetQuerySelectors' => json_encode([
-                    'price' => SettingsHelper::getProductPriceQuerySelector(),
-                    'attrSelect' => SettingsHelper::getProductAttrQuerySelector(),
-                    'attrRadio' => SettingsHelper::getProductAttrRadioQuerySelector(),
-                    'colorPick' => SettingsHelper::getProductColorPickQuerySelector(),
-                    'quantity' => SettingsHelper::getProductQuantityQuerySelector(),
-                    'isCartCustom' => SettingsHelper::isCartWidgetCustomPosition(),
-                    'cartPosition' => SettingsHelper::getCartWidgetPositionQuerySelector(),
+            // need ps verions && refresh price
+            $psVersion = '1.7';
+            $refreshPrice = true;
+            if (version_compare(_PS_VERSION_, '1.7', '<')) {
+                $psVersion = '1.6';
+                $refreshPrice = false;
+                if (version_compare(_PS_VERSION_, '1.6', '<')) {
+                    $psVersion = '1.5';
+                }
+            }
+
+            if ($isEligible) {
+                $this->context->smarty->assign([
+                    'eligibility_msg' => $eligibilityMsg,
+                    'logo' => $logo,
+                    'isExcluded' => $isExcluded,
+                    'settings' => [
+                        'merchantId' => SettingsHelper::getMerchantId(),
+                        'apiMode' => SettingsHelper::getActiveMode(),
+                        'amount' => $cartTotal,
+                        'plans' => $activePlans,
+                        'refreshPrice' => $refreshPrice,
+                        'decimalSeparator' => LocaleHelper::decimalSeparator(),
+                        'thousandSeparator' => LocaleHelper::thousandSeparator(),
+                        'psVersion' => $psVersion,
+                        'showIfNotEligible' => SettingsHelper::showCartWidgetIfNotEligible(),
+                        'locale' => $locale,
+                    ],
+                    'widgetQuerySelectors' => json_encode([
+                        'price' => SettingsHelper::getProductPriceQuerySelector(),
+                        'attrSelect' => SettingsHelper::getProductAttrQuerySelector(),
+                        'attrRadio' => SettingsHelper::getProductAttrRadioQuerySelector(),
+                        'colorPick' => SettingsHelper::getProductColorPickQuerySelector(),
+                        'quantity' => SettingsHelper::getProductQuantityQuerySelector(),
+                        'isCartCustom' => SettingsHelper::isCartWidgetCustomPosition(),
+                        'cartPosition' => SettingsHelper::getCartWidgetPositionQuerySelector(),
                     ]),
-            ]);
+                ]);
 
-            return $this->module->display($this->module->file, 'displayShoppingCartFooter.tpl');
+                return $this->module->display($this->module->file, 'displayShoppingCartFooter.tpl');
+            }
+        } catch (\Exception $e) {
+            Logger::instance()->error("[Alma] DisplayShoppingCartFooter Error: {$e->getMessage()}");
         }
     }
 }

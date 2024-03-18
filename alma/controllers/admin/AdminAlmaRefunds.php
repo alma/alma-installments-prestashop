@@ -31,7 +31,6 @@ use Alma\PrestaShop\Helpers\PriceHelper;
 use Alma\PrestaShop\Helpers\RefundHelper;
 use Alma\PrestaShop\Logger;
 use Alma\PrestaShop\Traits\AjaxTrait;
-use PrestaShop\PrestaShop\Core\Localization\Exception\LocalizationException;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -53,57 +52,62 @@ class AdminAlmaRefundsController extends ModuleAdminController
      * Make refund over ajax request and display json on std output.
      *
      * @return void
-     *
-     * @throws LocalizationException
-     * @throws PrestaShopDatabaseException
-     * @throws PrestaShopException
-     * @throws RequestException
      */
     public function ajaxProcessRefund()
     {
-        $refundType = Tools::getValue('refundType');
-        $order = new Order(Tools::getValue('orderId'));
-        $orderHelper = new OrderHelper();
-        $orderPayment = $orderHelper->getOrderPaymentOrFail($order);
-        $paymentId = $orderPayment->transaction_id;
-
-        $isTotal = $this->isTotalRefund($refundType);
-        $amount = $this->getRefundAmount($refundType, $order);
-
-        $refundResult = false;
         try {
-            $refundResult = $this->runRefund($paymentId, $amount, $isTotal);
-        } catch (RequestError $e) {
-            $msg = "[Alma] ERROR when creating refund for Order {$order->id}: {$e->getMessage()}";
-            Logger::instance()->error($msg);
-        }
+            $refundType = Tools::getValue('refundType');
+            $order = new Order(Tools::getValue('orderId'));
+            $orderHelper = new OrderHelper();
+            $orderPayment = $orderHelper->getOrderPaymentOrFail($order);
+            $paymentId = $orderPayment->transaction_id;
 
-        if (false === $refundResult) {
-            $this->ajaxFailAndDie(
-                $this->module->l('There was an error while processing the refund', 'AdminAlmaRefunds')
+            $isTotal = $this->isTotalRefund($refundType);
+            $amount = $this->getRefundAmount($refundType, $order);
+
+            $refundResult = false;
+            try {
+                $refundResult = $this->runRefund($paymentId, $amount, $isTotal);
+            } catch (RequestError $e) {
+                $msg = "[Alma] ERROR when creating refund for Order {$order->id}: {$e->getMessage()}";
+                Logger::instance()->error($msg);
+            }
+
+            if (false === $refundResult) {
+                $this->ajaxFailAndDie(
+                    $this->module->l('There was an error while processing the refund', 'AdminAlmaRefunds')
+                );
+            }
+            $totalOrderAmount = $refundResult->purchase_amount;
+            $idCurrency = (int) $order->id_currency;
+            $totalOrderPrice = PriceHelper::formatPriceToCentsByCurrencyId($totalOrderAmount, $idCurrency);
+            $totalRefundAmount = RefundHelper::buildTotalRefund($refundResult->refunds, $totalOrderAmount);
+            $totalRefundPrice = PriceHelper::formatPriceToCentsByCurrencyId($totalRefundAmount, $idCurrency);
+            $percentRefund = PriceHelper::calculatePercentage($totalRefundAmount, $totalOrderAmount);
+
+            if ($isTotal) {
+                $this->setOrdersAsRefund($order);
+            }
+
+            $this->ajaxRenderAndExit(json_encode([
+                'success' => true,
+                'message' => $this->module->l('Refund has been processed', 'AdminAlmaRefunds'),
+                'paymentData' => $refundResult,
+                'percentRefund' => $percentRefund,
+                'totalRefundAmount' => $totalRefundAmount,
+                'totalRefundPrice' => $totalRefundPrice,
+                'totalOrderAmount' => $totalOrderAmount,
+                'totalOrderPrice' => $totalOrderPrice,
+            ]));
+        } catch (\Exception $e) {
+            Logger::instance()->error(
+                sprintf(
+                    '[Alma] Error in AdminAlmaRefund Message :%s - Trace: %s',
+                    $e->getMessage(),
+                    $e->getTraceAsString()
+                )
             );
         }
-        $totalOrderAmount = $refundResult->purchase_amount;
-        $idCurrency = (int) $order->id_currency;
-        $totalOrderPrice = PriceHelper::formatPriceToCentsByCurrencyId($totalOrderAmount, $idCurrency);
-        $totalRefundAmount = RefundHelper::buildTotalRefund($refundResult->refunds, $totalOrderAmount);
-        $totalRefundPrice = PriceHelper::formatPriceToCentsByCurrencyId($totalRefundAmount, $idCurrency);
-        $percentRefund = PriceHelper::calculatePercentage($totalRefundAmount, $totalOrderAmount);
-
-        if ($isTotal) {
-            $this->setOrdersAsRefund($order);
-        }
-
-        $this->ajaxRenderAndExit(json_encode([
-            'success' => true,
-            'message' => $this->module->l('Refund has been processed', 'AdminAlmaRefunds'),
-            'paymentData' => $refundResult,
-            'percentRefund' => $percentRefund,
-            'totalRefundAmount' => $totalRefundAmount,
-            'totalRefundPrice' => $totalRefundPrice,
-            'totalOrderAmount' => $totalOrderAmount,
-            'totalOrderPrice' => $totalOrderPrice,
-        ]));
     }
 
     /**

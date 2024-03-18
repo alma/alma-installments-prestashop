@@ -29,6 +29,8 @@ if (!defined('_PS_VERSION_')) {
 }
 
 use Alma\API\Client;
+use Alma\API\Exceptions\ParametersException;
+use Alma\API\Exceptions\RequestException;
 use Alma\API\RequestError;
 use Alma\PrestaShop\Helpers\ClientHelper;
 use Alma\PrestaShop\Helpers\OrderHelper;
@@ -58,46 +60,49 @@ final class StateHookController extends AdminHookController
      *
      * @param $params
      *
-     * @throws \PrestaShopDatabaseException
-     * @throws \PrestaShopException
+     * @return void
      */
     public function run($params)
     {
-        $order = new \Order($params['id_order']);
-        $newStatus = $params['newOrderStatus'];
-        if ($order->module !== 'alma') {
-            return;
-        }
-        if ($newStatus->id == \Configuration::get('PS_OS_REFUND')) {
-            $orderHelper = new OrderHelper();
-            $orderPayment = $orderHelper->getOrderPaymentOrFail($order);
-        } else {
-            $orderPayment = OrderData::getCurrentOrderPayment($order);
-        }
-        if (!$orderPayment) {
-            return;
-        }
-        $alma = ClientHelper::defaultInstance();
-        if (!$alma) {
-            return;
-        }
-        $idPayment = $orderPayment->transaction_id;
-        $idStateRefund = SettingsHelper::getRefundState();
-        $idStatePaymentTrigger = SettingsHelper::getPaymentTriggerState();
+        try {
+            $order = new \Order($params['id_order']);
+            $newStatus = $params['newOrderStatus'];
+            if ($order->module !== 'alma') {
+                return;
+            }
+            if ($newStatus->id == \Configuration::get('PS_OS_REFUND')) {
+                $orderHelper = new OrderHelper();
+                $orderPayment = $orderHelper->getOrderPaymentOrFail($order);
+            } else {
+                $orderPayment = OrderData::getCurrentOrderPayment($order);
+            }
+            if (!$orderPayment) {
+                return;
+            }
+            $alma = ClientHelper::defaultInstance();
+            if (!$alma) {
+                return;
+            }
+            $idPayment = $orderPayment->transaction_id;
+            $idStateRefund = SettingsHelper::getRefundState();
+            $idStatePaymentTrigger = SettingsHelper::getPaymentTriggerState();
 
-        switch ($newStatus->id) {
-            case $idStateRefund:
-                if (SettingsHelper::isRefundEnabledByState()) {
-                    $this->refund($alma, $idPayment, $order);
-                }
-                break;
-            case $idStatePaymentTrigger:
-                if (SettingsHelper::isPaymentTriggerEnabledByState()) {
-                    $this->triggerPayment($alma, $idPayment, $order);
-                }
-                break;
-            default:
-                break;
+            switch ($newStatus->id) {
+                case $idStateRefund:
+                    if (SettingsHelper::isRefundEnabledByState()) {
+                        $this->refund($alma, $idPayment, $order);
+                    }
+                    break;
+                case $idStatePaymentTrigger:
+                    if (SettingsHelper::isPaymentTriggerEnabledByState()) {
+                        $this->triggerPayment($alma, $idPayment, $order);
+                    }
+                    break;
+                default:
+                    break;
+            }
+        } catch (\Exception $e) {
+            Logger::instance()->error("[Alma] StateHookController Error: {$e->getMessage()}");
         }
     }
 
@@ -109,6 +114,9 @@ final class StateHookController extends AdminHookController
      * @param \Order $order
      *
      * @return void
+     *
+     * @throws ParametersException
+     * @throws RequestException
      */
     private function refund($alma, $idPayment, $order)
     {

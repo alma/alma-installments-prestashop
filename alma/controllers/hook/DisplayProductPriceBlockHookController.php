@@ -35,6 +35,7 @@ use Alma\PrestaShop\Helpers\PriceHelper;
 use Alma\PrestaShop\Helpers\SettingsCustomFieldsHelper;
 use Alma\PrestaShop\Helpers\SettingsHelper;
 use Alma\PrestaShop\Hooks\FrontendHookController;
+use Alma\PrestaShop\Logger;
 
 class DisplayProductPriceBlockHookController extends FrontendHookController
 {
@@ -54,7 +55,7 @@ class DisplayProductPriceBlockHookController extends FrontendHookController
 
         $this->localeHelper = new LocaleHelper(new LanguageHelper());
     }
-    
+
     public function canRun()
     {
         return parent::canRun()
@@ -63,140 +64,149 @@ class DisplayProductPriceBlockHookController extends FrontendHookController
             && SettingsHelper::getMerchantId() != null;
     }
 
+    /**
+     * @param $params
+     *
+     * @return void|null
+     */
     public function run($params)
     {
-        if (array_key_exists('type', $params)) {
-            if (version_compare(_PS_VERSION_, '1.7', '>')) {
-                $skip = $params['type'] === 'price' || (!in_array($params['type'], ['price', 'after_price']));
-            } elseif (version_compare(_PS_VERSION_, '1.6', '>')) {
-                $skip = $params['type'] !== 'after_price';
-            } else {
-                $skip = !in_array($params['type'], ['price', 'after_price']);
+        try {
+            if (array_key_exists('type', $params)) {
+                if (version_compare(_PS_VERSION_, '1.7', '>')) {
+                    $skip = $params['type'] === 'price' || (!in_array($params['type'], ['price', 'after_price']));
+                } elseif (version_compare(_PS_VERSION_, '1.6', '>')) {
+                    $skip = $params['type'] !== 'after_price';
+                } else {
+                    $skip = !in_array($params['type'], ['price', 'after_price']);
+                }
+
+                if ($skip) {
+                    return null;
+                }
             }
 
-            if ($skip) {
+            /* @var \Product $product */
+            if (isset($params['product']) && $params['product'] instanceof \Product) {
+                $product = $params['product'];
+                $price = PriceHelper::convertPriceToCents($product->getPrice(true));
+                $productId = $product->id;
+
+                // Since we don't have access to the combination ID nor the wanted quantity, we should reload things from
+                // the frontend to make sure we're displaying something relevant
+                $refreshPrice = true;
+            } else {
+                $productParams = isset($params['product']) ? $params['product'] : [];
+
+                $productId = isset($productParams['id_product'])
+                    ? $productParams['id_product']
+                    : \Tools::getValue('id_product');
+
+                $productAttributeId = isset($productParams['id_product_attribute'])
+                    ? $productParams['id_product_attribute']
+                    : null;
+
+                if (!isset($productParams['quantity_wanted']) && !isset($productParams['minimal_quantity'])) {
+                    $quantity = 1;
+                } elseif (!isset($productParams['quantity_wanted'])) {
+                    $quantity = (int) $productParams['minimal_quantity'];
+                } elseif (!isset($productParams['minimal_quantity'])) {
+                    $quantity = (int) $productParams['quantity_wanted'];
+                } else {
+                    $quantity = max((int) $productParams['minimal_quantity'], (int) $productParams['quantity_wanted']);
+                }
+                if ($quantity === 0) {
+                    $quantity = 1;
+                }
+
+                $price = PriceHelper::convertPriceToCents(
+                    \Product::getPriceStatic(
+                        $productId,
+                        true,
+                        $productAttributeId,
+                        6,
+                        null,
+                        false,
+                        true,
+                        $quantity
+                    )
+                );
+
+                // Being able to use `quantity_wanted` here means we don't have to reload price on the front-end
+                $price *= $quantity;
+                $refreshPrice = $productAttributeId === null;
+            }
+
+            if (\Tools::getValue('id_product') != $productId) {
                 return null;
             }
-        }
 
-        /* @var \Product $product */
-        if (isset($params['product']) && $params['product'] instanceof \Product) {
-            $product = $params['product'];
-            $price = PriceHelper::convertPriceToCents($product->getPrice(true));
-            $productId = $product->id;
-
-            // Since we don't have access to the combination ID nor the wanted quantity, we should reload things from
-            // the frontend to make sure we're displaying something relevant
-            $refreshPrice = true;
-        } else {
-            $productParams = isset($params['product']) ? $params['product'] : [];
-
-            $productId = isset($productParams['id_product'])
-                ? $productParams['id_product']
-                : \Tools::getValue('id_product');
-
-            $productAttributeId = isset($productParams['id_product_attribute'])
-                ? $productParams['id_product_attribute']
-                : null;
-
-            if (!isset($productParams['quantity_wanted']) && !isset($productParams['minimal_quantity'])) {
-                $quantity = 1;
-            } elseif (!isset($productParams['quantity_wanted'])) {
-                $quantity = (int) $productParams['minimal_quantity'];
-            } elseif (!isset($productParams['minimal_quantity'])) {
-                $quantity = (int) $productParams['quantity_wanted'];
-            } else {
-                $quantity = max((int) $productParams['minimal_quantity'], (int) $productParams['quantity_wanted']);
-            }
-            if ($quantity === 0) {
-                $quantity = 1;
+            $psVersion = 'ps15';
+            if (version_compare(_PS_VERSION_, '1.7', '>=')) {
+                $psVersion = 'ps17';
+            } elseif (version_compare(_PS_VERSION_, '1.6', '>=')) {
+                $psVersion = 'ps16';
             }
 
-            $price = PriceHelper::convertPriceToCents(
-                \Product::getPriceStatic(
-                    $productId,
-                    true,
-                    $productAttributeId,
-                    6,
-                    null,
-                    false,
-                    true,
-                    $quantity
-                )
-            );
+            $activePlans = SettingsHelper::activePlans();
 
-            // Being able to use `quantity_wanted` here means we don't have to reload price on the front-end
-            $price *= $quantity;
-            $refreshPrice = $productAttributeId === null;
-        }
+            $locale = $this->localeHelper->getLocaleByIdLangForWidget($this->context->language->id);
 
-        if (\Tools::getValue('id_product') != $productId) {
-            return null;
-        }
+            if (!$activePlans) {
+                return;
+            }
 
-        $psVersion = 'ps15';
-        if (version_compare(_PS_VERSION_, '1.7', '>=')) {
-            $psVersion = 'ps17';
-        } elseif (version_compare(_PS_VERSION_, '1.6', '>=')) {
-            $psVersion = 'ps16';
-        }
+            $isEligible = true;
 
-        $activePlans = SettingsHelper::activePlans();
+            if (!SettingsHelper::showProductWidgetIfNotEligible()) {
+                $feePlans = json_decode(SettingsHelper::getFeePlans());
 
-        $locale = $this->localeHelper->getLocaleByIdLangForWidget($this->context->language->id);
-
-        if (!$activePlans) {
-            return;
-        }
-
-        $isEligible = true;
-
-        if (!SettingsHelper::showProductWidgetIfNotEligible()) {
-            $feePlans = json_decode(SettingsHelper::getFeePlans());
-
-            $isEligible = false;
-            foreach ($feePlans as $feePlan) {
-                if (1 == $feePlan->enabled) {
-                    if ($price >= $feePlan->min && $price <= $feePlan->max) {
-                        $isEligible = true;
-                        break;
+                $isEligible = false;
+                foreach ($feePlans as $feePlan) {
+                    if (1 == $feePlan->enabled) {
+                        if ($price >= $feePlan->min && $price <= $feePlan->max) {
+                            $isEligible = true;
+                            break;
+                        }
                     }
                 }
             }
-        }
-        if (!SettingsHelper::showCategoriesWidgetIfNotEligible() && SettingsHelper::isProductExcluded($productId)) {
-            $isEligible = false;
-        }
-        if ($isEligible) {
-            $this->context->smarty->assign([
-            'productId' => $productId,
-            'psVersion' => $psVersion,
-            'logo' => LinkHelper::getSvgDataUrl(_PS_MODULE_DIR_ . $this->module->name . '/views/img/logos/logo_alma.svg'),
-            'isExcluded' => SettingsHelper::isProductExcluded($productId),
-            'exclusionMsg' => SettingsCustomFieldsHelper::getNonEligibleCategoriesMessageByLang($this->context->language->id),
-            'settings' => [
-                'merchantId' => SettingsHelper::getMerchantId(),
-                'apiMode' => SettingsHelper::getActiveMode(),
-                'amount' => $price,
-                'plans' => $activePlans,
-                'refreshPrice' => $refreshPrice,
-                'decimalSeparator' => LocaleHelper::decimalSeparator(),
-                'thousandSeparator' => LocaleHelper::thousandSeparator(),
-                'showIfNotEligible' => SettingsHelper::showProductWidgetIfNotEligible(),
-                'locale' => $locale,
-                ],
-            'widgetQuerySelectors' => json_encode([
-                'price' => SettingsHelper::getProductPriceQuerySelector(),
-                'attrSelect' => SettingsHelper::getProductAttrQuerySelector(),
-                'attrRadio' => SettingsHelper::getProductAttrRadioQuerySelector(),
-                'colorPick' => SettingsHelper::getProductColorPickQuerySelector(),
-                'quantity' => SettingsHelper::getProductQuantityQuerySelector(),
-                'isCustom' => SettingsHelper::isWidgetCustomPosition(),
-                'position' => SettingsHelper::getProductWidgetPositionQuerySelector(),
-                ]),
-            ]);
+            if (!SettingsHelper::showCategoriesWidgetIfNotEligible() && SettingsHelper::isProductExcluded($productId)) {
+                $isEligible = false;
+            }
+            if ($isEligible) {
+                $this->context->smarty->assign([
+                    'productId' => $productId,
+                    'psVersion' => $psVersion,
+                    'logo' => LinkHelper::getSvgDataUrl(_PS_MODULE_DIR_ . $this->module->name . '/views/img/logos/logo_alma.svg'),
+                    'isExcluded' => SettingsHelper::isProductExcluded($productId),
+                    'exclusionMsg' => SettingsCustomFieldsHelper::getNonEligibleCategoriesMessageByLang($this->context->language->id),
+                    'settings' => [
+                        'merchantId' => SettingsHelper::getMerchantId(),
+                        'apiMode' => SettingsHelper::getActiveMode(),
+                        'amount' => $price,
+                        'plans' => $activePlans,
+                        'refreshPrice' => $refreshPrice,
+                        'decimalSeparator' => LocaleHelper::decimalSeparator(),
+                        'thousandSeparator' => LocaleHelper::thousandSeparator(),
+                        'showIfNotEligible' => SettingsHelper::showProductWidgetIfNotEligible(),
+                        'locale' => $locale,
+                    ],
+                    'widgetQuerySelectors' => json_encode([
+                        'price' => SettingsHelper::getProductPriceQuerySelector(),
+                        'attrSelect' => SettingsHelper::getProductAttrQuerySelector(),
+                        'attrRadio' => SettingsHelper::getProductAttrRadioQuerySelector(),
+                        'colorPick' => SettingsHelper::getProductColorPickQuerySelector(),
+                        'quantity' => SettingsHelper::getProductQuantityQuerySelector(),
+                        'isCustom' => SettingsHelper::isWidgetCustomPosition(),
+                        'position' => SettingsHelper::getProductWidgetPositionQuerySelector(),
+                    ]),
+                ]);
 
-            return $this->module->display($this->module->file, 'displayProductPriceBlock.tpl');
+                return $this->module->display($this->module->file, 'displayProductPriceBlock.tpl');
+            }
+        } catch (\Exception $e) {
+            Logger::instance()->error('[Alma] DisplayProductPriceBlockHookController Error: ' . $e->getMessage());
         }
     }
 }

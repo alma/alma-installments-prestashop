@@ -30,6 +30,7 @@ if (!defined('_PS_VERSION_')) {
 
 use Alma\PrestaShop\Helpers\SettingsHelper;
 use Alma\PrestaShop\Hooks\FrontendHookController;
+use Alma\PrestaShop\Logger;
 
 class DisplayAdminAfterHeaderHookController extends FrontendHookController
 {
@@ -65,12 +66,16 @@ class DisplayAdminAfterHeaderHookController extends FrontendHookController
      */
     public function run($params)
     {
-        if (SettingsHelper::isShareOfCheckoutNoAnswered() || !SettingsHelper::isShareOfCheckoutSetting()) {
-            $this->context->smarty->assign([
-                'token' => \Tools::getAdminTokenLite('AdminAlmaShareOfCheckout'),
-            ]);
+        try {
+            if (SettingsHelper::isShareOfCheckoutNoAnswered() || !SettingsHelper::isShareOfCheckoutSetting()) {
+                $this->context->smarty->assign([
+                    'token' => \Tools::getAdminTokenLite('AdminAlmaShareOfCheckout'),
+                ]);
 
-            return $this->module->display($this->module->file, 'notificationShareOfCheckout.tpl');
+                return $this->module->display($this->module->file, 'notificationShareOfCheckout.tpl');
+            }
+        } catch (\Exception $e) {
+            Logger::instance()->error('[Alma] DisplayAdminAfterHeaderHookController Error: ' . $e->getMessage());
         }
     }
 }

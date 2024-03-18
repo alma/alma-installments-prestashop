@@ -37,40 +37,49 @@ use Alma\PrestaShop\Model\OrderData;
 
 class DisplayPaymentReturnHookController extends FrontendHookController
 {
+    /**
+     * @param $params
+     *
+     * @return void
+     */
     public function run($params)
     {
-        $this->context->controller->addCSS($this->module->_path . 'views/css/alma.css', 'all');
+        try {
+            $this->context->controller->addCSS($this->module->_path . 'views/css/alma.css', 'all');
 
-        $payment = null;
-        $order = array_key_exists('objOrder', $params) ? $params['objOrder'] : $params['order'];
-        $orderPayment = OrderData::getCurrentOrderPayment($order);
-        if (!$orderPayment) {
-            $msg = '[Alma] orderPayment not found';
-            Logger::instance()->error($msg);
-            throw new RenderPaymentException($msg);
-        }
-        $almaPaymentId = $orderPayment->transaction_id;
-        if (!$almaPaymentId) {
-            $msg = '[Alma] Payment_id not found';
-            Logger::instance()->error($msg);
-            throw new RenderPaymentException($msg);
-        }
-        $alma = ClientHelper::defaultInstance();
-        if ($alma) {
-            try {
-                $payment = $alma->payments->fetch($almaPaymentId);
-            } catch (RequestError $e) {
-                Logger::instance()->error("[Alma] DisplayPaymentReturn Error fetching payment with ID {$almaPaymentId}: {$e->getMessage()}");
-                throw new RenderPaymentException($e->getMessage());
+            $payment = null;
+            $order = array_key_exists('objOrder', $params) ? $params['objOrder'] : $params['order'];
+            $orderPayment = OrderData::getCurrentOrderPayment($order);
+            if (!$orderPayment) {
+                $msg = '[Alma] orderPayment not found';
+                Logger::instance()->error($msg);
+                throw new RenderPaymentException($msg);
             }
+            $almaPaymentId = $orderPayment->transaction_id;
+            if (!$almaPaymentId) {
+                $msg = '[Alma] Payment_id not found';
+                Logger::instance()->error($msg);
+                throw new RenderPaymentException($msg);
+            }
+            $alma = ClientHelper::defaultInstance();
+            if ($alma) {
+                try {
+                    $payment = $alma->payments->fetch($almaPaymentId);
+                } catch (RequestError $e) {
+                    Logger::instance()->error("[Alma] DisplayPaymentReturn Error fetching payment with ID {$almaPaymentId}: {$e->getMessage()}");
+                    throw new RenderPaymentException($e->getMessage());
+                }
+            }
+
+            $this->context->smarty->assign([
+                'order_reference' => $order->reference,
+                'payment_order' => $orderPayment,
+                'payment' => $payment,
+            ]);
+
+            return $this->module->display($this->module->file, 'displayPaymentReturn.tpl');
+        } catch (\Exception $e) {
+            Logger::instance()->error("[Alma] DisplayPaymentReturn Error: {$e->getMessage()}");
         }
-
-        $this->context->smarty->assign([
-            'order_reference' => $order->reference,
-            'payment_order' => $orderPayment,
-            'payment' => $payment,
-        ]);
-
-        return $this->module->display($this->module->file, 'displayPaymentReturn.tpl');
     }
 }

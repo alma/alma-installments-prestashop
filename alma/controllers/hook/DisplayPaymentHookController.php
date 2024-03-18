@@ -37,7 +37,9 @@ use Alma\PrestaShop\Helpers\PriceHelper;
 use Alma\PrestaShop\Helpers\SettingsCustomFieldsHelper;
 use Alma\PrestaShop\Helpers\SettingsHelper;
 use Alma\PrestaShop\Hooks\FrontendHookController;
+use Alma\PrestaShop\Logger;
 use Alma\PrestaShop\Model\CartData;
+use PrestaShop\PrestaShop\Core\Localization\Exception\LocalizationException;
 
 class DisplayPaymentHookController extends FrontendHookController
 {
@@ -73,113 +75,123 @@ class DisplayPaymentHookController extends FrontendHookController
      */
     public function run($params)
     {
-        // Check if some products in cart are in the excludes listing
-        $diff = CartData::getCartExclusion($params['cart']);
-        if (!empty($diff)) {
-            return false;
-        }
+        try {
+            // Check if some products in cart are in the excludes listing
+            $diff = CartData::getCartExclusion($params['cart']);
+            if (!empty($diff)) {
+                return false;
+            }
 
-        $idLang = $this->context->language->id;
-        $locale = $this->localeHelper->getLocaleByIdLangForWidget($idLang);
+            $idLang = $this->context->language->id;
+            $locale = $this->localeHelper->getLocaleByIdLangForWidget($idLang);
 
-        $installmentPlans = EligibilityHelper::eligibilityCheck($this->context);
+            $installmentPlans = EligibilityHelper::eligibilityCheck($this->context);
 
-        if (empty($installmentPlans)) {
-            return;
-        }
+            if (empty($installmentPlans)) {
+                return;
+            }
 
-        $feePlans = json_decode(SettingsHelper::getFeePlans());
-        $paymentOptions = [];
-        $sortOptions = [];
-        $totalCart = (float) PriceHelper::convertPriceToCents(
-            \Tools::ps_round((float) $this->context->cart->getOrderTotal(true, \Cart::BOTH), 2)
-        );
+            $feePlans = json_decode(SettingsHelper::getFeePlans());
+            $paymentOptions = [];
+            $sortOptions = [];
+            $totalCart = (float) PriceHelper::convertPriceToCents(
+                \Tools::ps_round((float) $this->context->cart->getOrderTotal(true, \Cart::BOTH), 2)
+            );
 
-        foreach ($installmentPlans as $keyPlan => $plan) {
-            $installment = $plan->installmentsCount;
-            $key = SettingsHelper::keyForInstallmentPlan($plan);
-            $plans = $plan->paymentPlan;
-            $disabled = false;
-            $creditInfo = [
-                'totalCart' => $totalCart,
-                'costCredit' => $plan->customerTotalCostAmount,
-                'totalCredit' => $plan->customerTotalCostAmount + $totalCart,
-                'taeg' => $plan->annualInterestRate,
-            ];
+            foreach ($installmentPlans as $keyPlan => $plan) {
+                $installment = $plan->installmentsCount;
+                $key = SettingsHelper::keyForInstallmentPlan($plan);
+                $plans = $plan->paymentPlan;
+                $disabled = false;
+                $creditInfo = [
+                    'totalCart' => $totalCart,
+                    'costCredit' => $plan->customerTotalCostAmount,
+                    'totalCredit' => $plan->customerTotalCostAmount + $totalCart,
+                    'taeg' => $plan->annualInterestRate,
+                ];
 
-            $isDeferred = SettingsHelper::isDeferred($plan);
-            $isPayNow = ConstantsHelper::ALMA_KEY_PAYNOW === $key;
+                $isDeferred = SettingsHelper::isDeferred($plan);
+                $isPayNow = ConstantsHelper::ALMA_KEY_PAYNOW === $key;
 
-            if (!$plan->isEligible) {
-                if ($feePlans->$key->enabled && SettingsHelper::showDisabledButton()) {
-                    $disabled = true;
-                    $plans = null;
-                } else {
-                    continue;
+                if (!$plan->isEligible) {
+                    if ($feePlans->$key->enabled && SettingsHelper::showDisabledButton()) {
+                        $disabled = true;
+                        $plans = null;
+                    } else {
+                        continue;
+                    }
                 }
-            }
-            $duration = $this->settingsHelper->getDuration($plan);
-            $valueLogo = $isDeferred ? $duration : $installment;
-            $logo = $this->getAlmaLogo($isDeferred, $valueLogo);
+                $duration = $this->settingsHelper->getDuration($plan);
+                $valueLogo = $isDeferred ? $duration : $installment;
+                $logo = $this->getAlmaLogo($isDeferred, $valueLogo);
 
-            $paymentOption = [
-                'link' => $this->context->link->getModuleLink(
-                    $this->module->name,
-                    'payment',
-                    ['key' => $key],
-                    true
-                ),
-                'disabled' => $disabled,
-                'pnx' => $installment,
-                'deferredDays' => $plan->deferredDays,
-                'deferredMonths' => $plan->deferredMonths,
-                'logo' => $logo,
-                'plans' => $plans,
-                'installmentText' => $this->getInstallmentText($plans, $idLang, SettingsHelper::isDeferredTriggerLimitDays($feePlans, $key), $isPayNow),
-                'deferred_trigger_limit_days' => $feePlans->$key->deferred_trigger_limit_days,
-                'isDeferred' => $isDeferred,
-                'text' => sprintf(SettingsCustomFieldsHelper::getPnxButtonTitleByLang($idLang), $installment),
-                'desc' => sprintf(SettingsCustomFieldsHelper::getPnxButtonDescriptionByLang($idLang), $installment),
-                'creditInfo' => $creditInfo,
-                'isInPageEnabled' => SettingsHelper::isInPageEnabled(),
-                'paymentOptionKey' => $keyPlan,
-                'locale' => $locale,
-            ];
-            if ($installment > 4) {
-                $paymentOption['text'] = sprintf(SettingsCustomFieldsHelper::getPnxAirButtonTitleByLang($idLang), $installment);
-                $paymentOption['desc'] = sprintf(SettingsCustomFieldsHelper::getPnxAirButtonDescriptionByLang($idLang), $installment);
-                $paymentOption['isInPageEnabled'] = false;
+                $paymentOption = [
+                    'link' => $this->context->link->getModuleLink(
+                        $this->module->name,
+                        'payment',
+                        ['key' => $key],
+                        true
+                    ),
+                    'disabled' => $disabled,
+                    'pnx' => $installment,
+                    'deferredDays' => $plan->deferredDays,
+                    'deferredMonths' => $plan->deferredMonths,
+                    'logo' => $logo,
+                    'plans' => $plans,
+                    'installmentText' => $this->getInstallmentText($plans, $idLang, SettingsHelper::isDeferredTriggerLimitDays($feePlans, $key), $isPayNow),
+                    'deferred_trigger_limit_days' => $feePlans->$key->deferred_trigger_limit_days,
+                    'isDeferred' => $isDeferred,
+                    'text' => sprintf(SettingsCustomFieldsHelper::getPnxButtonTitleByLang($idLang), $installment),
+                    'desc' => sprintf(SettingsCustomFieldsHelper::getPnxButtonDescriptionByLang($idLang), $installment),
+                    'creditInfo' => $creditInfo,
+                    'isInPageEnabled' => SettingsHelper::isInPageEnabled(),
+                    'paymentOptionKey' => $keyPlan,
+                    'locale' => $locale,
+                ];
+                if ($installment > 4) {
+                    $paymentOption['text'] = sprintf(SettingsCustomFieldsHelper::getPnxAirButtonTitleByLang($idLang), $installment);
+                    $paymentOption['desc'] = sprintf(SettingsCustomFieldsHelper::getPnxAirButtonDescriptionByLang($idLang), $installment);
+                    $paymentOption['isInPageEnabled'] = false;
+                }
+                if ($isDeferred) {
+                    $paymentOption['duration'] = $duration;
+                    $paymentOption['key'] = $key;
+                    $paymentOption['text'] = sprintf(SettingsCustomFieldsHelper::getPaymentButtonTitleDeferredByLang($idLang), $duration);
+                    $paymentOption['desc'] = sprintf(SettingsCustomFieldsHelper::getPaymentButtonDescriptionDeferredByLang($idLang), $duration);
+                }
+                if ($isPayNow) {
+                    $paymentOption['text'] = SettingsCustomFieldsHelper::getPayNowButtonTitleByLang($idLang);
+                    $paymentOption['desc'] = SettingsCustomFieldsHelper::getPayNowButtonDescriptionByLang($idLang);
+                }
+                $paymentOptions[$key] = $paymentOption;
+                $sortOptions[$key] = $feePlans->$key->order;
             }
-            if ($isDeferred) {
-                $paymentOption['duration'] = $duration;
-                $paymentOption['key'] = $key;
-                $paymentOption['text'] = sprintf(SettingsCustomFieldsHelper::getPaymentButtonTitleDeferredByLang($idLang), $duration);
-                $paymentOption['desc'] = sprintf(SettingsCustomFieldsHelper::getPaymentButtonDescriptionDeferredByLang($idLang), $duration);
+
+            asort($sortOptions);
+            $payment = [];
+            foreach (array_keys($sortOptions) as $key) {
+                $payment[] = $paymentOptions[$key];
             }
-            if ($isPayNow) {
-                $paymentOption['text'] = SettingsCustomFieldsHelper::getPayNowButtonTitleByLang($idLang);
-                $paymentOption['desc'] = SettingsCustomFieldsHelper::getPayNowButtonDescriptionByLang($idLang);
-            }
-            $paymentOptions[$key] = $paymentOption;
-            $sortOptions[$key] = $feePlans->$key->order;
+
+            return $this->displayAlmaPaymentOption($payment);
+        } catch (\Exception $e) {
+            Logger::instance()->error('[Alma] DisplayPaymentHookController Error: ' . $e->getMessage());
+
+            return '';
         }
-
-        asort($sortOptions);
-        $payment = [];
-        foreach (array_keys($sortOptions) as $key) {
-            $payment[] = $paymentOptions[$key];
-        }
-
-        return $this->displayAlmaPaymentOption($payment);
     }
 
     /**
-     * Text of one liner installment.
+     * Text of one-liner installment.
      *
      * @param array $plans
      * @param int $idLang
+     * @param $isDeferredTriggerLimitDays
+     * @param $isPayNow
      *
-     * @return string text one liner option
+     * @return string text one-liner option
+     *
+     * @throws LocalizationException
      */
     private function getInstallmentText($plans, $idLang, $isDeferredTriggerLimitDays, $isPayNow)
     {

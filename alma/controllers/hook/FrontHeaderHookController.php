@@ -31,6 +31,7 @@ if (!defined('_PS_VERSION_')) {
 use Alma\PrestaShop\Helpers\ConstantsHelper;
 use Alma\PrestaShop\Helpers\SettingsHelper;
 use Alma\PrestaShop\Hooks\FrontendHookController;
+use Alma\PrestaShop\Logger;
 
 class FrontHeaderHookController extends FrontendHookController
 {
@@ -61,20 +62,26 @@ class FrontHeaderHookController extends FrontendHookController
      */
     public function run($params)
     {
-        $controllerName = $this->currentControllerName();
-        $handler = [$this, "handle{$controllerName}Page"];
+        try {
+            $controllerName = $this->currentControllerName();
+            $handler = [$this, "handle{$controllerName}Page"];
 
-        $content = $this->assetsWidgets();
+            $content = $this->assetsWidgets();
 
-        if (SettingsHelper::isInPageEnabled()) {
-            $content .= $this->assetsInPage();
+            if (SettingsHelper::isInPageEnabled()) {
+                $content .= $this->assetsInPage();
+            }
+
+            if (is_callable($handler)) {
+                return $content . call_user_func_array($handler, [$params]);
+            }
+
+            return $content;
+        } catch (\Exception $e) {
+            Logger::instance()->error("[Alma] FrontHeaderHookController Error: {$e->getMessage()}");
+
+            return '';
         }
-
-        if (is_callable($handler)) {
-            return $content . call_user_func_array($handler, [$params]);
-        }
-
-        return $content;
     }
 
     /**

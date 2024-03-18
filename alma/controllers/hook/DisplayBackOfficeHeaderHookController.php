@@ -53,26 +53,27 @@ class DisplayBackOfficeHeaderHookController extends FrontendHookController
      * @param array $params
      *
      * @return void
-     *
-     * @throws \PrestaShopDatabaseException
-     * @throws \PrestaShopException
      */
     public function run($params)
     {
-        $this->context->controller->setMedia();
-        $this->context->controller->addCSS($this->module->_path . 'views/css/admin/_configure/helpers/form/form.css', 'all');
-        $this->context->controller->addCSS($this->module->_path . 'views/css/admin/almaPage.css', 'all');
-        $this->context->controller->addJS($this->module->_path . 'views/js/admin/alma.js');
+        try {
+            $this->context->controller->setMedia();
+            $this->context->controller->addCSS($this->module->_path . 'views/css/admin/_configure/helpers/form/form.css', 'all');
+            $this->context->controller->addCSS($this->module->_path . 'views/css/admin/almaPage.css', 'all');
+            $this->context->controller->addJS($this->module->_path . 'views/js/admin/alma.js');
 
-        $date = new \DateTime();
-        $timestamp = $date->getTimestamp();
+            $date = new \DateTime();
+            $timestamp = $date->getTimestamp();
 
-        if (!DateHelper::isSameDay($timestamp, \Configuration::get('ALMA_SOC_CRON_TASK'))) {
-            Logger::instance()->info('Pseudo Cron Task exec to ' . $timestamp);
-            $orderHelper = new OrderHelper();
-            $shareOfCheckoutHelper = new ShareOfCheckoutHelper($orderHelper);
-            $shareOfCheckoutHelper->shareDays();
-            SettingsHelper::updateValue('ALMA_SOC_CRON_TASK', $timestamp);
+            if (!DateHelper::isSameDay($timestamp, \Configuration::get('ALMA_SOC_CRON_TASK'))) {
+                Logger::instance()->info('Pseudo Cron Task exec to ' . $timestamp);
+                $orderHelper = new OrderHelper();
+                $shareOfCheckoutHelper = new ShareOfCheckoutHelper($orderHelper);
+                $shareOfCheckoutHelper->shareDays();
+                SettingsHelper::updateValue('ALMA_SOC_CRON_TASK', $timestamp);
+            }
+        } catch (\Exception $e) {
+            Logger::instance()->error('[Alma] Error in DisplayBackOfficeHeaderHookController: ' . $e->getMessage());
         }
     }
 }
