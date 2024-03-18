@@ -55,12 +55,18 @@ class AdminAlmaInsuranceOrdersDetailsController extends ModuleAdminController
      */
     protected $adminInsuranceHelper;
 
+    /**
+     * @var PriceHelper
+     */
+    protected $priceHelper;
+
     public function __construct()
     {
         $this->bootstrap = true;
         $this->insuranceRepository = new AlmaInsuranceProductRepository();
         $this->productHelper = new ProductHelper();
         $this->adminInsuranceHelper = new InsuranceHelper($this->module);
+        $this->priceHelper = new PriceHelper();
 
         parent::__construct();
     }
@@ -160,7 +166,7 @@ class AdminAlmaInsuranceOrdersDetailsController extends ModuleAdminController
             $dataSubscriptions['status'] = $subscription['subscription_state'];
             $dataSubscriptions['productPrice'] = $subscription['product_price'];
             $dataSubscriptions['subscriptionAmount'] = PriceHelper::convertPriceFromCents(
-                PriceHelper::convertPriceToCents($subscription['price'])
+                $this->priceHelper->convertPriceToCents($subscription['price'])
             );
             $dataSubscriptions['isRefunded'] = $subscription['is_refunded'];
             $dataSubscriptions['reasonForCancelation'] = $subscription['reason_of_cancelation'];

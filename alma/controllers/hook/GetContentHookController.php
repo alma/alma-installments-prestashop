@@ -76,6 +76,11 @@ final class GetContentHookController extends AdminHookController
     protected $settingsHelper;
 
     /**
+     * @var PriceHelper
+     */
+    protected $priceHelper;
+
+    /**
      * @var array
      */
     const KEY_CONFIG = [
@@ -138,6 +143,7 @@ final class GetContentHookController extends AdminHookController
         $this->apiHelper = new ApiHelper($module);
         $this->apiKeyHelper = new ApiKeyHelper();
         $this->settingsHelper = new SettingsHelper(new ShopHelper(), new ConfigurationHelper());
+        $this->priceHelper = new PriceHelper();
 
         parent::__construct($module);
     }
@@ -238,7 +244,7 @@ final class GetContentHookController extends AdminHookController
                     3 == $n
                     && !$this->settingsHelper->isDeferred($feePlan)
                 ) {
-                    $key = SettingsHelper::keyForFeePlan($feePlan);
+                    $key = $this->settingsHelper->keyForFeePlan($feePlan);
                     $almaPlans = [];
                     $almaPlans[$key]['enabled'] = 1;
                     $almaPlans[$key]['min'] = $feePlan->min_purchase_amount;
@@ -271,14 +277,14 @@ final class GetContentHookController extends AdminHookController
                     $n = $feePlan->installments_count;
                     $deferred_days = $feePlan->deferred_days;
                     $deferred_months = $feePlan->deferred_months;
-                    $key = SettingsHelper::keyForFeePlan($feePlan);
+                    $key = $this->settingsHelper->keyForFeePlan($feePlan);
 
                     if (1 != $n && $this->settingsHelper->isDeferred($feePlan)) {
                         continue;
                     }
 
-                    $min = PriceHelper::convertPriceToCents((int) \Tools::getValue("ALMA_{$key}_MIN_AMOUNT"));
-                    $max = PriceHelper::convertPriceToCents((int) \Tools::getValue("ALMA_{$key}_MAX_AMOUNT"));
+                    $min = $this->priceHelper->convertPriceToCents((int) \Tools::getValue("ALMA_{$key}_MIN_AMOUNT"));
+                    $max = $this->priceHelper->convertPriceToCents((int) \Tools::getValue("ALMA_{$key}_MAX_AMOUNT"));
 
                     $enablePlan = (bool) \Tools::getValue("ALMA_{$key}_ENABLED_ON");
 
@@ -324,7 +330,7 @@ final class GetContentHookController extends AdminHookController
 
                 foreach ($feePlans as $feePlan) {
                     $n = $feePlan->installments_count;
-                    $key = SettingsHelper::keyForFeePlan($feePlan);
+                    $key = $this->settingsHelper->keyForFeePlan($feePlan);
 
                     if (1 != $n && $this->settingsHelper->isDeferred($feePlan)) {
                         continue;
@@ -355,8 +361,8 @@ final class GetContentHookController extends AdminHookController
                     } else {
                         $enablePlan = (bool) \Tools::getValue("ALMA_{$key}_ENABLED_ON");
                         $almaPlans[$key]['enabled'] = $enablePlan ? '1' : '0';
-                        $almaPlans[$key]['min'] = PriceHelper::convertPriceToCents($min);
-                        $almaPlans[$key]['max'] = PriceHelper::convertPriceToCents($max);
+                        $almaPlans[$key]['min'] = $this->priceHelper->convertPriceToCents($min);
+                        $almaPlans[$key]['max'] = $this->priceHelper->convertPriceToCents($max);
                         $almaPlans[$key]['deferred_trigger_limit_days'] = $feePlan->deferred_trigger_limit_days;
                         $almaPlans[$key]['order'] = (int) \Tools::getValue("ALMA_{$key}_SORT_ORDER");
                     }
@@ -532,7 +538,7 @@ final class GetContentHookController extends AdminHookController
         if ($merchant) {
             $sortOrder = 1;
             foreach ($feePlans as $feePlan) {
-                $key = SettingsHelper::keyForFeePlan($feePlan);
+                $key = $this->settingsHelper->keyForFeePlan($feePlan);
 
                 $helper->fields_value["ALMA_{$key}_ENABLED_ON"] = isset($installmentsPlans->$key->enabled)
                     ? $installmentsPlans->$key->enabled

@@ -57,6 +57,11 @@ class PaymentValidation
     protected $toolsHelper;
 
     /**
+     * @var PriceHelper
+     */
+    protected $priceHelper;
+
+    /**
      * @param $context
      * @param $module
      */
@@ -66,6 +71,7 @@ class PaymentValidation
         $this->module = $module;
         $this->settingsHelper = new SettingsHelper(new ShopHelper(), new ConfigurationHelper());
         $this->toolsHelper = new ToolsHelper();
+        $this->priceHelper = new PriceHelper();
     }
 
     /**
@@ -171,7 +177,7 @@ class PaymentValidation
                 );
             }
 
-            if (abs($payment->purchase_amount - PriceHelper::convertPriceToCents($cartTotals)) > 2) {
+            if (abs($payment->purchase_amount - $this->priceHelper->convertPriceToCents($cartTotals)) > 2) {
                 $reason = Payment::FRAUD_AMOUNT_MISMATCH;
                 $reason .= ' - ' . $cartTotals . ' * 100 vs ' . $payment->purchase_amount;
 

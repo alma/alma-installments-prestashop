@@ -743,13 +743,13 @@ class SettingsHelper
     }
 
     /**
-     * @param Alma\API\Entities\FeePlan $plan
+     * @param \Alma\API\Entities\FeePlan $plan
      *
      * @return string
      */
-    public static function keyForFeePlan($plan)
+    public function keyForFeePlan($plan)
     {
-        return static::key(
+        return $this->key(
             $plan->kind,
             (int) $plan->installments_count,
             (int) $plan->deferred_days,
@@ -758,13 +758,13 @@ class SettingsHelper
     }
 
     /**
-     * @param Alma\API\Entities\FeePlan $plan
+     * @param \Alma\API\Entities\FeePlan $plan
      *
      * @return string
      */
-    public static function keyForInstallmentPlan($plan)
+    public function keyForInstallmentPlan($plan)
     {
-        return static::key(
+        return $this->key(
             'general',
             (int) $plan->installmentsCount,
             (int) $plan->deferredDays,
@@ -780,7 +780,7 @@ class SettingsHelper
      *
      * @return string
      */
-    private static function key(
+    public function key(
         $planKind,
         $installmentsCount,
         $deferredDays,

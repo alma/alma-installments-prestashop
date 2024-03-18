@@ -61,6 +61,11 @@ class DisplayProductActionsHookController extends FrontendHookController
     protected $cartHelper;
 
     /**
+     * @var PriceHelper
+     */
+    protected $priceHelper;
+
+    /**
      * @param $module
      */
     public function __construct($module)
@@ -69,6 +74,7 @@ class DisplayProductActionsHookController extends FrontendHookController
         $this->adminInsuranceHelper = new AdminInsuranceHelper($module);
         $this->productHelper = new ProductHelper();
         $this->cartHelper = new CartHelper();
+        $this->priceHelper = new PriceHelper();
 
         parent::__construct($module);
     }
@@ -105,7 +111,7 @@ class DisplayProductActionsHookController extends FrontendHookController
         $cmsReference = $productId . '-' . $productAttributeId;
 
         $regularPrice = $this->productHelper->getRegularPrice($productId, $productAttributeId);
-        $regularPriceInCents = PriceHelper::convertPriceToCents($regularPrice);
+        $regularPriceInCents = $this->priceHelper->convertPriceToCents($regularPrice);
 
         $merchantId = SettingsHelper::getMerchantId();
         $settings = $this->handleSettings($merchantId);

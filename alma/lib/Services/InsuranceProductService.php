@@ -92,6 +92,11 @@ class InsuranceProductService
      */
     protected $insuranceApiService;
 
+    /**
+     * @var PriceHelper
+     */
+    protected $priceHelper;
+
     public function __construct()
     {
         $this->context = \Context::getContext();
@@ -105,6 +110,7 @@ class InsuranceProductService
         $this->alma = ClientHelper::defaultInstance();
         $this->productHelper = new ProductHelper();
         $this->insuranceApiService = new InsuranceApiService();
+        $this->priceHelper = new PriceHelper();
     }
 
     /**
@@ -142,7 +148,7 @@ class InsuranceProductService
                 $idCustomization,
                 $idProductToAssociate,
                 $idProductAttributeToAssocation,
-                PriceHelper::convertPriceToCents($price),
+                $this->priceHelper->convertPriceToCents($price),
                 $idAddressDelivery,
                 $insuranceContractInfos
             );
@@ -244,7 +250,7 @@ class InsuranceProductService
                 $idProductAttribute
             );
             $regularPrice = $this->productHelper->getRegularPrice($idProduct, $idProductAttribute);
-            $regularPriceInCents = PriceHelper::convertPriceToCents($regularPrice);
+            $regularPriceInCents = $this->priceHelper->convertPriceToCents($regularPrice);
 
             $insuranceContract = $this->insuranceApiService->getInsuranceContract($insuranceContractId, $cmsReference, $regularPriceInCents);
 

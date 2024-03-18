@@ -40,15 +40,21 @@ class EligibilityHelper
      */
     protected $paymentData;
 
+    /**
+     * @var PriceHelper
+     */
+    protected $priceHelper;
+
     public function __construct()
     {
         $this->paymentData = new PaymentData();
+        $this->priceHelper = new PriceHelper();
     }
 
     public function eligibilityCheck($context)
     {
         $almaEligibilities = [];
-        $purchaseAmount = PriceHelper::convertPriceToCents($context->cart->getOrderTotal(true, \Cart::BOTH));
+        $purchaseAmount = $this->priceHelper->convertPriceToCents($context->cart->getOrderTotal(true, \Cart::BOTH));
         $alma = self::checkClientInstance();
         $feePlans = self::checkFeePlans();
         $eligibilities = self::getNotEligibleFeePlans($feePlans, $purchaseAmount);
