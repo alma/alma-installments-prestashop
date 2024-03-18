@@ -66,9 +66,9 @@ class PaymentOptionsHookController extends FrontendHookController
      */
     protected $eligibilityHelper;
 
-    public function __construct()
+    public function __construct($module)
     {
-        parent::__construct();
+        parent::__construct($module);
 
         $this->settingsHelper = new SettingsHelper(new ShopHelper(), new ConfigurationHelper());
         $this->localeHelper = new LocaleHelper(new LanguageHelper());
@@ -145,7 +145,7 @@ class PaymentOptionsHookController extends FrontendHookController
                 if ($isPayNow) {
                     $plans[$keyPlan]['human_date'] = $this->module->l('Total', 'PaymentOptionsHookController');
                 }
-                if (SettingsHelper::isDeferredTriggerLimitDays($feePlans, $key)) {
+                if ($this->settingsHelper->isDeferredTriggerLimitDays($feePlans, $key)) {
                     $plans[$keyPlan]['human_date'] = sprintf(
                         $this->module->l('%s month later', 'PaymentOptionsHookController'),
                         $keyPlan
