@@ -151,7 +151,12 @@ class DisplayPaymentHookController extends FrontendHookController
                 'deferredMonths' => $plan->deferredMonths,
                 'logo' => $logo,
                 'plans' => $plans,
-                'installmentText' => $this->getInstallmentText($plans, $idLang, SettingsHelper::isDeferredTriggerLimitDays($feePlans, $key), $isPayNow),
+                'installmentText' => $this->getInstallmentText(
+                    $plans,
+                    $idLang,
+                    $this->settingsHelper->isDeferredTriggerLimitDays($feePlans, $key),
+                    $isPayNow
+                ),
                 'deferred_trigger_limit_days' => $feePlans->$key->deferred_trigger_limit_days,
                 'isDeferred' => $isDeferred,
                 'text' => sprintf(SettingsCustomFieldsHelper::getPnxButtonTitleByLang($idLang), $installment),
