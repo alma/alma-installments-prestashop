@@ -58,9 +58,6 @@ class SettingsHelper
      */
     protected $configurationHelper;
 
-    /**
-     *
-     */
     public function __construct($shopHelper, $configurationHelper)
     {
         $this->shopHelper = $shopHelper;
@@ -129,7 +126,6 @@ class SettingsHelper
 
         return $value;
     }
-
 
     /**
      * Update value in config.

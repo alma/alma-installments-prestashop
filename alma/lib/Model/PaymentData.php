@@ -46,7 +46,6 @@ class PaymentData
 {
     const PAYMENT_METHOD = 'alma';
 
-
     /**
      * @var ToolsHelper
      */

@@ -54,7 +54,7 @@ class DisplayProductPriceBlockHookController extends FrontendHookController
 
         $this->localeHelper = new LocaleHelper(new LanguageHelper());
     }
-    
+
     public function canRun()
     {
         return parent::canRun()

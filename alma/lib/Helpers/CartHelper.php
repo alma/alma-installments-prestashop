@@ -46,7 +46,6 @@ class CartHelper
      */
     protected $toolsHelper;
 
-
     public function __construct($context)
     {
         $this->context = $context;

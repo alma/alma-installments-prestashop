@@ -32,7 +32,6 @@ use PHPUnit\Framework\TestCase;
 
 class SettingsHelperTest extends TestCase
 {
-
     /**
      * @var SettingsHelper
      */
@@ -53,7 +52,7 @@ class SettingsHelperTest extends TestCase
         $plan = new FeePlan(
             [
                 'deferred_days' => 15,
-                'deferred_months' => 0
+                'deferred_months' => 0,
             ]
         );
 
@@ -64,7 +63,7 @@ class SettingsHelperTest extends TestCase
         $plan = new FeePlan(
             [
                 'deferred_days' => 15,
-                'deferred_months' => 2
+                'deferred_months' => 2,
             ]
         );
 
@@ -81,7 +80,7 @@ class SettingsHelperTest extends TestCase
         $plan = new FeePlan(
             [
                 'deferredDays' => 0,
-                'deferredMonths' => 1
+                'deferredMonths' => 1,
             ]
         );
 
@@ -92,7 +91,7 @@ class SettingsHelperTest extends TestCase
         $plan = new FeePlan(
             [
                 'deferredDays' => 15,
-                'deferredMonths' => 1
+                'deferredMonths' => 1,
             ]
         );
 
@@ -106,7 +105,7 @@ class SettingsHelperTest extends TestCase
         $plan = new FeePlan(
             [
                 'deferred_days' => 15,
-                'deferred_months' => 1
+                'deferred_months' => 1,
             ]
         );
 
@@ -117,7 +116,7 @@ class SettingsHelperTest extends TestCase
         $plan = new FeePlan(
             [
                 'deferred_days' => 0,
-                'deferred_months' => 1
+                'deferred_months' => 1,
             ]
         );
 
@@ -128,7 +127,7 @@ class SettingsHelperTest extends TestCase
         $plan = new FeePlan(
             [
                 'deferred_days' => 15,
-                'deferred_months' => 0
+                'deferred_months' => 0,
             ]
         );
 
@@ -139,7 +138,7 @@ class SettingsHelperTest extends TestCase
         $plan = new FeePlan(
             [
                 'deferred_days' => 0,
-                'deferred_months' => 0
+                'deferred_months' => 0,
             ]
         );
 
@@ -153,7 +152,7 @@ class SettingsHelperTest extends TestCase
         $plan = new FeePlan(
             [
                 'deferredDays' => 15,
-                'deferredMonths' => 1
+                'deferredMonths' => 1,
             ]
         );
 
@@ -164,7 +163,7 @@ class SettingsHelperTest extends TestCase
         $plan = new FeePlan(
             [
                 'deferredDays' => 0,
-                'deferredMonths' => 1
+                'deferredMonths' => 1,
             ]
         );
 
@@ -175,7 +174,7 @@ class SettingsHelperTest extends TestCase
         $plan = new FeePlan(
             [
                 'deferredDays' => 15,
-                'deferredMonths' => 0
+                'deferredMonths' => 0,
             ]
         );
 
@@ -186,7 +185,7 @@ class SettingsHelperTest extends TestCase
         $plan = new FeePlan(
             [
                 'deferredDays' => 0,
-                'deferredMonths' => 0
+                'deferredMonths' => 0,
             ]
         );
 
@@ -287,13 +286,13 @@ class SettingsHelperTest extends TestCase
         $this->assertTrue($settingsHelperMock->isDeferredTriggerLimitDays(
             [
                 'deferred_trigger_limit_days' => 1,
-                'test' => 1
+                'test' => 1,
             ]
         ));
         $this->assertFalse($settingsHelperMock->isDeferredTriggerLimitDays(
             [
                 'deferred_trigger_limit_days' => 0,
-                'test' => 0
+                'test' => 0,
             ]
         ));
         $this->assertFalse($settingsHelperMock->isDeferredTriggerLimitDays(['test' => 1]));
@@ -320,13 +319,13 @@ class SettingsHelperTest extends TestCase
         $this->assertFalse($settingsHelperMock->isDeferredTriggerLimitDays(
             [
                 'deferred_trigger_limit_days' => 1,
-                'test' => 1
+                'test' => 1,
             ]
         ));
         $this->assertFalse($settingsHelperMock->isDeferredTriggerLimitDays(
             [
                 'deferred_trigger_limit_days' => 0,
-                'test' => 0
+                'test' => 0,
             ]
         ));
         $this->assertFalse($settingsHelperMock->isDeferredTriggerLimitDays(['test' => 1]));
