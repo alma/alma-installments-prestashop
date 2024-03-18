@@ -49,6 +49,25 @@ use Alma\PrestaShop\Forms\ShareOfCheckoutAdminFormBuilder;
 class SettingsHelper
 {
     /**
+     * @var ShopHelper
+     */
+    protected $shopHelper;
+
+    /**
+     * @var ConfigurationHelper
+     */
+    protected $configurationHelper;
+
+    /**
+     *
+     */
+    public function __construct($shopHelper, $configurationHelper)
+    {
+        $this->shopHelper = $shopHelper;
+        $this->configurationHelper = $configurationHelper;
+    }
+
+    /**
      * Translate strings.
      *
      * @param string $str
@@ -66,6 +85,8 @@ class SettingsHelper
      * @param string $configKey
      * @param string $default
      *
+     * @deprecated use getKey()
+     *
      * @return false|mixed|string|null
      */
     public static function get($configKey, $default = null)
@@ -82,6 +103,33 @@ class SettingsHelper
 
         return $value;
     }
+
+    /**
+     * Get value from key in config.
+     *
+     * @param string $configKey
+     * @param string $default
+     *
+     * @return false|mixed|string|null
+     */
+    public function getKey($configKey, $default = null)
+    {
+        $idShop = $this->shopHelper->getContextShopID(true);
+        $idShopGroup = $this->shopHelper->getContextShopGroupID(true);
+
+        $value = $this->configurationHelper->get($configKey, null, $idShopGroup, $idShop, $default);
+
+        // Configuration::get in PrestaShop 1.5 doesn't have a default argument, so we handle it here
+        if (
+            !$value
+            && !$this->configurationHelper->hasKey($configKey, null, $idShopGroup, $idShop)
+        ) {
+            $value = $default;
+        }
+
+        return $value;
+    }
+
 
     /**
      * Update value in config.
@@ -466,9 +514,9 @@ class SettingsHelper
     /**
      * @return bool
      */
-    public static function isPaymentTriggerEnabledByState()
+    public function isPaymentTriggerEnabledByState()
     {
-        return (bool) static::get('ALMA_PAYMENT_ON_TRIGGERING_ENABLED', 0);
+        return (bool) $this->getKey('ALMA_PAYMENT_ON_TRIGGERING_ENABLED', 0);
     }
 
     /**
@@ -759,12 +807,12 @@ class SettingsHelper
     /**
      * Check if is deferred trigger by value in fee plans and enabled in config.
      *
-     * @param object $feePlans
+     * @param object|array $feePlans
      * @param string|null $key
      *
      * @return bool
      */
-    public static function isDeferredTriggerLimitDays($feePlans, $key = null)
+    public function isDeferredTriggerLimitDays($feePlans, $key = null)
     {
         if (!empty($key)) {
             $isDeferredTriggerLimitDay = !empty($feePlans->$key->deferred_trigger_limit_days);
@@ -772,7 +820,7 @@ class SettingsHelper
             $isDeferredTriggerLimitDay = !empty($feePlans['deferred_trigger_limit_days']);
         }
 
-        return $isDeferredTriggerLimitDay && SettingsHelper::isPaymentTriggerEnabledByState();
+        return $isDeferredTriggerLimitDay && $this->isPaymentTriggerEnabledByState();
     }
 
     /**
