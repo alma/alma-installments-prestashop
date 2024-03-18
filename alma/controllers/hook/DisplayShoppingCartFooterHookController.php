@@ -50,6 +50,11 @@ class DisplayShoppingCartFooterHookController extends FrontendHookController
     protected $eligibilityHelper;
 
     /**
+     * @var PriceHelper
+     */
+    protected $priceHelper;
+
+    /**
      * HookController constructor.
      *
      * @param $module Alma
@@ -60,6 +65,7 @@ class DisplayShoppingCartFooterHookController extends FrontendHookController
 
         $this->localeHelper = new LocaleHelper(new LanguageHelper());
         $this->eligibilityHelper = new EligibilityHelper();
+        $this->priceHelper = new PriceHelper();
     }
 
     public function canRun()
@@ -80,7 +86,7 @@ class DisplayShoppingCartFooterHookController extends FrontendHookController
         }
 
         $cart = $this->context->cart;
-        $cartTotal = PriceHelper::convertPriceToCents((float) $cart->getOrderTotal(true, \Cart::BOTH));
+        $cartTotal = $this->priceHelper->convertPriceToCents((float) $cart->getOrderTotal(true, \Cart::BOTH));
 
         $isEligible = true;
         if (!SettingsHelper::showCartWidgetIfNotEligible()) {

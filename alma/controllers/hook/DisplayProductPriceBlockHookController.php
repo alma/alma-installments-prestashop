@@ -44,6 +44,10 @@ class DisplayProductPriceBlockHookController extends FrontendHookController
     protected $localeHelper;
 
     /**
+     * @var PriceHelper
+     */
+    protected $priceHelper;
+    /**
      * HookController constructor.
      *
      * @param $module Alma
@@ -53,6 +57,7 @@ class DisplayProductPriceBlockHookController extends FrontendHookController
         parent::__construct($module);
 
         $this->localeHelper = new LocaleHelper(new LanguageHelper());
+        $this->priceHelper = new PriceHelper();
     }
     
     public function canRun()
@@ -82,7 +87,7 @@ class DisplayProductPriceBlockHookController extends FrontendHookController
         /* @var \Product $product */
         if (isset($params['product']) && $params['product'] instanceof \Product) {
             $product = $params['product'];
-            $price = PriceHelper::convertPriceToCents($product->getPrice(true));
+            $price = $this->priceHelper->convertPriceToCents($product->getPrice(true));
             $productId = $product->id;
 
             // Since we don't have access to the combination ID nor the wanted quantity, we should reload things from
@@ -112,7 +117,7 @@ class DisplayProductPriceBlockHookController extends FrontendHookController
                 $quantity = 1;
             }
 
-            $price = PriceHelper::convertPriceToCents(
+            $price = $this->priceHelper->convertPriceToCents(
                 \Product::getPriceStatic(
                     $productId,
                     true,

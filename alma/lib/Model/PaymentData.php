@@ -57,10 +57,28 @@ class PaymentData
      */
     protected $settingsHelper;
 
+    /**
+     * @var PriceHelper
+     */
+    protected $priceHelper;
+
+    /**
+     * @var CartData
+     */
+    protected $cartData;
+
+    /**
+     * @var ShippingData
+     */
+    protected $shippingData;
+
     public function __construct()
     {
         $this->toolsHelper = new ToolsHelper();
         $this->settingsHelper = new SettingsHelper(new ShopHelper(), new ConfigurationHelper());
+        $this->priceHelper = new PriceHelper();
+        $this->cartData = new CartData();
+        $this->shippingData = new ShippingData();
     }
 
     /**
@@ -115,7 +133,7 @@ class PaymentData
             $queries = [];
             foreach ($feePlans as $plan) {
                 $queries[] = [
-                    'purchase_amount' => PriceHelper::convertPriceToCents($purchaseAmount),
+                    'purchase_amount' =>$this->priceHelper->convertPriceToCents($purchaseAmount),
                     'installments_count' => $plan['installmentsCount'],
                     'deferred_days' => $plan['deferredDays'],
                     'deferred_months' => $plan['deferredMonths'],
@@ -123,7 +141,7 @@ class PaymentData
             }
 
             return [
-                'purchase_amount' => PriceHelper::convertPriceToCents($purchaseAmount),
+                'purchase_amount' => $this->priceHelper->convertPriceToCents($purchaseAmount),
                 'queries' => $queries,
                 'shipping_address' => [
                     'country' => $countryShippingAddress,
@@ -198,12 +216,12 @@ class PaymentData
         }
 
         $dataPayment = [
-            'website_customer_details' => self::buildWebsiteCustomerDetails($context, $customer, $cart, $purchaseAmount),
+            'website_customer_details' => $this->buildWebsiteCustomerDetails($context, $customer, $cart, $purchaseAmount),
             'payment' => [
                 'installments_count' => $feePlans['installmentsCount'],
                 'deferred_days' => $feePlans['deferredDays'],
                 'deferred_months' => $feePlans['deferredMonths'],
-                'purchase_amount' => PriceHelper::convertPriceToCents($purchaseAmount),
+                'purchase_amount' => $this->priceHelper->convertPriceToCents($purchaseAmount),
                 'customer_cancel_url' => $context->link->getPageLink('order&step=3'),
                 'return_url' => $context->link->getModuleLink('alma', 'validation'),
                 'ipn_callback_url' => $context->link->getModuleLink('alma', 'ipn'),
@@ -215,7 +233,7 @@ class PaymentData
                     'county_sublocality' => null,
                     'state_province' => $idStateShipping > 0 ? \State::getNameById((int) $idStateShipping) : '',
                 ],
-                'shipping_info' => ShippingData::shippingInfo($cart),
+                'shipping_info' => $this->shippingData->shippingInfo($cart),
                 'billing_address' => [
                     'line1' => $billingAddress->address1,
                     'postal_code' => $billingAddress->postcode,
@@ -244,7 +262,7 @@ class PaymentData
         }
 
         if ($feePlans['installmentsCount'] > 4) {
-            $dataPayment['payment']['cart'] = CartData::cartInfo($cart);
+            $dataPayment['payment']['cart'] = $this->cartInfo($cart);
         }
 
         if (static::isInPage($dataPayment)) {
@@ -311,7 +329,7 @@ class PaymentData
         return true;
     }
 
-    private static function buildWebsiteCustomerDetails($context, $customer, $cart, $purchaseAmount)
+    private function buildWebsiteCustomerDetails($context, $customer, $cart, $purchaseAmount)
     {
         $carrierHelper = new CarrierHelper($context);
         $cartHelper = new CartHelper($context);
@@ -323,11 +341,11 @@ class PaymentData
             'is_guest' => (bool) $customer->is_guest,
             'created' => strtotime($customer->date_add),
             'current_order' => [
-                'purchase_amount' => PriceHelper::convertPriceToCents($purchaseAmount),
+                'purchase_amount' => $this->priceHelper->convertPriceToCents($purchaseAmount),
                 'created' => strtotime($cart->date_add),
                 'payment_method' => PaymentData::PAYMENT_METHOD,
                 'shipping_method' => $carrierHelper->getParentCarrierNameById($cart->id_carrier),
-                'items' => CartData::getCartItems($cart, $productHelper, $productRepository),
+                'items' => $this->cartData->getCartItems($cart, $productHelper, $productRepository),
             ],
             'previous_orders' => [
                 $cartHelper->previousCartOrdered($customer->id),

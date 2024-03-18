@@ -71,6 +71,11 @@ final class GetContentHookController extends AdminHookController
     protected $settingsHelper;
 
     /**
+     * @var PriceHelper
+     */
+    protected $priceHelper;
+
+    /**
      * @var array
      */
     const KEY_CONFIG = [
@@ -132,6 +137,7 @@ final class GetContentHookController extends AdminHookController
     {
         $this->apiKeyHelper = new ApiKeyHelper();
         $this->settingsHelper = new SettingsHelper(new ShopHelper(), new ConfigurationHelper());
+        $this->priceHelper = new PriceHelper();
 
         parent::__construct($module);
     }
@@ -271,8 +277,8 @@ final class GetContentHookController extends AdminHookController
                         continue;
                     }
 
-                    $min = PriceHelper::convertPriceToCents((int) \Tools::getValue("ALMA_{$key}_MIN_AMOUNT"));
-                    $max = PriceHelper::convertPriceToCents((int) \Tools::getValue("ALMA_{$key}_MAX_AMOUNT"));
+                    $min = $this->priceHelper->convertPriceToCents((int) \Tools::getValue("ALMA_{$key}_MIN_AMOUNT"));
+                    $max = $this->priceHelper->convertPriceToCents((int) \Tools::getValue("ALMA_{$key}_MAX_AMOUNT"));
 
                     $enablePlan = (bool) \Tools::getValue("ALMA_{$key}_ENABLED_ON");
 
@@ -349,8 +355,8 @@ final class GetContentHookController extends AdminHookController
                     } else {
                         $enablePlan = (bool) \Tools::getValue("ALMA_{$key}_ENABLED_ON");
                         $almaPlans[$key]['enabled'] = $enablePlan ? '1' : '0';
-                        $almaPlans[$key]['min'] = PriceHelper::convertPriceToCents($min);
-                        $almaPlans[$key]['max'] = PriceHelper::convertPriceToCents($max);
+                        $almaPlans[$key]['min'] = $this->priceHelper->convertPriceToCents($min);
+                        $almaPlans[$key]['max'] = $this->priceHelper->convertPriceToCents($max);
                         $almaPlans[$key]['deferred_trigger_limit_days'] = $feePlan->deferred_trigger_limit_days;
                         $almaPlans[$key]['order'] = (int) \Tools::getValue("ALMA_{$key}_SORT_ORDER");
                     }

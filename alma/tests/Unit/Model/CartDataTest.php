@@ -56,7 +56,9 @@ class CartDataTest extends TestCase
 
         $summaryDetailsMock = ['products' => $items, 'gift_products' => []];
         $cart->method('getSummaryDetails')->willReturn($summaryDetailsMock);
-        $returnItems = CartData::getCartItems($cart, $productHelper, $productRepository);
+
+        $cartData = new CartData();
+        $returnItems = $cartData->getCartItems($cart, $productHelper, $productRepository);
         $this->assertEquals($expected, $returnItems);
     }
 

@@ -66,6 +66,11 @@ class DisplayPaymentHookController extends FrontendHookController
     protected $eligibilityHelper;
 
     /**
+     * @var PriceHelper
+     */
+    protected $priceHelper;
+
+    /**
      * HookController constructor.
      *
      * @param $module Alma
@@ -78,6 +83,7 @@ class DisplayPaymentHookController extends FrontendHookController
         $this->localeHelper = new LocaleHelper(new LanguageHelper());
         $this->toolsHelper = new ToolsHelper();
         $this->eligibilityHelper = new EligibilityHelper();
+        $this->priceHelper = new PriceHelper();
     }
 
     /**
@@ -107,7 +113,7 @@ class DisplayPaymentHookController extends FrontendHookController
         $feePlans = json_decode(SettingsHelper::getFeePlans());
         $paymentOptions = [];
         $sortOptions = [];
-        $totalCart = (float) PriceHelper::convertPriceToCents(
+        $totalCart = (float) $this->priceHelper->convertPriceToCents(
             $this->toolsHelper->psRound((float) $this->context->cart->getOrderTotal(true, \Cart::BOTH), 2)
         );
 

@@ -53,10 +53,16 @@ class ShareOfCheckoutHelper
      */
     protected $context;
 
+    /**
+     * @var PriceHelper
+     */
+    protected $priceHelper;
+
     public function __construct($orderHelper)
     {
         $this->orderHelper = $orderHelper;
         $this->context = \Context::getContext();
+        $this->priceHelper = new PriceHelper();
     }
 
     /**
@@ -175,7 +181,7 @@ class ShareOfCheckoutHelper
             }
 
             ++$ordersByCurrency[$isoCodeCurrency][self::TOTAL_COUNT_KEY];
-            $ordersByCurrency[$isoCodeCurrency][self::TOTAL_AMOUNT_KEY] += PriceHelper::convertPriceToCents($order->total_paid_tax_incl);
+            $ordersByCurrency[$isoCodeCurrency][self::TOTAL_AMOUNT_KEY] += $this->priceHelper->convertPriceToCents($order->total_paid_tax_incl);
         }
 
         return array_values($ordersByCurrency);
@@ -203,7 +209,7 @@ class ShareOfCheckoutHelper
             }
 
             $ordersByCheckout[$paymentMethod][self::PAYMENT_METHOD_KEY] = $paymentMethod;
-            $ordersByCheckout[$paymentMethod]['orders'][$isoCodeCurrency][self::AMOUNT_KEY] += PriceHelper::convertPriceToCents($order->total_paid_tax_incl);
+            $ordersByCheckout[$paymentMethod]['orders'][$isoCodeCurrency][self::AMOUNT_KEY] += $this->priceHelper->convertPriceToCents($order->total_paid_tax_incl);
             ++$ordersByCheckout[$paymentMethod]['orders'][$isoCodeCurrency][self::COUNT_KEY];
         }
         foreach ($ordersByCheckout as $paymentKey => $paymentMethodOrders) {
