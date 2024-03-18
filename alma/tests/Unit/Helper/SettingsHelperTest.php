@@ -57,6 +57,17 @@ class SettingsHelperTest extends TestCase
         $duration = $this->settingsHelper->getDuration($plan);
 
         $this->assertEquals('15', $duration);
+
+        $plan = new FeePlan(
+            [
+                'deferred_days' => 15,
+                'deferred_months' => 2,
+            ]
+        );
+
+        $duration = $this->settingsHelper->getDuration($plan);
+
+        $this->assertEquals('75', $duration);
     }
 
     /**
@@ -74,5 +85,110 @@ class SettingsHelperTest extends TestCase
         $duration = $this->settingsHelper->getDuration($plan);
 
         $this->assertEquals('30', $duration);
+
+        $plan = new FeePlan(
+            [
+                'deferredDays' => 15,
+                'deferredMonths' => 1,
+            ]
+        );
+
+        $duration = $this->settingsHelper->getDuration($plan);
+
+        $this->assertEquals('45', $duration);
+    }
+
+    public function testIsDeferredWithUnderscore()
+    {
+        $plan = new FeePlan(
+            [
+                'deferred_days' => 15,
+                'deferred_months' => 1,
+            ]
+        );
+
+        $duration = $this->settingsHelper->isDeferred($plan);
+
+        $this->assertTrue($duration);
+
+        $plan = new FeePlan(
+            [
+                'deferred_days' => 0,
+                'deferred_months' => 1,
+            ]
+        );
+
+        $duration = $this->settingsHelper->isDeferred($plan);
+
+        $this->assertTrue($duration);
+
+        $plan = new FeePlan(
+            [
+                'deferred_days' => 15,
+                'deferred_months' => 0,
+            ]
+        );
+
+        $duration = $this->settingsHelper->isDeferred($plan);
+
+        $this->assertTrue($duration);
+
+        $plan = new FeePlan(
+            [
+                'deferred_days' => 0,
+                'deferred_months' => 0,
+            ]
+        );
+
+        $duration = $this->settingsHelper->isDeferred($plan);
+
+        $this->assertFalse($duration);
+    }
+
+    public function testIsDeferred()
+    {
+        $plan = new FeePlan(
+            [
+                'deferredDays' => 15,
+                'deferredMonths' => 1,
+            ]
+        );
+
+        $duration = $this->settingsHelper->isDeferred($plan);
+
+        $this->assertTrue($duration);
+
+        $plan = new FeePlan(
+            [
+                'deferredDays' => 0,
+                'deferredMonths' => 1,
+            ]
+        );
+
+        $duration = $this->settingsHelper->isDeferred($plan);
+
+        $this->assertTrue($duration);
+
+        $plan = new FeePlan(
+            [
+                'deferredDays' => 15,
+                'deferredMonths' => 0,
+            ]
+        );
+
+        $duration = $this->settingsHelper->isDeferred($plan);
+
+        $this->assertTrue($duration);
+
+        $plan = new FeePlan(
+            [
+                'deferredDays' => 0,
+                'deferredMonths' => 0,
+            ]
+        );
+
+        $duration = $this->settingsHelper->isDeferred($plan);
+
+        $this->assertFalse($duration);
     }
 }

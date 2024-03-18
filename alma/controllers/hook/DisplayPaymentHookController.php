@@ -36,6 +36,7 @@ use Alma\PrestaShop\Helpers\LocaleHelper;
 use Alma\PrestaShop\Helpers\PriceHelper;
 use Alma\PrestaShop\Helpers\SettingsCustomFieldsHelper;
 use Alma\PrestaShop\Helpers\SettingsHelper;
+use Alma\PrestaShop\Helpers\ToolsHelper;
 use Alma\PrestaShop\Hooks\FrontendHookController;
 use Alma\PrestaShop\Logger;
 use Alma\PrestaShop\Model\CartData;
@@ -54,6 +55,16 @@ class DisplayPaymentHookController extends FrontendHookController
     protected $settingsHelper;
 
     /**
+     * @var ToolsHelper
+     */
+    protected $toolsHelper;
+
+    /**
+     * @var EligibilityHelper
+     */
+    protected $eligibilityHelper;
+
+    /**
      * HookController constructor.
      *
      * @param $module Alma
@@ -64,6 +75,8 @@ class DisplayPaymentHookController extends FrontendHookController
 
         $this->settingsHelper = new SettingsHelper();
         $this->localeHelper = new LocaleHelper(new LanguageHelper());
+        $this->toolsHelper = new ToolsHelper();
+        $this->eligibilityHelper = new EligibilityHelper();
     }
 
     /**
@@ -85,7 +98,7 @@ class DisplayPaymentHookController extends FrontendHookController
             $idLang = $this->context->language->id;
             $locale = $this->localeHelper->getLocaleByIdLangForWidget($idLang);
 
-            $installmentPlans = EligibilityHelper::eligibilityCheck($this->context);
+            $installmentPlans = $this->eligibilityHelper->eligibilityCheck($this->context);
 
             if (empty($installmentPlans)) {
                 return;
@@ -95,7 +108,7 @@ class DisplayPaymentHookController extends FrontendHookController
             $paymentOptions = [];
             $sortOptions = [];
             $totalCart = (float) PriceHelper::convertPriceToCents(
-                \Tools::ps_round((float) $this->context->cart->getOrderTotal(true, \Cart::BOTH), 2)
+                $this->toolsHelper->psRound((float) $this->context->cart->getOrderTotal(true, \Cart::BOTH), 2)
             );
 
             foreach ($installmentPlans as $keyPlan => $plan) {
@@ -110,7 +123,7 @@ class DisplayPaymentHookController extends FrontendHookController
                     'taeg' => $plan->annualInterestRate,
                 ];
 
-                $isDeferred = SettingsHelper::isDeferred($plan);
+                $isDeferred = $this->settingsHelper->isDeferred($plan);
                 $isPayNow = ConstantsHelper::ALMA_KEY_PAYNOW === $key;
 
                 if (!$plan->isEligible) {

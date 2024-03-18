@@ -36,6 +36,7 @@ use Alma\PrestaShop\Helpers\LocaleHelper;
 use Alma\PrestaShop\Helpers\PriceHelper;
 use Alma\PrestaShop\Helpers\SettingsCustomFieldsHelper;
 use Alma\PrestaShop\Helpers\SettingsHelper;
+use Alma\PrestaShop\Helpers\ToolsHelper;
 use Alma\PrestaShop\Hooks\FrontendHookController;
 use Alma\PrestaShop\Logger;
 use Alma\PrestaShop\Model\CartData;
@@ -50,9 +51,19 @@ class PaymentOptionsHookController extends FrontendHookController
     protected $localeHelper;
 
     /**
+     * @var ToolsHelper
+     */
+    protected $toolsHelper;
+
+    /**
      * @var SettingsHelper
      */
     protected $settingsHelper;
+
+    /**
+     * @var EligibilityHelper
+     */
+    protected $eligibilityHelper;
 
     public function __construct()
     {
@@ -60,6 +71,8 @@ class PaymentOptionsHookController extends FrontendHookController
 
         $this->settingsHelper = new SettingsHelper();
         $this->localeHelper = new LocaleHelper(new LanguageHelper());
+        $this->toolsHelper = new ToolsHelper();
+        $this->eligibilityHelper = new EligibilityHelper();
     }
 
     /**
@@ -82,7 +95,7 @@ class PaymentOptionsHookController extends FrontendHookController
                 return [];
             }
 
-            $installmentPlans = EligibilityHelper::eligibilityCheck($this->context);
+            $installmentPlans = $this->eligibilityHelper->eligibilityCheck($this->context);
             $idLang = $this->context->language->id;
             $locale = $this->localeHelper->getLocaleByIdLangForWidget($idLang);
 
@@ -100,7 +113,7 @@ class PaymentOptionsHookController extends FrontendHookController
             $feePlans = json_decode(SettingsHelper::getFeePlans());
             $countIteration = 1;
             $totalCart = (float) PriceHelper::convertPriceToCents(
-                \Tools::ps_round((float) $this->context->cart->getOrderTotal(true, \Cart::BOTH), 2)
+                $this->toolsHelper->psRound((float) $this->context->cart->getOrderTotal(true, \Cart::BOTH), 2)
             );
 
             foreach ($installmentPlans as $plan) {
@@ -142,7 +155,7 @@ class PaymentOptionsHookController extends FrontendHookController
                         }
                     }
                 }
-                $isDeferred = SettingsHelper::isDeferred($plan);
+                $isDeferred = $this->settingsHelper->isDeferred($plan);
                 $duration = $this->settingsHelper->getDuration($plan);
                 $fileTemplate = 'payment_button_pnx.tpl';
                 $valueBNPL = $installment;

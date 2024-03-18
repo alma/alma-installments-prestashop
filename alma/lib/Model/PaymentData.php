@@ -32,6 +32,7 @@ use Alma\PrestaShop\Helpers\PriceHelper;
 use Alma\PrestaShop\Helpers\ProductHelper;
 use Alma\PrestaShop\Helpers\SettingsCustomFieldsHelper;
 use Alma\PrestaShop\Helpers\SettingsHelper;
+use Alma\PrestaShop\Helpers\ToolsHelper;
 use Alma\PrestaShop\Logger;
 use Alma\PrestaShop\Repositories\ProductRepository;
 
@@ -42,6 +43,16 @@ if (!defined('_PS_VERSION_')) {
 class PaymentData
 {
     const PAYMENT_METHOD = 'alma';
+
+    /**
+     * @var ToolsHelper
+     */
+    protected $toolsHelper;
+
+    public function __construct()
+    {
+        $this->toolsHelper = new ToolsHelper();
+    }
 
     /**
      * @param \Cart $cart
@@ -55,7 +66,7 @@ class PaymentData
      * @throws \PrestaShopDatabaseException
      * @throws \PrestaShopException
      */
-    public static function dataFromCart($cart, $context, $feePlans, $forPayment = false)
+    public function dataFromCart($cart, $context, $feePlans, $forPayment = false)
     {
         if (
             $forPayment
@@ -88,7 +99,7 @@ class PaymentData
         if (property_exists($context->language, 'locale')) {
             $locale = $context->language->locale;
         }
-        $purchaseAmount = (float) \Tools::ps_round((float) $cart->getOrderTotal(true, \Cart::BOTH), 2);
+        $purchaseAmount = (float) $this->toolsHelper->psRound((float) $cart->getOrderTotal(true, \Cart::BOTH), 2);
 
         /* Eligibility Endpoint V2 */
         if (!$forPayment) {
