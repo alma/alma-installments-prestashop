@@ -1,5 +1,6 @@
-{*
- * 2018-2023 Alma SAS
+<?php
+/**
+ * 2018-2023 Alma SAS.
  *
  * THE MIT LICENSE
  *
@@ -19,16 +20,51 @@
  * @author    Alma SAS <contact@getalma.eu>
  * @copyright 2018-2023 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
- *}
-<form id="alma-inpage-plan-{$keyPlan|escape:'htmlall':'UTF-8'}" class="alma-inpage"
-      data-action="{$action}"
-      data-apimode="{$apiMode|escape:'htmlall':'UTF-8'}"
-      data-merchantid="{$merchantId|escape:'htmlall':'UTF-8'}"
-      data-isinpageenabled="{$isInPageEnabled|escape:'htmlall':'UTF-8'}"
-      data-installment="{$installment|escape:'htmlall':'UTF-8'}"
-      data-deferreddays="{$deferredDays|escape:'htmlall':'UTF-8'}"
-      data-deferredmonths="{$deferredMonths|escape:'htmlall':'UTF-8'}"
-      data-purchaseamount="{$creditInfo.totalCart|escape:'htmlall':'UTF-8'}"
-      data-locale="{$locale|escape:'htmlall':'UTF-8'}">
-    <div id="alma-inpage-iframe-plan-{$keyPlan|escape:'htmlall':'UTF-8'}" class="alma-inpage-iframe"></div>
-</form>
+ */
+
+namespace Alma\PrestaShop\Tests\Unit\Helper;
+
+use Alma\PrestaShop\Helpers\LanguageHelper;
+use Alma\PrestaShop\Helpers\LocaleHelper;
+use PHPUnit\Framework\TestCase;
+
+class LocaleHelperTest extends TestCase
+{
+    /**
+     * @var LocaleHelper
+     */
+    protected $localeHelper;
+
+    public function __construct()
+    {
+        parent::__construct();
+
+        $this->localeHelper = new LocaleHelper(new LanguageHelper());
+    }
+
+
+    /**
+     * @return void
+     */
+    public function testGetLocaleByIdLangForWidgetEn()
+    {
+        $locale = $this->localeHelper->getLocaleByIdLangForWidget(1);
+
+        $this->assertEquals('en', $locale);
+    }
+
+    /**
+     * @return void
+     */
+    public function testGetLocaleByIdLangForWidgetNl()
+    {
+        $languageHelperMock = \Mockery::mock(LanguageHelper::class);
+        $languageHelperMock->shouldReceive('getIsoById')->with(2)->andReturn('nl');
+
+        $localeHelper = new LocaleHelper($languageHelperMock);
+        $locale = $localeHelper->getLocaleByIdLangForWidget(2);
+
+        $this->assertEquals('nl-NL', $locale);
+    }
+
+}

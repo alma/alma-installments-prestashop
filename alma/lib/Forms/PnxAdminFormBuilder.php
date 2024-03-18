@@ -38,6 +38,19 @@ if (!defined('_PS_VERSION_')) {
 class PnxAdminFormBuilder extends AbstractAlmaAdminFormBuilder
 {
     /**
+     * @var SettingsHelper
+     */
+    protected $settingsHelper;
+
+
+    public function __construct($module, $context, $image, $config = [])
+    {
+        parent::__construct($module, $context, $image, $config);
+
+        $this->settingsHelper = new SettingsHelper();
+    }
+
+    /**
      * @param int $duration
      *
      * @return array
@@ -118,7 +131,7 @@ class PnxAdminFormBuilder extends AbstractAlmaAdminFormBuilder
                 $this->disableFeePlan($key, $installmentsPlans);
                 continue;
             }
-            $duration = SettingsHelper::getDuration($feePlan);
+            $duration = $this->settingsHelper->getDuration($feePlan);
 
             $return = array_merge($return, $this->buildPnxForm($feePlan, $duration));
 

@@ -42,6 +42,16 @@ if (!defined('_PS_VERSION_')) {
 class LocaleHelper
 {
     /**
+     * @var LanguageHelper
+     */
+    protected $languageHelper;
+
+    public function __construct($languageHelper)
+    {
+        $this->languageHelper = $languageHelper;
+    }
+
+    /**
      * Find the current decimal separator depending on the current context.
      *
      * @return string The decimal separator used for the current context (locale)
@@ -179,9 +189,9 @@ class LocaleHelper
      *
      * @return string
      */
-    public static function localeByIdLangForWidget($idLang)
+    public function getLocaleByIdLangForWidget($idLang)
     {
-        $locale = \Language::getIsoById($idLang);
+        $locale = $this->languageHelper->getIsoById($idLang);
 
         if ('nl' == $locale) {
             $locale = 'nl-NL';

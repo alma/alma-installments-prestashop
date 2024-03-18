@@ -45,6 +45,7 @@ function onloadAlma() {
         input.addEventListener("change", function () {
             let paymentOptionId = input.getAttribute('id');
             let blockForm = document.querySelector('#pay-with-' + paymentOptionId + '-form');
+
             removeAlmaEventsFromPaymentButton();
             if (inPage !== undefined) {
                 inPage.unmount();
@@ -53,7 +54,14 @@ function onloadAlma() {
                 let formInpage = blockForm.querySelector('.alma-inpage');
                 if (this.checked && formInpage) {
                     let installment = formInpage.dataset.installment;
-                    if (installment === '1') {
+                    let deferredDays = formInpage.dataset.deferreddays;
+                    let deferredMonths = formInpage.dataset.deferredmonths;
+
+                    if (
+                        installment === '1'
+                        && deferredDays === '0'
+                        && deferredMonths === '0'
+                    ) {
                         blockForm.hidden = true;
                     }
                     let url = formInpage.dataset.action;
@@ -87,6 +95,8 @@ function onloadAlma() {
 function createAlmaIframe(form, showPayButton = false, url = '') {
     let merchantId = form.dataset.merchantid;
     let installment = form.dataset.installment;
+    let deferredDays = form.dataset.deferreddays;
+    let deferredMonths = form.dataset.deferredmonths;
     let purchaseAmount = form.dataset.purchaseamount;
     let locale = form.dataset.locale;
 
@@ -98,6 +108,8 @@ function createAlmaIframe(form, showPayButton = false, url = '') {
                 merchantId: merchantId,
                 amountInCents: purchaseAmount,
                 installmentsCount: installment,
+                deferredDays: deferredDays,
+                deferredMonths: deferredMonths,
                 locale: locale,
                 environment: form.dataset.apimode,
                 selector: selectorIframeInPage.getAttribute('id'),
@@ -115,6 +127,8 @@ function createAlmaIframe(form, showPayButton = false, url = '') {
             merchantId: merchantId,
             amountInCents: purchaseAmount,
             installmentsCount: installment,
+            deferredDays: deferredDays,
+            deferredMonths: deferredMonths,
             locale: locale,
             environment: form.dataset.apimode,
             selector: selectorIframeInPage.getAttribute('id'),

@@ -31,6 +31,7 @@ if (!defined('_PS_VERSION_')) {
 use Alma\PrestaShop\Helpers\ConstantsHelper;
 use Alma\PrestaShop\Helpers\DateHelper;
 use Alma\PrestaShop\Helpers\EligibilityHelper;
+use Alma\PrestaShop\Helpers\LanguageHelper;
 use Alma\PrestaShop\Helpers\LocaleHelper;
 use Alma\PrestaShop\Helpers\PriceHelper;
 use Alma\PrestaShop\Helpers\SettingsCustomFieldsHelper;
@@ -42,6 +43,24 @@ use PrestaShop\PrestaShop\Core\Payment\PaymentOption;
 
 class PaymentOptionsHookController extends FrontendHookController
 {
+    /**
+     * @var LocaleHelper
+     */
+    protected $localeHelper;
+
+    /**
+     * @var SettingsHelper
+     */
+    protected $settingsHelper;
+
+    public function __construct()
+    {
+        parent::__construct();
+
+        $this->settingsHelper = new SettingsHelper();
+        $this->localeHelper = new LocaleHelper(new LanguageHelper());
+    }
+
     /**
      * Payment option for Hook PaymentOption (Prestashop 1.7).
      *
@@ -63,7 +82,7 @@ class PaymentOptionsHookController extends FrontendHookController
 
         $installmentPlans = EligibilityHelper::eligibilityCheck($this->context);
         $idLang = $this->context->language->id;
-        $locale = LocaleHelper::localeByIdLangForWidget($idLang);
+        $locale = $this->localeHelper->getLocaleByIdLangForWidget($idLang);
 
         if (empty($installmentPlans)) {
             return [];
@@ -122,7 +141,7 @@ class PaymentOptionsHookController extends FrontendHookController
                 }
             }
             $isDeferred = SettingsHelper::isDeferred($plan);
-            $duration = SettingsHelper::getDuration($plan);
+            $duration = $this->settingsHelper->getDuration($plan);
             $fileTemplate = 'payment_button_pnx.tpl';
             $valueBNPL = $installment;
             $textPaymentButton = sprintf(SettingsCustomFieldsHelper::getPnxButtonTitleByLang($idLang), $installment);
@@ -137,7 +156,6 @@ class PaymentOptionsHookController extends FrontendHookController
                 $valueBNPL = $duration;
                 $textPaymentButton = sprintf(SettingsCustomFieldsHelper::getPaymentButtonTitleDeferredByLang($idLang), $duration);
                 $descPaymentButton = sprintf(SettingsCustomFieldsHelper::getPaymentButtonDescriptionDeferredByLang($idLang), $duration);
-                $isInPageEnabled = false;
             }
             if ($isPayNow) {
                 $textPaymentButton = SettingsCustomFieldsHelper::getPayNowButtonTitleByLang($idLang);
@@ -158,6 +176,7 @@ class PaymentOptionsHookController extends FrontendHookController
                 $isDeferred,
                 $valueBNPL
             );
+
             if (!$forEUComplianceModule) {
                 $templateVar = [
                     'keyPlan' => $installment . '-' . $duration,
@@ -171,6 +190,8 @@ class PaymentOptionsHookController extends FrontendHookController
                     'first' => $first,
                     'creditInfo' => $creditInfo,
                     'installment' => $installment,
+                    'deferredDays' => $plan->deferredDays,
+                    'deferredMonths' => $plan->deferredMonths,
                     'locale' => $locale,
                 ];
                 if ($isDeferred) {
