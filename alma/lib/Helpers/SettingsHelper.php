@@ -780,7 +780,7 @@ class SettingsHelper
      *
      * @return float|int
      */
-    public static function getDuration($plan)
+    public function getDuration($plan)
     {
         if (isset($plan->deferred_days)) {
             return ($plan->deferred_months * 30) + $plan->deferred_days;

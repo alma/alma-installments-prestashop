@@ -48,10 +48,16 @@ class PaymentOptionsHookController extends FrontendHookController
      */
     protected $localeHelper;
 
+    /**
+     * @var SettingsHelper
+     */
+    protected $settingsHelper;
+
     public function __construct()
     {
         parent::__construct();
 
+        $this->settingsHelper = new SettingsHelper();
         $this->localeHelper = new LocaleHelper(new LanguageHelper());
     }
 
@@ -135,7 +141,7 @@ class PaymentOptionsHookController extends FrontendHookController
                 }
             }
             $isDeferred = SettingsHelper::isDeferred($plan);
-            $duration = SettingsHelper::getDuration($plan);
+            $duration = $this->settingsHelper->getDuration($plan);
             $fileTemplate = 'payment_button_pnx.tpl';
             $valueBNPL = $installment;
             $textPaymentButton = sprintf(SettingsCustomFieldsHelper::getPnxButtonTitleByLang($idLang), $installment);
@@ -150,7 +156,6 @@ class PaymentOptionsHookController extends FrontendHookController
                 $valueBNPL = $duration;
                 $textPaymentButton = sprintf(SettingsCustomFieldsHelper::getPaymentButtonTitleDeferredByLang($idLang), $duration);
                 $descPaymentButton = sprintf(SettingsCustomFieldsHelper::getPaymentButtonDescriptionDeferredByLang($idLang), $duration);
-                $isInPageEnabled = false;
             }
             if ($isPayNow) {
                 $textPaymentButton = SettingsCustomFieldsHelper::getPayNowButtonTitleByLang($idLang);
@@ -171,6 +176,7 @@ class PaymentOptionsHookController extends FrontendHookController
                 $isDeferred,
                 $valueBNPL
             );
+
             if (!$forEUComplianceModule) {
                 $templateVar = [
                     'keyPlan' => $installment . '-' . $duration,
@@ -184,6 +190,8 @@ class PaymentOptionsHookController extends FrontendHookController
                     'first' => $first,
                     'creditInfo' => $creditInfo,
                     'installment' => $installment,
+                    'deferredDays' => $plan->deferredDays,
+                    'deferredMonths' => $plan->deferredMonths,
                     'locale' => $locale,
                 ];
                 if ($isDeferred) {
