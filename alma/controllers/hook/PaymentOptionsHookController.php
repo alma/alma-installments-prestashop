@@ -65,9 +65,9 @@ class PaymentOptionsHookController extends FrontendHookController
      */
     protected $eligibilityHelper;
 
-    public function __construct()
+    public function __construct($module)
     {
-        parent::__construct();
+        parent::__construct($module);
 
         $this->settingsHelper = new SettingsHelper();
         $this->localeHelper = new LocaleHelper(new LanguageHelper());
