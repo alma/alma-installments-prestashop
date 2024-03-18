@@ -35,8 +35,10 @@ use Alma\API\RequestError;
 use Alma\PrestaShop\Exceptions\OrderException;
 use Alma\PrestaShop\Helpers\ClientHelper;
 use Alma\PrestaShop\Helpers\InsuranceHelper;
+use Alma\PrestaShop\Helpers\ConfigurationHelper;
 use Alma\PrestaShop\Helpers\OrderHelper;
 use Alma\PrestaShop\Helpers\SettingsHelper;
+use Alma\PrestaShop\Helpers\ShopHelper;
 use Alma\PrestaShop\Hooks\AdminHookController;
 use Alma\PrestaShop\Logger;
 use Alma\PrestaShop\Services\InsuranceSubscriptionService;
@@ -57,6 +59,11 @@ final class StateHookController extends AdminHookController
     protected $insuranceSubscriptionService;
 
     /**
+     * @var SettingsHelper
+     */
+    protected $settingsHelper;
+
+    /**
      * @var InsuranceHelper
      */
     protected $insuranceHelper;
@@ -68,6 +75,7 @@ final class StateHookController extends AdminHookController
         $this->orderHelper = new OrderHelper();
         $this->insuranceSubscriptionService = new InsuranceSubscriptionService();
         $this->insuranceHelper = new InsuranceHelper();
+        $this->settingsHelper = new SettingsHelper(new ShopHelper(), new ConfigurationHelper());
     }
 
     /**
@@ -182,7 +190,7 @@ final class StateHookController extends AdminHookController
      */
     private function triggerPayment($order)
     {
-        if (SettingsHelper::isPaymentTriggerEnabledByState()) {
+        if ($this->settingsHelper->isPaymentTriggerEnabledByState()) {
             try {
                 $orderPayment = $this->orderHelper->ajaxGetOrderPayment($order);
                 $idPayment = $orderPayment->transaction_id;

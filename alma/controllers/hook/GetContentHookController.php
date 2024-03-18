@@ -45,6 +45,7 @@ use Alma\PrestaShop\Forms\ShareOfCheckoutAdminFormBuilder;
 use Alma\PrestaShop\Helpers\ApiHelper;
 use Alma\PrestaShop\Helpers\ApiKeyHelper;
 use Alma\PrestaShop\Helpers\ClientHelper;
+use Alma\PrestaShop\Helpers\ConfigurationHelper;
 use Alma\PrestaShop\Helpers\ConstantsHelper;
 use Alma\PrestaShop\Helpers\MediaHelper;
 use Alma\PrestaShop\Helpers\OrderHelper;
@@ -52,6 +53,7 @@ use Alma\PrestaShop\Helpers\PriceHelper;
 use Alma\PrestaShop\Helpers\SettingsCustomFieldsHelper;
 use Alma\PrestaShop\Helpers\SettingsHelper;
 use Alma\PrestaShop\Helpers\ShareOfCheckoutHelper;
+use Alma\PrestaShop\Helpers\ShopHelper;
 use Alma\PrestaShop\Hooks\AdminHookController;
 use Alma\PrestaShop\Logger;
 
@@ -135,7 +137,7 @@ final class GetContentHookController extends AdminHookController
     {
         $this->apiHelper = new ApiHelper($module);
         $this->apiKeyHelper = new ApiKeyHelper();
-        $this->settingsHelper = new SettingsHelper();
+        $this->settingsHelper = new SettingsHelper(new ShopHelper(), new ConfigurationHelper());
 
         parent::__construct($module);
     }
@@ -611,7 +613,7 @@ final class GetContentHookController extends AdminHookController
             $fieldsForms[] = $inpageBuilder->build();
         }
 
-        if (SettingsHelper::isPaymentTriggerEnabledByState()) {
+        if ($this->settingsHelper->isPaymentTriggerEnabledByState()) {
             $triggerBuilder = new PaymentOnTriggeringAdminFormBuilder($this->module, $this->context, $iconPath);
             $fieldsForms[] = $triggerBuilder->build();
         }
@@ -656,7 +658,7 @@ final class GetContentHookController extends AdminHookController
             'ALMA_STATE_REFUND' => SettingsHelper::getRefundState(),
             'ALMA_STATE_REFUND_ENABLED_ON' => SettingsHelper::isRefundEnabledByState(),
             'ALMA_STATE_TRIGGER' => SettingsHelper::getPaymentTriggerState(),
-            'ALMA_PAYMENT_ON_TRIGGERING_ENABLED_ON' => SettingsHelper::isPaymentTriggerEnabledByState(),
+            'ALMA_PAYMENT_ON_TRIGGERING_ENABLED_ON' => $this->settingsHelper->isPaymentTriggerEnabledByState(),
             'ALMA_DESCRIPTION_TRIGGER' => SettingsHelper::getKeyDescriptionPaymentTrigger(),
             'ALMA_NOT_ELIGIBLE_CATEGORIES' => SettingsCustomFieldsHelper::getNonEligibleCategoriesMessage(),
             'ALMA_SHOW_PRODUCT_ELIGIBILITY_ON' => SettingsHelper::showProductEligibility(),

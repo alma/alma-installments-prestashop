@@ -27,9 +27,11 @@ namespace Alma\PrestaShop\Validators;
 use Alma\API\Entities\Payment;
 use Alma\API\RequestError;
 use Alma\PrestaShop\Helpers\ClientHelper;
+use Alma\PrestaShop\Helpers\ConfigurationHelper;
 use Alma\PrestaShop\Helpers\PriceHelper;
 use Alma\PrestaShop\Helpers\RefundHelper;
 use Alma\PrestaShop\Helpers\SettingsHelper;
+use Alma\PrestaShop\Helpers\ShopHelper;
 use Alma\PrestaShop\Helpers\ToolsHelper;
 use Alma\PrestaShop\Logger;
 
@@ -62,7 +64,7 @@ class PaymentValidation
     {
         $this->context = $context;
         $this->module = $module;
-        $this->settingsHelper = new SettingsHelper();
+        $this->settingsHelper = new SettingsHelper(new ShopHelper(), new ConfigurationHelper());
         $this->toolsHelper = new ToolsHelper();
     }
 

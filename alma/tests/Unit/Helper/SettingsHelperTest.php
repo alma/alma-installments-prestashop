@@ -25,7 +25,9 @@
 namespace Alma\PrestaShop\Tests\Unit\Helper;
 
 use Alma\API\Entities\FeePlan;
+use Alma\PrestaShop\Helpers\ConfigurationHelper;
 use Alma\PrestaShop\Helpers\SettingsHelper;
+use Alma\PrestaShop\Helpers\ShopHelper;
 use PHPUnit\Framework\TestCase;
 
 class SettingsHelperTest extends TestCase
@@ -40,7 +42,7 @@ class SettingsHelperTest extends TestCase
     {
         parent::__construct();
 
-        $this->settingsHelper = new SettingsHelper();
+        $this->settingsHelper = new SettingsHelper(new ShopHelper(), new ConfigurationHelper());
     }
 
     /**
@@ -191,5 +193,156 @@ class SettingsHelperTest extends TestCase
         $duration = $this->settingsHelper->isDeferred($plan);
 
         $this->assertFalse($duration);
+    }
+
+    public function testGetKeyWithValue()
+    {
+        $key = 'TEST_KEY';
+
+        $shopHelperMock = \Mockery::mock(ShopHelper::class);
+        $shopHelperMock->shouldReceive('getContextShopID')->with(true)->andReturn(1);
+        $shopHelperMock->shouldReceive('getContextShopGroupID')->with(true)->andReturn(1);
+
+        $configurationHelperMock = \Mockery::mock(ConfigurationHelper::class);
+        $configurationHelperMock->shouldReceive('get')->with($key, null, 1, 1, null)->andReturn('valeurTest');
+        $configurationHelperMock->shouldReceive('hasKey')->with($key, null, 1, 1)->andReturn(false);
+
+        $localeHelper = new SettingsHelper($shopHelperMock, $configurationHelperMock);
+        $result = $localeHelper->getKey($key);
+
+        $this->assertEquals('valeurTest', $result);
+    }
+
+    public function testGetKeyWithoutValue()
+    {
+        $key = 'TEST_KEY';
+        $defaultValue = 'default_value';
+
+        $shopHelperMock = \Mockery::mock(ShopHelper::class);
+        $shopHelperMock->shouldReceive('getContextShopID')->with(true)->andReturn(1);
+        $shopHelperMock->shouldReceive('getContextShopGroupID')->with(true)->andReturn(1);
+
+        $configurationHelperMock = \Mockery::mock(ConfigurationHelper::class);
+        $configurationHelperMock->shouldReceive('get')->with($key, null, 1, 1, $defaultValue)->andReturn(null);
+        $configurationHelperMock->shouldReceive('hasKey')->with($key, null, 1, 1)->andReturn(false);
+
+        $localeHelper = new SettingsHelper($shopHelperMock, $configurationHelperMock);
+        $result = $localeHelper->getKey($key, $defaultValue);
+
+        $this->assertEquals($defaultValue, $result);
+    }
+
+    public function testIsPaymentTriggerEnabledByState()
+    {
+        $keyName = 'ALMA_PAYMENT_ON_TRIGGERING_ENABLED';
+
+        $settingsHelperMock = $this->getSettingsHelperMockForIsPaymentTriggerEnabledByState($keyName);
+        $settingsHelperMock->shouldReceive('getKey')->with($keyName)->andReturn(true);
+
+        $this->assertTrue($settingsHelperMock->isPaymentTriggerEnabledByState());
+
+        $settingsHelperMock->shouldReceive('getKey')->with($keyName)->andReturn(1);
+
+        $this->assertTrue($settingsHelperMock->isPaymentTriggerEnabledByState());
+
+        $settingsHelperMock->shouldReceive('getKey')->with($keyName)->andReturn('1');
+
+        $this->assertTrue($settingsHelperMock->isPaymentTriggerEnabledByState());
+
+        $configurationHelperMock = \Mockery::mock(ConfigurationHelper::class);
+        $configurationHelperMock->shouldReceive('get')->with($keyName, null, 1, 1, '')->andReturn(false);
+        $configurationHelperMock->shouldReceive('hasKey')->with($keyName, null, 1, 1)->andReturn(false);
+
+        $settingsHelperMock = $this->getSettingsHelperMockForIsPaymentTriggerEnabledByState($keyName, false);
+        $settingsHelperMock->shouldReceive('getKey')->with($keyName)->andReturn(false);
+
+        $this->assertFalse($settingsHelperMock->isPaymentTriggerEnabledByState());
+
+        $settingsHelperMock->shouldReceive('getKey')->with($keyName)->andReturn('0');
+
+        $this->assertFalse($settingsHelperMock->isPaymentTriggerEnabledByState());
+
+        $settingsHelperMock->shouldReceive('getKey')->with($keyName)->andReturn(0);
+
+        $this->assertFalse($settingsHelperMock->isPaymentTriggerEnabledByState());
+    }
+
+    public function testIsDeferredTriggerLimitDaysTestStateTrue()
+    {
+        $keyName = 'ALMA_PAYMENT_ON_TRIGGERING_ENABLED';
+
+        $settingsHelperMock = $this->getSettingsHelperMockForIsPaymentTriggerEnabledByState($keyName);
+        $settingsHelperMock->shouldReceive('getKey')->with($keyName)->andReturn(true);
+        $settingsHelperMock->shouldReceive('isPaymentTriggerEnabledByState')->andReturn(true);
+
+        $feePlans = new \stdClass();
+        $feePlans->maclee = new \stdClass();
+        $feePlans->maclee->deferred_trigger_limit_days = '0';
+        $feePlans->maclee2 = new \stdClass();
+        $feePlans->maclee2->deferred_trigger_limit_days = '1';
+
+        $this->assertTrue($settingsHelperMock->isDeferredTriggerLimitDays($feePlans, 'maclee2'));
+        $this->assertFalse($settingsHelperMock->isDeferredTriggerLimitDays($feePlans, 'maclee'));
+        $this->assertFalse($settingsHelperMock->isDeferredTriggerLimitDays($feePlans, 'cleinconnue'));
+        $this->assertTrue($settingsHelperMock->isDeferredTriggerLimitDays(
+            [
+                'deferred_trigger_limit_days' => 1,
+                'test' => 1
+            ]
+        ));
+        $this->assertFalse($settingsHelperMock->isDeferredTriggerLimitDays(
+            [
+                'deferred_trigger_limit_days' => 0,
+                'test' => 0
+            ]
+        ));
+        $this->assertFalse($settingsHelperMock->isDeferredTriggerLimitDays(['test' => 1]));
+        $this->assertFalse($settingsHelperMock->isDeferredTriggerLimitDays([]));
+    }
+
+    public function testIsDeferredTriggerLimitDaysTestStateFalse()
+    {
+        $keyName = 'ALMA_PAYMENT_ON_TRIGGERING_ENABLED';
+
+        $settingsHelperMock = $this->getSettingsHelperMockForIsPaymentTriggerEnabledByState($keyName);
+        $settingsHelperMock->shouldReceive('getKey')->with($keyName)->andReturn(true);
+        $settingsHelperMock->shouldReceive('isPaymentTriggerEnabledByState')->andReturn(false);
+
+        $feePlans = new \stdClass();
+        $feePlans->maclee = new \stdClass();
+        $feePlans->maclee->deferred_trigger_limit_days = '0';
+        $feePlans->maclee2 = new \stdClass();
+        $feePlans->maclee2->deferred_trigger_limit_days = '1';
+
+        $this->assertFalse($settingsHelperMock->isDeferredTriggerLimitDays($feePlans, 'maclee2'));
+        $this->assertFalse($settingsHelperMock->isDeferredTriggerLimitDays($feePlans, 'maclee'));
+        $this->assertFalse($settingsHelperMock->isDeferredTriggerLimitDays($feePlans, 'cleinconnue'));
+        $this->assertFalse($settingsHelperMock->isDeferredTriggerLimitDays(
+            [
+                'deferred_trigger_limit_days' => 1,
+                'test' => 1
+            ]
+        ));
+        $this->assertFalse($settingsHelperMock->isDeferredTriggerLimitDays(
+            [
+                'deferred_trigger_limit_days' => 0,
+                'test' => 0
+            ]
+        ));
+        $this->assertFalse($settingsHelperMock->isDeferredTriggerLimitDays(['test' => 1]));
+        $this->assertFalse($settingsHelperMock->isDeferredTriggerLimitDays([]));
+    }
+
+    protected function getSettingsHelperMockForIsPaymentTriggerEnabledByState($keyName, $keyValue = true)
+    {
+        $shopHelperMock = \Mockery::mock(ShopHelper::class);
+        $shopHelperMock->shouldReceive('getContextShopID')->with(true)->andReturn(1);
+        $shopHelperMock->shouldReceive('getContextShopGroupID')->with(true)->andReturn(1);
+
+        $configurationHelperMock = \Mockery::mock(ConfigurationHelper::class);
+        $configurationHelperMock->shouldReceive('get')->with($keyName, null, 1, 1, '')->andReturn($keyValue);
+        $configurationHelperMock->shouldReceive('hasKey')->with($keyName, null, 1, 1)->andReturn(false);
+
+        return \Mockery::mock(SettingsHelper::class, [$shopHelperMock, $configurationHelperMock])->shouldAllowMockingProtectedMethods()->makePartial();
     }
 }
