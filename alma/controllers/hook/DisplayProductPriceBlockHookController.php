@@ -125,7 +125,7 @@ class DisplayProductPriceBlockHookController extends FrontendHookController
 
         $activePlans = SettingsHelper::activePlans();
 
-        $locale = LocaleHelper::localeByIdLangForWidget($this->context->language->id);
+        $locale = LocaleHelper::getLocaleByIdLangForWidget($this->context->language->id);
 
         if (!$activePlans) {
             return;

@@ -29,6 +29,7 @@ if (!defined('_PS_VERSION_')) {
 }
 
 use Alma\PrestaShop\Helpers\EligibilityHelper;
+use Alma\PrestaShop\Helpers\LanguageHelper;
 use Alma\PrestaShop\Helpers\LocaleHelper;
 use Alma\PrestaShop\Helpers\PriceHelper;
 use Alma\PrestaShop\Helpers\SettingsCustomFieldsHelper;
@@ -38,6 +39,18 @@ use Alma\PrestaShop\Model\CartData;
 
 class DisplayShoppingCartFooterHookController extends FrontendHookController
 {
+    /**
+     * @var LocaleHelper
+     */
+    protected $localeHelper;
+
+    public function __construct()
+    {
+        parent::__construct();
+
+        $this->localeHelper = new LocaleHelper(new LanguageHelper());
+    }
+
     public function canRun()
     {
         return parent::canRun() && SettingsHelper::showEligibilityMessage();
@@ -49,7 +62,7 @@ class DisplayShoppingCartFooterHookController extends FrontendHookController
 
         $activePlans = SettingsHelper::activePlans();
 
-        $locale = LocaleHelper::localeByIdLangForWidget($this->context->language->id);
+        $locale = $this->localeHelper->getLocaleByIdLangForWidget($this->context->language->id);
 
         if (!$activePlans) {
             return;

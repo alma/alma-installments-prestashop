@@ -31,6 +31,7 @@ if (!defined('_PS_VERSION_')) {
 use Alma\PrestaShop\Helpers\ConstantsHelper;
 use Alma\PrestaShop\Helpers\DateHelper;
 use Alma\PrestaShop\Helpers\EligibilityHelper;
+use Alma\PrestaShop\Helpers\LanguageHelper;
 use Alma\PrestaShop\Helpers\LocaleHelper;
 use Alma\PrestaShop\Helpers\PriceHelper;
 use Alma\PrestaShop\Helpers\SettingsCustomFieldsHelper;
@@ -42,6 +43,18 @@ use PrestaShop\PrestaShop\Core\Payment\PaymentOption;
 
 class PaymentOptionsHookController extends FrontendHookController
 {
+    /**
+     * @var LocaleHelper
+     */
+    protected $localeHelper;
+
+    public function __construct()
+    {
+        parent::__construct();
+
+        $this->localeHelper = new LocaleHelper(new LanguageHelper());
+    }
+
     /**
      * Payment option for Hook PaymentOption (Prestashop 1.7).
      *
@@ -63,7 +76,7 @@ class PaymentOptionsHookController extends FrontendHookController
 
         $installmentPlans = EligibilityHelper::eligibilityCheck($this->context);
         $idLang = $this->context->language->id;
-        $locale = LocaleHelper::localeByIdLangForWidget($idLang);
+        $locale = $this->localeHelper->getLocaleByIdLangForWidget($idLang);
 
         if (empty($installmentPlans)) {
             return [];

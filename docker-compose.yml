@@ -42,8 +42,8 @@ services:
       - PS_INSTALL_DB=1
       - PS_DOMAIN=localhost:8080
       - PS_SHOP_URL=localhost:8080
-      - PS_COUNTRY=FR
-      - PS_LANGUAGE=fr
+      - PS_COUNTRY=EN
+      - PS_LANGUAGE=en
       - PS_FOLDER_ADMIN=almin
       - PS_FOLDER_INSTALL=alminstall
       - ADMIN_MAIL=admin@test.prestashop.com
