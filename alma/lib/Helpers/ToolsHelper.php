@@ -47,4 +47,51 @@ class ToolsHelper
     {
         return \Tools::ps_round($value, $precision, $roundMode);
     }
+
+    /**
+     * Return price with currency sign for a given product.
+     *
+     * @see \PrestaShop\PrestaShop\Core\Localization\Locale
+     *
+     * @param bool $legacy
+     * @param float $price Product price
+     * @param int|\Currency|array|null $currency Current currency (object, id_currency, NULL => context currency)
+     *
+     * @return string Price correctly formatted (sign, decimal separator...)
+     *                if you modify this function, don't forget to modify the Javascript function formatCurrency (in tools.js)
+     *
+     * @throws \LocalizationException
+     */
+    public function displayPrice($legacy, $price, $currency = null)
+    {
+        if ($legacy) {
+            return \Tools::displayPrice($price, $currency);
+        }
+
+        $locale = \Context::getContext()->currentLocale;
+
+        try {
+            $formattedPrice = $locale->formatPrice($price, $currency->iso_code);
+        } catch (\PrestaShop\PrestaShop\Core\Localization\Exception\LocalizationException $e) {
+            // Catch LocalizationException at this level too, so that we can fallback to \Tools::displayPrice if it
+            // still exists. If it, itself, throws a LocalizationException, it will be caught by the outer catch.
+            if (method_exists('\Tools', 'displayPrice')) {
+                $formattedPrice = \Tools::displayPrice($price, $currency);
+            }
+        }
+
+        return $formattedPrice;
+    }
+
+    /**
+     * @param string $version2
+     * @param string $operator
+     * @param string $version1
+     *
+     * @return bool|int
+     */
+    public function psVersionCompare($version2, $operator, $version1 = _PS_VERSION_)
+    {
+        return version_compare($version1, $version2, $operator);
+    }
 }

@@ -24,7 +24,9 @@
 
 namespace Alma\PrestaShop\Tests\Unit\Helper;
 
+use Alma\PrestaShop\Helpers\CurrencyHelper;
 use Alma\PrestaShop\Helpers\PriceHelper;
+use Alma\PrestaShop\Helpers\ToolsHelper;
 use PHPUnit\Framework\TestCase;
 
 class PriceHelperTest extends TestCase
@@ -36,7 +38,7 @@ class PriceHelperTest extends TestCase
 
     public function setUp()
     {
-        $this->priceHelper = new PriceHelper();
+        $this->priceHelper = new PriceHelper(new ToolsHelper(), new CurrencyHelper());
     }
 
     public function testConvertPriceToCents()
@@ -44,5 +46,39 @@ class PriceHelperTest extends TestCase
         $this->assertEquals('10000', $this->priceHelper->convertPriceToCents(100));
         $this->assertEquals('10000', $this->priceHelper->convertPriceToCents(99.9999));
         $this->assertEquals('10000', $this->priceHelper->convertPriceToCents(100.0011));
+    }
+
+    public function testConvertPriceFromCents()
+    {
+        $this->assertEquals('100.0', $this->priceHelper->convertPriceFromCents(10000));
+    }
+
+    public function testFormatPriceToCentsByCurrencyId()
+    {
+        $toolsHelperMock = \Mockery::mock(ToolsHelper::class);
+        $toolsHelperMock->shouldReceive('psVersionCompare')->with('1.7.6.0', '<')->andReturn(false);
+        $toolsHelperMock->shouldReceive('displayPrice')->with(false, '10000', '1')->andReturn(false);
+
+        $currencyHelperMock = \Mockery::mock(CurrencyHelper::class);
+        $currencyHelperMock->shouldReceive('getCurrencyFromContext')->andReturn('1');
+        $currencyHelperMock->shouldReceive('getCurrencyById')->with('1')->andReturn('1');
+
+        $priceHelperMock = \Mockery::mock(PriceHelper::class, [$toolsHelperMock, $currencyHelperMock])->makePartial();
+        $result = $priceHelperMock->formatPriceToCentsByCurrencyId('10000', 1);
+
+        $this->assertEquals('100.00€', $result);
+
+        $toolsHelperMock = \Mockery::mock(ToolsHelper::class);
+        $toolsHelperMock->shouldReceive('psVersionCompare')->with('1.7.6.0', '<')->andReturn(false);
+        $toolsHelperMock->shouldReceive('displayPrice')->with(false, '10000', '1')->andThrow(new \Exception());
+
+        $currencyHelperMock = \Mockery::mock(CurrencyHelper::class);
+        $currencyHelperMock->shouldReceive('getCurrencyFromContext')->andReturn('1');
+        $currencyHelperMock->shouldReceive('getCurrencyById')->with('1')->andReturn('1');
+
+        $priceHelperMock = \Mockery::mock(PriceHelper::class, [$toolsHelperMock, $currencyHelperMock])->makePartial();
+        $result = $priceHelperMock->formatPriceToCentsByCurrencyId('10000');
+
+        $this->assertEquals('100.00€', $result);
     }
 }

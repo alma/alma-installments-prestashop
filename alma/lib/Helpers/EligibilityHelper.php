@@ -48,7 +48,7 @@ class EligibilityHelper
     public function __construct()
     {
         $this->paymentData = new PaymentData();
-        $this->priceHelper = new PriceHelper();
+        $this->priceHelper = new PriceHelper(new ToolsHelper(), new CurrencyHelper());
     }
 
     public function eligibilityCheck($context)

@@ -44,11 +44,17 @@ class PnxAdminFormBuilder extends AbstractAlmaAdminFormBuilder
      */
     protected $settingsHelper;
 
+    /**
+     * @var PriceHelper
+     */
+    protected $priceHelper;
+
     public function __construct($module, $context, $image, $config = [])
     {
         parent::__construct($module, $context, $image, $config);
 
         $this->settingsHelper = new SettingsHelper(new ShopHelper(), new ConfigurationHelper());
+        $this->priceHelper = new PriceHelper(new ToolsHelper(), new CurrencyHelper());
     }
 
     /**
@@ -60,8 +66,8 @@ class PnxAdminFormBuilder extends AbstractAlmaAdminFormBuilder
     {
         $tabId = $key = $feePlan->getPlanKey();
 
-        $minAmount = (int) PriceHelper::convertPriceFromCents($feePlan->min_purchase_amount);
-        $maxAmount = (int) PriceHelper::convertPriceFromCents($feePlan->max_purchase_amount);
+        $minAmount = (int) $this->priceHelper->convertPriceFromCents($feePlan->min_purchase_amount);
+        $maxAmount = (int) $this->priceHelper->convertPriceFromCents($feePlan->max_purchase_amount);
 
         $tpl = $this->context->smarty->createTemplate(
             "{$this->module->local_path}views/templates/hook/pnx_fees.tpl"

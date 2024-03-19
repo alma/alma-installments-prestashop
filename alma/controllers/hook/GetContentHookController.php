@@ -47,6 +47,7 @@ use Alma\PrestaShop\Helpers\ApiKeyHelper;
 use Alma\PrestaShop\Helpers\ClientHelper;
 use Alma\PrestaShop\Helpers\ConfigurationHelper;
 use Alma\PrestaShop\Helpers\ConstantsHelper;
+use Alma\PrestaShop\Helpers\CurrencyHelper;
 use Alma\PrestaShop\Helpers\CustomFieldsHelper;
 use Alma\PrestaShop\Helpers\LanguageHelper;
 use Alma\PrestaShop\Helpers\LocaleHelper;
@@ -56,6 +57,7 @@ use Alma\PrestaShop\Helpers\PriceHelper;
 use Alma\PrestaShop\Helpers\SettingsHelper;
 use Alma\PrestaShop\Helpers\ShareOfCheckoutHelper;
 use Alma\PrestaShop\Helpers\ShopHelper;
+use Alma\PrestaShop\Helpers\ToolsHelper;
 use Alma\PrestaShop\Hooks\AdminHookController;
 use Alma\PrestaShop\Logger;
 
@@ -144,7 +146,7 @@ final class GetContentHookController extends AdminHookController
     {
         $this->apiKeyHelper = new ApiKeyHelper();
         $this->settingsHelper = new SettingsHelper(new ShopHelper(), new ConfigurationHelper());
-        $this->priceHelper = new PriceHelper();
+        $this->priceHelper = new PriceHelper(new ToolsHelper(), new CurrencyHelper());
         $this->customFieldsHelper = new CustomFieldsHelper(new LanguageHelper(), new LocaleHelper(new LanguageHelper()));
 
         parent::__construct($module);
@@ -301,8 +303,8 @@ final class GetContentHookController extends AdminHookController
                             'n' => $n,
                             'deferred_days' => $deferred_days,
                             'deferred_months' => $deferred_months,
-                            'min' => PriceHelper::convertPriceFromCents($feePlan->min_purchase_amount),
-                            'max' => PriceHelper::convertPriceFromCents(min($max, $feePlan->max_purchase_amount)),
+                            'min' => $this->priceHelper->convertPriceFromCents($feePlan->min_purchase_amount),
+                            'max' => $this->priceHelper->convertPriceFromCents(min($max, $feePlan->max_purchase_amount)),
                         ]);
 
                         return $this->module->display($this->module->file, 'getContent.tpl');
@@ -319,8 +321,8 @@ final class GetContentHookController extends AdminHookController
                             'n' => $n,
                             'deferred_days' => $deferred_days,
                             'deferred_months' => $deferred_months,
-                            'min' => PriceHelper::convertPriceFromCents($min),
-                            'max' => PriceHelper::convertPriceFromCents($feePlan->max_purchase_amount),
+                            'min' => $this->priceHelper->convertPriceFromCents($min),
+                            'max' => $this->priceHelper->convertPriceFromCents($feePlan->max_purchase_amount),
                         ]);
 
                         return $this->module->display($this->module->file, 'getContent.tpl');
@@ -551,13 +553,13 @@ final class GetContentHookController extends AdminHookController
                     : $feePlan->min_purchase_amount;
 
                 $helper->fields_value["ALMA_{$key}_MIN_AMOUNT"] = (int) round(
-                    PriceHelper::convertPriceFromCents($minAmount)
+                    $this->priceHelper->convertPriceFromCents($minAmount)
                 );
                 $maxAmount = isset($installmentsPlans->$key->max)
                     ? $installmentsPlans->$key->max
                     : $feePlan->max_purchase_amount;
 
-                $helper->fields_value["ALMA_{$key}_MAX_AMOUNT"] = (int) PriceHelper::convertPriceFromCents($maxAmount);
+                $helper->fields_value["ALMA_{$key}_MAX_AMOUNT"] = (int) $this->priceHelper->convertPriceFromCents($maxAmount);
 
                 $order = isset($installmentsPlans->$key->order)
                     ? $installmentsPlans->$key->order

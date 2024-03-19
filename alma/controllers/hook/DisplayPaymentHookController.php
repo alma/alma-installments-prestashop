@@ -31,6 +31,7 @@ if (!defined('_PS_VERSION_')) {
 use Alma\PrestaShop\Forms\PaymentButtonAdminFormBuilder;
 use Alma\PrestaShop\Helpers\ConfigurationHelper;
 use Alma\PrestaShop\Helpers\ConstantsHelper;
+use Alma\PrestaShop\Helpers\CurrencyHelper;
 use Alma\PrestaShop\Helpers\CustomFieldsHelper;
 use Alma\PrestaShop\Helpers\DateHelper;
 use Alma\PrestaShop\Helpers\EligibilityHelper;
@@ -99,7 +100,7 @@ class DisplayPaymentHookController extends FrontendHookController
         $this->localeHelper = new LocaleHelper(new LanguageHelper());
         $this->toolsHelper = new ToolsHelper();
         $this->eligibilityHelper = new EligibilityHelper();
-        $this->priceHelper = new PriceHelper();
+        $this->priceHelper = new PriceHelper(new ToolsHelper(), new CurrencyHelper());
         $this->dateHelper = new DateHelper();
         $this->customFieldsHelper = new CustomFieldsHelper(new LanguageHelper(), $this->localeHelper);
         $this->cartData = new CartData(new ProductHelper(), $this->settingsHelper);
@@ -283,17 +284,17 @@ class DisplayPaymentHookController extends FrontendHookController
         if ($isDeferredTriggerLimitDays) {
             return sprintf(
                 $this->module->l('%1$s then %2$d x %3$s', 'DisplayPaymentHookController'),
-                PriceHelper::formatPriceToCentsByCurrencyId($plans[0]['total_amount']) . ' ' . $this->customFieldsHelper->getDescriptionPaymentTriggerByLang($idLang),
+                $this->priceHelper->formatPriceToCentsByCurrencyId($plans[0]['total_amount']) . ' ' . $this->customFieldsHelper->getDescriptionPaymentTriggerByLang($idLang),
                 $nbPlans - 1,
-                PriceHelper::formatPriceToCentsByCurrencyId($plans[1]['total_amount'])
+                $this->priceHelper->formatPriceToCentsByCurrencyId($plans[1]['total_amount'])
             );
         }
         if ($nbPlans > 1) {
             return sprintf(
                 $this->module->l('%1$s today then %2$d x %3$s', 'DisplayPaymentHookController'),
-                PriceHelper::formatPriceToCentsByCurrencyId($plans[0]['total_amount']),
+                $this->priceHelper->formatPriceToCentsByCurrencyId($plans[0]['total_amount']),
                 $nbPlans - 1,
-                PriceHelper::formatPriceToCentsByCurrencyId($plans[1]['total_amount'])
+                $this->priceHelper->formatPriceToCentsByCurrencyId($plans[1]['total_amount'])
             );
         }
         if ($isPayNow) {
@@ -302,7 +303,7 @@ class DisplayPaymentHookController extends FrontendHookController
 
         return sprintf(
             $this->module->l('0 € today then %1$s on %2$s', 'DisplayPaymentHookController'),
-            PriceHelper::formatPriceToCentsByCurrencyId($plans[0]['purchase_amount'] + $plans[0]['customer_fee']),
+            $this->priceHelper->formatPriceToCentsByCurrencyId($plans[0]['purchase_amount'] + $plans[0]['customer_fee']),
             $this->dateHelper->getDateFormat($locale, $plans[0]['due_date'])
         );
     }
