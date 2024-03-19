@@ -42,7 +42,6 @@ class LocaleHelperTest extends TestCase
         $this->localeHelper = new LocaleHelper(new LanguageHelper());
     }
 
-
     /**
      * @return void
      */
@@ -66,5 +65,4 @@ class LocaleHelperTest extends TestCase
 
         $this->assertEquals('nl-NL', $locale);
     }
-
 }
