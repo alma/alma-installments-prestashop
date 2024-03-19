@@ -24,7 +24,10 @@
 
 namespace Alma\PrestaShop\Forms;
 
+use Alma\PrestaShop\Helpers\ConfigurationHelper;
+use Alma\PrestaShop\Helpers\ProductHelper;
 use Alma\PrestaShop\Helpers\SettingsHelper;
+use Alma\PrestaShop\Helpers\ShopHelper;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -38,6 +41,18 @@ class ExcludedCategoryAdminFormBuilder extends AbstractAlmaAdminFormBuilder
     const ALMA_CATEGORIES_WDGT_NOT_ELGBL = 'ALMA_CATEGORIES_WDGT_NOT_ELGBL';
     const ALMA_NOT_ELIGIBLE_CATEGORIES = 'ALMA_NOT_ELIGIBLE_CATEGORIES';
 
+    /**
+     * @var SettingsHelper
+     */
+    protected $settingsHelper;
+
+    public function __construct($module, $context, $image, $config = [])
+    {
+        parent::__construct($module, $context, $image, $config);
+
+        $this->settingsHelper = new SettingsHelper(new ShopHelper(), new ConfigurationHelper());
+    }
+
     protected function configForm()
     {
         // Exclusion
@@ -45,7 +60,7 @@ class ExcludedCategoryAdminFormBuilder extends AbstractAlmaAdminFormBuilder
             "{$this->module->local_path}views/templates/hook/excludedCategories.tpl"
         );
 
-        $excludedCategoryNames = SettingsHelper::getExcludedCategoryNames();
+        $excludedCategoryNames = $this->settingsHelper->getExcludedCategoryNames();
 
         $tpl->assign([
             'excludedCategories' => count($excludedCategoryNames) > 0

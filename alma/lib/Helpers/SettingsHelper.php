@@ -59,7 +59,8 @@ class SettingsHelper
     protected $configurationHelper;
 
     /**
-     *
+     * @param ShopHelper $shopHelper
+     * @param ConfigurationHelper $configurationHelper
      */
     public function __construct($shopHelper, $configurationHelper)
     {
@@ -529,9 +530,9 @@ class SettingsHelper
     /**
      * @return array
      */
-    public static function getExcludedCategories()
+    public function getExcludedCategories()
     {
-        $categories = static::get('ALMA_EXCLUDED_CATEGORIES');
+        $categories = $this->getKey('ALMA_EXCLUDED_CATEGORIES');
 
         if (
             null !== $categories
@@ -546,9 +547,9 @@ class SettingsHelper
     /**
      * @return array
      */
-    public static function getExcludedCategoryNames()
+    public function getExcludedCategoryNames()
     {
-        $categories = static::getExcludedCategories();
+        $categories = $this->getExcludedCategories();
 
         if (!$categories) {
             return [];
@@ -575,9 +576,9 @@ class SettingsHelper
      *
      * @return void
      */
-    public static function addExcludedCategories($idCategory)
+    public function addExcludedCategories($idCategory)
     {
-        $excludedCategories = static::getExcludedCategories();
+        $excludedCategories = $this->getExcludedCategories();
 
         $category = CategoryHelper::fromCategory($idCategory);
 
@@ -597,9 +598,9 @@ class SettingsHelper
      *
      * @return void
      */
-    public static function removeExcludedCategories($idCategory)
+    public function removeExcludedCategories($idCategory)
     {
-        $excludedCategories = static::getExcludedCategories();
+        $excludedCategories = $this->getExcludedCategories();
 
         $category = CategoryHelper::fromCategory($idCategory);
 
@@ -637,11 +638,11 @@ class SettingsHelper
      *
      * @return bool Whether this product belongs to an excluded category
      */
-    public static function isProductExcluded($productId)
+    public function isProductExcluded($productId)
     {
         $excludedCategories = [];
 
-        foreach (static::getExcludedCategories() as $categoryId) {
+        foreach ($this->getExcludedCategories() as $categoryId) {
             $excludedCategories[] = ['id_category' => (int) $categoryId];
         }
 

@@ -24,9 +24,11 @@
 
 namespace Alma\PrestaShop\Model;
 
+use Alma\PrestaShop\Helpers\ConfigurationHelper;
 use Alma\PrestaShop\Helpers\PriceHelper;
 use Alma\PrestaShop\Helpers\ProductHelper;
 use Alma\PrestaShop\Helpers\SettingsHelper;
+use Alma\PrestaShop\Helpers\ShopHelper;
 use Alma\PrestaShop\Repositories\ProductRepository;
 
 if (!defined('_PS_VERSION_')) {
@@ -42,9 +44,15 @@ class CartData
      */
     protected $priceHelper;
 
+    /**
+     * @var SettingsHelper
+     */
+    protected $settingsHelper;
+
     public function __construct()
     {
         $this->priceHelper = new PriceHelper();
+        $this->settingsHelper = new SettingsHelper(new ShopHelper(), new ConfigurationHelper());
     }
 
     /**
@@ -194,7 +202,7 @@ class CartData
      *
      * @return array
      */
-    public static function getCartExclusion($cart)
+    public function getCartExclusion($cart)
     {
         $products = $cart->getProducts(true);
 
@@ -207,7 +215,7 @@ class CartData
             }
         }
 
-        $excludedListing = SettingsHelper::getExcludedCategories();
+        $excludedListing =  $this->settingsHelper->getExcludedCategories();
 
         return array_intersect($cartProductsCategories, $excludedListing);
     }
