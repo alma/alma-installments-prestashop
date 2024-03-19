@@ -34,10 +34,8 @@ class PriceHelperTest extends TestCase
      */
     protected $priceHelper;
 
-    public function __construct()
+    public function setUp()
     {
-        parent::__construct();
-
         $this->priceHelper = new PriceHelper();
     }
 

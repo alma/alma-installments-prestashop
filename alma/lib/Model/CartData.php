@@ -52,6 +52,12 @@ class CartData
      */
     protected $productHelper;
 
+    /**
+     * @codeCoverageIgnore
+     *
+     * @param $productHelper
+     * @param $settingsHelper
+     */
     public function __construct($productHelper, $settingsHelper)
     {
         $this->priceHelper = new PriceHelper();

@@ -34,10 +34,8 @@ class DateHelperTest extends TestCase
      */
     protected $dateHelper;
 
-    public function __construct()
+    public function setUp()
     {
-        parent::__construct();
-
         $this->dateHelper = new DateHelper();
     }
 

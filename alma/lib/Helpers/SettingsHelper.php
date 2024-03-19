@@ -59,6 +59,8 @@ class SettingsHelper
     protected $configurationHelper;
 
     /**
+     * @codeCoverageIgnore
+     *
      * @param ShopHelper $shopHelper
      * @param ConfigurationHelper $configurationHelper
      */
@@ -136,6 +138,24 @@ class SettingsHelper
      *
      * @param string $configKey
      * @param string $value
+     *
+     * @return void
+     */
+    public function updateKey($configKey, $value)
+    {
+        $idShop = $this->shopHelper->getContextShopID(true);
+        $idShopGroup = $this->shopHelper->getContextShopGroupID(true);
+
+        $this->configurationHelper->updateValue($configKey, $value, false, $idShopGroup, $idShop);
+    }
+
+    /**
+     * Update value in config.
+     *
+     * @param string $configKey
+     * @param string $value
+     *
+     * @deprecated use updateKey
      *
      * @return void
      */

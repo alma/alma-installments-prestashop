@@ -47,10 +47,12 @@ use Alma\PrestaShop\Helpers\ApiKeyHelper;
 use Alma\PrestaShop\Helpers\ClientHelper;
 use Alma\PrestaShop\Helpers\ConfigurationHelper;
 use Alma\PrestaShop\Helpers\ConstantsHelper;
+use Alma\PrestaShop\Helpers\CustomFieldsHelper;
+use Alma\PrestaShop\Helpers\LanguageHelper;
+use Alma\PrestaShop\Helpers\LocaleHelper;
 use Alma\PrestaShop\Helpers\MediaHelper;
 use Alma\PrestaShop\Helpers\OrderHelper;
 use Alma\PrestaShop\Helpers\PriceHelper;
-use Alma\PrestaShop\Helpers\SettingsCustomFieldsHelper;
 use Alma\PrestaShop\Helpers\SettingsHelper;
 use Alma\PrestaShop\Helpers\ShareOfCheckoutHelper;
 use Alma\PrestaShop\Helpers\ShopHelper;
@@ -74,6 +76,11 @@ final class GetContentHookController extends AdminHookController
      * @var PriceHelper
      */
     protected $priceHelper;
+
+    /**
+     * @var CustomFieldsHelper
+     */
+    protected $customFieldsHelper;
 
     /**
      * @var array
@@ -138,6 +145,7 @@ final class GetContentHookController extends AdminHookController
         $this->apiKeyHelper = new ApiKeyHelper();
         $this->settingsHelper = new SettingsHelper(new ShopHelper(), new ConfigurationHelper());
         $this->priceHelper = new PriceHelper();
+        $this->customFieldsHelper = new CustomFieldsHelper(new LanguageHelper(), new LocaleHelper(new LanguageHelper()));
 
         parent::__construct($module);
     }
@@ -638,14 +646,30 @@ final class GetContentHookController extends AdminHookController
             'ALMA_LIVE_API_KEY' => SettingsHelper::getLiveKey(),
             'ALMA_TEST_API_KEY' => SettingsHelper::getTestKey(),
             'ALMA_API_MODE' => SettingsHelper::getActiveMode(),
-            PaymentButtonAdminFormBuilder::ALMA_PAY_NOW_BUTTON_TITLE => SettingsCustomFieldsHelper::getPayNowButtonTitle(),
-            PaymentButtonAdminFormBuilder::ALMA_PAY_NOW_BUTTON_DESC => SettingsCustomFieldsHelper::getPayNowButtonDescription(),
-            PaymentButtonAdminFormBuilder::ALMA_PNX_BUTTON_TITLE => SettingsCustomFieldsHelper::getPnxButtonTitle(),
-            PaymentButtonAdminFormBuilder::ALMA_PNX_BUTTON_DESC => SettingsCustomFieldsHelper::getPnxButtonDescription(),
-            PaymentButtonAdminFormBuilder::ALMA_DEFERRED_BUTTON_TITLE => SettingsCustomFieldsHelper::getPaymentButtonTitleDeferred(),
-            PaymentButtonAdminFormBuilder::ALMA_DEFERRED_BUTTON_DESC => SettingsCustomFieldsHelper::getPaymentButtonDescriptionDeferred(),
-            PaymentButtonAdminFormBuilder::ALMA_PNX_AIR_BUTTON_TITLE => SettingsCustomFieldsHelper::getPnxAirButtonTitle(),
-            PaymentButtonAdminFormBuilder::ALMA_PNX_AIR_BUTTON_DESC => SettingsCustomFieldsHelper::getPnxAirButtonDescription(),
+            PaymentButtonAdminFormBuilder::ALMA_PAY_NOW_BUTTON_TITLE => $this->customFieldsHelper->getValue(
+                PaymentButtonAdminFormBuilder::ALMA_PAY_NOW_BUTTON_TITLE
+            ),
+            PaymentButtonAdminFormBuilder::ALMA_PAY_NOW_BUTTON_DESC => $this->customFieldsHelper->getValue(
+                PaymentButtonAdminFormBuilder::ALMA_PAY_NOW_BUTTON_DESC
+            ),
+            PaymentButtonAdminFormBuilder::ALMA_PNX_BUTTON_TITLE => $this->customFieldsHelper->getValue(
+                PaymentButtonAdminFormBuilder::ALMA_PNX_BUTTON_TITLE
+            ),
+            PaymentButtonAdminFormBuilder::ALMA_PNX_BUTTON_DESC => $this->customFieldsHelper->getValue(
+                PaymentButtonAdminFormBuilder::ALMA_PNX_BUTTON_DESC
+            ),
+            PaymentButtonAdminFormBuilder::ALMA_DEFERRED_BUTTON_TITLE => $this->customFieldsHelper->getValue(
+                PaymentButtonAdminFormBuilder::ALMA_DEFERRED_BUTTON_TITLE
+            ),
+            PaymentButtonAdminFormBuilder::ALMA_DEFERRED_BUTTON_DESC => $this->customFieldsHelper->getValue(
+                PaymentButtonAdminFormBuilder::ALMA_DEFERRED_BUTTON_DESC
+            ),
+            PaymentButtonAdminFormBuilder::ALMA_PNX_AIR_BUTTON_TITLE => $this->customFieldsHelper->getValue(
+                PaymentButtonAdminFormBuilder::ALMA_PNX_AIR_BUTTON_TITLE
+            ),
+            PaymentButtonAdminFormBuilder::ALMA_PNX_AIR_BUTTON_DESC => $this->customFieldsHelper->getValue(
+                PaymentButtonAdminFormBuilder::ALMA_PNX_AIR_BUTTON_DESC
+            ),
             InpageAdminFormBuilder::ALMA_ACTIVATE_INPAGE . '_ON' => SettingsHelper::isInPageEnabled(),
             'ALMA_SHOW_DISABLED_BUTTON' => SettingsHelper::showDisabledButton(),
             'ALMA_SHOW_ELIGIBILITY_MESSAGE_ON' => SettingsHelper::showEligibilityMessage(),
@@ -660,7 +684,9 @@ final class GetContentHookController extends AdminHookController
             'ALMA_STATE_TRIGGER' => SettingsHelper::getPaymentTriggerState(),
             'ALMA_PAYMENT_ON_TRIGGERING_ENABLED_ON' => $this->settingsHelper->isPaymentTriggerEnabledByState(),
             'ALMA_DESCRIPTION_TRIGGER' => SettingsHelper::getKeyDescriptionPaymentTrigger(),
-            'ALMA_NOT_ELIGIBLE_CATEGORIES' => SettingsCustomFieldsHelper::getNonEligibleCategoriesMessage(),
+            'ALMA_NOT_ELIGIBLE_CATEGORIES' => $this->customFieldsHelper->getValue(
+                ExcludedCategoryAdminFormBuilder::ALMA_NOT_ELIGIBLE_CATEGORIES
+            ),
             'ALMA_SHOW_PRODUCT_ELIGIBILITY_ON' => SettingsHelper::showProductEligibility(),
             'ALMA_PRODUCT_PRICE_SELECTOR' => SettingsHelper::getProductPriceQuerySelector(),
             'ALMA_WIDGET_POSITION_SELECTOR' => SettingsHelper::getProductWidgetPositionQuerySelector(),

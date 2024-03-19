@@ -28,15 +28,16 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
+use Alma\PrestaShop\Forms\PaymentButtonAdminFormBuilder;
 use Alma\PrestaShop\Helpers\ConfigurationHelper;
 use Alma\PrestaShop\Helpers\ConstantsHelper;
+use Alma\PrestaShop\Helpers\CustomFieldsHelper;
 use Alma\PrestaShop\Helpers\DateHelper;
 use Alma\PrestaShop\Helpers\EligibilityHelper;
 use Alma\PrestaShop\Helpers\LanguageHelper;
 use Alma\PrestaShop\Helpers\LocaleHelper;
 use Alma\PrestaShop\Helpers\PriceHelper;
 use Alma\PrestaShop\Helpers\ProductHelper;
-use Alma\PrestaShop\Helpers\SettingsCustomFieldsHelper;
 use Alma\PrestaShop\Helpers\SettingsHelper;
 use Alma\PrestaShop\Helpers\ShopHelper;
 use Alma\PrestaShop\Helpers\ToolsHelper;
@@ -82,6 +83,11 @@ class PaymentOptionsHookController extends FrontendHookController
      */
     protected $cartData;
 
+    /**
+     * @var CustomFieldsHelper
+     */
+    protected $customFieldsHelper;
+
     public function __construct($module)
     {
         parent::__construct($module);
@@ -92,6 +98,7 @@ class PaymentOptionsHookController extends FrontendHookController
         $this->eligibilityHelper = new EligibilityHelper();
         $this->priceHelper = new PriceHelper();
         $this->dateHelper = new DateHelper();
+        $this->customFieldsHelper = new CustomFieldsHelper(new LanguageHelper(), $this->localeHelper);
         $this->cartData = new CartData(new ProductHelper(), $this->settingsHelper);
     }
 
@@ -170,7 +177,7 @@ class PaymentOptionsHookController extends FrontendHookController
                         $keyPlan
                     );
                     if (0 === $keyPlan) {
-                        $plans[$keyPlan]['human_date'] = SettingsCustomFieldsHelper::getDescriptionPaymentTriggerByLang($idLang);
+                        $plans[$keyPlan]['human_date'] = $this->customFieldsHelper->getDescriptionPaymentTriggerByLang($idLang);
                     }
                 }
             }
@@ -178,22 +185,70 @@ class PaymentOptionsHookController extends FrontendHookController
             $duration = $this->settingsHelper->getDuration($plan);
             $fileTemplate = 'payment_button_pnx.tpl';
             $valueBNPL = $installment;
-            $textPaymentButton = sprintf(SettingsCustomFieldsHelper::getPnxButtonTitleByLang($idLang), $installment);
-            $descPaymentButton = sprintf(SettingsCustomFieldsHelper::getPnxButtonDescriptionByLang($idLang), $installment);
+
+            $textPaymentButton = sprintf(
+                $this->customFieldsHelper->getBtnValueByLang(
+                    $idLang,
+                    PaymentButtonAdminFormBuilder::ALMA_PNX_BUTTON_TITLE
+                ),
+                $installment
+            );
+
+            $descPaymentButton = sprintf(
+                $this->customFieldsHelper->getBtnValueByLang(
+                    $idLang,
+                    PaymentButtonAdminFormBuilder::ALMA_PNX_BUTTON_DESC
+                ),
+                $installment
+            );
+
             if ($installment > 4) {
-                $textPaymentButton = sprintf(SettingsCustomFieldsHelper::getPnxAirButtonTitleByLang($idLang), $installment);
-                $descPaymentButton = sprintf(SettingsCustomFieldsHelper::getPnxAirButtonDescriptionByLang($idLang), $installment);
+                $textPaymentButton = sprintf(
+                    $this->customFieldsHelper->getBtnValueByLang(
+                        $idLang,
+                        PaymentButtonAdminFormBuilder::ALMA_PNX_AIR_BUTTON_TITLE
+                    ),
+                    $installment
+                );
+                $descPaymentButton = sprintf(
+                    $this->customFieldsHelper->getBtnValueByLang(
+                        $idLang,
+                    PaymentButtonAdminFormBuilder::ALMA_PNX_AIR_BUTTON_DESC
+                    ),
+                    $installment
+                );
                 $isInPageEnabled = false;
             }
             if ($isDeferred) {
                 $fileTemplate = 'payment_button_deferred.tpl';
                 $valueBNPL = $duration;
-                $textPaymentButton = sprintf(SettingsCustomFieldsHelper::getPaymentButtonTitleDeferredByLang($idLang), $duration);
-                $descPaymentButton = sprintf(SettingsCustomFieldsHelper::getPaymentButtonDescriptionDeferredByLang($idLang), $duration);
+
+                $textPaymentButton = sprintf(
+                    $this->customFieldsHelper->getBtnValueByLang(
+                        $idLang,
+                        PaymentButtonAdminFormBuilder::ALMA_DEFERRED_BUTTON_TITLE
+                    ),
+                    $duration
+                );
+
+                $descPaymentButton = sprintf(
+                    $this->customFieldsHelper->getBtnValueByLang(
+                        $idLang,
+                        PaymentButtonAdminFormBuilder::ALMA_DEFERRED_BUTTON_DESC
+                    ),
+                    $duration
+                );
             }
             if ($isPayNow) {
-                $textPaymentButton = SettingsCustomFieldsHelper::getPayNowButtonTitleByLang($idLang);
-                $descPaymentButton = SettingsCustomFieldsHelper::getPayNowButtonDescriptionByLang($idLang);
+                $textPaymentButton = $this->customFieldsHelper->getBtnValueByLang(
+                    $idLang,
+                    PaymentButtonAdminFormBuilder::ALMA_PAY_NOW_BUTTON_TITLE
+                );
+
+                $descPaymentButton = $this->customFieldsHelper->getBtnValueByLang(
+                    $idLang,
+                    PaymentButtonAdminFormBuilder::ALMA_PAY_NOW_BUTTON_DESC
+                );
             }
 
             $action = $this->context->link->getModuleLink(

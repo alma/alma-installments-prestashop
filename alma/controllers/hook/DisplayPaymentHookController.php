@@ -28,15 +28,16 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
+use Alma\PrestaShop\Forms\PaymentButtonAdminFormBuilder;
 use Alma\PrestaShop\Helpers\ConfigurationHelper;
 use Alma\PrestaShop\Helpers\ConstantsHelper;
+use Alma\PrestaShop\Helpers\CustomFieldsHelper;
 use Alma\PrestaShop\Helpers\DateHelper;
 use Alma\PrestaShop\Helpers\EligibilityHelper;
 use Alma\PrestaShop\Helpers\LanguageHelper;
 use Alma\PrestaShop\Helpers\LocaleHelper;
 use Alma\PrestaShop\Helpers\PriceHelper;
 use Alma\PrestaShop\Helpers\ProductHelper;
-use Alma\PrestaShop\Helpers\SettingsCustomFieldsHelper;
 use Alma\PrestaShop\Helpers\SettingsHelper;
 use Alma\PrestaShop\Helpers\ShopHelper;
 use Alma\PrestaShop\Helpers\ToolsHelper;
@@ -81,6 +82,11 @@ class DisplayPaymentHookController extends FrontendHookController
     protected $dateHelper;
 
     /**
+     * @var CustomFieldsHelper
+     */
+    protected $customFieldsHelper;
+
+    /**
      * HookController constructor.
      *
      * @param $module Alma
@@ -95,6 +101,7 @@ class DisplayPaymentHookController extends FrontendHookController
         $this->eligibilityHelper = new EligibilityHelper();
         $this->priceHelper = new PriceHelper();
         $this->dateHelper = new DateHelper();
+        $this->customFieldsHelper = new CustomFieldsHelper(new LanguageHelper(), $this->localeHelper);
         $this->cartData = new CartData(new ProductHelper(), $this->settingsHelper);
     }
 
@@ -177,33 +184,81 @@ class DisplayPaymentHookController extends FrontendHookController
                 ),
                 'deferred_trigger_limit_days' => $feePlans->$key->deferred_trigger_limit_days,
                 'isDeferred' => $isDeferred,
-                'text' => sprintf(SettingsCustomFieldsHelper::getPnxButtonTitleByLang($idLang), $installment),
-                'desc' => sprintf(SettingsCustomFieldsHelper::getPnxButtonDescriptionByLang($idLang), $installment),
+                'text' => sprintf(
+                    $this->customFieldsHelper->getBtnValueByLang(
+                        $idLang,
+                        PaymentButtonAdminFormBuilder::ALMA_PNX_BUTTON_TITLE
+                    ),
+                    $installment
+                ),
+                'desc' => sprintf(
+                    $this->customFieldsHelper->getBtnValueByLang(
+                        $idLang,
+                        PaymentButtonAdminFormBuilder::ALMA_PNX_BUTTON_DESC
+                    ),
+                    $installment
+                ),
                 'creditInfo' => $creditInfo,
                 'isInPageEnabled' => SettingsHelper::isInPageEnabled(),
                 'paymentOptionKey' => $keyPlan,
                 'locale' => $locale,
             ];
+
             if ($installment > 4) {
-                $paymentOption['text'] = sprintf(SettingsCustomFieldsHelper::getPnxAirButtonTitleByLang($idLang), $installment);
-                $paymentOption['desc'] = sprintf(SettingsCustomFieldsHelper::getPnxAirButtonDescriptionByLang($idLang), $installment);
+                $paymentOption['text'] = sprintf(
+                    $this->customFieldsHelper->getBtnValueByLang(
+                        $idLang,
+                        PaymentButtonAdminFormBuilder::ALMA_PNX_AIR_BUTTON_TITLE
+                    ),
+                    $installment
+                );
+                $paymentOption['desc'] = sprintf(
+                    $this->customFieldsHelper->getBtnValueByLang(
+                        $idLang,
+                        PaymentButtonAdminFormBuilder::ALMA_PNX_AIR_BUTTON_DESC
+                    ),
+                    $installment
+                );
                 $paymentOption['isInPageEnabled'] = false;
             }
+
             if ($isDeferred) {
                 $paymentOption['duration'] = $duration;
                 $paymentOption['key'] = $key;
-                $paymentOption['text'] = sprintf(SettingsCustomFieldsHelper::getPaymentButtonTitleDeferredByLang($idLang), $duration);
-                $paymentOption['desc'] = sprintf(SettingsCustomFieldsHelper::getPaymentButtonDescriptionDeferredByLang($idLang), $duration);
+                $paymentOption['text'] = sprintf(
+                    $this->customFieldsHelper->getBtnValueByLang(
+                        $idLang,
+                        PaymentButtonAdminFormBuilder::ALMA_DEFERRED_BUTTON_TITLE
+                    ),
+                    $duration
+                );
+                $paymentOption['desc'] = sprintf(
+                    $this->customFieldsHelper->getBtnValueByLang(
+                        $idLang,
+                        PaymentButtonAdminFormBuilder::ALMA_DEFERRED_BUTTON_DESC
+                    ),
+                    $duration
+                );
             }
+
             if ($isPayNow) {
-                $paymentOption['text'] = SettingsCustomFieldsHelper::getPayNowButtonTitleByLang($idLang);
-                $paymentOption['desc'] = SettingsCustomFieldsHelper::getPayNowButtonDescriptionByLang($idLang);
+                $paymentOption['text'] = $this->customFieldsHelper->getBtnValueByLang(
+                    $idLang,
+                    PaymentButtonAdminFormBuilder::ALMA_PAY_NOW_BUTTON_TITLE
+                );
+
+                $paymentOption['desc'] = $this->customFieldsHelper->getBtnValueByLang(
+                    $idLang,
+                    PaymentButtonAdminFormBuilder::ALMA_PAY_NOW_BUTTON_DESC
+                );
             }
+
             $paymentOptions[$key] = $paymentOption;
             $sortOptions[$key] = $feePlans->$key->order;
         }
 
         asort($sortOptions);
+
         $payment = [];
         foreach (array_keys($sortOptions) as $key) {
             $payment[] = $paymentOptions[$key];
@@ -228,7 +283,7 @@ class DisplayPaymentHookController extends FrontendHookController
         if ($isDeferredTriggerLimitDays) {
             return sprintf(
                 $this->module->l('%1$s then %2$d x %3$s', 'DisplayPaymentHookController'),
-                PriceHelper::formatPriceToCentsByCurrencyId($plans[0]['total_amount']) . ' ' . SettingsCustomFieldsHelper::getDescriptionPaymentTriggerByLang($idLang),
+                PriceHelper::formatPriceToCentsByCurrencyId($plans[0]['total_amount']) . ' ' . $this->customFieldsHelper->getDescriptionPaymentTriggerByLang($idLang),
                 $nbPlans - 1,
                 PriceHelper::formatPriceToCentsByCurrencyId($plans[1]['total_amount'])
             );

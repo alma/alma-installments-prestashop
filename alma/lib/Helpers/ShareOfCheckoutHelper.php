@@ -58,6 +58,11 @@ class ShareOfCheckoutHelper
      */
     protected $priceHelper;
 
+    /**
+     * @codeCoverageIgnore
+     *
+     * @param $orderHelper
+     */
     public function __construct($orderHelper)
     {
         $this->orderHelper = $orderHelper;
