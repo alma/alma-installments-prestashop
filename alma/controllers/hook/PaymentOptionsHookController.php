@@ -73,6 +73,11 @@ class PaymentOptionsHookController extends FrontendHookController
     protected $priceHelper;
 
     /**
+     * @var DateHelper
+     */
+    protected $dateHelper;
+
+    /**
      * @var CartData
      */
     protected $cartData;
@@ -86,6 +91,7 @@ class PaymentOptionsHookController extends FrontendHookController
         $this->toolsHelper = new ToolsHelper();
         $this->eligibilityHelper = new EligibilityHelper();
         $this->priceHelper = new PriceHelper();
+        $this->dateHelper = new DateHelper();
         $this->cartData = new CartData(new ProductHelper(), $this->settingsHelper);
     }
 
@@ -150,7 +156,7 @@ class PaymentOptionsHookController extends FrontendHookController
             $isInPageEnabled = SettingsHelper::isInPageEnabled();
 
             foreach ($plans as $keyPlan => $paymentPlan) {
-                $plans[$keyPlan]['human_date'] = DateHelper::getDateFormat($locale, $paymentPlan['due_date']);
+                $plans[$keyPlan]['human_date'] = $this->dateHelper->getDateFormat($locale, $paymentPlan['due_date']);
                 if (0 === $keyPlan) {
                     $plans[$keyPlan]['human_date'] = $this->module->l('Today', 'PaymentOptionsHookController');
                 }
@@ -226,7 +232,7 @@ class PaymentOptionsHookController extends FrontendHookController
                     $templateVar['installmentText'] = sprintf(
                         $this->module->l('0 € today then %1$s on %2$s', 'PaymentOptionsHookController'),
                         PriceHelper::formatPriceToCentsByCurrencyId($plans[0]['purchase_amount'] + $plans[0]['customer_fee']),
-                        DateHelper::getDateFormat($locale, $plans[0]['due_date'])
+                        $this->dateHelper->getDateFormat($locale, $plans[0]['due_date'])
                     );
                 }
                 $this->context->smarty->assign($templateVar);

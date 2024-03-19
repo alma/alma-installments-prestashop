@@ -104,7 +104,7 @@ class DateHelper
      *
      * @return string date
      */
-    public static function getDateFormat($locale, $timestamp)
+    public function getDateFormat($locale, $timestamp)
     {
         try {
             if (class_exists(\IntlDateFormatter::class)) {
@@ -116,7 +116,7 @@ class DateHelper
             // We don't need to deal with this Exception because a fallback exists in default return statement
         }
 
-        return static::getFrenchDateFormat($timestamp);
+        return $this->getFrenchDateFormat($timestamp);
     }
 
     /**
@@ -126,7 +126,7 @@ class DateHelper
      *
      * @return string
      */
-    protected static function getFrenchDateFormat($timestamp)
+    public function getFrenchDateFormat($timestamp)
     {
         $date = new \DateTime();
         $date->setTimestamp($timestamp);
