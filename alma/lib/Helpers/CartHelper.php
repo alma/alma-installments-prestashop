@@ -61,7 +61,7 @@ class CartHelper
         $this->context = $context;
         $this->toolsHelper = new ToolsHelper();
         $this->priceHelper = new PriceHelper();
-        $this->cartaData = new CartData();
+        $this->cartaData = new CartData(new ProductHelper(), new SettingsHelper(new ShopHelper(), new ConfigurationHelper()));
     }
 
     /**

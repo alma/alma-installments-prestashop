@@ -91,4 +91,16 @@ class ProductHelper
 
         return \ImageType::getFormatedName($name);
     }
+
+    /**
+     * getProductCategories return an array of categories which this product belongs to.
+     *
+     * @param int|string $id_product Product identifier
+     *
+     * @return array Category identifiers
+     */
+    public function getProductCategories($idProduct)
+    {
+        return \Product::getProductCategories($idProduct);
+    }
 }

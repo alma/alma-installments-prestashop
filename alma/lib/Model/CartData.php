@@ -49,10 +49,16 @@ class CartData
      */
     protected $settingsHelper;
 
-    public function __construct()
+    /**
+     * @var ProductHelper
+     */
+    protected $productHelper;
+
+    public function __construct($productHelper, $settingsHelper)
     {
         $this->priceHelper = new PriceHelper();
-        $this->settingsHelper = new SettingsHelper(new ShopHelper(), new ConfigurationHelper());
+        $this->settingsHelper = $settingsHelper;
+        $this->productHelper = $productHelper;
     }
 
     /**
@@ -209,7 +215,8 @@ class CartData
         $cartProductsCategories = [];
 
         foreach ($products as $p) {
-            $productCategories = \Product::getProductCategories((int) $p['id_product']);
+            $productCategories = $this->productHelper->getProductCategories((int) $p['id_product']);
+
             foreach ($productCategories as $cat) {
                 $cartProductsCategories[] = $cat;
             }
