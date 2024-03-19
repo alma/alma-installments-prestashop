@@ -69,7 +69,9 @@ class DisplayBackOfficeHeaderHookController extends FrontendHookController
      */
     public function run($params)
     {
-        $this->context->controller->setMedia();
+        if (version_compare(_PS_VERSION_, '1.7', '<')) {
+            $this->context->controller->setMedia();
+        }
         $this->context->controller->addCSS($this->module->_path . 'views/css/admin/_configure/helpers/form/form.css', 'all');
         $this->context->controller->addCSS($this->module->_path . 'views/css/admin/almaPage.css', 'all');
         $this->context->controller->addJS($this->module->_path . 'views/js/admin/alma.js');
