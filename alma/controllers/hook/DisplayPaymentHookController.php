@@ -55,7 +55,6 @@ class DisplayPaymentHookController extends FrontendHookController
      */
     protected $settingsHelper;
 
-
     /**
      * @var ToolsHelper
      */
