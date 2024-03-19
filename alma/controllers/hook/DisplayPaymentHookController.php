@@ -45,6 +45,11 @@ use Alma\PrestaShop\Model\CartData;
 class DisplayPaymentHookController extends FrontendHookController
 {
     /**
+     * @var DateHelper
+     */
+    protected $dateHelper;
+
+    /**
      * @var LocaleHelper
      */
     protected $localeHelper;
@@ -83,6 +88,7 @@ class DisplayPaymentHookController extends FrontendHookController
     {
         parent::__construct($module);
 
+        $this->dateHelper = new DateHelper();
         $this->settingsHelper = new SettingsHelper(new ShopHelper(), new ConfigurationHelper());
         $this->localeHelper = new LocaleHelper(new LanguageHelper());
         $this->toolsHelper = new ToolsHelper();
@@ -241,7 +247,7 @@ class DisplayPaymentHookController extends FrontendHookController
         return sprintf(
             $this->module->l('0 € today then %1$s on %2$s', 'DisplayPaymentHookController'),
             PriceHelper::formatPriceToCentsByCurrencyId($plans[0]['purchase_amount'] + $plans[0]['customer_fee']),
-            DateHelper::getDateFormat($locale, $plans[0]['due_date'])
+            $this->dateHelper->getDateFormat($locale, $plans[0]['due_date'])
         );
     }
 

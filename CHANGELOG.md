@@ -1,6 +1,7 @@
 # Changelog
 
-* feature : In Page is available with deferred payments
+- fix: prevent soc to send data twice
+- feature : In Page is available with deferred payments
 
 ## v3.1.6
 

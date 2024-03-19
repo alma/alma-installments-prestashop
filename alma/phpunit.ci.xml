@@ -23,6 +23,9 @@
                 <directory>../alma/vendor</directory>
                 <directory>../alma/tests</directory>
             </exclude>
+            <exclude>
+                <directory>../alma/tests</directory>
+            </exclude>
         </whitelist>
     </filter>
 
