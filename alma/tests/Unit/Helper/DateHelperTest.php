@@ -47,4 +47,11 @@ class DateHelperTest extends TestCase
 
         $this->assertEquals('19/03/2024', $result);
     }
+
+    public function testGetDateFormat()
+    {
+        $result = $this->dateHelper->getDateFormat('FR', '1710839269');
+
+        $this->assertEquals('19 mars 2024', $result);
+    }
 }
