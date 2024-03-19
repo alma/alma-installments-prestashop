@@ -66,6 +66,16 @@ class PaymentOptionsHookController extends FrontendHookController
      */
     protected $eligibilityHelper;
 
+    /**
+     * @var PriceHelper
+     */
+    protected $priceHelper;
+
+    /**
+     * @var CartData
+     */
+    protected $cartData;
+
     public function __construct($module)
     {
         parent::__construct($module);
@@ -74,6 +84,8 @@ class PaymentOptionsHookController extends FrontendHookController
         $this->localeHelper = new LocaleHelper(new LanguageHelper());
         $this->toolsHelper = new ToolsHelper();
         $this->eligibilityHelper = new EligibilityHelper();
+        $this->priceHelper = new PriceHelper();
+        $this->cartData = new CartData();
     }
 
     /**
@@ -89,7 +101,7 @@ class PaymentOptionsHookController extends FrontendHookController
     public function run($params)
     {
         //  Check if some products in cart are in the excludes listing
-        $diff = CartData::getCartExclusion($params['cart']);
+        $diff = $this->cartData->getCartExclusion($params['cart']);
 
         if (!empty($diff)) {
             return [];
@@ -112,7 +124,7 @@ class PaymentOptionsHookController extends FrontendHookController
         $sortOptions = [];
         $feePlans = json_decode(SettingsHelper::getFeePlans());
         $countIteration = 1;
-        $totalCart = (float) PriceHelper::convertPriceToCents(
+        $totalCart = (float) $this->priceHelper->convertPriceToCents(
             $this->toolsHelper->psRound((float) $this->context->cart->getOrderTotal(true, \Cart::BOTH), 2)
         );
 
@@ -125,7 +137,7 @@ class PaymentOptionsHookController extends FrontendHookController
             ++$countIteration;
 
             $installment = $plan->installmentsCount;
-            $key = SettingsHelper::keyForInstallmentPlan($plan);
+            $key = $this->settingsHelper->keyForInstallmentPlan($plan);
             $plans = $plan->paymentPlan;
             $creditInfo = [
                 'totalCart' => $totalCart,

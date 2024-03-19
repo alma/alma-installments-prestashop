@@ -50,6 +50,16 @@ class DisplayShoppingCartFooterHookController extends FrontendHookController
     protected $eligibilityHelper;
 
     /**
+     * @var PriceHelper
+     */
+    protected $priceHelper;
+
+    /**
+     * @var CartData
+     */
+    protected $cartData;
+
+    /**
      * HookController constructor.
      *
      * @param $module Alma
@@ -60,6 +70,8 @@ class DisplayShoppingCartFooterHookController extends FrontendHookController
 
         $this->localeHelper = new LocaleHelper(new LanguageHelper());
         $this->eligibilityHelper = new EligibilityHelper();
+        $this->priceHelper = new PriceHelper();
+        $this->cartData = new CartData();
     }
 
     public function canRun()
@@ -80,7 +92,7 @@ class DisplayShoppingCartFooterHookController extends FrontendHookController
         }
 
         $cart = $this->context->cart;
-        $cartTotal = PriceHelper::convertPriceToCents((float) $cart->getOrderTotal(true, \Cart::BOTH));
+        $cartTotal = $this->priceHelper->convertPriceToCents((float) $cart->getOrderTotal(true, \Cart::BOTH));
 
         $isEligible = true;
         if (!SettingsHelper::showCartWidgetIfNotEligible()) {
@@ -96,7 +108,7 @@ class DisplayShoppingCartFooterHookController extends FrontendHookController
 
         // Check if some products in cart are in the excludes listing
         $isExcluded = false;
-        $diff = CartData::getCartExclusion($params['cart']);
+        $diff = $this->cartData->getCartExclusion($params['cart']);
         if (!empty($diff)) {
             $eligibilityMsg = SettingsCustomFieldsHelper::getNonEligibleCategoriesMessageByLang($this->context->language->id);
             $isExcluded = true;

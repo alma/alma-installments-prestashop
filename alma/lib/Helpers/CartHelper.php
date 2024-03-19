@@ -46,10 +46,22 @@ class CartHelper
      */
     protected $toolsHelper;
 
+    /**
+     * @var PriceHelper
+     */
+    protected $priceHelper;
+
+    /**
+     * @var
+     */
+    protected $cartData;
+
     public function __construct($context)
     {
         $this->context = $context;
         $this->toolsHelper = new ToolsHelper();
+        $this->priceHelper = new PriceHelper();
+        $this->cartaData = new CartData();
     }
 
     /**
@@ -80,7 +92,7 @@ class CartHelper
 
             $cartItems = [];
             try {
-                $cartItems = CartData::getCartItems($cart, $productHelper, $productRepository);
+                $cartItems = $this->cartData->getCartItems($cart, $productHelper, $productRepository);
             } catch (\PrestaShopDatabaseException $e) {
                 $msg = '[Alma] cart items for previous cart ordered no found';
                 Logger::instance()->warning($msg);
@@ -89,7 +101,7 @@ class CartHelper
                 Logger::instance()->warning($msg);
             }
             $ordersData[] = [
-                'purchase_amount' => PriceHelper::convertPriceToCents($purchaseAmount),
+                'purchase_amount' => $this->priceHelper->convertPriceToCents($purchaseAmount),
                 'created' => strtotime($order['date_add']),
                 'payment_method' => $order['payment'],
                 'alma_payment_external_id' => $order['module'] === 'alma' ? $order['transaction_id'] : null,
