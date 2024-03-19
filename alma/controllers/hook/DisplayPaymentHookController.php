@@ -71,6 +71,11 @@ class DisplayPaymentHookController extends FrontendHookController
     protected $priceHelper;
 
     /**
+     * @var CartData
+     */
+    protected $cartData;
+
+    /**
      * HookController constructor.
      *
      * @param $module Alma
@@ -84,6 +89,7 @@ class DisplayPaymentHookController extends FrontendHookController
         $this->toolsHelper = new ToolsHelper();
         $this->eligibilityHelper = new EligibilityHelper();
         $this->priceHelper = new PriceHelper();
+        $this->cartData = new CartData();
     }
 
     /**
@@ -96,7 +102,7 @@ class DisplayPaymentHookController extends FrontendHookController
     public function run($params)
     {
         // Check if some products in cart are in the excludes listing
-        $diff = CartData::getCartExclusion($params['cart']);
+        $diff = $this->cartData->getCartExclusion($params['cart']);
         if (!empty($diff)) {
             return false;
         }
