@@ -3,6 +3,7 @@
 - feature : In Page is available with deferred payments
 - fix: Removed the setMedia on HookController for Prestashop 1.7+
 - fix: Issue for save configuration for the module on Prestashop 1.5 with last Chrome
+- fix: prevent soc to send data twice
 
 ## v3.1.6
 
