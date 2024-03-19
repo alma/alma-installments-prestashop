@@ -221,10 +221,10 @@ class CartDataTest extends TestCase
         $cart = \Mockery::mock(\Cart::class);
         $cart->allows()->getProducts(true)->andReturns([['id_product' => 1]]);
 
-        $settingsHelperMock =  \Mockery::mock(SettingsHelper::class, [new ShopHelper(), new ConfigurationHelper()]);
+        $settingsHelperMock = \Mockery::mock(SettingsHelper::class, [new ShopHelper(), new ConfigurationHelper()]);
         $settingsHelperMock->shouldReceive('getExcludedCategories')->andReturn(['cateexclue']);
 
-        $productHelperMock =  \Mockery::mock(ProductHelper::class);
+        $productHelperMock = \Mockery::mock(ProductHelper::class);
         $productHelperMock->shouldReceive('getProductCategories')->with(1)->andReturn(['cate1', 'cate2', 'cateexclue']);
 
         $cartData = new CartData($productHelperMock, $settingsHelperMock);

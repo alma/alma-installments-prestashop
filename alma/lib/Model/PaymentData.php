@@ -76,7 +76,7 @@ class PaymentData
         $this->toolsHelper = new ToolsHelper();
         $this->settingsHelper = new SettingsHelper(new ShopHelper(), new ConfigurationHelper());
         $this->priceHelper = new PriceHelper();
-        $this->cartData = new CartData(new ProductHelper(),$this->settingsHelper);
+        $this->cartData = new CartData(new ProductHelper(), $this->settingsHelper);
         $this->shippingData = new ShippingData();
     }
 

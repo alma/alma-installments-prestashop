@@ -86,7 +86,7 @@ class PaymentOptionsHookController extends FrontendHookController
         $this->toolsHelper = new ToolsHelper();
         $this->eligibilityHelper = new EligibilityHelper();
         $this->priceHelper = new PriceHelper();
-        $this->cartData = new CartData(new ProductHelper(),$this->settingsHelper);
+        $this->cartData = new CartData(new ProductHelper(), $this->settingsHelper);
     }
 
     /**
