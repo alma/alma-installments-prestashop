@@ -68,7 +68,7 @@ class DisplayProductPriceBlockHookController extends FrontendHookController
         $this->priceHelper = new PriceHelper();
         $this->settingsHelper = new SettingsHelper(new ShopHelper(), new ConfigurationHelper());
     }
-    
+
     public function canRun()
     {
         return parent::canRun()

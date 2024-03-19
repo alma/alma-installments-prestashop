@@ -27,7 +27,6 @@ namespace Alma\PrestaShop\Forms;
 use Alma\API\Entities\FeePlan;
 use Alma\PrestaShop\Helpers\ConfigurationHelper;
 use Alma\PrestaShop\Helpers\PriceHelper;
-use Alma\PrestaShop\Helpers\ProductHelper;
 use Alma\PrestaShop\Helpers\SettingsHelper;
 use Alma\PrestaShop\Helpers\ShopHelper;
 
@@ -44,7 +43,6 @@ class PnxAdminFormBuilder extends AbstractAlmaAdminFormBuilder
      * @var SettingsHelper
      */
     protected $settingsHelper;
-
 
     public function __construct($module, $context, $image, $config = [])
     {

@@ -215,7 +215,7 @@ class CartData
             }
         }
 
-        $excludedListing =  $this->settingsHelper->getExcludedCategories();
+        $excludedListing = $this->settingsHelper->getExcludedCategories();
 
         return array_intersect($cartProductsCategories, $excludedListing);
     }
