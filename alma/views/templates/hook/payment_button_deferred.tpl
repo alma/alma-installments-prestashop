@@ -25,7 +25,14 @@
         {$desc|escape:'htmlall':'UTF-8'}
     </p>
     {if $isInPageEnabled}
-        <div class="alma-inpage" data-apimode="{$apiMode|escape:'htmlall':'UTF-8'}" data-merchantid="{$merchantId|escape:'htmlall':'UTF-8'}" data-isinpageenabled="{$isInPageEnabled|escape:'htmlall':'UTF-8'}" data-installment="{$installment|escape:'htmlall':'UTF-8'}" data-purchaseamount="{$creditInfo.totalCart|escape:'htmlall':'UTF-8'}" data-locale="{$locale|escape:'htmlall':'UTF-8'}"></div>
+        <div class="alma-inpage" data-apimode="{$apiMode|escape:'htmlall':'UTF-8'}"
+             data-merchantid="{$merchantId|escape:'htmlall':'UTF-8'}"
+             data-isinpageenabled="{$isInPageEnabled|escape:'htmlall':'UTF-8'}"
+             data-installment="{$installment|escape:'htmlall':'UTF-8'}"
+             data-deferreddays="{$deferredDays|escape:'htmlall':'UTF-8'}"
+             data-deferredmonths="{$deferredMonths|escape:'htmlall':'UTF-8'}"
+             data-purchaseamount="{$creditInfo.totalCart|escape:'htmlall':'UTF-8'}"
+             data-locale="{$locale|escape:'htmlall':'UTF-8'}"></div>
     {else}
         {include file="modules/alma/views/templates/hook/_partials/deferred.tpl" plans=$plans}
     {/if}

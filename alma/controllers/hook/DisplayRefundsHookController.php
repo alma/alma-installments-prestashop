@@ -44,6 +44,17 @@ final class DisplayRefundsHookController extends AdminHookController
     public $order;
 
     /**
+     * @var PriceHelper
+     */
+    protected $priceHelper;
+
+    public function __construct($module)
+    {
+        parent::__construct($module);
+        $this->priceHelper = new PriceHelper();
+    }
+
+    /**
      * Run Hook for show block Refund in Order page if is payment Alma
      *
      * @param array $params
@@ -88,7 +99,7 @@ final class DisplayRefundsHookController extends AdminHookController
             $paymentTotalAmount = $orderTotalPaid;
         }
 
-        $totalOrderInCents = PriceHelper::convertPriceToCents($paymentTotalAmount);
+        $totalOrderInCents = $this->priceHelper->convertPriceToCents($paymentTotalAmount);
         if ($payment->refunds) {
             $totalRefundInCents = RefundHelper::buildTotalRefund($payment->refunds, $totalOrderInCents);
             $percentRefund = PriceHelper::calculatePercentage($totalRefundInCents, $totalOrderInCents);
@@ -102,7 +113,7 @@ final class DisplayRefundsHookController extends AdminHookController
         $currency = new \Currency($order->id_currency);
         $orderData = [
             'id' => $order->id,
-            'maxAmount' => PriceHelper::formatPriceToCentsByCurrencyId(PriceHelper::convertPriceToCents($order->total_paid_tax_incl), (int) $order->id_currency),
+            'maxAmount' => PriceHelper::formatPriceToCentsByCurrencyId($this->priceHelper->convertPriceToCents($order->total_paid_tax_incl), (int) $order->id_currency),
             'currencySymbol' => $currency->sign,
             'ordersId' => $ordersId,
             'paymentTotalPrice' => PriceHelper::formatPriceToCentsByCurrencyId($totalOrderInCents, (int) $order->id_currency),

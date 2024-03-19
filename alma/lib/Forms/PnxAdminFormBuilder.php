@@ -25,8 +25,10 @@
 namespace Alma\PrestaShop\Forms;
 
 use Alma\API\Entities\FeePlan;
+use Alma\PrestaShop\Helpers\ConfigurationHelper;
 use Alma\PrestaShop\Helpers\PriceHelper;
 use Alma\PrestaShop\Helpers\SettingsHelper;
+use Alma\PrestaShop\Helpers\ShopHelper;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -37,6 +39,18 @@ if (!defined('_PS_VERSION_')) {
  */
 class PnxAdminFormBuilder extends AbstractAlmaAdminFormBuilder
 {
+    /**
+     * @var SettingsHelper
+     */
+    protected $settingsHelper;
+
+    public function __construct($module, $context, $image, $config = [])
+    {
+        parent::__construct($module, $context, $image, $config);
+
+        $this->settingsHelper = new SettingsHelper(new ShopHelper(), new ConfigurationHelper());
+    }
+
     /**
      * @param int $duration
      *
@@ -118,7 +132,7 @@ class PnxAdminFormBuilder extends AbstractAlmaAdminFormBuilder
                 $this->disableFeePlan($key, $installmentsPlans);
                 continue;
             }
-            $duration = SettingsHelper::getDuration($feePlan);
+            $duration = $this->settingsHelper->getDuration($feePlan);
 
             $return = array_merge($return, $this->buildPnxForm($feePlan, $duration));
 

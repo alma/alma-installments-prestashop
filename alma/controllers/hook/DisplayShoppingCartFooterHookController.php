@@ -29,6 +29,7 @@ if (!defined('_PS_VERSION_')) {
 }
 
 use Alma\PrestaShop\Helpers\EligibilityHelper;
+use Alma\PrestaShop\Helpers\LanguageHelper;
 use Alma\PrestaShop\Helpers\LocaleHelper;
 use Alma\PrestaShop\Helpers\PriceHelper;
 use Alma\PrestaShop\Helpers\SettingsCustomFieldsHelper;
@@ -38,6 +39,41 @@ use Alma\PrestaShop\Model\CartData;
 
 class DisplayShoppingCartFooterHookController extends FrontendHookController
 {
+    /**
+     * @var LocaleHelper
+     */
+    protected $localeHelper;
+
+    /**
+     * @var EligibilityHelper
+     */
+    protected $eligibilityHelper;
+
+    /**
+     * @var PriceHelper
+     */
+    protected $priceHelper;
+
+    /**
+     * @var CartData
+     */
+    protected $cartData;
+
+    /**
+     * HookController constructor.
+     *
+     * @param $module Alma
+     */
+    public function __construct($module)
+    {
+        parent::__construct($module);
+
+        $this->localeHelper = new LocaleHelper(new LanguageHelper());
+        $this->eligibilityHelper = new EligibilityHelper();
+        $this->priceHelper = new PriceHelper();
+        $this->cartData = new CartData();
+    }
+
     public function canRun()
     {
         return parent::canRun() && SettingsHelper::showEligibilityMessage();
@@ -49,18 +85,18 @@ class DisplayShoppingCartFooterHookController extends FrontendHookController
 
         $activePlans = SettingsHelper::activePlans();
 
-        $locale = LocaleHelper::localeByIdLangForWidget($this->context->language->id);
+        $locale = $this->localeHelper->getLocaleByIdLangForWidget($this->context->language->id);
 
         if (!$activePlans) {
             return;
         }
 
         $cart = $this->context->cart;
-        $cartTotal = PriceHelper::convertPriceToCents((float) $cart->getOrderTotal(true, \Cart::BOTH));
+        $cartTotal = $this->priceHelper->convertPriceToCents((float) $cart->getOrderTotal(true, \Cart::BOTH));
 
         $isEligible = true;
         if (!SettingsHelper::showCartWidgetIfNotEligible()) {
-            $installmentPlans = EligibilityHelper::eligibilityCheck($this->context);
+            $installmentPlans = $this->eligibilityHelper->eligibilityCheck($this->context);
             $isEligible = false;
             foreach ($installmentPlans as $plan) {
                 if ($plan->installmentsCount !== 1 && $plan->isEligible) {
@@ -72,7 +108,7 @@ class DisplayShoppingCartFooterHookController extends FrontendHookController
 
         // Check if some products in cart are in the excludes listing
         $isExcluded = false;
-        $diff = CartData::getCartExclusion($params['cart']);
+        $diff = $this->cartData->getCartExclusion($params['cart']);
         if (!empty($diff)) {
             $eligibilityMsg = SettingsCustomFieldsHelper::getNonEligibleCategoriesMessageByLang($this->context->language->id);
             $isExcluded = true;

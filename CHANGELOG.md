@@ -1,7 +1,8 @@
 # Changelog
 
 - fix: prevent soc to send data twice
-- 
+- feature : In Page is available with deferred payments
+
 ## v3.1.6
 
 - fix: Pay Now without inpage PS 1.5 / 1.6

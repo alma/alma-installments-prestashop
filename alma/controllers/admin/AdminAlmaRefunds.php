@@ -50,6 +50,17 @@ class AdminAlmaRefundsController extends ModuleAdminController
     protected $json = true;
 
     /**
+     * @var PriceHelper
+     */
+    protected $priceHelper;
+
+    public function __construct()
+    {
+        parent::__construct();
+        $this->priceHelper = new PriceHelper();
+    }
+
+    /**
      * Make refund over ajax request and display json on std output.
      *
      * @return void
@@ -125,7 +136,7 @@ class AdminAlmaRefundsController extends ModuleAdminController
         }
 
         try {
-            return $alma->payments->refund($paymentId, $isTotal, PriceHelper::convertPriceToCents($amount));
+            return $alma->payments->refund($paymentId, $isTotal, $this->priceHelper->convertPriceToCents($amount));
         } catch (ParametersException $e) {
             Logger::instance()->error(
                 sprintf('Message :%s - Trace: %s', $e->getMessage(), $e->getTraceAsString())

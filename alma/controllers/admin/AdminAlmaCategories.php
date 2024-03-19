@@ -21,7 +21,9 @@
  * @copyright 2018-2023 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
+use Alma\PrestaShop\Helpers\ConfigurationHelper;
 use Alma\PrestaShop\Helpers\SettingsHelper;
+use Alma\PrestaShop\Helpers\ShopHelper;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -43,6 +45,7 @@ class AdminAlmaCategoriesController extends ModuleAdminController
         $this->_defaultOrderBy = 'position';
         $this->allow_export = false;
         $this->list_no_link = true;
+        $this->settingsHelper = new SettingsHelper(new ShopHelper(), new ConfigurationHelper());
 
         parent::__construct();
 
@@ -88,7 +91,7 @@ class AdminAlmaCategoriesController extends ModuleAdminController
             ],
         ];
 
-        static::$excludedCategories = SettingsHelper::getExcludedCategories();
+        static::$excludedCategories = $this->settingsHelper->getExcludedCategories();
     }
 
     public function init()
@@ -366,7 +369,7 @@ class AdminAlmaCategoriesController extends ModuleAdminController
             $category = new Category((int) $id_category);
 
             if (Validate::isLoadedObject($category)) {
-                SettingsHelper::removeExcludedCategories((int) $id_category);
+                $this->settingsHelper->removeExcludedCategories((int) $id_category);
             }
         }
 
@@ -385,7 +388,7 @@ class AdminAlmaCategoriesController extends ModuleAdminController
             $category = new Category((int) $id_category);
 
             if (Validate::isLoadedObject($category)) {
-                SettingsHelper::addExcludedCategories((int) $id_category);
+                $this->settingsHelper->addExcludedCategories((int) $id_category);
             }
         }
 

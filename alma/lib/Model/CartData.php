@@ -24,9 +24,11 @@
 
 namespace Alma\PrestaShop\Model;
 
+use Alma\PrestaShop\Helpers\ConfigurationHelper;
 use Alma\PrestaShop\Helpers\PriceHelper;
 use Alma\PrestaShop\Helpers\ProductHelper;
 use Alma\PrestaShop\Helpers\SettingsHelper;
+use Alma\PrestaShop\Helpers\ShopHelper;
 use Alma\PrestaShop\Repositories\ProductRepository;
 
 if (!defined('_PS_VERSION_')) {
@@ -38,6 +40,22 @@ class CartData
     private static $taxCalculationMethod = [];
 
     /**
+     * @var PriceHelper
+     */
+    protected $priceHelper;
+
+    /**
+     * @var SettingsHelper
+     */
+    protected $settingsHelper;
+
+    public function __construct()
+    {
+        $this->priceHelper = new PriceHelper();
+        $this->settingsHelper = new SettingsHelper(new ShopHelper(), new ConfigurationHelper());
+    }
+
+    /**
      * @param \Cart $cart
      *
      * @return array
@@ -45,14 +63,14 @@ class CartData
      * @throws \PrestaShopDatabaseException
      * @throws \PrestaShopException
      */
-    public static function cartInfo($cart)
+    public function cartInfo($cart)
     {
         $productHelper = new ProductHelper();
         $productRepository = new ProductRepository();
 
         return [
-            'items' => static::getCartItems($cart, $productHelper, $productRepository),
-            'discounts' => self::getCartDiscounts($cart),
+            'items' => $this->getCartItems($cart, $productHelper, $productRepository),
+            'discounts' => $this->getCartDiscounts($cart),
         ];
     }
 
@@ -91,7 +109,7 @@ class CartData
      * @throws \PrestaShopDatabaseException
      * @throws \PrestaShopException
      */
-    public static function getCartItems($cart, $productHelper, $productRepository)
+    public function getCartItems($cart, $productHelper, $productRepository)
     {
         $items = [];
 
@@ -132,8 +150,8 @@ class CartData
                 'title' => $productRow['name'],
                 'variant_title' => null,
                 'quantity' => (int) $productRow['cart_quantity'],
-                'unit_price' => PriceHelper::convertPriceToCents($unitPrice),
-                'line_price' => PriceHelper::convertPriceToCents($linePrice),
+                'unit_price' => $this->priceHelper->convertPriceToCents($unitPrice),
+                'line_price' => $this->priceHelper->convertPriceToCents($linePrice),
                 'is_gift' => $isGift,
                 'categories' => [$productRow['category']],
                 'url' => $productHelper->getProductLink($product, $productRow, $cart),
@@ -161,7 +179,7 @@ class CartData
      *
      * @return array of discount items
      */
-    private static function getCartDiscounts($cart)
+    private function getCartDiscounts($cart)
     {
         $discounts = [];
         $cartRules = $cart->getCartRules(\CartRule::FILTER_ACTION_ALL, false);
@@ -170,7 +188,7 @@ class CartData
             $amount = self::includeTaxes($cart) ? (float) $cartRule['value_real'] : (float) $cartRule['value_tax_exc'];
             $discounts[] = [
                 'title' => isset($cartRule['name']) ? $cartRule['name'] : $cartRule['description'],
-                'amount' => PriceHelper::convertPriceToCents($amount),
+                'amount' => $this->priceHelper->convertPriceToCents($amount),
             ];
         }
 
@@ -184,7 +202,7 @@ class CartData
      *
      * @return array
      */
-    public static function getCartExclusion($cart)
+    public function getCartExclusion($cart)
     {
         $products = $cart->getProducts(true);
 
@@ -197,7 +215,7 @@ class CartData
             }
         }
 
-        $excludedListing = SettingsHelper::getExcludedCategories();
+        $excludedListing = $this->settingsHelper->getExcludedCategories();
 
         return array_intersect($cartProductsCategories, $excludedListing);
     }
