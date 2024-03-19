@@ -26,6 +26,7 @@ namespace Alma\PrestaShop\Helpers;
 
 use Alma\API\Client;
 use Alma\API\RequestError;
+use Alma\PrestaShop\Exceptions\ClientException;
 use Alma\PrestaShop\Exceptions\ShareOfCheckoutException;
 use Alma\PrestaShop\Forms\ApiAdminFormBuilder;
 use Alma\PrestaShop\Forms\ShareOfCheckoutAdminFormBuilder;
@@ -66,6 +67,10 @@ class ShareOfCheckoutHelper
      * @var DateHelper
      */
     protected $dateHelper;
+    /**
+     * @var PriceHelper
+     */
+    protected $priceHelper;
 
     /**
      * @param OrderHelper$orderHelper
@@ -76,12 +81,15 @@ class ShareOfCheckoutHelper
         $this->context = \Context::getContext();
         $this->almaClientHelper = new ClientHelper();
         $this->dateHelper = new DateHelper();
+        $this->priceHelper = new PriceHelper();
     }
 
     /**
      * @codeCoverageIgnore
      *
      * @return void
+     *
+     * @throws ClientException
      */
     public function sendSocData()
     {
@@ -211,8 +219,6 @@ class ShareOfCheckoutHelper
      * Total Orders to send.
      *
      * @param array $orders
-     * @param string $startDate
-     * @param string $endDate
      *
      * @return array
      */
@@ -232,7 +238,7 @@ class ShareOfCheckoutHelper
             }
 
             ++$ordersByCurrency[$isoCodeCurrency]['total_order_count'];
-            $ordersByCurrency[$isoCodeCurrency]['total_amount'] += PriceHelper::convertPriceToCents(
+            $ordersByCurrency[$isoCodeCurrency]['total_amount'] += $this->priceHelper->convertPriceToCents(
                 $order->total_paid_tax_incl
             );
         }
@@ -270,7 +276,7 @@ class ShareOfCheckoutHelper
 
             ++$paymentMethodsByCurrency[$paymentMethod][$isoCodeCurrency]['order_count'];
 
-            $paymentMethodsByCurrency[$paymentMethod][$isoCodeCurrency]['amount'] += PriceHelper::convertPriceToCents(
+            $paymentMethodsByCurrency[$paymentMethod][$isoCodeCurrency]['amount'] += $this->priceHelper->convertPriceToCents(
                 $order->total_paid_tax_incl
             );
         }
