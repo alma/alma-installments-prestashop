@@ -190,7 +190,11 @@ class PaymentService
                 $plans = $this->buildDates($plans, $locale, $feePlans, $key);
                 $duration = $this->settingsHelper->getDuration($plan);
 
-                list($textPaymentButton, $descPaymentButton) = $this->getTextsByTypes($plan->installmentsCount);
+                list($textPaymentButton, $descPaymentButton) = $this->getTextsByTypes(
+                    $plan->installmentsCount,
+                    $duration
+                );
+
                 list($fileTemplate, $valueBNPL) = $this->getTemplateAndBnpl(
                     $plan->installmentsCount,
                     $duration
@@ -208,7 +212,6 @@ class PaymentService
                     $forEUComplianceModule,
                     $textPaymentButton,
                     $action,
-                    $this->isDeferred,
                     $valueBNPL
                 );
 
@@ -237,15 +240,14 @@ class PaymentService
                 $paymentOptions[$key] = $paymentOption;
             }
 
-            return $this->sortPaymentsOptions($sortOptions, $paymentOption);
+            return $this->sortPaymentsOptions($sortOptions, $paymentOptions);
         } catch (\Exception $e) {
             var_dump($e->getMessage());
-            var_dump($e->getTrace());
-            exit;
             Logger::instance()->error(
                 sprintf(
-                'An error occured when displaying options payments - message : %s',
-                $e->getMessage()
+                'An error occured when displaying options payments - message : %s, %s',
+                $e->getMessage(),
+                $e->getTraceAsString()
                 ));
         }
     }
@@ -351,14 +353,14 @@ class PaymentService
     {
         if ($this->isDeferred) {
             return [
-                'fileTemplate' => 'payment_button_deferred.tpl',
-                'valueBNPL' => $duration,
+                 'payment_button_deferred.tpl',
+                 $duration,
             ];
         }
 
         return [
-            'fileTemplate' => 'payment_button_pnx.tpl',
-            'valueBNPL' => $installments,
+             'payment_button_pnx.tpl',
+             $installments,
         ];
     }
 
@@ -367,7 +369,7 @@ class PaymentService
      *
      * @return array
      */
-    protected function getTextsByTypes($installementCount)
+    protected function getTextsByTypes($installementCount, $duration)
     {
         if ($this->isPnxPlus4) {
             return $this->getTexts(
@@ -378,7 +380,7 @@ class PaymentService
         }
         if ($this->isDeferred) {
             return $this->getTexts(
-                $installementCount,
+                $duration,
                 PaymentButtonAdminFormBuilder::ALMA_DEFERRED_BUTTON_TITLE,
                 PaymentButtonAdminFormBuilder::ALMA_DEFERRED_BUTTON_DESC
             );
@@ -495,12 +497,12 @@ class PaymentService
     protected function getTexts($installment, $keyTitle, $keyDescription)
     {
         return [
-            'textPaymentButton' => $this->customFieldsHelper->getTextButton(
+             $this->customFieldsHelper->getTextButton(
                     $this->context->language->id,
                     $keyTitle,
                     $installment
                 ),
-            'descPaymentButton' => $this->customFieldsHelper->getTextButton(
+             $this->customFieldsHelper->getTextButton(
                 $this->context->language->id,
                 $keyDescription,
                 $installment
@@ -519,13 +521,14 @@ class PaymentService
      *
      * @return PaymentOption
      */
-    protected function createPaymentOption($forEUComplianceModule, $ctaText, $action, $valueBNPL, $moduleName)
+    protected function createPaymentOption($forEUComplianceModule, $ctaText, $action, $valueBNPL)
     {
         $logoName = $this->getLogoName($valueBNPL);
 
         if ($forEUComplianceModule) {
             $logo = $this->mediaHelper->getMediaPath(
-                _PS_MODULE_DIR_ . $moduleName . '/views/img/logos/alma_payment_logos_tiny.svg'
+                 '/views/img/logos/alma_payment_logos_tiny.svg',
+                $this->module
             );
 
             return [
@@ -536,13 +539,13 @@ class PaymentService
         }
 
         $paymentOption = new PaymentOption();
-
         $logo = $this->mediaHelper->getMediaPath(
-            _PS_MODULE_DIR_ . $moduleName . '/views/img/logos/' . $logoName
+             '/views/img/logos/' . $logoName,
+            $this->module
         );
 
         return $paymentOption
-                ->setModuleName($moduleName)
+                ->setModuleName($this->module->name)
                 ->setCallToActionText($ctaText)
                 ->setAction($action)
                 ->setLogo($logo);

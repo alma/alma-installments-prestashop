@@ -54,8 +54,8 @@ class MediaHelper
      *
      * @return mixed
      */
-    public function getMediaPath($path)
+    public function getMediaPath($path, $module)
     {
-        return \Media::getMediaPath($path);
+        return \Media::getMediaPath(_PS_MODULE_DIR_ . $module->name . $path);
     }
 }
