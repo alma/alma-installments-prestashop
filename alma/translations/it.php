@@ -67,7 +67,7 @@ $_MODULE['<{alma}prestashop>paymentoptionshookcontroller_1dd1c5fb7f25cd41b291d43
 $_MODULE['<{alma}prestashop>paymentoptionshookcontroller_96b0141273eabab320119c467cdcaf17'] = 'Totale';
 $_MODULE['<{alma}prestashop>paymentoptionshookcontroller_9bbd94e0a507283ae202812ea1bd6f20'] = '%s mese dopo';
 $_MODULE['<{alma}prestashop>paymentoptionshookcontroller_9088921432b295dfe6f02863b2dc0ff8'] = 'Oggi paghi 0 € poi %1$s il %2$s';
-$_MODULE['<{alma}prestashop>wrongcredentialsexception_9c2a0378c6c1a5fbb47a5d4546caa1c9'] = 'Impossibile connettersi ad Alma utilizzando le chiavi API. Si prega di ricontrollare le chiavi sul cruscotto di %s Alma %s.';
+$_MODULE['<{alma}prestashop>wrongcredentialsexception_9c2a0378c6c1a5fbb47a5d4546caa1c9'] = 'Impossibile connettersi ad Alma utilizzando le chiavi API. Si prega di ricontrollare le chiavi sul %s portale Alma %s.';
 $_MODULE['<{alma}prestashop>abstractalmaadminformbuilder_c9cc8cce247e49bae79f15173ce97354'] = 'Salva';
 $_MODULE['<{alma}prestashop>apiadminformbuilder_fe1d478b2e434b92277b47f0cf62e040'] = 'Modalità API';
 $_MODULE['<{alma}prestashop>apiadminformbuilder_0e95e5facc2cad62d6458c65164c4455'] = 'Usa la modalità Test finché non sarai pronto ad accettare ordini reali con Alma. In modalità test, solo gli amministratori possono vedere Alma sulle pagine dei carrelli e dei checkout.';
@@ -96,10 +96,10 @@ $_MODULE['<{alma}prestashop>excludedcategoryadminformbuilder_f5e42a943a36e2a61ba
 $_MODULE['<{alma}prestashop>excludedcategoryadminformbuilder_41c2bdcbfb6ea702ac49667124a1652a'] = 'Messaggio di non idoneità per le categorie escluse';
 $_MODULE['<{alma}prestashop>excludedcategoryadminformbuilder_c4cea4750fb3ef077cbf2e1283c312ac'] = 'Messaggio visualizzato nella pagina di un prodotto escluso o nella pagina del carrello se contiene un prodotto escluso.';
 $_MODULE['<{alma}prestashop>excludedcategoryadminformbuilder_36359547b09bdb31f46c419a0bd5807e'] = 'Categorie escluse';
-$_MODULE['<{alma}prestashop>inpageadminformbuilder_2420ebe02d61c738479f399a97e1cf18'] = 'Attivare il checkout in-page';
-$_MODULE['<{alma}prestashop>inpageadminformbuilder_bf3b980c4aa11b5fca4cc3096f50e0b8'] = 'Attivazione del checkout in-page per Pay Now, P2X, P3X e P4X';
-$_MODULE['<{alma}prestashop>inpageadminformbuilder_220a4f39147308a2160f7abc4d00ae43'] = 'La pagina di checkout nel proprio sito web';
-$_MODULE['<{alma}prestashop>inpageadminformbuilder_6de24747c86085e597f6b38d4d1d01a4'] = 'Cassa in pagina';
+$_MODULE['<{alma}prestashop>inpageadminformbuilder_2420ebe02d61c738479f399a97e1cf18'] = 'Attiva il checkout nella stessa pagine';
+$_MODULE['<{alma}prestashop>inpageadminformbuilder_bf3b980c4aa11b5fca4cc3096f50e0b8'] = 'Attiva del checkout nella stessa pagine per Paga Ora, P2X, P3X e P4X';
+$_MODULE['<{alma}prestashop>inpageadminformbuilder_220a4f39147308a2160f7abc4d00ae43'] = 'La pagina di checkout all\'interno del tuo sito web';
+$_MODULE['<{alma}prestashop>inpageadminformbuilder_6de24747c86085e597f6b38d4d1d01a4'] = 'Pagamento sulla stessa pagina';
 $_MODULE['<{alma}prestashop>paymentbuttonadminformbuilder_8bd4837a76cf443ab523a51895e23c36'] = 'Paga ora';
 $_MODULE['<{alma}prestashop>paymentbuttonadminformbuilder_b78a3223503896721cca1303f776159b'] = 'Titolo';
 $_MODULE['<{alma}prestashop>paymentbuttonadminformbuilder_b5a7adde1af5c87d7fd797b6245c2a39'] = 'Descrizione';
@@ -158,10 +158,10 @@ $_MODULE['<{alma}prestashop>refundadminformbuilder_9d21f767a50ad583330024bce9afa
 $_MODULE['<{alma}prestashop>shareofcheckoutadminformbuilder_6e8f64880a74e62ac2ba57bed59fbbaf'] = 'Attiva l\'impostazione di condivisione dei dati';
 $_MODULE['<{alma}prestashop>shareofcheckoutadminformbuilder_c1a238cd82a8997cf32426ef561772b2'] = 'Aumenta le tue prestazioni e ricevi approfondimenti sulle tue vendite';
 $_MODULE['<{alma}prestashop>apihelper_fc610b81ff31f9d969ddb659cd8248c1'] = 'Alma ha riscontrato un errore durante il recupero dello stato del commerciante, si prega di controllare le chiavi api o di riprovare più tardi.';
-$_MODULE['<{alma}prestashop>customfieldshelper_2c53dea2326232a2d867ddd1d2206aa0'] = 'Paga ora con la carta';
+$_MODULE['<{alma}prestashop>customfieldshelper_2c53dea2326232a2d867ddd1d2206aa0'] = 'Paga ora con la carta bancaria';
 $_MODULE['<{alma}prestashop>customfieldshelper_300de0751d957421cc332ba21c43a598'] = 'Paga in %d rate';
 $_MODULE['<{alma}prestashop>customfieldshelper_726c61fad46c135efb4198820e5484ba'] = 'Compra ora Paga in %d giorni';
-$_MODULE['<{alma}prestashop>customfieldshelper_82d2b98eb8f9388d13766a9367096499'] = 'Pagamento veloce e sicuro con carta.';
+$_MODULE['<{alma}prestashop>customfieldshelper_82d2b98eb8f9388d13766a9367096499'] = 'Pagamento veloce e sicuro con carta bancaria.';
 $_MODULE['<{alma}prestashop>customfieldshelper_4f05e285f22aa8b5d8f88f302c1633c1'] = 'Pagamenti rapidi e sicuri.';
 $_MODULE['<{alma}prestashop>customfieldshelper_7a854e750fe5f3e7120020c7c20987d4'] = 'Il tuo carrello non è idoneo per i pagamenti con Alma.';
 $_MODULE['<{alma}prestashop>customfieldshelper_6ed45ebd72fcca0fc0c271128e9d7b7b'] = 'Alla spedizione';
