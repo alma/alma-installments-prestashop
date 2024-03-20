@@ -672,7 +672,7 @@ final class GetContentHookController extends AdminHookController
             PaymentButtonAdminFormBuilder::ALMA_PNX_AIR_BUTTON_DESC => $this->customFieldsHelper->getValue(
                 PaymentButtonAdminFormBuilder::ALMA_PNX_AIR_BUTTON_DESC
             ),
-            InpageAdminFormBuilder::ALMA_ACTIVATE_INPAGE . '_ON' => SettingsHelper::isInPageEnabled(),
+            InpageAdminFormBuilder::ALMA_ACTIVATE_INPAGE . '_ON' => $this->settingsHelper->isInPageEnabled(),
             'ALMA_SHOW_DISABLED_BUTTON' => SettingsHelper::showDisabledButton(),
             'ALMA_SHOW_ELIGIBILITY_MESSAGE_ON' => SettingsHelper::showEligibilityMessage(),
             'ALMA_CART_WDGT_NOT_ELGBL_ON' => SettingsHelper::showCartWidgetIfNotEligible(),

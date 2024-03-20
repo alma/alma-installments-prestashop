@@ -247,4 +247,22 @@ class CustomFieldsHelper
 
         return $arrayDescriptionPaymentTriggerByLang[$idLang];
     }
+
+    /**
+     * @param $languageId
+     * @param $key
+     * @param $installments
+     *
+     * @return string
+     */
+    public function getTextButton($languageId, $key, $installments)
+    {
+        return sprintf(
+            $this->getBtnValueByLang(
+                $languageId,
+                $key
+            ),
+            $installments
+        );
+    }
 }

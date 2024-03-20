@@ -341,11 +341,23 @@ class SettingsHelper
     /**
      * Get API mode saved in Prestashop database.
      *
+     * @deprecated use getModeActive
+     *
      * @return string
      */
     public static function getActiveMode()
     {
         return static::get('ALMA_API_MODE', ALMA_MODE_TEST);
+    }
+
+    /**
+     * Get API mode saved in Prestashop database.
+     *
+     * @return string
+     */
+    public function getModeActive()
+    {
+        return $this->getKey('ALMA_API_MODE', ALMA_MODE_TEST);
     }
 
     /**
@@ -476,9 +488,9 @@ class SettingsHelper
     /**
      * @return bool
      */
-    public static function isInPageEnabled()
+    public function isInPageEnabled()
     {
-        return (bool) (int) static::get(InpageAdminFormBuilder::ALMA_ACTIVATE_INPAGE, false);
+        return (bool) (int) $this->getKey(InpageAdminFormBuilder::ALMA_ACTIVATE_INPAGE, false);
     }
 
     /**
@@ -749,10 +761,20 @@ class SettingsHelper
 
     /**
      * @return false|mixed|string|null
+     *
+     * @deprecated use getIdMerchant
      */
     public static function getMerchantId()
     {
         return static::get('ALMA_MERCHANT_ID');
+    }
+
+    /**
+     * @return false|mixed|string|null
+     */
+    public function getIdMerchant()
+    {
+        return $this->getKey('ALMA_MERCHANT_ID');
     }
 
     /**
@@ -804,10 +826,20 @@ class SettingsHelper
 
     /**
      * @return false|mixed|string|null
+     *
+     * @deprecated use getAlmaFeePlans
      */
     public static function getFeePlans()
     {
         return static::get('ALMA_FEE_PLANS');
+    }
+
+    /**
+     * @return false|mixed|string|null
+     */
+    public function getAlmaFeePlans()
+    {
+        return $this->getKey('ALMA_FEE_PLANS');
     }
 
     /**

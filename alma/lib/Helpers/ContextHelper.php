@@ -29,33 +29,51 @@ if (!defined('_PS_VERSION_')) {
 }
 
 /**
- * Class MediaHelper.
+ * Class ContextHelper.
  *
- * Use for Media
+ * Currency formatting/localization has been handled differently through PS versions, as they moved from a simple
+ * enum (<1.7) to using CLDR data in PS 1.7.
+ * Until PS 1.7.6, the IcanBoogie/CLDR library was being used; since PS 1.7.6, the PrestaShop team has implemented their
+ * own CLDR data handling.
+ *
+ * This class is meant to help handle currency- and other locale-related data throughout PrestaShop versions, making
+ * those differences transparent.
  */
-class MediaHelper
+class ContextHelper
 {
     /**
-     * @param object $module
+     * Create a link to a module.
+     *
+     * @since    1.5.0
+     *
+     * @param string $module Module name
+     * @param string $controller
+     * @param array $params
+     * @param bool|null $ssl
+     * @param int|null $idLang
+     * @param int|null $idShop
+     * @param bool $relativeProtocol
      *
      * @return string
      */
-    public static function getIconPathAlmaTiny($module)
+    public function getModuleLink(
+        $context,
+        $module,
+        $controller = 'default',
+        array $params = [],
+        $ssl = null,
+        $idLang = null,
+        $idShop = null,
+        $relativeProtocol = false)
     {
-        if (is_callable('\Media::getMediaPath')) {
-            return \Media::getMediaPath(_PS_MODULE_DIR_ . $module->name . '/views/img/logos/alma_tiny.svg');
-        }
-
-        return $module->getPathUri() . '/views/img/logos/alma_tiny.svg';
-    }
-
-    /**
-     * @param $path
-     *
-     * @return mixed
-     */
-    public function getMediaPath($path)
-    {
-        return \Media::getMediaPath($path);
+        return $context->link->getModuleLink(
+            $module,
+            $controller,
+            $params,
+            $ssl,
+            $idLang,
+            $idShop,
+            $relativeProtocol
+        );
     }
 }

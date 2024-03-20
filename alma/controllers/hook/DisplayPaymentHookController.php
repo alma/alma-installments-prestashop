@@ -200,7 +200,7 @@ class DisplayPaymentHookController extends FrontendHookController
                     $installment
                 ),
                 'creditInfo' => $creditInfo,
-                'isInPageEnabled' => SettingsHelper::isInPageEnabled(),
+                'isInPageEnabled' => $this->settingsHelper->isInPageEnabled(),
                 'paymentOptionKey' => $keyPlan,
                 'locale' => $locale,
             ];

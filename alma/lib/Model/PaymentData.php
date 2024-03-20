@@ -273,7 +273,7 @@ class PaymentData
             $dataPayment['payment']['cart'] = $this->cartInfo($cart);
         }
 
-        if (static::isInPage($dataPayment)) {
+        if ($this->isInPage($dataPayment)) {
             $dataPayment['payment']['origin'] = 'online_in_page';
         }
 
@@ -319,13 +319,13 @@ class PaymentData
      *
      * @return bool
      */
-    public static function isInPage($dataPayment)
+    public function isInPage($dataPayment)
     {
         return (
             static::isPnXOnly($dataPayment)
             || static::isPayNow($dataPayment)
             || static::isPayLater($dataPayment))
-            && SettingsHelper::isInPageEnabled();
+            && $this->settingsHelper->isInPageEnabled();
     }
 
     private static function isNewCustomer($idCustomer)
