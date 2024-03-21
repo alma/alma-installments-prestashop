@@ -93,6 +93,7 @@ class MessageOrderHelperTest extends TestCase
             'subscription_id' => 'subscription_51Jr3LqiVTQpe4a0rWBjfV',
             'subscription_amount' => 12938,
             'subscription_broker_id' => '0e1d4e1b-2b12-4ad7-9212-0fb6d66f2cb4',
+            'subscription_broker_reference' => 'TGLC47CQ',
             'subscription_state' => 'started',
             'date_of_cancelation' => '0000-00-00 00:00:00',
             'reason_of_cancelation' => '',

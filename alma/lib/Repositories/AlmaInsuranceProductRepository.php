@@ -271,6 +271,7 @@ class AlmaInsuranceProductRepository
             `subscription_id` varchar(255) null,
             `subscription_amount` int(10) unsigned NULL,
             `subscription_broker_id` varchar(255) null,
+            `subscription_broker_reference` varchar(255) null,
             `subscription_state` varchar(255) null,
             `date_of_cancelation` datetime null,
             `reason_of_cancelation` text null,   

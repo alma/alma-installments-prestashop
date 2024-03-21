@@ -183,6 +183,7 @@ class AdminAlmaInsuranceOrdersDetailsController extends ModuleAdminController
             }
 
             $dataSubscriptions['subscriptionBrokerId'] = $subscription['subscription_broker_id'];
+            $dataSubscriptions['subscriptionBrokerReference'] = $subscription['subscription_broker_reference'];
             $dataSubscriptions['subscriptionId'] = $subscription['subscription_id'];
 
             $data['cmsSubscriptions'][] = $dataSubscriptions;
