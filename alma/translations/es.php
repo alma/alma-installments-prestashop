@@ -23,7 +23,7 @@
  */
 global $_MODULE;
 $_MODULE = [];
-$_MODULE['<{alma}prestashop>alma_c407a14c73b61d727c55a42fb531f2e3'] = '1x 2x 3x 4x, D+15 o D+30 Alma - Pago a plazos y aplazado';
+$_MODULE['<{alma}prestashop>alma_c407a14c73b61d727c55a42fb531f2e3'] = '1x 2x 3x 4x, D+15 o D+30 Alma - Pago a plazos y Pago diferido';
 $_MODULE['<{alma}prestashop>alma_7f9c508fa226d3e72644403653115c29'] = '¡Vende más y aumenta la satisfacción de tus Clientes! Asegura tus ventas con Alma, el pago aplazado, simple y garantizado';
 $_MODULE['<{alma}prestashop>alma_ce67a7d4b82bc360a17d25943924b388'] = '¿Estás seguro/a de que quieres desactivar el pagos aplazado con Alma de tu tienda?';
 $_MODULE['<{alma}prestashop>alma_7bab99339291e7eea710b4a998e663de'] = 'Alma requiere la extensión PHP CURL.';
@@ -67,7 +67,7 @@ $_MODULE['<{alma}prestashop>paymentoptionshookcontroller_1dd1c5fb7f25cd41b291d43
 $_MODULE['<{alma}prestashop>paymentoptionshookcontroller_96b0141273eabab320119c467cdcaf17'] = 'Total';
 $_MODULE['<{alma}prestashop>paymentoptionshookcontroller_9bbd94e0a507283ae202812ea1bd6f20'] = '%s mes después';
 $_MODULE['<{alma}prestashop>paymentoptionshookcontroller_9088921432b295dfe6f02863b2dc0ff8'] = '0 € hoy después %1$s en %2$s';
-$_MODULE['<{alma}prestashop>wrongcredentialsexception_9c2a0378c6c1a5fbb47a5d4546caa1c9'] = 'No se pudo conectar a Alma utilizando sus claves de API. Por favor, vuelva a comprobar sus claves en su %s Alma salpicadero %s.';
+$_MODULE['<{alma}prestashop>wrongcredentialsexception_9c2a0378c6c1a5fbb47a5d4546caa1c9'] = 'No se pudo conectar a Alma utilizando tus claves de API. Por favor, vuelve a comprobar tus claves en tu %s Panel de control ALMA %s.';
 $_MODULE['<{alma}prestashop>abstractalmaadminformbuilder_c9cc8cce247e49bae79f15173ce97354'] = 'Guardar';
 $_MODULE['<{alma}prestashop>apiadminformbuilder_fe1d478b2e434b92277b47f0cf62e040'] = 'Modo API';
 $_MODULE['<{alma}prestashop>apiadminformbuilder_0e95e5facc2cad62d6458c65164c4455'] = 'Utiliza el modo de prueba hasta que estés listo/a para recibir pedidos reales con Alma. En el modo de prueba, sólo los administradores pueden ver Alma en las páginas de carrito/compra.';
@@ -98,7 +98,7 @@ $_MODULE['<{alma}prestashop>excludedcategoryadminformbuilder_c4cea4750fb3ef077cb
 $_MODULE['<{alma}prestashop>excludedcategoryadminformbuilder_36359547b09bdb31f46c419a0bd5807e'] = 'Categorías excluidas';
 $_MODULE['<{alma}prestashop>inpageadminformbuilder_2420ebe02d61c738479f399a97e1cf18'] = 'Activar el pago integrado';
 $_MODULE['<{alma}prestashop>inpageadminformbuilder_bf3b980c4aa11b5fca4cc3096f50e0b8'] = 'Activar el pago integrado para Pay Now, P2X, P3X y P4X';
-$_MODULE['<{alma}prestashop>inpageadminformbuilder_220a4f39147308a2160f7abc4d00ae43'] = 'La página de pago en su propio sitio web';
+$_MODULE['<{alma}prestashop>inpageadminformbuilder_220a4f39147308a2160f7abc4d00ae43'] = 'La página de pago en tu propio sitio web';
 $_MODULE['<{alma}prestashop>inpageadminformbuilder_6de24747c86085e597f6b38d4d1d01a4'] = 'Pago integrado';
 $_MODULE['<{alma}prestashop>paymentbuttonadminformbuilder_8bd4837a76cf443ab523a51895e23c36'] = 'Pagar ahora';
 $_MODULE['<{alma}prestashop>paymentbuttonadminformbuilder_b78a3223503896721cca1303f776159b'] = 'Título';
@@ -157,8 +157,8 @@ $_MODULE['<{alma}prestashop>refundadminformbuilder_a2175c8178a92176b9810d330fbc0
 $_MODULE['<{alma}prestashop>refundadminformbuilder_9d21f767a50ad583330024bce9afa2e1'] = 'Reembolso por cambio de estado';
 $_MODULE['<{alma}prestashop>shareofcheckoutadminformbuilder_6e8f64880a74e62ac2ba57bed59fbbaf'] = 'Activar la configuración de uso compartido de datos';
 $_MODULE['<{alma}prestashop>shareofcheckoutadminformbuilder_c1a238cd82a8997cf32426ef561772b2'] = 'Aumenta tu rendimiento y obtén información';
-$_MODULE['<{alma}prestashop>apihelper_fc610b81ff31f9d969ddb659cd8248c1'] = 'Alma ha encontrado un error al obtener el estado del comerciante, por favor, compruebe sus claves api o vuelva a intentarlo más tarde.';
-$_MODULE['<{alma}prestashop>customfieldshelper_2c53dea2326232a2d867ddd1d2206aa0'] = 'Pague ahora con tarjeta de crédito';
+$_MODULE['<{alma}prestashop>apihelper_fc610b81ff31f9d969ddb659cd8248c1'] = 'Alma ha encontrado un error al obtener el estado del comerciante, por favor, comprueba tus claves api o vuelve a intentar más tarde.';
+$_MODULE['<{alma}prestashop>customfieldshelper_2c53dea2326232a2d867ddd1d2206aa0'] = 'Paga ahora con tarjeta de crédito';
 $_MODULE['<{alma}prestashop>customfieldshelper_300de0751d957421cc332ba21c43a598'] = 'Pagar en %d plazos';
 $_MODULE['<{alma}prestashop>customfieldshelper_726c61fad46c135efb4198820e5484ba'] = 'Comprar ahora Pagar en %d días';
 $_MODULE['<{alma}prestashop>customfieldshelper_82d2b98eb8f9388d13766a9367096499'] = 'Pago rápido y seguro con tu tarjeta.';

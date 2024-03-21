@@ -1,5 +1,6 @@
-{*
- * 2018-2023 Alma SAS
+<?php
+/**
+ * 2018-2023 Alma SAS.
  *
  * THE MIT LICENSE
  *
@@ -19,16 +20,31 @@
  * @author    Alma SAS <contact@getalma.eu>
  * @copyright 2018-2023 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
- *}
-<form id="alma-inpage-plan-{$keyPlan|escape:'htmlall':'UTF-8'}" class="alma-inpage"
-      data-action="{$action}"
-      data-apimode="{$apiMode|escape:'htmlall':'UTF-8'}"
-      data-merchantid="{$merchantId|escape:'htmlall':'UTF-8'}"
-      data-isinpageenabled="{$isInPageEnabled|escape:'htmlall':'UTF-8'}"
-      data-installment="{$installment|escape:'htmlall':'UTF-8'}"
-      data-deferreddays="{$deferredDays|escape:'htmlall':'UTF-8'}"
-      data-deferredmonths="{$deferredMonths|escape:'htmlall':'UTF-8'}"
-      data-purchaseamount="{$creditInfo.totalCart|escape:'htmlall':'UTF-8'}"
-      data-locale="{$locale|escape:'htmlall':'UTF-8'}">
-    <div id="alma-inpage-iframe-plan-{$keyPlan|escape:'htmlall':'UTF-8'}" class="alma-inpage-iframe"></div>
-</form>
+ */
+
+namespace Alma\PrestaShop\Tests\Unit\Helper;
+
+use Alma\PrestaShop\Helpers\PriceHelper;
+use PHPUnit\Framework\TestCase;
+
+class PriceHelperTest extends TestCase
+{
+    /**
+     * @var PriceHelper
+     */
+    protected $priceHelper;
+
+    public function __construct()
+    {
+        parent::__construct();
+
+        $this->priceHelper = new PriceHelper();
+    }
+
+    public function testConvertPriceToCents()
+    {
+        $this->assertEquals('10000', $this->priceHelper->convertPriceToCents(100));
+        $this->assertEquals('10000', $this->priceHelper->convertPriceToCents(99.9999));
+        $this->assertEquals('10000', $this->priceHelper->convertPriceToCents(100.0011));
+    }
+}

@@ -28,15 +28,47 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
+use Alma\PrestaShop\Helpers\ConfigurationHelper;
+use Alma\PrestaShop\Helpers\LanguageHelper;
 use Alma\PrestaShop\Helpers\LinkHelper;
 use Alma\PrestaShop\Helpers\LocaleHelper;
 use Alma\PrestaShop\Helpers\PriceHelper;
 use Alma\PrestaShop\Helpers\SettingsCustomFieldsHelper;
 use Alma\PrestaShop\Helpers\SettingsHelper;
+use Alma\PrestaShop\Helpers\ShopHelper;
 use Alma\PrestaShop\Hooks\FrontendHookController;
 
 class DisplayProductPriceBlockHookController extends FrontendHookController
 {
+    /**
+     * @var LocaleHelper
+     */
+    protected $localeHelper;
+
+    /**
+     * @var PriceHelper
+     */
+    protected $priceHelper;
+
+    /**
+     * @var
+     */
+    protected $settingsHelper;
+
+    /**
+     * HookController constructor.
+     *
+     * @param $module Alma
+     */
+    public function __construct($module)
+    {
+        parent::__construct($module);
+
+        $this->localeHelper = new LocaleHelper(new LanguageHelper());
+        $this->priceHelper = new PriceHelper();
+        $this->settingsHelper = new SettingsHelper(new ShopHelper(), new ConfigurationHelper());
+    }
+
     public function canRun()
     {
         return parent::canRun()
@@ -64,7 +96,7 @@ class DisplayProductPriceBlockHookController extends FrontendHookController
         /* @var \Product $product */
         if (isset($params['product']) && $params['product'] instanceof \Product) {
             $product = $params['product'];
-            $price = PriceHelper::convertPriceToCents($product->getPrice(true));
+            $price = $this->priceHelper->convertPriceToCents($product->getPrice(true));
             $productId = $product->id;
 
             // Since we don't have access to the combination ID nor the wanted quantity, we should reload things from
@@ -94,7 +126,7 @@ class DisplayProductPriceBlockHookController extends FrontendHookController
                 $quantity = 1;
             }
 
-            $price = PriceHelper::convertPriceToCents(
+            $price = $this->priceHelper->convertPriceToCents(
                 \Product::getPriceStatic(
                     $productId,
                     true,
@@ -125,7 +157,7 @@ class DisplayProductPriceBlockHookController extends FrontendHookController
 
         $activePlans = SettingsHelper::activePlans();
 
-        $locale = LocaleHelper::localeByIdLangForWidget($this->context->language->id);
+        $locale = $this->localeHelper->getLocaleByIdLangForWidget($this->context->language->id);
 
         if (!$activePlans) {
             return;
@@ -146,7 +178,7 @@ class DisplayProductPriceBlockHookController extends FrontendHookController
                 }
             }
         }
-        if (!SettingsHelper::showCategoriesWidgetIfNotEligible() && SettingsHelper::isProductExcluded($productId)) {
+        if (!SettingsHelper::showCategoriesWidgetIfNotEligible() && $this->settingsHelper->isProductExcluded($productId)) {
             $isEligible = false;
         }
         if ($isEligible) {
@@ -154,7 +186,7 @@ class DisplayProductPriceBlockHookController extends FrontendHookController
             'productId' => $productId,
             'psVersion' => $psVersion,
             'logo' => LinkHelper::getSvgDataUrl(_PS_MODULE_DIR_ . $this->module->name . '/views/img/logos/logo_alma.svg'),
-            'isExcluded' => SettingsHelper::isProductExcluded($productId),
+            'isExcluded' => $this->settingsHelper->isProductExcluded($productId),
             'exclusionMsg' => SettingsCustomFieldsHelper::getNonEligibleCategoriesMessageByLang($this->context->language->id),
             'settings' => [
                 'merchantId' => SettingsHelper::getMerchantId(),

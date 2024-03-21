@@ -33,11 +33,21 @@ if (!defined('_PS_VERSION_')) {
 class ShippingData
 {
     /**
+     * @var PriceHelper
+     */
+    protected $priceHelper;
+
+    public function __construct()
+    {
+        $this->priceHelper = new PriceHelper();
+    }
+
+    /**
      * @param \Cart $cart
      *
      * @return array|null
      */
-    public static function shippingInfo($cart)
+    public function shippingInfo($cart)
     {
         $addressId = $cart->id_address_delivery;
 
@@ -78,7 +88,7 @@ class ShippingData
             if (!$carrier) {
                 continue;
             }
-            $shippingInfo['selected_options'][] = self::shippingInfoData($carrier, $carrierInfo);
+            $shippingInfo['selected_options'][] = $this->shippingInfoData($carrier, $carrierInfo);
         }
 
         $knownOptions = [];
@@ -89,7 +99,7 @@ class ShippingData
                     continue;
                 }
 
-                $data = self::shippingInfoData($carrierOption, $carrierOptionInfo);
+                $data = $this->shippingInfoData($carrierOption, $carrierOptionInfo);
                 $knownOptions[md5(serialize($data))] = $data;
             }
         }
@@ -113,10 +123,10 @@ class ShippingData
      *
      * @return array
      */
-    private static function shippingInfoData($carrier, $carrierInfo)
+    private function shippingInfoData($carrier, $carrierInfo)
     {
         return [
-            'amount' => PriceHelper::convertPriceToCents((float) $carrierInfo['price_with_tax']),
+            'amount' => $this->priceHelper->convertPriceToCents((float) $carrierInfo['price_with_tax']),
             'carrier' => $carrier->name,
             'title' => (is_array($carrier->delay)) ? implode(', ', $carrier->delay) : (string) $carrier->delay,
             'express_delivery' => self::isExpressShipping($carrierInfo),
