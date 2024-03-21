@@ -147,7 +147,7 @@ final class GetContentHookController extends AdminHookController
         $this->apiKeyHelper = new ApiKeyHelper();
         $this->settingsHelper = new SettingsHelper(new ShopHelper(), new ConfigurationHelper());
         $this->priceHelper = new PriceHelper(new ToolsHelper(), new CurrencyHelper());
-        $this->customFieldsHelper = new CustomFieldsHelper(new LanguageHelper(), new LocaleHelper(new LanguageHelper()));
+        $this->customFieldsHelper = new CustomFieldsHelper(new LanguageHelper(), new LocaleHelper(new LanguageHelper()), $this->settingsHelper);
 
         parent::__construct($module);
     }

@@ -52,16 +52,22 @@ class CartHelper
     protected $priceHelper;
 
     /**
-     * @var
+     * @var CartData
      */
     protected $cartData;
 
-    public function __construct($context)
+    /**
+     * @param \Context $context
+     * @param ToolsHelper $toolsHelper
+     * @param PriceHelper $priceHelper
+     * @param CartData $cartData
+     */
+    public function __construct($context, $toolsHelper, $priceHelper, $cartData)
     {
         $this->context = $context;
-        $this->toolsHelper = new ToolsHelper();
-        $this->priceHelper = new PriceHelper(new ToolsHelper(), new CurrencyHelper());
-        $this->cartaData = new CartData(new ProductHelper(), new SettingsHelper(new ShopHelper(), new ConfigurationHelper()));
+        $this->toolsHelper = $toolsHelper;
+        $this->priceHelper = $priceHelper;
+        $this->cartData = $cartData;
     }
 
     /**
@@ -131,5 +137,17 @@ class CartHelper
         }
 
         return $orders;
+    }
+
+    /**
+     * @param \Cart $cart
+     *
+     * @return float
+     */
+    public function getCartTotal($cart)
+    {
+        return (float) $this->priceHelper->convertPriceToCents(
+            $this->toolsHelper->psRound((float) $cart->getOrderTotal(true, \Cart::BOTH), 2)
+        );
     }
 }

@@ -29,49 +29,30 @@ if (!defined('_PS_VERSION_')) {
 }
 
 /**
- * Class MediaHelper.
- *
- * Use for Media
+ * Class TranslationHelper.
  */
-class MediaHelper
+class TranslationHelper
 {
-    /**
-     * @param object $module
-     *
-     * @return string
-     */
-    public static function getIconPathAlmaTiny($module)
-    {
-        if (is_callable('\Media::getMediaPath')) {
-            return \Media::getMediaPath(_PS_MODULE_DIR_ . $module->name . '/views/img/logos/alma_tiny.svg');
-        }
+    protected $module;
 
-        return $module->getPathUri() . '/views/img/logos/alma_tiny.svg';
+    /**
+     * @codeCoverageIgnore
+     *
+     * @param $module
+     */
+    public function __construct($module)
+    {
+        $this->module = $module;
     }
 
     /**
-     * @param $path
-     * @param $module
+     * @param string $string
+     * @param string $file
      *
      * @return mixed
      */
-    public function getMediaPath($path, $module)
+    public function getTranslation($string, $file)
     {
-        return \Media::getMediaPath(_PS_MODULE_DIR_ . $module->name . $path);
-    }
-
-    /**
-     * @param string $valueBNPL
-     * @param bool $isDeferred
-     *
-     * @return string
-     */
-    public function getLogoName($valueBNPL, $isDeferred)
-    {
-        if ($isDeferred) {
-            return "{$valueBNPL}j_logo.svg";
-        }
-
-        return "p{$valueBNPL}x_logo.svg";
+        return $this->module->l($string, $file);
     }
 }

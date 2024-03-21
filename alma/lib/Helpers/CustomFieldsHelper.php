@@ -54,11 +54,15 @@ class CustomFieldsHelper
 
     /**
      * @codeCoverageIgnore
+     *
+     * @param LanguageHelper $languageHelper
+     * @param LocaleHelper $localeHelper
+     * @param SettingsHelper $settingsHelper
      */
-    public function __construct($languageHelper, $localeHelper)
+    public function __construct($languageHelper, $localeHelper, $settingsHelper)
     {
         $this->languageHelper = $languageHelper;
-        $this->settingsHelper = new SettingsHelper(new ShopHelper(), new ConfigurationHelper());
+        $this->settingsHelper = $settingsHelper;
         $this->localeHelper = $localeHelper;
     }
 
@@ -249,9 +253,9 @@ class CustomFieldsHelper
     }
 
     /**
-     * @param $languageId
-     * @param $key
-     * @param $installments
+     * @param int $languageId
+     * @param string $key
+     * @param int $installments
      *
      * @return string
      */

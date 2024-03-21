@@ -45,12 +45,21 @@ class EligibilityHelper
      */
     protected $priceHelper;
 
-    public function __construct()
+    /**
+     * @param PaymentData $paymentData
+     * @param PriceHelper $priceHelper
+     */
+    public function __construct($paymentData, $priceHelper)
     {
-        $this->paymentData = new PaymentData();
-        $this->priceHelper = new PriceHelper(new ToolsHelper(), new CurrencyHelper());
+        $this->paymentData = $paymentData;
+        $this->priceHelper = $priceHelper;
     }
 
+    /**
+     * @param \Context $context
+     *
+     * @return array
+     */
     public function eligibilityCheck($context)
     {
         $almaEligibilities = [];

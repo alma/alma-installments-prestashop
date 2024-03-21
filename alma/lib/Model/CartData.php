@@ -24,11 +24,9 @@
 
 namespace Alma\PrestaShop\Model;
 
-use Alma\PrestaShop\Helpers\CurrencyHelper;
 use Alma\PrestaShop\Helpers\PriceHelper;
 use Alma\PrestaShop\Helpers\ProductHelper;
 use Alma\PrestaShop\Helpers\SettingsHelper;
-use Alma\PrestaShop\Helpers\ToolsHelper;
 use Alma\PrestaShop\Repositories\ProductRepository;
 
 if (!defined('_PS_VERSION_')) {
@@ -57,12 +55,13 @@ class CartData
     /**
      * @codeCoverageIgnore
      *
-     * @param $productHelper
-     * @param $settingsHelper
+     * @param ProductHelper $productHelper
+     * @param SettingsHelper $settingsHelper
+     * @param PriceHelper $priceHelper
      */
-    public function __construct($productHelper, $settingsHelper)
+    public function __construct($productHelper, $settingsHelper, $priceHelper)
     {
-        $this->priceHelper = new PriceHelper(new ToolsHelper(), new CurrencyHelper());
+        $this->priceHelper = $priceHelper;
         $this->settingsHelper = $settingsHelper;
         $this->productHelper = $productHelper;
     }

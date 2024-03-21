@@ -42,6 +42,10 @@ class PriceHelper
      */
     protected $currencyHelper;
 
+    /**
+     * @param ToolsHelper $toolsHelper
+     * @param CurrencyHelper $currencyHelper
+     */
     public function __construct($toolsHelper, $currencyHelper)
     {
         $this->toolsHelper = $toolsHelper;

@@ -75,7 +75,7 @@ class DisplayProductPriceBlockHookController extends FrontendHookController
         $this->localeHelper = new LocaleHelper(new LanguageHelper());
         $this->priceHelper = new PriceHelper(new ToolsHelper(), new CurrencyHelper());
         $this->settingsHelper = new SettingsHelper(new ShopHelper(), new ConfigurationHelper());
-        $this->customFieldsHelper = new CustomFieldsHelper(new LanguageHelper(), $this->localeHelper);
+        $this->customFieldsHelper = new CustomFieldsHelper(new LanguageHelper(), $this->localeHelper, $this->settingsHelper);
     }
 
     public function canRun()

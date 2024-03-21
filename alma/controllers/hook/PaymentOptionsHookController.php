@@ -28,7 +28,28 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
+use Alma\PrestaShop\Helpers\CartHelper;
+use Alma\PrestaShop\Helpers\ConfigurationHelper;
+use Alma\PrestaShop\Helpers\ContextHelper;
+use Alma\PrestaShop\Helpers\CurrencyHelper;
+use Alma\PrestaShop\Helpers\CustomFieldsHelper;
+use Alma\PrestaShop\Helpers\DateHelper;
+use Alma\PrestaShop\Helpers\EligibilityHelper;
+use Alma\PrestaShop\Helpers\LanguageHelper;
+use Alma\PrestaShop\Helpers\LocaleHelper;
+use Alma\PrestaShop\Helpers\MediaHelper;
+use Alma\PrestaShop\Helpers\PaymentOptionHelper;
+use Alma\PrestaShop\Helpers\PaymentOptionTemplateHelper;
+use Alma\PrestaShop\Helpers\PlanHelper;
+use Alma\PrestaShop\Helpers\PriceHelper;
+use Alma\PrestaShop\Helpers\ProductHelper;
+use Alma\PrestaShop\Helpers\SettingsHelper;
+use Alma\PrestaShop\Helpers\ShopHelper;
+use Alma\PrestaShop\Helpers\ToolsHelper;
+use Alma\PrestaShop\Helpers\TranslationHelper;
 use Alma\PrestaShop\Hooks\FrontendHookController;
+use Alma\PrestaShop\Model\CartData;
+use Alma\PrestaShop\Model\PaymentData;
 use Alma\PrestaShop\Services\PaymentService;
 use PrestaShop\PrestaShop\Core\Localization\Exception\LocalizationException;
 
@@ -43,7 +64,76 @@ class PaymentOptionsHookController extends FrontendHookController
     {
         parent::__construct($module);
 
-        $this->paymentService = new PaymentService($this->context, $module);
+        $context = $this->context;
+        $languageHelper = new LanguageHelper();
+        $configurationHelper = new ConfigurationHelper();
+        $settingsHelper = new SettingsHelper(new ShopHelper(), $configurationHelper);
+        $localeHelper = new LocaleHelper($languageHelper);
+        $toolsHelper = new ToolsHelper();
+        $priceHelper = new PriceHelper($toolsHelper, new CurrencyHelper());
+        $eligibilityHelper = new EligibilityHelper(new PaymentData(), $priceHelper);
+        $dateHelper = new DateHelper();
+        $customFieldsHelper = new CustomFieldsHelper($languageHelper, $localeHelper, $settingsHelper);
+        $cartData = new CartData(new ProductHelper(), $settingsHelper, $priceHelper);
+        $contextHelper = new ContextHelper();
+        $mediaHelper = new MediaHelper();
+        $translationHelper = new TranslationHelper($module);
+        $planHelper = new PlanHelper(
+            $module,
+            $context,
+            $dateHelper,
+            $settingsHelper,
+            $customFieldsHelper,
+            $translationHelper
+        );
+
+        $cartHelper = new CartHelper(
+            $context,
+            $toolsHelper,
+            $priceHelper,
+            $cartData
+        );
+
+        $paymentOptionTemplateHelper = new PaymentOptionTemplateHelper(
+            $context,
+            $module,
+            $settingsHelper,
+            $configurationHelper,
+            $translationHelper,
+            $priceHelper,
+            $dateHelper
+        );
+
+        $paymentOptionHelper = new PaymentOptionHelper(
+            $context,
+            $module,
+            $settingsHelper,
+            $customFieldsHelper,
+            $mediaHelper,
+            $configurationHelper,
+            $paymentOptionTemplateHelper
+        );
+
+        $this->paymentService = new PaymentService(
+            $context,
+            $module,
+            $settingsHelper,
+            $localeHelper,
+            $toolsHelper,
+            $eligibilityHelper,
+            $priceHelper,
+            $dateHelper,
+            $customFieldsHelper,
+            $cartData,
+            $contextHelper,
+            $mediaHelper,
+            $planHelper,
+            $configurationHelper,
+            $translationHelper,
+            $cartHelper,
+            $paymentOptionTemplateHelper,
+            $paymentOptionHelper
+        );
     }
 
     /**

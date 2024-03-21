@@ -24,25 +24,22 @@
 
 namespace Alma\PrestaShop\Services;
 
-use Alma\PrestaShop\Forms\PaymentButtonAdminFormBuilder;
 use Alma\PrestaShop\Helpers\ConfigurationHelper;
-use Alma\PrestaShop\Helpers\ConstantsHelper;
 use Alma\PrestaShop\Helpers\ContextHelper;
-use Alma\PrestaShop\Helpers\CurrencyHelper;
 use Alma\PrestaShop\Helpers\CustomFieldsHelper;
 use Alma\PrestaShop\Helpers\DateHelper;
 use Alma\PrestaShop\Helpers\EligibilityHelper;
-use Alma\PrestaShop\Helpers\LanguageHelper;
 use Alma\PrestaShop\Helpers\LocaleHelper;
 use Alma\PrestaShop\Helpers\MediaHelper;
+use Alma\PrestaShop\Helpers\PaymentOptionHelper;
+use Alma\PrestaShop\Helpers\PaymentOptionTemplateHelper;
+use Alma\PrestaShop\Helpers\PlanHelper;
 use Alma\PrestaShop\Helpers\PriceHelper;
-use Alma\PrestaShop\Helpers\ProductHelper;
 use Alma\PrestaShop\Helpers\SettingsHelper;
-use Alma\PrestaShop\Helpers\ShopHelper;
 use Alma\PrestaShop\Helpers\ToolsHelper;
+use Alma\PrestaShop\Helpers\TranslationHelper;
 use Alma\PrestaShop\Logger;
 use Alma\PrestaShop\Model\CartData;
-use PrestaShop\PrestaShop\Core\Payment\PaymentOption;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -94,6 +91,11 @@ class PaymentService
     protected $customFieldsHelper;
 
     /**
+     * @var PlanHelper
+     */
+    protected $planHelper;
+
+    /**
      * @var float
      */
     protected $totalCart;
@@ -125,20 +127,64 @@ class PaymentService
      */
     protected $mediaHelper;
 
-    public function __construct($context, $module)
-    {
+    /**
+     * @var ConfigurationHelper
+     */
+    protected $configurationHelper;
+
+    /**
+     * @var TranslationHelper
+     */
+    protected $translationHelper;
+
+    /**
+     * @var PaymentOptionTemplateHelper
+     */
+    protected $paymentOptionTemplateHelper;
+
+    /**
+     * @var PaymentOptionHelper
+     */
+    protected $paymentOptionHelper;
+
+    public function __construct(
+        $context,
+        $module,
+        $settingsHelper,
+        $localeHelper,
+        $toolsHelper,
+        $eligibilityHelper,
+        $priceHelper,
+        $dateHelper,
+        $customFieldsHelper,
+        $cartData,
+        $contextHelper,
+        $mediaHelper,
+        $planHelper,
+        $configurationHelper,
+        $translationHelper,
+        $cartHelper,
+        $paymentOptionTemplateHelper,
+        $paymentOptionHelper
+    ) {
         $this->context = $context;
         $this->module = $module;
-        $this->settingsHelper = new SettingsHelper(new ShopHelper(), new ConfigurationHelper());
-        $this->localeHelper = new LocaleHelper(new LanguageHelper());
-        $this->toolsHelper = new ToolsHelper();
-        $this->eligibilityHelper = new EligibilityHelper();
-        $this->priceHelper = new PriceHelper(new ToolsHelper(), new CurrencyHelper());
-        $this->dateHelper = new DateHelper();
-        $this->customFieldsHelper = new CustomFieldsHelper(new LanguageHelper(), $this->localeHelper);
-        $this->cartData = new CartData(new ProductHelper(), $this->settingsHelper);
-        $this->contextHelper = new ContextHelper();
-        $this->mediaHelper = new MediaHelper();
+        $this->settingsHelper = $settingsHelper;
+        $this->localeHelper = $localeHelper;
+        $this->toolsHelper = $toolsHelper;
+        $this->eligibilityHelper = $eligibilityHelper;
+        $this->priceHelper = $priceHelper;
+        $this->dateHelper = $dateHelper;
+        $this->customFieldsHelper = $customFieldsHelper;
+        $this->cartData = $cartData;
+        $this->contextHelper = $contextHelper;
+        $this->mediaHelper = $mediaHelper;
+        $this->planHelper = $planHelper;
+        $this->configurationHelper = $configurationHelper;
+        $this->translationHelper = $translationHelper;
+        $this->cartHelper = $cartHelper;
+        $this->paymentOptionTemplateHelper = $paymentOptionTemplateHelper;
+        $this->paymentOptionHelper = $paymentOptionHelper;
     }
 
     /**
@@ -163,14 +209,14 @@ class PaymentService
                 return [];
             }
 
-            $forEUComplianceModule = $this->getEuCompliance($params);
+            $forEUComplianceModule = $this->paymentOptionHelper->getEuCompliance($params);
 
             $paymentOptions = [];
             $sortOptions = [];
             $feePlans = json_decode($this->settingsHelper->getAlmaFeePlans());
             $countIteration = 1;
 
-            $this->totalCart = $this->getCartTotal();
+            $this->totalCart = $this->cartHelper->getCartTotal($this->context->cart);
 
             foreach ($installmentPlans as $plan) {
                 if (!$plan->isEligible) {
@@ -183,21 +229,25 @@ class PaymentService
                 $key = $this->settingsHelper->keyForInstallmentPlan($plan);
                 $plans = $plan->paymentPlan;
 
-                $this->isPayNow = $this->isPayNow($key);
+                $this->isPayNow = $this->configurationHelper->isPayNow($key);
                 $this->isDeferred = $this->settingsHelper->isDeferred($plan);
-                $this->isPnxPlus4 = $this->isPnxPlus4($plan);
+                $this->isPnxPlus4 = $this->planHelper->isPnxPlus4($plan);
 
-                $plans = $this->buildDates($plans, $locale, $feePlans, $key);
+                $plans = $this->planHelper->buildDates($plans, $locale, $feePlans, $key, $this->isPayNow);
                 $duration = $this->settingsHelper->getDuration($plan);
 
-                list($textPaymentButton, $descPaymentButton) = $this->getTextsByTypes(
+                list($textPaymentButton, $descPaymentButton) = $this->paymentOptionHelper->getTextsByTypes(
                     $plan->installmentsCount,
-                    $duration
+                    $duration,
+                    $this->isPnxPlus4,
+                    $this->isDeferred,
+                    $this->isPayNow
                 );
 
-                list($fileTemplate, $valueBNPL) = $this->getTemplateAndBnpl(
+                list($fileTemplate, $valueBNPL) = $this->paymentOptionTemplateHelper->getTemplateAndBnpl(
                     $plan->installmentsCount,
-                    $duration
+                    $duration,
+                    $this->isDeferred
                 );
 
                 $action = $this->contextHelper->getModuleLink(
@@ -208,15 +258,16 @@ class PaymentService
                     true
                 );
 
-                $paymentOption = $this->createPaymentOption(
+                $paymentOption = $this->paymentOptionHelper->createPaymentOption(
                     $forEUComplianceModule,
                     $textPaymentButton,
                     $action,
-                    $valueBNPL
+                    $valueBNPL,
+                    $this->isDeferred
                 );
 
                 if (!$forEUComplianceModule) {
-                    $templateParams = $this->buildTemplateVar(
+                    $templateParams = $this->paymentOptionTemplateHelper->buildTemplateVar(
                         $plan->installmentsCount . '-' . $duration,
                         $action,
                         $descPaymentButton,
@@ -224,23 +275,25 @@ class PaymentService
                         $feePlans->$key->deferred_trigger_limit_days,
                         $plan,
                         $first,
-                        $locale
+                        $locale,
+                        $this->totalCart,
+                        $this->isDeferred
                     );
 
-                    $template = $this->buildSmartyTemplate($templateParams, $fileTemplate);
+                    $template = $this->paymentOptionTemplateHelper->buildSmartyTemplate($templateParams, $fileTemplate);
 
-                    $paymentOption->setAdditionalInformation($template);
-
-                    if ($this->isInPageEnabled($plan->installmentsCount)) {
-                        $paymentOption->setForm($this->getTemplateInPage());
-                    }
+                    $paymentOption = $this->paymentOptionHelper->setAdditionalInformationForEuCompliance(
+                        $paymentOption,
+                        $template,
+                        $plan->installmentsCount
+                    );
                 }
 
                 $sortOptions[$key] = $feePlans->$key->order;
                 $paymentOptions[$key] = $paymentOption;
             }
 
-            return $this->sortPaymentsOptions($sortOptions, $paymentOptions);
+            return $this->paymentOptionHelper->sortPaymentsOptions($sortOptions, $paymentOptions);
         } catch (\Exception $e) {
             var_dump($e->getMessage());
             Logger::instance()->error(
@@ -250,344 +303,5 @@ class PaymentService
                 $e->getTraceAsString()
                 ));
         }
-    }
-
-    /**
-     * @param $sortOptions
-     * @param $paymentOptions
-     *
-     * @return array
-     */
-    protected function sortPaymentsOptions($sortOptions, $paymentOptions)
-    {
-        asort($sortOptions);
-        $payment = [];
-        foreach (array_keys($sortOptions) as $key) {
-            $payment[] = $paymentOptions[$key];
-        }
-
-        return $payment;
-    }
-
-    /**
-     * @return mixed
-     */
-    protected function getTemplateInPage()
-    {
-        return $this->context->smarty->fetch(
-            "module:{$this->module->name}/views/templates/front/payment_form_inpage.tpl"
-        );
-    }
-
-    /**
-     * @param $params
-     * @param $fileTemplate
-     *
-     * @return mixed
-     */
-    protected function buildSmartyTemplate($params, $fileTemplate)
-    {
-        $this->context->smarty->assign($params);
-
-        return $this->context->smarty->fetch(
-            "module:{$this->module->name}/views/templates/hook/{$fileTemplate}"
-        );
-    }
-
-    /**
-     * @param $keyPlan
-     * @param $action
-     * @param $desc
-     * @param $plans
-     * @param $deferredTrigger
-     * @param $plan
-     * @param $first
-     * @param $locale
-     *
-     * @return array
-     */
-    protected function buildTemplateVar($keyPlan, $action, $desc, $plans, $deferredTrigger, $plan, $first, $locale)
-    {
-        $templateVar = [
-            'keyPlan' => $keyPlan,
-            'action' => $action,
-            'desc' => $desc,
-            'plans' => (array) $plans,
-            'deferred_trigger_limit_days' => $deferredTrigger,
-            'apiMode' => strtoupper($this->settingsHelper->getModeActive()),
-            'merchantId' => $this->settingsHelper->getIdMerchant(),
-            'isInPageEnabled' => $this->isInPageEnabled($plan->installmentsCount),
-            'first' => $first,
-            'creditInfo' => [
-                'totalCart' => $this->totalCart,
-                'costCredit' => $plan->customerTotalCostAmount,
-                'totalCredit' => $plan->customerTotalCostAmount + $this->totalCart,
-                'taeg' => $plan->annualInterestRate,
-            ],
-            'installment' => $plan->installmentsCount,
-            'deferredDays' => $plan->deferredDays,
-            'deferredMonths' => $plan->deferredMonths,
-            'locale' => $locale,
-        ];
-
-        if ($this->isDeferred) {
-            $templateVar['installmentText'] = sprintf(
-                $this->getTranslation('0 € today then %1$s on %2$s', 'PaymentOptionsHookController'),
-                $this->priceHelper->formatPriceToCentsByCurrencyId(
-                    $plans[0]['purchase_amount'] + $plans[0]['customer_fee']
-                ),
-                $this->dateHelper->getDateFormat($locale, $plans[0]['due_date'])
-            );
-        }
-
-        return $templateVar;
-    }
-
-    /**
-     * @param $installments
-     * @param $duration
-     *
-     * @return array
-     */
-    protected function getTemplateAndBnpl($installments, $duration)
-    {
-        if ($this->isDeferred) {
-            return [
-                 'payment_button_deferred.tpl',
-                 $duration,
-            ];
-        }
-
-        return [
-             'payment_button_pnx.tpl',
-             $installments,
-        ];
-    }
-
-    /**
-     * @param $installementCount
-     *
-     * @return array
-     */
-    protected function getTextsByTypes($installementCount, $duration)
-    {
-        if ($this->isPnxPlus4) {
-            return $this->getTexts(
-                $installementCount,
-                PaymentButtonAdminFormBuilder::ALMA_PNX_AIR_BUTTON_TITLE,
-                PaymentButtonAdminFormBuilder::ALMA_PNX_BUTTON_DESC
-            );
-        }
-        if ($this->isDeferred) {
-            return $this->getTexts(
-                $duration,
-                PaymentButtonAdminFormBuilder::ALMA_DEFERRED_BUTTON_TITLE,
-                PaymentButtonAdminFormBuilder::ALMA_DEFERRED_BUTTON_DESC
-            );
-        }
-        if ($this->isPayNow) {
-            return $this->getTexts(
-                $installementCount,
-                PaymentButtonAdminFormBuilder::ALMA_PAY_NOW_BUTTON_TITLE,
-                PaymentButtonAdminFormBuilder::ALMA_PAY_NOW_BUTTON_DESC
-            );
-        }
-
-        return $this->getTexts(
-            $installementCount,
-            PaymentButtonAdminFormBuilder::ALMA_PNX_BUTTON_TITLE,
-            PaymentButtonAdminFormBuilder::ALMA_PNX_BUTTON_DESC
-        );
-    }
-
-    /**
-     * @param $plan
-     *
-     * @return bool
-     */
-    protected function isPnxPlus4($plan)
-    {
-        return $plan->installmentsCount > 4;
-    }
-
-    /**
-     * @param $plans
-     * @param $locale
-     * @param $feePlans
-     * @param $key
-     *
-     * @return array
-     */
-    protected function buildDates($plans, $locale, $feePlans, $key)
-    {
-        foreach ($plans as $keyPlan => $paymentPlan) {
-            $plans[$keyPlan]['human_date'] = $this->dateHelper->getDateFormat($locale, $paymentPlan['due_date']);
-
-            if (0 === $keyPlan) {
-                $plans[$keyPlan]['human_date'] = $this->getTranslation('Today', 'PaymentService');
-                continue;
-            }
-
-            if ($this->isPayNow) {
-                $plans[$keyPlan]['human_date'] = $this->getTranslation('Total', 'PaymentService');
-                continue;
-            }
-
-            if ($this->settingsHelper->isDeferredTriggerLimitDays($feePlans, $key)) {
-                $plans[$keyPlan]['human_date'] = sprintf(
-                    $this->getTranslation('%s month later', 'PaymentService'),
-                    $keyPlan
-                );
-
-                if (0 === $keyPlan) {
-                    $plans[$keyPlan]['human_date'] = $this->customFieldsHelper->getDescriptionPaymentTriggerByLang(
-                        $this->context->language->id
-                    );
-                }
-            }
-        }
-
-        return $plans;
-    }
-
-    /**
-     * @param $string
-     * @param $file
-     *
-     * @return mixed
-     */
-    protected function getTranslation($string, $file)
-    {
-        return $this->module->l($string, $file);
-    }
-
-    /**
-     * @param $key
-     *
-     * @return bool
-     */
-    protected function isPayNow($key)
-    {
-        return ConstantsHelper::ALMA_KEY_PAYNOW === $key;
-    }
-
-    /**
-     * @param $installments
-     *
-     * @return bool
-     */
-    protected function isInPageEnabled($installments)
-    {
-        $isInPageEnabled = $this->settingsHelper->isInPageEnabled();
-
-        if ($installments > 4) {
-            $isInPageEnabled = false;
-        }
-
-        return $isInPageEnabled;
-    }
-
-    /**
-     * @param $installment
-     * @param $keyTitle
-     * @param $keyDescription
-     *
-     * @return array
-     */
-    protected function getTexts($installment, $keyTitle, $keyDescription)
-    {
-        return [
-             $this->customFieldsHelper->getTextButton(
-                    $this->context->language->id,
-                    $keyTitle,
-                    $installment
-                ),
-             $this->customFieldsHelper->getTextButton(
-                $this->context->language->id,
-                $keyDescription,
-                $installment
-            ),
-        ];
-    }
-
-    /**
-     * Create Payment option.
-     *
-     * @param bool $forEUComplianceModule
-     * @param string $ctaText
-     * @param string $action
-     * @param bool $isDeferred
-     * @param int $valueBNPL
-     *
-     * @return PaymentOption
-     */
-    protected function createPaymentOption($forEUComplianceModule, $ctaText, $action, $valueBNPL)
-    {
-        $logoName = $this->getLogoName($valueBNPL);
-
-        if ($forEUComplianceModule) {
-            $logo = $this->mediaHelper->getMediaPath(
-                 '/views/img/logos/alma_payment_logos_tiny.svg',
-                $this->module
-            );
-
-            return [
-                'cta_text' => $ctaText,
-                'action' => $action,
-                'logo' => $logo,
-            ];
-        }
-
-        $paymentOption = new PaymentOption();
-        $logo = $this->mediaHelper->getMediaPath(
-             '/views/img/logos/' . $logoName,
-            $this->module
-        );
-
-        return $paymentOption
-                ->setModuleName($this->module->name)
-                ->setCallToActionText($ctaText)
-                ->setAction($action)
-                ->setLogo($logo);
-    }
-
-    /**
-     * @param $valueBNPL
-     *
-     * @return string
-     */
-    protected function getLogoName($valueBNPL)
-    {
-        if ($this->isDeferred) {
-            return "{$valueBNPL}j_logo.svg";
-        }
-
-        return "p{$valueBNPL}x_logo.svg";
-    }
-
-    /**
-     * @return float
-     */
-    protected function getCartTotal()
-    {
-        return (float) $this->priceHelper->convertPriceToCents(
-            $this->toolsHelper->psRound((float) $this->context->cart->getOrderTotal(true, \Cart::BOTH), 2)
-        );
-    }
-
-    /**
-     * @param $params
-     *
-     * @return false|mixed
-     */
-    protected function getEuCompliance($params)
-    {
-        $forEUComplianceModule = false;
-
-        if (array_key_exists('for_eu_compliance_module', $params)) {
-            $forEUComplianceModule = $params['for_eu_compliance_module'];
-        }
-
-        return $forEUComplianceModule;
     }
 }

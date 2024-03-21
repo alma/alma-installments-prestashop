@@ -84,8 +84,16 @@ class PaymentData
         $this->toolsHelper = new ToolsHelper();
         $this->settingsHelper = new SettingsHelper(new ShopHelper(), new ConfigurationHelper());
         $this->priceHelper = new PriceHelper($this->toolsHelper, new CurrencyHelper());
-        $this->customFieldsHelper = new CustomFieldsHelper(new LanguageHelper(), new LocaleHelper(new LanguageHelper()));
-        $this->cartData = new CartData(new ProductHelper(), $this->settingsHelper);
+        $this->customFieldsHelper = new CustomFieldsHelper(
+            new LanguageHelper(),
+            new LocaleHelper(new LanguageHelper()),
+            $this->settingsHelper
+        );
+        $this->cartData = new CartData(
+            new ProductHelper(),
+            $this->settingsHelper,
+            $this->priceHelper
+        );
         $this->shippingData = new ShippingData();
     }
 
@@ -340,7 +348,12 @@ class PaymentData
     private function buildWebsiteCustomerDetails($context, $customer, $cart, $purchaseAmount)
     {
         $carrierHelper = new CarrierHelper($context);
-        $cartHelper = new CartHelper($context);
+        $cartHelper = new CartHelper(
+            $context,
+            $this->toolsHelper,
+            $this->priceHelper,
+            $this->cartData
+        );
         $productHelper = new ProductHelper();
         $productRepository = new ProductRepository();
 

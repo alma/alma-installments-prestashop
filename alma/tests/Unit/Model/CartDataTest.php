@@ -25,9 +25,12 @@
 namespace Alma\PrestaShop\Tests\Unit\Model;
 
 use Alma\PrestaShop\Helpers\ConfigurationHelper;
+use Alma\PrestaShop\Helpers\CurrencyHelper;
+use Alma\PrestaShop\Helpers\PriceHelper;
 use Alma\PrestaShop\Helpers\ProductHelper;
 use Alma\PrestaShop\Helpers\SettingsHelper;
 use Alma\PrestaShop\Helpers\ShopHelper;
+use Alma\PrestaShop\Helpers\ToolsHelper;
 use Alma\PrestaShop\Model\CartData;
 use Alma\PrestaShop\Repositories\ProductRepository;
 use Cart;
@@ -60,7 +63,11 @@ class CartDataTest extends TestCase
         $summaryDetailsMock = ['products' => $items, 'gift_products' => []];
         $cart->method('getSummaryDetails')->willReturn($summaryDetailsMock);
 
-        $cartData = new CartData(new ProductHelper(), new SettingsHelper(new ShopHelper(), new ConfigurationHelper()));
+        $cartData = new CartData(
+            new ProductHelper(),
+            new SettingsHelper(new ShopHelper(), new ConfigurationHelper()),
+            new PriceHelper(new ToolsHelper(), new CurrencyHelper())
+        );
         $returnItems = $cartData->getCartItems($cart, $productHelper, $productRepository);
         $this->assertEquals($expected, $returnItems);
     }
