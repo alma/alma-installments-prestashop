@@ -52,7 +52,7 @@ class CartHelper
     protected $priceHelper;
 
     /**
-     * @var
+     * @var CartData
      */
     protected $cartData;
 
@@ -61,7 +61,7 @@ class CartHelper
         $this->context = $context;
         $this->toolsHelper = new ToolsHelper();
         $this->priceHelper = new PriceHelper();
-        $this->cartaData = new CartData();
+        $this->cartData = new CartData();
     }
 
     /**
