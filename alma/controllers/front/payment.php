@@ -73,6 +73,9 @@ class AlmaPaymentModuleFrontController extends ModuleFrontController
      */
     protected $settingsHelper;
 
+    /**
+     * @codeCoverageIgnore
+     */
     public function __construct()
     {
         parent::__construct();

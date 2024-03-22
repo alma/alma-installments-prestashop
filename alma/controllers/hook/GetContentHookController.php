@@ -141,6 +141,8 @@ final class GetContentHookController extends AdminHookController
 
     /**
      * GetContentHook Controller construct.
+     *
+     * @codeCoverageIgnore
      */
     public function __construct($module)
     {

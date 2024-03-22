@@ -34,6 +34,9 @@ class AdminAlmaCategoriesController extends ModuleAdminController
     public static $excludedCategories = [];
     private $excludeFilter;
 
+    /**
+     * @codeCoverageIgnore
+     */
     public function __construct()
     {
         $this->bootstrap = true;

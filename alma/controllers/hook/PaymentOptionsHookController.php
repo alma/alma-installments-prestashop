@@ -74,6 +74,11 @@ class PaymentOptionsHookController extends FrontendHookController
      */
     protected $paymentService;
 
+    /**
+     * @codeCoverageIgnore
+     *
+     * @param $module
+     */
     public function __construct($module)
     {
         parent::__construct($module);

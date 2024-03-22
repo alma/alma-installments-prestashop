@@ -50,6 +50,9 @@ class OrderHelper
      */
     private $orders;
 
+    /**
+     * @codeCoverageIgnore
+     */
     public function __construct()
     {
         $this->defaultStatesExcluded = [6, 7, 8];

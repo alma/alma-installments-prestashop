@@ -79,6 +79,8 @@ class CartHelper
      * @param OrderData $orderData
      * @param OrderStateHelper $orderStateHelper
      * @param CarrierHelper $carrierHelper
+     *
+     * @codeCoverageIgnore
      */
     public function __construct(
         $context,

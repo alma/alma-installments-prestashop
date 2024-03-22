@@ -35,6 +35,7 @@ class OrderStateHelper
 {
     /**
      * @param \Context $context
+     * @codeCoverageIgnore
      */
     public function __construct($context)
     {

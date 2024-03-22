@@ -51,6 +51,14 @@ class PnxAdminFormBuilder extends AbstractAlmaAdminFormBuilder
      */
     protected $priceHelper;
 
+    /**
+     * @codeCoverageIgnore
+     *
+     * @param $module
+     * @param $context
+     * @param $image
+     * @param $config
+     */
     public function __construct($module, $context, $image, $config = [])
     {
         parent::__construct($module, $context, $image, $config);

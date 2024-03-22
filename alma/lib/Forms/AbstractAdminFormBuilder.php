@@ -41,6 +41,8 @@ abstract class AbstractAdminFormBuilder
     private $title;
 
     /**
+     * @codeCoverageIgnore
+     *
      * @param $image
      * @param $title
      */

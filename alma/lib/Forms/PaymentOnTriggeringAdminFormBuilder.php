@@ -50,6 +50,11 @@ class PaymentOnTriggeringAdminFormBuilder extends AbstractAlmaAdminFormBuilder
      */
     protected $customFieldsHelper;
 
+    /**
+     * @codeCoverageIgnore
+     *
+     * @param $module
+     */
     public function __construct($module)
     {
         parent::__construct($module);

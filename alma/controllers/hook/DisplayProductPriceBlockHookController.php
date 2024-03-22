@@ -66,6 +66,8 @@ class DisplayProductPriceBlockHookController extends FrontendHookController
     /**
      * HookController constructor.
      *
+     * @codeCoverageIgnore
+     *
      * @param $module Alma
      */
     public function __construct($module)

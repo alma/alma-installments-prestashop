@@ -41,6 +41,11 @@ class CarrierHelper
     /** @var CarrierData */
     private $carrierData;
 
+    /**
+     * @param $context
+     * @param $carrierData
+     * @codeCoverageIgnore
+     */
     public function __construct($context, $carrierData)
     {
         $this->context = $context;

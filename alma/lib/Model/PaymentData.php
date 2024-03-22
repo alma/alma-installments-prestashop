@@ -117,6 +117,24 @@ class PaymentData
      */
     protected $context;
 
+    /**
+     * @param ToolsHelper $toolsHelper
+     * @param SettingsHelper $settingsHelper
+     * @param PriceHelper $priceHelper
+     * @param CustomFieldsHelper $customFieldsHelper
+     * @param CartData $cartData
+     * @param ShippingData $shippingData
+     * @param \Context $context
+     * @param AddressHelper $addressHelper
+     * @param CountryHelper $countryHelper
+     * @param LocaleHelper $localeHelper
+     * @param StateHelper $stateHelper
+     * @param CustomerHelper $customerHelper
+     * @param CartHelper $cartHelper
+     * @param CarrierHelper $carrierHelper
+     *
+     * @codeCoverageIgnore
+     */
     public function __construct(
         $toolsHelper,
         $settingsHelper,

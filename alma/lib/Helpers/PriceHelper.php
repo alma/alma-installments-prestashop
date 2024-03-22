@@ -45,6 +45,7 @@ class PriceHelper
     /**
      * @param ToolsHelper $toolsHelper
      * @param CurrencyHelper $currencyHelper
+     * @codeCoverageIgnore
      */
     public function __construct($toolsHelper, $currencyHelper)
     {

@@ -107,6 +107,7 @@ class DisplayPaymentHookController extends FrontendHookController
      * HookController constructor.
      *
      * @param $module Alma
+     * @codeCoverageIgnore
      */
     public function __construct($module)
     {

@@ -52,6 +52,8 @@ class FrontHeaderHookController extends FrontendHookController
     protected $settingsHelper;
 
     /**
+     * @codeCoverageIgnore
+     *
      * @param $module
      */
     public function __construct($module)

@@ -45,6 +45,14 @@ class ExcludedCategoryAdminFormBuilder extends AbstractAlmaAdminFormBuilder
      */
     protected $settingsHelper;
 
+    /**
+     * @codeCoverageIgnore
+     *
+     * @param $module
+     * @param $context
+     * @param $image
+     * @param $config
+     */
     public function __construct($module, $context, $image, $config = [])
     {
         parent::__construct($module, $context, $image, $config);

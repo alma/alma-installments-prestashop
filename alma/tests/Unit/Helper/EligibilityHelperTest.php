@@ -47,4 +47,8 @@ class EligibilityHelperTest extends TestCase
     public function testCheckPaymentData()
     {
     }
+
+    public function testCreateEligibility()
+    {
+    }
 }

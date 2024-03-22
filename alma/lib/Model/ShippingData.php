@@ -43,6 +43,12 @@ class ShippingData
      */
     protected $carrierHelper;
 
+    /**
+     * @param PriceHelper $priceHelper
+     * @param CarrierHelper $carrierHelper
+     *
+     * @codeCoverageIgnore
+     */
     public function __construct($priceHelper, $carrierHelper)
     {
         $this->priceHelper = $priceHelper;

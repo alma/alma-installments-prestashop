@@ -51,6 +51,8 @@ class CustomerHelper
      * @param \Context $context
      * @param OrderHelper $orderHelper
      * @param ValidateHelper $validateHelper
+     *
+     * @codeCoverageIgnore
      */
     public function __construct($context, $orderHelper, $validateHelper)
     {

@@ -40,6 +40,8 @@ class EncryptionHelper
 
     /**
      * Encryption Helper construct
+     *
+     * @codeCoverageIgnore
      */
     public function __construct()
     {

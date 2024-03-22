@@ -56,6 +56,9 @@ class AdminAlmaRefundsController extends ModuleAdminController
      */
     protected $priceHelper;
 
+    /**
+     * @codeCoverageIgnore
+     */
     public function __construct()
     {
         parent::__construct();

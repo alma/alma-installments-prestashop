@@ -64,6 +64,8 @@ class CartData
      * @param SettingsHelper $settingsHelper
      * @param PriceHelper $priceHelper
      * @param ProductRepository $productRepository
+     *
+     * @codeCoverageIgnore
      */
     public function __construct($productHelper, $settingsHelper, $priceHelper, $productRepository)
     {

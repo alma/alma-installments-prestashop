@@ -22,50 +22,13 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
-namespace Alma\PrestaShop\Helpers;
+namespace Alma\PrestaShop\Tests\Unit\Helper;
 
-if (!defined('_PS_VERSION_')) {
-    exit;
-}
+use PHPUnit\Framework\TestCase;
 
-class AddressHelper
+class CurrencyHelperTest extends TestCase
 {
-    /**
-     * @var ToolsHelper
-     */
-    protected $toolsHelper;
-
-    /**
-     * @param ToolsHelper $toolHelper
-     * @codeCoverageIgnore
-     */
-    public function __construct($toolHelper)
+    public function testConvertPriceToCenStr()
     {
-        $this->toolsHelper = $toolHelper;
-    }
-
-    /**
-     * @param int $id
-     *
-     * @return \Address
-     */
-    public function create($id)
-    {
-        return new \Address((int) $id);
-    }
-
-    /**
-     * @param \Customer $customer
-     * @param \Context $context
-     *
-     * @return mixed
-     */
-    public function getAdressFromCustomer($customer, $context)
-    {
-        if ($this->toolsHelper->psVersionCompare('1.5.4.0', '<')) {
-            return $customer->getAddresses($context->language->id);
-        }
-
-        return $customer->getAddresses($customer->id_lang);
     }
 }

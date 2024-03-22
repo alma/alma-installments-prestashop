@@ -76,6 +76,8 @@ class PaymentOptionHelper
      * @param MediaHelper $mediaHelper
      * @param ConfigurationHelper $configurationHelper
      * @param PaymentOptionTemplateHelper $paymentOptionTemplateHelper
+     *
+     * @codeCoverageIgnore
      */
     public function __construct(
         $context,

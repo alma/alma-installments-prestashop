@@ -159,24 +159,26 @@ class PaymentService
     protected $cartHelper;
 
     /**
-     * @param $context
+     * @param \Context $context
      * @param $module
-     * @param $settingsHelper
-     * @param $localeHelper
-     * @param $toolsHelper
-     * @param $eligibilityHelper
-     * @param $priceHelper
-     * @param $dateHelper
-     * @param $customFieldsHelper
-     * @param $cartData
-     * @param $contextHelper
-     * @param $mediaHelper
-     * @param $planHelper
-     * @param $configurationHelper
-     * @param $translationHelper
-     * @param $cartHelper
-     * @param $paymentOptionTemplateHelper
-     * @param $paymentOptionHelper
+     * @param SettingsHelper $settingsHelper
+     * @param LocaleHelper $localeHelper
+     * @param ToolsHelper $toolsHelper
+     * @param EligibilityHelper $eligibilityHelper
+     * @param PriceHelper $priceHelper
+     * @param DateHelper $dateHelper
+     * @param CustomFieldsHelper $customFieldsHelper
+     * @param CartData $cartData
+     * @param ContextHelper $contextHelper
+     * @param MediaHelper $mediaHelper
+     * @param PlanHelper $planHelper
+     * @param ConfigurationHelper $configurationHelper
+     * @param TranslationHelper $translationHelper
+     * @param CartHelper $cartHelper
+     * @param PaymentOptionTemplateHelper $paymentOptionTemplateHelper
+     * @param PaymentOptionHelper $paymentOptionHelper
+     *
+     * @codeCoverageIgnore
      */
     public function __construct(
         $context,

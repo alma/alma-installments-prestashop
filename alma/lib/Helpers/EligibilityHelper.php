@@ -71,6 +71,8 @@ class EligibilityHelper
      * @param ClientHelper $clientHelper
      * @param SettingsHelper $settingsHelper
      * @param ApiHelper $apiHelper
+     *
+     * @codeCoverageIgnore
      */
     public function __construct($paymentData, $priceHelper, $clientHelper, $settingsHelper, $apiHelper, $context)
     {

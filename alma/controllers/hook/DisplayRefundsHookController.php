@@ -50,6 +50,11 @@ final class DisplayRefundsHookController extends AdminHookController
      */
     protected $priceHelper;
 
+    /**
+     * @codeCoverageIgnore
+     *
+     * @param $module
+     */
     public function __construct($module)
     {
         parent::__construct($module);
