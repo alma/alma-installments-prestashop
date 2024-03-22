@@ -24,6 +24,7 @@
 
 namespace Alma\PrestaShop\Services;
 
+use Alma\PrestaShop\Helpers\CartHelper;
 use Alma\PrestaShop\Helpers\ConfigurationHelper;
 use Alma\PrestaShop\Helpers\ContextHelper;
 use Alma\PrestaShop\Helpers\CustomFieldsHelper;
@@ -108,6 +109,11 @@ class PaymentService
     protected $module;
 
     /**
+     * @var \Context
+     */
+    protected $context;
+
+    /**
      * @var bool
      */
     protected $isPayNow;
@@ -147,6 +153,31 @@ class PaymentService
      */
     protected $paymentOptionHelper;
 
+    /**
+     * @var CartHelper
+     */
+    protected $cartHelper;
+
+    /**
+     * @param $context
+     * @param $module
+     * @param $settingsHelper
+     * @param $localeHelper
+     * @param $toolsHelper
+     * @param $eligibilityHelper
+     * @param $priceHelper
+     * @param $dateHelper
+     * @param $customFieldsHelper
+     * @param $cartData
+     * @param $contextHelper
+     * @param $mediaHelper
+     * @param $planHelper
+     * @param $configurationHelper
+     * @param $translationHelper
+     * @param $cartHelper
+     * @param $paymentOptionTemplateHelper
+     * @param $paymentOptionHelper
+     */
     public function __construct(
         $context,
         $module,
@@ -201,7 +232,7 @@ class PaymentService
                 return [];
             }
 
-            $installmentPlans = $this->eligibilityHelper->eligibilityCheck($this->context);
+            $installmentPlans = $this->eligibilityHelper->eligibilityCheck();
 
             $locale = $this->localeHelper->getLocaleByIdLangForWidget($this->context->language->id);
 
@@ -230,7 +261,7 @@ class PaymentService
                 $plans = $plan->paymentPlan;
 
                 $this->isPayNow = $this->configurationHelper->isPayNow($key);
-                $this->isDeferred = $this->settingsHelper->isDeferred($plan);
+                $this->isDeferred = $this->planHelper->isDeferred($plan);
                 $this->isPnxPlus4 = $this->planHelper->isPnxPlus4($plan);
 
                 $plans = $this->planHelper->buildDates($plans, $locale, $feePlans, $key, $this->isPayNow);

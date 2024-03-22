@@ -25,7 +25,7 @@
 namespace Alma\PrestaShop\Helpers;
 
 use Alma\API\Endpoints\Results\Eligibility;
-use Alma\API\RequestError;
+use Alma\API\Entities\FeePlan;
 use Alma\PrestaShop\Logger;
 use Alma\PrestaShop\Model\PaymentData;
 
@@ -46,46 +46,70 @@ class EligibilityHelper
     protected $priceHelper;
 
     /**
+     * @var ClientHelper
+     */
+    protected $clientHelper;
+
+    /**
+     * @var SettingsHelper
+     */
+    protected $settingsHelper;
+
+    /**
+     * @var ApiHelper
+     */
+    protected $apiHelper;
+
+    /**
+     * @var \Context
+     */
+    protected $context;
+
+    /**
      * @param PaymentData $paymentData
      * @param PriceHelper $priceHelper
+     * @param ClientHelper $clientHelper
+     * @param SettingsHelper $settingsHelper
+     * @param ApiHelper $apiHelper
      */
-    public function __construct($paymentData, $priceHelper)
+    public function __construct($paymentData, $priceHelper, $clientHelper, $settingsHelper, $apiHelper, $context)
     {
         $this->paymentData = $paymentData;
         $this->priceHelper = $priceHelper;
+        $this->clientHelper = $clientHelper;
+        $this->settingsHelper = $settingsHelper;
+        $this->apiHelper = $apiHelper;
+        $this->context = $context;
     }
 
     /**
-     * @param \Context $context
-     *
      * @return array
+     *
+     * @throws \Alma\API\ParamsError
      */
-    public function eligibilityCheck($context)
+    public function eligibilityCheck()
     {
         $almaEligibilities = [];
-        $purchaseAmount = $this->priceHelper->convertPriceToCents($context->cart->getOrderTotal(true, \Cart::BOTH));
-        $alma = self::checkClientInstance();
-        $feePlans = self::checkFeePlans();
-        $eligibilities = self::getNotEligibleFeePlans($feePlans, $purchaseAmount);
-        $activePlans = self::getEligibleFeePlans($feePlans, $purchaseAmount);
-        $paymentData = $this->checkPaymentData($context, $activePlans);
+        $purchaseAmount = $this->priceHelper->convertPriceToCents(
+            $this->context->cart->getOrderTotal(true, \Cart::BOTH)
+        );
+        $feePlans = $this->checkFeePlans();
+        $eligibilities = $this->getNotEligibleFeePlans($feePlans, $purchaseAmount);
+        $activePlans = $this->getEligibleFeePlans($feePlans, $purchaseAmount);
+        $paymentData = $this->checkPaymentData($activePlans);
 
-        try {
-            if (!empty($activePlans)) {
-                $almaEligibilities = $alma->payments->eligibility($paymentData);
-                if ($almaEligibilities instanceof Eligibility) {
-                    $almaEligibilities = [$almaEligibilities];
-                }
-            }
-        } catch (RequestError $e) {
-            Logger::instance()->error(
-                "Error when checking cart {$context->cart->id} eligibility: " . $e->getMessage()
-            );
+        if (empty($activePlans)) {
+            return $almaEligibilities;
+        }
 
-            return [];
+        $almaEligibilities = $this->apiHelper->getPaymentEligibility($paymentData);
+
+        if ($almaEligibilities instanceof Eligibility) {
+            $almaEligibilities = [$almaEligibilities];
         }
 
         $eligibilities = array_merge((array) $eligibilities, (array) $almaEligibilities);
+
         usort($eligibilities, function ($a, $b) {
             return $a->installmentsCount - $b->installmentsCount;
         });
@@ -93,21 +117,12 @@ class EligibilityHelper
         return $eligibilities;
     }
 
-    private static function checkClientInstance()
+    /**
+     * @return array
+     */
+    public function checkFeePlans()
     {
-        $alma = ClientHelper::defaultInstance();
-        if (!$alma) {
-            Logger::instance()->error('Cannot check cart eligibility: no API client');
-
-            return [];
-        }
-
-        return $alma;
-    }
-
-    private static function checkFeePlans()
-    {
-        $feePlans = array_filter((array) json_decode(SettingsHelper::getFeePlans()), function ($feePlan) {
+        $feePlans = array_filter((array) json_decode($this->settingsHelper->getAlmaFeePlans()), function ($feePlan) {
             return $feePlan->enabled == 1;
         });
 
@@ -118,9 +133,16 @@ class EligibilityHelper
         return $feePlans;
     }
 
-    private function checkPaymentData($context, $activePlans)
+    /**
+     * @param $activePlans
+     *
+     * @return array
+     *
+     * @throws \Alma\API\ParamsError
+     */
+    public function checkPaymentData($activePlans)
     {
-        $paymentData = $this->paymentData->dataFromCart($context->cart, $context, $activePlans);
+        $paymentData = $this->paymentData->dataFromCart($activePlans);
 
         if (!$paymentData) {
             Logger::instance()->error('Cannot check cart eligibility: no data extracted from cart');
@@ -131,44 +153,60 @@ class EligibilityHelper
         return $paymentData;
     }
 
-    private static function getNotEligibleFeePlans($feePlans, $purchaseAmount)
+    /**
+     * @param array $feePlans
+     * @param $purchaseAmount
+     *
+     * @return array
+     */
+    public function getNotEligibleFeePlans($feePlans, $purchaseAmount)
     {
         $eligibilities = [];
 
         foreach ($feePlans as $key => $feePlan) {
-            $getDataFromKey = SettingsHelper::getDataFromKey($key);
+            $data = $this->settingsHelper->getDataFromKey($key);
 
             if (
                 $purchaseAmount < $feePlan->min
                 || $purchaseAmount > $feePlan->max
             ) {
-                $eligibility = new Eligibility(
-                    [
-                        'installments_count' => $getDataFromKey['installmentsCount'],
-                        'deferred_days' => $getDataFromKey['deferredDays'],
-                        'deferred_months' => $getDataFromKey['deferredMonths'],
-                        'eligible' => false,
-                        'constraints' => [
-                            'purchase_amount' => [
-                                'minimum' => $feePlan->min,
-                                'maximum' => $feePlan->max,
-                            ],
-                        ],
-                    ]
-                );
-                $eligibilities[] = $eligibility;
+                $eligibilities[] = $this->createEligibility($data, $feePlan);
             }
         }
 
         return $eligibilities;
     }
 
-    private static function getEligibleFeePlans($feePlans, $purchaseAmount)
+    /**
+     * @param array $data
+     * @param FeePlan $feePlan
+     *
+     * @return Eligibility
+     */
+    public function createEligibility($data, $feePlan, $eligible = false)
+    {
+        return new Eligibility(
+            [
+                'installments_count' => $data['installmentsCount'],
+                'deferred_days' => $data['deferredDays'],
+                'deferred_months' => $data['deferredMonths'],
+                'eligible' => $eligible,
+                'constraints' => [
+                    'purchase_amount' => [
+                        'minimum' => $feePlan->min,
+                        'maximum' => $feePlan->max,
+                    ],
+                ],
+            ]
+        );
+    }
+
+    public function getEligibleFeePlans($feePlans, $purchaseAmount)
     {
         $activePlans = [];
 
         foreach ($feePlans as $key => $feePlan) {
-            $getDataFromKey = SettingsHelper::getDataFromKey($key);
+            $getDataFromKey = $this->settingsHelper->getDataFromKey($key);
 
             if (
                 $purchaseAmount > $feePlan->min

@@ -164,7 +164,7 @@ class DisplayProductPriceBlockHookController extends FrontendHookController
             $psVersion = 'ps16';
         }
 
-        $activePlans = SettingsHelper::activePlans();
+        $activePlans = $this->settingsHelper->activePlans();
 
         $locale = $this->localeHelper->getLocaleByIdLangForWidget($this->context->language->id);
 

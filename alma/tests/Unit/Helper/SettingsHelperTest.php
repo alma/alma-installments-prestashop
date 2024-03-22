@@ -406,4 +406,8 @@ class SettingsHelperTest extends TestCase
 
         $this->assertEquals([], $result);
     }
+
+    public function testGetDataFromKey()
+    {
+    }
 }

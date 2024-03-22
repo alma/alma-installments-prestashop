@@ -94,4 +94,27 @@ class ToolsHelper
     {
         return version_compare($version1, $version2, $operator);
     }
+
+    /**
+     * @param $string
+     *
+     * @return false|int
+     */
+    public function strlen($string)
+    {
+        return \Tools::strlen($string);
+    }
+
+    /**
+     * @param string $str
+     * @param int $start
+     * @param bool $length
+     * @param string $encoding
+     *
+     * @return false|string
+     */
+    public function substr($str, $start, $length = false, $encoding = 'utf-8')
+    {
+        return \Tools::substr($str, $start, $length, $encoding);
+    }
 }

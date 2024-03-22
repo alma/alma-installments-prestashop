@@ -28,42 +28,15 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-/**
- * Class OrderStateHelper
- */
-class OrderStateHelper
+class ValidateHelper
 {
     /**
-     * @param \Context $context
-     */
-    public function __construct($context)
-    {
-        $this->context = $context;
-    }
-
-    /**
-     * @param int $idOrderState
+     * @param $object
      *
-     * @return mixed
+     * @return bool
      */
-    public function getNameById($idOrderState)
+    public function isLoadedObject($object)
     {
-        $orderStates = $this->getOrderStates($this->context->language->id);
-
-        $state = array_filter($orderStates, function ($orderState) use ($idOrderState) {
-            return $orderState['id_order_state'] == $idOrderState;
-        });
-
-        return array_values($state)[0]['name'];
-    }
-
-    /**
-     * @param int $languageId
-     *
-     * @return mixed
-     */
-    public function getOrderStates($languageId)
-    {
-        return \OrderState::getOrderStates($languageId);
+        return \Validate::isLoadedObject($object);
     }
 }

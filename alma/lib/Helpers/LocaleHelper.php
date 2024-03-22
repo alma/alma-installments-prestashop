@@ -204,4 +204,20 @@ class LocaleHelper
 
         return $locale;
     }
+
+    /**
+     * @param \Context $context
+     *
+     * @return mixed
+     */
+    public function getLocaleFromContext($context)
+    {
+        $locale = $context->language->iso_code;
+
+        if (property_exists($context->language, 'locale')) {
+            $locale = $context->language->locale;
+        }
+
+        return $locale;
+    }
 }

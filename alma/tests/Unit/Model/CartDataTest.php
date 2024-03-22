@@ -66,7 +66,8 @@ class CartDataTest extends TestCase
         $cartData = new CartData(
             new ProductHelper(),
             new SettingsHelper(new ShopHelper(), new ConfigurationHelper()),
-            new PriceHelper(new ToolsHelper(), new CurrencyHelper())
+            new PriceHelper(new ToolsHelper(), new CurrencyHelper()),
+            new ProductRepository()
         );
         $returnItems = $cartData->getCartItems($cart, $productHelper, $productRepository);
         $this->assertEquals($expected, $returnItems);
@@ -234,9 +235,24 @@ class CartDataTest extends TestCase
         $productHelperMock = \Mockery::mock(ProductHelper::class);
         $productHelperMock->shouldReceive('getProductCategories')->with(1)->andReturn(['cate1', 'cate2', 'cateexclue']);
 
-        $cartData = new CartData($productHelperMock, $settingsHelperMock);
+        $priceHelperMock = \Mockery::mock(PriceHelper::class, [new ToolsHelper(), new CurrencyHelper()]);
+        $productRepositoryMock = \Mockery::mock(ProductRepository::class);
+
+        $cartData = new CartData($productHelperMock, $settingsHelperMock, $priceHelperMock, $productRepositoryMock);
         $result = $cartData->getCartExclusion($cart);
 
         $this->assertEquals(['2' => 'cateexclue'], $result);
+    }
+
+    public function testIncludeTaxes()
+    {
+    }
+
+    public function testCartInfo()
+    {
+    }
+
+    public function testGetCartDiscounts()
+    {
     }
 }

@@ -29,22 +29,37 @@ if (!defined('_PS_VERSION_')) {
 }
 
 use Alma\PrestaShop\Forms\PaymentButtonAdminFormBuilder;
+use Alma\PrestaShop\Helpers\AddressHelper;
+use Alma\PrestaShop\Helpers\ApiHelper;
+use Alma\PrestaShop\Helpers\CarrierHelper;
+use Alma\PrestaShop\Helpers\CartHelper;
+use Alma\PrestaShop\Helpers\ClientHelper;
 use Alma\PrestaShop\Helpers\ConfigurationHelper;
 use Alma\PrestaShop\Helpers\ConstantsHelper;
+use Alma\PrestaShop\Helpers\CountryHelper;
 use Alma\PrestaShop\Helpers\CurrencyHelper;
+use Alma\PrestaShop\Helpers\CustomerHelper;
 use Alma\PrestaShop\Helpers\CustomFieldsHelper;
 use Alma\PrestaShop\Helpers\DateHelper;
 use Alma\PrestaShop\Helpers\EligibilityHelper;
 use Alma\PrestaShop\Helpers\LanguageHelper;
 use Alma\PrestaShop\Helpers\LocaleHelper;
+use Alma\PrestaShop\Helpers\OrderHelper;
+use Alma\PrestaShop\Helpers\OrderStateHelper;
 use Alma\PrestaShop\Helpers\PriceHelper;
 use Alma\PrestaShop\Helpers\ProductHelper;
 use Alma\PrestaShop\Helpers\SettingsHelper;
 use Alma\PrestaShop\Helpers\ShopHelper;
+use Alma\PrestaShop\Helpers\StateHelper;
 use Alma\PrestaShop\Helpers\ToolsHelper;
+use Alma\PrestaShop\Helpers\ValidateHelper;
 use Alma\PrestaShop\Hooks\FrontendHookController;
+use Alma\PrestaShop\Model\CarrierData;
 use Alma\PrestaShop\Model\CartData;
+use Alma\PrestaShop\Model\OrderData;
 use Alma\PrestaShop\Model\PaymentData;
+use Alma\PrestaShop\Model\ShippingData;
+use Alma\PrestaShop\Repositories\ProductRepository;
 
 class DisplayPaymentHookController extends FrontendHookController
 {
@@ -97,21 +112,59 @@ class DisplayPaymentHookController extends FrontendHookController
     {
         parent::__construct($module);
 
-        $this->settingsHelper = new SettingsHelper(new ShopHelper(), new ConfigurationHelper());
+        $settingsHelper = new SettingsHelper(new ShopHelper(), new ConfigurationHelper());
+        $clientHelper = new ClientHelper();
+
+        $this->settingsHelper = $settingsHelper;
         $this->localeHelper = new LocaleHelper(new LanguageHelper());
         $this->toolsHelper = new ToolsHelper();
-        $this->eligibilityHelper = new EligibilityHelper(
-            new PaymentData(),
-            new PriceHelper($this->toolsHelper, new CurrencyHelper())
-        );
-        $this->priceHelper = new PriceHelper(new ToolsHelper(), new CurrencyHelper());
-        $this->dateHelper = new DateHelper();
+        $this->priceHelper = new PriceHelper($this->toolsHelper, new CurrencyHelper());
         $this->customFieldsHelper = new CustomFieldsHelper(
             new LanguageHelper(),
             $this->localeHelper,
             $this->settingsHelper
         );
-        $this->cartData = new CartData(new ProductHelper(), $this->settingsHelper, $this->priceHelper);
+        $this->cartData = new CartData(
+            new ProductHelper(),
+            $this->settingsHelper,
+            $this->priceHelper,
+            new ProductRepository()
+        );
+
+        $carrierHelper = new CarrierHelper($this->context, new CarrierData());
+
+        $this->eligibilityHelper = new EligibilityHelper(
+            new PaymentData(
+                $this->toolsHelper,
+                $this->settingsHelper,
+                $this->priceHelper,
+                $this->customFieldsHelper,
+                $this->cartData,
+                new ShippingData($this->priceHelper, $carrierHelper),
+                $this->context,
+                new AddressHelper($this->toolsHelper),
+                new CountryHelper(),
+                $this->localeHelper,
+                new StateHelper(),
+                new CustomerHelper($this->context, new OrderHelper(), new ValidateHelper()),
+                new CartHelper(
+                    $this->context,
+                    $this->toolsHelper,
+                    $this->priceHelper,
+                    $this->cartData,
+                    new OrderData(),
+                    new OrderStateHelper($this->context),
+                    $carrierHelper
+                ),
+                $carrierHelper
+            ),
+            $this->priceHelper,
+            $clientHelper,
+            $settingsHelper,
+            new ApiHelper($clientHelper),
+            $this->context
+        );
+        $this->dateHelper = new DateHelper();
     }
 
     /**
@@ -132,7 +185,7 @@ class DisplayPaymentHookController extends FrontendHookController
         $idLang = $this->context->language->id;
         $locale = $this->localeHelper->getLocaleByIdLangForWidget($idLang);
 
-        $installmentPlans = $this->eligibilityHelper->eligibilityCheck($this->context);
+        $installmentPlans = $this->eligibilityHelper->eligibilityCheck();
 
         if (empty($installmentPlans)) {
             return;

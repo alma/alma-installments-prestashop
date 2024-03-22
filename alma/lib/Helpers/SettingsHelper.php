@@ -498,14 +498,14 @@ class SettingsHelper
      *
      * @return array
      */
-    public static function activePlans()
+    public function activePlans()
     {
         $plans = [];
-        $feePlans = json_decode(static::getFeePlans());
+        $feePlans = json_decode($this->getAlmaFeePlans());
 
         foreach ($feePlans as $key => $feePlan) {
             if (1 == $feePlan->enabled) {
-                $dataFromKey = static::getDataFromKey($key);
+                $dataFromKey = $this->getDataFromKey($key);
                 $plans[] = [
                     'installmentsCount' => (int) $dataFromKey['installmentsCount'],
                     'minAmount' => $feePlan->min,
@@ -845,6 +845,8 @@ class SettingsHelper
     /**
      * @param \Alma\API\Entities\FeePlan $plan
      *
+     * @deprecated use PlanHelper->isDeferred
+     *
      * @return bool
      */
     public function isDeferred($plan)
@@ -896,9 +898,9 @@ class SettingsHelper
      *
      * @return array feePlans
      */
-    public static function getDataFromKey($key)
+    public function getDataFromKey($key)
     {
-        $feePlans = json_decode(static::getFeePlans());
+        $feePlans = json_decode($this->getAlmaFeePlans());
         preg_match("/general_(\d*)_(\d*)_(\d*)/", $key, $data);
 
         $dataFromKey = [

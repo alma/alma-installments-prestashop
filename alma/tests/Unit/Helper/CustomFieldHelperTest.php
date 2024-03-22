@@ -193,4 +193,8 @@ class CustomFieldHelperTest extends TestCase
         $result = $this->customFieldsHelper->getDescriptionPaymentTriggerByLang('1');
         $this->assertEquals('At shipping', $result);
     }
+
+    public function testGetTextButton()
+    {
+    }
 }

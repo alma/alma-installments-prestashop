@@ -23,10 +23,31 @@
  */
 
 use Alma\API\ParamsError;
+use Alma\PrestaShop\Helpers\AddressHelper;
+use Alma\PrestaShop\Helpers\CarrierHelper;
+use Alma\PrestaShop\Helpers\CartHelper;
 use Alma\PrestaShop\Helpers\ClientHelper;
+use Alma\PrestaShop\Helpers\ConfigurationHelper;
+use Alma\PrestaShop\Helpers\CountryHelper;
+use Alma\PrestaShop\Helpers\CurrencyHelper;
+use Alma\PrestaShop\Helpers\CustomerHelper;
+use Alma\PrestaShop\Helpers\CustomFieldsHelper;
+use Alma\PrestaShop\Helpers\LanguageHelper;
+use Alma\PrestaShop\Helpers\LocaleHelper;
+use Alma\PrestaShop\Helpers\OrderHelper;
+use Alma\PrestaShop\Helpers\PriceHelper;
+use Alma\PrestaShop\Helpers\ProductHelper;
 use Alma\PrestaShop\Helpers\SettingsHelper;
+use Alma\PrestaShop\Helpers\ShopHelper;
+use Alma\PrestaShop\Helpers\StateHelper;
+use Alma\PrestaShop\Helpers\ToolsHelper;
+use Alma\PrestaShop\Helpers\ValidateHelper;
 use Alma\PrestaShop\Logger;
+use Alma\PrestaShop\Model\CarrierData;
+use Alma\PrestaShop\Model\CartData;
 use Alma\PrestaShop\Model\PaymentData;
+use Alma\PrestaShop\Model\ShippingData;
+use Alma\PrestaShop\Repositories\ProductRepository;
 use Alma\PrestaShop\Traits\AjaxTrait;
 
 if (!defined('_PS_VERSION_')) {
@@ -47,11 +68,58 @@ class AlmaPaymentModuleFrontController extends ModuleFrontController
      */
     protected $paymentData;
 
+    /**
+     * @var SettingsHelper
+     */
+    protected $settingsHelper;
+
     public function __construct()
     {
         parent::__construct();
         $this->context = Context::getContext();
-        $this->paymentData = new PaymentData();
+        $this->settingsHelper = new SettingsHelper(new ShopHelper(), new ConfigurationHelper());
+
+        $toolsHelper = new ToolsHelper();
+        $languageHelper = new LanguageHelper();
+        $priceHelper = new PriceHelper($toolsHelper, new CurrencyHelper());
+        $localeHelper = new LocaleHelper($languageHelper);
+        $cartData = new CartData(
+            new ProductHelper(),
+            $this->settingsHelper,
+            $priceHelper,
+            new ProductRepository()
+        );
+
+        $carrierHelper = new CarrierHelper($this->context, new CarrierData());
+
+        $this->paymentData = new PaymentData(
+            $toolsHelper,
+            $this->settingsHelper,
+            $priceHelper,
+            new CustomFieldsHelper(
+                $languageHelper,
+                $localeHelper,
+                $this->settingsHelper
+            ),
+           $cartData,
+            new ShippingData($priceHelper, $carrierHelper),
+            $this->context,
+            new AddressHelper($toolsHelper),
+            new CountryHelper(),
+            $localeHelper,
+            new StateHelper(),
+            new CustomerHelper($this->context, new OrderHelper(), new ValidateHelper()),
+            new CartHelper(
+                $this->context,
+                $toolsHelper,
+                $priceHelper,
+                $cartData,
+                new \Alma\PrestaShop\Model\OrderData(),
+                new \Alma\PrestaShop\Helpers\OrderStateHelper($this->context),
+                $carrierHelper
+            ),
+            $carrierHelper
+        );
     }
 
     /**
@@ -122,11 +190,11 @@ class AlmaPaymentModuleFrontController extends ModuleFrontController
             }
 
             $key = Tools::getValue('key', 'general_3_0_0');
-            $feePlans = json_decode(SettingsHelper::getFeePlans());
-            $dataFromKey = SettingsHelper::getDataFromKey($key);
+            $feePlans = json_decode($this->settingsHelper->getAlmaFeePlans());
+            $dataFromKey = $this->settingsHelper->getDataFromKey($key);
 
             $cart = $this->context->cart;
-            $data = $this->paymentData->dataFromCart($cart, $this->context, $dataFromKey, true);
+            $data = $this->paymentData->dataFromCart($dataFromKey, true);
             $alma = ClientHelper::defaultInstance();
 
             if (!$data || !$alma) {
@@ -144,7 +212,12 @@ class AlmaPaymentModuleFrontController extends ModuleFrontController
 
             $payment = $alma->payments->create($data);
         } catch (Exception $e) {
-            $msg = "[Alma] ERROR when creating payment for Cart {$cart->id}: {$e->getMessage()}";
+            $msg = sprintf(
+                '[Alma] ERROR when creating payment for Cart %s: %s - Trace %s',
+                $cart->id,
+                $e->getMessage(),
+                $e->getTraceAsString()
+            );
             Logger::instance()->error($msg);
             $this->ajaxErrorAndDie();
         }

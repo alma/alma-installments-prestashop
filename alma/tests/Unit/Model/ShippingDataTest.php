@@ -22,48 +22,29 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
-namespace Alma\PrestaShop\Helpers;
+namespace Alma\PrestaShop\Tests\Unit\Model;
 
-if (!defined('_PS_VERSION_')) {
-    exit;
-}
+use PHPUnit\Framework\TestCase;
 
-/**
- * Class OrderStateHelper
- */
-class OrderStateHelper
+class ShippingDataTest extends TestCase
 {
-    /**
-     * @param \Context $context
-     */
-    public function __construct($context)
+    public function testShippingInfo()
     {
-        $this->context = $context;
     }
 
-    /**
-     * @param int $idOrderState
-     *
-     * @return mixed
-     */
-    public function getNameById($idOrderState)
+    public function testShippingInfoData()
     {
-        $orderStates = $this->getOrderStates($this->context->language->id);
-
-        $state = array_filter($orderStates, function ($orderState) use ($idOrderState) {
-            return $orderState['id_order_state'] == $idOrderState;
-        });
-
-        return array_values($state)[0]['name'];
     }
 
-    /**
-     * @param int $languageId
-     *
-     * @return mixed
-     */
-    public function getOrderStates($languageId)
+    public function testGetKnownOptions()
     {
-        return \OrderState::getOrderStates($languageId);
+    }
+
+    public function testBuildShippingInfos()
+    {
+    }
+
+    public function testGetCarrierIds()
+    {
     }
 }

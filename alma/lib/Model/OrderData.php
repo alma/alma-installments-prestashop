@@ -53,7 +53,7 @@ class OrderData
      *
      * @throws \PrestaShopDatabaseException
      */
-    public static function getCustomerOrders($idCustomer, $limit)
+    public function getCustomerOrders($idCustomer, $limit)
     {
         $res = \Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
             'SELECT

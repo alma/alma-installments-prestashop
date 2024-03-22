@@ -136,4 +136,14 @@ class OrderHelper
 
         return $orderPayment;
     }
+
+    /**
+     * @param int $id
+     *
+     * @return mixed
+     */
+    public function getCustomerNbOrders($id)
+    {
+        return \Order::getCustomerNbOrders($id);
+    }
 }

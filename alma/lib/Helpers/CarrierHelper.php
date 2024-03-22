@@ -41,10 +41,10 @@ class CarrierHelper
     /** @var CarrierData */
     private $carrierData;
 
-    public function __construct($context)
+    public function __construct($context, $carrierData)
     {
         $this->context = $context;
-        $this->carrierData = new CarrierData();
+        $this->carrierData = $carrierData;
     }
 
     /**
@@ -78,5 +78,14 @@ class CarrierHelper
         }
 
         return self::UNKNOWN_CARRIER;
+    }
+
+    /**
+     * @param int|null $id Carrier ID
+     * @param int|null $id_lang Language ID
+     */
+    public function createCarrier($id = null, $id_lang = null)
+    {
+        return new \Carrier($id, $id_lang);
     }
 }

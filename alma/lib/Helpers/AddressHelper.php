@@ -28,42 +28,43 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-/**
- * Class OrderStateHelper
- */
-class OrderStateHelper
+class AddressHelper
 {
     /**
+     * @var ToolsHelper
+     */
+    protected $toolsHelper;
+
+    /**
+     * @param ToolsHelper $toolHelper
+     */
+    public function __construct($toolHelper)
+    {
+        $this->toolsHelper = $toolHelper;
+    }
+
+    /**
+     * @param int $id
+     *
+     * @return \Address
+     */
+    public function create($id)
+    {
+        return new \Address((int) $id);
+    }
+
+    /**
+     * @param \Customer $customer
      * @param \Context $context
-     */
-    public function __construct($context)
-    {
-        $this->context = $context;
-    }
-
-    /**
-     * @param int $idOrderState
      *
      * @return mixed
      */
-    public function getNameById($idOrderState)
+    public function getAdressFromCustomer($customer, $context)
     {
-        $orderStates = $this->getOrderStates($this->context->language->id);
+        if ($this->toolsHelper->psVersionCompare('1.5.4.0', '<')) {
+            return $customer->getAddresses($context->language->id);
+        }
 
-        $state = array_filter($orderStates, function ($orderState) use ($idOrderState) {
-            return $orderState['id_order_state'] == $idOrderState;
-        });
-
-        return array_values($state)[0]['name'];
-    }
-
-    /**
-     * @param int $languageId
-     *
-     * @return mixed
-     */
-    public function getOrderStates($languageId)
-    {
-        return \OrderState::getOrderStates($languageId);
+        return $customer->getAddresses($customer->id_lang);
     }
 }

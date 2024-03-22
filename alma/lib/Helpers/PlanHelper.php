@@ -97,10 +97,24 @@ class PlanHelper
     }
 
     /**
+     * @param \Alma\API\Entities\FeePlan $plan
+     *
+     * @return bool
+     */
+    public function isDeferred($plan)
+    {
+        if (isset($plan->deferred_days)) {
+            return 0 < $plan->deferred_days || 0 < $plan->deferred_months;
+        }
+
+        return 0 < $plan->deferredDays || 0 < $plan->deferredMonths;
+    }
+
+    /**
      * @param array $plans
      * @param string $locale
      * @param object|array $feePlans
-     * @param array $key
+     * @param string $key
      * @param bool $isPayNow
      *
      * @return array

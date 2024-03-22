@@ -103,4 +103,26 @@ class ProductHelper
     {
         return \Product::getProductCategories($idProduct);
     }
+
+    /**
+     * @param int|null $id_product Product identifier
+     * @param bool $full Load with price, tax rate, manufacturer name, supplier name, tags, stocks...
+     * @param int|null $id_lang Language identifier
+     * @param int|null $id_shop Shop identifier
+     * @param Context|null $context Context to use for retrieve cart
+     */
+    public function createProduct($id_product = null, $full = false, $id_lang = null, $id_shop = null, $context = null)
+    {
+        return new \Product($id_product, $full, $id_lang, $id_shop, $context);
+    }
+
+    /**
+     * @param $idCustomer
+     *
+     * @return mixed
+     */
+    public function getTaxCalculationMethod($idCustomer)
+    {
+        return \Product::getTaxCalculationMethod($idCustomer);
+    }
 }

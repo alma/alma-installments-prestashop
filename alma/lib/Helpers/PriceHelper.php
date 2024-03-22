@@ -71,19 +71,17 @@ class PriceHelper
      *
      * @return int
      */
-    public static function convertPriceToCentsStr($price)
+    public function convertPriceToCentsStr($price)
     {
         $priceStr = (string) $price;
         $parts = explode('.', $priceStr);
 
         if (count($parts) == 1) {
             $parts[] = '00';
-        } elseif (\Tools::strlen($parts[1]) == 1) {
+        } elseif ($this->toolsHelper->strlen($parts[1]) == 1) {
             $parts[1] .= '0';
-        } else {
-            if (\Tools::strlen($parts[1]) > 2) {
-                $parts[1] = \Tools::substr($parts[1], 0, 2);
-            }
+        } elseif ($this->toolsHelper->strlen($parts[1]) > 2) {
+            $parts[1] = $this->toolsHelpersubstr($parts[1], 0, 2);
         }
 
         return (int) implode($parts);
