@@ -153,7 +153,7 @@ class CartData
                 $isGift = isset($productRow['is_gift']) && (bool) $productRow['is_gift'];
             }
 
-            $pictureUrl = $this->productHelper->getImageLink($productRow);
+            $pictureUrl = $this->productHelper->getImageLink($product);
 
             if (isset($productRow['is_virtual'])) {
                 $requiresShipping = !(bool) $productRow['is_virtual'];
