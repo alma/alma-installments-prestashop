@@ -30,7 +30,7 @@ require_once _PS_MODULE_DIR_ . 'alma/vendor/autoload.php';
 
 class Alma extends PaymentModule
 {
-    const VERSION = '3.2.0';
+    const VERSION = '3.2.1';
 
     public $_path;
     public $local_path;
@@ -65,7 +65,7 @@ class Alma extends PaymentModule
     {
         $this->name = 'alma';
         $this->tab = 'payments_gateways';
-        $this->version = '3.2.0';
+        $this->version = '3.2.1';
         $this->author = 'Alma';
         $this->need_instance = false;
         $this->bootstrap = true;
