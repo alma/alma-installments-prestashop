@@ -28,6 +28,9 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
+/**
+ * Class LanguageHelper.
+ */
 class ConfigurationHelper
 {
     /**
