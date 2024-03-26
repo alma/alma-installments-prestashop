@@ -23,7 +23,7 @@
 {extends file="helpers/form/form.tpl"}
 
 {block name="defaultForm"}
-<form id="{if isset($fields.form.form.id_form)}{$fields.form.form.id_form|escape:'htmlall':'UTF-8'}{else}{if $table == null}configuration_form{else}{$table}_form{/if}{/if}" class="defaultForm {$name_controller}" action="{$current}&{if !empty($submit_action)}{$submit_action}=1{/if}&token={$token}" method="post" enctype="multipart/form-data" {if isset($style)}style="{$style}"{/if}>
+<form id="{if isset($fields.form.form.id_form)}{$fields.form.form.id_form|escape:'htmlall':'UTF-8'}{else}{if $table == null}configuration_form{else}{$table}_form{/if}{/if}" class="defaultForm {$name_controller}" action="{$current}&{if !empty($submit_action)}{$submit_action}=1{/if}&token={$token}" method="post" enctype="multipart/form-data" {if isset($style)}style="{$style}"{/if} novalidate>
     {if $form_id}
         <input type="hidden" name="{$identifier}" id="{$identifier}" value="{$form_id}" />
     {/if}
@@ -393,11 +393,10 @@
                     </div>
                 {elseif $key == 'submit'}
                     <div class="margin-form">
-                        <input type="submit"
-                            id="{if isset($field.id)}{$field.id}{else}{$table}_form_submit_btn{/if}"
-                            value="{$field.title}"
+                        <button type="submit"
+                            id="{if isset($field.id)}{$field.id}{else}{$table}_form_submit_btn_{$f}{/if}"
                             name="{if isset($field.name)}{$field.name}{else}{$submit_action}{/if}{if isset($field.stay) && $field.stay}AndStay{/if}"
-                            {if isset($field.class)}class="{$field.class}"{/if} />
+                                {if isset($field.class)}class="{$field.class}"{/if}>{$field.title}</button>
                     </div>
                 {elseif $key == 'desc'}
                     <p class="clear">
