@@ -77,11 +77,6 @@ class PaymentOptionsHookController extends FrontendHookController
     protected $priceHelper;
 
     /**
-     * @var DateHelper
-     */
-    protected $dateHelper;
-
-    /**
      * @var CartData
      */
     protected $cartData;
@@ -90,7 +85,6 @@ class PaymentOptionsHookController extends FrontendHookController
     {
         parent::__construct($module);
 
-        $this->dateHelper = new DateHelper();
         $this->settingsHelper = new SettingsHelper(new ShopHelper(), new ConfigurationHelper());
         $this->localeHelper = new LocaleHelper(new LanguageHelper());
         $this->toolsHelper = new ToolsHelper();
