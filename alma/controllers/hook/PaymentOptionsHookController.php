@@ -48,6 +48,10 @@ use PrestaShop\PrestaShop\Core\Payment\PaymentOption;
 class PaymentOptionsHookController extends FrontendHookController
 {
     /**
+     * @var DateHelper
+     */
+    protected $dateHelper;
+    /**
      * @var LocaleHelper
      */
     protected $localeHelper;
@@ -86,6 +90,7 @@ class PaymentOptionsHookController extends FrontendHookController
     {
         parent::__construct($module);
 
+        $this->dateHelper = new DateHelper();
         $this->settingsHelper = new SettingsHelper(new ShopHelper(), new ConfigurationHelper());
         $this->localeHelper = new LocaleHelper(new LanguageHelper());
         $this->toolsHelper = new ToolsHelper();
