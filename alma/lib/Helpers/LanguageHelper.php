@@ -30,7 +30,6 @@ if (!defined('_PS_VERSION_')) {
 
 /**
  * Class LanguageHelper.
- *
  */
 class LanguageHelper
 {

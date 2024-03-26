@@ -131,7 +131,6 @@ class SettingsHelper
         return $value;
     }
 
-
     /**
      * Update value in config.
      *
