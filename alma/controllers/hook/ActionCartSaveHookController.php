@@ -96,8 +96,7 @@ class ActionCartSaveHookController extends FrontendHookController
     public function handleAddingProductInsurance($cart)
     {
         if (
-            version_compare(_PS_VERSION_, '1.7', '>=')
-            && \Tools::getIsset('alma_id_insurance_contract')
+            \Tools::getIsset('alma_id_insurance_contract')
             && 1 == \Tools::getValue('add')
             && 'update' == \Tools::getValue('action')
         ) {
