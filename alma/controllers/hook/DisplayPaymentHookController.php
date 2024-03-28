@@ -47,6 +47,11 @@ use Alma\PrestaShop\Model\CartData;
 class DisplayPaymentHookController extends FrontendHookController
 {
     /**
+     * @var DateHelper
+     */
+    protected $dateHelper;
+
+    /**
      * @var LocaleHelper
      */
     protected $localeHelper;
@@ -95,6 +100,7 @@ class DisplayPaymentHookController extends FrontendHookController
     {
         parent::__construct($module);
 
+        $this->dateHelper = new DateHelper();
         $this->settingsHelper = new SettingsHelper(new ShopHelper(), new ConfigurationHelper());
         $this->localeHelper = new LocaleHelper(new LanguageHelper());
         $this->toolsHelper = new ToolsHelper();

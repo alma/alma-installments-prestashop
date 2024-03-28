@@ -269,7 +269,7 @@ class PaymentData
         }
 
         if ($feePlans['installmentsCount'] > 4) {
-            $dataPayment['payment']['cart'] = $this->cartInfo($cart);
+            $dataPayment['payment']['cart'] = $this->cartData->cartInfo($cart);
         }
 
         if (static::isInPage($dataPayment)) {
