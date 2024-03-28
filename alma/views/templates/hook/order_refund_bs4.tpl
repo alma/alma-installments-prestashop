@@ -43,7 +43,7 @@
     </div>
     <div class="card-body">
         <form id="alma-refund" method="POST" action="{$actionUrl|escape:'htmlall':'UTF-8'}" class="defaultForm form-horizontal form-alma {if $refund.percentRefund|string_format:"%.2f" >= 100}disabled{/if}">
-            <input type="hidden" class="alma" name="orderId" required value="{$order.id|escape:'htmlall':'UTF-8'}"/>  
+            <input type="hidden" class="alma" name="orderId" required value="{$order.id|escape:'htmlall':'UTF-8'}"/>
             <div class="row">
                 <div class="col">
                     <p>
@@ -52,14 +52,14 @@
                 </div>
             </div>
             <div class="form-group row">
-                <label class='control-label text-right col-lg-4'>                
+                <label class='control-label text-right col-lg-4'>
                     <span class="text-danger">*</span> {$wording.labelTypeRefund|escape:'htmlall':'UTF-8'}
-                </label>                
+                </label>
                 <div class="col-sm">
                     {if $order.ordersId}
                         <div class="radio t">
                             <label>
-                                <input type="radio" autocomplete="off" class="refundType form-check-input" name="refundType" value="partial_multi" />                            
+                                <input type="radio" autocomplete="off" class="refundType form-check-input" name="refundType" value="partial_multi" />
                                 {$wording.labelRadioRefundOneOrder|escape:'htmlall':'UTF-8'}
                             </label>
                         </div>
@@ -91,13 +91,13 @@
                 </label>
                 <div class="col-sm">
                     <div class="input-group">
-                        <input 
+                        <input
                             type="number"
                             step="0.01"
-                            class="alma" 
-                            name="amount" 
-                            autocomplete="off" 
-                            id="amount" 
+                            class="alma"
+                            name="amount"
+                            autocomplete="off"
+                            id="amount"
                             placeholder="{$wording.placeholderInputRefundPartial|escape:'htmlall':'UTF-8'}"
                         />
                         <div class="input-group-append">
@@ -107,7 +107,7 @@
                 </div>
             </div>
             <div class="text-right">
-            <button type="submit" class="button btn btn-primary button-medium pull-right">
+            <button type="submit" class="button btn btn-primary">
                 <span>{$wording.buttonRefund|escape:'htmlall':'UTF-8'}</button>
         </div>
         </form>
