@@ -21,17 +21,24 @@
  * @copyright 2018-2023 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
-use Alma\API\RequestError;
-use Alma\PrestaShop\Forms\ShareOfCheckoutAdminFormBuilder;
-use Alma\PrestaShop\Helpers\ClientHelper;
-use Alma\PrestaShop\Helpers\SettingsHelper;
+
+use Alma\PrestaShop\Helpers\Admin\TabsHelper;
 
 if (!defined('_PS_VERSION_')) {
     exit;
 }
 
+/**
+ * @param $module
+ *
+ * @return bool
+ *
+ * @throws PrestaShopException
+ */
 function upgrade_module_4_0_0($module)
 {
+    $tabsHelper = new TabsHelper();
+
     if (version_compare(_PS_VERSION_, '1.7.7', '>=')) {
         $module->registerHook('actionCartSave');
         $module->registerHook('actionObjectProductInCartDeleteAfter');
@@ -44,5 +51,5 @@ function upgrade_module_4_0_0($module)
         $module->registerHook('termsAndConditions');
     }
 
-    return $module->uninstallTabs() && $module->installTabs();
+    return $tabsHelper->uninstallTabs($module->dataTabs()) && $tabsHelper->installTabs($module->dataTabs());
 }
