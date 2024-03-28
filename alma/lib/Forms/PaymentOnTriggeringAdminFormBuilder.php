@@ -24,7 +24,9 @@
 
 namespace Alma\PrestaShop\Forms;
 
-use Alma\PrestaShop\Helpers\SettingsCustomFieldsHelper;
+use Alma\PrestaShop\Helpers\CustomFieldsHelper;
+use Alma\PrestaShop\Helpers\LanguageHelper;
+use Alma\PrestaShop\Helpers\LocaleHelper;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -40,13 +42,25 @@ class PaymentOnTriggeringAdminFormBuilder extends AbstractAlmaAdminFormBuilder
     const ALMA_DESCRIPTION_TRIGGER = 'ALMA_DESCRIPTION_TRIGGER';
     const ALMA_DESCRIPTION_TRIGGER_AT_SHIPPING = 'at_shipping';
 
+    /**
+     * @var CustomFieldsHelper
+     */
+    protected $customFieldsHelper;
+
+    public function __construct($module)
+    {
+        parent::__construct($module);
+
+        $this->customFieldsHelper = new CustomFieldsHelper(new LanguageHelper(), new LocaleHelper(new LanguageHelper()));
+    }
+
     protected function configForm()
     {
         $htmlContent = $this->module->l('This option is available only for Alma payment in 2x, 3x and 4x. When it\'s turned on, your clients will pay the first installment at the order status change. When your client order on your website, Alma will only ask for a payment authorization. Only status handled by Alma are available in the menu below. Please contact Alma if you need us to add another status.', 'PaymentOnTriggeringAdminFormBuilder');
 
         $query[] = [
             'description_trigger' => self::ALMA_DESCRIPTION_TRIGGER_AT_SHIPPING,
-            'name' => SettingsCustomFieldsHelper::getDescriptionPaymentTriggerByLang($this->context->language->id),
+            'name' => $this->customFieldsHelper->getDescriptionPaymentTriggerByLang($this->context->language->id),
         ];
 
         return [

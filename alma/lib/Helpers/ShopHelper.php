@@ -36,8 +36,6 @@ class ShopHelper
     /**
      * Get current ID of shop if context is CONTEXT_SHOP.
      *
-     * @codeCoverageIgnore
-     *
      * @return int|null
      */
     public function getContextShopID($nullValueWithoutMultiShop = false)
@@ -47,8 +45,6 @@ class ShopHelper
 
     /**
      * Get current ID of shop group if context is CONTEXT_SHOP or CONTEXT_GROUP.
-     *
-     * @codeCoverageIgnore
      *
      * @return int|null
      */

@@ -28,13 +28,14 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
+use Alma\PrestaShop\Forms\ExcludedCategoryAdminFormBuilder;
 use Alma\PrestaShop\Helpers\ConfigurationHelper;
+use Alma\PrestaShop\Helpers\CustomFieldsHelper;
 use Alma\PrestaShop\Helpers\EligibilityHelper;
 use Alma\PrestaShop\Helpers\LanguageHelper;
 use Alma\PrestaShop\Helpers\LocaleHelper;
 use Alma\PrestaShop\Helpers\PriceHelper;
 use Alma\PrestaShop\Helpers\ProductHelper;
-use Alma\PrestaShop\Helpers\SettingsCustomFieldsHelper;
 use Alma\PrestaShop\Helpers\SettingsHelper;
 use Alma\PrestaShop\Helpers\ShopHelper;
 use Alma\PrestaShop\Hooks\FrontendHookController;
@@ -63,6 +64,11 @@ class DisplayShoppingCartFooterHookController extends FrontendHookController
     protected $cartData;
 
     /**
+     * @var CustomFieldsHelper
+     */
+    protected $customFieldsHelper;
+
+    /**
      * HookController constructor.
      *
      * @param $module Alma
@@ -74,6 +80,7 @@ class DisplayShoppingCartFooterHookController extends FrontendHookController
         $this->localeHelper = new LocaleHelper(new LanguageHelper());
         $this->eligibilityHelper = new EligibilityHelper();
         $this->priceHelper = new PriceHelper();
+        $this->customFieldsHelper = new CustomFieldsHelper(new LanguageHelper(), $this->localeHelper);
         $this->cartData = new CartData(new ProductHelper(), new SettingsHelper(new ShopHelper(), new ConfigurationHelper()));
     }
 
@@ -113,7 +120,10 @@ class DisplayShoppingCartFooterHookController extends FrontendHookController
         $isExcluded = false;
         $diff = $this->cartData->getCartExclusion($params['cart']);
         if (!empty($diff)) {
-            $eligibilityMsg = SettingsCustomFieldsHelper::getNonEligibleCategoriesMessageByLang($this->context->language->id);
+            $eligibilityMsg = $this->customFieldsHelper->getBtnValueByLang(
+                $this->context->language->id,
+                ExcludedCategoryAdminFormBuilder::ALMA_NOT_ELIGIBLE_CATEGORIES
+            );
             $isExcluded = true;
             if (!SettingsHelper::showCategoriesWidgetIfNotEligible()) {
                 $isEligible = false;

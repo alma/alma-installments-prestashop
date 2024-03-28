@@ -38,8 +38,6 @@ class ToolsHelper
      *
      * @note : PHP 5.3.0 introduce a 3rd parameter mode in round function
      *
-     * @codeCoverageIgnore
-     *
      * @param float $value
      * @param int $precision
      *

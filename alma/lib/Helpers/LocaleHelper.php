@@ -46,6 +46,11 @@ class LocaleHelper
      */
     protected $languageHelper;
 
+    /**
+     * @codeCoverageIgnore
+     *
+     * @param $languageHelper
+     */
     public function __construct($languageHelper)
     {
         $this->languageHelper = $languageHelper;
@@ -142,7 +147,7 @@ class LocaleHelper
      *
      * @see AdminTranslationsController::getModuleTranslation
      */
-    public static function getModuleTranslation(
+    public function getModuleTranslation(
         $string,
         $source,
         $iso

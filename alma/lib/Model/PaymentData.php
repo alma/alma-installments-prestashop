@@ -29,9 +29,11 @@ use Alma\API\ParamsError;
 use Alma\PrestaShop\Helpers\CarrierHelper;
 use Alma\PrestaShop\Helpers\CartHelper;
 use Alma\PrestaShop\Helpers\ConfigurationHelper;
+use Alma\PrestaShop\Helpers\CustomFieldsHelper;
+use Alma\PrestaShop\Helpers\LanguageHelper;
+use Alma\PrestaShop\Helpers\LocaleHelper;
 use Alma\PrestaShop\Helpers\PriceHelper;
 use Alma\PrestaShop\Helpers\ProductHelper;
-use Alma\PrestaShop\Helpers\SettingsCustomFieldsHelper;
 use Alma\PrestaShop\Helpers\SettingsHelper;
 use Alma\PrestaShop\Helpers\ShopHelper;
 use Alma\PrestaShop\Helpers\ToolsHelper;
@@ -62,6 +64,11 @@ class PaymentData
     protected $priceHelper;
 
     /**
+     * @var CustomFieldsHelper
+     */
+    protected $customFieldsHelper;
+
+    /**
      * @var CartData
      */
     protected $cartData;
@@ -76,6 +83,7 @@ class PaymentData
         $this->toolsHelper = new ToolsHelper();
         $this->settingsHelper = new SettingsHelper(new ShopHelper(), new ConfigurationHelper());
         $this->priceHelper = new PriceHelper();
+        $this->customFieldsHelper = new CustomFieldsHelper(new LanguageHelper(), new LocaleHelper(new LanguageHelper()));
         $this->cartData = new CartData(new ProductHelper(), $this->settingsHelper);
         $this->shippingData = new ShippingData();
     }
@@ -257,7 +265,7 @@ class PaymentData
 
         if ($this->settingsHelper->isDeferredTriggerLimitDays($feePlans)) {
             $dataPayment['payment']['deferred'] = 'trigger';
-            $dataPayment['payment']['deferred_description'] = SettingsCustomFieldsHelper::getDescriptionPaymentTriggerByLang($context->language->id);
+            $dataPayment['payment']['deferred_description'] = $this->customFieldsHelper->getDescriptionPaymentTriggerByLang($context->language->id);
         }
 
         if ($feePlans['installmentsCount'] > 4) {
