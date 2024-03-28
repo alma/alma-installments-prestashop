@@ -27,7 +27,6 @@ namespace Alma\PrestaShop\Forms;
 use Alma\API\Entities\FeePlan;
 use Alma\PrestaShop\Helpers\ConfigurationHelper;
 use Alma\PrestaShop\Helpers\PriceHelper;
-use Alma\PrestaShop\Helpers\ProductHelper;
 use Alma\PrestaShop\Helpers\SettingsHelper;
 use Alma\PrestaShop\Helpers\ShopHelper;
 
@@ -45,7 +44,6 @@ class PnxAdminFormBuilder extends AbstractAlmaAdminFormBuilder
      */
     protected $settingsHelper;
 
-
     public function __construct($module, $context, $image, $config = [])
     {
         parent::__construct($module, $context, $image, $config);
@@ -54,12 +52,18 @@ class PnxAdminFormBuilder extends AbstractAlmaAdminFormBuilder
     }
 
     /**
+     * @param $feePlan
      * @param int $duration
      *
      * @return array
+     *
+     * @throws \SmartyException
      */
     protected function buildPnxForm($feePlan, $duration)
     {
+        /**
+         * @var FeePlan $feePlan
+         */
         $tabId = $key = $feePlan->getPlanKey();
 
         $minAmount = (int) PriceHelper::convertPriceFromCents($feePlan->min_purchase_amount);

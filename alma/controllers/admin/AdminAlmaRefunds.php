@@ -59,6 +59,7 @@ class AdminAlmaRefundsController extends ModuleAdminController
         parent::__construct();
         $this->priceHelper = new PriceHelper();
     }
+
     /**
      * Make refund over ajax request and display json on std output.
      *

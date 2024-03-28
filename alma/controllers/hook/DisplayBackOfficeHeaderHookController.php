@@ -28,16 +28,17 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-use Alma\PrestaShop\Helpers\DateHelper;
 use Alma\PrestaShop\Helpers\InsuranceHelper;
 use Alma\PrestaShop\Helpers\OrderHelper;
-use Alma\PrestaShop\Helpers\SettingsHelper;
 use Alma\PrestaShop\Helpers\ShareOfCheckoutHelper;
 use Alma\PrestaShop\Hooks\FrontendHookController;
-use Alma\PrestaShop\Logger;
 
 class DisplayBackOfficeHeaderHookController extends FrontendHookController
 {
+    /**
+     * @var ShareOfCheckoutHelper
+     */
+    protected $socHelper;
     /**
      * @var InsuranceHelper
      */
@@ -45,8 +46,11 @@ class DisplayBackOfficeHeaderHookController extends FrontendHookController
 
     public function __construct($module)
     {
-        parent::__construct($module);
+        $orderHelper = new OrderHelper();
+        $this->socHelper = new ShareOfCheckoutHelper($orderHelper);
         $this->insuranceHelper = new InsuranceHelper();
+
+        parent::__construct($module);
     }
 
     /**
@@ -71,20 +75,15 @@ class DisplayBackOfficeHeaderHookController extends FrontendHookController
      */
     public function run($params)
     {
-        $this->context->controller->setMedia();
+        if (version_compare(_PS_VERSION_, '1.7', '<')) {
+            $this->context->controller->setMedia();
+        }
         $this->context->controller->addCSS($this->module->_path . 'views/css/admin/_configure/helpers/form/form.css', 'all');
         $this->context->controller->addCSS($this->module->_path . 'views/css/admin/almaPage.css', 'all');
         $this->context->controller->addJS($this->module->_path . 'views/js/admin/alma.js');
 
-        $date = new \DateTime();
-        $timestamp = $date->getTimestamp();
-
-        if (!DateHelper::isSameDay($timestamp, \Configuration::get('ALMA_SOC_CRON_TASK'))) {
-            Logger::instance()->info('Pseudo Cron Task exec to ' . $timestamp);
-            $orderHelper = new OrderHelper();
-            $shareOfCheckoutHelper = new ShareOfCheckoutHelper($orderHelper);
-            $shareOfCheckoutHelper->shareDays();
-            SettingsHelper::updateValue('ALMA_SOC_CRON_TASK', $timestamp);
+        if ($this->socHelper->isSocActivated()) {
+            $this->socHelper->sendSocData();
         }
 
         if ($this->insuranceHelper->isInsuranceActivated()) {

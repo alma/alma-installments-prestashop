@@ -46,7 +46,6 @@ class PaymentData
 {
     const PAYMENT_METHOD = 'alma';
 
-
     /**
      * @var ToolsHelper
      */
@@ -133,7 +132,7 @@ class PaymentData
             $queries = [];
             foreach ($feePlans as $plan) {
                 $queries[] = [
-                    'purchase_amount' =>$this->priceHelper->convertPriceToCents($purchaseAmount),
+                    'purchase_amount' => $this->priceHelper->convertPriceToCents($purchaseAmount),
                     'installments_count' => $plan['installmentsCount'],
                     'deferred_days' => $plan['deferredDays'],
                     'deferred_months' => $plan['deferredMonths'],
@@ -262,7 +261,7 @@ class PaymentData
         }
 
         if ($feePlans['installmentsCount'] > 4) {
-            $dataPayment['payment']['cart'] = $this->cartInfo($cart);
+            $dataPayment['payment']['cart'] = $this->cartData->cartInfo($cart);
         }
 
         if (static::isInPage($dataPayment)) {

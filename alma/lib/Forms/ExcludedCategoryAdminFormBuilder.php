@@ -25,7 +25,6 @@
 namespace Alma\PrestaShop\Forms;
 
 use Alma\PrestaShop\Helpers\ConfigurationHelper;
-use Alma\PrestaShop\Helpers\ProductHelper;
 use Alma\PrestaShop\Helpers\SettingsHelper;
 use Alma\PrestaShop\Helpers\ShopHelper;
 
@@ -53,6 +52,9 @@ class ExcludedCategoryAdminFormBuilder extends AbstractAlmaAdminFormBuilder
         $this->settingsHelper = new SettingsHelper(new ShopHelper(), new ConfigurationHelper());
     }
 
+    /**
+     * @throws \SmartyException
+     */
     protected function configForm()
     {
         // Exclusion

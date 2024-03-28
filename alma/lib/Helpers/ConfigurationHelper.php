@@ -28,6 +28,9 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
+/**
+ * Class LanguageHelper.
+ */
 class ConfigurationHelper
 {
     /**
@@ -59,7 +62,7 @@ class ConfigurationHelper
      */
     public function get($key, $idLang = null, $idShopGroup = null, $idShop = null, $default = false)
     {
-        return \Configuration::get($key, $idLang , $idShopGroup , $idShop , $default);
+        return \Configuration::get($key, $idLang, $idShopGroup, $idShop, $default);
     }
 
     /**

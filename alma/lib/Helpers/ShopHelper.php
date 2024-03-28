@@ -30,7 +30,6 @@ if (!defined('_PS_VERSION_')) {
 
 /**
  * Class LanguageHelper.
- *
  */
 class ShopHelper
 {
@@ -41,9 +40,9 @@ class ShopHelper
      *
      * @return int|null
      */
-    public function getContextShopID($null_value_without_multishop = false)
+    public function getContextShopID($nullValueWithoutMultiShop = false)
     {
-        return \Shop::getContextShopID($null_value_without_multishop);
+        return \Shop::getContextShopID($nullValueWithoutMultiShop);
     }
 
     /**
@@ -53,8 +52,8 @@ class ShopHelper
      *
      * @return int|null
      */
-    public function getContextShopGroupID($null_value_without_multishop = false)
+    public function getContextShopGroupID($nullValueWithoutMultiShop = false)
     {
-        return \Shop::getContextShopGroupID($null_value_without_multishop);
+        return \Shop::getContextShopGroupID($nullValueWithoutMultiShop);
     }
 }
