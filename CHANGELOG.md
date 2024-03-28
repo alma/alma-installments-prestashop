@@ -1,5 +1,9 @@
 # Changelog
 
+## v3.2.1
+
+- fix: Issue with the credit payment method
+
 ## v3.2.0
 
 - feature : In Page is available with deferred payments

@@ -36,20 +36,21 @@ use Alma\PrestaShop\Hooks\FrontendHookController;
 class DisplayBackOfficeHeaderHookController extends FrontendHookController
 {
     /**
-     * @var InsuranceHelper
-     */
-    protected $insuranceHelper;
-    /**
      * @var ShareOfCheckoutHelper
      */
     protected $socHelper;
+    /**
+     * @var InsuranceHelper
+     */
+    protected $insuranceHelper;
 
     public function __construct($module)
     {
-        parent::__construct($module);
-        $this->insuranceHelper = new InsuranceHelper();
         $orderHelper = new OrderHelper();
         $this->socHelper = new ShareOfCheckoutHelper($orderHelper);
+        $this->insuranceHelper = new InsuranceHelper();
+
+        parent::__construct($module);
     }
 
     /**
