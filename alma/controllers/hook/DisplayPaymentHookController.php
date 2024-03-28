@@ -81,6 +81,11 @@ class DisplayPaymentHookController extends FrontendHookController
     protected $cartData;
 
     /**
+     * @var DateHelper
+     */
+    protected $dateHelper;
+
+    /**
      * HookController constructor.
      *
      * @param $module Alma
@@ -95,6 +100,7 @@ class DisplayPaymentHookController extends FrontendHookController
         $this->toolsHelper = new ToolsHelper();
         $this->eligibilityHelper = new EligibilityHelper();
         $this->priceHelper = new PriceHelper();
+        $this->dateHelper = new DateHelper();
         $this->cartData = new CartData(new ProductHelper(), $this->settingsHelper);
     }
 
