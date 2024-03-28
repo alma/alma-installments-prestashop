@@ -24,7 +24,10 @@
 
 namespace Alma\PrestaShop\Tests\Unit\Model;
 
+use Alma\PrestaShop\Helpers\ConfigurationHelper;
 use Alma\PrestaShop\Helpers\ProductHelper;
+use Alma\PrestaShop\Helpers\SettingsHelper;
+use Alma\PrestaShop\Helpers\ShopHelper;
 use Alma\PrestaShop\Model\CartData;
 use Alma\PrestaShop\Repositories\ProductRepository;
 use Cart;
@@ -57,7 +60,7 @@ class CartDataTest extends TestCase
         $summaryDetailsMock = ['products' => $items, 'gift_products' => []];
         $cart->method('getSummaryDetails')->willReturn($summaryDetailsMock);
 
-        $cartData = new CartData();
+        $cartData = new CartData(new ProductHelper(), new SettingsHelper(new ShopHelper(), new ConfigurationHelper()));
         $returnItems = $cartData->getCartItems($cart, $productHelper, $productRepository);
         $this->assertEquals($expected, $returnItems);
     }
@@ -211,5 +214,22 @@ class CartDataTest extends TestCase
             '3-2' => 'Color - Black, Size - S',
             '4-8' => 'Storage - 1Go',
         ];
+    }
+
+    public function testGetCartExclusion()
+    {
+        $cart = \Mockery::mock(\Cart::class);
+        $cart->allows()->getProducts(true)->andReturns([['id_product' => 1]]);
+
+        $settingsHelperMock = \Mockery::mock(SettingsHelper::class, [new ShopHelper(), new ConfigurationHelper()]);
+        $settingsHelperMock->shouldReceive('getExcludedCategories')->andReturn(['cateexclue']);
+
+        $productHelperMock = \Mockery::mock(ProductHelper::class);
+        $productHelperMock->shouldReceive('getProductCategories')->with(1)->andReturn(['cate1', 'cate2', 'cateexclue']);
+
+        $cartData = new CartData($productHelperMock, $settingsHelperMock);
+        $result = $cartData->getCartExclusion($cart);
+
+        $this->assertEquals(['2' => 'cateexclue'], $result);
     }
 }

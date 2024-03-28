@@ -28,12 +28,15 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
+use Alma\PrestaShop\Helpers\ConfigurationHelper;
 use Alma\PrestaShop\Helpers\EligibilityHelper;
 use Alma\PrestaShop\Helpers\LanguageHelper;
 use Alma\PrestaShop\Helpers\LocaleHelper;
 use Alma\PrestaShop\Helpers\PriceHelper;
+use Alma\PrestaShop\Helpers\ProductHelper;
 use Alma\PrestaShop\Helpers\SettingsCustomFieldsHelper;
 use Alma\PrestaShop\Helpers\SettingsHelper;
+use Alma\PrestaShop\Helpers\ShopHelper;
 use Alma\PrestaShop\Hooks\FrontendHookController;
 use Alma\PrestaShop\Model\CartData;
 
@@ -71,7 +74,7 @@ class DisplayShoppingCartFooterHookController extends FrontendHookController
         $this->localeHelper = new LocaleHelper(new LanguageHelper());
         $this->eligibilityHelper = new EligibilityHelper();
         $this->priceHelper = new PriceHelper();
-        $this->cartData = new CartData();
+        $this->cartData = new CartData(new ProductHelper(), new SettingsHelper(new ShopHelper(), new ConfigurationHelper()));
     }
 
     public function canRun()

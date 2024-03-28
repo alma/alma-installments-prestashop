@@ -35,6 +35,7 @@ use Alma\PrestaShop\Helpers\EligibilityHelper;
 use Alma\PrestaShop\Helpers\LanguageHelper;
 use Alma\PrestaShop\Helpers\LocaleHelper;
 use Alma\PrestaShop\Helpers\PriceHelper;
+use Alma\PrestaShop\Helpers\ProductHelper;
 use Alma\PrestaShop\Helpers\SettingsCustomFieldsHelper;
 use Alma\PrestaShop\Helpers\SettingsHelper;
 use Alma\PrestaShop\Helpers\ShopHelper;
@@ -94,7 +95,7 @@ class DisplayPaymentHookController extends FrontendHookController
         $this->toolsHelper = new ToolsHelper();
         $this->eligibilityHelper = new EligibilityHelper();
         $this->priceHelper = new PriceHelper();
-        $this->cartData = new CartData();
+        $this->cartData = new CartData(new ProductHelper(), $this->settingsHelper);
     }
 
     /**
