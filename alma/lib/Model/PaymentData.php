@@ -26,19 +26,18 @@ namespace Alma\PrestaShop\Model;
 
 use Alma\API\Lib\PaymentValidator;
 use Alma\API\ParamsError;
+use Alma\PrestaShop\Helpers\AddressHelper;
 use Alma\PrestaShop\Helpers\CarrierHelper;
 use Alma\PrestaShop\Helpers\CartHelper;
-use Alma\PrestaShop\Helpers\ConfigurationHelper;
+use Alma\PrestaShop\Helpers\CountryHelper;
+use Alma\PrestaShop\Helpers\CustomerHelper;
 use Alma\PrestaShop\Helpers\CustomFieldsHelper;
-use Alma\PrestaShop\Helpers\LanguageHelper;
 use Alma\PrestaShop\Helpers\LocaleHelper;
 use Alma\PrestaShop\Helpers\PriceHelper;
-use Alma\PrestaShop\Helpers\ProductHelper;
 use Alma\PrestaShop\Helpers\SettingsHelper;
-use Alma\PrestaShop\Helpers\ShopHelper;
+use Alma\PrestaShop\Helpers\StateHelper;
 use Alma\PrestaShop\Helpers\ToolsHelper;
 use Alma\PrestaShop\Logger;
-use Alma\PrestaShop\Repositories\ProductRepository;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -78,92 +77,273 @@ class PaymentData
      */
     protected $shippingData;
 
-    public function __construct()
-    {
-        $this->toolsHelper = new ToolsHelper();
-        $this->settingsHelper = new SettingsHelper(new ShopHelper(), new ConfigurationHelper());
-        $this->priceHelper = new PriceHelper();
-        $this->customFieldsHelper = new CustomFieldsHelper(new LanguageHelper(), new LocaleHelper(new LanguageHelper()));
-        $this->cartData = new CartData(new ProductHelper(), $this->settingsHelper);
-        $this->shippingData = new ShippingData();
+    /**
+     * @var AddressHelper
+     */
+    protected $addressHelper;
+
+    /**
+     * @var CountryHelper
+     */
+    protected $countryHelper;
+
+    /**
+     * @var LocaleHelper
+     */
+    protected $localeHelper;
+
+    /**
+     * @var StateHelper
+     */
+    protected $stateHelper;
+
+    /**
+     * @var CustomerHelper
+     */
+    protected $customerHelper;
+
+    /**
+     * @var CartHelper
+     */
+    protected $cartHelper;
+
+    /**
+     * @var CarrierHelper
+     */
+    protected $carrierHelper;
+
+    /**
+     * @var \Context
+     */
+    protected $context;
+
+    /**
+     * @param ToolsHelper $toolsHelper
+     * @param SettingsHelper $settingsHelper
+     * @param PriceHelper $priceHelper
+     * @param CustomFieldsHelper $customFieldsHelper
+     * @param CartData $cartData
+     * @param ShippingData $shippingData
+     * @param \Context $context
+     * @param AddressHelper $addressHelper
+     * @param CountryHelper $countryHelper
+     * @param LocaleHelper $localeHelper
+     * @param StateHelper $stateHelper
+     * @param CustomerHelper $customerHelper
+     * @param CartHelper $cartHelper
+     * @param CarrierHelper $carrierHelper
+     *
+     * @codeCoverageIgnore
+     */
+    public function __construct(
+        $toolsHelper,
+        $settingsHelper,
+        $priceHelper,
+        $customFieldsHelper,
+        $cartData,
+        $shippingData,
+        $context,
+        $addressHelper,
+        $countryHelper,
+        $localeHelper,
+        $stateHelper,
+        $customerHelper,
+        $cartHelper,
+        $carrierHelper
+    ) {
+        $this->toolsHelper = $toolsHelper;
+        $this->settingsHelper = $settingsHelper;
+        $this->priceHelper = $priceHelper;
+        $this->customFieldsHelper = $customFieldsHelper;
+        $this->cartData = $cartData;
+        $this->shippingData = $shippingData;
+        $this->context = $context;
+        $this->addressHelper = $addressHelper;
+        $this->countryHelper = $countryHelper;
+        $this->localeHelper = $localeHelper;
+        $this->stateHelper = $stateHelper;
+        $this->customerHelper = $customerHelper;
+        $this->cartHelper = $cartHelper;
+        $this->carrierHelper = $carrierHelper;
     }
 
     /**
-     * @param \Cart $cart
-     * @param \Context $context
-     * @param array $feePlans
-     * @param bool $forPayment
+     * @param $feePlans
+     * @param $forPayment
      *
      * @return array|null
      *
      * @throws ParamsError
-     * @throws \PrestaShopDatabaseException
-     * @throws \PrestaShopException
      */
-    public function dataFromCart($cart, $context, $feePlans, $forPayment = false)
+    public function dataFromCart($feePlans, $forPayment = false)
     {
         if (
             $forPayment
             && (
-                0 == $cart->id_customer
-                || 0 == $cart->id_address_delivery
-                || 0 == $cart->id_address_invoice
+                0 == $this->context->cart->id_customer
+                || 0 == $this->context->cart->id_address_delivery
+                || 0 == $this->context->cart->id_address_invoice
             )
         ) {
-            Logger::instance()->warning("[Alma] Missing Customer ID or Delivery/Billing address ID for Cart {$cart->id}");
+            Logger::instance()->warning(
+                sprintf(
+                    '[Alma] Missing Customer ID or Delivery/Billing address ID for Cart %s',
+                    $this->context->cart->id
+                )
+            );
         }
 
-        $customer = null;
-        if ($cart->id_customer) {
-            $customer = new \Customer($cart->id_customer);
-            if (!\Validate::isLoadedObject($customer)) {
-                Logger::instance()->error("[Alma] Error loading Customer {$cart->id_customer} from Cart {$cart->id}");
+        $customer = $this->customerHelper->getCustomer();
 
-                return null;
-            }
-        }
-
-        $shippingAddress = new \Address((int) $cart->id_address_delivery);
-        $billingAddress = new \Address((int) $cart->id_address_invoice);
-        $countryShippingAddress = \Country::getIsoById((int) $shippingAddress->id_country);
-        $countryBillingAddress = \Country::getIsoById((int) $billingAddress->id_country);
+        $shippingAddress = $this->addressHelper->create($this->context->cart->id_address_delivery);
+        $billingAddress = $this->addressHelper->create((int) $this->context->cart->id_address_invoice);
+        $countryShippingAddress = $this->countryHelper->getIsoById((int) $shippingAddress->id_country);
+        $countryBillingAddress = $this->countryHelper->getIsoById((int) $billingAddress->id_country);
         $countryShippingAddress = ($countryShippingAddress) ? $countryShippingAddress : '';
         $countryBillingAddress = ($countryBillingAddress) ? $countryBillingAddress : '';
-        $locale = $context->language->iso_code;
-        if (property_exists($context->language, 'locale')) {
-            $locale = $context->language->locale;
-        }
-        $purchaseAmount = (float) $this->toolsHelper->psRound((float) $cart->getOrderTotal(true, \Cart::BOTH), 2);
+
+        $locale = $this->localeHelper->getLocaleFromContext($this->context);
+
+        $purchaseAmount = (float) $this->toolsHelper->psRound(
+            (float) $this->context->cart->getOrderTotal(true, \Cart::BOTH),
+            2
+        );
 
         /* Eligibility Endpoint V2 */
         if (!$forPayment) {
-            $queries = [];
-            foreach ($feePlans as $plan) {
-                $queries[] = [
-                    'purchase_amount' => $this->priceHelper->convertPriceToCents($purchaseAmount),
-                    'installments_count' => $plan['installmentsCount'],
-                    'deferred_days' => $plan['deferredDays'],
-                    'deferred_months' => $plan['deferredMonths'],
-                ];
-            }
+            return $this->getDataForEligibilityV2(
+                $feePlans,
+                $purchaseAmount,
+                $countryShippingAddress,
+                $countryBillingAddress,
+                $locale
+            );
+        }
 
-            return [
+        $customerData = $this->buildCustomerData($customer, $shippingAddress, $billingAddress);
+
+        $dataPayment = $this->buildDataPayment(
+            $customer,
+            $purchaseAmount,
+            $feePlans,
+            $shippingAddress,
+            $countryShippingAddress,
+            $locale,
+            $billingAddress,
+            $countryBillingAddress,
+            $customerData
+        );
+
+        $this->checkPurchaseAmount($dataPayment);
+
+        return $dataPayment;
+    }
+
+    /**
+     * @param $customer
+     * @param $purchaseAmount
+     * @param $feePlans
+     * @param $shippingAddress
+     * @param $countryShippingAddress
+     * @param $locale
+     * @param $billingAddress
+     * @param $countryBillingAddress
+     * @param $customerData
+     *
+     * @return array
+     */
+    public function buildDataPayment(
+        $customer,
+        $purchaseAmount,
+        $feePlans,
+        $shippingAddress,
+        $countryShippingAddress,
+        $locale,
+        $billingAddress,
+        $countryBillingAddress,
+        $customerData
+    ) {
+        $dataPayment = [
+            'website_customer_details' => $this->buildWebsiteCustomerDetails($customer, $purchaseAmount),
+            'payment' => [
+                'installments_count' => $feePlans['installmentsCount'],
+                'deferred_days' => $feePlans['deferredDays'],
+                'deferred_months' => $feePlans['deferredMonths'],
                 'purchase_amount' => $this->priceHelper->convertPriceToCents($purchaseAmount),
-                'queries' => $queries,
+                'customer_cancel_url' => $this->context->link->getPageLink('order&step=3'),
+                'return_url' => $this->context->link->getModuleLink('alma', 'validation'),
+                'ipn_callback_url' => $this->context->link->getModuleLink('alma', 'ipn'),
                 'shipping_address' => [
+                    'line1' => $shippingAddress->address1,
+                    'postal_code' => $shippingAddress->postcode,
+                    'city' => $shippingAddress->city,
                     'country' => $countryShippingAddress,
+                    'county_sublocality' => null,
+                    'state_province' => $shippingAddress->id_state > 0 ? $this->stateHelper->getNameById(
+                        (int) $shippingAddress->id_state) : '',
                 ],
+                'shipping_info' => $this->shippingData->shippingInfo($this->context->cart),
                 'billing_address' => [
+                    'line1' => $billingAddress->address1,
+                    'postal_code' => $billingAddress->postcode,
+                    'city' => $billingAddress->city,
                     'country' => $countryBillingAddress,
+                    'county_sublocality' => null,
+                    'state_province' => $billingAddress->id_state > 0 ? $customerData['state_province'] : '',
+                ],
+                'custom_data' => [
+                    'cart_id' => $this->context->cart->id,
+                    'purchase_amount_new_conversion_func' => $this->priceHelper->convertPriceToCentsStr(
+                        $purchaseAmount
+                    ),
+                    'cart_totals' => $purchaseAmount,
+                    'cart_totals_high_precision' => number_format($purchaseAmount, 16),
+                    'poc' => [
+                        'data-for-risk',
+                    ],
                 ],
                 'locale' => $locale,
-            ];
+            ],
+            'customer' => $customerData,
+        ];
+
+        if ($this->settingsHelper->isDeferredTriggerLimitDays($feePlans)) {
+            $dataPayment['payment']['deferred'] = 'trigger';
+            $dataPayment['payment']['deferred_description'] = $this->customFieldsHelper->getDescriptionPaymentTriggerByLang($this->context->language->id);
         }
 
-        if (!$customer) {
-            $customer = $context->customer;
+        if ($feePlans['installmentsCount'] > 4) {
+            $dataPayment['payment']['cart'] = $this->cartData->cartInfo($this->context->cart);
         }
 
+        if ($this->isInPage($dataPayment)) {
+            $dataPayment['payment']['origin'] = 'online_in_page';
+        }
+
+        return $dataPayment;
+    }
+
+    /**
+     * @param array $dataPayment
+     *
+     * @return void
+     *
+     * @throws ParamsError
+     */
+    public function checkPurchaseAmount($dataPayment)
+    {
+        PaymentValidator::checkPurchaseAmount($dataPayment);
+    }
+
+    /**
+     * @param \Customer $customer
+     * @param \Address $shippingAddress
+     * @param \Address $billingAddress
+     *
+     * @return array
+     */
+    public function buildCustomerData($customer, $shippingAddress, $billingAddress)
+    {
         $customerData = [
             'first_name' => $customer->firstname,
             'last_name' => $customer->lastname,
@@ -182,23 +362,18 @@ class PaymentData
 
         if ($shippingAddress->phone) {
             $customerData['phone'] = $shippingAddress->phone;
-        } else {
-            if ($shippingAddress->phone_mobile) {
-                $customerData['phone'] = $shippingAddress->phone_mobile;
-            }
+        } elseif ($shippingAddress->phone_mobile) {
+            $customerData['phone'] = $shippingAddress->phone_mobile;
         }
 
-        if (version_compare(_PS_VERSION_, '1.5.4.0', '<')) {
-            $addresses = $customer->getAddresses($context->language->id);
-        } else {
-            $addresses = $customer->getAddresses($customer->id_lang);
-        }
+        $addresses = $this->addressHelper->getAdressFromCustomer($customer, $this->context);
+
         foreach ($addresses as $address) {
             $customerData['addresses'][] = [
                 'line1' => $address['address1'],
                 'postal_code' => $address['postcode'],
                 'city' => $address['city'],
-                'country' => \Country::getIsoById((int) $address['id_country']),
+                'country' => $this->countryHelper->getIsoById((int) $address['id_country']),
                 'county_sublocality' => null,
                 'state_province' => $address['state'],
             ];
@@ -211,74 +386,54 @@ class PaymentData
                 }
             }
         }
-
-        $idStateShipping = $shippingAddress->id_state;
-        $idStateBilling = $billingAddress->id_state;
-        $customerData['state_province'] = \State::getNameById((int) $idStateBilling);
-        $customerData['country'] = \Country::getIsoById((int) $billingAddress->id_country);
+        $customerData['state_province'] = $this->stateHelper->getNameById((int) $billingAddress->id_state);
+        $customerData['country'] = $this->countryHelper->getIsoById((int) $billingAddress->id_country);
 
         if ($billingAddress->company) {
             $customerData['is_business'] = true;
             $customerData['business_name'] = $billingAddress->company;
         }
 
-        $dataPayment = [
-            'website_customer_details' => $this->buildWebsiteCustomerDetails($context, $customer, $cart, $purchaseAmount),
-            'payment' => [
-                'installments_count' => $feePlans['installmentsCount'],
-                'deferred_days' => $feePlans['deferredDays'],
-                'deferred_months' => $feePlans['deferredMonths'],
+        return $customerData;
+    }
+
+    /**
+     * @param string $purchaseAmount
+     * @param string $countryShippingAddress
+     * @param string $countryBillingAddress
+     * @param string $locale
+     *
+     * @return array
+     */
+    public function getDataForEligibilityV2(
+        $feePlans,
+        $purchaseAmount,
+        $countryShippingAddress,
+        $countryBillingAddress,
+        $locale
+    ) {
+        $queries = [];
+
+        foreach ($feePlans as $plan) {
+            $queries[] = [
                 'purchase_amount' => $this->priceHelper->convertPriceToCents($purchaseAmount),
-                'customer_cancel_url' => $context->link->getPageLink('order&step=3'),
-                'return_url' => $context->link->getModuleLink('alma', 'validation'),
-                'ipn_callback_url' => $context->link->getModuleLink('alma', 'ipn'),
-                'shipping_address' => [
-                    'line1' => $shippingAddress->address1,
-                    'postal_code' => $shippingAddress->postcode,
-                    'city' => $shippingAddress->city,
-                    'country' => $countryShippingAddress,
-                    'county_sublocality' => null,
-                    'state_province' => $idStateShipping > 0 ? \State::getNameById((int) $idStateShipping) : '',
-                ],
-                'shipping_info' => $this->shippingData->shippingInfo($cart),
-                'billing_address' => [
-                    'line1' => $billingAddress->address1,
-                    'postal_code' => $billingAddress->postcode,
-                    'city' => $billingAddress->city,
-                    'country' => $countryBillingAddress,
-                    'county_sublocality' => null,
-                    'state_province' => $idStateBilling > 0 ? $customerData['state_province'] : '',
-                ],
-                'custom_data' => [
-                    'cart_id' => $cart->id,
-                    'purchase_amount_new_conversion_func' => PriceHelper::convertPriceToCentsStr($purchaseAmount),
-                    'cart_totals' => $purchaseAmount,
-                    'cart_totals_high_precision' => number_format($purchaseAmount, 16),
-                    'poc' => [
-                        'data-for-risk',
-                    ],
-                ],
-                'locale' => $locale,
+                'installments_count' => $plan['installmentsCount'],
+                'deferred_days' => $plan['deferredDays'],
+                'deferred_months' => $plan['deferredMonths'],
+            ];
+        }
+
+        return [
+            'purchase_amount' => $this->priceHelper->convertPriceToCents($purchaseAmount),
+            'queries' => $queries,
+            'shipping_address' => [
+                'country' => $countryShippingAddress,
             ],
-            'customer' => $customerData,
+            'billing_address' => [
+                'country' => $countryBillingAddress,
+            ],
+            'locale' => $locale,
         ];
-
-        if ($this->settingsHelper->isDeferredTriggerLimitDays($feePlans)) {
-            $dataPayment['payment']['deferred'] = 'trigger';
-            $dataPayment['payment']['deferred_description'] = $this->customFieldsHelper->getDescriptionPaymentTriggerByLang($context->language->id);
-        }
-
-        if ($feePlans['installmentsCount'] > 4) {
-            $dataPayment['payment']['cart'] = $this->cartData->cartInfo($cart);
-        }
-
-        if (static::isInPage($dataPayment)) {
-            $dataPayment['payment']['origin'] = 'online_in_page';
-        }
-
-        PaymentValidator::checkPurchaseAmount($dataPayment);
-
-        return $dataPayment;
     }
 
     /**
@@ -286,7 +441,7 @@ class PaymentData
      *
      * @return bool
      */
-    public static function isPayLater($paymentData)
+    public function isPayLater($paymentData)
     {
         return $paymentData['payment']['deferred_days'] >= 1 || $paymentData['payment']['deferred_months'] >= 1;
     }
@@ -296,7 +451,7 @@ class PaymentData
      *
      * @return bool
      */
-    public static function isPnXOnly($paymentData)
+    public function isPnXOnly($paymentData)
     {
         return $paymentData['payment']['installments_count'] > 1
             && $paymentData['payment']['installments_count'] <= 4
@@ -308,9 +463,13 @@ class PaymentData
      *
      * @return bool
      */
-    public static function isPayNow($paymentData)
+    public function isPayNow($paymentData)
     {
-        return $paymentData['payment']['installments_count'] === 1 && (0 === $paymentData['payment']['deferred_days'] && 0 === $paymentData['payment']['deferred_months']);
+        return $paymentData['payment']['installments_count'] === 1
+            && (
+                0 === $paymentData['payment']['deferred_days']
+                && 0 === $paymentData['payment']['deferred_months']
+            );
     }
 
     /**
@@ -318,44 +477,36 @@ class PaymentData
      *
      * @return bool
      */
-    public static function isInPage($dataPayment)
+    public function isInPage($dataPayment)
     {
         return (
-            static::isPnXOnly($dataPayment)
-            || static::isPayNow($dataPayment)
-            || static::isPayLater($dataPayment))
-            && SettingsHelper::isInPageEnabled();
+            $this->isPnXOnly($dataPayment)
+            || $this->isPayNow($dataPayment)
+            || $this->isPayLater($dataPayment))
+            && $this->settingsHelper->isInPageEnabled();
     }
 
-    private static function isNewCustomer($idCustomer)
+    /**
+     * @param \Customer $customer
+     * @param $purchaseAmount
+     *
+     * @return array
+     */
+    public function buildWebsiteCustomerDetails($customer, $purchaseAmount)
     {
-        if (\Order::getCustomerNbOrders($idCustomer) > 0) {
-            return false;
-        }
-
-        return true;
-    }
-
-    private function buildWebsiteCustomerDetails($context, $customer, $cart, $purchaseAmount)
-    {
-        $carrierHelper = new CarrierHelper($context);
-        $cartHelper = new CartHelper($context);
-        $productHelper = new ProductHelper();
-        $productRepository = new ProductRepository();
-
         return [
-            'new_customer' => self::isNewCustomer($customer->id),
+            'new_customer' => $this->customerHelper->isNewCustomer($customer->id),
             'is_guest' => (bool) $customer->is_guest,
             'created' => strtotime($customer->date_add),
             'current_order' => [
                 'purchase_amount' => $this->priceHelper->convertPriceToCents($purchaseAmount),
-                'created' => strtotime($cart->date_add),
+                'created' => strtotime($this->context->cart->date_add),
                 'payment_method' => PaymentData::PAYMENT_METHOD,
-                'shipping_method' => $carrierHelper->getParentCarrierNameById($cart->id_carrier),
-                'items' => $this->cartData->getCartItems($cart, $productHelper, $productRepository),
+                'shipping_method' => $this->carrierHelper->getParentCarrierNameById($this->context->cart->id_carrier),
+                'items' => $this->cartData->getCartItems($this->context->cart),
             ],
             'previous_orders' => [
-                $cartHelper->previousCartOrdered($customer->id),
+                $this->cartHelper->previousCartOrdered($customer->id),
             ],
         ];
     }

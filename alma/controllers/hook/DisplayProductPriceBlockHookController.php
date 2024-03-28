@@ -30,6 +30,7 @@ if (!defined('_PS_VERSION_')) {
 
 use Alma\PrestaShop\Forms\ExcludedCategoryAdminFormBuilder;
 use Alma\PrestaShop\Helpers\ConfigurationHelper;
+use Alma\PrestaShop\Helpers\CurrencyHelper;
 use Alma\PrestaShop\Helpers\CustomFieldsHelper;
 use Alma\PrestaShop\Helpers\LanguageHelper;
 use Alma\PrestaShop\Helpers\LinkHelper;
@@ -37,6 +38,7 @@ use Alma\PrestaShop\Helpers\LocaleHelper;
 use Alma\PrestaShop\Helpers\PriceHelper;
 use Alma\PrestaShop\Helpers\SettingsHelper;
 use Alma\PrestaShop\Helpers\ShopHelper;
+use Alma\PrestaShop\Helpers\ToolsHelper;
 use Alma\PrestaShop\Hooks\FrontendHookController;
 
 class DisplayProductPriceBlockHookController extends FrontendHookController
@@ -64,6 +66,8 @@ class DisplayProductPriceBlockHookController extends FrontendHookController
     /**
      * HookController constructor.
      *
+     * @codeCoverageIgnore
+     *
      * @param $module Alma
      */
     public function __construct($module)
@@ -71,9 +75,9 @@ class DisplayProductPriceBlockHookController extends FrontendHookController
         parent::__construct($module);
 
         $this->localeHelper = new LocaleHelper(new LanguageHelper());
-        $this->priceHelper = new PriceHelper();
+        $this->priceHelper = new PriceHelper(new ToolsHelper(), new CurrencyHelper());
         $this->settingsHelper = new SettingsHelper(new ShopHelper(), new ConfigurationHelper());
-        $this->customFieldsHelper = new CustomFieldsHelper(new LanguageHelper(), $this->localeHelper);
+        $this->customFieldsHelper = new CustomFieldsHelper(new LanguageHelper(), $this->localeHelper, $this->settingsHelper);
     }
 
     public function canRun()
@@ -162,7 +166,7 @@ class DisplayProductPriceBlockHookController extends FrontendHookController
             $psVersion = 'ps16';
         }
 
-        $activePlans = SettingsHelper::activePlans();
+        $activePlans = $this->settingsHelper->activePlans();
 
         $locale = $this->localeHelper->getLocaleByIdLangForWidget($this->context->language->id);
 

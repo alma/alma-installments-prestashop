@@ -33,19 +33,38 @@ if (!defined('_PS_VERSION_')) {
  */
 class OrderStateHelper
 {
+    /**
+     * @param \Context $context
+     * @codeCoverageIgnore
+     */
     public function __construct($context)
     {
         $this->context = $context;
     }
 
+    /**
+     * @param int $idOrderState
+     *
+     * @return mixed
+     */
     public function getNameById($idOrderState)
     {
-        $orderStates = \OrderState::getOrderStates($this->context->language->id);
+        $orderStates = $this->getOrderStates($this->context->language->id);
 
         $state = array_filter($orderStates, function ($orderState) use ($idOrderState) {
             return $orderState['id_order_state'] == $idOrderState;
         });
 
         return array_values($state)[0]['name'];
+    }
+
+    /**
+     * @param int $languageId
+     *
+     * @return mixed
+     */
+    public function getOrderStates($languageId)
+    {
+        return \OrderState::getOrderStates($languageId);
     }
 }

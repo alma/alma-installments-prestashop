@@ -24,10 +24,10 @@
 
 namespace Alma\PrestaShop\Helpers;
 
+use Alma\API\Entities\Order;
 use Alma\PrestaShop\Logger;
 use Alma\PrestaShop\Model\CartData;
 use Alma\PrestaShop\Model\OrderData;
-use Alma\PrestaShop\Repositories\ProductRepository;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -56,12 +56,48 @@ class CartHelper
      */
     protected $cartData;
 
-    public function __construct($context)
-    {
+    /**
+     * @var OrderData
+     */
+    protected $orderData;
+
+    /**
+     * @var OrderStateHelper
+     */
+    protected $orderStateHelper;
+
+    /**
+     * @var CarrierHelper
+     */
+    protected $carrierHelper;
+
+    /**
+     * @param \Context $context
+     * @param ToolsHelper $toolsHelper
+     * @param PriceHelper $priceHelper
+     * @param CartData $cartData
+     * @param OrderData $orderData
+     * @param OrderStateHelper $orderStateHelper
+     * @param CarrierHelper $carrierHelper
+     *
+     * @codeCoverageIgnore
+     */
+    public function __construct(
+        $context,
+        $toolsHelper,
+        $priceHelper,
+        $cartData,
+        $orderData,
+        $orderStateHelper,
+        $carrierHelper
+    ) {
         $this->context = $context;
-        $this->toolsHelper = new ToolsHelper();
-        $this->priceHelper = new PriceHelper();
-        $this->cartData = new CartData();
+        $this->toolsHelper = $toolsHelper;
+        $this->priceHelper = $priceHelper;
+        $this->cartData = $cartData;
+        $this->orderData = $orderData;
+        $this->orderStateHelper = $orderStateHelper;
+        $this->carrierHelper = $carrierHelper;
     }
 
     /**
@@ -75,38 +111,33 @@ class CartHelper
     {
         $ordersData = [];
         $orders = $this->getOrdersByCustomer($idCustomer, 10);
-        $orderStateHelper = new OrderStateHelper($this->context);
-        $productHelper = new ProductHelper();
-        $productRepository = new ProductRepository();
 
-        $carrier = new CarrierHelper($this->context);
         foreach ($orders as $order) {
             $cart = new \Cart((int) $order['id_cart']);
             $purchaseAmount = -1;
             try {
                 $purchaseAmount = $this->toolsHelper->psRound((float) $cart->getOrderTotal(), 2);
             } catch (\Exception $e) {
-                $msg = '[Alma] purchase amount for previous cart ordered no found';
-                Logger::instance()->warning($msg);
+                Logger::instance()->warning('[Alma] purchase amount for previous cart ordered no found');
             }
 
             $cartItems = [];
+
             try {
-                $cartItems = $this->cartData->getCartItems($cart, $productHelper, $productRepository);
+                $cartItems = $this->cartData->getCartItems($cart);
             } catch (\PrestaShopDatabaseException $e) {
-                $msg = '[Alma] cart items for previous cart ordered no found';
-                Logger::instance()->warning($msg);
+                Logger::instance()->warning('[Alma] cart items for previous cart ordered no found');
             } catch (\PrestaShopException $e) {
-                $msg = '[Alma] cart items for previous cart ordered no found';
-                Logger::instance()->warning($msg);
+                Logger::instance()->warning('[Alma] cart items for previous cart ordered no found');
             }
+
             $ordersData[] = [
                 'purchase_amount' => $this->priceHelper->convertPriceToCents($purchaseAmount),
                 'created' => strtotime($order['date_add']),
                 'payment_method' => $order['payment'],
                 'alma_payment_external_id' => $order['module'] === 'alma' ? $order['transaction_id'] : null,
-                'current_state' => $orderStateHelper->getNameById($order['current_state']),
-                'shipping_method' => $carrier->getParentCarrierNameById($cart->id_carrier),
+                'current_state' => $this->orderStateHelper->getNameById($order['current_state']),
+                'shipping_method' => $this->carrierHelper->getParentCarrierNameById($cart->id_carrier),
                 'items' => $cartItems,
             ];
         }
@@ -122,14 +153,26 @@ class CartHelper
      *
      * @return array
      */
-    private function getOrdersByCustomer($idCustomer, $limit)
+    public function getOrdersByCustomer($idCustomer, $limit)
     {
         try {
-            $orders = OrderData::getCustomerOrders($idCustomer, $limit);
+            $orders = $this->orderData->getCustomerOrders($idCustomer, $limit);
         } catch (\PrestaShopDatabaseException $e) {
             return [];
         }
 
         return $orders;
+    }
+
+    /**
+     * @param \Cart $cart
+     *
+     * @return float
+     */
+    public function getCartTotal($cart)
+    {
+        return (float) $this->priceHelper->convertPriceToCents(
+            $this->toolsHelper->psRound((float) $cart->getOrderTotal(true, \Cart::BOTH), 2)
+        );
     }
 }

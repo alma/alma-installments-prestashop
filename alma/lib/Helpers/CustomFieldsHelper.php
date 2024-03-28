@@ -54,11 +54,17 @@ class CustomFieldsHelper
 
     /**
      * @codeCoverageIgnore
+     *
+     * @param LanguageHelper $languageHelper
+     * @param LocaleHelper $localeHelper
+     * @param SettingsHelper $settingsHelper
+     *
+     * @codeCoverageIgnore
      */
-    public function __construct($languageHelper, $localeHelper)
+    public function __construct($languageHelper, $localeHelper, $settingsHelper)
     {
         $this->languageHelper = $languageHelper;
-        $this->settingsHelper = new SettingsHelper(new ShopHelper(), new ConfigurationHelper());
+        $this->settingsHelper = $settingsHelper;
         $this->localeHelper = $localeHelper;
     }
 
@@ -246,5 +252,23 @@ class CustomFieldsHelper
         }
 
         return $arrayDescriptionPaymentTriggerByLang[$idLang];
+    }
+
+    /**
+     * @param int $languageId
+     * @param string $key
+     * @param int $installments
+     *
+     * @return string
+     */
+    public function getTextButton($languageId, $key, $installments)
+    {
+        return sprintf(
+            $this->getBtnValueByLang(
+                $languageId,
+                $key
+            ),
+            $installments
+        );
     }
 }

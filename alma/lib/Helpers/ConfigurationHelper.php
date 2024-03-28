@@ -29,7 +29,7 @@ if (!defined('_PS_VERSION_')) {
 }
 
 /**
- * Class LanguageHelper.
+ * Class ConfigurationHelper.
  */
 class ConfigurationHelper
 {
@@ -78,5 +78,32 @@ class ConfigurationHelper
     public function updateValue($key, $values, $html = false, $idShopGroup = null, $idShop = null)
     {
         return \Configuration::updateValue($key, $values, $html, $idShopGroup, $idShop);
+    }
+
+    /**
+     * @param int $installments
+     * @param SettingsHelper $settingsHelper
+     *
+     * @return bool
+     */
+    public function isInPageEnabled($installments, $settingsHelper)
+    {
+        $isInPageEnabled = $settingsHelper->isInPageEnabled();
+
+        if ($installments > 4) {
+            $isInPageEnabled = false;
+        }
+
+        return $isInPageEnabled;
+    }
+
+    /**
+     * @param string $key
+     *
+     * @return bool
+     */
+    public function isPayNow($key)
+    {
+        return ConstantsHelper::ALMA_KEY_PAYNOW === $key;
     }
 }

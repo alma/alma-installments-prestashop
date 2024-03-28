@@ -24,9 +24,12 @@
 
 namespace Alma\PrestaShop\Forms;
 
+use Alma\PrestaShop\Helpers\ConfigurationHelper;
 use Alma\PrestaShop\Helpers\CustomFieldsHelper;
 use Alma\PrestaShop\Helpers\LanguageHelper;
 use Alma\PrestaShop\Helpers\LocaleHelper;
+use Alma\PrestaShop\Helpers\SettingsHelper;
+use Alma\PrestaShop\Helpers\ShopHelper;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -47,11 +50,22 @@ class PaymentOnTriggeringAdminFormBuilder extends AbstractAlmaAdminFormBuilder
      */
     protected $customFieldsHelper;
 
+    /**
+     * @codeCoverageIgnore
+     *
+     * @param $module
+     */
     public function __construct($module)
     {
         parent::__construct($module);
 
-        $this->customFieldsHelper = new CustomFieldsHelper(new LanguageHelper(), new LocaleHelper(new LanguageHelper()));
+        $languageHelper = new LanguageHelper();
+
+        $this->customFieldsHelper = new CustomFieldsHelper(
+            $languageHelper,
+            new LocaleHelper($languageHelper),
+            new SettingsHelper(new ShopHelper(), new ConfigurationHelper())
+        );
     }
 
     protected function configForm()

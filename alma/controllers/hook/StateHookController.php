@@ -49,6 +49,8 @@ final class StateHookController extends AdminHookController
     /**
      * HookController constructor.
      *
+     * @codeCoverageIgnore
+     *
      * @param $module Alma
      */
     public function __construct($module)

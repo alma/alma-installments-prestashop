@@ -58,7 +58,17 @@ function upgrade_module_2_3_0()
                 Configuration::deleteByName($configKey);
             }
 
-            $customFieldsHelper = new CustomFieldsHelper(new LanguageHelper(), new \Alma\PrestaShop\Helpers\LocaleHelper(new LanguageHelper()));
+            $languageHelper = new LanguageHelper();
+
+            $customFieldsHelper = new CustomFieldsHelper(
+                $languageHelper,
+                new \Alma\PrestaShop\Helpers\LocaleHelper($languageHelper),
+                new SettingsHelper(
+                    new \Alma\PrestaShop\Helpers\ShopHelper(),
+                    new \Alma\PrestaShop\Helpers\ConfigurationHelper()
+                )
+            );
+
             $customFieldsHelper->initCustomFields();
         } catch (RequestError $e) {
             Logger::instance()->error("[Alma] ERROR upgrade v2.3.0: {$e->getMessage()}");

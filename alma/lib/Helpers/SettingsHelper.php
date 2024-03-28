@@ -341,11 +341,23 @@ class SettingsHelper
     /**
      * Get API mode saved in Prestashop database.
      *
+     * @deprecated use getModeActive
+     *
      * @return string
      */
     public static function getActiveMode()
     {
         return static::get('ALMA_API_MODE', ALMA_MODE_TEST);
+    }
+
+    /**
+     * Get API mode saved in Prestashop database.
+     *
+     * @return string
+     */
+    public function getModeActive()
+    {
+        return $this->getKey('ALMA_API_MODE', ALMA_MODE_TEST);
     }
 
     /**
@@ -476,9 +488,9 @@ class SettingsHelper
     /**
      * @return bool
      */
-    public static function isInPageEnabled()
+    public function isInPageEnabled()
     {
-        return (bool) (int) static::get(InpageAdminFormBuilder::ALMA_ACTIVATE_INPAGE, false);
+        return (bool) (int) $this->getKey(InpageAdminFormBuilder::ALMA_ACTIVATE_INPAGE, false);
     }
 
     /**
@@ -486,14 +498,14 @@ class SettingsHelper
      *
      * @return array
      */
-    public static function activePlans()
+    public function activePlans()
     {
         $plans = [];
-        $feePlans = json_decode(static::getFeePlans());
+        $feePlans = json_decode($this->getAlmaFeePlans());
 
         foreach ($feePlans as $key => $feePlan) {
             if (1 == $feePlan->enabled) {
-                $dataFromKey = static::getDataFromKey($key);
+                $dataFromKey = $this->getDataFromKey($key);
                 $plans[] = [
                     'installmentsCount' => (int) $dataFromKey['installmentsCount'],
                     'minAmount' => $feePlan->min,
@@ -749,10 +761,20 @@ class SettingsHelper
 
     /**
      * @return false|mixed|string|null
+     *
+     * @deprecated use getIdMerchant
      */
     public static function getMerchantId()
     {
         return static::get('ALMA_MERCHANT_ID');
+    }
+
+    /**
+     * @return false|mixed|string|null
+     */
+    public function getIdMerchant()
+    {
+        return $this->getKey('ALMA_MERCHANT_ID');
     }
 
     /**
@@ -804,6 +826,8 @@ class SettingsHelper
 
     /**
      * @return false|mixed|string|null
+     *
+     * @deprecated use getAlmaFeePlans
      */
     public static function getFeePlans()
     {
@@ -811,7 +835,17 @@ class SettingsHelper
     }
 
     /**
+     * @return false|mixed|string|null
+     */
+    public function getAlmaFeePlans()
+    {
+        return $this->getKey('ALMA_FEE_PLANS');
+    }
+
+    /**
      * @param \Alma\API\Entities\FeePlan $plan
+     *
+     * @deprecated use PlanHelper->isDeferred
      *
      * @return bool
      */
@@ -864,9 +898,9 @@ class SettingsHelper
      *
      * @return array feePlans
      */
-    public static function getDataFromKey($key)
+    public function getDataFromKey($key)
     {
-        $feePlans = json_decode(static::getFeePlans());
+        $feePlans = json_decode($this->getAlmaFeePlans());
         preg_match("/general_(\d*)_(\d*)_(\d*)/", $key, $data);
 
         $dataFromKey = [

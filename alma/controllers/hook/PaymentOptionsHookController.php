@@ -28,77 +28,166 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-use Alma\PrestaShop\Forms\PaymentButtonAdminFormBuilder;
+use Alma\PrestaShop\Helpers\AddressHelper;
+use Alma\PrestaShop\Helpers\ApiHelper;
+use Alma\PrestaShop\Helpers\CarrierHelper;
+use Alma\PrestaShop\Helpers\CartHelper;
+use Alma\PrestaShop\Helpers\ClientHelper;
 use Alma\PrestaShop\Helpers\ConfigurationHelper;
-use Alma\PrestaShop\Helpers\ConstantsHelper;
+use Alma\PrestaShop\Helpers\ContextHelper;
+use Alma\PrestaShop\Helpers\CountryHelper;
+use Alma\PrestaShop\Helpers\CurrencyHelper;
+use Alma\PrestaShop\Helpers\CustomerHelper;
 use Alma\PrestaShop\Helpers\CustomFieldsHelper;
 use Alma\PrestaShop\Helpers\DateHelper;
 use Alma\PrestaShop\Helpers\EligibilityHelper;
 use Alma\PrestaShop\Helpers\LanguageHelper;
 use Alma\PrestaShop\Helpers\LocaleHelper;
+use Alma\PrestaShop\Helpers\MediaHelper;
+use Alma\PrestaShop\Helpers\OrderHelper;
+use Alma\PrestaShop\Helpers\OrderStateHelper;
+use Alma\PrestaShop\Helpers\PaymentOptionHelper;
+use Alma\PrestaShop\Helpers\PaymentOptionTemplateHelper;
+use Alma\PrestaShop\Helpers\PlanHelper;
 use Alma\PrestaShop\Helpers\PriceHelper;
 use Alma\PrestaShop\Helpers\ProductHelper;
 use Alma\PrestaShop\Helpers\SettingsHelper;
 use Alma\PrestaShop\Helpers\ShopHelper;
+use Alma\PrestaShop\Helpers\StateHelper;
 use Alma\PrestaShop\Helpers\ToolsHelper;
+use Alma\PrestaShop\Helpers\TranslationHelper;
+use Alma\PrestaShop\Helpers\ValidateHelper;
 use Alma\PrestaShop\Hooks\FrontendHookController;
+use Alma\PrestaShop\Model\CarrierData;
 use Alma\PrestaShop\Model\CartData;
+use Alma\PrestaShop\Model\OrderData;
+use Alma\PrestaShop\Model\PaymentData;
+use Alma\PrestaShop\Model\ShippingData;
+use Alma\PrestaShop\Repositories\ProductRepository;
+use Alma\PrestaShop\Services\PaymentService;
 use PrestaShop\PrestaShop\Core\Localization\Exception\LocalizationException;
-use PrestaShop\PrestaShop\Core\Payment\PaymentOption;
 
 class PaymentOptionsHookController extends FrontendHookController
 {
     /**
-     * @var DateHelper
+     * @var PaymentService
      */
-    protected $dateHelper;
-    /**
-     * @var LocaleHelper
-     */
-    protected $localeHelper;
+    protected $paymentService;
 
     /**
-     * @var ToolsHelper
+     * @codeCoverageIgnore
+     *
+     * @param $module
      */
-    protected $toolsHelper;
-
-    /**
-     * @var SettingsHelper
-     */
-    protected $settingsHelper;
-
-    /**
-     * @var EligibilityHelper
-     */
-    protected $eligibilityHelper;
-
-    /**
-     * @var PriceHelper
-     */
-    protected $priceHelper;
-
-    /**
-     * @var CartData
-     */
-    protected $cartData;
-
-    /**
-     * @var CustomFieldsHelper
-     */
-    protected $customFieldsHelper;
-
     public function __construct($module)
     {
         parent::__construct($module);
 
-        $this->settingsHelper = new SettingsHelper(new ShopHelper(), new ConfigurationHelper());
-        $this->localeHelper = new LocaleHelper(new LanguageHelper());
-        $this->toolsHelper = new ToolsHelper();
-        $this->eligibilityHelper = new EligibilityHelper();
-        $this->priceHelper = new PriceHelper();
-        $this->dateHelper = new DateHelper();
-        $this->customFieldsHelper = new CustomFieldsHelper(new LanguageHelper(), $this->localeHelper);
-        $this->cartData = new CartData(new ProductHelper(), $this->settingsHelper);
+        $context = $this->context;
+        $languageHelper = new LanguageHelper();
+        $configurationHelper = new ConfigurationHelper();
+        $settingsHelper = new SettingsHelper(new ShopHelper(), $configurationHelper);
+        $localeHelper = new LocaleHelper($languageHelper);
+        $toolsHelper = new ToolsHelper();
+        $priceHelper = new PriceHelper($toolsHelper, new CurrencyHelper());
+        $clientHelper = new ClientHelper();
+
+        $dateHelper = new DateHelper();
+        $customFieldsHelper = new CustomFieldsHelper($languageHelper, $localeHelper, $settingsHelper);
+        $cartData = new CartData(
+            new ProductHelper(),
+            $settingsHelper,
+            $priceHelper,
+            new ProductRepository()
+        );
+        $contextHelper = new ContextHelper();
+        $mediaHelper = new MediaHelper();
+        $translationHelper = new TranslationHelper($module);
+        $planHelper = new PlanHelper(
+            $module,
+            $context,
+            $dateHelper,
+            $settingsHelper,
+            $customFieldsHelper,
+            $translationHelper
+        );
+
+        $carrierHelper = new CarrierHelper($this->context, new CarrierData());
+
+        $cartHelper = new CartHelper(
+            $context,
+            $toolsHelper,
+            $priceHelper,
+            $cartData,
+            new OrderData(),
+            new OrderStateHelper($context),
+            $carrierHelper
+        );
+
+        $eligibilityHelper = new EligibilityHelper(
+            new PaymentData(
+                $toolsHelper,
+                $settingsHelper,
+                $priceHelper,
+                $customFieldsHelper,
+                $cartData,
+                new ShippingData($priceHelper, $carrierHelper),
+                $this->context,
+                new AddressHelper($toolsHelper),
+                new CountryHelper(),
+                $localeHelper,
+                new StateHelper(),
+                new CustomerHelper($context, new OrderHelper(), new ValidateHelper()),
+                $cartHelper,
+                $carrierHelper
+            ),
+            $priceHelper,
+            $clientHelper,
+            $settingsHelper,
+            new ApiHelper($clientHelper),
+            $context
+        );
+
+        $paymentOptionTemplateHelper = new PaymentOptionTemplateHelper(
+            $context,
+            $module,
+            $settingsHelper,
+            $configurationHelper,
+            $translationHelper,
+            $priceHelper,
+            $dateHelper
+        );
+
+        $paymentOptionHelper = new PaymentOptionHelper(
+            $context,
+            $module,
+            $settingsHelper,
+            $customFieldsHelper,
+            $mediaHelper,
+            $configurationHelper,
+            $paymentOptionTemplateHelper
+        );
+
+        $this->paymentService = new PaymentService(
+            $context,
+            $module,
+            $settingsHelper,
+            $localeHelper,
+            $toolsHelper,
+            $eligibilityHelper,
+            $priceHelper,
+            $dateHelper,
+            $customFieldsHelper,
+            $cartData,
+            $contextHelper,
+            $mediaHelper,
+            $planHelper,
+            $configurationHelper,
+            $translationHelper,
+            $cartHelper,
+            $paymentOptionTemplateHelper,
+            $paymentOptionHelper
+        );
     }
 
     /**
@@ -113,244 +202,6 @@ class PaymentOptionsHookController extends FrontendHookController
      */
     public function run($params)
     {
-        //  Check if some products in cart are in the excludes listing
-        $diff = $this->cartData->getCartExclusion($params['cart']);
-
-        if (!empty($diff)) {
-            return [];
-        }
-
-        $installmentPlans = $this->eligibilityHelper->eligibilityCheck($this->context);
-        $idLang = $this->context->language->id;
-        $locale = $this->localeHelper->getLocaleByIdLangForWidget($idLang);
-
-        if (empty($installmentPlans)) {
-            return [];
-        }
-
-        $forEUComplianceModule = false;
-        if (array_key_exists('for_eu_compliance_module', $params)) {
-            $forEUComplianceModule = $params['for_eu_compliance_module'];
-        }
-
-        $paymentOptions = [];
-        $sortOptions = [];
-        $feePlans = json_decode(SettingsHelper::getFeePlans());
-        $countIteration = 1;
-        $totalCart = (float) $this->priceHelper->convertPriceToCents(
-            $this->toolsHelper->psRound((float) $this->context->cart->getOrderTotal(true, \Cart::BOTH), 2)
-        );
-
-        foreach ($installmentPlans as $plan) {
-            if (!$plan->isEligible) {
-                continue;
-            }
-
-            $first = 1 == $countIteration;
-            ++$countIteration;
-
-            $installment = $plan->installmentsCount;
-            $key = $this->settingsHelper->keyForInstallmentPlan($plan);
-            $plans = $plan->paymentPlan;
-            $creditInfo = [
-                'totalCart' => $totalCart,
-                'costCredit' => $plan->customerTotalCostAmount,
-                'totalCredit' => $plan->customerTotalCostAmount + $totalCart,
-                'taeg' => $plan->annualInterestRate,
-            ];
-            $isPayNow = ConstantsHelper::ALMA_KEY_PAYNOW === $key;
-            $isInPageEnabled = SettingsHelper::isInPageEnabled();
-
-            foreach ($plans as $keyPlan => $paymentPlan) {
-                $plans[$keyPlan]['human_date'] = $this->dateHelper->getDateFormat($locale, $paymentPlan['due_date']);
-                if (0 === $keyPlan) {
-                    $plans[$keyPlan]['human_date'] = $this->module->l('Today', 'PaymentOptionsHookController');
-                }
-
-                if ($isPayNow) {
-                    $plans[$keyPlan]['human_date'] = $this->module->l('Total', 'PaymentOptionsHookController');
-                }
-                if ($this->settingsHelper->isDeferredTriggerLimitDays($feePlans, $key)) {
-                    $plans[$keyPlan]['human_date'] = sprintf(
-                        $this->module->l('%s month later', 'PaymentOptionsHookController'),
-                        $keyPlan
-                    );
-                    if (0 === $keyPlan) {
-                        $plans[$keyPlan]['human_date'] = $this->customFieldsHelper->getDescriptionPaymentTriggerByLang($idLang);
-                    }
-                }
-            }
-            $isDeferred = $this->settingsHelper->isDeferred($plan);
-            $duration = $this->settingsHelper->getDuration($plan);
-            $fileTemplate = 'payment_button_pnx.tpl';
-            $valueBNPL = $installment;
-
-            $textPaymentButton = sprintf(
-                $this->customFieldsHelper->getBtnValueByLang(
-                    $idLang,
-                    PaymentButtonAdminFormBuilder::ALMA_PNX_BUTTON_TITLE
-                ),
-                $installment
-            );
-
-            $descPaymentButton = sprintf(
-                $this->customFieldsHelper->getBtnValueByLang(
-                    $idLang,
-                    PaymentButtonAdminFormBuilder::ALMA_PNX_BUTTON_DESC
-                ),
-                $installment
-            );
-
-            if ($installment > 4) {
-                $textPaymentButton = sprintf(
-                    $this->customFieldsHelper->getBtnValueByLang(
-                        $idLang,
-                        PaymentButtonAdminFormBuilder::ALMA_PNX_AIR_BUTTON_TITLE
-                    ),
-                    $installment
-                );
-                $descPaymentButton = sprintf(
-                    $this->customFieldsHelper->getBtnValueByLang(
-                        $idLang,
-                    PaymentButtonAdminFormBuilder::ALMA_PNX_AIR_BUTTON_DESC
-                    ),
-                    $installment
-                );
-                $isInPageEnabled = false;
-            }
-            if ($isDeferred) {
-                $fileTemplate = 'payment_button_deferred.tpl';
-                $valueBNPL = $duration;
-
-                $textPaymentButton = sprintf(
-                    $this->customFieldsHelper->getBtnValueByLang(
-                        $idLang,
-                        PaymentButtonAdminFormBuilder::ALMA_DEFERRED_BUTTON_TITLE
-                    ),
-                    $duration
-                );
-
-                $descPaymentButton = sprintf(
-                    $this->customFieldsHelper->getBtnValueByLang(
-                        $idLang,
-                        PaymentButtonAdminFormBuilder::ALMA_DEFERRED_BUTTON_DESC
-                    ),
-                    $duration
-                );
-            }
-            if ($isPayNow) {
-                $textPaymentButton = $this->customFieldsHelper->getBtnValueByLang(
-                    $idLang,
-                    PaymentButtonAdminFormBuilder::ALMA_PAY_NOW_BUTTON_TITLE
-                );
-
-                $descPaymentButton = $this->customFieldsHelper->getBtnValueByLang(
-                    $idLang,
-                    PaymentButtonAdminFormBuilder::ALMA_PAY_NOW_BUTTON_DESC
-                );
-            }
-
-            $action = $this->context->link->getModuleLink(
-                $this->module->name,
-                'payment',
-                ['key' => $key],
-                true
-            );
-
-            $paymentOption = $this->createPaymentOption(
-                $forEUComplianceModule,
-                $textPaymentButton,
-                $action,
-                $isDeferred,
-                $valueBNPL
-            );
-
-            if (!$forEUComplianceModule) {
-                $templateVar = [
-                    'keyPlan' => $installment . '-' . $duration,
-                    'action' => $action,
-                    'desc' => $descPaymentButton,
-                    'plans' => (array) $plans,
-                    'deferred_trigger_limit_days' => $feePlans->$key->deferred_trigger_limit_days,
-                    'apiMode' => strtoupper(SettingsHelper::getActiveMode()),
-                    'merchantId' => SettingsHelper::getMerchantId(),
-                    'isInPageEnabled' => $isInPageEnabled,
-                    'first' => $first,
-                    'creditInfo' => $creditInfo,
-                    'installment' => $installment,
-                    'deferredDays' => $plan->deferredDays,
-                    'deferredMonths' => $plan->deferredMonths,
-                    'locale' => $locale,
-                ];
-                if ($isDeferred) {
-                    $templateVar['installmentText'] = sprintf(
-                        $this->module->l('0 € today then %1$s on %2$s', 'PaymentOptionsHookController'),
-                        PriceHelper::formatPriceToCentsByCurrencyId($plans[0]['purchase_amount'] + $plans[0]['customer_fee']),
-                        $this->dateHelper->getDateFormat($locale, $plans[0]['due_date'])
-                    );
-                }
-                $this->context->smarty->assign($templateVar);
-                $template = $this->context->smarty->fetch(
-                    "module:{$this->module->name}/views/templates/hook/{$fileTemplate}"
-                );
-                $paymentOption->setAdditionalInformation($template);
-                if ($isInPageEnabled) {
-                    $paymentOption->setForm($this->context->smarty->fetch(
-                        "module:{$this->module->name}/views/templates/front/payment_form_inpage.tpl"
-                    ));
-                }
-            }
-            $sortOptions[$key] = $feePlans->$key->order;
-            $paymentOptions[$key] = $paymentOption;
-        }
-
-        asort($sortOptions);
-        $payment = [];
-        foreach (array_keys($sortOptions) as $key) {
-            $payment[] = $paymentOptions[$key];
-        }
-
-        return $payment;
-    }
-
-    /**
-     * Create Payment option.
-     *
-     * @param bool $forEUComplianceModule
-     * @param string $ctaText
-     * @param string $action
-     * @param bool $isDeferred
-     * @param int $valueBNPL
-     *
-     * @return PaymentOption
-     */
-    private function createPaymentOption($forEUComplianceModule, $ctaText, $action, $isDeferred, $valueBNPL)
-    {
-        $baseDir = _PS_MODULE_DIR_ . $this->module->name;
-
-        if ($isDeferred) {
-            $logoName = "{$valueBNPL}j_logo.svg";
-        } else {
-            $logoName = "p{$valueBNPL}x_logo.svg";
-        }
-
-        if ($forEUComplianceModule) {
-            $logo = \Media::getMediaPath("{$baseDir}/views/img/logos/alma_payment_logos_tiny.svg");
-            $paymentOption = [
-                'cta_text' => $ctaText,
-                'action' => $action,
-                'logo' => $logo,
-            ];
-        } else {
-            $paymentOption = new PaymentOption();
-            $logo = \Media::getMediaPath("{$baseDir}/views/img/logos/{$logoName}");
-            $paymentOption
-                ->setModuleName($this->module->name)
-                ->setCallToActionText($ctaText)
-                ->setAction($action)
-                ->setLogo($logo);
-        }
-
-        return $paymentOption;
+        return $this->paymentService->createPaymentOptions($params);
     }
 }

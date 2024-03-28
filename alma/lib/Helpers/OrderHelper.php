@@ -50,6 +50,9 @@ class OrderHelper
      */
     private $orders;
 
+    /**
+     * @codeCoverageIgnore
+     */
     public function __construct()
     {
         $this->defaultStatesExcluded = [6, 7, 8];
@@ -136,5 +139,15 @@ class OrderHelper
         }
 
         return $orderPayment;
+    }
+
+    /**
+     * @param int $id
+     *
+     * @return mixed
+     */
+    public function getCustomerNbOrders($id)
+    {
+        return \Order::getCustomerNbOrders($id);
     }
 }

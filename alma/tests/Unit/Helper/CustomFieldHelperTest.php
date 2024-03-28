@@ -24,9 +24,12 @@
 
 namespace Alma\PrestaShop\Tests\Unit\Helper;
 
+use Alma\PrestaShop\Helpers\ConfigurationHelper;
 use Alma\PrestaShop\Helpers\CustomFieldsHelper;
 use Alma\PrestaShop\Helpers\LanguageHelper;
 use Alma\PrestaShop\Helpers\LocaleHelper;
+use Alma\PrestaShop\Helpers\SettingsHelper;
+use Alma\PrestaShop\Helpers\ShopHelper;
 use PHPUnit\Framework\TestCase;
 
 class CustomFieldHelperTest extends TestCase
@@ -54,7 +57,11 @@ class CustomFieldHelperTest extends TestCase
 
     public function setUp()
     {
-        $this->customFieldsHelper = new CustomFieldsHelper(new LanguageHelper(), new LocaleHelper(new LanguageHelper()));
+        $this->customFieldsHelper = new CustomFieldsHelper(
+            new LanguageHelper(),
+            new LocaleHelper(new LanguageHelper()),
+            new SettingsHelper(new ShopHelper(), new ConfigurationHelper())
+        );
     }
 
     public function testCustomFields()
@@ -185,5 +192,9 @@ class CustomFieldHelperTest extends TestCase
     {
         $result = $this->customFieldsHelper->getDescriptionPaymentTriggerByLang('1');
         $this->assertEquals('At shipping', $result);
+    }
+
+    public function testGetTextButton()
+    {
     }
 }

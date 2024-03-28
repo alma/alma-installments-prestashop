@@ -32,9 +32,11 @@ use Alma\API\Entities\Payment;
 use Alma\API\RequestError;
 use Alma\PrestaShop\Exceptions\PaymentNotFoundException;
 use Alma\PrestaShop\Helpers\ClientHelper;
+use Alma\PrestaShop\Helpers\CurrencyHelper;
 use Alma\PrestaShop\Helpers\OrderHelper;
 use Alma\PrestaShop\Helpers\PriceHelper;
 use Alma\PrestaShop\Helpers\RefundHelper;
+use Alma\PrestaShop\Helpers\ToolsHelper;
 use Alma\PrestaShop\Hooks\AdminHookController;
 use Alma\PrestaShop\Logger;
 
@@ -48,10 +50,15 @@ final class DisplayRefundsHookController extends AdminHookController
      */
     protected $priceHelper;
 
+    /**
+     * @codeCoverageIgnore
+     *
+     * @param $module
+     */
     public function __construct($module)
     {
         parent::__construct($module);
-        $this->priceHelper = new PriceHelper();
+        $this->priceHelper = new PriceHelper(new ToolsHelper(), new CurrencyHelper());
     }
 
     /**
@@ -105,7 +112,10 @@ final class DisplayRefundsHookController extends AdminHookController
             $percentRefund = PriceHelper::calculatePercentage($totalRefundInCents, $totalOrderInCents);
 
             $refundData = [
-                'totalRefundPrice' => PriceHelper::formatPriceToCentsByCurrencyId($totalRefundInCents, (int) $order->id_currency),
+                'totalRefundPrice' => $this->priceHelper->formatPriceToCentsByCurrencyId(
+                    $totalRefundInCents,
+                    (int) $order->id_currency
+                ),
                 'percentRefund' => $percentRefund,
             ];
         }
@@ -113,10 +123,16 @@ final class DisplayRefundsHookController extends AdminHookController
         $currency = new \Currency($order->id_currency);
         $orderData = [
             'id' => $order->id,
-            'maxAmount' => PriceHelper::formatPriceToCentsByCurrencyId($this->priceHelper->convertPriceToCents($order->total_paid_tax_incl), (int) $order->id_currency),
+            'maxAmount' => $this->priceHelper->formatPriceToCentsByCurrencyId(
+                $this->priceHelper->convertPriceToCents($order->total_paid_tax_incl),
+                (int) $order->id_currency
+            ),
             'currencySymbol' => $currency->sign,
             'ordersId' => $ordersId,
-            'paymentTotalPrice' => PriceHelper::formatPriceToCentsByCurrencyId($totalOrderInCents, (int) $order->id_currency),
+            'paymentTotalPrice' => $this->priceHelper->formatPriceToCentsByCurrencyId(
+                $totalOrderInCents,
+                (int) $order->id_currency
+            ),
         ];
         $wording = [
             'title' => $this->module->l('Alma refund', 'DisplayRefundsHookController'),

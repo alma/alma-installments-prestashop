@@ -24,10 +24,12 @@
 
 namespace Alma\PrestaShop\Helpers;
 
+use Alma\API\Endpoints\Results\Eligibility;
 use Alma\API\Entities\Merchant;
 use Alma\PrestaShop\Exceptions\ActivationException;
 use Alma\PrestaShop\Exceptions\ApiMerchantsException;
 use Alma\PrestaShop\Exceptions\WrongCredentialsException;
+use Alma\PrestaShop\Logger;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -35,6 +37,20 @@ if (!defined('_PS_VERSION_')) {
 
 class ApiHelper
 {
+    /**
+     * @var ClientHelper
+     */
+    protected $clientHelper;
+
+    /**
+     * @param ClientHelper $clientHelper
+     * @codeCoverageIgnore
+     */
+    public function __construct($clientHelper)
+    {
+        $this->clientHelper = $clientHelper;
+    }
+
     /**
      * @return Merchant|null
      *
@@ -70,5 +86,27 @@ class ApiHelper
         }
 
         return $merchant;
+    }
+
+    /**
+     * @param array $paymentData
+     *
+     * @return Eligibility|Eligibility[]|array
+     */
+    public function getPaymentEligibility($paymentData)
+    {
+        try {
+            return $this->clientHelper->getAlmaClient()->payments->eligibility($paymentData);
+        } catch (\Exception $e) {
+            Logger::instance()->error(
+                sprintf(
+                    'Error on check cart eligibility - payload : %s - message : %s',
+                    json_encode($paymentData),
+                    $e->getMessage()
+                )
+            );
+        }
+
+        return [];
     }
 }

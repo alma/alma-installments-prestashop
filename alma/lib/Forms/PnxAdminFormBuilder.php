@@ -26,9 +26,11 @@ namespace Alma\PrestaShop\Forms;
 
 use Alma\API\Entities\FeePlan;
 use Alma\PrestaShop\Helpers\ConfigurationHelper;
+use Alma\PrestaShop\Helpers\CurrencyHelper;
 use Alma\PrestaShop\Helpers\PriceHelper;
 use Alma\PrestaShop\Helpers\SettingsHelper;
 use Alma\PrestaShop\Helpers\ShopHelper;
+use Alma\PrestaShop\Helpers\ToolsHelper;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -44,11 +46,25 @@ class PnxAdminFormBuilder extends AbstractAlmaAdminFormBuilder
      */
     protected $settingsHelper;
 
+    /**
+     * @var PriceHelper
+     */
+    protected $priceHelper;
+
+    /**
+     * @codeCoverageIgnore
+     *
+     * @param $module
+     * @param $context
+     * @param $image
+     * @param $config
+     */
     public function __construct($module, $context, $image, $config = [])
     {
         parent::__construct($module, $context, $image, $config);
 
         $this->settingsHelper = new SettingsHelper(new ShopHelper(), new ConfigurationHelper());
+        $this->priceHelper = new PriceHelper(new ToolsHelper(), new CurrencyHelper());
     }
 
     /**
@@ -66,8 +82,8 @@ class PnxAdminFormBuilder extends AbstractAlmaAdminFormBuilder
          */
         $tabId = $key = $feePlan->getPlanKey();
 
-        $minAmount = (int) PriceHelper::convertPriceFromCents($feePlan->min_purchase_amount);
-        $maxAmount = (int) PriceHelper::convertPriceFromCents($feePlan->max_purchase_amount);
+        $minAmount = (int) $this->priceHelper->convertPriceFromCents($feePlan->min_purchase_amount);
+        $maxAmount = (int) $this->priceHelper->convertPriceFromCents($feePlan->max_purchase_amount);
 
         $tpl = $this->context->smarty->createTemplate(
             "{$this->module->local_path}views/templates/hook/pnx_fees.tpl"
