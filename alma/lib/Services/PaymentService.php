@@ -328,7 +328,6 @@ class PaymentService
 
             return $this->paymentOptionHelper->sortPaymentsOptions($sortOptions, $paymentOptions);
         } catch (\Exception $e) {
-            var_dump($e->getMessage());
             Logger::instance()->error(
                 sprintf(
                 'An error occured when displaying options payments - message : %s, %s',
