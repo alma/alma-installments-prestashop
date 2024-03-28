@@ -52,7 +52,7 @@ class CartHelper
     protected $priceHelper;
 
     /**
-     * @var
+     * @var CartData
      */
     protected $cartData;
 
