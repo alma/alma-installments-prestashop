@@ -108,7 +108,8 @@ class SubscriptionHelper
             !$this->almaInsuranceProductRepository->updateSubscription(
                 $sid,
                 $subscriptionArray['state'],
-                $subscriptionArray['broker_subscription_id']
+                $subscriptionArray['broker_subscription_id'],
+                $subscriptionArray['broker_subscription_reference']
             )
         ) {
             throw new SubscriptionException('Error to update DB Alma Insurance Product', 500);

@@ -98,7 +98,7 @@ class InsuranceSubscriptionService
                 $orderPayment->transaction_id
             );
 
-            $this->confirmSubscriptions($order->id_cart, $order->id_shop, $subscriptions);
+            $this->confirmSubscriptions($order->id, $order->id_shop, $subscriptions);
             $this->insuranceApiService->sendCmsReferenceSubscribedForTracking($cart);
         }
     }

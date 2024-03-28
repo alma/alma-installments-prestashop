@@ -229,15 +229,16 @@ class AlmaInsuranceProductRepository
      * @param string $subscriptionId
      * @param string $status
      * @param string $subscriptionBrokerId
+     * @param string $subscriptionBrokerReference
      *
      * @return bool
      */
-    public function updateSubscription($subscriptionId, $status, $subscriptionBrokerId)
+    public function updateSubscription($subscriptionId, $status, $subscriptionBrokerId, $subscriptionBrokerReference)
     {
         if (
             !\Db::getInstance()->execute(
                 'UPDATE `' . _DB_PREFIX_ . 'alma_insurance_product`
-                SET `subscription_state` ="' . $status . '", `subscription_broker_id`= "' . $subscriptionBrokerId . '"
+                SET `subscription_state` ="' . $status . '", `subscription_broker_id`= "' . $subscriptionBrokerId . '", `subscription_broker_reference`= "' . $subscriptionBrokerReference . '"
                 WHERE `subscription_id` ="' . $subscriptionId . '"'
             )
         ) {
@@ -271,6 +272,7 @@ class AlmaInsuranceProductRepository
             `subscription_id` varchar(255) null,
             `subscription_amount` int(10) unsigned NULL,
             `subscription_broker_id` varchar(255) null,
+            `subscription_broker_reference` varchar(255) null,
             `subscription_state` varchar(255) null,
             `date_of_cancelation` datetime null,
             `reason_of_cancelation` text null,   
@@ -349,7 +351,6 @@ class AlmaInsuranceProductRepository
             WHERE `id_order` = ' . (int) $orderId . '
             AND `insurance_contract_id` = "' . $contractId . '"
             AND `cms_reference` = "' . $cmsReference . '"
-            AND `subscription_state` is NULL
             AND `id_shop` = ' . (int) $shopId;
 
         return \Db::getInstance()->getRow($sql);
