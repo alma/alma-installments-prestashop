@@ -29,6 +29,7 @@ use Alma\API\ParamsError;
 use Alma\PrestaShop\Helpers\CarrierHelper;
 use Alma\PrestaShop\Helpers\CartHelper;
 use Alma\PrestaShop\Helpers\ConfigurationHelper;
+use Alma\PrestaShop\Helpers\CurrencyHelper;
 use Alma\PrestaShop\Helpers\CustomFieldsHelper;
 use Alma\PrestaShop\Helpers\LanguageHelper;
 use Alma\PrestaShop\Helpers\LocaleHelper;
@@ -82,7 +83,7 @@ class PaymentData
     {
         $this->toolsHelper = new ToolsHelper();
         $this->settingsHelper = new SettingsHelper(new ShopHelper(), new ConfigurationHelper());
-        $this->priceHelper = new PriceHelper();
+        $this->priceHelper = new PriceHelper($this->toolsHelper, new CurrencyHelper());
         $this->customFieldsHelper = new CustomFieldsHelper(new LanguageHelper(), new LocaleHelper(new LanguageHelper()));
         $this->cartData = new CartData(new ProductHelper(), $this->settingsHelper);
         $this->shippingData = new ShippingData();

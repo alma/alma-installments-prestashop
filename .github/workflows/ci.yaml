@@ -16,5 +16,7 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
-    - name: Run unit tests
-      run: make test
+    - name: Run unit Tests and Coverage
+      run: make coverage
+      env:
+        XDEBUG_MODE: coverage

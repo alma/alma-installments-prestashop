@@ -24,7 +24,9 @@
 
 namespace Alma\PrestaShop\Model;
 
+use Alma\PrestaShop\Helpers\CurrencyHelper;
 use Alma\PrestaShop\Helpers\PriceHelper;
+use Alma\PrestaShop\Helpers\ToolsHelper;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -39,7 +41,7 @@ class ShippingData
 
     public function __construct()
     {
-        $this->priceHelper = new PriceHelper();
+        $this->priceHelper = new PriceHelper(new ToolsHelper(), new CurrencyHelper());
     }
 
     /**

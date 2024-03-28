@@ -30,6 +30,7 @@ if (!defined('_PS_VERSION_')) {
 
 use Alma\PrestaShop\Forms\ExcludedCategoryAdminFormBuilder;
 use Alma\PrestaShop\Helpers\ConfigurationHelper;
+use Alma\PrestaShop\Helpers\CurrencyHelper;
 use Alma\PrestaShop\Helpers\CustomFieldsHelper;
 use Alma\PrestaShop\Helpers\EligibilityHelper;
 use Alma\PrestaShop\Helpers\LanguageHelper;
@@ -38,6 +39,7 @@ use Alma\PrestaShop\Helpers\PriceHelper;
 use Alma\PrestaShop\Helpers\ProductHelper;
 use Alma\PrestaShop\Helpers\SettingsHelper;
 use Alma\PrestaShop\Helpers\ShopHelper;
+use Alma\PrestaShop\Helpers\ToolsHelper;
 use Alma\PrestaShop\Hooks\FrontendHookController;
 use Alma\PrestaShop\Model\CartData;
 
@@ -79,7 +81,7 @@ class DisplayShoppingCartFooterHookController extends FrontendHookController
 
         $this->localeHelper = new LocaleHelper(new LanguageHelper());
         $this->eligibilityHelper = new EligibilityHelper();
-        $this->priceHelper = new PriceHelper();
+        $this->priceHelper = new PriceHelper(new ToolsHelper(), new CurrencyHelper());
         $this->customFieldsHelper = new CustomFieldsHelper(new LanguageHelper(), $this->localeHelper);
         $this->cartData = new CartData(new ProductHelper(), new SettingsHelper(new ShopHelper(), new ConfigurationHelper()));
     }

@@ -9,4 +9,6 @@ set -o pipefail
 
 bash /tmp/docker_install.sh
 
-exec "$@"
+./vendor/bin/phpunit -c phpunit.ci.xml --coverage-xml ./.coverage
+pwd
+php ./phpunit-threshold.php
