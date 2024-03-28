@@ -60,6 +60,9 @@ class ExcludedCategoryAdminFormBuilder extends AbstractAlmaAdminFormBuilder
         $this->settingsHelper = new SettingsHelper(new ShopHelper(), new ConfigurationHelper());
     }
 
+    /**
+     * @throws \SmartyException
+     */
     protected function configForm()
     {
         // Exclusion

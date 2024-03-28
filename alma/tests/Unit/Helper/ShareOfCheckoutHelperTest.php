@@ -41,39 +41,6 @@ class ShareOfCheckoutHelperTest extends TestCase
     }
 
     /**
-     * @dataProvider dateErrorDataProvider
-     *
-     * @param $dateErrorData
-     *
-     * @return void
-     *
-     * @throws \PrestaShopDatabaseException
-     * @throws \PrestaShopException
-     */
-    public function testShareDaysNoDate($dateErrorData)
-    {
-        $shareOfCheckoutHelperMock = Mockery::mock(ShareOfCheckoutHelper::class, [$this->orderHelperMock])->shouldAllowMockingProtectedMethods()->makePartial();
-        $shareOfCheckoutHelperMock->shouldReceive('getEnabledDate')->andReturn($dateErrorData);
-        $this->assertFalse($shareOfCheckoutHelperMock->shareDays());
-    }
-
-    /**
-     * @return void
-     *
-     * @throws \PrestaShopDatabaseException
-     * @throws \PrestaShopException
-     */
-    public function testShareDaysReturnTrueWithValidTimestamp()
-    {
-        $this->orderHelperMock->shouldReceive('resetOrderList');
-        $shareOfCheckoutHelperMock = Mockery::mock(ShareOfCheckoutHelper::class, [$this->orderHelperMock])->shouldAllowMockingProtectedMethods()->makePartial();
-        $shareOfCheckoutHelperMock->shouldReceive('getEnabledDate')->andReturn('1654041601');
-        $shareOfCheckoutHelperMock->shouldReceive('getDatesInInterval')->andReturn(['2022-01-01', '2022-01-03']);
-        $shareOfCheckoutHelperMock->shouldReceive('putDay');
-        $this->assertTrue($shareOfCheckoutHelperMock->shareDays());
-    }
-
-    /**
      * test get Payload
      *
      * @dataProvider ordersGetPayload
@@ -82,9 +49,6 @@ class ShareOfCheckoutHelperTest extends TestCase
      * @param $expectedPayload
      *
      * @return void
-     *
-     * @throws \PrestaShopDatabaseException
-     * @throws \PrestaShopException
      */
     public function testGetPayload($ordersMock, $expectedPayload)
     {
@@ -92,8 +56,7 @@ class ShareOfCheckoutHelperTest extends TestCase
         $orderHelperMock->shouldReceive('getOrdersByDate')->andReturn($ordersMock);
 
         $shareOfCheckoutHelper = new ShareOfCheckoutHelper($orderHelperMock);
-        $shareOfCheckoutHelper->setStartDate('2022-01-01');
-        $payload = $shareOfCheckoutHelper->getPayload();
+        $payload = $shareOfCheckoutHelper->getPayload('2022-01-01');
 
         $this->assertEquals($expectedPayload, $payload);
     }
@@ -108,10 +71,10 @@ class ShareOfCheckoutHelperTest extends TestCase
     public function testGetTotalPaymentMethods($ordersMock, $expectedTotalPaymentMethods)
     {
         $orderHelperMock = Mockery::mock(OrderHelper::class);
-        $orderHelperMock->shouldReceive('getOrdersByDate')->andReturn($ordersMock);
 
         $shareOfCheckoutHelper = new ShareOfCheckoutHelper($orderHelperMock);
-        $getTotalPaymentMethods = $shareOfCheckoutHelper->getTotalPaymentMethods();
+        $getTotalPaymentMethods = $shareOfCheckoutHelper->getTotalPaymentMethods($ordersMock);
+
         $this->assertEquals($expectedTotalPaymentMethods, $getTotalPaymentMethods);
     }
 
@@ -124,17 +87,13 @@ class ShareOfCheckoutHelperTest extends TestCase
      * @param $expectedTotalOrders
      *
      * @return void
-     *
-     * @throws \PrestaShopDatabaseException
-     * @throws \PrestaShopException
      */
     public function testGetTotalOrders($ordersMock, $expectedTotalOrders)
     {
         $orderHelperMock = Mockery::mock(OrderHelper::class);
-        $orderHelperMock->shouldReceive('getOrdersByDate')->andReturn($ordersMock);
 
         $shareOfCheckoutHelper = new ShareOfCheckoutHelper($orderHelperMock);
-        $getTotalOrders = $shareOfCheckoutHelper->getTotalOrders();
+        $getTotalOrders = $shareOfCheckoutHelper->getTotalOrders($ordersMock);
         $this->assertEquals($expectedTotalOrders, $getTotalOrders);
     }
 

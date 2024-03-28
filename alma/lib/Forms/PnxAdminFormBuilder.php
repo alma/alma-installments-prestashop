@@ -68,12 +68,18 @@ class PnxAdminFormBuilder extends AbstractAlmaAdminFormBuilder
     }
 
     /**
+     * @param $feePlan
      * @param int $duration
      *
      * @return array
+     *
+     * @throws \SmartyException
      */
     protected function buildPnxForm($feePlan, $duration)
     {
+        /**
+         * @var FeePlan $feePlan
+         */
         $tabId = $key = $feePlan->getPlanKey();
 
         $minAmount = (int) $this->priceHelper->convertPriceFromCents($feePlan->min_purchase_amount);
