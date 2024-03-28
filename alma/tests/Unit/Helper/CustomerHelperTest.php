@@ -36,7 +36,7 @@ class CustomerHelperTest extends TestCase
     {
     }
 
-    public function isNewCustomer()
+    public function testIsNewCustomer()
     {
     }
 }
