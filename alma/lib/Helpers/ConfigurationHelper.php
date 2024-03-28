@@ -28,6 +28,9 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
+/**
+ * Class LanguageHelper.
+ */
 class ConfigurationHelper
 {
     /**
@@ -48,18 +51,35 @@ class ConfigurationHelper
     }
 
     /**
-     * Check if the key exists in database
+     * Get a single configuration value (in one language only).
      *
-     * @param string $configKey
+     * @param string $key Key wanted
+     * @param int $idLang Language ID
+     *
+     * @codeCoverageIgnore
+     *
+     * @return string|false Value
+     */
+    public function get($key, $idLang = null, $idShopGroup = null, $idShop = null, $default = false)
+    {
+        return \Configuration::get($key, $idLang, $idShopGroup, $idShop, $default);
+    }
+
+    /**
+     * Check if key exists in configuration.
+     *
+     * @param string $key
+     * @param int $idLang
+     * @param int $idShopGroup
+     * @param int $idShop
+     *
+     * @codeCoverageIgnore
      *
      * @return bool
      */
-    public function hasKey($configKey)
+    public function hasKey($key, $idLang = null, $idShopGroup = null, $idShop = null)
     {
-        $idShop = \Shop::getContextShopID(true);
-        $idShopGroup = \Shop::getContextShopGroupID(true);
-
-        return \Configuration::hasKey($configKey, null, $idShopGroup, $idShop);
+        return \Configuration::hasKey($key, $idLang, $idShopGroup, $idShop);
     }
 
     /**

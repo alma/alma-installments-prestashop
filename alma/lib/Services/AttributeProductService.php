@@ -24,6 +24,7 @@
 
 namespace Alma\PrestaShop\Services;
 
+use Alma\PrestaShop\Helpers\LanguageHelper;
 use Alma\PrestaShop\Helpers\LocaleHelper;
 use Alma\PrestaShop\Repositories\AttributeRepository;
 
@@ -51,7 +52,7 @@ class AttributeProductService
     public function __construct()
     {
         $this->context = \Context::getContext();
-        $this->localeHelper = new LocaleHelper();
+        $this->localeHelper = new LocaleHelper(new LanguageHelper());
         $this->attributeRepository = new AttributeRepository();
     }
 

@@ -49,6 +49,26 @@ use Alma\PrestaShop\Forms\ShareOfCheckoutAdminFormBuilder;
 class SettingsHelper
 {
     /**
+     * @var ShopHelper
+     */
+    protected $shopHelper;
+
+    /**
+     * @var ConfigurationHelper
+     */
+    protected $configurationHelper;
+
+    /**
+     * @param ShopHelper $shopHelper
+     * @param ConfigurationHelper $configurationHelper
+     */
+    public function __construct($shopHelper, $configurationHelper)
+    {
+        $this->shopHelper = $shopHelper;
+        $this->configurationHelper = $configurationHelper;
+    }
+
+    /**
      * Translate strings.
      *
      * @param string $str
@@ -66,6 +86,8 @@ class SettingsHelper
      * @param string $configKey
      * @param string $default
      *
+     * @deprecated use getKey()
+     *
      * @return false|mixed|string|null
      */
     public static function get($configKey, $default = null)
@@ -77,6 +99,32 @@ class SettingsHelper
 
         // Configuration::get in PrestaShop 1.5 doesn't have a default argument, so we handle it here
         if (!$value && !\Configuration::hasKey($configKey, null, $idShopGroup, $idShop)) {
+            $value = $default;
+        }
+
+        return $value;
+    }
+
+    /**
+     * Get value from key in config.
+     *
+     * @param string $configKey
+     * @param string $default
+     *
+     * @return false|mixed|string|null
+     */
+    public function getKey($configKey, $default = null)
+    {
+        $idShop = $this->shopHelper->getContextShopID(true);
+        $idShopGroup = $this->shopHelper->getContextShopGroupID(true);
+
+        $value = $this->configurationHelper->get($configKey, null, $idShopGroup, $idShop, $default);
+
+        // Configuration::get in PrestaShop 1.5 doesn't have a default argument, so we handle it here
+        if (
+            !$value
+            && !$this->configurationHelper->hasKey($configKey, null, $idShopGroup, $idShop)
+        ) {
             $value = $default;
         }
 
@@ -473,17 +521,17 @@ class SettingsHelper
     /**
      * @return bool
      */
-    public static function isPaymentTriggerEnabledByState()
+    public function isPaymentTriggerEnabledByState()
     {
-        return (bool) static::get('ALMA_PAYMENT_ON_TRIGGERING_ENABLED', 0);
+        return (bool) $this->getKey('ALMA_PAYMENT_ON_TRIGGERING_ENABLED', 0);
     }
 
     /**
      * @return array
      */
-    public static function getExcludedCategories()
+    public function getExcludedCategories()
     {
-        $categories = static::get('ALMA_EXCLUDED_CATEGORIES');
+        $categories = $this->getKey('ALMA_EXCLUDED_CATEGORIES');
 
         if (
             null !== $categories
@@ -498,9 +546,9 @@ class SettingsHelper
     /**
      * @return array
      */
-    public static function getExcludedCategoryNames()
+    public function getExcludedCategoryNames()
     {
-        $categories = static::getExcludedCategories();
+        $categories = $this->getExcludedCategories();
 
         if (!$categories) {
             return [];
@@ -527,9 +575,9 @@ class SettingsHelper
      *
      * @return void
      */
-    public static function addExcludedCategories($idCategory)
+    public function addExcludedCategories($idCategory)
     {
-        $excludedCategories = static::getExcludedCategories();
+        $excludedCategories = $this->getExcludedCategories();
 
         $category = CategoryHelper::fromCategory($idCategory);
 
@@ -549,9 +597,9 @@ class SettingsHelper
      *
      * @return void
      */
-    public static function removeExcludedCategories($idCategory)
+    public function removeExcludedCategories($idCategory)
     {
-        $excludedCategories = static::getExcludedCategories();
+        $excludedCategories = $this->getExcludedCategories();
 
         $category = CategoryHelper::fromCategory($idCategory);
 
@@ -589,11 +637,11 @@ class SettingsHelper
      *
      * @return bool Whether this product belongs to an excluded category
      */
-    public static function isProductExcluded($productId)
+    public function isProductExcluded($productId)
     {
         $excludedCategories = [];
 
-        foreach (static::getExcludedCategories() as $categoryId) {
+        foreach ($this->getExcludedCategories() as $categoryId) {
             $excludedCategories[] = ['id_category' => (int) $categoryId];
         }
 
@@ -695,13 +743,13 @@ class SettingsHelper
     }
 
     /**
-     * @param Alma\API\Entities\FeePlan $plan
+     * @param \Alma\API\Entities\FeePlan $plan
      *
      * @return string
      */
-    public static function keyForFeePlan($plan)
+    public function keyForFeePlan($plan)
     {
-        return static::key(
+        return $this->key(
             $plan->kind,
             (int) $plan->installments_count,
             (int) $plan->deferred_days,
@@ -710,13 +758,13 @@ class SettingsHelper
     }
 
     /**
-     * @param Alma\API\Entities\FeePlan $plan
+     * @param \Alma\API\Entities\FeePlan $plan
      *
      * @return string
      */
-    public static function keyForInstallmentPlan($plan)
+    public function keyForInstallmentPlan($plan)
     {
-        return static::key(
+        return $this->key(
             'general',
             (int) $plan->installmentsCount,
             (int) $plan->deferredDays,
@@ -732,7 +780,7 @@ class SettingsHelper
      *
      * @return string
      */
-    private static function key(
+    public function key(
         $planKind,
         $installmentsCount,
         $deferredDays,
@@ -750,11 +798,11 @@ class SettingsHelper
     }
 
     /**
-     * @param Alma\API\Entities\FeePlan $plan
+     * @param \Alma\API\Entities\FeePlan $plan
      *
      * @return bool
      */
-    public static function isDeferred($plan)
+    public function isDeferred($plan)
     {
         if (isset($plan->deferred_days)) {
             return 0 < $plan->deferred_days || 0 < $plan->deferred_months;
@@ -766,12 +814,12 @@ class SettingsHelper
     /**
      * Check if is deferred trigger by value in fee plans and enabled in config.
      *
-     * @param object $feePlans
+     * @param object|array $feePlans
      * @param string|null $key
      *
      * @return bool
      */
-    public static function isDeferredTriggerLimitDays($feePlans, $key = null)
+    public function isDeferredTriggerLimitDays($feePlans, $key = null)
     {
         if (!empty($key)) {
             $isDeferredTriggerLimitDay = !empty($feePlans->$key->deferred_trigger_limit_days);
@@ -779,7 +827,7 @@ class SettingsHelper
             $isDeferredTriggerLimitDay = !empty($feePlans['deferred_trigger_limit_days']);
         }
 
-        return $isDeferredTriggerLimitDay && SettingsHelper::isPaymentTriggerEnabledByState();
+        return $isDeferredTriggerLimitDay && $this->isPaymentTriggerEnabledByState();
     }
 
     /**
@@ -787,7 +835,7 @@ class SettingsHelper
      *
      * @return float|int
      */
-    public static function getDuration($plan)
+    public function getDuration($plan)
     {
         if (isset($plan->deferred_days)) {
             return ($plan->deferred_months * 30) + $plan->deferred_days;

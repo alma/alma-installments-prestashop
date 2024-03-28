@@ -80,6 +80,8 @@
                      data-merchantid="{$merchantId|escape:'htmlall':'UTF-8'}"
                      data-isinpageenabled="{$option.isInPageEnabled|escape:'htmlall':'UTF-8'}"
                      data-installment="{$option.pnx|escape:'htmlall':'UTF-8'}"
+                     data-deferreddays="{$option.deferredDays|escape:'htmlall':'UTF-8'}"
+                     data-deferredmonths="{$option.deferredMonths|escape:'htmlall':'UTF-8'}"
                      data-purchaseamount="{$creditInfo.totalCart|escape:'htmlall':'UTF-8'}"
                      data-locale="{$option.locale|escape:'htmlall':'UTF-8'}">
                     <div id="alma-inpage-iframe-plan-{$option.paymentOptionKey|escape:'htmlall':'UTF-8'}" class="alma-inpage-iframe"></div>

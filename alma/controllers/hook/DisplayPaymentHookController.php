@@ -28,18 +28,75 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
+use Alma\PrestaShop\Helpers\ConfigurationHelper;
 use Alma\PrestaShop\Helpers\ConstantsHelper;
 use Alma\PrestaShop\Helpers\DateHelper;
 use Alma\PrestaShop\Helpers\EligibilityHelper;
+use Alma\PrestaShop\Helpers\LanguageHelper;
 use Alma\PrestaShop\Helpers\LocaleHelper;
 use Alma\PrestaShop\Helpers\PriceHelper;
 use Alma\PrestaShop\Helpers\SettingsCustomFieldsHelper;
 use Alma\PrestaShop\Helpers\SettingsHelper;
+use Alma\PrestaShop\Helpers\ShopHelper;
+use Alma\PrestaShop\Helpers\ToolsHelper;
 use Alma\PrestaShop\Hooks\FrontendHookController;
 use Alma\PrestaShop\Model\CartData;
 
 class DisplayPaymentHookController extends FrontendHookController
 {
+    /**
+     * @var DateHelper
+     */
+    protected $dateHelper;
+
+    /**
+     * @var LocaleHelper
+     */
+    protected $localeHelper;
+
+    /**
+     * @var SettingsHelper
+     */
+    protected $settingsHelper;
+
+    /**
+     * @var ToolsHelper
+     */
+    protected $toolsHelper;
+
+    /**
+     * @var EligibilityHelper
+     */
+    protected $eligibilityHelper;
+
+    /**
+     * @var PriceHelper
+     */
+    protected $priceHelper;
+
+    /**
+     * @var CartData
+     */
+    protected $cartData;
+
+    /**
+     * HookController constructor.
+     *
+     * @param $module Alma
+     */
+    public function __construct($module)
+    {
+        parent::__construct($module);
+
+        $this->dateHelper = new DateHelper();
+        $this->settingsHelper = new SettingsHelper(new ShopHelper(), new ConfigurationHelper());
+        $this->localeHelper = new LocaleHelper(new LanguageHelper());
+        $this->toolsHelper = new ToolsHelper();
+        $this->eligibilityHelper = new EligibilityHelper();
+        $this->priceHelper = new PriceHelper();
+        $this->cartData = new CartData();
+    }
+
     /**
      * Payment option for Hook DisplayPayment (Prestashop 1.6).
      *
@@ -50,15 +107,15 @@ class DisplayPaymentHookController extends FrontendHookController
     public function run($params)
     {
         // Check if some products in cart are in the excludes listing
-        $diff = CartData::getCartExclusion($params['cart']);
+        $diff = $this->cartData->getCartExclusion($params['cart']);
         if (!empty($diff)) {
             return false;
         }
 
         $idLang = $this->context->language->id;
-        $locale = LocaleHelper::localeByIdLangForWidget($idLang);
+        $locale = $this->localeHelper->getLocaleByIdLangForWidget($idLang);
 
-        $installmentPlans = EligibilityHelper::eligibilityCheck($this->context);
+        $installmentPlans = $this->eligibilityHelper->eligibilityCheck($this->context);
 
         if (empty($installmentPlans)) {
             return;
@@ -67,13 +124,13 @@ class DisplayPaymentHookController extends FrontendHookController
         $feePlans = json_decode(SettingsHelper::getFeePlans());
         $paymentOptions = [];
         $sortOptions = [];
-        $totalCart = (float) PriceHelper::convertPriceToCents(
-            \Tools::ps_round((float) $this->context->cart->getOrderTotal(true, \Cart::BOTH), 2)
+        $totalCart = (float) $this->priceHelper->convertPriceToCents(
+            $this->toolsHelper->psRound((float) $this->context->cart->getOrderTotal(true, \Cart::BOTH), 2)
         );
 
         foreach ($installmentPlans as $keyPlan => $plan) {
             $installment = $plan->installmentsCount;
-            $key = SettingsHelper::keyForInstallmentPlan($plan);
+            $key = $this->settingsHelper->keyForInstallmentPlan($plan);
             $plans = $plan->paymentPlan;
             $disabled = false;
             $creditInfo = [
@@ -83,7 +140,7 @@ class DisplayPaymentHookController extends FrontendHookController
                 'taeg' => $plan->annualInterestRate,
             ];
 
-            $isDeferred = SettingsHelper::isDeferred($plan);
+            $isDeferred = $this->settingsHelper->isDeferred($plan);
             $isPayNow = ConstantsHelper::ALMA_KEY_PAYNOW === $key;
 
             if (!$plan->isEligible) {
@@ -94,9 +151,10 @@ class DisplayPaymentHookController extends FrontendHookController
                     continue;
                 }
             }
-            $duration = SettingsHelper::getDuration($plan);
+            $duration = $this->settingsHelper->getDuration($plan);
             $valueLogo = $isDeferred ? $duration : $installment;
             $logo = $this->getAlmaLogo($isDeferred, $valueLogo);
+
             $paymentOption = [
                 'link' => $this->context->link->getModuleLink(
                     $this->module->name,
@@ -106,9 +164,16 @@ class DisplayPaymentHookController extends FrontendHookController
                 ),
                 'disabled' => $disabled,
                 'pnx' => $installment,
+                'deferredDays' => $plan->deferredDays,
+                'deferredMonths' => $plan->deferredMonths,
                 'logo' => $logo,
                 'plans' => $plans,
-                'installmentText' => $this->getInstallmentText($plans, $idLang, SettingsHelper::isDeferredTriggerLimitDays($feePlans, $key), $isPayNow),
+                'installmentText' => $this->getInstallmentText(
+                    $plans,
+                    $idLang,
+                    $this->settingsHelper->isDeferredTriggerLimitDays($feePlans, $key),
+                    $isPayNow
+                ),
                 'deferred_trigger_limit_days' => $feePlans->$key->deferred_trigger_limit_days,
                 'isDeferred' => $isDeferred,
                 'text' => sprintf(SettingsCustomFieldsHelper::getPnxButtonTitleByLang($idLang), $installment),
@@ -128,7 +193,6 @@ class DisplayPaymentHookController extends FrontendHookController
                 $paymentOption['key'] = $key;
                 $paymentOption['text'] = sprintf(SettingsCustomFieldsHelper::getPaymentButtonTitleDeferredByLang($idLang), $duration);
                 $paymentOption['desc'] = sprintf(SettingsCustomFieldsHelper::getPaymentButtonDescriptionDeferredByLang($idLang), $duration);
-                $paymentOption['isInPageEnabled'] = false;
             }
             if ($isPayNow) {
                 $paymentOption['text'] = SettingsCustomFieldsHelper::getPayNowButtonTitleByLang($idLang);
@@ -183,7 +247,7 @@ class DisplayPaymentHookController extends FrontendHookController
         return sprintf(
             $this->module->l('0 € today then %1$s on %2$s', 'DisplayPaymentHookController'),
             PriceHelper::formatPriceFromCentsByCurrencyId($plans[0]['purchase_amount'] + $plans[0]['customer_fee']),
-            DateHelper::getDateFormat($locale, $plans[0]['due_date'])
+            $this->dateHelper->getDateFormat($locale, $plans[0]['due_date'])
         );
     }
 

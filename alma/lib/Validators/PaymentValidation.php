@@ -27,9 +27,12 @@ namespace Alma\PrestaShop\Validators;
 use Alma\API\Entities\Payment;
 use Alma\API\RequestError;
 use Alma\PrestaShop\Helpers\ClientHelper;
+use Alma\PrestaShop\Helpers\ConfigurationHelper;
 use Alma\PrestaShop\Helpers\PriceHelper;
 use Alma\PrestaShop\Helpers\RefundHelper;
 use Alma\PrestaShop\Helpers\SettingsHelper;
+use Alma\PrestaShop\Helpers\ShopHelper;
+use Alma\PrestaShop\Helpers\ToolsHelper;
 use Alma\PrestaShop\Logger;
 
 if (!defined('_PS_VERSION_')) {
@@ -44,6 +47,21 @@ class PaymentValidation
     private $module;
 
     /**
+     * @var SettingsHelper
+     */
+    protected $settingsHelper;
+
+    /**
+     * @var ToolsHelper
+     */
+    protected $toolsHelper;
+
+    /**
+     * @var PriceHelper
+     */
+    protected $priceHelper;
+
+    /**
      * @param $context
      * @param $module
      */
@@ -51,6 +69,9 @@ class PaymentValidation
     {
         $this->context = $context;
         $this->module = $module;
+        $this->settingsHelper = new SettingsHelper(new ShopHelper(), new ConfigurationHelper());
+        $this->toolsHelper = new ToolsHelper();
+        $this->priceHelper = new PriceHelper();
     }
 
     /**
@@ -149,14 +170,14 @@ class PaymentValidation
 
         if (!$cart->OrderExists()) {
             try {
-                $cartTotals = (float) \Tools::ps_round((float) $this->getCartTotals($cart, $customer), 2);
+                $cartTotals = $this->toolsHelper->psRound((float) $this->getCartTotals($cart, $customer), 2);
             } catch (\Exception $e) {
                 Logger::instance()->warning(
                     "[Alma] Payment validation error with cart total. {$e->getMessage()}"
                 );
             }
 
-            if (abs($payment->purchase_amount - PriceHelper::convertPriceToCents($cartTotals)) > 2) {
+            if (abs($payment->purchase_amount - $this->priceHelper->convertPriceToCents($cartTotals)) > 2) {
                 $reason = Payment::FRAUD_AMOUNT_MISMATCH;
                 $reason .= ' - ' . $cartTotals . ' * 100 vs ' . $payment->purchase_amount;
 
@@ -194,8 +215,8 @@ class PaymentValidation
 
             $installmentCount = $payment->installments_count;
 
-            if (SettingsHelper::isDeferred($payment)) {
-                $days = SettingsHelper::getDuration($payment);
+            if ($this->settingsHelper->isDeferred($payment)) {
+                $days = $this->settingsHelper->getDuration($payment);
                 $paymentMode = sprintf(
                     $this->module->l('Alma - +%d days payment', 'paymentvalidation'),
                     $days

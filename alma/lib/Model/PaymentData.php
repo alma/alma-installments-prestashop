@@ -28,10 +28,13 @@ use Alma\API\Lib\PaymentValidator;
 use Alma\API\ParamsError;
 use Alma\PrestaShop\Helpers\CarrierHelper;
 use Alma\PrestaShop\Helpers\CartHelper;
+use Alma\PrestaShop\Helpers\ConfigurationHelper;
 use Alma\PrestaShop\Helpers\PriceHelper;
 use Alma\PrestaShop\Helpers\ProductHelper;
 use Alma\PrestaShop\Helpers\SettingsCustomFieldsHelper;
 use Alma\PrestaShop\Helpers\SettingsHelper;
+use Alma\PrestaShop\Helpers\ShopHelper;
+use Alma\PrestaShop\Helpers\ToolsHelper;
 use Alma\PrestaShop\Logger;
 use Alma\PrestaShop\Repositories\ProductRepository;
 
@@ -42,6 +45,40 @@ if (!defined('_PS_VERSION_')) {
 class PaymentData
 {
     const PAYMENT_METHOD = 'alma';
+
+    /**
+     * @var ToolsHelper
+     */
+    protected $toolsHelper;
+
+    /**
+     * @var SettingsHelper
+     */
+    protected $settingsHelper;
+
+    /**
+     * @var PriceHelper
+     */
+    protected $priceHelper;
+
+    /**
+     * @var CartData
+     */
+    protected $cartData;
+
+    /**
+     * @var ShippingData
+     */
+    protected $shippingData;
+
+    public function __construct()
+    {
+        $this->toolsHelper = new ToolsHelper();
+        $this->settingsHelper = new SettingsHelper(new ShopHelper(), new ConfigurationHelper());
+        $this->priceHelper = new PriceHelper();
+        $this->cartData = new CartData();
+        $this->shippingData = new ShippingData();
+    }
 
     /**
      * @param \Cart $cart
@@ -55,7 +92,7 @@ class PaymentData
      * @throws \PrestaShopDatabaseException
      * @throws \PrestaShopException
      */
-    public static function dataFromCart($cart, $context, $feePlans, $forPayment = false)
+    public function dataFromCart($cart, $context, $feePlans, $forPayment = false)
     {
         if (
             $forPayment
@@ -88,14 +125,14 @@ class PaymentData
         if (property_exists($context->language, 'locale')) {
             $locale = $context->language->locale;
         }
-        $purchaseAmount = (float) \Tools::ps_round((float) $cart->getOrderTotal(true, \Cart::BOTH), 2);
+        $purchaseAmount = (float) $this->toolsHelper->psRound((float) $cart->getOrderTotal(true, \Cart::BOTH), 2);
 
         /* Eligibility Endpoint V2 */
         if (!$forPayment) {
             $queries = [];
             foreach ($feePlans as $plan) {
                 $queries[] = [
-                    'purchase_amount' => PriceHelper::convertPriceToCents($purchaseAmount),
+                    'purchase_amount' => $this->priceHelper->convertPriceToCents($purchaseAmount),
                     'installments_count' => $plan['installmentsCount'],
                     'deferred_days' => $plan['deferredDays'],
                     'deferred_months' => $plan['deferredMonths'],
@@ -103,7 +140,7 @@ class PaymentData
             }
 
             return [
-                'purchase_amount' => PriceHelper::convertPriceToCents($purchaseAmount),
+                'purchase_amount' => $this->priceHelper->convertPriceToCents($purchaseAmount),
                 'queries' => $queries,
                 'shipping_address' => [
                     'country' => $countryShippingAddress,
@@ -178,12 +215,12 @@ class PaymentData
         }
 
         $dataPayment = [
-            'website_customer_details' => self::buildWebsiteCustomerDetails($context, $customer, $cart, $purchaseAmount),
+            'website_customer_details' => $this->buildWebsiteCustomerDetails($context, $customer, $cart, $purchaseAmount),
             'payment' => [
                 'installments_count' => $feePlans['installmentsCount'],
                 'deferred_days' => $feePlans['deferredDays'],
                 'deferred_months' => $feePlans['deferredMonths'],
-                'purchase_amount' => PriceHelper::convertPriceToCents($purchaseAmount),
+                'purchase_amount' => $this->priceHelper->convertPriceToCents($purchaseAmount),
                 'customer_cancel_url' => $context->link->getPageLink('order&step=3'),
                 'return_url' => $context->link->getModuleLink('alma', 'validation'),
                 'ipn_callback_url' => $context->link->getModuleLink('alma', 'ipn'),
@@ -195,7 +232,7 @@ class PaymentData
                     'county_sublocality' => null,
                     'state_province' => $idStateShipping > 0 ? \State::getNameById((int) $idStateShipping) : '',
                 ],
-                'shipping_info' => ShippingData::shippingInfo($cart),
+                'shipping_info' => $this->shippingData->shippingInfo($cart),
                 'billing_address' => [
                     'line1' => $billingAddress->address1,
                     'postal_code' => $billingAddress->postcode,
@@ -206,7 +243,7 @@ class PaymentData
                 ],
                 'custom_data' => [
                     'cart_id' => $cart->id,
-                    'purchase_amount_new_conversion_func' => PriceHelper::convertPriceToCentsStr($purchaseAmount),
+                    'purchase_amount_new_conversion_func' => $this->priceHelper->convertPriceToCentsStr($purchaseAmount),
                     'cart_totals' => $purchaseAmount,
                     'cart_totals_high_precision' => number_format($purchaseAmount, 16),
                     'poc' => [
@@ -218,12 +255,13 @@ class PaymentData
             'customer' => $customerData,
         ];
 
-        if (SettingsHelper::isDeferredTriggerLimitDays($feePlans)) {
+        if ($this->settingsHelper->isDeferredTriggerLimitDays($feePlans)) {
             $dataPayment['payment']['deferred'] = 'trigger';
             $dataPayment['payment']['deferred_description'] = SettingsCustomFieldsHelper::getDescriptionPaymentTriggerByLang($context->language->id);
         }
+
         if ($feePlans['installmentsCount'] > 4) {
-            $dataPayment['payment']['cart'] = CartData::cartInfo($cart);
+            $dataPayment['payment']['cart'] = $this->cartData->cartInfo($cart);
         }
 
         if (static::isInPage($dataPayment)) {
@@ -240,9 +278,21 @@ class PaymentData
      *
      * @return bool
      */
+    public static function isPayLater($paymentData)
+    {
+        return $paymentData['payment']['deferred_days'] >= 1 || $paymentData['payment']['deferred_months'] >= 1;
+    }
+
+    /**
+     * @param $paymentData
+     *
+     * @return bool
+     */
     public static function isPnXOnly($paymentData)
     {
-        return $paymentData['payment']['installments_count'] > 1 && $paymentData['payment']['installments_count'] <= 4 && (0 === $paymentData['payment']['deferred_days'] && 0 === $paymentData['payment']['deferred_months']);
+        return $paymentData['payment']['installments_count'] > 1
+            && $paymentData['payment']['installments_count'] <= 4
+            && (0 === $paymentData['payment']['deferred_days'] && 0 === $paymentData['payment']['deferred_months']);
     }
 
     /**
@@ -262,7 +312,11 @@ class PaymentData
      */
     public static function isInPage($dataPayment)
     {
-        return (static::isPnXOnly($dataPayment) || static::isPayNow($dataPayment)) && SettingsHelper::isInPageEnabled();
+        return (
+            static::isPnXOnly($dataPayment)
+            || static::isPayNow($dataPayment)
+            || static::isPayLater($dataPayment))
+            && SettingsHelper::isInPageEnabled();
     }
 
     private static function isNewCustomer($idCustomer)
@@ -274,7 +328,7 @@ class PaymentData
         return true;
     }
 
-    private static function buildWebsiteCustomerDetails($context, $customer, $cart, $purchaseAmount)
+    private function buildWebsiteCustomerDetails($context, $customer, $cart, $purchaseAmount)
     {
         $carrierHelper = new CarrierHelper($context);
         $cartHelper = new CartHelper();
@@ -286,11 +340,11 @@ class PaymentData
             'is_guest' => (bool) $customer->is_guest,
             'created' => strtotime($customer->date_add),
             'current_order' => [
-                'purchase_amount' => PriceHelper::convertPriceToCents($purchaseAmount),
+                'purchase_amount' => $this->priceHelper->convertPriceToCents($purchaseAmount),
                 'created' => strtotime($cart->date_add),
                 'payment_method' => PaymentData::PAYMENT_METHOD,
                 'shipping_method' => $carrierHelper->getParentCarrierNameById($cart->id_carrier),
-                'items' => CartData::getCartItems($cart, $productHelper, $productRepository),
+                'items' => $this->cartData->getCartItems($cart, $productHelper, $productRepository),
             ],
             'previous_orders' => [
                 $cartHelper->previousCartOrdered($customer->id),

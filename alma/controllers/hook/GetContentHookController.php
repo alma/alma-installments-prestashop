@@ -45,6 +45,7 @@ use Alma\PrestaShop\Forms\ShareOfCheckoutAdminFormBuilder;
 use Alma\PrestaShop\Helpers\ApiHelper;
 use Alma\PrestaShop\Helpers\ApiKeyHelper;
 use Alma\PrestaShop\Helpers\ClientHelper;
+use Alma\PrestaShop\Helpers\ConfigurationHelper;
 use Alma\PrestaShop\Helpers\ConstantsHelper;
 use Alma\PrestaShop\Helpers\MediaHelper;
 use Alma\PrestaShop\Helpers\OrderHelper;
@@ -52,6 +53,7 @@ use Alma\PrestaShop\Helpers\PriceHelper;
 use Alma\PrestaShop\Helpers\SettingsCustomFieldsHelper;
 use Alma\PrestaShop\Helpers\SettingsHelper;
 use Alma\PrestaShop\Helpers\ShareOfCheckoutHelper;
+use Alma\PrestaShop\Helpers\ShopHelper;
 use Alma\PrestaShop\Hooks\AdminHookController;
 use Alma\PrestaShop\Logger;
 
@@ -67,6 +69,16 @@ final class GetContentHookController extends AdminHookController
 
     /** @var Alma */
     protected $module;
+
+    /**
+     * @var SettingsHelper
+     */
+    protected $settingsHelper;
+
+    /**
+     * @var PriceHelper
+     */
+    protected $priceHelper;
 
     /**
      * @var array
@@ -130,6 +142,9 @@ final class GetContentHookController extends AdminHookController
     {
         $this->apiHelper = new ApiHelper($module);
         $this->apiKeyHelper = new ApiKeyHelper();
+        $this->settingsHelper = new SettingsHelper(new ShopHelper(), new ConfigurationHelper());
+        $this->priceHelper = new PriceHelper();
+
         parent::__construct($module);
     }
 
@@ -224,8 +239,12 @@ final class GetContentHookController extends AdminHookController
             $feePlans = $this->getFeePlans();
             foreach ($feePlans as $feePlan) {
                 $n = $feePlan->installments_count;
-                if (3 == $n && !SettingsHelper::isDeferred($feePlan)) {
-                    $key = SettingsHelper::keyForFeePlan($feePlan);
+
+                if (
+                    3 == $n
+                    && !$this->settingsHelper->isDeferred($feePlan)
+                ) {
+                    $key = $this->settingsHelper->keyForFeePlan($feePlan);
                     $almaPlans = [];
                     $almaPlans[$key]['enabled'] = 1;
                     $almaPlans[$key]['min'] = $feePlan->min_purchase_amount;
@@ -258,14 +277,14 @@ final class GetContentHookController extends AdminHookController
                     $n = $feePlan->installments_count;
                     $deferred_days = $feePlan->deferred_days;
                     $deferred_months = $feePlan->deferred_months;
-                    $key = SettingsHelper::keyForFeePlan($feePlan);
+                    $key = $this->settingsHelper->keyForFeePlan($feePlan);
 
-                    if (1 != $n && SettingsHelper::isDeferred($feePlan)) {
+                    if (1 != $n && $this->settingsHelper->isDeferred($feePlan)) {
                         continue;
                     }
 
-                    $min = PriceHelper::convertPriceToCents((int) \Tools::getValue("ALMA_{$key}_MIN_AMOUNT"));
-                    $max = PriceHelper::convertPriceToCents((int) \Tools::getValue("ALMA_{$key}_MAX_AMOUNT"));
+                    $min = $this->priceHelper->convertPriceToCents((int) \Tools::getValue("ALMA_{$key}_MIN_AMOUNT"));
+                    $max = $this->priceHelper->convertPriceToCents((int) \Tools::getValue("ALMA_{$key}_MAX_AMOUNT"));
 
                     $enablePlan = (bool) \Tools::getValue("ALMA_{$key}_ENABLED_ON");
 
@@ -311,9 +330,9 @@ final class GetContentHookController extends AdminHookController
 
                 foreach ($feePlans as $feePlan) {
                     $n = $feePlan->installments_count;
-                    $key = SettingsHelper::keyForFeePlan($feePlan);
+                    $key = $this->settingsHelper->keyForFeePlan($feePlan);
 
-                    if (1 != $n && SettingsHelper::isDeferred($feePlan)) {
+                    if (1 != $n && $this->settingsHelper->isDeferred($feePlan)) {
                         continue;
                     }
 
@@ -342,8 +361,8 @@ final class GetContentHookController extends AdminHookController
                     } else {
                         $enablePlan = (bool) \Tools::getValue("ALMA_{$key}_ENABLED_ON");
                         $almaPlans[$key]['enabled'] = $enablePlan ? '1' : '0';
-                        $almaPlans[$key]['min'] = PriceHelper::convertPriceToCents($min);
-                        $almaPlans[$key]['max'] = PriceHelper::convertPriceToCents($max);
+                        $almaPlans[$key]['min'] = $this->priceHelper->convertPriceToCents($min);
+                        $almaPlans[$key]['max'] = $this->priceHelper->convertPriceToCents($max);
                         $almaPlans[$key]['deferred_trigger_limit_days'] = $feePlan->deferred_trigger_limit_days;
                         $almaPlans[$key]['order'] = (int) \Tools::getValue("ALMA_{$key}_SORT_ORDER");
                     }
@@ -519,7 +538,7 @@ final class GetContentHookController extends AdminHookController
         if ($merchant) {
             $sortOrder = 1;
             foreach ($feePlans as $feePlan) {
-                $key = SettingsHelper::keyForFeePlan($feePlan);
+                $key = $this->settingsHelper->keyForFeePlan($feePlan);
 
                 $helper->fields_value["ALMA_{$key}_ENABLED_ON"] = isset($installmentsPlans->$key->enabled)
                     ? $installmentsPlans->$key->enabled
@@ -600,7 +619,7 @@ final class GetContentHookController extends AdminHookController
             $fieldsForms[] = $inpageBuilder->build();
         }
 
-        if (SettingsHelper::isPaymentTriggerEnabledByState()) {
+        if ($this->settingsHelper->isPaymentTriggerEnabledByState()) {
             $triggerBuilder = new PaymentOnTriggeringAdminFormBuilder($this->module, $this->context, $iconPath);
             $fieldsForms[] = $triggerBuilder->build();
         }
@@ -645,7 +664,7 @@ final class GetContentHookController extends AdminHookController
             'ALMA_STATE_REFUND' => SettingsHelper::getRefundState(),
             'ALMA_STATE_REFUND_ENABLED_ON' => SettingsHelper::isRefundEnabledByState(),
             'ALMA_STATE_TRIGGER' => SettingsHelper::getPaymentTriggerState(),
-            'ALMA_PAYMENT_ON_TRIGGERING_ENABLED_ON' => SettingsHelper::isPaymentTriggerEnabledByState(),
+            'ALMA_PAYMENT_ON_TRIGGERING_ENABLED_ON' => $this->settingsHelper->isPaymentTriggerEnabledByState(),
             'ALMA_DESCRIPTION_TRIGGER' => SettingsHelper::getKeyDescriptionPaymentTrigger(),
             'ALMA_NOT_ELIGIBLE_CATEGORIES' => SettingsCustomFieldsHelper::getNonEligibleCategoriesMessage(),
             'ALMA_SHOW_PRODUCT_ELIGIBILITY_ON' => SettingsHelper::showProductEligibility(),
@@ -680,12 +699,12 @@ final class GetContentHookController extends AdminHookController
             $feePlanDeferred = [];
 
             foreach ($feePlans as $feePlan) {
-                if (!SettingsHelper::isDeferred($feePlan)) {
+                if (!$this->settingsHelper->isDeferred($feePlan)) {
                     $feePlansOrdered[$feePlan->installments_count] = $feePlan;
                     continue;
                 }
 
-                $duration = SettingsHelper::getDuration($feePlan);
+                $duration = $this->settingsHelper->getDuration($feePlan);
                 $feePlanDeferred[$feePlan->installments_count . $duration] = $feePlan;
             }
 

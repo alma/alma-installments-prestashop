@@ -39,7 +39,7 @@ class PriceHelper
      *
      * @return int
      */
-    public static function convertPriceToCents($price)
+    public function convertPriceToCents($price)
     {
         return (int) round($price * 100);
     }
