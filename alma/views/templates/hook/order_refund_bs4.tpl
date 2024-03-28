@@ -107,7 +107,7 @@
                 </div>
             </div>
             <div class="text-right">
-            <button type="submit" class="button btn btn-primary button-medium pull-right">
+            <button type="submit" class="button btn btn-primary">
                 <span>{$wording.buttonRefund|escape:'htmlall':'UTF-8'}</button>
         </div>
         </form>
