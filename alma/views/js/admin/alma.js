@@ -20,6 +20,7 @@
  * @copyright 2018-2023 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
+
 (function ($) {
     $(function () {
         if ($('.alma.share-of-checkout').length > 0) {

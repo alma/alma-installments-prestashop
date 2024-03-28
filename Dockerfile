@@ -12,7 +12,7 @@ RUN echo 'root:alma' | chpasswd
 RUN pecl install xdebug-3.1.5 \
     && docker-php-ext-enable xdebug
 
-WORKDIR /var/www/html/modules/alma/ 
+WORKDIR /var/www/html/modules/alma/
 
 RUN head -n -1 /tmp/docker_run.sh > /tmp/docker_install.sh
 COPY ./scripts/entrypoint.sh /entrypoint.sh

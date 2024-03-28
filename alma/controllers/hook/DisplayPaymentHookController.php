@@ -227,17 +227,17 @@ class DisplayPaymentHookController extends FrontendHookController
         if ($isDeferredTriggerLimitDays) {
             return sprintf(
                 $this->module->l('%1$s then %2$d x %3$s', 'DisplayPaymentHookController'),
-                PriceHelper::formatPriceToCentsByCurrencyId($plans[0]['total_amount']) . ' ' . SettingsCustomFieldsHelper::getDescriptionPaymentTriggerByLang($idLang),
+                PriceHelper::formatPriceFromCentsByCurrencyId($plans[0]['total_amount']) . ' ' . SettingsCustomFieldsHelper::getDescriptionPaymentTriggerByLang($idLang),
                 $nbPlans - 1,
-                PriceHelper::formatPriceToCentsByCurrencyId($plans[1]['total_amount'])
+                PriceHelper::formatPriceFromCentsByCurrencyId($plans[1]['total_amount'])
             );
         }
         if ($nbPlans > 1) {
             return sprintf(
                 $this->module->l('%1$s today then %2$d x %3$s', 'DisplayPaymentHookController'),
-                PriceHelper::formatPriceToCentsByCurrencyId($plans[0]['total_amount']),
+                PriceHelper::formatPriceFromCentsByCurrencyId($plans[0]['total_amount']),
                 $nbPlans - 1,
-                PriceHelper::formatPriceToCentsByCurrencyId($plans[1]['total_amount'])
+                PriceHelper::formatPriceFromCentsByCurrencyId($plans[1]['total_amount'])
             );
         }
         if ($isPayNow) {
@@ -246,7 +246,7 @@ class DisplayPaymentHookController extends FrontendHookController
 
         return sprintf(
             $this->module->l('0 € today then %1$s on %2$s', 'DisplayPaymentHookController'),
-            PriceHelper::formatPriceToCentsByCurrencyId($plans[0]['purchase_amount'] + $plans[0]['customer_fee']),
+            PriceHelper::formatPriceFromCentsByCurrencyId($plans[0]['purchase_amount'] + $plans[0]['customer_fee']),
             $this->dateHelper->getDateFormat($locale, $plans[0]['due_date'])
         );
     }

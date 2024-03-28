@@ -92,5 +92,8 @@
             refreshWidgets();
             window.__alma_refreshWidgets = refreshWidgets;
         }
+
     });
+
+
 })(jQuery);

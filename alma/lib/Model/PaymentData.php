@@ -243,7 +243,7 @@ class PaymentData
                 ],
                 'custom_data' => [
                     'cart_id' => $cart->id,
-                    'purchase_amount_new_conversion_func' => PriceHelper::convertPriceToCentsStr($purchaseAmount),
+                    'purchase_amount_new_conversion_func' => $this->priceHelper->convertPriceToCentsStr($purchaseAmount),
                     'cart_totals' => $purchaseAmount,
                     'cart_totals_high_precision' => number_format($purchaseAmount, 16),
                     'poc' => [
@@ -331,7 +331,7 @@ class PaymentData
     private function buildWebsiteCustomerDetails($context, $customer, $cart, $purchaseAmount)
     {
         $carrierHelper = new CarrierHelper($context);
-        $cartHelper = new CartHelper($context);
+        $cartHelper = new CartHelper();
         $productHelper = new ProductHelper();
         $productRepository = new ProductRepository();
 

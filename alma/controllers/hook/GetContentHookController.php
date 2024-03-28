@@ -59,6 +59,11 @@ use Alma\PrestaShop\Logger;
 
 final class GetContentHookController extends AdminHookController
 {
+    /**
+     * @var ApiHelper
+     */
+    protected $apiHelper;
+
     /** @var ApiKeyHelper */
     private $apiKeyHelper;
 
@@ -135,6 +140,7 @@ final class GetContentHookController extends AdminHookController
      */
     public function __construct($module)
     {
+        $this->apiHelper = new ApiHelper($module);
         $this->apiKeyHelper = new ApiKeyHelper();
         $this->settingsHelper = new SettingsHelper(new ShopHelper(), new ConfigurationHelper());
         $this->priceHelper = new PriceHelper();
@@ -209,7 +215,7 @@ final class GetContentHookController extends AdminHookController
 
         // Try to get merchant from configured API key/mode
         try {
-            $merchant = ApiHelper::getMerchant($this->module);
+            $merchant = $this->apiHelper->getMerchant();
         } catch (\Exception $e) {
             $this->context->smarty->assign(
                 [
@@ -432,7 +438,7 @@ final class GetContentHookController extends AdminHookController
 
             // Try to get merchant from configured API key/mode
             try {
-                ApiHelper::getMerchant($this->module, $alma);
+                $this->apiHelper->getMerchant($alma);
             } catch (\Exception $e) {
                 $this->context->smarty->assign(
                     [
@@ -480,7 +486,7 @@ final class GetContentHookController extends AdminHookController
         $merchant = null;
 
         try {
-            $merchant = ApiHelper::getMerchant($this->module);
+            $merchant = $this->apiHelper->getMerchant();
         } catch (\Exception $e) {
             Logger::instance()->error($e->getMessage());
         }

@@ -160,10 +160,8 @@ async function createPayment(url, inPage, input = null) {
                 {
                     paymentId: paymentData.id,
                     onUserCloseModal: () => {
-                        let checkboxTermsOfService = document.querySelector('.ps-shown-by-js[type=checkbox]');
-                        if (checkboxTermsOfService !== null) {
-                            checkboxTermsOfService.checked = false;
-                        }
+                        uncheckTermsAndConditions();
+
                         document.querySelector('.alma-loader--wrapper').remove();
                         if (input) {
                             input.checked = false
@@ -208,4 +206,15 @@ function displayLoader() {
 
 function isAlmaPayment(url) {
     return url.indexOf("module/alma/payment") !== -1 || url.indexOf("module=alma") !== -1;
+}
+
+function uncheckTermsAndConditions() {
+    let listOfTermsOfService = document.querySelectorAll('#conditions-to-approve > ul > li');
+
+    listOfTermsOfService.forEach((input) => {
+        let checkboxTermsOfService = input.querySelector('.ps-shown-by-js[type=checkbox]');
+        if (checkboxTermsOfService !== null) {
+            checkboxTermsOfService.checked = false;
+        }
+    });
 }

@@ -69,13 +69,14 @@ class AdminAlmaRefundsController extends ModuleAdminController
      * @throws PrestaShopDatabaseException
      * @throws PrestaShopException
      * @throws RequestException
+     * @throws \Alma\PrestaShop\Exceptions\OrderException
      */
     public function ajaxProcessRefund()
     {
         $refundType = Tools::getValue('refundType');
         $order = new Order(Tools::getValue('orderId'));
         $orderHelper = new OrderHelper();
-        $orderPayment = $orderHelper->getOrderPaymentOrFail($order);
+        $orderPayment = $orderHelper->ajaxGetOrderPayment($order);
         $paymentId = $orderPayment->transaction_id;
 
         $isTotal = $this->isTotalRefund($refundType);
@@ -96,9 +97,9 @@ class AdminAlmaRefundsController extends ModuleAdminController
         }
         $totalOrderAmount = $refundResult->purchase_amount;
         $idCurrency = (int) $order->id_currency;
-        $totalOrderPrice = PriceHelper::formatPriceToCentsByCurrencyId($totalOrderAmount, $idCurrency);
+        $totalOrderPrice = PriceHelper::formatPriceFromCentsByCurrencyId($totalOrderAmount, $idCurrency);
         $totalRefundAmount = RefundHelper::buildTotalRefund($refundResult->refunds, $totalOrderAmount);
-        $totalRefundPrice = PriceHelper::formatPriceToCentsByCurrencyId($totalRefundAmount, $idCurrency);
+        $totalRefundPrice = PriceHelper::formatPriceFromCentsByCurrencyId($totalRefundAmount, $idCurrency);
         $percentRefund = PriceHelper::calculatePercentage($totalRefundAmount, $totalOrderAmount);
 
         if ($isTotal) {

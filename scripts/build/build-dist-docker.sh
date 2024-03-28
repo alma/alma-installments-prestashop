@@ -17,7 +17,7 @@ fi
 cd $BUILD_DIR
 
 rm -f composer.lock config.xml config_*.xml phpunit.ci.xml phpunit.dist.xml
-rm -rf tests vendor 
+rm -rf tests vendor
 
 php /usr/bin/composer install --no-dev --optimize-autoloader
 php /usr/bin/composer dump-autoload --optimize

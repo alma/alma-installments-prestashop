@@ -1,0 +1,129 @@
+.product-quantity {
+    flex-wrap: wrap;
+}
+
+.alma-widget-insurance{
+    width: 100%;
+}
+#product-alma-iframe{
+    border: 0;
+    padding: 0;
+    margin: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.actions-alma-insurance-product.loading{
+    position: relative;
+}
+
+.actions-alma-insurance-product .item-alma-insurance {
+    background: #f9f9f9;
+    padding: 12px 0;
+    border-radius: 12px;
+}
+
+.item-alma-insurance .alma-action-item-insurance {
+    text-align: right;
+    font-size: 0.9rem;
+}
+.item-alma-insurance .alma-action-item-insurance .alma-remove-insurance-product {
+    color: inherit;
+    text-decoration: underline;
+}
+
+/**
+-- Loader dot
+ */
+.alma-loader-dot-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    column-gap: 6px;
+    margin: auto;
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    z-index: 10;
+}
+.alma-loader-dot-container:before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: #eee;
+    opacity: .5;
+}
+
+.dot {
+    width: 8px;
+    height: 8px;
+    background-color: #fa5022;
+    border-radius: 50%;
+}
+
+.one {
+    animation: change-color 1.34s normal 0.1s infinite, bounce 1.34s linear 0s infinite;
+}
+
+.two {
+    animation: change-color 1.34s normal 0.34s infinite, bounce 1.34s linear 0.24s infinite;
+}
+
+.three {
+    animation: change-color 1.34s normal 0.58s infinite, bounce 1.34s linear 0.48s infinite;
+}
+.spinner {
+    vertical-align: middle;
+    margin-right: 5px;
+    width: 20px;
+    height: 20px;
+    border: 2px solid #FFF;
+    border-bottom-color: transparent;
+    border-radius: 50%;
+    display: inline-block;
+    box-sizing: border-box;
+    animation: rotation 1s linear infinite;
+
+}
+@keyframes rotation {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+@keyframes bounce {
+    0%,
+    40%,
+    63%,
+    100% {
+        transform: translateY(0);
+    }
+
+    26% {
+        transform: translateY(-7px);
+    }
+
+    47% {
+        transform: translateY(1px);
+    }
+}
+
+@keyframes change-color {
+    0%,
+    13%,
+    63%,
+    100% {
+        background-color: #fa5022;
+    }
+
+    40% {
+        background-color: #ff5147;
+    }
+}

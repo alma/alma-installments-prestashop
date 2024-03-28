@@ -169,6 +169,20 @@ fieldset .form-alma.disabled::before{
     border-radius: 4px;
 }
 
+.bootstrap .alma-insurance.alert,
+#main-div .alma-insurance.alert{
+    padding-left: 100px;
+    background-repeat: no-repeat;
+    background-position: 30px;
+    background-image: url('/modules/alma/views/img/alma-insurance.png');
+    background-size: 60px;
+    box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.08);
+    border-radius: 4px;
+    line-height: 0px;
+    padding-bottom: 30px;
+}
+
+
 .bootstrap .alma.alert h2, .bootstrap .alma.alert .btn,
 #main-div .alma.alert h2, #main-div .alma.alert .btn{
     font-family: 'Eina04-Bold', sans-serif;
@@ -193,10 +207,28 @@ fieldset .form-alma.disabled::before{
     font-size: 16px;
 }
 
+.bootstrap .alma.alert.alert-warning,
+#main-div .alma.alert.alert-warning{
+    background-color: #fffbd3;
+    border: 1px solid #fab000;
+    color: #00425D;
+    font-size: 16px;
+}
+
 .bootstrap .alma.alert.alert-info:before,
 #main-div .alma.alert.alert-info:before{
     content: '';
 }
+.bootstrap .alma.alert.alert-warning:before,
+#main-div .alma.alert.alert-warning:before{
+    content: '';
+}
+
+.bootstrap .alma-insurance.alert.alert-warning:before,
+#main-div .alma-insurance.alert.alert-warning:before{
+    content: '';
+}
+
 
 .bootstrap .alma.alert ul,
 #main-div .alma.alert ul{
@@ -246,4 +278,15 @@ fieldset .form-alma.disabled::before{
     color: #999;
     border: 1px solid #b5bdc0;
     background-color: #ddd;
+}
+
+.alma--insurance-bo-form{
+    height: 510px;
+}
+.alma-insurance-iframe{
+    width: 100%;
+    height: 100%;
+    border: 0;
+    padding: 0;
+    margin: 0;
 }
