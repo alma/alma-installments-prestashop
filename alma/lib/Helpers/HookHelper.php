@@ -99,10 +99,6 @@ class HookHelper
             'version' => '1.7.1',
             'operand' => '>=',
         ],
-        'actionDeleteProductInCartAfter' => [
-            'version' => '1.7.1',
-            'operand' => '<',
-        ],
         'actionCartSave' => 'all',
         'actionValidateOrder' => 'all',
         'displayCartExtraProductActions' => 'all',
@@ -114,10 +110,6 @@ class HookHelper
         'actionOrderGridDefinitionModifier' => [
             'version' => '1.7.7',
             'operand' => '>=',
-        ],
-        'displayInvoice' => [
-            'version' => '1.7.7',
-            'operand' => '<',
         ],
         'displayAdminOrderTop' => [
             'version' => '1.7.7',
