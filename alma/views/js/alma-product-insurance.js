@@ -67,7 +67,7 @@ let quantity = 1;
             prestashop.on(
                 'updatedProduct',
                 function () {
-                    document.getElementById('quantity_wanted').value = quantity;
+                    document.querySelector('.qty [name="qty"]').value = quantity;
                     productDetails = JSON.parse(document.getElementById('product-details').dataset.product);
                     refreshWidget();
                     addModalListenerToAddToCart();
