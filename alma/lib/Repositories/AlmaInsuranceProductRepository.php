@@ -350,6 +350,7 @@ class AlmaInsuranceProductRepository
             FROM `' . _DB_PREFIX_ . 'alma_insurance_product`
             WHERE `id_order` = ' . (int) $orderId . '
             AND `insurance_contract_id` = "' . $contractId . '"
+            AND `subscription_id` IS NULL
             AND `cms_reference` = "' . $cmsReference . '"
             AND `id_shop` = ' . (int) $shopId;
 
