@@ -126,7 +126,10 @@ function onloadInsuranceItemCartAlma() {
                 formQty.querySelector('input').addEventListener('wheel', function (e) {
                     document.activeElement.blur();
                 });
-                formQty.querySelector('[class^=input-group-btn]').remove();
+                let btnsQty = formQty.querySelectorAll('[class^=input-group-btn]');
+                btnsQty.forEach((btnQty) => {
+                    btnQty.remove();
+                });
             }
         }
         if (isAlmaInsuranceProduct) {
