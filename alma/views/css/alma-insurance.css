@@ -24,12 +24,26 @@
 }
 
 .item-alma-insurance .alma-action-item-insurance {
-    text-align: right;
     font-size: 0.9rem;
+}
+.item-alma-insurance .alma-action-item-insurance.text-center {
+    text-align: center;
+}
+.item-alma-insurance .alma-action-item-insurance.text-right {
+    text-align: right;
 }
 .item-alma-insurance .alma-action-item-insurance .alma-remove-insurance-product {
     color: inherit;
     text-decoration: underline;
+}
+.item-alma-insurance .alma-action-item-insurance .alma-add-insurance-product {
+    display: block;
+    color: inherit;
+    border: solid 1px #f0f0f0;
+    padding: 10px 14px;
+    margin-top: 5px;
+    border-radius: 20px;
+    background: #fefefe;
 }
 
 /**

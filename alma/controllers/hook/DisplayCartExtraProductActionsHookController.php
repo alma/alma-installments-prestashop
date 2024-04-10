@@ -162,6 +162,7 @@ class DisplayCartExtraProductActionsHookController extends FrontendHookControlle
                 'ajaxLinkAlmaRemoveProduct' => $ajaxLinkRemoveProduct,
                 'ajaxLinkAlmaRemoveAssociation' => $ajaxLinkRemoveAssociation,
                 'ajaxLinkRemoveInsuranceProduct' => $ajaxLinkRemoveInsuranceProduct,
+                'ajaxLinkAddInsuranceProduct' => '',
                 'token' => \Tools::getToken(false),
                 'idProduct' => $idProduct,
             ]);

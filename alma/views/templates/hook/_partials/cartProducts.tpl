@@ -56,41 +56,72 @@
             </div>
 
             {if $hasInsurance == '1'}
-            <div class="col-md-6">
-                <div class="row item-alma-insurance">
-                    <div class="product-line-grid-left col-md-5 col-xs-6">
-                        <span class="product-image media-middle">
-                            <img src="{$associatedInsurances[$idAlmaInsuranceProduct]['urlImage']}" alt="{$associatedInsurances[$idAlmaInsuranceProduct]['name']}" loading="lazy">
-                        </span>
-                    </div>
-                    <div class="product-line-grid-left col-md-7 col-xs-6">
-                        <div class="product-line-info">
-                            <span class="label">
-                                {$associatedInsurance.insuranceProduct->getFieldByLang('name', $idLanguage)|escape:'htmlall':'UTF-8'}
-                                <strong>
-                                    {$associatedInsurance.insuranceProductAttribute->reference|escape:'htmlall':'UTF-8'}
-                                </strong>
+                <div class="col-md-6">
+                    <div class="row item-alma-insurance">
+                        <div class="product-line-grid-left col-md-5 col-xs-6">
+                            <span class="product-image media-middle">
+                                <img src="{$associatedInsurances[$idAlmaInsuranceProduct]['urlImage']}" alt="{$associatedInsurances[$idAlmaInsuranceProduct]['name']}" loading="lazy">
                             </span>
                         </div>
-                        <div class="product-line-info product-price h5">
-                            <div class="current-price">
-                                <span class="price">{Context::getContext()->currentLocale->formatPrice($associatedInsurance.price, $currency.iso_code)}</span>
+                        <div class="product-line-grid-left col-md-7 col-xs-6">
+                            <div class="product-line-info">
+                                <span class="label">
+                                    {$associatedInsurance.insuranceProduct->getFieldByLang('name', $idLanguage)|escape:'htmlall':'UTF-8'}
+                                    <strong>
+                                        {$associatedInsurance.insuranceProductAttribute->reference|escape:'htmlall':'UTF-8'}
+                                    </strong>
+                                </span>
                             </div>
-                        </div>
-                        <div class="alma-action-item-insurance">
-                            <a data-alma-association-id="{$idAlmaInsuranceProduct}"
-                               data-action="remove-insurance-product"
-                               data-token='{\Tools::getToken(false)|escape:'htmlall':'UTF-8'}'
-                               href="#"
-                               class="alma-remove-insurance-product"
-                               data-link='{$ajaxLinkRemoveInsuranceProduct|escape:'htmlall':'UTF-8'}'
-                            >
-                                {l s='Remove insurance' mod='alma'}
-                            </a>
+                            <div class="product-line-info product-price h5">
+                                <div class="current-price">
+                                    <span class="price">{Context::getContext()->currentLocale->formatPrice($associatedInsurance.price, $currency.iso_code)}</span>
+                                </div>
+                            </div>
+                            <div class="alma-action-item-insurance text-right">
+                                <a data-alma-association-id="{$idAlmaInsuranceProduct}"
+                                   data-action="remove-insurance-product"
+                                   data-token='{\Tools::getToken(false)|escape:'htmlall':'UTF-8'}'
+                                   href="#"
+                                   class="alma-remove-insurance-product"
+                                   data-link='{$ajaxLinkRemoveInsuranceProduct|escape:'htmlall':'UTF-8'}'
+                                >
+                                    {l s='Remove insurance' mod='alma'}
+                                </a>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
+            {else}
+                <div class="col-md-6">
+                    <div class="row item-alma-insurance">
+                        <div class="product-line-grid-left col-md-2 col-xs-3">
+                            <span class="product-image media-middle">
+                                <i class="material-icons">shield</i>
+                            </span>
+                        </div>
+                        <div class="product-line-grid-left col-md-10 col-xs-9">
+                            <div class="product-line-info">
+                                <span class="label">
+                                    {l s='Protect your product with' mod='alma'}
+                                    <strong>
+                                        Alma
+                                    </strong>
+                                </span>
+                            </div>
+                            <div class="alma-action-item-insurance">
+                                <a data-alma-association-id="{$idAlmaInsuranceProduct}"
+                                   data-action="add-insurance-product"
+                                   data-token='{\Tools::getToken(false)|escape:'htmlall':'UTF-8'}'
+                                   href="#"
+                                   class="alma-add-insurance-product"
+                                   data-link='{$ajaxLinkAddInsuranceProduct|escape:'htmlall':'UTF-8'}'
+                                >
+                                    {l s='See available insurance policies' mod='alma'}
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             {/if}
         </div>
 
