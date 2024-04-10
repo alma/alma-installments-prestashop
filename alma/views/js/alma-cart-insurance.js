@@ -30,7 +30,7 @@
             prestashop.on("updatedCart", onloadInsuranceItemCartAlma);
         }
     });
-    
+
      $('.alma-remove-product').on( "click", function(e) {
          e.preventDefault();
          addLoaderDot(e);
@@ -117,16 +117,20 @@ function onloadInsuranceItemCartAlma() {
             let clearfix = document.createElement('div');
             clearfix.classList.add('clearfix');
             item.append(clearfix);
-            let formQty = item.querySelector('.qty');
 
-            formQty.querySelector('input').disabled = true
+            let formQty = item.querySelector('.input-group');
 
-
-            // Remove change number of input when you wheel (scroll) inside the input
-            formQty.querySelector('input').addEventListener('wheel', function (e) {
-                document.activeElement.blur();
-            });
-            formQty.querySelector('.input-group-btn-vertical').remove();
+            if (formQty) {
+                formQty.querySelector('input').disabled = true
+                // Remove change number of input when you wheel (scroll) inside the input
+                formQty.querySelector('input').addEventListener('wheel', function (e) {
+                    document.activeElement.blur();
+                });
+                let btnsQty = formQty.querySelectorAll('[class^=input-group-btn]');
+                btnsQty.forEach((btnQty) => {
+                    btnQty.remove();
+                });
+            }
         }
         if (isAlmaInsuranceProduct) {
             item.remove();
