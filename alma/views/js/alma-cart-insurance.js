@@ -108,10 +108,18 @@ function onloadInsuranceItemCartAlma() {
     itemsCart.forEach((item) => {
         let dataProduct = item.querySelector('.alma-data-product');
         let actionsInsuranceProduct = dataProduct.querySelector('.actions-alma-insurance-product');
+        let widgetInsuranceCartItem = dataProduct.querySelector('.widget-alma-insurance-cart-item');
         let isAlmaInsuranceProduct = parseInt(dataProduct.dataset.isAlmaInsurance);
-        let noInsuranceAssociated = parseInt(dataProduct.dataset.noInsuranceAssociated);
+        let isInsuranceAssociated = parseInt(dataProduct.dataset.noInsuranceAssociated);
 
-        if (!isAlmaInsuranceProduct && noInsuranceAssociated) {
+        if (!isAlmaInsuranceProduct && !isInsuranceAssociated) {
+            widgetInsuranceCartItem.style.display = 'block';
+            item.append(widgetInsuranceCartItem);
+            let clearfix = document.createElement('div');
+            clearfix.classList.add('clearfix');
+            item.append(clearfix);
+        }
+        if (!isAlmaInsuranceProduct && isInsuranceAssociated) {
             actionsInsuranceProduct.style.display = 'block';
             item.append(actionsInsuranceProduct);
             let clearfix = document.createElement('div');
@@ -134,6 +142,12 @@ function onloadInsuranceItemCartAlma() {
         }
         if (isAlmaInsuranceProduct) {
             item.remove();
+        }
+    });
+
+    window.addEventListener('message', (e) => {
+        if (e.data.type === 'getSelectedInsuranceData') {
+            console.log(e.data);
         }
     });
 }

@@ -91,6 +91,8 @@
                     </div>
                 </div>
             </div>
+            {else}
+                <button type="button" onclick="openModal('popupModal', 1);">OpenModal</button>
             {/if}
         </div>
 

@@ -209,7 +209,7 @@ class FrontHeaderHookController extends FrontendHookController
             $this->insuranceHelper->isInsuranceActivated()
             && version_compare(_PS_VERSION_, '1.7', '>=')
         ) {
-            $this->manageInsuranceAssetsAfter17();
+            $content = $this->manageInsuranceAssetsAfter17();
         }
 
         if (
@@ -316,6 +316,8 @@ class FrontHeaderHookController extends FrontendHookController
                 ConstantsHelper::INSURANCE_PRODUCT_CSS_ID,
                 "modules/$this->moduleName/" . ConstantsHelper::INSURANCE_PRODUCT_CSS_PATH
             );
+
+            return '<script type="module" src="https://protect.sandbox.almapay.com/displayModal.js"></script><div id="alma-insurance-modal"></div>';
         }
 
         if (
