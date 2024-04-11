@@ -168,7 +168,7 @@ class AdminAlmaInsuranceOrdersDetailsController extends ModuleAdminController
             $dataSubscriptions['subscriptionAmount'] = PriceHelper::convertPriceFromCents(
                 $this->priceHelper->convertPriceToCents($subscription['price'])
             );
-            $dataSubscriptions['isRefunded'] = $subscription['is_refunded'];
+            $dataSubscriptions['isRefunded'] = (bool) $subscription['is_refunded'];
             $dataSubscriptions['reasonForCancelation'] = $subscription['reason_of_cancelation'];
             $dataSubscriptions['dateOfCancelation'] = $subscription['date_of_cancelation'];
 
