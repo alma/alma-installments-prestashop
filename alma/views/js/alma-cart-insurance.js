@@ -98,6 +98,31 @@
                  location.reload();
              });
      });
+
+     window.addEventListener('message', (e) => {
+         if (e.data.type === 'getSelectedInsuranceData') {
+             console.log(e.data);
+
+             addLoaderDot($('.alma-add-insurance-product'));
+             $.ajax({
+                 type: 'POST',
+                 url: '/module/alma/insurance?action=addInsuranceProduct',
+                 dataType: 'json',
+                 data: {
+                     ajax: true,
+                     token: $(this).attr('data-token'),
+                     alma_insurance_product_id: $(this).attr("data-alma-association-id")
+                 },
+             })
+                 .success(function() {
+                     location.reload();
+                 })
+
+                 .error(function(e) {
+                     location.reload();
+                 });
+         }
+     });
 })(jQuery);
 
 // Insurance

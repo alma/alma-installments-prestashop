@@ -108,8 +108,10 @@
                                     </strong>
                                 </span>
                             </div>
+                            {* TODO : Need to add id for identify the right element *}
                             <div class="alma-action-item-insurance">
-                                <a data-alma-association-id="{$idAlmaInsuranceProduct}"
+                                <a data-product-id="{$product.id_product|escape:'htmlall':'UTF-8'}"
+                                   data-product-customization-id="{$product.id_customization|intval}"
                                    data-action="add-insurance-product"
                                    data-token='{\Tools::getToken(false)|escape:'htmlall':'UTF-8'}'
                                    href="#"

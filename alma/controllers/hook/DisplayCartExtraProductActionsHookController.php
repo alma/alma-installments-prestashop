@@ -151,6 +151,7 @@ class DisplayCartExtraProductActionsHookController extends FrontendHookControlle
         $ajaxLinkRemoveProduct = $this->link->getModuleLink('alma', 'insurance', ['action' => 'removeProductFromCart']);
         $ajaxLinkRemoveAssociation = $this->link->getModuleLink('alma', 'insurance', ['action' => 'removeAssociation']);
         $ajaxLinkRemoveInsuranceProduct = $this->link->getModuleLink('alma', 'insurance', ['action' => 'removeInsuranceProduct']);
+        $ajaxLinkAddInsuranceProduct = $this->link->getModuleLink('alma', 'insurance', ['action' => 'addInsuranceProduct']);
 
         $this->context->smarty->assign([
                 'idCart' => $cart->id,
@@ -162,7 +163,7 @@ class DisplayCartExtraProductActionsHookController extends FrontendHookControlle
                 'ajaxLinkAlmaRemoveProduct' => $ajaxLinkRemoveProduct,
                 'ajaxLinkAlmaRemoveAssociation' => $ajaxLinkRemoveAssociation,
                 'ajaxLinkRemoveInsuranceProduct' => $ajaxLinkRemoveInsuranceProduct,
-                'ajaxLinkAddInsuranceProduct' => '',
+                'ajaxLinkAddInsuranceProduct' => $ajaxLinkAddInsuranceProduct,
                 'token' => \Tools::getToken(false),
                 'idProduct' => $idProduct,
             ]);
