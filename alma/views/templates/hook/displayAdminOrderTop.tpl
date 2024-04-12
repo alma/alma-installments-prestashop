@@ -22,10 +22,11 @@
  *}
 <div class="alma-insurance alert alert-warning">
     <div class="row">
-        <h2>{l s='Remember to cancel insurance subscriptions before initiating a refund' mod='alma'}</h2>
-        <p>
-            {$text|unescape:'html'}
-        </p>
+        <div class="col-xs-12">
+            <h2>{l s='Remember to cancel insurance subscriptions before initiating a refund' mod='alma'}</h2>
+            <p>
+                {$text|unescape:'html'}
+            </p>
+        </div>
     </div>
-
 </div>
