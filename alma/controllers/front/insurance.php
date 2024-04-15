@@ -62,6 +62,10 @@ class AlmaInsuranceModuleFrontController extends ModuleFrontController
                 $this->ajaxRenderAndExit(json_encode(['error' => 'Invalid Token']), 401);
             }
 
+            $productId = Tools::getValue('product_id');
+            $customizationId = Tools::getValue('customization_id');
+            $insuranceContractId = Tools::getValue('insurance_contract_id');
+
             try {
                 /**
                  * @var \ContextCore $context
@@ -79,7 +83,7 @@ class AlmaInsuranceModuleFrontController extends ModuleFrontController
                         $this->ajaxRemoveInsuranceProductAndAssociation($context);
                         break;
                     case 'addInsuranceProduct':
-                        $this->ajaxAddInsuranceProductAndAssociation($context);
+                        $this->ajaxAddInsuranceProductAndAssociation($productId, $customizationId, $insuranceContractId);
                         break;
                     default:
                         throw new AlmaException(sprintf('Action unknown : %s', Tools::getValue('action')));
@@ -155,19 +159,17 @@ class AlmaInsuranceModuleFrontController extends ModuleFrontController
     }
 
     /**
-     * @param \ContextCore $context
+     * @param $productId
+     * @param $customisationId
+     * @param $insuranceContractId
      *
      * @return void
      *
      * @throws PrestaShopException
      */
-    public function ajaxAddInsuranceProductAndAssociation($context)
+    public function ajaxAddInsuranceProductAndAssociation($productId, $customisationId, $insuranceContractId)
     {
-        $idProduct = '';
-        $insuranceContractId = '';
-        $idCustomization = '';
-
-        $this->addInsuranceProductAndAssociation($idProduct, $insuranceContractId, 1, $idCustomization);
+        $this->addInsuranceProductAndAssociation($productId, $insuranceContractId, 1, $customisationId);
 
         $this->ajaxRenderAndExit(json_encode(['success' => true]));
     }

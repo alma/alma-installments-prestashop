@@ -28,7 +28,6 @@
      data-no-insurance-associated="{$associatedInsurances|count}"
 >
     <div class="actions-alma-insurance-product" style="display:none">
-
         {foreach from=$associatedInsurances item=$associatedInsurance key=$idAlmaInsuranceProduct}
             {include file="modules/alma/views/templates/hook/_partials/cartProducts.tpl" hasInsurance='1'}
         {/foreach}
@@ -38,7 +37,9 @@
                 {include file="modules/alma/views/templates/hook/_partials/cartProducts.tpl" hasInsurance='0'}
             {/for}
         {/if}
-
+    </div>
+    <div class="widget-alma-insurance-cart-item" style="display:none">
+        <iframe id="product-alma-iframe" src="https://protect.sandbox.almapay.com/almaProductInPageWidget.html?cms_reference={$product->id}-{$product->id_product_attribute}&amp;product_price={$product->price_without_reduction * 100}&amp;merchant_id=merchant_11xYpTY1GTkww5uWFKFdOllK82S1r7j5v5&amp;customer_session_id=testexplo&amp;cart_id={$idCart}"></iframe>
     </div>
 
 </div>
