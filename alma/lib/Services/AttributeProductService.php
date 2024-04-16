@@ -110,7 +110,7 @@ class AttributeProductService
      */
     public function getIdProductAttributeFromPost($idProduct)
     {
-        $idProductAttribute = 0;
+        $idProductAttribute = (int) \Tools::getValue('product_attribute_id');
 
         if (\Tools::getIsset('group')) {
             $idProductAttribute = (int) \Product::getIdProductAttributeByIdAttributes(

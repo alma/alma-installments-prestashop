@@ -111,6 +111,8 @@
                             {* TODO : Need to add id for identify the right element *}
                             <div class="alma-action-item-insurance">
                                 <a data-product-id="{$product.id_product|escape:'htmlall':'UTF-8'}"
+                                   data-product-attribute-id="{$product.id_product_attribute|escape:'htmlall':'UTF-8'}"
+                                   data-product-price="{$product.price_without_reduction|escape:'htmlall':'UTF-8' * 100}"
                                    data-product-customization-id="{$product.id_customization|intval}"
                                    data-action="add-insurance-product"
                                    data-token='{\Tools::getToken(false)|escape:'htmlall':'UTF-8'}'

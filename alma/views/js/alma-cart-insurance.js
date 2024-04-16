@@ -101,6 +101,8 @@
 
      $('.alma-add-insurance-product').on( "click", function(e) {
          console.log(e);
+         console.log($(this).attr("data-product-id") + '-' + $(this).attr("data-product-attribute-id"));
+         console.log($(this).attr("data-product-price"));
          openModal('popupModal', 1);
      });
 
@@ -109,10 +111,8 @@
              console.log(e.data);
              // TODO : Get id-iframe-modal by the modal to identify the product selected
              // let idIframeModal = e.data.idIframeModal;
-             // TODO : need to be replaced by the id of the product selected
-             let product_id = 1;
-             let customization_id = 0;
-             let token = '5c3699b949fd6b222df42fb58bef7d77';
+             let idIframeModal = $('#product-alma-iframe-1-1-35000');
+             // TODO : need to be replaced by the element clicked to add insurance
              let elementClicked = document.querySelector('.alma-add-insurance-product');
 
              addLoaderDot(null, elementClicked);
@@ -122,18 +122,19 @@
                  dataType: 'json',
                  data: {
                      ajax: true,
-                     token: token,
-                     product_id: product_id,
-                     customization_id: customization_id,
+                     token: idIframeModal.attr('data-token'),
+                     product_id: idIframeModal.attr('data-product-id'),
+                     product_attribute_id: idIframeModal.attr('data-product-attribute-id'),
+                     customization_id: idIframeModal.attr('data-product-customization-id'),
                      insurance_contract_id: e.data.selectedInsuranceData.insuranceContractId
                  },
              })
                  .success(function() {
-                     location.reload();
+                     //location.reload();
                  })
 
                  .error(function(e) {
-                     location.reload();
+                     //location.reload();
                  });
          }
      });
@@ -159,6 +160,17 @@ function onloadInsuranceItemCartAlma() {
             item.append(clearfix);
         }
         if (!isAlmaInsuranceProduct && isInsuranceAssociated) {
+
+            // TODO : Need to be deleted
+            /*
+            widgetInsuranceCartItem.style.display = 'block';
+            item.append(widgetInsuranceCartItem);
+            let clearfix = document.createElement('div');
+            clearfix.classList.add('clearfix');
+            item.append(clearfix);
+            */
+            // TODO : Need to be deleted
+
             actionsInsuranceProduct.style.display = 'block';
             item.append(actionsInsuranceProduct);
             let clearfix = document.createElement('div');
@@ -193,7 +205,6 @@ function addLoaderDot(event, element = null) {
         actionAlmaInsuranceProduct = event.currentTarget.closest('.actions-alma-insurance-product');
     }
 
-    console.log(actionAlmaInsuranceProduct);
     actionAlmaInsuranceProduct.classList.add('loading');
     actionAlmaInsuranceProduct.append(createLoaderDot());
 }

@@ -5,7 +5,8 @@
 .alma-widget-insurance{
     width: 100%;
 }
-#product-alma-iframe{
+#product-alma-iframe,
+.cart-item-alma-iframe{
     border: 0;
     padding: 0;
     margin: 0;

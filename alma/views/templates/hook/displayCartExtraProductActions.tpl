@@ -39,7 +39,16 @@
         {/if}
     </div>
     <div class="widget-alma-insurance-cart-item" style="display:none">
-        <iframe id="product-alma-iframe" src="https://protect.sandbox.almapay.com/almaProductInPageWidget.html?cms_reference={$product->id}-{$product->id_product_attribute}&amp;product_price={$product->price_without_reduction * 100}&amp;merchant_id=merchant_11xYpTY1GTkww5uWFKFdOllK82S1r7j5v5&amp;customer_session_id=testexplo&amp;cart_id={$idCart}"></iframe>
+        <iframe
+                id="product-alma-iframe-{$product->id}-{$product->id_product_attribute}-{$product->price_without_reduction * 100}"
+                class="cart-item-alma-iframe"
+                data-product-id="{$product->id|escape:'htmlall':'UTF-8'}"
+                data-product-attribute-id="{$product->id_product_attribute|escape:'htmlall':'UTF-8'}"
+                data-product-customization-id="{$product->id_customization|intval}"
+                data-token='{\Tools::getToken(false)|escape:'htmlall':'UTF-8'}'
+                data-link='{$ajaxLinkAddInsuranceProduct|escape:'htmlall':'UTF-8'}'
+                src="https://protect.sandbox.almapay.com/almaProductInPageWidget.html?cms_reference={$product->id}-{$product->id_product_attribute}&amp;product_price={$product->price_without_reduction * 100}&amp;merchant_id=merchant_11xYpTY1GTkww5uWFKFdOllK82S1r7j5v5&amp;customer_session_id=testexplo&amp;cart_id={$idCart}">
+        </iframe>
     </div>
 
 </div>

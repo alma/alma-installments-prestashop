@@ -62,10 +62,6 @@ class AlmaInsuranceModuleFrontController extends ModuleFrontController
                 $this->ajaxRenderAndExit(json_encode(['error' => 'Invalid Token']), 401);
             }
 
-            $productId = Tools::getValue('product_id');
-            $customizationId = Tools::getValue('customization_id');
-            $insuranceContractId = Tools::getValue('insurance_contract_id');
-
             try {
                 /**
                  * @var \ContextCore $context
@@ -83,7 +79,7 @@ class AlmaInsuranceModuleFrontController extends ModuleFrontController
                         $this->ajaxRemoveInsuranceProductAndAssociation($context);
                         break;
                     case 'addInsuranceProduct':
-                        $this->ajaxAddInsuranceProductAndAssociation($productId, $customizationId, $insuranceContractId);
+                        $this->ajaxAddInsuranceProductAndAssociation();
                         break;
                     default:
                         throw new AlmaException(sprintf('Action unknown : %s', Tools::getValue('action')));
@@ -159,17 +155,13 @@ class AlmaInsuranceModuleFrontController extends ModuleFrontController
     }
 
     /**
-     * @param $productId
-     * @param $customisationId
-     * @param $insuranceContractId
-     *
      * @return void
      *
      * @throws PrestaShopException
      */
-    public function ajaxAddInsuranceProductAndAssociation($productId, $customisationId, $insuranceContractId)
+    public function ajaxAddInsuranceProductAndAssociation()
     {
-        $this->addInsuranceProductAndAssociation($productId, $insuranceContractId, 1, $customisationId);
+        $this->addInsuranceProductAndAssociation();
 
         $this->ajaxRenderAndExit(json_encode(['success' => true]));
     }
@@ -243,13 +235,13 @@ class AlmaInsuranceModuleFrontController extends ModuleFrontController
         );
     }
 
-    protected function addInsuranceProductAndAssociation($idProduct, $insuranceContractId, $quantity, $idCustomization)
+    protected function addInsuranceProductAndAssociation()
     {
         $this->insuranceProductService->handleAddingProductInsurance(
-            $idProduct,
-            $insuranceContractId,
-            $quantity,
-            $idCustomization
+            \Tools::getValue('product_id'),
+            \Tools::getValue('insurance_contract_id'),
+            1,
+            \Tools::getValue('customization_id')
         );
     }
 }
