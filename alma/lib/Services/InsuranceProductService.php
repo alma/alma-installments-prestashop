@@ -28,6 +28,7 @@ use Alma\API\Client;
 use Alma\PrestaShop\Exceptions\AlmaException;
 use Alma\PrestaShop\Helpers\ClientHelper;
 use Alma\PrestaShop\Helpers\ConstantsHelper;
+use Alma\PrestaShop\Helpers\InsuranceHelper;
 use Alma\PrestaShop\Helpers\PriceHelper;
 use Alma\PrestaShop\Helpers\ProductHelper;
 use Alma\PrestaShop\Logger;
@@ -96,6 +97,10 @@ class InsuranceProductService
      * @var PriceHelper
      */
     protected $priceHelper;
+    /**
+     * @var InsuranceHelper
+     */
+    protected $insuranceHelper;
 
     public function __construct()
     {
@@ -111,6 +116,7 @@ class InsuranceProductService
         $this->productHelper = new ProductHelper();
         $this->insuranceApiService = new InsuranceApiService();
         $this->priceHelper = new PriceHelper();
+        $this->insuranceHelper = new InsuranceHelper();
     }
 
     /**
@@ -244,11 +250,7 @@ class InsuranceProductService
         try {
             $idProductAttribute = $this->attributeProductService->getIdProductAttributeFromPost($idProduct);
 
-            $cmsReference = sprintf(
-                '%s-%s',
-                $idProduct,
-                $idProductAttribute
-            );
+            $cmsReference = $this->insuranceHelper->createCmsReference($idProduct, $idProductAttribute);
             $regularPrice = $this->productHelper->getRegularPrice($idProduct, $idProductAttribute);
             $regularPriceInCents = $this->priceHelper->convertPriceToCents($regularPrice);
 

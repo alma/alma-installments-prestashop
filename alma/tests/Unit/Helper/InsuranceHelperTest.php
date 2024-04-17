@@ -146,6 +146,56 @@ class InsuranceHelperTest extends TestCase
     }
 
     /**
+     * Given an id product and id product attribute we return a cms reference
+     *
+     * @dataProvider productIdAndProductAttributeIdForCmsReference
+     *
+     * @param $productId
+     * @param $productAttributeId
+     * @param $expected
+     *
+     * @return void
+     */
+    public function testCreateCmsReferenceWithProductIdAndProductAttributeId($productId, $productAttributeId, $expected)
+    {
+        $this->assertEquals($expected, $this->insuranceHelper->createCmsReference($productId, $productAttributeId));
+    }
+
+    /**
+     * @return array[]
+     */
+    public function productIdAndProductAttributeIdForCmsReference()
+    {
+        return [
+            'product id and product attribute id' => [
+                'productId' => 1,
+                'productAttributeId' => 1,
+                'expected' => '1-1',
+            ],
+            'product id and product attribute id zero' => [
+                'productId' => 1,
+                'productAttributeId' => 0,
+                'expected' => '1',
+            ],
+            'product id and no product attribute id' => [
+                'productId' => 1,
+                'productAttributeId' => null,
+                'expected' => '1',
+            ],
+            'no product id and product attribute id' => [
+                'productId' => null,
+                'productAttributeId' => 1,
+                'expected' => null,
+            ],
+            'no product id and no product attribute id' => [
+                'productId' => null,
+                'productAttributeId' => null,
+                'expected' => null,
+            ],
+        ];
+    }
+
+    /**
      * @return array[]
      */
     public function cartWithOrWithoutInsuranceProduct()

@@ -36,6 +36,16 @@ if (!defined('_PS_VERSION_')) {
 class ProductHelper
 {
     /**
+     * @var InsuranceHelper
+     */
+    protected $insuranceHelper;
+
+    public function __construct()
+    {
+        $this->insuranceHelper = new InsuranceHelper();
+    }
+
+    /**
      * @param array $productRow
      *
      * @return string
@@ -165,11 +175,7 @@ class ProductHelper
         $products = $cart->getProducts();
         foreach ($products as $product) {
             for ($qty = 1; $qty <= $product['cart_quantity']; ++$qty) {
-                $cmsReferences[] = sprintf(
-                    '%s-%s',
-                    $product['id_product'],
-                    $product['id_product_attribute']
-                );
+                $cmsReferences[] = $this->insuranceHelper->createCmsReference($product['id_product'], $product['id_product_attribute']);
             }
         }
 

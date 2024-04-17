@@ -108,7 +108,7 @@ class DisplayProductActionsHookController extends FrontendHookController
             ? $productParams['id_product_attribute']
             : null;
 
-        $cmsReference = $productId . '-' . $productAttributeId;
+        $cmsReference = $this->insuranceHelper->createCmsReference($productId, $productAttributeId);
 
         $regularPrice = $this->productHelper->getRegularPrice($productId, $productAttributeId);
         $regularPriceInCents = $this->priceHelper->convertPriceToCents($regularPrice);

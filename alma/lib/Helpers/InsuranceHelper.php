@@ -149,4 +149,23 @@ class InsuranceHelper
 
         return true;
     }
+
+    /**
+     * @param $productId
+     * @param $productAttributeId
+     *
+     * @return string|null
+     */
+    public function createCmsReference($productId, $productAttributeId)
+    {
+        if ($productId !== null) {
+            if ((int) $productAttributeId <= 0) {
+                return (string) $productId;
+            }
+
+            return $productId . '-' . $productAttributeId;
+        }
+
+        return null;
+    }
 }
