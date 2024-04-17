@@ -22,7 +22,6 @@
  */
  (function ($) {
     $(function () {
-
         // Insurance
         onloadInsuranceItemCartAlma();
         // Reload item cart for Prestashop 1.7+ when quantity change
@@ -30,7 +29,9 @@
             prestashop.on("updatedCart", onloadInsuranceItemCartAlma);
         }
     });
+})(jQuery);
 
+function onloadInsuranceClickEvents() {
      $('.alma-remove-product').on( "click", function(e) {
          e.preventDefault();
          addLoaderDot(e);
@@ -98,22 +99,23 @@
                  location.reload();
              });
      });
-})(jQuery);
+ }
 
-// Insurance
 // ** Display extra info for insurance under the item product on cart **
 function onloadInsuranceItemCartAlma() {
     let itemsCart = document.querySelectorAll('.cart-items .cart-item');
 
     itemsCart.forEach((item) => {
         let dataProduct = item.querySelector('.alma-data-product');
-        let actionsInsuranceProduct = dataProduct.querySelector('.actions-alma-insurance-product');
         let isAlmaInsuranceProduct = parseInt(dataProduct.dataset.isAlmaInsurance);
         let noInsuranceAssociated = parseInt(dataProduct.dataset.noInsuranceAssociated);
+        let actionsInsuranceProduct = dataProduct.querySelector('.actions-alma-insurance-product');
 
         if (!isAlmaInsuranceProduct && noInsuranceAssociated) {
-            actionsInsuranceProduct.style.display = 'block';
-            item.append(actionsInsuranceProduct);
+            if (actionsInsuranceProduct) {
+                actionsInsuranceProduct.style.display = 'block';
+                item.append(actionsInsuranceProduct);
+            }
             let clearfix = document.createElement('div');
             clearfix.classList.add('clearfix');
             item.append(clearfix);
@@ -136,6 +138,8 @@ function onloadInsuranceItemCartAlma() {
             item.remove();
         }
     });
+
+    onloadInsuranceClickEvents();
 }
 
 function addLoaderDot(e) {
