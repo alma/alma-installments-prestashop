@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<phpunit xmlns="http://schema.phpunit.de/coverage/1.0">
+  <file name="ActionValidateOrderHookController.php">
+    <totals>
+      <lines total="93" comments="41" code="52" executable="26" executed="0" percent="0.00%"/>
+      <methods count="3" tested="0" percent="0.00%"/>
+      <functions count="0" tested="0" percent=""/>
+      <classes count="1" tested="0" percent="0.00%"/>
+      <traits count="0" tested="0" percent=""/>
+    </totals>
+    <class name="ActionValidateOrderHookController" start="35" executable="23" executed="0" crap="42">
+      <package full="" name="" sub="" category=""/>
+      <namespace name="Alma\PrestaShop\Controllers\Hook"/>
+      <method name="__construct" signature="__construct($module)" start="47" end="52" crap="2" executable="5" executed="0" coverage="0"/>
+      <method name="canRun" signature="canRun()" start="54" end="57" crap="6" executable="3" executed="0" coverage="0"/>
+      <method name="run" signature="run($params)" start="66" end="92" crap="12" executable="15" executed="0" coverage="0"/>
+    </class>
+  </file>
+</phpunit>

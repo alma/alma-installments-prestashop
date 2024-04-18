@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<phpunit xmlns="http://schema.phpunit.de/coverage/1.0">
+  <file name="AdminAlmaInsuranceOrders.php">
+    <totals>
+      <lines total="213" comments="75" code="138" executable="102" executed="0" percent="0.00%"/>
+      <methods count="6" tested="0" percent="0.00%"/>
+      <functions count="0" tested="0" percent=""/>
+      <classes count="1" tested="0" percent="0.00%"/>
+      <traits count="0" tested="0" percent=""/>
+    </totals>
+    <class name="AdminAlmaInsuranceOrdersController" start="30" executable="99" executed="0" crap="132">
+      <package full="" name="" sub="" category=""/>
+      <namespace name=""/>
+      <method name="__construct" signature="__construct()" start="37" end="78" crap="2" executable="38" executed="0" coverage="0"/>
+      <method name="renderList" signature="renderList()" start="85" end="90" crap="2" executable="4" executed="0" coverage="0"/>
+      <method name="getList" signature="getList($id_lang, $orderBy = null, $orderWay = null, $start = 0, $limit = null, $id_lang_shop = null)" start="105" end="140" crap="20" executable="23" executed="0" coverage="0"/>
+      <method name="displayShowLink" signature="displayShowLink($token = null, $id, $name = null) // phpcs:ignore" start="151" end="173" crap="2" executable="18" executed="0" coverage="0"/>
+      <method name="getProductName" signature="getProductName($idProduct, $idProductAttribute = null)" start="181" end="202" crap="12" executable="12" executed="0" coverage="0"/>
+      <method name="initToolbar" signature="initToolbar()" start="207" end="212" crap="2" executable="4" executed="0" coverage="0"/>
+    </class>
+  </file>
+</phpunit>

@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<phpunit xmlns="http://schema.phpunit.de/coverage/1.0">
+  <file name="AttributeProductService.php">
+    <totals>
+      <lines total="124" comments="53" code="71" executable="39" executed="0" percent="0.00%"/>
+      <methods count="4" tested="0" percent="0.00%"/>
+      <functions count="0" tested="0" percent=""/>
+      <classes count="1" tested="0" percent="0.00%"/>
+      <traits count="0" tested="0" percent=""/>
+    </totals>
+    <class name="AttributeProductService" start="35" executable="36" executed="0" crap="56">
+      <package full="" name="" sub="" category=""/>
+      <namespace name="Alma\PrestaShop\Services"/>
+      <method name="__construct" signature="__construct()" start="52" end="57" crap="2" executable="5" executed="0" coverage="0"/>
+      <method name="getAttributeId" signature="getAttributeId($name, $attributeGroupId)" start="65" end="84" crap="6" executable="15" executed="0" coverage="0"/>
+      <method name="getProductAttributeObject" signature="getProductAttributeObject()" start="89" end="102" crap="6" executable="6" executed="0" coverage="0"/>
+      <method name="getIdProductAttributeFromPost" signature="getIdProductAttributeFromPost($idProduct)" start="111" end="123" crap="6" executable="10" executed="0" coverage="0"/>
+    </class>
+  </file>
+</phpunit>

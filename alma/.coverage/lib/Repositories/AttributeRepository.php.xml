@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<phpunit xmlns="http://schema.phpunit.de/coverage/1.0">
+  <file name="AttributeRepository.php">
+    <totals>
+      <lines total="67" comments="34" code="33" executable="23" executed="0" percent="0.00%"/>
+      <methods count="1" tested="0" percent="0.00%"/>
+      <functions count="0" tested="0" percent=""/>
+      <classes count="1" tested="0" percent="0.00%"/>
+      <traits count="0" tested="0" percent=""/>
+    </totals>
+    <class name="AttributeRepository" start="36" executable="20" executed="0" crap="6">
+      <package full="" name="" sub="" category=""/>
+      <namespace name="Alma\PrestaShop\Repositories"/>
+      <method name="getAttributeIdByNameAndGroup" signature="getAttributeIdByNameAndGroup($name, $idGroup, $idLang = 1)" start="45" end="66" crap="6" executable="20" executed="0" coverage="0"/>
+    </class>
+  </file>
+</phpunit>

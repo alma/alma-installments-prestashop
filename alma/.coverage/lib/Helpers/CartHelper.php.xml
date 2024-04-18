@@ -1,0 +1,26 @@
+<?xml version="1.0"?>
+<phpunit xmlns="http://schema.phpunit.de/coverage/1.0">
+  <file name="CartHelper.php">
+    <totals>
+      <lines total="191" comments="78" code="113" executable="35" executed="1" percent="2.86%"/>
+      <methods count="4" tested="0" percent="0.00%"/>
+      <functions count="0" tested="0" percent=""/>
+      <classes count="1" tested="0" percent="0.00%"/>
+      <traits count="0" tested="0" percent=""/>
+    </totals>
+    <class name="CartHelper" start="38" executable="33" executed="0" crap="156">
+      <package full="" name="" sub="" category=""/>
+      <namespace name="Alma\PrestaShop\Helpers"/>
+      <method name="__construct" signature="__construct(&#10;        $context,&#10;        $toolsHelper,&#10;        $priceHelper,&#10;        $cartData,&#10;        $orderRepository,&#10;        $orderStateHelper,&#10;        $carrierHelper&#10;    )" start="84" end="100" crap="1" executable="0" executed="0" coverage="100"/>
+      <method name="getCartIdFromContext" signature="getCartIdFromContext()" start="105" end="114" crap="6" executable="4" executed="0" coverage="0"/>
+      <method name="previousCartOrdered" signature="previousCartOrdered($idCustomer)" start="123" end="159" crap="42" executable="23" executed="0" coverage="0"/>
+      <method name="getOrdersByCustomer" signature="getOrdersByCustomer($idCustomer, $limit)" start="169" end="178" crap="6" executable="4" executed="0" coverage="0"/>
+      <method name="getCartTotal" signature="getCartTotal($cart)" start="185" end="190" crap="2" executable="2" executed="0" coverage="0"/>
+    </class>
+    <coverage>
+      <line nr="31">
+        <covered by="Alma\PrestaShop\Tests\Unit\Services\InsuranceApiServiceTest::testPostProcessMethodExists"/>
+      </line>
+    </coverage>
+  </file>
+</phpunit>

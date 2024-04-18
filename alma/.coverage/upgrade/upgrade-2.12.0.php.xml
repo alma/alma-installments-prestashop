@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<phpunit xmlns="http://schema.phpunit.de/coverage/1.0">
+  <file name="upgrade-2.12.0.php">
+    <totals>
+      <lines total="57" comments="25" code="32" executable="19" executed="0" percent="0.00%"/>
+      <methods count="0" tested="0" percent=""/>
+      <functions count="1" tested="0" percent="0.00%"/>
+      <classes count="0" tested="0" percent=""/>
+      <traits count="0" tested="0" percent=""/>
+    </totals>
+    <function name="upgrade_module_2_12_0" signature="upgrade_module_2_12_0()" start="37" crap="0" executable="16" executed="0" coverage="0"/>
+  </file>
+</phpunit>

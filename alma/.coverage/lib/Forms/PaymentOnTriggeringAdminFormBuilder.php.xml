@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<phpunit xmlns="http://schema.phpunit.de/coverage/1.0">
+  <file name="PaymentOnTriggeringAdminFormBuilder.php">
+    <totals>
+      <lines total="111" comments="33" code="78" executable="26" executed="1" percent="3.85%"/>
+      <methods count="2" tested="0" percent="0.00%"/>
+      <functions count="0" tested="0" percent=""/>
+      <classes count="1" tested="0" percent="0.00%"/>
+      <traits count="0" tested="0" percent=""/>
+    </totals>
+    <class name="PaymentOnTriggeringAdminFormBuilder" start="41" executable="24" executed="0" crap="12">
+      <package full="" name="" sub="" category=""/>
+      <namespace name="Alma\PrestaShop\Forms"/>
+      <method name="__construct" signature="__construct($module, $context, $image, $config = [])" start="58" end="69" crap="1" executable="0" executed="0" coverage="100"/>
+      <method name="configForm" signature="configForm()" start="71" end="105" crap="2" executable="23" executed="0" coverage="0"/>
+      <method name="getTitle" signature="getTitle()" start="107" end="110" crap="2" executable="1" executed="0" coverage="0"/>
+    </class>
+    <coverage>
+      <line nr="34">
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\CustomFieldHelperTest::testCustomFields"/>
+      </line>
+    </coverage>
+  </file>
+</phpunit>

@@ -1,0 +1,26 @@
+<?xml version="1.0"?>
+<phpunit xmlns="http://schema.phpunit.de/coverage/1.0">
+  <file name="ToolsHelper.php">
+    <totals>
+      <lines total="120" comments="73" code="47" executable="14" executed="1" percent="7.14%"/>
+      <methods count="5" tested="0" percent="0.00%"/>
+      <functions count="0" tested="0" percent=""/>
+      <classes count="1" tested="0" percent="0.00%"/>
+      <traits count="0" tested="0" percent=""/>
+    </totals>
+    <class name="ToolsHelper" start="34" executable="12" executed="0" crap="72">
+      <package full="" name="" sub="" category=""/>
+      <namespace name="Alma\PrestaShop\Helpers"/>
+      <method name="psRound" signature="psRound($value, $precision = 0, $roundMode = null)" start="46" end="49" crap="2" executable="1" executed="0" coverage="0"/>
+      <method name="displayPrice" signature="displayPrice($legacy, $price, $currency = null)" start="65" end="84" crap="20" executable="8" executed="0" coverage="0"/>
+      <method name="psVersionCompare" signature="psVersionCompare($version2, $operator, $version1 = _PS_VERSION_)" start="93" end="96" crap="2" executable="1" executed="0" coverage="0"/>
+      <method name="strlen" signature="strlen($string)" start="103" end="106" crap="2" executable="1" executed="0" coverage="0"/>
+      <method name="substr" signature="substr($str, $start, $length = false, $encoding = 'utf-8')" start="116" end="119" crap="2" executable="1" executed="0" coverage="0"/>
+    </class>
+    <coverage>
+      <line nr="27">
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\MessageOrderHelperTest::testGetMessageForRefundWithRightData"/>
+      </line>
+    </coverage>
+  </file>
+</phpunit>

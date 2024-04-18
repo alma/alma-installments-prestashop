@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<phpunit xmlns="http://schema.phpunit.de/coverage/1.0">
+  <file name="AttributeGroupProductService.php">
+    <totals>
+      <lines total="70" comments="33" code="37" executable="18" executed="0" percent="0.00%"/>
+      <methods count="2" tested="0" percent="0.00%"/>
+      <functions count="0" tested="0" percent=""/>
+      <classes count="1" tested="0" percent="0.00%"/>
+      <traits count="0" tested="0" percent=""/>
+    </totals>
+    <class name="AttributeGroupProductService" start="33" executable="15" executed="0" crap="12">
+      <package full="" name="" sub="" category=""/>
+      <namespace name="Alma\PrestaShop\Services"/>
+      <method name="__construct" signature="__construct()" start="45" end="49" crap="2" executable="4" executed="0" coverage="0"/>
+      <method name="getIdAttributeGroupByName" signature="getIdAttributeGroupByName($name)" start="56" end="69" crap="6" executable="11" executed="0" coverage="0"/>
+    </class>
+  </file>
+</phpunit>
