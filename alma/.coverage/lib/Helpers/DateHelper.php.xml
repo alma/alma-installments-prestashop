@@ -1,0 +1,46 @@
+<?xml version="1.0"?>
+<phpunit xmlns="http://schema.phpunit.de/coverage/1.0">
+  <file name="DateHelper.php">
+    <totals>
+      <lines total="148" comments="79" code="69" executable="24" executed="7" percent="29.17%"/>
+      <methods count="7" tested="1" percent="14.29%"/>
+      <functions count="0" tested="0" percent=""/>
+      <classes count="1" tested="0" percent="0.00%"/>
+      <traits count="0" tested="0" percent=""/>
+    </totals>
+    <class name="DateHelper" start="36" executable="22" executed="6" crap="78.01">
+      <package full="" name="" sub="" category=""/>
+      <namespace name="Alma\PrestaShop\Helpers"/>
+      <method name="getDatesInInterval" signature="getDatesInInterval($from, $first)" start="46" end="60" crap="12" executable="8" executed="0" coverage="0"/>
+      <method name="isSameDay" signature="isSameDay($today, $day)" start="70" end="73" crap="2" executable="1" executed="0" coverage="0"/>
+      <method name="extractTimestampWithoutTime" signature="extractTimestampWithoutTime($timestamp)" start="82" end="85" crap="2" executable="1" executed="0" coverage="0"/>
+      <method name="extractDateWithoutTime" signature="extractDateWithoutTime($timestamp)" start="94" end="97" crap="2" executable="1" executed="0" coverage="0"/>
+      <method name="getDateFormat" signature="getDateFormat($locale, $timestamp)" start="107" end="120" crap="3.58" executable="5" executed="3" coverage="60"/>
+      <method name="getFrenchDateFormat" signature="getFrenchDateFormat($timestamp)" start="129" end="135" crap="1" executable="3" executed="3" coverage="100"/>
+      <method name="isValidTimeStamp" signature="isValidTimeStamp($timestamp)" start="142" end="147" crap="12" executable="3" executed="0" coverage="0"/>
+    </class>
+    <coverage>
+      <line nr="27">
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\DateHelperTest::testGetFrenchDateFormat"/>
+      </line>
+      <line nr="110">
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\DateHelperTest::testGetDateFormat"/>
+      </line>
+      <line nr="111">
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\DateHelperTest::testGetDateFormat"/>
+      </line>
+      <line nr="113">
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\DateHelperTest::testGetDateFormat"/>
+      </line>
+      <line nr="131">
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\DateHelperTest::testGetFrenchDateFormat"/>
+      </line>
+      <line nr="132">
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\DateHelperTest::testGetFrenchDateFormat"/>
+      </line>
+      <line nr="134">
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\DateHelperTest::testGetFrenchDateFormat"/>
+      </line>
+    </coverage>
+  </file>
+</phpunit>

@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<phpunit xmlns="http://schema.phpunit.de/coverage/1.0">
+  <file name="InsuranceProduct.php">
+    <totals>
+      <lines total="143" comments="50" code="93" executable="3" executed="0" percent="0.00%"/>
+      <methods count="0" tested="0" percent=""/>
+      <functions count="0" tested="0" percent=""/>
+      <classes count="0" tested="0" percent=""/>
+      <traits count="0" tested="0" percent=""/>
+    </totals>
+    <class name="InsuranceProduct" start="32" executable="0" executed="0" crap="0">
+      <package full="" name="" sub="" category=""/>
+      <namespace name="Alma\PrestaShop\Model"/>
+    </class>
+  </file>
+</phpunit>

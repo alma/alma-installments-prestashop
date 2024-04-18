@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<phpunit xmlns="http://schema.phpunit.de/coverage/1.0">
+  <file name="AdminAlmaInsuranceConfiguration.php">
+    <totals>
+      <lines total="107" comments="39" code="68" executable="42" executed="0" percent="0.00%"/>
+      <methods count="3" tested="0" percent="0.00%"/>
+      <functions count="0" tested="0" percent=""/>
+      <classes count="1" tested="0" percent="0.00%"/>
+      <traits count="0" tested="0" percent=""/>
+    </totals>
+    <class name="AdminAlmaInsuranceConfigurationController" start="34" executable="39" executed="0" crap="20">
+      <package full="" name="" sub="" category=""/>
+      <namespace name=""/>
+      <method name="__construct" signature="__construct()" start="47" end="53" crap="2" executable="6" executed="0" coverage="0"/>
+      <method name="initContent" signature="initContent()" start="61" end="77" crap="2" executable="13" executed="0" coverage="0"/>
+      <method name="ajaxProcessSaveConfigInsurance" signature="ajaxProcessSaveConfigInsurance()" start="84" end="106" crap="6" executable="20" executed="0" coverage="0"/>
+    </class>
+  </file>
+</phpunit>

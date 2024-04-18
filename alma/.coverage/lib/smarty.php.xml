@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<phpunit xmlns="http://schema.phpunit.de/coverage/1.0">
+  <file name="smarty.php">
+    <totals>
+      <lines total="84" comments="39" code="45" executable="30" executed="0" percent="0.00%"/>
+      <methods count="0" tested="0" percent=""/>
+      <functions count="3" tested="0" percent="0.00%"/>
+      <classes count="0" tested="0" percent=""/>
+      <traits count="0" tested="0" percent=""/>
+    </totals>
+    <function name="smarty_prefilter_almaDisplayHtml" signature="smarty_prefilter_almaDisplayHtml($source, $template)" start="40" crap="0" executable="10" executed="0" coverage="0"/>
+    <function name="smarty_function_almaFormatPrice" signature="smarty_function_almaFormatPrice($params, $smarty)" start="60" crap="0" executable="4" executed="0" coverage="0"/>
+    <function name="smarty_modifier_almaJsonEncode" signature="smarty_modifier_almaJsonEncode($value)" start="74" crap="0" executable="7" executed="0" coverage="0"/>
+  </file>
+</phpunit>

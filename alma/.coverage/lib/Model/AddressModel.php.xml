@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<phpunit xmlns="http://schema.phpunit.de/coverage/1.0">
+  <file name="AddressModel.php">
+    <totals>
+      <lines total="88" comments="43" code="45" executable="24" executed="0" percent="0.00%"/>
+      <methods count="7" tested="0" percent="0.00%"/>
+      <functions count="0" tested="0" percent=""/>
+      <classes count="1" tested="0" percent="0.00%"/>
+      <traits count="0" tested="0" percent=""/>
+    </totals>
+    <class name="AddressModel" start="31" executable="21" executed="0" crap="56">
+      <package full="" name="" sub="" category=""/>
+      <namespace name="Alma\PrestaShop\Model"/>
+      <method name="getAddressLine1" signature="getAddressLine1()" start="36" end="39" crap="2" executable="3" executed="0" coverage="0"/>
+      <method name="getAddressLine2" signature="getAddressLine2()" start="44" end="47" crap="2" executable="3" executed="0" coverage="0"/>
+      <method name="getZipCode" signature="getZipCode()" start="52" end="55" crap="2" executable="3" executed="0" coverage="0"/>
+      <method name="getCity" signature="getCity()" start="60" end="63" crap="2" executable="3" executed="0" coverage="0"/>
+      <method name="getCountry" signature="getCountry()" start="68" end="71" crap="2" executable="3" executed="0" coverage="0"/>
+      <method name="getPhone" signature="getPhone()" start="76" end="79" crap="2" executable="3" executed="0" coverage="0"/>
+      <method name="getPhoneMobile" signature="getPhoneMobile()" start="84" end="87" crap="2" executable="3" executed="0" coverage="0"/>
+    </class>
+  </file>
+</phpunit>

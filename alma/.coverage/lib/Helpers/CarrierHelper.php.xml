@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<phpunit xmlns="http://schema.phpunit.de/coverage/1.0">
+  <file name="CarrierHelper.php">
+    <totals>
+      <lines total="96" comments="43" code="53" executable="15" executed="1" percent="6.67%"/>
+      <methods count="2" tested="0" percent="0.00%"/>
+      <functions count="0" tested="0" percent=""/>
+      <classes count="1" tested="0" percent="0.00%"/>
+      <traits count="0" tested="0" percent=""/>
+    </totals>
+    <class name="CarrierHelper" start="36" executable="13" executed="0" crap="72">
+      <package full="" name="" sub="" category=""/>
+      <namespace name="Alma\PrestaShop\Helpers"/>
+      <method name="__construct" signature="__construct($context, $carrierData)" start="49" end="53" crap="1" executable="0" executed="0" coverage="100"/>
+      <method name="getParentCarrierNameById" signature="getParentCarrierNameById($idCarrier)" start="62" end="86" crap="42" executable="12" executed="0" coverage="0"/>
+      <method name="createCarrier" signature="createCarrier($id = null, $id_lang = null)" start="92" end="95" crap="2" executable="1" executed="0" coverage="0"/>
+    </class>
+    <coverage>
+      <line nr="29">
+        <covered by="Alma\PrestaShop\Tests\Unit\Services\InsuranceApiServiceTest::testPostProcessMethodExists"/>
+      </line>
+    </coverage>
+  </file>
+</phpunit>

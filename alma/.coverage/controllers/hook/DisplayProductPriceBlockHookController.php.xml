@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<phpunit xmlns="http://schema.phpunit.de/coverage/1.0">
+  <file name="DisplayProductPriceBlockHookController.php">
+    <totals>
+      <lines total="213" comments="48" code="165" executable="107" executed="0" percent="0.00%"/>
+      <methods count="2" tested="0" percent="0.00%"/>
+      <functions count="0" tested="0" percent=""/>
+      <classes count="1" tested="0" percent="0.00%"/>
+      <traits count="0" tested="0" percent=""/>
+    </totals>
+    <class name="DisplayProductPriceBlockHookController" start="46" executable="104" executed="0" crap="812">
+      <package full="" name="" sub="" category=""/>
+      <namespace name="Alma\PrestaShop\Controllers\Hook"/>
+      <method name="__construct" signature="__construct($module)" start="75" end="83" crap="1" executable="0" executed="0" coverage="100"/>
+      <method name="canRun" signature="canRun()" start="85" end="91" crap="20" executable="6" executed="0" coverage="0"/>
+      <method name="run" signature="run($params)" start="93" end="212" crap="552" executable="98" executed="0" coverage="0"/>
+    </class>
+  </file>
+</phpunit>

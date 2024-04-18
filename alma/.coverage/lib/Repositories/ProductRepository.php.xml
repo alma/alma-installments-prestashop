@@ -1,0 +1,60 @@
+<?xml version="1.0"?>
+<phpunit xmlns="http://schema.phpunit.de/coverage/1.0">
+  <file name="ProductRepository.php">
+    <totals>
+      <lines total="256" comments="74" code="182" executable="98" executed="4" percent="4.08%"/>
+      <methods count="6" tested="1" percent="16.67%"/>
+      <functions count="0" tested="0" percent=""/>
+      <classes count="1" tested="0" percent="0.00%"/>
+      <traits count="0" tested="0" percent=""/>
+    </totals>
+    <class name="ProductRepository" start="40" executable="96" executed="3" crap="312.56">
+      <package full="" name="" sub="" category=""/>
+      <namespace name="Alma\PrestaShop\Repositories"/>
+      <method name="__construct" signature="__construct()" start="54" end="58" crap="1" executable="3" executed="3" coverage="100"/>
+      <method name="getProductsCombinations" signature="getProductsCombinations($cart, $products)" start="70" end="133" crap="42" executable="41" executed="0" coverage="0"/>
+      <method name="getProductsDetails" signature="getProductsDetails($products)" start="140" end="171" crap="30" executable="18" executed="0" coverage="0"/>
+      <method name="getProductIdByReference" signature="getProductIdByReference($reference, $id_lang = 1)" start="179" end="189" crap="2" executable="8" executed="0" coverage="0"/>
+      <method name="createInsuranceProduct" signature="createInsuranceProduct()" start="197" end="245" crap="20" executable="25" executed="0" coverage="0"/>
+      <method name="getProduct" signature="getProduct($idProduct)" start="252" end="255" crap="2" executable="1" executed="0" coverage="0"/>
+    </class>
+    <coverage>
+      <line nr="31">
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\InsuranceHelperTest::testCanRefundOrderWithNbNotCancelledValueUpToZeroReturnFalse"/>
+      </line>
+      <line nr="56">
+        <covered by="Alma\PrestaShop\Tests\Unit\Services\InsuranceApiServiceTest::testPostProcessMethodExists"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Services\InsuranceApiServiceTest::testGetRequestIsCalledAndThrowSubscriptionExceptionIfApiThrowException"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Services\InsuranceApiServiceTest::testGetRequestIsCalledAndReturnSubscriptionIfNoError"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Services\InsuranceApiServiceTest::testGetRequestIsCalledToVoidInsuranceAndThrowSubscriptionExceptionIfApiThrowException"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Services\InsuranceApiServiceTest::testReturnPendingCancellationIfApiThrowInsuranceCancelPendingException"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Services\InsuranceApiServiceTest::testReturn200IfNoError"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Services\InsuranceSubscriptionServiceTest::testSetCancellationMethodExist"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Services\InsuranceSubscriptionServiceTest::testExpectMethodOnceSetSubscriptionForCancellationAndReturnTrue"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Services\InsuranceSubscriptionServiceTest::testExpectMethodOnceSetSubscriptionForCancellationReturnFalseAndThrowException"/>
+      </line>
+      <line nr="57">
+        <covered by="Alma\PrestaShop\Tests\Unit\Services\InsuranceApiServiceTest::testPostProcessMethodExists"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Services\InsuranceApiServiceTest::testGetRequestIsCalledAndThrowSubscriptionExceptionIfApiThrowException"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Services\InsuranceApiServiceTest::testGetRequestIsCalledAndReturnSubscriptionIfNoError"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Services\InsuranceApiServiceTest::testGetRequestIsCalledToVoidInsuranceAndThrowSubscriptionExceptionIfApiThrowException"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Services\InsuranceApiServiceTest::testReturnPendingCancellationIfApiThrowInsuranceCancelPendingException"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Services\InsuranceApiServiceTest::testReturn200IfNoError"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Services\InsuranceSubscriptionServiceTest::testSetCancellationMethodExist"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Services\InsuranceSubscriptionServiceTest::testExpectMethodOnceSetSubscriptionForCancellationAndReturnTrue"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Services\InsuranceSubscriptionServiceTest::testExpectMethodOnceSetSubscriptionForCancellationReturnFalseAndThrowException"/>
+      </line>
+      <line nr="58">
+        <covered by="Alma\PrestaShop\Tests\Unit\Services\InsuranceApiServiceTest::testPostProcessMethodExists"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Services\InsuranceApiServiceTest::testGetRequestIsCalledAndThrowSubscriptionExceptionIfApiThrowException"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Services\InsuranceApiServiceTest::testGetRequestIsCalledAndReturnSubscriptionIfNoError"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Services\InsuranceApiServiceTest::testGetRequestIsCalledToVoidInsuranceAndThrowSubscriptionExceptionIfApiThrowException"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Services\InsuranceApiServiceTest::testReturnPendingCancellationIfApiThrowInsuranceCancelPendingException"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Services\InsuranceApiServiceTest::testReturn200IfNoError"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Services\InsuranceSubscriptionServiceTest::testSetCancellationMethodExist"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Services\InsuranceSubscriptionServiceTest::testExpectMethodOnceSetSubscriptionForCancellationAndReturnTrue"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Services\InsuranceSubscriptionServiceTest::testExpectMethodOnceSetSubscriptionForCancellationReturnFalseAndThrowException"/>
+      </line>
+    </coverage>
+  </file>
+</phpunit>

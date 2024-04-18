@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<phpunit xmlns="http://schema.phpunit.de/coverage/1.0">
+  <file name="ActionCartSaveHookController.php">
+    <totals>
+      <lines total="112" comments="52" code="60" executable="33" executed="0" percent="0.00%"/>
+      <methods count="4" tested="0" percent="0.00%"/>
+      <functions count="0" tested="0" percent=""/>
+      <classes count="1" tested="0" percent="0.00%"/>
+      <traits count="0" tested="0" percent=""/>
+    </totals>
+    <class name="ActionCartSaveHookController" start="38" executable="30" executed="0" crap="110">
+      <package full="" name="" sub="" category=""/>
+      <namespace name="Alma\PrestaShop\Controllers\Hook"/>
+      <method name="canRun" signature="canRun()" start="54" end="63" crap="20" executable="6" executed="0" coverage="0"/>
+      <method name="__construct" signature="__construct($module)" start="68" end="75" crap="2" executable="6" executed="0" coverage="0"/>
+      <method name="run" signature="run($params)" start="86" end="89" crap="2" executable="3" executed="0" coverage="0"/>
+      <method name="handleAddingProductInsurance" signature="handleAddingProductInsurance($cart)" start="96" end="111" crap="20" executable="15" executed="0" coverage="0"/>
+    </class>
+  </file>
+</phpunit>

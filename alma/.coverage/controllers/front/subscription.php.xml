@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<phpunit xmlns="http://schema.phpunit.de/coverage/1.0">
+  <file name="subscription.php">
+    <totals>
+      <lines total="281" comments="87" code="194" executable="133" executed="0" percent="0.00%"/>
+      <methods count="6" tested="0" percent="0.00%"/>
+      <functions count="0" tested="0" percent=""/>
+      <classes count="1" tested="0" percent="0.00%"/>
+      <traits count="0" tested="0" percent=""/>
+    </totals>
+    <class name="AlmaSubscriptionModuleFrontController" start="49" executable="130" executed="0" crap="240">
+      <package full="" name="" sub="" category=""/>
+      <namespace name=""/>
+      <method name="__construct" signature="__construct()" start="86" end="111" crap="2" executable="24" executed="0" coverage="0"/>
+      <method name="postProcess" signature="postProcess()" start="119" end="135" crap="6" executable="13" executed="0" coverage="0"/>
+      <method name="responseSubscriptionByAction" signature="responseSubscriptionByAction($action, $sid, $trace, $reason = '')" start="146" end="165" crap="12" executable="19" executed="0" coverage="0"/>
+      <method name="update" signature="update($sid, $trace)" start="173" end="197" crap="12" executable="21" executed="0" coverage="0"/>
+      <method name="cancel" signature="cancel($sid, $reason)" start="210" end="243" crap="20" executable="30" executed="0" coverage="0"/>
+      <method name="addMessageOrder" signature="addMessageOrder($sid)" start="254" end="280" crap="6" executable="23" executed="0" coverage="0"/>
+    </class>
+  </file>
+</phpunit>

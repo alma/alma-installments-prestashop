@@ -1,0 +1,531 @@
+<?xml version="1.0"?>
+<phpunit xmlns="http://schema.phpunit.de/coverage/1.0">
+  <file name="InsuranceHelper.php">
+    <totals>
+      <lines total="254" comments="90" code="164" executable="68" executed="66" percent="97.06%"/>
+      <methods count="9" tested="8" percent="88.89%"/>
+      <functions count="0" tested="0" percent=""/>
+      <classes count="1" tested="0" percent="0.00%"/>
+      <traits count="0" tested="0" percent=""/>
+    </totals>
+    <class name="InsuranceHelper" start="37" executable="66" executed="65" crap="23">
+      <package full="" name="" sub="" category=""/>
+      <namespace name="Alma\PrestaShop\Helpers\Admin"/>
+      <method name="__construct" signature="__construct($module)" start="69" end="75" crap="1" executable="5" executed="5" coverage="100"/>
+      <method name="tabsInsuranceDescription" signature="tabsInsuranceDescription()" start="80" end="114" crap="1" executable="19" executed="19" coverage="100"/>
+      <method name="handleBOMenu" signature="handleBOMenu($isAllowInsurance)" start="123" end="143" crap="5" executable="8" executed="8" coverage="100"/>
+      <method name="handleDefaultInsuranceFieldValues" signature="handleDefaultInsuranceFieldValues($isAllowInsurance)" start="152" end="173" crap="6" executable="9" executed="9" coverage="100"/>
+      <method name="envUrl" signature="envUrl()" start="178" end="185" crap="2.15" executable="3" executed="2" coverage="66.666666666667"/>
+      <method name="constructIframeUrlWithParams" signature="constructIframeUrlWithParams()" start="192" end="199" crap="1" executable="4" executed="4" coverage="100"/>
+      <method name="mapDbFieldsWithIframeParams" signature="mapDbFieldsWithIframeParams()" start="206" end="217" crap="3" executable="6" executed="6" coverage="100"/>
+      <method name="saveBOFormValues" signature="saveBOFormValues($configKeys, $dbFields)" start="225" end="233" crap="2" executable="5" executed="5" coverage="100"/>
+      <method name="saveConfigInsurance" signature="saveConfigInsurance($config)" start="242" end="253" crap="2" executable="7" executed="7" coverage="100"/>
+    </class>
+    <coverage>
+      <line nr="33">
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\Admin\InsuranceHelperTest::testTabInstalledWithAllowFlagAndTabNotInstalled with data set &quot;install tabs&quot;"/>
+      </line>
+      <line nr="71">
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\Admin\InsuranceHelperTest::testTabInstalledWithAllowFlagAndTabNotInstalled with data set &quot;install tabs&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\Admin\InsuranceHelperTest::testTabUninstalledWithDisallowFlagAndTabInstalled with data set &quot;install tabs&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\Admin\InsuranceHelperTest::testTabMethodNotCalledWithWrongParams with data set &quot;is allow&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\Admin\InsuranceHelperTest::testTabMethodNotCalledWithWrongParams with data set &quot;is disallow&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\Admin\InsuranceHelperTest::testUpdateValueIfFlagIsAllowAndInsuranceIsDisabled"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\Admin\InsuranceHelperTest::testDeleteByNamesIfFlagIsDisallowAndInsuranceIsAllow"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\Admin\InsuranceHelperTest::testConstructIframeUrlWithParams"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\Admin\InsuranceHelperTest::testSaveConfigInsurance"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\Admin\InsuranceHelperTest::testDontSaveConfigInsuranceWithWrongKeysAndThrowException"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\CustomFieldHelperTest::testCustomFields"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\CustomFieldHelperTest::testGetAllLangCustomFieldByKeyConfig with data set &quot;test ALMA_PAY_NOW_BUTTON_TITLE&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\CustomFieldHelperTest::testGetAllLangCustomFieldByKeyConfig with data set &quot;test ALMA_PAY_NOW_BUTTON_DESC&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\CustomFieldHelperTest::testGetAllLangCustomFieldByKeyConfig with data set &quot;test ALMA_PNX_BUTTON_TITLE&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\CustomFieldHelperTest::testGetAllLangCustomFieldByKeyConfig with data set &quot;test ALMA_PNX_BUTTON_DESC&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\CustomFieldHelperTest::testGetAllLangCustomFieldByKeyConfig with data set &quot;test ALMA_DEFERRED_BUTTON_TITLE&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\CustomFieldHelperTest::testGetAllLangCustomFieldByKeyConfig with data set &quot;test ALMA_PNX_AIR_BUTTON_TITLE&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\CustomFieldHelperTest::testGetAllLangCustomFieldByKeyConfig with data set &quot;test ALMA_PNX_AIR_BUTTON_DESC&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\CustomFieldHelperTest::testGetAllLangCustomFieldByKeyConfig with data set &quot;test ALMA_NOT_ELIGIBLE_CATEGORIES&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\CustomFieldHelperTest::testGetAllLangCustomFieldByKeyConfig with data set &quot;test ALMA_DESCRIPTION_TRIGGER&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\CustomFieldHelperTest::testGetCustomFieldByKeyConfig with data set &quot;test ALMA_PAY_NOW_BUTTON_TITLE&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\CustomFieldHelperTest::testGetCustomFieldByKeyConfig with data set &quot;test ALMA_PAY_NOW_BUTTON_DESC&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\CustomFieldHelperTest::testGetCustomFieldByKeyConfig with data set &quot;test ALMA_PNX_BUTTON_TITLE&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\CustomFieldHelperTest::testGetCustomFieldByKeyConfig with data set &quot;test ALMA_PNX_BUTTON_DESC&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\CustomFieldHelperTest::testGetCustomFieldByKeyConfig with data set &quot;test ALMA_DEFERRED_BUTTON_TITLE&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\CustomFieldHelperTest::testGetCustomFieldByKeyConfig with data set &quot;test ALMA_PNX_AIR_BUTTON_TITLE&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\CustomFieldHelperTest::testGetCustomFieldByKeyConfig with data set &quot;test ALMA_PNX_AIR_BUTTON_DESC&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\CustomFieldHelperTest::testGetCustomFieldByKeyConfig with data set &quot;test ALMA_NOT_ELIGIBLE_CATEGORIES&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\CustomFieldHelperTest::testGetCustomFieldByKeyConfig with data set &quot;test ALMA_DESCRIPTION_TRIGGER&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\CustomFieldHelperTest::testGetValue with data set &quot;test ALMA_PAY_NOW_BUTTON_TITLE&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\CustomFieldHelperTest::testGetValue with data set &quot;test ALMA_PAY_NOW_BUTTON_DESC&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\CustomFieldHelperTest::testGetValue with data set &quot;test ALMA_PNX_BUTTON_TITLE&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\CustomFieldHelperTest::testGetValue with data set &quot;test ALMA_PNX_BUTTON_DESC&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\CustomFieldHelperTest::testGetValue with data set &quot;test ALMA_DEFERRED_BUTTON_TITLE&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\CustomFieldHelperTest::testGetValue with data set &quot;test ALMA_PNX_AIR_BUTTON_TITLE&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\CustomFieldHelperTest::testGetValue with data set &quot;test ALMA_PNX_AIR_BUTTON_DESC&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\CustomFieldHelperTest::testGetValue with data set &quot;test ALMA_NOT_ELIGIBLE_CATEGORIES&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\CustomFieldHelperTest::testGetValue with data set &quot;test ALMA_DESCRIPTION_TRIGGER&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\CustomFieldHelperTest::testGetBtnValueByLang with data set &quot;test ALMA_PAY_NOW_BUTTON_TITLE&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\CustomFieldHelperTest::testGetBtnValueByLang with data set &quot;test ALMA_PAY_NOW_BUTTON_DESC&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\CustomFieldHelperTest::testGetBtnValueByLang with data set &quot;test ALMA_PNX_BUTTON_TITLE&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\CustomFieldHelperTest::testGetBtnValueByLang with data set &quot;test ALMA_PNX_BUTTON_DESC&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\CustomFieldHelperTest::testGetBtnValueByLang with data set &quot;test ALMA_DEFERRED_BUTTON_TITLE&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\CustomFieldHelperTest::testGetBtnValueByLang with data set &quot;test ALMA_PNX_AIR_BUTTON_TITLE&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\CustomFieldHelperTest::testGetBtnValueByLang with data set &quot;test ALMA_PNX_AIR_BUTTON_DESC&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\CustomFieldHelperTest::testGetBtnValueByLang with data set &quot;test ALMA_NOT_ELIGIBLE_CATEGORIES&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\CustomFieldHelperTest::testGetBtnValueByLang with data set &quot;test ALMA_DESCRIPTION_TRIGGER&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\CustomFieldHelperTest::testGetDescriptionPaymentTrigger"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\CustomFieldHelperTest::testGetDescriptionPaymentTriggerByLang"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Services\InsuranceApiServiceTest::testPostProcessMethodExists"/>
+      </line>
+      <line nr="72">
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\Admin\InsuranceHelperTest::testTabInstalledWithAllowFlagAndTabNotInstalled with data set &quot;install tabs&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\Admin\InsuranceHelperTest::testTabUninstalledWithDisallowFlagAndTabInstalled with data set &quot;install tabs&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\Admin\InsuranceHelperTest::testTabMethodNotCalledWithWrongParams with data set &quot;is allow&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\Admin\InsuranceHelperTest::testTabMethodNotCalledWithWrongParams with data set &quot;is disallow&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\Admin\InsuranceHelperTest::testUpdateValueIfFlagIsAllowAndInsuranceIsDisabled"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\Admin\InsuranceHelperTest::testDeleteByNamesIfFlagIsDisallowAndInsuranceIsAllow"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\Admin\InsuranceHelperTest::testConstructIframeUrlWithParams"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\Admin\InsuranceHelperTest::testSaveConfigInsurance"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\Admin\InsuranceHelperTest::testDontSaveConfigInsuranceWithWrongKeysAndThrowException"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\CustomFieldHelperTest::testCustomFields"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\CustomFieldHelperTest::testGetAllLangCustomFieldByKeyConfig with data set &quot;test ALMA_PAY_NOW_BUTTON_TITLE&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\CustomFieldHelperTest::testGetAllLangCustomFieldByKeyConfig with data set &quot;test ALMA_PAY_NOW_BUTTON_DESC&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\CustomFieldHelperTest::testGetAllLangCustomFieldByKeyConfig with data set &quot;test ALMA_PNX_BUTTON_TITLE&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\CustomFieldHelperTest::testGetAllLangCustomFieldByKeyConfig with data set &quot;test ALMA_PNX_BUTTON_DESC&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\CustomFieldHelperTest::testGetAllLangCustomFieldByKeyConfig with data set &quot;test ALMA_DEFERRED_BUTTON_TITLE&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\CustomFieldHelperTest::testGetAllLangCustomFieldByKeyConfig with data set &quot;test ALMA_PNX_AIR_BUTTON_TITLE&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\CustomFieldHelperTest::testGetAllLangCustomFieldByKeyConfig with data set &quot;test ALMA_PNX_AIR_BUTTON_DESC&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\CustomFieldHelperTest::testGetAllLangCustomFieldByKeyConfig with data set &quot;test ALMA_NOT_ELIGIBLE_CATEGORIES&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\CustomFieldHelperTest::testGetAllLangCustomFieldByKeyConfig with data set &quot;test ALMA_DESCRIPTION_TRIGGER&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\CustomFieldHelperTest::testGetCustomFieldByKeyConfig with data set &quot;test ALMA_PAY_NOW_BUTTON_TITLE&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\CustomFieldHelperTest::testGetCustomFieldByKeyConfig with data set &quot;test ALMA_PAY_NOW_BUTTON_DESC&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\CustomFieldHelperTest::testGetCustomFieldByKeyConfig with data set &quot;test ALMA_PNX_BUTTON_TITLE&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\CustomFieldHelperTest::testGetCustomFieldByKeyConfig with data set &quot;test ALMA_PNX_BUTTON_DESC&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\CustomFieldHelperTest::testGetCustomFieldByKeyConfig with data set &quot;test ALMA_DEFERRED_BUTTON_TITLE&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\CustomFieldHelperTest::testGetCustomFieldByKeyConfig with data set &quot;test ALMA_PNX_AIR_BUTTON_TITLE&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\CustomFieldHelperTest::testGetCustomFieldByKeyConfig with data set &quot;test ALMA_PNX_AIR_BUTTON_DESC&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\CustomFieldHelperTest::testGetCustomFieldByKeyConfig with data set &quot;test ALMA_NOT_ELIGIBLE_CATEGORIES&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\CustomFieldHelperTest::testGetCustomFieldByKeyConfig with data set &quot;test ALMA_DESCRIPTION_TRIGGER&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\CustomFieldHelperTest::testGetValue with data set &quot;test ALMA_PAY_NOW_BUTTON_TITLE&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\CustomFieldHelperTest::testGetValue with data set &quot;test ALMA_PAY_NOW_BUTTON_DESC&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\CustomFieldHelperTest::testGetValue with data set &quot;test ALMA_PNX_BUTTON_TITLE&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\CustomFieldHelperTest::testGetValue with data set &quot;test ALMA_PNX_BUTTON_DESC&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\CustomFieldHelperTest::testGetValue with data set &quot;test ALMA_DEFERRED_BUTTON_TITLE&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\CustomFieldHelperTest::testGetValue with data set &quot;test ALMA_PNX_AIR_BUTTON_TITLE&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\CustomFieldHelperTest::testGetValue with data set &quot;test ALMA_PNX_AIR_BUTTON_DESC&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\CustomFieldHelperTest::testGetValue with data set &quot;test ALMA_NOT_ELIGIBLE_CATEGORIES&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\CustomFieldHelperTest::testGetValue with data set &quot;test ALMA_DESCRIPTION_TRIGGER&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\CustomFieldHelperTest::testGetBtnValueByLang with data set &quot;test ALMA_PAY_NOW_BUTTON_TITLE&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\CustomFieldHelperTest::testGetBtnValueByLang with data set &quot;test ALMA_PAY_NOW_BUTTON_DESC&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\CustomFieldHelperTest::testGetBtnValueByLang with data set &quot;test ALMA_PNX_BUTTON_TITLE&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\CustomFieldHelperTest::testGetBtnValueByLang with data set &quot;test ALMA_PNX_BUTTON_DESC&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\CustomFieldHelperTest::testGetBtnValueByLang with data set &quot;test ALMA_DEFERRED_BUTTON_TITLE&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\CustomFieldHelperTest::testGetBtnValueByLang with data set &quot;test ALMA_PNX_AIR_BUTTON_TITLE&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\CustomFieldHelperTest::testGetBtnValueByLang with data set &quot;test ALMA_PNX_AIR_BUTTON_DESC&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\CustomFieldHelperTest::testGetBtnValueByLang with data set &quot;test ALMA_NOT_ELIGIBLE_CATEGORIES&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\CustomFieldHelperTest::testGetBtnValueByLang with data set &quot;test ALMA_DESCRIPTION_TRIGGER&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\CustomFieldHelperTest::testGetDescriptionPaymentTrigger"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\CustomFieldHelperTest::testGetDescriptionPaymentTriggerByLang"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Services\InsuranceApiServiceTest::testPostProcessMethodExists"/>
+      </line>
+      <line nr="73">
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\Admin\InsuranceHelperTest::testTabInstalledWithAllowFlagAndTabNotInstalled with data set &quot;install tabs&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\Admin\InsuranceHelperTest::testTabUninstalledWithDisallowFlagAndTabInstalled with data set &quot;install tabs&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\Admin\InsuranceHelperTest::testTabMethodNotCalledWithWrongParams with data set &quot;is allow&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\Admin\InsuranceHelperTest::testTabMethodNotCalledWithWrongParams with data set &quot;is disallow&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\Admin\InsuranceHelperTest::testUpdateValueIfFlagIsAllowAndInsuranceIsDisabled"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\Admin\InsuranceHelperTest::testDeleteByNamesIfFlagIsDisallowAndInsuranceIsAllow"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\Admin\InsuranceHelperTest::testConstructIframeUrlWithParams"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\Admin\InsuranceHelperTest::testSaveConfigInsurance"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\Admin\InsuranceHelperTest::testDontSaveConfigInsuranceWithWrongKeysAndThrowException"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\CustomFieldHelperTest::testCustomFields"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\CustomFieldHelperTest::testGetAllLangCustomFieldByKeyConfig with data set &quot;test ALMA_PAY_NOW_BUTTON_TITLE&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\CustomFieldHelperTest::testGetAllLangCustomFieldByKeyConfig with data set &quot;test ALMA_PAY_NOW_BUTTON_DESC&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\CustomFieldHelperTest::testGetAllLangCustomFieldByKeyConfig with data set &quot;test ALMA_PNX_BUTTON_TITLE&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\CustomFieldHelperTest::testGetAllLangCustomFieldByKeyConfig with data set &quot;test ALMA_PNX_BUTTON_DESC&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\CustomFieldHelperTest::testGetAllLangCustomFieldByKeyConfig with data set &quot;test ALMA_DEFERRED_BUTTON_TITLE&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\CustomFieldHelperTest::testGetAllLangCustomFieldByKeyConfig with data set &quot;test ALMA_PNX_AIR_BUTTON_TITLE&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\CustomFieldHelperTest::testGetAllLangCustomFieldByKeyConfig with data set &quot;test ALMA_PNX_AIR_BUTTON_DESC&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\CustomFieldHelperTest::testGetAllLangCustomFieldByKeyConfig with data set &quot;test ALMA_NOT_ELIGIBLE_CATEGORIES&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\CustomFieldHelperTest::testGetAllLangCustomFieldByKeyConfig with data set &quot;test ALMA_DESCRIPTION_TRIGGER&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\CustomFieldHelperTest::testGetCustomFieldByKeyConfig with data set &quot;test ALMA_PAY_NOW_BUTTON_TITLE&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\CustomFieldHelperTest::testGetCustomFieldByKeyConfig with data set &quot;test ALMA_PAY_NOW_BUTTON_DESC&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\CustomFieldHelperTest::testGetCustomFieldByKeyConfig with data set &quot;test ALMA_PNX_BUTTON_TITLE&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\CustomFieldHelperTest::testGetCustomFieldByKeyConfig with data set &quot;test ALMA_PNX_BUTTON_DESC&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\CustomFieldHelperTest::testGetCustomFieldByKeyConfig with data set &quot;test ALMA_DEFERRED_BUTTON_TITLE&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\CustomFieldHelperTest::testGetCustomFieldByKeyConfig with data set &quot;test ALMA_PNX_AIR_BUTTON_TITLE&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\CustomFieldHelperTest::testGetCustomFieldByKeyConfig with data set &quot;test ALMA_PNX_AIR_BUTTON_DESC&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\CustomFieldHelperTest::testGetCustomFieldByKeyConfig with data set &quot;test ALMA_NOT_ELIGIBLE_CATEGORIES&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\CustomFieldHelperTest::testGetCustomFieldByKeyConfig with data set &quot;test ALMA_DESCRIPTION_TRIGGER&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\CustomFieldHelperTest::testGetValue with data set &quot;test ALMA_PAY_NOW_BUTTON_TITLE&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\CustomFieldHelperTest::testGetValue with data set &quot;test ALMA_PAY_NOW_BUTTON_DESC&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\CustomFieldHelperTest::testGetValue with data set &quot;test ALMA_PNX_BUTTON_TITLE&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\CustomFieldHelperTest::testGetValue with data set &quot;test ALMA_PNX_BUTTON_DESC&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\CustomFieldHelperTest::testGetValue with data set &quot;test ALMA_DEFERRED_BUTTON_TITLE&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\CustomFieldHelperTest::testGetValue with data set &quot;test ALMA_PNX_AIR_BUTTON_TITLE&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\CustomFieldHelperTest::testGetValue with data set &quot;test ALMA_PNX_AIR_BUTTON_DESC&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\CustomFieldHelperTest::testGetValue with data set &quot;test ALMA_NOT_ELIGIBLE_CATEGORIES&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\CustomFieldHelperTest::testGetValue with data set &quot;test ALMA_DESCRIPTION_TRIGGER&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\CustomFieldHelperTest::testGetBtnValueByLang with data set &quot;test ALMA_PAY_NOW_BUTTON_TITLE&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\CustomFieldHelperTest::testGetBtnValueByLang with data set &quot;test ALMA_PAY_NOW_BUTTON_DESC&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\CustomFieldHelperTest::testGetBtnValueByLang with data set &quot;test ALMA_PNX_BUTTON_TITLE&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\CustomFieldHelperTest::testGetBtnValueByLang with data set &quot;test ALMA_PNX_BUTTON_DESC&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\CustomFieldHelperTest::testGetBtnValueByLang with data set &quot;test ALMA_DEFERRED_BUTTON_TITLE&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\CustomFieldHelperTest::testGetBtnValueByLang with data set &quot;test ALMA_PNX_AIR_BUTTON_TITLE&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\CustomFieldHelperTest::testGetBtnValueByLang with data set &quot;test ALMA_PNX_AIR_BUTTON_DESC&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\CustomFieldHelperTest::testGetBtnValueByLang with data set &quot;test ALMA_NOT_ELIGIBLE_CATEGORIES&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\CustomFieldHelperTest::testGetBtnValueByLang with data set &quot;test ALMA_DESCRIPTION_TRIGGER&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\CustomFieldHelperTest::testGetDescriptionPaymentTrigger"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\CustomFieldHelperTest::testGetDescriptionPaymentTriggerByLang"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Services\InsuranceApiServiceTest::testPostProcessMethodExists"/>
+      </line>
+      <line nr="74">
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\Admin\InsuranceHelperTest::testTabInstalledWithAllowFlagAndTabNotInstalled with data set &quot;install tabs&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\Admin\InsuranceHelperTest::testTabUninstalledWithDisallowFlagAndTabInstalled with data set &quot;install tabs&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\Admin\InsuranceHelperTest::testTabMethodNotCalledWithWrongParams with data set &quot;is allow&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\Admin\InsuranceHelperTest::testTabMethodNotCalledWithWrongParams with data set &quot;is disallow&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\Admin\InsuranceHelperTest::testUpdateValueIfFlagIsAllowAndInsuranceIsDisabled"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\Admin\InsuranceHelperTest::testDeleteByNamesIfFlagIsDisallowAndInsuranceIsAllow"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\Admin\InsuranceHelperTest::testConstructIframeUrlWithParams"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\Admin\InsuranceHelperTest::testSaveConfigInsurance"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\Admin\InsuranceHelperTest::testDontSaveConfigInsuranceWithWrongKeysAndThrowException"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\CustomFieldHelperTest::testCustomFields"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\CustomFieldHelperTest::testGetAllLangCustomFieldByKeyConfig with data set &quot;test ALMA_PAY_NOW_BUTTON_TITLE&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\CustomFieldHelperTest::testGetAllLangCustomFieldByKeyConfig with data set &quot;test ALMA_PAY_NOW_BUTTON_DESC&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\CustomFieldHelperTest::testGetAllLangCustomFieldByKeyConfig with data set &quot;test ALMA_PNX_BUTTON_TITLE&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\CustomFieldHelperTest::testGetAllLangCustomFieldByKeyConfig with data set &quot;test ALMA_PNX_BUTTON_DESC&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\CustomFieldHelperTest::testGetAllLangCustomFieldByKeyConfig with data set &quot;test ALMA_DEFERRED_BUTTON_TITLE&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\CustomFieldHelperTest::testGetAllLangCustomFieldByKeyConfig with data set &quot;test ALMA_PNX_AIR_BUTTON_TITLE&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\CustomFieldHelperTest::testGetAllLangCustomFieldByKeyConfig with data set &quot;test ALMA_PNX_AIR_BUTTON_DESC&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\CustomFieldHelperTest::testGetAllLangCustomFieldByKeyConfig with data set &quot;test ALMA_NOT_ELIGIBLE_CATEGORIES&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\CustomFieldHelperTest::testGetAllLangCustomFieldByKeyConfig with data set &quot;test ALMA_DESCRIPTION_TRIGGER&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\CustomFieldHelperTest::testGetCustomFieldByKeyConfig with data set &quot;test ALMA_PAY_NOW_BUTTON_TITLE&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\CustomFieldHelperTest::testGetCustomFieldByKeyConfig with data set &quot;test ALMA_PAY_NOW_BUTTON_DESC&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\CustomFieldHelperTest::testGetCustomFieldByKeyConfig with data set &quot;test ALMA_PNX_BUTTON_TITLE&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\CustomFieldHelperTest::testGetCustomFieldByKeyConfig with data set &quot;test ALMA_PNX_BUTTON_DESC&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\CustomFieldHelperTest::testGetCustomFieldByKeyConfig with data set &quot;test ALMA_DEFERRED_BUTTON_TITLE&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\CustomFieldHelperTest::testGetCustomFieldByKeyConfig with data set &quot;test ALMA_PNX_AIR_BUTTON_TITLE&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\CustomFieldHelperTest::testGetCustomFieldByKeyConfig with data set &quot;test ALMA_PNX_AIR_BUTTON_DESC&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\CustomFieldHelperTest::testGetCustomFieldByKeyConfig with data set &quot;test ALMA_NOT_ELIGIBLE_CATEGORIES&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\CustomFieldHelperTest::testGetCustomFieldByKeyConfig with data set &quot;test ALMA_DESCRIPTION_TRIGGER&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\CustomFieldHelperTest::testGetValue with data set &quot;test ALMA_PAY_NOW_BUTTON_TITLE&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\CustomFieldHelperTest::testGetValue with data set &quot;test ALMA_PAY_NOW_BUTTON_DESC&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\CustomFieldHelperTest::testGetValue with data set &quot;test ALMA_PNX_BUTTON_TITLE&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\CustomFieldHelperTest::testGetValue with data set &quot;test ALMA_PNX_BUTTON_DESC&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\CustomFieldHelperTest::testGetValue with data set &quot;test ALMA_DEFERRED_BUTTON_TITLE&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\CustomFieldHelperTest::testGetValue with data set &quot;test ALMA_PNX_AIR_BUTTON_TITLE&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\CustomFieldHelperTest::testGetValue with data set &quot;test ALMA_PNX_AIR_BUTTON_DESC&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\CustomFieldHelperTest::testGetValue with data set &quot;test ALMA_NOT_ELIGIBLE_CATEGORIES&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\CustomFieldHelperTest::testGetValue with data set &quot;test ALMA_DESCRIPTION_TRIGGER&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\CustomFieldHelperTest::testGetBtnValueByLang with data set &quot;test ALMA_PAY_NOW_BUTTON_TITLE&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\CustomFieldHelperTest::testGetBtnValueByLang with data set &quot;test ALMA_PAY_NOW_BUTTON_DESC&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\CustomFieldHelperTest::testGetBtnValueByLang with data set &quot;test ALMA_PNX_BUTTON_TITLE&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\CustomFieldHelperTest::testGetBtnValueByLang with data set &quot;test ALMA_PNX_BUTTON_DESC&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\CustomFieldHelperTest::testGetBtnValueByLang with data set &quot;test ALMA_DEFERRED_BUTTON_TITLE&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\CustomFieldHelperTest::testGetBtnValueByLang with data set &quot;test ALMA_PNX_AIR_BUTTON_TITLE&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\CustomFieldHelperTest::testGetBtnValueByLang with data set &quot;test ALMA_PNX_AIR_BUTTON_DESC&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\CustomFieldHelperTest::testGetBtnValueByLang with data set &quot;test ALMA_NOT_ELIGIBLE_CATEGORIES&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\CustomFieldHelperTest::testGetBtnValueByLang with data set &quot;test ALMA_DESCRIPTION_TRIGGER&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\CustomFieldHelperTest::testGetDescriptionPaymentTrigger"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\CustomFieldHelperTest::testGetDescriptionPaymentTriggerByLang"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Services\InsuranceApiServiceTest::testPostProcessMethodExists"/>
+      </line>
+      <line nr="75">
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\Admin\InsuranceHelperTest::testTabInstalledWithAllowFlagAndTabNotInstalled with data set &quot;install tabs&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\Admin\InsuranceHelperTest::testTabUninstalledWithDisallowFlagAndTabInstalled with data set &quot;install tabs&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\Admin\InsuranceHelperTest::testTabMethodNotCalledWithWrongParams with data set &quot;is allow&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\Admin\InsuranceHelperTest::testTabMethodNotCalledWithWrongParams with data set &quot;is disallow&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\Admin\InsuranceHelperTest::testUpdateValueIfFlagIsAllowAndInsuranceIsDisabled"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\Admin\InsuranceHelperTest::testDeleteByNamesIfFlagIsDisallowAndInsuranceIsAllow"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\Admin\InsuranceHelperTest::testConstructIframeUrlWithParams"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\Admin\InsuranceHelperTest::testSaveConfigInsurance"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\Admin\InsuranceHelperTest::testDontSaveConfigInsuranceWithWrongKeysAndThrowException"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\CustomFieldHelperTest::testCustomFields"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\CustomFieldHelperTest::testGetAllLangCustomFieldByKeyConfig with data set &quot;test ALMA_PAY_NOW_BUTTON_TITLE&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\CustomFieldHelperTest::testGetAllLangCustomFieldByKeyConfig with data set &quot;test ALMA_PAY_NOW_BUTTON_DESC&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\CustomFieldHelperTest::testGetAllLangCustomFieldByKeyConfig with data set &quot;test ALMA_PNX_BUTTON_TITLE&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\CustomFieldHelperTest::testGetAllLangCustomFieldByKeyConfig with data set &quot;test ALMA_PNX_BUTTON_DESC&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\CustomFieldHelperTest::testGetAllLangCustomFieldByKeyConfig with data set &quot;test ALMA_DEFERRED_BUTTON_TITLE&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\CustomFieldHelperTest::testGetAllLangCustomFieldByKeyConfig with data set &quot;test ALMA_PNX_AIR_BUTTON_TITLE&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\CustomFieldHelperTest::testGetAllLangCustomFieldByKeyConfig with data set &quot;test ALMA_PNX_AIR_BUTTON_DESC&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\CustomFieldHelperTest::testGetAllLangCustomFieldByKeyConfig with data set &quot;test ALMA_NOT_ELIGIBLE_CATEGORIES&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\CustomFieldHelperTest::testGetAllLangCustomFieldByKeyConfig with data set &quot;test ALMA_DESCRIPTION_TRIGGER&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\CustomFieldHelperTest::testGetCustomFieldByKeyConfig with data set &quot;test ALMA_PAY_NOW_BUTTON_TITLE&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\CustomFieldHelperTest::testGetCustomFieldByKeyConfig with data set &quot;test ALMA_PAY_NOW_BUTTON_DESC&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\CustomFieldHelperTest::testGetCustomFieldByKeyConfig with data set &quot;test ALMA_PNX_BUTTON_TITLE&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\CustomFieldHelperTest::testGetCustomFieldByKeyConfig with data set &quot;test ALMA_PNX_BUTTON_DESC&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\CustomFieldHelperTest::testGetCustomFieldByKeyConfig with data set &quot;test ALMA_DEFERRED_BUTTON_TITLE&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\CustomFieldHelperTest::testGetCustomFieldByKeyConfig with data set &quot;test ALMA_PNX_AIR_BUTTON_TITLE&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\CustomFieldHelperTest::testGetCustomFieldByKeyConfig with data set &quot;test ALMA_PNX_AIR_BUTTON_DESC&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\CustomFieldHelperTest::testGetCustomFieldByKeyConfig with data set &quot;test ALMA_NOT_ELIGIBLE_CATEGORIES&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\CustomFieldHelperTest::testGetCustomFieldByKeyConfig with data set &quot;test ALMA_DESCRIPTION_TRIGGER&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\CustomFieldHelperTest::testGetValue with data set &quot;test ALMA_PAY_NOW_BUTTON_TITLE&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\CustomFieldHelperTest::testGetValue with data set &quot;test ALMA_PAY_NOW_BUTTON_DESC&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\CustomFieldHelperTest::testGetValue with data set &quot;test ALMA_PNX_BUTTON_TITLE&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\CustomFieldHelperTest::testGetValue with data set &quot;test ALMA_PNX_BUTTON_DESC&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\CustomFieldHelperTest::testGetValue with data set &quot;test ALMA_DEFERRED_BUTTON_TITLE&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\CustomFieldHelperTest::testGetValue with data set &quot;test ALMA_PNX_AIR_BUTTON_TITLE&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\CustomFieldHelperTest::testGetValue with data set &quot;test ALMA_PNX_AIR_BUTTON_DESC&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\CustomFieldHelperTest::testGetValue with data set &quot;test ALMA_NOT_ELIGIBLE_CATEGORIES&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\CustomFieldHelperTest::testGetValue with data set &quot;test ALMA_DESCRIPTION_TRIGGER&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\CustomFieldHelperTest::testGetBtnValueByLang with data set &quot;test ALMA_PAY_NOW_BUTTON_TITLE&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\CustomFieldHelperTest::testGetBtnValueByLang with data set &quot;test ALMA_PAY_NOW_BUTTON_DESC&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\CustomFieldHelperTest::testGetBtnValueByLang with data set &quot;test ALMA_PNX_BUTTON_TITLE&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\CustomFieldHelperTest::testGetBtnValueByLang with data set &quot;test ALMA_PNX_BUTTON_DESC&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\CustomFieldHelperTest::testGetBtnValueByLang with data set &quot;test ALMA_DEFERRED_BUTTON_TITLE&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\CustomFieldHelperTest::testGetBtnValueByLang with data set &quot;test ALMA_PNX_AIR_BUTTON_TITLE&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\CustomFieldHelperTest::testGetBtnValueByLang with data set &quot;test ALMA_PNX_AIR_BUTTON_DESC&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\CustomFieldHelperTest::testGetBtnValueByLang with data set &quot;test ALMA_NOT_ELIGIBLE_CATEGORIES&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\CustomFieldHelperTest::testGetBtnValueByLang with data set &quot;test ALMA_DESCRIPTION_TRIGGER&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\CustomFieldHelperTest::testGetDescriptionPaymentTrigger"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\CustomFieldHelperTest::testGetDescriptionPaymentTriggerByLang"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Services\InsuranceApiServiceTest::testPostProcessMethodExists"/>
+      </line>
+      <line nr="83">
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\Admin\InsuranceHelperTest::testTabInstalledWithAllowFlagAndTabNotInstalled with data set &quot;install tabs&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\Admin\InsuranceHelperTest::testTabUninstalledWithDisallowFlagAndTabInstalled with data set &quot;install tabs&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\Admin\InsuranceHelperTest::testTabMethodNotCalledWithWrongParams with data set &quot;is disallow&quot;"/>
+      </line>
+      <line nr="84">
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\Admin\InsuranceHelperTest::testTabInstalledWithAllowFlagAndTabNotInstalled with data set &quot;install tabs&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\Admin\InsuranceHelperTest::testTabUninstalledWithDisallowFlagAndTabInstalled with data set &quot;install tabs&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\Admin\InsuranceHelperTest::testTabMethodNotCalledWithWrongParams with data set &quot;is disallow&quot;"/>
+      </line>
+      <line nr="85">
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\Admin\InsuranceHelperTest::testTabInstalledWithAllowFlagAndTabNotInstalled with data set &quot;install tabs&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\Admin\InsuranceHelperTest::testTabUninstalledWithDisallowFlagAndTabInstalled with data set &quot;install tabs&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\Admin\InsuranceHelperTest::testTabMethodNotCalledWithWrongParams with data set &quot;is disallow&quot;"/>
+      </line>
+      <line nr="86">
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\Admin\InsuranceHelperTest::testTabInstalledWithAllowFlagAndTabNotInstalled with data set &quot;install tabs&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\Admin\InsuranceHelperTest::testTabUninstalledWithDisallowFlagAndTabInstalled with data set &quot;install tabs&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\Admin\InsuranceHelperTest::testTabMethodNotCalledWithWrongParams with data set &quot;is disallow&quot;"/>
+      </line>
+      <line nr="87">
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\Admin\InsuranceHelperTest::testTabInstalledWithAllowFlagAndTabNotInstalled with data set &quot;install tabs&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\Admin\InsuranceHelperTest::testTabUninstalledWithDisallowFlagAndTabInstalled with data set &quot;install tabs&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\Admin\InsuranceHelperTest::testTabMethodNotCalledWithWrongParams with data set &quot;is disallow&quot;"/>
+      </line>
+      <line nr="89">
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\Admin\InsuranceHelperTest::testTabInstalledWithAllowFlagAndTabNotInstalled with data set &quot;install tabs&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\Admin\InsuranceHelperTest::testTabUninstalledWithDisallowFlagAndTabInstalled with data set &quot;install tabs&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\Admin\InsuranceHelperTest::testTabMethodNotCalledWithWrongParams with data set &quot;is disallow&quot;"/>
+      </line>
+      <line nr="90">
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\Admin\InsuranceHelperTest::testTabInstalledWithAllowFlagAndTabNotInstalled with data set &quot;install tabs&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\Admin\InsuranceHelperTest::testTabUninstalledWithDisallowFlagAndTabInstalled with data set &quot;install tabs&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\Admin\InsuranceHelperTest::testTabMethodNotCalledWithWrongParams with data set &quot;is disallow&quot;"/>
+      </line>
+      <line nr="91">
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\Admin\InsuranceHelperTest::testTabInstalledWithAllowFlagAndTabNotInstalled with data set &quot;install tabs&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\Admin\InsuranceHelperTest::testTabUninstalledWithDisallowFlagAndTabInstalled with data set &quot;install tabs&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\Admin\InsuranceHelperTest::testTabMethodNotCalledWithWrongParams with data set &quot;is disallow&quot;"/>
+      </line>
+      <line nr="92">
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\Admin\InsuranceHelperTest::testTabInstalledWithAllowFlagAndTabNotInstalled with data set &quot;install tabs&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\Admin\InsuranceHelperTest::testTabUninstalledWithDisallowFlagAndTabInstalled with data set &quot;install tabs&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\Admin\InsuranceHelperTest::testTabMethodNotCalledWithWrongParams with data set &quot;is disallow&quot;"/>
+      </line>
+      <line nr="93">
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\Admin\InsuranceHelperTest::testTabInstalledWithAllowFlagAndTabNotInstalled with data set &quot;install tabs&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\Admin\InsuranceHelperTest::testTabUninstalledWithDisallowFlagAndTabInstalled with data set &quot;install tabs&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\Admin\InsuranceHelperTest::testTabMethodNotCalledWithWrongParams with data set &quot;is disallow&quot;"/>
+      </line>
+      <line nr="95">
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\Admin\InsuranceHelperTest::testTabInstalledWithAllowFlagAndTabNotInstalled with data set &quot;install tabs&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\Admin\InsuranceHelperTest::testTabUninstalledWithDisallowFlagAndTabInstalled with data set &quot;install tabs&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\Admin\InsuranceHelperTest::testTabMethodNotCalledWithWrongParams with data set &quot;is disallow&quot;"/>
+      </line>
+      <line nr="96">
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\Admin\InsuranceHelperTest::testTabInstalledWithAllowFlagAndTabNotInstalled with data set &quot;install tabs&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\Admin\InsuranceHelperTest::testTabUninstalledWithDisallowFlagAndTabInstalled with data set &quot;install tabs&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\Admin\InsuranceHelperTest::testTabMethodNotCalledWithWrongParams with data set &quot;is disallow&quot;"/>
+      </line>
+      <line nr="97">
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\Admin\InsuranceHelperTest::testTabInstalledWithAllowFlagAndTabNotInstalled with data set &quot;install tabs&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\Admin\InsuranceHelperTest::testTabUninstalledWithDisallowFlagAndTabInstalled with data set &quot;install tabs&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\Admin\InsuranceHelperTest::testTabMethodNotCalledWithWrongParams with data set &quot;is disallow&quot;"/>
+      </line>
+      <line nr="98">
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\Admin\InsuranceHelperTest::testTabInstalledWithAllowFlagAndTabNotInstalled with data set &quot;install tabs&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\Admin\InsuranceHelperTest::testTabUninstalledWithDisallowFlagAndTabInstalled with data set &quot;install tabs&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\Admin\InsuranceHelperTest::testTabMethodNotCalledWithWrongParams with data set &quot;is disallow&quot;"/>
+      </line>
+      <line nr="99">
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\Admin\InsuranceHelperTest::testTabInstalledWithAllowFlagAndTabNotInstalled with data set &quot;install tabs&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\Admin\InsuranceHelperTest::testTabUninstalledWithDisallowFlagAndTabInstalled with data set &quot;install tabs&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\Admin\InsuranceHelperTest::testTabMethodNotCalledWithWrongParams with data set &quot;is disallow&quot;"/>
+      </line>
+      <line nr="101">
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\Admin\InsuranceHelperTest::testTabInstalledWithAllowFlagAndTabNotInstalled with data set &quot;install tabs&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\Admin\InsuranceHelperTest::testTabUninstalledWithDisallowFlagAndTabInstalled with data set &quot;install tabs&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\Admin\InsuranceHelperTest::testTabMethodNotCalledWithWrongParams with data set &quot;is disallow&quot;"/>
+      </line>
+      <line nr="103">
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\Admin\InsuranceHelperTest::testTabInstalledWithAllowFlagAndTabNotInstalled with data set &quot;install tabs&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\Admin\InsuranceHelperTest::testTabUninstalledWithDisallowFlagAndTabInstalled with data set &quot;install tabs&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\Admin\InsuranceHelperTest::testTabMethodNotCalledWithWrongParams with data set &quot;is disallow&quot;"/>
+      </line>
+      <line nr="107">
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\Admin\InsuranceHelperTest::testTabInstalledWithAllowFlagAndTabNotInstalled with data set &quot;install tabs&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\Admin\InsuranceHelperTest::testTabUninstalledWithDisallowFlagAndTabInstalled with data set &quot;install tabs&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\Admin\InsuranceHelperTest::testTabMethodNotCalledWithWrongParams with data set &quot;is disallow&quot;"/>
+      </line>
+      <line nr="109">
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\Admin\InsuranceHelperTest::testTabInstalledWithAllowFlagAndTabNotInstalled with data set &quot;install tabs&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\Admin\InsuranceHelperTest::testTabUninstalledWithDisallowFlagAndTabInstalled with data set &quot;install tabs&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\Admin\InsuranceHelperTest::testTabMethodNotCalledWithWrongParams with data set &quot;is disallow&quot;"/>
+      </line>
+      <line nr="125">
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\Admin\InsuranceHelperTest::testTabInstalledWithAllowFlagAndTabNotInstalled with data set &quot;install tabs&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\Admin\InsuranceHelperTest::testTabUninstalledWithDisallowFlagAndTabInstalled with data set &quot;install tabs&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\Admin\InsuranceHelperTest::testTabMethodNotCalledWithWrongParams with data set &quot;is allow&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\Admin\InsuranceHelperTest::testTabMethodNotCalledWithWrongParams with data set &quot;is disallow&quot;"/>
+      </line>
+      <line nr="128">
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\Admin\InsuranceHelperTest::testTabInstalledWithAllowFlagAndTabNotInstalled with data set &quot;install tabs&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\Admin\InsuranceHelperTest::testTabUninstalledWithDisallowFlagAndTabInstalled with data set &quot;install tabs&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\Admin\InsuranceHelperTest::testTabMethodNotCalledWithWrongParams with data set &quot;is allow&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\Admin\InsuranceHelperTest::testTabMethodNotCalledWithWrongParams with data set &quot;is disallow&quot;"/>
+      </line>
+      <line nr="129">
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\Admin\InsuranceHelperTest::testTabInstalledWithAllowFlagAndTabNotInstalled with data set &quot;install tabs&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\Admin\InsuranceHelperTest::testTabUninstalledWithDisallowFlagAndTabInstalled with data set &quot;install tabs&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\Admin\InsuranceHelperTest::testTabMethodNotCalledWithWrongParams with data set &quot;is allow&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\Admin\InsuranceHelperTest::testTabMethodNotCalledWithWrongParams with data set &quot;is disallow&quot;"/>
+      </line>
+      <line nr="131">
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\Admin\InsuranceHelperTest::testTabUninstalledWithDisallowFlagAndTabInstalled with data set &quot;install tabs&quot;"/>
+      </line>
+      <line nr="136">
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\Admin\InsuranceHelperTest::testTabInstalledWithAllowFlagAndTabNotInstalled with data set &quot;install tabs&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\Admin\InsuranceHelperTest::testTabUninstalledWithDisallowFlagAndTabInstalled with data set &quot;install tabs&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\Admin\InsuranceHelperTest::testTabMethodNotCalledWithWrongParams with data set &quot;is allow&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\Admin\InsuranceHelperTest::testTabMethodNotCalledWithWrongParams with data set &quot;is disallow&quot;"/>
+      </line>
+      <line nr="137">
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\Admin\InsuranceHelperTest::testTabInstalledWithAllowFlagAndTabNotInstalled with data set &quot;install tabs&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\Admin\InsuranceHelperTest::testTabUninstalledWithDisallowFlagAndTabInstalled with data set &quot;install tabs&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\Admin\InsuranceHelperTest::testTabMethodNotCalledWithWrongParams with data set &quot;is allow&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\Admin\InsuranceHelperTest::testTabMethodNotCalledWithWrongParams with data set &quot;is disallow&quot;"/>
+      </line>
+      <line nr="139">
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\Admin\InsuranceHelperTest::testTabInstalledWithAllowFlagAndTabNotInstalled with data set &quot;install tabs&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\Admin\InsuranceHelperTest::testTabMethodNotCalledWithWrongParams with data set &quot;is disallow&quot;"/>
+      </line>
+      <line nr="142">
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\Admin\InsuranceHelperTest::testTabInstalledWithAllowFlagAndTabNotInstalled with data set &quot;install tabs&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\Admin\InsuranceHelperTest::testTabUninstalledWithDisallowFlagAndTabInstalled with data set &quot;install tabs&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\Admin\InsuranceHelperTest::testTabMethodNotCalledWithWrongParams with data set &quot;is allow&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\Admin\InsuranceHelperTest::testTabMethodNotCalledWithWrongParams with data set &quot;is disallow&quot;"/>
+      </line>
+      <line nr="154">
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\Admin\InsuranceHelperTest::testUpdateValueIfFlagIsAllowAndInsuranceIsDisabled"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\Admin\InsuranceHelperTest::testDeleteByNamesIfFlagIsDisallowAndInsuranceIsAllow"/>
+      </line>
+      <line nr="158">
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\Admin\InsuranceHelperTest::testUpdateValueIfFlagIsAllowAndInsuranceIsDisabled"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\Admin\InsuranceHelperTest::testDeleteByNamesIfFlagIsDisallowAndInsuranceIsAllow"/>
+      </line>
+      <line nr="159">
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\Admin\InsuranceHelperTest::testUpdateValueIfFlagIsAllowAndInsuranceIsDisabled"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\Admin\InsuranceHelperTest::testDeleteByNamesIfFlagIsDisallowAndInsuranceIsAllow"/>
+      </line>
+      <line nr="161">
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\Admin\InsuranceHelperTest::testUpdateValueIfFlagIsAllowAndInsuranceIsDisabled"/>
+      </line>
+      <line nr="162">
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\Admin\InsuranceHelperTest::testUpdateValueIfFlagIsAllowAndInsuranceIsDisabled"/>
+      </line>
+      <line nr="168">
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\Admin\InsuranceHelperTest::testUpdateValueIfFlagIsAllowAndInsuranceIsDisabled"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\Admin\InsuranceHelperTest::testDeleteByNamesIfFlagIsDisallowAndInsuranceIsAllow"/>
+      </line>
+      <line nr="169">
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\Admin\InsuranceHelperTest::testUpdateValueIfFlagIsAllowAndInsuranceIsDisabled"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\Admin\InsuranceHelperTest::testDeleteByNamesIfFlagIsDisallowAndInsuranceIsAllow"/>
+      </line>
+      <line nr="171">
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\Admin\InsuranceHelperTest::testDeleteByNamesIfFlagIsDisallowAndInsuranceIsAllow"/>
+      </line>
+      <line nr="173">
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\Admin\InsuranceHelperTest::testUpdateValueIfFlagIsAllowAndInsuranceIsDisabled"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\Admin\InsuranceHelperTest::testDeleteByNamesIfFlagIsDisallowAndInsuranceIsAllow"/>
+      </line>
+      <line nr="180">
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\Admin\InsuranceHelperTest::testConstructIframeUrlWithParams"/>
+      </line>
+      <line nr="184">
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\Admin\InsuranceHelperTest::testConstructIframeUrlWithParams"/>
+      </line>
+      <line nr="194">
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\Admin\InsuranceHelperTest::testConstructIframeUrlWithParams"/>
+      </line>
+      <line nr="195">
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\Admin\InsuranceHelperTest::testConstructIframeUrlWithParams"/>
+      </line>
+      <line nr="196">
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\Admin\InsuranceHelperTest::testConstructIframeUrlWithParams"/>
+      </line>
+      <line nr="197">
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\Admin\InsuranceHelperTest::testConstructIframeUrlWithParams"/>
+      </line>
+      <line nr="208">
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\Admin\InsuranceHelperTest::testConstructIframeUrlWithParams"/>
+      </line>
+      <line nr="209">
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\Admin\InsuranceHelperTest::testConstructIframeUrlWithParams"/>
+      </line>
+      <line nr="211">
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\Admin\InsuranceHelperTest::testConstructIframeUrlWithParams"/>
+      </line>
+      <line nr="212">
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\Admin\InsuranceHelperTest::testConstructIframeUrlWithParams"/>
+      </line>
+      <line nr="213">
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\Admin\InsuranceHelperTest::testConstructIframeUrlWithParams"/>
+      </line>
+      <line nr="216">
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\Admin\InsuranceHelperTest::testConstructIframeUrlWithParams"/>
+      </line>
+      <line nr="227">
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\Admin\InsuranceHelperTest::testSaveConfigInsurance"/>
+      </line>
+      <line nr="228">
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\Admin\InsuranceHelperTest::testSaveConfigInsurance"/>
+      </line>
+      <line nr="229">
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\Admin\InsuranceHelperTest::testSaveConfigInsurance"/>
+      </line>
+      <line nr="230">
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\Admin\InsuranceHelperTest::testSaveConfigInsurance"/>
+      </line>
+      <line nr="233">
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\Admin\InsuranceHelperTest::testSaveConfigInsurance"/>
+      </line>
+      <line nr="244">
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\Admin\InsuranceHelperTest::testSaveConfigInsurance"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\Admin\InsuranceHelperTest::testDontSaveConfigInsuranceWithWrongKeysAndThrowException"/>
+      </line>
+      <line nr="245">
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\Admin\InsuranceHelperTest::testSaveConfigInsurance"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\Admin\InsuranceHelperTest::testDontSaveConfigInsuranceWithWrongKeysAndThrowException"/>
+      </line>
+      <line nr="247">
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\Admin\InsuranceHelperTest::testSaveConfigInsurance"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\Admin\InsuranceHelperTest::testDontSaveConfigInsuranceWithWrongKeysAndThrowException"/>
+      </line>
+      <line nr="248">
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\Admin\InsuranceHelperTest::testDontSaveConfigInsuranceWithWrongKeysAndThrowException"/>
+      </line>
+      <line nr="249">
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\Admin\InsuranceHelperTest::testDontSaveConfigInsuranceWithWrongKeysAndThrowException"/>
+      </line>
+      <line nr="252">
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\Admin\InsuranceHelperTest::testSaveConfigInsurance"/>
+      </line>
+      <line nr="253">
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\Admin\InsuranceHelperTest::testSaveConfigInsurance"/>
+      </line>
+    </coverage>
+  </file>
+</phpunit>

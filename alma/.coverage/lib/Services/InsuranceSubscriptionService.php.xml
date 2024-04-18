@@ -1,0 +1,66 @@
+<?xml version="1.0"?>
+<phpunit xmlns="http://schema.phpunit.de/coverage/1.0">
+  <file name="InsuranceSubscriptionService.php">
+    <totals>
+      <lines total="171" comments="77" code="94" executable="40" executed="10" percent="25.00%"/>
+      <methods count="5" tested="1" percent="20.00%"/>
+      <functions count="0" tested="0" percent=""/>
+      <classes count="1" tested="0" percent="0.00%"/>
+      <traits count="0" tested="0" percent=""/>
+    </totals>
+    <class name="InsuranceSubscriptionService" start="36" executable="38" executed="9" crap="54.45">
+      <package full="" name="" sub="" category=""/>
+      <namespace name="Alma\PrestaShop\Services"/>
+      <method name="__construct" signature="__construct(&#10;        $almaInsuranceProductRepository = null&#10;    )" start="60" end="70" crap="2.01" executable="7" executed="6" coverage="85.714285714286"/>
+      <method name="triggerInsuranceSubscription" signature="triggerInsuranceSubscription($order)" start="81" end="104" crap="6" executable="13" executed="0" coverage="0"/>
+      <method name="confirmSubscriptions" signature="confirmSubscriptions($orderId, $shopId, $subscriptions)" start="117" end="122" crap="6" executable="3" executed="0" coverage="0"/>
+      <method name="confirmSubscription" signature="confirmSubscription($orderId, $shopId, $subscription)" start="135" end="154" crap="6" executable="12" executed="0" coverage="0"/>
+      <method name="setCancellation" signature="setCancellation($sid, $state, $reason)" start="165" end="170" crap="2" executable="3" executed="3" coverage="100"/>
+    </class>
+    <coverage>
+      <line nr="32">
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\SubscriptionHelperTest::testGetCancelSubscriptionWithValidToken"/>
+      </line>
+      <line nr="63">
+        <covered by="Alma\PrestaShop\Tests\Unit\Services\InsuranceSubscriptionServiceTest::testSetCancellationMethodExist"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Services\InsuranceSubscriptionServiceTest::testExpectMethodOnceSetSubscriptionForCancellationAndReturnTrue"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Services\InsuranceSubscriptionServiceTest::testExpectMethodOnceSetSubscriptionForCancellationReturnFalseAndThrowException"/>
+      </line>
+      <line nr="66">
+        <covered by="Alma\PrestaShop\Tests\Unit\Services\InsuranceSubscriptionServiceTest::testSetCancellationMethodExist"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Services\InsuranceSubscriptionServiceTest::testExpectMethodOnceSetSubscriptionForCancellationAndReturnTrue"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Services\InsuranceSubscriptionServiceTest::testExpectMethodOnceSetSubscriptionForCancellationReturnFalseAndThrowException"/>
+      </line>
+      <line nr="67">
+        <covered by="Alma\PrestaShop\Tests\Unit\Services\InsuranceSubscriptionServiceTest::testSetCancellationMethodExist"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Services\InsuranceSubscriptionServiceTest::testExpectMethodOnceSetSubscriptionForCancellationAndReturnTrue"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Services\InsuranceSubscriptionServiceTest::testExpectMethodOnceSetSubscriptionForCancellationReturnFalseAndThrowException"/>
+      </line>
+      <line nr="68">
+        <covered by="Alma\PrestaShop\Tests\Unit\Services\InsuranceSubscriptionServiceTest::testSetCancellationMethodExist"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Services\InsuranceSubscriptionServiceTest::testExpectMethodOnceSetSubscriptionForCancellationAndReturnTrue"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Services\InsuranceSubscriptionServiceTest::testExpectMethodOnceSetSubscriptionForCancellationReturnFalseAndThrowException"/>
+      </line>
+      <line nr="69">
+        <covered by="Alma\PrestaShop\Tests\Unit\Services\InsuranceSubscriptionServiceTest::testSetCancellationMethodExist"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Services\InsuranceSubscriptionServiceTest::testExpectMethodOnceSetSubscriptionForCancellationAndReturnTrue"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Services\InsuranceSubscriptionServiceTest::testExpectMethodOnceSetSubscriptionForCancellationReturnFalseAndThrowException"/>
+      </line>
+      <line nr="70">
+        <covered by="Alma\PrestaShop\Tests\Unit\Services\InsuranceSubscriptionServiceTest::testSetCancellationMethodExist"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Services\InsuranceSubscriptionServiceTest::testExpectMethodOnceSetSubscriptionForCancellationAndReturnTrue"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Services\InsuranceSubscriptionServiceTest::testExpectMethodOnceSetSubscriptionForCancellationReturnFalseAndThrowException"/>
+      </line>
+      <line nr="167">
+        <covered by="Alma\PrestaShop\Tests\Unit\Services\InsuranceSubscriptionServiceTest::testExpectMethodOnceSetSubscriptionForCancellationAndReturnTrue"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Services\InsuranceSubscriptionServiceTest::testExpectMethodOnceSetSubscriptionForCancellationReturnFalseAndThrowException"/>
+      </line>
+      <line nr="168">
+        <covered by="Alma\PrestaShop\Tests\Unit\Services\InsuranceSubscriptionServiceTest::testExpectMethodOnceSetSubscriptionForCancellationReturnFalseAndThrowException"/>
+      </line>
+      <line nr="170">
+        <covered by="Alma\PrestaShop\Tests\Unit\Services\InsuranceSubscriptionServiceTest::testExpectMethodOnceSetSubscriptionForCancellationAndReturnTrue"/>
+      </line>
+    </coverage>
+  </file>
+</phpunit>

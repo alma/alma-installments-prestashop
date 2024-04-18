@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<phpunit xmlns="http://schema.phpunit.de/coverage/1.0">
+  <file name="AbstractAlmaAdminFormBuilder.php">
+    <totals>
+      <lines total="73" comments="40" code="33" executable="3" executed="1" percent="33.33%"/>
+      <methods count="1" tested="0" percent="0.00%"/>
+      <functions count="0" tested="0" percent=""/>
+      <classes count="1" tested="0" percent="0.00%"/>
+      <traits count="0" tested="0" percent=""/>
+    </totals>
+    <class name="AbstractAlmaAdminFormBuilder" start="34" executable="1" executed="0" crap="12">
+      <package full="" name="" sub="" category=""/>
+      <namespace name="Alma\PrestaShop\Forms"/>
+      <method name="__construct" signature="__construct($module, $context, $image, $config = [])" start="53" end="62" crap="1" executable="0" executed="0" coverage="100"/>
+      <method name="getSubmitTitle" signature="getSubmitTitle()" start="64" end="67" crap="2" executable="1" executed="0" coverage="0"/>
+      <method name="getTitle" signature="getTitle()" start="72" end="72" crap="1" executable="0" executed="0" coverage="100"/>
+    </class>
+    <coverage>
+      <line nr="27">
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\CustomFieldHelperTest::testCustomFields"/>
+      </line>
+    </coverage>
+  </file>
+</phpunit>

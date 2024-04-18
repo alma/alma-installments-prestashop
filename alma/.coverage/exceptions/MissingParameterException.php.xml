@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<phpunit xmlns="http://schema.phpunit.de/coverage/1.0">
+  <file name="MissingParameterException.php">
+    <totals>
+      <lines total="47" comments="27" code="20" executable="11" executed="0" percent="0.00%"/>
+      <methods count="1" tested="0" percent="0.00%"/>
+      <functions count="0" tested="0" percent=""/>
+      <classes count="1" tested="0" percent="0.00%"/>
+      <traits count="0" tested="0" percent=""/>
+    </totals>
+    <class name="MissingParameterException" start="31" executable="8" executed="0" crap="2">
+      <package full="" name="" sub="" category=""/>
+      <namespace name="Alma\PrestaShop\Exceptions"/>
+      <method name="__construct" signature="__construct($locale, $keyForm, $languageId)" start="38" end="46" crap="2" executable="8" executed="0" coverage="0"/>
+    </class>
+  </file>
+</phpunit>
