@@ -24,13 +24,14 @@
 
 namespace Alma\PrestaShop\Helpers;
 
+use Alma\API\Endpoints\Results\Eligibility;
 use Alma\API\Entities\Merchant;
 use Alma\PrestaShop\Exceptions\ActivationException;
 use Alma\PrestaShop\Exceptions\ApiMerchantsException;
 use Alma\PrestaShop\Exceptions\InsuranceInstallException;
 use Alma\PrestaShop\Exceptions\WrongCredentialsException;
-use Alma\PrestaShop\Helpers\Admin\InsuranceHelper;
 use Alma\PrestaShop\Logger;
+use Alma\PrestaShop\Helpers\Admin\InsuranceHelper;
 use Alma\PrestaShop\Services\InsuranceService;
 
 if (!defined('_PS_VERSION_')) {
@@ -46,25 +47,31 @@ class ApiHelper
     /**
      * @var mixed
      */
-    private $module;
+    protected $module;
     /**
      * @var InsuranceService
      */
-    private $insuranceService;
+    protected $insuranceService;
     /**
      * @var ConfigurationHelper
      */
-    private $configurationHelper;
-
+    protected $configurationHelper;
+    /**
+     * @var ClientHelper
+     */
+    protected $clientHelper;
     /**
      * @param $module
+     * @param ClientHelper $clientHelper
+     * @codeCoverageIgnore
      */
-    public function __construct($module)
+    public function __construct($module, $clientHelper)
     {
         $this->module = $module;
         $this->insuranceHelper = new InsuranceHelper($module);
         $this->insuranceService = new InsuranceService();
         $this->configurationHelper = new ConfigurationHelper();
+        $this->clientHelper = $clientHelper;
     }
 
     /**
@@ -168,5 +175,27 @@ class ApiHelper
         }
 
         return (int) $value;
+    }
+
+    /**
+     * @param array $paymentData
+     *
+     * @return Eligibility|Eligibility[]|array
+     */
+    public function getPaymentEligibility($paymentData)
+    {
+        try {
+            return $this->clientHelper->getAlmaClient()->payments->eligibility($paymentData);
+        } catch (\Exception $e) {
+            Logger::instance()->error(
+                sprintf(
+                    'Error on check cart eligibility - payload : %s - message : %s',
+                    json_encode($paymentData),
+                    $e->getMessage()
+                )
+            );
+        }
+
+        return [];
     }
 }

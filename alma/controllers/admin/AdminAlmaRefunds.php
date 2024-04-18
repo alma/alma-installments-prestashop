@@ -26,9 +26,11 @@ use Alma\API\Exceptions\ParametersException;
 use Alma\API\Exceptions\RequestException;
 use Alma\API\RequestError;
 use Alma\PrestaShop\Helpers\ClientHelper;
+use Alma\PrestaShop\Helpers\CurrencyHelper;
 use Alma\PrestaShop\Helpers\OrderHelper;
 use Alma\PrestaShop\Helpers\PriceHelper;
 use Alma\PrestaShop\Helpers\RefundHelper;
+use Alma\PrestaShop\Helpers\ToolsHelper;
 use Alma\PrestaShop\Logger;
 use Alma\PrestaShop\Traits\AjaxTrait;
 use PrestaShop\PrestaShop\Core\Localization\Exception\LocalizationException;
@@ -54,10 +56,13 @@ class AdminAlmaRefundsController extends ModuleAdminController
      */
     protected $priceHelper;
 
+    /**
+     * @codeCoverageIgnore
+     */
     public function __construct()
     {
         parent::__construct();
-        $this->priceHelper = new PriceHelper();
+        $this->priceHelper = new PriceHelper(new ToolsHelper(), new CurrencyHelper());
     }
 
     /**
@@ -97,9 +102,9 @@ class AdminAlmaRefundsController extends ModuleAdminController
         }
         $totalOrderAmount = $refundResult->purchase_amount;
         $idCurrency = (int) $order->id_currency;
-        $totalOrderPrice = PriceHelper::formatPriceFromCentsByCurrencyId($totalOrderAmount, $idCurrency);
+        $totalOrderPrice = $this->priceHelper->formatPriceToCentsByCurrencyId($totalOrderAmount, $idCurrency);
         $totalRefundAmount = RefundHelper::buildTotalRefund($refundResult->refunds, $totalOrderAmount);
-        $totalRefundPrice = PriceHelper::formatPriceFromCentsByCurrencyId($totalRefundAmount, $idCurrency);
+        $totalRefundPrice = $this->priceHelper->formatPriceToCentsByCurrencyId($totalRefundAmount, $idCurrency);
         $percentRefund = PriceHelper::calculatePercentage($totalRefundAmount, $totalOrderAmount);
 
         if ($isTotal) {

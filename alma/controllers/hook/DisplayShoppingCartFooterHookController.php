@@ -28,14 +28,36 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
+use Alma\PrestaShop\Forms\ExcludedCategoryAdminFormBuilder;
+use Alma\PrestaShop\Helpers\AddressHelper;
+use Alma\PrestaShop\Helpers\ApiHelper;
+use Alma\PrestaShop\Helpers\CarrierHelper;
+use Alma\PrestaShop\Helpers\CartHelper;
+use Alma\PrestaShop\Helpers\ClientHelper;
+use Alma\PrestaShop\Helpers\ConfigurationHelper;
+use Alma\PrestaShop\Helpers\CountryHelper;
+use Alma\PrestaShop\Helpers\CurrencyHelper;
+use Alma\PrestaShop\Helpers\CustomerHelper;
+use Alma\PrestaShop\Helpers\CustomFieldsHelper;
 use Alma\PrestaShop\Helpers\EligibilityHelper;
 use Alma\PrestaShop\Helpers\LanguageHelper;
 use Alma\PrestaShop\Helpers\LocaleHelper;
+use Alma\PrestaShop\Helpers\OrderHelper;
+use Alma\PrestaShop\Helpers\OrderStateHelper;
 use Alma\PrestaShop\Helpers\PriceHelper;
-use Alma\PrestaShop\Helpers\SettingsCustomFieldsHelper;
+use Alma\PrestaShop\Helpers\ProductHelper;
 use Alma\PrestaShop\Helpers\SettingsHelper;
+use Alma\PrestaShop\Helpers\ShopHelper;
+use Alma\PrestaShop\Helpers\StateHelper;
+use Alma\PrestaShop\Helpers\ToolsHelper;
+use Alma\PrestaShop\Helpers\ValidateHelper;
 use Alma\PrestaShop\Hooks\FrontendHookController;
+use Alma\PrestaShop\Model\CarrierData;
 use Alma\PrestaShop\Model\CartData;
+use Alma\PrestaShop\Repositories\OrderRepository;
+use Alma\PrestaShop\Model\PaymentData;
+use Alma\PrestaShop\Model\ShippingData;
+use Alma\PrestaShop\Repositories\ProductRepository;
 
 class DisplayShoppingCartFooterHookController extends FrontendHookController
 {
@@ -60,7 +82,19 @@ class DisplayShoppingCartFooterHookController extends FrontendHookController
     protected $cartData;
 
     /**
+     * @var CustomFieldsHelper
+     */
+    protected $customFieldsHelper;
+
+    /**
+     * @var SettingsHelper
+     */
+    protected $settingsHelper;
+
+    /**
      * HookController constructor.
+     *
+     * @codeCoverageIgnore
      *
      * @param $module Alma
      */
@@ -69,9 +103,54 @@ class DisplayShoppingCartFooterHookController extends FrontendHookController
         parent::__construct($module);
 
         $this->localeHelper = new LocaleHelper(new LanguageHelper());
-        $this->eligibilityHelper = new EligibilityHelper();
-        $this->priceHelper = new PriceHelper();
-        $this->cartData = new CartData();
+        $toolsHelper = new ToolsHelper();
+        $this->priceHelper = new PriceHelper($toolsHelper, new CurrencyHelper());
+        $this->settingsHelper = new SettingsHelper(new ShopHelper(), new ConfigurationHelper());
+        $clientHelper = new ClientHelper();
+        $this->customFieldsHelper = new CustomFieldsHelper(
+            new LanguageHelper(),
+            $this->localeHelper,
+            $this->settingsHelper
+        );
+        $this->cartData = new CartData(
+            new ProductHelper(),
+            $this->settingsHelper,
+            $this->priceHelper,
+            new ProductRepository()
+        );
+        $carrierHelper = new CarrierHelper($this->context, new CarrierData());
+
+        $this->eligibilityHelper = new EligibilityHelper(
+            new PaymentData(
+                $toolsHelper,
+                $this->settingsHelper,
+                $this->priceHelper,
+                $this->customFieldsHelper,
+                $this->cartData,
+                new ShippingData($this->priceHelper, $carrierHelper),
+                $this->context,
+                new AddressHelper($toolsHelper),
+                new CountryHelper(),
+                $this->localeHelper,
+                new StateHelper(),
+                new CustomerHelper($this->context, new OrderHelper(), new ValidateHelper()),
+                new CartHelper(
+                    $this->context,
+                    $toolsHelper,
+                    $this->priceHelper,
+                    $this->cartData,
+                    new OrderRepository(),
+                    new OrderStateHelper($this->context),
+                    $carrierHelper
+                ),
+                $carrierHelper
+            ),
+            $this->priceHelper,
+            $clientHelper,
+            $this->settingsHelper,
+            new ApiHelper($this->module, $clientHelper),
+            $this->context
+        );
     }
 
     public function canRun()
@@ -83,7 +162,7 @@ class DisplayShoppingCartFooterHookController extends FrontendHookController
     {
         $eligibilityMsg = null;
 
-        $activePlans = SettingsHelper::activePlans();
+        $activePlans = $this->settingsHelper->activePlans();
 
         $locale = $this->localeHelper->getLocaleByIdLangForWidget($this->context->language->id);
 
@@ -96,7 +175,7 @@ class DisplayShoppingCartFooterHookController extends FrontendHookController
 
         $isEligible = true;
         if (!SettingsHelper::showCartWidgetIfNotEligible()) {
-            $installmentPlans = $this->eligibilityHelper->eligibilityCheck($this->context);
+            $installmentPlans = $this->eligibilityHelper->eligibilityCheck();
             $isEligible = false;
             foreach ($installmentPlans as $plan) {
                 if ($plan->installmentsCount !== 1 && $plan->isEligible) {
@@ -110,7 +189,10 @@ class DisplayShoppingCartFooterHookController extends FrontendHookController
         $isExcluded = false;
         $diff = $this->cartData->getCartExclusion($params['cart']);
         if (!empty($diff)) {
-            $eligibilityMsg = SettingsCustomFieldsHelper::getNonEligibleCategoriesMessageByLang($this->context->language->id);
+            $eligibilityMsg = $this->customFieldsHelper->getBtnValueByLang(
+                $this->context->language->id,
+                ExcludedCategoryAdminFormBuilder::ALMA_NOT_ELIGIBLE_CATEGORIES
+            );
             $isExcluded = true;
             if (!SettingsHelper::showCategoriesWidgetIfNotEligible()) {
                 $isEligible = false;
