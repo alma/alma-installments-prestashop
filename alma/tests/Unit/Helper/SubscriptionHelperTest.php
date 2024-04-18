@@ -178,10 +178,11 @@ class SubscriptionHelperTest extends TestCase
         $subscriptionArray = [
             'state' => 'started',
             'broker_subscription_id' => 'broker_id',
+            'broker_subscription_reference' => 'broker_reference',
         ];
         $this->almaInsuranceProductRepository->expects($this->once())
             ->method('updateSubscription')
-            ->with($sid, $subscriptionArray['state'], $subscriptionArray['broker_subscription_id'])
+            ->with($sid, $subscriptionArray['state'], $subscriptionArray['broker_subscription_id'], $subscriptionArray['broker_subscription_reference'])
             ->willReturn(true);
         $this->insuranceApiService->expects($this->once())
             ->method('getSubscriptionById')
@@ -227,11 +228,12 @@ class SubscriptionHelperTest extends TestCase
         $subscriptionArray = [
             'state' => 'started',
             'broker_subscription_id' => 'broker_id',
+            'broker_subscription_reference' => 'broker_reference',
         ];
         $this->expectException(SubscriptionException::class);
         $this->almaInsuranceProductRepository->expects($this->once())
             ->method('updateSubscription')
-            ->with($sid, $subscriptionArray['state'], $subscriptionArray['broker_subscription_id'])
+            ->with($sid, $subscriptionArray['state'], $subscriptionArray['broker_subscription_id'],  $subscriptionArray['broker_subscription_reference'])
             ->willReturn(false);
         $this->insuranceApiService->expects($this->once())
             ->method('getSubscriptionById')
