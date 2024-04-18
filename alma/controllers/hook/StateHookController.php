@@ -69,6 +69,7 @@ final class StateHookController extends AdminHookController
      * @codeCoverageIgnore
      *
      * @param $module Alma
+     *
      * @var InsuranceHelper
      */
     protected $insuranceHelper;

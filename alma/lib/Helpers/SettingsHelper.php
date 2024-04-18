@@ -136,7 +136,6 @@ class SettingsHelper
     /**
      * Update value in config.
      *
-     *
      * @param string $configKey
      * @param string $value
      *
