@@ -32,11 +32,22 @@ use Alma\API\RequestError;
 use Alma\PrestaShop\Exceptions\InsurancePendingCancellationException;
 use Alma\PrestaShop\Exceptions\InsuranceSubscriptionException;
 use Alma\PrestaShop\Exceptions\SubscriptionException;
+use Alma\PrestaShop\Helpers\CarrierHelper;
 use Alma\PrestaShop\Helpers\CartHelper;
 use Alma\PrestaShop\Helpers\ClientHelper;
+use Alma\PrestaShop\Helpers\ConfigurationHelper;
+use Alma\PrestaShop\Helpers\CurrencyHelper;
+use Alma\PrestaShop\Helpers\OrderStateHelper;
+use Alma\PrestaShop\Helpers\PriceHelper;
 use Alma\PrestaShop\Helpers\ProductHelper;
+use Alma\PrestaShop\Helpers\SettingsHelper;
+use Alma\PrestaShop\Helpers\ShopHelper;
+use Alma\PrestaShop\Helpers\ToolsHelper;
 use Alma\PrestaShop\Logger;
+use Alma\PrestaShop\Model\CartData;
 use Alma\PrestaShop\Repositories\AlmaInsuranceProductRepository;
+use Alma\PrestaShop\Repositories\OrderRepository;
+use Alma\PrestaShop\Repositories\ProductRepository;
 
 class InsuranceApiService
 {
@@ -67,8 +78,37 @@ class InsuranceApiService
     {
         $this->almaApiClient = ClientHelper::defaultInstance();
         $this->context = \Context::getContext();
-        $this->cartHelper = new CartHelper();
+        $toolsHelper = new ToolsHelper();
+        $currencyHelper = new CurrencyHelper();
+        $settingsHelper =  new SettingsHelper(
+            new ShopHelper(),
+            new ConfigurationHelper()
+        );
+        $priceHelper = new PriceHelper($toolsHelper, $currencyHelper);
+        $productRepository = new ProductRepository();
         $this->productHelper = new ProductHelper();
+        $this->cartHelper = new CartHelper(
+            $this->context,
+            $toolsHelper,
+            $priceHelper,
+            new CartData(
+                $this->productHelper,
+                $settingsHelper,
+                new PriceHelper($toolsHelper, $currencyHelper),
+                $productRepository
+            ),
+            new OrderRepository(),
+            new OrderStateHelper($this->context),
+            new CarrierHelper(
+                $this->context,
+                new CartData(
+                    $this->productHelper,
+                    $settingsHelper,
+                    $priceHelper,
+                    $productRepository
+                )
+            )
+        );
         $this->insuranceProductRepository = new AlmaInsuranceProductRepository();
     }
 

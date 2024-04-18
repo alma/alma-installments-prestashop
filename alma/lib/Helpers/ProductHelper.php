@@ -36,6 +36,16 @@ if (!defined('_PS_VERSION_')) {
 class ProductHelper
 {
     /**
+     * @var InsuranceHelper
+     */
+    protected $insuranceHelper;
+
+    public function __construct()
+    {
+        $this->insuranceHelper = new InsuranceHelper();
+    }
+
+    /**
      * @param array $productRow
      *
      * @return string
@@ -47,7 +57,7 @@ class ProductHelper
         return $link->getImageLink(
             $productRow['link_rewrite'],
             $productRow['id_image'],
-            self::getFormattedImageTypeName('large')
+            $this->getFormattedImageTypeName('large')
         );
     }
 
@@ -83,13 +93,47 @@ class ProductHelper
      *
      * @return string
      */
-    private static function getFormattedImageTypeName($name)
+    private function getFormattedImageTypeName($name)
     {
         if (version_compare(_PS_VERSION_, '1.7', '>=')) {
             return \ImageType::getFormattedName($name);
         }
 
         return \ImageType::getFormatedName($name);
+    }
+
+    /**
+     * getProductCategories return an array of categories which this product belongs to.
+     *
+     * @param int|string $id_product Product identifier
+     *
+     * @return array Category identifiers
+     */
+    public function getProductCategories($idProduct)
+    {
+        return \Product::getProductCategories($idProduct);
+    }
+
+    /**
+     * @param int|null $id_product Product identifier
+     * @param bool $full Load with price, tax rate, manufacturer name, supplier name, tags, stocks...
+     * @param int|null $id_lang Language identifier
+     * @param int|null $id_shop Shop identifier
+     * @param Context|null $context Context to use for retrieve cart
+     */
+    public function createProduct($id_product = null, $full = false, $id_lang = null, $id_shop = null, $context = null)
+    {
+        return new \Product($id_product, $full, $id_lang, $id_shop, $context);
+    }
+
+    /**
+     * @param $idCustomer
+     *
+     * @return mixed
+     */
+    public function getTaxCalculationMethod($idCustomer)
+    {
+        return \Product::getTaxCalculationMethod($idCustomer);
     }
 
     /**
@@ -165,11 +209,7 @@ class ProductHelper
         $products = $cart->getProducts();
         foreach ($products as $product) {
             for ($qty = 1; $qty <= $product['cart_quantity']; ++$qty) {
-                $cmsReferences[] = sprintf(
-                    '%s-%s',
-                    $product['id_product'],
-                    $product['id_product_attribute']
-                );
+                $cmsReferences[] = $this->insuranceHelper->createCmsReference($product['id_product'], $product['id_product_attribute']);
             }
         }
 

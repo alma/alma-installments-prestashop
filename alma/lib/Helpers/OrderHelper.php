@@ -52,6 +52,9 @@ class OrderHelper
     private $orders;
     private $module;
 
+    /**
+     * @codeCoverageIgnore
+     */
     public function __construct()
     {
         $this->defaultStatesExcluded = [6, 7, 8];
@@ -201,5 +204,15 @@ class OrderHelper
             Logger::instance()->error($msg);
             throw new OrderException($msg);
         }
+    }
+
+    /**
+     * @param int $id
+     *
+     * @return mixed
+     */
+    public function getCustomerNbOrders($id)
+    {
+        return \Order::getCustomerNbOrders($id);
     }
 }

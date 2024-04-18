@@ -56,6 +56,8 @@ class RefundHelper
      * @param \Cart $cart
      * @param int $paymentId
      * @param ClientHelper $clientHelper
+     *
+     * @codeCoverageIgnore
      */
     public function __construct($module, $cart, $paymentId, $clientHelper)
     {

@@ -48,7 +48,7 @@ class AlmaInsuranceProductRepository
      * @param int $idProductAttributeInsurance
      * @param int $assurancePrice
      * @param int $idAddressDelivery
-     * @param string $insuranceContractInfos
+     * @param array $insuranceContractInfos
      *
      * @return bool
      *

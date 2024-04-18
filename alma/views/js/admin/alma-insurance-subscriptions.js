@@ -34,7 +34,6 @@
 
         window.addEventListener('message', (e) => {
             if (e.data.type === 'sendCancelSubscriptionToCms') {
-
                 $.ajax({
                     type: 'POST',
                     url: subscriptionData.cancelUrl,
