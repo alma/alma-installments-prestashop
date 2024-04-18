@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<phpunit xmlns="http://schema.phpunit.de/coverage/1.0">
+  <file name="CustomerHelper.php">
+    <totals>
+      <lines total="127" comments="56" code="71" executable="35" executed="0" percent="0.00%"/>
+      <methods count="4" tested="0" percent="0.00%"/>
+      <functions count="0" tested="0" percent=""/>
+      <classes count="1" tested="0" percent="0.00%"/>
+      <traits count="0" tested="0" percent=""/>
+    </totals>
+    <class name="CustomerHelper" start="33" executable="32" executed="0" crap="90">
+      <package full="" name="" sub="" category=""/>
+      <namespace name="Alma\PrestaShop\Helpers"/>
+      <method name="__construct" signature="__construct($context, $orderHelper, $validateHelper)" start="57" end="62" crap="1" executable="0" executed="0" coverage="100"/>
+      <method name="createCustomer" signature="createCustomer($id)" start="69" end="72" crap="2" executable="3" executed="0" coverage="0"/>
+      <method name="getCustomer" signature="getCustomer()" start="77" end="90" crap="12" executable="10" executed="0" coverage="0"/>
+      <method name="validateCustomer" signature="validateCustomer($customer)" start="97" end="112" crap="6" executable="13" executed="0" coverage="0"/>
+      <method name="isNewCustomer" signature="isNewCustomer($idCustomer)" start="119" end="126" crap="6" executable="6" executed="0" coverage="0"/>
+    </class>
+  </file>
+</phpunit>

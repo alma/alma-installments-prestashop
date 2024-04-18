@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<phpunit xmlns="http://schema.phpunit.de/coverage/1.0">
+  <file name="PaymentOptionsHookController.php">
+    <totals>
+      <lines total="207" comments="40" code="167" executable="6" executed="0" percent="0.00%"/>
+      <methods count="1" tested="0" percent="0.00%"/>
+      <functions count="0" tested="0" percent=""/>
+      <classes count="1" tested="0" percent="0.00%"/>
+      <traits count="0" tested="0" percent=""/>
+    </totals>
+    <class name="PaymentOptionsHookController" start="70" executable="3" executed="0" crap="6">
+      <package full="" name="" sub="" category=""/>
+      <namespace name="Alma\PrestaShop\Controllers\Hook"/>
+      <method name="__construct" signature="__construct($module)" start="82" end="191" crap="1" executable="0" executed="0" coverage="100"/>
+      <method name="run" signature="run($params)" start="203" end="206" crap="2" executable="3" executed="0" coverage="0"/>
+    </class>
+  </file>
+</phpunit>

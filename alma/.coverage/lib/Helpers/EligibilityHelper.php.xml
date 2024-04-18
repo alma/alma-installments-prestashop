@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<phpunit xmlns="http://schema.phpunit.de/coverage/1.0">
+  <file name="EligibilityHelper.php">
+    <totals>
+      <lines total="223" comments="76" code="147" executable="82" executed="0" percent="0.00%"/>
+      <methods count="8" tested="0" percent="0.00%"/>
+      <functions count="0" tested="0" percent=""/>
+      <classes count="1" tested="0" percent="0.00%"/>
+      <traits count="0" tested="0" percent=""/>
+    </totals>
+    <class name="EligibilityHelper" start="36" executable="79" executed="0" crap="380">
+      <package full="" name="" sub="" category=""/>
+      <namespace name="Alma\PrestaShop\Helpers"/>
+      <method name="__construct" signature="__construct($paymentData, $priceHelper, $clientHelper, $settingsHelper, $apiHelper, $context)" start="77" end="85" crap="1" executable="0" executed="0" coverage="100"/>
+      <method name="eligibilityCheck" signature="eligibilityCheck()" start="92" end="120" crap="12" executable="17" executed="0" coverage="0"/>
+      <method name="anonymousFunction:115#386" signature="anonymousFunction ($a, $b)" start="115" end="117" crap="2" executable="2" executed="0" coverage="0"/>
+      <method name="checkFeePlans" signature="checkFeePlans()" start="125" end="136" crap="6" executable="1" executed="0" coverage="0"/>
+      <method name="anonymousFunction:127#453" signature="anonymousFunction ($feePlan)" start="127" end="129" crap="2" executable="2" executed="0" coverage="0"/>
+      <method name="checkPaymentData" signature="checkPaymentData($activePlans)" start="145" end="156" crap="6" executable="8" executed="0" coverage="0"/>
+      <method name="getNotEligibleFeePlans" signature="getNotEligibleFeePlans($feePlans, $purchaseAmount)" start="164" end="180" crap="20" executable="13" executed="0" coverage="0"/>
+      <method name="createEligibility" signature="createEligibility($data, $feePlan, $eligible = false)" start="188" end="204" crap="2" executable="16" executed="0" coverage="0"/>
+      <method name="getEligibleFeePlans" signature="getEligibleFeePlans($feePlans, $purchaseAmount)" start="206" end="222" crap="20" executable="13" executed="0" coverage="0"/>
+    </class>
+  </file>
+</phpunit>

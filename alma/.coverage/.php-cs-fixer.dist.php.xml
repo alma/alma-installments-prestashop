@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<phpunit xmlns="http://schema.phpunit.de/coverage/1.0">
+  <file name=".php-cs-fixer.dist.php">
+    <totals>
+      <lines total="9" comments="1" code="8" executable="4" executed="0" percent="0.00%"/>
+      <methods count="0" tested="0" percent=""/>
+      <functions count="0" tested="0" percent=""/>
+      <classes count="0" tested="0" percent=""/>
+      <traits count="0" tested="0" percent=""/>
+    </totals>
+  </file>
+</phpunit>

@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<phpunit xmlns="http://schema.phpunit.de/coverage/1.0">
+  <file name="InpageAdminFormBuilder.php">
+    <totals>
+      <lines total="60" comments="31" code="29" executable="16" executed="0" percent="0.00%"/>
+      <methods count="2" tested="0" percent="0.00%"/>
+      <functions count="0" tested="0" percent=""/>
+      <classes count="1" tested="0" percent="0.00%"/>
+      <traits count="0" tested="0" percent=""/>
+    </totals>
+    <class name="InpageAdminFormBuilder" start="34" executable="13" executed="0" crap="6">
+      <package full="" name="" sub="" category=""/>
+      <namespace name="Alma\PrestaShop\Forms"/>
+      <method name="configForm" signature="configForm()" start="41" end="51" crap="2" executable="10" executed="0" coverage="0"/>
+      <method name="getTitle" signature="getTitle()" start="56" end="59" crap="2" executable="3" executed="0" coverage="0"/>
+    </class>
+  </file>
+</phpunit>

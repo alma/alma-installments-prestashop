@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<phpunit xmlns="http://schema.phpunit.de/coverage/1.0">
+  <file name="ImageHelper.php">
+    <totals>
+      <lines total="104" comments="51" code="53" executable="23" executed="1" percent="4.35%"/>
+      <methods count="3" tested="0" percent="0.00%"/>
+      <functions count="0" tested="0" percent=""/>
+      <classes count="1" tested="0" percent="0.00%"/>
+      <traits count="0" tested="0" percent=""/>
+    </totals>
+    <class name="ImageHelper" start="31" executable="21" executed="0" crap="42">
+      <package full="" name="" sub="" category=""/>
+      <namespace name="Alma\PrestaShop\Helpers"/>
+      <method name="resizeImages" signature="resizeImages($tmpFile, $path, $idImage, $idModel, $imageType)" start="45" end="53" crap="6" executable="5" executed="0" coverage="0"/>
+      <method name="resizeImage" signature="resizeImage($tmpFile, $path, $imageType, $watermarkTypes, $idImage, $idModel)" start="67" end="89" crap="6" executable="13" executed="0" coverage="0"/>
+      <method name="getFormattedImageTypeName" signature="getFormattedImageTypeName($name)" start="96" end="103" crap="6" executable="3" executed="0" coverage="0"/>
+    </class>
+    <coverage>
+      <line nr="27">
+        <covered by="Alma\PrestaShop\Tests\Unit\Services\InsuranceSubscriptionServiceTest::testSetCancellationMethodExist"/>
+      </line>
+    </coverage>
+  </file>
+</phpunit>

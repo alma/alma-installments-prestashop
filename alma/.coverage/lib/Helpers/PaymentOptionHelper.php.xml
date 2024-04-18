@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<phpunit xmlns="http://schema.phpunit.de/coverage/1.0">
+  <file name="PaymentOptionHelper.php">
+    <totals>
+      <lines total="255" comments="99" code="156" executable="91" executed="0" percent="0.00%"/>
+      <methods count="6" tested="0" percent="0.00%"/>
+      <functions count="0" tested="0" percent=""/>
+      <classes count="1" tested="0" percent="0.00%"/>
+      <traits count="0" tested="0" percent=""/>
+    </totals>
+    <class name="PaymentOptionHelper" start="37" executable="88" executed="0" crap="210">
+      <package full="" name="" sub="" category=""/>
+      <namespace name="Alma\PrestaShop\Helpers"/>
+      <method name="__construct" signature="__construct(&#10;        $context,&#10;        $module,&#10;        $settingsHelper,&#10;        $customFieldsHelper,&#10;        $mediaHelper,&#10;        $configurationHelper,&#10;        $paymentOptionTemplateHelper&#10;    )" start="82" end="98" crap="1" executable="0" executed="0" coverage="100"/>
+      <method name="getTexts" signature="getTexts($installment, $keyTitle, $keyDescription)" start="107" end="121" crap="2" executable="14" executed="0" coverage="0"/>
+      <method name="createPaymentOption" signature="createPaymentOption($forEUComplianceModule, $ctaText, $action, $valueBNPL, $isDeferred)" start="134" end="162" crap="6" executable="24" executed="0" coverage="0"/>
+      <method name="getEuCompliance" signature="getEuCompliance($params)" start="169" end="178" crap="6" executable="7" executed="0" coverage="0"/>
+      <method name="getTextsByTypes" signature="getTextsByTypes($installementCount, $duration, $isPnxPlus4, $isDeferred, $isPayNow)" start="189" end="218" crap="20" executable="28" executed="0" coverage="0"/>
+      <method name="sortPaymentsOptions" signature="sortPaymentsOptions($sortOptions, $paymentOptions)" start="226" end="236" crap="6" executable="8" executed="0" coverage="0"/>
+      <method name="setAdditionalInformationForEuCompliance" signature="setAdditionalInformationForEuCompliance($paymentOption, $template, $installments)" start="245" end="254" crap="6" executable="7" executed="0" coverage="0"/>
+    </class>
+  </file>
+</phpunit>

@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<phpunit xmlns="http://schema.phpunit.de/coverage/1.0">
+  <file name="PaymentData.php">
+    <totals>
+      <lines total="513" comments="152" code="361" executable="235" executed="0" percent="0.00%"/>
+      <methods count="10" tested="0" percent="0.00%"/>
+      <functions count="0" tested="0" percent=""/>
+      <classes count="1" tested="0" percent="0.00%"/>
+      <traits count="0" tested="0" percent=""/>
+    </totals>
+    <class name="PaymentData" start="46" executable="232" executed="0" crap="1806">
+      <package full="" name="" sub="" category=""/>
+      <namespace name="Alma\PrestaShop\Model"/>
+      <method name="__construct" signature="__construct(&#10;        $toolsHelper,&#10;        $settingsHelper,&#10;        $priceHelper,&#10;        $customFieldsHelper,&#10;        $cartData,&#10;        $shippingData,&#10;        $context,&#10;        $addressHelper,&#10;        $countryHelper,&#10;        $localeHelper,&#10;        $stateHelper,&#10;        $customerHelper,&#10;        $cartHelper,&#10;        $carrierHelper&#10;    )" start="138" end="168" crap="1" executable="0" executed="0" coverage="100"/>
+      <method name="dataFromCart" signature="dataFromCart($feePlans, $forPayment = false)" start="178" end="240" crap="72" executable="52" executed="0" coverage="0"/>
+      <method name="buildDataPayment" signature="buildDataPayment(&#10;        $customer,&#10;        $purchaseAmount,&#10;        $feePlans,&#10;        $shippingAddress,&#10;        $countryShippingAddress,&#10;        $locale,&#10;        $billingAddress,&#10;        $countryBillingAddress,&#10;        $customerData&#10;    )" start="255" end="324" crap="42" executable="65" executed="0" coverage="0"/>
+      <method name="checkPurchaseAmount" signature="checkPurchaseAmount($dataPayment)" start="333" end="336" crap="2" executable="3" executed="0" coverage="0"/>
+      <method name="buildCustomerData" signature="buildCustomerData($customer, $shippingAddress, $billingAddress)" start="345" end="398" crap="110" executable="46" executed="0" coverage="0"/>
+      <method name="getDataForEligibilityV2" signature="getDataForEligibilityV2(&#10;        $feePlans,&#10;        $purchaseAmount,&#10;        $countryShippingAddress,&#10;        $countryBillingAddress,&#10;        $locale&#10;    )" start="408" end="437" crap="6" executable="27" executed="0" coverage="0"/>
+      <method name="isPayLater" signature="isPayLater($paymentData)" start="444" end="447" crap="6" executable="3" executed="0" coverage="0"/>
+      <method name="isPnXOnly" signature="isPnXOnly($paymentData)" start="454" end="459" crap="20" executable="5" executed="0" coverage="0"/>
+      <method name="isPayNow" signature="isPayNow($paymentData)" start="466" end="473" crap="12" executable="7" executed="0" coverage="0"/>
+      <method name="isInPage" signature="isInPage($dataPayment)" start="480" end="487" crap="20" executable="7" executed="0" coverage="0"/>
+      <method name="buildWebsiteCustomerDetails" signature="buildWebsiteCustomerDetails($customer, $purchaseAmount)" start="495" end="512" crap="2" executable="17" executed="0" coverage="0"/>
+    </class>
+  </file>
+</phpunit>

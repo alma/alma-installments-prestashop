@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<phpunit xmlns="http://schema.phpunit.de/coverage/1.0">
+  <file name="ActionObjectProductInCartDeleteAfterHookController.php">
+    <totals>
+      <lines total="71" comments="35" code="36" executable="14" executed="0" percent="0.00%"/>
+      <methods count="3" tested="0" percent="0.00%"/>
+      <functions count="0" tested="0" percent=""/>
+      <classes count="1" tested="0" percent="0.00%"/>
+      <traits count="0" tested="0" percent=""/>
+    </totals>
+    <class name="ActionObjectProductInCartDeleteAfterHookController" start="35" executable="11" executed="0" crap="20">
+      <package full="" name="" sub="" category=""/>
+      <namespace name="Alma\PrestaShop\Controllers\Hook"/>
+      <method name="__construct" signature="__construct($module)" start="47" end="53" crap="2" executable="5" executed="0" coverage="0"/>
+      <method name="canRun" signature="canRun()" start="55" end="58" crap="6" executable="3" executed="0" coverage="0"/>
+      <method name="run" signature="run($params)" start="67" end="70" crap="2" executable="3" executed="0" coverage="0"/>
+    </class>
+  </file>
+</phpunit>

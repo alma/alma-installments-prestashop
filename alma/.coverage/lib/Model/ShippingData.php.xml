@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<phpunit xmlns="http://schema.phpunit.de/coverage/1.0">
+  <file name="ShippingData.php">
+    <totals>
+      <lines total="208" comments="71" code="137" executable="91" executed="0" percent="0.00%"/>
+      <methods count="5" tested="0" percent="0.00%"/>
+      <functions count="0" tested="0" percent=""/>
+      <classes count="1" tested="0" percent="0.00%"/>
+      <traits count="0" tested="0" percent=""/>
+    </totals>
+    <class name="ShippingData" start="34" executable="88" executed="0" crap="462">
+      <package full="" name="" sub="" category=""/>
+      <namespace name="Alma\PrestaShop\Model"/>
+      <method name="__construct" signature="__construct($priceHelper, $carrierHelper)" start="52" end="56" crap="1" executable="0" executed="0" coverage="100"/>
+      <method name="shippingInfo" signature="shippingInfo($cart)" start="63" end="101" crap="42" executable="30" executed="0" coverage="0"/>
+      <method name="getCarrierIds" signature="getCarrierIds($carriersListKey, $cart)" start="109" end="127" crap="20" executable="14" executed="0" coverage="0"/>
+      <method name="buildShippingInfos" signature="buildShippingInfos($carrierIds, $deliveryOptionList, $addressId, $carriersListKey, $idLang, $deliveryOption)" start="139" end="165" crap="20" executable="21" executed="0" coverage="0"/>
+      <method name="getKnownOptions" signature="getKnownOptions($deliveryOptionList, $addressId, $idLang)" start="174" end="190" crap="20" executable="14" executed="0" coverage="0"/>
+      <method name="shippingInfoData" signature="shippingInfoData($carrier, $carrierInfo)" start="198" end="207" crap="6" executable="9" executed="0" coverage="0"/>
+    </class>
+  </file>
+</phpunit>
