@@ -47,15 +47,22 @@ class MessageOrderHelper
     protected $module;
 
     /**
+     * @var PriceHelper
+     */
+    protected $priceHelper;
+
+    /**
      * @param $module
      * @param $context
      * @param $insuranceApiService
+     * @param PriceHelper $priceHelper
      */
-    public function __construct($module, $context, $insuranceApiService)
+    public function __construct($module, $context, $insuranceApiService, $priceHelper)
     {
         $this->module = $module;
         $this->context = $context;
         $this->insuranceApiService = $insuranceApiService;
+        $this->priceHelper = $priceHelper;
     }
 
     /**
@@ -88,7 +95,7 @@ class MessageOrderHelper
             Action Required: Refund the customer for the affected subscriptions.
             Thank you.',
             $insuranceContract->getName(),
-            PriceHelper::convertPriceFromCents($price) . '€',
+            $this->priceHelper->convertPriceFromCents($price) . '€',
             $product->name
         );
 
