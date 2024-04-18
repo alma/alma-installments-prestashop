@@ -46,6 +46,11 @@ class LocaleHelper
      */
     protected $languageHelper;
 
+    /**
+     * @codeCoverageIgnore
+     *
+     * @param $languageHelper
+     */
     public function __construct($languageHelper)
     {
         $this->languageHelper = $languageHelper;
@@ -142,7 +147,7 @@ class LocaleHelper
      *
      * @see AdminTranslationsController::getModuleTranslation
      */
-    public static function getModuleTranslation(
+    public function getModuleTranslation(
         $string,
         $source,
         $iso
@@ -195,6 +200,22 @@ class LocaleHelper
 
         if ('nl' == $locale) {
             $locale = 'nl-NL';
+        }
+
+        return $locale;
+    }
+
+    /**
+     * @param \Context $context
+     *
+     * @return mixed
+     */
+    public function getLocaleFromContext($context)
+    {
+        $locale = $context->language->iso_code;
+
+        if (property_exists($context->language, 'locale')) {
+            $locale = $context->language->locale;
         }
 
         return $locale;

@@ -26,8 +26,10 @@ namespace Alma\PrestaShop\Validators;
 
 use Alma\API\Entities\Payment;
 use Alma\API\RequestError;
+use Alma\PrestaShop\API\MismatchException;
 use Alma\PrestaShop\Helpers\ClientHelper;
 use Alma\PrestaShop\Helpers\ConfigurationHelper;
+use Alma\PrestaShop\Helpers\CurrencyHelper;
 use Alma\PrestaShop\Helpers\PriceHelper;
 use Alma\PrestaShop\Helpers\RefundHelper;
 use Alma\PrestaShop\Helpers\SettingsHelper;
@@ -64,6 +66,8 @@ class PaymentValidation
     /**
      * @param $context
      * @param $module
+     *
+     * @codeCoverageIgnore
      */
     public function __construct($context, $module)
     {
@@ -71,7 +75,7 @@ class PaymentValidation
         $this->module = $module;
         $this->settingsHelper = new SettingsHelper(new ShopHelper(), new ConfigurationHelper());
         $this->toolsHelper = new ToolsHelper();
-        $this->priceHelper = new PriceHelper();
+        $this->priceHelper = new PriceHelper($this->toolsHelper, new CurrencyHelper());
     }
 
     /**
@@ -237,7 +241,7 @@ class PaymentValidation
                 $this->module->validateOrder(
                     (int) $cart->id,
                     \Configuration::get('PS_OS_PAYMENT'),
-                    PriceHelper::convertPriceFromCents($payment->purchase_amount),
+                    $this->priceHelper->convertPriceFromCents($payment->purchase_amount),
                     $paymentMode,
                     null,
                     $extraVars,

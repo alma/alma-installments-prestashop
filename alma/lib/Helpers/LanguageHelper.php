@@ -37,12 +37,27 @@ class LanguageHelper
      * Return iso code from id (installed languages only).
      *
      * @param int $id_lang Language ID
-     * @codeCoverageIgnore
      *
      * @return string 2-letter ISO code
      */
     public function getIsoById($idLang)
     {
         return \Language::getIsoById($idLang);
+    }
+
+    /**
+     * Returns installed languages.
+     *
+     * @see loadLanguages()
+     *
+     * @param bool $active Select only active languages
+     * @param int|false $id_shop Shop ID
+     * @param bool $ids_only If true, returns an array of language IDs
+     *
+     * @return array<int|array> Language information
+     */
+    public function getLanguages($active = true, $id_shop = false, $ids_only = false)
+    {
+        return \Language::getLanguages($active, $id_shop, $ids_only);
     }
 }

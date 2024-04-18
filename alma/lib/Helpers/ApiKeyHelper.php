@@ -43,11 +43,20 @@ class ApiKeyHelper
     private $encryptionHelper;
 
     /**
+     * @var SettingsHelper
+     */
+    protected $settingsHelper;
+
+
+    /**
      * ApiKey Helper construct
+     *
+     * @codeCoverageIgnore
      */
     public function __construct()
     {
         $this->encryptionHelper = new EncryptionHelper();
+        $this->settingsHelper = new SettingsHelper(new ShopHelper(), new ConfigurationHelper());
     }
 
     /**
@@ -71,7 +80,7 @@ class ApiKeyHelper
      */
     public function setLiveApiKey($apiKey)
     {
-        SettingsHelper::updateValue(ApiAdminFormBuilder::ALMA_LIVE_API_KEY, $this->encryptionHelper->encrypt($apiKey));
+        $this->settingsHelper->updateKey(ApiAdminFormBuilder::ALMA_LIVE_API_KEY, $this->encryptionHelper->encrypt($apiKey));
     }
 
     /**
@@ -83,6 +92,6 @@ class ApiKeyHelper
      */
     public function setTestApiKey($apiKey)
     {
-        SettingsHelper::updateValue(ApiAdminFormBuilder::ALMA_TEST_API_KEY, $this->encryptionHelper->encrypt($apiKey));
+        $this->settingsHelper->updateKey(ApiAdminFormBuilder::ALMA_TEST_API_KEY, $this->encryptionHelper->encrypt($apiKey));
     }
 }

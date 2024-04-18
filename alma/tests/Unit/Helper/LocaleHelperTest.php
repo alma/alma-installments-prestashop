@@ -35,10 +35,8 @@ class LocaleHelperTest extends TestCase
      */
     protected $localeHelper;
 
-    public function __construct()
+    public function setUp()
     {
-        parent::__construct();
-
         $this->localeHelper = new LocaleHelper(new LanguageHelper());
     }
 
