@@ -101,7 +101,6 @@ class DisplayProductActionsHookController extends FrontendHookController
             new CarrierHelper($this->context, new CarrierData())
         );
 
-
         parent::__construct($module);
     }
 

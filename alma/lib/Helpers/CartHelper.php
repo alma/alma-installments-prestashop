@@ -59,7 +59,6 @@ class CartHelper
      */
     protected $cartData;
 
-
     /**
      * @var OrderStateHelper
      */
