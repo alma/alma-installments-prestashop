@@ -24,19 +24,136 @@
 
 namespace Alma\PrestaShop\Tests\Unit\Helper;
 
+use Alma\API\Entities\FeePlan;
+use Alma\PrestaShop\Helpers\CustomFieldsHelper;
+use Alma\PrestaShop\Helpers\DateHelper;
+use Alma\PrestaShop\Helpers\OrderHelper;
+use Alma\PrestaShop\Helpers\PlanHelper;
+use Alma\PrestaShop\Helpers\SettingsHelper;
 use PHPUnit\Framework\TestCase;
 
 class PlanHelperTest extends TestCase
 {
+    protected function setUp()
+    {
+        $this->dateHelper = \Mockery::mock(DateHelper::class);
+        $this->settingsHelper = \Mockery::mock(SettingsHelper::class);
+        $this->customFieldsHelper = \Mockery::mock(CustomFieldsHelper::class);
+        $this->context = \Mockery::mock(\Context::class);
+        $this->translationHelper = \Mockery::mock(TranslationHelperTest::class);
+        $this->module = \Mockery::mock(\Alma::class);
+
+        $this->planHelper = new PlanHelper(
+            $this->dateHelper,
+            $this->settingsHelper,
+            $this->customFieldsHelper,
+            $this->context,
+            $this->translationHelper,
+            $this->module
+        );
+    }
     public function testIsPnxPlus4()
     {
+        $plan = new FeePlan(
+            [
+                'installmentsCount' => 4,
+            ]
+        );
+
+        $this->assertEquals($this->planHelper->isPnxPlus4($plan), false);
+
+        $plan = new FeePlan(
+            [
+                'installmentsCount' => 3,
+            ]
+        );
+
+        $this->assertEquals($this->planHelper->isPnxPlus4($plan), false);
+
+        $plan = new FeePlan(
+            [
+                'installmentsCount' => 6,
+            ]
+        );
+
+        $this->assertEquals($this->planHelper->isPnxPlus4($plan), true);
     }
 
     public function testIsDeferred()
     {
-    }
+        $plan = new FeePlan(
+            [
+                'deferred_days' => 0,
+                'deferred_months' => 0,
+            ]
+        );
 
-    public function testBuildDates()
-    {
+        $this->assertEquals($this->planHelper->isDeferred($plan), false);
+
+        $plan = new FeePlan(
+            [
+                'deferred_days' => 0,
+                'deferred_months' => 1,
+            ]
+        );
+
+        $this->assertEquals($this->planHelper->isDeferred($plan), true);
+
+
+        $plan = new FeePlan(
+            [
+                'deferred_days' => 1,
+                'deferred_months' => 0,
+            ]
+        );
+
+        $this->assertEquals($this->planHelper->isDeferred($plan), true);
+
+        $plan = new FeePlan(
+            [
+                'deferred_days' => 1,
+                'deferred_months' => 1,
+            ]
+        );
+
+        $this->assertEquals($this->planHelper->isDeferred($plan), true);
+
+        $plan = new FeePlan(
+            [
+                'deferredDays' => 0,
+                'deferredMonths' => 0,
+            ]
+        );
+
+        $this->assertEquals($this->planHelper->isDeferred($plan), false);
+
+        $plan = new FeePlan(
+            [
+                'deferredDays' => 0,
+                'deferredMonths' => 1,
+            ]
+        );
+
+        $this->assertEquals($this->planHelper->isDeferred($plan), true);
+
+
+        $plan = new FeePlan(
+            [
+                'deferredDays' => 1,
+                'deferredMonths' => 0,
+            ]
+        );
+
+        $this->assertEquals($this->planHelper->isDeferred($plan), true);
+
+        $plan = new FeePlan(
+            [
+                'deferredDays' => 1,
+                'deferredMonths' => 1,
+            ]
+        );
+
+        $this->assertEquals($this->planHelper->isDeferred($plan), true);
+
     }
 }
