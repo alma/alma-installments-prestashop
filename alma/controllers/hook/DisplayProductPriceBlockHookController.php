@@ -36,6 +36,8 @@ use Alma\PrestaShop\Helpers\LanguageHelper;
 use Alma\PrestaShop\Helpers\LinkHelper;
 use Alma\PrestaShop\Helpers\LocaleHelper;
 use Alma\PrestaShop\Helpers\PriceHelper;
+use Alma\PrestaShop\Helpers\ProductHelper;
+use Alma\PrestaShop\Helpers\SettingsCustomFieldsHelper;
 use Alma\PrestaShop\Helpers\SettingsHelper;
 use Alma\PrestaShop\Helpers\ShopHelper;
 use Alma\PrestaShop\Helpers\ToolsHelper;
@@ -124,30 +126,11 @@ class DisplayProductPriceBlockHookController extends FrontendHookController
                 ? $productParams['id_product_attribute']
                 : null;
 
-            if (!isset($productParams['quantity_wanted']) && !isset($productParams['minimal_quantity'])) {
-                $quantity = 1;
-            } elseif (!isset($productParams['quantity_wanted'])) {
-                $quantity = (int) $productParams['minimal_quantity'];
-            } elseif (!isset($productParams['minimal_quantity'])) {
-                $quantity = (int) $productParams['quantity_wanted'];
-            } else {
-                $quantity = max((int) $productParams['minimal_quantity'], (int) $productParams['quantity_wanted']);
-            }
-            if ($quantity === 0) {
-                $quantity = 1;
-            }
+            $productHelper = new ProductHelper();
+            $quantity = $productHelper->getQuantity($productParams);
 
             $price = $this->priceHelper->convertPriceToCents(
-                \Product::getPriceStatic(
-                    $productId,
-                    true,
-                    $productAttributeId,
-                    6,
-                    null,
-                    false,
-                    true,
-                    $quantity
-                )
+                $productHelper->getPriceStatic($productId, $productAttributeId, $quantity)
             );
 
             // Being able to use `quantity_wanted` here means we don't have to reload price on the front-end

@@ -82,7 +82,7 @@ class PriceHelper
         } elseif ($this->toolsHelper->strlen($parts[1]) == 1) {
             $parts[1] .= '0';
         } elseif ($this->toolsHelper->strlen($parts[1]) > 2) {
-            $parts[1] = $this->toolsHelpersubstr($parts[1], 0, 2);
+            $parts[1] = $this->toolsHelper->substr($parts[1], 0, 2);
         }
 
         return (int) implode($parts);

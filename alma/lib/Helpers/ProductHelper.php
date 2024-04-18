@@ -36,6 +36,16 @@ if (!defined('_PS_VERSION_')) {
 class ProductHelper
 {
     /**
+     * @var InsuranceHelper
+     */
+    protected $insuranceHelper;
+
+    public function __construct()
+    {
+        $this->insuranceHelper = new InsuranceHelper();
+    }
+
+    /**
      * @param array $productRow
      *
      * @return string
@@ -124,5 +134,111 @@ class ProductHelper
     public function getTaxCalculationMethod($idCustomer)
     {
         return \Product::getTaxCalculationMethod($idCustomer);
+    }
+
+    /**
+     * @param $productId
+     * @param $productAttributeId
+     * @param $quantity
+     *
+     * @return float
+     */
+    public function getPriceStatic($productId, $productAttributeId, $quantity = 1)
+    {
+        return \Product::getPriceStatic(
+            $productId,
+            true,
+            $productAttributeId,
+            6,
+            null,
+            false,
+            true,
+            $quantity
+        );
+    }
+
+    /**
+     * @param $productId
+     * @param $productAttributeId
+     *
+     * @return float|int
+     */
+    public function getRegularPrice($productId, $productAttributeId)
+    {
+        $product = new \Product((int) $productId);
+        $combination = new \Combination($productAttributeId);
+
+        $combinationPrice = $combination->price;
+        $productRegularPrice = $product->price;
+
+        return $combinationPrice + $productRegularPrice;
+    }
+
+    /**
+     * @param $productParams
+     *
+     * @return int|mixed
+     */
+    public function getQuantity($productParams)
+    {
+        if (!isset($productParams['quantity_wanted']) && !isset($productParams['minimal_quantity'])) {
+            $quantity = 1;
+        } elseif (!isset($productParams['quantity_wanted'])) {
+            $quantity = (int) $productParams['minimal_quantity'];
+        } elseif (!isset($productParams['minimal_quantity'])) {
+            $quantity = (int) $productParams['quantity_wanted'];
+        } else {
+            $quantity = max((int) $productParams['minimal_quantity'], (int) $productParams['quantity_wanted']);
+        }
+        if ($quantity === 0) {
+            $quantity = 1;
+        }
+
+        return $quantity;
+    }
+
+    /**
+     * @param \CartCore $cart
+     *
+     * @return array
+     */
+    public function getCmsReferencesByCart($cart)
+    {
+        $cmsReferences = [];
+
+        $products = $cart->getProducts();
+        foreach ($products as $product) {
+            for ($qty = 1; $qty <= $product['cart_quantity']; ++$qty) {
+                $cmsReferences[] = $this->insuranceHelper->createCmsReference($product['id_product'], $product['id_product_attribute']);
+            }
+        }
+
+        return $cmsReferences;
+    }
+
+    /**
+     * @param \ProductCore $product
+     * @param int $languageId
+     * @param int|null $idProductAttribute
+     *
+     * @return string
+     */
+    public function getProductName($product, $languageId, $idProductAttribute = null)
+    {
+        $productName = $product->name[$languageId];
+
+        if (null !== $idProductAttribute) {
+            /*
+             * @var CombinationCore $combinationProduct;
+             */
+            $combinationProduct = new \Combination($idProductAttribute);
+
+            $nameDetails = $combinationProduct->getAttributesName($languageId);
+            foreach ($nameDetails as $nameDetail) {
+                $productName .= ' - ' . $nameDetail['name'];
+            }
+        }
+
+        return htmlspecialchars($productName, ENT_NOQUOTES);
     }
 }

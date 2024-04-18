@@ -28,56 +28,61 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-class OrderData
+class AddressModel extends \AddressCore
 {
-    public static function getCurrentOrderPayment($order)
+    /**
+     * @return string
+     */
+    public function getAddressLine1()
     {
-        if ('alma' != $order->module && 1 == $order->valid) {
-            return false;
-        }
-        $orderPayments = \OrderPayment::getByOrderReference($order->reference);
-        if ($orderPayments && isset($orderPayments[0])) {
-            return $orderPayments[0];
-        }
-
-        return false;
+        return $this->address1;
     }
 
     /**
-     * Get customer orders.
-     *
-     * @param int $idCustomer Customer id
-     * @param int $limit
-     *
-     * @return array Customer orders
-     *
-     * @throws \PrestaShopDatabaseException
+     * @return string
      */
-    public function getCustomerOrders($idCustomer, $limit)
+    public function getAddressLine2()
     {
-        $res = \Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS(
-            'SELECT
-                o.id_cart,
-                o.date_add,
-                o.payment,
-                o.current_state,
-                o.module,
-                op.transaction_id
-            FROM
-                `' . _DB_PREFIX_ . 'orders` o
-                LEFT JOIN `' . _DB_PREFIX_ . 'order_payment` op ON op.`order_reference` = o.`reference`
-            WHERE
-                o.`id_customer` = ' . (int) $idCustomer
-                . \Shop::addSqlRestriction(\Shop::SHARE_ORDER) . '
-            ORDER BY
-                o.`date_add` DESC
-            LIMIT ' . (int) $limit
-        );
+        return $this->address2;
+    }
 
-        if (!$res) {
-            return [];
-        }
+    /**
+     * @return string
+     */
+    public function getZipCode()
+    {
+        return $this->postcode;
+    }
 
-        return $res;
+    /**
+     * @return string
+     */
+    public function getCity()
+    {
+        return $this->city;
+    }
+
+    /**
+     * @return string
+     */
+    public function getCountry()
+    {
+        return $this->country;
+    }
+
+    /**
+     * @return string
+     */
+    public function getPhone()
+    {
+        return $this->phone;
+    }
+
+    /**
+     * @return string
+     */
+    public function getPhoneMobile()
+    {
+        return $this->phone_mobile;
     }
 }

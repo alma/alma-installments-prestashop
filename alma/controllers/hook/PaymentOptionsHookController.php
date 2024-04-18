@@ -60,7 +60,7 @@ use Alma\PrestaShop\Helpers\ValidateHelper;
 use Alma\PrestaShop\Hooks\FrontendHookController;
 use Alma\PrestaShop\Model\CarrierData;
 use Alma\PrestaShop\Model\CartData;
-use Alma\PrestaShop\Model\OrderData;
+use Alma\PrestaShop\Repositories\OrderRepository;
 use Alma\PrestaShop\Model\PaymentData;
 use Alma\PrestaShop\Model\ShippingData;
 use Alma\PrestaShop\Repositories\ProductRepository;
@@ -119,7 +119,7 @@ class PaymentOptionsHookController extends FrontendHookController
             $toolsHelper,
             $priceHelper,
             $cartData,
-            new OrderData(),
+            new OrderRepository(),
             new OrderStateHelper($context),
             $carrierHelper
         );
@@ -144,7 +144,7 @@ class PaymentOptionsHookController extends FrontendHookController
             $priceHelper,
             $clientHelper,
             $settingsHelper,
-            new ApiHelper($clientHelper),
+            new ApiHelper($this->module, $clientHelper),
             $context
         );
 

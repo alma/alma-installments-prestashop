@@ -24,10 +24,9 @@
 
 namespace Alma\PrestaShop\Helpers;
 
-use Alma\API\Entities\Order;
 use Alma\PrestaShop\Logger;
 use Alma\PrestaShop\Model\CartData;
-use Alma\PrestaShop\Model\OrderData;
+use Alma\PrestaShop\Repositories\OrderRepository;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -38,8 +37,12 @@ if (!defined('_PS_VERSION_')) {
  */
 class CartHelper
 {
-    /** @var \Context */
+    /** @var \ContextCore */
     private $context;
+    /**
+     * @var OrderRepository
+     */
+    protected $orderRepository;
 
     /**
      * @var ToolsHelper
@@ -56,10 +59,6 @@ class CartHelper
      */
     protected $cartData;
 
-    /**
-     * @var OrderData
-     */
-    protected $orderData;
 
     /**
      * @var OrderStateHelper
@@ -76,7 +75,7 @@ class CartHelper
      * @param ToolsHelper $toolsHelper
      * @param PriceHelper $priceHelper
      * @param CartData $cartData
-     * @param OrderData $orderData
+     * @param OrderRepository $orderRepository
      * @param OrderStateHelper $orderStateHelper
      * @param CarrierHelper $carrierHelper
      *
@@ -87,7 +86,7 @@ class CartHelper
         $toolsHelper,
         $priceHelper,
         $cartData,
-        $orderData,
+        $orderRepository,
         $orderStateHelper,
         $carrierHelper
     ) {
@@ -95,9 +94,23 @@ class CartHelper
         $this->toolsHelper = $toolsHelper;
         $this->priceHelper = $priceHelper;
         $this->cartData = $cartData;
-        $this->orderData = $orderData;
         $this->orderStateHelper = $orderStateHelper;
         $this->carrierHelper = $carrierHelper;
+        $this->orderRepository = $orderRepository;
+    }
+
+    /**
+     * @return null/int
+     */
+    public function getCartIdFromContext()
+    {
+        $cartId = null;
+
+        if (isset($this->context->cart->id)) {
+            $cartId = $this->context->cart->id;
+        }
+
+        return $cartId;
     }
 
     /**
@@ -156,7 +169,7 @@ class CartHelper
     public function getOrdersByCustomer($idCustomer, $limit)
     {
         try {
-            $orders = $this->orderData->getCustomerOrders($idCustomer, $limit);
+            $orders = $this->orderRepository->getCustomerOrders($idCustomer, $limit);
         } catch (\PrestaShopDatabaseException $e) {
             return [];
         }

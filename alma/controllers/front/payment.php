@@ -117,7 +117,7 @@ class AlmaPaymentModuleFrontController extends ModuleFrontController
                 $toolsHelper,
                 $priceHelper,
                 $cartData,
-                new \Alma\PrestaShop\Model\OrderData(),
+                new \Alma\PrestaShop\Repositories\OrderRepository(),
                 new \Alma\PrestaShop\Helpers\OrderStateHelper($this->context),
                 $carrierHelper
             ),

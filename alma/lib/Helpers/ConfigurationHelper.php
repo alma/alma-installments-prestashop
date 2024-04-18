@@ -34,6 +34,23 @@ if (!defined('_PS_VERSION_')) {
 class ConfigurationHelper
 {
     /**
+     * Get several configuration values (in one language only).
+     *
+     * @throws \PrestaShopException
+     *
+     * @param array $keys Keys wanted
+     * @param int $idLang Language ID
+     * @param int $idShopGroup
+     * @param int $idShop
+     *
+     * @return array Values
+     */
+    public function getMultiple($keys, $idLang = null, $idShopGroup = null, $idShop = null)
+    {
+        return \Configuration::getMultiple($keys, $idLang, $idShopGroup, $idShop);
+    }
+
+    /**
      * Get a single configuration value (in one language only).
      *
      * @param string $key Key wanted
@@ -59,6 +76,32 @@ class ConfigurationHelper
     public function hasKey($key, $idLang = null, $idShopGroup = null, $idShop = null)
     {
         return \Configuration::hasKey($key, $idLang, $idShopGroup, $idShop);
+    }
+
+    /**
+     * Delete the key in database
+     *
+     * @param $configKey
+     *
+     * @return void
+     */
+    public function deleteByName($configKey)
+    {
+        \Configuration::deleteByName($configKey);
+    }
+
+    /**
+     * Delete the keys in database
+     *
+     * @param array $configKeys
+     *
+     * @return void
+     */
+    public function deleteByNames($configKeys)
+    {
+        foreach ($configKeys as $configKey) {
+            $this->deleteByName($configKey);
+        }
     }
 
     /**

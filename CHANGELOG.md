@@ -1,5 +1,9 @@
 # Changelog
 
+## v4.0.0
+
+- feature : Alma Insurance
+
 ## v3.2.1
 
 - fix: Issue with the credit payment method

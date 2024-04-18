@@ -55,9 +55,9 @@ class PaymentOnTriggeringAdminFormBuilder extends AbstractAlmaAdminFormBuilder
      *
      * @param $module
      */
-    public function __construct($module)
+    public function __construct($module, $context, $image, $config = [])
     {
-        parent::__construct($module);
+        parent::__construct($module, $context, $image, $config);
 
         $languageHelper = new LanguageHelper();
 

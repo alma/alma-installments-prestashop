@@ -21,6 +21,9 @@
  * @copyright 2018-2023 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
+
+use PrestaShop\PrestaShop\Core\Localization\Exception\LocalizationException;
+
 if (!defined('_PS_VERSION_')) {
     exit;
 }

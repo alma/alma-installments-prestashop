@@ -35,7 +35,8 @@ function upgrade_module_3_0_0($module)
     $module->registerHooks();
 
     try {
-        ApiHelper::getMerchant($module);
+        $apiHelper = new ApiHelper($module, new \Alma\PrestaShop\Helpers\ClientHelper());
+        $apiHelper->getMerchant();
     } catch (\Exception $e) {
     }
 

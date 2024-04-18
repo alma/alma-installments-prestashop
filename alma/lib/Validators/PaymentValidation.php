@@ -26,6 +26,7 @@ namespace Alma\PrestaShop\Validators;
 
 use Alma\API\Entities\Payment;
 use Alma\API\RequestError;
+use Alma\PrestaShop\API\MismatchException;
 use Alma\PrestaShop\Helpers\ClientHelper;
 use Alma\PrestaShop\Helpers\ConfigurationHelper;
 use Alma\PrestaShop\Helpers\CurrencyHelper;

@@ -136,6 +136,7 @@ class SettingsHelper
     /**
      * Update value in config.
      *
+     *
      * @param string $configKey
      * @param string $value
      *
@@ -215,6 +216,11 @@ class SettingsHelper
             'ALMA_CART_WDGT_NOT_ELGBL',
             'ALMA_PRODUCT_WDGT_NOT_ELGBL',
             'ALMA_CATEGORIES_WDGT_NOT_ELGBL',
+            ConstantsHelper::ALMA_ALLOW_INSURANCE,
+            ConstantsHelper::ALMA_ACTIVATE_INSURANCE,
+            ConstantsHelper::ALMA_SHOW_INSURANCE_WIDGET_PRODUCT,
+            ConstantsHelper::ALMA_SHOW_INSURANCE_WIDGET_CART,
+            ConstantsHelper::ALMA_SHOW_INSURANCE_POPUP_CART,
         ];
 
         foreach ($configKeys as $configKey) {
@@ -686,7 +692,7 @@ class SettingsHelper
      */
     public static function getProductPriceQuerySelector()
     {
-        return static::get('ALMA_PRODUCT_PRICE_SELECTOR', '[itemprop=price],#our_price_display');
+        return static::get('ALMA_PRODUCT_PRICE_SELECTOR', '[itemprop=price],#our_price_display,.modal-body .current-price-value');
     }
 
     /**
