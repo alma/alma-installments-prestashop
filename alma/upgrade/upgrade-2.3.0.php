@@ -32,6 +32,7 @@ use Alma\PrestaShop\Forms\ExcludedCategoryAdminFormBuilder;
 use Alma\PrestaShop\Forms\PaymentButtonAdminFormBuilder;
 use Alma\PrestaShop\Helpers\ClientHelper;
 use Alma\PrestaShop\Helpers\CustomFieldsHelper;
+use Alma\PrestaShop\Helpers\LanguageHelper;
 use Alma\PrestaShop\Helpers\SettingsHelper;
 use Alma\PrestaShop\Logger;
 
@@ -57,7 +58,18 @@ function upgrade_module_2_3_0()
                 Configuration::deleteByName($configKey);
             }
 
-            CustomFieldsHelper::initCustomFields();
+            $languageHelper = new LanguageHelper();
+
+            $customFieldsHelper = new CustomFieldsHelper(
+                $languageHelper,
+                new \Alma\PrestaShop\Helpers\LocaleHelper($languageHelper),
+                new SettingsHelper(
+                    new \Alma\PrestaShop\Helpers\ShopHelper(),
+                    new \Alma\PrestaShop\Helpers\ConfigurationHelper()
+                )
+            );
+
+            $customFieldsHelper->initCustomFields();
         } catch (RequestError $e) {
             Logger::instance()->error("[Alma] ERROR upgrade v2.3.0: {$e->getMessage()}");
 

@@ -28,9 +28,11 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
+use Alma\PrestaShop\Helpers\ConfigurationHelper;
 use Alma\PrestaShop\Helpers\ConstantsHelper;
 use Alma\PrestaShop\Helpers\InsuranceHelper;
 use Alma\PrestaShop\Helpers\SettingsHelper;
+use Alma\PrestaShop\Helpers\ShopHelper;
 use Alma\PrestaShop\Hooks\FrontendHookController;
 use Alma\PrestaShop\Services\InsuranceService;
 
@@ -57,6 +59,13 @@ class FrontHeaderHookController extends FrontendHookController
     protected $insuranceService;
 
     /**
+     * @var SettingsHelper
+     */
+    protected $settingsHelper;
+
+    /**
+     * @codeCoverageIgnore
+     *
      * @param $module
      */
     public function __construct($module)
@@ -64,6 +73,7 @@ class FrontHeaderHookController extends FrontendHookController
         parent::__construct($module);
         $this->controller = $this->context->controller;
         $this->moduleName = $this->module->name;
+        $this->settingsHelper = new SettingsHelper(new ShopHelper(), new ConfigurationHelper());
         $this->insuranceHelper = new InsuranceHelper();
         $this->insuranceService = new InsuranceService();
     }
@@ -80,7 +90,7 @@ class FrontHeaderHookController extends FrontendHookController
 
         $content = $this->assetsWidgets();
 
-        if (SettingsHelper::isInPageEnabled()) {
+        if ($this->settingsHelper->isInPageEnabled()) {
             $content .= $this->assetsInPage();
         }
 

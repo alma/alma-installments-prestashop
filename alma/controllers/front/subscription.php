@@ -39,6 +39,9 @@ use Alma\PrestaShop\Services\InsuranceSubscriptionService;
 use Alma\PrestaShop\Services\MessageOrderService;
 use Alma\PrestaShop\Traits\AjaxTrait;
 use PrestaShop\PrestaShop\Adapter\Entity\CustomerThread;
+use Alma\PrestaShop\Helpers\ToolsHelper;
+use Alma\PrestaShop\Helpers\PriceHelper;
+use Alma\PrestaShop\Helpers\CurrencyHelper;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -69,7 +72,7 @@ class AlmaSubscriptionModuleFrontController extends ModuleFrontController
      */
     protected $customerMessage;
     /**
-     * @var CustomerThread
+     * @var \CustomerThread
      */
     protected $customerThread;
     /**
@@ -85,7 +88,7 @@ class AlmaSubscriptionModuleFrontController extends ModuleFrontController
         parent::__construct();
         $this->context = Context::getContext();
         $this->almaInsuranceProductRepository = new AlmaInsuranceProductRepository();
-        $this->customerThread = new CustomerThread();
+        $this->customerThread = new \CustomerThread();
         $this->customerMessage = new \CustomerMessage();
         $this->customerThreadRepository = new CustomerThreadRepository();
         $insuranceApiService = new InsuranceApiService();
@@ -102,7 +105,8 @@ class AlmaSubscriptionModuleFrontController extends ModuleFrontController
         $this->messageOrderHelper = new MessageOrderHelper(
             $this->module,
             $this->context,
-            $insuranceApiService
+            $insuranceApiService,
+            new PriceHelper(new ToolsHelper(), new CurrencyHelper())
         );
     }
 
@@ -254,7 +258,7 @@ class AlmaSubscriptionModuleFrontController extends ModuleFrontController
         $idCustomerThread = $this->customerThreadRepository->getIdCustomerThreadByOrderId($order->id);
 
         if ($idCustomerThread) {
-            $this->customerThread = new CustomerThread($idCustomerThread);
+            $this->customerThread = new \CustomerThread($idCustomerThread);
         }
         $messageOrderService = new MessageOrderService(
             $order->id_customer,

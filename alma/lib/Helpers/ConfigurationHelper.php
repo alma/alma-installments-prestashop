@@ -29,7 +29,7 @@ if (!defined('_PS_VERSION_')) {
 }
 
 /**
- * Class LanguageHelper.
+ * Class ConfigurationHelper.
  */
 class ConfigurationHelper
 {
@@ -56,8 +56,6 @@ class ConfigurationHelper
      * @param string $key Key wanted
      * @param int $idLang Language ID
      *
-     * @codeCoverageIgnore
-     *
      * @return string|false Value
      */
     public function get($key, $idLang = null, $idShopGroup = null, $idShop = null, $default = false)
@@ -73,29 +71,11 @@ class ConfigurationHelper
      * @param int $idShopGroup
      * @param int $idShop
      *
-     * @codeCoverageIgnore
-     *
      * @return bool
      */
     public function hasKey($key, $idLang = null, $idShopGroup = null, $idShop = null)
     {
         return \Configuration::hasKey($key, $idLang, $idShopGroup, $idShop);
-    }
-
-    /**
-     * Update value in config.
-     *
-     * @param string $configKey
-     * @param string $value
-     *
-     * @return bool
-     */
-    public function updateValue($configKey, $value)
-    {
-        $idShop = \Shop::getContextShopID(true);
-        $idShopGroup = \Shop::getContextShopGroupID(true);
-
-        return \Configuration::updateValue($configKey, $value, false, $idShopGroup, $idShop);
     }
 
     /**
@@ -122,5 +102,51 @@ class ConfigurationHelper
         foreach ($configKeys as $configKey) {
             $this->deleteByName($configKey);
         }
+    }
+
+    /**
+     * Update configuration key and value into database (automatically insert if key does not exist).
+     *
+     * Values are inserted/updated directly using SQL, because using (Configuration) ObjectModel
+     * may not insert values correctly (for example, HTML is escaped, when it should not be).
+     *
+     * @param string $key Configuration key
+     * @param mixed $values $values is an array if the configuration is multilingual, a single string else
+     * @param bool $html Specify if html is authorized in value
+     * @param int $idShopGroup
+     * @param int $idShop
+     *
+     * @return bool Update result
+     */
+    public function updateValue($key, $values, $html = false, $idShopGroup = null, $idShop = null)
+    {
+        return \Configuration::updateValue($key, $values, $html, $idShopGroup, $idShop);
+    }
+
+    /**
+     * @param int $installments
+     * @param SettingsHelper $settingsHelper
+     *
+     * @return bool
+     */
+    public function isInPageEnabled($installments, $settingsHelper)
+    {
+        $isInPageEnabled = $settingsHelper->isInPageEnabled();
+
+        if ($installments > 4) {
+            $isInPageEnabled = false;
+        }
+
+        return $isInPageEnabled;
+    }
+
+    /**
+     * @param string $key
+     *
+     * @return bool
+     */
+    public function isPayNow($key)
+    {
+        return ConstantsHelper::ALMA_KEY_PAYNOW === $key;
     }
 }

@@ -28,9 +28,11 @@ use Alma\API\Client;
 use Alma\PrestaShop\Exceptions\AlmaException;
 use Alma\PrestaShop\Helpers\ClientHelper;
 use Alma\PrestaShop\Helpers\ConstantsHelper;
+use Alma\PrestaShop\Helpers\CurrencyHelper;
 use Alma\PrestaShop\Helpers\InsuranceHelper;
 use Alma\PrestaShop\Helpers\PriceHelper;
 use Alma\PrestaShop\Helpers\ProductHelper;
+use Alma\PrestaShop\Helpers\ToolsHelper;
 use Alma\PrestaShop\Logger;
 use Alma\PrestaShop\Repositories\AlmaInsuranceProductRepository;
 use Alma\PrestaShop\Repositories\ProductRepository;
@@ -115,7 +117,7 @@ class InsuranceProductService
         $this->alma = ClientHelper::defaultInstance();
         $this->productHelper = new ProductHelper();
         $this->insuranceApiService = new InsuranceApiService();
-        $this->priceHelper = new PriceHelper();
+        $this->priceHelper = new PriceHelper(new ToolsHelper(), new CurrencyHelper());
         $this->insuranceHelper = new InsuranceHelper();
     }
 
@@ -266,7 +268,7 @@ class InsuranceProductService
                 $this->addInsuranceProduct(
                     $idProduct,
                     $insuranceProduct,
-                    PriceHelper::convertPriceFromCents($insuranceContract->getPrice()),
+                    $this->priceHelper->convertPriceFromCents($insuranceContract->getPrice()),
                     $insuranceContract->getName(),
                     $quantity,
                     $idCustomization,
