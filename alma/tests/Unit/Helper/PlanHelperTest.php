@@ -60,7 +60,7 @@ class PlanHelperTest extends TestCase
             ]
         );
 
-        $this->assertEquals($this->planHelper->isPnxPlus4($plan), false);
+        $this->assertEquals(false, $this->planHelper->isPnxPlus4($plan));
 
         $plan = new FeePlan(
             [
@@ -68,7 +68,7 @@ class PlanHelperTest extends TestCase
             ]
         );
 
-        $this->assertEquals($this->planHelper->isPnxPlus4($plan), false);
+        $this->assertEquals(false, $this->planHelper->isPnxPlus4($plan));
 
         $plan = new FeePlan(
             [
@@ -76,7 +76,7 @@ class PlanHelperTest extends TestCase
             ]
         );
 
-        $this->assertEquals($this->planHelper->isPnxPlus4($plan), true);
+        $this->assertEquals(true, $this->planHelper->isPnxPlus4($plan));
     }
 
     public function testIsDeferred()
@@ -88,7 +88,7 @@ class PlanHelperTest extends TestCase
             ]
         );
 
-        $this->assertEquals($this->planHelper->isDeferred($plan), false);
+        $this->assertEquals(false, $this->planHelper->isDeferred($plan));
 
         $plan = new FeePlan(
             [
@@ -97,7 +97,7 @@ class PlanHelperTest extends TestCase
             ]
         );
 
-        $this->assertEquals($this->planHelper->isDeferred($plan), true);
+        $this->assertEquals(true, $this->planHelper->isDeferred($plan));
 
 
         $plan = new FeePlan(
@@ -107,7 +107,7 @@ class PlanHelperTest extends TestCase
             ]
         );
 
-        $this->assertEquals($this->planHelper->isDeferred($plan), true);
+        $this->assertEquals(true, $this->planHelper->isDeferred($plan));
 
         $plan = new FeePlan(
             [
@@ -116,7 +116,7 @@ class PlanHelperTest extends TestCase
             ]
         );
 
-        $this->assertEquals($this->planHelper->isDeferred($plan), true);
+        $this->assertEquals(true, $this->planHelper->isDeferred($plan));
 
         $plan = new FeePlan(
             [
@@ -125,7 +125,7 @@ class PlanHelperTest extends TestCase
             ]
         );
 
-        $this->assertEquals($this->planHelper->isDeferred($plan), false);
+        $this->assertEquals(false, $this->planHelper->isDeferred($plan));
 
         $plan = new FeePlan(
             [
@@ -134,7 +134,7 @@ class PlanHelperTest extends TestCase
             ]
         );
 
-        $this->assertEquals($this->planHelper->isDeferred($plan), true);
+        $this->assertEquals(true, $this->planHelper->isDeferred($plan));
 
 
         $plan = new FeePlan(
@@ -144,7 +144,7 @@ class PlanHelperTest extends TestCase
             ]
         );
 
-        $this->assertEquals($this->planHelper->isDeferred($plan), true);
+        $this->assertEquals(true, $this->planHelper->isDeferred($plan));
 
         $plan = new FeePlan(
             [
@@ -153,7 +153,7 @@ class PlanHelperTest extends TestCase
             ]
         );
 
-        $this->assertEquals($this->planHelper->isDeferred($plan), true);
+        $this->assertEquals(true, $this->planHelper->isDeferred($plan));
 
     }
 }
