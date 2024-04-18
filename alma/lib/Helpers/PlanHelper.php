@@ -85,7 +85,7 @@ class PlanHelper
         $this->customFieldsHelper = $customFieldsHelper;
         $this->context = $context;
         $this->translationHelper = $translationHelper;
-        $this->module = $module;
+        $this->modulemodule = $module;
     }
 
     /**
