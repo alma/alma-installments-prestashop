@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<phpunit xmlns="http://schema.phpunit.de/coverage/1.0">
+  <file name="ExcludedCategoryAdminFormBuilder.php">
+    <totals>
+      <lines total="105" comments="41" code="64" executable="24" executed="1" percent="4.17%"/>
+      <methods count="2" tested="0" percent="0.00%"/>
+      <functions count="0" tested="0" percent=""/>
+      <classes count="1" tested="0" percent="0.00%"/>
+      <traits count="0" tested="0" percent=""/>
+    </totals>
+    <class name="ExcludedCategoryAdminFormBuilder" start="38" executable="22" executed="0" crap="20">
+      <package full="" name="" sub="" category=""/>
+      <namespace name="Alma\PrestaShop\Forms"/>
+      <method name="__construct" signature="__construct($module, $context, $image, $config = [])" start="56" end="61" crap="1" executable="0" executed="0" coverage="100"/>
+      <method name="configForm" signature="configForm()" start="66" end="99" crap="6" executable="21" executed="0" coverage="0"/>
+      <method name="getTitle" signature="getTitle()" start="101" end="104" crap="2" executable="1" executed="0" coverage="0"/>
+    </class>
+    <coverage>
+      <line nr="31">
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\CustomFieldHelperTest::testCustomFields"/>
+      </line>
+    </coverage>
+  </file>
+</phpunit>

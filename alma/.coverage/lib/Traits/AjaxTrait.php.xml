@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<phpunit xmlns="http://schema.phpunit.de/coverage/1.0">
+  <file name="AjaxTrait.php">
+    <totals>
+      <lines total="108" comments="61" code="47" executable="18" executed="1" percent="5.56%"/>
+      <methods count="4" tested="0" percent="0.00%"/>
+      <functions count="0" tested="0" percent=""/>
+      <classes count="0" tested="0" percent=""/>
+      <traits count="1" tested="0" percent="0.00%"/>
+    </totals>
+    <trait name="AjaxTrait" start="36" executable="16" executed="0" crap="56">
+      <package full="" name="" sub="" category=""/>
+      <namespace name="Alma\PrestaShop\Traits"/>
+      <method name="ajaxRenderAndExit" signature="ajaxRenderAndExit($value = null, $responseCode = null, $controller = null, $method = null)" start="50" end="66" crap="20" executable="9" executed="0" coverage="0"/>
+      <method name="ajaxFailAndDie" signature="ajaxFailAndDie($msg = null, $statusCode = 500)" start="76" end="82" crap="2" executable="4" executed="0" coverage="0"/>
+      <method name="renderAndExit" signature="renderAndExit($value = null, $controller = null, $method = null)" start="93" end="97" crap="2" executable="2" executed="0" coverage="0"/>
+      <method name="ajaxRenderBefore16012" signature="ajaxRenderBefore16012($value)" start="104" end="107" crap="2" executable="1" executed="0" coverage="0"/>
+    </trait>
+    <coverage>
+      <line nr="27">
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\ShareOfCheckoutHelperTest::testGetPayload with data set &quot;order get payload&quot;"/>
+      </line>
+    </coverage>
+  </file>
+</phpunit>

@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<phpunit xmlns="http://schema.phpunit.de/coverage/1.0">
+  <file name="MediaHelper.php">
+    <totals>
+      <lines total="77" comments="44" code="33" executable="18" executed="0" percent="0.00%"/>
+      <methods count="3" tested="0" percent="0.00%"/>
+      <functions count="0" tested="0" percent=""/>
+      <classes count="1" tested="0" percent="0.00%"/>
+      <traits count="0" tested="0" percent=""/>
+    </totals>
+    <class name="MediaHelper" start="36" executable="15" executed="0" crap="30">
+      <package full="" name="" sub="" category=""/>
+      <namespace name="Alma\PrestaShop\Helpers"/>
+      <method name="getIconPathAlmaTiny" signature="getIconPathAlmaTiny($module)" start="43" end="50" crap="6" executable="6" executed="0" coverage="0"/>
+      <method name="getMediaPath" signature="getMediaPath($path, $module)" start="58" end="61" crap="2" executable="3" executed="0" coverage="0"/>
+      <method name="getLogoName" signature="getLogoName($valueBNPL, $isDeferred)" start="69" end="76" crap="6" executable="6" executed="0" coverage="0"/>
+    </class>
+  </file>
+</phpunit>

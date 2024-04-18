@@ -1,0 +1,179 @@
+<?xml version="1.0"?>
+<phpunit xmlns="http://schema.phpunit.de/coverage/1.0">
+  <file name="SubscriptionHelper.php">
+    <totals>
+      <lines total="132" comments="59" code="73" executable="25" executed="24" percent="96.00%"/>
+      <methods count="4" tested="4" percent="100.00%"/>
+      <functions count="0" tested="0" percent=""/>
+      <classes count="1" tested="1" percent="100.00%"/>
+      <traits count="0" tested="0" percent=""/>
+    </totals>
+    <class name="SubscriptionHelper" start="42" executable="23" executed="23" crap="8">
+      <package full="" name="" sub="" category=""/>
+      <namespace name="Alma\PrestaShop\Helpers"/>
+      <method name="__construct" signature="__construct(&#10;        $almaInsuranceProductRepository,&#10;        $insuranceApiService,&#10;        $tokenHelper,&#10;        $insuranceSubscriptionService&#10;    )" start="61" end="71" crap="1" executable="5" executed="5" coverage="100"/>
+      <method name="cancelSubscriptionWithToken" signature="cancelSubscriptionWithToken($sid)" start="82" end="92" crap="2" executable="6" executed="6" coverage="100"/>
+      <method name="updateSubscriptionWithTrace" signature="updateSubscriptionWithTrace($sid, $trace)" start="102" end="119" crap="2" executable="9" executed="9" coverage="100"/>
+      <method name="isTraceValid" signature="isTraceValid($trace)" start="126" end="131" crap="3" executable="3" executed="3" coverage="100"/>
+    </class>
+    <coverage>
+      <line nr="35">
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\SubscriptionHelperTest::testGetCancelSubscriptionWithValidToken"/>
+      </line>
+      <line nr="67">
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\SubscriptionHelperTest::testGetCancelSubscriptionWithValidToken"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\SubscriptionHelperTest::testGetCancelSubscriptionWithValidTokenAndThrowException"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\SubscriptionHelperTest::testGetCancelSubscriptionReturnErrorIfTokenIsNotValid"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\SubscriptionHelperTest::testUpdateSubscriptionInvalidTrace with data set &quot;Test trace is empty&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\SubscriptionHelperTest::testUpdateSubscriptionInvalidTrace with data set &quot;Test trace is not a string&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\SubscriptionHelperTest::testUpdateSubscriptionInvalidTrace with data set &quot;Test trace is an object&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\SubscriptionHelperTest::testUpdateSubscriptionInvalidTrace with data set &quot;Test trace is an array&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\SubscriptionHelperTest::testUpdateSubscriptionInvalidTrace with data set &quot;Test trace is an empty array&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\SubscriptionHelperTest::testUpdateSubscriptionWithValidTrace"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\SubscriptionHelperTest::testUpdateSubscriptionWithValidTraceAndGetSubscriptionByIdThrowException"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\SubscriptionHelperTest::testUpdateSubscriptionWithValidTraceAndGetSubscriptionByIdAndUpdateSubscriptionFalse"/>
+      </line>
+      <line nr="68">
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\SubscriptionHelperTest::testGetCancelSubscriptionWithValidToken"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\SubscriptionHelperTest::testGetCancelSubscriptionWithValidTokenAndThrowException"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\SubscriptionHelperTest::testGetCancelSubscriptionReturnErrorIfTokenIsNotValid"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\SubscriptionHelperTest::testUpdateSubscriptionInvalidTrace with data set &quot;Test trace is empty&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\SubscriptionHelperTest::testUpdateSubscriptionInvalidTrace with data set &quot;Test trace is not a string&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\SubscriptionHelperTest::testUpdateSubscriptionInvalidTrace with data set &quot;Test trace is an object&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\SubscriptionHelperTest::testUpdateSubscriptionInvalidTrace with data set &quot;Test trace is an array&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\SubscriptionHelperTest::testUpdateSubscriptionInvalidTrace with data set &quot;Test trace is an empty array&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\SubscriptionHelperTest::testUpdateSubscriptionWithValidTrace"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\SubscriptionHelperTest::testUpdateSubscriptionWithValidTraceAndGetSubscriptionByIdThrowException"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\SubscriptionHelperTest::testUpdateSubscriptionWithValidTraceAndGetSubscriptionByIdAndUpdateSubscriptionFalse"/>
+      </line>
+      <line nr="69">
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\SubscriptionHelperTest::testGetCancelSubscriptionWithValidToken"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\SubscriptionHelperTest::testGetCancelSubscriptionWithValidTokenAndThrowException"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\SubscriptionHelperTest::testGetCancelSubscriptionReturnErrorIfTokenIsNotValid"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\SubscriptionHelperTest::testUpdateSubscriptionInvalidTrace with data set &quot;Test trace is empty&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\SubscriptionHelperTest::testUpdateSubscriptionInvalidTrace with data set &quot;Test trace is not a string&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\SubscriptionHelperTest::testUpdateSubscriptionInvalidTrace with data set &quot;Test trace is an object&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\SubscriptionHelperTest::testUpdateSubscriptionInvalidTrace with data set &quot;Test trace is an array&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\SubscriptionHelperTest::testUpdateSubscriptionInvalidTrace with data set &quot;Test trace is an empty array&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\SubscriptionHelperTest::testUpdateSubscriptionWithValidTrace"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\SubscriptionHelperTest::testUpdateSubscriptionWithValidTraceAndGetSubscriptionByIdThrowException"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\SubscriptionHelperTest::testUpdateSubscriptionWithValidTraceAndGetSubscriptionByIdAndUpdateSubscriptionFalse"/>
+      </line>
+      <line nr="70">
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\SubscriptionHelperTest::testGetCancelSubscriptionWithValidToken"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\SubscriptionHelperTest::testGetCancelSubscriptionWithValidTokenAndThrowException"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\SubscriptionHelperTest::testGetCancelSubscriptionReturnErrorIfTokenIsNotValid"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\SubscriptionHelperTest::testUpdateSubscriptionInvalidTrace with data set &quot;Test trace is empty&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\SubscriptionHelperTest::testUpdateSubscriptionInvalidTrace with data set &quot;Test trace is not a string&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\SubscriptionHelperTest::testUpdateSubscriptionInvalidTrace with data set &quot;Test trace is an object&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\SubscriptionHelperTest::testUpdateSubscriptionInvalidTrace with data set &quot;Test trace is an array&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\SubscriptionHelperTest::testUpdateSubscriptionInvalidTrace with data set &quot;Test trace is an empty array&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\SubscriptionHelperTest::testUpdateSubscriptionWithValidTrace"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\SubscriptionHelperTest::testUpdateSubscriptionWithValidTraceAndGetSubscriptionByIdThrowException"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\SubscriptionHelperTest::testUpdateSubscriptionWithValidTraceAndGetSubscriptionByIdAndUpdateSubscriptionFalse"/>
+      </line>
+      <line nr="71">
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\SubscriptionHelperTest::testGetCancelSubscriptionWithValidToken"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\SubscriptionHelperTest::testGetCancelSubscriptionWithValidTokenAndThrowException"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\SubscriptionHelperTest::testGetCancelSubscriptionReturnErrorIfTokenIsNotValid"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\SubscriptionHelperTest::testUpdateSubscriptionInvalidTrace with data set &quot;Test trace is empty&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\SubscriptionHelperTest::testUpdateSubscriptionInvalidTrace with data set &quot;Test trace is not a string&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\SubscriptionHelperTest::testUpdateSubscriptionInvalidTrace with data set &quot;Test trace is an object&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\SubscriptionHelperTest::testUpdateSubscriptionInvalidTrace with data set &quot;Test trace is an array&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\SubscriptionHelperTest::testUpdateSubscriptionInvalidTrace with data set &quot;Test trace is an empty array&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\SubscriptionHelperTest::testUpdateSubscriptionWithValidTrace"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\SubscriptionHelperTest::testUpdateSubscriptionWithValidTraceAndGetSubscriptionByIdThrowException"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\SubscriptionHelperTest::testUpdateSubscriptionWithValidTraceAndGetSubscriptionByIdAndUpdateSubscriptionFalse"/>
+      </line>
+      <line nr="84">
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\SubscriptionHelperTest::testGetCancelSubscriptionWithValidToken"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\SubscriptionHelperTest::testGetCancelSubscriptionWithValidTokenAndThrowException"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\SubscriptionHelperTest::testGetCancelSubscriptionReturnErrorIfTokenIsNotValid"/>
+      </line>
+      <line nr="85">
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\SubscriptionHelperTest::testGetCancelSubscriptionWithValidToken"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\SubscriptionHelperTest::testGetCancelSubscriptionWithValidTokenAndThrowException"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\SubscriptionHelperTest::testGetCancelSubscriptionReturnErrorIfTokenIsNotValid"/>
+      </line>
+      <line nr="86">
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\SubscriptionHelperTest::testGetCancelSubscriptionWithValidToken"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\SubscriptionHelperTest::testGetCancelSubscriptionWithValidTokenAndThrowException"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\SubscriptionHelperTest::testGetCancelSubscriptionReturnErrorIfTokenIsNotValid"/>
+      </line>
+      <line nr="88">
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\SubscriptionHelperTest::testGetCancelSubscriptionReturnErrorIfTokenIsNotValid"/>
+      </line>
+      <line nr="91">
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\SubscriptionHelperTest::testGetCancelSubscriptionWithValidToken"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\SubscriptionHelperTest::testGetCancelSubscriptionWithValidTokenAndThrowException"/>
+      </line>
+      <line nr="92">
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\SubscriptionHelperTest::testGetCancelSubscriptionWithValidToken"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\SubscriptionHelperTest::testGetCancelSubscriptionWithValidTokenAndThrowException"/>
+      </line>
+      <line nr="104">
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\SubscriptionHelperTest::testUpdateSubscriptionInvalidTrace with data set &quot;Test trace is empty&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\SubscriptionHelperTest::testUpdateSubscriptionInvalidTrace with data set &quot;Test trace is not a string&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\SubscriptionHelperTest::testUpdateSubscriptionInvalidTrace with data set &quot;Test trace is an object&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\SubscriptionHelperTest::testUpdateSubscriptionInvalidTrace with data set &quot;Test trace is an array&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\SubscriptionHelperTest::testUpdateSubscriptionInvalidTrace with data set &quot;Test trace is an empty array&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\SubscriptionHelperTest::testUpdateSubscriptionWithValidTrace"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\SubscriptionHelperTest::testUpdateSubscriptionWithValidTraceAndGetSubscriptionByIdThrowException"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\SubscriptionHelperTest::testUpdateSubscriptionWithValidTraceAndGetSubscriptionByIdAndUpdateSubscriptionFalse"/>
+      </line>
+      <line nr="106">
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\SubscriptionHelperTest::testUpdateSubscriptionWithValidTrace"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\SubscriptionHelperTest::testUpdateSubscriptionWithValidTraceAndGetSubscriptionByIdThrowException"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\SubscriptionHelperTest::testUpdateSubscriptionWithValidTraceAndGetSubscriptionByIdAndUpdateSubscriptionFalse"/>
+      </line>
+      <line nr="108">
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\SubscriptionHelperTest::testUpdateSubscriptionWithValidTrace"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\SubscriptionHelperTest::testUpdateSubscriptionWithValidTraceAndGetSubscriptionByIdAndUpdateSubscriptionFalse"/>
+      </line>
+      <line nr="109">
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\SubscriptionHelperTest::testUpdateSubscriptionWithValidTrace"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\SubscriptionHelperTest::testUpdateSubscriptionWithValidTraceAndGetSubscriptionByIdAndUpdateSubscriptionFalse"/>
+      </line>
+      <line nr="110">
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\SubscriptionHelperTest::testUpdateSubscriptionWithValidTrace"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\SubscriptionHelperTest::testUpdateSubscriptionWithValidTraceAndGetSubscriptionByIdAndUpdateSubscriptionFalse"/>
+      </line>
+      <line nr="111">
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\SubscriptionHelperTest::testUpdateSubscriptionWithValidTrace"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\SubscriptionHelperTest::testUpdateSubscriptionWithValidTraceAndGetSubscriptionByIdAndUpdateSubscriptionFalse"/>
+      </line>
+      <line nr="112">
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\SubscriptionHelperTest::testUpdateSubscriptionWithValidTrace"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\SubscriptionHelperTest::testUpdateSubscriptionWithValidTraceAndGetSubscriptionByIdAndUpdateSubscriptionFalse"/>
+      </line>
+      <line nr="115">
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\SubscriptionHelperTest::testUpdateSubscriptionWithValidTraceAndGetSubscriptionByIdAndUpdateSubscriptionFalse"/>
+      </line>
+      <line nr="118">
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\SubscriptionHelperTest::testUpdateSubscriptionWithValidTrace"/>
+      </line>
+      <line nr="128">
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\SubscriptionHelperTest::testUpdateSubscriptionInvalidTrace with data set &quot;Test trace is empty&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\SubscriptionHelperTest::testUpdateSubscriptionInvalidTrace with data set &quot;Test trace is not a string&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\SubscriptionHelperTest::testUpdateSubscriptionInvalidTrace with data set &quot;Test trace is an object&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\SubscriptionHelperTest::testUpdateSubscriptionInvalidTrace with data set &quot;Test trace is an array&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\SubscriptionHelperTest::testUpdateSubscriptionInvalidTrace with data set &quot;Test trace is an empty array&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\SubscriptionHelperTest::testUpdateSubscriptionWithValidTrace"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\SubscriptionHelperTest::testUpdateSubscriptionWithValidTraceAndGetSubscriptionByIdThrowException"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\SubscriptionHelperTest::testUpdateSubscriptionWithValidTraceAndGetSubscriptionByIdAndUpdateSubscriptionFalse"/>
+      </line>
+      <line nr="129">
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\SubscriptionHelperTest::testUpdateSubscriptionInvalidTrace with data set &quot;Test trace is empty&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\SubscriptionHelperTest::testUpdateSubscriptionInvalidTrace with data set &quot;Test trace is not a string&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\SubscriptionHelperTest::testUpdateSubscriptionInvalidTrace with data set &quot;Test trace is an object&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\SubscriptionHelperTest::testUpdateSubscriptionInvalidTrace with data set &quot;Test trace is an array&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\SubscriptionHelperTest::testUpdateSubscriptionInvalidTrace with data set &quot;Test trace is an empty array&quot;"/>
+      </line>
+      <line nr="131">
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\SubscriptionHelperTest::testUpdateSubscriptionWithValidTrace"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\SubscriptionHelperTest::testUpdateSubscriptionWithValidTraceAndGetSubscriptionByIdThrowException"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\SubscriptionHelperTest::testUpdateSubscriptionWithValidTraceAndGetSubscriptionByIdAndUpdateSubscriptionFalse"/>
+      </line>
+    </coverage>
+  </file>
+</phpunit>

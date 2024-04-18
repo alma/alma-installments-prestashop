@@ -1,0 +1,58 @@
+<?xml version="1.0"?>
+<phpunit xmlns="http://schema.phpunit.de/coverage/1.0">
+  <file name="ConfigurationHelper.php">
+    <totals>
+      <lines total="152" comments="94" code="58" executable="16" executed="2" percent="12.50%"/>
+      <methods count="8" tested="1" percent="12.50%"/>
+      <functions count="0" tested="0" percent=""/>
+      <classes count="1" tested="0" percent="0.00%"/>
+      <traits count="0" tested="0" percent=""/>
+    </totals>
+    <class name="ConfigurationHelper" start="34" executable="14" executed="1" crap="90.07">
+      <package full="" name="" sub="" category=""/>
+      <namespace name="Alma\PrestaShop\Helpers"/>
+      <method name="getMultiple" signature="getMultiple($keys, $idLang = null, $idShopGroup = null, $idShop = null)" start="48" end="51" crap="2" executable="1" executed="0" coverage="0"/>
+      <method name="get" signature="get($key, $idLang = null, $idShopGroup = null, $idShop = null, $default = false)" start="61" end="64" crap="1" executable="1" executed="1" coverage="100"/>
+      <method name="hasKey" signature="hasKey($key, $idLang = null, $idShopGroup = null, $idShop = null)" start="76" end="79" crap="2" executable="1" executed="0" coverage="0"/>
+      <method name="deleteByName" signature="deleteByName($configKey)" start="88" end="91" crap="2" executable="2" executed="0" coverage="0"/>
+      <method name="deleteByNames" signature="deleteByNames($configKeys)" start="100" end="105" crap="6" executable="3" executed="0" coverage="0"/>
+      <method name="updateValue" signature="updateValue($key, $values, $html = false, $idShopGroup = null, $idShop = null)" start="121" end="124" crap="2" executable="1" executed="0" coverage="0"/>
+      <method name="isInPageEnabled" signature="isInPageEnabled($installments, $settingsHelper)" start="132" end="141" crap="6" executable="4" executed="0" coverage="0"/>
+      <method name="isPayNow" signature="isPayNow($key)" start="148" end="151" crap="2" executable="1" executed="0" coverage="0"/>
+    </class>
+    <coverage>
+      <line nr="27">
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\Admin\InsuranceHelperTest::testTabInstalledWithAllowFlagAndTabNotInstalled with data set &quot;install tabs&quot;"/>
+      </line>
+      <line nr="63">
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\CustomFieldHelperTest::testGetCustomFieldByKeyConfig with data set &quot;test ALMA_PAY_NOW_BUTTON_TITLE&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\CustomFieldHelperTest::testGetCustomFieldByKeyConfig with data set &quot;test ALMA_PAY_NOW_BUTTON_DESC&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\CustomFieldHelperTest::testGetCustomFieldByKeyConfig with data set &quot;test ALMA_PNX_BUTTON_TITLE&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\CustomFieldHelperTest::testGetCustomFieldByKeyConfig with data set &quot;test ALMA_PNX_BUTTON_DESC&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\CustomFieldHelperTest::testGetCustomFieldByKeyConfig with data set &quot;test ALMA_DEFERRED_BUTTON_TITLE&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\CustomFieldHelperTest::testGetCustomFieldByKeyConfig with data set &quot;test ALMA_PNX_AIR_BUTTON_TITLE&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\CustomFieldHelperTest::testGetCustomFieldByKeyConfig with data set &quot;test ALMA_PNX_AIR_BUTTON_DESC&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\CustomFieldHelperTest::testGetCustomFieldByKeyConfig with data set &quot;test ALMA_NOT_ELIGIBLE_CATEGORIES&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\CustomFieldHelperTest::testGetCustomFieldByKeyConfig with data set &quot;test ALMA_DESCRIPTION_TRIGGER&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\CustomFieldHelperTest::testGetValue with data set &quot;test ALMA_PAY_NOW_BUTTON_TITLE&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\CustomFieldHelperTest::testGetValue with data set &quot;test ALMA_PAY_NOW_BUTTON_DESC&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\CustomFieldHelperTest::testGetValue with data set &quot;test ALMA_PNX_BUTTON_TITLE&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\CustomFieldHelperTest::testGetValue with data set &quot;test ALMA_PNX_BUTTON_DESC&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\CustomFieldHelperTest::testGetValue with data set &quot;test ALMA_DEFERRED_BUTTON_TITLE&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\CustomFieldHelperTest::testGetValue with data set &quot;test ALMA_PNX_AIR_BUTTON_TITLE&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\CustomFieldHelperTest::testGetValue with data set &quot;test ALMA_PNX_AIR_BUTTON_DESC&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\CustomFieldHelperTest::testGetValue with data set &quot;test ALMA_NOT_ELIGIBLE_CATEGORIES&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\CustomFieldHelperTest::testGetValue with data set &quot;test ALMA_DESCRIPTION_TRIGGER&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\CustomFieldHelperTest::testGetBtnValueByLang with data set &quot;test ALMA_PAY_NOW_BUTTON_TITLE&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\CustomFieldHelperTest::testGetBtnValueByLang with data set &quot;test ALMA_PAY_NOW_BUTTON_DESC&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\CustomFieldHelperTest::testGetBtnValueByLang with data set &quot;test ALMA_PNX_BUTTON_TITLE&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\CustomFieldHelperTest::testGetBtnValueByLang with data set &quot;test ALMA_PNX_BUTTON_DESC&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\CustomFieldHelperTest::testGetBtnValueByLang with data set &quot;test ALMA_DEFERRED_BUTTON_TITLE&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\CustomFieldHelperTest::testGetBtnValueByLang with data set &quot;test ALMA_PNX_AIR_BUTTON_TITLE&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\CustomFieldHelperTest::testGetBtnValueByLang with data set &quot;test ALMA_PNX_AIR_BUTTON_DESC&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\CustomFieldHelperTest::testGetBtnValueByLang with data set &quot;test ALMA_NOT_ELIGIBLE_CATEGORIES&quot;"/>
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\CustomFieldHelperTest::testGetBtnValueByLang with data set &quot;test ALMA_DESCRIPTION_TRIGGER&quot;"/>
+      </line>
+    </coverage>
+  </file>
+</phpunit>

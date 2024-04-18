@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<phpunit xmlns="http://schema.phpunit.de/coverage/1.0">
+  <file name="CurrencyHelper.php">
+    <totals>
+      <lines total="61" comments="35" code="26" executable="7" executed="1" percent="14.29%"/>
+      <methods count="2" tested="0" percent="0.00%"/>
+      <functions count="0" tested="0" percent=""/>
+      <classes count="1" tested="0" percent="0.00%"/>
+      <traits count="0" tested="0" percent=""/>
+    </totals>
+    <class name="CurrencyHelper" start="36" executable="5" executed="0" crap="12">
+      <package full="" name="" sub="" category=""/>
+      <namespace name="Alma\PrestaShop\Helpers"/>
+      <method name="getCurrencyFromContext" signature="getCurrencyFromContext()" start="41" end="44" crap="2" executable="1" executed="0" coverage="0"/>
+      <method name="getCurrencyById" signature="getCurrencyById($idCurrency)" start="51" end="60" crap="6" executable="4" executed="0" coverage="0"/>
+    </class>
+    <coverage>
+      <line nr="27">
+        <covered by="Alma\PrestaShop\Tests\Unit\Helper\MessageOrderHelperTest::testGetMessageForRefundWithRightData"/>
+      </line>
+    </coverage>
+  </file>
+</phpunit>

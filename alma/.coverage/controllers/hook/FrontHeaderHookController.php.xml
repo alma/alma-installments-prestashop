@@ -1,0 +1,34 @@
+<?xml version="1.0"?>
+<phpunit xmlns="http://schema.phpunit.de/coverage/1.0">
+  <file name="FrontHeaderHookController.php">
+    <totals>
+      <lines total="424" comments="115" code="309" executable="208" executed="0" percent="0.00%"/>
+      <methods count="17" tested="0" percent="0.00%"/>
+      <functions count="0" tested="0" percent=""/>
+      <classes count="1" tested="0" percent="0.00%"/>
+      <traits count="0" tested="0" percent=""/>
+    </totals>
+    <class name="FrontHeaderHookController" start="39" executable="205" executed="0" crap="4290">
+      <package full="" name="" sub="" category=""/>
+      <namespace name="Alma\PrestaShop\Controllers\Hook"/>
+      <method name="__construct" signature="__construct($module)" start="71" end="79" crap="1" executable="0" executed="0" coverage="100"/>
+      <method name="run" signature="run($params)" start="86" end="102" crap="12" executable="12" executed="0" coverage="0"/>
+      <method name="displayWidgetOnProductPage" signature="displayWidgetOnProductPage()" start="107" end="110" crap="12" executable="3" executed="0" coverage="0"/>
+      <method name="displayWidgetOnCartPage" signature="displayWidgetOnCartPage()" start="115" end="118" crap="12" executable="3" executed="0" coverage="0"/>
+      <method name="iAmInProductPage" signature="iAmInProductPage()" start="123" end="126" crap="6" executable="3" executed="0" coverage="0"/>
+      <method name="iAmInOrderPage" signature="iAmInOrderPage()" start="131" end="134" crap="6" executable="3" executed="0" coverage="0"/>
+      <method name="iAmInHomePage" signature="iAmInHomePage()" start="139" end="142" crap="6" executable="3" executed="0" coverage="0"/>
+      <method name="cartIsNotEmpty" signature="cartIsNotEmpty()" start="147" end="150" crap="2" executable="3" executed="0" coverage="0"/>
+      <method name="iAmInCartPage" signature="iAmInCartPage()" start="155" end="164" crap="20" executable="7" executed="0" coverage="0"/>
+      <method name="iAmInPaymentPage" signature="iAmInPaymentPage()" start="169" end="178" crap="20" executable="7" executed="0" coverage="0"/>
+      <method name="handleOrderPage" signature="handleOrderPage($params)" start="187" end="203" crap="6" executable="12" executed="0" coverage="0"/>
+      <method name="handleOrderOpcPage" signature="handleOrderOpcPage($params)" start="205" end="208" crap="2" executable="3" executed="0" coverage="0"/>
+      <method name="assetsWidgets" signature="assetsWidgets()" start="213" end="239" crap="56" executable="21" executed="0" coverage="0"/>
+      <method name="manageInsuranceAssetsBefore17" signature="manageInsuranceAssetsBefore17()" start="244" end="272" crap="42" executable="22" executed="0" coverage="0"/>
+      <method name="manageAssetVersionForPrestashopBefore17" signature="manageAssetVersionForPrestashopBefore17()" start="279" end="303" crap="30" executable="18" executed="0" coverage="0"/>
+      <method name="manageInsuranceAssetsAfter17" signature="manageInsuranceAssetsAfter17()" start="305" end="337" crap="56" executable="28" executed="0" coverage="0"/>
+      <method name="manageAssetVersionForPrestashopAfter17" signature="manageAssetVersionForPrestashopAfter17()" start="344" end="378" crap="30" executable="24" executed="0" coverage="0"/>
+      <method name="assetsInPage" signature="assetsInPage()" start="383" end="423" crap="56" executable="33" executed="0" coverage="0"/>
+    </class>
+  </file>
+</phpunit>

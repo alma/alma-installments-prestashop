@@ -24,15 +24,50 @@
 
 namespace Alma\PrestaShop\Tests\Unit\Helper;
 
+use Alma\PrestaShop\Helpers\ToolsHelper;
 use PHPUnit\Framework\TestCase;
 
 class ToolsHelperTest extends TestCase
 {
+    /**
+     * @var ToolsHelper
+     */
+    protected $toolsHelper;
+
+    public function setUp() {
+        $this->toolsHelper = new ToolsHelper();
+    }
+
     public function testPsRound()
     {
+        $this->assertEquals($this->toolsHelper->psRound('200.236'), 200);
+        $this->assertEquals($this->toolsHelper->psRound('200.236', 2), 200.24);
+        $this->assertEquals($this->toolsHelper->psRound('200.236', 2, PS_ROUND_UP), 200.24);
+        $this->assertEquals($this->toolsHelper->psRound('200.236', 2, PS_ROUND_DOWN), 200.23);
+        $this->assertEquals($this->toolsHelper->psRound('200.236', 2, PS_ROUND_HALF_DOWN), 200.24);
+        $this->assertEquals($this->toolsHelper->psRound('200.236', 2, PS_ROUND_HALF_EVEN), 200.24);
+        $this->assertEquals($this->toolsHelper->psRound('200.236', 2, PS_ROUND_HALF_ODD), 200.24);
+        $this->assertEquals($this->toolsHelper->psRound('200.236', 2, PS_ROUND_HALF_UP), 200.24);
     }
 
     public function testPsVersionCompare()
     {
+        $this->assertEquals($this->toolsHelper->psVersionCompare('1.5', '<'), false);
+        $this->assertEquals($this->toolsHelper->psVersionCompare('8', '<'), true);
+        $this->assertEquals($this->toolsHelper->psVersionCompare('8', '<', '9'), false);
+        $this->assertEquals($this->toolsHelper->psVersionCompare('1.6.5', '>=', '1.5.3'), false);
+        $this->assertEquals($this->toolsHelper->psVersionCompare('1.5.3', '>=', '1.6.5'), true);
+    }
+
+    public function testStrlen()
+    {
+        $this->assertEquals($this->toolsHelper->strlen(''), 0);
+        $this->assertEquals($this->toolsHelper->strlen('test'), 4);
+    }
+
+    public function testSubstr()
+    {
+        $this->assertEquals($this->toolsHelper->substr('testHello', 0, '4'), 'test');
+        $this->assertEquals($this->toolsHelper->substr('testHello', 4, '5'), 'Hello');
     }
 }

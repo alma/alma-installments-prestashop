@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<phpunit xmlns="http://schema.phpunit.de/coverage/1.0">
+  <file name="PaymentValidationError.php">
+    <totals>
+      <lines total="40" comments="22" code="18" executable="7" executed="0" percent="0.00%"/>
+      <methods count="1" tested="0" percent="0.00%"/>
+      <functions count="0" tested="0" percent=""/>
+      <classes count="1" tested="0" percent="0.00%"/>
+      <traits count="0" tested="0" percent=""/>
+    </totals>
+    <class name="PaymentValidationError" start="31" executable="4" executed="0" crap="2">
+      <package full="" name="" sub="" category=""/>
+      <namespace name="Alma\PrestaShop\Validators"/>
+      <method name="__construct" signature="__construct($cart = null, $message = '', $code = 0, $previous = null)" start="35" end="39" crap="2" executable="4" executed="0" coverage="0"/>
+    </class>
+  </file>
+</phpunit>

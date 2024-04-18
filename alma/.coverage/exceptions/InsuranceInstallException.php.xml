@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<phpunit xmlns="http://schema.phpunit.de/coverage/1.0">
+  <file name="InsuranceInstallException.php">
+    <totals>
+      <lines total="29" comments="22" code="7" executable="0" executed="0" percent=""/>
+      <methods count="0" tested="0" percent=""/>
+      <functions count="0" tested="0" percent=""/>
+      <classes count="0" tested="0" percent=""/>
+      <traits count="0" tested="0" percent=""/>
+    </totals>
+    <class name="InsuranceInstallException" start="27" executable="0" executed="0" crap="0">
+      <package full="" name="" sub="" category=""/>
+      <namespace name="Alma\PrestaShop\Exceptions"/>
+    </class>
+  </file>
+</phpunit>

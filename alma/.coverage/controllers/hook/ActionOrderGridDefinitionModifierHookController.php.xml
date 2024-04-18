@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<phpunit xmlns="http://schema.phpunit.de/coverage/1.0">
+  <file name="ActionOrderGridDefinitionModifierHookController.php">
+    <totals>
+      <lines total="93" comments="39" code="54" executable="31" executed="0" percent="0.00%"/>
+      <methods count="3" tested="0" percent="0.00%"/>
+      <functions count="0" tested="0" percent=""/>
+      <classes count="1" tested="0" percent="0.00%"/>
+      <traits count="0" tested="0" percent=""/>
+    </totals>
+    <class name="ActionOrderGridDefinitionModifierHookController" start="40" executable="28" executed="0" crap="20">
+      <package full="" name="" sub="" category=""/>
+      <namespace name="Alma\PrestaShop\Controllers\Hook"/>
+      <method name="canRun" signature="canRun()" start="42" end="48" crap="6" executable="4" executed="0" coverage="0"/>
+      <method name="__construct" signature="__construct($module)" start="53" end="58" crap="2" executable="4" executed="0" coverage="0"/>
+      <method name="run" signature="run($params)" start="69" end="92" crap="2" executable="20" executed="0" coverage="0"/>
+    </class>
+  </file>
+</phpunit>
