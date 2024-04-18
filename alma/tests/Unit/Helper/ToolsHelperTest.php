@@ -40,34 +40,34 @@ class ToolsHelperTest extends TestCase
 
     public function testPsRound()
     {
-        $this->assertEquals($this->toolsHelper->psRound('200.236'), 200);
-        $this->assertEquals($this->toolsHelper->psRound('200.236', 2), 200.24);
-        $this->assertEquals($this->toolsHelper->psRound('200.236', 2, PS_ROUND_UP), 200.24);
-        $this->assertEquals($this->toolsHelper->psRound('200.236', 2, PS_ROUND_DOWN), 200.23);
-        $this->assertEquals($this->toolsHelper->psRound('200.236', 2, PS_ROUND_HALF_DOWN), 200.24);
-        $this->assertEquals($this->toolsHelper->psRound('200.236', 2, PS_ROUND_HALF_EVEN), 200.24);
-        $this->assertEquals($this->toolsHelper->psRound('200.236', 2, PS_ROUND_HALF_ODD), 200.24);
-        $this->assertEquals($this->toolsHelper->psRound('200.236', 2, PS_ROUND_HALF_UP), 200.24);
+        $this->assertEquals(200, $this->toolsHelper->psRound('200.236'));
+        $this->assertEquals(200.24, $this->toolsHelper->psRound('200.236', 2));
+        $this->assertEquals(200.24, $this->toolsHelper->psRound('200.236', 2, PS_ROUND_UP));
+        $this->assertEquals(200.23, $this->toolsHelper->psRound('200.236', 2, PS_ROUND_DOWN));
+        $this->assertEquals(200.24, $this->toolsHelper->psRound('200.236', 2, PS_ROUND_HALF_DOWN));
+        $this->assertEquals(200.24, $this->toolsHelper->psRound('200.236', 2, PS_ROUND_HALF_EVEN));
+        $this->assertEquals(200.24, $this->toolsHelper->psRound('200.236', 2, PS_ROUND_HALF_ODD));
+        $this->assertEquals(200.24, $this->toolsHelper->psRound('200.236', 2, PS_ROUND_HALF_UP));
     }
 
     public function testPsVersionCompare()
     {
-        $this->assertEquals($this->toolsHelper->psVersionCompare('1.5', '<'), false);
-        $this->assertEquals($this->toolsHelper->psVersionCompare('8', '<'), true);
-        $this->assertEquals($this->toolsHelper->psVersionCompare('8', '<', '9'), false);
-        $this->assertEquals($this->toolsHelper->psVersionCompare('1.6.5', '>=', '1.5.3'), false);
-        $this->assertEquals($this->toolsHelper->psVersionCompare('1.5.3', '>=', '1.6.5'), true);
+        $this->assertEquals(false, $this->toolsHelper->psVersionCompare('1.5', '<'));
+        $this->assertEquals(true, $this->toolsHelper->psVersionCompare('8', '<'));
+        $this->assertEquals(false, $this->toolsHelper->psVersionCompare('8', '<', '9'));
+        $this->assertEquals(false, $this->toolsHelper->psVersionCompare('1.6.5', '>=', '1.5.3'));
+        $this->assertEquals(true, $this->toolsHelper->psVersionCompare('1.5.3', '>=', '1.6.5'));
     }
 
     public function testStrlen()
     {
-        $this->assertEquals($this->toolsHelper->strlen(''), 0);
-        $this->assertEquals($this->toolsHelper->strlen('test'), 4);
+        $this->assertEquals(0, $this->toolsHelper->strlen(''));
+        $this->assertEquals(4, $this->toolsHelper->strlen('test'));
     }
 
     public function testSubstr()
     {
-        $this->assertEquals($this->toolsHelper->substr('testHello', 0, '4'), 'test');
-        $this->assertEquals($this->toolsHelper->substr('testHello', 4, '5'), 'Hello');
+        $this->assertEquals('test', $this->toolsHelper->substr('testHello', 0, '4'));
+        $this->assertEquals('Hello', $this->toolsHelper->substr('testHello', 4, '5'));
     }
 }
