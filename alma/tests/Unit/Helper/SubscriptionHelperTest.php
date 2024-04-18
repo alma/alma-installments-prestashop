@@ -233,7 +233,7 @@ class SubscriptionHelperTest extends TestCase
         $this->expectException(SubscriptionException::class);
         $this->almaInsuranceProductRepository->expects($this->once())
             ->method('updateSubscription')
-            ->with($sid, $subscriptionArray['state'], $subscriptionArray['broker_subscription_id'],  $subscriptionArray['broker_subscription_reference'])
+            ->with($sid, $subscriptionArray['state'], $subscriptionArray['broker_subscription_id'], $subscriptionArray['broker_subscription_reference'])
             ->willReturn(false);
         $this->insuranceApiService->expects($this->once())
             ->method('getSubscriptionById')

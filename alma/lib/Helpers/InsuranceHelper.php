@@ -24,6 +24,7 @@
 
 namespace Alma\PrestaShop\Helpers;
 
+use Alma\PrestaShop\Logger;
 use Alma\PrestaShop\Repositories\AlmaInsuranceProductRepository;
 use Alma\PrestaShop\Repositories\CartProductRepository;
 use Alma\PrestaShop\Repositories\ProductRepository;
@@ -148,5 +149,26 @@ class InsuranceHelper
         }
 
         return true;
+    }
+
+    /**
+     * @param $productId
+     * @param $productAttributeId
+     *
+     * @return string|null
+     */
+    public function createCmsReference($productId, $productAttributeId)
+    {
+        if ($productId !== null) {
+            if ((int) $productAttributeId <= 0) {
+                return (string) $productId;
+            }
+
+            return $productId . '-' . $productAttributeId;
+        }
+
+        Logger::instance()->error('[Alma] Impossible to create cms reference, productId is null');
+
+        return null;
     }
 }
