@@ -44,11 +44,11 @@
             const updateConfirmModal = new window.ConfirmModal(
                 {
                     id: 'confirm-refund-order-insurance-modal',
-                    confirmTitle: window.confirmTitleText,
-                    closeButtonLabel: window.closeButtonLabelText,
-                    confirmButtonLabel: window.confirmButtonLabelText,
+                    confirmTitle: window.InsuranceModalConfirm.confirmTitleText,
+                    closeButtonLabel: window.InsuranceModalConfirm.closeButtonLabelText,
+                    confirmButtonLabel: window.InsuranceModalConfirm.confirmButtonLabelText,
                     confirmButtonClass: 'btn-primary',
-                    confirmMessage: window.confirmMessageLine1Text + '<br>' + window.confirmMessageLine2Text,
+                    confirmMessage: window.InsuranceModalConfirm.confirmMessageLine1Text + '<br>' + window.InsuranceModalConfirm.confirmMessageLine2Text,
                     closable: true,
                     customButtons: [],
                 },
