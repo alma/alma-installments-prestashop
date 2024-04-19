@@ -30,8 +30,8 @@ use Alma\PrestaShop\Exceptions\ActivationException;
 use Alma\PrestaShop\Exceptions\ApiMerchantsException;
 use Alma\PrestaShop\Exceptions\InsuranceInstallException;
 use Alma\PrestaShop\Exceptions\WrongCredentialsException;
-use Alma\PrestaShop\Logger;
 use Alma\PrestaShop\Helpers\Admin\InsuranceHelper;
+use Alma\PrestaShop\Logger;
 use Alma\PrestaShop\Services\InsuranceService;
 
 if (!defined('_PS_VERSION_')) {
@@ -60,6 +60,7 @@ class ApiHelper
      * @var ClientHelper
      */
     protected $clientHelper;
+
     /**
      * @param $module
      * @param ClientHelper $clientHelper

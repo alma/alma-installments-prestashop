@@ -56,9 +56,9 @@ use Alma\PrestaShop\Helpers\ValidateHelper;
 use Alma\PrestaShop\Hooks\FrontendHookController;
 use Alma\PrestaShop\Model\CarrierData;
 use Alma\PrestaShop\Model\CartData;
-use Alma\PrestaShop\Repositories\OrderRepository;
 use Alma\PrestaShop\Model\PaymentData;
 use Alma\PrestaShop\Model\ShippingData;
+use Alma\PrestaShop\Repositories\OrderRepository;
 use Alma\PrestaShop\Repositories\ProductRepository;
 
 class DisplayPaymentHookController extends FrontendHookController

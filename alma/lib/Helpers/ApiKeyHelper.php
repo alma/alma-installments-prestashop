@@ -47,7 +47,6 @@ class ApiKeyHelper
      */
     protected $settingsHelper;
 
-
     /**
      * ApiKey Helper construct
      *

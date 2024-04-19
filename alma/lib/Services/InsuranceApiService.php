@@ -80,7 +80,7 @@ class InsuranceApiService
         $this->context = \Context::getContext();
         $toolsHelper = new ToolsHelper();
         $currencyHelper = new CurrencyHelper();
-        $settingsHelper =  new SettingsHelper(
+        $settingsHelper = new SettingsHelper(
             new ShopHelper(),
             new ConfigurationHelper()
         );

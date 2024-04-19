@@ -27,10 +27,13 @@ use Alma\PrestaShop\Exceptions\InsurancePendingCancellationException;
 use Alma\PrestaShop\Exceptions\InsuranceSubscriptionException;
 use Alma\PrestaShop\Exceptions\MessageOrderException;
 use Alma\PrestaShop\Exceptions\SubscriptionException;
+use Alma\PrestaShop\Helpers\CurrencyHelper;
 use Alma\PrestaShop\Helpers\InsuranceHelper;
 use Alma\PrestaShop\Helpers\MessageOrderHelper;
+use Alma\PrestaShop\Helpers\PriceHelper;
 use Alma\PrestaShop\Helpers\SubscriptionHelper;
 use Alma\PrestaShop\Helpers\TokenHelper;
+use Alma\PrestaShop\Helpers\ToolsHelper;
 use Alma\PrestaShop\Logger;
 use Alma\PrestaShop\Repositories\AlmaInsuranceProductRepository;
 use Alma\PrestaShop\Repositories\CustomerThreadRepository;
@@ -38,10 +41,6 @@ use Alma\PrestaShop\Services\InsuranceApiService;
 use Alma\PrestaShop\Services\InsuranceSubscriptionService;
 use Alma\PrestaShop\Services\MessageOrderService;
 use Alma\PrestaShop\Traits\AjaxTrait;
-use PrestaShop\PrestaShop\Adapter\Entity\CustomerThread;
-use Alma\PrestaShop\Helpers\ToolsHelper;
-use Alma\PrestaShop\Helpers\PriceHelper;
-use Alma\PrestaShop\Helpers\CurrencyHelper;
 
 if (!defined('_PS_VERSION_')) {
     exit;
