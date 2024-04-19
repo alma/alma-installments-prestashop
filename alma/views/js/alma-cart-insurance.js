@@ -20,9 +20,9 @@
  * @copyright 2018-2023 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
+let cmsReferencePrice = null;
  (function ($) {
     $(function () {
-
         // Insurance
         onloadInsuranceItemCartAlma();
         // Reload item cart for Prestashop 1.7+ when quantity change
@@ -100,20 +100,31 @@
      });
 
      $('.alma-add-insurance-product').on( "click", function(e) {
+         // TODO : Can be removed when the modal will send us the id of the iframe
          console.log(e);
          console.log($(this).attr("data-product-id") + '-' + $(this).attr("data-product-attribute-id"));
          console.log($(this).attr("data-product-price"));
+         let cmsReference = $(this).attr("data-product-id") + '-' + $(this).attr("data-product-attribute-id");
+         let price = $(this).attr("data-product-price");
+         cmsReferencePrice = cmsReference + '-' + price;
+         console.log(cmsReferencePrice);
+         // TODO : Can be removed when the modal will send us the id of the iframe
+
          openModal('popupModal', 1);
      });
 
      window.addEventListener('message', (e) => {
          if (e.data.type === 'getSelectedInsuranceData') {
              console.log(e.data);
+             console.log(cmsReferencePrice);
              // TODO : Get id-iframe-modal by the modal to identify the product selected
-             // let idIframeModal = e.data.idIframeModal;
-             let idIframeModal = $('#product-alma-iframe-1-1-35000');
+             // let idIframeModal = $(e.data.idIframeModal);
+             //idIframeModal = $(idIframeModal);
+             let idIframeModal = $('#product-alma-iframe-' + cmsReferencePrice);
              // TODO : need to be replaced by the element clicked to add insurance
-             let elementClicked = document.querySelector('.alma-add-insurance-product');
+             let elementClicked = document.querySelector('#add-insurance-product-' + cmsReferencePrice);
+             console.log('#add-insurance-product-' + cmsReferencePrice);
+             //let elementClicked = document.querySelector($(e.data.idIframeModal));
 
              addLoaderDot(null, elementClicked);
              $.ajax({
@@ -131,6 +142,12 @@
              })
                  .success(function() {
                      //location.reload();
+                     //prestashop.emit('updateCart');
+                     // TODO : The updateCart event is not working need to be fixed
+                     console.log('updateCart');
+                     prestashop.on('updateCart', function() {
+                         location.reload();
+                     })
                  })
 
                  .error(function(e) {
@@ -199,6 +216,7 @@ function onloadInsuranceItemCartAlma() {
 
 function addLoaderDot(event, element = null) {
     let actionAlmaInsuranceProduct = undefined;
+    console.log(element);
     if (event == null) {
         actionAlmaInsuranceProduct = element.closest('.actions-alma-insurance-product');
     } else {
