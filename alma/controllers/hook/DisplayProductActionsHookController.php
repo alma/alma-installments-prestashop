@@ -29,13 +29,23 @@ if (!defined('_PS_VERSION_')) {
 }
 
 use Alma\PrestaShop\Helpers\Admin\InsuranceHelper as AdminInsuranceHelper;
+use Alma\PrestaShop\Helpers\CarrierHelper;
 use Alma\PrestaShop\Helpers\CartHelper;
+use Alma\PrestaShop\Helpers\ConfigurationHelper;
 use Alma\PrestaShop\Helpers\ConstantsHelper;
+use Alma\PrestaShop\Helpers\CurrencyHelper;
 use Alma\PrestaShop\Helpers\InsuranceHelper;
+use Alma\PrestaShop\Helpers\OrderStateHelper;
 use Alma\PrestaShop\Helpers\PriceHelper;
 use Alma\PrestaShop\Helpers\ProductHelper;
 use Alma\PrestaShop\Helpers\SettingsHelper;
+use Alma\PrestaShop\Helpers\ShopHelper;
+use Alma\PrestaShop\Helpers\ToolsHelper;
 use Alma\PrestaShop\Hooks\FrontendHookController;
+use Alma\PrestaShop\Model\CarrierData;
+use Alma\PrestaShop\Model\CartData;
+use Alma\PrestaShop\Repositories\OrderRepository;
+use Alma\PrestaShop\Repositories\ProductRepository;
 
 class DisplayProductActionsHookController extends FrontendHookController
 {
@@ -73,8 +83,23 @@ class DisplayProductActionsHookController extends FrontendHookController
         $this->insuranceHelper = new InsuranceHelper();
         $this->adminInsuranceHelper = new AdminInsuranceHelper($module);
         $this->productHelper = new ProductHelper();
-        $this->cartHelper = new CartHelper();
-        $this->priceHelper = new PriceHelper();
+        $toolsHelper = new ToolsHelper();
+        $this->priceHelper = new PriceHelper($toolsHelper, new CurrencyHelper());
+
+        $this->cartHelper = new CartHelper(
+            $this->context,
+            new ToolsHelper(),
+            $this->priceHelper,
+            new CartData(
+                $this->productHelper,
+                new SettingsHelper(new ShopHelper(), new ConfigurationHelper()),
+                $this->priceHelper,
+                new ProductRepository()
+            ),
+            new OrderRepository(),
+            new OrderStateHelper($this->context),
+            new CarrierHelper($this->context, new CarrierData())
+        );
 
         parent::__construct($module);
     }
@@ -108,7 +133,7 @@ class DisplayProductActionsHookController extends FrontendHookController
             ? $productParams['id_product_attribute']
             : null;
 
-        $cmsReference = $productId . '-' . $productAttributeId;
+        $cmsReference = $this->insuranceHelper->createCmsReference($productId, $productAttributeId);
 
         $regularPrice = $this->productHelper->getRegularPrice($productId, $productAttributeId);
         $regularPriceInCents = $this->priceHelper->convertPriceToCents($regularPrice);

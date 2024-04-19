@@ -34,6 +34,9 @@ class AlmaValidationModuleFrontController extends ModuleFrontController
 {
     public $ssl = true;
 
+    /**
+     * @codeCoverageIgnore
+     */
     public function __construct()
     {
         parent::__construct();

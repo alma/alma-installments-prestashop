@@ -18,10 +18,13 @@
 
     <filter>
         <whitelist includeUncoveredFilesFromWhitelist="true">
-            <directory>../alma</directory>
+            <directory suffix=".php">../alma</directory>
             <exclude>
                 <directory>../alma/vendor</directory>
                 <directory>../alma/tests</directory>
+                <directory>../alma/translations</directory>
+                <directory>../alma/views</directory>
+                <directory>../alma/upgrade</directory>
             </exclude>
         </whitelist>
     </filter>

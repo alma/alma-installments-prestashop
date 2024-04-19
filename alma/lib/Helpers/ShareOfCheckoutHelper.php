@@ -79,9 +79,9 @@ class ShareOfCheckoutHelper
     {
         $this->orderHelper = $orderHelper;
         $this->context = \Context::getContext();
+        $this->priceHelper = new PriceHelper(new ToolsHelper(), new CurrencyHelper());
         $this->almaClientHelper = new ClientHelper();
         $this->dateHelper = new DateHelper();
-        $this->priceHelper = new PriceHelper();
     }
 
     /**

@@ -30,7 +30,9 @@ let cmsReferencePrice = null;
             prestashop.on("updatedCart", onloadInsuranceItemCartAlma);
         }
     });
+})(jQuery);
 
+function onloadInsuranceClickEvents() {
      $('.alma-remove-product').on( "click", function(e) {
          e.preventDefault();
          addLoaderDot(e);
@@ -155,9 +157,8 @@ let cmsReferencePrice = null;
                  });
          }
      });
-})(jQuery);
+}
 
-// Insurance
 // ** Display extra info for insurance under the item product on cart **
 function onloadInsuranceItemCartAlma() {
     let itemsCart = document.querySelectorAll('.cart-items .cart-item');
@@ -188,8 +189,10 @@ function onloadInsuranceItemCartAlma() {
             */
             // TODO : Need to be deleted
 
-            actionsInsuranceProduct.style.display = 'block';
-            item.append(actionsInsuranceProduct);
+            if (actionsInsuranceProduct) {
+                actionsInsuranceProduct.style.display = 'block';
+                item.append(actionsInsuranceProduct);
+            }
             let clearfix = document.createElement('div');
             clearfix.classList.add('clearfix');
             item.append(clearfix);
@@ -212,6 +215,8 @@ function onloadInsuranceItemCartAlma() {
             item.remove();
         }
     });
+
+    onloadInsuranceClickEvents();
 }
 
 function addLoaderDot(event, element = null) {

@@ -126,7 +126,7 @@ class DateHelper
      *
      * @return string
      */
-    protected function getFrenchDateFormat($timestamp)
+    public function getFrenchDateFormat($timestamp)
     {
         $date = new \DateTime();
         $date->setTimestamp($timestamp);

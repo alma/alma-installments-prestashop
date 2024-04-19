@@ -26,7 +26,10 @@ namespace Alma\PrestaShop\Tests\Unit\Helper;
 
 use Alma\API\Entities\Insurance\Contract;
 use Alma\PrestaShop\Exceptions\MessageOrderException;
+use Alma\PrestaShop\Helpers\CurrencyHelper;
 use Alma\PrestaShop\Helpers\MessageOrderHelper;
+use Alma\PrestaShop\Helpers\PriceHelper;
+use Alma\PrestaShop\Helpers\ToolsHelper;
 use Alma\PrestaShop\Services\InsuranceApiService;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -56,7 +59,8 @@ class MessageOrderHelperTest extends TestCase
         $this->messageOrderHelper = new MessageOrderHelper(
             $this->module,
             $this->context,
-            $this->insuranceApiService
+            $this->insuranceApiService,
+            new PriceHelper(new ToolsHelper(), new CurrencyHelper())
         );
         $this->createMock(\Language::class);
         $this->createMock(\Shop::class);

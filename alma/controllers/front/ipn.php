@@ -44,6 +44,8 @@ class AlmaIpnModuleFrontController extends ModuleFrontController
 
     /**
      * IPN constructor
+     *
+     * @codeCoverageIgnore
      */
     public function __construct()
     {

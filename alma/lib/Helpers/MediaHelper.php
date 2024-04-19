@@ -48,4 +48,30 @@ class MediaHelper
 
         return $module->getPathUri() . '/views/img/logos/alma_tiny.svg';
     }
+
+    /**
+     * @param $path
+     * @param $module
+     *
+     * @return mixed
+     */
+    public function getMediaPath($path, $module)
+    {
+        return \Media::getMediaPath(_PS_MODULE_DIR_ . $module->name . $path);
+    }
+
+    /**
+     * @param string $valueBNPL
+     * @param bool $isDeferred
+     *
+     * @return string
+     */
+    public function getLogoName($valueBNPL, $isDeferred)
+    {
+        if ($isDeferred) {
+            return "{$valueBNPL}j_logo.svg";
+        }
+
+        return "p{$valueBNPL}x_logo.svg";
+    }
 }

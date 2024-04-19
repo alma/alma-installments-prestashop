@@ -27,10 +27,13 @@ use Alma\PrestaShop\Exceptions\InsurancePendingCancellationException;
 use Alma\PrestaShop\Exceptions\InsuranceSubscriptionException;
 use Alma\PrestaShop\Exceptions\MessageOrderException;
 use Alma\PrestaShop\Exceptions\SubscriptionException;
+use Alma\PrestaShop\Helpers\CurrencyHelper;
 use Alma\PrestaShop\Helpers\InsuranceHelper;
 use Alma\PrestaShop\Helpers\MessageOrderHelper;
+use Alma\PrestaShop\Helpers\PriceHelper;
 use Alma\PrestaShop\Helpers\SubscriptionHelper;
 use Alma\PrestaShop\Helpers\TokenHelper;
+use Alma\PrestaShop\Helpers\ToolsHelper;
 use Alma\PrestaShop\Logger;
 use Alma\PrestaShop\Repositories\AlmaInsuranceProductRepository;
 use Alma\PrestaShop\Repositories\CustomerThreadRepository;
@@ -38,7 +41,6 @@ use Alma\PrestaShop\Services\InsuranceApiService;
 use Alma\PrestaShop\Services\InsuranceSubscriptionService;
 use Alma\PrestaShop\Services\MessageOrderService;
 use Alma\PrestaShop\Traits\AjaxTrait;
-use PrestaShop\PrestaShop\Adapter\Entity\CustomerThread;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -69,7 +71,7 @@ class AlmaSubscriptionModuleFrontController extends ModuleFrontController
      */
     protected $customerMessage;
     /**
-     * @var CustomerThread
+     * @var \CustomerThread
      */
     protected $customerThread;
     /**
@@ -85,7 +87,7 @@ class AlmaSubscriptionModuleFrontController extends ModuleFrontController
         parent::__construct();
         $this->context = Context::getContext();
         $this->almaInsuranceProductRepository = new AlmaInsuranceProductRepository();
-        $this->customerThread = new CustomerThread();
+        $this->customerThread = new \CustomerThread();
         $this->customerMessage = new \CustomerMessage();
         $this->customerThreadRepository = new CustomerThreadRepository();
         $insuranceApiService = new InsuranceApiService();
@@ -102,7 +104,8 @@ class AlmaSubscriptionModuleFrontController extends ModuleFrontController
         $this->messageOrderHelper = new MessageOrderHelper(
             $this->module,
             $this->context,
-            $insuranceApiService
+            $insuranceApiService,
+            new PriceHelper(new ToolsHelper(), new CurrencyHelper())
         );
     }
 
@@ -254,7 +257,7 @@ class AlmaSubscriptionModuleFrontController extends ModuleFrontController
         $idCustomerThread = $this->customerThreadRepository->getIdCustomerThreadByOrderId($order->id);
 
         if ($idCustomerThread) {
-            $this->customerThread = new CustomerThread($idCustomerThread);
+            $this->customerThread = new \CustomerThread($idCustomerThread);
         }
         $messageOrderService = new MessageOrderService(
             $order->id_customer,

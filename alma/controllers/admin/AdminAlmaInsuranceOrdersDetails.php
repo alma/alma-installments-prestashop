@@ -27,8 +27,10 @@ if (!defined('_PS_VERSION_')) {
 
 use Alma\PrestaShop\Helpers\Admin\InsuranceHelper;
 use Alma\PrestaShop\Helpers\ConstantsHelper;
+use Alma\PrestaShop\Helpers\CurrencyHelper;
 use Alma\PrestaShop\Helpers\PriceHelper;
 use Alma\PrestaShop\Helpers\ProductHelper;
+use Alma\PrestaShop\Helpers\ToolsHelper;
 use Alma\PrestaShop\Repositories\AlmaInsuranceProductRepository;
 use Alma\PrestaShop\Traits\AjaxTrait;
 
@@ -66,7 +68,7 @@ class AdminAlmaInsuranceOrdersDetailsController extends ModuleAdminController
         $this->insuranceRepository = new AlmaInsuranceProductRepository();
         $this->productHelper = new ProductHelper();
         $this->adminInsuranceHelper = new InsuranceHelper($this->module);
-        $this->priceHelper = new PriceHelper();
+        $this->priceHelper = new PriceHelper(new ToolsHelper(), new CurrencyHelper());
 
         parent::__construct();
     }
@@ -165,10 +167,10 @@ class AdminAlmaInsuranceOrdersDetailsController extends ModuleAdminController
 
             $dataSubscriptions['status'] = $subscription['subscription_state'];
             $dataSubscriptions['productPrice'] = $subscription['product_price'];
-            $dataSubscriptions['subscriptionAmount'] = PriceHelper::convertPriceFromCents(
+            $dataSubscriptions['subscriptionAmount'] = $this->priceHelper->convertPriceFromCents(
                 $this->priceHelper->convertPriceToCents($subscription['price'])
             );
-            $dataSubscriptions['isRefunded'] = $subscription['is_refunded'];
+            $dataSubscriptions['isRefunded'] = (bool) $subscription['is_refunded'];
             $dataSubscriptions['reasonForCancelation'] = $subscription['reason_of_cancelation'];
             $dataSubscriptions['dateOfCancelation'] = $subscription['date_of_cancelation'];
 

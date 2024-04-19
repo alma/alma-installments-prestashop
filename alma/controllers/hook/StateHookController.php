@@ -64,6 +64,12 @@ final class StateHookController extends AdminHookController
     protected $settingsHelper;
 
     /**
+     * HookController constructor.
+     *
+     * @codeCoverageIgnore
+     *
+     * @param $module Alma
+     *
      * @var InsuranceHelper
      */
     protected $insuranceHelper;

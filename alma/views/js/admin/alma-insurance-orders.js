@@ -41,15 +41,14 @@
         });
 
         function ajaxOrderAndConfirmModal(checkboxOrder, buttonStatus, statusId) {
-
             const updateConfirmModal = new window.ConfirmModal(
                 {
                     id: 'confirm-refund-order-insurance-modal',
-                    confirmTitle: confirmTitleText,
-                    closeButtonLabel: closeButtonLabelText,
-                    confirmButtonLabel: confirmButtonLabelText,
+                    confirmTitle: window.confirmTitleText,
+                    closeButtonLabel: window.closeButtonLabelText,
+                    confirmButtonLabel: window.confirmButtonLabelText,
                     confirmButtonClass: 'btn-primary',
-                    confirmMessage: confirmMessageLine1Text + '<br>' + confirmMessageLine2Text,
+                    confirmMessage: window.confirmMessageLine1Text + '<br>' + window.confirmMessageLine2Text,
                     closable: true,
                     customButtons: [],
                 },

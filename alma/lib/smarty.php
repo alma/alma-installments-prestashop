@@ -21,9 +21,6 @@
  * @copyright 2018-2023 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
-
-use PrestaShop\PrestaShop\Core\Localization\Exception\LocalizationException;
-
 if (!defined('_PS_VERSION_')) {
     exit;
 }
@@ -56,12 +53,12 @@ if (class_exists('\Context') && PHP_SAPI != 'cli') {
      * @param $smarty
      *
      * @return string
-     *
-     * @throws LocalizationException
      */
     function smarty_function_almaFormatPrice($params, $smarty)
     {
-        return \Alma\PrestaShop\Helpers\PriceHelper::formatPriceFromCentsByCurrencyId($params['cents'], isset($params['currency']) ? $params['currency'] : null);
+        $priceHelper = new \Alma\PrestaShop\Helpers\PriceHelper(new \Alma\PrestaShop\Helpers\ToolsHelper(), new \Alma\PrestaShop\Helpers\CurrencyHelper());
+
+        return $priceHelper->formatPriceToCentsByCurrencyId($params['cents'], isset($params['currency']) ? $params['currency'] : null);
     }
 
     smartyRegisterFunction($smarty, 'function', 'almaFormatPrice', 'smarty_function_almaFormatPrice');
