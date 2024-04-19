@@ -47,7 +47,7 @@
                 data-product-customization-id="{$product->id_customization|intval}"
                 data-token='{\Tools::getToken(false)|escape:'htmlall':'UTF-8'}'
                 data-link='{$ajaxLinkAddInsuranceProduct|escape:'htmlall':'UTF-8'}'
-                src="https://protect.sandbox.almapay.com/almaProductInPageWidget.html?cms_reference={$product->id}-{$product->id_product_attribute}&amp;product_price={$product->price_without_reduction * 100}&amp;merchant_id=merchant_11xYpTY1GTkww5uWFKFdOllK82S1r7j5v5&amp;customer_session_id=testexplo&amp;cart_id={$idCart}">
+                src="{$iframeUrl}">
         </iframe>
     </div>
 

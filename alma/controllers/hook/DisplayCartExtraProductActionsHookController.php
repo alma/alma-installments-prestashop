@@ -25,10 +25,14 @@
 namespace Alma\PrestaShop\Controllers\Hook;
 
 use Alma\PrestaShop\Exceptions\InsuranceNotFoundException;
+use Alma\PrestaShop\Helpers\Admin\InsuranceHelper as AdminInsuranceHelper;
+use Alma\PrestaShop\Helpers\CartHelper;
 use Alma\PrestaShop\Helpers\ConstantsHelper;
 use Alma\PrestaShop\Helpers\ImageHelper;
 use Alma\PrestaShop\Helpers\InsuranceHelper;
 use Alma\PrestaShop\Helpers\PriceHelper;
+use Alma\PrestaShop\Helpers\ProductHelper;
+use Alma\PrestaShop\Helpers\SettingsHelper;
 use Alma\PrestaShop\Hooks\FrontendHookController;
 use Alma\PrestaShop\Repositories\AlmaInsuranceProductRepository;
 use Alma\PrestaShop\Repositories\ProductRepository;
@@ -64,6 +68,22 @@ class DisplayCartExtraProductActionsHookController extends FrontendHookControlle
      * @var \Link
      */
     protected $link;
+    /**
+     * @var AdminInsuranceHelper
+     */
+    protected $adminInsuranceHelper;
+    /**
+     * @var ProductHelper
+     */
+    protected $productHelper;
+    /**
+     * @var PriceHelper
+     */
+    protected $priceHelper;
+    /**
+     * @var CartHelper
+     */
+    protected $cartHelper;
 
     /**
      * @param $module
@@ -71,7 +91,11 @@ class DisplayCartExtraProductActionsHookController extends FrontendHookControlle
     public function __construct($module)
     {
         $this->insuranceHelper = new InsuranceHelper();
+        $this->adminInsuranceHelper = new AdminInsuranceHelper($module);
         $this->productRepository = new ProductRepository();
+        $this->productHelper = new ProductHelper();
+        $this->priceHelper = new PriceHelper();
+        $this->cartHelper = new CartHelper();
         $this->almaInsuranceProductRepository = new AlmaInsuranceProductRepository();
         $this->imageHelper = new ImageHelper();
         $this->link = new \Link();
@@ -119,8 +143,13 @@ class DisplayCartExtraProductActionsHookController extends FrontendHookControlle
         $resultInsurance = [];
 
         $idProduct = $product->id;
+        $productAttributeId = $product->id_product_attribute;
         $productQuantity = $product->quantity;
         $template = 'displayCartExtraProductActions.tpl';
+        $cmsReference = $idProduct . '-' . $productAttributeId;
+        $regularPrice = $this->productHelper->getRegularPrice($idProduct, $productAttributeId);
+        $regularPriceInCents = $this->priceHelper->convertPriceToCents($regularPrice);
+        $merchantId = SettingsHelper::getMerchantId();
 
         if ($idProduct !== $insuranceProductId) {
             $almaInsurances = $this->almaInsuranceProductRepository->getIdsByCartIdAndShopAndProduct(
@@ -166,6 +195,16 @@ class DisplayCartExtraProductActionsHookController extends FrontendHookControlle
                 'ajaxLinkAddInsuranceProduct' => $ajaxLinkAddInsuranceProduct,
                 'token' => \Tools::getToken(false),
                 'idProduct' => $idProduct,
+                'iframeUrl' => sprintf(
+                    '%s%s?cms_reference=%s&product_price=%s&merchant_id=%s&customer_session_id=%s&cart_id=%s',
+                    $this->adminInsuranceHelper->envUrl(),
+                    ConstantsHelper::FO_IFRAME_WIDGET_INSURANCE_PATH,
+                    $cmsReference,
+                    $regularPriceInCents,
+                    $merchantId,
+                    $this->context->session->getId(),
+                    $this->cartHelper->getCartIdFromContext()
+                ),
             ]);
 
         return $this->module->display($this->module->file, $template);
