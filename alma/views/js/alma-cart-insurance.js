@@ -20,7 +20,7 @@
  * @copyright 2018-2023 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
- (function ($) {
+(function ($) {
     $(function () {
         // Insurance
         onloadInsuranceItemCartAlma();
