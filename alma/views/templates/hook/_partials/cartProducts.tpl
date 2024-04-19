@@ -118,6 +118,7 @@
                                    data-action="add-insurance-product"
                                    data-token='{\Tools::getToken(false)|escape:'htmlall':'UTF-8'}'
                                    href="#"
+                                   id="add-insurance-product-{$product.id_product|escape:'htmlall':'UTF-8'}-{$product.id_product_attribute|escape:'htmlall':'UTF-8'}-{$product.price_without_reduction|escape:'htmlall':'UTF-8' * 100}"
                                    class="alma-add-insurance-product"
                                    data-link='{$ajaxLinkAddInsuranceProduct|escape:'htmlall':'UTF-8'}'
                                 >
