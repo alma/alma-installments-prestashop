@@ -33,130 +33,130 @@ let cmsReferencePrice = null;
 })(jQuery);
 
 function onloadInsuranceClickEvents() {
-     $('.alma-remove-product').on( "click", function(e) {
-         e.preventDefault();
-         addLoaderDot(e);
-         $.ajax({
-             type: 'POST',
-             url: $(this).attr("data-link"),
-             dataType: 'json',
-             data: {
-                 ajax: true,
-                 token: $(this).attr('data-token'),
-                 product_id: $(this).attr("data-product-id"),
-                 attribute_id: $(this).attr("data-product-attribute-id"),
-                 customization_id: $(this).attr("data-product-customization-id"),
-             },
-         })
-             .success(function() {
-                 location.reload();
-             })
+    $('.alma-remove-product').on("click", function (e) {
+        e.preventDefault();
+        addLoaderDot(e);
+        $.ajax({
+            type: 'POST',
+            url: $(this).attr("data-link"),
+            dataType: 'json',
+            data: {
+                ajax: true,
+                token: $(this).attr('data-token'),
+                product_id: $(this).attr("data-product-id"),
+                attribute_id: $(this).attr("data-product-attribute-id"),
+                customization_id: $(this).attr("data-product-customization-id"),
+            },
+        })
+            .success(function () {
+                location.reload();
+            })
 
-             .error(function(e) {
-                 location.reload();
-             });
-     });
+            .error(function (e) {
+                location.reload();
+            });
+    });
 
-     $('.alma-remove-association').on( "click", function(e) {
-         e.preventDefault();
-         addLoaderDot(e);
-         $.ajax({
-             type: 'POST',
-             url: $(this).attr("data-link"),
-             dataType: 'json',
-             data: {
-                 ajax: true,
-                 token: $(this).attr('data-token'),
-                 alma_insurance_product_id: $(this).attr("data-alma-association-id")
-             },
-         })
-             .success(function() {
-                 location.reload();
-             })
+    $('.alma-remove-association').on("click", function (e) {
+        e.preventDefault();
+        addLoaderDot(e);
+        $.ajax({
+            type: 'POST',
+            url: $(this).attr("data-link"),
+            dataType: 'json',
+            data: {
+                ajax: true,
+                token: $(this).attr('data-token'),
+                alma_insurance_product_id: $(this).attr("data-alma-association-id")
+            },
+        })
+            .success(function () {
+                location.reload();
+            })
 
-             .error(function(e) {
-                 location.reload();
-             });
-     });
+            .error(function (e) {
+                location.reload();
+            });
+    });
 
-     $('.alma-remove-insurance-product').on( "click", function(e) {
-         e.preventDefault();
-         addLoaderDot(e);
-         $.ajax({
-             type: 'POST',
-             url: $(this).attr("data-link"),
-             dataType: 'json',
-             data: {
-                 ajax: true,
-                 token: $(this).attr('data-token'),
-                 alma_insurance_product_id: $(this).attr("data-alma-association-id")
-             },
-         })
-             .success(function() {
-                 location.reload();
-             })
+    $('.alma-remove-insurance-product').on("click", function (e) {
+        e.preventDefault();
+        addLoaderDot(e);
+        $.ajax({
+            type: 'POST',
+            url: $(this).attr("data-link"),
+            dataType: 'json',
+            data: {
+                ajax: true,
+                token: $(this).attr('data-token'),
+                alma_insurance_product_id: $(this).attr("data-alma-association-id")
+            },
+        })
+            .success(function () {
+                location.reload();
+            })
 
-             .error(function(e) {
-                 location.reload();
-             });
-     });
+            .error(function (e) {
+                location.reload();
+            });
+    });
 
-     $('.alma-add-insurance-product').on( "click", function(e) {
-         // TODO : Can be removed when the modal will send us the id of the iframe
-         console.log(e);
-         console.log($(this).attr("data-product-id") + '-' + $(this).attr("data-product-attribute-id"));
-         console.log($(this).attr("data-product-price"));
-         let cmsReference = $(this).attr("data-product-id") + '-' + $(this).attr("data-product-attribute-id");
-         let price = $(this).attr("data-product-price");
-         cmsReferencePrice = cmsReference + '-' + price;
-         console.log(cmsReferencePrice);
-         // TODO : Can be removed when the modal will send us the id of the iframe
+    $('.alma-add-insurance-product').on("click", function (e) {
+        // TODO : Can be removed when the modal will send us the id of the iframe
+        console.log(e);
+        console.log($(this).attr("data-product-id") + '-' + $(this).attr("data-product-attribute-id"));
+        console.log($(this).attr("data-product-price"));
+        let cmsReference = $(this).attr("data-product-id") + '-' + $(this).attr("data-product-attribute-id");
+        let price = $(this).attr("data-product-price");
+        cmsReferencePrice = cmsReference + '-' + price;
+        console.log(cmsReferencePrice);
+        // TODO : Can be removed when the modal will send us the id of the iframe
 
-         openModal('popupModal', 1);
-     });
+        openModal('popupModal', 1);
+    });
 
-     window.addEventListener('message', (e) => {
-         if (e.data.type === 'getSelectedInsuranceData') {
-             console.log(e.data);
-             console.log(cmsReferencePrice);
-             // TODO : Get id-iframe-modal by the modal to identify the product selected
-             // let idIframeModal = $(e.data.idIframeModal);
-             //idIframeModal = $(idIframeModal);
-             let idIframeModal = $('#product-alma-iframe-' + cmsReferencePrice);
-             // TODO : need to be replaced by the element clicked to add insurance
-             let elementClicked = document.querySelector('#add-insurance-product-' + cmsReferencePrice);
-             console.log('#add-insurance-product-' + cmsReferencePrice);
-             //let elementClicked = document.querySelector($(e.data.idIframeModal));
+    window.addEventListener('message', (e) => {
+        if (e.data.type === 'getSelectedInsuranceData') {
+            console.log(e.data);
+            console.log(cmsReferencePrice);
+            // TODO : Get id-iframe-modal by the modal to identify the product selected
+            // let idIframeModal = $(e.data.idIframeModal);
+            //idIframeModal = $(idIframeModal);
+            let idIframeModal = $('#product-alma-iframe-' + cmsReferencePrice);
+            // TODO : need to be replaced by the element clicked to add insurance
+            let elementClicked = document.querySelector('#add-insurance-product-' + cmsReferencePrice);
+            console.log('#add-insurance-product-' + cmsReferencePrice);
+            //let elementClicked = document.querySelector($(e.data.idIframeModal));
 
-             addLoaderDot(null, elementClicked);
-             $.ajax({
-                 type: 'POST',
-                 url: '/module/alma/insurance?action=addInsuranceProduct',
-                 dataType: 'json',
-                 data: {
-                     ajax: true,
-                     token: idIframeModal.attr('data-token'),
-                     product_id: idIframeModal.attr('data-product-id'),
-                     product_attribute_id: idIframeModal.attr('data-product-attribute-id'),
-                     customization_id: idIframeModal.attr('data-product-customization-id'),
-                     insurance_contract_id: e.data.selectedInsuranceData.insuranceContractId
-                 },
-             })
-                 .success(function() {
-                     //location.reload();
-                     //prestashop.emit('updateCart');
-                     // TODO : The updateCart event is not working need to be fixed
-                     console.log('updateCart');
-                     prestashop.on('updateCart', function() {
-                         location.reload();
-                     })
-                 })
+            addLoaderDot(null, elementClicked);
+            $.ajax({
+                type: 'POST',
+                url: '/module/alma/insurance?action=addInsuranceProduct',
+                dataType: 'json',
+                data: {
+                    ajax: true,
+                    token: idIframeModal.attr('data-token'),
+                    product_id: idIframeModal.attr('data-product-id'),
+                    product_attribute_id: idIframeModal.attr('data-product-attribute-id'),
+                    customization_id: idIframeModal.attr('data-product-customization-id'),
+                    insurance_contract_id: e.data.selectedInsuranceData.insuranceContractId
+                },
+            })
+                .success(function () {
+                    //location.reload();
+                    //prestashop.emit('updateCart');
+                    // TODO : The updateCart event is not working need to be fixed
+                    console.log('updateCart');
+                    prestashop.on('updateCart', function () {
+                        location.reload();
+                    })
+                })
 
-                 .error(function(e) {
-                     //location.reload();
-                 });
-         }
-     });
+                .error(function (e) {
+                    //location.reload();
+                });
+        }
+    });
 }
 
 // ** Display extra info for insurance under the item product on cart **
