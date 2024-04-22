@@ -69,6 +69,18 @@ class Alma extends PaymentModule
      * @var Alma\PrestaShop\Helpers\Admin\InsuranceHelper
      */
     private $adminInsuranceHelper;
+    /**
+     * @var \PrestaShop\PsAccountsInstaller\Installer\Installer
+     */
+    private $psAccountsInstaller;
+    /**
+     * @var \PrestaShop\PsAccountsInstaller\Installer\Facade\PsAccounts
+     */
+    private $psAccountsFacade;
+    /**
+     * @var \PrestaShop\ModuleLibServiceContainer\DependencyInjection\ServiceContainer
+     */
+    private $container;
 
     public function __construct()
     {
@@ -118,6 +130,13 @@ class Alma extends PaymentModule
         $this->hook = new \Alma\PrestaShop\Helpers\HookHelper();
         $this->tabsHelper = new \Alma\PrestaShop\Helpers\Admin\TabsHelper();
         $this->adminInsuranceHelper = new \Alma\PrestaShop\Helpers\Admin\InsuranceHelper($this);
+
+        if ($this->container === null) {
+            $this->container = new \PrestaShop\ModuleLibServiceContainer\DependencyInjection\ServiceContainer(
+                $this->name,
+                $this->getLocalPath()
+            );
+        }
     }
 
     /**
@@ -192,6 +211,8 @@ class Alma extends PaymentModule
      */
     public function install()
     {
+        $this->getService('ps_accounts_installer')->install();
+
         $coreInstall = parent::install();
 
         if (!$this->checkCoreInstall($coreInstall)
@@ -505,6 +526,36 @@ class Alma extends PaymentModule
 
     public function getContent()
     {
+        /*********************
+         * PrestaShop Account *
+         * *******************/
+
+        $accountsService = null;
+
+        try {
+            $accountsFacade = $this->getService('alma.ps_accounts_facade');
+            $accountsService = $accountsFacade->getPsAccountsService();
+        } catch (\PrestaShop\PsAccountsInstaller\Installer\Exception\InstallerException $e) {
+            $accountsInstaller = $this->getService('alma.ps_accounts_installer');
+            $accountsInstaller->install();
+            $accountsFacade = $this->getService('alma.ps_accounts_facade');
+            $accountsService = $accountsFacade->getPsAccountsService();
+        }
+
+        try {
+            Media::addJsDef([
+                'contextPsAccounts' => $accountsFacade->getPsAccountsPresenter()
+                    ->present($this->name),
+            ]);
+
+            // Retrieve the PrestaShop Account CDN
+            $this->context->smarty->assign('urlAccountsCdn', $accountsService->getAccountsCdn());
+        } catch (Exception $e) {
+            $this->context->controller->errors[] = $e->getMessage();
+
+            return '';
+        }
+
         return $this->runHookController('getContent', null);
     }
 
@@ -596,5 +647,17 @@ class Alma extends PaymentModule
     public function hookDisplayAdminAfterHeader($params)
     {
         return $this->runHookController('displayAdminAfterHeader', $params);
+    }
+
+    /**
+     * Retrieve the service
+     *
+     * @param string $serviceName
+     *
+     * @return object|null
+     */
+    public function getService($serviceName)
+    {
+        return $this->container->getService($serviceName);
     }
 }
