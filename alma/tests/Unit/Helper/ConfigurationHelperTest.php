@@ -24,15 +24,67 @@
 
 namespace Alma\PrestaShop\Tests\Unit\Helper;
 
+use Alma\PrestaShop\Helpers\ConfigurationHelper;
+use Alma\PrestaShop\Helpers\SettingsHelper;
+use Alma\PrestaShop\Helpers\ShopHelper;
 use PHPUnit\Framework\TestCase;
 
 class ConfigurationHelperTest extends TestCase
 {
+    public function setUp()
+    {
+        $this->configurationHelper = new ConfigurationHelper();
+    }
     public function testIsPayNow()
     {
+        $this->assertFalse($this->configurationHelper->isPayNow('test'));
+        $this->assertTrue($this->configurationHelper->isPayNow('general_1_0_0'));
     }
 
-    public function testIsInPageEnabled()
+    /**
+     * @dataProvider provideIsInPageEnabled
+     * @return void
+     */
+    public function testIsInPageEnabled($expected, $isInPageEnabled, $installments)
     {
+        $settingsHelper = \Mockery::mock(SettingsHelper::class);
+        $settingsHelper->shouldReceive('isInPageEnabled')->andReturn($isInPageEnabled);
+        $this->assertEquals($expected, $this->configurationHelper->isInPageEnabled($installments, $settingsHelper));
+    }
+
+    public function provideIsInPageEnabled()
+    {
+        return [
+            'test no inpage enable, installment 1' => [
+                'expected' => false,
+                'isInpageEnabled' => false,
+                'installments' => 1
+            ],
+            'test no inpage enable, installment 4' => [
+                'expected' => false,
+                'isInpageEnabled' => false,
+                'installments' => 4
+            ],
+            'test no inpage enable, installment 6' => [
+                'expected' => false,
+                'isInpageEnabled' => false,
+                'installments' => 6
+            ],
+            'test inpage enable, installment 1' => [
+                'expected' => true,
+                'isInpageEnabled' => true,
+                'installments' => 1
+            ],
+            'test inpage enable, installment 4' => [
+                'expected' => true,
+                'isInpageEnabled' => true,
+                'installments' => 4
+            ],
+            'test inpage enable, installment 6' => [
+                'expected' => false,
+                'isInpageEnabled' => true,
+                'installments' => 6
+            ],
+        ];
     }
 }
