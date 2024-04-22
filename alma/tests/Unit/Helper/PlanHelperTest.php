@@ -52,108 +52,117 @@ class PlanHelperTest extends TestCase
             $this->module
         );
     }
-    public function testIsPnxPlus4()
+
+    /**
+     * @dataProvider provideIsPnxPlus4
+     * @return void
+     */
+    public function testIsPnxPlus4($expected, $installmentsCount)
     {
         $plan = new FeePlan(
             [
-                'installmentsCount' => 4,
+                'installmentsCount' => $installmentsCount,
             ]
         );
 
-        $this->assertEquals(false, $this->planHelper->isPnxPlus4($plan));
+        $this->assertEquals($expected, $this->planHelper->isPnxPlus4($plan));
 
-        $plan = new FeePlan(
-            [
-                'installmentsCount' => 3,
-            ]
-        );
-
-        $this->assertEquals(false, $this->planHelper->isPnxPlus4($plan));
-
-        $plan = new FeePlan(
-            [
-                'installmentsCount' => 6,
-            ]
-        );
-
-        $this->assertEquals(true, $this->planHelper->isPnxPlus4($plan));
     }
 
-    public function testIsDeferred()
+    public function provideIsPnxPlus4()
+    {
+        return [
+            'test 4 installments' => [
+                'expected' => false,
+                'installmentsCount' => 3,
+            ],
+            'test 2 installments' => [
+                'expected' => false,
+                'installmentsCount' => 4,
+            ],
+            'test 6 installments' => [
+                'expected' => true,
+                'installmentsCount' => 6,
+            ],
+        ];
+    }
+    /**
+     * @dataProvider provideIsDeferred
+     *
+     * @return void
+     */
+    public function testIsDeferred($expected, $deferredDays, $deferredMonths, $keyDeferredDays, $keyDeferredMonths)
     {
         $plan = new FeePlan(
             [
-                'deferred_days' => 0,
-                'deferred_months' => 0,
+                $keyDeferredDays => $deferredDays,
+                $keyDeferredMonths => $deferredMonths,
             ]
         );
 
-        $this->assertEquals(false, $this->planHelper->isDeferred($plan));
+        $this->assertEquals($expected, $this->planHelper->isDeferred($plan));
 
-        $plan = new FeePlan(
-            [
-                'deferred_days' => 0,
-                'deferred_months' => 1,
-            ]
-        );
+    }
 
-        $this->assertEquals(true, $this->planHelper->isDeferred($plan));
-
-
-        $plan = new FeePlan(
-            [
-                'deferred_days' => 1,
-                'deferred_months' => 0,
-            ]
-        );
-
-        $this->assertEquals(true, $this->planHelper->isDeferred($plan));
-
-        $plan = new FeePlan(
-            [
-                'deferred_days' => 1,
-                'deferred_months' => 1,
-            ]
-        );
-
-        $this->assertEquals(true, $this->planHelper->isDeferred($plan));
-
-        $plan = new FeePlan(
-            [
-                'deferredDays' => 0,
-                'deferredMonths' => 0,
-            ]
-        );
-
-        $this->assertEquals(false, $this->planHelper->isDeferred($plan));
-
-        $plan = new FeePlan(
-            [
-                'deferredDays' => 0,
-                'deferredMonths' => 1,
-            ]
-        );
-
-        $this->assertEquals(true, $this->planHelper->isDeferred($plan));
-
-
-        $plan = new FeePlan(
-            [
-                'deferredDays' => 1,
-                'deferredMonths' => 0,
-            ]
-        );
-
-        $this->assertEquals(true, $this->planHelper->isDeferred($plan));
-
-        $plan = new FeePlan(
-            [
+    public function provideIsDeferred()
+    {
+        return [
+            'test 1' => [
+                'expected' => true,
                 'deferredDays' => 1,
                 'deferredMonths' => 1,
-            ]
-        );
-
-        $this->assertEquals(true, $this->planHelper->isDeferred($plan));
-
+                'keyDeferredDays' => 'deferredDays',
+                'keyDeferredMonths' => 'deferredMonths',
+            ],
+            'test 2' => [
+                'expected' => true,
+                'deferredDays' => 1,
+                'deferredMonths' => 0,
+                'keyDeferredDays' => 'deferredDays',
+                'keyDeferredMonths' => 'deferredMonths',
+            ],
+            'test 3' => [
+                'expected' => true,
+                'deferredDays' => 0,
+                'deferredMonths' => 1,
+                'keyDeferredDays' => 'deferredDays',
+                'keyDeferredMonths' => 'deferredMonths',
+            ],
+            'test 4' => [
+                'expected' => false,
+                'deferredDays' => 0,
+                'deferredMonths' => 0,
+                'keyDeferredDays' => 'deferredDays',
+                'keyDeferredMonths' => 'deferredMonths',
+            ],
+            'test 5' => [
+                'expected' => true,
+                'deferredDays' => 1,
+                'deferredMonths' => 1,
+                'keyDeferredDays' => 'deferred_days',
+                'keyDeferredMonths' => 'deferred_months',
+            ],
+            'test 6' => [
+                'expected' => true,
+                'deferredDays' => 1,
+                'deferredMonths' => 0,
+                'keyDeferredDays' => 'deferred_days',
+                'keyDeferredMonths' => 'deferred_months',
+            ],
+            'test 7' => [
+                'expected' => true,
+                'deferredDays' => 0,
+                'deferredMonths' => 1,
+                'keyDeferredDays' => 'deferred_days',
+                'keyDeferredMonths' => 'deferred_months',
+            ],
+            'test 8' => [
+                'expected' => false,
+                'deferredDays' => 0,
+                'deferredMonths' => 0,
+                'keyDeferredDays' => 'deferred_days',
+                'keyDeferredMonths' => 'deferred_months',
+            ],
+        ];
     }
 }
