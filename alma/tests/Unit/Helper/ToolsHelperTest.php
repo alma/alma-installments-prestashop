@@ -38,16 +38,63 @@ class ToolsHelperTest extends TestCase
         $this->toolsHelper = new ToolsHelper();
     }
 
-    public function testPsRound()
+    /**
+     * @dataProvider provideTestPsRound
+     *
+     * @return void
+     */
+    public function testPsRound($expected, $precision, $roundMode)
     {
-        $this->assertEquals(200, $this->toolsHelper->psRound('200.236'));
-        $this->assertEquals(200.24, $this->toolsHelper->psRound('200.236', 2));
-        $this->assertEquals(200.24, $this->toolsHelper->psRound('200.236', 2, PS_ROUND_UP));
-        $this->assertEquals(200.23, $this->toolsHelper->psRound('200.236', 2, PS_ROUND_DOWN));
-        $this->assertEquals(200.24, $this->toolsHelper->psRound('200.236', 2, PS_ROUND_HALF_DOWN));
-        $this->assertEquals(200.24, $this->toolsHelper->psRound('200.236', 2, PS_ROUND_HALF_EVEN));
-        $this->assertEquals(200.24, $this->toolsHelper->psRound('200.236', 2, PS_ROUND_HALF_ODD));
-        $this->assertEquals(200.24, $this->toolsHelper->psRound('200.236', 2, PS_ROUND_HALF_UP));
+        $this->assertEquals($expected, $this->toolsHelper->psRound('200.236', $precision, $roundMode));
+    }
+
+    /**
+     * @return array[]
+     */
+    public function provideTestPsRound()
+    {
+        return [
+            'test default' => [
+                'expected' => 200,
+                'precision' => 0,
+                'mode' => null,
+            ],
+            'test precision 2 ' => [
+                'expected' => 200.24,
+                'precision' => 2,
+                'mode' => null,
+            ],
+            'test PS_ROUND_UP' => [
+                'expected' => 200.24,
+                'precision' => 2,
+                'mode' => PS_ROUND_UP,
+            ],
+            'test PS_ROUND_DOWN' => [
+                'expected' => 200.23,
+                'precision' => 2,
+                'mode' => PS_ROUND_DOWN,
+            ],
+            'test PS_ROUND_HALF_DOWN' => [
+                'expected' => 200.24,
+                'precision' => 2,
+                'mode' => PS_ROUND_HALF_DOWN,
+            ],
+            'test PS_ROUND_HALF_EVEN' => [
+                'expected' => 200.24,
+                'precision' => 2,
+                'mode' => PS_ROUND_HALF_EVEN,
+            ],
+            'test PS_ROUND_HALF_ODD' => [
+                'expected' => 200.24,
+                'precision' => 2,
+                'mode' => PS_ROUND_HALF_ODD,
+            ],
+            'test PS_ROUND_HALF_UP' => [
+                'expected' => 200.24,
+                'precision' => 2,
+                'mode' => PS_ROUND_HALF_UP,
+            ],
+        ];
     }
 
     public function testPsVersionCompare()
