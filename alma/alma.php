@@ -70,14 +70,6 @@ class Alma extends PaymentModule
      */
     private $adminInsuranceHelper;
     /**
-     * @var \PrestaShop\PsAccountsInstaller\Installer\Installer
-     */
-    private $psAccountsInstaller;
-    /**
-     * @var \PrestaShop\PsAccountsInstaller\Installer\Facade\PsAccounts
-     */
-    private $psAccountsFacade;
-    /**
      * @var \PrestaShop\ModuleLibServiceContainer\DependencyInjection\ServiceContainer
      */
     private $container;
@@ -137,10 +129,6 @@ class Alma extends PaymentModule
                 $this->getLocalPath()
             );
         }
-
-        // Initialize the PrestaShop Accounts Installer for Prestashop 1.6
-        $this->psAccountsInstaller = new \PrestaShop\PsAccountsInstaller\Installer\Installer('5.0');
-        $this->psAccountsFacade = new PrestaShop\PsAccountsInstaller\Installer\Facade\PsAccounts($this->psAccountsInstaller);
     }
 
     /**
@@ -534,44 +522,21 @@ class Alma extends PaymentModule
          * PrestaShop Account *
          * *******************/
 
-        // For Prestashop 1.7
+        // TODO : For Prestashop 1.6, we need to check if the module Prestashop Account is installed : https://addons.prestashop.com/fr/outils-administration/49648-prestashop-account.html
         $accountsService = null;
-        /*
-                try {
-                    $accountsFacade = $this->getService('alma.ps_accounts_facade');
-                    $accountsService = $accountsFacade->getPsAccountsService();
-                } catch (\PrestaShop\PsAccountsInstaller\Installer\Exception\InstallerException $e) {
-                    $accountsInstaller = $this->getService('alma.ps_accounts_installer');
-                    $accountsInstaller->install();
-                    $accountsFacade = $this->getService('alma.ps_accounts_facade');
-                    $accountsService = $accountsFacade->getPsAccountsService();
-                }
-
-                try {
-                    Media::addJsDef([
-                        'contextPsAccounts' => $accountsFacade->getPsAccountsPresenter()
-                            ->present($this->name),
-                    ]);
-
-                    // Retrieve the PrestaShop Account CDN
-                    $this->context->smarty->assign('urlAccountsCdn', $accountsService->getAccountsCdn());
-                } catch (Exception $e) {
-                    $this->context->controller->errors[] = $e->getMessage();
-
-                    return '';
-                }
-        */
-        // For Prestashop 1.6
         try {
-            $accountsService = $this->psAccountsFacade->getPsAccountsService();
+            $accountsFacade = $this->getService('alma.ps_accounts_facade');
+            $accountsService = $accountsFacade->getPsAccountsService();
         } catch (\PrestaShop\PsAccountsInstaller\Installer\Exception\InstallerException $e) {
-            $this->psAccountsInstaller->install();
-            $accountsService = $this->psAccountsFacade->getPsAccountsService();
+            $accountsInstaller = $this->getService('alma.ps_accounts_installer');
+            $accountsInstaller->install();
+            $accountsFacade = $this->getService('alma.ps_accounts_facade');
+            $accountsService = $accountsFacade->getPsAccountsService();
         }
 
         try {
             Media::addJsDef([
-                'contextPsAccounts' => $this->psAccountsFacade->getPsAccountsPresenter()
+                'contextPsAccounts' => $accountsFacade->getPsAccountsPresenter()
                     ->present($this->name),
             ]);
 
