@@ -137,6 +137,10 @@ class Alma extends PaymentModule
                 $this->getLocalPath()
             );
         }
+
+        // Initialize the PrestaShop Accounts Installer for Prestashop 1.6
+        $this->psAccountsInstaller = new \PrestaShop\PsAccountsInstaller\Installer\Installer('5.0');
+        $this->psAccountsFacade = new PrestaShop\PsAccountsInstaller\Installer\Facade\PsAccounts($this->psAccountsInstaller);
     }
 
     /**
@@ -530,21 +534,44 @@ class Alma extends PaymentModule
          * PrestaShop Account *
          * *******************/
 
+        // For Prestashop 1.7
         $accountsService = null;
+        /*
+                try {
+                    $accountsFacade = $this->getService('alma.ps_accounts_facade');
+                    $accountsService = $accountsFacade->getPsAccountsService();
+                } catch (\PrestaShop\PsAccountsInstaller\Installer\Exception\InstallerException $e) {
+                    $accountsInstaller = $this->getService('alma.ps_accounts_installer');
+                    $accountsInstaller->install();
+                    $accountsFacade = $this->getService('alma.ps_accounts_facade');
+                    $accountsService = $accountsFacade->getPsAccountsService();
+                }
 
+                try {
+                    Media::addJsDef([
+                        'contextPsAccounts' => $accountsFacade->getPsAccountsPresenter()
+                            ->present($this->name),
+                    ]);
+
+                    // Retrieve the PrestaShop Account CDN
+                    $this->context->smarty->assign('urlAccountsCdn', $accountsService->getAccountsCdn());
+                } catch (Exception $e) {
+                    $this->context->controller->errors[] = $e->getMessage();
+
+                    return '';
+                }
+        */
+        // For Prestashop 1.6
         try {
-            $accountsFacade = $this->getService('alma.ps_accounts_facade');
-            $accountsService = $accountsFacade->getPsAccountsService();
+            $accountsService = $this->psAccountsFacade->getPsAccountsService();
         } catch (\PrestaShop\PsAccountsInstaller\Installer\Exception\InstallerException $e) {
-            $accountsInstaller = $this->getService('alma.ps_accounts_installer');
-            $accountsInstaller->install();
-            $accountsFacade = $this->getService('alma.ps_accounts_facade');
-            $accountsService = $accountsFacade->getPsAccountsService();
+            $this->psAccountsInstaller->install();
+            $accountsService = $this->psAccountsFacade->getPsAccountsService();
         }
 
         try {
             Media::addJsDef([
-                'contextPsAccounts' => $accountsFacade->getPsAccountsPresenter()
+                'contextPsAccounts' => $this->psAccountsFacade->getPsAccountsPresenter()
                     ->present($this->name),
             ]);
 
