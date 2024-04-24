@@ -108,16 +108,17 @@
                                     </strong>
                                 </span>
                             </div>
-                            {* TODO : Need to add id for identify the right element *}
+                            {* TODO : Need to refacto the id with cmsReference and Price *}
                             <div class="alma-action-item-insurance">
                                 <a data-product-id="{$product.id_product|escape:'htmlall':'UTF-8'}"
                                    data-product-attribute-id="{$product.id_product_attribute|escape:'htmlall':'UTF-8'}"
                                    data-product-price="{$product.price_without_reduction|escape:'htmlall':'UTF-8' * 100}"
                                    data-product-customization-id="{$product.id_customization|intval}"
+                                   data-if-iframe="product-alma-iframe-{$product.id_product|escape:'htmlall':'UTF-8'}-{$product.id_product_attribute|escape:'htmlall':'UTF-8'}-{$product.price_without_reduction|escape:'htmlall':'UTF-8' * 100}"
                                    data-action="add-insurance-product"
                                    data-token='{\Tools::getToken(false)|escape:'htmlall':'UTF-8'}'
                                    href="#"
-                                   id="add-insurance-product-{$product.id_product|escape:'htmlall':'UTF-8'}-{$product.id_product_attribute|escape:'htmlall':'UTF-8'}-{$product.price_without_reduction|escape:'htmlall':'UTF-8' * 100}"
+                                   id="add-button-product-alma-iframe-{$product.id_product|escape:'htmlall':'UTF-8'}-{$product.id_product_attribute|escape:'htmlall':'UTF-8'}-{$product.price_without_reduction|escape:'htmlall':'UTF-8' * 100}"
                                    class="alma-add-insurance-product"
                                    data-link='{$ajaxLinkAddInsuranceProduct|escape:'htmlall':'UTF-8'}'
                                 >

@@ -327,7 +327,7 @@ class FrontHeaderHookController extends FrontendHookController
                 "modules/$this->moduleName/" . ConstantsHelper::INSURANCE_PRODUCT_CSS_PATH
             );
 
-            return '<script type="module" src="https://protect.sandbox.almapay.com/displayModal.js"></script><div id="alma-insurance-modal"></div>';
+            return '<script type="module" src="https://protect.staging.almapay.com/displayModal.js"></script><div id="alma-insurance-modal"></div>';
         }
 
         if (

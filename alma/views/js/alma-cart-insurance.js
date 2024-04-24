@@ -102,30 +102,18 @@ function onloadInsuranceClickEvents() {
     });
 
     $('.alma-add-insurance-product').on("click", function (e) {
-        // TODO : Can be removed when the modal will send us the id of the iframe
-        console.log(e);
-        console.log($(this).attr("data-product-id") + '-' + $(this).attr("data-product-attribute-id"));
-        console.log($(this).attr("data-product-price"));
         let cmsReference = $(this).attr("data-product-id") + '-' + $(this).attr("data-product-attribute-id");
         let price = $(this).attr("data-product-price");
         cmsReferencePrice = cmsReference + '-' + price;
-        console.log(cmsReferencePrice);
-        // TODO : Can be removed when the modal will send us the id of the iframe
 
-        openModal('popupModal', 1);
+        openModal('popupModal', 1, 'product-alma-iframe-' + cmsReferencePrice);
     });
 
     window.addEventListener('message', (e) => {
         if (e.data.type === 'getSelectedInsuranceData') {
-            console.log(e.data);
-            console.log(cmsReferencePrice);
-            // TODO : Get id-iframe-modal by the modal to identify the product selected
-            // let idIframeModal = $(e.data.idIframeModal);
-            //idIframeModal = $(idIframeModal);
-            let idIframeModal = $('#product-alma-iframe-' + cmsReferencePrice);
-            // TODO : need to be replaced by the element clicked to add insurance
+            let idIframeModal = $('#' + e.data.idIframeModal);
+            // Todo : need to replace the id selector by data to fix the openModal
             let elementClicked = document.querySelector('#add-insurance-product-' + cmsReferencePrice);
-            console.log('#add-insurance-product-' + cmsReferencePrice);
             //let elementClicked = document.querySelector($(e.data.idIframeModal));
 
             addLoaderDot(null, elementClicked);
@@ -178,16 +166,6 @@ function onloadInsuranceItemCartAlma() {
             item.append(clearfix);
         }
         if (!isAlmaInsuranceProduct && isInsuranceAssociated) {
-
-            // TODO : Need to be deleted
-            /*
-            widgetInsuranceCartItem.style.display = 'block';
-            item.append(widgetInsuranceCartItem);
-            let clearfix = document.createElement('div');
-            clearfix.classList.add('clearfix');
-            item.append(clearfix);
-            */
-            // TODO : Need to be deleted
 
             if (actionsInsuranceProduct) {
                 actionsInsuranceProduct.style.display = 'block';
