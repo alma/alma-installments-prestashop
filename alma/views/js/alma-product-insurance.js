@@ -128,7 +128,7 @@ function refreshWidget() {
     let cmsReference = productDetails.id_product + '-' + productDetails.id_product_attribute;
     let regularPriceToCents = productDetails.price_without_reduction * 100;
 
-    getproductDataForApiCall(
+    getProductDataForApiCall(
         cmsReference,
         regularPriceToCents,
         settings.merchant_id,

@@ -105,7 +105,7 @@ function onloadInsuranceClickEvents() {
         let elementClicked = document.querySelector('a[data-id-iframe=' + idIframeModal + ']');
 
         addLoaderDot(null, elementClicked);
-        openModal('popupModal', 1, idIframeModal);
+        openModal('inCartModal', 1, idIframeModal);
     });
 
     window.addEventListener('message', (e) => {
