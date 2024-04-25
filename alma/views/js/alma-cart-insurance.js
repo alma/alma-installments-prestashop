@@ -102,18 +102,17 @@ function onloadInsuranceClickEvents() {
     });
 
     $('.alma-add-insurance-product').on("click", function (e) {
-        let cmsReference = $(this).attr("data-product-id") + '-' + $(this).attr("data-product-attribute-id");
-        let price = $(this).attr("data-product-price");
-        cmsReferencePrice = cmsReference + '-' + price;
+        let idIframeModal = $(this).attr("data-id-iframe");
 
-        openModal('popupModal', 1, 'product-alma-iframe-' + cmsReferencePrice);
+        openModal('popupModal', 1, idIframeModal);
     });
 
     window.addEventListener('message', (e) => {
         if (e.data.type === 'getSelectedInsuranceData') {
             let idIframeModal = $('#' + e.data.idIframeModal);
             // Todo : need to replace the id selector by data to fix the openModal
-            let elementClicked = document.querySelector('#add-insurance-product-' + cmsReferencePrice);
+            let elementClicked = document.querySelector('a[data-id-iframe=' + e.data.idIframeModal + ']');
+            console.log(elementClicked);
             //let elementClicked = document.querySelector($(e.data.idIframeModal));
 
             addLoaderDot(null, elementClicked);
