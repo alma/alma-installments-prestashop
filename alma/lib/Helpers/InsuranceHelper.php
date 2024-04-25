@@ -66,7 +66,8 @@ class InsuranceHelper
         $cartProductRepository = null,
         $productRepository = null,
         $insuranceProductRepository = null,
-        $context = null
+        $context = null,
+        $settingsHelper = null
     ) {
         if (!$cartProductRepository) {
             $cartProductRepository = new CartProductRepository();
@@ -80,14 +81,17 @@ class InsuranceHelper
         if (!$context) {
             $context = \Context::getContext();
         }
+        if (!$settingsHelper) {
+            $settingsHelper = new SettingsHelper(
+                new ShopHelper(),
+                new ConfigurationHelper()
+            );
+        }
         $this->cartProductRepository = $cartProductRepository;
         $this->productRepository = $productRepository;
         $this->insuranceProductRepository = $insuranceProductRepository;
-        $this->settingsHelper = new SettingsHelper(
-            new ShopHelper(),
-            new ConfigurationHelper()
-        );
         $this->context = $context;
+        $this->settingsHelper = $settingsHelper;
     }
 
     /**
