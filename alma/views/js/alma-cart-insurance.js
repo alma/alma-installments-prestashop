@@ -135,6 +135,8 @@ function onloadInsuranceClickEvents() {
                         //location.reload();
                     });
             }
+
+            removeLoaderDot();
         }
     });
 }
@@ -191,7 +193,7 @@ function onloadInsuranceItemCartAlma() {
 
 function addLoaderDot(event, element = null) {
     let actionAlmaInsuranceProduct = undefined;
-    console.log(element);
+
     if (event == null) {
         actionAlmaInsuranceProduct = element.closest('.actions-alma-insurance-product');
     } else {
@@ -200,6 +202,15 @@ function addLoaderDot(event, element = null) {
 
     actionAlmaInsuranceProduct.classList.add('loading');
     actionAlmaInsuranceProduct.append(createLoaderDot());
+}
+
+function removeLoaderDot() {
+    let loaderDot = document.querySelector('.alma-loader-dot-container');
+    loaderDot.remove();
+    let actionsAlmaInsuranceProduct = document.querySelectorAll('.actions-alma-insurance-product');
+    actionsAlmaInsuranceProduct.forEach((actionAlmaInsuranceProduct) => {
+        actionAlmaInsuranceProduct.classList.remove('loading');
+    });
 }
 
 function createLoaderDot() {

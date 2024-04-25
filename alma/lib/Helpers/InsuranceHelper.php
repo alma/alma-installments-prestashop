@@ -89,8 +89,17 @@ class InsuranceHelper
     {
         return (bool) version_compare(_PS_VERSION_, '1.7', '>=')
             && (bool) (int) SettingsHelper::get(ConstantsHelper::ALMA_SHOW_INSURANCE_WIDGET_PRODUCT, false)
-            && (bool) (int) SettingsHelper::get(ConstantsHelper::ALMA_ALLOW_INSURANCE, false)
-            && (bool) (int) SettingsHelper::get(ConstantsHelper::ALMA_ACTIVATE_INSURANCE, false);
+            && $this->isInsuranceActivated();
+    }
+
+    /**
+     * @return bool
+     */
+    public function isInsuranceAllowedInCartPage()
+    {
+        return (bool) version_compare(_PS_VERSION_, '1.7', '>=')
+            && (bool) (int) SettingsHelper::get(ConstantsHelper::ALMA_SHOW_INSURANCE_WIDGET_CART, false)
+            && $this->isInsuranceActivated();
     }
 
     /**
