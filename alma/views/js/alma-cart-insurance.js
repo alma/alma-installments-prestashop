@@ -20,7 +20,6 @@
  * @copyright 2018-2023 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
-let cmsReferencePrice = null;
  (function ($) {
     $(function () {
         // Insurance
@@ -103,45 +102,39 @@ function onloadInsuranceClickEvents() {
 
     $('.alma-add-insurance-product').on("click", function (e) {
         let idIframeModal = $(this).attr("data-id-iframe");
+        let elementClicked = document.querySelector('a[data-id-iframe=' + idIframeModal + ']');
 
+        addLoaderDot(null, elementClicked);
         openModal('popupModal', 1, idIframeModal);
     });
 
     window.addEventListener('message', (e) => {
         if (e.data.type === 'getSelectedInsuranceData') {
             let idIframeModal = $('#' + e.data.idIframeModal);
-            // Todo : need to replace the id selector by data to fix the openModal
-            let elementClicked = document.querySelector('a[data-id-iframe=' + e.data.idIframeModal + ']');
-            console.log(elementClicked);
-            //let elementClicked = document.querySelector($(e.data.idIframeModal));
 
-            addLoaderDot(null, elementClicked);
-            $.ajax({
-                type: 'POST',
-                url: '/module/alma/insurance?action=addInsuranceProduct',
-                dataType: 'json',
-                data: {
-                    ajax: true,
-                    token: idIframeModal.attr('data-token'),
-                    product_id: idIframeModal.attr('data-product-id'),
-                    product_attribute_id: idIframeModal.attr('data-product-attribute-id'),
-                    customization_id: idIframeModal.attr('data-product-customization-id'),
-                    insurance_contract_id: e.data.selectedInsuranceData.insuranceContractId
-                },
-            })
-                .success(function () {
-                    //location.reload();
-                    //prestashop.emit('updateCart');
-                    // TODO : The updateCart event is not working need to be fixed
-                    console.log('updateCart');
-                    prestashop.on('updateCart', function () {
+            if (e.data.selectedInsuranceData !== null) {
+                $.ajax({
+                    type: 'POST',
+                    url: '/module/alma/insurance?action=addInsuranceProduct',
+                    dataType: 'json',
+                    data: {
+                        ajax: true,
+                        token: idIframeModal.attr('data-token'),
+                        product_id: idIframeModal.attr('data-product-id'),
+                        product_attribute_id: idIframeModal.attr('data-product-attribute-id'),
+                        customization_id: idIframeModal.attr('data-product-customization-id'),
+                        insurance_contract_id: e.data.selectedInsuranceData.insuranceContractId
+                    },
+                })
+                    .success(function () {
                         location.reload();
                     })
-                })
 
-                .error(function (e) {
-                    //location.reload();
-                });
+                    .error(function (e) {
+                        console.log(e)
+                        //location.reload();
+                    });
+            }
         }
     });
 }
