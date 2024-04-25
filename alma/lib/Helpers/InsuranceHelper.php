@@ -57,6 +57,10 @@ class InsuranceHelper
      * @var \Context|null
      */
     protected $context;
+    /**
+     * @var SettingsHelper
+     */
+    protected $settingsHelper;
 
     public function __construct(
         $cartProductRepository = null,
@@ -79,6 +83,10 @@ class InsuranceHelper
         $this->cartProductRepository = $cartProductRepository;
         $this->productRepository = $productRepository;
         $this->insuranceProductRepository = $insuranceProductRepository;
+        $this->settingsHelper = new SettingsHelper(
+            new ShopHelper(),
+            new ConfigurationHelper()
+        );
         $this->context = $context;
     }
 
@@ -88,7 +96,7 @@ class InsuranceHelper
     public function isInsuranceAllowedInProductPage()
     {
         return (bool) version_compare(_PS_VERSION_, '1.7', '>=')
-            && (bool) (int) SettingsHelper::get(ConstantsHelper::ALMA_SHOW_INSURANCE_WIDGET_PRODUCT, false)
+            && (bool) (int) $this->settingsHelper->getKey(ConstantsHelper::ALMA_SHOW_INSURANCE_WIDGET_PRODUCT, false)
             && $this->isInsuranceActivated();
     }
 
@@ -98,7 +106,7 @@ class InsuranceHelper
     public function isInsuranceAllowedInCartPage()
     {
         return (bool) version_compare(_PS_VERSION_, '1.7', '>=')
-            && (bool) (int) SettingsHelper::get(ConstantsHelper::ALMA_SHOW_INSURANCE_WIDGET_CART, false)
+            && (bool) (int) $this->settingsHelper->getKey(ConstantsHelper::ALMA_SHOW_INSURANCE_WIDGET_CART, false)
             && $this->isInsuranceActivated();
     }
 
@@ -108,8 +116,8 @@ class InsuranceHelper
     public function isInsuranceActivated()
     {
         return (bool) version_compare(_PS_VERSION_, '1.7', '>=')
-            && (bool) (int) SettingsHelper::get(ConstantsHelper::ALMA_ALLOW_INSURANCE, false)
-            && (bool) (int) SettingsHelper::get(ConstantsHelper::ALMA_ACTIVATE_INSURANCE, false);
+            && (bool) (int) $this->settingsHelper->getKey(ConstantsHelper::ALMA_ALLOW_INSURANCE, false)
+            && (bool) (int) $this->settingsHelper->getKey(ConstantsHelper::ALMA_ACTIVATE_INSURANCE, false);
     }
 
     /**

@@ -113,7 +113,7 @@ class SettingsHelper
      * @param string $configKey
      * @param string $default
      *
-     * @return false|mixed|string|null
+     * @return false|string|null
      */
     public function getKey($configKey, $default = null)
     {
