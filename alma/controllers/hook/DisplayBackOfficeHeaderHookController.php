@@ -28,6 +28,8 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
+use Alma\PrestaShop\Helpers\Admin\InsuranceHelper as AdminInsuranceHelper;
+use Alma\PrestaShop\Helpers\ConstantsHelper;
 use Alma\PrestaShop\Helpers\InsuranceHelper;
 use Alma\PrestaShop\Helpers\OrderHelper;
 use Alma\PrestaShop\Helpers\ShareOfCheckoutHelper;
@@ -43,12 +45,17 @@ class DisplayBackOfficeHeaderHookController extends FrontendHookController
      * @var InsuranceHelper
      */
     protected $insuranceHelper;
+    /**
+     * @var AdminInsuranceHelper
+     */
+    protected $adminInsuranceHelper;
 
     public function __construct($module)
     {
         $orderHelper = new OrderHelper();
         $this->socHelper = new ShareOfCheckoutHelper($orderHelper);
         $this->insuranceHelper = new InsuranceHelper();
+        $this->adminInsuranceHelper = new AdminInsuranceHelper($module);
 
         parent::__construct($module);
     }
@@ -89,8 +96,13 @@ class DisplayBackOfficeHeaderHookController extends FrontendHookController
         if ($this->insuranceHelper->isInsuranceActivated()) {
             $this->context->controller->addJS($this->module->_path . 'views/js/admin/components/modal.js');
             $this->context->controller->addJS($this->module->_path . 'views/js/admin/alma-insurance-orders.js');
-
-            return $this->module->display($this->module->file, 'DisplayBackOfficeHeader.tpl');
         }
+
+        $this->context->controller->addJS($this->module->_path . 'views/js/admin/alma-insurance-configuration.js');
+        $this->context->smarty->assign([
+            'urlScriptInsuranceModal' => $this->adminInsuranceHelper->envUrl() . ConstantsHelper::SCRIPT_MODAL_WIDGET_INSURANCE_PATH,
+        ]);
+
+        return $this->module->display($this->module->file, 'DisplayBackOfficeHeader.tpl');
     }
 }
