@@ -126,6 +126,7 @@ $_MODULE['<{alma}prestashop>producteligibilityadminformbuilder_97cadaaeae5141e73
 $_MODULE['<{alma}prestashop>producteligibilityadminformbuilder_500cde25580890603dc759aac02ff085'] = 'Affichage du badge sur les fiches produit';
 $_MODULE['<{alma}prestashop>debugadminformbuilder_3132e398e6e7acace9290305a55a7d25'] = 'Activer les logs';
 $_MODULE['<{alma}prestashop>debugadminformbuilder_1bd879809ceec8809db58ca2f12965bc'] = 'Options de débogage';
+$_MODULE['<{alma}prestashop>productrepository_add80e02e8a8bd91d737ab2de2ad8646'] = 'Assurance Alma';
 $_MODULE['<{alma}prestashop>paymentvalidation_efa820507b1951ee5722003639b1a0b0'] = 'Alma n\'est pas disponible dans cette devise';
 $_MODULE['<{alma}prestashop>paymentvalidation_1d879e270cfb195f257aab3116618d8b'] = 'Alma - Paiement +%d jours';
 $_MODULE['<{alma}prestashop>paymentvalidation_2ea09287a94f2bc88b459fc7d5a31b6b'] = 'Alma - Payer maintenant';
@@ -146,6 +147,7 @@ $_MODULE['<{alma}prestashop>insurancehelper_f1206f9fadc5ce41694f69129aecac26'] =
 $_MODULE['<{alma}prestashop>insurancehelper_7442e29d7d53e549b78d93c46b8cdcfc'] = 'Souscriptions';
 $_MODULE['<{alma}prestashop>insuranceservice_d87aee5118a62a7ff6c21e4ac31006c5'] = 'J\'atteste accepter de souscrire à l\'assurance proposée par Alma et avoir à cet effet avoir pris préalablement connaissance de la [fiche d\'informations et de conseil], du [document d\'information sur le produit d\'assurance] et de la [notice d\'information]. J\'y adhère sans réserve et accepte de signer électroniquement les différents documents constituant mon contrat, le cas échéant. Je consens expressément à la collecte et à l\'utilisation de mes données personnelles dans le cadre de la souscription et de la gestion de mon (ou de mes) contrat(s) d\'assurance.';
 $_MODULE['<{alma}prestashop>adminalmainsuranceconfiguration_b824200e9b8aca1fbb762d6566ff0cd7'] = 'Votre configuration a été sauvegardée';
+$_MODULE['<{alma}prestashop>adminalmainsuranceconfiguration_4a39c6a33c3441762924914168d2a387'] = 'Erreur lors de la création de la configuration de l\'assurance Alma : %1$s';
 $_MODULE['<{alma}prestashop>adminalmainsuranceorders_a66f446516cd125af12bd25073f88b78'] = 'Commandes avec assurance';
 $_MODULE['<{alma}prestashop>adminalmainsuranceorders_49414cda71621b3ee718ae5ff40804c5'] = 'Id de commande';
 $_MODULE['<{alma}prestashop>adminalmainsuranceorders_63d5049791d9d79d86e9a108b0a999ca'] = 'Référence';
@@ -154,6 +156,7 @@ $_MODULE['<{alma}prestashop>adminalmainsuranceorders_ce26601dac0dea138b7295f02b7
 $_MODULE['<{alma}prestashop>adminalmainsuranceorders_8dfcee4c6da50ea3690524c690303ab8'] = 'Nb Insurances';
 $_MODULE['<{alma}prestashop>adminalmainsuranceorders_44749712dbec183e983dcd78a7736c41'] = 'Date';
 $_MODULE['<{alma}prestashop>adminalmainsuranceorders_650be61892bf690026089544abbd9d26'] = 'Mode';
+$_MODULE['<{alma}prestashop>adminalmainsuranceorders_4351cfebe4b61d8aa5efa1d020710005'] = 'Afficher';
 $_MODULE['<{alma}prestashop>adminalmacategories_b718adec73e04ce3ec720dd11a06a308'] = 'ID';
 $_MODULE['<{alma}prestashop>adminalmacategories_49ee3087348e8d44e1feda1917443987'] = 'Nom';
 $_MODULE['<{alma}prestashop>adminalmacategories_b5a7adde1af5c87d7fd797b6245c2a39'] = 'Description';
@@ -184,7 +187,7 @@ $_MODULE['<{alma}prestashop>displayrefundshookcontroller_88d0b8b8a18adb1a2d0e05d
 $_MODULE['<{alma}prestashop>displayrefundshookcontroller_6036af1bc6455aea1332546921cae25b'] = 'Montant à rembourser';
 $_MODULE['<{alma}prestashop>displayrefundshookcontroller_becd29bb1a0004cdfc177e9bb117e56f'] = 'Procéder au remboursement';
 $_MODULE['<{alma}prestashop>getcontenthookcontroller_bf17ac149e2e7a530c677e9bd51d3fd2'] = 'Modules';
-$_MODULE['<{alma}prestashop>getcontenthookcontroller_f805369aef0b94a941a131e9a2b72ab5'] = 'Gestionnaire de module';
+$_MODULE['<{alma}prestashop>getcontenthookcontroller_5f265dfcb9ab68a1258ec25393ffb886'] = 'Gestionnaire de module';
 $_MODULE['<{alma}prestashop>getcontenthookcontroller_c6e24f81cb99e08c3d56b191c00aea28'] = 'Gestionnaire de module - Liste';
 $_MODULE['<{alma}prestashop>frontheaderhookcontroller_0bbf1fb0708055cf522541b4151894c4'] = 'Pour gérer vos achats avec Assurance, veuillez vous rendre à la page de paiement.';
 $_MODULE['<{alma}prestashop>displaypaymenthookcontroller_afd8ac1c65e1519d6a890e5f98558a52'] = '%1$s puis %2$d x %3$s';
