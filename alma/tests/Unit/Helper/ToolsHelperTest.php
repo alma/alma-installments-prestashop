@@ -34,7 +34,8 @@ class ToolsHelperTest extends TestCase
      */
     protected $toolsHelper;
 
-    public function setUp() {
+    public function setUp()
+    {
         $this->toolsHelper = new ToolsHelper();
     }
 

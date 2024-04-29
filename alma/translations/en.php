@@ -193,10 +193,7 @@ $_MODULE['<{alma}prestashop>displaypaymenthookcontroller_9088921432b295dfe6f0286
 $_MODULE['<{alma}prestashop>actionordergriddefinitionmodifierhookcontroller_26ddd5e40e811e8db050efc33508167b'] = 'Has Insurance';
 $_MODULE['<{alma}prestashop>actionordergriddefinitionmodifierhookcontroller_93cba07454f06a4a960172bbd6e2a435'] = 'Yes';
 $_MODULE['<{alma}prestashop>actionordergriddefinitionmodifierhookcontroller_bafd7322c6e97d25b6299b5d6fe8920b'] = 'No';
-$_MODULE['<{alma}prestashop>paymentoptionshookcontroller_1dd1c5fb7f25cd41b291d43a89e3aefd'] = 'Today';
-$_MODULE['<{alma}prestashop>paymentoptionshookcontroller_96b0141273eabab320119c467cdcaf17'] = 'Total';
-$_MODULE['<{alma}prestashop>paymentoptionshookcontroller_9bbd94e0a507283ae202812ea1bd6f20'] = '%s month later';
-$_MODULE['<{alma}prestashop>paymentoptionshookcontroller_9088921432b295dfe6f02863b2dc0ff8'] = '0 € today then %1$s on %2$s';
+$_MODULE['<{alma}prestashop>displayadminordertophookcontroller_f23e273d05fb22018b906de7ac983510'] = 'This basket includes one or more insurance subscriptions. Make sure that the subscription(s) is canceled before proceeding with the refund. %1$sManage the cancellation directly here.%2$s';
 $_MODULE['<{alma}prestashop>insurance_order_details_f5d74ea75357b5e139854c14f8e24fe3'] = 'Order details';
 $_MODULE['<{alma}prestashop>insurance_order_details_88b1b598df916ded43ff4abb0935ed7e'] = 'Orders details';
 $_MODULE['<{alma}prestashop>insurance_254f642527b45bc260048e30704edb39'] = 'Configuration';
