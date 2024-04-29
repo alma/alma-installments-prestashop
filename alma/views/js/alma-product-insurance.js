@@ -125,7 +125,7 @@ function onloadAddInsuranceInputOnProductAlma() {
 }
 
 function refreshWidget() {
-    let cmsReference = productDetails.id_product + '-' + productDetails.id_product_attribute;
+    let cmsReference = createCmsReference(productDetails);
     let regularPriceToCents = productDetails.price_without_reduction * 100;
 
     getproductDataForApiCall(
@@ -136,6 +136,18 @@ function refreshWidget() {
         settings.cart_id,
         settings.session_id
     );
+}
+
+function createCmsReference(productDetails) {
+    if (productDetails.id_product !== null) {
+        if (productDetails.id_product_attribute <= '0') {
+            return productDetails.id_product;
+        }
+
+        return productDetails.id_product + '-' + productDetails.id_product_attribute;
+    }
+
+    return undefined;
 }
 
 function addInputsInsurance(selectedAlmaInsurance) {
