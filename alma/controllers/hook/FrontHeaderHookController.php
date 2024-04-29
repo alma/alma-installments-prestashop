@@ -255,7 +255,7 @@ class FrontHeaderHookController extends FrontendHookController
 
         if ($this->insuranceHelper->hasInsuranceInCart()) {
             $this->controller->addJS($this->module->_path . ConstantsHelper::MINI_CART_INSURANCE_16_SCRIPT_PATH);
-            $text = $this->module->l('To manage your purchases with Assurance, please go to the checkout page.');
+            $text = $this->module->l('To manage your purchases with Assurance, please go to the checkout page.', 'FrontHeaderHookController');
             $content .= '<input type="hidden" value="' . $text . '" id="alma-mini-cart-insurance-message">';
 
             if ($this->iAmInOrderPage()) {

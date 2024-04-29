@@ -68,6 +68,9 @@ class InsuranceHelper
 
     public function __construct($module)
     {
+        /*
+         * @var \Alma $module
+         */
         $this->module = $module;
         $this->tabsHelper = new TabsHelper();
         $this->configurationHelper = new ConfigurationHelper();
@@ -81,19 +84,19 @@ class InsuranceHelper
     {
         return [
             ConstantsHelper::BO_CONTROLLER_INSURANCE_CLASSNAME => [
-                'name' => $this->module->l('Insurance'),
+                'name' => $this->module->l('Insurance', 'InsuranceHelper'),
                 'parent' => ConstantsHelper::ALMA_MODULE_NAME,
                 'position' => 3,
                 'icon' => 'security',
             ],
             ConstantsHelper::BO_CONTROLLER_INSURANCE_CONFIGURATION_CLASSNAME => [
-                'name' => $this->module->l('Configure'),
+                'name' => $this->module->l('Configure', 'InsuranceHelper'),
                 'parent' => ConstantsHelper::BO_CONTROLLER_INSURANCE_CLASSNAME,
                 'position' => 1,
                 'icon' => 'tune',
             ],
             ConstantsHelper::BO_CONTROLLER_INSURANCE_ORDERS_CLASSNAME => [
-                'name' => $this->module->l('Orders'),
+                'name' => $this->module->l('Orders', 'InsuranceHelper'),
                 'parent' => ConstantsHelper::BO_CONTROLLER_INSURANCE_CLASSNAME,
                 'position' => 2,
                 'icon' => 'shopping_basket',

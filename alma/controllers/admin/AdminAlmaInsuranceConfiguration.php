@@ -91,14 +91,14 @@ class AdminAlmaInsuranceConfigurationController extends ModuleAdminController
 
             $this->ajaxRenderAndExit(json_encode([
                     'success' => true,
-                    'message' => $this->module->l('Your configuration has been saved'),
+                    'message' => $this->module->l('Your configuration has been saved', 'AdminAlmaInsuranceConfiguration'),
                 ])
             );
         } catch (\Exception $e) {
             Logger::instance()->error('Error creating Alma configuration insurance: ' . $e->getMessage());
             $this->ajaxRenderAndExit(json_encode([
                     'error' => [
-                        'msg' => $this->module->l('Error creating Alma configuration insurance: ' . $e->getMessage()),
+                        'msg' => $this->module->l('Error creating Alma configuration insurance: ' . $e->getMessage(), 'AdminAlmaInsuranceConfiguration'),
                         'code' => $e->getCode(),
                     ],
                 ])
