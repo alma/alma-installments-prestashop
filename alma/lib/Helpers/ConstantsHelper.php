@@ -85,7 +85,6 @@ class ConstantsHelper
     const FO_IFRAME_WIDGET_INSURANCE_PATH = '/almaProductInPageWidget.html';
     const SCRIPT_MODAL_WIDGET_INSURANCE_PATH = '/displayModal.js';
 
-    const ALMA_INSURANCE_PRODUCT_NAME = 'Insurance by Alma';
     const ALMA_INSURANCE_PRODUCT_REFERENCE = 'alma-insurance';
     const ALMA_INSURANCE_ATTRIBUTE_NAME = 'Alma Insurance (DO NOT REMOVE)';
     const ALMA_INSURANCE_ATTRIBUTE_PUBLIC_NAME = 'My Insurance';

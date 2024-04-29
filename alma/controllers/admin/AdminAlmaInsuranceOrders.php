@@ -29,7 +29,7 @@ use Alma\PrestaShop\Helpers\SettingsHelper;
 
 class AdminAlmaInsuranceOrdersController extends ModuleAdminController
 {
-    protected $actions_available = ['show'];
+    protected $actions_available = ['view'];
 
     /**
      * @throws PrestaShopException
@@ -84,7 +84,7 @@ class AdminAlmaInsuranceOrdersController extends ModuleAdminController
      */
     public function renderList()
     {
-        $this->addRowAction('show');
+        $this->addRowAction('view');
 
         return parent::renderList();
     }
@@ -148,9 +148,9 @@ class AdminAlmaInsuranceOrdersController extends ModuleAdminController
      *
      * @throws SmartyException
      */
-    public function displayShowLink($token = null, $id, $name = null) // phpcs:ignore
+    public function displayViewLink($token = null, $id, $name = null) // phpcs:ignore
     {
-        $tpl = $this->createTemplate('helpers/list/list_action_edit.tpl');
+        $tpl = $this->createTemplate('helpers/list/list_action_view.tpl');
 
         $link = new LinkCore();
 
@@ -165,7 +165,7 @@ class AdminAlmaInsuranceOrdersController extends ModuleAdminController
 
         $tpl->assign([
             'href' => $linkToController,
-            'action' => 'Show',
+            'action' => $this->module->l('View', 'AdminAlmaInsuranceOrders'),
             'id' => $id,
         ]);
 

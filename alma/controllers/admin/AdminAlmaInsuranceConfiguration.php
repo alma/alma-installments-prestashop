@@ -97,7 +97,10 @@ class AdminAlmaInsuranceConfigurationController extends ModuleAdminController
             Logger::instance()->error('Error creating Alma configuration insurance: ' . $e->getMessage());
             $this->ajaxRenderAndExit(json_encode([
                     'error' => [
-                        'msg' => $this->module->l('Error creating Alma configuration insurance: ' . $e->getMessage(), 'AdminAlmaInsuranceConfiguration'),
+                        'msg' => sprintf(
+                            $this->module->l('Error creating configuration Alma insurance: %1$s', 'AdminAlmaInsuranceConfiguration'),
+                            $e->getMessage()
+                        ),
                         'code' => $e->getCode(),
                     ],
                 ])
