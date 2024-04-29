@@ -208,7 +208,7 @@ class InsuranceApiService
                 $order->id,
                 $idTransaction,
                 $this->context->session->getId(),
-                $this->cartHelper->getCartIdFromContext()
+                $order->id_cart
             );
 
             if (isset($result['subscriptions'])) {
