@@ -93,13 +93,13 @@ class CartHelper
         $this->toolsHelper = $toolsHelper;
         $this->priceHelper = $priceHelper;
         $this->cartData = $cartData;
+        $this->orderRepository = $orderRepository;
         $this->orderStateHelper = $orderStateHelper;
         $this->carrierHelper = $carrierHelper;
-        $this->orderRepository = $orderRepository;
     }
 
     /**
-     * @return null/int
+     * @return int|null
      */
     public function getCartIdFromContext()
     {

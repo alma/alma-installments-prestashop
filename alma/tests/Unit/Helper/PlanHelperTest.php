@@ -27,7 +27,6 @@ namespace Alma\PrestaShop\Tests\Unit\Helper;
 use Alma\API\Entities\FeePlan;
 use Alma\PrestaShop\Helpers\CustomFieldsHelper;
 use Alma\PrestaShop\Helpers\DateHelper;
-use Alma\PrestaShop\Helpers\OrderHelper;
 use Alma\PrestaShop\Helpers\PlanHelper;
 use Alma\PrestaShop\Helpers\SettingsHelper;
 use PHPUnit\Framework\TestCase;
@@ -55,6 +54,7 @@ class PlanHelperTest extends TestCase
 
     /**
      * @dataProvider provideIsPnxPlus4
+     *
      * @return void
      */
     public function testIsPnxPlus4($expected, $installmentsCount)
@@ -66,7 +66,6 @@ class PlanHelperTest extends TestCase
         );
 
         $this->assertEquals($expected, $this->planHelper->isPnxPlus4($plan));
-
     }
 
     public function provideIsPnxPlus4()
@@ -86,6 +85,7 @@ class PlanHelperTest extends TestCase
             ],
         ];
     }
+
     /**
      * @dataProvider provideIsDeferred
      *
@@ -101,7 +101,6 @@ class PlanHelperTest extends TestCase
         );
 
         $this->assertEquals($expected, $this->planHelper->isDeferred($plan));
-
     }
 
     public function provideIsDeferred()
