@@ -763,15 +763,15 @@ final class GetContentHookController extends AdminHookController
                 'success_classes' => 'alert alert-success',
                 'breadcrumbs2' => [
                     'container' => [
-                        'name' => $this->module->l('Modules'),
+                        'name' => $this->module->l('Modules', 'GetContentHookController'),
                         'href' => $href,
                     ],
                     'tab' => [
-                        'name' => $this->module->l('Module Manager '),
+                        'name' => $this->module->l('Module Manager', 'GetContentHookController'),
                         'href' => $href,
                     ],
                 ],
-                'quick_access_current_link_name' => $this->module->l('Module Manager - List'),
+                'quick_access_current_link_name' => $this->module->l('Module Manager - List', 'GetContentHookController'),
                 'quick_access_current_link_icon' => 'icon-AdminParentModulesSf',
                 'token' => $token,
                 'host_mode' => 0,
