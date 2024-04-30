@@ -158,20 +158,18 @@ class ProductHelper
     }
 
     /**
+     * We get the price without reduction and with tax with the param usereduc at false.
+     *
      * @param $productId
      * @param $productAttributeId
      *
-     * @return float|int
+     * @return float
      */
     public function getRegularPrice($productId, $productAttributeId)
     {
-        $product = new \Product((int) $productId);
-        $combination = new \Combination($productAttributeId);
+        $product = new \Product();
 
-        $combinationPrice = $combination->price;
-        $productRegularPrice = $product->price;
-
-        return $combinationPrice + $productRegularPrice;
+        return $product->getPriceStatic($productId, true, $productAttributeId, 6, null, false, false);
     }
 
     /**
