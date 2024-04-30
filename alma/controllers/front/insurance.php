@@ -235,6 +235,9 @@ class AlmaInsuranceModuleFrontController extends ModuleFrontController
         );
     }
 
+    /**
+     * @return void
+     */
     protected function addInsuranceProductAndAssociation()
     {
         $this->insuranceProductService->handleAddingProductInsurance(

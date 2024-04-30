@@ -55,6 +55,10 @@ class InsuranceHelperTest extends TestCase
      * @var SettingsHelper|(SettingsHelper&\PHPUnit_Framework_MockObject_MockObject)|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $settingsHelper;
+    /**
+     * @var \PHPUnit_Framework_MockObject_MockObject|\Tools|(\Tools&\PHPUnit_Framework_MockObject_MockObject)
+     */
+    protected $toolsHelper;
 
     /**
      * @return void
@@ -68,12 +72,14 @@ class InsuranceHelperTest extends TestCase
         $this->cart = $this->createMock(\Cart::class);
         $this->context->cart = $this->cart;
         $this->settingsHelper = $this->createMock(SettingsHelper::class);
+        $this->toolsHelper = $this->createMock(\Tools::class);
         $this->insuranceHelper = new InsuranceHelper(
             $this->cartProductRepository,
             $this->productRepository,
             $this->insuranceProductRepository,
             $this->context,
-            $this->settingsHelper
+            $this->settingsHelper,
+            $this->toolsHelper
         );
         $this->order = $this->createMock(Order::class);
     }
@@ -127,6 +133,7 @@ class InsuranceHelperTest extends TestCase
             ->method('getProductIdByReference')
             ->with(ConstantsHelper::ALMA_INSURANCE_PRODUCT_REFERENCE)
             ->willReturn(null);
+
         $this->assertFalse($this->insuranceHelper->hasInsuranceInCart());
     }
 
@@ -149,6 +156,7 @@ class InsuranceHelperTest extends TestCase
             ->method('getProductIdByReference')
             ->with(ConstantsHelper::ALMA_INSURANCE_PRODUCT_REFERENCE)
             ->willReturn($idInsuranceProduct);
+
         $this->assertEquals($expected, $this->insuranceHelper->hasInsuranceInCart());
     }
 
@@ -190,6 +198,11 @@ class InsuranceHelperTest extends TestCase
             )
             ->willReturn(true);
 
+        $this->toolsHelper->expects($this->once())
+            ->method('psVersionCompare')
+            ->with(_PS_VERSION_, '1.7', '>=')
+            ->willReturn(true);
+
         $this->assertTrue($this->insuranceHelper->isInsuranceAllowedInProductPage());
     }
 
@@ -206,6 +219,11 @@ class InsuranceHelperTest extends TestCase
                 ConstantsHelper::ALMA_SHOW_INSURANCE_WIDGET_PRODUCT, false,
             ])
             ->willReturn(false);
+
+        $this->toolsHelper->expects($this->once())
+            ->method('psVersionCompare')
+            ->with(_PS_VERSION_, '1.7', '>=')
+            ->willReturn(true);
 
         $this->assertFalse($this->insuranceHelper->isInsuranceAllowedInProductPage());
     }
@@ -228,6 +246,11 @@ class InsuranceHelperTest extends TestCase
                 ]
             )
             ->willReturnOnConsecutiveCalls(true, false);
+
+        $this->toolsHelper->expects($this->once())
+            ->method('psVersionCompare')
+            ->with(_PS_VERSION_, '1.7', '>=')
+            ->willReturn(true);
 
         $this->assertFalse($this->insuranceHelper->isInsuranceAllowedInProductPage());
     }
@@ -254,6 +277,11 @@ class InsuranceHelperTest extends TestCase
             )
             ->willReturnOnConsecutiveCalls(true, true, false);
 
+        $this->toolsHelper->expects($this->once())
+            ->method('psVersionCompare')
+            ->with(_PS_VERSION_, '1.7', '>=')
+            ->willReturn(true);
+
         $this->assertFalse($this->insuranceHelper->isInsuranceAllowedInProductPage());
     }
 
@@ -279,6 +307,11 @@ class InsuranceHelperTest extends TestCase
             )
             ->willReturn(true);
 
+        $this->toolsHelper->expects($this->once())
+            ->method('psVersionCompare')
+            ->with(_PS_VERSION_, '1.7', '>=')
+            ->willReturn(true);
+
         $this->assertTrue($this->insuranceHelper->isInsuranceAllowedInCartPage());
     }
 
@@ -295,6 +328,11 @@ class InsuranceHelperTest extends TestCase
                 ConstantsHelper::ALMA_SHOW_INSURANCE_WIDGET_CART, false,
             ])
             ->willReturn(false);
+
+        $this->toolsHelper->expects($this->once())
+            ->method('psVersionCompare')
+            ->with(_PS_VERSION_, '1.7', '>=')
+            ->willReturn(true);
 
         $this->assertFalse($this->insuranceHelper->isInsuranceAllowedInCartPage());
     }
@@ -317,6 +355,11 @@ class InsuranceHelperTest extends TestCase
                 ]
             )
             ->willReturnOnConsecutiveCalls(true, false);
+
+        $this->toolsHelper->expects($this->once())
+            ->method('psVersionCompare')
+            ->with(_PS_VERSION_, '1.7', '>=')
+            ->willReturn(true);
 
         $this->assertFalse($this->insuranceHelper->isInsuranceAllowedInCartPage());
     }
@@ -343,6 +386,11 @@ class InsuranceHelperTest extends TestCase
             )
             ->willReturnOnConsecutiveCalls(true, true, false);
 
+        $this->toolsHelper->expects($this->once())
+            ->method('psVersionCompare')
+            ->with(_PS_VERSION_, '1.7', '>=')
+            ->willReturn(true);
+
         $this->assertFalse($this->insuranceHelper->isInsuranceAllowedInCartPage());
     }
 
@@ -365,6 +413,11 @@ class InsuranceHelperTest extends TestCase
             )
             ->willReturn(true);
 
+        $this->toolsHelper->expects($this->once())
+            ->method('psVersionCompare')
+            ->with(_PS_VERSION_, '1.7', '>=')
+            ->willReturn(true);
+
         $this->assertTrue($this->insuranceHelper->isInsuranceActivated());
     }
 
@@ -381,6 +434,11 @@ class InsuranceHelperTest extends TestCase
                 ConstantsHelper::ALMA_ALLOW_INSURANCE, false,
             ])
             ->willReturn(false);
+
+        $this->toolsHelper->expects($this->once())
+            ->method('psVersionCompare')
+            ->with(_PS_VERSION_, '1.7', '>=')
+            ->willReturn(true);
 
         $this->assertFalse($this->insuranceHelper->isInsuranceActivated());
     }
@@ -403,6 +461,11 @@ class InsuranceHelperTest extends TestCase
                 ]
             )
             ->willReturnOnConsecutiveCalls(true, false);
+
+        $this->toolsHelper->expects($this->once())
+            ->method('psVersionCompare')
+            ->with(_PS_VERSION_, '1.7', '>=')
+            ->willReturn(true);
 
         $this->assertFalse($this->insuranceHelper->isInsuranceActivated());
     }
