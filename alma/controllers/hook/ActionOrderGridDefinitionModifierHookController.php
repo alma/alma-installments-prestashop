@@ -76,11 +76,11 @@ class ActionOrderGridDefinitionModifierHookController extends FrontendHookContro
             ->addAfter(
                 'date_add',
                 (new AlmaBooleanColumn('has_alma_insurance'))
-                    ->setName($this->module->l('Has Insurance', 'actionordergriddefinitionmodifiercontroller'))
+                    ->setName($this->module->l('Has Insurance', 'ActionOrderGridDefinitionModifierHookController'))
                     ->setOptions([
                         'field' => 'has_alma_insurance',
-                        'true_name' => $this->module->l('Yes', 'actionordergriddefinitionmodifiercontroller'),
-                        'false_name' => $this->module->l('No', 'actionordergriddefinitionmodifiercontroller'),
+                        'true_name' => $this->module->l('Yes', 'ActionOrderGridDefinitionModifierHookController'),
+                        'false_name' => $this->module->l('No', 'ActionOrderGridDefinitionModifierHookController'),
                     ])
             )
         ;

@@ -212,7 +212,7 @@ class ProductRepository
         /*
          * @var \ProductCore $product
          */
-        $insuranceProductName = $this->module->l(ConstantsHelper::ALMA_INSURANCE_PRODUCT_NAME, 'ProductRepository');
+        $insuranceProductName = $this->module->l('Insurance by Alma', 'ProductRepository');
         $product = new \Product();
         $product->name = $this->localeHelper->createMultiLangField($insuranceProductName);
         $product->reference = ConstantsHelper::ALMA_INSURANCE_PRODUCT_REFERENCE;

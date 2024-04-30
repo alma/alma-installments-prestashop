@@ -29,7 +29,7 @@ use Alma\PrestaShop\Helpers\SettingsHelper;
 
 class AdminAlmaInsuranceOrdersController extends ModuleAdminController
 {
-    protected $actions_available = ['show'];
+    protected $actions_available = ['view'];
 
     /**
      * @throws PrestaShopException
@@ -43,35 +43,35 @@ class AdminAlmaInsuranceOrdersController extends ModuleAdminController
         $this->bootstrap = true;
         parent::__construct();
 
-        $this->meta_title = $this->module->l('Orders with insurance');
+        $this->meta_title = $this->module->l('Orders with insurance', 'AdminAlmaInsuranceOrders');
 
         $this->fields_list = [
             'id_order' => [
-                'title' => $this->module->l('Id Order'),
+                'title' => $this->module->l('Id Order', 'AdminAlmaInsuranceOrders'),
                 'type' => 'text',
             ],
             'reference' => [
-                'title' => $this->module->l('Reference'),
+                'title' => $this->module->l('Reference', 'AdminAlmaInsuranceOrders'),
                 'type' => 'text',
             ],
             'status' => [
-                'title' => $this->module->l('Order Status'),
+                'title' => $this->module->l('Order Status', 'AdminAlmaInsuranceOrders'),
                 'type' => 'text',
             ],
             'customer' => [
-                'title' => $this->module->l('Customer'),
+                'title' => $this->module->l('Customer', 'AdminAlmaInsuranceOrders'),
                 'type' => 'text',
             ],
             'nb_insurance' => [
-                'title' => $this->module->l('Nb Insurances'),
+                'title' => $this->module->l('Nb Insurances', 'AdminAlmaInsuranceOrders'),
                 'type' => 'text',
             ],
             'date' => [
-                'title' => $this->module->l('Date'),
+                'title' => $this->module->l('Date', 'AdminAlmaInsuranceOrders'),
                 'type' => 'text',
             ],
             'mode' => [
-                'title' => $this->module->l('Mode'),
+                'title' => $this->module->l('Mode', 'AdminAlmaInsuranceOrders'),
                 'type' => 'text',
             ],
         ];
@@ -84,7 +84,7 @@ class AdminAlmaInsuranceOrdersController extends ModuleAdminController
      */
     public function renderList()
     {
-        $this->addRowAction('show');
+        $this->addRowAction('view');
 
         return parent::renderList();
     }
@@ -148,9 +148,9 @@ class AdminAlmaInsuranceOrdersController extends ModuleAdminController
      *
      * @throws SmartyException
      */
-    public function displayShowLink($token = null, $id, $name = null) // phpcs:ignore
+    public function displayViewLink($token = null, $id, $name = null) // phpcs:ignore
     {
-        $tpl = $this->createTemplate('helpers/list/list_action_edit.tpl');
+        $tpl = $this->createTemplate('helpers/list/list_action_view.tpl');
 
         $link = new LinkCore();
 
@@ -165,7 +165,7 @@ class AdminAlmaInsuranceOrdersController extends ModuleAdminController
 
         $tpl->assign([
             'href' => $linkToController,
-            'action' => 'Show',
+            'action' => $this->module->l('View', 'AdminAlmaInsuranceOrders'),
             'id' => $id,
         ]);
 

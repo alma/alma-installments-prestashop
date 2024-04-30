@@ -159,7 +159,7 @@ class PaymentValidation
 
         if (!$this->isValidCurrency()) {
             Logger::instance()->error("[Alma] Payment validation error for Cart {$cart->id}: currency mismatch.");
-            $msg = $this->module->l('Alma Monthly Installments are not available for this currency', 'paymentvalidation');
+            $msg = $this->module->l('Alma Monthly Installments are not available for this currency', 'PaymentValidation');
             throw new PaymentValidationError($cart, $msg);
         }
 
@@ -222,15 +222,15 @@ class PaymentValidation
             if ($this->settingsHelper->isDeferred($payment)) {
                 $days = $this->settingsHelper->getDuration($payment);
                 $paymentMode = sprintf(
-                    $this->module->l('Alma - +%d days payment', 'paymentvalidation'),
+                    $this->module->l('Alma - +%d days payment', 'PaymentValidation'),
                     $days
                 );
             } else {
                 if (1 === $installmentCount) {
-                    $paymentMode = $this->module->l('Alma - Pay now', 'paymentvalidation');
+                    $paymentMode = $this->module->l('Alma - Pay now', 'PaymentValidation');
                 } else {
                     $paymentMode = sprintf(
-                        $this->module->l('Alma - %d monthly installments', 'paymentvalidation'),
+                        $this->module->l('Alma - %d monthly installments', 'PaymentValidation'),
                         $installmentCount
                     );
                 }
