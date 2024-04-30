@@ -153,7 +153,7 @@ $_MODULE['<{alma}prestashop>adminalmainsuranceorders_49414cda71621b3ee718ae5ff40
 $_MODULE['<{alma}prestashop>adminalmainsuranceorders_63d5049791d9d79d86e9a108b0a999ca'] = 'Référence';
 $_MODULE['<{alma}prestashop>adminalmainsuranceorders_bbd3a18e6d45b8331cf8a715f3f0008d'] = 'État de la commande';
 $_MODULE['<{alma}prestashop>adminalmainsuranceorders_ce26601dac0dea138b7295f02b7620a7'] = 'Client';
-$_MODULE['<{alma}prestashop>adminalmainsuranceorders_8dfcee4c6da50ea3690524c690303ab8'] = 'Nb Insurances';
+$_MODULE['<{alma}prestashop>adminalmainsuranceorders_8dfcee4c6da50ea3690524c690303ab8'] = 'Nb Assurances';
 $_MODULE['<{alma}prestashop>adminalmainsuranceorders_44749712dbec183e983dcd78a7736c41'] = 'Date';
 $_MODULE['<{alma}prestashop>adminalmainsuranceorders_650be61892bf690026089544abbd9d26'] = 'Mode';
 $_MODULE['<{alma}prestashop>adminalmainsuranceorders_4351cfebe4b61d8aa5efa1d020710005'] = 'Afficher';
