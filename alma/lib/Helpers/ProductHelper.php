@@ -158,6 +158,8 @@ class ProductHelper
     }
 
     /**
+     * We get the price without reduction and with tax with the param usereduc at false.
+     *
      * @param $productId
      * @param $productAttributeId
      *
