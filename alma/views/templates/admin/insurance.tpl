@@ -42,7 +42,6 @@
 </div>
 <script type='module'>
     window.addEventListener("load", (e) => {
-        console.log('ici');
         let insuranceConfigurationParams = {$insuranceConfigurationParams};
 
         sendConfigurationInsuranceParams(insuranceConfigurationParams);
