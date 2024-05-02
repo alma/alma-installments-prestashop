@@ -180,6 +180,8 @@ class CartHelper
      * @param \Cart $cart
      *
      * @return float
+     *
+     * @throws \Exception
      */
     public function getCartTotal($cart)
     {
