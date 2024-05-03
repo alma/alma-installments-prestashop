@@ -24,6 +24,7 @@
 
 namespace Alma\PrestaShop\Tests\Unit\Helper;
 
+use Alma\PrestaShop\Builders\PriceHelperBuilder;
 use Alma\PrestaShop\Helpers\CurrencyHelper;
 use Alma\PrestaShop\Helpers\PriceHelper;
 use Alma\PrestaShop\Helpers\ToolsHelper;
@@ -38,7 +39,9 @@ class PriceHelperTest extends TestCase
 
     public function setUp()
     {
-        $this->priceHelper = new PriceHelper(new ToolsHelper(), new CurrencyHelper());
+        $priceHelperBuilder = new PriceHelperBuilder();
+        $this->priceHelper = $priceHelperBuilder->getInstance();
+
     }
 
     public function testConvertPriceToCents()

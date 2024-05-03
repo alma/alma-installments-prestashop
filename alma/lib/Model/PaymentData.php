@@ -26,6 +26,7 @@ namespace Alma\PrestaShop\Model;
 
 use Alma\API\Lib\PaymentValidator;
 use Alma\API\ParamsError;
+use Alma\PrestaShop\Factories\ContextFactory;
 use Alma\PrestaShop\Helpers\AddressHelper;
 use Alma\PrestaShop\Helpers\CarrierHelper;
 use Alma\PrestaShop\Helpers\CartHelper;
@@ -124,7 +125,7 @@ class PaymentData
      * @param CustomFieldsHelper $customFieldsHelper
      * @param CartData $cartData
      * @param ShippingData $shippingData
-     * @param \Context $context
+     * @param ContextFactory $contextFactory
      * @param AddressHelper $addressHelper
      * @param CountryHelper $countryHelper
      * @param LocaleHelper $localeHelper
@@ -142,7 +143,7 @@ class PaymentData
         $customFieldsHelper,
         $cartData,
         $shippingData,
-        $context,
+        $contextFactory,
         $addressHelper,
         $countryHelper,
         $localeHelper,
@@ -157,7 +158,7 @@ class PaymentData
         $this->customFieldsHelper = $customFieldsHelper;
         $this->cartData = $cartData;
         $this->shippingData = $shippingData;
-        $this->context = $context;
+        $this->context = $contextFactory->getContext();
         $this->addressHelper = $addressHelper;
         $this->countryHelper = $countryHelper;
         $this->localeHelper = $localeHelper;

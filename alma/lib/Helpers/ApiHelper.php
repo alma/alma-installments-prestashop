@@ -26,10 +26,12 @@ namespace Alma\PrestaShop\Helpers;
 
 use Alma\API\Endpoints\Results\Eligibility;
 use Alma\API\Entities\Merchant;
+use Alma\PrestaShop\Builders\Admin\InsuranceHelperBuilder;
 use Alma\PrestaShop\Exceptions\ActivationException;
 use Alma\PrestaShop\Exceptions\ApiMerchantsException;
 use Alma\PrestaShop\Exceptions\InsuranceInstallException;
 use Alma\PrestaShop\Exceptions\WrongCredentialsException;
+use Alma\PrestaShop\Factories\ModuleFactory;
 use Alma\PrestaShop\Helpers\Admin\InsuranceHelper;
 use Alma\PrestaShop\Logger;
 use Alma\PrestaShop\Services\InsuranceService;
@@ -62,14 +64,14 @@ class ApiHelper
     protected $clientHelper;
 
     /**
-     * @param $module
+     * @param ModuleFactory $moduleFactory
      * @param ClientHelper $clientHelper
      * @codeCoverageIgnore
      */
-    public function __construct($module, $clientHelper)
+    public function __construct($moduleFactory, $clientHelper)
     {
-        $this->module = $module;
-        $this->insuranceHelper = new InsuranceHelper($module);
+        $this->module = $moduleFactory->getModule();
+        $this->insuranceHelper = new InsuranceHelper($this->module);
         $this->insuranceService = new InsuranceService();
         $this->configurationHelper = new ConfigurationHelper();
         $this->clientHelper = $clientHelper;

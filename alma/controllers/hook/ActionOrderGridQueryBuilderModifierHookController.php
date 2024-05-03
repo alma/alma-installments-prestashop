@@ -37,6 +37,11 @@ use PrestaShop\PrestaShop\Core\Search\Filters\OrderFilters;
 
 class ActionOrderGridQueryBuilderModifierHookController extends FrontendHookController
 {
+    /**
+     * @var InsuranceHelper $insuranceHelper
+     */
+    protected $insuranceHelper;
+
     public function canRun()
     {
         // Front controllers can run if the module is properly configured ...

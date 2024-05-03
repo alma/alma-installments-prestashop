@@ -24,6 +24,8 @@
 
 namespace Alma\PrestaShop\Helpers;
 
+use Alma\PrestaShop\Factories\ContextFactory;
+
 if (!defined('_PS_VERSION_')) {
     exit;
 }
@@ -34,12 +36,17 @@ if (!defined('_PS_VERSION_')) {
 class OrderStateHelper
 {
     /**
-     * @param \Context $context
+     * @var \Context|null
+     */
+    protected $context;
+
+    /**
+     * @param ContextFactory $contextFactory
      * @codeCoverageIgnore
      */
-    public function __construct($context)
+    public function __construct($contextFactory)
     {
-        $this->context = $context;
+        $this->context = $contextFactory->getContext();
     }
 
     /**

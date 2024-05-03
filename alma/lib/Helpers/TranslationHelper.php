@@ -24,6 +24,8 @@
 
 namespace Alma\PrestaShop\Helpers;
 
+use Alma\PrestaShop\Factories\ModuleFactory;
+
 if (!defined('_PS_VERSION_')) {
     exit;
 }
@@ -38,11 +40,11 @@ class TranslationHelper
     /**
      * @codeCoverageIgnore
      *
-     * @param $module
+     * @param ModuleFactory $moduleFactory
      */
-    public function __construct($module)
+    public function __construct($moduleFactory)
     {
-        $this->module = $module;
+        $this->module = $moduleFactory->getModule();
     }
 
     /**
