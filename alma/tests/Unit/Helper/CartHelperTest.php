@@ -24,8 +24,9 @@
 
 namespace Alma\PrestaShop\Tests\Unit\Helper;
 
+use Alma\PrestaShop\Builders\CartHelperBuilder;
+use Alma\PrestaShop\Factories\ContextFactory;
 use Alma\PrestaShop\Helpers\CarrierHelper;
-use Alma\PrestaShop\Helpers\CartHelper;
 use Alma\PrestaShop\Helpers\OrderStateHelper;
 use Alma\PrestaShop\Helpers\PriceHelper;
 use Alma\PrestaShop\Helpers\ToolsHelper;
@@ -64,24 +65,9 @@ class CartHelperTest extends TestCase
      */
     protected $carrierHelper;
 
+
     public function setUp()
     {
-        $this->context = $this->createMock(\Context::class);
-        $this->toolHelper = $this->createMock(ToolsHelper::class);
-        $this->priceHelper = $this->createMock(PriceHelper::class);
-        $this->cartData = $this->createMock(CartData::class);
-        $this->orderRepository = $this->createMock(OrderRepository::class);
-        $this->orderStateHelper = $this->createMock(OrderStateHelper::class);
-        $this->carrierHelper = $this->createMock(CarrierHelper::class);
-        $this->cartHelper = new CartHelper(
-            $this->context,
-            $this->toolHelper,
-            $this->priceHelper,
-            $this->cartData,
-            $this->orderRepository,
-            $this->orderStateHelper,
-            $this->carrierHelper
-        );
         $this->cart = $this->createMock(\Cart::class);
     }
 
@@ -182,12 +168,17 @@ class CartHelperTest extends TestCase
                 'transaction_id' => 'payment_11yo3821WeKDsXa9Peqj1hT4pNGgZ3Ikvi',
             ],
         ];
-        $this->orderRepository->expects($this->once())
-            ->method('getCustomerOrders')
-            ->with(1, 10)
-            ->willReturn($expected);
 
-        $this->assertEquals($expected, $this->cartHelper->getOrdersByCustomer(1, 10));
+        $orderRepository = \Mockery::mock(OrderRepository::class)->makePartial();
+        $orderRepository->shouldReceive('getCustomerOrders', [1, 10])
+            ->andReturn($expected);
+
+        $cartHelperBuilder = \Mockery::mock(CartHelperBuilder::class)->makePartial();
+        $cartHelperBuilder->shouldReceive('getOrderRepository')->andReturn($orderRepository);
+
+        $cartHelper = $cartHelperBuilder->getInstance();
+
+        $this->assertEquals($expected, $cartHelper->getOrdersByCustomer(1, 10));
     }
 
     /**
@@ -195,12 +186,15 @@ class CartHelperTest extends TestCase
      */
     public function testGetOrdersByCustomerWithException()
     {
-        $this->orderRepository->expects($this->once())
-            ->method('getCustomerOrders')
-            ->with(99, 10)
-            ->willThrowException(new \PrestaShopDatabaseException());
+        $orderRepository = \Mockery::mock(OrderRepository::class)->makePartial();
+        $orderRepository->shouldReceive('getCustomerOrders', [99, 10])
+            ->andThrow(new \PrestaShopDatabaseException());
 
-        $this->assertEquals([], $this->cartHelper->getOrdersByCustomer(99, 10));
+        $cartHelperBuilder = \Mockery::mock(CartHelperBuilder::class)->makePartial();
+        $cartHelperBuilder->shouldReceive('getOrderRepository')->andReturn($orderRepository);
+
+        $cartHelper = $cartHelperBuilder->getInstance();
+        $this->assertEquals([], $cartHelper->getOrdersByCustomer(99, 10));
     }
 
     /**
@@ -209,15 +203,26 @@ class CartHelperTest extends TestCase
     public function testGetCartTotal()
     {
         $this->cart->method('getOrderTotal')->willReturn(364.5);
-        $this->toolHelper->expects($this->once())
+
+        $toolHelper = $this->createMock(ToolsHelper::class);
+        $toolHelper->expects($this->once())
             ->method('psRound')
             ->with(364.5)
             ->willReturn(364.5);
-        $this->priceHelper->expects($this->once())
+
+        $priceHelper = $this->createMock(PriceHelper::class);
+        $priceHelper->expects($this->once())
             ->method('convertPriceToCents')
             ->with(364.5)
             ->willReturn(36450);
-        $this->assertEquals(36450, $this->cartHelper->getCartTotal($this->cart));
+
+        $cartHelperBuilder = \Mockery::mock(CartHelperBuilder::class)->makePartial();
+        $cartHelperBuilder->shouldReceive('getToolsHelper')->andReturn($toolHelper);
+        $cartHelperBuilder->shouldReceive('getPriceHelper')->andReturn($priceHelper);
+
+        $cartHelper = $cartHelperBuilder->getInstance();
+
+        $this->assertEquals(36450, $cartHelper->getCartTotal($this->cart));
     }
 
     /**
@@ -225,9 +230,18 @@ class CartHelperTest extends TestCase
      */
     public function testGetCartIdFromContext()
     {
+        $this->cart = $this->createMock(\Cart::class);
         $this->cart->id = 1;
+        $this->context = $this->createMock(\Context::class);
         $this->context->cart = $this->cart;
 
-        $this->assertEquals(1, $this->cartHelper->getCartIdFromContext());
+        $contextFactory = \Mockery::mock(ContextFactory::class);
+        $contextFactory->shouldReceive('getContext')->andReturn($this->context);
+
+        $cartHelperBuilder = \Mockery::mock(CartHelperBuilder::class)->makePartial();
+        $cartHelperBuilder->shouldReceive('getContextFactory')->andReturn($contextFactory);
+        $cartHelper = $cartHelperBuilder->getInstance();
+
+        $this->assertEquals(1, $cartHelper->getCartIdFromContext());
     }
 }

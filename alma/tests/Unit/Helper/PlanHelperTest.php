@@ -25,31 +25,15 @@
 namespace Alma\PrestaShop\Tests\Unit\Helper;
 
 use Alma\API\Entities\FeePlan;
-use Alma\PrestaShop\Helpers\CustomFieldsHelper;
-use Alma\PrestaShop\Helpers\DateHelper;
-use Alma\PrestaShop\Helpers\PlanHelper;
-use Alma\PrestaShop\Helpers\SettingsHelper;
+use Alma\PrestaShop\Builders\PlanHelperBuilder;
 use PHPUnit\Framework\TestCase;
 
 class PlanHelperTest extends TestCase
 {
     protected function setUp()
     {
-        $this->dateHelper = \Mockery::mock(DateHelper::class);
-        $this->settingsHelper = \Mockery::mock(SettingsHelper::class);
-        $this->customFieldsHelper = \Mockery::mock(CustomFieldsHelper::class);
-        $this->context = \Mockery::mock(\Context::class);
-        $this->translationHelper = \Mockery::mock(TranslationHelperTest::class);
-        $this->module = \Mockery::mock(\Alma::class);
-
-        $this->planHelper = new PlanHelper(
-            $this->dateHelper,
-            $this->settingsHelper,
-            $this->customFieldsHelper,
-            $this->context,
-            $this->translationHelper,
-            $this->module
-        );
+        $planHelperBuilder = new PlanHelperBuilder();
+        $this->planHelper = $planHelperBuilder->getInstance();
     }
 
     /**

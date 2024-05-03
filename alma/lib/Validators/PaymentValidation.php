@@ -27,13 +27,12 @@ namespace Alma\PrestaShop\Validators;
 use Alma\API\Entities\Payment;
 use Alma\API\RequestError;
 use Alma\PrestaShop\API\MismatchException;
+use Alma\PrestaShop\Builders\PriceHelperBuilder;
+use Alma\PrestaShop\Builders\SettingsHelperBuilder;
 use Alma\PrestaShop\Helpers\ClientHelper;
-use Alma\PrestaShop\Helpers\ConfigurationHelper;
-use Alma\PrestaShop\Helpers\CurrencyHelper;
 use Alma\PrestaShop\Helpers\PriceHelper;
 use Alma\PrestaShop\Helpers\RefundHelper;
 use Alma\PrestaShop\Helpers\SettingsHelper;
-use Alma\PrestaShop\Helpers\ShopHelper;
 use Alma\PrestaShop\Helpers\ToolsHelper;
 use Alma\PrestaShop\Logger;
 
@@ -73,9 +72,14 @@ class PaymentValidation
     {
         $this->context = $context;
         $this->module = $module;
-        $this->settingsHelper = new SettingsHelper(new ShopHelper(), new ConfigurationHelper());
+
+        $settingsHelperBuilder = new SettingsHelperBuilder();
+        $this->settingsHelper = $settingsHelperBuilder->getInstance();
+
         $this->toolsHelper = new ToolsHelper();
-        $this->priceHelper = new PriceHelper($this->toolsHelper, new CurrencyHelper());
+
+        $priceHelperBuilder = new PriceHelperBuilder();
+        $this->priceHelper = $priceHelperBuilder->getInstance();
     }
 
     /**

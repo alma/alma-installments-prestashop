@@ -24,9 +24,8 @@
 
 namespace Alma\PrestaShop\Forms;
 
-use Alma\PrestaShop\Helpers\ConfigurationHelper;
+use Alma\PrestaShop\Builders\SettingsHelperBuilder;
 use Alma\PrestaShop\Helpers\SettingsHelper;
-use Alma\PrestaShop\Helpers\ShopHelper;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -57,7 +56,8 @@ class ExcludedCategoryAdminFormBuilder extends AbstractAlmaAdminFormBuilder
     {
         parent::__construct($module, $context, $image, $config);
 
-        $this->settingsHelper = new SettingsHelper(new ShopHelper(), new ConfigurationHelper());
+        $settingsHelperBuilder = new SettingsHelperBuilder();
+        $this->settingsHelper = $settingsHelperBuilder->getInstance();
     }
 
     /**

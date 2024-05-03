@@ -32,13 +32,12 @@ use Alma\API\Client;
 use Alma\API\Exceptions\ParametersException;
 use Alma\API\Exceptions\RequestException;
 use Alma\API\RequestError;
+use Alma\PrestaShop\Builders\SettingsHelperBuilder;
 use Alma\PrestaShop\Exceptions\OrderException;
 use Alma\PrestaShop\Helpers\ClientHelper;
-use Alma\PrestaShop\Helpers\ConfigurationHelper;
 use Alma\PrestaShop\Helpers\InsuranceHelper;
 use Alma\PrestaShop\Helpers\OrderHelper;
 use Alma\PrestaShop\Helpers\SettingsHelper;
-use Alma\PrestaShop\Helpers\ShopHelper;
 use Alma\PrestaShop\Hooks\AdminHookController;
 use Alma\PrestaShop\Logger;
 use Alma\PrestaShop\Services\InsuranceSubscriptionService;
@@ -81,7 +80,8 @@ final class StateHookController extends AdminHookController
         $this->orderHelper = new OrderHelper();
         $this->insuranceSubscriptionService = new InsuranceSubscriptionService();
         $this->insuranceHelper = new InsuranceHelper();
-        $this->settingsHelper = new SettingsHelper(new ShopHelper(), new ConfigurationHelper());
+        $settingsHelperBuilder = new SettingsHelperBuilder();
+        $this->settingsHelper = $settingsHelperBuilder->getInstance();
     }
 
     /**

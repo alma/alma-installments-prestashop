@@ -24,8 +24,8 @@
 
 namespace Alma\PrestaShop\Repositories;
 
+use Alma\PrestaShop\Builders\LocaleHelperBuilder;
 use Alma\PrestaShop\Helpers\ConstantsHelper;
-use Alma\PrestaShop\Helpers\LanguageHelper;
 use Alma\PrestaShop\Helpers\LocaleHelper;
 
 if (!defined('_PS_VERSION_')) {
@@ -47,7 +47,9 @@ class AttributeGroupRepository
 
     public function __construct()
     {
-        $this->localeHelper = new LocaleHelper(new LanguageHelper());
+        $localeHelperBuilder = new LocaleHelperBuilder();
+        $this->localeHelper = $localeHelperBuilder->getInstance();
+
         $this->module = \Module::getInstanceByName(ConstantsHelper::ALMA_MODULE_NAME);
     }
 

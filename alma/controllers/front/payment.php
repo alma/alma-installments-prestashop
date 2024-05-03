@@ -23,31 +23,12 @@
  */
 
 use Alma\API\ParamsError;
-use Alma\PrestaShop\Helpers\AddressHelper;
-use Alma\PrestaShop\Helpers\CarrierHelper;
-use Alma\PrestaShop\Helpers\CartHelper;
+use Alma\PrestaShop\Builders\PaymentDataBuilder;
+use Alma\PrestaShop\Builders\SettingsHelperBuilder;
 use Alma\PrestaShop\Helpers\ClientHelper;
-use Alma\PrestaShop\Helpers\ConfigurationHelper;
-use Alma\PrestaShop\Helpers\CountryHelper;
-use Alma\PrestaShop\Helpers\CurrencyHelper;
-use Alma\PrestaShop\Helpers\CustomerHelper;
-use Alma\PrestaShop\Helpers\CustomFieldsHelper;
-use Alma\PrestaShop\Helpers\LanguageHelper;
-use Alma\PrestaShop\Helpers\LocaleHelper;
-use Alma\PrestaShop\Helpers\OrderHelper;
-use Alma\PrestaShop\Helpers\PriceHelper;
-use Alma\PrestaShop\Helpers\ProductHelper;
 use Alma\PrestaShop\Helpers\SettingsHelper;
-use Alma\PrestaShop\Helpers\ShopHelper;
-use Alma\PrestaShop\Helpers\StateHelper;
-use Alma\PrestaShop\Helpers\ToolsHelper;
-use Alma\PrestaShop\Helpers\ValidateHelper;
 use Alma\PrestaShop\Logger;
-use Alma\PrestaShop\Model\CarrierData;
-use Alma\PrestaShop\Model\CartData;
 use Alma\PrestaShop\Model\PaymentData;
-use Alma\PrestaShop\Model\ShippingData;
-use Alma\PrestaShop\Repositories\ProductRepository;
 use Alma\PrestaShop\Traits\AjaxTrait;
 
 if (!defined('_PS_VERSION_')) {
@@ -79,50 +60,14 @@ class AlmaPaymentModuleFrontController extends ModuleFrontController
     public function __construct()
     {
         parent::__construct();
+
         $this->context = Context::getContext();
-        $this->settingsHelper = new SettingsHelper(new ShopHelper(), new ConfigurationHelper());
 
-        $toolsHelper = new ToolsHelper();
-        $languageHelper = new LanguageHelper();
-        $priceHelper = new PriceHelper($toolsHelper, new CurrencyHelper());
-        $localeHelper = new LocaleHelper($languageHelper);
-        $cartData = new CartData(
-            new ProductHelper(),
-            $this->settingsHelper,
-            $priceHelper,
-            new ProductRepository()
-        );
+        $settingsHelperBuilder = new SettingsHelperBuilder();
+        $this->settingsHelper = $settingsHelperBuilder->getInstance();
 
-        $carrierHelper = new CarrierHelper($this->context, new CarrierData());
-
-        $this->paymentData = new PaymentData(
-            $toolsHelper,
-            $this->settingsHelper,
-            $priceHelper,
-            new CustomFieldsHelper(
-                $languageHelper,
-                $localeHelper,
-                $this->settingsHelper
-            ),
-           $cartData,
-            new ShippingData($priceHelper, $carrierHelper),
-            $this->context,
-            new AddressHelper($toolsHelper),
-            new CountryHelper(),
-            $localeHelper,
-            new StateHelper(),
-            new CustomerHelper($this->context, new OrderHelper(), new ValidateHelper()),
-            new CartHelper(
-                $this->context,
-                $toolsHelper,
-                $priceHelper,
-                $cartData,
-                new \Alma\PrestaShop\Repositories\OrderRepository(),
-                new \Alma\PrestaShop\Helpers\OrderStateHelper($this->context),
-                $carrierHelper
-            ),
-            $carrierHelper
-        );
+        $paymentDataBuilder = new PaymentDataBuilder();
+        $this->paymentData = $paymentDataBuilder->getInstance();
     }
 
     /**

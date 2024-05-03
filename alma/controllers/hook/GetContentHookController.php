@@ -30,6 +30,11 @@ if (!defined('_PS_VERSION_')) {
 
 use Alma\API\Entities\Merchant;
 use Alma\API\RequestError;
+use Alma\PrestaShop\Builders\ApiHelperBuilder;
+use Alma\PrestaShop\Builders\CustomFieldHelperBuilder;
+use Alma\PrestaShop\Builders\PriceHelperBuilder;
+use Alma\PrestaShop\Builders\SettingsHelperBuilder;
+use Alma\PrestaShop\Builders\ShareOfCheckoutHelperBuilder;
 use Alma\PrestaShop\Exceptions\MissingParameterException;
 use Alma\PrestaShop\Forms\ApiAdminFormBuilder;
 use Alma\PrestaShop\Forms\CartEligibilityAdminFormBuilder;
@@ -45,19 +50,11 @@ use Alma\PrestaShop\Forms\ShareOfCheckoutAdminFormBuilder;
 use Alma\PrestaShop\Helpers\ApiHelper;
 use Alma\PrestaShop\Helpers\ApiKeyHelper;
 use Alma\PrestaShop\Helpers\ClientHelper;
-use Alma\PrestaShop\Helpers\ConfigurationHelper;
 use Alma\PrestaShop\Helpers\ConstantsHelper;
-use Alma\PrestaShop\Helpers\CurrencyHelper;
 use Alma\PrestaShop\Helpers\CustomFieldsHelper;
-use Alma\PrestaShop\Helpers\LanguageHelper;
-use Alma\PrestaShop\Helpers\LocaleHelper;
 use Alma\PrestaShop\Helpers\MediaHelper;
-use Alma\PrestaShop\Helpers\OrderHelper;
 use Alma\PrestaShop\Helpers\PriceHelper;
 use Alma\PrestaShop\Helpers\SettingsHelper;
-use Alma\PrestaShop\Helpers\ShareOfCheckoutHelper;
-use Alma\PrestaShop\Helpers\ShopHelper;
-use Alma\PrestaShop\Helpers\ToolsHelper;
 use Alma\PrestaShop\Hooks\AdminHookController;
 use Alma\PrestaShop\Logger;
 
@@ -151,11 +148,19 @@ final class GetContentHookController extends AdminHookController
      */
     public function __construct($module)
     {
-        $this->apiHelper = new ApiHelper($module, new ClientHelper());
+        $apiHelperBuilder = new ApiHelperBuilder();
+        $this->apiHelper = $apiHelperBuilder->getInstance();
+
         $this->apiKeyHelper = new ApiKeyHelper();
-        $this->settingsHelper = new SettingsHelper(new ShopHelper(), new ConfigurationHelper());
-        $this->priceHelper = new PriceHelper(new ToolsHelper(), new CurrencyHelper());
-        $this->customFieldsHelper = new CustomFieldsHelper(new LanguageHelper(), new LocaleHelper(new LanguageHelper()), $this->settingsHelper);
+
+        $settingsHelperBuilder = new SettingsHelperBuilder();
+        $this->settingsHelper = $settingsHelperBuilder->getInstance();
+
+        $priceHelperBuilder = new PriceHelperBuilder();
+        $this->priceHelper = $priceHelperBuilder->getInstance();
+
+        $customFieldHelperBuilder = new CustomFieldHelperBuilder();
+        $this->customFieldsHelper= $customFieldHelperBuilder->getInstance();
 
         parent::__construct($module);
     }
@@ -202,8 +207,9 @@ final class GetContentHookController extends AdminHookController
             return $credentialsError['message'];
         }
 
-        $orderHelper = new OrderHelper();
-        $shareOfCheckoutHelper = new ShareOfCheckoutHelper($orderHelper);
+        $shareOfCheckoutHelperBuilder = new ShareOfCheckoutHelperBuilder();
+        $shareOfCheckoutHelper = $shareOfCheckoutHelperBuilder->getInstance();
+
 
         if ($liveKey !== SettingsHelper::getLiveKey()
             && ConstantsHelper::OBSCURE_VALUE !== $liveKey
