@@ -71,10 +71,106 @@ class PaymentServiceBuilderTest extends TestCase
      *
      * @var PaymentServiceBuilder $paymentServiceBuilder
      */
-    protected $paymentServiceBuilder
-    ;
+    protected $paymentServiceBuilder;
+
+    /**
+     * @var PriceHelper $priceHelper
+     */
+    protected $priceHelper;
+
+    /**
+     * @var SettingsHelper $settingsHelper
+     */
+    protected $settingsHelper;
+
+    /**
+     * @var CartData $cartData
+     */
+    protected $cartData;
+
+    /**
+     * @var ContextFactory $contextFactory
+     */
+    protected $contextFactory;
+
+    /**
+     * @var CarrierHelper $carrierHelper
+     */
+    protected $carrierHelper;
+
+    /**
+     * @var ToolsHelper $toolsHelper
+     */
+    protected $toolsHelper;
+    /**
+     * @var LanguageHelper $languageHelper
+     */
+    protected $languageHelper;
+
+    /**
+     * @var LocaleHelper $localeHelper
+     */
+    protected $localeHelper;
+
+    /**
+     * @var ModuleFactory $moduleFactory
+     */
+    protected $moduleFactory;
+
+    /**
+     * @var ClientHelper $clientHelper
+     */
+    protected $clientHelper;
+
+    /**
+     * @var ConfigurationHelper $configurationHelper
+     */
+    protected $configurationHelper;
+
+    /**
+     * @var CustomFieldsHelper $customFieldsHelper
+     */
+    protected $customFieldsHelper;
+
     public function setUp() {
         $this->paymentServiceBuilder = new PaymentServiceBuilder();
+        $this->contextFactory = new ContextFactory();
+        $this->toolsHelper = new ToolsHelper();
+        $this->languageHelper = new LanguageHelper();
+        $this->moduleFactory = new ModuleFactory();
+        $this->clientHelper = new ClientHelper();
+        $this->configurationHelper = new ConfigurationHelper();
+
+        $this->localeHelper = new LocaleHelper(
+            $this->languageHelper
+        );
+        $this->priceHelper = new PriceHelper(
+            $this->toolsHelper,
+            new CurrencyHelper()
+        );
+
+        $this->settingsHelper =  new SettingsHelper(
+            new ShopHelper(),
+            $this->configurationHelper
+        );
+
+        $this->cartData = new CartData(
+            new ProductHelper(),
+            $this->settingsHelper,
+            $this->priceHelper,
+            new ProductRepository()
+        );
+
+        $this->carrierHelper = new CarrierHelper(
+            $this->contextFactory,
+            new CarrierData()
+        );
+
+        $this->customFieldsHelper =   new CustomFieldsHelper(
+            $this->languageHelper,
+            $this->localeHelper,
+            $this->settingsHelper
+        );
     }
 
 
@@ -85,40 +181,35 @@ class PaymentServiceBuilderTest extends TestCase
     public function testGetContextFactory() {
         $this->assertInstanceOf(ContextFactory::class, $this->paymentServiceBuilder->getContextFactory());
         $this->assertInstanceOf(ContextFactory::class, $this->paymentServiceBuilder->getContextFactory(
-            new ContextFactory())
-        );
+            $this->contextFactory
+        ));
     }
 
     public function testModuleContextFactory() {
         $this->assertInstanceOf(ModuleFactory::class, $this->paymentServiceBuilder->getModuleFactory());
         $this->assertInstanceOf(ModuleFactory::class, $this->paymentServiceBuilder->getModuleFactory(
-            new ModuleFactory())
-        );
+            $this->moduleFactory
+        ));
     }
 
     public function testGetSettingsHelper() {
         $this->assertInstanceOf(SettingsHelper::class, $this->paymentServiceBuilder->getSettingsHelper());
         $this->assertInstanceOf(SettingsHelper::class, $this->paymentServiceBuilder->getSettingsHelper(
-            new SettingsHelper(
-                new ShopHelper(),
-                new ConfigurationHelper()
-            ))
-        );
+            $this->settingsHelper
+        ));
     }
 
     public function testGetLocaleHelper() {
         $this->assertInstanceOf(LocaleHelper::class, $this->paymentServiceBuilder->getLocaleHelper());
         $this->assertInstanceOf(LocaleHelper::class, $this->paymentServiceBuilder->getLocaleHelper(
-            new LocaleHelper(
-                new LanguageHelper()
-            ))
-        );
+            $this->localeHelper
+        ));
     }
 
     public function testGetToolsHelper() {
         $this->assertInstanceOf(ToolsHelper::class, $this->paymentServiceBuilder->getToolsHelper());
         $this->assertInstanceOf(ToolsHelper::class, $this->paymentServiceBuilder->getToolsHelper(
-            new ToolsHelper()
+            $this->toolsHelper
         ));
     }
 
@@ -127,108 +218,44 @@ class PaymentServiceBuilderTest extends TestCase
         $this->assertInstanceOf(EligibilityHelper::class, $this->paymentServiceBuilder->getEligibilityHelper(
             new EligibilityHelper(
                 new PaymentData(
-                    new ToolsHelper(),
-                    new SettingsHelper(
-                        new ShopHelper(),
-                        new ConfigurationHelper()
-                    ),
-                    new PriceHelper(
-                        new ToolsHelper(),
-                        new CurrencyHelper()
-                    ),
-                    new CustomFieldsHelper(
-                        new LanguageHelper(),
-                        new LocaleHelper(
-                            new LanguageHelper()
-                        ),
-                        new SettingsHelper(
-                            new ShopHelper(),
-                            new ConfigurationHelper()
-                        )
-                    ),
-                    new CartData(
-                        new ProductHelper(),
-                        new SettingsHelper(
-                            new ShopHelper(),
-                            new ConfigurationHelper()
-                        ),
-                        new PriceHelper(
-                            new ToolsHelper(),
-                            new CurrencyHelper()
-                        ),
-                        new ProductRepository()
-                    ),
+                    $this->toolsHelper,
+                    $this->settingsHelper,
+                    $this->priceHelper,
+                    $this->customFieldsHelper,
+                    $this->cartData,
                     new ShippingData(
-                        new PriceHelper(
-                            new ToolsHelper(),
-                            new CurrencyHelper()
-                        ),
-                        new CarrierHelper(
-                            new ContextFactory(),
-                            new CarrierData()
-                        )
+                        $this->priceHelper,
+                        $this->carrierHelper
                     ),
-                    new ContextFactory(),
-                    new AddressHelper(
-                        new ToolsHelper()
-                    ),
+                    $this->contextFactory,
+                    new AddressHelper($this->toolsHelper),
                     new CountryHelper(),
-                    new LocaleHelper(
-                        new LanguageHelper()
-                    ),
+                    $this->localeHelper,
                     new StateHelper(),
                     new CustomerHelper(
-                        new ContextFactory(),
+                        $this->contextFactory,
                         new OrderHelper(),
                         new ValidateHelper()
                     ),
                     new CartHelper(
-                        new ContextFactory(),
-                        new ToolsHelper(),
-                        new PriceHelper(
-                            new ToolsHelper(),
-                            new CurrencyHelper()
-                        ),
-                        new CartData(
-                            new ProductHelper(),
-                            new SettingsHelper(
-                                new ShopHelper(),
-                                new ConfigurationHelper()
-                            ),
-                            new PriceHelper(
-                                new ToolsHelper(),
-                                new CurrencyHelper()
-                            ),
-                            new ProductRepository()
-                        ),
+                        $this->contextFactory,
+                        $this->toolsHelper,
+                        $this->priceHelper,
+                        $this->cartData,
                         new OrderRepository(),
-                        new OrderStateHelper(
-                            new ContextFactory()
-                        ),
-                        new CarrierHelper(
-                            new ContextFactory(),
-                            new CarrierData()
-                        )
+                        new OrderStateHelper($this->contextFactory),
+                        $this->carrierHelper
                     ),
-                    new CarrierHelper(
-                        new ContextFactory(),
-                        new CarrierData()
-                    )
+                    $this->carrierHelper
                 ),
-                new PriceHelper(
-                    new ToolsHelper(),
-                    new CurrencyHelper()
-                ),
-                new ClientHelper(),
-                new SettingsHelper(
-                    new ShopHelper(),
-                    new ConfigurationHelper()
-                ),
+                $this->priceHelper,
+                $this->clientHelper,
+                $this->settingsHelper,
                 new ApiHelper(
-                    new ModuleFactory(),
-                    new ClientHelper()
+                    $this->moduleFactory ,
+                    $this->clientHelper
                 ),
-                new ContextFactory()
+                $this->contextFactory
             )
         ));
     }
@@ -236,10 +263,7 @@ class PaymentServiceBuilderTest extends TestCase
     public function testGetPriceHelper() {
         $this->assertInstanceOf(PriceHelper::class, $this->paymentServiceBuilder->getPriceHelper());
         $this->assertInstanceOf(PriceHelper::class, $this->paymentServiceBuilder->getPriceHelper(
-            new PriceHelper(
-                new ToolsHelper(),
-                new CurrencyHelper()
-            )
+            $this->priceHelper
         ));
     }
 
@@ -253,34 +277,14 @@ class PaymentServiceBuilderTest extends TestCase
     public function testGetCustomFieldsHelper() {
         $this->assertInstanceOf(CustomFieldsHelper::class, $this->paymentServiceBuilder->getCustomFieldsHelper());
         $this->assertInstanceOf(CustomFieldsHelper::class, $this->paymentServiceBuilder->getCustomFieldsHelper(
-            new CustomFieldsHelper(
-                new LanguageHelper(),
-                new LocaleHelper(
-                    new LanguageHelper()
-                ),
-                new SettingsHelper(
-                    new ShopHelper(),
-                    new ConfigurationHelper()
-                )
-            )
+            $this->customFieldsHelper
         ));
     }
 
     public function testGetCartData() {
         $this->assertInstanceOf(CartData::class, $this->paymentServiceBuilder->getCartData());
         $this->assertInstanceOf(CartData::class, $this->paymentServiceBuilder->getCartData(
-            new CartData(
-                new ProductHelper(),
-                new SettingsHelper(
-                    new ShopHelper(),
-                    new ConfigurationHelper()
-                ),
-                new PriceHelper(
-                    new ToolsHelper(),
-                    new CurrencyHelper()
-                ),
-                new ProductRepository()
-            )
+            $this->cartData
         ));
     }
 
@@ -302,23 +306,13 @@ class PaymentServiceBuilderTest extends TestCase
         $this->assertInstanceOf(PlanHelper::class, $this->paymentServiceBuilder->getPlanHelper());
         $this->assertInstanceOf(PlanHelper::class, $this->paymentServiceBuilder->getPlanHelper(
             new PlanHelper(
-                new ModuleFactory(),
-                new ContextFactory(),
+                $this->moduleFactory ,
+                $this->contextFactory,
                 new DateHelper(),
-                new SettingsHelper(
-                    new ShopHelper(),
-                    new ConfigurationHelper()
-                ),
-                new CustomFieldsHelper(
-                    new LanguageHelper(),
-                    new LocaleHelper(new LanguageHelper()),
-                    new SettingsHelper(
-                        new ShopHelper(),
-                        new ConfigurationHelper()
-                    )
-                ),
+                $this->settingsHelper,
+                $this->customFieldsHelper,
                 new TranslationHelper(
-                    new ModuleFactory()
+                    $this->moduleFactory
                 )
             )
         ));
@@ -327,16 +321,14 @@ class PaymentServiceBuilderTest extends TestCase
     public function testGetConfigurationHelper() {
         $this->assertInstanceOf(ConfigurationHelper::class, $this->paymentServiceBuilder->getConfigurationHelper());
         $this->assertInstanceOf(ConfigurationHelper::class, $this->paymentServiceBuilder->getConfigurationHelper(
-            new ConfigurationHelper()
+            $this->configurationHelper
         ));
     }
 
     public function testGetTranslationHelper() {
         $this->assertInstanceOf(TranslationHelper::class, $this->paymentServiceBuilder->getTranslationHelper());
         $this->assertInstanceOf(TranslationHelper::class, $this->paymentServiceBuilder->getTranslationHelper(
-            new TranslationHelper(
-                new ModuleFactory()
-            )
+            new TranslationHelper($this->moduleFactory)
         ));
     }
 
@@ -344,32 +336,13 @@ class PaymentServiceBuilderTest extends TestCase
         $this->assertInstanceOf(CartHelper::class, $this->paymentServiceBuilder->getCartHelper());
         $this->assertInstanceOf(CartHelper::class, $this->paymentServiceBuilder->getCartHelper(
             new CartHelper(
-                new ContextFactory(),
-                new ToolsHelper(),
-                new PriceHelper(
-                    new ToolsHelper(),
-                    new CurrencyHelper()
-                ),
-                new CartData(
-                    new ProductHelper(),
-                    new SettingsHelper(
-                        new ShopHelper(),
-                        new ConfigurationHelper()
-                    ),
-                    new PriceHelper(
-                        new ToolsHelper(),
-                        new CurrencyHelper()
-                    ),
-                    new ProductRepository()
-                ),
+                $this->contextFactory,
+                $this->toolsHelper,
+                $this->priceHelper,
+                $this->cartData,
                 new OrderRepository(),
-                new OrderStateHelper(
-                    new ContextFactory()
-                ),
-                new CarrierHelper(
-                    new ContextFactory(),
-                    new CarrierData()
-                )
+                new OrderStateHelper($this->contextFactory),
+                $this->carrierHelper
             )
         ));
     }
@@ -378,20 +351,12 @@ class PaymentServiceBuilderTest extends TestCase
         $this->assertInstanceOf(PaymentOptionTemplateHelper::class, $this->paymentServiceBuilder->getPaymentOptionTemplateHelper());
         $this->assertInstanceOf(PaymentOptionTemplateHelper::class, $this->paymentServiceBuilder->getPaymentOptionTemplateHelper(
             new PaymentOptionTemplateHelper(
-                new ContextFactory(),
-                new ModuleFactory(),
-                new SettingsHelper(
-                    new ShopHelper(),
-                    new ConfigurationHelper()
-                ),
-                new ConfigurationHelper(),
-                new TranslationHelper(
-                    new ModuleFactory()
-                ),
-                new PriceHelper(
-                    new ToolsHelper(),
-                    new CurrencyHelper()
-                ),
+                $this->contextFactory,
+                $this->moduleFactory ,
+                $this->settingsHelper,
+                $this->configurationHelper,
+                new TranslationHelper($this->moduleFactory),
+                $this->priceHelper,
                 new DateHelper()
             )
         ));
@@ -401,39 +366,19 @@ class PaymentServiceBuilderTest extends TestCase
         $this->assertInstanceOf(PaymentOptionHelper::class, $this->paymentServiceBuilder->getPaymentOptionHelper());
         $this->assertInstanceOf(PaymentOptionHelper::class, $this->paymentServiceBuilder->getPaymentOptionHelper(
             new PaymentOptionHelper(
-                new ContextFactory(),
-                new ModuleFactory(),
-                new SettingsHelper(
-                    new ShopHelper(),
-                    new ConfigurationHelper()
-                ),
-                new CustomFieldsHelper(
-                    new LanguageHelper(),
-                    new LocaleHelper(
-                        new LanguageHelper()
-                    ),
-                    new SettingsHelper(
-                        new ShopHelper(),
-                        new ConfigurationHelper()
-                    )
-                ),
+                $this->contextFactory,
+                $this->moduleFactory,
+                $this->settingsHelper,
+                $this->customFieldsHelper,
                 new MediaHelper(),
-                new ConfigurationHelper(),
+                $this->configurationHelper,
                 new PaymentOptionTemplateHelper(
-                    new ContextFactory(),
-                    new ModuleFactory(),
-                    new SettingsHelper(
-                        new ShopHelper(),
-                        new ConfigurationHelper()
-                    ),
-                    new ConfigurationHelper(),
-                    new TranslationHelper(
-                        new ModuleFactory()
-                    ),
-                    new PriceHelper(
-                        new ToolsHelper(),
-                        new CurrencyHelper()
-                    ),
+                    $this->contextFactory,
+                    $this->moduleFactory,
+                    $this->settingsHelper,
+                    $this->configurationHelper,
+                    new TranslationHelper($this->moduleFactory),
+                    $this->priceHelper,
                     new DateHelper()
                 )
             )

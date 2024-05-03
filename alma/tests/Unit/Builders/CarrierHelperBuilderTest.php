@@ -36,8 +36,8 @@ class CarrierHelperBuilderTest extends TestCase
      *
      * @var CarrierHelperBuilder $carrierHelperBuilder
      */
-    protected $carrierHelperBuilder
-    ;
+    protected $carrierHelperBuilder;
+
     public function setUp() {
         $this->carrierHelperBuilder = new CarrierHelperBuilder();
     }

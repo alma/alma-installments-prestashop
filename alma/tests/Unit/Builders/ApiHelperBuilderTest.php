@@ -36,8 +36,8 @@ class ApiHelperBuilderTest extends TestCase
      *
      * @var ApiHelperBuilder $apiHelperBuilder
      */
-    protected $apiHelperBuilder
-    ;
+    protected $apiHelperBuilder;
+
     public function setUp() {
         $this->apiHelperBuilder = new ApiHelperBuilder();
     }

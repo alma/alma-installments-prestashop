@@ -60,9 +60,7 @@ class CustomFieldHelperBuilderTest extends TestCase
     public function testGetLocaleHelper() {
         $this->assertInstanceOf(LocaleHelper::class, $this->customFieldHelperBuilder->getLocaleHelper());
         $this->assertInstanceOf(LocaleHelper::class, $this->customFieldHelperBuilder->getLocaleHelper(
-            new LocaleHelper(
-                new LanguageHelper()
-            )
+            new LocaleHelper(new LanguageHelper())
         ));
     }
 

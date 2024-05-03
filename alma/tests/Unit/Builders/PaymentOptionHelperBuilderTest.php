@@ -49,10 +49,18 @@ class PaymentOptionHelperBuilderTest extends TestCase
      *
      * @var PaymentOptionHelperBuilder $paymentOptionHelperBuilder
      */
-    protected $paymentOptionHelperBuilder
-    ;
+    protected $paymentOptionHelperBuilder;
+
+    /**
+     * @var SettingsHelper $settingsHelper
+     */
+    protected $settingsHelper;
     public function setUp() {
         $this->paymentOptionHelperBuilder = new PaymentOptionHelperBuilder();
+        $this->settingsHelper = new SettingsHelper(
+            new ShopHelper(),
+            new ConfigurationHelper()
+        );
     }
 
 
@@ -80,10 +88,7 @@ class PaymentOptionHelperBuilderTest extends TestCase
     {
         $this->assertInstanceOf(SettingsHelper::class, $this->paymentOptionHelperBuilder->getSettingsHelper());
         $this->assertInstanceOf(SettingsHelper::class, $this->paymentOptionHelperBuilder->getSettingsHelper(
-            new SettingsHelper(
-                new ShopHelper(),
-                new ConfigurationHelper()
-            )
+            $this->settingsHelper
         ));
     }
 
@@ -93,13 +98,8 @@ class PaymentOptionHelperBuilderTest extends TestCase
         $this->assertInstanceOf(CustomFieldsHelper::class, $this->paymentOptionHelperBuilder->getCustomFieldsHelper(
             new CustomFieldsHelper(
                 new LanguageHelper(),
-                new LocaleHelper(
-                    new LanguageHelper()
-                ),
-                new SettingsHelper(
-                    new ShopHelper(),
-                    new ConfigurationHelper()
-                )
+                new LocaleHelper(new LanguageHelper()),
+                $this->settingsHelper
             )
         ));
     }
@@ -127,14 +127,9 @@ class PaymentOptionHelperBuilderTest extends TestCase
             new PaymentOptionTemplateHelper(
                 new ContextFactory(),
                 new ModuleFactory(),
-                new SettingsHelper(
-                    new ShopHelper(),
-                    new ConfigurationHelper()
-                ),
+                $this->settingsHelper ,
                 new ConfigurationHelper(),
-                new TranslationHelper(
-                    new ModuleFactory()
-                ),
+                new TranslationHelper(new ModuleFactory()),
                 new PriceHelper(
                     new ToolsHelper(),
                     new CurrencyHelper()
@@ -143,5 +138,4 @@ class PaymentOptionHelperBuilderTest extends TestCase
             )
         ));
     }
-
 }

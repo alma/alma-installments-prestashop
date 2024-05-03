@@ -38,8 +38,8 @@ class AddressHelperBuilderTest extends TestCase
      *
      * @var AddressHelperBuilder $addressHelperBuilder
      */
-    protected $addressHelperBuilder
-    ;
+    protected $addressHelperBuilder;
+
     public function setUp() {
         $this->addressHelperBuilder = new AddressHelperBuilder();
     }

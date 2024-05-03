@@ -55,8 +55,14 @@ class CartHelperBuilderTest extends TestCase
      */
     protected $priceHelper;
 
+    /**
+     * @var ContextFactory $contextFactory
+     */
+    protected $contextFactory;
+
     public function setUp() {
         $this->cartHelperBuilder = new CartHelperBuilder();
+        $this->contextFactory = new ContextFactory();
         $this->priceHelper =  new PriceHelper(
             new ToolsHelper(),
             new CurrencyHelper()
@@ -71,7 +77,7 @@ class CartHelperBuilderTest extends TestCase
     public function testGetContextFactory() {
         $this->assertInstanceOf(ContextFactory::class, $this->cartHelperBuilder->getContextFactory());
         $this->assertInstanceOf(ContextFactory::class, $this->cartHelperBuilder->getContextFactory(
-            new ContextFactory()
+            $this->contextFactory
         ));
     }
 
@@ -121,9 +127,7 @@ class CartHelperBuilderTest extends TestCase
     {
         $this->assertInstanceOf(OrderStateHelper::class, $this->cartHelperBuilder->getOrderStateHelper());
         $this->assertInstanceOf(OrderStateHelper::class, $this->cartHelperBuilder->getOrderStateHelper(
-            new OrderStateHelper(
-                new ContextFactory()
-            )
+            new OrderStateHelper($this->contextFactory)
         ));
     }
 
@@ -132,7 +136,7 @@ class CartHelperBuilderTest extends TestCase
         $this->assertInstanceOf(CarrierHelper::class, $this->cartHelperBuilder->getCarrierHelper());
         $this->assertInstanceOf(CarrierHelper::class, $this->cartHelperBuilder->getCarrierHelper(
             new CarrierHelper(
-                new ContextFactory(),
+                $this->contextFactory,
                 new CarrierData()
             )
         ));
