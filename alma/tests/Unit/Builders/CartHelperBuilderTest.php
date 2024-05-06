@@ -103,15 +103,7 @@ class CartHelperBuilderTest extends TestCase
     {
         $this->assertInstanceOf(CartData::class, $this->cartHelperBuilder->getCartData());
         $this->assertInstanceOf(CartData::class, $this->cartHelperBuilder->getPriceHelper(
-            new CartData(
-                new ProductHelper(),
-                new SettingsHelper(
-                  new ShopHelper(),
-                  new ConfigurationHelper()
-                ),
-                $this->priceHelper,
-                new ProductRepository()
-            )
+            $this->createMock(CartData::class)
         ));
     }
 
@@ -135,10 +127,7 @@ class CartHelperBuilderTest extends TestCase
     {
         $this->assertInstanceOf(CarrierHelper::class, $this->cartHelperBuilder->getCarrierHelper());
         $this->assertInstanceOf(CarrierHelper::class, $this->cartHelperBuilder->getCarrierHelper(
-            new CarrierHelper(
-                $this->contextFactory,
-                new CarrierData()
-            )
+            $this->createMock(CarrierHelper::class)
         ));
     }
 }

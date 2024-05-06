@@ -67,10 +67,7 @@ class CustomFieldHelperBuilderTest extends TestCase
     public function testGetSettingsHelper() {
         $this->assertInstanceOf(SettingsHelper::class, $this->customFieldHelperBuilder->getSettingsHelper());
         $this->assertInstanceOf(SettingsHelper::class, $this->customFieldHelperBuilder->getSettingsHelper(
-            new SettingsHelper(
-                new ShopHelper(),
-                new ConfigurationHelper()
-            )
+            $this->createMock(SettingsHelper::class)
         ));
     }
 }
