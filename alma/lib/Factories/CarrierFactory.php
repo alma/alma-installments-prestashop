@@ -22,24 +22,28 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
-namespace Alma\PrestaShop\Tests\Unit\Factories;
+namespace Alma\PrestaShop\Factories;
 
-use Alma\PrestaShop\Factories\AddressFactory;
-use PHPUnit\Framework\TestCase;
-class AddressFactoryTest extends TestCase
+
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
+/**
+ * Class CarrierFactory.
+ *
+ */
+class CarrierFactory
 {
+
     /**
-     * @var AddressFactory
+     * @param int|null $id Carrier ID
+     * @param int|null $id_lang Language ID
+     * @return \Carrier
      */
-    protected $addressFactory;
-
-    public function setUp()
+    public function create($id = null, $id_lang = null)
     {
-        $this->addressFactory = new AddressFactory();
+        return new \Carrier($id, $id_lang);
     }
 
-    public function testCreate()
-    {
-        $this->assertInstanceOf(\Address::class, $this->addressFactory->create(10));
-    }
 }

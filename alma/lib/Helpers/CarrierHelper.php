@@ -37,8 +37,10 @@ if (!defined('_PS_VERSION_')) {
 class CarrierHelper
 {
     const UNKNOWN_CARRIER = 'Unknown';
+
     /** @var \Context */
-    private $context;
+    protected $context;
+
     /** @var CarrierData */
     private $carrierData;
 
@@ -85,12 +87,4 @@ class CarrierHelper
         return self::UNKNOWN_CARRIER;
     }
 
-    /**
-     * @param int|null $id Carrier ID
-     * @param int|null $id_lang Language ID
-     */
-    public function createCarrier($id = null, $id_lang = null)
-    {
-        return new \Carrier($id, $id_lang);
-    }
 }

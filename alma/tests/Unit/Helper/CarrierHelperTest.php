@@ -24,11 +24,74 @@
 
 namespace Alma\PrestaShop\Tests\Unit\Helper;
 
+use Alma\PrestaShop\Builders\CarrierHelperBuilder;
+use Alma\PrestaShop\Helpers\CarrierHelper;
+use Alma\PrestaShop\Model\CarrierData;
 use PHPUnit\Framework\TestCase;
 
 class CarrierHelperTest extends TestCase
 {
     public function testGetParentCarrierNameById()
     {
+        $carrierHelperBuilder = new CarrierHelperBuilder();
+        $carrierHelper = $carrierHelperBuilder->getInstance();
+
+        $this->assertEquals('PrestaShop', $carrierHelper->getParentCarrierNameById(1));
+
+        $carrierData = \Mockery::mock(CarrierData::class)->makePartial();
+        $carrierData->shouldReceive('getCarriers')->andThrow(new \PrestaShopDatabaseException());
+
+        $carrierHelperBuilder = \Mockery::mock(CarrierHelperBuilder::class)->makePartial();
+        $carrierHelperBuilder->shouldReceive('getCarrierData')->andReturn($carrierData);
+        $carrierHelper = $carrierHelperBuilder->getInstance();
+
+        $this->assertEquals(CarrierHelper::UNKNOWN_CARRIER, $carrierHelper->getParentCarrierNameById(1));
+
+        $carrierData = \Mockery::mock(CarrierData::class)->makePartial();
+        $carrierData->shouldReceive('getCarriers')->andReturn([]);
+
+        $carrierHelperBuilder = \Mockery::mock(CarrierHelperBuilder::class)->makePartial();
+        $carrierHelperBuilder->shouldReceive('getCarrierData')->andReturn($carrierData);
+        $carrierHelper = $carrierHelperBuilder->getInstance();
+        $this->assertEquals(CarrierHelper::UNKNOWN_CARRIER, $carrierHelper->getParentCarrierNameById(1));
+
+        $carriers =  array (
+            array (
+                'id_carrier' => 5,
+                'id_reference' => 1,
+                'name' => 'PrestaShop',
+            ),
+        );
+
+        $carrierData = \Mockery::mock(CarrierData::class)->makePartial();
+        $carrierData->shouldReceive('getCarriers')->andReturn($carriers);
+
+        $carrierHelperBuilder = \Mockery::mock(CarrierHelperBuilder::class)->makePartial();
+        $carrierHelperBuilder->shouldReceive('getCarrierData')->andReturn($carrierData);
+        $carrierHelper = $carrierHelperBuilder->getInstance();
+        $this->assertEquals(CarrierHelper::UNKNOWN_CARRIER, $carrierHelper->getParentCarrierNameById(1));
+
+        $carriers =  array (
+            array (
+                'id_carrier' => 1,
+                'id_reference' => 2,
+                'name' => 'PrestaShop',
+            ),
+            array (
+                'id_carrier' => 3,
+                'id_reference' => 3,
+                'name' => 'Test',
+            ),
+        );
+
+        $carrierData = \Mockery::mock(CarrierData::class)->makePartial();
+        $carrierData->shouldReceive('getCarriers')->andReturn($carriers);
+
+        $carrierHelperBuilder = \Mockery::mock(CarrierHelperBuilder::class)->makePartial();
+        $carrierHelperBuilder->shouldReceive('getCarrierData')->andReturn($carrierData);
+        $carrierHelper = $carrierHelperBuilder->getInstance();
+        $this->assertEquals('PrestaShop', $carrierHelper->getParentCarrierNameById(1));
+
     }
+
 }

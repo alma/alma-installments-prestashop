@@ -24,22 +24,23 @@
 
 namespace Alma\PrestaShop\Tests\Unit\Factories;
 
-use Alma\PrestaShop\Factories\AddressFactory;
+use Alma\PrestaShop\Factories\CarrierFactory;
 use PHPUnit\Framework\TestCase;
-class AddressFactoryTest extends TestCase
+class CarrierFactoryTest extends TestCase
 {
     /**
-     * @var AddressFactory
+     * @var CarrierFactory
      */
-    protected $addressFactory;
+    protected $carrierFactory;
 
     public function setUp()
     {
-        $this->addressFactory = new AddressFactory();
+        $this->carrierFactory = new CarrierFactory();
     }
 
     public function testCreate()
     {
-        $this->assertInstanceOf(\Address::class, $this->addressFactory->create(10));
+        $this->assertInstanceOf(\Carrier::class, $this->carrierFactory->create(10, 1));
+        $this->assertInstanceOf(\Carrier::class, $this->carrierFactory->create());
     }
 }

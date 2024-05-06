@@ -25,6 +25,7 @@
 namespace Alma\PrestaShop\Tests\Unit\Builders;
 
 use Alma\PrestaShop\Builders\ShippingDataBuilder;
+use Alma\PrestaShop\Factories\CarrierFactory;
 use Alma\PrestaShop\Factories\ContextFactory;
 use Alma\PrestaShop\Helpers\CarrierHelper;
 use Alma\PrestaShop\Helpers\CurrencyHelper;
@@ -60,11 +61,11 @@ class ShippingDataBuilderTest extends TestCase
         ));
     }
 
-    public function testGetCarrierHelper()
+    public function testGetCarrierFactory()
     {
-        $this->assertInstanceOf(CarrierHelper::class, $this->shippingDataBuilder->getCarrierHelper());
-        $this->assertInstanceOf(CarrierHelper::class, $this->shippingDataBuilder->getCarrierHelper(
-            $this->createMock(CarrierHelper::class)
+        $this->assertInstanceOf(CarrierFactory::class, $this->shippingDataBuilder->getCarrierFactory());
+        $this->assertInstanceOf(CarrierFactory::class, $this->shippingDataBuilder->getCarrierFactory(
+            $this->createMock(CarrierFactory::class)
         ));
     }
 }
