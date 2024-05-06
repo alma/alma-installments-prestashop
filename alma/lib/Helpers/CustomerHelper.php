@@ -53,7 +53,6 @@ class CustomerHelper
      * @param OrderHelper $orderHelper
      * @param ValidateHelper $validateHelper
      *
-     * @codeCoverageIgnore
      */
     public function __construct($contextFactory, $orderHelper, $validateHelper)
     {

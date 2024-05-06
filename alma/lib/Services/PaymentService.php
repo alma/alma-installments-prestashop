@@ -180,7 +180,6 @@ class PaymentService
      * @param PaymentOptionTemplateHelper $paymentOptionTemplateHelper
      * @param PaymentOptionHelper $paymentOptionHelper
      *
-     * @codeCoverageIgnore
      */
     public function __construct(
         $contextFactory,

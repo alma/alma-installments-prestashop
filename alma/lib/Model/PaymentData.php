@@ -141,7 +141,6 @@ class PaymentData
      * @param CarrierHelper $carrierHelper
      * @param AddressFactory $addressFactory
      *
-     * @codeCoverageIgnore
      */
     public function __construct(
         $toolsHelper,

@@ -45,7 +45,6 @@ abstract class AbstractAlmaAdminFormBuilder extends AbstractAdminFormBuilder
     protected $config;
 
     /**
-     * @codeCoverageIgnore
      *
      * @param string $image
      * @param array $config

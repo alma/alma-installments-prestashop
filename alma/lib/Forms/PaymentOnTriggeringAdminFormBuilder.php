@@ -47,7 +47,6 @@ class PaymentOnTriggeringAdminFormBuilder extends AbstractAlmaAdminFormBuilder
     protected $customFieldsHelper;
 
     /**
-     * @codeCoverageIgnore
      *
      * @param $module
      */

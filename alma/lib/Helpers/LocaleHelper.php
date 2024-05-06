@@ -47,7 +47,6 @@ class LocaleHelper
     protected $languageHelper;
 
     /**
-     * @codeCoverageIgnore
      *
      * @param $languageHelper
      */

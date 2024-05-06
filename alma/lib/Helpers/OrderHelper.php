@@ -53,7 +53,6 @@ class OrderHelper
     private $module;
 
     /**
-     * @codeCoverageIgnore
      */
     public function __construct()
     {

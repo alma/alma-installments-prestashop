@@ -42,7 +42,6 @@ class OrderStateHelper
 
     /**
      * @param ContextFactory $contextFactory
-     * @codeCoverageIgnore
      */
     public function __construct($contextFactory)
     {

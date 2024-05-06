@@ -45,7 +45,6 @@ class ExcludedCategoryAdminFormBuilder extends AbstractAlmaAdminFormBuilder
     protected $settingsHelper;
 
     /**
-     * @codeCoverageIgnore
      *
      * @param $module
      * @param $context

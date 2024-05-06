@@ -39,7 +39,6 @@ class HookHelper
     protected $hooks;
 
     /**
-     * @codeCoverageIgnore
      */
     public function __construct()
     {

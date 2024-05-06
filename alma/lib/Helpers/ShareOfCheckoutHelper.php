@@ -89,7 +89,6 @@ class ShareOfCheckoutHelper
     }
 
     /**
-     * @codeCoverageIgnore
      *
      * @return void
      *

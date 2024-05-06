@@ -73,7 +73,6 @@ class PlanHelper
      * @param CustomFieldsHelper $customFieldsHelper
      * @param TranslationHelper $translationHelper
      *
-     * @codeCoverageIgnore
      */
     public function __construct(
         $moduleFactory,

@@ -79,7 +79,6 @@ class PaymentOptionHelper
      * @param ConfigurationHelper $configurationHelper
      * @param PaymentOptionTemplateHelper $paymentOptionTemplateHelper
      *
-     * @codeCoverageIgnore
      */
     public function __construct(
         $contextFactory,
