@@ -153,11 +153,6 @@ class DisplayProductActionsHookController extends FrontendHookController
                 $this->context->session->getId(),
                 $this->cartHelper->getCartIdFromContext()
             ),
-            'scriptModalUrl' => sprintf(
-                '%s%s',
-                $this->adminInsuranceHelper->envUrl(),
-                ConstantsHelper::SCRIPT_MODAL_WIDGET_INSURANCE_PATH
-            ),
         ]);
 
         return $this->module->display($this->module->file, 'displayProductActions.tpl');

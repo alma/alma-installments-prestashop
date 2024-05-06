@@ -78,6 +78,9 @@ class AlmaInsuranceModuleFrontController extends ModuleFrontController
                     case 'removeInsuranceProduct':
                         $this->ajaxRemoveInsuranceProductAndAssociation($context);
                         break;
+                    case 'addInsuranceProduct':
+                        $this->ajaxAddInsuranceProductAndAssociation();
+                        break;
                     default:
                         throw new AlmaException(sprintf('Action unknown : %s', Tools::getValue('action')));
                 }
@@ -152,6 +155,18 @@ class AlmaInsuranceModuleFrontController extends ModuleFrontController
     }
 
     /**
+     * @return void
+     *
+     * @throws PrestaShopException
+     */
+    public function ajaxAddInsuranceProductAndAssociation()
+    {
+        $this->addInsuranceProductAndAssociation();
+
+        $this->ajaxRenderAndExit(json_encode(['success' => true]));
+    }
+
+    /**
      * @param \ContextCore $context
      *
      * @return array
@@ -217,6 +232,19 @@ class AlmaInsuranceModuleFrontController extends ModuleFrontController
             $idCustomization,
             'down',
             $context->cart->id_address_delivery
+        );
+    }
+
+    /**
+     * @return void
+     */
+    protected function addInsuranceProductAndAssociation()
+    {
+        $this->insuranceProductService->handleAddingProductInsurance(
+            \Tools::getValue('product_id'),
+            \Tools::getValue('insurance_contract_id'),
+            1,
+            \Tools::getValue('customization_id')
         );
     }
 }

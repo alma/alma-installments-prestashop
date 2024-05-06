@@ -128,7 +128,7 @@ function refreshWidget() {
     let cmsReference = createCmsReference(productDetails);
     let regularPriceToCents = Math.round(productDetails.price_without_reduction * 100);
 
-    getproductDataForApiCall(
+    getProductDataForApiCall(
         cmsReference,
         regularPriceToCents,
         settings.merchant_id,
@@ -186,7 +186,7 @@ function removeInputInsurance() {
 }
 
 function addModalListenerToAddToCart() {
-    if (settings.is_add_to_cart_popup_insurance_activated === 'true') {
+    if (settings.isAddToCartPopupActivated === 'true') {
         let addToCart = document.querySelector('.add-to-cart');
         addToCart.removeEventListener("click",insuranceListener)
         addToCart.addEventListener("click", insuranceListener);

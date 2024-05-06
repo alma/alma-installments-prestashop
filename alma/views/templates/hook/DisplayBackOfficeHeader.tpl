@@ -1,3 +1,5 @@
+<script type='module' src='{$urlScriptInsuranceModal}'></script>
+<div id="alma-insurance-modal"></div>
 <script type="text/javascript">
     window.InsuranceModalConfirm = {
         confirmTitleText: "{l s='Confirm Insurance cancellation before refunding the order' mod='alma'}",

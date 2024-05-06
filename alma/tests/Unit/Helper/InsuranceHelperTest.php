@@ -27,6 +27,7 @@ namespace Alma\PrestaShop\Tests\Unit\Helper;
 use Alma\API\Entities\Order;
 use Alma\PrestaShop\Helpers\ConstantsHelper;
 use Alma\PrestaShop\Helpers\InsuranceHelper;
+use Alma\PrestaShop\Helpers\SettingsHelper;
 use Alma\PrestaShop\Repositories\AlmaInsuranceProductRepository;
 use Alma\PrestaShop\Repositories\CartProductRepository;
 use Alma\PrestaShop\Repositories\ProductRepository;
@@ -50,6 +51,14 @@ class InsuranceHelperTest extends TestCase
      * @var CartProductRepository|(CartProductRepository&\PHPUnit_Framework_MockObject_MockObject)|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $cartProductRepository;
+    /**
+     * @var SettingsHelper|(SettingsHelper&\PHPUnit_Framework_MockObject_MockObject)|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $settingsHelper;
+    /**
+     * @var \PHPUnit_Framework_MockObject_MockObject|\Tools|(\Tools&\PHPUnit_Framework_MockObject_MockObject)
+     */
+    protected $toolsHelper;
 
     /**
      * @return void
@@ -62,11 +71,15 @@ class InsuranceHelperTest extends TestCase
         $this->context = $this->createMock(\Context::class);
         $this->cart = $this->createMock(\Cart::class);
         $this->context->cart = $this->cart;
+        $this->settingsHelper = $this->createMock(SettingsHelper::class);
+        $this->toolsHelper = $this->createMock(\Tools::class);
         $this->insuranceHelper = new InsuranceHelper(
             $this->cartProductRepository,
             $this->productRepository,
             $this->insuranceProductRepository,
-            $this->context
+            $this->context,
+            $this->settingsHelper,
+            $this->toolsHelper
         );
         $this->order = $this->createMock(Order::class);
     }
@@ -120,6 +133,7 @@ class InsuranceHelperTest extends TestCase
             ->method('getProductIdByReference')
             ->with(ConstantsHelper::ALMA_INSURANCE_PRODUCT_REFERENCE)
             ->willReturn(null);
+
         $this->assertFalse($this->insuranceHelper->hasInsuranceInCart());
     }
 
@@ -142,6 +156,7 @@ class InsuranceHelperTest extends TestCase
             ->method('getProductIdByReference')
             ->with(ConstantsHelper::ALMA_INSURANCE_PRODUCT_REFERENCE)
             ->willReturn($idInsuranceProduct);
+
         $this->assertEquals($expected, $this->insuranceHelper->hasInsuranceInCart());
     }
 
@@ -159,6 +174,300 @@ class InsuranceHelperTest extends TestCase
     public function testCreateCmsReferenceWithProductIdAndProductAttributeId($productId, $productAttributeId, $expected)
     {
         $this->assertEquals($expected, $this->insuranceHelper->createCmsReference($productId, $productAttributeId));
+    }
+
+    /**
+     * Given a true parameter for all insurance settings we return true
+     *
+     * @return void
+     */
+    public function testIsInsuranceAllowedInProductPageWithAllParameterTrue()
+    {
+        $this->settingsHelper->expects($this->exactly(3))
+            ->method('getKey')
+            ->withConsecutive(
+                [
+                    ConstantsHelper::ALMA_SHOW_INSURANCE_WIDGET_PRODUCT, false,
+                ],
+                [
+                    ConstantsHelper::ALMA_ALLOW_INSURANCE, false,
+                ],
+                [
+                    ConstantsHelper::ALMA_ACTIVATE_INSURANCE, false,
+                ]
+            )
+            ->willReturn(true);
+
+        $this->toolsHelper->expects($this->once())
+            ->method('psVersionCompare')
+            ->with(_PS_VERSION_, '1.7', '>=')
+            ->willReturn(true);
+
+        $this->assertTrue($this->insuranceHelper->isInsuranceAllowedInProductPage());
+    }
+
+    /**
+     * Given a false parameter for widget insurance settings we return false
+     *
+     * @return void
+     */
+    public function testIsInsuranceAllowedInProductPageWithWidgetParameterFalse()
+    {
+        $this->settingsHelper->expects($this->exactly(1))
+            ->method('getKey')
+            ->withConsecutive([
+                ConstantsHelper::ALMA_SHOW_INSURANCE_WIDGET_PRODUCT, false,
+            ])
+            ->willReturn(false);
+
+        $this->toolsHelper->expects($this->once())
+            ->method('psVersionCompare')
+            ->with(_PS_VERSION_, '1.7', '>=')
+            ->willReturn(true);
+
+        $this->assertFalse($this->insuranceHelper->isInsuranceAllowedInProductPage());
+    }
+
+    /**
+     * Given a false parameter for allow insurance settings we return false
+     *
+     * @return void
+     */
+    public function testIsInsuranceAllowedInProductPageWithAllowInsuranceParameterFalse()
+    {
+        $this->settingsHelper->expects($this->exactly(2))
+            ->method('getKey')
+            ->withConsecutive(
+                [
+                    ConstantsHelper::ALMA_SHOW_INSURANCE_WIDGET_PRODUCT, false,
+                ],
+                [
+                    ConstantsHelper::ALMA_ALLOW_INSURANCE, false,
+                ]
+            )
+            ->willReturnOnConsecutiveCalls(true, false);
+
+        $this->toolsHelper->expects($this->once())
+            ->method('psVersionCompare')
+            ->with(_PS_VERSION_, '1.7', '>=')
+            ->willReturn(true);
+
+        $this->assertFalse($this->insuranceHelper->isInsuranceAllowedInProductPage());
+    }
+
+    /**
+     * Given a false parameter for activate insurance settings we return false
+     *
+     * @return void
+     */
+    public function testIsInsuranceAllowedInProductPageWithActivateInsuranceParameterFalse()
+    {
+        $this->settingsHelper->expects($this->exactly(3))
+            ->method('getKey')
+            ->withConsecutive(
+                [
+                    ConstantsHelper::ALMA_SHOW_INSURANCE_WIDGET_PRODUCT, false,
+                ],
+                [
+                    ConstantsHelper::ALMA_ALLOW_INSURANCE, false,
+                ],
+                [
+                    ConstantsHelper::ALMA_ACTIVATE_INSURANCE, false,
+                ]
+            )
+            ->willReturnOnConsecutiveCalls(true, true, false);
+
+        $this->toolsHelper->expects($this->once())
+            ->method('psVersionCompare')
+            ->with(_PS_VERSION_, '1.7', '>=')
+            ->willReturn(true);
+
+        $this->assertFalse($this->insuranceHelper->isInsuranceAllowedInProductPage());
+    }
+
+    /**
+     * Given a true parameter for all insurance settings we return true
+     *
+     * @return void
+     */
+    public function testIsInsuranceAllowedInCartPageWithAllParameterTrue()
+    {
+        $this->settingsHelper->expects($this->exactly(3))
+            ->method('getKey')
+            ->withConsecutive(
+                [
+                    ConstantsHelper::ALMA_SHOW_INSURANCE_WIDGET_CART, false,
+                ],
+                [
+                    ConstantsHelper::ALMA_ALLOW_INSURANCE, false,
+                ],
+                [
+                    ConstantsHelper::ALMA_ACTIVATE_INSURANCE, false,
+                ]
+            )
+            ->willReturn(true);
+
+        $this->toolsHelper->expects($this->once())
+            ->method('psVersionCompare')
+            ->with(_PS_VERSION_, '1.7', '>=')
+            ->willReturn(true);
+
+        $this->assertTrue($this->insuranceHelper->isInsuranceAllowedInCartPage());
+    }
+
+    /**
+     * Given a false parameter for widget insurance settings we return false
+     *
+     * @return void
+     */
+    public function testIsInsuranceAllowedInCartPageWithWidgetParameterFalse()
+    {
+        $this->settingsHelper->expects($this->exactly(1))
+            ->method('getKey')
+            ->withConsecutive([
+                ConstantsHelper::ALMA_SHOW_INSURANCE_WIDGET_CART, false,
+            ])
+            ->willReturn(false);
+
+        $this->toolsHelper->expects($this->once())
+            ->method('psVersionCompare')
+            ->with(_PS_VERSION_, '1.7', '>=')
+            ->willReturn(true);
+
+        $this->assertFalse($this->insuranceHelper->isInsuranceAllowedInCartPage());
+    }
+
+    /**
+     * Given a false parameter for allow insurance settings we return false
+     *
+     * @return void
+     */
+    public function testIsInsuranceAllowedInCartPageWithAllowInsuranceParameterFalse()
+    {
+        $this->settingsHelper->expects($this->exactly(2))
+            ->method('getKey')
+            ->withConsecutive(
+                [
+                    ConstantsHelper::ALMA_SHOW_INSURANCE_WIDGET_CART, false,
+                ],
+                [
+                    ConstantsHelper::ALMA_ALLOW_INSURANCE, false,
+                ]
+            )
+            ->willReturnOnConsecutiveCalls(true, false);
+
+        $this->toolsHelper->expects($this->once())
+            ->method('psVersionCompare')
+            ->with(_PS_VERSION_, '1.7', '>=')
+            ->willReturn(true);
+
+        $this->assertFalse($this->insuranceHelper->isInsuranceAllowedInCartPage());
+    }
+
+    /**
+     * Given a false parameter for activate insurance settings we return false
+     *
+     * @return void
+     */
+    public function testIsInsuranceAllowedInCartPageWithActivateInsuranceParameterFalse()
+    {
+        $this->settingsHelper->expects($this->exactly(3))
+            ->method('getKey')
+            ->withConsecutive(
+                [
+                    ConstantsHelper::ALMA_SHOW_INSURANCE_WIDGET_CART, false,
+                ],
+                [
+                    ConstantsHelper::ALMA_ALLOW_INSURANCE, false,
+                ],
+                [
+                    ConstantsHelper::ALMA_ACTIVATE_INSURANCE, false,
+                ]
+            )
+            ->willReturnOnConsecutiveCalls(true, true, false);
+
+        $this->toolsHelper->expects($this->once())
+            ->method('psVersionCompare')
+            ->with(_PS_VERSION_, '1.7', '>=')
+            ->willReturn(true);
+
+        $this->assertFalse($this->insuranceHelper->isInsuranceAllowedInCartPage());
+    }
+
+    /**
+     * Given a true parameter for all insurance settings we return true
+     *
+     * @return void
+     */
+    public function testIsInsuranceActivatedWithAllParameterTrue()
+    {
+        $this->settingsHelper->expects($this->exactly(2))
+            ->method('getKey')
+            ->withConsecutive(
+                [
+                    ConstantsHelper::ALMA_ALLOW_INSURANCE, false,
+                ],
+                [
+                    ConstantsHelper::ALMA_ACTIVATE_INSURANCE, false,
+                ]
+            )
+            ->willReturn(true);
+
+        $this->toolsHelper->expects($this->once())
+            ->method('psVersionCompare')
+            ->with(_PS_VERSION_, '1.7', '>=')
+            ->willReturn(true);
+
+        $this->assertTrue($this->insuranceHelper->isInsuranceActivated());
+    }
+
+    /**
+     * Given a false parameter for widget insurance settings we return false
+     *
+     * @return void
+     */
+    public function testIsInsuranceActivatedWithAllowParameterFalse()
+    {
+        $this->settingsHelper->expects($this->exactly(1))
+            ->method('getKey')
+            ->withConsecutive([
+                ConstantsHelper::ALMA_ALLOW_INSURANCE, false,
+            ])
+            ->willReturn(false);
+
+        $this->toolsHelper->expects($this->once())
+            ->method('psVersionCompare')
+            ->with(_PS_VERSION_, '1.7', '>=')
+            ->willReturn(true);
+
+        $this->assertFalse($this->insuranceHelper->isInsuranceActivated());
+    }
+
+    /**
+     * Given a false parameter for allow insurance settings we return false
+     *
+     * @return void
+     */
+    public function testIsInsuranceActivatedWithActiveParameterFalse()
+    {
+        $this->settingsHelper->expects($this->exactly(2))
+            ->method('getKey')
+            ->withConsecutive(
+                [
+                    ConstantsHelper::ALMA_ALLOW_INSURANCE, false,
+                ],
+                [
+                    ConstantsHelper::ALMA_ACTIVATE_INSURANCE, false,
+                ]
+            )
+            ->willReturnOnConsecutiveCalls(true, false);
+
+        $this->toolsHelper->expects($this->once())
+            ->method('psVersionCompare')
+            ->with(_PS_VERSION_, '1.7', '>=')
+            ->willReturn(true);
+
+        $this->assertFalse($this->insuranceHelper->isInsuranceActivated());
     }
 
     /**

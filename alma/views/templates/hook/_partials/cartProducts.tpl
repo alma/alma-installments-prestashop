@@ -20,6 +20,8 @@
  * @copyright 2018-2023 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  *}
+{capture assign='productRegularPriceInCent'}{$product.price_without_reduction|escape:'htmlall':'UTF-8' * 100}{/capture}
+{capture assign='cmsReference'}{$product.id_product|escape:'htmlall':'UTF-8'}-{$product.id_product_attribute|escape:'htmlall':'UTF-8'}-{$productRegularPriceInCent}{/capture}
 <div class="row py-1">
     <div class="col-md-11">
         <div class="row">
@@ -92,6 +94,7 @@
                     </div>
                 </div>
             {else}
+                {if $insuranceSettings.isInCartWidgetActivated}
                 <div class="col-md-6">
                     <div class="row item-alma-insurance">
                         <div class="product-line-grid-left col-md-2 col-xs-3">
@@ -109,10 +112,15 @@
                                 </span>
                             </div>
                             <div class="alma-action-item-insurance">
-                                <a data-alma-association-id="{$idAlmaInsuranceProduct}"
+                                <a data-product-id="{$product.id_product|escape:'htmlall':'UTF-8'}"
+                                   data-product-attribute-id="{$product.id_product_attribute|escape:'htmlall':'UTF-8'}"
+                                   data-product-price="{$productRegularPriceInCent}"
+                                   data-product-customization-id="{$product.id_customization|intval}"
+                                   data-id-iframe="product-alma-iframe-{$cmsReference}"
                                    data-action="add-insurance-product"
                                    data-token='{\Tools::getToken(false)|escape:'htmlall':'UTF-8'}'
                                    href="#"
+                                   id="add-insurance-product-{$cmsReference}"
                                    class="alma-add-insurance-product"
                                    data-link='{$ajaxLinkAddInsuranceProduct|escape:'htmlall':'UTF-8'}'
                                 >
@@ -122,6 +130,7 @@
                         </div>
                     </div>
                 </div>
+                {/if}
             {/if}
         </div>
 

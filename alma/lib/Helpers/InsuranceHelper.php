@@ -57,12 +57,22 @@ class InsuranceHelper
      * @var \Context|null
      */
     protected $context;
+    /**
+     * @var SettingsHelper
+     */
+    protected $settingsHelper;
+    /**
+     * @var ToolsHelper
+     */
+    protected $toolsHelper;
 
     public function __construct(
         $cartProductRepository = null,
         $productRepository = null,
         $insuranceProductRepository = null,
-        $context = null
+        $context = null,
+        $settingsHelper = null,
+        $toolsHelper = null
     ) {
         if (!$cartProductRepository) {
             $cartProductRepository = new CartProductRepository();
@@ -76,10 +86,21 @@ class InsuranceHelper
         if (!$context) {
             $context = \Context::getContext();
         }
+        if (!$settingsHelper) {
+            $settingsHelper = new SettingsHelper(
+                new ShopHelper(),
+                new ConfigurationHelper()
+            );
+        }
+        if (!$toolsHelper) {
+            $toolsHelper = new ToolsHelper();
+        }
         $this->cartProductRepository = $cartProductRepository;
         $this->productRepository = $productRepository;
         $this->insuranceProductRepository = $insuranceProductRepository;
         $this->context = $context;
+        $this->settingsHelper = $settingsHelper;
+        $this->toolsHelper = $toolsHelper;
     }
 
     /**
@@ -87,10 +108,19 @@ class InsuranceHelper
      */
     public function isInsuranceAllowedInProductPage()
     {
-        return (bool) version_compare(_PS_VERSION_, '1.7', '>=')
-            && (bool) (int) SettingsHelper::get(ConstantsHelper::ALMA_SHOW_INSURANCE_WIDGET_PRODUCT, false)
-            && (bool) (int) SettingsHelper::get(ConstantsHelper::ALMA_ALLOW_INSURANCE, false)
-            && (bool) (int) SettingsHelper::get(ConstantsHelper::ALMA_ACTIVATE_INSURANCE, false);
+        return (bool) $this->toolsHelper->psVersionCompare(_PS_VERSION_, '1.7', '>=')
+            && (bool) (int) $this->settingsHelper->getKey(ConstantsHelper::ALMA_SHOW_INSURANCE_WIDGET_PRODUCT, false)
+            && $this->isInsuranceActivated();
+    }
+
+    /**
+     * @return bool
+     */
+    public function isInsuranceAllowedInCartPage()
+    {
+        return (bool) $this->toolsHelper->psVersionCompare(_PS_VERSION_, '1.7', '>=')
+            && (bool) (int) $this->settingsHelper->getKey(ConstantsHelper::ALMA_SHOW_INSURANCE_WIDGET_CART, false)
+            && $this->isInsuranceActivated();
     }
 
     /**
@@ -98,9 +128,9 @@ class InsuranceHelper
      */
     public function isInsuranceActivated()
     {
-        return (bool) version_compare(_PS_VERSION_, '1.7', '>=')
-            && (bool) (int) SettingsHelper::get(ConstantsHelper::ALMA_ALLOW_INSURANCE, false)
-            && (bool) (int) SettingsHelper::get(ConstantsHelper::ALMA_ACTIVATE_INSURANCE, false);
+        return (bool) $this->toolsHelper->psVersionCompare(_PS_VERSION_, '1.7', '>=')
+            && (bool) (int) $this->settingsHelper->getKey(ConstantsHelper::ALMA_ALLOW_INSURANCE, false)
+            && (bool) (int) $this->settingsHelper->getKey(ConstantsHelper::ALMA_ACTIVATE_INSURANCE, false);
     }
 
     /**
