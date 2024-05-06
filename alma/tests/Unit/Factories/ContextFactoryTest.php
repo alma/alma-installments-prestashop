@@ -29,11 +29,25 @@ use Alma\PrestaShop\Factories\ContextFactory;
 
 class ContextFactoryTest extends TestCase
 {
+    /**
+     * @var ContextFactory
+     */
+    protected $contextFactory;
+
+    public function setUp()
+    {
+        $this->contextFactory = new ContextFactory();
+    }
+
     public function testGetContext()
     {
-        $contextFactory = new ContextFactory();
+        $this->assertInstanceOf(\Context::class, $this->contextFactory->getContext());
+    }
 
-        $this->assertInstanceOf(\Context::class, $contextFactory->getContext());
+    public function testGetContextLink()
+    {
+        $this->assertInstanceOf(\Link::class, $this->contextFactory->getContextLink());
+
     }
 
 }

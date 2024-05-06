@@ -22,36 +22,30 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
-namespace Alma\PrestaShop\Factories;
+namespace Alma\PrestaShop\Builders;
 
-
-use Alma\PrestaShop\Helpers\ConstantsHelper;
+use Alma\PrestaShop\Helpers\ContextHelper;
+use Alma\PrestaShop\Traits\BuilderTrait;
 
 if (!defined('_PS_VERSION_')) {
     exit;
 }
 
 /**
- * Class ModuleFactory.
- *
+ * ContextHelperBuilder.
  */
-class ModuleFactory
+class ContextHelperBuilder
 {
-    /**
-     * @return false|\Module
-     */
-    public function getModule()
-    {
-        return \Module::getInstanceByName(ConstantsHelper::ALMA_MODULE_NAME);
-    }
+    use BuilderTrait;
 
     /**
-     * @return string
+     * @return ContextHelper
      */
-    public function getModuleName()
+    public function getInstance()
     {
-        $module = $this->getModule();
-
-        return $module->name;
+        return new ContextHelper(
+            $this->getContextFactory(),
+            $this->getModuleFactory()
+        );
     }
 }

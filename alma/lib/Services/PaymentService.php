@@ -286,8 +286,6 @@ class PaymentService
                 );
 
                 $action = $this->contextHelper->getModuleLink(
-                    $this->context,
-                    $this->module->name,
                     'payment',
                     ['key' => $key],
                     true

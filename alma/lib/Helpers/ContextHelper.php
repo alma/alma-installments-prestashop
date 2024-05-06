@@ -24,6 +24,10 @@
 
 namespace Alma\PrestaShop\Helpers;
 
+use Alma\PrestaShop\Factories\ContextFactory;
+use Alma\PrestaShop\Factories\ModuleFactory;
+use PrestaShop\PrestaShop\Adapter\Module\Module;
+
 if (!defined('_PS_VERSION_')) {
     exit;
 }
@@ -42,11 +46,29 @@ if (!defined('_PS_VERSION_')) {
 class ContextHelper
 {
     /**
+     * @var \Link|null
+     */
+    protected $contextLink;
+
+    /**
+     * @var string
+     */
+    protected $moduleName;
+
+    /**
+     * @param ContextFactory $contextFactory
+     * @param ModuleFactory $moduleFactory
+     */
+    public function __construct($contextFactory, $moduleFactory)
+    {
+        $this->contextLink = $contextFactory->getContextLink();
+        $this->moduleName = $moduleFactory->getModuleName();
+    }
+    /**
      * Create a link to a module.
      *
      * @since    1.5.0
      *
-     * @param string $module Module name
      * @param string $controller
      * @param array $params
      * @param bool|null $ssl
@@ -57,8 +79,6 @@ class ContextHelper
      * @return string
      */
     public function getModuleLink(
-        $context,
-        $module,
         $controller = 'default',
         array $params = [],
         $ssl = null,
@@ -66,8 +86,8 @@ class ContextHelper
         $idShop = null,
         $relativeProtocol = false)
     {
-        return $context->link->getModuleLink(
-            $module,
+        return $this->contextLink->getModuleLink(
+            $this->moduleName,
             $controller,
             $params,
             $ssl,

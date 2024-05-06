@@ -42,4 +42,12 @@ class ContextFactory
     {
         return \Context::getContext();
     }
+
+    /**
+     * @return \Link|null
+     */
+    public function getContextLink()
+    {
+        return \Context::getContext()->link;
+    }
 }

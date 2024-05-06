@@ -22,32 +22,49 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
-namespace Alma\PrestaShop\Tests\Unit\Factories;
+namespace Alma\PrestaShop\Tests\Unit\Builders;
 
+use Alma\PrestaShop\Builders\ContextHelperBuilder;
+use Alma\PrestaShop\Factories\ContextFactory;
 use Alma\PrestaShop\Factories\ModuleFactory;
-use Alma\PrestaShop\Helpers\ConstantsHelper;
+use Alma\PrestaShop\Helpers\ContextHelper;
 use PHPUnit\Framework\TestCase;
 
-class ModuleFactoryTest extends TestCase
+/**
+ * @covers \Alma\PrestaShop\Builders\ContextHelperBuilder
+ */
+class ContextHelperBuilderTest extends TestCase
 {
     /**
-     * @var ModuleFactory
+     *
+     * @var ContextHelperBuilder $contextHelperBuilder
      */
-    protected $moduleFactory;
+    protected $contextHelperBuilder;
 
-    public function setUp()
-    {
-        $this->moduleFactory = new ModuleFactory();
+    public function setUp() {
+        $this->contextHelperBuilder = new ContextHelperBuilder();
     }
 
-    public function testGetContext()
-    {
-        $this->assertInstanceOf(\Module::class, $this->moduleFactory->getModule());
+    /**
+     * @covers \Alma\PrestaShop\Builders\ContextHelperBuilder::getInstance
+     * @return void
+     */
+    public function testGetInstance() {
+        $this->assertInstanceOf(ContextHelper::class, $this->contextHelperBuilder->getInstance());
     }
 
-    public function testGetContextName()
-    {
-        $this->assertEquals(ConstantsHelper::ALMA_MODULE_NAME, $this->moduleFactory->getModuleName());
+    public function testGetContextFactory() {
+        $this->assertInstanceOf(ContextFactory::class, $this->contextHelperBuilder->getContextFactory());
+        $this->assertInstanceOf(ContextFactory::class, $this->contextHelperBuilder->getContextFactory(
+            new ContextFactory()
+        ));
     }
 
+
+    public function testGetModuleFactory() {
+        $this->assertInstanceOf(ModuleFactory::class, $this->contextHelperBuilder->getModuleFactory());
+        $this->assertInstanceOf(ModuleFactory::class, $this->contextHelperBuilder->getModuleFactory(
+            new ModuleFactory()
+        ));
+    }
 }
