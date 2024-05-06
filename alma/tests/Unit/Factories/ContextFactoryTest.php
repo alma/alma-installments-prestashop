@@ -47,7 +47,15 @@ class ContextFactoryTest extends TestCase
     public function testGetContextLink()
     {
         $this->assertInstanceOf(\Link::class, $this->contextFactory->getContextLink());
-
     }
 
+    public function testGetContextLanguage()
+    {
+        $this->assertInstanceOf(\Language::class, $this->contextFactory->getContextLanguage());
+    }
+
+    public function testGetContextLanguageId()
+    {
+        $this->assertEquals('1', $this->contextFactory->getContextLanguageId());
+    }
 }

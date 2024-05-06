@@ -22,13 +22,28 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
-namespace Alma\PrestaShop\Tests\Unit\Helper;
+namespace Alma\PrestaShop\Factories;
 
-use PHPUnit\Framework\TestCase;
 
-class AdressHelperTest extends TestCase
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
+/**
+ * Class AddressFactory.
+ *
+ */
+class AddressFactory
 {
-    public function testGetAdressFromCustomer()
+
+    /**
+     * @param int $id
+     *
+     * @return \Address
+     */
+    public function create($id)
     {
+        return new \Address((int) $id);
     }
+
 }

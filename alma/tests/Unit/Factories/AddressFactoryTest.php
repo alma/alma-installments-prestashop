@@ -22,44 +22,30 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
-namespace Alma\PrestaShop\Builders;
+namespace Alma\PrestaShop\Tests\Unit\Factories;
 
-use Alma\PrestaShop\Model\PaymentData;
-use Alma\PrestaShop\Traits\BuilderTrait;
-
-if (!defined('_PS_VERSION_')) {
-    exit;
-}
-
-/**
- * PaymentDataBuilder.
- */
-class PaymentDataBuilder
+use Alma\PrestaShop\Factories\AddressFactory;
+use PHPUnit\Framework\TestCase;
+class AddressFactoryTest extends TestCase
 {
-    use BuilderTrait;
-
     /**
-     * @return PaymentData
+     * @var AddressFactory
      */
-    public function getInstance()
+    protected $addressFactory;
+
+    public function setUp()
     {
-        return new PaymentData(
-            $this->getToolsHelper(),
-            $this->getSettingsHelper(),
-            $this->getPriceHelper(),
-            $this->getCustomFieldsHelper(),
-            $this->getCartData(),
-            $this->getShippingData(),
-            $this->getContextFactory(),
-            $this->getAddressHelper(),
-            $this->getCountryHelper(),
-            $this->getLocaleHelper(),
-            $this->getStateHelper(),
-            $this->getCustomerHelper(),
-            $this->getCartHelper(),
-            $this->getCarrierHelper(),
-            $this->getAddressFactory()
-        );
+        $this->addressFactory = new AddressFactory();
     }
+
+    public function testCreateAddress()
+    {
+        $this->assertInstanceOf(\Address::class, $this->addressFactory->create(10));
+
+        $address = $this->addressFactory->create(20);
+
+        $this->assertEquals(20, $address->id);
+    }
+
 
 }

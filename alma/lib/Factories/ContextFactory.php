@@ -50,4 +50,23 @@ class ContextFactory
     {
         return \Context::getContext()->link;
     }
+
+    /**
+     * @return \Language|\PrestaShopBundle\Install\Language|null
+     */
+    public function getContextLanguage()
+    {
+        return \Context::getContext()->language;
+    }
+
+    /**
+     * @return int
+     */
+    public function getContextLanguageId()
+    {
+        $language = $this->getContextLanguage();
+
+        return $language->id;
+    }
+
 }

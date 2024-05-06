@@ -24,6 +24,8 @@
 
 namespace Alma\PrestaShop\Helpers;
 
+use Alma\PrestaShop\Factories\ContextFactory;
+
 if (!defined('_PS_VERSION_')) {
     exit;
 }
@@ -36,34 +38,29 @@ class AddressHelper
     protected $toolsHelper;
 
     /**
-     * @param ToolsHelper $toolHelper
-     * @codeCoverageIgnore
+     * @var ContextFactory
      */
-    public function __construct($toolHelper)
-    {
-        $this->toolsHelper = $toolHelper;
-    }
+    protected $contextFactory;
 
     /**
-     * @param int $id
-     *
-     * @return \Address
+     * @param ToolsHelper $toolHelper
+     * @param ContextFactory $contextFactory
      */
-    public function create($id)
+    public function __construct($toolHelper, $contextFactory)
     {
-        return new \Address((int) $id);
+        $this->toolsHelper = $toolHelper;
+        $this->contextFactory = $contextFactory;
     }
 
     /**
      * @param \Customer $customer
-     * @param \Context $context
      *
      * @return mixed
      */
-    public function getAdressFromCustomer($customer, $context)
+    public function getAddressFromCustomer($customer)
     {
         if ($this->toolsHelper->psVersionCompare('1.5.4.0', '<')) {
-            return $customer->getAddresses($context->language->id);
+            return $customer->getAddresses($this->contextFactory->getContextLanguageId());
         }
 
         return $customer->getAddresses($customer->id_lang);

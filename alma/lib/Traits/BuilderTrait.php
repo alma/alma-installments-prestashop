@@ -24,6 +24,7 @@
 
 namespace Alma\PrestaShop\Traits;
 
+use Alma\PrestaShop\Factories\AddressFactory;
 use Alma\PrestaShop\Factories\ContextFactory;
 use Alma\PrestaShop\Factories\ModuleFactory;
 use Alma\PrestaShop\Helpers\AddressHelper;
@@ -410,7 +411,8 @@ trait BuilderTrait
         }
 
         return new AddressHelper(
-            $this->getToolsHelper()
+            $this->getToolsHelper(),
+            $this->getContextFactory()
         );
     }
 
@@ -515,7 +517,8 @@ trait BuilderTrait
             $this->getStateHelper(),
             $this->getCustomerHelper(),
             $this->getCartHelper(),
-            $this->getCarrierHelper()
+            $this->getCarrierHelper(),
+            $this->getAddressFactory()
         );
     }
 
@@ -645,5 +648,19 @@ trait BuilderTrait
             $this->getConfigurationHelper(),
             $this->getPaymentOptionTemplateHelper()
         );
+    }
+
+
+    /**
+     * @param AddressFactory $addressFactory
+     * @return AddressFactory
+     */
+    public function getAddressFactory($addressFactory = null)
+    {
+        if($addressFactory) {
+            return $addressFactory;
+        }
+
+        return new AddressFactory();
     }
 }

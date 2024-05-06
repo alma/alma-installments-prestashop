@@ -25,6 +25,7 @@
 namespace Alma\PrestaShop\Tests\Unit\Builders;
 
 use Alma\PrestaShop\Builders\EligibilityHelperBuilder;
+use Alma\PrestaShop\Factories\AddressFactory;
 use Alma\PrestaShop\Factories\ContextFactory;
 use Alma\PrestaShop\Factories\ModuleFactory;
 use Alma\PrestaShop\Helpers\AddressHelper;
@@ -153,7 +154,7 @@ class EligibilityHelperBuilderTest extends TestCase
                     $this->carrierHelper
                 ),
                 $this->contextFactory ,
-                new AddressHelper($this->toolsHelper),
+                new AddressHelper($this->toolsHelper, $this->contextFactory),
                 new CountryHelper(),
                 $this->localeHelper,
                 new StateHelper(),
@@ -176,7 +177,8 @@ class EligibilityHelperBuilderTest extends TestCase
                     new OrderStateHelper($this->contextFactory),
                     $this->carrierHelper
                 ),
-                $this->carrierHelper
+                $this->carrierHelper,
+                new AddressFactory()
             )
         ));
     }
