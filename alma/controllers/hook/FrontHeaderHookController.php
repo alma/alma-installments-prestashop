@@ -359,6 +359,31 @@ class FrontHeaderHookController extends FrontendHookController
             $this->context->language->id
         );
 
+        $cartWithInsurance = [
+            'idCart' => 11,
+            'products' => [
+                [
+                    'idProduct' => 1,
+                    'idProductAttribute' => 1,
+                    'idCustomization' => null,
+                    'idAlmaInsuranceProduct' => 158,
+                    'quantity' => 1,
+                    'isInsurance' => false,
+                ],
+                [
+                    'idProduct' => $insuranceProductId,
+                    'idProductAttribute' => 50,
+                    'idCustomization' => null,
+                    'idAlmaInsuranceProduct' => 158,
+                    'quantity' => 1,
+                    'isInsurance' => true,
+                ],
+            ],
+        ];
+        foreach ($this->context->cart->getProducts() as $product) {
+            var_dump($product);
+        }
+
         return "<div id='alma-insurance-global' data-insurance-id='{$insuranceProductId}'></div>";
     }
 
