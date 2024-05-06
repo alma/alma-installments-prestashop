@@ -29,34 +29,28 @@ use Alma\PrestaShop\Factories\ContextFactory;
 use Alma\PrestaShop\Factories\MediaFactory;
 use Alma\PrestaShop\Factories\ModuleFactory;
 use Alma\PrestaShop\Helpers\ConfigurationHelper;
-use Alma\PrestaShop\Helpers\CurrencyHelper;
 use Alma\PrestaShop\Helpers\CustomFieldsHelper;
-use Alma\PrestaShop\Helpers\DateHelper;
-use Alma\PrestaShop\Helpers\LanguageHelper;
-use Alma\PrestaShop\Helpers\LocaleHelper;
 use Alma\PrestaShop\Helpers\MediaHelper;
 use Alma\PrestaShop\Helpers\PaymentOptionHelper;
 use Alma\PrestaShop\Helpers\PaymentOptionTemplateHelper;
-use Alma\PrestaShop\Helpers\PriceHelper;
 use Alma\PrestaShop\Helpers\SettingsHelper;
 use Alma\PrestaShop\Helpers\ShopHelper;
-use Alma\PrestaShop\Helpers\ToolsHelper;
-use Alma\PrestaShop\Helpers\TranslationHelper;
 use PHPUnit\Framework\TestCase;
 
 class PaymentOptionHelperBuilderTest extends TestCase
 {
     /**
-     *
-     * @var PaymentOptionHelperBuilder $paymentOptionHelperBuilder
+     * @var PaymentOptionHelperBuilder
      */
     protected $paymentOptionHelperBuilder;
 
     /**
-     * @var SettingsHelper $settingsHelper
+     * @var SettingsHelper
      */
     protected $settingsHelper;
-    public function setUp() {
+
+    public function setUp()
+    {
         $this->paymentOptionHelperBuilder = new PaymentOptionHelperBuilder();
         $this->settingsHelper = new SettingsHelper(
             new ShopHelper(),
@@ -64,8 +58,8 @@ class PaymentOptionHelperBuilderTest extends TestCase
         );
     }
 
-
-    public function testGetInstance() {
+    public function testGetInstance()
+    {
         $this->assertInstanceOf(PaymentOptionHelper::class, $this->paymentOptionHelperBuilder->getInstance());
     }
 

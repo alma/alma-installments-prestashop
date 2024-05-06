@@ -22,34 +22,25 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
-namespace Alma\PrestaShop\Builders;
+namespace Alma\PrestaShop\Tests\Unit\Factories;
 
-use Alma\PrestaShop\Helpers\EligibilityHelper;
-use Alma\PrestaShop\Traits\BuilderTrait;
+use Alma\PrestaShop\Factories\CustomerFactory;
+use PHPUnit\Framework\TestCase;
 
-if (!defined('_PS_VERSION_')) {
-    exit;
-}
-
-/**
- * EligibilityHelperBuilder.
- */
-class EligibilityHelperBuilder
+class CustomerFactoryTest extends TestCase
 {
-    use BuilderTrait;
-
     /**
-     * @return EligibilityHelper
+     * @var CustomerFactory
      */
-    public function getInstance()
+    protected $customerFactory;
+
+    public function setUp()
     {
-        return new EligibilityHelper(
-            $this->getPaymentData(),
-            $this->getPriceHelper(),
-            $this->getClientHelper(),
-            $this->getSettingsHelper(),
-            $this->getApiHelper(),
-            $this->getContextFactory()
-        );
+        $this->customerFactory = new CustomerFactory();
+    }
+
+    public function testCreate()
+    {
+        $this->assertInstanceOf(\Customer::class, $this->customerFactory->create(10));
     }
 }

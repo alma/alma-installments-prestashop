@@ -46,8 +46,8 @@ class CustomerHelperBuilder
         return new CustomerHelper(
             $this->getContextFactory(),
             $this->getOrderHelper(),
-            $this->getValidateHelper()
+            $this->getValidateHelper(),
+            $this->getCustomerFactory()
         );
     }
-
 }

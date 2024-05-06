@@ -50,7 +50,6 @@ class ApiKeyHelper
 
     /**
      * ApiKey Helper construct
-     *
      */
     public function __construct()
     {

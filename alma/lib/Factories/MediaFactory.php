@@ -24,20 +24,18 @@
 
 namespace Alma\PrestaShop\Factories;
 
-
 if (!defined('_PS_VERSION_')) {
     exit;
 }
 
 /**
  * Class MediaFactory.
- *
  */
 class MediaFactory
 {
-
     /**
      * @param $path
+     *
      * @return bool|string|string[]|null
      */
     public function getMediaPath($path)
@@ -47,5 +45,4 @@ class MediaFactory
 
         return \Media::getMediaPath(_PS_MODULE_DIR_ . $moduleName . $path);
     }
-
 }

@@ -24,14 +24,12 @@
 
 namespace Alma\PrestaShop\Factories;
 
-
 if (!defined('_PS_VERSION_')) {
     exit;
 }
 
 /**
  * Class ContextFactory.
- *
  */
 class ContextFactory
 {
@@ -69,4 +67,43 @@ class ContextFactory
         return $language->id;
     }
 
+    /**
+     * @return \Cart|null
+     */
+    public function getContextCart()
+    {
+        $context = $this->getContext();
+
+        return $context->cart;
+    }
+
+    /**
+     * @return int|null
+     */
+    public function getContextCartId()
+    {
+        $contextCart = $this->getContextCart();
+
+        return $contextCart->id;
+    }
+
+    /**
+     * @return int|null
+     */
+    public function getContextCartCustomerId()
+    {
+        $contextCart = $this->getContextCart();
+
+        return $contextCart->id_customer;
+    }
+
+    /**
+     * @return \Customer|null
+     */
+    public function getContextCustomer()
+    {
+        $contextCart = $this->getContext();
+
+        return $contextCart->customer;
+    }
 }

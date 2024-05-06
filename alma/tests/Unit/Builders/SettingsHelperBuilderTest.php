@@ -33,28 +33,30 @@ use PHPUnit\Framework\TestCase;
 class SettingsHelperBuilderTest extends TestCase
 {
     /**
-     *
-     * @var SettingsHelperBuilder $settingsHelperBuilder
+     * @var SettingsHelperBuilder
      */
     protected $settingsHelperBuilder;
 
-    public function setUp() {
+    public function setUp()
+    {
         $this->settingsHelperBuilder = new SettingsHelperBuilder();
     }
 
-
-    public function testGetInstance() {
+    public function testGetInstance()
+    {
         $this->assertInstanceOf(SettingsHelper::class, $this->settingsHelperBuilder->getInstance());
     }
 
-    public function testGetShopHelper() {
+    public function testGetShopHelper()
+    {
         $this->assertInstanceOf(ShopHelper::class, $this->settingsHelperBuilder->getShopHelper());
         $this->assertInstanceOf(ShopHelper::class, $this->settingsHelperBuilder->getShopHelper(
             new ShopHelper()
         ));
     }
 
-    public function testGetConfigurationHelper() {
+    public function testGetConfigurationHelper()
+    {
         $this->assertInstanceOf(ConfigurationHelper::class, $this->settingsHelperBuilder->getConfigurationHelper());
         $this->assertInstanceOf(ConfigurationHelper::class, $this->settingsHelperBuilder->getConfigurationHelper(
             new ConfigurationHelper()

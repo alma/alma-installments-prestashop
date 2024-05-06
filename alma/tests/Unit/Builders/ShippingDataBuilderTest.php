@@ -26,30 +26,24 @@ namespace Alma\PrestaShop\Tests\Unit\Builders;
 
 use Alma\PrestaShop\Builders\ShippingDataBuilder;
 use Alma\PrestaShop\Factories\CarrierFactory;
-use Alma\PrestaShop\Factories\ContextFactory;
-use Alma\PrestaShop\Helpers\CarrierHelper;
-use Alma\PrestaShop\Helpers\CurrencyHelper;
-use Alma\PrestaShop\Helpers\OrderHelper;
 use Alma\PrestaShop\Helpers\PriceHelper;
-use Alma\PrestaShop\Helpers\ToolsHelper;
-use Alma\PrestaShop\Model\CarrierData;
 use Alma\PrestaShop\Model\ShippingData;
 use PHPUnit\Framework\TestCase;
 
 class ShippingDataBuilderTest extends TestCase
 {
     /**
-     *
-     * @var ShippingDataBuilder $shareOfCheckoutHelper
+     * @var ShippingDataBuilder
      */
     protected $shippingDataBuilder;
 
-    public function setUp() {
+    public function setUp()
+    {
         $this->shippingDataBuilder = new ShippingDataBuilder();
     }
 
-
-    public function testGetInstance() {
+    public function testGetInstance()
+    {
         $this->assertInstanceOf(ShippingData::class, $this->shippingDataBuilder->getInstance());
     }
 

@@ -52,8 +52,6 @@ class OrderHelper
     private $orders;
     private $module;
 
-    /**
-     */
     public function __construct()
     {
         $this->defaultStatesExcluded = [6, 7, 8];

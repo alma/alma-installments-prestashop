@@ -106,6 +106,7 @@ class ContextHelperTest extends TestCase
     /**
      * @param bool|null $ssl
      * @param bool $relativeProtocol
+     *
      * @return string
      */
     protected function getBase($ssl = null, $relativeProtocol = false)

@@ -85,7 +85,6 @@ class PaymentOptionHelper
      * @param ConfigurationHelper $configurationHelper
      * @param PaymentOptionTemplateHelper $paymentOptionTemplateHelper
      * @param MediaFactory $mediaFactory
-     *
      */
     public function __construct(
         $contextFactory,

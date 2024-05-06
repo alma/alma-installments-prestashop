@@ -64,6 +64,7 @@ class ContextHelper
         $this->contextLink = $contextFactory->getContextLink();
         $this->moduleName = $moduleFactory->getModuleName();
     }
+
     /**
      * Create a link to a module.
      *

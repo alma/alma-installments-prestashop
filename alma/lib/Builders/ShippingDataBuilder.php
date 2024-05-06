@@ -48,5 +48,4 @@ class ShippingDataBuilder
             $this->getCarrierFactory()
         );
     }
-
 }

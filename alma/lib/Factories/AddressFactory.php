@@ -24,18 +24,15 @@
 
 namespace Alma\PrestaShop\Factories;
 
-
 if (!defined('_PS_VERSION_')) {
     exit;
 }
 
 /**
  * Class AddressFactory.
- *
  */
 class AddressFactory
 {
-
     /**
      * @param int $id
      *
@@ -45,5 +42,4 @@ class AddressFactory
     {
         return new \Address((int) $id);
     }
-
 }

@@ -48,5 +48,4 @@ class ApiHelperBuilder
             $this->getClientHelper()
         );
     }
-
 }

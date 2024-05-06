@@ -24,26 +24,23 @@
 
 namespace Alma\PrestaShop\Factories;
 
-
 if (!defined('_PS_VERSION_')) {
     exit;
 }
 
 /**
  * Class CarrierFactory.
- *
  */
 class CarrierFactory
 {
-
     /**
      * @param int|null $id Carrier ID
      * @param int|null $id_lang Language ID
+     *
      * @return \Carrier
      */
     public function create($id = null, $id_lang = null)
     {
         return new \Carrier($id, $id_lang);
     }
-
 }

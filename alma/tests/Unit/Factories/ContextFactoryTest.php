@@ -24,8 +24,8 @@
 
 namespace Alma\PrestaShop\Tests\Unit\Factories;
 
-use PHPUnit\Framework\TestCase;
 use Alma\PrestaShop\Factories\ContextFactory;
+use PHPUnit\Framework\TestCase;
 
 class ContextFactoryTest extends TestCase
 {
@@ -57,5 +57,78 @@ class ContextFactoryTest extends TestCase
     public function testGetContextLanguageId()
     {
         $this->assertEquals('1', $this->contextFactory->getContextLanguageId());
+    }
+
+    public function testGetContextCart()
+    {
+        $this->assertEquals(null, $this->contextFactory->getContextCart());
+
+        $cart = new \Cart();
+        $cart->id_currency = 1;
+        $cart->save();
+
+        $context = new \Context;
+        $context->cart = $cart;
+
+        $contextFactory = \Mockery::mock(ContextFactory::class)->makePartial();
+        $contextFactory->shouldReceive('getContext')->andReturn($context);
+
+        $this->assertInstanceOf(\Cart::class, $contextFactory->getContextCart());
+
+    }
+
+    public function testGetContextCartId()
+    {
+
+        $cart = new \Cart();
+        $cart->id_currency = 1;
+        $cart->save();
+
+        $idCart = $cart->id;
+
+        $context = new \Context;
+        $context->cart = $cart;
+
+        $contextFactory = \Mockery::mock(ContextFactory::class)->makePartial();
+        $contextFactory->shouldReceive('getContext')->andReturn($context);
+
+        $this->assertEquals($idCart, $contextFactory->getContextCartId());
+
+    }
+
+    public function testGetContextCartCustomerId()
+    {
+
+        $cart = new \Cart();
+        $cart->id_customer = 1;
+        $cart->id_currency = 1;
+        $cart->save();
+
+
+        $context = new \Context;
+        $context->cart = $cart;
+
+        $contextFactory = \Mockery::mock(ContextFactory::class)->makePartial();
+        $contextFactory->shouldReceive('getContext')->andReturn($context);
+
+        $this->assertEquals(1, $contextFactory->getContextCartCustomerId());
+    }
+
+    public function testGetContextCustomer()
+    {
+        $customer = new \Customer();
+        $customer->firstname = 'test';
+        $customer->lastname = 'test';
+        $customer->email = 'test@test.fr';
+        $customer->passwd = 'zeezazea';
+        $customer->save();
+
+        $context = new \Context;
+        $context->customer = $customer;
+
+        $contextFactory = \Mockery::mock(ContextFactory::class)->makePartial();
+        $contextFactory->shouldReceive('getContext')->andReturn($context);
+
+        $this->isInstanceOf(\Customer::class, $contextFactory->getContextCustomer());
     }
 }

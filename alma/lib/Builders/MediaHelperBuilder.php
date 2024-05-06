@@ -25,7 +25,6 @@
 namespace Alma\PrestaShop\Builders;
 
 use Alma\PrestaShop\Helpers\MediaHelper;
-use Alma\PrestaShop\Model\ShippingData;
 use Alma\PrestaShop\Traits\BuilderTrait;
 
 if (!defined('_PS_VERSION_')) {
@@ -50,5 +49,4 @@ class MediaHelperBuilder
             $this->getPhpFactory()
         );
     }
-
 }
