@@ -29,10 +29,7 @@ include_once _PS_MODULE_DIR_ . 'alma/vendor/autoload.php';
 
 use Alma\API\RequestError;
 use Alma\PrestaShop\Builders\CustomFieldHelperBuilder;
-use Alma\PrestaShop\Builders\SettingsHelperBuilder;
 use Alma\PrestaShop\Helpers\ClientHelper;
-use Alma\PrestaShop\Helpers\CustomFieldsHelper;
-use Alma\PrestaShop\Helpers\LanguageHelper;
 use Alma\PrestaShop\Helpers\SettingsHelper;
 use Alma\PrestaShop\Logger;
 
@@ -56,7 +53,7 @@ function upgrade_module_2_6_0()
             }
 
             $customFieldHelperBuilder = new CustomFieldHelperBuilder();
-            $customFieldsHelper= $customFieldHelperBuilder->getInstance();
+            $customFieldsHelper = $customFieldHelperBuilder->getInstance();
 
             $customFieldsHelper->initCustomFields();
         } catch (RequestError $e) {

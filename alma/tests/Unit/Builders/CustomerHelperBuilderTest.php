@@ -26,6 +26,7 @@ namespace Alma\PrestaShop\Tests\Unit\Builders;
 
 use Alma\PrestaShop\Builders\CustomerHelperBuilder;
 use Alma\PrestaShop\Factories\ContextFactory;
+use Alma\PrestaShop\Factories\CustomerFactory;
 use Alma\PrestaShop\Helpers\CustomerHelper;
 use Alma\PrestaShop\Helpers\OrderHelper;
 use Alma\PrestaShop\Helpers\ValidateHelper;
@@ -33,40 +34,51 @@ use PHPUnit\Framework\TestCase;
 
 class CustomerHelperBuilderTest extends TestCase
 {
-
     /**
-     *
-     * @var CustomerHelperBuilder $customerHelperBuilder
+     * @var CustomerHelperBuilder
      */
     protected $customerHelperBuilder
     ;
-    public function setUp() {
+
+    public function setUp()
+    {
         $this->customerHelperBuilder = new CustomerHelperBuilder();
     }
 
-
-    public function testGetInstance() {
+    public function testGetInstance()
+    {
         $this->assertInstanceOf(CustomerHelper::class, $this->customerHelperBuilder->getInstance());
     }
 
-    public function testGetContextFactory() {
+    public function testGetContextFactory()
+    {
         $this->assertInstanceOf(ContextFactory::class, $this->customerHelperBuilder->getContextFactory());
         $this->assertInstanceOf(ContextFactory::class, $this->customerHelperBuilder->getContextFactory(
             new ContextFactory()
         ));
     }
 
-    public function testGetOrderHelper() {
+    public function testGetOrderHelper()
+    {
         $this->assertInstanceOf(OrderHelper::class, $this->customerHelperBuilder->getOrderHelper());
         $this->assertInstanceOf(OrderHelper::class, $this->customerHelperBuilder->getOrderHelper(
             new OrderHelper()
         ));
     }
 
-    public function testGetValidateHelper() {
+    public function testGetValidateHelper()
+    {
         $this->assertInstanceOf(ValidateHelper::class, $this->customerHelperBuilder->getValidateHelper());
         $this->assertInstanceOf(ValidateHelper::class, $this->customerHelperBuilder->getValidateHelper(
             new ValidateHelper()
+        ));
+    }
+
+    public function testGetCustomerFactory()
+    {
+        $this->assertInstanceOf(CustomerFactory::class, $this->customerHelperBuilder->getCustomerFactory());
+        $this->assertInstanceOf(CustomerFactory::class, $this->customerHelperBuilder->getCustomerFactory(
+            new CustomerFactory()
         ));
     }
 }

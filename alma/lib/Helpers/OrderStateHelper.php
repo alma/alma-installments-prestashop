@@ -25,6 +25,7 @@
 namespace Alma\PrestaShop\Helpers;
 
 use Alma\PrestaShop\Factories\ContextFactory;
+use Alma\PrestaShop\Factories\OrderStateFactory;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -36,17 +37,23 @@ if (!defined('_PS_VERSION_')) {
 class OrderStateHelper
 {
     /**
-     * @var \Context|null
+     * @var int
      */
-    protected $context;
+    protected $contextLanguageId;
+
+    /**
+     * @var
+     */
+    protected $orderStateFactory;
 
     /**
      * @param ContextFactory $contextFactory
-     * @codeCoverageIgnore
+     * @param OrderStateFactory $orderStateFactory
      */
-    public function __construct($contextFactory)
+    public function __construct($contextFactory, $orderStateFactory)
     {
-        $this->context = $contextFactory->getContext();
+        $this->contextLanguageId = $contextFactory->getContextLanguageId();
+        $this->orderStateFactory = $orderStateFactory;
     }
 
     /**
@@ -56,22 +63,12 @@ class OrderStateHelper
      */
     public function getNameById($idOrderState)
     {
-        $orderStates = $this->getOrderStates($this->context->language->id);
+        $orderStates = $this->orderStateFactory->getOrderStates($this->contextLanguageId);
 
         $state = array_filter($orderStates, function ($orderState) use ($idOrderState) {
             return $orderState['id_order_state'] == $idOrderState;
         });
 
         return array_values($state)[0]['name'];
-    }
-
-    /**
-     * @param int $languageId
-     *
-     * @return mixed
-     */
-    public function getOrderStates($languageId)
-    {
-        return \OrderState::getOrderStates($languageId);
     }
 }

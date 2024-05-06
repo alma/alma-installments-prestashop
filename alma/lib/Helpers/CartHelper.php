@@ -78,8 +78,6 @@ class CartHelper
      * @param OrderRepository $orderRepository
      * @param OrderStateHelper $orderStateHelper
      * @param CarrierHelper $carrierHelper
-     *
-     * @codeCoverageIgnore
      */
     public function __construct(
         $contextFactory,

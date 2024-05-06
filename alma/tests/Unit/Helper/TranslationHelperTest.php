@@ -24,11 +24,16 @@
 
 namespace Alma\PrestaShop\Tests\Unit\Helper;
 
+use Alma\PrestaShop\Builders\TranslationHelperBuilder;
 use PHPUnit\Framework\TestCase;
 
 class TranslationHelperTest extends TestCase
 {
     public function testGetTranslation()
     {
+        $translationHelperBuilder = new TranslationHelperBuilder();
+        $translationHelper = $translationHelperBuilder->getInstance();
+
+        $this->assertEquals('Today', $translationHelper->getTranslation('Today', 'PaymentService'));
     }
 }

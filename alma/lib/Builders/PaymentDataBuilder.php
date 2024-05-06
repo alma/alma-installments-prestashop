@@ -57,8 +57,8 @@ class PaymentDataBuilder
             $this->getStateHelper(),
             $this->getCustomerHelper(),
             $this->getCartHelper(),
-            $this->getCarrierHelper()
+            $this->getCarrierHelper(),
+            $this->getAddressFactory()
         );
     }
-
 }

@@ -38,7 +38,7 @@ use PrestaShop\PrestaShop\Core\Search\Filters\OrderFilters;
 class ActionOrderGridQueryBuilderModifierHookController extends FrontendHookController
 {
     /**
-     * @var InsuranceHelper $insuranceHelper
+     * @var InsuranceHelper
      */
     protected $insuranceHelper;
 

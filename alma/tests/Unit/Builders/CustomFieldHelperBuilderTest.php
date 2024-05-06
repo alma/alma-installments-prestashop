@@ -25,52 +25,51 @@
 namespace Alma\PrestaShop\Tests\Unit\Builders;
 
 use Alma\PrestaShop\Builders\CustomFieldHelperBuilder;
-use Alma\PrestaShop\Helpers\ConfigurationHelper;
 use Alma\PrestaShop\Helpers\CustomFieldsHelper;
 use Alma\PrestaShop\Helpers\LanguageHelper;
 use Alma\PrestaShop\Helpers\LocaleHelper;
 use Alma\PrestaShop\Helpers\SettingsHelper;
-use Alma\PrestaShop\Helpers\ShopHelper;
 use PHPUnit\Framework\TestCase;
 
 class CustomFieldHelperBuilderTest extends TestCase
 {
     /**
-     *
-     * @var CustomFieldHelperBuilder $customFieldHelperHelperBuilder
+     * @var CustomFieldHelperBuilder
      */
     protected $customFieldHelperBuilder
     ;
-    public function setUp() {
+
+    public function setUp()
+    {
         $this->customFieldHelperBuilder = new CustomFieldHelperBuilder();
     }
 
-
-    public function testGetInstance() {
+    public function testGetInstance()
+    {
         $this->assertInstanceOf(CustomFieldsHelper::class, $this->customFieldHelperBuilder->getInstance());
     }
 
-    public function testGetLanguageHelper() {
+    public function testGetLanguageHelper()
+    {
         $this->assertInstanceOf(LanguageHelper::class, $this->customFieldHelperBuilder->getLanguageHelper());
         $this->assertInstanceOf(LanguageHelper::class, $this->customFieldHelperBuilder->getLanguageHelper(
             new LanguageHelper()
         ));
     }
 
-    public function testGetLocaleHelper() {
+    public function testGetLocaleHelper()
+    {
         $this->assertInstanceOf(LocaleHelper::class, $this->customFieldHelperBuilder->getLocaleHelper());
         $this->assertInstanceOf(LocaleHelper::class, $this->customFieldHelperBuilder->getLocaleHelper(
             new LocaleHelper(new LanguageHelper())
         ));
     }
 
-    public function testGetSettingsHelper() {
+    public function testGetSettingsHelper()
+    {
         $this->assertInstanceOf(SettingsHelper::class, $this->customFieldHelperBuilder->getSettingsHelper());
         $this->assertInstanceOf(SettingsHelper::class, $this->customFieldHelperBuilder->getSettingsHelper(
-            new SettingsHelper(
-                new ShopHelper(),
-                new ConfigurationHelper()
-            )
+            $this->createMock(SettingsHelper::class)
         ));
     }
 }

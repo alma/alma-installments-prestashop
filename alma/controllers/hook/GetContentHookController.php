@@ -32,6 +32,7 @@ use Alma\API\Entities\Merchant;
 use Alma\API\RequestError;
 use Alma\PrestaShop\Builders\ApiHelperBuilder;
 use Alma\PrestaShop\Builders\CustomFieldHelperBuilder;
+use Alma\PrestaShop\Builders\MediaHelperBuilder;
 use Alma\PrestaShop\Builders\PriceHelperBuilder;
 use Alma\PrestaShop\Builders\SettingsHelperBuilder;
 use Alma\PrestaShop\Builders\ShareOfCheckoutHelperBuilder;
@@ -85,6 +86,11 @@ final class GetContentHookController extends AdminHookController
      * @var CustomFieldsHelper
      */
     protected $customFieldsHelper;
+
+    /**
+     * @var MediaHelper
+     */
+    protected $mediaHelper;
 
     /**
      * @var array
@@ -160,7 +166,10 @@ final class GetContentHookController extends AdminHookController
         $this->priceHelper = $priceHelperBuilder->getInstance();
 
         $customFieldHelperBuilder = new CustomFieldHelperBuilder();
-        $this->customFieldsHelper= $customFieldHelperBuilder->getInstance();
+        $this->customFieldsHelper = $customFieldHelperBuilder->getInstance();
+
+        $mediaHelperBuilder = new MediaHelperBuilder();
+        $this->mediaHelper = $mediaHelperBuilder->getInstance();
 
         parent::__construct($module);
     }
@@ -209,7 +218,6 @@ final class GetContentHookController extends AdminHookController
 
         $shareOfCheckoutHelperBuilder = new ShareOfCheckoutHelperBuilder();
         $shareOfCheckoutHelper = $shareOfCheckoutHelperBuilder->getInstance();
-
 
         if ($liveKey !== SettingsHelper::getLiveKey()
             && ConstantsHelper::OBSCURE_VALUE !== $liveKey
@@ -599,7 +607,7 @@ final class GetContentHookController extends AdminHookController
      */
     protected function buildForms($needsKeys, $feePlansOrdered, $installmentsPlans)
     {
-        $iconPath = MediaHelper::getIconPathAlmaTiny($this->module);
+        $iconPath = $this->mediaHelper->getIconPathAlmaTiny();
         $fieldsForms = [];
 
         if (!$needsKeys) {

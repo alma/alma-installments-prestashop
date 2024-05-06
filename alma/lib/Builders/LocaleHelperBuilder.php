@@ -47,5 +47,4 @@ class LocaleHelperBuilder
             $this->getLanguageHelper()
         );
     }
-
 }

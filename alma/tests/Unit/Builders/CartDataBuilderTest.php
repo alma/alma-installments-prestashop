@@ -25,13 +25,9 @@
 namespace Alma\PrestaShop\Tests\Unit\Builders;
 
 use Alma\PrestaShop\Builders\CartDataBuilder;
-use Alma\PrestaShop\Helpers\ConfigurationHelper;
-use Alma\PrestaShop\Helpers\CurrencyHelper;
 use Alma\PrestaShop\Helpers\PriceHelper;
 use Alma\PrestaShop\Helpers\ProductHelper;
 use Alma\PrestaShop\Helpers\SettingsHelper;
-use Alma\PrestaShop\Helpers\ShopHelper;
-use Alma\PrestaShop\Helpers\ToolsHelper;
 use Alma\PrestaShop\Model\CartData;
 use Alma\PrestaShop\Repositories\ProductRepository;
 use PHPUnit\Framework\TestCase;
@@ -39,48 +35,47 @@ use PHPUnit\Framework\TestCase;
 class CartDataBuilderTest extends TestCase
 {
     /**
-     *
-     * @var CartDataBuilder $cartDataBuilder
+     * @var CartDataBuilder
      */
     protected $cartDataBuilder
     ;
-    public function setUp() {
+
+    public function setUp()
+    {
         $this->cartDataBuilder = new CartDataBuilder();
     }
 
-
-    public function testGetInstance() {
+    public function testGetInstance()
+    {
         $this->assertInstanceOf(CartData::class, $this->cartDataBuilder->getInstance());
     }
 
-    public function testGetProductHelper() {
+    public function testGetProductHelper()
+    {
         $this->assertInstanceOf(ProductHelper::class, $this->cartDataBuilder->getProductHelper());
         $this->assertInstanceOf(ProductHelper::class, $this->cartDataBuilder->getProductHelper(
             new ProductHelper()
         ));
     }
 
-    public function testGetSettingsHelper() {
+    public function testGetSettingsHelper()
+    {
         $this->assertInstanceOf(SettingsHelper::class, $this->cartDataBuilder->getSettingsHelper());
         $this->assertInstanceOf(SettingsHelper::class, $this->cartDataBuilder->getSettingsHelper(
-            new SettingsHelper(
-                new ShopHelper(),
-                new ConfigurationHelper()
-            )
+            $this->createMock(SettingsHelper::class)
         ));
     }
 
-    public function testGetPriceHelper() {
+    public function testGetPriceHelper()
+    {
         $this->assertInstanceOf(PriceHelper::class, $this->cartDataBuilder->getPriceHelper());
         $this->assertInstanceOf(PriceHelper::class, $this->cartDataBuilder->getPriceHelper(
-            new PriceHelper(
-                new ToolsHelper(),
-                new CurrencyHelper()
-            )
+            $this->createMock(PriceHelper::class)
         ));
     }
 
-    public function testGetProductRepository() {
+    public function testGetProductRepository()
+    {
         $this->assertInstanceOf(ProductRepository::class, $this->cartDataBuilder->getProductRepository());
         $this->assertInstanceOf(ProductRepository::class, $this->cartDataBuilder->getProductRepository(
             new ProductRepository()

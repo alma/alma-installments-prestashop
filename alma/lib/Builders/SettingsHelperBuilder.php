@@ -48,5 +48,4 @@ class SettingsHelperBuilder
             $this->getConfigurationHelper()
         );
     }
-
 }

@@ -25,15 +25,28 @@
 namespace Alma\PrestaShop\Tests\Unit\Factories;
 
 use Alma\PrestaShop\Factories\ModuleFactory;
+use Alma\PrestaShop\Helpers\ConstantsHelper;
 use PHPUnit\Framework\TestCase;
 
 class ModuleFactoryTest extends TestCase
 {
-    public function testGetContext()
-    {
-        $moduleFactory = new ModuleFactory();
+    /**
+     * @var ModuleFactory
+     */
+    protected $moduleFactory;
 
-        $this->assertInstanceOf(\Module::class, $moduleFactory->getModule());
+    public function setUp()
+    {
+        $this->moduleFactory = new ModuleFactory();
     }
 
+    public function testGetContext()
+    {
+        $this->assertInstanceOf(\Module::class, $this->moduleFactory->getModule());
+    }
+
+    public function testGetContextName()
+    {
+        $this->assertEquals(ConstantsHelper::ALMA_MODULE_NAME, $this->moduleFactory->getModuleName());
+    }
 }

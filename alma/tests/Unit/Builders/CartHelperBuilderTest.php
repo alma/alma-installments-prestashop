@@ -26,55 +26,51 @@ namespace Alma\PrestaShop\Tests\Unit\Builders;
 
 use Alma\PrestaShop\Builders\CartHelperBuilder;
 use Alma\PrestaShop\Factories\ContextFactory;
+use Alma\PrestaShop\Factories\OrderStateFactory;
 use Alma\PrestaShop\Helpers\CarrierHelper;
 use Alma\PrestaShop\Helpers\CartHelper;
-use Alma\PrestaShop\Helpers\ConfigurationHelper;
 use Alma\PrestaShop\Helpers\CurrencyHelper;
 use Alma\PrestaShop\Helpers\OrderStateHelper;
 use Alma\PrestaShop\Helpers\PriceHelper;
-use Alma\PrestaShop\Helpers\ProductHelper;
-use Alma\PrestaShop\Helpers\SettingsHelper;
-use Alma\PrestaShop\Helpers\ShopHelper;
 use Alma\PrestaShop\Helpers\ToolsHelper;
-use Alma\PrestaShop\Model\CarrierData;
 use Alma\PrestaShop\Model\CartData;
 use Alma\PrestaShop\Repositories\OrderRepository;
-use Alma\PrestaShop\Repositories\ProductRepository;
 use PHPUnit\Framework\TestCase;
 
 class CartHelperBuilderTest extends TestCase
 {
     /**
-     *
-     * @var CartHelperBuilder $cartHelperBuilder
+     * @var CartHelperBuilder
      */
     protected $cartHelperBuilder;
 
     /**
-     * @var PriceHelper $priceHelper
+     * @var PriceHelper
      */
     protected $priceHelper;
 
     /**
-     * @var ContextFactory $contextFactory
+     * @var ContextFactory
      */
     protected $contextFactory;
 
-    public function setUp() {
+    public function setUp()
+    {
         $this->cartHelperBuilder = new CartHelperBuilder();
         $this->contextFactory = new ContextFactory();
-        $this->priceHelper =  new PriceHelper(
+        $this->priceHelper = new PriceHelper(
             new ToolsHelper(),
             new CurrencyHelper()
         );
     }
 
-
-    public function testGetInstance() {
+    public function testGetInstance()
+    {
         $this->assertInstanceOf(CartHelper::class, $this->cartHelperBuilder->getInstance());
     }
 
-    public function testGetContextFactory() {
+    public function testGetContextFactory()
+    {
         $this->assertInstanceOf(ContextFactory::class, $this->cartHelperBuilder->getContextFactory());
         $this->assertInstanceOf(ContextFactory::class, $this->cartHelperBuilder->getContextFactory(
             $this->contextFactory
@@ -83,16 +79,19 @@ class CartHelperBuilderTest extends TestCase
 
     /**
      * @covers \Alma\PrestaShop\Builders\AddressHelperBuilder::getToolsHelper
+     *
      * @return void
      */
-    public function testGetToolsHelperTest() {
+    public function testGetToolsHelperTest()
+    {
         $this->assertInstanceOf(ToolsHelper::class, $this->cartHelperBuilder->getToolsHelper());
         $this->assertInstanceOf(ToolsHelper::class, $this->cartHelperBuilder->getToolsHelper(
             new ToolsHelper()
         ));
     }
 
-    public function testGetPriceHelper() {
+    public function testGetPriceHelper()
+    {
         $this->assertInstanceOf(PriceHelper::class, $this->cartHelperBuilder->getPriceHelper());
         $this->assertInstanceOf(PriceHelper::class, $this->cartHelperBuilder->getPriceHelper(
             $this->priceHelper
@@ -103,15 +102,7 @@ class CartHelperBuilderTest extends TestCase
     {
         $this->assertInstanceOf(CartData::class, $this->cartHelperBuilder->getCartData());
         $this->assertInstanceOf(CartData::class, $this->cartHelperBuilder->getPriceHelper(
-            new CartData(
-                new ProductHelper(),
-                new SettingsHelper(
-                  new ShopHelper(),
-                  new ConfigurationHelper()
-                ),
-                $this->priceHelper,
-                new ProductRepository()
-            )
+            $this->createMock(CartData::class)
         ));
     }
 
@@ -127,7 +118,7 @@ class CartHelperBuilderTest extends TestCase
     {
         $this->assertInstanceOf(OrderStateHelper::class, $this->cartHelperBuilder->getOrderStateHelper());
         $this->assertInstanceOf(OrderStateHelper::class, $this->cartHelperBuilder->getOrderStateHelper(
-            new OrderStateHelper($this->contextFactory)
+            new OrderStateHelper($this->contextFactory, new OrderStateFactory())
         ));
     }
 
@@ -135,10 +126,7 @@ class CartHelperBuilderTest extends TestCase
     {
         $this->assertInstanceOf(CarrierHelper::class, $this->cartHelperBuilder->getCarrierHelper());
         $this->assertInstanceOf(CarrierHelper::class, $this->cartHelperBuilder->getCarrierHelper(
-            new CarrierHelper(
-                $this->contextFactory,
-                new CarrierData()
-            )
+            $this->createMock(CarrierHelper::class)
         ));
     }
 }

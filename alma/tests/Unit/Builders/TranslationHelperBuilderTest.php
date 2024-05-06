@@ -25,29 +25,25 @@
 namespace Alma\PrestaShop\Tests\Unit\Builders;
 
 use Alma\PrestaShop\Builders\TranslationHelperBuilder;
-use Alma\PrestaShop\Factories\ContextFactory;
 use Alma\PrestaShop\Helpers\CarrierHelper;
-use Alma\PrestaShop\Helpers\CurrencyHelper;
 use Alma\PrestaShop\Helpers\PriceHelper;
-use Alma\PrestaShop\Helpers\ToolsHelper;
 use Alma\PrestaShop\Helpers\TranslationHelper;
-use Alma\PrestaShop\Model\CarrierData;
 use PHPUnit\Framework\TestCase;
 
 class TranslationHelperBuilderTest extends TestCase
 {
     /**
-     *
-     * @var TranslationHelperBuilder $shareOfCheckoutHelper
+     * @var TranslationHelperBuilder
      */
     protected $translationHelperBuilder;
 
-    public function setUp() {
+    public function setUp()
+    {
         $this->translationHelperBuilder = new TranslationHelperBuilder();
     }
 
-
-    public function testGetInstance() {
+    public function testGetInstance()
+    {
         $this->assertInstanceOf(TranslationHelper::class, $this->translationHelperBuilder->getInstance());
     }
 
@@ -55,10 +51,7 @@ class TranslationHelperBuilderTest extends TestCase
     {
         $this->assertInstanceOf(PriceHelper::class, $this->translationHelperBuilder->getPriceHelper());
         $this->assertInstanceOf(PriceHelper::class, $this->translationHelperBuilder->getPriceHelper(
-            new PriceHelper(
-                new ToolsHelper(),
-                new CurrencyHelper()
-            )
+            $this->createMock(PriceHelper::class)
         ));
     }
 
@@ -66,10 +59,7 @@ class TranslationHelperBuilderTest extends TestCase
     {
         $this->assertInstanceOf(CarrierHelper::class, $this->translationHelperBuilder->getCarrierHelper());
         $this->assertInstanceOf(CarrierHelper::class, $this->translationHelperBuilder->getCarrierHelper(
-            new CarrierHelper(
-                new ContextFactory(),
-                new CarrierData()
-            )
+            $this->createMock(CarrierHelper::class)
         ));
     }
 }

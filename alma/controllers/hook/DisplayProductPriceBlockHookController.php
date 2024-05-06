@@ -84,8 +84,7 @@ class DisplayProductPriceBlockHookController extends FrontendHookController
         $this->settingsHelper = $settingsHelperBuilder->getInstance();
 
         $customFieldHelperBuilder = new CustomFieldHelperBuilder();
-        $this->customFieldsHelper= $customFieldHelperBuilder->getInstance();
-
+        $this->customFieldsHelper = $customFieldHelperBuilder->getInstance();
     }
 
     public function canRun()

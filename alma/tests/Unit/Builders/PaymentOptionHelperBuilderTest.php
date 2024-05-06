@@ -26,36 +26,31 @@ namespace Alma\PrestaShop\Tests\Unit\Builders;
 
 use Alma\PrestaShop\Builders\PaymentOptionHelperBuilder;
 use Alma\PrestaShop\Factories\ContextFactory;
+use Alma\PrestaShop\Factories\MediaFactory;
 use Alma\PrestaShop\Factories\ModuleFactory;
 use Alma\PrestaShop\Helpers\ConfigurationHelper;
-use Alma\PrestaShop\Helpers\CurrencyHelper;
 use Alma\PrestaShop\Helpers\CustomFieldsHelper;
-use Alma\PrestaShop\Helpers\DateHelper;
-use Alma\PrestaShop\Helpers\LanguageHelper;
-use Alma\PrestaShop\Helpers\LocaleHelper;
 use Alma\PrestaShop\Helpers\MediaHelper;
 use Alma\PrestaShop\Helpers\PaymentOptionHelper;
 use Alma\PrestaShop\Helpers\PaymentOptionTemplateHelper;
-use Alma\PrestaShop\Helpers\PriceHelper;
 use Alma\PrestaShop\Helpers\SettingsHelper;
 use Alma\PrestaShop\Helpers\ShopHelper;
-use Alma\PrestaShop\Helpers\ToolsHelper;
-use Alma\PrestaShop\Helpers\TranslationHelper;
 use PHPUnit\Framework\TestCase;
 
 class PaymentOptionHelperBuilderTest extends TestCase
 {
     /**
-     *
-     * @var PaymentOptionHelperBuilder $paymentOptionHelperBuilder
+     * @var PaymentOptionHelperBuilder
      */
     protected $paymentOptionHelperBuilder;
 
     /**
-     * @var SettingsHelper $settingsHelper
+     * @var SettingsHelper
      */
     protected $settingsHelper;
-    public function setUp() {
+
+    public function setUp()
+    {
         $this->paymentOptionHelperBuilder = new PaymentOptionHelperBuilder();
         $this->settingsHelper = new SettingsHelper(
             new ShopHelper(),
@@ -63,8 +58,8 @@ class PaymentOptionHelperBuilderTest extends TestCase
         );
     }
 
-
-    public function testGetInstance() {
+    public function testGetInstance()
+    {
         $this->assertInstanceOf(PaymentOptionHelper::class, $this->paymentOptionHelperBuilder->getInstance());
     }
 
@@ -96,11 +91,7 @@ class PaymentOptionHelperBuilderTest extends TestCase
     {
         $this->assertInstanceOf(CustomFieldsHelper::class, $this->paymentOptionHelperBuilder->getCustomFieldsHelper());
         $this->assertInstanceOf(CustomFieldsHelper::class, $this->paymentOptionHelperBuilder->getCustomFieldsHelper(
-            new CustomFieldsHelper(
-                new LanguageHelper(),
-                new LocaleHelper(new LanguageHelper()),
-                $this->settingsHelper
-            )
+            $this->createMock(CustomFieldsHelper::class)
         ));
     }
 
@@ -108,7 +99,7 @@ class PaymentOptionHelperBuilderTest extends TestCase
     {
         $this->assertInstanceOf(MediaHelper::class, $this->paymentOptionHelperBuilder->getMediaHelper());
         $this->assertInstanceOf(MediaHelper::class, $this->paymentOptionHelperBuilder->getMediaHelper(
-            new MediaHelper()
+            $this->createMock(MediaHelper::class)
         ));
     }
 
@@ -124,18 +115,15 @@ class PaymentOptionHelperBuilderTest extends TestCase
     {
         $this->assertInstanceOf(PaymentOptionTemplateHelper::class, $this->paymentOptionHelperBuilder->getPaymentOptionTemplateHelper());
         $this->assertInstanceOf(PaymentOptionTemplateHelper::class, $this->paymentOptionHelperBuilder->getPaymentOptionTemplateHelper(
-            new PaymentOptionTemplateHelper(
-                new ContextFactory(),
-                new ModuleFactory(),
-                $this->settingsHelper ,
-                new ConfigurationHelper(),
-                new TranslationHelper(new ModuleFactory()),
-                new PriceHelper(
-                    new ToolsHelper(),
-                    new CurrencyHelper()
-                ),
-                new DateHelper()
-            )
+            $this->createMock(PaymentOptionTemplateHelper::class)
+        ));
+    }
+
+    public function testGetMediaFactory()
+    {
+        $this->assertInstanceOf(MediaFactory::class, $this->paymentOptionHelperBuilder->getMediaFactory());
+        $this->assertInstanceOf(MediaFactory::class, $this->paymentOptionHelperBuilder->getMediaFactory(
+            $this->createMock(MediaFactory::class)
         ));
     }
 }

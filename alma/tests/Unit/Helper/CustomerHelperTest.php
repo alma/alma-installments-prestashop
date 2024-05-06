@@ -24,19 +24,111 @@
 
 namespace Alma\PrestaShop\Tests\Unit\Helper;
 
+use Alma\PrestaShop\Builders\CustomerHelperBuilder;
+use Alma\PrestaShop\Factories\ContextFactory;
+use Alma\PrestaShop\Helpers\OrderHelper;
+use Alma\PrestaShop\Helpers\ValidateHelper;
 use PHPUnit\Framework\TestCase;
 
 class CustomerHelperTest extends TestCase
 {
     public function testGetCustomer()
     {
+        $contextFactory = \Mockery::mock(ContextFactory::class);
+        $contextFactory->shouldReceive('getContextCartCustomerId')->andReturn(1);
+
+        $customerHelperBuilder = \Mockery::mock(CustomerHelperBuilder::class)->makePartial();
+        $customerHelperBuilder->shouldReceive('getContextFactory')->andReturn($contextFactory);
+        $customerHelper = $customerHelperBuilder->getInstance();
+
+        $this->assertInstanceOf(\Customer::class, $customerHelper->getCustomer());
+
+
+        $customer = new \Customer();
+        $customer->firstname = 'test';
+        $customer->lastname = 'test';
+        $customer->email = 'test@test.fr';
+        $customer->passwd = '12345';
+        $customer->save();
+
+
+        $contextFactory = \Mockery::mock(ContextFactory::class);
+        $contextFactory->shouldReceive('getContextCartCustomerId')->andReturn(null);
+        $contextFactory->shouldReceive('getContextCustomer')->andReturn($customer);
+        $contextFactory->shouldReceive('getContextCartCustomerId')->andReturn(1);
+        $contextFactory->shouldReceive('getContextCartId')->andReturn(1);
+
+        $customerHelperBuilder = \Mockery::mock(CustomerHelperBuilder::class)->makePartial();
+        $customerHelperBuilder->shouldReceive('getContextFactory')->andReturn($contextFactory);
+        $customerHelper = $customerHelperBuilder->getInstance();
+
+        $this->assertInstanceOf(\Customer::class, $customerHelper->getCustomer());
+
+
+        $contextFactory = \Mockery::mock(ContextFactory::class);
+        $contextFactory->shouldReceive('getContextCartCustomerId')->andReturn(null);
+        $contextFactory->shouldReceive('getContextCustomer')->andReturn(null);
+        $contextFactory->shouldReceive('getContextCartCustomerId')->andReturn(1);
+        $contextFactory->shouldReceive('getContextCartId')->andReturn(1);
+
+        $customerHelperBuilder = \Mockery::mock(CustomerHelperBuilder::class)->makePartial();
+        $customerHelperBuilder->shouldReceive('getContextFactory')->andReturn($contextFactory);
+        $customerHelper = $customerHelperBuilder->getInstance();
+
+        $this->assertNull($customerHelper->getCustomer());
+
     }
 
     public function testValidateCustomer()
     {
+        $validateHelper = \Mockery::mock(ValidateHelper::class);
+        $validateHelper->shouldReceive('isLoadedObject', [new \stdClass()])->andReturn(false);
+
+        $contextFactory = \Mockery::mock(ContextFactory::class);
+        $contextFactory->shouldReceive('getContextCartCustomerId')->andReturn(1);
+        $contextFactory->shouldReceive('getContextCartId')->andReturn(1);
+
+        $customerHelperBuilder = \Mockery::mock(CustomerHelperBuilder::class)->makePartial();
+        $customerHelperBuilder->shouldReceive('getValidateHelper')->andReturn($validateHelper);
+        $customerHelperBuilder->shouldReceive('getContextFactory')->andReturn($contextFactory);
+        $customerHelper = $customerHelperBuilder->getInstance();
+
+        $this->assertNull($customerHelper->validateCustomer(new \stdClass()));
+
+
+        $customer = new \Customer();
+        $customer->firstname = 'test';
+        $customer->lastname = 'test';
+        $customer->email = 'test@test.fr';
+        $customer->passwd = '12345';
+        $customer->save();
+
+        $customerHelperBuilder = new CustomerHelperBuilder();
+        $customerHelper = $customerHelperBuilder->getInstance();
+
+        $this->assertInstanceOf(\Customer::class, $customerHelper->validateCustomer($customer));
+
     }
 
     public function testIsNewCustomer()
     {
+        $orderHelper = \Mockery::mock(OrderHelper::class)->makePartial();
+        $orderHelper->shouldReceive('getCustomerNbOrders', [1])->andReturn(0);
+
+        $customerHelperBuilder = \Mockery::mock(CustomerHelperBuilder::class)->makePartial();
+        $customerHelperBuilder->shouldReceive('getOrderHelper')->andReturn($orderHelper);
+        $customerHelper = $customerHelperBuilder->getInstance();
+
+        $this->assertTrue($customerHelper->isNewCustomer(1));
+
+        $orderHelper = \Mockery::mock(OrderHelper::class)->makePartial();
+        $orderHelper->shouldReceive('getCustomerNbOrders', [1])->andReturn(10);
+
+        $customerHelperBuilder = \Mockery::mock(CustomerHelperBuilder::class)->makePartial();
+        $customerHelperBuilder->shouldReceive('getOrderHelper')->andReturn($orderHelper);
+        $customerHelper = $customerHelperBuilder->getInstance();
+
+        $this->assertFalse($customerHelper->isNewCustomer(1));
+
     }
 }

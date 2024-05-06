@@ -26,23 +26,25 @@ namespace Alma\PrestaShop\Tests\Unit\Builders;
 
 use Alma\PrestaShop\Builders\OrderStateHelperBuilder;
 use Alma\PrestaShop\Factories\ContextFactory;
+use Alma\PrestaShop\Factories\OrderStateFactory;
 use Alma\PrestaShop\Helpers\OrderStateHelper;
 use PHPUnit\Framework\TestCase;
 
 class OrderStateHelperBuilderTest extends TestCase
 {
     /**
-     *
-     * @var OrderStateHelperBuilder $orderStateHelperBuilder
+     * @var OrderStateHelperBuilder
      */
     protected $orderStateHelperBuilder
     ;
-    public function setUp() {
+
+    public function setUp()
+    {
         $this->orderStateHelperBuilder = new OrderStateHelperBuilder();
     }
 
-
-    public function testGetInstance() {
+    public function testGetInstance()
+    {
         $this->assertInstanceOf(OrderStateHelper::class, $this->orderStateHelperBuilder->getInstance());
     }
 
@@ -51,6 +53,14 @@ class OrderStateHelperBuilderTest extends TestCase
         $this->assertInstanceOf(ContextFactory::class, $this->orderStateHelperBuilder->getContextFactory());
         $this->assertInstanceOf(ContextFactory::class, $this->orderStateHelperBuilder->getContextFactory(
             new ContextFactory()
+        ));
+    }
+
+    public function testGetOrderStateFactory()
+    {
+        $this->assertInstanceOf(OrderStateFactory::class, $this->orderStateHelperBuilder->getOrderStateFactory());
+        $this->assertInstanceOf(OrderStateFactory::class, $this->orderStateHelperBuilder->getOrderStateFactory(
+            new OrderStateFactory()
         ));
     }
 }

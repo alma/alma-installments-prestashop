@@ -41,7 +41,6 @@ class PriceHelperTest extends TestCase
     {
         $priceHelperBuilder = new PriceHelperBuilder();
         $this->priceHelper = $priceHelperBuilder->getInstance();
-
     }
 
     public function testConvertPriceToCents()

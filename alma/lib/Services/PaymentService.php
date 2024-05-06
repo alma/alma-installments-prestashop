@@ -179,8 +179,6 @@ class PaymentService
      * @param CartHelper $cartHelper
      * @param PaymentOptionTemplateHelper $paymentOptionTemplateHelper
      * @param PaymentOptionHelper $paymentOptionHelper
-     *
-     * @codeCoverageIgnore
      */
     public function __construct(
         $contextFactory,
@@ -286,8 +284,6 @@ class PaymentService
                 );
 
                 $action = $this->contextHelper->getModuleLink(
-                    $this->context,
-                    $this->module->name,
                     'payment',
                     ['key' => $key],
                     true
