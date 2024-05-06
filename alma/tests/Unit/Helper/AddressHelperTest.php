@@ -41,7 +41,7 @@ class AddressHelperTest extends TestCase
 
     public function testGetAddressFromCustomer()
     {
-        $idCustomer = rand(1, 10000);
+        $idCustomer = rand(10000, 20000);
         $customer = new \Customer();
         $customer->id = $idCustomer;
         $customer->id_lang = 1;
@@ -79,7 +79,6 @@ class AddressHelperTest extends TestCase
         $address2->save();
 
         $result = $this->addressHelper->getAddressFromCustomer($customer);
-
         $this->assertEquals(2, count($result));
 
         $toolsHelper = \Mockery::mock(ToolsHelper::class)->makePartial();

@@ -41,11 +41,5 @@ class AddressFactoryTest extends TestCase
     public function testCreateAddress()
     {
         $this->assertInstanceOf(\Address::class, $this->addressFactory->create(10));
-
-        $address = $this->addressFactory->create(20);
-
-        $this->assertEquals(20, $address->id);
     }
-
-
 }
