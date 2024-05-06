@@ -22,76 +22,24 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
-namespace Alma\PrestaShop\Helpers;
+namespace Alma\PrestaShop\Tests\Unit\Factories;
 
 use Alma\PrestaShop\Factories\MediaFactory;
-use Alma\PrestaShop\Factories\ModuleFactory;
-use Alma\PrestaShop\Factories\PhpFactory;
-
-if (!defined('_PS_VERSION_')) {
-    exit;
-}
-
-/**
- * Class MediaHelper.
- *
- * Use for Media
- */
-class MediaHelper
+use PHPUnit\Framework\TestCase;
+class MediaFactoryTest extends TestCase
 {
-
     /**
      * @var MediaFactory
      */
     protected $mediaFactory;
 
-    /**
-     * @var ModuleFactory
-     */
-    protected $moduleFactory;
-
-    /**
-     * @var PhpFactory
-     */
-    protected $phpFactory;
-
-
-    /**
-     * @param MediaFactory $mediaFactory
-     * @param ModuleFactory $moduleFactory
-     * @param PhpFactory $phpFactory
-     */
-    public function __construct($mediaFactory, $moduleFactory, $phpFactory)
+    public function setUp()
     {
-        $this->mediaFactory = $mediaFactory;
-        $this->moduleFactory = $moduleFactory;
-        $this->phpFactory = $phpFactory;
+        $this->mediaFactory = new MediaFactory();
     }
 
-    /**
-     * @return bool|string|string[]|null
-     */
-    public function getIconPathAlmaTiny()
+    public function testGetMediaPath()
     {
-        if ($this->phpFactory->is_callable('\Media::getMediaPath')) {
-            return $this->mediaFactory->getMediaPath('/views/img/logos/alma_tiny.svg');
-        }
-
-        return $this->moduleFactory->getPathUri() . '/views/img/logos/alma_tiny.svg';
-    }
-
-    /**
-     * @param string $valueBNPL
-     * @param bool $isDeferred
-     *
-     * @return string
-     */
-    public function getLogoName($valueBNPL, $isDeferred)
-    {
-        if ($isDeferred) {
-            return "{$valueBNPL}j_logo.svg";
-        }
-
-        return "p{$valueBNPL}x_logo.svg";
+        $this->assertEquals("/modules/alma/views/img/logos/alma_payment_logos_tiny.svg", $this->mediaFactory->getMediaPath('/views/img/logos/alma_payment_logos_tiny.svg'));
     }
 }

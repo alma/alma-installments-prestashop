@@ -22,76 +22,30 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
-namespace Alma\PrestaShop\Helpers;
+namespace Alma\PrestaShop\Factories;
 
-use Alma\PrestaShop\Factories\MediaFactory;
-use Alma\PrestaShop\Factories\ModuleFactory;
-use Alma\PrestaShop\Factories\PhpFactory;
 
 if (!defined('_PS_VERSION_')) {
     exit;
 }
 
 /**
- * Class MediaHelper.
+ * Class MediaFactory.
  *
- * Use for Media
  */
-class MediaHelper
+class MediaFactory
 {
 
     /**
-     * @var MediaFactory
-     */
-    protected $mediaFactory;
-
-    /**
-     * @var ModuleFactory
-     */
-    protected $moduleFactory;
-
-    /**
-     * @var PhpFactory
-     */
-    protected $phpFactory;
-
-
-    /**
-     * @param MediaFactory $mediaFactory
-     * @param ModuleFactory $moduleFactory
-     * @param PhpFactory $phpFactory
-     */
-    public function __construct($mediaFactory, $moduleFactory, $phpFactory)
-    {
-        $this->mediaFactory = $mediaFactory;
-        $this->moduleFactory = $moduleFactory;
-        $this->phpFactory = $phpFactory;
-    }
-
-    /**
+     * @param $path
      * @return bool|string|string[]|null
      */
-    public function getIconPathAlmaTiny()
+    public function getMediaPath($path)
     {
-        if ($this->phpFactory->is_callable('\Media::getMediaPath')) {
-            return $this->mediaFactory->getMediaPath('/views/img/logos/alma_tiny.svg');
-        }
+        $moduleFactory = new ModuleFactory();
+        $moduleName = $moduleFactory->getModuleName();
 
-        return $this->moduleFactory->getPathUri() . '/views/img/logos/alma_tiny.svg';
+        return \Media::getMediaPath(_PS_MODULE_DIR_ . $moduleName . $path);
     }
 
-    /**
-     * @param string $valueBNPL
-     * @param bool $isDeferred
-     *
-     * @return string
-     */
-    public function getLogoName($valueBNPL, $isDeferred)
-    {
-        if ($isDeferred) {
-            return "{$valueBNPL}j_logo.svg";
-        }
-
-        return "p{$valueBNPL}x_logo.svg";
-    }
 }

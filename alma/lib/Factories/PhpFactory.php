@@ -22,39 +22,27 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
-namespace Alma\PrestaShop\Builders;
+namespace Alma\PrestaShop\Factories;
 
-use Alma\PrestaShop\Helpers\AddressHelper;
-
-use Alma\PrestaShop\Helpers\PaymentOptionHelper;
-use Alma\PrestaShop\Traits\BuilderTrait;
 
 if (!defined('_PS_VERSION_')) {
     exit;
 }
 
 /**
- * PaymentOptionHelperBuilder.
+ * Class PhpFactory.
+ *
  */
-class PaymentOptionHelperBuilder
+class PhpFactory
 {
-    use BuilderTrait;
 
     /**
-     * @return PaymentOptionHelper
+     * @param callable|mixed $value
+     * @return bool
      */
-    public function getInstance()
-    {
-        return new PaymentOptionHelper(
-            $this->getContextFactory(),
-            $this->getModuleFactory(),
-            $this->getSettingsHelper(),
-            $this->getCustomFieldsHelper(),
-            $this->getMediaHelper(),
-            $this->getConfigurationHelper(),
-            $this->getPaymentOptionTemplateHelper(),
-            $this->getMediaFactory()
-        );
-    }
 
+    public function is_callable( $value)
+    {
+        return is_callable($value);
+    }
 }

@@ -24,9 +24,8 @@
 
 namespace Alma\PrestaShop\Builders;
 
-use Alma\PrestaShop\Helpers\AddressHelper;
-
-use Alma\PrestaShop\Helpers\PaymentOptionHelper;
+use Alma\PrestaShop\Helpers\MediaHelper;
+use Alma\PrestaShop\Model\ShippingData;
 use Alma\PrestaShop\Traits\BuilderTrait;
 
 if (!defined('_PS_VERSION_')) {
@@ -34,26 +33,21 @@ if (!defined('_PS_VERSION_')) {
 }
 
 /**
- * PaymentOptionHelperBuilder.
+ * MediaHelperBuilder.
  */
-class PaymentOptionHelperBuilder
+class MediaHelperBuilder
 {
     use BuilderTrait;
 
     /**
-     * @return PaymentOptionHelper
+     * @return MediaHelper
      */
     public function getInstance()
     {
-        return new PaymentOptionHelper(
-            $this->getContextFactory(),
+        return new MediaHelper(
+            $this->getMediaFactory(),
             $this->getModuleFactory(),
-            $this->getSettingsHelper(),
-            $this->getCustomFieldsHelper(),
-            $this->getMediaHelper(),
-            $this->getConfigurationHelper(),
-            $this->getPaymentOptionTemplateHelper(),
-            $this->getMediaFactory()
+            $this->getPhpFactory()
         );
     }
 
