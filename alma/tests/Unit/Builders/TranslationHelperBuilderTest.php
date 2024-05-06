@@ -55,10 +55,7 @@ class TranslationHelperBuilderTest extends TestCase
     {
         $this->assertInstanceOf(PriceHelper::class, $this->translationHelperBuilder->getPriceHelper());
         $this->assertInstanceOf(PriceHelper::class, $this->translationHelperBuilder->getPriceHelper(
-            new PriceHelper(
-                new ToolsHelper(),
-                new CurrencyHelper()
-            )
+            $this->createMock(PriceHelper::class)
         ));
     }
 
@@ -66,10 +63,7 @@ class TranslationHelperBuilderTest extends TestCase
     {
         $this->assertInstanceOf(CarrierHelper::class, $this->translationHelperBuilder->getCarrierHelper());
         $this->assertInstanceOf(CarrierHelper::class, $this->translationHelperBuilder->getCarrierHelper(
-            new CarrierHelper(
-                new ContextFactory(),
-                new CarrierData()
-            )
+            $this->createMock(CarrierHelper::class)
         ));
     }
 }

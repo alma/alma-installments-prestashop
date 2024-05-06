@@ -153,11 +153,7 @@ class PaymentDataBuilderTest extends TestCase
     {
         $this->assertInstanceOf(CustomFieldsHelper::class, $this->paymentDataBuilder->getCustomFieldsHelper());
         $this->assertInstanceOf(CustomFieldsHelper::class, $this->paymentDataBuilder->getCustomFieldsHelper(
-            new CustomFieldsHelper(
-                $this->languageHelper,
-                new LocaleHelper($this->languageHelper),
-                $this->settingsHelper
-            )
+            $this->createMock(CustomFieldsHelper::class)
         ));
     }
 
@@ -165,12 +161,7 @@ class PaymentDataBuilderTest extends TestCase
     {
         $this->assertInstanceOf(CartData::class, $this->paymentDataBuilder->getCartData());
         $this->assertInstanceOf(CartData::class, $this->paymentDataBuilder->getCartData(
-            new CartData(
-                new ProductHelper(),
-                $this->settingsHelper,
-                $this->priceHelper,
-                new ProductRepository()
-            )
+            $this->createMock(CartData::class)
         ));
     }
 
@@ -178,10 +169,7 @@ class PaymentDataBuilderTest extends TestCase
     {
         $this->assertInstanceOf(ShippingData::class, $this->paymentDataBuilder->getShippingData());
         $this->assertInstanceOf(ShippingData::class, $this->paymentDataBuilder->getShippingData(
-            new ShippingData(
-                $this->priceHelper,
-                $this->carrierHelper
-            )
+            $this->createMock(ShippingData::class)
         ));
     }
 
@@ -228,11 +216,7 @@ class PaymentDataBuilderTest extends TestCase
     {
         $this->assertInstanceOf(CustomerHelper::class, $this->paymentDataBuilder->getCustomerHelper());
         $this->assertInstanceOf(CustomerHelper::class, $this->paymentDataBuilder->getCustomerHelper(
-            new CustomerHelper(
-                $this->contextFactory,
-                new OrderHelper(),
-                new ValidateHelper()
-            )
+            $this->createMock(CustomerHelper::class)
         ));
     }
 
@@ -240,20 +224,7 @@ class PaymentDataBuilderTest extends TestCase
     {
         $this->assertInstanceOf(CartHelper::class, $this->paymentDataBuilder->getCartHelper());
         $this->assertInstanceOf(CartHelper::class, $this->paymentDataBuilder->getCartHelper(
-            new CartHelper(
-                $this->contextFactory,
-                $this->toolsHelper ,
-                $this->priceHelper,
-                new CartData(
-                    new ProductHelper(),
-                    $this->settingsHelper,
-                    $this->priceHelper,
-                    new ProductRepository()
-                ),
-                new OrderRepository(),
-                new OrderStateHelper($this->contextFactory),
-                $this->carrierHelper
-            )
+            $this->createMock(CartHelper::class)
         ));
     }
 
