@@ -22,54 +22,27 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
-namespace Alma\PrestaShop\Helpers;
+namespace Alma\PrestaShop\Factories;
 
-use Alma\PrestaShop\Factories\ContextFactory;
-use Alma\PrestaShop\Factories\OrderStateFactory;
 
 if (!defined('_PS_VERSION_')) {
     exit;
 }
 
 /**
- * Class OrderStateHelper
+ * Class OrderStateFactory.
+ *
  */
-class OrderStateHelper
+class OrderStateFactory
 {
-    /**
-     * @var int
-     */
-    protected $contextLanguageId;
 
     /**
-     * @var
-     */
-    protected $orderStateFactory;
-
-    /**
-     * @param ContextFactory $contextFactory
-     * @param OrderStateFactory $orderStateFactory
-     */
-    public function __construct($contextFactory, $orderStateFactory)
-    {
-        $this->contextLanguageId = $contextFactory->getContextLanguageId();
-        $this->orderStateFactory = $orderStateFactory;
-    }
-
-    /**
-     * @param int $idOrderState
+     * @param int $languageId
      *
      * @return mixed
      */
-    public function getNameById($idOrderState)
+    public function getOrderStates($languageId)
     {
-        $orderStates = $this->orderStateFactory->getOrderStates($this->contextLanguageId);
-
-        $state = array_filter($orderStates, function ($orderState) use ($idOrderState) {
-            return $orderState['id_order_state'] == $idOrderState;
-        });
-
-        return array_values($state)[0]['name'];
+        return \OrderState::getOrderStates($languageId);
     }
-
 }

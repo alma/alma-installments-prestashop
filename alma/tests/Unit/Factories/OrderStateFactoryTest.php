@@ -22,54 +22,20 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
-namespace Alma\PrestaShop\Helpers;
+namespace Alma\PrestaShop\Tests\Unit\Factories;
 
-use Alma\PrestaShop\Factories\ContextFactory;
 use Alma\PrestaShop\Factories\OrderStateFactory;
-
-if (!defined('_PS_VERSION_')) {
-    exit;
-}
-
-/**
- * Class OrderStateHelper
- */
-class OrderStateHelper
+use PHPUnit\Framework\TestCase;
+class OrderStateFactoryTest extends TestCase
 {
     /**
-     * @var int
-     */
-    protected $contextLanguageId;
-
-    /**
-     * @var
+     * @var OrderStateFactoryTest
      */
     protected $orderStateFactory;
 
-    /**
-     * @param ContextFactory $contextFactory
-     * @param OrderStateFactory $orderStateFactory
-     */
-    public function __construct($contextFactory, $orderStateFactory)
+    public function setUp()
     {
-        $this->contextLanguageId = $contextFactory->getContextLanguageId();
-        $this->orderStateFactory = $orderStateFactory;
-    }
-
-    /**
-     * @param int $idOrderState
-     *
-     * @return mixed
-     */
-    public function getNameById($idOrderState)
-    {
-        $orderStates = $this->orderStateFactory->getOrderStates($this->contextLanguageId);
-
-        $state = array_filter($orderStates, function ($orderState) use ($idOrderState) {
-            return $orderState['id_order_state'] == $idOrderState;
-        });
-
-        return array_values($state)[0]['name'];
+        $this->orderStateFactory = new OrderStateFactoryTest();
     }
 
 }
