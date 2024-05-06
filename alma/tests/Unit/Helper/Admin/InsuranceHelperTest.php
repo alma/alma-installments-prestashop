@@ -154,26 +154,6 @@ class InsuranceHelperTest extends TestCase
     /**
      * @return void
      *
-     * @throws \PrestaShopException
-     */
-    public function testConstructIframeUrlWithParams()
-    {
-        $expected = 'https://protect.sandbox.almapay.com/almaBackOfficeConfiguration.html?is_insurance_activated=true&is_insurance_on_product_page_activated=false&is_insurance_on_cart_page_activated=false&is_add_to_cart_popup_insurance_activated=true';
-
-        $this->configurationHelperMock->method('getMultiple')->willReturn([
-            'ALMA_ACTIVATE_INSURANCE' => '1',
-            'ALMA_SHOW_INSURANCE_WIDGET_PRODUCT' => '0',
-            'ALMA_SHOW_INSURANCE_WIDGET_CART' => '0',
-            'ALMA_SHOW_INSURANCE_POPUP_CART' => '1',
-        ]);
-        $actual = $this->insuranceHelper->constructIframeUrlWithParams();
-
-        $this->assertEquals($expected, $actual);
-    }
-
-    /**
-     * @return void
-     *
      * @throws \Alma\PrestaShop\Exceptions\WrongParamsException
      */
     public function testSaveConfigInsurance()

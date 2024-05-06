@@ -158,6 +158,7 @@ class DisplayCartExtraProductActionsHookController extends FrontendHookControlle
      *
      * @throws InsuranceNotFoundException
      * @throws \PrestaShopDatabaseException
+     * @throws \PrestaShopException
      */
     public function run($params)
     {
@@ -245,6 +246,7 @@ class DisplayCartExtraProductActionsHookController extends FrontendHookControlle
                     $this->context->session->getId(),
                     $this->cartHelper->getCartIdFromContext()
                 ),
+                'insuranceSettings' => $this->adminInsuranceHelper->mapDbFieldsWithIframeParams(),
             ]);
 
         return $this->module->display($this->module->file, $template);
