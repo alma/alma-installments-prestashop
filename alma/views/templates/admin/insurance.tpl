@@ -41,7 +41,7 @@
     </div>
 </div>
 
-<script type="module">
+<script data-cfasync="false" type="module">
     let currentResolve
     let save = document.getElementById('alma_config_form_submit_btn');
     save.addEventListener('click', async () => {
