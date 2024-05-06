@@ -216,47 +216,7 @@ class PaymentServiceBuilderTest extends TestCase
     public function testGetEligibilityHelper() {
         $this->assertInstanceOf(EligibilityHelper::class, $this->paymentServiceBuilder->getEligibilityHelper());
         $this->assertInstanceOf(EligibilityHelper::class, $this->paymentServiceBuilder->getEligibilityHelper(
-            new EligibilityHelper(
-                new PaymentData(
-                    $this->toolsHelper,
-                    $this->settingsHelper,
-                    $this->priceHelper,
-                    $this->customFieldsHelper,
-                    $this->cartData,
-                    new ShippingData(
-                        $this->priceHelper,
-                        $this->carrierHelper
-                    ),
-                    $this->contextFactory,
-                    new AddressHelper($this->toolsHelper),
-                    new CountryHelper(),
-                    $this->localeHelper,
-                    new StateHelper(),
-                    new CustomerHelper(
-                        $this->contextFactory,
-                        new OrderHelper(),
-                        new ValidateHelper()
-                    ),
-                    new CartHelper(
-                        $this->contextFactory,
-                        $this->toolsHelper,
-                        $this->priceHelper,
-                        $this->cartData,
-                        new OrderRepository(),
-                        new OrderStateHelper($this->contextFactory),
-                        $this->carrierHelper
-                    ),
-                    $this->carrierHelper
-                ),
-                $this->priceHelper,
-                $this->clientHelper,
-                $this->settingsHelper,
-                new ApiHelper(
-                    $this->moduleFactory ,
-                    $this->clientHelper
-                ),
-                $this->contextFactory
-            )
+            $this->createMock(EligibilityHelper::class)
         ));
     }
 
@@ -305,16 +265,7 @@ class PaymentServiceBuilderTest extends TestCase
     public function testGetPlanHelper() {
         $this->assertInstanceOf(PlanHelper::class, $this->paymentServiceBuilder->getPlanHelper());
         $this->assertInstanceOf(PlanHelper::class, $this->paymentServiceBuilder->getPlanHelper(
-            new PlanHelper(
-                $this->moduleFactory ,
-                $this->contextFactory,
-                new DateHelper(),
-                $this->settingsHelper,
-                $this->customFieldsHelper,
-                new TranslationHelper(
-                    $this->moduleFactory
-                )
-            )
+            $this->createMock(PlanHelper::class)
         ));
     }
 
@@ -328,60 +279,28 @@ class PaymentServiceBuilderTest extends TestCase
     public function testGetTranslationHelper() {
         $this->assertInstanceOf(TranslationHelper::class, $this->paymentServiceBuilder->getTranslationHelper());
         $this->assertInstanceOf(TranslationHelper::class, $this->paymentServiceBuilder->getTranslationHelper(
-            new TranslationHelper($this->moduleFactory)
+            $this->createMock( TranslationHelper::class)
         ));
     }
 
     public function testGetCartHelper() {
         $this->assertInstanceOf(CartHelper::class, $this->paymentServiceBuilder->getCartHelper());
         $this->assertInstanceOf(CartHelper::class, $this->paymentServiceBuilder->getCartHelper(
-            new CartHelper(
-                $this->contextFactory,
-                $this->toolsHelper,
-                $this->priceHelper,
-                $this->cartData,
-                new OrderRepository(),
-                new OrderStateHelper($this->contextFactory),
-                $this->carrierHelper
-            )
+            $this->createMock(CartHelper::class)
         ));
     }
 
     public function testGetPaymentOptionTemplateHelper() {
         $this->assertInstanceOf(PaymentOptionTemplateHelper::class, $this->paymentServiceBuilder->getPaymentOptionTemplateHelper());
         $this->assertInstanceOf(PaymentOptionTemplateHelper::class, $this->paymentServiceBuilder->getPaymentOptionTemplateHelper(
-            new PaymentOptionTemplateHelper(
-                $this->contextFactory,
-                $this->moduleFactory ,
-                $this->settingsHelper,
-                $this->configurationHelper,
-                new TranslationHelper($this->moduleFactory),
-                $this->priceHelper,
-                new DateHelper()
-            )
+            $this->createMock(PaymentOptionTemplateHelper::class)
         ));
     }
 
     public function testGetPaymentOptionHelper() {
         $this->assertInstanceOf(PaymentOptionHelper::class, $this->paymentServiceBuilder->getPaymentOptionHelper());
         $this->assertInstanceOf(PaymentOptionHelper::class, $this->paymentServiceBuilder->getPaymentOptionHelper(
-            new PaymentOptionHelper(
-                $this->contextFactory,
-                $this->moduleFactory,
-                $this->settingsHelper,
-                $this->customFieldsHelper,
-                new MediaHelper(),
-                $this->configurationHelper,
-                new PaymentOptionTemplateHelper(
-                    $this->contextFactory,
-                    $this->moduleFactory,
-                    $this->settingsHelper,
-                    $this->configurationHelper,
-                    new TranslationHelper($this->moduleFactory),
-                    $this->priceHelper,
-                    new DateHelper()
-                )
-            )
+            $this->createMock(PaymentOptionHelper::class)
         ));
     }
 }

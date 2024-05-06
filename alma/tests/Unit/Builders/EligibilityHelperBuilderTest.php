@@ -133,51 +133,7 @@ class EligibilityHelperBuilderTest extends TestCase
     public function testGetPaymentData() {
         $this->assertInstanceOf(PaymentData::class, $this->eligibilityHelperBuilder->getPaymentData());
         $this->assertInstanceOf(PaymentData::class, $this->eligibilityHelperBuilder->getPaymentData(
-            new PaymentData(
-                $this->toolsHelper,
-                $this->settingsHelper,
-                $this->priceHelper,
-                new CustomFieldsHelper(
-                    $this->languageHelper,
-                    $this->localeHelper,
-                    $this->settingsHelper
-                ),
-                new CartData(
-                    new ProductHelper(),
-                    $this->settingsHelper,
-                    $this->priceHelper,
-                    new ProductRepository()
-                ),
-                new ShippingData(
-                    $this->priceHelper,
-                    $this->carrierHelper
-                ),
-                $this->contextFactory ,
-                new AddressHelper($this->toolsHelper),
-                new CountryHelper(),
-                $this->localeHelper,
-                new StateHelper(),
-                new CustomerHelper(
-                    $this->contextFactory ,
-                    new OrderHelper(),
-                    new ValidateHelper()
-                ),
-                new CartHelper(
-                    $this->contextFactory ,
-                    $this->toolsHelper,
-                    $this->priceHelper,
-                    new CartData(
-                        new ProductHelper(),
-                        $this->settingsHelper,
-                        $this->priceHelper,
-                        new ProductRepository()
-                    ),
-                    new OrderRepository(),
-                    new OrderStateHelper($this->contextFactory),
-                    $this->carrierHelper
-                ),
-                $this->carrierHelper
-            )
+            $this->createMock(PaymentData::class)
         ));
     }
 
@@ -205,10 +161,7 @@ class EligibilityHelperBuilderTest extends TestCase
     public function testGetApiHelper() {
         $this->assertInstanceOf(ApiHelper::class, $this->eligibilityHelperBuilder->getApiHelper());
         $this->assertInstanceOf(ApiHelper::class, $this->eligibilityHelperBuilder->getApiHelper(
-            new ApiHelper(
-                new ModuleFactory(),
-                new ClientHelper()
-            )
+            $this->createMock(ApiHelper::class)
         ));
     }
 

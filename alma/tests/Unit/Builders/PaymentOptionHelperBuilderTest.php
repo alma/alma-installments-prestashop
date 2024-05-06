@@ -96,11 +96,7 @@ class PaymentOptionHelperBuilderTest extends TestCase
     {
         $this->assertInstanceOf(CustomFieldsHelper::class, $this->paymentOptionHelperBuilder->getCustomFieldsHelper());
         $this->assertInstanceOf(CustomFieldsHelper::class, $this->paymentOptionHelperBuilder->getCustomFieldsHelper(
-            new CustomFieldsHelper(
-                new LanguageHelper(),
-                new LocaleHelper(new LanguageHelper()),
-                $this->settingsHelper
-            )
+            $this->createMock(CustomFieldsHelper::class)
         ));
     }
 
@@ -124,18 +120,7 @@ class PaymentOptionHelperBuilderTest extends TestCase
     {
         $this->assertInstanceOf(PaymentOptionTemplateHelper::class, $this->paymentOptionHelperBuilder->getPaymentOptionTemplateHelper());
         $this->assertInstanceOf(PaymentOptionTemplateHelper::class, $this->paymentOptionHelperBuilder->getPaymentOptionTemplateHelper(
-            new PaymentOptionTemplateHelper(
-                new ContextFactory(),
-                new ModuleFactory(),
-                $this->settingsHelper ,
-                new ConfigurationHelper(),
-                new TranslationHelper(new ModuleFactory()),
-                new PriceHelper(
-                    new ToolsHelper(),
-                    new CurrencyHelper()
-                ),
-                new DateHelper()
-            )
+            $this->createMock(PaymentOptionTemplateHelper::class)
         ));
     }
 }

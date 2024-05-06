@@ -63,20 +63,14 @@ class CartDataBuilderTest extends TestCase
     public function testGetSettingsHelper() {
         $this->assertInstanceOf(SettingsHelper::class, $this->cartDataBuilder->getSettingsHelper());
         $this->assertInstanceOf(SettingsHelper::class, $this->cartDataBuilder->getSettingsHelper(
-            new SettingsHelper(
-                new ShopHelper(),
-                new ConfigurationHelper()
-            )
+            $this->createMock(SettingsHelper::class)
         ));
     }
 
     public function testGetPriceHelper() {
         $this->assertInstanceOf(PriceHelper::class, $this->cartDataBuilder->getPriceHelper());
         $this->assertInstanceOf(PriceHelper::class, $this->cartDataBuilder->getPriceHelper(
-            new PriceHelper(
-                new ToolsHelper(),
-                new CurrencyHelper()
-            )
+            $this->createMock(PriceHelper::class)
         ));
     }
 
