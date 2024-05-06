@@ -24,11 +24,24 @@
 
 namespace Alma\PrestaShop\Tests\Unit\Helper;
 
+use Alma\PrestaShop\Builders\OrderStateHelperBuilder;
 use PHPUnit\Framework\TestCase;
 
 class OrderStateHelperTest extends TestCase
 {
+    /**
+     * @var \Alma\PrestaShop\Helpers\OrderStateHelper
+     */
+    protected $orderStateHelper;
+
+    public function setUp()
+    {
+        $orderStateHelperBuilder = new OrderStateHelperBuilder();
+        $this->orderStateHelper = $orderStateHelperBuilder->getOrderStateHelper();
+    }
+
     public function testGetNameById()
     {
+        $this->assertEquals("Awaiting check payment", $this->orderStateHelper->getNameById(1));
     }
 }

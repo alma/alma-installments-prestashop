@@ -26,6 +26,7 @@ namespace Alma\PrestaShop\Tests\Unit\Builders;
 
 use Alma\PrestaShop\Builders\CartHelperBuilder;
 use Alma\PrestaShop\Factories\ContextFactory;
+use Alma\PrestaShop\Factories\OrderStateFactory;
 use Alma\PrestaShop\Helpers\CarrierHelper;
 use Alma\PrestaShop\Helpers\CartHelper;
 use Alma\PrestaShop\Helpers\ConfigurationHelper;
@@ -119,7 +120,7 @@ class CartHelperBuilderTest extends TestCase
     {
         $this->assertInstanceOf(OrderStateHelper::class, $this->cartHelperBuilder->getOrderStateHelper());
         $this->assertInstanceOf(OrderStateHelper::class, $this->cartHelperBuilder->getOrderStateHelper(
-            new OrderStateHelper($this->contextFactory)
+            new OrderStateHelper($this->contextFactory, new OrderStateFactory())
         ));
     }
 
