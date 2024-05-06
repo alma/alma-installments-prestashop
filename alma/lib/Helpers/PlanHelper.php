@@ -24,6 +24,9 @@
 
 namespace Alma\PrestaShop\Helpers;
 
+use Alma\PrestaShop\Factories\ContextFactory;
+use Alma\PrestaShop\Factories\ModuleFactory;
+
 if (!defined('_PS_VERSION_')) {
     exit;
 }
@@ -63,8 +66,8 @@ class PlanHelper
     protected $context;
 
     /**
-     * @param $module
-     * @param \Context $context
+     * @param ModuleFactory $moduleFactory
+     * @param ContextFactory $contextFactory
      * @param DateHelper $dateHelper
      * @param SettingsHelper $settingsHelper
      * @param CustomFieldsHelper $customFieldsHelper
@@ -73,8 +76,8 @@ class PlanHelper
      * @codeCoverageIgnore
      */
     public function __construct(
-        $module,
-        $context,
+        $moduleFactory,
+        $contextFactory,
         $dateHelper,
         $settingsHelper,
         $customFieldsHelper,
@@ -83,9 +86,9 @@ class PlanHelper
         $this->dateHelper = $dateHelper;
         $this->settingsHelper = $settingsHelper;
         $this->customFieldsHelper = $customFieldsHelper;
-        $this->context = $context;
+        $this->context = $contextFactory->getContext();
         $this->translationHelper = $translationHelper;
-        $this->module = $module;
+        $this->module = $moduleFactory->getModule();
     }
 
     /**

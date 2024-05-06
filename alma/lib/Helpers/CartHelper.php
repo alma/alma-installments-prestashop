@@ -24,6 +24,7 @@
 
 namespace Alma\PrestaShop\Helpers;
 
+use Alma\PrestaShop\Factories\ContextFactory;
 use Alma\PrestaShop\Logger;
 use Alma\PrestaShop\Model\CartData;
 use Alma\PrestaShop\Repositories\OrderRepository;
@@ -70,7 +71,7 @@ class CartHelper
     protected $carrierHelper;
 
     /**
-     * @param \Context $context
+     * @param ContextFactory $contextFactory
      * @param ToolsHelper $toolsHelper
      * @param PriceHelper $priceHelper
      * @param CartData $cartData
@@ -81,7 +82,7 @@ class CartHelper
      * @codeCoverageIgnore
      */
     public function __construct(
-        $context,
+        $contextFactory,
         $toolsHelper,
         $priceHelper,
         $cartData,
@@ -89,7 +90,7 @@ class CartHelper
         $orderStateHelper,
         $carrierHelper
     ) {
-        $this->context = $context;
+        $this->context = $contextFactory->getContext();
         $this->toolsHelper = $toolsHelper;
         $this->priceHelper = $priceHelper;
         $this->cartData = $cartData;

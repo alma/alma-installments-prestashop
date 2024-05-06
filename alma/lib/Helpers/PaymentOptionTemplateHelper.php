@@ -24,6 +24,9 @@
 
 namespace Alma\PrestaShop\Helpers;
 
+use Alma\PrestaShop\Factories\ContextFactory;
+use Alma\PrestaShop\Factories\ModuleFactory;
+
 if (!defined('_PS_VERSION_')) {
     exit;
 }
@@ -66,8 +69,8 @@ class PaymentOptionTemplateHelper
     protected $dateHelper;
 
     /**
-     * @param \Context $context
-     * @param $module
+     * @param ContextFactory $contextFactory
+     * @param ModuleFactory $moduleFactory
      * @param SettingsHelper $settingsHelper
      * @param ConfigurationHelper $configurationHelper
      * @param TranslationHelper $translationHelper
@@ -77,16 +80,16 @@ class PaymentOptionTemplateHelper
      * @codeCoverageIgnore
      */
     public function __construct(
-        $context,
-        $module,
+        $contextFactory,
+        $moduleFactory,
         $settingsHelper,
         $configurationHelper,
         $translationHelper,
         $priceHelper,
         $dateHelper
     ) {
-        $this->context = $context;
-        $this->module = $module;
+        $this->context = $contextFactory->getContext();
+        $this->module = $moduleFactory->getModule();
         $this->settingsHelper = $settingsHelper;
         $this->configurationHelper = $configurationHelper;
         $this->translationHelper = $translationHelper;

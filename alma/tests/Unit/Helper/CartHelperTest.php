@@ -24,8 +24,9 @@
 
 namespace Alma\PrestaShop\Tests\Unit\Helper;
 
+use Alma\PrestaShop\Builders\CartHelperBuilder;
+use Alma\PrestaShop\Factories\ContextFactory;
 use Alma\PrestaShop\Helpers\CarrierHelper;
-use Alma\PrestaShop\Helpers\CartHelper;
 use Alma\PrestaShop\Helpers\OrderStateHelper;
 use Alma\PrestaShop\Helpers\PriceHelper;
 use Alma\PrestaShop\Helpers\ToolsHelper;
@@ -64,27 +65,6 @@ class CartHelperTest extends TestCase
      */
     protected $carrierHelper;
 
-    public function setUp()
-    {
-        $this->context = $this->createMock(\Context::class);
-        $this->toolHelper = $this->createMock(ToolsHelper::class);
-        $this->priceHelper = $this->createMock(PriceHelper::class);
-        $this->cartData = $this->createMock(CartData::class);
-        $this->orderRepository = $this->createMock(OrderRepository::class);
-        $this->orderStateHelper = $this->createMock(OrderStateHelper::class);
-        $this->carrierHelper = $this->createMock(CarrierHelper::class);
-        $this->cartHelper = new CartHelper(
-            $this->context,
-            $this->toolHelper,
-            $this->priceHelper,
-            $this->cartData,
-            $this->orderRepository,
-            $this->orderStateHelper,
-            $this->carrierHelper
-        );
-        $this->cart = $this->createMock(\Cart::class);
-    }
-
     public function testPreviousCartOrdered()
     {
     }
@@ -102,8 +82,17 @@ class CartHelperTest extends TestCase
      */
     public function testGetCartIdFromContext()
     {
+        $this->cart = $this->createMock(\Cart::class);
         $this->cart->id = 1;
+        $this->context = $this->createMock(\Context::class);
         $this->context->cart = $this->cart;
+
+        $contextFactory = \Mockery::mock(ContextFactory::class);
+        $contextFactory->shouldReceive('getContext')->andReturn($this->context);
+
+        $cartHelperBuilder = \Mockery::mock(CartHelperBuilder::class)->makePartial();
+        $cartHelperBuilder->shouldReceive('getContextFactory')->andReturn($contextFactory);
+        $this->cartHelper = $cartHelperBuilder->getInstance();
 
         $this->assertEquals(1, $this->cartHelper->getCartIdFromContext());
     }

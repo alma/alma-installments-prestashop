@@ -21,9 +21,8 @@
  * @copyright 2018-2023 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
-use Alma\PrestaShop\Helpers\ConfigurationHelper;
-use Alma\PrestaShop\Helpers\SettingsHelper;
-use Alma\PrestaShop\Helpers\ShopHelper;
+
+use Alma\PrestaShop\Builders\SettingsHelperBuilder;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -48,7 +47,9 @@ class AdminAlmaCategoriesController extends ModuleAdminController
         $this->_defaultOrderBy = 'position';
         $this->allow_export = false;
         $this->list_no_link = true;
-        $this->settingsHelper = new SettingsHelper(new ShopHelper(), new ConfigurationHelper());
+
+        $settingsHelperBuilder = new SettingsHelperBuilder();
+        $this->settingsHelper = $settingsHelperBuilder->getInstance();
 
         parent::__construct();
 

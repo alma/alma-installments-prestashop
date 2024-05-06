@@ -26,6 +26,7 @@ namespace Alma\PrestaShop\Helpers;
 
 use Alma\API\Client;
 use Alma\API\RequestError;
+use Alma\PrestaShop\Builders\PriceHelperBuilder;
 use Alma\PrestaShop\Exceptions\ClientException;
 use Alma\PrestaShop\Exceptions\ShareOfCheckoutException;
 use Alma\PrestaShop\Forms\ApiAdminFormBuilder;
@@ -79,7 +80,10 @@ class ShareOfCheckoutHelper
     {
         $this->orderHelper = $orderHelper;
         $this->context = \Context::getContext();
-        $this->priceHelper = new PriceHelper(new ToolsHelper(), new CurrencyHelper());
+
+        $priceHelperBuilder = new PriceHelperBuilder();
+        $this->priceHelper = $priceHelperBuilder->getInstance();
+
         $this->almaClientHelper = new ClientHelper();
         $this->dateHelper = new DateHelper();
     }

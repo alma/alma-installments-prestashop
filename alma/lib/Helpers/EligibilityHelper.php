@@ -26,6 +26,7 @@ namespace Alma\PrestaShop\Helpers;
 
 use Alma\API\Endpoints\Results\Eligibility;
 use Alma\API\Entities\FeePlan;
+use Alma\PrestaShop\Factories\ContextFactory;
 use Alma\PrestaShop\Logger;
 use Alma\PrestaShop\Model\PaymentData;
 
@@ -71,17 +72,18 @@ class EligibilityHelper
      * @param ClientHelper $clientHelper
      * @param SettingsHelper $settingsHelper
      * @param ApiHelper $apiHelper
+     * @param ContextFactory $contextFactory
      *
      * @codeCoverageIgnore
      */
-    public function __construct($paymentData, $priceHelper, $clientHelper, $settingsHelper, $apiHelper, $context)
+    public function __construct($paymentData, $priceHelper, $clientHelper, $settingsHelper, $apiHelper, $contextFactory)
     {
         $this->paymentData = $paymentData;
         $this->priceHelper = $priceHelper;
         $this->clientHelper = $clientHelper;
         $this->settingsHelper = $settingsHelper;
         $this->apiHelper = $apiHelper;
-        $this->context = $context;
+        $this->context = $contextFactory->getContext();
     }
 
     /**

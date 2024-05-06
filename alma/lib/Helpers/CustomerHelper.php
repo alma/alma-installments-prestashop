@@ -24,6 +24,7 @@
 
 namespace Alma\PrestaShop\Helpers;
 
+use Alma\PrestaShop\Factories\ContextFactory;
 use Alma\PrestaShop\Logger;
 
 if (!defined('_PS_VERSION_')) {
@@ -48,15 +49,15 @@ class CustomerHelper
     protected $validateHelper;
 
     /**
-     * @param \Context $context
+     * @param ContextFactory $contextFactory
      * @param OrderHelper $orderHelper
      * @param ValidateHelper $validateHelper
      *
      * @codeCoverageIgnore
      */
-    public function __construct($context, $orderHelper, $validateHelper)
+    public function __construct($contextFactory, $orderHelper, $validateHelper)
     {
-        $this->context = $context;
+        $this->context = $contextFactory->getContext();
         $this->orderHelper = $orderHelper;
         $this->validateHelper = $validateHelper;
     }

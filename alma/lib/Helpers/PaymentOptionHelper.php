@@ -24,6 +24,8 @@
 
 namespace Alma\PrestaShop\Helpers;
 
+use Alma\PrestaShop\Factories\ContextFactory;
+use Alma\PrestaShop\Factories\ModuleFactory;
 use Alma\PrestaShop\Forms\PaymentButtonAdminFormBuilder;
 use PrestaShop\PrestaShop\Core\Payment\PaymentOption;
 
@@ -69,8 +71,8 @@ class PaymentOptionHelper
     protected $settingsHelper;
 
     /**
-     * @param \Context $context
-     * @param $module
+     * @param ContextFactory $contextFactory
+     * @param ModuleFactory $moduleFactory
      * @param SettingsHelper $settingsHelper
      * @param CustomFieldsHelper $customFieldsHelper
      * @param MediaHelper $mediaHelper
@@ -80,16 +82,16 @@ class PaymentOptionHelper
      * @codeCoverageIgnore
      */
     public function __construct(
-        $context,
-        $module,
+        $contextFactory,
+        $moduleFactory,
         $settingsHelper,
         $customFieldsHelper,
         $mediaHelper,
         $configurationHelper,
         $paymentOptionTemplateHelper
     ) {
-        $this->context = $context;
-        $this->module = $module;
+        $this->context = $contextFactory->getContext();
+        $this->module = $moduleFactory->getModule();
         $this->settingsHelper = $settingsHelper;
         $this->customFieldsHelper = $customFieldsHelper;
         $this->mediaHelper = $mediaHelper;

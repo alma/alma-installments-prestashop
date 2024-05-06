@@ -28,24 +28,16 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
+use Alma\PrestaShop\Builders\CartHelperBuilder;
+use Alma\PrestaShop\Builders\PriceHelperBuilder;
 use Alma\PrestaShop\Helpers\Admin\InsuranceHelper as AdminInsuranceHelper;
-use Alma\PrestaShop\Helpers\CarrierHelper;
 use Alma\PrestaShop\Helpers\CartHelper;
-use Alma\PrestaShop\Helpers\ConfigurationHelper;
 use Alma\PrestaShop\Helpers\ConstantsHelper;
-use Alma\PrestaShop\Helpers\CurrencyHelper;
 use Alma\PrestaShop\Helpers\InsuranceHelper;
-use Alma\PrestaShop\Helpers\OrderStateHelper;
 use Alma\PrestaShop\Helpers\PriceHelper;
 use Alma\PrestaShop\Helpers\ProductHelper;
 use Alma\PrestaShop\Helpers\SettingsHelper;
-use Alma\PrestaShop\Helpers\ShopHelper;
-use Alma\PrestaShop\Helpers\ToolsHelper;
 use Alma\PrestaShop\Hooks\FrontendHookController;
-use Alma\PrestaShop\Model\CarrierData;
-use Alma\PrestaShop\Model\CartData;
-use Alma\PrestaShop\Repositories\OrderRepository;
-use Alma\PrestaShop\Repositories\ProductRepository;
 
 class DisplayProductActionsHookController extends FrontendHookController
 {
@@ -83,23 +75,12 @@ class DisplayProductActionsHookController extends FrontendHookController
         $this->insuranceHelper = new InsuranceHelper();
         $this->adminInsuranceHelper = new AdminInsuranceHelper($module);
         $this->productHelper = new ProductHelper();
-        $toolsHelper = new ToolsHelper();
-        $this->priceHelper = new PriceHelper($toolsHelper, new CurrencyHelper());
 
-        $this->cartHelper = new CartHelper(
-            $this->context,
-            new ToolsHelper(),
-            $this->priceHelper,
-            new CartData(
-                $this->productHelper,
-                new SettingsHelper(new ShopHelper(), new ConfigurationHelper()),
-                $this->priceHelper,
-                new ProductRepository()
-            ),
-            new OrderRepository(),
-            new OrderStateHelper($this->context),
-            new CarrierHelper($this->context, new CarrierData())
-        );
+        $priceHelperBuilder = new PriceHelperBuilder();
+        $this->priceHelper = $priceHelperBuilder->getInstance();
+
+        $cartHelperBuilder = new CartHelperBuilder();
+        $this->cartHelper = $cartHelperBuilder->getInstance();
 
         parent::__construct($module);
     }

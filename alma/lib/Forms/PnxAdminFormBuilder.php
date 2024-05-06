@@ -25,12 +25,10 @@
 namespace Alma\PrestaShop\Forms;
 
 use Alma\API\Entities\FeePlan;
-use Alma\PrestaShop\Helpers\ConfigurationHelper;
-use Alma\PrestaShop\Helpers\CurrencyHelper;
+use Alma\PrestaShop\Builders\PriceHelperBuilder;
+use Alma\PrestaShop\Builders\SettingsHelperBuilder;
 use Alma\PrestaShop\Helpers\PriceHelper;
 use Alma\PrestaShop\Helpers\SettingsHelper;
-use Alma\PrestaShop\Helpers\ShopHelper;
-use Alma\PrestaShop\Helpers\ToolsHelper;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -63,8 +61,11 @@ class PnxAdminFormBuilder extends AbstractAlmaAdminFormBuilder
     {
         parent::__construct($module, $context, $image, $config);
 
-        $this->settingsHelper = new SettingsHelper(new ShopHelper(), new ConfigurationHelper());
-        $this->priceHelper = new PriceHelper(new ToolsHelper(), new CurrencyHelper());
+        $settingsHelperBuilder = new SettingsHelperBuilder();
+        $this->settingsHelper = $settingsHelperBuilder->getInstance();
+
+        $priceHelperBuilder = new PriceHelperBuilder();
+        $this->priceHelper = $priceHelperBuilder->getInstance();
     }
 
     /**
