@@ -56,10 +56,7 @@ class ShippingDataBuilderTest extends TestCase
     {
         $this->assertInstanceOf(PriceHelper::class, $this->shippingDataBuilder->getPriceHelper());
         $this->assertInstanceOf(PriceHelper::class, $this->shippingDataBuilder->getPriceHelper(
-            new PriceHelper(
-                new ToolsHelper(),
-                new CurrencyHelper()
-            )
+            $this->createMock(PriceHelper::class)
         ));
     }
 
@@ -67,10 +64,7 @@ class ShippingDataBuilderTest extends TestCase
     {
         $this->assertInstanceOf(CarrierHelper::class, $this->shippingDataBuilder->getCarrierHelper());
         $this->assertInstanceOf(CarrierHelper::class, $this->shippingDataBuilder->getCarrierHelper(
-            new CarrierHelper(
-                new ContextFactory(),
-                new CarrierData()
-            )
+            $this->createMock(CarrierHelper::class)
         ));
     }
 }
