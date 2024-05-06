@@ -11,12 +11,10 @@
                     });
                     $(e).find('.pscartdropdown-product-line-grid-right .input-group-btn-vertical').remove()
                     $(e).find('a.label').removeAttr('href')
+                    // TODO : Need to edit the url of delete product for remove an insurance product
+                    $(e).find('.remove-from-cart').remove()
                 }
             })
-            // TODO : Need to edit the url for remove an insurance product
-            //<a data-alma-association-id="14" data-action="remove-insurance-product" data-token="" href="#" class="alma-remove-insurance-product" data-link="https://sync-ipln.serverapps.io/module/alma/insurance?action=removeInsuranceProduct">
-            //                                     Retirer l'assurance
-            // 								</a>
         }
     });
 })(jQuery)
