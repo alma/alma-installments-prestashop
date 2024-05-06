@@ -1,0 +1,82 @@
+version: 3
+
+tasks:
+
+  default:
+    silent: true
+    cmds:
+      - task -l
+
+  build:
+    desc: Build prestashop docker image
+    cmds:
+      - docker compose build prestashop
+
+  coverage:
+    desc: Execute Unit Tests with coverage
+    deps:
+      - build
+    cmds:
+      - docker compose run --rm prestashop
+
+  dist:
+    desc: Build the zip file of the module
+    deps:
+      - clean
+    cmds:
+      - docker build -t alma_prestashop_builder:latest scripts/build/
+      - docker run --rm -u $(id -u):$(id -g) -w ${PWD} -v "${PWD}:${PWD}" alma_prestashop_builder:latest /bin/sh scripts/build/build-dist-docker.sh
+ 
+  clean:
+    desc: Remove the dist folder
+    cmds:
+      - rm -rf ./dist
+
+  install-tools:
+    desc: Composer install of tools
+    cmds: 
+      - composer install --no-dev --optimize-autoloader --working-dir=alma
+
+  ci:lint:
+    desc: Run linter without fix
+    deps:
+      - build
+    cmds:
+      - docker compose run --rm --entrypoint "php" -w /var/www/html/modules/alma prestashop vendor/bin/php-cs-fixer fix --dry-run --diff .
+
+  lint:
+    desc: Run linter
+    cmds:
+      - ./scripts/coding-standard.sh
+
+  lint-fix:
+    desc: Run linter with fix
+    cmds:
+      - ./scripts/coding-standard-fixer.sh
+
+  php-compatibililty:
+    desc: Check compatibility code
+    deps:
+      - install-tools
+    cmds:
+      - ./alma/vendor/bin/phpcs -p alma --standard=PHPCompatibility -s --runtime-set testVersion 5.6-8.1 --ignore=\*/vendor/\*
+
+  autoindex:
+    desc: Execute autoindex to add index in all folders
+    cmds: 
+      - ./alma/vendor/bin/autoindex prestashop:add:index alma/
+
+  remove-blank-line-index:
+    desc: Remove white space in the index.php
+    cmds: 
+      - ./scripts/remove-blank-line-index.sh
+
+  crowdin:download:
+    desc: Download translations from Crowdin
+    cmds: 
+      - crowdin download
+
+  crowdin:upload:
+    desc: Upload translations to Crowdin
+    cmds: 
+      - crowdin upload sources
