@@ -26,6 +26,7 @@ namespace Alma\PrestaShop\Tests\Unit\Helper;
 
 use Alma\PrestaShop\Builders\CustomerHelperBuilder;
 use Alma\PrestaShop\Factories\ContextFactory;
+use Alma\PrestaShop\Helpers\OrderHelper;
 use Alma\PrestaShop\Helpers\ValidateHelper;
 use PHPUnit\Framework\TestCase;
 
@@ -111,5 +112,23 @@ class CustomerHelperTest extends TestCase
 
     public function testIsNewCustomer()
     {
+        $orderHelper = \Mockery::mock(OrderHelper::class)->makePartial();
+        $orderHelper->shouldReceive('getCustomerNbOrders', [1])->andReturn(0);
+
+        $customerHelperBuilder = \Mockery::mock(CustomerHelperBuilder::class)->makePartial();
+        $customerHelperBuilder->shouldReceive('getOrderHelper')->andReturn($orderHelper);
+        $customerHelper = $customerHelperBuilder->getInstance();
+
+        $this->assertTrue($customerHelper->isNewCustomer(1));
+
+        $orderHelper = \Mockery::mock(OrderHelper::class)->makePartial();
+        $orderHelper->shouldReceive('getCustomerNbOrders', [1])->andReturn(10);
+
+        $customerHelperBuilder = \Mockery::mock(CustomerHelperBuilder::class)->makePartial();
+        $customerHelperBuilder->shouldReceive('getOrderHelper')->andReturn($orderHelper);
+        $customerHelper = $customerHelperBuilder->getInstance();
+
+        $this->assertFalse($customerHelper->isNewCustomer(1));
+
     }
 }
