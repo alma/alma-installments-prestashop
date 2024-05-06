@@ -64,7 +64,6 @@ class CartDataTest extends TestCase
         $summaryDetailsMock = ['products' => $items, 'gift_products' => []];
         $cart->method('getSummaryDetails')->willReturn($summaryDetailsMock);
 
-
         $cartDataBuilder = \Mockery::mock(CartDataBuilder::class)->makePartial();
         $cartDataBuilder->shouldReceive('getProductHelper')->andReturn($productHelper);
         $cartDataBuilder->shouldReceive('getProductRepository')->andReturn($productRepository);

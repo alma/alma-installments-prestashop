@@ -47,5 +47,4 @@ class TranslationHelperBuilder
             $this->getModuleFactory()
         );
     }
-
 }

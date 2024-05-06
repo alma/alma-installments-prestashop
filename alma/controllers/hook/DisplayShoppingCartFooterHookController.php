@@ -96,7 +96,7 @@ class DisplayShoppingCartFooterHookController extends FrontendHookController
         $this->settingsHelper = $settingsHelperBuilder->getInstance();
 
         $customFieldHelperBuilder = new CustomFieldHelperBuilder();
-        $this->customFieldsHelper= $customFieldHelperBuilder->getInstance();
+        $this->customFieldsHelper = $customFieldHelperBuilder->getInstance();
 
         $cartDataBuilder = new CartDataBuilder();
         $this->cartData = $cartDataBuilder->getInstance();

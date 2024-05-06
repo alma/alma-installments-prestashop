@@ -24,7 +24,6 @@
 
 namespace Alma\PrestaShop\Factories;
 
-
 use Alma\PrestaShop\Helpers\ConstantsHelper;
 
 if (!defined('_PS_VERSION_')) {
@@ -33,7 +32,6 @@ if (!defined('_PS_VERSION_')) {
 
 /**
  * Class ModuleFactory.
- *
  */
 class ModuleFactory
 {

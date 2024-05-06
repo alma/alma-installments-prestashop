@@ -36,69 +36,56 @@ use Alma\PrestaShop\Helpers\CustomerHelper;
 use Alma\PrestaShop\Helpers\CustomFieldsHelper;
 use Alma\PrestaShop\Helpers\LanguageHelper;
 use Alma\PrestaShop\Helpers\LocaleHelper;
-use Alma\PrestaShop\Helpers\OrderHelper;
-use Alma\PrestaShop\Helpers\OrderStateHelper;
 use Alma\PrestaShop\Helpers\PriceHelper;
-use Alma\PrestaShop\Helpers\ProductHelper;
 use Alma\PrestaShop\Helpers\SettingsHelper;
 use Alma\PrestaShop\Helpers\ShopHelper;
 use Alma\PrestaShop\Helpers\StateHelper;
 use Alma\PrestaShop\Helpers\ToolsHelper;
-use Alma\PrestaShop\Helpers\ValidateHelper;
 use Alma\PrestaShop\Model\CarrierData;
 use Alma\PrestaShop\Model\CartData;
 use Alma\PrestaShop\Model\PaymentData;
 use Alma\PrestaShop\Model\ShippingData;
-use Alma\PrestaShop\Repositories\OrderRepository;
-use Alma\PrestaShop\Repositories\ProductRepository;
 use PHPUnit\Framework\TestCase;
 
 class PaymentDataBuilderTest extends TestCase
 {
     /**
-     *
-     * @var PaymentDataBuilder $paymentDataBuilder
+     * @var PaymentDataBuilder
      */
     protected $paymentDataBuilder;
 
     /**
-     *
-     * @var SettingsHelper $settingsHelper
+     * @var SettingsHelper
      */
     protected $settingsHelper;
 
     /**
-     *
-     * @var PriceHelper $priceHelper
+     * @var PriceHelper
      */
     protected $priceHelper;
 
     /**
-     *
-     * @var CarrierHelper $carrierHelper
+     * @var CarrierHelper
      */
     protected $carrierHelper;
 
-
     /**
-     *
-     * @var ContextFactory $contextFactory
+     * @var ContextFactory
      */
     protected $contextFactory;
 
     /**
-     *
-     * @var ToolsHelper $toolsHelper
+     * @var ToolsHelper
      */
     protected $toolsHelper;
 
     /**
-     *
-     * @var LanguageHelper $languageHelper
+     * @var LanguageHelper
      */
     protected $languageHelper;
 
-    public function setUp() {
+    public function setUp()
+    {
         $this->paymentDataBuilder = new PaymentDataBuilder();
         $this->contextFactory = new ContextFactory();
         $this->toolsHelper = new ToolsHelper();
@@ -109,19 +96,19 @@ class PaymentDataBuilderTest extends TestCase
             new ConfigurationHelper()
         );
 
-        $this->priceHelper =  new PriceHelper(
+        $this->priceHelper = new PriceHelper(
             $this->toolsHelper,
             new CurrencyHelper()
         );
 
-        $this->carrierHelper =  new CarrierHelper(
+        $this->carrierHelper = new CarrierHelper(
             $this->contextFactory,
             new CarrierData()
         );
     }
 
-
-    public function testGetInstance() {
+    public function testGetInstance()
+    {
         $this->assertInstanceOf(PaymentData::class, $this->paymentDataBuilder->getInstance());
     }
 
@@ -204,6 +191,7 @@ class PaymentDataBuilderTest extends TestCase
             new LocaleHelper($this->languageHelper)
         ));
     }
+
     public function testGetStatesHelper()
     {
         $this->assertInstanceOf(StateHelper::class, $this->paymentDataBuilder->getStateHelper());
@@ -235,5 +223,4 @@ class PaymentDataBuilderTest extends TestCase
             $this->carrierHelper
         ));
     }
-
 }

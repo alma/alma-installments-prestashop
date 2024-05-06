@@ -35,5 +35,4 @@ class ModuleFactoryTest extends TestCase
 
         $this->assertInstanceOf(\Module::class, $moduleFactory->getModule());
     }
-
 }

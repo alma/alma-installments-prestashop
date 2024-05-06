@@ -27,70 +27,73 @@ namespace Alma\PrestaShop\Tests\Unit\Builders;
 use Alma\PrestaShop\Builders\PlanHelperBuilder;
 use Alma\PrestaShop\Factories\ContextFactory;
 use Alma\PrestaShop\Factories\ModuleFactory;
-use Alma\PrestaShop\Helpers\ConfigurationHelper;
 use Alma\PrestaShop\Helpers\CustomFieldsHelper;
 use Alma\PrestaShop\Helpers\DateHelper;
-use Alma\PrestaShop\Helpers\LanguageHelper;
-use Alma\PrestaShop\Helpers\LocaleHelper;
 use Alma\PrestaShop\Helpers\PlanHelper;
 use Alma\PrestaShop\Helpers\SettingsHelper;
-use Alma\PrestaShop\Helpers\ShopHelper;
 use Alma\PrestaShop\Helpers\TranslationHelper;
 use PHPUnit\Framework\TestCase;
 
 class PlanHelperBuilderTest extends TestCase
 {
-
     /**
-     *
-     * @var PlanHelperBuilder $planHelperBuilder
+     * @var PlanHelperBuilder
      */
     protected $planHelperBuilder
     ;
-    public function setUp() {
+
+    public function setUp()
+    {
         $this->planHelperBuilder = new PlanHelperBuilder();
     }
 
-
-    public function testGetInstance() {
+    public function testGetInstance()
+    {
         $this->assertInstanceOf(PlanHelper::class, $this->planHelperBuilder->getInstance());
     }
 
-    public function testGetModuleFactory() {
+    public function testGetModuleFactory()
+    {
         $this->assertInstanceOf(ModuleFactory::class, $this->planHelperBuilder->getModuleFactory());
         $this->assertInstanceOf(ModuleFactory::class, $this->planHelperBuilder->getModuleFactory(
             new ModuleFactory()
         ));
     }
 
-    public function testGetContextFactory() {
+    public function testGetContextFactory()
+    {
         $this->assertInstanceOf(ContextFactory::class, $this->planHelperBuilder->getContextFactory());
         $this->assertInstanceOf(ContextFactory::class, $this->planHelperBuilder->getContextFactory(
             new ContextFactory()
         ));
     }
 
-    public function testGetDateHelper() {
+    public function testGetDateHelper()
+    {
         $this->assertInstanceOf(DateHelper::class, $this->planHelperBuilder->getDateHelper());
         $this->assertInstanceOf(DateHelper::class, $this->planHelperBuilder->getDateHelper(
             new DateHelper()
         ));
     }
-    public function testGetSettingsHelper() {
+
+    public function testGetSettingsHelper()
+    {
         $this->assertInstanceOf(SettingsHelper::class, $this->planHelperBuilder->getSettingsHelper());
         $this->assertInstanceOf(SettingsHelper::class, $this->planHelperBuilder->getSettingsHelper(
             $this->createMock(SettingsHelper::class)
         ));
     }
 
-    public function testGetCustomFieldsHelper() {
+    public function testGetCustomFieldsHelper()
+    {
         $this->assertInstanceOf(CustomFieldsHelper::class, $this->planHelperBuilder->getCustomFieldsHelper());
         $this->assertInstanceOf(CustomFieldsHelper::class, $this->planHelperBuilder->getCustomFieldsHelper(
             $this->createMock(CustomFieldsHelper::class)
         ));
     }
 
-    public function testgetTranslationHelper() {
+    public function testgetTranslationHelper()
+    {
         $this->assertInstanceOf(TranslationHelper::class, $this->planHelperBuilder->getTranslationHelper());
         $this->assertInstanceOf(TranslationHelper::class, $this->planHelperBuilder->getTranslationHelper(
             $this->createMock(TranslationHelper::class)

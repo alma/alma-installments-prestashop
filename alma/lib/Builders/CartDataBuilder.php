@@ -50,5 +50,4 @@ class CartDataBuilder
             $this->getProductRepository()
         );
     }
-
 }

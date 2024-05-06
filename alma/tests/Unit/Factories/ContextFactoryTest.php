@@ -24,8 +24,8 @@
 
 namespace Alma\PrestaShop\Tests\Unit\Factories;
 
-use PHPUnit\Framework\TestCase;
 use Alma\PrestaShop\Factories\ContextFactory;
+use PHPUnit\Framework\TestCase;
 
 class ContextFactoryTest extends TestCase
 {
@@ -35,5 +35,4 @@ class ContextFactoryTest extends TestCase
 
         $this->assertInstanceOf(\Context::class, $contextFactory->getContext());
     }
-
 }

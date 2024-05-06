@@ -28,30 +28,28 @@ use Alma\PrestaShop\Builders\PaymentOptionTemplateHelperBuilder;
 use Alma\PrestaShop\Factories\ContextFactory;
 use Alma\PrestaShop\Factories\ModuleFactory;
 use Alma\PrestaShop\Helpers\ConfigurationHelper;
-use Alma\PrestaShop\Helpers\CurrencyHelper;
 use Alma\PrestaShop\Helpers\DateHelper;
 use Alma\PrestaShop\Helpers\PaymentOptionTemplateHelper;
 use Alma\PrestaShop\Helpers\PriceHelper;
 use Alma\PrestaShop\Helpers\SettingsHelper;
-use Alma\PrestaShop\Helpers\ShopHelper;
-use Alma\PrestaShop\Helpers\ToolsHelper;
 use Alma\PrestaShop\Helpers\TranslationHelper;
 use PHPUnit\Framework\TestCase;
 
 class PaymentOptionTemplateHelperBuilderTest extends TestCase
 {
     /**
-     *
-     * @var PaymentOptionTemplateHelperBuilder $paymentOptionTemplateHelperBuilder
+     * @var PaymentOptionTemplateHelperBuilder
      */
     protected $paymentOptionTemplateHelperBuilder
     ;
-    public function setUp() {
+
+    public function setUp()
+    {
         $this->paymentOptionTemplateHelperBuilder = new PaymentOptionTemplateHelperBuilder();
     }
 
-
-    public function testGetInstance() {
+    public function testGetInstance()
+    {
         $this->assertInstanceOf(PaymentOptionTemplateHelper::class, $this->paymentOptionTemplateHelperBuilder->getInstance());
     }
 

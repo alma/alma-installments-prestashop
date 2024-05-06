@@ -32,17 +32,18 @@ use PHPUnit\Framework\TestCase;
 class OrderStateHelperBuilderTest extends TestCase
 {
     /**
-     *
-     * @var OrderStateHelperBuilder $orderStateHelperBuilder
+     * @var OrderStateHelperBuilder
      */
     protected $orderStateHelperBuilder
     ;
-    public function setUp() {
+
+    public function setUp()
+    {
         $this->orderStateHelperBuilder = new OrderStateHelperBuilder();
     }
 
-
-    public function testGetInstance() {
+    public function testGetInstance()
+    {
         $this->assertInstanceOf(OrderStateHelper::class, $this->orderStateHelperBuilder->getInstance());
     }
 

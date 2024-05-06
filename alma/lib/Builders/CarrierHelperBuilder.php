@@ -25,7 +25,6 @@
 namespace Alma\PrestaShop\Builders;
 
 use Alma\PrestaShop\Helpers\CarrierHelper;
-
 use Alma\PrestaShop\Traits\BuilderTrait;
 
 if (!defined('_PS_VERSION_')) {
@@ -49,5 +48,4 @@ class CarrierHelperBuilder
             $this->getCarrierData()
         );
     }
-
 }
