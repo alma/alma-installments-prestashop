@@ -79,35 +79,21 @@ class PlanHelperBuilderTest extends TestCase
     public function testGetSettingsHelper() {
         $this->assertInstanceOf(SettingsHelper::class, $this->planHelperBuilder->getSettingsHelper());
         $this->assertInstanceOf(SettingsHelper::class, $this->planHelperBuilder->getSettingsHelper(
-            new SettingsHelper(
-                new ShopHelper(),
-                new ConfigurationHelper()
-            )
+            $this->createMock(SettingsHelper::class)
         ));
     }
 
     public function testGetCustomFieldsHelper() {
         $this->assertInstanceOf(CustomFieldsHelper::class, $this->planHelperBuilder->getCustomFieldsHelper());
         $this->assertInstanceOf(CustomFieldsHelper::class, $this->planHelperBuilder->getCustomFieldsHelper(
-            new CustomFieldsHelper(
-                new LanguageHelper(),
-                new LocaleHelper(
-                    new LanguageHelper()
-                ),
-                new SettingsHelper(
-                    new ShopHelper(),
-                    new ConfigurationHelper()
-                )
-            )
+            $this->createMock(CustomFieldsHelper::class)
         ));
     }
 
     public function testgetTranslationHelper() {
         $this->assertInstanceOf(TranslationHelper::class, $this->planHelperBuilder->getTranslationHelper());
         $this->assertInstanceOf(TranslationHelper::class, $this->planHelperBuilder->getTranslationHelper(
-            new TranslationHelper(
-                new ModuleFactory()
-            )
+            $this->createMock(TranslationHelper::class)
         ));
     }
 }
