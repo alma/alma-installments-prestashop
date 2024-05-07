@@ -22,34 +22,25 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
-namespace Alma\PrestaShop\Tests\Unit\Helper;
+namespace Alma\PrestaShop\Tests\Unit\Factories;
 
-use Alma\PrestaShop\Builders\CurrencyHelperBuilder;
-use Alma\PrestaShop\Factories\ContextFactory;
 use Alma\PrestaShop\Factories\CurrencyFactory;
 use PHPUnit\Framework\TestCase;
 
-class CurrencyHelperTest extends TestCase
+class CurrencyFactoryTest extends TestCase
 {
-    public function testConvertPriceToCenStr()
+    /**
+     * @var CurrencyFactory
+     */
+    protected $currencyFactory;
+
+    public function setUp()
     {
-        $currencyHelperBuilder = new CurrencyHelperBuilder();
-        $currencyHelper = $currencyHelperBuilder->getInstance();
+        $this->currencyFactory = new CurrencyFactory();
+    }
 
-        $this->assertInstanceOf(\Currency::class, $currencyHelper->getCurrencyById(1));
-
-        $currencyFactory = \Mockery::mock(CurrencyFactory::class)->makePartial();
-        $currencyFactory->shouldReceive('getCurrencyInstance', [1])->andReturn(null);
-
-        $contextFactory = \Mockery::mock(ContextFactory::class)->makePartial();
-        $contextFactory->shouldReceive('getCurrencyFromContext')->andReturn(null);
-
-        $currencyHelperBuilder = \Mockery::mock(CurrencyHelperBuilder::class)->makePartial();
-        $currencyHelperBuilder->shouldReceive('getCurrencyFactory')->andReturn($currencyFactory);
-        $currencyHelperBuilder->shouldReceive('getContextFactory')->andReturn($contextFactory);
-
-        $currencyHelper = $currencyHelperBuilder->getInstance();
-
-        $this->assertNull($currencyHelper->getCurrencyById(1));
+    public function testCreate()
+    {
+        $this->assertInstanceOf(\Currency::class, $this->currencyFactory->getCurrencyInstance(1));
     }
 }

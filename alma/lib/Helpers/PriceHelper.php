@@ -24,6 +24,7 @@
 
 namespace Alma\PrestaShop\Helpers;
 
+use Alma\PrestaShop\Factories\ContextFactory;
 use Alma\PrestaShop\Logger;
 
 if (!defined('_PS_VERSION_')) {
@@ -43,13 +44,20 @@ class PriceHelper
     protected $currencyHelper;
 
     /**
+     * @var ContextFactory
+     */
+    protected $contextFactory;
+
+
+    /**
      * @param ToolsHelper $toolsHelper
      * @param CurrencyHelper $currencyHelper
      */
-    public function __construct($toolsHelper, $currencyHelper)
+    public function __construct($toolsHelper, $currencyHelper, $contextFactory)
     {
         $this->toolsHelper = $toolsHelper;
         $this->currencyHelper = $currencyHelper;
+        $this->contextFactory = $contextFactory;
     }
 
     /**
@@ -109,7 +117,7 @@ class PriceHelper
     {
         $legacy = $this->toolsHelper->psVersionCompare('1.7.6.0', '<');
 
-        $currency = $this->currencyHelper->getCurrencyFromContext();
+        $currency = $this->contextFactory->getCurrencyFromContext();
 
         $price = $this->convertPriceFromCents($cents);
 

@@ -134,10 +134,7 @@ class PaymentServiceBuilderTest extends TestCase
         $this->localeHelper = new LocaleHelper(
             $this->languageHelper
         );
-        $this->priceHelper = new PriceHelper(
-            $this->toolsHelper,
-            new CurrencyHelper()
-        );
+        $this->priceHelper =  \Mockery::mock(PriceHelper::class);
 
         $this->settingsHelper = new SettingsHelper(
             new ShopHelper(),
