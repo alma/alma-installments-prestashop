@@ -153,11 +153,7 @@ class PaymentServiceBuilderTest extends TestCase
             new CarrierData()
         );
 
-        $this->customFieldsHelper = new CustomFieldsHelper(
-            $this->languageHelper,
-            $this->localeHelper,
-            $this->settingsHelper
-        );
+        $this->customFieldsHelper = \Mockery::mock(CustomFieldsHelper::class);
     }
 
     public function testGetInstance()
