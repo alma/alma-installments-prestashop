@@ -63,7 +63,7 @@ if (class_exists('\Context') && PHP_SAPI != 'cli') {
                 new \Alma\PrestaShop\Helpers\ValidateHelper(),
                 new \Alma\PrestaShop\Factories\CurrencyFactory()
             ),
-            new \phpDocumentor\Reflection\Types\ContextFactory()
+            new \Alma\PrestaShop\Factories\ContextFactory()
         );
 
         return $priceHelper->formatPriceToCentsByCurrencyId($params['cents'], isset($params['currency']) ? $params['currency'] : null);
