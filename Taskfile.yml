@@ -59,12 +59,12 @@ tasks:
     deps:
       - install-tools
     cmds:
-      - ./alma/vendor/bin/phpcs -p alma --standard=PHPCompatibility -s --runtime-set testVersion 5.6-8.1 --ignore=\*/vendor/\*
+      - php ./alma/vendor/bin/phpcs -p alma --standard=PHPCompatibility -s --runtime-set testVersion 5.6-8.1 --ignore=\*/vendor/\*
 
   index:autoindex:
     desc: Execute autoindex to add index in all folders
     cmds: 
-      - ./alma/vendor/bin/autoindex prestashop:add:index alma/
+      - php ./alma/vendor/bin/autoindex prestashop:add:index alma/
 
   index:remove-blank-line:
     desc: Remove white space in the index.php
