@@ -96,10 +96,7 @@ class PaymentDataBuilderTest extends TestCase
             new ConfigurationHelper()
         );
 
-        $this->priceHelper = new PriceHelper(
-            $this->toolsHelper,
-            new CurrencyHelper()
-        );
+        $this->priceHelper =  \Mockery::mock(PriceHelper::class);
 
         $this->carrierHelper = new CarrierHelper(
             $this->contextFactory,

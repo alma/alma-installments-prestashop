@@ -27,6 +27,7 @@ namespace Alma\PrestaShop\Traits;
 use Alma\PrestaShop\Factories\AddressFactory;
 use Alma\PrestaShop\Factories\CarrierFactory;
 use Alma\PrestaShop\Factories\ContextFactory;
+use Alma\PrestaShop\Factories\CurrencyFactory;
 use Alma\PrestaShop\Factories\CustomerFactory;
 use Alma\PrestaShop\Factories\MediaFactory;
 use Alma\PrestaShop\Factories\ModuleFactory;
@@ -144,7 +145,11 @@ trait BuilderTrait
             return $currencyHelper;
         }
 
-        return new CurrencyHelper();
+        return new CurrencyHelper(
+            $this->getContextFactory(),
+            $this->getValidateHelper(),
+            $this->getCurrencyFactory()
+        );
     }
 
     /**
@@ -207,7 +212,8 @@ trait BuilderTrait
 
         return new PriceHelper(
             $this->getToolsHelper(),
-            $this->getCurrencyHelper()
+            $this->getCurrencyHelper(),
+            $this->getContextFactory()
         );
     }
 
@@ -778,5 +784,19 @@ trait BuilderTrait
         }
 
         return new CustomerFactory();
+    }
+
+    /**
+     * @param CurrencyFactory $currencyFactory
+     *
+     * @return CurrencyFactory
+     */
+    public function getCurrencyFactory($currencyFactory = null)
+    {
+        if ($currencyFactory) {
+            return $currencyFactory;
+        }
+
+        return new CurrencyFactory();
     }
 }

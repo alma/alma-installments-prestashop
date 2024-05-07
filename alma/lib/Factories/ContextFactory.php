@@ -106,4 +106,16 @@ class ContextFactory
 
         return $contextCart->customer;
     }
+
+    /**
+     * @return \Currency|null
+     */
+    public function getCurrencyFromContext()
+    {
+        $context = $this->getContext();
+
+        return $context->currency;
+    }
 }
+
+

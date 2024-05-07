@@ -58,10 +58,7 @@ class CartHelperBuilderTest extends TestCase
     {
         $this->cartHelperBuilder = new CartHelperBuilder();
         $this->contextFactory = new ContextFactory();
-        $this->priceHelper = new PriceHelper(
-            new ToolsHelper(),
-            new CurrencyHelper()
-        );
+        $this->priceHelper = \Mockery::mock(PriceHelper::class);
     }
 
     public function testGetInstance()

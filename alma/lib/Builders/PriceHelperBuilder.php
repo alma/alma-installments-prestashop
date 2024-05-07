@@ -45,7 +45,8 @@ class PriceHelperBuilder
     {
         return new PriceHelper(
             $this->getToolsHelper(),
-            $this->getCurrencyHelper()
+            $this->getCurrencyHelper(),
+            $this->getContextFactory()
         );
     }
 }
