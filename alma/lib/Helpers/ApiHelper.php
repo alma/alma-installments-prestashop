@@ -105,6 +105,7 @@ class ApiHelper
             $merchant = $this->clientHelper->getMerchantsMe();
 
         } catch (\Exception $e) {
+
             if ($e->response && 401 === $e->response->responseCode) {
                 throw new WrongCredentialsException($this->moduleFactory);
             }
@@ -116,7 +117,7 @@ class ApiHelper
             throw new ActivationException($this->moduleFactory);
         }
 
-        if ($this->toolsHelper->psVersionCompare(_PS_VERSION_, '1.7', '>=')) {
+        if ($this->toolsHelper->psVersionCompare( '1.7', '>=')) {
             $this->handleInsuranceFlag($merchant);
         }
 
