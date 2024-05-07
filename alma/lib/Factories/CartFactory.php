@@ -22,37 +22,24 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
-namespace Alma\PrestaShop\Builders;
-
-use Alma\PrestaShop\Helpers\CartHelper;
-use Alma\PrestaShop\Traits\BuilderTrait;
+namespace Alma\PrestaShop\Factories;
 
 if (!defined('_PS_VERSION_')) {
     exit;
 }
 
 /**
- * CartHelperBuilder.
+ * Class CartFactory.
  */
-class CartHelperBuilder
+class CartFactory
 {
-    use BuilderTrait;
-
     /**
-     * @return CartHelper
+     * @param int $id
+     *
+     * @return \Cart
      */
-    public function getInstance()
+    public function create($id)
     {
-        return new CartHelper(
-            $this->getContextFactory(),
-            $this->getToolsHelper(),
-            $this->getPriceHelper(),
-            $this->getCartData(),
-            $this->getOrderRepository(),
-            $this->getOrderStateHelper(),
-            $this->getCarrierHelper(),
-            $this->getCartFactory(),
-            $this->getOrderHelper()
-        );
+        return new \Cart((int) $id);
     }
 }

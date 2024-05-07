@@ -26,6 +26,7 @@ namespace Alma\PrestaShop\Traits;
 
 use Alma\PrestaShop\Factories\AddressFactory;
 use Alma\PrestaShop\Factories\CarrierFactory;
+use Alma\PrestaShop\Factories\CartFactory;
 use Alma\PrestaShop\Factories\ContextFactory;
 use Alma\PrestaShop\Factories\CurrencyFactory;
 use Alma\PrestaShop\Factories\CustomerFactory;
@@ -520,7 +521,9 @@ trait BuilderTrait
             $this->getCartData(),
             $this->getOrderRepository(),
             $this->getOrderStateHelper(),
-            $this->getCarrierHelper()
+            $this->getCarrierHelper(),
+            $this->getCartFactory(),
+            $this->getOrderHelper()
         );
     }
 
@@ -871,4 +874,18 @@ trait BuilderTrait
         );
     }
 
+
+    /**
+     * @param CartFactory $cartFactory
+     *
+     * @return CartFactory
+     */
+    public function getCartFactory($cartFactory = null)
+    {
+        if ($cartFactory) {
+            return $cartFactory;
+        }
+
+        return new CartFactory();
+    }
 }

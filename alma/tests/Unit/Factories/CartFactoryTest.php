@@ -22,37 +22,25 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
-namespace Alma\PrestaShop\Builders;
+namespace Alma\PrestaShop\Tests\Unit\Factories;
 
-use Alma\PrestaShop\Helpers\CartHelper;
-use Alma\PrestaShop\Traits\BuilderTrait;
+use Alma\PrestaShop\Factories\CartFactory;
+use PHPUnit\Framework\TestCase;
 
-if (!defined('_PS_VERSION_')) {
-    exit;
-}
-
-/**
- * CartHelperBuilder.
- */
-class CartHelperBuilder
+class CartFactoryTest extends TestCase
 {
-    use BuilderTrait;
-
     /**
-     * @return CartHelper
+     * @var CartFactory
      */
-    public function getInstance()
+    protected $cartFactory;
+
+    public function setUp()
     {
-        return new CartHelper(
-            $this->getContextFactory(),
-            $this->getToolsHelper(),
-            $this->getPriceHelper(),
-            $this->getCartData(),
-            $this->getOrderRepository(),
-            $this->getOrderStateHelper(),
-            $this->getCarrierHelper(),
-            $this->getCartFactory(),
-            $this->getOrderHelper()
-        );
+        $this->cartFactory = new CartFactory();
+    }
+
+    public function testCreate()
+    {
+        $this->assertInstanceOf(\Cart::class, $this->cartFactory->create(10));
     }
 }
