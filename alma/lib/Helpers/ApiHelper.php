@@ -34,6 +34,7 @@ use Alma\PrestaShop\Factories\ModuleFactory;
 use Alma\PrestaShop\Helpers\Admin\InsuranceHelper;
 use Alma\PrestaShop\Logger;
 use Alma\PrestaShop\Services\InsuranceService;
+use PrestaShop\PrestaShop\Adapter\Tools;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -46,9 +47,9 @@ class ApiHelper
      */
     protected $insuranceHelper;
     /**
-     * @var mixed
+     * @var ModuleFactory
      */
-    protected $module;
+    protected $moduleFactory;
     /**
      * @var InsuranceService
      */
@@ -63,20 +64,30 @@ class ApiHelper
     protected $clientHelper;
 
     /**
+     * @var ToolsHelper
+     */
+    protected $toolsHelper;
+
+
+    /**
      * @param ModuleFactory $moduleFactory
      * @param ClientHelper $clientHelper
+     * @param ToolsHelper $toolsHelper
+     * @param InsuranceService $insuranceService
+     * @param ConfigurationHelper $configurationHelper
+     * @param InsuranceHelper $insuranceHelper
      */
-    public function __construct($moduleFactory, $clientHelper)
+    public function __construct($moduleFactory, $clientHelper, $toolsHelper, $insuranceService, $configurationHelper, $insuranceHelper)
     {
-        $this->module = $moduleFactory->getModule();
-        $this->insuranceHelper = new InsuranceHelper($this->module);
-        $this->insuranceService = new InsuranceService();
-        $this->configurationHelper = new ConfigurationHelper();
+        $this->moduleFactory = $moduleFactory;
+        $this->insuranceHelper = $insuranceHelper;
+        $this->insuranceService = $insuranceService;
+        $this->configurationHelper = $configurationHelper;
         $this->clientHelper = $clientHelper;
+        $this->toolsHelper = $toolsHelper;
     }
 
     /**
-     * @param null $alma
      *
      * @return Merchant|null
      *
@@ -85,31 +96,24 @@ class ApiHelper
      * @throws WrongCredentialsException
      * @throws \PrestaShopException
      */
-    public function getMerchant($alma = null)
+    public function getMerchant()
     {
-        if (!$alma) {
-            $alma = ClientHelper::defaultInstance();
-        }
-
-        if (!$alma) {
-            return null;
-        }
-
         try {
             /**
-             * @var Merchant $merchant
+             * @param Merchant $merchant
              */
-            $merchant = $alma->merchants->me();
+            $merchant = $this->clientHelper->getMerchantsMe();
+
         } catch (\Exception $e) {
             if ($e->response && 401 === $e->response->responseCode) {
-                throw new WrongCredentialsException($this->module);
+                throw new WrongCredentialsException($this->moduleFactory);
             }
 
-            throw new ApiMerchantsException($this->module->l('Alma encountered an error when fetching merchant status, please check your api keys or retry later.', 'GetContentHookController'), $e->getCode(), $e);
+            throw new ApiMerchantsException($this->moduleFactory->l('Alma encountered an error when fetching merchant status, please check your api keys or retry later.', 'GetContentHookController'), $e->getCode(), $e);
         }
 
         if (!$merchant->can_create_payments) {
-            throw new ActivationException($this->module);
+            throw new ActivationException($this->moduleFactory);
         }
 
         if (version_compare(_PS_VERSION_, '1.7', '>=')) {
@@ -186,7 +190,7 @@ class ApiHelper
     public function getPaymentEligibility($paymentData)
     {
         try {
-            return $this->clientHelper->getAlmaClient()->payments->eligibility($paymentData);
+            return $this->clientHelper->getPaymentEligibility($paymentData);
         } catch (\Exception $e) {
             Logger::instance()->error(
                 sprintf(

@@ -45,7 +45,11 @@ class ApiHelperBuilder
     {
         return new ApiHelper(
             $this->getModuleFactory(),
-            $this->getClientHelper()
+            $this->getClientHelper(),
+            $this->getToolsHelper(),
+            $this->getInsuranceService(),
+            $this->getConfigurationHelper(),
+            $this->getAdminInsuranceHelper()
         );
     }
 }

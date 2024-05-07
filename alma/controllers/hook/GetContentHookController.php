@@ -453,18 +453,9 @@ final class GetContentHookController extends AdminHookController
                 continue;
             }
 
-            $alma = ClientHelper::createInstance($key, $mode);
-            if (!$alma) {
-                $this->context->smarty->assign('validation_error', 'alma_client_null');
-
-                $errorMessage = $this->module->display($this->module->file, 'getContent.tpl');
-
-                return ['error' => true, 'message' => $errorMessage];
-            }
-
             // Try to get merchant from configured API key/mode
             try {
-                $this->apiHelper->getMerchant($alma);
+                $this->apiHelper->getMerchant();
             } catch (\Exception $e) {
                 $this->context->smarty->assign(
                     [

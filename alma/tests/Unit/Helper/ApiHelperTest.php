@@ -28,6 +28,20 @@ use PHPUnit\Framework\TestCase;
 
 class ApiHelperTest extends TestCase
 {
+    public function testGetMerchant()
+    {
+
+    }
+
+    public function testHandleInsuranceFlag()
+    {
+
+    }
+
+    public function testSaveFeatureFlag()
+    {
+
+    }
     public function testGetPaymentEligibility()
     {
     }

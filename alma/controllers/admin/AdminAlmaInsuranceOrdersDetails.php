@@ -25,6 +25,7 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
+use Alma\PrestaShop\Builders\Admin\InsuranceHelperBuilder;
 use Alma\PrestaShop\Builders\PriceHelperBuilder;
 use Alma\PrestaShop\Helpers\Admin\InsuranceHelper;
 use Alma\PrestaShop\Helpers\ConstantsHelper;
@@ -68,8 +69,8 @@ class AdminAlmaInsuranceOrdersDetailsController extends ModuleAdminController
         $this->bootstrap = true;
         $this->insuranceRepository = new AlmaInsuranceProductRepository();
         $this->productHelper = new ProductHelper();
-        $this->adminInsuranceHelper = new InsuranceHelper($this->module);
-
+        $insuranceHelperBuilder = new InsuranceHelperBuilder();
+        $this->adminInsuranceHelper = $insuranceHelperBuilder->getInstance();
         $priceHelperBuilder = new PriceHelperBuilder();
         $this->priceHelper = $priceHelperBuilder->getInstance();
 

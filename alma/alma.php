@@ -65,10 +65,7 @@ class Alma extends PaymentModule
      * @var Alma\PrestaShop\Helpers\Admin\TabsHelper
      */
     private $tabsHelper;
-    /**
-     * @var Alma\PrestaShop\Helpers\Admin\InsuranceHelper
-     */
-    private $adminInsuranceHelper;
+
 
     public function __construct()
     {
@@ -117,7 +114,6 @@ class Alma extends PaymentModule
 
         $this->hook = new \Alma\PrestaShop\Helpers\HookHelper();
         $this->tabsHelper = new \Alma\PrestaShop\Helpers\Admin\TabsHelper();
-        $this->adminInsuranceHelper = new \Alma\PrestaShop\Helpers\Admin\InsuranceHelper($this);
     }
 
     /**

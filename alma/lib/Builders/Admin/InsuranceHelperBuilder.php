@@ -22,35 +22,32 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
-namespace Alma\PrestaShop\Exceptions;
+namespace Alma\PrestaShop\Builders\Admin;
 
-use Alma\PrestaShop\Factories\ModuleFactory;
-use Alma\PrestaShop\Helpers\LinkHelper;
-use Alma\PrestaShop\Helpers\SettingsHelper;
+use Alma\PrestaShop\Helpers\Admin\InsuranceHelper;
+use Alma\PrestaShop\Traits\BuilderTrait;
 
 if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-class ActivationException extends AlmaException
+/**
+ * InsuranceHelperBuilder.
+ */
+class InsuranceHelperBuilder
 {
-    /**
-     * @param ModuleFactory$moduleFactory
-     */
-    public function __construct($moduleFactory)
-    {
-        $message = $moduleFactory->l('Your Alma account needs to be activated before you can use Alma on your shop.', 'ActivationException')
-        . sprintf(
-                $moduleFactory->l('Go to your %1$sAlma dashboard%2$s to activate your account.', 'ActivationException'),
-            '<a href="' . LinkHelper::getAlmaDashboardUrl(SettingsHelper::getActiveMode(), 'settings') . '" target="_blank">',
-            '</a>'
-        )
-        . sprintf(
-                $moduleFactory->l('%1$sRefresh%2$s the page when ready.', 'ActivationException'),
-            '<a href="#">',
-            '</a>'
-        );
+    use BuilderTrait;
 
-        parent::__construct($message);
+    /**
+     * @return InsuranceHelper
+     */
+    public function getInstance()
+    {
+        return new InsuranceHelper(
+            $this->getModuleFactory(),
+            $this->getTabsHelper(),
+            $this->getConfigurationHelper(),
+            $this->getAlmaInsuranceProductRepository()
+        );
     }
 }
