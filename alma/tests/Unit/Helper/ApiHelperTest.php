@@ -24,12 +24,19 @@
 
 namespace Alma\PrestaShop\Tests\Unit\Helper;
 
+use Alma\PrestaShop\Builders\ApiHelperBuilder;
+use Alma\PrestaShop\Helpers\ClientHelper;
+use Mockery;
 use PHPUnit\Framework\TestCase;
 
 class ApiHelperTest extends TestCase
 {
     public function testGetMerchant()
     {
+        $clientHelper = Mockery::mock(ClientHelper::class)->makePartial();
+        $clientHelper->shouldReceive('getMerchantsMe')->andThrow(new \Exception('', 401));
+        $apiHelperBuilder = Mockery::mock(ApiHelperBuilder::class);
+        $apiHelperBuilder->shouldReceive('getClientHelper')->andReturn($clientHelper);
 
     }
 

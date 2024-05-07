@@ -116,7 +116,7 @@ class ApiHelper
             throw new ActivationException($this->moduleFactory);
         }
 
-        if (version_compare(_PS_VERSION_, '1.7', '>=')) {
+        if ($this->toolsHelper->psVersionCompare(_PS_VERSION_, '1.7', '>=')) {
             $this->handleInsuranceFlag($merchant);
         }
 
