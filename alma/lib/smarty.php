@@ -56,7 +56,15 @@ if (class_exists('\Context') && PHP_SAPI != 'cli') {
      */
     function smarty_function_almaFormatPrice($params, $smarty)
     {
-        $priceHelper = new \Alma\PrestaShop\Helpers\PriceHelper(new \Alma\PrestaShop\Helpers\ToolsHelper(), new \Alma\PrestaShop\Helpers\CurrencyHelper());
+        $priceHelper = new \Alma\PrestaShop\Helpers\PriceHelper(
+            new \Alma\PrestaShop\Helpers\ToolsHelper(),
+            new \Alma\PrestaShop\Helpers\CurrencyHelper(
+                new \Alma\PrestaShop\Factories\ContextFactory(),
+                new \Alma\PrestaShop\Helpers\ValidateHelper(),
+                new \Alma\PrestaShop\Factories\CurrencyFactory()
+            ),
+            new \phpDocumentor\Reflection\Types\ContextFactory()
+        );
 
         return $priceHelper->formatPriceToCentsByCurrencyId($params['cents'], isset($params['currency']) ? $params['currency'] : null);
     }
