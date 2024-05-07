@@ -22,62 +22,44 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
-namespace Alma\PrestaShop\Helpers;
+namespace Alma\PrestaShop\Tests\Unit\Builders;
 
-use Alma\PrestaShop\Factories\ContextFactory;
-use Alma\PrestaShop\Factories\CurrencyFactory;
+use Alma\PrestaShop\Builders\FeePlanHelperBuilder;
+use Alma\PrestaShop\Factories\EligibilityFactory;
+use Alma\PrestaShop\Helpers\FeePlanHelper;
+use Alma\PrestaShop\Helpers\SettingsHelper;
+use PHPUnit\Framework\TestCase;
 
-if (!defined('_PS_VERSION_')) {
-    exit;
-}
-
-/**
- * Class CurrencyHelper.
- *
- * Use for method date
- */
-class CurrencyHelper
+class FeePlanHelperBuilderTest extends TestCase
 {
     /**
-     * @var ValidateHelper
+     * @var FeePlanHelperBuilder
      */
-    protected $validationHelper;
+    protected $feePlanHelperBuilder;
 
-    /**
-     * @var ContextFactory
-     */
-    protected $contextFactory;
-
-    /**
-     * @var CurrencyFactory
-     */
-    protected $currencyFactory;
-
-    /**
-     * @param ContextFactory $contextFactory
-     * @param ValidateHelper $validationHelper
-     * @param CurrencyFactory $currencyFactory
-     */
-    public function __construct($contextFactory, $validationHelper, $currencyFactory)
+    public function setUp()
     {
-        $this->contextFactory = $contextFactory;
-        $this->validationHelper = $validationHelper;
-        $this->currencyFactory = $currencyFactory;
+        $this->feePlanHelperBuilder = new FeePlanHelperBuilder();
     }
 
-    /**
-     * @param $idCurrency
-     *
-     * @return \Currency|null
-     */
-    public function getCurrencyById($idCurrency)
+    public function testGetInstance()
     {
-        $currency = $this->currencyFactory->getCurrencyInstance($idCurrency);
+        $this->assertInstanceOf(FeePlanHelper::class, $this->feePlanHelperBuilder->getInstance());
+    }
 
-        if (!$this->validationHelper->isLoadedObject($currency)) {
-            $currency = $this->contextFactory->getCurrencyFromContext();
-        }
+    public function testGetSettingsHelper()
+    {
+        $this->assertInstanceOf(SettingsHelper::class, $this->feePlanHelperBuilder->getSettingsHelper());
+        $this->assertInstanceOf(SettingsHelper::class, $this->feePlanHelperBuilder->getSettingsHelper(
+           \Mockery::mock(SettingsHelper::class)
+        ));
+    }
 
-        return $currency;
+    public function testGetEligibilityFactory()
+    {
+        $this->assertInstanceOf(EligibilityFactory::class, $this->feePlanHelperBuilder->getEligibilityFactory());
+        $this->assertInstanceOf(EligibilityFactory::class, $this->feePlanHelperBuilder->getEligibilityFactory(
+            new EligibilityFactory()
+        ));
     }
 }

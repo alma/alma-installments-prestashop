@@ -81,7 +81,6 @@ class CartHelper
      */
     protected $orderHelper;
 
-
     /**
      * @param ContextFactory $contextFactory
      * @param ToolsHelper $toolsHelper
@@ -173,7 +172,6 @@ class CartHelper
 
         return $ordersData;
     }
-
 
     /**
      * @param \Cart $cart

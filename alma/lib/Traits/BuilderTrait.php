@@ -30,6 +30,7 @@ use Alma\PrestaShop\Factories\CartFactory;
 use Alma\PrestaShop\Factories\ContextFactory;
 use Alma\PrestaShop\Factories\CurrencyFactory;
 use Alma\PrestaShop\Factories\CustomerFactory;
+use Alma\PrestaShop\Factories\EligibilityFactory;
 use Alma\PrestaShop\Factories\MediaFactory;
 use Alma\PrestaShop\Factories\ModuleFactory;
 use Alma\PrestaShop\Factories\OrderStateFactory;
@@ -49,11 +50,13 @@ use Alma\PrestaShop\Helpers\CustomerHelper;
 use Alma\PrestaShop\Helpers\CustomFieldsHelper;
 use Alma\PrestaShop\Helpers\DateHelper;
 use Alma\PrestaShop\Helpers\EligibilityHelper;
+use Alma\PrestaShop\Helpers\FeePlanHelper;
 use Alma\PrestaShop\Helpers\LanguageHelper;
 use Alma\PrestaShop\Helpers\LocaleHelper;
 use Alma\PrestaShop\Helpers\MediaHelper;
 use Alma\PrestaShop\Helpers\OrderHelper;
 use Alma\PrestaShop\Helpers\OrderStateHelper;
+use Alma\PrestaShop\Helpers\PaymentHelper;
 use Alma\PrestaShop\Helpers\PaymentOptionHelper;
 use Alma\PrestaShop\Helpers\PaymentOptionTemplateHelper;
 use Alma\PrestaShop\Helpers\PlanHelper;
@@ -644,12 +647,11 @@ trait BuilderTrait
         }
 
         return new EligibilityHelper(
-            $this->getPaymentData(),
             $this->getPriceHelper(),
-            $this->getClientHelper(),
-            $this->getSettingsHelper(),
             $this->getApiHelper(),
-            $this->getContextFactory()
+            $this->getContextFactory(),
+            $this->getFeePlanHelper(),
+            $this->getPaymentHelper()
         );
     }
 
@@ -826,7 +828,6 @@ trait BuilderTrait
         return new TabsHelper();
     }
 
-
     /**
      * @param AlmaInsuranceProductRepository $almaInsuranceProductRepository
      *
@@ -874,7 +875,6 @@ trait BuilderTrait
         );
     }
 
-
     /**
      * @param CartFactory $cartFactory
      *
@@ -887,5 +887,53 @@ trait BuilderTrait
         }
 
         return new CartFactory();
+    }
+
+    /**
+     * @param EligibilityFactory $eligibilityFactory
+     *
+     * @return EligibilityFactory
+     */
+    public function getEligibilityFactory($eligibilityFactory = null)
+    {
+        if ($eligibilityFactory) {
+            return $eligibilityFactory;
+        }
+
+        return new EligibilityFactory();
+    }
+
+    /**
+     * @param FeePlanHelper $feePlanHelper
+     *
+     * @return FeePlanHelper
+     */
+    public function getFeePlanHelper($feePlanHelper = null)
+    {
+        if ($feePlanHelper) {
+            return $feePlanHelper;
+        }
+
+        return new FeePlanHelper(
+            new SettingsHelper(
+                new ShopHelper(),
+                new ConfigurationHelper()
+            ),
+            new EligibilityFactory()
+        );
+    }
+
+    /**
+     * @param PaymentHelper $paymentHelper
+     *
+     * @return PaymentHelper
+     */
+    public function getPaymentHelper($paymentHelper = null)
+    {
+        if ($paymentHelper) {
+            return $paymentHelper;
+        }
+
+        return new PaymentHelper($this->getPaymentData());
     }
 }

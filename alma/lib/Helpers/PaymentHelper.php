@@ -24,60 +24,45 @@
 
 namespace Alma\PrestaShop\Helpers;
 
-use Alma\PrestaShop\Factories\ContextFactory;
-use Alma\PrestaShop\Factories\CurrencyFactory;
+use Alma\PrestaShop\Logger;
+use Alma\PrestaShop\Model\PaymentData;
 
 if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-/**
- * Class CurrencyHelper.
- *
- * Use for method date
- */
-class CurrencyHelper
+class PaymentHelper
 {
     /**
-     * @var ValidateHelper
+     * @var PaymentData
      */
-    protected $validationHelper;
+    protected $paymentData;
 
     /**
-     * @var ContextFactory
+     * @param $paymentData
      */
-    protected $contextFactory;
-
-    /**
-     * @var CurrencyFactory
-     */
-    protected $currencyFactory;
-
-    /**
-     * @param ContextFactory $contextFactory
-     * @param ValidateHelper $validationHelper
-     * @param CurrencyFactory $currencyFactory
-     */
-    public function __construct($contextFactory, $validationHelper, $currencyFactory)
+    public function __construct($paymentData)
     {
-        $this->contextFactory = $contextFactory;
-        $this->validationHelper = $validationHelper;
-        $this->currencyFactory = $currencyFactory;
+        $this->paymentData = $paymentData;
     }
 
     /**
-     * @param $idCurrency
+     * @param $activePlans
      *
-     * @return \Currency|null
+     * @return array
+     *
+     * @throws \Alma\API\ParamsError
      */
-    public function getCurrencyById($idCurrency)
+    public function checkPaymentData($activePlans)
     {
-        $currency = $this->currencyFactory->getCurrencyInstance($idCurrency);
+        $paymentData = $this->paymentData->dataFromCart($activePlans);
 
-        if (!$this->validationHelper->isLoadedObject($currency)) {
-            $currency = $this->contextFactory->getCurrencyFromContext();
+        if (!$paymentData) {
+            Logger::instance()->error('Cannot check cart eligibility: no data extracted from cart');
+
+            return [];
         }
 
-        return $currency;
+        return $paymentData;
     }
 }

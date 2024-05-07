@@ -22,62 +22,41 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
-namespace Alma\PrestaShop\Helpers;
+namespace Alma\PrestaShop\Factories;
 
-use Alma\PrestaShop\Factories\ContextFactory;
-use Alma\PrestaShop\Factories\CurrencyFactory;
+use Alma\API\Endpoints\Results\Eligibility;
+use Alma\API\Entities\FeePlan;
 
 if (!defined('_PS_VERSION_')) {
     exit;
 }
 
 /**
- * Class CurrencyHelper.
- *
- * Use for method date
+ * Class EligibilityFactory.
  */
-class CurrencyHelper
+class EligibilityFactory
 {
     /**
-     * @var ValidateHelper
-     */
-    protected $validationHelper;
-
-    /**
-     * @var ContextFactory
-     */
-    protected $contextFactory;
-
-    /**
-     * @var CurrencyFactory
-     */
-    protected $currencyFactory;
-
-    /**
-     * @param ContextFactory $contextFactory
-     * @param ValidateHelper $validationHelper
-     * @param CurrencyFactory $currencyFactory
-     */
-    public function __construct($contextFactory, $validationHelper, $currencyFactory)
-    {
-        $this->contextFactory = $contextFactory;
-        $this->validationHelper = $validationHelper;
-        $this->currencyFactory = $currencyFactory;
-    }
-
-    /**
-     * @param $idCurrency
+     * @param array $data
+     * @param FeePlan $feePlan
      *
-     * @return \Currency|null
+     * @return Eligibility
      */
-    public function getCurrencyById($idCurrency)
+    public function createEligibility($data, $feePlan, $eligible = false)
     {
-        $currency = $this->currencyFactory->getCurrencyInstance($idCurrency);
-
-        if (!$this->validationHelper->isLoadedObject($currency)) {
-            $currency = $this->contextFactory->getCurrencyFromContext();
-        }
-
-        return $currency;
+        return new Eligibility(
+            [
+                'installments_count' => $data['installmentsCount'],
+                'deferred_days' => $data['deferredDays'],
+                'deferred_months' => $data['deferredMonths'],
+                'eligible' => $eligible,
+                'constraints' => [
+                    'purchase_amount' => [
+                        'minimum' => $feePlan->min,
+                        'maximum' => $feePlan->max,
+                    ],
+                ],
+            ]
+        );
     }
 }

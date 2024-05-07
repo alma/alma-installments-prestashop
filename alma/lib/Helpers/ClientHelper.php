@@ -52,6 +52,7 @@ class ClientHelper
     /**
      * @param $apiKey
      * @param $mode
+     *
      * @return Client|null
      */
     public static function createInstance($apiKey, $mode = null)
@@ -99,6 +100,7 @@ class ClientHelper
 
     /**
      * @return Merchant
+     *
      * @throws ClientException
      * @throws RequestError
      */
@@ -117,7 +119,9 @@ class ClientHelper
 
     /**
      * @param array $paymentData
+     *
      * @return Alma\API\Endpoints\Results\Eligibility|Alma\API\Endpoints\Results\Eligibility[]
+     *
      * @throws ClientException
      * @throws RequestError
      */

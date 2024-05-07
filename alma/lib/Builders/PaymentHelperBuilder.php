@@ -22,62 +22,29 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
-namespace Alma\PrestaShop\Helpers;
+namespace Alma\PrestaShop\Builders;
 
-use Alma\PrestaShop\Factories\ContextFactory;
-use Alma\PrestaShop\Factories\CurrencyFactory;
+use Alma\PrestaShop\Helpers\PaymentHelper;
+use Alma\PrestaShop\Traits\BuilderTrait;
 
 if (!defined('_PS_VERSION_')) {
     exit;
 }
 
 /**
- * Class CurrencyHelper.
- *
- * Use for method date
+ * PaymentHelperBuilder
  */
-class CurrencyHelper
+class PaymentHelperBuilder
 {
-    /**
-     * @var ValidateHelper
-     */
-    protected $validationHelper;
+    use BuilderTrait;
 
     /**
-     * @var ContextFactory
+     * @return PaymentHelper
      */
-    protected $contextFactory;
-
-    /**
-     * @var CurrencyFactory
-     */
-    protected $currencyFactory;
-
-    /**
-     * @param ContextFactory $contextFactory
-     * @param ValidateHelper $validationHelper
-     * @param CurrencyFactory $currencyFactory
-     */
-    public function __construct($contextFactory, $validationHelper, $currencyFactory)
+    public function getInstance()
     {
-        $this->contextFactory = $contextFactory;
-        $this->validationHelper = $validationHelper;
-        $this->currencyFactory = $currencyFactory;
-    }
-
-    /**
-     * @param $idCurrency
-     *
-     * @return \Currency|null
-     */
-    public function getCurrencyById($idCurrency)
-    {
-        $currency = $this->currencyFactory->getCurrencyInstance($idCurrency);
-
-        if (!$this->validationHelper->isLoadedObject($currency)) {
-            $currency = $this->contextFactory->getCurrencyFromContext();
-        }
-
-        return $currency;
+        return new PaymentHelper(
+           $this->getPaymentData()
+        );
     }
 }

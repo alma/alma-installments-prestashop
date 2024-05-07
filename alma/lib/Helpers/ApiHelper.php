@@ -34,7 +34,6 @@ use Alma\PrestaShop\Factories\ModuleFactory;
 use Alma\PrestaShop\Helpers\Admin\InsuranceHelper;
 use Alma\PrestaShop\Logger;
 use Alma\PrestaShop\Services\InsuranceService;
-use PrestaShop\PrestaShop\Adapter\Tools;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -68,7 +67,6 @@ class ApiHelper
      */
     protected $toolsHelper;
 
-
     /**
      * @param ModuleFactory $moduleFactory
      * @param ClientHelper $clientHelper
@@ -89,7 +87,9 @@ class ApiHelper
 
     /**
      * @param $alma
+     *
      * @return Merchant
+     *
      * @throws ActivationException
      * @throws ApiMerchantsException
      * @throws WrongCredentialsException
@@ -102,9 +102,7 @@ class ApiHelper
              * @param Merchant $merchant
              */
             $merchant = $this->clientHelper->getMerchantsMe($alma);
-
         } catch (\Exception $e) {
-
             if ($e->response && 401 === $e->response->responseCode) {
                 throw new WrongCredentialsException($this->moduleFactory);
             }
@@ -116,7 +114,7 @@ class ApiHelper
             throw new ActivationException($this->moduleFactory);
         }
 
-        if ($this->toolsHelper->psVersionCompare( '1.7', '>=')) {
+        if ($this->toolsHelper->psVersionCompare('1.7', '>=')) {
             $this->handleInsuranceFlag($merchant);
         }
 

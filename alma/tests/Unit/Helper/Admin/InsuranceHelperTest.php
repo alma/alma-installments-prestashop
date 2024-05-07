@@ -26,8 +26,6 @@ namespace Alma\PrestaShop\Tests\Unit\Helper\Admin;
 
 use Alma\PrestaShop\Builders\Admin\InsuranceHelperBuilder;
 use Alma\PrestaShop\Exceptions\WrongParamsException;
-use Alma\PrestaShop\Factories\ModuleFactory;
-use Alma\PrestaShop\Helpers\Admin\InsuranceHelper;
 use Alma\PrestaShop\Helpers\Admin\TabsHelper;
 use Alma\PrestaShop\Helpers\ConfigurationHelper;
 use Alma\PrestaShop\Helpers\ConstantsHelper;
@@ -90,7 +88,6 @@ class InsuranceHelperTest extends TestCase
         $tabsHelper->shouldReceive('installTabs', $tabsInsuranceDescription)->andReturn('');
         $tabsHelper->shouldReceive('getInstanceFromClassName')->andReturn($this->tabWithoutId);
 
-
         $insuranceHelperBuilder = \Mockery::mock(InsuranceHelperBuilder::class)->makePartial();
         $insuranceHelperBuilder->shouldReceive('getTabsHelper')->andReturn($tabsHelper);
         $insuranceHelperBuilder->shouldReceive('getConfigurationHelper')->andReturn($this->configurationHelperMock);
@@ -111,7 +108,6 @@ class InsuranceHelperTest extends TestCase
         $tabsHelper = \Mockery::mock(TabsHelper::class)->makePartial();
         $tabsHelper->shouldReceive('uninstallTabs', $tabsInsuranceDescription)->andReturn('');
         $tabsHelper->shouldReceive('getInstanceFromClassName')->andReturn($this->tabWithId);
-
 
         $insuranceHelperBuilder = \Mockery::mock(InsuranceHelperBuilder::class)->makePartial();
         $insuranceHelperBuilder->shouldReceive('getTabsHelper')->andReturn($tabsHelper);

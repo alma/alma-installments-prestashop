@@ -22,62 +22,34 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
-namespace Alma\PrestaShop\Helpers;
+namespace Alma\PrestaShop\Tests\Unit\Helper;
 
-use Alma\PrestaShop\Factories\ContextFactory;
-use Alma\PrestaShop\Factories\CurrencyFactory;
+use Alma\PrestaShop\Builders\PaymentHelperBuilder;
+use Alma\PrestaShop\Model\PaymentData;
+use PHPUnit\Framework\TestCase;
 
-if (!defined('_PS_VERSION_')) {
-    exit;
-}
-
-/**
- * Class CurrencyHelper.
- *
- * Use for method date
- */
-class CurrencyHelper
+class PaymentDataHelperTest extends TestCase
 {
-    /**
-     * @var ValidateHelper
-     */
-    protected $validationHelper;
-
-    /**
-     * @var ContextFactory
-     */
-    protected $contextFactory;
-
-    /**
-     * @var CurrencyFactory
-     */
-    protected $currencyFactory;
-
-    /**
-     * @param ContextFactory $contextFactory
-     * @param ValidateHelper $validationHelper
-     * @param CurrencyFactory $currencyFactory
-     */
-    public function __construct($contextFactory, $validationHelper, $currencyFactory)
+    public function testCheckPaymentData()
     {
-        $this->contextFactory = $contextFactory;
-        $this->validationHelper = $validationHelper;
-        $this->currencyFactory = $currencyFactory;
-    }
+        $paymentData = \Mockery::mock(PaymentData::class);
+        $paymentData->shouldReceive('dataFromCart')->andReturn([]);
 
-    /**
-     * @param $idCurrency
-     *
-     * @return \Currency|null
-     */
-    public function getCurrencyById($idCurrency)
-    {
-        $currency = $this->currencyFactory->getCurrencyInstance($idCurrency);
+        $paymentHelperBuilder = \Mockery::mock(PaymentHelperBuilder::class)->makePartial();
+        $paymentHelperBuilder->shouldReceive('getPaymentData')->andReturn($paymentData);
 
-        if (!$this->validationHelper->isLoadedObject($currency)) {
-            $currency = $this->contextFactory->getCurrencyFromContext();
-        }
+        $paymentHelper = $paymentHelperBuilder->getInstance();
 
-        return $currency;
+        $this->assertEquals([], $paymentHelper->checkPaymentData([]));
+
+        $paymentData = \Mockery::mock(PaymentData::class);
+        $paymentData->shouldReceive('dataFromCart')->andReturn(['mon test']);
+
+        $paymentHelperBuilder = \Mockery::mock(PaymentHelperBuilder::class)->makePartial();
+        $paymentHelperBuilder->shouldReceive('getPaymentData')->andReturn($paymentData);
+
+        $paymentHelper = $paymentHelperBuilder->getInstance();
+
+        $this->assertEquals(['mon test'], $paymentHelper->checkPaymentData([]));
     }
 }

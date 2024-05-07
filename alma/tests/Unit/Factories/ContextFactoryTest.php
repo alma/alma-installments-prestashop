@@ -67,45 +67,40 @@ class ContextFactoryTest extends TestCase
         $cart->id_currency = 1;
         $cart->save();
 
-        $context = new \Context;
+        $context = new \Context();
         $context->cart = $cart;
 
         $contextFactory = \Mockery::mock(ContextFactory::class)->makePartial();
         $contextFactory->shouldReceive('getContext')->andReturn($context);
 
         $this->assertInstanceOf(\Cart::class, $contextFactory->getContextCart());
-
     }
 
     public function testGetContextCartId()
     {
-
         $cart = new \Cart();
         $cart->id_currency = 1;
         $cart->save();
 
         $idCart = $cart->id;
 
-        $context = new \Context;
+        $context = new \Context();
         $context->cart = $cart;
 
         $contextFactory = \Mockery::mock(ContextFactory::class)->makePartial();
         $contextFactory->shouldReceive('getContext')->andReturn($context);
 
         $this->assertEquals($idCart, $contextFactory->getContextCartId());
-
     }
 
     public function testGetContextCartCustomerId()
     {
-
         $cart = new \Cart();
         $cart->id_customer = 1;
         $cart->id_currency = 1;
         $cart->save();
 
-
-        $context = new \Context;
+        $context = new \Context();
         $context->cart = $cart;
 
         $contextFactory = \Mockery::mock(ContextFactory::class)->makePartial();
@@ -123,7 +118,7 @@ class ContextFactoryTest extends TestCase
         $customer->passwd = 'zeezazea';
         $customer->save();
 
-        $context = new \Context;
+        $context = new \Context();
         $context->customer = $customer;
 
         $contextFactory = \Mockery::mock(ContextFactory::class)->makePartial();

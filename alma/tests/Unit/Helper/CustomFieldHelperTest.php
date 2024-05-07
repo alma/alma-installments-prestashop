@@ -203,5 +203,4 @@ class CustomFieldHelperTest extends TestCase
     {
         $this->assertEquals(static::$data, $this->customFieldsHelper->customFields());
     }
-
 }

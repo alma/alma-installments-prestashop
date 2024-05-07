@@ -22,62 +22,35 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
-namespace Alma\PrestaShop\Helpers;
+namespace Alma\PrestaShop\Tests\Unit\Builders;
 
-use Alma\PrestaShop\Factories\ContextFactory;
-use Alma\PrestaShop\Factories\CurrencyFactory;
+use Alma\PrestaShop\Builders\PaymentHelperBuilder;
+use Alma\PrestaShop\Helpers\PaymentHelper;
+use Alma\PrestaShop\Model\PaymentData;
+use PHPUnit\Framework\TestCase;
 
-if (!defined('_PS_VERSION_')) {
-    exit;
-}
-
-/**
- * Class CurrencyHelper.
- *
- * Use for method date
- */
-class CurrencyHelper
+class PaymentHelperBuilderTest extends TestCase
 {
     /**
-     * @var ValidateHelper
+     * @var PaymentHelperBuilder
      */
-    protected $validationHelper;
+    protected $paymentHelperBuilder;
 
-    /**
-     * @var ContextFactory
-     */
-    protected $contextFactory;
-
-    /**
-     * @var CurrencyFactory
-     */
-    protected $currencyFactory;
-
-    /**
-     * @param ContextFactory $contextFactory
-     * @param ValidateHelper $validationHelper
-     * @param CurrencyFactory $currencyFactory
-     */
-    public function __construct($contextFactory, $validationHelper, $currencyFactory)
+    public function setUp()
     {
-        $this->contextFactory = $contextFactory;
-        $this->validationHelper = $validationHelper;
-        $this->currencyFactory = $currencyFactory;
+        $this->paymentHelperBuilder = new PaymentHelperBuilder();
     }
 
-    /**
-     * @param $idCurrency
-     *
-     * @return \Currency|null
-     */
-    public function getCurrencyById($idCurrency)
+    public function testGetInstance()
     {
-        $currency = $this->currencyFactory->getCurrencyInstance($idCurrency);
+        $this->assertInstanceOf(PaymentHelper::class, $this->paymentHelperBuilder->getInstance());
+    }
 
-        if (!$this->validationHelper->isLoadedObject($currency)) {
-            $currency = $this->contextFactory->getCurrencyFromContext();
-        }
-
-        return $currency;
+    public function testGetPaymentData()
+    {
+        $this->assertInstanceOf(PaymentData::class, $this->paymentHelperBuilder->getPaymentData());
+        $this->assertInstanceOf(PaymentData::class, $this->paymentHelperBuilder->getPaymentData(
+            \Mockery::mock(PaymentData::class)
+        ));
     }
 }
