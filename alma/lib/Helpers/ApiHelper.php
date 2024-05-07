@@ -88,21 +88,20 @@ class ApiHelper
     }
 
     /**
-     *
-     * @return Merchant|null
-     *
+     * @param $alma
+     * @return Merchant
      * @throws ActivationException
      * @throws ApiMerchantsException
      * @throws WrongCredentialsException
      * @throws \PrestaShopException
      */
-    public function getMerchant()
+    public function getMerchant($alma = null)
     {
         try {
             /**
              * @param Merchant $merchant
              */
-            $merchant = $this->clientHelper->getMerchantsMe();
+            $merchant = $this->clientHelper->getMerchantsMe($alma);
 
         } catch (\Exception $e) {
 

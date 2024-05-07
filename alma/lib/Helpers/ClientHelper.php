@@ -49,6 +49,11 @@ class ClientHelper
         return $almaClient;
     }
 
+    /**
+     * @param $apiKey
+     * @param $mode
+     * @return Client|null
+     */
     public static function createInstance($apiKey, $mode = null)
     {
         if (!$mode) {
@@ -97,9 +102,13 @@ class ClientHelper
      * @throws ClientException
      * @throws RequestError
      */
-    public function getMerchantsMe()
+    public function getMerchantsMe($alma = null)
     {
-        return $this->getAlmaClient()->merchants->me();
+        if(null === $alma) {
+            $alma = ClientHelper::defaultInstance();
+        }
+
+        return $alma->merchants->me();
     }
 
     /**
