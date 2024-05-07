@@ -104,8 +104,12 @@ class ClientHelper
      */
     public function getMerchantsMe($alma = null)
     {
-        if(null === $alma) {
+        if (!$alma) {
             $alma = ClientHelper::defaultInstance();
+        }
+
+        if (!$alma) {
+            return null;
         }
 
         return $alma->merchants->me();
