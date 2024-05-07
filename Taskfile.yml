@@ -7,7 +7,7 @@ tasks:
     cmds:
       - task -l
 
-  build:
+  docker:build:
     desc: Build prestashop docker image
     cmds:
       - docker compose build prestashop
@@ -15,7 +15,7 @@ tasks:
   test:coverage:
     desc: Execute Unit Tests with coverage
     deps:
-      - build
+      - docker:build
     cmds:
       - docker compose run --rm prestashop
 
@@ -26,7 +26,7 @@ tasks:
     cmds:
       - docker build -t alma_prestashop_builder:latest scripts/build/
       - docker run --rm -u $(id -u):$(id -g) -w ${PWD} -v "${PWD}:${PWD}" alma_prestashop_builder:latest /bin/sh scripts/build/build-dist-docker.sh
- 
+
   clean:
     desc: Remove the dist folder
     cmds:
@@ -34,23 +34,30 @@ tasks:
 
   install-tools:
     desc: Composer install of tools
-    cmds: 
-      - composer install --no-dev --optimize-autoloader --working-dir=alma
+    sources:
+      - alma/composer.json
+      - alma/composer.lock
+    cmds:
+      - composer install --optimize-autoloader --working-dir=alma
 
   lint:ci:
     desc: Run linter within docker-compose for the CI
     deps:
-      - build
+      - docker:build
     cmds:
-      - docker compose run --rm --entrypoint "php" -w /var/www/html/modules/alma prestashop vendor/bin/php-cs-fixer fix --dry-run --diff .
+      - docker compose run --rm --entrypoint "php" -w /var/www/html/modules prestashop alma/vendor/bin/php-cs-fixer fix --dry-run --diff alma
 
   lint:
     desc: Run linter
+    deps:
+      - install-tools
     cmds:
-      - php alma/vendor/bin/php-cs-fixer fix --dry-run alma
+      - php alma/vendor/bin/php-cs-fixer fix --dry-run --diff alma
 
   lint:fix:
     desc: Run linter and apply fix
+    deps:
+      - install-tools
     cmds:
       - php alma/vendor/bin/php-cs-fixer fix alma
 
@@ -63,20 +70,32 @@ tasks:
 
   index:autoindex:
     desc: Execute autoindex to add index in all folders
-    cmds: 
+    deps:
+      - install-tools
+    cmds:
       - php ./alma/vendor/bin/autoindex prestashop:add:index alma/
 
   index:remove-blank-line:
     desc: Remove white space in the index.php
-    cmds: 
+    cmds:
       - ./scripts/remove-blank-line-index.sh
+
+  crowdin:
+    internal: true
+    preconditions:
+      - sh: which crowdin
+        msg: Crowdin CLI is required
 
   crowdin:download:
     desc: Download translations from Crowdin
-    cmds: 
+    deps:
+      - crowdin
+    cmds:
       - crowdin download
 
   crowdin:upload:
     desc: Upload translations to Crowdin
-    cmds: 
+    deps:
+      - crowdin
+    cmds:
       - crowdin upload sources
