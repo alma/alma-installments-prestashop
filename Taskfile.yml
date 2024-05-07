@@ -12,7 +12,7 @@ tasks:
     cmds:
       - docker compose build prestashop
 
-  coverage:
+  test:coverage:
     desc: Execute Unit Tests with coverage
     deps:
       - build
@@ -37,8 +37,8 @@ tasks:
     cmds: 
       - composer install --no-dev --optimize-autoloader --working-dir=alma
 
-  ci:lint:
-    desc: Run linter without fix
+  lint:ci:
+    desc: Run linter within docker-compose for the CI
     deps:
       - build
     cmds:
@@ -47,12 +47,12 @@ tasks:
   lint:
     desc: Run linter
     cmds:
-      - ./scripts/coding-standard.sh
+      - php alma/vendor/bin/php-cs-fixer fix --dry-run alma
 
-  lint-fix:
-    desc: Run linter with fix
+  lint:fix:
+    desc: Run linter and apply fix
     cmds:
-      - ./scripts/coding-standard-fixer.sh
+      - php alma/vendor/bin/php-cs-fixer fix alma
 
   php-compatibililty:
     desc: Check compatibility code
@@ -61,12 +61,12 @@ tasks:
     cmds:
       - ./alma/vendor/bin/phpcs -p alma --standard=PHPCompatibility -s --runtime-set testVersion 5.6-8.1 --ignore=\*/vendor/\*
 
-  autoindex:
+  index:autoindex:
     desc: Execute autoindex to add index in all folders
     cmds: 
       - ./alma/vendor/bin/autoindex prestashop:add:index alma/
 
-  remove-blank-line-index:
+  index:remove-blank-line:
     desc: Remove white space in the index.php
     cmds: 
       - ./scripts/remove-blank-line-index.sh

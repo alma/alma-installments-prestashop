@@ -26,9 +26,9 @@ jobs:
         repo-token: ${{ github.token }}
 
     - name: Run linter
-      run: task ci:lint
+      run: task lint:ci
 
     - name: Run unit Tests and Coverage
-      run: task coverage
+      run: task test:coverage
       env:
         XDEBUG_MODE: coverage
