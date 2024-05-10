@@ -1,17 +1,21 @@
 (function ($) {
     $(function () {
+        const insuranceId = $('#alma-insurance-global').data('insurance-id');
         loadInsuranceMiniCart();
         prestashop.on(
             'updateCart',
             function(event) {
-                setTimeout(loadInsuranceMiniCart, 200);
+                setTimeout(loadInsuranceMiniCart, 1000);
+        });
+        $(document).on('mouseover', `.cart-item-${insuranceId}`, function() {
+            loadInsuranceMiniCart();
         });
     });
 })(jQuery)
 
 function loadInsuranceMiniCart() {
     if ($('.cartdrop-overview').length) {
-        const insuranceId = $('#alma-insurance-global').data('insurance-id')
+        const insuranceId = $('#alma-insurance-global').data('insurance-id');
         $('.cartdrop-overview .productcard').each(function (i, e) {
             if ($(e).hasClass(`cart-item-${insuranceId}`)) {
                 $(e).find('input').prop('disabled', true)
