@@ -108,7 +108,7 @@ class InsuranceHelper
      */
     public function isInsuranceAllowedInProductPage()
     {
-        return (bool) $this->toolsHelper->psVersionCompare(_PS_VERSION_, '1.7', '>=')
+        return (bool) $this->toolsHelper->psVersionCompare('1.7', '>=')
             && (bool) (int) $this->settingsHelper->getKey(ConstantsHelper::ALMA_SHOW_INSURANCE_WIDGET_PRODUCT, false)
             && $this->isInsuranceActivated();
     }
@@ -118,7 +118,7 @@ class InsuranceHelper
      */
     public function isInsuranceAllowedInCartPage()
     {
-        return (bool) $this->toolsHelper->psVersionCompare(_PS_VERSION_, '1.7', '>=')
+        return (bool) $this->toolsHelper->psVersionCompare('1.7', '>=')
             && (bool) (int) $this->settingsHelper->getKey(ConstantsHelper::ALMA_SHOW_INSURANCE_WIDGET_CART, false)
             && $this->isInsuranceActivated();
     }
@@ -128,7 +128,7 @@ class InsuranceHelper
      */
     public function isInsuranceActivated()
     {
-        return (bool) $this->toolsHelper->psVersionCompare(_PS_VERSION_, '1.7', '>=')
+        return (bool) $this->toolsHelper->psVersionCompare('1.7', '>=')
             && (bool) (int) $this->settingsHelper->getKey(ConstantsHelper::ALMA_ALLOW_INSURANCE, false)
             && (bool) (int) $this->settingsHelper->getKey(ConstantsHelper::ALMA_ACTIVATE_INSURANCE, false);
     }

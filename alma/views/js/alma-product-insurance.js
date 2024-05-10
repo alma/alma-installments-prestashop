@@ -186,7 +186,7 @@ function removeInputInsurance() {
 }
 
 function addModalListenerToAddToCart() {
-    if (settings.isAddToCartPopupActivated === 'true') {
+    if (settings.isAddToCartPopupActivated === true) {
         let addToCart = document.querySelector('.add-to-cart');
         addToCart.removeEventListener("click",insuranceListener)
         addToCart.addEventListener("click", insuranceListener);

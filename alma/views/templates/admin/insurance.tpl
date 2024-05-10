@@ -41,10 +41,10 @@
     </div>
 </div>
 <script type='module'>
-    window.addEventListener("load", (e) => {
+    window.addEventListener('almaIframeScriptLoaded', () => {
         let insuranceConfigurationParams = {$insuranceConfigurationParams};
 
         sendConfigurationInsuranceParams(insuranceConfigurationParams);
         loadConfigurationInsurance('{$domainInsuranceUrl}', '{$insuranceConfigurationController}', '{$token}');
-    });
+    })
 </script>
