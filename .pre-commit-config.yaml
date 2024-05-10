@@ -14,29 +14,20 @@ repos:
       - id: coding-standard-fixer
         name: PHP and Prestashop coding standards Fixer test
         language: script
-        # Replace by task lint:fix once PR https://github.com/alma/alma-installments-prestashop/pull/393 merged
-        # Then remove ./scripts/coding-standard-fixer.sh
-        entry:  ./scripts/coding-standard-fixer.sh
+        entry:  task lint:fix
         stages: [commit]
 
       - id: coding-standard
         name: Check the PHP and Prestashop coding standards
         language: script
-        # Replace by task lint:fix once PR https://github.com/alma/alma-installments-prestashop/pull/393 merged
-        # Then remove ./scripts/coding-standard.sh
-        entry:  ./scripts/coding-standard.sh
+        entry:  task lint
         stages: [commit]
 
       - id: php-compatibility
         name: Check the PHP compatibility
         language: script
-        # Replace by task php-compatibililty once PR https://github.com/alma/alma-installments-prestashop/pull/393 merged
-        # Then remove ./scripts/php-compatibility.sh
-        entry:  ./scripts/php-compatibility.sh
+        entry:  task php-compatibililty
         stages: [commit]
-
-      #TODO : add task index:autoindex & task index:remove-blank-line once PR https://github.com/alma/alma-installments-prestashop/pull/393 merged
-      #TODO : Add a script to checks that any new variables in smarty templates use |escape:'htmlall':'UTF-8' and print warning if not
 
   - repo: https://github.com/returntocorp/semgrep
     rev: v1.27.0
