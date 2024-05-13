@@ -26,6 +26,7 @@ namespace Alma\PrestaShop\Model;
 
 use Alma\API\Lib\PaymentValidator;
 use Alma\API\ParamsError;
+use Alma\PrestaShop\Exceptions\AlmaException;
 use Alma\PrestaShop\Factories\AddressFactory;
 use Alma\PrestaShop\Factories\ContextFactory;
 use Alma\PrestaShop\Helpers\AddressHelper;
@@ -182,6 +183,9 @@ class PaymentData
      * @return array|null
      *
      * @throws ParamsError
+     * @throws \PrestaShopDatabaseException
+     * @throws \PrestaShopException
+     * @throws AlmaException
      */
     public function dataFromCart($feePlans, $forPayment = false)
     {
@@ -259,6 +263,10 @@ class PaymentData
      * @param $customerData
      *
      * @return array
+     *
+     * @throws \PrestaShopDatabaseException
+     * @throws \PrestaShopException
+     * @throws AlmaException
      */
     public function buildDataPayment(
         $customer,
@@ -499,6 +507,10 @@ class PaymentData
      * @param $purchaseAmount
      *
      * @return array
+     *
+     * @throws AlmaException
+     * @throws \PrestaShopDatabaseException
+     * @throws \PrestaShopException
      */
     public function buildWebsiteCustomerDetails($customer, $purchaseAmount)
     {

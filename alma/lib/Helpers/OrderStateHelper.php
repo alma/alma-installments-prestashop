@@ -24,6 +24,7 @@
 
 namespace Alma\PrestaShop\Helpers;
 
+use Alma\PrestaShop\Exceptions\AlmaException;
 use Alma\PrestaShop\Factories\ContextFactory;
 use Alma\PrestaShop\Factories\OrderStateFactory;
 
@@ -52,17 +53,28 @@ class OrderStateHelper
      */
     public function __construct($contextFactory, $orderStateFactory)
     {
-        $this->contextLanguageId = $contextFactory->getContextLanguageId();
+        try {
+            $this->contextLanguageId = $contextFactory->getContextLanguageId();
+        } catch (AlmaException $e) {
+            $this->contextLanguageId = null;
+        }
+
         $this->orderStateFactory = $orderStateFactory;
     }
 
     /**
-     * @param int $idOrderState
+     * @param $idOrderState
      *
      * @return mixed
+     *
+     * @throws AlmaException
      */
     public function getNameById($idOrderState)
     {
+        if (!$this->contextLanguageId) {
+            throw new AlmaException('Context language id not set');
+        }
+
         $orderStates = $this->orderStateFactory->getOrderStates($this->contextLanguageId);
 
         $state = array_filter($orderStates, function ($orderState) use ($idOrderState) {
