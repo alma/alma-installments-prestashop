@@ -1,0 +1,19 @@
+name: Create release pull request
+
+on:
+  workflow_dispatch:
+
+jobs:
+
+  create-release-pull-request:
+    runs-on: ubuntu-latest
+
+    steps:
+
+      - uses: actions/checkout@v4
+        
+      - uses: alma/actions/create-release-pull-request@7d07bc2a1df552ae159c586a3e7a6f4212cf2ae0
+        with:
+          script_path_for_version_update: ./scripts/update-files-with-release-version.sh
+          base_branch: main
+          update_changelog: true
