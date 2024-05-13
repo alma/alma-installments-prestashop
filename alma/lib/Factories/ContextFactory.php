@@ -141,5 +141,3 @@ class ContextFactory
         return $context->currency;
     }
 }
-
-

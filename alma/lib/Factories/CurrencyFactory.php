@@ -35,6 +35,7 @@ class CurrencyFactory
 {
     /**
      * @param $id
+     *
      * @return \Currency
      */
     public function getCurrencyInstance($id)

@@ -48,7 +48,6 @@ class PriceHelper
      */
     protected $contextFactory;
 
-
     /**
      * @param ToolsHelper $toolsHelper
      * @param CurrencyHelper $currencyHelper
