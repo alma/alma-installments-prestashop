@@ -22,26 +22,24 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
-namespace Alma\PrestaShop\Tests\Unit\Helper;
+namespace Alma\PrestaShop\Factories;
 
-use Alma\PrestaShop\Builders\OrderStateHelperBuilder;
-use PHPUnit\Framework\TestCase;
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
 
-class OrderStateHelperTest extends TestCase
+/**
+ * Class OrderStateFactory.
+ */
+class OrderStateFactory
 {
     /**
-     * @var \Alma\PrestaShop\Helpers\OrderStateHelper
+     * @param int $languageId
+     *
+     * @return mixed
      */
-    protected $orderStateHelper;
-
-    public function setUp()
+    public function getOrderStates($languageId)
     {
-        $orderStateHelperBuilder = new OrderStateHelperBuilder();
-        $this->orderStateHelper = $orderStateHelperBuilder->getOrderStateHelper();
-    }
-
-    public function testGetNameById()
-    {
-        $this->assertEquals('Awaiting check payment', $this->orderStateHelper->getNameById(1));
+        return \OrderState::getOrderStates($languageId);
     }
 }

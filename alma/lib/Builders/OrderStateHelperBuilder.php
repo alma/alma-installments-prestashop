@@ -44,7 +44,8 @@ class OrderStateHelperBuilder
     public function getInstance()
     {
         return new OrderStateHelper(
-            $this->getContextFactory()
+            $this->getContextFactory(),
+            $this->getOrderStateFactory()
         );
     }
 }

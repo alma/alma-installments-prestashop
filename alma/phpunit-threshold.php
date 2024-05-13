@@ -25,7 +25,7 @@ $totals = [
         'name' => 'Classes',
         'threshold' => 20,
         'ratio' => (float) $coverage->project->directory->totals->classes['percent'],
-    ]
+    ],
 ];
 
 foreach ($totals as $total) {

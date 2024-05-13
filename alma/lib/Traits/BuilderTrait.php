@@ -27,6 +27,7 @@ namespace Alma\PrestaShop\Traits;
 use Alma\PrestaShop\Factories\AddressFactory;
 use Alma\PrestaShop\Factories\ContextFactory;
 use Alma\PrestaShop\Factories\ModuleFactory;
+use Alma\PrestaShop\Factories\OrderStateFactory;
 use Alma\PrestaShop\Helpers\AddressHelper;
 use Alma\PrestaShop\Helpers\ApiHelper;
 use Alma\PrestaShop\Helpers\CarrierHelper;
@@ -355,7 +356,8 @@ trait BuilderTrait
         }
 
         return new OrderStateHelper(
-            $this->getContextFactory()
+            $this->getContextFactory(),
+            $this->getOrderStateFactory()
         );
     }
 
@@ -696,5 +698,19 @@ trait BuilderTrait
         }
 
         return new AddressFactory();
+    }
+
+    /**
+     * @param OrderStateFactory $orderStateFactory
+     *
+     * @return OrderStateFactory
+     */
+    public function getOrderStateFactory($orderStateFactory = null)
+    {
+        if ($orderStateFactory) {
+            return $orderStateFactory;
+        }
+
+        return new OrderStateFactory();
     }
 }
