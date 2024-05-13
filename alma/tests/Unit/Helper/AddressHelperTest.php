@@ -25,6 +25,8 @@
 namespace Alma\PrestaShop\Tests\Unit\Helper;
 
 use Alma\PrestaShop\Builders\AddressHelperBuilder;
+use Alma\PrestaShop\Exceptions\AlmaException;
+use Alma\PrestaShop\Factories\ContextFactory;
 use Alma\PrestaShop\Helpers\ToolsHelper;
 use PHPUnit\Framework\TestCase;
 
@@ -87,5 +89,20 @@ class AddressHelperTest extends TestCase
         $result = $addressHelper->getAddressFromCustomer($customer);
 
         $this->assertEquals(2, count($result));
+
+        $toolsHelper = \Mockery::mock(ToolsHelper::class)->makePartial();
+        $toolsHelper->shouldReceive('psVersionCompare', ['1.5.4.0', '<', '1'])->andReturn(true);
+
+        $contextFactory = \Mockery::mock(ContextFactory::class)->makePartial();
+        $contextFactory->shouldReceive('getContext')->andReturn(null);
+
+        $addressHelperBuilder = \Mockery::mock(AddressHelperBuilder::class)->makePartial();
+        $addressHelperBuilder->shouldReceive('getToolsHelper')->andReturn($toolsHelper);
+        $addressHelperBuilder->shouldReceive('getContextFactory')->andReturn($contextFactory);
+
+        $addressHelper = $addressHelperBuilder->getAddressHelper();
+
+        $this->expectException(AlmaException::class);
+        $addressHelper->getAddressFromCustomer($customer);
     }
 }
