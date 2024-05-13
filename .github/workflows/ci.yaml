@@ -2,21 +2,33 @@ name: Continuous Integration
 
 on:
   push:
+    branches:
+      - main
+      - develop
   pull_request:
     branches:
       - main
       - develop
-  workflow_dispatch:
 
 jobs:
-  tests:
+
+  lint-and-test:
 
     runs-on: ubuntu-22.04
 
     steps:
     - uses: actions/checkout@v4
 
+    - name: Install taskfile.dev
+      uses: arduino/setup-task@v2
+      with:
+        version: 3.x
+        repo-token: ${{ github.token }}
+
+    - name: Run linter
+      run: task lint:ci
+
     - name: Run unit Tests and Coverage
-      run: make coverage
+      run: task test:coverage
       env:
         XDEBUG_MODE: coverage
