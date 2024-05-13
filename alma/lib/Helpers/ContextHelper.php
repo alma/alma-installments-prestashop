@@ -24,6 +24,7 @@
 
 namespace Alma\PrestaShop\Helpers;
 
+use Alma\PrestaShop\Exceptions\AlmaException;
 use Alma\PrestaShop\Factories\ContextFactory;
 use Alma\PrestaShop\Factories\ModuleFactory;
 use PrestaShop\PrestaShop\Adapter\Module\Module;
@@ -64,6 +65,7 @@ class ContextHelper
         $this->contextLink = $contextFactory->getContextLink();
         $this->moduleName = $moduleFactory->getModuleName();
     }
+
     /**
      * Create a link to a module.
      *
@@ -77,6 +79,8 @@ class ContextHelper
      * @param bool $relativeProtocol
      *
      * @return string
+     *
+     * @throws AlmaException
      */
     public function getModuleLink(
         $controller = 'default',
@@ -86,6 +90,10 @@ class ContextHelper
         $idShop = null,
         $relativeProtocol = false)
     {
+        if (!$this->contextLink) {
+            throw new AlmaException('Context link must be set before calling getModuleLink()');
+        }
+
         return $this->contextLink->getModuleLink(
             $this->moduleName,
             $controller,

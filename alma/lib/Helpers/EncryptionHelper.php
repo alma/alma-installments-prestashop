@@ -40,7 +40,6 @@ class EncryptionHelper
 
     /**
      * Encryption Helper construct
-     *
      */
     public function __construct()
     {

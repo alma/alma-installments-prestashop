@@ -33,28 +33,30 @@ use PHPUnit\Framework\TestCase;
 class ApiHelperBuilderTest extends TestCase
 {
     /**
-     *
-     * @var ApiHelperBuilder $apiHelperBuilder
+     * @var ApiHelperBuilder
      */
     protected $apiHelperBuilder;
 
-    public function setUp() {
+    public function setUp()
+    {
         $this->apiHelperBuilder = new ApiHelperBuilder();
     }
 
-
-    public function testGetInstance() {
+    public function testGetInstance()
+    {
         $this->assertInstanceOf(ApiHelper::class, $this->apiHelperBuilder->getInstance());
     }
 
-    public function testGetModuleFactory() {
+    public function testGetModuleFactory()
+    {
         $this->assertInstanceOf(ModuleFactory::class, $this->apiHelperBuilder->getModuleFactory());
         $this->assertInstanceOf(ModuleFactory::class, $this->apiHelperBuilder->getModuleFactory(
             new ModuleFactory()
         ));
     }
 
-    public function testGetClientHelper() {
+    public function testGetClientHelper()
+    {
         $this->assertInstanceOf(ClientHelper::class, $this->apiHelperBuilder->getClientHelper());
         $this->assertInstanceOf(ClientHelper::class, $this->apiHelperBuilder->getClientHelper(
             new ClientHelper()

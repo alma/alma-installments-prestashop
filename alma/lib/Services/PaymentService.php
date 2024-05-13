@@ -179,7 +179,6 @@ class PaymentService
      * @param CartHelper $cartHelper
      * @param PaymentOptionTemplateHelper $paymentOptionTemplateHelper
      * @param PaymentOptionHelper $paymentOptionHelper
-     *
      */
     public function __construct(
         $contextFactory,

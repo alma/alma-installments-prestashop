@@ -24,14 +24,12 @@
 
 namespace Alma\PrestaShop\Factories;
 
-
 if (!defined('_PS_VERSION_')) {
     exit;
 }
 
 /**
  * Class ContextFactory.
- *
  */
 class ContextFactory
 {
@@ -68,5 +66,4 @@ class ContextFactory
 
         return $language->id;
     }
-
 }

@@ -59,7 +59,6 @@ class CategoryHelper
      *
      * @param $idCategory int ID of the PrestaShop Category to load
      *
-     *
      * @throws \Exception
      */
     public function __construct($idCategory)

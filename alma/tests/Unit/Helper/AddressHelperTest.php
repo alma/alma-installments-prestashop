@@ -24,11 +24,8 @@
 
 namespace Alma\PrestaShop\Tests\Unit\Helper;
 
-use Address;
 use Alma\PrestaShop\Builders\AddressHelperBuilder;
-use Alma\PrestaShop\Factories\AddressFactory;
 use Alma\PrestaShop\Helpers\ToolsHelper;
-use Customer;
 use PHPUnit\Framework\TestCase;
 
 class AddressHelperTest extends TestCase
@@ -64,7 +61,6 @@ class AddressHelperTest extends TestCase
         $address->firstname = 'firstname';
         $address->id_customer = $idCustomer;
         $address->save();
-
 
         $address2 = new \Address();
         $address2->country = 'FR';

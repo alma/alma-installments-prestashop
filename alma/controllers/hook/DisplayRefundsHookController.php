@@ -60,7 +60,6 @@ final class DisplayRefundsHookController extends AdminHookController
 
         $priceHelperBuilder = new PriceHelperBuilder();
         $this->priceHelper = $priceHelperBuilder->getInstance();
-
     }
 
     /**

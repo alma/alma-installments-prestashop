@@ -206,7 +206,6 @@ class SettingsHelperTest extends TestCase
         $configurationHelperMock->shouldReceive('get')->with($key, null, 1, 1, null)->andReturn('valeurTest');
         $configurationHelperMock->shouldReceive('hasKey')->with($key, null, 1, 1)->andReturn(false);
 
-
         $settingsHelperBuilder = \Mockery::mock(SettingsHelperBuilder::class)->makePartial();
         $settingsHelperBuilder->shouldReceive('getShopHelper')->andReturn($shopHelperMock);
         $settingsHelperBuilder->shouldReceive('getConfigurationHelper')->andReturn($configurationHelperMock);

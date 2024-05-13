@@ -36,32 +36,35 @@ use PHPUnit\Framework\TestCase;
 class ContextHelperBuilderTest extends TestCase
 {
     /**
-     *
-     * @var ContextHelperBuilder $contextHelperBuilder
+     * @var ContextHelperBuilder
      */
     protected $contextHelperBuilder;
 
-    public function setUp() {
+    public function setUp()
+    {
         $this->contextHelperBuilder = new ContextHelperBuilder();
     }
 
     /**
      * @covers \Alma\PrestaShop\Builders\ContextHelperBuilder::getInstance
+     *
      * @return void
      */
-    public function testGetInstance() {
+    public function testGetInstance()
+    {
         $this->assertInstanceOf(ContextHelper::class, $this->contextHelperBuilder->getInstance());
     }
 
-    public function testGetContextFactory() {
+    public function testGetContextFactory()
+    {
         $this->assertInstanceOf(ContextFactory::class, $this->contextHelperBuilder->getContextFactory());
         $this->assertInstanceOf(ContextFactory::class, $this->contextHelperBuilder->getContextFactory(
             new ContextFactory()
         ));
     }
 
-
-    public function testGetModuleFactory() {
+    public function testGetModuleFactory()
+    {
         $this->assertInstanceOf(ModuleFactory::class, $this->contextHelperBuilder->getModuleFactory());
         $this->assertInstanceOf(ModuleFactory::class, $this->contextHelperBuilder->getModuleFactory(
             new ModuleFactory()
