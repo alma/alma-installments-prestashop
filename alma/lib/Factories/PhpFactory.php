@@ -24,42 +24,22 @@
 
 namespace Alma\PrestaShop\Factories;
 
-use Alma\PrestaShop\Helpers\ConstantsHelper;
-
 if (!defined('_PS_VERSION_')) {
     exit;
 }
 
 /**
- * Class ModuleFactory.
+ * Class PhpFactory.
  */
-class ModuleFactory
+class PhpFactory
 {
     /**
-     * @return false|\Module
+     * @param callable|mixed $value
+     *
+     * @return bool
      */
-    public function getModule()
+    public function is_callable($value)
     {
-        return \Module::getInstanceByName(ConstantsHelper::ALMA_MODULE_NAME);
-    }
-
-    /**
-     * @return string
-     */
-    public function getModuleName()
-    {
-        $module = $this->getModule();
-
-        return $module->name;
-    }
-
-    /**
-     * @return string|null
-     */
-    public function getPathUri()
-    {
-        $module = $this->getModule();
-
-        return $module->getPathUri();
+        return is_callable($value);
     }
 }

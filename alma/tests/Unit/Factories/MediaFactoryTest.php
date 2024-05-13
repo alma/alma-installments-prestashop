@@ -22,44 +22,25 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
-namespace Alma\PrestaShop\Factories;
+namespace Alma\PrestaShop\Tests\Unit\Factories;
 
-use Alma\PrestaShop\Helpers\ConstantsHelper;
+use Alma\PrestaShop\Factories\MediaFactory;
+use PHPUnit\Framework\TestCase;
 
-if (!defined('_PS_VERSION_')) {
-    exit;
-}
-
-/**
- * Class ModuleFactory.
- */
-class ModuleFactory
+class MediaFactoryTest extends TestCase
 {
     /**
-     * @return false|\Module
+     * @var MediaFactory
      */
-    public function getModule()
+    protected $mediaFactory;
+
+    public function setUp()
     {
-        return \Module::getInstanceByName(ConstantsHelper::ALMA_MODULE_NAME);
+        $this->mediaFactory = new MediaFactory();
     }
 
-    /**
-     * @return string
-     */
-    public function getModuleName()
+    public function testGetMediaPath()
     {
-        $module = $this->getModule();
-
-        return $module->name;
-    }
-
-    /**
-     * @return string|null
-     */
-    public function getPathUri()
-    {
-        $module = $this->getModule();
-
-        return $module->getPathUri();
+        $this->assertEquals('/modules/alma/views/img/logos/alma_payment_logos_tiny.svg', $this->mediaFactory->getMediaPath('/views/img/logos/alma_payment_logos_tiny.svg'));
     }
 }

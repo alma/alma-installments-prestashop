@@ -26,8 +26,10 @@ namespace Alma\PrestaShop\Traits;
 
 use Alma\PrestaShop\Factories\AddressFactory;
 use Alma\PrestaShop\Factories\ContextFactory;
+use Alma\PrestaShop\Factories\MediaFactory;
 use Alma\PrestaShop\Factories\ModuleFactory;
 use Alma\PrestaShop\Factories\OrderStateFactory;
+use Alma\PrestaShop\Factories\PhpFactory;
 use Alma\PrestaShop\Helpers\AddressHelper;
 use Alma\PrestaShop\Helpers\ApiHelper;
 use Alma\PrestaShop\Helpers\CarrierHelper;
@@ -580,7 +582,11 @@ trait BuilderTrait
             return $mediaHelper;
         }
 
-        return new MediaHelper();
+        return new MediaHelper(
+            $this->getMediaFactory(),
+            $this->getModuleFactory(),
+            $this->getPhpFactory()
+        );
     }
 
     /**
@@ -682,7 +688,8 @@ trait BuilderTrait
             $this->getCustomFieldsHelper(),
             $this->getMediaHelper(),
             $this->getConfigurationHelper(),
-            $this->getPaymentOptionTemplateHelper()
+            $this->getPaymentOptionTemplateHelper(),
+            $this->getMediaFactory()
         );
     }
 
@@ -712,5 +719,33 @@ trait BuilderTrait
         }
 
         return new OrderStateFactory();
+    }
+
+    /**
+     * @param MediaFactory $mediaFactory
+     *
+     * @return MediaFactory
+     */
+    public function getMediaFactory($mediaFactory = null)
+    {
+        if ($mediaFactory) {
+            return $mediaFactory;
+        }
+
+        return new MediaFactory();
+    }
+
+    /**
+     * @param PhpFactory $phpFactory
+     *
+     * @return PhpFactory
+     */
+    public function getPhpFactory($phpFactory = null)
+    {
+        if ($phpFactory) {
+            return $phpFactory;
+        }
+
+        return new PhpFactory();
     }
 }

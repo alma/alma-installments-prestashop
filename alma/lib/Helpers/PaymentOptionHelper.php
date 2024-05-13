@@ -25,6 +25,7 @@
 namespace Alma\PrestaShop\Helpers;
 
 use Alma\PrestaShop\Factories\ContextFactory;
+use Alma\PrestaShop\Factories\MediaFactory;
 use Alma\PrestaShop\Factories\ModuleFactory;
 use Alma\PrestaShop\Forms\PaymentButtonAdminFormBuilder;
 use PrestaShop\PrestaShop\Core\Payment\PaymentOption;
@@ -71,6 +72,11 @@ class PaymentOptionHelper
     protected $settingsHelper;
 
     /**
+     * @var MediaFactory
+     */
+    protected $mediaFactory;
+
+    /**
      * @param ContextFactory $contextFactory
      * @param ModuleFactory $moduleFactory
      * @param SettingsHelper $settingsHelper
@@ -78,6 +84,7 @@ class PaymentOptionHelper
      * @param MediaHelper $mediaHelper
      * @param ConfigurationHelper $configurationHelper
      * @param PaymentOptionTemplateHelper $paymentOptionTemplateHelper
+     * @param MediaFactory $mediaFactory
      */
     public function __construct(
         $contextFactory,
@@ -86,7 +93,8 @@ class PaymentOptionHelper
         $customFieldsHelper,
         $mediaHelper,
         $configurationHelper,
-        $paymentOptionTemplateHelper
+        $paymentOptionTemplateHelper,
+        $mediaFactory
     ) {
         $this->context = $contextFactory->getContext();
         $this->module = $moduleFactory->getModule();
@@ -95,6 +103,7 @@ class PaymentOptionHelper
         $this->mediaHelper = $mediaHelper;
         $this->configurationHelper = $configurationHelper;
         $this->paymentOptionTemplateHelper = $paymentOptionTemplateHelper;
+        $this->mediaFactory = $mediaFactory;
     }
 
     /**
@@ -136,7 +145,7 @@ class PaymentOptionHelper
         $logoName = $this->mediaHelper->getLogoName($valueBNPL, $isDeferred);
 
         if ($forEUComplianceModule) {
-            $logo = $this->mediaHelper->getMediaPath(
+            $logo = $this->mediaFactory->getMediaPath(
                 '/views/img/logos/alma_payment_logos_tiny.svg',
                 $this->module
             );
@@ -149,7 +158,7 @@ class PaymentOptionHelper
         }
 
         $paymentOption = new PaymentOption();
-        $logo = $this->mediaHelper->getMediaPath(
+        $logo = $this->mediaFactory->getMediaPath(
             '/views/img/logos/' . $logoName,
             $this->module
         );

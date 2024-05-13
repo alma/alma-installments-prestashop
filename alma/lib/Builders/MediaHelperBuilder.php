@@ -22,44 +22,31 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
-namespace Alma\PrestaShop\Factories;
+namespace Alma\PrestaShop\Builders;
 
-use Alma\PrestaShop\Helpers\ConstantsHelper;
+use Alma\PrestaShop\Helpers\MediaHelper;
+use Alma\PrestaShop\Traits\BuilderTrait;
 
 if (!defined('_PS_VERSION_')) {
     exit;
 }
 
 /**
- * Class ModuleFactory.
+ * MediaHelperBuilder.
  */
-class ModuleFactory
+class MediaHelperBuilder
 {
-    /**
-     * @return false|\Module
-     */
-    public function getModule()
-    {
-        return \Module::getInstanceByName(ConstantsHelper::ALMA_MODULE_NAME);
-    }
+    use BuilderTrait;
 
     /**
-     * @return string
+     * @return MediaHelper
      */
-    public function getModuleName()
+    public function getInstance()
     {
-        $module = $this->getModule();
-
-        return $module->name;
-    }
-
-    /**
-     * @return string|null
-     */
-    public function getPathUri()
-    {
-        $module = $this->getModule();
-
-        return $module->getPathUri();
+        return new MediaHelper(
+            $this->getMediaFactory(),
+            $this->getModuleFactory(),
+            $this->getPhpFactory()
+        );
     }
 }

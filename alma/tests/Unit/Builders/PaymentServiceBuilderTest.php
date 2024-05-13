@@ -263,7 +263,7 @@ class PaymentServiceBuilderTest extends TestCase
     {
         $this->assertInstanceOf(MediaHelper::class, $this->paymentServiceBuilder->getMediaHelper());
         $this->assertInstanceOf(MediaHelper::class, $this->paymentServiceBuilder->getMediaHelper(
-            new MediaHelper()
+            $this->createMock(MediaHelper::class)
         ));
     }
 

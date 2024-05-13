@@ -22,74 +22,53 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
-namespace Alma\PrestaShop\Helpers;
+namespace Alma\PrestaShop\Tests\Unit\Builders;
 
+use Alma\PrestaShop\Builders\MediaHelperBuilder;
 use Alma\PrestaShop\Factories\MediaFactory;
 use Alma\PrestaShop\Factories\ModuleFactory;
 use Alma\PrestaShop\Factories\PhpFactory;
+use Alma\PrestaShop\Helpers\MediaHelper;
+use PHPUnit\Framework\TestCase;
 
-if (!defined('_PS_VERSION_')) {
-    exit;
-}
-
-/**
- * Class MediaHelper.
- *
- * Use for Media
- */
-class MediaHelper
+class MediaHelperBuilderTest extends TestCase
 {
     /**
-     * @var MediaFactory
+     * @var MediaHelperBuilderTest
      */
-    protected $mediaFactory;
+    protected $mediaHelperBuilder;
 
-    /**
-     * @var ModuleFactory
-     */
-    protected $moduleFactory;
-
-    /**
-     * @var PhpFactory
-     */
-    protected $phpFactory;
-
-    /**
-     * @param MediaFactory $mediaFactory
-     * @param ModuleFactory $moduleFactory
-     * @param PhpFactory $phpFactory
-     */
-    public function __construct($mediaFactory, $moduleFactory, $phpFactory)
+    public function setUp()
     {
-        $this->mediaFactory = $mediaFactory;
-        $this->moduleFactory = $moduleFactory;
-        $this->phpFactory = $phpFactory;
+        $this->mediaHelperBuilder = new MediaHelperBuilder();
     }
 
-    /**
-     * @return bool|string|string[]|null
-     */
-    public function getIconPathAlmaTiny()
+    public function testGetInstance()
     {
-        if ($this->phpFactory->is_callable('\Media::getMediaPath')) {
-            return $this->mediaFactory->getMediaPath('/views/img/logos/alma_tiny.svg');
-        }
-
-        return $this->moduleFactory->getPathUri() . '/views/img/logos/alma_tiny.svg';
+        $this->assertInstanceOf(MediaHelper::class, $this->mediaHelperBuilder->getInstance());
     }
 
-    /**
-     * @param string $valueBNPL
-     * @param bool $isDeferred
-     *
-     * @return string
-     */
-    public function getLogoName($valueBNPL, $isDeferred)
+    public function testGetModuleFactory()
     {
-        if ($isDeferred) {
-            return "{$valueBNPL}j_logo.svg";
-        }
+        $this->assertInstanceOf(ModuleFactory::class, $this->mediaHelperBuilder->getModuleFactory());
+        $this->assertInstanceOf(ModuleFactory::class, $this->mediaHelperBuilder->getModuleFactory(
+            new ModuleFactory()
+        ));
+    }
 
-        return "p{$valueBNPL}x_logo.svg";
+    public function testGetMediaFactory()
+    {
+        $this->assertInstanceOf(MediaFactory::class, $this->mediaHelperBuilder->getMediaFactory());
+        $this->assertInstanceOf(MediaFactory::class, $this->mediaHelperBuilder->getMediaFactory(
+            new MediaFactory()
+        ));
+    }
+
+    public function testGetPhpFactory()
+    {
+        $this->assertInstanceOf(PhpFactory::class, $this->mediaHelperBuilder->getPhpFactory());
+        $this->assertInstanceOf(PhpFactory::class, $this->mediaHelperBuilder->getPhpFactory(
+            new PhpFactory()
+        ));
     }
 }
