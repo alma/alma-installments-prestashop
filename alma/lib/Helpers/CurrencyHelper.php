@@ -56,7 +56,7 @@ class CurrencyHelper
     /**
      * @param ContextFactory $contextFactory
      * @param ValidateHelper $validationHelper
-     * @param CurrencyFactory  $currencyFactory
+     * @param CurrencyFactory $currencyFactory
      */
     public function __construct($contextFactory, $validationHelper, $currencyFactory)
     {
@@ -65,9 +65,9 @@ class CurrencyHelper
         $this->currencyFactory = $currencyFactory;
     }
 
-
     /**
      * @param $idCurrency
+     *
      * @return \Currency|null
      */
     public function getCurrencyById($idCurrency)

@@ -33,7 +33,6 @@ use Alma\PrestaShop\Helpers\CartHelper;
 use Alma\PrestaShop\Helpers\ClientHelper;
 use Alma\PrestaShop\Helpers\ConfigurationHelper;
 use Alma\PrestaShop\Helpers\ContextHelper;
-use Alma\PrestaShop\Helpers\CurrencyHelper;
 use Alma\PrestaShop\Helpers\CustomFieldsHelper;
 use Alma\PrestaShop\Helpers\DateHelper;
 use Alma\PrestaShop\Helpers\EligibilityHelper;
@@ -134,7 +133,7 @@ class PaymentServiceBuilderTest extends TestCase
         $this->localeHelper = new LocaleHelper(
             $this->languageHelper
         );
-        $this->priceHelper =  \Mockery::mock(PriceHelper::class);
+        $this->priceHelper = \Mockery::mock(PriceHelper::class);
 
         $this->settingsHelper = new SettingsHelper(
             new ShopHelper(),
@@ -153,11 +152,7 @@ class PaymentServiceBuilderTest extends TestCase
             new CarrierData()
         );
 
-        $this->customFieldsHelper = new CustomFieldsHelper(
-            $this->languageHelper,
-            $this->localeHelper,
-            $this->settingsHelper
-        );
+        $this->customFieldsHelper = \Mockery::mock(CustomFieldsHelper::class);
     }
 
     public function testGetInstance()

@@ -25,6 +25,10 @@
 namespace Alma\PrestaShop\Tests\Unit\Helper;
 
 use Alma\PrestaShop\Builders\ContextHelperBuilder;
+use Alma\PrestaShop\Exceptions\AlmaException;
+use Alma\PrestaShop\Factories\ContextFactory;
+use Alma\PrestaShop\Factories\ModuleFactory;
+use Alma\PrestaShop\Helpers\ContextHelper;
 use PHPUnit\Framework\TestCase;
 
 class ContextHelperTest extends TestCase
@@ -101,6 +105,23 @@ class ContextHelperTest extends TestCase
 
         $base = $this->getBase(false, true);
         $this->assertEquals($base . 'module/alma/payment?key=general_1_0_0', $result);
+
+        $contextFactory = \Mockery::mock(ContextFactory::class)->makePartial();
+        $contextFactory->shouldReceive('getContextLink')->andReturn(null);
+
+        $moduleFactory = \Mockery::mock(ModuleFactory::class)->makePartial();
+        $moduleFactory->shouldReceive('getModuleName')->andReturn('Alma');
+
+        $this->expectException(AlmaException::class);
+        $contextHelper = \Mockery::mock(ContextHelper::class, [$contextFactory, $moduleFactory])->makePartial();
+        $contextHelper->getModuleLink(
+            'payment',
+            ['key' => 'general_1_0_0'],
+            false,
+            1,
+            1,
+            true
+        );
     }
 
     /**

@@ -49,4 +49,9 @@ class ModuleFactoryTest extends TestCase
     {
         $this->assertEquals(ConstantsHelper::ALMA_MODULE_NAME, $this->moduleFactory->getModuleName());
     }
+
+    public function testL()
+    {
+        $this->assertEquals('Pay now by credit card', $this->moduleFactory->l('Pay now by credit card', ConstantsHelper::SOURCE_CUSTOM_FIELDS));
+    }
 }

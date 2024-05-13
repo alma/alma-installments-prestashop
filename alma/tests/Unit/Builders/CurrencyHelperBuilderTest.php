@@ -68,7 +68,6 @@ class CurrencyHelperBuilderTest extends TestCase
         ));
     }
 
-
     public function testGetValidateHelper()
     {
         $this->assertInstanceOf(ValidateHelper::class, $this->currencyHelperBuilder->getValidateHelper());
