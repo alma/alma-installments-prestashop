@@ -58,12 +58,10 @@ class CartData
     protected $productRepository;
 
     /**
-     *
      * @param ProductHelper $productHelper
      * @param SettingsHelper $settingsHelper
      * @param PriceHelper $priceHelper
      * @param ProductRepository $productRepository
-     *
      */
     public function __construct($productHelper, $settingsHelper, $priceHelper, $productRepository)
     {

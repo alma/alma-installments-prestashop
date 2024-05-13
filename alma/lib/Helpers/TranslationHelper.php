@@ -38,7 +38,6 @@ class TranslationHelper
     protected $module;
 
     /**
-     *
      * @param ModuleFactory $moduleFactory
      */
     public function __construct($moduleFactory)

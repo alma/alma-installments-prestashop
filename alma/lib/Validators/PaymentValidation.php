@@ -65,7 +65,6 @@ class PaymentValidation
     /**
      * @param $context
      * @param $module
-     *
      */
     public function __construct($context, $module)
     {

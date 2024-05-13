@@ -38,8 +38,6 @@ class HookHelper
      */
     protected $hooks;
 
-    /**
-     */
     public function __construct()
     {
         $this->hooks = \Hook::getHooks();

@@ -26,6 +26,7 @@ namespace Alma\PrestaShop\Tests\Unit\Factories;
 
 use Alma\PrestaShop\Factories\AddressFactory;
 use PHPUnit\Framework\TestCase;
+
 class AddressFactoryTest extends TestCase
 {
     /**

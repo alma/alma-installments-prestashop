@@ -32,30 +32,32 @@ use PHPUnit\Framework\TestCase;
 
 class PriceHelperBuilderTest extends TestCase
 {
-    
     /**
-     *
-     * @var PriceHelperBuilder $priceHelperBuilder
+     * @var PriceHelperBuilder
      */
     protected $priceHelperBuilder
     ;
-    public function setUp() {
+
+    public function setUp()
+    {
         $this->priceHelperBuilder = new PriceHelperBuilder();
     }
 
-
-    public function testGetInstance() {
+    public function testGetInstance()
+    {
         $this->assertInstanceOf(PriceHelper::class, $this->priceHelperBuilder->getInstance());
     }
 
-    public function testGetToolsHelper() {
+    public function testGetToolsHelper()
+    {
         $this->assertInstanceOf(ToolsHelper::class, $this->priceHelperBuilder->getToolsHelper());
         $this->assertInstanceOf(ToolsHelper::class, $this->priceHelperBuilder->getToolsHelper(
             new ToolsHelper()
         ));
     }
 
-    public function testGetCurrencyHelper() {
+    public function testGetCurrencyHelper()
+    {
         $this->assertInstanceOf(CurrencyHelper::class, $this->priceHelperBuilder->getCurrencyHelper());
         $this->assertInstanceOf(CurrencyHelper::class, $this->priceHelperBuilder->getCurrencyHelper(
             new CurrencyHelper()

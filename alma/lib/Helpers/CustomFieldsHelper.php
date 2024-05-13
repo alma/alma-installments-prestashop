@@ -53,11 +53,9 @@ class CustomFieldsHelper
     protected $localeHelper;
 
     /**
-     *
      * @param LanguageHelper $languageHelper
      * @param LocaleHelper $localeHelper
      * @param SettingsHelper $settingsHelper
-     *
      */
     public function __construct($languageHelper, $localeHelper, $settingsHelper)
     {

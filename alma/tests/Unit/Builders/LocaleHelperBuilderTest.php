@@ -32,17 +32,18 @@ use PHPUnit\Framework\TestCase;
 class LocaleHelperBuilderTest extends TestCase
 {
     /**
-     *
-     * @var LocaleHelperBuilder $localeHelperBuilder
+     * @var LocaleHelperBuilder
      */
     protected $localeHelperBuilder
     ;
-    public function setUp() {
+
+    public function setUp()
+    {
         $this->localeHelperBuilder = new LocaleHelperBuilder();
     }
 
-
-    public function testGetInstance() {
+    public function testGetInstance()
+    {
         $this->assertInstanceOf(LocaleHelper::class, $this->localeHelperBuilder->getInstance());
     }
 

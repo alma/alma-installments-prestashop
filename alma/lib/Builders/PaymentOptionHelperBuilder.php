@@ -24,8 +24,6 @@
 
 namespace Alma\PrestaShop\Builders;
 
-use Alma\PrestaShop\Helpers\AddressHelper;
-
 use Alma\PrestaShop\Helpers\PaymentOptionHelper;
 use Alma\PrestaShop\Traits\BuilderTrait;
 
@@ -56,5 +54,4 @@ class PaymentOptionHelperBuilder
             $this->getMediaFactory()
         );
     }
-
 }

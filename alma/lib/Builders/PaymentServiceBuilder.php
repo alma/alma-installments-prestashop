@@ -64,5 +64,4 @@ class PaymentServiceBuilder
             $this->getPaymentOptionHelper()
         );
     }
-
 }

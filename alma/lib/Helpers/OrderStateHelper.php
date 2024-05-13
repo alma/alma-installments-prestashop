@@ -71,5 +71,4 @@ class OrderStateHelper
 
         return array_values($state)[0]['name'];
     }
-
 }

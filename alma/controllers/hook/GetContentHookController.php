@@ -166,7 +166,7 @@ final class GetContentHookController extends AdminHookController
         $this->priceHelper = $priceHelperBuilder->getInstance();
 
         $customFieldHelperBuilder = new CustomFieldHelperBuilder();
-        $this->customFieldsHelper= $customFieldHelperBuilder->getInstance();
+        $this->customFieldsHelper = $customFieldHelperBuilder->getInstance();
 
         $mediaHelperBuilder = new MediaHelperBuilder();
         $this->mediaHelper = $mediaHelperBuilder->getInstance();
@@ -218,7 +218,6 @@ final class GetContentHookController extends AdminHookController
 
         $shareOfCheckoutHelperBuilder = new ShareOfCheckoutHelperBuilder();
         $shareOfCheckoutHelper = $shareOfCheckoutHelperBuilder->getInstance();
-
 
         if ($liveKey !== SettingsHelper::getLiveKey()
             && ConstantsHelper::OBSCURE_VALUE !== $liveKey
