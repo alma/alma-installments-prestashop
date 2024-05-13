@@ -24,7 +24,6 @@
 
 use Alma\PrestaShop\Builders\ApiHelperBuilder;
 use Alma\PrestaShop\Forms\InpageAdminFormBuilder;
-use Alma\PrestaShop\Helpers\ApiHelper;
 use Alma\PrestaShop\Helpers\ConstantsHelper;
 use Alma\PrestaShop\Helpers\SettingsHelper;
 

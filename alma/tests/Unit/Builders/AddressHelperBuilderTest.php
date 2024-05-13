@@ -35,28 +35,32 @@ use PHPUnit\Framework\TestCase;
 class AddressHelperBuilderTest extends TestCase
 {
     /**
-     *
-     * @var AddressHelperBuilder $addressHelperBuilder
+     * @var AddressHelperBuilder
      */
     protected $addressHelperBuilder;
 
-    public function setUp() {
+    public function setUp()
+    {
         $this->addressHelperBuilder = new AddressHelperBuilder();
     }
 
     /**
      * @covers \Alma\PrestaShop\Builders\AddressHelperBuilder::getInstance
+     *
      * @return void
      */
-    public function testGetInstance() {
+    public function testGetInstance()
+    {
         $this->assertInstanceOf(AddressHelper::class, $this->addressHelperBuilder->getInstance());
     }
 
     /**
      * @covers \Alma\PrestaShop\Builders\AddressHelperBuilder::getToolsHelper
+     *
      * @return void
      */
-    public function testGetToolsHelperTest() {
+    public function testGetToolsHelperTest()
+    {
         $this->assertInstanceOf(ToolsHelper::class, $this->addressHelperBuilder->getToolsHelper());
         $this->assertInstanceOf(ToolsHelper::class, $this->addressHelperBuilder->getToolsHelper(
             new ToolsHelper()

@@ -60,5 +60,4 @@ class PaymentDataBuilder
             $this->getCarrierHelper()
         );
     }
-
 }

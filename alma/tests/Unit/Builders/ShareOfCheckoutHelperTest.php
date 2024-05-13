@@ -32,17 +32,17 @@ use PHPUnit\Framework\TestCase;
 class ShareOfCheckoutHelperTest extends TestCase
 {
     /**
-     *
-     * @var ShareOfCheckoutHelperBuilder $shareOfCheckoutHelper
+     * @var ShareOfCheckoutHelperBuilder
      */
     protected $shareOfCheckoutHelperBuilder;
 
-    public function setUp() {
+    public function setUp()
+    {
         $this->shareOfCheckoutHelperBuilder = new ShareOfCheckoutHelperBuilder();
     }
 
-
-    public function testGetInstance() {
+    public function testGetInstance()
+    {
         $this->assertInstanceOf(ShareOfCheckoutHelper::class, $this->shareOfCheckoutHelperBuilder->getInstance());
     }
 

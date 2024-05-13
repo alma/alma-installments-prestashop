@@ -99,7 +99,7 @@ class DisplayPaymentHookController extends FrontendHookController
         parent::__construct($module);
 
         $settingsHelperBuilder = new SettingsHelperBuilder();
-        $this->settingsHelper  = $settingsHelperBuilder->getInstance();
+        $this->settingsHelper = $settingsHelperBuilder->getInstance();
 
         $localeHelperBuilder = new LocaleHelperBuilder();
         $this->localeHelper = $localeHelperBuilder->getInstance();
@@ -108,7 +108,7 @@ class DisplayPaymentHookController extends FrontendHookController
         $this->priceHelper = $priceHelperBuilder->getInstance();
 
         $customFieldHelperBuilder = new CustomFieldHelperBuilder();
-        $this->customFieldsHelper= $customFieldHelperBuilder->getInstance();
+        $this->customFieldsHelper = $customFieldHelperBuilder->getInstance();
 
         $cartDataBuilder = new CartDataBuilder();
         $this->cartData = $cartDataBuilder->getInstance();

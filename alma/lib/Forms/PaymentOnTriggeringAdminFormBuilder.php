@@ -56,7 +56,7 @@ class PaymentOnTriggeringAdminFormBuilder extends AbstractAlmaAdminFormBuilder
         parent::__construct($module, $context, $image, $config);
 
         $customFieldHelperBuilder = new CustomFieldHelperBuilder();
-        $this->customFieldsHelper= $customFieldHelperBuilder->getInstance();
+        $this->customFieldsHelper = $customFieldHelperBuilder->getInstance();
     }
 
     protected function configForm()
