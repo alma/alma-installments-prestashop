@@ -56,6 +56,8 @@ class AddressHelper
      * @param \Customer $customer
      *
      * @return mixed
+     *
+     * @throws \Alma\PrestaShop\Exceptions\AlmaException
      */
     public function getAddressFromCustomer($customer)
     {

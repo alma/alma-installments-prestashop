@@ -232,7 +232,7 @@ class CustomFieldsHelper
             PaymentOnTriggeringAdminFormBuilder::ALMA_DESCRIPTION_TRIGGER, $languages
         );
 
-        $return = array();
+        $return = [];
 
         foreach ($defaultField as $key => $field) {
             $return[$key] = $field['string'];

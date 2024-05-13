@@ -24,6 +24,8 @@
 
 namespace Alma\PrestaShop\Factories;
 
+use Alma\PrestaShop\Exceptions\AlmaException;
+
 if (!defined('_PS_VERSION_')) {
     exit;
 }
@@ -43,26 +45,48 @@ class ContextFactory
 
     /**
      * @return \Link|null
+     *
+     * @throws AlmaException
      */
     public function getContextLink()
     {
-        return \Context::getContext()->link;
+        $context = $this->getContext();
+
+        if (!$context) {
+            throw new AlmaException('No context found');
+        }
+
+        return $context->link;
     }
 
     /**
      * @return \Language|\PrestaShopBundle\Install\Language|null
+     *
+     * @throws AlmaException
      */
     public function getContextLanguage()
     {
-        return \Context::getContext()->language;
+        $context = $this->getContext();
+
+        if (!$context) {
+            throw new AlmaException('No context found');
+        }
+
+        return $context->language;
     }
 
     /**
      * @return int
+     *
+     * @throws AlmaException
      */
     public function getContextLanguageId()
     {
         $language = $this->getContextLanguage();
+
+        if (!$language) {
+            throw new AlmaException('ContextLanguageId is null');
+        }
 
         return $language->id;
     }
@@ -117,5 +141,3 @@ class ContextFactory
         return $context->currency;
     }
 }
-
-

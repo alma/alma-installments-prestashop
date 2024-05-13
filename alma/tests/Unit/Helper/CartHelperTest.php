@@ -24,13 +24,10 @@
 
 namespace Alma\PrestaShop\Tests\Unit\Helper;
 
-use Alma\PrestaShop\Builders\CartDataBuilder;
 use Alma\PrestaShop\Builders\CartHelperBuilder;
-use Alma\PrestaShop\Builders\OrderStateHelperBuilder;
-use Alma\PrestaShop\Builders\PriceHelperBuilder;
+use Alma\PrestaShop\Exceptions\AlmaException;
 use Alma\PrestaShop\Factories\ContextFactory;
 use Alma\PrestaShop\Helpers\CarrierHelper;
-use Alma\PrestaShop\Helpers\CartHelper;
 use Alma\PrestaShop\Helpers\OrderHelper;
 use Alma\PrestaShop\Helpers\OrderStateHelper;
 use Alma\PrestaShop\Helpers\PriceHelper;
@@ -70,7 +67,6 @@ class CartHelperTest extends TestCase
      */
     protected $carrierHelper;
 
-
     public function setUp()
     {
         $this->cart = $this->createMock(\Cart::class);
@@ -108,7 +104,7 @@ class CartHelperTest extends TestCase
                 'current_state' => 'Payment accepted',
                 'shipping_method' => 'PrestaShop',
                 'items' => $cartItem,
-                ]
+                ],
         ];
 
         $expectedOrders = [
@@ -119,9 +115,8 @@ class CartHelperTest extends TestCase
                 'current_state' => '1',
                 'module' => 'ps_checkpayment',
                 'transaction_id' => null,
-            ]
+            ],
         ];
-
 
         $cartData = \Mockery::mock(CartData::class)->makePartial();
         $cartData->shouldReceive('getCartItems')->andReturn($cartItem);
@@ -194,11 +189,27 @@ class CartHelperTest extends TestCase
 
         $contextFactory = \Mockery::mock(ContextFactory::class)->makePartial();
         $contextFactory->shouldReceive('getContext')->andReturn($this->context);
+        $contextFactory->shouldReceive('getContextLanguageId')->andReturn(1);
 
         $cartHelperBuilder = \Mockery::mock(CartHelperBuilder::class)->makePartial();
         $cartHelperBuilder->shouldReceive('getContextFactory')->andReturn($contextFactory);
         $cartHelper = $cartHelperBuilder->getInstance();
 
         $this->assertEquals(1, $cartHelper->getCartIdFromContext());
+
+        $this->cart = $this->createMock(\Cart::class);
+        $this->cart->id = 1;
+        $this->context = $this->createMock(\Context::class);
+        $this->context->cart = $this->cart;
+
+        $contextFactory = \Mockery::mock(ContextFactory::class)->makePartial();
+        $contextFactory->shouldReceive('getContext')->andReturn($this->context);
+        $contextFactory->shouldReceive('getContextLanguage')->andReturn(null);
+
+        $cartHelperBuilder = \Mockery::mock(CartHelperBuilder::class)->makePartial();
+        $cartHelperBuilder->shouldReceive('getContextFactory')->andReturn($contextFactory);
+
+        $this->expectException(AlmaException::class);
+        $cartHelperBuilder->getInstance();
     }
 }

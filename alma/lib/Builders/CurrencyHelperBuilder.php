@@ -25,7 +25,6 @@
 namespace Alma\PrestaShop\Builders;
 
 use Alma\PrestaShop\Helpers\CurrencyHelper;
-use Alma\PrestaShop\Helpers\PriceHelper;
 use Alma\PrestaShop\Traits\BuilderTrait;
 
 if (!defined('_PS_VERSION_')) {
