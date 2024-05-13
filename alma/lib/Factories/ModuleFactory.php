@@ -44,6 +44,7 @@ class ModuleFactory
     {
         $this->module = $this->getModule();
     }
+
     /**
      * @return false|\Module
      */
@@ -83,6 +84,6 @@ class ModuleFactory
      */
     public function l($string, $specific = false, $locale = null)
     {
-       return $this->module->l($string, $specific, $locale);
+        return $this->module->l($string, $specific, $locale);
     }
 }
