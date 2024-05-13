@@ -42,4 +42,14 @@ class ModuleFactory
     {
         return \Module::getInstanceByName(ConstantsHelper::ALMA_MODULE_NAME);
     }
+
+    /**
+     * @return string
+     */
+    public function getModuleName()
+    {
+        $module = $this->getModule();
+
+        return $module->name;
+    }
 }

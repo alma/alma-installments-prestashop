@@ -632,7 +632,10 @@ trait BuilderTrait
             return $contextHelper;
         }
 
-        return new ContextHelper();
+        return new ContextHelper(
+            $this->getContextFactory(),
+            $this->getModuleFactory()
+        );
     }
 
     /**

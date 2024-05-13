@@ -251,7 +251,10 @@ class PaymentServiceBuilderTest extends TestCase
     {
         $this->assertInstanceOf(ContextHelper::class, $this->paymentServiceBuilder->getContextHelper());
         $this->assertInstanceOf(ContextHelper::class, $this->paymentServiceBuilder->getContextHelper(
-            new ContextHelper()
+            new ContextHelper(
+                new ContextFactory(),
+                new ModuleFactory()
+            )
         ));
     }
 

@@ -22,30 +22,52 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
-namespace Alma\PrestaShop\Tests\Unit\Factories;
+namespace Alma\PrestaShop\Tests\Unit\Builders;
 
+use Alma\PrestaShop\Builders\ContextHelperBuilder;
 use Alma\PrestaShop\Factories\ContextFactory;
+use Alma\PrestaShop\Factories\ModuleFactory;
+use Alma\PrestaShop\Helpers\ContextHelper;
 use PHPUnit\Framework\TestCase;
 
-class ContextFactoryTest extends TestCase
+/**
+ * @covers \Alma\PrestaShop\Builders\ContextHelperBuilder
+ */
+class ContextHelperBuilderTest extends TestCase
 {
     /**
-     * @var ContextFactory
+     * @var ContextHelperBuilder
      */
-    protected $contextFactory;
+    protected $contextHelperBuilder;
 
     public function setUp()
     {
-        $this->contextFactory = new ContextFactory();
+        $this->contextHelperBuilder = new ContextHelperBuilder();
     }
 
-    public function testGetContext()
+    /**
+     * @covers \Alma\PrestaShop\Builders\ContextHelperBuilder::getInstance
+     *
+     * @return void
+     */
+    public function testGetInstance()
     {
-        $this->assertInstanceOf(\Context::class, $this->contextFactory->getContext());
+        $this->assertInstanceOf(ContextHelper::class, $this->contextHelperBuilder->getInstance());
     }
 
-    public function testGetContextLink()
+    public function testGetContextFactory()
     {
-        $this->assertInstanceOf(\Link::class, $this->contextFactory->getContextLink());
+        $this->assertInstanceOf(ContextFactory::class, $this->contextHelperBuilder->getContextFactory());
+        $this->assertInstanceOf(ContextFactory::class, $this->contextHelperBuilder->getContextFactory(
+            new ContextFactory()
+        ));
+    }
+
+    public function testGetModuleFactory()
+    {
+        $this->assertInstanceOf(ModuleFactory::class, $this->contextHelperBuilder->getModuleFactory());
+        $this->assertInstanceOf(ModuleFactory::class, $this->contextHelperBuilder->getModuleFactory(
+            new ModuleFactory()
+        ));
     }
 }

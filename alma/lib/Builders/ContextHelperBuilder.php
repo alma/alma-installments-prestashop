@@ -22,30 +22,30 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
-namespace Alma\PrestaShop\Tests\Unit\Factories;
+namespace Alma\PrestaShop\Builders;
 
-use Alma\PrestaShop\Factories\ContextFactory;
-use PHPUnit\Framework\TestCase;
+use Alma\PrestaShop\Helpers\ContextHelper;
+use Alma\PrestaShop\Traits\BuilderTrait;
 
-class ContextFactoryTest extends TestCase
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
+/**
+ * ContextHelperBuilder.
+ */
+class ContextHelperBuilder
 {
+    use BuilderTrait;
+
     /**
-     * @var ContextFactory
+     * @return ContextHelper
      */
-    protected $contextFactory;
-
-    public function setUp()
+    public function getInstance()
     {
-        $this->contextFactory = new ContextFactory();
-    }
-
-    public function testGetContext()
-    {
-        $this->assertInstanceOf(\Context::class, $this->contextFactory->getContext());
-    }
-
-    public function testGetContextLink()
-    {
-        $this->assertInstanceOf(\Link::class, $this->contextFactory->getContextLink());
+        return new ContextHelper(
+            $this->getContextFactory(),
+            $this->getModuleFactory()
+        );
     }
 }
