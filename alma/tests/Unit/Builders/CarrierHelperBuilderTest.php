@@ -33,28 +33,30 @@ use PHPUnit\Framework\TestCase;
 class CarrierHelperBuilderTest extends TestCase
 {
     /**
-     *
-     * @var CarrierHelperBuilder $carrierHelperBuilder
+     * @var CarrierHelperBuilder
      */
     protected $carrierHelperBuilder;
 
-    public function setUp() {
+    public function setUp()
+    {
         $this->carrierHelperBuilder = new CarrierHelperBuilder();
     }
 
-
-    public function testGetInstance() {
+    public function testGetInstance()
+    {
         $this->assertInstanceOf(CarrierHelper::class, $this->carrierHelperBuilder->getInstance());
     }
 
-    public function testGetContextFactory() {
+    public function testGetContextFactory()
+    {
         $this->assertInstanceOf(ContextFactory::class, $this->carrierHelperBuilder->getContextFactory());
         $this->assertInstanceOf(ContextFactory::class, $this->carrierHelperBuilder->getContextFactory(
             new ContextFactory()
         ));
     }
 
-    public function testGetCarrierData() {
+    public function testGetCarrierData()
+    {
         $this->assertInstanceOf(CarrierData::class, $this->carrierHelperBuilder->getCarrierData());
         $this->assertInstanceOf(CarrierData::class, $this->carrierHelperBuilder->getCarrierData(
             new CarrierData()

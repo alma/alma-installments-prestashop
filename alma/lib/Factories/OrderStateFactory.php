@@ -24,18 +24,15 @@
 
 namespace Alma\PrestaShop\Factories;
 
-
 if (!defined('_PS_VERSION_')) {
     exit;
 }
 
 /**
  * Class OrderStateFactory.
- *
  */
 class OrderStateFactory
 {
-
     /**
      * @param int $languageId
      *

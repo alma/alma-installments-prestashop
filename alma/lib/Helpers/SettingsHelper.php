@@ -59,7 +59,6 @@ class SettingsHelper
     protected $configurationHelper;
 
     /**
-     *
      * @param ShopHelper $shopHelper
      * @param ConfigurationHelper $configurationHelper
      */

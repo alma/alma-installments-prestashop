@@ -52,7 +52,6 @@ class CustomerHelper
      * @param ContextFactory $contextFactory
      * @param OrderHelper $orderHelper
      * @param ValidateHelper $validateHelper
-     *
      */
     public function __construct($contextFactory, $orderHelper, $validateHelper)
     {

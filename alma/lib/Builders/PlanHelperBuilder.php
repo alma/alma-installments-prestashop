@@ -52,5 +52,4 @@ class PlanHelperBuilder
             $this->getTranslationHelper()
         );
     }
-
 }

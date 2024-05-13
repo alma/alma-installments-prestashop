@@ -49,5 +49,4 @@ class CustomerHelperBuilder
             $this->getValidateHelper()
         );
     }
-
 }

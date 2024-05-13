@@ -53,5 +53,4 @@ class PaymentOptionTemplateHelperBuilder
             $this->getDateHelper()
         );
     }
-
 }

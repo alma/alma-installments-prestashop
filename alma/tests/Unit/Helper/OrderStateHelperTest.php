@@ -42,6 +42,6 @@ class OrderStateHelperTest extends TestCase
 
     public function testGetNameById()
     {
-        $this->assertEquals("Awaiting check payment", $this->orderStateHelper->getNameById(1));
+        $this->assertEquals('Awaiting check payment', $this->orderStateHelper->getNameById(1));
     }
 }

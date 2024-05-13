@@ -49,5 +49,4 @@ class ModuleFactoryTest extends TestCase
     {
         $this->assertEquals(ConstantsHelper::ALMA_MODULE_NAME, $this->moduleFactory->getModuleName());
     }
-
 }

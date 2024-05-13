@@ -40,7 +40,6 @@ class LocaleHelperTest extends TestCase
     {
         $localeHelperBuilder = new LocaleHelperBuilder();
         $this->localeHelper = $localeHelperBuilder->getInstance();
-
     }
 
     /**
@@ -61,7 +60,7 @@ class LocaleHelperTest extends TestCase
         $languageHelperMock = \Mockery::mock(LanguageHelper::class);
         $languageHelperMock->shouldReceive('getIsoById')->with(2)->andReturn('nl');
 
-        $localeHelperBuilder =  \Mockery::mock(LocaleHelperBuilder::class)->makePartial();
+        $localeHelperBuilder = \Mockery::mock(LocaleHelperBuilder::class)->makePartial();
         $localeHelperBuilder->shouldReceive('getLanguageHelper')->andReturn($languageHelperMock);
 
         $localeHelper = $localeHelperBuilder->getInstance();
