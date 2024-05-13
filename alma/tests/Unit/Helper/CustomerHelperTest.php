@@ -43,14 +43,12 @@ class CustomerHelperTest extends TestCase
 
         $this->assertInstanceOf(\Customer::class, $customerHelper->getCustomer());
 
-
         $customer = new \Customer();
         $customer->firstname = 'test';
         $customer->lastname = 'test';
         $customer->email = 'test@test.fr';
         $customer->passwd = '12345';
         $customer->save();
-
 
         $contextFactory = \Mockery::mock(ContextFactory::class);
         $contextFactory->shouldReceive('getContextCartCustomerId')->andReturn(null);
@@ -64,7 +62,6 @@ class CustomerHelperTest extends TestCase
 
         $this->assertInstanceOf(\Customer::class, $customerHelper->getCustomer());
 
-
         $contextFactory = \Mockery::mock(ContextFactory::class);
         $contextFactory->shouldReceive('getContextCartCustomerId')->andReturn(null);
         $contextFactory->shouldReceive('getContextCustomer')->andReturn(null);
@@ -76,7 +73,6 @@ class CustomerHelperTest extends TestCase
         $customerHelper = $customerHelperBuilder->getInstance();
 
         $this->assertNull($customerHelper->getCustomer());
-
     }
 
     public function testValidateCustomer()
@@ -95,7 +91,6 @@ class CustomerHelperTest extends TestCase
 
         $this->assertNull($customerHelper->validateCustomer(new \stdClass()));
 
-
         $customer = new \Customer();
         $customer->firstname = 'test';
         $customer->lastname = 'test';
@@ -107,7 +102,6 @@ class CustomerHelperTest extends TestCase
         $customerHelper = $customerHelperBuilder->getInstance();
 
         $this->assertInstanceOf(\Customer::class, $customerHelper->validateCustomer($customer));
-
     }
 
     public function testIsNewCustomer()
@@ -129,6 +123,5 @@ class CustomerHelperTest extends TestCase
         $customerHelper = $customerHelperBuilder->getInstance();
 
         $this->assertFalse($customerHelper->isNewCustomer(1));
-
     }
 }
