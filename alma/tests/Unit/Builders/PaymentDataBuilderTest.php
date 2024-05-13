@@ -31,7 +31,6 @@ use Alma\PrestaShop\Helpers\CarrierHelper;
 use Alma\PrestaShop\Helpers\CartHelper;
 use Alma\PrestaShop\Helpers\ConfigurationHelper;
 use Alma\PrestaShop\Helpers\CountryHelper;
-use Alma\PrestaShop\Helpers\CurrencyHelper;
 use Alma\PrestaShop\Helpers\CustomerHelper;
 use Alma\PrestaShop\Helpers\CustomFieldsHelper;
 use Alma\PrestaShop\Helpers\LanguageHelper;
@@ -96,7 +95,7 @@ class PaymentDataBuilderTest extends TestCase
             new ConfigurationHelper()
         );
 
-        $this->priceHelper =  \Mockery::mock(PriceHelper::class);
+        $this->priceHelper = \Mockery::mock(PriceHelper::class);
 
         $this->carrierHelper = new CarrierHelper(
             $this->contextFactory,
