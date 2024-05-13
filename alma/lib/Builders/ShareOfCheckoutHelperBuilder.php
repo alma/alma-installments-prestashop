@@ -47,5 +47,4 @@ class ShareOfCheckoutHelperBuilder
             $this->getOrderHelper()
         );
     }
-
 }

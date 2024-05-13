@@ -24,24 +24,21 @@
 
 namespace Alma\PrestaShop\Factories;
 
-
 if (!defined('_PS_VERSION_')) {
     exit;
 }
 
 /**
  * Class PhpFactory.
- *
  */
 class PhpFactory
 {
-
     /**
      * @param callable|mixed $value
+     *
      * @return bool
      */
-
-    public function is_callable( $value)
+    public function is_callable($value)
     {
         return is_callable($value);
     }

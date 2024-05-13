@@ -61,5 +61,4 @@ class PaymentDataBuilder
             $this->getAddressFactory()
         );
     }
-
 }

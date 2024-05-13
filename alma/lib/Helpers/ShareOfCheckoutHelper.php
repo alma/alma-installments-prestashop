@@ -89,7 +89,6 @@ class ShareOfCheckoutHelper
     }
 
     /**
-     *
      * @return void
      *
      * @throws ClientException

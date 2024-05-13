@@ -26,6 +26,7 @@ namespace Alma\PrestaShop\Tests\Unit\Factories;
 
 use Alma\PrestaShop\Factories\MediaFactory;
 use PHPUnit\Framework\TestCase;
+
 class MediaFactoryTest extends TestCase
 {
     /**
@@ -40,6 +41,6 @@ class MediaFactoryTest extends TestCase
 
     public function testGetMediaPath()
     {
-        $this->assertEquals("/modules/alma/views/img/logos/alma_payment_logos_tiny.svg", $this->mediaFactory->getMediaPath('/views/img/logos/alma_payment_logos_tiny.svg'));
+        $this->assertEquals('/modules/alma/views/img/logos/alma_payment_logos_tiny.svg', $this->mediaFactory->getMediaPath('/views/img/logos/alma_payment_logos_tiny.svg'));
     }
 }

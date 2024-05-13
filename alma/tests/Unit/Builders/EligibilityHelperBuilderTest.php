@@ -25,87 +25,62 @@
 namespace Alma\PrestaShop\Tests\Unit\Builders;
 
 use Alma\PrestaShop\Builders\EligibilityHelperBuilder;
-use Alma\PrestaShop\Factories\AddressFactory;
 use Alma\PrestaShop\Factories\ContextFactory;
-use Alma\PrestaShop\Factories\ModuleFactory;
-use Alma\PrestaShop\Helpers\AddressHelper;
 use Alma\PrestaShop\Helpers\ApiHelper;
 use Alma\PrestaShop\Helpers\CarrierHelper;
-use Alma\PrestaShop\Helpers\CartHelper;
 use Alma\PrestaShop\Helpers\ClientHelper;
 use Alma\PrestaShop\Helpers\ConfigurationHelper;
-use Alma\PrestaShop\Helpers\CountryHelper;
 use Alma\PrestaShop\Helpers\CurrencyHelper;
-use Alma\PrestaShop\Helpers\CustomerHelper;
-use Alma\PrestaShop\Helpers\CustomFieldsHelper;
 use Alma\PrestaShop\Helpers\EligibilityHelper;
 use Alma\PrestaShop\Helpers\LanguageHelper;
 use Alma\PrestaShop\Helpers\LocaleHelper;
-use Alma\PrestaShop\Helpers\OrderHelper;
-use Alma\PrestaShop\Helpers\OrderStateHelper;
 use Alma\PrestaShop\Helpers\PriceHelper;
-use Alma\PrestaShop\Helpers\ProductHelper;
 use Alma\PrestaShop\Helpers\SettingsHelper;
 use Alma\PrestaShop\Helpers\ShopHelper;
-use Alma\PrestaShop\Helpers\StateHelper;
 use Alma\PrestaShop\Helpers\ToolsHelper;
-use Alma\PrestaShop\Helpers\ValidateHelper;
 use Alma\PrestaShop\Model\CarrierData;
-use Alma\PrestaShop\Model\CartData;
 use Alma\PrestaShop\Model\PaymentData;
-use Alma\PrestaShop\Model\ShippingData;
-use Alma\PrestaShop\Repositories\OrderRepository;
-use Alma\PrestaShop\Repositories\ProductRepository;
 use PHPUnit\Framework\TestCase;
 
 class EligibilityHelperBuilderTest extends TestCase
 {
-
     /**
-     *
-     * @var EligibilityHelperBuilder $eligibilityHelperBuilder
+     * @var EligibilityHelperBuilder
      */
     protected $eligibilityHelperBuilder;
 
-        /**
-         *
-         * @var PriceHelper $priceHelper
-         */
+    /**
+     * @var PriceHelper
+     */
     protected $priceHelper;
 
     /**
-     *
-     * @var SettingsHelper $settingsHelper
+     * @var SettingsHelper
      */
     protected $settingsHelper;
 
     /**
-     *
-     * @var CarrierHelper $carrierHelper
+     * @var CarrierHelper
      */
     protected $carrierHelper;
 
     /**
-     *
-     * @var ContextFactory $contextFactory
+     * @var ContextFactory
      */
     protected $contextFactory;
 
     /**
-     *
-     * @var LanguageHelper $languageHelper
+     * @var LanguageHelper
      */
     protected $languageHelper;
 
     /**
-     *
-     * @var ToolsHelper $toolsHelper
+     * @var ToolsHelper
      */
     protected $toolsHelper;
 
-
-
-    public function setUp() {
+    public function setUp()
+    {
         $this->eligibilityHelperBuilder = new EligibilityHelperBuilder();
         $this->contextFactory = new ContextFactory();
         $this->languageHelper = new LanguageHelper();
@@ -126,47 +101,53 @@ class EligibilityHelperBuilderTest extends TestCase
         );
     }
 
-
-    public function testGetInstance() {
+    public function testGetInstance()
+    {
         $this->assertInstanceOf(EligibilityHelper::class, $this->eligibilityHelperBuilder->getInstance());
     }
 
-    public function testGetPaymentData() {
+    public function testGetPaymentData()
+    {
         $this->assertInstanceOf(PaymentData::class, $this->eligibilityHelperBuilder->getPaymentData());
         $this->assertInstanceOf(PaymentData::class, $this->eligibilityHelperBuilder->getPaymentData(
             $this->createMock(PaymentData::class)
         ));
     }
 
-    public function testGetPriceHelper() {
+    public function testGetPriceHelper()
+    {
         $this->assertInstanceOf(PriceHelper::class, $this->eligibilityHelperBuilder->getPriceHelper());
         $this->assertInstanceOf(PriceHelper::class, $this->eligibilityHelperBuilder->getPriceHelper(
             $this->priceHelper
         ));
     }
 
-    public function testGetClientHelper() {
+    public function testGetClientHelper()
+    {
         $this->assertInstanceOf(ClientHelper::class, $this->eligibilityHelperBuilder->getClientHelper());
         $this->assertInstanceOf(ClientHelper::class, $this->eligibilityHelperBuilder->getClientHelper(
             new ClientHelper()
         ));
     }
 
-    public function testGetSettingsHelper() {
+    public function testGetSettingsHelper()
+    {
         $this->assertInstanceOf(SettingsHelper::class, $this->eligibilityHelperBuilder->getSettingsHelper());
         $this->assertInstanceOf(SettingsHelper::class, $this->eligibilityHelperBuilder->getSettingsHelper(
             $this->settingsHelper
         ));
     }
 
-    public function testGetApiHelper() {
+    public function testGetApiHelper()
+    {
         $this->assertInstanceOf(ApiHelper::class, $this->eligibilityHelperBuilder->getApiHelper());
         $this->assertInstanceOf(ApiHelper::class, $this->eligibilityHelperBuilder->getApiHelper(
             $this->createMock(ApiHelper::class)
         ));
     }
 
-    public function testGetContextFactory() {
+    public function testGetContextFactory()
+    {
         $this->assertInstanceOf(ContextFactory::class, $this->eligibilityHelperBuilder->getContextFactory());
         $this->assertInstanceOf(ContextFactory::class, $this->eligibilityHelperBuilder->getContextFactory(
             $this->contextFactory

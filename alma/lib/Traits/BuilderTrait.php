@@ -73,17 +73,17 @@ if (!defined('_PS_VERSION_')) {
 
 /**
  * Trait BuilderTrait.
- *
  */
 trait BuilderTrait
 {
     /**
      * @param ShopHelper $shopHelper
+     *
      * @return ShopHelper
      */
     public function getShopHelper($shopHelper = null)
     {
-        if($shopHelper) {
+        if ($shopHelper) {
             return $shopHelper;
         }
 
@@ -92,11 +92,12 @@ trait BuilderTrait
 
     /**
      * @param ConfigurationHelper $configurationHelper
+     *
      * @return ConfigurationHelper
      */
     public function getConfigurationHelper($configurationHelper = null)
     {
-        if($configurationHelper) {
+        if ($configurationHelper) {
             return $configurationHelper;
         }
 
@@ -105,11 +106,12 @@ trait BuilderTrait
 
     /**
      * @param LanguageHelper $languageHelper
+     *
      * @return LanguageHelper
      */
     public function getLanguageHelper($languageHelper = null)
     {
-        if($languageHelper) {
+        if ($languageHelper) {
             return $languageHelper;
         }
 
@@ -118,11 +120,12 @@ trait BuilderTrait
 
     /**
      * @param ToolsHelper $toolsHelper
+     *
      * @return ToolsHelper
      */
     public function getToolsHelper($toolsHelper = null)
     {
-        if($toolsHelper) {
+        if ($toolsHelper) {
             return $toolsHelper;
         }
 
@@ -131,11 +134,12 @@ trait BuilderTrait
 
     /**
      * @param CurrencyHelper $currencyHelper
+     *
      * @return CurrencyHelper
      */
     public function getCurrencyHelper($currencyHelper = null)
     {
-        if($currencyHelper) {
+        if ($currencyHelper) {
             return $currencyHelper;
         }
 
@@ -144,11 +148,12 @@ trait BuilderTrait
 
     /**
      * @param LocaleHelper $localeHelper
+     *
      * @return LocaleHelper
      */
     public function getLocaleHelper($localeHelper = null)
     {
-        if($localeHelper) {
+        if ($localeHelper) {
             return $localeHelper;
         }
 
@@ -159,11 +164,12 @@ trait BuilderTrait
 
     /**
      * @param SettingsHelper $settingsHelper
+     *
      * @return SettingsHelper
      */
     public function getSettingsHelper($settingsHelper = null)
     {
-        if($settingsHelper) {
+        if ($settingsHelper) {
             return $settingsHelper;
         }
 
@@ -175,11 +181,12 @@ trait BuilderTrait
 
     /**
      * @param ProductHelper $productHelper
+     *
      * @return ProductHelper
      */
     public function getProductHelper($productHelper = null)
     {
-        if($productHelper) {
+        if ($productHelper) {
             return $productHelper;
         }
 
@@ -188,11 +195,12 @@ trait BuilderTrait
 
     /**
      * @param PriceHelper $priceHelper
+     *
      * @return PriceHelper
      */
     public function getPriceHelper($priceHelper = null)
     {
-        if($priceHelper) {
+        if ($priceHelper) {
             return $priceHelper;
         }
 
@@ -204,11 +212,12 @@ trait BuilderTrait
 
     /**
      * @param ProductRepository $productRepository
+     *
      * @return ProductRepository
      */
     public function getProductRepository($productRepository = null)
     {
-        if($productRepository) {
+        if ($productRepository) {
             return $productRepository;
         }
 
@@ -217,11 +226,12 @@ trait BuilderTrait
 
     /**
      * @param ModuleFactory $moduleFactory
+     *
      * @return ModuleFactory
      */
     public function getModuleFactory($moduleFactory = null)
     {
-        if($moduleFactory) {
+        if ($moduleFactory) {
             return $moduleFactory;
         }
 
@@ -230,11 +240,12 @@ trait BuilderTrait
 
     /**
      * @param ContextFactory $contextFactory
+     *
      * @return ContextFactory
      */
     public function getContextFactory($contextFactory = null)
     {
-        if($contextFactory) {
+        if ($contextFactory) {
             return $contextFactory;
         }
 
@@ -243,25 +254,26 @@ trait BuilderTrait
 
     /**
      * @param DateHelper $dateHelper
+     *
      * @return DateHelper
      */
     public function getDateHelper($dateHelper = null)
     {
-        if($dateHelper) {
+        if ($dateHelper) {
             return $dateHelper;
         }
 
         return new DateHelper();
     }
 
-
     /**
      * @param CustomFieldsHelper $customFieldsHelper
+     *
      * @return CustomFieldsHelper
      */
     public function getCustomFieldsHelper($customFieldsHelper = null)
     {
-        if($customFieldsHelper) {
+        if ($customFieldsHelper) {
             return $customFieldsHelper;
         }
 
@@ -274,11 +286,12 @@ trait BuilderTrait
 
     /**
      * @param TranslationHelper $translationHelper
+     *
      * @return TranslationHelper
      */
     public function getTranslationHelper($translationHelper = null)
     {
-        if($translationHelper) {
+        if ($translationHelper) {
             return $translationHelper;
         }
 
@@ -287,14 +300,14 @@ trait BuilderTrait
         );
     }
 
-
     /**
      * @param CarrierData $carrierData
+     *
      * @return CarrierData
      */
     public function getCarrierData($carrierData = null)
     {
-        if($carrierData) {
+        if ($carrierData) {
             return $carrierData;
         }
 
@@ -303,11 +316,12 @@ trait BuilderTrait
 
     /**
      * @param CartData $cartData
+     *
      * @return CartData
      */
     public function getCartData($cartData = null)
     {
-        if($cartData) {
+        if ($cartData) {
             return $cartData;
         }
 
@@ -321,11 +335,12 @@ trait BuilderTrait
 
     /**
      * @param OrderRepository $orderRepository
+     *
      * @return OrderRepository
      */
     public function getOrderRepository($orderRepository = null)
     {
-        if($orderRepository) {
+        if ($orderRepository) {
             return $orderRepository;
         }
 
@@ -334,11 +349,12 @@ trait BuilderTrait
 
     /**
      * @param OrderStateHelper $orderStateHelper
+     *
      * @return OrderStateHelper
      */
     public function getOrderStateHelper($orderStateHelper = null)
     {
-        if($orderStateHelper) {
+        if ($orderStateHelper) {
             return $orderStateHelper;
         }
 
@@ -350,11 +366,12 @@ trait BuilderTrait
 
     /**
      * @param CarrierHelper $carrierHelper
+     *
      * @return CarrierHelper
      */
     public function getCarrierHelper($carrierHelper = null)
     {
-        if($carrierHelper) {
+        if ($carrierHelper) {
             return $carrierHelper;
         }
 
@@ -366,11 +383,12 @@ trait BuilderTrait
 
     /**
      * @param OrderHelper $orderHelper
+     *
      * @return OrderHelper
      */
     public function getOrderHelper($orderHelper = null)
     {
-        if($orderHelper) {
+        if ($orderHelper) {
             return $orderHelper;
         }
 
@@ -379,23 +397,26 @@ trait BuilderTrait
 
     /**
      * @param ValidateHelper $validateHelper
+     *
      * @return ValidateHelper
      */
     public function getValidateHelper($validateHelper = null)
     {
-        if($validateHelper) {
+        if ($validateHelper) {
             return $validateHelper;
         }
 
         return new ValidateHelper();
     }
+
     /**
      * @param ShippingData $shippingData
+     *
      * @return ShippingData
      */
     public function getShippingData($shippingData = null)
     {
-        if($shippingData) {
+        if ($shippingData) {
             return $shippingData;
         }
 
@@ -407,11 +428,12 @@ trait BuilderTrait
 
     /**
      * @param AddressHelper $addressHelper
+     *
      * @return AddressHelper
      */
     public function getAddressHelper($addressHelper = null)
     {
-        if($addressHelper) {
+        if ($addressHelper) {
             return $addressHelper;
         }
 
@@ -423,11 +445,12 @@ trait BuilderTrait
 
     /**
      * @param CountryHelper $countryHelper
+     *
      * @return CountryHelper
      */
     public function getCountryHelper($countryHelper = null)
     {
-        if($countryHelper) {
+        if ($countryHelper) {
             return $countryHelper;
         }
 
@@ -436,11 +459,12 @@ trait BuilderTrait
 
     /**
      * @param StateHelper $stateHelper
+     *
      * @return StateHelper
      */
     public function getStateHelper($stateHelper = null)
     {
-        if($stateHelper) {
+        if ($stateHelper) {
             return $stateHelper;
         }
 
@@ -449,11 +473,12 @@ trait BuilderTrait
 
     /**
      * @param CustomerHelper $customerHelper
+     *
      * @return CustomerHelper
      */
     public function getCustomerHelper($customerHelper = null)
     {
-        if($customerHelper) {
+        if ($customerHelper) {
             return $customerHelper;
         }
 
@@ -466,11 +491,12 @@ trait BuilderTrait
 
     /**
      * @param CartHelper $cartHelper
+     *
      * @return CartHelper
      */
     public function getCartHelper($cartHelper = null)
     {
-        if($cartHelper) {
+        if ($cartHelper) {
             return $cartHelper;
         }
 
@@ -487,11 +513,12 @@ trait BuilderTrait
 
     /**
      * @param ClientHelper $clientHelper
+     *
      * @return ClientHelper
      */
     public function getClientHelper($clientHelper = null)
     {
-        if($clientHelper) {
+        if ($clientHelper) {
             return $clientHelper;
         }
 
@@ -500,11 +527,12 @@ trait BuilderTrait
 
     /**
      * @param PaymentData $paymentData
+     *
      * @return PaymentData
      */
     public function getPaymentData($paymentData = null)
     {
-        if($paymentData) {
+        if ($paymentData) {
             return $paymentData;
         }
 
@@ -529,11 +557,12 @@ trait BuilderTrait
 
     /**
      * @param ApiHelper $apiHelper
+     *
      * @return ApiHelper
      */
     public function getApiHelper($apiHelper = null)
     {
-        if($apiHelper) {
+        if ($apiHelper) {
             return $apiHelper;
         }
 
@@ -545,11 +574,12 @@ trait BuilderTrait
 
     /**
      * @param MediaHelper $mediaHelper
+     *
      * @return MediaHelper
      */
     public function getMediaHelper($mediaHelper = null)
     {
-        if($mediaHelper) {
+        if ($mediaHelper) {
             return $mediaHelper;
         }
 
@@ -562,11 +592,12 @@ trait BuilderTrait
 
     /**
      * @param PaymentOptionTemplateHelper $paymentOptionTemplateHelper
+     *
      * @return PaymentOptionTemplateHelper
      */
     public function getPaymentOptionTemplateHelper($paymentOptionTemplateHelper = null)
     {
-        if($paymentOptionTemplateHelper) {
+        if ($paymentOptionTemplateHelper) {
             return $paymentOptionTemplateHelper;
         }
 
@@ -583,11 +614,12 @@ trait BuilderTrait
 
     /**
      * @param EligibilityHelper $eligibilityHelper
+     *
      * @return EligibilityHelper
      */
     public function getEligibilityHelper($eligibilityHelper = null)
     {
-        if($eligibilityHelper) {
+        if ($eligibilityHelper) {
             return $eligibilityHelper;
         }
 
@@ -603,11 +635,12 @@ trait BuilderTrait
 
     /**
      * @param ContextHelper $contextHelper
+     *
      * @return ContextHelper
      */
     public function getContextHelper($contextHelper = null)
     {
-        if($contextHelper) {
+        if ($contextHelper) {
             return $contextHelper;
         }
 
@@ -619,11 +652,12 @@ trait BuilderTrait
 
     /**
      * @param PlanHelper $planHelper
+     *
      * @return PlanHelper
      */
     public function getPlanHelper($planHelper = null)
     {
-        if($planHelper) {
+        if ($planHelper) {
             return $planHelper;
         }
 
@@ -637,14 +671,14 @@ trait BuilderTrait
         );
     }
 
-
     /**
      * @param PaymentOptionHelper $paymentOptionHelper
+     *
      * @return PaymentOptionHelper
      */
     public function getPaymentOptionHelper($paymentOptionHelper = null)
     {
-        if($paymentOptionHelper) {
+        if ($paymentOptionHelper) {
             return $paymentOptionHelper;
         }
 
@@ -660,14 +694,14 @@ trait BuilderTrait
         );
     }
 
-
     /**
      * @param AddressFactory $addressFactory
+     *
      * @return AddressFactory
      */
     public function getAddressFactory($addressFactory = null)
     {
-        if($addressFactory) {
+        if ($addressFactory) {
             return $addressFactory;
         }
 
@@ -676,11 +710,12 @@ trait BuilderTrait
 
     /**
      * @param OrderStateFactory $orderStateFactory
+     *
      * @return OrderStateFactory
      */
     public function getOrderStateFactory($orderStateFactory = null)
     {
-        if($orderStateFactory) {
+        if ($orderStateFactory) {
             return $orderStateFactory;
         }
 
@@ -689,24 +724,26 @@ trait BuilderTrait
 
     /**
      * @param MediaFactory $mediaFactory
+     *
      * @return MediaFactory
      */
     public function getMediaFactory($mediaFactory = null)
     {
-        if($mediaFactory) {
+        if ($mediaFactory) {
             return $mediaFactory;
         }
 
         return new MediaFactory();
     }
+
     /**
-     *
      * @param PhpFactory $phpFactory
+     *
      * @return PhpFactory
      */
     public function getPhpFactory($phpFactory = null)
     {
-        if($phpFactory) {
+        if ($phpFactory) {
             return $phpFactory;
         }
 
@@ -714,13 +751,13 @@ trait BuilderTrait
     }
 
     /**
-     *
      * @param CarrierFactory $carrierFactory
+     *
      * @return CarrierFactory
      */
     public function getCarrierFactory($carrierFactory = null)
     {
-        if($carrierFactory) {
+        if ($carrierFactory) {
             return $carrierFactory;
         }
 

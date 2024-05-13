@@ -34,35 +34,38 @@ use PHPUnit\Framework\TestCase;
 class MediaHelperBuilderTest extends TestCase
 {
     /**
-     *
-     * @var MediaHelperBuilderTest $mediaHelperBuilder
+     * @var MediaHelperBuilderTest
      */
     protected $mediaHelperBuilder;
 
-    public function setUp() {
+    public function setUp()
+    {
         $this->mediaHelperBuilder = new MediaHelperBuilder();
     }
 
-
-    public function testGetInstance() {
+    public function testGetInstance()
+    {
         $this->assertInstanceOf(MediaHelper::class, $this->mediaHelperBuilder->getInstance());
     }
 
-    public function testGetModuleFactory() {
+    public function testGetModuleFactory()
+    {
         $this->assertInstanceOf(ModuleFactory::class, $this->mediaHelperBuilder->getModuleFactory());
         $this->assertInstanceOf(ModuleFactory::class, $this->mediaHelperBuilder->getModuleFactory(
             new ModuleFactory()
         ));
     }
 
-    public function testGetMediaFactory() {
+    public function testGetMediaFactory()
+    {
         $this->assertInstanceOf(MediaFactory::class, $this->mediaHelperBuilder->getMediaFactory());
         $this->assertInstanceOf(MediaFactory::class, $this->mediaHelperBuilder->getMediaFactory(
             new MediaFactory()
         ));
     }
 
-    public function testGetPhpFactory() {
+    public function testGetPhpFactory()
+    {
         $this->assertInstanceOf(PhpFactory::class, $this->mediaHelperBuilder->getPhpFactory());
         $this->assertInstanceOf(PhpFactory::class, $this->mediaHelperBuilder->getPhpFactory(
             new PhpFactory()

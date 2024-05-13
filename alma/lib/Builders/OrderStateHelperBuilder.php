@@ -48,5 +48,4 @@ class OrderStateHelperBuilder
             $this->getOrderStateFactory()
         );
     }
-
 }

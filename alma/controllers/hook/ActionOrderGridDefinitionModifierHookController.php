@@ -40,7 +40,7 @@ use PrestaShopBundle\Form\Admin\Type\YesAndNoChoiceType;
 class ActionOrderGridDefinitionModifierHookController extends FrontendHookController
 {
     /**
-     * @var InsuranceHelper $insuranceHelper
+     * @var InsuranceHelper
      */
     protected $insuranceHelper;
 

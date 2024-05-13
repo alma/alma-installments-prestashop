@@ -86,5 +86,4 @@ class CarrierHelper
 
         return self::UNKNOWN_CARRIER;
     }
-
 }

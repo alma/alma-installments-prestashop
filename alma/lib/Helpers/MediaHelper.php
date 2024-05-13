@@ -39,7 +39,6 @@ if (!defined('_PS_VERSION_')) {
  */
 class MediaHelper
 {
-
     /**
      * @var MediaFactory
      */
@@ -54,7 +53,6 @@ class MediaHelper
      * @var PhpFactory
      */
     protected $phpFactory;
-
 
     /**
      * @param MediaFactory $mediaFactory

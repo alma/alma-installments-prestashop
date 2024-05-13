@@ -140,7 +140,6 @@ class PaymentData
      * @param CartHelper $cartHelper
      * @param CarrierHelper $carrierHelper
      * @param AddressFactory $addressFactory
-     *
      */
     public function __construct(
         $toolsHelper,

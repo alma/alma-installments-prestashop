@@ -26,8 +26,6 @@ namespace Alma\PrestaShop\Tests\Unit\Helper;
 
 use Alma\PrestaShop\Builders\MediaHelperBuilder;
 use Alma\PrestaShop\Factories\PhpFactory;
-use Alma\PrestaShop\Helpers\MediaHelper;
-use Mockery\Mock;
 use PHPUnit\Framework\TestCase;
 
 class MediaHelperTest extends TestCase
@@ -36,11 +34,11 @@ class MediaHelperTest extends TestCase
     {
         $mediaHelperBuilder = new MediaHelperBuilder();
         $mediaHelper = $mediaHelperBuilder->getInstance();
-        $this->assertEquals('p3x_logo.svg' , $mediaHelper->getLogoName(3 , false) );
+        $this->assertEquals('p3x_logo.svg', $mediaHelper->getLogoName(3, false));
 
         $mediaHelperBuilder = new MediaHelperBuilder();
         $mediaHelper = $mediaHelperBuilder->getInstance();
-        $this->assertEquals('15j_logo.svg' , $mediaHelper->getLogoName(15 , true) );
+        $this->assertEquals('15j_logo.svg', $mediaHelper->getLogoName(15, true));
     }
 
     public function testGetIconPathAlmaTiny()

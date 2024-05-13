@@ -42,7 +42,6 @@ abstract class AbstractAdminFormBuilder
     private $title;
 
     /**
-     *
      * @param $image
      * @param $title
      */

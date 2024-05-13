@@ -54,8 +54,7 @@ class CustomFieldHelperTest extends TestCase
     public function setUp()
     {
         $customFieldHelperBuilder = new CustomFieldHelperBuilder();
-        $this->customFieldsHelper= $customFieldHelperBuilder->getInstance();
-
+        $this->customFieldsHelper = $customFieldHelperBuilder->getInstance();
     }
 
     public function testCustomFields()

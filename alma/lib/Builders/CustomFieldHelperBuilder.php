@@ -49,5 +49,4 @@ class CustomFieldHelperBuilder
             $this->getSettingsHelper()
         );
     }
-
 }

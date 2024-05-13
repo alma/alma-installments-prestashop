@@ -26,6 +26,7 @@ namespace Alma\PrestaShop\Tests\Unit\Factories;
 
 use Alma\PrestaShop\Factories\CarrierFactory;
 use PHPUnit\Framework\TestCase;
+
 class CarrierFactoryTest extends TestCase
 {
     /**

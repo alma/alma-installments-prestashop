@@ -24,8 +24,9 @@
 
 namespace Alma\PrestaShop\Tests\Unit\Factories;
 
-use PHPUnit\Framework\TestCase;
+use Alma\PrestaShop\Exceptions\AlmaException;
 use Alma\PrestaShop\Factories\ContextFactory;
+use PHPUnit\Framework\TestCase;
 
 class ContextFactoryTest extends TestCase
 {
@@ -47,15 +48,36 @@ class ContextFactoryTest extends TestCase
     public function testGetContextLink()
     {
         $this->assertInstanceOf(\Link::class, $this->contextFactory->getContextLink());
+
+        $contextFactory = \Mockery::mock(ContextFactory::class)->makePartial();
+        $contextFactory->shouldReceive('getContext')->andReturn(null);
+
+        $this->expectException(AlmaException::class);
+
+        $contextFactory->getContextLink();
     }
 
     public function testGetContextLanguage()
     {
         $this->assertInstanceOf(\Language::class, $this->contextFactory->getContextLanguage());
+
+        $contextFactory = \Mockery::mock(ContextFactory::class)->makePartial();
+        $contextFactory->shouldReceive('getContext')->andReturn(null);
+
+        $this->expectException(AlmaException::class);
+
+        $contextFactory->getContextLanguage();
     }
 
     public function testGetContextLanguageId()
     {
         $this->assertEquals('1', $this->contextFactory->getContextLanguageId());
+
+        $contextFactory = \Mockery::mock(ContextFactory::class)->makePartial();
+        $contextFactory->shouldReceive('getContextLanguage')->andReturn(null);
+
+        $this->expectException(AlmaException::class);
+
+        $contextFactory->getContextLanguageId();
     }
 }

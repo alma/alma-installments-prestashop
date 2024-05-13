@@ -48,5 +48,4 @@ class PriceHelperBuilder
             $this->getCurrencyHelper()
         );
     }
-
 }
