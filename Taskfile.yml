@@ -57,7 +57,8 @@ tasks:
       # ="{\$[^\s|]*} => Search for string ="{$<variable>}" with variable not followed by the character |
       # exits with 0 if no match is found
       # exits with 1 with an error message if a match is found
-      - grep --color -r -P  '="{\$[^\s|]*}' alma/views/templates/* || exit 0 && >&2 echo "Variables in smarty templates should use |escape:'htmlall':'UTF-8'" && exit 1
+      # TODO : Check rule to be clarified with Prestashop, check commented in the meantime
+      # - grep --color -r -P  '="{\$[^\s|]*}' alma/views/templates/* || exit 0 && >&2 echo "Variables in smarty templates should use |escape:'htmlall':'UTF-8'" && exit 1
 
   lint:fix:
     desc: Run linter and apply fix
