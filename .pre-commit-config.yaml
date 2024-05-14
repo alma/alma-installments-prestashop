@@ -15,21 +15,21 @@ repos:
         name: PHP and Prestashop coding standards Fixer test
         language: system
         pass_filenames: false
-        entry:  task lint:fix --
+        entry:  task lint:fix
         stages: [commit]
 
       - id: coding-standard
         name: Check the PHP and Prestashop coding standards
         language: system
         pass_filenames: false
-        entry:  task lint --
+        entry:  task lint
         stages: [commit]
 
       - id: php-compatibility
         name: Check the PHP compatibility
         language: system
         pass_filenames: false
-        entry:  task php-compatibililty --
+        entry:  task php-compatibililty
         stages: [commit]
 
   - repo: https://github.com/returntocorp/semgrep
