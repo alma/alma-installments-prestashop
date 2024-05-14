@@ -53,6 +53,12 @@ tasks:
       - install-tools
     cmds:
       - php alma/vendor/bin/php-cs-fixer fix --dry-run --diff alma
+      # Search for variables in smarty templates that are not escaped
+      # ="{\$[^\s|]*} => Search for string ="{$<variable>}" with variable not followed by the character |
+      # exits with 0 if no match is found
+      # exits with 1 with an error message if a match is found
+      # TODO : Check rule to be clarified with Prestashop, check commented in the meantime
+      # - grep --color -r -P  '="{\$[^\s|]*}' alma/views/templates/* || exit 0 && >&2 echo "Variables in smarty templates should use |escape:'htmlall':'UTF-8'" && exit 1
 
   lint:fix:
     desc: Run linter and apply fix
@@ -60,6 +66,10 @@ tasks:
       - install-tools
     cmds:
       - php alma/vendor/bin/php-cs-fixer fix alma
+      # Execute autoindex to add index in all folders
+      - php ./alma/vendor/bin/autoindex prestashop:add:index alma/
+      # Remove blank line at the end of index.php file
+      - ./scripts/remove-blank-line-index.sh
 
   php-compatibililty:
     desc: Check compatibility code
@@ -67,18 +77,6 @@ tasks:
       - install-tools
     cmds:
       - php ./alma/vendor/bin/phpcs -p alma --standard=PHPCompatibility -s --runtime-set testVersion 5.6-8.1 --ignore=\*/vendor/\*
-
-  index:autoindex:
-    desc: Execute autoindex to add index in all folders
-    deps:
-      - install-tools
-    cmds:
-      - php ./alma/vendor/bin/autoindex prestashop:add:index alma/
-
-  index:remove-blank-line:
-    desc: Remove white space in the index.php
-    cmds:
-      - ./scripts/remove-blank-line-index.sh
 
   crowdin:
     internal: true
