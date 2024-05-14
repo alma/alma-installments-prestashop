@@ -11,9 +11,31 @@ jobs:
     steps:
 
       - uses: actions/checkout@v4
-        
-      - uses: alma/actions/create-release-pull-request@7d07bc2a1df552ae159c586a3e7a6f4212cf2ae0
         with:
-          script_path_for_version_update: ./scripts/update-files-with-release-version.sh
-          base_branch: main
-          update_changelog: true
+          persist-credentials: false
+
+      - name: Release drafter
+        uses: release-drafter/release-drafter@v5
+        id: release-drafter
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Update CHANGELOG.md
+        uses: stefanzweifel/changelog-updater-action@v1
+        with:
+          latest-version: ${{ steps.release-drafter.outputs.tag_name }}
+          release-notes: ${{ steps.release-drafter.outputs.body }}
+
+      - name: Update other files
+        run: |
+          ./scripts/update-files-with-release-version.sh ${{ steps.release-drafter.outputs.tag_name }}
+
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v6
+        with:
+          commit-message: 'chore: update version'
+          title: Release ${{ steps.release-drafter.outputs.tag_name }}
+          body: Update version to ${{ steps.release-drafter.outputs.tag_name }}
+          branch: feature/release-${{ steps.release-drafter.outputs.tag_name }}
+          base: main
+          labels: release
