@@ -31,6 +31,7 @@ if (!defined('_PS_VERSION_')) {
 use Alma\API\Client;
 use Alma\PrestaShop\Exceptions\ClientException;
 use Alma\PrestaShop\Logger;
+use Alma\PrestaShop\Helpers\SettingsHelper;
 
 class ClientHelper
 {
