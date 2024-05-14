@@ -73,7 +73,6 @@ class ClientHelper
      *
      * @return Client
      *
-     *
      * @throws ClientException
      */
     public function getAlmaClient()
