@@ -13,20 +13,23 @@ repos:
     hooks:
       - id: coding-standard-fixer
         name: PHP and Prestashop coding standards Fixer test
-        language: script
-        entry:  task lint:fix
+        language: system
+        pass_filenames: false
+        entry:  task lint:fix --
         stages: [commit]
 
       - id: coding-standard
         name: Check the PHP and Prestashop coding standards
-        language: script
-        entry:  task lint
+        language: system
+        pass_filenames: false
+        entry:  task lint --
         stages: [commit]
 
       - id: php-compatibility
         name: Check the PHP compatibility
-        language: script
-        entry:  task php-compatibililty
+        language: system
+        pass_filenames: false
+        entry:  task php-compatibililty --
         stages: [commit]
 
   - repo: https://github.com/returntocorp/semgrep

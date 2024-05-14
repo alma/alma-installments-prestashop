@@ -75,16 +75,13 @@ class ClientHelper
      *
      * @throws ClientException
      */
-    public function getAlmaClient()
-    {
+    public function getAlmaClient() {
         $alma = ClientHelper::defaultInstance();
-
         if (!$alma) {
             $msg = '[Alma] Error instantiating Alma API Client';
             Logger::instance()->error($msg);
             throw new ClientException($msg);
         }
-
         return $alma;
     }
 }

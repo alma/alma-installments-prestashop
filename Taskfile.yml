@@ -52,7 +52,7 @@ tasks:
     deps:
       - install-tools
     cmds:
-      - php alma/vendor/bin/php-cs-fixer fix --dry-run --diff alma
+      - php alma/vendor/bin/php-cs-fixer fix --dry-run --diff alma {{.CLI_ARGS}}
       # Search for variables in smarty templates that are not escaped
       # ="{\$[^\s|]*} => Search for string ="{$<variable>}" with variable not followed by the character |
       # exits with 0 if no match is found
@@ -65,7 +65,7 @@ tasks:
     deps:
       - install-tools
     cmds:
-      - php alma/vendor/bin/php-cs-fixer fix alma
+      - php alma/vendor/bin/php-cs-fixer fix alma {{.CLI_ARGS}}
       # Execute autoindex to add index in all folders
       - php ./alma/vendor/bin/autoindex prestashop:add:index alma/
       # Remove blank line at the end of index.php file
@@ -76,7 +76,7 @@ tasks:
     deps:
       - install-tools
     cmds:
-      - php ./alma/vendor/bin/phpcs -p alma --standard=PHPCompatibility -s --runtime-set testVersion 5.6-8.1 --ignore=\*/vendor/\*
+      - php ./alma/vendor/bin/phpcs -p alma --standard=PHPCompatibility -s --runtime-set testVersion 5.6-8.1 --ignore=\*/vendor/\* {{.CLI_ARGS}}
 
   crowdin:
     internal: true
