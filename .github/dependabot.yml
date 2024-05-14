@@ -18,5 +18,5 @@ updates:
     labels:
       - "type: security"
     reviewers:
-      - alma/squad-pre-purchase
+      - alma/squad-e-commerce-integrations
       - alma/it-and-security-operation
