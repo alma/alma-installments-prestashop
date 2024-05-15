@@ -22,32 +22,24 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
-namespace Alma\PrestaShop\Builders;
-
-use Alma\PrestaShop\Helpers\CustomerHelper;
-use Alma\PrestaShop\Traits\BuilderTrait;
+namespace Alma\PrestaShop\Factories;
 
 if (!defined('_PS_VERSION_')) {
     exit;
 }
 
 /**
- * CustomerHelperBuilder.
+ * Class CustomerFactory.
  */
-class CustomerHelperBuilder
+class CustomerFactory
 {
-    use BuilderTrait;
-
     /**
-     * @return CustomerHelper
+     * @param int $id
+     *
+     * @return \Customer
      */
-    public function getInstance()
+    public function create($id)
     {
-        return new CustomerHelper(
-            $this->getContextFactory(),
-            $this->getOrderHelper(),
-            $this->getValidateHelper(),
-            $this->getCustomerFactory()
-        );
+        return new \Customer($id);
     }
 }

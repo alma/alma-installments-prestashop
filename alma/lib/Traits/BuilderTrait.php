@@ -27,6 +27,7 @@ namespace Alma\PrestaShop\Traits;
 use Alma\PrestaShop\Factories\AddressFactory;
 use Alma\PrestaShop\Factories\CarrierFactory;
 use Alma\PrestaShop\Factories\ContextFactory;
+use Alma\PrestaShop\Factories\CustomerFactory;
 use Alma\PrestaShop\Factories\MediaFactory;
 use Alma\PrestaShop\Factories\ModuleFactory;
 use Alma\PrestaShop\Factories\OrderStateFactory;
@@ -485,7 +486,8 @@ trait BuilderTrait
         return new CustomerHelper(
             $this->getContextFactory(),
             $this->getOrderHelper(),
-            $this->getValidateHelper()
+            $this->getValidateHelper(),
+            $this->getCustomerFactory()
         );
     }
 
@@ -762,5 +764,19 @@ trait BuilderTrait
         }
 
         return new CarrierFactory();
+    }
+
+    /**
+     * @param CustomerFactory $customerFactory
+     *
+     * @return CustomerFactory
+     */
+    public function getCustomerFactory($customerFactory = null)
+    {
+        if ($customerFactory) {
+            return $customerFactory;
+        }
+
+        return new CustomerFactory();
     }
 }
