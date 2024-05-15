@@ -22,33 +22,47 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
-namespace Alma\PrestaShop\Builders;
+namespace Alma\PrestaShop\Helpers;
 
-use Alma\PrestaShop\Helpers\EligibilityHelper;
-use Alma\PrestaShop\Traits\BuilderTrait;
+use Alma\PrestaShop\Logger;
+use Alma\PrestaShop\Model\PaymentData;
 
 if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-/**
- * EligibilityHelperBuilder.
- */
-class EligibilityHelperBuilder
+class PaymentHelper
 {
-    use BuilderTrait;
+    /**
+     * @var PaymentData
+     */
+    protected $paymentData;
 
     /**
-     * @return EligibilityHelper
+     * @param $paymentData
      */
-    public function getInstance()
+    public function __construct($paymentData)
     {
-        return new EligibilityHelper(
-            $this->getPriceHelper(),
-            $this->getApiHelper(),
-            $this->getContextFactory(),
-            $this->getFeePlanHelper(),
-            $this->getPaymentHelper()
-        );
+        $this->paymentData = $paymentData;
+    }
+
+    /**
+     * @param $activePlans
+     *
+     * @return array
+     *
+     * @throws \Alma\API\ParamsError
+     */
+    public function checkPaymentData($activePlans)
+    {
+        $paymentData = $this->paymentData->dataFromCart($activePlans);
+
+        if (!$paymentData) {
+            Logger::instance()->error('Cannot check cart eligibility: no data extracted from cart');
+
+            return [];
+        }
+
+        return $paymentData;
     }
 }

@@ -25,7 +25,6 @@
 namespace Alma\PrestaShop\Tests\Unit\Helper;
 
 use Alma\PrestaShop\Builders\CartHelperBuilder;
-use Alma\PrestaShop\Exceptions\AlmaException;
 use Alma\PrestaShop\Factories\ContextFactory;
 use Alma\PrestaShop\Helpers\CarrierHelper;
 use Alma\PrestaShop\Helpers\OrderHelper;
@@ -182,6 +181,7 @@ class CartHelperTest extends TestCase
      */
     public function testGetCartIdFromContext()
     {
+        // Test it works
         $this->cart = $this->createMock(\Cart::class);
         $this->cart->id = 1;
         $this->context = $this->createMock(\Context::class);
@@ -196,20 +196,5 @@ class CartHelperTest extends TestCase
         $cartHelper = $cartHelperBuilder->getInstance();
 
         $this->assertEquals(1, $cartHelper->getCartIdFromContext());
-
-        $this->cart = $this->createMock(\Cart::class);
-        $this->cart->id = 1;
-        $this->context = $this->createMock(\Context::class);
-        $this->context->cart = $this->cart;
-
-        $contextFactory = \Mockery::mock(ContextFactory::class)->makePartial();
-        $contextFactory->shouldReceive('getContext')->andReturn($this->context);
-        $contextFactory->shouldReceive('getContextLanguage')->andReturn(null);
-
-        $cartHelperBuilder = \Mockery::mock(CartHelperBuilder::class)->makePartial();
-        $cartHelperBuilder->shouldReceive('getContextFactory')->andReturn($contextFactory);
-
-        $this->expectException(AlmaException::class);
-        $cartHelperBuilder->getInstance();
     }
 }

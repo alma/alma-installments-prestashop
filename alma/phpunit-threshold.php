@@ -8,12 +8,12 @@ $errorMessage = '';
 $totals = [
     [
         'name' => 'Lines',
-        'threshold' => 13,
+        'threshold' => 17,
         'ratio' => (float) $coverage->project->directory->totals->lines['percent'],
     ],
     [
         'name' => 'Methods',
-        'threshold' => 20,
+        'threshold' => 28,
         'ratio' => (float) $coverage->project->directory->totals->methods['percent'],
     ],
     [
@@ -23,7 +23,7 @@ $totals = [
     ],
     [
         'name' => 'Classes',
-        'threshold' => 20,
+        'threshold' => 28,
         'ratio' => (float) $coverage->project->directory->totals->classes['percent'],
     ],
 ];
