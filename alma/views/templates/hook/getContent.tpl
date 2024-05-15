@@ -134,16 +134,16 @@
     </div>
 {/if}
 {*
-TODO : Temporary solution to display the PrestaShop accounts component.
-    Need to be refactoring, The code below is only display the psaccounts component if the form is not saved.
-*}
-<prestashop-accounts></prestashop-accounts>
 
-<script src="{$urlAccountsCdn|escape:'htmlall':'UTF-8'}" rel=preload></script>
+{if $hasPSAccount}
+    <prestashop-accounts></prestashop-accounts>
 
-<script>
-    /*********************
-     * PrestaShop Account *
-     * *******************/
-    window?.psaccountsVue?.init();
-</script>
+    <script src="{$urlAccountsCdn|escape:'htmlall':'UTF-8'}" rel=preload></script>
+
+    <script>
+        /*********************
+         * PrestaShop Account *
+         * *******************/
+        window?.psaccountsVue?.init();
+    </script>
+{/if}

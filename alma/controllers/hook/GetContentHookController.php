@@ -805,6 +805,10 @@ final class GetContentHookController extends AdminHookController
      */
     public function run($params)
     {
+        $this->context->smarty->assign([
+            'hasPSAccount' => $params['hasPSAccount'],
+        ]);
+
         $this->assignSmartyAlertClasses();
 
         if (\Tools::isSubmit('alma_config_form')) {

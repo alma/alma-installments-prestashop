@@ -568,16 +568,20 @@ class Alma extends PaymentModule
      */
     public function getContent()
     {
-        $this->renderPSAccount();
+        $hasPSAccount = $this->renderPSAccount();
 
-        return $this->runHookController('getContent', null);
+        return $this->runHookController('getContent', ['hasPSAccount' => $hasPSAccount]);
     }
 
     /**
-     * @return void
+     * @return bool
      */
     public function renderPSAccount()
     {
+        if (!$this->checkCompatibilityPSModule()) {
+            return false;
+        }
+
         try {
             $accountsFacade = $this->getService('alma.ps_accounts_facade');
             $accountsService = $accountsFacade->getPsAccountsService();
@@ -598,8 +602,12 @@ class Alma extends PaymentModule
 
             // Retrieve the PrestaShop Account CDN
             $this->context->smarty->assign('urlAccountsCdn', $accountsService->getAccountsCdn());
+
+            return true;
         } catch (Exception $e) {
             $this->context->controller->errors[] = $e->getMessage();
+
+            return false;
         }
     }
 
