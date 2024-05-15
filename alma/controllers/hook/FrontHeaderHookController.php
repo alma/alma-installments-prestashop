@@ -33,6 +33,7 @@ use Alma\PrestaShop\Helpers\ConstantsHelper;
 use Alma\PrestaShop\Helpers\InsuranceHelper;
 use Alma\PrestaShop\Helpers\SettingsHelper;
 use Alma\PrestaShop\Hooks\FrontendHookController;
+use Alma\PrestaShop\Repositories\ProductRepository;
 use Alma\PrestaShop\Services\InsuranceService;
 
 class FrontHeaderHookController extends FrontendHookController
@@ -61,6 +62,10 @@ class FrontHeaderHookController extends FrontendHookController
      * @var SettingsHelper
      */
     protected $settingsHelper;
+    /**
+     * @var ProductRepository
+     */
+    protected $productRepository;
 
     /**
      * @codeCoverageIgnore
@@ -78,6 +83,7 @@ class FrontHeaderHookController extends FrontendHookController
 
         $this->insuranceHelper = new InsuranceHelper();
         $this->insuranceService = new InsuranceService();
+        $this->productRepository = new ProductRepository();
     }
 
     /**
@@ -221,7 +227,7 @@ class FrontHeaderHookController extends FrontendHookController
             $this->insuranceHelper->isInsuranceActivated()
             && version_compare(_PS_VERSION_, '1.7', '>=')
         ) {
-            $this->manageInsuranceAssetsAfter17();
+            $content .= $this->manageInsuranceAssetsAfter17();
         }
 
         if (
@@ -304,6 +310,9 @@ class FrontHeaderHookController extends FrontendHookController
         return $content;
     }
 
+    /**
+     * @return string
+     */
     public function manageInsuranceAssetsAfter17()
     {
         if (
@@ -336,6 +345,23 @@ class FrontHeaderHookController extends FrontendHookController
         ) {
             $this->controller->addJS($this->module->_path . ConstantsHelper::ORDER_INSURANCE_SCRIPT_PATH);
         }
+
+        $this->controller->addJS($this->module->_path . ConstantsHelper::INSURANCE_SCRIPT_PATH);
+
+        return $this->almaInsuranceIdInHeader();
+    }
+
+    /**
+     * @return string
+     */
+    protected function almaInsuranceIdInHeader()
+    {
+        $insuranceProductId = $this->productRepository->getProductIdByReference(
+            ConstantsHelper::ALMA_INSURANCE_PRODUCT_REFERENCE,
+            $this->context->language->id
+        );
+
+        return "<div id='alma-insurance-global' data-insurance-id='{$insuranceProductId}'></div>";
     }
 
     /**

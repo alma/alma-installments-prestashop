@@ -34,6 +34,7 @@ class CustomerHelperTest extends TestCase
 {
     public function testGetCustomer()
     {
+        // Test with an id in the context cart customer
         $contextFactory = \Mockery::mock(ContextFactory::class);
         $contextFactory->shouldReceive('getContextCartCustomerId')->andReturn(1);
 
@@ -43,6 +44,7 @@ class CustomerHelperTest extends TestCase
 
         $this->assertInstanceOf(\Customer::class, $customerHelper->getCustomer());
 
+        // Test with the customer object get from the context
         $customer = new \Customer();
         $customer->firstname = 'test';
         $customer->lastname = 'test';
@@ -62,6 +64,7 @@ class CustomerHelperTest extends TestCase
 
         $this->assertInstanceOf(\Customer::class, $customerHelper->getCustomer());
 
+        // Test with no customer at all
         $contextFactory = \Mockery::mock(ContextFactory::class);
         $contextFactory->shouldReceive('getContextCartCustomerId')->andReturn(null);
         $contextFactory->shouldReceive('getContextCustomer')->andReturn(null);

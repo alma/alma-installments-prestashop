@@ -1,0 +1,99 @@
+version: 3
+
+tasks:
+
+  default:
+    silent: true
+    cmds:
+      - task -l
+
+  docker:build:
+    desc: Build prestashop docker image
+    cmds:
+      - docker compose build prestashop
+
+  test:coverage:
+    desc: Execute Unit Tests with coverage
+    deps:
+      - docker:build
+    cmds:
+      - docker compose run --rm prestashop
+
+  dist:
+    desc: Build the zip file of the module
+    deps:
+      - clean
+    cmds:
+      - docker build -t alma_prestashop_builder:latest scripts/build/
+      - docker run --rm -u $(id -u):$(id -g) -w ${PWD} -v "${PWD}:${PWD}" alma_prestashop_builder:latest /bin/sh scripts/build/build-dist-docker.sh
+
+  clean:
+    desc: Remove the dist folder
+    cmds:
+      - rm -rf ./dist
+
+  install-tools:
+    desc: Composer install of tools
+    sources:
+      - alma/composer.json
+      - alma/composer.lock
+    cmds:
+      - composer install --optimize-autoloader --working-dir=alma
+
+  lint:ci:
+    desc: Run linter within docker-compose for the CI
+    deps:
+      - docker:build
+    cmds:
+      - docker compose run --rm --entrypoint "php" -w /var/www/html/modules prestashop alma/vendor/bin/php-cs-fixer fix --dry-run --diff alma
+
+  lint:
+    desc: Run linter
+    deps:
+      - install-tools
+    cmds:
+      - php alma/vendor/bin/php-cs-fixer fix --dry-run --diff alma
+      # Search for variables in smarty templates that are not escaped
+      # ="{\$[^\s|]*} => Search for string ="{$<variable>}" with variable not followed by the character |
+      # exits with 0 if no match is found
+      # exits with 1 with an error message if a match is found
+      # TODO : Check rule to be clarified with Prestashop, check commented in the meantime
+      # - grep --color -r -P  '="{\$[^\s|]*}' alma/views/templates/* || exit 0 && >&2 echo "Variables in smarty templates should use |escape:'htmlall':'UTF-8'" && exit 1
+
+  lint:fix:
+    desc: Run linter and apply fix
+    deps:
+      - install-tools
+    cmds:
+      - php alma/vendor/bin/php-cs-fixer fix alma
+      # Execute autoindex to add index in all folders
+      - php ./alma/vendor/bin/autoindex prestashop:add:index alma/
+      # Remove blank line at the end of index.php file
+      - ./scripts/remove-blank-line-index.sh
+
+  php-compatibililty:
+    desc: Check compatibility code
+    deps:
+      - install-tools
+    cmds:
+      - php ./alma/vendor/bin/phpcs -p alma --standard=PHPCompatibility -s --runtime-set testVersion 5.6-8.1 --ignore=\*/vendor/\*
+
+  crowdin:
+    internal: true
+    preconditions:
+      - sh: which crowdin
+        msg: Crowdin CLI is required
+
+  crowdin:download:
+    desc: Download translations from Crowdin
+    deps:
+      - crowdin
+    cmds:
+      - crowdin download
+
+  crowdin:upload:
+    desc: Upload translations to Crowdin
+    deps:
+      - crowdin
+    cmds:
+      - crowdin upload sources
