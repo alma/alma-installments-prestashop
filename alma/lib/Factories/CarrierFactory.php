@@ -22,44 +22,25 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
-namespace Alma\PrestaShop\Tests\Unit\Builders;
+namespace Alma\PrestaShop\Factories;
 
-use Alma\PrestaShop\Builders\ShippingDataBuilder;
-use Alma\PrestaShop\Factories\CarrierFactory;
-use Alma\PrestaShop\Helpers\PriceHelper;
-use Alma\PrestaShop\Model\ShippingData;
-use PHPUnit\Framework\TestCase;
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
 
-class ShippingDataBuilderTest extends TestCase
+/**
+ * Class CarrierFactory.
+ */
+class CarrierFactory
 {
     /**
-     * @var ShippingDataBuilder
+     * @param int|null $id Carrier ID
+     * @param int|null $id_lang Language ID
+     *
+     * @return \Carrier
      */
-    protected $shippingDataBuilder;
-
-    public function setUp()
+    public function create($id = null, $id_lang = null)
     {
-        $this->shippingDataBuilder = new ShippingDataBuilder();
-    }
-
-    public function testGetInstance()
-    {
-        $this->assertInstanceOf(ShippingData::class, $this->shippingDataBuilder->getInstance());
-    }
-
-    public function testGetPriceHelper()
-    {
-        $this->assertInstanceOf(PriceHelper::class, $this->shippingDataBuilder->getPriceHelper());
-        $this->assertInstanceOf(PriceHelper::class, $this->shippingDataBuilder->getPriceHelper(
-            $this->createMock(PriceHelper::class)
-        ));
-    }
-
-    public function testGetCarrierFactory()
-    {
-        $this->assertInstanceOf(CarrierFactory::class, $this->shippingDataBuilder->getCarrierFactory());
-        $this->assertInstanceOf(CarrierFactory::class, $this->shippingDataBuilder->getCarrierFactory(
-            $this->createMock(CarrierFactory::class)
-        ));
+        return new \Carrier($id, $id_lang);
     }
 }

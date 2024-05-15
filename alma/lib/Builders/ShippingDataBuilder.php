@@ -45,7 +45,7 @@ class ShippingDataBuilder
     {
         return new ShippingData(
             $this->getPriceHelper(),
-            $this->getCarrierHelper()
+            $this->getCarrierFactory()
         );
     }
 }

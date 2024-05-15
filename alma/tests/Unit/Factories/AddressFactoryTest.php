@@ -39,7 +39,7 @@ class AddressFactoryTest extends TestCase
         $this->addressFactory = new AddressFactory();
     }
 
-    public function testCreateAddress()
+    public function testCreate()
     {
         $this->assertInstanceOf(\Address::class, $this->addressFactory->create(10));
     }

@@ -24,7 +24,7 @@
 
 namespace Alma\PrestaShop\Model;
 
-use Alma\PrestaShop\Helpers\CarrierHelper;
+use Alma\PrestaShop\Factories\CarrierFactory;
 use Alma\PrestaShop\Helpers\PriceHelper;
 
 if (!defined('_PS_VERSION_')) {
@@ -39,18 +39,18 @@ class ShippingData
     protected $priceHelper;
 
     /**
-     * @var CarrierHelper
+     * @var CarrierFactory
      */
-    protected $carrierHelper;
+    protected $carrierFactory;
 
     /**
      * @param PriceHelper $priceHelper
-     * @param CarrierHelper $carrierHelper
+     * @param CarrierFactory $carrierFactory
      */
-    public function __construct($priceHelper, $carrierHelper)
+    public function __construct($priceHelper, $carrierFactory)
     {
         $this->priceHelper = $priceHelper;
-        $this->carrierHelper = $carrierHelper;
+        $this->carrierFactory = $carrierFactory;
     }
 
     /**
@@ -140,7 +140,7 @@ class ShippingData
         foreach ($carrierIds as $carrierId) {
             $carrierInfo = $deliveryOptionList[$addressId][$carriersListKey]['carrier_list'][$carrierId];
             /** @var \Carrier $carrier */
-            $carrier = $this->carrierHelper->createCarrier($carrierId, $idLang);
+            $carrier = $this->carrierFactory->create($carrierId, $idLang);
             if (!$carrier) {
                 continue;
             }
@@ -174,7 +174,7 @@ class ShippingData
         $knownOptions = [];
         foreach ($deliveryOptionList[$addressId] as $carriers) {
             foreach ($carriers['carrier_list'] as $id => $carrierOptionInfo) {
-                $carrierOption = $this->carrierHelper->createCarrier($id, $idLang);
+                $carrierOption = $this->carrierFactory->create($id, $idLang);
                 if (!$carrierOption) {
                     continue;
                 }
