@@ -35,6 +35,8 @@ use Alma\PrestaShop\Factories\ModuleFactory;
 use Alma\PrestaShop\Factories\OrderStateFactory;
 use Alma\PrestaShop\Factories\PhpFactory;
 use Alma\PrestaShop\Helpers\AddressHelper;
+use Alma\PrestaShop\Helpers\Admin\InsuranceHelper;
+use Alma\PrestaShop\Helpers\Admin\TabsHelper;
 use Alma\PrestaShop\Helpers\ApiHelper;
 use Alma\PrestaShop\Helpers\CarrierHelper;
 use Alma\PrestaShop\Helpers\CartHelper;
@@ -67,8 +69,10 @@ use Alma\PrestaShop\Model\CarrierData;
 use Alma\PrestaShop\Model\CartData;
 use Alma\PrestaShop\Model\PaymentData;
 use Alma\PrestaShop\Model\ShippingData;
+use Alma\PrestaShop\Repositories\AlmaInsuranceProductRepository;
 use Alma\PrestaShop\Repositories\OrderRepository;
 use Alma\PrestaShop\Repositories\ProductRepository;
+use Alma\PrestaShop\Services\InsuranceService;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -580,7 +584,11 @@ trait BuilderTrait
 
         return new ApiHelper(
             $this->getModuleFactory(),
-            $this->getClientHelper()
+            $this->getClientHelper(),
+            $this->getToolsHelper(),
+            $this->getInsuranceService(),
+            $this->getConfigurationHelper(),
+            $this->getAdminInsuranceHelper()
         );
     }
 
@@ -803,6 +811,69 @@ trait BuilderTrait
 
         return new CurrencyFactory();
     }
+
+    /**
+     * @param TabsHelper $tabsHelper
+     *
+     * @return TabsHelper
+     */
+    public function getTabsHelper($tabsHelper = null)
+    {
+        if ($tabsHelper) {
+            return $tabsHelper;
+        }
+
+        return new TabsHelper();
+    }
+
+
+    /**
+     * @param AlmaInsuranceProductRepository $almaInsuranceProductRepository
+     *
+     * @return AlmaInsuranceProductRepository
+     */
+    public function getAlmaInsuranceProductRepository($almaInsuranceProductRepository = null)
+    {
+        if ($almaInsuranceProductRepository) {
+            return $almaInsuranceProductRepository;
+        }
+
+        return new AlmaInsuranceProductRepository();
+    }
+
+    /**
+     * @param InsuranceService $insuranceService
+     *
+     * @return InsuranceService
+     */
+    public function getInsuranceService($insuranceService = null)
+    {
+        if ($insuranceService) {
+            return $insuranceService;
+        }
+
+        return new InsuranceService();
+    }
+
+    /**
+     * @param InsuranceHelper $insuranceHelper
+     *
+     * @return InsuranceHelper
+     */
+    public function getAdminInsuranceHelper($insuranceHelper = null)
+    {
+        if ($insuranceHelper) {
+            return $insuranceHelper;
+        }
+
+        return new InsuranceHelper(
+            $this->getModuleFactory(),
+            $this->getTabsHelper(),
+            $this->getConfigurationHelper(),
+            $this->getAlmaInsuranceProductRepository()
+        );
+    }
+
 
     /**
      * @param CartFactory $cartFactory

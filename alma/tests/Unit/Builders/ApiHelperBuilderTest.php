@@ -26,8 +26,12 @@ namespace Alma\PrestaShop\Tests\Unit\Builders;
 
 use Alma\PrestaShop\Builders\ApiHelperBuilder;
 use Alma\PrestaShop\Factories\ModuleFactory;
+use Alma\PrestaShop\Helpers\Admin\InsuranceHelper;
 use Alma\PrestaShop\Helpers\ApiHelper;
 use Alma\PrestaShop\Helpers\ClientHelper;
+use Alma\PrestaShop\Helpers\ConfigurationHelper;
+use Alma\PrestaShop\Helpers\ToolsHelper;
+use Alma\PrestaShop\Services\InsuranceService;
 use PHPUnit\Framework\TestCase;
 
 class ApiHelperBuilderTest extends TestCase
@@ -60,6 +64,37 @@ class ApiHelperBuilderTest extends TestCase
         $this->assertInstanceOf(ClientHelper::class, $this->apiHelperBuilder->getClientHelper());
         $this->assertInstanceOf(ClientHelper::class, $this->apiHelperBuilder->getClientHelper(
             new ClientHelper()
+        ));
+    }
+    public function testGetToolsHelper()
+    {
+        $this->assertInstanceOf(ToolsHelper::class, $this->apiHelperBuilder->getToolsHelper());
+        $this->assertInstanceOf(ToolsHelper::class, $this->apiHelperBuilder->getToolsHelper(
+            \Mockery::mock(ToolsHelper::class)
+        ));
+    }
+
+    public function testGetInsuranceService()
+    {
+        $this->assertInstanceOf(InsuranceService::class, $this->apiHelperBuilder->getInsuranceService());
+        $this->assertInstanceOf(InsuranceService::class, $this->apiHelperBuilder->getInsuranceService(
+            \Mockery::mock(InsuranceService::class)
+        ));
+    }
+
+    public function testGetConfigurationHelper()
+    {
+        $this->assertInstanceOf(ConfigurationHelper::class, $this->apiHelperBuilder->getConfigurationHelper());
+        $this->assertInstanceOf(ConfigurationHelper::class, $this->apiHelperBuilder->getConfigurationHelper(
+            \Mockery::mock(ConfigurationHelper::class)
+        ));
+    }
+
+    public function testGetAdminInsuranceHelper()
+    {
+        $this->assertInstanceOf(InsuranceHelper::class, $this->apiHelperBuilder->getAdminInsuranceHelper());
+        $this->assertInstanceOf(InsuranceHelper::class, $this->apiHelperBuilder->getAdminInsuranceHelper(
+            \Mockery::mock(InsuranceHelper::class)
         ));
     }
 }

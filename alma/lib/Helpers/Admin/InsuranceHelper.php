@@ -25,6 +25,7 @@
 namespace Alma\PrestaShop\Helpers\Admin;
 
 use Alma\PrestaShop\Exceptions\WrongParamsException;
+use Alma\PrestaShop\Factories\ModuleFactory;
 use Alma\PrestaShop\Helpers\ConfigurationHelper;
 use Alma\PrestaShop\Helpers\ConstantsHelper;
 use Alma\PrestaShop\Helpers\SettingsHelper;
@@ -56,25 +57,30 @@ class InsuranceHelper
      * @var ConfigurationHelper
      */
     public $configurationHelper;
+
     /**
-     * @var mixed
+     * @var ModuleFactory
      */
-    private $module;
+    private $moduleFactory;
 
     /**
      * @var AlmaInsuranceProductRepository
      */
     protected $almaInsuranceProductRepository;
 
-    public function __construct($module)
+    /**
+     * @param ModuleFactory $moduleFactory
+     * @param TabsHelper $tabsHelper
+     * @param ConfigurationHelper $configurationHelper
+     * @param AlmaInsuranceProductRepository $almaInsuranceProductRepository
+     */
+
+    public function __construct($moduleFactory, $tabsHelper, $configurationHelper, $almaInsuranceProductRepository)
     {
-        /*
-         * @var \Alma $module
-         */
-        $this->module = $module;
-        $this->tabsHelper = new TabsHelper();
-        $this->configurationHelper = new ConfigurationHelper();
-        $this->almaInsuranceProductRepository = new AlmaInsuranceProductRepository();
+        $this->moduleFactory = $moduleFactory;
+        $this->tabsHelper = $tabsHelper;
+        $this->configurationHelper = $configurationHelper;
+        $this->almaInsuranceProductRepository = $almaInsuranceProductRepository;
     }
 
     /**
@@ -84,19 +90,19 @@ class InsuranceHelper
     {
         return [
             ConstantsHelper::BO_CONTROLLER_INSURANCE_CLASSNAME => [
-                'name' => $this->module->l('Insurance', 'InsuranceHelper'),
+                'name' =>  $this->moduleFactory->l('Insurance', 'InsuranceHelper'),
                 'parent' => ConstantsHelper::ALMA_MODULE_NAME,
                 'position' => 3,
                 'icon' => 'security',
             ],
             ConstantsHelper::BO_CONTROLLER_INSURANCE_CONFIGURATION_CLASSNAME => [
-                'name' => $this->module->l('Configure', 'InsuranceHelper'),
+                'name' =>  $this->moduleFactory->l('Configure', 'InsuranceHelper'),
                 'parent' => ConstantsHelper::BO_CONTROLLER_INSURANCE_CLASSNAME,
                 'position' => 1,
                 'icon' => 'tune',
             ],
             ConstantsHelper::BO_CONTROLLER_INSURANCE_ORDERS_CLASSNAME => [
-                'name' => $this->module->l('Orders', 'InsuranceHelper'),
+                'name' =>  $this->moduleFactory->l('Orders', 'InsuranceHelper'),
                 'parent' => ConstantsHelper::BO_CONTROLLER_INSURANCE_CLASSNAME,
                 'position' => 2,
                 'icon' => 'shopping_basket',
@@ -249,7 +255,7 @@ class InsuranceHelper
 
         if (!empty($diffKeysArray)) {
             header('HTTP/1.1 401 Unauthorized request');
-            throw new WrongParamsException($this->module, $diffKeysArray);
+            throw new WrongParamsException( $this->moduleFactory, $diffKeysArray);
         }
 
         $this->saveBOFormValues($config, $dbFields);
