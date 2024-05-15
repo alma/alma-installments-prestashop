@@ -31,7 +31,6 @@ use Alma\PrestaShop\Exceptions\ActivationException;
 use Alma\PrestaShop\Exceptions\ApiMerchantsException;
 use Alma\PrestaShop\Exceptions\InsuranceInstallException;
 use Alma\PrestaShop\Exceptions\WrongCredentialsException;
-use Alma\PrestaShop\Helpers\ApiHelper;
 use Alma\PrestaShop\Helpers\ClientHelper;
 use Alma\PrestaShop\Helpers\ConfigurationHelper;
 use Alma\PrestaShop\Helpers\ConstantsHelper;
@@ -40,7 +39,6 @@ use Alma\PrestaShop\Helpers\ToolsHelper;
 use Alma\PrestaShop\Services\InsuranceService;
 use Mockery;
 use PHPUnit\Framework\TestCase;
-use ReflectionMethod;
 
 class ApiHelperTest extends TestCase
 {
@@ -61,7 +59,6 @@ class ApiHelperTest extends TestCase
         $this->expectException(WrongCredentialsException::class);
         $apiHelper->getMerchant();
 
-
         $clientHelper = Mockery::mock(ClientHelper::class)->makePartial();
         $clientHelper->shouldReceive('getMerchantsMe')->andThrow(new \Exception());
 
@@ -72,7 +69,6 @@ class ApiHelperTest extends TestCase
 
         $this->expectException(ApiMerchantsException::class);
         $apiHelper->getMerchant();
-
 
         $merchant = new Merchant(['can_create_payments' => false]);
 
@@ -113,7 +109,6 @@ class ApiHelperTest extends TestCase
         $this->assertInstanceOf(Merchant::class, $apiHelper->getMerchant());
     }
 
-
     public function testHandleInsuranceFlag()
     {
         $merchant = new Merchant(['cms_insurance' => 1]);
@@ -132,7 +127,7 @@ class ApiHelperTest extends TestCase
         $apiHelper = $apiHelperBuilder->getInstance();
 
         $reflection = new \ReflectionClass($apiHelper);
-        $method = $reflection->getMethod('handleInsuranceFlag');;
+        $method = $reflection->getMethod('handleInsuranceFlag');
         $method->setAccessible(true);
 
         $this->assertNull($method->invokeArgs($apiHelper, [$merchant]));
@@ -153,11 +148,10 @@ class ApiHelperTest extends TestCase
         $apiHelper = $apiHelperBuilder->getInstance();
 
         $reflection = new \ReflectionClass($apiHelper);
-        $method = $reflection->getMethod('handleInsuranceFlag');;
+        $method = $reflection->getMethod('handleInsuranceFlag');
         $method->setAccessible(true);
 
         $this->assertNull($method->invokeArgs($apiHelper, [$merchant]));
-
     }
 
     public function testSaveFeatureFlag()
@@ -173,14 +167,14 @@ class ApiHelperTest extends TestCase
         $apiHelper = $apiHelperBuilder->getInstance();
 
         $reflection = new \ReflectionClass($apiHelper);
-        $method = $reflection->getMethod('saveFeatureFlag');;
+        $method = $reflection->getMethod('saveFeatureFlag');
         $method->setAccessible(true);
 
         $this->assertEquals('1', $method->invokeArgs($apiHelper, [
             $merchant,
             'cms_insurance',
             ConstantsHelper::ALMA_ALLOW_INSURANCE,
-            ConstantsHelper::ALMA_ACTIVATE_INSURANCE
+            ConstantsHelper::ALMA_ACTIVATE_INSURANCE,
         ]));
 
         $merchant = new Merchant(['cms_insurance' => 0]);
@@ -194,16 +188,17 @@ class ApiHelperTest extends TestCase
         $apiHelper = $apiHelperBuilder->getInstance();
 
         $reflection = new \ReflectionClass($apiHelper);
-        $method = $reflection->getMethod('saveFeatureFlag');;
+        $method = $reflection->getMethod('saveFeatureFlag');
         $method->setAccessible(true);
 
         $this->assertEquals('0', $method->invokeArgs($apiHelper, [
             $merchant,
             'cms_insurance',
             ConstantsHelper::ALMA_ALLOW_INSURANCE,
-            ConstantsHelper::ALMA_ACTIVATE_INSURANCE
+            ConstantsHelper::ALMA_ACTIVATE_INSURANCE,
         ]));
     }
+
     public function testGetPaymentEligibility()
     {
         $paymentData = ['paymentData'];
@@ -226,6 +221,5 @@ class ApiHelperTest extends TestCase
 
         $apiHelper = $apiHelperBuilder->getInstance();
         $this->assertEquals([], $apiHelper->getPaymentEligibility($paymentData));
-
     }
 }

@@ -22,33 +22,35 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
-namespace Alma\PrestaShop\Builders;
+namespace Alma\PrestaShop\Tests\Unit\Builders;
 
-use Alma\PrestaShop\Helpers\EligibilityHelper;
-use Alma\PrestaShop\Traits\BuilderTrait;
+use Alma\PrestaShop\Builders\PaymentHelperBuilder;
+use Alma\PrestaShop\Helpers\PaymentHelper;
+use Alma\PrestaShop\Model\PaymentData;
+use PHPUnit\Framework\TestCase;
 
-if (!defined('_PS_VERSION_')) {
-    exit;
-}
-
-/**
- * EligibilityHelperBuilder.
- */
-class EligibilityHelperBuilder
+class PaymentHelperBuilderTest extends TestCase
 {
-    use BuilderTrait;
-
     /**
-     * @return EligibilityHelper
+     * @var PaymentHelperBuilder
      */
-    public function getInstance()
+    protected $paymentHelperBuilder;
+
+    public function setUp()
     {
-        return new EligibilityHelper(
-            $this->getPriceHelper(),
-            $this->getApiHelper(),
-            $this->getContextFactory(),
-            $this->getFeePlanHelper(),
-            $this->getPaymentHelper()
-        );
+        $this->paymentHelperBuilder = new PaymentHelperBuilder();
+    }
+
+    public function testGetInstance()
+    {
+        $this->assertInstanceOf(PaymentHelper::class, $this->paymentHelperBuilder->getInstance());
+    }
+
+    public function testGetPaymentData()
+    {
+        $this->assertInstanceOf(PaymentData::class, $this->paymentHelperBuilder->getPaymentData());
+        $this->assertInstanceOf(PaymentData::class, $this->paymentHelperBuilder->getPaymentData(
+            \Mockery::mock(PaymentData::class)
+        ));
     }
 }

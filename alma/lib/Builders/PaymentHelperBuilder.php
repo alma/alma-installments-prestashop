@@ -24,7 +24,7 @@
 
 namespace Alma\PrestaShop\Builders;
 
-use Alma\PrestaShop\Helpers\EligibilityHelper;
+use Alma\PrestaShop\Helpers\PaymentHelper;
 use Alma\PrestaShop\Traits\BuilderTrait;
 
 if (!defined('_PS_VERSION_')) {
@@ -32,23 +32,19 @@ if (!defined('_PS_VERSION_')) {
 }
 
 /**
- * EligibilityHelperBuilder.
+ * PaymentHelperBuilder
  */
-class EligibilityHelperBuilder
+class PaymentHelperBuilder
 {
     use BuilderTrait;
 
     /**
-     * @return EligibilityHelper
+     * @return PaymentHelper
      */
     public function getInstance()
     {
-        return new EligibilityHelper(
-            $this->getPriceHelper(),
-            $this->getApiHelper(),
-            $this->getContextFactory(),
-            $this->getFeePlanHelper(),
-            $this->getPaymentHelper()
+        return new PaymentHelper(
+           $this->getPaymentData()
         );
     }
 }

@@ -22,33 +22,34 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
-namespace Alma\PrestaShop\Builders;
+namespace Alma\PrestaShop\Tests\Unit\Helper;
 
-use Alma\PrestaShop\Helpers\EligibilityHelper;
-use Alma\PrestaShop\Traits\BuilderTrait;
+use Alma\PrestaShop\Builders\PaymentHelperBuilder;
+use Alma\PrestaShop\Model\PaymentData;
+use PHPUnit\Framework\TestCase;
 
-if (!defined('_PS_VERSION_')) {
-    exit;
-}
-
-/**
- * EligibilityHelperBuilder.
- */
-class EligibilityHelperBuilder
+class PaymentDataHelperTest extends TestCase
 {
-    use BuilderTrait;
-
-    /**
-     * @return EligibilityHelper
-     */
-    public function getInstance()
+    public function testCheckPaymentData()
     {
-        return new EligibilityHelper(
-            $this->getPriceHelper(),
-            $this->getApiHelper(),
-            $this->getContextFactory(),
-            $this->getFeePlanHelper(),
-            $this->getPaymentHelper()
-        );
+        $paymentData = \Mockery::mock(PaymentData::class);
+        $paymentData->shouldReceive('dataFromCart')->andReturn([]);
+
+        $paymentHelperBuilder = \Mockery::mock(PaymentHelperBuilder::class)->makePartial();
+        $paymentHelperBuilder->shouldReceive('getPaymentData')->andReturn($paymentData);
+
+        $paymentHelper = $paymentHelperBuilder->getInstance();
+
+        $this->assertEquals([], $paymentHelper->checkPaymentData([]));
+
+        $paymentData = \Mockery::mock(PaymentData::class);
+        $paymentData->shouldReceive('dataFromCart')->andReturn(['mon test']);
+
+        $paymentHelperBuilder = \Mockery::mock(PaymentHelperBuilder::class)->makePartial();
+        $paymentHelperBuilder->shouldReceive('getPaymentData')->andReturn($paymentData);
+
+        $paymentHelper = $paymentHelperBuilder->getInstance();
+
+        $this->assertEquals(['mon test'], $paymentHelper->checkPaymentData([]));
     }
 }

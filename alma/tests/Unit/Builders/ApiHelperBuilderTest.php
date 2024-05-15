@@ -66,6 +66,7 @@ class ApiHelperBuilderTest extends TestCase
             new ClientHelper()
         ));
     }
+
     public function testGetToolsHelper()
     {
         $this->assertInstanceOf(ToolsHelper::class, $this->apiHelperBuilder->getToolsHelper());

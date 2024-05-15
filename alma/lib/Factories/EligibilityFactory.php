@@ -22,33 +22,41 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
-namespace Alma\PrestaShop\Builders;
+namespace Alma\PrestaShop\Factories;
 
-use Alma\PrestaShop\Helpers\EligibilityHelper;
-use Alma\PrestaShop\Traits\BuilderTrait;
+use Alma\API\Endpoints\Results\Eligibility;
+use Alma\API\Entities\FeePlan;
 
 if (!defined('_PS_VERSION_')) {
     exit;
 }
 
 /**
- * EligibilityHelperBuilder.
+ * Class EligibilityFactory.
  */
-class EligibilityHelperBuilder
+class EligibilityFactory
 {
-    use BuilderTrait;
-
     /**
-     * @return EligibilityHelper
+     * @param array $data
+     * @param FeePlan $feePlan
+     *
+     * @return Eligibility
      */
-    public function getInstance()
+    public function createEligibility($data, $feePlan, $eligible = false)
     {
-        return new EligibilityHelper(
-            $this->getPriceHelper(),
-            $this->getApiHelper(),
-            $this->getContextFactory(),
-            $this->getFeePlanHelper(),
-            $this->getPaymentHelper()
+        return new Eligibility(
+            [
+                'installments_count' => $data['installmentsCount'],
+                'deferred_days' => $data['deferredDays'],
+                'deferred_months' => $data['deferredMonths'],
+                'eligible' => $eligible,
+                'constraints' => [
+                    'purchase_amount' => [
+                        'minimum' => $feePlan->min,
+                        'maximum' => $feePlan->max,
+                    ],
+                ],
+            ]
         );
     }
 }
