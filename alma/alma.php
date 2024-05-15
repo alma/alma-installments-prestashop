@@ -127,9 +127,9 @@ class Alma extends PaymentModule
      */
     public function handlePSModule()
     {
-        if(
+        if (
             $this->checkCompatibilityPSModule()
-            &&  $this->container === null
+            && $this->container === null
         ) {
             $this->container = new \PrestaShop\ModuleLibServiceContainer\DependencyInjection\ServiceContainer(
                 $this->name,
@@ -145,9 +145,9 @@ class Alma extends PaymentModule
     {
         $versionHelper = new \Alma\PrestaShop\Helpers\ToolsHelper();
 
-        if(
+        if (
             $versionHelper->psVersionCompare('1.6', '<')
-            || ! class_exists(\PrestaShop\ModuleLibServiceContainer\DependencyInjection\ServiceContainer::class)
+            || !class_exists(\PrestaShop\ModuleLibServiceContainer\DependencyInjection\ServiceContainer::class)
         ) {
             return false;
         }
@@ -227,7 +227,7 @@ class Alma extends PaymentModule
      */
     public function install()
     {
-        if($this->checkCompatibilityPSModule()) {
+        if ($this->checkCompatibilityPSModule()) {
             $this->getService('alma.ps_accounts_installer')->install();
         }
 
@@ -527,6 +527,7 @@ class Alma extends PaymentModule
     /**
      * @param $hookName
      * @param $params
+     *
      * @return mixed|null
      */
     private function runHookController($hookName, $params)
@@ -600,7 +601,6 @@ class Alma extends PaymentModule
         } catch (Exception $e) {
             $this->context->controller->errors[] = $e->getMessage();
         }
-
     }
 
     public function hookHeader($params)

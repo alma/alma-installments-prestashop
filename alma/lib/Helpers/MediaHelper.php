@@ -81,7 +81,8 @@ class MediaHelper
      * @param mixed $jsDef
      * @codeCoverageIgnore
      */
-    public function addJSDef($jsDef) {
+    public function addJSDef($jsDef)
+    {
         \Media::addJsDef($jsDef);
     }
 }
