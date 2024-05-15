@@ -46,7 +46,8 @@ class CustomFieldHelperBuilder
         return new CustomFieldsHelper(
             $this->getLanguageHelper(),
             $this->getLocaleHelper(),
-            $this->getSettingsHelper()
+            $this->getSettingsHelper(),
+            $this->getModuleFactory()
         );
     }
 }
