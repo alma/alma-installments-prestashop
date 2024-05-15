@@ -25,6 +25,7 @@
 namespace Alma\PrestaShop\Tests\Unit\Helper;
 
 use Alma\PrestaShop\Builders\PriceHelperBuilder;
+use Alma\PrestaShop\Factories\ContextFactory;
 use Alma\PrestaShop\Helpers\CurrencyHelper;
 use Alma\PrestaShop\Helpers\PriceHelper;
 use Alma\PrestaShop\Helpers\ToolsHelper;
@@ -62,10 +63,12 @@ class PriceHelperTest extends TestCase
         $toolsHelperMock->shouldReceive('displayPrice')->with(false, '10000', '1')->andReturn(false);
 
         $currencyHelperMock = \Mockery::mock(CurrencyHelper::class);
-        $currencyHelperMock->shouldReceive('getCurrencyFromContext')->andReturn('1');
         $currencyHelperMock->shouldReceive('getCurrencyById')->with('1')->andReturn('1');
 
-        $priceHelperMock = \Mockery::mock(PriceHelper::class, [$toolsHelperMock, $currencyHelperMock])->makePartial();
+        $contextFactoryMock = \Mockery::mock(ContextFactory::class);
+        $contextFactoryMock->shouldReceive('getCurrencyFromContext')->andReturn('1');
+
+        $priceHelperMock = \Mockery::mock(PriceHelper::class, [$toolsHelperMock, $currencyHelperMock, $contextFactoryMock])->makePartial();
         $result = $priceHelperMock->formatPriceToCentsByCurrencyId('10000', 1);
 
         $this->assertEquals('100.00€', $result);
@@ -75,10 +78,12 @@ class PriceHelperTest extends TestCase
         $toolsHelperMock->shouldReceive('displayPrice')->with(false, '10000', '1')->andThrow(new \Exception());
 
         $currencyHelperMock = \Mockery::mock(CurrencyHelper::class);
-        $currencyHelperMock->shouldReceive('getCurrencyFromContext')->andReturn('1');
         $currencyHelperMock->shouldReceive('getCurrencyById')->with('1')->andReturn('1');
 
-        $priceHelperMock = \Mockery::mock(PriceHelper::class, [$toolsHelperMock, $currencyHelperMock])->makePartial();
+        $contextFactoryMock = \Mockery::mock(ContextFactory::class);
+        $contextFactoryMock->shouldReceive('getCurrencyFromContext')->andReturn('1');
+
+        $priceHelperMock = \Mockery::mock(PriceHelper::class, [$toolsHelperMock, $currencyHelperMock, $contextFactoryMock])->makePartial();
         $result = $priceHelperMock->formatPriceToCentsByCurrencyId('10000');
 
         $this->assertEquals('100.00€', $result);

@@ -24,11 +24,32 @@
 
 namespace Alma\PrestaShop\Tests\Unit\Helper;
 
+use Alma\PrestaShop\Builders\CurrencyHelperBuilder;
+use Alma\PrestaShop\Factories\ContextFactory;
+use Alma\PrestaShop\Factories\CurrencyFactory;
 use PHPUnit\Framework\TestCase;
 
 class CurrencyHelperTest extends TestCase
 {
     public function testConvertPriceToCenStr()
     {
+        $currencyHelperBuilder = new CurrencyHelperBuilder();
+        $currencyHelper = $currencyHelperBuilder->getInstance();
+
+        $this->assertInstanceOf(\Currency::class, $currencyHelper->getCurrencyById(1));
+
+        $currencyFactory = \Mockery::mock(CurrencyFactory::class)->makePartial();
+        $currencyFactory->shouldReceive('getCurrencyInstance', [1])->andReturn(null);
+
+        $contextFactory = \Mockery::mock(ContextFactory::class)->makePartial();
+        $contextFactory->shouldReceive('getCurrencyFromContext')->andReturn(null);
+
+        $currencyHelperBuilder = \Mockery::mock(CurrencyHelperBuilder::class)->makePartial();
+        $currencyHelperBuilder->shouldReceive('getCurrencyFactory')->andReturn($currencyFactory);
+        $currencyHelperBuilder->shouldReceive('getContextFactory')->andReturn($contextFactory);
+
+        $currencyHelper = $currencyHelperBuilder->getInstance();
+
+        $this->assertNull($currencyHelper->getCurrencyById(1));
     }
 }

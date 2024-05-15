@@ -22,62 +22,25 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
-namespace Alma\PrestaShop\Helpers;
+namespace Alma\PrestaShop\Tests\Unit\Factories;
 
-use Alma\PrestaShop\Factories\ContextFactory;
 use Alma\PrestaShop\Factories\CurrencyFactory;
+use PHPUnit\Framework\TestCase;
 
-if (!defined('_PS_VERSION_')) {
-    exit;
-}
-
-/**
- * Class CurrencyHelper.
- *
- * Use for method date
- */
-class CurrencyHelper
+class CurrencyFactoryTest extends TestCase
 {
-    /**
-     * @var ValidateHelper
-     */
-    protected $validationHelper;
-
-    /**
-     * @var ContextFactory
-     */
-    protected $contextFactory;
-
     /**
      * @var CurrencyFactory
      */
     protected $currencyFactory;
 
-    /**
-     * @param ContextFactory $contextFactory
-     * @param ValidateHelper $validationHelper
-     * @param CurrencyFactory $currencyFactory
-     */
-    public function __construct($contextFactory, $validationHelper, $currencyFactory)
+    public function setUp()
     {
-        $this->contextFactory = $contextFactory;
-        $this->validationHelper = $validationHelper;
-        $this->currencyFactory = $currencyFactory;
+        $this->currencyFactory = new CurrencyFactory();
     }
 
-    /**
-     * @param $idCurrency
-     *
-     * @return \Currency|null
-     */
-    public function getCurrencyById($idCurrency)
+    public function testCreate()
     {
-        $currency = $this->currencyFactory->getCurrencyInstance($idCurrency);
-
-        if (!$this->validationHelper->isLoadedObject($currency)) {
-            $currency = $this->contextFactory->getCurrencyFromContext();
-        }
-
-        return $currency;
+        $this->assertInstanceOf(\Currency::class, $this->currencyFactory->getCurrencyInstance(1));
     }
 }

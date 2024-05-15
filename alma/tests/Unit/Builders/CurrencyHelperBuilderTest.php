@@ -24,52 +24,63 @@
 
 namespace Alma\PrestaShop\Tests\Unit\Builders;
 
-use Alma\PrestaShop\Builders\PriceHelperBuilder;
+use Alma\PrestaShop\Builders\CurrencyHelperBuilder;
 use Alma\PrestaShop\Factories\ContextFactory;
+use Alma\PrestaShop\Factories\CurrencyFactory;
 use Alma\PrestaShop\Helpers\CurrencyHelper;
 use Alma\PrestaShop\Helpers\PriceHelper;
-use Alma\PrestaShop\Helpers\ToolsHelper;
+use Alma\PrestaShop\Helpers\ValidateHelper;
 use PHPUnit\Framework\TestCase;
 
-class PriceHelperBuilderTest extends TestCase
+class CurrencyHelperBuilderTest extends TestCase
 {
     /**
-     * @var PriceHelperBuilder
+     * @var CurrencyHelperBuilder
      */
-    protected $priceHelperBuilder
-    ;
+    protected $currencyHelperBuilder;
+
+    /**
+     * @var PriceHelper
+     */
+    protected $priceHelper;
+
+    /**
+     * @var ContextFactory
+     */
+    protected $contextFactory;
 
     public function setUp()
     {
-        $this->priceHelperBuilder = new PriceHelperBuilder();
+        $this->currencyHelperBuilder = new CurrencyHelperBuilder();
+        $this->contextFactory = new ContextFactory();
     }
 
     public function testGetInstance()
     {
-        $this->assertInstanceOf(PriceHelper::class, $this->priceHelperBuilder->getInstance());
-    }
-
-    public function testGetToolsHelper()
-    {
-        $this->assertInstanceOf(ToolsHelper::class, $this->priceHelperBuilder->getToolsHelper());
-        $this->assertInstanceOf(ToolsHelper::class, $this->priceHelperBuilder->getToolsHelper(
-            new ToolsHelper()
-        ));
-    }
-
-    public function testGetCurrencyHelper()
-    {
-        $this->assertInstanceOf(CurrencyHelper::class, $this->priceHelperBuilder->getCurrencyHelper());
-        $this->assertInstanceOf(CurrencyHelper::class, $this->priceHelperBuilder->getCurrencyHelper(
-            \Mockery::mock(CurrencyHelper::class)
-        ));
+        $this->assertInstanceOf(CurrencyHelper::class, $this->currencyHelperBuilder->getInstance());
     }
 
     public function testGetContextFactory()
     {
-        $this->assertInstanceOf(ContextFactory::class, $this->priceHelperBuilder->getContextFactory());
-        $this->assertInstanceOf(ContextFactory::class, $this->priceHelperBuilder->getContextFactory(
-            new ContextFactory()
+        $this->assertInstanceOf(ContextFactory::class, $this->currencyHelperBuilder->getContextFactory());
+        $this->assertInstanceOf(ContextFactory::class, $this->currencyHelperBuilder->getContextFactory(
+            $this->contextFactory
+        ));
+    }
+
+    public function testGetValidateHelper()
+    {
+        $this->assertInstanceOf(ValidateHelper::class, $this->currencyHelperBuilder->getValidateHelper());
+        $this->assertInstanceOf(ValidateHelper::class, $this->currencyHelperBuilder->getValidateHelper(
+            new ValidateHelper()
+        ));
+    }
+
+    public function testGetCurrencyFactory()
+    {
+        $this->assertInstanceOf(CurrencyFactory::class, $this->currencyHelperBuilder->getCurrencyFactory());
+        $this->assertInstanceOf(CurrencyFactory::class, $this->currencyHelperBuilder->getCurrencyFactory(
+            new CurrencyFactory()
         ));
     }
 }
