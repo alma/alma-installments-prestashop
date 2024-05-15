@@ -25,6 +25,7 @@
 namespace Alma\PrestaShop\Tests\Unit\Builders;
 
 use Alma\PrestaShop\Builders\PriceHelperBuilder;
+use Alma\PrestaShop\Factories\ContextFactory;
 use Alma\PrestaShop\Helpers\CurrencyHelper;
 use Alma\PrestaShop\Helpers\PriceHelper;
 use Alma\PrestaShop\Helpers\ToolsHelper;
@@ -60,7 +61,15 @@ class PriceHelperBuilderTest extends TestCase
     {
         $this->assertInstanceOf(CurrencyHelper::class, $this->priceHelperBuilder->getCurrencyHelper());
         $this->assertInstanceOf(CurrencyHelper::class, $this->priceHelperBuilder->getCurrencyHelper(
-            new CurrencyHelper()
+            \Mockery::mock(CurrencyHelper::class)
+        ));
+    }
+
+    public function testGetContextFactory()
+    {
+        $this->assertInstanceOf(ContextFactory::class, $this->priceHelperBuilder->getContextFactory());
+        $this->assertInstanceOf(ContextFactory::class, $this->priceHelperBuilder->getContextFactory(
+            new ContextFactory()
         ));
     }
 }

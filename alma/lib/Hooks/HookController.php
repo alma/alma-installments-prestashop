@@ -40,7 +40,6 @@ abstract class HookController
      * HookController constructor.
      *
      * @param $module Alma
-     * @codeCoverageIgnore
      */
     public function __construct($module)
     {

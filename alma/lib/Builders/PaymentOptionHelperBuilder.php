@@ -50,7 +50,8 @@ class PaymentOptionHelperBuilder
             $this->getCustomFieldsHelper(),
             $this->getMediaHelper(),
             $this->getConfigurationHelper(),
-            $this->getPaymentOptionTemplateHelper()
+            $this->getPaymentOptionTemplateHelper(),
+            $this->getMediaFactory()
         );
     }
 }

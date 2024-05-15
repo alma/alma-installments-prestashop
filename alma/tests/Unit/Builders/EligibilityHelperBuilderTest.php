@@ -30,7 +30,6 @@ use Alma\PrestaShop\Helpers\ApiHelper;
 use Alma\PrestaShop\Helpers\CarrierHelper;
 use Alma\PrestaShop\Helpers\ClientHelper;
 use Alma\PrestaShop\Helpers\ConfigurationHelper;
-use Alma\PrestaShop\Helpers\CurrencyHelper;
 use Alma\PrestaShop\Helpers\EligibilityHelper;
 use Alma\PrestaShop\Helpers\LanguageHelper;
 use Alma\PrestaShop\Helpers\LocaleHelper;
@@ -91,10 +90,8 @@ class EligibilityHelperBuilderTest extends TestCase
             new ShopHelper(),
             new ConfigurationHelper()
         );
-        $this->priceHelper = new PriceHelper(
-            $this->toolsHelper,
-            new CurrencyHelper()
-        );
+        $this->priceHelper = \Mockery::mock(PriceHelper::class);
+
         $this->carrierHelper = new CarrierHelper(
             $this->contextFactory,
             new CarrierData()

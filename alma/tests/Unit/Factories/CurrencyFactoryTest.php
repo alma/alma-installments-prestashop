@@ -22,13 +22,25 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
-namespace Alma\PrestaShop\Tests\Unit\Helper;
+namespace Alma\PrestaShop\Tests\Unit\Factories;
 
+use Alma\PrestaShop\Factories\CurrencyFactory;
 use PHPUnit\Framework\TestCase;
 
-class AdressHelperTest extends TestCase
+class CurrencyFactoryTest extends TestCase
 {
-    public function testGetAdressFromCustomer()
+    /**
+     * @var CurrencyFactory
+     */
+    protected $currencyFactory;
+
+    public function setUp()
     {
+        $this->currencyFactory = new CurrencyFactory();
+    }
+
+    public function testCreate()
+    {
+        $this->assertInstanceOf(\Currency::class, $this->currencyFactory->getCurrencyInstance(1));
     }
 }

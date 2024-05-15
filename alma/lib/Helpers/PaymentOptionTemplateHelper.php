@@ -76,8 +76,6 @@ class PaymentOptionTemplateHelper
      * @param TranslationHelper $translationHelper
      * @param PriceHelper $priceHelper
      * @param DateHelper $dateHelper
-     *
-     * @codeCoverageIgnore
      */
     public function __construct(
         $contextFactory,

@@ -26,6 +26,7 @@ namespace Alma\PrestaShop\Tests\Unit\Builders;
 
 use Alma\PrestaShop\Builders\CustomerHelperBuilder;
 use Alma\PrestaShop\Factories\ContextFactory;
+use Alma\PrestaShop\Factories\CustomerFactory;
 use Alma\PrestaShop\Helpers\CustomerHelper;
 use Alma\PrestaShop\Helpers\OrderHelper;
 use Alma\PrestaShop\Helpers\ValidateHelper;
@@ -70,6 +71,14 @@ class CustomerHelperBuilderTest extends TestCase
         $this->assertInstanceOf(ValidateHelper::class, $this->customerHelperBuilder->getValidateHelper());
         $this->assertInstanceOf(ValidateHelper::class, $this->customerHelperBuilder->getValidateHelper(
             new ValidateHelper()
+        ));
+    }
+
+    public function testGetCustomerFactory()
+    {
+        $this->assertInstanceOf(CustomerFactory::class, $this->customerHelperBuilder->getCustomerFactory());
+        $this->assertInstanceOf(CustomerFactory::class, $this->customerHelperBuilder->getCustomerFactory(
+            new CustomerFactory()
         ));
     }
 }

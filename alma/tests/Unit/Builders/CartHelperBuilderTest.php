@@ -25,10 +25,11 @@
 namespace Alma\PrestaShop\Tests\Unit\Builders;
 
 use Alma\PrestaShop\Builders\CartHelperBuilder;
+use Alma\PrestaShop\Factories\CartFactory;
 use Alma\PrestaShop\Factories\ContextFactory;
+use Alma\PrestaShop\Factories\OrderStateFactory;
 use Alma\PrestaShop\Helpers\CarrierHelper;
 use Alma\PrestaShop\Helpers\CartHelper;
-use Alma\PrestaShop\Helpers\CurrencyHelper;
 use Alma\PrestaShop\Helpers\OrderStateHelper;
 use Alma\PrestaShop\Helpers\PriceHelper;
 use Alma\PrestaShop\Helpers\ToolsHelper;
@@ -57,10 +58,7 @@ class CartHelperBuilderTest extends TestCase
     {
         $this->cartHelperBuilder = new CartHelperBuilder();
         $this->contextFactory = new ContextFactory();
-        $this->priceHelper = new PriceHelper(
-            new ToolsHelper(),
-            new CurrencyHelper()
-        );
+        $this->priceHelper = \Mockery::mock(PriceHelper::class);
     }
 
     public function testGetInstance()
@@ -117,7 +115,7 @@ class CartHelperBuilderTest extends TestCase
     {
         $this->assertInstanceOf(OrderStateHelper::class, $this->cartHelperBuilder->getOrderStateHelper());
         $this->assertInstanceOf(OrderStateHelper::class, $this->cartHelperBuilder->getOrderStateHelper(
-            new OrderStateHelper($this->contextFactory)
+            new OrderStateHelper($this->contextFactory, new OrderStateFactory())
         ));
     }
 
@@ -126,6 +124,14 @@ class CartHelperBuilderTest extends TestCase
         $this->assertInstanceOf(CarrierHelper::class, $this->cartHelperBuilder->getCarrierHelper());
         $this->assertInstanceOf(CarrierHelper::class, $this->cartHelperBuilder->getCarrierHelper(
             $this->createMock(CarrierHelper::class)
+        ));
+    }
+
+    public function testGetCartFactory()
+    {
+        $this->assertInstanceOf(CartFactory::class, $this->cartHelperBuilder->getCartFactory());
+        $this->assertInstanceOf(CartFactory::class, $this->cartHelperBuilder->getCartFactory(
+            $this->createMock(CartFactory::class)
         ));
     }
 }

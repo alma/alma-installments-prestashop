@@ -25,6 +25,7 @@
 namespace Alma\PrestaShop\Tests\Unit\Builders;
 
 use Alma\PrestaShop\Builders\PaymentServiceBuilder;
+use Alma\PrestaShop\Factories\AddressFactory;
 use Alma\PrestaShop\Factories\ContextFactory;
 use Alma\PrestaShop\Factories\ModuleFactory;
 use Alma\PrestaShop\Helpers\CarrierHelper;
@@ -32,7 +33,6 @@ use Alma\PrestaShop\Helpers\CartHelper;
 use Alma\PrestaShop\Helpers\ClientHelper;
 use Alma\PrestaShop\Helpers\ConfigurationHelper;
 use Alma\PrestaShop\Helpers\ContextHelper;
-use Alma\PrestaShop\Helpers\CurrencyHelper;
 use Alma\PrestaShop\Helpers\CustomFieldsHelper;
 use Alma\PrestaShop\Helpers\DateHelper;
 use Alma\PrestaShop\Helpers\EligibilityHelper;
@@ -133,10 +133,7 @@ class PaymentServiceBuilderTest extends TestCase
         $this->localeHelper = new LocaleHelper(
             $this->languageHelper
         );
-        $this->priceHelper = new PriceHelper(
-            $this->toolsHelper,
-            new CurrencyHelper()
-        );
+        $this->priceHelper = \Mockery::mock(PriceHelper::class);
 
         $this->settingsHelper = new SettingsHelper(
             new ShopHelper(),
@@ -155,11 +152,7 @@ class PaymentServiceBuilderTest extends TestCase
             new CarrierData()
         );
 
-        $this->customFieldsHelper = new CustomFieldsHelper(
-            $this->languageHelper,
-            $this->localeHelper,
-            $this->settingsHelper
-        );
+        $this->customFieldsHelper = \Mockery::mock(CustomFieldsHelper::class);
     }
 
     public function testGetInstance()
@@ -262,7 +255,15 @@ class PaymentServiceBuilderTest extends TestCase
     {
         $this->assertInstanceOf(MediaHelper::class, $this->paymentServiceBuilder->getMediaHelper());
         $this->assertInstanceOf(MediaHelper::class, $this->paymentServiceBuilder->getMediaHelper(
-            new MediaHelper()
+            $this->createMock(MediaHelper::class)
+        ));
+    }
+
+    public function testGetAddressFactory()
+    {
+        $this->assertInstanceOf(AddressFactory::class, $this->paymentServiceBuilder->getAddressFactory());
+        $this->assertInstanceOf(AddressFactory::class, $this->paymentServiceBuilder->getAddressFactory(
+            new AddressFactory()
         ));
     }
 

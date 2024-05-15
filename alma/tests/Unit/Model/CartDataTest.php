@@ -25,6 +25,7 @@
 namespace Alma\PrestaShop\Tests\Unit\Model;
 
 use Alma\PrestaShop\Builders\CartDataBuilder;
+use Alma\PrestaShop\Factories\CurrencyFactory;
 use Alma\PrestaShop\Helpers\ConfigurationHelper;
 use Alma\PrestaShop\Helpers\CurrencyHelper;
 use Alma\PrestaShop\Helpers\PriceHelper;
@@ -236,7 +237,7 @@ class CartDataTest extends TestCase
         $productHelperMock = \Mockery::mock(ProductHelper::class);
         $productHelperMock->shouldReceive('getProductCategories')->with(1)->andReturn(['cate1', 'cate2', 'cateexclue']);
 
-        $priceHelperMock = \Mockery::mock(PriceHelper::class, [new ToolsHelper(), new CurrencyHelper()]);
+        $priceHelperMock = \Mockery::mock(PriceHelper::class, [new ToolsHelper(), \Mockery::mock(CurrencyHelper::class), new CurrencyFactory()]);
         $productRepositoryMock = \Mockery::mock(ProductRepository::class);
 
         $cartDataBuilder = \Mockery::mock(CartDataBuilder::class)->makePartial();

@@ -24,6 +24,7 @@
 
 namespace Alma\PrestaShop\Exceptions;
 
+use Alma\PrestaShop\Factories\ModuleFactory;
 use Alma\PrestaShop\Helpers\LinkHelper;
 use Alma\PrestaShop\Helpers\SettingsHelper;
 
@@ -34,20 +35,18 @@ if (!defined('_PS_VERSION_')) {
 class ActivationException extends AlmaException
 {
     /**
-     * Constructor.
-     *
-     * @param object $module
+     * @param ModuleFactory$moduleFactory
      */
-    public function __construct($module)
+    public function __construct($moduleFactory)
     {
-        $message = $module->l('Your Alma account needs to be activated before you can use Alma on your shop.', 'ActivationException')
+        $message = $moduleFactory->l('Your Alma account needs to be activated before you can use Alma on your shop.', 'ActivationException')
         . sprintf(
-            $module->l('Go to your %1$sAlma dashboard%2$s to activate your account.', 'ActivationException'),
+                $moduleFactory->l('Go to your %1$sAlma dashboard%2$s to activate your account.', 'ActivationException'),
             '<a href="' . LinkHelper::getAlmaDashboardUrl(SettingsHelper::getActiveMode(), 'settings') . '" target="_blank">',
             '</a>'
         )
         . sprintf(
-            $module->l('%1$sRefresh%2$s the page when ready.', 'ActivationException'),
+                $moduleFactory->l('%1$sRefresh%2$s the page when ready.', 'ActivationException'),
             '<a href="#">',
             '</a>'
         );
