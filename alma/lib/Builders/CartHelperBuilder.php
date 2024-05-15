@@ -50,7 +50,9 @@ class CartHelperBuilder
             $this->getCartData(),
             $this->getOrderRepository(),
             $this->getOrderStateHelper(),
-            $this->getCarrierHelper()
+            $this->getCarrierHelper(),
+            $this->getCartFactory(),
+            $this->getOrderHelper()
         );
     }
 }

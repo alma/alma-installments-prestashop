@@ -25,6 +25,7 @@
 namespace Alma\PrestaShop\Helpers;
 
 use Alma\PrestaShop\Factories\ContextFactory;
+use Alma\PrestaShop\Factories\CustomerFactory;
 use Alma\PrestaShop\Logger;
 
 if (!defined('_PS_VERSION_')) {
@@ -34,9 +35,9 @@ if (!defined('_PS_VERSION_')) {
 class CustomerHelper
 {
     /**
-     * @var \Context
+     * @var ContextFactory
      */
-    protected $context;
+    protected $contextFactory;
 
     /**
      * @var OrderHelper
@@ -49,27 +50,22 @@ class CustomerHelper
     protected $validateHelper;
 
     /**
+     * @var CustomerFactory
+     */
+    protected $customerFactory;
+
+    /**
      * @param ContextFactory $contextFactory
      * @param OrderHelper $orderHelper
      * @param ValidateHelper $validateHelper
-     *
-     * @codeCoverageIgnore
+     * @param CustomerFactory $customerFactory
      */
-    public function __construct($contextFactory, $orderHelper, $validateHelper)
+    public function __construct($contextFactory, $orderHelper, $validateHelper, $customerFactory)
     {
-        $this->context = $contextFactory->getContext();
+        $this->contextFactory = $contextFactory;
         $this->orderHelper = $orderHelper;
         $this->validateHelper = $validateHelper;
-    }
-
-    /**
-     * @param $id
-     *
-     * @return \Customer
-     */
-    public function createCustomer($id)
-    {
-        return new \Customer($id);
+        $this->customerFactory = $customerFactory;
     }
 
     /**
@@ -77,14 +73,16 @@ class CustomerHelper
      */
     public function getCustomer()
     {
-        if ($this->context->cart->id_customer) {
-            $customer = $this->createCustomer($this->context->cart->id_customer);
+        $customer = null;
+
+        if ($this->contextFactory->getContextCartCustomerId()) {
+            $customer = $this->customerFactory->create($this->contextFactory->getContextCartCustomerId());
         }
 
         $customer = $this->validateCustomer($customer);
 
         if (!$customer) {
-            $customer = $this->context->customer;
+            $customer = $this->contextFactory->getContextCustomer();
         }
 
         return $this->validateCustomer($customer);
@@ -101,8 +99,8 @@ class CustomerHelper
             Logger::instance()->error(
                 sprintf(
                     '[Alma] Error loading Customer %s from Cart %s',
-                    $this->context->cart->id_customer,
-                    $this->context->cart->id
+                    $this->contextFactory->getContextCartCustomerId(),
+                    $this->contextFactory->getContextCartId()
                 )
             );
 

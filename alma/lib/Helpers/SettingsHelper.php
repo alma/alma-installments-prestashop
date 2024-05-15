@@ -59,8 +59,6 @@ class SettingsHelper
     protected $configurationHelper;
 
     /**
-     * @codeCoverageIgnore
-     *
      * @param ShopHelper $shopHelper
      * @param ConfigurationHelper $configurationHelper
      */

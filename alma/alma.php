@@ -71,6 +71,16 @@ class Alma extends PaymentModule
      */
     protected $container;
 
+    /**
+     * @var \Alma\PrestaShop\Helpers\MediaHelper
+     */
+    protected $mediaHelper;
+
+    /**
+     * @var \Alma\PrestaShop\Helpers\ToolsHelper
+     */
+    protected $toolsHelper;
+
     public function __construct()
     {
         $this->name = \Alma\PrestaShop\Helpers\ConstantsHelper::ALMA_MODULE_NAME;
@@ -118,6 +128,9 @@ class Alma extends PaymentModule
 
         $this->hook = new \Alma\PrestaShop\Helpers\HookHelper();
         $this->tabsHelper = new \Alma\PrestaShop\Helpers\Admin\TabsHelper();
+        $mediaHelperBuilder = new \Alma\PrestaShop\Builders\MediaHelperBuilder();
+        $this->mediaHelper = $mediaHelperBuilder->getInstance();
+        $this->toolsHelper = new \Alma\PrestaShop\Helpers\ToolsHelper();
 
         $this->handlePSModule();
     }
@@ -143,10 +156,8 @@ class Alma extends PaymentModule
      */
     public function checkCompatibilityPSModule()
     {
-        $versionHelper = new \Alma\PrestaShop\Helpers\ToolsHelper();
-
         if (
-            $versionHelper->psVersionCompare('1.6', '<')
+            $this->toolsHelper->psVersionCompare('1.6', '<')
             || !class_exists(\PrestaShop\ModuleLibServiceContainer\DependencyInjection\ServiceContainer::class)
         ) {
             return false;
@@ -600,9 +611,7 @@ class Alma extends PaymentModule
         }
 
         try {
-            $mediaHelper = new \Alma\PrestaShop\Helpers\MediaHelper();
-
-            $mediaHelper->addJsDef([
+            $this->mediaHelper->addJsDef([
                 'contextPsAccounts' => $accountsFacade->getPsAccountsPresenter()
                     ->present($this->name),
             ]);

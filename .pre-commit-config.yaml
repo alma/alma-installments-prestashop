@@ -11,13 +11,6 @@ repos:
 
   - repo: local
     hooks:
-      - id: coding-standard-fixer
-        name: PHP and Prestashop coding standards Fixer test
-        language: system
-        pass_filenames: false
-        entry:  task lint:fix
-        stages: [commit]
-
       - id: coding-standard
         name: Check the PHP and Prestashop coding standards
         language: system

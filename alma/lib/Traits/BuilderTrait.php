@@ -24,9 +24,20 @@
 
 namespace Alma\PrestaShop\Traits;
 
+use Alma\PrestaShop\Factories\AddressFactory;
+use Alma\PrestaShop\Factories\CarrierFactory;
+use Alma\PrestaShop\Factories\CartFactory;
 use Alma\PrestaShop\Factories\ContextFactory;
+use Alma\PrestaShop\Factories\CurrencyFactory;
+use Alma\PrestaShop\Factories\CustomerFactory;
+use Alma\PrestaShop\Factories\EligibilityFactory;
+use Alma\PrestaShop\Factories\MediaFactory;
 use Alma\PrestaShop\Factories\ModuleFactory;
+use Alma\PrestaShop\Factories\OrderStateFactory;
+use Alma\PrestaShop\Factories\PhpFactory;
 use Alma\PrestaShop\Helpers\AddressHelper;
+use Alma\PrestaShop\Helpers\Admin\InsuranceHelper;
+use Alma\PrestaShop\Helpers\Admin\TabsHelper;
 use Alma\PrestaShop\Helpers\ApiHelper;
 use Alma\PrestaShop\Helpers\CarrierHelper;
 use Alma\PrestaShop\Helpers\CartHelper;
@@ -39,11 +50,13 @@ use Alma\PrestaShop\Helpers\CustomerHelper;
 use Alma\PrestaShop\Helpers\CustomFieldsHelper;
 use Alma\PrestaShop\Helpers\DateHelper;
 use Alma\PrestaShop\Helpers\EligibilityHelper;
+use Alma\PrestaShop\Helpers\FeePlanHelper;
 use Alma\PrestaShop\Helpers\LanguageHelper;
 use Alma\PrestaShop\Helpers\LocaleHelper;
 use Alma\PrestaShop\Helpers\MediaHelper;
 use Alma\PrestaShop\Helpers\OrderHelper;
 use Alma\PrestaShop\Helpers\OrderStateHelper;
+use Alma\PrestaShop\Helpers\PaymentHelper;
 use Alma\PrestaShop\Helpers\PaymentOptionHelper;
 use Alma\PrestaShop\Helpers\PaymentOptionTemplateHelper;
 use Alma\PrestaShop\Helpers\PlanHelper;
@@ -59,8 +72,10 @@ use Alma\PrestaShop\Model\CarrierData;
 use Alma\PrestaShop\Model\CartData;
 use Alma\PrestaShop\Model\PaymentData;
 use Alma\PrestaShop\Model\ShippingData;
+use Alma\PrestaShop\Repositories\AlmaInsuranceProductRepository;
 use Alma\PrestaShop\Repositories\OrderRepository;
 use Alma\PrestaShop\Repositories\ProductRepository;
+use Alma\PrestaShop\Services\InsuranceService;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -138,7 +153,11 @@ trait BuilderTrait
             return $currencyHelper;
         }
 
-        return new CurrencyHelper();
+        return new CurrencyHelper(
+            $this->getContextFactory(),
+            $this->getValidateHelper(),
+            $this->getCurrencyFactory()
+        );
     }
 
     /**
@@ -201,7 +220,8 @@ trait BuilderTrait
 
         return new PriceHelper(
             $this->getToolsHelper(),
-            $this->getCurrencyHelper()
+            $this->getCurrencyHelper(),
+            $this->getContextFactory()
         );
     }
 
@@ -275,7 +295,8 @@ trait BuilderTrait
         return new CustomFieldsHelper(
             $this->getLanguageHelper(),
             $this->getLocaleHelper(),
-            $this->getSettingsHelper()
+            $this->getSettingsHelper(),
+            $this->getModuleFactory()
         );
     }
 
@@ -354,7 +375,8 @@ trait BuilderTrait
         }
 
         return new OrderStateHelper(
-            $this->getContextFactory()
+            $this->getContextFactory(),
+            $this->getOrderStateFactory()
         );
     }
 
@@ -416,7 +438,7 @@ trait BuilderTrait
 
         return new ShippingData(
             $this->getPriceHelper(),
-            $this->getCarrierHelper()
+            $this->getCarrierFactory()
         );
     }
 
@@ -432,7 +454,8 @@ trait BuilderTrait
         }
 
         return new AddressHelper(
-            $this->getToolsHelper()
+            $this->getToolsHelper(),
+            $this->getContextFactory()
         );
     }
 
@@ -478,7 +501,8 @@ trait BuilderTrait
         return new CustomerHelper(
             $this->getContextFactory(),
             $this->getOrderHelper(),
-            $this->getValidateHelper()
+            $this->getValidateHelper(),
+            $this->getCustomerFactory()
         );
     }
 
@@ -500,7 +524,9 @@ trait BuilderTrait
             $this->getCartData(),
             $this->getOrderRepository(),
             $this->getOrderStateHelper(),
-            $this->getCarrierHelper()
+            $this->getCarrierHelper(),
+            $this->getCartFactory(),
+            $this->getOrderHelper()
         );
     }
 
@@ -543,7 +569,8 @@ trait BuilderTrait
             $this->getStateHelper(),
             $this->getCustomerHelper(),
             $this->getCartHelper(),
-            $this->getCarrierHelper()
+            $this->getCarrierHelper(),
+            $this->getAddressFactory()
         );
     }
 
@@ -560,7 +587,11 @@ trait BuilderTrait
 
         return new ApiHelper(
             $this->getModuleFactory(),
-            $this->getClientHelper()
+            $this->getClientHelper(),
+            $this->getToolsHelper(),
+            $this->getInsuranceService(),
+            $this->getConfigurationHelper(),
+            $this->getAdminInsuranceHelper()
         );
     }
 
@@ -575,7 +606,11 @@ trait BuilderTrait
             return $mediaHelper;
         }
 
-        return new MediaHelper();
+        return new MediaHelper(
+            $this->getMediaFactory(),
+            $this->getModuleFactory(),
+            $this->getPhpFactory()
+        );
     }
 
     /**
@@ -612,12 +647,11 @@ trait BuilderTrait
         }
 
         return new EligibilityHelper(
-            $this->getPaymentData(),
             $this->getPriceHelper(),
-            $this->getClientHelper(),
-            $this->getSettingsHelper(),
             $this->getApiHelper(),
-            $this->getContextFactory()
+            $this->getContextFactory(),
+            $this->getFeePlanHelper(),
+            $this->getPaymentHelper()
         );
     }
 
@@ -677,7 +711,229 @@ trait BuilderTrait
             $this->getCustomFieldsHelper(),
             $this->getMediaHelper(),
             $this->getConfigurationHelper(),
-            $this->getPaymentOptionTemplateHelper()
+            $this->getPaymentOptionTemplateHelper(),
+            $this->getMediaFactory()
         );
+    }
+
+    /**
+     * @param AddressFactory $addressFactory
+     *
+     * @return AddressFactory
+     */
+    public function getAddressFactory($addressFactory = null)
+    {
+        if ($addressFactory) {
+            return $addressFactory;
+        }
+
+        return new AddressFactory();
+    }
+
+    /**
+     * @param OrderStateFactory $orderStateFactory
+     *
+     * @return OrderStateFactory
+     */
+    public function getOrderStateFactory($orderStateFactory = null)
+    {
+        if ($orderStateFactory) {
+            return $orderStateFactory;
+        }
+
+        return new OrderStateFactory();
+    }
+
+    /**
+     * @param MediaFactory $mediaFactory
+     *
+     * @return MediaFactory
+     */
+    public function getMediaFactory($mediaFactory = null)
+    {
+        if ($mediaFactory) {
+            return $mediaFactory;
+        }
+
+        return new MediaFactory();
+    }
+
+    /**
+     * @param PhpFactory $phpFactory
+     *
+     * @return PhpFactory
+     */
+    public function getPhpFactory($phpFactory = null)
+    {
+        if ($phpFactory) {
+            return $phpFactory;
+        }
+
+        return new PhpFactory();
+    }
+
+    /**
+     * @param CarrierFactory $carrierFactory
+     *
+     * @return CarrierFactory
+     */
+    public function getCarrierFactory($carrierFactory = null)
+    {
+        if ($carrierFactory) {
+            return $carrierFactory;
+        }
+
+        return new CarrierFactory();
+    }
+
+    /**
+     * @param CustomerFactory $customerFactory
+     *
+     * @return CustomerFactory
+     */
+    public function getCustomerFactory($customerFactory = null)
+    {
+        if ($customerFactory) {
+            return $customerFactory;
+        }
+
+        return new CustomerFactory();
+    }
+
+    /**
+     * @param CurrencyFactory $currencyFactory
+     *
+     * @return CurrencyFactory
+     */
+    public function getCurrencyFactory($currencyFactory = null)
+    {
+        if ($currencyFactory) {
+            return $currencyFactory;
+        }
+
+        return new CurrencyFactory();
+    }
+
+    /**
+     * @param TabsHelper $tabsHelper
+     *
+     * @return TabsHelper
+     */
+    public function getTabsHelper($tabsHelper = null)
+    {
+        if ($tabsHelper) {
+            return $tabsHelper;
+        }
+
+        return new TabsHelper();
+    }
+
+    /**
+     * @param AlmaInsuranceProductRepository $almaInsuranceProductRepository
+     *
+     * @return AlmaInsuranceProductRepository
+     */
+    public function getAlmaInsuranceProductRepository($almaInsuranceProductRepository = null)
+    {
+        if ($almaInsuranceProductRepository) {
+            return $almaInsuranceProductRepository;
+        }
+
+        return new AlmaInsuranceProductRepository();
+    }
+
+    /**
+     * @param InsuranceService $insuranceService
+     *
+     * @return InsuranceService
+     */
+    public function getInsuranceService($insuranceService = null)
+    {
+        if ($insuranceService) {
+            return $insuranceService;
+        }
+
+        return new InsuranceService();
+    }
+
+    /**
+     * @param InsuranceHelper $insuranceHelper
+     *
+     * @return InsuranceHelper
+     */
+    public function getAdminInsuranceHelper($insuranceHelper = null)
+    {
+        if ($insuranceHelper) {
+            return $insuranceHelper;
+        }
+
+        return new InsuranceHelper(
+            $this->getModuleFactory(),
+            $this->getTabsHelper(),
+            $this->getConfigurationHelper(),
+            $this->getAlmaInsuranceProductRepository()
+        );
+    }
+
+    /**
+     * @param CartFactory $cartFactory
+     *
+     * @return CartFactory
+     */
+    public function getCartFactory($cartFactory = null)
+    {
+        if ($cartFactory) {
+            return $cartFactory;
+        }
+
+        return new CartFactory();
+    }
+
+    /**
+     * @param EligibilityFactory $eligibilityFactory
+     *
+     * @return EligibilityFactory
+     */
+    public function getEligibilityFactory($eligibilityFactory = null)
+    {
+        if ($eligibilityFactory) {
+            return $eligibilityFactory;
+        }
+
+        return new EligibilityFactory();
+    }
+
+    /**
+     * @param FeePlanHelper $feePlanHelper
+     *
+     * @return FeePlanHelper
+     */
+    public function getFeePlanHelper($feePlanHelper = null)
+    {
+        if ($feePlanHelper) {
+            return $feePlanHelper;
+        }
+
+        return new FeePlanHelper(
+            new SettingsHelper(
+                new ShopHelper(),
+                new ConfigurationHelper()
+            ),
+            new EligibilityFactory()
+        );
+    }
+
+    /**
+     * @param PaymentHelper $paymentHelper
+     *
+     * @return PaymentHelper
+     */
+    public function getPaymentHelper($paymentHelper = null)
+    {
+        if ($paymentHelper) {
+            return $paymentHelper;
+        }
+
+        return new PaymentHelper($this->getPaymentData());
     }
 }

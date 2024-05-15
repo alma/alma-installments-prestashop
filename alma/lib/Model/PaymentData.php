@@ -26,6 +26,8 @@ namespace Alma\PrestaShop\Model;
 
 use Alma\API\Lib\PaymentValidator;
 use Alma\API\ParamsError;
+use Alma\PrestaShop\Exceptions\AlmaException;
+use Alma\PrestaShop\Factories\AddressFactory;
 use Alma\PrestaShop\Factories\ContextFactory;
 use Alma\PrestaShop\Helpers\AddressHelper;
 use Alma\PrestaShop\Helpers\CarrierHelper;
@@ -119,6 +121,11 @@ class PaymentData
     protected $context;
 
     /**
+     * @var AddressFactory
+     */
+    protected $addressFactory;
+
+    /**
      * @param ToolsHelper $toolsHelper
      * @param SettingsHelper $settingsHelper
      * @param PriceHelper $priceHelper
@@ -133,8 +140,7 @@ class PaymentData
      * @param CustomerHelper $customerHelper
      * @param CartHelper $cartHelper
      * @param CarrierHelper $carrierHelper
-     *
-     * @codeCoverageIgnore
+     * @param AddressFactory $addressFactory
      */
     public function __construct(
         $toolsHelper,
@@ -150,7 +156,8 @@ class PaymentData
         $stateHelper,
         $customerHelper,
         $cartHelper,
-        $carrierHelper
+        $carrierHelper,
+        $addressFactory
     ) {
         $this->toolsHelper = $toolsHelper;
         $this->settingsHelper = $settingsHelper;
@@ -166,6 +173,7 @@ class PaymentData
         $this->customerHelper = $customerHelper;
         $this->cartHelper = $cartHelper;
         $this->carrierHelper = $carrierHelper;
+        $this->addressFactory = $addressFactory;
     }
 
     /**
@@ -175,6 +183,9 @@ class PaymentData
      * @return array|null
      *
      * @throws ParamsError
+     * @throws \PrestaShopDatabaseException
+     * @throws \PrestaShopException
+     * @throws AlmaException
      */
     public function dataFromCart($feePlans, $forPayment = false)
     {
@@ -196,8 +207,8 @@ class PaymentData
 
         $customer = $this->customerHelper->getCustomer();
 
-        $shippingAddress = $this->addressHelper->create($this->context->cart->id_address_delivery);
-        $billingAddress = $this->addressHelper->create((int) $this->context->cart->id_address_invoice);
+        $shippingAddress = $this->addressFactory->create($this->context->cart->id_address_delivery);
+        $billingAddress = $this->addressFactory->create((int) $this->context->cart->id_address_invoice);
         $countryShippingAddress = $this->countryHelper->getIsoById((int) $shippingAddress->id_country);
         $countryBillingAddress = $this->countryHelper->getIsoById((int) $billingAddress->id_country);
         $countryShippingAddress = ($countryShippingAddress) ? $countryShippingAddress : '';
@@ -252,6 +263,10 @@ class PaymentData
      * @param $customerData
      *
      * @return array
+     *
+     * @throws \PrestaShopDatabaseException
+     * @throws \PrestaShopException
+     * @throws AlmaException
      */
     public function buildDataPayment(
         $customer,
@@ -367,7 +382,7 @@ class PaymentData
             $customerData['phone'] = $shippingAddress->phone_mobile;
         }
 
-        $addresses = $this->addressHelper->getAdressFromCustomer($customer, $this->context);
+        $addresses = $this->addressHelper->getAddressFromCustomer($customer);
 
         foreach ($addresses as $address) {
             $customerData['addresses'][] = [
@@ -492,6 +507,10 @@ class PaymentData
      * @param $purchaseAmount
      *
      * @return array
+     *
+     * @throws AlmaException
+     * @throws \PrestaShopDatabaseException
+     * @throws \PrestaShopException
      */
     public function buildWebsiteCustomerDetails($customer, $purchaseAmount)
     {

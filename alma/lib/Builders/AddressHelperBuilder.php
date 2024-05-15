@@ -44,7 +44,8 @@ class AddressHelperBuilder
     public function getInstance()
     {
         return new AddressHelper(
-           $this->getToolsHelper()
+           $this->getToolsHelper(),
+           $this->getContextFactory()
         );
     }
 }

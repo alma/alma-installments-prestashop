@@ -24,11 +24,32 @@
 
 namespace Alma\PrestaShop\Tests\Unit\Helper;
 
+use Alma\PrestaShop\Builders\PaymentHelperBuilder;
+use Alma\PrestaShop\Model\PaymentData;
 use PHPUnit\Framework\TestCase;
 
-class AdressHelperTest extends TestCase
+class PaymentDataHelperTest extends TestCase
 {
-    public function testGetAdressFromCustomer()
+    public function testCheckPaymentData()
     {
+        $paymentData = \Mockery::mock(PaymentData::class);
+        $paymentData->shouldReceive('dataFromCart')->andReturn([]);
+
+        $paymentHelperBuilder = \Mockery::mock(PaymentHelperBuilder::class)->makePartial();
+        $paymentHelperBuilder->shouldReceive('getPaymentData')->andReturn($paymentData);
+
+        $paymentHelper = $paymentHelperBuilder->getInstance();
+
+        $this->assertEquals([], $paymentHelper->checkPaymentData([]));
+
+        $paymentData = \Mockery::mock(PaymentData::class);
+        $paymentData->shouldReceive('dataFromCart')->andReturn(['mon test']);
+
+        $paymentHelperBuilder = \Mockery::mock(PaymentHelperBuilder::class)->makePartial();
+        $paymentHelperBuilder->shouldReceive('getPaymentData')->andReturn($paymentData);
+
+        $paymentHelper = $paymentHelperBuilder->getInstance();
+
+        $this->assertEquals(['mon test'], $paymentHelper->checkPaymentData([]));
     }
 }

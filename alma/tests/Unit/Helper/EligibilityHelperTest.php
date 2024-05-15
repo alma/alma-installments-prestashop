@@ -24,31 +24,95 @@
 
 namespace Alma\PrestaShop\Tests\Unit\Helper;
 
+use Alma\API\Endpoints\Results\Eligibility;
+use Alma\PrestaShop\Builders\EligibilityHelperBuilder;
+use Alma\PrestaShop\Factories\ContextFactory;
+use Alma\PrestaShop\Helpers\ApiHelper;
+use Alma\PrestaShop\Helpers\FeePlanHelper;
+use Alma\PrestaShop\Helpers\PaymentHelper;
+use Alma\PrestaShop\Helpers\PriceHelper;
 use PHPUnit\Framework\TestCase;
 
 class EligibilityHelperTest extends TestCase
 {
     public function testEligibilityCheck()
     {
-    }
+        $priceHelper = \Mockery::mock(PriceHelper::class)->makePartial();
+        $priceHelper->shouldReceive('convertPriceToCents', [200.00])->andReturn(20000);
 
-    public function testCheckFeePlans()
-    {
-    }
+        $cart = $this->createMock(\Cart::class);
+        $cart->method('getOrderTotal')->willReturn(200.00);
 
-    public function testGetNotEligibleFeePlans()
-    {
-    }
+        $contextFactory = \Mockery::mock(ContextFactory::class)->makePartial();
+        $contextFactory->shouldReceive('getContextCart')->andReturn($cart);
 
-    public function testGetEligibleFeePlans()
-    {
-    }
+        $feePlansHelper = \Mockery::mock(FeePlanHelper::class)->makePartial();
+        $feePlansHelper->shouldReceive('checkFeePlans')->andReturn([]);
+        $feePlansHelper->shouldReceive('getNotEligibleFeePlans')->andReturn([]);
+        $feePlansHelper->shouldReceive('getEligibleFeePlans')->andReturn([
+            [
+                'installmentsCount' => 1,
+                'deferredDays' => 0,
+                'deferredMonths' => 0,
+            ],
+        ]);
 
-    public function testCheckPaymentData()
-    {
-    }
+        $paymentHelper = \Mockery::mock(PaymentHelper::class)->makePartial();
+        $paymentHelper->shouldReceive('checkPaymentData', [])->andReturn([]);
 
-    public function testCreateEligibility()
-    {
+        $eligibility = new Eligibility(
+            [
+                'installments_count' => 1,
+                'deferred_days' => 0,
+                'deferred_months' => 0,
+                'eligible' => true,
+                'constraints' => [
+                    'purchase_amount' => [
+                        'minimum' => 10,
+                        'maximum' => 1000,
+                    ],
+                ],
+            ]
+        );
+        $apiHelper = \Mockery::mock(ApiHelper::class)->makePartial();
+        $apiHelper->shouldReceive('getPaymentEligibility', [])->andReturn($eligibility);
+
+        $eligibilityHelperBuilder = \Mockery::mock(EligibilityHelperBuilder::class)->makePartial();
+        $eligibilityHelperBuilder->shouldReceive('getPriceHelper')->andReturn($priceHelper);
+        $eligibilityHelperBuilder->shouldReceive('getContextFactory')->andReturn($contextFactory);
+        $eligibilityHelperBuilder->shouldReceive('getFeePlanHelper')->andReturn($feePlansHelper);
+        $eligibilityHelperBuilder->shouldReceive('getPaymentHelper')->andReturn($paymentHelper);
+        $eligibilityHelperBuilder->shouldReceive('getApiHelper')->andReturn($apiHelper);
+
+        $eligibilityHelper = $eligibilityHelperBuilder->getInstance();
+
+        $this->assertEquals([$eligibility], $eligibilityHelper->eligibilityCheck());
+
+        $priceHelper = \Mockery::mock(PriceHelper::class)->makePartial();
+        $priceHelper->shouldReceive('convertPriceToCents', [200.00])->andReturn(20000);
+
+        $cart = $this->createMock(\Cart::class);
+        $cart->method('getOrderTotal')->willReturn(200.00);
+
+        $contextFactory = \Mockery::mock(ContextFactory::class)->makePartial();
+        $contextFactory->shouldReceive('getContextCart')->andReturn($cart);
+
+        $feePlansHelper = \Mockery::mock(FeePlanHelper::class)->makePartial();
+        $feePlansHelper->shouldReceive('checkFeePlans')->andReturn([]);
+        $feePlansHelper->shouldReceive('getNotEligibleFeePlans')->andReturn([]);
+        $feePlansHelper->shouldReceive('getEligibleFeePlans')->andReturn([]);
+
+        $paymentHelper = \Mockery::mock(PaymentHelper::class)->makePartial();
+        $paymentHelper->shouldReceive('checkPaymentData', [])->andReturn([]);
+
+        $eligibilityHelperBuilder = \Mockery::mock(EligibilityHelperBuilder::class)->makePartial();
+        $eligibilityHelperBuilder->shouldReceive('getPriceHelper')->andReturn($priceHelper);
+        $eligibilityHelperBuilder->shouldReceive('getContextFactory')->andReturn($contextFactory);
+        $eligibilityHelperBuilder->shouldReceive('getFeePlanHelper')->andReturn($feePlansHelper);
+        $eligibilityHelperBuilder->shouldReceive('getPaymentHelper')->andReturn($paymentHelper);
+
+        $eligibilityHelper = $eligibilityHelperBuilder->getInstance();
+
+        $this->assertEquals([], $eligibilityHelper->eligibilityCheck());
     }
 }

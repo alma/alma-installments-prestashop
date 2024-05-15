@@ -36,6 +36,16 @@ if (!defined('_PS_VERSION_')) {
 class ModuleFactory
 {
     /**
+     * @var false|\Module
+     */
+    protected $module;
+
+    public function __construct()
+    {
+        $this->module = $this->getModule();
+    }
+
+    /**
      * @return false|\Module
      */
     public function getModule()
@@ -48,8 +58,32 @@ class ModuleFactory
      */
     public function getModuleName()
     {
-        $module = $this->getModule();
+        return $this->module->name;
+    }
 
-        return $module->name;
+    /**
+     * @return string|null
+     */
+    public function getPathUri()
+    {
+        return $this->module->getPathUri();
+    }
+
+    /**
+     * Get translation for a given module text.
+     *
+     * Note: $specific parameter is mandatory for library files.
+     * Otherwise, translation key will not match for Module library
+     * when module is loaded with eval() Module::getModulesOnDisk()
+     *
+     * @param string $string String to translate
+     * @param bool|string $specific filename to use in translation key
+     * @param string|null $locale Locale to translate to
+     *
+     * @return string Translation
+     */
+    public function l($string, $specific = false, $locale = null)
+    {
+        return $this->module->l($string, $specific, $locale);
     }
 }

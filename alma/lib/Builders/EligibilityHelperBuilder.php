@@ -44,12 +44,11 @@ class EligibilityHelperBuilder
     public function getInstance()
     {
         return new EligibilityHelper(
-            $this->getPaymentData(),
             $this->getPriceHelper(),
-            $this->getClientHelper(),
-            $this->getSettingsHelper(),
             $this->getApiHelper(),
-            $this->getContextFactory()
+            $this->getContextFactory(),
+            $this->getFeePlanHelper(),
+            $this->getPaymentHelper()
         );
     }
 }
