@@ -74,4 +74,14 @@ class MediaHelper
 
         return "p{$valueBNPL}x_logo.svg";
     }
+
+    /**
+     * Add a new javascript definition at bottom of page.
+     *
+     * @param mixed $jsDef
+     * @codeCoverageIgnore
+     */
+    public function addJSDef($jsDef) {
+        \Media::addJsDef($jsDef);
+    }
 }

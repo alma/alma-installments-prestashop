@@ -65,10 +65,11 @@ class Alma extends PaymentModule
      * @var Alma\PrestaShop\Helpers\Admin\TabsHelper
      */
     private $tabsHelper;
+
     /**
-     * @var Alma\PrestaShop\Helpers\Admin\InsuranceHelper
+     * @var \PrestaShop\ModuleLibServiceContainer\DependencyInjection\ServiceContainer
      */
-    private $adminInsuranceHelper;
+    protected $container;
 
     public function __construct()
     {
@@ -117,7 +118,41 @@ class Alma extends PaymentModule
 
         $this->hook = new \Alma\PrestaShop\Helpers\HookHelper();
         $this->tabsHelper = new \Alma\PrestaShop\Helpers\Admin\TabsHelper();
-        $this->adminInsuranceHelper = new \Alma\PrestaShop\Helpers\Admin\InsuranceHelper($this);
+
+        $this->handlePSModule();
+    }
+
+    /**
+     * @return void
+     */
+    public function handlePSModule()
+    {
+        if(
+            $this->checkCompatibilityPSModule()
+            &&  $this->container === null
+        ) {
+            $this->container = new \PrestaShop\ModuleLibServiceContainer\DependencyInjection\ServiceContainer(
+                $this->name,
+                $this->getLocalPath()
+            );
+        }
+    }
+
+    /**
+     * @return bool
+     */
+    public function checkCompatibilityPSModule()
+    {
+        $versionHelper = new \Alma\PrestaShop\Helpers\ToolsHelper();
+
+        if(
+            $versionHelper->psVersionCompare('1.6', '<')
+            || ! class_exists(\PrestaShop\ModuleLibServiceContainer\DependencyInjection\ServiceContainer::class)
+        ) {
+            return false;
+        }
+
+        return true;
     }
 
     /**
@@ -192,6 +227,10 @@ class Alma extends PaymentModule
      */
     public function install()
     {
+        if($this->checkCompatibilityPSModule()) {
+            $this->getService('alma.ps_accounts_installer')->install();
+        }
+
         $coreInstall = parent::install();
 
         if (!$this->checkCoreInstall($coreInstall)
@@ -208,6 +247,18 @@ class Alma extends PaymentModule
         }
 
         return $this->tabsHelper->installTabs($this->dataTabs());
+    }
+
+    /**
+     * Retrieve the service
+     *
+     * @param string $serviceName
+     *
+     * @return object|null
+     */
+    public function getService($serviceName)
+    {
+        return $this->container->getService($serviceName);
     }
 
     /**
@@ -473,28 +524,36 @@ class Alma extends PaymentModule
         return $result;
     }
 
+    /**
+     * @param $hookName
+     * @param $params
+     * @return mixed|null
+     */
     private function runHookController($hookName, $params)
     {
         $hookName = Tools::ucfirst(preg_replace('/[^a-zA-Z0-9]/', '', $hookName));
 
         require_once dirname(__FILE__) . "/controllers/hook/{$hookName}HookController.php";
-        $ControllerName = "Alma\PrestaShop\Controllers\Hook\\{$hookName}HookController";
+        $controllerName = "Alma\PrestaShop\Controllers\Hook\\{$hookName}HookController";
 
         // check if override exist for hook controllers
         if (file_exists(dirname(__FILE__) . "/../../override/modules/alma/controllers/hook/{$hookName}HookController.php")) {
             require_once dirname(__FILE__) . "/../../override/modules/alma/controllers/hook/{$hookName}HookController.php";
-            $ControllerName = "Alma\PrestaShop\Controllers\Hook\\{$hookName}HookControllerOverride";
+            $controllerName = "Alma\PrestaShop\Controllers\Hook\\{$hookName}HookControllerOverride";
         }
 
-        $controller = new $ControllerName($this);
+        $controller = new $controllerName($this);
 
         if ($controller->canRun()) {
             return $controller->run($params);
-        } else {
-            return null;
         }
+
+        return null;
     }
 
+    /**
+     * @return void
+     */
     public function viewAccess()
     {
         // Simply redirect to the default module's configuration page
@@ -503,9 +562,45 @@ class Alma extends PaymentModule
         Tools::redirectAdmin($location);
     }
 
+    /**
+     * @return mixed|null
+     */
     public function getContent()
     {
+        $this->renderPSAccount();
+
         return $this->runHookController('getContent', null);
+    }
+
+    /**
+     * @return void
+     */
+    public function renderPSAccount()
+    {
+        try {
+            $accountsFacade = $this->getService('alma.ps_accounts_facade');
+            $accountsService = $accountsFacade->getPsAccountsService();
+        } catch (\PrestaShop\PsAccountsInstaller\Installer\Exception\InstallerException $e) {
+            $accountsInstaller = $this->getService('alma.ps_accounts_installer');
+            $accountsInstaller->install();
+            $accountsFacade = $this->getService('alma.ps_accounts_facade');
+            $accountsService = $accountsFacade->getPsAccountsService();
+        }
+
+        try {
+            $mediaHelper = new \Alma\PrestaShop\Helpers\MediaHelper();
+
+            $mediaHelper->addJsDef([
+                'contextPsAccounts' => $accountsFacade->getPsAccountsPresenter()
+                    ->present($this->name),
+            ]);
+
+            // Retrieve the PrestaShop Account CDN
+            $this->context->smarty->assign('urlAccountsCdn', $accountsService->getAccountsCdn());
+        } catch (Exception $e) {
+            $this->context->controller->errors[] = $e->getMessage();
+        }
+
     }
 
     public function hookHeader($params)
