@@ -24,7 +24,7 @@
 
 namespace Alma\PrestaShop\Helpers;
 
-use Alma\PrestaShop\Exceptions\AlmaException;
+use Alma\PrestaShop\Factories\CartFactory;
 use Alma\PrestaShop\Factories\ContextFactory;
 use Alma\PrestaShop\Logger;
 use Alma\PrestaShop\Model\CartData;
@@ -72,6 +72,16 @@ class CartHelper
     protected $carrierHelper;
 
     /**
+     * @var CartFactory
+     */
+    protected $cartFactory;
+
+    /**
+     * @var OrderHelper
+     */
+    protected $orderHelper;
+
+    /**
      * @param ContextFactory $contextFactory
      * @param ToolsHelper $toolsHelper
      * @param PriceHelper $priceHelper
@@ -79,6 +89,7 @@ class CartHelper
      * @param OrderRepository $orderRepository
      * @param OrderStateHelper $orderStateHelper
      * @param CarrierHelper $carrierHelper
+     * @param CartFactory $cartFactory
      */
     public function __construct(
         $contextFactory,
@@ -87,7 +98,9 @@ class CartHelper
         $cartData,
         $orderRepository,
         $orderStateHelper,
-        $carrierHelper
+        $carrierHelper,
+        $cartFactory,
+        $orderHelper
     ) {
         $this->context = $contextFactory->getContext();
         $this->toolsHelper = $toolsHelper;
@@ -96,6 +109,8 @@ class CartHelper
         $this->orderRepository = $orderRepository;
         $this->orderStateHelper = $orderStateHelper;
         $this->carrierHelper = $carrierHelper;
+        $this->cartFactory = $cartFactory;
+        $this->orderHelper = $orderHelper;
     }
 
     /**
@@ -118,17 +133,16 @@ class CartHelper
      * @param int $idCustomer
      *
      * @return array
-     *
-     * @throws AlmaException
      */
     public function previousCartOrdered($idCustomer)
     {
         $ordersData = [];
-        $orders = $this->getOrdersByCustomer($idCustomer, 10);
+        $orders = $this->orderHelper->getOrdersByCustomer($idCustomer, 10);
 
         foreach ($orders as $order) {
-            $cart = new \Cart((int) $order['id_cart']);
+            $cart = $this->cartFactory->create((int) $order['id_cart']);
             $purchaseAmount = -1;
+
             try {
                 $purchaseAmount = $this->toolsHelper->psRound((float) $cart->getOrderTotal(), 2);
             } catch (\Exception $e) {
@@ -160,28 +174,11 @@ class CartHelper
     }
 
     /**
-     * Get ids order by customer id with limit (default = 10)
-     *
-     * @param int $idCustomer
-     * @param int $limit
-     *
-     * @return array
-     */
-    public function getOrdersByCustomer($idCustomer, $limit)
-    {
-        try {
-            $orders = $this->orderRepository->getCustomerOrders($idCustomer, $limit);
-        } catch (\PrestaShopDatabaseException $e) {
-            return [];
-        }
-
-        return $orders;
-    }
-
-    /**
      * @param \Cart $cart
      *
      * @return float
+     *
+     * @throws \Exception
      */
     public function getCartTotal($cart)
     {

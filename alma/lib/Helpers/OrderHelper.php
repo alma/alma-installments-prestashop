@@ -26,6 +26,7 @@ namespace Alma\PrestaShop\Helpers;
 
 use Alma\PrestaShop\Exceptions\OrderException;
 use Alma\PrestaShop\Logger;
+use Alma\PrestaShop\Repositories\OrderRepository;
 use Alma\PrestaShop\Traits\AjaxTrait;
 
 if (!defined('_PS_VERSION_')) {
@@ -52,10 +53,16 @@ class OrderHelper
     private $orders;
     private $module;
 
+    /**
+     * @var OrderRepository
+     */
+    protected $orderRepository;
+
     public function __construct()
     {
         $this->defaultStatesExcluded = [6, 7, 8];
         $this->orders = [];
+        $this->orderRepository = new OrderRepository();
     }
 
     /**
@@ -211,5 +218,24 @@ class OrderHelper
     public function getCustomerNbOrders($id)
     {
         return \Order::getCustomerNbOrders($id);
+    }
+
+    /**
+     * Get ids order by customer id with limit (default = 10)
+     *
+     * @param int $idCustomer
+     * @param int $limit
+     *
+     * @return array
+     */
+    public function getOrdersByCustomer($idCustomer, $limit)
+    {
+        try {
+            $orders = $this->orderRepository->getCustomerOrders($idCustomer, $limit);
+        } catch (\PrestaShopDatabaseException $e) {
+            return [];
+        }
+
+        return $orders;
     }
 }
