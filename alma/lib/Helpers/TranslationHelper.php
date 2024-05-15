@@ -38,8 +38,6 @@ class TranslationHelper
     protected $module;
 
     /**
-     * @codeCoverageIgnore
-     *
      * @param ModuleFactory $moduleFactory
      */
     public function __construct($moduleFactory)

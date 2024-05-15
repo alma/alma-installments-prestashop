@@ -46,8 +46,6 @@ class ShippingData
     /**
      * @param PriceHelper $priceHelper
      * @param CarrierHelper $carrierHelper
-     *
-     * @codeCoverageIgnore
      */
     public function __construct($priceHelper, $carrierHelper)
     {

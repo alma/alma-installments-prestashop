@@ -24,8 +24,12 @@
 
 namespace Alma\PrestaShop\Traits;
 
+use Alma\PrestaShop\Factories\AddressFactory;
 use Alma\PrestaShop\Factories\ContextFactory;
+use Alma\PrestaShop\Factories\MediaFactory;
 use Alma\PrestaShop\Factories\ModuleFactory;
+use Alma\PrestaShop\Factories\OrderStateFactory;
+use Alma\PrestaShop\Factories\PhpFactory;
 use Alma\PrestaShop\Helpers\AddressHelper;
 use Alma\PrestaShop\Helpers\ApiHelper;
 use Alma\PrestaShop\Helpers\CarrierHelper;
@@ -354,7 +358,8 @@ trait BuilderTrait
         }
 
         return new OrderStateHelper(
-            $this->getContextFactory()
+            $this->getContextFactory(),
+            $this->getOrderStateFactory()
         );
     }
 
@@ -432,7 +437,8 @@ trait BuilderTrait
         }
 
         return new AddressHelper(
-            $this->getToolsHelper()
+            $this->getToolsHelper(),
+            $this->getContextFactory()
         );
     }
 
@@ -543,7 +549,8 @@ trait BuilderTrait
             $this->getStateHelper(),
             $this->getCustomerHelper(),
             $this->getCartHelper(),
-            $this->getCarrierHelper()
+            $this->getCarrierHelper(),
+            $this->getAddressFactory()
         );
     }
 
@@ -575,7 +582,11 @@ trait BuilderTrait
             return $mediaHelper;
         }
 
-        return new MediaHelper();
+        return new MediaHelper(
+            $this->getMediaFactory(),
+            $this->getModuleFactory(),
+            $this->getPhpFactory()
+        );
     }
 
     /**
@@ -677,7 +688,64 @@ trait BuilderTrait
             $this->getCustomFieldsHelper(),
             $this->getMediaHelper(),
             $this->getConfigurationHelper(),
-            $this->getPaymentOptionTemplateHelper()
+            $this->getPaymentOptionTemplateHelper(),
+            $this->getMediaFactory()
         );
+    }
+
+    /**
+     * @param AddressFactory $addressFactory
+     *
+     * @return AddressFactory
+     */
+    public function getAddressFactory($addressFactory = null)
+    {
+        if ($addressFactory) {
+            return $addressFactory;
+        }
+
+        return new AddressFactory();
+    }
+
+    /**
+     * @param OrderStateFactory $orderStateFactory
+     *
+     * @return OrderStateFactory
+     */
+    public function getOrderStateFactory($orderStateFactory = null)
+    {
+        if ($orderStateFactory) {
+            return $orderStateFactory;
+        }
+
+        return new OrderStateFactory();
+    }
+
+    /**
+     * @param MediaFactory $mediaFactory
+     *
+     * @return MediaFactory
+     */
+    public function getMediaFactory($mediaFactory = null)
+    {
+        if ($mediaFactory) {
+            return $mediaFactory;
+        }
+
+        return new MediaFactory();
+    }
+
+    /**
+     * @param PhpFactory $phpFactory
+     *
+     * @return PhpFactory
+     */
+    public function getPhpFactory($phpFactory = null)
+    {
+        if ($phpFactory) {
+            return $phpFactory;
+        }
+
+        return new PhpFactory();
     }
 }

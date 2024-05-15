@@ -24,43 +24,51 @@
 
 namespace Alma\PrestaShop\Tests\Unit\Builders;
 
-use Alma\PrestaShop\Builders\OrderStateHelperBuilder;
-use Alma\PrestaShop\Factories\ContextFactory;
-use Alma\PrestaShop\Factories\OrderStateFactory;
-use Alma\PrestaShop\Helpers\OrderStateHelper;
+use Alma\PrestaShop\Builders\MediaHelperBuilder;
+use Alma\PrestaShop\Factories\MediaFactory;
+use Alma\PrestaShop\Factories\ModuleFactory;
+use Alma\PrestaShop\Factories\PhpFactory;
+use Alma\PrestaShop\Helpers\MediaHelper;
 use PHPUnit\Framework\TestCase;
 
-class OrderStateHelperBuilderTest extends TestCase
+class MediaHelperBuilderTest extends TestCase
 {
     /**
-     * @var OrderStateHelperBuilder
+     * @var MediaHelperBuilderTest
      */
-    protected $orderStateHelperBuilder
-    ;
+    protected $mediaHelperBuilder;
 
     public function setUp()
     {
-        $this->orderStateHelperBuilder = new OrderStateHelperBuilder();
+        $this->mediaHelperBuilder = new MediaHelperBuilder();
     }
 
     public function testGetInstance()
     {
-        $this->assertInstanceOf(OrderStateHelper::class, $this->orderStateHelperBuilder->getInstance());
+        $this->assertInstanceOf(MediaHelper::class, $this->mediaHelperBuilder->getInstance());
     }
 
-    public function testGetContextFactory()
+    public function testGetModuleFactory()
     {
-        $this->assertInstanceOf(ContextFactory::class, $this->orderStateHelperBuilder->getContextFactory());
-        $this->assertInstanceOf(ContextFactory::class, $this->orderStateHelperBuilder->getContextFactory(
-            new ContextFactory()
+        $this->assertInstanceOf(ModuleFactory::class, $this->mediaHelperBuilder->getModuleFactory());
+        $this->assertInstanceOf(ModuleFactory::class, $this->mediaHelperBuilder->getModuleFactory(
+            new ModuleFactory()
         ));
     }
 
-    public function testGetOrderStateFactory()
+    public function testGetMediaFactory()
     {
-        $this->assertInstanceOf(OrderStateFactory::class, $this->orderStateHelperBuilder->getOrderStateFactory());
-        $this->assertInstanceOf(OrderStateFactory::class, $this->orderStateHelperBuilder->getOrderStateFactory(
-            new OrderStateFactory()
+        $this->assertInstanceOf(MediaFactory::class, $this->mediaHelperBuilder->getMediaFactory());
+        $this->assertInstanceOf(MediaFactory::class, $this->mediaHelperBuilder->getMediaFactory(
+            new MediaFactory()
+        ));
+    }
+
+    public function testGetPhpFactory()
+    {
+        $this->assertInstanceOf(PhpFactory::class, $this->mediaHelperBuilder->getPhpFactory());
+        $this->assertInstanceOf(PhpFactory::class, $this->mediaHelperBuilder->getPhpFactory(
+            new PhpFactory()
         ));
     }
 }

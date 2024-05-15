@@ -22,50 +22,31 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
-namespace Alma\PrestaShop\Forms;
+namespace Alma\PrestaShop\Builders;
+
+use Alma\PrestaShop\Helpers\MediaHelper;
+use Alma\PrestaShop\Traits\BuilderTrait;
 
 if (!defined('_PS_VERSION_')) {
     exit;
 }
 
 /**
- * Class AbstractAlmaAdminFormBuilder
+ * MediaHelperBuilder.
  */
-abstract class AbstractAlmaAdminFormBuilder extends AbstractAdminFormBuilder
+class MediaHelperBuilder
 {
-    /**
-     * @var Alma
-     */
-    protected $module;
+    use BuilderTrait;
 
     /**
-     * @var \Context
+     * @return MediaHelper
      */
-    protected $context;
-    protected $config;
-
-    /**
-     * @param string $image
-     * @param array $config
-     */
-    public function __construct($module, $context, $image, $config = [])
+    public function getInstance()
     {
-        $this->module = $module;
-        $this->context = $context;
-        $this->config = $config;
-        parent::__construct(
-            $image,
-            $this->getTitle()
+        return new MediaHelper(
+            $this->getMediaFactory(),
+            $this->getModuleFactory(),
+            $this->getPhpFactory()
         );
     }
-
-    protected function getSubmitTitle()
-    {
-        return $this->module->l('Save');
-    }
-
-    /**
-     * @return mixed
-     */
-    abstract protected function getTitle();
 }

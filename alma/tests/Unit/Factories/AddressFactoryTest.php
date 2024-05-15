@@ -22,50 +22,25 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
-namespace Alma\PrestaShop\Forms;
+namespace Alma\PrestaShop\Tests\Unit\Factories;
 
-if (!defined('_PS_VERSION_')) {
-    exit;
-}
+use Alma\PrestaShop\Factories\AddressFactory;
+use PHPUnit\Framework\TestCase;
 
-/**
- * Class AbstractAlmaAdminFormBuilder
- */
-abstract class AbstractAlmaAdminFormBuilder extends AbstractAdminFormBuilder
+class AddressFactoryTest extends TestCase
 {
     /**
-     * @var Alma
+     * @var AddressFactory
      */
-    protected $module;
+    protected $addressFactory;
 
-    /**
-     * @var \Context
-     */
-    protected $context;
-    protected $config;
-
-    /**
-     * @param string $image
-     * @param array $config
-     */
-    public function __construct($module, $context, $image, $config = [])
+    public function setUp()
     {
-        $this->module = $module;
-        $this->context = $context;
-        $this->config = $config;
-        parent::__construct(
-            $image,
-            $this->getTitle()
-        );
+        $this->addressFactory = new AddressFactory();
     }
 
-    protected function getSubmitTitle()
+    public function testCreateAddress()
     {
-        return $this->module->l('Save');
+        $this->assertInstanceOf(\Address::class, $this->addressFactory->create(10));
     }
-
-    /**
-     * @return mixed
-     */
-    abstract protected function getTitle();
 }

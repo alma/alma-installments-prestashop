@@ -22,50 +22,27 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
-namespace Alma\PrestaShop\Forms;
+namespace Alma\PrestaShop\Factories;
 
 if (!defined('_PS_VERSION_')) {
     exit;
 }
 
 /**
- * Class AbstractAlmaAdminFormBuilder
+ * Class MediaFactory.
  */
-abstract class AbstractAlmaAdminFormBuilder extends AbstractAdminFormBuilder
+class MediaFactory
 {
     /**
-     * @var Alma
+     * @param $path
+     *
+     * @return bool|string|string[]|null
      */
-    protected $module;
-
-    /**
-     * @var \Context
-     */
-    protected $context;
-    protected $config;
-
-    /**
-     * @param string $image
-     * @param array $config
-     */
-    public function __construct($module, $context, $image, $config = [])
+    public function getMediaPath($path)
     {
-        $this->module = $module;
-        $this->context = $context;
-        $this->config = $config;
-        parent::__construct(
-            $image,
-            $this->getTitle()
-        );
-    }
+        $moduleFactory = new ModuleFactory();
+        $moduleName = $moduleFactory->getModuleName();
 
-    protected function getSubmitTitle()
-    {
-        return $this->module->l('Save');
+        return \Media::getMediaPath(_PS_MODULE_DIR_ . $moduleName . $path);
     }
-
-    /**
-     * @return mixed
-     */
-    abstract protected function getTitle();
 }

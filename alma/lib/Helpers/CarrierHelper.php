@@ -45,7 +45,6 @@ class CarrierHelper
     /**
      * @param ContextFactory $contextFactory
      * @param CarrierData $carrierData
-     * @codeCoverageIgnore
      */
     public function __construct($contextFactory, $carrierData)
     {

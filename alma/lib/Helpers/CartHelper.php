@@ -24,6 +24,7 @@
 
 namespace Alma\PrestaShop\Helpers;
 
+use Alma\PrestaShop\Exceptions\AlmaException;
 use Alma\PrestaShop\Factories\ContextFactory;
 use Alma\PrestaShop\Logger;
 use Alma\PrestaShop\Model\CartData;
@@ -78,8 +79,6 @@ class CartHelper
      * @param OrderRepository $orderRepository
      * @param OrderStateHelper $orderStateHelper
      * @param CarrierHelper $carrierHelper
-     *
-     * @codeCoverageIgnore
      */
     public function __construct(
         $contextFactory,
@@ -119,6 +118,8 @@ class CartHelper
      * @param int $idCustomer
      *
      * @return array
+     *
+     * @throws AlmaException
      */
     public function previousCartOrdered($idCustomer)
     {

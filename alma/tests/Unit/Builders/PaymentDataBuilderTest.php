@@ -172,7 +172,7 @@ class PaymentDataBuilderTest extends TestCase
     {
         $this->assertInstanceOf(AddressHelper::class, $this->paymentDataBuilder->getAddressHelper());
         $this->assertInstanceOf(AddressHelper::class, $this->paymentDataBuilder->getAddressHelper(
-            new AddressHelper($this->toolsHelper)
+            new AddressHelper($this->toolsHelper, $this->contextFactory)
         ));
     }
 

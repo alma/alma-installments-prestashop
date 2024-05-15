@@ -25,6 +25,7 @@
 namespace Alma\PrestaShop\Tests\Unit\Builders;
 
 use Alma\PrestaShop\Builders\PaymentServiceBuilder;
+use Alma\PrestaShop\Factories\AddressFactory;
 use Alma\PrestaShop\Factories\ContextFactory;
 use Alma\PrestaShop\Factories\ModuleFactory;
 use Alma\PrestaShop\Helpers\CarrierHelper;
@@ -262,7 +263,15 @@ class PaymentServiceBuilderTest extends TestCase
     {
         $this->assertInstanceOf(MediaHelper::class, $this->paymentServiceBuilder->getMediaHelper());
         $this->assertInstanceOf(MediaHelper::class, $this->paymentServiceBuilder->getMediaHelper(
-            new MediaHelper()
+            $this->createMock(MediaHelper::class)
+        ));
+    }
+
+    public function testGetAddressFactory()
+    {
+        $this->assertInstanceOf(AddressFactory::class, $this->paymentServiceBuilder->getAddressFactory());
+        $this->assertInstanceOf(AddressFactory::class, $this->paymentServiceBuilder->getAddressFactory(
+            new AddressFactory()
         ));
     }
 

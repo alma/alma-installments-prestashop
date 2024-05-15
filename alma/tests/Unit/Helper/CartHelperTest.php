@@ -87,8 +87,9 @@ class CartHelperTest extends TestCase
         $this->context = $this->createMock(\Context::class);
         $this->context->cart = $this->cart;
 
-        $contextFactory = \Mockery::mock(ContextFactory::class);
+        $contextFactory = \Mockery::mock(ContextFactory::class)->makePartial();
         $contextFactory->shouldReceive('getContext')->andReturn($this->context);
+        $contextFactory->shouldReceive('getContextLanguageId')->andReturn(1);
 
         $cartHelperBuilder = \Mockery::mock(CartHelperBuilder::class)->makePartial();
         $cartHelperBuilder->shouldReceive('getContextFactory')->andReturn($contextFactory);

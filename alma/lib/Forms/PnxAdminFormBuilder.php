@@ -50,8 +50,6 @@ class PnxAdminFormBuilder extends AbstractAlmaAdminFormBuilder
     protected $priceHelper;
 
     /**
-     * @codeCoverageIgnore
-     *
      * @param $module
      * @param $context
      * @param $image

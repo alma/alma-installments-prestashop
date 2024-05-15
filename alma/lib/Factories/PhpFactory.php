@@ -22,50 +22,24 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
-namespace Alma\PrestaShop\Forms;
+namespace Alma\PrestaShop\Factories;
 
 if (!defined('_PS_VERSION_')) {
     exit;
 }
 
 /**
- * Class AbstractAlmaAdminFormBuilder
+ * Class PhpFactory.
  */
-abstract class AbstractAlmaAdminFormBuilder extends AbstractAdminFormBuilder
+class PhpFactory
 {
     /**
-     * @var Alma
+     * @param callable|mixed $value
+     *
+     * @return bool
      */
-    protected $module;
-
-    /**
-     * @var \Context
-     */
-    protected $context;
-    protected $config;
-
-    /**
-     * @param string $image
-     * @param array $config
-     */
-    public function __construct($module, $context, $image, $config = [])
+    public function is_callable($value)
     {
-        $this->module = $module;
-        $this->context = $context;
-        $this->config = $config;
-        parent::__construct(
-            $image,
-            $this->getTitle()
-        );
+        return is_callable($value);
     }
-
-    protected function getSubmitTitle()
-    {
-        return $this->module->l('Save');
-    }
-
-    /**
-     * @return mixed
-     */
-    abstract protected function getTitle();
 }

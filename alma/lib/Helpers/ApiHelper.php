@@ -65,7 +65,6 @@ class ApiHelper
     /**
      * @param ModuleFactory $moduleFactory
      * @param ClientHelper $clientHelper
-     * @codeCoverageIgnore
      */
     public function __construct($moduleFactory, $clientHelper)
     {

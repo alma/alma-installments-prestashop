@@ -89,8 +89,6 @@ class ShareOfCheckoutHelper
     }
 
     /**
-     * @codeCoverageIgnore
-     *
      * @return void
      *
      * @throws ClientException

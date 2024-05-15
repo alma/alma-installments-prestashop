@@ -50,8 +50,6 @@ class ApiKeyHelper
 
     /**
      * ApiKey Helper construct
-     *
-     * @codeCoverageIgnore
      */
     public function __construct()
     {

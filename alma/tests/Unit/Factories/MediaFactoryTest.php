@@ -22,50 +22,25 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
-namespace Alma\PrestaShop\Forms;
+namespace Alma\PrestaShop\Tests\Unit\Factories;
 
-if (!defined('_PS_VERSION_')) {
-    exit;
-}
+use Alma\PrestaShop\Factories\MediaFactory;
+use PHPUnit\Framework\TestCase;
 
-/**
- * Class AbstractAlmaAdminFormBuilder
- */
-abstract class AbstractAlmaAdminFormBuilder extends AbstractAdminFormBuilder
+class MediaFactoryTest extends TestCase
 {
     /**
-     * @var Alma
+     * @var MediaFactory
      */
-    protected $module;
+    protected $mediaFactory;
 
-    /**
-     * @var \Context
-     */
-    protected $context;
-    protected $config;
-
-    /**
-     * @param string $image
-     * @param array $config
-     */
-    public function __construct($module, $context, $image, $config = [])
+    public function setUp()
     {
-        $this->module = $module;
-        $this->context = $context;
-        $this->config = $config;
-        parent::__construct(
-            $image,
-            $this->getTitle()
-        );
+        $this->mediaFactory = new MediaFactory();
     }
 
-    protected function getSubmitTitle()
+    public function testGetMediaPath()
     {
-        return $this->module->l('Save');
+        $this->assertEquals('/modules/alma/views/img/logos/alma_payment_logos_tiny.svg', $this->mediaFactory->getMediaPath('/views/img/logos/alma_payment_logos_tiny.svg'));
     }
-
-    /**
-     * @return mixed
-     */
-    abstract protected function getTitle();
 }

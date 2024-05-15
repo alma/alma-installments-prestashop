@@ -52,4 +52,14 @@ class ModuleFactory
 
         return $module->name;
     }
+
+    /**
+     * @return string|null
+     */
+    public function getPathUri()
+    {
+        $module = $this->getModule();
+
+        return $module->getPathUri();
+    }
 }
