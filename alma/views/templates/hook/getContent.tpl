@@ -128,13 +128,13 @@
             En cas de problème, contactez-nous par email à <a href="mailto:support@getalma.eu">support@getalma.eu</a>
         </p>
     </div>
-{else}
+{elseif $updated}
     <div class="{$success_classes|escape:'htmlall':'UTF-8'}">
         {l s='Settings successfully updated' mod='alma'}
     </div>
 {/if}
 
-{if $hasPSAccount}
+{if isset($hasPSAccount) &&  $hasPSAccount}
     <prestashop-accounts></prestashop-accounts>
 
     <script src="{$urlAccountsCdn|escape:'htmlall':'UTF-8'}" rel=preload></script>

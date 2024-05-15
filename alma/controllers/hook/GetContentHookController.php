@@ -816,9 +816,12 @@ final class GetContentHookController extends AdminHookController
     {
         $this->context->smarty->assign([
             'hasPSAccount' => $params['hasPSAccount'],
+            'updated' => true,
         ]);
 
         $this->assignSmartyAlertClasses();
+
+        $messages = null;
 
         if (\Tools::isSubmit('alma_config_form')) {
             $messages = $this->processConfiguration();
@@ -831,8 +834,13 @@ final class GetContentHookController extends AdminHookController
             if ($messages) {
                 $messages = $messages['message'];
             }
-        } else {
-            $messages = '';
+        }
+
+        if (!$messages) {
+            $this->context->smarty->assign([
+                'updated' => false,
+            ]);
+            $messages = $this->module->display($this->module->file, 'getContent.tpl');
         }
 
         $htmlForm = $this->renderForm();
