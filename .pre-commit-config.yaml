@@ -13,54 +13,24 @@ repos:
     hooks:
       - id: coding-standard-fixer
         name: PHP and Prestashop coding standards Fixer test
-        language: script
-        entry:  ./scripts/coding-standard-fixer.sh
+        language: system
+        pass_filenames: false
+        entry:  task lint:fix
         stages: [commit]
 
-  - repo: local
-    hooks:
       - id: coding-standard
         name: Check the PHP and Prestashop coding standards
-        language: script
-        entry:  ./scripts/coding-standard.sh
+        language: system
+        pass_filenames: false
+        entry:  task lint
         stages: [commit]
 
-  - repo: local
-    hooks:
       - id: php-compatibility
         name: Check the PHP compatibility
-        language: script
-        entry:  ./scripts/php-compatibility.sh
+        language: system
+        pass_filenames: false
+        entry:  task php-compatibililty
         stages: [commit]
-
-#  - repo: https://github.com/pre-commit/mirrors-prettier
-  #  rev: v3.0.0-alpha.4
-   # hooks:
-   #   - id: prettier
-   #     files: "(^.*\\.js$)|(^pos/frontend/.*$)"
-
-#  - repo: https://github.com/pre-commit/mirrors-eslint
-  #  rev: v8.29.0
-  #  hooks:
- #     - id: eslint
-    #    files: "(^dashboard/frontend/src/.*\\.[jt]sx?$)" # *.js, *.jsx, *.ts and *.tsx
-    #    types: [file]
-     #   args:
-      #    - --fix
-
-#  - repo: https://github.com/thibaudcolas/pre-commit-stylelint
-#    rev: v14.16.0
-#    hooks:
-#      - id: stylelint
-#        files: "(^src/assets/css/.*\\.css$)|(^src/assets/widget/css/.*\\.css$)|(^.*\\.css$)"
-#        args:
-#          - --config
-#          - stylelint.config.cjs
-#        additional_dependencies:
-#          - stylelint@15.10.2
-#          - prettier@2.8.8
-#          - stylelint-config-standard@32.0.0
-#          - stylelint-prettier@3.0.0
 
   - repo: https://github.com/returntocorp/semgrep
     rev: v1.27.0

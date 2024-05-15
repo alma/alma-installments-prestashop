@@ -38,6 +38,7 @@ class ConstantsHelper
     const PRODUCT_SCRIPT_PATH = 'views/js/alma-product.js';
     const PRODUCT_INSURANCE_SCRIPT_PATH = 'views/js/alma-product-insurance.js';
     const ORDER_INSURANCE_SCRIPT_PATH = 'views/js/alma-order-insurance.js';
+    const INSURANCE_SCRIPT_PATH = 'views/js/alma-insurance.js';
     const PRODUCT_INSURANCE_16_SCRIPT_PATH = 'views/js/alma-product-insurance16.js';
     const INSURANCE_16_SCRIPT_PATH = 'views/js/alma-insurance16.js';
     const ORDER_INSURANCE_16_SCRIPT_PATH = 'views/js/order-alma-insurance16.js';

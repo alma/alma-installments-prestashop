@@ -25,6 +25,10 @@
 namespace Alma\PrestaShop\Tests\Unit\Helper;
 
 use Alma\PrestaShop\Builders\OrderStateHelperBuilder;
+use Alma\PrestaShop\Exceptions\AlmaException;
+use Alma\PrestaShop\Factories\ContextFactory;
+use Alma\PrestaShop\Factories\OrderStateFactory;
+use Alma\PrestaShop\Helpers\OrderStateHelper;
 use PHPUnit\Framework\TestCase;
 
 class OrderStateHelperTest extends TestCase
@@ -43,5 +47,15 @@ class OrderStateHelperTest extends TestCase
     public function testGetNameById()
     {
         $this->assertEquals('Awaiting check payment', $this->orderStateHelper->getNameById(1));
+
+        $contextFactory = \Mockery::mock(ContextFactory::class)->makePartial();
+        $contextFactory->shouldReceive('getContext')->andReturn(null);
+
+        $orderStateFactory = \Mockery::mock(OrderStateFactory::class);
+
+        $orderStateHelper = \Mockery::mock(OrderStateHelper::class, [$contextFactory, $orderStateFactory])->makePartial();
+
+        $this->expectException(AlmaException::class);
+        $orderStateHelper->getNameById(1);
     }
 }

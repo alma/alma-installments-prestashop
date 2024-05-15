@@ -85,7 +85,7 @@ class ContextFactory
         $language = $this->getContextLanguage();
 
         if (!$language) {
-            throw new AlmaException('ContextLanguageId is null');
+            throw new AlmaException('ContextLanguage is null');
         }
 
         return $language->id;
