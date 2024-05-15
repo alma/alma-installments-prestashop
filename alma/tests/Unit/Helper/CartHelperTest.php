@@ -25,7 +25,6 @@
 namespace Alma\PrestaShop\Tests\Unit\Helper;
 
 use Alma\PrestaShop\Builders\CartHelperBuilder;
-use Alma\PrestaShop\Exceptions\AlmaException;
 use Alma\PrestaShop\Factories\ContextFactory;
 use Alma\PrestaShop\Helpers\CarrierHelper;
 use Alma\PrestaShop\Helpers\OrderHelper;
@@ -197,6 +196,5 @@ class CartHelperTest extends TestCase
         $cartHelper = $cartHelperBuilder->getInstance();
 
         $this->assertEquals(1, $cartHelper->getCartIdFromContext());
-        
     }
 }
