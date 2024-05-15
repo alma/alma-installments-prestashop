@@ -133,7 +133,6 @@
         {l s='Settings successfully updated' mod='alma'}
     </div>
 {/if}
-{*
 
 {if $hasPSAccount}
     <prestashop-accounts></prestashop-accounts>
