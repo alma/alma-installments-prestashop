@@ -67,7 +67,7 @@ tasks:
     cmds:
       - php alma/vendor/bin/php-cs-fixer fix alma
       # Execute autoindex to add index in all folders
-      - php ./alma/vendor/bin/autoindex prestashop:add:index alma/
+      - php ./alma/vendor/bin/autoindex prestashop:add:index --exclude=vendor alma/
       # Remove blank line at the end of index.php file
       #- ./scripts/remove-blank-line-index.sh alma/
 
