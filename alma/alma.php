@@ -72,11 +72,6 @@ class Alma extends PaymentModule
     protected $container;
 
     /**
-     * @var \Alma\PrestaShop\Helpers\MediaHelper
-     */
-    protected $mediaHelper;
-
-    /**
      * @var \Alma\PrestaShop\Helpers\ToolsHelper
      */
     protected $toolsHelper;
@@ -101,12 +96,10 @@ class Alma extends PaymentModule
         }
 
         $this->controllers = $controllers;
-
         $this->is_eu_compatible = 1;
         $this->currencies = true;
         $this->currencies_mode = 'checkbox';
         $this->module_key = 'ad25114b1fb02d9d8b8787b992a0ccdb';
-
         $this->limited_currencies = ['EUR'];
 
         $version = _PS_VERSION_;
@@ -131,8 +124,7 @@ class Alma extends PaymentModule
 
         $this->hook = new \Alma\PrestaShop\Helpers\HookHelper();
         $this->tabsHelper = new \Alma\PrestaShop\Helpers\Admin\TabsHelper();
-        $mediaHelperBuilder = new \Alma\PrestaShop\Builders\MediaHelperBuilder();
-        $this->mediaHelper = $mediaHelperBuilder->getInstance();
+
         $this->toolsHelper = new \Alma\PrestaShop\Helpers\ToolsHelper();
 
         $this->handlePSModule();
@@ -614,7 +606,9 @@ class Alma extends PaymentModule
         }
 
         try {
-            $this->mediaHelper->addJsDef([
+            $mediaHelperBuilder = new \Alma\PrestaShop\Builders\MediaHelperBuilder();
+            $mediaHelper = $mediaHelperBuilder->getInstance();
+            $mediaHelper->addJsDef([
                 'contextPsAccounts' => $accountsFacade->getPsAccountsPresenter()
                     ->present($this->name),
             ]);
