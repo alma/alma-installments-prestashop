@@ -1,6 +1,5 @@
 (function ($) {
     $(function () {
-        const insuranceId = $('#alma-insurance-global').data('insurance-id');
         loadInsuranceMiniCart();
         prestashop.on(
             'updateCart',
