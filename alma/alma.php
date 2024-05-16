@@ -606,7 +606,7 @@ class Alma extends PaymentModule
         }
 
         try {
-            $mediaHelperBuilder = new \Alma\PrestaShop\Builders\MediaHelperBuilder();
+            $mediaHelperBuilder = new \Alma\PrestaShop\Builders\Models\MediaHelperBuilder();
             $mediaHelper = $mediaHelperBuilder->getInstance();
             $mediaHelper->addJsDef([
                 'contextPsAccounts' => $accountsFacade->getPsAccountsPresenter()

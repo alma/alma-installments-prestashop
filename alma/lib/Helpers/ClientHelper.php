@@ -129,4 +129,38 @@ class ClientHelper
     {
         return $this->getAlmaClient()->payments->eligibility($paymentData);
     }
+
+    /**
+     * @param string $transactionId
+     * @return Alma\API\Entities\Payment
+     * @throws ClientException
+     * @throws RequestError
+     */
+    public function getPaymentByTransactionId($transactionId)
+    {
+        return $this->getAlmaClient()->payments->fetch($transactionId);
+    }
+
+    /**
+     * @param string $orderExternalId
+     * @param array $data
+     * @return null
+     * @throws Alma\API\Exceptions\ParametersException
+     * @throws Alma\API\Exceptions\RequestException
+     * @throws ClientException
+     */
+    public function sendOrderStatus($orderExternalId, $data)
+    {
+        $this->getClientOrdersEndpoint()->sendStatus($orderExternalId, $data);
+    }
+
+    /**
+     * @return Alma\API\Endpoints\Orders
+     * @throws ClientException
+     */
+    public function getClientOrdersEndpoint()
+    {
+        return $this->getAlmaClient()->orders;
+    }
+
 }

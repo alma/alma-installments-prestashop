@@ -24,7 +24,7 @@
 
 namespace Alma\PrestaShop\Tests\Unit\Helper;
 
-use Alma\PrestaShop\Builders\TranslationHelperBuilder;
+use Alma\PrestaShop\Builders\Helpers\TranslationHelperBuilder;
 use PHPUnit\Framework\TestCase;
 
 class TranslationHelperTest extends TestCase

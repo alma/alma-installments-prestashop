@@ -772,6 +772,7 @@ class SettingsHelper
         return static::get('ALMA_MERCHANT_ID');
     }
 
+
     /**
      * @return false|mixed|string|null
      */

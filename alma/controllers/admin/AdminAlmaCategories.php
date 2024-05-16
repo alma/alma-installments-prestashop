@@ -22,7 +22,7 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
-use Alma\PrestaShop\Builders\SettingsHelperBuilder;
+use Alma\PrestaShop\Builders\Helpers\SettingsHelperBuilder;
 
 if (!defined('_PS_VERSION_')) {
     exit;

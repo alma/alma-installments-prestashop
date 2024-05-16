@@ -25,7 +25,7 @@
 namespace Alma\PrestaShop\Tests\Unit\Helper;
 
 use Alma\API\Entities\Insurance\Contract;
-use Alma\PrestaShop\Builders\PriceHelperBuilder;
+use Alma\PrestaShop\Builders\Helpers\PriceHelperBuilder;
 use Alma\PrestaShop\Exceptions\MessageOrderException;
 use Alma\PrestaShop\Helpers\MessageOrderHelper;
 use Alma\PrestaShop\Services\InsuranceApiService;

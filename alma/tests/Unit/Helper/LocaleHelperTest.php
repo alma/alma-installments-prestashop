@@ -24,7 +24,7 @@
 
 namespace Alma\PrestaShop\Tests\Unit\Helper;
 
-use Alma\PrestaShop\Builders\LocaleHelperBuilder;
+use Alma\PrestaShop\Builders\Models\LocaleHelperBuilder;
 use Alma\PrestaShop\Helpers\LanguageHelper;
 use Alma\PrestaShop\Helpers\LocaleHelper;
 use PHPUnit\Framework\TestCase;

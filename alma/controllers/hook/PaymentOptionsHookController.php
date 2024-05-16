@@ -27,7 +27,8 @@ namespace Alma\PrestaShop\Controllers\Hook;
 if (!defined('_PS_VERSION_')) {
     exit;
 }
-use Alma\PrestaShop\Builders\PaymentServiceBuilder;
+
+use Alma\PrestaShop\Builders\Services\PaymentServiceBuilder;
 use Alma\PrestaShop\Hooks\FrontendHookController;
 use Alma\PrestaShop\Services\PaymentService;
 use PrestaShop\PrestaShop\Core\Localization\Exception\LocalizationException;

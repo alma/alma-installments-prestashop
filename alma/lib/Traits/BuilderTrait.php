@@ -68,6 +68,7 @@ use Alma\PrestaShop\Helpers\StateHelper;
 use Alma\PrestaShop\Helpers\ToolsHelper;
 use Alma\PrestaShop\Helpers\TranslationHelper;
 use Alma\PrestaShop\Helpers\ValidateHelper;
+use Alma\PrestaShop\Logger;
 use Alma\PrestaShop\Model\CarrierData;
 use Alma\PrestaShop\Model\CartData;
 use Alma\PrestaShop\Model\PaymentData;
@@ -935,5 +936,19 @@ trait BuilderTrait
         }
 
         return new PaymentHelper($this->getPaymentData());
+    }
+
+    /**
+     * @param Logger $paymentHelper
+     *
+     * @return Logger
+     */
+    public function getLogger($logger = null)
+    {
+        if ($logger) {
+            return $logger;
+        }
+
+        return new Logger();
     }
 }

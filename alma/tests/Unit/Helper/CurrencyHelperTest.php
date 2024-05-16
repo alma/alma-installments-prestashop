@@ -24,7 +24,7 @@
 
 namespace Alma\PrestaShop\Tests\Unit\Helper;
 
-use Alma\PrestaShop\Builders\CurrencyHelperBuilder;
+use Alma\PrestaShop\Builders\Helpers\CurrencyHelperBuilder;
 use Alma\PrestaShop\Factories\ContextFactory;
 use Alma\PrestaShop\Factories\CurrencyFactory;
 use PHPUnit\Framework\TestCase;

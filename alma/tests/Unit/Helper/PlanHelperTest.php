@@ -25,7 +25,7 @@
 namespace Alma\PrestaShop\Tests\Unit\Helper;
 
 use Alma\API\Entities\FeePlan;
-use Alma\PrestaShop\Builders\PlanHelperBuilder;
+use Alma\PrestaShop\Builders\Helpers\PlanHelperBuilder;
 use PHPUnit\Framework\TestCase;
 
 class PlanHelperTest extends TestCase

@@ -24,7 +24,7 @@
 
 namespace Alma\PrestaShop\Forms;
 
-use Alma\PrestaShop\Builders\CustomFieldHelperBuilder;
+use Alma\PrestaShop\Builders\Helpers\CustomFieldHelperBuilder;
 use Alma\PrestaShop\Helpers\CustomFieldsHelper;
 
 if (!defined('_PS_VERSION_')) {

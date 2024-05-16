@@ -24,7 +24,7 @@
 
 namespace Alma\PrestaShop\Tests\Unit\Helper;
 
-use Alma\PrestaShop\Builders\MediaHelperBuilder;
+use Alma\PrestaShop\Builders\Models\MediaHelperBuilder;
 use Alma\PrestaShop\Factories\PhpFactory;
 use PHPUnit\Framework\TestCase;
 

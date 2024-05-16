@@ -30,12 +30,12 @@ if (!defined('_PS_VERSION_')) {
 
 use Alma\API\Entities\Merchant;
 use Alma\API\RequestError;
-use Alma\PrestaShop\Builders\ApiHelperBuilder;
-use Alma\PrestaShop\Builders\CustomFieldHelperBuilder;
-use Alma\PrestaShop\Builders\MediaHelperBuilder;
-use Alma\PrestaShop\Builders\PriceHelperBuilder;
-use Alma\PrestaShop\Builders\SettingsHelperBuilder;
-use Alma\PrestaShop\Builders\ShareOfCheckoutHelperBuilder;
+use Alma\PrestaShop\Builders\Helpers\ApiHelperBuilder;
+use Alma\PrestaShop\Builders\Helpers\CustomFieldHelperBuilder;
+use Alma\PrestaShop\Builders\Helpers\PriceHelperBuilder;
+use Alma\PrestaShop\Builders\Helpers\SettingsHelperBuilder;
+use Alma\PrestaShop\Builders\Helpers\ShareOfCheckoutHelperBuilder;
+use Alma\PrestaShop\Builders\Models\MediaHelperBuilder;
 use Alma\PrestaShop\Exceptions\MissingParameterException;
 use Alma\PrestaShop\Forms\ApiAdminFormBuilder;
 use Alma\PrestaShop\Forms\CartEligibilityAdminFormBuilder;
