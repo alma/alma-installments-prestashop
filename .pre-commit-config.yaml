@@ -29,7 +29,7 @@ repos:
         name: Check the PHP compatibility
         language: system
         pass_filenames: false
-        entry:  task php-compatibililty
+        entry:  task php-compatibility
         stages: [commit]
 
   - repo: https://github.com/returntocorp/semgrep

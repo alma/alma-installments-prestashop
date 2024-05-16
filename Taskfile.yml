@@ -72,7 +72,7 @@ tasks:
       # Script commented as it is not coherent with the linter rules
       - #./scripts/remove-blank-line-index.sh
 
-  php-compatibililty:
+  php-compatibility:
     desc: Check compatibility code
     deps:
       - install-tools
