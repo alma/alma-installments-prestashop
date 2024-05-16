@@ -5,11 +5,13 @@
         prestashop.on(
             'updateCart',
             function(event) {
-                setTimeout(loadInsuranceMiniCart, 1000);
-        });
-        $(document).on('mouseover', `.cart-item-${insuranceId}`, function() {
-            loadInsuranceMiniCart();
-        });
+                loadInsuranceMiniCart()
+            });
+        prestashop.on(
+            'updatedCart',
+            function(event) {
+                loadInsuranceMiniCart()
+            });
     });
 })(jQuery)
 
