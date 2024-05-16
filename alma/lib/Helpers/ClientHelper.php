@@ -138,7 +138,7 @@ class ClientHelper
      */
     public function getPaymentByTransactionId($transactionId)
     {
-        return $this->getAlmaClient()->payments->fetch($transactionId);
+        return $this->getClientPaymentsEndpoint()->fetch($transactionId);
     }
 
     /**
@@ -161,6 +161,15 @@ class ClientHelper
     public function getClientOrdersEndpoint()
     {
         return $this->getAlmaClient()->orders;
+    }
+
+    /**
+     * @return Alma\API\Endpoints\Payments
+     * @throws ClientException
+     */
+    public function getClientPaymentsEndpoint()
+    {
+        return $this->getAlmaClient()->payments;
     }
 
 }

@@ -27,6 +27,7 @@ namespace Alma\PrestaShop\Tests\Unit\Helper;
 
 use Alma\API\ClientContext;
 use Alma\API\Endpoints\Orders;
+use Alma\API\Entities\Payment;
 use Alma\API\Exceptions\ParametersException;
 use Alma\API\Exceptions\RequestException;
 use Alma\PrestaShop\Exceptions\ClientException;
@@ -104,6 +105,50 @@ class ClientHelperTest extends TestCase
         $this->expectException(RequestException::class);
         $clientHelper->sendOrderStatus('transactionId', []);
     }
+
+    /**
+     * When i call an api
+     * Then I expect a endpoint paymentqs
+     */
+    public function testSendPaymentEndpoint()
+    {
+        $almaClient = new \stdClass();
+        $almaClient->payments = Mockery::mock(Payment::class);
+
+        $this->clientHelper->shouldReceive('getAlmaClient')->andReturn($almaClient);
+
+        $this->assertInstanceOf(Payment::class, $this->clientHelper->getClientPaymentsEndpoint());
+    }
+
+    /**
+     * When i call an api
+     * And there is no alma client
+     * Then I expect a client exception
+     */
+    public function testSendPaymentEndpointNoAlmaClient()
+    {
+        $this->clientHelper->shouldReceive('getAlmaClient')->andThrow(ClientException::class);
+
+        $this->expectException(ClientException::class);
+        $this->clientHelper->getClientPaymentsEndpoint();
+    }
+
+    /**
+     * When i call the function and the request fails
+     * Then I expect a Request exception
+     */
+    public function testGetPaymentByTransactionIdBadRequest()
+    {
+        $paymentEndoint = Mockery::mock(Payment::class)->makePartial();
+        $paymentEndoint->shouldReceive('fetch')->andThrow(RequestException::class);
+
+        $clientHelper = Mockery::mock(ClientHelper::class)->makePartial();
+        $clientHelper->shouldReceive('getClientPaymentsEndpoint')->andReturn($paymentEndoint);
+
+        $this->expectException(RequestException::class);
+        $clientHelper->getPaymentByTransactionId('transactionId');
+    }
+
 
     public function tearDown()
     {
