@@ -69,7 +69,8 @@ tasks:
       # Execute autoindex to add index in all folders
       - php ./alma/vendor/bin/autoindex prestashop:add:index --exclude=vendor alma/
       # Remove blank line at the end of index.php file
-      #- ./scripts/remove-blank-line-index.sh alma/
+      # Script commented as it is not coherent with the linter rules
+      - #./scripts/remove-blank-line-index.sh
 
   php-compatibililty:
     desc: Check compatibility code
