@@ -99,7 +99,7 @@
                     <div class="row item-alma-insurance">
                         <div class="product-line-grid-left col-md-2 col-xs-3">
                             <span class="product-image media-middle">
-                                <i class="material-icons">shield</i>
+                                <img src="/modules/alma/views/img/logos/shield.svg" alt="{l s='Alma insurance' mod='alma'}">
                             </span>
                         </div>
                         <div class="product-line-grid-left col-md-10 col-xs-9">
