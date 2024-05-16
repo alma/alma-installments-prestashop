@@ -81,6 +81,9 @@ class Alma extends PaymentModule
      */
     protected $toolsHelper;
 
+    /**
+     *
+     */
     public function __construct()
     {
         $this->name = \Alma\PrestaShop\Helpers\ConstantsHelper::ALMA_MODULE_NAME;
@@ -579,9 +582,16 @@ class Alma extends PaymentModule
      */
     public function getContent()
     {
-        $hasPSAccount = $this->renderPSAccount();
+        $suggestPSAccount = false;
 
-        return $this->runHookController('getContent', ['hasPSAccount' => $hasPSAccount]);
+        try {
+            $hasPSAccount = $this->renderPSAccount();
+        } catch (\PrestaShop\PsAccountsInstaller\Installer\Exception\ModuleNotInstalledException $e) {
+            $hasPSAccount = false;
+            $suggestPSAccount = true;
+        }
+
+        return $this->runHookController('getContent', ['hasPSAccount' => $hasPSAccount, 'suggestPSAccount' => $suggestPSAccount]);
     }
 
     /**

@@ -198,6 +198,9 @@ final class GetContentHookController extends AdminHookController
 
         if ((empty($liveKey) && ALMA_MODE_LIVE == $apiMode) || (empty($testKey) && ALMA_MODE_TEST == $apiMode)) {
             $this->context->smarty->assign('validation_error', "missing_key_for_{$apiMode}_mode");
+            $this->context->smarty->assign([
+                'suggestPSAccount' => false,
+            ]);
 
             return $this->module->display($this->module->file, 'getContent.tpl');
         }
@@ -528,6 +531,8 @@ final class GetContentHookController extends AdminHookController
 
             $this->assignSmartyAlertClasses();
             $this->context->smarty->assign('tip', 'fill_api_keys');
+            $this->context->smarty->assign('suggestPSAccount', false);
+            $this->context->smarty->assign('hasPSAccount', false);
 
             $extraMessage = $this->module->display($this->module->file, 'getContent.tpl');
         }
@@ -817,6 +822,7 @@ final class GetContentHookController extends AdminHookController
         $this->context->smarty->assign([
             'hasPSAccount' => $params['hasPSAccount'],
             'updated' => true,
+            'suggestPSAccount' => $params['suggestPSAccount'],
         ]);
 
         $this->assignSmartyAlertClasses();

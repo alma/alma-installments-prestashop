@@ -146,3 +146,18 @@
         window?.psaccountsVue?.init();
     </script>
 {/if}
+{if isset($suggestPSAccount) &&  $suggestPSAccount}
+
+    <div class="alert alert-dismissible alert-info">
+        <h4>
+            {l s='We offer to download the PrestaShop Account module ' mod='alma'}
+        </h4>
+        <p>
+            {l s='Link your store to your PrestaShop account to take full advantage of the modules offered by the PrestaShop Marketplace and optimize your experience.'}
+        </p>
+        {almaDisplayHtml}
+        {l s='You can find the module %1$shere%2$s' sprintf=['<a href="https://addons.prestashop.com/en/administrative-tools/49648-prestashop-account.html" target=\"_blank\">', '</a>'] mod='alma'}
+        {/almaDisplayHtml}
+    </div>
+
+{/if}
