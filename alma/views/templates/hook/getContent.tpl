@@ -145,6 +145,18 @@
          * *******************/
         window?.psaccountsVue?.init();
     </script>
+
+    {if isset($hasKey) &&  !$hasKey}
+        <script>
+            window.onload = function() {
+                if (window.psaccountsVue.isOnboardingCompleted() != true) {
+                    document.getElementById("alma_config_form").style.opacity = "0.5";
+                    document.getElementById("alma_config_form").setAttribute('inert', 'inert')
+                }
+            }
+        </script>
+        }
+    {/if}
 {/if}
 {if isset($suggestPSAccount) &&  $suggestPSAccount}
 

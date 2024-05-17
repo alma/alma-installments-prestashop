@@ -110,7 +110,10 @@ class ApiHelper
             throw new ApiMerchantsException($this->moduleFactory->l('Alma encountered an error when fetching merchant status, please check your api keys or retry later.', 'GetContentHookController'), $e->getCode(), $e);
         }
 
-        if (!$merchant->can_create_payments) {
+        if (
+            !$merchant
+            || !$merchant->can_create_payments
+        ) {
             throw new ActivationException($this->moduleFactory);
         }
 
