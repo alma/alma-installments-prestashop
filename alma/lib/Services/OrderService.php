@@ -65,7 +65,7 @@ class OrderService
        $almaPayment = $this->getAlmaPayment($paymentTransactionId);
 
        $this->clientHelper->sendOrderStatus($almaPayment->orders[0]->id, [
-           'label' => $orderState->name,
+           'status' => $orderState->name,
            'is_shipped' => (bool)$orderState->shipped
        ]);
    }
