@@ -76,9 +76,6 @@ class Alma extends PaymentModule
      */
     protected $toolsHelper;
 
-    /**
-     *
-     */
     public function __construct()
     {
         $this->name = \Alma\PrestaShop\Helpers\ConstantsHelper::ALMA_MODULE_NAME;
