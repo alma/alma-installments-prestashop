@@ -72,6 +72,7 @@ class ActionCartSaveHookController extends FrontendHookController
         $this->insuranceProductService = new InsuranceProductService();
         $this->insuranceHelper = new InsuranceHelper();
         $this->productHelper = new ProductHelper();
+        $this->context = \Context::getContext();
     }
 
     /**
@@ -80,11 +81,21 @@ class ActionCartSaveHookController extends FrontendHookController
      * @param array $params
      *
      * @return void
-     *
-     * @throws InsuranceInstallException
+     * @throws \PrestaShopDatabaseException
      */
     public function run($params)
     {
+        $currentCart = $this->context->cart;
+        $newCart = $params['cart'];
+
+        if ($currentCart->id != $newCart->id) {
+            if (!$this->insuranceHelper->checkInsuranceProductsExist($newCart)) {
+                $this->insuranceProductService->duplicateInsuranceProducts($currentCart, $newCart);
+            }
+
+            return;
+        }
+
         $this->handleAddingProductInsurance($params['cart']);
     }
 

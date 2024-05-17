@@ -191,6 +191,22 @@ class AlmaInsuranceProductRepository
     }
 
     /**
+     * @param $cartId
+     * @param $shopId
+     * @return mixed
+     * @throws \PrestaShopDatabaseException
+     */
+    public function getByCartIdAndShop($cartId, $shopId)
+    {
+        $sql = '
+            SELECT * FROM `' . _DB_PREFIX_ . 'alma_insurance_product` aip
+            WHERE aip.`id_cart` = ' . (int) $cartId . '
+            AND aip.`id_shop` = ' . (int) $shopId;
+
+        return \Db::getInstance()->executeS($sql);
+    }
+
+    /**
      * @param int $id
      *
      * @return bool
@@ -371,6 +387,22 @@ class AlmaInsuranceProductRepository
             AND aip.`subscription_state` IS NOT NULL
             AND aip.`id_order` = ' . (int) $order->id . '
             AND aip.`id_shop` = ' . (int) $order->id_shop;
+
+        return \Db::getInstance()->getRow($sql);
+    }
+
+    /**
+     * @param $cartId
+     * @param $shopId
+     * @return array|bool|object|null
+     */
+    public function hasInsuranceForCartIdAndShop($cartId, $shopId)
+    {
+        $sql = '
+            SELECT `id_alma_insurance_product` as id
+            FROM `' . _DB_PREFIX_ . 'alma_insurance_product` aip
+            WHERE aip.`id_cart` = ' . (int) $cartId . '
+            AND aip.`id_shop` = ' . (int) $shopId;
 
         return \Db::getInstance()->getRow($sql);
     }
