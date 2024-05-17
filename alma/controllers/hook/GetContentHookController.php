@@ -93,6 +93,11 @@ final class GetContentHookController extends AdminHookController
     protected $mediaHelper;
 
     /**
+     * @var boolean
+     */
+    protected $hasKey;
+
+    /**
      * @var array
      */
     const KEY_CONFIG = [
@@ -171,6 +176,8 @@ final class GetContentHookController extends AdminHookController
         $mediaHelperBuilder = new MediaHelperBuilder();
         $this->mediaHelper = $mediaHelperBuilder->getInstance();
 
+        $this->hasKey = false;
+
         parent::__construct($module);
     }
 
@@ -202,6 +209,7 @@ final class GetContentHookController extends AdminHookController
                 'suggestPSAccount' => false,
             ]);
 
+            $this->hasKey = false;
             return $this->module->display($this->module->file, 'getContent.tpl');
         }
 
@@ -839,8 +847,13 @@ final class GetContentHookController extends AdminHookController
 
             if ($messages) {
                 $messages = $messages['message'];
+            } else {
+                $this->hasKey = true;
             }
         }
+        $this->context->smarty->assign([
+            'hasKey' => $this->hasKey,
+        ]);
 
         if (!$messages) {
             $this->context->smarty->assign([
