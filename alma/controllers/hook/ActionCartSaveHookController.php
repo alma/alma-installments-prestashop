@@ -28,11 +28,11 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-use Alma\PrestaShop\Exceptions\InsuranceInstallException;
 use Alma\PrestaShop\Helpers\InsuranceHelper;
 use Alma\PrestaShop\Helpers\ProductHelper;
 use Alma\PrestaShop\Helpers\SettingsHelper;
 use Alma\PrestaShop\Hooks\FrontendHookController;
+use Alma\PrestaShop\Services\CartSaveService;
 use Alma\PrestaShop\Services\InsuranceProductService;
 
 class ActionCartSaveHookController extends FrontendHookController
@@ -50,6 +50,10 @@ class ActionCartSaveHookController extends FrontendHookController
      * @var ProductHelper
      */
     protected $productHelper;
+    /**
+     * @var CartSaveService
+     */
+    protected $cartSaveService;
 
     public function canRun()
     {
@@ -73,6 +77,7 @@ class ActionCartSaveHookController extends FrontendHookController
         $this->insuranceHelper = new InsuranceHelper();
         $this->productHelper = new ProductHelper();
         $this->context = \Context::getContext();
+        $this->cartSaveService = new CartSaveService();
     }
 
     /**
@@ -81,12 +86,18 @@ class ActionCartSaveHookController extends FrontendHookController
      * @param array $params
      *
      * @return void
+     *
      * @throws \PrestaShopDatabaseException
      */
     public function run($params)
     {
         $currentCart = $this->context->cart;
         $newCart = $params['cart'];
+
+        if (null === $currentCart) {
+            $cartSaved = $this->cartSaveService->getCartSaved(\Tools::getValue('token'));
+            $currentCart = new \Cart($cartSaved['id_cart']);
+        }
 
         if ($currentCart->id != $newCart->id) {
             if (!$this->insuranceHelper->checkInsuranceProductsExist($newCart)) {

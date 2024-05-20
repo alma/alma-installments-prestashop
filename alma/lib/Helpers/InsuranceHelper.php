@@ -176,6 +176,7 @@ class InsuranceHelper
      * Check if there is an insurance product in the cart
      *
      * @param \Cart $cart
+     *
      * @return bool
      */
     public function checkInsuranceProductsExist($cart)

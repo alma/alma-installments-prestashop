@@ -193,7 +193,9 @@ class AlmaInsuranceProductRepository
     /**
      * @param $cartId
      * @param $shopId
+     *
      * @return mixed
+     *
      * @throws \PrestaShopDatabaseException
      */
     public function getByCartIdAndShop($cartId, $shopId)
@@ -394,6 +396,7 @@ class AlmaInsuranceProductRepository
     /**
      * @param $cartId
      * @param $shopId
+     *
      * @return array|bool|object|null
      */
     public function hasInsuranceForCartIdAndShop($cartId, $shopId)

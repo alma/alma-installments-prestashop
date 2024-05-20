@@ -342,14 +342,13 @@ class InsuranceProductService
     /**
      * @param $currentCart
      * @param $newCart
+     *
      * @return void
+     *
      * @throws \PrestaShopDatabaseException
      */
     public function duplicateInsuranceProducts($currentCart, $newCart)
     {
-        if (null === $currentCart) {
-            // TODO: need to get the cart save on opartsavecart db, but not optimal
-        }
         $almaInsuranceProducts = $this->almaInsuranceProductRepository->getByCartIdAndShop($currentCart->id, $this->context->shop->id);
 
         foreach ($almaInsuranceProducts as $almaInsuranceProduct) {
