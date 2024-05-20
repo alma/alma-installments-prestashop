@@ -41,12 +41,12 @@ class ActivationException extends AlmaException
     {
         $message = $moduleFactory->l('Your Alma account needs to be activated before you can use Alma on your shop.', 'ActivationException')
         . sprintf(
-                $moduleFactory->l('Go to your %1$sAlma dashboard%2$s to activate your account.', 'ActivationException'),
+            $moduleFactory->l('Go to your %1$sAlma dashboard%2$s to activate your account.', 'ActivationException'),
             '<a href="' . LinkHelper::getAlmaDashboardUrl(SettingsHelper::getActiveMode(), 'settings') . '" target="_blank">',
             '</a>'
         )
         . sprintf(
-                $moduleFactory->l('%1$sRefresh%2$s the page when ready.', 'ActivationException'),
+            $moduleFactory->l('%1$sRefresh%2$s the page when ready.', 'ActivationException'),
             '<a href="#">',
             '</a>'
         );

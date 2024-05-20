@@ -51,7 +51,7 @@ class FeePlanHelperBuilderTest extends TestCase
     {
         $this->assertInstanceOf(SettingsHelper::class, $this->feePlanHelperBuilder->getSettingsHelper());
         $this->assertInstanceOf(SettingsHelper::class, $this->feePlanHelperBuilder->getSettingsHelper(
-           \Mockery::mock(SettingsHelper::class)
+            \Mockery::mock(SettingsHelper::class)
         ));
     }
 
