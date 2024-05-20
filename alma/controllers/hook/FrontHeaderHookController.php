@@ -28,6 +28,8 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
+use Alma\PrestaShop\Builders\Admin\InsuranceHelperBuilder as AdminInsuranceHelperBuilder;
+use Alma\PrestaShop\Builders\InsuranceHelperBuilder;
 use Alma\PrestaShop\Builders\SettingsHelperBuilder;
 use Alma\PrestaShop\Helpers\Admin\InsuranceHelper as AdminInsuranceHelper;
 use Alma\PrestaShop\Helpers\ConstantsHelper;
@@ -86,8 +88,11 @@ class FrontHeaderHookController extends FrontendHookController
         $settingsHelperBuilder = new SettingsHelperBuilder();
         $this->settingsHelper = $settingsHelperBuilder->getInstance();
 
-        $this->insuranceHelper = new InsuranceHelper();
-        $this->adminInsuranceHelper = new AdminInsuranceHelper($module);
+        $insuranceHelperBuilder = new InsuranceHelperBuilder();
+        $this->insuranceHelper = $insuranceHelperBuilder->getInstance();
+
+        $adminInsuranceHelperBuilder = new AdminInsuranceHelperBuilder();
+        $this->adminInsuranceHelper = $adminInsuranceHelperBuilder->getInstance();
         $this->insuranceService = new InsuranceService();
         $this->productRepository = new ProductRepository();
     }

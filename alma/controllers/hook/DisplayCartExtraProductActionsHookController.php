@@ -24,26 +24,21 @@
 
 namespace Alma\PrestaShop\Controllers\Hook;
 
+use Alma\PrestaShop\Builders\Admin\InsuranceHelperBuilder;
+use Alma\PrestaShop\Builders\CartHelperBuilder;
+use Alma\PrestaShop\Builders\PriceHelperBuilder;
+use Alma\PrestaShop\Builders\SettingsHelperBuilder;
 use Alma\PrestaShop\Exceptions\InsuranceNotFoundException;
 use Alma\PrestaShop\Helpers\Admin\InsuranceHelper as AdminInsuranceHelper;
-use Alma\PrestaShop\Helpers\CarrierHelper;
 use Alma\PrestaShop\Helpers\CartHelper;
-use Alma\PrestaShop\Helpers\ConfigurationHelper;
 use Alma\PrestaShop\Helpers\ConstantsHelper;
-use Alma\PrestaShop\Helpers\CurrencyHelper;
 use Alma\PrestaShop\Helpers\ImageHelper;
 use Alma\PrestaShop\Helpers\InsuranceHelper;
-use Alma\PrestaShop\Helpers\OrderStateHelper;
 use Alma\PrestaShop\Helpers\PriceHelper;
 use Alma\PrestaShop\Helpers\ProductHelper;
 use Alma\PrestaShop\Helpers\SettingsHelper;
-use Alma\PrestaShop\Helpers\ShopHelper;
-use Alma\PrestaShop\Helpers\ToolsHelper;
 use Alma\PrestaShop\Hooks\FrontendHookController;
-use Alma\PrestaShop\Model\CarrierData;
-use Alma\PrestaShop\Model\CartData;
 use Alma\PrestaShop\Repositories\AlmaInsuranceProductRepository;
-use Alma\PrestaShop\Repositories\OrderRepository;
 use Alma\PrestaShop\Repositories\ProductRepository;
 
 if (!defined('_PS_VERSION_')) {
@@ -103,42 +98,26 @@ class DisplayCartExtraProductActionsHookController extends FrontendHookControlle
      */
     public function __construct($module)
     {
-        $toolsHelper = new ToolsHelper();
-        $shopHelper = new ShopHelper();
-        $configurationHelper = new ConfigurationHelper();
-
         $this->insuranceHelper = new InsuranceHelper();
-        $this->adminInsuranceHelper = new AdminInsuranceHelper($module);
+
+        $adminInsuranceHelperBuilder = new InsuranceHelperBuilder();
+        $this->adminInsuranceHelper = $adminInsuranceHelperBuilder->getInstance();
+
         $this->productRepository = new ProductRepository();
         $this->productHelper = new ProductHelper();
-        $this->priceHelper = new PriceHelper(
-            $toolsHelper,
-            new CurrencyHelper()
-        );
-        $this->cartHelper = new CartHelper(
-            $this->context,
-            $toolsHelper,
-            $this->priceHelper,
-            new CartData(
-                $this->productHelper,
-                new SettingsHelper(
-                    $shopHelper,
-                    $configurationHelper
-                ),
-                $this->priceHelper,
-                new ProductRepository()
-            ),
-            new OrderRepository(),
-            new OrderStateHelper($this->context),
-            new CarrierHelper($this->context, new CarrierData())
-        );
+
+        $priceHelperBuilder = new PriceHelperBuilder();
+        $this->priceHelper = $priceHelperBuilder->getInstance();
+        $cartHelperBuilder = new CartHelperBuilder();
+        $this->cartHelper = $cartHelperBuilder->getInstance();
+
         $this->almaInsuranceProductRepository = new AlmaInsuranceProductRepository();
         $this->imageHelper = new ImageHelper();
         $this->link = new \Link();
-        $this->settingHelper = new SettingsHelper(
-            $shopHelper,
-            $configurationHelper
-        );
+
+        $settingHelperBuilder = new SettingsHelperBuilder();
+        $this->settingHelper = $settingHelperBuilder->getInstance();
+
         parent::__construct($module);
     }
 
