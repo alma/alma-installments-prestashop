@@ -1,4 +1,4 @@
-<script type='module' src='{$urlScriptInsuranceModal}'></script>
+<script data-cfasync='false' type='module' src='{$urlScriptInsuranceModal}'></script>
 <div id="alma-insurance-modal"></div>
 <script type="text/javascript">
     window.InsuranceModalConfirm = {
