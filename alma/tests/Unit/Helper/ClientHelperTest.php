@@ -24,7 +24,6 @@
 
 namespace Alma\PrestaShop\Tests\Unit\Helper;
 
-
 use Alma\API\ClientContext;
 use Alma\API\Endpoints\Orders;
 use Alma\API\Entities\Payment;
@@ -148,7 +147,6 @@ class ClientHelperTest extends TestCase
         $this->expectException(RequestException::class);
         $clientHelper->getPaymentByTransactionId('transactionId');
     }
-
 
     public function tearDown()
     {

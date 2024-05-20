@@ -44,7 +44,7 @@ class PaymentHelperBuilder
     public function getInstance()
     {
         return new PaymentHelper(
-           $this->getPaymentData()
+            $this->getPaymentData()
         );
     }
 }

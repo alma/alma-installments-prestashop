@@ -34,6 +34,7 @@ class OrderServiceBuilderTest extends TestCase
      * @var OrderServiceBuilder
      */
     protected $orderServiceBuilder;
+
     public function setUp()
     {
         $this->orderServiceBuilder = new OrderServiceBuilder();
@@ -49,5 +50,4 @@ class OrderServiceBuilderTest extends TestCase
     {
         $this->assertInstanceOf(OrderService::class, $this->orderServiceBuilder->getInstance());
     }
-
 }

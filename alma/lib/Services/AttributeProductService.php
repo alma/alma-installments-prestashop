@@ -67,10 +67,10 @@ class AttributeProductService
     public function getAttributeId($name, $attributeGroupId)
     {
         $insuranceAttributeId = $this->attributeRepository->getAttributeIdByNameAndGroup(
-           $name,
-           $attributeGroupId,
-           $this->context->language->id
-       );
+            $name,
+            $attributeGroupId,
+            $this->context->language->id
+        );
 
         if (!$insuranceAttributeId) {
             $insuranceAttribute = $this->getProductAttributeObject();

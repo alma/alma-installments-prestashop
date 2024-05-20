@@ -328,9 +328,9 @@ class PaymentService
         } catch (\Exception $e) {
             Logger::instance()->error(
                 sprintf(
-                'An error occured when displaying options payments - message : %s, %s',
-                $e->getMessage(),
-                $e->getTraceAsString()
+                    'An error occured when displaying options payments - message : %s, %s',
+                    $e->getMessage(),
+                    $e->getTraceAsString()
                 ));
         }
     }

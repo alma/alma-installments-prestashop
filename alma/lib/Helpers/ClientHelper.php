@@ -132,7 +132,9 @@ class ClientHelper
 
     /**
      * @param string $transactionId
+     *
      * @return Alma\API\Entities\Payment
+     *
      * @throws ClientException
      * @throws RequestError
      */
@@ -144,7 +146,9 @@ class ClientHelper
     /**
      * @param string $orderExternalId
      * @param array $data
+     *
      * @return null
+     *
      * @throws Alma\API\Exceptions\ParametersException
      * @throws Alma\API\Exceptions\RequestException
      * @throws ClientException
@@ -156,6 +160,7 @@ class ClientHelper
 
     /**
      * @return Alma\API\Endpoints\Orders
+     *
      * @throws ClientException
      */
     public function getClientOrdersEndpoint()
@@ -165,11 +170,11 @@ class ClientHelper
 
     /**
      * @return Alma\API\Endpoints\Payments
+     *
      * @throws ClientException
      */
     public function getClientPaymentsEndpoint()
     {
         return $this->getAlmaClient()->payments;
     }
-
 }

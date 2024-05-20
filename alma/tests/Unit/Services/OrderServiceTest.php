@@ -99,7 +99,7 @@ class OrderServiceTest extends TestCase
         $payment->transaction_id = 'transactionId';
 
         $this->orderMock->shouldReceive('getOrderPayments')->andReturn([
-            $payment
+            $payment,
         ]);
         $this->orderMock->id = 1;
 
@@ -198,7 +198,6 @@ class OrderServiceTest extends TestCase
         $order->id = '987654';
         $order->merchant_reference = '987654';
 
-
         $almaPayment = new \stdClass();
         $almaPayment->orders = [$order];
 
@@ -209,6 +208,7 @@ class OrderServiceTest extends TestCase
         $this->expectExceptionMessage('Merchant reference from Alma order "987654" does not match order reference "123456"');
         $orderService->getAlmaPayment('transactionId', $this->orderReference);
     }
+
     /**
      * When i call the send status api with wrong data
      * Then i expect a Parameters exception
@@ -220,7 +220,6 @@ class OrderServiceTest extends TestCase
 
         $almaPayment = new \stdClass();
         $almaPayment->orders = [$order];
-
 
         $this->clientHelperMock->shouldReceive('sendOrderStatus')->andThrow(new ParametersException());
 
@@ -243,7 +242,6 @@ class OrderServiceTest extends TestCase
 
         $almaPayment = new \stdClass();
         $almaPayment->orders = [$order];
-
 
         $this->clientHelperMock->shouldReceive('sendOrderStatus')->andThrow(new RequestException());
 

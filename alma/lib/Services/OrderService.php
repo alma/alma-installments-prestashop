@@ -39,7 +39,6 @@ class OrderService
      */
     protected $clientHelper;
 
-
     /**
      * @param ClientHelper $clientHelper
      */
@@ -48,91 +47,90 @@ class OrderService
         $this->clientHelper = $clientHelper;
     }
 
-
     /**
      * @param \Order $order
      * @param \OrderState $orderState
+     *
      * @return void
+     *
      * @throws AlmaException
      * @throws \Alma\API\Exceptions\ParametersException
      * @throws \Alma\API\Exceptions\RequestException
      * @throws \Alma\API\RequestError
      * @throws \Alma\PrestaShop\Exceptions\ClientException
      */
-   public function manageStatusUpdate($order, $orderState)
-   {
-       $paymentTransactionId = $this->getPaymentTransactionId($order);
-       $almaPayment = $this->getAlmaPayment($paymentTransactionId, $order->reference);
+    public function manageStatusUpdate($order, $orderState)
+    {
+        $paymentTransactionId = $this->getPaymentTransactionId($order);
+        $almaPayment = $this->getAlmaPayment($paymentTransactionId, $order->reference);
 
-       $this->clientHelper->sendOrderStatus($almaPayment->orders[0]->id, [
+        $this->clientHelper->sendOrderStatus($almaPayment->orders[0]->id, [
            'status' => $orderState->name,
-           'is_shipped' => (bool)$orderState->shipped
+           'is_shipped' => (bool) $orderState->shipped,
        ]);
-   }
+    }
 
     /**
      * @param \Order $order
+     *
      * @return string
+     *
      * @throws AlmaException
      */
-   public function getPaymentTransactionId($order)
-   {
-       // Retrieve the order Status from Alma
-       $payments = $order->getOrderPayments();
+    public function getPaymentTransactionId($order)
+    {
+        // Retrieve the order Status from Alma
+        $payments = $order->getOrderPayments();
 
-       if (count($payments) === 0) {
-           throw new AlmaException(sprintf('No payment found for order "%s"', $order->id));
-       }
+        if (count($payments) === 0) {
+            throw new AlmaException(sprintf('No payment found for order "%s"', $order->id));
+        }
 
-       return $payments[0]->transaction_id;
-   }
+        return $payments[0]->transaction_id;
+    }
 
     /**
      * @param string $paymentTransactionId
+     *
      * @return Payment
+     *
      * @throws AlmaException
      * @throws \Alma\API\RequestError
      * @throws \Alma\PrestaShop\Exceptions\ClientException
      */
+    public function getAlmaPayment($paymentTransactionId, $orderReference)
+    {
+        /**
+         * @var Payment $almaPayment
+         */
+        $almaPayment = $this->clientHelper->getPaymentByTransactionId($paymentTransactionId);
 
-   public function getAlmaPayment($paymentTransactionId, $orderReference)
-   {
-       /**
-        * @var Payment $almaPayment
-        */
-       $almaPayment = $this->clientHelper->getPaymentByTransactionId($paymentTransactionId);
+        if (
+            !$almaPayment
+            || count($almaPayment->orders) == 0
+            || !isset($almaPayment->orders[0]->id)
+            || !isset($almaPayment->orders[0]->merchant_reference)
+        ) {
+            throw new AlmaException(sprintf('No alma payments found for transaction id "%s"', $paymentTransactionId));
+        }
 
-       if (
-           !$almaPayment
-           || count($almaPayment->orders) == 0
-           || !isset($almaPayment->orders[0]->id)
-           || !isset($almaPayment->orders[0]->merchant_reference)
-       ) {
-           throw new AlmaException(sprintf('No alma payments found for transaction id "%s"', $paymentTransactionId));
-       }
+        $this->checkOrderReference($almaPayment->orders[0]->merchant_reference, $orderReference);
 
-       $this->checkOrderReference($almaPayment->orders[0]->merchant_reference, $orderReference);
-
-       return $almaPayment;
-   }
-
+        return $almaPayment;
+    }
 
     /**
      * @param string $merchantReference
      * @param string $orderReference
+     *
      * @return void
+     *
      * @throws AlmaException
      */
-   public function checkOrderReference($merchantReference, $orderReference)
-   {
-        if($merchantReference !== $orderReference) {
-            throw new AlmaException(
-                sprintf(
-                    'Merchant reference from Alma order "%s" does not match order reference "%s"',
-                    $merchantReference,
-                    $orderReference
-                )
-            );
+    public function checkOrderReference($merchantReference, $orderReference)
+    {
+        if ($merchantReference !== $orderReference) {
+            throw new AlmaException(sprintf('Merchant reference from Alma order "%s" does not match order reference "%s"', $merchantReference, $orderReference));
         }
-   }
+    }
 }

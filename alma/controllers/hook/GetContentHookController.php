@@ -93,7 +93,7 @@ final class GetContentHookController extends AdminHookController
     protected $mediaHelper;
 
     /**
-     * @var boolean
+     * @var bool
      */
     protected $hasKey;
 
@@ -210,6 +210,7 @@ final class GetContentHookController extends AdminHookController
             ]);
 
             $this->hasKey = false;
+
             return $this->module->display($this->module->file, 'getContent.tpl');
         }
 
