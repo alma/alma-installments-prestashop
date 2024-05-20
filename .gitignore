@@ -14,3 +14,4 @@ tools/composer.lock
 .phpunit.result.cache
 /alma/.php-cs-fixer.cache
 /alma/.coverage
+./.task
