@@ -40,7 +40,7 @@
         </button>
     </div>
 </div>
-<script type='module'>
+<script data-cfasync="false" type='module'>
     window.addEventListener('almaIframeScriptLoaded', () => {
         let insuranceConfigurationParams = {$insuranceConfigurationParams};
 

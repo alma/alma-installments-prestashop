@@ -24,12 +24,9 @@
 
 namespace Alma\PrestaShop\Tests\Unit\Helper;
 
-use Alma\PrestaShop\Helpers\ConfigurationHelper;
+use Alma\PrestaShop\Builders\CustomFieldHelperBuilder;
+use Alma\PrestaShop\Forms\PaymentButtonAdminFormBuilder;
 use Alma\PrestaShop\Helpers\CustomFieldsHelper;
-use Alma\PrestaShop\Helpers\LanguageHelper;
-use Alma\PrestaShop\Helpers\LocaleHelper;
-use Alma\PrestaShop\Helpers\SettingsHelper;
-use Alma\PrestaShop\Helpers\ShopHelper;
 use PHPUnit\Framework\TestCase;
 
 class CustomFieldHelperTest extends TestCase
@@ -57,11 +54,8 @@ class CustomFieldHelperTest extends TestCase
 
     public function setUp()
     {
-        $this->customFieldsHelper = new CustomFieldsHelper(
-            new LanguageHelper(),
-            new LocaleHelper(new LanguageHelper()),
-            new SettingsHelper(new ShopHelper(), new ConfigurationHelper())
-        );
+        $customFieldHelperBuilder = new CustomFieldHelperBuilder();
+        $this->customFieldsHelper = $customFieldHelperBuilder->getInstance();
     }
 
     public function testCustomFields()
@@ -198,5 +192,17 @@ class CustomFieldHelperTest extends TestCase
 
     public function testGetTextButton()
     {
+        $result = $this->customFieldsHelper->getTextButton(
+            '1',
+            PaymentButtonAdminFormBuilder::ALMA_DEFERRED_BUTTON_TITLE,
+            15
+        );
+
+        $this->assertEquals('Buy now Pay in 15 days', $result);
+    }
+
+    public function testInitCustomFields()
+    {
+        $this->assertEquals(static::$data, $this->customFieldsHelper->customFields());
     }
 }

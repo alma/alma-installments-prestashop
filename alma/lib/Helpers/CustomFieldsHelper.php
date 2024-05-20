@@ -24,6 +24,7 @@
 
 namespace Alma\PrestaShop\Helpers;
 
+use Alma\PrestaShop\Factories\ModuleFactory;
 use Alma\PrestaShop\Forms\ExcludedCategoryAdminFormBuilder;
 use Alma\PrestaShop\Forms\PaymentButtonAdminFormBuilder;
 use Alma\PrestaShop\Forms\PaymentOnTriggeringAdminFormBuilder;
@@ -53,19 +54,22 @@ class CustomFieldsHelper
     protected $localeHelper;
 
     /**
-     * @codeCoverageIgnore
-     *
+     * @var ModuleFactory
+     */
+    protected $moduleFactory;
+
+    /**
      * @param LanguageHelper $languageHelper
      * @param LocaleHelper $localeHelper
      * @param SettingsHelper $settingsHelper
-     *
-     * @codeCoverageIgnore
+     * @param ModuleFactory $moduleFactory
      */
-    public function __construct($languageHelper, $localeHelper, $settingsHelper)
+    public function __construct($languageHelper, $localeHelper, $settingsHelper, $moduleFactory)
     {
         $this->languageHelper = $languageHelper;
         $this->settingsHelper = $settingsHelper;
         $this->localeHelper = $localeHelper;
+        $this->moduleFactory = $moduleFactory;
     }
 
     /**
@@ -97,14 +101,13 @@ class CustomFieldsHelper
         $textPnxButtonTitle = 'Pay in %d installments';
         $textButtonDescription = 'Fast and secure payment by credit card.';
 
-        $module = new \Alma();
-        $module->l('Pay now by credit card', ConstantsHelper::SOURCE_CUSTOM_FIELDS);
-        $module->l('Pay in %d installments', ConstantsHelper::SOURCE_CUSTOM_FIELDS);
-        $module->l('Buy now Pay in %d days', ConstantsHelper::SOURCE_CUSTOM_FIELDS);
-        $module->l('Fast and secure payment by credit card.', ConstantsHelper::SOURCE_CUSTOM_FIELDS);
-        $module->l('Fast and secure payments.', ConstantsHelper::SOURCE_CUSTOM_FIELDS);
-        $module->l('Your cart is not eligible for payments with Alma.', ConstantsHelper::SOURCE_CUSTOM_FIELDS);
-        $module->l('At shipping', ConstantsHelper::SOURCE_CUSTOM_FIELDS);
+        $this->moduleFactory->l('Pay now by credit card', ConstantsHelper::SOURCE_CUSTOM_FIELDS);
+        $this->moduleFactory->l('Pay in %d installments', ConstantsHelper::SOURCE_CUSTOM_FIELDS);
+        $this->moduleFactory->l('Buy now Pay in %d days', ConstantsHelper::SOURCE_CUSTOM_FIELDS);
+        $this->moduleFactory->l('Fast and secure payment by credit card.', ConstantsHelper::SOURCE_CUSTOM_FIELDS);
+        $this->moduleFactory->l('Fast and secure payments.', ConstantsHelper::SOURCE_CUSTOM_FIELDS);
+        $this->moduleFactory->l('Your cart is not eligible for payments with Alma.', ConstantsHelper::SOURCE_CUSTOM_FIELDS);
+        $this->moduleFactory->l('At shipping', ConstantsHelper::SOURCE_CUSTOM_FIELDS);
 
         return [
             PaymentButtonAdminFormBuilder::ALMA_PAY_NOW_BUTTON_TITLE => 'Pay now by credit card',
@@ -228,6 +231,8 @@ class CustomFieldsHelper
         $defaultField = $this->getAllLangCustomFieldByKeyConfig(
             PaymentOnTriggeringAdminFormBuilder::ALMA_DESCRIPTION_TRIGGER, $languages
         );
+
+        $return = [];
 
         foreach ($defaultField as $key => $field) {
             $return[$key] = $field['string'];

@@ -24,6 +24,10 @@
 
 namespace Alma\PrestaShop\Helpers;
 
+use Alma\PrestaShop\Factories\MediaFactory;
+use Alma\PrestaShop\Factories\ModuleFactory;
+use Alma\PrestaShop\Factories\PhpFactory;
+
 if (!defined('_PS_VERSION_')) {
     exit;
 }
@@ -36,28 +40,42 @@ if (!defined('_PS_VERSION_')) {
 class MediaHelper
 {
     /**
-     * @param object $module
-     *
-     * @return string
+     * @var MediaFactory
      */
-    public static function getIconPathAlmaTiny($module)
-    {
-        if (is_callable('\Media::getMediaPath')) {
-            return \Media::getMediaPath(_PS_MODULE_DIR_ . $module->name . '/views/img/logos/alma_tiny.svg');
-        }
+    protected $mediaFactory;
 
-        return $module->getPathUri() . '/views/img/logos/alma_tiny.svg';
+    /**
+     * @var ModuleFactory
+     */
+    protected $moduleFactory;
+
+    /**
+     * @var PhpFactory
+     */
+    protected $phpFactory;
+
+    /**
+     * @param MediaFactory $mediaFactory
+     * @param ModuleFactory $moduleFactory
+     * @param PhpFactory $phpFactory
+     */
+    public function __construct($mediaFactory, $moduleFactory, $phpFactory)
+    {
+        $this->mediaFactory = $mediaFactory;
+        $this->moduleFactory = $moduleFactory;
+        $this->phpFactory = $phpFactory;
     }
 
     /**
-     * @param $path
-     * @param $module
-     *
-     * @return mixed
+     * @return bool|string|string[]|null
      */
-    public function getMediaPath($path, $module)
+    public function getIconPathAlmaTiny()
     {
-        return \Media::getMediaPath(_PS_MODULE_DIR_ . $module->name . $path);
+        if ($this->phpFactory->is_callable('\Media::getMediaPath')) {
+            return $this->mediaFactory->getMediaPath('/views/img/logos/alma_tiny.svg');
+        }
+
+        return $this->moduleFactory->getPathUri() . '/views/img/logos/alma_tiny.svg';
     }
 
     /**
@@ -73,5 +91,16 @@ class MediaHelper
         }
 
         return "p{$valueBNPL}x_logo.svg";
+    }
+
+    /**
+     * Add a new javascript definition at bottom of page.
+     *
+     * @param mixed $jsDef
+     * @codeCoverageIgnore
+     */
+    public function addJSDef($jsDef)
+    {
+        \Media::addJsDef($jsDef);
     }
 }

@@ -28,9 +28,13 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
+use Alma;
 use Alma\API\Client;
+use Alma\API\Entities\Merchant;
+use Alma\API\RequestError;
 use Alma\PrestaShop\Exceptions\ClientException;
 use Alma\PrestaShop\Logger;
+use Exception;
 
 class ClientHelper
 {
@@ -45,6 +49,12 @@ class ClientHelper
         return $almaClient;
     }
 
+    /**
+     * @param $apiKey
+     * @param $mode
+     *
+     * @return Client|null
+     */
     public static function createInstance($apiKey, $mode = null)
     {
         if (!$mode) {
@@ -60,8 +70,8 @@ class ClientHelper
             ]);
 
             $alma->addUserAgentComponent('PrestaShop', _PS_VERSION_);
-            $alma->addUserAgentComponent('Alma for PrestaShop', \Alma::VERSION);
-        } catch (\Exception $e) {
+            $alma->addUserAgentComponent('Alma for PrestaShop', Alma::VERSION);
+        } catch (Exception $e) {
             Logger::instance()->error('Error creating Alma API client: ' . $e->getMessage());
         }
 
@@ -86,5 +96,37 @@ class ClientHelper
         }
 
         return $alma;
+    }
+
+    /**
+     * @return Merchant
+     *
+     * @throws ClientException
+     * @throws RequestError
+     */
+    public function getMerchantsMe($alma = null)
+    {
+        if (!$alma) {
+            $alma = ClientHelper::defaultInstance();
+        }
+
+        if (!$alma) {
+            return null;
+        }
+
+        return $alma->merchants->me();
+    }
+
+    /**
+     * @param array $paymentData
+     *
+     * @return Alma\API\Endpoints\Results\Eligibility|Alma\API\Endpoints\Results\Eligibility[]
+     *
+     * @throws ClientException
+     * @throws RequestError
+     */
+    public function getPaymentEligibility($paymentData)
+    {
+        return $this->getAlmaClient()->payments->eligibility($paymentData);
     }
 }

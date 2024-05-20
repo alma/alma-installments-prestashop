@@ -24,6 +24,7 @@
 
 namespace Alma\PrestaShop\Exceptions;
 
+use Alma\PrestaShop\Factories\ModuleFactory;
 use Alma\PrestaShop\Helpers\LinkHelper;
 use Alma\PrestaShop\Helpers\SettingsHelper;
 
@@ -34,15 +35,13 @@ if (!defined('_PS_VERSION_')) {
 class WrongCredentialsException extends AlmaException
 {
     /**
-     * Constructor.
-     *
-     * @param object $module
+     * @param ModuleFactory$moduleFactory
      */
-    public function __construct($module)
+    public function __construct($moduleFactory)
     {
-        $message = $module->l('Could not connect to Alma using your API keys.', 'WrongCredentialsException')
+        $message = $moduleFactory->l('Could not connect to Alma using your API keys.', 'WrongCredentialsException')
         . sprintf(
-            $module->l('Please double check your keys on your %1$sAlma dashboard%2$s.', 'WrongCredentialsException'),
+            $moduleFactory->l('Please double check your keys on your %1$sAlma dashboard%2$s.', 'WrongCredentialsException'),
             '<a href="' . LinkHelper::getAlmaDashboardUrl(SettingsHelper::getActiveMode(), 'api') . '" target="_blank">',
             '</a>'
         );

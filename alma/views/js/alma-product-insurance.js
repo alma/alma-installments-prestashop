@@ -128,11 +128,16 @@ function refreshWidget() {
     let cmsReference = createCmsReference(productDetails);
     let regularPriceToCents = Math.round(productDetails.price_without_reduction * 100);
 
+    quantity = productDetails.quantity_wanted;
+    if (productDetails.quantity_wanted <= 0) {
+        quantity = 1;
+    }
+
     getProductDataForApiCall(
         cmsReference,
         regularPriceToCents,
         settings.merchant_id,
-        productDetails.quantity_wanted,
+        quantity,
         settings.cart_id,
         settings.session_id
     );

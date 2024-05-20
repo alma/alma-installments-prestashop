@@ -22,13 +22,30 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
-namespace Alma\PrestaShop\Tests\Unit\Helper;
+namespace Alma\PrestaShop\Builders;
 
-use PHPUnit\Framework\TestCase;
+use Alma\PrestaShop\Helpers\AddressHelper;
+use Alma\PrestaShop\Traits\BuilderTrait;
 
-class AdressHelperTest extends TestCase
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
+/**
+ * AddressHelperBuilder.
+ */
+class AddressHelperBuilder
 {
-    public function testGetAdressFromCustomer()
+    use BuilderTrait;
+
+    /**
+     * @return AddressHelper
+     */
+    public function getInstance()
     {
+        return new AddressHelper(
+            $this->getToolsHelper(),
+            $this->getContextFactory()
+        );
     }
 }

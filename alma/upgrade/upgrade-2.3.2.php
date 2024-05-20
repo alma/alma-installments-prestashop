@@ -28,11 +28,10 @@ if (!defined('_PS_VERSION_')) {
 include_once _PS_MODULE_DIR_ . 'alma/vendor/autoload.php';
 
 use Alma\API\RequestError;
+use Alma\PrestaShop\Builders\CustomFieldHelperBuilder;
 use Alma\PrestaShop\Forms\ExcludedCategoryAdminFormBuilder;
 use Alma\PrestaShop\Forms\PaymentButtonAdminFormBuilder;
 use Alma\PrestaShop\Helpers\ClientHelper;
-use Alma\PrestaShop\Helpers\CustomFieldsHelper;
-use Alma\PrestaShop\Helpers\LanguageHelper;
 use Alma\PrestaShop\Helpers\SettingsHelper;
 use Alma\PrestaShop\Logger;
 
@@ -58,16 +57,8 @@ function upgrade_module_2_3_2()
                 Configuration::deleteByName($configKey);
             }
 
-            $languageHelper = new LanguageHelper();
-
-            $customFieldsHelper = new CustomFieldsHelper(
-                $languageHelper,
-                new \Alma\PrestaShop\Helpers\LocaleHelper($languageHelper),
-                new SettingsHelper(
-                    new \Alma\PrestaShop\Helpers\ShopHelper(),
-                    new \Alma\PrestaShop\Helpers\ConfigurationHelper()
-                )
-            );
+            $customFieldHelperBuilder = new CustomFieldHelperBuilder();
+            $customFieldsHelper = $customFieldHelperBuilder->getInstance();
 
             $customFieldsHelper->initCustomFields();
         } catch (RequestError $e) {

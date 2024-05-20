@@ -24,6 +24,9 @@
 
 namespace Alma\PrestaShop\Helpers;
 
+use Alma\PrestaShop\Factories\ContextFactory;
+use Alma\PrestaShop\Factories\CurrencyFactory;
+
 if (!defined('_PS_VERSION_')) {
     exit;
 }
@@ -36,24 +39,43 @@ if (!defined('_PS_VERSION_')) {
 class CurrencyHelper
 {
     /**
-     * @return mixed
+     * @var ValidateHelper
      */
-    public function getCurrencyFromContext()
+    protected $validationHelper;
+
+    /**
+     * @var ContextFactory
+     */
+    protected $contextFactory;
+
+    /**
+     * @var CurrencyFactory
+     */
+    protected $currencyFactory;
+
+    /**
+     * @param ContextFactory $contextFactory
+     * @param ValidateHelper $validationHelper
+     * @param CurrencyFactory $currencyFactory
+     */
+    public function __construct($contextFactory, $validationHelper, $currencyFactory)
     {
-        return \Context::getContext()->currency;
+        $this->contextFactory = $contextFactory;
+        $this->validationHelper = $validationHelper;
+        $this->currencyFactory = $currencyFactory;
     }
 
     /**
      * @param $idCurrency
      *
-     * @return mixed
+     * @return \Currency|null
      */
     public function getCurrencyById($idCurrency)
     {
-        $currency = \Currency::getCurrencyInstance((int) $idCurrency);
+        $currency = $this->currencyFactory->getCurrencyInstance($idCurrency);
 
-        if (!\Validate::isLoadedObject($currency)) {
-            $currency = \Context::getContext()->currency;
+        if (!$this->validationHelper->isLoadedObject($currency)) {
+            $currency = $this->contextFactory->getCurrencyFromContext();
         }
 
         return $currency;

@@ -30,6 +30,12 @@ if (!defined('_PS_VERSION_')) {
 
 use Alma\API\Entities\Merchant;
 use Alma\API\RequestError;
+use Alma\PrestaShop\Builders\ApiHelperBuilder;
+use Alma\PrestaShop\Builders\CustomFieldHelperBuilder;
+use Alma\PrestaShop\Builders\MediaHelperBuilder;
+use Alma\PrestaShop\Builders\PriceHelperBuilder;
+use Alma\PrestaShop\Builders\SettingsHelperBuilder;
+use Alma\PrestaShop\Builders\ShareOfCheckoutHelperBuilder;
 use Alma\PrestaShop\Exceptions\MissingParameterException;
 use Alma\PrestaShop\Forms\ApiAdminFormBuilder;
 use Alma\PrestaShop\Forms\CartEligibilityAdminFormBuilder;
@@ -45,19 +51,11 @@ use Alma\PrestaShop\Forms\ShareOfCheckoutAdminFormBuilder;
 use Alma\PrestaShop\Helpers\ApiHelper;
 use Alma\PrestaShop\Helpers\ApiKeyHelper;
 use Alma\PrestaShop\Helpers\ClientHelper;
-use Alma\PrestaShop\Helpers\ConfigurationHelper;
 use Alma\PrestaShop\Helpers\ConstantsHelper;
-use Alma\PrestaShop\Helpers\CurrencyHelper;
 use Alma\PrestaShop\Helpers\CustomFieldsHelper;
-use Alma\PrestaShop\Helpers\LanguageHelper;
-use Alma\PrestaShop\Helpers\LocaleHelper;
 use Alma\PrestaShop\Helpers\MediaHelper;
-use Alma\PrestaShop\Helpers\OrderHelper;
 use Alma\PrestaShop\Helpers\PriceHelper;
 use Alma\PrestaShop\Helpers\SettingsHelper;
-use Alma\PrestaShop\Helpers\ShareOfCheckoutHelper;
-use Alma\PrestaShop\Helpers\ShopHelper;
-use Alma\PrestaShop\Helpers\ToolsHelper;
 use Alma\PrestaShop\Hooks\AdminHookController;
 use Alma\PrestaShop\Logger;
 
@@ -88,6 +86,16 @@ final class GetContentHookController extends AdminHookController
      * @var CustomFieldsHelper
      */
     protected $customFieldsHelper;
+
+    /**
+     * @var MediaHelper
+     */
+    protected $mediaHelper;
+
+    /**
+     * @var bool
+     */
+    protected $hasKey;
 
     /**
      * @var array
@@ -151,11 +159,24 @@ final class GetContentHookController extends AdminHookController
      */
     public function __construct($module)
     {
-        $this->apiHelper = new ApiHelper($module, new ClientHelper());
+        $apiHelperBuilder = new ApiHelperBuilder();
+        $this->apiHelper = $apiHelperBuilder->getInstance();
+
         $this->apiKeyHelper = new ApiKeyHelper();
-        $this->settingsHelper = new SettingsHelper(new ShopHelper(), new ConfigurationHelper());
-        $this->priceHelper = new PriceHelper(new ToolsHelper(), new CurrencyHelper());
-        $this->customFieldsHelper = new CustomFieldsHelper(new LanguageHelper(), new LocaleHelper(new LanguageHelper()), $this->settingsHelper);
+
+        $settingsHelperBuilder = new SettingsHelperBuilder();
+        $this->settingsHelper = $settingsHelperBuilder->getInstance();
+
+        $priceHelperBuilder = new PriceHelperBuilder();
+        $this->priceHelper = $priceHelperBuilder->getInstance();
+
+        $customFieldHelperBuilder = new CustomFieldHelperBuilder();
+        $this->customFieldsHelper = $customFieldHelperBuilder->getInstance();
+
+        $mediaHelperBuilder = new MediaHelperBuilder();
+        $this->mediaHelper = $mediaHelperBuilder->getInstance();
+
+        $this->hasKey = false;
 
         parent::__construct($module);
     }
@@ -184,6 +205,11 @@ final class GetContentHookController extends AdminHookController
 
         if ((empty($liveKey) && ALMA_MODE_LIVE == $apiMode) || (empty($testKey) && ALMA_MODE_TEST == $apiMode)) {
             $this->context->smarty->assign('validation_error', "missing_key_for_{$apiMode}_mode");
+            $this->context->smarty->assign([
+                'suggestPSAccount' => false,
+            ]);
+
+            $this->hasKey = false;
 
             return $this->module->display($this->module->file, 'getContent.tpl');
         }
@@ -202,8 +228,8 @@ final class GetContentHookController extends AdminHookController
             return $credentialsError['message'];
         }
 
-        $orderHelper = new OrderHelper();
-        $shareOfCheckoutHelper = new ShareOfCheckoutHelper($orderHelper);
+        $shareOfCheckoutHelperBuilder = new ShareOfCheckoutHelperBuilder();
+        $shareOfCheckoutHelper = $shareOfCheckoutHelperBuilder->getInstance();
 
         if ($liveKey !== SettingsHelper::getLiveKey()
             && ConstantsHelper::OBSCURE_VALUE !== $liveKey
@@ -514,6 +540,8 @@ final class GetContentHookController extends AdminHookController
 
             $this->assignSmartyAlertClasses();
             $this->context->smarty->assign('tip', 'fill_api_keys');
+            $this->context->smarty->assign('suggestPSAccount', false);
+            $this->context->smarty->assign('hasPSAccount', false);
 
             $extraMessage = $this->module->display($this->module->file, 'getContent.tpl');
         }
@@ -593,7 +621,7 @@ final class GetContentHookController extends AdminHookController
      */
     protected function buildForms($needsKeys, $feePlansOrdered, $installmentsPlans)
     {
-        $iconPath = MediaHelper::getIconPathAlmaTiny($this->module);
+        $iconPath = $this->mediaHelper->getIconPathAlmaTiny();
         $fieldsForms = [];
 
         if (!$needsKeys) {
@@ -800,7 +828,15 @@ final class GetContentHookController extends AdminHookController
      */
     public function run($params)
     {
+        $this->context->smarty->assign([
+            'hasPSAccount' => $params['hasPSAccount'],
+            'updated' => true,
+            'suggestPSAccount' => $params['suggestPSAccount'],
+        ]);
+
         $this->assignSmartyAlertClasses();
+
+        $messages = null;
 
         if (\Tools::isSubmit('alma_config_form')) {
             $messages = $this->processConfiguration();
@@ -812,9 +848,19 @@ final class GetContentHookController extends AdminHookController
 
             if ($messages) {
                 $messages = $messages['message'];
+            } else {
+                $this->hasKey = true;
             }
-        } else {
-            $messages = '';
+        }
+        $this->context->smarty->assign([
+            'hasKey' => $this->hasKey,
+        ]);
+
+        if (!$messages) {
+            $this->context->smarty->assign([
+                'updated' => false,
+            ]);
+            $messages = $this->module->display($this->module->file, 'getContent.tpl');
         }
 
         $htmlForm = $this->renderForm();

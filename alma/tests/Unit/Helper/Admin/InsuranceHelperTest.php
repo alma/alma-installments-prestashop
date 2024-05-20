@@ -24,8 +24,8 @@
 
 namespace Alma\PrestaShop\Tests\Unit\Helper\Admin;
 
+use Alma\PrestaShop\Builders\Admin\InsuranceHelperBuilder;
 use Alma\PrestaShop\Exceptions\WrongParamsException;
-use Alma\PrestaShop\Helpers\Admin\InsuranceHelper;
 use Alma\PrestaShop\Helpers\Admin\TabsHelper;
 use Alma\PrestaShop\Helpers\ConfigurationHelper;
 use Alma\PrestaShop\Helpers\ConstantsHelper;
@@ -58,10 +58,13 @@ class InsuranceHelperTest extends TestCase
         $this->tabWithId->id = 1;
         $this->tabWithoutId = new \Tab();
         $this->tabHelper = $this->createMock(TabsHelper::class);
-        $this->insuranceHelper = new InsuranceHelper($this->module);
-        $this->insuranceHelper->tabsHelper = $this->tabHelper;
         $this->configurationHelperMock = $this->createMock(ConfigurationHelper::class);
-        $this->insuranceHelper->configurationHelper = $this->configurationHelperMock;
+
+        $insuranceHelperBuilder = \Mockery::mock(InsuranceHelperBuilder::class)->makePartial();
+        $insuranceHelperBuilder->shouldReceive('getTabsHelper')->andReturn($this->tabHelper);
+        $insuranceHelperBuilder->shouldReceive('getConfigurationHelper')->andReturn($this->configurationHelperMock);
+
+        $this->insuranceHelper = $insuranceHelperBuilder->getInstance();
     }
 
     protected function tearDown()
@@ -81,11 +84,14 @@ class InsuranceHelperTest extends TestCase
      */
     public function testTabInstalledWithAllowFlagAndTabNotInstalled($tabsInsuranceDescription)
     {
-        $this->tabHelper->expects($this->once())->method('installTabs')->with(
-            $tabsInsuranceDescription
-        );
-        $this->tabHelper->method('installTabs');
-        $this->tabHelper->method('getInstanceFromClassName')->willReturn($this->tabWithoutId);
+        $tabsHelper = \Mockery::mock(TabsHelper::class)->makePartial();
+        $tabsHelper->shouldReceive('installTabs', $tabsInsuranceDescription)->andReturn('');
+        $tabsHelper->shouldReceive('getInstanceFromClassName')->andReturn($this->tabWithoutId);
+
+        $insuranceHelperBuilder = \Mockery::mock(InsuranceHelperBuilder::class)->makePartial();
+        $insuranceHelperBuilder->shouldReceive('getTabsHelper')->andReturn($tabsHelper);
+        $insuranceHelperBuilder->shouldReceive('getConfigurationHelper')->andReturn($this->configurationHelperMock);
+        $this->insuranceHelper = $insuranceHelperBuilder->getInstance();
 
         $this->insuranceHelper->handleBOMenu(1);
     }
@@ -99,11 +105,17 @@ class InsuranceHelperTest extends TestCase
      */
     public function testTabUninstalledWithDisallowFlagAndTabInstalled($tabsInsuranceDescription)
     {
-        $this->tabHelper->expects($this->once())->method('uninstallTabs')->with($tabsInsuranceDescription);
-        $this->tabHelper->method('uninstallTabs');
-        $this->tabHelper->method('getInstanceFromClassName')->willReturn($this->tabWithId);
+        $tabsHelper = \Mockery::mock(TabsHelper::class)->makePartial();
+        $tabsHelper->shouldReceive('uninstallTabs', $tabsInsuranceDescription)->andReturn('');
+        $tabsHelper->shouldReceive('getInstanceFromClassName')->andReturn($this->tabWithId);
 
-        $this->insuranceHelper->handleBOMenu(0);
+        $insuranceHelperBuilder = \Mockery::mock(InsuranceHelperBuilder::class)->makePartial();
+        $insuranceHelperBuilder->shouldReceive('getTabsHelper')->andReturn($tabsHelper);
+        $insuranceHelperBuilder->shouldReceive('getConfigurationHelper')->andReturn($this->configurationHelperMock);
+
+        $insuranceHelper = $insuranceHelperBuilder->getInstance();
+
+        $insuranceHelper->handleBOMenu(0);
     }
 
     /**
@@ -123,7 +135,7 @@ class InsuranceHelperTest extends TestCase
         $this->tabHelper->expects($this->never())->method('installTab');
         $this->tabHelper->expects($this->never())->method('uninstallTab');
 
-        $this->assertNull($this->insuranceHelper->handleBOMenu($this->module, $isAllowInsurance));
+        $this->assertNull($this->insuranceHelper->handleBOMenu($isAllowInsurance));
     }
 
     /**

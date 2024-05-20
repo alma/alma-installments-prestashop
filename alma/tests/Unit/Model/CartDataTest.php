@@ -24,6 +24,8 @@
 
 namespace Alma\PrestaShop\Tests\Unit\Model;
 
+use Alma\PrestaShop\Builders\CartDataBuilder;
+use Alma\PrestaShop\Factories\CurrencyFactory;
 use Alma\PrestaShop\Helpers\ConfigurationHelper;
 use Alma\PrestaShop\Helpers\CurrencyHelper;
 use Alma\PrestaShop\Helpers\PriceHelper;
@@ -31,7 +33,6 @@ use Alma\PrestaShop\Helpers\ProductHelper;
 use Alma\PrestaShop\Helpers\SettingsHelper;
 use Alma\PrestaShop\Helpers\ShopHelper;
 use Alma\PrestaShop\Helpers\ToolsHelper;
-use Alma\PrestaShop\Model\CartData;
 use Alma\PrestaShop\Repositories\ProductRepository;
 use Cart;
 use PHPUnit\Framework\TestCase;
@@ -64,13 +65,13 @@ class CartDataTest extends TestCase
         $summaryDetailsMock = ['products' => $items, 'gift_products' => []];
         $cart->method('getSummaryDetails')->willReturn($summaryDetailsMock);
 
-        $cartData = new CartData(
-            $productHelper,
-            new SettingsHelper(new ShopHelper(), new ConfigurationHelper()),
-            new PriceHelper(new ToolsHelper(), new CurrencyHelper()),
-            $productRepository
-        );
-        $returnItems = $cartData->getCartItems($cart, $productHelper, $productRepository);
+        $cartDataBuilder = \Mockery::mock(CartDataBuilder::class)->makePartial();
+        $cartDataBuilder->shouldReceive('getProductHelper')->andReturn($productHelper);
+        $cartDataBuilder->shouldReceive('getProductRepository')->andReturn($productRepository);
+
+        $cartData = $cartDataBuilder->getInstance();
+
+        $returnItems = $cartData->getCartItems($cart);
         $this->assertEquals($expected, $returnItems);
     }
 
@@ -236,10 +237,17 @@ class CartDataTest extends TestCase
         $productHelperMock = \Mockery::mock(ProductHelper::class);
         $productHelperMock->shouldReceive('getProductCategories')->with(1)->andReturn(['cate1', 'cate2', 'cateexclue']);
 
-        $priceHelperMock = \Mockery::mock(PriceHelper::class, [new ToolsHelper(), new CurrencyHelper()]);
+        $priceHelperMock = \Mockery::mock(PriceHelper::class, [new ToolsHelper(), \Mockery::mock(CurrencyHelper::class), new CurrencyFactory()]);
         $productRepositoryMock = \Mockery::mock(ProductRepository::class);
 
-        $cartData = new CartData($productHelperMock, $settingsHelperMock, $priceHelperMock, $productRepositoryMock);
+        $cartDataBuilder = \Mockery::mock(CartDataBuilder::class)->makePartial();
+        $cartDataBuilder->shouldReceive('getSettingsHelper')->andReturn($settingsHelperMock);
+        $cartDataBuilder->shouldReceive('getProductHelper')->andReturn($productHelperMock);
+        $cartDataBuilder->shouldReceive('getPriceHelper')->andReturn($priceHelperMock);
+        $cartDataBuilder->shouldReceive('getProductRepository')->andReturn($productRepositoryMock);
+
+        $cartData = $cartDataBuilder->getInstance();
+
         $result = $cartData->getCartExclusion($cart);
 
         $this->assertEquals(['2' => 'cateexclue'], $result);

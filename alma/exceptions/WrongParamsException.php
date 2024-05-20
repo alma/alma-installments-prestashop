@@ -24,18 +24,20 @@
 
 namespace Alma\PrestaShop\Exceptions;
 
+use Alma\PrestaShop\Factories\ModuleFactory;
+
 class WrongParamsException extends AlmaException
 {
     /**
      * Constructor.
      *
-     * @param object $module
+     * @param ModuleFactory $moduleFactory
      * @param array $errorKeyConfig
      */
-    public function __construct($module, $errorKeyConfig)
+    public function __construct($moduleFactory, $errorKeyConfig)
     {
         $message = sprintf(
-            $module->l('Error(s) key(s): %1$s.', 'WrongParamsException'),
+            $moduleFactory->l('Error(s) key(s): %1$s.', 'WrongParamsException'),
             implode(', ', array_keys($errorKeyConfig))
         );
 

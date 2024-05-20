@@ -28,38 +28,23 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
+use Alma\PrestaShop\Builders\CartDataBuilder;
+use Alma\PrestaShop\Builders\CustomFieldHelperBuilder;
+use Alma\PrestaShop\Builders\EligibilityHelperBuilder;
+use Alma\PrestaShop\Builders\LocaleHelperBuilder;
+use Alma\PrestaShop\Builders\PriceHelperBuilder;
+use Alma\PrestaShop\Builders\SettingsHelperBuilder;
 use Alma\PrestaShop\Forms\PaymentButtonAdminFormBuilder;
-use Alma\PrestaShop\Helpers\AddressHelper;
-use Alma\PrestaShop\Helpers\ApiHelper;
-use Alma\PrestaShop\Helpers\CarrierHelper;
-use Alma\PrestaShop\Helpers\CartHelper;
-use Alma\PrestaShop\Helpers\ClientHelper;
-use Alma\PrestaShop\Helpers\ConfigurationHelper;
 use Alma\PrestaShop\Helpers\ConstantsHelper;
-use Alma\PrestaShop\Helpers\CountryHelper;
-use Alma\PrestaShop\Helpers\CurrencyHelper;
-use Alma\PrestaShop\Helpers\CustomerHelper;
 use Alma\PrestaShop\Helpers\CustomFieldsHelper;
 use Alma\PrestaShop\Helpers\DateHelper;
 use Alma\PrestaShop\Helpers\EligibilityHelper;
-use Alma\PrestaShop\Helpers\LanguageHelper;
 use Alma\PrestaShop\Helpers\LocaleHelper;
-use Alma\PrestaShop\Helpers\OrderHelper;
-use Alma\PrestaShop\Helpers\OrderStateHelper;
 use Alma\PrestaShop\Helpers\PriceHelper;
-use Alma\PrestaShop\Helpers\ProductHelper;
 use Alma\PrestaShop\Helpers\SettingsHelper;
-use Alma\PrestaShop\Helpers\ShopHelper;
-use Alma\PrestaShop\Helpers\StateHelper;
 use Alma\PrestaShop\Helpers\ToolsHelper;
-use Alma\PrestaShop\Helpers\ValidateHelper;
 use Alma\PrestaShop\Hooks\FrontendHookController;
-use Alma\PrestaShop\Model\CarrierData;
 use Alma\PrestaShop\Model\CartData;
-use Alma\PrestaShop\Model\PaymentData;
-use Alma\PrestaShop\Model\ShippingData;
-use Alma\PrestaShop\Repositories\OrderRepository;
-use Alma\PrestaShop\Repositories\ProductRepository;
 
 class DisplayPaymentHookController extends FrontendHookController
 {
@@ -113,59 +98,26 @@ class DisplayPaymentHookController extends FrontendHookController
     {
         parent::__construct($module);
 
-        $settingsHelper = new SettingsHelper(new ShopHelper(), new ConfigurationHelper());
-        $clientHelper = new ClientHelper();
+        $settingsHelperBuilder = new SettingsHelperBuilder();
+        $this->settingsHelper = $settingsHelperBuilder->getInstance();
 
-        $this->settingsHelper = $settingsHelper;
-        $this->localeHelper = new LocaleHelper(new LanguageHelper());
-        $this->toolsHelper = new ToolsHelper();
-        $this->priceHelper = new PriceHelper($this->toolsHelper, new CurrencyHelper());
-        $this->customFieldsHelper = new CustomFieldsHelper(
-            new LanguageHelper(),
-            $this->localeHelper,
-            $this->settingsHelper
-        );
-        $this->cartData = new CartData(
-            new ProductHelper(),
-            $this->settingsHelper,
-            $this->priceHelper,
-            new ProductRepository()
-        );
+        $localeHelperBuilder = new LocaleHelperBuilder();
+        $this->localeHelper = $localeHelperBuilder->getInstance();
 
-        $carrierHelper = new CarrierHelper($this->context, new CarrierData());
+        $priceHelperBuilder = new PriceHelperBuilder();
+        $this->priceHelper = $priceHelperBuilder->getInstance();
 
-        $this->eligibilityHelper = new EligibilityHelper(
-            new PaymentData(
-                $this->toolsHelper,
-                $this->settingsHelper,
-                $this->priceHelper,
-                $this->customFieldsHelper,
-                $this->cartData,
-                new ShippingData($this->priceHelper, $carrierHelper),
-                $this->context,
-                new AddressHelper($this->toolsHelper),
-                new CountryHelper(),
-                $this->localeHelper,
-                new StateHelper(),
-                new CustomerHelper($this->context, new OrderHelper(), new ValidateHelper()),
-                new CartHelper(
-                    $this->context,
-                    $this->toolsHelper,
-                    $this->priceHelper,
-                    $this->cartData,
-                    new OrderRepository(),
-                    new OrderStateHelper($this->context),
-                    $carrierHelper
-                ),
-                $carrierHelper
-            ),
-            $this->priceHelper,
-            $clientHelper,
-            $settingsHelper,
-            new ApiHelper($this->module, $clientHelper),
-            $this->context
-        );
+        $customFieldHelperBuilder = new CustomFieldHelperBuilder();
+        $this->customFieldsHelper = $customFieldHelperBuilder->getInstance();
+
+        $cartDataBuilder = new CartDataBuilder();
+        $this->cartData = $cartDataBuilder->getInstance();
+
+        $eligibilityHelperBuilder = new EligibilityHelperBuilder();
+        $this->eligibilityHelper = $eligibilityHelperBuilder->getInstance();
+
         $this->dateHelper = new DateHelper();
+        $this->toolsHelper = new ToolsHelper();
     }
 
     /**

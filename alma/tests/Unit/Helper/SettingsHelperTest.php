@@ -25,6 +25,7 @@
 namespace Alma\PrestaShop\Tests\Unit\Helper;
 
 use Alma\API\Entities\FeePlan;
+use Alma\PrestaShop\Builders\SettingsHelperBuilder;
 use Alma\PrestaShop\Helpers\ConfigurationHelper;
 use Alma\PrestaShop\Helpers\SettingsHelper;
 use Alma\PrestaShop\Helpers\ShopHelper;
@@ -39,7 +40,8 @@ class SettingsHelperTest extends TestCase
 
     public function setUp()
     {
-        $this->settingsHelper = new SettingsHelper(new ShopHelper(), new ConfigurationHelper());
+        $settingsHelperBuilder = new SettingsHelperBuilder();
+        $this->settingsHelper = $settingsHelperBuilder->getInstance();
     }
 
     /**
@@ -204,8 +206,12 @@ class SettingsHelperTest extends TestCase
         $configurationHelperMock->shouldReceive('get')->with($key, null, 1, 1, null)->andReturn('valeurTest');
         $configurationHelperMock->shouldReceive('hasKey')->with($key, null, 1, 1)->andReturn(false);
 
-        $localeHelper = new SettingsHelper($shopHelperMock, $configurationHelperMock);
-        $result = $localeHelper->getKey($key);
+        $settingsHelperBuilder = \Mockery::mock(SettingsHelperBuilder::class)->makePartial();
+        $settingsHelperBuilder->shouldReceive('getShopHelper')->andReturn($shopHelperMock);
+        $settingsHelperBuilder->shouldReceive('getConfigurationHelper')->andReturn($configurationHelperMock);
+        $settingsHelper = $settingsHelperBuilder->getInstance();
+
+        $result = $settingsHelper->getKey($key);
 
         $this->assertEquals('valeurTest', $result);
     }
@@ -223,8 +229,12 @@ class SettingsHelperTest extends TestCase
         $configurationHelperMock->shouldReceive('get')->with($key, null, 1, 1, $defaultValue)->andReturn(null);
         $configurationHelperMock->shouldReceive('hasKey')->with($key, null, 1, 1)->andReturn(false);
 
-        $localeHelper = new SettingsHelper($shopHelperMock, $configurationHelperMock);
-        $result = $localeHelper->getKey($key, $defaultValue);
+        $settingsHelperBuilder = \Mockery::mock(SettingsHelperBuilder::class)->makePartial();
+        $settingsHelperBuilder->shouldReceive('getShopHelper')->andReturn($shopHelperMock);
+        $settingsHelperBuilder->shouldReceive('getConfigurationHelper')->andReturn($configurationHelperMock);
+        $settingsHelper = $settingsHelperBuilder->getInstance();
+
+        $result = $settingsHelper->getKey($key, $defaultValue);
 
         $this->assertEquals($defaultValue, $result);
     }

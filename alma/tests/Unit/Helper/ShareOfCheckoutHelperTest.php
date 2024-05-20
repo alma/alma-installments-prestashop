@@ -24,8 +24,8 @@
 
 namespace Alma\PrestaShop\Tests\Unit\Helper;
 
+use Alma\PrestaShop\Builders\ShareOfCheckoutHelperBuilder;
 use Alma\PrestaShop\Helpers\OrderHelper;
-use Alma\PrestaShop\Helpers\ShareOfCheckoutHelper;
 use Mockery;
 use Order;
 use PHPUnit\Framework\TestCase;
@@ -55,7 +55,10 @@ class ShareOfCheckoutHelperTest extends TestCase
         $orderHelperMock = Mockery::mock(OrderHelper::class);
         $orderHelperMock->shouldReceive('getOrdersByDate')->andReturn($ordersMock);
 
-        $shareOfCheckoutHelper = new ShareOfCheckoutHelper($orderHelperMock);
+        $shareOfCheckoutHelperBuilder = \Mockery::mock(ShareOfCheckoutHelperBuilder::class)->makePartial();
+        $shareOfCheckoutHelperBuilder->shouldReceive('getOrderHelper')->andReturn($orderHelperMock);
+        $shareOfCheckoutHelper = $shareOfCheckoutHelperBuilder->getInstance();
+
         $payload = $shareOfCheckoutHelper->getPayload('2022-01-01');
 
         $this->assertEquals($expectedPayload, $payload);
@@ -70,9 +73,9 @@ class ShareOfCheckoutHelperTest extends TestCase
      */
     public function testGetTotalPaymentMethods($ordersMock, $expectedTotalPaymentMethods)
     {
-        $orderHelperMock = Mockery::mock(OrderHelper::class);
+        $shareOfCheckoutHelperBuilder = new ShareOfCheckoutHelperBuilder();
+        $shareOfCheckoutHelper = $shareOfCheckoutHelperBuilder->getInstance();
 
-        $shareOfCheckoutHelper = new ShareOfCheckoutHelper($orderHelperMock);
         $getTotalPaymentMethods = $shareOfCheckoutHelper->getTotalPaymentMethods($ordersMock);
 
         $this->assertEquals($expectedTotalPaymentMethods, $getTotalPaymentMethods);
@@ -90,9 +93,9 @@ class ShareOfCheckoutHelperTest extends TestCase
      */
     public function testGetTotalOrders($ordersMock, $expectedTotalOrders)
     {
-        $orderHelperMock = Mockery::mock(OrderHelper::class);
+        $shareOfCheckoutHelperBuilder = new ShareOfCheckoutHelperBuilder();
+        $shareOfCheckoutHelper = $shareOfCheckoutHelperBuilder->getInstance();
 
-        $shareOfCheckoutHelper = new ShareOfCheckoutHelper($orderHelperMock);
         $getTotalOrders = $shareOfCheckoutHelper->getTotalOrders($ordersMock);
         $this->assertEquals($expectedTotalOrders, $getTotalOrders);
     }
