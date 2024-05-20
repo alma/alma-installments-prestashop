@@ -32,10 +32,10 @@ class CartSaveRepository
 {
     public function getCurrentCartForOpartSaveCart($token)
     {
-        return \Db::getInstance()->execute('
+        return \Db::getInstance()->getRow('
             SELECT *
-            FROM `' . _DB_PREFIX_ . 'opartsavecart`
-            WHERE token = ' . $token
+            FROM `' . _DB_PREFIX_ . "opartsavecart`
+            WHERE token = '" . $token . "';"
         );
     }
 }

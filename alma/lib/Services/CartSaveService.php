@@ -49,10 +49,17 @@ class CartSaveService
         $this->cartSaveRepository = new CartSaveRepository();
     }
 
+    /**
+     * @param $value
+     *
+     * @return array|bool
+     */
     public function getCartSaved($value)
     {
         if ($this->moduleManagerBuilder->isInstalled('opartsavecart')) {
             return $this->cartSaveRepository->getCurrentCartForOpartSaveCart($value);
         }
+
+        return false;
     }
 }

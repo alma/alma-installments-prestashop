@@ -94,7 +94,7 @@ class ActionCartSaveHookController extends FrontendHookController
         $currentCart = $this->context->cart;
         $newCart = $params['cart'];
 
-        if (null === $currentCart) {
+        if (null === $currentCart->id) {
             $cartSaved = $this->cartSaveService->getCartSaved(\Tools::getValue('token'));
             $currentCart = new \Cart($cartSaved['id_cart']);
         }
