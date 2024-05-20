@@ -131,10 +131,10 @@ class MessageOrderHelperTest extends TestCase
         Thank you.');
         $this->insuranceApiService->expects($this->once())
             ->method('getInsuranceContract')->with(
-            $almaInsuranceProduct['insurance_contract_id'],
-            $almaInsuranceProduct['cms_reference'],
-            $almaInsuranceProduct['price']
-        )->willReturn($this->insuranceContract);
+                $almaInsuranceProduct['insurance_contract_id'],
+                $almaInsuranceProduct['cms_reference'],
+                $almaInsuranceProduct['price']
+            )->willReturn($this->insuranceContract);
         $this->assertEquals($expected, $this->messageOrderHelper->getInsuranceCancelMessageRefundAllow($almaInsuranceProduct));
     }
 

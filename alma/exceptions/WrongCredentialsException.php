@@ -41,7 +41,7 @@ class WrongCredentialsException extends AlmaException
     {
         $message = $moduleFactory->l('Could not connect to Alma using your API keys.', 'WrongCredentialsException')
         . sprintf(
-                $moduleFactory->l('Please double check your keys on your %1$sAlma dashboard%2$s.', 'WrongCredentialsException'),
+            $moduleFactory->l('Please double check your keys on your %1$sAlma dashboard%2$s.', 'WrongCredentialsException'),
             '<a href="' . LinkHelper::getAlmaDashboardUrl(SettingsHelper::getActiveMode(), 'api') . '" target="_blank">',
             '</a>'
         );

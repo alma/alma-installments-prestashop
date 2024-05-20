@@ -161,7 +161,7 @@ class AlmaSubscriptionModuleFrontController extends ModuleFrontController
                     ]),
                     500
                 );
-            break;
+                break;
         }
     }
 
