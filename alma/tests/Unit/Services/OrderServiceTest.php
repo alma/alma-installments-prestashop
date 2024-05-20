@@ -55,6 +55,12 @@ class OrderServiceTest extends TestCase
      * @var \Mockery\LegacyMockInterface|\Mockery\MockInterface|\OrderState|(\OrderState&\Mockery\LegacyMockInterface)|(\OrderState&\Mockery\MockInterface)
      */
     protected $clientHelperMock;
+
+    /**
+     * @var string
+     */
+    protected $orderReference;
+
     public function setUp()
     {
         $this->orderMock = \Mockery::mock(\Order::class);
@@ -63,6 +69,7 @@ class OrderServiceTest extends TestCase
         $this->psPaymentMock->transaction_id = 'transactionId';
 
         $this->clientHelperMock = \Mockery::mock(ClientHelper::class);
+        $this->orderReference = '123456';
     }
 
     /**
@@ -115,7 +122,7 @@ class OrderServiceTest extends TestCase
 
         $this->expectException(AlmaException::class);
         $this->expectExceptionMessage('No alma payments found for transaction id "transactionId"');
-        $orderService->getAlmaPayment('transactionId');
+        $orderService->getAlmaPayment('transactionId', $this->orderReference);
     }
 
     /**
@@ -134,7 +141,7 @@ class OrderServiceTest extends TestCase
 
         $this->expectException(AlmaException::class);
         $this->expectExceptionMessage('No alma payments found for transaction id "transactionId"');
-        $orderService->getAlmaPayment('transactionId');
+        $orderService->getAlmaPayment('transactionId', $this->orderReference);
     }
 
     /**
@@ -155,9 +162,53 @@ class OrderServiceTest extends TestCase
 
         $this->expectException(AlmaException::class);
         $this->expectExceptionMessage('No alma payments found for transaction id "transactionId"');
-        $orderService->getAlmaPayment('transactionId');
+        $orderService->getAlmaPayment('transactionId', $this->orderReference);
     }
 
+    /**
+     * When i want to retrieve alma payments
+     * And The alma payment does contains order with no order reference
+     * Then i expect an Alma Exception
+     */
+    public function testGetAlmaPaymentNoReferenceOrders()
+    {
+        $order = new \stdClass();
+        $order->id = '987654';
+
+        $almaPayment = new \stdClass();
+        $almaPayment->orders = [$order];
+
+        $this->clientHelperMock->shouldReceive('getPaymentByTransactionId')->andReturn($almaPayment);
+
+        $orderService = \Mockery::mock(OrderService::class, [$this->clientHelperMock])->makePartial();
+
+        $this->expectException(AlmaException::class);
+        $this->expectExceptionMessage('No alma payments found for transaction id "transactionId"');
+        $orderService->getAlmaPayment('transactionId', $this->orderReference);
+    }
+
+    /**
+     * When i want to retrieve alma payments
+     * And The alma payment order has a wrong reference
+     * Then i expect an Alma Exception
+     */
+    public function testGetAlmaPaymentWrongReferenceOrders()
+    {
+        $order = new \stdClass();
+        $order->id = '987654';
+        $order->merchant_reference = '987654';
+
+
+        $almaPayment = new \stdClass();
+        $almaPayment->orders = [$order];
+
+        $this->clientHelperMock->shouldReceive('getPaymentByTransactionId')->andReturn($almaPayment);
+
+        $orderService = \Mockery::mock(OrderService::class, [$this->clientHelperMock])->makePartial();
+        $this->expectException(AlmaException::class);
+        $this->expectExceptionMessage('Merchant reference from Alma order "987654" does not match order reference "123456"');
+        $orderService->getAlmaPayment('transactionId', $this->orderReference);
+    }
     /**
      * When i call the send status api with wrong data
      * Then i expect a Parameters exception
