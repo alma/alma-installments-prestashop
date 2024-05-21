@@ -238,6 +238,8 @@ class OrderServiceTest extends TestCase
         $orderService->shouldReceive('getPaymentTransactionId')->andReturn('transactionId');
         $orderService->shouldReceive('getAlmaPayment')->andReturn($almaPayment);
 
+        $this->orderMock->module = 'alma';
+
         $this->expectException(ParametersException::class);
         $orderService->manageStatusUpdate($this->orderMock, $this->orderStateMock);
     }
@@ -259,6 +261,8 @@ class OrderServiceTest extends TestCase
         $orderService = \Mockery::mock(OrderService::class, [$this->clientHelperMock])->makePartial();
         $orderService->shouldReceive('getPaymentTransactionId')->andReturn('transactionId');
         $orderService->shouldReceive('getAlmaPayment')->andReturn($almaPayment);
+
+        $this->orderMock->module = 'alma';
 
         $this->expectException(RequestException::class);
         $orderService->manageStatusUpdate($this->orderMock, $this->orderStateMock);
