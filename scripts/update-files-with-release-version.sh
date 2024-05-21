@@ -27,6 +27,6 @@ version=`echo ${1#v}`
 ####################
 filepath="alma/alma.php"
 # Update const VERSION
-sed -i -E "s/VERSION = '[0-9\.]+';/VERSION = '$version'/g" $filepath
+sed -i -E "s/VERSION = '[0-9\.]+';/VERSION = '$version';/g" $filepath
 # Update $this->version
 sed -i -E "s/$this->version = '[0-9\.]+';/$this->version = '$version';/g" $filepath
