@@ -43,10 +43,18 @@ class CartSaveService
      */
     protected $cartSaveRepository;
 
-    public function __construct()
-    {
-        $this->moduleManagerBuilder = ModuleManagerBuilder::getInstance()->build();
-        $this->cartSaveRepository = new CartSaveRepository();
+    public function __construct(
+        $moduleManagerBuilder = null,
+        $cartSaveRepository = null
+    ) {
+        if (!$moduleManagerBuilder) {
+            $moduleManagerBuilder = ModuleManagerBuilder::getInstance()->build();
+        }
+        if (!$cartSaveRepository) {
+            $cartSaveRepository = new CartSaveRepository();
+        }
+        $this->moduleManagerBuilder = $moduleManagerBuilder;
+        $this->cartSaveRepository = $cartSaveRepository;
     }
 
     /**

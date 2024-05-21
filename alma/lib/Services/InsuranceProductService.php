@@ -104,10 +104,14 @@ class InsuranceProductService
      */
     protected $insuranceHelper;
 
-    public function __construct()
+    public function __construct($almaInsuranceProductRepository = null)
     {
+        if (!$almaInsuranceProductRepository) {
+            $almaInsuranceProductRepository = new AlmaInsuranceProductRepository();
+        }
+
+        $this->almaInsuranceProductRepository = $almaInsuranceProductRepository;
         $this->context = \Context::getContext();
-        $this->almaInsuranceProductRepository = new AlmaInsuranceProductRepository();
         $this->attributeGroupProductService = new AttributeGroupProductService();
         $this->attributeProductService = new AttributeProductService();
         $this->combinationProductAttributeService = new CombinationProductAttributeService();
