@@ -138,6 +138,11 @@ function onloadInsuranceClickEvents() {
 
             removeLoaderDot();
         }
+        if (e.data.type === 'almaEligibilityAnswer') {
+            if (e.data.eligibilityCallResult.length > 0) {
+                $('#' + e.data.iFrameIdForProductWidget).show();
+            }
+        }
     });
 }
 

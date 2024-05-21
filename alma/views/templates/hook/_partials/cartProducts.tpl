@@ -21,7 +21,8 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  *}
 {capture assign='productRegularPriceInCent'}{$product.price_without_reduction|escape:'htmlall':'UTF-8' * 100}{/capture}
-{capture assign='cmsReference'}{$product.id_product|escape:'htmlall':'UTF-8'}-{$product.id_product_attribute|escape:'htmlall':'UTF-8'}-{$productRegularPriceInCent}{/capture}
+{capture assign='cmsReference'}{almaCmsReference product_id=$product.id_product product_attribute_id=$product.id_product_attribute regular_price=$product.price_without_reduction}{/capture}
+
 <div class="row py-1">
     <div class="col-md-11">
         <div class="row">
