@@ -35,9 +35,11 @@ class InsuranceHelperBuilder
 {
     use BuilderTrait;
 
+    /**
+     * @return InsuranceHelper
+     */
     public function getInstance()
     {
-        return new InsuranceHelper(
-        );
+        return new InsuranceHelper();
     }
 }

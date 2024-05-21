@@ -22,21 +22,30 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
-namespace Alma\PrestaShop\Builders;
+namespace Alma\PrestaShop\Tests\Unit\Builders;
 
-use Alma\PrestaShop\Services\InsuranceProductService;
-use Alma\PrestaShop\Traits\BuilderTrait;
+use Alma\PrestaShop\Builders\InsuranceHelperBuilder;
+use Alma\PrestaShop\Helpers\InsuranceHelper;
+use PHPUnit\Framework\TestCase;
 
-if (!defined('_PS_VERSION_')) {
-    exit;
-}
-
-class InsuranceProductServiceBuilder
+class InsuranceHelperBuilderTest extends TestCase
 {
-    use BuilderTrait;
+    /**
+     * @var InsuranceHelperBuilder
+     */
+    protected $insuranceHelperBuilder
+    ;
 
-    public function getInstance()
+    public function setUp()
     {
-        return new InsuranceProductService();
+        $this->insuranceHelperBuilder = new InsuranceHelperBuilder();
+    }
+
+    /**
+     * @return void
+     */
+    public function testGetInstance()
+    {
+        $this->assertInstanceOf(InsuranceHelper::class, $this->insuranceHelperBuilder->getInstance());
     }
 }

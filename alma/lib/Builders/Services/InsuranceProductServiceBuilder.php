@@ -22,34 +22,21 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
-namespace Alma\PrestaShop\Tests\Unit\Builders\Repositories;
+namespace Alma\PrestaShop\Builders\Services;
 
-use Alma\PrestaShop\Builders\Repositories\InsuranceProductRepositoryBuilder;
-use Alma\PrestaShop\Repositories\AlmaInsuranceProductRepository;
-use PHPUnit\Framework\TestCase;
+use Alma\PrestaShop\Services\InsuranceProductService;
+use Alma\PrestaShop\Traits\BuilderTrait;
 
-/**
- * @covers \Alma\PrestaShop\Builders\InsuranceProductRepositoryBuilder
- */
-class InsuranceProductRepositoryBuilderTest extends TestCase
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
+class InsuranceProductServiceBuilder
 {
-    /**
-     * @var InsuranceProductRepositoryBuilder
-     */
-    protected $insuranceProductRepositoryBuilder;
+    use BuilderTrait;
 
-    public function setUp()
+    public function getInstance()
     {
-        $this->insuranceProductRepositoryBuilder = new InsuranceProductRepositoryBuilder();
-    }
-
-    /**
-     * @covers \Alma\PrestaShop\Builders\InsuranceProductRepositoryBuilder::getInstance
-     *
-     * @return void
-     */
-    public function testGetInstance()
-    {
-        $this->assertInstanceOf(AlmaInsuranceProductRepository::class, $this->insuranceProductRepositoryBuilder->getInstance());
+        return new InsuranceProductService();
     }
 }
