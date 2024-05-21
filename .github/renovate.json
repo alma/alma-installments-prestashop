@@ -11,6 +11,7 @@
   ],
   "dependencyDashboard": true,
   "reviewers": ["team:squad-e-commerce-integrations"],
+  "baseBranches": ["develop"],
   "packageRules": [
     {
       "matchManagers": ["composer"],
