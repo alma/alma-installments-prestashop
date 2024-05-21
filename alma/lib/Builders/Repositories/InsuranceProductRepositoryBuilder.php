@@ -22,7 +22,7 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
-namespace Alma\PrestaShop\Builders;
+namespace Alma\PrestaShop\Builders\Repositories;
 
 use Alma\PrestaShop\Repositories\AlmaInsuranceProductRepository;
 use Alma\PrestaShop\Traits\BuilderTrait;
@@ -31,10 +31,13 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-class AlmaInsuranceProductRepositoryBuilder
+class InsuranceProductRepositoryBuilder
 {
     use BuilderTrait;
 
+    /**
+     * @return AlmaInsuranceProductRepository
+     */
     public function getInstance()
     {
         return new AlmaInsuranceProductRepository();

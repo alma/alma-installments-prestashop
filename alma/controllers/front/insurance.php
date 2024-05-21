@@ -22,8 +22,8 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
-use Alma\PrestaShop\Builders\AlmaInsuranceProductRepositoryBuilder;
 use Alma\PrestaShop\Builders\InsuranceProductServiceBuilder;
+use Alma\PrestaShop\Builders\Repositories\InsuranceProductRepositoryBuilder;
 use Alma\PrestaShop\Exceptions\AlmaException;
 use Alma\PrestaShop\Logger;
 use Alma\PrestaShop\Repositories\AlmaInsuranceProductRepository;
@@ -49,7 +49,7 @@ class AlmaInsuranceModuleFrontController extends ModuleFrontController
         $insuranceProductServiceBuilder = new InsuranceProductServiceBuilder();
         $this->insuranceProductService = $insuranceProductServiceBuilder->getInstance();
 
-        $almaInsuranceProductRepository = new AlmaInsuranceProductRepositoryBuilder();
+        $almaInsuranceProductRepository = new InsuranceProductRepositoryBuilder();
         $this->almaInsuranceProductRepository = $almaInsuranceProductRepository->getInstance();
     }
 

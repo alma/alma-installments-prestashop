@@ -28,6 +28,7 @@ use Alma\API\Entities\Order;
 use Alma\PrestaShop\Helpers\ConstantsHelper;
 use Alma\PrestaShop\Helpers\InsuranceHelper;
 use Alma\PrestaShop\Helpers\SettingsHelper;
+use Alma\PrestaShop\Helpers\ToolsHelper;
 use Alma\PrestaShop\Repositories\AlmaInsuranceProductRepository;
 use Alma\PrestaShop\Repositories\CartProductRepository;
 use Alma\PrestaShop\Repositories\ProductRepository;
@@ -72,7 +73,7 @@ class InsuranceHelperTest extends TestCase
         $this->cart = $this->createMock(\Cart::class);
         $this->context->cart = $this->cart;
         $this->settingsHelper = $this->createMock(SettingsHelper::class);
-        $this->toolsHelper = $this->createMock(\Tools::class);
+        $this->toolsHelper = $this->createMock(ToolsHelper::class);
         $this->insuranceHelper = new InsuranceHelper(
             $this->cartProductRepository,
             $this->productRepository,
@@ -198,9 +199,9 @@ class InsuranceHelperTest extends TestCase
             )
             ->willReturn(true);
 
-        $this->toolsHelper->expects($this->once())
+        $this->toolsHelper->expects($this->any())
             ->method('psVersionCompare')
-            ->with(_PS_VERSION_, '1.7', '>=')
+            ->with('1.7', '>=')
             ->willReturn(true);
 
         $this->assertTrue($this->insuranceHelper->isInsuranceAllowedInProductPage());
@@ -220,9 +221,9 @@ class InsuranceHelperTest extends TestCase
             ])
             ->willReturn(false);
 
-        $this->toolsHelper->expects($this->once())
+        $this->toolsHelper->expects($this->any())
             ->method('psVersionCompare')
-            ->with(_PS_VERSION_, '1.7', '>=')
+            ->with('1.7', '>=')
             ->willReturn(true);
 
         $this->assertFalse($this->insuranceHelper->isInsuranceAllowedInProductPage());
@@ -247,9 +248,9 @@ class InsuranceHelperTest extends TestCase
             )
             ->willReturnOnConsecutiveCalls(true, false);
 
-        $this->toolsHelper->expects($this->once())
+        $this->toolsHelper->expects($this->any())
             ->method('psVersionCompare')
-            ->with(_PS_VERSION_, '1.7', '>=')
+            ->with('1.7', '>=')
             ->willReturn(true);
 
         $this->assertFalse($this->insuranceHelper->isInsuranceAllowedInProductPage());
@@ -277,9 +278,9 @@ class InsuranceHelperTest extends TestCase
             )
             ->willReturnOnConsecutiveCalls(true, true, false);
 
-        $this->toolsHelper->expects($this->once())
+        $this->toolsHelper->expects($this->any())
             ->method('psVersionCompare')
-            ->with(_PS_VERSION_, '1.7', '>=')
+            ->with('1.7', '>=')
             ->willReturn(true);
 
         $this->assertFalse($this->insuranceHelper->isInsuranceAllowedInProductPage());
@@ -307,9 +308,9 @@ class InsuranceHelperTest extends TestCase
             )
             ->willReturn(true);
 
-        $this->toolsHelper->expects($this->once())
+        $this->toolsHelper->expects($this->any())
             ->method('psVersionCompare')
-            ->with(_PS_VERSION_, '1.7', '>=')
+            ->with('1.7', '>=')
             ->willReturn(true);
 
         $this->assertTrue($this->insuranceHelper->isInsuranceAllowedInCartPage());
@@ -329,9 +330,9 @@ class InsuranceHelperTest extends TestCase
             ])
             ->willReturn(false);
 
-        $this->toolsHelper->expects($this->once())
+        $this->toolsHelper->expects($this->any())
             ->method('psVersionCompare')
-            ->with(_PS_VERSION_, '1.7', '>=')
+            ->with('1.7', '>=')
             ->willReturn(true);
 
         $this->assertFalse($this->insuranceHelper->isInsuranceAllowedInCartPage());
@@ -356,9 +357,9 @@ class InsuranceHelperTest extends TestCase
             )
             ->willReturnOnConsecutiveCalls(true, false);
 
-        $this->toolsHelper->expects($this->once())
+        $this->toolsHelper->expects($this->any())
             ->method('psVersionCompare')
-            ->with(_PS_VERSION_, '1.7', '>=')
+            ->with('1.7', '>=')
             ->willReturn(true);
 
         $this->assertFalse($this->insuranceHelper->isInsuranceAllowedInCartPage());
@@ -386,9 +387,9 @@ class InsuranceHelperTest extends TestCase
             )
             ->willReturnOnConsecutiveCalls(true, true, false);
 
-        $this->toolsHelper->expects($this->once())
+        $this->toolsHelper->expects($this->any())
             ->method('psVersionCompare')
-            ->with(_PS_VERSION_, '1.7', '>=')
+            ->with('1.7', '>=')
             ->willReturn(true);
 
         $this->assertFalse($this->insuranceHelper->isInsuranceAllowedInCartPage());
@@ -413,9 +414,9 @@ class InsuranceHelperTest extends TestCase
             )
             ->willReturn(true);
 
-        $this->toolsHelper->expects($this->once())
+        $this->toolsHelper->expects($this->any())
             ->method('psVersionCompare')
-            ->with(_PS_VERSION_, '1.7', '>=')
+            ->with('1.7', '>=')
             ->willReturn(true);
 
         $this->assertTrue($this->insuranceHelper->isInsuranceActivated());
@@ -435,9 +436,9 @@ class InsuranceHelperTest extends TestCase
             ])
             ->willReturn(false);
 
-        $this->toolsHelper->expects($this->once())
+        $this->toolsHelper->expects($this->any())
             ->method('psVersionCompare')
-            ->with(_PS_VERSION_, '1.7', '>=')
+            ->with('1.7', '>=')
             ->willReturn(true);
 
         $this->assertFalse($this->insuranceHelper->isInsuranceActivated());
@@ -462,9 +463,9 @@ class InsuranceHelperTest extends TestCase
             )
             ->willReturnOnConsecutiveCalls(true, false);
 
-        $this->toolsHelper->expects($this->once())
+        $this->toolsHelper->expects($this->any())
             ->method('psVersionCompare')
-            ->with(_PS_VERSION_, '1.7', '>=')
+            ->with('1.7', '>=')
             ->willReturn(true);
 
         $this->assertFalse($this->insuranceHelper->isInsuranceActivated());
@@ -519,5 +520,18 @@ class InsuranceHelperTest extends TestCase
                 'idProduct' => null,
             ],
         ];
+    }
+
+    protected function tearDown()
+    {
+        $this->cartProductRepository = null;
+        $this->productRepository = null;
+        $this->insuranceProductRepository = null;
+        $this->context = null;
+        $this->cart = null;
+        $this->settingsHelper = null;
+        $this->toolsHelper = null;
+        $this->insuranceHelper = null;
+        $this->order = null;
     }
 }

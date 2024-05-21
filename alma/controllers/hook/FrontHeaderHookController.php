@@ -388,7 +388,7 @@ class FrontHeaderHookController extends FrontendHookController
     {
         $urlScriptInsuranceModal = $this->adminInsuranceHelper->envUrl() . ConstantsHelper::SCRIPT_MODAL_WIDGET_INSURANCE_PATH;
 
-        return "<script data-cfasync='false' type='module' src='${urlScriptInsuranceModal}'></script><div id='alma-insurance-modal'></div>";
+        return "<script data-cfasync='false' type='module' src='{$urlScriptInsuranceModal}'></script><div id='alma-insurance-modal'></div>";
     }
 
     /**

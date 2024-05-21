@@ -26,9 +26,11 @@ namespace Alma\PrestaShop\Tests\Unit\Helper\Admin;
 
 use Alma\PrestaShop\Builders\Admin\InsuranceHelperBuilder;
 use Alma\PrestaShop\Exceptions\WrongParamsException;
+use Alma\PrestaShop\Helpers\Admin\InsuranceHelper;
 use Alma\PrestaShop\Helpers\Admin\TabsHelper;
 use Alma\PrestaShop\Helpers\ConfigurationHelper;
 use Alma\PrestaShop\Helpers\ConstantsHelper;
+use Alma\PrestaShop\Repositories\AlmaInsuranceProductRepository;
 use PHPUnit\Framework\TestCase;
 
 class InsuranceHelperTest extends TestCase
@@ -177,7 +179,17 @@ class InsuranceHelperTest extends TestCase
             [ConstantsHelper::ALMA_SHOW_INSURANCE_WIDGET_CART, 0],
             [ConstantsHelper::ALMA_SHOW_INSURANCE_POPUP_CART, 1]
         );
-        $this->insuranceHelper->saveConfigInsurance([
+
+        $insuranceHelperMock = \Mockery::mock(InsuranceHelper::class,
+            [
+                $this->module,
+                $this->tabHelper,
+                $this->configurationHelperMock,
+                \Mockery::mock(AlmaInsuranceProductRepository::class),
+            ])->makePartial();
+
+        $insuranceHelperMock->shouldReceive('setHeader')->andReturn();
+        $insuranceHelperMock->saveConfigInsurance([
             'is_insurance_activated' => '1',
             'is_insurance_on_product_page_activated' => '1',
             'is_insurance_on_cart_page_activated' => '0',

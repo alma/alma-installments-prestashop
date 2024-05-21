@@ -239,10 +239,20 @@ class InsuranceHelper
         $diffKeysArray = array_diff_key($config, $dbFields);
 
         if (!empty($diffKeysArray)) {
-            header('HTTP/1.1 401 Unauthorized request');
+            $this->setHeader();
             throw new WrongParamsException($this->moduleFactory, $diffKeysArray);
         }
 
         $this->saveBOFormValues($config, $dbFields);
+    }
+
+    /**
+     * @codeCoverageIgnore because it's a method to set header
+     *
+     * @return void
+     */
+    public function setHeader()
+    {
+        header('HTTP/1.1 401 Unauthorized request');
     }
 }
