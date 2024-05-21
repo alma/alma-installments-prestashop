@@ -61,6 +61,11 @@ class OrderServiceTest extends TestCase
      */
     protected $orderReference;
 
+    /**
+     * @var OrderService
+     */
+    protected $orderService;
+
     public function setUp()
     {
         $this->orderMock = \Mockery::mock(\Order::class);
@@ -70,6 +75,16 @@ class OrderServiceTest extends TestCase
 
         $this->clientHelperMock = \Mockery::mock(ClientHelper::class);
         $this->orderReference = '123456';
+
+        $orderServiceBuilder = new OrderServiceBuilder();
+        $this->orderService = $orderServiceBuilder->getInstance();
+    }
+
+    public function testOrderNotAlma()
+    {
+        $this->orderMock->module = 'notAlma';
+
+        $this->assertNull($this->orderService->manageStatusUpdate($this->orderMock, $this->orderStateMock));
     }
 
     /**
@@ -80,13 +95,11 @@ class OrderServiceTest extends TestCase
     {
         $this->orderMock->shouldReceive('getOrderPayments')->andReturn([]);
         $this->orderMock->id = 1;
-
-        $orderServiceBuilder = new OrderServiceBuilder();
-        $orderService = $orderServiceBuilder->getInstance();
+        $this->orderMock->module = 'alma';
 
         $this->expectException(AlmaException::class);
         $this->expectExceptionMessage('No payment found for order "1"');
-        $orderService->getPaymentTransactionId($this->orderMock);
+        $this->orderService->getPaymentTransactionId($this->orderMock);
     }
 
     /**
@@ -102,12 +115,10 @@ class OrderServiceTest extends TestCase
             $payment,
         ]);
         $this->orderMock->id = 1;
+        $this->orderMock->module = 'alma';
 
-        $orderServiceBuilder = new OrderServiceBuilder();
-        $orderService = $orderServiceBuilder->getInstance();
-
-        $orderService->getPaymentTransactionId($this->orderMock);
-        $this->assertEquals('transactionId', $orderService->getPaymentTransactionId($this->orderMock));
+        $this->orderService->getPaymentTransactionId($this->orderMock);
+        $this->assertEquals('transactionId', $this->orderService->getPaymentTransactionId($this->orderMock));
     }
 
     /**
@@ -264,5 +275,6 @@ class OrderServiceTest extends TestCase
         $this->orderStateMock = null;
         $this->psPaymentMock = null;
         $this->clientHelperMock = null;
+        $this->orderService = null;
     }
 }

@@ -61,6 +61,10 @@ class OrderService
      */
     public function manageStatusUpdate($order, $orderState)
     {
+        if ($order->module !== 'alma') {
+            return;
+        }
+
         $paymentTransactionId = $this->getPaymentTransactionId($order);
         $almaPayment = $this->getAlmaPayment($paymentTransactionId, $order->reference);
 
