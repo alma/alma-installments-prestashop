@@ -25,6 +25,18 @@ jobs:
         version: 3.x
         repo-token: ${{ github.token }}
 
+    - name: Build docker images
+      uses: docker/bake-action@v4
+      with:
+        files: compose.yml
+        pull: true
+        load: true
+        targets: |
+          prestashop
+        set: |
+          *.cache-from=type=gha
+          *.cache-to=type=gha
+
     - name: Run linter
       run: task lint:ci
 
