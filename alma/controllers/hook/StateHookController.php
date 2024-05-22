@@ -32,6 +32,7 @@ use Alma\API\Client;
 use Alma\API\Exceptions\ParametersException;
 use Alma\API\Exceptions\RequestException;
 use Alma\API\RequestError;
+use Alma\PrestaShop\Builders\InsuranceHelperBuilder;
 use Alma\PrestaShop\Builders\SettingsHelperBuilder;
 use Alma\PrestaShop\Exceptions\OrderException;
 use Alma\PrestaShop\Helpers\ClientHelper;
@@ -79,7 +80,8 @@ final class StateHookController extends AdminHookController
         $this->alma = ClientHelper::defaultInstance();
         $this->orderHelper = new OrderHelper();
         $this->insuranceSubscriptionService = new InsuranceSubscriptionService();
-        $this->insuranceHelper = new InsuranceHelper();
+        $insuranceHelperBuilder = new InsuranceHelperBuilder();
+        $this->insuranceHelper = $insuranceHelperBuilder->getInstance();
         $settingsHelperBuilder = new SettingsHelperBuilder();
         $this->settingsHelper = $settingsHelperBuilder->getInstance();
     }

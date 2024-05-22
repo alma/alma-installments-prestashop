@@ -25,6 +25,7 @@
 namespace Alma\PrestaShop\Controllers\Hook;
 
 use Alma\API\Exceptions\MissingKeyException;
+use Alma\PrestaShop\Builders\InsuranceHelperBuilder;
 use Alma\PrestaShop\Helpers\InsuranceHelper;
 use Alma\PrestaShop\Hooks\FrontendHookController;
 use Alma\PrestaShop\Logger;
@@ -64,7 +65,8 @@ class TermsAndConditionsHookController extends FrontendHookController
      */
     public function __construct($module)
     {
-        $this->insuranceHelper = new InsuranceHelper();
+        $insuranceHelperBuilder = new InsuranceHelperBuilder();
+        $this->insuranceHelper = $insuranceHelperBuilder->getInstance();
         $this->insuranceService = new InsuranceService();
         $this->almaInsuranceProductRepository = new AlmaInsuranceProductRepository();
         $this->termsAndConditions = new TermsAndConditions();

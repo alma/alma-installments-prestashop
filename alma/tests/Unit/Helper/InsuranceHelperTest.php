@@ -25,6 +25,7 @@
 namespace Alma\PrestaShop\Tests\Unit\Helper;
 
 use Alma\API\Entities\Order;
+use Alma\PrestaShop\Factories\ContextFactory;
 use Alma\PrestaShop\Helpers\ConstantsHelper;
 use Alma\PrestaShop\Helpers\InsuranceHelper;
 use Alma\PrestaShop\Helpers\SettingsHelper;
@@ -69,18 +70,23 @@ class InsuranceHelperTest extends TestCase
         $this->cartProductRepository = $this->createMock(CartProductRepository::class);
         $this->productRepository = $this->createMock(ProductRepository::class);
         $this->insuranceProductRepository = $this->createMock(AlmaInsuranceProductRepository::class);
-        $this->context = $this->createMock(\Context::class);
-        $this->cart = $this->createMock(\Cart::class);
-        $this->context->cart = $this->cart;
-        $this->settingsHelper = $this->createMock(SettingsHelper::class);
         $this->toolsHelper = $this->createMock(ToolsHelper::class);
+        $this->settingsHelper = $this->createMock(SettingsHelper::class);
+
+        $this->cart = $this->createMock(\Cart::class);
+        $context = $this->createMock(\Context::class);
+        $context->cart = $this->cart;
+
+        $this->contextFactory = \Mockery::mock(ContextFactory::class)->makePartial();
+        $this->contextFactory->shouldReceive('getContext')->andReturn($context);
+
         $this->insuranceHelper = new InsuranceHelper(
             $this->cartProductRepository,
             $this->productRepository,
             $this->insuranceProductRepository,
-            $this->context,
-            $this->settingsHelper,
-            $this->toolsHelper
+            $this->contextFactory,
+            $this->toolsHelper,
+            $this->settingsHelper
         );
         $this->order = $this->createMock(Order::class);
     }
@@ -147,16 +153,34 @@ class InsuranceHelperTest extends TestCase
      */
     public function testHasInsuranceInCartWithIdInsuranceProductReturnBool($expected, $idProduct)
     {
-        $this->context->cart->id = 1;
+        $this->cart = $this->createMock(\Cart::class);
+        $context = $this->createMock(\Context::class);
+        $context->cart = $this->cart;
+        $context->cart->id = 1;
+
+        $this->contextFactory = \Mockery::mock(ContextFactory::class)->makePartial();
+        $this->contextFactory->shouldReceive('getContext')->andReturn($context);
+
         $idInsuranceProduct = 1;
+
         $this->cartProductRepository->expects($this->once())
             ->method('hasProductInCart')
-            ->with($idInsuranceProduct, $this->context->cart->id)
+            ->with($idInsuranceProduct, $context->cart->id)
             ->willReturn($idProduct);
+
         $this->productRepository->expects($this->once())
             ->method('getProductIdByReference')
             ->with(ConstantsHelper::ALMA_INSURANCE_PRODUCT_REFERENCE)
             ->willReturn($idInsuranceProduct);
+
+        $this->insuranceHelper = new InsuranceHelper(
+            $this->cartProductRepository,
+            $this->productRepository,
+            $this->insuranceProductRepository,
+            $this->contextFactory,
+            $this->toolsHelper,
+            $this->settingsHelper
+        );
 
         $this->assertEquals($expected, $this->insuranceHelper->hasInsuranceInCart());
     }
@@ -527,7 +551,7 @@ class InsuranceHelperTest extends TestCase
         $this->cartProductRepository = null;
         $this->productRepository = null;
         $this->insuranceProductRepository = null;
-        $this->context = null;
+        $this->contextFactory = null;
         $this->cart = null;
         $this->settingsHelper = null;
         $this->toolsHelper = null;

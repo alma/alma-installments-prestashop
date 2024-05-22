@@ -24,6 +24,7 @@
 
 namespace Alma\PrestaShop\Helpers;
 
+use Alma\PrestaShop\Factories\ContextFactory;
 use Alma\PrestaShop\Logger;
 use Alma\PrestaShop\Repositories\AlmaInsuranceProductRepository;
 use Alma\PrestaShop\Repositories\CartProductRepository;
@@ -66,39 +67,26 @@ class InsuranceHelper
      */
     protected $toolsHelper;
 
+    /***
+     * @param CartProductRepository $cartProductRepository
+     * @param ProductRepository $productRepository
+     * @param AlmaInsuranceProductRepository $insuranceProductRepository
+     * @param ContextFactory $contextFactory
+     * @param ToolsHelper $toolsHelper
+     * @param SettingsHelper $settingsHelper
+     */
     public function __construct(
-        $cartProductRepository = null,
-        $productRepository = null,
-        $insuranceProductRepository = null,
-        $context = null,
-        $settingsHelper = null,
-        $toolsHelper = null
+        $cartProductRepository,
+        $productRepository,
+        $insuranceProductRepository,
+        $contextFactory,
+        $toolsHelper,
+        $settingsHelper
     ) {
-        if (!$cartProductRepository) {
-            $cartProductRepository = new CartProductRepository();
-        }
-        if (!$productRepository) {
-            $productRepository = new ProductRepository();
-        }
-        if (!$insuranceProductRepository) {
-            $insuranceProductRepository = new AlmaInsuranceProductRepository();
-        }
-        if (!$context) {
-            $context = \Context::getContext();
-        }
-        if (!$settingsHelper) {
-            $settingsHelper = new SettingsHelper(
-                new ShopHelper(),
-                new ConfigurationHelper()
-            );
-        }
-        if (!$toolsHelper) {
-            $toolsHelper = new ToolsHelper();
-        }
         $this->cartProductRepository = $cartProductRepository;
         $this->productRepository = $productRepository;
         $this->insuranceProductRepository = $insuranceProductRepository;
-        $this->context = $context;
+        $this->context = $contextFactory->getContext();
         $this->settingsHelper = $settingsHelper;
         $this->toolsHelper = $toolsHelper;
     }

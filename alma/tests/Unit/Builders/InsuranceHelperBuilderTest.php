@@ -26,6 +26,7 @@ namespace Alma\PrestaShop\Tests\Unit\Builders;
 
 use Alma\PrestaShop\Builders\InsuranceHelperBuilder;
 use Alma\PrestaShop\Helpers\InsuranceHelper;
+use Alma\PrestaShop\Repositories\CartProductRepository;
 use PHPUnit\Framework\TestCase;
 
 class InsuranceHelperBuilderTest extends TestCase
@@ -33,8 +34,7 @@ class InsuranceHelperBuilderTest extends TestCase
     /**
      * @var InsuranceHelperBuilder
      */
-    protected $insuranceHelperBuilder
-    ;
+    protected $insuranceHelperBuilder;
 
     public function setUp()
     {
@@ -47,5 +47,11 @@ class InsuranceHelperBuilderTest extends TestCase
     public function testGetInstance()
     {
         $this->assertInstanceOf(InsuranceHelper::class, $this->insuranceHelperBuilder->getInstance());
+    }
+
+    public function testGetCartProductRepository()
+    {
+        $this->assertInstanceOf(CartProductRepository::class, $this->insuranceHelperBuilder->getCartProductRepository());
+        $this->assertInstanceOf(CartProductRepository::class, $this->insuranceHelperBuilder->getCartProductRepository());
     }
 }

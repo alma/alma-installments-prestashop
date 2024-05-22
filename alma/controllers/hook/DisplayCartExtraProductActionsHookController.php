@@ -24,8 +24,9 @@
 
 namespace Alma\PrestaShop\Controllers\Hook;
 
-use Alma\PrestaShop\Builders\Admin\InsuranceHelperBuilder;
+use Alma\PrestaShop\Builders\Admin\InsuranceHelperBuilder as AdminInsuranceHelperBuilder;
 use Alma\PrestaShop\Builders\CartHelperBuilder;
+use Alma\PrestaShop\Builders\InsuranceHelperBuilder;
 use Alma\PrestaShop\Builders\PriceHelperBuilder;
 use Alma\PrestaShop\Builders\SettingsHelperBuilder;
 use Alma\PrestaShop\Exceptions\InsuranceNotFoundException;
@@ -98,9 +99,10 @@ class DisplayCartExtraProductActionsHookController extends FrontendHookControlle
      */
     public function __construct($module)
     {
-        $this->insuranceHelper = new InsuranceHelper();
+        $insuranceHelperBuilder = new InsuranceHelperBuilder();
+        $this->insuranceHelper = $insuranceHelperBuilder->getInstance();
 
-        $adminInsuranceHelperBuilder = new InsuranceHelperBuilder();
+        $adminInsuranceHelperBuilder = new AdminInsuranceHelperBuilder();
         $this->adminInsuranceHelper = $adminInsuranceHelperBuilder->getInstance();
 
         $this->productRepository = new ProductRepository();

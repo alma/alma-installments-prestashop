@@ -73,6 +73,7 @@ use Alma\PrestaShop\Model\CartData;
 use Alma\PrestaShop\Model\PaymentData;
 use Alma\PrestaShop\Model\ShippingData;
 use Alma\PrestaShop\Repositories\AlmaInsuranceProductRepository;
+use Alma\PrestaShop\Repositories\CartProductRepository;
 use Alma\PrestaShop\Repositories\OrderRepository;
 use Alma\PrestaShop\Repositories\ProductRepository;
 use Alma\PrestaShop\Services\InsuranceService;
@@ -935,5 +936,19 @@ trait BuilderTrait
         }
 
         return new PaymentHelper($this->getPaymentData());
+    }
+
+    /**
+     * @param CartProductRepository $cartProductRepository
+     *
+     * @return CartProductRepository
+     */
+    public function getCartProductRepository($cartProductRepository = null)
+    {
+        if ($cartProductRepository) {
+            return $cartProductRepository;
+        }
+
+        return new CartProductRepository();
     }
 }
