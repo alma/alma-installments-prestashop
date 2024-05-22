@@ -45,7 +45,7 @@ tasks:
     deps:
       - docker:build
     cmds:
-      - docker compose run --rm --entrypoint "php" -w /var/www/html/modules prestashop alma/vendor/bin/php-cs-fixer fix --dry-run --diff alma
+      - docker compose run --no-deps --rm --entrypoint "php" -w /var/www/html/modules prestashop alma/vendor/bin/php-cs-fixer fix --dry-run --diff alma
 
   lint:
     desc: Run linter
