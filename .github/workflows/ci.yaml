@@ -25,6 +25,9 @@ jobs:
         version: 3.x
         repo-token: ${{ github.token }}
 
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+
     - name: Build docker images
       uses: docker/bake-action@v4
       with:
