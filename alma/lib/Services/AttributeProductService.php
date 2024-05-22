@@ -24,7 +24,7 @@
 
 namespace Alma\PrestaShop\Services;
 
-use Alma\PrestaShop\Builders\LocaleHelperBuilder;
+use Alma\PrestaShop\Builders\Models\LocaleHelperBuilder;
 use Alma\PrestaShop\Helpers\LocaleHelper;
 use Alma\PrestaShop\Repositories\AttributeRepository;
 
