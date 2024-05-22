@@ -126,7 +126,7 @@ function onloadAddInsuranceInputOnProductAlma() {
 
 function refreshWidget() {
     let cmsReference = createCmsReference(productDetails);
-    let regularPriceToCents = Math.round(productDetails.price_without_reduction * 100);
+    let staticPriceToCents = Math.round(productDetails.price_amount * 100);
 
     quantity = productDetails.quantity_wanted;
     if (productDetails.quantity_wanted <= 0) {
@@ -135,7 +135,7 @@ function refreshWidget() {
 
     getproductDataForApiCall(
         cmsReference,
-        regularPriceToCents,
+        staticPriceToCents,
         settings.merchant_id,
         quantity,
         settings.cart_id,
