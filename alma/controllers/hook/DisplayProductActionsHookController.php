@@ -135,8 +135,8 @@ class DisplayProductActionsHookController extends FrontendHookController
 
         $cmsReference = $this->insuranceHelper->createCmsReference($productId, $productAttributeId);
 
-        $regularPrice = $this->productHelper->getRegularPrice($productId, $productAttributeId);
-        $regularPriceInCents = $this->priceHelper->convertPriceToCents($regularPrice);
+        $staticPrice = $this->productHelper->getPriceStatic($productId, $productAttributeId);
+        $staticPriceInCents = $this->priceHelper->convertPriceToCents($staticPrice);
 
         $merchantId = SettingsHelper::getMerchantId();
         $settings = $this->handleSettings($merchantId);
@@ -148,7 +148,7 @@ class DisplayProductActionsHookController extends FrontendHookController
                 $this->adminInsuranceHelper->envUrl(),
                 ConstantsHelper::FO_IFRAME_WIDGET_INSURANCE_PATH,
                 $cmsReference,
-                $regularPriceInCents,
+                $staticPriceInCents,
                 $merchantId,
                 $this->context->session->getId(),
                 $this->cartHelper->getCartIdFromContext()
