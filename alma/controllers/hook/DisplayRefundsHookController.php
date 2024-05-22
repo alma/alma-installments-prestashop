@@ -30,13 +30,12 @@ if (!defined('_PS_VERSION_')) {
 
 use Alma\API\Entities\Payment;
 use Alma\API\RequestError;
+use Alma\PrestaShop\Builders\PriceHelperBuilder;
 use Alma\PrestaShop\Exceptions\PaymentNotFoundException;
 use Alma\PrestaShop\Helpers\ClientHelper;
-use Alma\PrestaShop\Helpers\CurrencyHelper;
 use Alma\PrestaShop\Helpers\OrderHelper;
 use Alma\PrestaShop\Helpers\PriceHelper;
 use Alma\PrestaShop\Helpers\RefundHelper;
-use Alma\PrestaShop\Helpers\ToolsHelper;
 use Alma\PrestaShop\Hooks\AdminHookController;
 use Alma\PrestaShop\Logger;
 
@@ -58,7 +57,9 @@ final class DisplayRefundsHookController extends AdminHookController
     public function __construct($module)
     {
         parent::__construct($module);
-        $this->priceHelper = new PriceHelper(new ToolsHelper(), new CurrencyHelper());
+
+        $priceHelperBuilder = new PriceHelperBuilder();
+        $this->priceHelper = $priceHelperBuilder->getInstance();
     }
 
     /**

@@ -24,6 +24,8 @@
 
 namespace Alma\PrestaShop\Services;
 
+use Alma\PrestaShop\Factories\ContextFactory;
+use Alma\PrestaShop\Factories\ModuleFactory;
 use Alma\PrestaShop\Helpers\CartHelper;
 use Alma\PrestaShop\Helpers\ConfigurationHelper;
 use Alma\PrestaShop\Helpers\ContextHelper;
@@ -159,8 +161,8 @@ class PaymentService
     protected $cartHelper;
 
     /**
-     * @param \Context $context
-     * @param $module
+     * @param ContextFactory $contextFactory
+     * @param ModuleFactory $moduleFactory
      * @param SettingsHelper $settingsHelper
      * @param LocaleHelper $localeHelper
      * @param ToolsHelper $toolsHelper
@@ -177,12 +179,10 @@ class PaymentService
      * @param CartHelper $cartHelper
      * @param PaymentOptionTemplateHelper $paymentOptionTemplateHelper
      * @param PaymentOptionHelper $paymentOptionHelper
-     *
-     * @codeCoverageIgnore
      */
     public function __construct(
-        $context,
-        $module,
+        $contextFactory,
+        $moduleFactory,
         $settingsHelper,
         $localeHelper,
         $toolsHelper,
@@ -200,8 +200,8 @@ class PaymentService
         $paymentOptionTemplateHelper,
         $paymentOptionHelper
     ) {
-        $this->context = $context;
-        $this->module = $module;
+        $this->context = $contextFactory->getContext();
+        $this->module = $moduleFactory->getModule();
         $this->settingsHelper = $settingsHelper;
         $this->localeHelper = $localeHelper;
         $this->toolsHelper = $toolsHelper;
@@ -284,8 +284,6 @@ class PaymentService
                 );
 
                 $action = $this->contextHelper->getModuleLink(
-                    $this->context,
-                    $this->module->name,
                     'payment',
                     ['key' => $key],
                     true
@@ -330,9 +328,9 @@ class PaymentService
         } catch (\Exception $e) {
             Logger::instance()->error(
                 sprintf(
-                'An error occured when displaying options payments - message : %s, %s',
-                $e->getMessage(),
-                $e->getTraceAsString()
+                    'An error occured when displaying options payments - message : %s, %s',
+                    $e->getMessage(),
+                    $e->getTraceAsString()
                 ));
         }
     }

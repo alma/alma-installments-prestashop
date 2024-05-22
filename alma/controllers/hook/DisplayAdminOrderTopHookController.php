@@ -78,9 +78,9 @@ class DisplayAdminOrderTopHookController extends FrontendHookController
             $link = $this->insuranceService->getLinkToOrderDetails($order);
 
             $text = sprintf(
-                    $this->module->l('This basket includes one or more insurance subscriptions. Make sure that the subscription(s) is canceled before proceeding with the refund. %1$sManage the cancellation directly here.%2$s', 'DisplayAdminOrderTopHookController'),
-                    '<a href="' . $link . '">',
-                    '</a>'
+                $this->module->l('This basket includes one or more insurance subscriptions. Make sure that the subscription(s) is canceled before proceeding with the refund. %1$sManage the cancellation directly here.%2$s', 'DisplayAdminOrderTopHookController'),
+                '<a href="' . $link . '">',
+                '</a>'
             );
 
             $this->context->smarty->assign(

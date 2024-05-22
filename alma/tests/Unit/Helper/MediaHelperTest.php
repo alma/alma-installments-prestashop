@@ -24,15 +24,39 @@
 
 namespace Alma\PrestaShop\Tests\Unit\Helper;
 
+use Alma\PrestaShop\Builders\MediaHelperBuilder;
+use Alma\PrestaShop\Factories\PhpFactory;
 use PHPUnit\Framework\TestCase;
 
 class MediaHelperTest extends TestCase
 {
     public function testGetLogoName()
     {
+        $mediaHelperBuilder = new MediaHelperBuilder();
+        $mediaHelper = $mediaHelperBuilder->getInstance();
+        $this->assertEquals('p3x_logo.svg', $mediaHelper->getLogoName(3, false));
+
+        $mediaHelperBuilder = new MediaHelperBuilder();
+        $mediaHelper = $mediaHelperBuilder->getInstance();
+        $this->assertEquals('15j_logo.svg', $mediaHelper->getLogoName(15, true));
     }
 
-    public function testGetMediaPath()
+    public function testGetIconPathAlmaTiny()
     {
+        $phpFactory = \Mockery::mock(PHPFactory::class)->makePartial();
+        $phpFactory->shouldReceive('is_callable')->andReturn('false');
+        $mediaHelperBuilder = \Mockery::mock(MediaHelperBuilder::class)->makePartial();
+        $mediaHelperBuilder->shouldReceive('getPhpFactory')->andReturn($phpFactory);
+        $mediaHelper = $mediaHelperBuilder->getInstance();
+
+        $this->assertEquals('/modules/alma/views/img/logos/alma_tiny.svg', $mediaHelper->getIconPathAlmaTiny());
+
+        $phpFactory = \Mockery::mock(PHPFactory::class)->makePartial();
+        $phpFactory->shouldReceive('is_callable')->andReturn('true');
+        $mediaHelperBuilder = \Mockery::mock(MediaHelperBuilder::class)->makePartial();
+        $mediaHelperBuilder->shouldReceive('getPhpFactory')->andReturn($phpFactory);
+        $mediaHelper = $mediaHelperBuilder->getInstance();
+
+        $this->assertEquals('/modules/alma/views/img/logos/alma_tiny.svg', $mediaHelper->getIconPathAlmaTiny());
     }
 }

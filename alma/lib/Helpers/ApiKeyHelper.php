@@ -24,6 +24,7 @@
 
 namespace Alma\PrestaShop\Helpers;
 
+use Alma\PrestaShop\Builders\SettingsHelperBuilder;
 use Alma\PrestaShop\Forms\ApiAdminFormBuilder;
 
 if (!defined('_PS_VERSION_')) {
@@ -49,13 +50,12 @@ class ApiKeyHelper
 
     /**
      * ApiKey Helper construct
-     *
-     * @codeCoverageIgnore
      */
     public function __construct()
     {
         $this->encryptionHelper = new EncryptionHelper();
-        $this->settingsHelper = new SettingsHelper(new ShopHelper(), new ConfigurationHelper());
+        $settingsHelperBuilder = new SettingsHelperBuilder();
+        $this->settingsHelper = $settingsHelperBuilder->getInstance();
     }
 
     /**

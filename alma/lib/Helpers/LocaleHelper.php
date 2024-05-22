@@ -47,8 +47,6 @@ class LocaleHelper
     protected $languageHelper;
 
     /**
-     * @codeCoverageIgnore
-     *
      * @param $languageHelper
      */
     public function __construct($languageHelper)

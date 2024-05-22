@@ -65,10 +65,16 @@ class Alma extends PaymentModule
      * @var Alma\PrestaShop\Helpers\Admin\TabsHelper
      */
     private $tabsHelper;
+
     /**
-     * @var Alma\PrestaShop\Helpers\Admin\InsuranceHelper
+     * @var \PrestaShop\ModuleLibServiceContainer\DependencyInjection\ServiceContainer
      */
-    private $adminInsuranceHelper;
+    protected $container;
+
+    /**
+     * @var \Alma\PrestaShop\Helpers\ToolsHelper
+     */
+    protected $toolsHelper;
 
     public function __construct()
     {
@@ -87,12 +93,10 @@ class Alma extends PaymentModule
         }
 
         $this->controllers = $controllers;
-
         $this->is_eu_compatible = 1;
         $this->currencies = true;
         $this->currencies_mode = 'checkbox';
         $this->module_key = 'ad25114b1fb02d9d8b8787b992a0ccdb';
-
         $this->limited_currencies = ['EUR'];
 
         $version = _PS_VERSION_;
@@ -117,7 +121,45 @@ class Alma extends PaymentModule
 
         $this->hook = new \Alma\PrestaShop\Helpers\HookHelper();
         $this->tabsHelper = new \Alma\PrestaShop\Helpers\Admin\TabsHelper();
-        $this->adminInsuranceHelper = new \Alma\PrestaShop\Helpers\Admin\InsuranceHelper($this);
+
+        $this->toolsHelper = new \Alma\PrestaShop\Helpers\ToolsHelper();
+
+        $this->handlePSModule();
+    }
+
+    /**
+     * @return void
+     */
+    public function handlePSModule()
+    {
+        if (
+            $this->checkCompatibilityPSModule()
+            && $this->container === null
+        ) {
+            $this->container = new \PrestaShop\ModuleLibServiceContainer\DependencyInjection\ServiceContainer(
+                $this->name,
+                $this->getLocalPath()
+            );
+        }
+    }
+
+    /**
+     * @return bool
+     */
+    public function checkCompatibilityPSModule()
+    {
+        // todo remove deactive ps account module
+        return false;
+
+        if (
+            $this->toolsHelper->psVersionCompare('1.6', '<')
+            || !class_exists(\PrestaShop\ModuleLibServiceContainer\DependencyInjection\ServiceContainer::class)
+            || _PS_ENV_ === 'dev'
+        ) {
+            return false;
+        }
+
+        return true;
     }
 
     /**
@@ -192,6 +234,10 @@ class Alma extends PaymentModule
      */
     public function install()
     {
+        if ($this->checkCompatibilityPSModule()) {
+            $this->getService('alma.ps_accounts_installer')->install();
+        }
+
         $coreInstall = parent::install();
 
         if (!$this->checkCoreInstall($coreInstall)
@@ -208,6 +254,18 @@ class Alma extends PaymentModule
         }
 
         return $this->tabsHelper->installTabs($this->dataTabs());
+    }
+
+    /**
+     * Retrieve the service
+     *
+     * @param string $serviceName
+     *
+     * @return object|null
+     */
+    public function getService($serviceName)
+    {
+        return $this->container->getService($serviceName);
     }
 
     /**
@@ -473,28 +531,37 @@ class Alma extends PaymentModule
         return $result;
     }
 
+    /**
+     * @param $hookName
+     * @param $params
+     *
+     * @return mixed|null
+     */
     private function runHookController($hookName, $params)
     {
         $hookName = Tools::ucfirst(preg_replace('/[^a-zA-Z0-9]/', '', $hookName));
 
         require_once dirname(__FILE__) . "/controllers/hook/{$hookName}HookController.php";
-        $ControllerName = "Alma\PrestaShop\Controllers\Hook\\{$hookName}HookController";
+        $controllerName = "Alma\PrestaShop\Controllers\Hook\\{$hookName}HookController";
 
         // check if override exist for hook controllers
         if (file_exists(dirname(__FILE__) . "/../../override/modules/alma/controllers/hook/{$hookName}HookController.php")) {
             require_once dirname(__FILE__) . "/../../override/modules/alma/controllers/hook/{$hookName}HookController.php";
-            $ControllerName = "Alma\PrestaShop\Controllers\Hook\\{$hookName}HookControllerOverride";
+            $controllerName = "Alma\PrestaShop\Controllers\Hook\\{$hookName}HookControllerOverride";
         }
 
-        $controller = new $ControllerName($this);
+        $controller = new $controllerName($this);
 
         if ($controller->canRun()) {
             return $controller->run($params);
-        } else {
-            return null;
         }
+
+        return null;
     }
 
+    /**
+     * @return void
+     */
     public function viewAccess()
     {
         // Simply redirect to the default module's configuration page
@@ -503,9 +570,59 @@ class Alma extends PaymentModule
         Tools::redirectAdmin($location);
     }
 
+    /**
+     * @return mixed|null
+     */
     public function getContent()
     {
-        return $this->runHookController('getContent', null);
+        $suggestPSAccount = false;
+
+        try {
+            $hasPSAccount = $this->renderPSAccount();
+        } catch (\PrestaShop\PsAccountsInstaller\Installer\Exception\ModuleNotInstalledException $e) {
+            $hasPSAccount = false;
+            $suggestPSAccount = true;
+        }
+
+        return $this->runHookController('getContent', ['hasPSAccount' => $hasPSAccount, 'suggestPSAccount' => $suggestPSAccount]);
+    }
+
+    /**
+     * @return bool
+     */
+    public function renderPSAccount()
+    {
+        if (!$this->checkCompatibilityPSModule()) {
+            return false;
+        }
+
+        try {
+            $accountsFacade = $this->getService('alma.ps_accounts_facade');
+            $accountsService = $accountsFacade->getPsAccountsService();
+        } catch (\PrestaShop\PsAccountsInstaller\Installer\Exception\InstallerException $e) {
+            $accountsInstaller = $this->getService('alma.ps_accounts_installer');
+            $accountsInstaller->install();
+            $accountsFacade = $this->getService('alma.ps_accounts_facade');
+            $accountsService = $accountsFacade->getPsAccountsService();
+        }
+
+        try {
+            $mediaHelperBuilder = new \Alma\PrestaShop\Builders\MediaHelperBuilder();
+            $mediaHelper = $mediaHelperBuilder->getInstance();
+            $mediaHelper->addJsDef([
+                'contextPsAccounts' => $accountsFacade->getPsAccountsPresenter()
+                    ->present($this->name),
+            ]);
+
+            // Retrieve the PrestaShop Account CDN
+            $this->context->smarty->assign('urlAccountsCdn', $accountsService->getAccountsCdn());
+
+            return true;
+        } catch (Exception $e) {
+            $this->context->controller->errors[] = $e->getMessage();
+
+            return false;
+        }
     }
 
     public function hookHeader($params)

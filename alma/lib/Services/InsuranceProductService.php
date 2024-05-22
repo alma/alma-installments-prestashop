@@ -25,14 +25,13 @@
 namespace Alma\PrestaShop\Services;
 
 use Alma\API\Client;
+use Alma\PrestaShop\Builders\PriceHelperBuilder;
 use Alma\PrestaShop\Exceptions\AlmaException;
 use Alma\PrestaShop\Helpers\ClientHelper;
 use Alma\PrestaShop\Helpers\ConstantsHelper;
-use Alma\PrestaShop\Helpers\CurrencyHelper;
 use Alma\PrestaShop\Helpers\InsuranceHelper;
 use Alma\PrestaShop\Helpers\PriceHelper;
 use Alma\PrestaShop\Helpers\ProductHelper;
-use Alma\PrestaShop\Helpers\ToolsHelper;
 use Alma\PrestaShop\Logger;
 use Alma\PrestaShop\Repositories\AlmaInsuranceProductRepository;
 use Alma\PrestaShop\Repositories\ProductRepository;
@@ -121,7 +120,10 @@ class InsuranceProductService
         $this->alma = ClientHelper::defaultInstance();
         $this->productHelper = new ProductHelper();
         $this->insuranceApiService = new InsuranceApiService();
-        $this->priceHelper = new PriceHelper(new ToolsHelper(), new CurrencyHelper());
+
+        $priceHelperBuilder = new PriceHelperBuilder();
+        $this->priceHelper = $priceHelperBuilder->getInstance();
+
         $this->insuranceHelper = new InsuranceHelper();
     }
 
