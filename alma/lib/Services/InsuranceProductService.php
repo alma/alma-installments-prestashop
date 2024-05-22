@@ -255,10 +255,10 @@ class InsuranceProductService
             $idProductAttribute = $this->attributeProductService->getIdProductAttributeFromPost($idProduct);
 
             $cmsReference = $this->insuranceHelper->createCmsReference($idProduct, $idProductAttribute);
-            $regularPrice = $this->productHelper->getRegularPrice($idProduct, $idProductAttribute);
-            $regularPriceInCents = $this->priceHelper->convertPriceToCents($regularPrice);
+            $staticPrice = $this->productHelper->getPriceStatic($idProduct, $idProductAttribute);
+            $staticPriceInCents = $this->priceHelper->convertPriceToCents($staticPrice);
 
-            $insuranceContract = $this->insuranceApiService->getInsuranceContract($insuranceContractId, $cmsReference, $regularPriceInCents);
+            $insuranceContract = $this->insuranceApiService->getInsuranceContract($insuranceContractId, $cmsReference, $staticPriceInCents);
 
             if (null === $insuranceContract) {
                 return false;
@@ -277,7 +277,7 @@ class InsuranceProductService
                     [
                         'insurance_contract_id' => $insuranceContractId,
                         'cms_reference' => $cmsReference,
-                        'product_price' => $regularPriceInCents,
+                        'product_price' => $staticPriceInCents,
                     ],
                     $cart,
                     $destroyPost

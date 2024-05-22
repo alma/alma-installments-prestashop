@@ -169,7 +169,15 @@ class ProductHelper
     {
         $product = new \Product();
 
-        return $product->getPriceStatic($productId, true, $productAttributeId, 6, null, false, false);
+        return $product->getPriceStatic(
+            $productId,
+            true,
+            $productAttributeId,
+            6,
+            null,
+            false,
+            false
+        );
     }
 
     /**
