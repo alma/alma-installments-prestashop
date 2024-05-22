@@ -22,23 +22,23 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
-namespace Unit\Services;
+namespace Alma\PrestaShop\Tests\Unit\Modules\OpartSaveCart;
 
-use Alma\PrestaShop\Repositories\CartSaveRepository;
-use Alma\PrestaShop\Services\CartSaveService;
+use Alma\PrestaShop\Modules\OpartSaveCart\CartRepository;
+use Alma\PrestaShop\Modules\OpartSaveCart\CartService;
 use PHPUnit\Framework\TestCase;
 use PrestaShop\PrestaShop\Core\Addon\Module\ModuleManager;
 
-class CartSaveServiceTest extends TestCase
+class CartServiceTest extends TestCase
 {
     protected $cartSaveService;
     protected $moduleManagerBuilder;
 
     protected function setUp()
     {
-        $this->cartSaveRepository = $this->createMock(CartSaveRepository::class);
+        $this->cartSaveRepository = $this->createMock(CartRepository::class);
         $this->moduleManagerBuilder = $this->createMock(ModuleManager::class);
-        $this->cartSaveService = new CartSaveService(
+        $this->cartSaveService = new CartService(
             $this->moduleManagerBuilder,
             $this->cartSaveRepository
         );

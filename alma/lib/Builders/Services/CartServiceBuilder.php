@@ -22,9 +22,9 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
-namespace Alma\PrestaShop\Builders\Admin;
+namespace Alma\PrestaShop\Builders\Services;
 
-use Alma\PrestaShop\Helpers\Admin\InsuranceHelper;
+use Alma\PrestaShop\Services\CartService;
 use Alma\PrestaShop\Traits\BuilderTrait;
 
 if (!defined('_PS_VERSION_')) {
@@ -32,22 +32,23 @@ if (!defined('_PS_VERSION_')) {
 }
 
 /**
- * InsuranceProductHelperBuilder.
+ * CartServiceBuilder.
  */
-class InsuranceHelperBuilder
+class CartServiceBuilder
 {
     use BuilderTrait;
 
     /**
-     * @return InsuranceHelper
+     * @return CartService
      */
     public function getInstance()
     {
-        return new InsuranceHelper(
-            $this->getModuleFactory(),
-            $this->getTabsHelper(),
-            $this->getConfigurationHelper(),
-            $this->getAlmaInsuranceProductRepository()
+        return new CartService(
+            $this->getCartProductRepository(),
+            $this->getContextFactory(),
+            $this->getOpartSaveCartCartService(),
+            $this->getInsuranceHelper(),
+            $this->getInsuranceProductHelper()
         );
     }
 }

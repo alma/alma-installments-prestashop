@@ -22,7 +22,7 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
-namespace Alma\PrestaShop\Builders;
+namespace Alma\PrestaShop\Builders\Services;
 
 use Alma\PrestaShop\Services\PaymentService;
 use Alma\PrestaShop\Traits\BuilderTrait;

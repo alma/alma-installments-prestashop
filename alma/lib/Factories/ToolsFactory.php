@@ -22,20 +22,30 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
-namespace Alma\PrestaShop\Repositories;
+namespace Alma\PrestaShop\Factories;
 
 if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-class CartSaveRepository
+/**
+ * Class CartFactory.
+ */
+class ToolsFactory
 {
-    public function getCurrentCartForOpartSaveCart($token)
+    // @todo test it
+
+    /**
+     * Get a value from $_POST / $_GET
+     * if unavailable, take a default value.
+     *
+     * @param string $key Value key
+     * @param mixed $default_value (optional)
+     *
+     * @return mixed Value
+     */
+    public function getValue($key, $default_value = false)
     {
-        return \Db::getInstance()->getRow('
-            SELECT *
-            FROM `' . _DB_PREFIX_ . "opartsavecart`
-            WHERE token = '" . $token . "';"
-        );
+        return \Tools::getValue($key, $default_value);
     }
 }

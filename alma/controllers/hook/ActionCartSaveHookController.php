@@ -28,11 +28,13 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
+use Alma\PrestaShop\Builders\Services\CartServiceBuilder;
 use Alma\PrestaShop\Helpers\InsuranceHelper;
 use Alma\PrestaShop\Helpers\ProductHelper;
 use Alma\PrestaShop\Helpers\SettingsHelper;
 use Alma\PrestaShop\Hooks\FrontendHookController;
-use Alma\PrestaShop\Services\CartSaveService;
+use Alma\PrestaShop\Logger;
+use Alma\PrestaShop\Services\CartService;
 use Alma\PrestaShop\Services\InsuranceProductService;
 
 class ActionCartSaveHookController extends FrontendHookController
@@ -50,10 +52,16 @@ class ActionCartSaveHookController extends FrontendHookController
      * @var ProductHelper
      */
     protected $productHelper;
+
     /**
-     * @var CartSaveService
+     * @var CartService
      */
-    protected $cartSaveService;
+    protected $cartService;
+
+    /**
+     * @var Logger
+     */
+    protected $logger;
 
     public function canRun()
     {
@@ -77,7 +85,9 @@ class ActionCartSaveHookController extends FrontendHookController
         $this->insuranceHelper = new InsuranceHelper();
         $this->productHelper = new ProductHelper();
         $this->context = \Context::getContext();
-        $this->cartSaveService = new CartSaveService();
+        $cartServiceBuilder = new CartServiceBuilder();
+        $this->cartService = $cartServiceBuilder->getInstance();
+        $this->logger = new Logger();
     }
 
     /**
@@ -91,23 +101,13 @@ class ActionCartSaveHookController extends FrontendHookController
      */
     public function run($params)
     {
-        $currentCart = $this->context->cart;
-        $newCart = $params['cart'];
+        try {
+            $this->cartService->duplicateCart($params['cart']);
 
-        if (null === $currentCart->id) {
-            $cartSaved = $this->cartSaveService->getCartSaved(\Tools::getValue('token'));
-            $currentCart = new \Cart($cartSaved['id_cart']);
+            $this->handleAddingProductInsurance($params['cart']);
+        } catch (\Exception $e) {
+            $this->logger->error($e->getMessage());
         }
-
-        if ($currentCart->id != $newCart->id) {
-            if (!$this->insuranceHelper->checkInsuranceProductsExist($newCart)) {
-                $this->insuranceProductService->duplicateInsuranceProducts($currentCart, $newCart);
-            }
-
-            return;
-        }
-
-        $this->handleAddingProductInsurance($params['cart']);
     }
 
     /**

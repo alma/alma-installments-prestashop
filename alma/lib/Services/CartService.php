@@ -25,6 +25,10 @@
 namespace Alma\PrestaShop\Services;
 
 use Alma\PrestaShop\Exceptions\AlmaException;
+use Alma\PrestaShop\Factories\ContextFactory;
+use Alma\PrestaShop\Helpers\InsuranceHelper;
+use Alma\PrestaShop\Helpers\InsuranceProductHelper;
+use Alma\PrestaShop\Modules\OpartSaveCart\CartService as OpartSaveCartCartService;
 use Alma\PrestaShop\Repositories\CartProductRepository;
 
 if (!defined('_PS_VERSION_')) {
@@ -38,9 +42,74 @@ class CartService
      */
     protected $cartProductRepository;
 
-    public function __construct()
+    /**
+     * @var OpartSaveCartCartService
+     */
+    protected $opartCartSaveService;
+    /**
+     * @var InsuranceHelper
+     */
+    protected $insuranceHelper;
+    /**
+     * @var InsuranceProductHelper
+     */
+    protected $insuranceProductHelper;
+
+    /**
+     * @var ContextFactory
+     */
+    protected $contextFactory;
+
+    /**
+     * @param CartProductRepository $cartProductRepository
+     * @param ContextFactory $contextFactory
+     * @param OpartSaveCartCartService $opartCartSaveService
+     * @param InsuranceHelper $insuranceHelper
+     * @param InsuranceProductHelper $insuranceProductHelper
+     */
+    public function __construct($cartProductRepository, $contextFactory, $opartCartSaveService, $insuranceHelper, $insuranceProductHelper)
     {
-        $this->cartProductRepository = new CartProductRepository();
+        $this->cartProductRepository = $cartProductRepository;
+        $this->contextFactory = $contextFactory;
+        $this->opartCartSaveService = $opartCartSaveService;
+        $this->insuranceHelper = $insuranceHelper;
+        $this->insuranceProductHelper = $insuranceProductHelper;
+    }
+
+    /**
+     * @param \Cart $newCart
+     *
+     * @return void
+     */
+    public function duplicateCart($newCart)
+    {
+        $currentCart = $this->contextFactory->getContextCart();
+
+        if (
+            $currentCart
+            && null === $currentCart->id
+        ) {
+            $currentCart = $this->opartCartSaveService->getCartSaved();
+        }
+
+        if (
+            $currentCart
+            && $currentCart->id != $newCart->id
+        ) {
+            $this->duplicateInsuranceProductsInDB($newCart, $currentCart);
+        }
+    }
+
+    /***
+     * @param \Cart $newCart
+     * @param \Cart $currentCart
+     * @return void
+     */
+    public function duplicateInsuranceProductsInDB($newCart, $currentCart)
+    {
+        if (!$this->insuranceHelper->checkInsuranceProductsExist($newCart)) {
+            $this->insuranceProductHelper->duplicateInsuranceProducts($currentCart, $newCart);
+        }
     }
 
     /**
@@ -72,7 +141,7 @@ class CartService
         /**
          * @var \ContextCore $context
          */
-        $context = \Context::getContext();
+        $context = $this->contextFactory->getContext();
 
         if (!$shop) {
             $shop = $context->shop;

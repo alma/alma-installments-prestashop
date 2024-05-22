@@ -22,32 +22,20 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
-namespace Alma\PrestaShop\Builders\Admin;
-
-use Alma\PrestaShop\Helpers\Admin\InsuranceHelper;
-use Alma\PrestaShop\Traits\BuilderTrait;
+namespace Alma\PrestaShop\Modules\OpartSaveCart;
 
 if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-/**
- * InsuranceProductHelperBuilder.
- */
-class InsuranceHelperBuilder
+class CartRepository
 {
-    use BuilderTrait;
-
-    /**
-     * @return InsuranceHelper
-     */
-    public function getInstance()
+    public function getCurrentCartForOpartSaveCart($token)
     {
-        return new InsuranceHelper(
-            $this->getModuleFactory(),
-            $this->getTabsHelper(),
-            $this->getConfigurationHelper(),
-            $this->getAlmaInsuranceProductRepository()
+        return \Db::getInstance()->getRow('
+            SELECT *
+            FROM `' . _DB_PREFIX_ . "opartsavecart`
+            WHERE token = '" . $token . "';"
         );
     }
 }

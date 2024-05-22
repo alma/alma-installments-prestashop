@@ -22,52 +22,31 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
-namespace Alma\PrestaShop\Services;
+namespace Alma\PrestaShop\Builders\Helpers;
 
-use Alma\PrestaShop\Repositories\CartSaveRepository;
-use PrestaShop\PrestaShop\Core\Addon\Module\ModuleManager;
-use PrestaShop\PrestaShop\Core\Addon\Module\ModuleManagerBuilder;
+use Alma\PrestaShop\Helpers\InsuranceProductHelper;
+use Alma\PrestaShop\Traits\BuilderTrait;
 
 if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-class CartSaveService
+/**
+ * InsuranceProductHelperBuilder.
+ */
+class InsuranceProductHelperBuilder
 {
-    /**
-     * @var ModuleManager|null
-     */
-    protected $moduleManagerBuilder;
-    /**
-     * @var CartSaveRepository
-     */
-    protected $cartSaveRepository;
+    use BuilderTrait;
 
-    public function __construct(
-        $moduleManagerBuilder = null,
-        $cartSaveRepository = null
-    ) {
-        if (!$moduleManagerBuilder) {
-            $moduleManagerBuilder = ModuleManagerBuilder::getInstance()->build();
-        }
-        if (!$cartSaveRepository) {
-            $cartSaveRepository = new CartSaveRepository();
-        }
-        $this->moduleManagerBuilder = $moduleManagerBuilder;
-        $this->cartSaveRepository = $cartSaveRepository;
-    }
-
+    // @todo add test
     /**
-     * @param $value
-     *
-     * @return array|bool
+     * @return InsuranceProductHelper
      */
-    public function getCartSaved($value)
+    public function getInstance()
     {
-        if ($this->moduleManagerBuilder->isInstalled('opartsavecart')) {
-            return $this->cartSaveRepository->getCurrentCartForOpartSaveCart($value);
-        }
-
-        return false;
+        return new InsuranceProductHelper(
+            $this->getAlmaInsuranceProductRepository(),
+            $this->getContextFactory()
+        );
     }
 }

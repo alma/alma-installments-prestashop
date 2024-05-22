@@ -22,9 +22,9 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
-namespace Alma\PrestaShop\Tests\Unit\Builders;
+namespace Alma\PrestaShop\Tests\Unit\Builders\Services;
 
-use Alma\PrestaShop\Builders\PaymentServiceBuilder;
+use Alma\PrestaShop\Builders\Services\PaymentServiceBuilder;
 use Alma\PrestaShop\Factories\AddressFactory;
 use Alma\PrestaShop\Factories\ContextFactory;
 use Alma\PrestaShop\Factories\ModuleFactory;
