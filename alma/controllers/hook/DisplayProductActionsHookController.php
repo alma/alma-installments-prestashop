@@ -80,6 +80,8 @@ class DisplayProductActionsHookController extends FrontendHookController
      */
     public function __construct($module)
     {
+        parent::__construct($module);
+
         $this->insuranceHelper = new InsuranceHelper();
         $this->adminInsuranceHelper = new AdminInsuranceHelper($module);
         $this->productHelper = new ProductHelper();
@@ -100,8 +102,6 @@ class DisplayProductActionsHookController extends FrontendHookController
             new OrderStateHelper($this->context),
             new CarrierHelper($this->context, new CarrierData())
         );
-
-        parent::__construct($module);
     }
 
     /**
