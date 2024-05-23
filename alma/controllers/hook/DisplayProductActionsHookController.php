@@ -73,6 +73,8 @@ class DisplayProductActionsHookController extends FrontendHookController
      */
     public function __construct($module)
     {
+        parent::__construct($module);
+
         $this->insuranceHelper = new InsuranceHelper();
         $insuranceHelperBuilder = new InsuranceHelperBuilder();
         $this->adminInsuranceHelper = $insuranceHelperBuilder->getInstance();
@@ -83,8 +85,6 @@ class DisplayProductActionsHookController extends FrontendHookController
 
         $cartHelperBuilder = new CartHelperBuilder();
         $this->cartHelper = $cartHelperBuilder->getInstance();
-
-        parent::__construct($module);
     }
 
     /**
