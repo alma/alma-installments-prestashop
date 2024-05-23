@@ -151,14 +151,7 @@ class Alma extends PaymentModule
         if (
             $this->toolsHelper->psVersionCompare('1.6', '<')
             || !class_exists(\PrestaShop\ModuleLibServiceContainer\DependencyInjection\ServiceContainer::class)
-            || (
-                defined('_PS_ENV_')
-                && _PS_ENV_ === 'dev'
-            )
-            || (
-                $this->toolsHelper->psVersionCompare('1.7', '<')
-               && _PS_MODE_DEV_ === true
-            )
+            || _PS_MODE_DEV_ === true
         ) {
             return false;
         }
