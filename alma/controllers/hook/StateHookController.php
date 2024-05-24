@@ -127,6 +127,8 @@ final class StateHookController extends AdminHookController
                 $this->triggerPayment($order);
                 break;
             case (int) \Configuration::get('PS_OS_PAYMENT'):
+                Logger::instance()->error('[Alma] StateHookController');
+                Logger::instance()->error(json_encode($newStatus));
                 $this->processInsurance($order);
                 break;
             default:
