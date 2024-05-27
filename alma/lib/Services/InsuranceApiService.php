@@ -157,14 +157,16 @@ class InsuranceApiService
     /**
      * @param array $subscriptionData
      * @param \OrderCore $order
-     * @param int $idTransaction
+     * @param \OrderPayment|false $orderPayment
      *
      * @return array
      *
      * @throws InsuranceSubscriptionException
      */
-    public function subscribeInsurance($subscriptionData, $order, $idTransaction)
+    public function subscribeInsurance($subscriptionData, $order, $orderPayment = false)
     {
+        $idTransaction = $orderPayment ? $orderPayment->transaction_id : null;
+
         try {
             $result = $this->almaApiClient->insurance->subscription(
                 $subscriptionData,
