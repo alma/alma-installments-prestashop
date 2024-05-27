@@ -119,6 +119,9 @@ final class StateHookController extends AdminHookController
         $order = new \Order($params['id_order']);
         $newStatus = $params['newOrderStatus'];
 
+        // TODO : Remove log after fix
+        Logger::instance()->info('[Alma] StateHookController');
+        Logger::instance()->info(json_encode($newStatus));
         switch ($newStatus->id) {
             case SettingsHelper::getRefundState():
                 $this->refund($order);
@@ -127,6 +130,8 @@ final class StateHookController extends AdminHookController
                 $this->triggerPayment($order);
                 break;
             case (int) \Configuration::get('PS_OS_PAYMENT'):
+                Logger::instance()->info('[Alma] StateHookController Id Status 2');
+                Logger::instance()->info(json_encode($newStatus));
                 $this->processInsurance($order);
                 break;
             default:
