@@ -50,9 +50,9 @@ jobs:
 
           DRAFT_RELEASE=$(echo $DRAFT_RELEASE | jq first)
 
-          # Retrieve tag_name, id and body of the draft release
+          # Retrieve name, id and body of the draft release
           # We need to remove the quotes from the JSON output
-          TAG_NAME=$(echo $DRAFT_RELEASE | jq '.tag_name' | sed 's/"//g')
+          NAME=$(echo $DRAFT_RELEASE | jq '.name' | sed 's/"//g')
           ID=$(echo $DRAFT_RELEASE | jq '.id')
           BODY=$(echo $DRAFT_RELEASE | jq '.body' | sed 's/"//g')
           HTML_URL=$(echo $DRAFT_RELEASE | jq '.html_url' | sed 's/"//g')
@@ -68,7 +68,7 @@ jobs:
           BODY=$(echo -e "$BODY" | sed -E "s/@([[:alnum:]-]+)/[@\1](${ESCAPED_PROFILE_URL_START}\1)/g")
 
           # Write the output variables
-          echo "tag_name=$TAG_NAME" >> $GITHUB_OUTPUT
+          echo "name=$NAME" >> $GITHUB_OUTPUT
           echo "id=$ID" >> $GITHUB_OUTPUT
           echo "html_url=$HTML_URL" >> $GITHUB_OUTPUT
           echo "body<<EOF" >> $GITHUB_OUTPUT
@@ -96,7 +96,8 @@ jobs:
               repo,
               release_id: "${{ steps.fetch-release-draft.outputs.id }}",
               draft: false,
-              make_latest: true
+              make_latest: true,
+              tag_name: "${{ steps.fetch-release-draft.outputs.name }}"
             });
 
       - name: Format release notes for Slack
@@ -105,7 +106,7 @@ jobs:
         id: slack-markdown-release-notes
         with:
           text: |
-            New release of `${{ github.repository }}` published, **[${{ steps.fetch-release-draft.outputs.tag_name }}](${{
+            New release of `${{ github.repository }}` published, **[${{ steps.fetch-release-draft.outputs.name }}](${{
               steps.fetch-release-draft.outputs.html_url }})**:
 
             ${{ steps.fetch-release-draft.outputs.body }}
