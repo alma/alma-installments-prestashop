@@ -109,7 +109,8 @@ final class StateHookController extends AdminHookController
      */
     public function canRun()
     {
-        return parent::canRun() || $this->isKnownApiUser();
+        // Front controllers can run if the module is properly configured ...
+        return SettingsHelper::isFullyConfigured();
     }
 
     /**
@@ -135,13 +136,19 @@ final class StateHookController extends AdminHookController
 
         switch ($newStatus->id) {
             case SettingsHelper::getRefundState():
-                $this->refund($order);
+                if ($this->loggedAsEmployee() || $this->isKnownApiUser()) {
+                    $this->refund($order);
+                }
                 break;
             case SettingsHelper::getPaymentTriggerState():
-                $this->triggerPayment($order);
+                if ($this->loggedAsEmployee() || $this->isKnownApiUser()) {
+                    $this->triggerPayment($order);
+                }
                 break;
             case (int) \Configuration::get('PS_OS_PAYMENT'):
-                $this->processInsurance($order);
+                if ($this->insuranceHelper->isInsuranceActivated()) {
+                    $this->processInsurance($order);
+                }
                 break;
             default:
                 break;
@@ -169,10 +176,7 @@ final class StateHookController extends AdminHookController
     protected function processInsurance($order)
     {
         try {
-            if (
-                $this->insuranceHelper->isInsuranceActivated()
-                && $this->insuranceHelper->canInsuranceSubscriptionBeTriggered($order)
-            ) {
+            if ($this->insuranceHelper->canInsuranceSubscriptionBeTriggered($order)) {
                 $this->insuranceSubscriptionService->triggerInsuranceSubscription($order);
             }
         } catch (\Exception $e) {
