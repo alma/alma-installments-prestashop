@@ -10,7 +10,9 @@ on:
 jobs:
 
   release:
-    if: ${{ (github.event.pull_request.merged == true) && (contains(github.event.pull_request.labels.*.name, 'release')) }}
+    if: |
+      github.event.pull_request.merged == true &&
+      (contains(github.event.pull_request.labels.*.name, 'release') || contains(github.event.pull_request.labels.*.name, 'hotfix'))
     runs-on: ubuntu-22.04
 
     steps:
