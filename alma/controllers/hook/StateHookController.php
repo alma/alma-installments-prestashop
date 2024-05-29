@@ -157,7 +157,7 @@ final class StateHookController extends AdminHookController
         try {
             $this->orderService->manageStatusUpdate($order, $newStatus);
         } catch (\Exception $e) {
-            $this->almaLogger->error(
+            $this->almaLogger->info(
                 sprintf(
                     'Impossible to update order status: Error : %s, Code : %s, Type : %s',
                     $e->getMessage(),

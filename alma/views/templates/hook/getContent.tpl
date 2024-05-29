@@ -100,7 +100,7 @@
     </div>
 
 {elseif isset($tip)}
-    <div class="{$tip_classes|escape:'htmlall':'UTF-8'}">
+    <div class="{$tip_classes|escape:'htmlall':'UTF-8'}" id="alma_first_installation">
         <p>
             {l s='Thanks for installing Alma!' mod='alma'}
             <br>
