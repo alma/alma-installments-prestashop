@@ -1,5 +1,8 @@
 version: 3
 
+env:
+  REPOSITORY: alma-installments-prestashop
+
 tasks:
 
   default:
@@ -98,3 +101,45 @@ tasks:
       - crowdin
     cmds:
       - crowdin upload sources
+
+  release:
+    desc: Create a release pull request
+    cmds:
+    - task: trigger-release-pull-request-workflow
+      vars: { WORKFLOW_FILE: 'release-pull-request.yml', RELEASE_TYPE: 'release'
+        }
+
+  hotfix:
+    desc: Create a hotfix pull request
+    cmds:
+    - task: trigger-release-pull-request-workflow
+      vars: { WORKFLOW_FILE: 'hotfix-pull-request.yml', RELEASE_TYPE: 'hotfix'}
+
+  trigger-release-pull-request-workflow:
+    internal: true
+    vars:
+      WORKFLOW_FILE: '{{default "create-release-pr.yml" .WORKFLOW_FILE}}'
+      RELEASE_TYPE: '{{default "release" .RELEASE_TYPE}}'
+    silent: true
+    preconditions:
+    - sh: gh --version
+      msg: |
+        ⚠️ This task requires `gh` (Github CLI).
+        Please check out: https://github.com/cli/cli#installation
+        You'll need a personal access token to authenticate with `gh`.
+        Please check out: https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token#creating-a-personal-access-token-classic
+        Then, run `gh auth login` or set the GITHUB_TOKEN environment variable with your personal access token.
+    cmds:
+      - |
+        # If RELEASE_TYPE is hotfix, ask for a changelog message
+        INPUTS_FLAG=""
+        if [ "{{.RELEASE_TYPE}}" == "hotfix" ]; then
+          read -p "Please, provide a changelog message for this hotfix: "
+          INPUTS_FLAG="-f changelog-message='$REPLY'"
+        fi
+        echo "Creating {{.RELEASE_TYPE}} pull request..."
+        eval gh workflow run {{.WORKFLOW_FILE}} $INPUTS_FLAG
+        echo "{{.RELEASE_TYPE}} pull request created, check out https://github.com/alma/$REPOSITORY/pulls?q=is%3Aopen+is%3Apr+label%3A{{.RELEASE_TYPE}}"
+        echo "If no pull request is created, check out https://github.com/alma/$REPOSITORY/actions/workflows/{{.WORKFLOW_FILE}}."
+        echo "Please, review and merge the pull request."
+        echo "After merging, the release will be automatically created."
