@@ -94,12 +94,13 @@ class ActionCartSaveHookController extends FrontendHookController
         $currentCart = $this->context->cart;
         $newCart = $params['cart'];
 
-        if (null === $currentCart->id) {
-            $cartSaved = $this->cartSaveService->getCartSaved(\Tools::getValue('token'));
-            $currentCart = new \Cart($cartSaved['id_cart']);
-        }
+        // TODO : Need to optimise for more that the module opartSaveCart
+        if (null === $currentCart->id || $currentCart->id != $newCart->id) {
+            if (\Tools::getValue('action') !== 'shareCart') {
+                $cartIdSaved = $this->cartSaveService->getCartSaved(\Tools::getValue('token'));
+                $currentCart = new \Cart($cartIdSaved['id_cart']);
+            }
 
-        if ($currentCart->id != $newCart->id) {
             if (!$this->insuranceHelper->checkInsuranceProductsExist($newCart)) {
                 $this->insuranceProductService->duplicateInsuranceProducts($currentCart, $newCart);
             }
