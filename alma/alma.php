@@ -151,13 +151,10 @@ class Alma extends PaymentModule
      */
     public function checkCompatibilityPSModule()
     {
-        // todo remove deactive ps account module
-        return false;
-
         if (
             $this->toolsHelper->psVersionCompare('1.6', '<')
             || !class_exists(\PrestaShop\ModuleLibServiceContainer\DependencyInjection\ServiceContainer::class)
-            || _PS_ENV_ === 'dev'
+            || _PS_MODE_DEV_ === true
         ) {
             return false;
         }
