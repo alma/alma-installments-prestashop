@@ -28,11 +28,13 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-use Alma\PrestaShop\Exceptions\InsuranceInstallException;
+use Alma\PrestaShop\Exceptions\AlmaException;
 use Alma\PrestaShop\Helpers\InsuranceHelper;
 use Alma\PrestaShop\Helpers\ProductHelper;
 use Alma\PrestaShop\Helpers\SettingsHelper;
 use Alma\PrestaShop\Hooks\FrontendHookController;
+use Alma\PrestaShop\Logger;
+use Alma\PrestaShop\Services\CartSaveService;
 use Alma\PrestaShop\Services\InsuranceProductService;
 
 class ActionCartSaveHookController extends FrontendHookController
@@ -50,6 +52,10 @@ class ActionCartSaveHookController extends FrontendHookController
      * @var ProductHelper
      */
     protected $productHelper;
+    /**
+     * @var CartSaveService
+     */
+    protected $cartSaveService;
 
     public function canRun()
     {
@@ -72,6 +78,8 @@ class ActionCartSaveHookController extends FrontendHookController
         $this->insuranceProductService = new InsuranceProductService();
         $this->insuranceHelper = new InsuranceHelper();
         $this->productHelper = new ProductHelper();
+        $this->context = \Context::getContext();
+        $this->cartSaveService = new CartSaveService();
     }
 
     /**
@@ -81,10 +89,41 @@ class ActionCartSaveHookController extends FrontendHookController
      *
      * @return void
      *
-     * @throws InsuranceInstallException
+     * @throws AlmaException
      */
     public function run($params)
     {
+        $baseCart = $this->context->cart;
+        /**
+         * @var \Cart $newCart
+         */
+        $newCart = $params['cart'];
+
+        // TODO : Need to optimise for more that the module opartSaveCart
+        if (null === $baseCart->id || $baseCart->id != $newCart->id) {
+            if (\Tools::getValue('action') !== 'shareCart') {
+                $cartIdSaved = $this->cartSaveService->getIdCartSaved(\Tools::getValue('token'));
+                if (!$cartIdSaved) {
+                    return;
+                }
+
+                $baseCart = new \Cart($cartIdSaved);
+            }
+
+            if (!$this->insuranceHelper->checkInsuranceProductsExist($newCart)) {
+                try {
+                    $this->insuranceProductService->duplicateInsuranceProducts($baseCart, $newCart);
+                } catch (\PrestaShopDatabaseException $e) {
+                    Logger::instance()->error('[Alma] Error duplicating insurance products: ' . $e->getMessage());
+                    $newCart->delete();
+                    // We throw an exception to prevent to buy insurance product without the possibility to subscribe
+                    throw new AlmaException('[Alma] Impossible to duplicate insurance product in fact error connect to database');
+                }
+            }
+
+            return;
+        }
+
         $this->handleAddingProductInsurance($params['cart']);
     }
 

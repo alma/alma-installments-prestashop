@@ -103,10 +103,14 @@ class InsuranceProductService
      */
     protected $insuranceHelper;
 
-    public function __construct()
+    public function __construct($almaInsuranceProductRepository = null)
     {
+        if (!$almaInsuranceProductRepository) {
+            $almaInsuranceProductRepository = new AlmaInsuranceProductRepository();
+        }
+
+        $this->almaInsuranceProductRepository = $almaInsuranceProductRepository;
         $this->context = \Context::getContext();
-        $this->almaInsuranceProductRepository = new AlmaInsuranceProductRepository();
         $this->attributeGroupProductService = new AttributeGroupProductService();
         $this->attributeProductService = new AttributeProductService();
         $this->combinationProductAttributeService = new CombinationProductAttributeService();
@@ -338,6 +342,40 @@ class InsuranceProductService
             );
 
             return false;
+        }
+    }
+
+    /**
+     * @param $currentCart
+     * @param $newCart
+     *
+     * @return void
+     *
+     * @throws \PrestaShopDatabaseException
+     */
+    public function duplicateInsuranceProducts($currentCart, $newCart)
+    {
+        $almaInsuranceProducts = $this->almaInsuranceProductRepository->getByCartIdAndShop($currentCart->id, $this->context->shop->id);
+
+        foreach ($almaInsuranceProducts as $almaInsuranceProduct) {
+            $insuranceContractInfos = [
+                'insurance_contract_id' => $almaInsuranceProduct['insurance_contract_id'],
+                'cms_reference' => $almaInsuranceProduct['cms_reference'],
+                'product_price' => $almaInsuranceProduct['product_price'],
+            ];
+
+            $this->almaInsuranceProductRepository->add(
+                $newCart->id,
+                $almaInsuranceProduct['id_product'],
+                $this->context->shop->id,
+                $almaInsuranceProduct['id_product_attribute'],
+                $almaInsuranceProduct['id_customization'],
+                $almaInsuranceProduct['id_product_insurance'],
+                $almaInsuranceProduct['id_product_attribute_insurance'],
+                $almaInsuranceProduct['price'],
+                $almaInsuranceProduct['id_address_delivery'],
+                $insuranceContractInfos
+            );
         }
     }
 }
