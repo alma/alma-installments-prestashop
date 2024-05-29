@@ -37,10 +37,8 @@ class SettingsHelperTest extends TestCase
      */
     protected $settingsHelper;
 
-    public function __construct()
+    public function setUp()
     {
-        parent::__construct();
-
         $this->settingsHelper = new SettingsHelper(new ShopHelper(), new ConfigurationHelper());
     }
 
@@ -407,5 +405,9 @@ class SettingsHelperTest extends TestCase
         $result = $settingsHelperMock->getExcludedCategories();
 
         $this->assertEquals([], $result);
+    }
+
+    public function testGetDataFromKey()
+    {
     }
 }

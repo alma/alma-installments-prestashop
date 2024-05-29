@@ -24,6 +24,7 @@
 
 namespace Alma\PrestaShop\Model;
 
+use Alma\PrestaShop\Helpers\CarrierHelper;
 use Alma\PrestaShop\Helpers\PriceHelper;
 
 if (!defined('_PS_VERSION_')) {
@@ -37,9 +38,21 @@ class ShippingData
      */
     protected $priceHelper;
 
-    public function __construct()
+    /**
+     * @var CarrierHelper
+     */
+    protected $carrierHelper;
+
+    /**
+     * @param PriceHelper $priceHelper
+     * @param CarrierHelper $carrierHelper
+     *
+     * @codeCoverageIgnore
+     */
+    public function __construct($priceHelper, $carrierHelper)
     {
-        $this->priceHelper = new PriceHelper();
+        $this->priceHelper = $priceHelper;
+        $this->carrierHelper = $carrierHelper;
     }
 
     /**
@@ -52,21 +65,49 @@ class ShippingData
         $addressId = $cart->id_address_delivery;
 
         $deliveryOption = $cart->getDeliveryOption(null, true);
+
         if ($deliveryOption === false) {
             $deliveryOption = $cart->getDeliveryOption();
         }
 
         // We don't have any shipping information for the shipping address
-        if ($deliveryOption === false || !isset($deliveryOption[$addressId])) {
+        if (
+            $deliveryOption === false
+            || !isset($deliveryOption[$addressId])
+        ) {
             return null;
         }
 
         $deliveryOptionList = $cart->getDeliveryOptionList();
         $carriersListKey = $deliveryOption[$addressId];
-        if (!isset($deliveryOptionList[$addressId]) || !isset($deliveryOptionList[$addressId][$carriersListKey])) {
+
+        if (
+            !isset($deliveryOptionList[$addressId])
+            || !isset($deliveryOptionList[$addressId][$carriersListKey])
+        ) {
             return null;
         }
 
+        $carrierIdArray = $this->getCarrierIds($carriersListKey, $cart);
+
+        return $this->buildShippingInfos(
+            $carrierIdArray,
+            $deliveryOptionList,
+            $addressId,
+            $carriersListKey,
+            $cart->id_lang,
+            $deliveryOption
+        );
+    }
+
+    /**
+     * @param $carriersListKey
+     * @param $cart
+     *
+     * @return array
+     */
+    public function getCarrierIds($carriersListKey, $cart)
+    {
         $carrierIdArray = [];
 
         if (!isset($cart->unique_carrier)) {
@@ -76,33 +117,39 @@ class ShippingData
                     $carrierIdArray[] = $id;
                 }
             }
-        } else {
-            $carrierIdArray[] = $cart->id_carrier;
+
+            return $carrierIdArray;
         }
 
+        $carrierIdArray[] = $cart->id_carrier;
+
+        return $carrierIdArray;
+    }
+
+    /**
+     * @param $carrierIds
+     * @param $deliveryOptionList
+     * @param $addressId
+     * @param $carriersListKey
+     * @param $idLang
+     * @param $deliveryOption
+     *
+     * @return array|array[]
+     */
+    public function buildShippingInfos($carrierIds, $deliveryOptionList, $addressId, $carriersListKey, $idLang, $deliveryOption)
+    {
         $shippingInfo = ['selected_options' => []];
-        foreach ($carrierIdArray as $carrierId) {
+        foreach ($carrierIds as $carrierId) {
             $carrierInfo = $deliveryOptionList[$addressId][$carriersListKey]['carrier_list'][$carrierId];
             /** @var \Carrier $carrier */
-            $carrier = new \Carrier($carrierId, $cart->id_lang);
+            $carrier = $this->carrierHelper->createCarrier($carrierId, $idLang);
             if (!$carrier) {
                 continue;
             }
             $shippingInfo['selected_options'][] = $this->shippingInfoData($carrier, $carrierInfo);
         }
 
-        $knownOptions = [];
-        foreach ($deliveryOptionList[$addressId] as $carriers) {
-            foreach ($carriers['carrier_list'] as $id => $carrierOptionInfo) {
-                $carrierOption = new \Carrier($id, $cart->id_lang);
-                if (!$carrierOption) {
-                    continue;
-                }
-
-                $data = $this->shippingInfoData($carrierOption, $carrierOptionInfo);
-                $knownOptions[md5(serialize($data))] = $data;
-            }
-        }
+        $knownOptions = $this->getKnownOptions($deliveryOptionList, $addressId, $idLang);
 
         $shippingInfo['available_options'] = array_values($knownOptions);
 
@@ -118,29 +165,44 @@ class ShippingData
     }
 
     /**
+     * @param $deliveryOptionList
+     * @param $addressId
+     * @param $idLang
+     *
+     * @return array
+     */
+    public function getKnownOptions($deliveryOptionList, $addressId, $idLang)
+    {
+        $knownOptions = [];
+        foreach ($deliveryOptionList[$addressId] as $carriers) {
+            foreach ($carriers['carrier_list'] as $id => $carrierOptionInfo) {
+                $carrierOption = $this->carrierHelper->createCarrier($id, $idLang);
+                if (!$carrierOption) {
+                    continue;
+                }
+
+                $data = $this->shippingInfoData($carrierOption, $carrierOptionInfo);
+                $knownOptions[md5(serialize($data))] = $data;
+            }
+        }
+
+        return $knownOptions;
+    }
+
+    /**
      * @param \Carrier $carrier
      * @param array $carrierInfo
      *
      * @return array
      */
-    private function shippingInfoData($carrier, $carrierInfo)
+    public function shippingInfoData($carrier, $carrierInfo)
     {
         return [
             'amount' => $this->priceHelper->convertPriceToCents((float) $carrierInfo['price_with_tax']),
             'carrier' => $carrier->name,
             'title' => (is_array($carrier->delay)) ? implode(', ', $carrier->delay) : (string) $carrier->delay,
-            'express_delivery' => self::isExpressShipping($carrierInfo),
-            'pickup_delivery' => self::isPickupShipping($carrierInfo),
+            'express_delivery' => null,
+            'pickup_delivery' => null,
         ];
-    }
-
-    private static function isExpressShipping($carrierInfo)
-    {
-        return null;
-    }
-
-    private static function isPickupShipping($carrierInfo)
-    {
-        return null;
     }
 }

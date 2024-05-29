@@ -28,9 +28,14 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
+use Alma\PrestaShop\Helpers\ConfigurationHelper;
 use Alma\PrestaShop\Helpers\ConstantsHelper;
+use Alma\PrestaShop\Helpers\InsuranceHelper;
 use Alma\PrestaShop\Helpers\SettingsHelper;
+use Alma\PrestaShop\Helpers\ShopHelper;
 use Alma\PrestaShop\Hooks\FrontendHookController;
+use Alma\PrestaShop\Repositories\ProductRepository;
+use Alma\PrestaShop\Services\InsuranceService;
 
 class FrontHeaderHookController extends FrontendHookController
 {
@@ -45,6 +50,27 @@ class FrontHeaderHookController extends FrontendHookController
     private $moduleName;
 
     /**
+     * @var InsuranceHelper
+     */
+    protected $insuranceHelper;
+
+    /**
+     * @var InsuranceService
+     */
+    protected $insuranceService;
+
+    /**
+     * @var SettingsHelper
+     */
+    protected $settingsHelper;
+    /**
+     * @var ProductRepository
+     */
+    protected $productRepository;
+
+    /**
+     * @codeCoverageIgnore
+     *
      * @param $module
      */
     public function __construct($module)
@@ -52,6 +78,10 @@ class FrontHeaderHookController extends FrontendHookController
         parent::__construct($module);
         $this->controller = $this->context->controller;
         $this->moduleName = $this->module->name;
+        $this->settingsHelper = new SettingsHelper(new ShopHelper(), new ConfigurationHelper());
+        $this->insuranceHelper = new InsuranceHelper();
+        $this->insuranceService = new InsuranceService();
+        $this->productRepository = new ProductRepository();
     }
 
     /**
@@ -66,7 +96,7 @@ class FrontHeaderHookController extends FrontendHookController
 
         $content = $this->assetsWidgets();
 
-        if (SettingsHelper::isInPageEnabled()) {
+        if ($this->settingsHelper->isInPageEnabled()) {
             $content .= $this->assetsInPage();
         }
 
@@ -82,7 +112,7 @@ class FrontHeaderHookController extends FrontendHookController
      */
     public function displayWidgetOnProductPage()
     {
-        return SettingsHelper::showProductEligibility() && $this->iAmInProductPage();
+        return SettingsHelper::showProductEligibility() && ($this->iAmInProductPage() || $this->iAmInHomePage());
     }
 
     /**
@@ -99,6 +129,22 @@ class FrontHeaderHookController extends FrontendHookController
     private function iAmInProductPage()
     {
         return 'product' == $this->controller->php_self || 'ProductController' == get_class($this->controller);
+    }
+
+    /**
+     * @return bool
+     */
+    protected function iAmInOrderPage()
+    {
+        return 'order' == $this->controller->php_self || 'OrderController' == get_class($this->controller);
+    }
+
+    /**
+     * @return bool
+     */
+    private function iAmInHomePage()
+    {
+        return 'index' == $this->controller->php_self || 'IndexController' == get_class($this->controller);
     }
 
     /**
@@ -172,20 +218,63 @@ class FrontHeaderHookController extends FrontendHookController
      */
     private function assetsWidgets()
     {
+        $content = '';
+
+        // Insurance Assets
+        if (
+            $this->insuranceHelper->isInsuranceActivated()
+            && version_compare(_PS_VERSION_, '1.7', '>=')
+        ) {
+            $content .= $this->manageInsuranceAssetsAfter17();
+        }
+
         if (
             $this->displayWidgetOnCartPage()
             || $this->displayWidgetOnProductPage()
         ) {
             if (version_compare(_PS_VERSION_, '1.7', '<')) {
-                return $this->manageAssetVersionForPrestashopBefore17();
+                $content .= $this->manageAssetVersionForPrestashopBefore17();
             }
 
             if (version_compare(_PS_VERSION_, '1.7.0.0', '>=')) {
-                return $this->manageAssetVersionForPrestashopAfter17();
+                $content .= $this->manageAssetVersionForPrestashopAfter17();
             }
         }
 
-        return '';
+        return $content;
+    }
+
+    /**
+     * @return string
+     */
+    protected function manageInsuranceAssetsBefore17()
+    {
+        $content = '';
+
+        $this->controller->addJS($this->module->_path . ConstantsHelper::INSURANCE_16_SCRIPT_PATH);
+
+        if ($this->insuranceHelper->hasInsuranceInCart()) {
+            $this->controller->addJS($this->module->_path . ConstantsHelper::MINI_CART_INSURANCE_16_SCRIPT_PATH);
+            $text = $this->module->l('To manage your purchases with Assurance, please go to the checkout page.', 'FrontHeaderHookController');
+            $content .= '<input type="hidden" value="' . $text . '" id="alma-mini-cart-insurance-message">';
+
+            if ($this->iAmInOrderPage()) {
+                $this->controller->addJS($this->module->_path . ConstantsHelper::ORDER_INSURANCE_16_SCRIPT_PATH);
+            }
+
+            if ($this->iAmInCartPage()) {
+                $this->controller->addJS($this->module->_path . ConstantsHelper::CART_INSURANCE_16_SCRIPT_PATH);
+            }
+        }
+
+        if (
+            $this->insuranceHelper->isInsuranceAllowedInProductPage()
+            && $this->iAmInProductPage()
+        ) {
+            $this->controller->addJS($this->module->_path . ConstantsHelper::PRODUCT_INSURANCE_16_SCRIPT_PATH);
+        }
+
+        return $content;
     }
 
     /**
@@ -209,7 +298,7 @@ class FrontHeaderHookController extends FrontendHookController
         }
 
         if (version_compare(_PS_VERSION_, '1.5.6.2', '<')) {
-            $content = '<link rel="stylesheet" href="' . ConstantsHelper::WIDGETS_CSS_URL . '">';
+            $content .= '<link rel="stylesheet" href="' . ConstantsHelper::WIDGETS_CSS_URL . '">';
         }
 
         if (version_compare(_PS_VERSION_, '1.5.6.2', '>=')) {
@@ -217,6 +306,60 @@ class FrontHeaderHookController extends FrontendHookController
         }
 
         return $content;
+    }
+
+    /**
+     * @return string
+     */
+    public function manageInsuranceAssetsAfter17()
+    {
+        if (
+            $this->insuranceHelper->isInsuranceAllowedInProductPage()
+            && $this->iAmInProductPage()
+        ) {
+            $this->controller->addJS($this->module->_path . ConstantsHelper::PRODUCT_INSURANCE_SCRIPT_PATH);
+
+            $this->controller->registerStylesheet(
+                ConstantsHelper::INSURANCE_PRODUCT_CSS_ID,
+                "modules/$this->moduleName/" . ConstantsHelper::INSURANCE_PRODUCT_CSS_PATH
+            );
+        }
+
+        if (
+            $this->iAmInCartPage()
+            && $this->cartIsNotEmpty()
+        ) {
+            $this->controller->addJS($this->module->_path . ConstantsHelper::CART_INSURANCE_SCRIPT_PATH);
+
+            $this->controller->registerStylesheet(
+                ConstantsHelper::INSURANCE_PRODUCT_CSS_ID,
+                "modules/$this->moduleName/" . ConstantsHelper::INSURANCE_PRODUCT_CSS_PATH
+            );
+        }
+
+        if (
+            $this->insuranceHelper->isInsuranceAllowedInProductPage()
+            && $this->iAmInOrderPage()
+        ) {
+            $this->controller->addJS($this->module->_path . ConstantsHelper::ORDER_INSURANCE_SCRIPT_PATH);
+        }
+
+        $this->controller->addJS($this->module->_path . ConstantsHelper::INSURANCE_SCRIPT_PATH);
+
+        return $this->almaInsuranceIdInHeader();
+    }
+
+    /**
+     * @return string
+     */
+    protected function almaInsuranceIdInHeader()
+    {
+        $insuranceProductId = $this->productRepository->getProductIdByReference(
+            ConstantsHelper::ALMA_INSURANCE_PRODUCT_REFERENCE,
+            $this->context->language->id
+        );
+
+        return "<div id='alma-insurance-global' data-insurance-id='{$insuranceProductId}'></div>";
     }
 
     /**

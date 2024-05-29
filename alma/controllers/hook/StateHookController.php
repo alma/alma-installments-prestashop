@@ -29,18 +29,35 @@ if (!defined('_PS_VERSION_')) {
 }
 
 use Alma\API\Client;
+use Alma\API\Exceptions\ParametersException;
+use Alma\API\Exceptions\RequestException;
 use Alma\API\RequestError;
+use Alma\PrestaShop\Exceptions\OrderException;
 use Alma\PrestaShop\Helpers\ClientHelper;
 use Alma\PrestaShop\Helpers\ConfigurationHelper;
+use Alma\PrestaShop\Helpers\InsuranceHelper;
 use Alma\PrestaShop\Helpers\OrderHelper;
 use Alma\PrestaShop\Helpers\SettingsHelper;
 use Alma\PrestaShop\Helpers\ShopHelper;
 use Alma\PrestaShop\Hooks\AdminHookController;
 use Alma\PrestaShop\Logger;
-use Alma\PrestaShop\Model\OrderData;
+use Alma\PrestaShop\Services\InsuranceSubscriptionService;
 
 final class StateHookController extends AdminHookController
 {
+    /**
+     * @var OrderHelper
+     */
+    protected $orderHelper;
+    /**
+     * @var Client|mixed|null
+     */
+    protected $alma;
+    /**
+     * @var InsuranceSubscriptionService
+     */
+    protected $insuranceSubscriptionService;
+
     /**
      * @var SettingsHelper
      */
@@ -49,12 +66,21 @@ final class StateHookController extends AdminHookController
     /**
      * HookController constructor.
      *
+     * @codeCoverageIgnore
+     *
      * @param $module Alma
+     *
+     * @var InsuranceHelper
      */
+    protected $insuranceHelper;
+
     public function __construct($module)
     {
         parent::__construct($module);
-
+        $this->alma = ClientHelper::defaultInstance();
+        $this->orderHelper = new OrderHelper();
+        $this->insuranceSubscriptionService = new InsuranceSubscriptionService();
+        $this->insuranceHelper = new InsuranceHelper();
         $this->settingsHelper = new SettingsHelper(new ShopHelper(), new ConfigurationHelper());
     }
 
@@ -69,50 +95,45 @@ final class StateHookController extends AdminHookController
      */
     public function canRun()
     {
-        return parent::canRun() || $this->isKnownApiUser();
+        // Front controllers can run if the module is properly configured ...
+        return SettingsHelper::isFullyConfigured();
     }
 
     /**
-     * Execute refund or trigger payment on change state
+     * Execute some trigger on change state (refund, payment, insurance)
      *
-     * @param $params
+     * @param array $params
      *
+     * @return void
+     *
+     * @throws ParametersException
+     * @throws RequestException
      * @throws \PrestaShopDatabaseException
      * @throws \PrestaShopException
      */
     public function run($params)
     {
+        if (!$this->alma) {
+            return;
+        }
+
         $order = new \Order($params['id_order']);
         $newStatus = $params['newOrderStatus'];
-        if ($order->module !== 'alma') {
-            return;
-        }
-        if ($newStatus->id == \Configuration::get('PS_OS_REFUND')) {
-            $orderHelper = new OrderHelper();
-            $orderPayment = $orderHelper->getOrderPaymentOrFail($order);
-        } else {
-            $orderPayment = OrderData::getCurrentOrderPayment($order);
-        }
-        if (!$orderPayment) {
-            return;
-        }
-        $alma = ClientHelper::defaultInstance();
-        if (!$alma) {
-            return;
-        }
-        $idPayment = $orderPayment->transaction_id;
-        $idStateRefund = SettingsHelper::getRefundState();
-        $idStatePaymentTrigger = SettingsHelper::getPaymentTriggerState();
 
         switch ($newStatus->id) {
-            case $idStateRefund:
-                if (SettingsHelper::isRefundEnabledByState()) {
-                    $this->refund($alma, $idPayment, $order);
+            case SettingsHelper::getRefundState():
+                if ($this->loggedAsEmployee() || $this->isKnownApiUser()) {
+                    $this->refund($order);
                 }
                 break;
-            case $idStatePaymentTrigger:
-                if ($this->settingsHelper->isPaymentTriggerEnabledByState()) {
-                    $this->triggerPayment($alma, $idPayment, $order);
+            case SettingsHelper::getPaymentTriggerState():
+                if ($this->loggedAsEmployee() || $this->isKnownApiUser()) {
+                    $this->triggerPayment($order);
+                }
+                break;
+            case (int) \Configuration::get('PS_OS_PAYMENT'):
+                if ($this->insuranceHelper->isInsuranceActivated()) {
+                    $this->processInsurance($order);
                 }
                 break;
             default:
@@ -121,44 +142,80 @@ final class StateHookController extends AdminHookController
     }
 
     /**
-     * Query Refund
-     *
-     * @param Client $alma
-     * @param string $idPayment
-     * @param \Order $order
+     * @param \OrderCore $order
      *
      * @return void
      */
-    private function refund($alma, $idPayment, $order)
+    protected function processInsurance($order)
     {
         try {
-            $alma->payments->refund($idPayment, true);
-        } catch (RequestError $e) {
-            $msg = "[Alma] ERROR when creating refund for Order {$order->id}: {$e->getMessage()}";
-            Logger::instance()->error($msg);
+            if ($this->insuranceHelper->canInsuranceSubscriptionBeTriggered($order)) {
+                $this->insuranceSubscriptionService->triggerInsuranceSubscription($order);
+            }
+        } catch (\Exception $e) {
+            Logger::instance()->error($e->getMessage(), $e->getTrace());
+        }
+    }
 
-            return;
+    /**
+     * Query Refund
+     *
+     * @param \Order $order
+     *
+     * @return void
+     *
+     * @throws ParametersException
+     * @throws RequestException
+     * @throws \PrestaShopException
+     */
+    private function refund($order)
+    {
+        if (SettingsHelper::isRefundEnabledByState()) {
+            try {
+                $orderPayment = $this->orderHelper->ajaxGetOrderPayment($order);
+                $idPayment = $orderPayment->transaction_id;
+                $this->orderHelper->checkIfIsOrderAlma($order);
+
+                $this->alma->payments->refund($idPayment, true);
+            } catch (RequestError $e) {
+                $msg = "[Alma] ERROR when creating refund for Order {$order->id}: {$e->getMessage()}";
+                Logger::instance()->error($msg);
+
+                return;
+            } catch (OrderException $e) {
+                $msg = "[Alma] ERROR Refund Order {$order->id}: {$e->getMessage()}";
+                Logger::instance()->error($msg);
+            }
         }
     }
 
     /**
      * Query Trigger Payment
      *
-     * @param Client $alma
-     * @param string $idPayment
      * @param \Order $order
      *
      * @return void
+     *
+     * @throws \PrestaShopException
      */
-    private function triggerPayment($alma, $idPayment, $order)
+    private function triggerPayment($order)
     {
-        try {
-            $alma->payments->trigger($idPayment);
-        } catch (RequestError $e) {
-            $msg = "[Alma] ERROR when creating trigger for Order {$order->id}: {$e->getMessage()}";
-            Logger::instance()->error($msg);
+        if ($this->settingsHelper->isPaymentTriggerEnabledByState()) {
+            try {
+                $orderPayment = $this->orderHelper->ajaxGetOrderPayment($order);
+                $idPayment = $orderPayment->transaction_id;
+                $this->orderHelper->checkIfIsOrderAlma($order);
 
-            return;
+                $this->alma->payments->trigger($idPayment);
+            } catch (RequestError $e) {
+                $msg = "[Alma] ERROR when creating trigger for Order {$order->id}: {$e->getMessage()}";
+                Logger::instance()->error($msg);
+
+                return;
+            } catch (OrderException $e) {
+                $msg = "[Alma] ERROR Trigger Order {$order->id}: {$e->getMessage()}";
+                Logger::instance()->error($msg);
+            }
         }
     }
 }

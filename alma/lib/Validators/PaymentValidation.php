@@ -26,8 +26,10 @@ namespace Alma\PrestaShop\Validators;
 
 use Alma\API\Entities\Payment;
 use Alma\API\RequestError;
+use Alma\PrestaShop\API\MismatchException;
 use Alma\PrestaShop\Helpers\ClientHelper;
 use Alma\PrestaShop\Helpers\ConfigurationHelper;
+use Alma\PrestaShop\Helpers\CurrencyHelper;
 use Alma\PrestaShop\Helpers\PriceHelper;
 use Alma\PrestaShop\Helpers\RefundHelper;
 use Alma\PrestaShop\Helpers\SettingsHelper;
@@ -64,6 +66,8 @@ class PaymentValidation
     /**
      * @param $context
      * @param $module
+     *
+     * @codeCoverageIgnore
      */
     public function __construct($context, $module)
     {
@@ -71,7 +75,7 @@ class PaymentValidation
         $this->module = $module;
         $this->settingsHelper = new SettingsHelper(new ShopHelper(), new ConfigurationHelper());
         $this->toolsHelper = new ToolsHelper();
-        $this->priceHelper = new PriceHelper();
+        $this->priceHelper = new PriceHelper($this->toolsHelper, new CurrencyHelper());
     }
 
     /**
@@ -155,7 +159,7 @@ class PaymentValidation
 
         if (!$this->isValidCurrency()) {
             Logger::instance()->error("[Alma] Payment validation error for Cart {$cart->id}: currency mismatch.");
-            $msg = $this->module->l('Alma Monthly Installments are not available for this currency', 'paymentvalidation');
+            $msg = $this->module->l('Alma Monthly Installments are not available for this currency', 'PaymentValidation');
             throw new PaymentValidationError($cart, $msg);
         }
 
@@ -218,15 +222,15 @@ class PaymentValidation
             if ($this->settingsHelper->isDeferred($payment)) {
                 $days = $this->settingsHelper->getDuration($payment);
                 $paymentMode = sprintf(
-                    $this->module->l('Alma - +%d days payment', 'paymentvalidation'),
+                    $this->module->l('Alma - +%d days payment', 'PaymentValidation'),
                     $days
                 );
             } else {
                 if (1 === $installmentCount) {
-                    $paymentMode = $this->module->l('Alma - Pay now', 'paymentvalidation');
+                    $paymentMode = $this->module->l('Alma - Pay now', 'PaymentValidation');
                 } else {
                     $paymentMode = sprintf(
-                        $this->module->l('Alma - %d monthly installments', 'paymentvalidation'),
+                        $this->module->l('Alma - %d monthly installments', 'PaymentValidation'),
                         $installmentCount
                     );
                 }
@@ -237,7 +241,7 @@ class PaymentValidation
                 $this->module->validateOrder(
                     (int) $cart->id,
                     \Configuration::get('PS_OS_PAYMENT'),
-                    PriceHelper::convertPriceFromCents($payment->purchase_amount),
+                    $this->priceHelper->convertPriceFromCents($payment->purchase_amount),
                     $paymentMode,
                     null,
                     $extraVars,

@@ -49,6 +49,7 @@ trait AjaxTrait
      */
     protected function ajaxRenderAndExit($value = null, $responseCode = null, $controller = null, $method = null)
     {
+        header('Content-Type: application/json');
         if ($responseCode) {
             header('X-PHP-Response-Code: ' . $responseCode, true, $responseCode);
         }
