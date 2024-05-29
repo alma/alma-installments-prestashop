@@ -162,7 +162,7 @@ class EligibilityHelper
             $getDataFromKey = SettingsHelper::getDataFromKey($key);
 
             if (
-                $purchaseAmount > $feePlan->min
+                $purchaseAmount >= $feePlan->min
                 && $purchaseAmount < $feePlan->max
             ) {
                 $activePlans[] = $getDataFromKey;
