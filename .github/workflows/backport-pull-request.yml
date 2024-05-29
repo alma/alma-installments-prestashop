@@ -4,6 +4,8 @@ name: Create backport pull request
 
 on:
   pull_request:
+    branches:
+      - main
     types:
       - closed
 
