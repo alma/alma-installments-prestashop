@@ -162,6 +162,40 @@ class InsuranceHelperTest extends TestCase
     }
 
     /**
+     * Given a cart we check if insurance products exist
+     *
+     * @return void
+     */
+    public function testCheckInsuranceProductsExist()
+    {
+        $this->cart->id = 1;
+        $this->cart->id_shop = 1;
+        $cart = $this->cart;
+        $this->insuranceProductRepository->expects($this->once())
+            ->method('hasInsuranceForCartIdAndShop')
+            ->with($cart->id, $cart->id_shop)
+            ->willReturn(true);
+        $this->assertTrue($this->insuranceHelper->checkInsuranceProductsExist($cart));
+    }
+
+    /**
+     * Given a cart we check if insurance products don't exist
+     *
+     * @return void
+     */
+    public function testCheckInsuranceProductsDontExist()
+    {
+        $this->cart->id = 1;
+        $this->cart->id_shop = 1;
+        $cart = $this->cart;
+        $this->insuranceProductRepository->expects($this->once())
+            ->method('hasInsuranceForCartIdAndShop')
+            ->with($cart->id, $cart->id_shop)
+            ->willReturn(false);
+        $this->assertFalse($this->insuranceHelper->checkInsuranceProductsExist($cart));
+    }
+
+    /**
      * @return array[]
      */
     public function productIdAndProductAttributeIdForCmsReference()
