@@ -23,7 +23,7 @@ jobs:
           git fetch origin develop:develop
           git reset --hard develop
 
-      - name: Release drafter
+      - name: Create release draft
         uses: release-drafter/release-drafter@v5
         id: release-drafter
         env:
@@ -35,7 +35,7 @@ jobs:
           latest-version: ${{ steps.release-drafter.outputs.tag_name }}
           release-notes: ${{ steps.release-drafter.outputs.body }}
 
-      - name: Update other files
+      - name: Update files with release version
         run: |
           ./scripts/update-files-with-release-version.sh ${{ steps.release-drafter.outputs.tag_name }}
 
