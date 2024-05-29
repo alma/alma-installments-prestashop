@@ -49,7 +49,7 @@ class CartSaveServiceTest extends TestCase
      */
     public function testGetCartSavedFromOpartSaveCart()
     {
-        $expected = [
+        $returnRepository = [
             'id_cart' => 1,
             'id_customer' => 1,
             'token' => 'token',
@@ -59,12 +59,12 @@ class CartSaveServiceTest extends TestCase
         ];
         $this->cartSaveRepository->method('getCurrentCartForOpartSaveCart')
             ->with('token')
-            ->willReturn($expected);
+            ->willReturn($returnRepository);
         $this->moduleManagerBuilder->expects($this->once())
             ->method('isInstalled')
             ->with('opartsavecart')
             ->willReturn(true);
-        $this->assertEquals($expected, $this->cartSaveService->getCartSaved('token'));
+        $this->assertEquals(1, $this->cartSaveService->getIdCartSaved('token'));
     }
 
     /**
@@ -76,6 +76,21 @@ class CartSaveServiceTest extends TestCase
             ->method('isInstalled')
             ->with('opartsavecart')
             ->willReturn(false);
-        $this->assertFalse($this->cartSaveService->getCartSaved('token'));
+        $this->assertNull($this->cartSaveService->getIdCartSaved('token'));
+    }
+
+    /**
+     * @return void
+     */
+    public function testGetCartSavedNoCart()
+    {
+        $this->cartSaveRepository->method('getCurrentCartForOpartSaveCart')
+            ->with('token')
+            ->willReturn(false);
+        $this->moduleManagerBuilder->expects($this->once())
+            ->method('isInstalled')
+            ->with('opartsavecart')
+            ->willReturn(true);
+        $this->assertNull($this->cartSaveService->getIdCartSaved('token'));
     }
 }

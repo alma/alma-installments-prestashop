@@ -60,14 +60,17 @@ class CartSaveService
     /**
      * @param $value
      *
-     * @return array|bool
+     * @return int|null
      */
-    public function getCartSaved($value)
+    public function getIdCartSaved($value)
     {
         if ($this->moduleManagerBuilder->isInstalled('opartsavecart')) {
-            return $this->cartSaveRepository->getCurrentCartForOpartSaveCart($value);
+            $cart = $this->cartSaveRepository->getCurrentCartForOpartSaveCart($value);
+            if ($cart) {
+                return (int) $cart['id_cart'];
+            }
         }
 
-        return false;
+        return null;
     }
 }
