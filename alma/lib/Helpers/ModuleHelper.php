@@ -22,54 +22,22 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
-namespace Alma\PrestaShop\Services;
+namespace Alma\PrestaShop\Helpers;
 
-use Alma\PrestaShop\Helpers\ModuleHelper;
-use Alma\PrestaShop\Repositories\CartSaveRepository;
+use PrestaShop\PrestaShop\Core\Addon\Module\ModuleManagerBuilder;
 
 if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-class CartSaveService
+class ModuleHelper
 {
-    /**
-     * @var ModuleHelper
-     */
-    protected $moduleHelper;
-    /**
-     * @var CartSaveRepository
-     */
-    protected $cartSaveRepository;
-
-    public function __construct(
-        $moduleHelper = null,
-        $cartSaveRepository = null
-    ) {
-        if (!$moduleHelper) {
-            $moduleHelper = new ModuleHelper();
-        }
-        if (!$cartSaveRepository) {
-            $cartSaveRepository = new CartSaveRepository();
-        }
-        $this->moduleHelper = $moduleHelper;
-        $this->cartSaveRepository = $cartSaveRepository;
-    }
-
-    /**
-     * @param $value
-     *
-     * @return int|null
-     */
-    public function getIdCartSaved($value)
+    public function isInstalled($moduleName)
     {
-        if ($this->moduleHelper->isInstalled('opartsavecart')) {
-            $cart = $this->cartSaveRepository->getCurrentCartForOpartSaveCart($value);
-            if ($cart) {
-                return (int) $cart['id_cart'];
-            }
+        if (version_compare(_PS_VERSION_, '1.6', '<')) {
+            return (bool) \Module::isInstalled($moduleName);
         }
 
-        return null;
+        return ModuleManagerBuilder::getInstance()->build()->isInstalled($moduleName);
     }
 }
