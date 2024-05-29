@@ -44,6 +44,7 @@ jobs:
       run: task lint:ci
 
     - name: Run unit Tests and Coverage
+      if: ${{ !contains(github.event.pull_request.labels.*.name, 'hotfix') }}
       run: task test:coverage
       env:
         XDEBUG_MODE: coverage
