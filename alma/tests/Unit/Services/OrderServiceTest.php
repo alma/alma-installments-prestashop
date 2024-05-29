@@ -69,7 +69,9 @@ class OrderServiceTest extends TestCase
     public function setUp()
     {
         $this->orderMock = \Mockery::mock(\Order::class);
-        $this->orderStateMock = \Mockery::mock(\OrderState::class);
+        $this->orderStateMock = \Mockery::mock(\OrderState::class)->makePartial();
+        $this->orderStateMock->shouldReceive('getFieldByLang')->andReturn('orderState');
+
         $this->psPaymentMock = \Mockery::mock(Payment::class);
         $this->psPaymentMock->transaction_id = 'transactionId';
 
@@ -271,6 +273,23 @@ class OrderServiceTest extends TestCase
     public function testManageStatusUpdateWithFailure()
     {
         $this->clientHelperMock->shouldReceive('sendOrderStatus')->andReturn(new RequestException());
+    }
+
+    public function testManageStatusUpdateWithNoParamOrderState()
+    {
+        $this->orderMock = \Mockery::mock(\Order::class)->makePartial();
+        $this->orderMock->shouldReceive('getCurrentOrderState')->andReturn($this->orderStateMock);
+
+        $this->psPaymentMock = \Mockery::mock(Payment::class);
+        $this->psPaymentMock->transaction_id = 'transactionId';
+
+        $this->clientHelperMock = \Mockery::mock(ClientHelper::class);
+        $this->orderReference = '123456';
+
+        $orderServiceBuilder = new OrderServiceBuilder();
+        $this->orderService = $orderServiceBuilder->getInstance();
+
+        $this->assertNull($this->orderService->manageStatusUpdate($this->orderMock));
     }
 
     public function tearDown()

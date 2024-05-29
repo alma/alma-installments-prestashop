@@ -29,12 +29,14 @@ use Alma\API\RequestError;
 use Alma\PrestaShop\API\MismatchException;
 use Alma\PrestaShop\Builders\Helpers\PriceHelperBuilder;
 use Alma\PrestaShop\Builders\Helpers\SettingsHelperBuilder;
+use Alma\PrestaShop\Builders\Services\OrderServiceBuilder;
 use Alma\PrestaShop\Helpers\ClientHelper;
 use Alma\PrestaShop\Helpers\PriceHelper;
 use Alma\PrestaShop\Helpers\RefundHelper;
 use Alma\PrestaShop\Helpers\SettingsHelper;
 use Alma\PrestaShop\Helpers\ToolsHelper;
 use Alma\PrestaShop\Logger;
+use Alma\PrestaShop\Services\OrderService;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -63,6 +65,11 @@ class PaymentValidation
     protected $priceHelper;
 
     /**
+     * @var OrderService
+     */
+    protected $orderService;
+
+    /**
      * @param $context
      * @param $module
      */
@@ -78,6 +85,10 @@ class PaymentValidation
 
         $priceHelperBuilder = new PriceHelperBuilder();
         $this->priceHelper = $priceHelperBuilder->getInstance();
+
+        $orderServiceBuilder = new OrderServiceBuilder();
+
+        $this->orderService = $orderServiceBuilder->getInstance();
     }
 
     /**
@@ -275,7 +286,9 @@ class PaymentValidation
                 $alma->payments->addOrder($payment->id, [
                     'merchant_reference' => $order->reference,
                 ]);
-            } catch (RequestError $e) {
+
+                $this->orderService->manageStatusUpdate($order);
+            } catch (\Exception $e) {
                 $msg = "[Alma] Error updating order reference {$order->reference}: {$e->getMessage()}";
                 Logger::instance()->error($msg);
             }
