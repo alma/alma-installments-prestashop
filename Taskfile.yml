@@ -114,7 +114,9 @@ tasks:
     desc: Create a hotfix pull request
     cmds:
     - task: trigger-release-pull-request-workflow
-      vars: { WORKFLOW_FILE: 'hotfix-pull-request.yml', RELEASE_TYPE: 'hotfix'}
+      vars: 
+        WORKFLOW_FILE: 'hotfix-pull-request.yml'
+        RELEASE_TYPE: 'hotfix'
 
   trigger-release-pull-request-workflow:
     internal: true
