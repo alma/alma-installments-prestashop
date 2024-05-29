@@ -34,7 +34,7 @@ class ModuleHelper
 {
     public function isInstalled($moduleName)
     {
-        if (version_compare(_PS_VERSION_, '1.6', '<')) {
+        if (version_compare(_PS_VERSION_, '1.7', '<')) {
             return (bool) \Module::isInstalled($moduleName);
         }
 
