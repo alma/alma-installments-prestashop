@@ -62,5 +62,5 @@ jobs:
             - [ ] Review the files updated with the new version number in the commit named "chore: update version"
           branch: hotfix/${{ steps.release-drafter.outputs.tag_name }}
           base: main
-          labels: hotfix
+          labels: hotfix, release
 
