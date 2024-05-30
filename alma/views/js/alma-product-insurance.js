@@ -112,6 +112,9 @@ function onloadAddInsuranceInputOnProductAlma() {
             }
         }
         if (e.data.type === 'getSelectedInsuranceData') {
+            if (parseInt(document.querySelector('.qty [name="qty"]').value) !== quantity) {
+                quantity = document.querySelector('.qty [name="qty"]').value;
+            }
             insuranceSelected = true;
             selectedAlmaInsurance = e.data.selectedInsuranceData;
             prestashop.emit('updateProduct', {

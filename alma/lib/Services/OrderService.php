@@ -48,8 +48,8 @@ class OrderService
     }
 
     /**
-     * @param \Order $order
-     * @param \OrderState $orderState
+     * @param \OrderCore $order
+     * @param \OrderStateCore $orderState
      *
      * @return void
      *
@@ -59,23 +59,27 @@ class OrderService
      * @throws \Alma\API\RequestError
      * @throws \Alma\PrestaShop\Exceptions\ClientException
      */
-    public function manageStatusUpdate($order, $orderState)
+    public function manageStatusUpdate($order, $orderState = null)
     {
         if ($order->module !== 'alma') {
             return;
+        }
+
+        if (!$orderState) {
+            $orderState = $order->getCurrentOrderState();
         }
 
         $paymentTransactionId = $this->getPaymentTransactionId($order);
         $almaPayment = $this->getAlmaPayment($paymentTransactionId, $order->reference);
 
         $this->clientHelper->sendOrderStatus($almaPayment->orders[0]->id, [
-           'status' => $orderState->name,
+           'status' => $orderState->getFieldByLang('name'),
            'is_shipped' => (bool) $orderState->shipped,
        ]);
     }
 
     /**
-     * @param \Order $order
+     * @param \OrderCore $order
      *
      * @return string
      *

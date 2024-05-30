@@ -3,12 +3,12 @@
     "description": "Payment method module to integrate Alma in PrestaShop",
     "type": "prestashop-module",
     "require-dev": {
-        "phpunit/phpunit": "^5",
-        "mockery/mockery": "^1.3",
-        "phpcompatibility/php-compatibility": "10.x-dev",
+        "phpunit/phpunit": "*",
+        "mockery/mockery": "*",
+        "phpcompatibility/php-compatibility": "*",
         "prestashop/php-dev-tools": "*",
         "prestashop/autoindex": "*",
-        "phpunit/php-code-coverage": "^4"
+        "phpunit/php-code-coverage": "*"
     },
     "require": {
         "php": "^5.6 || ~7.0 || ~7.1 || ~7.2 || ~7.3 || ~7.4 || ~8.0 || ~8.1",
