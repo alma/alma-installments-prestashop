@@ -25,7 +25,7 @@
 namespace Alma\PrestaShop\Tests\Unit\Helper;
 
 use Alma\API\Entities\FeePlan;
-use Alma\PrestaShop\Builders\PaymentOptionTemplateHelperBuilder;
+use Alma\PrestaShop\Builders\Helpers\PaymentOptionTemplateHelperBuilder;
 use Alma\PrestaShop\Factories\ContextFactory;
 use Alma\PrestaShop\Factories\ModuleFactory;
 use Alma\PrestaShop\Helpers\ConfigurationHelper;
