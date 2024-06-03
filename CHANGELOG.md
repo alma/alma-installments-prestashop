@@ -3,6 +3,8 @@
 ## v4.0.0
 
 - feature : Alma Insurance
+- improvement : Add unit tests + refacto code
+- feature : Order State API
 
 ## v3.2.1
 
