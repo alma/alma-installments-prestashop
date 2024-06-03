@@ -81,7 +81,7 @@ class Alma extends PaymentModule
 
     public function __construct()
     {
-        $this->name = \Alma\PrestaShop\Helpers\ConstantsHelper::ALMA_MODULE_NAME;
+        $this->name = 'alma';
         $this->tab = 'payments_gateways';
         $this->version = '4.0.0';
         $this->author = 'Alma';
