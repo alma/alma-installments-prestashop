@@ -100,7 +100,7 @@
     </div>
 
 {elseif isset($tip)}
-    <div class="{$tip_classes|escape:'htmlall':'UTF-8'}">
+    <div class="{$tip_classes|escape:'htmlall':'UTF-8'}" id="alma_first_installation">
         <p>
             {l s='Thanks for installing Alma!' mod='alma'}
             <br>
@@ -128,8 +128,47 @@
             En cas de problème, contactez-nous par email à <a href="mailto:support@getalma.eu">support@getalma.eu</a>
         </p>
     </div>
-{else}
+{elseif $updated}
     <div class="{$success_classes|escape:'htmlall':'UTF-8'}">
         {l s='Settings successfully updated' mod='alma'}
     </div>
+{/if}
+
+{if isset($hasPSAccount) &&  $hasPSAccount}
+    <prestashop-accounts></prestashop-accounts>
+
+    <script src="{$urlAccountsCdn|escape:'htmlall':'UTF-8'}" rel=preload></script>
+
+    <script>
+        /*********************
+         * PrestaShop Account *
+         * *******************/
+        window?.psaccountsVue?.init();
+    </script>
+
+    {if isset($hasKey) &&  !$hasKey}
+        <script>
+            window.onload = function() {
+                if (window.psaccountsVue.isOnboardingCompleted() != true) {
+                    document.getElementById("alma_config_form").remove()
+                    document.getElementById("alma_first_installation").remove()
+                }
+            }
+        </script>
+    {/if}
+{/if}
+{if isset($suggestPSAccount) &&  $suggestPSAccount}
+
+    <div class="alert alert-dismissible alert-info">
+        <h4>
+            {l s='We offer to download the PrestaShop Account module ' mod='alma'}
+        </h4>
+        <p>
+            {l s='Link your store to your PrestaShop account to take full advantage of the modules offered by the PrestaShop Marketplace and optimize your experience.'}
+        </p>
+        {almaDisplayHtml}
+        {l s='You can find the module %1$shere%2$s' sprintf=['<a href="https://addons.prestashop.com/en/administrative-tools/49648-prestashop-account.html" target=\"_blank\">', '</a>'] mod='alma'}
+        {/almaDisplayHtml}
+    </div>
+
 {/if}

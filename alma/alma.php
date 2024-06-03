@@ -21,6 +21,9 @@
  * @copyright 2018-2023 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
+
+use Alma\PrestaShop\Builders\Models\MediaHelperBuilder;
+
 if (!defined('_PS_VERSION_')) {
     exit;
 }
@@ -30,7 +33,7 @@ require_once _PS_MODULE_DIR_ . 'alma/vendor/autoload.php';
 
 class Alma extends PaymentModule
 {
-    const VERSION = '3.2.1';
+    const VERSION = '4.0.0';
 
     public $_path;
     public $local_path;
@@ -42,7 +45,7 @@ class Alma extends PaymentModule
     public $limited_currencies;
 
     /**
-     * @var HookHelper
+     * @var Alma\PrestaShop\Helpers\HookHelper
      */
     public $hook;
 
@@ -61,20 +64,42 @@ class Alma extends PaymentModule
      */
     public $confirmUninstall;
 
+    /**
+     * @var Alma\PrestaShop\Helpers\Admin\TabsHelper
+     */
+    private $tabsHelper;
+
+    /**
+     * @var \PrestaShop\ModuleLibServiceContainer\DependencyInjection\ServiceContainer
+     */
+    protected $container;
+
+    /**
+     * @var \Alma\PrestaShop\Helpers\ToolsHelper
+     */
+    protected $toolsHelper;
+
     public function __construct()
     {
-        $this->name = 'alma';
+        $this->name = \Alma\PrestaShop\Helpers\ConstantsHelper::ALMA_MODULE_NAME;
         $this->tab = 'payments_gateways';
-        $this->version = '3.2.1';
+        $this->version = '4.0.0';
         $this->author = 'Alma';
         $this->need_instance = false;
         $this->bootstrap = true;
-        $this->controllers = ['payment', 'validation', 'ipn'];
+        $controllers = ['payment', 'validation', 'ipn'];
+
+        if (version_compare(_PS_VERSION_, '1.7', '>=')) {
+            $controllers[] = 'insurance';
+            $controllers[] = 'subscription';
+            $controllers[] = 'cancellation';
+        }
+
+        $this->controllers = $controllers;
         $this->is_eu_compatible = 1;
         $this->currencies = true;
         $this->currencies_mode = 'checkbox';
         $this->module_key = 'ad25114b1fb02d9d8b8787b992a0ccdb';
-
         $this->limited_currencies = ['EUR'];
 
         $version = _PS_VERSION_;
@@ -98,6 +123,84 @@ class Alma extends PaymentModule
         }
 
         $this->hook = new \Alma\PrestaShop\Helpers\HookHelper();
+        $this->tabsHelper = new \Alma\PrestaShop\Helpers\Admin\TabsHelper();
+
+        $this->toolsHelper = new \Alma\PrestaShop\Helpers\ToolsHelper();
+
+        $this->handlePSModule();
+    }
+
+    /**
+     * @return void
+     */
+    public function handlePSModule()
+    {
+        if (
+            $this->checkCompatibilityPSModule()
+            && $this->container === null
+        ) {
+            $this->container = new \PrestaShop\ModuleLibServiceContainer\DependencyInjection\ServiceContainer(
+                $this->name,
+                $this->getLocalPath()
+            );
+        }
+    }
+
+    /**
+     * @return bool
+     */
+    public function checkCompatibilityPSModule()
+    {
+        return false;
+
+        if (
+            $this->toolsHelper->psVersionCompare('1.6', '<')
+            || !class_exists(\PrestaShop\ModuleLibServiceContainer\DependencyInjection\ServiceContainer::class)
+            || _PS_MODE_DEV_ === true
+        ) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * @return array[]
+     */
+    public function dataTabs()
+    {
+        return [
+            'alma' => [
+                'name' => 'Alma',
+                'parent' => null,
+                'position' => null,
+                'icon' => null,
+            ],
+            'AdminAlmaConfig' => [
+                'name' => $this->l('Configure'),
+                'parent' => 'alma',
+                'position' => 1,
+                'icon' => 'tune',
+            ],
+            'AdminAlmaCategories' => [
+                'name' => $this->l('Excluded categories'),
+                'parent' => 'alma',
+                'position' => 2,
+                'icon' => 'not_interested',
+            ],
+            'AdminAlmaRefunds' => [
+                'name' => false,
+                'parent' => 'alma',
+                'position' => null,
+                'icon' => null,
+            ],
+            'AdminAlmaShareOfCheckout' => [
+                'name' => false,
+                'parent' => 'alma',
+                'position' => null,
+                'icon' => null,
+            ],
+        ];
     }
 
     /**
@@ -128,9 +231,15 @@ class Alma extends PaymentModule
      * Insert module into datable.
      *
      * @override
+     *
+     * @return bool
      */
     public function install()
     {
+        if ($this->checkCompatibilityPSModule()) {
+            $this->getService('alma.ps_accounts_installer')->install();
+        }
+
         $coreInstall = parent::install();
 
         if (!$this->checkCoreInstall($coreInstall)
@@ -146,7 +255,44 @@ class Alma extends PaymentModule
             $this->updateCarriersWithAlma();
         }
 
-        return $this->installTabs();
+        return $this->tabsHelper->installTabs($this->dataTabs());
+    }
+
+    /**
+     * Retrieve the service
+     *
+     * @param string $serviceName
+     *
+     * @return object|null
+     */
+    public function getService($serviceName)
+    {
+        return $this->container->getService($serviceName);
+    }
+
+    /**
+     * @return bool
+     *
+     * @throws PrestaShopException
+     */
+    public function uninstall()
+    {
+        $result = parent::uninstall() && \Alma\PrestaShop\Helpers\SettingsHelper::deleteAllValues();
+
+        $paymentModuleConf = [
+            'CONF_ALMA_FIXED',
+            'CONF_ALMA_VAR',
+            'CONF_ALMA_FIXED_FOREIGN',
+            'CONF_ALMA_VAR_FOREIGN',
+        ];
+
+        foreach ($paymentModuleConf as $configKey) {
+            if (Configuration::hasKey($configKey)) {
+                $result = $result && Configuration::deleteByName($configKey);
+            }
+        }
+
+        return $result && $this->tabsHelper->uninstallTabs($this->dataTabs());
     }
 
     /**
@@ -232,7 +378,121 @@ class Alma extends PaymentModule
      */
     public function hookDisplayProductButtons($params)
     {
-        return $this->runHookController('displayProductPriceBlock', $params);
+        // @todo find another hook for prestashop 1.5
+        if (version_compare(_PS_VERSION_, '1.6', '<')) {
+            return $this->runHookController('displayProductPriceBlock', $params);
+        }
+
+        // until version 1.7.6
+        return $this->runHookController('displayProductActions', $params);
+    }
+
+    /**
+     * Hook the template below the add to cart button
+     *
+     * @param $params
+     *
+     * @return mixed|null
+     */
+    public function hookDisplayProductActions($params)
+    {
+        return $this->runHookController('displayProductActions', $params);
+    }
+
+    /**
+     * Hook the template below the product item near to the delete button
+     *
+     * @param $params
+     *
+     * @return mixed|null
+     */
+    public function hookDisplayCartExtraProductActions($params)
+    {
+        return $this->runHookController('displayCartExtraProductActions', $params);
+    }
+
+    /**
+     * Hook to add terms and conditions
+     *
+     * @param $params
+     *
+     * @return mixed|null
+     */
+    public function hookTermsAndConditions($params)
+    {
+        return $this->runHookController('termsAndConditions', $params);
+    }
+
+    /**
+     * Hook to modify the order table
+     *
+     * @param $params
+     *
+     * @return mixed|null
+     */
+    public function hookActionOrderGridQueryBuilderModifier($params)
+    {
+        return $this->runHookController('actionOrderGridQueryBuilderModifier', $params);
+    }
+
+    /**
+     * Hook to modify the order table
+     *
+     * @param $params
+     *
+     * @return mixed|null
+     */
+    public function hookActionOrderGridDefinitionModifier($params)
+    {
+        return $this->runHookController('actionOrderGridDefinitionModifier', $params);
+    }
+
+    /**
+     * Hook action after add cart
+     *
+     * @param $params
+     *
+     * @return mixed|null
+     */
+    public function hookActionCartSave($params)
+    {
+        return $this->runHookController('actionCartSave', $params);
+    }
+
+    /**
+     * Hook to display notification on order page
+     *
+     * @param $params
+     *
+     * @return mixed|null
+     */
+    public function hookDisplayInvoice($params)
+    {
+        return $this->hookDisplayAdminOrderTop($params);
+    }
+
+    /**
+     * Hook to display notification on order page
+     *
+     * @param $params
+     *
+     * @return mixed|null
+     */
+    public function hookDisplayAdminOrderTop($params)
+    {
+        return $this->runHookController('displayAdminOrderTop', $params);
+    }
+
+    /**
+     * Hook action after validate order
+     *
+     * @param $params
+     *
+     * @return mixed|null
+     */
+    public function hookActionValidateOrder($params)
+    {
+        return $this->runHookController('actionValidateOrder', $params);
     }
 
     /**
@@ -274,172 +534,36 @@ class Alma extends PaymentModule
     }
 
     /**
-     * @return bool
-     */
-    public function uninstall()
-    {
-        $result = parent::uninstall() && \Alma\PrestaShop\Helpers\SettingsHelper::deleteAllValues();
-
-        $paymentModuleConf = [
-            'CONF_ALMA_FIXED',
-            'CONF_ALMA_VAR',
-            'CONF_ALMA_FIXED_FOREIGN',
-            'CONF_ALMA_VAR_FOREIGN',
-        ];
-
-        foreach ($paymentModuleConf as $configKey) {
-            if (Configuration::hasKey($configKey)) {
-                $result = $result && Configuration::deleteByName($configKey);
-            }
-        }
-
-        return $result && $this->uninstallTabs();
-    }
-
-    /**
-     * @return array[]
-     */
-    protected function dataTabs()
-    {
-        return [
-            'alma' => [
-                'name' => 'Alma',
-                'parent' => null,
-                'position' => null,
-                'icon' => null,
-            ],
-            'AdminAlmaConfig' => [
-                'name' => $this->l('Configuration'),
-                'parent' => 'alma',
-                'position' => 1,
-                'icon' => 'tune',
-            ],
-            'AdminAlmaCategories' => [
-                'name' => $this->l('Excluded categories'),
-                'parent' => 'alma',
-                'position' => 2,
-                'icon' => 'not_interested',
-            ],
-            'AdminAlmaRefunds' => [
-                'name' => false,
-                'parent' => 'alma',
-                'position' => null,
-                'icon' => null,
-            ],
-            'AdminAlmaShareOfCheckout' => [
-                'name' => false,
-                'parent' => 'alma',
-                'position' => null,
-                'icon' => null,
-            ],
-        ];
-    }
-
-    /**
-     * @return bool
-     */
-    public function installTabs()
-    {
-        $allTableAreActivated = true;
-
-        foreach ($this->dataTabs() as $class => $dataTab) {
-            if (!$this->installTab($class, $dataTab['name'], $dataTab['parent'], $dataTab['position'], $dataTab['icon'])) {
-                $allTableAreActivated = false;
-            }
-        }
-
-        return $allTableAreActivated;
-    }
-
-    /**
-     * @return bool
-     */
-    public function uninstallTabs()
-    {
-        $allTableAreActivated = true;
-
-        foreach ($this->dataTabs() as $class => $dataTab) {
-            if (!$this->uninstallTab($class)) {
-                $allTableAreActivated = false;
-            }
-        }
-
-        return $allTableAreActivated;
-    }
-
-    /**
-     * Add Alma in backoffice menu.
+     * @param $hookName
+     * @param $params
      *
-     * @param string $class class controller
-     * @param string $name tab title
-     * @param string|null $parent parent class name
-     * @param int|null $position order in menu
-     * @param string|null $icon fontAwesome class icon
-     *
-     * @return bool if save successfully
+     * @return mixed|null
      */
-    private function installTab($class, $name, $parent = null, $position = null, $icon = null)
-    {
-        $tab = Tab::getInstanceFromClassName($class);
-        $tab->active = false !== $name;
-        $tab->class_name = $class;
-        $tab->name = [];
-
-        if ($position) {
-            $tab->position = $position;
-        }
-
-        foreach (Language::getLanguages(true) as $lang) {
-            $tab->name[$lang['id_lang']] = $name;
-        }
-
-        $tab->id_parent = 0;
-        if ($parent) {
-            if (version_compare(_PS_VERSION_, '1.7', '>=') && $icon) {
-                $tab->icon = $icon;
-            }
-
-            $parentTab = Tab::getInstanceFromClassName($parent);
-            $tab->id_parent = $parentTab->id;
-        }
-
-        $tab->module = $this->name;
-
-        return $tab->save();
-    }
-
-    private function uninstallTab($class)
-    {
-        $tab = Tab::getInstanceFromClassName($class);
-        if (!Validate::isLoadedObject($tab)) {
-            return true;
-        }
-
-        return $tab->delete();
-    }
-
     private function runHookController($hookName, $params)
     {
         $hookName = Tools::ucfirst(preg_replace('/[^a-zA-Z0-9]/', '', $hookName));
 
         require_once dirname(__FILE__) . "/controllers/hook/{$hookName}HookController.php";
-        $ControllerName = "Alma\PrestaShop\Controllers\Hook\\{$hookName}HookController";
+        $controllerName = "Alma\PrestaShop\Controllers\Hook\\{$hookName}HookController";
 
         // check if override exist for hook controllers
         if (file_exists(dirname(__FILE__) . "/../../override/modules/alma/controllers/hook/{$hookName}HookController.php")) {
             require_once dirname(__FILE__) . "/../../override/modules/alma/controllers/hook/{$hookName}HookController.php";
-            $ControllerName = "Alma\PrestaShop\Controllers\Hook\\{$hookName}HookControllerOverride";
+            $controllerName = "Alma\PrestaShop\Controllers\Hook\\{$hookName}HookControllerOverride";
         }
 
-        $controller = new $ControllerName($this);
+        $controller = new $controllerName($this);
 
         if ($controller->canRun()) {
             return $controller->run($params);
-        } else {
-            return null;
         }
+
+        return null;
     }
 
+    /**
+     * @return void
+     */
     public function viewAccess()
     {
         // Simply redirect to the default module's configuration page
@@ -448,9 +572,59 @@ class Alma extends PaymentModule
         Tools::redirectAdmin($location);
     }
 
+    /**
+     * @return mixed|null
+     */
     public function getContent()
     {
-        return $this->runHookController('getContent', null);
+        $suggestPSAccount = false;
+
+        try {
+            $hasPSAccount = $this->renderPSAccount();
+        } catch (\PrestaShop\PsAccountsInstaller\Installer\Exception\ModuleNotInstalledException $e) {
+            $hasPSAccount = false;
+            $suggestPSAccount = true;
+        }
+
+        return $this->runHookController('getContent', ['hasPSAccount' => $hasPSAccount, 'suggestPSAccount' => $suggestPSAccount]);
+    }
+
+    /**
+     * @return bool
+     */
+    public function renderPSAccount()
+    {
+        if (!$this->checkCompatibilityPSModule()) {
+            return false;
+        }
+
+        try {
+            $accountsFacade = $this->getService('alma.ps_accounts_facade');
+            $accountsService = $accountsFacade->getPsAccountsService();
+        } catch (\PrestaShop\PsAccountsInstaller\Installer\Exception\InstallerException $e) {
+            $accountsInstaller = $this->getService('alma.ps_accounts_installer');
+            $accountsInstaller->install();
+            $accountsFacade = $this->getService('alma.ps_accounts_facade');
+            $accountsService = $accountsFacade->getPsAccountsService();
+        }
+
+        try {
+            $mediaHelperBuilder = new MediaHelperBuilder();
+            $mediaHelper = $mediaHelperBuilder->getInstance();
+            $mediaHelper->addJsDef([
+                'contextPsAccounts' => $accountsFacade->getPsAccountsPresenter()
+                    ->present($this->name),
+            ]);
+
+            // Retrieve the PrestaShop Account CDN
+            $this->context->smarty->assign('urlAccountsCdn', $accountsService->getAccountsCdn());
+
+            return true;
+        } catch (Exception $e) {
+            $this->context->controller->errors[] = $e->getMessage();
+
+            return false;
+        }
     }
 
     public function hookHeader($params)
@@ -478,6 +652,16 @@ class Alma extends PaymentModule
     public function hookDisplayPayment($params)
     {
         return $this->runHookController('displayPayment', $params);
+    }
+
+    public function hookDeleteProductInCartAfter($params)
+    {
+        return $this->hookActionObjectProductInCartDeleteAfter($params);
+    }
+
+    public function hookActionObjectProductInCartDeleteAfter($params)
+    {
+        return $this->runHookController('actionObjectProductInCartDeleteAfter', $params);
     }
 
     // Deprecated for version 1.7

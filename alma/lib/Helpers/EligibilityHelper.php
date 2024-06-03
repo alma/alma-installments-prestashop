@@ -25,9 +25,7 @@
 namespace Alma\PrestaShop\Helpers;
 
 use Alma\API\Endpoints\Results\Eligibility;
-use Alma\API\RequestError;
-use Alma\PrestaShop\Logger;
-use Alma\PrestaShop\Model\PaymentData;
+use Alma\PrestaShop\Factories\ContextFactory;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -36,47 +34,76 @@ if (!defined('_PS_VERSION_')) {
 class EligibilityHelper
 {
     /**
-     * @var PaymentData
-     */
-    protected $paymentData;
-
-    /**
      * @var PriceHelper
      */
     protected $priceHelper;
 
-    public function __construct()
+    /**
+     * @var ApiHelper
+     */
+    protected $apiHelper;
+
+    /**
+     * @var ContextFactory
+     */
+    protected $contextFactory;
+
+    /**
+     * @var FeePlanHelper
+     */
+    protected $feePlanHelper;
+
+    /**
+     * @var PaymentHelper
+     */
+    protected $paymentHelper;
+
+    /**
+     * @param PriceHelper $priceHelper
+     * @param ApiHelper $apiHelper
+     * @param ContextFactory $contextFactory
+     * @param FeePlanHelper $feePlanHelper
+     * @param PaymentHelper $paymentHelper
+     */
+    public function __construct($priceHelper, $apiHelper, $contextFactory, $feePlanHelper, $paymentHelper)
     {
-        $this->paymentData = new PaymentData();
-        $this->priceHelper = new PriceHelper();
+        $this->priceHelper = $priceHelper;
+        $this->apiHelper = $apiHelper;
+        $this->contextFactory = $contextFactory;
+        $this->feePlanHelper = $feePlanHelper;
+        $this->paymentHelper = $paymentHelper;
     }
 
-    public function eligibilityCheck($context)
+    /**
+     * @return array
+     *
+     * @throws \Alma\API\ParamsError
+     */
+    public function eligibilityCheck()
     {
         $almaEligibilities = [];
-        $purchaseAmount = $this->priceHelper->convertPriceToCents($context->cart->getOrderTotal(true, \Cart::BOTH));
-        $alma = self::checkClientInstance();
-        $feePlans = self::checkFeePlans();
-        $eligibilities = self::getNotEligibleFeePlans($feePlans, $purchaseAmount);
-        $activePlans = self::getEligibleFeePlans($feePlans, $purchaseAmount);
-        $paymentData = $this->checkPaymentData($context, $activePlans);
 
-        try {
-            if (!empty($activePlans)) {
-                $almaEligibilities = $alma->payments->eligibility($paymentData);
-                if ($almaEligibilities instanceof Eligibility) {
-                    $almaEligibilities = [$almaEligibilities];
-                }
-            }
-        } catch (RequestError $e) {
-            Logger::instance()->error(
-                "Error when checking cart {$context->cart->id} eligibility: " . $e->getMessage()
-            );
+        $purchaseAmount = $this->priceHelper->convertPriceToCents(
+            $this->contextFactory->getContextCart()->getOrderTotal(true, \Cart::BOTH)
+        );
 
-            return [];
+        $feePlans = $this->feePlanHelper->checkFeePlans();
+        $eligibilities = $this->feePlanHelper->getNotEligibleFeePlans($feePlans, $purchaseAmount);
+        $activePlans = $this->feePlanHelper->getEligibleFeePlans($feePlans, $purchaseAmount);
+        $paymentData = $this->paymentHelper->checkPaymentData($activePlans);
+
+        if (empty($activePlans)) {
+            return $almaEligibilities;
+        }
+
+        $almaEligibilities = $this->apiHelper->getPaymentEligibility($paymentData);
+
+        if ($almaEligibilities instanceof Eligibility) {
+            $almaEligibilities = [$almaEligibilities];
         }
 
         $eligibilities = array_merge((array) $eligibilities, (array) $almaEligibilities);
+
         usort($eligibilities, function ($a, $b) {
             return $a->installmentsCount - $b->installmentsCount;
         });

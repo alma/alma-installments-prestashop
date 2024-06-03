@@ -21,6 +21,9 @@
  * @copyright 2018-2023 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
+
+use Alma\PrestaShop\Builders\Helpers\PriceHelperBuilder;
+
 if (!defined('_PS_VERSION_')) {
     exit;
 }
@@ -56,7 +59,10 @@ if (class_exists('\Context') && PHP_SAPI != 'cli') {
      */
     function smarty_function_almaFormatPrice($params, $smarty)
     {
-        return \Alma\PrestaShop\Helpers\PriceHelper::formatPriceToCentsByCurrencyId($params['cents'], isset($params['currency']) ? $params['currency'] : null);
+        $priceHelperBuilder = new PriceHelperBuilder();
+        $priceHelper = $priceHelperBuilder->getInstance();
+
+        return $priceHelper->formatPriceToCentsByCurrencyId($params['cents'], isset($params['currency']) ? $params['currency'] : null);
     }
 
     smartyRegisterFunction($smarty, 'function', 'almaFormatPrice', 'smarty_function_almaFormatPrice');

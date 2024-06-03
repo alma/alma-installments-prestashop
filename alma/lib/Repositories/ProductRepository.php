@@ -24,6 +24,10 @@
 
 namespace Alma\PrestaShop\Repositories;
 
+use Alma\PrestaShop\Builders\Models\LocaleHelperBuilder;
+use Alma\PrestaShop\Helpers\ConstantsHelper;
+use Alma\PrestaShop\Helpers\LocaleHelper;
+
 if (!defined('_PS_VERSION_')) {
     exit;
 }
@@ -35,6 +39,26 @@ if (!defined('_PS_VERSION_')) {
  */
 class ProductRepository
 {
+    const PRODUCT_TYPE_COMBINATIONS = 'combinations';
+    const VISIBILITY_NONE = 'none';
+
+    /**
+     * @var LocaleHelper
+     */
+    protected $localeHelper;
+    /**
+     * @var \Module
+     */
+    private $module;
+
+    public function __construct()
+    {
+        $localeHelperBuilder = new LocaleHelperBuilder();
+        $this->localeHelper = $localeHelperBuilder->getInstance();
+
+        $this->module = \Module::getInstanceByName(ConstantsHelper::ALMA_MODULE_NAME);
+    }
+
     /**
      * Get the product combinations
      *
@@ -146,5 +170,89 @@ class ProductRepository
         }
 
         return $productsDetails;
+    }
+
+    /**
+     * @param string $reference
+     * @param int $id_lang
+     *
+     * @return false|string
+     */
+    public function getProductIdByReference($reference, $id_lang = 1)
+    {
+        return \Db::getInstance()->getValue('SELECT p.id_product
+                FROM `' . _DB_PREFIX_ . 'product` p
+                ' . \Shop::addSqlAssociation('product', 'p') . '
+                LEFT JOIN `' . _DB_PREFIX_ . 'product_lang` pl ON (p.`id_product` = pl.`id_product` )
+                LEFT JOIN `' . _DB_PREFIX_ . 'manufacturer` m ON (m.`id_manufacturer` = p.`id_manufacturer`)
+                LEFT JOIN `' . _DB_PREFIX_ . 'supplier` s ON (s.`id_supplier` = p.`id_supplier`) 
+                WHERE pl.`id_lang` = ' . (int) $id_lang . '
+                AND p.reference="' . (string) $reference . '"');
+    }
+
+    /**
+     * @return \ProductCore
+     *
+     * @throws \PrestaShopDatabaseException
+     * @throws \PrestaShopException
+     */
+    public function createInsuranceProduct()
+    {
+        /**
+         * @var \ContextCore $context
+         */
+        $context = \Context::getContext();
+
+        $categories = \Category::getRootCategories($context->language->id);
+
+        if (isset($categories[0]['id_category'])) {
+            $id_root = $categories[0]['id_category'];
+        } else {
+            $id_root = $context->shop->id_category;
+        }
+
+        /*
+         * @var \ProductCore $product
+         */
+        $insuranceProductName = $this->module->l('Insurance by Alma', 'ProductRepository');
+        $product = new \Product();
+        $product->name = $this->localeHelper->createMultiLangField($insuranceProductName);
+        $product->reference = ConstantsHelper::ALMA_INSURANCE_PRODUCT_REFERENCE;
+        $product->link_rewrite = $this->localeHelper->createMultiLangField(\Tools::str2url($insuranceProductName));
+        $product->id_category_default = $id_root;
+        $product->product_type = self::PRODUCT_TYPE_COMBINATIONS;
+        $product->visibility = self::VISIBILITY_NONE;
+
+        if (version_compare(_PS_VERSION_, '1.7.8', '<')) {
+            $product->out_of_stock = 1;
+        }
+
+        $product->add();
+
+        $product->addToCategories($id_root);
+
+        \StockAvailable::setProductOutOfStock(
+            $product->id,
+            1
+        );
+
+        if (version_compare(_PS_VERSION_, '1.7.8', '<')) {
+            \StockAvailable::setProductDependsOnStock(
+                $product->id,
+                false
+            );
+        }
+
+        return $product;
+    }
+
+    /**
+     * @param int $idProduct
+     *
+     * @return \ProductCore
+     */
+    public function getProduct($idProduct)
+    {
+        return new \Product((int) $idProduct);
     }
 }

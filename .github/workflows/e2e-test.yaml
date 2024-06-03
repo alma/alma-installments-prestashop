@@ -8,48 +8,50 @@ on:
 
 jobs:
   launch:
+    runs-on: ubuntu-22.04
+    if: github.event.pull_request.draft == false && !contains(github.event.pull_request.labels.*.name, 'hotfix')
+
     strategy:
       matrix:
         version:
-        - 1.7.8.7
-        #- 1.7.7.5
-    runs-on: ubuntu-latest
-    if: github.event.pull_request.draft == false
+          - 1.7.8.7
+          #- 1.7.7.5
+
     steps:
     - name: Get only last part of branch name in $SLUG_VERSION env var
       run:  |
         VERSION=${{ matrix.version }}
         echo "SLUG_VERSION=${VERSION//./-}" >> $GITHUB_ENV
 
-    - name: Generate token
-      id: generate_token
-      uses: tibdex/github-app-token@v1.8.0
+    - name: Generate Github token for PR checks
+      id: github-token-checks
+      uses: actions/create-github-app-token@v1
       continue-on-error: true
       with:
-        app_id: ${{ secrets.ALMA_UPDATE_CHECKS_APP_ID }}
-        private_key: ${{ secrets.ALMA_UPDATE_CHECKS_APP_PEM }}
+        app-id: ${{ secrets.ALMA_UPDATE_CHECKS_APP_ID }}
+        private-key: ${{ secrets.ALMA_UPDATE_CHECKS_APP_PEM }}
+        repositories: alma-installments-prestashop
 
     - uses: LouisBrunner/checks-action@v2.0.0
       id: e2e_status
       with:
-        token: ${{ steps.generate_token.outputs.token }}
+        token: ${{ steps.github-token-checks.outputs.token }}
         name: E2E Test / result (${{ matrix.version }})
         status: "in_progress"
 
     - name: Generate Github token for integration-infrastructure repo
-      id: generate_github_token_integration_infrastructure
-      uses: tibdex/github-app-token@v1
+      id: github-token-infrastructure
+      uses: actions/create-github-app-token@v1
       with:
-        app_id: ${{ secrets.ALMA_WF_TRIGGER_APP_ID }}
-        private_key: ${{ secrets.ALMA_WF_TRIGGER_APP_PEM }}
-        installation_id: ${{ secrets.ALMA_WF_TRIGGER_INSTALLATION_ID }}
-        repository: alma/integration-infrastructure
+        app-id: ${{ secrets.ALMA_WF_TRIGGER_APP_ID }}
+        private-key: ${{ secrets.ALMA_WF_TRIGGER_APP_PEM }}
+        repositories: integration-infrastructure
 
     - name: Invoke e2e workflow with inputs
       uses: benc-uk/workflow-dispatch@v1.2.3
       with:
         workflow: Deploy CMS
-        token: ${{ steps.generate_github_token_integration_infrastructure.outputs.token }}
+        token: ${{ steps.github-token-infrastructure.outputs.token }}
         repo: alma/integration-infrastructure
         ref: main
         inputs: >
@@ -66,6 +68,6 @@ jobs:
     - uses: LouisBrunner/checks-action@v2.0.0
       if: failure()
       with:
-        token: ${{ steps.generate_token.outputs.token }}
+        token: ${{ steps.github-token-checks.outputs.token }}
         check_id: ${{ steps.e2e_status.outputs.check_id }}
         conclusion: failure

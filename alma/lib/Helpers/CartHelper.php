@@ -24,10 +24,11 @@
 
 namespace Alma\PrestaShop\Helpers;
 
+use Alma\PrestaShop\Factories\CartFactory;
+use Alma\PrestaShop\Factories\ContextFactory;
 use Alma\PrestaShop\Logger;
 use Alma\PrestaShop\Model\CartData;
-use Alma\PrestaShop\Model\OrderData;
-use Alma\PrestaShop\Repositories\ProductRepository;
+use Alma\PrestaShop\Repositories\OrderRepository;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -38,8 +39,12 @@ if (!defined('_PS_VERSION_')) {
  */
 class CartHelper
 {
-    /** @var \Context */
+    /** @var \ContextCore */
     private $context;
+    /**
+     * @var OrderRepository
+     */
+    protected $orderRepository;
 
     /**
      * @var ToolsHelper
@@ -56,12 +61,70 @@ class CartHelper
      */
     protected $cartData;
 
-    public function __construct($context)
+    /**
+     * @var OrderStateHelper
+     */
+    protected $orderStateHelper;
+
+    /**
+     * @var CarrierHelper
+     */
+    protected $carrierHelper;
+
+    /**
+     * @var CartFactory
+     */
+    protected $cartFactory;
+
+    /**
+     * @var OrderHelper
+     */
+    protected $orderHelper;
+
+    /**
+     * @param ContextFactory $contextFactory
+     * @param ToolsHelper $toolsHelper
+     * @param PriceHelper $priceHelper
+     * @param CartData $cartData
+     * @param OrderRepository $orderRepository
+     * @param OrderStateHelper $orderStateHelper
+     * @param CarrierHelper $carrierHelper
+     * @param CartFactory $cartFactory
+     */
+    public function __construct(
+        $contextFactory,
+        $toolsHelper,
+        $priceHelper,
+        $cartData,
+        $orderRepository,
+        $orderStateHelper,
+        $carrierHelper,
+        $cartFactory,
+        $orderHelper
+    ) {
+        $this->context = $contextFactory->getContext();
+        $this->toolsHelper = $toolsHelper;
+        $this->priceHelper = $priceHelper;
+        $this->cartData = $cartData;
+        $this->orderRepository = $orderRepository;
+        $this->orderStateHelper = $orderStateHelper;
+        $this->carrierHelper = $carrierHelper;
+        $this->cartFactory = $cartFactory;
+        $this->orderHelper = $orderHelper;
+    }
+
+    /**
+     * @return int|null
+     */
+    public function getCartIdFromContext()
     {
-        $this->context = $context;
-        $this->toolsHelper = new ToolsHelper();
-        $this->priceHelper = new PriceHelper();
-        $this->cartData = new CartData();
+        $cartId = null;
+
+        if (isset($this->context->cart->id)) {
+            $cartId = $this->context->cart->id;
+        }
+
+        return $cartId;
     }
 
     /**
@@ -74,39 +137,35 @@ class CartHelper
     public function previousCartOrdered($idCustomer)
     {
         $ordersData = [];
-        $orders = $this->getOrdersByCustomer($idCustomer, 10);
-        $orderStateHelper = new OrderStateHelper($this->context);
-        $productHelper = new ProductHelper();
-        $productRepository = new ProductRepository();
+        $orders = $this->orderHelper->getOrdersByCustomer($idCustomer, 10);
 
-        $carrier = new CarrierHelper($this->context);
         foreach ($orders as $order) {
-            $cart = new \Cart((int) $order['id_cart']);
+            $cart = $this->cartFactory->create((int) $order['id_cart']);
             $purchaseAmount = -1;
+
             try {
                 $purchaseAmount = $this->toolsHelper->psRound((float) $cart->getOrderTotal(), 2);
             } catch (\Exception $e) {
-                $msg = '[Alma] purchase amount for previous cart ordered no found';
-                Logger::instance()->warning($msg);
+                Logger::instance()->warning('[Alma] purchase amount for previous cart ordered no found');
             }
 
             $cartItems = [];
+
             try {
-                $cartItems = $this->cartData->getCartItems($cart, $productHelper, $productRepository);
+                $cartItems = $this->cartData->getCartItems($cart);
             } catch (\PrestaShopDatabaseException $e) {
-                $msg = '[Alma] cart items for previous cart ordered no found';
-                Logger::instance()->warning($msg);
+                Logger::instance()->warning('[Alma] cart items for previous cart ordered no found');
             } catch (\PrestaShopException $e) {
-                $msg = '[Alma] cart items for previous cart ordered no found';
-                Logger::instance()->warning($msg);
+                Logger::instance()->warning('[Alma] cart items for previous cart ordered no found');
             }
+
             $ordersData[] = [
                 'purchase_amount' => $this->priceHelper->convertPriceToCents($purchaseAmount),
                 'created' => strtotime($order['date_add']),
                 'payment_method' => $order['payment'],
                 'alma_payment_external_id' => $order['module'] === 'alma' ? $order['transaction_id'] : null,
-                'current_state' => $orderStateHelper->getNameById($order['current_state']),
-                'shipping_method' => $carrier->getParentCarrierNameById($cart->id_carrier),
+                'current_state' => $this->orderStateHelper->getNameById($order['current_state']),
+                'shipping_method' => $this->carrierHelper->getParentCarrierNameById($cart->id_carrier),
                 'items' => $cartItems,
             ];
         }
@@ -115,21 +174,16 @@ class CartHelper
     }
 
     /**
-     * Get ids order by customer id with limit (default = 10)
+     * @param \Cart $cart
      *
-     * @param int $idCustomer
-     * @param int $limit
+     * @return float
      *
-     * @return array
+     * @throws \Exception
      */
-    private function getOrdersByCustomer($idCustomer, $limit)
+    public function getCartTotal($cart)
     {
-        try {
-            $orders = OrderData::getCustomerOrders($idCustomer, $limit);
-        } catch (\PrestaShopDatabaseException $e) {
-            return [];
-        }
-
-        return $orders;
+        return (float) $this->priceHelper->convertPriceToCents(
+            $this->toolsHelper->psRound((float) $cart->getOrderTotal(true, \Cart::BOTH), 2)
+        );
     }
 }

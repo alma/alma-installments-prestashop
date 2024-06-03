@@ -24,6 +24,7 @@
 
 namespace Alma\PrestaShop\Helpers;
 
+use Alma\PrestaShop\Factories\ModuleFactory;
 use Alma\PrestaShop\Forms\ExcludedCategoryAdminFormBuilder;
 use Alma\PrestaShop\Forms\PaymentButtonAdminFormBuilder;
 use Alma\PrestaShop\Forms\PaymentOnTriggeringAdminFormBuilder;
@@ -38,20 +39,54 @@ if (!defined('_PS_VERSION_')) {
 class CustomFieldsHelper
 {
     /**
+     * @var LanguageHelper
+     */
+    protected $languageHelper;
+
+    /**
+     * @var SettingsHelper
+     */
+    protected $settingsHelper;
+
+    /**
+     * @var LocaleHelper
+     */
+    protected $localeHelper;
+
+    /**
+     * @var ModuleFactory
+     */
+    protected $moduleFactory;
+
+    /**
+     * @param LanguageHelper $languageHelper
+     * @param LocaleHelper $localeHelper
+     * @param SettingsHelper $settingsHelper
+     * @param ModuleFactory $moduleFactory
+     */
+    public function __construct($languageHelper, $localeHelper, $settingsHelper, $moduleFactory)
+    {
+        $this->languageHelper = $languageHelper;
+        $this->settingsHelper = $settingsHelper;
+        $this->localeHelper = $localeHelper;
+        $this->moduleFactory = $moduleFactory;
+    }
+
+    /**
      * Init default custom fields in ps_configuration table
      *
      * @return void
      */
-    public static function initCustomFields()
+    public function initCustomFields()
     {
-        $languages = \Language::getLanguages(false);
+        $languages = $this->languageHelper->getLanguages(false);
 
-        $keysCustomFields = array_keys(static::customFields());
+        $keysCustomFields = array_keys($this->customFields());
 
         foreach ($keysCustomFields as $keyCustomFields) {
-            SettingsHelper::updateValue(
+            $this->settingsHelper->updateKey(
                 $keyCustomFields,
-                json_encode(static::getAllLangCustomFieldByKeyConfig($keyCustomFields, $languages))
+                json_encode($this->getAllLangCustomFieldByKeyConfig($keyCustomFields, $languages))
             );
         }
     }
@@ -61,19 +96,18 @@ class CustomFieldsHelper
      *
      * @return array
      */
-    public static function customFields()
+    public function customFields()
     {
         $textPnxButtonTitle = 'Pay in %d installments';
         $textButtonDescription = 'Fast and secure payment by credit card.';
 
-        $module = new \Alma();
-        $module->l('Pay now by credit card', ConstantsHelper::SOURCE_CUSTOM_FIELDS);
-        $module->l('Pay in %d installments', ConstantsHelper::SOURCE_CUSTOM_FIELDS);
-        $module->l('Buy now Pay in %d days', ConstantsHelper::SOURCE_CUSTOM_FIELDS);
-        $module->l('Fast and secure payment by credit card.', ConstantsHelper::SOURCE_CUSTOM_FIELDS);
-        $module->l('Fast and secure payments.', ConstantsHelper::SOURCE_CUSTOM_FIELDS);
-        $module->l('Your cart is not eligible for payments with Alma.', ConstantsHelper::SOURCE_CUSTOM_FIELDS);
-        $module->l('At shipping', ConstantsHelper::SOURCE_CUSTOM_FIELDS);
+        $this->moduleFactory->l('Pay now by credit card', ConstantsHelper::SOURCE_CUSTOM_FIELDS);
+        $this->moduleFactory->l('Pay in %d installments', ConstantsHelper::SOURCE_CUSTOM_FIELDS);
+        $this->moduleFactory->l('Buy now Pay in %d days', ConstantsHelper::SOURCE_CUSTOM_FIELDS);
+        $this->moduleFactory->l('Fast and secure payment by credit card.', ConstantsHelper::SOURCE_CUSTOM_FIELDS);
+        $this->moduleFactory->l('Fast and secure payments.', ConstantsHelper::SOURCE_CUSTOM_FIELDS);
+        $this->moduleFactory->l('Your cart is not eligible for payments with Alma.', ConstantsHelper::SOURCE_CUSTOM_FIELDS);
+        $this->moduleFactory->l('At shipping', ConstantsHelper::SOURCE_CUSTOM_FIELDS);
 
         return [
             PaymentButtonAdminFormBuilder::ALMA_PAY_NOW_BUTTON_TITLE => 'Pay now by credit card',
@@ -97,15 +131,15 @@ class CustomFieldsHelper
      *
      * @return array
      */
-    public static function getAllLangCustomFieldByKeyConfig($keyConfig, $languages)
+    public function getAllLangCustomFieldByKeyConfig($keyConfig, $languages)
     {
         $result = [];
 
         foreach ($languages as $language) {
             $result[$language['id_lang']] = [
                 'locale' => $language['iso_code'],
-                'string' => LocaleHelper::getModuleTranslation(
-                    static::customFields()[$keyConfig],
+                'string' => $this->localeHelper->getModuleTranslation(
+                    $this->customFields()[$keyConfig],
                     ConstantsHelper::SOURCE_CUSTOM_FIELDS,
                     $language['iso_code']
                 ),
@@ -123,12 +157,15 @@ class CustomFieldsHelper
      *
      * @return array
      */
-    public static function getCustomFieldByKeyConfig($keyConfig, $languages)
+    public function getCustomFieldByKeyConfig($keyConfig, $languages)
     {
-        $defaultField = static::getAllLangCustomFieldByKeyConfig($keyConfig, $languages);
+        $defaultField = $this->getAllLangCustomFieldByKeyConfig($keyConfig, $languages);
         $result = [];
 
-        $allLangField = json_decode(SettingsHelper::get($keyConfig, json_encode($defaultField)), true);
+        $allLangField = json_decode(
+            $this->settingsHelper->getKey($keyConfig, json_encode($defaultField)),
+            true
+        );
 
         foreach ($allLangField as $key => $field) {
             $result[$key] = $field['string'];
@@ -144,16 +181,17 @@ class CustomFieldsHelper
      *
      * @return array
      */
-    public static function aggregateAllLanguagesCustomFields($keyConfig)
+    public function getValue($keyConfig)
     {
-        $languages = \Language::getLanguages(false);
-        $arrayFields = static::getCustomFieldByKeyConfig($keyConfig, $languages);
+        $languages = $this->languageHelper->getLanguages(false);
+
+        $arrayFields = $this->getCustomFieldByKeyConfig($keyConfig, $languages);
 
         if (count($arrayFields) < count($languages)) {
             foreach ($languages as $lang) {
                 if (!array_key_exists($lang['id_lang'], $arrayFields)) {
-                    $arrayFields[$lang['id_lang']] = LocaleHelper::getModuleTranslation(
-                        static::customFields()[$keyConfig],
+                    $arrayFields[$lang['id_lang']] = $this->localeHelper->getModuleTranslation(
+                        $this->customFields()[$keyConfig],
                         ConstantsHelper::SOURCE_CUSTOM_FIELDS,
                         $lang['iso_code']
                     );
@@ -162,5 +200,80 @@ class CustomFieldsHelper
         }
 
         return $arrayFields;
+    }
+
+    /**
+     * @param int $idLang
+     * @param string$key
+     *
+     * @return mixed|string
+     */
+    public function getBtnValueByLang($idLang, $key)
+    {
+        $result = $this->getValue($key);
+
+        if (!array_key_exists($idLang, $result)) {
+            return $this->customFields()[$key];
+        }
+
+        return $result[$idLang];
+    }
+
+    /**
+     * Get custom description payment trigger
+     *
+     * @return array
+     */
+    public function getDescriptionPaymentTrigger()
+    {
+        $languages = $this->languageHelper->getLanguages(false);
+
+        $defaultField = $this->getAllLangCustomFieldByKeyConfig(
+            PaymentOnTriggeringAdminFormBuilder::ALMA_DESCRIPTION_TRIGGER, $languages
+        );
+
+        $return = [];
+
+        foreach ($defaultField as $key => $field) {
+            $return[$key] = $field['string'];
+        }
+
+        return $return;
+    }
+
+    /**
+     * Get custom description payment trigger by id lang
+     *
+     * @param int $idLang
+     *
+     * @return string
+     */
+    public function getDescriptionPaymentTriggerByLang($idLang)
+    {
+        $arrayDescriptionPaymentTriggerByLang = $this->getDescriptionPaymentTrigger();
+
+        if (!array_key_exists($idLang, $arrayDescriptionPaymentTriggerByLang)) {
+            return $this->customFields()[PaymentOnTriggeringAdminFormBuilder::ALMA_DESCRIPTION_TRIGGER];
+        }
+
+        return $arrayDescriptionPaymentTriggerByLang[$idLang];
+    }
+
+    /**
+     * @param int $languageId
+     * @param string $key
+     * @param int $installments
+     *
+     * @return string
+     */
+    public function getTextButton($languageId, $key, $installments)
+    {
+        return sprintf(
+            $this->getBtnValueByLang(
+                $languageId,
+                $key
+            ),
+            $installments
+        );
     }
 }

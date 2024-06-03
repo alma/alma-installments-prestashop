@@ -28,11 +28,17 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
+use Alma\PrestaShop\Builders\Helpers\CustomFieldHelperBuilder;
+use Alma\PrestaShop\Builders\Helpers\EligibilityHelperBuilder;
+use Alma\PrestaShop\Builders\Helpers\PriceHelperBuilder;
+use Alma\PrestaShop\Builders\Helpers\SettingsHelperBuilder;
+use Alma\PrestaShop\Builders\Models\CartDataBuilder;
+use Alma\PrestaShop\Builders\Models\LocaleHelperBuilder;
+use Alma\PrestaShop\Forms\ExcludedCategoryAdminFormBuilder;
+use Alma\PrestaShop\Helpers\CustomFieldsHelper;
 use Alma\PrestaShop\Helpers\EligibilityHelper;
-use Alma\PrestaShop\Helpers\LanguageHelper;
 use Alma\PrestaShop\Helpers\LocaleHelper;
 use Alma\PrestaShop\Helpers\PriceHelper;
-use Alma\PrestaShop\Helpers\SettingsCustomFieldsHelper;
 use Alma\PrestaShop\Helpers\SettingsHelper;
 use Alma\PrestaShop\Hooks\FrontendHookController;
 use Alma\PrestaShop\Model\CartData;
@@ -60,7 +66,19 @@ class DisplayShoppingCartFooterHookController extends FrontendHookController
     protected $cartData;
 
     /**
+     * @var CustomFieldsHelper
+     */
+    protected $customFieldsHelper;
+
+    /**
+     * @var SettingsHelper
+     */
+    protected $settingsHelper;
+
+    /**
      * HookController constructor.
+     *
+     * @codeCoverageIgnore
      *
      * @param $module Alma
      */
@@ -68,10 +86,23 @@ class DisplayShoppingCartFooterHookController extends FrontendHookController
     {
         parent::__construct($module);
 
-        $this->localeHelper = new LocaleHelper(new LanguageHelper());
-        $this->eligibilityHelper = new EligibilityHelper();
-        $this->priceHelper = new PriceHelper();
-        $this->cartData = new CartData();
+        $localeHelperBuilder = new LocaleHelperBuilder();
+        $this->localeHelper = $localeHelperBuilder->getInstance();
+
+        $priceHelperBuilder = new PriceHelperBuilder();
+        $this->priceHelper = $priceHelperBuilder->getInstance();
+
+        $settingsHelperBuilder = new SettingsHelperBuilder();
+        $this->settingsHelper = $settingsHelperBuilder->getInstance();
+
+        $customFieldHelperBuilder = new CustomFieldHelperBuilder();
+        $this->customFieldsHelper = $customFieldHelperBuilder->getInstance();
+
+        $cartDataBuilder = new CartDataBuilder();
+        $this->cartData = $cartDataBuilder->getInstance();
+
+        $eligibilityHelperBuilder = new EligibilityHelperBuilder();
+        $this->eligibilityHelper = $eligibilityHelperBuilder->getInstance();
     }
 
     public function canRun()
@@ -83,7 +114,7 @@ class DisplayShoppingCartFooterHookController extends FrontendHookController
     {
         $eligibilityMsg = null;
 
-        $activePlans = SettingsHelper::activePlans();
+        $activePlans = $this->settingsHelper->activePlans();
 
         $locale = $this->localeHelper->getLocaleByIdLangForWidget($this->context->language->id);
 
@@ -96,7 +127,7 @@ class DisplayShoppingCartFooterHookController extends FrontendHookController
 
         $isEligible = true;
         if (!SettingsHelper::showCartWidgetIfNotEligible()) {
-            $installmentPlans = $this->eligibilityHelper->eligibilityCheck($this->context);
+            $installmentPlans = $this->eligibilityHelper->eligibilityCheck();
             $isEligible = false;
             foreach ($installmentPlans as $plan) {
                 if ($plan->installmentsCount !== 1 && $plan->isEligible) {
@@ -110,7 +141,10 @@ class DisplayShoppingCartFooterHookController extends FrontendHookController
         $isExcluded = false;
         $diff = $this->cartData->getCartExclusion($params['cart']);
         if (!empty($diff)) {
-            $eligibilityMsg = SettingsCustomFieldsHelper::getNonEligibleCategoriesMessageByLang($this->context->language->id);
+            $eligibilityMsg = $this->customFieldsHelper->getBtnValueByLang(
+                $this->context->language->id,
+                ExcludedCategoryAdminFormBuilder::ALMA_NOT_ELIGIBLE_CATEGORIES
+            );
             $isExcluded = true;
             if (!SettingsHelper::showCategoriesWidgetIfNotEligible()) {
                 $isEligible = false;

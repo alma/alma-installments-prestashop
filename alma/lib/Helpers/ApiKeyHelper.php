@@ -24,6 +24,7 @@
 
 namespace Alma\PrestaShop\Helpers;
 
+use Alma\PrestaShop\Builders\Helpers\SettingsHelperBuilder;
 use Alma\PrestaShop\Forms\ApiAdminFormBuilder;
 
 if (!defined('_PS_VERSION_')) {
@@ -43,11 +44,18 @@ class ApiKeyHelper
     private $encryptionHelper;
 
     /**
+     * @var SettingsHelper
+     */
+    protected $settingsHelper;
+
+    /**
      * ApiKey Helper construct
      */
     public function __construct()
     {
         $this->encryptionHelper = new EncryptionHelper();
+        $settingsHelperBuilder = new SettingsHelperBuilder();
+        $this->settingsHelper = $settingsHelperBuilder->getInstance();
     }
 
     /**
@@ -71,7 +79,7 @@ class ApiKeyHelper
      */
     public function setLiveApiKey($apiKey)
     {
-        SettingsHelper::updateValue(ApiAdminFormBuilder::ALMA_LIVE_API_KEY, $this->encryptionHelper->encrypt($apiKey));
+        $this->settingsHelper->updateKey(ApiAdminFormBuilder::ALMA_LIVE_API_KEY, $this->encryptionHelper->encrypt($apiKey));
     }
 
     /**
@@ -83,6 +91,6 @@ class ApiKeyHelper
      */
     public function setTestApiKey($apiKey)
     {
-        SettingsHelper::updateValue(ApiAdminFormBuilder::ALMA_TEST_API_KEY, $this->encryptionHelper->encrypt($apiKey));
+        $this->settingsHelper->updateKey(ApiAdminFormBuilder::ALMA_TEST_API_KEY, $this->encryptionHelper->encrypt($apiKey));
     }
 }

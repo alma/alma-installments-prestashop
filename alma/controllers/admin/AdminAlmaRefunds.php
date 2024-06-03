@@ -21,10 +21,12 @@
  * @copyright 2018-2023 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
+
 use Alma\API\Entities\Payment;
 use Alma\API\Exceptions\ParametersException;
 use Alma\API\Exceptions\RequestException;
 use Alma\API\RequestError;
+use Alma\PrestaShop\Builders\Helpers\PriceHelperBuilder;
 use Alma\PrestaShop\Helpers\ClientHelper;
 use Alma\PrestaShop\Helpers\OrderHelper;
 use Alma\PrestaShop\Helpers\PriceHelper;
@@ -54,10 +56,14 @@ class AdminAlmaRefundsController extends ModuleAdminController
      */
     protected $priceHelper;
 
+    /**
+     * @codeCoverageIgnore
+     */
     public function __construct()
     {
         parent::__construct();
-        $this->priceHelper = new PriceHelper();
+        $priceHelperBuilder = new PriceHelperBuilder();
+        $this->priceHelper = $priceHelperBuilder->getInstance();
     }
 
     /**
@@ -69,13 +75,14 @@ class AdminAlmaRefundsController extends ModuleAdminController
      * @throws PrestaShopDatabaseException
      * @throws PrestaShopException
      * @throws RequestException
+     * @throws \Alma\PrestaShop\Exceptions\OrderException
      */
     public function ajaxProcessRefund()
     {
         $refundType = Tools::getValue('refundType');
         $order = new Order(Tools::getValue('orderId'));
         $orderHelper = new OrderHelper();
-        $orderPayment = $orderHelper->getOrderPaymentOrFail($order);
+        $orderPayment = $orderHelper->ajaxGetOrderPayment($order);
         $paymentId = $orderPayment->transaction_id;
 
         $isTotal = $this->isTotalRefund($refundType);
@@ -96,9 +103,9 @@ class AdminAlmaRefundsController extends ModuleAdminController
         }
         $totalOrderAmount = $refundResult->purchase_amount;
         $idCurrency = (int) $order->id_currency;
-        $totalOrderPrice = PriceHelper::formatPriceToCentsByCurrencyId($totalOrderAmount, $idCurrency);
+        $totalOrderPrice = $this->priceHelper->formatPriceToCentsByCurrencyId($totalOrderAmount, $idCurrency);
         $totalRefundAmount = RefundHelper::buildTotalRefund($refundResult->refunds, $totalOrderAmount);
-        $totalRefundPrice = PriceHelper::formatPriceToCentsByCurrencyId($totalRefundAmount, $idCurrency);
+        $totalRefundPrice = $this->priceHelper->formatPriceToCentsByCurrencyId($totalRefundAmount, $idCurrency);
         $percentRefund = PriceHelper::calculatePercentage($totalRefundAmount, $totalOrderAmount);
 
         if ($isTotal) {

@@ -24,6 +24,7 @@
 
 namespace Alma\PrestaShop\Tests\Unit\Helper;
 
+use Alma\PrestaShop\Builders\Models\LocaleHelperBuilder;
 use Alma\PrestaShop\Helpers\LanguageHelper;
 use Alma\PrestaShop\Helpers\LocaleHelper;
 use PHPUnit\Framework\TestCase;
@@ -35,11 +36,10 @@ class LocaleHelperTest extends TestCase
      */
     protected $localeHelper;
 
-    public function __construct()
+    public function setUp()
     {
-        parent::__construct();
-
-        $this->localeHelper = new LocaleHelper(new LanguageHelper());
+        $localeHelperBuilder = new LocaleHelperBuilder();
+        $this->localeHelper = $localeHelperBuilder->getInstance();
     }
 
     /**
@@ -60,7 +60,10 @@ class LocaleHelperTest extends TestCase
         $languageHelperMock = \Mockery::mock(LanguageHelper::class);
         $languageHelperMock->shouldReceive('getIsoById')->with(2)->andReturn('nl');
 
-        $localeHelper = new LocaleHelper($languageHelperMock);
+        $localeHelperBuilder = \Mockery::mock(LocaleHelperBuilder::class)->makePartial();
+        $localeHelperBuilder->shouldReceive('getLanguageHelper')->andReturn($languageHelperMock);
+
+        $localeHelper = $localeHelperBuilder->getInstance();
         $locale = $localeHelper->getLocaleByIdLangForWidget(2);
 
         $this->assertEquals('nl-NL', $locale);

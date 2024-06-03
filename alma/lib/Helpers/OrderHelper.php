@@ -24,7 +24,9 @@
 
 namespace Alma\PrestaShop\Helpers;
 
-use Alma\PrestaShop\Model\OrderData;
+use Alma\PrestaShop\Exceptions\OrderException;
+use Alma\PrestaShop\Logger;
+use Alma\PrestaShop\Repositories\OrderRepository;
 use Alma\PrestaShop\Traits\AjaxTrait;
 
 if (!defined('_PS_VERSION_')) {
@@ -49,11 +51,18 @@ class OrderHelper
      * @var array
      */
     private $orders;
+    private $module;
+
+    /**
+     * @var OrderRepository
+     */
+    protected $orderRepository;
 
     public function __construct()
     {
         $this->defaultStatesExcluded = [6, 7, 8];
         $this->orders = [];
+        $this->orderRepository = new OrderRepository();
     }
 
     /**
@@ -120,21 +129,113 @@ class OrderHelper
     }
 
     /**
-     * @param $order
+     * @param \Order $order
      *
-     * @return false|mixed
+     * @return mixed
      *
-     * @throws \PrestaShopException
+     * @throws OrderException
      */
-    public function getOrderPaymentOrFail($order)
+    public function getOrderPayment($order)
     {
-        $orderPayment = OrderData::getCurrentOrderPayment($order);
+        $orderPayment = $this->getCurrentOrderPayment($order);
+
         if (!$orderPayment) {
-            $this->ajaxRenderAndExit(
-                $this->module->l('Error: Could not find Alma transaction', 'OrderDataTrait')
-            );
+            $msg = '[Alma] orderPayment not found';
+            Logger::instance()->error($msg);
+            throw new OrderException($msg);
         }
 
         return $orderPayment;
+    }
+
+    /**
+     * @param \Order $order
+     *
+     * @return false|\OrderPayment|void
+     *
+     * @throws \PrestaShopException
+     */
+    public function ajaxGetOrderPayment($order)
+    {
+        try {
+            return $this->getOrderPayment($order);
+        } catch (OrderException $e) {
+            $this->ajaxRenderAndExit(
+                $this->module->l('Error: Could not find Alma transaction', 'OrderHelper')
+            );
+        }
+    }
+
+    /**
+     * @param \OrderCore $order
+     * @param bool $checkIsAlma
+     *
+     * @return false|mixed
+     */
+    public function getCurrentOrderPayment($order, $checkIsAlma = true)
+    {
+        if (
+            true === $checkIsAlma
+            && 'alma' != $order->module
+            && 1 == $order->valid
+        ) {
+            return false;
+        }
+
+        $orderPayments = $order->getOrderPayments();
+
+        if (
+            $orderPayments
+            && isset($orderPayments[0])
+        ) {
+            return $orderPayments[0];
+        }
+
+        return false;
+    }
+
+    /**
+     * @throws OrderException
+     */
+    public function checkIfIsOrderAlma($order)
+    {
+        if ($order->module !== 'alma') {
+            $msg = sprintf(
+                '[Alma] This order id #%s is not an order Alma',
+                $order->id
+            );
+
+            Logger::instance()->error($msg);
+            throw new OrderException($msg);
+        }
+    }
+
+    /**
+     * @param int $id
+     *
+     * @return mixed
+     */
+    public function getCustomerNbOrders($id)
+    {
+        return \Order::getCustomerNbOrders($id);
+    }
+
+    /**
+     * Get ids order by customer id with limit (default = 10)
+     *
+     * @param int $idCustomer
+     * @param int $limit
+     *
+     * @return array
+     */
+    public function getOrdersByCustomer($idCustomer, $limit)
+    {
+        try {
+            $orders = $this->orderRepository->getCustomerOrders($idCustomer, $limit);
+        } catch (\PrestaShopDatabaseException $e) {
+            return [];
+        }
+
+        return $orders;
     }
 }

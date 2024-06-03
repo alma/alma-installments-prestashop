@@ -24,6 +24,7 @@
 
 namespace Alma\PrestaShop\Helpers;
 
+use Alma\PrestaShop\Factories\ContextFactory;
 use Alma\PrestaShop\Model\CarrierData;
 
 if (!defined('_PS_VERSION_')) {
@@ -36,15 +37,21 @@ if (!defined('_PS_VERSION_')) {
 class CarrierHelper
 {
     const UNKNOWN_CARRIER = 'Unknown';
+
     /** @var \Context */
-    private $context;
+    protected $context;
+
     /** @var CarrierData */
     private $carrierData;
 
-    public function __construct($context)
+    /**
+     * @param ContextFactory $contextFactory
+     * @param CarrierData $carrierData
+     */
+    public function __construct($contextFactory, $carrierData)
     {
-        $this->context = $context;
-        $this->carrierData = new CarrierData();
+        $this->context = $contextFactory->getContext();
+        $this->carrierData = $carrierData;
     }
 
     /**

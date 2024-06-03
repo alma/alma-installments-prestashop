@@ -29,17 +29,32 @@ if (!defined('_PS_VERSION_')) {
 }
 
 /**
- * Class LanguageHelper.
+ * Class ConfigurationHelper.
  */
 class ConfigurationHelper
 {
+    /**
+     * Get several configuration values (in one language only).
+     *
+     * @throws \PrestaShopException
+     *
+     * @param array $keys Keys wanted
+     * @param int $idLang Language ID
+     * @param int $idShopGroup
+     * @param int $idShop
+     *
+     * @return array Values
+     */
+    public function getMultiple($keys, $idLang = null, $idShopGroup = null, $idShop = null)
+    {
+        return \Configuration::getMultiple($keys, $idLang, $idShopGroup, $idShop);
+    }
+
     /**
      * Get a single configuration value (in one language only).
      *
      * @param string $key Key wanted
      * @param int $idLang Language ID
-     *
-     * @codeCoverageIgnore
      *
      * @return string|false Value
      */
@@ -56,12 +71,82 @@ class ConfigurationHelper
      * @param int $idShopGroup
      * @param int $idShop
      *
-     * @codeCoverageIgnore
-     *
      * @return bool
      */
     public function hasKey($key, $idLang = null, $idShopGroup = null, $idShop = null)
     {
         return \Configuration::hasKey($key, $idLang, $idShopGroup, $idShop);
+    }
+
+    /**
+     * Delete the key in database
+     *
+     * @param $configKey
+     *
+     * @return void
+     */
+    public function deleteByName($configKey)
+    {
+        \Configuration::deleteByName($configKey);
+    }
+
+    /**
+     * Delete the keys in database
+     *
+     * @param array $configKeys
+     *
+     * @return void
+     */
+    public function deleteByNames($configKeys)
+    {
+        foreach ($configKeys as $configKey) {
+            $this->deleteByName($configKey);
+        }
+    }
+
+    /**
+     * Update configuration key and value into database (automatically insert if key does not exist).
+     *
+     * Values are inserted/updated directly using SQL, because using (Configuration) ObjectModel
+     * may not insert values correctly (for example, HTML is escaped, when it should not be).
+     *
+     * @param string $key Configuration key
+     * @param mixed $values $values is an array if the configuration is multilingual, a single string else
+     * @param bool $html Specify if html is authorized in value
+     * @param int $idShopGroup
+     * @param int $idShop
+     *
+     * @return bool Update result
+     */
+    public function updateValue($key, $values, $html = false, $idShopGroup = null, $idShop = null)
+    {
+        return \Configuration::updateValue($key, $values, $html, $idShopGroup, $idShop);
+    }
+
+    /**
+     * @param int $installments
+     * @param SettingsHelper $settingsHelper
+     *
+     * @return bool
+     */
+    public function isInPageEnabled($installments, $settingsHelper)
+    {
+        $isInPageEnabled = $settingsHelper->isInPageEnabled();
+
+        if ($installments > 4) {
+            $isInPageEnabled = false;
+        }
+
+        return $isInPageEnabled;
+    }
+
+    /**
+     * @param string $key
+     *
+     * @return bool
+     */
+    public function isPayNow($key)
+    {
+        return ConstantsHelper::ALMA_KEY_PAYNOW === $key;
     }
 }

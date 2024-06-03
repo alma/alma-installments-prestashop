@@ -22,6 +22,9 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
+use Alma\API\ParamsError;
+use Alma\PrestaShop\Builders\Helpers\SettingsHelperBuilder;
+use Alma\PrestaShop\Builders\Models\PaymentDataBuilder;
 use Alma\PrestaShop\Helpers\ClientHelper;
 use Alma\PrestaShop\Helpers\SettingsHelper;
 use Alma\PrestaShop\Logger;
@@ -46,11 +49,25 @@ class AlmaPaymentModuleFrontController extends ModuleFrontController
      */
     protected $paymentData;
 
+    /**
+     * @var SettingsHelper
+     */
+    protected $settingsHelper;
+
+    /**
+     * @codeCoverageIgnore
+     */
     public function __construct()
     {
         parent::__construct();
+
         $this->context = Context::getContext();
-        $this->paymentData = new PaymentData();
+
+        $settingsHelperBuilder = new SettingsHelperBuilder();
+        $this->settingsHelper = $settingsHelperBuilder->getInstance();
+
+        $paymentDataBuilder = new PaymentDataBuilder();
+        $this->paymentData = $paymentDataBuilder->getInstance();
     }
 
     /**
@@ -89,7 +106,9 @@ class AlmaPaymentModuleFrontController extends ModuleFrontController
     /**
      * @return void
      *
+     * @throws PrestaShopDatabaseException
      * @throws PrestaShopException
+     * @throws ParamsError
      */
     public function postProcess()
     {
@@ -119,11 +138,11 @@ class AlmaPaymentModuleFrontController extends ModuleFrontController
             }
 
             $key = Tools::getValue('key', 'general_3_0_0');
-            $feePlans = json_decode(SettingsHelper::getFeePlans());
-            $dataFromKey = SettingsHelper::getDataFromKey($key);
+            $feePlans = json_decode($this->settingsHelper->getAlmaFeePlans());
+            $dataFromKey = $this->settingsHelper->getDataFromKey($key);
 
             $cart = $this->context->cart;
-            $data = $this->paymentData->dataFromCart($cart, $this->context, $dataFromKey, true);
+            $data = $this->paymentData->dataFromCart($dataFromKey, true);
             $alma = ClientHelper::defaultInstance();
 
             if (!$data || !$alma) {
@@ -141,12 +160,17 @@ class AlmaPaymentModuleFrontController extends ModuleFrontController
 
             $payment = $alma->payments->create($data);
         } catch (Exception $e) {
-            $msg = "[Alma] ERROR when creating payment for Cart {$cart->id}: {$e->getMessage()}";
+            $msg = sprintf(
+                '[Alma] ERROR when creating payment for Cart %s: %s - Trace %s',
+                $cart->id,
+                $e->getMessage(),
+                $e->getTraceAsString()
+            );
             Logger::instance()->error($msg);
             $this->ajaxErrorAndDie();
         }
 
-        if (PaymentData::isInPage($data)) {
+        if ($this->paymentData->isInPage($data)) {
             $this->ajaxRenderAndExit(json_encode($payment));
         }
 

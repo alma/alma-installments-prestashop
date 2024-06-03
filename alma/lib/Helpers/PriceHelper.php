@@ -24,6 +24,7 @@
 
 namespace Alma\PrestaShop\Helpers;
 
+use Alma\PrestaShop\Factories\ContextFactory;
 use Alma\PrestaShop\Logger;
 
 if (!defined('_PS_VERSION_')) {
@@ -32,6 +33,32 @@ if (!defined('_PS_VERSION_')) {
 
 class PriceHelper
 {
+    /**
+     * @var ToolsHelper
+     */
+    protected $toolsHelper;
+
+    /**
+     * @var CurrencyHelper
+     */
+    protected $currencyHelper;
+
+    /**
+     * @var ContextFactory
+     */
+    protected $contextFactory;
+
+    /**
+     * @param ToolsHelper $toolsHelper
+     * @param CurrencyHelper $currencyHelper
+     */
+    public function __construct($toolsHelper, $currencyHelper, $contextFactory)
+    {
+        $this->toolsHelper = $toolsHelper;
+        $this->currencyHelper = $currencyHelper;
+        $this->contextFactory = $contextFactory;
+    }
+
     /**
      * Converts a float price to its integer cents value, used by the API
      *
@@ -51,19 +78,17 @@ class PriceHelper
      *
      * @return int
      */
-    public static function convertPriceToCentsStr($price)
+    public function convertPriceToCentsStr($price)
     {
         $priceStr = (string) $price;
         $parts = explode('.', $priceStr);
 
         if (count($parts) == 1) {
             $parts[] = '00';
-        } elseif (\Tools::strlen($parts[1]) == 1) {
+        } elseif ($this->toolsHelper->strlen($parts[1]) == 1) {
             $parts[1] .= '0';
-        } else {
-            if (\Tools::strlen($parts[1]) > 2) {
-                $parts[1] = \Tools::substr($parts[1], 0, 2);
-            }
+        } elseif ($this->toolsHelper->strlen($parts[1]) > 2) {
+            $parts[1] = $this->toolsHelper->substr($parts[1], 0, 2);
         }
 
         return (int) implode($parts);
@@ -76,7 +101,7 @@ class PriceHelper
      *
      * @return float
      */
-    public static function convertPriceFromCents($price)
+    public function convertPriceFromCents($price)
     {
         return (float) ($price / 100);
     }
@@ -86,44 +111,26 @@ class PriceHelper
      * @param null $idCurrency
      *
      * @return string The formatted price, using the current locale and provided or current currency
-     *
-     * @throws \PrestaShop\PrestaShop\Core\Localization\Exception\LocalizationException
      */
-    public static function formatPriceToCentsByCurrencyId($cents, $idCurrency = null)
+    public function formatPriceToCentsByCurrencyId($cents, $idCurrency = null)
     {
-        $legacy = version_compare(_PS_VERSION_, '1.7.6.0', '<');
-        $currency = \Context::getContext()->currency;
-        $price = PriceHelper::convertPriceFromCents($cents);
+        $legacy = $this->toolsHelper->psVersionCompare('1.7.6.0', '<');
+
+        $currency = $this->contextFactory->getCurrencyFromContext();
+
+        $price = $this->convertPriceFromCents($cents);
 
         if ($idCurrency) {
-            $currency = \Currency::getCurrencyInstance((int) $idCurrency);
-
-            if (!\Validate::isLoadedObject($currency)) {
-                $currency = \Context::getContext()->currency;
-            }
+            $currency = $this->currencyHelper->getCurrencyById($idCurrency);
         }
 
         // We default to a naive format of the price, in case things don't work with PrestaShop localization
         $formattedPrice = sprintf('%.2f€', $price);
 
         try {
-            if ($legacy) {
-                $formattedPrice = \Tools::displayPrice($price, $currency);
-            } else {
-                $locale = \Context::getContext()->currentLocale;
-
-                try {
-                    $formattedPrice = $locale->formatPrice($price, $currency->iso_code);
-                } catch (\PrestaShop\PrestaShop\Core\Localization\Exception\LocalizationException $e) {
-                    // Catch LocalizationException at this level too, so that we can fallback to \Tools::displayPrice if it
-                    // still exists. If it, itself, throws a LocalizationException, it will be caught by the outer catch.
-                    if (method_exists('\Tools', 'displayPrice')) {
-                        $formattedPrice = \Tools::displayPrice($price, $currency);
-                    }
-                }
-            }
+            $formattedPrice = $this->toolsHelper->displayPrice($legacy, $price, $currency);
         } catch (\Exception $e) {
-            Logger::instance()->warning("Price localization error: $e");
+            Logger::instance()->warning(sprintf('Price localization error: %s', $e->getMessage()));
         }
 
         return $formattedPrice;

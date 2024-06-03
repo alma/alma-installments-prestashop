@@ -28,7 +28,8 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-use Alma\PrestaShop\Helpers\OrderHelper;
+use Alma\PrestaShop\Builders\Helpers\ShareOfCheckoutHelperBuilder;
+use Alma\PrestaShop\Helpers\InsuranceHelper;
 use Alma\PrestaShop\Helpers\ShareOfCheckoutHelper;
 use Alma\PrestaShop\Hooks\FrontendHookController;
 
@@ -38,11 +39,17 @@ class DisplayBackOfficeHeaderHookController extends FrontendHookController
      * @var ShareOfCheckoutHelper
      */
     protected $socHelper;
+    /**
+     * @var InsuranceHelper
+     */
+    protected $insuranceHelper;
 
     public function __construct($module)
     {
-        $orderHelper = new OrderHelper();
-        $this->socHelper = new ShareOfCheckoutHelper($orderHelper);
+        $shareOfCheckoutHelperBuilder = new ShareOfCheckoutHelperBuilder();
+        $this->socHelper = $shareOfCheckoutHelperBuilder->getInstance();
+
+        $this->insuranceHelper = new InsuranceHelper();
 
         parent::__construct($module);
     }
@@ -78,6 +85,13 @@ class DisplayBackOfficeHeaderHookController extends FrontendHookController
 
         if ($this->socHelper->isSocActivated()) {
             $this->socHelper->sendSocData();
+        }
+
+        if ($this->insuranceHelper->isInsuranceActivated()) {
+            $this->context->controller->addJS($this->module->_path . 'views/js/admin/components/modal.js');
+            $this->context->controller->addJS($this->module->_path . 'views/js/admin/alma-insurance-orders.js');
+
+            return $this->module->display($this->module->file, 'DisplayBackOfficeHeader.tpl');
         }
     }
 }

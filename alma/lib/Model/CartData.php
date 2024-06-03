@@ -24,11 +24,9 @@
 
 namespace Alma\PrestaShop\Model;
 
-use Alma\PrestaShop\Helpers\ConfigurationHelper;
 use Alma\PrestaShop\Helpers\PriceHelper;
 use Alma\PrestaShop\Helpers\ProductHelper;
 use Alma\PrestaShop\Helpers\SettingsHelper;
-use Alma\PrestaShop\Helpers\ShopHelper;
 use Alma\PrestaShop\Repositories\ProductRepository;
 
 if (!defined('_PS_VERSION_')) {
@@ -49,10 +47,28 @@ class CartData
      */
     protected $settingsHelper;
 
-    public function __construct()
+    /**
+     * @var ProductHelper
+     */
+    protected $productHelper;
+
+    /**
+     * @var ProductRepository
+     */
+    protected $productRepository;
+
+    /**
+     * @param ProductHelper $productHelper
+     * @param SettingsHelper $settingsHelper
+     * @param PriceHelper $priceHelper
+     * @param ProductRepository $productRepository
+     */
+    public function __construct($productHelper, $settingsHelper, $priceHelper, $productRepository)
     {
-        $this->priceHelper = new PriceHelper();
-        $this->settingsHelper = new SettingsHelper(new ShopHelper(), new ConfigurationHelper());
+        $this->priceHelper = $priceHelper;
+        $this->settingsHelper = $settingsHelper;
+        $this->productHelper = $productHelper;
+        $this->productRepository = $productRepository;
     }
 
     /**
@@ -65,11 +81,8 @@ class CartData
      */
     public function cartInfo($cart)
     {
-        $productHelper = new ProductHelper();
-        $productRepository = new ProductRepository();
-
         return [
-            'items' => $this->getCartItems($cart, $productHelper, $productRepository),
+            'items' => $this->getCartItems($cart),
             'discounts' => $this->getCartDiscounts($cart),
         ];
     }
@@ -79,56 +92,56 @@ class CartData
      *
      * @return bool|mixed
      */
-    private static function includeTaxes($cart)
+    public function includeTaxes($cart)
     {
         if (version_compare(_PS_VERSION_, '1.7', '>=')) {
             $taxConfiguration = new \TaxConfiguration();
 
             return $taxConfiguration->includeTaxes();
-        } else {
-            if (!\Configuration::get('PS_TAX')) {
-                return false;
-            }
-
-            $idCustomer = (int) $cart->id_customer;
-            if (!array_key_exists($idCustomer, self::$taxCalculationMethod)) {
-                self::$taxCalculationMethod[$idCustomer] = !\Product::getTaxCalculationMethod($idCustomer);
-            }
-
-            return self::$taxCalculationMethod[$idCustomer];
         }
+
+        if (!\Configuration::get('PS_TAX')) {
+            return false;
+        }
+
+        $idCustomer = (int) $cart->id_customer;
+
+        if (!array_key_exists($idCustomer, self::$taxCalculationMethod)) {
+            self::$taxCalculationMethod[$idCustomer] = !$this->productHelper->getTaxCalculationMethod($idCustomer);
+        }
+
+        return self::$taxCalculationMethod[$idCustomer];
     }
 
     /**
      * @param \Cart $cart
-     * @param ProductHelper $productHelper
-     * @param ProductRepository $productRepository
      *
      * @return array of items
      *
      * @throws \PrestaShopDatabaseException
      * @throws \PrestaShopException
      */
-    public function getCartItems($cart, $productHelper, $productRepository)
+    public function getCartItems($cart)
     {
         $items = [];
 
         $summaryDetails = $cart->getSummaryDetails($cart->id_lang, true);
         $products = array_merge($summaryDetails['products'], $summaryDetails['gift_products']);
-        $productsDetails = $productRepository->getProductsDetails($products);
-        $combinationsNames = $productRepository->getProductsCombinations($cart, $products);
+        $productsDetails = $this->productRepository->getProductsDetails($products);
+        $combinationsNames = $this->productRepository->getProductsCombinations($cart, $products);
 
         foreach ($products as $productRow) {
-            $product = new \Product(null, false, $cart->id_lang);
+            $product = $this->productHelper->createProduct(null, false, $cart->id_lang);
             $product->hydrate($productRow);
             $pid = (int) $product->id;
             $manufacturerName = isset($productRow['manufacturer_name']) ? $productRow['manufacturer_name'] : null;
+
             if (!$manufacturerName && isset($productsDetails[$pid])) {
                 $manufacturerName = $productsDetails[$pid]['manufacturer_name'];
             }
 
-            $unitPrice = self::includeTaxes($cart) ? (float) $productRow['price_wt'] : (float) $productRow['price'];
-            $linePrice = self::includeTaxes($cart) ? (float) $productRow['total_wt'] : (float) $productRow['total'];
+            $unitPrice = $this->includeTaxes($cart) ? (float) $productRow['price_wt'] : (float) $productRow['price'];
+            $linePrice = $this->includeTaxes($cart) ? (float) $productRow['total_wt'] : (float) $productRow['total'];
 
             if (isset($productRow['gift'])) {
                 $isGift = (bool) $productRow['gift'];
@@ -136,7 +149,7 @@ class CartData
                 $isGift = isset($productRow['is_gift']) && (bool) $productRow['is_gift'];
             }
 
-            $pictureUrl = $productHelper->getImageLink($productRow);
+            $pictureUrl = $this->productHelper->getImageLink($productRow);
 
             if (isset($productRow['is_virtual'])) {
                 $requiresShipping = !(bool) $productRow['is_virtual'];
@@ -154,10 +167,10 @@ class CartData
                 'line_price' => $this->priceHelper->convertPriceToCents($linePrice),
                 'is_gift' => $isGift,
                 'categories' => [$productRow['category']],
-                'url' => $productHelper->getProductLink($product, $productRow, $cart),
+                'url' => $this->productHelper->getProductLink($product, $productRow, $cart),
                 'picture_url' => $pictureUrl,
                 'requires_shipping' => $requiresShipping,
-                'taxes_included' => self::includeTaxes($cart),
+                'taxes_included' => $this->includeTaxes($cart),
             ];
 
             if (isset($productRow['id_product_attribute']) && (int) $productRow['id_product_attribute']) {
@@ -179,13 +192,13 @@ class CartData
      *
      * @return array of discount items
      */
-    private function getCartDiscounts($cart)
+    public function getCartDiscounts($cart)
     {
         $discounts = [];
         $cartRules = $cart->getCartRules(\CartRule::FILTER_ACTION_ALL, false);
 
         foreach ($cartRules as $cartRule) {
-            $amount = self::includeTaxes($cart) ? (float) $cartRule['value_real'] : (float) $cartRule['value_tax_exc'];
+            $amount = $this->includeTaxes($cart) ? (float) $cartRule['value_real'] : (float) $cartRule['value_tax_exc'];
             $discounts[] = [
                 'title' => isset($cartRule['name']) ? $cartRule['name'] : $cartRule['description'],
                 'amount' => $this->priceHelper->convertPriceToCents($amount),
@@ -209,7 +222,8 @@ class CartData
         $cartProductsCategories = [];
 
         foreach ($products as $p) {
-            $productCategories = \Product::getProductCategories((int) $p['id_product']);
+            $productCategories = $this->productHelper->getProductCategories((int) $p['id_product']);
+
             foreach ($productCategories as $cat) {
                 $cartProductsCategories[] = $cat;
             }

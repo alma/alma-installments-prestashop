@@ -26,14 +26,17 @@ namespace Alma\PrestaShop\Validators;
 
 use Alma\API\Entities\Payment;
 use Alma\API\RequestError;
+use Alma\PrestaShop\API\MismatchException;
+use Alma\PrestaShop\Builders\Helpers\PriceHelperBuilder;
+use Alma\PrestaShop\Builders\Helpers\SettingsHelperBuilder;
+use Alma\PrestaShop\Builders\Services\OrderServiceBuilder;
 use Alma\PrestaShop\Helpers\ClientHelper;
-use Alma\PrestaShop\Helpers\ConfigurationHelper;
 use Alma\PrestaShop\Helpers\PriceHelper;
 use Alma\PrestaShop\Helpers\RefundHelper;
 use Alma\PrestaShop\Helpers\SettingsHelper;
-use Alma\PrestaShop\Helpers\ShopHelper;
 use Alma\PrestaShop\Helpers\ToolsHelper;
 use Alma\PrestaShop\Logger;
+use Alma\PrestaShop\Services\OrderService;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -62,6 +65,11 @@ class PaymentValidation
     protected $priceHelper;
 
     /**
+     * @var OrderService
+     */
+    protected $orderService;
+
+    /**
      * @param $context
      * @param $module
      */
@@ -69,9 +77,18 @@ class PaymentValidation
     {
         $this->context = $context;
         $this->module = $module;
-        $this->settingsHelper = new SettingsHelper(new ShopHelper(), new ConfigurationHelper());
+
+        $settingsHelperBuilder = new SettingsHelperBuilder();
+        $this->settingsHelper = $settingsHelperBuilder->getInstance();
+
         $this->toolsHelper = new ToolsHelper();
-        $this->priceHelper = new PriceHelper();
+
+        $priceHelperBuilder = new PriceHelperBuilder();
+        $this->priceHelper = $priceHelperBuilder->getInstance();
+
+        $orderServiceBuilder = new OrderServiceBuilder();
+
+        $this->orderService = $orderServiceBuilder->getInstance();
     }
 
     /**
@@ -155,7 +172,7 @@ class PaymentValidation
 
         if (!$this->isValidCurrency()) {
             Logger::instance()->error("[Alma] Payment validation error for Cart {$cart->id}: currency mismatch.");
-            $msg = $this->module->l('Alma Monthly Installments are not available for this currency', 'paymentvalidation');
+            $msg = $this->module->l('Alma Monthly Installments are not available for this currency', 'PaymentValidation');
             throw new PaymentValidationError($cart, $msg);
         }
 
@@ -218,15 +235,15 @@ class PaymentValidation
             if ($this->settingsHelper->isDeferred($payment)) {
                 $days = $this->settingsHelper->getDuration($payment);
                 $paymentMode = sprintf(
-                    $this->module->l('Alma - +%d days payment', 'paymentvalidation'),
+                    $this->module->l('Alma - +%d days payment', 'PaymentValidation'),
                     $days
                 );
             } else {
                 if (1 === $installmentCount) {
-                    $paymentMode = $this->module->l('Alma - Pay now', 'paymentvalidation');
+                    $paymentMode = $this->module->l('Alma - Pay now', 'PaymentValidation');
                 } else {
                     $paymentMode = sprintf(
-                        $this->module->l('Alma - %d monthly installments', 'paymentvalidation'),
+                        $this->module->l('Alma - %d monthly installments', 'PaymentValidation'),
                         $installmentCount
                     );
                 }
@@ -237,7 +254,7 @@ class PaymentValidation
                 $this->module->validateOrder(
                     (int) $cart->id,
                     \Configuration::get('PS_OS_PAYMENT'),
-                    PriceHelper::convertPriceFromCents($payment->purchase_amount),
+                    $this->priceHelper->convertPriceFromCents($payment->purchase_amount),
                     $paymentMode,
                     null,
                     $extraVars,
@@ -269,7 +286,9 @@ class PaymentValidation
                 $alma->payments->addOrder($payment->id, [
                     'merchant_reference' => $order->reference,
                 ]);
-            } catch (RequestError $e) {
+
+                $this->orderService->manageStatusUpdate($order);
+            } catch (\Exception $e) {
                 $msg = "[Alma] Error updating order reference {$order->reference}: {$e->getMessage()}";
                 Logger::instance()->error($msg);
             }

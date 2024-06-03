@@ -30,6 +30,12 @@ if (!defined('_PS_VERSION_')) {
 
 use Alma\API\Entities\Merchant;
 use Alma\API\RequestError;
+use Alma\PrestaShop\Builders\Helpers\ApiHelperBuilder;
+use Alma\PrestaShop\Builders\Helpers\CustomFieldHelperBuilder;
+use Alma\PrestaShop\Builders\Helpers\PriceHelperBuilder;
+use Alma\PrestaShop\Builders\Helpers\SettingsHelperBuilder;
+use Alma\PrestaShop\Builders\Helpers\ShareOfCheckoutHelperBuilder;
+use Alma\PrestaShop\Builders\Models\MediaHelperBuilder;
 use Alma\PrestaShop\Exceptions\MissingParameterException;
 use Alma\PrestaShop\Forms\ApiAdminFormBuilder;
 use Alma\PrestaShop\Forms\CartEligibilityAdminFormBuilder;
@@ -45,20 +51,21 @@ use Alma\PrestaShop\Forms\ShareOfCheckoutAdminFormBuilder;
 use Alma\PrestaShop\Helpers\ApiHelper;
 use Alma\PrestaShop\Helpers\ApiKeyHelper;
 use Alma\PrestaShop\Helpers\ClientHelper;
-use Alma\PrestaShop\Helpers\ConfigurationHelper;
 use Alma\PrestaShop\Helpers\ConstantsHelper;
+use Alma\PrestaShop\Helpers\CustomFieldsHelper;
 use Alma\PrestaShop\Helpers\MediaHelper;
-use Alma\PrestaShop\Helpers\OrderHelper;
 use Alma\PrestaShop\Helpers\PriceHelper;
-use Alma\PrestaShop\Helpers\SettingsCustomFieldsHelper;
 use Alma\PrestaShop\Helpers\SettingsHelper;
-use Alma\PrestaShop\Helpers\ShareOfCheckoutHelper;
-use Alma\PrestaShop\Helpers\ShopHelper;
 use Alma\PrestaShop\Hooks\AdminHookController;
 use Alma\PrestaShop\Logger;
 
 final class GetContentHookController extends AdminHookController
 {
+    /**
+     * @var ApiHelper
+     */
+    protected $apiHelper;
+
     /** @var ApiKeyHelper */
     private $apiKeyHelper;
 
@@ -74,6 +81,21 @@ final class GetContentHookController extends AdminHookController
      * @var PriceHelper
      */
     protected $priceHelper;
+
+    /**
+     * @var CustomFieldsHelper
+     */
+    protected $customFieldsHelper;
+
+    /**
+     * @var MediaHelper
+     */
+    protected $mediaHelper;
+
+    /**
+     * @var bool
+     */
+    protected $hasKey;
 
     /**
      * @var array
@@ -132,12 +154,29 @@ final class GetContentHookController extends AdminHookController
 
     /**
      * GetContentHook Controller construct.
+     *
+     * @codeCoverageIgnore
      */
     public function __construct($module)
     {
+        $apiHelperBuilder = new ApiHelperBuilder();
+        $this->apiHelper = $apiHelperBuilder->getInstance();
+
         $this->apiKeyHelper = new ApiKeyHelper();
-        $this->settingsHelper = new SettingsHelper(new ShopHelper(), new ConfigurationHelper());
-        $this->priceHelper = new PriceHelper();
+
+        $settingsHelperBuilder = new SettingsHelperBuilder();
+        $this->settingsHelper = $settingsHelperBuilder->getInstance();
+
+        $priceHelperBuilder = new PriceHelperBuilder();
+        $this->priceHelper = $priceHelperBuilder->getInstance();
+
+        $customFieldHelperBuilder = new CustomFieldHelperBuilder();
+        $this->customFieldsHelper = $customFieldHelperBuilder->getInstance();
+
+        $mediaHelperBuilder = new MediaHelperBuilder();
+        $this->mediaHelper = $mediaHelperBuilder->getInstance();
+
+        $this->hasKey = false;
 
         parent::__construct($module);
     }
@@ -166,6 +205,11 @@ final class GetContentHookController extends AdminHookController
 
         if ((empty($liveKey) && ALMA_MODE_LIVE == $apiMode) || (empty($testKey) && ALMA_MODE_TEST == $apiMode)) {
             $this->context->smarty->assign('validation_error', "missing_key_for_{$apiMode}_mode");
+            $this->context->smarty->assign([
+                'suggestPSAccount' => false,
+            ]);
+
+            $this->hasKey = false;
 
             return $this->module->display($this->module->file, 'getContent.tpl');
         }
@@ -184,8 +228,8 @@ final class GetContentHookController extends AdminHookController
             return $credentialsError['message'];
         }
 
-        $orderHelper = new OrderHelper();
-        $shareOfCheckoutHelper = new ShareOfCheckoutHelper($orderHelper);
+        $shareOfCheckoutHelperBuilder = new ShareOfCheckoutHelperBuilder();
+        $shareOfCheckoutHelper = $shareOfCheckoutHelperBuilder->getInstance();
 
         if ($liveKey !== SettingsHelper::getLiveKey()
             && ConstantsHelper::OBSCURE_VALUE !== $liveKey
@@ -209,7 +253,7 @@ final class GetContentHookController extends AdminHookController
 
         // Try to get merchant from configured API key/mode
         try {
-            $merchant = ApiHelper::getMerchant($this->module);
+            $merchant = $this->apiHelper->getMerchant();
         } catch (\Exception $e) {
             $this->context->smarty->assign(
                 [
@@ -293,8 +337,8 @@ final class GetContentHookController extends AdminHookController
                             'n' => $n,
                             'deferred_days' => $deferred_days,
                             'deferred_months' => $deferred_months,
-                            'min' => PriceHelper::convertPriceFromCents($feePlan->min_purchase_amount),
-                            'max' => PriceHelper::convertPriceFromCents(min($max, $feePlan->max_purchase_amount)),
+                            'min' => $this->priceHelper->convertPriceFromCents($feePlan->min_purchase_amount),
+                            'max' => $this->priceHelper->convertPriceFromCents(min($max, $feePlan->max_purchase_amount)),
                         ]);
 
                         return $this->module->display($this->module->file, 'getContent.tpl');
@@ -311,8 +355,8 @@ final class GetContentHookController extends AdminHookController
                             'n' => $n,
                             'deferred_days' => $deferred_days,
                             'deferred_months' => $deferred_months,
-                            'min' => PriceHelper::convertPriceFromCents($min),
-                            'max' => PriceHelper::convertPriceFromCents($feePlan->max_purchase_amount),
+                            'min' => $this->priceHelper->convertPriceFromCents($min),
+                            'max' => $this->priceHelper->convertPriceFromCents($feePlan->max_purchase_amount),
                         ]);
 
                         return $this->module->display($this->module->file, 'getContent.tpl');
@@ -432,7 +476,7 @@ final class GetContentHookController extends AdminHookController
 
             // Try to get merchant from configured API key/mode
             try {
-                ApiHelper::getMerchant($this->module, $alma);
+                $this->apiHelper->getMerchant($alma);
             } catch (\Exception $e) {
                 $this->context->smarty->assign(
                     [
@@ -480,7 +524,7 @@ final class GetContentHookController extends AdminHookController
         $merchant = null;
 
         try {
-            $merchant = ApiHelper::getMerchant($this->module);
+            $merchant = $this->apiHelper->getMerchant();
         } catch (\Exception $e) {
             Logger::instance()->error($e->getMessage());
         }
@@ -496,6 +540,8 @@ final class GetContentHookController extends AdminHookController
 
             $this->assignSmartyAlertClasses();
             $this->context->smarty->assign('tip', 'fill_api_keys');
+            $this->context->smarty->assign('suggestPSAccount', false);
+            $this->context->smarty->assign('hasPSAccount', false);
 
             $extraMessage = $this->module->display($this->module->file, 'getContent.tpl');
         }
@@ -543,13 +589,13 @@ final class GetContentHookController extends AdminHookController
                     : $feePlan->min_purchase_amount;
 
                 $helper->fields_value["ALMA_{$key}_MIN_AMOUNT"] = (int) round(
-                    PriceHelper::convertPriceFromCents($minAmount)
+                    $this->priceHelper->convertPriceFromCents($minAmount)
                 );
                 $maxAmount = isset($installmentsPlans->$key->max)
                     ? $installmentsPlans->$key->max
                     : $feePlan->max_purchase_amount;
 
-                $helper->fields_value["ALMA_{$key}_MAX_AMOUNT"] = (int) PriceHelper::convertPriceFromCents($maxAmount);
+                $helper->fields_value["ALMA_{$key}_MAX_AMOUNT"] = (int) $this->priceHelper->convertPriceFromCents($maxAmount);
 
                 $order = isset($installmentsPlans->$key->order)
                     ? $installmentsPlans->$key->order
@@ -575,7 +621,7 @@ final class GetContentHookController extends AdminHookController
      */
     protected function buildForms($needsKeys, $feePlansOrdered, $installmentsPlans)
     {
-        $iconPath = MediaHelper::getIconPathAlmaTiny($this->module);
+        $iconPath = $this->mediaHelper->getIconPathAlmaTiny();
         $fieldsForms = [];
 
         if (!$needsKeys) {
@@ -638,15 +684,31 @@ final class GetContentHookController extends AdminHookController
             'ALMA_LIVE_API_KEY' => SettingsHelper::getLiveKey(),
             'ALMA_TEST_API_KEY' => SettingsHelper::getTestKey(),
             'ALMA_API_MODE' => SettingsHelper::getActiveMode(),
-            PaymentButtonAdminFormBuilder::ALMA_PAY_NOW_BUTTON_TITLE => SettingsCustomFieldsHelper::getPayNowButtonTitle(),
-            PaymentButtonAdminFormBuilder::ALMA_PAY_NOW_BUTTON_DESC => SettingsCustomFieldsHelper::getPayNowButtonDescription(),
-            PaymentButtonAdminFormBuilder::ALMA_PNX_BUTTON_TITLE => SettingsCustomFieldsHelper::getPnxButtonTitle(),
-            PaymentButtonAdminFormBuilder::ALMA_PNX_BUTTON_DESC => SettingsCustomFieldsHelper::getPnxButtonDescription(),
-            PaymentButtonAdminFormBuilder::ALMA_DEFERRED_BUTTON_TITLE => SettingsCustomFieldsHelper::getPaymentButtonTitleDeferred(),
-            PaymentButtonAdminFormBuilder::ALMA_DEFERRED_BUTTON_DESC => SettingsCustomFieldsHelper::getPaymentButtonDescriptionDeferred(),
-            PaymentButtonAdminFormBuilder::ALMA_PNX_AIR_BUTTON_TITLE => SettingsCustomFieldsHelper::getPnxAirButtonTitle(),
-            PaymentButtonAdminFormBuilder::ALMA_PNX_AIR_BUTTON_DESC => SettingsCustomFieldsHelper::getPnxAirButtonDescription(),
-            InpageAdminFormBuilder::ALMA_ACTIVATE_INPAGE . '_ON' => SettingsHelper::isInPageEnabled(),
+            PaymentButtonAdminFormBuilder::ALMA_PAY_NOW_BUTTON_TITLE => $this->customFieldsHelper->getValue(
+                PaymentButtonAdminFormBuilder::ALMA_PAY_NOW_BUTTON_TITLE
+            ),
+            PaymentButtonAdminFormBuilder::ALMA_PAY_NOW_BUTTON_DESC => $this->customFieldsHelper->getValue(
+                PaymentButtonAdminFormBuilder::ALMA_PAY_NOW_BUTTON_DESC
+            ),
+            PaymentButtonAdminFormBuilder::ALMA_PNX_BUTTON_TITLE => $this->customFieldsHelper->getValue(
+                PaymentButtonAdminFormBuilder::ALMA_PNX_BUTTON_TITLE
+            ),
+            PaymentButtonAdminFormBuilder::ALMA_PNX_BUTTON_DESC => $this->customFieldsHelper->getValue(
+                PaymentButtonAdminFormBuilder::ALMA_PNX_BUTTON_DESC
+            ),
+            PaymentButtonAdminFormBuilder::ALMA_DEFERRED_BUTTON_TITLE => $this->customFieldsHelper->getValue(
+                PaymentButtonAdminFormBuilder::ALMA_DEFERRED_BUTTON_TITLE
+            ),
+            PaymentButtonAdminFormBuilder::ALMA_DEFERRED_BUTTON_DESC => $this->customFieldsHelper->getValue(
+                PaymentButtonAdminFormBuilder::ALMA_DEFERRED_BUTTON_DESC
+            ),
+            PaymentButtonAdminFormBuilder::ALMA_PNX_AIR_BUTTON_TITLE => $this->customFieldsHelper->getValue(
+                PaymentButtonAdminFormBuilder::ALMA_PNX_AIR_BUTTON_TITLE
+            ),
+            PaymentButtonAdminFormBuilder::ALMA_PNX_AIR_BUTTON_DESC => $this->customFieldsHelper->getValue(
+                PaymentButtonAdminFormBuilder::ALMA_PNX_AIR_BUTTON_DESC
+            ),
+            InpageAdminFormBuilder::ALMA_ACTIVATE_INPAGE . '_ON' => $this->settingsHelper->isInPageEnabled(),
             'ALMA_SHOW_DISABLED_BUTTON' => SettingsHelper::showDisabledButton(),
             'ALMA_SHOW_ELIGIBILITY_MESSAGE_ON' => SettingsHelper::showEligibilityMessage(),
             'ALMA_CART_WDGT_NOT_ELGBL_ON' => SettingsHelper::showCartWidgetIfNotEligible(),
@@ -660,7 +722,9 @@ final class GetContentHookController extends AdminHookController
             'ALMA_STATE_TRIGGER' => SettingsHelper::getPaymentTriggerState(),
             'ALMA_PAYMENT_ON_TRIGGERING_ENABLED_ON' => $this->settingsHelper->isPaymentTriggerEnabledByState(),
             'ALMA_DESCRIPTION_TRIGGER' => SettingsHelper::getKeyDescriptionPaymentTrigger(),
-            'ALMA_NOT_ELIGIBLE_CATEGORIES' => SettingsCustomFieldsHelper::getNonEligibleCategoriesMessage(),
+            'ALMA_NOT_ELIGIBLE_CATEGORIES' => $this->customFieldsHelper->getValue(
+                ExcludedCategoryAdminFormBuilder::ALMA_NOT_ELIGIBLE_CATEGORIES
+            ),
             'ALMA_SHOW_PRODUCT_ELIGIBILITY_ON' => SettingsHelper::showProductEligibility(),
             'ALMA_PRODUCT_PRICE_SELECTOR' => SettingsHelper::getProductPriceQuerySelector(),
             'ALMA_WIDGET_POSITION_SELECTOR' => SettingsHelper::getProductWidgetPositionQuerySelector(),
@@ -727,15 +791,15 @@ final class GetContentHookController extends AdminHookController
                 'success_classes' => 'alert alert-success',
                 'breadcrumbs2' => [
                     'container' => [
-                        'name' => $this->module->l('Modules'),
+                        'name' => $this->module->l('Modules', 'GetContentHookController'),
                         'href' => $href,
                     ],
                     'tab' => [
-                        'name' => $this->module->l('Module Manager '),
+                        'name' => $this->module->l('Module Manager', 'GetContentHookController'),
                         'href' => $href,
                     ],
                 ],
-                'quick_access_current_link_name' => $this->module->l('Module Manager - List'),
+                'quick_access_current_link_name' => $this->module->l('Module Manager - List', 'GetContentHookController'),
                 'quick_access_current_link_icon' => 'icon-AdminParentModulesSf',
                 'token' => $token,
                 'host_mode' => 0,
@@ -764,7 +828,15 @@ final class GetContentHookController extends AdminHookController
      */
     public function run($params)
     {
+        $this->context->smarty->assign([
+            'hasPSAccount' => $params['hasPSAccount'],
+            'updated' => true,
+            'suggestPSAccount' => $params['suggestPSAccount'],
+        ]);
+
         $this->assignSmartyAlertClasses();
+
+        $messages = null;
 
         if (\Tools::isSubmit('alma_config_form')) {
             $messages = $this->processConfiguration();
@@ -776,8 +848,18 @@ final class GetContentHookController extends AdminHookController
 
             if ($messages) {
                 $messages = $messages['message'];
+            } else {
+                $this->hasKey = true;
             }
-        } else {
+        }
+        $this->context->smarty->assign([
+            'hasKey' => $this->hasKey,
+        ]);
+
+        if (!$messages) {
+            $this->context->smarty->assign([
+                'updated' => false,
+            ]);
             $messages = '';
         }
 

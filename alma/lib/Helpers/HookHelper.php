@@ -88,8 +88,32 @@ class HookHelper
             'operand' => '>=',
         ],
         'displayProductButtons' => [
-            'version' => '1.6',
+            'version' => '1.7.6',
             'operand' => '<',
+        ],
+        'displayProductActions' => [
+            'version' => '1.7.6',
+            'operand' => '>=',
+        ],
+        'actionObjectProductInCartDeleteAfter' => [
+            'version' => '1.7.1',
+            'operand' => '>=',
+        ],
+        'actionCartSave' => 'all',
+        'actionValidateOrder' => 'all',
+        'displayCartExtraProductActions' => 'all',
+        'termsAndConditions' => 'all',
+        'actionOrderGridQueryBuilderModifier' => [
+            'version' => '1.7.7',
+            'operand' => '>=',
+        ],
+        'actionOrderGridDefinitionModifier' => [
+            'version' => '1.7.7',
+            'operand' => '>=',
+        ],
+        'displayAdminOrderTop' => [
+            'version' => '1.7.7',
+            'operand' => '>=',
         ],
     ];
 

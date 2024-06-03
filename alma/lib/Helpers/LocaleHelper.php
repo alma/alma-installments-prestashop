@@ -46,6 +46,9 @@ class LocaleHelper
      */
     protected $languageHelper;
 
+    /**
+     * @param $languageHelper
+     */
     public function __construct($languageHelper)
     {
         $this->languageHelper = $languageHelper;
@@ -142,7 +145,7 @@ class LocaleHelper
      *
      * @see AdminTranslationsController::getModuleTranslation
      */
-    public static function getModuleTranslation(
+    public function getModuleTranslation(
         $string,
         $source,
         $iso
@@ -198,5 +201,40 @@ class LocaleHelper
         }
 
         return $locale;
+    }
+
+    /**
+     * @param \Context $context
+     *
+     * @return mixed
+     */
+    public function getLocaleFromContext($context)
+    {
+        $locale = $context->language->iso_code;
+
+        if (property_exists($context->language, 'locale')) {
+            $locale = $context->language->locale;
+        }
+
+        return $locale;
+    }
+
+    /**
+     * Create a multilang field.
+     * Same function as \PrestaShop\PrestaShop\Adapter\Import\ImportDataFormatter()->createMultiLangField()
+     *
+     * @param string $field
+     *
+     * @return array
+     */
+    public function createMultiLangField($field)
+    {
+        $result = [];
+
+        foreach (\Language::getIDs(false) as $languageId) {
+            $result[$languageId] = $field;
+        }
+
+        return $result;
     }
 }

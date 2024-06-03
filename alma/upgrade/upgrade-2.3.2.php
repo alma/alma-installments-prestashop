@@ -28,10 +28,10 @@ if (!defined('_PS_VERSION_')) {
 include_once _PS_MODULE_DIR_ . 'alma/vendor/autoload.php';
 
 use Alma\API\RequestError;
+use Alma\PrestaShop\Builders\Helpers\CustomFieldHelperBuilder;
 use Alma\PrestaShop\Forms\ExcludedCategoryAdminFormBuilder;
 use Alma\PrestaShop\Forms\PaymentButtonAdminFormBuilder;
 use Alma\PrestaShop\Helpers\ClientHelper;
-use Alma\PrestaShop\Helpers\CustomFieldsHelper;
 use Alma\PrestaShop\Helpers\SettingsHelper;
 use Alma\PrestaShop\Logger;
 
@@ -57,7 +57,10 @@ function upgrade_module_2_3_2()
                 Configuration::deleteByName($configKey);
             }
 
-            CustomFieldsHelper::initCustomFields();
+            $customFieldHelperBuilder = new CustomFieldHelperBuilder();
+            $customFieldsHelper = $customFieldHelperBuilder->getInstance();
+
+            $customFieldsHelper->initCustomFields();
         } catch (RequestError $e) {
             Logger::instance()->error("[Alma] ERROR upgrade v2.3.2: {$e->getMessage()}");
 
