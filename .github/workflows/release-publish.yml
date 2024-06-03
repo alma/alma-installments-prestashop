@@ -87,7 +87,7 @@ jobs:
             https://uploads.github.com/repos/${{ github.repository }}/releases/${{ steps.fetch-release-draft.outputs.id }}/assets?name=alma.zip
 
       - name: Publish Github release
-        uses: actions/github-script@v6
+        uses: actions/github-script@v7
         with:
           script: |
             const { owner, repo } = context.repo;
@@ -102,7 +102,7 @@ jobs:
 
       - name: Format release notes for Slack
         # v1.0.2 cannot be used as it is not correctly handling the newlines
-        uses: LoveToKnow/slackify-markdown-action@v1.0.0
+        uses: LoveToKnow/slackify-markdown-action@v1.0.2
         id: slack-markdown-release-notes
         with:
           text: |
