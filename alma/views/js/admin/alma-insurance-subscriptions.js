@@ -25,12 +25,9 @@
     $(function () {
         const subscriptionData = dataSubscriptions
 
-        var checkFunction = setInterval(function() {
-            if (typeof getSubscriptionDatafromCms === "function") {
-                clearInterval(checkFunction);
-                getSubscriptionDatafromCms(subscriptionData);
-            }
-        }, 700)
+        window.addEventListener('almaIframeScriptLoaded', () => {
+            getSubscriptionDatafromCms(subscriptionData);
+        });
 
         window.addEventListener('message', (e) => {
             if (e.data.type === 'sendCancelSubscriptionToCms') {
