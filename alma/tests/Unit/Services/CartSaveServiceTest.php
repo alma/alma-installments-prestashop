@@ -24,22 +24,22 @@
 
 namespace Unit\Services;
 
+use Alma\PrestaShop\Helpers\ModuleHelper;
 use Alma\PrestaShop\Repositories\CartSaveRepository;
 use Alma\PrestaShop\Services\CartSaveService;
 use PHPUnit\Framework\TestCase;
-use PrestaShop\PrestaShop\Core\Addon\Module\ModuleManager;
 
 class CartSaveServiceTest extends TestCase
 {
     protected $cartSaveService;
-    protected $moduleManagerBuilder;
+    protected $moduleHelper;
 
     protected function setUp()
     {
         $this->cartSaveRepository = $this->createMock(CartSaveRepository::class);
-        $this->moduleManagerBuilder = $this->createMock(ModuleManager::class);
+        $this->moduleHelper = $this->createMock(ModuleHelper::class);
         $this->cartSaveService = new CartSaveService(
-            $this->moduleManagerBuilder,
+            $this->moduleHelper,
             $this->cartSaveRepository
         );
     }
@@ -60,7 +60,7 @@ class CartSaveServiceTest extends TestCase
         $this->cartSaveRepository->method('getCurrentCartForOpartSaveCart')
             ->with('token')
             ->willReturn($returnRepository);
-        $this->moduleManagerBuilder->expects($this->once())
+        $this->moduleHelper->expects($this->once())
             ->method('isInstalled')
             ->with('opartsavecart')
             ->willReturn(true);
@@ -72,7 +72,7 @@ class CartSaveServiceTest extends TestCase
      */
     public function testGetCartSavedNoModuleInstalled()
     {
-        $this->moduleManagerBuilder->expects($this->once())
+        $this->moduleHelper->expects($this->once())
             ->method('isInstalled')
             ->with('opartsavecart')
             ->willReturn(false);
@@ -87,7 +87,7 @@ class CartSaveServiceTest extends TestCase
         $this->cartSaveRepository->method('getCurrentCartForOpartSaveCart')
             ->with('token')
             ->willReturn(false);
-        $this->moduleManagerBuilder->expects($this->once())
+        $this->moduleHelper->expects($this->once())
             ->method('isInstalled')
             ->with('opartsavecart')
             ->willReturn(true);
