@@ -72,6 +72,8 @@ class InsuranceApiService
         $cartHelperBuilder = new CartHelperBuilder();
         $this->cartHelper = $cartHelperBuilder->getInstance();
 
+        $this->productHelper = new ProductHelper();
+
         $this->insuranceProductRepository = new AlmaInsuranceProductRepository();
     }
 
