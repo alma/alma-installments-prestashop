@@ -860,7 +860,12 @@ final class GetContentHookController extends AdminHookController
             $this->context->smarty->assign([
                 'updated' => false,
             ]);
+
             $messages = '';
+
+            if ($params['hasPSAccount'] === true) {
+                $messages = $this->module->display($this->module->file, 'getContent.tpl');
+            }
         }
 
         $htmlForm = $this->renderForm();
