@@ -55,7 +55,6 @@ jobs:
           NAME=$(echo $DRAFT_RELEASE | jq '.name' | sed 's/"//g')
           ID=$(echo $DRAFT_RELEASE | jq '.id')
           BODY=$(echo $DRAFT_RELEASE | jq '.body' | sed 's/"//g')
-          HTML_URL=$(echo $DRAFT_RELEASE | jq '.html_url' | sed 's/"//g')
 
           # Add URLs to GitHub pull requests
           PULL_REQUEST_URL_START=${{ github.server_url }}/${{ github.repository }}/pull/
@@ -70,7 +69,6 @@ jobs:
           # Write the output variables
           echo "name=$NAME" >> $GITHUB_OUTPUT
           echo "id=$ID" >> $GITHUB_OUTPUT
-          echo "html_url=$HTML_URL" >> $GITHUB_OUTPUT
           echo "body<<EOF" >> $GITHUB_OUTPUT
           echo -e "$BODY" >> $GITHUB_OUTPUT
           echo "EOF" >> $GITHUB_OUTPUT
@@ -106,10 +104,11 @@ jobs:
         id: slack-markdown-release-notes
         with:
           text: |
-            New release of `${{ github.repository }}` published, **[${{ steps.fetch-release-draft.outputs.name }}](${{
-              steps.fetch-release-draft.outputs.html_url }})**:
+            :tada: New publication of PrestaShop Alma module, **[${{ steps.fetch-release-draft.outputs.name }}](https://github.com/${{ github.repository }}/releases/tag/${{ steps.fetch-release-draft.outputs.name }})**:
 
             ${{ steps.fetch-release-draft.outputs.body }}
+
+            :warning: This release will be available on PrestaShop marketplace in a few hours
 
       - name: Send changelog to Slack
         uses: slackapi/slack-github-action@v1.26.0
