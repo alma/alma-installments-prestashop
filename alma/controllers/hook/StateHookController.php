@@ -32,7 +32,8 @@ use Alma\API\Client;
 use Alma\API\Exceptions\ParametersException;
 use Alma\API\Exceptions\RequestException;
 use Alma\API\RequestError;
-use Alma\PrestaShop\Builders\SettingsHelperBuilder;
+use Alma\PrestaShop\Builders\Helpers\SettingsHelperBuilder;
+use Alma\PrestaShop\Builders\Services\OrderServiceBuilder;
 use Alma\PrestaShop\Exceptions\OrderException;
 use Alma\PrestaShop\Helpers\ClientHelper;
 use Alma\PrestaShop\Helpers\InsuranceHelper;
@@ -41,6 +42,7 @@ use Alma\PrestaShop\Helpers\SettingsHelper;
 use Alma\PrestaShop\Hooks\AdminHookController;
 use Alma\PrestaShop\Logger;
 use Alma\PrestaShop\Services\InsuranceSubscriptionService;
+use Alma\PrestaShop\Services\OrderService;
 
 final class StateHookController extends AdminHookController
 {
@@ -73,6 +75,15 @@ final class StateHookController extends AdminHookController
      */
     protected $insuranceHelper;
 
+    /**
+     * @var Logger
+     */
+    protected $almaLogger;
+    /**
+     * @var OrderService
+     */
+    protected $orderService;
+
     public function __construct($module)
     {
         parent::__construct($module);
@@ -82,6 +93,9 @@ final class StateHookController extends AdminHookController
         $this->insuranceHelper = new InsuranceHelper();
         $settingsHelperBuilder = new SettingsHelperBuilder();
         $this->settingsHelper = $settingsHelperBuilder->getInstance();
+        $orderServiceBuilder = new OrderServiceBuilder();
+        $this->orderService = $orderServiceBuilder->getInstance();
+        $this->almaLogger = new Logger();
     }
 
     /**
@@ -95,7 +109,8 @@ final class StateHookController extends AdminHookController
      */
     public function canRun()
     {
-        return parent::canRun() || $this->isKnownApiUser();
+        // Front controllers can run if the module is properly configured ...
+        return SettingsHelper::isFullyConfigured();
     }
 
     /**
@@ -121,16 +136,35 @@ final class StateHookController extends AdminHookController
 
         switch ($newStatus->id) {
             case SettingsHelper::getRefundState():
-                $this->refund($order);
+                if ($this->loggedAsEmployee() || $this->isKnownApiUser()) {
+                    $this->refund($order);
+                }
                 break;
             case SettingsHelper::getPaymentTriggerState():
-                $this->triggerPayment($order);
+                if ($this->loggedAsEmployee() || $this->isKnownApiUser()) {
+                    $this->triggerPayment($order);
+                }
                 break;
             case (int) \Configuration::get('PS_OS_PAYMENT'):
-                $this->processInsurance($order);
+                if ($this->insuranceHelper->isInsuranceActivated()) {
+                    $this->processInsurance($order);
+                }
                 break;
             default:
                 break;
+        }
+
+        try {
+            $this->orderService->manageStatusUpdate($order, $newStatus);
+        } catch (\Exception $e) {
+            $this->almaLogger->info(
+                sprintf(
+                    'Impossible to update order status: Error : %s, Code : %s, Type : %s',
+                    $e->getMessage(),
+                    $e->getCode(),
+                    get_class($e)
+                )
+            );
         }
     }
 
@@ -142,10 +176,7 @@ final class StateHookController extends AdminHookController
     protected function processInsurance($order)
     {
         try {
-            if (
-                $this->insuranceHelper->isInsuranceActivated()
-                && $this->insuranceHelper->canInsuranceSubscriptionBeTriggered($order)
-            ) {
+            if ($this->insuranceHelper->canInsuranceSubscriptionBeTriggered($order)) {
                 $this->insuranceSubscriptionService->triggerInsuranceSubscription($order);
             }
         } catch (\Exception $e) {

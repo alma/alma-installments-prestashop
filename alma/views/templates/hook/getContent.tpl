@@ -100,7 +100,7 @@
     </div>
 
 {elseif isset($tip)}
-    <div class="{$tip_classes|escape:'htmlall':'UTF-8'}">
+    <div class="{$tip_classes|escape:'htmlall':'UTF-8'}" id="alma_first_installation">
         <p>
             {l s='Thanks for installing Alma!' mod='alma'}
             <br>
@@ -150,12 +150,11 @@
         <script>
             window.onload = function() {
                 if (window.psaccountsVue.isOnboardingCompleted() != true) {
-                    document.getElementById("alma_config_form").style.opacity = "0.5";
-                    document.getElementById("alma_config_form").setAttribute('inert', 'inert')
+                    document.getElementById("alma_config_form").remove()
+                    document.getElementById("alma_first_installation").remove()
                 }
             }
         </script>
-        }
     {/if}
 {/if}
 {if isset($suggestPSAccount) &&  $suggestPSAccount}

@@ -24,7 +24,7 @@
 
 namespace Alma\PrestaShop\Helpers;
 
-use Alma\PrestaShop\Builders\SettingsHelperBuilder;
+use Alma\PrestaShop\Builders\Helpers\SettingsHelperBuilder;
 use Alma\PrestaShop\Forms\ApiAdminFormBuilder;
 
 if (!defined('_PS_VERSION_')) {

@@ -1,5 +1,8 @@
 version: 3
 
+env:
+  REPOSITORY: alma-installments-prestashop
+
 tasks:
 
   default:
@@ -45,7 +48,7 @@ tasks:
     deps:
       - docker:build
     cmds:
-      - docker compose run --rm --entrypoint "php" -w /var/www/html/modules prestashop alma/vendor/bin/php-cs-fixer fix --dry-run --diff alma
+      - docker compose run --no-deps --rm --entrypoint "php" -w /var/www/html/modules prestashop alma/vendor/bin/php-cs-fixer fix --dry-run --diff alma
 
   lint:
     desc: Run linter
@@ -98,3 +101,51 @@ tasks:
       - crowdin
     cmds:
       - crowdin upload sources
+
+  gh-cli:
+    internal: true
+    preconditions:
+      - sh: gh --version
+        msg: |
+          ⚠️ This task requires `gh` (Github CLI).
+          Please check out: https://github.com/cli/cli#installation
+          You'll need a personal access token to authenticate with `gh`.
+          Please check out: https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token#creating-a-personal-access-token-classic
+          Then, run `gh auth login` or set the GITHUB_TOKEN environment variable with your personal access token.
+
+  release:
+    deps:
+      - gh-cli
+    desc: Create a release pull request
+    cmds: 
+      - gh workflow run release-pull-request.yml
+      - sleep 2
+      - cmd: echo "Release pull request created, check out https://github.com/alma/{{.REPOSITORY}}/pulls?q=is%3Aopen+is%3Apr+label%3Arelease"
+        silent: true
+      - cmd: echo "If no pull request is created, check out https://github.com/alma/{{.REPOSITORY}}/actions/workflows/release-pull-request.yml."
+        silent: true
+      - cmd: echo "Please, review and merge the pull request."
+        silent: true
+      - cmd: echo "After merging, the release will be automatically created."
+        silent: true
+
+  hotfix:
+    deps:
+      - gh-cli
+    desc: Create a hotfix pull request
+    preconditions:
+      - sh: test -n "{{.CHANGELOG_MESSAGE}}"
+        msg: |
+          ⚠️ This task requires a changelog message.
+          Please provide a changelog message. Example: `task hotfix CHANGELOG_MESSAGE='This is a message'`.
+    cmds: 
+      - gh workflow run hotfix-pull-request.yml -F changelog-message='{{.CHANGELOG_MESSAGE}}'
+      - sleep 2
+      - cmd: echo "Hotfix pull request created, check out https://github.com/alma/{{.REPOSITORY}}/pulls?q=is%3Aopen+is%3Apr+label%3Ahotfix"
+        silent: true
+      - cmd: echo "If no pull request is created, check out https://github.com/alma/{{.REPOSITORY}}/actions/workflows/hotfix-pull-request.yml."
+        silent: true
+      - cmd: echo "Please, review and merge the pull request."
+        silent: true
+      - cmd: echo "After merging, the release will be automatically created."
+        silent: true

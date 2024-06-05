@@ -30,6 +30,11 @@ if (!defined('_PS_VERSION_')) {
 
 class CartRepository
 {
+    /**
+     * @param $token
+     *
+     * @return array|bool
+     */
     public function getCurrentCartForOpartSaveCart($token)
     {
         return \Db::getInstance()->getRow('

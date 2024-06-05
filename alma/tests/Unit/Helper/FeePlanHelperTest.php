@@ -26,7 +26,7 @@ namespace Alma\PrestaShop\Tests\Unit\Helper;
 
 use Alma\API\Endpoints\Results\Eligibility;
 use Alma\API\Entities\FeePlan;
-use Alma\PrestaShop\Builders\FeePlanHelperBuilder;
+use Alma\PrestaShop\Builders\Helpers\FeePlanHelperBuilder;
 use Alma\PrestaShop\Factories\EligibilityFactory;
 use Alma\PrestaShop\Helpers\SettingsHelper;
 use PHPUnit\Framework\TestCase;

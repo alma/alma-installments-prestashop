@@ -30,7 +30,7 @@ if (!defined('_PS_VERSION_')) {
 
 use Alma\API\Entities\Payment;
 use Alma\API\RequestError;
-use Alma\PrestaShop\Builders\PriceHelperBuilder;
+use Alma\PrestaShop\Builders\Helpers\PriceHelperBuilder;
 use Alma\PrestaShop\Exceptions\PaymentNotFoundException;
 use Alma\PrestaShop\Helpers\ClientHelper;
 use Alma\PrestaShop\Helpers\OrderHelper;

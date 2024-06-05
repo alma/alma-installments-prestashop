@@ -24,7 +24,7 @@
 
 namespace Alma\PrestaShop\Tests\Unit\Helper;
 
-use Alma\PrestaShop\Builders\PaymentHelperBuilder;
+use Alma\PrestaShop\Builders\Helpers\PaymentHelperBuilder;
 use Alma\PrestaShop\Model\PaymentData;
 use PHPUnit\Framework\TestCase;
 
