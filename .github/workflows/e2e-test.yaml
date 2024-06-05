@@ -9,7 +9,6 @@ on:
 jobs:
   launch:
     runs-on: ubuntu-22.04
-    if: github.event.pull_request.draft == false && !contains(github.event.pull_request.labels.*.name, 'hotfix')
 
     strategy:
       matrix:
