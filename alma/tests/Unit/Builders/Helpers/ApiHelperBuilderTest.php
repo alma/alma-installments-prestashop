@@ -25,7 +25,6 @@
 namespace Alma\PrestaShop\Tests\Unit\Builders\Helpers;
 
 use Alma\PrestaShop\Builders\Helpers\ApiHelperBuilder;
-use Alma\PrestaShop\Factories\ModuleFactory;
 use Alma\PrestaShop\Helpers\Admin\InsuranceHelper;
 use Alma\PrestaShop\Helpers\ApiHelper;
 use Alma\PrestaShop\Helpers\ClientHelper;
@@ -49,14 +48,6 @@ class ApiHelperBuilderTest extends TestCase
     public function testGetInstance()
     {
         $this->assertInstanceOf(ApiHelper::class, $this->apiHelperBuilder->getInstance());
-    }
-
-    public function testGetModuleFactory()
-    {
-        $this->assertInstanceOf(ModuleFactory::class, $this->apiHelperBuilder->getModuleFactory());
-        $this->assertInstanceOf(ModuleFactory::class, $this->apiHelperBuilder->getModuleFactory(
-            new ModuleFactory()
-        ));
     }
 
     public function testGetClientHelper()

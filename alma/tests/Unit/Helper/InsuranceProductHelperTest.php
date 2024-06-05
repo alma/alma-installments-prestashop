@@ -22,18 +22,20 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
-namespace Unit\Services;
+namespace Alma\PrestaShop\Tests\Unit\Helper;
 
+use Alma\PrestaShop\Builders\Helpers\InsuranceProductHelperBuilder;
+use Alma\PrestaShop\Factories\ContextFactory;
+use Alma\PrestaShop\Helpers\InsuranceProductHelper;
 use Alma\PrestaShop\Repositories\AlmaInsuranceProductRepository;
-use Alma\PrestaShop\Services\InsuranceProductService;
 use PHPUnit\Framework\TestCase;
 
-class InsuranceProductServiceTest extends TestCase
+class InsuranceProductHelperTest extends TestCase
 {
     /**
-     * @var InsuranceProductService
+     * @var InsuranceProductHelper
      */
-    protected $insuranceProductService;
+    protected $insuranceProductHelper;
     /**
      * @var AlmaInsuranceProductRepository|(AlmaInsuranceProductRepository&\PHPUnit_Framework_MockObject_MockObject)|\PHPUnit_Framework_MockObject_MockObject
      */
@@ -46,16 +48,23 @@ class InsuranceProductServiceTest extends TestCase
      * @var \Cart|(\Cart&\PHPUnit_Framework_MockObject_MockObject)|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $newCart;
+    /**
+     * @var \Mockery\Mock|(\Mockery\MockInterface&InsuranceProductHelperBuilder)
+     */
+    private $insuranceProductHelperBuilderMock;
 
     protected function setUp()
     {
-        $this->almaInsuranceProductRepository = $this->createMock(AlmaInsuranceProductRepository::class);
-        $this->insuranceProductService = new InsuranceProductService(
-            $this->almaInsuranceProductRepository
-        );
+        $this->insuranceProductHelperBuilderMock = \Mockery::mock(InsuranceProductHelperBuilder::class)->makePartial();
+        $this->insuranceProductHelper = $this->insuranceProductHelperBuilderMock->getInstance();
+        $this->almaInsuranceProductRepository = \Mockery::mock(AlmaInsuranceProductRepository::class)->makePartial();
+
+        $this->context = \Mockery::mock(\Context::class);
+        $this->contextFactory = \Mockery::mock(ContextFactory::class)->makePartial();
+        $this->contextFactory->shouldReceive('getContext')->andReturn($this->context);
+
         $this->cart = $this->createMock(\Cart::class);
         $this->newCart = $this->createMock(\Cart::class);
-        $this->context = $this->createMock(\Context::class);
         $this->shop = $this->createMock(\Shop::class);
     }
 
@@ -80,13 +89,22 @@ class InsuranceProductServiceTest extends TestCase
         $this->newCart->id = 2;
         $this->shop->id = 1;
         $this->context->shop = $this->shop;
-        $this->almaInsuranceProductRepository->expects($this->once())
-            ->method('add');
-        $this->almaInsuranceProductRepository->expects($this->once())
-            ->method('getByCartIdAndShop')
+
+        $this->almaInsuranceProductRepositorySpy = \Mockery::spy(AlmaInsuranceProductRepository::class)->makePartial();
+
+        $this->almaInsuranceProductRepositorySpy->shouldReceive('getByCartIdAndShop')
             ->with($this->cart->id, $this->context->shop->id)
-            ->willReturn($almaInsuranceProduct);
-        $this->insuranceProductService->duplicateInsuranceProducts($this->cart, $this->newCart);
+            ->andReturn($almaInsuranceProduct);
+
+        $this->almaInsuranceProductRepositorySpy->shouldReceive('add')->andReturn(null);
+
+        $this->insuranceProductHelper = \Mockery::mock(InsuranceProductHelper::class, [
+            $this->almaInsuranceProductRepositorySpy,
+          $this->contextFactory,
+        ])->makePartial();
+
+        $this->insuranceProductHelper->duplicateInsuranceProducts($this->cart, $this->newCart);
+        $this->almaInsuranceProductRepositorySpy->shouldHaveReceived('add')->once();
     }
 
     /**
@@ -125,12 +143,21 @@ class InsuranceProductServiceTest extends TestCase
         $this->newCart->id = 2;
         $this->shop->id = 1;
         $this->context->shop = $this->shop;
-        $this->almaInsuranceProductRepository->expects($this->exactly(2))
-            ->method('add');
-        $this->almaInsuranceProductRepository->expects($this->once())
-            ->method('getByCartIdAndShop')
+
+        $this->almaInsuranceProductRepositorySpy = \Mockery::spy(AlmaInsuranceProductRepository::class)->makePartial();
+
+        $this->almaInsuranceProductRepositorySpy->shouldReceive('getByCartIdAndShop')
             ->with($this->cart->id, $this->context->shop->id)
-            ->willReturn($almaInsuranceProduct);
-        $this->insuranceProductService->duplicateInsuranceProducts($this->cart, $this->newCart);
+            ->andReturn($almaInsuranceProduct);
+
+        $this->almaInsuranceProductRepositorySpy->shouldReceive('add')->andReturn(null);
+
+        $this->insuranceProductHelper = \Mockery::mock(InsuranceProductHelper::class, [
+            $this->almaInsuranceProductRepositorySpy,
+            $this->contextFactory,
+        ])->makePartial();
+
+        $this->insuranceProductHelper->duplicateInsuranceProducts($this->cart, $this->newCart);
+        $this->almaInsuranceProductRepositorySpy->shouldHaveReceived('add')->twice();
     }
 }

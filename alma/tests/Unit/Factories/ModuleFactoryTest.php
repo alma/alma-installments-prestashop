@@ -24,6 +24,7 @@
 
 namespace Alma\PrestaShop\Tests\Unit\Factories;
 
+use Alma\PrestaShop\Builders\Factories\ModuleFactoryBuilder;
 use Alma\PrestaShop\Factories\ModuleFactory;
 use Alma\PrestaShop\Helpers\ConstantsHelper;
 use PHPUnit\Framework\TestCase;
@@ -37,7 +38,8 @@ class ModuleFactoryTest extends TestCase
 
     public function setUp()
     {
-        $this->moduleFactory = new ModuleFactory();
+        $moduleFactoryBuilder = new ModuleFactoryBuilder();
+        $this->moduleFactory = $moduleFactoryBuilder->getInstance();
     }
 
     public function testGetContext()

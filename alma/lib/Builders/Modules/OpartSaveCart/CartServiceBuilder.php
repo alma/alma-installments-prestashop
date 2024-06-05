@@ -22,40 +22,26 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
-namespace Alma\PrestaShop\Factories;
+namespace Alma\PrestaShop\Builders\Modules\OpartSaveCart;
+
+use Alma\PrestaShop\Modules\OpartSaveCart\CartService;
+use Alma\PrestaShop\Traits\BuilderTrait;
 
 if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-/**
- * Class CartFactory.
- */
-class ToolsFactory
+class CartServiceBuilder
 {
-    /**
-     * Get a value from $_POST / $_GET
-     * if unavailable, take a default value.
-     *
-     * @param string $key Value key
-     * @param mixed $default_value (optional)
-     *
-     * @return mixed Value
-     */
-    public function getValue($key, $default_value = false)
-    {
-        return \Tools::getValue($key, $default_value);
-    }
+    use BuilderTrait;
 
-    /**
-     * Checks if a key exists either in $_POST or $_GET.
-     *
-     * @param string $key
-     *
-     * @return bool
-     */
-    public function getIsset($key)
+    public function getInstance()
     {
-        return \Tools::getIsset($key);
+        return new CartService(
+            $this->getModuleFactory(),
+            $this->getOpartSaveCartRepository(),
+            $this->getToolsFactory(),
+            $this->getCartFactory()
+        );
     }
 }

@@ -31,14 +31,14 @@ if (!defined('_PS_VERSION_')) {
 class CartRepository
 {
     /**
-     * @param $token
+     * @param string $token
      *
-     * @return array|bool
+     * @return array|bool|object|null
      */
-    public function getCurrentCartForOpartSaveCart($token)
+    public function getIdCartByToken($token)
     {
         return \Db::getInstance()->getRow('
-            SELECT *
+            SELECT  `id_cart` 
             FROM `' . _DB_PREFIX_ . "opartsavecart`
             WHERE token = '" . $token . "';"
         );

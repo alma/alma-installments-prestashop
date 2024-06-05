@@ -22,62 +22,29 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
-namespace Alma\PrestaShop\Modules\OpartSaveCart;
+namespace Alma\PrestaShop\Builders\Factories;
 
-use Alma\PrestaShop\Factories\CartFactory;
 use Alma\PrestaShop\Factories\ModuleFactory;
-use Alma\PrestaShop\Factories\ToolsFactory;
+use Alma\PrestaShop\Traits\BuilderTrait;
 
 if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-class CartService
+/**
+ * ModuleFactoryBuilder.
+ */
+class ModuleFactoryBuilder
 {
-    /**
-     * @var ModuleFactory|null
-     */
-    protected $moduleFactory;
-    /**
-     * @var CartRepository
-     */
-    protected $opartSaveCartRepository;
+    use BuilderTrait;
 
     /**
-     * @var ToolsFactory
+     * @return ModuleFactory
      */
-    protected $toolsFactory;
-
-    /**
-     * @var CartFactory
-     */
-    protected $cartFactory;
-
-    public function __construct($moduleFactory, $opartSaveCartRepository, $toolsFactory, $cartFactory)
+    public function getInstance()
     {
-        $this->moduleFactory = $moduleFactory;
-        $this->opartSaveCartRepository = $opartSaveCartRepository;
-        $this->toolsFactory = $toolsFactory;
-        $this->cartFactory = $cartFactory;
-    }
-
-    /**
-     * @return \Cart|null
-     */
-    public function getCartSaved()
-    {
-        if ($this->moduleFactory->isInstalled('opartsavecart')) {
-            $token = $this->toolsFactory->getValue('token');
-            $opartCart = $this->opartSaveCartRepository->getIdCartByToken($token);
-
-            if (
-                !empty($opartCart)
-                && isset($opartCart['id_cart'])
-            ) {
-                return $this->cartFactory->create($opartCart['id_cart']);
-            }
-        }
-
-        return null;
+        return new ModuleFactory(
+            $this->getToolsHelper()
+        );
     }
 }

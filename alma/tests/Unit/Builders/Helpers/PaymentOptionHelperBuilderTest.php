@@ -27,7 +27,6 @@ namespace Alma\PrestaShop\Tests\Unit\Builders\Helpers;
 use Alma\PrestaShop\Builders\Helpers\PaymentOptionHelperBuilder;
 use Alma\PrestaShop\Factories\ContextFactory;
 use Alma\PrestaShop\Factories\MediaFactory;
-use Alma\PrestaShop\Factories\ModuleFactory;
 use Alma\PrestaShop\Helpers\ConfigurationHelper;
 use Alma\PrestaShop\Helpers\CustomFieldsHelper;
 use Alma\PrestaShop\Helpers\MediaHelper;
@@ -68,14 +67,6 @@ class PaymentOptionHelperBuilderTest extends TestCase
         $this->assertInstanceOf(ContextFactory::class, $this->paymentOptionHelperBuilder->getContextFactory());
         $this->assertInstanceOf(ContextFactory::class, $this->paymentOptionHelperBuilder->getContextFactory(
             new ContextFactory()
-        ));
-    }
-
-    public function testGetModuleFactory()
-    {
-        $this->assertInstanceOf(ModuleFactory::class, $this->paymentOptionHelperBuilder->getModuleFactory());
-        $this->assertInstanceOf(ModuleFactory::class, $this->paymentOptionHelperBuilder->getModuleFactory(
-            new ModuleFactory()
         ));
     }
 

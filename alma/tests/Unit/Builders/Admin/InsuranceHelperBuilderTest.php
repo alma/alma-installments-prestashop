@@ -53,7 +53,7 @@ class InsuranceHelperBuilderTest extends TestCase
     {
         $this->assertInstanceOf(ModuleFactory::class, $this->insuranceHelperBuilder->getModuleFactory());
         $this->assertInstanceOf(ModuleFactory::class, $this->insuranceHelperBuilder->getModuleFactory(
-            new ModuleFactory()
+            \Mockery::mock(ModuleFactory::class)
         ));
     }
 

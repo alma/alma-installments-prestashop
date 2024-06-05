@@ -34,14 +34,23 @@ if (!defined('_PS_VERSION_')) {
 class MediaFactory
 {
     /**
+     * @var ModuleFactory
+     */
+    protected $moduleFactory;
+
+    public function __construct($moduleFactory)
+    {
+        $this->moduleFactory = $moduleFactory;
+    }
+
+    /**
      * @param $path
      *
      * @return bool|string|string[]|null
      */
     public function getMediaPath($path)
     {
-        $moduleFactory = new ModuleFactory();
-        $moduleName = $moduleFactory->getModuleName();
+        $moduleName = $this->moduleFactory->getModuleName();
 
         return \Media::getMediaPath(_PS_MODULE_DIR_ . $moduleName . $path);
     }

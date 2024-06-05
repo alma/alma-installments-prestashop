@@ -29,8 +29,8 @@ if (!defined('_PS_VERSION_')) {
 }
 
 use Alma\PrestaShop\Builders\Services\CartServiceBuilder;
+use Alma\PrestaShop\Builders\Services\InsuranceProductServiceBuilder;
 use Alma\PrestaShop\Helpers\InsuranceHelper;
-use Alma\PrestaShop\Helpers\ProductHelper;
 use Alma\PrestaShop\Helpers\SettingsHelper;
 use Alma\PrestaShop\Hooks\FrontendHookController;
 use Alma\PrestaShop\Logger;
@@ -48,10 +48,6 @@ class ActionCartSaveHookController extends FrontendHookController
      * @var InsuranceHelper
      */
     protected $insuranceHelper;
-    /**
-     * @var ProductHelper
-     */
-    protected $productHelper;
 
     /**
      * @var CartService
@@ -81,10 +77,10 @@ class ActionCartSaveHookController extends FrontendHookController
     {
         parent::__construct($module);
 
-        $this->insuranceProductService = new InsuranceProductService();
+        $insuranceProductServiceBuilder = new InsuranceProductServiceBuilder();
+        $this->insuranceProductService = $insuranceProductServiceBuilder->getInstance();
+
         $this->insuranceHelper = new InsuranceHelper();
-        $this->productHelper = new ProductHelper();
-        $this->context = \Context::getContext();
         $cartServiceBuilder = new CartServiceBuilder();
         $this->cartService = $cartServiceBuilder->getInstance();
         $this->logger = new Logger();
@@ -104,31 +100,9 @@ class ActionCartSaveHookController extends FrontendHookController
         try {
             $this->cartService->duplicateCart($params['cart']);
 
-            $this->handleAddingProductInsurance($params['cart']);
+            $this->insuranceProductService->handleAddingProductInsurance($params['cart']);
         } catch (\Exception $e) {
             $this->logger->error($e->getMessage());
-        }
-    }
-
-    /**
-     * @param \Cart $cart
-     *
-     * @return void
-     */
-    public function handleAddingProductInsurance($cart)
-    {
-        if (
-            \Tools::getIsset('alma_id_insurance_contract')
-            && 1 == \Tools::getValue('add')
-            && 'update' == \Tools::getValue('action')
-        ) {
-            $this->insuranceProductService->handleAddingProductInsurance(
-                \Tools::getValue('id_product'),
-                \Tools::getValue('alma_id_insurance_contract'),
-                \Tools::getValue('qty'),
-                \Tools::getValue('id_customization'),
-                $cart
-            );
         }
     }
 }

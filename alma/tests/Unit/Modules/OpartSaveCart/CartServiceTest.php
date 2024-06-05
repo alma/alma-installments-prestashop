@@ -24,24 +24,66 @@
 
 namespace Alma\PrestaShop\Tests\Unit\Modules\OpartSaveCart;
 
+use Alma\PrestaShop\Builders\Modules\OpartSaveCart\CartServiceBuilder;
+use Alma\PrestaShop\Factories\CartFactory;
+use Alma\PrestaShop\Factories\ModuleFactory;
+use Alma\PrestaShop\Factories\ToolsFactory;
 use Alma\PrestaShop\Modules\OpartSaveCart\CartRepository;
 use Alma\PrestaShop\Modules\OpartSaveCart\CartService;
 use PHPUnit\Framework\TestCase;
-use PrestaShop\PrestaShop\Core\Addon\Module\ModuleManager;
 
 class CartServiceTest extends TestCase
 {
-    protected $cartSaveService;
-    protected $moduleManagerBuilder;
+    /**
+     * @var CartService
+     */
+    protected $cartService;
+
+    /**
+     * @var \Mockery\Mock|(\Mockery\MockInterface&CartServiceBuilder)
+     */
+    protected $cartServiceBuilderMock;
+    /**
+     * @var \Mockery\Mock|(\Mockery\MockInterface&CartRepository)
+     */
+    protected $cartRepositoryMock;
+    /**
+     * @var \Mockery\Mock|(\Mockery\MockInterface&ModuleFactory)
+     */
+    protected $moduleFactoryMock;
+    /**
+     * @var \Mockery\Mock|(\Mockery\MockInterface&ToolsFactory)
+     */
+    protected $toolsFactoryMock;
+    /**
+     * @var \Mockery\Mock|(\Mockery\MockInterface&CartFactory)
+     */
+    protected $cartFactoryMock;
+    /**
+     * @var \Mockery\Mock|(\Mockery\MockInterface&\Cart)
+     */
+    protected $cartMock;
 
     protected function setUp()
     {
-        $this->cartSaveRepository = $this->createMock(CartRepository::class);
-        $this->moduleManagerBuilder = $this->createMock(ModuleManager::class);
-        $this->cartSaveService = new CartService(
-            $this->moduleManagerBuilder,
-            $this->cartSaveRepository
-        );
+        $this->cartServiceBuilderMock = \Mockery::mock(CartServiceBuilder::class)->makePartial();
+        $this->cartRepositoryMock = \Mockery::mock(CartRepository::class)->makePartial();
+        $this->moduleFactoryMock = \Mockery::mock(ModuleFactory::class)->makePartial();
+        $this->toolsFactoryMock = \Mockery::mock(ToolsFactory::class)->makePartial();
+        $this->cartFactoryMock = \Mockery::mock(CartFactory::class)->makePartial();
+        $this->cartService = $this->cartServiceBuilderMock->getInstance();
+        $this->cartMock = \Mockery::mock(\Cart::class)->makePartial();
+    }
+
+    protected function tearDown()
+    {
+        $this->cartServiceBuilderMock = null;
+        $this->cartRepositoryMock = null;
+        $this->moduleFactoryMock = null;
+        $this->toolsFactoryMock = null;
+        $this->cartFactoryMock = null;
+        $this->cartService = null;
+        $this->cartMock = null;
     }
 
     /**
@@ -51,20 +93,25 @@ class CartServiceTest extends TestCase
     {
         $returnRepository = [
             'id_cart' => 1,
-            'id_customer' => 1,
-            'token' => 'token',
-            'name' => '',
-            'reminded' => 0,
-            'date_add' => '2019-01-01 00:00:00',
         ];
-        $this->cartSaveRepository->method('getCurrentCartForOpartSaveCart')
-            ->with('token')
-            ->willReturn($returnRepository);
-        $this->moduleManagerBuilder->expects($this->once())
-            ->method('isInstalled')
-            ->with('opartsavecart')
-            ->willReturn(true);
-        $this->assertEquals(1, $this->cartSaveService->getCartSaved('token'));
+        $this->moduleFactoryMock->shouldReceive('isInstalled')->with('opartsavecart')->andReturn(true);
+        $this->cartServiceBuilderMock->shouldReceive('getModuleFactory')->andReturn($this->moduleFactoryMock);
+
+        $this->toolsFactoryMock->shouldReceive('getValue')->with('token')->andReturn('12345');
+        $this->cartServiceBuilderMock->shouldReceive('getToolsFactory')->andReturn($this->toolsFactoryMock);
+
+        $this->cartRepositoryMock->shouldReceive('getIdCartByToken')->andReturn($returnRepository);
+        $this->cartServiceBuilderMock->shouldReceive('getOpartSaveCartRepository')->andReturn($this->cartRepositoryMock);
+
+        $this->cartMock->id = 1;
+        $this->cartFactoryMock->shouldReceive('create')->with(1)->andReturn($this->cartMock);
+        $this->cartServiceBuilderMock->shouldReceive('getCartFactory')->andReturn($this->cartFactoryMock);
+
+        $this->cartService = $this->cartServiceBuilderMock->getInstance();
+
+        $result = $this->cartService->getCartSaved();
+        $this->assertInstanceOf(\Cart::class, $result);
+        $this->assertEquals(1, $result->id);
     }
 
     /**
@@ -72,11 +119,12 @@ class CartServiceTest extends TestCase
      */
     public function testGetCartSavedNoModuleInstalled()
     {
-        $this->moduleManagerBuilder->expects($this->once())
-            ->method('isInstalled')
-            ->with('opartsavecart')
-            ->willReturn(false);
-        $this->assertNull($this->cartSaveService->getIdCartSaved('token'));
+        $this->moduleFactoryMock->shouldReceive('isInstalled')->with('opartsavecart')->andReturn(false);
+        $this->cartServiceBuilderMock->shouldReceive('getModuleFactory')->andReturn($this->moduleFactoryMock);
+
+        $this->cartService = $this->cartServiceBuilderMock->getInstance();
+
+        $this->assertNull($this->cartService->getCartSaved());
     }
 
     /**
@@ -84,13 +132,40 @@ class CartServiceTest extends TestCase
      */
     public function testGetCartSavedNoCart()
     {
-        $this->cartSaveRepository->method('getCurrentCartForOpartSaveCart')
-            ->with('token')
-            ->willReturn(false);
-        $this->moduleHelper->expects($this->once())
-            ->method('isInstalled')
-            ->with('opartsavecart')
-            ->willReturn(true);
-        $this->assertNull($this->cartSaveService->getIdCartSaved('token'));
+        $this->moduleFactoryMock->shouldReceive('isInstalled')->with('opartsavecart')->andReturn(true);
+        $this->cartServiceBuilderMock->shouldReceive('getModuleFactory')->andReturn($this->moduleFactoryMock);
+
+        $this->toolsFactoryMock->shouldReceive('getValue')->with('token')->andReturn('12345');
+        $this->cartServiceBuilderMock->shouldReceive('getToolsFactory')->andReturn($this->toolsFactoryMock);
+
+        $this->cartRepositoryMock->shouldReceive('getIdCartByToken')->andReturn(false);
+        $this->cartServiceBuilderMock->shouldReceive('getOpartSaveCartRepository')->andReturn($this->cartRepositoryMock);
+
+        $this->cartService = $this->cartServiceBuilderMock->getInstance();
+
+        $this->assertNull($this->cartService->getCartSaved());
+    }
+
+    /**
+     * @return void
+     */
+    public function testGetCartSavedNoCartId()
+    {
+        $this->moduleFactoryMock->shouldReceive('isInstalled')->with('opartsavecart')->andReturn(true);
+        $this->cartServiceBuilderMock->shouldReceive('getModuleFactory')->andReturn($this->moduleFactoryMock);
+
+        $this->toolsFactoryMock->shouldReceive('getValue')->with('token')->andReturn('12345');
+        $this->cartServiceBuilderMock->shouldReceive('getToolsFactory')->andReturn($this->toolsFactoryMock);
+
+        $this->cartRepositoryMock->shouldReceive('getIdCartByToken')->andReturn(false);
+        $this->cartServiceBuilderMock->shouldReceive('getOpartSaveCartRepository')->andReturn($this->cartRepositoryMock);
+
+        $this->cartMock->id = null;
+        $this->cartFactoryMock->shouldReceive('create')->with(1)->andReturn($this->cartMock);
+        $this->cartServiceBuilderMock->shouldReceive('getCartFactory')->andReturn($this->cartFactoryMock);
+
+        $this->cartService = $this->cartServiceBuilderMock->getInstance();
+
+        $this->assertNull($this->cartService->getCartSaved());
     }
 }

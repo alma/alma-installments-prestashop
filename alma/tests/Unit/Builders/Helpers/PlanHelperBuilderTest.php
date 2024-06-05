@@ -26,7 +26,6 @@ namespace Alma\PrestaShop\Tests\Unit\Builders\Helpers;
 
 use Alma\PrestaShop\Builders\Helpers\PlanHelperBuilder;
 use Alma\PrestaShop\Factories\ContextFactory;
-use Alma\PrestaShop\Factories\ModuleFactory;
 use Alma\PrestaShop\Helpers\CustomFieldsHelper;
 use Alma\PrestaShop\Helpers\DateHelper;
 use Alma\PrestaShop\Helpers\PlanHelper;
@@ -50,14 +49,6 @@ class PlanHelperBuilderTest extends TestCase
     public function testGetInstance()
     {
         $this->assertInstanceOf(PlanHelper::class, $this->planHelperBuilder->getInstance());
-    }
-
-    public function testGetModuleFactory()
-    {
-        $this->assertInstanceOf(ModuleFactory::class, $this->planHelperBuilder->getModuleFactory());
-        $this->assertInstanceOf(ModuleFactory::class, $this->planHelperBuilder->getModuleFactory(
-            new ModuleFactory()
-        ));
     }
 
     public function testGetContextFactory()

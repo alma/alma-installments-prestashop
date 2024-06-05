@@ -24,11 +24,8 @@
 
 namespace Alma\PrestaShop\Services;
 
-use Alma\API\Client;
-use Alma\PrestaShop\Builders\Helpers\PriceHelperBuilder;
-use Alma\PrestaShop\Builders\Services\CartServiceBuilder;
 use Alma\PrestaShop\Exceptions\AlmaException;
-use Alma\PrestaShop\Helpers\ClientHelper;
+use Alma\PrestaShop\Factories\ContextFactory;
 use Alma\PrestaShop\Helpers\ConstantsHelper;
 use Alma\PrestaShop\Helpers\InsuranceHelper;
 use Alma\PrestaShop\Helpers\PriceHelper;
@@ -44,7 +41,7 @@ if (!defined('_PS_VERSION_')) {
 class InsuranceProductService
 {
     /**
-     * @var \ContextCore
+     * @var \Context|null
      */
     protected $context;
 
@@ -82,10 +79,7 @@ class InsuranceProductService
      * @var ProductRepository
      */
     protected $productRepository;
-    /**
-     * @var Client|mixed|null
-     */
-    protected $alma;
+
     /**
      * @var ProductHelper
      */
@@ -104,29 +98,46 @@ class InsuranceProductService
      */
     protected $insuranceHelper;
 
-    public function __construct($almaInsuranceProductRepository = null)
-    {
-        if (!$almaInsuranceProductRepository) {
-            $almaInsuranceProductRepository = new AlmaInsuranceProductRepository();
-        }
-
+    /**
+     * @param AlmaInsuranceProductRepository $almaInsuranceProductRepository
+     * @param ContextFactory $contextFactory
+     * @param AttributeGroupProductService $attributeGroupProductService
+     * @param AttributeProductService $attributeProductService
+     * @param CombinationProductAttributeService $combinationProductAttributeService
+     * @param InsuranceService $insuranceService
+     * @param CartService $cartService
+     * @param ProductRepository $productRepository
+     * @param ProductHelper $productHelper
+     * @param InsuranceApiService $insuranceApiService
+     * @param PriceHelper $priceHelper
+     * @param InsuranceHelper $insuranceHelper
+     */
+    public function __construct(
+        $almaInsuranceProductRepository,
+        $contextFactory,
+        $attributeGroupProductService,
+        $attributeProductService,
+        $combinationProductAttributeService,
+        $insuranceService,
+        $cartService,
+        $productRepository,
+        $productHelper,
+        $insuranceApiService,
+        $priceHelper,
+        $insuranceHelper
+    ) {
         $this->almaInsuranceProductRepository = $almaInsuranceProductRepository;
-        $this->context = \Context::getContext();
-        $this->attributeGroupProductService = new AttributeGroupProductService();
-        $this->attributeProductService = new AttributeProductService();
-        $this->combinationProductAttributeService = new CombinationProductAttributeService();
-        $this->insuranceService = new InsuranceService();
-        $cartServiceBuilder = new CartServiceBuilder();
-        $this->cartService = $cartServiceBuilder->getInstance();
-        $this->productRepository = new ProductRepository();
-        $this->alma = ClientHelper::defaultInstance();
-        $this->productHelper = new ProductHelper();
-        $this->insuranceApiService = new InsuranceApiService();
-
-        $priceHelperBuilder = new PriceHelperBuilder();
-        $this->priceHelper = $priceHelperBuilder->getInstance();
-
-        $this->insuranceHelper = new InsuranceHelper();
+        $this->context = $contextFactory->getContext();
+        $this->attributeGroupProductService = $attributeGroupProductService;
+        $this->attributeProductService = $attributeProductService;
+        $this->combinationProductAttributeService = $combinationProductAttributeService;
+        $this->insuranceService = $insuranceService;
+        $this->cartService = $cartService;
+        $this->productRepository = $productRepository;
+        $this->productHelper = $productHelper;
+        $this->insuranceApiService = $insuranceApiService;
+        $this->priceHelper = $priceHelper;
+        $this->insuranceHelper = $insuranceHelper;
     }
 
     /**
@@ -196,8 +207,7 @@ class InsuranceProductService
         $quantity,
         $idCustomization,
         $insuranceContractInfos,
-        $cart = null,
-        $destroyPost = true
+        $cart = null
     ) {
         $idProductAttribute = $this->attributeProductService->getIdProductAttributeFromPost($idProduct);
 
@@ -219,9 +229,7 @@ class InsuranceProductService
             $this->context->shop->id
         );
 
-        if ($destroyPost) {
-            $_POST['alma_id_insurance_contract'] = null;
-        }
+        $_POST['alma_id_insurance_contract'] = null;
 
         if (null === $this->context->cart) {
             // There is a bug in some versions of Prestashop when adding a product on the cart and be sign-in and not having a default address
@@ -255,9 +263,18 @@ class InsuranceProductService
      *
      * @return bool
      */
-    public function handleAddingProductInsurance($idProduct, $insuranceContractId, $quantity, $idCustomization, $cart = null, $destroyPost = true)
+    public function handleAddingProductInsurance($cart = null)
     {
         try {
+            if (!$this->canHandleAddingProductInsurance()) {
+                return false;
+            }
+
+            $idProduct = \Tools::getValue('id_product');
+            $insuranceContractId = \Tools::getValue('alma_id_insurance_contract');
+            $quantity = \Tools::getValue('qty');
+            $idCustomization = \Tools::getValue('id_customization');
+
             $idProductAttribute = $this->attributeProductService->getIdProductAttributeFromPost($idProduct);
 
             $cmsReference = $this->insuranceHelper->createCmsReference($idProduct, $idProductAttribute);
@@ -285,8 +302,7 @@ class InsuranceProductService
                         'cms_reference' => $cmsReference,
                         'product_price' => $staticPriceInCents,
                     ],
-                    $cart,
-                    $destroyPost
+                    $cart
                 );
             }
 
@@ -307,43 +323,18 @@ class InsuranceProductService
     }
 
     /**
-     * @param int $idProduct
-     * @param int $idProductAttribute
-     *
      * @return bool
      */
-    public function handleRemovingProductInsurance($idProduct, $idProductAttribute)
+    public function canHandleAddingProductInsurance()
     {
-        try {
-            $insuranceProductId = $this->productRepository->getProductIdByReference(
-                ConstantsHelper::ALMA_INSURANCE_PRODUCT_REFERENCE,
-                $this->context->language->id
-            );
-
-            if ($idProduct === $insuranceProductId) {
-                return true;
-            }
-
-            $this->insuranceService->deleteAllLinkedInsuranceProducts([
-                'id_cart' => $this->context->cart->id,
-                'id_product' => $idProduct,
-                'id_product_attribute' => $idProductAttribute,
-                'customization_id' => 0,
-            ]);
-
+        if (
+            \Tools::getIsset('alma_id_insurance_contract')
+            && 1 == \Tools::getValue('add')
+            && 'update' == \Tools::getValue('action')
+        ) {
             return true;
-        } catch (\Exception $e) {
-            Logger::instance()->error(
-                sprintf(
-                    '[Alma] An error occurred when removed an insurance, productId : "%s", productAttributeId : "%s", message "%s", trace "%s"',
-                    $idProduct,
-                    $idProductAttribute,
-                    $e->getMessage(),
-                    $e->getTraceAsString()
-                )
-            );
-
-            return false;
         }
+
+        return false;
     }
 }

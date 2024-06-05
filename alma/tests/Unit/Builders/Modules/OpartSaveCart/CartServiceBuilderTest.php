@@ -22,12 +22,10 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
-namespace Alma\PrestaShop\Tests\Unit\Builders\Services;
+namespace Alma\PrestaShop\Tests\Unit\Builders\Modules\OpartSaveCart;
 
-use Alma\PrestaShop\Builders\Services\CartServiceBuilder;
-use Alma\PrestaShop\Helpers\InsuranceHelper;
-use Alma\PrestaShop\Modules\OpartSaveCart\CartService as OpartSaveCartCartService;
-use Alma\PrestaShop\Services\CartService;
+use Alma\PrestaShop\Builders\Modules\OpartSaveCart\CartServiceBuilder;
+use Alma\PrestaShop\Modules\OpartSaveCart\CartService;
 use PHPUnit\Framework\TestCase;
 
 class CartServiceBuilderTest extends TestCase
@@ -43,27 +41,5 @@ class CartServiceBuilderTest extends TestCase
     public function testGetInstance()
     {
         $this->assertInstanceOf(CartService::class, $this->cartServiceBuilder->getInstance());
-    }
-
-    /**
-     * @return void
-     */
-    public function testGetOpartSaveCartCartService()
-    {
-        $this->assertInstanceOf(OpartSaveCartCartService::class, $this->cartServiceBuilder->getOpartSaveCartCartService());
-        $this->assertInstanceOf(OpartSaveCartCartService::class, $this->cartServiceBuilder->getOpartSaveCartCartService(
-            \Mockery::mock(OpartSaveCartCartService::class)
-        ));
-    }
-
-    /**
-     * @return void
-     */
-    public function testGetInsuranceHelper()
-    {
-        $this->assertInstanceOf(InsuranceHelper::class, $this->cartServiceBuilder->getInsuranceHelper());
-        $this->assertInstanceOf(InsuranceHelper::class, $this->cartServiceBuilder->getInsuranceHelper(
-            new InsuranceHelper()
-        ));
     }
 }

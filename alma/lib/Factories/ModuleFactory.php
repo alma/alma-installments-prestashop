@@ -25,6 +25,8 @@
 namespace Alma\PrestaShop\Factories;
 
 use Alma\PrestaShop\Helpers\ConstantsHelper;
+use Alma\PrestaShop\Helpers\ToolsHelper;
+use PrestaShop\PrestaShop\Core\Addon\Module\ModuleManagerBuilder;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -40,8 +42,15 @@ class ModuleFactory
      */
     protected $module;
 
-    public function __construct()
+    /**
+     * @var ToolsHelper
+     */
+    protected $toolsHelper;
+
+    public function __construct($toolsHelper)
     {
+        $this->toolsHelper = $toolsHelper;
+
         $this->module = $this->getModule();
     }
 
@@ -85,5 +94,21 @@ class ModuleFactory
     public function l($string, $specific = false, $locale = null)
     {
         return $this->module->l($string, $specific, $locale);
+    }
+
+    /**
+     * Check if module is installed.
+     *
+     * @param string $moduleName
+     *
+     * @return bool
+     */
+    public function isInstalled($moduleName)
+    {
+        if ($this->toolsHelper->psVersionCompare('1.7', '<')) {
+            return (bool) \Module::isInstalled($moduleName);
+        }
+
+        return ModuleManagerBuilder::getInstance()->build()->isInstalled($moduleName);
     }
 }
