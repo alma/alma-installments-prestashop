@@ -100,6 +100,7 @@ jobs:
       if: github.event_name == 'pull_request'
       uses: actions/github-script@v7
       with:
+          github-token: ${{ steps.github-token-checks.outputs.token }}
           script: |
               const checkOutput = {
                   title: 'E2E tests results',
