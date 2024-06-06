@@ -26,7 +26,9 @@ namespace Alma\PrestaShop\Tests\Unit\Builders\Services;
 
 use Alma\PrestaShop\Builders\Services\CartServiceBuilder;
 use Alma\PrestaShop\Helpers\InsuranceHelper;
+use Alma\PrestaShop\Helpers\InsuranceProductHelper;
 use Alma\PrestaShop\Modules\OpartSaveCart\CartService as OpartSaveCartCartService;
+use Alma\PrestaShop\Repositories\CartProductRepository;
 use Alma\PrestaShop\Services\CartService;
 use PHPUnit\Framework\TestCase;
 
@@ -64,6 +66,28 @@ class CartServiceBuilderTest extends TestCase
         $this->assertInstanceOf(InsuranceHelper::class, $this->cartServiceBuilder->getInsuranceHelper());
         $this->assertInstanceOf(InsuranceHelper::class, $this->cartServiceBuilder->getInsuranceHelper(
             new InsuranceHelper()
+        ));
+    }
+
+    /**
+     * @return void
+     */
+    public function testGetCartProductRepository()
+    {
+        $this->assertInstanceOf(CartProductRepository::class, $this->cartServiceBuilder->getCartProductRepository());
+        $this->assertInstanceOf(CartProductRepository::class, $this->cartServiceBuilder->getCartProductRepository(
+            \Mockery::mock(CartProductRepository::class)
+        ));
+    }
+
+    /**
+     * @return void
+     */
+    public function testGetInsuranceProductHelper()
+    {
+        $this->assertInstanceOf(InsuranceProductHelper::class, $this->cartServiceBuilder->getInsuranceProductHelper());
+        $this->assertInstanceOf(InsuranceProductHelper::class, $this->cartServiceBuilder->getInsuranceProductHelper(
+            \Mockery::mock(InsuranceProductHelper::class)
         ));
     }
 }

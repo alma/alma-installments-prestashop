@@ -38,11 +38,6 @@ if (!defined('_PS_VERSION_')) {
 class ModuleFactory
 {
     /**
-     * @var false|\Module
-     */
-    protected $module;
-
-    /**
      * @var ToolsHelper
      */
     protected $toolsHelper;
@@ -50,8 +45,6 @@ class ModuleFactory
     public function __construct($toolsHelper)
     {
         $this->toolsHelper = $toolsHelper;
-
-        $this->module = $this->getModule();
     }
 
     /**
@@ -67,7 +60,13 @@ class ModuleFactory
      */
     public function getModuleName()
     {
-        return $this->module->name;
+        $module = $this->getModule();
+
+        if ($module) {
+            return $module->name;
+        }
+
+        return '';
     }
 
     /**
@@ -75,7 +74,13 @@ class ModuleFactory
      */
     public function getPathUri()
     {
-        return $this->module->getPathUri();
+        $module = $this->getModule();
+
+        if ($module) {
+            return $module->getPathUri();
+        }
+
+        return '';
     }
 
     /**
@@ -93,7 +98,13 @@ class ModuleFactory
      */
     public function l($string, $specific = false, $locale = null)
     {
-        return $this->module->l($string, $specific, $locale);
+        $module = $this->getModule();
+
+        if ($module) {
+            return $module->l($string, $specific, $locale);
+        }
+
+        return '';
     }
 
     /**
@@ -106,9 +117,33 @@ class ModuleFactory
     public function isInstalled($moduleName)
     {
         if ($this->toolsHelper->psVersionCompare('1.7', '<')) {
-            return (bool) \Module::isInstalled($moduleName);
+            return $this->isInstalledBefore17($moduleName);
         }
 
+        return $this->isInstalledAfter17($moduleName);
+    }
+
+    /**
+     * @codeCoverageIgnore
+     *
+     * @param $moduleName
+     *
+     * @return bool
+     */
+    public function isInstalledBefore17($moduleName)
+    {
+        return (bool) \Module::isInstalled($moduleName);
+    }
+
+    /**
+     * @codeCoverageIgnore
+     *
+     * @param $moduleName
+     *
+     * @return bool
+     */
+    public function isInstalledAfter17($moduleName)
+    {
         return ModuleManagerBuilder::getInstance()->build()->isInstalled($moduleName);
     }
 }

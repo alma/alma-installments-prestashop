@@ -38,8 +38,6 @@ class InsuranceProductHelperBuilder
 {
     use BuilderTrait;
 
-    // @todo add test
-
     /**
      * @return InsuranceProductHelper
      */

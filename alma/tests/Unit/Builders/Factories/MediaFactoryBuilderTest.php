@@ -22,33 +22,29 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
-namespace Alma\PrestaShop\Tests\Unit\Builders\Modules\OpartSaveCart;
+namespace Alma\PrestaShop\Tests\Unit\Builders\Factories;
 
-use Alma\PrestaShop\Builders\Modules\OpartSaveCart\CartServiceBuilder;
-use Alma\PrestaShop\Modules\OpartSaveCart\CartRepository;
-use Alma\PrestaShop\Modules\OpartSaveCart\CartService;
+use Alma\PrestaShop\Builders\Factories\MediaFactoryBuilder;
+use Alma\PrestaShop\Factories\MediaFactory;
 use PHPUnit\Framework\TestCase;
 
-class CartServiceBuilderTest extends TestCase
+/**
+ * @covers \Alma\PrestaShop\Builders\Helpers\AddressHelperBuilder
+ */
+class MediaFactoryBuilderTest extends TestCase
 {
+    /**
+     * @var MediaFactoryBuilder
+     */
+    protected $mediaFactoryBuilder;
+
     public function setUp()
     {
-        $this->cartServiceBuilder = new CartServiceBuilder();
+        $this->mediaFactoryBuilder = new MediaFactoryBuilder();
     }
 
-    /**
-     * @return void
-     */
     public function testGetInstance()
     {
-        $this->assertInstanceOf(CartService::class, $this->cartServiceBuilder->getInstance());
-    }
-
-    public function testGetOpartSaveCartRepository()
-    {
-        $this->assertInstanceOf(CartRepository::class, $this->cartServiceBuilder->getOpartSaveCartRepository());
-        $this->assertInstanceOf(CartRepository::class, $this->cartServiceBuilder->getOpartSaveCartRepository(
-            new CartRepository()
-        ));
+        $this->assertInstanceOf(MediaFactory::class, $this->mediaFactoryBuilder->getInstance());
     }
 }

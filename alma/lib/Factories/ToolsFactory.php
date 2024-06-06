@@ -40,6 +40,8 @@ class ToolsFactory
      * @param string $key Value key
      * @param mixed $default_value (optional)
      *
+     * @codeCoverageIgnore Simple getter
+     *
      * @return mixed Value
      */
     public function getValue($key, $default_value = false)
@@ -51,6 +53,8 @@ class ToolsFactory
      * Checks if a key exists either in $_POST or $_GET.
      *
      * @param string $key
+     *
+     * @codeCoverageIgnore Simple getter.
      *
      * @return bool
      */

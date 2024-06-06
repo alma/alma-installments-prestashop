@@ -33,6 +33,8 @@ class CartRepository
     /**
      * @param string $token
      *
+     * @codeCoverageIgnore
+     *
      * @return array|bool|object|null
      */
     public function getIdCartByToken($token)
