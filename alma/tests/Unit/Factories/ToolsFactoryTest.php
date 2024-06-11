@@ -22,41 +22,25 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
-namespace Alma\PrestaShop\Builders\Services;
+namespace Alma\PrestaShop\Tests\Unit\Factories;
 
-use Alma\PrestaShop\Services\InsuranceProductService;
-use Alma\PrestaShop\Traits\BuilderTrait;
+use Alma\PrestaShop\Factories\ToolsFactory;
+use PHPUnit\Framework\TestCase;
 
-if (!defined('_PS_VERSION_')) {
-    exit;
-}
-
-/**
- * InsuranceProductServiceBuilder.
- */
-class InsuranceProductServiceBuilder
+class ToolsFactoryTest extends TestCase
 {
-    use BuilderTrait;
-
     /**
-     * @return InsuranceProductService
+     * @var ToolsFactoryTest
      */
-    public function getInstance()
+    protected $toolsFactory;
+
+    public function setUp()
     {
-        return new InsuranceProductService(
-            $this->getAlmaInsuranceProductRepository(),
-            $this->getContextFactory(),
-            $this->getAttributeGroupProductService(),
-            $this->getAttributeProductService(),
-            $this->getCombinationProductAttributeService(),
-            $this->getInsuranceService(),
-            $this->getCartService(),
-            $this->getProductRepository(),
-            $this->getProductHelper(),
-            $this->getInsuranceApiService(),
-            $this->getPriceHelper(),
-            $this->getInsuranceHelper(),
-            $this->getToolsFactory()
-        );
+        $this->toolsFactory = new ToolsFactory();
+    }
+
+    public function testGetValueWithDefaultKey()
+    {
+        $this->assertEquals('value', $this->toolsFactory->getValue('key', 'value'));
     }
 }

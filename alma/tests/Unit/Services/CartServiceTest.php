@@ -34,134 +34,130 @@ use PHPUnit\Framework\TestCase;
 
 class CartServiceTest extends TestCase
 {
+    /**
+     * @var \Cart|(\Cart&\Mockery\LegacyMockInterface)|(\Cart&\Mockery\MockInterface)|\Mockery\LegacyMockInterface|\Mockery\MockInterface
+     */
+    protected $cartMock;
+    /**
+     * @var \Cart|(\Cart&\Mockery\LegacyMockInterface)|(\Cart&\Mockery\MockInterface)|\Mockery\LegacyMockInterface|\Mockery\MockInterface
+     */
+    protected $newCartMock;
+    /**
+     * @var ContextFactory|(ContextFactory&\Mockery\LegacyMockInterface)|(ContextFactory&\Mockery\MockInterface)|\Mockery\LegacyMockInterface|\Mockery\MockInterface|(\Mockery\MockInterface&ContextFactory)
+     */
+    protected $contextFactoryMock;
+    /**
+     * @var CartServiceAlias|(CartServiceAlias&\Mockery\LegacyMockInterface)|(CartServiceAlias&\Mockery\MockInterface)|\Mockery\LegacyMockInterface|\Mockery\MockInterface|(\Mockery\MockInterface&CartServiceAlias)
+     */
+    protected $opartCartSaveServiceSpy;
+    /**
+     * @var \#M#C\Mockery.mock[]|(\#M#C\Mockery.mock[]&\Mockery\LegacyMockInterface)|(\#M#C\Mockery.mock[]&\Mockery\MockInterface)|\#P#C\Alma\PrestaShop\Tests\Unit\Services\CartServiceTest.contextFactoryMock[]|(\#P#C\Alma\PrestaShop\Tests\Unit\Services\CartServiceTest.contextFactoryMock[]&\Mockery\LegacyMockInterface)|(\#P#C\Alma\PrestaShop\Tests\Unit\Services\CartServiceTest.contextFactoryMock[]&\Mockery\MockInterface)|\#P#C\Alma\PrestaShop\Tests\Unit\Services\CartServiceTest.opartCartSaveServiceSpy[]|(\#P#C\Alma\PrestaShop\Tests\Unit\Services\CartServiceTest.opartCartSaveServiceSpy[]&\Mockery\LegacyMockInterface)|(\#P#C\Alma\PrestaShop\Tests\Unit\Services\CartServiceTest.opartCartSaveServiceSpy[]&\Mockery\MockInterface)|\#P#S\Alma\PrestaShop\Tests\Unit\Services\CartServiceTest.contextFactoryMock[]|(\#P#S\Alma\PrestaShop\Tests\Unit\Services\CartServiceTest.contextFactoryMock[]&\Mockery\LegacyMockInterface)|(\#P#S\Alma\PrestaShop\Tests\Unit\Services\CartServiceTest.contextFactoryMock[]&\Mockery\MockInterface)|\#P#S\Alma\PrestaShop\Tests\Unit\Services\CartServiceTest.opartCartSaveServiceSpy[]|(\#P#S\Alma\PrestaShop\Tests\Unit\Services\CartServiceTest.opartCartSaveServiceSpy[]&\Mockery\LegacyMockInterface)|(\#P#S\Alma\PrestaShop\Tests\Unit\Services\CartServiceTest.opartCartSaveServiceSpy[]&\Mockery\MockInterface)|CartService|(CartService&\Mockery\LegacyMockInterface)|(CartService&\Mockery\MockInterface)|\Mockery\LegacyMockInterface|\Mockery\MockInterface|(\Mockery\MockInterface&\#M#C\Mockery.mock[])|(\Mockery\MockInterface&\#P#C\Alma\PrestaShop\Tests\Unit\Services\CartServiceTest.contextFactoryMock[])|(\Mockery\MockInterface&\#P#C\Alma\PrestaShop\Tests\Unit\Services\CartServiceTest.opartCartSaveServiceSpy[])|(\Mockery\MockInterface&\#P#S\Alma\PrestaShop\Tests\Unit\Services\CartServiceTest.contextFactoryMock[])|(\Mockery\MockInterface&\#P#S\Alma\PrestaShop\Tests\Unit\Services\CartServiceTest.opartCartSaveServiceSpy[])|(\Mockery\MockInterface&CartService)
+     */
+    protected $cartServiceSpy;
+
+    /**
+     * @return void
+     */
     public function setUp()
     {
+        $this->cartMock = \Mockery::mock(\Cart::class);
+        $this->newCartMock = \Mockery::mock(\Cart::class);
+        $this->contextFactoryMock = \Mockery::mock(ContextFactory::class)->makePartial();
+        $this->opartCartSaveServiceSpy = \Mockery::spy(CartServiceAlias::class)->makePartial();
+        $this->cartServiceSpy = \Mockery::spy(
+            CartService::class,
+            [
+                \Mockery::mock(CartProductRepository::class),
+                $this->contextFactoryMock,
+                $this->opartCartSaveServiceSpy,
+                \Mockery::mock(InsuranceHelper::class),
+                \Mockery::mock(InsuranceProductHelper::class),
+            ]
+        )->makePartial();
     }
 
+    /**
+     * @return void
+     */
     public function tearDown()
     {
+        $this->cartMock = null;
+        $this->newCartMock = null;
+        $this->contextFactoryMock = null;
+        $this->opartCartSaveServiceSpy = null;
+        $this->cartServiceSpy = null;
     }
 
+    /**
+     * @return void
+     */
     public function testDuplicateCartWithoutCurrentCart()
     {
-        $cartMock = \Mockery::mock(\Cart::class);
-        $contextFactoryMock = \Mockery::mock(ContextFactory::class)->makePartial();
-        $contextFactoryMock->shouldReceive('getContextCart')->andReturn(null);
+        $this->contextFactoryMock->shouldReceive('getContextCart')->andReturn(null);
+        $this->opartCartSaveServiceSpy->shouldReceive('getCartSaved');
 
-        $opartCartSaveServiceSpy = \Mockery::spy(CartServiceAlias::class)->makePartial();
-        $opartCartSaveServiceSpy->shouldReceive('getCartSaved');
+        $this->cartServiceSpy->shouldReceive('duplicateInsuranceProductsInDB');
 
-        $cartServiceSpy = \Mockery::spy(
-            CartService::class,
-            [
-                \Mockery::mock(CartProductRepository::class),
-                $contextFactoryMock,
-                $opartCartSaveServiceSpy,
-                \Mockery::mock(InsuranceHelper::class),
-                \Mockery::mock(InsuranceProductHelper::class),
-            ]
-        )->makePartial();
-        $cartServiceSpy->shouldReceive('duplicateInsuranceProductsInDB');
+        $this->cartServiceSpy->duplicateCart($this->cartMock);
 
-        $cartServiceSpy->duplicateCart($cartMock);
-
-        $opartCartSaveServiceSpy->shouldNotHaveReceived('getCartSaved');
-        $cartServiceSpy->shouldNotHaveReceived('duplicateInsuranceProductsInDB');
+        $this->opartCartSaveServiceSpy->shouldNotHaveReceived('getCartSaved');
+        $this->cartServiceSpy->shouldNotHaveReceived('duplicateInsuranceProductsInDB');
     }
 
+    /**
+     * @return void
+     */
     public function testDuplicateCartWithCurrentCartAndCartIdNull()
     {
-        $cartMock = \Mockery::mock(\Cart::class);
-        $cartMock->id = null;
+        $this->cartMock->id = null;
+        $this->newCartMock->id = 2;
 
-        $newCartMock = \Mockery::mock(\Cart::class);
-        $newCartMock->id = 2;
+        $this->contextFactoryMock->shouldReceive('getContextCart')->andReturn($this->cartMock);
+        $this->opartCartSaveServiceSpy->shouldReceive('getCartSaved')->andReturn($this->newCartMock);
 
-        $contextFactoryMock = \Mockery::mock(ContextFactory::class)->makePartial();
-        $contextFactoryMock->shouldReceive('getContextCart')->andReturn($cartMock);
+        $this->cartServiceSpy->shouldReceive('duplicateInsuranceProductsInDB');
 
-        $opartCartSaveServiceSpy = \Mockery::spy(CartServiceAlias::class)->makePartial();
-        $opartCartSaveServiceSpy->shouldReceive('getCartSaved')->andReturn($newCartMock);
+        $this->cartServiceSpy->duplicateCart($this->cartMock);
 
-        $cartServiceSpy = \Mockery::spy(
-            CartService::class,
-            [
-                \Mockery::mock(CartProductRepository::class),
-                $contextFactoryMock,
-                $opartCartSaveServiceSpy,
-                \Mockery::mock(InsuranceHelper::class),
-                \Mockery::mock(InsuranceProductHelper::class),
-            ]
-        )->makePartial();
-        $cartServiceSpy->shouldReceive('duplicateInsuranceProductsInDB');
-
-        $cartServiceSpy->duplicateCart($cartMock);
-
-        $opartCartSaveServiceSpy->shouldHaveReceived('getCartSaved');
-        $cartServiceSpy->shouldHaveReceived('duplicateInsuranceProductsInDB');
+        $this->opartCartSaveServiceSpy->shouldHaveReceived('getCartSaved');
+        $this->cartServiceSpy->shouldHaveReceived('duplicateInsuranceProductsInDB');
     }
 
+    /**
+     * @return void
+     */
     public function testDuplicateCartWithCurrentCartAndCartIdDifferentNewCart()
     {
-        $cartMock = \Mockery::mock(\Cart::class);
-        $cartMock->id = 1;
+        $this->cartMock->id = 1;
+        $this->newCartMock->id = 2;
 
-        $newCartMock = \Mockery::mock(\Cart::class);
-        $newCartMock->id = 2;
+        $this->contextFactoryMock->shouldReceive('getContextCart')->andReturn($this->cartMock);
+        $this->opartCartSaveServiceSpy->shouldReceive('getCartSaved');
 
-        $contextFactoryMock = \Mockery::mock(ContextFactory::class)->makePartial();
-        $contextFactoryMock->shouldReceive('getContextCart')->andReturn($cartMock);
+        $this->cartServiceSpy->shouldReceive('duplicateInsuranceProductsInDB');
 
-        $opartCartSaveServiceSpy = \Mockery::spy(CartServiceAlias::class)->makePartial();
-        $opartCartSaveServiceSpy->shouldReceive('getCartSaved');
+        $this->cartServiceSpy->duplicateCart($this->newCartMock);
 
-        $cartServiceSpy = \Mockery::spy(
-            CartService::class,
-            [
-                \Mockery::mock(CartProductRepository::class),
-                $contextFactoryMock,
-                $opartCartSaveServiceSpy,
-                \Mockery::mock(InsuranceHelper::class),
-                \Mockery::mock(InsuranceProductHelper::class),
-            ]
-        )->makePartial();
-        $cartServiceSpy->shouldReceive('duplicateInsuranceProductsInDB');
-
-        $cartServiceSpy->duplicateCart($newCartMock);
-
-        $opartCartSaveServiceSpy->shouldNotHaveReceived('getCartSaved');
-        $cartServiceSpy->shouldHaveReceived('duplicateInsuranceProductsInDB');
+        $this->opartCartSaveServiceSpy->shouldNotHaveReceived('getCartSaved');
+        $this->cartServiceSpy->shouldHaveReceived('duplicateInsuranceProductsInDB');
     }
 
+    /**
+     * @return void
+     */
     public function testDuplicateCartWithCurrentCartAndCartIdSameNewCart()
     {
-        $cartMock = \Mockery::mock(\Cart::class);
-        $cartMock->id = 1;
+        $this->cartMock->id = 1;
+        $this->newCartMock->id = 1;
 
-        $newCartMock = \Mockery::mock(\Cart::class);
-        $newCartMock->id = 1;
+        $this->contextFactoryMock->shouldReceive('getContextCart')->andReturn($this->cartMock);
+        $this->opartCartSaveServiceSpy->shouldReceive('getCartSaved');
 
-        $contextFactoryMock = \Mockery::mock(ContextFactory::class)->makePartial();
-        $contextFactoryMock->shouldReceive('getContextCart')->andReturn($cartMock);
+        $this->cartServiceSpy->shouldReceive('duplicateInsuranceProductsInDB');
 
-        $opartCartSaveServiceSpy = \Mockery::spy(CartServiceAlias::class)->makePartial();
-        $opartCartSaveServiceSpy->shouldReceive('getCartSaved');
+        $this->cartServiceSpy->duplicateCart($this->newCartMock);
 
-        $cartServiceSpy = \Mockery::spy(
-            CartService::class,
-            [
-                \Mockery::mock(CartProductRepository::class),
-                $contextFactoryMock,
-                $opartCartSaveServiceSpy,
-                \Mockery::mock(InsuranceHelper::class),
-                \Mockery::mock(InsuranceProductHelper::class),
-            ]
-        )->makePartial();
-        $cartServiceSpy->shouldReceive('duplicateInsuranceProductsInDB');
-
-        $cartServiceSpy->duplicateCart($newCartMock);
-
-        $opartCartSaveServiceSpy->shouldNotHaveReceived('getCartSaved');
-        $cartServiceSpy->shouldNotHaveReceived('duplicateInsuranceProductsInDB');
+        $this->opartCartSaveServiceSpy->shouldNotHaveReceived('getCartSaved');
+        $this->cartServiceSpy->shouldNotHaveReceived('duplicateInsuranceProductsInDB');
     }
 }

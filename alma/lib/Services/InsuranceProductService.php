@@ -26,6 +26,7 @@ namespace Alma\PrestaShop\Services;
 
 use Alma\PrestaShop\Exceptions\AlmaException;
 use Alma\PrestaShop\Factories\ContextFactory;
+use Alma\PrestaShop\Factories\ToolsFactory;
 use Alma\PrestaShop\Helpers\ConstantsHelper;
 use Alma\PrestaShop\Helpers\InsuranceHelper;
 use Alma\PrestaShop\Helpers\PriceHelper;
@@ -97,6 +98,10 @@ class InsuranceProductService
      * @var InsuranceHelper
      */
     protected $insuranceHelper;
+    /**
+     * @var ToolsFactory
+     */
+    protected $toolsFactory;
 
     /**
      * @param AlmaInsuranceProductRepository $almaInsuranceProductRepository
@@ -124,7 +129,8 @@ class InsuranceProductService
         $productHelper,
         $insuranceApiService,
         $priceHelper,
-        $insuranceHelper
+        $insuranceHelper,
+        $toolsFactory
     ) {
         $this->almaInsuranceProductRepository = $almaInsuranceProductRepository;
         $this->context = $contextFactory->getContext();
@@ -138,6 +144,7 @@ class InsuranceProductService
         $this->insuranceApiService = $insuranceApiService;
         $this->priceHelper = $priceHelper;
         $this->insuranceHelper = $insuranceHelper;
+        $this->toolsFactory = $toolsFactory;
     }
 
     /**
@@ -328,9 +335,9 @@ class InsuranceProductService
     public function canHandleAddingProductInsurance()
     {
         if (
-            \Tools::getIsset('alma_id_insurance_contract')
-            && 1 == \Tools::getValue('add')
-            && 'update' == \Tools::getValue('action')
+            $this->toolsFactory->getIsset('alma_id_insurance_contract')
+            && 1 == $this->toolsFactory->getValue('add')
+            && 'update' == $this->toolsFactory->getValue('action')
         ) {
             return true;
         }
