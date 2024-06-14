@@ -1117,7 +1117,8 @@ trait BuilderTrait
             $this->getContextFactory(),
             $this->getOpartSaveCartCartService(),
             $this->getInsuranceHelper(),
-            $this->getInsuranceProductHelper()
+            $this->getInsuranceProductHelper(),
+            $this->getToolsFactory()
         );
     }
 

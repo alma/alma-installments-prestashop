@@ -92,8 +92,6 @@ class ActionCartSaveHookController extends FrontendHookController
      * @param array $params
      *
      * @return void
-     *
-     * @throws \PrestaShopDatabaseException
      */
     public function run($params)
     {

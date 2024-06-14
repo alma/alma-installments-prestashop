@@ -24,7 +24,9 @@
 
 namespace Alma\PrestaShop\Tests\Unit\Services;
 
+use Alma\PrestaShop\Exceptions\AlmaException;
 use Alma\PrestaShop\Factories\ContextFactory;
+use Alma\PrestaShop\Factories\ToolsFactory;
 use Alma\PrestaShop\Helpers\InsuranceHelper;
 use Alma\PrestaShop\Helpers\InsuranceProductHelper;
 use Alma\PrestaShop\Modules\OpartSaveCart\CartService as CartServiceAlias;
@@ -54,6 +56,10 @@ class CartServiceTest extends TestCase
      * @var \#M#C\Mockery.mock[]|(\#M#C\Mockery.mock[]&\Mockery\LegacyMockInterface)|(\#M#C\Mockery.mock[]&\Mockery\MockInterface)|\#P#C\Alma\PrestaShop\Tests\Unit\Services\CartServiceTest.contextFactoryMock[]|(\#P#C\Alma\PrestaShop\Tests\Unit\Services\CartServiceTest.contextFactoryMock[]&\Mockery\LegacyMockInterface)|(\#P#C\Alma\PrestaShop\Tests\Unit\Services\CartServiceTest.contextFactoryMock[]&\Mockery\MockInterface)|\#P#C\Alma\PrestaShop\Tests\Unit\Services\CartServiceTest.opartCartSaveServiceSpy[]|(\#P#C\Alma\PrestaShop\Tests\Unit\Services\CartServiceTest.opartCartSaveServiceSpy[]&\Mockery\LegacyMockInterface)|(\#P#C\Alma\PrestaShop\Tests\Unit\Services\CartServiceTest.opartCartSaveServiceSpy[]&\Mockery\MockInterface)|\#P#S\Alma\PrestaShop\Tests\Unit\Services\CartServiceTest.contextFactoryMock[]|(\#P#S\Alma\PrestaShop\Tests\Unit\Services\CartServiceTest.contextFactoryMock[]&\Mockery\LegacyMockInterface)|(\#P#S\Alma\PrestaShop\Tests\Unit\Services\CartServiceTest.contextFactoryMock[]&\Mockery\MockInterface)|\#P#S\Alma\PrestaShop\Tests\Unit\Services\CartServiceTest.opartCartSaveServiceSpy[]|(\#P#S\Alma\PrestaShop\Tests\Unit\Services\CartServiceTest.opartCartSaveServiceSpy[]&\Mockery\LegacyMockInterface)|(\#P#S\Alma\PrestaShop\Tests\Unit\Services\CartServiceTest.opartCartSaveServiceSpy[]&\Mockery\MockInterface)|CartService|(CartService&\Mockery\LegacyMockInterface)|(CartService&\Mockery\MockInterface)|\Mockery\LegacyMockInterface|\Mockery\MockInterface|(\Mockery\MockInterface&\#M#C\Mockery.mock[])|(\Mockery\MockInterface&\#P#C\Alma\PrestaShop\Tests\Unit\Services\CartServiceTest.contextFactoryMock[])|(\Mockery\MockInterface&\#P#C\Alma\PrestaShop\Tests\Unit\Services\CartServiceTest.opartCartSaveServiceSpy[])|(\Mockery\MockInterface&\#P#S\Alma\PrestaShop\Tests\Unit\Services\CartServiceTest.contextFactoryMock[])|(\Mockery\MockInterface&\#P#S\Alma\PrestaShop\Tests\Unit\Services\CartServiceTest.opartCartSaveServiceSpy[])|(\Mockery\MockInterface&CartService)
      */
     protected $cartServiceSpy;
+    /**
+     * @var ToolsFactory|(ToolsFactory&\Mockery\LegacyMockInterface)|(ToolsFactory&\Mockery\MockInterface)|\Mockery\LegacyMockInterface|\Mockery\Mock|\Mockery\MockInterface|(\Mockery\MockInterface&ToolsFactory)
+     */
+    protected $toolsFactoryMock;
 
     /**
      * @return void
@@ -64,6 +70,7 @@ class CartServiceTest extends TestCase
         $this->newCartMock = \Mockery::mock(\Cart::class);
         $this->contextFactoryMock = \Mockery::mock(ContextFactory::class)->makePartial();
         $this->opartCartSaveServiceSpy = \Mockery::spy(CartServiceAlias::class)->makePartial();
+        $this->toolsFactoryMock = \Mockery::mock(ToolsFactory::class)->makePartial();
         $this->cartServiceSpy = \Mockery::spy(
             CartService::class,
             [
@@ -72,6 +79,7 @@ class CartServiceTest extends TestCase
                 $this->opartCartSaveServiceSpy,
                 \Mockery::mock(InsuranceHelper::class),
                 \Mockery::mock(InsuranceProductHelper::class),
+                $this->toolsFactoryMock,
             ]
         )->makePartial();
     }
@@ -90,10 +98,14 @@ class CartServiceTest extends TestCase
 
     /**
      * @return void
+     *
+     * @throws AlmaException
+     * @throws \PrestaShopException
      */
-    public function testDuplicateCartWithoutCurrentCart()
+    public function testDuplicateCartWithoutBaseCartAndActionShareCart()
     {
         $this->contextFactoryMock->shouldReceive('getContextCart')->andReturn(null);
+        $this->toolsFactoryMock->shouldReceive('getValue')->andReturn('shareCart');
         $this->opartCartSaveServiceSpy->shouldReceive('getCartSaved');
 
         $this->cartServiceSpy->shouldReceive('duplicateInsuranceProductsInDB');
@@ -106,13 +118,40 @@ class CartServiceTest extends TestCase
 
     /**
      * @return void
+     *
+     * @throws AlmaException
+     * @throws \PrestaShopException
      */
-    public function testDuplicateCartWithCurrentCartAndCartIdNull()
+    public function testDuplicateCartWithBaseCartCartIdNullAndActionShareCart()
     {
         $this->cartMock->id = null;
         $this->newCartMock->id = 2;
 
         $this->contextFactoryMock->shouldReceive('getContextCart')->andReturn($this->cartMock);
+        $this->toolsFactoryMock->shouldReceive('getValue')->andReturn('shareCart');
+        $this->opartCartSaveServiceSpy->shouldReceive('getCartSaved')->andReturn($this->newCartMock);
+
+        $this->cartServiceSpy->shouldReceive('duplicateInsuranceProductsInDB');
+
+        $this->cartServiceSpy->duplicateCart($this->cartMock);
+
+        $this->opartCartSaveServiceSpy->shouldNotHaveReceived('getCartSaved');
+        $this->cartServiceSpy->shouldHaveReceived('duplicateInsuranceProductsInDB');
+    }
+
+    /**
+     * @return void
+     *
+     * @throws AlmaException
+     * @throws \PrestaShopException
+     */
+    public function testDuplicateCartWithBaseCartCartIdNullAndActionNotShareCart()
+    {
+        $this->cartMock->id = null;
+        $this->newCartMock->id = 2;
+
+        $this->contextFactoryMock->shouldReceive('getContextCart')->andReturn($this->cartMock);
+        $this->toolsFactoryMock->shouldReceive('getValue')->andReturn('notShareCart');
         $this->opartCartSaveServiceSpy->shouldReceive('getCartSaved')->andReturn($this->newCartMock);
 
         $this->cartServiceSpy->shouldReceive('duplicateInsuranceProductsInDB');
@@ -125,13 +164,17 @@ class CartServiceTest extends TestCase
 
     /**
      * @return void
+     *
+     * @throws AlmaException
+     * @throws \PrestaShopException
      */
-    public function testDuplicateCartWithCurrentCartAndCartIdDifferentNewCart()
+    public function testDuplicateCartWithBaseCartAndCartIdDifferentNewCartAndActionShareCart()
     {
         $this->cartMock->id = 1;
         $this->newCartMock->id = 2;
 
         $this->contextFactoryMock->shouldReceive('getContextCart')->andReturn($this->cartMock);
+        $this->toolsFactoryMock->shouldReceive('getValue')->andReturn('shareCart');
         $this->opartCartSaveServiceSpy->shouldReceive('getCartSaved');
 
         $this->cartServiceSpy->shouldReceive('duplicateInsuranceProductsInDB');
@@ -144,8 +187,34 @@ class CartServiceTest extends TestCase
 
     /**
      * @return void
+     *
+     * @throws AlmaException
+     * @throws \PrestaShopException
      */
-    public function testDuplicateCartWithCurrentCartAndCartIdSameNewCart()
+    public function testDuplicateCartWithBaseCartAndCartIdDifferentNewCartAndActionNotShareCart()
+    {
+        $this->cartMock->id = 1;
+        $this->newCartMock->id = 2;
+
+        $this->contextFactoryMock->shouldReceive('getContextCart')->andReturn($this->cartMock);
+        $this->toolsFactoryMock->shouldReceive('getValue')->andReturn('notShareCart');
+        $this->opartCartSaveServiceSpy->shouldReceive('getCartSaved');
+
+        $this->cartServiceSpy->shouldReceive('duplicateInsuranceProductsInDB');
+
+        $this->cartServiceSpy->duplicateCart($this->newCartMock);
+
+        $this->opartCartSaveServiceSpy->shouldHaveReceived('getCartSaved');
+        $this->cartServiceSpy->shouldHaveReceived('duplicateInsuranceProductsInDB');
+    }
+
+    /**
+     * @return void
+     *
+     * @throws AlmaException
+     * @throws \PrestaShopException
+     */
+    public function testDuplicateCartWithBaseCartAndCartIdSameNewCart()
     {
         $this->cartMock->id = 1;
         $this->newCartMock->id = 1;

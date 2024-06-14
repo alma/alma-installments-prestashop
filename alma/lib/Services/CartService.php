@@ -26,6 +26,7 @@ namespace Alma\PrestaShop\Services;
 
 use Alma\PrestaShop\Exceptions\AlmaException;
 use Alma\PrestaShop\Factories\ContextFactory;
+use Alma\PrestaShop\Factories\ToolsFactory;
 use Alma\PrestaShop\Helpers\InsuranceHelper;
 use Alma\PrestaShop\Helpers\InsuranceProductHelper;
 use Alma\PrestaShop\Modules\OpartSaveCart\CartService as OpartSaveCartCartService;
@@ -59,6 +60,10 @@ class CartService
      * @var ContextFactory
      */
     protected $contextFactory;
+    /**
+     * @var ToolsFactory
+     */
+    protected $toolsFactory;
 
     /**
      * @param CartProductRepository $cartProductRepository
@@ -66,14 +71,16 @@ class CartService
      * @param OpartSaveCartCartService $opartCartSaveService
      * @param InsuranceHelper $insuranceHelper
      * @param InsuranceProductHelper $insuranceProductHelper
+     * @param ToolsFactory $toolsFactory
      */
-    public function __construct($cartProductRepository, $contextFactory, $opartCartSaveService, $insuranceHelper, $insuranceProductHelper)
+    public function __construct($cartProductRepository, $contextFactory, $opartCartSaveService, $insuranceHelper, $insuranceProductHelper, $toolsFactory)
     {
         $this->cartProductRepository = $cartProductRepository;
         $this->contextFactory = $contextFactory;
         $this->opartCartSaveService = $opartCartSaveService;
         $this->insuranceHelper = $insuranceHelper;
         $this->insuranceProductHelper = $insuranceProductHelper;
+        $this->toolsFactory = $toolsFactory;
     }
 
     /**
@@ -81,25 +88,22 @@ class CartService
      *
      * @return void
      *
-     * @throws \PrestaShopDatabaseException
+     * @throws AlmaException
+     * @throws \PrestaShopException
      */
     public function duplicateCart($newCart)
     {
-        $currentCart = $this->contextFactory->getContextCart();
-        // TODO : Need to get the cart id from opartsavecart
+        $baseCart = $this->contextFactory->getContextCart();
 
         if (
-            $currentCart
-            && null === $currentCart->id
+            $baseCart
+            && (null === $baseCart->id || $baseCart->id != $newCart->id)
         ) {
-            $currentCart = $this->opartCartSaveService->getCartSaved();
-        }
+            if ($this->toolsFactory->getValue('action') !== 'shareCart') {
+                $baseCart = $this->opartCartSaveService->getCartSaved();
+            }
 
-        if (
-            $currentCart
-            && $currentCart->id != $newCart->id
-        ) {
-            $this->duplicateInsuranceProductsInDB($newCart, $currentCart);
+            $this->duplicateInsuranceProductsInDB($newCart, $baseCart);
         }
     }
 
@@ -109,12 +113,19 @@ class CartService
      *
      * @return void
      *
-     * @throws \PrestaShopDatabaseException
+     * @throws AlmaException
+     * @throws \PrestaShopException
      */
     public function duplicateInsuranceProductsInDB($newCart, $currentCart)
     {
         if (!$this->insuranceHelper->checkInsuranceProductsExist($newCart)) {
-            $this->insuranceProductHelper->duplicateInsuranceProducts($currentCart, $newCart);
+            try {
+                $this->insuranceProductHelper->duplicateInsuranceProducts($currentCart, $newCart);
+            } catch (\PrestaShopDatabaseException $e) {
+                $newCart->delete();
+                // We throw an exception to prevent to buy insurance product without the possibility to subscribe
+                throw new AlmaException('[Alma] Impossible to duplicate insurance product in fact error connect to database');
+            }
         }
     }
 
