@@ -135,8 +135,48 @@
 {/if}
 
 {if isset($hasPSAccount) &&  $hasPSAccount}
-    <prestashop-accounts></prestashop-accounts>
+    <div class="ps-account-container">
+        <div class="ps-account-steps-banner">
+            <div class="ps-account-text-container">
+                <div class="ps-account-title"> {l s='To use Alma, please follow these steps' mod='alma'}</div>
+                <ol>
+                    <li>
+                        <div class="ps-account-list-title">{l s='1. Associate PrestaShop account (just below)' mod='alma'}</div>
+                    </li>
+                    <li>
+                        <div class="ps-account-list-title">{l s='2. Create an Alma account' mod='alma'}</div>
+                        <div>
+                            <a href="https://support.getalma.eu/hc/fr/articles/360007913920-D%C3%A9marrer-avec-le-paiement-en-plusieurs-fois-Alma-sur-mon-site-e-commerce" target="_blank">
+                                {l s='Consult our getting started guide' mod='alma'}
+                            </a>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="ps-account-list-title">{l s='3. Enter your API key' mod='alma'}</div>
+                        <div>
+                            {almaDisplayHtml}
+                            {l s='Find your API live key on your %1$s Alma dashboard%2$s' sprintf=['<a href="https://dashboard.getalma.eu/api" target="_blank">', '</a'] mod='alma'}
+                            {/almaDisplayHtml}
+                        </div>
+                        <div>
+                            {almaDisplayHtml}
+                            {l s='To use Test mode, retrieve your Test API key from your %1$s sandbox dashboard%2$s' sprintf=['<a href="https://dashboard.sandbox.getalma.eu/api" target="_blank">', '</a'] mod='alma'}
+                            {/almaDisplayHtml}
+                        </div>
+                    </li>
+                </ol>
 
+
+            </div>
+            <svg xmlns="http://www.w3.org/2000/svg" width="320" height="206" viewBox="0 0 320 206" fill="none">
+                <path d="M208.543 16.2549C230.059 16.2549 252.619 29.0533 263.307 69.0556L309.695 235.915H263.984C260.936 223.52 253.82 212.505 243.772 204.63C233.724 196.756 221.325 192.476 208.557 192.476C195.789 192.476 183.39 196.756 173.342 204.63C163.295 212.505 156.178 223.52 153.13 235.915H107.419L153.807 69.0556C164.467 29.0533 187.027 16.2549 208.543 16.2549Z" fill="#FA5022"/>
+                <path d="M64.7515 288.063L130.589 51.1795C145.718 -5.61027 177.737 -23.7798 208.274 -23.7798C238.812 -23.7798 270.83 -5.61027 285.999 51.1795L351.837 288.063" stroke="#FFCF00" stroke-width="29.3157"/>
+                <path d="M173.265 158.98C182.528 149.866 194.658 144.84 207.228 144.908C219.809 144.846 231.949 149.882 241.217 159.008L217.458 64.5067C215.207 55.3447 211.831 52.6016 207.228 52.6016C202.625 52.6016 199.274 55.4818 196.998 64.5067L173.265 158.98Z" fill="#E7F8FA"/>
+                <path d="M-31.1194 521.931L94.4756 69.7241C123.336 -38.6863 184.415 -73.3716 242.67 -73.3716C300.925 -73.3716 362.004 -38.6863 390.941 69.7241L516.536 521.931" stroke="#60D2DF" stroke-width="10.0518"/>
+            </svg>
+        </div>
+        <prestashop-accounts></prestashop-accounts>
+    </div>
     <script src="{$urlAccountsCdn|escape:'htmlall':'UTF-8'}" rel=preload></script>
 
     <script>
