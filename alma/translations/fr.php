@@ -1,28 +1,7 @@
 <?php
-/**
- * 2018-2023 Alma SAS.
- *
- * THE MIT LICENSE
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
- * documentation files (the "Software"), to deal in the Software without restriction, including without limitation
- * the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and
- * to permit persons to whom the Software is furnished to do so, subject to the following conditions:
- * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the
- * Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE
- * WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
- * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
- * IN THE SOFTWARE.
- *
- * @author    Alma SAS <contact@getalma.eu>
- * @copyright 2018-2023 Alma SAS
- * @license   https://opensource.org/licenses/MIT The MIT License
- */
+
 global $_MODULE;
-$_MODULE = [];
+$_MODULE = array();
 $_MODULE['<{alma}prestashop>alma_c407a14c73b61d727c55a42fb531f2e3'] = '1x 2x 3x 4x, J+15 ou J+30 Alma — Paiement en plusieurs fois et différé';
 $_MODULE['<{alma}prestashop>alma_7f9c508fa226d3e72644403653115c29'] = 'Boostez vos ventes en installant Alma ! C\'est simple et garanti, votre trésorerie est sécurisée. 0 engagement, 0 abonnement, 0 risque.';
 $_MODULE['<{alma}prestashop>alma_ce67a7d4b82bc360a17d25943924b388'] = 'Voulez-vous vraiment supprimer les paiements Alma de votre boutique ?';
@@ -292,6 +271,15 @@ $_MODULE['<{alma}prestashop>getcontent_8e51eafe439b0adfecc2dc209c2efb15'] = 'Vou
 $_MODULE['<{alma}prestashop>getcontent_1e6898bbd6a44041932ac84cbda13bd7'] = 'Retrouvez votre clef d\'API Live sur %1$svotre tableau de bord Alma%2$s';
 $_MODULE['<{alma}prestashop>getcontent_689c39b29a6d91e6dff728a7762cbc9e'] = 'Pour utiliser le mode Test, récupérez votre clef d\'API Test sur %1$svotre tableau de bord sandbox%2$s';
 $_MODULE['<{alma}prestashop>getcontent_7f40d377cc4942c4f0d6e75a736f8445'] = 'Configuration enregistrée avec succès';
+$_MODULE['<{alma}prestashop>getcontent_9f246d669c560d2ac604f5e01c8dd981'] = 'Pour utiliser Alma, merci de suivre les étapes suivantes';
+$_MODULE['<{alma}prestashop>getcontent_7379f16a6f4551a47731893ecfce52ab'] = '1. Associez votre compte PrestaShop Account (juste en dessous)';
+$_MODULE['<{alma}prestashop>getcontent_54f458d63e438020e62552dc28f23925'] = '2. Créez un compte Alma';
+$_MODULE['<{alma}prestashop>getcontent_e243bbd390b43c9ee6047fab4ab3cdc0'] = 'Consultez notre guide de démarrage';
+$_MODULE['<{alma}prestashop>getcontent_45d67e5114ba6e1f894f12c0c8ac6538'] = '3. Entrez votre clé d\'API';
+$_MODULE['<{alma}prestashop>getcontent_055f421849c2a1c32b885c95540f827c'] = 'Vous pouvez trouver votre clé live d\'API dans votre %1$s Alma dashboard%2$s';
+$_MODULE['<{alma}prestashop>getcontent_83b4d24aae962bb5581ba5720be20666'] = 'Pour utiliser le mode Test, retrouvez votre clé d\'API de Test dans votre %1$s Alma dashboard de sandbox%2$s';
+$_MODULE['<{alma}prestashop>getcontent_41d0063d3bb7d3067f46734fac8b27c4'] = 'Nous permettons de télécharger le module PrestaShop Account';
+$_MODULE['<{alma}prestashop>getcontent_6997dde298b14fbf6a7c95bd39fe8dc4'] = 'Vous pouvez trouver le module  %1$sici%2$s';
 $_MODULE['<{alma}prestashop>cartproducts_39f9a4a4bf8387aa7c0478f98b713f91'] = 'Supprimer l\'assurance';
 $_MODULE['<{alma}prestashop>fees_3acc62b245d8bc10f04d81f69d85b685'] = '(Sans frais)';
 $_MODULE['<{alma}prestashop>feeplan_64408fc092e84b9eb352626a0bcbbdf7'] = 'TAEG fixe';
