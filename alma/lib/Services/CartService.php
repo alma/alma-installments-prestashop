@@ -80,10 +80,13 @@ class CartService
      * @param \Cart $newCart
      *
      * @return void
+     *
+     * @throws \PrestaShopDatabaseException
      */
     public function duplicateCart($newCart)
     {
         $currentCart = $this->contextFactory->getContextCart();
+        // TODO : Need to get the cart id from opartsavecart
 
         if (
             $currentCart
@@ -100,10 +103,13 @@ class CartService
         }
     }
 
-    /***
+    /**
      * @param \Cart $newCart
      * @param \Cart $currentCart
+     *
      * @return void
+     *
+     * @throws \PrestaShopDatabaseException
      */
     public function duplicateInsuranceProductsInDB($newCart, $currentCart)
     {
