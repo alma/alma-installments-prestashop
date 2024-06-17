@@ -301,6 +301,9 @@ fieldset .form-alma.disabled::before{
     display: flex;
     justify-content: space-between;
     margin-bottom: 24px;
+    background-image: url('../../img/alma-banner-asset.svg');
+    background-position: right 100%;
+    background-repeat: no-repeat;
 }
 
 .ps-account-text-container {
