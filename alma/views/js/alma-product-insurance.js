@@ -136,6 +136,7 @@ function refreshWidget() {
     getProductDataForApiCall(
         cmsReference,
         regularPriceToCents,
+        productDetails.name,
         settings.merchant_id,
         quantity,
         settings.cart_id,

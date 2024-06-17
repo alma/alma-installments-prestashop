@@ -123,6 +123,7 @@ class DisplayProductActionsHookController extends FrontendHookController
 
         $regularPrice = $this->productHelper->getRegularPrice($productId, $productAttributeId);
         $regularPriceInCents = $this->priceHelper->convertPriceToCents($regularPrice);
+        $productName = isset($productParams['name']) ? $productParams['name'] : '';
 
         $merchantId = SettingsHelper::getMerchantId();
         $settings = $this->handleSettings($merchantId);
@@ -130,11 +131,12 @@ class DisplayProductActionsHookController extends FrontendHookController
         $this->context->smarty->assign([
             'settingsInsurance' => $settings,
             'iframeUrl' => sprintf(
-                '%s%s?cms_reference=%s&product_price=%s&merchant_id=%s&customer_session_id=%s&cart_id=%s',
+                '%s%s?cms_reference=%s&product_price=%s&product_name=%s&merchant_id=%s&customer_session_id=%s&cart_id=%s',
                 $this->adminInsuranceHelper->envUrl(),
                 ConstantsHelper::FO_IFRAME_WIDGET_INSURANCE_PATH,
                 $cmsReference,
                 $regularPriceInCents,
+                $productName,
                 $merchantId,
                 $this->context->session->getId(),
                 $this->cartHelper->getCartIdFromContext()
