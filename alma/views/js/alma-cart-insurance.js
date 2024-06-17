@@ -123,7 +123,8 @@ function onloadInsuranceClickEvents() {
                         product_id: idIframeModal.attr('data-product-id'),
                         product_attribute_id: idIframeModal.attr('data-product-attribute-id'),
                         customization_id: idIframeModal.attr('data-product-customization-id'),
-                        insurance_contract_id: e.data.selectedInsuranceData.insuranceContractId
+                        insurance_contract_id: e.data.selectedInsuranceData.insuranceContractId,
+                        insurance_quantity: e.data.selectedInsuranceQuantity
                     },
                 })
                     .success(function () {

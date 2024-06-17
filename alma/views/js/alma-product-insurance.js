@@ -52,7 +52,7 @@ let quantity = 1;
                     }
                     if (typeof event.selectedAlmaInsurance !== 'undefined' && event.selectedAlmaInsurance !== null) {
                         insuranceSelected = true;
-                        addInputsInsurance(event.selectedAlmaInsurance);
+                        addInputsInsurance(event);
                     }
                     if (typeof event.selectedInsuranceData !== 'undefined' && event.selectedInsuranceData) {
                         removeInputInsurance();
@@ -116,7 +116,8 @@ function onloadAddInsuranceInputOnProductAlma() {
             selectedAlmaInsurance = e.data.selectedInsuranceData;
             prestashop.emit('updateProduct', {
                 selectedAlmaInsurance: selectedAlmaInsurance,
-                selectedInsuranceData: e.data.declinedInsurance
+                selectedInsuranceData: e.data.declinedInsurance,
+                selectedInsuranceQuantity: e.data.selectedInsuranceQuantity
             });
         } else if (currentResolve) {
             currentResolve(e.data);
@@ -155,10 +156,17 @@ function createCmsReference(productDetails) {
     return undefined;
 }
 
-function addInputsInsurance(selectedAlmaInsurance) {
+function addInputsInsurance(event) {
     let formAddToCart = document.getElementById('add-to-cart-or-refresh');
+    let selectedInsuranceQuantity = event.selectedInsuranceQuantity;
 
-    handleInput('alma_id_insurance_contract', selectedAlmaInsurance.insuranceContractId, formAddToCart);
+    if (selectedInsuranceQuantity > quantity) {
+        selectedInsuranceQuantity = quantity
+    }
+
+    handleInput('alma_id_insurance_contract', event.selectedAlmaInsurance.insuranceContractId, formAddToCart);
+    handleInput('alma_quantity_insurance', selectedInsuranceQuantity, formAddToCart);
+
 }
 
 function handleInput(inputName, value, form) {

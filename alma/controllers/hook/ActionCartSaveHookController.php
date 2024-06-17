@@ -105,7 +105,7 @@ class ActionCartSaveHookController extends FrontendHookController
             $this->insuranceProductService->handleAddingProductInsurance(
                 \Tools::getValue('id_product'),
                 \Tools::getValue('alma_id_insurance_contract'),
-                \Tools::getValue('qty'),
+                $this->insuranceHelper->getInsuranceQuantity(),
                 \Tools::getValue('id_customization'),
                 $cart
             );
