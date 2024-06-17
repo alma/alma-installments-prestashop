@@ -860,7 +860,7 @@ final class GetContentHookController extends AdminHookController
             $this->context->smarty->assign([
                 'updated' => false,
             ]);
-            $messages = '';
+            $messages = $this->module->display($this->module->file, 'getContent.tpl') || '';
         }
 
         $htmlForm = $this->renderForm();
