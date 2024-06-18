@@ -295,6 +295,7 @@ fieldset .form-alma.disabled::before{
 }
 
 .ps-account-steps-banner {
+    position: relative;
     background-color: #E7F8FA;
     border-radius: 24px;
     overflow: hidden;
