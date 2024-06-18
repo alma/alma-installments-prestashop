@@ -24,7 +24,7 @@
 
 namespace Alma\PrestaShop\Builders\Admin;
 
-use Alma\PrestaShop\Helpers\Admin\InsuranceHelper;
+use Alma\PrestaShop\Helpers\Admin\AdminInsuranceHelper;
 use Alma\PrestaShop\Traits\BuilderTrait;
 
 if (!defined('_PS_VERSION_')) {
@@ -39,11 +39,11 @@ class InsuranceHelperBuilder
     use BuilderTrait;
 
     /**
-     * @return InsuranceHelper
+     * @return AdminInsuranceHelper
      */
     public function getInstance()
     {
-        return new InsuranceHelper(
+        return new AdminInsuranceHelper(
             $this->getModuleFactory(),
             $this->getTabsHelper(),
             $this->getConfigurationHelper(),

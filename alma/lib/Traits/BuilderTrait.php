@@ -36,7 +36,7 @@ use Alma\PrestaShop\Factories\ModuleFactory;
 use Alma\PrestaShop\Factories\OrderStateFactory;
 use Alma\PrestaShop\Factories\PhpFactory;
 use Alma\PrestaShop\Helpers\AddressHelper;
-use Alma\PrestaShop\Helpers\Admin\InsuranceHelper;
+use Alma\PrestaShop\Helpers\Admin\AdminInsuranceHelper;
 use Alma\PrestaShop\Helpers\Admin\TabsHelper;
 use Alma\PrestaShop\Helpers\ApiHelper;
 use Alma\PrestaShop\Helpers\CarrierHelper;
@@ -858,9 +858,9 @@ trait BuilderTrait
     }
 
     /**
-     * @param InsuranceHelper $insuranceHelper
+     * @param AdminInsuranceHelper $insuranceHelper
      *
-     * @return InsuranceHelper
+     * @return AdminInsuranceHelper
      */
     public function getAdminInsuranceHelper($insuranceHelper = null)
     {
@@ -868,7 +868,7 @@ trait BuilderTrait
             return $insuranceHelper;
         }
 
-        return new InsuranceHelper(
+        return new AdminInsuranceHelper(
             $this->getModuleFactory(),
             $this->getTabsHelper(),
             $this->getConfigurationHelper(),
