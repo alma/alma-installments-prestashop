@@ -1,6 +1,6 @@
 <?php
 /**
- * 2018-2023 Alma SAS.
+ * 2018-2024 Alma SAS.
  *
  * THE MIT LICENSE
  *
@@ -18,13 +18,12 @@
  * IN THE SOFTWARE.
  *
  * @author    Alma SAS <contact@getalma.eu>
- * @copyright 2018-2023 Alma SAS
+ * @copyright 2018-2024 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
 namespace Alma\PrestaShop\Tests\Unit\Services;
 
-use Alma\PrestaShop\Exceptions\AlmaException;
 use Alma\PrestaShop\Factories\ContextFactory;
 use Alma\PrestaShop\Factories\ToolsFactory;
 use Alma\PrestaShop\Helpers\InsuranceHelper;
@@ -94,139 +93,5 @@ class CartServiceTest extends TestCase
         $this->contextFactoryMock = null;
         $this->opartCartSaveServiceSpy = null;
         $this->cartServiceSpy = null;
-    }
-
-    /**
-     * @return void
-     *
-     * @throws AlmaException
-     * @throws \PrestaShopException
-     */
-    public function testDuplicateCartWithoutBaseCartAndActionShareCart()
-    {
-        $this->contextFactoryMock->shouldReceive('getContextCart')->andReturn(null);
-        $this->toolsFactoryMock->shouldReceive('getValue')->andReturn('shareCart');
-        $this->opartCartSaveServiceSpy->shouldReceive('getCartSaved');
-
-        $this->cartServiceSpy->shouldReceive('duplicateInsuranceProductsInDB');
-
-        $this->cartServiceSpy->duplicateCart($this->cartMock);
-
-        $this->opartCartSaveServiceSpy->shouldNotHaveReceived('getCartSaved');
-        $this->cartServiceSpy->shouldNotHaveReceived('duplicateInsuranceProductsInDB');
-    }
-
-    /**
-     * @return void
-     *
-     * @throws AlmaException
-     * @throws \PrestaShopException
-     */
-    public function testDuplicateCartWithBaseCartCartIdNullAndActionShareCart()
-    {
-        $this->cartMock->id = null;
-        $this->newCartMock->id = 2;
-
-        $this->contextFactoryMock->shouldReceive('getContextCart')->andReturn($this->cartMock);
-        $this->toolsFactoryMock->shouldReceive('getValue')->andReturn('shareCart');
-        $this->opartCartSaveServiceSpy->shouldReceive('getCartSaved')->andReturn($this->newCartMock);
-
-        $this->cartServiceSpy->shouldReceive('duplicateInsuranceProductsInDB');
-
-        $this->cartServiceSpy->duplicateCart($this->cartMock);
-
-        $this->opartCartSaveServiceSpy->shouldNotHaveReceived('getCartSaved');
-        $this->cartServiceSpy->shouldHaveReceived('duplicateInsuranceProductsInDB');
-    }
-
-    /**
-     * @return void
-     *
-     * @throws AlmaException
-     * @throws \PrestaShopException
-     */
-    public function testDuplicateCartWithBaseCartCartIdNullAndActionNotShareCart()
-    {
-        $this->cartMock->id = null;
-        $this->newCartMock->id = 2;
-
-        $this->contextFactoryMock->shouldReceive('getContextCart')->andReturn($this->cartMock);
-        $this->toolsFactoryMock->shouldReceive('getValue')->andReturn('notShareCart');
-        $this->opartCartSaveServiceSpy->shouldReceive('getCartSaved')->andReturn($this->newCartMock);
-
-        $this->cartServiceSpy->shouldReceive('duplicateInsuranceProductsInDB');
-
-        $this->cartServiceSpy->duplicateCart($this->cartMock);
-
-        $this->opartCartSaveServiceSpy->shouldHaveReceived('getCartSaved');
-        $this->cartServiceSpy->shouldHaveReceived('duplicateInsuranceProductsInDB');
-    }
-
-    /**
-     * @return void
-     *
-     * @throws AlmaException
-     * @throws \PrestaShopException
-     */
-    public function testDuplicateCartWithBaseCartAndCartIdDifferentNewCartAndActionShareCart()
-    {
-        $this->cartMock->id = 1;
-        $this->newCartMock->id = 2;
-
-        $this->contextFactoryMock->shouldReceive('getContextCart')->andReturn($this->cartMock);
-        $this->toolsFactoryMock->shouldReceive('getValue')->andReturn('shareCart');
-        $this->opartCartSaveServiceSpy->shouldReceive('getCartSaved');
-
-        $this->cartServiceSpy->shouldReceive('duplicateInsuranceProductsInDB');
-
-        $this->cartServiceSpy->duplicateCart($this->newCartMock);
-
-        $this->opartCartSaveServiceSpy->shouldNotHaveReceived('getCartSaved');
-        $this->cartServiceSpy->shouldHaveReceived('duplicateInsuranceProductsInDB');
-    }
-
-    /**
-     * @return void
-     *
-     * @throws AlmaException
-     * @throws \PrestaShopException
-     */
-    public function testDuplicateCartWithBaseCartAndCartIdDifferentNewCartAndActionNotShareCart()
-    {
-        $this->cartMock->id = 1;
-        $this->newCartMock->id = 2;
-
-        $this->contextFactoryMock->shouldReceive('getContextCart')->andReturn($this->cartMock);
-        $this->toolsFactoryMock->shouldReceive('getValue')->andReturn('notShareCart');
-        $this->opartCartSaveServiceSpy->shouldReceive('getCartSaved');
-
-        $this->cartServiceSpy->shouldReceive('duplicateInsuranceProductsInDB');
-
-        $this->cartServiceSpy->duplicateCart($this->newCartMock);
-
-        $this->opartCartSaveServiceSpy->shouldHaveReceived('getCartSaved');
-        $this->cartServiceSpy->shouldHaveReceived('duplicateInsuranceProductsInDB');
-    }
-
-    /**
-     * @return void
-     *
-     * @throws AlmaException
-     * @throws \PrestaShopException
-     */
-    public function testDuplicateCartWithBaseCartAndCartIdSameNewCart()
-    {
-        $this->cartMock->id = 1;
-        $this->newCartMock->id = 1;
-
-        $this->contextFactoryMock->shouldReceive('getContextCart')->andReturn($this->cartMock);
-        $this->opartCartSaveServiceSpy->shouldReceive('getCartSaved');
-
-        $this->cartServiceSpy->shouldReceive('duplicateInsuranceProductsInDB');
-
-        $this->cartServiceSpy->duplicateCart($this->newCartMock);
-
-        $this->opartCartSaveServiceSpy->shouldNotHaveReceived('getCartSaved');
-        $this->cartServiceSpy->shouldNotHaveReceived('duplicateInsuranceProductsInDB');
     }
 }

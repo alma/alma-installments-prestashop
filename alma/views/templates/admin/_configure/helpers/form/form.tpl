@@ -1,5 +1,5 @@
 {*
- * 2018-2023 Alma SAS
+ * 2018-2024 Alma SAS
  *
  * THE MIT LICENSE
  *
@@ -17,7 +17,7 @@
  * IN THE SOFTWARE.
  *
  * @author    Alma SAS <contact@getalma.eu>
- * @copyright 2018-2023 Alma SAS
+ * @copyright 2018-2024 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  *}
 {extends file="helpers/form/form.tpl"}
@@ -46,7 +46,7 @@
                 {strip}
                     <label class="switch" for="{$id_checkbox}">
                         {if isset($input.readonly) && $input.readonly}
-                            <input type="hidden" name="{$id_checkbox}" id="{$id_checkbox}" {if isset($fields_value[$id_checkbox]) && $fields_value[$id_checkbox]} value="{$fields_value[$id_checkbox]}"{/if} />                                
+                            <input type="hidden" name="{$id_checkbox}" id="{$id_checkbox}" {if isset($fields_value[$id_checkbox]) && $fields_value[$id_checkbox]} value="{$fields_value[$id_checkbox]}"{/if} />
                             <input type="checkbox" name="{$id_checkbox}_visible" id="{$id_checkbox}_visible" class="{if isset($input.class)}{$input.class}{/if}"{if isset($value.val)} value="{$value.val|escape:'html':'UTF-8'}"{/if}{if isset($fields_value[$id_checkbox]) && $fields_value[$id_checkbox]} checked="checked"{/if} disabled="disabled" />
                         {else}
                             <input type="checkbox" name="{$id_checkbox}" id="{$id_checkbox}" class="{if isset($input.class)}{$input.class}{/if}"{if isset($value.val)} value="{$value.val|escape:'html':'UTF-8'}"{/if}{if isset($fields_value[$id_checkbox]) && $fields_value[$id_checkbox]} checked="checked"{/if} />

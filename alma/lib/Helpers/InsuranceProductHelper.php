@@ -1,6 +1,6 @@
 <?php
 /**
- * 2018-2023 Alma SAS.
+ * 2018-2024 Alma SAS.
  *
  * THE MIT LICENSE
  *
@@ -18,7 +18,7 @@
  * IN THE SOFTWARE.
  *
  * @author    Alma SAS <contact@getalma.eu>
- * @copyright 2018-2023 Alma SAS
+ * @copyright 2018-2024 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
@@ -60,16 +60,16 @@ class InsuranceProductHelper
     }
 
     /**
-     * @param \Cart $currentCart
-     * @param \Cart $newCart
+     * @param int $currentCartId
+     * @param int $newCartId
      *
      * @return void
      *
      * @throws \PrestaShopDatabaseException
      */
-    public function duplicateInsuranceProducts($currentCart, $newCart)
+    public function duplicateAlmaInsuranceProducts($currentCartId, $newCartId)
     {
-        $almaInsuranceProducts = $this->almaInsuranceProductRepository->getByCartIdAndShop($currentCart->id, $this->context->shop->id);
+        $almaInsuranceProducts = $this->almaInsuranceProductRepository->getByCartIdAndShop($currentCartId, $this->context->shop->id);
 
         foreach ($almaInsuranceProducts as $almaInsuranceProduct) {
             $insuranceContractInfos = [
@@ -79,7 +79,7 @@ class InsuranceProductHelper
             ];
 
             $this->almaInsuranceProductRepository->add(
-                $newCart->id,
+                $newCartId,
                 $almaInsuranceProduct['id_product'],
                 $this->context->shop->id,
                 $almaInsuranceProduct['id_product_attribute'],

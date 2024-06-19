@@ -1,6 +1,6 @@
 <?php
 /**
- * 2018-2023 Alma SAS.
+ * 2018-2024 Alma SAS.
  *
  * THE MIT LICENSE
  *
@@ -18,7 +18,7 @@
  * IN THE SOFTWARE.
  *
  * @author    Alma SAS <contact@getalma.eu>
- * @copyright 2018-2023 Alma SAS
+ * @copyright 2018-2024 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
@@ -102,6 +102,10 @@ class InsuranceProductService
      * @var ToolsFactory
      */
     protected $toolsFactory;
+    /**
+     * @var mixed
+     */
+    protected $logger;
 
     /**
      * @param AlmaInsuranceProductRepository $almaInsuranceProductRepository
@@ -266,22 +270,12 @@ class InsuranceProductService
      * @param int $quantity
      * @param int $idCustomization
      * @param \Cart|null $cart
-     * @param bool $destroyPost
      *
      * @return bool
      */
-    public function handleAddingProductInsurance($cart = null)
+    public function addInsuranceProductInPsCart($idProduct, $insuranceContractId, $quantity, $idCustomization, $cart = null)
     {
         try {
-            if (!$this->canHandleAddingProductInsurance()) {
-                return false;
-            }
-
-            $idProduct = \Tools::getValue('id_product');
-            $insuranceContractId = \Tools::getValue('alma_id_insurance_contract');
-            $quantity = \Tools::getValue('qty');
-            $idCustomization = \Tools::getValue('id_customization');
-
             $idProductAttribute = $this->attributeProductService->getIdProductAttributeFromPost($idProduct);
 
             $cmsReference = $this->insuranceHelper->createCmsReference($idProduct, $idProductAttribute);

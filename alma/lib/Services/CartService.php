@@ -1,6 +1,6 @@
 <?php
 /**
- * 2018-2023 Alma SAS.
+ * 2018-2024 Alma SAS.
  *
  * THE MIT LICENSE
  *
@@ -18,7 +18,7 @@
  * IN THE SOFTWARE.
  *
  * @author    Alma SAS <contact@getalma.eu>
- * @copyright 2018-2023 Alma SAS
+ * @copyright 2018-2024 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
@@ -85,30 +85,6 @@ class CartService
 
     /**
      * @param \Cart $newCart
-     *
-     * @return void
-     *
-     * @throws AlmaException
-     * @throws \PrestaShopException
-     */
-    public function duplicateCart($newCart)
-    {
-        $baseCart = $this->contextFactory->getContextCart();
-
-        if (
-            $baseCart
-            && (null === $baseCart->id || $baseCart->id != $newCart->id)
-        ) {
-            if ($this->toolsFactory->getValue('action') !== 'shareCart') {
-                $baseCart = $this->opartCartSaveService->getCartSaved();
-            }
-
-            $this->duplicateInsuranceProductsInDB($newCart, $baseCart);
-        }
-    }
-
-    /**
-     * @param \Cart $newCart
      * @param \Cart $currentCart
      *
      * @return void
@@ -116,11 +92,12 @@ class CartService
      * @throws AlmaException
      * @throws \PrestaShopException
      */
-    public function duplicateInsuranceProductsInDB($newCart, $currentCart)
+    public function duplicateAlmaInsuranceProductsIfNotExist($newCart, $currentCart)
     {
-        if (!$this->insuranceHelper->checkInsuranceProductsExist($newCart)) {
+        // We check if alma insurance product exist because this function is executed for each product updated
+        if (!$this->insuranceHelper->almaInsuranceProductsAlreadyExist($newCart)) {
             try {
-                $this->insuranceProductHelper->duplicateInsuranceProducts($currentCart, $newCart);
+                $this->insuranceProductHelper->duplicateAlmaInsuranceProducts($currentCart->id, $newCart->id);
             } catch (\PrestaShopDatabaseException $e) {
                 $newCart->delete();
                 // We throw an exception to prevent to buy insurance product without the possibility to subscribe
