@@ -112,6 +112,9 @@ function onloadAddInsuranceInputOnProductAlma() {
             }
         }
         if (e.data.type === 'getSelectedInsuranceData') {
+            if (parseInt(document.querySelector('.qty [name="qty"]').value) !== quantity) {
+                quantity = document.querySelector('.qty [name="qty"]').value;
+            }
             insuranceSelected = true;
             selectedAlmaInsurance = e.data.selectedInsuranceData;
             prestashop.emit('updateProduct', {
@@ -127,7 +130,7 @@ function onloadAddInsuranceInputOnProductAlma() {
 
 function refreshWidget() {
     let cmsReference = createCmsReference(productDetails);
-    let regularPriceToCents = Math.round(productDetails.price_without_reduction * 100);
+    let staticPriceToCents = Math.round(productDetails.price_amount * 100);
 
     quantity = productDetails.quantity_wanted;
     if (productDetails.quantity_wanted <= 0) {
@@ -136,7 +139,7 @@ function refreshWidget() {
 
     getProductDataForApiCall(
         cmsReference,
-        regularPriceToCents,
+        staticPriceToCents,
         productDetails.name,
         settings.merchant_id,
         quantity,

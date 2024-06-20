@@ -90,17 +90,18 @@ class InsuranceSubscriptionService
         $subscriptionData = $this->insuranceService->createSubscriptionData($insuranceContracts, $cart);
 
         if (!empty($subscriptionData)) {
-            $orderPayment = $this->orderHelper->getCurrentOrderPayment($order, false);
+            $orderPayment = $this->orderHelper->getCurrentOrderPayment($order);
 
             $subscriptions = $this->insuranceApiService->subscribeInsurance(
                 $subscriptionData,
                 $order,
-                $orderPayment->transaction_id
+                $orderPayment
             );
 
             $this->confirmSubscriptions($order->id, $order->id_shop, $subscriptions);
-            $this->insuranceApiService->sendCmsReferenceSubscribedForTracking($cart);
         }
+
+        $this->insuranceApiService->sendCmsReferenceSubscribedForTracking($cart);
     }
 
     /**

@@ -24,7 +24,7 @@
 
 namespace Alma\PrestaShop\Tests\Unit\Model;
 
-use Alma\PrestaShop\Builders\CartDataBuilder;
+use Alma\PrestaShop\Builders\Models\CartDataBuilder;
 use Alma\PrestaShop\Factories\CurrencyFactory;
 use Alma\PrestaShop\Helpers\ConfigurationHelper;
 use Alma\PrestaShop\Helpers\CurrencyHelper;

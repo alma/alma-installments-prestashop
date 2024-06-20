@@ -23,8 +23,8 @@
  */
 
 use Alma\API\ParamsError;
-use Alma\PrestaShop\Builders\PaymentDataBuilder;
-use Alma\PrestaShop\Builders\SettingsHelperBuilder;
+use Alma\PrestaShop\Builders\Helpers\SettingsHelperBuilder;
+use Alma\PrestaShop\Builders\Models\PaymentDataBuilder;
 use Alma\PrestaShop\Helpers\ClientHelper;
 use Alma\PrestaShop\Helpers\SettingsHelper;
 use Alma\PrestaShop\Logger;

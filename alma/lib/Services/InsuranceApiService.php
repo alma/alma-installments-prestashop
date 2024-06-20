@@ -29,7 +29,7 @@ use Alma\API\Entities\Insurance\Contract;
 use Alma\API\Exceptions\AlmaException;
 use Alma\API\Exceptions\InsuranceCancelPendingException;
 use Alma\API\RequestError;
-use Alma\PrestaShop\Builders\CartHelperBuilder;
+use Alma\PrestaShop\Builders\Helpers\CartHelperBuilder;
 use Alma\PrestaShop\Exceptions\InsurancePendingCancellationException;
 use Alma\PrestaShop\Exceptions\InsuranceSubscriptionException;
 use Alma\PrestaShop\Exceptions\SubscriptionException;
@@ -71,6 +71,8 @@ class InsuranceApiService
 
         $cartHelperBuilder = new CartHelperBuilder();
         $this->cartHelper = $cartHelperBuilder->getInstance();
+
+        $this->productHelper = new ProductHelper();
 
         $this->insuranceProductRepository = new AlmaInsuranceProductRepository();
     }
@@ -157,14 +159,16 @@ class InsuranceApiService
     /**
      * @param array $subscriptionData
      * @param \OrderCore $order
-     * @param int $idTransaction
+     * @param \OrderPayment|false $orderPayment
      *
      * @return array
      *
      * @throws InsuranceSubscriptionException
      */
-    public function subscribeInsurance($subscriptionData, $order, $idTransaction)
+    public function subscribeInsurance($subscriptionData, $order, $orderPayment = false)
     {
+        $idTransaction = $orderPayment ? $orderPayment->transaction_id : null;
+
         try {
             $result = $this->almaApiClient->insurance->subscription(
                 $subscriptionData,

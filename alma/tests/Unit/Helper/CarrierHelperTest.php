@@ -24,7 +24,7 @@
 
 namespace Alma\PrestaShop\Tests\Unit\Helper;
 
-use Alma\PrestaShop\Builders\CarrierHelperBuilder;
+use Alma\PrestaShop\Builders\Helpers\CarrierHelperBuilder;
 use Alma\PrestaShop\Helpers\CarrierHelper;
 use Alma\PrestaShop\Model\CarrierData;
 use PHPUnit\Framework\TestCase;

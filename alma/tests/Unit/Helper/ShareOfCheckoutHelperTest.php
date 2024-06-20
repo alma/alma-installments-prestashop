@@ -24,7 +24,7 @@
 
 namespace Alma\PrestaShop\Tests\Unit\Helper;
 
-use Alma\PrestaShop\Builders\ShareOfCheckoutHelperBuilder;
+use Alma\PrestaShop\Builders\Helpers\ShareOfCheckoutHelperBuilder;
 use Alma\PrestaShop\Helpers\OrderHelper;
 use Mockery;
 use Order;

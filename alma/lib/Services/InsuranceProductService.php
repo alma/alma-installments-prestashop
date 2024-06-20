@@ -25,8 +25,8 @@
 namespace Alma\PrestaShop\Services;
 
 use Alma\API\Client;
+use Alma\PrestaShop\Builders\Helpers\PriceHelperBuilder;
 use Alma\PrestaShop\Builders\InsuranceHelperBuilder;
-use Alma\PrestaShop\Builders\PriceHelperBuilder;
 use Alma\PrestaShop\Exceptions\AlmaException;
 use Alma\PrestaShop\Helpers\ClientHelper;
 use Alma\PrestaShop\Helpers\ConstantsHelper;
@@ -104,10 +104,14 @@ class InsuranceProductService
      */
     protected $insuranceHelper;
 
-    public function __construct()
+    public function __construct($almaInsuranceProductRepository = null)
     {
+        if (!$almaInsuranceProductRepository) {
+            $almaInsuranceProductRepository = new AlmaInsuranceProductRepository();
+        }
+
+        $this->almaInsuranceProductRepository = $almaInsuranceProductRepository;
         $this->context = \Context::getContext();
-        $this->almaInsuranceProductRepository = new AlmaInsuranceProductRepository();
         $this->attributeGroupProductService = new AttributeGroupProductService();
         $this->attributeProductService = new AttributeProductService();
         $this->combinationProductAttributeService = new CombinationProductAttributeService();
@@ -257,10 +261,10 @@ class InsuranceProductService
             $idProductAttribute = $this->attributeProductService->getIdProductAttributeFromPost($idProduct);
 
             $cmsReference = $this->insuranceHelper->createCmsReference($idProduct, $idProductAttribute);
-            $regularPrice = $this->productHelper->getRegularPrice($idProduct, $idProductAttribute);
-            $regularPriceInCents = $this->priceHelper->convertPriceToCents($regularPrice);
+            $staticPrice = $this->productHelper->getPriceStatic($idProduct, $idProductAttribute);
+            $staticPriceInCents = $this->priceHelper->convertPriceToCents($staticPrice);
 
-            $insuranceContract = $this->insuranceApiService->getInsuranceContract($insuranceContractId, $cmsReference, $regularPriceInCents);
+            $insuranceContract = $this->insuranceApiService->getInsuranceContract($insuranceContractId, $cmsReference, $staticPriceInCents);
 
             if (null === $insuranceContract) {
                 return false;
@@ -279,7 +283,7 @@ class InsuranceProductService
                     [
                         'insurance_contract_id' => $insuranceContractId,
                         'cms_reference' => $cmsReference,
-                        'product_price' => $regularPriceInCents,
+                        'product_price' => $staticPriceInCents,
                     ],
                     $cart,
                     $destroyPost
@@ -340,6 +344,40 @@ class InsuranceProductService
             );
 
             return false;
+        }
+    }
+
+    /**
+     * @param $currentCart
+     * @param $newCart
+     *
+     * @return void
+     *
+     * @throws \PrestaShopDatabaseException
+     */
+    public function duplicateInsuranceProducts($currentCart, $newCart)
+    {
+        $almaInsuranceProducts = $this->almaInsuranceProductRepository->getByCartIdAndShop($currentCart->id, $this->context->shop->id);
+
+        foreach ($almaInsuranceProducts as $almaInsuranceProduct) {
+            $insuranceContractInfos = [
+                'insurance_contract_id' => $almaInsuranceProduct['insurance_contract_id'],
+                'cms_reference' => $almaInsuranceProduct['cms_reference'],
+                'product_price' => $almaInsuranceProduct['product_price'],
+            ];
+
+            $this->almaInsuranceProductRepository->add(
+                $newCart->id,
+                $almaInsuranceProduct['id_product'],
+                $this->context->shop->id,
+                $almaInsuranceProduct['id_product_attribute'],
+                $almaInsuranceProduct['id_customization'],
+                $almaInsuranceProduct['id_product_insurance'],
+                $almaInsuranceProduct['id_product_attribute_insurance'],
+                $almaInsuranceProduct['price'],
+                $almaInsuranceProduct['id_address_delivery'],
+                $insuranceContractInfos
+            );
         }
     }
 }

@@ -26,7 +26,7 @@ namespace Alma\PrestaShop\Tests\Unit\Helper;
 
 use Alma\API\Entities\Merchant;
 use Alma\API\RequestError;
-use Alma\PrestaShop\Builders\ApiHelperBuilder;
+use Alma\PrestaShop\Builders\Helpers\ApiHelperBuilder;
 use Alma\PrestaShop\Exceptions\ActivationException;
 use Alma\PrestaShop\Exceptions\ApiMerchantsException;
 use Alma\PrestaShop\Exceptions\InsuranceInstallException;

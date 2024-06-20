@@ -26,8 +26,8 @@ namespace Alma\PrestaShop\Controllers\Hook;
 
 use Alma\PrestaShop\Builders\Admin\InsuranceHelperBuilder as AdminInsuranceHelperBuilder;
 use Alma\PrestaShop\Builders\CartHelperBuilder;
+use Alma\PrestaShop\Builders\Helpers\PriceHelperBuilder;
 use Alma\PrestaShop\Builders\InsuranceHelperBuilder;
-use Alma\PrestaShop\Builders\PriceHelperBuilder;
 use Alma\PrestaShop\Builders\SettingsHelperBuilder;
 use Alma\PrestaShop\Exceptions\InsuranceNotFoundException;
 use Alma\PrestaShop\Helpers\Admin\InsuranceHelper as AdminInsuranceHelper;
@@ -94,6 +94,11 @@ class DisplayCartExtraProductActionsHookController extends FrontendHookControlle
      */
     protected $settingHelper;
 
+    /*
+     * @var PriceHelper
+     */
+    protected $priceHelper;
+
     /**
      * @param $module
      */
@@ -115,6 +120,9 @@ class DisplayCartExtraProductActionsHookController extends FrontendHookControlle
 
         $this->almaInsuranceProductRepository = new AlmaInsuranceProductRepository();
         $this->imageHelper = new ImageHelper();
+        $priceHelperBuilder = new PriceHelperBuilder();
+        $this->priceHelper = $priceHelperBuilder->getInstance();
+
         $this->link = new \Link();
 
         $settingHelperBuilder = new SettingsHelperBuilder();

@@ -191,6 +191,22 @@ class InsuranceHelper
     }
 
     /**
+     * Check if there is an insurance product in the cart
+     *
+     * @param \Cart $cart
+     *
+     * @return bool
+     */
+    public function checkInsuranceProductsExist($cart)
+    {
+        if ($this->insuranceProductRepository->hasInsuranceForCartIdAndShop($cart->id, $cart->id_shop)) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
      * @return bool
      */
     public function getInsuranceQuantity()
