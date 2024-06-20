@@ -218,11 +218,12 @@ class DisplayCartExtraProductActionsHookController extends FrontendHookControlle
                 'token' => \Tools::getToken(false),
                 'idProduct' => $idProduct,
                 'iframeUrl' => sprintf(
-                    '%s%s?cms_reference=%s&product_price=%s&merchant_id=%s&customer_session_id=%s&cart_id=%s&is_in_cart=true',
+                    '%s%s?cms_reference=%s&product_price=%s&product_quantity=%s&merchant_id=%s&customer_session_id=%s&cart_id=%s&is_in_cart=true',
                     $this->adminInsuranceHelper->envUrl(),
                     ConstantsHelper::FO_IFRAME_WIDGET_INSURANCE_PATH,
                     $cmsReference,
                     $regularPriceInCents,
+                    $product['quantity_wanted'],
                     $merchantId,
                     $this->context->session->getId(),
                     $this->cartHelper->getCartIdFromContext()

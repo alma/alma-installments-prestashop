@@ -247,7 +247,7 @@ class AlmaInsuranceModuleFrontController extends ModuleFrontController
         $this->insuranceProductService->handleAddingProductInsurance(
             \Tools::getValue('product_id'),
             \Tools::getValue('insurance_contract_id'),
-            1,
+            \Tools::getValue('insurance_quantity'),
             \Tools::getValue('customization_id')
         );
     }
