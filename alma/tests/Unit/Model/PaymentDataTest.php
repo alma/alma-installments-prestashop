@@ -32,7 +32,7 @@ use PHPUnit\Framework\TestCase;
 class PaymentDataTest extends TestCase
 {
     /**
-     * @var mixed
+     * @var \Customer
      */
     protected $customer;
     protected $shippingAddress;
@@ -59,6 +59,8 @@ class PaymentDataTest extends TestCase
         $this->linkMock->method('getPageLink')->willReturn('');
         $this->linkMock->method('getModuleLink')->willReturn('');
         $this->contextMock->link = $this->linkMock;
+
+        $this->contextMock->language = $this->createMock(\Language::class);
 
         $this->settingsHelperMock = $this->createMock(SettingsHelper::class);
 
@@ -169,8 +171,6 @@ class PaymentDataTest extends TestCase
     public function testBuildDataPaymentWithDeferredTrigger()
     {
         $this->settingsHelperMock->method('isDeferredTriggerLimitDays')->willReturn(true);
-        $this->contextMock->language = $this->createMock(\Language::class);
-        $this->contextMock->language->id = '38';
 
         $this->dataPaymentExpected['payment']['deferred'] = 'trigger';
         $this->dataPaymentExpected['payment']['deferred_description'] = 'At shipping';
