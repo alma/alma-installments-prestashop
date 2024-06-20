@@ -28,12 +28,12 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-use Alma\PrestaShop\Builders\CartDataBuilder;
-use Alma\PrestaShop\Builders\CustomFieldHelperBuilder;
-use Alma\PrestaShop\Builders\EligibilityHelperBuilder;
-use Alma\PrestaShop\Builders\LocaleHelperBuilder;
-use Alma\PrestaShop\Builders\PriceHelperBuilder;
-use Alma\PrestaShop\Builders\SettingsHelperBuilder;
+use Alma\PrestaShop\Builders\Helpers\CustomFieldHelperBuilder;
+use Alma\PrestaShop\Builders\Helpers\EligibilityHelperBuilder;
+use Alma\PrestaShop\Builders\Helpers\PriceHelperBuilder;
+use Alma\PrestaShop\Builders\Helpers\SettingsHelperBuilder;
+use Alma\PrestaShop\Builders\Models\CartDataBuilder;
+use Alma\PrestaShop\Builders\Models\LocaleHelperBuilder;
 use Alma\PrestaShop\Forms\ExcludedCategoryAdminFormBuilder;
 use Alma\PrestaShop\Helpers\CustomFieldsHelper;
 use Alma\PrestaShop\Helpers\EligibilityHelper;

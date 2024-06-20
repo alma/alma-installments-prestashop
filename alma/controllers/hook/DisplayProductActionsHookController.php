@@ -28,10 +28,10 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
+use Alma\PrestaShop\Builders\Admin\InsuranceHelperBuilder;
 use Alma\PrestaShop\Builders\Admin\InsuranceHelperBuilder as AdminInsuranceHelperBuilder;
-use Alma\PrestaShop\Builders\CartHelperBuilder;
-use Alma\PrestaShop\Builders\InsuranceHelperBuilder;
-use Alma\PrestaShop\Builders\PriceHelperBuilder;
+use Alma\PrestaShop\Builders\Helpers\CartHelperBuilder;
+use Alma\PrestaShop\Builders\Helpers\PriceHelperBuilder;
 use Alma\PrestaShop\Helpers\Admin\InsuranceHelper as AdminInsuranceHelper;
 use Alma\PrestaShop\Helpers\CartHelper;
 use Alma\PrestaShop\Helpers\ConstantsHelper;
@@ -74,6 +74,8 @@ class DisplayProductActionsHookController extends FrontendHookController
      */
     public function __construct($module)
     {
+        parent::__construct($module);
+
         $insuranceHelperBuilder = new InsuranceHelperBuilder();
         $this->insuranceHelper = $insuranceHelperBuilder->getInstance();
 
@@ -86,8 +88,6 @@ class DisplayProductActionsHookController extends FrontendHookController
 
         $cartHelperBuilder = new CartHelperBuilder();
         $this->cartHelper = $cartHelperBuilder->getInstance();
-
-        parent::__construct($module);
     }
 
     /**
@@ -121,8 +121,8 @@ class DisplayProductActionsHookController extends FrontendHookController
 
         $cmsReference = $this->insuranceHelper->createCmsReference($productId, $productAttributeId);
 
-        $regularPrice = $this->productHelper->getRegularPrice($productId, $productAttributeId);
-        $regularPriceInCents = $this->priceHelper->convertPriceToCents($regularPrice);
+        $staticPrice = $this->productHelper->getPriceStatic($productId, $productAttributeId);
+        $staticPriceInCents = $this->priceHelper->convertPriceToCents($staticPrice);
 
         $merchantId = SettingsHelper::getMerchantId();
         $settings = $this->handleSettings($merchantId);
@@ -134,7 +134,7 @@ class DisplayProductActionsHookController extends FrontendHookController
                 $this->adminInsuranceHelper->envUrl(),
                 ConstantsHelper::FO_IFRAME_WIDGET_INSURANCE_PATH,
                 $cmsReference,
-                $regularPriceInCents,
+                $staticPriceInCents,
                 $merchantId,
                 $this->context->session->getId(),
                 $this->cartHelper->getCartIdFromContext()

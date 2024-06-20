@@ -24,7 +24,7 @@
 
 namespace Alma\PrestaShop\Tests\Unit\Helper;
 
-use Alma\PrestaShop\Builders\OrderStateHelperBuilder;
+use Alma\PrestaShop\Builders\Models\OrderStateHelperBuilder;
 use Alma\PrestaShop\Exceptions\AlmaException;
 use Alma\PrestaShop\Factories\ContextFactory;
 use Alma\PrestaShop\Factories\OrderStateFactory;

@@ -21,6 +21,9 @@
  * @copyright 2018-2023 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
+
+use Alma\PrestaShop\Builders\Models\MediaHelperBuilder;
+
 if (!defined('_PS_VERSION_')) {
     exit;
 }
@@ -30,7 +33,7 @@ require_once _PS_MODULE_DIR_ . 'alma/vendor/autoload.php';
 
 class Alma extends PaymentModule
 {
-    const VERSION = '4.0.0';
+    const VERSION = '4.0.1';
 
     public $_path;
     public $local_path;
@@ -78,9 +81,9 @@ class Alma extends PaymentModule
 
     public function __construct()
     {
-        $this->name = \Alma\PrestaShop\Helpers\ConstantsHelper::ALMA_MODULE_NAME;
+        $this->name = 'alma';
         $this->tab = 'payments_gateways';
-        $this->version = '4.0.0';
+        $this->version = '4.0.1';
         $this->author = 'Alma';
         $this->need_instance = false;
         $this->bootstrap = true;
@@ -148,10 +151,12 @@ class Alma extends PaymentModule
      */
     public function checkCompatibilityPSModule()
     {
+        return false;
+
         if (
             $this->toolsHelper->psVersionCompare('1.6', '<')
             || !class_exists(\PrestaShop\ModuleLibServiceContainer\DependencyInjection\ServiceContainer::class)
-            || _PS_ENV_ === 'dev'
+            || _PS_MODE_DEV_ === true
         ) {
             return false;
         }
@@ -604,7 +609,7 @@ class Alma extends PaymentModule
         }
 
         try {
-            $mediaHelperBuilder = new \Alma\PrestaShop\Builders\MediaHelperBuilder();
+            $mediaHelperBuilder = new MediaHelperBuilder();
             $mediaHelper = $mediaHelperBuilder->getInstance();
             $mediaHelper->addJsDef([
                 'contextPsAccounts' => $accountsFacade->getPsAccountsPresenter()

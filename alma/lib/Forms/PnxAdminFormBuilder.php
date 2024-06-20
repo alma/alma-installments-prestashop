@@ -25,8 +25,8 @@
 namespace Alma\PrestaShop\Forms;
 
 use Alma\API\Entities\FeePlan;
-use Alma\PrestaShop\Builders\PriceHelperBuilder;
-use Alma\PrestaShop\Builders\SettingsHelperBuilder;
+use Alma\PrestaShop\Builders\Helpers\PriceHelperBuilder;
+use Alma\PrestaShop\Builders\Helpers\SettingsHelperBuilder;
 use Alma\PrestaShop\Helpers\PriceHelper;
 use Alma\PrestaShop\Helpers\SettingsHelper;
 

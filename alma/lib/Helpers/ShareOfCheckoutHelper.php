@@ -26,7 +26,7 @@ namespace Alma\PrestaShop\Helpers;
 
 use Alma\API\Client;
 use Alma\API\RequestError;
-use Alma\PrestaShop\Builders\PriceHelperBuilder;
+use Alma\PrestaShop\Builders\Helpers\PriceHelperBuilder;
 use Alma\PrestaShop\Exceptions\ClientException;
 use Alma\PrestaShop\Exceptions\ShareOfCheckoutException;
 use Alma\PrestaShop\Forms\ApiAdminFormBuilder;

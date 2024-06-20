@@ -25,7 +25,7 @@
 namespace Alma\PrestaShop\Tests\Unit\Helper;
 
 use Alma\API\Endpoints\Results\Eligibility;
-use Alma\PrestaShop\Builders\EligibilityHelperBuilder;
+use Alma\PrestaShop\Builders\Helpers\EligibilityHelperBuilder;
 use Alma\PrestaShop\Factories\ContextFactory;
 use Alma\PrestaShop\Helpers\ApiHelper;
 use Alma\PrestaShop\Helpers\FeePlanHelper;
