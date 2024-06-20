@@ -39,8 +39,8 @@ class CartRepository
      */
     public function getIdCartByToken($token)
     {
-        return \Db::getInstance()->getRow('
-            SELECT  `id_cart` 
+        return \Db::getInstance()->getValue('
+            SELECT `id_cart`
             FROM `' . _DB_PREFIX_ . "opartsavecart`
             WHERE token = '" . $token . "';"
         );

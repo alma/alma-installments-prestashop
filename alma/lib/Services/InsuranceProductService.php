@@ -25,6 +25,7 @@
 namespace Alma\PrestaShop\Services;
 
 use Alma\PrestaShop\Exceptions\AlmaException;
+use Alma\PrestaShop\Exceptions\InsuranceContractException;
 use Alma\PrestaShop\Factories\ContextFactory;
 use Alma\PrestaShop\Factories\ToolsFactory;
 use Alma\PrestaShop\Helpers\ConstantsHelper;
@@ -202,7 +203,6 @@ class InsuranceProductService
      * @param int $idCustomization
      * @param array $insuranceContractInfos
      * @param \Cart|null $cart
-     * @param bool $destroyPost
      *
      * @return void
      *
@@ -240,8 +240,6 @@ class InsuranceProductService
             $this->context->shop->id
         );
 
-        $_POST['alma_id_insurance_contract'] = null;
-
         if (null === $this->context->cart) {
             // There is a bug in some versions of Prestashop when adding a product on the cart and be sign-in and not having a default address
             // In this case in the actionCartSaveHook, the cart in the context is null
@@ -271,7 +269,7 @@ class InsuranceProductService
      * @param int $idCustomization
      * @param \Cart|null $cart
      *
-     * @return bool
+     * @return void
      */
     public function addInsuranceProductInPsCart($idProduct, $insuranceContractId, $quantity, $idCustomization, $cart = null)
     {
@@ -285,7 +283,7 @@ class InsuranceProductService
             $insuranceContract = $this->insuranceApiService->getInsuranceContract($insuranceContractId, $cmsReference, $staticPriceInCents);
 
             if (null === $insuranceContract) {
-                return false;
+                throw new InsuranceContractException(sprintf('[Alma] Insurance contract not found with these insuranceContractId: %s, cmsReference: %s, staticPriceInCents: %s', $insuranceContractId, $cmsReference, $staticPriceInCents));
             }
 
             $insuranceProduct = $this->insuranceService->createProductIfNotExists();
@@ -306,8 +304,6 @@ class InsuranceProductService
                     $cart
                 );
             }
-
-            return true;
         } catch (\Exception $e) {
             Logger::instance()->error(
                 sprintf(
@@ -318,8 +314,6 @@ class InsuranceProductService
                     $e->getTraceAsString()
                 )
             );
-
-            return false;
         }
     }
 

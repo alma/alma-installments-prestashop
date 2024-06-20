@@ -68,13 +68,13 @@ class CartService
     {
         if ($this->moduleFactory->isInstalled('opartsavecart')) {
             $token = $this->toolsFactory->getValue('token');
-            $opartCart = $this->opartSaveCartRepository->getIdCartByToken($token);
+            $opartCartId = $this->opartSaveCartRepository->getIdCartByToken($token);
 
             if (
-                !empty($opartCart)
-                && isset($opartCart['id_cart'])
+                !empty($opartCartId)
+                && (is_string($opartCartId) || is_int($opartCartId))
             ) {
-                return $this->cartFactory->create($opartCart['id_cart']);
+                return $this->cartFactory->create($opartCartId);
             }
         }
 

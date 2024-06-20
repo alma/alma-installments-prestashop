@@ -32,6 +32,7 @@ use Alma\PrestaShop\Builders\Modules\OpartSaveCart\CartServiceBuilder as OpartSa
 use Alma\PrestaShop\Builders\Services\CartServiceBuilder;
 use Alma\PrestaShop\Builders\Services\InsuranceProductServiceBuilder;
 use Alma\PrestaShop\Exceptions\AlmaException;
+use Alma\PrestaShop\Factories\ContextFactory;
 use Alma\PrestaShop\Factories\ToolsFactory;
 use Alma\PrestaShop\Helpers\InsuranceHelper;
 use Alma\PrestaShop\Helpers\SettingsHelper;
@@ -45,7 +46,7 @@ class ActionCartSaveHookController extends FrontendHookController
     /**
      * @var \Context
      */
-    protected $context;
+    protected $contextCart;
 
     /**
      * @var InsuranceProductService
@@ -93,7 +94,8 @@ class ActionCartSaveHookController extends FrontendHookController
     {
         parent::__construct($module);
 
-        $this->context = $module->context;
+        $contextFactory = new ContextFactory();
+        $this->contextCart = $contextFactory->getContextCart();
         $insuranceProductServiceBuilder = new InsuranceProductServiceBuilder();
         $this->toolsFactory = new ToolsFactory();
         $this->insuranceProductService = $insuranceProductServiceBuilder->getInstance();
@@ -120,7 +122,7 @@ class ActionCartSaveHookController extends FrontendHookController
         $insuranceContractId = $this->toolsFactory->getValue('alma_id_insurance_contract');
         $quantity = $this->toolsFactory->getValue('qty');
         $idCustomization = $this->toolsFactory->getValue('id_customization');
-        $baseCart = $this->context->cart;
+        $baseCart = $this->contextCart;
         $newCart = $params['cart'];
 
         try {
