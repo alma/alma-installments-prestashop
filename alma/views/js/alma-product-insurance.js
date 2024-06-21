@@ -144,7 +144,8 @@ function refreshWidget() {
         settings.merchant_id,
         quantity,
         settings.cart_id,
-        settings.session_id
+        settings.session_id,
+        insuranceSelected
     );
 }
 
