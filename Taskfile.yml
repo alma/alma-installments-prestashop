@@ -10,6 +10,34 @@ tasks:
     cmds:
       - task -l
 
+  brew:
+    preconditions:
+      - sh: brew -v
+        msg: 'This task requires `brew`. Please refer to this documentation: https://brew.sh/'
+
+  pre-commit:
+    desc: Install pre-commit tool
+    internal: true
+    deps: [brew]
+    status:
+      - pre-commit --version
+    cmds:
+      - brew install pre-commit
+
+  install:pre-commit:
+    desc: Install and set up pre-commit hooks
+    deps: [pre-commit]
+    cmds:
+      - pre-commit install --hook-type pre-commit --hook-type commit-msg
+
+  install:tools:
+    desc: Composer install of tools
+    sources:
+      - alma/composer.json
+      - alma/composer.lock
+    cmds:
+      - composer install --optimize-autoloader --working-dir=alma
+
   docker:build:
     desc: Build prestashop docker image
     cmds:
@@ -35,14 +63,6 @@ tasks:
     cmds:
       - rm -rf ./dist
 
-  install-tools:
-    desc: Composer install of tools
-    sources:
-      - alma/composer.json
-      - alma/composer.lock
-    cmds:
-      - composer install --optimize-autoloader --working-dir=alma
-
   lint:ci:
     desc: Run linter within docker-compose for the CI
     deps:
@@ -53,7 +73,7 @@ tasks:
   lint:
     desc: Run linter
     deps:
-      - install-tools
+      - install:tools
     cmds:
       - php alma/vendor/bin/php-cs-fixer fix --dry-run --diff alma
       # Search for variables in smarty templates that are not escaped
@@ -66,7 +86,7 @@ tasks:
   lint:fix:
     desc: Run linter and apply fix
     deps:
-      - install-tools
+      - install:tools
     cmds:
       - php alma/vendor/bin/php-cs-fixer fix alma
       # Execute autoindex to add index in all folders
@@ -78,7 +98,7 @@ tasks:
   php-compatibility:
     desc: Check compatibility code
     deps:
-      - install-tools
+      - install:tools
     cmds:
       - php ./alma/vendor/bin/phpcs -p alma --standard=PHPCompatibility -s --runtime-set testVersion 5.6-8.1 --ignore=\*/vendor/\*
 
