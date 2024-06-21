@@ -15,7 +15,7 @@ tasks:
     cmds:
       - docker compose build prestashop
 
-  test:coverage:
+  test:
     desc: Execute Unit Tests with coverage
     deps:
       - docker:build
