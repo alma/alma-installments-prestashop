@@ -22,7 +22,7 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
-namespace Alma\PrestaShop\Builders;
+namespace Alma\PrestaShop\Builders\Helpers;
 
 use Alma\PrestaShop\Helpers\InsuranceHelper;
 use Alma\PrestaShop\Traits\BuilderTrait;

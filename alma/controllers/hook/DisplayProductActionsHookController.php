@@ -28,9 +28,9 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-use Alma\PrestaShop\Builders\Admin\InsuranceHelperBuilder;
 use Alma\PrestaShop\Builders\Admin\InsuranceHelperBuilder as AdminInsuranceHelperBuilder;
 use Alma\PrestaShop\Builders\Helpers\CartHelperBuilder;
+use Alma\PrestaShop\Builders\Helpers\InsuranceHelperBuilder;
 use Alma\PrestaShop\Builders\Helpers\PriceHelperBuilder;
 use Alma\PrestaShop\Helpers\Admin\InsuranceHelper as AdminInsuranceHelper;
 use Alma\PrestaShop\Helpers\CartHelper;
@@ -79,8 +79,9 @@ class DisplayProductActionsHookController extends FrontendHookController
         $insuranceHelperBuilder = new InsuranceHelperBuilder();
         $this->insuranceHelper = $insuranceHelperBuilder->getInstance();
 
-        $insuranceHelperBuilder = new AdminInsuranceHelperBuilder();
-        $this->adminInsuranceHelper = $insuranceHelperBuilder->getInstance();
+        $adminInsuranceHelperBuilder = new AdminInsuranceHelperBuilder();
+        $this->adminInsuranceHelper = $adminInsuranceHelperBuilder->getInstance();
+
         $this->productHelper = new ProductHelper();
 
         $priceHelperBuilder = new PriceHelperBuilder();

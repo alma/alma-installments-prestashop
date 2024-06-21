@@ -24,7 +24,7 @@
 
 namespace Alma\PrestaShop\Tests\Unit\Builders;
 
-use Alma\PrestaShop\Builders\InsuranceHelperBuilder;
+use Alma\PrestaShop\Builders\Helpers\InsuranceHelperBuilder;
 use Alma\PrestaShop\Helpers\InsuranceHelper;
 use Alma\PrestaShop\Repositories\CartProductRepository;
 use PHPUnit\Framework\TestCase;

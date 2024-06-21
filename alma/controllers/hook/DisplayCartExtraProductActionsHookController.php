@@ -26,8 +26,8 @@ namespace Alma\PrestaShop\Controllers\Hook;
 
 use Alma\PrestaShop\Builders\Admin\InsuranceHelperBuilder as AdminInsuranceHelperBuilder;
 use Alma\PrestaShop\Builders\CartHelperBuilder;
+use Alma\PrestaShop\Builders\Helpers\InsuranceHelperBuilder;
 use Alma\PrestaShop\Builders\Helpers\PriceHelperBuilder;
-use Alma\PrestaShop\Builders\InsuranceHelperBuilder;
 use Alma\PrestaShop\Builders\SettingsHelperBuilder;
 use Alma\PrestaShop\Exceptions\InsuranceNotFoundException;
 use Alma\PrestaShop\Helpers\Admin\InsuranceHelper as AdminInsuranceHelper;

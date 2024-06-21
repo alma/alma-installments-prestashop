@@ -28,7 +28,7 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-use Alma\PrestaShop\Builders\InsuranceHelperBuilder;
+use Alma\PrestaShop\Builders\Helpers\InsuranceHelperBuilder;
 use Alma\PrestaShop\Exceptions\AlmaException;
 use Alma\PrestaShop\Helpers\InsuranceHelper;
 use Alma\PrestaShop\Helpers\ProductHelper;
@@ -92,6 +92,7 @@ class ActionCartSaveHookController extends FrontendHookController
      * @return void
      *
      * @throws AlmaException
+     * @throws \PrestaShopException
      */
     public function run($params)
     {
