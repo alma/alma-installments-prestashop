@@ -23,6 +23,7 @@
  */
 
 use Alma\PrestaShop\Builders\Models\MediaHelperBuilder;
+use Alma\PrestaShop\Logger;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -715,5 +716,13 @@ class Alma extends PaymentModule
     public function hookDisplayAdminAfterHeader($params)
     {
         return $this->runHookController('displayAdminAfterHeader', $params);
+    }
+
+    public function hookActionObjectUpdateAfter($params)
+    {
+        $object = $params['object'];
+        if ($object instanceof OrderCarrier) {
+            Logger::instance()->error(sprintf('Number tracking %s for carrier %s', $object->tracking_number, $object->id_carrier));
+        }
     }
 }
