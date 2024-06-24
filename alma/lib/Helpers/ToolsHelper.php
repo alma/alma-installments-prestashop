@@ -117,4 +117,21 @@ class ToolsHelper
     {
         return \Tools::substr($str, $start, $length, $encoding);
     }
+
+    /**
+     * @param $array
+     * @param $key
+     *
+     * @return false|string
+     */
+    public function getJsonValues($array, $key)
+    {
+        $return = [];
+
+        foreach ($array as $value) {
+            $return[] = $value[$key];
+        }
+
+        return json_encode($return);
+    }
 }

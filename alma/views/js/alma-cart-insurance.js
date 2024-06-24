@@ -78,6 +78,28 @@ function onloadInsuranceClickEvents() {
             });
     });
 
+    $('.alma-remove-associations').on("click", function (e) {
+        e.preventDefault();
+        addLoaderDot(e);
+        $.ajax({
+            type: 'POST',
+            url: $(this).attr("data-link"),
+            dataType: 'json',
+            data: {
+                ajax: true,
+                token: $(this).attr('data-token'),
+                alma_insurance_product_ids: $(this).attr("data-alma-association-ids")
+            },
+        })
+            .success(function () {
+                location.reload();
+            })
+
+            .error(function (e) {
+                location.reload();
+            });
+    });
+
     $('.alma-remove-insurance-product').on("click", function (e) {
         e.preventDefault();
         addLoaderDot(e);
@@ -100,12 +122,65 @@ function onloadInsuranceClickEvents() {
             });
     });
 
+    $('.alma-remove-insurance-products').on("click", function (e) {
+        e.preventDefault();
+        addLoaderDot(e);
+        $.ajax({
+            type: 'POST',
+            url: $(this).attr("data-link"),
+            dataType: 'json',
+            data: {
+                ajax: true,
+                token: $(this).attr('data-token'),
+                alma_insurance_product_ids: $(this).attr("data-alma-association-ids")
+            },
+        })
+            .success(function () {
+                location.reload();
+            })
+
+            .error(function (e) {
+                location.reload();
+            });
+    });
+
     $('.alma-add-insurance-product').on("click", function (e) {
         let idIframeModal = $(this).attr("data-id-iframe");
         let elementClicked = document.querySelector('a[data-id-iframe=' + idIframeModal + ']');
 
         addLoaderDot(null, elementClicked);
         openModal('inCartModal', 1, idIframeModal);
+    });
+
+    $('.alma-add-all-insurance-product').on("click", function (e) {
+        e.preventDefault();
+        let idIframeModal = $(this).attr("data-id-iframe");
+        let elementClicked = document.querySelector('a[data-id-iframe=' + idIframeModal + ']');
+
+        addLoaderDot(null, elementClicked);
+        $.ajax({
+            type: 'POST',
+            url: '/module/alma/insurance?action=addInsuranceProduct',
+            dataType: 'json',
+            data: {
+                ajax: true,
+                token: $(this).attr('data-token'),
+                product_id: $(this).attr('data-product-id'),
+                product_attribute_id: $(this).attr('data-product-attribute-id'),
+                customization_id: $(this).attr('data-product-customization-id'),
+                insurance_contract_id: $(this).attr('data-insurance-contract-id'),
+                insurance_quantity: $(this).attr('data-remaining-quantity')
+            },
+        })
+            .success(function () {
+                location.reload();
+            })
+
+            .error(function (e) {
+                console.log(e)
+                //location.reload();
+            });
+
     });
 
     window.addEventListener('message', (e) => {
@@ -166,7 +241,6 @@ function onloadInsuranceItemCartAlma() {
             item.append(clearfix);
         }
         if (!isAlmaInsuranceProduct && isInsuranceAssociated) {
-
             if (actionsInsuranceProduct) {
                 actionsInsuranceProduct.style.display = 'block';
                 item.append(actionsInsuranceProduct);
