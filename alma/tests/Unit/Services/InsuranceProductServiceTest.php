@@ -173,7 +173,7 @@ class InsuranceProductServiceTest extends TestCase
             [
                 'idInsuranceProduct' => 21,
                 'nameInsuranceProduct' => 'Name insurance Alma',
-                'urlImageInsuranceProduct' => '//http://url_image',
+                'urlImageInsuranceProduct' => '//url_image',
                 'reference' => 'Reference Vol + Casse Alma',
                 'price' => 47.899999999999999,
                 'quantity' => '2',
@@ -183,7 +183,7 @@ class InsuranceProductServiceTest extends TestCase
             [
                 'idInsuranceProduct' => 21,
                 'nameInsuranceProduct' => 'Name insurance Alma',
-                'urlImageInsuranceProduct' => '//http://url_image',
+                'urlImageInsuranceProduct' => '//url_image',
                 'reference' => 'Reference Vol Alma',
                 'price' => 22.899999999999999,
                 'quantity' => '1',
@@ -234,7 +234,7 @@ class InsuranceProductServiceTest extends TestCase
 
         $this->linkMock->expects($this->exactly(2))
             ->method('getImageLink')
-            ->willReturn('http://url_image');
+            ->willReturn('url_image');
         $this->almaInsuranceProductRepository->expects($this->exactly(2))
             ->method('getContractByProductAndCartIdAndShopAndInsuranceProductAttribute')
             ->willReturnOnConsecutiveCalls($returnContractByProduct1, $returnContractByProduct2);
