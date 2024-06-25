@@ -64,6 +64,9 @@ class CartServiceTest extends TestCase
      */
     protected $cartMock;
 
+    /**
+     * @return void
+     */
     protected function setUp()
     {
         $this->cartServiceBuilderMock = \Mockery::mock(CartServiceBuilder::class)->makePartial();
@@ -75,6 +78,9 @@ class CartServiceTest extends TestCase
         $this->cartMock = \Mockery::mock(\Cart::class)->makePartial();
     }
 
+    /**
+     * @return void
+     */
     protected function tearDown()
     {
         $this->cartServiceBuilderMock = null;
@@ -91,16 +97,13 @@ class CartServiceTest extends TestCase
      */
     public function testGetCartSavedFromOpartSaveCart()
     {
-        $returnRepository = [
-            'id_cart' => 1,
-        ];
         $this->moduleFactoryMock->shouldReceive('isInstalled')->with('opartsavecart')->andReturn(true);
         $this->cartServiceBuilderMock->shouldReceive('getModuleFactory')->andReturn($this->moduleFactoryMock);
 
         $this->toolsFactoryMock->shouldReceive('getValue')->with('token')->andReturn('12345');
         $this->cartServiceBuilderMock->shouldReceive('getToolsFactory')->andReturn($this->toolsFactoryMock);
 
-        $this->cartRepositoryMock->shouldReceive('getIdCartByToken')->andReturn($returnRepository);
+        $this->cartRepositoryMock->shouldReceive('getIdCartByToken')->andReturn(1);
         $this->cartServiceBuilderMock->shouldReceive('getOpartSaveCartRepository')->andReturn($this->cartRepositoryMock);
 
         $this->cartMock->id = 1;

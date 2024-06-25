@@ -103,7 +103,7 @@ class InsuranceProductHelperTest extends TestCase
           $this->contextFactory,
         ])->makePartial();
 
-        $this->insuranceProductHelper->duplicateAlmaInsuranceProducts($this->cart, $this->newCart);
+        $this->insuranceProductHelper->duplicateAlmaInsuranceProducts($this->cart->id, $this->newCart->id);
         $this->almaInsuranceProductRepositorySpy->shouldHaveReceived('add')->once();
     }
 
@@ -157,7 +157,7 @@ class InsuranceProductHelperTest extends TestCase
             $this->contextFactory,
         ])->makePartial();
 
-        $this->insuranceProductHelper->duplicateAlmaInsuranceProducts($this->cart, $this->newCart);
+        $this->insuranceProductHelper->duplicateAlmaInsuranceProducts($this->cart->id, $this->newCart->id);
         $this->almaInsuranceProductRepositorySpy->shouldHaveReceived('add')->twice();
     }
 }

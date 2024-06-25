@@ -54,7 +54,7 @@ class CartServiceTest extends TestCase
     /**
      * @var \#M#C\Mockery.mock[]|(\#M#C\Mockery.mock[]&\Mockery\LegacyMockInterface)|(\#M#C\Mockery.mock[]&\Mockery\MockInterface)|\#P#C\Alma\PrestaShop\Tests\Unit\Services\CartServiceTest.contextFactoryMock[]|(\#P#C\Alma\PrestaShop\Tests\Unit\Services\CartServiceTest.contextFactoryMock[]&\Mockery\LegacyMockInterface)|(\#P#C\Alma\PrestaShop\Tests\Unit\Services\CartServiceTest.contextFactoryMock[]&\Mockery\MockInterface)|\#P#C\Alma\PrestaShop\Tests\Unit\Services\CartServiceTest.opartCartSaveServiceSpy[]|(\#P#C\Alma\PrestaShop\Tests\Unit\Services\CartServiceTest.opartCartSaveServiceSpy[]&\Mockery\LegacyMockInterface)|(\#P#C\Alma\PrestaShop\Tests\Unit\Services\CartServiceTest.opartCartSaveServiceSpy[]&\Mockery\MockInterface)|\#P#S\Alma\PrestaShop\Tests\Unit\Services\CartServiceTest.contextFactoryMock[]|(\#P#S\Alma\PrestaShop\Tests\Unit\Services\CartServiceTest.contextFactoryMock[]&\Mockery\LegacyMockInterface)|(\#P#S\Alma\PrestaShop\Tests\Unit\Services\CartServiceTest.contextFactoryMock[]&\Mockery\MockInterface)|\#P#S\Alma\PrestaShop\Tests\Unit\Services\CartServiceTest.opartCartSaveServiceSpy[]|(\#P#S\Alma\PrestaShop\Tests\Unit\Services\CartServiceTest.opartCartSaveServiceSpy[]&\Mockery\LegacyMockInterface)|(\#P#S\Alma\PrestaShop\Tests\Unit\Services\CartServiceTest.opartCartSaveServiceSpy[]&\Mockery\MockInterface)|CartService|(CartService&\Mockery\LegacyMockInterface)|(CartService&\Mockery\MockInterface)|\Mockery\LegacyMockInterface|\Mockery\MockInterface|(\Mockery\MockInterface&\#M#C\Mockery.mock[])|(\Mockery\MockInterface&\#P#C\Alma\PrestaShop\Tests\Unit\Services\CartServiceTest.contextFactoryMock[])|(\Mockery\MockInterface&\#P#C\Alma\PrestaShop\Tests\Unit\Services\CartServiceTest.opartCartSaveServiceSpy[])|(\Mockery\MockInterface&\#P#S\Alma\PrestaShop\Tests\Unit\Services\CartServiceTest.contextFactoryMock[])|(\Mockery\MockInterface&\#P#S\Alma\PrestaShop\Tests\Unit\Services\CartServiceTest.opartCartSaveServiceSpy[])|(\Mockery\MockInterface&CartService)
      */
-    protected $cartServiceSpy;
+    protected $cartServiceMock;
     /**
      * @var ToolsFactory|(ToolsFactory&\Mockery\LegacyMockInterface)|(ToolsFactory&\Mockery\MockInterface)|\Mockery\LegacyMockInterface|\Mockery\Mock|\Mockery\MockInterface|(\Mockery\MockInterface&ToolsFactory)
      */
@@ -67,17 +67,19 @@ class CartServiceTest extends TestCase
     {
         $this->cartMock = \Mockery::mock(\Cart::class);
         $this->newCartMock = \Mockery::mock(\Cart::class);
-        $this->contextFactoryMock = \Mockery::mock(ContextFactory::class)->makePartial();
-        $this->opartCartSaveServiceSpy = \Mockery::spy(CartServiceAlias::class)->makePartial();
-        $this->toolsFactoryMock = \Mockery::mock(ToolsFactory::class)->makePartial();
-        $this->cartServiceSpy = \Mockery::spy(
+        $this->contextFactoryMock = \Mockery::mock(ContextFactory::class);
+        $this->opartCartSaveServiceSpy = \Mockery::spy(CartServiceAlias::class);
+        $this->toolsFactoryMock = \Mockery::mock(ToolsFactory::class);
+        $this->insuranceHelperMock = \Mockery::mock(InsuranceHelper::class);
+        $this->insuranceProductHelperSpy = \Mockery::spy(InsuranceProductHelper::class);
+        $this->cartServiceMock = \Mockery::mock(
             CartService::class,
             [
                 \Mockery::mock(CartProductRepository::class),
                 $this->contextFactoryMock,
                 $this->opartCartSaveServiceSpy,
-                \Mockery::mock(InsuranceHelper::class),
-                \Mockery::mock(InsuranceProductHelper::class),
+                $this->insuranceHelperMock,
+                $this->insuranceProductHelperSpy,
                 $this->toolsFactoryMock,
             ]
         )->makePartial();
@@ -92,6 +94,40 @@ class CartServiceTest extends TestCase
         $this->newCartMock = null;
         $this->contextFactoryMock = null;
         $this->opartCartSaveServiceSpy = null;
-        $this->cartServiceSpy = null;
+        $this->cartServiceMock = null;
+    }
+
+    /**
+     * @return void
+     *
+     * @throws \Alma\PrestaShop\Exceptions\AlmaException
+     * @throws \PrestaShopException
+     */
+    public function testDuplicateAlmaInsuranceProductsIfExist()
+    {
+        $this->newCartMock->id = 2;
+        $this->cartMock->id = 1;
+        $this->insuranceHelperMock->shouldReceive('almaInsuranceProductsAlreadyExist')
+            ->with($this->newCartMock)
+            ->andReturn(true);
+        $this->cartServiceMock->duplicateAlmaInsuranceProductsIfNotExist($this->newCartMock, $this->cartMock);
+        $this->insuranceProductHelperSpy->shouldNotHaveReceived('duplicateAlmaInsuranceProducts');
+    }
+
+    /**
+     * @return void
+     *
+     * @throws \Alma\PrestaShop\Exceptions\AlmaException
+     * @throws \PrestaShopException
+     */
+    public function testDuplicateAlmaInsuranceProductsIfNotExist()
+    {
+        $this->newCartMock->id = 2;
+        $this->cartMock->id = 1;
+        $this->insuranceHelperMock->shouldReceive('almaInsuranceProductsAlreadyExist')
+            ->with($this->newCartMock)
+            ->andReturn(false);
+        $this->cartServiceMock->duplicateAlmaInsuranceProductsIfNotExist($this->newCartMock, $this->cartMock);
+        $this->insuranceProductHelperSpy->shouldHaveReceived('duplicateAlmaInsuranceProducts')->once();
     }
 }
