@@ -19,7 +19,7 @@
     },
     {
       "matchManagers": ["docker"],
-      "matchPackageNames": ["composer"],
+      "matchDepNames": ["composer"],
       "matchFileNames": ["scripts/build/Dockerfile"],
       "enabled": false
     },
