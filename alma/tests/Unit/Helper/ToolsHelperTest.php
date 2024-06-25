@@ -118,4 +118,30 @@ class ToolsHelperTest extends TestCase
         $this->assertEquals('test', $this->toolsHelper->substr('testHello', 0, '4'));
         $this->assertEquals('Hello', $this->toolsHelper->substr('testHello', 4, '5'));
     }
+
+    public function testGetJsonValuesWithRightValues()
+    {
+        $array = [
+            ['key' => 'value1'],
+            ['key' => 'value2'],
+            ['key' => 'value3'],
+        ];
+        $this->assertEquals('["value1","value2","value3"]', $this->toolsHelper->getJsonValues($array, 'key'));
+    }
+
+    public function testGetJsonValuesWithoutArray()
+    {
+        $array = 'toto';
+        $this->assertEquals('[]', $this->toolsHelper->getJsonValues($array, 'key'));
+    }
+
+    public function testGetJsonValuesWithWrongKey()
+    {
+        $array = [
+            ['key' => 'value1'],
+            ['key' => 'value2'],
+            ['key' => 'value3'],
+        ];
+        $this->assertEquals('[]', $this->toolsHelper->getJsonValues($array, 'toto'));
+    }
 }

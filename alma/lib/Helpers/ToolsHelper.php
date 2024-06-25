@@ -128,7 +128,14 @@ class ToolsHelper
     {
         $return = [];
 
+        if (!is_array($array)) {
+            return json_encode($return);
+        }
+
         foreach ($array as $value) {
+            if (!is_array($value) || !array_key_exists($key, $value)) {
+                continue;
+            }
             $return[] = $value[$key];
         }
 
