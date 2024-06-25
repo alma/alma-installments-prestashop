@@ -28,6 +28,8 @@ use Alma\API\Client;
 use Alma\PrestaShop\Builders\Helpers\InsuranceHelperBuilder;
 use Alma\PrestaShop\Builders\Helpers\PriceHelperBuilder;
 use Alma\PrestaShop\Exceptions\AlmaException;
+use Alma\PrestaShop\Factories\CombinationFactory;
+use Alma\PrestaShop\Factories\ProductFactory;
 use Alma\PrestaShop\Helpers\ClientHelper;
 use Alma\PrestaShop\Helpers\ConstantsHelper;
 use Alma\PrestaShop\Helpers\ImageHelper;
@@ -117,9 +119,25 @@ class InsuranceProductService
      * @var \Link
      */
     protected $link;
+    /**
+     * @var ProductFactory
+     */
+    protected $productFactory;
+    /**
+     * @var CombinationFactory
+     */
+    protected $combinationFactory;
+    /**
+     * @var mixed
+     */
+    protected $linkFactory;
 
-    public function __construct($almaInsuranceProductRepository = null)
-    {
+    public function __construct(
+        $productFactory,
+        $combinationFactory,
+        $linkFactory,
+        $almaInsuranceProductRepository = null
+    ) {
         if (!$almaInsuranceProductRepository) {
             $almaInsuranceProductRepository = new AlmaInsuranceProductRepository();
         }
@@ -142,8 +160,10 @@ class InsuranceProductService
         $insuranceHelperBuilder = new InsuranceHelperBuilder();
         $this->insuranceHelper = $insuranceHelperBuilder->getInstance();
         $this->imageHelper = new ImageHelper();
-        $this->link = new \Link();
         $this->toolsHelper = new ToolsHelper();
+        $this->productFactory = $productFactory;
+        $this->combinationFactory = $combinationFactory;
+        $this->linkFactory = $linkFactory;
     }
 
     /**
@@ -417,12 +437,12 @@ class InsuranceProductService
             $this->context->shop->id
         );
 
-        $almaInsuranceProduct = new \ProductCore((int) $insuranceProductId);
+        $almaInsuranceProduct = $this->productFactory->create((int) $insuranceProductId);
         $idImage = $almaInsuranceProduct->getImages($this->context->language->id)[0]['id_image'];
         $linkRewrite = $almaInsuranceProduct->link_rewrite[$this->context->language->id];
 
         foreach ($almaInsurancesByAttribute as $almaInsurance) {
-            $almaProductAttribute = new \CombinationCore((int) $almaInsurance['id_product_attribute_insurance']);
+            $almaProductAttribute = $this->combinationFactory->create((int) $almaInsurance['id_product_attribute_insurance']);
             $contractAlmaInsuranceProduct = $this->almaInsuranceProductRepository->getContractByProductAndCartIdAndShopAndInsuranceProductAttribute(
                 $product,
                 $cartId,
@@ -432,7 +452,7 @@ class InsuranceProductService
             $resultInsurance[] = [
                 'idInsuranceProduct' => $almaInsuranceProduct->id,
                 'nameInsuranceProduct' => $almaInsuranceProduct->name[$this->context->language->id],
-                'urlImageInsuranceProduct' => '//' . $this->link->getImageLink(
+                'urlImageInsuranceProduct' => '//' . $this->linkFactory->getImageLink(
                         $linkRewrite,
                         $idImage,
                         $this->imageHelper->getFormattedImageTypeName('cart')

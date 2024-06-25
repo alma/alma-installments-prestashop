@@ -22,25 +22,24 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
-namespace Alma\PrestaShop\Builders\Services;
-
-use Alma\PrestaShop\Services\InsuranceProductService;
-use Alma\PrestaShop\Traits\BuilderTrait;
+namespace Alma\PrestaShop\Factories;
 
 if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-class InsuranceProductServiceBuilder
+/**
+ * Class CustomerFactory.
+ */
+class CombinationFactory
 {
-    use BuilderTrait;
-
-    public function getInstance()
+    /**
+     * @param int $id
+     *
+     * @return \CombinationCore
+     */
+    public function create($id)
     {
-        return new InsuranceProductService(
-            $this->getProductFactory(),
-            $this->getCombinationFactory(),
-            $this->getLinkFactory()
-        );
+        return new \CombinationCore($id);
     }
 }

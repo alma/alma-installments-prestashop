@@ -29,6 +29,7 @@ if (!defined('_PS_VERSION_')) {
 }
 
 use Alma\PrestaShop\Builders\Helpers\InsuranceHelperBuilder;
+use Alma\PrestaShop\Builders\Services\InsuranceProductServiceBuilder;
 use Alma\PrestaShop\Exceptions\AlmaException;
 use Alma\PrestaShop\Helpers\InsuranceHelper;
 use Alma\PrestaShop\Helpers\ProductHelper;
@@ -76,7 +77,8 @@ class ActionCartSaveHookController extends FrontendHookController
     {
         parent::__construct($module);
 
-        $this->insuranceProductService = new InsuranceProductService();
+        $insuranceProductServiceBuilder = new InsuranceProductServiceBuilder();
+        $this->insuranceProductService = $insuranceProductServiceBuilder->getInstance();
         $insuranceHelperBuilder = new InsuranceHelperBuilder();
         $this->insuranceHelper = $insuranceHelperBuilder->getInstance();
         $this->productHelper = new ProductHelper();
