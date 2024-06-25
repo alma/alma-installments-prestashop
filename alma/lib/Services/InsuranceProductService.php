@@ -447,16 +447,17 @@ class InsuranceProductService
                 $product,
                 $cartId,
                 $this->context->shop->id,
-                $almaInsurance['id_product_attribute_insurance']);
+                $almaInsurance['id_product_attribute_insurance']
+            );
 
             $resultInsurance[] = [
                 'idInsuranceProduct' => $almaInsuranceProduct->id,
                 'nameInsuranceProduct' => $almaInsuranceProduct->name[$this->context->language->id],
                 'urlImageInsuranceProduct' => '//' . $this->linkFactory->getImageLink(
-                        $linkRewrite,
-                        $idImage,
-                        $this->imageHelper->getFormattedImageTypeName('cart')
-                    ),
+                    $linkRewrite,
+                    $idImage,
+                    $this->imageHelper->getFormattedImageTypeName('cart')
+                ),
                 'reference' => $almaProductAttribute->reference,
                 'price' => $this->priceHelper->convertPriceFromCents($almaInsurance['price']),
                 'quantity' => $almaInsurance['nbInsurance'],
