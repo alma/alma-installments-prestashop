@@ -42,7 +42,7 @@ class ModuleFactoryTest extends TestCase
     protected $moduleFactoryBuilder;
 
     /**
-     * @var \Mockery\Mock|(\Mockery\MockInterface&ToolsHelper)
+     * @var ToolsHelper
      */
     protected $toolsHelperMock;
 
@@ -50,7 +50,7 @@ class ModuleFactoryTest extends TestCase
     {
         $this->moduleFactoryBuilder = new ModuleFactoryBuilder();
         $this->moduleFactory = $this->moduleFactoryBuilder->getInstance();
-        $this->toolsHelperMock = \Mockery::mock(ToolsHelper::class);
+        $this->toolsHelperMock = $this->createMock(ToolsHelper::class);
     }
 
     public function tearDown()
@@ -66,27 +66,23 @@ class ModuleFactoryTest extends TestCase
         $this->assertInstanceOf(\Module::class, $this->moduleFactory->getModule());
     }
 
-    /* TODO improve
     public function testGetModuleNameNoModule()
     {
-        $moduleFactoryMock = \Mockery::mock(ModuleFactory::class, [$this->toolsHelperMock]);
+        $moduleFactoryMock = \Mockery::mock(ModuleFactory::class)->makePartial();
         $moduleFactoryMock->shouldReceive('getModule')->andReturn(false);
-        $this->assertEquals('', $this->moduleFactory->getModuleName());
+        $this->assertEquals('', $moduleFactoryMock->getModuleName());
     }
-    */
 
-    /* TODO need to be fixed
     public function testGetModuleName()
     {
-        $moduleFactoryMock = $this->createMock(ModuleFactory::class);
+        $moduleFactoryMock = \Mockery::mock(ModuleFactory::class)->makePartial();
 
         $moduleMock = $this->createMock(\Module::class);
         $moduleMock->name = 'module name';
-        $moduleFactoryMock->method('getModule')->willReturn($moduleMock);
+        $moduleFactoryMock->shouldReceive('getModule')->andReturn($moduleMock);
 
-        $this->assertEquals($moduleMock->name, $this->moduleFactory->getModuleName());
+        $this->assertEquals($moduleMock->name, $moduleFactoryMock->getModuleName());
     }
-    */
 
     public function testL()
     {
@@ -95,25 +91,27 @@ class ModuleFactoryTest extends TestCase
 
     public function testIsInstalledPsAfter17()
     {
-        $moduleFactory = $this->createMock(ModuleFactory::class);
-        $moduleFactory->method('isInstalledAfter17');
+        $this->toolsHelperMock->expects($this->once())
+            ->method('psVersionCompare')
+            ->willReturn(false);
 
-        $moduleFactory->expects($this->once())->method('isInstalledAfter17');
-        $moduleFactory->expects($this->never())->method('isInstalledBefore17');
-        $this->toolsHelperMock->expects($this->once())('psVersionCompare')->andReturn(false);
-        $this->moduleFactory->isInstalled('alma');
+        $moduleFactory = \Mockery::mock(ModuleFactory::class, [$this->toolsHelperMock])->makePartial();
+
+        $moduleFactory->shouldReceive('isInstalledAfter17')->once();
+        $moduleFactory->shouldNotReceive('isInstalledBefore17');
+        $moduleFactory->isInstalled('alma');
     }
 
     public function testIsInstalledPsBefore17()
     {
-        $this->toolsHelperMock->shouldReceive('psVersionCompare')->andReturn(true);
+        $this->toolsHelperMock->expects($this->once())
+            ->method('psVersionCompare')
+            ->willReturn(true);
 
-        $moduleFactory = \Mockery::spy(ModuleFactory::class, [$this->toolsHelperMock])->makePartial();
+        $moduleFactory = \Mockery::mock(ModuleFactory::class, [$this->toolsHelperMock])->makePartial();
+
         $moduleFactory->shouldReceive('isInstalledBefore17');
-
+        $moduleFactory->shouldNotReceive('isInstalledAfter17');
         $moduleFactory->isInstalled('fakename');
-
-        $moduleFactory->shouldHaveReceived('isInstalledBefore17');
-        $moduleFactory->shouldNotHaveReceived('isInstalledAfter17');
     }
 }
