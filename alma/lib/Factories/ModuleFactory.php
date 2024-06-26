@@ -104,7 +104,7 @@ class ModuleFactory
             return $module->l($string, $specific, $locale);
         }
 
-        return '';
+        return $string;
     }
 
     /**
