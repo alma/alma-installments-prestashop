@@ -26,7 +26,7 @@ namespace Alma\PrestaShop\Tests\Unit\Builders\Admin;
 
 use Alma\PrestaShop\Builders\Admin\InsuranceHelperBuilder;
 use Alma\PrestaShop\Factories\ModuleFactory;
-use Alma\PrestaShop\Helpers\Admin\InsuranceHelper;
+use Alma\PrestaShop\Helpers\Admin\AdminInsuranceHelper;
 use Alma\PrestaShop\Helpers\Admin\TabsHelper;
 use Alma\PrestaShop\Helpers\ConfigurationHelper;
 use Alma\PrestaShop\Repositories\AlmaInsuranceProductRepository;
@@ -46,7 +46,7 @@ class InsuranceHelperBuilderTest extends TestCase
 
     public function testGetInstance()
     {
-        $this->assertInstanceOf(InsuranceHelper::class, $this->insuranceHelperBuilder->getInstance());
+        $this->assertInstanceOf(AdminInsuranceHelper::class, $this->insuranceHelperBuilder->getInstance());
     }
 
     public function testGetModuleFactory()

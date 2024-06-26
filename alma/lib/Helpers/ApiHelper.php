@@ -31,7 +31,7 @@ use Alma\PrestaShop\Exceptions\ApiMerchantsException;
 use Alma\PrestaShop\Exceptions\InsuranceInstallException;
 use Alma\PrestaShop\Exceptions\WrongCredentialsException;
 use Alma\PrestaShop\Factories\ModuleFactory;
-use Alma\PrestaShop\Helpers\Admin\InsuranceHelper;
+use Alma\PrestaShop\Helpers\Admin\AdminInsuranceHelper;
 use Alma\PrestaShop\Logger;
 use Alma\PrestaShop\Services\InsuranceService;
 
@@ -42,7 +42,7 @@ if (!defined('_PS_VERSION_')) {
 class ApiHelper
 {
     /**
-     * @var InsuranceHelper
+     * @var AdminInsuranceHelper
      */
     protected $insuranceHelper;
     /**
@@ -73,7 +73,7 @@ class ApiHelper
      * @param ToolsHelper $toolsHelper
      * @param InsuranceService $insuranceService
      * @param ConfigurationHelper $configurationHelper
-     * @param InsuranceHelper $insuranceHelper
+     * @param AdminInsuranceHelper $insuranceHelper
      */
     public function __construct($moduleFactory, $clientHelper, $toolsHelper, $insuranceService, $configurationHelper, $insuranceHelper)
     {

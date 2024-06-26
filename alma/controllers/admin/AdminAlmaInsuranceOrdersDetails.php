@@ -27,7 +27,7 @@ if (!defined('_PS_VERSION_')) {
 
 use Alma\PrestaShop\Builders\Admin\InsuranceHelperBuilder;
 use Alma\PrestaShop\Builders\Helpers\PriceHelperBuilder;
-use Alma\PrestaShop\Helpers\Admin\InsuranceHelper;
+use Alma\PrestaShop\Helpers\Admin\AdminInsuranceHelper;
 use Alma\PrestaShop\Helpers\ConstantsHelper;
 use Alma\PrestaShop\Helpers\PriceHelper;
 use Alma\PrestaShop\Helpers\ProductHelper;
@@ -53,7 +53,7 @@ class AdminAlmaInsuranceOrdersDetailsController extends ModuleAdminController
      */
     public $module;
     /**
-     * @var InsuranceHelper
+     * @var AdminInsuranceHelper
      */
     protected $adminInsuranceHelper;
 

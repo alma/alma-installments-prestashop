@@ -35,7 +35,7 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-class InsuranceHelper
+class AdminInsuranceHelper
 {
     /**
      * Insurance form fields for mapping
