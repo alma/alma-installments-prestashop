@@ -998,7 +998,12 @@ trait BuilderTrait
         return new CombinationFactory();
     }
 
-    private function getLinkFactory($linkFactory = null)
+    /**
+     * @param $linkFactory
+     *
+     * @return LinkFactory|mixed
+     */
+    public function getLinkFactory($linkFactory = null)
     {
         if ($linkFactory) {
             return $linkFactory;

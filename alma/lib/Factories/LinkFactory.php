@@ -35,6 +35,6 @@ class LinkFactory extends \Link
 {
     public function getImageLink($name, $ids, $type = null)
     {
-        return $this->getImageLink($name, $ids, $type);
+        return parent::getImageLink($name, $ids, $type);
     }
 }
