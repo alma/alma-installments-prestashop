@@ -233,7 +233,7 @@ function onloadInsuranceItemCartAlma() {
         let isAlmaInsuranceProduct = parseInt(dataProduct.dataset.isAlmaInsurance);
         let isInsuranceAssociated = parseInt(dataProduct.dataset.noInsuranceAssociated);
 
-        if (!isAlmaInsuranceProduct && !isInsuranceAssociated) {
+        if (!isAlmaInsuranceProduct && !isInsuranceAssociated && widgetInsuranceCartItem) {
             widgetInsuranceCartItem.style.display = 'block';
             item.append(widgetInsuranceCartItem);
             let clearfix = document.createElement('div');
