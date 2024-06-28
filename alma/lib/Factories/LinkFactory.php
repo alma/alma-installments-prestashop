@@ -22,31 +22,19 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
-namespace Alma\PrestaShop\Builders;
-
-use Alma\PrestaShop\Helpers\InsuranceHelper;
-use Alma\PrestaShop\Traits\BuilderTrait;
+namespace Alma\PrestaShop\Factories;
 
 if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-class InsuranceHelperBuilder
+/**
+ * Class CustomerFactory.
+ */
+class LinkFactory extends \Link
 {
-    use BuilderTrait;
-
-    /**
-     * @return InsuranceHelper
-     */
-    public function getInstance()
+    public function getImageLink($name, $ids, $type = null)
     {
-        return new InsuranceHelper(
-            $this->getCartProductRepository(),
-            $this->getProductRepository(),
-            $this->getAlmaInsuranceProductRepository(),
-            $this->getContextFactory(),
-            $this->getToolsHelper(),
-            $this->getSettingsHelper()
-        );
+        return parent::getImageLink($name, $ids, $type);
     }
 }

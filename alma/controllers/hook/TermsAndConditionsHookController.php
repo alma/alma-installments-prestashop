@@ -25,7 +25,7 @@
 namespace Alma\PrestaShop\Controllers\Hook;
 
 use Alma\API\Exceptions\MissingKeyException;
-use Alma\PrestaShop\Builders\InsuranceHelperBuilder;
+use Alma\PrestaShop\Builders\Helpers\InsuranceHelperBuilder;
 use Alma\PrestaShop\Helpers\InsuranceHelper;
 use Alma\PrestaShop\Hooks\FrontendHookController;
 use Alma\PrestaShop\Logger;

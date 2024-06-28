@@ -483,4 +483,47 @@ class AlmaInsuranceProductRepository
 
         return \Db::getInstance()->getRow($sql);
     }
+
+    /**
+     * @param \ProductCore $product
+     * @param $cartId
+     * @param $shopId
+     *
+     * @return mixed
+     *
+     * @throws \PrestaShopDatabaseException
+     */
+    public function getCountInsuranceProductAttributeByProductAndCartIdAndShopId($product, $cartId, $shopId)
+    {
+        $sql = '
+            SELECT COUNT(aip.`id_product_attribute_insurance`) as nbInsurance,
+                    `id_product_insurance`,
+                   `id_product_attribute_insurance`,
+                   `price`
+            FROM `' . _DB_PREFIX_ . 'alma_insurance_product` aip
+            WHERE aip.`id_cart` = ' . (int) $cartId . '
+            AND aip.`id_product` = ' . (int) $product->id . '
+            AND aip.`id_product_attribute` = ' . (int) $product->id_product_attribute . '
+            AND aip.`id_customization` = ' . (int) $product->id_customization . '
+            AND aip.`id_shop` = ' . (int) $shopId . '
+            GROUP BY aip.`id_product_attribute_insurance`';
+
+        return \Db::getInstance()->executeS($sql);
+    }
+
+    public function getContractByProductAndCartIdAndShopAndInsuranceProductAttribute($product, $cartId, $shopId, $insuranceProductAttribute)
+    {
+        $sql = '
+            SELECT `id_alma_insurance_product`,
+                   `insurance_contract_id`
+            FROM `' . _DB_PREFIX_ . 'alma_insurance_product` aip
+            WHERE aip.`id_cart` = ' . (int) $cartId . '
+            AND aip.`id_product` = ' . (int) $product->id . '
+            AND aip.`id_product_attribute` = ' . (int) $product->id_product_attribute . '
+            AND aip.`id_customization` = ' . (int) $product->id_customization . '
+            AND aip.`id_shop` = ' . (int) $shopId . '
+            AND aip.`id_product_attribute_insurance` = ' . (int) $insuranceProductAttribute;
+
+        return \Db::getInstance()->executeS($sql);
+    }
 }

@@ -28,9 +28,9 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-use Alma\PrestaShop\Builders\Admin\InsuranceHelperBuilder;
 use Alma\PrestaShop\Builders\Admin\InsuranceHelperBuilder as AdminInsuranceHelperBuilder;
 use Alma\PrestaShop\Builders\Helpers\CartHelperBuilder;
+use Alma\PrestaShop\Builders\Helpers\InsuranceHelperBuilder;
 use Alma\PrestaShop\Builders\Helpers\PriceHelperBuilder;
 use Alma\PrestaShop\Helpers\Admin\InsuranceHelper as AdminInsuranceHelper;
 use Alma\PrestaShop\Helpers\CartHelper;
@@ -79,8 +79,9 @@ class DisplayProductActionsHookController extends FrontendHookController
         $insuranceHelperBuilder = new InsuranceHelperBuilder();
         $this->insuranceHelper = $insuranceHelperBuilder->getInstance();
 
-        $insuranceHelperBuilder = new AdminInsuranceHelperBuilder();
-        $this->adminInsuranceHelper = $insuranceHelperBuilder->getInstance();
+        $adminInsuranceHelperBuilder = new AdminInsuranceHelperBuilder();
+        $this->adminInsuranceHelper = $adminInsuranceHelperBuilder->getInstance();
+
         $this->productHelper = new ProductHelper();
 
         $priceHelperBuilder = new PriceHelperBuilder();
@@ -123,6 +124,7 @@ class DisplayProductActionsHookController extends FrontendHookController
 
         $staticPrice = $this->productHelper->getPriceStatic($productId, $productAttributeId);
         $staticPriceInCents = $this->priceHelper->convertPriceToCents($staticPrice);
+        $productName = isset($productParams['name']) ? $productParams['name'] : '';
 
         $merchantId = SettingsHelper::getMerchantId();
         $settings = $this->handleSettings($merchantId);
@@ -130,11 +132,12 @@ class DisplayProductActionsHookController extends FrontendHookController
         $this->context->smarty->assign([
             'settingsInsurance' => $settings,
             'iframeUrl' => sprintf(
-                '%s%s?cms_reference=%s&product_price=%s&merchant_id=%s&customer_session_id=%s&cart_id=%s',
+                '%s%s?cms_reference=%s&product_price=%s&product_name=%s&merchant_id=%s&customer_session_id=%s&cart_id=%s',
                 $this->adminInsuranceHelper->envUrl(),
                 ConstantsHelper::FO_IFRAME_WIDGET_INSURANCE_PATH,
                 $cmsReference,
                 $staticPriceInCents,
+                $productName,
                 $merchantId,
                 $this->context->session->getId(),
                 $this->cartHelper->getCartIdFromContext()

@@ -37,6 +37,10 @@ class InsuranceProductServiceBuilder
 
     public function getInstance()
     {
-        return new InsuranceProductService();
+        return new InsuranceProductService(
+            $this->getProductFactory(),
+            $this->getCombinationFactory(),
+            $this->getLinkFactory()
+        );
     }
 }

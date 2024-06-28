@@ -24,7 +24,7 @@
 
 namespace Alma\PrestaShop\Helpers;
 
-use Alma\PrestaShop\Builders\InsuranceHelperBuilder;
+use Alma\PrestaShop\Builders\Helpers\InsuranceHelperBuilder;
 
 if (!defined('_PS_VERSION_')) {
     exit;

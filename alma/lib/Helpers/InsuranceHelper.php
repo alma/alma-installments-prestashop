@@ -205,4 +205,18 @@ class InsuranceHelper
 
         return false;
     }
+
+    /**
+     * @return bool
+     */
+    public function getInsuranceQuantity()
+    {
+        $quantity = \Tools::getValue('qty');
+
+        if (\Tools::getIsset('alma_quantity_insurance')) {
+            $quantity = \Tools::getValue('alma_quantity_insurance');
+        }
+
+        return $quantity;
+    }
 }

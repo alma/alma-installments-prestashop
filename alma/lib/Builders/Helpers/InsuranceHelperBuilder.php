@@ -22,36 +22,31 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
-namespace Alma\PrestaShop\Tests\Unit\Builders;
+namespace Alma\PrestaShop\Builders\Helpers;
 
-use Alma\PrestaShop\Builders\Helpers\InsuranceHelperBuilder;
 use Alma\PrestaShop\Helpers\InsuranceHelper;
-use Alma\PrestaShop\Repositories\CartProductRepository;
-use PHPUnit\Framework\TestCase;
+use Alma\PrestaShop\Traits\BuilderTrait;
 
-class InsuranceHelperBuilderTest extends TestCase
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
+class InsuranceHelperBuilder
 {
-    /**
-     * @var InsuranceHelperBuilder
-     */
-    protected $insuranceHelperBuilder;
-
-    public function setUp()
-    {
-        $this->insuranceHelperBuilder = new InsuranceHelperBuilder();
-    }
+    use BuilderTrait;
 
     /**
-     * @return void
+     * @return InsuranceHelper
      */
-    public function testGetInstance()
+    public function getInstance()
     {
-        $this->assertInstanceOf(InsuranceHelper::class, $this->insuranceHelperBuilder->getInstance());
-    }
-
-    public function testGetCartProductRepository()
-    {
-        $this->assertInstanceOf(CartProductRepository::class, $this->insuranceHelperBuilder->getCartProductRepository());
-        $this->assertInstanceOf(CartProductRepository::class, $this->insuranceHelperBuilder->getCartProductRepository());
+        return new InsuranceHelper(
+            $this->getCartProductRepository(),
+            $this->getProductRepository(),
+            $this->getAlmaInsuranceProductRepository(),
+            $this->getContextFactory(),
+            $this->getToolsHelper(),
+            $this->getSettingsHelper()
+        );
     }
 }
