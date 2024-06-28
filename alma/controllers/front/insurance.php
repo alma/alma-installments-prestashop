@@ -209,7 +209,8 @@ class AlmaInsuranceModuleFrontController extends ModuleFrontController
     }
 
     /**
-     * @param \ContextCore $context
+     * @param ContextCore $context
+     * @param $idAlmaInsuranceProduct
      *
      * @return array
      */
