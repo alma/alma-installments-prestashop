@@ -27,14 +27,17 @@ namespace Alma\PrestaShop\Traits;
 use Alma\PrestaShop\Factories\AddressFactory;
 use Alma\PrestaShop\Factories\CarrierFactory;
 use Alma\PrestaShop\Factories\CartFactory;
+use Alma\PrestaShop\Factories\CombinationFactory;
 use Alma\PrestaShop\Factories\ContextFactory;
 use Alma\PrestaShop\Factories\CurrencyFactory;
 use Alma\PrestaShop\Factories\CustomerFactory;
 use Alma\PrestaShop\Factories\EligibilityFactory;
+use Alma\PrestaShop\Factories\LinkFactory;
 use Alma\PrestaShop\Factories\MediaFactory;
 use Alma\PrestaShop\Factories\ModuleFactory;
 use Alma\PrestaShop\Factories\OrderStateFactory;
 use Alma\PrestaShop\Factories\PhpFactory;
+use Alma\PrestaShop\Factories\ProductFactory;
 use Alma\PrestaShop\Helpers\AddressHelper;
 use Alma\PrestaShop\Helpers\Admin\InsuranceHelper;
 use Alma\PrestaShop\Helpers\Admin\TabsHelper;
@@ -965,5 +968,47 @@ trait BuilderTrait
         }
 
         return new CartProductRepository();
+    }
+
+    /**
+     * @param $productFactory
+     *
+     * @return ProductFactory|mixed
+     */
+    public function getProductFactory($productFactory = null)
+    {
+        if ($productFactory) {
+            return $productFactory;
+        }
+
+        return new ProductFactory();
+    }
+
+    /**
+     * @param $combinationFactory
+     *
+     * @return CombinationFactory|mixed
+     */
+    public function getCombinationFactory($combinationFactory = null)
+    {
+        if ($combinationFactory) {
+            return $combinationFactory;
+        }
+
+        return new CombinationFactory();
+    }
+
+    /**
+     * @param $linkFactory
+     *
+     * @return LinkFactory|mixed
+     */
+    public function getLinkFactory($linkFactory = null)
+    {
+        if ($linkFactory) {
+            return $linkFactory;
+        }
+
+        return new LinkFactory();
     }
 }

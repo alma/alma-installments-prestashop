@@ -30,15 +30,9 @@
      data-no-insurance-associated="{$associatedInsurances|count}"
 >
     <div class="actions-alma-insurance-product" style="display:none">
-        {foreach from=$associatedInsurances item=$associatedInsurance key=$idAlmaInsuranceProduct}
-            {include file="modules/alma/views/templates/hook/_partials/cartProducts.tpl" hasInsurance='1'}
+        {foreach from=$associatedInsurances item=$associatedInsurance key=$idProductAttributeInsurance}
+            {include file="modules/alma/views/templates/hook/_partials/itemCartInsuranceProduct.tpl"}
         {/foreach}
-
-        {if $associatedInsurances|count !== 0}
-            {for $var=1 to $nbProductWithoutInsurance  }
-                {include file="modules/alma/views/templates/hook/_partials/cartProducts.tpl" hasInsurance='0'}
-            {/for}
-        {/if}
     </div>
     {if $insuranceSettings.isInCartWidgetActivated}
         <div class="widget-alma-insurance-cart-item" style="display:none">
