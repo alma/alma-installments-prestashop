@@ -135,8 +135,43 @@
 {/if}
 
 {if isset($hasPSAccount) &&  $hasPSAccount}
-    <prestashop-accounts></prestashop-accounts>
+    <div class="ps-account-container">
+        <div class="ps-account-steps-banner">
+            <div class="ps-account-text-container">
+                <div class="ps-account-title"> {l s='To use Alma, please follow these steps' mod='alma'}</div>
+                <ol>
+                    <li>
+                        <div class="ps-account-list-title">{l s='1. Associate PrestaShop account (just below)' mod='alma'}</div>
+                    </li>
+                    <li>
+                        <div class="ps-account-list-title">{l s='2. Create an Alma account' mod='alma'}</div>
+                        <div>
+                            <a href="https://support.getalma.eu/hc/fr/articles/360007913920-D%C3%A9marrer-avec-le-paiement-en-plusieurs-fois-Alma-sur-mon-site-e-commerce" target="_blank">
+                                {l s='Consult our getting started guide' mod='alma'}
+                            </a>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="ps-account-list-title">{l s='3. Enter your API key' mod='alma'}</div>
+                        <div>
+                            {almaDisplayHtml}
+                            {l s='Find your API live key on your %1$s Alma dashboard%2$s' sprintf=['<a href="https://dashboard.getalma.eu/api" target="_blank">', '</a'] mod='alma'}
+                            {/almaDisplayHtml}
+                        </div>
+                        <div>
+                            {almaDisplayHtml}
+                            {l s='To use Test mode, retrieve your Test API key from your %1$s sandbox dashboard%2$s' sprintf=['<a href="https://dashboard.sandbox.getalma.eu/api" target="_blank">', '</a'] mod='alma'}
+                            {/almaDisplayHtml}
+                        </div>
+                    </li>
+                </ol>
 
+
+            </div>
+
+        </div>
+        <prestashop-accounts></prestashop-accounts>
+    </div>
     <script src="{$urlAccountsCdn|escape:'htmlall':'UTF-8'}" rel=preload></script>
 
     <script>
