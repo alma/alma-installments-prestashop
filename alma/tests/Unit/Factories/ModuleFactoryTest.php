@@ -70,7 +70,7 @@ class ModuleFactoryTest extends TestCase
     {
         $moduleFactoryMock = \Mockery::mock(ModuleFactory::class)->makePartial();
         $moduleFactoryMock->shouldReceive('getModule')->andReturn(false);
-        $this->assertEquals('', $moduleFactoryMock->getModuleName());
+        $this->assertSame('', $moduleFactoryMock->getModuleName());
     }
 
     public function testGetModuleName()
@@ -81,12 +81,22 @@ class ModuleFactoryTest extends TestCase
         $moduleMock->name = 'module name';
         $moduleFactoryMock->shouldReceive('getModule')->andReturn($moduleMock);
 
-        $this->assertEquals($moduleMock->name, $moduleFactoryMock->getModuleName());
+        $this->assertSame($moduleMock->name, $moduleFactoryMock->getModuleName());
     }
 
     public function testL()
     {
-        $this->assertEquals('My wording to translate', $this->moduleFactory->l('My wording to translate', 'ClassNameTest'));
+        $moduleFactoryMock = \Mockery::mock(ModuleFactory::class)->makePartial();
+
+        $moduleMock = $this->createMock(\Module::class);
+        $moduleMock->expects($this->once())
+            ->method('l')
+            ->with('My wording to translate', 'ClassNameTest', 'fr')
+            ->willReturn('Mon mot à traduire');
+        $moduleMock->name = 'module name';
+        $moduleFactoryMock->shouldReceive('getModule')->andReturn($moduleMock);
+
+        $this->assertEquals('Mon mot à traduire', $moduleFactoryMock->l('My wording to translate', 'ClassNameTest', 'fr'));
     }
 
     public function testIsInstalledPsAfter17()
@@ -97,9 +107,9 @@ class ModuleFactoryTest extends TestCase
 
         $moduleFactory = \Mockery::mock(ModuleFactory::class, [$this->toolsHelperMock])->makePartial();
 
-        $moduleFactory->shouldReceive('isInstalledAfter17')->once();
+        $moduleFactory->shouldReceive('isInstalledAfter17')->once()->with('mymodulename');
         $moduleFactory->shouldNotReceive('isInstalledBefore17');
-        $moduleFactory->isInstalled('alma');
+        $moduleFactory->isInstalled('mymodulename');
     }
 
     public function testIsInstalledPsBefore17()

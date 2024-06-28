@@ -26,7 +26,7 @@ namespace Alma\PrestaShop\Tests\Unit\Services;
 
 use Alma\PrestaShop\Factories\ContextFactory;
 use Alma\PrestaShop\Factories\ToolsFactory;
-use Alma\PrestaShop\Helpers\Admin\InsuranceHelper;
+use Alma\PrestaShop\Helpers\Admin\AdminInsuranceHelper;
 use Alma\PrestaShop\Helpers\PriceHelper;
 use Alma\PrestaShop\Helpers\ProductHelper;
 use Alma\PrestaShop\Repositories\AlmaInsuranceProductRepository;
@@ -72,7 +72,7 @@ class InsuranceProductServiceTest extends TestCase
             \Mockery::mock(ProductHelper::class),
             \Mockery::mock(InsuranceApiService::class),
             \Mockery::mock(PriceHelper::class),
-            \Mockery::mock(InsuranceHelper::class),
+            \Mockery::mock(AdminInsuranceHelper::class),
             $this->toolsFactorySpy,
         ])->makePartial();
     }
