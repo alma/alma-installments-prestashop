@@ -27,7 +27,7 @@ namespace Alma\PrestaShop\Tests\Unit\Builders\Services;
 use Alma\PrestaShop\Builders\Services\CartServiceBuilder;
 use Alma\PrestaShop\Helpers\InsuranceHelper;
 use Alma\PrestaShop\Helpers\InsuranceProductHelper;
-use Alma\PrestaShop\Modules\OpartSaveCart\CartService as OpartSaveCartCartService;
+use Alma\PrestaShop\Modules\OpartSaveCart\OpartSaveCartCartService as OpartSaveCartCartService;
 use Alma\PrestaShop\Repositories\CartProductRepository;
 use Alma\PrestaShop\Services\CartService;
 use PHPUnit\Framework\TestCase;

@@ -24,27 +24,27 @@
 
 namespace Alma\PrestaShop\Tests\Unit\Modules\OpartSaveCart;
 
-use Alma\PrestaShop\Builders\Modules\OpartSaveCart\CartServiceBuilder;
+use Alma\PrestaShop\Builders\Modules\OpartSaveCart\OpartSaveCartCartServiceBuilder;
 use Alma\PrestaShop\Factories\CartFactory;
 use Alma\PrestaShop\Factories\ModuleFactory;
 use Alma\PrestaShop\Factories\ToolsFactory;
-use Alma\PrestaShop\Modules\OpartSaveCart\CartRepository;
-use Alma\PrestaShop\Modules\OpartSaveCart\CartService;
+use Alma\PrestaShop\Modules\OpartSaveCart\OpartSaveCartCartRepository;
+use Alma\PrestaShop\Modules\OpartSaveCart\OpartSaveCartCartService;
 use PHPUnit\Framework\TestCase;
 
 class CartServiceTest extends TestCase
 {
     /**
-     * @var CartService
+     * @var OpartSaveCartCartService
      */
     protected $cartService;
 
     /**
-     * @var \Mockery\Mock|(\Mockery\MockInterface&CartServiceBuilder)
+     * @var \Mockery\Mock|(\Mockery\MockInterface&OpartSaveCartCartServiceBuilder)
      */
     protected $cartServiceBuilderMock;
     /**
-     * @var \Mockery\Mock|(\Mockery\MockInterface&CartRepository)
+     * @var \Mockery\Mock|(\Mockery\MockInterface&OpartSaveCartCartRepository)
      */
     protected $cartRepositoryMock;
     /**
@@ -69,8 +69,8 @@ class CartServiceTest extends TestCase
      */
     protected function setUp()
     {
-        $this->cartServiceBuilderMock = \Mockery::mock(CartServiceBuilder::class)->makePartial();
-        $this->cartRepositoryMock = \Mockery::mock(CartRepository::class)->makePartial();
+        $this->cartServiceBuilderMock = \Mockery::mock(OpartSaveCartCartServiceBuilder::class)->makePartial();
+        $this->cartRepositoryMock = \Mockery::mock(OpartSaveCartCartRepository::class)->makePartial();
         $this->moduleFactoryMock = \Mockery::mock(ModuleFactory::class)->makePartial();
         $this->toolsFactoryMock = \Mockery::mock(ToolsFactory::class)->makePartial();
         $this->cartFactoryMock = \Mockery::mock(CartFactory::class)->makePartial();

@@ -24,25 +24,60 @@
 
 namespace Alma\PrestaShop\Modules\OpartSaveCart;
 
+use Alma\PrestaShop\Factories\CartFactory;
+use Alma\PrestaShop\Factories\ModuleFactory;
+use Alma\PrestaShop\Factories\ToolsFactory;
+
 if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-class CartRepository
+class OpartSaveCartCartService
 {
     /**
-     * @param string $token
-     *
-     * @codeCoverageIgnore
-     *
-     * @return array|bool|object|null
+     * @var ModuleFactory|null
      */
-    public function getIdCartByToken($token)
+    protected $moduleFactory;
+    /**
+     * @var OpartSaveCartCartRepository
+     */
+    protected $opartSaveCartRepository;
+
+    /**
+     * @var ToolsFactory
+     */
+    protected $toolsFactory;
+
+    /**
+     * @var CartFactory
+     */
+    protected $cartFactory;
+
+    public function __construct($moduleFactory, $opartSaveCartRepository, $toolsFactory, $cartFactory)
     {
-        return \Db::getInstance()->getValue('
-            SELECT `id_cart`
-            FROM `' . _DB_PREFIX_ . "opartsavecart`
-            WHERE token = '" . $token . "';"
-        );
+        $this->moduleFactory = $moduleFactory;
+        $this->opartSaveCartRepository = $opartSaveCartRepository;
+        $this->toolsFactory = $toolsFactory;
+        $this->cartFactory = $cartFactory;
+    }
+
+    /**
+     * @return \Cart|null
+     */
+    public function getCartSaved()
+    {
+        if ($this->moduleFactory->isInstalled('opartsavecart')) {
+            $token = $this->toolsFactory->getValue('token');
+            $opartCartId = $this->opartSaveCartRepository->getIdCartByToken($token);
+
+            if (
+                !empty($opartCartId)
+                && (is_string($opartCartId) || is_int($opartCartId))
+            ) {
+                return $this->cartFactory->create($opartCartId);
+            }
+        }
+
+        return null;
     }
 }

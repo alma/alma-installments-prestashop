@@ -28,7 +28,7 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-use Alma\PrestaShop\Builders\Modules\OpartSaveCart\CartServiceBuilder as OpartSaveCartCartServiceBuilder;
+use Alma\PrestaShop\Builders\Modules\OpartSaveCart\OpartSaveCartCartServiceBuilder;
 use Alma\PrestaShop\Builders\Services\CartServiceBuilder;
 use Alma\PrestaShop\Builders\Services\InsuranceProductServiceBuilder;
 use Alma\PrestaShop\Exceptions\AlmaException;
@@ -72,7 +72,7 @@ class ActionCartSaveHookController extends FrontendHookController
      */
     protected $toolsFactory;
     /**
-     * @var \Alma\PrestaShop\Modules\OpartSaveCart\CartService
+     * @var \Alma\PrestaShop\Modules\OpartSaveCart\OpartSaveCartCartService
      */
     protected $opartCartSaveService;
 

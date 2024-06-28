@@ -29,7 +29,7 @@ use Alma\PrestaShop\Factories\ContextFactory;
 use Alma\PrestaShop\Factories\ToolsFactory;
 use Alma\PrestaShop\Helpers\InsuranceHelper;
 use Alma\PrestaShop\Helpers\InsuranceProductHelper;
-use Alma\PrestaShop\Modules\OpartSaveCart\CartService as OpartSaveCartCartService;
+use Alma\PrestaShop\Modules\OpartSaveCart\OpartSaveCartCartService;
 use Alma\PrestaShop\Repositories\CartProductRepository;
 
 if (!defined('_PS_VERSION_')) {

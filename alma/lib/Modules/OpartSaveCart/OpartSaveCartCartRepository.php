@@ -22,26 +22,27 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
-namespace Alma\PrestaShop\Builders\Modules\OpartSaveCart;
-
-use Alma\PrestaShop\Modules\OpartSaveCart\CartService;
-use Alma\PrestaShop\Traits\BuilderTrait;
+namespace Alma\PrestaShop\Modules\OpartSaveCart;
 
 if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-class CartServiceBuilder
+class OpartSaveCartCartRepository
 {
-    use BuilderTrait;
-
-    public function getInstance()
+    /**
+     * @param string $token
+     *
+     * @codeCoverageIgnore
+     *
+     * @return array|bool|object|null
+     */
+    public function getIdCartByToken($token)
     {
-        return new CartService(
-            $this->getModuleFactory(),
-            $this->getOpartSaveCartRepository(),
-            $this->getToolsFactory(),
-            $this->getCartFactory()
+        return \Db::getInstance()->getValue('
+            SELECT `id_cart`
+            FROM `' . _DB_PREFIX_ . "opartsavecart`
+            WHERE token = '" . $token . "';"
         );
     }
 }

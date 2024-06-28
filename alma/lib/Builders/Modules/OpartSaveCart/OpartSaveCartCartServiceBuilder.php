@@ -22,33 +22,26 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
-namespace Alma\PrestaShop\Tests\Unit\Builders\Modules\OpartSaveCart;
+namespace Alma\PrestaShop\Builders\Modules\OpartSaveCart;
 
-use Alma\PrestaShop\Builders\Modules\OpartSaveCart\OpartSaveCartCartServiceBuilder;
-use Alma\PrestaShop\Modules\OpartSaveCart\OpartSaveCartCartRepository;
 use Alma\PrestaShop\Modules\OpartSaveCart\OpartSaveCartCartService;
-use PHPUnit\Framework\TestCase;
+use Alma\PrestaShop\Traits\BuilderTrait;
 
-class CartServiceBuilderTest extends TestCase
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
+class OpartSaveCartCartServiceBuilder
 {
-    public function setUp()
-    {
-        $this->cartServiceBuilder = new OpartSaveCartCartServiceBuilder();
-    }
+    use BuilderTrait;
 
-    /**
-     * @return void
-     */
-    public function testGetInstance()
+    public function getInstance()
     {
-        $this->assertInstanceOf(OpartSaveCartCartService::class, $this->cartServiceBuilder->getInstance());
-    }
-
-    public function testGetOpartSaveCartRepository()
-    {
-        $this->assertInstanceOf(OpartSaveCartCartRepository::class, $this->cartServiceBuilder->getOpartSaveCartRepository());
-        $this->assertInstanceOf(OpartSaveCartCartRepository::class, $this->cartServiceBuilder->getOpartSaveCartRepository(
-            new OpartSaveCartCartRepository()
-        ));
+        return new OpartSaveCartCartService(
+            $this->getModuleFactory(),
+            $this->getOpartSaveCartRepository(),
+            $this->getToolsFactory(),
+            $this->getCartFactory()
+        );
     }
 }

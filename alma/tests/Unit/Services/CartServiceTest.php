@@ -28,7 +28,7 @@ use Alma\PrestaShop\Factories\ContextFactory;
 use Alma\PrestaShop\Factories\ToolsFactory;
 use Alma\PrestaShop\Helpers\InsuranceHelper;
 use Alma\PrestaShop\Helpers\InsuranceProductHelper;
-use Alma\PrestaShop\Modules\OpartSaveCart\CartService as CartServiceAlias;
+use Alma\PrestaShop\Modules\OpartSaveCart\OpartSaveCartCartService;
 use Alma\PrestaShop\Repositories\CartProductRepository;
 use Alma\PrestaShop\Services\CartService;
 use PHPUnit\Framework\TestCase;
@@ -36,27 +36,27 @@ use PHPUnit\Framework\TestCase;
 class CartServiceTest extends TestCase
 {
     /**
-     * @var \Cart|(\Cart&\Mockery\LegacyMockInterface)|(\Cart&\Mockery\MockInterface)|\Mockery\LegacyMockInterface|\Mockery\MockInterface
+     * @var \Cart
      */
     protected $cartMock;
     /**
-     * @var \Cart|(\Cart&\Mockery\LegacyMockInterface)|(\Cart&\Mockery\MockInterface)|\Mockery\LegacyMockInterface|\Mockery\MockInterface
+     * @var \Cart
      */
     protected $newCartMock;
     /**
-     * @var ContextFactory|(ContextFactory&\Mockery\LegacyMockInterface)|(ContextFactory&\Mockery\MockInterface)|\Mockery\LegacyMockInterface|\Mockery\MockInterface|(\Mockery\MockInterface&ContextFactory)
+     * @var ContextFactory
      */
     protected $contextFactoryMock;
     /**
-     * @var CartServiceAlias|(CartServiceAlias&\Mockery\LegacyMockInterface)|(CartServiceAlias&\Mockery\MockInterface)|\Mockery\LegacyMockInterface|\Mockery\MockInterface|(\Mockery\MockInterface&CartServiceAlias)
+     * @var OpartSaveCartCartService
      */
     protected $opartCartSaveServiceSpy;
     /**
-     * @var \#M#C\Mockery.mock[]|(\#M#C\Mockery.mock[]&\Mockery\LegacyMockInterface)|(\#M#C\Mockery.mock[]&\Mockery\MockInterface)|\#P#C\Alma\PrestaShop\Tests\Unit\Services\CartServiceTest.contextFactoryMock[]|(\#P#C\Alma\PrestaShop\Tests\Unit\Services\CartServiceTest.contextFactoryMock[]&\Mockery\LegacyMockInterface)|(\#P#C\Alma\PrestaShop\Tests\Unit\Services\CartServiceTest.contextFactoryMock[]&\Mockery\MockInterface)|\#P#C\Alma\PrestaShop\Tests\Unit\Services\CartServiceTest.opartCartSaveServiceSpy[]|(\#P#C\Alma\PrestaShop\Tests\Unit\Services\CartServiceTest.opartCartSaveServiceSpy[]&\Mockery\LegacyMockInterface)|(\#P#C\Alma\PrestaShop\Tests\Unit\Services\CartServiceTest.opartCartSaveServiceSpy[]&\Mockery\MockInterface)|\#P#S\Alma\PrestaShop\Tests\Unit\Services\CartServiceTest.contextFactoryMock[]|(\#P#S\Alma\PrestaShop\Tests\Unit\Services\CartServiceTest.contextFactoryMock[]&\Mockery\LegacyMockInterface)|(\#P#S\Alma\PrestaShop\Tests\Unit\Services\CartServiceTest.contextFactoryMock[]&\Mockery\MockInterface)|\#P#S\Alma\PrestaShop\Tests\Unit\Services\CartServiceTest.opartCartSaveServiceSpy[]|(\#P#S\Alma\PrestaShop\Tests\Unit\Services\CartServiceTest.opartCartSaveServiceSpy[]&\Mockery\LegacyMockInterface)|(\#P#S\Alma\PrestaShop\Tests\Unit\Services\CartServiceTest.opartCartSaveServiceSpy[]&\Mockery\MockInterface)|CartService|(CartService&\Mockery\LegacyMockInterface)|(CartService&\Mockery\MockInterface)|\Mockery\LegacyMockInterface|\Mockery\MockInterface|(\Mockery\MockInterface&\#M#C\Mockery.mock[])|(\Mockery\MockInterface&\#P#C\Alma\PrestaShop\Tests\Unit\Services\CartServiceTest.contextFactoryMock[])|(\Mockery\MockInterface&\#P#C\Alma\PrestaShop\Tests\Unit\Services\CartServiceTest.opartCartSaveServiceSpy[])|(\Mockery\MockInterface&\#P#S\Alma\PrestaShop\Tests\Unit\Services\CartServiceTest.contextFactoryMock[])|(\Mockery\MockInterface&\#P#S\Alma\PrestaShop\Tests\Unit\Services\CartServiceTest.opartCartSaveServiceSpy[])|(\Mockery\MockInterface&CartService)
+     * @var CartService
      */
     protected $cartServiceMock;
     /**
-     * @var ToolsFactory|(ToolsFactory&\Mockery\LegacyMockInterface)|(ToolsFactory&\Mockery\MockInterface)|\Mockery\LegacyMockInterface|\Mockery\Mock|\Mockery\MockInterface|(\Mockery\MockInterface&ToolsFactory)
+     * @var ToolsFactory
      */
     protected $toolsFactoryMock;
 
@@ -68,7 +68,7 @@ class CartServiceTest extends TestCase
         $this->cartMock = \Mockery::mock(\Cart::class);
         $this->newCartMock = \Mockery::mock(\Cart::class);
         $this->contextFactoryMock = \Mockery::mock(ContextFactory::class);
-        $this->opartCartSaveServiceSpy = \Mockery::spy(CartServiceAlias::class);
+        $this->opartCartSaveServiceSpy = \Mockery::spy(OpartSaveCartCartService::class);
         $this->toolsFactoryMock = \Mockery::mock(ToolsFactory::class);
         $this->insuranceHelperMock = \Mockery::mock(InsuranceHelper::class);
         $this->insuranceProductHelperSpy = \Mockery::spy(InsuranceProductHelper::class);
