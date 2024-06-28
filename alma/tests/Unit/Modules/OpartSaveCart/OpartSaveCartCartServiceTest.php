@@ -32,7 +32,7 @@ use Alma\PrestaShop\Modules\OpartSaveCart\OpartSaveCartCartRepository;
 use Alma\PrestaShop\Modules\OpartSaveCart\OpartSaveCartCartService;
 use PHPUnit\Framework\TestCase;
 
-class CartServiceTest extends TestCase
+class OpartSaveCartCartServiceTest extends TestCase
 {
     /**
      * @var OpartSaveCartCartService
@@ -40,27 +40,27 @@ class CartServiceTest extends TestCase
     protected $cartService;
 
     /**
-     * @var \Mockery\Mock|(\Mockery\MockInterface&OpartSaveCartCartServiceBuilder)
+     * @var OpartSaveCartCartServiceBuilder
      */
     protected $cartServiceBuilderMock;
     /**
-     * @var \Mockery\Mock|(\Mockery\MockInterface&OpartSaveCartCartRepository)
+     * @var OpartSaveCartCartRepository
      */
     protected $cartRepositoryMock;
     /**
-     * @var \Mockery\Mock|(\Mockery\MockInterface&ModuleFactory)
+     * @var ModuleFactory
      */
     protected $moduleFactoryMock;
     /**
-     * @var \Mockery\Mock|(\Mockery\MockInterface&ToolsFactory)
+     * @var ToolsFactory
      */
     protected $toolsFactoryMock;
     /**
-     * @var \Mockery\Mock|(\Mockery\MockInterface&CartFactory)
+     * @var CartFactory
      */
     protected $cartFactoryMock;
     /**
-     * @var \Mockery\Mock|(\Mockery\MockInterface&\Cart)
+     * @var \Cart
      */
     protected $cartMock;
 

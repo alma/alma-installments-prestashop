@@ -29,7 +29,7 @@ use Alma\PrestaShop\Modules\OpartSaveCart\OpartSaveCartCartRepository;
 use Alma\PrestaShop\Modules\OpartSaveCart\OpartSaveCartCartService;
 use PHPUnit\Framework\TestCase;
 
-class CartServiceBuilderTest extends TestCase
+class OpartSaveCartCartServiceBuilderTest extends TestCase
 {
     public function setUp()
     {
