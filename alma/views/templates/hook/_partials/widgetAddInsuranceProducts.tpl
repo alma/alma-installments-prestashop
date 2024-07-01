@@ -54,7 +54,7 @@
                    class="btn-add-insurance-product alma-add-all-insurance-product"
                    data-link='{$ajaxLinkAddInsuranceProduct|escape:'htmlall':'UTF-8'}'
                 >
-                    {l s='I want to insure all the %1$s in my basket' sprintf=[$product.name] mod='alma'}
+                    {l s='I want to insure all the remaining [1]%1$s[/1] in my cart' tags=['<strong>'] sprintf=[$product.name] mod='alma'}
                 </a>
             </div>
         </div>
