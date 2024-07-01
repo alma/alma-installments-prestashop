@@ -47,6 +47,9 @@
     color: inherit;
     text-decoration: underline;
 }
+.product-line-grid-right .cart-line-product-actions .alma-remove-insurance-products {
+    color: inherit;
+}
 .item-alma-insurance .alma-action-item-insurance .btn-add-insurance-product {
     display: inline-block;
     color: inherit;
