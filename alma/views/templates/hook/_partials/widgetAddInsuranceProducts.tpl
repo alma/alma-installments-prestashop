@@ -23,14 +23,9 @@
 {capture assign='productRegularPriceInCent'}{$product.price_without_reduction|escape:'htmlall':'UTF-8' * 100}{/capture}
 {capture assign='cmsReference'}{almaCmsReference product_id=$product.id_product product_attribute_id=$product.id_product_attribute regular_price=$product.price_without_reduction}{/capture}
 
-<div class="col-md-12 py-1">
+<div class="col-md-12">
     <div class="item-alma-insurance">
-        <div class="product-line-grid-left">
-            <span class="product-image media-middle">
-                <img src="/modules/alma/views/img/logos/shield.svg" alt="{l s='Alma insurance' mod='alma'}">
-            </span>
-        </div>
-        <div class="product-line-grid-right">
+        <div class="product-line-grid-left alma-title-widget-insurance">
             <div class="product-line-info">
                 <span class="label">
                     {l s='Protect the rest of your products with' mod='alma'}
@@ -39,6 +34,8 @@
                     </strong>
                 </span>
             </div>
+        </div>
+        <div class="product-line-grid-left">
             <div class="alma-action-item-insurance">
                 <a data-product-id="{$product.id_product|escape:'htmlall':'UTF-8'}"
                    data-product-attribute-id="{$product.id_product_attribute|escape:'htmlall':'UTF-8'}"
@@ -54,7 +51,7 @@
                    class="btn-add-insurance-product alma-add-all-insurance-product"
                    data-link='{$ajaxLinkAddInsuranceProduct|escape:'htmlall':'UTF-8'}'
                 >
-                    {l s='I want to insure all the %1$s in my basket' sprintf=[$product.name] mod='alma'}
+                    {l s='I want to insure all the remaining [1]%1$s[/1] in my cart' tags=['<strong>'] sprintf=[$product.name] mod='alma'}
                 </a>
             </div>
         </div>

@@ -40,7 +40,7 @@
             </span>
         </div>
 
-        <div class="product-line-info product-price h5 has-discount">
+        <div class="product-line-info product-price h5">
             <div class="current-price">
                 <span class="price">{Context::getContext()->currentLocale->formatPrice($associatedInsurance.price, $currency.iso_code)}</span>
             </div>

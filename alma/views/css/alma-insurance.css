@@ -19,6 +19,7 @@
 }
 
 .actions-alma-insurance-product .item-alma-insurance {
+    font-family: "Venn", sans-serif;
     background: #f9f9f9;
     padding: 12px 0;
     border-radius: 12px;
@@ -37,8 +38,13 @@
     float: left;
     padding: 0 15px;
 }
-.item-alma-insurance .product-line-grid-right {
-    float: left;
+.item-alma-insurance .product-line-grid-left.alma-title-widget-insurance {
+    background-image: url('/modules/alma/views/img/logos/shield.svg');
+    background-repeat: no-repeat;
+    background-position: 15px;
+    background-size: 24px;
+    padding-left: 45px;
+    margin-bottom: 5px;
 }
 .item-alma-insurance .product-line-info .label strong{
     color: #FA5022;
