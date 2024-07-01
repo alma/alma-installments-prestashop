@@ -26,7 +26,7 @@ if (!defined('_PS_VERSION_')) {
 }
 
 use Alma\PrestaShop\Builders\Admin\InsuranceHelperBuilder;
-use Alma\PrestaShop\Helpers\Admin\InsuranceHelper;
+use Alma\PrestaShop\Helpers\Admin\AdminInsuranceHelper;
 use Alma\PrestaShop\Helpers\ConfigurationHelper;
 use Alma\PrestaShop\Helpers\ConstantsHelper;
 use Alma\PrestaShop\Logger;
@@ -37,7 +37,7 @@ class AdminAlmaInsuranceConfigurationController extends ModuleAdminController
     use AjaxTrait;
 
     /**
-     * @var InsuranceHelper
+     * @var AdminInsuranceHelper
      */
     private $insuranceHelper;
     /**

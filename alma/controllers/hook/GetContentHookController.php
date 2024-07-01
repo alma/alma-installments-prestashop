@@ -863,6 +863,10 @@ final class GetContentHookController extends AdminHookController
             $messages = '';
         }
 
+        if ($params['hasPSAccount'] || $params['suggestPSAccount']) {
+            $messages = $this->module->display($this->module->file, 'getContent.tpl');
+        }
+
         $htmlForm = $this->renderForm();
 
         return $messages . $htmlForm;

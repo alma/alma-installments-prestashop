@@ -288,3 +288,63 @@ fieldset .form-alma.disabled::before{
     padding: 0;
     margin: 0;
 }
+
+/* PS Account Banner */
+.ps-account-container {
+    margin: 32px;
+}
+
+.ps-account-steps-banner {
+    position: relative;
+    background-color: #E7F8FA;
+    border-radius: 24px;
+    overflow: hidden;
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 24px;
+    background-image: url('../../img/alma-banner-asset.svg');
+    background-position: right 100%;
+    background-repeat: no-repeat;
+}
+
+.ps-account-text-container {
+    font-family: 'Venn', sans-serif;
+    color: black;
+    padding: 24px 32px;
+    max-width: 60%;
+}
+
+.ps-account-text-container > ol {
+    padding: 0;
+    list-style: none;
+}
+
+.ps-account-text-container li {
+    margin-bottom: 8px;
+}
+
+.ps-account-title {
+    /* font-base-bold */
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: 135%; /* 21.6px */
+    margin-bottom: 8px;
+}
+
+.ps-account-list-title {
+    font-size: 12px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: 135%;
+}
+
+.ps-account-text-container a,
+.ps-account-text-container a:visited {
+    color: black;
+    text-decoration: underline
+}
+
+.ps-account-text-container a:hover {
+    color: #6C6C6C;
+}
