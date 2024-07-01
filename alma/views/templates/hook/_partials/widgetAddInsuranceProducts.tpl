@@ -30,7 +30,7 @@
                 <span class="label">
                     {l s='Protect the rest of your products with' mod='alma'}
                     <strong>
-                        Alma
+                        <img src="/modules/alma/views/img/logos/alma_logo_orange.svg" alt="Alma" height="12px" />
                     </strong>
                 </span>
             </div>

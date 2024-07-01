@@ -23,8 +23,12 @@
     background: #f9f9f9;
     padding: 12px 0;
     border-radius: 12px;
+    color: #1A1A1A;
 }
 
+.item-alma-insurance *{
+    -webkit-font-smoothing: initial;
+}
 .item-alma-insurance .alma-action-item-insurance {
     font-size: 0.9rem;
 }
@@ -46,8 +50,13 @@
     padding-left: 45px;
     margin-bottom: 5px;
 }
+.item-alma-insurance .product-line-info .label{
+    display: flex;
+    gap: 4px;
+}
 .item-alma-insurance .product-line-info .label strong{
-    color: #FA5022;
+    display: flex;
+    align-items: center;
 }
 .item-alma-insurance .alma-action-item-insurance .alma-remove-insurance-product {
     color: inherit;
