@@ -41,10 +41,19 @@
     </div>
 </div>
 <script data-cfasync="false" type='module'>
-    window.addEventListener('almaIframeScriptLoaded', () => {
+    window.addEventListener('load', () => {
         let insuranceConfigurationParams = {$insuranceConfigurationParams};
 
-        sendConfigurationInsuranceParams(insuranceConfigurationParams);
+        function waitForScript()
+        {
+            if (typeof sendConfigurationInsuranceParams !== 'undefined') {
+                setTimeout(sendConfigurationInsuranceParams(insuranceConfigurationParams), 650)
+            } else {
+                console.log('re set timeout')
+                setTimeout(waitForScript, 450)
+            }
+        }
+        waitForScript();
         loadConfigurationInsurance('{$domainInsuranceUrl}', '{$insuranceConfigurationController}', '{$token}');
     })
 </script>
