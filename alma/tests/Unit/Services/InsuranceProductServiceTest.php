@@ -26,11 +26,14 @@ namespace Alma\PrestaShop\Tests\Unit\Services;
 
 use Alma\PrestaShop\Factories\CombinationFactory;
 use Alma\PrestaShop\Factories\ContextFactory;
+use Alma\PrestaShop\Factories\LinkFactory;
 use Alma\PrestaShop\Factories\ProductFactory;
 use Alma\PrestaShop\Factories\ToolsFactory;
 use Alma\PrestaShop\Helpers\Admin\AdminInsuranceHelper;
+use Alma\PrestaShop\Helpers\ImageHelper;
 use Alma\PrestaShop\Helpers\PriceHelper;
 use Alma\PrestaShop\Helpers\ProductHelper;
+use Alma\PrestaShop\Helpers\ToolsHelper;
 use Alma\PrestaShop\Repositories\AlmaInsuranceProductRepository;
 use Alma\PrestaShop\Repositories\ProductRepository;
 use Alma\PrestaShop\Services\AttributeGroupProductService;
@@ -49,35 +52,35 @@ class InsuranceProductServiceTest extends TestCase
      */
     protected $insuranceProductServiceMock;
     /**
-     * @var AlmaInsuranceProductRepository|(AlmaInsuranceProductRepository&\PHPUnit_Framework_MockObject_MockObject)|\PHPUnit_Framework_MockObject_MockObject
+     * @var AlmaInsuranceProductRepository
      */
     protected $almaInsuranceProductRepository;
     /**
-     * @var \Cart|(\Cart&\PHPUnit_Framework_MockObject_MockObject)|\PHPUnit_Framework_MockObject_MockObject
+     * @var \Cart
      */
     protected $cart;
     /**
-     * @var \Cart|(\Cart&\PHPUnit_Framework_MockObject_MockObject)|\PHPUnit_Framework_MockObject_MockObject
+     * @var \Cart
      */
     protected $newCart;
     /**
-     * @var ProductFactory|(ProductFactory&\PHPUnit_Framework_MockObject_MockObject)|\PHPUnit_Framework_MockObject_MockObject
+     * @var ProductFactory
      */
     protected $productFactoryMock;
     /**
-     * @var CombinationFactory|(CombinationFactory&\PHPUnit_Framework_MockObject_MockObject)|\PHPUnit_Framework_MockObject_MockObject
+     * @var CombinationFactory
      */
     protected $combinationFactoryMock;
     /**
-     * @var \Combination|(\Combination&\PHPUnit_Framework_MockObject_MockObject)|\PHPUnit_Framework_MockObject_MockObject
+     * @var \Combination
      */
     protected $combinationMock;
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|\Product|(\Product&\PHPUnit_Framework_MockObject_MockObject)
+     * @var \Product
      */
     protected $productMock;
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|\Product|(\Product&\PHPUnit_Framework_MockObject_MockObject)
+     * @var \Product
      */
     protected $productInsuranceMock;
     /**
@@ -85,9 +88,25 @@ class InsuranceProductServiceTest extends TestCase
      */
     protected $toolsFactorySpy;
     /**
-     * @var ContextFactory|(ContextFactory&\Mockery\LegacyMockInterface)|(ContextFactory&\Mockery\MockInterface)|\Mockery\LegacyMockInterface|\Mockery\MockInterface|(\Mockery\MockInterface&ContextFactory)
+     * @var ContextFactory
      */
     protected $contextFactoryMock;
+    /**
+     * @var ImageHelper
+     */
+    protected $imageHelperMock;
+    /**
+     * @var ToolsHelper
+     */
+    protected $toolsHelperMock;
+    /**
+     * @var PriceHelper
+     */
+    protected $priceHelperMock;
+    /**
+     * @var LinkFactory|(LinkFactory&\PHPUnit_Framework_MockObject_MockObject)|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $linkFactoryMock;
 
     public function setUp()
     {
@@ -96,7 +115,7 @@ class InsuranceProductServiceTest extends TestCase
         $this->almaInsuranceProductRepository = $this->createMock(AlmaInsuranceProductRepository::class);
         $this->productFactoryMock = $this->createMock(ProductFactory::class);
         $this->combinationFactoryMock = $this->createMock(CombinationFactory::class);
-        $this->linkMock = $this->createMock(\Link::class);
+        $this->linkFactoryMock = $this->createMock(LinkFactory::class);
         $this->cart = $this->createMock(\Cart::class);
         $this->newCart = $this->createMock(\Cart::class);
         $this->context = $this->createMock(\Context::class);
@@ -110,8 +129,14 @@ class InsuranceProductServiceTest extends TestCase
         $this->combinationMock2 = $this->createMock(\Combination::class);
         $this->context->shop = $this->shop;
         $this->context->language = $this->languageMock;
+        $this->imageHelperMock = $this->createMock(ImageHelper::class);
+        $this->toolsHelperMock = $this->createMock(ToolsHelper::class);
+        $this->priceHelperMock = $this->createMock(PriceHelper::class);
         $this->insuranceProductServiceMock = \Mockery::mock(InsuranceProductService::class,
         [
+            $this->productFactoryMock,
+            $this->combinationFactoryMock,
+            $this->linkFactoryMock,
             $this->almaInsuranceProductRepository,
             $this->contextFactoryMock,
             \Mockery::mock(AttributeGroupProductService::class),
@@ -122,9 +147,11 @@ class InsuranceProductServiceTest extends TestCase
             \Mockery::mock(ProductRepository::class),
             \Mockery::mock(ProductHelper::class),
             \Mockery::mock(InsuranceApiService::class),
-            \Mockery::mock(PriceHelper::class),
+            $this->priceHelperMock,
             \Mockery::mock(AdminInsuranceHelper::class),
             $this->toolsFactorySpy,
+            $this->imageHelperMock,
+            $this->toolsHelperMock,
         ])->makePartial();
     }
 
@@ -141,74 +168,6 @@ class InsuranceProductServiceTest extends TestCase
     /**
      * @throws \PrestaShopDatabaseException
      */
-    public function testDuplicateInsuranceProductsWithOneInsuranceProduct()
-    {
-        $almaInsuranceProduct = [[
-            'id_product' => '1',
-            'id_product_attribute' => '1',
-            'id_customization' => '0',
-            'id_product_insurance' => '20',
-            'id_product_attribute_insurance' => '42',
-            'id_address_delivery' => '7',
-            'price' => '2150',
-            'insurance_contract_id' => 'insurance_contract_3CR76PNE04X7hHEY7V65rZ',
-            'cms_reference' => '1-1',
-            'product_price' => '35000',
-        ]];
-        $this->cart->id = 1;
-        $this->newCart->id = 2;
-        $this->almaInsuranceProductRepository->expects($this->once())
-            ->method('add');
-        $this->almaInsuranceProductRepository->expects($this->once())
-            ->method('getByCartIdAndShop')
-            ->with($this->cart->id, $this->context->shop->id)
-            ->willReturn($almaInsuranceProduct);
-        $this->insuranceProductService->duplicateInsuranceProducts($this->cart, $this->newCart);
-    }
-
-    /**
-     * @return void
-     *
-     * @throws \PrestaShopDatabaseException
-     */
-    public function testDuplicateInsuranceProductsWithTwoInsuranceProduct()
-    {
-        $almaInsuranceProduct = [
-            [
-                'id_product' => '1',
-                'id_product_attribute' => '1',
-                'id_customization' => '0',
-                'id_product_insurance' => '20',
-                'id_product_attribute_insurance' => '42',
-                'id_address_delivery' => '7',
-                'price' => '2150',
-                'insurance_contract_id' => 'insurance_contract_3CR76PNE04X7hHEY7V65rZ',
-                'cms_reference' => '1-1',
-                'product_price' => '35000',
-            ],
-            [
-                'id_product' => '2',
-                'id_product_attribute' => '1',
-                'id_customization' => '0',
-                'id_product_insurance' => '20',
-                'id_product_attribute_insurance' => '42',
-                'id_address_delivery' => '7',
-                'price' => '2250',
-                'insurance_contract_id' => 'insurance_contract_ABC',
-                'cms_reference' => '2-1',
-                'product_price' => '25000',
-            ], ];
-        $this->cart->id = 1;
-        $this->newCart->id = 2;
-        $this->almaInsuranceProductRepository->expects($this->exactly(2))
-            ->method('add');
-        $this->almaInsuranceProductRepository->expects($this->once())
-            ->method('getByCartIdAndShop')
-            ->with($this->cart->id, $this->context->shop->id)
-            ->willReturn($almaInsuranceProduct);
-        $this->insuranceProductService->duplicateInsuranceProducts($this->cart, $this->newCart);
-    }
-
     public function testGetItemCartInsuranceProductAttributes()
     {
         $expectedResult = [
@@ -274,7 +233,13 @@ class InsuranceProductServiceTest extends TestCase
         $this->combinationMock2->reference = 'Reference Vol Alma';
         $this->productInsuranceMock->link_rewrite = [1 => ''];
 
-        $this->linkMock->expects($this->exactly(2))
+        $this->toolsHelperMock->expects($this->exactly(2))
+            ->method('getJsonValues')
+            ->willReturnOnConsecutiveCalls('["22","23"]', '["24"]');
+        $this->priceHelperMock->expects($this->exactly(2))
+            ->method('convertPriceFromCents')
+            ->willReturnOnConsecutiveCalls(47.899999999999999, 22.899999999999999);
+        $this->linkFactoryMock->expects($this->exactly(2))
             ->method('getImageLink')
             ->willReturn('url_image');
         $this->almaInsuranceProductRepository->expects($this->exactly(2))
@@ -298,7 +263,7 @@ class InsuranceProductServiceTest extends TestCase
             ->willReturn($returnGetCountInsuranceProductAttribute);
         $this->assertEquals(
             $expectedResult,
-            $this->insuranceProductService->getItemsCartInsuranceProductAttributes($this->productMock, $cartId, $insuranceProductId)
+            $this->insuranceProductServiceMock->getItemsCartInsuranceProductAttributes($this->productMock, $cartId, $insuranceProductId)
         );
     }
 

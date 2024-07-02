@@ -374,40 +374,6 @@ class InsuranceProductService
     }
 
     /**
-     * @param $currentCart
-     * @param $newCart
-     *
-     * @return void
-     *
-     * @throws \PrestaShopDatabaseException
-     */
-    public function duplicateInsuranceProducts($currentCart, $newCart)
-    {
-        $almaInsuranceProducts = $this->almaInsuranceProductRepository->getByCartIdAndShop($currentCart->id, $this->context->shop->id);
-
-        foreach ($almaInsuranceProducts as $almaInsuranceProduct) {
-            $insuranceContractInfos = [
-                'insurance_contract_id' => $almaInsuranceProduct['insurance_contract_id'],
-                'cms_reference' => $almaInsuranceProduct['cms_reference'],
-                'product_price' => $almaInsuranceProduct['product_price'],
-            ];
-
-            $this->almaInsuranceProductRepository->add(
-                $newCart->id,
-                $almaInsuranceProduct['id_product'],
-                $this->context->shop->id,
-                $almaInsuranceProduct['id_product_attribute'],
-                $almaInsuranceProduct['id_customization'],
-                $almaInsuranceProduct['id_product_insurance'],
-                $almaInsuranceProduct['id_product_attribute_insurance'],
-                $almaInsuranceProduct['price'],
-                $almaInsuranceProduct['id_address_delivery'],
-                $insuranceContractInfos
-            );
-        }
-    }
-
-    /**
      * @param $product
      * @param $cartId
      * @param $insuranceProductId
