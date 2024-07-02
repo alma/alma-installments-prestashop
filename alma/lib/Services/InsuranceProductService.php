@@ -149,6 +149,8 @@ class InsuranceProductService
      * @param InsuranceApiService $insuranceApiService
      * @param PriceHelper $priceHelper
      * @param InsuranceHelper $insuranceHelper
+     * @param ImageHelper $imageHelper
+     * @param ToolsHelper $toolsHelper
      */
     public function __construct(
         $productFactory,
@@ -166,7 +168,9 @@ class InsuranceProductService
         $insuranceApiService,
         $priceHelper,
         $insuranceHelper,
-        $toolsFactory
+        $toolsFactory,
+        $imageHelper,
+        $toolsHelper
     ) {
         $this->productFactory = $productFactory;
         $this->combinationFactory = $combinationFactory;
@@ -184,6 +188,8 @@ class InsuranceProductService
         $this->priceHelper = $priceHelper;
         $this->insuranceHelper = $insuranceHelper;
         $this->toolsFactory = $toolsFactory;
+        $this->imageHelper = $imageHelper;
+        $this->toolsHelper = $toolsHelper;
     }
 
     /**

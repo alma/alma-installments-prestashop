@@ -99,8 +99,8 @@ class ActionCartSaveHookController extends FrontendHookController
         $contextFactory = new ContextFactory();
         $this->contextCart = $contextFactory->getContextCart();
         $insuranceProductServiceBuilder = new InsuranceProductServiceBuilder();
-        $this->toolsFactory = new ToolsFactory();
         $this->insuranceProductService = $insuranceProductServiceBuilder->getInstance();
+        $this->toolsFactory = new ToolsFactory();
         $insuranceHelperBuilder = new InsuranceHelperBuilder();
         $this->insuranceHelper = $insuranceHelperBuilder->getInstance();
         $cartServiceBuilder = new CartServiceBuilder();

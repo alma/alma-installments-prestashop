@@ -55,6 +55,7 @@ use Alma\PrestaShop\Helpers\CustomFieldsHelper;
 use Alma\PrestaShop\Helpers\DateHelper;
 use Alma\PrestaShop\Helpers\EligibilityHelper;
 use Alma\PrestaShop\Helpers\FeePlanHelper;
+use Alma\PrestaShop\Helpers\ImageHelper;
 use Alma\PrestaShop\Helpers\InsuranceHelper;
 use Alma\PrestaShop\Helpers\InsuranceProductHelper;
 use Alma\PrestaShop\Helpers\LanguageHelper;
@@ -920,6 +921,20 @@ trait BuilderTrait
         }
 
         return new ToolsFactory();
+    }
+
+    /**
+     * @param ImageHelper $imageHelper
+     *
+     * @return ImageHelper
+     */
+    public function getImageHelper($imageHelper = null)
+    {
+        if ($imageHelper) {
+            return $imageHelper;
+        }
+
+        return new ImageHelper();
     }
 
     /**

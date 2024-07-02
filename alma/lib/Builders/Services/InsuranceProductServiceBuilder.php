@@ -59,7 +59,9 @@ class InsuranceProductServiceBuilder
             $this->getInsuranceApiService(),
             $this->getPriceHelper(),
             $this->getInsuranceHelper(),
-            $this->getToolsFactory()
+            $this->getToolsFactory(),
+            $this->getImageHelper(),
+            $this->getToolsHelper()
         );
     }
 }
