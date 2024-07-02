@@ -23,7 +23,7 @@
     },
     {
       "description": "PHP, composer and Prestashop versions in Dockerfiles must be freezed",
-      "matchManagers": ["docker"],
+      "matchManagers": ["dockerfile"],
       "matchDepNames": ["prestashop/prestashop", "php", "composer"],
       "enabled": false
     }
