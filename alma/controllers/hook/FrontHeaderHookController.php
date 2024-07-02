@@ -28,7 +28,10 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
+use Alma\PrestaShop\Builders\Admin\InsuranceHelperBuilder as AdminInsuranceHelperBuilder;
+use Alma\PrestaShop\Builders\Helpers\InsuranceHelperBuilder;
 use Alma\PrestaShop\Builders\Helpers\SettingsHelperBuilder;
+use Alma\PrestaShop\Helpers\Admin\InsuranceHelper as AdminInsuranceHelper;
 use Alma\PrestaShop\Helpers\ConstantsHelper;
 use Alma\PrestaShop\Helpers\InsuranceHelper;
 use Alma\PrestaShop\Helpers\SettingsHelper;
@@ -66,6 +69,10 @@ class FrontHeaderHookController extends FrontendHookController
      * @var ProductRepository
      */
     protected $productRepository;
+    /**
+     * @var AdminInsuranceHelper
+     */
+    protected $adminInsuranceHelper;
 
     /**
      * @codeCoverageIgnore
@@ -81,7 +88,11 @@ class FrontHeaderHookController extends FrontendHookController
         $settingsHelperBuilder = new SettingsHelperBuilder();
         $this->settingsHelper = $settingsHelperBuilder->getInstance();
 
-        $this->insuranceHelper = new InsuranceHelper();
+        $insuranceHelperBuilder = new InsuranceHelperBuilder();
+        $this->insuranceHelper = $insuranceHelperBuilder->getInstance();
+
+        $adminInsuranceHelperBuilder = new AdminInsuranceHelperBuilder();
+        $this->adminInsuranceHelper = $adminInsuranceHelperBuilder->getInstance();
         $this->insuranceService = new InsuranceService();
         $this->productRepository = new ProductRepository();
     }
@@ -325,6 +336,8 @@ class FrontHeaderHookController extends FrontendHookController
                 ConstantsHelper::INSURANCE_PRODUCT_CSS_ID,
                 "modules/$this->moduleName/" . ConstantsHelper::INSURANCE_PRODUCT_CSS_PATH
             );
+
+            return $this->urlScriptInsuranceModal();
         }
 
         if (
@@ -337,6 +350,10 @@ class FrontHeaderHookController extends FrontendHookController
                 ConstantsHelper::INSURANCE_PRODUCT_CSS_ID,
                 "modules/$this->moduleName/" . ConstantsHelper::INSURANCE_PRODUCT_CSS_PATH
             );
+
+            if ($this->insuranceHelper->isInsuranceAllowedInCartPage()) {
+                return $this->urlScriptInsuranceModal();
+            }
         }
 
         if (
@@ -362,6 +379,16 @@ class FrontHeaderHookController extends FrontendHookController
         );
 
         return "<div id='alma-insurance-global' data-insurance-id='{$insuranceProductId}'></div>";
+    }
+
+    /**
+     * @return string
+     */
+    protected function urlScriptInsuranceModal()
+    {
+        $urlScriptInsuranceModal = $this->adminInsuranceHelper->envUrl() . ConstantsHelper::SCRIPT_MODAL_WIDGET_INSURANCE_PATH;
+
+        return "<script data-cfasync='false' type='module' src='{$urlScriptInsuranceModal}'></script><div id='alma-insurance-modal'></div>";
     }
 
     /**

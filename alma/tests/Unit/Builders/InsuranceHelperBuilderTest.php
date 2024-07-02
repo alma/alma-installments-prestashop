@@ -1,6 +1,6 @@
 <?php
 /**
- * 2018-2024 Alma SAS.
+ * 2018-2023 Alma SAS.
  *
  * THE MIT LICENSE
  *
@@ -18,56 +18,40 @@
  * IN THE SOFTWARE.
  *
  * @author    Alma SAS <contact@getalma.eu>
- * @copyright 2018-2024 Alma SAS
+ * @copyright 2018-2023 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
-namespace Alma\PrestaShop\Controllers\Hook;
-
-if (!defined('_PS_VERSION_')) {
-    exit;
-}
+namespace Alma\PrestaShop\Tests\Unit\Builders;
 
 use Alma\PrestaShop\Builders\Helpers\InsuranceHelperBuilder;
 use Alma\PrestaShop\Helpers\InsuranceHelper;
-use Alma\PrestaShop\Hooks\FrontendHookController;
-use Alma\PrestaShop\Services\InsuranceService;
+use Alma\PrestaShop\Repositories\CartProductRepository;
+use PHPUnit\Framework\TestCase;
 
-class ActionObjectProductInCartDeleteAfterHookController extends FrontendHookController
+class InsuranceHelperBuilderTest extends TestCase
 {
     /**
-     * @var InsuranceService
+     * @var InsuranceHelperBuilder
      */
-    protected $insuranceService;
+    protected $insuranceHelperBuilder;
 
-    /**
-     * @var InsuranceHelper
-     */
-    protected $insuranceHelper;
-
-    public function __construct($module)
+    public function setUp()
     {
-        parent::__construct($module);
-
-        $this->insuranceService = new InsuranceService();
-        $insuranceHelperBuilder = new InsuranceHelperBuilder();
-        $this->insuranceHelper = $insuranceHelperBuilder->getInstance();
-    }
-
-    public function canRun()
-    {
-        return parent::canRun() && $this->insuranceHelper->isInsuranceActivated();
+        $this->insuranceHelperBuilder = new InsuranceHelperBuilder();
     }
 
     /**
-     * Run Controller
-     *
-     * @param array $params
-     *
      * @return void
      */
-    public function run($params)
+    public function testGetInstance()
     {
-        $this->insuranceService->deleteAllLinkedInsuranceProducts($params);
+        $this->assertInstanceOf(InsuranceHelper::class, $this->insuranceHelperBuilder->getInstance());
+    }
+
+    public function testGetCartProductRepository()
+    {
+        $this->assertInstanceOf(CartProductRepository::class, $this->insuranceHelperBuilder->getCartProductRepository());
+        $this->assertInstanceOf(CartProductRepository::class, $this->insuranceHelperBuilder->getCartProductRepository());
     }
 }

@@ -65,10 +65,11 @@ class AdminAlmaInsuranceConfigurationController extends ModuleAdminController
         parent::initContent();
 
         $this->context->smarty->assign([
-            'iframeUrl' => $this->insuranceHelper->constructIframeUrlWithParams(),
+            'iframeUrl' => $this->insuranceHelper->envUrl() . ConstantsHelper::BO_IFRAME_CONFIGURATION_INSURANCE_PATH,
             'domainInsuranceUrl' => $this->insuranceHelper->envUrl(),
             'token' => \Tools::getAdminTokenLite(ConstantsHelper::BO_CONTROLLER_INSURANCE_CONFIGURATION_CLASSNAME),
             'insuranceConfigurationController' => ConstantsHelper::BO_CONTROLLER_INSURANCE_CONFIGURATION_CLASSNAME,
+            'insuranceConfigurationParams' => json_encode($this->insuranceHelper->mapDbFieldsWithIframeParams()),
         ]);
 
         $content = $this->context->smarty->fetch(_PS_MODULE_DIR_ . 'alma/views/templates/admin/insurance.tpl');

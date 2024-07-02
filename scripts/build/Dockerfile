@@ -1,3 +1,4 @@
+# We need to keep composer in versio 2.2 to be compatible with PHP 5.6
 FROM composer:2.2 AS composer
 FROM php:5.6-cli-alpine AS php
 

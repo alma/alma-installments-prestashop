@@ -1,6 +1,6 @@
 <?php
 /**
- * 2018-2024 Alma SAS.
+ * 2018-2023 Alma SAS.
  *
  * THE MIT LICENSE
  *
@@ -18,56 +18,28 @@
  * IN THE SOFTWARE.
  *
  * @author    Alma SAS <contact@getalma.eu>
- * @copyright 2018-2024 Alma SAS
+ * @copyright 2018-2023 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
-namespace Alma\PrestaShop\Controllers\Hook;
+namespace Alma\PrestaShop\Factories;
 
 if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-use Alma\PrestaShop\Builders\Helpers\InsuranceHelperBuilder;
-use Alma\PrestaShop\Helpers\InsuranceHelper;
-use Alma\PrestaShop\Hooks\FrontendHookController;
-use Alma\PrestaShop\Services\InsuranceService;
-
-class ActionObjectProductInCartDeleteAfterHookController extends FrontendHookController
+/**
+ * Class CustomerFactory.
+ */
+class CombinationFactory
 {
     /**
-     * @var InsuranceService
-     */
-    protected $insuranceService;
-
-    /**
-     * @var InsuranceHelper
-     */
-    protected $insuranceHelper;
-
-    public function __construct($module)
-    {
-        parent::__construct($module);
-
-        $this->insuranceService = new InsuranceService();
-        $insuranceHelperBuilder = new InsuranceHelperBuilder();
-        $this->insuranceHelper = $insuranceHelperBuilder->getInstance();
-    }
-
-    public function canRun()
-    {
-        return parent::canRun() && $this->insuranceHelper->isInsuranceActivated();
-    }
-
-    /**
-     * Run Controller
+     * @param int $id
      *
-     * @param array $params
-     *
-     * @return void
+     * @return \CombinationCore
      */
-    public function run($params)
+    public function create($id)
     {
-        $this->insuranceService->deleteAllLinkedInsuranceProducts($params);
+        return new \CombinationCore($id);
     }
 }

@@ -117,7 +117,7 @@ tasks:
     deps:
       - gh-cli
     desc: Create a release pull request
-    cmds: 
+    cmds:
       - gh workflow run release-pull-request.yml
       - sleep 2
       - cmd: echo "Release pull request created, check out https://github.com/alma/{{.REPOSITORY}}/pulls?q=is%3Aopen+is%3Apr+label%3Arelease"
@@ -138,7 +138,7 @@ tasks:
         msg: |
           ⚠️ This task requires a changelog message.
           Please provide a changelog message. Example: `task hotfix CHANGELOG_MESSAGE='This is a message'`.
-    cmds: 
+    cmds:
       - gh workflow run hotfix-pull-request.yml -F changelog-message='{{.CHANGELOG_MESSAGE}}'
       - sleep 2
       - cmd: echo "Hotfix pull request created, check out https://github.com/alma/{{.REPOSITORY}}/pulls?q=is%3Aopen+is%3Apr+label%3Ahotfix"

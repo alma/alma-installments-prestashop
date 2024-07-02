@@ -55,7 +55,7 @@ jobs:
           title: Release ${{ steps.release-drafter.outputs.tag_name }}
           body: |
             Update version to ${{ steps.release-drafter.outputs.tag_name }}
-    
+
             ### Checklist of actions to be done before merging
             - [ ] Review and update the CHANGELOG.md if needed
             - [ ] Review and update the Github release draft if needed
@@ -63,4 +63,3 @@ jobs:
           branch: hotfix/${{ steps.release-drafter.outputs.tag_name }}
           base: main
           labels: hotfix, release
-

@@ -30,15 +30,27 @@ use Alma\PrestaShop\Services\AttributeProductService;
 use Alma\PrestaShop\Services\CartService;
 use Alma\PrestaShop\Services\CombinationProductAttributeService;
 use Alma\PrestaShop\Services\InsuranceApiService;
+use Alma\PrestaShop\Services\InsuranceProductService;
 use PHPUnit\Framework\TestCase;
 
 class InsuranceProductServiceBuilderTest extends TestCase
 {
+    /**
+     * @var InsuranceProductServiceBuilder
+     */
     protected $insuranceProductServiceBuilder;
 
     public function setUp()
     {
         $this->insuranceProductServiceBuilder = new InsuranceProductServiceBuilder();
+    }
+
+    /**
+     * @return void
+     */
+    public function testGetInstance()
+    {
+        $this->assertInstanceOf(InsuranceProductService::class, $this->insuranceProductServiceBuilder->getInstance());
     }
 
     /**

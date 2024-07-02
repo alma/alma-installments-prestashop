@@ -1,6 +1,6 @@
 <?php
 /**
- * 2018-2024 Alma SAS.
+ * 2018-2023 Alma SAS.
  *
  * THE MIT LICENSE
  *
@@ -18,56 +18,28 @@
  * IN THE SOFTWARE.
  *
  * @author    Alma SAS <contact@getalma.eu>
- * @copyright 2018-2024 Alma SAS
+ * @copyright 2018-2023 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
-namespace Alma\PrestaShop\Controllers\Hook;
+namespace Alma\PrestaShop\Builders\Repositories;
+
+use Alma\PrestaShop\Repositories\AlmaInsuranceProductRepository;
+use Alma\PrestaShop\Traits\BuilderTrait;
 
 if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-use Alma\PrestaShop\Builders\Helpers\InsuranceHelperBuilder;
-use Alma\PrestaShop\Helpers\InsuranceHelper;
-use Alma\PrestaShop\Hooks\FrontendHookController;
-use Alma\PrestaShop\Services\InsuranceService;
-
-class ActionObjectProductInCartDeleteAfterHookController extends FrontendHookController
+class InsuranceProductRepositoryBuilder
 {
-    /**
-     * @var InsuranceService
-     */
-    protected $insuranceService;
+    use BuilderTrait;
 
     /**
-     * @var InsuranceHelper
+     * @return AlmaInsuranceProductRepository
      */
-    protected $insuranceHelper;
-
-    public function __construct($module)
+    public function getInstance()
     {
-        parent::__construct($module);
-
-        $this->insuranceService = new InsuranceService();
-        $insuranceHelperBuilder = new InsuranceHelperBuilder();
-        $this->insuranceHelper = $insuranceHelperBuilder->getInstance();
-    }
-
-    public function canRun()
-    {
-        return parent::canRun() && $this->insuranceHelper->isInsuranceActivated();
-    }
-
-    /**
-     * Run Controller
-     *
-     * @param array $params
-     *
-     * @return void
-     */
-    public function run($params)
-    {
-        $this->insuranceService->deleteAllLinkedInsuranceProducts($params);
+        return new AlmaInsuranceProductRepository();
     }
 }
