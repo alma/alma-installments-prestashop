@@ -1070,7 +1070,14 @@ trait BuilderTrait
             return $insuranceHelper;
         }
 
-        return new InsuranceHelper();
+        return new InsuranceHelper(
+            $this->getCartProductRepository(),
+            $this->getProductRepository(),
+            $this->getAlmaInsuranceProductRepository(),
+            $this->getContextFactory(),
+            $this->getToolsHelper(),
+            $this->getSettingsHelper()
+        );
     }
 
     /**

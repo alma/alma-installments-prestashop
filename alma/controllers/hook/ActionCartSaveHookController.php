@@ -141,7 +141,13 @@ class ActionCartSaveHookController extends FrontendHookController
             }
 
             if ($this->insuranceProductService->canHandleAddingProductInsurance()) {
-                $this->insuranceProductService->addInsuranceProductInPsCart($idProduct, $insuranceContractId, $quantity, $idCustomization, $params['cart']);
+                $this->insuranceProductService->addInsuranceProductInPsCart(
+                    $idProduct,
+                    $insuranceContractId,
+                    $quantity,
+                    $idCustomization,
+                    $params['cart']
+                );
             }
         } catch (AlmaException $e) {
             $this->logger->error($e->getMessage());
