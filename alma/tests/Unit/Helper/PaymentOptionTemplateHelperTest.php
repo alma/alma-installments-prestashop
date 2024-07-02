@@ -1,6 +1,6 @@
 <?php
 /**
- * 2018-2023 Alma SAS.
+ * 2018-2024 Alma SAS.
  *
  * THE MIT LICENSE
  *
@@ -18,7 +18,7 @@
  * IN THE SOFTWARE.
  *
  * @author    Alma SAS <contact@getalma.eu>
- * @copyright 2018-2023 Alma SAS
+ * @copyright 2018-2024 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
@@ -33,6 +33,7 @@ use Alma\PrestaShop\Helpers\DateHelper;
 use Alma\PrestaShop\Helpers\PaymentOptionTemplateHelper;
 use Alma\PrestaShop\Helpers\PriceHelper;
 use Alma\PrestaShop\Helpers\SettingsHelper;
+use Alma\PrestaShop\Helpers\ToolsHelper;
 use Alma\PrestaShop\Helpers\TranslationHelper;
 use PHPUnit\Framework\TestCase;
 
@@ -96,7 +97,7 @@ class PaymentOptionTemplateHelperTest extends TestCase
 
         $paymentOptionTemplateHelper = new PaymentOptionTemplateHelper(
             new ContextFactory(),
-            new ModuleFactory(),
+            new ModuleFactory(new ToolsHelper()),
             $this->settingsHelperMock,
             $this->configurationHelperMock,
             $this->translationHelperMock,
@@ -168,7 +169,7 @@ class PaymentOptionTemplateHelperTest extends TestCase
 
         $paymentOptionTemplateHelper = new PaymentOptionTemplateHelper(
             new ContextFactory(),
-            new ModuleFactory(),
+            new ModuleFactory(new ToolsHelper()),
             $this->settingsHelperMock,
             $this->configurationHelperMock,
             $this->translationHelperMock,

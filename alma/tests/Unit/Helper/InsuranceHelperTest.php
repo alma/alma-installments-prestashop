@@ -1,6 +1,6 @@
 <?php
 /**
- * 2018-2023 Alma SAS.
+ * 2018-2024 Alma SAS.
  *
  * THE MIT LICENSE
  *
@@ -18,7 +18,7 @@
  * IN THE SOFTWARE.
  *
  * @author    Alma SAS <contact@getalma.eu>
- * @copyright 2018-2023 Alma SAS
+ * @copyright 2018-2024 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
@@ -175,7 +175,7 @@ class InsuranceHelperTest extends TestCase
             ->method('hasInsuranceForCartIdAndShop')
             ->with($cart->id, $cart->id_shop)
             ->willReturn(true);
-        $this->assertTrue($this->insuranceHelper->checkInsuranceProductsExist($cart));
+        $this->assertTrue($this->insuranceHelper->almaInsuranceProductsAlreadyExist($cart));
     }
 
     /**
@@ -192,7 +192,7 @@ class InsuranceHelperTest extends TestCase
             ->method('hasInsuranceForCartIdAndShop')
             ->with($cart->id, $cart->id_shop)
             ->willReturn(false);
-        $this->assertFalse($this->insuranceHelper->checkInsuranceProductsExist($cart));
+        $this->assertFalse($this->insuranceHelper->almaInsuranceProductsAlreadyExist($cart));
     }
 
     /**

@@ -1,6 +1,6 @@
 <?php
 /**
- * 2018-2023 Alma SAS.
+ * 2018-2024 Alma SAS.
  *
  * THE MIT LICENSE
  *
@@ -18,16 +18,16 @@
  * IN THE SOFTWARE.
  *
  * @author    Alma SAS <contact@getalma.eu>
- * @copyright 2018-2023 Alma SAS
+ * @copyright 2018-2024 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
 namespace Alma\PrestaShop\Services;
 
-use Alma\API\Client;
-use Alma\PrestaShop\Builders\Helpers\PriceHelperBuilder;
 use Alma\PrestaShop\Exceptions\AlmaException;
-use Alma\PrestaShop\Helpers\ClientHelper;
+use Alma\PrestaShop\Exceptions\InsuranceContractException;
+use Alma\PrestaShop\Factories\ContextFactory;
+use Alma\PrestaShop\Factories\ToolsFactory;
 use Alma\PrestaShop\Helpers\ConstantsHelper;
 use Alma\PrestaShop\Helpers\InsuranceHelper;
 use Alma\PrestaShop\Helpers\PriceHelper;
@@ -43,7 +43,7 @@ if (!defined('_PS_VERSION_')) {
 class InsuranceProductService
 {
     /**
-     * @var \ContextCore
+     * @var \Context|null
      */
     protected $context;
 
@@ -81,10 +81,7 @@ class InsuranceProductService
      * @var ProductRepository
      */
     protected $productRepository;
-    /**
-     * @var Client|mixed|null
-     */
-    protected $alma;
+
     /**
      * @var ProductHelper
      */
@@ -102,29 +99,57 @@ class InsuranceProductService
      * @var InsuranceHelper
      */
     protected $insuranceHelper;
+    /**
+     * @var ToolsFactory
+     */
+    protected $toolsFactory;
+    /**
+     * @var mixed
+     */
+    protected $logger;
 
-    public function __construct($almaInsuranceProductRepository = null)
-    {
-        if (!$almaInsuranceProductRepository) {
-            $almaInsuranceProductRepository = new AlmaInsuranceProductRepository();
-        }
-
+    /**
+     * @param AlmaInsuranceProductRepository $almaInsuranceProductRepository
+     * @param ContextFactory $contextFactory
+     * @param AttributeGroupProductService $attributeGroupProductService
+     * @param AttributeProductService $attributeProductService
+     * @param CombinationProductAttributeService $combinationProductAttributeService
+     * @param InsuranceService $insuranceService
+     * @param CartService $cartService
+     * @param ProductRepository $productRepository
+     * @param ProductHelper $productHelper
+     * @param InsuranceApiService $insuranceApiService
+     * @param PriceHelper $priceHelper
+     * @param InsuranceHelper $insuranceHelper
+     */
+    public function __construct(
+        $almaInsuranceProductRepository,
+        $contextFactory,
+        $attributeGroupProductService,
+        $attributeProductService,
+        $combinationProductAttributeService,
+        $insuranceService,
+        $cartService,
+        $productRepository,
+        $productHelper,
+        $insuranceApiService,
+        $priceHelper,
+        $insuranceHelper,
+        $toolsFactory
+    ) {
         $this->almaInsuranceProductRepository = $almaInsuranceProductRepository;
-        $this->context = \Context::getContext();
-        $this->attributeGroupProductService = new AttributeGroupProductService();
-        $this->attributeProductService = new AttributeProductService();
-        $this->combinationProductAttributeService = new CombinationProductAttributeService();
-        $this->insuranceService = new InsuranceService();
-        $this->cartService = new CartService();
-        $this->productRepository = new ProductRepository();
-        $this->alma = ClientHelper::defaultInstance();
-        $this->productHelper = new ProductHelper();
-        $this->insuranceApiService = new InsuranceApiService();
-
-        $priceHelperBuilder = new PriceHelperBuilder();
-        $this->priceHelper = $priceHelperBuilder->getInstance();
-
-        $this->insuranceHelper = new InsuranceHelper();
+        $this->context = $contextFactory->getContext();
+        $this->attributeGroupProductService = $attributeGroupProductService;
+        $this->attributeProductService = $attributeProductService;
+        $this->combinationProductAttributeService = $combinationProductAttributeService;
+        $this->insuranceService = $insuranceService;
+        $this->cartService = $cartService;
+        $this->productRepository = $productRepository;
+        $this->productHelper = $productHelper;
+        $this->insuranceApiService = $insuranceApiService;
+        $this->priceHelper = $priceHelper;
+        $this->insuranceHelper = $insuranceHelper;
+        $this->toolsFactory = $toolsFactory;
     }
 
     /**
@@ -178,7 +203,6 @@ class InsuranceProductService
      * @param int $idCustomization
      * @param array $insuranceContractInfos
      * @param \Cart|null $cart
-     * @param bool $destroyPost
      *
      * @return void
      *
@@ -194,8 +218,7 @@ class InsuranceProductService
         $quantity,
         $idCustomization,
         $insuranceContractInfos,
-        $cart = null,
-        $destroyPost = true
+        $cart = null
     ) {
         $idProductAttribute = $this->attributeProductService->getIdProductAttributeFromPost($idProduct);
 
@@ -216,10 +239,6 @@ class InsuranceProductService
             $quantity,
             $this->context->shop->id
         );
-
-        if ($destroyPost) {
-            $_POST['alma_id_insurance_contract'] = null;
-        }
 
         if (null === $this->context->cart) {
             // There is a bug in some versions of Prestashop when adding a product on the cart and be sign-in and not having a default address
@@ -249,11 +268,10 @@ class InsuranceProductService
      * @param int $quantity
      * @param int $idCustomization
      * @param \Cart|null $cart
-     * @param bool $destroyPost
      *
-     * @return bool
+     * @return void
      */
-    public function handleAddingProductInsurance($idProduct, $insuranceContractId, $quantity, $idCustomization, $cart = null, $destroyPost = true)
+    public function addInsuranceProductInPsCart($idProduct, $insuranceContractId, $quantity, $idCustomization, $cart = null)
     {
         try {
             $idProductAttribute = $this->attributeProductService->getIdProductAttributeFromPost($idProduct);
@@ -265,7 +283,7 @@ class InsuranceProductService
             $insuranceContract = $this->insuranceApiService->getInsuranceContract($insuranceContractId, $cmsReference, $staticPriceInCents);
 
             if (null === $insuranceContract) {
-                return false;
+                throw new InsuranceContractException(sprintf('[Alma] Insurance contract not found with these insuranceContractId: %s, cmsReference: %s, staticPriceInCents: %s', $insuranceContractId, $cmsReference, $staticPriceInCents));
             }
 
             $insuranceProduct = $this->insuranceService->createProductIfNotExists();
@@ -283,12 +301,9 @@ class InsuranceProductService
                         'cms_reference' => $cmsReference,
                         'product_price' => $staticPriceInCents,
                     ],
-                    $cart,
-                    $destroyPost
+                    $cart
                 );
             }
-
-            return true;
         } catch (\Exception $e) {
             Logger::instance()->error(
                 sprintf(
@@ -299,83 +314,22 @@ class InsuranceProductService
                     $e->getTraceAsString()
                 )
             );
-
-            return false;
         }
     }
 
     /**
-     * @param int $idProduct
-     * @param int $idProductAttribute
-     *
      * @return bool
      */
-    public function handleRemovingProductInsurance($idProduct, $idProductAttribute)
+    public function canHandleAddingProductInsurance()
     {
-        try {
-            $insuranceProductId = $this->productRepository->getProductIdByReference(
-                ConstantsHelper::ALMA_INSURANCE_PRODUCT_REFERENCE,
-                $this->context->language->id
-            );
-
-            if ($idProduct === $insuranceProductId) {
-                return true;
-            }
-
-            $this->insuranceService->deleteAllLinkedInsuranceProducts([
-                'id_cart' => $this->context->cart->id,
-                'id_product' => $idProduct,
-                'id_product_attribute' => $idProductAttribute,
-                'customization_id' => 0,
-            ]);
-
+        if (
+            $this->toolsFactory->getIsset('alma_id_insurance_contract')
+            && 1 == $this->toolsFactory->getValue('add')
+            && 'update' == $this->toolsFactory->getValue('action')
+        ) {
             return true;
-        } catch (\Exception $e) {
-            Logger::instance()->error(
-                sprintf(
-                    '[Alma] An error occurred when removed an insurance, productId : "%s", productAttributeId : "%s", message "%s", trace "%s"',
-                    $idProduct,
-                    $idProductAttribute,
-                    $e->getMessage(),
-                    $e->getTraceAsString()
-                )
-            );
-
-            return false;
         }
-    }
 
-    /**
-     * @param $currentCart
-     * @param $newCart
-     *
-     * @return void
-     *
-     * @throws \PrestaShopDatabaseException
-     */
-    public function duplicateInsuranceProducts($currentCart, $newCart)
-    {
-        $almaInsuranceProducts = $this->almaInsuranceProductRepository->getByCartIdAndShop($currentCart->id, $this->context->shop->id);
-
-        foreach ($almaInsuranceProducts as $almaInsuranceProduct) {
-            $insuranceContractInfos = [
-                'insurance_contract_id' => $almaInsuranceProduct['insurance_contract_id'],
-                'cms_reference' => $almaInsuranceProduct['cms_reference'],
-                'product_price' => $almaInsuranceProduct['product_price'],
-            ];
-
-            $this->almaInsuranceProductRepository->add(
-                $newCart->id,
-                $almaInsuranceProduct['id_product'],
-                $this->context->shop->id,
-                $almaInsuranceProduct['id_product_attribute'],
-                $almaInsuranceProduct['id_customization'],
-                $almaInsuranceProduct['id_product_insurance'],
-                $almaInsuranceProduct['id_product_attribute_insurance'],
-                $almaInsuranceProduct['price'],
-                $almaInsuranceProduct['id_address_delivery'],
-                $insuranceContractInfos
-            );
-        }
+        return false;
     }
 }

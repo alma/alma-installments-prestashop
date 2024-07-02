@@ -1,6 +1,6 @@
 <?php
 /**
- * 2018-2023 Alma SAS.
+ * 2018-2024 Alma SAS.
  *
  * THE MIT LICENSE
  *
@@ -18,13 +18,15 @@
  * IN THE SOFTWARE.
  *
  * @author    Alma SAS <contact@getalma.eu>
- * @copyright 2018-2023 Alma SAS
+ * @copyright 2018-2024 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
 namespace Alma\PrestaShop\Factories;
 
 use Alma\PrestaShop\Helpers\ConstantsHelper;
+use Alma\PrestaShop\Helpers\ToolsHelper;
+use PrestaShop\PrestaShop\Core\Addon\Module\ModuleManagerBuilder;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -36,13 +38,13 @@ if (!defined('_PS_VERSION_')) {
 class ModuleFactory
 {
     /**
-     * @var false|\Module
+     * @var ToolsHelper
      */
-    protected $module;
+    protected $toolsHelper;
 
-    public function __construct()
+    public function __construct($toolsHelper)
     {
-        $this->module = $this->getModule();
+        $this->toolsHelper = $toolsHelper;
     }
 
     /**
@@ -58,7 +60,13 @@ class ModuleFactory
      */
     public function getModuleName()
     {
-        return $this->module->name;
+        $module = $this->getModule();
+
+        if ($module) {
+            return $module->name;
+        }
+
+        return '';
     }
 
     /**
@@ -66,7 +74,13 @@ class ModuleFactory
      */
     public function getPathUri()
     {
-        return $this->module->getPathUri();
+        $module = $this->getModule();
+
+        if ($module) {
+            return $module->getPathUri();
+        }
+
+        return '';
     }
 
     /**
@@ -84,6 +98,52 @@ class ModuleFactory
      */
     public function l($string, $specific = false, $locale = null)
     {
-        return $this->module->l($string, $specific, $locale);
+        $module = $this->getModule();
+
+        if ($module) {
+            return $module->l($string, $specific, $locale);
+        }
+
+        return $string;
+    }
+
+    /**
+     * Check if module is installed.
+     *
+     * @param string $moduleName
+     *
+     * @return bool
+     */
+    public function isInstalled($moduleName)
+    {
+        if ($this->toolsHelper->psVersionCompare('1.7', '<')) {
+            return $this->isInstalledBefore17($moduleName);
+        }
+
+        return $this->isInstalledAfter17($moduleName);
+    }
+
+    /**
+     * @codeCoverageIgnore
+     *
+     * @param $moduleName
+     *
+     * @return bool
+     */
+    public function isInstalledBefore17($moduleName)
+    {
+        return (bool) \Module::isInstalled($moduleName);
+    }
+
+    /**
+     * @codeCoverageIgnore
+     *
+     * @param $moduleName
+     *
+     * @return bool
+     */
+    public function isInstalledAfter17($moduleName)
+    {
+        return ModuleManagerBuilder::getInstance()->build()->isInstalled($moduleName);
     }
 }

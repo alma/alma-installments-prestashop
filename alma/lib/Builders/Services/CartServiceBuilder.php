@@ -1,6 +1,6 @@
 <?php
 /**
- * 2018-2023 Alma SAS.
+ * 2018-2024 Alma SAS.
  *
  * THE MIT LICENSE
  *
@@ -18,29 +18,38 @@
  * IN THE SOFTWARE.
  *
  * @author    Alma SAS <contact@getalma.eu>
- * @copyright 2018-2023 Alma SAS
+ * @copyright 2018-2024 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
-namespace Alma\PrestaShop\Repositories;
+namespace Alma\PrestaShop\Builders\Services;
+
+use Alma\PrestaShop\Services\CartService;
+use Alma\PrestaShop\Traits\BuilderTrait;
 
 if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-class CartSaveRepository
+/**
+ * CartServiceBuilder.
+ */
+class CartServiceBuilder
 {
+    use BuilderTrait;
+
     /**
-     * @param $token
-     *
-     * @return array|bool
+     * @return CartService
      */
-    public function getCurrentCartForOpartSaveCart($token)
+    public function getInstance()
     {
-        return \Db::getInstance()->getRow('
-            SELECT *
-            FROM `' . _DB_PREFIX_ . "opartsavecart`
-            WHERE token = '" . $token . "';"
+        return new CartService(
+            $this->getCartProductRepository(),
+            $this->getContextFactory(),
+            $this->getOpartSaveCartCartService(),
+            $this->getInsuranceHelper(),
+            $this->getInsuranceProductHelper(),
+            $this->getToolsFactory()
         );
     }
 }
