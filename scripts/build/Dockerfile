@@ -1,4 +1,4 @@
-FROM composer:2.2 AS composer
+FROM composer:2.7 AS composer
 FROM php:5.6-cli-alpine AS php
 
 # Prepare Packages requirements
