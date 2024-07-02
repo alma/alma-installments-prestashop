@@ -27,6 +27,7 @@ use Alma\PrestaShop\Builders\Services\InsuranceProductServiceBuilder;
 use Alma\PrestaShop\Exceptions\AlmaException;
 use Alma\PrestaShop\Logger;
 use Alma\PrestaShop\Repositories\AlmaInsuranceProductRepository;
+use Alma\PrestaShop\Services\InsuranceProductService;
 use Alma\PrestaShop\Traits\AjaxTrait;
 
 if (!defined('_PS_VERSION_')) {
@@ -284,7 +285,7 @@ class AlmaInsuranceModuleFrontController extends ModuleFrontController
      */
     protected function addInsuranceProductAndAssociation()
     {
-        $this->insuranceProductService->handleAddingProductInsurance(
+        $this->insuranceProductService->addInsuranceProductInPsCart(
             \Tools::getValue('product_id'),
             \Tools::getValue('insurance_contract_id'),
             \Tools::getValue('insurance_quantity'),

@@ -39,6 +39,7 @@ use Alma\PrestaShop\Helpers\InsuranceHelper;
 use Alma\PrestaShop\Helpers\SettingsHelper;
 use Alma\PrestaShop\Hooks\FrontendHookController;
 use Alma\PrestaShop\Logger;
+use Alma\PrestaShop\Modules\OpartSaveCart\OpartSaveCartCartService;
 use Alma\PrestaShop\Services\CartService;
 use Alma\PrestaShop\Services\InsuranceProductService;
 
@@ -73,7 +74,7 @@ class ActionCartSaveHookController extends FrontendHookController
      */
     protected $toolsFactory;
     /**
-     * @var \Alma\PrestaShop\Modules\OpartSaveCart\OpartSaveCartCartService
+     * @var OpartSaveCartCartService
      */
     protected $opartCartSaveService;
 
@@ -116,7 +117,6 @@ class ActionCartSaveHookController extends FrontendHookController
      *
      * @return void
      *
-     * @throws AlmaException
      * @throws \PrestaShopException
      */
     public function run($params)
