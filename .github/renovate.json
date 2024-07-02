@@ -18,13 +18,14 @@
       "groupName": "composer updates"
     },
     {
-      "matchDepNames": ["php"],
-      "matchFileNames": ["scripts/build/Dockerfile"],
-      "enabled": false
-    },
-    {
       "matchManagers": ["dockerfile", "docker-compose"],
       "groupName": "docker updates"
+    },
+    {
+      "description": "PHP, composer and Prestashop versions in Dockerfiles must be freezed",
+      "matchManagers": ["docker"],
+      "matchDepNames": ["prestashop/prestashop", "php", "composer"],
+      "enabled": false
     }
   ]
 }
