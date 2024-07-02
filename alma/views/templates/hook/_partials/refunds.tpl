@@ -1,5 +1,5 @@
 {*
- * 2018-2023 Alma SAS
+ * 2018-2024 Alma SAS
  *
  * THE MIT LICENSE
  *
@@ -17,7 +17,7 @@
  * IN THE SOFTWARE.
  *
  * @author    Alma SAS <contact@getalma.eu>
- * @copyright 2018-2023 Alma SAS
+ * @copyright 2018-2024 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  *}
 <script type="text/javascript">
@@ -26,15 +26,15 @@
 
         $('input[type=radio][name=refundType]').change(function () {
             if (this.value === 'partial') {
-                $('#amountDisplay').show();                
+                $('#amountDisplay').show();
                 $($form.find('[name=amount]')).prop('required', true);
             } else {
                 $('#amountDisplay').hide();
                 $($form.find('[name=amount]')).prop('required', false);
-            }            
+            }
         });
 
-        
+
         $form.submit(function (e) {
             if (e) {
                 e.preventDefault();
@@ -53,7 +53,7 @@
                         refundType: $form.find('[name=refundType]:checked').val(),
                         amount: $form.find('[name=amount]').val(),
                     }
-                })                
+                })
                 .done(function (data) {
                     $('.alma-success').html(data.message).show();
                     if ($('.alma-progress').length > 0) {
@@ -71,7 +71,7 @@
                     }
                 })
                 .fail(function (data) {
-                    var jsondata = JSON.parse(data.responseText);                    
+                    var jsondata = JSON.parse(data.responseText);
                     $('.alma-danger').html(jsondata.message).show();
                 })
                 .always(function(){

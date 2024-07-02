@@ -1,6 +1,6 @@
 <?php
 /**
- * 2018-2023 Alma SAS.
+ * 2018-2024 Alma SAS.
  *
  * THE MIT LICENSE
  *
@@ -18,13 +18,18 @@
  * IN THE SOFTWARE.
  *
  * @author    Alma SAS <contact@getalma.eu>
- * @copyright 2018-2023 Alma SAS
+ * @copyright 2018-2024 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
 namespace Alma\PrestaShop\Services;
 
 use Alma\PrestaShop\Exceptions\AlmaException;
+use Alma\PrestaShop\Factories\ContextFactory;
+use Alma\PrestaShop\Factories\ToolsFactory;
+use Alma\PrestaShop\Helpers\InsuranceHelper;
+use Alma\PrestaShop\Helpers\InsuranceProductHelper;
+use Alma\PrestaShop\Modules\OpartSaveCart\OpartSaveCartCartService;
 use Alma\PrestaShop\Repositories\CartProductRepository;
 
 if (!defined('_PS_VERSION_')) {
@@ -38,9 +43,67 @@ class CartService
      */
     protected $cartProductRepository;
 
-    public function __construct()
+    /**
+     * @var OpartSaveCartCartService
+     */
+    protected $opartCartSaveService;
+    /**
+     * @var InsuranceHelper
+     */
+    protected $insuranceHelper;
+    /**
+     * @var InsuranceProductHelper
+     */
+    protected $insuranceProductHelper;
+
+    /**
+     * @var ContextFactory
+     */
+    protected $contextFactory;
+    /**
+     * @var ToolsFactory
+     */
+    protected $toolsFactory;
+
+    /**
+     * @param CartProductRepository $cartProductRepository
+     * @param ContextFactory $contextFactory
+     * @param OpartSaveCartCartService $opartCartSaveService
+     * @param InsuranceHelper $insuranceHelper
+     * @param InsuranceProductHelper $insuranceProductHelper
+     * @param ToolsFactory $toolsFactory
+     */
+    public function __construct($cartProductRepository, $contextFactory, $opartCartSaveService, $insuranceHelper, $insuranceProductHelper, $toolsFactory)
     {
-        $this->cartProductRepository = new CartProductRepository();
+        $this->cartProductRepository = $cartProductRepository;
+        $this->contextFactory = $contextFactory;
+        $this->opartCartSaveService = $opartCartSaveService;
+        $this->insuranceHelper = $insuranceHelper;
+        $this->insuranceProductHelper = $insuranceProductHelper;
+        $this->toolsFactory = $toolsFactory;
+    }
+
+    /**
+     * @param \Cart $newCart
+     * @param \Cart $currentCart
+     *
+     * @return void
+     *
+     * @throws AlmaException
+     * @throws \PrestaShopException
+     */
+    public function duplicateAlmaInsuranceProductsIfNotExist($newCart, $currentCart)
+    {
+        // We check if alma insurance product exist because this function is executed for each product updated
+        if (!$this->insuranceHelper->almaInsuranceProductsAlreadyExist($newCart)) {
+            try {
+                $this->insuranceProductHelper->duplicateAlmaInsuranceProducts($currentCart->id, $newCart->id);
+            } catch (\PrestaShopDatabaseException $e) {
+                $newCart->delete();
+                // We throw an exception to prevent to buy insurance product without the possibility to subscribe
+                throw new AlmaException('[Alma] Impossible to duplicate insurance product in fact error connect to database');
+            }
+        }
     }
 
     /**
@@ -72,7 +135,7 @@ class CartService
         /**
          * @var \ContextCore $context
          */
-        $context = \Context::getContext();
+        $context = $this->contextFactory->getContext();
 
         if (!$shop) {
             $shop = $context->shop;

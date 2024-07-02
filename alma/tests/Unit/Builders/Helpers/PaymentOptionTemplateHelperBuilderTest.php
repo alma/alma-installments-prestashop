@@ -1,6 +1,6 @@
 <?php
 /**
- * 2018-2023 Alma SAS.
+ * 2018-2024 Alma SAS.
  *
  * THE MIT LICENSE
  *
@@ -18,7 +18,7 @@
  * IN THE SOFTWARE.
  *
  * @author    Alma SAS <contact@getalma.eu>
- * @copyright 2018-2023 Alma SAS
+ * @copyright 2018-2024 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
@@ -26,7 +26,6 @@ namespace Alma\PrestaShop\Tests\Unit\Builders\Helpers;
 
 use Alma\PrestaShop\Builders\Helpers\PaymentOptionTemplateHelperBuilder;
 use Alma\PrestaShop\Factories\ContextFactory;
-use Alma\PrestaShop\Factories\ModuleFactory;
 use Alma\PrestaShop\Helpers\ConfigurationHelper;
 use Alma\PrestaShop\Helpers\DateHelper;
 use Alma\PrestaShop\Helpers\PaymentOptionTemplateHelper;
@@ -58,14 +57,6 @@ class PaymentOptionTemplateHelperBuilderTest extends TestCase
         $this->assertInstanceOf(ContextFactory::class, $this->paymentOptionTemplateHelperBuilder->getContextFactory());
         $this->assertInstanceOf(ContextFactory::class, $this->paymentOptionTemplateHelperBuilder->getContextFactory(
             new ContextFactory()
-        ));
-    }
-
-    public function testGetModuleFactory()
-    {
-        $this->assertInstanceOf(ModuleFactory::class, $this->paymentOptionTemplateHelperBuilder->getModuleFactory());
-        $this->assertInstanceOf(ModuleFactory::class, $this->paymentOptionTemplateHelperBuilder->getModuleFactory(
-            new ModuleFactory()
         ));
     }
 

@@ -1,6 +1,6 @@
 <?php
 /**
- * 2018-2023 Alma SAS.
+ * 2018-2024 Alma SAS.
  *
  * THE MIT LICENSE
  *
@@ -18,12 +18,13 @@
  * IN THE SOFTWARE.
  *
  * @author    Alma SAS <contact@getalma.eu>
- * @copyright 2018-2023 Alma SAS
+ * @copyright 2018-2024 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
 namespace Alma\PrestaShop\Tests\Unit\Factories;
 
+use Alma\PrestaShop\Builders\Factories\MediaFactoryBuilder;
 use Alma\PrestaShop\Factories\MediaFactory;
 use PHPUnit\Framework\TestCase;
 
@@ -36,7 +37,8 @@ class MediaFactoryTest extends TestCase
 
     public function setUp()
     {
-        $this->mediaFactory = new MediaFactory();
+        $mediaFactoryBuilder = new MediaFactoryBuilder();
+        $this->mediaFactory = $mediaFactoryBuilder->getInstance();
     }
 
     public function testGetMediaPath()

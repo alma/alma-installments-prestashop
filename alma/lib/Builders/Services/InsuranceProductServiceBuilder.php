@@ -1,6 +1,6 @@
 <?php
 /**
- * 2018-2023 Alma SAS.
+ * 2018-2024 Alma SAS.
  *
  * THE MIT LICENSE
  *
@@ -18,7 +18,7 @@
  * IN THE SOFTWARE.
  *
  * @author    Alma SAS <contact@getalma.eu>
- * @copyright 2018-2023 Alma SAS
+ * @copyright 2018-2024 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
@@ -31,16 +31,35 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
+/**
+ * InsuranceProductServiceBuilder.
+ */
 class InsuranceProductServiceBuilder
 {
     use BuilderTrait;
 
+    /**
+     * @return InsuranceProductService
+     */
     public function getInstance()
     {
         return new InsuranceProductService(
             $this->getProductFactory(),
             $this->getCombinationFactory(),
-            $this->getLinkFactory()
+            $this->getLinkFactory(),
+            $this->getAlmaInsuranceProductRepository(),
+            $this->getContextFactory(),
+            $this->getAttributeGroupProductService(),
+            $this->getAttributeProductService(),
+            $this->getCombinationProductAttributeService(),
+            $this->getInsuranceService(),
+            $this->getCartService(),
+            $this->getProductRepository(),
+            $this->getProductHelper(),
+            $this->getInsuranceApiService(),
+            $this->getPriceHelper(),
+            $this->getInsuranceHelper(),
+            $this->getToolsFactory()
         );
     }
 }

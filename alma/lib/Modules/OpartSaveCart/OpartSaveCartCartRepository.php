@@ -1,6 +1,6 @@
 <?php
 /**
- * 2018-2023 Alma SAS.
+ * 2018-2024 Alma SAS.
  *
  * THE MIT LICENSE
  *
@@ -18,26 +18,31 @@
  * IN THE SOFTWARE.
  *
  * @author    Alma SAS <contact@getalma.eu>
- * @copyright 2018-2023 Alma SAS
+ * @copyright 2018-2024 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
-namespace Alma\PrestaShop\Helpers;
-
-use PrestaShop\PrestaShop\Core\Addon\Module\ModuleManagerBuilder;
+namespace Alma\PrestaShop\Modules\OpartSaveCart;
 
 if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-class ModuleHelper
+class OpartSaveCartCartRepository
 {
-    public function isInstalled($moduleName)
+    /**
+     * @param string $token
+     *
+     * @codeCoverageIgnore
+     *
+     * @return array|bool|object|null
+     */
+    public function getIdCartByToken($token)
     {
-        if (version_compare(_PS_VERSION_, '1.7', '<')) {
-            return (bool) \Module::isInstalled($moduleName);
-        }
-
-        return ModuleManagerBuilder::getInstance()->build()->isInstalled($moduleName);
+        return \Db::getInstance()->getValue('
+            SELECT `id_cart`
+            FROM `' . _DB_PREFIX_ . "opartsavecart`
+            WHERE token = '" . $token . "';"
+        );
     }
 }

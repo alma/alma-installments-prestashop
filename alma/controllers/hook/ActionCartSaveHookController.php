@@ -1,6 +1,6 @@
 <?php
 /**
- * 2018-2023 Alma SAS.
+ * 2018-2024 Alma SAS.
  *
  * THE MIT LICENSE
  *
@@ -18,7 +18,7 @@
  * IN THE SOFTWARE.
  *
  * @author    Alma SAS <contact@getalma.eu>
- * @copyright 2018-2023 Alma SAS
+ * @copyright 2018-2024 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
@@ -29,18 +29,26 @@ if (!defined('_PS_VERSION_')) {
 }
 
 use Alma\PrestaShop\Builders\Helpers\InsuranceHelperBuilder;
+use Alma\PrestaShop\Builders\Modules\OpartSaveCart\OpartSaveCartCartServiceBuilder;
+use Alma\PrestaShop\Builders\Services\CartServiceBuilder;
 use Alma\PrestaShop\Builders\Services\InsuranceProductServiceBuilder;
 use Alma\PrestaShop\Exceptions\AlmaException;
+use Alma\PrestaShop\Factories\ContextFactory;
+use Alma\PrestaShop\Factories\ToolsFactory;
 use Alma\PrestaShop\Helpers\InsuranceHelper;
-use Alma\PrestaShop\Helpers\ProductHelper;
 use Alma\PrestaShop\Helpers\SettingsHelper;
 use Alma\PrestaShop\Hooks\FrontendHookController;
 use Alma\PrestaShop\Logger;
-use Alma\PrestaShop\Services\CartSaveService;
+use Alma\PrestaShop\Services\CartService;
 use Alma\PrestaShop\Services\InsuranceProductService;
 
 class ActionCartSaveHookController extends FrontendHookController
 {
+    /**
+     * @var \Context
+     */
+    protected $contextCart;
+
     /**
      * @var InsuranceProductService
      */
@@ -50,14 +58,24 @@ class ActionCartSaveHookController extends FrontendHookController
      * @var InsuranceHelper
      */
     protected $insuranceHelper;
+
     /**
-     * @var ProductHelper
+     * @var CartService
      */
-    protected $productHelper;
+    protected $cartService;
+
     /**
-     * @var CartSaveService
+     * @var Logger
      */
-    protected $cartSaveService;
+    protected $logger;
+    /**
+     * @var ToolsFactory
+     */
+    protected $toolsFactory;
+    /**
+     * @var \Alma\PrestaShop\Modules\OpartSaveCart\OpartSaveCartCartService
+     */
+    protected $opartCartSaveService;
 
     public function canRun()
     {
@@ -77,13 +95,18 @@ class ActionCartSaveHookController extends FrontendHookController
     {
         parent::__construct($module);
 
+        $contextFactory = new ContextFactory();
+        $this->contextCart = $contextFactory->getContextCart();
         $insuranceProductServiceBuilder = new InsuranceProductServiceBuilder();
+        $this->toolsFactory = new ToolsFactory();
         $this->insuranceProductService = $insuranceProductServiceBuilder->getInstance();
         $insuranceHelperBuilder = new InsuranceHelperBuilder();
         $this->insuranceHelper = $insuranceHelperBuilder->getInstance();
-        $this->productHelper = new ProductHelper();
-        $this->context = \Context::getContext();
-        $this->cartSaveService = new CartSaveService();
+        $cartServiceBuilder = new CartServiceBuilder();
+        $this->cartService = $cartServiceBuilder->getInstance();
+        $opartCartSaveServiceBuilder = new OpartSaveCartCartServiceBuilder();
+        $this->opartCartSaveService = $opartCartSaveServiceBuilder->getInstance();
+        $this->logger = new Logger();
     }
 
     /**
@@ -98,59 +121,30 @@ class ActionCartSaveHookController extends FrontendHookController
      */
     public function run($params)
     {
-        $baseCart = $this->context->cart;
-        /**
-         * @var \Cart $newCart
-         */
+        $idProduct = $this->toolsFactory->getValue('id_product');
+        $insuranceContractId = $this->toolsFactory->getValue('alma_id_insurance_contract');
+        $quantity = $this->insuranceHelper->getInsuranceQuantity();
+        $idCustomization = $this->toolsFactory->getValue('id_customization');
+        $baseCart = $this->contextCart;
         $newCart = $params['cart'];
 
-        // TODO : Need to optimise for more that the module opartSaveCart
-        if (null === $baseCart->id || $baseCart->id != $newCart->id) {
-            if (\Tools::getValue('action') !== 'shareCart') {
-                $cartIdSaved = $this->cartSaveService->getIdCartSaved(\Tools::getValue('token'));
-                if (!$cartIdSaved) {
-                    return;
+        try {
+            if (
+                $baseCart
+                && (null === $baseCart->id || $baseCart->id != $newCart->id)
+            ) {
+                if ($this->toolsFactory->getValue('action') !== 'shareCart') {
+                    $baseCart = $this->opartCartSaveService->getCartSaved();
                 }
 
-                $baseCart = new \Cart($cartIdSaved);
+                $this->cartService->duplicateAlmaInsuranceProductsIfNotExist($newCart, $baseCart);
             }
 
-            if (!$this->insuranceHelper->checkInsuranceProductsExist($newCart)) {
-                try {
-                    $this->insuranceProductService->duplicateInsuranceProducts($baseCart, $newCart);
-                } catch (\PrestaShopDatabaseException $e) {
-                    Logger::instance()->error('[Alma] Error duplicating insurance products: ' . $e->getMessage());
-                    $newCart->delete();
-                    // We throw an exception to prevent to buy insurance product without the possibility to subscribe
-                    throw new AlmaException('[Alma] Impossible to duplicate insurance product in fact error connect to database');
-                }
+            if ($this->insuranceProductService->canHandleAddingProductInsurance()) {
+                $this->insuranceProductService->addInsuranceProductInPsCart($idProduct, $insuranceContractId, $quantity, $idCustomization, $params['cart']);
             }
-
-            return;
-        }
-
-        $this->handleAddingProductInsurance($params['cart']);
-    }
-
-    /**
-     * @param \Cart $cart
-     *
-     * @return void
-     */
-    public function handleAddingProductInsurance($cart)
-    {
-        if (
-            \Tools::getIsset('alma_id_insurance_contract')
-            && 1 == \Tools::getValue('add')
-            && 'update' == \Tools::getValue('action')
-        ) {
-            $this->insuranceProductService->handleAddingProductInsurance(
-                \Tools::getValue('id_product'),
-                \Tools::getValue('alma_id_insurance_contract'),
-                $this->insuranceHelper->getInsuranceQuantity(),
-                \Tools::getValue('id_customization'),
-                $cart
-            );
+        } catch (AlmaException $e) {
+            $this->logger->error($e->getMessage());
         }
     }
 }

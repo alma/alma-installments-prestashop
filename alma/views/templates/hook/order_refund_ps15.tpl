@@ -1,5 +1,5 @@
 {*
- * 2018-2023 Alma SAS
+ * 2018-2024 Alma SAS
  *
  * THE MIT LICENSE
  *
@@ -17,7 +17,7 @@
  * IN THE SOFTWARE.
  *
  * @author    Alma SAS <contact@getalma.eu>
- * @copyright 2018-2023 Alma SAS
+ * @copyright 2018-2024 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  *}
 <br>
@@ -33,7 +33,7 @@
         {if $refund.percentRefund > 0}
             <table cellspacing="0" cellpadding="0" class="table tableDnD alma-table-refund" style="float:right; {if !$refund}display:none;{/if}">
                 <thead>
-                <tr> 
+                <tr>
                     <th>{l s='Amount refunded' mod='alma'}</th>
                     <th>{l s='Total' mod='alma'}</th>
                     <th></th>
@@ -64,7 +64,7 @@
                 <input type="radio" autocomplete="off" class="refundType" name="refundType" value="partial_multi" />
                 <label>{$wording.labelRadioRefundOneOrder|escape:'htmlall':'UTF-8'}</label>
                 <div class="clear"></div>
-            {/if} 
+            {/if}
             <input type="radio" autocomplete="off" name="refundType" value="total" checked="checked"/>
             <label>
                 {if $order.ordersId}
@@ -97,7 +97,7 @@
                        name="amount"
                        placeholder="{$wording.placeholderInputRefundPartial|escape:'htmlall':'UTF-8'}" />
             </div>
-        </div>  
+        </div>
         <div class="clear"></div>
         <div class="margin-form">
             <input type="submit" class="button" value="{$wording.buttonRefund|escape:'htmlall':'UTF-8'}" />

@@ -1,6 +1,6 @@
 <?php
 /**
- * 2018-2023 Alma SAS.
+ * 2018-2024 Alma SAS.
  *
  * THE MIT LICENSE
  *
@@ -18,13 +18,18 @@
  * IN THE SOFTWARE.
  *
  * @author    Alma SAS <contact@getalma.eu>
- * @copyright 2018-2023 Alma SAS
+ * @copyright 2018-2024 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
 namespace Alma\PrestaShop\Tests\Unit\Builders\Services;
 
 use Alma\PrestaShop\Builders\Services\InsuranceProductServiceBuilder;
+use Alma\PrestaShop\Services\AttributeGroupProductService;
+use Alma\PrestaShop\Services\AttributeProductService;
+use Alma\PrestaShop\Services\CartService;
+use Alma\PrestaShop\Services\CombinationProductAttributeService;
+use Alma\PrestaShop\Services\InsuranceApiService;
 use Alma\PrestaShop\Services\InsuranceProductService;
 use PHPUnit\Framework\TestCase;
 
@@ -33,8 +38,7 @@ class InsuranceProductServiceBuilderTest extends TestCase
     /**
      * @var InsuranceProductServiceBuilder
      */
-    protected $insuranceProductServiceBuilder
-    ;
+    protected $insuranceProductServiceBuilder;
 
     public function setUp()
     {
@@ -47,5 +51,60 @@ class InsuranceProductServiceBuilderTest extends TestCase
     public function testGetInstance()
     {
         $this->assertInstanceOf(InsuranceProductService::class, $this->insuranceProductServiceBuilder->getInstance());
+    }
+
+    /**
+     * @return void
+     */
+    public function testGetAttributeGroupProductService()
+    {
+        $this->assertInstanceOf(AttributeGroupProductService::class, $this->insuranceProductServiceBuilder->getAttributeGroupProductService());
+        $this->assertInstanceOf(AttributeGroupProductService::class, $this->insuranceProductServiceBuilder->getAttributeGroupProductService(
+            new AttributeGroupProductService()
+        ));
+    }
+
+    /**
+     * @return void
+     */
+    public function testGetAttributeProductService()
+    {
+        $this->assertInstanceOf(AttributeProductService::class, $this->insuranceProductServiceBuilder->getAttributeProductService());
+        $this->assertInstanceOf(AttributeProductService::class, $this->insuranceProductServiceBuilder->getAttributeProductService(
+            new AttributeProductService()
+        ));
+    }
+
+    /**
+     * @return void
+     */
+    public function testGetCombinationProductAttributeService()
+    {
+        $this->assertInstanceOf(CombinationProductAttributeService::class, $this->insuranceProductServiceBuilder->getCombinationProductAttributeService());
+        $this->assertInstanceOf(CombinationProductAttributeService::class, $this->insuranceProductServiceBuilder->getCombinationProductAttributeService(
+            new CombinationProductAttributeService()
+        ));
+    }
+
+    /**
+     * @return void
+     */
+    public function testGetCartService()
+    {
+        $this->assertInstanceOf(CartService::class, $this->insuranceProductServiceBuilder->getCartService());
+        $this->assertInstanceOf(CartService::class, $this->insuranceProductServiceBuilder->getCartService(
+            \Mockery::mock(CartService::class)
+        ));
+    }
+
+    /**
+     * @return void
+     */
+    public function testGetInsuranceApiService()
+    {
+        $this->assertInstanceOf(InsuranceApiService::class, $this->insuranceProductServiceBuilder->getInsuranceApiService());
+        $this->assertInstanceOf(InsuranceApiService::class, $this->insuranceProductServiceBuilder->getInsuranceApiService(
+            new InsuranceApiService()
+        ));
     }
 }

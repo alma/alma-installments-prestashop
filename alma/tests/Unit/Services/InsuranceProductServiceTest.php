@@ -1,6 +1,6 @@
 <?php
 /**
- * 2018-2023 Alma SAS.
+ * 2018-2024 Alma SAS.
  *
  * THE MIT LICENSE
  *
@@ -18,16 +18,28 @@
  * IN THE SOFTWARE.
  *
  * @author    Alma SAS <contact@getalma.eu>
- * @copyright 2018-2023 Alma SAS
+ * @copyright 2018-2024 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
-namespace Unit\Services;
+namespace Alma\PrestaShop\Tests\Unit\Services;
 
 use Alma\PrestaShop\Factories\CombinationFactory;
+use Alma\PrestaShop\Factories\ContextFactory;
 use Alma\PrestaShop\Factories\ProductFactory;
+use Alma\PrestaShop\Factories\ToolsFactory;
+use Alma\PrestaShop\Helpers\Admin\AdminInsuranceHelper;
+use Alma\PrestaShop\Helpers\PriceHelper;
+use Alma\PrestaShop\Helpers\ProductHelper;
 use Alma\PrestaShop\Repositories\AlmaInsuranceProductRepository;
+use Alma\PrestaShop\Repositories\ProductRepository;
+use Alma\PrestaShop\Services\AttributeGroupProductService;
+use Alma\PrestaShop\Services\AttributeProductService;
+use Alma\PrestaShop\Services\CartService;
+use Alma\PrestaShop\Services\CombinationProductAttributeService;
+use Alma\PrestaShop\Services\InsuranceApiService;
 use Alma\PrestaShop\Services\InsuranceProductService;
+use Alma\PrestaShop\Services\InsuranceService;
 use PHPUnit\Framework\TestCase;
 
 class InsuranceProductServiceTest extends TestCase
@@ -35,7 +47,7 @@ class InsuranceProductServiceTest extends TestCase
     /**
      * @var InsuranceProductService
      */
-    protected $insuranceProductService;
+    protected $insuranceProductServiceMock;
     /**
      * @var AlmaInsuranceProductRepository|(AlmaInsuranceProductRepository&\PHPUnit_Framework_MockObject_MockObject)|\PHPUnit_Framework_MockObject_MockObject
      */
@@ -68,19 +80,23 @@ class InsuranceProductServiceTest extends TestCase
      * @var \PHPUnit_Framework_MockObject_MockObject|\Product|(\Product&\PHPUnit_Framework_MockObject_MockObject)
      */
     protected $productInsuranceMock;
+    /**
+     * @var ToolsFactory
+     */
+    protected $toolsFactorySpy;
+    /**
+     * @var ContextFactory|(ContextFactory&\Mockery\LegacyMockInterface)|(ContextFactory&\Mockery\MockInterface)|\Mockery\LegacyMockInterface|\Mockery\MockInterface|(\Mockery\MockInterface&ContextFactory)
+     */
+    protected $contextFactoryMock;
 
-    protected function setUp()
+    public function setUp()
     {
+        $this->toolsFactorySpy = \Mockery::spy(ToolsFactory::class);
+        $this->contextFactoryMock = \Mockery::mock(ContextFactory::class)->makePartial();
         $this->almaInsuranceProductRepository = $this->createMock(AlmaInsuranceProductRepository::class);
         $this->productFactoryMock = $this->createMock(ProductFactory::class);
         $this->combinationFactoryMock = $this->createMock(CombinationFactory::class);
         $this->linkMock = $this->createMock(\Link::class);
-        $this->insuranceProductService = new InsuranceProductService(
-            $this->productFactoryMock,
-            $this->combinationFactoryMock,
-            $this->linkMock,
-            $this->almaInsuranceProductRepository
-        );
         $this->cart = $this->createMock(\Cart::class);
         $this->newCart = $this->createMock(\Cart::class);
         $this->context = $this->createMock(\Context::class);
@@ -94,6 +110,32 @@ class InsuranceProductServiceTest extends TestCase
         $this->combinationMock2 = $this->createMock(\Combination::class);
         $this->context->shop = $this->shop;
         $this->context->language = $this->languageMock;
+        $this->insuranceProductServiceMock = \Mockery::mock(InsuranceProductService::class,
+        [
+            $this->almaInsuranceProductRepository,
+            $this->contextFactoryMock,
+            \Mockery::mock(AttributeGroupProductService::class),
+            \Mockery::mock(AttributeProductService::class),
+            \Mockery::mock(CombinationProductAttributeService::class),
+            \Mockery::mock(InsuranceService::class),
+            \Mockery::mock(CartService::class),
+            \Mockery::mock(ProductRepository::class),
+            \Mockery::mock(ProductHelper::class),
+            \Mockery::mock(InsuranceApiService::class),
+            \Mockery::mock(PriceHelper::class),
+            \Mockery::mock(AdminInsuranceHelper::class),
+            $this->toolsFactorySpy,
+        ])->makePartial();
+    }
+
+    /**
+     * @return void
+     */
+    public function tearDown()
+    {
+        $this->toolsFactorySpy = null;
+        $this->contextFactoryMock = null;
+        $this->insuranceProductServiceMock = null;
     }
 
     /**
@@ -258,5 +300,83 @@ class InsuranceProductServiceTest extends TestCase
             $expectedResult,
             $this->insuranceProductService->getItemsCartInsuranceProductAttributes($this->productMock, $cartId, $insuranceProductId)
         );
+    }
+
+    /**
+     * @return void
+     */
+    public function testCanHandleAddingProductInsuranceWithInputsToAddInsurance()
+    {
+        $this->toolsFactorySpy->shouldReceive('getIsset')
+            ->with('alma_id_insurance_contract')
+            ->andReturn('insurance_contract_abcd1234');
+
+        $this->toolsFactorySpy->shouldReceive('getValue')
+            ->with('add')
+            ->andReturn(1);
+
+        $this->toolsFactorySpy->shouldReceive('getValue')
+            ->with('action')
+            ->andReturn('update');
+
+        $this->assertTrue($this->insuranceProductServiceMock->canHandleAddingProductInsurance());
+    }
+
+    /**
+     * @return void
+     */
+    public function testCanHandleAddingProductInsuranceWithoutInputInsurance()
+    {
+        $this->toolsFactorySpy->shouldNotHaveReceived('getIsset');
+
+        $this->toolsFactorySpy->shouldReceive('getValue')
+            ->with('add')
+            ->andReturn(1);
+
+        $this->toolsFactorySpy->shouldReceive('getValue')
+            ->with('action')
+            ->andReturn('update');
+
+        $this->assertFalse($this->insuranceProductServiceMock->canHandleAddingProductInsurance());
+    }
+
+    /**
+     * @return void
+     */
+    public function testCanHandleAddingProductInsuranceWithInputInsuranceWithoutInputAdd()
+    {
+        $this->toolsFactorySpy->shouldReceive('getIsset')
+            ->with('alma_id_insurance_contract')
+            ->andReturn('insurance_contract_abcd1234');
+
+        $this->toolsFactorySpy->shouldReceive('getValue')
+            ->with('delete')
+            ->andReturn(1);
+
+        $this->toolsFactorySpy->shouldReceive('getValue')
+            ->with('action')
+            ->andReturn('update');
+
+        $this->assertFalse($this->insuranceProductServiceMock->canHandleAddingProductInsurance());
+    }
+
+    /**
+     * @return void
+     */
+    public function testCanHandleAddingProductInsuranceWithInputInsuranceWithInputAddAndActionShow()
+    {
+        $this->toolsFactorySpy->shouldReceive('getIsset')
+            ->with('alma_id_insurance_contract')
+            ->andReturn('insurance_contract_abcd1234');
+
+        $this->toolsFactorySpy->shouldReceive('getValue')
+            ->with('add')
+            ->andReturn(1);
+
+        $this->toolsFactorySpy->shouldReceive('getValue')
+            ->with('action')
+            ->andReturn('show');
+
+        $this->assertFalse($this->insuranceProductServiceMock->canHandleAddingProductInsurance());
     }
 }
