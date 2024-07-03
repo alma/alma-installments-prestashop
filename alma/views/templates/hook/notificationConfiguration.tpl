@@ -29,7 +29,13 @@
                     {l s='To use Alma, please follow these steps' mod='alma'}
                 </h2>
                 <ol>
-                    <li><strong>{l s='Associate PrestaShop account (just below)' mod='alma'}</strong></li>
+                    <li>
+                        <strong>
+                            {almaDisplayHtml}
+                                {l s='Associate PrestaShop account (%1$sjust below%2$s)' sprintf=['<a id="alma-associate-shop-button" href="#">', "</a>"] mod='alma'}
+                            {/almaDisplayHtml}
+                        </strong>
+                    </li>
                     <li><strong>{l s='Create an Alma account' mod='alma'}</strong>
                         <p>
                             <a href="https://support.getalma.eu/hc/fr/articles/360007913920-D%C3%A9marrer-avec-le-paiement-en-plusieurs-fois-Alma-sur-mon-site-e-commerce" target="_blank">
@@ -45,7 +51,7 @@
                             {/almaDisplayHtml}
                         <br />
                             {almaDisplayHtml}
-                                {l s='To use Test mode, retrieve your Test API key from your %1$s sandbox dashboard%2$s' sprintf=['<a href="https://dashboard.sandbox.getalma.eu/api" target="_blank">', '</a>'] mod='alma'}
+                                {l s='To use Test mode, retrieve your Test API key from your %1$ssandbox dashboard%2$s' sprintf=['<a href="https://dashboard.sandbox.getalma.eu/api" target="_blank">', '</a>'] mod='alma'}
                             {/almaDisplayHtml}
                         </p>
                     </li>
@@ -80,15 +86,15 @@
     {/if}
 {/if}
 {if isset($suggestPSAccount) && $suggestPSAccount}
-    <div class="alert alert-dismissible alert-info">
-        <h4>
+    <div class="alma alert alert-dismissible alert-info">
+        <h2>
             {l s='We offer to download the PrestaShop Account module ' mod='alma'}
-        </h4>
+        </h2>
         <p>
             {l s='Link your store to your PrestaShop account to take full advantage of the modules offered by the PrestaShop Marketplace and optimize your experience.'}
         </p>
         {almaDisplayHtml}
-        {l s='You can find the module %1$shere%2$s' sprintf=['<a href="https://addons.prestashop.com/en/administrative-tools/49648-prestashop-account.html" target=\"_blank\">', '</a>'] mod='alma'}
+            {l s='You can find the module %1$shere%2$s' sprintf=['<a href="https://addons.prestashop.com/en/administrative-tools/49648-prestashop-account.html" target=\"_blank\">', '</a>'] mod='alma'}
         {/almaDisplayHtml}
     </div>
 {/if}
