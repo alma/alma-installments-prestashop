@@ -360,13 +360,16 @@ class InsuranceProductService
     /**
      * @return bool
      */
-    public function canHandleAddingProductInsurance()
+    public function canHandleAddingProductInsuranceOnce()
     {
         if (
             $this->toolsFactory->getIsset('alma_id_insurance_contract')
             && 1 == $this->toolsFactory->getValue('add')
             && 'update' == $this->toolsFactory->getValue('action')
         ) {
+            // To reset the execution context of PHP
+            $_POST['alma_id_insurance_contract'] = null;
+
             return true;
         }
 

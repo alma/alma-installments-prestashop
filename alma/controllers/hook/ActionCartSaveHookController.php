@@ -140,7 +140,7 @@ class ActionCartSaveHookController extends FrontendHookController
                 $this->cartService->duplicateAlmaInsuranceProductsIfNotExist($newCart, $baseCart);
             }
 
-            if ($this->insuranceProductService->canHandleAddingProductInsurance()) {
+            if ($this->insuranceProductService->canHandleAddingProductInsuranceOnce()) {
                 $this->insuranceProductService->addInsuranceProductInPsCart(
                     $idProduct,
                     $insuranceContractId,

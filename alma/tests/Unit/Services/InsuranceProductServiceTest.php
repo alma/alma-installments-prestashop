@@ -284,7 +284,7 @@ class InsuranceProductServiceTest extends TestCase
             ->with('action')
             ->andReturn('update');
 
-        $this->assertTrue($this->insuranceProductServiceMock->canHandleAddingProductInsurance());
+        $this->assertTrue($this->insuranceProductServiceMock->canHandleAddingProductInsuranceOnce());
     }
 
     /**
@@ -302,7 +302,7 @@ class InsuranceProductServiceTest extends TestCase
             ->with('action')
             ->andReturn('update');
 
-        $this->assertFalse($this->insuranceProductServiceMock->canHandleAddingProductInsurance());
+        $this->assertFalse($this->insuranceProductServiceMock->canHandleAddingProductInsuranceOnce());
     }
 
     /**
@@ -322,7 +322,7 @@ class InsuranceProductServiceTest extends TestCase
             ->with('action')
             ->andReturn('update');
 
-        $this->assertFalse($this->insuranceProductServiceMock->canHandleAddingProductInsurance());
+        $this->assertFalse($this->insuranceProductServiceMock->canHandleAddingProductInsuranceOnce());
     }
 
     /**
@@ -342,6 +342,6 @@ class InsuranceProductServiceTest extends TestCase
             ->with('action')
             ->andReturn('show');
 
-        $this->assertFalse($this->insuranceProductServiceMock->canHandleAddingProductInsurance());
+        $this->assertFalse($this->insuranceProductServiceMock->canHandleAddingProductInsuranceOnce());
     }
 }
