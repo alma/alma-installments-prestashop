@@ -31,7 +31,7 @@ use Alma\PrestaShop\Builders\Helpers\PriceHelperBuilder;
 use Alma\PrestaShop\Builders\Helpers\SettingsHelperBuilder;
 use Alma\PrestaShop\Builders\Services\InsuranceProductServiceBuilder;
 use Alma\PrestaShop\Exceptions\InsuranceNotFoundException;
-use Alma\PrestaShop\Helpers\Admin\InsuranceHelper as AdminInsuranceHelper;
+use Alma\PrestaShop\Helpers\Admin\AdminInsuranceHelper;
 use Alma\PrestaShop\Helpers\CartHelper;
 use Alma\PrestaShop\Helpers\ConstantsHelper;
 use Alma\PrestaShop\Helpers\ImageHelper;
@@ -42,6 +42,7 @@ use Alma\PrestaShop\Helpers\SettingsHelper;
 use Alma\PrestaShop\Hooks\FrontendHookController;
 use Alma\PrestaShop\Repositories\AlmaInsuranceProductRepository;
 use Alma\PrestaShop\Repositories\ProductRepository;
+use Alma\PrestaShop\Services\InsuranceProductService;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -95,7 +96,7 @@ class DisplayCartExtraProductActionsHookController extends FrontendHookControlle
      */
     protected $settingHelper;
     /**
-     * @var \Alma\PrestaShop\Services\InsuranceProductService
+     * @var InsuranceProductService
      */
     protected $insuranceProductService;
 
