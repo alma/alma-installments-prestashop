@@ -99,7 +99,7 @@
         {/if}
     </div>
 
-{elseif isset($tip) && !isset($hasPSAccount) && !$hasPSAccount}
+{elseif isset($tip) && (!isset($hasPSAccount) && !$hasPSAccount) || _PS_MODE_DEV_}
     {include file="./_partials/notificationFirstInstallation.tpl"}
 {elseif isset($updated) && $updated}
     <div class="{$success_classes|escape:'htmlall':'UTF-8'}">
