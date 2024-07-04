@@ -98,10 +98,10 @@
             {$validation_error|escape:'htmlall':'UTF-8'}
         {/if}
     </div>
-
 {elseif isset($tip) && (!isset($hasPSAccount) && !$hasPSAccount) || _PS_MODE_DEV_}
     {include file="./_partials/notificationFirstInstallation.tpl"}
-{elseif isset($updated) && $updated}
+{/if}
+{if isset($updated) && $updated}
     <div class="{$success_classes|escape:'htmlall':'UTF-8'}">
         {l s='Settings successfully updated' mod='alma'}
     </div>
