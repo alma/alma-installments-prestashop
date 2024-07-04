@@ -101,7 +101,7 @@
 
 {elseif isset($tip) && !isset($hasPSAccount) && !$hasPSAccount}
     {include file="./_partials/notificationFirstInstallation.tpl"}
-{elseif $updated}
+{elseif isset($updated) && $updated}
     <div class="{$success_classes|escape:'htmlall':'UTF-8'}">
         {l s='Settings successfully updated' mod='alma'}
     </div>
