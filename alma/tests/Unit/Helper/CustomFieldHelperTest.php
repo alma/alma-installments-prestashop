@@ -27,6 +27,7 @@ namespace Alma\PrestaShop\Tests\Unit\Helper;
 use Alma\PrestaShop\Builders\Helpers\CustomFieldHelperBuilder;
 use Alma\PrestaShop\Forms\PaymentButtonAdminFormBuilder;
 use Alma\PrestaShop\Helpers\CustomFieldsHelper;
+use Alma\PrestaShop\Helpers\LanguageHelper;
 use PHPUnit\Framework\TestCase;
 
 class CustomFieldHelperTest extends TestCase
@@ -144,12 +145,14 @@ class CustomFieldHelperTest extends TestCase
      */
     public function testGetCustomFieldByKeyConfig($key, $value)
     {
-        $result = $this->customFieldsHelper->getCustomFieldByKeyConfig($key, [
+        $languageHelperMock = $this->createMock(LanguageHelper::class);
+        $languageHelperMock->method('getLanguages')->willReturn([
             [
                 'id_lang' => '1',
                 'iso_code' => 'en',
             ],
         ]);
+        $result = $this->customFieldsHelper->getCustomFieldByKeyConfig($key, $languageHelperMock->getLanguages());
 
         $this->assertEquals(['1' => $value], $result);
     }

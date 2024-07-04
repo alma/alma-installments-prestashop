@@ -1,6 +1,6 @@
 <?php
 /**
- * 2018-2024 Alma SAS.
+ * 2018-2023 Alma SAS.
  *
  * THE MIT LICENSE
  *
@@ -18,56 +18,38 @@
  * IN THE SOFTWARE.
  *
  * @author    Alma SAS <contact@getalma.eu>
- * @copyright 2018-2024 Alma SAS
+ * @copyright 2018-2023 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
-namespace Alma\PrestaShop\Controllers\Hook;
+namespace Alma\PrestaShop\Tests\Unit\Builders\Repositories;
 
-if (!defined('_PS_VERSION_')) {
-    exit;
-}
+use Alma\PrestaShop\Builders\Repositories\InsuranceProductRepositoryBuilder;
+use Alma\PrestaShop\Repositories\AlmaInsuranceProductRepository;
+use PHPUnit\Framework\TestCase;
 
-use Alma\PrestaShop\Builders\Helpers\InsuranceHelperBuilder;
-use Alma\PrestaShop\Helpers\InsuranceHelper;
-use Alma\PrestaShop\Hooks\FrontendHookController;
-use Alma\PrestaShop\Services\InsuranceService;
-
-class ActionObjectProductInCartDeleteAfterHookController extends FrontendHookController
+/**
+ * @covers \Alma\PrestaShop\Builders\InsuranceProductRepositoryBuilder
+ */
+class InsuranceProductRepositoryBuilderTest extends TestCase
 {
     /**
-     * @var InsuranceService
+     * @var InsuranceProductRepositoryBuilder
      */
-    protected $insuranceService;
+    protected $insuranceProductRepositoryBuilder;
 
-    /**
-     * @var InsuranceHelper
-     */
-    protected $insuranceHelper;
-
-    public function __construct($module)
+    public function setUp()
     {
-        parent::__construct($module);
-
-        $this->insuranceService = new InsuranceService();
-        $insuranceHelperBuilder = new InsuranceHelperBuilder();
-        $this->insuranceHelper = $insuranceHelperBuilder->getInstance();
-    }
-
-    public function canRun()
-    {
-        return parent::canRun() && $this->insuranceHelper->isInsuranceActivated();
+        $this->insuranceProductRepositoryBuilder = new InsuranceProductRepositoryBuilder();
     }
 
     /**
-     * Run Controller
-     *
-     * @param array $params
+     * @covers \Alma\PrestaShop\Builders\InsuranceProductRepositoryBuilder::getInstance
      *
      * @return void
      */
-    public function run($params)
+    public function testGetInstance()
     {
-        $this->insuranceService->deleteAllLinkedInsuranceProducts($params);
+        $this->assertInstanceOf(AlmaInsuranceProductRepository::class, $this->insuranceProductRepositoryBuilder->getInstance());
     }
 }

@@ -26,12 +26,16 @@ namespace Alma\PrestaShop\Services;
 
 use Alma\PrestaShop\Exceptions\AlmaException;
 use Alma\PrestaShop\Exceptions\InsuranceContractException;
+use Alma\PrestaShop\Factories\CombinationFactory;
 use Alma\PrestaShop\Factories\ContextFactory;
+use Alma\PrestaShop\Factories\ProductFactory;
 use Alma\PrestaShop\Factories\ToolsFactory;
 use Alma\PrestaShop\Helpers\ConstantsHelper;
+use Alma\PrestaShop\Helpers\ImageHelper;
 use Alma\PrestaShop\Helpers\InsuranceHelper;
 use Alma\PrestaShop\Helpers\PriceHelper;
 use Alma\PrestaShop\Helpers\ProductHelper;
+use Alma\PrestaShop\Helpers\ToolsHelper;
 use Alma\PrestaShop\Logger;
 use Alma\PrestaShop\Repositories\AlmaInsuranceProductRepository;
 use Alma\PrestaShop\Repositories\ProductRepository;
@@ -100,6 +104,30 @@ class InsuranceProductService
      */
     protected $insuranceHelper;
     /**
+     * @var ImageHelper
+     */
+    protected $imageHelper;
+    /**
+     * @var ToolsHelper
+     */
+    protected $toolsHelper;
+    /**
+     * @var \Link
+     */
+    protected $link;
+    /**
+     * @var ProductFactory
+     */
+    protected $productFactory;
+    /**
+     * @var CombinationFactory
+     */
+    protected $combinationFactory;
+    /**
+     * @var mixed
+     */
+    protected $linkFactory;
+    /**
      * @var ToolsFactory
      */
     protected $toolsFactory;
@@ -121,8 +149,13 @@ class InsuranceProductService
      * @param InsuranceApiService $insuranceApiService
      * @param PriceHelper $priceHelper
      * @param InsuranceHelper $insuranceHelper
+     * @param ImageHelper $imageHelper
+     * @param ToolsHelper $toolsHelper
      */
     public function __construct(
+        $productFactory,
+        $combinationFactory,
+        $linkFactory,
         $almaInsuranceProductRepository,
         $contextFactory,
         $attributeGroupProductService,
@@ -135,8 +168,13 @@ class InsuranceProductService
         $insuranceApiService,
         $priceHelper,
         $insuranceHelper,
-        $toolsFactory
+        $toolsFactory,
+        $imageHelper,
+        $toolsHelper
     ) {
+        $this->productFactory = $productFactory;
+        $this->combinationFactory = $combinationFactory;
+        $this->linkFactory = $linkFactory;
         $this->almaInsuranceProductRepository = $almaInsuranceProductRepository;
         $this->context = $contextFactory->getContext();
         $this->attributeGroupProductService = $attributeGroupProductService;
@@ -150,6 +188,8 @@ class InsuranceProductService
         $this->priceHelper = $priceHelper;
         $this->insuranceHelper = $insuranceHelper;
         $this->toolsFactory = $toolsFactory;
+        $this->imageHelper = $imageHelper;
+        $this->toolsHelper = $toolsHelper;
     }
 
     /**
@@ -320,16 +360,70 @@ class InsuranceProductService
     /**
      * @return bool
      */
-    public function canHandleAddingProductInsurance()
+    public function canHandleAddingProductInsuranceOnce()
     {
         if (
             $this->toolsFactory->getIsset('alma_id_insurance_contract')
             && 1 == $this->toolsFactory->getValue('add')
             && 'update' == $this->toolsFactory->getValue('action')
         ) {
+            // To reset the execution context of PHP
+            $_POST['alma_id_insurance_contract'] = null;
+
             return true;
         }
 
         return false;
+    }
+
+    /**
+     * @param $product
+     * @param $cartId
+     * @param $insuranceProductId
+     *
+     * @return array
+     *
+     * @throws \PrestaShopDatabaseException
+     */
+    public function getItemsCartInsuranceProductAttributes($product, $cartId, $insuranceProductId)
+    {
+        $resultInsurance = [];
+
+        $almaInsurancesByAttribute = $this->almaInsuranceProductRepository->getCountInsuranceProductAttributeByProductAndCartIdAndShopId(
+            $product,
+            $cartId,
+            $this->context->shop->id
+        );
+
+        $almaInsuranceProduct = $this->productFactory->create((int) $insuranceProductId);
+        $idImage = $almaInsuranceProduct->getImages($this->context->language->id)[0]['id_image'];
+        $linkRewrite = $almaInsuranceProduct->link_rewrite[$this->context->language->id];
+
+        foreach ($almaInsurancesByAttribute as $almaInsurance) {
+            $almaProductAttribute = $this->combinationFactory->create((int) $almaInsurance['id_product_attribute_insurance']);
+            $contractAlmaInsuranceProduct = $this->almaInsuranceProductRepository->getContractByProductAndCartIdAndShopAndInsuranceProductAttribute(
+                $product,
+                $cartId,
+                $this->context->shop->id,
+                $almaInsurance['id_product_attribute_insurance']
+            );
+
+            $resultInsurance[] = [
+                'idInsuranceProduct' => $almaInsuranceProduct->id,
+                'nameInsuranceProduct' => $almaInsuranceProduct->name[$this->context->language->id],
+                'urlImageInsuranceProduct' => '//' . $this->linkFactory->getImageLink(
+                    $linkRewrite,
+                    $idImage,
+                    $this->imageHelper->getFormattedImageTypeName('cart')
+                ),
+                'reference' => $almaProductAttribute->reference,
+                'price' => $this->priceHelper->convertPriceFromCents($almaInsurance['price']),
+                'quantity' => $almaInsurance['nbInsurance'],
+                'insuranceContractId' => $contractAlmaInsuranceProduct[0]['insurance_contract_id'],
+                'idsAlmaInsuranceProduct' => $this->toolsHelper->getJsonValues($contractAlmaInsuranceProduct, 'id_alma_insurance_product'),
+            ];
+        }
+
+        return $resultInsurance;
     }
 }

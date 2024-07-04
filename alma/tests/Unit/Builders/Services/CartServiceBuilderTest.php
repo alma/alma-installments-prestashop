@@ -65,7 +65,7 @@ class CartServiceBuilderTest extends TestCase
     {
         $this->assertInstanceOf(InsuranceHelper::class, $this->cartServiceBuilder->getInsuranceHelper());
         $this->assertInstanceOf(InsuranceHelper::class, $this->cartServiceBuilder->getInsuranceHelper(
-            new InsuranceHelper()
+            \Mockery::mock(InsuranceHelper::class)
         ));
     }
 

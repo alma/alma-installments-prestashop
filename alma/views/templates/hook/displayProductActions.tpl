@@ -23,8 +23,5 @@
 {if isset($layout)}
     <div class="alma-widget-insurance" id="alma-widget-insurance-product-page" data-alma-insurance-settings="{$settingsInsurance}" style="height: 0px" >
         <iframe id="product-alma-iframe" src="{$iframeUrl}"></iframe>
-        <div id="alma-insurance-modal"></div>
     </div>
-    <!-- TODO : Need to load the asset in registerJavascript() with type module -->
-    <script data-cfasync="false" type="module" src="{$scriptModalUrl}"></script>
 {/if}

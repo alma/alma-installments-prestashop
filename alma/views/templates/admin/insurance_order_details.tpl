@@ -20,9 +20,6 @@
  * @copyright 2018-2024 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  *}
-<div id="alma-insurance-modal"></div>
-<script data-cfasync="false" type="module" src="{$modalScriptUrl}"></script>
-
 <script type="text/javascript">
     var dataSubscriptions = {$dataSubscriptions};
 </script>

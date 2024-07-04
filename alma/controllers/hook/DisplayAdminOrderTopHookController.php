@@ -28,6 +28,7 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
+use Alma\PrestaShop\Builders\Helpers\InsuranceHelperBuilder;
 use Alma\PrestaShop\Helpers\InsuranceHelper;
 use Alma\PrestaShop\Hooks\FrontendHookController;
 use Alma\PrestaShop\Services\InsuranceService;
@@ -48,7 +49,8 @@ class DisplayAdminOrderTopHookController extends FrontendHookController
     {
         parent::__construct($module);
 
-        $this->insuranceHelper = new InsuranceHelper();
+        $insuranceHelperBuilder = new InsuranceHelperBuilder();
+        $this->insuranceHelper = $insuranceHelperBuilder->getInstance();
         $this->insuranceService = new InsuranceService();
     }
 

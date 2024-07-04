@@ -166,42 +166,25 @@ class InsuranceHelperTest extends TestCase
     /**
      * @return void
      *
-     * @throws \PrestaShopException
-     */
-    public function testConstructIframeUrlWithParams()
-    {
-        $expected = 'https://protect.sandbox.almapay.com/almaBackOfficeConfiguration.html?is_insurance_activated=true&is_insurance_on_product_page_activated=false&is_insurance_on_cart_page_activated=false&is_add_to_cart_popup_insurance_activated=true';
-
-        $this->configurationHelperMock->method('getMultiple')->willReturn([
-            'ALMA_ACTIVATE_INSURANCE' => '1',
-            'ALMA_SHOW_INSURANCE_WIDGET_PRODUCT' => '0',
-            'ALMA_SHOW_INSURANCE_WIDGET_CART' => '0',
-            'ALMA_SHOW_INSURANCE_POPUP_CART' => '1',
-        ]);
-        $actual = $this->insuranceHelper->constructIframeUrlWithParams();
-
-        $this->assertEquals($expected, $actual);
-    }
-
-    /**
-     * @return void
-     *
      * @throws \Alma\PrestaShop\Exceptions\WrongParamsException
      */
     public function testSaveConfigInsurance()
     {
         $this->configurationHelperMock->method('updateValue');
-        $this->configurationHelperMock->expects($this->exactly(4))->method('updateValue')->withConsecutive(
-            [ConstantsHelper::ALMA_ACTIVATE_INSURANCE, 1],
-            [ConstantsHelper::ALMA_SHOW_INSURANCE_WIDGET_PRODUCT, 1],
-            [ConstantsHelper::ALMA_SHOW_INSURANCE_WIDGET_CART, 0],
-            [ConstantsHelper::ALMA_SHOW_INSURANCE_POPUP_CART, 1]
-        );
+        $this->configurationHelperMock->expects($this->exactly(4))
+            ->method('updateValue')
+            ->withConsecutive(
+                [ConstantsHelper::ALMA_ACTIVATE_INSURANCE, 1],
+                [ConstantsHelper::ALMA_SHOW_INSURANCE_WIDGET_PRODUCT, 1],
+                [ConstantsHelper::ALMA_SHOW_INSURANCE_WIDGET_CART, 0],
+                [ConstantsHelper::ALMA_SHOW_INSURANCE_POPUP_CART, 1]
+            );
+
         $this->insuranceHelper->saveConfigInsurance([
-            'is_insurance_activated' => '1',
-            'is_insurance_on_product_page_activated' => '1',
-            'is_insurance_on_cart_page_activated' => '0',
-            'is_add_to_cart_popup_insurance_activated' => '1',
+            'isInsuranceActivated' => '1',
+            'isInsuranceOnProductPageActivated' => '1',
+            'isInCartWidgetActivated' => '0',
+            'isAddToCartPopupActivated' => '1',
         ]);
     }
 
@@ -218,10 +201,10 @@ class InsuranceHelperTest extends TestCase
         $this->configurationHelperMock->expects($this->never())->method('updateValue');
         $this->expectException(WrongParamsException::class);
         $this->insuranceHelper->saveConfigInsurance([
-            'is_insurance_activated' => '1',
-            'is_insurance_on_product_page_activated' => '1',
-            'is_insurance_on_cart_page_activated' => '0',
-            'is_add_to_cart_popup_insurance_activated' => '1',
+            'isInsuranceActivated' => '1',
+            'isInsuranceOnProductPageActivated' => '1',
+            'isInCartWidgetActivated' => '0',
+            'isAddToCartPopupActivated' => '1',
             'key_false' => '0',
         ]);
     }

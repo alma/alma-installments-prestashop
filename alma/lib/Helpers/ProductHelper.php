@@ -24,6 +24,8 @@
 
 namespace Alma\PrestaShop\Helpers;
 
+use Alma\PrestaShop\Builders\Helpers\InsuranceHelperBuilder;
+
 if (!defined('_PS_VERSION_')) {
     exit;
 }
@@ -42,7 +44,8 @@ class ProductHelper
 
     public function __construct()
     {
-        $this->insuranceHelper = new InsuranceHelper();
+        $insuranceHelperBuilder = new InsuranceHelperBuilder();
+        $this->insuranceHelper = $insuranceHelperBuilder->getInstance();
     }
 
     /**

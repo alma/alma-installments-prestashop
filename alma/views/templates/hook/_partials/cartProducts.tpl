@@ -20,6 +20,9 @@
  * @copyright 2018-2024 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  *}
+{capture assign='productRegularPriceInCent'}{$product.price_without_reduction|escape:'htmlall':'UTF-8' * 100}{/capture}
+{capture assign='cmsReference'}{almaCmsReference product_id=$product.id_product product_attribute_id=$product.id_product_attribute regular_price=$product.price_without_reduction}{/capture}
+
 <div class="row py-1">
     <div class="col-md-11">
         <div class="row">
@@ -56,41 +59,79 @@
             </div>
 
             {if $hasInsurance == '1'}
-            <div class="col-md-6">
-                <div class="row item-alma-insurance">
-                    <div class="product-line-grid-left col-md-5 col-xs-6">
-                        <span class="product-image media-middle">
-                            <img src="{$associatedInsurances[$idAlmaInsuranceProduct]['urlImage']}" alt="{$associatedInsurances[$idAlmaInsuranceProduct]['name']}" loading="lazy">
-                        </span>
-                    </div>
-                    <div class="product-line-grid-left col-md-7 col-xs-6">
-                        <div class="product-line-info">
-                            <span class="label">
-                                {$associatedInsurance.insuranceProduct->getFieldByLang('name', $idLanguage)|escape:'htmlall':'UTF-8'}
-                                <strong>
-                                    {$associatedInsurance.insuranceProductAttribute->reference|escape:'htmlall':'UTF-8'}
-                                </strong>
+                <div class="col-md-6">
+                    <div class="row item-alma-insurance">
+                        <div class="product-line-grid-left col-md-5 col-xs-6">
+                            <span class="product-image media-middle">
+                                <img src="{$associatedInsurances[$idAlmaInsuranceProduct]['urlImage']}" alt="{$associatedInsurances[$idAlmaInsuranceProduct]['name']}" loading="lazy">
                             </span>
                         </div>
-                        <div class="product-line-info product-price h5">
-                            <div class="current-price">
-                                <span class="price">{Context::getContext()->currentLocale->formatPrice($associatedInsurance.price, $currency.iso_code)}</span>
+                        <div class="product-line-grid-left col-md-7 col-xs-6">
+                            <div class="product-line-info">
+                                <span class="label">
+                                    {$associatedInsurance.insuranceProduct->getFieldByLang('name', $idLanguage)|escape:'htmlall':'UTF-8'}
+                                    <strong>
+                                        {$associatedInsurance.insuranceProductAttribute->reference|escape:'htmlall':'UTF-8'}
+                                    </strong>
+                                </span>
                             </div>
-                        </div>
-                        <div class="alma-action-item-insurance">
-                            <a data-alma-association-id="{$idAlmaInsuranceProduct}"
-                               data-action="remove-insurance-product"
-                               data-token='{\Tools::getToken(false)|escape:'htmlall':'UTF-8'}'
-                               href="#"
-                               class="alma-remove-insurance-product"
-                               data-link='{$ajaxLinkRemoveInsuranceProduct|escape:'htmlall':'UTF-8'}'
-                            >
-                                {l s='Remove insurance' mod='alma'}
-                            </a>
+                            <div class="product-line-info product-price h5">
+                                <div class="current-price">
+                                    <span class="price">{Context::getContext()->currentLocale->formatPrice($associatedInsurance.price, $currency.iso_code)}</span>
+                                </div>
+                            </div>
+                            <div class="alma-action-item-insurance text-right">
+                                <a data-alma-association-id="{$idAlmaInsuranceProduct}"
+                                   data-action="remove-insurance-product"
+                                   data-token='{\Tools::getToken(false)|escape:'htmlall':'UTF-8'}'
+                                   href="#"
+                                   class="alma-remove-insurance-product"
+                                   data-link='{$ajaxLinkRemoveInsuranceProduct|escape:'htmlall':'UTF-8'}'
+                                >
+                                    {l s='Remove insurance' mod='alma'}
+                                </a>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
+            {else}
+                {if $insuranceSettings.isInCartWidgetActivated}
+                <div class="col-md-6">
+                    <div class="row item-alma-insurance">
+                        <div class="product-line-grid-left col-md-2 col-xs-3">
+                            <span class="product-image media-middle">
+                                <img src="/modules/alma/views/img/logos/shield.svg" alt="{l s='Alma insurance' mod='alma'}">
+                            </span>
+                        </div>
+                        <div class="product-line-grid-left col-md-10 col-xs-9">
+                            <div class="product-line-info">
+                                <span class="label">
+                                    {l s='Protect your product with' mod='alma'}
+                                    <strong>
+                                        Alma
+                                    </strong>
+                                </span>
+                            </div>
+                            <div class="alma-action-item-insurance">
+                                <a data-product-id="{$product.id_product|escape:'htmlall':'UTF-8'}"
+                                   data-product-attribute-id="{$product.id_product_attribute|escape:'htmlall':'UTF-8'}"
+                                   data-product-price="{$productRegularPriceInCent}"
+                                   data-product-customization-id="{$product.id_customization|intval}"
+                                   data-id-iframe="product-alma-iframe-{$cmsReference}"
+                                   data-action="add-insurance-product"
+                                   data-token='{\Tools::getToken(false)|escape:'htmlall':'UTF-8'}'
+                                   href="#"
+                                   id="add-insurance-product-{$cmsReference}"
+                                   class="alma-add-insurance-product"
+                                   data-link='{$ajaxLinkAddInsuranceProduct|escape:'htmlall':'UTF-8'}'
+                                >
+                                    {l s='See available insurance policies' mod='alma'}
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {/if}
             {/if}
         </div>
 

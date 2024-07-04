@@ -44,6 +44,9 @@ class InsuranceProductServiceBuilder
     public function getInstance()
     {
         return new InsuranceProductService(
+            $this->getProductFactory(),
+            $this->getCombinationFactory(),
+            $this->getLinkFactory(),
             $this->getAlmaInsuranceProductRepository(),
             $this->getContextFactory(),
             $this->getAttributeGroupProductService(),
@@ -56,7 +59,9 @@ class InsuranceProductServiceBuilder
             $this->getInsuranceApiService(),
             $this->getPriceHelper(),
             $this->getInsuranceHelper(),
-            $this->getToolsFactory()
+            $this->getToolsFactory(),
+            $this->getImageHelper(),
+            $this->getToolsHelper()
         );
     }
 }
