@@ -5,7 +5,8 @@
 .alma-widget-insurance{
     width: 100%;
 }
-#product-alma-iframe{
+#product-alma-iframe,
+.cart-item-alma-iframe{
     border: 0;
     padding: 0;
     margin: 0;
@@ -18,18 +19,70 @@
 }
 
 .actions-alma-insurance-product .item-alma-insurance {
+    font-family: "Venn", sans-serif;
     background: #f9f9f9;
     padding: 12px 0;
     border-radius: 12px;
+    color: #1A1A1A;
 }
 
+.item-alma-insurance *{
+    -webkit-font-smoothing: initial;
+}
 .item-alma-insurance .alma-action-item-insurance {
-    text-align: right;
     font-size: 0.9rem;
+}
+.item-alma-insurance .alma-action-item-insurance.text-center {
+    text-align: center;
+}
+.item-alma-insurance .alma-action-item-insurance.text-right {
+    text-align: right;
+}
+.item-alma-insurance .product-line-grid-left {
+    float: left;
+    padding: 0 15px;
+}
+.item-alma-insurance .product-line-grid-left.alma-title-widget-insurance {
+    background-image: url('/modules/alma/views/img/logos/shield.svg');
+    background-repeat: no-repeat;
+    background-position: 15px;
+    background-size: 24px;
+    padding-left: 45px;
+    margin-bottom: 5px;
+}
+.item-alma-insurance .product-line-info .label{
+    display: flex;
+    gap: 4px;
+}
+.item-alma-insurance .product-line-info .label strong{
+    display: flex;
+    align-items: center;
 }
 .item-alma-insurance .alma-action-item-insurance .alma-remove-insurance-product {
     color: inherit;
     text-decoration: underline;
+}
+.product-line-grid-right .cart-line-product-actions .alma-remove-insurance-products {
+    color: inherit;
+}
+.item-alma-insurance .alma-action-item-insurance .btn-add-insurance-product {
+    display: inline-block;
+    color: inherit;
+    border: solid 1px #f0f0f0;
+    padding: 10px 14px;
+    margin-top: 5px;
+    border-radius: 20px;
+    background: #fefefe;
+}
+
+.actions-alma-insurance-product .input-group input {
+    float: left;
+    width: 3rem;
+    height: 2.5rem;
+    padding: 0.175rem 0.5rem;
+    color: #232323;
+    background-color: #fff;
+    border: 1px solid rgba(0, 0, 0, 0.25);
 }
 
 /**

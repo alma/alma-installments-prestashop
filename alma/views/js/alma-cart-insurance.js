@@ -1,5 +1,5 @@
 /**
- * 2018-2023 Alma SAS
+ * 2018-2024 Alma SAS
  *
  * THE MIT LICENSE
  *
@@ -17,10 +17,10 @@
  * IN THE SOFTWARE.
  *
  * @author    Alma SAS <contact@getalma.eu>
- * @copyright 2018-2023 Alma SAS
+ * @copyright 2018-2024 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
- (function ($) {
+(function ($) {
     $(function () {
         // Insurance
         onloadInsuranceItemCartAlma();
@@ -32,74 +32,195 @@
 })(jQuery);
 
 function onloadInsuranceClickEvents() {
-     $('.alma-remove-product').on( "click", function(e) {
-         e.preventDefault();
-         addLoaderDot(e);
-         $.ajax({
-             type: 'POST',
-             url: $(this).attr("data-link"),
-             dataType: 'json',
-             data: {
-                 ajax: true,
-                 token: $(this).attr('data-token'),
-                 product_id: $(this).attr("data-product-id"),
-                 attribute_id: $(this).attr("data-product-attribute-id"),
-                 customization_id: $(this).attr("data-product-customization-id"),
-             },
-         })
-             .success(function() {
-                 location.reload();
-             })
+    $('.alma-remove-product').on("click", function (e) {
+        e.preventDefault();
+        addLoaderDot(e);
+        $.ajax({
+            type: 'POST',
+            url: $(this).attr("data-link"),
+            dataType: 'json',
+            data: {
+                ajax: true,
+                token: $(this).attr('data-token'),
+                product_id: $(this).attr("data-product-id"),
+                attribute_id: $(this).attr("data-product-attribute-id"),
+                customization_id: $(this).attr("data-product-customization-id"),
+            },
+        })
+            .success(function () {
+                location.reload();
+            })
 
-             .error(function(e) {
-                 location.reload();
-             });
-     });
+            .error(function (e) {
+                location.reload();
+            });
+    });
 
-     $('.alma-remove-association').on( "click", function(e) {
-         e.preventDefault();
-         addLoaderDot(e);
-         $.ajax({
-             type: 'POST',
-             url: $(this).attr("data-link"),
-             dataType: 'json',
-             data: {
-                 ajax: true,
-                 token: $(this).attr('data-token'),
-                 alma_insurance_product_id: $(this).attr("data-alma-association-id")
-             },
-         })
-             .success(function() {
-                 location.reload();
-             })
+    $('.alma-remove-association').on("click", function (e) {
+        e.preventDefault();
+        addLoaderDot(e);
+        $.ajax({
+            type: 'POST',
+            url: $(this).attr("data-link"),
+            dataType: 'json',
+            data: {
+                ajax: true,
+                token: $(this).attr('data-token'),
+                alma_insurance_product_id: $(this).attr("data-alma-association-id")
+            },
+        })
+            .success(function () {
+                location.reload();
+            })
 
-             .error(function(e) {
-                 location.reload();
-             });
-     });
+            .error(function (e) {
+                location.reload();
+            });
+    });
 
-     $('.alma-remove-insurance-product').on( "click", function(e) {
-         e.preventDefault();
-         addLoaderDot(e);
-         $.ajax({
-             type: 'POST',
-             url: $(this).attr("data-link"),
-             dataType: 'json',
-             data: {
-                 ajax: true,
-                 token: $(this).attr('data-token'),
-                 alma_insurance_product_id: $(this).attr("data-alma-association-id")
-             },
-         })
-             .success(function() {
-                 location.reload();
-             })
+    $('.alma-remove-associations').on("click", function (e) {
+        e.preventDefault();
+        addLoaderDot(e);
+        $.ajax({
+            type: 'POST',
+            url: $(this).attr("data-link"),
+            dataType: 'json',
+            data: {
+                ajax: true,
+                token: $(this).attr('data-token'),
+                alma_insurance_product_ids: $(this).attr("data-alma-association-ids")
+            },
+        })
+            .success(function () {
+                location.reload();
+            })
 
-             .error(function(e) {
-                 location.reload();
-             });
-     });
- }
+            .error(function (e) {
+                location.reload();
+            });
+    });
+
+    $('.alma-remove-insurance-product').on("click", function (e) {
+        e.preventDefault();
+        addLoaderDot(e);
+        $.ajax({
+            type: 'POST',
+            url: $(this).attr("data-link"),
+            dataType: 'json',
+            data: {
+                ajax: true,
+                token: $(this).attr('data-token'),
+                alma_insurance_product_id: $(this).attr("data-alma-association-id")
+            },
+        })
+            .success(function () {
+                location.reload();
+            })
+
+            .error(function (e) {
+                location.reload();
+            });
+    });
+
+    $('.alma-remove-insurance-products').on("click", function (e) {
+        e.preventDefault();
+        addLoaderDot(e);
+        $.ajax({
+            type: 'POST',
+            url: $(this).attr("data-link"),
+            dataType: 'json',
+            data: {
+                ajax: true,
+                token: $(this).attr('data-token'),
+                alma_insurance_product_ids: $(this).attr("data-alma-association-ids")
+            },
+        })
+            .success(function () {
+                location.reload();
+            })
+
+            .error(function (e) {
+                location.reload();
+            });
+    });
+
+    $('.alma-add-insurance-product').on("click", function (e) {
+        let idIframeModal = $(this).attr("data-id-iframe");
+        let elementClicked = document.querySelector('a[data-id-iframe=' + idIframeModal + ']');
+
+        addLoaderDot(null, elementClicked);
+        openModal('inCartModal', 1, idIframeModal);
+    });
+
+    $('.alma-add-all-insurance-product').on("click", function (e) {
+        e.preventDefault();
+        let idIframeModal = $(this).attr("data-id-iframe");
+        let elementClicked = document.querySelector('a[data-id-iframe=' + idIframeModal + ']');
+
+        addLoaderDot(null, elementClicked);
+        $.ajax({
+            type: 'POST',
+            url: '/module/alma/insurance?action=addInsuranceProduct',
+            dataType: 'json',
+            data: {
+                ajax: true,
+                token: $(this).attr('data-token'),
+                product_id: $(this).attr('data-product-id'),
+                product_attribute_id: $(this).attr('data-product-attribute-id'),
+                customization_id: $(this).attr('data-product-customization-id'),
+                insurance_contract_id: $(this).attr('data-insurance-contract-id'),
+                insurance_quantity: $(this).attr('data-remaining-quantity')
+            },
+        })
+            .success(function () {
+                location.reload();
+            })
+
+            .error(function (e) {
+                console.log(e)
+                //location.reload();
+            });
+
+    });
+
+    window.addEventListener('message', (e) => {
+        if (e.data.type === 'getSelectedInsuranceData') {
+            let idIframeModal = $('#' + e.data.idIframeModal);
+
+            if (e.data.selectedInsuranceData !== null) {
+                $.ajax({
+                    type: 'POST',
+                    url: '/module/alma/insurance?action=addInsuranceProduct',
+                    dataType: 'json',
+                    data: {
+                        ajax: true,
+                        token: idIframeModal.attr('data-token'),
+                        product_id: idIframeModal.attr('data-product-id'),
+                        product_attribute_id: idIframeModal.attr('data-product-attribute-id'),
+                        customization_id: idIframeModal.attr('data-product-customization-id'),
+                        insurance_contract_id: e.data.selectedInsuranceData.insuranceContractId,
+                        insurance_quantity: e.data.selectedInsuranceQuantity
+                    },
+                })
+                    .success(function () {
+                        location.reload();
+                    })
+
+                    .error(function (e) {
+                        console.log(e)
+                        //location.reload();
+                    });
+            }
+
+            removeLoaderDot();
+        }
+        if (e.data.type === 'almaEligibilityAnswer') {
+            if (e.data.eligibilityCallResult.length > 0) {
+                $('#' + e.data.iFrameIdForProductWidget).show();
+            }
+        }
+    });
+}
 
 // ** Display extra info for insurance under the item product on cart **
 function onloadInsuranceItemCartAlma() {
@@ -107,11 +228,19 @@ function onloadInsuranceItemCartAlma() {
 
     itemsCart.forEach((item) => {
         let dataProduct = item.querySelector('.alma-data-product');
-        let isAlmaInsuranceProduct = parseInt(dataProduct.dataset.isAlmaInsurance);
-        let noInsuranceAssociated = parseInt(dataProduct.dataset.noInsuranceAssociated);
         let actionsInsuranceProduct = dataProduct.querySelector('.actions-alma-insurance-product');
+        let widgetInsuranceCartItem = dataProduct.querySelector('.widget-alma-insurance-cart-item');
+        let isAlmaInsuranceProduct = parseInt(dataProduct.dataset.isAlmaInsurance);
+        let isInsuranceAssociated = parseInt(dataProduct.dataset.noInsuranceAssociated);
 
-        if (!isAlmaInsuranceProduct && noInsuranceAssociated) {
+        if (!isAlmaInsuranceProduct && !isInsuranceAssociated && widgetInsuranceCartItem) {
+            widgetInsuranceCartItem.style.display = 'block';
+            item.append(widgetInsuranceCartItem);
+            let clearfix = document.createElement('div');
+            clearfix.classList.add('clearfix');
+            item.append(clearfix);
+        }
+        if (!isAlmaInsuranceProduct && isInsuranceAssociated) {
             if (actionsInsuranceProduct) {
                 actionsInsuranceProduct.style.display = 'block';
                 item.append(actionsInsuranceProduct);
@@ -142,10 +271,26 @@ function onloadInsuranceItemCartAlma() {
     onloadInsuranceClickEvents();
 }
 
-function addLoaderDot(e) {
-    let actionAlmaInsuranceProduct = e.currentTarget.closest('.actions-alma-insurance-product');
+function addLoaderDot(event, element = null) {
+    let actionAlmaInsuranceProduct = undefined;
+
+    if (event == null) {
+        actionAlmaInsuranceProduct = element.closest('.actions-alma-insurance-product');
+    } else {
+        actionAlmaInsuranceProduct = event.currentTarget.closest('.actions-alma-insurance-product');
+    }
+
     actionAlmaInsuranceProduct.classList.add('loading');
     actionAlmaInsuranceProduct.append(createLoaderDot());
+}
+
+function removeLoaderDot() {
+    let loaderDot = document.querySelector('.alma-loader-dot-container');
+    loaderDot.remove();
+    let actionsAlmaInsuranceProduct = document.querySelectorAll('.actions-alma-insurance-product');
+    actionsAlmaInsuranceProduct.forEach((actionAlmaInsuranceProduct) => {
+        actionAlmaInsuranceProduct.classList.remove('loading');
+    });
 }
 
 function createLoaderDot() {

@@ -1,6 +1,6 @@
 <?php
 /**
- * 2018-2023 Alma SAS.
+ * 2018-2024 Alma SAS.
  *
  * THE MIT LICENSE
  *
@@ -18,7 +18,7 @@
  * IN THE SOFTWARE.
  *
  * @author    Alma SAS <contact@getalma.eu>
- * @copyright 2018-2023 Alma SAS
+ * @copyright 2018-2024 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
@@ -26,7 +26,6 @@ namespace Alma\PrestaShop\Tests\Unit\Builders\Helpers;
 
 use Alma\PrestaShop\Builders\Helpers\ContextHelperBuilder;
 use Alma\PrestaShop\Factories\ContextFactory;
-use Alma\PrestaShop\Factories\ModuleFactory;
 use Alma\PrestaShop\Helpers\ContextHelper;
 use PHPUnit\Framework\TestCase;
 
@@ -55,14 +54,6 @@ class ContextHelperBuilderTest extends TestCase
         $this->assertInstanceOf(ContextFactory::class, $this->contextHelperBuilder->getContextFactory());
         $this->assertInstanceOf(ContextFactory::class, $this->contextHelperBuilder->getContextFactory(
             new ContextFactory()
-        ));
-    }
-
-    public function testGetModuleFactory()
-    {
-        $this->assertInstanceOf(ModuleFactory::class, $this->contextHelperBuilder->getModuleFactory());
-        $this->assertInstanceOf(ModuleFactory::class, $this->contextHelperBuilder->getModuleFactory(
-            new ModuleFactory()
         ));
     }
 }

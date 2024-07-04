@@ -1,6 +1,6 @@
 <?php
 /**
- * 2018-2023 Alma SAS.
+ * 2018-2024 Alma SAS.
  *
  * THE MIT LICENSE
  *
@@ -18,7 +18,7 @@
  * IN THE SOFTWARE.
  *
  * @author    Alma SAS <contact@getalma.eu>
- * @copyright 2018-2023 Alma SAS
+ * @copyright 2018-2024 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
@@ -82,4 +82,17 @@ if (class_exists('\Context') && PHP_SAPI != 'cli') {
     }
 
     smartyRegisterFunction($smarty, 'modifier', 'almaJsonEncode', 'smarty_modifier_almaJsonEncode');
+
+    function smarty_function_almaCmsReference($params, $smarty)
+    {
+        $regular_price = $params['regular_price'] * 100;
+
+        if ($params['product_attribute_id'] === '0') {
+            return $params['product_id'] . '-' . $regular_price;
+        }
+
+        return $params['product_id'] . '-' . $params['product_attribute_id'] . '-' . $regular_price;
+    }
+
+    smartyRegisterFunction($smarty, 'function', 'almaCmsReference', 'smarty_function_almaCmsReference');
 }

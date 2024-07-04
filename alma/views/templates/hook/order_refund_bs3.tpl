@@ -1,5 +1,5 @@
 {*
- * 2018-2023 Alma SAS
+ * 2018-2024 Alma SAS
  *
  * THE MIT LICENSE
  *
@@ -17,7 +17,7 @@
  * IN THE SOFTWARE.
  *
  * @author    Alma SAS <contact@getalma.eu>
- * @copyright 2018-2023 Alma SAS
+ * @copyright 2018-2024 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  *}
 <div class="alert alert-success alma-success"  style="display:none" data-alert="success"></div>
@@ -53,7 +53,7 @@
                     {if $order.ordersId}
                         <div class="radio t">
                             <label>
-                                <input type="radio" class="refundType" name="refundType" value="partial_multi" />                            
+                                <input type="radio" class="refundType" name="refundType" value="partial_multi" />
                                 {$wording.labelRadioRefundOneOrder|escape:'htmlall':'UTF-8'}
                             </label>
                         </div>

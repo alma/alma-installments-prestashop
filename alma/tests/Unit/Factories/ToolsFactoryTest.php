@@ -1,6 +1,6 @@
 <?php
 /**
- * 2018-2023 Alma SAS.
+ * 2018-2024 Alma SAS.
  *
  * THE MIT LICENSE
  *
@@ -18,58 +18,29 @@
  * IN THE SOFTWARE.
  *
  * @author    Alma SAS <contact@getalma.eu>
- * @copyright 2018-2023 Alma SAS
+ * @copyright 2018-2024 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
-namespace Alma\PrestaShop\Services;
+namespace Alma\PrestaShop\Tests\Unit\Factories;
 
-use Alma\PrestaShop\Helpers\ModuleHelper;
-use Alma\PrestaShop\Repositories\CartSaveRepository;
+use Alma\PrestaShop\Factories\ToolsFactory;
+use PHPUnit\Framework\TestCase;
 
-if (!defined('_PS_VERSION_')) {
-    exit;
-}
-
-class CartSaveService
+class ToolsFactoryTest extends TestCase
 {
     /**
-     * @var ModuleHelper
+     * @var ToolsFactoryTest
      */
-    protected $moduleHelper;
-    /**
-     * @var CartSaveRepository
-     */
-    protected $cartSaveRepository;
+    protected $toolsFactory;
 
-    public function __construct(
-        $moduleHelper = null,
-        $cartSaveRepository = null
-    ) {
-        if (!$moduleHelper) {
-            $moduleHelper = new ModuleHelper();
-        }
-        if (!$cartSaveRepository) {
-            $cartSaveRepository = new CartSaveRepository();
-        }
-        $this->moduleHelper = $moduleHelper;
-        $this->cartSaveRepository = $cartSaveRepository;
+    public function setUp()
+    {
+        $this->toolsFactory = new ToolsFactory();
     }
 
-    /**
-     * @param $value
-     *
-     * @return int|null
-     */
-    public function getIdCartSaved($value)
+    public function testGetValueWithDefaultKey()
     {
-        if ($this->moduleHelper->isInstalled('opartsavecart')) {
-            $cart = $this->cartSaveRepository->getCurrentCartForOpartSaveCart($value);
-            if ($cart) {
-                return (int) $cart['id_cart'];
-            }
-        }
-
-        return null;
+        $this->assertEquals('value', $this->toolsFactory->getValue('key', 'value'));
     }
 }

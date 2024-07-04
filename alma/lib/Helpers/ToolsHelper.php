@@ -1,6 +1,6 @@
 <?php
 /**
- * 2018-2023 Alma SAS.
+ * 2018-2024 Alma SAS.
  *
  * THE MIT LICENSE
  *
@@ -18,7 +18,7 @@
  * IN THE SOFTWARE.
  *
  * @author    Alma SAS <contact@getalma.eu>
- * @copyright 2018-2023 Alma SAS
+ * @copyright 2018-2024 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
@@ -116,5 +116,29 @@ class ToolsHelper
     public function substr($str, $start, $length = false, $encoding = 'utf-8')
     {
         return \Tools::substr($str, $start, $length, $encoding);
+    }
+
+    /**
+     * @param $array
+     * @param $key
+     *
+     * @return false|string
+     */
+    public function getJsonValues($array, $key)
+    {
+        $return = [];
+
+        if (!is_array($array)) {
+            return json_encode($return);
+        }
+
+        foreach ($array as $value) {
+            if (!is_array($value) || !array_key_exists($key, $value)) {
+                continue;
+            }
+            $return[] = $value[$key];
+        }
+
+        return json_encode($return);
     }
 }

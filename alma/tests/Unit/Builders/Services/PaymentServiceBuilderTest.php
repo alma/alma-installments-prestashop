@@ -1,6 +1,6 @@
 <?php
 /**
- * 2018-2023 Alma SAS.
+ * 2018-2024 Alma SAS.
  *
  * THE MIT LICENSE
  *
@@ -18,12 +18,13 @@
  * IN THE SOFTWARE.
  *
  * @author    Alma SAS <contact@getalma.eu>
- * @copyright 2018-2023 Alma SAS
+ * @copyright 2018-2024 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
 namespace Alma\PrestaShop\Tests\Unit\Builders\Services;
 
+use Alma\PrestaShop\Builders\Factories\ModuleFactoryBuilder;
 use Alma\PrestaShop\Builders\Services\PaymentServiceBuilder;
 use Alma\PrestaShop\Factories\AddressFactory;
 use Alma\PrestaShop\Factories\ContextFactory;
@@ -126,7 +127,8 @@ class PaymentServiceBuilderTest extends TestCase
         $this->contextFactory = new ContextFactory();
         $this->toolsHelper = new ToolsHelper();
         $this->languageHelper = new LanguageHelper();
-        $this->moduleFactory = new ModuleFactory();
+        $moduleFactoryBuilder = new ModuleFactoryBuilder();
+        $this->moduleFactory = $moduleFactoryBuilder->getInstance();
         $this->clientHelper = new ClientHelper();
         $this->configurationHelper = new ConfigurationHelper();
 
@@ -244,10 +246,7 @@ class PaymentServiceBuilderTest extends TestCase
     {
         $this->assertInstanceOf(ContextHelper::class, $this->paymentServiceBuilder->getContextHelper());
         $this->assertInstanceOf(ContextHelper::class, $this->paymentServiceBuilder->getContextHelper(
-            new ContextHelper(
-                new ContextFactory(),
-                new ModuleFactory()
-            )
+            \Mockery::mock(ContextHelper::class)
         ));
     }
 

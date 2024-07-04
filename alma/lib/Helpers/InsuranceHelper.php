@@ -1,6 +1,6 @@
 <?php
 /**
- * 2018-2023 Alma SAS.
+ * 2018-2024 Alma SAS.
  *
  * THE MIT LICENSE
  *
@@ -18,12 +18,13 @@
  * IN THE SOFTWARE.
  *
  * @author    Alma SAS <contact@getalma.eu>
- * @copyright 2018-2023 Alma SAS
+ * @copyright 2018-2024 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
 namespace Alma\PrestaShop\Helpers;
 
+use Alma\PrestaShop\Factories\ContextFactory;
 use Alma\PrestaShop\Logger;
 use Alma\PrestaShop\Repositories\AlmaInsuranceProductRepository;
 use Alma\PrestaShop\Repositories\CartProductRepository;
@@ -57,29 +58,37 @@ class InsuranceHelper
      * @var \Context|null
      */
     protected $context;
+    /**
+     * @var SettingsHelper
+     */
+    protected $settingsHelper;
+    /**
+     * @var ToolsHelper
+     */
+    protected $toolsHelper;
 
+    /***
+     * @param CartProductRepository $cartProductRepository
+     * @param ProductRepository $productRepository
+     * @param AlmaInsuranceProductRepository $insuranceProductRepository
+     * @param ContextFactory $contextFactory
+     * @param ToolsHelper $toolsHelper
+     * @param SettingsHelper $settingsHelper
+     */
     public function __construct(
-        $cartProductRepository = null,
-        $productRepository = null,
-        $insuranceProductRepository = null,
-        $context = null
+        $cartProductRepository,
+        $productRepository,
+        $insuranceProductRepository,
+        $contextFactory,
+        $toolsHelper,
+        $settingsHelper
     ) {
-        if (!$cartProductRepository) {
-            $cartProductRepository = new CartProductRepository();
-        }
-        if (!$productRepository) {
-            $productRepository = new ProductRepository();
-        }
-        if (!$insuranceProductRepository) {
-            $insuranceProductRepository = new AlmaInsuranceProductRepository();
-        }
-        if (!$context) {
-            $context = \Context::getContext();
-        }
         $this->cartProductRepository = $cartProductRepository;
         $this->productRepository = $productRepository;
         $this->insuranceProductRepository = $insuranceProductRepository;
-        $this->context = $context;
+        $this->context = $contextFactory->getContext();
+        $this->settingsHelper = $settingsHelper;
+        $this->toolsHelper = $toolsHelper;
     }
 
     /**
@@ -87,10 +96,19 @@ class InsuranceHelper
      */
     public function isInsuranceAllowedInProductPage()
     {
-        return (bool) version_compare(_PS_VERSION_, '1.7', '>=')
-            && (bool) (int) SettingsHelper::get(ConstantsHelper::ALMA_SHOW_INSURANCE_WIDGET_PRODUCT, false)
-            && (bool) (int) SettingsHelper::get(ConstantsHelper::ALMA_ALLOW_INSURANCE, false)
-            && (bool) (int) SettingsHelper::get(ConstantsHelper::ALMA_ACTIVATE_INSURANCE, false);
+        return (bool) $this->toolsHelper->psVersionCompare('1.7', '>=')
+            && (bool) (int) $this->settingsHelper->getKey(ConstantsHelper::ALMA_SHOW_INSURANCE_WIDGET_PRODUCT, false)
+            && $this->isInsuranceActivated();
+    }
+
+    /**
+     * @return bool
+     */
+    public function isInsuranceAllowedInCartPage()
+    {
+        return (bool) $this->toolsHelper->psVersionCompare('1.7', '>=')
+            && (bool) (int) $this->settingsHelper->getKey(ConstantsHelper::ALMA_SHOW_INSURANCE_WIDGET_CART, false)
+            && $this->isInsuranceActivated();
     }
 
     /**
@@ -98,9 +116,9 @@ class InsuranceHelper
      */
     public function isInsuranceActivated()
     {
-        return (bool) version_compare(_PS_VERSION_, '1.7', '>=')
-            && (bool) (int) SettingsHelper::get(ConstantsHelper::ALMA_ALLOW_INSURANCE, false)
-            && (bool) (int) SettingsHelper::get(ConstantsHelper::ALMA_ACTIVATE_INSURANCE, false);
+        return (bool) $this->toolsHelper->psVersionCompare('1.7', '>=')
+            && (bool) (int) $this->settingsHelper->getKey(ConstantsHelper::ALMA_ALLOW_INSURANCE, false)
+            && (bool) (int) $this->settingsHelper->getKey(ConstantsHelper::ALMA_ACTIVATE_INSURANCE, false);
     }
 
     /**
@@ -179,12 +197,26 @@ class InsuranceHelper
      *
      * @return bool
      */
-    public function checkInsuranceProductsExist($cart)
+    public function almaInsuranceProductsAlreadyExist($cart)
     {
         if ($this->insuranceProductRepository->hasInsuranceForCartIdAndShop($cart->id, $cart->id_shop)) {
             return true;
         }
 
         return false;
+    }
+
+    /**
+     * @return bool
+     */
+    public function getInsuranceQuantity()
+    {
+        $quantity = \Tools::getValue('qty');
+
+        if (\Tools::getIsset('alma_quantity_insurance')) {
+            $quantity = \Tools::getValue('alma_quantity_insurance');
+        }
+
+        return $quantity;
     }
 }

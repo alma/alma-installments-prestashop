@@ -1,6 +1,6 @@
 <?php
 /**
- * 2018-2023 Alma SAS.
+ * 2018-2024 Alma SAS.
  *
  * THE MIT LICENSE
  *
@@ -18,7 +18,7 @@
  * IN THE SOFTWARE.
  *
  * @author    Alma SAS <contact@getalma.eu>
- * @copyright 2018-2023 Alma SAS
+ * @copyright 2018-2024 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 global $_MODULE;
@@ -299,7 +299,21 @@ $_MODULE['<{alma}prestashop>getcontent_b47a7c1526a093a0afe5f28bdeb5face'] = 'Max
 $_MODULE['<{alma}prestashop>getcontent_8c10d3b0970a247fc554062dc9055fd1'] = 'Maximum amount for %1$d-installment plan must be within %2$d and %3$d.';
 $_MODULE['<{alma}prestashop>getcontent_84b96a3ca61f4425b3fd56534a89a653'] = 'Impossible to save the Share of Checkout settings, please try again later';
 $_MODULE['<{alma}prestashop>getcontent_7f40d377cc4942c4f0d6e75a736f8445'] = 'Settings successfully updated';
+$_MODULE['<{alma}prestashop>getcontent_9f246d669c560d2ac604f5e01c8dd981'] = 'To use Alma, please follow these steps';
+$_MODULE['<{alma}prestashop>getcontent_7379f16a6f4551a47731893ecfce52ab'] = '1. Associate PrestaShop account (just below)';
+$_MODULE['<{alma}prestashop>getcontent_54f458d63e438020e62552dc28f23925'] = '2. Create an Alma account';
+$_MODULE['<{alma}prestashop>getcontent_e243bbd390b43c9ee6047fab4ab3cdc0'] = 'Consult our getting started guide';
+$_MODULE['<{alma}prestashop>getcontent_45d67e5114ba6e1f894f12c0c8ac6538'] = '3. Enter your API key';
+$_MODULE['<{alma}prestashop>getcontent_055f421849c2a1c32b885c95540f827c'] = 'Find your API live key on your %1$s Alma dashboard%2$s';
+$_MODULE['<{alma}prestashop>getcontent_83b4d24aae962bb5581ba5720be20666'] = 'To use Test mode, retrieve your Test API key from your %1$s sandbox dashboard%2$s';
+$_MODULE['<{alma}prestashop>getcontent_41d0063d3bb7d3067f46734fac8b27c4'] = 'We offer to download the PrestaShop Account module';
+$_MODULE['<{alma}prestashop>getcontent_6997dde298b14fbf6a7c95bd39fe8dc4'] = 'You can find the module %1$shere%2$s';
 $_MODULE['<{alma}prestashop>cartproducts_39f9a4a4bf8387aa7c0478f98b713f91'] = 'Remove insurance';
+$_MODULE['<{alma}prestashop>cartproducts_7da9ba421c3f84f283070d68bb7adca1'] = 'Alma insurance';
+$_MODULE['<{alma}prestashop>cartproducts_adcd954ece839e7da469e9b37801fa69'] = 'Protect your product with';
+$_MODULE['<{alma}prestashop>cartproducts_4cc10fb1d9332d404cc8016b47a1afd1'] = 'See available insurance policies';
+$_MODULE['<{alma}prestashop>widgetaddinsuranceproducts_f1aab89a3a1e86807c8dffa61d41ded6'] = 'Protect the rest of your products with';
+$_MODULE['<{alma}prestashop>widgetaddinsuranceproducts_f28220d70798406523119d998573b489'] = 'I want to insure all the remaining [1]%1$s[/1] in my cart';
 $_MODULE['<{alma}prestashop>fees_3acc62b245d8bc10f04d81f69d85b685'] = '(No additional fees)';
 $_MODULE['<{alma}prestashop>feeplan_64408fc092e84b9eb352626a0bcbbdf7'] = 'Fixed APR';
 $_MODULE['<{alma}prestashop>feeplan_ae9a134243362e66fef28a6b2e8a77c4'] = 'Cart total';

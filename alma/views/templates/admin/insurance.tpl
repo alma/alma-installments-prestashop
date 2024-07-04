@@ -1,5 +1,5 @@
 {*
- * 2018-2023 Alma SAS
+ * 2018-2024 Alma SAS
  *
  * THE MIT LICENSE
  *
@@ -17,7 +17,7 @@
  * IN THE SOFTWARE.
  *
  * @author    Alma SAS <contact@getalma.eu>
- * @copyright 2018-2023 Alma SAS
+ * @copyright 2018-2024 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  *}
 <div class="alert alert-success alma-success"  style="display:none" data-alert="success"></div>
@@ -40,51 +40,20 @@
         </button>
     </div>
 </div>
+<script data-cfasync="false" type='module'>
+    window.addEventListener('load', () => {
+        let insuranceConfigurationParams = {$insuranceConfigurationParams};
 
-<script data-cfasync="false" type="module">
-    let currentResolve
-    let save = document.getElementById('alma_config_form_submit_btn');
-    save.addEventListener('click', async () => {
-        let messageCallback = (e) => {
-            if (currentResolve && e.origin === '{$domainInsuranceUrl}') {
-                currentResolve(e.data)
-                $.ajax({
-                    type: 'POST',
-                    url: 'ajax-tab.php',
-                    dataType: 'json',
-                    data: {
-                        ajax: true,
-                        controller: '{$insuranceConfigurationController}',
-                        action: 'SaveConfigInsurance',
-                        token: '{$token}',
-                        config: e.data
-                    },
-                })
-                    .success(function(data) {
-                        $('.alma-success').html(data.message).show();
-                    })
-                    .error(function(e) {
-                        if (e.status !== 200) {
-                            let jsonData = JSON.parse(e.responseText);
-                            $('.alma-danger').html(jsonData.error.msg).show();
-                        }
-                    });
+        function waitForScript()
+        {
+            if (typeof sendConfigurationInsuranceParams !== 'undefined') {
+                setTimeout(sendConfigurationInsuranceParams(insuranceConfigurationParams), 650)
+            } else {
+                console.log('re set timeout')
+                setTimeout(waitForScript, 450)
             }
         }
-
-        const almaGetInsuranceConfigurationData = () => {
-            const iframe = document.getElementById('config-alma-iframe').contentWindow
-
-            const promise = new Promise((resolve) => {
-                currentResolve = resolve
-                iframe.postMessage('send value', '*')
-                window.addEventListener('message', messageCallback)
-            }).then((data) => {
-                currentResolve = null
-                window.removeEventListener('message', messageCallback)
-            })
-        }
-        window.getData = almaGetInsuranceConfigurationData
-        almaGetInsuranceConfigurationData()
-    });
+        waitForScript();
+        loadConfigurationInsurance('{$domainInsuranceUrl}', '{$insuranceConfigurationController}', '{$token}');
+    })
 </script>

@@ -1,6 +1,6 @@
 <?php
 /**
- * 2018-2023 Alma SAS.
+ * 2018-2024 Alma SAS.
  *
  * THE MIT LICENSE
  *
@@ -18,7 +18,7 @@
  * IN THE SOFTWARE.
  *
  * @author    Alma SAS <contact@getalma.eu>
- * @copyright 2018-2023 Alma SAS
+ * @copyright 2018-2024 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
@@ -27,14 +27,18 @@ namespace Alma\PrestaShop\Traits;
 use Alma\PrestaShop\Factories\AddressFactory;
 use Alma\PrestaShop\Factories\CarrierFactory;
 use Alma\PrestaShop\Factories\CartFactory;
+use Alma\PrestaShop\Factories\CombinationFactory;
 use Alma\PrestaShop\Factories\ContextFactory;
 use Alma\PrestaShop\Factories\CurrencyFactory;
 use Alma\PrestaShop\Factories\CustomerFactory;
 use Alma\PrestaShop\Factories\EligibilityFactory;
+use Alma\PrestaShop\Factories\LinkFactory;
 use Alma\PrestaShop\Factories\MediaFactory;
 use Alma\PrestaShop\Factories\ModuleFactory;
 use Alma\PrestaShop\Factories\OrderStateFactory;
 use Alma\PrestaShop\Factories\PhpFactory;
+use Alma\PrestaShop\Factories\ProductFactory;
+use Alma\PrestaShop\Factories\ToolsFactory;
 use Alma\PrestaShop\Helpers\AddressHelper;
 use Alma\PrestaShop\Helpers\Admin\AdminInsuranceHelper;
 use Alma\PrestaShop\Helpers\Admin\TabsHelper;
@@ -51,6 +55,9 @@ use Alma\PrestaShop\Helpers\CustomFieldsHelper;
 use Alma\PrestaShop\Helpers\DateHelper;
 use Alma\PrestaShop\Helpers\EligibilityHelper;
 use Alma\PrestaShop\Helpers\FeePlanHelper;
+use Alma\PrestaShop\Helpers\ImageHelper;
+use Alma\PrestaShop\Helpers\InsuranceHelper;
+use Alma\PrestaShop\Helpers\InsuranceProductHelper;
 use Alma\PrestaShop\Helpers\LanguageHelper;
 use Alma\PrestaShop\Helpers\LocaleHelper;
 use Alma\PrestaShop\Helpers\MediaHelper;
@@ -73,9 +80,17 @@ use Alma\PrestaShop\Model\CarrierData;
 use Alma\PrestaShop\Model\CartData;
 use Alma\PrestaShop\Model\PaymentData;
 use Alma\PrestaShop\Model\ShippingData;
+use Alma\PrestaShop\Modules\OpartSaveCart\OpartSaveCartCartRepository;
+use Alma\PrestaShop\Modules\OpartSaveCart\OpartSaveCartCartService;
 use Alma\PrestaShop\Repositories\AlmaInsuranceProductRepository;
+use Alma\PrestaShop\Repositories\CartProductRepository;
 use Alma\PrestaShop\Repositories\OrderRepository;
 use Alma\PrestaShop\Repositories\ProductRepository;
+use Alma\PrestaShop\Services\AttributeGroupProductService;
+use Alma\PrestaShop\Services\AttributeProductService;
+use Alma\PrestaShop\Services\CartService;
+use Alma\PrestaShop\Services\CombinationProductAttributeService;
+use Alma\PrestaShop\Services\InsuranceApiService;
 use Alma\PrestaShop\Services\InsuranceService;
 
 if (!defined('_PS_VERSION_')) {
@@ -251,7 +266,9 @@ trait BuilderTrait
             return $moduleFactory;
         }
 
-        return new ModuleFactory();
+        return new ModuleFactory(
+            $this->getToolsHelper()
+        );
     }
 
     /**
@@ -756,7 +773,9 @@ trait BuilderTrait
             return $mediaFactory;
         }
 
-        return new MediaFactory();
+        return new MediaFactory(
+            $this->getModuleFactory()
+        );
     }
 
     /**
@@ -891,6 +910,34 @@ trait BuilderTrait
     }
 
     /**
+     * @param ToolsFactory $toolsFactory
+     *
+     * @return ToolsFactory
+     */
+    public function getToolsFactory($toolsFactory = null)
+    {
+        if ($toolsFactory) {
+            return $toolsFactory;
+        }
+
+        return new ToolsFactory();
+    }
+
+    /**
+     * @param ImageHelper $imageHelper
+     *
+     * @return ImageHelper
+     */
+    public function getImageHelper($imageHelper = null)
+    {
+        if ($imageHelper) {
+            return $imageHelper;
+        }
+
+        return new ImageHelper();
+    }
+
+    /**
      * @param EligibilityFactory $eligibilityFactory
      *
      * @return EligibilityFactory
@@ -939,6 +986,133 @@ trait BuilderTrait
     }
 
     /**
+     * @param CartProductRepository $cartProductRepository
+     *
+     * @return CartProductRepository
+     */
+    public function getCartProductRepository($cartProductRepository = null)
+    {
+        if ($cartProductRepository) {
+            return $cartProductRepository;
+        }
+
+        return new CartProductRepository();
+    }
+
+    /**
+     * @param $productFactory
+     *
+     * @return ProductFactory|mixed
+     */
+    public function getProductFactory($productFactory = null)
+    {
+        if ($productFactory) {
+            return $productFactory;
+        }
+
+        return new ProductFactory();
+    }
+
+    /**
+     * @param $combinationFactory
+     *
+     * @return CombinationFactory|mixed
+     */
+    public function getCombinationFactory($combinationFactory = null)
+    {
+        if ($combinationFactory) {
+            return $combinationFactory;
+        }
+
+        return new CombinationFactory();
+    }
+
+    /**
+     * @param $linkFactory
+     *
+     * @return LinkFactory|mixed
+     */
+    public function getLinkFactory($linkFactory = null)
+    {
+        if ($linkFactory) {
+            return $linkFactory;
+        }
+
+        return new LinkFactory();
+    }
+
+    /**
+     * @param OpartSaveCartCartService $cartService
+     *
+     * @return OpartSaveCartCartService
+     */
+    public function getOpartSaveCartCartService($cartService = null)
+    {
+        if ($cartService) {
+            return $cartService;
+        }
+
+        return new OpartSaveCartCartService(
+           $this->getModuleFactory(),
+           $this->getOpartSaveCartRepository(),
+           $this->getToolsFactory(),
+           $this->getCartFactory()
+        );
+    }
+
+    /**
+     * @param OpartSaveCartCartRepository $opartSaveCartRepository
+     *
+     * @return OpartSaveCartCartRepository
+     */
+    public function getOpartSaveCartRepository($opartSaveCartRepository = null)
+    {
+        if ($opartSaveCartRepository) {
+            return $opartSaveCartRepository;
+        }
+
+        return new OpartSaveCartCartRepository();
+    }
+
+    /**
+     * @param InsuranceHelper $insuranceHelper
+     *
+     * @return InsuranceHelper
+     */
+    public function getInsuranceHelper($insuranceHelper = null)
+    {
+        if ($insuranceHelper) {
+            return $insuranceHelper;
+        }
+
+        return new InsuranceHelper(
+            $this->getCartProductRepository(),
+            $this->getProductRepository(),
+            $this->getAlmaInsuranceProductRepository(),
+            $this->getContextFactory(),
+            $this->getToolsHelper(),
+            $this->getSettingsHelper()
+        );
+    }
+
+    /**
+     * @param InsuranceProductHelper $insuranceProductHelper
+     *
+     * @return InsuranceProductHelper
+     */
+    public function getInsuranceProductHelper($insuranceProductHelper = null)
+    {
+        if ($insuranceProductHelper) {
+            return $insuranceProductHelper;
+        }
+
+        return new InsuranceProductHelper(
+            $this->getAlmaInsuranceProductRepository(),
+            $this->getContextFactory()
+        );
+    }
+
+    /**
      * @param Logger $paymentHelper
      *
      * @return Logger
@@ -950,5 +1124,82 @@ trait BuilderTrait
         }
 
         return new Logger();
+    }
+
+    /**
+     * @param AttributeGroupProductService $attributeGroupProductService
+     *
+     * @return AttributeGroupProductService
+     */
+    public function getAttributeGroupProductService($attributeGroupProductService = null)
+    {
+        if ($attributeGroupProductService) {
+            return $attributeGroupProductService;
+        }
+
+        return new AttributeGroupProductService();
+    }
+
+    /**
+     * @param AttributeProductService $attributeProductService
+     *
+     * @return AttributeProductService
+     */
+    public function getAttributeProductService($attributeProductService = null)
+    {
+        if ($attributeProductService) {
+            return $attributeProductService;
+        }
+
+        return new AttributeProductService();
+    }
+
+    /**
+     * @param CombinationProductAttributeService $combinationProductAttributeService
+     *
+     * @return CombinationProductAttributeService
+     */
+    public function getCombinationProductAttributeService($combinationProductAttributeService = null)
+    {
+        if ($combinationProductAttributeService) {
+            return $combinationProductAttributeService;
+        }
+
+        return new CombinationProductAttributeService();
+    }
+
+    /**
+     * @param CartService $cartService
+     *
+     * @return CartService
+     */
+    public function getCartService($cartService = null)
+    {
+        if ($cartService) {
+            return $cartService;
+        }
+
+        return new CartService(
+            $this->getCartProductRepository(),
+            $this->getContextFactory(),
+            $this->getOpartSaveCartCartService(),
+            $this->getInsuranceHelper(),
+            $this->getInsuranceProductHelper(),
+            $this->getToolsFactory()
+        );
+    }
+
+    /**
+     * @param InsuranceApiService $insuranceApiService
+     *
+     * @return InsuranceApiService
+     */
+    public function getInsuranceApiService($insuranceApiService = null)
+    {
+        if ($insuranceApiService) {
+            return $insuranceApiService;
+        }
+
+        return new InsuranceApiService();
     }
 }

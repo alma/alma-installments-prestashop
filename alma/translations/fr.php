@@ -1,6 +1,6 @@
 <?php
 /**
- * 2018-2023 Alma SAS.
+ * 2018-2024 Alma SAS.
  *
  * THE MIT LICENSE
  *
@@ -18,7 +18,7 @@
  * IN THE SOFTWARE.
  *
  * @author    Alma SAS <contact@getalma.eu>
- * @copyright 2018-2023 Alma SAS
+ * @copyright 2018-2024 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 global $_MODULE;
@@ -31,6 +31,7 @@ $_MODULE['<{alma}prestashop>alma_36359547b09bdb31f46c419a0bd5807e'] = 'Catégori
 $_MODULE['<{alma}prestashop>alma_7bab99339291e7eea710b4a998e663de'] = 'Alma nécessite l\'extension PHP cURL';
 $_MODULE['<{alma}prestashop>alma_fbb47375d2272bef79f5722a183bf1ec'] = 'Alma nécessite l\'extension PHP JSON';
 $_MODULE['<{alma}prestashop>alma_7fb83ba9cf3cc38857a2ddae98534d22'] = 'Alma nécessite OpenSSL >= 1.0.1';
+$_MODULE['<{alma}prestashop>modulefactorytest_2c53dea2326232a2d867ddd1d2206aa0'] = 'Payer maintenant par carte de crédit';
 $_MODULE['<{alma}prestashop>wrongcredentialsexception_cc76de47de858ac2fa2964f534ecfdfb'] = 'Impossible de se connecter à Alma en utilisant vos clés API.';
 $_MODULE['<{alma}prestashop>wrongcredentialsexception_733b6ddadc31fd97174b0cfe69b584c9'] = 'Veuillez vérifier vos clés sur votre tableau de bord %1$sAlma%2$s.';
 $_MODULE['<{alma}prestashop>wrongparamsexception_8ec75b5f68c49d1d6541b1e318a8120d'] = 'Clé(s) d\'erreur : %1$s.';
@@ -146,7 +147,7 @@ $_MODULE['<{alma}prestashop>insurancehelper_eaff1bdf24fcffe0e14e29a1bff51a12'] =
 $_MODULE['<{alma}prestashop>insurancehelper_f1206f9fadc5ce41694f69129aecac26'] = 'Configurer';
 $_MODULE['<{alma}prestashop>insurancehelper_7442e29d7d53e549b78d93c46b8cdcfc'] = 'Commandes';
 $_MODULE['<{alma}prestashop>admininsurancehelper_eaff1bdf24fcffe0e14e29a1bff51a12'] = 'Assurance';
-$_MODULE['<{alma}prestashop>admininsurancehelper_f1206f9fadc5ce41694f69129aecac26'] = 'Configurer';
+$_MODULE['<{alma}prestashop>admininsurancehelper_f1206f9fadc5ce41694f69129aecac26'] = 'Configuration';
 $_MODULE['<{alma}prestashop>admininsurancehelper_7442e29d7d53e549b78d93c46b8cdcfc'] = 'Commandes';
 $_MODULE['<{alma}prestashop>insuranceservice_d87aee5118a62a7ff6c21e4ac31006c5'] = 'Par la présente, je reconnais accepter de souscrire à l\'assurance proposée par Alma. Ce faisant, je confirme avoir préalablement pris connaissance de la [notice d\'information valant conditions générales], du [document d\'information sur le produit d\'assurance], et de la [fiche d\'information et de conseil précontractuelle]. J\'y adhère sans réserve et accepte de signer électroniquement les différents documents formant mon contrat, le cas échéant. Je consens expressément à la collecte et à l\'utilisation de mes données personnelles aux fins de la souscription et de la gestion de mon (mes) contrat(s) d\'assurance.';
 $_MODULE['<{alma}prestashop>adminalmainsuranceconfiguration_b824200e9b8aca1fbb762d6566ff0cd7'] = 'Votre configuration a été sauvegardée';
@@ -299,6 +300,11 @@ $_MODULE['<{alma}prestashop>getcontent_8c10d3b0970a247fc554062dc9055fd1'] = 'Le 
 $_MODULE['<{alma}prestashop>getcontent_84b96a3ca61f4425b3fd56534a89a653'] = 'Impossible d\'enregistrer le partage des paramètres de paiement, veuillez réessayer plus tard.';
 $_MODULE['<{alma}prestashop>getcontent_7f40d377cc4942c4f0d6e75a736f8445'] = 'Configuration enregistrée avec succès';
 $_MODULE['<{alma}prestashop>cartproducts_39f9a4a4bf8387aa7c0478f98b713f91'] = 'Supprimer l\'assurance';
+$_MODULE['<{alma}prestashop>cartproducts_7da9ba421c3f84f283070d68bb7adca1'] = 'Assurance Alma';
+$_MODULE['<{alma}prestashop>cartproducts_adcd954ece839e7da469e9b37801fa69'] = 'Protéger votre produit avec';
+$_MODULE['<{alma}prestashop>cartproducts_4cc10fb1d9332d404cc8016b47a1afd1'] = 'Voir les assurances disponibles';
+$_MODULE['<{alma}prestashop>widgetaddinsuranceproducts_f1aab89a3a1e86807c8dffa61d41ded6'] = 'Protégez le reste de vos produits avec';
+$_MODULE['<{alma}prestashop>widgetaddinsuranceproducts_f28220d70798406523119d998573b489'] = 'Je veux assurer tous les [1]%1$s[/1] restants de mon panier';
 $_MODULE['<{alma}prestashop>fees_3acc62b245d8bc10f04d81f69d85b685'] = '(Sans frais)';
 $_MODULE['<{alma}prestashop>feeplan_64408fc092e84b9eb352626a0bcbbdf7'] = 'TAEG fixe';
 $_MODULE['<{alma}prestashop>feeplan_ae9a134243362e66fef28a6b2e8a77c4'] = 'Votre panier';

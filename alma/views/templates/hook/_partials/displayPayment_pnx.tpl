@@ -1,5 +1,5 @@
 {*
- * 2018-2023 Alma SAS
+ * 2018-2024 Alma SAS
  *
  * THE MIT LICENSE
  *
@@ -17,7 +17,7 @@
  * IN THE SOFTWARE.
  *
  * @author    Alma SAS <contact@getalma.eu>
- * @copyright 2018-2023 Alma SAS
+ * @copyright 2018-2024 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  *}
 {if $option.disabled}
@@ -59,7 +59,7 @@
 
                         <span class="alma-button--logo">
                             <img src="{$option.logo|escape:'htmlall':'UTF-8'}" alt="Alma">
-                        </span>                        
+                        </span>
                         <span class="alma-button--text">
                             <span class="alma-button--title">{$option.text|escape:'htmlall':'UTF-8'}</span>
                             {if $option.desc}

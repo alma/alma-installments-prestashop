@@ -1,5 +1,5 @@
 {*
- * 2018-2023 Alma SAS
+ * 2018-2024 Alma SAS
  *
  * THE MIT LICENSE
  *
@@ -17,7 +17,7 @@
  * IN THE SOFTWARE.
  *
  * @author    Alma SAS <contact@getalma.eu>
- * @copyright 2018-2023 Alma SAS
+ * @copyright 2018-2024 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  *}
 {$n=$fee_plan['installments_count']}
@@ -36,7 +36,7 @@
     {l s='You can offer %d-deferred payments for amounts between %d€ and %d€.' sprintf=array($n, $min_amount, $max_amount) mod='alma'}
     {else}
         {l s='You can offer %d-installment payments for amounts between %d€ and %d€.' sprintf=array($n, $min_amount, $max_amount) mod='alma'}
-    {/if}        
+    {/if}
     </b>
 </p>
 
