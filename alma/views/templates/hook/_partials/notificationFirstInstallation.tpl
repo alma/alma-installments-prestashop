@@ -42,6 +42,8 @@
         <br />
     </p>
     <p>
-        {l s='If you have any problems, please contact us by email at %1$ssupport@getalma.eu%2$s' sprintf=['<a href="mailto:support@getalma.eu">', '</a>'] mod='alma'}
+        {almaDisplayHtml}
+            {l s='If you have any problems, please contact us by email at %1$ssupport@getalma.eu%2$s' sprintf=['<a href="mailto:support@getalma.eu">', '</a>'] mod='alma'}
+        {/almaDisplayHtml}
     </p>
 </div>
