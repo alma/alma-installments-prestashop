@@ -32,7 +32,7 @@
                     <li>
                         <strong>
                             {almaDisplayHtml}
-                                {l s='Associate PrestaShop account (%1$sjust below%2$s)' sprintf=['<a id="alma-associate-shop-button" href="#">', "</a>"] mod='alma'}
+                                {l s='Associate PrestaShop account (just below)' mod='alma'}
                             {/almaDisplayHtml}
                         </strong>
                     </li>
