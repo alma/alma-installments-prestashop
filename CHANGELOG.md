@@ -1,5 +1,34 @@
 # Changelog
 
+## v4.1.0 - 2024-07-08
+
+- [DEVX] Fix release drafter branch
+- fix: Banner displays another message when account is linked
+- [cart-item] Integrate the block see the insurance available for the
+- chore(deps): update pre-commit hook returntocorp/semgrep to v1.78.0
+- [insurance-refacto] handle savecart module with insurance
+- feat: redesign widget cart and wording
+- Feature/ecom 1815 ps change insurance logo
+- feat: Delete icon should be black
+- [ps-account] Feature/ecom 1767 ps new designed banner
+- [cart-item] add name product to send to insurance widget
+- [cart-item] feat: new design cart item + add all same insurance on cart page
+- chore(deps): update pre-commit hook returntocorp/semgrep to v1.76.0
+- Fix compatibility PHP 5.6
+- [DEVX][RENOVATE] Freeze composer version
+- fix: builder module
+- Gather cart data from pnx and deferred payments
+- [ps-account] Fix display ps account
+- [cart-item] send quantity to widget and get insurance quantity to buy
+- Add commit message check
+- chore(deps): update pre-commit repositories
+- chore(deps): update docker updates
+- [DEX-866] Add infos in PR about E2E tests run status
+- [devx] Use a mysql docker volume instead of local folder
+- [DEVX] Fix release slack message
+- Revert upgrade to slackify-markdown-action, freeze version on Renovate
+- Backport main to develop
+
 ## v4.0.1 - 2024-06-04
 
 ### 🐛 Bug Fixes
@@ -272,16 +301,16 @@ fix: instance insurance productHelper
 
 - All logos have been updated to our latest branding
 - Adds an "Excluded categories" custom tab/page to let merchants deactivate Alma for categories of
-    products that are not compatible with our legal terms. The exclusion configuration is accessible via a new Tab in the
-    PrestaShop backoffice.
+  products that are not compatible with our legal terms. The exclusion configuration is accessible via a new Tab in the
+  PrestaShop backoffice.
 - Display a detailed payment plan for the selected Alma payment method at checkout.
 - Display a "badge" on product pages, which shows customers whether they can pay products with Alma and, if that's the
-    case, what the payment plan would be.
+  case, what the payment plan would be.
 - Correctly syncs fee plans display and information with Alma's API data
 - Temporarily removes the sending of shipping information as it causes a bug with orders with multiple carriers.
 - Fixes the appearance of config buttons in PrestaShop 1.5.
 - Fixes a bug in the IPN processing code that caused an exception to be thrown when the order had already been
-    processed.
+  processed.
 - Fixes issues with eligibility messages display when there are multiple activated fee plans
 - By default, display the module's own confirmation page template on PrestaShop 1.5 & 1.6 (only for new installations)
 - Added some code quality tooling to the repository
@@ -300,7 +329,7 @@ fix: instance insurance productHelper
 
 - Dependencies update
 - Send order reference to Alma upon payment confirmation, to make it easier for merchants to
-    associate Alma payments with actual orders in their PrestaShop orders
+  associate Alma payments with actual orders in their PrestaShop orders
 
 ## v1.2.6
 
@@ -353,7 +382,7 @@ fix: instance insurance productHelper
 Let's start following semver.
 
 - Adds User-Agent string containing the module's version, PrestaShop version, PHP client and PHP versions, to all
-    requests going to Alma's API.
+  requests going to Alma's API.
 
 ## v1.0.0
 
@@ -362,8 +391,8 @@ Features in the latest push to this release:
 
 - Compatible from PrestaShop 1.5.6.2 to 1.7.x
 - Module can be configured in Test and Live mode; Test mode only shows Alma's payment method to visitors who are also
-    logged in to the shop's backoffice
+  logged in to the shop's backoffice
 - A message displays below the cart to indicate whether the purchase is eligible to monthly installments
 - The module adds a payment method/payment option to the checkout, which redirects the user to Alma's payment page.
-    If everything goes right (i.e. Customer doesn't cancel, pays the right amount, ... ), an order is created and validated
-    upon customer return.
+  If everything goes right (i.e. Customer doesn't cancel, pays the right amount, ... ), an order is created and validated
+  upon customer return.
