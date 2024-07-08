@@ -2,32 +2,11 @@
 
 ## v4.1.0 - 2024-07-08
 
-- [DEVX] Fix release drafter branch
-- fix: Banner displays another message when account is linked
-- [cart-item] Integrate the block see the insurance available for the
-- chore(deps): update pre-commit hook returntocorp/semgrep to v1.78.0
-- [insurance-refacto] handle savecart module with insurance
-- feat: redesign widget cart and wording
-- Feature/ecom 1815 ps change insurance logo
-- feat: Delete icon should be black
-- [ps-account] Feature/ecom 1767 ps new designed banner
-- [cart-item] add name product to send to insurance widget
-- [cart-item] feat: new design cart item + add all same insurance on cart page
-- chore(deps): update pre-commit hook returntocorp/semgrep to v1.76.0
-- Fix compatibility PHP 5.6
-- [DEVX][RENOVATE] Freeze composer version
-- fix: builder module
-- Gather cart data from pnx and deferred payments
-- [ps-account] Fix display ps account
-- [cart-item] send quantity to widget and get insurance quantity to buy
-- Add commit message check
-- chore(deps): update pre-commit repositories
-- chore(deps): update docker updates
-- [DEX-866] Add infos in PR about E2E tests run status
-- [devx] Use a mysql docker volume instead of local folder
-- [DEVX] Fix release slack message
-- Revert upgrade to slackify-markdown-action, freeze version on Renovate
-- Backport main to develop
+- feat: Link your store with PS Account
+- feat: Insurance - add insurance in cart item
+- feat: Insurance - compatibility with save cart opartsavecart module
+- feat: Update cart data for PNX & Deferred
+- fix: Compatibility with PHP 5.6
 
 ## v4.0.1 - 2024-06-04
 
