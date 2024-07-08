@@ -1,6 +1,6 @@
 <?php
 /**
- * 2018-2023 Alma SAS.
+ * 2018-2024 Alma SAS.
  *
  * THE MIT LICENSE
  *
@@ -18,7 +18,7 @@
  * IN THE SOFTWARE.
  *
  * @author    Alma SAS <contact@getalma.eu>
- * @copyright 2018-2023 Alma SAS
+ * @copyright 2018-2024 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
@@ -28,10 +28,11 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-use Alma\PrestaShop\Builders\Admin\InsuranceHelperBuilder;
+use Alma\PrestaShop\Builders\Admin\InsuranceHelperBuilder as AdminInsuranceHelperBuilder;
 use Alma\PrestaShop\Builders\Helpers\CartHelperBuilder;
+use Alma\PrestaShop\Builders\Helpers\InsuranceHelperBuilder;
 use Alma\PrestaShop\Builders\Helpers\PriceHelperBuilder;
-use Alma\PrestaShop\Helpers\Admin\InsuranceHelper as AdminInsuranceHelper;
+use Alma\PrestaShop\Helpers\Admin\AdminInsuranceHelper;
 use Alma\PrestaShop\Helpers\CartHelper;
 use Alma\PrestaShop\Helpers\ConstantsHelper;
 use Alma\PrestaShop\Helpers\InsuranceHelper;
@@ -75,9 +76,12 @@ class DisplayProductActionsHookController extends FrontendHookController
     {
         parent::__construct($module);
 
-        $this->insuranceHelper = new InsuranceHelper();
         $insuranceHelperBuilder = new InsuranceHelperBuilder();
-        $this->adminInsuranceHelper = $insuranceHelperBuilder->getInstance();
+        $this->insuranceHelper = $insuranceHelperBuilder->getInstance();
+
+        $adminInsuranceHelperBuilder = new AdminInsuranceHelperBuilder();
+        $this->adminInsuranceHelper = $adminInsuranceHelperBuilder->getInstance();
+
         $this->productHelper = new ProductHelper();
 
         $priceHelperBuilder = new PriceHelperBuilder();
@@ -120,6 +124,7 @@ class DisplayProductActionsHookController extends FrontendHookController
 
         $staticPrice = $this->productHelper->getPriceStatic($productId, $productAttributeId);
         $staticPriceInCents = $this->priceHelper->convertPriceToCents($staticPrice);
+        $productName = isset($productParams['name']) ? $productParams['name'] : '';
 
         $merchantId = SettingsHelper::getMerchantId();
         $settings = $this->handleSettings($merchantId);
@@ -127,19 +132,15 @@ class DisplayProductActionsHookController extends FrontendHookController
         $this->context->smarty->assign([
             'settingsInsurance' => $settings,
             'iframeUrl' => sprintf(
-                '%s%s?cms_reference=%s&product_price=%s&merchant_id=%s&customer_session_id=%s&cart_id=%s',
+                '%s%s?cms_reference=%s&product_price=%s&product_name=%s&merchant_id=%s&customer_session_id=%s&cart_id=%s',
                 $this->adminInsuranceHelper->envUrl(),
                 ConstantsHelper::FO_IFRAME_WIDGET_INSURANCE_PATH,
                 $cmsReference,
                 $staticPriceInCents,
+                $productName,
                 $merchantId,
                 $this->context->session->getId(),
                 $this->cartHelper->getCartIdFromContext()
-            ),
-            'scriptModalUrl' => sprintf(
-                '%s%s',
-                $this->adminInsuranceHelper->envUrl(),
-                ConstantsHelper::SCRIPT_MODAL_WIDGET_INSURANCE_PATH
             ),
         ]);
 

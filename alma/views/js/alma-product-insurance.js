@@ -1,5 +1,5 @@
 /**
- * 2018-2023 Alma SAS
+ * 2018-2024 Alma SAS
  *
  * THE MIT LICENSE
  *
@@ -17,7 +17,7 @@
  * IN THE SOFTWARE.
  *
  * @author    Alma SAS <contact@getalma.eu>
- * @copyright 2018-2023 Alma SAS
+ * @copyright 2018-2024 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 const settings = JSON.parse(document.querySelector('#alma-widget-insurance-product-page').dataset.almaInsuranceSettings);
@@ -52,7 +52,7 @@ let quantity = 1;
                     }
                     if (typeof event.selectedAlmaInsurance !== 'undefined' && event.selectedAlmaInsurance !== null) {
                         insuranceSelected = true;
-                        addInputsInsurance(event.selectedAlmaInsurance);
+                        addInputsInsurance(event);
                     }
                     if (typeof event.selectedInsuranceData !== 'undefined' && event.selectedInsuranceData) {
                         removeInputInsurance();
@@ -119,7 +119,8 @@ function onloadAddInsuranceInputOnProductAlma() {
             selectedAlmaInsurance = e.data.selectedInsuranceData;
             prestashop.emit('updateProduct', {
                 selectedAlmaInsurance: selectedAlmaInsurance,
-                selectedInsuranceData: e.data.declinedInsurance
+                selectedInsuranceData: e.data.declinedInsurance,
+                selectedInsuranceQuantity: e.data.selectedInsuranceQuantity
             });
         } else if (currentResolve) {
             currentResolve(e.data);
@@ -136,13 +137,15 @@ function refreshWidget() {
         quantity = 1;
     }
 
-    getproductDataForApiCall(
+    getProductDataForApiCall(
         cmsReference,
         staticPriceToCents,
+        productDetails.name,
         settings.merchant_id,
         quantity,
         settings.cart_id,
-        settings.session_id
+        settings.session_id,
+        insuranceSelected
     );
 }
 
@@ -158,10 +161,17 @@ function createCmsReference(productDetails) {
     return undefined;
 }
 
-function addInputsInsurance(selectedAlmaInsurance) {
+function addInputsInsurance(event) {
     let formAddToCart = document.getElementById('add-to-cart-or-refresh');
+    let selectedInsuranceQuantity = event.selectedInsuranceQuantity;
 
-    handleInput('alma_id_insurance_contract', selectedAlmaInsurance.insuranceContractId, formAddToCart);
+    if (selectedInsuranceQuantity > quantity) {
+        selectedInsuranceQuantity = quantity
+    }
+
+    handleInput('alma_id_insurance_contract', event.selectedAlmaInsurance.insuranceContractId, formAddToCart);
+    handleInput('alma_quantity_insurance', selectedInsuranceQuantity, formAddToCart);
+
 }
 
 function handleInput(inputName, value, form) {
@@ -194,7 +204,7 @@ function removeInputInsurance() {
 }
 
 function addModalListenerToAddToCart() {
-    if (settings.is_add_to_cart_popup_insurance_activated === 'true') {
+    if (settings.isAddToCartPopupActivated === true) {
         let addToCart = document.querySelector('.add-to-cart');
         addToCart.removeEventListener("click",insuranceListener)
         addToCart.addEventListener("click", insuranceListener);

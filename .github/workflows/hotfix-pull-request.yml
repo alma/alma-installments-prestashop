@@ -20,13 +20,13 @@ jobs:
           ref: main
 
       - name: Release drafter
-        uses: release-drafter/release-drafter@v5
+        uses: release-drafter/release-drafter@v6
         id: release-drafter
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Update release draft
-        uses: actions/github-script@v6
+        uses: actions/github-script@v7
         with:
           script: |
             const { owner, repo } = context.repo;
@@ -55,7 +55,7 @@ jobs:
           title: Release ${{ steps.release-drafter.outputs.tag_name }}
           body: |
             Update version to ${{ steps.release-drafter.outputs.tag_name }}
-    
+
             ### Checklist of actions to be done before merging
             - [ ] Review and update the CHANGELOG.md if needed
             - [ ] Review and update the Github release draft if needed
@@ -63,4 +63,3 @@ jobs:
           branch: hotfix/${{ steps.release-drafter.outputs.tag_name }}
           base: main
           labels: hotfix, release
-

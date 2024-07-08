@@ -1,6 +1,6 @@
 <?php
 /**
- * 2018-2023 Alma SAS.
+ * 2018-2024 Alma SAS.
  *
  * THE MIT LICENSE
  *
@@ -18,7 +18,7 @@
  * IN THE SOFTWARE.
  *
  * @author    Alma SAS <contact@getalma.eu>
- * @copyright 2018-2023 Alma SAS
+ * @copyright 2018-2024 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 global $_MODULE;
@@ -26,14 +26,15 @@ $_MODULE = [];
 $_MODULE['<{alma}prestashop>alma_c407a14c73b61d727c55a42fb531f2e3'] = '1x 2x 3x 4x, D+15 oder D+30 Alma - Ratenzahlung und Aufschub';
 $_MODULE['<{alma}prestashop>alma_7f9c508fa226d3e72644403653115c29'] = 'Verkaufen Sie mehr, indem Sie die Zufriedenheit Ihrer Kunden erhöhen! Sichern Sie Ihre Liquidität mit Alma, der einfachen und garantierten Ratenzahlung';
 $_MODULE['<{alma}prestashop>alma_ce67a7d4b82bc360a17d25943924b388'] = 'Sind Sie sicher, dass Sie die Alma-Zahlungen in Ihrem Shop deaktivieren möchten?';
-$_MODULE['<{alma}prestashop>alma_f1206f9fadc5ce41694f69129aecac26'] = 'Konfigurieren Sie';
+$_MODULE['<{alma}prestashop>alma_f1206f9fadc5ce41694f69129aecac26'] = 'Configure';
 $_MODULE['<{alma}prestashop>alma_36359547b09bdb31f46c419a0bd5807e'] = 'Ausgeschlossene Kategorien';
 $_MODULE['<{alma}prestashop>alma_7bab99339291e7eea710b4a998e663de'] = 'Alma erfordert die PHP-cURL-Erweiterung';
 $_MODULE['<{alma}prestashop>alma_fbb47375d2272bef79f5722a183bf1ec'] = 'Alma erfordert die PHP-JSON-Erweiterung';
 $_MODULE['<{alma}prestashop>alma_7fb83ba9cf3cc38857a2ddae98534d22'] = 'Alma erfordert OpenSSL 1.0.1 oder höher';
+$_MODULE['<{alma}prestashop>modulefactorytest_2c53dea2326232a2d867ddd1d2206aa0'] = 'Jetzt per Kreditkarte bezahlen';
 $_MODULE['<{alma}prestashop>wrongcredentialsexception_cc76de47de858ac2fa2964f534ecfdfb'] = 'Could not connect to Alma using your API keys.';
 $_MODULE['<{alma}prestashop>wrongcredentialsexception_733b6ddadc31fd97174b0cfe69b584c9'] = 'Please double check your keys on your %1$sAlma dashboard%2$s.';
-$_MODULE['<{alma}prestashop>wrongparamsexception_8ec75b5f68c49d1d6541b1e318a8120d'] = 'Fehlerschlüssel: %1$s.';
+$_MODULE['<{alma}prestashop>wrongparamsexception_8ec75b5f68c49d1d6541b1e318a8120d'] = 'Error(s) key(s): %1$s.';
 $_MODULE['<{alma}prestashop>activationexception_775ab97c1b3d6e302ff6c35731e221fc'] = 'Your Alma account needs to be activated before you can use Alma on your shop.';
 $_MODULE['<{alma}prestashop>activationexception_29078267ae901ff90213dc0960ad24c2'] = 'Go to your %1$sAlma dashboard%2$s to activate your account.';
 $_MODULE['<{alma}prestashop>activationexception_aabe795eef98c70dab6d990341398cec'] = '%1$sRefresh%2$s the page when ready.';
@@ -126,7 +127,7 @@ $_MODULE['<{alma}prestashop>producteligibilityadminformbuilder_97cadaaeae5141e73
 $_MODULE['<{alma}prestashop>producteligibilityadminformbuilder_500cde25580890603dc759aac02ff085'] = 'Widget auf der Produktseite anzeigen';
 $_MODULE['<{alma}prestashop>debugadminformbuilder_3132e398e6e7acace9290305a55a7d25'] = 'Protokollierung aktivieren';
 $_MODULE['<{alma}prestashop>debugadminformbuilder_1bd879809ceec8809db58ca2f12965bc'] = 'Debug-Optionen';
-$_MODULE['<{alma}prestashop>productrepository_add80e02e8a8bd91d737ab2de2ad8646'] = 'Versicherung bei Alma';
+$_MODULE['<{alma}prestashop>productrepository_add80e02e8a8bd91d737ab2de2ad8646'] = 'Insurance by Alma';
 $_MODULE['<{alma}prestashop>paymentvalidation_efa820507b1951ee5722003639b1a0b0'] = 'Die Ratenzahlung mit Alma ist in dieser Währung nicht möglich';
 $_MODULE['<{alma}prestashop>paymentvalidation_1d879e270cfb195f257aab3116618d8b'] = 'Alma - +%d Tage Zahlungsfrist';
 $_MODULE['<{alma}prestashop>paymentvalidation_2ea09287a94f2bc88b459fc7d5a31b6b'] = 'Alma - Jetzt bezahlen';
@@ -142,21 +143,27 @@ $_MODULE['<{alma}prestashop>customfieldshelper_4f05e285f22aa8b5d8f88f302c1633c1'
 $_MODULE['<{alma}prestashop>customfieldshelper_7a854e750fe5f3e7120020c7c20987d4'] = 'Ihr Warenkorb ist nicht für Zahlungen mit Alma geeignet.';
 $_MODULE['<{alma}prestashop>customfieldshelper_6ed45ebd72fcca0fc0c271128e9d7b7b'] = 'Beim Versand';
 $_MODULE['<{alma}prestashop>apihelper_fc610b81ff31f9d969ddb659cd8248c1'] = 'Alma ist beim Abrufen des Händlerstatus auf einen Fehler gestoßen. Bitte überprüfen Sie Ihre Api-Schlüssel oder versuchen Sie es später erneut.';
-$_MODULE['<{alma}prestashop>insurancehelper_eaff1bdf24fcffe0e14e29a1bff51a12'] = 'Versicherung';
-$_MODULE['<{alma}prestashop>insurancehelper_f1206f9fadc5ce41694f69129aecac26'] = 'Konfigurieren Sie';
-$_MODULE['<{alma}prestashop>insurancehelper_7442e29d7d53e549b78d93c46b8cdcfc'] = 'Bestellungen';
-$_MODULE['<{alma}prestashop>insuranceservice_d87aee5118a62a7ff6c21e4ac31006c5'] = 'Ich bestätige hiermit, dass ich die von Alma angebotene Versicherung abschließen möchte. Damit bestätige ich, dass ich zuvor die [Informationsschrift, die die allgemeinen Bedingungen darstellt], das [Informationsdokument zum Versicherungsprodukt] und das [vorvertragliche Informations- und Beratungsblatt] gelesen habe. Ich stimme dem vorbehaltlos zu und erkläre mich bereit, die verschiedenen Dokumente, die meinen Vertrag bilden, gegebenenfalls elektronisch zu unterzeichnen. Ich erkläre mich ausdrücklich damit einverstanden, dass meine personenbezogenen Daten zum Zwecke des Abschlusses und der Verwaltung meines Versicherungsvertrags bzw. meiner Versicherungsverträge erhoben und verwendet werden.';
-$_MODULE['<{alma}prestashop>adminalmainsuranceconfiguration_b824200e9b8aca1fbb762d6566ff0cd7'] = 'Ihre Konfiguration wurde gespeichert';
-$_MODULE['<{alma}prestashop>adminalmainsuranceconfiguration_4a39c6a33c3441762924914168d2a387'] = 'Fehler beim Erstellen der Konfiguration Alma Versicherung: %1$s';
-$_MODULE['<{alma}prestashop>adminalmainsuranceorders_a66f446516cd125af12bd25073f88b78'] = 'Aufträge mit Versicherung';
-$_MODULE['<{alma}prestashop>adminalmainsuranceorders_49414cda71621b3ee718ae5ff40804c5'] = 'Id Bestellung';
-$_MODULE['<{alma}prestashop>adminalmainsuranceorders_63d5049791d9d79d86e9a108b0a999ca'] = 'Referenz';
-$_MODULE['<{alma}prestashop>adminalmainsuranceorders_bbd3a18e6d45b8331cf8a715f3f0008d'] = 'Status der Bestellung';
-$_MODULE['<{alma}prestashop>adminalmainsuranceorders_ce26601dac0dea138b7295f02b7620a7'] = 'Kunde';
-$_MODULE['<{alma}prestashop>adminalmainsuranceorders_8dfcee4c6da50ea3690524c690303ab8'] = 'Nb-Versicherungen';
-$_MODULE['<{alma}prestashop>adminalmainsuranceorders_44749712dbec183e983dcd78a7736c41'] = 'Datum';
-$_MODULE['<{alma}prestashop>adminalmainsuranceorders_650be61892bf690026089544abbd9d26'] = 'Modus';
-$_MODULE['<{alma}prestashop>adminalmainsuranceorders_4351cfebe4b61d8aa5efa1d020710005'] = 'Siehe';
+$_MODULE['<{alma}prestashop>insurancehelper_eaff1bdf24fcffe0e14e29a1bff51a12'] = 'Insurance';
+$_MODULE['<{alma}prestashop>insurancehelper_f1206f9fadc5ce41694f69129aecac26'] = 'Configure';
+$_MODULE['<{alma}prestashop>insurancehelper_7442e29d7d53e549b78d93c46b8cdcfc'] = 'Orders';
+$_MODULE['<{alma}prestashop>admininsurancehelper_eaff1bdf24fcffe0e14e29a1bff51a12'] = 'Insurance';
+$_MODULE['<{alma}prestashop>admininsurancehelper_f1206f9fadc5ce41694f69129aecac26'] = 'Configure';
+$_MODULE['<{alma}prestashop>admininsurancehelper_7442e29d7d53e549b78d93c46b8cdcfc'] = 'Orders';
+$_MODULE['<{alma}prestashop>insurancehelper_eaff1bdf24fcffe0e14e29a1bff51a12'] = 'Insurance';
+$_MODULE['<{alma}prestashop>insurancehelper_f1206f9fadc5ce41694f69129aecac26'] = 'Configure';
+$_MODULE['<{alma}prestashop>insurancehelper_7442e29d7d53e549b78d93c46b8cdcfc'] = 'Orders';
+$_MODULE['<{alma}prestashop>insuranceservice_d87aee5118a62a7ff6c21e4ac31006c5'] = 'I hereby acknowledge my acceptance to subscribe to the insurance offered by Alma. In doing so, I confirm that I have previously reviewed the [information notice, which constitutes the general conditions], the [insurance product information document], and the [pre-contractual information and advice sheet]. I ahead to it without reservation and agree to electronically sign the various documents forming my contract, if applicable. I expressly consent to the collection and use of my personal data for the purpose of subscribing to and managing my insurance contract(s).';
+$_MODULE['<{alma}prestashop>adminalmainsuranceconfiguration_b824200e9b8aca1fbb762d6566ff0cd7'] = 'Your configuration has been saved';
+$_MODULE['<{alma}prestashop>adminalmainsuranceconfiguration_4a39c6a33c3441762924914168d2a387'] = 'Error creating configuration Alma insurance: %1$s';
+$_MODULE['<{alma}prestashop>adminalmainsuranceorders_a66f446516cd125af12bd25073f88b78'] = 'Orders with insurance';
+$_MODULE['<{alma}prestashop>adminalmainsuranceorders_49414cda71621b3ee718ae5ff40804c5'] = 'Id Order';
+$_MODULE['<{alma}prestashop>adminalmainsuranceorders_63d5049791d9d79d86e9a108b0a999ca'] = 'Reference';
+$_MODULE['<{alma}prestashop>adminalmainsuranceorders_bbd3a18e6d45b8331cf8a715f3f0008d'] = 'Order Status';
+$_MODULE['<{alma}prestashop>adminalmainsuranceorders_ce26601dac0dea138b7295f02b7620a7'] = 'Customer';
+$_MODULE['<{alma}prestashop>adminalmainsuranceorders_8dfcee4c6da50ea3690524c690303ab8'] = 'Nb Insurances';
+$_MODULE['<{alma}prestashop>adminalmainsuranceorders_44749712dbec183e983dcd78a7736c41'] = 'Date';
+$_MODULE['<{alma}prestashop>adminalmainsuranceorders_650be61892bf690026089544abbd9d26'] = 'Mode';
+$_MODULE['<{alma}prestashop>adminalmainsuranceorders_4351cfebe4b61d8aa5efa1d020710005'] = 'View';
 $_MODULE['<{alma}prestashop>adminalmacategories_b718adec73e04ce3ec720dd11a06a308'] = 'ID';
 $_MODULE['<{alma}prestashop>adminalmacategories_49ee3087348e8d44e1feda1917443987'] = 'Name';
 $_MODULE['<{alma}prestashop>adminalmacategories_b5a7adde1af5c87d7fd797b6245c2a39'] = 'Beschreibung';
@@ -168,9 +175,9 @@ $_MODULE['<{alma}prestashop>adminalmarefunds_69c00601627a9011bf5c4816abf00b5a'] 
 $_MODULE['<{alma}prestashop>adminalmarefunds_9bbf53faf470010110269d041cab1e9f'] = 'Die Erstattung wurde bearbeitet';
 $_MODULE['<{alma}prestashop>adminalmarefunds_4ba820211f99849725468bd56fc50216'] = 'Fehler: Betrag ist höher als der maximal erstattungsfähige Betrag';
 $_MODULE['<{alma}prestashop>adminalmarefunds_dde9188155937e885e5f5b002e6dcb39'] = 'Fehler: unbekannter Erstattungstyp (%s)';
-$_MODULE['<{alma}prestashop>subscription_e8b288e3bc9f8001cb5e625c549420e9'] = 'Abonnement-ID fehlt';
-$_MODULE['<{alma}prestashop>subscription_0d06849941740b4bdd9281f07d28e0dd'] = 'Aktion ist unbekannt';
-$_MODULE['<{alma}prestashop>subscription_a8cec6fae3a5545458fcf2f8a34dcbe9'] = 'Fehler bei der Kündigung des Abonnements';
+$_MODULE['<{alma}prestashop>subscription_e8b288e3bc9f8001cb5e625c549420e9'] = 'Subscription id is missing';
+$_MODULE['<{alma}prestashop>subscription_0d06849941740b4bdd9281f07d28e0dd'] = 'Action is unknown';
+$_MODULE['<{alma}prestashop>subscription_a8cec6fae3a5545458fcf2f8a34dcbe9'] = 'Error to cancel subscription';
 $_MODULE['<{alma}prestashop>payment_2f9f52496706027b880bac2e3c9af1d8'] = 'Bei der Zahlungsanforderung ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut oder kontaktieren Sie uns, falls das Problem weiter besteht.';
 $_MODULE['<{alma}prestashop>payment_efa820507b1951ee5722003639b1a0b0'] = 'Die Ratenzahlung mit Alma ist in dieser Währung nicht möglich';
 $_MODULE['<{alma}prestashop>validation_9d55a51cbc2d6cf7f9251b0cec59390e'] = 'Bei der Bestätigung Ihrer Zahlung ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut oder kontaktieren Sie uns, falls das Problem weiter besteht. Warenkorb-ID: %d';
@@ -187,20 +194,20 @@ $_MODULE['<{alma}prestashop>displayrefundshookcontroller_88d0b8b8a18adb1a2d0e05d
 $_MODULE['<{alma}prestashop>displayrefundshookcontroller_6036af1bc6455aea1332546921cae25b'] = 'Zu erstattender Betrag...';
 $_MODULE['<{alma}prestashop>displayrefundshookcontroller_becd29bb1a0004cdfc177e9bb117e56f'] = 'Die Erstattung fortsetzen';
 $_MODULE['<{alma}prestashop>getcontenthookcontroller_bf17ac149e2e7a530c677e9bd51d3fd2'] = 'Module';
-$_MODULE['<{alma}prestashop>getcontenthookcontroller_5f265dfcb9ab68a1258ec25393ffb886'] = 'Modul-Manager';
+$_MODULE['<{alma}prestashop>getcontenthookcontroller_5f265dfcb9ab68a1258ec25393ffb886'] = 'Module Manager';
 $_MODULE['<{alma}prestashop>getcontenthookcontroller_c6e24f81cb99e08c3d56b191c00aea28'] = 'Modul-Manager - Liste';
-$_MODULE['<{alma}prestashop>frontheaderhookcontroller_0bbf1fb0708055cf522541b4151894c4'] = 'Um Ihre Einkäufe mit Assurance zu verwalten, gehen Sie bitte zur Kassenseite.';
+$_MODULE['<{alma}prestashop>frontheaderhookcontroller_0bbf1fb0708055cf522541b4151894c4'] = 'To manage your purchases with Assurance, please go to the checkout page.';
 $_MODULE['<{alma}prestashop>displaypaymenthookcontroller_afd8ac1c65e1519d6a890e5f98558a52'] = '%1$s dann %2$d x %3$s';
 $_MODULE['<{alma}prestashop>displaypaymenthookcontroller_bc69b42c4bd339154f9025f3299ad146'] = '%1$s heute dann %2$d x %3$s';
 $_MODULE['<{alma}prestashop>displaypaymenthookcontroller_9088921432b295dfe6f02863b2dc0ff8'] = '0 € heute dann %1$s am %2$s';
-$_MODULE['<{alma}prestashop>actionordergriddefinitionmodifierhookcontroller_26ddd5e40e811e8db050efc33508167b'] = 'Hat Versicherung';
-$_MODULE['<{alma}prestashop>actionordergriddefinitionmodifierhookcontroller_93cba07454f06a4a960172bbd6e2a435'] = 'Ja';
-$_MODULE['<{alma}prestashop>actionordergriddefinitionmodifierhookcontroller_bafd7322c6e97d25b6299b5d6fe8920b'] = 'Nein';
-$_MODULE['<{alma}prestashop>displayadminordertophookcontroller_f23e273d05fb22018b906de7ac983510'] = 'Dieser Korb enthält ein oder mehrere Versicherungsabonnements. Vergewissern Sie sich, dass das/die Abonnement(e) gekündigt ist/sind, bevor Sie mit der Erstattung fortfahren. %1$sVerwalten Sie die Stornierung direkt hier.%2$s';
-$_MODULE['<{alma}prestashop>insurance_order_details_f5d74ea75357b5e139854c14f8e24fe3'] = 'Details zur Bestellung';
-$_MODULE['<{alma}prestashop>insurance_order_details_88b1b598df916ded43ff4abb0935ed7e'] = 'Details zur Bestellung';
-$_MODULE['<{alma}prestashop>insurance_254f642527b45bc260048e30704edb39'] = 'Konfiguration';
-$_MODULE['<{alma}prestashop>insurance_c9cc8cce247e49bae79f15173ce97354'] = 'Speichern Sie';
+$_MODULE['<{alma}prestashop>actionordergriddefinitionmodifierhookcontroller_26ddd5e40e811e8db050efc33508167b'] = 'Has Insurance';
+$_MODULE['<{alma}prestashop>actionordergriddefinitionmodifierhookcontroller_93cba07454f06a4a960172bbd6e2a435'] = 'Yes';
+$_MODULE['<{alma}prestashop>actionordergriddefinitionmodifierhookcontroller_bafd7322c6e97d25b6299b5d6fe8920b'] = 'No';
+$_MODULE['<{alma}prestashop>displayadminordertophookcontroller_f23e273d05fb22018b906de7ac983510'] = 'This basket includes one or more insurance subscriptions. Make sure that the subscription(s) is canceled before proceeding with the refund. %1$sManage the cancellation directly here.%2$s';
+$_MODULE['<{alma}prestashop>insurance_order_details_f5d74ea75357b5e139854c14f8e24fe3'] = 'Order details';
+$_MODULE['<{alma}prestashop>insurance_order_details_88b1b598df916ded43ff4abb0935ed7e'] = 'Orders details';
+$_MODULE['<{alma}prestashop>insurance_254f642527b45bc260048e30704edb39'] = 'Configuration';
+$_MODULE['<{alma}prestashop>insurance_c9cc8cce247e49bae79f15173ce97354'] = 'Save';
 $_MODULE['<{alma}prestashop>form_1908624a0bca678cd26b99bfd405324e'] = 'Größe der Datei';
 $_MODULE['<{alma}prestashop>form_ba34ea40525a4379add785228e37fe86'] = 'kb';
 $_MODULE['<{alma}prestashop>form_f2a6c498fb90ee345d997f888fce3b18'] = 'Löschen';
@@ -224,7 +231,7 @@ $_MODULE['<{alma}prestashop>excludedcategories_ebb1e29b7a24f7244361d8c9bef5cafd'
 $_MODULE['<{alma}prestashop>excludedcategories_2b02fe17f294da7167110f5df2b72fc0'] = 'Wenn Sie solche Produkte verkaufen, müssen Sie das Alma-Modul so konfigurieren, dass es deaktiviert wird, wenn Ihre Kunden die Produkte aufrufen oder kaufen.';
 $_MODULE['<{alma}prestashop>excludedcategories_eeecfb6e26e4e102986292a543d37542'] = 'Verwenden Sie %1$s%2$sauf der Seite mit den ausgeschlossenen Kategorien%3$s%4$s, um sich diesen Einschränkungen anzupassen.';
 $_MODULE['<{alma}prestashop>excludedcategories_576dc983c16c3d346e6dfe174b662bf2'] = 'Derzeit ausgeschlossene Kategorien: ';
-$_MODULE['<{alma}prestashop>displayadminordertop_57f05100f1068b2f65644ff34e339eb1'] = 'Denken Sie daran, Versicherungsabonnements zu kündigen, bevor Sie eine Erstattung einleiten';
+$_MODULE['<{alma}prestashop>displayadminordertop_57f05100f1068b2f65644ff34e339eb1'] = 'Remember to cancel insurance subscriptions before initiating a refund';
 $_MODULE['<{alma}prestashop>sample_payment_button_1f956efd3d3772790153d1e9e95e64c5'] = 'Bearbeiten Sie den Text, der bei der Auswahl der Zahlungsmethode in Ihrer Kasse angezeigt wird. Er wird an die Sprachen Ihrer Website angepasst.';
 $_MODULE['<{alma}prestashop>sample_payment_button_f3244aba99d8eb5ccaf1f3a6b8ad1a93'] = 'Muster einer Zahlungstaste Alma';
 $_MODULE['<{alma}prestashop>sample_payment_button_9f04fe30d0288024643a1dd3074abe2e'] = 'Beispiel für Titel und Beschreibung.';
@@ -251,6 +258,15 @@ $_MODULE['<{alma}prestashop>pnx_fees_02d4482d332e1aef3437cd61c9bcc624'] = 'Konta
 $_MODULE['<{alma}prestashop>pnx_fees_5532ee2e5ea88b613ccb38e9c88f9a77'] = 'wenn Sie glauben, dass Ihr Volumen bessere Preise rechtfertigt!';
 $_MODULE['<{alma}prestashop>order_refund_ps15_cbb3ab577b705e328991986e35218f50'] = 'Erstatteter Betrag';
 $_MODULE['<{alma}prestashop>order_refund_ps15_96b0141273eabab320119c467cdcaf17'] = 'Insgesamt';
+$_MODULE['<{alma}prestashop>notificationconfiguration_9f246d669c560d2ac604f5e01c8dd981'] = 'Um Alma zu verwenden, gehen Sie bitte folgendermaßen vor';
+$_MODULE['<{alma}prestashop>notificationconfiguration_3f2c7ed52eb56243edc3a40def7df34b'] = 'Zugehöriges PrestaShop-Konto (gleich unten)';
+$_MODULE['<{alma}prestashop>notificationconfiguration_b6a9cb8bac15ad209cf970e3f7cc73a0'] = 'Ein Alma-Konto erstellen';
+$_MODULE['<{alma}prestashop>notificationconfiguration_e243bbd390b43c9ee6047fab4ab3cdc0'] = 'Lesen Sie unseren Leitfaden für den Einstieg';
+$_MODULE['<{alma}prestashop>notificationconfiguration_cf5ec9fb9f7214a3db82a5a39fec5b48'] = 'Geben Sie Ihren API-Schlüssel ein';
+$_MODULE['<{alma}prestashop>notificationconfiguration_055f421849c2a1c32b885c95540f827c'] = 'Finden Sie Ihren API-Live-Schlüssel auf Ihrem %1$s Alma Dashboard%2$s';
+$_MODULE['<{alma}prestashop>notificationconfiguration_53b458e8453e3694811e61c96527d638'] = 'Um den Testmodus zu verwenden, rufen Sie Ihren Test-API-Schlüssel von Ihrem %1$ssandbox dashboard%2$sab.';
+$_MODULE['<{alma}prestashop>notificationconfiguration_41d0063d3bb7d3067f46734fac8b27c4'] = 'Wir bieten das PrestaShop Account Modul zum Download an';
+$_MODULE['<{alma}prestashop>notificationconfiguration_6997dde298b14fbf6a7c95bd39fe8dc4'] = 'Das Modul %1$sfinden Sie hier%2$s';
 $_MODULE['<{alma}prestashop>notificationshareofcheckout_a6b0ef107f0d278df612764187bbdece'] = ' Steigern Sie Ihre Leistung und erhalten Sie Einblicke!';
 $_MODULE['<{alma}prestashop>notificationshareofcheckout_5b64cb0849dd12ea528c04f2fe66ae4d'] = 'Indem Sie diese Option akzeptieren, ermöglichen Sie es Alma, die Nutzung Ihrer Zahlungsmittel zu analysieren, [1]mehr Informationen zu erhalten, um[/1] durchzuführen und diese Daten mit Ihnen zu teilen. Sie können [2]jederzeit abbestellen und Ihre Daten[/2] löschen.';
 $_MODULE['<{alma}prestashop>notificationshareofcheckout_50396a07824c89e694c1c76c3cb23a01'] = 'Mehr über gesammelte Daten erfahren';
@@ -258,11 +274,11 @@ $_MODULE['<{alma}prestashop>notificationshareofcheckout_19d6ea64f6810fa5329fcaa4
 $_MODULE['<{alma}prestashop>notificationshareofcheckout_28515fa383208fc73e01ab440f053fb0'] = 'Zahlungsdienstleister für jede Bestellung';
 $_MODULE['<{alma}prestashop>notificationshareofcheckout_d98ac12774fca5c3cbaffe276840c55f'] = 'Ablehnen';
 $_MODULE['<{alma}prestashop>notificationshareofcheckout_c4408d335012a56ff58937d78050efad'] = 'Akzeptieren';
-$_MODULE['<{alma}prestashop>displaybackofficeheader_1e5f420d1f82c216803c0f6f2d25fb19'] = 'Bestätigen Sie die Stornierung der Versicherung, bevor Sie die Bestellung erstatten';
-$_MODULE['<{alma}prestashop>displaybackofficeheader_ea4788705e6873b424c65e91c2846b19'] = 'Abbrechen';
-$_MODULE['<{alma}prestashop>displaybackofficeheader_9fc85cd14a16265c6062fef6709317f0'] = 'Erstattung der Bestellung';
-$_MODULE['<{alma}prestashop>displaybackofficeheader_d51b3b1c19648b5d3bfc1c5db6264519'] = 'Vergewissern Sie sich, dass die zugehörigen Versicherungsverträge erfolgreich gekündigt wurden, bevor Sie mit der Auftragsrückerstattung fortfahren.';
-$_MODULE['<{alma}prestashop>displaybackofficeheader_36e992ad2ba4173cd6391e4c737b8e1d'] = 'Sind Sie sicher, dass Sie die Erstattung bestätigen wollen?';
+$_MODULE['<{alma}prestashop>displaybackofficeheader_1e5f420d1f82c216803c0f6f2d25fb19'] = 'Confirm Insurance cancellation before refunding the order';
+$_MODULE['<{alma}prestashop>displaybackofficeheader_ea4788705e6873b424c65e91c2846b19'] = 'Cancel';
+$_MODULE['<{alma}prestashop>displaybackofficeheader_9fc85cd14a16265c6062fef6709317f0'] = 'Refund the order';
+$_MODULE['<{alma}prestashop>displaybackofficeheader_d51b3b1c19648b5d3bfc1c5db6264519'] = 'Before proceeding with the order refund, ensure the associated insurance contracts have been successfully canceled.';
+$_MODULE['<{alma}prestashop>displaybackofficeheader_36e992ad2ba4173cd6391e4c737b8e1d'] = 'Are you sure you want to confirm the refund?';
 $_MODULE['<{alma}prestashop>getcontent_53ce4ef3d9b0dde0cb18ee9424dc4e4f'] = 'Bitte füllen Sie alle Pflichtfelder aus';
 $_MODULE['<{alma}prestashop>getcontent_8f5fc63df52306a94566eba9f11de438'] = 'Geben Sie Ihren Live-API-Schlüssel ein, um den Livemodus zu nutzen';
 $_MODULE['<{alma}prestashop>getcontent_fde62b5820c448b8db7eb98235de0138'] = 'Geben Sie Ihren Test-API-Schlüssel ein, um den Testmodus zu nutzen';
@@ -285,14 +301,22 @@ $_MODULE['<{alma}prestashop>getcontent_a4978be2e8b36124fd4505f7e7f2aa3f'] = 'Der
 $_MODULE['<{alma}prestashop>getcontent_b47a7c1526a093a0afe5f28bdeb5face'] = 'Der Höchstbetrag für den Zahlungsaufschub + %1$d Monate muss zwischen %2$d und %3$d liegen.';
 $_MODULE['<{alma}prestashop>getcontent_8c10d3b0970a247fc554062dc9055fd1'] = 'Für Zahlungen in %1$d Raten muss der Höchstbetrag zwischen %2$d und %3$d liegen.';
 $_MODULE['<{alma}prestashop>getcontent_84b96a3ca61f4425b3fd56534a89a653'] = 'Es ist nicht möglich, die Einstellungen des Check-out zu speichern, bitte versuchen Sie es später noch einmal';
-$_MODULE['<{alma}prestashop>getcontent_2d4a12c50532eb37b1a827fe310070c3'] = 'Danke, dass Sie Alma installiert haben!';
-$_MODULE['<{alma}prestashop>getcontent_bbea702c04c766345509aa28d60812ad'] = 'Sie müssen zunächst ein Alma-Konto erstellen.';
-$_MODULE['<{alma}prestashop>getcontent_bc2323832922e12693c983c2e2d63cc0'] = 'Nutzen Sie unsere Schnellstartanleitung';
-$_MODULE['<{alma}prestashop>getcontent_8e51eafe439b0adfecc2dc209c2efb15'] = 'Anschließend können Sie Ihre API-Schlüssel eingeben:';
-$_MODULE['<{alma}prestashop>getcontent_1e6898bbd6a44041932ac84cbda13bd7'] = 'Ihren Live-API-Schlüssel finden Sie in %1$sIhrem Alma-Dashboard%2$s';
-$_MODULE['<{alma}prestashop>getcontent_689c39b29a6d91e6dff728a7762cbc9e'] = 'Um den Testmodus zu nutzen, rufen Sie in %1$sIhrem Sandbox-Dashboard%2$s Ihren Test-API-Schlüssel ab';
 $_MODULE['<{alma}prestashop>getcontent_7f40d377cc4942c4f0d6e75a736f8445'] = 'Konfiguration gespeichert';
-$_MODULE['<{alma}prestashop>cartproducts_39f9a4a4bf8387aa7c0478f98b713f91'] = 'Versicherung entfernen';
+$_MODULE['<{alma}prestashop>getcontent_9f246d669c560d2ac604f5e01c8dd981'] = 'Um Alma zu verwenden, gehen Sie bitte folgendermaßen vor';
+$_MODULE['<{alma}prestashop>getcontent_7379f16a6f4551a47731893ecfce52ab'] = '1. PrestaShop-Konto zuordnen (gleich unten)';
+$_MODULE['<{alma}prestashop>getcontent_54f458d63e438020e62552dc28f23925'] = '2. Erstellen Sie ein Alma-Konto';
+$_MODULE['<{alma}prestashop>getcontent_e243bbd390b43c9ee6047fab4ab3cdc0'] = 'Lesen Sie unseren Leitfaden für den Einstieg';
+$_MODULE['<{alma}prestashop>getcontent_45d67e5114ba6e1f894f12c0c8ac6538'] = '3. Geben Sie Ihren API-Schlüssel ein';
+$_MODULE['<{alma}prestashop>getcontent_055f421849c2a1c32b885c95540f827c'] = 'Finden Sie Ihren API-Live-Schlüssel auf Ihrem %1$s Alma Dashboard%2$s';
+$_MODULE['<{alma}prestashop>getcontent_83b4d24aae962bb5581ba5720be20666'] = 'Um den Testmodus zu verwenden, rufen Sie Ihren Test-API-Schlüssel von Ihrem %1$s sandbox dashboard%2$sab.';
+$_MODULE['<{alma}prestashop>getcontent_41d0063d3bb7d3067f46734fac8b27c4'] = 'Wir bieten das PrestaShop Account Modul zum Download an';
+$_MODULE['<{alma}prestashop>getcontent_6997dde298b14fbf6a7c95bd39fe8dc4'] = 'Das Modul %1$sfinden Sie hier%2$s';
+$_MODULE['<{alma}prestashop>cartproducts_39f9a4a4bf8387aa7c0478f98b713f91'] = 'Remove insurance';
+$_MODULE['<{alma}prestashop>cartproducts_7da9ba421c3f84f283070d68bb7adca1'] = 'Alma Versicherung';
+$_MODULE['<{alma}prestashop>cartproducts_adcd954ece839e7da469e9b37801fa69'] = 'Schützen Sie Ihr Produkt mit';
+$_MODULE['<{alma}prestashop>cartproducts_4cc10fb1d9332d404cc8016b47a1afd1'] = 'Siehe verfügbare Versicherungspolicen';
+$_MODULE['<{alma}prestashop>widgetaddinsuranceproducts_f1aab89a3a1e86807c8dffa61d41ded6'] = 'Schützen Sie den Rest Ihrer Produkte mit';
+$_MODULE['<{alma}prestashop>widgetaddinsuranceproducts_f28220d70798406523119d998573b489'] = 'Ich möchte alle verbleibenden [1]%1$s[/1] in meinem Warenkorb versichern';
 $_MODULE['<{alma}prestashop>fees_3acc62b245d8bc10f04d81f69d85b685'] = '(ohne Gebühren)';
 $_MODULE['<{alma}prestashop>feeplan_64408fc092e84b9eb352626a0bcbbdf7'] = 'Jährlicher Zinssatz:';
 $_MODULE['<{alma}prestashop>feeplan_ae9a134243362e66fef28a6b2e8a77c4'] = 'Ihr Warenkorb:';
@@ -306,4 +330,11 @@ $_MODULE['<{alma}prestashop>shareofcheckout_98e056fc52b8e67882401819edb249f0'] =
 $_MODULE['<{alma}prestashop>shareofcheckout_50396a07824c89e694c1c76c3cb23a01'] = 'Mehr über gesammelte Daten erfahren';
 $_MODULE['<{alma}prestashop>shareofcheckout_19d6ea64f6810fa5329fcaa438cd9f4b'] = 'Gesamtmenge der Aufträge, Beträge und Währungen';
 $_MODULE['<{alma}prestashop>shareofcheckout_28515fa383208fc73e01ab440f053fb0'] = 'Zahlungsdienstleister für jede Bestellung';
+$_MODULE['<{alma}prestashop>notificationfirstinstallation_2d4a12c50532eb37b1a827fe310070c3'] = 'Danke, dass Sie Alma installiert haben!';
+$_MODULE['<{alma}prestashop>notificationfirstinstallation_bbea702c04c766345509aa28d60812ad'] = 'Sie müssen zunächst ein Alma-Konto erstellen.';
+$_MODULE['<{alma}prestashop>notificationfirstinstallation_bc2323832922e12693c983c2e2d63cc0'] = 'Nutzen Sie unsere Schnellstartanleitung';
+$_MODULE['<{alma}prestashop>notificationfirstinstallation_8e51eafe439b0adfecc2dc209c2efb15'] = 'Anschließend können Sie Ihre API-Schlüssel eingeben:';
+$_MODULE['<{alma}prestashop>notificationfirstinstallation_1e6898bbd6a44041932ac84cbda13bd7'] = 'Ihren Live-API-Schlüssel finden Sie in %1$sIhrem Alma-Dashboard%2$s';
+$_MODULE['<{alma}prestashop>notificationfirstinstallation_689c39b29a6d91e6dff728a7762cbc9e'] = 'Um den Testmodus zu nutzen, rufen Sie in %1$sIhrem Sandbox-Dashboard%2$s Ihren Test-API-Schlüssel ab';
+$_MODULE['<{alma}prestashop>notificationfirstinstallation_dcab24ea1a3cd9bab8047b1b6f7ee65c'] = 'Wenn Sie Probleme haben, kontaktieren Sie uns bitte per E-Mail unter %1$ssupport@getalma.eu%2$s';
 $_MODULE['<{alma}prestashop>displaypayment_pnx_22f0189423433ab0e055b91d98970e5f'] = 'Die Ratenzahlung mit Alma ist bei dieser Bestellung nicht möglich';

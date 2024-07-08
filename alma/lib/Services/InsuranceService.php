@@ -1,6 +1,6 @@
 <?php
 /**
- * 2018-2023 Alma SAS.
+ * 2018-2024 Alma SAS.
  *
  * THE MIT LICENSE
  *
@@ -18,7 +18,7 @@
  * IN THE SOFTWARE.
  *
  * @author    Alma SAS <contact@getalma.eu>
- * @copyright 2018-2023 Alma SAS
+ * @copyright 2018-2024 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
@@ -27,6 +27,7 @@ namespace Alma\PrestaShop\Services;
 use Alma\API\Entities\Insurance\Subscription;
 use Alma\API\Exceptions\MissingKeyException;
 use Alma\API\Lib\ArrayUtils;
+use Alma\PrestaShop\Builders\Services\CartServiceBuilder;
 use Alma\PrestaShop\Exceptions\InsuranceInstallException;
 use Alma\PrestaShop\Exceptions\TermsAndConditionsException;
 use Alma\PrestaShop\Helpers\ConstantsHelper;
@@ -80,7 +81,8 @@ class InsuranceService
         $this->module = \Module::getInstanceByName(ConstantsHelper::ALMA_MODULE_NAME);
         $this->productRepository = new ProductRepository();
         $this->imageService = new ImageService();
-        $this->cartService = new CartService();
+        $cartServiceBuilder = new CartServiceBuilder();
+        $this->cartService = $cartServiceBuilder->getInstance();
         $this->context = \Context::getContext();
         $this->attributeGroupRepository = new AttributeGroupRepository();
         $this->almaInsuranceProductRepository = new AlmaInsuranceProductRepository();

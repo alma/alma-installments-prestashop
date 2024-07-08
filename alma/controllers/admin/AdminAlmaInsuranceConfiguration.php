@@ -1,6 +1,6 @@
 <?php
 /**
- * 2018-2023 Alma SAS.
+ * 2018-2024 Alma SAS.
  *
  * THE MIT LICENSE
  *
@@ -18,7 +18,7 @@
  * IN THE SOFTWARE.
  *
  * @author    Alma SAS <contact@getalma.eu>
- * @copyright 2018-2023 Alma SAS
+ * @copyright 2018-2024 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 if (!defined('_PS_VERSION_')) {
@@ -26,7 +26,7 @@ if (!defined('_PS_VERSION_')) {
 }
 
 use Alma\PrestaShop\Builders\Admin\InsuranceHelperBuilder;
-use Alma\PrestaShop\Helpers\Admin\InsuranceHelper;
+use Alma\PrestaShop\Helpers\Admin\AdminInsuranceHelper;
 use Alma\PrestaShop\Helpers\ConfigurationHelper;
 use Alma\PrestaShop\Helpers\ConstantsHelper;
 use Alma\PrestaShop\Logger;
@@ -37,7 +37,7 @@ class AdminAlmaInsuranceConfigurationController extends ModuleAdminController
     use AjaxTrait;
 
     /**
-     * @var InsuranceHelper
+     * @var AdminInsuranceHelper
      */
     private $insuranceHelper;
     /**
@@ -65,10 +65,11 @@ class AdminAlmaInsuranceConfigurationController extends ModuleAdminController
         parent::initContent();
 
         $this->context->smarty->assign([
-            'iframeUrl' => $this->insuranceHelper->constructIframeUrlWithParams(),
+            'iframeUrl' => $this->insuranceHelper->envUrl() . ConstantsHelper::BO_IFRAME_CONFIGURATION_INSURANCE_PATH,
             'domainInsuranceUrl' => $this->insuranceHelper->envUrl(),
             'token' => \Tools::getAdminTokenLite(ConstantsHelper::BO_CONTROLLER_INSURANCE_CONFIGURATION_CLASSNAME),
             'insuranceConfigurationController' => ConstantsHelper::BO_CONTROLLER_INSURANCE_CONFIGURATION_CLASSNAME,
+            'insuranceConfigurationParams' => json_encode($this->insuranceHelper->mapDbFieldsWithIframeParams()),
         ]);
 
         $content = $this->context->smarty->fetch(_PS_MODULE_DIR_ . 'alma/views/templates/admin/insurance.tpl');

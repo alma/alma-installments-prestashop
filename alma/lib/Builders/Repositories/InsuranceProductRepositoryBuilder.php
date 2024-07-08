@@ -22,22 +22,24 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
-namespace Alma\PrestaShop\Helpers;
+namespace Alma\PrestaShop\Builders\Repositories;
 
-use PrestaShop\PrestaShop\Core\Addon\Module\ModuleManagerBuilder;
+use Alma\PrestaShop\Repositories\AlmaInsuranceProductRepository;
+use Alma\PrestaShop\Traits\BuilderTrait;
 
 if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-class ModuleHelper
+class InsuranceProductRepositoryBuilder
 {
-    public function isInstalled($moduleName)
-    {
-        if (version_compare(_PS_VERSION_, '1.7', '<')) {
-            return (bool) \Module::isInstalled($moduleName);
-        }
+    use BuilderTrait;
 
-        return ModuleManagerBuilder::getInstance()->build()->isInstalled($moduleName);
+    /**
+     * @return AlmaInsuranceProductRepository
+     */
+    public function getInstance()
+    {
+        return new AlmaInsuranceProductRepository();
     }
 }

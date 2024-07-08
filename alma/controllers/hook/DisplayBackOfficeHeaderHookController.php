@@ -1,6 +1,6 @@
 <?php
 /**
- * 2018-2023 Alma SAS.
+ * 2018-2024 Alma SAS.
  *
  * THE MIT LICENSE
  *
@@ -18,7 +18,7 @@
  * IN THE SOFTWARE.
  *
  * @author    Alma SAS <contact@getalma.eu>
- * @copyright 2018-2023 Alma SAS
+ * @copyright 2018-2024 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
@@ -28,7 +28,11 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
+use Alma\PrestaShop\Builders\Admin\InsuranceHelperBuilder as AdminInsuranceHelperBuilder;
+use Alma\PrestaShop\Builders\Helpers\InsuranceHelperBuilder;
 use Alma\PrestaShop\Builders\Helpers\ShareOfCheckoutHelperBuilder;
+use Alma\PrestaShop\Helpers\Admin\InsuranceHelper as AdminInsuranceHelper;
+use Alma\PrestaShop\Helpers\ConstantsHelper;
 use Alma\PrestaShop\Helpers\InsuranceHelper;
 use Alma\PrestaShop\Helpers\ShareOfCheckoutHelper;
 use Alma\PrestaShop\Hooks\FrontendHookController;
@@ -43,13 +47,21 @@ class DisplayBackOfficeHeaderHookController extends FrontendHookController
      * @var InsuranceHelper
      */
     protected $insuranceHelper;
+    /**
+     * @var AdminInsuranceHelper
+     */
+    protected $adminInsuranceHelper;
 
     public function __construct($module)
     {
         $shareOfCheckoutHelperBuilder = new ShareOfCheckoutHelperBuilder();
         $this->socHelper = $shareOfCheckoutHelperBuilder->getInstance();
 
-        $this->insuranceHelper = new InsuranceHelper();
+        $insuranceHelperBuilder = new InsuranceHelperBuilder();
+        $this->insuranceHelper = $insuranceHelperBuilder->getInstance();
+
+        $adminInsuranceHelperBuilder = new AdminInsuranceHelperBuilder();
+        $this->adminInsuranceHelper = $adminInsuranceHelperBuilder->getInstance();
 
         parent::__construct($module);
     }
@@ -90,8 +102,13 @@ class DisplayBackOfficeHeaderHookController extends FrontendHookController
         if ($this->insuranceHelper->isInsuranceActivated()) {
             $this->context->controller->addJS($this->module->_path . 'views/js/admin/components/modal.js');
             $this->context->controller->addJS($this->module->_path . 'views/js/admin/alma-insurance-orders.js');
-
-            return $this->module->display($this->module->file, 'DisplayBackOfficeHeader.tpl');
         }
+
+        $this->context->controller->addJS($this->module->_path . 'views/js/admin/alma-insurance-configuration.js');
+        $this->context->smarty->assign([
+            'urlScriptInsuranceModal' => $this->adminInsuranceHelper->envUrl() . ConstantsHelper::SCRIPT_MODAL_WIDGET_INSURANCE_PATH,
+        ]);
+
+        return $this->module->display($this->module->file, 'DisplayBackOfficeHeader.tpl');
     }
 }

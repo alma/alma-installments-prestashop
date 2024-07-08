@@ -1,6 +1,6 @@
 <?php
 /**
- * 2018-2023 Alma SAS.
+ * 2018-2024 Alma SAS.
  *
  * THE MIT LICENSE
  *
@@ -18,14 +18,15 @@
  * IN THE SOFTWARE.
  *
  * @author    Alma SAS <contact@getalma.eu>
- * @copyright 2018-2023 Alma SAS
+ * @copyright 2018-2024 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
 namespace Alma\PrestaShop\Tests\Unit\Factories;
 
+use Alma\PrestaShop\Builders\Factories\ModuleFactoryBuilder;
 use Alma\PrestaShop\Factories\ModuleFactory;
-use Alma\PrestaShop\Helpers\ConstantsHelper;
+use Alma\PrestaShop\Helpers\ToolsHelper;
 use PHPUnit\Framework\TestCase;
 
 class ModuleFactoryTest extends TestCase
@@ -35,23 +36,92 @@ class ModuleFactoryTest extends TestCase
      */
     protected $moduleFactory;
 
+    /**
+     * @var ModuleFactoryBuilder
+     */
+    protected $moduleFactoryBuilder;
+
+    /**
+     * @var ToolsHelper
+     */
+    protected $toolsHelperMock;
+
     public function setUp()
     {
-        $this->moduleFactory = new ModuleFactory();
+        $this->moduleFactoryBuilder = new ModuleFactoryBuilder();
+        $this->moduleFactory = $this->moduleFactoryBuilder->getInstance();
+        $this->toolsHelperMock = $this->createMock(ToolsHelper::class);
     }
 
-    public function testGetContext()
+    public function tearDown()
+    {
+        \Mockery::close();
+        $this->moduleFactory = null;
+        $this->moduleFactoryBuilder = null;
+        $this->toolsHelperMock = null;
+    }
+
+    public function testGetModule()
     {
         $this->assertInstanceOf(\Module::class, $this->moduleFactory->getModule());
     }
 
-    public function testGetContextName()
+    public function testGetModuleNameNoModule()
     {
-        $this->assertEquals(ConstantsHelper::ALMA_MODULE_NAME, $this->moduleFactory->getModuleName());
+        $moduleFactoryMock = \Mockery::mock(ModuleFactory::class)->makePartial();
+        $moduleFactoryMock->shouldReceive('getModule')->andReturn(false);
+        $this->assertSame('', $moduleFactoryMock->getModuleName());
+    }
+
+    public function testGetModuleName()
+    {
+        $moduleFactoryMock = \Mockery::mock(ModuleFactory::class)->makePartial();
+
+        $moduleMock = $this->createMock(\Module::class);
+        $moduleMock->name = 'module name';
+        $moduleFactoryMock->shouldReceive('getModule')->andReturn($moduleMock);
+
+        $this->assertSame($moduleMock->name, $moduleFactoryMock->getModuleName());
     }
 
     public function testL()
     {
-        $this->assertEquals('Pay now by credit card', $this->moduleFactory->l('Pay now by credit card', ConstantsHelper::SOURCE_CUSTOM_FIELDS));
+        $moduleFactoryMock = \Mockery::mock(ModuleFactory::class)->makePartial();
+
+        $moduleMock = $this->createMock(\Module::class);
+        $moduleMock->expects($this->once())
+            ->method('l')
+            ->with('My wording to translate', 'ClassNameTest', 'fr')
+            ->willReturn('Mon mot à traduire');
+        $moduleMock->name = 'module name';
+        $moduleFactoryMock->shouldReceive('getModule')->andReturn($moduleMock);
+
+        $this->assertEquals('Mon mot à traduire', $moduleFactoryMock->l('My wording to translate', 'ClassNameTest', 'fr'));
+    }
+
+    public function testIsInstalledPsAfter17()
+    {
+        $this->toolsHelperMock->expects($this->once())
+            ->method('psVersionCompare')
+            ->willReturn(false);
+
+        $moduleFactory = \Mockery::mock(ModuleFactory::class, [$this->toolsHelperMock])->makePartial();
+
+        $moduleFactory->shouldReceive('isInstalledAfter17')->once()->with('mymodulename');
+        $moduleFactory->shouldNotReceive('isInstalledBefore17');
+        $moduleFactory->isInstalled('mymodulename');
+    }
+
+    public function testIsInstalledPsBefore17()
+    {
+        $this->toolsHelperMock->expects($this->once())
+            ->method('psVersionCompare')
+            ->willReturn(true);
+
+        $moduleFactory = \Mockery::mock(ModuleFactory::class, [$this->toolsHelperMock])->makePartial();
+
+        $moduleFactory->shouldReceive('isInstalledBefore17');
+        $moduleFactory->shouldNotReceive('isInstalledAfter17');
+        $moduleFactory->isInstalled('fakename');
     }
 }

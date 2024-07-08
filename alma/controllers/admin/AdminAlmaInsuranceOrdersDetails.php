@@ -1,6 +1,6 @@
 <?php
 /**
- * 2018-2023 Alma SAS.
+ * 2018-2024 Alma SAS.
  *
  * THE MIT LICENSE
  *
@@ -18,7 +18,7 @@
  * IN THE SOFTWARE.
  *
  * @author    Alma SAS <contact@getalma.eu>
- * @copyright 2018-2023 Alma SAS
+ * @copyright 2018-2024 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 if (!defined('_PS_VERSION_')) {
@@ -27,7 +27,7 @@ if (!defined('_PS_VERSION_')) {
 
 use Alma\PrestaShop\Builders\Admin\InsuranceHelperBuilder;
 use Alma\PrestaShop\Builders\Helpers\PriceHelperBuilder;
-use Alma\PrestaShop\Helpers\Admin\InsuranceHelper;
+use Alma\PrestaShop\Helpers\Admin\AdminInsuranceHelper;
 use Alma\PrestaShop\Helpers\ConstantsHelper;
 use Alma\PrestaShop\Helpers\PriceHelper;
 use Alma\PrestaShop\Helpers\ProductHelper;
@@ -53,7 +53,7 @@ class AdminAlmaInsuranceOrdersDetailsController extends ModuleAdminController
      */
     public $module;
     /**
-     * @var InsuranceHelper
+     * @var AdminInsuranceHelper
      */
     protected $adminInsuranceHelper;
 

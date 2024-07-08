@@ -1,6 +1,6 @@
 <?php
 /**
- * 2018-2023 Alma SAS.
+ * 2018-2024 Alma SAS.
  *
  * THE MIT LICENSE
  *
@@ -18,13 +18,13 @@
  * IN THE SOFTWARE.
  *
  * @author    Alma SAS <contact@getalma.eu>
- * @copyright 2018-2023 Alma SAS
+ * @copyright 2018-2024 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
 namespace Alma\PrestaShop\Builders\Admin;
 
-use Alma\PrestaShop\Helpers\Admin\InsuranceHelper;
+use Alma\PrestaShop\Helpers\Admin\AdminInsuranceHelper;
 use Alma\PrestaShop\Traits\BuilderTrait;
 
 if (!defined('_PS_VERSION_')) {
@@ -32,18 +32,18 @@ if (!defined('_PS_VERSION_')) {
 }
 
 /**
- * InsuranceHelperBuilder.
+ * InsuranceProductHelperBuilder.
  */
 class InsuranceHelperBuilder
 {
     use BuilderTrait;
 
     /**
-     * @return InsuranceHelper
+     * @return AdminInsuranceHelper
      */
     public function getInstance()
     {
-        return new InsuranceHelper(
+        return new AdminInsuranceHelper(
             $this->getModuleFactory(),
             $this->getTabsHelper(),
             $this->getConfigurationHelper(),

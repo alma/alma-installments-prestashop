@@ -27,6 +27,7 @@ jobs:
         uses: release-drafter/release-drafter@v6
         id: release-drafter
         env:
+          commitish: develop
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Update CHANGELOG.md
@@ -50,6 +51,7 @@ jobs:
             ### Checklist of actions to be done before merging
             - [ ] Review and update the CHANGELOG.md if needed
             - [ ] Review and update the Github release draft if needed
+            - [ ] Review and update the translation files after crowdin update if needed
             - [ ] Review the files updated with the new version number in the commit named "chore: update version"
           branch: release/${{ steps.release-drafter.outputs.tag_name }}
           base: main

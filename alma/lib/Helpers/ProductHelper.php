@@ -1,6 +1,6 @@
 <?php
 /**
- * 2018-2023 Alma SAS.
+ * 2018-2024 Alma SAS.
  *
  * THE MIT LICENSE
  *
@@ -18,11 +18,13 @@
  * IN THE SOFTWARE.
  *
  * @author    Alma SAS <contact@getalma.eu>
- * @copyright 2018-2023 Alma SAS
+ * @copyright 2018-2024 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
 namespace Alma\PrestaShop\Helpers;
+
+use Alma\PrestaShop\Builders\Helpers\InsuranceHelperBuilder;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -42,7 +44,8 @@ class ProductHelper
 
     public function __construct()
     {
-        $this->insuranceHelper = new InsuranceHelper();
+        $insuranceHelperBuilder = new InsuranceHelperBuilder();
+        $this->insuranceHelper = $insuranceHelperBuilder->getInstance();
     }
 
     /**

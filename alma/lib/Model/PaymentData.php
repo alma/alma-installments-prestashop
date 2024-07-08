@@ -1,6 +1,6 @@
 <?php
 /**
- * 2018-2023 Alma SAS.
+ * 2018-2024 Alma SAS.
  *
  * THE MIT LICENSE
  *
@@ -18,7 +18,7 @@
  * IN THE SOFTWARE.
  *
  * @author    Alma SAS <contact@getalma.eu>
- * @copyright 2018-2023 Alma SAS
+ * @copyright 2018-2024 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
@@ -319,6 +319,7 @@ class PaymentData
                     ],
                 ],
                 'locale' => $locale,
+                'cart' => $this->cartData->cartInfo($this->context->cart),
             ],
             'customer' => $customerData,
         ];
@@ -326,10 +327,6 @@ class PaymentData
         if ($this->settingsHelper->isDeferredTriggerLimitDays($feePlans)) {
             $dataPayment['payment']['deferred'] = 'trigger';
             $dataPayment['payment']['deferred_description'] = $this->customFieldsHelper->getDescriptionPaymentTriggerByLang($this->context->language->id);
-        }
-
-        if ($feePlans['installmentsCount'] > 4) {
-            $dataPayment['payment']['cart'] = $this->cartData->cartInfo($this->context->cart);
         }
 
         if ($this->isInPage($dataPayment)) {

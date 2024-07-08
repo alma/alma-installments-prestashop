@@ -1,6 +1,6 @@
 <?php
 /**
- * 2018-2023 Alma SAS.
+ * 2018-2024 Alma SAS.
  *
  * THE MIT LICENSE
  *
@@ -18,15 +18,14 @@
  * IN THE SOFTWARE.
  *
  * @author    Alma SAS <contact@getalma.eu>
- * @copyright 2018-2023 Alma SAS
+ * @copyright 2018-2024 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
 namespace Alma\PrestaShop\Tests\Unit\Builders\Helpers;
 
 use Alma\PrestaShop\Builders\Helpers\ApiHelperBuilder;
-use Alma\PrestaShop\Factories\ModuleFactory;
-use Alma\PrestaShop\Helpers\Admin\InsuranceHelper;
+use Alma\PrestaShop\Helpers\Admin\AdminInsuranceHelper;
 use Alma\PrestaShop\Helpers\ApiHelper;
 use Alma\PrestaShop\Helpers\ClientHelper;
 use Alma\PrestaShop\Helpers\ConfigurationHelper;
@@ -49,14 +48,6 @@ class ApiHelperBuilderTest extends TestCase
     public function testGetInstance()
     {
         $this->assertInstanceOf(ApiHelper::class, $this->apiHelperBuilder->getInstance());
-    }
-
-    public function testGetModuleFactory()
-    {
-        $this->assertInstanceOf(ModuleFactory::class, $this->apiHelperBuilder->getModuleFactory());
-        $this->assertInstanceOf(ModuleFactory::class, $this->apiHelperBuilder->getModuleFactory(
-            new ModuleFactory()
-        ));
     }
 
     public function testGetClientHelper()
@@ -93,9 +84,9 @@ class ApiHelperBuilderTest extends TestCase
 
     public function testGetAdminInsuranceHelper()
     {
-        $this->assertInstanceOf(InsuranceHelper::class, $this->apiHelperBuilder->getAdminInsuranceHelper());
-        $this->assertInstanceOf(InsuranceHelper::class, $this->apiHelperBuilder->getAdminInsuranceHelper(
-            \Mockery::mock(InsuranceHelper::class)
+        $this->assertInstanceOf(AdminInsuranceHelper::class, $this->apiHelperBuilder->getAdminInsuranceHelper());
+        $this->assertInstanceOf(AdminInsuranceHelper::class, $this->apiHelperBuilder->getAdminInsuranceHelper(
+            \Mockery::mock(AdminInsuranceHelper::class)
         ));
     }
 }

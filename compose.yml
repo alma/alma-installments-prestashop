@@ -2,16 +2,16 @@ version: '3'
 
 services:
   mysql:
-    image: mysql:8.2
+    image: mysql:8.4
     environment:
-      - MYSQL_ROOT_PASSWORD=admin
-      - MYSQL_DATABASE=prestashop
+      MYSQL_ROOT_PASSWORD: admin
+      MYSQL_DATABASE: prestashop
     expose:
       - 3306
     ports:
       - 3307:3306
     volumes:
-      - "./tmp/db_data:/var/lib/mysql"
+      - db_data:/var/lib/mysql
     healthcheck:
       test:
         [
@@ -20,7 +20,8 @@ services:
           "ping",
           "-p$$MYSQL_ROOT_PASSWORD"
         ]
-      timeout: 10s
+      timeout: 1s
+      interval: 2s
       retries: 10
 
   prestashop:
@@ -32,22 +33,22 @@ services:
         # updating prestashop/autoindex.
         PLATFORM_VERSION: 1.7.8.7
     environment:
-      - DB_SERVER=mysql
-      - DB_NAME=prestashop
-      - DB_USER=root
-      - DB_PASSWD=admin
-      - PS_DEV_MODE=1
-      - PS_INSTALL_AUTO=1
-      - PS_ERASE_DB=1
-      - PS_INSTALL_DB=1
-      - PS_DOMAIN=localhost:8080
-      - PS_SHOP_URL=localhost:8080
-      - PS_COUNTRY=EN
-      - PS_LANGUAGE=en
-      - PS_FOLDER_ADMIN=almin
-      - PS_FOLDER_INSTALL=alminstall
-      - ADMIN_MAIL=admin@test.prestashop.com
-      - ADMIN_PASSWD=test2test
+      DB_SERVER: mysql
+      DB_NAME: prestashop
+      DB_USER: root
+      DB_PASSWD: admin
+      PS_DEV_MODE: 1
+      PS_INSTALL_AUTO: 1
+      PS_ERASE_DB: 1
+      PS_INSTALL_DB: 1
+      PS_DOMAIN: localhost:8080
+      PS_SHOP_URL: localhost:8080
+      PS_COUNTRY: EN
+      PS_LANGUAGE: en
+      PS_FOLDER_ADMIN: almin
+      PS_FOLDER_INSTALL: alminstall
+      ADMIN_MAIL: admin@test.prestashop.com
+      ADMIN_PASSWD: test2test
     depends_on:
       mysql:
         condition: service_healthy
@@ -58,3 +59,6 @@ services:
       - ./alma:/var/www/html/modules/alma
       - /var/www/html/modules/alma/vendor # do not mount vendor inside container
       - ./docker/php-customization.ini:/usr/local/etc/php/conf.d/php-customization.ini
+
+volumes:
+  db_data:

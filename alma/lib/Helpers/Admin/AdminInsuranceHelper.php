@@ -1,6 +1,6 @@
 <?php
 /**
- * 2018-2023 Alma SAS.
+ * 2018-2024 Alma SAS.
  *
  * THE MIT LICENSE
  *
@@ -18,7 +18,7 @@
  * IN THE SOFTWARE.
  *
  * @author    Alma SAS <contact@getalma.eu>
- * @copyright 2018-2023 Alma SAS
+ * @copyright 2018-2024 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
@@ -35,7 +35,7 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-class InsuranceHelper
+class AdminInsuranceHelper
 {
     /**
      * Insurance form fields for mapping
@@ -43,10 +43,10 @@ class InsuranceHelper
      * @var string[]
      */
     public static $fieldsDbInsuranceToIframeParamNames = [
-        ConstantsHelper::ALMA_ACTIVATE_INSURANCE => 'is_insurance_activated',
-        ConstantsHelper::ALMA_SHOW_INSURANCE_WIDGET_PRODUCT => 'is_insurance_on_product_page_activated',
-        ConstantsHelper::ALMA_SHOW_INSURANCE_WIDGET_CART => 'is_insurance_on_cart_page_activated',
-        ConstantsHelper::ALMA_SHOW_INSURANCE_POPUP_CART => 'is_add_to_cart_popup_insurance_activated',
+        ConstantsHelper::ALMA_ACTIVATE_INSURANCE => 'isInsuranceActivated',
+        ConstantsHelper::ALMA_SHOW_INSURANCE_WIDGET_PRODUCT => 'isInsuranceOnProductPageActivated',
+        ConstantsHelper::ALMA_SHOW_INSURANCE_WIDGET_CART => 'isInCartWidgetActivated',
+        ConstantsHelper::ALMA_SHOW_INSURANCE_POPUP_CART => 'isAddToCartPopupActivated',
     ];
 
     /**
@@ -193,20 +193,6 @@ class InsuranceHelper
     }
 
     /**
-     * @return string
-     *
-     * @throws \PrestaShopException
-     */
-    public function constructIframeUrlWithParams()
-    {
-        return sprintf(
-            '%s?%s',
-            $this->envUrl() . ConstantsHelper::BO_IFRAME_CONFIGURATION_INSURANCE_PATH,
-            http_build_query($this->mapDbFieldsWithIframeParams())
-        );
-    }
-
-    /**
      * @return array
      *
      * @throws \PrestaShopException
@@ -218,7 +204,7 @@ class InsuranceHelper
 
         foreach ($fieldsBoInsurance as $fieldName => $fieldValue) {
             $configKey = static::$fieldsDbInsuranceToIframeParamNames[$fieldName];
-            $mapParams[$configKey] = (bool) $fieldValue ? 'true' : 'false';
+            $mapParams[$configKey] = (bool) $fieldValue;
         }
 
         return $mapParams;
@@ -253,10 +239,20 @@ class InsuranceHelper
         $diffKeysArray = array_diff_key($config, $dbFields);
 
         if (!empty($diffKeysArray)) {
-            header('HTTP/1.1 401 Unauthorized request');
+            $this->setHeader();
             throw new WrongParamsException($this->moduleFactory, $diffKeysArray);
         }
 
         $this->saveBOFormValues($config, $dbFields);
+    }
+
+    /**
+     * @codeCoverageIgnore because it's a method to set header
+     *
+     * @return void
+     */
+    public function setHeader()
+    {
+        header('HTTP/1.1 401 Unauthorized request');
     }
 }

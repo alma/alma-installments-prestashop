@@ -1,5 +1,5 @@
 /**
- * 2018-2023 Alma SAS
+ * 2018-2024 Alma SAS
  *
  * THE MIT LICENSE
  *
@@ -17,7 +17,7 @@
  * IN THE SOFTWARE.
  *
  * @author    Alma SAS <contact@getalma.eu>
- * @copyright 2018-2023 Alma SAS
+ * @copyright 2018-2024 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
@@ -25,12 +25,9 @@
     $(function () {
         const subscriptionData = dataSubscriptions
 
-        var checkFunction = setInterval(function() {
-            if (typeof getSubscriptionDatafromCms === "function") {
-                clearInterval(checkFunction);
-                getSubscriptionDatafromCms(subscriptionData);
-            }
-        }, 700)
+        window.addEventListener('almaIframeScriptLoaded', () => {
+            getSubscriptionDatafromCms(subscriptionData);
+        });
 
         window.addEventListener('message', (e) => {
             if (e.data.type === 'sendCancelSubscriptionToCms') {

@@ -1,6 +1,6 @@
 <?php
 /**
- * 2018-2023 Alma SAS.
+ * 2018-2024 Alma SAS.
  *
  * THE MIT LICENSE
  *
@@ -18,7 +18,7 @@
  * IN THE SOFTWARE.
  *
  * @author    Alma SAS <contact@getalma.eu>
- * @copyright 2018-2023 Alma SAS
+ * @copyright 2018-2024 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
@@ -33,7 +33,7 @@ require_once _PS_MODULE_DIR_ . 'alma/vendor/autoload.php';
 
 class Alma extends PaymentModule
 {
-    const VERSION = '4.0.1';
+    const VERSION = '4.1.0';
 
     public $_path;
     public $local_path;
@@ -83,7 +83,7 @@ class Alma extends PaymentModule
     {
         $this->name = 'alma';
         $this->tab = 'payments_gateways';
-        $this->version = '4.0.1';
+        $this->version = '4.1.0';
         $this->author = 'Alma';
         $this->need_instance = false;
         $this->bootstrap = true;
@@ -151,8 +151,6 @@ class Alma extends PaymentModule
      */
     public function checkCompatibilityPSModule()
     {
-        return false;
-
         if (
             $this->toolsHelper->psVersionCompare('1.6', '<')
             || !class_exists(\PrestaShop\ModuleLibServiceContainer\DependencyInjection\ServiceContainer::class)

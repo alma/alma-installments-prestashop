@@ -1,6 +1,6 @@
 <?php
 /**
- * 2018-2023 Alma SAS.
+ * 2018-2024 Alma SAS.
  *
  * THE MIT LICENSE
  *
@@ -18,7 +18,7 @@
  * IN THE SOFTWARE.
  *
  * @author    Alma SAS <contact@getalma.eu>
- * @copyright 2018-2023 Alma SAS
+ * @copyright 2018-2024 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
@@ -26,7 +26,6 @@ namespace Alma\PrestaShop\Tests\Unit\Builders\Helpers;
 
 use Alma\PrestaShop\Builders\Models\MediaHelperBuilder;
 use Alma\PrestaShop\Factories\MediaFactory;
-use Alma\PrestaShop\Factories\ModuleFactory;
 use Alma\PrestaShop\Factories\PhpFactory;
 use Alma\PrestaShop\Helpers\MediaHelper;
 use PHPUnit\Framework\TestCase;
@@ -48,19 +47,11 @@ class MediaHelperBuilderTest extends TestCase
         $this->assertInstanceOf(MediaHelper::class, $this->mediaHelperBuilder->getInstance());
     }
 
-    public function testGetModuleFactory()
-    {
-        $this->assertInstanceOf(ModuleFactory::class, $this->mediaHelperBuilder->getModuleFactory());
-        $this->assertInstanceOf(ModuleFactory::class, $this->mediaHelperBuilder->getModuleFactory(
-            new ModuleFactory()
-        ));
-    }
-
     public function testGetMediaFactory()
     {
         $this->assertInstanceOf(MediaFactory::class, $this->mediaHelperBuilder->getMediaFactory());
         $this->assertInstanceOf(MediaFactory::class, $this->mediaHelperBuilder->getMediaFactory(
-            new MediaFactory()
+            \Mockery::mock(MediaFactory::class)
         ));
     }
 

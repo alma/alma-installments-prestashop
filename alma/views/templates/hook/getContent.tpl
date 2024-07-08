@@ -1,5 +1,5 @@
 {*
- * 2018-2023 Alma SAS
+ * 2018-2024 Alma SAS
  *
  * THE MIT LICENSE
  *
@@ -17,7 +17,7 @@
  * IN THE SOFTWARE.
  *
  * @author    Alma SAS <contact@getalma.eu>
- * @copyright 2018-2023 Alma SAS
+ * @copyright 2018-2024 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  *}
 {if isset($validation_error)}
@@ -98,77 +98,13 @@
             {$validation_error|escape:'htmlall':'UTF-8'}
         {/if}
     </div>
-
-{elseif isset($tip)}
-    <div class="{$tip_classes|escape:'htmlall':'UTF-8'}" id="alma_first_installation">
-        <p>
-            {l s='Thanks for installing Alma!' mod='alma'}
-            <br>
-            <b>{l s='You need to create an Alma account before proceeding.' mod='alma'}</b>
-            <br>
-            <a href="https://support.getalma.eu/hc/fr/articles/360007913920-D%C3%A9marrer-avec-le-paiement-en-plusieurs-fois-Alma-sur-mon-site-e-commerce" target="_blank">
-                {l s='Read our getting started guide' mod='alma'}
-            </a>
-        </p>
-        <br>
-        <p>
-            <b>{l s='You can then fill in your API keys:' mod='alma'}</b>
-            <br>
-            {almaDisplayHtml}
-                {l s='You can find your Live API key in %1$syour Alma dashboard%2$s' sprintf=['<a href="https://dashboard.getalma.eu/api" target=\"_blank\">', '</a>'] mod='alma'}
-            {/almaDisplayHtml}
-            <br>
-            {almaDisplayHtml}
-                {l s='To use the Test mode, you need your Test API key from %1$syour sandbox dasboard%2$s' sprintf=['<a href="https://dashboard.sandbox.getalma.eu/api" target=\"_blank\">', '</a>'] mod='alma'}
-            {/almaDisplayHtml}
-            <br>
-        </p>
-        <br>
-        <p>
-            En cas de problème, contactez-nous par email à <a href="mailto:support@getalma.eu">support@getalma.eu</a>
-        </p>
-    </div>
-{elseif $updated}
+{elseif isset($tip) && (!isset($hasPSAccount) && !$hasPSAccount) || _PS_MODE_DEV_}
+    {include file="./_partials/notificationFirstInstallation.tpl"}
+{/if}
+{if isset($updated) && $updated}
     <div class="{$success_classes|escape:'htmlall':'UTF-8'}">
         {l s='Settings successfully updated' mod='alma'}
     </div>
 {/if}
 
-{if isset($hasPSAccount) &&  $hasPSAccount}
-    <prestashop-accounts></prestashop-accounts>
-
-    <script src="{$urlAccountsCdn|escape:'htmlall':'UTF-8'}" rel=preload></script>
-
-    <script>
-        /*********************
-         * PrestaShop Account *
-         * *******************/
-        window?.psaccountsVue?.init();
-    </script>
-
-    {if isset($hasKey) &&  !$hasKey}
-        <script>
-            window.onload = function() {
-                if (window.psaccountsVue.isOnboardingCompleted() != true) {
-                    document.getElementById("alma_config_form").remove()
-                    document.getElementById("alma_first_installation").remove()
-                }
-            }
-        </script>
-    {/if}
-{/if}
-{if isset($suggestPSAccount) &&  $suggestPSAccount}
-
-    <div class="alert alert-dismissible alert-info">
-        <h4>
-            {l s='We offer to download the PrestaShop Account module ' mod='alma'}
-        </h4>
-        <p>
-            {l s='Link your store to your PrestaShop account to take full advantage of the modules offered by the PrestaShop Marketplace and optimize your experience.'}
-        </p>
-        {almaDisplayHtml}
-        {l s='You can find the module %1$shere%2$s' sprintf=['<a href="https://addons.prestashop.com/en/administrative-tools/49648-prestashop-account.html" target=\"_blank\">', '</a>'] mod='alma'}
-        {/almaDisplayHtml}
-    </div>
-
-{/if}
+{include file="./notificationConfiguration.tpl"}

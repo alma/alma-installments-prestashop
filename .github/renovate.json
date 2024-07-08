@@ -18,8 +18,19 @@
       "groupName": "composer updates"
     },
     {
+      "matchManagers": ["docker"],
+      "matchDepNames": ["composer"],
+      "matchFileNames": ["scripts/build/Dockerfile"],
+      "enabled": false
+    },
+    {
       "matchManagers": ["dockerfile", "docker-compose"],
       "groupName": "docker updates"
+    },
+    {
+      "matchManagers": ["github-actions"],
+      "matchPackageNames": ["LoveToKnow/slackify-markdown-action"],
+      "enabled": false
     },
     {
       "description": "PHP, composer and Prestashop versions in Dockerfiles must be freezed",

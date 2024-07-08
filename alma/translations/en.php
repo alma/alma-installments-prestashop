@@ -1,6 +1,6 @@
 <?php
 /**
- * 2018-2023 Alma SAS.
+ * 2018-2024 Alma SAS.
  *
  * THE MIT LICENSE
  *
@@ -18,7 +18,7 @@
  * IN THE SOFTWARE.
  *
  * @author    Alma SAS <contact@getalma.eu>
- * @copyright 2018-2023 Alma SAS
+ * @copyright 2018-2024 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 global $_MODULE;
@@ -31,6 +31,7 @@ $_MODULE['<{alma}prestashop>alma_36359547b09bdb31f46c419a0bd5807e'] = 'Excluded 
 $_MODULE['<{alma}prestashop>alma_7bab99339291e7eea710b4a998e663de'] = 'Alma requires the CURL PHP extension.';
 $_MODULE['<{alma}prestashop>alma_fbb47375d2272bef79f5722a183bf1ec'] = 'Alma requires the JSON PHP extension.';
 $_MODULE['<{alma}prestashop>alma_7fb83ba9cf3cc38857a2ddae98534d22'] = 'Alma requires OpenSSL >= 1.0.1';
+$_MODULE['<{alma}prestashop>modulefactorytest_2c53dea2326232a2d867ddd1d2206aa0'] = 'Pay now by credit card';
 $_MODULE['<{alma}prestashop>wrongcredentialsexception_cc76de47de858ac2fa2964f534ecfdfb'] = 'Could not connect to Alma using your API keys.';
 $_MODULE['<{alma}prestashop>wrongcredentialsexception_733b6ddadc31fd97174b0cfe69b584c9'] = 'Please double check your keys on your %1$sAlma dashboard%2$s.';
 $_MODULE['<{alma}prestashop>wrongparamsexception_8ec75b5f68c49d1d6541b1e318a8120d'] = 'Error(s) key(s): %1$s.';
@@ -145,6 +146,12 @@ $_MODULE['<{alma}prestashop>apihelper_fc610b81ff31f9d969ddb659cd8248c1'] = 'Alma
 $_MODULE['<{alma}prestashop>insurancehelper_eaff1bdf24fcffe0e14e29a1bff51a12'] = 'Insurance';
 $_MODULE['<{alma}prestashop>insurancehelper_f1206f9fadc5ce41694f69129aecac26'] = 'Configure';
 $_MODULE['<{alma}prestashop>insurancehelper_7442e29d7d53e549b78d93c46b8cdcfc'] = 'Orders';
+$_MODULE['<{alma}prestashop>admininsurancehelper_eaff1bdf24fcffe0e14e29a1bff51a12'] = 'Insurance';
+$_MODULE['<{alma}prestashop>admininsurancehelper_f1206f9fadc5ce41694f69129aecac26'] = 'Configure';
+$_MODULE['<{alma}prestashop>admininsurancehelper_7442e29d7d53e549b78d93c46b8cdcfc'] = 'Orders';
+$_MODULE['<{alma}prestashop>insurancehelper_eaff1bdf24fcffe0e14e29a1bff51a12'] = 'Insurance';
+$_MODULE['<{alma}prestashop>insurancehelper_f1206f9fadc5ce41694f69129aecac26'] = 'Configure';
+$_MODULE['<{alma}prestashop>insurancehelper_7442e29d7d53e549b78d93c46b8cdcfc'] = 'Orders';
 $_MODULE['<{alma}prestashop>insuranceservice_d87aee5118a62a7ff6c21e4ac31006c5'] = 'I hereby acknowledge my acceptance to subscribe to the insurance offered by Alma. In doing so, I confirm that I have previously reviewed the [information notice, which constitutes the general conditions], the [insurance product information document], and the [pre-contractual information and advice sheet]. I ahead to it without reservation and agree to electronically sign the various documents forming my contract, if applicable. I expressly consent to the collection and use of my personal data for the purpose of subscribing to and managing my insurance contract(s).';
 $_MODULE['<{alma}prestashop>adminalmainsuranceconfiguration_b824200e9b8aca1fbb762d6566ff0cd7'] = 'Your configuration has been saved';
 $_MODULE['<{alma}prestashop>adminalmainsuranceconfiguration_4a39c6a33c3441762924914168d2a387'] = 'Error creating configuration Alma insurance: %1$s';
@@ -251,6 +258,15 @@ $_MODULE['<{alma}prestashop>pnx_fees_02d4482d332e1aef3437cd61c9bcc624'] = 'Conta
 $_MODULE['<{alma}prestashop>pnx_fees_5532ee2e5ea88b613ccb38e9c88f9a77'] = 'if you think your sales volumes warrant better rates!';
 $_MODULE['<{alma}prestashop>order_refund_ps15_cbb3ab577b705e328991986e35218f50'] = 'Amount refunded';
 $_MODULE['<{alma}prestashop>order_refund_ps15_96b0141273eabab320119c467cdcaf17'] = 'Total';
+$_MODULE['<{alma}prestashop>notificationconfiguration_9f246d669c560d2ac604f5e01c8dd981'] = 'To use Alma, please follow these steps';
+$_MODULE['<{alma}prestashop>notificationconfiguration_3f2c7ed52eb56243edc3a40def7df34b'] = 'Associate PrestaShop account (just below)';
+$_MODULE['<{alma}prestashop>notificationconfiguration_b6a9cb8bac15ad209cf970e3f7cc73a0'] = 'Create an Alma account';
+$_MODULE['<{alma}prestashop>notificationconfiguration_e243bbd390b43c9ee6047fab4ab3cdc0'] = 'Consult our getting started guide';
+$_MODULE['<{alma}prestashop>notificationconfiguration_cf5ec9fb9f7214a3db82a5a39fec5b48'] = 'Enter your API key';
+$_MODULE['<{alma}prestashop>notificationconfiguration_055f421849c2a1c32b885c95540f827c'] = 'Find your API live key on your %1$s Alma dashboard%2$s';
+$_MODULE['<{alma}prestashop>notificationconfiguration_53b458e8453e3694811e61c96527d638'] = 'To use Test mode, retrieve your Test API key from your %1$ssandbox dashboard%2$s';
+$_MODULE['<{alma}prestashop>notificationconfiguration_41d0063d3bb7d3067f46734fac8b27c4'] = 'We offer to download the PrestaShop Account module';
+$_MODULE['<{alma}prestashop>notificationconfiguration_6997dde298b14fbf6a7c95bd39fe8dc4'] = 'You can find the module %1$shere%2$s';
 $_MODULE['<{alma}prestashop>notificationshareofcheckout_a6b0ef107f0d278df612764187bbdece'] = ' Increase your performance & get insights !';
 $_MODULE['<{alma}prestashop>notificationshareofcheckout_5b64cb0849dd12ea528c04f2fe66ae4d'] = 'By accepting this option, you enable Alma to analyse the usage of your payment methods, [1]get more information to perform[/1] and share this data with you. You can [2]unsubscribe and erase your data[/2] at any moment.';
 $_MODULE['<{alma}prestashop>notificationshareofcheckout_50396a07824c89e694c1c76c3cb23a01'] = 'Know more about collected data';
@@ -285,14 +301,22 @@ $_MODULE['<{alma}prestashop>getcontent_a4978be2e8b36124fd4505f7e7f2aa3f'] = 'Max
 $_MODULE['<{alma}prestashop>getcontent_b47a7c1526a093a0afe5f28bdeb5face'] = 'Maximum amount for deferred %1$d months plan must be within %2$d and %3$d.';
 $_MODULE['<{alma}prestashop>getcontent_8c10d3b0970a247fc554062dc9055fd1'] = 'Maximum amount for %1$d-installment plan must be within %2$d and %3$d.';
 $_MODULE['<{alma}prestashop>getcontent_84b96a3ca61f4425b3fd56534a89a653'] = 'Impossible to save the Share of Checkout settings, please try again later';
-$_MODULE['<{alma}prestashop>getcontent_2d4a12c50532eb37b1a827fe310070c3'] = 'Thanks for installing Alma!';
-$_MODULE['<{alma}prestashop>getcontent_bbea702c04c766345509aa28d60812ad'] = 'You need to create an Alma account before proceeding.';
-$_MODULE['<{alma}prestashop>getcontent_bc2323832922e12693c983c2e2d63cc0'] = 'Read our getting started guide';
-$_MODULE['<{alma}prestashop>getcontent_8e51eafe439b0adfecc2dc209c2efb15'] = 'You can then fill in your API keys:';
-$_MODULE['<{alma}prestashop>getcontent_1e6898bbd6a44041932ac84cbda13bd7'] = 'You can find your Live API key in %1$syour Alma dashboard%2$s';
-$_MODULE['<{alma}prestashop>getcontent_689c39b29a6d91e6dff728a7762cbc9e'] = 'To use the Test mode, you need your Test API key from %1$syour sandbox dasboard%2$s';
 $_MODULE['<{alma}prestashop>getcontent_7f40d377cc4942c4f0d6e75a736f8445'] = 'Settings successfully updated';
+$_MODULE['<{alma}prestashop>getcontent_9f246d669c560d2ac604f5e01c8dd981'] = 'To use Alma, please follow these steps';
+$_MODULE['<{alma}prestashop>getcontent_7379f16a6f4551a47731893ecfce52ab'] = '1. Associate PrestaShop account (just below)';
+$_MODULE['<{alma}prestashop>getcontent_54f458d63e438020e62552dc28f23925'] = '2. Create an Alma account';
+$_MODULE['<{alma}prestashop>getcontent_e243bbd390b43c9ee6047fab4ab3cdc0'] = 'Consult our getting started guide';
+$_MODULE['<{alma}prestashop>getcontent_45d67e5114ba6e1f894f12c0c8ac6538'] = '3. Enter your API key';
+$_MODULE['<{alma}prestashop>getcontent_055f421849c2a1c32b885c95540f827c'] = 'Find your API live key on your %1$s Alma dashboard%2$s';
+$_MODULE['<{alma}prestashop>getcontent_83b4d24aae962bb5581ba5720be20666'] = 'To use Test mode, retrieve your Test API key from your %1$s sandbox dashboard%2$s';
+$_MODULE['<{alma}prestashop>getcontent_41d0063d3bb7d3067f46734fac8b27c4'] = 'We offer to download the PrestaShop Account module';
+$_MODULE['<{alma}prestashop>getcontent_6997dde298b14fbf6a7c95bd39fe8dc4'] = 'You can find the module %1$shere%2$s';
 $_MODULE['<{alma}prestashop>cartproducts_39f9a4a4bf8387aa7c0478f98b713f91'] = 'Remove insurance';
+$_MODULE['<{alma}prestashop>cartproducts_7da9ba421c3f84f283070d68bb7adca1'] = 'Alma insurance';
+$_MODULE['<{alma}prestashop>cartproducts_adcd954ece839e7da469e9b37801fa69'] = 'Protect your product with';
+$_MODULE['<{alma}prestashop>cartproducts_4cc10fb1d9332d404cc8016b47a1afd1'] = 'See available insurance policies';
+$_MODULE['<{alma}prestashop>widgetaddinsuranceproducts_f1aab89a3a1e86807c8dffa61d41ded6'] = 'Protect the rest of your products with';
+$_MODULE['<{alma}prestashop>widgetaddinsuranceproducts_f28220d70798406523119d998573b489'] = 'I want to insure all the remaining [1]%1$s[/1] in my cart';
 $_MODULE['<{alma}prestashop>fees_3acc62b245d8bc10f04d81f69d85b685'] = '(No additional fees)';
 $_MODULE['<{alma}prestashop>feeplan_64408fc092e84b9eb352626a0bcbbdf7'] = 'Fixed APR';
 $_MODULE['<{alma}prestashop>feeplan_ae9a134243362e66fef28a6b2e8a77c4'] = 'Cart total';
@@ -306,4 +330,11 @@ $_MODULE['<{alma}prestashop>shareofcheckout_98e056fc52b8e67882401819edb249f0'] =
 $_MODULE['<{alma}prestashop>shareofcheckout_50396a07824c89e694c1c76c3cb23a01'] = 'Know more about collected data';
 $_MODULE['<{alma}prestashop>shareofcheckout_19d6ea64f6810fa5329fcaa438cd9f4b'] = 'total quantity of orders, amounts and currencies';
 $_MODULE['<{alma}prestashop>shareofcheckout_28515fa383208fc73e01ab440f053fb0'] = 'payment provider for each order';
+$_MODULE['<{alma}prestashop>notificationfirstinstallation_2d4a12c50532eb37b1a827fe310070c3'] = 'Thanks for installing Alma!';
+$_MODULE['<{alma}prestashop>notificationfirstinstallation_bbea702c04c766345509aa28d60812ad'] = 'You need to create an Alma account before proceeding.';
+$_MODULE['<{alma}prestashop>notificationfirstinstallation_bc2323832922e12693c983c2e2d63cc0'] = 'Read our getting started guide';
+$_MODULE['<{alma}prestashop>notificationfirstinstallation_8e51eafe439b0adfecc2dc209c2efb15'] = 'You can then fill in your API keys:';
+$_MODULE['<{alma}prestashop>notificationfirstinstallation_1e6898bbd6a44041932ac84cbda13bd7'] = 'You can find your Live API key in %1$syour Alma dashboard%2$s';
+$_MODULE['<{alma}prestashop>notificationfirstinstallation_689c39b29a6d91e6dff728a7762cbc9e'] = 'To use the Test mode, you need your Test API key from %1$syour sandbox dasboard%2$s';
+$_MODULE['<{alma}prestashop>notificationfirstinstallation_dcab24ea1a3cd9bab8047b1b6f7ee65c'] = 'If you have any problems, please contact us by email at %1$ssupport@getalma.eu%2$s';
 $_MODULE['<{alma}prestashop>displaypayment_pnx_22f0189423433ab0e055b91d98970e5f'] = 'Alma Monthly Installments are not available for this order';

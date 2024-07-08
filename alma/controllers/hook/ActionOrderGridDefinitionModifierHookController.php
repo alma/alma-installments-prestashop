@@ -1,6 +1,6 @@
 <?php
 /**
- * 2018-2023 Alma SAS.
+ * 2018-2024 Alma SAS.
  *
  * THE MIT LICENSE
  *
@@ -18,7 +18,7 @@
  * IN THE SOFTWARE.
  *
  * @author    Alma SAS <contact@getalma.eu>
- * @copyright 2018-2023 Alma SAS
+ * @copyright 2018-2024 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
@@ -28,6 +28,7 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
+use Alma\PrestaShop\Builders\Helpers\InsuranceHelperBuilder;
 use Alma\PrestaShop\Exceptions\InsuranceInstallException;
 use Alma\PrestaShop\Grid\Column\AlmaBooleanColumn;
 use Alma\PrestaShop\Helpers\InsuranceHelper;
@@ -59,7 +60,8 @@ class ActionOrderGridDefinitionModifierHookController extends FrontendHookContro
     {
         parent::__construct($module);
 
-        $this->insuranceHelper = new InsuranceHelper();
+        $insuranceHelperBuilder = new InsuranceHelperBuilder();
+        $this->insuranceHelper = $insuranceHelperBuilder->getInstance();
     }
 
     /**
