@@ -74,8 +74,12 @@ class AdminInsuranceHelper
      * @param ConfigurationHelper $configurationHelper
      * @param AlmaInsuranceProductRepository $almaInsuranceProductRepository
      */
-    public function __construct($moduleFactory, $tabsHelper, $configurationHelper, $almaInsuranceProductRepository)
-    {
+    public function __construct(
+        $moduleFactory,
+        $tabsHelper,
+        $configurationHelper,
+        $almaInsuranceProductRepository
+    ) {
         $this->moduleFactory = $moduleFactory;
         $this->tabsHelper = $tabsHelper;
         $this->configurationHelper = $configurationHelper;

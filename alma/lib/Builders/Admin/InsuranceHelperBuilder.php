@@ -24,7 +24,12 @@
 
 namespace Alma\PrestaShop\Builders\Admin;
 
+use Alma\PrestaShop\Builders\Factories\ModuleFactoryBuilder;
+use Alma\PrestaShop\DependencyInjection\ContainerBuilder;
 use Alma\PrestaShop\Helpers\Admin\AdminInsuranceHelper;
+use Alma\PrestaShop\Helpers\Admin\TabsHelper;
+use Alma\PrestaShop\Helpers\ConfigurationHelper;
+use Alma\PrestaShop\Repositories\AlmaInsuranceProductRepository;
 use Alma\PrestaShop\Traits\BuilderTrait;
 
 if (!defined('_PS_VERSION_')) {
@@ -39,15 +44,42 @@ class InsuranceHelperBuilder
     use BuilderTrait;
 
     /**
+     * @var ModuleFactoryBuilder
+     */
+    protected $moduleFactory;
+    /**
+     * @var ContainerBuilder
+     */
+    protected $dic;
+
+    /**
      * @return AdminInsuranceHelper
      */
     public function getInstance()
     {
+/*
         return new AdminInsuranceHelper(
             $this->getModuleFactory(),
             $this->getTabsHelper(),
             $this->getConfigurationHelper(),
             $this->getAlmaInsuranceProductRepository()
         );
+*/
+    }
+
+    public function __construct()
+    {
+        $this->dic = new ContainerBuilder();
+        $this->moduleFactory = new ModuleFactoryBuilder();
+        $this->dic->setFactory('Alma\PrestaShop\Helpers\Admin\AdminInsuranceHelper', function () {
+            return new AdminInsuranceHelper(
+                $this->dic->setInstance('Alma\PrestaShop\Builders\Factories\ModuleFactoryBuilder'),
+                new TabsHelper(),
+                new ConfigurationHelper(),
+                new AlmaInsuranceProductRepository()
+            );
+        });
+
+        return $this->dic->getFactory('Alma\PrestaShop\Helpers\Admin\AdminInsuranceHelper');
     }
 }

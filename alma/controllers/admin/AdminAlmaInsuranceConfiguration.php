@@ -26,6 +26,7 @@ if (!defined('_PS_VERSION_')) {
 }
 
 use Alma\PrestaShop\Builders\Admin\InsuranceHelperBuilder;
+use Alma\PrestaShop\DependencyInjection\ContainerBuilder;
 use Alma\PrestaShop\Helpers\Admin\AdminInsuranceHelper;
 use Alma\PrestaShop\Helpers\ConfigurationHelper;
 use Alma\PrestaShop\Helpers\ConstantsHelper;
@@ -48,8 +49,12 @@ class AdminAlmaInsuranceConfigurationController extends ModuleAdminController
     public function __construct()
     {
         $this->bootstrap = true;
-        $insuranceHelperBuilder = new InsuranceHelperBuilder();
-        $this->insuranceHelper = $insuranceHelperBuilder->getInstance();
+
+        $dic = new ContainerBuilder();
+        $this->insuranceHelper = $dic->getInstance('Alma\PrestaShop\Builders\Admin\InsuranceHelperBuilder');
+
+        //$insuranceHelperBuilder = new InsuranceHelperBuilder();
+        //$this->insuranceHelper = $insuranceHelperBuilder->getInstance();
         $this->configurationHelper = new ConfigurationHelper();
         parent::__construct();
     }
