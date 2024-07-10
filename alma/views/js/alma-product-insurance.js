@@ -44,7 +44,10 @@ let quantity = 1;
                         quantity = 1;
                     }
                     if (event.eventType === 'updatedProductQuantity') {
-                        quantity = event.event.target.value;
+                        quantity = document.querySelector('.qty [name="qty"]').value;
+                        if (event.event) {
+                            quantity = event.event.target.value;
+                        }
                         removeInsurance();
                     }
                     if (modalIsClosed || event.eventType === 'updatedProductCombination') {
@@ -118,6 +121,9 @@ function onloadAddInsuranceInputOnProductAlma() {
             insuranceSelected = true;
             selectedAlmaInsurance = e.data.selectedInsuranceData;
             prestashop.emit('updateProduct', {
+                reason:{
+                    productUrl: window.location.href
+                },
                 selectedAlmaInsurance: selectedAlmaInsurance,
                 selectedInsuranceData: e.data.declinedInsurance,
                 selectedInsuranceQuantity: e.data.selectedInsuranceQuantity
