@@ -115,10 +115,18 @@ class AttributeProductService
         $idProductAttribute = (int) \Tools::getValue('product_attribute_id');
 
         if (\Tools::getIsset('group')) {
-            $idProductAttribute = (int) \Product::getIdProductAttributeByIdAttributes(
-                $idProduct,
-                \Tools::getValue('group')
-            );
+            // TODO : Use the factory Product to override the function getIdProductAttributeByIdAttributes and handle the compatibility
+            if (version_compare(_PS_VERSION_, '1.7.4.0', '<')) {
+                $idProductAttribute = \Product::getIdProductAttributesByIdAttributes(
+                    $idProduct,
+                    \Tools::getValue('group')
+                );
+            } else {
+                $idProductAttribute = (int) \Product::getIdProductAttributeByIdAttributes(
+                    $idProduct,
+                    \Tools::getValue('group')
+                );
+            }
         }
 
         return $idProductAttribute;
