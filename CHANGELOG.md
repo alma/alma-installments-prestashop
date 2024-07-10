@@ -1,5 +1,15 @@
 # Changelog
 
+## v4.1.1 - 2024-07-10
+
+### Changes
+
+- fix: add insurance from cart page with multiple execution (#499)
+
+#### Contributors
+
+@Benjamin-Freoua-Alma, @carine-bonnafous and @github-actions
+
 ## v4.1.0 - 2024-07-08
 
 - feat: Link your store with PS Account
