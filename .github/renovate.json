@@ -28,11 +28,6 @@
       "groupName": "docker updates"
     },
     {
-      "matchManagers": ["github-actions"],
-      "matchPackageNames": ["LoveToKnow/slackify-markdown-action"],
-      "enabled": false
-    },
-    {
       "description": "PHP, composer and Prestashop versions in Dockerfiles must be freezed",
       "matchManagers": ["dockerfile"],
       "matchDepNames": ["prestashop/prestashop", "php", "composer"],
