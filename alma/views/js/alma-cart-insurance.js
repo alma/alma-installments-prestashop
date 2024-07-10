@@ -184,42 +184,45 @@ function onloadInsuranceClickEvents() {
     });
 
     window.addEventListener('message', (e) => {
-        if (e.data.type === 'getSelectedInsuranceData') {
-            let idIframeModal = $('#' + e.data.idIframeModal);
-
-            if (e.data.selectedInsuranceData !== null) {
-                $.ajax({
-                    type: 'POST',
-                    url: '/module/alma/insurance?action=addInsuranceProduct',
-                    dataType: 'json',
-                    data: {
-                        ajax: true,
-                        token: idIframeModal.attr('data-token'),
-                        product_id: idIframeModal.attr('data-product-id'),
-                        product_attribute_id: idIframeModal.attr('data-product-attribute-id'),
-                        customization_id: idIframeModal.attr('data-product-customization-id'),
-                        insurance_contract_id: e.data.selectedInsuranceData.insuranceContractId,
-                        insurance_quantity: e.data.selectedInsuranceQuantity
-                    },
-                })
-                    .success(function () {
-                        location.reload();
-                    })
-
-                    .error(function (e) {
-                        console.log(e)
-                        //location.reload();
-                    });
-            }
-
-            removeLoaderDot();
-        }
-        if (e.data.type === 'almaEligibilityAnswer') {
-            if (e.data.eligibilityCallResult.length > 0) {
-                $('#' + e.data.iFrameIdForProductWidget).show();
-            }
-        }
+        handleAddInsuranceProductFromWidget(e);
     });
+}
+
+function handleAddInsuranceProductFromWidget(e) {
+    if (e.data.type === 'getSelectedInsuranceData') {
+        let idIframeModal = $('#' + e.data.idIframeModal);
+
+        if (e.data.selectedInsuranceData !== null) {
+            $.ajax({
+                type: 'POST',
+                url: '/module/alma/insurance?action=addInsuranceProduct',
+                dataType: 'json',
+                data: {
+                    ajax: true,
+                    token: idIframeModal.attr('data-token'),
+                    product_id: idIframeModal.attr('data-product-id'),
+                    product_attribute_id: idIframeModal.attr('data-product-attribute-id'),
+                    customization_id: idIframeModal.attr('data-product-customization-id'),
+                    insurance_contract_id: e.data.selectedInsuranceData.insuranceContractId,
+                    insurance_quantity: e.data.selectedInsuranceQuantity
+                },
+            })
+                .success(function () {
+                    location.reload();
+                })
+
+                .error(function (e) {
+                    console.log(e)
+                    //location.reload();
+                });
+        }
+    }
+    if (e.data.type === 'almaEligibilityAnswer') {
+        if (e.data.eligibilityCallResult.length > 0) {
+            $('#' + e.data.iFrameIdForProductWidget).show();
+        }
+    }
+    window.removeEventListener('message', handleAddInsuranceProductFromWidget);
 }
 
 // ** Display extra info for insurance under the item product on cart **
