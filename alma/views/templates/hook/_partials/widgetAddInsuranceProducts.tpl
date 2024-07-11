@@ -45,7 +45,7 @@
                    data-remaining-quantity="{$nbProductWithoutInsurance}"
                    data-id-iframe="product-alma-iframe-{$cmsReference}"
                    data-action="add-insurance-product"
-                   data-token='{\Tools::getToken(false)|escape:'htmlall':'UTF-8'}'
+                   data-token='{$token|escape:'htmlall':'UTF-8'}'
                    href="#"
                    id="add-insurance-product-{$cmsReference}"
                    class="btn-add-insurance-product alma-add-all-insurance-product"
