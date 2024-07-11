@@ -260,6 +260,7 @@ class InsuranceProductService
         $insuranceContractInfos,
         $cart = null
     ) {
+        $insuranceName = str_replace('insurance_contract_', '', $insuranceName);
         $idProductAttribute = $this->attributeProductService->getIdProductAttributeFromPost($idProduct);
 
         $insuranceAttributeGroupId = $this->attributeGroupProductService->getIdAttributeGroupByName(
@@ -333,7 +334,7 @@ class InsuranceProductService
                     $idProduct,
                     $insuranceProduct,
                     $this->priceHelper->convertPriceFromCents($insuranceContract->getPrice()),
-                    $insuranceContract->getName(),
+                    $insuranceContract->getId(),
                     $quantity,
                     $idCustomization,
                     [
