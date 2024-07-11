@@ -31,7 +31,7 @@
 >
     <div class="actions-alma-insurance-product" style="display:none">
         {if $associatedInsurances}
-            {foreach from=$associatedInsurances item=$associatedInsurance key=$idProductAttributeInsurance}
+            {foreach $associatedInsurances as $idProductAttributeInsurance => $associatedInsurance}
                 {include file="modules/alma/views/templates/hook/_partials/itemCartInsuranceProduct.tpl"}
             {/foreach}
         {/if}

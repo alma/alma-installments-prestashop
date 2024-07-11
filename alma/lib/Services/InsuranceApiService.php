@@ -140,7 +140,7 @@ class InsuranceApiService
                 $insuranceContractId,
                 $cmsReference,
                 $productPrice,
-                $this->context->session->getId(),
+                $this->context->cookie->checksum,
                 $this->cartHelper->getCartIdFromContext()
             );
         } catch (\Exception $e) {
