@@ -495,6 +495,16 @@ class AlmaInsuranceProductRepository
      */
     public function getCountInsuranceProductAttributeByProductAndCartIdAndShopId($product, $cartId, $shopId)
     {
+        // TODO : Use Product Factory to build a product object and always get the same product structure
+        if (is_array($product)) {
+            $idProduct = $product['id_product'];
+            $productAttributeId = $product['id_product_attribute'];
+            $productIdCustomization = $product['id_customization'];
+        } else {
+            $idProduct = $product->id;
+            $productAttributeId = $product->id_product_attribute;
+            $productIdCustomization = $product->id_customization;
+        }
         $sql = '
             SELECT COUNT(aip.`id_product_attribute_insurance`) as nbInsurance,
                     `id_product_insurance`,
@@ -502,9 +512,9 @@ class AlmaInsuranceProductRepository
                    `price`
             FROM `' . _DB_PREFIX_ . 'alma_insurance_product` aip
             WHERE aip.`id_cart` = ' . (int) $cartId . '
-            AND aip.`id_product` = ' . (int) $product->id . '
-            AND aip.`id_product_attribute` = ' . (int) $product->id_product_attribute . '
-            AND aip.`id_customization` = ' . (int) $product->id_customization . '
+            AND aip.`id_product` = ' . (int) $idProduct . '
+            AND aip.`id_product_attribute` = ' . (int) $productAttributeId . '
+            AND aip.`id_customization` = ' . (int) $productIdCustomization . '
             AND aip.`id_shop` = ' . (int) $shopId . '
             GROUP BY aip.`id_product_attribute_insurance`';
 

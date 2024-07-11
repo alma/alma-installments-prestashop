@@ -174,9 +174,16 @@ class DisplayCartExtraProductActionsHookController extends FrontendHookControlle
 
         $resultInsurance = [];
 
-        $idProduct = $product->id;
-        $productAttributeId = $product->id_product_attribute;
-        $productQuantity = $product->quantity;
+        // TODO : Use Product Factory to build a product object and always get the same product structure
+        if (is_array($product)) {
+            $idProduct = $product['id_product'];
+            $productAttributeId = $product['id_product_attribute'];
+            $productQuantity = $product['quantity'];
+        } else {
+            $idProduct = $product->id;
+            $productAttributeId = $product->id_product_attribute;
+            $productQuantity = $product->quantity;
+        }
         $template = 'displayCartExtraProductActions.tpl';
         $cmsReference = $this->insuranceHelper->createCmsReference($idProduct, $productAttributeId);
         $regularPrice = $this->productHelper->getRegularPrice($idProduct, $productAttributeId);
@@ -223,7 +230,7 @@ class DisplayCartExtraProductActionsHookController extends FrontendHookControlle
                     $regularPriceInCents,
                     $product['quantity_wanted'],
                     $merchantId,
-                    $this->context->session->getId(),
+                    $this->context->cookie->checksum,
                     $this->cartHelper->getCartIdFromContext()
                 ),
                 'insuranceSettings' => $this->adminInsuranceHelper->mapDbFieldsWithIframeParams(),
