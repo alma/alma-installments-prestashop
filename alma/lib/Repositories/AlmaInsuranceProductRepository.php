@@ -253,6 +253,7 @@ class AlmaInsuranceProductRepository
      */
     public function updateSubscription($subscriptionId, $status, $subscriptionBrokerId, $subscriptionBrokerReference)
     {
+        // TODO : Need to improve this query to throw exception if request is empty of subscriptionId is not found
         if (
             !\Db::getInstance()->execute(
                 'UPDATE `' . _DB_PREFIX_ . 'alma_insurance_product`

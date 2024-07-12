@@ -174,7 +174,7 @@ class InsuranceApiService
                 $subscriptionData,
                 $order->id,
                 $idTransaction,
-                $this->context->session->getId(),
+                $this->context->cookie->checksum,
                 $order->id_cart
             );
 
