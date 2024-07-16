@@ -326,6 +326,8 @@ class FrontHeaderHookController extends FrontendHookController
      */
     public function manageInsuranceAssetsAfter17()
     {
+        $scripts = '';
+
         if (
             $this->insuranceHelper->isInsuranceAllowedInProductPage()
             && $this->iAmInProductPage()
@@ -337,7 +339,7 @@ class FrontHeaderHookController extends FrontendHookController
                 "modules/$this->moduleName/" . ConstantsHelper::INSURANCE_PRODUCT_CSS_PATH
             );
 
-            return $this->urlScriptInsuranceModal();
+            $scripts .= $this->urlScriptInsuranceModal();
         }
 
         if (
@@ -352,7 +354,7 @@ class FrontHeaderHookController extends FrontendHookController
             );
 
             if ($this->insuranceHelper->isInsuranceAllowedInCartPage()) {
-                return $this->urlScriptInsuranceModal();
+                $scripts .= $this->urlScriptInsuranceModal();
             }
         }
 
@@ -365,7 +367,9 @@ class FrontHeaderHookController extends FrontendHookController
 
         $this->controller->addJS($this->module->_path . ConstantsHelper::INSURANCE_SCRIPT_PATH);
 
-        return $this->almaInsuranceIdInHeader();
+        $scripts .= $this->almaInsuranceIdInHeader();
+
+        return $scripts;
     }
 
     /**
