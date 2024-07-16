@@ -107,12 +107,16 @@ class HookHelper
         'actionValidateOrder' => 'all',
         'displayCartExtraProductActions' => 'all',
         'termsAndConditions' => 'all',
+        'actionAdminOrdersListingFieldsModifier' => [
+            'version' => '1.7.5',
+            'operand' => '<',
+        ],
         'actionOrderGridQueryBuilderModifier' => [
-            'version' => '1.7.7',
+            'version' => '1.7.5',
             'operand' => '>=',
         ],
         'actionOrderGridDefinitionModifier' => [
-            'version' => '1.7.7',
+            'version' => '1.7.5',
             'operand' => '>=',
         ],
         'displayInvoice' => [
