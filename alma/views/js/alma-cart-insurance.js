@@ -28,6 +28,9 @@
         if (window.prestashop != null && window.prestashop.on != null) {
             prestashop.on("updatedCart", onloadInsuranceItemCartAlma);
         }
+        window.addEventListener('message', (e) => {
+            handleAddInsuranceProductFromWidget(e);
+        });
     });
 })(jQuery);
 
@@ -182,10 +185,6 @@ function onloadInsuranceClickEvents() {
             });
 
     });
-
-    window.addEventListener('message', (e) => {
-        handleAddInsuranceProductFromWidget(e);
-    });
 }
 
 function handleAddInsuranceProductFromWidget(e) {
@@ -218,7 +217,7 @@ function handleAddInsuranceProductFromWidget(e) {
         }
     }
     if (e.data.type === 'almaEligibilityAnswer') {
-        if (e.data.eligibilityCallResult.length > 0) {
+        if (e.data.eligibilityCallResponseStatus.response.eligibleProduct && e.data.eligibilityCallResult.length > 0) {
             $('#' + e.data.iFrameIdForProductWidget).show();
         }
     }

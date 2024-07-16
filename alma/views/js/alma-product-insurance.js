@@ -26,6 +26,7 @@ let selectedAlmaInsurance = null;
 let addToCartFlow = false;
 let productDetails = null;
 let quantity = 1;
+let almaEligibilityAnswer = false;
 
 (function ($) {
     $(function () {
@@ -97,8 +98,9 @@ function onloadAddInsuranceInputOnProductAlma() {
 
     window.addEventListener('message', (e) => {
         if (e.data.type === 'almaEligibilityAnswer') {
+            almaEligibilityAnswer = e.data.eligibilityCallResponseStatus.response.eligibleProduct;
             btnLoaders('stop');
-            if (e.data.eligibilityCallResponseStatus.response.eligibleProduct === true) {
+            if (almaEligibilityAnswer) {
                 let heightIframe = e.data.widgetSize.height;
                 let stringHeightIframe = heightIframe + 'px';
                 if (heightIframe <= 45) {
@@ -108,7 +110,7 @@ function onloadAddInsuranceInputOnProductAlma() {
                 document.getElementById('alma-widget-insurance-product-page').style.height = stringHeightIframe;
             } else {
                 let addToCart = document.querySelector('.add-to-cart');
-                addToCart.removeEventListener("click",insuranceListener)
+                addToCart.removeEventListener("click", insuranceListener)
             }
         }
         if (e.data.type === 'getSelectedInsuranceData') {
@@ -204,8 +206,9 @@ function removeInputInsurance() {
 }
 
 function addModalListenerToAddToCart() {
-    if (settings.isAddToCartPopupActivated === true) {
+    if (settings.isAddToCartPopupActivated === true && almaEligibilityAnswer) {
         let addToCart = document.querySelector('.add-to-cart');
+        // If we change the quantity the DOM is reloaded then we need to remove and add the listener again
         addToCart.removeEventListener("click",insuranceListener)
         addToCart.addEventListener("click", insuranceListener);
     }

@@ -1,5 +1,20 @@
 # Changelog
 
+## v4.1.2 - 2024-07-16
+
+### Changes
+
+### 🐛 Bug Fixes
+
+- fix: Avoid change quantity with module pscartdropdown for insurance (#510)
+- fix: Issue PS Account with PS 8.1.7 (#506)
+- fix: Issue quantity insurance if we change quantity in cart (#508)
+- fix: Issue insurance for product not eligible created after import (#509)
+
+#### Contributors
+
+@Benjamin-Freoua-Alma, @carine-bonnafous and @github-actions
+
 ## v4.1.1 - 2024-07-10
 
 ### Changes

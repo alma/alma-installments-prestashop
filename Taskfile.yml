@@ -10,12 +10,40 @@ tasks:
     cmds:
       - task -l
 
+  brew:
+    preconditions:
+      - sh: brew -v
+        msg: 'This task requires `brew`. Please refer to this documentation: https://brew.sh/'
+
+  pre-commit:
+    desc: Install pre-commit tool
+    internal: true
+    deps: [brew]
+    status:
+      - pre-commit --version
+    cmds:
+      - brew install pre-commit
+
+  pre-commit:install:
+    desc: Install and set up pre-commit hooks
+    deps: [pre-commit]
+    cmds:
+      - pre-commit install --hook-type pre-commit --hook-type commit-msg
+
+  tools:install:
+    desc: Composer install of tools
+    sources:
+      - alma/composer.json
+      - alma/composer.lock
+    cmds:
+      - composer install --optimize-autoloader --working-dir=alma
+
   docker:build:
     desc: Build prestashop docker image
     cmds:
       - docker compose build prestashop
 
-  test:coverage:
+  test:
     desc: Execute Unit Tests with coverage
     deps:
       - docker:build
@@ -35,14 +63,6 @@ tasks:
     cmds:
       - rm -rf ./dist
 
-  install-tools:
-    desc: Composer install of tools
-    sources:
-      - alma/composer.json
-      - alma/composer.lock
-    cmds:
-      - composer install --optimize-autoloader --working-dir=alma
-
   lint:ci:
     desc: Run linter within docker-compose for the CI
     deps:
@@ -53,7 +73,7 @@ tasks:
   lint:
     desc: Run linter
     deps:
-      - install-tools
+      - tools:install
     cmds:
       - php alma/vendor/bin/php-cs-fixer fix --dry-run --diff alma
       # Search for variables in smarty templates that are not escaped
@@ -66,7 +86,7 @@ tasks:
   lint:fix:
     desc: Run linter and apply fix
     deps:
-      - install-tools
+      - tools:install
     cmds:
       - php alma/vendor/bin/php-cs-fixer fix alma
       # Execute autoindex to add index in all folders
@@ -78,7 +98,7 @@ tasks:
   php-compatibility:
     desc: Check compatibility code
     deps:
-      - install-tools
+      - tools:install
     cmds:
       - php ./alma/vendor/bin/phpcs -p alma --standard=PHPCompatibility -s --runtime-set testVersion 5.6-8.1 --ignore=\*/vendor/\*
 
@@ -119,10 +139,11 @@ tasks:
     desc: Create a release pull request
     cmds:
       - gh workflow run release-pull-request.yml
-      - sleep 2
+      - cmd: sleep 2
+        silent: true
       - cmd: echo "Release pull request created, check out https://github.com/alma/{{.REPOSITORY}}/pulls?q=is%3Aopen+is%3Apr+label%3Arelease"
         silent: true
-      - cmd: echo "If no pull request is created, check out https://github.com/alma/{{.REPOSITORY}}/actions/workflows/release-pull-request.yml."
+      - cmd: echo "If no pull request is created, check out https://github.com/alma/{{.REPOSITORY}}/actions/workflows/release-pull-request.yml"
         silent: true
       - cmd: echo "Please, review and merge the pull request."
         silent: true
@@ -140,10 +161,11 @@ tasks:
           Please provide a changelog message. Example: `task hotfix CHANGELOG_MESSAGE='This is a message'`.
     cmds:
       - gh workflow run hotfix-pull-request.yml -F changelog-message='{{.CHANGELOG_MESSAGE}}'
-      - sleep 2
+      - cmd: sleep 2
+        silent: true
       - cmd: echo "Hotfix pull request created, check out https://github.com/alma/{{.REPOSITORY}}/pulls?q=is%3Aopen+is%3Apr+label%3Ahotfix"
         silent: true
-      - cmd: echo "If no pull request is created, check out https://github.com/alma/{{.REPOSITORY}}/actions/workflows/hotfix-pull-request.yml."
+      - cmd: echo "If no pull request is created, check out https://github.com/alma/{{.REPOSITORY}}/actions/workflows/hotfix-pull-request.yml"
         silent: true
       - cmd: echo "Please, review and merge the pull request."
         silent: true
