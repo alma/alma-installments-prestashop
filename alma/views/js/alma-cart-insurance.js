@@ -28,6 +28,9 @@
         if (window.prestashop != null && window.prestashop.on != null) {
             prestashop.on("updatedCart", onloadInsuranceItemCartAlma);
         }
+        window.addEventListener('message', (e) => {
+            handleAddInsuranceProductFromWidget(e);
+        });
     });
 })(jQuery);
 
@@ -181,10 +184,6 @@ function onloadInsuranceClickEvents() {
                 //location.reload();
             });
 
-    });
-
-    window.addEventListener('message', (e) => {
-        handleAddInsuranceProductFromWidget(e);
     });
 }
 
