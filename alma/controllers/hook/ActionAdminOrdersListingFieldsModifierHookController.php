@@ -27,9 +27,9 @@ namespace Alma\PrestaShop\Controllers\Hook;
 use Alma\PrestaShop\Builders\Helpers\InsuranceHelperBuilder;
 use Alma\PrestaShop\Helpers\InsuranceHelper;
 use Alma\PrestaShop\Helpers\SettingsHelper;
-use PrestaShop\PrestaShop\Adapter\Entity\ModuleAdminController;
+use Alma\PrestaShop\Hooks\AdminHookController;
 
-class ActionAdminOrdersListingFieldsModifierHookController extends ModuleAdminController
+class ActionAdminOrdersListingFieldsModifierHookController extends AdminHookController
 {
     /**
      * @var InsuranceHelper
@@ -64,23 +64,19 @@ class ActionAdminOrdersListingFieldsModifierHookController extends ModuleAdminCo
      */
     public function run($params)
     {
-        if (isset($params['select'])) {
+        if (array_key_exists('select', $params)) {
             $params['select'] .= ' ,IF(aip.`id_order` IS NOT NULL,1,0) as has_alma_insurance ';
         }
-        if (isset($params['join'])) {
-            $params['join'] .= 'LEFT JOIN ' . _DB_PREFIX_ . 'alma_insurance_product aip ON (a.id_order = aip.id_order )';
+        if (array_key_exists('join', $params)) {
+            $params['join'] .= 'LEFT JOIN ' . _DB_PREFIX_ . 'alma_insurance_product aip ON (a.id_order = aip.id_order)';
         }
-        if (isset($params['group_by'])) {
-            $params['group_by'] .= 'aip.id_order';
+        if (array_key_exists('group_by', $params)) {
+            $params['group_by'] .= 'GROUP BY a.id_order';
         }
         $params['fields']['has_alma_insurance'] = [
             'title' => 'Has Insurance',
-            'type' => 'select',
-            'list' => [
-                0 => 'No',
-                1 => 'Yes',
-            ],
-            'filter_key' => 'aip!id_order',
+            'type' => 'bool',
+            'tmpTableFilter' => true,
         ];
     }
 }
