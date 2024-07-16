@@ -218,7 +218,7 @@ function handleAddInsuranceProductFromWidget(e) {
         }
     }
     if (e.data.type === 'almaEligibilityAnswer') {
-        if (e.data.eligibilityCallResult.length > 0) {
+        if (e.data.eligibilityCallResponseStatus.response.eligibleProduct && e.data.eligibilityCallResult.length > 0) {
             $('#' + e.data.iFrameIdForProductWidget).show();
         }
     }
