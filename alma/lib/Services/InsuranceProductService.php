@@ -28,6 +28,7 @@ use Alma\PrestaShop\Exceptions\AlmaException;
 use Alma\PrestaShop\Exceptions\InsuranceContractException;
 use Alma\PrestaShop\Factories\CombinationFactory;
 use Alma\PrestaShop\Factories\ContextFactory;
+use Alma\PrestaShop\Factories\LinkFactory;
 use Alma\PrestaShop\Factories\ProductFactory;
 use Alma\PrestaShop\Factories\ToolsFactory;
 use Alma\PrestaShop\Helpers\ConstantsHelper;
@@ -112,10 +113,6 @@ class InsuranceProductService
      */
     protected $toolsHelper;
     /**
-     * @var \Link
-     */
-    protected $link;
-    /**
      * @var ProductFactory
      */
     protected $productFactory;
@@ -124,9 +121,9 @@ class InsuranceProductService
      */
     protected $combinationFactory;
     /**
-     * @var mixed
+     * @var \Link
      */
-    protected $linkFactory;
+    protected $link;
     /**
      * @var ToolsFactory
      */
@@ -139,6 +136,7 @@ class InsuranceProductService
     /**
      * @param AlmaInsuranceProductRepository $almaInsuranceProductRepository
      * @param ContextFactory $contextFactory
+     * @param LinkFactory $linkFactory
      * @param AttributeGroupProductService $attributeGroupProductService
      * @param AttributeProductService $attributeProductService
      * @param CombinationProductAttributeService $combinationProductAttributeService
@@ -174,7 +172,7 @@ class InsuranceProductService
     ) {
         $this->productFactory = $productFactory;
         $this->combinationFactory = $combinationFactory;
-        $this->linkFactory = $linkFactory;
+        $this->link = $linkFactory->create();
         $this->almaInsuranceProductRepository = $almaInsuranceProductRepository;
         $this->context = $contextFactory->getContext();
         $this->attributeGroupProductService = $attributeGroupProductService;
@@ -411,7 +409,7 @@ class InsuranceProductService
             $resultInsurance[] = [
                 'idInsuranceProduct' => $almaInsuranceProduct->id,
                 'nameInsuranceProduct' => $almaInsuranceProduct->name[$this->context->language->id],
-                'urlImageInsuranceProduct' => '//' . $this->linkFactory->getImageLink(
+                'urlImageInsuranceProduct' => '//' . $this->link->getImageLink(
                     $linkRewrite,
                     $idImage,
                     $this->imageHelper->getFormattedImageTypeName('cart')
