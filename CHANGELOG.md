@@ -4,11 +4,10 @@
 
 ### Changes
 
-- fix: Issue with insurance on mobile display (#515)
-
 ### 🐛 Bug Fixes
 
 - fix: Declaration LinkFactory (#514)
+- fix: Issue with insurance on mobile display (#515)
 
 #### Contributors
 
