@@ -209,7 +209,7 @@ function addModalListenerToAddToCart() {
     if (settings.isAddToCartPopupActivated === true && almaEligibilityAnswer) {
         let addToCart = document.querySelector('.add-to-cart');
         // If we change the quantity the DOM is reloaded then we need to remove and add the listener again
-        addToCart.removeEventListener("click",insuranceListener)
+        addToCart.removeEventListener("click", insuranceListener);
         addToCart.addEventListener("click", insuranceListener);
     }
 }

@@ -31,10 +31,15 @@ if (!defined('_PS_VERSION_')) {
 /**
  * Class CustomerFactory.
  */
-class LinkFactory extends \Link
+class LinkFactory
 {
-    public function getImageLink($name, $ids, $type = null)
+    /**
+     * @var \Link
+     */
+    protected $link;
+
+    public function create()
     {
-        return parent::getImageLink($name, $ids, $type);
+        return new \Link();
     }
 }
