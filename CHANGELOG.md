@@ -1,5 +1,13 @@
 # Changelog
 
+## v4.1.4 - 2024-07-18
+
+### Changes
+
+#### Contributors
+
+@Benjamin-Freoua-Alma and @github-actions
+
 ## v4.1.3 - 2024-07-18
 
 ### Changes
