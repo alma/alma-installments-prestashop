@@ -1,5 +1,19 @@
 # Changelog
 
+## v4.1.3 - 2024-07-18
+
+### Changes
+
+- fix: Issue with insurance on mobile display (#515)
+
+### 🐛 Bug Fixes
+
+- fix: Declaration LinkFactory (#514)
+
+#### Contributors
+
+@Benjamin-Freoua-Alma, @carine-bonnafous and @github-actions
+
 ## v4.1.2 - 2024-07-16
 
 ### Changes
