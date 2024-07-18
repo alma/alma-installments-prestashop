@@ -43,9 +43,11 @@ function loadInsuranceMiniCart() {
             if ($(e).hasClass(`cart-item-${insuranceId}`)) {
                 $(e).find('input').prop('disabled', true)
                 // Remove change number of input when you wheel (scroll) inside the input
-                e.querySelector('input').addEventListener('wheel', function (e) {
-                    document.activeElement.blur();
-                });
+                if ($(e).find('input').length > 0) {
+                    e.querySelector('input').addEventListener('wheel', function (e) {
+                        document.activeElement.blur();
+                    });
+                }
                 $(e).find('.pscartdropdown-product-line-grid-right .input-group-btn-vertical').remove()
                 $(e).find('a.label').removeAttr('href')
                 // TODO : Need to edit the url of delete product for remove an insurance product
