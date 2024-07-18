@@ -652,11 +652,21 @@ class Alma extends PaymentModule
         return $this->runHookController('displayPayment', $params);
     }
 
-    public function hookDeleteProductInCartAfter($params)
+    /**
+     * @param $params
+     *
+     * @return mixed|null
+     */
+    public function hookActionAfterDeleteProductInCart($params)
     {
         return $this->hookActionObjectProductInCartDeleteAfter($params);
     }
 
+    /**
+     * @param $params
+     *
+     * @return mixed|null
+     */
     public function hookActionObjectProductInCartDeleteAfter($params)
     {
         return $this->runHookController('actionObjectProductInCartDeleteAfter', $params);

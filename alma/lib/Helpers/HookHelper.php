@@ -95,9 +95,13 @@ class HookHelper
             'version' => '1.7.6',
             'operand' => '>=',
         ],
-        'actionObjectProductInCartDeleteAfter' => [
-            'version' => '1.7.1',
+        'actionAfterDeleteProductInCart' => [
+            'version' => '1.7',
             'operand' => '>=',
+        ],
+        'actionObjectProductInCartDeleteAfter' => [
+            'version' => '8.1.4',
+            'operand' => '>',
         ],
         'actionCartSave' => 'all',
         'actionValidateOrder' => 'all',
