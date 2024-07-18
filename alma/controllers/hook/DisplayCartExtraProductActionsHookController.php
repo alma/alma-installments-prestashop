@@ -223,7 +223,7 @@ class DisplayCartExtraProductActionsHookController extends FrontendHookControlle
                     $regularPriceInCents,
                     $product['quantity_wanted'],
                     $merchantId,
-                    $this->context->session->getId(),
+                    $this->context->cookie->checksum,
                     $this->cartHelper->getCartIdFromContext()
                 ),
                 'insuranceSettings' => $this->adminInsuranceHelper->mapDbFieldsWithIframeParams(),
