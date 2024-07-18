@@ -85,6 +85,10 @@
     border: 1px solid rgba(0, 0, 0, 0.25);
 }
 
+.product-line-grid-right .bootstrap-touchspin {
+    box-shadow: none;
+}
+
 /**
 -- Loader dot
  */
