@@ -104,18 +104,24 @@ class InsuranceProductServiceTest extends TestCase
      */
     protected $priceHelperMock;
     /**
-     * @var LinkFactory|(LinkFactory&\PHPUnit_Framework_MockObject_MockObject)|\PHPUnit_Framework_MockObject_MockObject
+     * @var LinkFactory
      */
     protected $linkFactoryMock;
+    /**
+     * @var \Link
+     */
+    protected $linkMock;
 
     public function setUp()
     {
+        $this->linkMock = $this->createMock(\Link::class);
         $this->toolsFactorySpy = \Mockery::spy(ToolsFactory::class);
         $this->contextFactoryMock = \Mockery::mock(ContextFactory::class)->makePartial();
         $this->almaInsuranceProductRepository = $this->createMock(AlmaInsuranceProductRepository::class);
         $this->productFactoryMock = $this->createMock(ProductFactory::class);
         $this->combinationFactoryMock = $this->createMock(CombinationFactory::class);
         $this->linkFactoryMock = $this->createMock(LinkFactory::class);
+        $this->linkFactoryMock->method('create')->willReturn($this->linkMock);
         $this->cart = $this->createMock(\Cart::class);
         $this->newCart = $this->createMock(\Cart::class);
         $this->context = $this->createMock(\Context::class);
@@ -239,7 +245,7 @@ class InsuranceProductServiceTest extends TestCase
         $this->priceHelperMock->expects($this->exactly(2))
             ->method('convertPriceFromCents')
             ->willReturnOnConsecutiveCalls(47.899999999999999, 22.899999999999999);
-        $this->linkFactoryMock->expects($this->exactly(2))
+        $this->linkMock->expects($this->exactly(2))
             ->method('getImageLink')
             ->willReturn('url_image');
         $this->almaInsuranceProductRepository->expects($this->exactly(2))
