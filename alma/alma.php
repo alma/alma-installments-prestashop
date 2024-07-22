@@ -422,7 +422,19 @@ class Alma extends PaymentModule
     }
 
     /**
-     * Hook to modify the order table
+     * Hook to modify the order table before Ps 1.7.5
+     *
+     * @param $params
+     *
+     * @return mixed|null
+     */
+    public function hookActionAdminOrdersListingFieldsModifier($params)
+    {
+        return $this->runHookController('actionAdminOrdersListingFieldsModifier', $params);
+    }
+
+    /**
+     * Hook to modify the order table after Ps 1.7.5
      *
      * @param $params
      *
@@ -434,7 +446,7 @@ class Alma extends PaymentModule
     }
 
     /**
-     * Hook to modify the order table
+     * Hook to modify the order table after Ps 1.7.5
      *
      * @param $params
      *
