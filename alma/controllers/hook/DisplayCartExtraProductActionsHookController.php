@@ -30,7 +30,9 @@ use Alma\PrestaShop\Builders\Helpers\InsuranceHelperBuilder;
 use Alma\PrestaShop\Builders\Helpers\PriceHelperBuilder;
 use Alma\PrestaShop\Builders\Helpers\SettingsHelperBuilder;
 use Alma\PrestaShop\Builders\Services\InsuranceProductServiceBuilder;
+use Alma\PrestaShop\Exceptions\AlmaCartItemFactoryException;
 use Alma\PrestaShop\Exceptions\InsuranceNotFoundException;
+use Alma\PrestaShop\Factories\AlmaCartItemFactory;
 use Alma\PrestaShop\Helpers\Admin\AdminInsuranceHelper;
 use Alma\PrestaShop\Helpers\CartHelper;
 use Alma\PrestaShop\Helpers\ConstantsHelper;
@@ -99,6 +101,10 @@ class DisplayCartExtraProductActionsHookController extends FrontendHookControlle
      * @var InsuranceProductService
      */
     protected $insuranceProductService;
+    /**
+     * @var AlmaCartItemFactory
+     */
+    protected $almaCartItemFactory;
 
     /**
      * @param $module
@@ -130,6 +136,8 @@ class DisplayCartExtraProductActionsHookController extends FrontendHookControlle
         $insuranceProductServiceBuilder = new InsuranceProductServiceBuilder();
         $this->insuranceProductService = $insuranceProductServiceBuilder->getInstance();
 
+        $this->almaCartItemFactory = new AlmaCartItemFactory();
+
         parent::__construct($module);
     }
 
@@ -153,10 +161,11 @@ class DisplayCartExtraProductActionsHookController extends FrontendHookControlle
      */
     public function run($params)
     {
-        /**
-         * @var \ProductCore $product
-         */
-        $product = $params['product'];
+        try {
+            $product = $this->almaCartItemFactory->create($params['product']);
+        } catch (AlmaCartItemFactoryException $e) {
+            throw new InsuranceNotFoundException();
+        }
 
         /**
          * @var \CartCore $cart
@@ -174,9 +183,9 @@ class DisplayCartExtraProductActionsHookController extends FrontendHookControlle
 
         $resultInsurance = [];
 
-        $idProduct = $product->id;
-        $productAttributeId = $product->id_product_attribute;
-        $productQuantity = $product->quantity;
+        $idProduct = $product->getId();
+        $productAttributeId = $product->getIdProductAttribute();
+        $productQuantity = $product->getQuantity();
         $template = 'displayCartExtraProductActions.tpl';
         $cmsReference = $this->insuranceHelper->createCmsReference($idProduct, $productAttributeId);
         $regularPrice = $this->productHelper->getRegularPrice($idProduct, $productAttributeId);
@@ -221,7 +230,7 @@ class DisplayCartExtraProductActionsHookController extends FrontendHookControlle
                     ConstantsHelper::FO_IFRAME_WIDGET_INSURANCE_PATH,
                     $cmsReference,
                     $regularPriceInCents,
-                    $product['quantity_wanted'],
+                    $product->getQuantity(),
                     $merchantId,
                     $this->context->cookie->checksum,
                     $this->cartHelper->getCartIdFromContext()

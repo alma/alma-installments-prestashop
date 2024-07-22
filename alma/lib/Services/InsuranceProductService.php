@@ -38,6 +38,7 @@ use Alma\PrestaShop\Helpers\PriceHelper;
 use Alma\PrestaShop\Helpers\ProductHelper;
 use Alma\PrestaShop\Helpers\ToolsHelper;
 use Alma\PrestaShop\Logger;
+use Alma\PrestaShop\Model\AlmaCartItemModel;
 use Alma\PrestaShop\Repositories\AlmaInsuranceProductRepository;
 use Alma\PrestaShop\Repositories\ProductRepository;
 
@@ -258,6 +259,7 @@ class InsuranceProductService
         $insuranceContractInfos,
         $cart = null
     ) {
+        $insuranceName = str_replace('insurance_contract_', '', $insuranceName);
         $idProductAttribute = $this->attributeProductService->getIdProductAttributeFromPost($idProduct);
 
         $insuranceAttributeGroupId = $this->attributeGroupProductService->getIdAttributeGroupByName(
@@ -331,7 +333,7 @@ class InsuranceProductService
                     $idProduct,
                     $insuranceProduct,
                     $this->priceHelper->convertPriceFromCents($insuranceContract->getPrice()),
-                    $insuranceContract->getName(),
+                    $insuranceContract->getId(),
                     $quantity,
                     $idCustomization,
                     [
@@ -375,9 +377,9 @@ class InsuranceProductService
     }
 
     /**
-     * @param $product
-     * @param $cartId
-     * @param $insuranceProductId
+     * @param AlmaCartItemModel $product
+     * @param int $cartId
+     * @param string $insuranceProductId
      *
      * @return array
      *
@@ -415,7 +417,11 @@ class InsuranceProductService
                     $this->imageHelper->getFormattedImageTypeName('cart')
                 ),
                 'reference' => $almaProductAttribute->reference,
-                'price' => $this->priceHelper->convertPriceFromCents($almaInsurance['price']),
+                'unitPrice' => $this->priceHelper->convertPriceFromCents($almaInsurance['price']),
+                // TODO : Create a function to handle displayPrice for all versions of Prestashop
+                // TODO : Handle the currency symbol and quantity {Context::getContext()->currentLocale->formatPrice($associatedInsurance.price * $associatedInsurance.quantity, $currency.iso_code)}
+                //'price' => $this->context->currentLocale->formatPrice($this->priceHelper->convertPriceFromCents($almaInsurance['price']), $this->context->currency->iso_code),
+                'price' => \Tools::displayPrice($this->priceHelper->convertPriceFromCents($almaInsurance['price'])),
                 'quantity' => $almaInsurance['nbInsurance'],
                 'insuranceContractId' => $contractAlmaInsuranceProduct[0]['insurance_contract_id'],
                 'idsAlmaInsuranceProduct' => $this->toolsHelper->getJsonValues($contractAlmaInsuranceProduct, 'id_alma_insurance_product'),

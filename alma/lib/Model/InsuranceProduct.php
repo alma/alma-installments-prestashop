@@ -106,6 +106,9 @@ class InsuranceProduct extends \ObjectModel
     /** @var string Live ou test */
     public $mode;
 
+    /** @var string */
+    public $insurance_contract_id;
+
     /**
      * @see ObjectModel::$definition
      */

@@ -26,6 +26,7 @@ namespace Alma\PrestaShop\Repositories;
 
 use Alma\API\Entities\Insurance\Subscription;
 use Alma\PrestaShop\Helpers\SettingsHelper;
+use Alma\PrestaShop\Model\AlmaCartItemModel;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -485,9 +486,9 @@ class AlmaInsuranceProductRepository
     }
 
     /**
-     * @param \ProductCore $product
-     * @param $cartId
-     * @param $shopId
+     * @param AlmaCartItemModel $product
+     * @param int $cartId
+     * @param int $shopId
      *
      * @return mixed
      *
@@ -502,15 +503,25 @@ class AlmaInsuranceProductRepository
                    `price`
             FROM `' . _DB_PREFIX_ . 'alma_insurance_product` aip
             WHERE aip.`id_cart` = ' . (int) $cartId . '
-            AND aip.`id_product` = ' . (int) $product->id . '
-            AND aip.`id_product_attribute` = ' . (int) $product->id_product_attribute . '
-            AND aip.`id_customization` = ' . (int) $product->id_customization . '
+            AND aip.`id_product` = ' . (int) $product->getId() . '
+            AND aip.`id_product_attribute` = ' . (int) $product->getIdProductAttribute() . '
+            AND aip.`id_customization` = ' . (int) $product->getIdCustomization() . '
             AND aip.`id_shop` = ' . (int) $shopId . '
             GROUP BY aip.`id_product_attribute_insurance`';
 
         return \Db::getInstance()->executeS($sql);
     }
 
+    /**
+     * @param AlmaCartItemModel $product
+     * @param int $cartId
+     * @param int $shopId
+     * @param string $insuranceProductAttribute
+     *
+     * @return mixed
+     *
+     * @throws \PrestaShopDatabaseException
+     */
     public function getContractByProductAndCartIdAndShopAndInsuranceProductAttribute($product, $cartId, $shopId, $insuranceProductAttribute)
     {
         $sql = '
@@ -518,9 +529,9 @@ class AlmaInsuranceProductRepository
                    `insurance_contract_id`
             FROM `' . _DB_PREFIX_ . 'alma_insurance_product` aip
             WHERE aip.`id_cart` = ' . (int) $cartId . '
-            AND aip.`id_product` = ' . (int) $product->id . '
-            AND aip.`id_product_attribute` = ' . (int) $product->id_product_attribute . '
-            AND aip.`id_customization` = ' . (int) $product->id_customization . '
+            AND aip.`id_product` = ' . (int) $product->getId() . '
+            AND aip.`id_product_attribute` = ' . (int) $product->getIdProductAttribute() . '
+            AND aip.`id_customization` = ' . (int) $product->getIdCustomization() . '
             AND aip.`id_shop` = ' . (int) $shopId . '
             AND aip.`id_product_attribute_insurance` = ' . (int) $insuranceProductAttribute;
 

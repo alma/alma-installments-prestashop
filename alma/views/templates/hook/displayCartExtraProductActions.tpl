@@ -30,9 +30,11 @@
      data-no-insurance-associated="{$associatedInsurances|count}"
 >
     <div class="actions-alma-insurance-product" style="display:none">
-        {foreach from=$associatedInsurances item=$associatedInsurance key=$idProductAttributeInsurance}
-            {include file="modules/alma/views/templates/hook/_partials/itemCartInsuranceProduct.tpl"}
-        {/foreach}
+        {if $associatedInsurances}
+            {foreach $associatedInsurances as $idProductAttributeInsurance => $associatedInsurance}
+                {include file="modules/alma/views/templates/hook/_partials/itemCartInsuranceProduct.tpl"}
+            {/foreach}
+        {/if}
     </div>
     {if $insuranceSettings.isInCartWidgetActivated}
         <div class="widget-alma-insurance-cart-item" style="display:none">
@@ -43,11 +45,10 @@
                     data-product-id="{$product->id|escape:'htmlall':'UTF-8'}"
                     data-product-attribute-id="{$product->id_product_attribute|escape:'htmlall':'UTF-8'}"
                     data-product-customization-id="{$product->id_customization|intval}"
-                    data-token='{\Tools::getToken(false)|escape:'htmlall':'UTF-8'}'
+                    data-token='{$token|escape:'htmlall':'UTF-8'}'
                     data-link='{$ajaxLinkAddInsuranceProduct|escape:'htmlall':'UTF-8'}'
                     src="{$iframeUrl}">
             </iframe>
         </div>
     {/if}
-
 </div>

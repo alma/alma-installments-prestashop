@@ -42,7 +42,7 @@
 
         <div class="product-line-info product-price h5">
             <div class="current-price">
-                <span class="price">{Context::getContext()->currentLocale->formatPrice($associatedInsurance.price, $currency.iso_code)}</span>
+                <span class="price">{$associatedInsurance.price}</span>
             </div>
         </div>
     </div>
@@ -67,7 +67,7 @@
                     <div class="col-md-6 col-xs-2 price">
                         <span class="product-price">
                             <strong>
-                                  {Context::getContext()->currentLocale->formatPrice($associatedInsurance.price * $associatedInsurance.quantity, $currency.iso_code)}
+                                {$associatedInsurance.price}
                             </strong>
                         </span>
                     </div>
@@ -77,7 +77,7 @@
                 <div class="cart-line-product-actions">
                     <a data-alma-association-ids="{$associatedInsurance.idsAlmaInsuranceProduct|escape:'htmlall':'UTF-8'}"
                        data-action="remove-insurance-products"
-                       data-token='{\Tools::getToken(false)|escape:'htmlall':'UTF-8'}'
+                       data-token='{$token|escape:'htmlall':'UTF-8'}'
                        href="#"
                        class="alma-remove-insurance-products"
                        data-link='{$ajaxLinkRemoveInsuranceProducts|escape:'htmlall':'UTF-8'}'
