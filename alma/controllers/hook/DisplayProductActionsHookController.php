@@ -139,7 +139,7 @@ class DisplayProductActionsHookController extends FrontendHookController
                 $staticPriceInCents,
                 $productName,
                 $merchantId,
-                $this->context->session->getId(),
+                $this->context->cookie->checksum,
                 $this->cartHelper->getCartIdFromContext()
             ),
         ]);
@@ -157,7 +157,7 @@ class DisplayProductActionsHookController extends FrontendHookController
         $settings = $this->adminInsuranceHelper->mapDbFieldsWithIframeParams();
         $settings['merchant_id'] = $merchantId;
         $settings['cart_id'] = $this->cartHelper->getCartIdFromContext();
-        $settings['session_id'] = $this->context->session->getId();
+        $settings['session_id'] = $this->context->cookie->checksum;
 
         return json_encode($settings);
     }
