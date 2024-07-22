@@ -119,6 +119,10 @@ class HookHelper
             'version' => '1.7.5',
             'operand' => '>=',
         ],
+        'displayInvoice' => [
+            'version' => '1.7.7',
+            'operand' => '<',
+        ],
         'displayAdminOrderTop' => [
             'version' => '1.7.7',
             'operand' => '>=',
