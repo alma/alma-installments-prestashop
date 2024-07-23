@@ -109,6 +109,9 @@ class InsuranceProduct extends \ObjectModel
     /** @var string */
     public $insurance_contract_id;
 
+    /** @var string */
+    public $insurance_contract_name;
+
     /**
      * @see ObjectModel::$definition
      */
@@ -127,6 +130,7 @@ class InsuranceProduct extends \ObjectModel
             'id_order' => ['type' => self::TYPE_INT, 'validate' => 'isUnsignedId'],
             'price' => ['type' => self::TYPE_FLOAT, 'validate' => 'isPrice'],
             'insurance_contract_id' => ['type' => self::TYPE_STRING, 'validate' => 'isGenericName'],
+            'insurance_contract_name' => ['type' => self::TYPE_STRING, 'validate' => 'isGenericName'],
             'cms_reference' => ['type' => self::TYPE_STRING],
             'product_price' => ['type' => self::TYPE_FLOAT, 'validate' => 'isPrice'],
             'date_add' => ['type' => self::TYPE_DATE, 'validate' => 'isDate'],

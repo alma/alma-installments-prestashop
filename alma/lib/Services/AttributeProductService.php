@@ -65,15 +65,18 @@ class AttributeProductService
     }
 
     /**
-     * @param string $name
+     * @param string $insuranceContractId
      * @param int $attributeGroupId
      *
      * @return int
+     *
+     * @throws \PrestaShopDatabaseException
+     * @throws \PrestaShopException
      */
-    public function getAttributeId($name, $attributeGroupId)
+    public function getOrCreateAttributeId($insuranceContractId, $attributeGroupId)
     {
         $insuranceAttributeId = $this->attributeRepository->getAttributeIdByNameAndGroup(
-            $name,
+            $insuranceContractId,
             $attributeGroupId,
             $this->context->language->id
         );
@@ -81,7 +84,7 @@ class AttributeProductService
         if (!$insuranceAttributeId) {
             $insuranceAttribute = $this->getProductAttributeObject();
 
-            $insuranceAttribute->name = $this->localeHelper->createMultiLangField($name);
+            $insuranceAttribute->name = $this->localeHelper->createMultiLangField($insuranceContractId);
             $insuranceAttribute->id_attribute_group = $attributeGroupId;
             $insuranceAttribute->add();
 

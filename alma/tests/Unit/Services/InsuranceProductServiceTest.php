@@ -24,7 +24,6 @@
 
 namespace Alma\PrestaShop\Tests\Unit\Services;
 
-use Alma\PrestaShop\Factories\CombinationFactory;
 use Alma\PrestaShop\Factories\ContextFactory;
 use Alma\PrestaShop\Factories\LinkFactory;
 use Alma\PrestaShop\Factories\ProductFactory;
@@ -69,14 +68,6 @@ class InsuranceProductServiceTest extends TestCase
      */
     protected $productFactoryMock;
     /**
-     * @var CombinationFactory
-     */
-    protected $combinationFactoryMock;
-    /**
-     * @var \Combination
-     */
-    protected $combinationMock;
-    /**
      * @var \Product
      */
     protected $productMock;
@@ -120,7 +111,6 @@ class InsuranceProductServiceTest extends TestCase
         $this->contextFactoryMock = \Mockery::mock(ContextFactory::class)->makePartial();
         $this->almaInsuranceProductRepository = $this->createMock(AlmaInsuranceProductRepository::class);
         $this->productFactoryMock = $this->createMock(ProductFactory::class);
-        $this->combinationFactoryMock = $this->createMock(CombinationFactory::class);
         $this->linkFactoryMock = $this->createMock(LinkFactory::class);
         $this->linkFactoryMock->method('create')->willReturn($this->linkMock);
         $this->cart = $this->createMock(\Cart::class);
@@ -132,8 +122,6 @@ class InsuranceProductServiceTest extends TestCase
         $this->shop->id = 1;
         $this->productMock = $this->createMock(\Product::class);
         $this->productInsuranceMock = $this->createMock(\Product::class);
-        $this->combinationMock = $this->createMock(\Combination::class);
-        $this->combinationMock2 = $this->createMock(\Combination::class);
         $this->context->shop = $this->shop;
         $this->context->language = $this->languageMock;
         $this->imageHelperMock = $this->createMock(ImageHelper::class);
@@ -142,7 +130,6 @@ class InsuranceProductServiceTest extends TestCase
         $this->insuranceProductServiceMock = \Mockery::mock(InsuranceProductService::class,
         [
             $this->productFactoryMock,
-            $this->combinationFactoryMock,
             $this->linkFactoryMock,
             $this->almaInsuranceProductRepository,
             $this->contextFactoryMock,
@@ -222,16 +209,19 @@ class InsuranceProductServiceTest extends TestCase
             [
                 'id_alma_insurance_product' => '22',
                 'insurance_contract_id' => 'insurance_contract_ABCD123',
+                'insurance_contract_name' => 'Reference Vol + Casse Alma',
             ],
             [
                 'id_alma_insurance_product' => '23',
                 'insurance_contract_id' => 'insurance_contract_ABCD123',
+                'insurance_contract_name' => 'Reference Vol + Casse Alma',
             ],
         ];
         $returnContractByProduct2 = [
             [
                 'id_alma_insurance_product' => '24',
                 'insurance_contract_id' => 'insurance_contract_EFGH456',
+                'insurance_contract_name' => 'Reference Vol Alma',
             ],
         ];
         $this->productMock->id = 27;
@@ -241,8 +231,6 @@ class InsuranceProductServiceTest extends TestCase
         $this->productInsuranceMock->name = [
             '1' => 'Name insurance Alma',
         ];
-        $this->combinationMock->reference = 'Reference Vol + Casse Alma';
-        $this->combinationMock2->reference = 'Reference Vol Alma';
         $this->productInsuranceMock->link_rewrite = [1 => ''];
 
         $this->toolsHelperMock->expects($this->exactly(2))
@@ -259,9 +247,6 @@ class InsuranceProductServiceTest extends TestCase
         $this->almaInsuranceProductRepository->expects($this->exactly(2))
             ->method('getContractByProductAndCartIdAndShopAndInsuranceProductAttribute')
             ->willReturnOnConsecutiveCalls($returnContractByProduct1, $returnContractByProduct2);
-        $this->combinationFactoryMock->expects($this->exactly(2))
-            ->method('create')
-            ->willReturnOnConsecutiveCalls($this->combinationMock, $this->combinationMock2);
         $this->productInsuranceMock->expects($this->once())
             ->method('getImages')
             ->willReturn([

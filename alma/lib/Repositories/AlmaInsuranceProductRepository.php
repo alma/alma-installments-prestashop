@@ -80,6 +80,7 @@ class AlmaInsuranceProductRepository
             'insurance_contract_id' => $insuranceContractInfos['insurance_contract_id'],
             'cms_reference' => $insuranceContractInfos['cms_reference'],
             'product_price' => $insuranceContractInfos['product_price'],
+            'insurance_contract_name' => $insuranceContractInfos['insurance_contract_name'],
             'mode' => SettingsHelper::getActiveMode(),
         ])) {
             return false;
@@ -285,6 +286,7 @@ class AlmaInsuranceProductRepository
             `id_order` int(10) unsigned NULL,
             `price` int(10) unsigned NULL,
             `insurance_contract_id` varchar(255) NULL,
+            `insurance_contract_name` varchar(255) NULL,
             `cms_reference` varchar(255) NULL,
             `product_price` int(10) unsigned NULL,
             `date_add` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -526,7 +528,8 @@ class AlmaInsuranceProductRepository
     {
         $sql = '
             SELECT `id_alma_insurance_product`,
-                   `insurance_contract_id`
+                   `insurance_contract_id`,
+                   `insurance_contract_name`
             FROM `' . _DB_PREFIX_ . 'alma_insurance_product` aip
             WHERE aip.`id_cart` = ' . (int) $cartId . '
             AND aip.`id_product` = ' . (int) $product->getId() . '
