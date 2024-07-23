@@ -46,6 +46,7 @@ use Alma\PrestaShop\Logger;
 use Alma\PrestaShop\Repositories\AlmaInsuranceProductRepository;
 use Alma\PrestaShop\Repositories\ProductRepository;
 use Alma\PrestaShop\Services\InsuranceProductService;
+use PrestaShop\PrestaShop\Core\Localization\Exception\LocalizationException;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -165,6 +166,7 @@ class DisplayCartExtraProductActionsHookController extends FrontendHookControlle
      * @throws InsuranceNotFoundException
      * @throws \PrestaShopDatabaseException
      * @throws \PrestaShopException
+     * @throws LocalizationException
      */
     public function run($params)
     {
@@ -200,7 +202,7 @@ class DisplayCartExtraProductActionsHookController extends FrontendHookControlle
         $resultInsurance = [];
         $idProduct = $product->getId();
         $productAttributeId = $product->getIdProductAttribute();
-        $regularPrice = $this->productHelper->getRegularPrice($idProduct, $productAttributeId);
+        $staticPrice = $this->productHelper->getPriceStatic($idProduct, $productAttributeId);
         /**
          * @var \CartCore $cart
          */
@@ -236,7 +238,7 @@ class DisplayCartExtraProductActionsHookController extends FrontendHookControlle
                     $this->adminInsuranceHelper->envUrl(),
                     ConstantsHelper::FO_IFRAME_WIDGET_INSURANCE_PATH,
                     $this->insuranceHelper->createCmsReference($idProduct, $productAttributeId),
-                    $this->priceHelper->convertPriceToCents($regularPrice),
+                    $this->priceHelper->convertPriceToCents($staticPrice),
                     $product->getQuantity(),
                     $this->settingHelper->getIdMerchant(),
                     $this->context->cookie->checksum,

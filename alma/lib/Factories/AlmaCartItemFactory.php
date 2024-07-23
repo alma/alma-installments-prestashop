@@ -47,7 +47,7 @@ class AlmaCartItemFactory
             $cartItemData['id_product_attribute'] = isset($product->id_product_attribute) ? $product->id_product_attribute : null;
             $cartItemData['id_customization'] = isset($product->id_customization) ? $product->id_customization : null;
             $cartItemData['quantity'] = isset($product->quantity) ? $product->quantity : null;
-            $cartItemData['price_without_reduction'] = isset($product->price_without_reduction) ? $product->price_without_reduction : null;
+            $cartItemData['price_with_reduction'] = isset($product->price_with_reduction) ? $product->price_with_reduction : null;
             $cartItemData['reference'] = isset($product->reference) ? $product->reference : null;
             $cartItemData['name'] = isset($product->name) ? $product->name : null;
         }
@@ -60,7 +60,7 @@ class AlmaCartItemFactory
                 !isset($cartItemData['id']) ||
                 !isset($cartItemData['id_product_attribute']) ||
                 !isset($cartItemData['quantity']) ||
-                !isset($cartItemData['price_without_reduction']) ||
+                !isset($cartItemData['price_with_reduction']) ||
                 !isset($cartItemData['reference']) ||
                 !isset($cartItemData['name'])
             )

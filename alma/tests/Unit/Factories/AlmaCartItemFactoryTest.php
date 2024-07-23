@@ -101,7 +101,7 @@ class AlmaCartItemFactoryTest extends TestCase
         $product->id_product_attribute = '2';
         $product->id_customization = 0;
         $product->quantity = 3;
-        $product->price_without_reduction = 100.00;
+        $product->price_with_reduction = 100.00;
         $product->reference = 'ABC123';
         $product->name = 'Name of product';
 

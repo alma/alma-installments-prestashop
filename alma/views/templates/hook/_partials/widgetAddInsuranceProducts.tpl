@@ -20,8 +20,8 @@
  * @copyright 2018-2024 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  *}
-{capture assign='productRegularPriceInCent'}{$product->getPriceWithoutReduction()|escape:'htmlall':'UTF-8' * 100}{/capture}
-{capture assign='cmsReference'}{almaCmsReference product_id=$product->getId() product_attribute_id=$product->getIdProductAttribute() regular_price=$product->getPriceWithoutReduction()}{/capture}
+{capture assign='productRegularPriceInCent'}{$product->getPriceWithReduction()|escape:'htmlall':'UTF-8' * 100}{/capture}
+{capture assign='cmsReference'}{almaCmsReference product_id=$product->getId() product_attribute_id=$product->getIdProductAttribute() regular_price=$product->getPriceWithReduction()}{/capture}
 
 <div class="col-md-12">
     <div class="item-alma-insurance">

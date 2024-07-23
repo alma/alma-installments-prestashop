@@ -59,7 +59,7 @@ class AlmaCartItemModelTest extends TestCase
         $this->assertEquals($this->almaCartItemArrayData['id_product_attribute'], $this->almaCartItemModel->getIdProductAttribute());
         $this->assertEquals($this->almaCartItemArrayData['id_customization'], $this->almaCartItemModel->getIdCustomization());
         $this->assertEquals($this->almaCartItemArrayData['quantity'], $this->almaCartItemModel->getQuantity());
-        $this->assertEquals($this->almaCartItemArrayData['price_without_reduction'], $this->almaCartItemModel->getPriceWithoutReduction());
+        $this->assertEquals($this->almaCartItemArrayData['price_with_reduction'], $this->almaCartItemModel->getPriceWithReduction());
         $this->assertEquals($this->almaCartItemArrayData['reference'], $this->almaCartItemModel->getReference());
         $this->assertEquals($this->almaCartItemArrayData['name'], $this->almaCartItemModel->getName());
     }
@@ -81,7 +81,7 @@ class AlmaCartItemModelTest extends TestCase
             'id_product_attribute' => '2',
             'id_customization' => 0,
             'quantity' => 3,
-            'price_without_reduction' => 100.00,
+            'price_with_reduction' => 100.00,
             'reference' => 'ABC123',
             'name' => 'Name of product',
         ];

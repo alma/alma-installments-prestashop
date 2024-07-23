@@ -49,7 +49,7 @@ class AlmaCartItemModel
     /**
      * @var float
      */
-    private $price_without_reduction;
+    private $price_with_reduction;
     /**
      * @var string
      */
@@ -65,7 +65,7 @@ class AlmaCartItemModel
         $this->id_product_attribute = $productArray['id_product_attribute'];
         $this->id_customization = $productArray['id_customization'] ?: 0;
         $this->quantity = $productArray['quantity'];
-        $this->price_without_reduction = $productArray['price_without_reduction'];
+        $this->price_with_reduction = $productArray['price_with_reduction'];
         $this->reference = $productArray['reference'];
         $this->name = $productArray['name'];
     }
@@ -105,9 +105,9 @@ class AlmaCartItemModel
     /**
      * @return float
      */
-    public function getPriceWithoutReduction()
+    public function getPriceWithReduction()
     {
-        return $this->price_without_reduction;
+        return $this->price_with_reduction;
     }
 
     /**
