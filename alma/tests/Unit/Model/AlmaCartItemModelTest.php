@@ -33,10 +33,20 @@ class AlmaCartItemModelTest extends TestCase
      * @var AlmaCartItemModel
      */
     protected $almaCartItemModel;
+    /**
+     * @var array
+     */
+    protected $almaCartItemArrayData;
 
     public function setUp()
     {
-        $this->almaCartItemModel = new AlmaCartItemModel($this->almaCartItemDataFactory());
+        $this->almaCartItemArrayData = self::almaCartItemArrayData();
+        $this->almaCartItemModel = new AlmaCartItemModel($this->almaCartItemArrayData);
+    }
+
+    public function tearDown()
+    {
+        $this->almaCartItemModel = null;
     }
 
     /**
@@ -45,26 +55,35 @@ class AlmaCartItemModelTest extends TestCase
     public function testGetterAlmaCartItemModel()
     {
         $this->assertInstanceOf(AlmaCartItemModel::class, $this->almaCartItemModel);
-        $this->assertEquals(self::almaCartItemDataFactory()->id, $this->almaCartItemModel->getId());
-        $this->assertEquals(self::almaCartItemDataFactory()->id_product_attribute, $this->almaCartItemModel->getIdProductAttribute());
-        $this->assertEquals(self::almaCartItemDataFactory()->id_customization, $this->almaCartItemModel->getIdCustomization());
-        $this->assertEquals(self::almaCartItemDataFactory()->quantity, $this->almaCartItemModel->getQuantity());
+        $this->assertEquals($this->almaCartItemArrayData['id'], $this->almaCartItemModel->getId());
+        $this->assertEquals($this->almaCartItemArrayData['id_product_attribute'], $this->almaCartItemModel->getIdProductAttribute());
+        $this->assertEquals($this->almaCartItemArrayData['id_customization'], $this->almaCartItemModel->getIdCustomization());
+        $this->assertEquals($this->almaCartItemArrayData['quantity'], $this->almaCartItemModel->getQuantity());
+        $this->assertEquals($this->almaCartItemArrayData['price_without_reduction'], $this->almaCartItemModel->getPriceWithoutReduction());
+        $this->assertEquals($this->almaCartItemArrayData['reference'], $this->almaCartItemModel->getReference());
+        $this->assertEquals($this->almaCartItemArrayData['name'], $this->almaCartItemModel->getName());
+    }
+
+    public function testIdCustomizationNullSaveZero()
+    {
+        $this->almaCartItemArrayData['id_customization'] = null;
+        $almaCartItem = new AlmaCartItemModel($this->almaCartItemArrayData);
+        $this->assertEquals(0, $almaCartItem->getIdCustomization());
     }
 
     /**
-     * @return \stdClass
+     * @return array
      */
-    public static function almaCartItemDataFactory()
+    public static function almaCartItemArrayData()
     {
-        $product = new \stdClass();
-        $product->id = 1;
-        $product->id_product_attribute = 2;
-        $product->id_customization = 0;
-        $product->quantity = 1;
-        $product->price_without_reduction = 100.00;
-        $product->reference = 'ABC123';
-        $product->name = 'Name of product';
-
-        return $product;
+        return [
+            'id' => '1',
+            'id_product_attribute' => '2',
+            'id_customization' => 0,
+            'quantity' => 3,
+            'price_without_reduction' => 100.00,
+            'reference' => 'ABC123',
+            'name' => 'Name of product',
+        ];
     }
 }

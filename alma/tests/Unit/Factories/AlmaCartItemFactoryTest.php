@@ -35,43 +35,16 @@ class AlmaCartItemFactoryTest extends TestCase
 {
     public function setUp()
     {
-        $this->almaCartITemModelDataFactory = AlmaCartItemModelTest::almaCartItemDataFactory();
+        $this->almaCartItemModelArrayData = AlmaCartItemModelTest::almaCartItemArrayData();
         $this->almaCartItemFactory = new AlmaCartItemFactory();
-        $this->almaCartItemModel = new AlmaCartItemModel($this->almaCartITemModelDataFactory);
+        $this->almaCartItemModel = new AlmaCartItemModel($this->almaCartItemModelArrayData);
     }
 
-    /**
-     * @throws AlmaCartItemFactoryException
-     */
-    public function testCreateAlmaCartItemFactory()
+    public function tearDown()
     {
-        $this->assertInstanceOf(AlmaCartItemModel::class, $this->almaCartItemFactory->create($this->almaCartITemModelDataFactory));
-    }
-
-    /**
-     * @throws AlmaCartItemFactoryException
-     */
-    public function testCreateAlmaCartItemFactoryWithObject()
-    {
-        $this->assertEquals($this->almaCartItemModel, $this->almaCartItemFactory->create($this->almaCartITemModelDataFactory));
-    }
-
-    /**
-     * @throws AlmaCartItemFactoryException
-     */
-    public function testCreateAlmaCartItemFactoryWithArray()
-    {
-        $product = [
-            'id' => 1,
-            'id_product_attribute' => 2,
-            'id_customization' => 0,
-            'quantity' => 1,
-            'price_without_reduction' => 100.00,
-            'reference' => 'ABC123',
-            'name' => 'Name of product',
-        ];
-
-        $this->assertEquals($this->almaCartItemModel, $this->almaCartItemFactory->create($product));
+        $this->almaCartItemModelArrayData = null;
+        $this->almaCartItemFactory = null;
+        $this->almaCartItemModel = null;
     }
 
     /**
@@ -79,7 +52,7 @@ class AlmaCartItemFactoryTest extends TestCase
      *
      * @throws AlmaCartItemFactoryException
      */
-    public function testCreateAlmaCartItemFactoryWithStringOrInt($product)
+    public function testCreateAlmaCartItemFactoryWithWrongData($product)
     {
         $this->expectException(AlmaCartItemFactoryException::class);
         $this->almaCartItemFactory->create($product);
@@ -91,10 +64,10 @@ class AlmaCartItemFactoryTest extends TestCase
     public function testCreateAlmaCartItemFactoryWithWrongDataInArray()
     {
         $product = [
-            'wrongkeyid' => 1,
+            'wrongkeyid' => '1',
             'id_product_attribute' => 2,
             'id_customization' => 0,
-            'quantity' => 1,
+            'quantity' => 3,
         ];
 
         $this->expectException(AlmaCartItemFactoryException::class);
@@ -107,30 +80,40 @@ class AlmaCartItemFactoryTest extends TestCase
     public function testCreateAlmaCartItemFactoryWithWrongDataInObject()
     {
         $product = new \stdClass();
-        $product->wrongkeyid = 1;
-        $product->id_product_attribute = 2;
+        $product->wrongkeyid = '1';
+        $product->id_product_attribute = '2';
         $product->id_customization = 0;
-        $product->quantity = 1;
+        $product->quantity = 3;
 
         $this->expectException(AlmaCartItemFactoryException::class);
         $this->almaCartItemFactory->create($product);
     }
 
     /**
+     * @return void
+     *
      * @throws AlmaCartItemFactoryException
      */
-    public function testCreateAlmaCartItemFactoryAndConvertIdProductToId()
+    public function testCreateAlmaCartItemWithProductListingLazyArray()
     {
         $product = new \stdClass();
-        $product->id_product = 1;
-        $product->id_product_attribute = 2;
+        $product->id = '1';
+        $product->id_product_attribute = '2';
         $product->id_customization = 0;
-        $product->quantity = 1;
+        $product->quantity = 3;
         $product->price_without_reduction = 100.00;
         $product->reference = 'ABC123';
         $product->name = 'Name of product';
 
         $this->assertEquals($this->almaCartItemModel, $this->almaCartItemFactory->create($product));
+    }
+
+    /**
+     * @throws AlmaCartItemFactoryException
+     */
+    public function testCreateAlmaCartItemFactoryWithArray()
+    {
+        $this->assertEquals($this->almaCartItemModel, $this->almaCartItemFactory->create($this->almaCartItemModelArrayData));
     }
 
     /**

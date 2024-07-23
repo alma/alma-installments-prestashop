@@ -26,7 +26,6 @@ namespace Alma\PrestaShop\Factories;
 
 use Alma\PrestaShop\Exceptions\AlmaCartItemFactoryException;
 use Alma\PrestaShop\Model\AlmaCartItemModel;
-use stdClass;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -39,32 +38,36 @@ class AlmaCartItemFactory
      */
     public function create($product)
     {
-        if (!is_object($product) && (!is_array($product) || empty($product))) {
+        if (!is_object($product) && !is_array($product)) {
             throw new AlmaCartItemFactoryException('Product must be an object or an array');
         }
-
+        $cartItemData = [];
+        if (is_object($product)) {
+            $cartItemData['id'] = isset($product->id) ? $product->id : null;
+            $cartItemData['id_product_attribute'] = isset($product->id_product_attribute) ? $product->id_product_attribute : null;
+            $cartItemData['id_customization'] = isset($product->id_customization) ? $product->id_customization : null;
+            $cartItemData['quantity'] = isset($product->quantity) ? $product->quantity : null;
+            $cartItemData['price_without_reduction'] = isset($product->price_without_reduction) ? $product->price_without_reduction : null;
+            $cartItemData['reference'] = isset($product->reference) ? $product->reference : null;
+            $cartItemData['name'] = isset($product->name) ? $product->name : null;
+        }
         if (is_array($product)) {
-            $objProduct = new stdClass();
-
-            foreach ($product as $key => $value) {
-                $objProduct->$key = $value;
-            }
-        } else {
-            $objProduct = $product;
+            $cartItemData = $product;
         }
-
-        if (property_exists($objProduct, 'id_product')) {
-            $objProduct->id = $objProduct->id_product;
-        }
-
         if (
-            isset($objProduct->id) &&
-            isset($objProduct->id_product_attribute) &&
-            isset($objProduct->quantity)
+             empty($cartItemData) ||
+            (
+                !isset($cartItemData['id']) ||
+                !isset($cartItemData['id_product_attribute']) ||
+                !isset($cartItemData['quantity']) ||
+                !isset($cartItemData['price_without_reduction']) ||
+                !isset($cartItemData['reference']) ||
+                !isset($cartItemData['name'])
+            )
         ) {
-            return new AlmaCartItemModel($objProduct);
+            throw new AlmaCartItemFactoryException('Product array must contain Id, id_product_attribute and quantity');
         }
 
-        throw new AlmaCartItemFactoryException('Product must have id, id_product_attribute, id_customization and quantity');
+        return new AlmaCartItemModel($cartItemData);
     }
 }

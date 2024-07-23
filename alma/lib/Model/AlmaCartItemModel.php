@@ -33,45 +33,45 @@ class AlmaCartItemModel
     /**
      * @var string
      */
-    public $id;
+    private $id;
     /**
      * @var string
      */
-    public $id_product_attribute;
+    private $id_product_attribute;
     /**
      * @var int
      */
-    public $id_customization;
+    private $id_customization;
     /**
      * @var int
      */
-    public $quantity;
+    private $quantity;
     /**
      * @var float
      */
-    public $price_without_reduction;
+    private $price_without_reduction;
     /**
      * @var string
      */
-    public $reference;
+    private $reference;
     /**
      * @var string
      */
-    public $name;
+    private $name;
 
-    public function __construct($product)
+    public function __construct($productArray)
     {
-        $this->id = $product->id;
-        $this->id_product_attribute = $product->id_product_attribute;
-        $this->id_customization = $product->id_customization ?: 0;
-        $this->quantity = $product->quantity;
-        $this->price_without_reduction = $product->price_without_reduction;
-        $this->reference = $product->reference;
-        $this->name = $product->name;
+        $this->id = $productArray['id'];
+        $this->id_product_attribute = $productArray['id_product_attribute'];
+        $this->id_customization = $productArray['id_customization'] ?: 0;
+        $this->quantity = $productArray['quantity'];
+        $this->price_without_reduction = $productArray['price_without_reduction'];
+        $this->reference = $productArray['reference'];
+        $this->name = $productArray['name'];
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getId()
     {
@@ -79,7 +79,7 @@ class AlmaCartItemModel
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getIdProductAttribute()
     {
@@ -87,7 +87,7 @@ class AlmaCartItemModel
     }
 
     /**
-     * @return mixed
+     * @return int
      */
     public function getIdCustomization()
     {
@@ -95,10 +95,34 @@ class AlmaCartItemModel
     }
 
     /**
-     * @return mixed
+     * @return int
      */
     public function getQuantity()
     {
         return $this->quantity;
+    }
+
+    /**
+     * @return float
+     */
+    public function getPriceWithoutReduction()
+    {
+        return $this->price_without_reduction;
+    }
+
+    /**
+     * @return string
+     */
+    public function getReference()
+    {
+        return $this->reference;
+    }
+
+    /**
+     * @return string
+     */
+    public function getName()
+    {
+        return $this->name;
     }
 }

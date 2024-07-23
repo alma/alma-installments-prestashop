@@ -20,11 +20,11 @@
  * @copyright 2018-2024 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  *}
-{capture assign='cmsReference'}{almaCmsReference product_id=$product->id product_attribute_id=$product->id_product_attribute regular_price=$product->price_without_reduction}{/capture}
+{capture assign='cmsReference'}{almaCmsReference product_id=$product->getId() product_attribute_id=$product->getIdProductAttribute() regular_price=$product->getPriceWithoutReduction()}{/capture}
 
 <div class="alma-data-product"
-     data-reference="{$product->reference}"
-     data-id-product="{$product->id}"
+     data-reference="{$product->getReference()}"
+     data-id-product="{$product->getId()}"
      data-id-cart="{$idCart}"
      data-is-alma-insurance="{$isAlmaInsurance}"
      data-no-insurance-associated="{$associatedInsurances|count}"
@@ -42,9 +42,9 @@
                     id="product-alma-iframe-{$cmsReference}"
                     class="cart-item-alma-iframe"
                     style="display:none"
-                    data-product-id="{$product->id|escape:'htmlall':'UTF-8'}"
-                    data-product-attribute-id="{$product->id_product_attribute|escape:'htmlall':'UTF-8'}"
-                    data-product-customization-id="{$product->id_customization|intval}"
+                    data-product-id="{$product->getId()|escape:'htmlall':'UTF-8'}"
+                    data-product-attribute-id="{$product->getIdProductAttribute()|escape:'htmlall':'UTF-8'}"
+                    data-product-customization-id="{$product->getIdCustomization()|intval}"
                     data-token='{$token|escape:'htmlall':'UTF-8'}'
                     data-link='{$ajaxLinkAddInsuranceProduct|escape:'htmlall':'UTF-8'}'
                     src="{$iframeUrl}">
