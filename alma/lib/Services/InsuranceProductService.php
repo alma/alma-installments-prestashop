@@ -41,6 +41,7 @@ use Alma\PrestaShop\Logger;
 use Alma\PrestaShop\Model\AlmaCartItemModel;
 use Alma\PrestaShop\Repositories\AlmaInsuranceProductRepository;
 use Alma\PrestaShop\Repositories\ProductRepository;
+use PrestaShop\PrestaShop\Core\Localization\Exception\LocalizationException;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -384,6 +385,7 @@ class InsuranceProductService
      * @return array
      *
      * @throws \PrestaShopDatabaseException
+     * @throws LocalizationException
      */
     public function getItemsCartInsuranceProductAttributes($product, $cartId, $insuranceProductId)
     {
@@ -417,11 +419,8 @@ class InsuranceProductService
                     $this->imageHelper->getFormattedImageTypeName('cart')
                 ),
                 'reference' => $almaProductAttribute->reference,
-                'unitPrice' => $this->priceHelper->convertPriceFromCents($almaInsurance['price']),
-                // TODO : Create a function to handle displayPrice for all versions of Prestashop
-                // TODO : Handle the currency symbol and quantity {Context::getContext()->currentLocale->formatPrice($associatedInsurance.price * $associatedInsurance.quantity, $currency.iso_code)}
-                //'price' => $this->context->currentLocale->formatPrice($this->priceHelper->convertPriceFromCents($almaInsurance['price']), $this->context->currency->iso_code),
-                'price' => \Tools::displayPrice($this->priceHelper->convertPriceFromCents($almaInsurance['price'])),
+                'unitPrice' => $this->toolsHelper->displayPrice($this->priceHelper->convertPriceFromCents($almaInsurance['price']), $this->context->currency),
+                'price' => $this->toolsHelper->displayPrice($this->priceHelper->convertPriceFromCents($almaInsurance['price'] * $almaInsurance['nbInsurance']), $this->context->currency),
                 'quantity' => $almaInsurance['nbInsurance'],
                 'insuranceContractId' => $contractAlmaInsuranceProduct[0]['insurance_contract_id'],
                 'idsAlmaInsuranceProduct' => $this->toolsHelper->getJsonValues($contractAlmaInsuranceProduct, 'id_alma_insurance_product'),

@@ -42,7 +42,7 @@
 
         <div class="product-line-info product-price h5">
             <div class="current-price">
-                <span class="price">{$associatedInsurance.price}</span>
+                <span class="price">{$associatedInsurance.unitPrice}</span>
             </div>
         </div>
     </div>

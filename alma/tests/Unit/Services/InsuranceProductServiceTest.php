@@ -44,6 +44,7 @@ use Alma\PrestaShop\Services\InsuranceApiService;
 use Alma\PrestaShop\Services\InsuranceProductService;
 use Alma\PrestaShop\Services\InsuranceService;
 use PHPUnit\Framework\TestCase;
+use PrestaShop\PrestaShop\Core\Localization\Exception\LocalizationException;
 
 class InsuranceProductServiceTest extends TestCase
 {
@@ -172,11 +173,9 @@ class InsuranceProductServiceTest extends TestCase
     }
 
     /**
-     * // TODO : Need to fix the test
-     *
      * @throws \PrestaShopDatabaseException
+     * @throws LocalizationException
      */
-    /*
     public function testGetItemCartInsuranceProductAttributes()
     {
         $expectedResult = [
@@ -185,8 +184,8 @@ class InsuranceProductServiceTest extends TestCase
                 'nameInsuranceProduct' => 'Name insurance Alma',
                 'urlImageInsuranceProduct' => '//url_image',
                 'reference' => 'Reference Vol + Casse Alma',
-                'unitPrice' => 47.899999999999999,
-                'price' => '47.90 €',
+                'unitPrice' => '47.90 €',
+                'price' => '95.80 €',
                 'quantity' => '2',
                 'insuranceContractId' => 'insurance_contract_ABCD123',
                 'idsAlmaInsuranceProduct' => '["22","23"]',
@@ -196,7 +195,7 @@ class InsuranceProductServiceTest extends TestCase
                 'nameInsuranceProduct' => 'Name insurance Alma',
                 'urlImageInsuranceProduct' => '//url_image',
                 'reference' => 'Reference Vol Alma',
-                'unitPrice' => 22.899999999999999,
+                'unitPrice' => '22.90 €',
                 'price' => '22.90 €',
                 'quantity' => '1',
                 'insuranceContractId' => 'insurance_contract_EFGH456',
@@ -209,14 +208,14 @@ class InsuranceProductServiceTest extends TestCase
                 'id_product_insurance' => '21',
                 'id_product_attribute_insurance' => '33',
                 'unitPrice' => '4790',
-                'price' => '47.90 €',
+                'price' => '9580',
             ],
             [
                 'nbInsurance' => '1',
                 'id_product_insurance' => '21',
                 'id_product_attribute_insurance' => '34',
                 'unitPrice' => '2290',
-                'price' => '22.90 €',
+                'price' => '2290',
             ],
         ];
         $returnContractByProduct1 = [
@@ -249,9 +248,11 @@ class InsuranceProductServiceTest extends TestCase
         $this->toolsHelperMock->expects($this->exactly(2))
             ->method('getJsonValues')
             ->willReturnOnConsecutiveCalls('["22","23"]', '["24"]');
-        $this->priceHelperMock->expects($this->exactly(2))
-            ->method('convertPriceFromCents')
-            ->willReturnOnConsecutiveCalls(47.899999999999999, 22.899999999999999);
+        $this->priceHelperMock->expects($this->exactly(4))
+            ->method('convertPriceFromCents');
+        $this->toolsHelperMock->expects($this->exactly(4))
+            ->method('displayPrice')
+            ->willReturnOnConsecutiveCalls('47.90 €', '95.80 €', '22.90 €', '22.90 €');
         $this->linkMock->expects($this->exactly(2))
             ->method('getImageLink')
             ->willReturn('url_image');
@@ -279,7 +280,6 @@ class InsuranceProductServiceTest extends TestCase
             $this->insuranceProductServiceMock->getItemsCartInsuranceProductAttributes($this->productMock, $cartId, $insuranceProductId)
         );
     }
-    */
 
     /**
      * @return void
