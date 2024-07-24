@@ -115,9 +115,13 @@ class HookHelper
             'version' => '1.7.7',
             'operand' => '>=',
         ],
-        'actionGetProductPropertiesBefore' => [
-            'version' => '1.7',
+        'actionFrontControllerSetVariables' => [
+            'version' => '1.7.5',
             'operand' => '>=',
+        ],
+        'actionGetProductPropertiesBefore' => [
+            'version' => '1.7.5',
+            'operand' => '<',
         ],
     ];
 

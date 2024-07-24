@@ -24,24 +24,48 @@
 
 namespace Alma\PrestaShop\Controllers\Hook;
 
+use Alma\PrestaShop\Helpers\ConstantsHelper;
 use Alma\PrestaShop\Hooks\FrontendHookController;
+use Alma\PrestaShop\Repositories\ProductRepository;
 
 if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-class ActionGetProductPropertiesBeforeHookController extends FrontendHookController
+class ActionFrontControllerSetVariablesHookController extends FrontendHookController
 {
+    protected $productRepository;
+
+    public function __construct($module)
+    {
+        parent::__construct($module);
+
+        $this->productRepository = new ProductRepository();
+    }
+
+    /**
+     * @param $params
+     *
+     * @return bool
+     */
     public function run($params)
     {
-        //var_dump(array_keys((array)$params['context']));
-        //var_dump($params['context']->controller);
-        /*
-        $this->context->smarty->assign([
-            'configuration' => [
-                'is_catalog' => 'toto'
-            ]
-        ]);
-        */
+        if ($this->checkIsInsuranceProduct($params['templateVars']['page'])) {
+            return $params['templateVars']['configuration']['is_catalog'] = true;
+        }
+
+        return false;
+    }
+
+    /**
+     * @param $page
+     *
+     * @return bool
+     */
+    private function checkIsInsuranceProduct($page)
+    {
+        $idInsuranceProduct = $this->productRepository->getProductIdByReference(ConstantsHelper::ALMA_INSURANCE_PRODUCT_REFERENCE);
+
+        return $page['page_name'] === 'product' && array_key_exists('product-id-' . $idInsuranceProduct, $page['body_classes']);
     }
 }

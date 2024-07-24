@@ -720,8 +720,8 @@ class Alma extends PaymentModule
      *
      * @return mixed|null
      */
-    public function hookActionGetProductPropertiesBefore($params)
+    public function hookActionFrontControllerSetVariables($params)
     {
-        return $this->runHookController('actionGetProductPropertiesBefore', $params);
+        return $this->runHookController('actionFrontControllerSetVariables', $params);
     }
 }
