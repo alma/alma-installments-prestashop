@@ -22,31 +22,43 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
-namespace Alma\PrestaShop\Builders\Helpers;
-
-use Alma\PrestaShop\Helpers\InsuranceHelper;
-use Alma\PrestaShop\Traits\BuilderTrait;
+use Alma\PrestaShop\Builders\Helpers\InsuranceHelperBuilder;
+use Alma\PrestaShop\Helpers\ConstantsHelper;
 
 if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-class InsuranceHelperBuilder
+/**
+ * @param $module
+ *
+ * @return bool
+ *
+ * @throws PrestaShopException
+ */
+function upgrade_module_4_2_0($module)
 {
-    use BuilderTrait;
+    // TODO : Need to test this request
+    $insuranceHelperBuilder = new InsuranceHelperBuilder();
+    $insuranceHelper = $insuranceHelperBuilder->getInstance();
+    if ($insuranceHelper->isInsuranceActivated()) {
+        $sql = 'ALTER TABLE `' . _DB_PREFIX_ . 'alma_insurance_product`
+        ADD `insurance_contract_name` varchar(255) NULL AFTER `insurance_contract_id`';
 
-    /**
-     * @return InsuranceHelper
-     */
-    public function getInstance()
-    {
-        return new InsuranceHelper(
-            $this->getCartProductRepository(),
-            $this->getProductRepository(),
-            $this->getAlmaInsuranceProductRepository(),
-            $this->getContextFactory(),
-            $this->getToolsHelper(),
-            $this->getSettingsHelper()
-        );
+        \Db::getInstance()->execute($sql);
     }
+
+    if (version_compare(_PS_VERSION_, '1.7', '>=')) {
+        $module->registerHook('actionAfterDeleteProductInCart');
+        $module->registerHook('actionObjectProductInCartDeleteAfter');
+        $module->registerHook('actionAdminOrdersListingFieldsModifier');
+        $module->registerHook('displayInvoice');
+    }
+
+    if (version_compare(_PS_VERSION_, ConstantsHelper::PRESTASHOP_VERSION_1_7_0_2, '>')) {
+        Tools::clearAllCache();
+        Tools::clearXMLCache();
+    }
+
+    return true;
 }

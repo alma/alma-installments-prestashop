@@ -26,6 +26,7 @@ namespace Alma\PrestaShop\Services;
 
 use Alma\PrestaShop\Builders\Models\LocaleHelperBuilder;
 use Alma\PrestaShop\Helpers\LocaleHelper;
+use Alma\PrestaShop\Helpers\ToolsHelper;
 use Alma\PrestaShop\Repositories\AttributeRepository;
 
 if (!defined('_PS_VERSION_')) {
@@ -48,6 +49,10 @@ class AttributeProductService
      * @var LocaleHelper
      */
     protected $localeHelper;
+    /**
+     * @var ToolsHelper
+     */
+    protected $toolsHelper;
 
     public function __construct()
     {
@@ -56,18 +61,22 @@ class AttributeProductService
         $this->localeHelper = $localeHelperBuilder->getInstance();
 
         $this->attributeRepository = new AttributeRepository();
+        $this->toolsHelper = new ToolsHelper();
     }
 
     /**
-     * @param string $name
+     * @param string $insuranceContractId
      * @param int $attributeGroupId
      *
      * @return int
+     *
+     * @throws \PrestaShopDatabaseException
+     * @throws \PrestaShopException
      */
-    public function getAttributeId($name, $attributeGroupId)
+    public function getOrCreateAttributeId($insuranceContractId, $attributeGroupId)
     {
         $insuranceAttributeId = $this->attributeRepository->getAttributeIdByNameAndGroup(
-            $name,
+            $insuranceContractId,
             $attributeGroupId,
             $this->context->language->id
         );
@@ -75,7 +84,7 @@ class AttributeProductService
         if (!$insuranceAttributeId) {
             $insuranceAttribute = $this->getProductAttributeObject();
 
-            $insuranceAttribute->name = $this->localeHelper->createMultiLangField($name);
+            $insuranceAttribute->name = $this->localeHelper->createMultiLangField($insuranceContractId);
             $insuranceAttribute->id_attribute_group = $attributeGroupId;
             $insuranceAttribute->add();
 
@@ -115,10 +124,17 @@ class AttributeProductService
         $idProductAttribute = (int) \Tools::getValue('product_attribute_id');
 
         if (\Tools::getIsset('group')) {
-            $idProductAttribute = (int) \Product::getIdProductAttributeByIdAttributes(
-                $idProduct,
-                \Tools::getValue('group')
-            );
+            if ($this->toolsHelper->psVersionCompare('1.7.4.0', '<')) {
+                $idProductAttribute = (int) \Product::getIdProductAttributesByIdAttributes(
+                    $idProduct,
+                    \Tools::getValue('group')
+                );
+            } else {
+                $idProductAttribute = (int) \Product::getIdProductAttributeByIdAttributes(
+                    $idProduct,
+                    \Tools::getValue('group')
+                );
+            }
         }
 
         return $idProductAttribute;

@@ -30,7 +30,9 @@ use Alma\PrestaShop\Builders\Helpers\InsuranceHelperBuilder;
 use Alma\PrestaShop\Builders\Helpers\PriceHelperBuilder;
 use Alma\PrestaShop\Builders\Helpers\SettingsHelperBuilder;
 use Alma\PrestaShop\Builders\Services\InsuranceProductServiceBuilder;
+use Alma\PrestaShop\Exceptions\AlmaCartItemFactoryException;
 use Alma\PrestaShop\Exceptions\InsuranceNotFoundException;
+use Alma\PrestaShop\Factories\AlmaCartItemFactory;
 use Alma\PrestaShop\Helpers\Admin\AdminInsuranceHelper;
 use Alma\PrestaShop\Helpers\CartHelper;
 use Alma\PrestaShop\Helpers\ConstantsHelper;
@@ -40,9 +42,11 @@ use Alma\PrestaShop\Helpers\PriceHelper;
 use Alma\PrestaShop\Helpers\ProductHelper;
 use Alma\PrestaShop\Helpers\SettingsHelper;
 use Alma\PrestaShop\Hooks\FrontendHookController;
+use Alma\PrestaShop\Logger;
 use Alma\PrestaShop\Repositories\AlmaInsuranceProductRepository;
 use Alma\PrestaShop\Repositories\ProductRepository;
 use Alma\PrestaShop\Services\InsuranceProductService;
+use PrestaShop\PrestaShop\Core\Localization\Exception\LocalizationException;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -99,6 +103,14 @@ class DisplayCartExtraProductActionsHookController extends FrontendHookControlle
      * @var InsuranceProductService
      */
     protected $insuranceProductService;
+    /**
+     * @var AlmaCartItemFactory
+     */
+    protected $almaCartItemFactory;
+    /**
+     * @var Logger|mixed
+     */
+    protected $logger;
 
     /**
      * @param $module
@@ -130,6 +142,10 @@ class DisplayCartExtraProductActionsHookController extends FrontendHookControlle
         $insuranceProductServiceBuilder = new InsuranceProductServiceBuilder();
         $this->insuranceProductService = $insuranceProductServiceBuilder->getInstance();
 
+        $this->almaCartItemFactory = new AlmaCartItemFactory();
+
+        $this->logger = Logger::instance();
+
         parent::__construct($module);
     }
 
@@ -150,18 +166,22 @@ class DisplayCartExtraProductActionsHookController extends FrontendHookControlle
      * @throws InsuranceNotFoundException
      * @throws \PrestaShopDatabaseException
      * @throws \PrestaShopException
+     * @throws LocalizationException
      */
     public function run($params)
     {
-        /**
-         * @var \ProductCore $product
-         */
-        $product = $params['product'];
+        try {
+            $product = $this->almaCartItemFactory->create($params['product']);
+        } catch (AlmaCartItemFactoryException $e) {
+            $msg = 'Cannot display insurance cart item';
+            $this->logger->error('[Alma] ' . $msg);
 
-        /**
-         * @var \CartCore $cart
-         */
-        $cart = $params['cart'];
+            $this->context->smarty->assign([
+                'message' => $msg,
+            ]);
+
+            return $this->module->display($this->module->file, 'notificationError.tpl');
+        }
 
         $insuranceProductId = $this->productRepository->getProductIdByReference(
             ConstantsHelper::ALMA_INSURANCE_PRODUCT_REFERENCE,
@@ -169,19 +189,24 @@ class DisplayCartExtraProductActionsHookController extends FrontendHookControlle
         );
 
         if (!$insuranceProductId) {
-            throw new InsuranceNotFoundException();
+            $msg = 'Insurance product not found';
+            $this->logger->error('[Alma] ' . $msg);
+
+            $this->context->smarty->assign([
+                'message' => $msg,
+            ]);
+
+            return $this->module->display($this->module->file, 'notificationError.tpl');
         }
 
         $resultInsurance = [];
-
-        $idProduct = $product->id;
-        $productAttributeId = $product->id_product_attribute;
-        $productQuantity = $product->quantity;
-        $template = 'displayCartExtraProductActions.tpl';
-        $cmsReference = $this->insuranceHelper->createCmsReference($idProduct, $productAttributeId);
-        $regularPrice = $this->productHelper->getRegularPrice($idProduct, $productAttributeId);
-        $regularPriceInCents = $this->priceHelper->convertPriceToCents($regularPrice);
-        $merchantId = $this->settingHelper->getIdMerchant();
+        $idProduct = $product->getId();
+        $productAttributeId = $product->getIdProductAttribute();
+        $staticPrice = $this->productHelper->getPriceStatic($idProduct, $productAttributeId);
+        /**
+         * @var \CartCore $cart
+         */
+        $cart = $params['cart'];
 
         if ($idProduct !== $insuranceProductId) {
             $resultInsurance = $this->insuranceProductService->getItemsCartInsuranceProductAttributes($product, $cart->id, $insuranceProductId);
@@ -192,43 +217,36 @@ class DisplayCartExtraProductActionsHookController extends FrontendHookControlle
             $nbProductWithInsurance += $insurance['quantity'];
         }
 
-        $ajaxLinkRemoveProduct = $this->link->getModuleLink('alma', 'insurance', ['action' => 'removeProductFromCart']);
-        $ajaxLinkRemoveAssociation = $this->link->getModuleLink('alma', 'insurance', ['action' => 'removeAssociation']);
-        $ajaxLinkRemoveAssociations = $this->link->getModuleLink('alma', 'insurance', ['action' => 'removeAssociations']);
-        $ajaxLinkRemoveInsuranceProduct = $this->link->getModuleLink('alma', 'insurance', ['action' => 'removeInsuranceProduct']);
-        $ajaxLinkRemoveInsuranceProducts = $this->link->getModuleLink('alma', 'insurance', ['action' => 'removeInsuranceProducts']);
-        $ajaxLinkAddInsuranceProduct = $this->link->getModuleLink('alma', 'insurance', ['action' => 'addInsuranceProduct']);
-
         $this->context->smarty->assign([
                 'idCart' => $cart->id,
                 'idLanguage' => $this->context->language->id,
-                'nbProductWithoutInsurance' => $productQuantity - $nbProductWithInsurance,
+                'nbProductWithoutInsurance' => $product->getQuantity() - $nbProductWithInsurance,
                 'nbProductWithInsurance' => $nbProductWithInsurance,
                 'product' => $product,
                 'associatedInsurances' => $resultInsurance,
                 'isAlmaInsurance' => $idProduct === $insuranceProductId ? 1 : 0,
-                'ajaxLinkAlmaRemoveProduct' => $ajaxLinkRemoveProduct,
-                'ajaxLinkAlmaRemoveAssociation' => $ajaxLinkRemoveAssociation,
-                'ajaxLinkAlmaRemoveAssociations' => $ajaxLinkRemoveAssociations,
-                'ajaxLinkRemoveInsuranceProduct' => $ajaxLinkRemoveInsuranceProduct,
-                'ajaxLinkRemoveInsuranceProducts' => $ajaxLinkRemoveInsuranceProducts,
-                'ajaxLinkAddInsuranceProduct' => $ajaxLinkAddInsuranceProduct,
+                'ajaxLinkAlmaRemoveProduct' => $this->link->getModuleLink('alma', 'insurance', ['action' => 'removeProductFromCart']),
+                'ajaxLinkAlmaRemoveAssociation' => $this->link->getModuleLink('alma', 'insurance', ['action' => 'removeAssociation']),
+                'ajaxLinkAlmaRemoveAssociations' => $this->link->getModuleLink('alma', 'insurance', ['action' => 'removeAssociations']),
+                'ajaxLinkRemoveInsuranceProduct' => $this->link->getModuleLink('alma', 'insurance', ['action' => 'removeInsuranceProduct']),
+                'ajaxLinkRemoveInsuranceProducts' => $this->link->getModuleLink('alma', 'insurance', ['action' => 'removeInsuranceProducts']),
+                'ajaxLinkAddInsuranceProduct' => $this->link->getModuleLink('alma', 'insurance', ['action' => 'addInsuranceProduct']),
                 'token' => \Tools::getToken(false),
                 'idProduct' => $idProduct,
                 'iframeUrl' => sprintf(
                     '%s%s?cms_reference=%s&product_price=%s&product_quantity=%s&merchant_id=%s&customer_session_id=%s&cart_id=%s&is_in_cart=true',
                     $this->adminInsuranceHelper->envUrl(),
                     ConstantsHelper::FO_IFRAME_WIDGET_INSURANCE_PATH,
-                    $cmsReference,
-                    $regularPriceInCents,
-                    $product['quantity_wanted'],
-                    $merchantId,
+                    $this->insuranceHelper->createCmsReference($idProduct, $productAttributeId),
+                    $this->priceHelper->convertPriceToCents($staticPrice),
+                    $product->getQuantity(),
+                    $this->settingHelper->getIdMerchant(),
                     $this->context->cookie->checksum,
                     $this->cartHelper->getCartIdFromContext()
                 ),
                 'insuranceSettings' => $this->adminInsuranceHelper->mapDbFieldsWithIframeParams(),
             ]);
 
-        return $this->module->display($this->module->file, $template);
+        return $this->module->display($this->module->file, 'displayCartExtraProductActions.tpl');
     }
 }

@@ -20,8 +20,8 @@
  * @copyright 2018-2024 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  *}
-{capture assign='productRegularPriceInCent'}{$product.price_without_reduction|escape:'htmlall':'UTF-8' * 100}{/capture}
-{capture assign='cmsReference'}{almaCmsReference product_id=$product.id_product product_attribute_id=$product.id_product_attribute regular_price=$product.price_without_reduction}{/capture}
+{capture assign='productRegularPriceInCent'}{$product->getPriceWithReduction()|escape:'htmlall':'UTF-8' * 100}{/capture}
+{capture assign='cmsReference'}{almaCmsReference product_id=$product->getId() product_attribute_id=$product->getIdProductAttribute() regular_price=$product->getPriceWithReduction()}{/capture}
 
 <div class="col-md-12">
     <div class="item-alma-insurance">
@@ -37,21 +37,21 @@
         </div>
         <div class="product-line-grid-left">
             <div class="alma-action-item-insurance">
-                <a data-product-id="{$product.id_product|escape:'htmlall':'UTF-8'}"
-                   data-product-attribute-id="{$product.id_product_attribute|escape:'htmlall':'UTF-8'}"
+                <a data-product-id="{$product->getId()|escape:'htmlall':'UTF-8'}"
+                   data-product-attribute-id="{$product->getIdProductAttribute()|escape:'htmlall':'UTF-8'}"
                    data-product-price="{$productRegularPriceInCent}"
-                   data-product-customization-id="{$product.id_customization|intval}"
+                   data-product-customization-id="{$product->getIdCustomization()|intval}"
                    data-insurance-contract-id="{$associatedInsurance.insuranceContractId}"
                    data-remaining-quantity="{$nbProductWithoutInsurance}"
                    data-id-iframe="product-alma-iframe-{$cmsReference}"
                    data-action="add-insurance-product"
-                   data-token='{\Tools::getToken(false)|escape:'htmlall':'UTF-8'}'
+                   data-token='{$token|escape:'htmlall':'UTF-8'}'
                    href="#"
                    id="add-insurance-product-{$cmsReference}"
                    class="btn-add-insurance-product alma-add-all-insurance-product"
                    data-link='{$ajaxLinkAddInsuranceProduct|escape:'htmlall':'UTF-8'}'
                 >
-                    {l s='I want to insure all the remaining [1]%1$s[/1] in my cart' tags=['<strong>'] sprintf=[$product.name] mod='alma'}
+                    {l s='I want to insure all the remaining [1]%1$s[/1] in my cart' tags=['<strong>'] sprintf=[$product->getName()] mod='alma'}
                 </a>
             </div>
         </div>

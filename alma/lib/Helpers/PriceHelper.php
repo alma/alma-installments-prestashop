@@ -114,8 +114,6 @@ class PriceHelper
      */
     public function formatPriceToCentsByCurrencyId($cents, $idCurrency = null)
     {
-        $legacy = $this->toolsHelper->psVersionCompare('1.7.6.0', '<');
-
         $currency = $this->contextFactory->getCurrencyFromContext();
 
         $price = $this->convertPriceFromCents($cents);
@@ -128,7 +126,7 @@ class PriceHelper
         $formattedPrice = sprintf('%.2f€', $price);
 
         try {
-            $formattedPrice = $this->toolsHelper->displayPrice($legacy, $price, $currency);
+            $formattedPrice = $this->toolsHelper->displayPrice($price, $currency);
         } catch (\Exception $e) {
             Logger::instance()->warning(sprintf('Price localization error: %s', $e->getMessage()));
         }

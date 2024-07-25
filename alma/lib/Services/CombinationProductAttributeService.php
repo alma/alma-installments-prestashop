@@ -59,7 +59,7 @@ class CombinationProductAttributeService
      *
      * @return int
      */
-    public function manageCombination($product, $attributeId, $reference, $price, $quantity, $shopId = 1, $outOfStock = 1)
+    public function getOrCreateCombination($product, $attributeId, $reference, $price, $quantity, $shopId = 1, $outOfStock = 1)
     {
         /**
          * @var \CombinationCore $combinaison
