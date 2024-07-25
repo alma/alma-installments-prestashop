@@ -1,6 +1,7 @@
 services:
   _defaults:
     public: true
+    synthetic: true
 
   #####################
   # PS Account
