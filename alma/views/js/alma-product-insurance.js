@@ -45,7 +45,10 @@ let almaEligibilityAnswer = false;
                         quantity = 1;
                     }
                     if (event.eventType === 'updatedProductQuantity') {
-                        quantity = event.event.target.value;
+                        quantity = document.querySelector('.qty [name="qty"]').value;
+                        if (event.event) {
+                            quantity = event.event.target.value;
+                        }
                         removeInsurance();
                     }
                     if (modalIsClosed || event.eventType === 'updatedProductCombination') {
