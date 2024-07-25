@@ -25,7 +25,12 @@ let insuranceSelected = false;
 let selectedAlmaInsurance = null;
 let addToCartFlow = false;
 let productDetails = null;
-let quantity = 1;
+let quantity;
+if (document.querySelector('.qty [name="qty"]')) {
+    quantity = document.querySelector('.qty [name="qty"]').value;
+} else {
+    quantity = 1;
+}
 let almaEligibilityAnswer = false;
 
 (function ($) {
@@ -42,7 +47,7 @@ let almaEligibilityAnswer = false;
 
                     if (event.event !== undefined) {
                         modalIsClosed = event.event.namespace === 'bs.modal' && event.event.type === 'hidden';
-                        quantity = 1;
+                        quantity = document.querySelector('.qty [name="qty"]').value;
                     }
                     if (event.eventType === 'updatedProductQuantity') {
                         quantity = document.querySelector('.qty [name="qty"]').value;
