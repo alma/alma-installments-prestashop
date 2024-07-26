@@ -25,9 +25,16 @@
     $(function () {
         const subscriptionData = dataSubscriptions
 
-        window.addEventListener('almaIframeScriptLoaded', () => {
-            getSubscriptionDatafromCms(subscriptionData);
-        });
+        function waitForScript()
+        {
+            if (typeof getSubscriptionDatafromCms !== 'undefined') {
+                setTimeout(getSubscriptionDatafromCms(subscriptionData), 650)
+            } else {
+                console.log('re set timeout')
+                setTimeout(waitForScript, 450)
+            }
+        }
+        waitForScript();
 
         window.addEventListener('message', (e) => {
             if (e.data.type === 'sendCancelSubscriptionToCms') {
