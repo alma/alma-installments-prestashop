@@ -21,7 +21,7 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  *}
 {capture assign='cmsReference'}{almaCmsReference product_id=$product->id product_attribute_id=$product->id_product_attribute static_price=$product->price_with_reduction}{/capture}
-{$cmsReference}
+
 <div class="alma-data-product"
      data-reference="{$product->reference}"
      data-id-product="{$product->id}"
