@@ -18,7 +18,12 @@
       "groupName": "composer updates"
     },
     {
-      "matchManagers": ["docker"],
+      "matchManagers": ["composer"],
+      "matchUpdateTypes": ["major"],
+      "enabled": false
+    },
+    {
+      "matchManagers": ["dockerfile"],
       "matchDepNames": ["composer"],
       "matchFileNames": ["scripts/build/Dockerfile"],
       "enabled": false
