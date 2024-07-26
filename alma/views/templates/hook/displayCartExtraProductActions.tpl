@@ -20,7 +20,7 @@
  * @copyright 2018-2024 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  *}
-{capture assign='cmsReference'}{almaCmsReference product_id=$product->getId() product_attribute_id=$product->getIdProductAttribute() regular_price=$product->getPriceWithReduction()}{/capture}
+{capture assign='cmsReference'}{almaCmsReference product_id=$product->getId() product_attribute_id=$product->getIdProductAttribute() static_price=$product->getPriceWithReduction()}{/capture}
 
 <div class="alma-data-product"
      data-reference="{$product->getReference()}"
