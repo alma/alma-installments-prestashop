@@ -25,12 +25,7 @@ let insuranceSelected = false;
 let selectedAlmaInsurance = null;
 let addToCartFlow = false;
 let productDetails = null;
-let quantity;
-if (document.querySelector('.qty [name="qty"]')) {
-    quantity = document.querySelector('.qty [name="qty"]').value;
-} else {
-    quantity = 1;
-}
+let quantity = getQuantity();
 let almaEligibilityAnswer = false;
 
 (function ($) {
@@ -47,10 +42,10 @@ let almaEligibilityAnswer = false;
 
                     if (event.event !== undefined) {
                         modalIsClosed = event.event.namespace === 'bs.modal' && event.event.type === 'hidden';
-                        quantity = document.querySelector('.qty [name="qty"]').value;
+                        quantity = getQuantity();
                     }
                     if (event.eventType === 'updatedProductQuantity') {
-                        quantity = document.querySelector('.qty [name="qty"]').value;
+                        quantity = getQuantity();
                         if (event.event) {
                             quantity = event.event.target.value;
                         }
@@ -86,6 +81,13 @@ let almaEligibilityAnswer = false;
     });
 })(jQuery);
 
+function getQuantity() {
+    var quantity = 1;
+    if (document.querySelector('.qty [name="qty"]')) {
+        quantity = parseInt(document.querySelector('.qty [name="qty"]').value);
+    }
+    return quantity
+}
 
 function btnLoaders(action) {
     const addBtn = $(".add-to-cart");
@@ -123,7 +125,7 @@ function onloadAddInsuranceInputOnProductAlma() {
         }
         if (e.data.type === 'getSelectedInsuranceData') {
             if (parseInt(document.querySelector('.qty [name="qty"]').value) !== quantity) {
-                quantity = document.querySelector('.qty [name="qty"]').value;
+                quantity = getQuantity();
             }
             insuranceSelected = true;
             selectedAlmaInsurance = e.data.selectedInsuranceData;
