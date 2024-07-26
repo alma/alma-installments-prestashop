@@ -21,9 +21,6 @@
  * @copyright 2018-2024 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
-
-use Alma\PrestaShop\Builders\Models\MediaHelperBuilder;
-
 if (!defined('_PS_VERSION_')) {
     exit;
 }
@@ -607,7 +604,7 @@ class Alma extends PaymentModule
         }
 
         try {
-            $mediaHelperBuilder = new MediaHelperBuilder();
+            $mediaHelperBuilder = new Alma\PrestaShop\Builders\Models\MediaHelperBuilder();
             $mediaHelper = $mediaHelperBuilder->getInstance();
             $mediaHelper->addJsDef([
                 'contextPsAccounts' => $accountsFacade->getPsAccountsPresenter()
