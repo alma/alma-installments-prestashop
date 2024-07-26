@@ -179,8 +179,8 @@ class DisplayCartExtraProductActionsHookController extends FrontendHookControlle
         $productQuantity = $product->quantity;
         $template = 'displayCartExtraProductActions.tpl';
         $cmsReference = $this->insuranceHelper->createCmsReference($idProduct, $productAttributeId);
-        $regularPrice = $this->productHelper->getRegularPrice($idProduct, $productAttributeId);
-        $regularPriceInCents = $this->priceHelper->convertPriceToCents($regularPrice);
+        $staticPrice = $this->productHelper->getPriceStatic($idProduct, $productAttributeId);
+        $staticPriceInCents = $this->priceHelper->convertPriceToCents($staticPrice);
         $merchantId = $this->settingHelper->getIdMerchant();
 
         if ($idProduct !== $insuranceProductId) {
@@ -220,7 +220,7 @@ class DisplayCartExtraProductActionsHookController extends FrontendHookControlle
                     $this->adminInsuranceHelper->envUrl(),
                     ConstantsHelper::FO_IFRAME_WIDGET_INSURANCE_PATH,
                     $cmsReference,
-                    $regularPriceInCents,
+                    $staticPriceInCents,
                     $product['quantity_wanted'],
                     $merchantId,
                     $this->context->session->getId(),

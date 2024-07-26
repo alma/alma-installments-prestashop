@@ -85,13 +85,13 @@ if (class_exists('\Context') && PHP_SAPI != 'cli') {
 
     function smarty_function_almaCmsReference($params, $smarty)
     {
-        $regular_price = $params['regular_price'] * 100;
+        $static_price = round($params['static_price'] * 100);
 
         if ($params['product_attribute_id'] === '0') {
-            return $params['product_id'] . '-' . $regular_price;
+            return $params['product_id'] . '-' . $static_price;
         }
 
-        return $params['product_id'] . '-' . $params['product_attribute_id'] . '-' . $regular_price;
+        return $params['product_id'] . '-' . $params['product_attribute_id'] . '-' . $static_price;
     }
 
     smartyRegisterFunction($smarty, 'function', 'almaCmsReference', 'smarty_function_almaCmsReference');
