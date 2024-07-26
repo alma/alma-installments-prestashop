@@ -20,7 +20,7 @@
  * @copyright 2018-2024 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  *}
-<div class="product-line-grid py-1">
+<div class="product-line-grid row py-1">
     <div class="product-line-grid-left col-md-3 col-xs-4">
         <span class="product-image media-middle">
             <img src="{$associatedInsurance.urlImageInsuranceProduct}" alt="{$associatedInsurance.nameInsuranceProduct|escape:'htmlall':'UTF-8'}" loading="lazy">
