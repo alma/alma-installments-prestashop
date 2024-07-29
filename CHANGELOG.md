@@ -7,7 +7,7 @@
 ### 🐛 Bug Fixes
 
 - fix: display order details of insurance subscription (#534)
-- Fix: add quantity insurance in the product and display cart item (#533)
+- fix: add quantity insurance in the product and display cart item (#533)
 - fix: Issue price widget in Cart Item (#532)
 - fix: compatibility PS 1.6 during installing module (#531)
 
