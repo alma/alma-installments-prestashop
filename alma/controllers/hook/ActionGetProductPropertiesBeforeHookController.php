@@ -26,39 +26,26 @@ namespace Alma\PrestaShop\Controllers\Hook;
 
 use Alma\PrestaShop\Helpers\ConstantsHelper;
 use Alma\PrestaShop\Hooks\FrontendHookController;
-use Alma\PrestaShop\Repositories\ProductRepository;
 
 if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-class ActionFrontControllerSetVariablesHookController extends FrontendHookController
+class ActionGetProductPropertiesBeforeHookController extends FrontendHookController
 {
-    protected $productRepository;
-
-    public function __construct($module, $productRepository = null)
-    {
-        parent::__construct($module);
-
-        if (is_null($productRepository)) {
-            $productRepository = new ProductRepository();
-        }
-
-        $this->productRepository = $productRepository;
-    }
-
     /**
      * @param $params
-     *
-     * @return bool
      */
     public function run($params)
     {
         if ($this->checkIsInsuranceProduct($params)) {
-            return $params['templateVars']['configuration']['is_catalog'] = true;
+            $params['context']->smarty->assign([
+                'configuration' => [
+                    'is_catalog' => true,
+                    'display_taxes_label' => null,
+                ],
+            ]);
         }
-
-        return false;
     }
 
     /**
@@ -68,13 +55,10 @@ class ActionFrontControllerSetVariablesHookController extends FrontendHookContro
      */
     private function checkIsInsuranceProduct($params)
     {
-        $templateVars = $params['templateVars'];
-        $idInsuranceProduct = $this->productRepository->getProductIdByReference(ConstantsHelper::ALMA_INSURANCE_PRODUCT_REFERENCE);
-
         if (
-            !array_key_exists('page', $templateVars) ||
-            $templateVars['page']['page_name'] !== 'product' ||
-            !array_key_exists('product-id-' . $idInsuranceProduct, $templateVars['page']['body_classes'])
+            !array_key_exists('product', $params) ||
+            !array_key_exists('context', $params) ||
+            $params['product']['reference'] !== ConstantsHelper::ALMA_INSURANCE_PRODUCT_REFERENCE
         ) {
             return false;
         }
