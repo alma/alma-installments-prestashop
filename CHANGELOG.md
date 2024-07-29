@@ -1,5 +1,20 @@
 # Changelog
 
+## v4.1.4 - 2024-07-29
+
+### Changes
+
+### 🐛 Bug Fixes
+
+- fix: display order details of insurance subscription (#534)
+- Fix: add quantity insurance in the product and display cart item (#533)
+- fix: Issue price widget in Cart Item (#532)
+- fix: compatibility PS 1.6 during installing module (#531)
+
+#### Contributors
+
+@Benjamin-Freoua-Alma, @alma-renovate-bot, @gdraynz and @github-actions
+
 ## v4.1.3 - 2024-07-18
 
 ### Changes
