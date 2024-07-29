@@ -26,7 +26,6 @@ namespace Alma\PrestaShop\Services;
 
 use Alma\PrestaShop\Exceptions\AlmaException;
 use Alma\PrestaShop\Exceptions\InsuranceContractException;
-use Alma\PrestaShop\Factories\CombinationFactory;
 use Alma\PrestaShop\Factories\ContextFactory;
 use Alma\PrestaShop\Factories\LinkFactory;
 use Alma\PrestaShop\Factories\ProductFactory;
@@ -38,8 +37,10 @@ use Alma\PrestaShop\Helpers\PriceHelper;
 use Alma\PrestaShop\Helpers\ProductHelper;
 use Alma\PrestaShop\Helpers\ToolsHelper;
 use Alma\PrestaShop\Logger;
+use Alma\PrestaShop\Model\AlmaCartItemModel;
 use Alma\PrestaShop\Repositories\AlmaInsuranceProductRepository;
 use Alma\PrestaShop\Repositories\ProductRepository;
+use PrestaShop\PrestaShop\Core\Localization\Exception\LocalizationException;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -117,10 +118,6 @@ class InsuranceProductService
      */
     protected $productFactory;
     /**
-     * @var CombinationFactory
-     */
-    protected $combinationFactory;
-    /**
      * @var \Link
      */
     protected $link;
@@ -152,7 +149,6 @@ class InsuranceProductService
      */
     public function __construct(
         $productFactory,
-        $combinationFactory,
         $linkFactory,
         $almaInsuranceProductRepository,
         $contextFactory,
@@ -171,7 +167,6 @@ class InsuranceProductService
         $toolsHelper
     ) {
         $this->productFactory = $productFactory;
-        $this->combinationFactory = $combinationFactory;
         $this->link = $linkFactory->create();
         $this->almaInsuranceProductRepository = $almaInsuranceProductRepository;
         $this->context = $contextFactory->getContext();
@@ -236,7 +231,7 @@ class InsuranceProductService
      * @param int $idProduct
      * @param \ProductCore $insuranceProduct
      * @param float $insurancePrice
-     * @param string $insuranceName
+     * @param string $insuranceContractId
      * @param int $quantity
      * @param int $idCustomization
      * @param array $insuranceContractInfos
@@ -252,27 +247,28 @@ class InsuranceProductService
         $idProduct,
         $insuranceProduct,
         $insurancePrice,
-        $insuranceName,
+        $insuranceContractId,
         $quantity,
         $idCustomization,
         $insuranceContractInfos,
         $cart = null
     ) {
+        $insuranceContractId = str_replace('insurance_contract_', '', $insuranceContractId);
         $idProductAttribute = $this->attributeProductService->getIdProductAttributeFromPost($idProduct);
 
         $insuranceAttributeGroupId = $this->attributeGroupProductService->getIdAttributeGroupByName(
             ConstantsHelper::ALMA_INSURANCE_ATTRIBUTE_NAME
         );
-        $insuranceAttributeId = $this->attributeProductService->getAttributeId(
-            $insuranceName,
+        $insuranceAttributeId = $this->attributeProductService->getOrCreateAttributeId(
+            $insuranceContractId,
             $insuranceAttributeGroupId
         );
 
         // Check if the combination already exists
-        $idProductAttributeInsurance = $this->combinationProductAttributeService->manageCombination(
+        $idProductAttributeInsurance = $this->combinationProductAttributeService->getOrCreateCombination(
             $insuranceProduct,
             $insuranceAttributeId,
-            $insuranceName,
+            $insuranceContractId,
             $insurancePrice,
             $quantity,
             $this->context->shop->id
@@ -331,13 +327,14 @@ class InsuranceProductService
                     $idProduct,
                     $insuranceProduct,
                     $this->priceHelper->convertPriceFromCents($insuranceContract->getPrice()),
-                    $insuranceContract->getName(),
+                    $insuranceContract->getId(),
                     $quantity,
                     $idCustomization,
                     [
                         'insurance_contract_id' => $insuranceContractId,
                         'cms_reference' => $cmsReference,
                         'product_price' => $staticPriceInCents,
+                        'insurance_contract_name' => $insuranceContract->getName(),
                     ],
                     $cart
                 );
@@ -375,13 +372,14 @@ class InsuranceProductService
     }
 
     /**
-     * @param $product
-     * @param $cartId
-     * @param $insuranceProductId
+     * @param AlmaCartItemModel $product
+     * @param int $cartId
+     * @param string $insuranceProductId
      *
      * @return array
      *
      * @throws \PrestaShopDatabaseException
+     * @throws LocalizationException
      */
     public function getItemsCartInsuranceProductAttributes($product, $cartId, $insuranceProductId)
     {
@@ -398,7 +396,6 @@ class InsuranceProductService
         $linkRewrite = $almaInsuranceProduct->link_rewrite[$this->context->language->id];
 
         foreach ($almaInsurancesByAttribute as $almaInsurance) {
-            $almaProductAttribute = $this->combinationFactory->create((int) $almaInsurance['id_product_attribute_insurance']);
             $contractAlmaInsuranceProduct = $this->almaInsuranceProductRepository->getContractByProductAndCartIdAndShopAndInsuranceProductAttribute(
                 $product,
                 $cartId,
@@ -414,8 +411,9 @@ class InsuranceProductService
                     $idImage,
                     $this->imageHelper->getFormattedImageTypeName('cart')
                 ),
-                'reference' => $almaProductAttribute->reference,
-                'price' => $this->priceHelper->convertPriceFromCents($almaInsurance['price']),
+                'reference' => $contractAlmaInsuranceProduct[0]['insurance_contract_name'],
+                'unitPrice' => $this->toolsHelper->displayPrice($this->priceHelper->convertPriceFromCents($almaInsurance['price']), $this->context->currency),
+                'price' => $this->toolsHelper->displayPrice($this->priceHelper->convertPriceFromCents($almaInsurance['price'] * $almaInsurance['nbInsurance']), $this->context->currency),
                 'quantity' => $almaInsurance['nbInsurance'],
                 'insuranceContractId' => $contractAlmaInsuranceProduct[0]['insurance_contract_id'],
                 'idsAlmaInsuranceProduct' => $this->toolsHelper->getJsonValues($contractAlmaInsuranceProduct, 'id_alma_insurance_product'),

@@ -130,6 +130,9 @@ function onloadAddInsuranceInputOnProductAlma() {
             insuranceSelected = true;
             selectedAlmaInsurance = e.data.selectedInsuranceData;
             prestashop.emit('updateProduct', {
+                reason:{
+                    productUrl: window.location.href
+                },
                 selectedAlmaInsurance: selectedAlmaInsurance,
                 selectedInsuranceData: e.data.declinedInsurance,
                 selectedInsuranceQuantity: e.data.selectedInsuranceQuantity
@@ -142,7 +145,11 @@ function onloadAddInsuranceInputOnProductAlma() {
 
 function refreshWidget() {
     let cmsReference = createCmsReference(productDetails);
-    let staticPriceToCents = Math.round(productDetails.price_amount * 100);
+    let priceAmount = productDetails.price_amount;
+    if (productDetails.price_amount === undefined) {
+        priceAmount = productDetails.price;
+    }
+    let staticPriceToCents = Math.round(priceAmount * 100);
 
     quantity = productDetails.quantity_wanted;
     if (productDetails.quantity_wanted <= 0) {

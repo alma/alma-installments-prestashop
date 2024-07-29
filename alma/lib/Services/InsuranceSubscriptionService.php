@@ -148,7 +148,7 @@ class InsuranceSubscriptionService
 
         $insuranceProduct = new InsuranceProduct($almaInsuranceProduct['id_alma_insurance_product']);
         $insuranceProduct->subscription_id = $subscription['id'];
-
+        $insuranceProduct->insurance_contract_id = $subscription['contract_id'];
         $insuranceProduct->subscription_amount = $subscription['amount'];
         $insuranceProduct->subscription_state = $subscription['state'];
         $insuranceProduct->save();
