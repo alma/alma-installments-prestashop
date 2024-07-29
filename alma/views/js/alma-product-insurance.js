@@ -32,7 +32,7 @@ let almaEligibilityAnswer = false;
     $(function () {
         //Insurance
 
-        //handleInsuranceProductPage(); // To hide the price of the insurance product page
+        handleInsuranceProductPage();
         btnLoaders('start');
         onloadAddInsuranceInputOnProductAlma();
         if (typeof prestashop !== 'undefined') {
@@ -130,7 +130,9 @@ function onloadAddInsuranceInputOnProductAlma() {
                 document.getElementById('alma-widget-insurance-product-page').style.height = stringHeightIframe;
             } else {
                 let addToCart = document.querySelector('.add-to-cart');
-                addToCart.removeEventListener("click", insuranceListener)
+                if (addToCart) {
+                    addToCart.removeEventListener("click", insuranceListener)
+                }
             }
         }
         if (e.data.type === 'getSelectedInsuranceData') {
@@ -253,6 +255,10 @@ function insuranceListener(event) {
 
 function handleInsuranceProductPage() {
     if (productDetails.id === $('#alma-insurance-global').data('insurance-id')) {
-        $('.product-prices').hide();
+        //$('.product-prices').hide(); // To hide the price of the insurance product page
+        let tagInformationInsurance = '<div class="alert alert-info" id="alma-alert-insurance-product">' +
+            $('#alma-insurance-global').data('message-insurance-page')
+            + '</div>';
+        $(tagInformationInsurance).insertAfter('.product-variants');
     }
 }
