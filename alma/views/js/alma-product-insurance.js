@@ -20,17 +20,19 @@
  * @copyright 2018-2024 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
-const settings = JSON.parse(document.querySelector('#alma-widget-insurance-product-page').dataset.almaInsuranceSettings);
+const settings = getSettingsInsurance();
 let insuranceSelected = false;
 let selectedAlmaInsurance = null;
 let addToCartFlow = false;
-let productDetails = null;
+let productDetails = JSON.parse(document.getElementById('product-details').dataset.product);
 let quantity = getQuantity();
 let almaEligibilityAnswer = false;
 
 (function ($) {
     $(function () {
         //Insurance
+
+        //handleInsuranceProductPage(); // To hide the price of the insurance product page
         btnLoaders('start');
         onloadAddInsuranceInputOnProductAlma();
         if (typeof prestashop !== 'undefined') {
@@ -87,6 +89,14 @@ function getQuantity() {
         quantity = parseInt(document.querySelector('.qty [name="qty"]').value);
     }
     return quantity
+}
+
+function getSettingsInsurance() {
+    if (document.querySelector('#alma-widget-insurance-product-page')) {
+        return JSON.parse(document.querySelector('#alma-widget-insurance-product-page').dataset.almaInsuranceSettings);
+    }
+
+    return null;
 }
 
 function btnLoaders(action) {
@@ -239,4 +249,10 @@ function insuranceListener(event) {
             addToCartFlow = true;
         }
         insuranceSelected = false;
+}
+
+function handleInsuranceProductPage() {
+    if (productDetails.id === $('#alma-insurance-global').data('insurance-id')) {
+        $('.product-prices').hide();
+    }
 }
