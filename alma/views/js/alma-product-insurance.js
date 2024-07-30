@@ -118,6 +118,7 @@ function onloadAddInsuranceInputOnProductAlma() {
                 }
 
                 document.getElementById('alma-widget-insurance-product-page').style.height = stringHeightIframe;
+                prestashop.emit('updateProduct', {event});
             } else {
                 let addToCart = document.querySelector('.add-to-cart');
                 addToCart.removeEventListener("click", insuranceListener)
