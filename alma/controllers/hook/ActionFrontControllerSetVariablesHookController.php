@@ -72,6 +72,7 @@ class ActionFrontControllerSetVariablesHookController extends FrontendHookContro
         $idInsuranceProduct = $this->productRepository->getProductIdByReference(ConstantsHelper::ALMA_INSURANCE_PRODUCT_REFERENCE);
 
         if (
+            is_null($idInsuranceProduct) ||
             !array_key_exists('page', $templateVars) ||
             $templateVars['page']['page_name'] !== 'product' ||
             !array_key_exists('product-id-' . $idInsuranceProduct, $templateVars['page']['body_classes'])
