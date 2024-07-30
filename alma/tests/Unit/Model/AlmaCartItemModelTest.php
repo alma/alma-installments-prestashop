@@ -40,7 +40,7 @@ class AlmaCartItemModelTest extends TestCase
 
     public function setUp()
     {
-        $this->almaCartItemArrayData = self::almaCartItemArrayData();
+        $this->almaCartItemArrayData = static::almaCartItemArrayData();
         $this->almaCartItemModel = new AlmaCartItemModel($this->almaCartItemArrayData);
     }
 
