@@ -38,30 +38,25 @@ class ActionObjectUpdateAfter
      */
     public function run($params)
     {
-        Logger::instance()->info('[Alma] - Start Run');
         if (
             !isset($params['object']) ||
             !($params['object'] instanceof \OrderCarrierCore)
         ) {
             return;
         }
-        Logger::instance()->info('[Alma] - it s OrderCarrierCore object');
 
         /** @var \OrderCarrier $orderCarrier */
         $orderCarrier = $params['object'];
         $idOrder = $orderCarrier->id_order;
-        Logger::instance()->info('[Alma] - id order ' . $idOrder);
 
         /** @var \OrderCore $order */
         try {
             $order = $this->orderFactory->create($idOrder);
         } catch (\PrestaShopException $e) {
-            Logger::instance()->info('[Alma] - PrestaShopException - Impossible to get Order with id :' . $idOrder);
+            Logger::instance()->error('[Alma] - PrestaShopException - Impossible to get Order with id :' . $idOrder);
             return;
         }
         if ($order->module != ConstantsHelper::ALMA_MODULE_NAME || empty($order->getOrderPayments())) {
-            Logger::instance()->info('[Alma] - To Remove - Order is not Alma or payments are empty');
-            Logger::instance()->info('[Alma] - order module' . $order->module);
             return;
         }
 
@@ -73,7 +68,7 @@ class ActionObjectUpdateAfter
             }
         }
         if (!isset($almaPaymentExternalId)) {
-            Logger::instance()->info('[Alma] - To Remove - No Alma Payment External Id');
+            Logger::instance()->error('[Alma] - No Alma Payment External Id in order ' . $order->reference);
             return;
         }
 
