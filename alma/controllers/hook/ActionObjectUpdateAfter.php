@@ -10,6 +10,9 @@ use Alma\PrestaShop\Helpers\ClientHelper;
 use Alma\PrestaShop\Helpers\ConstantsHelper;
 use Alma\PrestaShop\Logger;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
 class ActionObjectUpdateAfter
 {
     /**
