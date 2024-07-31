@@ -10,8 +10,8 @@ class OrderFactory
      * @throws \PrestaShopDatabaseException
      * @throws \PrestaShopException
      */
-    public function create($id)
+    public function create($id = null, $id_lang = null)
     {
-        return new \Order($id);
+        return new \Order($id, $id_lang);
     }
 }
