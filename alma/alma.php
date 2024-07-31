@@ -313,7 +313,7 @@ class Alma extends PaymentModule
     private function updateCarriersWithAlma()
     {
         $id_module = $this->id;
-        $id_shop = (int) $this->context->shop->id;
+        $id_shop = (int)$this->context->shop->id;
         $id_lang = $this->context->language->id;
         $carriers = Carrier::getCarriers($id_lang, false, false, false, null, Carrier::ALL_CARRIERS);
         $values = null;
@@ -753,5 +753,14 @@ class Alma extends PaymentModule
     public function hookActionGetProductPropertiesBefore($params)
     {
         return $this->runHookController('actionGetProductPropertiesBefore', $params);
+    }
+
+    public function hookActionObjectUpdateAfter($params)
+    {
+        $orderFactory = new Alma\PrestaShop\Factories\OrderFactory();
+        $clientHelper = new Alma\PrestaShop\Helpers\ClientHelper();
+        $carrierFactory = new Alma\PrestaShop\Factories\CarrierFactory();
+        $actionObjectUpdateAfter = new Alma\PrestaShop\Controllers\Hook\ActionObjectUpdateAfter($orderFactory, $clientHelper, $carrierFactory);
+        $actionObjectUpdateAfter->run($params);
     }
 }
