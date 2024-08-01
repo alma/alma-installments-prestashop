@@ -48,3 +48,9 @@ jobs:
       run: task test
       env:
         XDEBUG_MODE: coverage
+
+    - name: Install semgrep
+      run: pip install semgrep
+
+    - name: Run semgrep
+      run: semgrep scan --config semgrep/rules
