@@ -24,6 +24,7 @@
     padding: 12px 0;
     border-radius: 12px;
     color: #1A1A1A;
+    margin : .5rem 0;
 }
 
 .item-alma-insurance *{
@@ -83,6 +84,10 @@
     color: #232323;
     background-color: #fff;
     border: 1px solid rgba(0, 0, 0, 0.25);
+}
+
+.product-line-grid-right .bootstrap-touchspin {
+    box-shadow: none;
 }
 
 /**

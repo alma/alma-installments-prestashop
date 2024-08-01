@@ -22,31 +22,47 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
-namespace Alma\PrestaShop\Builders\Helpers;
+namespace Alma\PrestaShop\Controllers\Hook;
 
-use Alma\PrestaShop\Helpers\InsuranceHelper;
-use Alma\PrestaShop\Traits\BuilderTrait;
+use Alma\PrestaShop\Helpers\ConstantsHelper;
+use Alma\PrestaShop\Hooks\FrontendHookController;
 
 if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-class InsuranceHelperBuilder
+class ActionGetProductPropertiesBeforeHookController extends FrontendHookController
 {
-    use BuilderTrait;
+    /**
+     * @param $params
+     */
+    public function run($params)
+    {
+        if ($this->checkIsInsuranceProduct($params)) {
+            $params['context']->smarty->assign([
+                'configuration' => [
+                    'is_catalog' => true,
+                    'display_taxes_label' => null,
+                ],
+            ]);
+        }
+    }
 
     /**
-     * @return InsuranceHelper
+     * @param $params
+     *
+     * @return bool
      */
-    public function getInstance()
+    private function checkIsInsuranceProduct($params)
     {
-        return new InsuranceHelper(
-            $this->getCartProductRepository(),
-            $this->getProductRepository(),
-            $this->getAlmaInsuranceProductRepository(),
-            $this->getContextFactory(),
-            $this->getToolsHelper(),
-            $this->getSettingsHelper()
-        );
+        if (
+            !array_key_exists('product', $params) ||
+            !array_key_exists('context', $params) ||
+            $params['product']['reference'] !== ConstantsHelper::ALMA_INSURANCE_PRODUCT_REFERENCE
+        ) {
+            return false;
+        }
+
+        return true;
     }
 }

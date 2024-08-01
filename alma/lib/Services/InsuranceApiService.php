@@ -104,7 +104,7 @@ class InsuranceApiService
                 $insuranceContractId,
                 $cmsReference,
                 $productPrice,
-                $this->context->session->getId(),
+                $this->context->cookie->checksum,
                 $this->cartHelper->getCartIdFromContext()
             )->getFiles();
 
@@ -140,7 +140,7 @@ class InsuranceApiService
                 $insuranceContractId,
                 $cmsReference,
                 $productPrice,
-                $this->context->session->getId(),
+                $this->context->cookie->checksum,
                 $this->cartHelper->getCartIdFromContext()
             );
         } catch (\Exception $e) {
@@ -174,7 +174,7 @@ class InsuranceApiService
                 $subscriptionData,
                 $order->id,
                 $idTransaction,
-                $this->context->session->getId(),
+                $this->context->cookie->checksum,
                 $order->id_cart
             );
 

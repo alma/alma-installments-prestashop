@@ -45,7 +45,6 @@ class InsuranceProductServiceBuilder
     {
         return new InsuranceProductService(
             $this->getProductFactory(),
-            $this->getCombinationFactory(),
             $this->getLinkFactory(),
             $this->getAlmaInsuranceProductRepository(),
             $this->getContextFactory(),
