@@ -1,7 +1,4 @@
 services:
-  _defaults:
-    public: true
-
   #####################
   # PS Account
   alma.ps_accounts_installer:
