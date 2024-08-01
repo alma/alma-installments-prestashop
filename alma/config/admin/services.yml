@@ -1,15 +1,14 @@
 services:
-  _defaults:
-    public: true
-
   #####################
   # PS Account
   alma.ps_accounts_installer:
+    public: true
     class: 'PrestaShop\PsAccountsInstaller\Installer\Installer'
     arguments:
       - '5.0'
 
   alma.ps_accounts_facade:
+    public: true
     class: 'PrestaShop\PsAccountsInstaller\Installer\Facade\PsAccounts'
     arguments:
       - '@alma.ps_accounts_installer'
