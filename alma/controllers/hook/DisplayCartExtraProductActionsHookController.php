@@ -108,7 +108,7 @@ class DisplayCartExtraProductActionsHookController extends FrontendHookControlle
      */
     protected $almaCartItemFactory;
     /**
-     * @var Logger|mixed
+     * @var Logger
      */
     protected $logger;
 
