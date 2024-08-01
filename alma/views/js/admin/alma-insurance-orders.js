@@ -21,97 +21,95 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
-(function ($) {
-    $(function () {
-        $('.js-choice-options .js-dropdown-item').each(function(i, e){
-            $(e).attr("data-confirm_modal", "module-modal-confirm-refund-order-with-insurance");
-            var rowOrder = $(e).parents('tr');
-            var checkboxOrder = rowOrder.find('.bulk_action-type .js-bulk-action-checkbox');
-            var buttonStatus = this;
-            var statusId = $(buttonStatus).data('value');
+window.addEventListener("load", function() {
+    $('.js-choice-options .js-dropdown-item').each(function(i, e){
+        $(e).attr("data-confirm_modal", "module-modal-confirm-refund-order-with-insurance");
+        var rowOrder = $(e).parents('tr');
+        var checkboxOrder = rowOrder.find('.bulk_action-type .js-bulk-action-checkbox');
+        var buttonStatus = this;
+        var statusId = $(buttonStatus).data('value');
 
-            $(e).off('click');
-            $(e).on('click', function(e) {
-                e.stopImmediatePropagation();
-                e.preventDefault();
+        $(e).off('click');
+        $(e).on('click', function(e) {
+            e.stopImmediatePropagation();
+            e.preventDefault();
 
-                ajaxOrderAndConfirmModal(checkboxOrder, buttonStatus, statusId);
-            });
-
+            ajaxOrderAndConfirmModal(checkboxOrder, buttonStatus, statusId);
         });
 
-        function ajaxOrderAndConfirmModal(checkboxOrder, buttonStatus, statusId) {
-            const updateConfirmModal = new window.ConfirmModal(
-                {
-                    id: 'confirm-refund-order-insurance-modal',
-                    confirmTitle: window.InsuranceModalConfirm.confirmTitleText,
-                    closeButtonLabel: window.InsuranceModalConfirm.closeButtonLabelText,
-                    confirmButtonLabel: window.InsuranceModalConfirm.confirmButtonLabelText,
-                    confirmButtonClass: 'btn-primary',
-                    confirmMessage: window.InsuranceModalConfirm.confirmMessageLine1Text + '<br>' + window.InsuranceModalConfirm.confirmMessageLine2Text,
-                    closable: true,
-                    customButtons: [],
-                },
+    });
 
-                () => confirmAction('update', buttonStatus),
-            );
+    function ajaxOrderAndConfirmModal(checkboxOrder, buttonStatus, statusId) {
+        const updateConfirmModal = new window.ConfirmModal(
+            {
+                id: 'confirm-refund-order-insurance-modal',
+                confirmTitle: window.InsuranceModalConfirm.confirmTitleText,
+                closeButtonLabel: window.InsuranceModalConfirm.closeButtonLabelText,
+                confirmButtonLabel: window.InsuranceModalConfirm.confirmButtonLabelText,
+                confirmButtonClass: 'btn-primary',
+                confirmMessage: window.InsuranceModalConfirm.confirmMessageLine1Text + '<br>' + window.InsuranceModalConfirm.confirmMessageLine2Text,
+                closable: true,
+                customButtons: [],
+            },
 
-            $.ajax({
-                type: 'GET',
-                url: 'ajax-tab.php',
-                dataType: 'json',
-                data: {
-                    ajax: true,
-                    controller: 'AdminAlmaInsuranceOrdersList',
-                    action: 'OrdersList',
-                    token: token,
-                    orderId: checkboxOrder.val(),
-                    statusId: statusId,
-                },
-            })
-            .success(function (result) {
-                if (!result.canRefund) {
-                    updateConfirmModal.show();
-                } else {
-                    confirmAction('update', buttonStatus);
-                }
+            () => confirmAction('update', buttonStatus),
+        );
 
-            })
-            .error(function (result) {
-                console.log('error');
-                console.log(result);
-            });
-        }
+        $.ajax({
+            type: 'GET',
+            url: 'ajax-tab.php',
+            dataType: 'json',
+            data: {
+                ajax: true,
+                controller: 'AdminAlmaInsuranceOrdersList',
+                action: 'OrdersList',
+                token: token,
+                orderId: checkboxOrder.val(),
+                statusId: statusId,
+            },
+        })
+        .success(function (result) {
+            if (!result.canRefund) {
+                updateConfirmModal.show();
+            } else {
+                confirmAction('update', buttonStatus);
+            }
 
-        function confirmAction(action, element) {
-            const $parent = element.closest('.js-choice-options');
-            const url = $($parent).data('url');
+        })
+        .error(function (result) {
+            console.log('error');
+            console.log(result);
+        });
+    }
 
-            submitForm(url, element);
-        }
+    function confirmAction(action, element) {
+        const $parent = element.closest('.js-choice-options');
+        const url = $($parent).data('url');
 
-        /**
-         * Submits the form.
-         * @param {string} url
-         * @param {jQuery} $button
-         * @private
-         */
-        function submitForm(url, $button) {
-            const selectedStatusId = $($button).data('value');
+        submitForm(url, element);
+    }
 
-            const $form = $('<form>', {
-                action: url,
-                method: 'POST',
-            }).append(
-                $('<input>', {
-                    name: 'value',
-                    value: selectedStatusId,
-                    type: 'hidden',
-                }));
+    /**
+     * Submits the form.
+     * @param {string} url
+     * @param {jQuery} $button
+     * @private
+     */
+    function submitForm(url, $button) {
+        const selectedStatusId = $($button).data('value');
 
-            $form.appendTo('body');
-            $form.submit();
-        }
+        const $form = $('<form>', {
+            action: url,
+            method: 'POST',
+        }).append(
+            $('<input>', {
+                name: 'value',
+                value: selectedStatusId,
+                type: 'hidden',
+            }));
 
-    })
-})(jQuery);
+        $form.appendTo('body');
+        $form.submit();
+    }
+
+});

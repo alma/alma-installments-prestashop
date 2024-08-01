@@ -21,48 +21,45 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
-(function ($) {
-    $(function () {
-        const subscriptionData = dataSubscriptions
+window.addEventListener("load", function() {
+    const subscriptionData = dataSubscriptions
 
-        function waitForScript()
-        {
-            if (typeof getSubscriptionDatafromCms !== 'undefined') {
-                setTimeout(getSubscriptionDatafromCms(subscriptionData), 650)
-            } else {
-                console.log('re set timeout')
-                setTimeout(waitForScript, 450)
-            }
+    function waitForScript()
+    {
+        if (typeof getSubscriptionDatafromCms !== 'undefined') {
+            setTimeout(getSubscriptionDatafromCms(subscriptionData), 650)
+        } else {
+            console.log('re set timeout')
+            setTimeout(waitForScript, 450)
         }
-        waitForScript();
+    }
+    waitForScript();
 
-        window.addEventListener('message', (e) => {
-            if (e.data.type === 'sendCancelSubscriptionToCms') {
-                $.ajax({
-                    type: 'POST',
-                    url: subscriptionData.cancelUrl,
-                    dataType: 'json',
-                    data: {
-                        ajax: true,
-                        action: 'cancel',
-                        token: subscriptionData.token,
-                        subscription_id: e.data.cmsSubscription.subscriptionId,
-                        reason: e.data.reasonContent
-                    },
-                })
-                .success(function(result) {
-                    sendNotificationToIFrame([
-                        {subscriptionBrokerId: e.data.cmsSubscription.subscriptionBrokerId, newStatus: result.state},
-                    ]);
-                })
-                .error(function(result) {
-                    console.log('Error', result);
-                    sendNotificationToIFrame([
-                        {subscriptionBrokerId: e.data.cmsSubscription.subscriptionBrokerId, newStatus: result.responseJSON.state},
-                    ]);
-                });
-            }
-        })
-
+    window.addEventListener('message', (e) => {
+        if (e.data.type === 'sendCancelSubscriptionToCms') {
+            $.ajax({
+                type: 'POST',
+                url: subscriptionData.cancelUrl,
+                dataType: 'json',
+                data: {
+                    ajax: true,
+                    action: 'cancel',
+                    token: subscriptionData.token,
+                    subscription_id: e.data.cmsSubscription.subscriptionId,
+                    reason: e.data.reasonContent
+                },
+            })
+            .success(function(result) {
+                sendNotificationToIFrame([
+                    {subscriptionBrokerId: e.data.cmsSubscription.subscriptionBrokerId, newStatus: result.state},
+                ]);
+            })
+            .error(function(result) {
+                console.log('Error', result);
+                sendNotificationToIFrame([
+                    {subscriptionBrokerId: e.data.cmsSubscription.subscriptionBrokerId, newStatus: result.responseJSON.state},
+                ]);
+            });
+        }
     })
-})(jQuery);
+});

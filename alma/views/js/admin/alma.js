@@ -21,57 +21,55 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
-(function ($) {
-    $(function () {
-        if ($('.alma.share-of-checkout').length > 0) {
-            $('.btn-share-of-checkout').on('click', function(event) {
-                event.preventDefault();
-                $.ajax({
-                    type: 'POST',
-                    url: 'ajax-tab.php',
-                    dataType: 'json',
-                    data: {
-                        ajax: true,
-                        controller: 'AdminAlmaShareOfCheckout',
-                        action: 'ConsentShareOfCheckout',
-                        token: $(this).attr('data-token'),
-                        consent: $(this).attr('data-consent')
-                    },
-                })
-                .success(function() {
-                    $('.alma.share-of-checkout').hide();
-                })
+window.addEventListener("load", function() {
+    if ($('.alma.share-of-checkout').length > 0) {
+        $('.btn-share-of-checkout').on('click', function(event) {
+            event.preventDefault();
+            $.ajax({
+                type: 'POST',
+                url: 'ajax-tab.php',
+                dataType: 'json',
+                data: {
+                    ajax: true,
+                    controller: 'AdminAlmaShareOfCheckout',
+                    action: 'ConsentShareOfCheckout',
+                    token: $(this).attr('data-token'),
+                    consent: $(this).attr('data-consent')
+                },
+            })
+            .success(function() {
+                $('.alma.share-of-checkout').hide();
+            })
 
-                .error(function(e) {
-                    if (e.status != 200) {
-                        $('.alma.share-of-checkout').after('<div class="alert alert-danger">' + e.statusText + '</div>');
-                    }
-                });
-            });
-        }
-        if ($('.soc_hidden').length > 0) {
-            $('.soc_hidden').parents('.panel').hide();
-        }
-        if ($('#alma_config_form').length > 0) {
-            initMoreOption('#fieldset_1', '.form-group:not(:nth-child(1)):not(:nth-child(2))', '#ALMA_SHOW_PRODUCT_ELIGIBILITY_ON');
-            initMoreOption('#fieldset_2', '.form-group:not(:nth-child(1)):not(:nth-child(2))', '#ALMA_SHOW_ELIGIBILITY_MESSAGE_ON');
-
-            $('#ALMA_SHOW_PRODUCT_ELIGIBILITY_ON').on('click', function() {
-                initMoreOption('#fieldset_1', '.form-group:not(:nth-child(1)):not(:nth-child(2))', '#' + $(this)[0].id);
-            });
-            $('#ALMA_SHOW_ELIGIBILITY_MESSAGE_ON').on('click', function() {
-                initMoreOption('#fieldset_2', '.form-group:not(:nth-child(1)):not(:nth-child(2))', '#' + $(this)[0].id);
-            });
-
-            function initMoreOption(selector, selectorNotHide, selectorInput) {
-                if ($(selector).length === 0) {
-                    selector = selector + '_' + selector.split('_')[1];
+            .error(function(e) {
+                if (e.status != 200) {
+                    $('.alma.share-of-checkout').after('<div class="alert alert-danger">' + e.statusText + '</div>');
                 }
-                $(selector + ' ' + selectorNotHide).hide();
-                if ($(selectorInput).prop("checked")) {
-                    $(selector + ' .form-group').show();
-                }
+            });
+        });
+    }
+    if ($('.soc_hidden').length > 0) {
+        $('.soc_hidden').parents('.panel').hide();
+    }
+    if ($('#alma_config_form').length > 0) {
+        initMoreOption('#fieldset_1', '.form-group:not(:nth-child(1)):not(:nth-child(2))', '#ALMA_SHOW_PRODUCT_ELIGIBILITY_ON');
+        initMoreOption('#fieldset_2', '.form-group:not(:nth-child(1)):not(:nth-child(2))', '#ALMA_SHOW_ELIGIBILITY_MESSAGE_ON');
+
+        $('#ALMA_SHOW_PRODUCT_ELIGIBILITY_ON').on('click', function() {
+            initMoreOption('#fieldset_1', '.form-group:not(:nth-child(1)):not(:nth-child(2))', '#' + $(this)[0].id);
+        });
+        $('#ALMA_SHOW_ELIGIBILITY_MESSAGE_ON').on('click', function() {
+            initMoreOption('#fieldset_2', '.form-group:not(:nth-child(1)):not(:nth-child(2))', '#' + $(this)[0].id);
+        });
+
+        function initMoreOption(selector, selectorNotHide, selectorInput) {
+            if ($(selector).length === 0) {
+                selector = selector + '_' + selector.split('_')[1];
+            }
+            $(selector + ' ' + selectorNotHide).hide();
+            if ($(selectorInput).prop("checked")) {
+                $(selector + ' .form-group').show();
             }
         }
-    })
-})(jQuery);
+    }
+});
