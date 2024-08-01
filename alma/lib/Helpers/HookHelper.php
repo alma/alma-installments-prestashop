@@ -127,6 +127,14 @@ class HookHelper
             'version' => '1.7.7',
             'operand' => '>=',
         ],
+        'actionFrontControllerSetVariables' => [
+            'version' => '1.7.5',
+            'operand' => '>=',
+        ],
+        'actionGetProductPropertiesBefore' => [
+            'version' => '1.7.5',
+            'operand' => '<',
+        ],
     ];
 
     /**

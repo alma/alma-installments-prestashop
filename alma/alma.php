@@ -733,4 +733,24 @@ class Alma extends PaymentModule
     {
         return $this->runHookController('displayAdminAfterHeader', $params);
     }
+
+    /**
+     * @param $params
+     *
+     * @return mixed|null
+     */
+    public function hookActionFrontControllerSetVariables($params)
+    {
+        return $this->runHookController('actionFrontControllerSetVariables', $params);
+    }
+
+    /**
+     * @param $params
+     *
+     * @return mixed|null
+     */
+    public function hookActionGetProductPropertiesBefore($params)
+    {
+        return $this->runHookController('actionGetProductPropertiesBefore', $params);
+    }
 }
