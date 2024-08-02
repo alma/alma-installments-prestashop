@@ -1,6 +1,6 @@
 <?php
 
-namespace Alma\PrestaShop\Tests\Unit\controllers\hook;
+namespace Alma\PrestaShop\Tests\Unit\Controllers\Hook;
 
 use Alma\API\Client;
 use Alma\API\Endpoints\Orders as OrdersEndpoint;
