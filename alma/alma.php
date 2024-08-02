@@ -313,7 +313,7 @@ class Alma extends PaymentModule
     private function updateCarriersWithAlma()
     {
         $id_module = $this->id;
-        $id_shop = (int)$this->context->shop->id;
+        $id_shop = (int) $this->context->shop->id;
         $id_lang = $this->context->language->id;
         $carriers = Carrier::getCarriers($id_lang, false, false, false, null, Carrier::ALL_CARRIERS);
         $values = null;

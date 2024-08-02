@@ -17,14 +17,13 @@ use PHPUnit\Framework\TestCase;
 
 class ActionObjectUpdateAfterTest extends TestCase
 {
-    protected $ActionObjectUpdateAfter;
+    protected $actionObjectUpdateAfter;
     protected $orderFactory;
     protected $carrierFactory;
 
     protected $clientHelper;
     protected $paymentEndpoint;
     protected $orderEndpoint;
-
 
     public function setUp()
     {
@@ -43,17 +42,18 @@ class ActionObjectUpdateAfterTest extends TestCase
         $this->clientHelper = $this->createMock(ClientHelper::class);
         $this->clientHelper->method('getAlmaClient')->willReturn($client);
 
-        $this->ActionObjectUpdateAfter = new ActionObjectUpdateAfter($this->orderFactory, $this->clientHelper, $this->carrierFactory);
+        $this->actionObjectUpdateAfter = new ActionObjectUpdateAfter($this->orderFactory, $this->clientHelper, $this->carrierFactory);
     }
 
     /**
      * @dataProvider badObjectProvider
+     *
      * @return void
      */
     public function testRunWithoutOrderCarrierObjectReturn($params)
     {
         $this->orderFactory->expects($this->never())->method('create');
-        $this->assertNull($this->ActionObjectUpdateAfter->run($params));
+        $this->actionObjectUpdateAfter->run($params);
     }
 
     public function testRunWithNonAlmaOrderReturn()
@@ -63,7 +63,7 @@ class ActionObjectUpdateAfterTest extends TestCase
             ->method('create')
             ->willReturn(new \Order());
 
-        $this->assertNull($this->ActionObjectUpdateAfter->run($this->paramsWithOrderCarrierObject()));
+        $this->actionObjectUpdateAfter->run($this->paramsWithOrderCarrierObject());
     }
 
     public function testRunWithAlmaOrderWithoutPaymentsReturn()
@@ -75,7 +75,7 @@ class ActionObjectUpdateAfterTest extends TestCase
             ->method('create')
             ->willReturn($almaOrder);
 
-        $this->assertNull($this->ActionObjectUpdateAfter->run($this->paramsWithOrderCarrierObject()));
+        $this->actionObjectUpdateAfter->run($this->paramsWithOrderCarrierObject());
     }
 
     public function testRunWithAlmaOrderWithPaymentsWithoutAlmaExternalIdReturn()
@@ -88,7 +88,7 @@ class ActionObjectUpdateAfterTest extends TestCase
             ->method('create')
             ->willReturn($almaOrder);
         $this->orderEndpoint->expects($this->never())->method('addTracking');
-        $this->assertNull($this->ActionObjectUpdateAfter->run($this->paramsWithOrderCarrierObject()));
+        $this->actionObjectUpdateAfter->run($this->paramsWithOrderCarrierObject());
     }
 
     public function testRunWithAlmaPaymentNotFound()
@@ -106,7 +106,7 @@ class ActionObjectUpdateAfterTest extends TestCase
         $this->paymentEndpoint->method('fetch')->willThrowException(new AlmaException('Payment not found'));
 
         $this->orderEndpoint->expects($this->never())->method('addTracking');
-        $this->assertNull($this->ActionObjectUpdateAfter->run($this->paramsWithOrderCarrierObject()));
+        $this->actionObjectUpdateAfter->run($this->paramsWithOrderCarrierObject());
     }
 
     public function testRunWithAlmaPaymentWithoutOrderCreateOrderAndSendShipping()
@@ -135,7 +135,7 @@ class ActionObjectUpdateAfterTest extends TestCase
             ->expects($this->once())
             ->method('addTracking')
             ->with('order_123');
-        $this->assertNull($this->ActionObjectUpdateAfter->run($this->paramsWithOrderCarrierObject()));
+        $this->actionObjectUpdateAfter->run($this->paramsWithOrderCarrierObject());
     }
 
     public function testRunWithAlmaPaymentWithOrderWithBadMerchantReferenceCreateOrderAndSendShipping()
@@ -167,7 +167,7 @@ class ActionObjectUpdateAfterTest extends TestCase
             ->expects($this->once())
             ->method('addTracking')
             ->with('order_123');
-        $this->assertNull($this->ActionObjectUpdateAfter->run($this->paramsWithOrderCarrierObject()));
+        $this->actionObjectUpdateAfter->run($this->paramsWithOrderCarrierObject());
     }
 
     public function testRunWithAlmaPaymentWithOrdersWithMerchantReferenceNoCreateOrderAndSendShipping()
@@ -192,7 +192,7 @@ class ActionObjectUpdateAfterTest extends TestCase
         $almaOrder2->method('getMerchantReference')->willReturn('AZERTY');
 
         $almaPayment = $this->almaPaymentWithoutOrders();
-        $almaPayment->orders = [$almaOrder,$almaOrder2];
+        $almaPayment->orders = [$almaOrder, $almaOrder2];
         $this->paymentEndpoint->method('fetch')->willReturn($almaPayment);
 
         $this->paymentEndpoint
@@ -202,7 +202,7 @@ class ActionObjectUpdateAfterTest extends TestCase
             ->expects($this->once())
             ->method('addTracking')
             ->with('order_321', 'MyCarrierName', 'track_1232', 'myurl');
-        $this->assertNull($this->ActionObjectUpdateAfter->run($this->paramsWithOrderCarrierObject()));
+        $this->actionObjectUpdateAfter->run($this->paramsWithOrderCarrierObject());
     }
 
     /**
@@ -221,6 +221,7 @@ class ActionObjectUpdateAfterTest extends TestCase
     {
         $orderCarrier = $this->createMock(\OrderCarrier::class);
         $orderCarrier->tracking_number = 'track_1232';
+
         return [
             'object' => $orderCarrier,
         ];
@@ -230,6 +231,7 @@ class ActionObjectUpdateAfterTest extends TestCase
     {
         $almaPayment = $this->createMock(Payment::class);
         $almaPayment->orders = [];
+
         return $almaPayment;
     }
 }

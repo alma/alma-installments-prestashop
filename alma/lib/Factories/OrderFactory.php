@@ -1,12 +1,14 @@
 <?php
+
 namespace Alma\PrestaShop\Factories;
 
 class OrderFactory
 {
-
     /**
      * @param $id
+     *
      * @return \Order
+     *
      * @throws \PrestaShopDatabaseException
      * @throws \PrestaShopException
      */

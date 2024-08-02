@@ -37,6 +37,7 @@ class ActionObjectUpdateAfter
 
     /**
      * @param $params
+     *
      * @return void
      */
     public function run($params)
@@ -52,11 +53,12 @@ class ActionObjectUpdateAfter
         $orderCarrier = $params['object'];
         $idOrder = $orderCarrier->id_order;
 
-        /** @var \OrderCore $order */
+        /* @var \OrderCore $order */
         try {
             $order = $this->orderFactory->create($idOrder);
         } catch (\PrestaShopException $e) {
             Logger::instance()->error('[Alma] - PrestaShopException - Impossible to get Order with id :' . $idOrder);
+
             return;
         }
         if ($order->module != ConstantsHelper::ALMA_MODULE_NAME || empty($order->getOrderPayments())) {
@@ -72,6 +74,7 @@ class ActionObjectUpdateAfter
         }
         if (!isset($almaPaymentExternalId)) {
             Logger::instance()->error('[Alma] - No Alma Payment External Id in order ' . $order->reference);
+
             return;
         }
 
@@ -79,6 +82,7 @@ class ActionObjectUpdateAfter
             $almaClient = $this->clientHelper->getAlmaClient();
         } catch (ClientException $e) {
             Logger::instance()->error('[Alma] - ClientException - ' . $e->getMessage());
+
             return;
         }
 
@@ -93,7 +97,7 @@ class ActionObjectUpdateAfter
             }
             if (!isset($orderExternalId)) {
                 $almaOrder = $almaClient->payments->addOrder($almaPaymentExternalId, [
-                        'merchant_reference' => $order->reference
+                        'merchant_reference' => $order->reference,
                     ]
                 );
                 $orderExternalId = $almaOrder->getExternalId();
