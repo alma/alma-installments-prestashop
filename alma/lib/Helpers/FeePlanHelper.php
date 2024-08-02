@@ -99,8 +99,8 @@ class FeePlanHelper
             $getDataFromKey = $this->settingsHelper->getDataFromKey($key);
 
             if (
-                $purchaseAmount > $feePlan->min
-                && $purchaseAmount < $feePlan->max
+                $purchaseAmount >= $feePlan->min
+                && $purchaseAmount <= $feePlan->max
             ) {
                 $activePlans[] = $getDataFromKey;
             }

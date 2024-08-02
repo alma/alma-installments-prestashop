@@ -28,6 +28,7 @@ use Alma\API\Endpoints\Results\Eligibility;
 use Alma\API\Entities\FeePlan;
 use Alma\PrestaShop\Builders\Helpers\FeePlanHelperBuilder;
 use Alma\PrestaShop\Factories\EligibilityFactory;
+use Alma\PrestaShop\Helpers\FeePlanHelper;
 use Alma\PrestaShop\Helpers\SettingsHelper;
 use PHPUnit\Framework\TestCase;
 
@@ -150,5 +151,41 @@ class FeePlanHelperTest extends TestCase
         ];
 
         $this->assertEquals([$installementData], $feePlanHelper->getEligibleFeePlans($feePlans, 300));
+    }
+
+    public function testGetEligibleFeePlansOnLimitMinMax()
+    {
+        $installementCountOne = [
+            'installmentsCount' => 1,
+            'deferredDays' => 0,
+            'deferredMonths' => 0,
+        ];
+        $installementCountThree = [
+            'installmentsCount' => 3,
+            'deferredDays' => 0,
+            'deferredMonths' => 0,
+        ];
+
+        $installementDataArray = [
+            $installementCountOne,
+            $installementCountThree,
+        ];
+
+        $settingsHelper = $this->createMock(SettingsHelper::class);
+        $settingsHelper->expects($this->exactly(2))->method('getDataFromKey')->willReturnOnConsecutiveCalls($installementCountOne, $installementCountThree);
+
+        $eligibilityFactory = $this->createMock(EligibilityFactory::class);
+
+        $feePlanHelper = new FeePlanHelper(
+            $settingsHelper,
+            $eligibilityFactory
+        );
+
+        $feePlans = [
+            'general_1_0_0' => new FeePlan(['min' => 100, 'max' => 1000]),
+            'general_3_0_0' => new FeePlan(['min' => 50, 'max' => 100]),
+        ];
+
+        $this->assertEquals($installementDataArray, $feePlanHelper->getEligibleFeePlans($feePlans, 100));
     }
 }
