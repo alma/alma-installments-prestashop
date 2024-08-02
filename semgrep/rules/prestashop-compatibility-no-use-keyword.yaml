@@ -1,0 +1,12 @@
+rules:
+  - id: no-use-keyword-in-alma-php-file
+    pattern: use $X;
+    message: Use keyword cannot be used in alma.php to ensure compatibility with Prestashop v1.6
+    languages:
+      - php
+    severity: ERROR
+    metadata:
+      category: compatibility
+    paths:
+      include:
+        - "alma/alma.php"
