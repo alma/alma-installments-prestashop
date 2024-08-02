@@ -166,7 +166,7 @@ class CartData
                 'unit_price' => $this->priceHelper->convertPriceToCents($unitPrice),
                 'line_price' => $this->priceHelper->convertPriceToCents($linePrice),
                 'is_gift' => $isGift,
-                'categories' => [$productRow['category']],
+                'categories' => $this->productHelper->getCategoryName($productRow),
                 'url' => $this->productHelper->getProductLink($product, $productRow, $cart),
                 'picture_url' => $pictureUrl,
                 'requires_shipping' => $requiresShipping,

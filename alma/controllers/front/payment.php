@@ -22,7 +22,6 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
-use Alma\API\ParamsError;
 use Alma\PrestaShop\Builders\Helpers\SettingsHelperBuilder;
 use Alma\PrestaShop\Builders\Models\PaymentDataBuilder;
 use Alma\PrestaShop\Helpers\ClientHelper;
@@ -106,9 +105,7 @@ class AlmaPaymentModuleFrontController extends ModuleFrontController
     /**
      * @return void
      *
-     * @throws PrestaShopDatabaseException
      * @throws PrestaShopException
-     * @throws ParamsError
      */
     public function postProcess()
     {

@@ -60,6 +60,7 @@ class CartDataTest extends TestCase
         $productHelper = $this->createMock(ProductHelper::class);
         $productHelper->method('getImageLink')->willReturn('https://prestashop-a-1-7-8-7.local.test/1-large_default/product_test.jpg');
         $productHelper->method('getProductLink')->willReturn('https://prestashop-a-1-7-8-7.local.test/1-1-product_test.html#/1-size-s/8-color-white');
+        $productHelper->method('getCategoryName')->willReturn(['category_test']);
         $productHelper->method('createProduct')->with()->willReturn(new \Product(null, false, 1));
 
         $summaryDetailsMock = ['products' => $items, 'gift_products' => []];
@@ -226,6 +227,9 @@ class CartDataTest extends TestCase
         ];
     }
 
+    /**
+     * @return void
+     */
     public function testGetCartExclusion()
     {
         $cart = \Mockery::mock(\Cart::class);
@@ -251,17 +255,5 @@ class CartDataTest extends TestCase
         $result = $cartData->getCartExclusion($cart);
 
         $this->assertEquals(['2' => 'cateexclue'], $result);
-    }
-
-    public function testIncludeTaxes()
-    {
-    }
-
-    public function testCartInfo()
-    {
-    }
-
-    public function testGetCartDiscounts()
-    {
     }
 }

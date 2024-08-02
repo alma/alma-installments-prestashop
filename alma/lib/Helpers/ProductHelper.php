@@ -250,4 +250,30 @@ class ProductHelper
 
         return htmlspecialchars($productName, ENT_NOQUOTES);
     }
+
+    /**
+     * @param $product
+     *
+     * @return array
+     */
+    public function getCategoryName($product)
+    {
+        $category = [];
+
+        if ($product instanceof \Product) {
+            $category = [$product->category];
+        }
+
+        if (is_array($product) && isset($product['category'])) {
+            if ($product['category'] instanceof \Category) {
+                $category = array_values($product['category']->name);
+            }
+
+            if (is_string($product['category'])) {
+                $category = [$product['category']];
+            }
+        }
+
+        return $category;
+    }
 }
