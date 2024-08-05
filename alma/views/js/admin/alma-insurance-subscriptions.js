@@ -29,7 +29,6 @@ window.addEventListener("load", function() {
         if (typeof getSubscriptionDatafromCms !== 'undefined') {
             setTimeout(getSubscriptionDatafromCms(subscriptionData), 650)
         } else {
-            console.log('re set timeout')
             setTimeout(waitForScript, 450)
         }
     }
