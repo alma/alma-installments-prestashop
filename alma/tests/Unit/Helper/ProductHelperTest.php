@@ -70,7 +70,7 @@ class ProductHelperTest extends TestCase
         ];
         $expected = ['category-name'];
 
-        $this->assertEquals($expected, $this->productHelper->getCategoryName($productArray));
+        $this->assertEquals($expected, $this->productHelper->getCategoriesName($productArray));
     }
 
     /**
@@ -93,7 +93,7 @@ class ProductHelperTest extends TestCase
             'Category Name 2',
         ];
 
-        $this->assertEquals($expected, $this->productHelper->getCategoryName($product));
+        $this->assertEquals($expected, $this->productHelper->getCategoriesName($product));
     }
 
     /**
@@ -104,7 +104,7 @@ class ProductHelperTest extends TestCase
         $this->productMock->id = 25;
         $this->productMock->category = 'category-name-object';
 
-        $this->assertEquals(['category-name-object'], $this->productHelper->getCategoryName($this->productMock));
+        $this->assertEquals(['category-name-object'], $this->productHelper->getCategoriesName($this->productMock));
     }
 
     /**
@@ -114,7 +114,7 @@ class ProductHelperTest extends TestCase
      */
     public function testGetCategoryNameWithWrongData($product)
     {
-        $this->assertEquals([], $this->productHelper->getCategoryName($product));
+        $this->assertEquals([], $this->productHelper->getCategoriesName($product));
     }
 
     /**

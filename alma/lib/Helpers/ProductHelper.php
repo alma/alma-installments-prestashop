@@ -256,7 +256,7 @@ class ProductHelper
      *
      * @return array
      */
-    public function getCategoryName($product)
+    public function getCategoriesName($product)
     {
         $category = [];
 
