@@ -13,6 +13,7 @@ use Alma\PrestaShop\Logger;
 if (!defined('_PS_VERSION_')) {
     exit;
 }
+
 class ActionObjectUpdateAfter
 {
     /**
@@ -52,7 +53,9 @@ class ActionObjectUpdateAfter
         /** @var \OrderCarrier $orderCarrier */
         $orderCarrier = $params['object'];
         $idOrder = $orderCarrier->id_order;
-
+        if ($orderCarrier->tracking_number === '') {
+            return;
+        }
         /* @var \OrderCore $order */
         try {
             $order = $this->orderFactory->create($idOrder);
@@ -77,7 +80,6 @@ class ActionObjectUpdateAfter
 
             return;
         }
-
         try {
             $almaClient = $this->clientHelper->getAlmaClient();
         } catch (ClientException $e) {
@@ -102,7 +104,7 @@ class ActionObjectUpdateAfter
                 );
                 $orderExternalId = $almaOrder->getExternalId();
             }
-            $carrier = $this->carrierFactory->create((int) $orderCarrier->id_carrier);
+            $carrier = $this->carrierFactory->create((int)$orderCarrier->id_carrier);
             $almaClient->orders->addTracking($orderExternalId, $carrier->name, $orderCarrier->tracking_number, $carrier->url);
         } catch (AlmaException $e) {
             Logger::instance()->error('[Alma] - AlmaException ' . $e->getMessage());

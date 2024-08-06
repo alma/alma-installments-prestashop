@@ -45,6 +45,9 @@ class ActionObjectUpdateAfterTest extends TestCase
         $this->actionObjectUpdateAfter = new ActionObjectUpdateAfter($this->orderFactory, $this->clientHelper, $this->carrierFactory);
     }
 
+    public function testInstanceOfObject(){
+        $this->assertInstanceOf(ActionObjectUpdateAfter::class, $this->actionObjectUpdateAfter);
+    }
     /**
      * @dataProvider badObjectProvider
      *
@@ -210,10 +213,13 @@ class ActionObjectUpdateAfterTest extends TestCase
      */
     public function badObjectProvider()
     {
+        $orderCarrier = $this->createMock(\OrderCarrier::class);
+        $orderCarrier->tracking_number = '';
         return [
             'Null object' => [[]],
             'StdClass' => [['object' => new \stdClass()]],
             'Order' => [['object' => new \Order()]],
+            'track without tracking number' => [['object' => $orderCarrier]],
         ];
     }
 
