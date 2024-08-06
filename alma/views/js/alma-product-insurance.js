@@ -31,7 +31,9 @@ let almaEligibilityAnswer = false;
 (function ($) {
     $(function () {
         //Insurance
-
+        $("body").on("hidden.bs.modal", "#blockcart-modal", function (e) {
+            removeInsurance();
+        });
         handleInsuranceProductPage();
         btnLoaders('start');
         onloadAddInsuranceInputOnProductAlma();
@@ -40,10 +42,8 @@ let almaEligibilityAnswer = false;
                 'updateProduct',
                 function (event) {
                     let addToCart = document.querySelector('.add-to-cart');
-                    let modalIsClosed = false;
 
                     if (event.event !== undefined) {
-                        modalIsClosed = event.event.namespace === 'bs.modal' && event.event.type === 'hidden';
                         quantity = getQuantity();
                     }
                     if (event.eventType === 'updatedProductQuantity') {
@@ -53,7 +53,7 @@ let almaEligibilityAnswer = false;
                         }
                         removeInsurance();
                     }
-                    if (modalIsClosed || event.eventType === 'updatedProductCombination') {
+                    if (event.eventType === 'updatedProductCombination') {
                         removeInsurance();
                     }
                     if (typeof event.selectedAlmaInsurance !== 'undefined' && event.selectedAlmaInsurance !== null) {
@@ -128,7 +128,11 @@ function onloadAddInsuranceInputOnProductAlma() {
                 }
 
                 document.getElementById('alma-widget-insurance-product-page').style.height = stringHeightIframe;
-                prestashop.emit('updateProduct', {event});
+                prestashop.emit('updateProduct', {
+                    reason:{
+                        productUrl: window.location.href,
+                    }
+                });
             } else {
                 let addToCart = document.querySelector('.add-to-cart');
                 if (addToCart) {
