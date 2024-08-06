@@ -41,20 +41,47 @@ jobs:
             jq 'map(select(.draft == true))' \
           )
 
-          # Fail if 0 or more than 1 draft release is found
-          if [[ $(echo $DRAFT_RELEASE | jq 'length') -ne 1 ]]
+          # We should find exactly 1 draft release to be published
+          if [[ $(echo $DRAFT_RELEASE | jq 'length') -eq 1 ]]
           then
-            echo "No draft release found or more than one draft release found"
-            exit 1
+              echo "Draft release found"
+              DRAFT_RELEASE=$(echo $DRAFT_RELEASE | jq first)
+          else
+              # Fail if more than 1 draft release is found
+              if [[ $(echo $DRAFT_RELEASE | jq 'length') -gt 1 ]]
+              then
+                  echo "Unable to publish the release: More than one draft is found"
+                  exit 1
+              fi
+              # If no draft release is found, maybe the draft has been manually published by error
+              # prior to the workflow execution
+              echo "No draft release found, checking for the latest release..."
+              LATEST_RELEASE=$(curl \
+                -H "Accept: application/vnd.github+json" \
+                -H "Authorization: Bearer ${{ github.token }}" \
+                https://api.github.com/repos/${{ github.repository }}/releases/latest
+              )
+              # Compare the latest release version with the version in the branch name of the PR
+              # (which should be release/<version> or hotfix/<version>)
+              # If they match, we consider the latest release as the draft release
+              VERSION_FROM_LATEST_RELEASE=$(echo $LATEST_RELEASE | jq -r '.name')
+              echo "Latest release version: $VERSION_FROM_LATEST_RELEASE"
+              VERSION_FROM_PR_BRANCH_NAME=$(echo ${{ github.event.pull_request.head.ref }} | sed -E 's/(release|hotfix)\///')
+              echo "Version found from PR branch name: $VERSION_FROM_PR_BRANCH_NAME"
+              if [[ "$VERSION_FROM_LATEST_RELEASE" == "$VERSION_FROM_PR_BRANCH_NAME" ]]
+              then
+                  echo "Version from the latest release matches with the version found in the release/hotfix PR branch name"
+                  DRAFT_RELEASE=$LATEST_RELEASE
+              else
+                  echo "Unable to publish the release: Latest release does not match with the version found in the PR branch name"
+                  exit 1
+              fi
           fi
 
-          DRAFT_RELEASE=$(echo $DRAFT_RELEASE | jq first)
-
           # Retrieve name, id and body of the draft release
-          # We need to remove the quotes from the JSON output
-          NAME=$(echo $DRAFT_RELEASE | jq '.name' | sed 's/"//g')
+          NAME=$(echo $DRAFT_RELEASE | jq -r '.name')
           ID=$(echo $DRAFT_RELEASE | jq '.id')
-          BODY=$(echo $DRAFT_RELEASE | jq '.body' | sed 's/"//g')
+          BODY=$(echo $DRAFT_RELEASE | jq -r '.body')
 
           # Add URLs to GitHub pull requests
           PULL_REQUEST_URL_START=${{ github.server_url }}/${{ github.repository }}/pull/
