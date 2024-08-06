@@ -27,12 +27,13 @@ let addToCartFlow = false;
 let productDetails = JSON.parse(document.getElementById('product-details').dataset.product);
 let quantity = getQuantity();
 let almaEligibilityAnswer = false;
-let modalIsClosed = false;
 
 (function ($) {
     $(function () {
         //Insurance
-
+        $("body").on("hidden.bs.modal", "#blockcart-modal", function (e) {
+            removeInsurance();
+        });
         handleInsuranceProductPage();
         btnLoaders('start');
         onloadAddInsuranceInputOnProductAlma();
@@ -40,11 +41,9 @@ let modalIsClosed = false;
             prestashop.on(
                 'updateProduct',
                 function (event) {
-                    console.log('updateProduct', event);
                     let addToCart = document.querySelector('.add-to-cart');
 
                     if (event.event !== undefined) {
-                        modalIsClosed = event.event.namespace === 'bs.modal' && event.event.type === 'hidden';
                         quantity = getQuantity();
                     }
                     if (event.eventType === 'updatedProductQuantity') {
@@ -54,7 +53,7 @@ let modalIsClosed = false;
                         }
                         removeInsurance();
                     }
-                    if (modalIsClosed || event.eventType === 'updatedProductCombination') {
+                    if (event.eventType === 'updatedProductCombination') {
                         removeInsurance();
                     }
                     if (typeof event.selectedAlmaInsurance !== 'undefined' && event.selectedAlmaInsurance !== null) {
@@ -74,7 +73,6 @@ let modalIsClosed = false;
             prestashop.on(
                 'updatedProduct',
                 function (event) {
-                    console.log('updatedProduct', event);
                     document.querySelector('.qty [name="qty"]').value = quantity;
                     productDetails = JSON.parse(document.getElementById('product-details').dataset.product);
                     refreshWidget();
@@ -130,14 +128,9 @@ function onloadAddInsuranceInputOnProductAlma() {
                 }
 
                 document.getElementById('alma-widget-insurance-product-page').style.height = stringHeightIframe;
-                $('#blockcart-modal').on('hidden.bs.modal', function (e) {
-                    console.log('close modal hidden');
-                    modalIsClosed = true;
-                });
                 prestashop.emit('updateProduct', {
                     reason:{
                         productUrl: window.location.href,
-                        modal: modalIsClosed
                     }
                 });
             } else {
