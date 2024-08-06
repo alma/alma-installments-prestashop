@@ -1,6 +1,5 @@
-<?php
-/**
- * 2018-2024 Alma SAS.
+{*
+ * 2018-2024 Alma SAS
  *
  * THE MIT LICENSE
  *
@@ -20,33 +19,7 @@
  * @author    Alma SAS <contact@getalma.eu>
  * @copyright 2018-2024 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
- */
-
-namespace Alma\PrestaShop\Builders\Helpers;
-
-use Alma\PrestaShop\Helpers\InsuranceHelper;
-use Alma\PrestaShop\Traits\BuilderTrait;
-
-if (!defined('_PS_VERSION_')) {
-    exit;
-}
-
-class InsuranceHelperBuilder
-{
-    use BuilderTrait;
-
-    /**
-     * @return InsuranceHelper
-     */
-    public function getInstance()
-    {
-        return new InsuranceHelper(
-            $this->getCartProductRepository(),
-            $this->getProductRepository(),
-            $this->getAlmaInsuranceProductRepository(),
-            $this->getContextFactory(),
-            $this->getToolsHelper(),
-            $this->getSettingsHelper()
-        );
-    }
-}
+ *}
+<div class="alert alert-danger">
+    {$message|escape:'htmlall':'UTF-8'}
+</div>

@@ -76,10 +76,17 @@
                 psAccountIsCompleted = window.psaccountsVue.isOnboardingCompleted();
                 if (psAccountIsCompleted != true) {
                     document.getElementById("alma_config_form").remove()
-                    document.getElementById("alma_first_installation").remove()
+                    $('.alma.first-installation').each(function() {
+                        $(this).remove();
+                    });
                 } else {
                     //Hide ps account notification
                     document.querySelector(".alma.ps-account.alert").remove()
+                    $('.alma.first-installation').each(function(i) {
+                        if (i > 0) {
+                            $(this).remove();
+                        }
+                    });
                 }
             }
         </script>

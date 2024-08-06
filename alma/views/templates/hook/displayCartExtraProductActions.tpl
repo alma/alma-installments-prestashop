@@ -20,19 +20,21 @@
  * @copyright 2018-2024 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  *}
-{capture assign='cmsReference'}{almaCmsReference product_id=$product->id product_attribute_id=$product->id_product_attribute static_price=$product->price_with_reduction}{/capture}
+{capture assign='cmsReference'}{almaCmsReference product_id=$product->getId() product_attribute_id=$product->getIdProductAttribute() static_price=$product->getPriceWithReduction()}{/capture}
 
 <div class="alma-data-product"
-     data-reference="{$product->reference}"
-     data-id-product="{$product->id}"
+     data-reference="{$product->getReference()}"
+     data-id-product="{$product->getId()}"
      data-id-cart="{$idCart}"
      data-is-alma-insurance="{$isAlmaInsurance}"
      data-no-insurance-associated="{$associatedInsurances|count}"
 >
     <div class="actions-alma-insurance-product" style="display:none">
-        {foreach from=$associatedInsurances item=$associatedInsurance key=$idProductAttributeInsurance}
-            {include file="modules/alma/views/templates/hook/_partials/itemCartInsuranceProduct.tpl"}
-        {/foreach}
+        {if $associatedInsurances}
+            {foreach $associatedInsurances as $idProductAttributeInsurance => $associatedInsurance}
+                {include file="modules/alma/views/templates/hook/_partials/itemCartInsuranceProduct.tpl"}
+            {/foreach}
+        {/if}
     </div>
     {if $insuranceSettings.isInCartWidgetActivated}
         <div class="widget-alma-insurance-cart-item" style="display:none">
@@ -40,14 +42,13 @@
                     id="product-alma-iframe-{$cmsReference}"
                     class="cart-item-alma-iframe"
                     style="display:none"
-                    data-product-id="{$product->id|escape:'htmlall':'UTF-8'}"
-                    data-product-attribute-id="{$product->id_product_attribute|escape:'htmlall':'UTF-8'}"
-                    data-product-customization-id="{$product->id_customization|intval}"
-                    data-token='{\Tools::getToken(false)|escape:'htmlall':'UTF-8'}'
+                    data-product-id="{$product->getId()|escape:'htmlall':'UTF-8'}"
+                    data-product-attribute-id="{$product->getIdProductAttribute()|escape:'htmlall':'UTF-8'}"
+                    data-product-customization-id="{$product->getIdCustomization()|intval}"
+                    data-token='{$token|escape:'htmlall':'UTF-8'}'
                     data-link='{$ajaxLinkAddInsuranceProduct|escape:'htmlall':'UTF-8'}'
                     src="{$iframeUrl}">
             </iframe>
         </div>
     {/if}
-
 </div>

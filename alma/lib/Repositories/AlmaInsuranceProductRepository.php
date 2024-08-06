@@ -26,6 +26,7 @@ namespace Alma\PrestaShop\Repositories;
 
 use Alma\API\Entities\Insurance\Subscription;
 use Alma\PrestaShop\Helpers\SettingsHelper;
+use Alma\PrestaShop\Model\AlmaCartItemModel;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -79,6 +80,7 @@ class AlmaInsuranceProductRepository
             'insurance_contract_id' => $insuranceContractInfos['insurance_contract_id'],
             'cms_reference' => $insuranceContractInfos['cms_reference'],
             'product_price' => $insuranceContractInfos['product_price'],
+            'insurance_contract_name' => $insuranceContractInfos['insurance_contract_name'],
             'mode' => SettingsHelper::getActiveMode(),
         ])) {
             return false;
@@ -284,6 +286,7 @@ class AlmaInsuranceProductRepository
             `id_order` int(10) unsigned NULL,
             `price` int(10) unsigned NULL,
             `insurance_contract_id` varchar(255) NULL,
+            `insurance_contract_name` varchar(255) NULL,
             `cms_reference` varchar(255) NULL,
             `product_price` int(10) unsigned NULL,
             `date_add` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -485,9 +488,9 @@ class AlmaInsuranceProductRepository
     }
 
     /**
-     * @param \ProductCore $product
-     * @param $cartId
-     * @param $shopId
+     * @param AlmaCartItemModel $product
+     * @param int $cartId
+     * @param int $shopId
      *
      * @return mixed
      *
@@ -502,25 +505,36 @@ class AlmaInsuranceProductRepository
                    `price`
             FROM `' . _DB_PREFIX_ . 'alma_insurance_product` aip
             WHERE aip.`id_cart` = ' . (int) $cartId . '
-            AND aip.`id_product` = ' . (int) $product->id . '
-            AND aip.`id_product_attribute` = ' . (int) $product->id_product_attribute . '
-            AND aip.`id_customization` = ' . (int) $product->id_customization . '
+            AND aip.`id_product` = ' . (int) $product->getId() . '
+            AND aip.`id_product_attribute` = ' . (int) $product->getIdProductAttribute() . '
+            AND aip.`id_customization` = ' . (int) $product->getIdCustomization() . '
             AND aip.`id_shop` = ' . (int) $shopId . '
             GROUP BY aip.`id_product_attribute_insurance`';
 
         return \Db::getInstance()->executeS($sql);
     }
 
+    /**
+     * @param AlmaCartItemModel $product
+     * @param int $cartId
+     * @param int $shopId
+     * @param string $insuranceProductAttribute
+     *
+     * @return mixed
+     *
+     * @throws \PrestaShopDatabaseException
+     */
     public function getContractByProductAndCartIdAndShopAndInsuranceProductAttribute($product, $cartId, $shopId, $insuranceProductAttribute)
     {
         $sql = '
             SELECT `id_alma_insurance_product`,
-                   `insurance_contract_id`
+                   `insurance_contract_id`,
+                   `insurance_contract_name`
             FROM `' . _DB_PREFIX_ . 'alma_insurance_product` aip
             WHERE aip.`id_cart` = ' . (int) $cartId . '
-            AND aip.`id_product` = ' . (int) $product->id . '
-            AND aip.`id_product_attribute` = ' . (int) $product->id_product_attribute . '
-            AND aip.`id_customization` = ' . (int) $product->id_customization . '
+            AND aip.`id_product` = ' . (int) $product->getId() . '
+            AND aip.`id_product_attribute` = ' . (int) $product->getIdProductAttribute() . '
+            AND aip.`id_customization` = ' . (int) $product->getIdCustomization() . '
             AND aip.`id_shop` = ' . (int) $shopId . '
             AND aip.`id_product_attribute_insurance` = ' . (int) $insuranceProductAttribute;
 

@@ -29,7 +29,7 @@ jobs:
       uses: docker/setup-buildx-action@v3
 
     - name: Build docker images
-      uses: docker/bake-action@v4
+      uses: docker/bake-action@v5
       with:
         files: compose.yml
         pull: true
@@ -48,3 +48,9 @@ jobs:
       run: task test
       env:
         XDEBUG_MODE: coverage
+
+    - name: Install semgrep
+      run: pip install semgrep
+
+    - name: Run semgrep
+      run: semgrep scan --config semgrep/rules

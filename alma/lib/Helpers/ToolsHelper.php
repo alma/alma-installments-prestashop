@@ -24,6 +24,8 @@
 
 namespace Alma\PrestaShop\Helpers;
 
+use PrestaShop\PrestaShop\Core\Localization\Exception\LocalizationException;
+
 if (!defined('_PS_VERSION_')) {
     exit;
 }
@@ -51,20 +53,19 @@ class ToolsHelper
     /**
      * Return price with currency sign for a given product.
      *
-     * @see \PrestaShop\PrestaShop\Core\Localization\Locale
-     *
-     * @param bool $legacy
      * @param float $price Product price
      * @param int|\Currency|array|null $currency Current currency (object, id_currency, NULL => context currency)
      *
      * @return string Price correctly formatted (sign, decimal separator...)
      *                if you modify this function, don't forget to modify the Javascript function formatCurrency (in tools.js)
      *
-     * @throws \LocalizationException
+     * @throws LocalizationException
+     *
+     * @see \PrestaShop\PrestaShop\Core\Localization\Locale
      */
-    public function displayPrice($legacy, $price, $currency = null)
+    public function displayPrice($price, $currency = null)
     {
-        if ($legacy) {
+        if ($this->psVersionCompare('1.7.6.0', '<')) {
             return \Tools::displayPrice($price, $currency);
         }
 

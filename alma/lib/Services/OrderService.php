@@ -69,6 +69,10 @@ class OrderService
             $orderState = $order->getCurrentOrderState();
         }
 
+        if (!$orderState) {
+            return;
+        }
+
         $paymentTransactionId = $this->getPaymentTransactionId($order);
         $almaPayment = $this->getAlmaPayment($paymentTransactionId, $order->reference);
 

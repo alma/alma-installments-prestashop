@@ -382,7 +382,9 @@ class FrontHeaderHookController extends FrontendHookController
             $this->context->language->id
         );
 
-        return "<div id='alma-insurance-global' data-insurance-id='{$insuranceProductId}'></div>";
+        $message = $this->module->l('Alma insurance can only be added to your cart if it is associated with a product eligible for insurance. It will be offered on the product page concerned.');
+
+        return "<div id='alma-insurance-global' data-insurance-id='{$insuranceProductId}' data-message-insurance-page='{$message}'></div>";
     }
 
     /**

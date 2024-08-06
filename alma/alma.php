@@ -30,7 +30,7 @@ require_once _PS_MODULE_DIR_ . 'alma/vendor/autoload.php';
 
 class Alma extends PaymentModule
 {
-    const VERSION = '4.1.4';
+    const VERSION = '4.2.0';
 
     public $_path;
     public $local_path;
@@ -80,7 +80,7 @@ class Alma extends PaymentModule
     {
         $this->name = 'alma';
         $this->tab = 'payments_gateways';
-        $this->version = '4.1.4';
+        $this->version = '4.2.0';
         $this->author = 'Alma';
         $this->need_instance = false;
         $this->bootstrap = true;
@@ -150,6 +150,7 @@ class Alma extends PaymentModule
     {
         if (
             $this->toolsHelper->psVersionCompare('1.6', '<')
+            || !class_exists(\Symfony\Component\Config\ConfigCache::class)
             || !class_exists(\PrestaShop\ModuleLibServiceContainer\DependencyInjection\ServiceContainer::class)
             || _PS_MODE_DEV_ === true
         ) {
@@ -419,7 +420,19 @@ class Alma extends PaymentModule
     }
 
     /**
-     * Hook to modify the order table
+     * Hook to modify the order table before Ps 1.7.5
+     *
+     * @param $params
+     *
+     * @return mixed|null
+     */
+    public function hookActionAdminOrdersListingFieldsModifier($params)
+    {
+        return $this->runHookController('actionAdminOrdersListingFieldsModifier', $params);
+    }
+
+    /**
+     * Hook to modify the order table after Ps 1.7.5
      *
      * @param $params
      *
@@ -431,7 +444,7 @@ class Alma extends PaymentModule
     }
 
     /**
-     * Hook to modify the order table
+     * Hook to modify the order table after Ps 1.7.5
      *
      * @param $params
      *
@@ -649,11 +662,21 @@ class Alma extends PaymentModule
         return $this->runHookController('displayPayment', $params);
     }
 
-    public function hookDeleteProductInCartAfter($params)
+    /**
+     * @param $params
+     *
+     * @return mixed|null
+     */
+    public function hookActionAfterDeleteProductInCart($params)
     {
         return $this->hookActionObjectProductInCartDeleteAfter($params);
     }
 
+    /**
+     * @param $params
+     *
+     * @return mixed|null
+     */
     public function hookActionObjectProductInCartDeleteAfter($params)
     {
         return $this->runHookController('actionObjectProductInCartDeleteAfter', $params);
@@ -710,5 +733,25 @@ class Alma extends PaymentModule
     public function hookDisplayAdminAfterHeader($params)
     {
         return $this->runHookController('displayAdminAfterHeader', $params);
+    }
+
+    /**
+     * @param $params
+     *
+     * @return mixed|null
+     */
+    public function hookActionFrontControllerSetVariables($params)
+    {
+        return $this->runHookController('actionFrontControllerSetVariables', $params);
+    }
+
+    /**
+     * @param $params
+     *
+     * @return mixed|null
+     */
+    public function hookActionGetProductPropertiesBefore($params)
+    {
+        return $this->runHookController('actionGetProductPropertiesBefore', $params);
     }
 }
