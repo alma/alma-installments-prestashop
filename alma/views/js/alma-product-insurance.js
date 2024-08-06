@@ -72,7 +72,7 @@ let almaEligibilityAnswer = false;
             );
             prestashop.on(
                 'updatedProduct',
-                function (event) {
+                function () {
                     document.querySelector('.qty [name="qty"]').value = quantity;
                     productDetails = JSON.parse(document.getElementById('product-details').dataset.product);
                     refreshWidget();
