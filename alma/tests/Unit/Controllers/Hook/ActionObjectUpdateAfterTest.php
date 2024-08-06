@@ -25,7 +25,7 @@ class ActionObjectUpdateAfterTest extends TestCase
     protected $paymentEndpoint;
     protected $orderEndpoint;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->orderFactory = $this->createMock(OrderFactory::class);
         $this->carrierFactory = $this->createMock(CarrierFactory::class);
