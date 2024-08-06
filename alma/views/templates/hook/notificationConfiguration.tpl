@@ -82,6 +82,11 @@
                 } else {
                     //Hide ps account notification
                     document.querySelector(".alma.ps-account.alert").remove()
+                    $('.alma.first-installation').each(function(i) {
+                        if (i > 0) {
+                            $(this).remove();
+                        }
+                    });
                 }
             }
         </script>

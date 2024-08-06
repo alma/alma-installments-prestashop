@@ -27,6 +27,7 @@ let addToCartFlow = false;
 let productDetails = JSON.parse(document.getElementById('product-details').dataset.product);
 let quantity = getQuantity();
 let almaEligibilityAnswer = false;
+let modalIsClosed = false;
 
 (function ($) {
     $(function () {
@@ -39,8 +40,8 @@ let almaEligibilityAnswer = false;
             prestashop.on(
                 'updateProduct',
                 function (event) {
+                    console.log('updateProduct', event);
                     let addToCart = document.querySelector('.add-to-cart');
-                    let modalIsClosed = false;
 
                     if (event.event !== undefined) {
                         modalIsClosed = event.event.namespace === 'bs.modal' && event.event.type === 'hidden';
@@ -72,7 +73,8 @@ let almaEligibilityAnswer = false;
             );
             prestashop.on(
                 'updatedProduct',
-                function () {
+                function (event) {
+                    console.log('updatedProduct', event);
                     document.querySelector('.qty [name="qty"]').value = quantity;
                     productDetails = JSON.parse(document.getElementById('product-details').dataset.product);
                     refreshWidget();
@@ -128,7 +130,16 @@ function onloadAddInsuranceInputOnProductAlma() {
                 }
 
                 document.getElementById('alma-widget-insurance-product-page').style.height = stringHeightIframe;
-                prestashop.emit('updateProduct', {event});
+                $('#blockcart-modal').on('hidden.bs.modal', function (e) {
+                    console.log('close modal hidden');
+                    modalIsClosed = true;
+                });
+                prestashop.emit('updateProduct', {
+                    reason:{
+                        productUrl: window.location.href,
+                        modal: modalIsClosed
+                    }
+                });
             } else {
                 let addToCart = document.querySelector('.add-to-cart');
                 if (addToCart) {
