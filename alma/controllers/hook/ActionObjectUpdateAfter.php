@@ -104,7 +104,7 @@ class ActionObjectUpdateAfter
                 );
                 $orderExternalId = $almaOrder->getExternalId();
             }
-            $carrier = $this->carrierFactory->create((int)$orderCarrier->id_carrier);
+            $carrier = $this->carrierFactory->create((int) $orderCarrier->id_carrier);
             $almaClient->orders->addTracking($orderExternalId, $carrier->name, $orderCarrier->tracking_number, $carrier->url);
         } catch (AlmaException $e) {
             Logger::instance()->error('[Alma] - AlmaException ' . $e->getMessage());
