@@ -1,5 +1,29 @@
 # Changelog
 
+## v4.2.0 - 2024-08-06
+
+### Changes
+
+### 🚀 New Features
+
+- feat: Insurance compatability with PS 1.7 (#522)
+- feat: Insurance product page cannot be added to cart (#530)
+
+### 🐛 Bug Fixes
+
+- fix: create payment with object category in product (#551)
+- fix: load alma script on dashboard for ps17 (#549)
+- fix: eligible limit of feePlans (#550)
+- fix: display multiple notification dashboard on ps17 (#548)
+- fix: install module with ps_account from ps17 to ps8 (#547)
+- fix: openmodal insurance in the first load product page (#543)
+- fix: change order status error (#542)
+- fix: install module without ConfigCache about PS Account (#541)
+
+#### Contributors
+
+@Benjamin-Freoua-Alma, @alma-renovate-bot, @alma-renovate-bot[bot], @carine-bonnafous and @github-actions
+
 ## v4.1.4 - 2024-07-29
 
 ### Changes

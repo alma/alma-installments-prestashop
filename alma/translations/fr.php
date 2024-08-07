@@ -31,7 +31,7 @@ $_MODULE['<{alma}prestashop>alma_36359547b09bdb31f46c419a0bd5807e'] = 'Catégori
 $_MODULE['<{alma}prestashop>alma_7bab99339291e7eea710b4a998e663de'] = 'Alma nécessite l\'extension PHP cURL';
 $_MODULE['<{alma}prestashop>alma_fbb47375d2272bef79f5722a183bf1ec'] = 'Alma nécessite l\'extension PHP JSON';
 $_MODULE['<{alma}prestashop>alma_7fb83ba9cf3cc38857a2ddae98534d22'] = 'Alma nécessite OpenSSL >= 1.0.1';
-$_MODULE['<{alma}prestashop>modulefactorytest_5914ca153abaf8a2af61e13e7fe7e829'] = 'My wording to translate';
+$_MODULE['<{alma}prestashop>modulefactorytest_5914ca153abaf8a2af61e13e7fe7e829'] = 'Ma formulation à traduire';
 $_MODULE['<{alma}prestashop>wrongcredentialsexception_cc76de47de858ac2fa2964f534ecfdfb'] = 'Impossible de se connecter à Alma en utilisant vos clés API.';
 $_MODULE['<{alma}prestashop>wrongcredentialsexception_733b6ddadc31fd97174b0cfe69b584c9'] = 'Veuillez vérifier vos clés sur votre tableau de bord %1$sAlma%2$s.';
 $_MODULE['<{alma}prestashop>wrongparamsexception_8ec75b5f68c49d1d6541b1e318a8120d'] = 'Clé(s) d\'erreur : %1$s.';
@@ -191,7 +191,7 @@ $_MODULE['<{alma}prestashop>getcontenthookcontroller_bf17ac149e2e7a530c677e9bd51
 $_MODULE['<{alma}prestashop>getcontenthookcontroller_5f265dfcb9ab68a1258ec25393ffb886'] = 'Gestionnaire de module';
 $_MODULE['<{alma}prestashop>getcontenthookcontroller_c6e24f81cb99e08c3d56b191c00aea28'] = 'Gestionnaire de module - Liste';
 $_MODULE['<{alma}prestashop>frontheaderhookcontroller_0bbf1fb0708055cf522541b4151894c4'] = 'Pour gérer vos achats avec Assurance, veuillez vous rendre à la page de paiement.';
-$_MODULE['<{alma}prestashop>frontheaderhookcontroller_8f1e80580ceb2bb7a54a7288ea169b30'] = 'L\'assurance Alma ne peut être ajoutée à votre panier que si elle est associée à un produit éligible à l\'assurance. Elle vous sera proposée depuis la page du produit concernée.';
+$_MODULE['<{alma}prestashop>frontheaderhookcontroller_8f1e80580ceb2bb7a54a7288ea169b30'] = 'L\'assurance Alma ne peut être ajoutée à votre panier que si elle est associée à un produit éligible à l\'assurance. Elle sera proposée sur la page du produit concerné.';
 $_MODULE['<{alma}prestashop>displaypaymenthookcontroller_afd8ac1c65e1519d6a890e5f98558a52'] = '%1$s puis %2$d x %3$s';
 $_MODULE['<{alma}prestashop>displaypaymenthookcontroller_bc69b42c4bd339154f9025f3299ad146'] = '%1$s aujourd\'hui puis %2$d x %3$s';
 $_MODULE['<{alma}prestashop>displaypaymenthookcontroller_9088921432b295dfe6f02863b2dc0ff8'] = '0 € aujourd\'hui puis %1$s le %2$s';
