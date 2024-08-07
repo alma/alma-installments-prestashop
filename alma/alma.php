@@ -28,7 +28,7 @@ if (!defined('_PS_VERSION_')) {
 // Autoload here for the module definition
 require_once _PS_MODULE_DIR_ . 'alma/vendor/autoload.php';
 
-class Alma extends PaymentModule
+class Alma extends PaymentModule implements \PrestaShop\PrestaShop\Core\Module\WidgetInterface
 {
     const VERSION = '4.1.4';
 
@@ -753,5 +753,31 @@ class Alma extends PaymentModule
     public function hookActionGetProductPropertiesBefore($params)
     {
         return $this->runHookController('actionGetProductPropertiesBefore', $params);
+    }
+
+    /**
+     * @param string $hookName
+     * @param array $configuration
+     *
+     * @return string
+     */
+    public function renderWidget($hookName, array $configuration)
+    {
+        $this->smarty->assign($this->getWidgetVariables($hookName, $configuration));
+
+        return $this->fetch('module:' . $this->name . "/views/templates/hook/{$hookName}.tpl");
+    }
+
+    /**
+     * @param string $hookName
+     * @param array $configuration
+     *
+     * @return array
+     */
+    public function getWidgetVariables($hookName, array $configuration)
+    {
+        return [
+            'settingsInsurance' => 'toto',
+        ];
     }
 }
