@@ -68,7 +68,9 @@ class ActionObjectUpdateAfter
      * Check if params Object is set and is an OrderCarrier
      *
      * @param $params
+     *
      * @return \OrderCarrierCore $orderCarrier
+     *
      * @throws AlmaActionObjectUpdateException
      */
     private function checkParamsContainValidOrderCarrierObject($params)
@@ -80,6 +82,7 @@ class ActionObjectUpdateAfter
         ) {
             throw new AlmaActionObjectUpdateException('Object is not an OrderCarrier');
         }
+
         return $params['object'];
     }
 
@@ -88,7 +91,9 @@ class ActionObjectUpdateAfter
      * Throw Exception for no Alma Order
      *
      * @param $orderId
+     *
      * @return \Order
+     *
      * @throws AlmaActionObjectUpdateException
      */
     private function getAlmaOrderFromOrderCarrierOrderId($orderId)
@@ -102,6 +107,7 @@ class ActionObjectUpdateAfter
         if ($order->module != ConstantsHelper::ALMA_MODULE_NAME) {
             throw new AlmaActionObjectUpdateException('Order is not an Alma Order');
         }
+
         return $order;
     }
 
@@ -110,12 +116,13 @@ class ActionObjectUpdateAfter
      * Throw Exception if no Payment or no Alma Payment External Id in Order
      *
      * @param \Order $order
+     *
      * @return string
+     *
      * @throws AlmaActionObjectUpdateException
      */
     private function getAlmaPaymentExternalId($order)
     {
-
         if (empty($order->getOrderPayments())) {
             throw new AlmaActionObjectUpdateException('Order is not an Alma Order');
         }
@@ -133,6 +140,7 @@ class ActionObjectUpdateAfter
      * Get Alma Client or throw Exception
      *
      * @return Client
+     *
      * @throws AlmaActionObjectUpdateException
      */
     private function getAlmaClient()
@@ -151,7 +159,9 @@ class ActionObjectUpdateAfter
      * @param $almaClient
      * @param $order
      * @param $almaPaymentExternalId
+     *
      * @return mixed|null
+     *
      * @throws AlmaActionObjectUpdateException
      */
     private function getOrCreateAlmaOrderExternalId($almaClient, $order, $almaPaymentExternalId)
@@ -172,12 +182,11 @@ class ActionObjectUpdateAfter
                 );
                 $orderExternalId = $almaOrder->getExternalId();
             }
+
             return $orderExternalId;
         } catch (AlmaException $e) {
             Logger::instance()->error('[Alma] - AlmaException ' . $e->getMessage());
             throw new AlmaActionObjectUpdateException('Impossible to get or create Alma Order');
         }
     }
-
-
 }
