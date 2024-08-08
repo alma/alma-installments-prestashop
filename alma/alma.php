@@ -754,4 +754,13 @@ class Alma extends PaymentModule
     {
         return $this->runHookController('actionGetProductPropertiesBefore', $params);
     }
+
+    public function hookActionObjectUpdateAfter($params)
+    {
+        $orderFactory = new Alma\PrestaShop\Factories\OrderFactory();
+        $clientHelper = new Alma\PrestaShop\Helpers\ClientHelper();
+        $carrierFactory = new Alma\PrestaShop\Factories\CarrierFactory();
+        $actionObjectUpdateAfter = new Alma\PrestaShop\Controllers\Hook\ActionObjectUpdateAfter($orderFactory, $clientHelper, $carrierFactory);
+        $actionObjectUpdateAfter->run($params);
+    }
 }

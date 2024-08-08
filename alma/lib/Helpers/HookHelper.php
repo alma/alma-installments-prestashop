@@ -49,6 +49,7 @@ class HookHelper
     public static $almaHooks = [
         'moduleRoutes' => 'all',
         'actionAdminControllerInitBefore' => 'all',
+        'actionObjectUpdateAfter' => 'all',
         'header' => 'all',
         'displayHeader' => 'all',
         'displayBackOfficeHeader' => 'all',
