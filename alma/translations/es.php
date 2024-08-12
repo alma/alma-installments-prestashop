@@ -191,7 +191,7 @@ $_MODULE['<{alma}prestashop>getcontenthookcontroller_bf17ac149e2e7a530c677e9bd51
 $_MODULE['<{alma}prestashop>getcontenthookcontroller_5f265dfcb9ab68a1258ec25393ffb886'] = 'Gestor de módulos';
 $_MODULE['<{alma}prestashop>getcontenthookcontroller_c6e24f81cb99e08c3d56b191c00aea28'] = 'Gestor de módulos - Lista';
 $_MODULE['<{alma}prestashop>frontheaderhookcontroller_0bbf1fb0708055cf522541b4151894c4'] = 'Para gestionar tus compras con Assurance, ve a la página de pago.';
-$_MODULE['<{alma}prestashop>frontheaderhookcontroller_8f1e80580ceb2bb7a54a7288ea169b30'] = 'El seguro Alma sólo puede añadirse a su cesta si está asociado a un producto susceptible de seguro. Se ofrecerá en la página del producto en cuestión.';
+$_MODULE['<{alma}prestashop>frontheaderhookcontroller_8f1e80580ceb2bb7a54a7288ea169b30'] = 'El seguro Alma sólo puede añadirse a tu cesta si está asociado a un producto susceptible de seguro. Se ofrecerá en la página del producto en cuestión.';
 $_MODULE['<{alma}prestashop>displaypaymenthookcontroller_afd8ac1c65e1519d6a890e5f98558a52'] = '%1$s entonces %2$d x %3$s';
 $_MODULE['<{alma}prestashop>displaypaymenthookcontroller_bc69b42c4bd339154f9025f3299ad146'] = '%1$s hoy después %2$d x %3$s';
 $_MODULE['<{alma}prestashop>displaypaymenthookcontroller_9088921432b295dfe6f02863b2dc0ff8'] = '0 € hoy después %1$s en %2$s';

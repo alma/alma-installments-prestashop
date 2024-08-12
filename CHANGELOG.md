@@ -1,5 +1,17 @@
 # Changelog
 
+## v4.3.0 - 2024-08-12
+
+### Changes
+
+### 🚀 New Features
+
+- feat: Shipment info analysis (#545)
+
+#### Contributors
+
+@Benjamin-Freoua-Alma, @Francois-Gomis, @alma-renovate-bot and @github-actions
+
 ## v4.2.0 - 2024-08-06
 
 ### Changes

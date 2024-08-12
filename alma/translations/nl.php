@@ -191,7 +191,7 @@ $_MODULE['<{alma}prestashop>getcontenthookcontroller_bf17ac149e2e7a530c677e9bd51
 $_MODULE['<{alma}prestashop>getcontenthookcontroller_5f265dfcb9ab68a1258ec25393ffb886'] = 'Module Manager';
 $_MODULE['<{alma}prestashop>getcontenthookcontroller_c6e24f81cb99e08c3d56b191c00aea28'] = 'Module Manager - Lijst';
 $_MODULE['<{alma}prestashop>frontheaderhookcontroller_0bbf1fb0708055cf522541b4151894c4'] = 'Ga naar de afrekenpagina om je aankopen met Assurance te beheren.';
-$_MODULE['<{alma}prestashop>frontheaderhookcontroller_8f1e80580ceb2bb7a54a7288ea169b30'] = 'Een Alma-verzekering kan alleen aan uw winkelwagen worden toegevoegd als deze gekoppeld is aan een product dat in aanmerking komt voor een verzekering. De verzekering wordt aangeboden op de betreffende productpagina.';
+$_MODULE['<{alma}prestashop>frontheaderhookcontroller_8f1e80580ceb2bb7a54a7288ea169b30'] = 'Een Alma-verzekering kan alleen aan de winkelwagen worden toegevoegd als deze gekoppeld is aan een product dat in aanmerking komt voor een verzekering. De verzekering wordt aangeboden op de betreffende productpagina.';
 $_MODULE['<{alma}prestashop>displaypaymenthookcontroller_afd8ac1c65e1519d6a890e5f98558a52'] = '%1$s dan %2$d x %3$s';
 $_MODULE['<{alma}prestashop>displaypaymenthookcontroller_bc69b42c4bd339154f9025f3299ad146'] = '%1$s vandaag dan %2$d x %3$s';
 $_MODULE['<{alma}prestashop>displaypaymenthookcontroller_9088921432b295dfe6f02863b2dc0ff8'] = '€0 vandaag dan %1$s op %2$s';
