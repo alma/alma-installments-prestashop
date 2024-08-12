@@ -30,7 +30,7 @@ require_once _PS_MODULE_DIR_ . 'alma/vendor/autoload.php';
 
 class Alma extends PaymentModule
 {
-    const VERSION = '4.2.0';
+    const VERSION = '4.3.0';
 
     public $_path;
     public $local_path;
@@ -80,7 +80,7 @@ class Alma extends PaymentModule
     {
         $this->name = 'alma';
         $this->tab = 'payments_gateways';
-        $this->version = '4.2.0';
+        $this->version = '4.3.0';
         $this->author = 'Alma';
         $this->need_instance = false;
         $this->bootstrap = true;
@@ -753,5 +753,14 @@ class Alma extends PaymentModule
     public function hookActionGetProductPropertiesBefore($params)
     {
         return $this->runHookController('actionGetProductPropertiesBefore', $params);
+    }
+
+    public function hookActionObjectUpdateAfter($params)
+    {
+        $orderFactory = new Alma\PrestaShop\Factories\OrderFactory();
+        $clientHelper = new Alma\PrestaShop\Helpers\ClientHelper();
+        $carrierFactory = new Alma\PrestaShop\Factories\CarrierFactory();
+        $actionObjectUpdateAfter = new Alma\PrestaShop\Controllers\Hook\ActionObjectUpdateAfter($orderFactory, $clientHelper, $carrierFactory);
+        $actionObjectUpdateAfter->run($params);
     }
 }
