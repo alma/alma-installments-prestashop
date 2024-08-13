@@ -67,6 +67,9 @@ class AlmaIpnModuleFrontController extends ModuleFrontController
         header('Content-Type: application/json');
 
         $paymentId = Tools::getValue('pid');
+        // Test to log Header IPN callback
+        Logger::instance()->info(json_encode(get_headers($this->context->link->getModuleLink('alma', 'ipn') . '?pid=' . $paymentId, true)));
+
         $validator = new PaymentValidation($this->context, $this->module);
 
         try {
