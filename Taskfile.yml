@@ -100,7 +100,7 @@ tasks:
     deps:
       - tools:install
     cmds:
-      - php ./alma/vendor/bin/phpcs -p alma --standard=PHPCompatibility -s --runtime-set testVersion 5.6-8.1 --ignore=\*/vendor/\*
+      - php ./alma/vendor/bin/phpcs -p alma --standard=PHPCompatibility -s --runtime-set testVersion 5.6-8.1 --ignore=\*/vendor/\*,\*/.coverage/\*
 
   crowdin:
     internal: true
