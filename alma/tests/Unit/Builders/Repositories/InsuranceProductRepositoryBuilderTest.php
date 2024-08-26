@@ -29,7 +29,7 @@ use Alma\PrestaShop\Repositories\AlmaInsuranceProductRepository;
 use PHPUnit\Framework\TestCase;
 
 /**
- * @covers \Alma\PrestaShop\Builders\InsuranceProductRepositoryBuilder
+ * @covers \Alma\PrestaShop\Builders\Repositories\InsuranceProductRepositoryBuilder
  */
 class InsuranceProductRepositoryBuilderTest extends TestCase
 {
@@ -44,7 +44,7 @@ class InsuranceProductRepositoryBuilderTest extends TestCase
     }
 
     /**
-     * @covers \Alma\PrestaShop\Builders\InsuranceProductRepositoryBuilder::getInstance
+     * @covers \Alma\PrestaShop\Builders\Repositories\InsuranceProductRepositoryBuilder::getInstance
      *
      * @return void
      */
