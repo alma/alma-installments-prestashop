@@ -68,8 +68,8 @@ class AlmaIpnModuleFrontController extends ModuleFrontController
 
         $paymentId = Tools::getValue('pid');
         // Test to log Header IPN callback
-        Logger::instance()->info('ipn paymentId - ' . $paymentId);
-        Logger::instance()->info(json_encode(get_headers($this->context->link->getModuleLink('alma', 'ipn') . '?pid=' . $paymentId, true)));
+
+        var_dump($_SERVER['HTTP_X_ALMA_SIGNATURE']);
 
         $validator = new PaymentValidation($this->context, $this->module);
 
