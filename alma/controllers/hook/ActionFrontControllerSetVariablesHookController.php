@@ -68,6 +68,10 @@ class ActionFrontControllerSetVariablesHookController extends FrontendHookContro
      */
     private function checkIsInsuranceProduct($params)
     {
+        if (!array_key_exists('templateVars', $params)) {
+            return false;
+        }
+
         $templateVars = $params['templateVars'];
         $idInsuranceProduct = $this->productRepository->getProductIdByReference(ConstantsHelper::ALMA_INSURANCE_PRODUCT_REFERENCE);
 
