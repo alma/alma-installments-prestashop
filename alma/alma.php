@@ -152,7 +152,6 @@ class Alma extends PaymentModule
             $this->toolsHelper->psVersionCompare('1.6', '<')
             || !class_exists(\Symfony\Component\Config\ConfigCache::class)
             || !class_exists(\PrestaShop\ModuleLibServiceContainer\DependencyInjection\ServiceContainer::class)
-            || is_null($this->container)
             || _PS_MODE_DEV_ === true
         ) {
             return false;
@@ -603,7 +602,7 @@ class Alma extends PaymentModule
      */
     public function renderPSAccount()
     {
-        if (!$this->checkCompatibilityPSModule()) {
+        if (!$this->checkCompatibilityPSModule() || is_null($this->container)) {
             return false;
         }
 
