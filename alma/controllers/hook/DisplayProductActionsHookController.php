@@ -127,10 +127,10 @@ class DisplayProductActionsHookController extends FrontendHookController
         $productName = isset($productParams['name']) ? $productParams['name'] : '';
 
         $merchantId = SettingsHelper::getMerchantId();
-        $settings = $this->handleSettings($merchantId);
 
         $this->context->smarty->assign([
-            'settingsInsurance' => $settings,
+            'productDetails' => $this->handleProductDetails($params),
+            'settingsInsurance' => $this->handleSettings($merchantId),
             'iframeUrl' => sprintf(
                 '%s%s?cms_reference=%s&product_price=%s&product_name=%s&merchant_id=%s&customer_session_id=%s&cart_id=%s',
                 $this->adminInsuranceHelper->envUrl(),
@@ -160,5 +160,21 @@ class DisplayProductActionsHookController extends FrontendHookController
         $settings['session_id'] = $this->context->cookie->checksum;
 
         return json_encode($settings);
+    }
+
+    /**
+     * @param $params
+     *
+     * @return false|string
+     */
+    protected function handleProductDetails($params)
+    {
+        $productDetails = [];
+
+        if (isset($params['product'])) {
+            $productDetails = $params['product'];
+        }
+
+        return json_encode($productDetails);
     }
 }
