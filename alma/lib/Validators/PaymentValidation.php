@@ -25,11 +25,13 @@
 namespace Alma\PrestaShop\Validators;
 
 use Alma\API\Entities\Payment;
+use Alma\API\Lib\PaymentValidator;
 use Alma\API\RequestError;
 use Alma\PrestaShop\API\MismatchException;
 use Alma\PrestaShop\Builders\Helpers\PriceHelperBuilder;
 use Alma\PrestaShop\Builders\Helpers\SettingsHelperBuilder;
 use Alma\PrestaShop\Builders\Services\OrderServiceBuilder;
+use Alma\PrestaShop\Exceptions\PaymentValidationException;
 use Alma\PrestaShop\Helpers\ClientHelper;
 use Alma\PrestaShop\Helpers\PriceHelper;
 use Alma\PrestaShop\Helpers\RefundHelper;
@@ -68,15 +70,23 @@ class PaymentValidation
      * @var OrderService
      */
     protected $orderService;
+    /**
+     * @var PaymentValidator
+     */
+    protected $paymentValidator;
 
     /**
      * @param $context
      * @param $module
      */
-    public function __construct($context, $module)
-    {
+    public function __construct(
+        $context,
+        $module,
+        $clientPaymentValidator
+    ) {
         $this->context = $context;
         $this->module = $module;
+        $this->paymentValidator = $clientPaymentValidator;
 
         $settingsHelperBuilder = new SettingsHelperBuilder();
         $this->settingsHelper = $settingsHelperBuilder->getInstance();
@@ -312,6 +322,9 @@ class PaymentValidation
      * @param $cartId
      *
      * @return \OrderCore|null
+     *
+     * @throws \PrestaShopDatabaseException
+     * @throws \PrestaShopException
      */
     private function getOrderByCartId($cartId)
     {
@@ -329,8 +342,8 @@ class PaymentValidation
      * in context to prevent amount_mismatch error
      * When calculating cart amount from an IPN call.
      *
-     * @param \Cart $cart
      * @param \Customer $cart
+     * @param $customer
      *
      * @return float
      */
@@ -346,5 +359,29 @@ class PaymentValidation
         $this->context->customer = $ipnCustomer;
 
         return $cartTotals;
+    }
+
+    /**
+     * @param $paymentId
+     * @param $apiKey
+     * @param $signature
+     *
+     * @return true
+     *
+     * @throws PaymentValidationException
+     */
+    public function checkSignature($paymentId, $apiKey, $signature)
+    {
+        if (!$paymentId) {
+            throw new PaymentValidationException(null, '[Alma] Payment ID is missing');
+        }
+        if (!$signature) {
+            throw new PaymentValidationException(null, '[Alma] Signature is missing');
+        }
+        if (!$this->paymentValidator->isHmacValidated($paymentId, $apiKey, $signature)) {
+            throw new PaymentValidationException(null, '[Alma] Signature is invalid');
+        }
+
+        return true;
     }
 }

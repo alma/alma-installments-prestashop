@@ -24,6 +24,7 @@
 
 namespace Alma\PrestaShop\Traits;
 
+use Alma\API\Lib\PaymentValidator;
 use Alma\PrestaShop\Factories\AddressFactory;
 use Alma\PrestaShop\Factories\CarrierFactory;
 use Alma\PrestaShop\Factories\CartFactory;
@@ -1201,5 +1202,19 @@ trait BuilderTrait
         }
 
         return new InsuranceApiService();
+    }
+
+    /**
+     * @param PaymentValidator $clientPaymentValidator
+     *
+     * @return PaymentValidator
+     */
+    public function getClientPaymentValidator($clientPaymentValidator = null)
+    {
+        if ($clientPaymentValidator) {
+            return $clientPaymentValidator;
+        }
+
+        return new PaymentValidator();
     }
 }

@@ -22,24 +22,31 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
-namespace Alma\PrestaShop\Validators;
+namespace Alma\PrestaShop\Builders\Validators;
+
+use Alma\PrestaShop\Traits\BuilderTrait;
+use Alma\PrestaShop\Validators\PaymentValidation;
 
 if (!defined('_PS_VERSION_')) {
     exit;
 }
 
 /**
- * Class PaymentValidationError.
- *
- * @deprecated Use PaymentValidationException instead
+ * PaymentValidationBuilder.
  */
-class PaymentValidationError extends \Exception
+class PaymentValidationBuilder
 {
-    public $cart;
+    use BuilderTrait;
 
-    public function __construct($cart = null, $message = '', $code = 0, $previous = null)
+    /**
+     * @return PaymentValidation
+     */
+    public function getInstance()
     {
-        parent::__construct($message, $code, $previous);
-        $this->cart = $cart;
+        return new PaymentValidation(
+            $this->getContextFactory(),
+            $this->getModuleFactory(),
+            $this->getClientPaymentValidator()
+        );
     }
 }

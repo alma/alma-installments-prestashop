@@ -22,31 +22,19 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
-namespace Alma\PrestaShop\Tests\Unit\Controllers\Front;
+namespace Alma\PrestaShop\Exceptions;
 
-use Alma\PrestaShop\API\MismatchException;
-use Alma\PrestaShop\Exceptions\RefundException;
-use PHPUnit\Framework\TestCase;
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
 
-class IpnTest extends TestCase
+class PaymentValidationException extends AlmaException
 {
-    /**
-     * @var \AlmaIpnModuleFrontController
-     */
-    protected $controller;
+    public $cart;
 
-    public function setUp()
+    public function __construct($cart = null, $message = '', $code = 0, $previous = null)
     {
-        $this->controller = new \AlmaIpnModuleFrontController();
-    }
-
-    /**
-     * @throws \PrestaShopException
-     * @throws MismatchException
-     * @throws RefundException
-     */
-    public function testIpn()
-    {
-        $this->controller->postProcess();
+        parent::__construct($message, $code, $previous);
+        $this->cart = $cart;
     }
 }
