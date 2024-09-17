@@ -246,11 +246,12 @@ function removeInputInsurance() {
 function addModalListenerToAddToCart() {
     if (settings.isAddToCartPopupActivated === true && almaEligibilityAnswer) {
         let addToCart = document.querySelector('.add-to-cart');
-        if (addToCart) {
-            // If we change the quantity the DOM is reloaded then we need to remove and add the listener again
-            addToCart.removeEventListener("click", insuranceListener);
-            addToCart.addEventListener("click", insuranceListener);
+        if (!addToCart) {
+            addToCart = document.querySelector('.add-to-cart a, .add-to-cart button');
         }
+        // If we change the quantity the DOM is reloaded then we need to remove and add the listener again
+        addToCart.removeEventListener("click", insuranceListener);
+        addToCart.addEventListener("click", insuranceListener);
     }
 }
 function insuranceListener(event) {
