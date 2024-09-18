@@ -1185,7 +1185,9 @@ trait BuilderTrait
             $this->getOpartSaveCartCartService(),
             $this->getInsuranceHelper(),
             $this->getInsuranceProductHelper(),
-            $this->getToolsFactory()
+            $this->getToolsFactory(),
+            $this->getCartFactory(),
+            $this->getProductHelper()
         );
     }
 

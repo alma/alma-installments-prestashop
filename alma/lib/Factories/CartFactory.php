@@ -34,6 +34,21 @@ if (!defined('_PS_VERSION_')) {
 class CartFactory
 {
     /**
+     * @var \Cart
+     */
+    protected $cart;
+
+    /**
+     * @param \Cart|null $cart
+     */
+    public function __construct($cart = null)
+    {
+        if ($cart !== null) {
+            $this->cart = $cart;
+        }
+    }
+
+    /**
      * @param int $id
      *
      * @return \Cart

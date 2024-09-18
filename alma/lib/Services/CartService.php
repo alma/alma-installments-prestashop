@@ -25,10 +25,14 @@
 namespace Alma\PrestaShop\Services;
 
 use Alma\PrestaShop\Exceptions\AlmaException;
+use Alma\PrestaShop\Exceptions\CartException;
+use Alma\PrestaShop\Exceptions\ProductException;
+use Alma\PrestaShop\Factories\CartFactory;
 use Alma\PrestaShop\Factories\ContextFactory;
 use Alma\PrestaShop\Factories\ToolsFactory;
 use Alma\PrestaShop\Helpers\InsuranceHelper;
 use Alma\PrestaShop\Helpers\InsuranceProductHelper;
+use Alma\PrestaShop\Helpers\ProductHelper;
 use Alma\PrestaShop\Modules\OpartSaveCart\OpartSaveCartCartService;
 use Alma\PrestaShop\Repositories\CartProductRepository;
 
@@ -64,6 +68,14 @@ class CartService
      * @var ToolsFactory
      */
     protected $toolsFactory;
+    /**
+     * @var CartFactory
+     */
+    protected $cartFactory;
+    /**
+     * @var ProductHelper
+     */
+    protected $productHelper;
 
     /**
      * @param CartProductRepository $cartProductRepository
@@ -72,15 +84,27 @@ class CartService
      * @param InsuranceHelper $insuranceHelper
      * @param InsuranceProductHelper $insuranceProductHelper
      * @param ToolsFactory $toolsFactory
+     * @param CartFactory $cartFactory
+     * @param ProductHelper $productHelper
      */
-    public function __construct($cartProductRepository, $contextFactory, $opartCartSaveService, $insuranceHelper, $insuranceProductHelper, $toolsFactory)
-    {
+    public function __construct(
+        $cartProductRepository,
+        $contextFactory,
+        $opartCartSaveService,
+        $insuranceHelper,
+        $insuranceProductHelper,
+        $toolsFactory,
+        $cartFactory,
+        $productHelper
+    ) {
         $this->cartProductRepository = $cartProductRepository;
         $this->contextFactory = $contextFactory;
         $this->opartCartSaveService = $opartCartSaveService;
         $this->insuranceHelper = $insuranceHelper;
         $this->insuranceProductHelper = $insuranceProductHelper;
         $this->toolsFactory = $toolsFactory;
+        $this->cartFactory = $cartFactory;
+        $this->productHelper = $productHelper;
     }
 
     /**
@@ -226,6 +250,43 @@ class CartService
                 $shop->id,
                 $quantity
             );
+        }
+    }
+
+    /**
+     * @param int|false $productId
+     * @param int $cartId
+     *
+     * @return bool|null
+     *
+     * @throws AlmaException
+     * @throws CartException
+     */
+    public function deleteProductByCartId($productId, $cartId)
+    {
+        if (!$productId || !$cartId) {
+            throw new CartException("[Alma] Product id and cart id are required. ProductId: {$productId}, cartId: {$cartId}");
+        }
+
+        $cart = $this->cartFactory->create($cartId);
+        $languageId = $this->contextFactory->getContextLanguageId();
+
+        try {
+            $insuranceProductAttributes = $this->productHelper->getAttributeCombinationsByProductId($productId, $languageId);
+        } catch (ProductException $e) {
+            throw new CartException("[Alma] Cannot get Attribute combination of productId {$productId}, with languageId {$languageId} ");
+        }
+
+        try {
+            foreach ($insuranceProductAttributes as $insuranceProductAttribute) {
+                $cart->deleteProduct($productId, $insuranceProductAttribute['id_product_attribute']);
+            }
+
+            return true;
+        } catch (\PrestaShopDatabaseException $e) {
+            throw new CartException("[Alma] Error Database while deleting product from cart. ProductId: {$productId}, cartId: {$cartId}");
+        } catch (\PrestaShopException $e) {
+            throw new CartException("[Alma] Error while deleting product from cart. ProductId: {$productId}, cartId: {$cartId}");
         }
     }
 }

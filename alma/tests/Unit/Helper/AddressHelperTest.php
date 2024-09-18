@@ -38,6 +38,12 @@ class AddressHelperTest extends TestCase
         $this->addressHelper = $addressHelperBuilder->getAddressHelper();
     }
 
+    /**
+     * @return void
+     *
+     * @throws AlmaException
+     * @throws \PrestaShopException
+     */
     public function testGetAddressFromCustomer()
     {
         $idCustomer = rand(10000, 20000);

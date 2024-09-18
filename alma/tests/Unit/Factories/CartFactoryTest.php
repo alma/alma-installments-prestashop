@@ -33,10 +33,18 @@ class CartFactoryTest extends TestCase
      * @var CartFactory
      */
     protected $cartFactory;
+    /**
+     * @var \Cart
+     */
+    protected $cartMock;
 
     public function setUp()
     {
-        $this->cartFactory = new CartFactory();
+        $this->cartMock = $this->createMock(\Cart::class);
+        $this->cartMock->id = 10;
+        $this->cartFactory = new CartFactory(
+            $this->cartMock
+        );
     }
 
     public function testCreate()
