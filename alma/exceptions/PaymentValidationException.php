@@ -30,6 +30,9 @@ if (!defined('_PS_VERSION_')) {
 
 class PaymentValidationException extends AlmaException
 {
+    /**
+     * @var \Cart
+     */
     public $cart;
 
     public function __construct($cart = null, $message = '', $code = 0, $previous = null)

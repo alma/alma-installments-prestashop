@@ -61,21 +61,14 @@ class PaymentValidationTest extends TestCase
     }
 
     /**
+     * @dataProvider checkSignatureWrongParamsDataProvider
+     *
      * @throws PaymentValidationException
      */
-    public function testCheckSignatureWithoutApiKeyReturnError()
+    public function testCheckSignatureWithoutParamsReturnError($paymentId, $apiKey, $signature)
     {
         $this->expectException(PaymentValidationException::class);
-        $this->paymentValidation->checkSignature('', self::API_KEY, self::GOOD_SIGNATURE);
-    }
-
-    /**
-     * @throws PaymentValidationException
-     */
-    public function testCheckSignatureWithoutSignatureReturnError()
-    {
-        $this->expectException(PaymentValidationException::class);
-        $this->paymentValidation->checkSignature(self::PAYMENT_ID, self::API_KEY, '');
+        $this->paymentValidation->checkSignature($paymentId, $apiKey, $signature);
     }
 
     /**
@@ -100,6 +93,18 @@ class PaymentValidationTest extends TestCase
             ->method('isHmacValidated')
             ->with(self::PAYMENT_ID, self::API_KEY, self::GOOD_SIGNATURE)
             ->willReturn(true);
-        $this->assertTrue($this->paymentValidation->checkSignature(self::PAYMENT_ID, self::API_KEY, self::GOOD_SIGNATURE));
+        $this->paymentValidation->checkSignature(self::PAYMENT_ID, self::API_KEY, self::GOOD_SIGNATURE);
+    }
+
+    /**
+     * @return array[]
+     */
+    public function checkSignatureWrongParamsDataProvider()
+    {
+        return [
+            'Without api key' => [self::PAYMENT_ID, '', self::GOOD_SIGNATURE],
+            'Without payement id' => ['', self::API_KEY, self::GOOD_SIGNATURE],
+            'Without signature' => [self::PAYMENT_ID, self::API_KEY, ''],
+        ];
     }
 }

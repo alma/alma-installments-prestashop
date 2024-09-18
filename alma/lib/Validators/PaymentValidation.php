@@ -342,8 +342,8 @@ class PaymentValidation
      * in context to prevent amount_mismatch error
      * When calculating cart amount from an IPN call.
      *
-     * @param \Customer $cart
-     * @param $customer
+     * @param \Cart $cart
+     * @param \Customer $customer
      *
      * @return float
      */
@@ -362,11 +362,9 @@ class PaymentValidation
     }
 
     /**
-     * @param $paymentId
-     * @param $apiKey
-     * @param $signature
-     *
-     * @return true
+     * @param string $paymentId
+     * @param string $apiKey
+     * @param string $signature
      *
      * @throws PaymentValidationException
      */
@@ -375,13 +373,14 @@ class PaymentValidation
         if (!$paymentId) {
             throw new PaymentValidationException(null, '[Alma] Payment ID is missing');
         }
+        if (!$apiKey) {
+            throw new PaymentValidationException(null, '[Alma] Api key is missing');
+        }
         if (!$signature) {
             throw new PaymentValidationException(null, '[Alma] Signature is missing');
         }
         if (!$this->paymentValidator->isHmacValidated($paymentId, $apiKey, $signature)) {
             throw new PaymentValidationException(null, '[Alma] Signature is invalid');
         }
-
-        return true;
     }
 }

@@ -41,7 +41,15 @@ class AlmaIpnModuleFrontController extends ModuleFrontController
 {
     use AjaxTrait;
 
+    /**
+     * @var bool
+     */
     public $ssl = true;
+
+    /**
+     * @var Context
+     */
+    public $context;
 
     /**
      * @var PaymentValidation
@@ -77,15 +85,15 @@ class AlmaIpnModuleFrontController extends ModuleFrontController
         try {
             $this->paymentValidation->checkSignature($paymentId, Configuration::get('ALMA_API_KEY'), $_SERVER['HTTP_X_ALMA_SIGNATURE']);
             $this->paymentValidation->validatePayment($paymentId);
+        } catch (PaymentValidationException $e) {
+            Logger::instance()->error('[Alma] IPN Payment Validation Error - Message : ' . $e->getMessage());
+            $this->ajaxRenderAndExit(json_encode(['error' => $e->getMessage()]), 500);
         } catch (PaymentValidationError $e) {
             Logger::instance()->error('ipn payment_validation_error - Message : ' . $e->getMessage());
             $this->ajaxRenderAndExit(json_encode(['error' => $e->getMessage()]), 500);
         } catch (MismatchException $e) {
             Logger::instance()->error('ipn payment_validation_mismatch_error - Message : ' . $e->getMessage());
             $this->ajaxRenderAndExit(json_encode(['error' => $e->getMessage()]), 200);
-        } catch (PaymentValidationException $e) {
-            Logger::instance()->error('[Alma] IPN Payment Validation Error - Message : ' . $e->getMessage());
-            $this->ajaxRenderAndExit(json_encode(['error' => $e->getMessage()]), 500);
         }
 
         $this->ajaxRenderAndExit(json_encode(['success' => true]));
