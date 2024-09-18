@@ -20,11 +20,14 @@
  * @copyright 2018-2024 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
+if (!document.getElementById('alma-product-details')) {
+    throw new Error('[Alma] Product details not found. You need to add the hook displayProductActions in your template product page.');
+}
 const settings = getSettingsInsurance();
 let insuranceSelected = false;
 let selectedAlmaInsurance = null;
 let addToCartFlow = false;
-let productDetails = JSON.parse(document.getElementById('product-details').dataset.product);
+let productDetails = JSON.parse(document.getElementById('alma-product-details').dataset.productDetails);
 let quantity = getQuantity();
 let almaEligibilityAnswer = false;
 
@@ -74,7 +77,8 @@ let almaEligibilityAnswer = false;
                 'updatedProduct',
                 function () {
                     document.querySelector('.qty [name="qty"]').value = quantity;
-                    productDetails = JSON.parse(document.getElementById('product-details').dataset.product);
+                    productDetails.quantity_wanted = parseInt(quantity);
+                    document.getElementById('alma-product-details').dataset.productDetails = JSON.stringify(productDetails);
                     refreshWidget();
                     addModalListenerToAddToCart();
                 }
@@ -241,12 +245,24 @@ function removeInputInsurance() {
 
 function addModalListenerToAddToCart() {
     if (settings.isAddToCartPopupActivated === true && almaEligibilityAnswer) {
-        let addToCart = document.querySelector('.add-to-cart');
-        // If we change the quantity the DOM is reloaded then we need to remove and add the listener again
-        addToCart.removeEventListener("click", insuranceListener);
-        addToCart.addEventListener("click", insuranceListener);
+        const addToCart = getAddToCartButton();
+        if (addToCart) {
+            // If we change the quantity the DOM is reloaded then we need to remove and add the listener again
+            addToCart.removeEventListener("click", insuranceListener);
+            addToCart.addEventListener("click", insuranceListener);
+        }
     }
 }
+
+function getAddToCartButton() {
+    let addToCart = document.querySelector('.add-to-cart');
+    if (!addToCart) {
+        addToCart = document.querySelector('.add-to-cart a, .add-to-cart button');
+    }
+
+    return addToCart;
+}
+
 function insuranceListener(event) {
         if (!insuranceSelected) {
             event.preventDefault();

@@ -20,8 +20,7 @@
  * @copyright 2018-2024 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  *}
-{if isset($layout)}
-    <div class="alma-widget-insurance" id="alma-widget-insurance-product-page" data-alma-insurance-settings="{$settingsInsurance}" style="height: 0px" >
-        <iframe id="product-alma-iframe" src="{$iframeUrl}"></iframe>
-    </div>
-{/if}
+<div id="alma-product-details" data-product-details="{$productDetails}" style="display:none;"></div>
+<div class="alma-widget-insurance" id="alma-widget-insurance-product-page" data-alma-insurance-settings="{$settingsInsurance}" style="height: 0px" >
+    <iframe id="product-alma-iframe" src="{$iframeUrl}"></iframe>
+</div>
