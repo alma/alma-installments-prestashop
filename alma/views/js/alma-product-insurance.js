@@ -245,7 +245,7 @@ function removeInputInsurance() {
 
 function addModalListenerToAddToCart() {
     if (settings.isAddToCartPopupActivated === true && almaEligibilityAnswer) {
-        let addToCart = getAddToCartButton();
+        const addToCart = getAddToCartButton();
         if (addToCart) {
             // If we change the quantity the DOM is reloaded then we need to remove and add the listener again
             addToCart.removeEventListener("click", insuranceListener);
