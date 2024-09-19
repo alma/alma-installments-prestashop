@@ -32,6 +32,7 @@ use Alma\PrestaShop\Builders\Helpers\PriceHelperBuilder;
 use Alma\PrestaShop\Builders\Helpers\SettingsHelperBuilder;
 use Alma\PrestaShop\Builders\Services\OrderServiceBuilder;
 use Alma\PrestaShop\Exceptions\PaymentValidationException;
+use Alma\PrestaShop\Exceptions\RefundException;
 use Alma\PrestaShop\Helpers\ClientHelper;
 use Alma\PrestaShop\Helpers\PriceHelper;
 use Alma\PrestaShop\Helpers\RefundHelper;
@@ -130,6 +131,7 @@ class PaymentValidation
      *
      * @throws MismatchException
      * @throws PaymentValidationError
+     * @throws PaymentValidationException
      */
     public function validatePayment($almaPaymentId)
     {
@@ -220,7 +222,11 @@ class PaymentValidation
 
                 $clientHelper = new ClientHelper();
                 $refundHelper = new RefundHelper($this->module, $cart, $payment->id, $clientHelper);
-                $refundHelper->mismatchFullRefund();
+                try {
+                    $refundHelper->mismatchFullRefund();
+                } catch (RefundException $e) {
+                    throw new PaymentValidationException('[Alma] Error refund from mismatch', $cart->id, 0, $e);
+                }
             }
 
             $firstInstalment = $payment->payment_plan[0];
@@ -323,8 +329,7 @@ class PaymentValidation
      *
      * @return \OrderCore|null
      *
-     * @throws \PrestaShopDatabaseException
-     * @throws \PrestaShopException
+     * @throws PaymentValidationException
      */
     private function getOrderByCartId($cartId)
     {
@@ -333,7 +338,13 @@ class PaymentValidation
         } else {
             $orderId = (int) \Order::getOrderByCartId((int) $cartId);
 
-            return new \Order($orderId);
+            try {
+                return new \Order($orderId);
+            } catch (\PrestaShopDatabaseException $e) {
+                throw new PaymentValidationException('[Alma] Error Prestashop database', $cartId, 0, $e);
+            } catch (\PrestaShopException $e) {
+                throw new PaymentValidationException('[Alma] Error Prestashop', $cartId, 0, $e);
+            }
         }
     }
 
@@ -371,16 +382,16 @@ class PaymentValidation
     public function checkSignature($paymentId, $apiKey, $signature)
     {
         if (!$paymentId) {
-            throw new PaymentValidationException(null, '[Alma] Payment ID is missing');
+            throw new PaymentValidationException('[Alma] Payment ID is missing');
         }
         if (!$apiKey) {
-            throw new PaymentValidationException(null, '[Alma] Api key is missing');
+            throw new PaymentValidationException('[Alma] Api key is missing');
         }
         if (!$signature) {
-            throw new PaymentValidationException(null, '[Alma] Signature is missing');
+            throw new PaymentValidationException('[Alma] Signature is missing');
         }
         if (!$this->paymentValidator->isHmacValidated($paymentId, $apiKey, $signature)) {
-            throw new PaymentValidationException(null, '[Alma] Signature is invalid');
+            throw new PaymentValidationException('[Alma] Signature is invalid');
         }
     }
 }

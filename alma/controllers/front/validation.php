@@ -22,6 +22,8 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
+use Alma\PrestaShop\API\MismatchException;
+use Alma\PrestaShop\Exceptions\PaymentValidationException;
 use Alma\PrestaShop\Logger;
 use Alma\PrestaShop\Validators\PaymentValidation;
 use Alma\PrestaShop\Validators\PaymentValidationError;
@@ -72,7 +74,10 @@ class AlmaValidationModuleFrontController extends ModuleFrontController
         } catch (PaymentValidationError $e) {
             Logger::instance()->error('payment_validation_error - Message : ' . $e->getMessage());
             $redirect_to = $this->fail($e->cart, $e->getMessage());
-        } catch (Exception $e) {
+        } catch (PaymentValidationException $e) {
+            Logger::instance()->error('payment_validation_error - Message : ' . $e->getMessage());
+            $redirect_to = $this->fail($e->cartId, $e->getMessage());
+        } catch (MismatchException $e) {
             Logger::instance()->error('payment_error - Message : ' . $e->getMessage());
             $redirect_to = $this->fail(null, $e->getMessage());
         }

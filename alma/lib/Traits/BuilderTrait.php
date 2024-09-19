@@ -1205,16 +1205,10 @@ trait BuilderTrait
     }
 
     /**
-     * @param PaymentValidator $clientPaymentValidator
-     *
      * @return PaymentValidator
      */
-    public function getClientPaymentValidator($clientPaymentValidator = null)
+    public function getClientPaymentValidator()
     {
-        if ($clientPaymentValidator) {
-            return $clientPaymentValidator;
-        }
-
         return new PaymentValidator();
     }
 }

@@ -87,7 +87,7 @@ class PaymentValidationTest extends TestCase
     /**
      * @throws PaymentValidationException
      */
-    public function testCheckSignatureWithGoodSignatureReturnTrue()
+    public function testCheckSignatureWithGoodSignature()
     {
         $this->clientPaymentValidator->expects($this->once())
             ->method('isHmacValidated')
@@ -105,6 +105,9 @@ class PaymentValidationTest extends TestCase
             'Without api key' => [self::PAYMENT_ID, '', self::GOOD_SIGNATURE],
             'Without payement id' => ['', self::API_KEY, self::GOOD_SIGNATURE],
             'Without signature' => [self::PAYMENT_ID, self::API_KEY, ''],
+            'With api key null' => [self::PAYMENT_ID, null, self::GOOD_SIGNATURE],
+            'With payement id null' => [null, self::API_KEY, self::GOOD_SIGNATURE],
+            'With signature null' => [self::PAYMENT_ID, self::API_KEY, null],
         ];
     }
 }
