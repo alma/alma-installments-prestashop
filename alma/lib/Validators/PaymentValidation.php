@@ -25,11 +25,14 @@
 namespace Alma\PrestaShop\Validators;
 
 use Alma\API\Entities\Payment;
+use Alma\API\Lib\PaymentValidator;
 use Alma\API\RequestError;
 use Alma\PrestaShop\API\MismatchException;
 use Alma\PrestaShop\Builders\Helpers\PriceHelperBuilder;
 use Alma\PrestaShop\Builders\Helpers\SettingsHelperBuilder;
 use Alma\PrestaShop\Builders\Services\OrderServiceBuilder;
+use Alma\PrestaShop\Exceptions\PaymentValidationException;
+use Alma\PrestaShop\Exceptions\RefundException;
 use Alma\PrestaShop\Helpers\ClientHelper;
 use Alma\PrestaShop\Helpers\PriceHelper;
 use Alma\PrestaShop\Helpers\RefundHelper;
@@ -68,15 +71,23 @@ class PaymentValidation
      * @var OrderService
      */
     protected $orderService;
+    /**
+     * @var PaymentValidator
+     */
+    protected $paymentValidator;
 
     /**
      * @param $context
      * @param $module
      */
-    public function __construct($context, $module)
-    {
+    public function __construct(
+        $context,
+        $module,
+        $clientPaymentValidator
+    ) {
         $this->context = $context;
         $this->module = $module;
+        $this->paymentValidator = $clientPaymentValidator;
 
         $settingsHelperBuilder = new SettingsHelperBuilder();
         $this->settingsHelper = $settingsHelperBuilder->getInstance();
@@ -120,6 +131,7 @@ class PaymentValidation
      *
      * @throws MismatchException
      * @throws PaymentValidationError
+     * @throws PaymentValidationException
      */
     public function validatePayment($almaPaymentId)
     {
@@ -210,7 +222,11 @@ class PaymentValidation
 
                 $clientHelper = new ClientHelper();
                 $refundHelper = new RefundHelper($this->module, $cart, $payment->id, $clientHelper);
-                $refundHelper->mismatchFullRefund();
+                try {
+                    $refundHelper->mismatchFullRefund();
+                } catch (RefundException $e) {
+                    throw new PaymentValidationException('[Alma] Error refund from mismatch', $cart->id, 0, $e);
+                }
             }
 
             $firstInstalment = $payment->payment_plan[0];
@@ -312,6 +328,8 @@ class PaymentValidation
      * @param $cartId
      *
      * @return \OrderCore|null
+     *
+     * @throws PaymentValidationException
      */
     private function getOrderByCartId($cartId)
     {
@@ -320,7 +338,13 @@ class PaymentValidation
         } else {
             $orderId = (int) \Order::getOrderByCartId((int) $cartId);
 
-            return new \Order($orderId);
+            try {
+                return new \Order($orderId);
+            } catch (\PrestaShopDatabaseException $e) {
+                throw new PaymentValidationException('[Alma] Error Prestashop database', $cartId, 0, $e);
+            } catch (\PrestaShopException $e) {
+                throw new PaymentValidationException('[Alma] Error Prestashop', $cartId, 0, $e);
+            }
         }
     }
 
@@ -330,7 +354,7 @@ class PaymentValidation
      * When calculating cart amount from an IPN call.
      *
      * @param \Cart $cart
-     * @param \Customer $cart
+     * @param \Customer $customer
      *
      * @return float
      */
@@ -346,5 +370,28 @@ class PaymentValidation
         $this->context->customer = $ipnCustomer;
 
         return $cartTotals;
+    }
+
+    /**
+     * @param string $paymentId
+     * @param string $apiKey
+     * @param string $signature
+     *
+     * @throws PaymentValidationException
+     */
+    public function checkSignature($paymentId, $apiKey, $signature)
+    {
+        if (!$paymentId) {
+            throw new PaymentValidationException('[Alma] Payment ID is missing');
+        }
+        if (!$apiKey) {
+            throw new PaymentValidationException('[Alma] Api key is missing');
+        }
+        if (!$signature) {
+            throw new PaymentValidationException('[Alma] Signature is missing');
+        }
+        if (!$this->paymentValidator->isHmacValidated($paymentId, $apiKey, $signature)) {
+            throw new PaymentValidationException('[Alma] Signature is invalid');
+        }
     }
 }

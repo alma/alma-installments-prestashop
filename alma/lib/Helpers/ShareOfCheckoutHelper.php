@@ -185,8 +185,6 @@ class ShareOfCheckoutHelper
             || empty($shareOfCheckoutEnabledDate)
             || !$this->dateHelper->isValidTimeStamp($shareOfCheckoutEnabledDate)
         ) {
-            Logger::instance()->info('Share Of Checkout is disabled or invalide date');
-
             return false;
         }
 
