@@ -94,7 +94,7 @@ class PlanHelper
      *
      * @return bool
      */
-    public function isPnxPlus4($plan)
+    public function isCredit($plan)
     {
         return $plan->installmentsCount > 4;
     }

@@ -37,11 +37,11 @@ class PlanHelperTest extends TestCase
     }
 
     /**
-     * @dataProvider provideIsPnxPlus4
+     * @dataProvider provideisCredit
      *
      * @return void
      */
-    public function testIsPnxPlus4($expected, $installmentsCount)
+    public function testisCredit($expected, $installmentsCount)
     {
         $plan = new FeePlan(
             [
@@ -49,10 +49,10 @@ class PlanHelperTest extends TestCase
             ]
         );
 
-        $this->assertEquals($expected, $this->planHelper->isPnxPlus4($plan));
+        $this->assertEquals($expected, $this->planHelper->isCredit($plan));
     }
 
-    public function provideIsPnxPlus4()
+    public function provideisCredit()
     {
         return [
             'test 4 installments' => [
