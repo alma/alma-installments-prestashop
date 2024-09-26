@@ -27,6 +27,7 @@ const settings = getSettingsInsurance();
 let insuranceSelected = false;
 let selectedAlmaInsurance = null;
 let addToCartFlow = false;
+//TODO: Need to refresh the productDetails on change reference
 let productDetails = JSON.parse(document.getElementById('alma-product-details').dataset.productDetails);
 let quantity = getQuantity();
 let almaEligibilityAnswer = false;
@@ -121,22 +122,26 @@ function onloadAddInsuranceInputOnProductAlma() {
     let currentResolve;
 
     window.addEventListener('message', (e) => {
+        let widgetInsurance = document.getElementById('alma-widget-insurance-product-page');
         if (e.data.type === 'almaEligibilityAnswer') {
             almaEligibilityAnswer = e.data.eligibilityCallResponseStatus.response.eligibleProduct;
             btnLoaders('stop');
             if (almaEligibilityAnswer) {
-                document.getElementById('alma-widget-insurance-product-page').style.height = e.data.widgetSize.height + 'px';
                 prestashop.emit('updateProduct', {
                     reason:{
                         productUrl: window.location.href,
                     }
                 });
             } else {
+                widgetInsurance.style.display = 'none';
                 let addToCart = document.querySelector('.add-to-cart');
                 if (addToCart) {
                     addToCart.removeEventListener("click", insuranceListener)
                 }
             }
+        }
+        if (e.data.type === 'changeWidgetHeight') {
+            widgetInsurance.style.height = e.data.widgetHeight + 'px';
         }
         if (e.data.type === 'getSelectedInsuranceData') {
             if (parseInt(document.querySelector('.qty [name="qty"]').value) !== quantity) {
