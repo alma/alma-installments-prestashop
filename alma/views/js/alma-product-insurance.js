@@ -125,13 +125,7 @@ function onloadAddInsuranceInputOnProductAlma() {
             almaEligibilityAnswer = e.data.eligibilityCallResponseStatus.response.eligibleProduct;
             btnLoaders('stop');
             if (almaEligibilityAnswer) {
-                let heightIframe = e.data.widgetSize.height;
-                let stringHeightIframe = heightIframe + 'px';
-                if (heightIframe <= 45) {
-                    stringHeightIframe = '100%';
-                }
-
-                document.getElementById('alma-widget-insurance-product-page').style.height = stringHeightIframe;
+                document.getElementById('alma-widget-insurance-product-page').style.height = e.data.widgetSize.height + 'px';
                 prestashop.emit('updateProduct', {
                     reason:{
                         productUrl: window.location.href,
