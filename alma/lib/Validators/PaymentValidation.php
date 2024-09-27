@@ -50,7 +50,7 @@ if (!defined('_PS_VERSION_')) {
 class PaymentValidation
 {
     /** @var ContextFactory */
-    private $context;
+    protected $context;
     /** @var ModuleFactory */
     protected $module;
 
@@ -79,17 +79,17 @@ class PaymentValidation
     protected $paymentValidator;
 
     /**
-     * @param ContextFactory $context
-     * @param ModuleFactory $module
+     * @param ContextFactory $contextFactory
+     * @param ModuleFactory $moduleFactory
      * @param PaymentValidator $clientPaymentValidator
      */
     public function __construct(
-        $context,
-        $module,
+        $contextFactory,
+        $moduleFactory,
         $clientPaymentValidator
     ) {
-        $this->context = $context->getContext();
-        $this->module = $module->getModule();
+        $this->context = $contextFactory->getContext();
+        $this->module = $moduleFactory->getModule();
         $this->paymentValidator = $clientPaymentValidator;
 
         $settingsHelperBuilder = new SettingsHelperBuilder();
