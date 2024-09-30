@@ -25,6 +25,7 @@
 use Alma\PrestaShop\API\MismatchException;
 use Alma\PrestaShop\Builders\Validators\PaymentValidationBuilder;
 use Alma\PrestaShop\Exceptions\PaymentValidationException;
+use Alma\PrestaShop\Helpers\SettingsHelper;
 use Alma\PrestaShop\Logger;
 use Alma\PrestaShop\Traits\AjaxTrait;
 use Alma\PrestaShop\Validators\PaymentValidation;
@@ -73,6 +74,7 @@ class AlmaIpnModuleFrontController extends ModuleFrontController
      * @return void
      *
      * @throws PrestaShopException
+     * @throws Exception
      */
     public function postProcess()
     {
@@ -83,7 +85,7 @@ class AlmaIpnModuleFrontController extends ModuleFrontController
         $paymentId = Tools::getValue('pid');
 
         try {
-            $this->paymentValidation->checkSignature($paymentId, Configuration::get('ALMA_API_KEY'), $_SERVER['HTTP_X_ALMA_SIGNATURE']);
+            $this->paymentValidation->checkSignature($paymentId, SettingsHelper::getActiveAPIKey(), $_SERVER['HTTP_X_ALMA_SIGNATURE']);
             $this->paymentValidation->validatePayment($paymentId);
             $this->ajaxRenderAndExit(json_encode(['success' => true]));
         } catch (PaymentValidationException $e) {
