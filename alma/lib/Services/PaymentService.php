@@ -315,8 +315,7 @@ class PaymentService
 
                     $paymentOption = $this->paymentOptionHelper->setAdditionalInformationForEuCompliance(
                         $paymentOption,
-                        $template,
-                        $plan->installmentsCount
+                        $template
                     );
                 }
 

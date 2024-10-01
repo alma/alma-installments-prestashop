@@ -247,15 +247,14 @@ class PaymentOptionHelper
     /**
      * @param PaymentOption $paymentOption
      * @param $template
-     * @param int $installments
      *
      * @return mixed
      */
-    public function setAdditionalInformationForEuCompliance($paymentOption, $template, $installments)
+    public function setAdditionalInformationForEuCompliance($paymentOption, $template)
     {
         $paymentOption->setAdditionalInformation($template);
 
-        if ($this->configurationHelper->isInPageEnabled($installments, $this->settingsHelper)) {
+        if ($this->configurationHelper->isInPageEnabled($this->settingsHelper)) {
             $paymentOption->setForm($this->paymentOptionTemplateHelper->getTemplateInPage());
         }
 

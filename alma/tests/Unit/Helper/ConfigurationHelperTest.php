@@ -50,7 +50,7 @@ class ConfigurationHelperTest extends TestCase
     {
         $settingsHelper = \Mockery::mock(SettingsHelper::class);
         $settingsHelper->shouldReceive('isInPageEnabled')->andReturn($isInPageEnabled);
-        $this->assertEquals($expected, $this->configurationHelper->isInPageEnabled($installments, $settingsHelper));
+        $this->assertEquals($expected, $this->configurationHelper->isInPageEnabled($settingsHelper));
     }
 
     public function provideIsInPageEnabled()
@@ -82,7 +82,7 @@ class ConfigurationHelperTest extends TestCase
                 'installments' => 4,
             ],
             'test inpage enable, installment 6' => [
-                'expected' => false,
+                'expected' => true,
                 'isInpageEnabled' => true,
                 'installments' => 6,
             ],

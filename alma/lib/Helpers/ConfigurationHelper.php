@@ -124,20 +124,13 @@ class ConfigurationHelper
     }
 
     /**
-     * @param int $installments
      * @param SettingsHelper $settingsHelper
      *
      * @return bool
      */
-    public function isInPageEnabled($installments, $settingsHelper)
+    public function isInPageEnabled($settingsHelper)
     {
-        $isInPageEnabled = $settingsHelper->isInPageEnabled();
-
-        if ($installments > 4) {
-            $isInPageEnabled = false;
-        }
-
-        return $isInPageEnabled;
+        return $settingsHelper->isInPageEnabled();
     }
 
     /**
