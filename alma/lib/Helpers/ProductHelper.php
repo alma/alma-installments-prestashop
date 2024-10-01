@@ -25,6 +25,8 @@
 namespace Alma\PrestaShop\Helpers;
 
 use Alma\PrestaShop\Builders\Helpers\InsuranceHelperBuilder;
+use Alma\PrestaShop\Exceptions\ProductException;
+use Alma\PrestaShop\Factories\ProductFactory;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -41,11 +43,24 @@ class ProductHelper
      * @var InsuranceHelper
      */
     protected $insuranceHelper;
+    /**
+     * @var ProductHelper
+     */
+    protected $productFactory;
 
-    public function __construct()
+    public function __construct($insuranceHelper = null, $productFactory = null)
     {
-        $insuranceHelperBuilder = new InsuranceHelperBuilder();
-        $this->insuranceHelper = $insuranceHelperBuilder->getInstance();
+        if (!isset($insuranceHelper)) {
+            $insuranceHelperBuilder = new InsuranceHelperBuilder();
+            $insuranceHelper = $insuranceHelperBuilder->getInstance();
+        }
+
+        if (!isset($productFactory)) {
+            $productFactory = new ProductFactory();
+        }
+
+        $this->insuranceHelper = $insuranceHelper;
+        $this->productFactory = $productFactory;
     }
 
     /**
@@ -275,5 +290,24 @@ class ProductHelper
         }
 
         return $category;
+    }
+
+    /**
+     * @param int $productId
+     * @param int $languageId
+     *
+     * @return array
+     *
+     * @throws ProductException
+     */
+    public function getAttributeCombinationsByProductId($productId, $languageId)
+    {
+        if (!$productId || !$languageId || !is_int($productId) || !is_int($languageId)) {
+            throw new ProductException("[Alma] Error to get attribute combination with productId {$productId} and languageId {$languageId}");
+        }
+
+        $product = $this->productFactory->create($productId);
+
+        return $product->getAttributeCombinations($languageId);
     }
 }

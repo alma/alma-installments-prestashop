@@ -24,12 +24,17 @@
 
 namespace Alma\PrestaShop\Tests\Unit\Services;
 
+use Alma\PrestaShop\Exceptions\CartException;
+use Alma\PrestaShop\Exceptions\InsuranceProductException;
+use Alma\PrestaShop\Factories\CartFactory;
 use Alma\PrestaShop\Factories\ContextFactory;
 use Alma\PrestaShop\Factories\LinkFactory;
 use Alma\PrestaShop\Factories\ProductFactory;
 use Alma\PrestaShop\Factories\ToolsFactory;
 use Alma\PrestaShop\Helpers\Admin\AdminInsuranceHelper;
+use Alma\PrestaShop\Helpers\ConstantsHelper;
 use Alma\PrestaShop\Helpers\ImageHelper;
+use Alma\PrestaShop\Helpers\InsuranceHelper;
 use Alma\PrestaShop\Helpers\PriceHelper;
 use Alma\PrestaShop\Helpers\ProductHelper;
 use Alma\PrestaShop\Helpers\ToolsHelper;
@@ -58,11 +63,11 @@ class InsuranceProductServiceTest extends TestCase
     /**
      * @var \Cart
      */
-    protected $cart;
+    protected $cartMock1;
     /**
      * @var \Cart
      */
-    protected $newCart;
+    protected $cartMock2;
     /**
      * @var ProductFactory
      */
@@ -103,6 +108,30 @@ class InsuranceProductServiceTest extends TestCase
      * @var \Link
      */
     protected $linkMock;
+    /**
+     * @var InsuranceProductService
+     */
+    protected $insuranceProductService;
+    /**
+     * @var \Language|(\Language&\PHPUnit_Framework_MockObject_MockObject)|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $productRepositoryMock;
+    /**
+     * @var \PHPUnit_Framework_MockObject_MockObject|\Product|(\Product&\PHPUnit_Framework_MockObject_MockObject)
+     */
+    protected $insuranceProductMock;
+    /**
+     * @var \ObjectModel|(\ObjectModel&\PHPUnit_Framework_MockObject_MockObject)|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $objectModelMock;
+    /**
+     * @var CartFactory
+     */
+    protected $cartFactoryMock;
+    /**
+     * @var CartService
+     */
+    protected $cartServiceMock;
 
     public function setUp()
     {
@@ -113,9 +142,13 @@ class InsuranceProductServiceTest extends TestCase
         $this->productFactoryMock = $this->createMock(ProductFactory::class);
         $this->linkFactoryMock = $this->createMock(LinkFactory::class);
         $this->linkFactoryMock->method('create')->willReturn($this->linkMock);
-        $this->cart = $this->createMock(\Cart::class);
-        $this->newCart = $this->createMock(\Cart::class);
+        $this->cartMock1 = $this->createMock(\Cart::class);
+        $this->cartMock1->id = 15;
+        $this->cartMock2 = $this->createMock(\Cart::class);
+        $this->cartMock2->id = 17;
+        $this->cartFactoryMock = $this->createMock(CartFactory::class);
         $this->context = $this->createMock(\Context::class);
+        $this->productRepositoryMock = $this->createMock(ProductRepository::class);
         $this->languageMock = $this->createMock(\Language::class);
         $this->languageMock->id = 1;
         $this->shop = $this->createMock(\Shop::class);
@@ -127,6 +160,7 @@ class InsuranceProductServiceTest extends TestCase
         $this->imageHelperMock = $this->createMock(ImageHelper::class);
         $this->toolsHelperMock = $this->createMock(ToolsHelper::class);
         $this->priceHelperMock = $this->createMock(PriceHelper::class);
+        $this->cartServiceMock = $this->createMock(CartService::class);
         $this->insuranceProductServiceMock = \Mockery::mock(InsuranceProductService::class,
         [
             $this->productFactoryMock,
@@ -146,7 +180,31 @@ class InsuranceProductServiceTest extends TestCase
             $this->toolsFactorySpy,
             $this->imageHelperMock,
             $this->toolsHelperMock,
+            $this->cartFactoryMock,
         ])->makePartial();
+        $this->insuranceProductService = new InsuranceProductService(
+            $this->productFactoryMock,
+            $this->linkFactoryMock,
+            $this->almaInsuranceProductRepository,
+            $this->contextFactoryMock,
+            $this->createMock(AttributeGroupProductService::class),
+            $this->createMock(AttributeProductService::class),
+            $this->createMock(CombinationProductAttributeService::class),
+            $this->createMock(InsuranceService::class),
+            $this->cartServiceMock,
+            $this->productRepositoryMock,
+            $this->createMock(ProductHelper::class),
+            $this->createMock(InsuranceApiService::class),
+            $this->priceHelperMock,
+            $this->createMock(InsuranceHelper::class),
+            $this->toolsFactorySpy,
+            $this->imageHelperMock,
+            $this->toolsHelperMock,
+            $this->cartFactoryMock
+        );
+        $this->insuranceProductMock = $this->createMock(\Product::class);
+        $this->insuranceProductMock->id = '10';
+        $this->insuranceProductMock->active = true;
     }
 
     /**
@@ -342,5 +400,169 @@ class InsuranceProductServiceTest extends TestCase
             ->andReturn('show');
 
         $this->assertFalse($this->insuranceProductServiceMock->canHandleAddingProductInsuranceOnce());
+    }
+
+    /**
+     * @dataProvider insuranceProductStateWithWrongParamsDataProvider
+     *
+     * @param $state
+     *
+     * @return void
+     *
+     * @throws InsuranceProductException
+     * @throws \PrestaShopException
+     */
+    public function testHandleInsuranceProductStateWithWrongParam($state)
+    {
+        $this->expectException(InsuranceProductException::class);
+        $this->insuranceProductService->handleInsuranceProductState($state);
+    }
+
+    /**
+     * @dataProvider insuranceProductStateWithRightParamsDataProvider
+     *
+     * @param $state
+     *
+     * @return void
+     *
+     * @throws InsuranceProductException
+     * @throws \PrestaShopException
+     */
+    public function testHandleInsuranceProductStateWithRightParams($state)
+    {
+        $this->productRepositoryMock->expects($this->once())
+            ->method('getProductIdByReference')
+            ->with(ConstantsHelper::ALMA_INSURANCE_PRODUCT_REFERENCE, $this->languageMock->id)
+            ->willReturn($this->insuranceProductMock->id);
+        $this->insuranceProductMock->expects($this->once())
+            ->method('save');
+        $this->productFactoryMock->expects($this->once())
+            ->method('create')
+            ->with($this->insuranceProductMock->id)
+            ->willReturn($this->insuranceProductMock);
+        $this->insuranceProductService->handleInsuranceProductState($state);
+    }
+
+    /**
+     * @return void
+     *
+     * @throws InsuranceProductException
+     * @throws \PrestaShopDatabaseException
+     */
+    public function testRemoveInsuranceProductsNotOrderedWithNoCartsReturned()
+    {
+        $this->almaInsuranceProductRepository->expects($this->once())
+            ->method('getCartsNotOrdered')
+            ->willReturn([]);
+        $this->assertTrue($this->insuranceProductService->removeInsuranceProductsNotOrdered());
+    }
+
+    /**
+     * @throws InsuranceProductException
+     * @throws \PrestaShopDatabaseException
+     */
+    public function testRemoveInsuranceProductsNotOrderedWithCartIdsAndWithoutInsuranceProducts()
+    {
+        $this->almaInsuranceProductRepository->expects($this->once())
+            ->method('getCartsNotOrdered')
+            ->willReturn([
+                ['id_cart' => $this->cartMock1->id],
+                ['id_cart' => $this->cartMock2->id],
+            ]);
+        $this->productRepositoryMock->expects($this->once())
+            ->method('getProductIdByReference')
+            ->with(ConstantsHelper::ALMA_INSURANCE_PRODUCT_REFERENCE)
+            ->willReturn(false);
+        $this->expectException(InsuranceProductException::class);
+        $this->insuranceProductService->removeInsuranceProductsNotOrdered();
+    }
+
+    /**
+     * @throws \PrestaShopDatabaseException
+     * @throws InsuranceProductException
+     */
+    public function testRemoveInsuranceProductsNotOrderedThrowExceptionByDeleteProductByCartId()
+    {
+        $this->almaInsuranceProductRepository->expects($this->once())
+            ->method('getCartsNotOrdered')
+            ->willReturn([
+                ['id_cart' => $this->cartMock1->id],
+                ['id_cart' => $this->cartMock2->id],
+            ]);
+        $this->productRepositoryMock->expects($this->once())
+            ->method('getProductIdByReference')
+            ->with(ConstantsHelper::ALMA_INSURANCE_PRODUCT_REFERENCE)
+            ->willReturn($this->insuranceProductMock->id);
+        $this->cartServiceMock->expects($this->exactly(2))
+            ->method('deleteProductByCartId')
+            ->withConsecutive(
+                [$this->insuranceProductMock->id, $this->cartMock1->id],
+                [$this->insuranceProductMock->id, $this->cartMock2->id]
+            )
+            ->willReturnOnConsecutiveCalls(
+                true,
+                $this->throwException(new CartException("Product id and cart id are required. ProductId: {$this->insuranceProductMock->id}, cartId: {$this->cartMock2->id}"))
+            );
+
+        $this->expectException(InsuranceProductException::class);
+        $this->insuranceProductService->removeInsuranceProductsNotOrdered();
+    }
+
+    /**
+     * @throws InsuranceProductException
+     * @throws \PrestaShopDatabaseException
+     */
+    public function testRemoveInsuranceProductsNotOrderedWithRightData()
+    {
+        $this->almaInsuranceProductRepository->expects($this->once())
+            ->method('getCartsNotOrdered')
+            ->willReturn([
+                ['id_cart' => $this->cartMock1->id],
+                ['id_cart' => $this->cartMock2->id],
+                ['id_cart' => '34'],
+            ]);
+        $this->productRepositoryMock->expects($this->once())
+            ->method('getProductIdByReference')
+            ->with(ConstantsHelper::ALMA_INSURANCE_PRODUCT_REFERENCE)
+            ->willReturn($this->insuranceProductMock->id);
+        $this->cartServiceMock->expects($this->exactly(3))
+            ->method('deleteProductByCartId')
+            ->withConsecutive(
+                [$this->insuranceProductMock->id, $this->cartMock1->id],
+                [$this->insuranceProductMock->id, $this->cartMock2->id],
+                [$this->insuranceProductMock->id, '34']
+            )
+            ->willReturnOnConsecutiveCalls(true, true, false);
+
+        $this->almaInsuranceProductRepository->expects($this->once())
+            ->method('deleteAssociationsByCartIds')
+            ->with("{$this->cartMock1->id}, {$this->cartMock2->id}, 34");
+
+        $this->insuranceProductService->removeInsuranceProductsNotOrdered();
+    }
+
+    public function insuranceProductStateWithWrongParamsDataProvider()
+    {
+        return [
+            'With a string' => ['toto'],
+            'With an object' => [\stdClass::class],
+            'With an array' => [[]],
+            'With a number' => [5],
+            'With null' => [null],
+        ];
+    }
+
+    public function insuranceProductStateWithRightParamsDataProvider()
+    {
+        return [
+            'With true' => [true],
+            'With false' => [false],
+            'With a string false' => ['false'],
+            'With a string true' => ['true'],
+            'With a string 0' => ['0'],
+            'With a string 1' => ['1'],
+            'With a int 0' => [0],
+            'With a int 1' => [1],
+        ];
     }
 }

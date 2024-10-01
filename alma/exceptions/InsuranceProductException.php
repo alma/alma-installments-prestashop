@@ -22,36 +22,8 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
-namespace Alma\PrestaShop\Builders\Services;
+namespace Alma\PrestaShop\Exceptions;
 
-use Alma\PrestaShop\Services\CartService;
-use Alma\PrestaShop\Traits\BuilderTrait;
-
-if (!defined('_PS_VERSION_')) {
-    exit;
-}
-
-/**
- * CartServiceBuilder.
- */
-class CartServiceBuilder
+class InsuranceProductException extends \Exception
 {
-    use BuilderTrait;
-
-    /**
-     * @return CartService
-     */
-    public function getInstance()
-    {
-        return new CartService(
-            $this->getCartProductRepository(),
-            $this->getContextFactory(),
-            $this->getOpartSaveCartCartService(),
-            $this->getInsuranceHelper(),
-            $this->getInsuranceProductHelper(),
-            $this->getToolsFactory(),
-            $this->getCartFactory(),
-            $this->getProductHelper()
-        );
-    }
 }

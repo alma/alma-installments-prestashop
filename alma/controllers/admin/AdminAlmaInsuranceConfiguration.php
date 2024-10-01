@@ -26,10 +26,14 @@ if (!defined('_PS_VERSION_')) {
 }
 
 use Alma\PrestaShop\Builders\Admin\InsuranceHelperBuilder;
+use Alma\PrestaShop\Builders\Services\InsuranceProductServiceBuilder;
+use Alma\PrestaShop\Exceptions\InsuranceProductException;
+use Alma\PrestaShop\Exceptions\WrongParamsException;
 use Alma\PrestaShop\Helpers\Admin\AdminInsuranceHelper;
 use Alma\PrestaShop\Helpers\ConfigurationHelper;
 use Alma\PrestaShop\Helpers\ConstantsHelper;
 use Alma\PrestaShop\Logger;
+use Alma\PrestaShop\Services\InsuranceProductService;
 use Alma\PrestaShop\Traits\AjaxTrait;
 
 class AdminAlmaInsuranceConfigurationController extends ModuleAdminController
@@ -44,6 +48,10 @@ class AdminAlmaInsuranceConfigurationController extends ModuleAdminController
      * @var ConfigurationHelper
      */
     private $configurationHelper;
+    /**
+     * @var InsuranceProductService
+     */
+    protected $insuranceProductService;
 
     public function __construct()
     {
@@ -51,6 +59,8 @@ class AdminAlmaInsuranceConfigurationController extends ModuleAdminController
         $insuranceHelperBuilder = new InsuranceHelperBuilder();
         $this->insuranceHelper = $insuranceHelperBuilder->getInstance();
         $this->configurationHelper = new ConfigurationHelper();
+        $insuranceProductServiceBuilder = new InsuranceProductServiceBuilder();
+        $this->insuranceProductService = $insuranceProductServiceBuilder->getInstance();
         parent::__construct();
     }
 
@@ -88,20 +98,38 @@ class AdminAlmaInsuranceConfigurationController extends ModuleAdminController
     {
         try {
             $config = Tools::getValue('config');
+            $savedInsuranceStatus = $config[AdminInsuranceHelper::$fieldsDbInsuranceToIframeParamNames[ConstantsHelper::ALMA_ACTIVATE_INSURANCE]];
 
             $this->insuranceHelper->saveConfigInsurance($config);
+            $this->insuranceProductService->handleInsuranceProductState($savedInsuranceStatus);
+
+            if ($savedInsuranceStatus === 'false') {
+                $this->insuranceProductService->removeInsuranceProductsNotOrdered();
+            }
 
             $this->ajaxRenderAndExit(json_encode([
                     'success' => true,
                     'message' => $this->module->l('Your configuration has been saved', 'AdminAlmaInsuranceConfiguration'),
                 ])
             );
-        } catch (\Exception $e) {
-            Logger::instance()->error('Error creating Alma configuration insurance: ' . $e->getMessage());
+        } catch (InsuranceProductException $e) {
+            Logger::instance()->error('[Alma] Error insurance product during change configuration: ' . $e->getMessage());
             $this->ajaxRenderAndExit(json_encode([
                     'error' => [
                         'msg' => sprintf(
-                            $this->module->l('Error creating configuration Alma insurance: %1$s', 'AdminAlmaInsuranceConfiguration'),
+                            $this->module->l('[Alma] Error insurance product during change configuration: %1$s', 'AdminAlmaInsuranceConfiguration'),
+                            $e->getMessage()
+                        ),
+                        'code' => $e->getCode(),
+                    ],
+                ])
+            );
+        } catch (WrongParamsException $e) {
+            Logger::instance()->error('[Alma] Error creating Alma configuration insurance: ' . $e->getMessage());
+            $this->ajaxRenderAndExit(json_encode([
+                    'error' => [
+                        'msg' => sprintf(
+                            $this->module->l('[Alma] Error creating configuration Alma insurance: %1$s', 'AdminAlmaInsuranceConfiguration'),
                             $e->getMessage()
                         ),
                         'code' => $e->getCode(),

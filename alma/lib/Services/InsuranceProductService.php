@@ -26,6 +26,8 @@ namespace Alma\PrestaShop\Services;
 
 use Alma\PrestaShop\Exceptions\AlmaException;
 use Alma\PrestaShop\Exceptions\InsuranceContractException;
+use Alma\PrestaShop\Exceptions\InsuranceProductException;
+use Alma\PrestaShop\Factories\CartFactory;
 use Alma\PrestaShop\Factories\ContextFactory;
 use Alma\PrestaShop\Factories\LinkFactory;
 use Alma\PrestaShop\Factories\ProductFactory;
@@ -126,9 +128,13 @@ class InsuranceProductService
      */
     protected $toolsFactory;
     /**
-     * @var mixed
+     * @var Logger
      */
     protected $logger;
+    /**
+     * @var CartFactory
+     */
+    protected $cartFactory;
 
     /**
      * @param AlmaInsuranceProductRepository $almaInsuranceProductRepository
@@ -146,6 +152,7 @@ class InsuranceProductService
      * @param InsuranceHelper $insuranceHelper
      * @param ImageHelper $imageHelper
      * @param ToolsHelper $toolsHelper
+     * @param CartFactory $cartFactory
      */
     public function __construct(
         $productFactory,
@@ -164,7 +171,8 @@ class InsuranceProductService
         $insuranceHelper,
         $toolsFactory,
         $imageHelper,
-        $toolsHelper
+        $toolsHelper,
+        $cartFactory
     ) {
         $this->productFactory = $productFactory;
         $this->link = $linkFactory->create();
@@ -183,6 +191,7 @@ class InsuranceProductService
         $this->toolsFactory = $toolsFactory;
         $this->imageHelper = $imageHelper;
         $this->toolsHelper = $toolsHelper;
+        $this->cartFactory = $cartFactory;
     }
 
     /**
@@ -421,5 +430,53 @@ class InsuranceProductService
         }
 
         return $resultInsurance;
+    }
+
+    /**
+     * @throws InsuranceProductException
+     * @throws \PrestaShopException
+     */
+    public function handleInsuranceProductState($state)
+    {
+        $filterState = filter_var($state, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE);
+
+        if (is_null($state) || is_null($filterState)) {
+            throw new InsuranceProductException('[Alma] Wrong param to save insurance : ' . var_export($state, true));
+        }
+
+        $insuranceProductId = $this->productRepository->getProductIdByReference(ConstantsHelper::ALMA_INSURANCE_PRODUCT_REFERENCE, $this->context->language->id);
+        $insuranceProduct = $this->productFactory->create($insuranceProductId);
+        $insuranceProduct->active = $filterState;
+        $insuranceProduct->save();
+    }
+
+    /**
+     * @return true|void
+     *
+     * @throws InsuranceProductException
+     * @throws \PrestaShopDatabaseException
+     */
+    public function removeInsuranceProductsNotOrdered()
+    {
+        $cartIds = $this->almaInsuranceProductRepository->getCartsNotOrdered();
+        $insuranceProductId = $this->productRepository->getProductIdByReference(ConstantsHelper::ALMA_INSURANCE_PRODUCT_REFERENCE);
+
+        if (empty($cartIds)) {
+            return true;
+        }
+        if (!$insuranceProductId) {
+            throw new InsuranceProductException("[Alma] Error while removing insurance product id. InsuranceProductId: {$insuranceProductId} doesn't exist");
+        }
+
+        foreach ($cartIds as $cartId) {
+            try {
+                $this->cartService->deleteProductByCartId((int) $insuranceProductId, (int) $cartId['id_cart']);
+            } catch (AlmaException $e) {
+                throw new InsuranceProductException("[Alma] Error while removing product id : {$insuranceProductId} in cart id : {$cartId['id_cart']}");
+            }
+        }
+
+        $arrayCartIds = array_column($cartIds, 'id_cart');
+        $this->almaInsuranceProductRepository->deleteAssociationsByCartIds(implode(', ', $arrayCartIds));
     }
 }
