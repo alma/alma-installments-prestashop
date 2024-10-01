@@ -167,7 +167,7 @@ class AlmaPaymentModuleFrontController extends ModuleFrontController
             $this->ajaxErrorAndDie();
         }
 
-        if ($this->paymentData->isInPage($data)) {
+        if ($this->paymentData->isInPage()) {
             $this->ajaxRenderAndExit(json_encode($payment));
         }
 

@@ -329,7 +329,7 @@ class PaymentData
             $dataPayment['payment']['deferred_description'] = $this->customFieldsHelper->getDescriptionPaymentTriggerByLang($this->context->language->id);
         }
 
-        if ($this->isInPage($dataPayment)) {
+        if ($this->isInPage()) {
             $dataPayment['payment']['origin'] = 'online_in_page';
         }
 
@@ -490,13 +490,9 @@ class PaymentData
      *
      * @return bool
      */
-    public function isInPage($dataPayment)
+    public function isInPage()
     {
-        return (
-            $this->isPnXOnly($dataPayment)
-            || $this->isPayNow($dataPayment)
-            || $this->isPayLater($dataPayment))
-            && $this->settingsHelper->isInPageEnabled();
+        return $this->settingsHelper->isInPageEnabled();
     }
 
     /**
