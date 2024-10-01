@@ -223,6 +223,7 @@ class Alma extends PaymentModule
     {
         try {
             $this->checkCompatibilityPSModule();
+            $this->setContainer();
             $this->getService('alma.ps_accounts_installer')->install();
         } catch (\Alma\PrestaShop\Exceptions\CompatibilityPsAccountException $e) {
             \Alma\PrestaShop\Logger::instance()->info($e->getMessage());
@@ -256,6 +257,14 @@ class Alma extends PaymentModule
     public function getService($serviceName)
     {
         return $this->container->getService($serviceName);
+    }
+
+    public function setContainer()
+    {
+        $this->container = new \PrestaShop\ModuleLibServiceContainer\DependencyInjection\ServiceContainer(
+            $this->name,
+            $this->getLocalPath()
+        );
     }
 
     /**
@@ -599,10 +608,7 @@ class Alma extends PaymentModule
     public function renderPSAccount()
     {
         $this->checkCompatibilityPSModule();
-        $this->container = new \PrestaShop\ModuleLibServiceContainer\DependencyInjection\ServiceContainer(
-            $this->name,
-            $this->getLocalPath()
-        );
+        $this->setContainer();
 
         try {
             $accountsFacade = $this->getService('alma.ps_accounts_facade');
