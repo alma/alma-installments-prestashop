@@ -83,6 +83,11 @@ class AlmaIpnModuleFrontController extends ModuleFrontController
         header('Content-Type: application/json');
 
         $paymentId = Tools::getValue('pid');
+        if (!array_key_exists('HTTP_X_ALMA_SIGNATURE', $_SERVER)) {
+            $msg = 'Header key X-Alma-Signature doesn\'t exist';
+            Logger::instance()->error('[Alma] IPN Payment Validation Error - Message : ' . $msg);
+            $this->ajaxRenderAndExit(json_encode(['error' => $msg]), 500);
+        }
 
         try {
             $this->paymentValidation->checkSignature($paymentId, SettingsHelper::getActiveAPIKey(), $_SERVER['HTTP_X_ALMA_SIGNATURE']);
