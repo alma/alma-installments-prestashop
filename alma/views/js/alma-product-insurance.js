@@ -27,8 +27,7 @@ const settings = getSettingsInsurance();
 let insuranceSelected = false;
 let selectedAlmaInsurance = null;
 let addToCartFlow = false;
-//TODO: Need to refresh the productDetails on change reference
-let productDetails = JSON.parse(document.getElementById('alma-product-details').dataset.productDetails);
+let productDetails = JSON.parse(document.querySelector('.alma-widget-insurance .js-product-details').dataset.product);
 let quantity = getQuantity();
 let almaEligibilityAnswer = false;
 
@@ -79,7 +78,7 @@ let almaEligibilityAnswer = false;
                 function () {
                     document.querySelector('.qty [name="qty"]').value = quantity;
                     productDetails.quantity_wanted = parseInt(quantity);
-                    document.getElementById('alma-product-details').dataset.productDetails = JSON.stringify(productDetails);
+                    document.querySelector('.alma-widget-insurance .js-product-details').dataset.product = JSON.stringify(productDetails);
                     refreshWidget();
                     addModalListenerToAddToCart();
                 }
@@ -254,9 +253,10 @@ function addModalListenerToAddToCart() {
 }
 
 function getAddToCartButton() {
-    let addToCart = document.querySelector('.add-to-cart');
+    let addToCart = document.querySelector('button.add-to-cart');
+    // TODO: Ravate specific to generalise with selector configuration
     if (!addToCart) {
-        addToCart = document.querySelector('.add-to-cart a, .add-to-cart button');
+        addToCart = document.querySelector('.add-to-cart a, .add-to-cart button').first();
     }
 
     return addToCart;
