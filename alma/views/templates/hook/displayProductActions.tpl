@@ -21,6 +21,6 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  *}
 <div class="alma-widget-insurance" id="alma-widget-insurance-product-page" data-alma-insurance-settings="{$settingsInsurance}" style="height: 100%" >
-    <div id="alma-product-details" class="js-product-details" data-product="{$product.embedded_attributes|json_encode}" style="display:none;"></div>
+    <div id="product-details" class="js-product-details" data-product="{$product.embedded_attributes|json_encode}" style="display:none;"></div>
     <iframe id="product-alma-iframe" src="{$iframeUrl}"></iframe>
 </div>

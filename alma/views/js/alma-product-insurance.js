@@ -20,7 +20,7 @@
  * @copyright 2018-2024 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
-if (!document.getElementById('alma-product-details')) {
+if (!document.getElementById('alma-widget-insurance-product-page')) {
     throw new Error('[Alma] Product details not found. You need to add the hook displayProductActions in your template product page.');
 }
 const settings = getSettingsInsurance();
