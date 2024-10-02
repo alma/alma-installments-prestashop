@@ -77,6 +77,7 @@ let almaEligibilityAnswer = false;
                 'updatedProduct',
                 function () {
                     document.querySelector('.qty [name="qty"]').value = quantity;
+                    productDetails = JSON.parse(document.querySelector('.alma-widget-insurance .js-product-details').dataset.product);
                     productDetails.quantity_wanted = parseInt(quantity);
                     document.querySelector('.alma-widget-insurance .js-product-details').dataset.product = JSON.stringify(productDetails);
                     refreshWidget();
