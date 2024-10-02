@@ -33,6 +33,8 @@ use Alma\PrestaShop\Builders\Helpers\SettingsHelperBuilder;
 use Alma\PrestaShop\Builders\Services\OrderServiceBuilder;
 use Alma\PrestaShop\Exceptions\PaymentValidationException;
 use Alma\PrestaShop\Exceptions\RefundException;
+use Alma\PrestaShop\Factories\ContextFactory;
+use Alma\PrestaShop\Factories\ModuleFactory;
 use Alma\PrestaShop\Helpers\ClientHelper;
 use Alma\PrestaShop\Helpers\PriceHelper;
 use Alma\PrestaShop\Helpers\RefundHelper;
@@ -47,10 +49,10 @@ if (!defined('_PS_VERSION_')) {
 
 class PaymentValidation
 {
-    /** @var \Context */
-    private $context;
-    /** @var \PaymentModule */
-    private $module;
+    /** @var ContextFactory */
+    protected $context;
+    /** @var ModuleFactory */
+    protected $module;
 
     /**
      * @var SettingsHelper
@@ -77,16 +79,17 @@ class PaymentValidation
     protected $paymentValidator;
 
     /**
-     * @param $context
-     * @param $module
+     * @param ContextFactory $contextFactory
+     * @param ModuleFactory $moduleFactory
+     * @param PaymentValidator $clientPaymentValidator
      */
     public function __construct(
-        $context,
-        $module,
+        $contextFactory,
+        $moduleFactory,
         $clientPaymentValidator
     ) {
-        $this->context = $context;
-        $this->module = $module;
+        $this->context = $contextFactory->getContext();
+        $this->module = $moduleFactory->getModule();
         $this->paymentValidator = $clientPaymentValidator;
 
         $settingsHelperBuilder = new SettingsHelperBuilder();

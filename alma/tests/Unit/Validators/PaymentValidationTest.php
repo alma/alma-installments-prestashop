@@ -27,6 +27,8 @@ namespace Alma\PrestaShop\Tests\Unit\Validators;
 
 use Alma\API\Lib\PaymentValidator;
 use Alma\PrestaShop\Exceptions\PaymentValidationException;
+use Alma\PrestaShop\Factories\ContextFactory;
+use Alma\PrestaShop\Factories\ModuleFactory;
 use Alma\PrestaShop\Validators\PaymentValidation;
 use PHPUnit\Framework\TestCase;
 
@@ -49,8 +51,8 @@ class PaymentValidationTest extends TestCase
     {
         $this->clientPaymentValidator = $this->createMock(PaymentValidator::class);
         $this->paymentValidation = new PaymentValidation(
-            $this->createMock(\Context::class),
-            $this->createMock(\Module::class),
+            $this->createMock(ContextFactory::class),
+            $this->createMock(ModuleFactory::class),
             $this->clientPaymentValidator
         );
     }
