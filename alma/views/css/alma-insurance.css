@@ -93,7 +93,8 @@
 /**
 -- Product Details
  */
-.alma-widget-insurance .js-product-details{
+.alma-widget-insurance .js-product-details,
+.alma-widget-insurance #product-details {
     display: none;
 }
 
