@@ -101,7 +101,7 @@ class HookHelper
             'operand' => '>=',
         ],
         'actionObjectProductInCartDeleteAfter' => [
-            'version' => '8.1.4',
+            'version' => '1.7.1',
             'operand' => '>',
         ],
         'actionCartSave' => 'all',

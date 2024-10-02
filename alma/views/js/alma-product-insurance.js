@@ -20,14 +20,14 @@
  * @copyright 2018-2024 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
-if (!document.getElementById('alma-product-details')) {
+if (!document.getElementById('alma-widget-insurance-product-page')) {
     throw new Error('[Alma] Product details not found. You need to add the hook displayProductActions in your template product page.');
 }
 const settings = getSettingsInsurance();
 let insuranceSelected = false;
 let selectedAlmaInsurance = null;
 let addToCartFlow = false;
-let productDetails = JSON.parse(document.getElementById('alma-product-details').dataset.productDetails);
+let productDetails = JSON.parse(document.querySelector('.alma-widget-insurance .js-product-details').dataset.product);
 let quantity = getQuantity();
 let almaEligibilityAnswer = false;
 
@@ -77,8 +77,9 @@ let almaEligibilityAnswer = false;
                 'updatedProduct',
                 function () {
                     document.querySelector('.qty [name="qty"]').value = quantity;
+                    productDetails = JSON.parse(document.querySelector('.alma-widget-insurance .js-product-details').dataset.product);
                     productDetails.quantity_wanted = parseInt(quantity);
-                    document.getElementById('alma-product-details').dataset.productDetails = JSON.stringify(productDetails);
+                    document.querySelector('.alma-widget-insurance .js-product-details').dataset.product = JSON.stringify(productDetails);
                     refreshWidget();
                     addModalListenerToAddToCart();
                 }
@@ -121,28 +122,26 @@ function onloadAddInsuranceInputOnProductAlma() {
     let currentResolve;
 
     window.addEventListener('message', (e) => {
+        let widgetInsurance = document.getElementById('alma-widget-insurance-product-page');
         if (e.data.type === 'almaEligibilityAnswer') {
             almaEligibilityAnswer = e.data.eligibilityCallResponseStatus.response.eligibleProduct;
             btnLoaders('stop');
             if (almaEligibilityAnswer) {
-                let heightIframe = e.data.widgetSize.height;
-                let stringHeightIframe = heightIframe + 'px';
-                if (heightIframe <= 45) {
-                    stringHeightIframe = '100%';
-                }
-
-                document.getElementById('alma-widget-insurance-product-page').style.height = stringHeightIframe;
                 prestashop.emit('updateProduct', {
                     reason:{
                         productUrl: window.location.href,
                     }
                 });
             } else {
+                widgetInsurance.style.display = 'none';
                 let addToCart = document.querySelector('.add-to-cart');
                 if (addToCart) {
                     addToCart.removeEventListener("click", insuranceListener)
                 }
             }
+        }
+        if (e.data.type === 'changeWidgetHeight') {
+            widgetInsurance.style.height = e.data.widgetHeight + 'px';
         }
         if (e.data.type === 'getSelectedInsuranceData') {
             if (parseInt(document.querySelector('.qty [name="qty"]').value) !== quantity) {
@@ -255,9 +254,10 @@ function addModalListenerToAddToCart() {
 }
 
 function getAddToCartButton() {
-    let addToCart = document.querySelector('.add-to-cart');
+    let addToCart = document.querySelector('button.add-to-cart');
+    // TODO: Ravate specific to generalise with selector configuration
     if (!addToCart) {
-        addToCart = document.querySelector('.add-to-cart a, .add-to-cart button');
+        addToCart = document.querySelector('.add-to-cart a, .add-to-cart button').first();
     }
 
     return addToCart;
