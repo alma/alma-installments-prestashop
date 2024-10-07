@@ -50,15 +50,8 @@ class ProductHelper
 
     public function __construct($insuranceHelper = null, $productFactory = null)
     {
-        if (!isset($insuranceHelper)) {
-            $insuranceHelperBuilder = new InsuranceHelperBuilder();
-            $insuranceHelper = $insuranceHelperBuilder->getInstance();
-        }
-
-        $productFactory = $productFactory ?: new ProductFactory();
-
-        $this->insuranceHelper = $insuranceHelper;
-        $this->productFactory = $productFactory;
+        $this->insuranceHelper = $insuranceHelper ?: (new InsuranceHelperBuilder())->getInstance();
+        $this->productFactory = $productFactory ?: new ProductFactory();
     }
 
     /**
