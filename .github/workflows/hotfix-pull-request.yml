@@ -59,6 +59,7 @@ jobs:
             ### Checklist of actions to be done before merging
             - [ ] Review and update the CHANGELOG.md if needed
             - [ ] Review and update the Github release draft if needed
+              ⚠️ Click on `Save draft` to update it, do not click on `Publish release`: it will be published automatically after the merge of this PR
             - [ ] Review the files updated with the new version number in the commit named "chore: update version"
           branch: hotfix/${{ steps.release-drafter.outputs.tag_name }}
           base: main
