@@ -24,3 +24,10 @@
 require '../../config/config.inc.php';
 
 require 'alma.php';
+
+// Workaround to avoid error during generation of html report file
+use Alma\PrestaShop\Tests\ReportConfigForHTMLReport;
+
+$configFilePath = __DIR__ . '/../phpunit.ci.xml';
+$reportConfig = new ReportConfigForHTMLReport($configFilePath);
+$reportConfig->handleReportConfig();

@@ -155,7 +155,6 @@ class PaymentOptionTemplateHelper
             'apiMode' => strtoupper($this->settingsHelper->getModeActive()),
             'merchantId' => $this->settingsHelper->getIdMerchant(),
             'isInPageEnabled' => $this->configurationHelper->isInPageEnabled(
-                $plan->installmentsCount,
                 $this->settingsHelper
             ),
             'first' => $first,

@@ -91,6 +91,14 @@
 }
 
 /**
+-- Product Details
+ */
+.alma-widget-insurance .js-product-details,
+.alma-widget-insurance #product-details {
+    display: none;
+}
+
+/**
 -- Loader dot
  */
 .alma-loader-dot-container {

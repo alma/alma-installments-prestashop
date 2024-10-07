@@ -22,36 +22,31 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
-namespace Alma\PrestaShop\Builders\Services;
+namespace Alma\PrestaShop\Builders\Validators;
 
-use Alma\PrestaShop\Services\CartService;
 use Alma\PrestaShop\Traits\BuilderTrait;
+use Alma\PrestaShop\Validators\PaymentValidation;
 
 if (!defined('_PS_VERSION_')) {
     exit;
 }
 
 /**
- * CartServiceBuilder.
+ * PaymentValidationBuilder.
  */
-class CartServiceBuilder
+class PaymentValidationBuilder
 {
     use BuilderTrait;
 
     /**
-     * @return CartService
+     * @return PaymentValidation
      */
     public function getInstance()
     {
-        return new CartService(
-            $this->getCartProductRepository(),
+        return new PaymentValidation(
             $this->getContextFactory(),
-            $this->getOpartSaveCartCartService(),
-            $this->getInsuranceHelper(),
-            $this->getInsuranceProductHelper(),
-            $this->getToolsFactory(),
-            $this->getCartFactory(),
-            $this->getProductHelper()
+            $this->getModuleFactory(),
+            $this->getClientPaymentValidator()
         );
     }
 }

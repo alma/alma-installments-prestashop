@@ -128,7 +128,7 @@ class PaymentService
     /**
      * @var bool
      */
-    protected $isPnxPlus4;
+    protected $isCredit;
 
     /**
      * @var MediaHelper
@@ -264,7 +264,7 @@ class PaymentService
 
                 $this->isPayNow = $this->configurationHelper->isPayNow($key);
                 $this->isDeferred = $this->planHelper->isDeferred($plan);
-                $this->isPnxPlus4 = $this->planHelper->isPnxPlus4($plan);
+                $this->isCredit = $this->planHelper->isCredit($plan);
 
                 $plans = $this->planHelper->buildDates($plans, $locale, $feePlans, $key, $this->isPayNow);
                 $duration = $this->settingsHelper->getDuration($plan);
@@ -272,7 +272,7 @@ class PaymentService
                 list($textPaymentButton, $descPaymentButton) = $this->paymentOptionHelper->getTextsByTypes(
                     $plan->installmentsCount,
                     $duration,
-                    $this->isPnxPlus4,
+                    $this->isCredit,
                     $this->isDeferred,
                     $this->isPayNow
                 );
@@ -315,8 +315,7 @@ class PaymentService
 
                     $paymentOption = $this->paymentOptionHelper->setAdditionalInformationForEuCompliance(
                         $paymentOption,
-                        $template,
-                        $plan->installmentsCount
+                        $template
                     );
                 }
 

@@ -1,5 +1,25 @@
 # Changelog
 
+## v4.4.0 - 2024-10-07
+
+### Changes
+
+### 🚀 New Features
+
+- feat: In page is now available for Credit (#575)
+- feat: Remove insurance in cart when deactivated (#569)
+- feat: HMAC verification on IPN callback for security (#561)
+
+### 🐛 Bug Fixes
+
+- fix: handle the height automatically of the insurance widget (#572)
+- fix: install module if container of getService Ps_account is null (#565)
+- fix: Inpage on prestashop 1.6 with third party module of checkout (#566)
+
+#### Contributors
+
+@Benjamin-Freoua-Alma, @FranceBe, @alma-renovate-bot, @alma-renovate-bot[bot], @github-actions and @joyet-simon
+
 ## v4.3.0 - 2024-08-12
 
 ### Changes

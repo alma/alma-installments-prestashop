@@ -23,7 +23,9 @@
  */
 
 use Alma\PrestaShop\API\MismatchException;
-use Alma\PrestaShop\Exceptions\RefundException;
+use Alma\PrestaShop\Builders\Validators\PaymentValidationBuilder;
+use Alma\PrestaShop\Exceptions\PaymentValidationException;
+use Alma\PrestaShop\Helpers\SettingsHelper;
 use Alma\PrestaShop\Logger;
 use Alma\PrestaShop\Traits\AjaxTrait;
 use Alma\PrestaShop\Validators\PaymentValidation;
@@ -40,7 +42,20 @@ class AlmaIpnModuleFrontController extends ModuleFrontController
 {
     use AjaxTrait;
 
+    /**
+     * @var bool
+     */
     public $ssl = true;
+
+    /**
+     * @var Context
+     */
+    public $context;
+
+    /**
+     * @var PaymentValidation
+     */
+    protected $paymentValidation;
 
     /**
      * IPN constructor
@@ -51,14 +66,15 @@ class AlmaIpnModuleFrontController extends ModuleFrontController
     {
         parent::__construct();
         $this->context = Context::getContext();
+        $paymentValidationBuilder = new PaymentValidationBuilder();
+        $this->paymentValidation = $paymentValidationBuilder->getInstance();
     }
 
     /**
      * @return void
      *
      * @throws PrestaShopException
-     * @throws RefundException
-     * @throws MismatchException
+     * @throws Exception
      */
     public function postProcess()
     {
@@ -67,10 +83,19 @@ class AlmaIpnModuleFrontController extends ModuleFrontController
         header('Content-Type: application/json');
 
         $paymentId = Tools::getValue('pid');
-        $validator = new PaymentValidation($this->context, $this->module);
+        if (!array_key_exists('HTTP_X_ALMA_SIGNATURE', $_SERVER)) {
+            $msg = 'Header key X-Alma-Signature doesn\'t exist';
+            Logger::instance()->error('[Alma] IPN Payment Validation Error - Message : ' . $msg);
+            $this->ajaxRenderAndExit(json_encode(['error' => $msg]), 500);
+        }
 
         try {
-            $validator->validatePayment($paymentId);
+            $this->paymentValidation->checkSignature($paymentId, SettingsHelper::getActiveAPIKey(), $_SERVER['HTTP_X_ALMA_SIGNATURE']);
+            $this->paymentValidation->validatePayment($paymentId);
+            $this->ajaxRenderAndExit(json_encode(['success' => true]));
+        } catch (PaymentValidationException $e) {
+            Logger::instance()->error('[Alma] IPN Payment Validation Error - Message : ' . $e->getMessage());
+            $this->ajaxRenderAndExit(json_encode(['error' => $e->getMessage()]), 500);
         } catch (PaymentValidationError $e) {
             Logger::instance()->error('ipn payment_validation_error - Message : ' . $e->getMessage());
             $this->ajaxRenderAndExit(json_encode(['error' => $e->getMessage()]), 500);
@@ -78,7 +103,5 @@ class AlmaIpnModuleFrontController extends ModuleFrontController
             Logger::instance()->error('ipn payment_validation_mismatch_error - Message : ' . $e->getMessage());
             $this->ajaxRenderAndExit(json_encode(['error' => $e->getMessage()]), 200);
         }
-
-        $this->ajaxRenderAndExit(json_encode(['success' => true]));
     }
 }

@@ -60,7 +60,8 @@ class InsuranceProductServiceBuilder
             $this->getInsuranceHelper(),
             $this->getToolsFactory(),
             $this->getImageHelper(),
-            $this->getToolsHelper()
+            $this->getToolsHelper(),
+            $this->getCartFactory()
         );
     }
 }

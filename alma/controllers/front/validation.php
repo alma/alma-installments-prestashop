@@ -22,6 +22,9 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
+use Alma\PrestaShop\API\MismatchException;
+use Alma\PrestaShop\Builders\Validators\PaymentValidationBuilder;
+use Alma\PrestaShop\Exceptions\PaymentValidationException;
 use Alma\PrestaShop\Logger;
 use Alma\PrestaShop\Validators\PaymentValidation;
 use Alma\PrestaShop\Validators\PaymentValidationError;
@@ -33,6 +36,10 @@ if (!defined('_PS_VERSION_')) {
 class AlmaValidationModuleFrontController extends ModuleFrontController
 {
     public $ssl = true;
+    /**
+     * @var PaymentValidation
+     */
+    protected $paymentValidation;
 
     /**
      * @codeCoverageIgnore
@@ -41,6 +48,8 @@ class AlmaValidationModuleFrontController extends ModuleFrontController
     {
         parent::__construct();
         $this->context = Context::getContext();
+        $paymentValidationBuilder = new PaymentValidationBuilder();
+        $this->paymentValidation = $paymentValidationBuilder->getInstance();
     }
 
     private function fail($cart, $msg = null)
@@ -65,14 +74,16 @@ class AlmaValidationModuleFrontController extends ModuleFrontController
         parent::postProcess();
 
         $paymentId = Tools::getValue('pid');
-        $validator = new PaymentValidation($this->context, $this->module);
 
         try {
-            $redirect_to = $validator->validatePayment($paymentId);
+            $redirect_to = $this->paymentValidation->validatePayment($paymentId);
         } catch (PaymentValidationError $e) {
             Logger::instance()->error('payment_validation_error - Message : ' . $e->getMessage());
             $redirect_to = $this->fail($e->cart, $e->getMessage());
-        } catch (Exception $e) {
+        } catch (PaymentValidationException $e) {
+            Logger::instance()->error('payment_validation_error - Message : ' . $e->getMessage());
+            $redirect_to = $this->fail($e->cartId, $e->getMessage());
+        } catch (MismatchException $e) {
             Logger::instance()->error('payment_error - Message : ' . $e->getMessage());
             $redirect_to = $this->fail(null, $e->getMessage());
         }

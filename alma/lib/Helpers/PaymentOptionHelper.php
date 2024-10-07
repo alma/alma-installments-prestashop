@@ -189,15 +189,15 @@ class PaymentOptionHelper
     /**
      * @param int $installementCount
      * @param int $duration
-     * @param bool $isPnxPlus4
+     * @param bool $isCredit
      * @param bool $isDeferred
      * @param bool $isPayNow
      *
      * @return array
      */
-    public function getTextsByTypes($installementCount, $duration, $isPnxPlus4, $isDeferred, $isPayNow)
+    public function getTextsByTypes($installementCount, $duration, $isCredit, $isDeferred, $isPayNow)
     {
-        if ($isPnxPlus4) {
+        if ($isCredit) {
             return $this->getTexts(
                 $installementCount,
                 PaymentButtonAdminFormBuilder::ALMA_PNX_AIR_BUTTON_TITLE,
@@ -247,15 +247,14 @@ class PaymentOptionHelper
     /**
      * @param PaymentOption $paymentOption
      * @param $template
-     * @param int $installments
      *
      * @return mixed
      */
-    public function setAdditionalInformationForEuCompliance($paymentOption, $template, $installments)
+    public function setAdditionalInformationForEuCompliance($paymentOption, $template)
     {
         $paymentOption->setAdditionalInformation($template);
 
-        if ($this->configurationHelper->isInPageEnabled($installments, $this->settingsHelper)) {
+        if ($this->configurationHelper->isInPageEnabled($this->settingsHelper)) {
             $paymentOption->setForm($this->paymentOptionTemplateHelper->getTemplateInPage());
         }
 

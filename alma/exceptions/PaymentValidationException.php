@@ -22,36 +22,22 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
-namespace Alma\PrestaShop\Builders\Services;
-
-use Alma\PrestaShop\Services\CartService;
-use Alma\PrestaShop\Traits\BuilderTrait;
+namespace Alma\PrestaShop\Exceptions;
 
 if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-/**
- * CartServiceBuilder.
- */
-class CartServiceBuilder
+class PaymentValidationException extends AlmaException
 {
-    use BuilderTrait;
-
     /**
-     * @return CartService
+     * @var int
      */
-    public function getInstance()
+    public $cartId;
+
+    public function __construct($message = '', $cartId = -1, $code = 0, $previous = null)
     {
-        return new CartService(
-            $this->getCartProductRepository(),
-            $this->getContextFactory(),
-            $this->getOpartSaveCartCartService(),
-            $this->getInsuranceHelper(),
-            $this->getInsuranceProductHelper(),
-            $this->getToolsFactory(),
-            $this->getCartFactory(),
-            $this->getProductHelper()
-        );
+        parent::__construct($message, $code, $previous);
+        $this->cartId = $cartId;
     }
 }

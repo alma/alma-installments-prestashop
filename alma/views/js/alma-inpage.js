@@ -79,6 +79,7 @@ function onloadAlma() {
         removeLoaderButtonPayment(button);
         button.addEventListener('click', function (e) {
             e.preventDefault();
+            e.stopPropagation();
             let paymentOptionId = this.getAttribute('id');
             let url = this.getAttribute('href');
             let settingInpage = document.querySelector('#alma-inpage-' + paymentOptionId);

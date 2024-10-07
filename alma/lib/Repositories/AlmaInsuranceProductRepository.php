@@ -540,4 +540,32 @@ class AlmaInsuranceProductRepository
 
         return \Db::getInstance()->executeS($sql);
     }
+
+    /**
+     * @throws \PrestaShopDatabaseException
+     */
+    public function getCartsNotOrdered()
+    {
+        $sql = '
+            SELECT aip.`id_cart`
+            FROM `' . _DB_PREFIX_ . 'alma_insurance_product` aip
+            WHERE aip.`id_order` IS NULL
+            GROUP BY aip.`id_cart`';
+
+        return \Db::getInstance()->executeS($sql);
+    }
+
+    /**
+     * @param string $cartIds
+     *
+     * @return bool
+     */
+    public function deleteAssociationsByCartIds($cartIds)
+    {
+        $sql = '
+            DELETE FROM `' . _DB_PREFIX_ . 'alma_insurance_product`
+            WHERE `id_cart` IN (' . $cartIds . ')';
+
+        return \Db::getInstance()->execute($sql);
+    }
 }

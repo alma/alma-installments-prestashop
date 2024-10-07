@@ -24,10 +24,14 @@
 
 namespace Alma\PrestaShop\Tests\Unit\Services;
 
+use Alma\PrestaShop\Exceptions\AlmaException;
+use Alma\PrestaShop\Exceptions\CartException;
+use Alma\PrestaShop\Factories\CartFactory;
 use Alma\PrestaShop\Factories\ContextFactory;
 use Alma\PrestaShop\Factories\ToolsFactory;
 use Alma\PrestaShop\Helpers\InsuranceHelper;
 use Alma\PrestaShop\Helpers\InsuranceProductHelper;
+use Alma\PrestaShop\Helpers\ProductHelper;
 use Alma\PrestaShop\Modules\OpartSaveCart\OpartSaveCartCartService;
 use Alma\PrestaShop\Repositories\CartProductRepository;
 use Alma\PrestaShop\Services\CartService;
@@ -59,19 +63,38 @@ class CartServiceTest extends TestCase
      * @var ToolsFactory
      */
     protected $toolsFactoryMock;
+    /**
+     * @var CartFactory
+     */
+    protected $cartFactoryMock;
+    /**
+     * @var CartService
+     */
+    protected $cartService;
+    /**
+     * @var \PHPUnit_Framework_MockObject_MockObject|\ProductHelper|(\ProductHelper&\PHPUnit_Framework_MockObject_MockObject)
+     */
+    protected $productHelper;
+    /**
+     * @var \PHPUnit_Framework_MockObject_MockObject|\Product|(\Product&\PHPUnit_Framework_MockObject_MockObject)
+     */
+    protected $productMock;
 
     /**
      * @return void
      */
     public function setUp()
     {
-        $this->cartMock = \Mockery::mock(\Cart::class);
+        $this->cartMock = $this->createMock(\Cart::class);
         $this->newCartMock = \Mockery::mock(\Cart::class);
-        $this->contextFactoryMock = \Mockery::mock(ContextFactory::class);
+        $this->contextFactoryMock = $this->createMock(ContextFactory::class);
         $this->opartCartSaveServiceSpy = \Mockery::spy(OpartSaveCartCartService::class);
         $this->toolsFactoryMock = \Mockery::mock(ToolsFactory::class);
         $this->insuranceHelperMock = \Mockery::mock(InsuranceHelper::class);
         $this->insuranceProductHelperSpy = \Mockery::spy(InsuranceProductHelper::class);
+        $this->cartFactoryMock = $this->createMock(CartFactory::class);
+        $this->productHelperMock = $this->createMock(ProductHelper::class);
+        $this->productMock = $this->createMock(\Product::class);
         $this->cartServiceMock = \Mockery::mock(
             CartService::class,
             [
@@ -81,8 +104,20 @@ class CartServiceTest extends TestCase
                 $this->insuranceHelperMock,
                 $this->insuranceProductHelperSpy,
                 $this->toolsFactoryMock,
+                $this->cartFactoryMock,
+                $this->productHelperMock,
             ]
         )->makePartial();
+        $this->cartService = new CartService(
+            $this->createMock(CartProductRepository::class),
+            $this->contextFactoryMock,
+            $this->opartCartSaveServiceSpy,
+            $this->insuranceHelperMock,
+            $this->insuranceProductHelperSpy,
+            $this->toolsFactoryMock,
+            $this->cartFactoryMock,
+            $this->productHelperMock
+        );
     }
 
     /**
@@ -129,5 +164,214 @@ class CartServiceTest extends TestCase
             ->andReturn(false);
         $this->cartServiceMock->duplicateAlmaInsuranceProductsIfNotExist($this->newCartMock, $this->cartMock);
         $this->insuranceProductHelperSpy->shouldHaveReceived('duplicateAlmaInsuranceProducts')->once();
+    }
+
+    /**
+     * @throws AlmaException
+     * @throws CartException
+     */
+    public function testDeleteProductWithoutProductId()
+    {
+        $this->cartMock->id = 12;
+
+        $this->expectException(CartException::class);
+        $this->cartService->deleteProductByCartId(false, $this->cartMock->id);
+    }
+
+    /**
+     * @throws AlmaException
+     * @throws CartException
+     */
+    public function testDeleteProductWithoutCartId()
+    {
+        $idProduct = 23;
+
+        $this->expectException(CartException::class);
+        $this->cartService->deleteProductByCartId($idProduct, $this->cartMock->id);
+    }
+
+    /**
+     * @throws CartException
+     * @throws AlmaException
+     */
+    public function testDeleteProductThrowExceptionIfGetAttributeCombinationsByProductIdReturnEmptyArray()
+    {
+        $languageId = 1;
+        $this->productMock->id = 10;
+        $this->cartMock->id = 12;
+        $this->cartFactoryMock->expects($this->once())
+            ->method('create')
+            ->with($this->cartMock->id)
+            ->willReturn($this->cartMock);
+        $this->contextFactoryMock->expects($this->once())
+            ->method('getContextLanguageId')
+            ->willReturn($languageId);
+        $this->productHelperMock->expects($this->once())
+            ->method('getAttributeCombinationsByProductId')
+            ->with($this->productMock->id, $languageId)
+            ->willThrowException(new CartException('Error attribute combinations'));
+        $this->expectException(CartException::class);
+        $this->cartService->deleteProductByCartId($this->productMock->id, $this->cartMock->id);
+    }
+
+    /**
+     * @throws CartException
+     * @throws AlmaException
+     */
+    public function testDeleteProductWithProductIdAndCartId()
+    {
+        $languageId = 1;
+        $this->productMock->id = 10;
+        $this->cartMock->id = 12;
+        $this->cartMock->expects($this->exactly(4))
+            ->method('deleteProduct')
+            ->withConsecutive(
+                [
+                    $this->productMock->id, $this->attributeCombinationsData()[0]['id_product_attribute'],
+                ],
+                [
+                    $this->productMock->id, $this->attributeCombinationsData()[1]['id_product_attribute'],
+                ],
+                [
+                    $this->productMock->id, $this->attributeCombinationsData()[2]['id_product_attribute'],
+                ],
+                [
+                    $this->productMock->id, $this->attributeCombinationsData()[3]['id_product_attribute'],
+                ]
+            )
+            ->willReturnOnConsecutiveCalls(true, true, true, true);
+        $this->cartFactoryMock->expects($this->once())
+            ->method('create')
+            ->with($this->cartMock->id)
+            ->willReturn($this->cartMock);
+        $this->contextFactoryMock->expects($this->once())
+            ->method('getContextLanguageId')
+            ->willReturn($languageId);
+        $this->productHelperMock->expects($this->once())
+            ->method('getAttributeCombinationsByProductId')
+            ->with($this->productMock->id, $languageId)
+            ->willReturn($this->attributeCombinationsData());
+        $this->assertTrue($this->cartService->deleteProductByCartId($this->productMock->id, $this->cartMock->id));
+    }
+
+    /**
+     * @return array
+     */
+    public function attributeCombinationsData()
+    {
+        return [
+            [
+                'id_product_attribute' => '9',
+                'id_product' => (string) $this->productMock->id,
+                'reference' => 'demo_3',
+                'supplier_reference' => '',
+                'location' => '',
+                'ean13' => '',
+                'isbn' => '',
+                'upc' => '',
+                'mpn' => '',
+                'wholesale_price' => '0.000000',
+                'price' => '0.000000',
+                'ecotax' => '0.000000',
+                'quantity' => 1200,
+                'weight' => '0.000000',
+                'unit_price_impact' => '0.000000',
+                'default_on' => '1',
+                'minimal_quantity' => '1',
+                'low_stock_threshold' => null,
+                'low_stock_alert' => '0',
+                'available_date' => '0000-00-00',
+                'id_shop' => '1',
+                'id_attribute_group' => '1',
+                'is_color_group' => '0',
+                'group_name' => null,
+                'attribute_name' => null,
+                'id_attribute' => '1',
+            ],
+            [
+                'id_product_attribute' => '10',
+                'id_product' => (string) $this->productMock->id,
+                'reference' => 'demo_3',
+                'supplier_reference' => '',
+                'location' => '',
+                'ean13' => '',
+                'isbn' => '',
+                'upc' => '',
+                'mpn' => '',
+                'wholesale_price' => '0.000000',
+                'price' => '0.000000',
+                'ecotax' => '0.000000',
+                'quantity' => 300,
+                'weight' => '0.000000',
+                'unit_price_impact' => '0.000000',
+                'default_on' => null,
+                'minimal_quantity' => '1',
+                'low_stock_threshold' => null,
+                'low_stock_alert' => '0',
+                'available_date' => '0000-00-00',
+                'id_shop' => '1',
+                'id_attribute_group' => '1',
+                'is_color_group' => '0',
+                'group_name' => null,
+                'attribute_name' => null,
+                'id_attribute' => '2',
+            ],
+            [
+                'id_product_attribute' => '11',
+                'id_product' => (string) $this->productMock->id,
+                'reference' => 'demo_3',
+                'supplier_reference' => '',
+                'location' => '',
+                'ean13' => '',
+                'isbn' => '',
+                'upc' => '',
+                'mpn' => '',
+                'wholesale_price' => '0.000000',
+                'price' => '0.000000',
+                'ecotax' => '0.000000',
+                'quantity' => 300,
+                'weight' => '0.000000',
+                'unit_price_impact' => '0.000000',
+                'default_on' => null,
+                'minimal_quantity' => '1',
+                'low_stock_threshold' => null,
+                'low_stock_alert' => '0',
+                'available_date' => '0000-00-00',
+                'id_shop' => '1',
+                'id_attribute_group' => '1',
+                'is_color_group' => '0',
+                'group_name' => null,
+                'attribute_name' => null,
+                'id_attribute' => '3',
+            ],
+            [
+                'id_product_attribute' => '12',
+                'id_product' => (string) $this->productMock->id,
+                'reference' => 'demo_3',
+                'supplier_reference' => '',
+                'location' => '',
+                'ean13' => '',
+                'isbn' => '',
+                'upc' => '',
+                'mpn' => '',
+                'wholesale_price' => '0.000000',
+                'price' => '0.000000',
+                'ecotax' => '0.000000',
+                'quantity' => 300,
+                'weight' => '0.000000',
+                'unit_price_impact' => '0.000000',
+                'default_on' => null,
+                'minimal_quantity' => '1',
+                'low_stock_threshold' => null,
+                'low_stock_alert' => '0',
+                'available_date' => '0000-00-00',
+                'id_shop' => '1',
+                'id_attribute_group' => '1',
+                'is_color_group' => '0',
+                'group_name' => null,
+                'attribute_name' => null,
+                'id_attribute' => '4',
+            ],
+        ];
     }
 }

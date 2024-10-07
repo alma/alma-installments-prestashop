@@ -234,7 +234,6 @@ class DisplayPaymentHookController extends FrontendHookController
                     ),
                     $installment
                 );
-                $paymentOption['isInPageEnabled'] = false;
             }
 
             if ($isDeferred) {

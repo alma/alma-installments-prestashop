@@ -28,6 +28,11 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
+/**
+ * Class PaymentValidationError.
+ *
+ * @deprecated Use PaymentValidationException instead
+ */
 class PaymentValidationError extends \Exception
 {
     public $cart;
