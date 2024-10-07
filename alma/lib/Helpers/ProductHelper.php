@@ -55,9 +55,7 @@ class ProductHelper
             $insuranceHelper = $insuranceHelperBuilder->getInstance();
         }
 
-        if (!isset($productFactory)) {
-            $productFactory = new ProductFactory();
-        }
+        $productFactory = $productFactory ?: new ProductFactory();
 
         $this->insuranceHelper = $insuranceHelper;
         $this->productFactory = $productFactory;
