@@ -133,6 +133,8 @@ final class GetContentHookController extends AdminHookController
             'action' => 'cast_bool',
             'suffix' => '_ON',
         ],
+        InpageAdminFormBuilder::ALMA_INPAGE_PAYMENT_BUTTON_SELECTOR => 'none',
+        InpageAdminFormBuilder::ALMA_INPAGE_PLACE_ORDER_BUTTON_SELECTOR => 'none',
         'ALMA_ACTIVATE_LOGGING' => [
             'action' => 'cast_bool',
             'suffix' => '_ON',
@@ -709,6 +711,8 @@ final class GetContentHookController extends AdminHookController
                 PaymentButtonAdminFormBuilder::ALMA_PNX_AIR_BUTTON_DESC
             ),
             InpageAdminFormBuilder::ALMA_ACTIVATE_INPAGE . '_ON' => $this->settingsHelper->isInPageEnabled(),
+            InpageAdminFormBuilder::ALMA_INPAGE_PAYMENT_BUTTON_SELECTOR => $this->settingsHelper->getKey(InpageAdminFormBuilder::ALMA_INPAGE_PAYMENT_BUTTON_SELECTOR, InpageAdminFormBuilder::ALMA_INPAGE_DEFAULT_VALUE_PAYMENT_BUTTON_SELECTOR),
+            InpageAdminFormBuilder::ALMA_INPAGE_PLACE_ORDER_BUTTON_SELECTOR => $this->settingsHelper->getKey(InpageAdminFormBuilder::ALMA_INPAGE_PLACE_ORDER_BUTTON_SELECTOR, InpageAdminFormBuilder::ALMA_INPAGE_DEFAULT_VALUE_PLACE_ORDER_BUTTON_SELECTOR),
             'ALMA_SHOW_DISABLED_BUTTON' => SettingsHelper::showDisabledButton(),
             'ALMA_SHOW_ELIGIBILITY_MESSAGE_ON' => SettingsHelper::showEligibilityMessage(),
             'ALMA_CART_WDGT_NOT_ELGBL_ON' => SettingsHelper::showCartWidgetIfNotEligible(),

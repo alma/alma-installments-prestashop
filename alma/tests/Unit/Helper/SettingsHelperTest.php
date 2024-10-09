@@ -26,6 +26,7 @@ namespace Alma\PrestaShop\Tests\Unit\Helper;
 
 use Alma\API\Entities\FeePlan;
 use Alma\PrestaShop\Builders\Helpers\SettingsHelperBuilder;
+use Alma\PrestaShop\Forms\InpageAdminFormBuilder;
 use Alma\PrestaShop\Helpers\ConfigurationHelper;
 use Alma\PrestaShop\Helpers\SettingsHelper;
 use Alma\PrestaShop\Helpers\ShopHelper;
@@ -37,11 +38,32 @@ class SettingsHelperTest extends TestCase
      * @var SettingsHelper
      */
     protected $settingsHelper;
+    /**
+     * @var ShopHelper
+     */
+    protected $shopHelper;
+    /**
+     * @var ConfigurationHelper
+     */
+    protected $configurationHelper;
+    /**
+     * @var (SettingsHelper&\PHPUnit\Framework\MockObject\MockObject)|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $settingsHelperMock;
 
     public function setUp()
     {
-        $settingsHelperBuilder = new SettingsHelperBuilder();
-        $this->settingsHelper = $settingsHelperBuilder->getInstance();
+        $this->shopHelper = $this->createMock(ShopHelper::class);
+        $this->configurationHelper = $this->createMock(ConfigurationHelper::class);
+        $this->settingsHelper = new SettingsHelper(
+            $this->shopHelper,
+            $this->configurationHelper
+        );
+
+        $this->settingsHelperMock = $this->getMockBuilder(SettingsHelper::class)
+            ->setConstructorArgs([$this->shopHelper, $this->configurationHelper])
+            ->setMethods(['isInPageEnabled', 'getKey'])
+            ->getMock();
     }
 
     /**
@@ -417,7 +439,57 @@ class SettingsHelperTest extends TestCase
         $this->assertEquals([], $result);
     }
 
-    public function testGetDataFromKey()
+    /**
+     * @dataProvider inPageSettingsDataProvider
+     *
+     * @return void
+     */
+    public function testGetInPageSettingsDefaultValues($isInPageEnabled, $paymentButtonSelector, $placeOrderButtonSelector)
     {
+        $this->settingsHelperMock->expects($this->once())
+            ->method('isInPageEnabled')
+            ->willReturn($isInPageEnabled);
+        $this->settingsHelperMock->expects($this->exactly(2))
+            ->method('getKey')
+            ->withConsecutive(
+                [InpageAdminFormBuilder::ALMA_INPAGE_PAYMENT_BUTTON_SELECTOR, InpageAdminFormBuilder::ALMA_INPAGE_DEFAULT_VALUE_PAYMENT_BUTTON_SELECTOR],
+                [InpageAdminFormBuilder::ALMA_INPAGE_PLACE_ORDER_BUTTON_SELECTOR, InpageAdminFormBuilder::ALMA_INPAGE_DEFAULT_VALUE_PLACE_ORDER_BUTTON_SELECTOR]
+            )
+            ->willReturnOnConsecutiveCalls(
+                $paymentButtonSelector,
+                $placeOrderButtonSelector
+            );
+
+        $expected = [
+            'enabled' => $isInPageEnabled,
+            'paymentButtonSelector' => $paymentButtonSelector,
+            'placeOrderButtonSelector' => $placeOrderButtonSelector,
+        ];
+
+        $this->assertEquals($expected, $this->settingsHelperMock->getInPageSettings());
+    }
+
+    /**
+     * @return array[]
+     */
+    public function inPageSettingsDataProvider()
+    {
+        return [
+            'Default values' => [
+                'enabled' => false,
+                'paymentButtonSelector' => InpageAdminFormBuilder::ALMA_INPAGE_DEFAULT_VALUE_PAYMENT_BUTTON_SELECTOR,
+                'placeOrderButtonSelector' => InpageAdminFormBuilder::ALMA_INPAGE_DEFAULT_VALUE_PLACE_ORDER_BUTTON_SELECTOR,
+            ],
+            'in-page disable and selector custom' => [
+                'enabled' => false,
+                'paymentButtonSelector' => 'payment button selector custom',
+                'placeOrderButtonSelector' => 'place order selector custom',
+            ],
+            'in-page enable and selector custom' => [
+                'enabled' => true,
+                'paymentButtonSelector' => 'payment button selector custom',
+                'placeOrderButtonSelector' => 'place order selector custom',
+            ],
+        ];
     }
 }

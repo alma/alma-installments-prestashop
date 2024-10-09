@@ -20,9 +20,12 @@
  * @copyright 2018-2024 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
-
+if (!document.getElementById('alma-inpage-global')) {
+    throw new Error('[Alma] In Page Settings is missing.');
+}
 let inPage = undefined;
 let paymentButtonEvents = [];
+const inPageSettings = JSON.parse(document.querySelector('#alma-inpage-global').dataset.settings);
 
 window.addEventListener("load", function() {
     onloadAlma();
@@ -50,7 +53,7 @@ function onloadAlma() {
             if (inPage !== undefined) {
                 inPage.unmount();
             }
-            if (this.dataset.moduleName === 'alma') {
+            if ($(input).is(inPageSettings.paymentButtonSelector)) {
                 let formInpage = blockForm.querySelector('.alma-inpage');
                 if (this.checked && formInpage) {
                     let installment = formInpage.dataset.installment;
@@ -138,7 +141,7 @@ function createAlmaIframe(form, showPayButton = false, url = '') {
 }
 
 function mapPaymentButtonToAlmaPaymentCreation(url, inPage, input) {
-    let paymentButton = document.querySelector('#payment-confirmation button');
+    let paymentButton = document.querySelector(inPageSettings.placeOrderButtonSelector);
 
     const eventAlma = async function (e) {
         e.preventDefault();
@@ -190,7 +193,7 @@ async function createPayment(url, inPage, input = null) {
 function removeAlmaEventsFromPaymentButton() {
     let event = paymentButtonEvents.shift();
     while (event) {
-        document.querySelector('#payment-confirmation button').removeEventListener('click', event);
+        document.querySelector(inPageSettings.placeOrderButtonSelector).removeEventListener('click', event);
         event = paymentButtonEvents.shift();
     }
 }

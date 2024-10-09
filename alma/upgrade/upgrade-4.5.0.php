@@ -1,5 +1,6 @@
-{*
- * 2018-2024 Alma SAS
+<?php
+/**
+ * 2018-2024 Alma SAS.
  *
  * THE MIT LICENSE
  *
@@ -19,17 +20,35 @@
  * @author    Alma SAS <contact@getalma.eu>
  * @copyright 2018-2024 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
- *}
-<form id="alma-inpage-plan-{$keyPlan|escape:'htmlall':'UTF-8'}" class="alma-inpage"
-      data-action="{$action}"
-      data-apimode="{$apiMode|escape:'htmlall':'UTF-8'}"
-      data-merchantid="{$merchantId|escape:'htmlall':'UTF-8'}"
-      data-isinpageenabled="{$isInPageEnabled|escape:'htmlall':'UTF-8'}"
-      data-installment="{$installment|escape:'htmlall':'UTF-8'}"
-      data-deferreddays="{$deferredDays|escape:'htmlall':'UTF-8'}"
-      data-deferredmonths="{$deferredMonths|escape:'htmlall':'UTF-8'}"
-      data-purchaseamount="{$creditInfo.totalCart|escape:'htmlall':'UTF-8'}"
-      data-locale="{$locale|escape:'htmlall':'UTF-8'}">
-    <div id="alma-inpage-iframe-plan-{$keyPlan|escape:'htmlall':'UTF-8'}" class="alma-inpage-iframe"></div>
-</form>
-<script type="text/javascript">window.__alma_refreshInpage && __alma_refreshInpage();</script>
+ */
+
+use Alma\PrestaShop\Builders\Helpers\SettingsHelperBuilder;
+use Alma\PrestaShop\Forms\InpageAdminFormBuilder;
+use Alma\PrestaShop\Helpers\ConstantsHelper;
+
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
+function upgrade_module_4_5_0()
+{
+    $settingsHelperBuilder = new SettingsHelperBuilder();
+    $settingsHelper = $settingsHelperBuilder->getInstance();
+
+    // Add default selector for In-Page
+    $settingsHelper->updateKey(
+        InpageAdminFormBuilder::ALMA_INPAGE_PAYMENT_BUTTON_SELECTOR,
+        InpageAdminFormBuilder::ALMA_INPAGE_DEFAULT_VALUE_PAYMENT_BUTTON_SELECTOR
+    );
+    $settingsHelper->updateKey(
+        InpageAdminFormBuilder::ALMA_INPAGE_PLACE_ORDER_BUTTON_SELECTOR,
+        InpageAdminFormBuilder::ALMA_INPAGE_DEFAULT_VALUE_PLACE_ORDER_BUTTON_SELECTOR
+    );
+
+    if (version_compare(_PS_VERSION_, ConstantsHelper::PRESTASHOP_VERSION_1_7_0_2, '>')) {
+        Tools::clearAllCache();
+        Tools::clearXMLCache();
+    }
+
+    return true;
+}
