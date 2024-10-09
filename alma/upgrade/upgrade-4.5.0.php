@@ -30,7 +30,7 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-function upgrade_module_4_5_0($module)
+function upgrade_module_4_5_0()
 {
     $settingsHelperBuilder = new SettingsHelperBuilder();
     $settingsHelper = $settingsHelperBuilder->getInstance();
