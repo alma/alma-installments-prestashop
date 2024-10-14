@@ -20,14 +20,15 @@
  * @copyright 2018-2024 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
-if (!document.getElementById('alma-inpage-global')) {
-    throw new Error('[Alma] In Page Settings is missing.');
-}
 let inPage = undefined;
 let paymentButtonEvents = [];
-const inPageSettings = JSON.parse(document.querySelector('#alma-inpage-global').dataset.settings);
+let inPageSettings = {};
 
 window.addEventListener("load", function() {
+    if (!document.getElementById('alma-inpage-global')) {
+        throw new Error('[Alma] In Page Settings is missing.');
+    }
+    inPageSettings = JSON.parse(document.querySelector('#alma-inpage-global').dataset.settings);
     onloadAlma();
     window.__alma_refreshInpage = onloadAlma;
 });
@@ -105,7 +106,6 @@ function createAlmaIframe(form, showPayButton = false, url = '') {
     let locale = form.dataset.locale;
 
     let selectorIframeInPage = form.querySelector('.alma-inpage-iframe');
-
     if (showPayButton) {
         inPage = Alma.InPage.initialize(
             {
@@ -172,7 +172,6 @@ async function createPayment(url, inPage, input = null) {
                             inPage.unmount();
                         }
                         removeAlmaEventsFromPaymentButton();
-                        onloadAlma();
                     }
                 }
             );
