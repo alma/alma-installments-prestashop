@@ -81,6 +81,11 @@ $_MODULE['<{alma}prestashop>excludedcategoryadminformbuilder_36359547b09bdb31f46
 $_MODULE['<{alma}prestashop>inpageadminformbuilder_2420ebe02d61c738479f399a97e1cf18'] = 'Activate in-page checkout';
 $_MODULE['<{alma}prestashop>inpageadminformbuilder_bf3b980c4aa11b5fca4cc3096f50e0b8'] = 'Activate in-page checkout for Pay Now, P2X, P3X and P4X';
 $_MODULE['<{alma}prestashop>inpageadminformbuilder_220a4f39147308a2160f7abc4d00ae43'] = 'The checkout in-page in your own website';
+$_MODULE['<{alma}prestashop>inpageadminformbuilder_6f7991629de2e9ee19a0bf2a0469138c'] = 'Input payment button Alma selector';
+$_MODULE['<{alma}prestashop>inpageadminformbuilder_fb28105057d934b2ddc35a775938069b'] = '%1$sAdvanced%2$s [Optional] Query selector for our scripts to identify the payment button Alma';
+$_MODULE['<{alma}prestashop>inpageadminformbuilder_cc12a5229a16dced1984745e05872a94'] = 'E.g. #id, .class, ...';
+$_MODULE['<{alma}prestashop>inpageadminformbuilder_8ee0042ba2657c2af782fcc8893fa45a'] = 'Place order button selector';
+$_MODULE['<{alma}prestashop>inpageadminformbuilder_8fbbdefb0c9073d81c746e70f7168f3e'] = '%1$sAdvanced%2$s [Optional] Query selector for our scripts to identify the place order button';
 $_MODULE['<{alma}prestashop>inpageadminformbuilder_6de24747c86085e597f6b38d4d1d01a4'] = 'In-page checkout';
 $_MODULE['<{alma}prestashop>carteligibilityadminformbuilder_a2a52a9dd1864e2b995793bd67b8c6e5'] = 'This widget allows you to inform your customers of the availability of Alma\'s payment facilities right from the product page, which will help to increase your conversion rate. For more details on its configuration or in case of problems, please consult %1$sthis documentation%2$s.';
 $_MODULE['<{alma}prestashop>carteligibilityadminformbuilder_ac6329ea064b9212be7e442cb46bf68f'] = 'Display widget';
@@ -148,7 +153,8 @@ $_MODULE['<{alma}prestashop>admininsurancehelper_f1206f9fadc5ce41694f69129aecac2
 $_MODULE['<{alma}prestashop>admininsurancehelper_7442e29d7d53e549b78d93c46b8cdcfc'] = 'Orders';
 $_MODULE['<{alma}prestashop>insuranceservice_d87aee5118a62a7ff6c21e4ac31006c5'] = 'I hereby acknowledge my acceptance to subscribe to the insurance offered by Alma. In doing so, I confirm that I have previously reviewed the [information notice, which constitutes the general conditions], the [insurance product information document], and the [pre-contractual information and advice sheet]. I ahead to it without reservation and agree to electronically sign the various documents forming my contract, if applicable. I expressly consent to the collection and use of my personal data for the purpose of subscribing to and managing my insurance contract(s).';
 $_MODULE['<{alma}prestashop>adminalmainsuranceconfiguration_b824200e9b8aca1fbb762d6566ff0cd7'] = 'Your configuration has been saved';
-$_MODULE['<{alma}prestashop>adminalmainsuranceconfiguration_4a39c6a33c3441762924914168d2a387'] = 'Error creating configuration Alma insurance: %1$s';
+$_MODULE['<{alma}prestashop>adminalmainsuranceconfiguration_a6bf06f186e2fccecad054fd831c2144'] = '[Alma] Error insurance product during change configuration: %1$s';
+$_MODULE['<{alma}prestashop>adminalmainsuranceconfiguration_b42688965893bdb7a37cf1197e506e25'] = '[Alma] Error creating configuration Alma insurance: %1$s';
 $_MODULE['<{alma}prestashop>adminalmainsuranceorders_a66f446516cd125af12bd25073f88b78'] = 'Orders with insurance';
 $_MODULE['<{alma}prestashop>adminalmainsuranceorders_49414cda71621b3ee718ae5ff40804c5'] = 'Id Order';
 $_MODULE['<{alma}prestashop>adminalmainsuranceorders_63d5049791d9d79d86e9a108b0a999ca'] = 'Reference';
@@ -319,4 +325,3 @@ $_MODULE['<{alma}prestashop>notificationfirstinstallation_8e51eafe439b0adfecc2dc
 $_MODULE['<{alma}prestashop>notificationfirstinstallation_1e6898bbd6a44041932ac84cbda13bd7'] = 'You can find your Live API key in %1$syour Alma dashboard%2$s';
 $_MODULE['<{alma}prestashop>notificationfirstinstallation_689c39b29a6d91e6dff728a7762cbc9e'] = 'To use the Test mode, you need your Test API key from %1$syour sandbox dasboard%2$s';
 $_MODULE['<{alma}prestashop>notificationfirstinstallation_dcab24ea1a3cd9bab8047b1b6f7ee65c'] = 'If you have any problems, please contact us by email at %1$ssupport@getalma.eu%2$s';
-$_MODULE['<{alma}prestashop>displaypayment_pnx_22f0189423433ab0e055b91d98970e5f'] = 'Alma Monthly Installments are not available for this order';
