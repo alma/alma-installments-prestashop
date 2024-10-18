@@ -12,8 +12,12 @@ repos:
     hooks:
       - id: check-added-large-files
         args: ["--maxkb=1024"]
+        stages: [commit]
       - id: detect-private-key
+        stages: [commit]
       - id: check-merge-conflict
+        stages: [commit]
+
 
   - repo: local
     hooks:
