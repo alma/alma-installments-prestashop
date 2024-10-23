@@ -33,7 +33,7 @@
         let almaEligibilityAnswer = false;
 
         //Insurance
-        $("body").on("hidden.bs.modal", "#blockcart-modal", function (e) {
+        $("body").on("hidden.bs.modal", "#blockcart-modal", function () {
             removeInsurance();
         });
         handleInsuranceProductPage();
@@ -280,9 +280,10 @@
         }
 
         function handleInsuranceProductPage() {
-            if (AlmaInsurance.productDetails.id === $('#alma-insurance-global').data('insurance-id')) {
+            const $almaInsuranceGlobal = $('#alma-insurance-global');
+            if (AlmaInsurance.productDetails.id === $almaInsuranceGlobal.data('insurance-id')) {
                 //$('.product-prices').hide(); // To hide the price of the insurance product page
-                let tagInformationInsurance = '<div class="alert alert-info" id="alma-alert-insurance-product">' + $('#alma-insurance-global').data('message-insurance-page') + '</div>';
+                let tagInformationInsurance = '<div class="alert alert-info" id="alma-alert-insurance-product">' + $almaInsuranceGlobal.data('message-insurance-page') + '</div>';
                 $(tagInformationInsurance).insertAfter('.product-variants');
             }
         }
