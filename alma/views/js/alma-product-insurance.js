@@ -95,6 +95,9 @@
                     return;
                 }
 
+                // There's a bug in some PS 1.7 versions where quantity_wanted is not set to the actual quantity value
+                AlmaInsurance.productDetails.quantity_wanted = getQuantity()
+
                 refreshWidget();
                 addModalListenerToAddToCart();
             });
