@@ -26,11 +26,9 @@
             throw new Error('[Alma] Product details not found. You need to add the hook displayProductActions in your template product page.');
         }
 
-        const settings = getSettingsInsurance();
         let insuranceSelected = false;
         let selectedAlmaInsurance = null;
         let addToCartFlow = false;
-        let productDetails = JSON.parse(document.querySelector('.alma-widget-insurance .js-product-details').dataset.product);
         let quantity = getQuantity();
         let almaEligibilityAnswer = false;
 
@@ -72,17 +70,31 @@
                 }
             });
             prestashop.on('updatedProduct', function (data) {
-                // TODO:
-                //  - use data.product_details to load latest product details from the data-product attribute of the div
-                //  - fallback to #product-details[data-product] if for any reason we cannot find what we need in `data`
-                //  - have a last fallback to making our own AJAX call?
+                // Update product details data from the PrestaShop-sent data
+                if (data.product_details) {
+                    const shadowDiv = document.createElement('div');
+                    shadowDiv.innerHTML = data.product_details;
 
-                document.querySelector('.qty [name="qty"]').value = quantity;
+                    const psProductDetails = shadowDiv.querySelector('[data-product]');
+                    if (!psProductDetails || !psProductDetails.dataset.product) {
+                        AlmaInsurance.productDetails = null
+                    } else {
+                        AlmaInsurance.productDetails = JSON.parse(psProductDetails.dataset.product);
+                    }
+                }
 
-                productDetails = JSON.parse(document.querySelector('.alma-widget-insurance .js-product-details').dataset.product);
-                productDetails.quantity_wanted = parseInt(quantity);
+                // If we did not get the data from PS's AJAX request, get it from the product-details panel
+                const psProductDetails = document.querySelector('[data-product]');
+                if (!AlmaInsurance.productDetails && psProductDetails && psProductDetails.dataset.product) {
+                    AlmaInsurance.productDetails = JSON.parse(psProductDetails.dataset.product);
+                }
 
-                document.querySelector('.alma-widget-insurance .js-product-details').dataset.product = JSON.stringify(productDetails);
+                if (!AlmaInsurance.productDetails) {
+                    // TODO: fallback on making an AJAX call ourselves?
+                    console.error("Could not find product details");
+                    return;
+                }
+
                 refreshWidget();
                 addModalListenerToAddToCart();
             });
@@ -95,14 +107,6 @@
                 quantity = parseInt(document.querySelector('.qty [name="qty"]').value);
             }
             return quantity
-        }
-
-        function getSettingsInsurance() {
-            if (document.querySelector('#alma-widget-insurance-product-page')) {
-                return JSON.parse(document.querySelector('#alma-widget-insurance-product-page').dataset.almaInsuranceSettings);
-            }
-
-            return null;
         }
 
         function btnLoaders(action) {
@@ -165,19 +169,28 @@
         }
 
         function refreshWidget() {
-            let cmsReference = createCmsReference(productDetails);
-            let priceAmount = productDetails.price_amount;
-            if (productDetails.price_amount === undefined) {
-                priceAmount = productDetails.price;
+            let cmsReference = createCmsReference(AlmaInsurance.productDetails);
+            let priceAmount = AlmaInsurance.productDetails.price_amount;
+            if (AlmaInsurance.productDetails.price_amount === undefined) {
+                priceAmount = AlmaInsurance.productDetails.price;
             }
             let staticPriceToCents = Math.round(priceAmount * 100);
 
-            quantity = productDetails.quantity_wanted;
-            if (productDetails.quantity_wanted <= 0) {
+            quantity = AlmaInsurance.productDetails.quantity_wanted;
+            if (quantity <= 0) {
                 quantity = 1;
             }
 
-            getProductDataForApiCall(cmsReference, staticPriceToCents, productDetails.name, settings.merchant_id, quantity, settings.cart_id, settings.session_id, insuranceSelected);
+            getProductDataForApiCall(
+                cmsReference,
+                staticPriceToCents,
+                AlmaInsurance.productDetails.name,
+                AlmaInsurance.settings.merchant_id,
+                quantity,
+                AlmaInsurance.settings.cart_id,
+                AlmaInsurance.settings.session_id,
+                insuranceSelected
+            );
         }
 
         function createCmsReference(productDetails) {
@@ -235,7 +248,7 @@
         }
 
         function addModalListenerToAddToCart() {
-            if (settings.isAddToCartPopupActivated === true && almaEligibilityAnswer) {
+            if (AlmaInsurance.settings.isAddToCartPopupActivated === true && almaEligibilityAnswer) {
                 const addToCart = getAddToCartButton();
                 if (addToCart) {
                     // If we change the quantity the DOM is reloaded then we need to remove and add the listener again
@@ -267,7 +280,7 @@
         }
 
         function handleInsuranceProductPage() {
-            if (productDetails.id === $('#alma-insurance-global').data('insurance-id')) {
+            if (AlmaInsurance.productDetails.id === $('#alma-insurance-global').data('insurance-id')) {
                 //$('.product-prices').hide(); // To hide the price of the insurance product page
                 let tagInformationInsurance = '<div class="alert alert-info" id="alma-alert-insurance-product">' + $('#alma-insurance-global').data('message-insurance-page') + '</div>';
                 $(tagInformationInsurance).insertAfter('.product-variants');
