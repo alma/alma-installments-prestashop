@@ -73,7 +73,7 @@
                 // Update product details data from the PrestaShop-sent data
                 if (data.product_details) {
                     const shadowDiv = document.createElement('div');
-                    shadowDiv.innerHTML = data.product_details;
+                    $(shadowDiv).html(data.product_details);
 
                     const psProductDetails = shadowDiv.querySelector('[data-product]');
                     if (!psProductDetails || !psProductDetails.dataset.product) {
