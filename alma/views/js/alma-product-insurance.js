@@ -90,7 +90,7 @@
 
 
         function getQuantity() {
-            var quantity = 1;
+            let quantity = 1;
             if (document.querySelector('.qty [name="qty"]')) {
                 quantity = parseInt(document.querySelector('.qty [name="qty"]').value);
             }
@@ -106,14 +106,14 @@
         }
 
         function btnLoaders(action) {
-            const addBtn = $(".add-to-cart");
+            const $addBtn = $(".add-to-cart");
             if (action === 'start') {
                 $('<div id="insuranceSpinner" class="spinner"></div>').insertBefore($(".add-to-cart i"));
-                addBtn.attr("disabled", "disabled");
+                $addBtn.attr("disabled", "disabled");
             }
             if (action === 'stop') {
                 $(".spinner").remove();
-                addBtn.removeAttr("disabled");
+                $addBtn.removeAttr("disabled");
                 addModalListenerToAddToCart();
             }
         }
@@ -181,15 +181,16 @@
         }
 
         function createCmsReference(productDetails) {
-            if (productDetails.id_product !== null) {
-                if (productDetails.id_product_attribute <= '0') {
-                    return productDetails.id_product;
-                }
-
-                return productDetails.id_product + '-' + productDetails.id_product_attribute;
+            if (!productDetails.id_product) {
+                return
             }
 
-            return undefined;
+            // TODO: check why comparing to string value
+            if (productDetails.id_product_attribute <= '0') {
+                return productDetails.id_product;
+            }
+
+            return productDetails.id_product + '-' + productDetails.id_product_attribute;
         }
 
         function addInputsInsurance(event) {
@@ -202,7 +203,6 @@
 
             handleInput('alma_id_insurance_contract', event.selectedAlmaInsurance.insuranceContractId, formAddToCart);
             handleInput('alma_quantity_insurance', selectedInsuranceQuantity, formAddToCart);
-
         }
 
         function handleInput(inputName, value, form) {
