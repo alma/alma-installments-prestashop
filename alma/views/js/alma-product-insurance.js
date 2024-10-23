@@ -43,7 +43,7 @@
         onloadAddInsuranceInputOnProductAlma();
         if (typeof prestashop !== 'undefined') {
             prestashop.on('updateProduct', function (event) {
-                let addToCart = document.querySelector('.add-to-cart');
+                let addToCart = getAddToCartButton();
 
                 if (event.event !== undefined) {
                     quantity = getQuantity();
