@@ -95,8 +95,10 @@
                     return;
                 }
 
-                // There's a bug in some PS 1.7 versions where quantity_wanted is not set to the actual quantity value
-                AlmaInsurance.productDetails.quantity_wanted = getQuantity()
+                // There's a bug in some PS 1.7 versions where quantity_wanted is not set to the actual quantity value,
+                // while in later versions it's correctly set but the quantity input value is reset to 1
+                AlmaInsurance.productDetails.quantity_wanted = quantity
+                setQuantity(AlmaInsurance.productDetails.quantity_wanted)
 
                 refreshWidget();
                 addModalListenerToAddToCart();
@@ -106,10 +108,18 @@
 
         function getQuantity() {
             let quantity = 1;
-            if (document.querySelector('.qty [name="qty"]')) {
-                quantity = parseInt(document.querySelector('.qty [name="qty"]').value);
+
+            const qtyInput = document.querySelector('.qty [name="qty"]');
+            if (qtyInput) {
+                quantity = Number(qtyInput.value);
             }
+
             return quantity
+        }
+
+        function setQuantity(quantity) {
+            const qtyInput = document.querySelector('.qty [name="qty"]');
+            qtyInput.value = quantity;
         }
 
         function btnLoaders(action) {
