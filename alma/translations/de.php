@@ -260,7 +260,7 @@ $_MODULE['<{alma}prestashop>notificationconfiguration_e243bbd390b43c9ee6047fab4a
 $_MODULE['<{alma}prestashop>notificationconfiguration_cf5ec9fb9f7214a3db82a5a39fec5b48'] = 'Enter your API key';
 $_MODULE['<{alma}prestashop>notificationconfiguration_055f421849c2a1c32b885c95540f827c'] = 'Find your API live key on your %1$s Alma dashboard%2$s';
 $_MODULE['<{alma}prestashop>notificationconfiguration_53b458e8453e3694811e61c96527d638'] = 'Um den Testmodus zu verwenden, rufen Sie Ihren Test-API-Schlüssel von Ihrem %1$ssandbox dashboard%2$s ab.';
-$_MODULE['<{alma}prestashop>notificationconfiguration_41d0063d3bb7d3067f46734fac8b27c4'] = 'Wir bieten das PrestaShop Account Modul zum Download an';
+$_MODULE['<{alma}prestashop>notificationconfiguration_42deb316427c319fae8ef1e9a2ebfacb'] = 'Wir bieten das PrestaShop Account Modul zum Download an';
 $_MODULE['<{alma}prestashop>notificationconfiguration_6997dde298b14fbf6a7c95bd39fe8dc4'] = 'Das Modul %1$sfinden Sie hier%2$s';
 $_MODULE['<{alma}prestashop>notificationshareofcheckout_a6b0ef107f0d278df612764187bbdece'] = ' Steigern Sie Ihre Leistung und erhalten Sie Einblicke!';
 $_MODULE['<{alma}prestashop>notificationshareofcheckout_5b64cb0849dd12ea528c04f2fe66ae4d'] = 'Indem Sie diese Option akzeptieren, ermöglichen Sie es Alma, die Nutzung Ihrer Zahlungsmittel zu analysieren, [1]mehr Informationen zu erhalten, um[/1] durchzuführen und diese Daten mit Ihnen zu teilen. Sie können [2]jederzeit abbestellen und Ihre Daten[/2] löschen.';
