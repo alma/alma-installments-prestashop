@@ -31,6 +31,7 @@ require_once _PS_MODULE_DIR_ . 'alma/vendor/autoload.php';
 class Alma extends PaymentModule
 {
     const VERSION = '4.4.0';
+    const PS_ACCOUNT_VERSION_REQUIRED = '5.0';
 
     public $_path;
     public $local_path;
@@ -146,6 +147,25 @@ class Alma extends PaymentModule
             $this->toolsHelper->psVersionCompare('1.6', '<')
         ) {
             throw new \Alma\PrestaShop\Exceptions\CompatibilityPsAccountException('[Alma] Prestashop version lower than 1.6');
+        }
+    }
+
+    /**
+     * Check if PS Account is installed and up to date, minimal version required 5.0.
+     *
+     * @return void
+     *
+     * @throws \PrestaShop\PsAccountsInstaller\Installer\Exception\ModuleNotInstalledException
+     */
+    public function checkPsAccountCompatibility()
+    {
+        $psAccountModule = \Module::getInstanceByName('ps_accounts');
+        if (!$psAccountModule) {
+            throw new \PrestaShop\PsAccountsInstaller\Installer\Exception\ModuleNotInstalledException('[Alma] PS Account is not installed');
+        }
+
+        if ($psAccountModule->version < self::PS_ACCOUNT_VERSION_REQUIRED) {
+            throw new \PrestaShop\PsAccountsInstaller\Installer\Exception\ModuleNotInstalledException('[Alma] PS Account is not up to date, minimal version required ' . self::PS_ACCOUNT_VERSION_REQUIRED);
         }
     }
 
@@ -604,10 +624,12 @@ class Alma extends PaymentModule
      * @return bool
      *
      * @throws \Alma\PrestaShop\Exceptions\CompatibilityPsAccountException
+     * @throws \PrestaShop\PsAccountsInstaller\Installer\Exception\ModuleNotInstalledException
      */
     public function renderPSAccount()
     {
         $this->checkCompatibilityPSModule();
+        $this->checkPsAccountCompatibility();
         $this->setContainer();
 
         try {
