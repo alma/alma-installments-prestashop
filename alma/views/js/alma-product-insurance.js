@@ -26,49 +26,68 @@
             throw new Error('[Alma] Product details not found. You need to add the hook displayProductActions in your template product page.');
         }
 
+        let loaded = false;
         let insuranceSelected = false;
         let selectedAlmaInsurance = null;
         let addToCartFlow = false;
         let quantity = getQuantity();
         let almaEligibilityAnswer = false;
 
-        //Insurance
-        $("body").on("hidden.bs.modal", "#blockcart-modal", function () {
-            removeInsurance();
-        });
+        // Reset the insurance widget & input when customer chooses "continue shopping" from the "added to cart" modal
+        $("body").on("hidden.bs.modal", "#blockcart-modal", removeInsurance);
+
+        // Display warning to customer if they're seeing the insurance "product" page
         handleInsuranceProductPage();
-        btnLoaders('start');
-        onloadAddInsuranceInputOnProductAlma();
-        if (typeof prestashop !== 'undefined') {
-            prestashop.on('updateProduct', function (event) {
+
+        // Add spinner to add to cart button & disable it until insurance is loaded
+        showLoadingSpinner();
+
+        // Listening to messages from our widget
+        window.addEventListener('message', handleWidgetMessage);
+
+        if (prestashop) {
+            prestashop.on('updateProduct', function (args) {
                 let addToCart = getAddToCartButton();
 
-                if (event.event !== undefined) {
+                // TODO: is this really useful?
+                if (args.event !== undefined) {
                     quantity = getQuantity();
                 }
-                if (event.eventType === 'updatedProductQuantity') {
-                    quantity = getQuantity();
-                    if (event.event) {
-                        quantity = event.event.target.value;
+
+                // Update quantity & reset insurance choices when quantity changes
+                if (args.eventType === 'updatedProductQuantity') {
+                    if (args.event) {
+                        quantity = Number(args.event.target.value);
+                    } else {
+                        quantity = getQuantity();
                     }
                     removeInsurance();
                 }
-                if (event.eventType === 'updatedProductCombination') {
+
+                // Reset insurance choice when product changes
+                if (args.eventType === 'updatedProductCombination') {
                     removeInsurance();
                 }
-                if (typeof event.selectedAlmaInsurance !== 'undefined' && event.selectedAlmaInsurance !== null) {
+
+                // An insurance offer has been chosen
+                if (Boolean(args.selectedAlmaInsurance)) {
                     insuranceSelected = true;
-                    addInputsInsurance(event);
+                    addInsuranceInputs(args);
                 }
-                if (typeof event.selectedInsuranceData !== 'undefined' && event.selectedInsuranceData) {
-                    removeInputInsurance();
+
+                // Insurance choice has been withdrawn
+                if (Boolean(args.hasRemovedInsurance)) {
+                    removeInsuranceInputs();
                 }
+
+                // If we had intercepted the add to cart flow, resume it to effectively add the product to the cart
                 if (addToCartFlow) {
                     addToCart.click();
                     insuranceSelected = false;
                     addToCartFlow = false;
                 }
             });
+
             prestashop.on('updatedProduct', function (data) {
                 // Update product details data from the PrestaShop-sent data
                 if (data.product_details) {
@@ -106,6 +125,7 @@
         }
 
 
+        // Retrieve wanted product quantity from the quantity selector
         function getQuantity() {
             let quantity = 1;
 
@@ -122,28 +142,36 @@
             qtyInput.value = quantity;
         }
 
-        function btnLoaders(action) {
-            const $addBtn = $(".add-to-cart");
-            if (action === 'start') {
-                $('<div id="insuranceSpinner" class="spinner"></div>').insertBefore($(".add-to-cart i"));
+        // Display/hide a spinner on the add to cart button
+        function showLoadingSpinner(show = true) {
+            const $addBtn = $(getAddToCartButton());
+
+            if (show) {
+                loaded = false;
+                $addBtn.prepend($('<div id="insuranceSpinner" class="spinner"></div>'));
                 $addBtn.attr("disabled", "disabled");
-            }
-            if (action === 'stop') {
-                $(".spinner").remove();
+            } else {
+                $("#insuranceSpinner").remove();
                 $addBtn.removeAttr("disabled");
-                addModalListenerToAddToCart();
             }
         }
 
-        // ** Add input insurance in form to add to cart **
-        function onloadAddInsuranceInputOnProductAlma() {
-            let currentResolve;
+        // Handle incoming messages from the widget
+        function handleWidgetMessage(message) {
+            let widgetInsurance = document.getElementById('alma-widget-insurance-product-page');
 
-            window.addEventListener('message', (e) => {
-                let widgetInsurance = document.getElementById('alma-widget-insurance-product-page');
-                if (e.data.type === 'almaEligibilityAnswer') {
-                    almaEligibilityAnswer = e.data.eligibilityCallResponseStatus.response.eligibleProduct;
-                    btnLoaders('stop');
+            switch (message.data.type) {
+                // Widget is sending us the result of the eligibility call for the current product
+                case 'almaEligibilityAnswer':
+                    almaEligibilityAnswer = message.data.eligibilityCallResponseStatus.response.eligibleProduct;
+
+                    // TODO: we should receive a "loaded" message from the widget
+                    if (!loaded) {
+                        loaded = true;
+                        showLoadingSpinner(false);
+                        addModalListenerToAddToCart();
+                    }
+
                     if (almaEligibilityAnswer) {
                         prestashop.emit('updateProduct', {
                             reason: {
@@ -157,34 +185,37 @@
                             addToCart.removeEventListener("click", insuranceListener)
                         }
                     }
-                }
-                if (e.data.type === 'changeWidgetHeight') {
-                    widgetInsurance.style.height = e.data.widgetHeight + 'px';
-                }
-                if (e.data.type === 'getSelectedInsuranceData') {
+                    break;
+
+                // Widget is asking us to adjust the iframe's height
+                case 'changeWidgetHeight':
+                    widgetInsurance.style.height = message.data.widgetHeight + 'px';
+                    break;
+
+                // Widget is sending us selected insurance data
+                case 'getSelectedInsuranceData':
                     if (parseInt(document.querySelector('.qty [name="qty"]').value) !== quantity) {
                         quantity = getQuantity();
                     }
                     insuranceSelected = true;
-                    selectedAlmaInsurance = e.data.selectedInsuranceData;
+                    selectedAlmaInsurance = message.data.selectedInsuranceData;
                     prestashop.emit('updateProduct', {
                         reason: {
                             productUrl: window.location.href
                         },
                         selectedAlmaInsurance: selectedAlmaInsurance,
-                        selectedInsuranceData: e.data.declinedInsurance,
-                        selectedInsuranceQuantity: e.data.selectedInsuranceQuantity
+                        hasRemovedInsurance: message.data.declinedInsurance,
+                        selectedInsuranceQuantity: message.data.selectedInsuranceQuantity
                     });
-                } else if (currentResolve) {
-                    currentResolve(e.data);
-                }
-            });
+                    break;
+            }
         }
 
+        // Ask widget to refresh with updated product data
         function refreshWidget() {
             let cmsReference = createCmsReference(AlmaInsurance.productDetails);
             let priceAmount = AlmaInsurance.productDetails.price_amount;
-            if (AlmaInsurance.productDetails.price_amount === undefined) {
+            if (priceAmount === undefined) {
                 priceAmount = AlmaInsurance.productDetails.price;
             }
             let staticPriceToCents = Math.round(priceAmount * 100);
@@ -194,6 +225,7 @@
                 quantity = 1;
             }
 
+            // !! Global function provided by openInPageModal script
             getProductDataForApiCall(
                 cmsReference,
                 staticPriceToCents,
@@ -206,20 +238,21 @@
             );
         }
 
+        // Concatenate product ID & its combination ID for a unique identifier
         function createCmsReference(productDetails) {
             if (!productDetails.id_product) {
                 return
             }
 
-            // TODO: check why comparing to string value
-            if (productDetails.id_product_attribute <= '0') {
+            if (productDetails.id_product_attribute <= 0) {
                 return productDetails.id_product;
             }
 
             return productDetails.id_product + '-' + productDetails.id_product_attribute;
         }
 
-        function addInputsInsurance(event) {
+        // Add hidden inputs to the add to cart form so that our insurance product is added along with the main product
+        function addInsuranceInputs(event) {
             let formAddToCart = document.getElementById('add-to-cart-or-refresh');
             let selectedInsuranceQuantity = event.selectedInsuranceQuantity;
 
@@ -227,37 +260,32 @@
                 selectedInsuranceQuantity = quantity
             }
 
-            handleInput('alma_id_insurance_contract', event.selectedAlmaInsurance.insuranceContractId, formAddToCart);
-            handleInput('alma_quantity_insurance', selectedInsuranceQuantity, formAddToCart);
+            // We need both the selected insurance contract ID, and how many subscriptions to add
+            addInsuranceInput('alma_id_insurance_contract', event.selectedAlmaInsurance.insuranceContractId, formAddToCart);
+            addInsuranceInput('alma_quantity_insurance', selectedInsuranceQuantity, formAddToCart);
         }
 
-        function handleInput(inputName, value, form) {
-            let elementInput = document.getElementById(inputName);
-            if (elementInput == null) {
-                let input = document.createElement('input');
-                input.setAttribute('value', value);
-                input.setAttribute('name', inputName);
-                input.setAttribute('class', 'alma_insurance_input');
-                input.setAttribute('id', inputName);
-                input.setAttribute('type', 'hidden');
-
-                form.prepend(input);
+        // Add a single insurance input to the add to cart form
+        function addInsuranceInput(inputName, value, form) {
+            let $elementInput = $(`#${inputName}`)
+            if (!$elementInput.length) {
+                const $input = $(`<input type="hidden" id="${inputName}" name="${inputName}" class="alma_insurance_input" value="${value}">`)
+                $(form).prepend($input);
             } else {
-                elementInput.setAttribute('value', value);
+                $elementInput.val(value);
             }
         }
 
-        function removeInsurance() {
-            resetInsurance();
-            insuranceSelected = false;
-            removeInputInsurance();
+        // Remove our insurance hidden fields from the add to cart form
+        function removeInsuranceInputs() {
+            $('.alma_insurance_input').remove()
         }
 
-        function removeInputInsurance() {
-            let inputsInsurance = document.getElementById('add-to-cart-or-refresh').querySelectorAll('.alma_insurance_input');
-            inputsInsurance.forEach((input) => {
-                input.remove();
-            });
+        function removeInsurance() {
+            // !! Global function provided by openInPageModal script
+            resetInsurance();
+            insuranceSelected = false;
+            removeInsuranceInputs();
         }
 
         function addModalListenerToAddToCart() {
@@ -271,27 +299,42 @@
             }
         }
 
-        function getAddToCartButton() {
-            let addToCart = document.querySelector('button.add-to-cart');
-            // TODO: Ravate specific to generalise with selector configuration
-            if (!addToCart) {
-                addToCart = document.querySelector('.add-to-cart a, .add-to-cart button').first();
-            }
+        // Find the selector for the add to cart button
+        function getAddToCartBtnSelector() {
+            // TODO: move selectors to a module configuration option
+            const selectors = [
+                '[data-button-action=add-to-cart]:visible', // generic PrestaShop add to cart button
+                'button.add-to-cart:visible',
+                '.add-to-cart a:visible',
+                '.add-to-cart button:visible',
+                'a[role=button][href$=addToCart]:visible' // elementor addToCart widget
+            ];
 
-            return addToCart;
+            // Return first selector that successfully matches an element in the DOM
+            return selectors.find(selector => $(selector).length > 0)
+        }
+
+        function getAddToCartButton() {
+            return $(getAddToCartBtnSelector())[0];
         }
 
         function insuranceListener(event) {
             if (!insuranceSelected) {
                 event.preventDefault();
                 event.stopPropagation();
+
                 openModal('popupModal', quantity);
+
                 insuranceSelected = true;
                 addToCartFlow = true;
             }
+
             insuranceSelected = false;
         }
 
+        // This is only used to display a callout message when the product page for the actual insurance "product" from
+        // the catalog is being viewed by a customer
+        // TODO: This should probably be removed in favor of conditional templating/hooks on the product page itself
         function handleInsuranceProductPage() {
             const $almaInsuranceGlobal = $('#alma-insurance-global');
             if (AlmaInsurance.productDetails.id === $almaInsuranceGlobal.data('insurance-id')) {
