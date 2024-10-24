@@ -20,7 +20,13 @@
  * @copyright 2018-2024 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  *}
-<div class="alma-widget-insurance" id="alma-widget-insurance-product-page" data-alma-insurance-settings="{$settingsInsurance}" style="height: 100%" >
-    <div id="product-details" class="js-product-details" data-product="{$product.embedded_attributes|json_encode}" style="display:none;"></div>
+<div class="alma-widget-insurance" id="alma-widget-insurance-product-page" style="height: 100%" >
+    {literal}
+    <script type="text/javascript">
+        window.AlmaInsurance = window.AlmaInsurance || { };
+        window.AlmaInsurance.settings = {/literal}{$settingsInsurance nofilter};{literal}
+        window.AlmaInsurance.productDetails = {/literal}{$productDetails nofilter};{literal}
+    </script>
+    {/literal}
     <iframe id="product-alma-iframe" src="{$iframeUrl}"></iframe>
 </div>
