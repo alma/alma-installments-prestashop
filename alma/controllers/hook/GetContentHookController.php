@@ -431,7 +431,7 @@ final class GetContentHookController extends AdminHookController
             return $credentialsError['message'];
         }
 
-        $this->apiHelper->sendUrlForGatherCmsData($this->contextHelper->getModuleLink('configuration', [], true));
+        $this->apiHelper->sendUrlForGatherCmsData($this->contextHelper->getModuleLink('cmsdataexport', [], true));
 
         $this->context->smarty->clearAssign('validation_error');
 
