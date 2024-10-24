@@ -31,7 +31,7 @@ require_once _PS_MODULE_DIR_ . 'alma/vendor/autoload.php';
 class Alma extends PaymentModule
 {
     const VERSION = '4.4.0';
-    const PS_ACCOUNT_VERSION_REQUIRED = '5.0';
+    const PS_ACCOUNT_VERSION_REQUIRED = '5.3.0';
 
     public $_path;
     public $local_path;
