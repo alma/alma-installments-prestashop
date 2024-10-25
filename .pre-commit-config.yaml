@@ -39,7 +39,7 @@ repos:
         stages: [commit]
 
   - repo: https://github.com/returntocorp/semgrep
-    rev: v1.91.0
+    rev: v1.92.0
     hooks:
       - id: semgrep
         args:
@@ -58,4 +58,4 @@ repos:
     hooks:
       - id: check-branch-name
         args:
-          - "-r^((chore|ci|dependabot|devx|docs|feature|fix|release|hotfix|hotfix-backport|infra|other|perf|refactor|security|test)\/.+|(snyk)-.+|main|develop|HEAD)$$"
+          - "-r^((chore|ci|dependabot|devx|renovate|docs|feature|fix|release|hotfix|hotfix-backport|infra|other|perf|refactor|security|test)\/.+|(snyk)-.+|main|develop|HEAD)$$"
