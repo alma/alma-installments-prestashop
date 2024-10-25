@@ -36,6 +36,9 @@ if (!defined('ALMA_MODE_LIVE')) {
     define('ALMA_MODE_LIVE', 'live');
 }
 
+use Alma\PrestaShop\Exceptions\AlmaException;
+use Alma\PrestaShop\Factories\CategoryFactory;
+use Alma\PrestaShop\Factories\ContextFactory;
 use Alma\PrestaShop\Forms\ApiAdminFormBuilder;
 use Alma\PrestaShop\Forms\ExcludedCategoryAdminFormBuilder;
 use Alma\PrestaShop\Forms\InpageAdminFormBuilder;
@@ -48,6 +51,8 @@ use Alma\PrestaShop\Forms\ShareOfCheckoutAdminFormBuilder;
  */
 class SettingsHelper
 {
+    const ALMA_FULLY_CONFIGURED = 'ALMA_FULLY_CONFIGURED';
+    const ALMA_EXCLUDED_CATEGORIES = 'ALMA_EXCLUDED_CATEGORIES';
     /**
      * @var ShopHelper
      */
@@ -57,15 +62,35 @@ class SettingsHelper
      * @var ConfigurationHelper
      */
     protected $configurationHelper;
+    /**
+     * @var CategoryFactory
+     */
+    protected $categoryFactory;
+    /**
+     * @var ContextFactory
+     */
+    protected $contextFactory;
+    /**
+     * @var ValidateHelper
+     */
+    protected $validateHelper;
 
     /**
      * @param ShopHelper $shopHelper
      * @param ConfigurationHelper $configurationHelper
      */
-    public function __construct($shopHelper, $configurationHelper)
-    {
+    public function __construct(
+        $shopHelper,
+        $configurationHelper,
+        $categoryFactory,
+        $contextFactory,
+        $validateHelper
+    ) {
         $this->shopHelper = $shopHelper;
         $this->configurationHelper = $configurationHelper;
+        $this->categoryFactory = $categoryFactory;
+        $this->contextFactory = $contextFactory;
+        $this->validateHelper = $validateHelper;
     }
 
     /**
@@ -172,7 +197,7 @@ class SettingsHelper
     public static function deleteAllValues()
     {
         $configKeys = [
-            'ALMA_FULLY_CONFIGURED',
+            self::ALMA_FULLY_CONFIGURED,
             'ALMA_ACTIVATE_LOGGING',
             ShareOfCheckoutAdminFormBuilder::ALMA_SHARE_OF_CHECKOUT_STATE,
             ShareOfCheckoutAdminFormBuilder::ALMA_SHARE_OF_CHECKOUT_DATE,
@@ -234,7 +259,7 @@ class SettingsHelper
      */
     public static function isFullyConfigured()
     {
-        return (bool) (int) static::get('ALMA_FULLY_CONFIGURED', false);
+        return (bool) (int) static::get(self::ALMA_FULLY_CONFIGURED, false);
     }
 
     /**
@@ -931,5 +956,31 @@ class SettingsHelper
         }
 
         return $dataFromKey;
+    }
+
+    /**
+     * @return array
+     */
+    public function getCategoriesExcludedNames()
+    {
+        $categories = $this->configurationHelper->get(self::ALMA_EXCLUDED_CATEGORIES);
+        if (!$categories) {
+            return [];
+        }
+
+        $categoriesNames = [];
+
+        foreach (json_decode($categories) as $id) {
+            try {
+                $category = $this->categoryFactory->create($id, $this->contextFactory->getContextLanguageId());
+            } catch (AlmaException $e) {
+                $category = $this->categoryFactory->create($id);
+            }
+            if ($this->validateHelper->isLoadedObject($category)) {
+                $categoriesNames[] = $category->name;
+            }
+        }
+
+        return $categoriesNames;
     }
 }

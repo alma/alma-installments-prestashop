@@ -22,33 +22,44 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
-namespace Alma\PrestaShop\Builders\Helpers;
+namespace Alma\PrestaShop\Helpers;
 
-use Alma\PrestaShop\Helpers\SettingsHelper;
-use Alma\PrestaShop\Traits\BuilderTrait;
+use Alma\PrestaShop\Builders\Factories\ModuleFactoryBuilder;
 
 if (!defined('_PS_VERSION_')) {
     exit;
 }
 
 /**
- * SettingsHelperBuilder.
+ * Class ModuleHelper.
  */
-class SettingsHelperBuilder
+class ModuleHelper
 {
-    use BuilderTrait;
+    /**
+     * @var \Alma\PrestaShop\Factories\ModuleFactory
+     */
+    protected $moduleFactory;
+
+    public function __construct()
+    {
+        $moduleFactoryBuilder = new ModuleFactoryBuilder();
+        $this->moduleFactory = $moduleFactoryBuilder->getInstance();
+    }
 
     /**
-     * @return SettingsHelper
+     * @return array
      */
-    public function getInstance()
+    public function getModuleList()
     {
-        return new SettingsHelper(
-            $this->getShopHelper(),
-            $this->getConfigurationHelper(),
-            $this->getCategoryFactory(),
-            $this->getContextFactory(),
-            $this->getValidateHelper()
-        );
+        $modules = [];
+        $modulesInstalled = $this->moduleFactory->getModulesInstalled();
+        foreach ($modulesInstalled as $module) {
+            $modules[] = [
+                'name' => $module['name'],
+                'version' => $module['version'],
+            ];
+        }
+
+        return $modules;
     }
 }

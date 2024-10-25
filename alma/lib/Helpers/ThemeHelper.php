@@ -22,33 +22,53 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
-namespace Alma\PrestaShop\Builders\Helpers;
+namespace Alma\PrestaShop\Helpers;
 
-use Alma\PrestaShop\Helpers\SettingsHelper;
-use Alma\PrestaShop\Traits\BuilderTrait;
+use Alma\PrestaShop\Factories\ContextFactory;
 
 if (!defined('_PS_VERSION_')) {
     exit;
 }
 
 /**
- * SettingsHelperBuilder.
+ * Class ThemeHelper.
  */
-class SettingsHelperBuilder
+class ThemeHelper
 {
-    use BuilderTrait;
+    const CONFIG_THEME_FILE = _PS_THEME_DIR_ . 'config/theme.yml';
+    /**
+     * @var ContextFactory
+     */
+    protected $contextFactory;
+    /**
+     * @var ToolsHelper
+     */
+    protected $toolsHelper;
+
+    public function __construct()
+    {
+        $this->contextFactory = new ContextFactory();
+        $this->toolsHelper = new ToolsHelper();
+    }
 
     /**
-     * @return SettingsHelper
+     * @return string
      */
-    public function getInstance()
+    public function getThemeNameWithVersion()
     {
-        return new SettingsHelper(
-            $this->getShopHelper(),
-            $this->getConfigurationHelper(),
-            $this->getCategoryFactory(),
-            $this->getContextFactory(),
-            $this->getValidateHelper()
-        );
+        $themeName = $this->contextFactory->getContext()->shop->theme_name;
+        $themeConfigPath = self::CONFIG_THEME_FILE;
+
+        // WARNING : NOT COMPATIBLE WITH PS 1.6
+        // TODO : Need to explo a better compatibility with PS 1.6
+        if ($this->toolsHelper->psVersionCompare('1.7', '>=')) {
+            if (file_exists($themeConfigPath)) {
+                $themeConfig = \Symfony\Component\Yaml\Yaml::parseFile($themeConfigPath);
+                $themeVersion = $themeConfig['version'] ?: 'undefined';
+                $themeName = $themeName . ' ' . $themeVersion;
+            }
+        }
+
+        return $themeName;
     }
 }

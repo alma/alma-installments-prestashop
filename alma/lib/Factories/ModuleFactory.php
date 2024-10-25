@@ -56,6 +56,14 @@ class ModuleFactory
     }
 
     /**
+     * @return array
+     */
+    public function getModulesInstalled()
+    {
+        return \Module::getModulesInstalled();
+    }
+
+    /**
      * @return string
      */
     public function getModuleName()
@@ -64,6 +72,20 @@ class ModuleFactory
 
         if ($module) {
             return $module->name;
+        }
+
+        return '';
+    }
+
+    /**
+     * @return string
+     */
+    public function getModuleVersion()
+    {
+        $module = $this->getModule();
+
+        if ($module) {
+            return $module->version;
         }
 
         return '';

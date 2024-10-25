@@ -22,33 +22,26 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
-namespace Alma\PrestaShop\Builders\Helpers;
+namespace Alma\PrestaShop\Factories;
 
-use Alma\PrestaShop\Helpers\SettingsHelper;
-use Alma\PrestaShop\Traits\BuilderTrait;
+use Category;
 
 if (!defined('_PS_VERSION_')) {
     exit;
 }
 
 /**
- * SettingsHelperBuilder.
+ * Class CategoryFactory.
  */
-class SettingsHelperBuilder
+class CategoryFactory
 {
-    use BuilderTrait;
-
     /**
-     * @return SettingsHelper
+     * @param int $id
+     *
+     * @return Category
      */
-    public function getInstance()
+    public function create($id = null, $idLang = null)
     {
-        return new SettingsHelper(
-            $this->getShopHelper(),
-            $this->getConfigurationHelper(),
-            $this->getCategoryFactory(),
-            $this->getContextFactory(),
-            $this->getValidateHelper()
-        );
+        return new Category($id, $idLang);
     }
 }

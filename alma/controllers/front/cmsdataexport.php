@@ -3,7 +3,17 @@
 use Alma\API\Entities\MerchantData\CmsFeatures;
 use Alma\API\Entities\MerchantData\CmsInfo;
 use Alma\API\Lib\PayloadFormatter;
+use Alma\PrestaShop\Builders\Factories\ModuleFactoryBuilder;
+use Alma\PrestaShop\Builders\Helpers\SettingsHelperBuilder;
+use Alma\PrestaShop\Forms\CartEligibilityAdminFormBuilder;
+use Alma\PrestaShop\Forms\DebugAdminFormBuilder;
+use Alma\PrestaShop\Forms\InpageAdminFormBuilder;
+use Alma\PrestaShop\Forms\PnxAdminFormBuilder;
+use Alma\PrestaShop\Forms\ProductEligibilityAdminFormBuilder;
 use Alma\PrestaShop\Helpers\ConfigurationHelper;
+use Alma\PrestaShop\Helpers\ModuleHelper;
+use Alma\PrestaShop\Helpers\SettingsHelper;
+use Alma\PrestaShop\Helpers\ThemeHelper;
 use Alma\PrestaShop\Traits\AjaxTrait;
 
 if (!defined('_PS_VERSION_')) {
@@ -18,11 +28,33 @@ class AlmaCmsDataExportModuleFrontController extends ModuleFrontController
     use AjaxTrait;
 
     private $configHelper;
+    /**
+     * @var ModuleHelper
+     */
+    protected $moduleHelper;
+    /**
+     * @var ThemeHelper
+     */
+    protected $themeHelper;
+    /**
+     * @var ModuleFactoryBuilder
+     */
+    protected $moduleFactory;
+    /**
+     * @var SettingsHelper
+     */
+    protected $settingsHelper;
 
     public function __construct()
     {
         parent::__construct();
         $this->configHelper = new ConfigurationHelper();
+        $this->moduleHelper = new ModuleHelper();
+        $this->themeHelper = new ThemeHelper();
+        $moduleFactoryBuilder = new ModuleFactoryBuilder();
+        $this->moduleFactory = $moduleFactoryBuilder->getInstance();
+        $settingsHelperBuilder = new SettingsHelperBuilder();
+        $this->settingsHelper = $settingsHelperBuilder->getInstance();
     }
 
     public function postProcess()
@@ -32,28 +64,28 @@ class AlmaCmsDataExportModuleFrontController extends ModuleFrontController
         $cmsInfoDataArray = [
             'cms_name' => 'Prestashop',
             'cms_version' => _PS_VERSION_,
-            'third_parties_plugins' => $this->getModuleListe(),
-            'themes' => $this->getThemeNameWithVersion(),
+            'third_parties_plugins' => $this->moduleHelper->getModuleList(),
+            'themes' => $this->themeHelper->getThemeNameWithVersion(),
             'language_name' => 'PHP',
             'language_version' => phpversion(),
-            'alma_plugin_version' => $this->getAlmaModuleVersion(),
+            'alma_plugin_version' => $this->moduleFactory->getModuleVersion(),
             'alma_sdk_name' => 'ALMA-PHP-CLIENT',
             'alma_sdk_version' => $this->getPhpClientVersion(),
         ];
 
         $cmsFeatureDataArray = [
-            'alma_enabled' => (bool) (int) $this->configHelper->get('ALMA_FULLY_CONFIGURED'), // clef fully configured
-            'widget_cart_activated' => (bool) (int) $this->configHelper->get('ALMA_SHOW_ELIGIBILITY_MESSAGE'),
-            'widget_product_activated' => (bool) (int) $this->configHelper->get('ALMA_SHOW_PRODUCT_ELIGIBILITY'),
-            'used_fee_plans' => json_decode($this->configHelper->get('ALMA_FEE_PLANS'), true),
+            'alma_enabled' => (bool) (int) $this->configHelper->get(SettingsHelper::ALMA_FULLY_CONFIGURED), // clef fully configured
+            'widget_cart_activated' => (bool) (int) $this->configHelper->get(CartEligibilityAdminFormBuilder::ALMA_SHOW_ELIGIBILITY_MESSAGE),
+            'widget_product_activated' => (bool) (int) $this->configHelper->get(ProductEligibilityAdminFormBuilder::ALMA_SHOW_PRODUCT_ELIGIBILITY),
+            'used_fee_plans' => json_decode($this->configHelper->get(PnxAdminFormBuilder::ALMA_FEE_PLANS), true),
             //'payment_method_position' => null, // not applicable - position is set in the used_fee_plans
-            'in_page_activated' => (bool) (int) $this->configHelper->get('ALMA_ACTIVATE_INPAGE'),
-            'log_activated' => (bool) (int) $this->configHelper->get('ALMA_ACTIVATE_LOGGING'),
-            'excluded_categories' => $this->getCategoriesName(),
+            'in_page_activated' => (bool) (int) $this->configHelper->get(InpageAdminFormBuilder::ALMA_ACTIVATE_INPAGE),
+            'log_activated' => (bool) (int) $this->configHelper->get(DebugAdminFormBuilder::ALMA_ACTIVATE_LOGGING),
+            'excluded_categories' => $this->settingsHelper->getCategoriesExcludedNames(),
             //'excluded_categories_activated' => '',// not applicable - it's not possible to disable the exclusion
-            'specific_features' => [], // no scpecific features in Prestashop
+            'specific_features' => [], // no specific features in Prestashop
             'country_restriction' => $this->getCountriesRestrictions(),
-            'custom_widget_css' => $this->configHelper->get('ALMA_WIDGET_POSITION_SELECTOR'),
+            'custom_widget_css' => $this->configHelper->get(ProductEligibilityAdminFormBuilder::ALMA_WIDGET_POSITION_SELECTOR),
             'is_multisite' => Shop::isFeatureActive(),
         ];
         $cmsInfo = new CmsInfo($cmsInfoDataArray);
@@ -67,62 +99,9 @@ class AlmaCmsDataExportModuleFrontController extends ModuleFrontController
         return [];
     }
 
-    private function getCategoriesName()
-    {
-        $categories = $this->configHelper->get('ALMA_EXCLUDED_CATEGORIES');
-        if (!$categories) {
-            return [];
-        }
-
-        $categoryNames = [];
-
-        foreach (json_decode($categories) as $id) {
-            // TODO extract to a helper to test
-            $category = new Category($id, Context::getContext()->language->id);
-            if (Validate::isLoadedObject($category)) {
-                $categoryNames[] = $category->name;
-            }
-        }
-
-        return $categoryNames;
-    }
-
-    private function getThemeNameWithVersion()
-    {
-        $themeName = Context::getContext()->shop->theme_name;
-        $themeConfigPath = _PS_THEME_DIR_ . 'config/theme.yml';
-
-        // WARNING : NOT COMPATIBLE WITH PS 1.6
-        if (file_exists($themeConfigPath)) {
-            $themeConfig = \Symfony\Component\Yaml\Yaml::parseFile($themeConfigPath);
-            $themeVersion = $themeConfig['version'] ?: 'undefined';
-            $themeName = $themeName . ' ' . $themeVersion;
-        }
-
-        return $themeName;
-    }
-
-    private function getModuleListe()
-    {
-        $modulesArray = [];
-        $modules = Module::getModulesInstalled();
-        foreach ($modules as $module) {
-            $modulesArray[] = [
-                'name' => $module['name'],
-                'version' => $module['version'],
-            ];
-        }
-
-        return $modulesArray;
-    }
-
-    private function getAlmaModuleVersion()
-    {
-        $module = Module::getInstanceByName('alma');
-
-        return $module->version;
-    }
-
+    /**
+     * @return mixed|string
+     */
     private function getPhpClientVersion()
     {
         $installedFile = _PS_MODULE_DIR_ . 'alma/vendor/composer/installed.json';
@@ -139,11 +118,6 @@ class AlmaCmsDataExportModuleFrontController extends ModuleFrontController
         }
 
         return '';
-    }
-
-    public function setConfigHelper($configHelperClass)
-    {
-        $this->configHelper = $configHelperClass;
     }
 
     public function getTestData()
