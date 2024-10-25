@@ -47,8 +47,6 @@
 
         if (prestashop) {
             prestashop.on('updateProduct', function (args) {
-                let addToCart = getAddToCartButton();
-
                 // TODO: is this really useful?
                 if (args.event !== undefined) {
                     quantity = getQuantity();
@@ -67,24 +65,6 @@
                 // Reset insurance choice when product changes
                 if (args.eventType === 'updatedProductCombination') {
                     removeInsurance();
-                }
-
-                // An insurance offer has been chosen
-                if (Boolean(args.selectedAlmaInsurance)) {
-                    insuranceSelected = true;
-                    addInsuranceInputs(args);
-                }
-
-                // Insurance choice has been withdrawn
-                if (Boolean(args.hasRemovedInsurance)) {
-                    removeInsuranceInputs();
-                }
-
-                // If we had intercepted the add to cart flow, resume it to effectively add the product to the cart
-                if (addToCartFlow) {
-                    addToCart.click();
-                    insuranceSelected = false;
-                    addToCartFlow = false;
                 }
             });
 
@@ -134,10 +114,18 @@
                 quantity = Number(qtyInput.value);
             }
 
+            if (quantity <= 0) {
+                quantity = 1;
+            }
+
             return quantity
         }
 
         function setQuantity(quantity) {
+            if (quantity <= 0) {
+                quantity = 1;
+            }
+
             const qtyInput = document.querySelector('.qty [name="qty"]');
             qtyInput.value = quantity;
         }
@@ -152,7 +140,7 @@
                 $addBtn.attr("disabled", "disabled");
             } else {
                 $("#insuranceSpinner").remove();
-                $addBtn.removeAttr("disabled");
+                $addBtn.attr("disabled", null);
             }
         }
 
@@ -172,17 +160,11 @@
                         addModalListenerToAddToCart();
                     }
 
-                    if (almaEligibilityAnswer) {
-                        prestashop.emit('updateProduct', {
-                            reason: {
-                                productUrl: window.location.href,
-                            }
-                        });
-                    } else {
+                    if (!almaEligibilityAnswer) {
                         widgetInsurance.style.display = 'none';
                         let addToCart = document.querySelector('.add-to-cart');
                         if (addToCart) {
-                            addToCart.removeEventListener("click", insuranceListener)
+                            addToCart.removeEventListener("click", addToCartListener)
                         }
                     }
                     break;
@@ -197,16 +179,27 @@
                     if (parseInt(document.querySelector('.qty [name="qty"]').value) !== quantity) {
                         quantity = getQuantity();
                     }
-                    insuranceSelected = true;
-                    selectedAlmaInsurance = message.data.selectedInsuranceData;
-                    prestashop.emit('updateProduct', {
-                        reason: {
-                            productUrl: window.location.href
-                        },
-                        selectedAlmaInsurance: selectedAlmaInsurance,
+
+                    const data = {
+                        selectedAlmaInsurance: message.data.selectedInsuranceData,
                         hasRemovedInsurance: message.data.declinedInsurance,
                         selectedInsuranceQuantity: message.data.selectedInsuranceQuantity
-                    });
+                    }
+
+                    if (Boolean(data.selectedAlmaInsurance)) {
+                        // An insurance offer has been chosen
+                        insuranceSelected = true;
+                        addInsuranceInputs(data);
+                    } else if (data.hasRemovedInsurance) {
+                        // Insurance choice has been withdrawn
+                        insuranceSelected = false;
+                        removeInsuranceInputs();
+                    }
+
+                    // If we had intercepted the add to cart flow, resume it to effectively add the product to the cart
+                    if (addToCartFlow) {
+                        getAddToCartButton().click();
+                    }
                     break;
             }
         }
@@ -219,11 +212,6 @@
                 priceAmount = AlmaInsurance.productDetails.price;
             }
             let staticPriceToCents = Math.round(priceAmount * 100);
-
-            quantity = AlmaInsurance.productDetails.quantity_wanted;
-            if (quantity <= 0) {
-                quantity = 1;
-            }
 
             // !! Global function provided by openInPageModal script
             getProductDataForApiCall(
@@ -293,8 +281,8 @@
                 const addToCart = getAddToCartButton();
                 if (addToCart) {
                     // If we change the quantity the DOM is reloaded then we need to remove and add the listener again
-                    addToCart.removeEventListener("click", insuranceListener);
-                    addToCart.addEventListener("click", insuranceListener);
+                    addToCart.removeEventListener("click", addToCartListener);
+                    addToCart.addEventListener("click", addToCartListener);
                 }
             }
         }
@@ -318,18 +306,16 @@
             return $(getAddToCartBtnSelector())[0];
         }
 
-        function insuranceListener(event) {
-            if (!insuranceSelected) {
+        function addToCartListener(event) {
+            if (!insuranceSelected && !addToCartFlow) {
                 event.preventDefault();
                 event.stopPropagation();
 
-                openModal('popupModal', quantity);
-
-                insuranceSelected = true;
                 addToCartFlow = true;
+                openModal('popupModal', quantity);
+            } else {
+                addToCartFlow = false;
             }
-
-            insuranceSelected = false;
         }
 
         // This is only used to display a callout message when the product page for the actual insurance "product" from
