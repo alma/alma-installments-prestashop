@@ -120,6 +120,8 @@ class DisplayProductActionsHookController extends FrontendHookController
             ? $productParams['id_product_attribute']
             : null;
 
+        $quantityWanted = isset($productParams['quantity_wanted']) ? $productParams['quantity_wanted'] : 1;
+
         $cmsReference = $this->insuranceHelper->createCmsReference($productId, $productAttributeId);
 
         $staticPrice = $this->productHelper->getPriceStatic($productId, $productAttributeId);
@@ -132,11 +134,12 @@ class DisplayProductActionsHookController extends FrontendHookController
             'productDetails' => $this->handleProductDetails($params),
             'settingsInsurance' => $this->handleSettings($merchantId),
             'iframeUrl' => sprintf(
-                '%s%s?cms_reference=%s&product_price=%s&product_name=%s&merchant_id=%s&customer_session_id=%s&cart_id=%s',
+                '%s%s?cms_reference=%s&product_price=%s&product_quantity=%s&product_name=%s&merchant_id=%s&customer_session_id=%s&cart_id=%s',
                 $this->adminInsuranceHelper->envUrl(),
                 ConstantsHelper::FO_IFRAME_WIDGET_INSURANCE_PATH,
                 $cmsReference,
                 $staticPriceInCents,
+                $quantityWanted,
                 $productName,
                 $merchantId,
                 $this->context->cookie->checksum,
