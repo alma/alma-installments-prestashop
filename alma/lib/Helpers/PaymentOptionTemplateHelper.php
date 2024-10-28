@@ -172,7 +172,7 @@ class PaymentOptionTemplateHelper
 
         if ($isDeferred) {
             $templateVar['installmentText'] = sprintf(
-                $this->translationHelper->getTranslation('0 € today then %1$s on %2$s', 'PaymentOptionsHookController'),
+                $this->translationHelper->l('0 € today then %1$s on %2$s', 'PaymentOptionTemplateHelper'),
                 $this->priceHelper->formatPriceToCentsByCurrencyId(
                     $plans[0]['purchase_amount'] + $plans[0]['customer_fee']
                 ),

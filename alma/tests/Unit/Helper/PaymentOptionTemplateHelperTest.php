@@ -91,7 +91,7 @@ class PaymentOptionTemplateHelperTest extends TestCase
         $this->settingsHelperMock->shouldReceive('getModeActive')->andReturn('test');
         $this->settingsHelperMock->shouldReceive('getIdMerchant')->andReturn('merchantId');
         $this->configurationHelperMock->shouldReceive('isInPageEnabled')->andReturn(true);
-        $this->translationHelperMock->shouldReceive('getTranslation')->andReturn('My translation');
+        $this->translationHelperMock->shouldReceive('l')->andReturn('My translation');
         $this->priceHelperMock->shouldReceive('formatPriceToCentsByCurrencyId')->andReturn('110.00');
         $this->dateHelperMock->shouldReceive('getDateFormat')->andReturn('22/05/2024');
 
@@ -163,7 +163,7 @@ class PaymentOptionTemplateHelperTest extends TestCase
         $this->settingsHelperMock->shouldReceive('getModeActive')->andReturn('test');
         $this->settingsHelperMock->shouldReceive('getIdMerchant')->andReturn('merchantId');
         $this->configurationHelperMock->shouldReceive('isInPageEnabled')->andReturn(true);
-        $this->translationHelperMock->shouldReceive('getTranslation')->andReturn('My translation');
+        $this->translationHelperMock->shouldReceive('l')->andReturn('My translation');
         $this->priceHelperMock->shouldReceive('formatPriceToCentsByCurrencyId')->andReturn('110.00');
         $this->dateHelperMock->shouldReceive('getDateFormat')->andReturn('22/05/2024');
 

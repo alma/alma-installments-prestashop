@@ -34,6 +34,6 @@ class TranslationHelperTest extends TestCase
         $translationHelperBuilder = new TranslationHelperBuilder();
         $translationHelper = $translationHelperBuilder->getInstance();
 
-        $this->assertEquals('Today', $translationHelper->getTranslation('Today', 'PaymentService'));
+        $this->assertEquals('Today', $translationHelper->l('Today', 'PaymentService'));
     }
 }

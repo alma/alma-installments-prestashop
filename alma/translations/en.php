@@ -32,6 +32,7 @@ $_MODULE['<{alma}prestashop>alma_7bab99339291e7eea710b4a998e663de'] = 'Alma requ
 $_MODULE['<{alma}prestashop>alma_fbb47375d2272bef79f5722a183bf1ec'] = 'Alma requires the JSON PHP extension.';
 $_MODULE['<{alma}prestashop>alma_7fb83ba9cf3cc38857a2ddae98534d22'] = 'Alma requires OpenSSL >= 1.0.1';
 $_MODULE['<{alma}prestashop>modulefactorytest_5914ca153abaf8a2af61e13e7fe7e829'] = 'My wording to translate';
+$_MODULE['<{alma}prestashop>translationhelpertest_1dd1c5fb7f25cd41b291d43a89e3aefd'] = 'Today';
 $_MODULE['<{alma}prestashop>wrongcredentialsexception_cc76de47de858ac2fa2964f534ecfdfb'] = 'Could not connect to Alma using your API keys.';
 $_MODULE['<{alma}prestashop>wrongcredentialsexception_733b6ddadc31fd97174b0cfe69b584c9'] = 'Please double check your keys on your %1$sAlma dashboard%2$s.';
 $_MODULE['<{alma}prestashop>wrongparamsexception_8ec75b5f68c49d1d6541b1e318a8120d'] = 'Error(s) key(s): %1$s.';
@@ -139,7 +140,11 @@ $_MODULE['<{alma}prestashop>paymentvalidation_2ea09287a94f2bc88b459fc7d5a31b6b']
 $_MODULE['<{alma}prestashop>paymentvalidation_6f11098989b14063e0a4cfe362734850'] = 'Alma - %d monthly installments';
 $_MODULE['<{alma}prestashop>refundhelper_446ae76a36687f9dbc62430e7006ca91'] = 'We regret to inform you that there was an issue during the payment process, your Alma payment will be fully refunded. Please retry your payment to complete your order.';
 $_MODULE['<{alma}prestashop>refundhelper_448edd2d5c593906afa202847b8d79c0'] = 'We apologize for the inconvenience, but there was an issue during the payment process, and we were unable to refund your Alma payment. To fix this, we kindly ask you to contact our support team with your payment reference: %s. Our team will be happy to assist you in ensuring that you receive your full refund. Thank you for your cooperation.';
+$_MODULE['<{alma}prestashop>planhelper_1dd1c5fb7f25cd41b291d43a89e3aefd'] = 'Today';
+$_MODULE['<{alma}prestashop>planhelper_96b0141273eabab320119c467cdcaf17'] = 'Total';
+$_MODULE['<{alma}prestashop>planhelper_9bbd94e0a507283ae202812ea1bd6f20'] = '%s month later';
 $_MODULE['<{alma}prestashop>orderhelper_7960c85fd5916169fc5038a2192094f8'] = 'Error: Could not find Alma transaction';
+$_MODULE['<{alma}prestashop>paymentoptiontemplatehelper_9088921432b295dfe6f02863b2dc0ff8'] = '0 € today then %1$s on %2$s';
 $_MODULE['<{alma}prestashop>customfieldshelper_2c53dea2326232a2d867ddd1d2206aa0'] = 'Pay now by credit card';
 $_MODULE['<{alma}prestashop>customfieldshelper_300de0751d957421cc332ba21c43a598'] = 'Pay in %d installments';
 $_MODULE['<{alma}prestashop>customfieldshelper_726c61fad46c135efb4198820e5484ba'] = 'Buy now Pay in %d days';
