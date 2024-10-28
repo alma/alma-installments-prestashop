@@ -131,7 +131,7 @@ class Alma extends PaymentModule
      *
      * @throws \Alma\PrestaShop\Exceptions\CompatibilityPsAccountException
      */
-    public function checkCompatibilityPSModule()
+    public function checkPsAccountPresence()
     {
         if (_PS_MODE_DEV_ === true) {
             throw new \Alma\PrestaShop\Exceptions\CompatibilityPsAccountException('[Alma] Debug mode is activated');
@@ -156,9 +156,11 @@ class Alma extends PaymentModule
      * @return void
      *
      * @throws \PrestaShop\PsAccountsInstaller\Installer\Exception\ModuleNotInstalledException
+     * @throws \Alma\PrestaShop\Exceptions\CompatibilityPsAccountException
      */
     public function checkPsAccountCompatibility()
     {
+        $this->checkPsAccountPresence();
         $psAccountModule = \Module::getInstanceByName('ps_accounts');
         if (!$psAccountModule) {
             throw new \PrestaShop\PsAccountsInstaller\Installer\Exception\ModuleNotInstalledException('[Alma] PS Account is not installed');
@@ -242,7 +244,7 @@ class Alma extends PaymentModule
     public function install()
     {
         try {
-            $this->checkCompatibilityPSModule();
+            $this->checkPsAccountPresence();
             $this->setContainer();
             $this->getService('alma.ps_accounts_installer')->install();
         } catch (\Alma\PrestaShop\Exceptions\CompatibilityPsAccountException $e) {
@@ -628,7 +630,6 @@ class Alma extends PaymentModule
      */
     public function renderPSAccount()
     {
-        $this->checkCompatibilityPSModule();
         $this->checkPsAccountCompatibility();
         $this->setContainer();
 
