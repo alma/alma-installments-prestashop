@@ -95,7 +95,7 @@
 {if isset($suggestPSAccounts) && $suggestPSAccounts}
     <div class="alma alert alert-dismissible alert-info">
         <h2>
-            {l s='We offer to download the PrestaShop Account module' mod='alma'}
+            {l s='We offer to download or update the PrestaShop Account module (minimum required version %1$s)' sprintf=[Alma::PS_ACCOUNTS_VERSION_REQUIRED] mod='alma'}
         </h2>
         <p>
             {l s='Link your store to your PrestaShop account to take full advantage of the modules offered by the PrestaShop Marketplace and optimize your experience.' mod='alma'}
