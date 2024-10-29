@@ -24,8 +24,6 @@
 
 namespace Alma\PrestaShop\Factories;
 
-use Category;
-
 if (!defined('_PS_VERSION_')) {
     exit;
 }
@@ -38,10 +36,10 @@ class CategoryFactory
     /**
      * @param int $id
      *
-     * @return Category
+     * @return \Category
      */
     public function create($id = null, $idLang = null)
     {
-        return new Category($id, $idLang);
+        return new \Category($id, $idLang);
     }
 }

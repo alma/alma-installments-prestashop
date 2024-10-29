@@ -34,15 +34,75 @@ class ModuleHelperTest extends TestCase
      * @var ModuleHelper
      */
     protected $moduleHelper;
+    /**
+     * @var ModuleFactory
+     */
+    protected $moduleFactoryMock;
 
     public function setUp()
     {
         $this->moduleFactoryMock = $this->createMock(ModuleFactory::class);
-        $this->moduleHelper = new ModuleHelper();
+        $this->moduleHelper = new ModuleHelper(
+            $this->moduleFactoryMock
+        );
     }
 
-    public function testGetModuleListWithListOfModules()
+    /**
+     * @dataProvider modulesInstalledDataProvider
+     *
+     * @return void
+     */
+    public function testGetModuleListWithListOfModules($moduleInstalled, $expectedModulesList)
     {
-        $this->assertEquals([], $this->moduleHelper->getModuleList());
+        $this->moduleFactoryMock->expects($this->once())
+            ->method('getModulesInstalled')
+            ->willReturn($moduleInstalled);
+        $this->assertEquals($expectedModulesList, $this->moduleHelper->getModuleList());
+    }
+
+    public function modulesInstalledDataProvider()
+    {
+        return [
+            'With Modules installed' => [
+                'Modules installed' => [
+                    [
+                        'id_module' => '1',
+                        'name' => 'blockwishlist',
+                        'active' => '1',
+                        'version' => '2.1.0',
+                    ],
+                    [
+                        'id_module' => '2',
+                        'name' => 'contactform',
+                        'active' => '1',
+                        'version' => '4.3.0',
+                    ],
+                    [
+                        'id_module' => '3',
+                        'name' => 'dashactivity',
+                        'active' => '1',
+                        'version' => '2.0.2',
+                    ],
+                ],
+                'Modules list' => [
+                    [
+                        'name' => 'blockwishlist',
+                        'version' => '2.1.0',
+                    ],
+                    [
+                        'name' => 'contactform',
+                        'version' => '4.3.0',
+                    ],
+                    [
+                        'name' => 'dashactivity',
+                        'version' => '2.0.2',
+                    ],
+                ],
+            ],
+            'With no module installed' => [
+                'Modules installed' => [],
+                'Modules list' => [],
+            ],
+        ];
     }
 }

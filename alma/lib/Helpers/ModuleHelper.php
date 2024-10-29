@@ -40,10 +40,13 @@ class ModuleHelper
      */
     protected $moduleFactory;
 
-    public function __construct()
+    public function __construct($moduleFactory = null)
     {
         $moduleFactoryBuilder = new ModuleFactoryBuilder();
-        $this->moduleFactory = $moduleFactoryBuilder->getInstance();
+        if ($moduleFactory == null) {
+            $moduleFactory = $moduleFactoryBuilder->getInstance();
+        }
+        $this->moduleFactory = $moduleFactory;
     }
 
     /**

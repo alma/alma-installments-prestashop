@@ -976,7 +976,7 @@ class SettingsHelper
             } catch (AlmaException $e) {
                 $category = $this->categoryFactory->create($id);
             }
-            if ($this->validateHelper->isLoadedObject($category)) {
+            if ($this->validateHelper->isLoadedObject($category) && $category->name !== null) {
                 $categoriesNames[] = $category->name;
             }
         }

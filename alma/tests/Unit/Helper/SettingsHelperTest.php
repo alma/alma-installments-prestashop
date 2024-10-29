@@ -26,6 +26,7 @@ namespace Alma\PrestaShop\Tests\Unit\Helper;
 
 use Alma\API\Entities\FeePlan;
 use Alma\PrestaShop\Builders\Helpers\SettingsHelperBuilder;
+use Alma\PrestaShop\Exceptions\AlmaException;
 use Alma\PrestaShop\Factories\CategoryFactory;
 use Alma\PrestaShop\Factories\ContextFactory;
 use Alma\PrestaShop\Forms\InpageAdminFormBuilder;
@@ -528,5 +529,101 @@ class SettingsHelperTest extends TestCase
                 'placeOrderButtonSelector' => 'place order selector custom',
             ],
         ];
+    }
+
+    public function testGetCategoriesExcludedNamesWithNoCategories()
+    {
+        $this->configurationHelperMock->expects($this->once())
+            ->method('get')
+            ->with(SettingsHelper::ALMA_EXCLUDED_CATEGORIES)
+            ->willReturn(false);
+        $this->assertEquals([], $this->settingsHelper->getCategoriesExcludedNames());
+    }
+
+    /**
+     * @return void
+     */
+    public function testGetCategoriesExcludedNamesWithCategoriesDontExist()
+    {
+        $categories = [
+            10 => $this->createMock(\Category::class),
+            11 => $this->createMock(\Category::class),
+        ];
+
+        $this->configurationHelperMock->expects($this->once())
+            ->method('get')
+            ->with(SettingsHelper::ALMA_EXCLUDED_CATEGORIES)
+            ->willReturn('[10, 11]');
+        $this->categoryFactoryMock->expects($this->exactly(2))
+            ->method('create')
+            ->withConsecutive([10, 1], [11, 1])
+            ->willReturnOnConsecutiveCalls($categories[10], $categories[11]);
+        $this->contextFactoryMock->expects($this->exactly(2))
+            ->method('getContextLanguageId')
+            ->willReturn(1);
+        $this->validateHelperMock->expects($this->exactly(2))
+            ->method('isLoadedObject')
+            ->withConsecutive([$categories[10]], [$categories[11]])
+            ->willReturnOnConsecutiveCalls(false, false);
+        $this->assertEquals([], $this->settingsHelper->getCategoriesExcludedNames());
+    }
+
+    public function testGetCategoriesExcludedNamesWithReturnOnlyCategoryExisting()
+    {
+        /** @var \Category[] $categories */
+        $categories = [
+            10 => $this->createMock(\Category::class),
+            11 => $this->createMock(\Category::class),
+        ];
+
+        $categories[10]->id = 10;
+        $categories[10]->name = 'category 10';
+
+        $this->configurationHelperMock->expects($this->once())
+            ->method('get')
+            ->with(SettingsHelper::ALMA_EXCLUDED_CATEGORIES)
+            ->willReturn('[10, 11]');
+        $this->categoryFactoryMock->expects($this->exactly(2))
+            ->method('create')
+            ->withConsecutive([10, 1], [11, 1])
+            ->willReturnOnConsecutiveCalls($categories[10], $categories[11]);
+        $this->contextFactoryMock->expects($this->exactly(2))
+            ->method('getContextLanguageId')
+            ->willReturn(1);
+        $this->validateHelperMock->expects($this->exactly(2))
+            ->method('isLoadedObject')
+            ->withConsecutive([$categories[10]], [$categories[11]])
+            ->willReturnOnConsecutiveCalls(true, false);
+        $this->assertEquals(['category 10'], $this->settingsHelper->getCategoriesExcludedNames());
+    }
+
+    public function testGetCategoriesExcludedNamesWithGetContextLanguageIdThrowException()
+    {
+        /** @var \Category[] $categories */
+        $categories = [
+            10 => $this->createMock(\Category::class),
+            11 => $this->createMock(\Category::class),
+        ];
+
+        $categories[10]->id = 10;
+        $categories[10]->name = 'category 10';
+
+        $this->configurationHelperMock->expects($this->once())
+            ->method('get')
+            ->with(SettingsHelper::ALMA_EXCLUDED_CATEGORIES)
+            ->willReturn('[10, 11]');
+
+        $this->contextFactoryMock->expects($this->exactly(2))
+            ->method('getContextLanguageId')
+            ->willThrowException(new AlmaException('Context language is null'));
+        $this->categoryFactoryMock->expects($this->exactly(2))
+            ->method('create')
+            ->withConsecutive([10], [11])
+            ->willReturnOnConsecutiveCalls($categories[10], $categories[11]);
+        $this->validateHelperMock->expects($this->exactly(2))
+            ->method('isLoadedObject')
+            ->withConsecutive([$categories[10]], [$categories[11]])
+            ->willReturnOnConsecutiveCalls(true, false);
+        $this->assertEquals(['category 10'], $this->settingsHelper->getCategoriesExcludedNames());
     }
 }
