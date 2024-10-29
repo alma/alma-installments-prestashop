@@ -6,6 +6,6 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-class CompatibilityPsAccountException extends AlmaException
+class CompatibilityPsAccountsException extends AlmaException
 {
 }

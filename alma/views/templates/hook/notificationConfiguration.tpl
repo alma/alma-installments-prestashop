@@ -20,7 +20,7 @@
  * @copyright 2018-2024 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  *}
-{if isset($hasPSAccount) && $hasPSAccount}
+{if isset($hasPSAccounts) && $hasPSAccounts}
     <div class="ps-account-container">
         {if isset($hasKey) && !$hasKey}
             {include file="./_partials/notificationFirstInstallation.tpl"}
@@ -73,8 +73,8 @@
     {if isset($hasKey) && !$hasKey}
         <script>
             window.onload = function() {
-                psAccountIsCompleted = window.psaccountsVue.isOnboardingCompleted();
-                if (psAccountIsCompleted != true) {
+                psAccountsIsCompleted = window.psaccountsVue.isOnboardingCompleted();
+                if (psAccountsIsCompleted != true) {
                     document.getElementById("alma_config_form").remove()
                     $('.alma.first-installation').each(function() {
                         $(this).remove();
@@ -92,7 +92,7 @@
         </script>
     {/if}
 {/if}
-{if isset($suggestPSAccount) && $suggestPSAccount}
+{if isset($suggestPSAccounts) && $suggestPSAccounts}
     <div class="alma alert alert-dismissible alert-info">
         <h2>
             {l s='We offer to download the PrestaShop Account module' mod='alma'}
