@@ -25,6 +25,7 @@
 namespace Alma\PrestaShop\Tests\Unit\Builders\Helpers;
 
 use Alma\PrestaShop\Builders\Helpers\EligibilityHelperBuilder;
+use Alma\PrestaShop\Factories\CategoryFactory;
 use Alma\PrestaShop\Factories\ContextFactory;
 use Alma\PrestaShop\Helpers\ApiHelper;
 use Alma\PrestaShop\Helpers\CarrierHelper;
@@ -38,6 +39,7 @@ use Alma\PrestaShop\Helpers\PriceHelper;
 use Alma\PrestaShop\Helpers\SettingsHelper;
 use Alma\PrestaShop\Helpers\ShopHelper;
 use Alma\PrestaShop\Helpers\ToolsHelper;
+use Alma\PrestaShop\Helpers\ValidateHelper;
 use Alma\PrestaShop\Model\CarrierData;
 use PHPUnit\Framework\TestCase;
 
@@ -88,7 +90,10 @@ class EligibilityHelperBuilderTest extends TestCase
 
         $this->settingsHelper = new SettingsHelper(
             new ShopHelper(),
-            new ConfigurationHelper()
+            new ConfigurationHelper(),
+            new CategoryFactory(),
+            new ContextFactory(),
+            new ValidateHelper()
         );
         $this->priceHelper = \Mockery::mock(PriceHelper::class);
 

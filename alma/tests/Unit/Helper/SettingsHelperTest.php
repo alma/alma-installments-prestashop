@@ -26,10 +26,13 @@ namespace Alma\PrestaShop\Tests\Unit\Helper;
 
 use Alma\API\Entities\FeePlan;
 use Alma\PrestaShop\Builders\Helpers\SettingsHelperBuilder;
+use Alma\PrestaShop\Factories\CategoryFactory;
+use Alma\PrestaShop\Factories\ContextFactory;
 use Alma\PrestaShop\Forms\InpageAdminFormBuilder;
 use Alma\PrestaShop\Helpers\ConfigurationHelper;
 use Alma\PrestaShop\Helpers\SettingsHelper;
 use Alma\PrestaShop\Helpers\ShopHelper;
+use Alma\PrestaShop\Helpers\ValidateHelper;
 use PHPUnit\Framework\TestCase;
 
 class SettingsHelperTest extends TestCase
@@ -41,27 +44,51 @@ class SettingsHelperTest extends TestCase
     /**
      * @var ShopHelper
      */
-    protected $shopHelper;
+    protected $shopHelperMock;
     /**
      * @var ConfigurationHelper
      */
-    protected $configurationHelper;
+    protected $configurationHelperMock;
     /**
      * @var (SettingsHelper&\PHPUnit\Framework\MockObject\MockObject)|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $settingsHelperMock;
+    /**
+     * @var \Alma\PrestaShop\Factories\CategoryFactory|(\Alma\PrestaShop\Factories\CategoryFactory&\PHPUnit_Framework_MockObject_MockObject)|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $categoryFactoryMock;
+    /**
+     * @var \Alma\PrestaShop\Factories\ContextFactory|(\Alma\PrestaShop\Factories\ContextFactory&\PHPUnit_Framework_MockObject_MockObject)|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $contextFactoryMock;
+    /**
+     * @var \Alma\PrestaShop\Helpers\ValidateHelper|(\Alma\PrestaShop\Helpers\ValidateHelper&\PHPUnit_Framework_MockObject_MockObject)|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $validateHelperMock;
 
     public function setUp()
     {
-        $this->shopHelper = $this->createMock(ShopHelper::class);
-        $this->configurationHelper = $this->createMock(ConfigurationHelper::class);
+        $this->shopHelperMock = $this->createMock(ShopHelper::class);
+        $this->configurationHelperMock = $this->createMock(ConfigurationHelper::class);
+        $this->categoryFactoryMock = $this->createMock(CategoryFactory::class);
+        $this->contextFactoryMock = $this->createMock(ContextFactory::class);
+        $this->validateHelperMock = $this->createMock(ValidateHelper::class);
         $this->settingsHelper = new SettingsHelper(
-            $this->shopHelper,
-            $this->configurationHelper
+            $this->shopHelperMock,
+            $this->configurationHelperMock,
+            $this->categoryFactoryMock,
+            $this->contextFactoryMock,
+            $this->validateHelperMock
         );
 
         $this->settingsHelperMock = $this->getMockBuilder(SettingsHelper::class)
-            ->setConstructorArgs([$this->shopHelper, $this->configurationHelper])
+            ->setConstructorArgs([
+                $this->shopHelperMock,
+                $this->configurationHelperMock,
+                $this->categoryFactoryMock,
+                $this->contextFactoryMock,
+                $this->validateHelperMock,
+            ])
             ->setMethods(['isInPageEnabled', 'getKey'])
             ->getMock();
     }
@@ -372,7 +399,17 @@ class SettingsHelperTest extends TestCase
         $configurationHelperMock->shouldReceive('get')->with($keyName, null, 1, 1, '')->andReturn($keyValue);
         $configurationHelperMock->shouldReceive('hasKey')->with($keyName, null, 1, 1)->andReturn(false);
 
-        return \Mockery::mock(SettingsHelper::class, [$shopHelperMock, $configurationHelperMock])->shouldAllowMockingProtectedMethods()->makePartial();
+        $categoryFactoryMock = \Mockery::mock(CategoryFactory::class);
+        $contextFactoryMock = \Mockery::mock(ContextFactory::class);
+        $validateHelperMock = \Mockery::mock(ValidateHelper::class);
+
+        return \Mockery::mock(SettingsHelper::class, [
+            $shopHelperMock,
+            $configurationHelperMock,
+            $categoryFactoryMock,
+            $contextFactoryMock,
+            $validateHelperMock,
+        ])->shouldAllowMockingProtectedMethods()->makePartial();
     }
 
     public function testKey()

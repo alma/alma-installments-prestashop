@@ -207,7 +207,10 @@ trait BuilderTrait
 
         return new SettingsHelper(
             $this->getShopHelper(),
-            $this->getConfigurationHelper()
+            $this->getConfigurationHelper(),
+            $this->getCategoryFactory(),
+            $this->getContextFactory(),
+            $this->getValidateHelper()
         );
     }
 
@@ -967,7 +970,10 @@ trait BuilderTrait
         return new FeePlanHelper(
             new SettingsHelper(
                 new ShopHelper(),
-                new ConfigurationHelper()
+                new ConfigurationHelper(),
+                new CategoryFactory(),
+                new ContextFactory(),
+                new ValidateHelper()
             ),
             new EligibilityFactory()
         );

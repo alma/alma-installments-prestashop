@@ -57,6 +57,9 @@ class AlmaCmsDataExportModuleFrontController extends ModuleFrontController
         $this->settingsHelper = $settingsHelperBuilder->getInstance();
     }
 
+    /**
+     * @throws \PrestaShopException
+     */
     public function postProcess()
     {
         parent::postProcess();
@@ -86,7 +89,7 @@ class AlmaCmsDataExportModuleFrontController extends ModuleFrontController
             'specific_features' => [], // no specific features in Prestashop
             'country_restriction' => $this->getCountriesRestrictions(),
             'custom_widget_css' => $this->configHelper->get(ProductEligibilityAdminFormBuilder::ALMA_WIDGET_POSITION_SELECTOR),
-            'is_multisite' => Shop::isFeatureActive(),
+            'is_multisite' => \Shop::isFeatureActive(),
         ];
         $cmsInfo = new CmsInfo($cmsInfoDataArray);
         $cmsFeature = new CmsFeatures($cmsFeatureDataArray);
@@ -96,11 +99,12 @@ class AlmaCmsDataExportModuleFrontController extends ModuleFrontController
 
     private function getCountriesRestrictions()
     {
+        // TODO : Need to implement this method with the db ps_module_country
         return [];
     }
 
     /**
-     * @return mixed|string
+     * @return string
      */
     private function getPhpClientVersion()
     {
@@ -118,10 +122,5 @@ class AlmaCmsDataExportModuleFrontController extends ModuleFrontController
         }
 
         return '';
-    }
-
-    public function getTestData()
-    {
-        return $this->configHelper->get('TEST_DATA');
     }
 }
