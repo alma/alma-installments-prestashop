@@ -79,13 +79,13 @@ $_MODULE['<{alma}prestashop>excludedcategoryadminformbuilder_41c2bdcbfb6ea702ac4
 $_MODULE['<{alma}prestashop>excludedcategoryadminformbuilder_c4cea4750fb3ef077cbf2e1283c312ac'] = 'Message displayed on an excluded product page or on the cart page if it contains an excluded product.';
 $_MODULE['<{alma}prestashop>excludedcategoryadminformbuilder_36359547b09bdb31f46c419a0bd5807e'] = 'Excluded categories';
 $_MODULE['<{alma}prestashop>inpageadminformbuilder_2420ebe02d61c738479f399a97e1cf18'] = 'Activate in-page checkout';
-$_MODULE['<{alma}prestashop>inpageadminformbuilder_bf3b980c4aa11b5fca4cc3096f50e0b8'] = 'Activate in-page checkout for Pay Now, P2X, P3X and P4X';
+$_MODULE['<{alma}prestashop>inpageadminformbuilder_3dd32a0e923aeb930c7c0ced60f7b2e0'] = 'Activate in-page checkout for all Alma payment methods';
 $_MODULE['<{alma}prestashop>inpageadminformbuilder_220a4f39147308a2160f7abc4d00ae43'] = 'The checkout in-page in your own website';
 $_MODULE['<{alma}prestashop>inpageadminformbuilder_6f7991629de2e9ee19a0bf2a0469138c'] = 'Input payment button Alma selector';
-$_MODULE['<{alma}prestashop>inpageadminformbuilder_fb28105057d934b2ddc35a775938069b'] = '%1$sAdvanced%2$s [Optional] Query selector for our scripts to identify the payment button Alma';
+$_MODULE['<{alma}prestashop>inpageadminformbuilder_6644897911f79aa5889998a5ab18c5cd'] = '%1$sAdvanced%2$s [Optional] CSS selector used by our scripts to identify the Alma payment button';
 $_MODULE['<{alma}prestashop>inpageadminformbuilder_cc12a5229a16dced1984745e05872a94'] = 'E.g. #id, .class, ...';
 $_MODULE['<{alma}prestashop>inpageadminformbuilder_8ee0042ba2657c2af782fcc8893fa45a'] = 'Place order button selector';
-$_MODULE['<{alma}prestashop>inpageadminformbuilder_8fbbdefb0c9073d81c746e70f7168f3e'] = '%1$sAdvanced%2$s [Optional] Query selector for our scripts to identify the place order button';
+$_MODULE['<{alma}prestashop>inpageadminformbuilder_afa1a431a4735641af813166d75b1c06'] = '%1$sAdvanced%2$s [Optional] CSS selector used by our scripts to identify the payment confirmation button';
 $_MODULE['<{alma}prestashop>inpageadminformbuilder_6de24747c86085e597f6b38d4d1d01a4'] = 'In-page checkout';
 $_MODULE['<{alma}prestashop>carteligibilityadminformbuilder_a2a52a9dd1864e2b995793bd67b8c6e5'] = 'This widget allows you to inform your customers of the availability of Alma\'s payment facilities right from the product page, which will help to increase your conversion rate. For more details on its configuration or in case of problems, please consult %1$sthis documentation%2$s.';
 $_MODULE['<{alma}prestashop>carteligibilityadminformbuilder_ac6329ea064b9212be7e442cb46bf68f'] = 'Display widget';

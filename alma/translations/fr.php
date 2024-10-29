@@ -79,8 +79,13 @@ $_MODULE['<{alma}prestashop>excludedcategoryadminformbuilder_41c2bdcbfb6ea702ac4
 $_MODULE['<{alma}prestashop>excludedcategoryadminformbuilder_c4cea4750fb3ef077cbf2e1283c312ac'] = 'Message affiché sur les pages de produits exclus ou sur la page du panier s\'il contient un produit exclus';
 $_MODULE['<{alma}prestashop>excludedcategoryadminformbuilder_36359547b09bdb31f46c419a0bd5807e'] = 'Catégories exclues';
 $_MODULE['<{alma}prestashop>inpageadminformbuilder_2420ebe02d61c738479f399a97e1cf18'] = 'Activer le paiement avec In-page';
-$_MODULE['<{alma}prestashop>inpageadminformbuilder_bf3b980c4aa11b5fca4cc3096f50e0b8'] = 'Activer le paiement avec In-page pour paiement comptant, P2X, P3X et P4X';
+$_MODULE['<{alma}prestashop>inpageadminformbuilder_3dd32a0e923aeb930c7c0ced60f7b2e0'] = 'Activer le paiement avec In-page pour toutes les méthodes de paiement Alma';
 $_MODULE['<{alma}prestashop>inpageadminformbuilder_220a4f39147308a2160f7abc4d00ae43'] = 'La page d\'accueil de la caisse dans votre propre site web';
+$_MODULE['<{alma}prestashop>inpageadminformbuilder_6f7991629de2e9ee19a0bf2a0469138c'] = 'Sélecteur CSS du bouton de paiement Alma';
+$_MODULE['<{alma}prestashop>inpageadminformbuilder_6644897911f79aa5889998a5ab18c5cd'] = '%1$sAvancé%2$s [Optionnel] Sélecteur CSS utilisé par nos scripts pour identifier le bouton de paiement Alma.';
+$_MODULE['<{alma}prestashop>inpageadminformbuilder_cc12a5229a16dced1984745e05872a94'] = 'Ex.: #id, .class, ...';
+$_MODULE['<{alma}prestashop>inpageadminformbuilder_8ee0042ba2657c2af782fcc8893fa45a'] = 'Sélecteur CSS du bouton de confirmation de paiement';
+$_MODULE['<{alma}prestashop>inpageadminformbuilder_afa1a431a4735641af813166d75b1c06'] = '%1$sAvancé%2$s [Optionnel] Sélecteur CSS utilisé par nos scripts pour identifier le bouton de confirmation de paiement.';
 $_MODULE['<{alma}prestashop>inpageadminformbuilder_6de24747c86085e597f6b38d4d1d01a4'] = 'Paiement en ligne';
 $_MODULE['<{alma}prestashop>carteligibilityadminformbuilder_a2a52a9dd1864e2b995793bd67b8c6e5'] = 'Ce badge permet d\'informer vos clients de la disponibilité des facilité de paiement Alma dès la fiche produit, ce qui participera à augmenter votre taux de conversion. Pour des précisions sur sa configuration ou en cas de problèmes, consultez %1$scette documentation%2$s.';
 $_MODULE['<{alma}prestashop>carteligibilityadminformbuilder_ac6329ea064b9212be7e442cb46bf68f'] = 'Afficher le badge';
