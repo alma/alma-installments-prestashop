@@ -193,6 +193,8 @@ class SettingsHelper
             PaymentButtonAdminFormBuilder::ALMA_PNX_AIR_BUTTON_DESC,
             ExcludedCategoryAdminFormBuilder::ALMA_NOT_ELIGIBLE_CATEGORIES,
             InpageAdminFormBuilder::ALMA_ACTIVATE_INPAGE,
+            InpageAdminFormBuilder::ALMA_INPAGE_PAYMENT_BUTTON_SELECTOR,
+            InpageAdminFormBuilder::ALMA_INPAGE_PLACE_ORDER_BUTTON_SELECTOR,
             'ALMA_STATE_REFUND',
             'ALMA_STATE_REFUND_ENABLED',
             'ALMA_STATE_TRIGGER',
@@ -494,6 +496,18 @@ class SettingsHelper
     public function isInPageEnabled()
     {
         return (bool) (int) $this->getKey(InpageAdminFormBuilder::ALMA_ACTIVATE_INPAGE, false);
+    }
+
+    /**
+     * @return array
+     */
+    public function getInPageSettings()
+    {
+        return [
+            'enabled' => $this->isInPageEnabled(),
+            'paymentButtonSelector' => $this->getKey(InpageAdminFormBuilder::ALMA_INPAGE_PAYMENT_BUTTON_SELECTOR, InpageAdminFormBuilder::ALMA_INPAGE_DEFAULT_VALUE_PAYMENT_BUTTON_SELECTOR),
+            'placeOrderButtonSelector' => $this->getKey(InpageAdminFormBuilder::ALMA_INPAGE_PLACE_ORDER_BUTTON_SELECTOR, InpageAdminFormBuilder::ALMA_INPAGE_DEFAULT_VALUE_PLACE_ORDER_BUTTON_SELECTOR),
+        ];
     }
 
     /**
