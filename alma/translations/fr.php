@@ -148,8 +148,7 @@ $_MODULE['<{alma}prestashop>admininsurancehelper_f1206f9fadc5ce41694f69129aecac2
 $_MODULE['<{alma}prestashop>admininsurancehelper_7442e29d7d53e549b78d93c46b8cdcfc'] = 'Commandes';
 $_MODULE['<{alma}prestashop>insuranceservice_d87aee5118a62a7ff6c21e4ac31006c5'] = 'Par la présente, je reconnais accepter de souscrire à l\'assurance proposée par Alma. Ce faisant, je confirme avoir préalablement pris connaissance de la [notice d\'information valant conditions générales], du [document d\'information sur le produit d\'assurance], et de la [fiche d\'information et de conseil précontractuelle]. J\'y adhère sans réserve et accepte de signer électroniquement les différents documents formant mon contrat, le cas échéant. Je consens expressément à la collecte et à l\'utilisation de mes données personnelles aux fins de la souscription et de la gestion de mon (mes) contrat(s) d\'assurance.';
 $_MODULE['<{alma}prestashop>adminalmainsuranceconfiguration_b824200e9b8aca1fbb762d6566ff0cd7'] = 'Votre configuration a été sauvegardée';
-$_MODULE['<{alma}prestashop>adminalmainsuranceconfiguration_a6bf06f186e2fccecad054fd831c2144'] = '[Alma] Erreur sur le produit d\'assurance pendant le changement de configuration : %1$s';
-$_MODULE['<{alma}prestashop>adminalmainsuranceconfiguration_b42688965893bdb7a37cf1197e506e25'] = '[Alma] Erreur de création de configuration sur l\'assurance Alma : %1$s';
+$_MODULE['<{alma}prestashop>adminalmainsuranceconfiguration_4a39c6a33c3441762924914168d2a387'] = 'Erreur lors de la création de la configuration Assurance Alma : %1$s';
 $_MODULE['<{alma}prestashop>adminalmainsuranceorders_a66f446516cd125af12bd25073f88b78'] = 'Commandes avec assurance';
 $_MODULE['<{alma}prestashop>adminalmainsuranceorders_49414cda71621b3ee718ae5ff40804c5'] = 'Ordonnance Id';
 $_MODULE['<{alma}prestashop>adminalmainsuranceorders_63d5049791d9d79d86e9a108b0a999ca'] = 'Référence';
