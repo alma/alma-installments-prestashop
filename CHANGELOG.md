@@ -1,5 +1,11 @@
 # Changelog
 
+## v4.4.1 - 2024-10-30
+
+### 🐛 Bug Fixes
+
+fix: Error configuration module with ps_accounts lower than 5.3.0
+
 ## v4.4.0 - 2024-10-07
 
 ### Changes

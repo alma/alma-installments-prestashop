@@ -260,7 +260,8 @@ $_MODULE['<{alma}prestashop>notificationconfiguration_e243bbd390b43c9ee6047fab4a
 $_MODULE['<{alma}prestashop>notificationconfiguration_cf5ec9fb9f7214a3db82a5a39fec5b48'] = 'Voer je API-sleutel in';
 $_MODULE['<{alma}prestashop>notificationconfiguration_055f421849c2a1c32b885c95540f827c'] = 'Vind je API live key op je %1$s Alma dashboard%2$s';
 $_MODULE['<{alma}prestashop>notificationconfiguration_53b458e8453e3694811e61c96527d638'] = 'Om de Testmodus te gebruiken, haalt je je Test API-sleutel op van jouw %1$ssandbox dashboard%2$s';
-$_MODULE['<{alma}prestashop>notificationconfiguration_42deb316427c319fae8ef1e9a2ebfacb'] = 'Wij bieden aan om de PrestaShop Account module te downloaden';
+$_MODULE['<{alma}prestashop>notificationconfiguration_b040aba3ff898146cd8c1fb8cfd04daf'] = 'Wij bieden aan om de module PrestaShop Account te downloaden of bij te werken (minimaal vereiste versie %1$s)';
+$_MODULE['<{alma}prestashop>notificationconfiguration_9700e091d54b8ff1fafcd27518c75b23'] = 'Koppel uw winkel aan uw PrestaShop-account om optimaal te profiteren van de modules die worden aangeboden door de PrestaShop Marketplace en optimaliseer uw ervaring.';
 $_MODULE['<{alma}prestashop>notificationconfiguration_6997dde298b14fbf6a7c95bd39fe8dc4'] = 'Je kunt de module %1$shier vinden%2$s';
 $_MODULE['<{alma}prestashop>notificationshareofcheckout_a6b0ef107f0d278df612764187bbdece'] = ' Verhoog je prestaties & krijg inzichten!';
 $_MODULE['<{alma}prestashop>notificationshareofcheckout_5b64cb0849dd12ea528c04f2fe66ae4d'] = 'Door deze optie te aanvaarden, stel je Alma in staat het gebruik van je betaalmethoden te analyseren, [1]meer informatie te verkrijgen om beter te presteren[/1] en deze gegevens met jou te delen. Je kunt [2]je op elk moment uitschrijven en je data wissen[/2].';

@@ -260,7 +260,8 @@ $_MODULE['<{alma}prestashop>notificationconfiguration_e243bbd390b43c9ee6047fab4a
 $_MODULE['<{alma}prestashop>notificationconfiguration_cf5ec9fb9f7214a3db82a5a39fec5b48'] = 'Inserire la chiave API';
 $_MODULE['<{alma}prestashop>notificationconfiguration_055f421849c2a1c32b885c95540f827c'] = 'Trovate la vostra chiave API live sul vostro cruscotto %1$s Alma%2$s';
 $_MODULE['<{alma}prestashop>notificationconfiguration_53b458e8453e3694811e61c96527d638'] = 'Per utilizzare la modalità Test, recuperare la chiave API Test dalla dashboard di %1$ssandbox%2$s.';
-$_MODULE['<{alma}prestashop>notificationconfiguration_42deb316427c319fae8ef1e9a2ebfacb'] = 'Vi proponiamo di scaricare il modulo Account di PrestaShop';
+$_MODULE['<{alma}prestashop>notificationconfiguration_b040aba3ff898146cd8c1fb8cfd04daf'] = 'Offriamo il download o l\'aggiornamento del modulo PrestaShop Account (versione minima richiesta %1$s).';
+$_MODULE['<{alma}prestashop>notificationconfiguration_9700e091d54b8ff1fafcd27518c75b23'] = 'Collegate il vostro negozio al vostro account PrestaShop per sfruttare appieno i moduli offerti dal Marketplace PrestaShop e ottimizzare la vostra esperienza.';
 $_MODULE['<{alma}prestashop>notificationconfiguration_6997dde298b14fbf6a7c95bd39fe8dc4'] = 'È possibile trovare il modulo %1$squi%2$s';
 $_MODULE['<{alma}prestashop>notificationshareofcheckout_a6b0ef107f0d278df612764187bbdece'] = 'Aumenta le tue prestazioni e ricevi approfondimenti sulle tue vendite!';
 $_MODULE['<{alma}prestashop>notificationshareofcheckout_5b64cb0849dd12ea528c04f2fe66ae4d'] = 'Attivando questa opzione, permetti ad Alma di analizzare l\'utilizzo dei tuoi metodi di pagamento [1]al fine[/1] di migliorare il servizio e condividerti un approfondimento sui dati analizzati. Puoi [2]annullare l\'iscrizione e cancellare i tuoi dati[/2] in qualsiasi momento.';
