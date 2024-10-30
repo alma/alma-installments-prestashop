@@ -98,7 +98,7 @@
             {$validation_error|escape:'htmlall':'UTF-8'}
         {/if}
     </div>
-{elseif isset($tip) && (!isset($hasPSAccount) && !$hasPSAccount) || _PS_MODE_DEV_}
+{elseif isset($tip) && (!isset($hasPSAccounts) && !$hasPSAccounts) || _PS_MODE_DEV_}
     {include file="./_partials/notificationFirstInstallation.tpl"}
 {/if}
 {if isset($updated) && $updated}

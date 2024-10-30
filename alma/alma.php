@@ -30,7 +30,8 @@ require_once _PS_MODULE_DIR_ . 'alma/vendor/autoload.php';
 
 class Alma extends PaymentModule
 {
-    const VERSION = '4.4.0';
+    const VERSION = '4.4.1';
+    const PS_ACCOUNTS_VERSION_REQUIRED = '5.3.0';
 
     public $_path;
     public $local_path;
@@ -80,7 +81,7 @@ class Alma extends PaymentModule
     {
         $this->name = 'alma';
         $this->tab = 'payments_gateways';
-        $this->version = '4.4.0';
+        $this->version = '4.4.1';
         $this->author = 'Alma';
         $this->need_instance = false;
         $this->bootstrap = true;
@@ -128,24 +129,45 @@ class Alma extends PaymentModule
     /**
      * @return void
      *
-     * @throws \Alma\PrestaShop\Exceptions\CompatibilityPsAccountException
+     * @throws \Alma\PrestaShop\Exceptions\CompatibilityPsAccountsException
      */
-    public function checkCompatibilityPSModule()
+    public function checkPsAccountsPresence()
     {
         if (_PS_MODE_DEV_ === true) {
-            throw new \Alma\PrestaShop\Exceptions\CompatibilityPsAccountException('[Alma] Debug mode is activated');
+            throw new \Alma\PrestaShop\Exceptions\CompatibilityPsAccountsException('[Alma] Debug mode is activated');
         }
 
         if (
             !class_exists(\Symfony\Component\Config\ConfigCache::class)
             || !class_exists(\PrestaShop\ModuleLibServiceContainer\DependencyInjection\ServiceContainer::class)
         ) {
-            throw new \Alma\PrestaShop\Exceptions\CompatibilityPsAccountException('[Alma] Classes don\'t exist for PS Account');
+            throw new \Alma\PrestaShop\Exceptions\CompatibilityPsAccountsException('[Alma] Classes don\'t exist for PS Account');
         }
         if (
             $this->toolsHelper->psVersionCompare('1.6', '<')
         ) {
-            throw new \Alma\PrestaShop\Exceptions\CompatibilityPsAccountException('[Alma] Prestashop version lower than 1.6');
+            throw new \Alma\PrestaShop\Exceptions\CompatibilityPsAccountsException('[Alma] Prestashop version lower than 1.6');
+        }
+    }
+
+    /**
+     * Check if PS Account is installed and up to date, minimal version required 5.0.
+     *
+     * @return void
+     *
+     * @throws \PrestaShop\PsAccountsInstaller\Installer\Exception\ModuleNotInstalledException
+     * @throws \Alma\PrestaShop\Exceptions\CompatibilityPsAccountsException
+     */
+    public function checkPsAccountsCompatibility()
+    {
+        $this->checkPsAccountsPresence();
+        $psAccountsModule = \Module::getInstanceByName('ps_accounts');
+        if (!$psAccountsModule) {
+            throw new \PrestaShop\PsAccountsInstaller\Installer\Exception\ModuleNotInstalledException('[Alma] PS Account is not installed');
+        }
+
+        if ($psAccountsModule->version < self::PS_ACCOUNTS_VERSION_REQUIRED) {
+            throw new \PrestaShop\PsAccountsInstaller\Installer\Exception\ModuleNotInstalledException('[Alma] PS Account is not up to date, minimal version required ' . self::PS_ACCOUNTS_VERSION_REQUIRED);
         }
     }
 
@@ -222,10 +244,10 @@ class Alma extends PaymentModule
     public function install()
     {
         try {
-            $this->checkCompatibilityPSModule();
+            $this->checkPsAccountsPresence();
             $this->setContainer();
             $this->getService('alma.ps_accounts_installer')->install();
-        } catch (\Alma\PrestaShop\Exceptions\CompatibilityPsAccountException $e) {
+        } catch (\Alma\PrestaShop\Exceptions\CompatibilityPsAccountsException $e) {
             \Alma\PrestaShop\Logger::instance()->info($e->getMessage());
         }
 
@@ -586,28 +608,29 @@ class Alma extends PaymentModule
      */
     public function getContent()
     {
-        $suggestPSAccount = false;
+        $suggestPSAccounts = false;
 
         try {
-            $hasPSAccount = $this->renderPSAccount();
-        } catch (\Alma\PrestaShop\Exceptions\CompatibilityPsAccountException $e) {
-            $hasPSAccount = false;
+            $hasPSAccounts = $this->renderPSAccounts();
+        } catch (\Alma\PrestaShop\Exceptions\CompatibilityPsAccountsException $e) {
+            $hasPSAccounts = false;
         } catch (\PrestaShop\PsAccountsInstaller\Installer\Exception\ModuleNotInstalledException $e) {
-            $hasPSAccount = false;
-            $suggestPSAccount = true;
+            $hasPSAccounts = false;
+            $suggestPSAccounts = true;
         }
 
-        return $this->runHookController('getContent', ['hasPSAccount' => $hasPSAccount, 'suggestPSAccount' => $suggestPSAccount]);
+        return $this->runHookController('getContent', ['hasPSAccounts' => $hasPSAccounts, 'suggestPSAccounts' => $suggestPSAccounts]);
     }
 
     /**
      * @return bool
      *
-     * @throws \Alma\PrestaShop\Exceptions\CompatibilityPsAccountException
+     * @throws \Alma\PrestaShop\Exceptions\CompatibilityPsAccountsException
+     * @throws \PrestaShop\PsAccountsInstaller\Installer\Exception\ModuleNotInstalledException
      */
-    public function renderPSAccount()
+    public function renderPSAccounts()
     {
-        $this->checkCompatibilityPSModule();
+        $this->checkPsAccountsCompatibility();
         $this->setContainer();
 
         try {
