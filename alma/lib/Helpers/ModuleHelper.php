@@ -42,9 +42,8 @@ class ModuleHelper
 
     public function __construct($moduleFactory = null)
     {
-        $moduleFactoryBuilder = new ModuleFactoryBuilder();
-        if ($moduleFactory == null) {
-            $moduleFactory = $moduleFactoryBuilder->getInstance();
+        if (!$moduleFactory) {
+            $moduleFactory = (new ModuleFactoryBuilder())->getInstance();
         }
         $this->moduleFactory = $moduleFactory;
     }

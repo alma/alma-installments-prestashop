@@ -22,12 +22,15 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
+use Alma\API\Entities\MerchantData\CmsFeatures;
+use Alma\API\Entities\MerchantData\CmsInfo;
+use Alma\API\Lib\PayloadFormatter;
 use Alma\PrestaShop\Builders\Helpers\SettingsHelperBuilder;
 use Alma\PrestaShop\Exceptions\CmsDataException;
 use Alma\PrestaShop\Exceptions\ValidateException;
+use Alma\PrestaShop\Helpers\CmsDataHelper;
 use Alma\PrestaShop\Helpers\SettingsHelper;
 use Alma\PrestaShop\Helpers\ValidateHelper;
-use Alma\PrestaShop\Services\CmsDataService;
 use Alma\PrestaShop\Traits\AjaxTrait;
 
 if (!defined('_PS_VERSION_')) {
@@ -42,10 +45,6 @@ class AlmaCmsDataExportModuleFrontController extends ModuleFrontController
     use AjaxTrait;
 
     /**
-     * @var CmsDataService
-     */
-    protected $cmsDataService;
-    /**
      * @var ValidateHelper
      */
     protected $validateHelper;
@@ -53,14 +52,22 @@ class AlmaCmsDataExportModuleFrontController extends ModuleFrontController
      * @var \Alma\PrestaShop\Helpers\SettingsHelper
      */
     protected $settingsHelper;
+    /**
+     * @var \Alma\API\Lib\PayloadFormatter
+     */
+    protected $payloadFormatter;
+    /**
+     * @var CmsDataHelper
+     */
+    protected $cmsDataHelper;
 
     public function __construct()
     {
         parent::__construct();
-        $this->cmsDataService = new CmsDataService();
         $this->validateHelper = new ValidateHelper();
-        $settingsHelperBuilder = new SettingsHelperBuilder();
-        $this->settingsHelper = $settingsHelperBuilder->getInstance();
+        $this->cmsDataHelper = new CmsDataHelper();
+        $this->settingsHelper = (new SettingsHelperBuilder())->getInstance();
+        $this->payloadFormatter = new PayloadFormatter();
     }
 
     /**
@@ -73,12 +80,55 @@ class AlmaCmsDataExportModuleFrontController extends ModuleFrontController
         try {
             $this->validateHelper->checkSignature($this->settingsHelper->getIdMerchant(), SettingsHelper::getActiveAPIKey(), $_SERVER['HTTP_X_ALMA_SIGNATURE']);
         } catch (ValidateException $e) {
-            throw new CmsDataException('[Alma] CmsData - ' . $e->getMessage());
+            throw new CmsDataException('[Alma] checkSignature - ' . $e->getMessage());
         } catch (\Exception $e) {
-            throw new CmsDataException('[Alma] CmsData - ' . $e->getMessage());
+            throw new CmsDataException('[Alma] Get Merchant Id - ' . $e->getMessage());
         }
 
-        $payload = $this->cmsDataService->getPayloadCmsData();
+        $cmsInfo = new CmsInfo($this->cmsDataHelper->getCmsInfoArray());
+        $cmsFeature = new CmsFeatures($this->cmsDataHelper->getCmsFeatureArray());
+
+        $payload = $this->payloadFormatter->formatConfigurationPayload($cmsInfo, $cmsFeature);
         $this->ajaxRenderAndExit(json_encode(['success' => $payload]));
+    }
+
+    /**
+     * @param $validateHelper
+     *
+     * @return void
+     */
+    public function setValidateHelper($validateHelper)
+    {
+        $this->validateHelper = $validateHelper;
+    }
+
+    /**
+     * @param $settingsHelper
+     *
+     * @return void
+     */
+    public function setSettingsHelper($settingsHelper)
+    {
+        $this->settingsHelper = $settingsHelper;
+    }
+
+    /**
+     * @param $payloadFormatter
+     *
+     * @return void
+     */
+    public function setPayloadFormatter($payloadFormatter)
+    {
+        $this->payloadFormatter = $payloadFormatter;
+    }
+
+    /**
+     * @param $cmsDataHelper
+     *
+     * @return void
+     */
+    public function setCmsDataHelper($cmsDataHelper)
+    {
+        $this->cmsDataHelper = $cmsDataHelper;
     }
 }

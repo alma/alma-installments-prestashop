@@ -24,12 +24,9 @@
 
 namespace Alma\PrestaShop\Helpers;
 
-use Alma\API\Entities\MerchantData\CmsFeatures;
-use Alma\API\Entities\MerchantData\CmsInfo;
+use Alma\API\Client;
 use Alma\PrestaShop\Builders\Factories\ModuleFactoryBuilder;
 use Alma\PrestaShop\Builders\Helpers\SettingsHelperBuilder;
-use Alma\PrestaShop\Factories\CmsFeaturesFactory;
-use Alma\PrestaShop\Factories\CmsInfoFactory;
 use Alma\PrestaShop\Forms\CartEligibilityAdminFormBuilder;
 use Alma\PrestaShop\Forms\DebugAdminFormBuilder;
 use Alma\PrestaShop\Forms\InpageAdminFormBuilder;
@@ -42,10 +39,6 @@ if (!defined('_PS_VERSION_')) {
 
 class CmsDataHelper
 {
-    /**
-     * @var \Alma\PrestaShop\Helpers\ConfigurationHelper
-     */
-    protected $configHelper;
     /**
      * @var \Alma\PrestaShop\Helpers\ModuleHelper
      */
@@ -63,72 +56,84 @@ class CmsDataHelper
      */
     protected $settingsHelper;
     /**
-     * @var \Alma\PrestaShop\Factories\CmsInfoFactory
+     * @var \Alma\PrestaShop\Helpers\ToolsHelper
      */
-    protected $cmsInfoFactory;
-    /**
-     * @var \Alma\PrestaShop\Factories\CmsFeaturesFactory
-     */
-    protected $cmsFeatureFactory;
+    protected $toolsHelper;
 
     /**
      * CmsDataHelper constructor.
      */
-    public function __construct()
-    {
-        $this->configHelper = new ConfigurationHelper();
-        $this->moduleHelper = new ModuleHelper();
-        $this->themeHelper = new ThemeHelper();
-        $moduleFactoryBuilder = new ModuleFactoryBuilder();
-        $this->moduleFactory = $moduleFactoryBuilder->getInstance();
-        $settingsHelperBuilder = new SettingsHelperBuilder();
-        $this->settingsHelper = $settingsHelperBuilder->getInstance();
-        $this->cmsInfoFactory = new CmsInfoFactory();
-        $this->cmsFeatureFactory = new CmsFeaturesFactory();
+    public function __construct(
+        $moduleHelper = null,
+        $themeHelper = null,
+        $moduleFactory = null,
+        $settingsHelper = null,
+        $toolsHelper = null
+    ) {
+        if (!$moduleHelper) {
+            $moduleHelper = new ModuleHelper();
+        }
+        $this->moduleHelper = $moduleHelper;
+
+        if (!$themeHelper) {
+            $themeHelper = new ThemeHelper();
+        }
+        $this->themeHelper = $themeHelper;
+
+        if (!$moduleFactory) {
+            $moduleFactory = (new ModuleFactoryBuilder())->getInstance();
+        }
+        $this->moduleFactory = $moduleFactory;
+
+        if (!$settingsHelper) {
+            $settingsHelper = (new SettingsHelperBuilder())->getInstance();
+        }
+        $this->settingsHelper = $settingsHelper;
+
+        if (!$toolsHelper) {
+            $toolsHelper = new ToolsHelper();
+        }
+        $this->toolsHelper = $toolsHelper;
     }
 
     /**
-     * @return CmsInfo
+     * @return array
      */
     public function getCmsInfoArray()
     {
-        $cmsInfoDataArray = [
+        return [
             'cms_name' => 'Prestashop',
-            'cms_version' => _PS_VERSION_,
+            'cms_version' => $this->toolsHelper->getPsVersion(),
             'third_parties_plugins' => $this->moduleHelper->getModuleList(),
             'themes' => $this->themeHelper->getThemeNameWithVersion(),
             'language_name' => 'PHP',
             'language_version' => phpversion(),
             'alma_plugin_version' => $this->moduleFactory->getModuleVersion(),
             'alma_sdk_name' => 'ALMA-PHP-CLIENT',
-            'alma_sdk_version' => $this->getPhpClientVersion(),
+            'alma_sdk_version' => Client::VERSION,
         ];
-
-        return $this->cmsInfoFactory->create($cmsInfoDataArray);
     }
 
     /**
-     * @return CmsFeatures
+     * @return array
      */
     public function getCmsFeatureArray()
     {
-        $cmsFeatureDataArray = [
-            'alma_enabled' => (bool) (int) $this->configHelper->get(SettingsHelper::ALMA_FULLY_CONFIGURED), // clef fully configured
-            'widget_cart_activated' => (bool) (int) $this->configHelper->get(CartEligibilityAdminFormBuilder::ALMA_SHOW_ELIGIBILITY_MESSAGE),
-            'widget_product_activated' => (bool) (int) $this->configHelper->get(ProductEligibilityAdminFormBuilder::ALMA_SHOW_PRODUCT_ELIGIBILITY),
-            'used_fee_plans' => json_decode($this->configHelper->get(PnxAdminFormBuilder::ALMA_FEE_PLANS), true),
+        return [
+            'alma_enabled' => (bool) (int) $this->settingsHelper->getKey(SettingsHelper::ALMA_FULLY_CONFIGURED), // clef fully configured
+            'widget_cart_activated' => (bool) (int) $this->settingsHelper->getKey(CartEligibilityAdminFormBuilder::ALMA_SHOW_ELIGIBILITY_MESSAGE),
+            'widget_product_activated' => (bool) (int) $this->settingsHelper->getKey(ProductEligibilityAdminFormBuilder::ALMA_SHOW_PRODUCT_ELIGIBILITY),
+            'used_fee_plans' => json_decode($this->settingsHelper->getKey(PnxAdminFormBuilder::ALMA_FEE_PLANS), true),
             //'payment_method_position' => null, // not applicable - position is set in the used_fee_plans
-            'in_page_activated' => (bool) (int) $this->configHelper->get(InpageAdminFormBuilder::ALMA_ACTIVATE_INPAGE),
-            'log_activated' => (bool) (int) $this->configHelper->get(DebugAdminFormBuilder::ALMA_ACTIVATE_LOGGING),
+            'in_page_activated' => (bool) (int) $this->settingsHelper->getKey(InpageAdminFormBuilder::ALMA_ACTIVATE_INPAGE),
+            'log_activated' => (bool) (int) $this->settingsHelper->getKey(DebugAdminFormBuilder::ALMA_ACTIVATE_LOGGING),
             'excluded_categories' => $this->settingsHelper->getCategoriesExcludedNames(),
             //'excluded_categories_activated' => '',// not applicable - it's not possible to disable the exclusion
             'specific_features' => [], // no specific features in Prestashop
             'country_restriction' => $this->getCountriesRestrictions(),
-            'custom_widget_css' => $this->configHelper->get(ProductEligibilityAdminFormBuilder::ALMA_WIDGET_POSITION_SELECTOR),
-            'is_multisite' => \Shop::isFeatureActive(),
+            'custom_widget_css' => (bool) $this->settingsHelper->getKey(ProductEligibilityAdminFormBuilder::ALMA_WIDGET_POSITION_SELECTOR),
+            'is_multisite' => \Shop::isFeatureActive(), // TODO : Need to implement this method
         ];
-
-        return $this->cmsFeatureFactory->create($cmsFeatureDataArray);
     }
 
     /**
@@ -138,26 +143,5 @@ class CmsDataHelper
     {
         // TODO : Need to implement this method with the db ps_module_country
         return [];
-    }
-
-    /**
-     * @return string
-     */
-    private function getPhpClientVersion()
-    {
-        $installedFile = _PS_MODULE_DIR_ . 'alma/vendor/composer/installed.json';
-
-        if (file_exists($installedFile)) {
-            $installedData = json_decode(file_get_contents($installedFile), true);
-            foreach ($installedData as $packages) {
-                foreach ($packages as $package) {
-                    if ($package['name'] === 'alma/alma-php-client') {
-                        return $package['version'];
-                    }
-                }
-            }
-        }
-
-        return '';
     }
 }
