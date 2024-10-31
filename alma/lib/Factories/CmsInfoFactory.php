@@ -22,49 +22,23 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
-namespace Alma\PrestaShop\Helpers;
+namespace Alma\PrestaShop\Factories;
 
-use Alma\API\Lib\RequestUtils;
-use Alma\PrestaShop\Exceptions\ValidateException;
+use Alma\API\Entities\MerchantData\CmsInfo;
 
 if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-class ValidateHelper
+class CmsInfoFactory
 {
     /**
-     * @param $object
+     * @param array $dataArray
      *
-     * @return bool
+     * @return CmsInfo
      */
-    public function isLoadedObject($object)
+    public function create($dataArray)
     {
-        return \Validate::isLoadedObject($object);
-    }
-
-    /**
-     * @param $externalId
-     * @param $apiKey
-     * @param $signature
-     *
-     * @return void
-     *
-     * @throws \Alma\PrestaShop\Exceptions\ValidateException
-     */
-    public function checkSignature($externalId, $apiKey, $signature)
-    {
-        if (!$externalId) {
-            throw new ValidateException('[Alma] External ID is missing');
-        }
-        if (!$apiKey) {
-            throw new ValidateException('[Alma] Api key is missing');
-        }
-        if (!$signature) {
-            throw new ValidateException('[Alma] Signature is missing');
-        }
-        if (!RequestUtils::isHmacValidated($externalId, $apiKey, $signature)) {
-            throw new ValidateException('[Alma] Signature is invalid');
-        }
+        return new CmsInfo($dataArray);
     }
 }

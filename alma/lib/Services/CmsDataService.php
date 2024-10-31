@@ -22,49 +22,45 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
-namespace Alma\PrestaShop\Helpers;
+namespace Alma\PrestaShop\Services;
 
-use Alma\API\Lib\RequestUtils;
-use Alma\PrestaShop\Exceptions\ValidateException;
+use Alma\API\Lib\PayloadFormatter;
+use Alma\PrestaShop\Helpers\CmsDataHelper;
 
 if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-class ValidateHelper
+class CmsDataService
 {
+    const ALMA_CMSDATA_DATE = 'ALMA_CMSDATA_DATE';
+
     /**
-     * @param $object
-     *
-     * @return bool
+     * @var PayloadFormatter
      */
-    public function isLoadedObject($object)
+    protected $payloadFormatter;
+    /**
+     * @var \Alma\PrestaShop\Helpers\CmsDataHelper
+     */
+    protected $cmsDataHelper;
+
+    /**
+     * CmsDataService constructor.
+     */
+    public function __construct()
     {
-        return \Validate::isLoadedObject($object);
+        $this->cmsDataHelper = new CmsDataHelper();
+        $this->payloadFormatter = new PayloadFormatter();
     }
 
     /**
-     * @param $externalId
-     * @param $apiKey
-     * @param $signature
-     *
-     * @return void
-     *
-     * @throws \Alma\PrestaShop\Exceptions\ValidateException
+     * @return array
      */
-    public function checkSignature($externalId, $apiKey, $signature)
+    public function getPayloadCmsData()
     {
-        if (!$externalId) {
-            throw new ValidateException('[Alma] External ID is missing');
-        }
-        if (!$apiKey) {
-            throw new ValidateException('[Alma] Api key is missing');
-        }
-        if (!$signature) {
-            throw new ValidateException('[Alma] Signature is missing');
-        }
-        if (!RequestUtils::isHmacValidated($externalId, $apiKey, $signature)) {
-            throw new ValidateException('[Alma] Signature is invalid');
-        }
+        $cmsInfo = $this->cmsDataHelper->getCmsInfoArray();
+        $cmsFeature = $this->cmsDataHelper->getCmsFeatureArray();
+
+        return $this->payloadFormatter->formatConfigurationPayload($cmsInfo, $cmsFeature);
     }
 }

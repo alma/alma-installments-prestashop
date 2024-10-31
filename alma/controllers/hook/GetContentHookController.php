@@ -29,6 +29,7 @@ if (!defined('_PS_VERSION_')) {
 }
 
 use Alma\API\Entities\Merchant;
+use Alma\API\Lib\IntegrationsConfigurationsUtils;
 use Alma\API\RequestError;
 use Alma\PrestaShop\Builders\Helpers\ApiHelperBuilder;
 use Alma\PrestaShop\Builders\Helpers\ContextHelperBuilder;
@@ -60,6 +61,7 @@ use Alma\PrestaShop\Helpers\PriceHelper;
 use Alma\PrestaShop\Helpers\SettingsHelper;
 use Alma\PrestaShop\Hooks\AdminHookController;
 use Alma\PrestaShop\Logger;
+use Alma\PrestaShop\Services\CmsDataService;
 
 final class GetContentHookController extends AdminHookController
 {
@@ -431,7 +433,10 @@ final class GetContentHookController extends AdminHookController
             return $credentialsError['message'];
         }
 
-        $this->apiHelper->sendUrlForGatherCmsData($this->contextHelper->getModuleLink('cmsdataexport', [], true));
+        if (IntegrationsConfigurationsUtils::isUrlRefreshRequired($this->settingsHelper->getKey(CmsDataService::ALMA_CMSDATA_DATE))) {
+            $this->apiHelper->sendUrlForGatherCmsData($this->contextHelper->getModuleLink('cmsdataexport', [], true));
+            $this->settingsHelper->updateKey(CmsDataService::ALMA_CMSDATA_DATE, time());
+        }
 
         $this->context->smarty->clearAssign('validation_error');
 
