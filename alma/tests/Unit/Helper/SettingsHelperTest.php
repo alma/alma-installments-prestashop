@@ -572,58 +572,58 @@ class SettingsHelperTest extends TestCase
     {
         /** @var \Category[] $categories */
         $categories = [
-            10 => $this->createMock(\Category::class),
-            11 => $this->createMock(\Category::class),
+            12 => $this->createMock(\Category::class),
+            13 => $this->createMock(\Category::class),
         ];
 
-        $categories[10]->id = 10;
-        $categories[10]->name = 'category 10';
+        $categories[12]->id = 12;
+        $categories[12]->name = 'category 12';
 
         $this->configurationHelperMock->expects($this->once())
             ->method('get')
             ->with(SettingsHelper::ALMA_EXCLUDED_CATEGORIES)
-            ->willReturn('[10, 11]');
+            ->willReturn('[12, 13]');
         $this->categoryFactoryMock->expects($this->exactly(2))
             ->method('create')
-            ->withConsecutive([10, 1], [11, 1])
-            ->willReturnOnConsecutiveCalls($categories[10], $categories[11]);
+            ->withConsecutive([12, 1], [13, 1])
+            ->willReturnOnConsecutiveCalls($categories[12], $categories[13]);
         $this->contextFactoryMock->expects($this->exactly(2))
             ->method('getContextLanguageId')
             ->willReturn(1);
         $this->validateHelperMock->expects($this->exactly(2))
             ->method('isLoadedObject')
-            ->withConsecutive([$categories[10]], [$categories[11]])
+            ->withConsecutive([$categories[12]], [$categories[13]])
             ->willReturnOnConsecutiveCalls(true, false);
-        $this->assertEquals(['category 10'], $this->settingsHelper->getCategoriesExcludedNames());
+        $this->assertEquals(['category 12'], $this->settingsHelper->getCategoriesExcludedNames());
     }
 
     public function testGetCategoriesExcludedNamesWithGetContextLanguageIdThrowException()
     {
         /** @var \Category[] $categories */
         $categories = [
-            10 => $this->createMock(\Category::class),
-            11 => $this->createMock(\Category::class),
+            14 => $this->createMock(\Category::class),
+            15 => $this->createMock(\Category::class),
         ];
 
-        $categories[10]->id = 10;
-        $categories[10]->name = 'category 10';
+        $categories[14]->id = 14;
+        $categories[14]->name = 'category 14';
 
         $this->configurationHelperMock->expects($this->once())
             ->method('get')
             ->with(SettingsHelper::ALMA_EXCLUDED_CATEGORIES)
-            ->willReturn('[10, 11]');
+            ->willReturn('[14, 15]');
 
         $this->contextFactoryMock->expects($this->exactly(2))
             ->method('getContextLanguageId')
             ->willThrowException(new AlmaException('Context language is null'));
         $this->categoryFactoryMock->expects($this->exactly(2))
             ->method('create')
-            ->withConsecutive([10], [11])
-            ->willReturnOnConsecutiveCalls($categories[10], $categories[11]);
+            ->withConsecutive([14], [15])
+            ->willReturnOnConsecutiveCalls($categories[14], $categories[15]);
         $this->validateHelperMock->expects($this->exactly(2))
             ->method('isLoadedObject')
-            ->withConsecutive([$categories[10]], [$categories[11]])
+            ->withConsecutive([$categories[14]], [$categories[15]])
             ->willReturnOnConsecutiveCalls(true, false);
-        $this->assertEquals(['category 10'], $this->settingsHelper->getCategoriesExcludedNames());
+        $this->assertEquals(['category 14'], $this->settingsHelper->getCategoriesExcludedNames());
     }
 }
