@@ -48,14 +48,14 @@ class InpageAdminFormBuilder extends AbstractAlmaAdminFormBuilder
             $this->inputAlmaSwitchForm(
                 self::ALMA_ACTIVATE_INPAGE,
                 $this->module->l('Activate in-page checkout', 'InpageAdminFormBuilder'),
-                $this->module->l('Activate in-page checkout for Pay Now, P2X, P3X and P4X', 'InpageAdminFormBuilder'),
+                $this->module->l('Activate in-page checkout for all Alma payment methods', 'InpageAdminFormBuilder'),
                 $this->module->l('The checkout in-page in your own website', 'InpageAdminFormBuilder')
             ),
             $this->inputTextForm(
                 self::ALMA_INPAGE_PAYMENT_BUTTON_SELECTOR,
                 $this->module->l('Input payment button Alma selector', 'InpageAdminFormBuilder'),
                 sprintf(
-                    $this->module->l('%1$sAdvanced%2$s [Optional] Query selector for our scripts to identify the payment button Alma', 'InpageAdminFormBuilder'),
+                    $this->module->l('%1$sAdvanced%2$s [Optional] CSS selector used by our scripts to identify the Alma payment button', 'InpageAdminFormBuilder'),
                     '<b>',
                     '</b>'
                 ),
@@ -65,7 +65,7 @@ class InpageAdminFormBuilder extends AbstractAlmaAdminFormBuilder
                 self::ALMA_INPAGE_PLACE_ORDER_BUTTON_SELECTOR,
                 $this->module->l('Place order button selector', 'InpageAdminFormBuilder'),
                 sprintf(
-                    $this->module->l('%1$sAdvanced%2$s [Optional] Query selector for our scripts to identify the place order button', 'InpageAdminFormBuilder'),
+                    $this->module->l('%1$sAdvanced%2$s [Optional] CSS selector used by our scripts to identify the payment confirmation button', 'InpageAdminFormBuilder'),
                     '<b>',
                     '</b>'
                 ),
