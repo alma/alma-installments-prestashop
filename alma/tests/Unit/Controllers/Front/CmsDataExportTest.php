@@ -33,7 +33,7 @@ use Alma\PrestaShop\Helpers\ValidateHelper;
 use PHPUnit\Framework\TestCase;
 use PrestaShop\PrestaShop\Core\Foundation\IoC\Exception;
 
-include __DIR__ . '/../../../../controllers/front/cmsdataexport.php';
+include_once __DIR__ . '/../../../../controllers/front/cmsdataexport.php';
 class AlmaCmsDataExportTest extends TestCase
 {
     /**
