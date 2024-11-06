@@ -21,6 +21,9 @@
  * @copyright 2018-2024 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
+
+use Alma\PrestaShop\Repositories\CartEligibilityRepository;
+
 if (!defined('_PS_VERSION_')) {
     exit;
 }
@@ -77,6 +80,9 @@ class Alma extends PaymentModule
      */
     protected $toolsHelper;
 
+    /** @var CartEligibilityRepository */
+    protected $cartEligibilityRepository;
+
     public function __construct()
     {
         $this->name = 'alma';
@@ -124,6 +130,7 @@ class Alma extends PaymentModule
         $this->tabsHelper = new \Alma\PrestaShop\Helpers\Admin\TabsHelper();
 
         $this->toolsHelper = new \Alma\PrestaShop\Helpers\ToolsHelper();
+        $this->cartEligibilityRepository = new CartEligibilityRepository();
     }
 
     /**
@@ -265,6 +272,8 @@ class Alma extends PaymentModule
         if (version_compare(_PS_VERSION_, '1.7', '>=')) {
             $this->updateCarriersWithAlma();
         }
+
+        $this->cartEligibilityRepository->createTable();
 
         return $this->tabsHelper->installTabs($this->dataTabs());
     }

@@ -28,10 +28,16 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
+use Alma\PrestaShop\Helpers\ConfigurationHelper;
+use Alma\PrestaShop\Model\AlmaPaymentOption;
+use CartCore as Cart;
+
 use Alma\PrestaShop\Builders\Services\PaymentServiceBuilder;
 use Alma\PrestaShop\Hooks\FrontendHookController;
+use Alma\PrestaShop\Repositories\CartEligibilityRepository;
 use Alma\PrestaShop\Services\PaymentService;
 use PrestaShop\PrestaShop\Core\Localization\Exception\LocalizationException;
+use PrestaShop\PrestaShop\Core\Payment\PaymentOption;
 
 class PaymentOptionsHookController extends FrontendHookController
 {
@@ -39,6 +45,14 @@ class PaymentOptionsHookController extends FrontendHookController
      * @var PaymentService
      */
     protected $paymentService;
+
+
+    /**
+     * @var CartEligibilityRepository
+     */
+    protected $cartEligibilityRepository;
+
+    protected $configurationHelper;
 
     /**
      * @codeCoverageIgnore
@@ -51,6 +65,9 @@ class PaymentOptionsHookController extends FrontendHookController
 
         $paymentServiceBuilder = new PaymentServiceBuilder();
         $this->paymentService = $paymentServiceBuilder->getInstance();
+        $this->cartEligibilityRepository = new CartEligibilityRepository();
+        $this->configurationHelper = new ConfigurationHelper();
+
     }
 
     /**
@@ -65,6 +82,31 @@ class PaymentOptionsHookController extends FrontendHookController
      */
     public function run($params)
     {
-        return $this->paymentService->createPaymentOptions($params);
+        $paymentOptions = $this->paymentService->createPaymentOptions($params);
+
+        /** @var Cart $cart */
+        $cart = $params['cart'];
+        $filteredOptions = array_filter($paymentOptions, [$this, 'filterP1X']);
+        $this->cartEligibilityRepository->add($cart, count($filteredOptions) > 0);
+
+        return array_map([$this, 'mapToPaymentOption'], $paymentOptions);
+    }
+
+    /**
+     * @param AlmaPaymentOption $almaPaymentOption
+     * @return PaymentOption
+     */
+    private function mapToPaymentOption($almaPaymentOption)
+    {
+        return $almaPaymentOption->getOption();
+    }
+
+    /**
+     * @param AlmaPaymentOption $almaPaymentOption
+     * @return bool
+     */
+    private function filterP1X($almaPaymentOption)
+    {
+        return !$this->configurationHelper->isPayNow($almaPaymentOption->getAlmaPaymentPlanKey());
     }
 }

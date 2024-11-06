@@ -22,6 +22,9 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
+use Alma\PrestaShop\Repositories\CartEligibilityRepository;
+use CartCore as Cart;
+
 use Alma\PrestaShop\Builders\Helpers\SettingsHelperBuilder;
 use Alma\PrestaShop\Builders\Models\PaymentDataBuilder;
 use Alma\PrestaShop\Helpers\ClientHelper;
@@ -138,6 +141,7 @@ class AlmaPaymentModuleFrontController extends ModuleFrontController
             $feePlans = json_decode($this->settingsHelper->getAlmaFeePlans());
             $dataFromKey = $this->settingsHelper->getDataFromKey($key);
 
+            /** @var Cart $cart */
             $cart = $this->context->cart;
             $data = $this->paymentData->dataFromCart($dataFromKey, true);
             $alma = ClientHelper::defaultInstance();

@@ -260,6 +260,7 @@ class PaymentValidation
             } else {
                 if (1 === $installmentCount) {
                     $paymentMode = $this->module->l('Alma - Pay now', 'PaymentValidation');
+                    $extraVars['alma_installments_count'] = 1;
                 } else {
                     $paymentMode = sprintf(
                         $this->module->l('Alma - %d monthly installments', 'PaymentValidation'),

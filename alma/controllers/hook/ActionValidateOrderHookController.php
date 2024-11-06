@@ -28,6 +28,10 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
+use CartCore as Cart;
+use OrderCore as Order;
+use ValidateCore as Validate;
+
 use Alma\PrestaShop\Builders\Helpers\InsuranceHelperBuilder;
 use Alma\PrestaShop\Helpers\InsuranceHelper;
 use Alma\PrestaShop\Hooks\FrontendHookController;
@@ -53,11 +57,6 @@ class ActionValidateOrderHookController extends FrontendHookController
         $this->insuranceHelper = $insuranceHelperBuilder->getInstance();
     }
 
-    public function canRun()
-    {
-        return parent::canRun() && $this->insuranceHelper->isInsuranceActivated();
-    }
-
     /**
      * Run Controller
      *
@@ -67,13 +66,37 @@ class ActionValidateOrderHookController extends FrontendHookController
      */
     public function run($params)
     {
+        if ($this->insuranceHelper->isInsuranceActivated()) {
+            $this->runInsurance($params);
+        }
+
+        $this->runMerchantEvents($params);
+    }
+
+    private function runMerchantEvents($params)
+    {
+        /** @var Order $order */
+        $order = $params['order'];
+        /** @var Cart $cart */
+        $cart = $params['cart'];
+
+        $hasValidParams = Validate::isLoadedObject($order) && Validate::isLoadedObject($cart);
+        if (!$hasValidParams) {
+            return;
+        }
+
+        $order->getOrderPayments()
+    }
+
+    private function runInsurance($params)
+    {
         /**
-         * @var \OrderCore $order
+         * @var Order $order
          */
         $order = $params['order'];
 
         /**
-         * @var \CartCore $cart
+         * @var Cart $cart
          */
         $cart = $params['cart'];
 

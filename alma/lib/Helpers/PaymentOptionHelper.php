@@ -28,6 +28,7 @@ use Alma\PrestaShop\Factories\ContextFactory;
 use Alma\PrestaShop\Factories\MediaFactory;
 use Alma\PrestaShop\Factories\ModuleFactory;
 use Alma\PrestaShop\Forms\PaymentButtonAdminFormBuilder;
+use Alma\PrestaShop\Model\AlmaPaymentOption;
 use PrestaShop\PrestaShop\Core\Payment\PaymentOption;
 
 if (!defined('_PS_VERSION_')) {
@@ -138,9 +139,9 @@ class PaymentOptionHelper
      * @param bool $isDeferred
      * @param int $valueBNPL
      *
-     * @return PaymentOption|array
+     * @return AlmaPaymentOption|array
      */
-    public function createPaymentOption($forEUComplianceModule, $ctaText, $action, $valueBNPL, $isDeferred)
+    public function createPaymentOption($forEUComplianceModule, $ctaText, $action, $valueBNPL, $isDeferred, $feePlanKey)
     {
         $logoName = $this->mediaHelper->getLogoName($valueBNPL, $isDeferred);
 
@@ -157,17 +158,21 @@ class PaymentOptionHelper
             ];
         }
 
-        $paymentOption = new PaymentOption();
+        $paymentOption = new AlmaPaymentOption();
         $logo = $this->mediaFactory->getMediaPath(
             '/views/img/logos/' . $logoName,
             $this->module
         );
 
-        return $paymentOption
-            ->setModuleName($this->module->name)
-            ->setCallToActionText($ctaText)
-            ->setAction($action)
-            ->setLogo($logo);
+        $paymentOption
+            ->setAlmaPaymentPlanKey($feePlanKey)
+            ->getOption()
+                ->setModuleName($this->module->name)
+                ->setCallToActionText($ctaText)
+                ->setAction($action)
+                ->setLogo($logo);
+
+        return $paymentOption;
     }
 
     /**
@@ -245,17 +250,17 @@ class PaymentOptionHelper
     }
 
     /**
-     * @param PaymentOption $paymentOption
+     * @param AlmaPaymentOption $paymentOption
      * @param $template
      *
-     * @return mixed
+     * @return AlmaPaymentOption
      */
     public function setAdditionalInformationForEuCompliance($paymentOption, $template)
     {
-        $paymentOption->setAdditionalInformation($template);
+        $paymentOption->getOption()->setAdditionalInformation($template);
 
         if ($this->configurationHelper->isInPageEnabled($this->settingsHelper)) {
-            $paymentOption->setForm($this->paymentOptionTemplateHelper->getTemplateInPage());
+            $paymentOption->getOption()->setForm($this->paymentOptionTemplateHelper->getTemplateInPage());
         }
 
         return $paymentOption;

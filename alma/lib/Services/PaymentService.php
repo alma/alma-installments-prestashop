@@ -294,7 +294,8 @@ class PaymentService
                     $textPaymentButton,
                     $action,
                     $valueBNPL,
-                    $this->isDeferred
+                    $this->isDeferred,
+                    $key
                 );
 
                 if (!$forEUComplianceModule) {
