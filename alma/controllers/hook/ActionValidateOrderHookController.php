@@ -28,10 +28,15 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
+use Alma\PrestaShop\Logger;
+use Alma\PrestaShop\Services\MerchantEventsApiService;
 use CartCore as Cart;
 use OrderCore as Order;
+use OrderPaymentCore as OrderPayment;
 use ValidateCore as Validate;
 
+use Alma\PrestaShop\Helpers\ConfigurationHelper;
+use Alma\PrestaShop\Repositories\CartEventsDataRepository;
 use Alma\PrestaShop\Builders\Helpers\InsuranceHelperBuilder;
 use Alma\PrestaShop\Helpers\InsuranceHelper;
 use Alma\PrestaShop\Hooks\FrontendHookController;
@@ -49,12 +54,25 @@ class ActionValidateOrderHookController extends FrontendHookController
      */
     protected $insuranceHelper;
 
+    /** @var CartEventsDataRepository */
+    private $cartEventsDataRepository;
+
+    /** @var ConfigurationHelper */
+    private $configurationHelper;
+
+    /** @var MerchantEventsApiService */
+    private $merchantEventsApiService;
+
     public function __construct($module)
     {
         parent::__construct($module);
         $this->almaInsuranceProductRepository = new AlmaInsuranceProductRepository();
         $insuranceHelperBuilder = new InsuranceHelperBuilder();
         $this->insuranceHelper = $insuranceHelperBuilder->getInstance();
+
+        $this->cartEventsDataRepository = new CartEventsDataRepository();
+        $this->configurationHelper = new ConfigurationHelper();
+        $this->merchantEventsApiService = new MerchantEventsApiService();
     }
 
     /**
@@ -85,7 +103,34 @@ class ActionValidateOrderHookController extends FrontendHookController
             return;
         }
 
-        $order->getOrderPayments()
+        $cartEventsData = $this->cartEventsDataRepository->get($cart);
+        if (!$cartEventsData) {
+            return;
+        }
+
+        $eventDetails = [
+            "is_alma_p1x" => false,
+            "is_alma_bnpl" => false,
+            "alma_payment_id" => null,
+            "was_bnpl_eligible" => (bool) $cartEventsData['bnpl_eligibility_result'],
+            "order_id" => strval($order->id),
+            "cart_id" => strval($cart->id),
+        ];
+
+        if (!empty($cartEventsData['plan_key'])) {
+            /** @var OrderPayment $orderPayment */
+            $orderPayment = $order->getOrderPayments()[0];
+            $eventDetails['alma_payment_id'] = $orderPayment->transaction_id;
+
+            $eventDetails['is_alma_p1x'] = $this->configurationHelper->isPayNow($cartEventsData['plan_key']);
+            $eventDetails['is_alma_bnpl'] = !$eventDetails['is_alma_p1x'];
+        }
+
+        try {
+            $this->merchantEventsApiService->sendMerchantEvent('order_confirmed', $eventDetails);
+        } catch (\Exception $e) {
+            Logger::instance()->error("[Alma] Error sending merchant event: {$e->getMessage()}");
+        }
     }
 
     private function runInsurance($params)

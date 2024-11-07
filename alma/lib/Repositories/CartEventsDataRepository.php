@@ -34,21 +34,30 @@ if (!defined('_PS_VERSION_')) {
  *
  * Use for Cart Product
  */
-class CartEligibilityRepository
+class CartEventsDataRepository
 {
-    public const TABLE_NAME = 'alma_cart_eligibility';
+    public const TABLE_NAME = 'alma_cart_events_data';
 
     /**
      * @param \Cart $cart
      * @param bool $eligibilityResult
      * @return bool
      */
-    public function add($cart, $eligibilityResult)
+    public function add($cart, $eligibilityResult, $planKey = null)
     {
         return \Db::getInstance()->insert(self::TABLE_NAME, [
             'id_cart' => (int) $cart->id,
             'bnpl_eligibility_result' => $eligibilityResult,
+            'plan_key' => $planKey,
         ], false, true, \Db::REPLACE);
+    }
+
+    public function setPlanKey($cart, $planKey)
+    {
+        return \Db::getInstance()->update(
+            self::TABLE_NAME, ['plan_key' => $planKey],
+            '`id_cart` = ' . (int) $cart->id
+        );
     }
 
     public function remove($cart)
@@ -58,9 +67,19 @@ class CartEligibilityRepository
 
     public function get($cart)
     {
-        return \Db::getInstance()->getValue(
-            'SELECT `bnl_eligibility_result` FROM `' . self::TABLE_NAME . '` WHERE `id_cart` = ' . (int) $cart->id
+        return \Db::getInstance()->getRow(
+            'SELECT * FROM `' . _DB_PREFIX_ . self::TABLE_NAME . '` WHERE `id_cart` = ' . (int) $cart->id
         );
+    }
+
+    public function getEligibility($cart)
+    {
+        return $this->get($cart)['bnpl_eligibility_result'];
+    }
+
+    public function getPlanKey($cart)
+    {
+        return $this->get($cart)['plan_key'];
     }
 
     /**
@@ -71,6 +90,7 @@ class CartEligibilityRepository
         $sql = 'CREATE TABLE IF NOT EXISTS `' . _DB_PREFIX_ . self::TABLE_NAME . '` (
             `id_cart` int(10) unsigned NOT NULL,
             `bnpl_eligibility_result` int(1) unsigned NOT NULL,
+            `plan_key` varchar(255) NULL DEFAULT NULL,
             unique (`id_cart`)
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci';
 

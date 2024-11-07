@@ -22,7 +22,7 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
-use Alma\PrestaShop\Repositories\CartEligibilityRepository;
+use Alma\PrestaShop\Repositories\CartEventsDataRepository;
 use CartCore as Cart;
 
 use Alma\PrestaShop\Builders\Helpers\SettingsHelperBuilder;

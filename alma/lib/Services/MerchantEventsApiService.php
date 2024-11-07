@@ -10,7 +10,7 @@ use Alma\PrestaShop\Repositories\AlmaInsuranceProductRepository;
 
 class MerchantEventsApiService
 {
-    const API_URL = 'https://a870-83-167-43-107.ngrok-free.app/merchant-events/merchant_123456789';
+    const API_URL = 'https://0aea-83-167-43-107.ngrok-free.app/merchant-events/merchant_olivier';
 
     /**
      * @var Context
@@ -57,7 +57,6 @@ class MerchantEventsApiService
 
         // Encode payload into JSON
         $jsonPayload = json_encode(['event_type' => $eventType, 'event_details' => $eventDetails]);
-        $this->logger->info('$jsonPayload', [$jsonPayload]);
 
         // Add payload to the POST request body
         curl_setopt($ch, CURLOPT_POSTFIELDS, $jsonPayload);

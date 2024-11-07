@@ -34,7 +34,7 @@ use CartCore as Cart;
 
 use Alma\PrestaShop\Builders\Services\PaymentServiceBuilder;
 use Alma\PrestaShop\Hooks\FrontendHookController;
-use Alma\PrestaShop\Repositories\CartEligibilityRepository;
+use Alma\PrestaShop\Repositories\CartEventsDataRepository;
 use Alma\PrestaShop\Services\PaymentService;
 use PrestaShop\PrestaShop\Core\Localization\Exception\LocalizationException;
 use PrestaShop\PrestaShop\Core\Payment\PaymentOption;
@@ -48,7 +48,7 @@ class PaymentOptionsHookController extends FrontendHookController
 
 
     /**
-     * @var CartEligibilityRepository
+     * @var CartEventsDataRepository
      */
     protected $cartEligibilityRepository;
 
@@ -65,7 +65,7 @@ class PaymentOptionsHookController extends FrontendHookController
 
         $paymentServiceBuilder = new PaymentServiceBuilder();
         $this->paymentService = $paymentServiceBuilder->getInstance();
-        $this->cartEligibilityRepository = new CartEligibilityRepository();
+        $this->cartEligibilityRepository = new CartEventsDataRepository();
         $this->configurationHelper = new ConfigurationHelper();
 
     }

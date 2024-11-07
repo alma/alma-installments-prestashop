@@ -41,6 +41,7 @@ use Alma\PrestaShop\Helpers\RefundHelper;
 use Alma\PrestaShop\Helpers\SettingsHelper;
 use Alma\PrestaShop\Helpers\ToolsHelper;
 use Alma\PrestaShop\Logger;
+use Alma\PrestaShop\Repositories\CartEventsDataRepository;
 use Alma\PrestaShop\Services\OrderService;
 
 if (!defined('_PS_VERSION_')) {
@@ -78,6 +79,9 @@ class PaymentValidation
      */
     protected $paymentValidator;
 
+    /** @var CartEventsDataRepository */
+    private $cartEventsDataRepository;
+
     /**
      * @param ContextFactory $contextFactory
      * @param ModuleFactory $moduleFactory
@@ -103,6 +107,8 @@ class PaymentValidation
         $orderServiceBuilder = new OrderServiceBuilder();
 
         $this->orderService = $orderServiceBuilder->getInstance();
+
+        $this->cartEventsDataRepository = new CartEventsDataRepository();
     }
 
     /**
@@ -260,7 +266,6 @@ class PaymentValidation
             } else {
                 if (1 === $installmentCount) {
                     $paymentMode = $this->module->l('Alma - Pay now', 'PaymentValidation');
-                    $extraVars['alma_installments_count'] = 1;
                 } else {
                     $paymentMode = sprintf(
                         $this->module->l('Alma - %d monthly installments', 'PaymentValidation'),
@@ -268,6 +273,10 @@ class PaymentValidation
                     );
                 }
             }
+
+            // TODO: fix: This will cause BNPL with P1X fallback to be considered a P1X
+            $planKey = $this->settingsHelper->key('general', $payment->installments_count, $payment->deferred_days, $payment->deferred_months);
+            $this->cartEventsDataRepository->setPlanKey($cart, $planKey);
 
             try {
                 // Place order

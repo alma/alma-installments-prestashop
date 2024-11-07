@@ -22,7 +22,7 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
-use Alma\PrestaShop\Repositories\CartEligibilityRepository;
+use Alma\PrestaShop\Repositories\CartEventsDataRepository;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -80,7 +80,7 @@ class Alma extends PaymentModule
      */
     protected $toolsHelper;
 
-    /** @var CartEligibilityRepository */
+    /** @var CartEventsDataRepository */
     protected $cartEligibilityRepository;
 
     public function __construct()
@@ -130,7 +130,7 @@ class Alma extends PaymentModule
         $this->tabsHelper = new \Alma\PrestaShop\Helpers\Admin\TabsHelper();
 
         $this->toolsHelper = new \Alma\PrestaShop\Helpers\ToolsHelper();
-        $this->cartEligibilityRepository = new CartEligibilityRepository();
+        $this->cartEligibilityRepository = new CartEventsDataRepository();
     }
 
     /**
