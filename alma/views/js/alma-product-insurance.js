@@ -28,7 +28,6 @@
 
         let loaded = false;
         let insuranceSelected = false;
-        let selectedAlmaInsurance = null;
         let addToCartFlow = false;
         let quantity = getQuantity();
         let almaEligibilityAnswer = false;
@@ -105,11 +104,15 @@
         }
 
 
+        function getQuantityInput() {
+            return document.querySelector('.qty [name="qty"]');
+        }
+
         // Retrieve wanted product quantity from the quantity selector
         function getQuantity() {
             let quantity = 1;
 
-            const qtyInput = document.querySelector('.qty [name="qty"]');
+            const qtyInput = getQuantityInput();
             if (qtyInput) {
                 quantity = Number(qtyInput.value);
             }
@@ -126,8 +129,10 @@
                 quantity = 1;
             }
 
-            const qtyInput = document.querySelector('.qty [name="qty"]');
-            qtyInput.value = quantity;
+            const qtyInput = getQuantityInput();
+            if (qtyInput) {
+                qtyInput.value = quantity;
+            }
         }
 
         // Display/hide a spinner on the add to cart button
@@ -176,7 +181,8 @@
 
                 // Widget is sending us selected insurance data
                 case 'getSelectedInsuranceData':
-                    if (parseInt(document.querySelector('.qty [name="qty"]').value) !== quantity) {
+                    const qtyInput = getQuantityInput();
+                    if (qtyInput && parseInt(qtyInput.value) !== quantity) {
                         quantity = getQuantity();
                     }
 
