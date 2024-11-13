@@ -59,7 +59,7 @@ class CustomerModel extends \CustomerCore
      */
     public function getBirthday()
     {
-        if ($this->birthday === '0000-00-00') {
+        if (strpos($this->birthday, '0000-00-00') !== false) {
             return null;
         }
 
