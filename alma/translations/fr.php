@@ -81,12 +81,12 @@ $_MODULE['<{alma}prestashop>excludedcategoryadminformbuilder_c4cea4750fb3ef077cb
 $_MODULE['<{alma}prestashop>excludedcategoryadminformbuilder_36359547b09bdb31f46c419a0bd5807e'] = 'Catégories exclues';
 $_MODULE['<{alma}prestashop>inpageadminformbuilder_2420ebe02d61c738479f399a97e1cf18'] = 'Activer le paiement avec In-page';
 $_MODULE['<{alma}prestashop>inpageadminformbuilder_3dd32a0e923aeb930c7c0ced60f7b2e0'] = 'Activer le paiement avec In-page pour toutes les méthodes de paiement Alma';
-$_MODULE['<{alma}prestashop>inpageadminformbuilder_220a4f39147308a2160f7abc4d00ae43'] = 'La page d\'accueil de la caisse dans votre propre site web';
-$_MODULE['<{alma}prestashop>inpageadminformbuilder_6f7991629de2e9ee19a0bf2a0469138c'] = 'Sélecteur CSS du bouton de paiement Alma';
-$_MODULE['<{alma}prestashop>inpageadminformbuilder_6644897911f79aa5889998a5ab18c5cd'] = '%1$sAvancé%2$s [Optionnel] Sélecteur CSS utilisé par nos scripts pour identifier le bouton de paiement Alma.';
-$_MODULE['<{alma}prestashop>inpageadminformbuilder_cc12a5229a16dced1984745e05872a94'] = 'Ex.: #id, .class, ...';
-$_MODULE['<{alma}prestashop>inpageadminformbuilder_8ee0042ba2657c2af782fcc8893fa45a'] = 'Sélecteur CSS du bouton de confirmation de paiement';
-$_MODULE['<{alma}prestashop>inpageadminformbuilder_afa1a431a4735641af813166d75b1c06'] = '%1$sAvancé%2$s [Optionnel] Sélecteur CSS utilisé par nos scripts pour identifier le bouton de confirmation de paiement.';
+$_MODULE['<{alma}prestashop>inpageadminformbuilder_220a4f39147308a2160f7abc4d00ae43'] = 'Le paiement avec In-page dans votre propre site web';
+$_MODULE['<{alma}prestashop>inpageadminformbuilder_6f7991629de2e9ee19a0bf2a0469138c'] = 'Bouton de paiement à l\'entrée Sélecteur d\'alma';
+$_MODULE['<{alma}prestashop>inpageadminformbuilder_6644897911f79aa5889998a5ab18c5cd'] = '%1$sAdvanced%2$s [Optional] Sélecteur CSS utilisé par nos scripts pour identifier le bouton de paiement Alma';
+$_MODULE['<{alma}prestashop>inpageadminformbuilder_cc12a5229a16dced1984745e05872a94'] = 'Ex : #id, .class, ...';
+$_MODULE['<{alma}prestashop>inpageadminformbuilder_8ee0042ba2657c2af782fcc8893fa45a'] = 'Sélecteur de bouton de commande';
+$_MODULE['<{alma}prestashop>inpageadminformbuilder_afa1a431a4735641af813166d75b1c06'] = '%1$sAvancé%2$s [Facultatif] Sélecteur CSS utilisé par nos scripts pour identifier le bouton de confirmation de paiement.';
 $_MODULE['<{alma}prestashop>inpageadminformbuilder_6de24747c86085e597f6b38d4d1d01a4'] = 'Paiement en ligne';
 $_MODULE['<{alma}prestashop>carteligibilityadminformbuilder_a2a52a9dd1864e2b995793bd67b8c6e5'] = 'Ce badge permet d\'informer vos clients de la disponibilité des facilité de paiement Alma dès la fiche produit, ce qui participera à augmenter votre taux de conversion. Pour des précisions sur sa configuration ou en cas de problèmes, consultez %1$scette documentation%2$s.';
 $_MODULE['<{alma}prestashop>carteligibilityadminformbuilder_ac6329ea064b9212be7e442cb46bf68f'] = 'Afficher le badge';
@@ -158,7 +158,8 @@ $_MODULE['<{alma}prestashop>admininsurancehelper_f1206f9fadc5ce41694f69129aecac2
 $_MODULE['<{alma}prestashop>admininsurancehelper_7442e29d7d53e549b78d93c46b8cdcfc'] = 'Commandes';
 $_MODULE['<{alma}prestashop>insuranceservice_d87aee5118a62a7ff6c21e4ac31006c5'] = 'Par la présente, je reconnais accepter de souscrire à l\'assurance proposée par Alma. Ce faisant, je confirme avoir préalablement pris connaissance de la [notice d\'information valant conditions générales], du [document d\'information sur le produit d\'assurance], et de la [fiche d\'information et de conseil précontractuelle]. J\'y adhère sans réserve et accepte de signer électroniquement les différents documents formant mon contrat, le cas échéant. Je consens expressément à la collecte et à l\'utilisation de mes données personnelles aux fins de la souscription et de la gestion de mon (mes) contrat(s) d\'assurance.';
 $_MODULE['<{alma}prestashop>adminalmainsuranceconfiguration_b824200e9b8aca1fbb762d6566ff0cd7'] = 'Votre configuration a été sauvegardée';
-$_MODULE['<{alma}prestashop>adminalmainsuranceconfiguration_4a39c6a33c3441762924914168d2a387'] = 'Erreur lors de la création de la configuration Assurance Alma : %1$s';
+$_MODULE['<{alma}prestashop>adminalmainsuranceconfiguration_a6bf06f186e2fccecad054fd831c2144'] = '[Alma] Erreur d\'assurance du produit lors de la modification de la configuration : %1$s';
+$_MODULE['<{alma}prestashop>adminalmainsuranceconfiguration_b42688965893bdb7a37cf1197e506e25'] = '[Alma] Erreur lors de la création de la configuration Assurance Alma : %1$s';
 $_MODULE['<{alma}prestashop>adminalmainsuranceorders_a66f446516cd125af12bd25073f88b78'] = 'Commandes avec assurance';
 $_MODULE['<{alma}prestashop>adminalmainsuranceorders_49414cda71621b3ee718ae5ff40804c5'] = 'Ordonnance Id';
 $_MODULE['<{alma}prestashop>adminalmainsuranceorders_63d5049791d9d79d86e9a108b0a999ca'] = 'Référence';
@@ -330,4 +331,3 @@ $_MODULE['<{alma}prestashop>notificationfirstinstallation_8e51eafe439b0adfecc2dc
 $_MODULE['<{alma}prestashop>notificationfirstinstallation_1e6898bbd6a44041932ac84cbda13bd7'] = 'Retrouvez votre clef d\'API Live sur %1$svotre tableau de bord Alma%2$s';
 $_MODULE['<{alma}prestashop>notificationfirstinstallation_689c39b29a6d91e6dff728a7762cbc9e'] = 'Pour utiliser le mode Test, récupérez votre clef d\'API Test sur %1$svotre tableau de bord sandbox%2$s';
 $_MODULE['<{alma}prestashop>notificationfirstinstallation_dcab24ea1a3cd9bab8047b1b6f7ee65c'] = 'En cas de problème, veuillez nous contacter par courrier électronique à l\'adresse suivante : %1$ssupport@getalma.eu%2$s';
-$_MODULE['<{alma}prestashop>displaypayment_pnx_22f0189423433ab0e055b91d98970e5f'] = 'Le paiement en plusieurs fois Alma n\'est pas disponible pour cette commande';
