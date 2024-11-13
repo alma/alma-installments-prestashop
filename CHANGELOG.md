@@ -1,5 +1,19 @@
 # Changelog
 
+## v4.4.2 - 2024-11-13
+
+### Changes
+
+### 🐛 Bug Fixes
+
+- fix: Prevent crash when there is not quantity input on product page for insurance (#598)
+- fix: issue with some translation in payment buttons (#593)
+- fix: Update wording for In-Page advanced feature (#594)
+
+#### Contributors
+
+@Benjamin-Freoua-Alma, @alma-renovate-bot, @alma-renovate-bot[bot], @carine-bonnafous, @github-actions and @olance
+
 ## v4.4.1 - 2024-10-30
 
 ### 🐛 Bug Fixes
