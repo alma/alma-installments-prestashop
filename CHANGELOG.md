@@ -6,10 +6,11 @@
 
 ### 🚀 New Features
 
-- fix: Update wording for In-Page advanced feature (#594)
+- feat: add inpage setting for selector payment buttons (#581)
 
 ### 🐛 Bug Fixes
 
+- fix: Update wording for In-Page advanced feature (#594)
 - fix: Prevent crash when there is not quantity input on product page for insurance (#598)
 - fix: issue with some translation in payment buttons (#593)
 
