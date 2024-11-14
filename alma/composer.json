@@ -11,7 +11,7 @@
     },
     "require": {
         "php": "^5.6 || ~7.0 || ~7.1 || ~7.2 || ~7.3 || ~7.4 || ~8.0 || ~8.1",
-        "alma/alma-php-client": "^2.2.0",
+        "alma/alma-php-client": "^3.2.1",
         "ext-json": "*",
         "ext-openssl": "*",
         "prestashop/prestashop-accounts-installer": "^v1.0.4",
