@@ -186,7 +186,7 @@ class ClientHelper
     public function sendUrlForGatherCmsData($url)
     {
         try {
-            $this->getAlmaClient()->merchants->sendIntegrationsConfigurationsUrl($url);
+            $this->getAlmaClient()->configuration->sendIntegrationsConfigurationsUrl($url);
         } catch (Alma\API\Exceptions\RequestException $e) {
             throw new ClientException('[Alma] Error Request: ' . $e->getMessage());
         } catch (RequestError $e) {

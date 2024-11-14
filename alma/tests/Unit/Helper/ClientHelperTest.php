@@ -26,7 +26,7 @@ namespace Alma\PrestaShop\Tests\Unit\Helper;
 
 use Alma\API\Client;
 use Alma\API\ClientContext;
-use Alma\API\Endpoints\Merchants;
+use Alma\API\Endpoints\Configuration;
 use Alma\API\Endpoints\Orders;
 use Alma\API\Entities\Payment;
 use Alma\API\Exceptions\ParametersException;
@@ -175,11 +175,11 @@ class ClientHelperTest extends TestCase
         $clientContextMock = $this->createMock(ClientContext::class);
         $almaClientMock = $this->createMock(Client::class);
 
-        $almaClientMock->merchants = $this->getMockBuilder(Merchants::class)
+        $almaClientMock->configuration = $this->getMockBuilder(Configuration::class)
             ->setConstructorArgs([$clientContextMock])
             ->setMethods(['sendIntegrationsConfigurationsUrl'])
             ->getMock();
-        $almaClientMock->merchants->expects($this->once())
+        $almaClientMock->configuration->expects($this->once())
             ->method('sendIntegrationsConfigurationsUrl')
             ->with($url)
             ->willThrowException($exceptions);
