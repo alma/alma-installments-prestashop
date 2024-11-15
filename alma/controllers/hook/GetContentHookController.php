@@ -53,6 +53,7 @@ use Alma\PrestaShop\Forms\ShareOfCheckoutAdminFormBuilder;
 use Alma\PrestaShop\Helpers\ApiHelper;
 use Alma\PrestaShop\Helpers\ApiKeyHelper;
 use Alma\PrestaShop\Helpers\ClientHelper;
+use Alma\PrestaShop\Helpers\CmsDataHelper;
 use Alma\PrestaShop\Helpers\ConstantsHelper;
 use Alma\PrestaShop\Helpers\ContextHelper;
 use Alma\PrestaShop\Helpers\CustomFieldsHelper;
@@ -61,7 +62,6 @@ use Alma\PrestaShop\Helpers\PriceHelper;
 use Alma\PrestaShop\Helpers\SettingsHelper;
 use Alma\PrestaShop\Hooks\AdminHookController;
 use Alma\PrestaShop\Logger;
-use Alma\PrestaShop\Services\CmsDataService;
 
 final class GetContentHookController extends AdminHookController
 {
@@ -433,9 +433,9 @@ final class GetContentHookController extends AdminHookController
             return $credentialsError['message'];
         }
 
-        if (IntegrationsConfigurationsUtils::isUrlRefreshRequired($this->settingsHelper->getKey(CmsDataService::ALMA_CMSDATA_DATE))) {
+        if (IntegrationsConfigurationsUtils::isUrlRefreshRequired($this->settingsHelper->getKey(CmsDataHelper::ALMA_CMSDATA_DATE))) {
             $this->apiHelper->sendUrlForGatherCmsData($this->contextHelper->getModuleLink('cmsdataexport', [], true));
-            $this->settingsHelper->updateKey(CmsDataService::ALMA_CMSDATA_DATE, time());
+            $this->settingsHelper->updateKey(CmsDataHelper::ALMA_CMSDATA_DATE, time());
         }
 
         $this->context->smarty->clearAssign('validation_error');

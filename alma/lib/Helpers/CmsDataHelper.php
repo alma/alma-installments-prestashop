@@ -41,6 +41,7 @@ if (!defined('_PS_VERSION_')) {
 
 class CmsDataHelper
 {
+    const ALMA_CMSDATA_DATE = 'ALMA_CMSDATA_DATE';
     /**
      * @var ModuleHelper
      */

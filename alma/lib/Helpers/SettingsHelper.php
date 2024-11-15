@@ -245,6 +245,7 @@ class SettingsHelper
             ConstantsHelper::ALMA_SHOW_INSURANCE_WIDGET_PRODUCT,
             ConstantsHelper::ALMA_SHOW_INSURANCE_WIDGET_CART,
             ConstantsHelper::ALMA_SHOW_INSURANCE_POPUP_CART,
+            CmsDataHelper::ALMA_CMSDATA_DATE,
         ];
 
         foreach ($configKeys as $configKey) {
