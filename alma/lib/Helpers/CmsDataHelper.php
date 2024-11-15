@@ -27,11 +27,13 @@ namespace Alma\PrestaShop\Helpers;
 use Alma\API\Client;
 use Alma\PrestaShop\Builders\Factories\ModuleFactoryBuilder;
 use Alma\PrestaShop\Builders\Helpers\SettingsHelperBuilder;
+use Alma\PrestaShop\Factories\ModuleFactory;
 use Alma\PrestaShop\Forms\CartEligibilityAdminFormBuilder;
 use Alma\PrestaShop\Forms\DebugAdminFormBuilder;
 use Alma\PrestaShop\Forms\InpageAdminFormBuilder;
 use Alma\PrestaShop\Forms\PnxAdminFormBuilder;
 use Alma\PrestaShop\Forms\ProductEligibilityAdminFormBuilder;
+use Alma\PrestaShop\Model\ShopModel;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -40,35 +42,45 @@ if (!defined('_PS_VERSION_')) {
 class CmsDataHelper
 {
     /**
-     * @var \Alma\PrestaShop\Helpers\ModuleHelper
+     * @var ModuleHelper
      */
     protected $moduleHelper;
     /**
-     * @var \Alma\PrestaShop\Helpers\ThemeHelper
+     * @var ThemeHelper
      */
     protected $themeHelper;
     /**
-     * @var \Alma\PrestaShop\Factories\ModuleFactory
+     * @var ModuleFactory
      */
     protected $moduleFactory;
     /**
-     * @var \Alma\PrestaShop\Helpers\SettingsHelper
+     * @var SettingsHelper
      */
     protected $settingsHelper;
     /**
-     * @var \Alma\PrestaShop\Helpers\ToolsHelper
+     * @var ToolsHelper
      */
     protected $toolsHelper;
+    /**
+     * @var ShopModel
+     */
+    protected $shopModel;
 
     /**
-     * CmsDataHelper constructor.
+     * @param ModuleHelper $moduleHelper
+     * @param ThemeHelper $themeHelper
+     * @param ModuleFactory $moduleFactory
+     * @param SettingsHelper $settingsHelper
+     * @param ToolsHelper $toolsHelper
+     * @param ShopModel $shopModel
      */
     public function __construct(
         $moduleHelper = null,
         $themeHelper = null,
         $moduleFactory = null,
         $settingsHelper = null,
-        $toolsHelper = null
+        $toolsHelper = null,
+        $shopModel = null
     ) {
         if (!$moduleHelper) {
             $moduleHelper = new ModuleHelper();
@@ -94,6 +106,11 @@ class CmsDataHelper
             $toolsHelper = new ToolsHelper();
         }
         $this->toolsHelper = $toolsHelper;
+
+        if (!$shopModel) {
+            $shopModel = new ShopModel();
+        }
+        $this->shopModel = $shopModel;
     }
 
     /**
@@ -132,7 +149,7 @@ class CmsDataHelper
             'specific_features' => [], // no specific features in Prestashop
             'country_restriction' => $this->getCountriesRestrictions(),
             'custom_widget_css' => (bool) $this->settingsHelper->getKey(ProductEligibilityAdminFormBuilder::ALMA_WIDGET_POSITION_SELECTOR),
-            'is_multisite' => \Shop::isFeatureActive(), // TODO : Need to implement this method
+            'is_multisite' => $this->shopModel->isMultisite(),
         ];
     }
 

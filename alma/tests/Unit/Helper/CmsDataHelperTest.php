@@ -14,6 +14,7 @@ use Alma\PrestaShop\Helpers\ModuleHelper;
 use Alma\PrestaShop\Helpers\SettingsHelper;
 use Alma\PrestaShop\Helpers\ThemeHelper;
 use Alma\PrestaShop\Helpers\ToolsHelper;
+use Alma\PrestaShop\Model\ShopModel;
 use PHPUnit\Framework\TestCase;
 
 class CmsDataHelperTest extends TestCase
@@ -24,6 +25,10 @@ class CmsDataHelperTest extends TestCase
     protected $settingsHelper;
     protected $cmsDataHelper;
     protected $toolsHelper;
+    /**
+     * @var ShopModel
+     */
+    protected $shopModel;
 
     public function setUp()
     {
@@ -32,12 +37,14 @@ class CmsDataHelperTest extends TestCase
         $this->moduleFactory = $this->createMock(ModuleFactory::class);
         $this->settingsHelper = $this->createMock(SettingsHelper::class);
         $this->toolsHelper = $this->createMock(ToolsHelper::class);
+        $this->shopModel = $this->createMock(ShopModel::class);
         $this->cmsDataHelper = new CmsDataHelper(
             $this->moduleHelper,
             $this->themeHelper,
             $this->moduleFactory,
             $this->settingsHelper,
-            $this->toolsHelper
+            $this->toolsHelper,
+            $this->shopModel
         );
     }
 
@@ -49,6 +56,7 @@ class CmsDataHelperTest extends TestCase
         $this->settingsHelper = null;
         $this->cmsDataHelper = null;
         $this->toolsHelper = null;
+        $this->shopModel = null;
     }
 
     /**
@@ -91,6 +99,7 @@ class CmsDataHelperTest extends TestCase
                 [ProductEligibilityAdminFormBuilder::ALMA_WIDGET_POSITION_SELECTOR, null, '#selectorCss'],
             ]
         );
+        $this->shopModel->method('isMultisite')->willReturn(false);
         $expected = [
             'alma_enabled' => false,
             'widget_cart_activated' => false,
@@ -102,7 +111,7 @@ class CmsDataHelperTest extends TestCase
             'specific_features' => [],
             'country_restriction' => [],
             'custom_widget_css' => (bool) '#selectorCss',
-            'is_multisite' => \Shop::isFeatureActive(),
+            'is_multisite' => false,
         ];
 
         $this->assertEquals($expected, $this->cmsDataHelper->getCmsFeatureArray());

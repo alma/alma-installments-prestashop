@@ -213,6 +213,8 @@ class ApiHelper
     }
 
     /**
+     * @param string $url
+     *
      * @return void
      */
     public function sendUrlForGatherCmsData($url)

@@ -179,7 +179,7 @@ class ClientHelper
     }
 
     /**
-     * @param $url
+     * @param string $url
      *
      * @throws \Alma\PrestaShop\Exceptions\ClientException
      */
