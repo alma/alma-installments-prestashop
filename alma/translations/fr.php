@@ -32,6 +32,7 @@ $_MODULE['<{alma}prestashop>alma_7bab99339291e7eea710b4a998e663de'] = 'Alma néc
 $_MODULE['<{alma}prestashop>alma_fbb47375d2272bef79f5722a183bf1ec'] = 'Alma nécessite l\'extension PHP JSON';
 $_MODULE['<{alma}prestashop>alma_7fb83ba9cf3cc38857a2ddae98534d22'] = 'Alma nécessite OpenSSL >= 1.0.1';
 $_MODULE['<{alma}prestashop>modulefactorytest_5914ca153abaf8a2af61e13e7fe7e829'] = 'Ma formulation à traduire';
+$_MODULE['<{alma}prestashop>translationhelpertest_1dd1c5fb7f25cd41b291d43a89e3aefd'] = 'Aujourd\'hui';
 $_MODULE['<{alma}prestashop>wrongcredentialsexception_cc76de47de858ac2fa2964f534ecfdfb'] = 'Impossible de se connecter à Alma en utilisant vos clés API.';
 $_MODULE['<{alma}prestashop>wrongcredentialsexception_733b6ddadc31fd97174b0cfe69b584c9'] = 'Veuillez vérifier vos clés sur votre tableau de bord %1$sAlma%2$s.';
 $_MODULE['<{alma}prestashop>wrongparamsexception_8ec75b5f68c49d1d6541b1e318a8120d'] = 'Clé(s) d\'erreur : %1$s.';
@@ -79,8 +80,13 @@ $_MODULE['<{alma}prestashop>excludedcategoryadminformbuilder_41c2bdcbfb6ea702ac4
 $_MODULE['<{alma}prestashop>excludedcategoryadminformbuilder_c4cea4750fb3ef077cbf2e1283c312ac'] = 'Message affiché sur les pages de produits exclus ou sur la page du panier s\'il contient un produit exclus';
 $_MODULE['<{alma}prestashop>excludedcategoryadminformbuilder_36359547b09bdb31f46c419a0bd5807e'] = 'Catégories exclues';
 $_MODULE['<{alma}prestashop>inpageadminformbuilder_2420ebe02d61c738479f399a97e1cf18'] = 'Activer le paiement avec In-page';
-$_MODULE['<{alma}prestashop>inpageadminformbuilder_bf3b980c4aa11b5fca4cc3096f50e0b8'] = 'Activer le paiement avec In-page pour paiement comptant, P2X, P3X et P4X';
-$_MODULE['<{alma}prestashop>inpageadminformbuilder_220a4f39147308a2160f7abc4d00ae43'] = 'La page d\'accueil de la caisse dans votre propre site web';
+$_MODULE['<{alma}prestashop>inpageadminformbuilder_3dd32a0e923aeb930c7c0ced60f7b2e0'] = 'Activer le paiement avec In-page pour toutes les méthodes de paiement Alma';
+$_MODULE['<{alma}prestashop>inpageadminformbuilder_220a4f39147308a2160f7abc4d00ae43'] = 'Le paiement avec In-page dans votre propre site web';
+$_MODULE['<{alma}prestashop>inpageadminformbuilder_6f7991629de2e9ee19a0bf2a0469138c'] = 'Bouton de paiement à l\'entrée Sélecteur d\'alma';
+$_MODULE['<{alma}prestashop>inpageadminformbuilder_6644897911f79aa5889998a5ab18c5cd'] = '%1$sAdvanced%2$s [Optional] Sélecteur CSS utilisé par nos scripts pour identifier le bouton de paiement Alma';
+$_MODULE['<{alma}prestashop>inpageadminformbuilder_cc12a5229a16dced1984745e05872a94'] = 'Ex : #id, .class, ...';
+$_MODULE['<{alma}prestashop>inpageadminformbuilder_8ee0042ba2657c2af782fcc8893fa45a'] = 'Sélecteur de bouton de commande';
+$_MODULE['<{alma}prestashop>inpageadminformbuilder_afa1a431a4735641af813166d75b1c06'] = '%1$sAvancé%2$s [Facultatif] Sélecteur CSS utilisé par nos scripts pour identifier le bouton de confirmation de paiement.';
 $_MODULE['<{alma}prestashop>inpageadminformbuilder_6de24747c86085e597f6b38d4d1d01a4'] = 'Paiement en ligne';
 $_MODULE['<{alma}prestashop>carteligibilityadminformbuilder_a2a52a9dd1864e2b995793bd67b8c6e5'] = 'Ce badge permet d\'informer vos clients de la disponibilité des facilité de paiement Alma dès la fiche produit, ce qui participera à augmenter votre taux de conversion. Pour des précisions sur sa configuration ou en cas de problèmes, consultez %1$scette documentation%2$s.';
 $_MODULE['<{alma}prestashop>carteligibilityadminformbuilder_ac6329ea064b9212be7e442cb46bf68f'] = 'Afficher le badge';
@@ -134,7 +140,11 @@ $_MODULE['<{alma}prestashop>paymentvalidation_2ea09287a94f2bc88b459fc7d5a31b6b']
 $_MODULE['<{alma}prestashop>paymentvalidation_6f11098989b14063e0a4cfe362734850'] = 'Alma - Paiement en %d fois';
 $_MODULE['<{alma}prestashop>refundhelper_446ae76a36687f9dbc62430e7006ca91'] = 'Nous avons le regret de vous informer qu\'il y a eu un problème lors du processus de paiement, votre paiement Alma sera entièrement remboursé. Veuillez réessayer votre paiement pour terminer votre commande.';
 $_MODULE['<{alma}prestashop>refundhelper_448edd2d5c593906afa202847b8d79c0'] = 'Nous nous excusons pour la gêne occasionnée, mais il y a eu un problème pendant le processus de paiement, et nous n\'avons pas été en mesure de vous rembourser votre paiement Alma. Pour résoudre ce problème, nous vous demandons de contacter notre équipe d\'assistance en indiquant la référence de votre paiement : %s. Notre équipe sera heureuse de vous aider à obtenir le remboursement intégral de votre paiement. Nous vous remercions de votre coopération.';
+$_MODULE['<{alma}prestashop>planhelper_1dd1c5fb7f25cd41b291d43a89e3aefd'] = 'Aujourd\'hui';
+$_MODULE['<{alma}prestashop>planhelper_96b0141273eabab320119c467cdcaf17'] = 'Total';
+$_MODULE['<{alma}prestashop>planhelper_9bbd94e0a507283ae202812ea1bd6f20'] = 'Dans %s mois';
 $_MODULE['<{alma}prestashop>orderhelper_7960c85fd5916169fc5038a2192094f8'] = 'Erreur : La transaction Alma n\'a pas pu être récupérée';
+$_MODULE['<{alma}prestashop>paymentoptiontemplatehelper_9088921432b295dfe6f02863b2dc0ff8'] = '0 € aujourd\'hui puis %1$s le %2$s';
 $_MODULE['<{alma}prestashop>customfieldshelper_2c53dea2326232a2d867ddd1d2206aa0'] = 'Payer maintenant par carte bancaire';
 $_MODULE['<{alma}prestashop>customfieldshelper_300de0751d957421cc332ba21c43a598'] = 'Payer en %d fois';
 $_MODULE['<{alma}prestashop>customfieldshelper_726c61fad46c135efb4198820e5484ba'] = 'Payer dans %d jours';
@@ -148,7 +158,8 @@ $_MODULE['<{alma}prestashop>admininsurancehelper_f1206f9fadc5ce41694f69129aecac2
 $_MODULE['<{alma}prestashop>admininsurancehelper_7442e29d7d53e549b78d93c46b8cdcfc'] = 'Commandes';
 $_MODULE['<{alma}prestashop>insuranceservice_d87aee5118a62a7ff6c21e4ac31006c5'] = 'Par la présente, je reconnais accepter de souscrire à l\'assurance proposée par Alma. Ce faisant, je confirme avoir préalablement pris connaissance de la [notice d\'information valant conditions générales], du [document d\'information sur le produit d\'assurance], et de la [fiche d\'information et de conseil précontractuelle]. J\'y adhère sans réserve et accepte de signer électroniquement les différents documents formant mon contrat, le cas échéant. Je consens expressément à la collecte et à l\'utilisation de mes données personnelles aux fins de la souscription et de la gestion de mon (mes) contrat(s) d\'assurance.';
 $_MODULE['<{alma}prestashop>adminalmainsuranceconfiguration_b824200e9b8aca1fbb762d6566ff0cd7'] = 'Votre configuration a été sauvegardée';
-$_MODULE['<{alma}prestashop>adminalmainsuranceconfiguration_4a39c6a33c3441762924914168d2a387'] = 'Erreur lors de la création de la configuration Assurance Alma : %1$s';
+$_MODULE['<{alma}prestashop>adminalmainsuranceconfiguration_a6bf06f186e2fccecad054fd831c2144'] = '[Alma] Erreur d\'assurance du produit lors de la modification de la configuration : %1$s';
+$_MODULE['<{alma}prestashop>adminalmainsuranceconfiguration_b42688965893bdb7a37cf1197e506e25'] = '[Alma] Erreur lors de la création de la configuration Assurance Alma : %1$s';
 $_MODULE['<{alma}prestashop>adminalmainsuranceorders_a66f446516cd125af12bd25073f88b78'] = 'Commandes avec assurance';
 $_MODULE['<{alma}prestashop>adminalmainsuranceorders_49414cda71621b3ee718ae5ff40804c5'] = 'Ordonnance Id';
 $_MODULE['<{alma}prestashop>adminalmainsuranceorders_63d5049791d9d79d86e9a108b0a999ca'] = 'Référence';
@@ -320,4 +331,3 @@ $_MODULE['<{alma}prestashop>notificationfirstinstallation_8e51eafe439b0adfecc2dc
 $_MODULE['<{alma}prestashop>notificationfirstinstallation_1e6898bbd6a44041932ac84cbda13bd7'] = 'Retrouvez votre clef d\'API Live sur %1$svotre tableau de bord Alma%2$s';
 $_MODULE['<{alma}prestashop>notificationfirstinstallation_689c39b29a6d91e6dff728a7762cbc9e'] = 'Pour utiliser le mode Test, récupérez votre clef d\'API Test sur %1$svotre tableau de bord sandbox%2$s';
 $_MODULE['<{alma}prestashop>notificationfirstinstallation_dcab24ea1a3cd9bab8047b1b6f7ee65c'] = 'En cas de problème, veuillez nous contacter par courrier électronique à l\'adresse suivante : %1$ssupport@getalma.eu%2$s';
-$_MODULE['<{alma}prestashop>displaypayment_pnx_22f0189423433ab0e055b91d98970e5f'] = 'Le paiement en plusieurs fois Alma n\'est pas disponible pour cette commande';

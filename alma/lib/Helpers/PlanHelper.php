@@ -128,18 +128,18 @@ class PlanHelper
             $plans[$keyPlan]['human_date'] = $this->dateHelper->getDateFormat($locale, $paymentPlan['due_date']);
 
             if (0 === $keyPlan) {
-                $plans[$keyPlan]['human_date'] = $this->translationHelper->getTranslation('Today', 'PaymentService');
+                $plans[$keyPlan]['human_date'] = $this->translationHelper->l('Today', 'PlanHelper');
                 continue;
             }
 
             if ($isPayNow) {
-                $plans[$keyPlan]['human_date'] = $this->translationHelper->getTranslation('Total', 'PaymentService');
+                $plans[$keyPlan]['human_date'] = $this->translationHelper->l('Total', 'PlanHelper');
                 continue;
             }
 
             if ($this->settingsHelper->isDeferredTriggerLimitDays($feePlans, $key)) {
                 $plans[$keyPlan]['human_date'] = sprintf(
-                    $this->translationHelper->getTranslation('%s month later', 'PaymentService'),
+                    $this->translationHelper->l('%s month later', 'PaymentService'),
                     $keyPlan
                 );
 

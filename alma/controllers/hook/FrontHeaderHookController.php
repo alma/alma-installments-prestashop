@@ -478,8 +478,20 @@ TAG;
                     $this->controller->unregisterJavascript(ConstantsHelper::WIDGETS_JS_ID);
                 }
             }
+
+            $content .= $this->almaInPageHeader();
         }
 
         return $content;
+    }
+
+    /**
+     * @return string
+     */
+    protected function almaInPageHeader()
+    {
+        $settings = json_encode($this->settingsHelper->getInPageSettings());
+
+        return "<div id='alma-inpage-global' data-settings='{$settings}'></div>";
     }
 }

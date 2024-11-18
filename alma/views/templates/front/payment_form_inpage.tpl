@@ -32,3 +32,4 @@
       data-locale="{$locale|escape:'htmlall':'UTF-8'}">
     <div id="alma-inpage-iframe-plan-{$keyPlan|escape:'htmlall':'UTF-8'}" class="alma-inpage-iframe"></div>
 </form>
+<script type="text/javascript">window.__alma_refreshInpage && __alma_refreshInpage();</script>

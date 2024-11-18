@@ -22,18 +22,33 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
-namespace Alma\PrestaShop\Tests\Unit\Helper;
+use Alma\PrestaShop\Builders\Helpers\SettingsHelperBuilder;
+use Alma\PrestaShop\Forms\InpageAdminFormBuilder;
+use Alma\PrestaShop\Helpers\ConstantsHelper;
 
-use Alma\PrestaShop\Builders\Helpers\TranslationHelperBuilder;
-use PHPUnit\Framework\TestCase;
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
 
-class TranslationHelperTest extends TestCase
+function upgrade_module_4_5_0()
 {
-    public function testGetTranslation()
-    {
-        $translationHelperBuilder = new TranslationHelperBuilder();
-        $translationHelper = $translationHelperBuilder->getInstance();
+    $settingsHelperBuilder = new SettingsHelperBuilder();
+    $settingsHelper = $settingsHelperBuilder->getInstance();
 
-        $this->assertEquals('Today', $translationHelper->l('Today', 'PaymentService'));
+    // Add default selector for In-Page
+    $settingsHelper->updateKey(
+        InpageAdminFormBuilder::ALMA_INPAGE_PAYMENT_BUTTON_SELECTOR,
+        InpageAdminFormBuilder::ALMA_INPAGE_DEFAULT_VALUE_PAYMENT_BUTTON_SELECTOR
+    );
+    $settingsHelper->updateKey(
+        InpageAdminFormBuilder::ALMA_INPAGE_PLACE_ORDER_BUTTON_SELECTOR,
+        InpageAdminFormBuilder::ALMA_INPAGE_DEFAULT_VALUE_PLACE_ORDER_BUTTON_SELECTOR
+    );
+
+    if (version_compare(_PS_VERSION_, ConstantsHelper::PRESTASHOP_VERSION_1_7_0_2, '>')) {
+        Tools::clearAllCache();
+        Tools::clearXMLCache();
     }
+
+    return true;
 }

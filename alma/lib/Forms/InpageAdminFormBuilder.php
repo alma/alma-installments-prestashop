@@ -34,6 +34,10 @@ if (!defined('_PS_VERSION_')) {
 class InpageAdminFormBuilder extends AbstractAlmaAdminFormBuilder
 {
     const ALMA_ACTIVATE_INPAGE = 'ALMA_ACTIVATE_INPAGE';
+    const ALMA_INPAGE_PAYMENT_BUTTON_SELECTOR = 'ALMA_INPAGE_PAYMENT_BUTTON_SELECTOR';
+    const ALMA_INPAGE_DEFAULT_VALUE_PAYMENT_BUTTON_SELECTOR = '[data-module-name=alma]';
+    const ALMA_INPAGE_PLACE_ORDER_BUTTON_SELECTOR = 'ALMA_INPAGE_PLACE_ORDER_BUTTON_SELECTOR';
+    const ALMA_INPAGE_DEFAULT_VALUE_PLACE_ORDER_BUTTON_SELECTOR = '#payment-confirmation button';
 
     /**
      * @return array
@@ -44,8 +48,28 @@ class InpageAdminFormBuilder extends AbstractAlmaAdminFormBuilder
             $this->inputAlmaSwitchForm(
                 self::ALMA_ACTIVATE_INPAGE,
                 $this->module->l('Activate in-page checkout', 'InpageAdminFormBuilder'),
-                $this->module->l('Activate in-page checkout for Pay Now, P2X, P3X and P4X', 'InpageAdminFormBuilder'),
+                $this->module->l('Activate in-page checkout for all Alma payment methods', 'InpageAdminFormBuilder'),
                 $this->module->l('The checkout in-page in your own website', 'InpageAdminFormBuilder')
+            ),
+            $this->inputTextForm(
+                self::ALMA_INPAGE_PAYMENT_BUTTON_SELECTOR,
+                $this->module->l('Input payment button Alma selector', 'InpageAdminFormBuilder'),
+                sprintf(
+                    $this->module->l('%1$sAdvanced%2$s [Optional] CSS selector used by our scripts to identify the Alma payment button', 'InpageAdminFormBuilder'),
+                    '<b>',
+                    '</b>'
+                ),
+                $this->module->l('E.g. #id, .class, ...', 'InpageAdminFormBuilder')
+            ),
+            $this->inputTextForm(
+                self::ALMA_INPAGE_PLACE_ORDER_BUTTON_SELECTOR,
+                $this->module->l('Place order button selector', 'InpageAdminFormBuilder'),
+                sprintf(
+                    $this->module->l('%1$sAdvanced%2$s [Optional] CSS selector used by our scripts to identify the payment confirmation button', 'InpageAdminFormBuilder'),
+                    '<b>',
+                    '</b>'
+                ),
+                $this->module->l('E.g. #id, .class, ...', 'InpageAdminFormBuilder')
             ),
         ];
     }

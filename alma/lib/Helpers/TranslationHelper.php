@@ -51,7 +51,7 @@ class TranslationHelper
      *
      * @return mixed
      */
-    public function getTranslation($string, $file)
+    public function l($string, $file)
     {
         return $this->module->l($string, $file);
     }
