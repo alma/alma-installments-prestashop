@@ -22,28 +22,15 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
-use Alma\PrestaShop\Builders\Helpers\SettingsHelperBuilder;
-use Alma\PrestaShop\Forms\InpageAdminFormBuilder;
 use Alma\PrestaShop\Helpers\ConstantsHelper;
 
 if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-function upgrade_module_4_5_0()
+function upgrade_module_4_6_0()
 {
-    $settingsHelperBuilder = new SettingsHelperBuilder();
-    $settingsHelper = $settingsHelperBuilder->getInstance();
-
-    // Add default selector for In-Page
-    $settingsHelper->updateKey(
-        InpageAdminFormBuilder::ALMA_INPAGE_PAYMENT_BUTTON_SELECTOR,
-        InpageAdminFormBuilder::ALMA_INPAGE_DEFAULT_VALUE_PAYMENT_BUTTON_SELECTOR
-    );
-    $settingsHelper->updateKey(
-        InpageAdminFormBuilder::ALMA_INPAGE_PLACE_ORDER_BUTTON_SELECTOR,
-        InpageAdminFormBuilder::ALMA_INPAGE_DEFAULT_VALUE_PLACE_ORDER_BUTTON_SELECTOR
-    );
+    // TODO : Add Send url for CmsData
 
     if (version_compare(_PS_VERSION_, ConstantsHelper::PRESTASHOP_VERSION_1_7_0_2, '>')) {
         Tools::clearAllCache();
