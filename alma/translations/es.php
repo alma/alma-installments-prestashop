@@ -32,6 +32,7 @@ $_MODULE['<{alma}prestashop>alma_7bab99339291e7eea710b4a998e663de'] = 'Alma requ
 $_MODULE['<{alma}prestashop>alma_fbb47375d2272bef79f5722a183bf1ec'] = 'Alma requiere la extensión PHP JSON';
 $_MODULE['<{alma}prestashop>alma_7fb83ba9cf3cc38857a2ddae98534d22'] = 'Alma requiere OpenSSL >= 1.0.1';
 $_MODULE['<{alma}prestashop>modulefactorytest_5914ca153abaf8a2af61e13e7fe7e829'] = 'Mi redacción para traducir';
+$_MODULE['<{alma}prestashop>translationhelpertest_1dd1c5fb7f25cd41b291d43a89e3aefd'] = 'Hoy';
 $_MODULE['<{alma}prestashop>wrongcredentialsexception_cc76de47de858ac2fa2964f534ecfdfb'] = 'No se pudo conectar a Alma utilizando tus claves de API.';
 $_MODULE['<{alma}prestashop>wrongcredentialsexception_733b6ddadc31fd97174b0cfe69b584c9'] = 'Por favor, vuelve a comprobar tus claves en tu %1$sPanel de control Alma%2$s.';
 $_MODULE['<{alma}prestashop>wrongparamsexception_8ec75b5f68c49d1d6541b1e318a8120d'] = 'Clave(s) de error(es): %1$s.';
@@ -79,8 +80,13 @@ $_MODULE['<{alma}prestashop>excludedcategoryadminformbuilder_41c2bdcbfb6ea702ac4
 $_MODULE['<{alma}prestashop>excludedcategoryadminformbuilder_c4cea4750fb3ef077cbf2e1283c312ac'] = 'Mensaje a mostrar en la página de un producto excluido o en la página del carrito si contiene un producto excluido.';
 $_MODULE['<{alma}prestashop>excludedcategoryadminformbuilder_36359547b09bdb31f46c419a0bd5807e'] = 'Categorías excluidas';
 $_MODULE['<{alma}prestashop>inpageadminformbuilder_2420ebe02d61c738479f399a97e1cf18'] = 'Activar el pago integrado';
-$_MODULE['<{alma}prestashop>inpageadminformbuilder_bf3b980c4aa11b5fca4cc3096f50e0b8'] = 'Activar el pago integrado para Pay Now, P2X, P3X y P4X';
+$_MODULE['<{alma}prestashop>inpageadminformbuilder_3dd32a0e923aeb930c7c0ced60f7b2e0'] = 'Activar en la página de pago para todos los métodos de pago Alma';
 $_MODULE['<{alma}prestashop>inpageadminformbuilder_220a4f39147308a2160f7abc4d00ae43'] = 'La página de pago en tu propio sitio web';
+$_MODULE['<{alma}prestashop>inpageadminformbuilder_6f7991629de2e9ee19a0bf2a0469138c'] = 'Botón de pago de entrada Selector de Alma';
+$_MODULE['<{alma}prestashop>inpageadminformbuilder_6644897911f79aa5889998a5ab18c5cd'] = '%1$sAvanzado%2$s [Opcional] Selector CSS utilizado por nuestros scripts para identificar el botón de pago Alma';
+$_MODULE['<{alma}prestashop>inpageadminformbuilder_cc12a5229a16dced1984745e05872a94'] = 'Por ejemplo, #id, .class, ...';
+$_MODULE['<{alma}prestashop>inpageadminformbuilder_8ee0042ba2657c2af782fcc8893fa45a'] = 'Selector de botones para realizar pedidos';
+$_MODULE['<{alma}prestashop>inpageadminformbuilder_afa1a431a4735641af813166d75b1c06'] = '%1$sAvanzado%2$s [Opcional] Selector CSS utilizado por nuestros scripts para identificar el botón de confirmación de pago.';
 $_MODULE['<{alma}prestashop>inpageadminformbuilder_6de24747c86085e597f6b38d4d1d01a4'] = 'Pago integrado';
 $_MODULE['<{alma}prestashop>carteligibilityadminformbuilder_a2a52a9dd1864e2b995793bd67b8c6e5'] = 'Este widget te permite informar a tus Clientes de la disponibilidad del pago aplazado con Alma directamente desde la página del producto. Esto te ayudará a aumentar tu tasa de conversión. Para más detalles sobre su configuración o en caso de problemas, consulta %1$sesta documentación%2$s.';
 $_MODULE['<{alma}prestashop>carteligibilityadminformbuilder_ac6329ea064b9212be7e442cb46bf68f'] = 'Mostrar widget';
@@ -134,7 +140,11 @@ $_MODULE['<{alma}prestashop>paymentvalidation_2ea09287a94f2bc88b459fc7d5a31b6b']
 $_MODULE['<{alma}prestashop>paymentvalidation_6f11098989b14063e0a4cfe362734850'] = 'Alma - Pago en %d plazos';
 $_MODULE['<{alma}prestashop>refundhelper_446ae76a36687f9dbc62430e7006ca91'] = 'Lamentamos informarte que ha habido un problema al procesar el pago. Tu pago con Alma será reembolsado en su totalidad. Por favor, vuelve a intentarlo para completar su pedido.';
 $_MODULE['<{alma}prestashop>refundhelper_448edd2d5c593906afa202847b8d79c0'] = 'Disculpa las molestias, pero se ha producido un problema al procesar el pago y no hemos podido reembolsarte tu pago de Alma. Para solucionarlo, rogamos que te pongas en contacto con nuestro equipo de soporte indicando tu referencia de pago: %s. Nuestro equipo estará encantado de ayudarte a recibir el reembolso en su totalidad. Gracias por tu colaboración.';
+$_MODULE['<{alma}prestashop>planhelper_1dd1c5fb7f25cd41b291d43a89e3aefd'] = 'Hoy';
+$_MODULE['<{alma}prestashop>planhelper_96b0141273eabab320119c467cdcaf17'] = 'Total';
+$_MODULE['<{alma}prestashop>planhelper_9bbd94e0a507283ae202812ea1bd6f20'] = '%s mes después';
 $_MODULE['<{alma}prestashop>orderhelper_7960c85fd5916169fc5038a2192094f8'] = 'Error: No se pudo encontrar la transacción de Alma';
+$_MODULE['<{alma}prestashop>paymentoptiontemplatehelper_9088921432b295dfe6f02863b2dc0ff8'] = '0 € hoy después %1$s en %2$s';
 $_MODULE['<{alma}prestashop>customfieldshelper_2c53dea2326232a2d867ddd1d2206aa0'] = 'Paga ahora con tarjeta de crédito';
 $_MODULE['<{alma}prestashop>customfieldshelper_300de0751d957421cc332ba21c43a598'] = 'Pagar en %d plazos';
 $_MODULE['<{alma}prestashop>customfieldshelper_726c61fad46c135efb4198820e5484ba'] = 'Comprar ahora Pagar en %d días';
@@ -148,7 +158,8 @@ $_MODULE['<{alma}prestashop>admininsurancehelper_f1206f9fadc5ce41694f69129aecac2
 $_MODULE['<{alma}prestashop>admininsurancehelper_7442e29d7d53e549b78d93c46b8cdcfc'] = 'Pedidos';
 $_MODULE['<{alma}prestashop>insuranceservice_d87aee5118a62a7ff6c21e4ac31006c5'] = 'Por la presente acepto suscribir el seguro ofrecido por Alma. Al hacerlo, confirmo que he revisado previamente el [aviso informativo, que constituye las condiciones generales], el [documento de información sobre el producto de seguro] y la [hoja de información y asesoramiento precontractual]. Y sin reservas, acepto firmar electrónicamente los distintos documentos que forman mi contrato, si procede. Consiento expresamente la recolección y utilización de mis datos personales a efectos de la suscripción y gestión de mi(s) contrato(s) de seguro.';
 $_MODULE['<{alma}prestashop>adminalmainsuranceconfiguration_b824200e9b8aca1fbb762d6566ff0cd7'] = 'Tu configuración se ha guardado';
-$_MODULE['<{alma}prestashop>adminalmainsuranceconfiguration_4a39c6a33c3441762924914168d2a387'] = 'Error al crear la configuración Alma insurance: %1$s';
+$_MODULE['<{alma}prestashop>adminalmainsuranceconfiguration_a6bf06f186e2fccecad054fd831c2144'] = '[Alma] Error al asegurar el producto durante la configuración del cambio: %1$s';
+$_MODULE['<{alma}prestashop>adminalmainsuranceconfiguration_b42688965893bdb7a37cf1197e506e25'] = '[Alma] Error al crear la configuración Alma seguro: %1$s';
 $_MODULE['<{alma}prestashop>adminalmainsuranceorders_a66f446516cd125af12bd25073f88b78'] = 'Pedidos con seguro';
 $_MODULE['<{alma}prestashop>adminalmainsuranceorders_49414cda71621b3ee718ae5ff40804c5'] = 'Id Orden';
 $_MODULE['<{alma}prestashop>adminalmainsuranceorders_63d5049791d9d79d86e9a108b0a999ca'] = 'Referencia';
@@ -260,7 +271,7 @@ $_MODULE['<{alma}prestashop>notificationconfiguration_e243bbd390b43c9ee6047fab4a
 $_MODULE['<{alma}prestashop>notificationconfiguration_cf5ec9fb9f7214a3db82a5a39fec5b48'] = 'Introduce tu clave API';
 $_MODULE['<{alma}prestashop>notificationconfiguration_055f421849c2a1c32b885c95540f827c'] = 'Encuentra tu API live key en tu %1$s Alma dashboard%2$s';
 $_MODULE['<{alma}prestashop>notificationconfiguration_53b458e8453e3694811e61c96527d638'] = 'Para utilizar el modo de prueba, obtenga su clave de API de prueba en el panel de control de su sandbox %1$s%2$s';
-$_MODULE['<{alma}prestashop>notificationconfiguration_b040aba3ff898146cd8c1fb8cfd04daf'] = 'Le ofrecemos descargar o actualizar el módulo Cuenta de PrestaShop (versión mínima requerida %1$s)';
+$_MODULE['<{alma}prestashop>notificationconfiguration_b040aba3ff898146cd8c1fb8cfd04daf'] = 'Te ofrecemos descargar o actualizar el módulo de tu cuenta de PrestaShop (versión mínima requerida %1$s)';
 $_MODULE['<{alma}prestashop>notificationconfiguration_9700e091d54b8ff1fafcd27518c75b23'] = 'Vincula tu tienda a tu cuenta PrestaShop para aprovechar al máximo los módulos que ofrece PrestaShop Marketplace y optimizar tu experiencia.';
 $_MODULE['<{alma}prestashop>notificationconfiguration_6997dde298b14fbf6a7c95bd39fe8dc4'] = 'Encontrará el módulo %1$saquí%2$s';
 $_MODULE['<{alma}prestashop>notificationshareofcheckout_a6b0ef107f0d278df612764187bbdece'] = ' Aumenta tu rendimiento y obtén información';
@@ -320,4 +331,3 @@ $_MODULE['<{alma}prestashop>notificationfirstinstallation_8e51eafe439b0adfecc2dc
 $_MODULE['<{alma}prestashop>notificationfirstinstallation_1e6898bbd6a44041932ac84cbda13bd7'] = 'Encuentra tu clave API Live en %1$stu panel de control Alma%2$s';
 $_MODULE['<{alma}prestashop>notificationfirstinstallation_689c39b29a6d91e6dff728a7762cbc9e'] = 'Para utilizar el modo Test (en pruebas), copia tu clave API Test desde %1$stu panel de control sandbox%2$s';
 $_MODULE['<{alma}prestashop>notificationfirstinstallation_dcab24ea1a3cd9bab8047b1b6f7ee65c'] = 'Si tienes algún problema, pónte en contacto con nosotros por correo electrónico en %1$ssoporte@almapay.com%2$s';
-$_MODULE['<{alma}prestashop>displaypayment_pnx_22f0189423433ab0e055b91d98970e5f'] = 'El pago a plazos con Alma no está disponible para este pedido';
