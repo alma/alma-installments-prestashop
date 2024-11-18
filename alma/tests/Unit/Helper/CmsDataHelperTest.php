@@ -3,7 +3,6 @@
 namespace Unit\Helper;
 
 use Alma\API\Client;
-use Alma\PrestaShop\Factories\ModuleFactory;
 use Alma\PrestaShop\Forms\CartEligibilityAdminFormBuilder;
 use Alma\PrestaShop\Forms\DebugAdminFormBuilder;
 use Alma\PrestaShop\Forms\InpageAdminFormBuilder;
@@ -14,6 +13,7 @@ use Alma\PrestaShop\Helpers\ModuleHelper;
 use Alma\PrestaShop\Helpers\SettingsHelper;
 use Alma\PrestaShop\Helpers\ThemeHelper;
 use Alma\PrestaShop\Helpers\ToolsHelper;
+use Alma\PrestaShop\Model\AlmaModuleModel;
 use Alma\PrestaShop\Model\ShopModel;
 use PHPUnit\Framework\TestCase;
 
@@ -21,7 +21,7 @@ class CmsDataHelperTest extends TestCase
 {
     protected $moduleHelper;
     protected $themeHelper;
-    protected $moduleFactory;
+    protected $almaModuleModel;
     protected $settingsHelper;
     protected $cmsDataHelper;
     protected $toolsHelper;
@@ -34,14 +34,14 @@ class CmsDataHelperTest extends TestCase
     {
         $this->moduleHelper = $this->createMock(ModuleHelper::class);
         $this->themeHelper = $this->createMock(ThemeHelper::class);
-        $this->moduleFactory = $this->createMock(ModuleFactory::class);
+        $this->almaModuleModel = $this->createMock(AlmaModuleModel::class);
         $this->settingsHelper = $this->createMock(SettingsHelper::class);
         $this->toolsHelper = $this->createMock(ToolsHelper::class);
         $this->shopModel = $this->createMock(ShopModel::class);
         $this->cmsDataHelper = new CmsDataHelper(
             $this->moduleHelper,
             $this->themeHelper,
-            $this->moduleFactory,
+            $this->almaModuleModel,
             $this->settingsHelper,
             $this->toolsHelper,
             $this->shopModel
@@ -52,7 +52,7 @@ class CmsDataHelperTest extends TestCase
     {
         $this->moduleHelper = null;
         $this->themeHelper = null;
-        $this->moduleFactory = null;
+        $this->almaModuleModel = null;
         $this->settingsHelper = null;
         $this->cmsDataHelper = null;
         $this->toolsHelper = null;
@@ -67,7 +67,7 @@ class CmsDataHelperTest extends TestCase
         $this->toolsHelper->method('getPsVersion')->willReturn('1.2.3');
         $this->moduleHelper->method('getModuleList')->willReturn(['moduleList']);
         $this->themeHelper->method('getThemeNameWithVersion')->willReturn('ThemeName');
-        $this->moduleFactory->method('getModuleVersion')->willReturn('4.3.2');
+        $this->almaModuleModel->method('getVersion')->willReturn('4.3.2');
         $expected = [
             'cms_name' => 'Prestashop',
             'cms_version' => '1.2.3',

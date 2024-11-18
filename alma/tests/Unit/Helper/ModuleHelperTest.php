@@ -24,8 +24,8 @@
 
 namespace Alma\PrestaShop\Tests\Unit\Helper;
 
-use Alma\PrestaShop\Factories\ModuleFactory;
 use Alma\PrestaShop\Helpers\ModuleHelper;
+use Alma\PrestaShop\Proxy\ModuleProxy;
 use PHPUnit\Framework\TestCase;
 
 class ModuleHelperTest extends TestCase
@@ -35,15 +35,15 @@ class ModuleHelperTest extends TestCase
      */
     protected $moduleHelper;
     /**
-     * @var ModuleFactory
+     * @var ModuleProxy
      */
-    protected $moduleFactoryMock;
+    protected $moduleProxyMock;
 
     public function setUp()
     {
-        $this->moduleFactoryMock = $this->createMock(ModuleFactory::class);
+        $this->moduleProxyMock = $this->createMock(ModuleProxy::class);
         $this->moduleHelper = new ModuleHelper(
-            $this->moduleFactoryMock
+            $this->moduleProxyMock
         );
     }
 
@@ -54,7 +54,7 @@ class ModuleHelperTest extends TestCase
      */
     public function testGetModuleListWithListOfModules($moduleInstalled, $expectedModulesList)
     {
-        $this->moduleFactoryMock->expects($this->once())
+        $this->moduleProxyMock->expects($this->once())
             ->method('getModulesInstalled')
             ->willReturn($moduleInstalled);
         $this->assertEquals($expectedModulesList, $this->moduleHelper->getModuleList());

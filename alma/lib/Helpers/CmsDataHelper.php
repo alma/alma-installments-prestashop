@@ -25,14 +25,13 @@
 namespace Alma\PrestaShop\Helpers;
 
 use Alma\API\Client;
-use Alma\PrestaShop\Builders\Factories\ModuleFactoryBuilder;
 use Alma\PrestaShop\Builders\Helpers\SettingsHelperBuilder;
-use Alma\PrestaShop\Factories\ModuleFactory;
 use Alma\PrestaShop\Forms\CartEligibilityAdminFormBuilder;
 use Alma\PrestaShop\Forms\DebugAdminFormBuilder;
 use Alma\PrestaShop\Forms\InpageAdminFormBuilder;
 use Alma\PrestaShop\Forms\PnxAdminFormBuilder;
 use Alma\PrestaShop\Forms\ProductEligibilityAdminFormBuilder;
+use Alma\PrestaShop\Model\AlmaModuleModel;
 use Alma\PrestaShop\Model\ShopModel;
 
 if (!defined('_PS_VERSION_')) {
@@ -51,9 +50,9 @@ class CmsDataHelper
      */
     protected $themeHelper;
     /**
-     * @var ModuleFactory
+     * @var AlmaModuleModel
      */
-    protected $moduleFactory;
+    protected $almaModuleModel;
     /**
      * @var SettingsHelper
      */
@@ -70,7 +69,7 @@ class CmsDataHelper
     /**
      * @param ModuleHelper $moduleHelper
      * @param ThemeHelper $themeHelper
-     * @param ModuleFactory $moduleFactory
+     * @param AlmaModuleModel $almaModuleModel
      * @param SettingsHelper $settingsHelper
      * @param ToolsHelper $toolsHelper
      * @param ShopModel $shopModel
@@ -78,7 +77,7 @@ class CmsDataHelper
     public function __construct(
         $moduleHelper = null,
         $themeHelper = null,
-        $moduleFactory = null,
+        $almaModuleModel = null,
         $settingsHelper = null,
         $toolsHelper = null,
         $shopModel = null
@@ -93,10 +92,10 @@ class CmsDataHelper
         }
         $this->themeHelper = $themeHelper;
 
-        if (!$moduleFactory) {
-            $moduleFactory = (new ModuleFactoryBuilder())->getInstance();
+        if (!$almaModuleModel) {
+            $almaModuleModel = new AlmaModuleModel();
         }
-        $this->moduleFactory = $moduleFactory;
+        $this->almaModuleModel = $almaModuleModel;
 
         if (!$settingsHelper) {
             $settingsHelper = (new SettingsHelperBuilder())->getInstance();
@@ -126,7 +125,7 @@ class CmsDataHelper
             'themes' => $this->themeHelper->getThemeNameWithVersion(),
             'language_name' => 'PHP',
             'language_version' => phpversion(),
-            'alma_plugin_version' => $this->moduleFactory->getModuleVersion(),
+            'alma_plugin_version' => $this->almaModuleModel->getVersion(),
             'alma_sdk_name' => 'ALMA-PHP-CLIENT',
             'alma_sdk_version' => Client::VERSION,
         ];

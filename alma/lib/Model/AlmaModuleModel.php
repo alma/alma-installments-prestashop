@@ -22,24 +22,45 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
-namespace Alma\PrestaShop\Factories;
+namespace Alma\PrestaShop\Model;
+
+use Alma\PrestaShop\Helpers\ConstantsHelper;
+use Alma\PrestaShop\Proxy\ModuleProxy;
 
 if (!defined('_PS_VERSION_')) {
     exit;
 }
 
 /**
- * Class CartFactory.
+ * Class ModuleFactory.
  */
-class CartFactory
+class AlmaModuleModel
 {
     /**
-     * @param int $id
-     *
-     * @return \Cart
+     * @var ModuleProxy
      */
-    public function create($id)
+    private $moduleProxy;
+    private $moduleName = ConstantsHelper::ALMA_MODULE_NAME;
+
+    public function __construct($moduleProxy = null)
     {
-        return new \Cart((int) $id);
+        if (!$moduleProxy) {
+            $moduleProxy = new ModuleProxy();
+        }
+        $this->moduleProxy = $moduleProxy;
+    }
+
+    /**
+     * @return string
+     */
+    public function getVersion()
+    {
+        $module = $this->moduleProxy->getModule($this->moduleName);
+
+        if ($module) {
+            return $this->moduleProxy->getModuleVersion($module);
+        }
+
+        return '';
     }
 }

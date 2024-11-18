@@ -22,9 +22,8 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
-namespace Alma\PrestaShop\Factories;
+namespace Alma\PrestaShop\Proxy;
 
-use Alma\PrestaShop\Helpers\ConstantsHelper;
 use Alma\PrestaShop\Helpers\ToolsHelper;
 use PrestaShop\PrestaShop\Core\Addon\Module\ModuleManagerBuilder;
 
@@ -32,94 +31,42 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-/**
- * @deprecated
- * Class ModuleFactory
- */
-class ModuleFactory
+class ModuleProxy
 {
     /**
      * @var ToolsHelper
      */
-    protected $toolsHelper;
+    private $toolsHelper;
 
-    public function __construct($toolsHelper)
+    /**
+     * @param $toolsHelper
+     */
+    public function __construct($toolsHelper = null)
     {
+        if (!$toolsHelper) {
+            $toolsHelper = new ToolsHelper();
+        }
         $this->toolsHelper = $toolsHelper;
     }
 
     /**
-     * @deprecated Use getModule() in ModuleProxy instead
-     *
      * @return false|\Module
      */
-    public function getModule()
+    public function getModule($moduleName)
     {
-        return \Module::getInstanceByName(ConstantsHelper::ALMA_MODULE_NAME);
+        return \Module::getInstanceByName($moduleName);
     }
 
     /**
-     * @deprecated
-     *
-     * @return string
+     * @return array
      */
-    public function getModuleName()
+    public function getModulesInstalled()
     {
-        $module = $this->getModule();
-
-        if ($module) {
-            return $module->name;
-        }
-
-        return '';
-    }
-
-    /**
-     * @deprecated
-     *
-     * @return string|null
-     */
-    public function getPathUri()
-    {
-        $module = $this->getModule();
-
-        if ($module) {
-            return $module->getPathUri();
-        }
-
-        return '';
-    }
-
-    /**
-     * Get translation for a given module text.
-     *
-     * Note: $specific parameter is mandatory for library files.
-     * Otherwise, translation key will not match for Module library
-     * when module is loaded with eval() Module::getModulesOnDisk()
-     *
-     * @deprecated
-     *
-     * @param string $string String to translate
-     * @param bool|string $specific filename to use in translation key
-     * @param string|null $locale Locale to translate to
-     *
-     * @return string Translation
-     */
-    public function l($string, $specific = false, $locale = null)
-    {
-        $module = $this->getModule();
-
-        if ($module) {
-            return $module->l($string, $specific, $locale);
-        }
-
-        return $string;
+        return \Module::getModulesInstalled();
     }
 
     /**
      * Check if module is installed.
-     *
-     * @deprecated Use isInstalled() in ModuleProxy instead
      *
      * @param string $moduleName
      *
@@ -137,8 +84,6 @@ class ModuleFactory
     /**
      * @codeCoverageIgnore
      *
-     * @deprecated
-     *
      * @param $moduleName
      *
      * @return bool
@@ -151,8 +96,6 @@ class ModuleFactory
     /**
      * @codeCoverageIgnore
      *
-     * @deprecated
-     *
      * @param $moduleName
      *
      * @return bool
@@ -160,5 +103,15 @@ class ModuleFactory
     public function isInstalledAfter17($moduleName)
     {
         return ModuleManagerBuilder::getInstance()->build()->isInstalled($moduleName);
+    }
+
+    /**
+     * @param \Module $module
+     *
+     * @return string
+     */
+    public function getModuleVersion($module)
+    {
+        return $module->version;
     }
 }

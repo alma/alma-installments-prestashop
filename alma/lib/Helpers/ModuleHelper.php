@@ -24,7 +24,7 @@
 
 namespace Alma\PrestaShop\Helpers;
 
-use Alma\PrestaShop\Builders\Factories\ModuleFactoryBuilder;
+use Alma\PrestaShop\Proxy\ModuleProxy;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -36,16 +36,16 @@ if (!defined('_PS_VERSION_')) {
 class ModuleHelper
 {
     /**
-     * @var \Alma\PrestaShop\Factories\ModuleFactory
+     * @var ModuleProxy
      */
-    protected $moduleFactory;
+    protected $moduleProxy;
 
-    public function __construct($moduleFactory = null)
+    public function __construct($moduleProxy = null)
     {
-        if (!$moduleFactory) {
-            $moduleFactory = (new ModuleFactoryBuilder())->getInstance();
+        if (!$moduleProxy) {
+            $moduleProxy = new ModuleProxy();
         }
-        $this->moduleFactory = $moduleFactory;
+        $this->moduleProxy = $moduleProxy;
     }
 
     /**
@@ -54,7 +54,7 @@ class ModuleHelper
     public function getModuleList()
     {
         $modules = [];
-        $modulesInstalled = $this->moduleFactory->getModulesInstalled();
+        $modulesInstalled = $this->moduleProxy->getModulesInstalled();
         foreach ($modulesInstalled as $module) {
             $modules[] = [
                 'name' => $module['name'],

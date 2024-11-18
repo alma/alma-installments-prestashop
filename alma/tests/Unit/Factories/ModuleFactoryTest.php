@@ -124,38 +124,4 @@ class ModuleFactoryTest extends TestCase
         $moduleFactory->shouldNotReceive('isInstalledAfter17');
         $moduleFactory->isInstalled('fakename');
     }
-
-    /**
-     * @dataProvider moduleDataProvider
-     *
-     * @return void
-     */
-    public function testGetModuleVersion($module, $expectedVersion)
-    {
-        if ($module) {
-            $module->version = $expectedVersion;
-        }
-        $moduleFactoryPartialMock = $this->getMockBuilder(ModuleFactory::class)
-            ->setConstructorArgs([$this->toolsHelperMock])
-            ->setMethods(['getModule'])
-            ->getMock();
-        $moduleFactoryPartialMock->expects($this->once())
-            ->method('getModule')
-            ->willReturn($module);
-        $this->assertEquals($expectedVersion, $moduleFactoryPartialMock->getModuleVersion());
-    }
-
-    public function moduleDataProvider()
-    {
-        return [
-            'With module' => [
-                'module' => $this->createMock(\Module::class),
-                'expectedVersion' => '4.4.0',
-            ],
-            'Without module' => [
-                'module' => false,
-                'expectedVersion' => '',
-            ],
-        ];
-    }
 }
