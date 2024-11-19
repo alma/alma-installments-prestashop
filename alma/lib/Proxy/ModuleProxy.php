@@ -84,6 +84,8 @@ class ModuleProxy
     /**
      * @codeCoverageIgnore
      *
+     * @deprecated use isInstalled instead
+     *
      * @param $moduleName
      *
      * @return bool
@@ -95,6 +97,8 @@ class ModuleProxy
 
     /**
      * @codeCoverageIgnore
+     *
+     * @deprecated use isInstalled instead
      *
      * @param $moduleName
      *
