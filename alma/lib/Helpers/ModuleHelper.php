@@ -24,47 +24,44 @@
 
 namespace Alma\PrestaShop\Helpers;
 
-use Alma\API\Lib\RequestUtils;
-use Alma\PrestaShop\Exceptions\ValidateException;
+use Alma\PrestaShop\Proxy\ModuleProxy;
 
 if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-class ValidateHelper
+/**
+ * Class ModuleHelper.
+ */
+class ModuleHelper
 {
     /**
-     * @param $object
-     *
-     * @return bool
+     * @var ModuleProxy
      */
-    public function isLoadedObject($object)
+    protected $moduleProxy;
+
+    public function __construct($moduleProxy = null)
     {
-        return \Validate::isLoadedObject($object);
+        if (!$moduleProxy) {
+            $moduleProxy = new ModuleProxy();
+        }
+        $this->moduleProxy = $moduleProxy;
     }
 
     /**
-     * @param $externalId
-     * @param $apiKey
-     * @param $signature
-     *
-     * @return void
-     *
-     * @throws \Alma\PrestaShop\Exceptions\ValidateException
+     * @return array
      */
-    public function checkSignature($externalId, $apiKey, $signature)
+    public function getModuleList()
     {
-        if (!$externalId) {
-            throw new ValidateException('[Alma] External ID is missing');
+        $modules = [];
+        $modulesInstalled = $this->moduleProxy->getModulesInstalled();
+        foreach ($modulesInstalled as $module) {
+            $modules[] = [
+                'name' => $module['name'],
+                'version' => $module['version'],
+            ];
         }
-        if (!$apiKey) {
-            throw new ValidateException('[Alma] Api key is missing');
-        }
-        if (!$signature) {
-            throw new ValidateException('[Alma] Signature is missing');
-        }
-        if (!RequestUtils::isHmacValidated($externalId, $apiKey, $signature)) {
-            throw new ValidateException('[Alma] Signature is invalid');
-        }
+
+        return $modules;
     }
 }

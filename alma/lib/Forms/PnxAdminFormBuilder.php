@@ -39,6 +39,7 @@ if (!defined('_PS_VERSION_')) {
  */
 class PnxAdminFormBuilder extends AbstractAlmaAdminFormBuilder
 {
+    const ALMA_FEE_PLANS = 'ALMA_FEE_PLANS';
     /**
      * @var SettingsHelper
      */
@@ -196,7 +197,7 @@ class PnxAdminFormBuilder extends AbstractAlmaAdminFormBuilder
     protected function disableFeePlan($key, $installmentsPlans)
     {
         unset($installmentsPlans->$key);
-        SettingsHelper::updateValue('ALMA_FEE_PLANS', json_encode($installmentsPlans));
+        SettingsHelper::updateValue(self::ALMA_FEE_PLANS, json_encode($installmentsPlans));
     }
 
     /**

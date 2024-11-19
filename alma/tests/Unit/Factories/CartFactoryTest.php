@@ -29,26 +29,8 @@ use PHPUnit\Framework\TestCase;
 
 class CartFactoryTest extends TestCase
 {
-    /**
-     * @var CartFactory
-     */
-    protected $cartFactory;
-    /**
-     * @var \Cart
-     */
-    protected $cartMock;
-
-    public function setUp()
-    {
-        $this->cartMock = $this->createMock(\Cart::class);
-        $this->cartMock->id = 10;
-        $this->cartFactory = new CartFactory(
-            $this->cartMock
-        );
-    }
-
     public function testCreate()
     {
-        $this->assertInstanceOf(\Cart::class, $this->cartFactory->create(10));
+        $this->assertInstanceOf(\Cart::class, (new CartFactory())->create(10));
     }
 }

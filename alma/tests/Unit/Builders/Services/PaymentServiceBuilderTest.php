@@ -27,6 +27,7 @@ namespace Alma\PrestaShop\Tests\Unit\Builders\Services;
 use Alma\PrestaShop\Builders\Factories\ModuleFactoryBuilder;
 use Alma\PrestaShop\Builders\Services\PaymentServiceBuilder;
 use Alma\PrestaShop\Factories\AddressFactory;
+use Alma\PrestaShop\Factories\CategoryFactory;
 use Alma\PrestaShop\Factories\ContextFactory;
 use Alma\PrestaShop\Factories\ModuleFactory;
 use Alma\PrestaShop\Helpers\CarrierHelper;
@@ -49,6 +50,7 @@ use Alma\PrestaShop\Helpers\SettingsHelper;
 use Alma\PrestaShop\Helpers\ShopHelper;
 use Alma\PrestaShop\Helpers\ToolsHelper;
 use Alma\PrestaShop\Helpers\TranslationHelper;
+use Alma\PrestaShop\Helpers\ValidateHelper;
 use Alma\PrestaShop\Model\CarrierData;
 use Alma\PrestaShop\Model\CartData;
 use Alma\PrestaShop\Repositories\ProductRepository;
@@ -139,7 +141,10 @@ class PaymentServiceBuilderTest extends TestCase
 
         $this->settingsHelper = new SettingsHelper(
             new ShopHelper(),
-            $this->configurationHelper
+            $this->configurationHelper,
+            new CategoryFactory(),
+            new ContextFactory(),
+            new ValidateHelper()
         );
 
         $this->cartData = new CartData(

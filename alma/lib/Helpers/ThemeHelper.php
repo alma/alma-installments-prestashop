@@ -24,47 +24,51 @@
 
 namespace Alma\PrestaShop\Helpers;
 
-use Alma\API\Lib\RequestUtils;
-use Alma\PrestaShop\Exceptions\ValidateException;
+use Alma\PrestaShop\Factories\ContextFactory;
 
 if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-class ValidateHelper
+/**
+ * Class ThemeHelper.
+ */
+class ThemeHelper
 {
+    const CONFIG_THEME_FILE = _PS_THEME_DIR_ . 'config/theme.yml';
     /**
-     * @param $object
-     *
-     * @return bool
+     * @var ContextFactory
      */
-    public function isLoadedObject($object)
+    protected $contextFactory;
+    /**
+     * @var ToolsHelper
+     */
+    protected $toolsHelper;
+
+    public function __construct()
     {
-        return \Validate::isLoadedObject($object);
+        $this->contextFactory = new ContextFactory();
+        $this->toolsHelper = new ToolsHelper();
     }
 
     /**
-     * @param $externalId
-     * @param $apiKey
-     * @param $signature
-     *
-     * @return void
-     *
-     * @throws \Alma\PrestaShop\Exceptions\ValidateException
+     * @return string
      */
-    public function checkSignature($externalId, $apiKey, $signature)
+    public function getThemeNameWithVersion()
     {
-        if (!$externalId) {
-            throw new ValidateException('[Alma] External ID is missing');
+        $themeName = $this->contextFactory->getContext()->shop->theme_name;
+        $themeConfigPath = self::CONFIG_THEME_FILE;
+
+        // WARNING : NOT COMPATIBLE WITH PS 1.6
+        // TODO : Need to explo a better compatibility with PS 1.6
+        if ($this->toolsHelper->psVersionCompare('1.7', '>=')) {
+            if (file_exists($themeConfigPath)) {
+                $themeConfig = \Symfony\Component\Yaml\Yaml::parseFile($themeConfigPath);
+                $themeVersion = $themeConfig['version'] ?: 'undefined';
+                $themeName = $themeName . ' ' . $themeVersion;
+            }
         }
-        if (!$apiKey) {
-            throw new ValidateException('[Alma] Api key is missing');
-        }
-        if (!$signature) {
-            throw new ValidateException('[Alma] Signature is missing');
-        }
-        if (!RequestUtils::isHmacValidated($externalId, $apiKey, $signature)) {
-            throw new ValidateException('[Alma] Signature is invalid');
-        }
+
+        return $themeName;
     }
 }
