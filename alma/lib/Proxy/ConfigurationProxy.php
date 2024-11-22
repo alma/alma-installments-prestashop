@@ -22,46 +22,24 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
-namespace Alma\PrestaShop\Factories;
+namespace Alma\Prestashop\Proxy;
 
 if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-/**
- * Class CartFactory.
- */
-class ToolsFactory
+class ConfigurationProxy
 {
     /**
-     * @deprecated use the getValue in ToolsProxy instead
-     * Get a value from $_POST / $_GET
-     * if unavailable, take a default value
+     * Get a single configuration value (in one language only).
      *
-     * @param string $key Value key
-     * @param mixed $default_value (optional)
+     * @param string $key Key wanted
+     * @param int $idLang Language ID
      *
-     * @codeCoverageIgnore Simple getter
-     *
-     * @return mixed Value
+     * @return string|false Value
      */
-    public function getValue($key, $default_value = false)
+    public function get($key, $idLang = null, $idShopGroup = null, $idShop = null, $default = false)
     {
-        return \Tools::getValue($key, $default_value);
-    }
-
-    /**
-     * @deprecated use the getIsset in ToolsProxy instead
-     * Checks if a key exists either in $_POST or $_GET
-     *
-     * @param string $key
-     *
-     * @codeCoverageIgnore Simple getter.
-     *
-     * @return bool
-     */
-    public function getIsset($key)
-    {
-        return \Tools::getIsset($key);
+        return \Configuration::get($key, $idLang, $idShopGroup, $idShop, $default);
     }
 }

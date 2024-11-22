@@ -24,44 +24,25 @@
 
 namespace Alma\PrestaShop\Factories;
 
+use Alma\PrestaShop\Model\ClientModel;
+
 if (!defined('_PS_VERSION_')) {
     exit;
 }
-
-/**
- * Class CartFactory.
- */
-class ToolsFactory
+class ClientFactory
 {
     /**
-     * @deprecated use the getValue in ToolsProxy instead
-     * Get a value from $_POST / $_GET
-     * if unavailable, take a default value
-     *
-     * @param string $key Value key
-     * @param mixed $default_value (optional)
-     *
-     * @codeCoverageIgnore Simple getter
-     *
-     * @return mixed Value
+     * @var string
      */
-    public function getValue($key, $default_value = false)
+    private $apiKey;
+
+    public function __construct($apiKey)
     {
-        return \Tools::getValue($key, $default_value);
+        $this->apiKey = $apiKey;
     }
 
-    /**
-     * @deprecated use the getIsset in ToolsProxy instead
-     * Checks if a key exists either in $_POST or $_GET
-     *
-     * @param string $key
-     *
-     * @codeCoverageIgnore Simple getter.
-     *
-     * @return bool
-     */
-    public function getIsset($key)
+    public function create()
     {
-        return \Tools::getIsset($key);
+        return new ClientModel($this->apiKey);
     }
 }

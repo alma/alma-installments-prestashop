@@ -22,46 +22,61 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
-namespace Alma\PrestaShop\Factories;
+namespace Alma\PrestaShop\Model;
+
+use Alma;
+use Alma\API\Client;
+use Alma\PrestaShop\Helpers\SettingsHelper;
+use Alma\PrestaShop\Logger;
 
 if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-/**
- * Class CartFactory.
- */
-class ToolsFactory
+class ClientModel
 {
     /**
-     * @deprecated use the getValue in ToolsProxy instead
-     * Get a value from $_POST / $_GET
-     * if unavailable, take a default value
-     *
-     * @param string $key Value key
-     * @param mixed $default_value (optional)
-     *
-     * @codeCoverageIgnore Simple getter
-     *
-     * @return mixed Value
+     * @var string
      */
-    public function getValue($key, $default_value = false)
+    private $apiKey;
+    /**
+     * @var string|null
+     */
+    private $mode;
+
+    public function __construct($apiKey, $mode = null)
     {
-        return \Tools::getValue($key, $default_value);
+        $this->apiKey = $apiKey;
+        $this->mode = $mode;
     }
 
-    /**
-     * @deprecated use the getIsset in ToolsProxy instead
-     * Checks if a key exists either in $_POST or $_GET
-     *
-     * @param string $key
-     *
-     * @codeCoverageIgnore Simple getter.
-     *
-     * @return bool
-     */
-    public function getIsset($key)
+    public function getClient()
     {
-        return \Tools::getIsset($key);
+        $mode = $this->mode ?: SettingsHelper::getActiveMode();
+
+        try {
+            $alma = new Client($this->apiKey, [
+                'mode' => $mode,
+                'logger' => Logger::instance(),
+            ]);
+
+            $alma->addUserAgentComponent('PrestaShop', _PS_VERSION_);
+            $alma->addUserAgentComponent('Alma for PrestaShop', Alma::VERSION);
+
+            return $alma;
+        } catch (Alma\API\DependenciesError $e) {
+            Logger::instance()->error('[Alma] Dependencies Error creating Alma client', ['exception' => $e]);
+
+            return null;
+        } catch (Alma\API\ParamsError $e) {
+            Logger::instance()->error('[Alma] Error creating Alma client', ['exception' => $e]);
+
+            return null;
+        }
+    }
+
+    public function getMerchantMe()
+    {
+        return $this->getClient()->merchants->me();
     }
 }

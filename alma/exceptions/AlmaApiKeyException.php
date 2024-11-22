@@ -22,46 +22,12 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
-namespace Alma\PrestaShop\Factories;
+namespace Alma\PrestaShop\Exceptions;
 
 if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-/**
- * Class CartFactory.
- */
-class ToolsFactory
+class AlmaApiKeyException extends AlmaException
 {
-    /**
-     * @deprecated use the getValue in ToolsProxy instead
-     * Get a value from $_POST / $_GET
-     * if unavailable, take a default value
-     *
-     * @param string $key Value key
-     * @param mixed $default_value (optional)
-     *
-     * @codeCoverageIgnore Simple getter
-     *
-     * @return mixed Value
-     */
-    public function getValue($key, $default_value = false)
-    {
-        return \Tools::getValue($key, $default_value);
-    }
-
-    /**
-     * @deprecated use the getIsset in ToolsProxy instead
-     * Checks if a key exists either in $_POST or $_GET
-     *
-     * @param string $key
-     *
-     * @codeCoverageIgnore Simple getter.
-     *
-     * @return bool
-     */
-    public function getIsset($key)
-    {
-        return \Tools::getIsset($key);
-    }
 }
