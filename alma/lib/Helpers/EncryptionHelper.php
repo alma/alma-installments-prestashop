@@ -24,6 +24,8 @@
 
 namespace Alma\PrestaShop\Helpers;
 
+use Alma\PrestaShop\Exceptions\EncryptionException;
+
 if (!defined('_PS_VERSION_')) {
     exit;
 }
@@ -73,26 +75,34 @@ class EncryptionHelper
     }
 
     /**
-     * @param $cipherText
+     * @param string $cipherApiKey
      *
-     * @return bool|mixed|string
+     * @return string
      *
-     * @throws \Exception
+     * @throws EncryptionException
      */
-    public function decrypt($cipherText)
+    public function decrypt($cipherApiKey)
     {
         if (class_exists('\PhpEncryption')) {
             $phpEncrypt = new \PhpEncryption($this->cookieKey);
-
-            return $phpEncrypt->decrypt($cipherText);
+            try {
+                $decryptedKey = $phpEncrypt->decrypt($cipherApiKey);
+                if ($decryptedKey) {
+                    return $decryptedKey;
+                }
+            } catch (\Exception $e) {
+                throw new EncryptionException('Exception in API Key decrypt with PhpEncryption', 0, $e);
+            }
         }
 
         if (class_exists('\Rijndael')) {
             $rijndael = new \Rijndael(_RIJNDAEL_KEY_, _RIJNDAEL_IV_);
-
-            return $rijndael->decrypt($cipherText);
+            $decryptedKey = $rijndael->decrypt($cipherApiKey);
+            if ($decryptedKey) {
+                return $decryptedKey;
+            }
         }
 
-        return $cipherText;
+        throw new EncryptionException('Impossible to decrypt Key - Libs not exist');
     }
 }

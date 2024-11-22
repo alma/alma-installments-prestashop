@@ -39,6 +39,7 @@ use Alma\PrestaShop\Builders\Helpers\SettingsHelperBuilder;
 use Alma\PrestaShop\Builders\Helpers\ShareOfCheckoutHelperBuilder;
 use Alma\PrestaShop\Builders\Models\MediaHelperBuilder;
 use Alma\PrestaShop\Exceptions\MissingParameterException;
+use Alma\PrestaShop\Factories\ClientFactory;
 use Alma\PrestaShop\Forms\ApiAdminFormBuilder;
 use Alma\PrestaShop\Forms\CartEligibilityAdminFormBuilder;
 use Alma\PrestaShop\Forms\DebugAdminFormBuilder;
@@ -62,6 +63,7 @@ use Alma\PrestaShop\Helpers\PriceHelper;
 use Alma\PrestaShop\Helpers\SettingsHelper;
 use Alma\PrestaShop\Hooks\AdminHookController;
 use Alma\PrestaShop\Logger;
+use Alma\PrestaShop\Model\ClientModel;
 
 final class GetContentHookController extends AdminHookController
 {
@@ -573,26 +575,7 @@ final class GetContentHookController extends AdminHookController
 
         $fieldsForms = $this->buildForms($needsKeys, $feePlansOrdered, $installmentsPlans);
 
-        $helper = new \HelperForm();
-        $helper->module = $this->module;
-        $helper->table = 'alma_config';
-        $helper->default_form_language = (int) \Configuration::get('PS_LANG_DEFAULT');
-        $helper->allow_employee_form_lang = (int) \Configuration::get('PS_BO_ALLOW_EMPLOYEE_FORM_LANG');
-        $helper->submit_action = 'alma_config_form';
-
-        if (version_compare(_PS_VERSION_, '1.6', '<')) {
-            $helper->base_folder = 'helpers/form/15/';
-            $this->context->controller->addCss(_MODULE_DIR_ . $this->module->name . '/views/css/admin/tabs.css');
-        }
-
-        $helper->currentIndex = $this->context->link->getAdminLink('AdminModules', false)
-            . '&configure=' . $this->module->name
-            . '&tab_module=' . $this->module->tab
-            . '&module_name=' . $this->module->name;
-
-        $helper->token = \Tools::getAdminTokenLite('AdminModules');
-
-        $helper->fields_value = $this->getFieldsValueForForm();
+        $helper = $this->getHelperForm();
 
         if ($merchant) {
             $sortOrder = 1;
@@ -625,8 +608,6 @@ final class GetContentHookController extends AdminHookController
                 ++$sortOrder;
             }
         }
-
-        $helper->languages = $this->context->controller->getLanguages();
 
         return $extraMessage . $helper->generateForm($fieldsForms);
     }
@@ -693,9 +674,29 @@ final class GetContentHookController extends AdminHookController
     }
 
     /**
-     * @return array
+     * @param bool $needsKeys
      *
-     * @throws \Exception
+     * @return array|array[]
+     */
+    protected function getApiAdminFormBuilder($needsKeys = false)
+    {
+        $apiBuilder = new ApiAdminFormBuilder($this->module, $this->context, $this->mediaHelper->getIconPathAlmaTiny(), ['needsAPIKey' => $needsKeys]);
+
+        return $apiBuilder->build();
+    }
+
+    /**
+     * @return array|array[]
+     */
+    protected function getDebugAdminFormBuilder()
+    {
+        $debugBuilder = new DebugAdminFormBuilder($this->module, $this->context, $this->mediaHelper->getIconPathAlmaTiny());
+
+        return $debugBuilder->build();
+    }
+
+    /**
+     * @return array
      */
     protected function getFieldsValueForForm()
     {
@@ -840,6 +841,13 @@ final class GetContentHookController extends AdminHookController
         return '' == $key || null == $key;
     }
 
+    private function renderTemplate($messages, $formFields)
+    {
+        $helperForm = $this->getHelperForm();
+
+        return $messages . $helperForm->generateForm($formFields);
+    }
+
     /**
      * @param $params
      *
@@ -849,6 +857,37 @@ final class GetContentHookController extends AdminHookController
      */
     public function run($params)
     {
+        $client = new ClientFactory();
+        /** @var \Alma\API\Client|null $almaClient */
+        $almaClient = $client->get();
+
+        if (\Tools::isSubmit('alma_config_form')) {
+            $messages = $this->processConfiguration($almaClient);
+            $formFields = [];
+            $formFields[] = $this->getApiAdminFormBuilder(true);
+            $formFields[] = $this->getDebugAdminFormBuilder();
+
+            return $this->renderTemplate($messages, $formFields);
+        }
+
+        if (!$almaClient) {
+            $this->context->smarty->assign([
+                'hasKey' => false,
+                'tip_classes' => 'alert alert-info',
+            ]);
+
+            $formFields = [];
+            $formFields[] = $this->getApiAdminFormBuilder(true);
+            $formFields[] = $this->getDebugAdminFormBuilder();
+            $messages = $this->module->display($this->module->file, 'getContent.tpl');
+
+            return $this->renderTemplate($messages, $formFields);
+        }
+
+        $clientModel = new ClientModel($almaClient);
+        $clientModel->getMerchantMe();
+
+        //Old code
         $this->context->smarty->assign([
             'hasPSAccounts' => $params['hasPSAccounts'],
             'updated' => true,
@@ -1008,5 +1047,33 @@ final class GetContentHookController extends AdminHookController
 
             $this->updateSettingsValue($key, $value);
         }
+    }
+
+    /**
+     * @return \HelperForm
+     */
+    public function getHelperForm()
+    {
+        $helper = new \HelperForm();
+        $helper->module = $this->module;
+        $helper->table = 'alma_config';
+        $helper->default_form_language = (int) \Configuration::get('PS_LANG_DEFAULT');
+        $helper->allow_employee_form_lang = (int) \Configuration::get('PS_BO_ALLOW_EMPLOYEE_FORM_LANG');
+        $helper->submit_action = 'alma_config_form';
+
+        if (version_compare(_PS_VERSION_, '1.6', '<')) {
+            $helper->base_folder = 'helpers/form/15/';
+            $this->context->controller->addCss(_MODULE_DIR_ . $this->module->name . '/views/css/admin/tabs.css');
+        }
+        $helper->currentIndex = $this->context->link->getAdminLink('AdminModules', false)
+            . '&configure=' . $this->module->name
+            . '&tab_module=' . $this->module->tab
+            . '&module_name=' . $this->module->name;
+
+        $helper->token = \Tools::getAdminTokenLite('AdminModules');
+        $helper->fields_value = $this->getFieldsValueForForm();
+        $helper->languages = $this->context->controller->getLanguages();
+
+        return $helper;
     }
 }
