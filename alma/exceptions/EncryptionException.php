@@ -22,26 +22,12 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
-namespace Alma\PrestaShop\Model;
+namespace Alma\PrestaShop\Exceptions;
 
 if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-class ClientModel
+class EncryptionException extends AlmaException
 {
-    /**
-     * @var mixed
-     */
-    private $almaClient;
-
-    public function __construct($almaClient)
-    {
-        $this->almaClient = $almaClient;
-    }
-
-    public function getMerchantMe()
-    {
-        return $this->almaClient->merchants->me();
-    }
 }
