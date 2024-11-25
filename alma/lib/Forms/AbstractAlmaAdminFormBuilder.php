@@ -34,7 +34,7 @@ if (!defined('_PS_VERSION_')) {
 abstract class AbstractAlmaAdminFormBuilder extends AbstractAdminFormBuilder
 {
     /**
-     * @var Alma
+     * @var \Module
      */
     protected $module;
 

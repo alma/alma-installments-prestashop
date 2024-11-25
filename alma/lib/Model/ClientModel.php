@@ -24,6 +24,8 @@
 
 namespace Alma\PrestaShop\Model;
 
+use Alma\API\RequestError;
+
 if (!defined('_PS_VERSION_')) {
     exit;
 }
@@ -31,7 +33,7 @@ if (!defined('_PS_VERSION_')) {
 class ClientModel
 {
     /**
-     * @var mixed
+     * @var \Alma\API\Client|null
      */
     private $almaClient;
 
@@ -40,8 +42,31 @@ class ClientModel
         $this->almaClient = $almaClient;
     }
 
+    /**
+     * @return \Alma\API\Entities\Merchant|null
+     */
     public function getMerchantMe()
     {
-        return $this->almaClient->merchants->me();
+        try {
+            return $this->almaClient->merchants->me();
+        } catch (RequestError $e) {
+            return null;
+        }
+    }
+
+    /**
+     * @param $kind
+     * @param $installmentsCounts
+     * @param $includeDeferred
+     *
+     * @return \Alma\API\Entities\FeePlan[]|array
+     */
+    public function getMerchantFeePlans($kind = 'general', $installmentsCounts = 'all', $includeDeferred = true)
+    {
+        try {
+            return $this->almaClient->merchants->feePlans($kind, $installmentsCounts, $includeDeferred);
+        } catch (RequestError $e) {
+            return [];
+        }
     }
 }
