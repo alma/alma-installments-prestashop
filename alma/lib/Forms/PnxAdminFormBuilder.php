@@ -27,8 +27,11 @@ namespace Alma\PrestaShop\Forms;
 use Alma\API\Entities\FeePlan;
 use Alma\PrestaShop\Builders\Helpers\PriceHelperBuilder;
 use Alma\PrestaShop\Builders\Helpers\SettingsHelperBuilder;
+use Alma\PrestaShop\Factories\ClientFactory;
 use Alma\PrestaShop\Helpers\PriceHelper;
 use Alma\PrestaShop\Helpers\SettingsHelper;
+use Alma\PrestaShop\Model\ClientModel;
+use Alma\PrestaShop\Model\FeePlanModel;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -49,12 +52,20 @@ class PnxAdminFormBuilder extends AbstractAlmaAdminFormBuilder
      * @var PriceHelper
      */
     protected $priceHelper;
+    /**
+     * @var \Alma\PrestaShop\Model\ClientModel
+     */
+    protected $clientModel;
+    /**
+     * @var \Alma\PrestaShop\Model\FeePlanModel
+     */
+    protected $feePlanModel;
 
     /**
-     * @param $module
-     * @param $context
-     * @param $image
-     * @param $config
+     * @param \Alma $module
+     * @param \Context $context
+     * @param string $image
+     * @param array $config
      */
     public function __construct($module, $context, $image, $config = [])
     {
@@ -65,6 +76,14 @@ class PnxAdminFormBuilder extends AbstractAlmaAdminFormBuilder
 
         $priceHelperBuilder = new PriceHelperBuilder();
         $this->priceHelper = $priceHelperBuilder->getInstance();
+
+        $almaClient = (new ClientFactory())->get();
+        $this->clientModel = new ClientModel($almaClient);
+
+        $this->feePlanModel = new FeePlanModel(
+            $this->settingsHelper,
+            $this->priceHelper
+        );
     }
 
     /**
@@ -144,10 +163,11 @@ class PnxAdminFormBuilder extends AbstractAlmaAdminFormBuilder
         $return = [];
         $pnxTabs = [];
         $activeTab = null;
-        $installmentsPlans = $this->config['installmentsPlans'];
+        $installmentsPlans = json_decode(SettingsHelper::getFeePlans());
+        $feePlans = $this->clientModel->getMerchantFeePlans();
 
         /** @var FeePlan $feePlan */
-        foreach ($this->config['feePlans'] as $feePlan) {
+        foreach ($this->feePlanModel->getFeePlansOrdered($feePlans) as $feePlan) {
             $tabId = $key = $feePlan->getPlanKey();
 
             if (!$feePlan->allowed) {

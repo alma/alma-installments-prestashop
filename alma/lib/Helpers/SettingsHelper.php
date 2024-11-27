@@ -337,7 +337,8 @@ class SettingsHelper
     }
 
     /**
-     * Get true if need to hide SoC form.
+     * @deprecated
+     * Get true if need to hide SoC form
      *
      * @return bool
      */
@@ -346,6 +347,16 @@ class SettingsHelper
         return (SettingsHelper::isShareOfCheckoutNoAnswered() && ALMA_MODE_LIVE === SettingsHelper::getActiveMode())
                 || (!SettingsHelper::isShareOfCheckoutSetting() && ALMA_MODE_LIVE === SettingsHelper::getActiveMode())
                 || ALMA_MODE_LIVE !== SettingsHelper::getActiveMode();
+    }
+
+    /**
+     * Return true if we need to display the SoC form.
+     *
+     * @return bool
+     */
+    public function shouldDisplayShareOfCheckoutForm()
+    {
+        return !self::shouldHideShareOfCheckoutForm();
     }
 
     /**

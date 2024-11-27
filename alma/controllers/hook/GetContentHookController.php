@@ -37,6 +37,8 @@ use Alma\PrestaShop\Builders\Helpers\PriceHelperBuilder;
 use Alma\PrestaShop\Builders\Helpers\SettingsHelperBuilder;
 use Alma\PrestaShop\Builders\Helpers\ShareOfCheckoutHelperBuilder;
 use Alma\PrestaShop\Exceptions\MissingParameterException;
+use Alma\PrestaShop\Factories\ClientFactory;
+use Alma\PrestaShop\Factories\ContextFactory;
 use Alma\PrestaShop\Forms\ApiAdminFormBuilder;
 use Alma\PrestaShop\Forms\ExcludedCategoryAdminFormBuilder;
 use Alma\PrestaShop\Forms\InpageAdminFormBuilder;
@@ -52,6 +54,7 @@ use Alma\PrestaShop\Helpers\PriceHelper;
 use Alma\PrestaShop\Helpers\SettingsHelper;
 use Alma\PrestaShop\Hooks\AdminHookController;
 use Alma\PrestaShop\Logger;
+use Alma\PrestaShop\Model\ClientModel;
 use Alma\PrestaShop\Services\ConfigFormService;
 
 final class GetContentHookController extends AdminHookController
@@ -147,6 +150,7 @@ final class GetContentHookController extends AdminHookController
      * @var \Alma\PrestaShop\Services\ConfigFormService
      */
     protected $configFormService;
+    protected $clientFactory;
 
     /**
      * GetContentHook Controller construct.
@@ -169,10 +173,14 @@ final class GetContentHookController extends AdminHookController
         $contextHelperBuilder = new ContextHelperBuilder();
         $this->contextHelper = $contextHelperBuilder->getInstance();
 
+        $contextFactory = new ContextFactory();
+
         $this->configFormService = new ConfigFormService(
             $module,
-            $this->settingsHelper
+            $contextFactory->getContext()
         );
+
+        $this->clientFactory = new ClientFactory();
 
         $this->hasKey = false;
 
@@ -226,6 +234,39 @@ final class GetContentHookController extends AdminHookController
         }
 
         return $assignSmartyKeys;
+    }
+
+    /**
+     * Execute the controller to display the configuration form and save the config if submit value alma_config_form
+     *
+     * @param $params
+     *
+     * @return string
+     *
+     * @throws \Exception
+     */
+    public function run($params)
+    {
+        $assignSmartyKeys = $this->assignSmartyKeys();
+        $messages = [];
+        $feePlans = [];
+
+        if (\Tools::isSubmit('alma_config_form')) {
+            $messages = $this->processConfiguration();
+        }
+
+        /** @var \Alma\API\Client|null $almaClient */
+        $almaClient = $this->clientFactory->get();
+        if ($almaClient) {
+            $clientModel = new ClientModel($almaClient);
+            $feePlans = $clientModel->getMerchantFeePlans();
+        }
+
+        $assignSmartyKeys['form'] = $this->configFormService->getRenderHtml($feePlans);
+        $assignSmartyKeys['error_messages'] = $messages;
+        $this->context->smarty->assign($assignSmartyKeys);
+
+        return $this->module->display($this->module->file, 'configurationContent.tpl');
     }
 
     /**
@@ -565,29 +606,6 @@ final class GetContentHookController extends AdminHookController
         } catch (RequestError $e) {
             return null;
         }
-    }
-
-    /**
-     * @param $params
-     *
-     * @return string
-     *
-     * @throws \Exception
-     */
-    public function run($params)
-    {
-        $assignSmartyKeys = $this->assignSmartyKeys();
-        $messages = [];
-
-        if (\Tools::isSubmit('alma_config_form')) {
-            $messages = $this->processConfiguration();
-        }
-
-        $assignSmartyKeys['form'] = $this->configFormService->getRenderHtml();
-        $assignSmartyKeys['error_messages'] = $messages;
-        $this->context->smarty->assign($assignSmartyKeys);
-
-        return $this->module->display($this->module->file, 'configurationContent.tpl');
     }
 
     /**
