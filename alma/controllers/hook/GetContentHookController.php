@@ -262,7 +262,7 @@ final class GetContentHookController extends AdminHookController
             $feePlans = $clientModel->getMerchantFeePlans();
         }
 
-        $assignSmartyKeys['form'] = $this->configFormService->getRenderHtml($feePlans);
+        $assignSmartyKeys['form'] = $this->configFormService->getRenderPaymentFormHtml($feePlans);
         $assignSmartyKeys['error_messages'] = $messages;
         $this->context->smarty->assign($assignSmartyKeys);
 
