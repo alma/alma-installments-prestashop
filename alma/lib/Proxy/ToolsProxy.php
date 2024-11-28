@@ -48,4 +48,14 @@ class ToolsProxy
     {
         return \Tools::getValue($key, $default_value);
     }
+
+    /**
+     * @param string $tab
+     *
+     * @return bool|string
+     */
+    public function getAdminTokenLite($tab)
+    {
+        return \Tools::getAdminTokenLite($tab);
+    }
 }

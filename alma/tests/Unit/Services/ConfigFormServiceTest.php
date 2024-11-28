@@ -42,6 +42,8 @@ class ConfigFormServiceTest extends TestCase
         $this->helperFormMock = $this->createMock(\HelperForm::class);
         $this->moduleMock = $this->createMock(\Module::class);
         $this->contextMock = $this->createMock(\Context::class);
+        $this->linkMock = $this->createMock(\Link::class);
+        $this->contextMock->link = $this->linkMock;
         $this->adminFormBuilderServiceMock = $this->createMock(AdminFormBuilderService::class);
         $this->feePlanModelMock = $this->createMock(FeePlanModel::class);
         $this->helperFormProxyMock = $this->createMock(HelperFormProxy::class);
@@ -57,24 +59,42 @@ class ConfigFormServiceTest extends TestCase
     public function testGetRenderHtmlWithoutFeePlans()
     {
         $this->moduleMock->name = 'alma';
-        $this->helperFormMock->module = $this->moduleMock;
-        $this->helperFormMock->table = 'alma_config';
-        $this->helperFormMock->default_form_language = 1;
-        $this->helperFormMock->allow_employee_form_lang = null;
-        $this->helperFormMock->submit_action = 'alma_config_form';
-        $this->helperFormMock->currentIndex = 'http://prestashop-a-1-7-8-7.local.test/almin/index.php?controller=AdminModules&configure=alma&tab_module=payments_gateways&module_name=alma';
-        $this->helperFormMock->token = 'token';
-        $this->helperFormMock->fields_value = [
-            'ALMA_LIVE_API_KEY' => 'live_api_key',
-            'ALMA_TEST_API_KEY' => 'test_api_key',
-            'ALMA_API_MODE' => 'api_mode',
-        ];
-        $this->helperFormMock->languages = [
-            [
-                'id_lang' => 1,
-                'iso_code' => 'en',
-            ],
-        ];
+        $this->helperFormProxyMock->expects($this->once())
+            ->method('setModule')
+            ->with($this->moduleMock);
+        $this->helperFormProxyMock->expects($this->once())
+            ->method('setTable')
+            ->with('alma_config');
+        $this->helperFormProxyMock->expects($this->once())
+            ->method('setDefaultFormLanguage')
+            ->with(1);
+        $this->helperFormProxyMock->expects($this->once())
+            ->method('setAllowEmployeeFormLang')
+            ->with(null);
+        $this->helperFormProxyMock->expects($this->once())
+            ->method('setSubmitAction')
+            ->with('alma_config_form');
+        $this->helperFormProxyMock->expects($this->once())
+            ->method('setCurrentIndex')
+            ->with('http://prestashop-a-1-7-8-7.local.test/almin/index.php?controller=AdminModules&configure=alma&tab_module=payments_gateways&module_name=alma');
+        $this->helperFormProxyMock->expects($this->once())
+            ->method('setToken')
+            ->with('token');
+        $this->helperFormProxyMock->expects($this->once())
+            ->method('setFieldsValue')
+            ->with([
+                'ALMA_LIVE_API_KEY' => 'live_api_key',
+                'ALMA_TEST_API_KEY' => 'test_api_key',
+                'ALMA_API_MODE' => 'api_mode',
+            ]);
+        $this->helperFormProxyMock->expects($this->once())
+            ->method('setLanguages')
+            ->with([
+                [
+                    'id_lang' => 1,
+                    'iso_code' => 'en',
+                ],
+            ]);
 
         $formFields = [
             [
@@ -129,6 +149,6 @@ class ConfigFormServiceTest extends TestCase
         $this->adminFormBuilderServiceMock->expects($this->once())
             ->method('getFormFields')
             ->willReturn($formFields);
-        $this->assertEquals($expected, $this->configFormService->getRenderHtml());
+        $this->assertEquals($expected, $this->configFormService->getRenderPaymentFormHtml());
     }
 }
