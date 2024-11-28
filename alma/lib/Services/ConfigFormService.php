@@ -84,13 +84,16 @@ class ConfigFormService
     }
 
     /**
+     * Return the HTML of the configuration form
+     *
      * @return string
      */
     public function getRenderHtml($feePlans = [])
     {
         $helperForm = $this->helperFormProxy->getHelperForm();
-        $formFields = $this->adminFormBuilderService->getForms($this->needsAPIKey());
+        $formFields = $this->adminFormBuilderService->getFormFields($this->needsAPIKey());
 
+        // If we have fee plans, we need to add them to the HelperForm
         if ($feePlans) {
             $helperForm->fields_value = array_merge($helperForm->fields_value, $this->feePlanModel->getFieldsValueFromFeePlans($feePlans));
         }
@@ -99,6 +102,8 @@ class ConfigFormService
     }
 
     /**
+     * Check if the api_key is set in the settings
+     *
      * @return bool
      */
     protected function needsAPIKey()

@@ -82,6 +82,8 @@ class FeePlanModel
     }
 
     /**
+     * Get the field values from the fee plans and sort it
+     *
      * @param array $feePlans
      *
      * @return array
