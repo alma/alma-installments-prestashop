@@ -127,7 +127,7 @@ class ConfigFormServiceTest extends TestCase
             ->method('getHelperForm')
             ->willReturn($this->helperFormMock);
         $this->adminFormBuilderServiceMock->expects($this->once())
-            ->method('getForms')
+            ->method('getFormFields')
             ->willReturn($formFields);
         $this->assertEquals($expected, $this->configFormService->getRenderHtml());
     }

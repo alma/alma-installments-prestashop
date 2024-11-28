@@ -90,6 +90,8 @@ class HelperFormProxy
     }
 
     /**
+     * Use the HelperForm from Prestashop to build the default data for configuration form
+     *
      * @return \HelperForm
      */
     public function getHelperForm()
@@ -117,6 +119,8 @@ class HelperFormProxy
     }
 
     /**
+     * Default fields value for the configuration form
+     *
      * @return array
      */
     protected function getFieldsValueForForm()

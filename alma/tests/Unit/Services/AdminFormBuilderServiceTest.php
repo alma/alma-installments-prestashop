@@ -76,7 +76,7 @@ class AdminFormBuilderServiceTest extends TestCase
         );
     }
 
-    public function testGetFormsWithoutApiKeySaved()
+    public function testGetFormFieldsWithoutApiKeySaved()
     {
         $this->pnxAdminFormBuilderMock->expects($this->never())
             ->method('build');
@@ -100,6 +100,72 @@ class AdminFormBuilderServiceTest extends TestCase
             ->method('build');
         $this->debugAdminFormBuilderMock->expects($this->once())
             ->method('build');
-        $this->adminFormBuilderService->getForms(true);
+        $this->adminFormBuilderService->getFormFields(true);
+    }
+
+    public function testGetFormFieldsWithApiKeyAndWithoutSocAndPut()
+    {
+        $this->pnxAdminFormBuilderMock->expects($this->once())
+            ->method('build');
+        $this->productEligibilityAdminFormBuilderMock->expects($this->once())
+            ->method('build');
+        $this->cartEligibilityAdminFormBuilderMock->expects($this->once())
+            ->method('build');
+        $this->paymentButtonAdminFormBuilderMock->expects($this->once())
+            ->method('build');
+        $this->excludedCategoryAdminFormBuilderMock->expects($this->once())
+            ->method('build');
+        $this->refundAdminFormBuilderMock->expects($this->once())
+            ->method('build');
+        $this->settingsHelperMock->expects($this->once())
+            ->method('shouldDisplayShareOfCheckoutForm')
+            ->willReturn(false);
+        $this->shareOfCheckoutAdminFormBuilderMock->expects($this->never())
+            ->method('build');
+        $this->inpageAdminFormBuilderMock->expects($this->once())
+            ->method('build');
+        $this->settingsHelperMock->expects($this->once())
+            ->method('isPaymentTriggerEnabledByState')
+            ->willReturn(false);
+        $this->paymentOnTriggeringAdminFormBuilderMock->expects($this->never())
+            ->method('build');
+        $this->apiAdminFormBuilderMock->expects($this->once())
+            ->method('build');
+        $this->debugAdminFormBuilderMock->expects($this->once())
+            ->method('build');
+        $this->adminFormBuilderService->getFormFields(false);
+    }
+
+    public function testGetFormFieldsWithApiKeyAndWithSocAndPut()
+    {
+        $this->pnxAdminFormBuilderMock->expects($this->once())
+            ->method('build');
+        $this->productEligibilityAdminFormBuilderMock->expects($this->once())
+            ->method('build');
+        $this->cartEligibilityAdminFormBuilderMock->expects($this->once())
+            ->method('build');
+        $this->paymentButtonAdminFormBuilderMock->expects($this->once())
+            ->method('build');
+        $this->excludedCategoryAdminFormBuilderMock->expects($this->once())
+            ->method('build');
+        $this->refundAdminFormBuilderMock->expects($this->once())
+            ->method('build');
+        $this->settingsHelperMock->expects($this->once())
+            ->method('shouldDisplayShareOfCheckoutForm')
+            ->willReturn(true);
+        $this->shareOfCheckoutAdminFormBuilderMock->expects($this->once())
+            ->method('build');
+        $this->inpageAdminFormBuilderMock->expects($this->once())
+            ->method('build');
+        $this->settingsHelperMock->expects($this->once())
+            ->method('isPaymentTriggerEnabledByState')
+            ->willReturn(true);
+        $this->paymentOnTriggeringAdminFormBuilderMock->expects($this->once())
+            ->method('build');
+        $this->apiAdminFormBuilderMock->expects($this->once())
+            ->method('build');
+        $this->debugAdminFormBuilderMock->expects($this->once())
+            ->method('build');
+        $this->adminFormBuilderService->getFormFields(false);
     }
 }

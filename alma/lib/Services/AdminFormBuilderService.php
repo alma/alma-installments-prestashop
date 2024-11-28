@@ -208,11 +208,13 @@ class AdminFormBuilderService
     }
 
     /**
+     * Use the form builder to get the form fields to send to the helper form
+     *
      * @param $needsApiKey
      *
      * @return array
      */
-    public function getForms($needsApiKey = true)
+    public function getFormFields($needsApiKey = true)
     {
         $formFields = [];
 
