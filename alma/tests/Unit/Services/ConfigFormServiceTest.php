@@ -24,8 +24,12 @@
 
 namespace Alma\PrestaShop\Tests\Unit\Services;
 
+use Alma\PrestaShop\Helpers\CustomFieldsHelper;
+use Alma\PrestaShop\Helpers\SettingsHelper;
 use Alma\PrestaShop\Model\FeePlanModel;
+use Alma\Prestashop\Proxy\ConfigurationProxy;
 use Alma\PrestaShop\Proxy\HelperFormProxy;
+use Alma\PrestaShop\Proxy\ToolsProxy;
 use Alma\PrestaShop\Services\AdminFormBuilderService;
 use Alma\PrestaShop\Services\ConfigFormService;
 use PHPUnit\Framework\TestCase;
@@ -43,22 +47,53 @@ class ConfigFormServiceTest extends TestCase
         $this->moduleMock = $this->createMock(\Module::class);
         $this->contextMock = $this->createMock(\Context::class);
         $this->linkMock = $this->createMock(\Link::class);
+        $this->controllerMock = $this->createMock(\AdminController::class);
         $this->contextMock->link = $this->linkMock;
+        $this->contextMock->controller = $this->controllerMock;
         $this->adminFormBuilderServiceMock = $this->createMock(AdminFormBuilderService::class);
         $this->feePlanModelMock = $this->createMock(FeePlanModel::class);
+        $this->customFieldsHelperMock = $this->createMock(CustomFieldsHelper::class);
+        $this->settingsHelperMock = $this->createMock(SettingsHelper::class);
         $this->helperFormProxyMock = $this->createMock(HelperFormProxy::class);
-        $this->configFormService = new ConfigFormService(
+        $this->configurationProxyMock = $this->createMock(ConfigurationProxy::class);
+        $this->toolsProxyMock = $this->createMock(ToolsProxy::class);
+        $this->configFormService = \Mockery::mock(ConfigFormService::class, [
             $this->moduleMock,
             $this->contextMock,
             $this->adminFormBuilderServiceMock,
             $this->feePlanModelMock,
-            $this->helperFormProxyMock
-        );
+            $this->customFieldsHelperMock,
+            $this->settingsHelperMock,
+            $this->helperFormProxyMock,
+            $this->configurationProxyMock,
+            $this->toolsProxyMock,
+        ])->shouldAllowMockingProtectedMethods()->makePartial();
     }
 
     public function testGetRenderHtmlWithoutFeePlans()
     {
         $this->moduleMock->name = 'alma';
+        $this->moduleMock->tab = 'payments_gateways';
+        $this->configurationProxyMock->expects($this->exactly(2))
+            ->method('get')
+            ->withConsecutive(['PS_LANG_DEFAULT'], ['PS_BO_ALLOW_EMPLOYEE_FORM_LANG'])
+            ->willReturnOnConsecutiveCalls(1, null);
+        $this->linkMock->expects($this->once())
+            ->method('getAdminLink')
+            ->with('AdminModules', false)
+            ->willReturn('http://prestashop-a-1-7-8-7.local.test/almin/index.php?controller=AdminModules');
+        $this->toolsProxyMock->expects($this->once())
+            ->method('getAdminTokenLite')
+            ->with('AdminModules')
+            ->willReturn('token');
+        $this->controllerMock->expects($this->once())
+            ->method('getLanguages')
+            ->willReturn([
+                [
+                    'id_lang' => 1,
+                    'iso_code' => 'en',
+                ],
+            ]);
         $this->helperFormProxyMock->expects($this->once())
             ->method('setModule')
             ->with($this->moduleMock);
@@ -80,6 +115,12 @@ class ConfigFormServiceTest extends TestCase
         $this->helperFormProxyMock->expects($this->once())
             ->method('setToken')
             ->with('token');
+        $this->configFormService->shouldReceive('getFieldsValueForPaymentForm')
+            ->andReturn([
+                'ALMA_LIVE_API_KEY' => 'live_api_key',
+                'ALMA_TEST_API_KEY' => 'test_api_key',
+                'ALMA_API_MODE' => 'api_mode',
+            ]);
         $this->helperFormProxyMock->expects($this->once())
             ->method('setFieldsValue')
             ->with([
@@ -97,58 +138,16 @@ class ConfigFormServiceTest extends TestCase
             ]);
 
         $formFields = [
-            [
-                'form' => [
-                    'legend' => [
-                        'title' => 'Alma Configuration',
-                    ],
-                    'input' => [
-                        [
-                            'type' => 'text',
-                            'label' => 'Live API Key',
-                            'name' => 'ALMA_LIVE_API_KEY',
-                            'required' => true,
-                        ],
-                        [
-                            'type' => 'text',
-                            'label' => 'Test API Key',
-                            'name' => 'ALMA_TEST_API_KEY',
-                            'required' => true,
-                        ],
-                        [
-                            'type' => 'select',
-                            'label' => 'API Mode',
-                            'name' => 'ALMA_API_MODE',
-                            'required' => true,
-                            'options' => [
-                                'query' => [
-                                    [
-                                        'id' => 'live',
-                                        'name' => 'Live',
-                                    ],
-                                    [
-                                        'id' => 'test',
-                                        'name' => 'Test',
-                                    ],
-                                ],
-                                'id' => 'id',
-                                'name' => 'name',
-                            ],
-                        ],
-                    ],
-                    'submit' => [
-                        'title' => 'Save',
-                    ],
-                ],
-            ],
+            'form_field' => true,
         ];
-        $expected = $this->helperFormMock->generateForm($formFields);
-        $this->helperFormProxyMock->expects($this->once())
-            ->method('getHelperForm')
-            ->willReturn($this->helperFormMock);
         $this->adminFormBuilderServiceMock->expects($this->once())
             ->method('getFormFields')
             ->willReturn($formFields);
-        $this->assertEquals($expected, $this->configFormService->getRenderPaymentFormHtml());
+        $this->helperFormProxyMock->expects($this->once())
+            ->method('getHelperForm')
+            ->with($formFields)
+            ->willReturn($this->helperFormMock);
+
+        $this->assertEquals($this->helperFormMock, $this->configFormService->getRenderPaymentFormHtml());
     }
 }

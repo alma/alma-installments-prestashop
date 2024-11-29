@@ -56,7 +56,7 @@ class ConfigFormService
      */
     private $helperFormProxy;
     /**
-     * @var \Alma\PrestaShop\Factories\ModuleFactory
+     * @var \Alma
      */
     private $module;
     /**
