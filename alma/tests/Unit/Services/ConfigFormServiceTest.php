@@ -81,7 +81,7 @@ class ConfigFormServiceTest extends TestCase
         $this->linkMock->expects($this->once())
             ->method('getAdminLink')
             ->with('AdminModules', false)
-            ->willReturn('http://prestashop-a-1-7-8-7.local.test/almin/index.php?controller=AdminModules');
+            ->willReturn('https://prestashop-a-1-7-8-7.local.test/almin/index.php?controller=AdminModules');
         $this->toolsProxyMock->expects($this->once())
             ->method('getAdminTokenLite')
             ->with('AdminModules')
@@ -111,7 +111,7 @@ class ConfigFormServiceTest extends TestCase
             ->with('alma_config_form');
         $this->helperFormProxyMock->expects($this->once())
             ->method('setCurrentIndex')
-            ->with('http://prestashop-a-1-7-8-7.local.test/almin/index.php?controller=AdminModules&configure=alma&tab_module=payments_gateways&module_name=alma');
+            ->with('https://prestashop-a-1-7-8-7.local.test/almin/index.php?controller=AdminModules&configure=alma&tab_module=payments_gateways&module_name=alma');
         $this->helperFormProxyMock->expects($this->once())
             ->method('setToken')
             ->with('token');

@@ -356,7 +356,7 @@ class SettingsHelper
      */
     public function shouldDisplayShareOfCheckoutForm()
     {
-        return !self::shouldHideShareOfCheckoutForm();
+        return !static::shouldHideShareOfCheckoutForm();
     }
 
     /**
