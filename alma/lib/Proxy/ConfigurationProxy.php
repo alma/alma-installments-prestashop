@@ -22,7 +22,7 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
-namespace Alma\Prestashop\Proxy;
+namespace Alma\PrestaShop\Proxy;
 
 if (!defined('_PS_VERSION_')) {
     exit;

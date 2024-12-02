@@ -26,8 +26,9 @@ namespace Alma\PrestaShop\Tests\Unit\Services;
 
 use Alma\PrestaShop\Helpers\CustomFieldsHelper;
 use Alma\PrestaShop\Helpers\SettingsHelper;
+use Alma\PrestaShop\Model\ClientModel;
 use Alma\PrestaShop\Model\FeePlanModel;
-use Alma\Prestashop\Proxy\ConfigurationProxy;
+use Alma\PrestaShop\Proxy\ConfigurationProxy;
 use Alma\PrestaShop\Proxy\HelperFormProxy;
 use Alma\PrestaShop\Proxy\ToolsProxy;
 use Alma\PrestaShop\Services\AdminFormBuilderService;
@@ -57,6 +58,7 @@ class ConfigFormServiceTest extends TestCase
         $this->helperFormProxyMock = $this->createMock(HelperFormProxy::class);
         $this->configurationProxyMock = $this->createMock(ConfigurationProxy::class);
         $this->toolsProxyMock = $this->createMock(ToolsProxy::class);
+        $this->clientModelMock = $this->createMock(ClientModel::class);
         $this->configFormService = \Mockery::mock(ConfigFormService::class, [
             $this->moduleMock,
             $this->contextMock,
@@ -67,11 +69,15 @@ class ConfigFormServiceTest extends TestCase
             $this->helperFormProxyMock,
             $this->configurationProxyMock,
             $this->toolsProxyMock,
+            $this->clientModelMock,
         ])->shouldAllowMockingProtectedMethods()->makePartial();
     }
 
     public function testGetRenderHtmlWithoutFeePlans()
     {
+        $this->clientModelMock->expects($this->once())
+            ->method('getMerchantFeePlans')
+            ->willReturn([]);
         $this->moduleMock->name = 'alma';
         $this->moduleMock->tab = 'payments_gateways';
         $this->configurationProxyMock->expects($this->exactly(2))

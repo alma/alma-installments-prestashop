@@ -25,6 +25,9 @@
 namespace Alma\PrestaShop\Model;
 
 use Alma\API\RequestError;
+use Alma\PrestaShop\Exceptions\ClientException;
+use Alma\PrestaShop\Factories\ClientFactory;
+use Alma\PrestaShop\Logger;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -37,24 +40,63 @@ class ClientModel
      */
     private $almaClient;
 
-    public function __construct($almaClient)
+    public function __construct($almaClient = null)
     {
+        if (!$almaClient) {
+            $almaClient = (new ClientFactory())->get();
+        }
         $this->almaClient = $almaClient;
     }
 
     /**
+     * Setter for unit test
+     *
+     * @param $client
+     *
+     * @return void
+     */
+    public function setClient($client)
+    {
+        $this->almaClient = $client;
+    }
+
+    /**
+     * Alma client can be null if no api key set.
+     *
+     * @return \Alma\API\Client
+     *
+     * @throws \Alma\PrestaShop\Exceptions\ClientException
+     */
+    private function getClient()
+    {
+        if (!$this->almaClient) {
+            throw new ClientException('No Api Key - it s normal at start');
+        }
+
+        return $this->almaClient;
+    }
+
+    /**
+     * Getter Merchant Me from Alma API
+     *
      * @return \Alma\API\Entities\Merchant|null
      */
     public function getMerchantMe()
     {
         try {
-            return $this->almaClient->merchants->me();
+            return $this->getClient()->merchants->me();
         } catch (RequestError $e) {
+            Logger::instance()->error('[Alma] Error getting merchant me', ['exception' => $e]);
+
+            return null;
+        } catch (ClientException $e) {
             return null;
         }
     }
 
     /**
+     * Getter Merchant Fee Plans from Alma API
+     *
      * @param $kind
      * @param $installmentsCounts
      * @param $includeDeferred
@@ -64,8 +106,12 @@ class ClientModel
     public function getMerchantFeePlans($kind = 'general', $installmentsCounts = 'all', $includeDeferred = true)
     {
         try {
-            return $this->almaClient->merchants->feePlans($kind, $installmentsCounts, $includeDeferred);
+            return $this->getClient()->merchants->feePlans($kind, $installmentsCounts, $includeDeferred);
         } catch (RequestError $e) {
+            Logger::instance()->error('[Alma] Error getting merchant fee plans', ['exception' => $e]);
+
+            return [];
+        } catch (ClientException $e) {
             return [];
         }
     }

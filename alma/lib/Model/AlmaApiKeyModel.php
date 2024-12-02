@@ -27,8 +27,8 @@ namespace Alma\PrestaShop\Model;
 use Alma\PrestaShop\Exceptions\AlmaApiKeyException;
 use Alma\PrestaShop\Forms\ApiAdminFormBuilder;
 use Alma\PrestaShop\Helpers\SettingsHelper;
-use Alma\Prestashop\Proxy\ConfigurationProxy;
-use Alma\Prestashop\Proxy\ToolsProxy;
+use Alma\PrestaShop\Proxy\ConfigurationProxy;
+use Alma\PrestaShop\Proxy\ToolsProxy;
 
 if (!defined('_PS_VERSION_')) {
     exit;
