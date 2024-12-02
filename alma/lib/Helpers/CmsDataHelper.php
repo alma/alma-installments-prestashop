@@ -140,12 +140,11 @@ class CmsDataHelper
             'alma_enabled' => (bool) (int) $this->settingsHelper->getKey(SettingsHelper::ALMA_FULLY_CONFIGURED), // clef fully configured
             'widget_cart_activated' => (bool) (int) $this->settingsHelper->getKey(CartEligibilityAdminFormBuilder::ALMA_SHOW_ELIGIBILITY_MESSAGE),
             'widget_product_activated' => (bool) (int) $this->settingsHelper->getKey(ProductEligibilityAdminFormBuilder::ALMA_SHOW_PRODUCT_ELIGIBILITY),
-            'used_fee_plans' => json_decode($this->settingsHelper->getKey(PnxAdminFormBuilder::ALMA_FEE_PLANS), true),
+            'used_fee_plans' => $this->getUsedFeePlans(),
             //'payment_method_position' => null, // not applicable - position is set in the used_fee_plans
             'in_page_activated' => (bool) (int) $this->settingsHelper->getKey(InpageAdminFormBuilder::ALMA_ACTIVATE_INPAGE),
             'log_activated' => (bool) (int) $this->settingsHelper->getKey(DebugAdminFormBuilder::ALMA_ACTIVATE_LOGGING),
             'excluded_categories' => $this->settingsHelper->getCategoriesExcludedNames(),
-            //'excluded_categories_activated' => '',// not applicable - it's not possible to disable the exclusion
             'specific_features' => [], // no specific features in Prestashop
             'country_restriction' => $this->getCountriesRestrictions(),
             'custom_widget_css' => (bool) $this->settingsHelper->getKey(ProductEligibilityAdminFormBuilder::ALMA_WIDGET_POSITION_SELECTOR),
@@ -158,7 +157,20 @@ class CmsDataHelper
      */
     private function getCountriesRestrictions()
     {
-        // TODO : Need to implement this method with the db ps_module_country
         return [];
+    }
+
+    /**
+     * @return array|null
+     */
+    private function getUsedFeePlans()
+    {
+        $feePlans = json_decode($this->settingsHelper->getKey(PnxAdminFormBuilder::ALMA_FEE_PLANS), true);
+
+        if (empty($feePlans)) {
+            return null;
+        }
+
+        return $feePlans;
     }
 }
