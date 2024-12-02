@@ -28,7 +28,6 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-use Alma\API\Entities\Merchant;
 use Alma\API\Lib\IntegrationsConfigurationsUtils;
 use Alma\API\RequestError;
 use Alma\PrestaShop\Builders\Helpers\ApiHelperBuilder;
@@ -37,7 +36,6 @@ use Alma\PrestaShop\Builders\Helpers\PriceHelperBuilder;
 use Alma\PrestaShop\Builders\Helpers\SettingsHelperBuilder;
 use Alma\PrestaShop\Builders\Helpers\ShareOfCheckoutHelperBuilder;
 use Alma\PrestaShop\Exceptions\MissingParameterException;
-use Alma\PrestaShop\Factories\ClientFactory;
 use Alma\PrestaShop\Factories\ContextFactory;
 use Alma\PrestaShop\Forms\ApiAdminFormBuilder;
 use Alma\PrestaShop\Forms\ExcludedCategoryAdminFormBuilder;
@@ -54,7 +52,6 @@ use Alma\PrestaShop\Helpers\PriceHelper;
 use Alma\PrestaShop\Helpers\SettingsHelper;
 use Alma\PrestaShop\Hooks\AdminHookController;
 use Alma\PrestaShop\Logger;
-use Alma\PrestaShop\Model\ClientModel;
 use Alma\PrestaShop\Services\ConfigFormService;
 
 final class GetContentHookController extends AdminHookController
@@ -150,7 +147,6 @@ final class GetContentHookController extends AdminHookController
      * @var \Alma\PrestaShop\Services\ConfigFormService
      */
     protected $configFormService;
-    protected $clientFactory;
 
     /**
      * GetContentHook Controller construct.
@@ -179,8 +175,6 @@ final class GetContentHookController extends AdminHookController
             $module,
             $contextFactory->getContext()
         );
-
-        $this->clientFactory = new ClientFactory();
 
         $this->hasKey = false;
 
@@ -249,20 +243,12 @@ final class GetContentHookController extends AdminHookController
     {
         $assignSmartyKeys = $this->assignSmartyKeys();
         $messages = [];
-        $feePlans = [];
 
         if (\Tools::isSubmit('alma_config_form')) {
             $messages = $this->processConfiguration();
         }
 
-        /** @var \Alma\API\Client|null $almaClient */
-        $almaClient = $this->clientFactory->get();
-        if ($almaClient) {
-            $clientModel = new ClientModel($almaClient);
-            $feePlans = $clientModel->getMerchantFeePlans();
-        }
-
-        $assignSmartyKeys['form'] = $this->configFormService->getRenderPaymentFormHtml($feePlans);
+        $assignSmartyKeys['form'] = $this->configFormService->getRenderPaymentFormHtml();
         $assignSmartyKeys['error_messages'] = $messages;
         $this->context->smarty->assign($assignSmartyKeys);
 

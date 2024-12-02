@@ -27,7 +27,6 @@ namespace Alma\PrestaShop\Forms;
 use Alma\API\Entities\FeePlan;
 use Alma\PrestaShop\Builders\Helpers\PriceHelperBuilder;
 use Alma\PrestaShop\Builders\Helpers\SettingsHelperBuilder;
-use Alma\PrestaShop\Factories\ClientFactory;
 use Alma\PrestaShop\Helpers\PriceHelper;
 use Alma\PrestaShop\Helpers\SettingsHelper;
 use Alma\PrestaShop\Model\ClientModel;
@@ -67,8 +66,13 @@ class PnxAdminFormBuilder extends AbstractAlmaAdminFormBuilder
      * @param string $image
      * @param array $config
      */
-    public function __construct($module, $context, $image, $config = [])
-    {
+    public function __construct(
+        $module,
+        $context,
+        $image,
+        $config = [],
+        $clientModel = null
+    ) {
         parent::__construct($module, $context, $image, $config);
 
         $settingsHelperBuilder = new SettingsHelperBuilder();
@@ -77,8 +81,10 @@ class PnxAdminFormBuilder extends AbstractAlmaAdminFormBuilder
         $priceHelperBuilder = new PriceHelperBuilder();
         $this->priceHelper = $priceHelperBuilder->getInstance();
 
-        $almaClient = (new ClientFactory())->get();
-        $this->clientModel = new ClientModel($almaClient);
+        if (!$clientModel) {
+            $clientModel = new ClientModel();
+        }
+        $this->clientModel = $clientModel;
 
         $this->feePlanModel = new FeePlanModel(
             $this->settingsHelper,

@@ -32,8 +32,9 @@ use Alma\PrestaShop\Forms\ExcludedCategoryAdminFormBuilder;
 use Alma\PrestaShop\Forms\InpageAdminFormBuilder;
 use Alma\PrestaShop\Forms\PaymentButtonAdminFormBuilder;
 use Alma\PrestaShop\Helpers\SettingsHelper;
+use Alma\PrestaShop\Model\ClientModel;
 use Alma\PrestaShop\Model\FeePlanModel;
-use Alma\Prestashop\Proxy\ConfigurationProxy;
+use Alma\PrestaShop\Proxy\ConfigurationProxy;
 use Alma\PrestaShop\Proxy\HelperFormProxy;
 use Alma\PrestaShop\Proxy\ToolsProxy;
 
@@ -76,9 +77,13 @@ class ConfigFormService
      */
     private $toolsProxy;
     /**
-     * @var \Alma\Prestashop\Proxy\ConfigurationProxy|mixed|null
+     * @var \Alma\PrestaShop\Proxy\ConfigurationProxy|mixed|null
      */
     private $configurationProxy;
+    /**
+     * @var \Alma\PrestaShop\Model\ClientModel|null
+     */
+    private $clientModel;
 
     public function __construct(
         $module = null,
@@ -89,7 +94,8 @@ class ConfigFormService
         $settingsHelper = null,
         $helperFormProxy = null,
         $configurationProxy = null,
-        $toolsProxy = null
+        $toolsProxy = null,
+        $clientModel = null
     ) {
         if (!$module) {
             $module = (new ModuleFactoryBuilder())->getInstance();
@@ -133,17 +139,20 @@ class ConfigFormService
             $toolsProxy = new ToolsProxy();
         }
         $this->toolsProxy = $toolsProxy;
+        if (!$clientModel) {
+            $clientModel = new ClientModel();
+        }
+        $this->clientModel = $clientModel;
     }
 
     /**
      * Return the HTML of the configuration form
      *
-     * @param array $feePlans
-     *
      * @return string
      */
-    public function getRenderPaymentFormHtml($feePlans = [])
+    public function getRenderPaymentFormHtml()
     {
+        $feePlans = $this->clientModel->getMerchantFeePlans();
         $this->initPaymentForm();
         $formFields = $this->adminFormBuilderService->getFormFields($this->needsAPIKey());
 
