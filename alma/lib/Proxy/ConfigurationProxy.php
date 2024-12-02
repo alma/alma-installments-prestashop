@@ -22,50 +22,24 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
-namespace Alma\PrestaShop\Forms;
+namespace Alma\PrestaShop\Proxy;
 
 if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-/**
- * Class AbstractAlmaAdminFormBuilder
- */
-abstract class AbstractAlmaAdminFormBuilder extends AbstractAdminFormBuilder
+class ConfigurationProxy
 {
     /**
-     * @var \Alma
+     * Get a single configuration value (in one language only).
+     *
+     * @param string $key Key wanted
+     * @param int $idLang Language ID
+     *
+     * @return string|false Value
      */
-    protected $module;
-
-    /**
-     * @var \Context
-     */
-    protected $context;
-    protected $config;
-
-    /**
-     * @param string $image
-     * @param array $config
-     */
-    public function __construct($module, $context, $image, $config = [])
+    public function get($key, $idLang = null, $idShopGroup = null, $idShop = null, $default = false)
     {
-        $this->module = $module;
-        $this->context = $context;
-        $this->config = $config;
-        parent::__construct(
-            $image,
-            $this->getTitle()
-        );
+        return \Configuration::get($key, $idLang, $idShopGroup, $idShop, $default);
     }
-
-    protected function getSubmitTitle()
-    {
-        return $this->module->l('Save');
-    }
-
-    /**
-     * @return mixed
-     */
-    abstract protected function getTitle();
 }

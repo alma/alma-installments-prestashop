@@ -22,50 +22,51 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
-namespace Alma\PrestaShop\Forms;
+namespace Alma\PrestaShop\Tests\Unit\Proxy;
 
-if (!defined('_PS_VERSION_')) {
-    exit;
-}
+use Alma\PrestaShop\Proxy\HelperFormProxy;
+use PHPUnit\Framework\TestCase;
 
-/**
- * Class AbstractAlmaAdminFormBuilder
- */
-abstract class AbstractAlmaAdminFormBuilder extends AbstractAdminFormBuilder
+class HelperFormProxyTest extends TestCase
 {
-    /**
-     * @var \Alma
-     */
-    protected $module;
-
     /**
      * @var \Context
      */
-    protected $context;
-    protected $config;
+    protected $contextMock;
 
     /**
-     * @param string $image
-     * @param array $config
+     * @var \HelperForm
      */
-    public function __construct($module, $context, $image, $config = [])
+    protected $helperFormMock;
+    /**
+     * @var \Alma\PrestaShop\Proxy\HelperFormProxy
+     */
+    protected $helperFormProxy;
+
+    public function setUp()
     {
-        $this->module = $module;
-        $this->context = $context;
-        $this->config = $config;
-        parent::__construct(
-            $image,
-            $this->getTitle()
+        $this->contextMock = $this->createMock(\Context::class);
+        $this->helperFormMock = $this->createMock(\HelperForm::class);
+        $this->helperFormProxy = new HelperFormProxy(
+            $this->contextMock,
+            $this->helperFormMock
         );
     }
 
-    protected function getSubmitTitle()
+    public function tearDown()
     {
-        return $this->module->l('Save');
+        $this->contextMock = null;
+        $this->helperFormMock = null;
     }
 
-    /**
-     * @return mixed
-     */
-    abstract protected function getTitle();
+    public function testGetHelperForm()
+    {
+        $formFields = [
+            'formfields' => true,
+        ];
+        $this->helperFormMock->expects($this->once())
+            ->method('generateForm')
+            ->willReturn('form');
+        $this->assertEquals('form', $this->helperFormProxy->getHelperForm($formFields));
+    }
 }

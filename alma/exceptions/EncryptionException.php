@@ -22,50 +22,12 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
-namespace Alma\PrestaShop\Forms;
+namespace Alma\PrestaShop\Exceptions;
 
 if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-/**
- * Class AbstractAlmaAdminFormBuilder
- */
-abstract class AbstractAlmaAdminFormBuilder extends AbstractAdminFormBuilder
+class EncryptionException extends AlmaException
 {
-    /**
-     * @var \Alma
-     */
-    protected $module;
-
-    /**
-     * @var \Context
-     */
-    protected $context;
-    protected $config;
-
-    /**
-     * @param string $image
-     * @param array $config
-     */
-    public function __construct($module, $context, $image, $config = [])
-    {
-        $this->module = $module;
-        $this->context = $context;
-        $this->config = $config;
-        parent::__construct(
-            $image,
-            $this->getTitle()
-        );
-    }
-
-    protected function getSubmitTitle()
-    {
-        return $this->module->l('Save');
-    }
-
-    /**
-     * @return mixed
-     */
-    abstract protected function getTitle();
 }
