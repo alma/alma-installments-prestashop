@@ -27,11 +27,14 @@ namespace Alma\PrestaShop\Services;
 use Alma\PrestaShop\Builders\Factories\ModuleFactoryBuilder;
 use Alma\PrestaShop\Builders\Helpers\CustomFieldHelperBuilder;
 use Alma\PrestaShop\Builders\Helpers\SettingsHelperBuilder;
+use Alma\PrestaShop\Exceptions\ShareOfCheckoutException;
 use Alma\PrestaShop\Factories\ContextFactory;
 use Alma\PrestaShop\Forms\ExcludedCategoryAdminFormBuilder;
 use Alma\PrestaShop\Forms\InpageAdminFormBuilder;
 use Alma\PrestaShop\Forms\PaymentButtonAdminFormBuilder;
 use Alma\PrestaShop\Helpers\SettingsHelper;
+use Alma\PrestaShop\Logger;
+use Alma\PrestaShop\Model\AlmaApiKeyModel;
 use Alma\PrestaShop\Model\ClientModel;
 use Alma\PrestaShop\Model\FeePlanModel;
 use Alma\PrestaShop\Proxy\ConfigurationProxy;
@@ -44,6 +47,8 @@ if (!defined('_PS_VERSION_')) {
 
 class ConfigFormService
 {
+    const ALMA_API_MODE = 'ALMA_API_MODE';
+    const ALMA_FULLY_CONFIGURED = 'ALMA_FULLY_CONFIGURED';
     /**
      * @var \Alma\PrestaShop\Services\AdminFormBuilderService
      */
@@ -84,6 +89,14 @@ class ConfigFormService
      * @var \Alma\PrestaShop\Model\ClientModel|null
      */
     private $clientModel;
+    /**
+     * @var \Alma\PrestaShop\Model\AlmaApiKeyModel
+     */
+    private $almaApiKeyModel;
+    /**
+     * @var \Alma\PrestaShop\Services\ShareOfCheckoutService
+     */
+    private $shareOfCheckoutService;
 
     public function __construct(
         $module = null,
@@ -95,7 +108,9 @@ class ConfigFormService
         $helperFormProxy = null,
         $configurationProxy = null,
         $toolsProxy = null,
-        $clientModel = null
+        $clientModel = null,
+        $almaApiKeyModel = null,
+        $shareOfCheckoutService = null
     ) {
         if (!$module) {
             $module = (new ModuleFactoryBuilder())->getInstance();
@@ -143,6 +158,14 @@ class ConfigFormService
             $clientModel = new ClientModel();
         }
         $this->clientModel = $clientModel;
+        if (!$almaApiKeyModel) {
+            $almaApiKeyModel = new AlmaApiKeyModel();
+        }
+        $this->almaApiKeyModel = $almaApiKeyModel;
+        if (!$shareOfCheckoutService) {
+            $shareOfCheckoutService = new ShareOfCheckoutService();
+        }
+        $this->shareOfCheckoutService = $shareOfCheckoutService;
     }
 
     /**
@@ -188,6 +211,29 @@ class ConfigFormService
     }
 
     /**
+     * @throws \Alma\PrestaShop\Exceptions\AlmaApiKeyException
+     * @throws \Alma\PrestaShop\Exceptions\ShareOfCheckoutException
+     */
+    public function saveConfiguration()
+    {
+        $almaFullyConfigured = '0';
+        $apiMode = $this->toolsProxy->getValue(self::ALMA_API_MODE);
+        $apiKeys = $this->almaApiKeyModel->getAllApiKeySend();
+        $this->almaApiKeyModel->checkActiveApiKeySendIsEmpty();
+        $this->almaApiKeyModel->checkApiKeys($apiKeys);
+        try {
+            $this->shareOfCheckoutService->handleConsent();
+        } catch (ShareOfCheckoutException $e) {
+            Logger::instance()->error($e->getMessage());
+            throw new ShareOfCheckoutException($e->getMessage());
+        }
+
+        // Consider the plugin as fully configured only when everything goes well
+        $this->configurationProxy->updateValue(self::ALMA_FULLY_CONFIGURED, $almaFullyConfigured);
+        $this->configurationProxy->updateValue(self::ALMA_API_MODE, $apiMode);
+    }
+
+    /**
      * Default fields value for the configuration form
      *
      * @return array
@@ -197,7 +243,7 @@ class ConfigFormService
         return [
             'ALMA_LIVE_API_KEY' => SettingsHelper::getLiveKey(),
             'ALMA_TEST_API_KEY' => SettingsHelper::getTestKey(),
-            'ALMA_API_MODE' => SettingsHelper::getActiveMode(),
+            self::ALMA_API_MODE => SettingsHelper::getActiveMode(),
             PaymentButtonAdminFormBuilder::ALMA_PAY_NOW_BUTTON_TITLE => $this->customFieldsHelper->getValue(
                 PaymentButtonAdminFormBuilder::ALMA_PAY_NOW_BUTTON_TITLE
             ),

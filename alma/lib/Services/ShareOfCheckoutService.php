@@ -22,61 +22,64 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
-namespace Alma\Prestashop\Services;
+namespace Alma\PrestaShop\Services;
 
-use Alma\PrestaShop\Exceptions\AlmaApiKeyException;
-use Alma\PrestaShop\Factories\ClientFactory;
-use Alma\PrestaShop\Forms\ApiAdminFormBuilder;
-use Alma\PrestaShop\Logger;
+use Alma\PrestaShop\Builders\Helpers\ShareOfCheckoutHelperBuilder;
+use Alma\PrestaShop\Exceptions\ShareOfCheckoutException;
+use Alma\PrestaShop\Forms\ShareOfCheckoutAdminFormBuilder;
+use Alma\PrestaShop\Helpers\SettingsHelper;
+use Alma\PrestaShop\Helpers\ShareOfCheckoutHelper;
 use Alma\PrestaShop\Model\AlmaApiKeyModel;
-use Alma\PrestaShop\Proxy\ToolsProxy;
 
 if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-class AlmaConfigurationService
+class ShareOfCheckoutService
 {
     /**
-     * @var \Alma\PrestaShop\Model\AlmaApiKeyModel
+     * @var ShareOfCheckoutHelper
+     */
+    private $shareOfCheckoutHelper;
+    /**
+     * @var AlmaApiKeyModel
      */
     private $almaApiKeyModel;
-    /**
-     * @var \Alma\PrestaShop\Proxy\ToolsProxy|mixed|null
-     */
-    private $toolsProxy;
 
+    /**
+     * @param ShareOfCheckoutHelper $shareOfCheckoutHelper
+     * @param AlmaApiKeyModel $almaApiKeyModel
+     */
     public function __construct(
-        $almaApiKeyModel = null,
-        $toolsProxy = null,
-        $clientFactory = null
+        $shareOfCheckoutHelper = null,
+        $almaApiKeyModel = null
     ) {
+        if (!$shareOfCheckoutHelper) {
+            $shareOfCheckoutHelper = (new ShareOfCheckoutHelperBuilder())->getInstance();
+        }
+        $this->shareOfCheckoutHelper = $shareOfCheckoutHelper;
         if (!$almaApiKeyModel) {
             $almaApiKeyModel = new AlmaApiKeyModel();
         }
         $this->almaApiKeyModel = $almaApiKeyModel;
-
-        if (!$toolsProxy) {
-            $toolsProxy = new ToolsProxy();
-        }
-        $this->toolsProxy = $toolsProxy;
-
-        if (!$clientFactory) {
-            $clientFactory = new ClientFactory();
-        }
     }
 
-    public function saveConfiguration()
+    /**
+     * @return void
+     *
+     * @throws \Alma\PrestaShop\Exceptions\ShareOfCheckoutException
+     */
+    public function handleConsent()
     {
-        try {
-            $currentMode = $this->toolsProxy->getValue(ApiAdminFormBuilder::ALMA_API_MODE);
-            $this->almaApiKeyModel->checkApiKeys($currentMode);
-        } catch (AlmaApiKeyException $e) {
-            Logger::instance()->error($e->getMessage());
+        if (!$this->almaApiKeyModel->isSameLiveApiKeySaved()) {
+            try {
+                $this->shareOfCheckoutHelper->resetShareOfCheckoutConsent();
+            } catch (ShareOfCheckoutException $e) {
+                throw new ShareOfCheckoutException($e->getMessage());
+            }
         }
-    }
-
-    public function getConfiguration()
-    {
+        if (SettingsHelper::isShareOfCheckoutAnswered() === true && $this->almaApiKeyModel->isSameModeSaved()) {
+            $this->shareOfCheckoutHelper->handleCheckoutConsent(ShareOfCheckoutAdminFormBuilder::ALMA_SHARE_OF_CHECKOUT_STATE . '_ON');
+        }
     }
 }

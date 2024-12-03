@@ -39,12 +39,25 @@ class ClientModel
      * @var \Alma\API\Client|null
      */
     private $almaClient;
+    /**
+     * @var string
+     */
+    private $apiKey;
+    /**
+     * @var string
+     */
+    private $mode;
 
     public function __construct($almaClient = null)
     {
-        if (!$almaClient) {
+        if (!$almaClient && empty($this->apiKey) && empty($this->mode)) {
             $almaClient = (new ClientFactory())->get();
         }
+
+        if ($this->apiKey && $this->mode) {
+            $almaClient = (new ClientFactory())->create($this->apiKey, $this->mode);
+        }
+
         $this->almaClient = $almaClient;
     }
 
@@ -58,6 +71,26 @@ class ClientModel
     public function setClient($client)
     {
         $this->almaClient = $client;
+    }
+
+    /**
+     * @param $apiKey
+     *
+     * @return void
+     */
+    public function setApiKey($apiKey)
+    {
+        $this->apiKey = $apiKey;
+    }
+
+    /**
+     * @param $mode
+     *
+     * @return void
+     */
+    public function setMode($mode)
+    {
+        $this->mode = $mode;
     }
 
     /**

@@ -44,11 +44,11 @@ class ClientFactory
     /**
      * @return \Alma\API\Client|null
      */
-    public function create()
+    public function create($apiKey, $mode)
     {
         try {
-            $this->alma = new Client(SettingsHelper::getActiveAPIKey(), [
-                'mode' => SettingsHelper::getActiveMode(),
+            $this->alma = new Client($apiKey, [
+                'mode' => $mode,
                 'logger' => Logger::instance(),
             ]);
 
@@ -73,7 +73,7 @@ class ClientFactory
     public function get()
     {
         if (!$this->alma) {
-            $this->alma = $this->create();
+            $this->alma = $this->create(SettingsHelper::getActiveAPIKey(), SettingsHelper::getActiveMode());
         }
 
         return $this->alma;
