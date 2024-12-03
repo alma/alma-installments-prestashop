@@ -35,7 +35,9 @@ use Alma\PrestaShop\Builders\Helpers\ContextHelperBuilder;
 use Alma\PrestaShop\Builders\Helpers\PriceHelperBuilder;
 use Alma\PrestaShop\Builders\Helpers\SettingsHelperBuilder;
 use Alma\PrestaShop\Builders\Helpers\ShareOfCheckoutHelperBuilder;
+use Alma\PrestaShop\Exceptions\AlmaApiKeyException;
 use Alma\PrestaShop\Exceptions\MissingParameterException;
+use Alma\PrestaShop\Exceptions\ShareOfCheckoutException;
 use Alma\PrestaShop\Factories\ContextFactory;
 use Alma\PrestaShop\Forms\ApiAdminFormBuilder;
 use Alma\PrestaShop\Forms\ExcludedCategoryAdminFormBuilder;
@@ -245,7 +247,14 @@ final class GetContentHookController extends AdminHookController
         $messages = [];
 
         if (\Tools::isSubmit('alma_config_form')) {
-            $messages = $this->processConfiguration();
+            try {
+                $this->configFormService->saveConfiguration();
+            } catch (AlmaApiKeyException $e) {
+                $messages[] = $e->getMessage();
+            } catch (ShareOfCheckoutException $e) {
+                $messages[] = $e->getMessage();
+            }
+            //$messages = $this->processConfiguration();
         }
 
         $assignSmartyKeys['form'] = $this->configFormService->getRenderPaymentFormHtml();

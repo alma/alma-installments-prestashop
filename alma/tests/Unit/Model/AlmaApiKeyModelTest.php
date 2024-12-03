@@ -24,8 +24,13 @@
 
 namespace Alma\PrestaShop\Tests\Unit\Model;
 
+use Alma\API\Client;
+use Alma\API\Endpoints\Merchants;
 use Alma\PrestaShop\Exceptions\AlmaApiKeyException;
+use Alma\PrestaShop\Helpers\ConstantsHelper;
 use Alma\PrestaShop\Model\AlmaApiKeyModel;
+use Alma\PrestaShop\Model\ClientModel;
+use Alma\PrestaShop\Proxy\ConfigurationProxy;
 use Alma\PrestaShop\Proxy\ToolsProxy;
 use PHPUnit\Framework\TestCase;
 
@@ -39,12 +44,38 @@ class AlmaApiKeyModelTest extends TestCase
      * @var ToolsProxy
      */
     protected $toolsProxyMock;
+    /**
+     * @var \Alma\PrestaShop\Model\ClientModel
+     */
+    protected $clientModelMock;
+    /**
+     * @var \Alma\API\Endpoints\Merchants
+     */
+    protected $merchantMock;
+    /**
+     * @var \Alma\API\Client
+     */
+    protected $clientMockTest;
+    /**
+     * @var \Alma\API\Client
+     */
+    protected $clientMockLive;
 
     public function setUp()
     {
         $this->toolsProxyMock = $this->createMock(ToolsProxy::class);
+        $this->configurationProxyMock = $this->createMock(ConfigurationProxy::class);
+        $this->clientModelMock = $this->createMock(ClientModel::class);
+        $this->clientMockTest = $this->createMock(Client::class);
+        $this->clientMockLive = $this->createMock(Client::class);
+        $this->merchantMockTest = $this->createMock(Merchants::class);
+        $this->merchantMockLive = $this->createMock(Merchants::class);
+        $this->clientMockTest->merchants = $this->merchantMockTest;
+        $this->clientMockLive->merchants = $this->merchantMockLive;
         $this->almaApiKeyModel = new AlmaApiKeyModel(
-            $this->toolsProxyMock
+            $this->toolsProxyMock,
+            $this->configurationProxyMock,
+            $this->clientModelMock
         );
     }
 
@@ -57,28 +88,119 @@ class AlmaApiKeyModelTest extends TestCase
     /**
      * @throws \Alma\PrestaShop\Exceptions\AlmaApiKeyException
      */
-    public function testCheckActiveApiKeyWithoutApiKey()
+    public function testCheckActiveApiKeySendIsEmptyWithEmptyKey()
     {
-        $mode = 'test';
-        $this->toolsProxyMock->expects($this->once())
+        $this->toolsProxyMock->expects($this->exactly(2))
             ->method('getValue')
-            ->with('ALMA_TEST_API_KEY')
-            ->willReturn('');
+            ->withConsecutive(['ALMA_API_MODE'], ['ALMA_TEST_API_KEY'])
+            ->willReturnOnConsecutiveCalls('test', '');
         $this->expectException(AlmaApiKeyException::class);
-        $this->almaApiKeyModel->checkActiveApiKey($mode);
+        $this->almaApiKeyModel->checkActiveApiKeySendIsEmpty();
     }
 
     /**
      * @throws \Alma\PrestaShop\Exceptions\AlmaApiKeyException
      */
-    public function testCheckActiveApiKeyWithApiKey()
+    public function testCheckActiveApiKeySendIsEmptyWithNotEmptyKey()
     {
-        $mode = 'test';
-        $this->toolsProxyMock->expects($this->once())
+        $this->toolsProxyMock->expects($this->exactly(2))
             ->method('getValue')
-            ->with('ALMA_TEST_API_KEY')
-            ->willReturn('api_key');
-        $this->almaApiKeyModel->checkActiveApiKey($mode);
-        $this->assertTrue(true);
+            ->withConsecutive(['ALMA_API_MODE'], ['ALMA_TEST_API_KEY'])
+            ->willReturnOnConsecutiveCalls('test', 'notEmpty');
+        $this->almaApiKeyModel->checkActiveApiKeySendIsEmpty();
+    }
+
+    /**
+     * @throws \Alma\PrestaShop\Exceptions\AlmaApiKeyException
+     */
+    public function testApiKeysInvalidFormClientWithCannotCreatePayment()
+    {
+        $this->merchantMockTest->can_create_payments = false;
+        $this->merchantMockLive->can_create_payments = true;
+        $apiKeys = [
+            'test' => 'notAllowedApiKey',
+            'live' => 'ValidApiKey',
+        ];
+        $this->clientModelMock->expects($this->exactly(2))
+            ->method('setApiKey')
+            ->withConsecutive([$apiKeys['test']], [$apiKeys['live']]);
+        $this->clientModelMock->expects($this->exactly(2))
+            ->method('setMode')
+            ->withConsecutive(['test'], ['live']);
+        $this->clientModelMock->expects($this->exactly(2))
+            ->method('getMerchantMe')
+            ->willReturnOnConsecutiveCalls($this->merchantMockTest, $this->merchantMockLive);
+        $this->expectException(AlmaApiKeyException::class);
+        $this->almaApiKeyModel->checkApiKeys($apiKeys);
+    }
+
+    /**
+     * @throws \Alma\PrestaShop\Exceptions\AlmaApiKeyException
+     */
+    public function testApiKeysInvalidFormClientWithInvalidApiKey()
+    {
+        $this->merchantMockTest = null;
+        $this->merchantMockLive->can_create_payments = true;
+        $apiKeys = [
+            'test' => 'invalidApiKey',
+            'live' => 'ValidApiKey',
+        ];
+        $this->clientModelMock->expects($this->exactly(2))
+            ->method('setApiKey')
+            ->withConsecutive([$apiKeys['test']], [$apiKeys['live']]);
+        $this->clientModelMock->expects($this->exactly(2))
+            ->method('setMode')
+            ->withConsecutive(['test'], ['live']);
+        $this->clientModelMock->expects($this->exactly(2))
+            ->method('getMerchantMe')
+            ->willReturnOnConsecutiveCalls($this->merchantMockTest, $this->merchantMockLive);
+        $this->expectException(AlmaApiKeyException::class);
+        $this->almaApiKeyModel->checkApiKeys($apiKeys);
+    }
+
+    /**
+     * @throws \Alma\PrestaShop\Exceptions\AlmaApiKeyException
+     */
+    public function testApiKeysInvalidFormClientWithCanCreatePayment()
+    {
+        $this->merchantMockTest->can_create_payments = true;
+        $this->merchantMockLive->can_create_payments = true;
+        $apiKeys = [
+            'test' => 'ValidApiKey',
+            'live' => 'ValidApiKey',
+        ];
+        $this->clientModelMock->expects($this->exactly(2))
+            ->method('setApiKey')
+            ->withConsecutive([$apiKeys['test']], [$apiKeys['live']]);
+        $this->clientModelMock->expects($this->exactly(2))
+            ->method('setMode')
+            ->withConsecutive(['test'], ['live']);
+        $this->clientModelMock->expects($this->exactly(2))
+            ->method('getMerchantMe')
+            ->willReturnOnConsecutiveCalls($this->merchantMockTest, $this->merchantMockLive);
+        $this->almaApiKeyModel->checkApiKeys($apiKeys);
+    }
+
+    /**
+     * @throws \Alma\PrestaShop\Exceptions\AlmaApiKeyException
+     */
+    public function testApiKeysInvalidFormClientWithCanCreatePaymentAndObscure()
+    {
+        $this->merchantMockTest->can_create_payments = true;
+        $this->merchantMockLive->can_create_payments = true;
+        $apiKeys = [
+            'test' => ConstantsHelper::OBSCURE_VALUE,
+            'live' => ConstantsHelper::OBSCURE_VALUE,
+        ];
+        $this->clientModelMock->expects($this->never())
+            ->method('setApiKey')
+            ->withConsecutive([$apiKeys['test']], [$apiKeys['live']]);
+        $this->clientModelMock->expects($this->never())
+            ->method('setMode')
+            ->withConsecutive(['test'], ['live']);
+        $this->clientModelMock->expects($this->never())
+            ->method('getMerchantMe')
+            ->willReturnOnConsecutiveCalls($this->merchantMockTest, $this->merchantMockLive);
+        $this->almaApiKeyModel->checkApiKeys($apiKeys);
     }
 }

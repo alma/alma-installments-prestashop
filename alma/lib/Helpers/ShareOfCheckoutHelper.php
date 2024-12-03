@@ -387,7 +387,7 @@ class ShareOfCheckoutHelper
      *
      * @return void
      *
-     * @throws \Exception
+     * @throws \Alma\PrestaShop\Exceptions\ShareOfCheckoutException
      */
     public function resetShareOfCheckoutConsent()
     {
@@ -402,6 +402,7 @@ class ShareOfCheckoutHelper
             }
         } catch (ShareOfCheckoutException $e) {
             $this->context->smarty->assign('validation_error', 'soc_api_error');
+            throw new ShareOfCheckoutException($e->getMessage());
         }
     }
 
