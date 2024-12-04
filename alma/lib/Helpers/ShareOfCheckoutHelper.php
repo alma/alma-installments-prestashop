@@ -513,4 +513,14 @@ class ShareOfCheckoutHelper
     {
         return \Configuration::get(ShareOfCheckoutAdminFormBuilder::ALMA_SHARE_OF_CHECKOUT_DATE);
     }
+
+    /**
+     * Get bool about the consent of SoC
+     *
+     * @return bool
+     */
+    public function isShareOfCheckoutAnswered()
+    {
+        return SettingsHelper::isShareOfCheckoutAnswered();
+    }
 }
