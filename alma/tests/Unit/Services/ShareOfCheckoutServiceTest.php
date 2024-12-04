@@ -26,9 +26,6 @@ namespace Alma\PrestaShop\Tests\Unit\Services;
 
 use PHPUnit\Framework\TestCase;
 
-class PaymentServiceTest extends TestCase
+class ShareOfCheckoutServiceTest extends TestCase
 {
-    public function testCreatePaymentOptions()
-    {
-    }
 }

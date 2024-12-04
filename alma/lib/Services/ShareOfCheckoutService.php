@@ -27,7 +27,6 @@ namespace Alma\PrestaShop\Services;
 use Alma\PrestaShop\Builders\Helpers\ShareOfCheckoutHelperBuilder;
 use Alma\PrestaShop\Exceptions\ShareOfCheckoutException;
 use Alma\PrestaShop\Forms\ShareOfCheckoutAdminFormBuilder;
-use Alma\PrestaShop\Helpers\SettingsHelper;
 use Alma\PrestaShop\Helpers\ShareOfCheckoutHelper;
 use Alma\PrestaShop\Model\AlmaApiKeyModel;
 
@@ -78,7 +77,7 @@ class ShareOfCheckoutService
                 throw new ShareOfCheckoutException($e->getMessage());
             }
         }
-        if (SettingsHelper::isShareOfCheckoutAnswered() === true && $this->almaApiKeyModel->isSameModeSaved()) {
+        if ($this->shareOfCheckoutHelper->isShareOfCheckoutAnswered() === true && $this->almaApiKeyModel->isSameModeSaved()) {
             $this->shareOfCheckoutHelper->handleCheckoutConsent(ShareOfCheckoutAdminFormBuilder::ALMA_SHARE_OF_CHECKOUT_STATE . '_ON');
         }
     }
