@@ -254,7 +254,7 @@ final class GetContentHookController extends AdminHookController
             } catch (ShareOfCheckoutException $e) {
                 $messages[] = $e->getMessage();
             }
-            //$messages = $this->processConfiguration();
+//            $messages = $this->processConfiguration();
         }
 
         $assignSmartyKeys['form'] = $this->configFormService->getRenderPaymentFormHtml();

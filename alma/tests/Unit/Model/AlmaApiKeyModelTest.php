@@ -28,6 +28,7 @@ use Alma\API\Client;
 use Alma\API\Endpoints\Merchants;
 use Alma\PrestaShop\Exceptions\AlmaApiKeyException;
 use Alma\PrestaShop\Helpers\ConstantsHelper;
+use Alma\PrestaShop\Helpers\EncryptionHelper;
 use Alma\PrestaShop\Model\AlmaApiKeyModel;
 use Alma\PrestaShop\Model\ClientModel;
 use Alma\PrestaShop\Proxy\ConfigurationProxy;
@@ -60,12 +61,21 @@ class AlmaApiKeyModelTest extends TestCase
      * @var \Alma\API\Client
      */
     protected $clientMockLive;
+    /**
+     * @var \Alma\PrestaShop\Helpers\EncryptionHelper
+     */
+    protected $encryptionHelperMock;
+    /**
+     * @var \Alma\PrestaShop\Proxy\ConfigurationProxy
+     */
+    protected $configurationProxyMock;
 
     public function setUp()
     {
         $this->toolsProxyMock = $this->createMock(ToolsProxy::class);
         $this->configurationProxyMock = $this->createMock(ConfigurationProxy::class);
         $this->clientModelMock = $this->createMock(ClientModel::class);
+        $this->encryptionHelperMock = $this->createMock(EncryptionHelper::class);
         $this->clientMockTest = $this->createMock(Client::class);
         $this->clientMockLive = $this->createMock(Client::class);
         $this->merchantMockTest = $this->createMock(Merchants::class);
@@ -75,7 +85,8 @@ class AlmaApiKeyModelTest extends TestCase
         $this->almaApiKeyModel = new AlmaApiKeyModel(
             $this->toolsProxyMock,
             $this->configurationProxyMock,
-            $this->clientModelMock
+            $this->clientModelMock,
+            $this->encryptionHelperMock
         );
     }
 
@@ -202,5 +213,50 @@ class AlmaApiKeyModelTest extends TestCase
             ->method('getMerchantMe')
             ->willReturnOnConsecutiveCalls($this->merchantMockTest, $this->merchantMockLive);
         $this->almaApiKeyModel->checkApiKeys($apiKeys);
+    }
+
+    public function testSaveApiKeysWithoutObscureKey()
+    {
+        $apiKeys = [
+            'test' => 'api_key_test',
+            'live' => 'api_key_live',
+        ];
+        $this->configurationProxyMock->expects($this->exactly(2))
+            ->method('updateValue')
+            ->withConsecutive(['ALMA_TEST_API_KEY', 'api_key_test_encrypted'], ['ALMA_LIVE_API_KEY', 'api_key_live_encrypted']);
+        $this->encryptionHelperMock->expects($this->exactly(2))
+            ->method('encrypt')
+            ->withConsecutive(['api_key_test'], ['api_key_live'])
+            ->willReturnOnConsecutiveCalls('api_key_test_encrypted', 'api_key_live_encrypted');
+        $this->almaApiKeyModel->saveApiKeys($apiKeys);
+    }
+
+    public function testSaveApiKeysWithOneObscureKey()
+    {
+        $apiKeys = [
+            'test' => ConstantsHelper::OBSCURE_VALUE,
+            'live' => 'api_key_live',
+        ];
+        $this->configurationProxyMock->expects($this->once())
+            ->method('updateValue')
+            ->with('ALMA_LIVE_API_KEY', 'api_key_live_encrypted');
+        $this->encryptionHelperMock->expects($this->once())
+            ->method('encrypt')
+            ->with('api_key_live')
+            ->willReturn('api_key_live_encrypted');
+        $this->almaApiKeyModel->saveApiKeys($apiKeys);
+    }
+
+    public function testSaveApiKeysWithAllObscureKeys()
+    {
+        $apiKeys = [
+            'test' => ConstantsHelper::OBSCURE_VALUE,
+            'live' => ConstantsHelper::OBSCURE_VALUE,
+        ];
+        $this->configurationProxyMock->expects($this->never())
+            ->method('updateValue');
+        $this->encryptionHelperMock->expects($this->never())
+            ->method('encrypt');
+        $this->almaApiKeyModel->saveApiKeys($apiKeys);
     }
 }

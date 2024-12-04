@@ -49,6 +49,7 @@ class ConfigFormService
 {
     const ALMA_API_MODE = 'ALMA_API_MODE';
     const ALMA_FULLY_CONFIGURED = 'ALMA_FULLY_CONFIGURED';
+    const ALMA_MERCHANT_ID = 'ALMA_MERCHANT_ID';
     /**
      * @var \Alma\PrestaShop\Services\AdminFormBuilderService
      */
@@ -227,7 +228,9 @@ class ConfigFormService
             Logger::instance()->error($e->getMessage());
             throw new ShareOfCheckoutException($e->getMessage());
         }
+        $this->almaApiKeyModel->saveApiKeys($apiKeys);
 
+        $this->configurationProxy->updateValue(self::ALMA_MERCHANT_ID, $this->clientModel->getMerchantId());
         // Consider the plugin as fully configured only when everything goes well
         $this->configurationProxy->updateValue(self::ALMA_FULLY_CONFIGURED, $almaFullyConfigured);
         $this->configurationProxy->updateValue(self::ALMA_API_MODE, $apiMode);

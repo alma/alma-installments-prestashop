@@ -520,12 +520,12 @@ class ShareOfCheckoutHelper
     }
 
     /**
-     * Get bool about the consent of SoC
+     * Check if SoC State are answered with Yes or No. If state is null, return false
      *
      * @return bool
      */
     public function isShareOfCheckoutAnswered()
     {
-        return SettingsHelper::isShareOfCheckoutAnswered();
+        return SettingsHelper::isShareOfCheckoutAnswered() === true;
     }
 }
