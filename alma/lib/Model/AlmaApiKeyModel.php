@@ -27,6 +27,7 @@ namespace Alma\PrestaShop\Model;
 use Alma\PrestaShop\Exceptions\AlmaApiKeyException;
 use Alma\PrestaShop\Forms\ApiAdminFormBuilder;
 use Alma\PrestaShop\Helpers\ConstantsHelper;
+use Alma\PrestaShop\Helpers\EncryptionHelper;
 use Alma\PrestaShop\Helpers\SettingsHelper;
 use Alma\PrestaShop\Proxy\ConfigurationProxy;
 use Alma\PrestaShop\Proxy\ToolsProxy;
@@ -46,18 +47,23 @@ class AlmaApiKeyModel
      */
     private $toolsProxy;
     /**
-     * @var ConfigurationProxy|mixed|null
+     * @var ConfigurationProxy
      */
     private $configurationProxy;
     /**
-     * @var \Alma\PrestaShop\Model\ClientModel|mixed|null
+     * @var \Alma\PrestaShop\Model\ClientModel
      */
     private $clientModel;
+    /**
+     * @var \Alma\PrestaShop\Helpers\EncryptionHelper
+     */
+    private $encryptionHelper;
 
     public function __construct(
         $toolsProxy = null,
         $configurationProxy = null,
-        $clientModel = null
+        $clientModel = null,
+        $encryptionHelper = null
     ) {
         if (!$toolsProxy) {
             $toolsProxy = new ToolsProxy();
@@ -73,6 +79,10 @@ class AlmaApiKeyModel
             $clientModel = new ClientModel();
         }
         $this->clientModel = $clientModel;
+        if (!$encryptionHelper) {
+            $encryptionHelper = new EncryptionHelper();
+        }
+        $this->encryptionHelper = $encryptionHelper;
     }
 
     /**
@@ -192,5 +202,20 @@ class AlmaApiKeyModel
             'test' => trim($this->toolsProxy->getValue(ApiAdminFormBuilder::ALMA_TEST_API_KEY)),
             'live' => trim($this->toolsProxy->getValue(ApiAdminFormBuilder::ALMA_LIVE_API_KEY)),
         ];
+    }
+
+    /**
+     * @param $apiKeys
+     *
+     * @return void
+     */
+    public function saveApiKeys($apiKeys)
+    {
+        foreach ($apiKeys as $mode => $apiKey) {
+            if ($this->isObscureApiKey($apiKey)) {
+                continue;
+            }
+            $this->configurationProxy->updateValue(self::ALMA_API_KEY_MODE[$mode], $this->encryptionHelper->encrypt($apiKey));
+        }
     }
 }

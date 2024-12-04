@@ -77,7 +77,11 @@ class ShareOfCheckoutService
                 throw new ShareOfCheckoutException($e->getMessage());
             }
         }
-        if ($this->shareOfCheckoutHelper->isShareOfCheckoutAnswered() === true && $this->almaApiKeyModel->isSameModeSaved()) {
+        if (
+            $this->almaApiKeyModel->isSameLiveApiKeySaved() &&
+            $this->shareOfCheckoutHelper->isShareOfCheckoutAnswered() &&
+            $this->almaApiKeyModel->isSameModeSaved()
+        ) {
             $this->shareOfCheckoutHelper->handleCheckoutConsent(ShareOfCheckoutAdminFormBuilder::ALMA_SHARE_OF_CHECKOUT_STATE . '_ON');
         }
     }

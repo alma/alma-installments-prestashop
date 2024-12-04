@@ -24,8 +24,86 @@
 
 namespace Alma\PrestaShop\Tests\Unit\Services;
 
+use Alma\PrestaShop\Exceptions\ShareOfCheckoutException;
+use Alma\PrestaShop\Forms\ShareOfCheckoutAdminFormBuilder;
+use Alma\PrestaShop\Helpers\ShareOfCheckoutHelper;
+use Alma\PrestaShop\Model\AlmaApiKeyModel;
+use Alma\PrestaShop\Services\ShareOfCheckoutService;
 use PHPUnit\Framework\TestCase;
 
 class ShareOfCheckoutServiceTest extends TestCase
 {
+    /**
+     * @var \Alma\PrestaShop\Helpers\ShareOfCheckoutHelper|(\Alma\PrestaShop\Helpers\ShareOfCheckoutHelper&\PHPUnit_Framework_MockObject_MockObject)|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $shareOfCheckoutHelperMock;
+    /**
+     * @var \Alma\PrestaShop\Model\AlmaApiKeyModel|(\Alma\PrestaShop\Model\AlmaApiKeyModel&\PHPUnit_Framework_MockObject_MockObject)|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $almaApiKeyModelMock;
+
+    public function setUp()
+    {
+        $this->shareOfCheckoutHelperMock = $this->createMock(ShareOfCheckoutHelper::class);
+        $this->almaApiKeyModelMock = $this->createMock(AlmaApiKeyModel::class);
+        $this->shareOfCheckoutService = new ShareOfCheckoutService(
+            $this->shareOfCheckoutHelperMock,
+            $this->almaApiKeyModelMock
+        );
+    }
+
+    /**
+     * @throws \Alma\PrestaShop\Exceptions\ShareOfCheckoutException
+     */
+    public function testHandleConsentResetSoCIfKeyIsNotSame()
+    {
+        $this->almaApiKeyModelMock->method('isSameLiveApiKeySaved')
+            ->willReturn(false);
+        $this->shareOfCheckoutHelperMock->expects($this->once())
+            ->method('resetShareOfCheckoutConsent');
+        $this->shareOfCheckoutService->handleConsent();
+    }
+
+    public function testHandleConsentResetSoCIfKeyIsNotSameAndThrowException()
+    {
+        $this->almaApiKeyModelMock->method('isSameLiveApiKeySaved')
+            ->willReturn(false);
+        $this->shareOfCheckoutHelperMock->expects($this->once())
+            ->method('resetShareOfCheckoutConsent')
+            ->willThrowException(new ShareOfCheckoutException());
+        $this->expectException(ShareOfCheckoutException::class);
+        $this->shareOfCheckoutService->handleConsent();
+    }
+
+    public function testHandleConsentWithSameApiKeyAndShareOfCheckoutAlreadyAnsweredAndSameModeApi()
+    {
+        $this->almaApiKeyModelMock->method('isSameLiveApiKeySaved')
+            ->willReturn(true);
+        $this->shareOfCheckoutHelperMock->expects($this->never())
+            ->method('resetShareOfCheckoutConsent');
+        $this->shareOfCheckoutHelperMock->method('isShareOfCheckoutAnswered')
+            ->willReturn(true);
+        $this->almaApiKeyModelMock->method('isSameModeSaved')
+            ->willReturn(true);
+        $this->shareOfCheckoutHelperMock->expects($this->once())
+            ->method('handleCheckoutConsent')
+            ->with(ShareOfCheckoutAdminFormBuilder::ALMA_SHARE_OF_CHECKOUT_STATE . '_ON');
+        $this->shareOfCheckoutService->handleConsent();
+    }
+
+    public function testHandleConsentWithSameApiKeyAndShareOfCheckoutAlreadyAnsweredAndNotSameModeApi()
+    {
+        $this->almaApiKeyModelMock->method('isSameLiveApiKeySaved')
+            ->willReturn(true);
+        $this->shareOfCheckoutHelperMock->expects($this->never())
+            ->method('resetShareOfCheckoutConsent');
+        $this->shareOfCheckoutHelperMock->method('isShareOfCheckoutAnswered')
+            ->willReturn(true);
+        $this->almaApiKeyModelMock->method('isSameModeSaved')
+            ->willReturn(false);
+        $this->shareOfCheckoutHelperMock->expects($this->never())
+            ->method('handleCheckoutConsent')
+            ->with(ShareOfCheckoutAdminFormBuilder::ALMA_SHARE_OF_CHECKOUT_STATE . '_ON');
+        $this->shareOfCheckoutService->handleConsent();
+    }
 }
