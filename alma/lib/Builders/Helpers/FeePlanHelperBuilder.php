@@ -45,7 +45,9 @@ class FeePlanHelperBuilder
     {
         return new FeePlanHelper(
             $this->getSettingsHelper(),
-            $this->getEligibilityFactory()
+            $this->getEligibilityFactory(),
+            $this->getPriceHelper(),
+            $this->getToolsProxy()
         );
     }
 }

@@ -24,6 +24,7 @@
 
 namespace Alma\PrestaShop\Model;
 
+use Alma\API\Exceptions\RequestException;
 use Alma\API\RequestError;
 use Alma\PrestaShop\Exceptions\ClientException;
 use Alma\PrestaShop\Factories\ClientFactory;
@@ -161,6 +162,26 @@ class ClientModel
             return [];
         } catch (ClientException $e) {
             return [];
+        }
+    }
+
+    /**
+     * Send the URL to Alma to gather CMS data
+     *
+     * @param string $url
+     *
+     * @throws \Alma\PrestaShop\Exceptions\ClientException
+     */
+    public function sendUrlForGatherCmsData($url)
+    {
+        try {
+            $this->getClient()->configuration->sendIntegrationsConfigurationsUrl($url);
+        } catch (RequestException $e) {
+            throw new ClientException('[Alma] Error Request: ' . $e->getMessage());
+        } catch (RequestError $e) {
+            throw new ClientException('[Alma] Error Request: ' . $e->getMessage());
+        } catch (ClientException $e) {
+            throw new ClientException('[Alma] Error to get Alma Client: ' . $e->getMessage());
         }
     }
 }

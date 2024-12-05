@@ -29,7 +29,9 @@ use Alma\API\Entities\FeePlan;
 use Alma\PrestaShop\Builders\Helpers\FeePlanHelperBuilder;
 use Alma\PrestaShop\Factories\EligibilityFactory;
 use Alma\PrestaShop\Helpers\FeePlanHelper;
+use Alma\PrestaShop\Helpers\PriceHelper;
 use Alma\PrestaShop\Helpers\SettingsHelper;
+use Alma\PrestaShop\Proxy\ToolsProxy;
 use PHPUnit\Framework\TestCase;
 
 class FeePlanHelperTest extends TestCase
@@ -155,30 +157,34 @@ class FeePlanHelperTest extends TestCase
 
     public function testGetEligibleFeePlansOnLimitMinMax()
     {
-        $installementCountOne = [
+        $installmentCountOne = [
             'installmentsCount' => 1,
             'deferredDays' => 0,
             'deferredMonths' => 0,
         ];
-        $installementCountThree = [
+        $installmentCountThree = [
             'installmentsCount' => 3,
             'deferredDays' => 0,
             'deferredMonths' => 0,
         ];
 
-        $installementDataArray = [
-            $installementCountOne,
-            $installementCountThree,
+        $installmentDataArray = [
+            $installmentCountOne,
+            $installmentCountThree,
         ];
 
         $settingsHelper = $this->createMock(SettingsHelper::class);
-        $settingsHelper->expects($this->exactly(2))->method('getDataFromKey')->willReturnOnConsecutiveCalls($installementCountOne, $installementCountThree);
+        $settingsHelper->expects($this->exactly(2))->method('getDataFromKey')->willReturnOnConsecutiveCalls($installmentCountOne, $installmentCountThree);
 
         $eligibilityFactory = $this->createMock(EligibilityFactory::class);
+        $priceHelper = $this->createMock(PriceHelper::class);
+        $toolsProxy = $this->createMock(ToolsProxy::class);
 
         $feePlanHelper = new FeePlanHelper(
             $settingsHelper,
-            $eligibilityFactory
+            $eligibilityFactory,
+            $priceHelper,
+            $toolsProxy
         );
 
         $feePlans = [
@@ -186,6 +192,6 @@ class FeePlanHelperTest extends TestCase
             'general_3_0_0' => new FeePlan(['min' => 50, 'max' => 100]),
         ];
 
-        $this->assertEquals($installementDataArray, $feePlanHelper->getEligibleFeePlans($feePlans, 100));
+        $this->assertEquals($installmentDataArray, $feePlanHelper->getEligibleFeePlans($feePlans, 100));
     }
 }
