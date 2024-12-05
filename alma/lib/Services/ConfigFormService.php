@@ -24,16 +24,16 @@
 
 namespace Alma\PrestaShop\Services;
 
+use Alma\API\Lib\IntegrationsConfigurationsUtils;
 use Alma\PrestaShop\Builders\Factories\ModuleFactoryBuilder;
 use Alma\PrestaShop\Builders\Helpers\CustomFieldHelperBuilder;
 use Alma\PrestaShop\Builders\Helpers\SettingsHelperBuilder;
-use Alma\PrestaShop\Exceptions\ShareOfCheckoutException;
 use Alma\PrestaShop\Factories\ContextFactory;
 use Alma\PrestaShop\Forms\ExcludedCategoryAdminFormBuilder;
 use Alma\PrestaShop\Forms\InpageAdminFormBuilder;
 use Alma\PrestaShop\Forms\PaymentButtonAdminFormBuilder;
+use Alma\PrestaShop\Helpers\CmsDataHelper;
 use Alma\PrestaShop\Helpers\SettingsHelper;
-use Alma\PrestaShop\Logger;
 use Alma\PrestaShop\Model\AlmaApiKeyModel;
 use Alma\PrestaShop\Model\ClientModel;
 use Alma\PrestaShop\Model\FeePlanModel;
@@ -50,6 +50,64 @@ class ConfigFormService
     const ALMA_API_MODE = 'ALMA_API_MODE';
     const ALMA_FULLY_CONFIGURED = 'ALMA_FULLY_CONFIGURED';
     const ALMA_MERCHANT_ID = 'ALMA_MERCHANT_ID';
+    const API_ONLY = '_api_only';
+    /**
+     * @var array
+     */
+    const STATIC_KEY_CONFIG = [
+        'ALMA_SHOW_ELIGIBILITY_MESSAGE' => [
+            'action' => 'test_bool',
+            'suffix' => '_ON',
+        ],
+        'ALMA_SHOW_PRODUCT_ELIGIBILITY' => [
+            'action' => 'test_bool',
+            'suffix' => '_ON',
+        ],
+        'ALMA_CART_WDGT_NOT_ELGBL' => [
+            'action' => 'cast_bool',
+            'suffix' => '_ON',
+        ],
+        'ALMA_PRODUCT_WDGT_NOT_ELGBL' => [
+            'action' => 'cast_bool',
+            'suffix' => '_ON',
+        ],
+        'ALMA_CATEGORIES_WDGT_NOT_ELGBL' => [
+            'action' => 'cast_bool',
+            'suffix' => '_ON',
+        ],
+        'ALMA_STATE_REFUND_ENABLED' => [
+            'action' => 'cast_bool',
+            'suffix' => '_ON',
+        ],
+        'ALMA_PAYMENT_ON_TRIGGERING_ENABLED' => [
+            'action' => 'cast_bool',
+            'suffix' => '_ON',
+        ],
+        InpageAdminFormBuilder::ALMA_ACTIVATE_INPAGE => [
+            'action' => 'cast_bool',
+            'suffix' => '_ON',
+        ],
+        InpageAdminFormBuilder::ALMA_INPAGE_PAYMENT_BUTTON_SELECTOR => 'none',
+        InpageAdminFormBuilder::ALMA_INPAGE_PLACE_ORDER_BUTTON_SELECTOR => 'none',
+        'ALMA_ACTIVATE_LOGGING' => [
+            'action' => 'cast_bool',
+            'suffix' => '_ON',
+        ],
+        'ALMA_WIDGET_POSITION_CUSTOM' => 'cast_bool',
+        'ALMA_SHOW_DISABLED_BUTTON' => 'cast_bool',
+        'ALMA_CART_WIDGET_POSITION_CUSTOM' => 'cast_bool',
+        'ALMA_PRODUCT_PRICE_SELECTOR' => 'none',
+        'ALMA_WIDGET_POSITION_SELECTOR' => 'none',
+        'ALMA_PRODUCT_ATTR_SELECTOR' => 'none',
+        'ALMA_PRODUCT_ATTR_RADIO_SELECTOR' => 'none',
+        'ALMA_PRODUCT_COLOR_PICK_SELECTOR' => 'none',
+        'ALMA_PRODUCT_QUANTITY_SELECTOR' => 'none',
+        'ALMA_CART_WDGT_POS_SELECTOR' => 'none',
+        'ALMA_STATE_REFUND' => 'none',
+        'ALMA_STATE_TRIGGER' => 'none',
+        'ALMA_DESCRIPTION_TRIGGER' => 'none',
+    ];
+
     /**
      * @var \Alma\PrestaShop\Services\AdminFormBuilderService
      */
@@ -98,6 +156,14 @@ class ConfigFormService
      * @var \Alma\PrestaShop\Services\ShareOfCheckoutService
      */
     private $shareOfCheckoutService;
+    /**
+     * @var \Alma\PrestaShop\Services\PnxFormService
+     */
+    private $pnxFormService;
+    /**
+     * @var \Alma\PrestaShop\Services\CustomFieldsFormService
+     */
+    private $customFieldsFormService;
 
     public function __construct(
         $module = null,
@@ -111,7 +177,9 @@ class ConfigFormService
         $toolsProxy = null,
         $clientModel = null,
         $almaApiKeyModel = null,
-        $shareOfCheckoutService = null
+        $shareOfCheckoutService = null,
+        $pnxFormService = null,
+        $customFieldsFormService = null
     ) {
         if (!$module) {
             $module = (new ModuleFactoryBuilder())->getInstance();
@@ -167,6 +235,14 @@ class ConfigFormService
             $shareOfCheckoutService = new ShareOfCheckoutService();
         }
         $this->shareOfCheckoutService = $shareOfCheckoutService;
+        if (!$pnxFormService) {
+            $pnxFormService = new PnxFormService();
+        }
+        $this->pnxFormService = $pnxFormService;
+        if (!$customFieldsFormService) {
+            $customFieldsFormService = new CustomFieldsFormService();
+        }
+        $this->customFieldsFormService = $customFieldsFormService;
     }
 
     /**
@@ -212,28 +288,78 @@ class ConfigFormService
     }
 
     /**
+     * Save all configurations
+     *
      * @throws \Alma\PrestaShop\Exceptions\AlmaApiKeyException
+     * @throws \Alma\PrestaShop\Exceptions\ClientException
+     * @throws \Alma\PrestaShop\Exceptions\MissingParameterException
+     * @throws \Alma\PrestaShop\Exceptions\PnxFormException
      * @throws \Alma\PrestaShop\Exceptions\ShareOfCheckoutException
      */
-    public function saveConfiguration()
+    public function saveConfigurations()
     {
-        $almaFullyConfigured = '0';
+        // Consider the plugin as fully configured only when everything goes well
+        $this->configurationProxy->updateValue(self::ALMA_FULLY_CONFIGURED, '0');
         $apiMode = $this->toolsProxy->getValue(self::ALMA_API_MODE);
         $apiKeys = $this->almaApiKeyModel->getAllApiKeySend();
         $this->almaApiKeyModel->checkActiveApiKeySendIsEmpty();
         $this->almaApiKeyModel->checkApiKeys($apiKeys);
-        try {
-            $this->shareOfCheckoutService->handleConsent();
-        } catch (ShareOfCheckoutException $e) {
-            Logger::instance()->error($e->getMessage());
-            throw new ShareOfCheckoutException($e->getMessage());
-        }
+        $this->shareOfCheckoutService->handleConsent();
         $this->almaApiKeyModel->saveApiKeys($apiKeys);
 
         $this->configurationProxy->updateValue(self::ALMA_MERCHANT_ID, $this->clientModel->getMerchantId());
-        // Consider the plugin as fully configured only when everything goes well
-        $this->configurationProxy->updateValue(self::ALMA_FULLY_CONFIGURED, $almaFullyConfigured);
+
+        $this->customFieldsFormService->save();
+        $this->saveStaticConfigurations();
+        $this->pnxFormService->save();
+
         $this->configurationProxy->updateValue(self::ALMA_API_MODE, $apiMode);
+
+        // At this point, consider things are sufficiently configured to be usable
+        $this->configurationProxy->updateValue(self::ALMA_FULLY_CONFIGURED, '1');
+
+        if (IntegrationsConfigurationsUtils::isUrlRefreshRequired($this->settingsHelper->getKey(CmsDataHelper::ALMA_CMSDATA_DATE))) {
+            $this->clientModel->sendUrlForGatherCmsData($this->context->link->getModuleLink($this->module->name, 'cmsdataexport', [], true));
+            $this->settingsHelper->updateKey(CmsDataHelper::ALMA_CMSDATA_DATE, time());
+        }
+    }
+
+    /**
+     * Save the STATIC_KEY_CONFIG in the configuration table
+     * All the key who haven't dynamic value from the API or language for example
+     *
+     * @return void
+     */
+    protected function saveStaticConfigurations()
+    {
+        foreach (self::STATIC_KEY_CONFIG as $key => $conditions) {
+            $type = $conditions;
+            $searchKey = $key;
+
+            if (is_array($conditions)) {
+                $searchKey = $key . $conditions['suffix'];
+                $type = $conditions['action'];
+            }
+
+            $value = $this->toolsProxy->getValue($searchKey);
+
+            switch ($type) {
+                case 'test_bool':
+                    $value = $value ? '1' : '0';
+                    break;
+                case 'cast_bool':
+                    $value = (bool) $value;
+                    break;
+                default:
+                    break;
+            }
+
+            if (is_array($value)) {
+                $value = json_encode($value);
+            }
+
+            $this->configurationProxy->updateValue($key, $value);
+        }
     }
 
     /**

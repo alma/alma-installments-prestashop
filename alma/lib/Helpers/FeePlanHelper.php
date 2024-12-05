@@ -24,7 +24,9 @@
 
 namespace Alma\PrestaShop\Helpers;
 
+use Alma\PrestaShop\Exceptions\PnxFormException;
 use Alma\PrestaShop\Factories\EligibilityFactory;
+use Alma\PrestaShop\Proxy\ToolsProxy;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -44,11 +46,25 @@ class FeePlanHelper
      * @var EligibilityFactory
      */
     protected $eligibilityFactory;
+    /**
+     * @var PriceHelper
+     */
+    private $priceHelper;
+    /**
+     * @var ToolsProxy
+     */
+    private $toolsProxy;
 
-    public function __construct($settingsHelper, $eligibilityFactory)
-    {
+    public function __construct(
+        $settingsHelper,
+        $eligibilityFactory,
+        $priceHelper,
+        $toolsProxy
+    ) {
         $this->settingsHelper = $settingsHelper;
         $this->eligibilityFactory = $eligibilityFactory;
+        $this->priceHelper = $priceHelper;
+        $this->toolsProxy = $toolsProxy;
     }
 
     /**
@@ -107,5 +123,93 @@ class FeePlanHelper
         }
 
         return $activePlans;
+    }
+
+    /**
+     * @throws \Alma\PrestaShop\Exceptions\PnxFormException
+     */
+    public function checkLimitsSaveFeePlans($feePlans)
+    {
+        foreach ($feePlans as $feePlan) {
+            $installment = $feePlan->installments_count;
+            $deferred_days = $feePlan->deferred_days;
+            $deferred_months = $feePlan->deferred_months;
+            $key = $this->settingsHelper->keyForFeePlan($feePlan);
+
+            if (1 != $installment && $this->settingsHelper->isDeferred($feePlan)) {
+                continue;
+            }
+
+            $min = $this->priceHelper->convertPriceToCents((int) \Tools::getValue("ALMA_{$key}_MIN_AMOUNT"));
+            $max = $this->priceHelper->convertPriceToCents((int) \Tools::getValue("ALMA_{$key}_MAX_AMOUNT"));
+            $limitMin = $this->priceHelper->convertPriceFromCents($feePlan->min_purchase_amount);
+            $limitMax = $this->priceHelper->convertPriceFromCents(min($max, $feePlan->max_purchase_amount));
+
+            $enablePlan = (bool) $this->toolsProxy->getValue("ALMA_{$key}_ENABLED_ON");
+
+            if ($enablePlan
+                && !(
+                    $min >= $feePlan->min_purchase_amount
+                    && $min <= min($max, $feePlan->max_purchase_amount)
+                )
+            ) {
+                $message = sprintf(
+                    'Minimum amount for %1$d-installment plan must be within %2$d and %3$d.',
+                    $installment,
+                    $limitMin,
+                    $limitMax
+                );
+                if ($installment == 1 && $deferred_days > 0 && $deferred_months == 0) {
+                    $message = sprintf(
+                        'Minimum amount for deferred + %1$s days plan must be within %2$d and %3$d.',
+                        $deferred_days,
+                        $limitMin,
+                        $limitMax
+                    );
+                }
+                if ($installment == 1 && $deferred_days == 0 && $deferred_months > 0) {
+                    $message = sprintf(
+                        'Minimum amount for deferred + %1$s months plan must be within %2$d and %3$d.',
+                        $deferred_months,
+                        $limitMin,
+                        $limitMax
+                    );
+                }
+
+                throw new PnxFormException($message);
+            }
+
+            if ($enablePlan
+                && !(
+                    $max >= $min
+                    && $max <= $feePlan->max_purchase_amount
+                )
+            ) {
+                $message = sprintf(
+                    'Maximum amount for %1$d-installment plan must be within %2$d and %3$d.',
+                    $installment,
+                    $limitMin,
+                    $limitMax
+                );
+                if ($installment == 1 && $deferred_days > 0 && $deferred_months == 0) {
+                    $message = sprintf(
+                        'Maximum amount for deferred + %1$s days plan must be within %2$d and %3$d.',
+                        $deferred_days,
+                        $limitMin,
+                        $limitMax
+                    );
+                }
+                if ($installment == 1 && $deferred_days == 0 && $deferred_months > 0) {
+                    $message = sprintf(
+                        'Maximum amount for deferred + %1$s months plan must be within %2$d and %3$d.',
+                        $deferred_months,
+                        $limitMin,
+                        $this->priceHelper->convertPriceFromCents($feePlan->max_purchase_amount)
+                    );
+                }
+
+                throw new PnxFormException($message);
+            }
+        }
     }
 }
