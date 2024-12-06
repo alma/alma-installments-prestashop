@@ -22,50 +22,61 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
-namespace Alma\PrestaShop\Proxy;
+namespace Alma\Prestashop\Services;
+
+use Alma\PrestaShop\Exceptions\AlmaApiKeyException;
+use Alma\PrestaShop\Factories\ClientFactory;
+use Alma\PrestaShop\Forms\ApiAdminFormBuilder;
+use Alma\PrestaShop\Logger;
+use Alma\PrestaShop\Model\AlmaApiKeyModel;
+use Alma\PrestaShop\Proxy\ToolsProxy;
 
 if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-/**
- * Class ToolsProxy.
- */
-class ToolsProxy
+class AlmaConfigurationService
 {
     /**
-     * Get a value from $_POST / $_GET
-     * if unavailable, take a default value.
-     *
-     * @param string $key Value key
-     * @param mixed $default_value (optional)
-     *
-     * @codeCoverageIgnore Simple getter
-     *
-     * @return mixed Value
+     * @var \Alma\PrestaShop\Model\AlmaApiKeyModel
      */
-    public function getValue($key, $default_value = false)
-    {
-        return \Tools::getValue($key, $default_value);
+    private $almaApiKeyModel;
+    /**
+     * @var \Alma\PrestaShop\Proxy\ToolsProxy|mixed|null
+     */
+    private $toolsProxy;
+
+    public function __construct(
+        $almaApiKeyModel = null,
+        $toolsProxy = null,
+        $clientFactory = null
+    ) {
+        if (!$almaApiKeyModel) {
+            $almaApiKeyModel = new AlmaApiKeyModel();
+        }
+        $this->almaApiKeyModel = $almaApiKeyModel;
+
+        if (!$toolsProxy) {
+            $toolsProxy = new ToolsProxy();
+        }
+        $this->toolsProxy = $toolsProxy;
+
+        if (!$clientFactory) {
+            $clientFactory = new ClientFactory();
+        }
     }
 
-    /**
-     * @param string $tab
-     *
-     * @return bool|string
-     */
-    public function getAdminTokenLite($tab)
+    public function saveConfiguration()
     {
-        return \Tools::getAdminTokenLite($tab);
+        try {
+            $currentMode = $this->toolsProxy->getValue(ApiAdminFormBuilder::ALMA_API_MODE);
+            $this->almaApiKeyModel->checkApiKeys($currentMode);
+        } catch (AlmaApiKeyException $e) {
+            Logger::instance()->error($e->getMessage());
+        }
     }
 
-    /**
-     * Check if submit has been posted.
-     *
-     * @param string $submit submit name
-     */
-    public function isSubmit($submit)
+    public function getConfiguration()
     {
-        return \Tools::isSubmit($submit);
     }
 }

@@ -24,6 +24,7 @@
 
 namespace Alma\PrestaShop\Model;
 
+use Alma\API\Exceptions\RequestException;
 use Alma\API\RequestError;
 use Alma\PrestaShop\Exceptions\ClientException;
 use Alma\PrestaShop\Factories\ClientFactory;
@@ -39,12 +40,25 @@ class ClientModel
      * @var \Alma\API\Client|null
      */
     private $almaClient;
+    /**
+     * @var string
+     */
+    private $apiKey;
+    /**
+     * @var string
+     */
+    private $mode;
 
     public function __construct($almaClient = null)
     {
-        if (!$almaClient) {
+        if (!$almaClient && empty($this->apiKey) && empty($this->mode)) {
             $almaClient = (new ClientFactory())->get();
         }
+
+        if ($this->apiKey && $this->mode) {
+            $almaClient = (new ClientFactory())->create($this->apiKey, $this->mode);
+        }
+
         $this->almaClient = $almaClient;
     }
 
@@ -58,6 +72,26 @@ class ClientModel
     public function setClient($client)
     {
         $this->almaClient = $client;
+    }
+
+    /**
+     * @param $apiKey
+     *
+     * @return void
+     */
+    public function setApiKey($apiKey)
+    {
+        $this->apiKey = $apiKey;
+    }
+
+    /**
+     * @param $mode
+     *
+     * @return void
+     */
+    public function setMode($mode)
+    {
+        $this->mode = $mode;
     }
 
     /**
@@ -95,6 +129,21 @@ class ClientModel
     }
 
     /**
+     * Getter Merchant Id from Alma API
+     *
+     * @return string|null
+     */
+    public function getMerchantId()
+    {
+        $merchant = $this->getMerchantMe();
+        if ($merchant) {
+            return $merchant->id;
+        }
+
+        return null;
+    }
+
+    /**
      * Getter Merchant Fee Plans from Alma API
      *
      * @param $kind
@@ -113,6 +162,26 @@ class ClientModel
             return [];
         } catch (ClientException $e) {
             return [];
+        }
+    }
+
+    /**
+     * Send the URL to Alma to gather CMS data
+     *
+     * @param string $url
+     *
+     * @throws \Alma\PrestaShop\Exceptions\ClientException
+     */
+    public function sendUrlForGatherCmsData($url)
+    {
+        try {
+            $this->getClient()->configuration->sendIntegrationsConfigurationsUrl($url);
+        } catch (RequestException $e) {
+            throw new ClientException('[Alma] Error Request: ' . $e->getMessage());
+        } catch (RequestError $e) {
+            throw new ClientException('[Alma] Error Request: ' . $e->getMessage());
+        } catch (ClientException $e) {
+            throw new ClientException('[Alma] Error to get Alma Client: ' . $e->getMessage());
         }
     }
 }
