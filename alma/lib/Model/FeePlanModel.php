@@ -27,6 +27,7 @@ namespace Alma\PrestaShop\Model;
 use Alma\PrestaShop\Builders\Helpers\PriceHelperBuilder;
 use Alma\PrestaShop\Builders\Helpers\SettingsHelperBuilder;
 use Alma\PrestaShop\Helpers\SettingsHelper;
+use Alma\PrestaShop\Proxy\ConfigurationProxy;
 use Alma\PrestaShop\Proxy\ToolsProxy;
 
 if (!defined('_PS_VERSION_')) {
@@ -47,11 +48,16 @@ class FeePlanModel
      * @var \Alma\PrestaShop\Proxy\ToolsProxy
      */
     private $toolsProxy;
+    /**
+     * @var \Alma\PrestaShop\Proxy\ConfigurationProxy
+     */
+    private $configurationProxy;
 
     public function __construct(
         $settingsHelper = null,
         $priceHelper = null,
-        $toolsProxy = null
+        $toolsProxy = null,
+        $configurationProxy = null
     ) {
         if (!$settingsHelper) {
             $settingsHelper = (new SettingsHelperBuilder())->getInstance();
@@ -65,9 +71,15 @@ class FeePlanModel
             $toolsProxy = new ToolsProxy();
         }
         $this->toolsProxy = $toolsProxy;
+        if (!$configurationProxy) {
+            $configurationProxy = new ConfigurationProxy();
+        }
+        $this->configurationProxy = $configurationProxy;
     }
 
     /**
+     * Get the fee plans ordered by Pnx installment then Pay Later duration
+     *
      * @param $feePlans
      *
      * @return array
@@ -102,7 +114,7 @@ class FeePlanModel
      */
     public function getFieldsValueFromFeePlans($feePlans)
     {
-        $currentFeePlans = json_decode(SettingsHelper::getFeePlans());
+        $currentFeePlans = json_decode($this->configurationProxy->get('ALMA_FEE_PLANS'));
         $fieldsValue = [];
         $sortOrder = 1;
         foreach ($feePlans as $feePlan) {
