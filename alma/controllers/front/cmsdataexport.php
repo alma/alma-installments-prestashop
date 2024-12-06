@@ -89,7 +89,7 @@ class AlmaCmsDataExportModuleFrontController extends ModuleFrontController
         $cmsFeature = new CmsFeatures($this->cmsDataHelper->getCmsFeatureArray());
 
         $payload = $this->payloadFormatter->formatConfigurationPayload($cmsInfo, $cmsFeature);
-        $this->ajaxRenderAndExit(json_encode(['success' => $payload]));
+        $this->ajaxRenderAndExit(json_encode($payload));
     }
 
     /**
