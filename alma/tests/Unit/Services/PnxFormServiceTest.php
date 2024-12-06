@@ -25,6 +25,7 @@
 namespace Alma\PrestaShop\Tests\Unit\Services;
 
 use Alma\API\Entities\FeePlan;
+use Alma\PrestaShop\Exceptions\PnxFormException;
 use Alma\PrestaShop\Helpers\FeePlanHelper;
 use Alma\PrestaShop\Helpers\SettingsHelper;
 use Alma\PrestaShop\Model\ClientModel;
@@ -97,14 +98,14 @@ class PnxFormServiceTest extends TestCase
         ];
 
         $feePlanSaved = [
-                'general_3_0_0' => [
-                    'enabled' => 1,
-                    'min' => 5000,
-                    'max' => 200000,
-                    'deferred_trigger_limit_days' => null,
-                    'order' => 1,
-                ],
-            ];
+            'general_3_0_0' => [
+                'enabled' => 1,
+                'min' => 5000,
+                'max' => 200000,
+                'deferred_trigger_limit_days' => null,
+                'order' => 1,
+            ],
+        ];
 
         $this->toolsProxyMock->expects($this->exactly(2))
             ->method('getValue')
@@ -126,6 +127,105 @@ class PnxFormServiceTest extends TestCase
             ->method('updateValue')
             ->with('ALMA_FEE_PLANS', json_encode($feePlanSaved));
 
+        $this->customFieldsFormService->save();
+    }
+
+    /**
+     * @throws \Alma\PrestaShop\Exceptions\PnxFormException
+     */
+    public function testSaveWithoutApiOnlyThrowExceptionForUpdateFeePlans()
+    {
+        $feePlans = [
+            $this->planPayNow(),
+            $this->planP2x(),
+            $this->planP3x(),
+            $this->planP4x(),
+            $this->planDeferred15(),
+        ];
+
+        $this->toolsProxyMock->expects($this->exactly(2))
+            ->method('getValue')
+            ->with('_api_only')
+            ->willReturn(false);
+        $this->clientModelMock->expects($this->once())
+            ->method('getMerchantFeePlans')
+            ->willReturn($feePlans);
+        $this->feePlanHelperMock->expects($this->once())
+            ->method('checkLimitsSaveFeePlans')
+            ->with($feePlans)
+            ->willThrowException(new PnxFormException('Error'));
+        $this->expectException(PnxFormException::class);
+        $this->customFieldsFormService->save();
+    }
+
+    /**
+     * @throws \Alma\PrestaShop\Exceptions\PnxFormException
+     */
+    public function testSaveWithoutApiOnlyAndUpdateFeePlans()
+    {
+        $feePlans = [
+            $this->planPayNow(),
+            $this->planP2x(),
+            $this->planP3x(),
+            $this->planP4x(),
+            $this->planDeferred15(),
+        ];
+
+        $feePlanToSave = [
+            'general_1_0_0' => [
+                'enabled' => 1,
+                'min' => 5000,
+                'max' => 200000,
+                'deferred_trigger_limit_days' => null,
+                'order' => 1,
+            ],
+            'general_2_0_0' => [
+                'enabled' => 1,
+                'min' => 5000,
+                'max' => 200000,
+                'deferred_trigger_limit_days' => null,
+                'order' => 2,
+            ],
+            'general_3_0_0' => [
+                'enabled' => 1,
+                'min' => 5000,
+                'max' => 200000,
+                'deferred_trigger_limit_days' => null,
+                'order' => 2,
+            ],
+            'general_4_0_0' => [
+                'enabled' => 1,
+                'min' => 5000,
+                'max' => 200000,
+                'deferred_trigger_limit_days' => null,
+                'order' => 3,
+            ],
+            'general_1_15_0' => [
+                'enabled' => 1,
+                'min' => 5000,
+                'max' => 200000,
+                'deferred_trigger_limit_days' => null,
+                'order' => 4,
+            ],
+        ];
+
+        $this->toolsProxyMock->expects($this->exactly(2))
+            ->method('getValue')
+            ->with('_api_only')
+            ->willReturn(false);
+        $this->clientModelMock->expects($this->once())
+            ->method('getMerchantFeePlans')
+            ->willReturn($feePlans);
+        $this->feePlanHelperMock->expects($this->once())
+            ->method('checkLimitsSaveFeePlans')
+            ->with($feePlans);
+        $this->feePlanModelMock->expects($this->once())
+            ->method('getFeePlanForSave')
+            ->with($feePlans)
+            ->willReturn($feePlanToSave);
+        $this->configurationProxyMock->expects($this->once())
+            ->method('updateValue')
+            ->with('ALMA_FEE_PLANS', json_encode($feePlanToSave));
         $this->customFieldsFormService->save();
     }
 

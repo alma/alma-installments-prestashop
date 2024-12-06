@@ -140,13 +140,12 @@ class FeePlanHelper
                 continue;
             }
 
-            $min = $this->priceHelper->convertPriceToCents((int) \Tools::getValue("ALMA_{$key}_MIN_AMOUNT"));
-            $max = $this->priceHelper->convertPriceToCents((int) \Tools::getValue("ALMA_{$key}_MAX_AMOUNT"));
+            $min = $this->priceHelper->convertPriceToCents((int) $this->toolsProxy->getValue("ALMA_{$key}_MIN_AMOUNT"));
+            $max = $this->priceHelper->convertPriceToCents((int) $this->toolsProxy->getValue("ALMA_{$key}_MAX_AMOUNT"));
             $limitMin = $this->priceHelper->convertPriceFromCents($feePlan->min_purchase_amount);
             $limitMax = $this->priceHelper->convertPriceFromCents(min($max, $feePlan->max_purchase_amount));
 
             $enablePlan = (bool) $this->toolsProxy->getValue("ALMA_{$key}_ENABLED_ON");
-
             if ($enablePlan
                 && !(
                     $min >= $feePlan->min_purchase_amount

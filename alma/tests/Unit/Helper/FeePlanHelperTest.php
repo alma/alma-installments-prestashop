@@ -27,6 +27,7 @@ namespace Alma\PrestaShop\Tests\Unit\Helper;
 use Alma\API\Endpoints\Results\Eligibility;
 use Alma\API\Entities\FeePlan;
 use Alma\PrestaShop\Builders\Helpers\FeePlanHelperBuilder;
+use Alma\PrestaShop\Exceptions\PnxFormException;
 use Alma\PrestaShop\Factories\EligibilityFactory;
 use Alma\PrestaShop\Helpers\FeePlanHelper;
 use Alma\PrestaShop\Helpers\PriceHelper;
@@ -36,6 +37,47 @@ use PHPUnit\Framework\TestCase;
 
 class FeePlanHelperTest extends TestCase
 {
+    /**
+     * @var \Alma\PrestaShop\Helpers\SettingsHelper
+     */
+    protected $settingsHelperMock;
+    /**
+     * @var \Alma\PrestaShop\Factories\EligibilityFactory
+     */
+    protected $eligibilityFactoryMock;
+    /**
+     * @var \Alma\PrestaShop\Helpers\PriceHelper
+     */
+    protected $priceHelperMock;
+    /**
+     * @var \Alma\PrestaShop\Proxy\ToolsProxy
+     */
+    protected $toolsProxyMock;
+    /**
+     * @var \Alma\PrestaShop\Helpers\FeePlanHelper
+     */
+    protected $feePlanHelper;
+    /**
+     * @var \Alma\PrestaShop\Tests\Unit\Helper\FeePlansDataProvider
+     */
+    protected $feePlansDataProvider;
+
+    public function setUp()
+    {
+        $this->settingsHelperMock = $this->createMock(SettingsHelper::class);
+        $this->eligibilityFactoryMock = $this->createMock(EligibilityFactory::class);
+        $this->priceHelperMock = $this->createMock(PriceHelper::class);
+        $this->toolsProxyMock = $this->createMock(ToolsProxy::class);
+
+        $this->feePlansDataProvider = new FeePlansDataProvider();
+        $this->feePlanHelper = new FeePlanHelper(
+            $this->settingsHelperMock,
+            $this->eligibilityFactoryMock,
+            $this->priceHelperMock,
+            $this->toolsProxyMock
+        );
+    }
+
     public function testCheckFeePlans()
     {
         $feePlan1 = new FeePlan(
@@ -173,25 +215,357 @@ class FeePlanHelperTest extends TestCase
             $installmentCountThree,
         ];
 
-        $settingsHelper = $this->createMock(SettingsHelper::class);
-        $settingsHelper->expects($this->exactly(2))->method('getDataFromKey')->willReturnOnConsecutiveCalls($installmentCountOne, $installmentCountThree);
-
-        $eligibilityFactory = $this->createMock(EligibilityFactory::class);
-        $priceHelper = $this->createMock(PriceHelper::class);
-        $toolsProxy = $this->createMock(ToolsProxy::class);
-
-        $feePlanHelper = new FeePlanHelper(
-            $settingsHelper,
-            $eligibilityFactory,
-            $priceHelper,
-            $toolsProxy
-        );
+        $this->settingsHelperMock->expects($this->exactly(2))->method('getDataFromKey')->willReturnOnConsecutiveCalls($installmentCountOne, $installmentCountThree);
 
         $feePlans = [
             'general_1_0_0' => new FeePlan(['min' => 100, 'max' => 1000]),
             'general_3_0_0' => new FeePlan(['min' => 50, 'max' => 100]),
         ];
 
-        $this->assertEquals($installmentDataArray, $feePlanHelper->getEligibleFeePlans($feePlans, 100));
+        $this->assertEquals($installmentDataArray, $this->feePlanHelper->getEligibleFeePlans($feePlans, 100));
+    }
+
+    /**
+     * @throws \Alma\PrestaShop\Exceptions\PnxFormException
+     */
+    public function testCheckLimitsSaveFeePlanWithWrongMinAmountInPnxThrowException()
+    {
+        $feePlans = [
+            $this->feePlansDataProvider->planPayNow(),
+            $this->feePlansDataProvider->planP2x(),
+            $this->feePlansDataProvider->planP3x(),
+            $this->feePlansDataProvider->planP4x(),
+            $this->feePlansDataProvider->planDeferred15(),
+        ];
+        $this->settingsHelperMock->expects($this->exactly(2))
+            ->method('keyForFeePlan')
+            ->willReturnOnConsecutiveCalls(
+                'general_1_0_0',
+                'general_2_0_0'
+            );
+        $this->settingsHelperMock->expects($this->once())
+            ->method('isDeferred')
+            ->willReturnOnConsecutiveCalls(false, false, false);
+        $this->priceHelperMock->expects($this->exactly(4))
+            ->method('convertPriceToCents')
+            ->withConsecutive(
+                [1],
+                [2000],
+                [50],
+                [2000]
+            )
+            ->willReturnOnConsecutiveCalls(100, 200000, 4000, 200000);
+        $this->toolsProxyMock->expects($this->exactly(6))
+            ->method('getValue')
+            ->withConsecutive(
+                ['ALMA_general_1_0_0_MIN_AMOUNT'],
+                ['ALMA_general_1_0_0_MAX_AMOUNT'],
+                ['ALMA_general_1_0_0_ENABLED_ON'],
+
+                ['ALMA_general_2_0_0_MIN_AMOUNT'],
+                ['ALMA_general_2_0_0_MAX_AMOUNT'],
+                ['ALMA_general_2_0_0_ENABLED_ON']
+            )
+            ->willReturnOnConsecutiveCalls(
+                1, 2000, true,
+                50, 2000, true
+            );
+        $this->priceHelperMock->expects($this->exactly(4))
+            ->method('convertPriceFromCents')
+            ->willReturnOnConsecutiveCalls(1, 2000, 50, 2000);
+        $this->expectException(PnxFormException::class);
+        $this->expectExceptionMessage('Minimum amount for 2-installment plan must be within 50 and 2000.');
+        $this->feePlanHelper->checkLimitsSaveFeePlans($feePlans);
+    }
+
+    /**
+     * @throws \Alma\PrestaShop\Exceptions\PnxFormException
+     */
+    public function testCheckLimitsSaveFeePlanWithWrongMinAmountInDeferredDaysThrowException()
+    {
+        $feePlans = [
+            $this->feePlansDataProvider->planPayNow(),
+            $this->feePlansDataProvider->planP2x(),
+            $this->feePlansDataProvider->planP3x(),
+            $this->feePlansDataProvider->planP4x(),
+            $this->feePlansDataProvider->planDeferred15(),
+        ];
+        $this->settingsHelperMock->expects($this->exactly(5))
+            ->method('keyForFeePlan')
+            ->willReturnOnConsecutiveCalls(
+                'general_1_0_0',
+                'general_2_0_0',
+                'general_3_0_0',
+                'general_4_0_0',
+                'general_1_15_0'
+            );
+        $this->settingsHelperMock->expects($this->exactly(3))
+            ->method('isDeferred')
+            ->willReturnOnConsecutiveCalls(false, false, false);
+        $this->priceHelperMock->expects($this->exactly(10))
+            ->method('convertPriceToCents')
+            ->withConsecutive(
+                [1],
+                [2000],
+                [50],
+                [2000],
+                [50],
+                [2000],
+                [50],
+                [2000],
+                [40],
+                [2000]
+            )
+            ->willReturnOnConsecutiveCalls(100, 200000, 5000, 200000, 5000, 200000, 5000, 200000, 4000, 200000);
+        $this->toolsProxyMock->expects($this->exactly(15))
+            ->method('getValue')
+            ->withConsecutive(
+                ['ALMA_general_1_0_0_MIN_AMOUNT'],
+                ['ALMA_general_1_0_0_MAX_AMOUNT'],
+                ['ALMA_general_1_0_0_ENABLED_ON'],
+
+                ['ALMA_general_2_0_0_MIN_AMOUNT'],
+                ['ALMA_general_2_0_0_MAX_AMOUNT'],
+                ['ALMA_general_2_0_0_ENABLED_ON'],
+
+                ['ALMA_general_3_0_0_MIN_AMOUNT'],
+                ['ALMA_general_3_0_0_MAX_AMOUNT'],
+                ['ALMA_general_3_0_0_ENABLED_ON'],
+
+                ['ALMA_general_4_0_0_MIN_AMOUNT'],
+                ['ALMA_general_4_0_0_MAX_AMOUNT'],
+                ['ALMA_general_4_0_0_ENABLED_ON'],
+
+                ['ALMA_general_1_15_0_MIN_AMOUNT'],
+                ['ALMA_general_1_15_0_MAX_AMOUNT'],
+                ['ALMA_general_1_15_0_ENABLED_ON']
+            )
+            ->willReturnOnConsecutiveCalls(
+                1, 2000, true,
+                50, 2000, true,
+                50, 2000, true,
+                50, 2000, true,
+                40, 2000, true
+            );
+        $this->priceHelperMock->expects($this->exactly(10))
+            ->method('convertPriceFromCents')
+            ->willReturnOnConsecutiveCalls(1, 2000, 50, 2000, 50, 2000, 50, 2000, 50, 2000);
+        $this->expectException(PnxFormException::class);
+        $this->expectExceptionMessage('Minimum amount for deferred + 15 days plan must be within 50 and 2000.');
+        $this->feePlanHelper->checkLimitsSaveFeePlans($feePlans);
+    }
+
+    /**
+     * @throws \Alma\PrestaShop\Exceptions\PnxFormException
+     */
+    public function testCheckLimitsSaveFeePlanWithWrongMaxAmountInPnxThrowException()
+    {
+        $feePlans = [
+            $this->feePlansDataProvider->planPayNow(),
+            $this->feePlansDataProvider->planP2x(),
+            $this->feePlansDataProvider->planP3x(),
+            $this->feePlansDataProvider->planP4x(),
+            $this->feePlansDataProvider->planDeferred15(),
+        ];
+        $this->settingsHelperMock->expects($this->exactly(2))
+            ->method('keyForFeePlan')
+            ->willReturnOnConsecutiveCalls(
+                'general_1_0_0',
+                'general_2_0_0'
+            );
+        $this->settingsHelperMock->expects($this->once())
+            ->method('isDeferred')
+            ->willReturnOnConsecutiveCalls(false, false, false);
+        $this->priceHelperMock->expects($this->exactly(4))
+            ->method('convertPriceToCents')
+            ->withConsecutive(
+                [1],
+                [2000],
+                [50],
+                [3000]
+            )
+            ->willReturnOnConsecutiveCalls(100, 200000, 5000, 300000);
+        $this->toolsProxyMock->expects($this->exactly(6))
+            ->method('getValue')
+            ->withConsecutive(
+                ['ALMA_general_1_0_0_MIN_AMOUNT'],
+                ['ALMA_general_1_0_0_MAX_AMOUNT'],
+                ['ALMA_general_1_0_0_ENABLED_ON'],
+
+                ['ALMA_general_2_0_0_MIN_AMOUNT'],
+                ['ALMA_general_2_0_0_MAX_AMOUNT'],
+                ['ALMA_general_2_0_0_ENABLED_ON']
+            )
+            ->willReturnOnConsecutiveCalls(
+                1, 2000, true,
+                50, 3000, true
+            );
+        $this->priceHelperMock->expects($this->exactly(4))
+            ->method('convertPriceFromCents')
+            ->willReturnOnConsecutiveCalls(1, 2000, 50, 2000);
+        $this->expectException(PnxFormException::class);
+        $this->expectExceptionMessage('Maximum amount for 2-installment plan must be within 50 and 2000.');
+        $this->feePlanHelper->checkLimitsSaveFeePlans($feePlans);
+    }
+
+    /**
+     * @throws \Alma\PrestaShop\Exceptions\PnxFormException
+     */
+    public function testCheckLimitsSaveFeePlanWithWrongMaxAmountInDeferredDaysThrowException()
+    {
+        $feePlans = [
+            $this->feePlansDataProvider->planPayNow(),
+            $this->feePlansDataProvider->planP2x(),
+            $this->feePlansDataProvider->planP3x(),
+            $this->feePlansDataProvider->planP4x(),
+            $this->feePlansDataProvider->planDeferred15(),
+        ];
+        $this->settingsHelperMock->expects($this->exactly(5))
+            ->method('keyForFeePlan')
+            ->willReturnOnConsecutiveCalls(
+                'general_1_0_0',
+                'general_2_0_0',
+                'general_3_0_0',
+                'general_4_0_0',
+                'general_1_15_0'
+            );
+        $this->settingsHelperMock->expects($this->exactly(3))
+            ->method('isDeferred')
+            ->willReturnOnConsecutiveCalls(false, false, false);
+        $this->priceHelperMock->expects($this->exactly(10))
+            ->method('convertPriceToCents')
+            ->withConsecutive(
+                [1],
+                [2000],
+                [50],
+                [2000],
+                [50],
+                [2000],
+                [50],
+                [2000],
+                [50],
+                [3000]
+            )
+            ->willReturnOnConsecutiveCalls(100, 200000, 5000, 200000, 5000, 200000, 5000, 200000, 5000, 300000);
+        $this->toolsProxyMock->expects($this->exactly(15))
+            ->method('getValue')
+            ->withConsecutive(
+                ['ALMA_general_1_0_0_MIN_AMOUNT'],
+                ['ALMA_general_1_0_0_MAX_AMOUNT'],
+                ['ALMA_general_1_0_0_ENABLED_ON'],
+
+                ['ALMA_general_2_0_0_MIN_AMOUNT'],
+                ['ALMA_general_2_0_0_MAX_AMOUNT'],
+                ['ALMA_general_2_0_0_ENABLED_ON'],
+
+                ['ALMA_general_3_0_0_MIN_AMOUNT'],
+                ['ALMA_general_3_0_0_MAX_AMOUNT'],
+                ['ALMA_general_3_0_0_ENABLED_ON'],
+
+                ['ALMA_general_4_0_0_MIN_AMOUNT'],
+                ['ALMA_general_4_0_0_MAX_AMOUNT'],
+                ['ALMA_general_4_0_0_ENABLED_ON'],
+
+                ['ALMA_general_1_15_0_MIN_AMOUNT'],
+                ['ALMA_general_1_15_0_MAX_AMOUNT'],
+                ['ALMA_general_1_15_0_ENABLED_ON']
+            )
+            ->willReturnOnConsecutiveCalls(
+                1, 2000, true,
+                50, 2000, true,
+                50, 2000, true,
+                50, 2000, true,
+                50, 3000, true
+            );
+        $this->priceHelperMock->expects($this->exactly(10))
+            ->method('convertPriceFromCents')
+            ->willReturnOnConsecutiveCalls(1, 2000, 50, 2000, 50, 2000, 50, 2000, 50, 2000);
+        $this->expectException(PnxFormException::class);
+        $this->expectExceptionMessage('Maximum amount for deferred + 15 days plan must be within 50 and 2000.');
+        $this->feePlanHelper->checkLimitsSaveFeePlans($feePlans);
+    }
+
+    /**
+     * @return void
+     *
+     * @throws \Alma\PrestaShop\Exceptions\PnxFormException
+     */
+    public function testCheckLimitsSaveFeePlanWithoutError()
+    {
+        $feePlans = [
+            $this->feePlansDataProvider->planPayNow(),
+            $this->feePlansDataProvider->planP2x(),
+            $this->feePlansDataProvider->planP3x(),
+            $this->feePlansDataProvider->planP4x(),
+            $this->feePlansDataProvider->planDeferred15(),
+        ];
+        $this->settingsHelperMock->expects($this->exactly(5))
+            ->method('keyForFeePlan')
+            ->willReturnOnConsecutiveCalls(
+                'general_1_0_0',
+                'general_2_0_0',
+                'general_3_0_0',
+                'general_4_0_0',
+                'general_1_15_0'
+            );
+        $this->settingsHelperMock->expects($this->exactly(3))
+            ->method('isDeferred')
+            ->willReturnOnConsecutiveCalls(false, false, false);
+        $this->priceHelperMock->expects($this->exactly(10))
+            ->method('convertPriceToCents')
+            ->withConsecutive(
+                [1],
+                [2000],
+                [50],
+                [2000],
+                [50],
+                [2000],
+                [50],
+                [2000],
+                [50],
+                [2000]
+            )
+            ->willReturnOnConsecutiveCalls(100, 5000, 5000, 5000, 5000, 200000, 200000, 200000, 200000, 200000);
+        $this->toolsProxyMock->expects($this->exactly(15))
+            ->method('getValue')
+            ->withConsecutive(
+                ['ALMA_general_1_0_0_MIN_AMOUNT'],
+                ['ALMA_general_1_0_0_MAX_AMOUNT'],
+                ['ALMA_general_1_0_0_ENABLED_ON'],
+
+                ['ALMA_general_2_0_0_MIN_AMOUNT'],
+                ['ALMA_general_2_0_0_MAX_AMOUNT'],
+                ['ALMA_general_2_0_0_ENABLED_ON'],
+
+                ['ALMA_general_3_0_0_MIN_AMOUNT'],
+                ['ALMA_general_3_0_0_MAX_AMOUNT'],
+                ['ALMA_general_3_0_0_ENABLED_ON'],
+
+                ['ALMA_general_4_0_0_MIN_AMOUNT'],
+                ['ALMA_general_4_0_0_MAX_AMOUNT'],
+                ['ALMA_general_4_0_0_ENABLED_ON'],
+
+                ['ALMA_general_1_15_0_MIN_AMOUNT'],
+                ['ALMA_general_1_15_0_MAX_AMOUNT'],
+                ['ALMA_general_1_15_0_ENABLED_ON']
+            )
+            ->willReturnOnConsecutiveCalls(
+                1, 2000, true,
+                50, 2000, true,
+                50, 2000, true,
+                50, 2000, true,
+                50, 2000, true
+            );
+        $this->priceHelperMock->expects($this->exactly(10))
+            ->method('convertPriceFromCents')
+            ->willReturnOnConsecutiveCalls(
+                1, 2000,
+                50, 2000,
+                50, 2000,
+                50, 2000,
+                50, 2000
+            );
+
+        $this->feePlanHelper->checkLimitsSaveFeePlans($feePlans);
     }
 }

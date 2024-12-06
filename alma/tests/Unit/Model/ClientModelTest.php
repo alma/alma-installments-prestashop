@@ -25,8 +25,11 @@
 namespace Alma\PrestaShop\Tests\Unit\Model;
 
 use Alma\API\Client;
+use Alma\API\Endpoints\Configuration;
 use Alma\API\Endpoints\Merchants;
+use Alma\API\Exceptions\RequestException;
 use Alma\API\RequestError;
+use Alma\PrestaShop\Exceptions\ClientException;
 use Alma\PrestaShop\Factories\ClientFactory;
 use Alma\PrestaShop\Model\ClientModel;
 use PHPUnit\Framework\TestCase;
@@ -41,14 +44,20 @@ class ClientModelTest extends TestCase
      * @var \Alma\API\Endpoints\Merchants
      */
     protected $merchantMock;
+    /**
+     * @var \Alma\API\Endpoints\Configuration
+     */
+    protected $configurationMock;
 
     public function setUp()
     {
         $this->merchantMock = $this->createMock(Merchants::class);
+        $this->configurationMock = $this->createMock(Configuration::class);
         $this->almaClientMock = $this->createMock(Client::class);
         $this->clientFactoryMock = $this->createMock(ClientFactory::class);
         $this->clientFactoryMock->method('get')->willReturn($this->almaClientMock);
         $this->almaClientMock->merchants = $this->merchantMock;
+        $this->almaClientMock->configuration = $this->configurationMock;
         $this->clientModel = new ClientModel($this->almaClientMock);
     }
 
@@ -97,5 +106,29 @@ class ClientModelTest extends TestCase
     {
         $this->clientModel->setClient(null);
         $this->assertEquals([], $this->clientModel->getMerchantFeePlans());
+    }
+
+    /**
+     * @dataProvider exceptionSendUrlForGatherCmsDataDataProvider
+     *
+     * @throws \Alma\PrestaShop\Exceptions\ClientException
+     */
+    public function testSendUrlForGatherCmsDataThrowRequestException($exceptions)
+    {
+        $this->configurationMock->method('sendIntegrationsConfigurationsUrl')->willThrowException($exceptions);
+        $this->expectException(ClientException::class);
+        $this->clientModel->sendUrlForGatherCmsData('url');
+    }
+
+    /**
+     * @return array
+     */
+    public function exceptionSendUrlForGatherCmsDataDataProvider()
+    {
+        return [
+            'RequestException' => [new RequestException('error')],
+            'RequestError' => [new RequestError('error')],
+            'ClientException' => [new ClientException('error')],
+        ];
     }
 }
