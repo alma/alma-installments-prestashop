@@ -50,6 +50,8 @@ class ClientHelper
     }
 
     /**
+     * @deprecated Use create in ClientFactory instead
+     *
      * @param $apiKey
      * @param $mode
      *

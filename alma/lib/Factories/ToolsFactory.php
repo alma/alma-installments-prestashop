@@ -34,8 +34,9 @@ if (!defined('_PS_VERSION_')) {
 class ToolsFactory
 {
     /**
+     * @deprecated use the getValue in ToolsProxy instead
      * Get a value from $_POST / $_GET
-     * if unavailable, take a default value.
+     * if unavailable, take a default value
      *
      * @param string $key Value key
      * @param mixed $default_value (optional)
@@ -50,7 +51,8 @@ class ToolsFactory
     }
 
     /**
-     * Checks if a key exists either in $_POST or $_GET.
+     * @deprecated use the getIsset in ToolsProxy instead
+     * Checks if a key exists either in $_POST or $_GET
      *
      * @param string $key
      *
