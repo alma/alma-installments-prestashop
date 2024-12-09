@@ -28,7 +28,6 @@ use Alma;
 use Alma\API\Client;
 use Alma\API\DependenciesError;
 use Alma\API\ParamsError;
-use Alma\PrestaShop\Helpers\SettingsHelper;
 use Alma\PrestaShop\Logger;
 
 if (!defined('_PS_VERSION_')) {
@@ -70,10 +69,10 @@ class ClientFactory
     /**
      * @return \Alma\API\Client|null
      */
-    public function get()
+    public function get($apiKey, $mode)
     {
         if (!$this->alma) {
-            $this->alma = $this->create(SettingsHelper::getActiveAPIKey(), SettingsHelper::getActiveMode());
+            $this->alma = $this->create($apiKey, $mode);
         }
 
         return $this->alma;

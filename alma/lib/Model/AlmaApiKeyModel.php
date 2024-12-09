@@ -76,7 +76,7 @@ class AlmaApiKeyModel
         $this->configurationProxy = $configurationProxy;
 
         if (!$clientModel) {
-            $clientModel = new ClientModel();
+            $clientModel = ClientModel::getInstance();
         }
         $this->clientModel = $clientModel;
         if (!$encryptionHelper) {
@@ -112,10 +112,13 @@ class AlmaApiKeyModel
         $invalidKeys = [];
         foreach ($apiKeys as $mode => $apiKey) {
             if ($this->isObscureApiKey($apiKey)) {
+                $apiKey = $this->getApiKeyByMode($mode);
+            }
+            if (empty($apiKey)) {
                 continue;
             }
-            $this->clientModel->setApiKey($apiKey);
             $this->clientModel->setMode($mode);
+            $this->clientModel->setApiKey($apiKey);
             /**
              * @var \Alma\API\Entities\Merchant|null $merchant
              */
@@ -196,12 +199,27 @@ class AlmaApiKeyModel
      *
      * @return array
      */
-    public function getAllApiKeySend()
+    public function getAllApiKeySend($mode)
     {
-        return [
+        $apiKeys = [
             'test' => trim($this->toolsProxy->getValue(ApiAdminFormBuilder::ALMA_TEST_API_KEY)),
             'live' => trim($this->toolsProxy->getValue(ApiAdminFormBuilder::ALMA_LIVE_API_KEY)),
         ];
+
+        // This function sort the array to have the mode key selected at the end
+        // We need to have the selected mode key at the end to be able to get the AlmaClient with the mode selected
+        uksort($apiKeys, function ($a, $b) use ($mode) {
+            if ($a === $mode) {
+                return 1;
+            }
+            if ($b === $mode) {
+                return -1;
+            }
+
+            return 0;
+        });
+
+        return $apiKeys;
     }
 
     /**
@@ -217,5 +235,19 @@ class AlmaApiKeyModel
             }
             $this->configurationProxy->updateValue(self::ALMA_API_KEY_MODE[$mode], $this->encryptionHelper->encrypt($apiKey));
         }
+    }
+
+    /**
+     * @param $mode
+     *
+     * @return string
+     */
+    private function getApiKeyByMode($mode)
+    {
+        if ($mode === 'live') {
+            return SettingsHelper::getLiveKey();
+        }
+
+        return SettingsHelper::getTestKey();
     }
 }

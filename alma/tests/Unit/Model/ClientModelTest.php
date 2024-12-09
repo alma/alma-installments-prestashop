@@ -58,7 +58,9 @@ class ClientModelTest extends TestCase
         $this->clientFactoryMock->method('get')->willReturn($this->almaClientMock);
         $this->almaClientMock->merchants = $this->merchantMock;
         $this->almaClientMock->configuration = $this->configurationMock;
-        $this->clientModel = new ClientModel($this->almaClientMock);
+        $this->clientModel = new ClientModel(
+            $this->clientFactoryMock
+        );
     }
 
     /**

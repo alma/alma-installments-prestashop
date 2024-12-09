@@ -81,7 +81,7 @@ class PnxFormService
         $feePlanModel = null
     ) {
         if (!$clientModel) {
-            $clientModel = new ClientModel();
+            $clientModel = ClientModel::getInstance();
         }
         $this->clientModel = $clientModel;
         if (!$settingsHelper) {
