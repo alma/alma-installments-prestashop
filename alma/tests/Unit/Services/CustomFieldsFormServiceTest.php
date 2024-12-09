@@ -58,7 +58,21 @@ class CustomFieldsFormServiceTest extends TestCase
     /**
      * @throws \Alma\PrestaShop\Exceptions\MissingParameterException
      */
-    public function testSaveWithOneLanguageOnPS17WithEmptyFieldInPnxButtonTitleThrowMissingParameterException()
+    public function testSaveNotOnFirstInstallation()
+    {
+        $this->toolsProxyMock->expects($this->once())
+            ->method('getValue')
+            ->with('_api_only')
+            ->willReturn(true);
+        $this->configurationProxyMock->expects($this->never())
+            ->method('updateValue');
+        $this->customFieldsFormService->save();
+    }
+
+    /**
+     * @throws \Alma\PrestaShop\Exceptions\MissingParameterException
+     */
+    public function testUpdateWithOneLanguageOnPS17WithEmptyFieldInPnxButtonTitleThrowMissingParameterException()
     {
         $languages = [
             [
@@ -78,14 +92,14 @@ class CustomFieldsFormServiceTest extends TestCase
                 'is_default' => 1,
             ],
         ];
+        $this->toolsProxyMock->expects($this->exactly(3))
+            ->method('getValue')
+            ->withConsecutive(['_api_only'], ['ALMA_PAY_NOW_BUTTON_TITLE_1'], ['ALMA_PNX_BUTTON_TITLE_1'])
+            ->willReturnOnConsecutiveCalls(false, 'Test Custom Field', '');
         $this->controllerMock->expects($this->once())
             ->method('getLanguages')
             ->willReturn($languages);
 
-        $this->toolsProxyMock->expects($this->exactly(2))
-            ->method('getValue')
-            ->withConsecutive(['ALMA_PAY_NOW_BUTTON_TITLE_1'], ['ALMA_PNX_BUTTON_TITLE_1'])
-            ->willReturnOnConsecutiveCalls('Test Custom Field', '');
         $this->expectException(MissingParameterException::class);
         $this->customFieldsFormService->save();
     }
@@ -93,7 +107,7 @@ class CustomFieldsFormServiceTest extends TestCase
     /**
      * @throws \Alma\PrestaShop\Exceptions\MissingParameterException
      */
-    public function testSaveWithOneLanguageOnPS17WithoutEmptyField()
+    public function testUpdateWithOneLanguageOnPS17WithoutEmptyField()
     {
         $languages = [
             [
@@ -117,9 +131,10 @@ class CustomFieldsFormServiceTest extends TestCase
             ->method('getLanguages')
             ->willReturn($languages);
 
-        $this->toolsProxyMock->expects($this->exactly(9))
+        $this->toolsProxyMock->expects($this->exactly(10))
             ->method('getValue')
             ->withConsecutive(
+                ['_api_only'],
                 ['ALMA_PAY_NOW_BUTTON_TITLE_1'],
                 ['ALMA_PNX_BUTTON_TITLE_1'],
                 ['ALMA_DEFERRED_BUTTON_TITLE_1'],
@@ -131,6 +146,7 @@ class CustomFieldsFormServiceTest extends TestCase
                 ['ALMA_NOT_ELIGIBLE_CATEGORIES_1']
             )
             ->willReturnOnConsecutiveCalls(
+                false,
                 'Pay Now Custom Field Title',
                 'Pnx Custom Field Title',
                 'Deferred Custom Field Title',
@@ -161,7 +177,7 @@ class CustomFieldsFormServiceTest extends TestCase
     /**
      * @throws \Alma\PrestaShop\Exceptions\MissingParameterException
      */
-    public function testSaveWithTwoLanguagesOnPS17WithoutEmptyField()
+    public function testUpdateWithTwoLanguagesOnPS17WithoutEmptyField()
     {
         $languages = [
             [
@@ -201,9 +217,10 @@ class CustomFieldsFormServiceTest extends TestCase
             ->method('getLanguages')
             ->willReturn($languages);
 
-        $this->toolsProxyMock->expects($this->exactly(18))
+        $this->toolsProxyMock->expects($this->exactly(19))
             ->method('getValue')
             ->withConsecutive(
+                ['_api_only'],
                 ['ALMA_PAY_NOW_BUTTON_TITLE_1'],
                 ['ALMA_PNX_BUTTON_TITLE_1'],
                 ['ALMA_DEFERRED_BUTTON_TITLE_1'],
@@ -224,6 +241,7 @@ class CustomFieldsFormServiceTest extends TestCase
                 ['ALMA_NOT_ELIGIBLE_CATEGORIES_2']
             )
             ->willReturnOnConsecutiveCalls(
+                false,
                 'Pay Now Custom Field Title',
                 'Pnx Custom Field Title',
                 'Deferred Custom Field Title',
@@ -263,7 +281,7 @@ class CustomFieldsFormServiceTest extends TestCase
     /**
      * @throws \Alma\PrestaShop\Exceptions\MissingParameterException
      */
-    public function testSaveWithOneLanguageOnPS16WithoutEmptyField()
+    public function testUpdateWithOneLanguageOnPS16WithoutEmptyField()
     {
         $languages = [
             [
@@ -286,9 +304,10 @@ class CustomFieldsFormServiceTest extends TestCase
             ->method('getLanguages')
             ->willReturn($languages);
 
-        $this->toolsProxyMock->expects($this->exactly(9))
+        $this->toolsProxyMock->expects($this->exactly(10))
             ->method('getValue')
             ->withConsecutive(
+                ['_api_only'],
                 ['ALMA_PAY_NOW_BUTTON_TITLE_1'],
                 ['ALMA_PNX_BUTTON_TITLE_1'],
                 ['ALMA_DEFERRED_BUTTON_TITLE_1'],
@@ -300,6 +319,7 @@ class CustomFieldsFormServiceTest extends TestCase
                 ['ALMA_NOT_ELIGIBLE_CATEGORIES_1']
             )
             ->willReturnOnConsecutiveCalls(
+                false,
                 'Pay Now Custom Field Title',
                 'Pnx Custom Field Title',
                 'Deferred Custom Field Title',

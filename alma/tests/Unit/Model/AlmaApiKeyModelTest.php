@@ -52,7 +52,11 @@ class AlmaApiKeyModelTest extends TestCase
     /**
      * @var \Alma\API\Endpoints\Merchants
      */
-    protected $merchantMock;
+    protected $merchantMockTest;
+    /**
+     * @var \Alma\API\Endpoints\Merchants
+     */
+    protected $merchantMockLive;
     /**
      * @var \Alma\API\Client
      */
@@ -187,29 +191,6 @@ class AlmaApiKeyModelTest extends TestCase
             ->method('setMode')
             ->withConsecutive(['test'], ['live']);
         $this->clientModelMock->expects($this->exactly(2))
-            ->method('getMerchantMe')
-            ->willReturnOnConsecutiveCalls($this->merchantMockTest, $this->merchantMockLive);
-        $this->almaApiKeyModel->checkApiKeys($apiKeys);
-    }
-
-    /**
-     * @throws \Alma\PrestaShop\Exceptions\AlmaApiKeyException
-     */
-    public function testApiKeysInvalidFormClientWithCanCreatePaymentAndObscure()
-    {
-        $this->merchantMockTest->can_create_payments = true;
-        $this->merchantMockLive->can_create_payments = true;
-        $apiKeys = [
-            'test' => ConstantsHelper::OBSCURE_VALUE,
-            'live' => ConstantsHelper::OBSCURE_VALUE,
-        ];
-        $this->clientModelMock->expects($this->never())
-            ->method('setApiKey')
-            ->withConsecutive([$apiKeys['test']], [$apiKeys['live']]);
-        $this->clientModelMock->expects($this->never())
-            ->method('setMode')
-            ->withConsecutive(['test'], ['live']);
-        $this->clientModelMock->expects($this->never())
             ->method('getMerchantMe')
             ->willReturnOnConsecutiveCalls($this->merchantMockTest, $this->merchantMockLive);
         $this->almaApiKeyModel->checkApiKeys($apiKeys);

@@ -28,6 +28,7 @@ use Alma\API\Exceptions\RequestException;
 use Alma\API\RequestError;
 use Alma\PrestaShop\Exceptions\ClientException;
 use Alma\PrestaShop\Factories\ClientFactory;
+use Alma\PrestaShop\Helpers\SettingsHelper;
 use Alma\PrestaShop\Logger;
 
 if (!defined('_PS_VERSION_')) {
@@ -36,6 +37,7 @@ if (!defined('_PS_VERSION_')) {
 
 class ClientModel
 {
+    private static $instance;
     /**
      * @var \Alma\API\Client|null
      */
@@ -48,18 +50,34 @@ class ClientModel
      * @var string
      */
     private $mode;
+    /**
+     * @var \Alma\PrestaShop\Factories\ClientFactory
+     */
+    private $clientFactory;
 
-    public function __construct($almaClient = null)
+    public function __construct($clientFactory = null)
     {
-        if (!$almaClient && empty($this->apiKey) && empty($this->mode)) {
-            $almaClient = (new ClientFactory())->get();
+        if (!$clientFactory) {
+            $clientFactory = new ClientFactory();
+        }
+        $this->clientFactory = $clientFactory;
+        if (!$this->almaClient && SettingsHelper::getActiveAPIKey()) {
+            $this->almaClient = $this->clientFactory->get(SettingsHelper::getActiveAPIKey(), SettingsHelper::getActiveMode());
+        }
+    }
+
+    /**
+     * Singleton to get the same Client instance
+     *
+     * @return self
+     */
+    public static function getInstance()
+    {
+        if (!self::$instance) {
+            self::$instance = new self();
         }
 
-        if ($this->apiKey && $this->mode) {
-            $almaClient = (new ClientFactory())->create($this->apiKey, $this->mode);
-        }
-
-        $this->almaClient = $almaClient;
+        return self::$instance;
     }
 
     /**
@@ -75,6 +93,8 @@ class ClientModel
     }
 
     /**
+     * Setter Api Key
+     *
      * @param $apiKey
      *
      * @return void
@@ -82,15 +102,21 @@ class ClientModel
     public function setApiKey($apiKey)
     {
         $this->apiKey = $apiKey;
+        $this->almaClient = $this->clientFactory->create($apiKey, $this->mode);
     }
 
     /**
+     * Setter Mode Api Key
+     *
      * @param $mode
      *
      * @return void
      */
-    public function setMode($mode)
+    public function setMode($mode = null)
     {
+        if (!$mode) {
+            $mode = SettingsHelper::getActiveMode();
+        }
         $this->mode = $mode;
     }
 
@@ -104,7 +130,7 @@ class ClientModel
     private function getClient()
     {
         if (!$this->almaClient) {
-            throw new ClientException('No Api Key - it s normal at start');
+            throw new ClientException('No Api Key - it is normal at start');
         }
 
         return $this->almaClient;

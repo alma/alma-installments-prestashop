@@ -224,7 +224,7 @@ class ConfigFormService
         }
         $this->toolsProxy = $toolsProxy;
         if (!$clientModel) {
-            $clientModel = new ClientModel();
+            $clientModel = ClientModel::getInstance();
         }
         $this->clientModel = $clientModel;
         if (!$almaApiKeyModel) {
@@ -301,19 +301,23 @@ class ConfigFormService
         // Consider the plugin as fully configured only when everything goes well
         $this->configurationProxy->updateValue(self::ALMA_FULLY_CONFIGURED, '0');
         $apiMode = $this->toolsProxy->getValue(self::ALMA_API_MODE);
-        $apiKeys = $this->almaApiKeyModel->getAllApiKeySend();
+        $apiKeys = $this->almaApiKeyModel->getAllApiKeySend($apiMode);
         $this->almaApiKeyModel->checkActiveApiKeySendIsEmpty();
         $this->almaApiKeyModel->checkApiKeys($apiKeys);
-        $this->shareOfCheckoutService->handleConsent();
         $this->almaApiKeyModel->saveApiKeys($apiKeys);
 
         $this->configurationProxy->updateValue(self::ALMA_MERCHANT_ID, $this->clientModel->getMerchantId());
 
-        $this->customFieldsFormService->save();
-        $this->saveStaticConfigurations();
+        // At the first installation we don't need to set the static configuration
+        // The static configuration is get with default value
+        if (!$this->toolsProxy->getValue(self::API_ONLY)) {
+            $this->updateStaticConfigurations();
+        }
         $this->pnxFormService->save();
+        $this->customFieldsFormService->save();
 
         $this->configurationProxy->updateValue(self::ALMA_API_MODE, $apiMode);
+        $this->shareOfCheckoutService->handleConsent();
 
         // At this point, consider things are sufficiently configured to be usable
         $this->configurationProxy->updateValue(self::ALMA_FULLY_CONFIGURED, '1');
@@ -330,7 +334,7 @@ class ConfigFormService
      *
      * @return void
      */
-    protected function saveStaticConfigurations()
+    protected function updateStaticConfigurations()
     {
         foreach (self::STATIC_KEY_CONFIG as $key => $conditions) {
             $type = $conditions;

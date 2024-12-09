@@ -75,12 +75,26 @@ class CustomFieldsFormService
     }
 
     /**
-     * Save the Custom Fields
+     * Save the Custom Fields. We don't need to save the custom fields at the first installation
+     * because the default values are already get in the configuration
      * This is the fields for text payment button with multiple language
      *
      * @throws \Alma\PrestaShop\Exceptions\MissingParameterException
      */
     public function save()
+    {
+        if (!$this->toolsProxy->getValue(ConfigFormService::API_ONLY)) {
+            $this->update();
+        }
+    }
+
+    /**
+     * Update the Custom Fields
+     * This is the fields for text payment button with multiple language
+     *
+     * @throws \Alma\PrestaShop\Exceptions\MissingParameterException
+     */
+    private function update()
     {
         // Get languages are active
         $languages = $this->context->controller->getLanguages();
