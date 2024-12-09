@@ -42,4 +42,23 @@ class ConfigurationProxy
     {
         return \Configuration::get($key, $idLang, $idShopGroup, $idShop, $default);
     }
+
+    /**
+     * Update configuration key and value into database (automatically insert if key does not exist).
+     *
+     * Values are inserted/updated directly using SQL, because using (Configuration) ObjectModel
+     * may not insert values correctly (for example, HTML is escaped, when it should not be).
+     *
+     * @param $key
+     * @param $value
+     * @param $html
+     * @param $idShopGroup
+     * @param $idShop
+     *
+     * @return bool
+     */
+    public function updateValue($key, $value, $html = false, $idShopGroup = null, $idShop = null)
+    {
+        return \Configuration::updateValue($key, $value, $html, $idShopGroup, $idShop);
+    }
 }

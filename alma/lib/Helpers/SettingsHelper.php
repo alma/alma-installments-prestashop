@@ -301,7 +301,8 @@ class SettingsHelper
     }
 
     /**
-     * Get true if the consent SoC isn't answered.
+     * @deprecated use isShareOfCheckoutNoAnswered in ShareOfCheckoutHelper
+     * Get true if the consent SoC isn't answered
      *
      * @return bool
      */
