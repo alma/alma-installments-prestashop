@@ -31,6 +31,9 @@ use Alma\PrestaShop\Exceptions\ActivationException;
 use Alma\PrestaShop\Exceptions\ApiMerchantsException;
 use Alma\PrestaShop\Exceptions\InsuranceInstallException;
 use Alma\PrestaShop\Exceptions\WrongCredentialsException;
+use Alma\PrestaShop\Factories\ModuleFactory;
+use Alma\PrestaShop\Helpers\Admin\AdminInsuranceHelper;
+use Alma\PrestaShop\Helpers\ApiHelper;
 use Alma\PrestaShop\Helpers\ClientHelper;
 use Alma\PrestaShop\Helpers\ConfigurationHelper;
 use Alma\PrestaShop\Helpers\ConstantsHelper;
@@ -42,6 +45,28 @@ use PHPUnit\Framework\TestCase;
 
 class ApiHelperTest extends TestCase
 {
+    /**
+     * @var \Alma\PrestaShop\Helpers\ApiHelper
+     */
+    protected $apiHelper;
+    /**
+     * @var \Alma\PrestaShop\Helpers\ClientHelper
+     */
+    protected $clientHelperMock;
+
+    public function setUp()
+    {
+        $this->clientHelperMock = $this->createMock(ClientHelper::class);
+        $this->apiHelper = new ApiHelper(
+            $this->createMock(ModuleFactory::class),
+            $this->clientHelperMock,
+            $this->createMock(ToolsHelper::class),
+            $this->createMock(InsuranceService::class),
+            $this->createMock(ConfigurationHelper::class),
+            $this->createMock(AdminInsuranceHelper::class)
+        );
+    }
+
     public function testGetMerchant()
     {
         $responseCode = new \stdClass();
@@ -221,5 +246,17 @@ class ApiHelperTest extends TestCase
 
         $apiHelper = $apiHelperBuilder->getInstance();
         $this->assertEquals([], $apiHelper->getPaymentEligibility($paymentData));
+    }
+
+    /**
+     * @return void
+     */
+    public function testSendUrlForGatherCmsData()
+    {
+        $url = 'url';
+        $this->clientHelperMock->expects($this->once())
+            ->method('sendUrlForGatherCmsData')
+            ->with($url);
+        $this->apiHelper->sendUrlForGatherCmsData($url);
     }
 }

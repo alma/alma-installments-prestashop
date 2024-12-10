@@ -29,8 +29,10 @@ if (!defined('_PS_VERSION_')) {
 }
 
 use Alma\API\Entities\Merchant;
+use Alma\API\Lib\IntegrationsConfigurationsUtils;
 use Alma\API\RequestError;
 use Alma\PrestaShop\Builders\Helpers\ApiHelperBuilder;
+use Alma\PrestaShop\Builders\Helpers\ContextHelperBuilder;
 use Alma\PrestaShop\Builders\Helpers\CustomFieldHelperBuilder;
 use Alma\PrestaShop\Builders\Helpers\PriceHelperBuilder;
 use Alma\PrestaShop\Builders\Helpers\SettingsHelperBuilder;
@@ -51,7 +53,9 @@ use Alma\PrestaShop\Forms\ShareOfCheckoutAdminFormBuilder;
 use Alma\PrestaShop\Helpers\ApiHelper;
 use Alma\PrestaShop\Helpers\ApiKeyHelper;
 use Alma\PrestaShop\Helpers\ClientHelper;
+use Alma\PrestaShop\Helpers\CmsDataHelper;
 use Alma\PrestaShop\Helpers\ConstantsHelper;
+use Alma\PrestaShop\Helpers\ContextHelper;
 use Alma\PrestaShop\Helpers\CustomFieldsHelper;
 use Alma\PrestaShop\Helpers\MediaHelper;
 use Alma\PrestaShop\Helpers\PriceHelper;
@@ -69,7 +73,7 @@ final class GetContentHookController extends AdminHookController
     /** @var ApiKeyHelper */
     private $apiKeyHelper;
 
-    /** @var Alma */
+    /** @var \Module */
     protected $module;
 
     /**
@@ -96,6 +100,11 @@ final class GetContentHookController extends AdminHookController
      * @var bool
      */
     protected $hasKey;
+
+    /**
+     * @var ContextHelper
+     */
+    protected $contextHelper;
 
     /**
      * @var array
@@ -178,6 +187,9 @@ final class GetContentHookController extends AdminHookController
         $mediaHelperBuilder = new MediaHelperBuilder();
         $this->mediaHelper = $mediaHelperBuilder->getInstance();
 
+        $contextHelperBuilder = new ContextHelperBuilder();
+        $this->contextHelper = $contextHelperBuilder->getInstance();
+
         $this->hasKey = false;
 
         parent::__construct($module);
@@ -250,8 +262,8 @@ final class GetContentHookController extends AdminHookController
         }
 
         // Down here, we know the provided API keys are correct (at least the one for the chosen API mode)
-        $this->setKeyIfValueIsNotObscur($liveKey, ALMA_MODE_LIVE);
-        $this->setKeyIfValueIsNotObscur($testKey, ALMA_MODE_TEST);
+        $this->setKeyIfValueIsNotObscure($liveKey, ALMA_MODE_LIVE);
+        $this->setKeyIfValueIsNotObscure($testKey, ALMA_MODE_TEST);
 
         // Try to get merchant from configured API key/mode
         try {
@@ -421,20 +433,25 @@ final class GetContentHookController extends AdminHookController
             return $credentialsError['message'];
         }
 
+        if (IntegrationsConfigurationsUtils::isUrlRefreshRequired($this->settingsHelper->getKey(CmsDataHelper::ALMA_CMSDATA_DATE))) {
+            $this->apiHelper->sendUrlForGatherCmsData($this->contextHelper->getModuleLink('cmsdataexport', [], true));
+            $this->settingsHelper->updateKey(CmsDataHelper::ALMA_CMSDATA_DATE, time());
+        }
+
         $this->context->smarty->clearAssign('validation_error');
 
         return $this->module->display($this->module->file, 'getContent.tpl');
     }
 
     /**
-     * Check if Api key are obscur.
+     * Check if Api key are obscure.
      *
      * @param string $apiKey
      * @param string $mode
      *
      * @return void
      */
-    private function setKeyIfValueIsNotObscur($apiKey, $mode)
+    private function setKeyIfValueIsNotObscure($apiKey, $mode)
     {
         if (ConstantsHelper::OBSCURE_VALUE === $apiKey) {
             return;

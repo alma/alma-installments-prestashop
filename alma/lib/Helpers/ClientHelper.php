@@ -177,4 +177,22 @@ class ClientHelper
     {
         return $this->getAlmaClient()->payments;
     }
+
+    /**
+     * @param string $url
+     *
+     * @throws \Alma\PrestaShop\Exceptions\ClientException
+     */
+    public function sendUrlForGatherCmsData($url)
+    {
+        try {
+            $this->getAlmaClient()->configuration->sendIntegrationsConfigurationsUrl($url);
+        } catch (Alma\API\Exceptions\RequestException $e) {
+            throw new ClientException('[Alma] Error Request: ' . $e->getMessage());
+        } catch (RequestError $e) {
+            throw new ClientException('[Alma] Error Request: ' . $e->getMessage());
+        } catch (ClientException $e) {
+            throw new ClientException('[Alma] Error to get Alma Client: ' . $e->getMessage());
+        }
+    }
 }

@@ -24,11 +24,14 @@
 
 namespace Alma\PrestaShop\Tests\Unit\Helper;
 
+use Alma\API\Client;
 use Alma\API\ClientContext;
+use Alma\API\Endpoints\Configuration;
 use Alma\API\Endpoints\Orders;
 use Alma\API\Entities\Payment;
 use Alma\API\Exceptions\ParametersException;
 use Alma\API\Exceptions\RequestException;
+use Alma\API\RequestError;
 use Alma\PrestaShop\Exceptions\ClientException;
 use Alma\PrestaShop\Helpers\ClientHelper;
 use Mockery;
@@ -39,11 +42,22 @@ class ClientHelperTest extends TestCase
     /**
      * @var Mockery\Mock|(Mockery\MockInterface&ClientHelper)
      */
+    protected $clientHelperMock;
+    /**
+     * @var \Alma\PrestaShop\Helpers\ClientHelper
+     */
     protected $clientHelper;
 
     public function setUp()
     {
-        $this->clientHelper = Mockery::mock(ClientHelper::class)->makePartial();
+        $this->clientHelperMock = Mockery::mock(ClientHelper::class)->makePartial();
+        $this->clientHelper = new ClientHelper();
+    }
+
+    public function tearDown()
+    {
+        $this->clientHelperMock = null;
+        $this->clientHelper = null;
     }
 
     /**
@@ -53,10 +67,10 @@ class ClientHelperTest extends TestCase
      */
     public function testSendOrderEndpointNoAlmaClient()
     {
-        $this->clientHelper->shouldReceive('getAlmaClient')->andThrow(ClientException::class);
+        $this->clientHelperMock->shouldReceive('getAlmaClient')->andThrow(ClientException::class);
 
         $this->expectException(ClientException::class);
-        $this->clientHelper->getClientOrdersEndpoint();
+        $this->clientHelperMock->getClientOrdersEndpoint();
     }
 
     /**
@@ -68,9 +82,9 @@ class ClientHelperTest extends TestCase
         $almaClient = new \stdClass();
         $almaClient->orders = new Orders(Mockery::mock(ClientContext::class));
 
-        $this->clientHelper->shouldReceive('getAlmaClient')->andReturn($almaClient);
+        $this->clientHelperMock->shouldReceive('getAlmaClient')->andReturn($almaClient);
 
-        $this->assertInstanceOf(Orders::class, $this->clientHelper->getClientOrdersEndpoint());
+        $this->assertInstanceOf(Orders::class, $this->clientHelperMock->getClientOrdersEndpoint());
     }
 
     /**
@@ -107,32 +121,34 @@ class ClientHelperTest extends TestCase
 
     /**
      * When i call an api
-     * Then I expect a endpoint paymentqs
+     * Then I expect a endpoint payments
      */
     public function testSendPaymentEndpoint()
     {
         $almaClient = new \stdClass();
         $almaClient->payments = Mockery::mock(Payment::class);
 
-        $this->clientHelper->shouldReceive('getAlmaClient')->andReturn($almaClient);
+        $this->clientHelperMock->shouldReceive('getAlmaClient')->andReturn($almaClient);
 
-        $this->assertInstanceOf(Payment::class, $this->clientHelper->getClientPaymentsEndpoint());
+        $this->assertInstanceOf(Payment::class, $this->clientHelperMock->getClientPaymentsEndpoint());
     }
 
     /**
+     * TODO : Need to be removed, useless test
      * When i call an api
      * And there is no alma client
      * Then I expect a client exception
      */
     public function testSendPaymentEndpointNoAlmaClient()
     {
-        $this->clientHelper->shouldReceive('getAlmaClient')->andThrow(ClientException::class);
+        $this->clientHelperMock->shouldReceive('getAlmaClient')->andThrow(ClientException::class);
 
         $this->expectException(ClientException::class);
-        $this->clientHelper->getClientPaymentsEndpoint();
+        $this->clientHelperMock->getClientPaymentsEndpoint();
     }
 
     /**
+     * TODO : Need to be removed, useless test
      * When i call the function and the request fails
      * Then I expect a Request exception
      */
@@ -148,8 +164,43 @@ class ClientHelperTest extends TestCase
         $clientHelper->getPaymentByTransactionId('transactionId');
     }
 
-    public function tearDown()
+    /**
+     * @dataProvider sendUrlForGatherCmsDataExceptionsDataProvider
+     *
+     * @throws \Alma\PrestaShop\Exceptions\ClientException
+     */
+    public function testSendUrlForGatherCmsDataWithThrowRequestException($exceptions)
     {
-        $this->clientHelper = null;
+        $url = 'url';
+        $clientContextMock = $this->createMock(ClientContext::class);
+        $almaClientMock = $this->createMock(Client::class);
+
+        $almaClientMock->configuration = $this->getMockBuilder(Configuration::class)
+            ->setConstructorArgs([$clientContextMock])
+            ->setMethods(['sendIntegrationsConfigurationsUrl'])
+            ->getMock();
+        $almaClientMock->configuration->expects($this->once())
+            ->method('sendIntegrationsConfigurationsUrl')
+            ->with($url)
+            ->willThrowException($exceptions);
+
+        $clientHelperPartialMock = $this->getMockBuilder(ClientHelper::class)
+            ->setMethods(['getAlmaClient'])
+            ->getMock();
+        $clientHelperPartialMock->expects($this->once())
+            ->method('getAlmaClient')
+            ->willReturn($almaClientMock);
+
+        $this->expectException(ClientException::class);
+        $clientHelperPartialMock->sendUrlForGatherCmsData($url);
+    }
+
+    public function sendUrlForGatherCmsDataExceptionsDataProvider()
+    {
+        return [
+            [new RequestException('error')],
+            [new RequestError('error')],
+            [new ClientException('error')],
+        ];
     }
 }

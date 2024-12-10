@@ -25,6 +25,8 @@
 namespace Alma\PrestaShop\Tests\Unit\Model;
 
 use Alma\PrestaShop\Builders\Models\CartDataBuilder;
+use Alma\PrestaShop\Factories\CategoryFactory;
+use Alma\PrestaShop\Factories\ContextFactory;
 use Alma\PrestaShop\Factories\CurrencyFactory;
 use Alma\PrestaShop\Helpers\ConfigurationHelper;
 use Alma\PrestaShop\Helpers\CurrencyHelper;
@@ -33,6 +35,7 @@ use Alma\PrestaShop\Helpers\ProductHelper;
 use Alma\PrestaShop\Helpers\SettingsHelper;
 use Alma\PrestaShop\Helpers\ShopHelper;
 use Alma\PrestaShop\Helpers\ToolsHelper;
+use Alma\PrestaShop\Helpers\ValidateHelper;
 use Alma\PrestaShop\Repositories\ProductRepository;
 use Cart;
 use PHPUnit\Framework\TestCase;
@@ -235,7 +238,13 @@ class CartDataTest extends TestCase
         $cart = \Mockery::mock(\Cart::class);
         $cart->allows()->getProducts(true)->andReturns([['id_product' => 1]]);
 
-        $settingsHelperMock = \Mockery::mock(SettingsHelper::class, [new ShopHelper(), new ConfigurationHelper()]);
+        $settingsHelperMock = \Mockery::mock(SettingsHelper::class, [
+            new ShopHelper(),
+            new ConfigurationHelper(),
+            new CategoryFactory(),
+            new ContextFactory(),
+            new ValidateHelper(),
+        ]);
         $settingsHelperMock->shouldReceive('getExcludedCategories')->andReturn(['cateexclue']);
 
         $productHelperMock = \Mockery::mock(ProductHelper::class);

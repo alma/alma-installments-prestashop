@@ -28,6 +28,7 @@ use Alma\API\Lib\PaymentValidator;
 use Alma\PrestaShop\Factories\AddressFactory;
 use Alma\PrestaShop\Factories\CarrierFactory;
 use Alma\PrestaShop\Factories\CartFactory;
+use Alma\PrestaShop\Factories\CategoryFactory;
 use Alma\PrestaShop\Factories\CombinationFactory;
 use Alma\PrestaShop\Factories\ContextFactory;
 use Alma\PrestaShop\Factories\CurrencyFactory;
@@ -206,7 +207,10 @@ trait BuilderTrait
 
         return new SettingsHelper(
             $this->getShopHelper(),
-            $this->getConfigurationHelper()
+            $this->getConfigurationHelper(),
+            $this->getCategoryFactory(),
+            $this->getContextFactory(),
+            $this->getValidateHelper()
         );
     }
 
@@ -966,7 +970,10 @@ trait BuilderTrait
         return new FeePlanHelper(
             new SettingsHelper(
                 new ShopHelper(),
-                new ConfigurationHelper()
+                new ConfigurationHelper(),
+                new CategoryFactory(),
+                new ContextFactory(),
+                new ValidateHelper()
             ),
             new EligibilityFactory()
         );
@@ -1212,5 +1219,13 @@ trait BuilderTrait
     public function getClientPaymentValidator()
     {
         return new PaymentValidator();
+    }
+
+    /**
+     * @return CategoryFactory
+     */
+    public function getCategoryFactory()
+    {
+        return new CategoryFactory();
     }
 }

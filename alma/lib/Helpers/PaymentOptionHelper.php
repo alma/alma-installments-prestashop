@@ -201,7 +201,7 @@ class PaymentOptionHelper
             return $this->getTexts(
                 $installementCount,
                 PaymentButtonAdminFormBuilder::ALMA_PNX_AIR_BUTTON_TITLE,
-                PaymentButtonAdminFormBuilder::ALMA_PNX_BUTTON_DESC
+                PaymentButtonAdminFormBuilder::ALMA_PNX_AIR_BUTTON_DESC
             );
         }
         if ($isDeferred) {
