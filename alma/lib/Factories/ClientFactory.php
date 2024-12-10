@@ -22,50 +22,60 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
-namespace Alma\PrestaShop\Forms;
+namespace Alma\PrestaShop\Factories;
+
+use Alma;
+use Alma\API\Client;
+use Alma\API\DependenciesError;
+use Alma\API\ParamsError;
+use Alma\PrestaShop\Helpers\SettingsHelper;
+use Alma\PrestaShop\Logger;
 
 if (!defined('_PS_VERSION_')) {
     exit;
 }
-
-/**
- * Class AbstractAlmaAdminFormBuilder
- */
-abstract class AbstractAlmaAdminFormBuilder extends AbstractAdminFormBuilder
+class ClientFactory
 {
     /**
-     * @var \Alma
+     * @var \Alma\API\Client
      */
-    protected $module;
+    private $alma = null;
 
     /**
-     * @var \Context
+     * @return \Alma\API\Client|null
      */
-    protected $context;
-    protected $config;
-
-    /**
-     * @param string $image
-     * @param array $config
-     */
-    public function __construct($module, $context, $image, $config = [])
+    public function create()
     {
-        $this->module = $module;
-        $this->context = $context;
-        $this->config = $config;
-        parent::__construct(
-            $image,
-            $this->getTitle()
-        );
+        try {
+            $this->alma = new Client(SettingsHelper::getActiveAPIKey(), [
+                'mode' => SettingsHelper::getActiveMode(),
+                'logger' => Logger::instance(),
+            ]);
+
+            $this->alma->addUserAgentComponent('PrestaShop', _PS_VERSION_);
+            $this->alma->addUserAgentComponent('Alma for PrestaShop', Alma::VERSION);
+
+            return $this->alma;
+        } catch (DependenciesError $e) {
+            Logger::instance()->error('[Alma] Dependencies Error creating Alma client', ['exception' => $e]);
+
+            return null;
+        } catch (ParamsError $e) {
+            Logger::instance()->error('[Alma] Error creating Alma client', ['exception' => $e]);
+
+            return null;
+        }
     }
 
-    protected function getSubmitTitle()
-    {
-        return $this->module->l('Save');
-    }
-
     /**
-     * @return mixed
+     * @return \Alma\API\Client|null
      */
-    abstract protected function getTitle();
+    public function get()
+    {
+        if (!$this->alma) {
+            $this->alma = $this->create();
+        }
+
+        return $this->alma;
+    }
 }

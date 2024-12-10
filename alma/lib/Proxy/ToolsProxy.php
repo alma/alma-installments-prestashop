@@ -22,50 +22,40 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
-namespace Alma\PrestaShop\Forms;
+namespace Alma\PrestaShop\Proxy;
 
 if (!defined('_PS_VERSION_')) {
     exit;
 }
 
 /**
- * Class AbstractAlmaAdminFormBuilder
+ * Class ToolsProxy.
  */
-abstract class AbstractAlmaAdminFormBuilder extends AbstractAdminFormBuilder
+class ToolsProxy
 {
     /**
-     * @var \Alma
+     * Get a value from $_POST / $_GET
+     * if unavailable, take a default value.
+     *
+     * @param string $key Value key
+     * @param mixed $default_value (optional)
+     *
+     * @codeCoverageIgnore Simple getter
+     *
+     * @return mixed Value
      */
-    protected $module;
-
-    /**
-     * @var \Context
-     */
-    protected $context;
-    protected $config;
-
-    /**
-     * @param string $image
-     * @param array $config
-     */
-    public function __construct($module, $context, $image, $config = [])
+    public function getValue($key, $default_value = false)
     {
-        $this->module = $module;
-        $this->context = $context;
-        $this->config = $config;
-        parent::__construct(
-            $image,
-            $this->getTitle()
-        );
-    }
-
-    protected function getSubmitTitle()
-    {
-        return $this->module->l('Save');
+        return \Tools::getValue($key, $default_value);
     }
 
     /**
-     * @return mixed
+     * @param string $tab
+     *
+     * @return bool|string
      */
-    abstract protected function getTitle();
+    public function getAdminTokenLite($tab)
+    {
+        return \Tools::getAdminTokenLite($tab);
+    }
 }

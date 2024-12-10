@@ -39,7 +39,7 @@ abstract class HookController
     /**
      * HookController constructor.
      *
-     * @param $module Alma
+     * @param $module \Module
      */
     public function __construct($module)
     {
