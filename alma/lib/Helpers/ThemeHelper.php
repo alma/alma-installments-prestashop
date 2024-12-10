@@ -59,8 +59,6 @@ class ThemeHelper
         $themeName = $this->contextFactory->getContext()->shop->theme_name;
         $themeConfigPath = self::CONFIG_THEME_FILE;
 
-        // WARNING : NOT COMPATIBLE WITH PS 1.6
-        // TODO : Need to explo a better compatibility with PS 1.6
         if ($this->toolsHelper->psVersionCompare('1.7', '>=')) {
             if (file_exists($themeConfigPath)) {
                 $themeConfig = \Symfony\Component\Yaml\Yaml::parseFile($themeConfigPath);
