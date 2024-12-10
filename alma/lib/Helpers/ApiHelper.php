@@ -138,7 +138,7 @@ class ApiHelper
      *
      * @throws \PrestaShopException
      */
-    protected function handleInsuranceFlag($merchant)
+    public function handleInsuranceFlag($merchant)
     {
         try {
             $isAllowInsurance = $this->saveFeatureFlag(
