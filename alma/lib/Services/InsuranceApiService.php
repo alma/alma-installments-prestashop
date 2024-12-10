@@ -172,10 +172,10 @@ class InsuranceApiService
         try {
             $result = $this->almaApiClient->insurance->subscription(
                 $subscriptionData,
-                $order->id,
+                strval($order->id),
                 $idTransaction,
                 $this->context->cookie->checksum,
-                $order->id_cart
+                strval($order->id_cart)
             );
 
             if (isset($result['subscriptions'])) {
@@ -184,11 +184,12 @@ class InsuranceApiService
         } catch (\Exception  $e) {
             Logger::instance()->error(
                 sprintf(
-                    '[Alma] Error when subscribing insurance contract, message "%s", trace "%s", subscriptionData : "%s", idTransaction : "%s"',
+                    '[Alma] Error when subscribing insurance contract, message "%s", trace "%s", subscriptionData : "%s", idTransaction : "%s", API response: "%s"',
                     $e->getMessage(),
                     $e->getTraceAsString(),
                     json_encode($subscriptionData),
-                    $idTransaction
+                    $idTransaction,
+                    $e->response ? json_encode($e->response->json) : null
                 )
             );
         }
