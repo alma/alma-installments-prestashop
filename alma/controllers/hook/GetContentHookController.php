@@ -36,8 +36,10 @@ use Alma\PrestaShop\Exceptions\ShareOfCheckoutException;
 use Alma\PrestaShop\Factories\ContextFactory;
 use Alma\PrestaShop\Hooks\AdminHookController;
 use Alma\PrestaShop\Logger;
+use Alma\PrestaShop\Proxy\ConfigurationProxy;
 use Alma\PrestaShop\Proxy\ToolsProxy;
 use Alma\PrestaShop\Services\ConfigFormService;
+use Alma\PrestaShop\Services\InsuranceService;
 
 final class GetContentHookController extends AdminHookController
 {
@@ -52,6 +54,14 @@ final class GetContentHookController extends AdminHookController
      * @var \Alma\PrestaShop\Proxy\ToolsProxy
      */
     protected $toolsProxy;
+    /**
+     * @var \Alma\PrestaShop\Proxy\ConfigurationProxy
+     */
+    protected $configurationProxy;
+    /**
+     * @var \Alma\PrestaShop\Services\InsuranceService
+     */
+    protected $insuranceService;
 
     /**
      * GetContentHook Controller construct.
@@ -68,6 +78,8 @@ final class GetContentHookController extends AdminHookController
         );
 
         $this->toolsProxy = new ToolsProxy();
+        $this->configurationProxy = new ConfigurationProxy();
+        $this->insuranceService = new InsuranceService();
 
         parent::__construct($module);
     }
@@ -151,6 +163,7 @@ final class GetContentHookController extends AdminHookController
         }
 
         $assignSmartyKeys['form'] = $this->configFormService->getRenderPaymentFormHtml();
+        $assignSmartyKeys['hasKey'] = $this->configurationProxy->get(ConfigFormService::ALMA_FULLY_CONFIGURED);
         $assignSmartyKeys['error_messages'] = $messages;
         $this->context->smarty->assign($assignSmartyKeys);
 
