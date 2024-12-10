@@ -1,5 +1,21 @@
 # Changelog
 
+## v4.6.0 - 2024-12-10
+
+### Changes
+
+### 🚀 New Features
+
+- feat: Product analytics for plugin performance (#587)
+
+### 🐛 Bug Fixes
+
+- fix: Custom Description for payment button credit (#614)
+
+#### Contributors
+
+@Benjamin-Freoua-Alma, @alma-renovate-bot, @alma-renovate-bot[bot], @github-actions and @remi-zuffinetti
+
 ## v4.5.0 - 2024-11-13
 
 ### Changes
