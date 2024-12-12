@@ -54,21 +54,36 @@ class ThemeHelper
     /**
      * @return string
      */
-    public function getThemeNameWithVersion()
+    public function getThemeName()
     {
-        $themeName = $this->contextFactory->getContext()->shop->theme_name;
+        return $this->contextFactory->getContext()->shop->theme_name;
+    }
+
+    /**
+     * @return string
+     */
+    public function getThemeVersion()
+    {
+        $themeVersion = '';
         $themeConfigPath = self::CONFIG_THEME_FILE;
 
-        // WARNING : NOT COMPATIBLE WITH PS 1.6
-        // TODO : Need to explo a better compatibility with PS 1.6
         if ($this->toolsHelper->psVersionCompare('1.7', '>=')) {
             if (file_exists($themeConfigPath)) {
                 $themeConfig = \Symfony\Component\Yaml\Yaml::parseFile($themeConfigPath);
                 $themeVersion = $themeConfig['version'] ?: 'undefined';
-                $themeName = $themeName . ' ' . $themeVersion;
+            }
+        } else {
+            $themeDirectory = _PS_THEME_DIR_;
+            $configFilePath = $themeDirectory . 'config.xml';
+
+            if (file_exists($configFilePath)) {
+                $xmlContent = simplexml_load_file($configFilePath);
+                if ($xmlContent && isset($xmlContent->version)) {
+                    $themeVersion = (string) $xmlContent->version['value'];
+                }
             }
         }
 
-        return $themeName;
+        return $themeVersion;
     }
 }
