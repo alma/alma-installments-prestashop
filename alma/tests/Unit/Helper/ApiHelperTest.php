@@ -29,7 +29,6 @@ use Alma\API\RequestError;
 use Alma\PrestaShop\Builders\Helpers\ApiHelperBuilder;
 use Alma\PrestaShop\Exceptions\ActivationException;
 use Alma\PrestaShop\Exceptions\ApiMerchantsException;
-use Alma\PrestaShop\Exceptions\InsuranceInstallException;
 use Alma\PrestaShop\Exceptions\WrongCredentialsException;
 use Alma\PrestaShop\Factories\ModuleFactory;
 use Alma\PrestaShop\Helpers\Admin\AdminInsuranceHelper;
@@ -37,9 +36,7 @@ use Alma\PrestaShop\Helpers\ApiHelper;
 use Alma\PrestaShop\Helpers\ClientHelper;
 use Alma\PrestaShop\Helpers\ConfigurationHelper;
 use Alma\PrestaShop\Helpers\ConstantsHelper;
-use Alma\PrestaShop\Helpers\InsuranceHelper;
 use Alma\PrestaShop\Helpers\ToolsHelper;
-use Alma\PrestaShop\Services\InsuranceService;
 use Mockery;
 use PHPUnit\Framework\TestCase;
 
@@ -61,7 +58,6 @@ class ApiHelperTest extends TestCase
             $this->createMock(ModuleFactory::class),
             $this->clientHelperMock,
             $this->createMock(ToolsHelper::class),
-            $this->createMock(InsuranceService::class),
             $this->createMock(ConfigurationHelper::class),
             $this->createMock(AdminInsuranceHelper::class)
         );
@@ -132,51 +128,6 @@ class ApiHelperTest extends TestCase
         $apiHelper = $apiHelperBuilder->getInstance();
 
         $this->assertInstanceOf(Merchant::class, $apiHelper->getMerchant());
-    }
-
-    public function testHandleInsuranceFlag()
-    {
-        $merchant = new Merchant(['cms_insurance' => 1]);
-
-        $insuranceService = Mockery::mock(InsuranceService::class)->makePartial();
-        $insuranceService->shouldReceive('installDefaultData')->andThrow(new InsuranceInstallException());
-
-        $insuranceHelper = Mockery::mock(InsuranceHelper::class)->makePartial();
-        $insuranceHelper->shouldReceive('handleBOMenu', [0])->andReturn('');
-        $insuranceHelper->shouldReceive('handleDefaultInsuranceFieldValues', [0])->andReturn('');
-
-        $apiHelperBuilder = Mockery::mock(ApiHelperBuilder::class)->makePartial();
-        $apiHelperBuilder->shouldReceive('getInsuranceService')->andReturn($insuranceService);
-        $apiHelperBuilder->shouldReceive('getInsuranceHelper')->andReturn($insuranceHelper);
-
-        $apiHelper = $apiHelperBuilder->getInstance();
-
-        $reflection = new \ReflectionClass($apiHelper);
-        $method = $reflection->getMethod('handleInsuranceFlag');
-        $method->setAccessible(true);
-
-        $this->assertNull($method->invokeArgs($apiHelper, [$merchant]));
-
-        $merchant = new Merchant(['cms_insurance' => 1]);
-
-        $insuranceService = Mockery::mock(InsuranceService::class)->makePartial();
-        $insuranceService->shouldReceive('installDefaultData')->andReturn(true);
-
-        $insuranceHelper = Mockery::mock(InsuranceHelper::class)->makePartial();
-        $insuranceHelper->shouldReceive('handleBOMenu', [true])->andReturn('');
-        $insuranceHelper->shouldReceive('handleDefaultInsuranceFieldValues', [true])->andReturn('');
-
-        $apiHelperBuilder = Mockery::mock(ApiHelperBuilder::class)->makePartial();
-        $apiHelperBuilder->shouldReceive('getInsuranceService')->andReturn($insuranceService);
-        $apiHelperBuilder->shouldReceive('getInsuranceHelper')->andReturn($insuranceHelper);
-
-        $apiHelper = $apiHelperBuilder->getInstance();
-
-        $reflection = new \ReflectionClass($apiHelper);
-        $method = $reflection->getMethod('handleInsuranceFlag');
-        $method->setAccessible(true);
-
-        $this->assertNull($method->invokeArgs($apiHelper, [$merchant]));
     }
 
     public function testSaveFeatureFlag()

@@ -25,12 +25,15 @@
 namespace Alma\PrestaShop\Services;
 
 use Alma\API\Entities\Insurance\Subscription;
+use Alma\API\Entities\Merchant;
 use Alma\API\Exceptions\MissingKeyException;
 use Alma\API\Lib\ArrayUtils;
+use Alma\PrestaShop\Builders\Admin\InsuranceHelperBuilder;
 use Alma\PrestaShop\Builders\Helpers\ApiHelperBuilder;
 use Alma\PrestaShop\Builders\Services\CartServiceBuilder;
 use Alma\PrestaShop\Exceptions\InsuranceInstallException;
 use Alma\PrestaShop\Exceptions\TermsAndConditionsException;
+use Alma\PrestaShop\Helpers\Admin\AdminInsuranceHelper;
 use Alma\PrestaShop\Helpers\ConstantsHelper;
 use Alma\PrestaShop\Helpers\ToolsHelper;
 use Alma\PrestaShop\Logger;
@@ -90,6 +93,10 @@ class InsuranceService
      * @var \Alma\PrestaShop\Model\ClientModel
      */
     protected $clientModel;
+    /**
+     * @var AdminInsuranceHelper
+     */
+    protected $insuranceHelper;
 
     public function __construct()
     {
@@ -106,6 +113,7 @@ class InsuranceService
         $this->toolsHelper = new ToolsHelper();
         $this->apiHelper = (new ApiHelperBuilder())->getInstance();
         $this->clientModel = new ClientModel();
+        $this->insuranceHelper = (new InsuranceHelperBuilder())->getInstance();
     }
 
     /**
@@ -355,13 +363,15 @@ class InsuranceService
     }
 
     /**
+     * @param Merchant $merchant
+     *
      * @return void
      */
-    public function installIfCompatible()
+    public function installIfCompatible($merchant)
     {
         if ($this->toolsHelper->psVersionCompare('1.7', '>=')) {
             try {
-                $this->apiHelper->handleInsuranceFlag($this->clientModel->getMerchantMe());
+                $this->handleInsuranceFlag($merchant);
             } catch (\PrestaShopException $e) {
                 Logger::instance()->error(
                     sprintf(
@@ -370,6 +380,40 @@ class InsuranceService
                     )
                 );
             }
+        }
+    }
+
+    /**
+     * @param Merchant $merchant
+     *
+     * @return void
+     *
+     * @throws \PrestaShopException
+     */
+    public function handleInsuranceFlag($merchant)
+    {
+        try {
+            $isAllowInsurance = $this->apiHelper->saveFeatureFlag(
+                $merchant,
+                'cms_insurance',
+                ConstantsHelper::ALMA_ALLOW_INSURANCE,
+                ConstantsHelper::ALMA_ACTIVATE_INSURANCE
+            );
+
+            if ($isAllowInsurance) {
+                $this->installDefaultData();
+            }
+
+            $this->insuranceHelper->handleBOMenu($isAllowInsurance);
+            $this->insuranceHelper->handleDefaultInsuranceFieldValues($isAllowInsurance);
+        } catch (InsuranceInstallException $e) {
+            Logger::instance()->error(
+                sprintf(
+                    '[Alma] Installation of exception has failed, message "%s", trace "%s"',
+                    $e->getMessage(),
+                    $e->getTraceAsString()
+                )
+            );
         }
     }
 }
