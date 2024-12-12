@@ -47,7 +47,6 @@ class ApiHelperBuilder
             $this->getModuleFactory(),
             $this->getClientHelper(),
             $this->getToolsHelper(),
-            $this->getInsuranceService(),
             $this->getConfigurationHelper(),
             $this->getAdminInsuranceHelper()
         );
