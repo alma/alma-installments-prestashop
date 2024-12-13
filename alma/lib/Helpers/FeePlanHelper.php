@@ -136,7 +136,7 @@ class FeePlanHelper
             $deferred_months = $feePlan->deferred_months;
             $key = $this->settingsHelper->keyForFeePlan($feePlan);
 
-            if (1 != $installment && $this->settingsHelper->isDeferred($feePlan)) {
+            if ($this->shouldSkipPlan($installment, $feePlan)) {
                 continue;
             }
 
@@ -146,69 +146,66 @@ class FeePlanHelper
             $limitMax = $this->priceHelper->convertPriceFromCents(min($max, $feePlan->max_purchase_amount));
 
             $enablePlan = (bool) $this->toolsProxy->getValue("ALMA_{$key}_ENABLED_ON");
-            if ($enablePlan
-                && !(
-                    $min >= $feePlan->min_purchase_amount
-                    && $min <= min($max, $feePlan->max_purchase_amount)
-                )
-            ) {
-                $message = sprintf(
-                    'Minimum amount for %1$d-installment plan must be within %2$d and %3$d.',
-                    $installment,
-                    $limitMin,
-                    $limitMax
-                );
-                if ($installment == 1 && $deferred_days > 0 && $deferred_months == 0) {
-                    $message = sprintf(
-                        'Minimum amount for deferred + %1$s days plan must be within %2$d and %3$d.',
-                        $deferred_days,
-                        $limitMin,
-                        $limitMax
-                    );
-                }
-                if ($installment == 1 && $deferred_days == 0 && $deferred_months > 0) {
-                    $message = sprintf(
-                        'Minimum amount for deferred + %1$s months plan must be within %2$d and %3$d.',
-                        $deferred_months,
-                        $limitMin,
-                        $limitMax
-                    );
-                }
 
-                throw new PnxFormException($message);
+            if ($enablePlan && !$this->isWithinLimits($min, $feePlan->min_purchase_amount, $max, $feePlan->max_purchase_amount)) {
+                throw new PnxFormException($this->generateErrorMessage('Minimum', $installment, $deferred_days, $deferred_months, $limitMin, $limitMax));
             }
 
-            if ($enablePlan
-                && !(
-                    $max >= $min
-                    && $max <= $feePlan->max_purchase_amount
-                )
-            ) {
-                $message = sprintf(
-                    'Maximum amount for %1$d-installment plan must be within %2$d and %3$d.',
-                    $installment,
-                    $limitMin,
-                    $limitMax
-                );
-                if ($installment == 1 && $deferred_days > 0 && $deferred_months == 0) {
-                    $message = sprintf(
-                        'Maximum amount for deferred + %1$s days plan must be within %2$d and %3$d.',
-                        $deferred_days,
-                        $limitMin,
-                        $limitMax
-                    );
-                }
-                if ($installment == 1 && $deferred_days == 0 && $deferred_months > 0) {
-                    $message = sprintf(
-                        'Maximum amount for deferred + %1$s months plan must be within %2$d and %3$d.',
-                        $deferred_months,
-                        $limitMin,
-                        $this->priceHelper->convertPriceFromCents($feePlan->max_purchase_amount)
-                    );
-                }
-
-                throw new PnxFormException($message);
+            if ($enablePlan && !$this->isWithinLimits($max, $min, $feePlan->max_purchase_amount, $feePlan->max_purchase_amount)) {
+                throw new PnxFormException($this->generateErrorMessage('Maximum', $installment, $deferred_days, $deferred_months, $limitMin, $limitMax));
             }
         }
+    }
+
+    /**
+     * Vérifie si un plan doit être ignoré.
+     */
+    private function shouldSkipPlan($installment, $feePlan)
+    {
+        return $installment !== 1 && $this->settingsHelper->isDeferred($feePlan);
+    }
+
+    /**
+     * Vérifie si une valeur est dans les limites spécifiées.
+     */
+    private function isWithinLimits($amount, $min, $max, $feePlanMax)
+    {
+        return $amount >= $min && $amount <= min($max, $feePlanMax);
+    }
+
+    /**
+     * Génère un message d'erreur personnalisé en fonction des limites.
+     */
+    private function generateErrorMessage($type, $installment, $deferred_days, $deferred_months, $limitMin, $limitMax)
+    {
+        if ($installment === 1) {
+            if ($deferred_days > 0 && $deferred_months === 0) {
+                return sprintf(
+                    '%s amount for deferred + %s days plan must be within %s and %s.',
+                    ucfirst($type),
+                    $deferred_days,
+                    $limitMin,
+                    $limitMax
+                );
+            }
+
+            if ($deferred_days === 0 && $deferred_months > 0) {
+                return sprintf(
+                    '%s amount for deferred + %s months plan must be within %s and %s.',
+                    ucfirst($type),
+                    $deferred_months,
+                    $limitMin,
+                    $limitMax
+                );
+            }
+        }
+
+        return sprintf(
+            '%s amount for %s-installment plan must be within %s and %s.',
+            ucfirst($type),
+            $installment,
+            $limitMin,
+            $limitMax
+        );
     }
 }
