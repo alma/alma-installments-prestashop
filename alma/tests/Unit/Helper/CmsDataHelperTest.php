@@ -66,13 +66,15 @@ class CmsDataHelperTest extends TestCase
     {
         $this->toolsHelper->method('getPsVersion')->willReturn('1.2.3');
         $this->moduleHelper->method('getModuleList')->willReturn(['moduleList']);
-        $this->themeHelper->method('getThemeNameWithVersion')->willReturn('ThemeName');
+        $this->themeHelper->method('getThemeName')->willReturn('ThemeName');
+        $this->themeHelper->method('getThemeVersion')->willReturn('2.4.9');
         $this->almaModuleModel->method('getVersion')->willReturn('4.3.2');
         $expected = [
             'cms_name' => 'Prestashop',
             'cms_version' => '1.2.3',
             'third_parties_plugins' => ['moduleList'],
-            'themes' => 'ThemeName',
+            'theme_name' => 'ThemeName',
+            'theme_version' => '2.4.9',
             'language_name' => 'PHP',
             'language_version' => phpversion(),
             'alma_plugin_version' => '4.3.2',
