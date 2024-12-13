@@ -32,6 +32,18 @@ use PHPUnit\Framework\TestCase;
 
 class CustomFieldsFormServiceTest extends TestCase
 {
+    const ENGLISH_ENGLISH = 'English (English)';
+    const M_D_Y = 'm/d/Y';
+    const M_D_Y_H_I_S = 'm/d/Y H:i:s';
+    const PAY_NOW_CUSTOM_FIELD_TITLE = 'Pay Now Custom Field Title';
+    const PNX_CUSTOM_FIELD_TITLE = 'Pnx Custom Field Title';
+    const DEFERRED_CUSTOM_FIELD_TITLE = 'Deferred Custom Field Title';
+    const PNX_AIR_CUSTOM_FIELD_TITLE = 'Pnx air Custom Field Title';
+    const PAY_NOW_CUSTOM_FIELD_DESC = 'Pay now Custom Field Desc';
+    const PNX_CUSTOM_FIELD_DESC = 'Pnx Custom Field Desc';
+    const DEFERRED_CUSTOM_FIELD_DESC = 'Deferred Custom Field Desc';
+    const PNX_AIR_CUSTOM_FIELD_DESC = 'Pnx air Custom Field Desc';
+    const NOT_ELIGIBLE_CATEGORIES_CUSTOM_FIELD = 'Not eligible categories Custom Field';
     /**
      * @var \Alma\PrestaShop\Proxy\ConfigurationProxy
      */
@@ -77,13 +89,13 @@ class CustomFieldsFormServiceTest extends TestCase
         $languages = [
             [
                 'id_lang' => '1',
-                'name' => 'English (English)',
+                'name' => self::ENGLISH_ENGLISH,
                 'active' => '1',
                 'iso_code' => 'en',
                 'language_code' => 'en-us',
                 'locale' => 'en-US',
-                'date_format_lite' => 'm/d/Y',
-                'date_format_full' => 'm/d/Y H:i:s',
+                'date_format_lite' => self::M_D_Y,
+                'date_format_full' => self::M_D_Y_H_I_S,
                 'is_rtl' => '0',
                 'id_shop' => '1',
                 'shops' => [
@@ -112,13 +124,13 @@ class CustomFieldsFormServiceTest extends TestCase
         $languages = [
             [
                 'id_lang' => '1',
-                'name' => 'English (English)',
+                'name' => self::ENGLISH_ENGLISH,
                 'active' => '1',
                 'iso_code' => 'en',
                 'language_code' => 'en-us',
                 'locale' => 'en-US',
-                'date_format_lite' => 'm/d/Y',
-                'date_format_full' => 'm/d/Y H:i:s',
+                'date_format_lite' => self::M_D_Y,
+                'date_format_full' => self::M_D_Y_H_I_S,
                 'is_rtl' => '0',
                 'id_shop' => '1',
                 'shops' => [
@@ -147,15 +159,15 @@ class CustomFieldsFormServiceTest extends TestCase
             )
             ->willReturnOnConsecutiveCalls(
                 false,
-                'Pay Now Custom Field Title',
-                'Pnx Custom Field Title',
-                'Deferred Custom Field Title',
-                'Pnx air Custom Field Title',
-                'Pay now Custom Field Desc',
-                'Pnx Custom Field Desc',
-                'Deferred Custom Field Desc',
-                'Pnx air Custom Field Desc',
-                'Not eligible categories Custom Field'
+                self::PAY_NOW_CUSTOM_FIELD_TITLE,
+                self::PNX_CUSTOM_FIELD_TITLE,
+                self::DEFERRED_CUSTOM_FIELD_TITLE,
+                self::PNX_AIR_CUSTOM_FIELD_TITLE,
+                self::PAY_NOW_CUSTOM_FIELD_DESC,
+                self::PNX_CUSTOM_FIELD_DESC,
+                self::DEFERRED_CUSTOM_FIELD_DESC,
+                self::PNX_AIR_CUSTOM_FIELD_DESC,
+                self::NOT_ELIGIBLE_CATEGORIES_CUSTOM_FIELD
             );
 
         $this->configurationProxyMock->expects($this->exactly(9))
@@ -182,13 +194,13 @@ class CustomFieldsFormServiceTest extends TestCase
         $languages = [
             [
                 'id_lang' => '1',
-                'name' => 'English (English)',
+                'name' => self::ENGLISH_ENGLISH,
                 'active' => '1',
                 'iso_code' => 'en',
                 'language_code' => 'en-us',
                 'locale' => 'en-US',
-                'date_format_lite' => 'm/d/Y',
-                'date_format_full' => 'm/d/Y H:i:s',
+                'date_format_lite' => self::M_D_Y,
+                'date_format_full' => self::M_D_Y_H_I_S,
                 'is_rtl' => '0',
                 'id_shop' => '1',
                 'shops' => [
@@ -203,8 +215,8 @@ class CustomFieldsFormServiceTest extends TestCase
                 'iso_code' => 'fr',
                 'language_code' => 'fr-fr',
                 'locale' => 'fr-FR',
-                'date_format_lite' => 'm/d/Y',
-                'date_format_full' => 'm/d/Y H:i:s',
+                'date_format_lite' => self::M_D_Y,
+                'date_format_full' => self::M_D_Y_H_I_S,
                 'is_rtl' => '0',
                 'id_shop' => '1',
                 'shops' => [
@@ -242,15 +254,15 @@ class CustomFieldsFormServiceTest extends TestCase
             )
             ->willReturnOnConsecutiveCalls(
                 false,
-                'Pay Now Custom Field Title',
-                'Pnx Custom Field Title',
-                'Deferred Custom Field Title',
-                'Pnx air Custom Field Title',
-                'Pay now Custom Field Desc',
-                'Pnx Custom Field Desc',
-                'Deferred Custom Field Desc',
-                'Pnx air Custom Field Desc',
-                'Not eligible categories Custom Field',
+                self::PAY_NOW_CUSTOM_FIELD_TITLE,
+                self::PNX_CUSTOM_FIELD_TITLE,
+                self::DEFERRED_CUSTOM_FIELD_TITLE,
+                self::PNX_AIR_CUSTOM_FIELD_TITLE,
+                self::PAY_NOW_CUSTOM_FIELD_DESC,
+                self::PNX_CUSTOM_FIELD_DESC,
+                self::DEFERRED_CUSTOM_FIELD_DESC,
+                self::PNX_AIR_CUSTOM_FIELD_DESC,
+                self::NOT_ELIGIBLE_CATEGORIES_CUSTOM_FIELD,
                 'Pay Now Custom Field Title FR',
                 'Pnx Custom Field Title FR',
                 'Deferred Custom Field Title FR',
@@ -286,12 +298,12 @@ class CustomFieldsFormServiceTest extends TestCase
         $languages = [
             [
                 'id_lang' => '1',
-                'name' => 'English (English)',
+                'name' => self::ENGLISH_ENGLISH,
                 'active' => '1',
                 'iso_code' => 'en',
                 'language_code' => 'en-us',
-                'date_format_lite' => 'm/d/Y',
-                'date_format_full' => 'm/d/Y H:i:s',
+                'date_format_lite' => self::M_D_Y,
+                'date_format_full' => self::M_D_Y_H_I_S,
                 'is_rtl' => '0',
                 'id_shop' => '1',
                 'shops' => [
@@ -320,15 +332,15 @@ class CustomFieldsFormServiceTest extends TestCase
             )
             ->willReturnOnConsecutiveCalls(
                 false,
-                'Pay Now Custom Field Title',
-                'Pnx Custom Field Title',
-                'Deferred Custom Field Title',
-                'Pnx air Custom Field Title',
-                'Pay now Custom Field Desc',
-                'Pnx Custom Field Desc',
-                'Deferred Custom Field Desc',
-                'Pnx air Custom Field Desc',
-                'Not eligible categories Custom Field'
+                self::PAY_NOW_CUSTOM_FIELD_TITLE,
+                self::PNX_CUSTOM_FIELD_TITLE,
+                self::DEFERRED_CUSTOM_FIELD_TITLE,
+                self::PNX_AIR_CUSTOM_FIELD_TITLE,
+                self::PAY_NOW_CUSTOM_FIELD_DESC,
+                self::PNX_CUSTOM_FIELD_DESC,
+                self::DEFERRED_CUSTOM_FIELD_DESC,
+                self::PNX_AIR_CUSTOM_FIELD_DESC,
+                self::NOT_ELIGIBLE_CATEGORIES_CUSTOM_FIELD
             );
 
         $this->configurationProxyMock->expects($this->exactly(9))
