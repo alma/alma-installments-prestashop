@@ -67,12 +67,7 @@ class ThemeHelper
         $themeVersion = '';
         $themeConfigPath = self::CONFIG_THEME_FILE;
 
-        if ($this->toolsHelper->psVersionCompare('1.7', '>=')) {
-            if (file_exists($themeConfigPath)) {
-                $themeConfig = \Symfony\Component\Yaml\Yaml::parseFile($themeConfigPath);
-                $themeVersion = $themeConfig['version'] ?: 'undefined';
-            }
-        } else {
+        if ($this->toolsHelper->psVersionCompare('1.7', '<')) {
             $themeDirectory = _PS_THEME_DIR_;
             $configFilePath = $themeDirectory . 'config.xml';
 
@@ -82,6 +77,13 @@ class ThemeHelper
                     $themeVersion = (string) $xmlContent->version['value'];
                 }
             }
+
+            return $themeVersion;
+        }
+
+        if (file_exists($themeConfigPath)) {
+            $themeConfig = \Symfony\Component\Yaml\Yaml::parseFile($themeConfigPath);
+            $themeVersion = $themeConfig['version'] ?: 'undefined';
         }
 
         return $themeVersion;
