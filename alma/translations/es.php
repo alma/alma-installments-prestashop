@@ -80,12 +80,12 @@ $_MODULE['<{alma}prestashop>excludedcategoryadminformbuilder_41c2bdcbfb6ea702ac4
 $_MODULE['<{alma}prestashop>excludedcategoryadminformbuilder_c4cea4750fb3ef077cbf2e1283c312ac'] = 'Mensaje a mostrar en la página de un producto excluido o en la página del carrito si contiene un producto excluido.';
 $_MODULE['<{alma}prestashop>excludedcategoryadminformbuilder_36359547b09bdb31f46c419a0bd5807e'] = 'Categorías excluidas';
 $_MODULE['<{alma}prestashop>inpageadminformbuilder_2420ebe02d61c738479f399a97e1cf18'] = 'Activar el pago integrado';
-$_MODULE['<{alma}prestashop>inpageadminformbuilder_3dd32a0e923aeb930c7c0ced60f7b2e0'] = 'Activar en la página de pago para todos los métodos de pago Alma';
+$_MODULE['<{alma}prestashop>inpageadminformbuilder_3dd32a0e923aeb930c7c0ced60f7b2e0'] = 'Activar in-page checkout para todos los métodos de pago Alma';
 $_MODULE['<{alma}prestashop>inpageadminformbuilder_220a4f39147308a2160f7abc4d00ae43'] = 'La página de pago en tu propio sitio web';
 $_MODULE['<{alma}prestashop>inpageadminformbuilder_6f7991629de2e9ee19a0bf2a0469138c'] = 'Botón de pago de entrada Selector de Alma';
 $_MODULE['<{alma}prestashop>inpageadminformbuilder_6644897911f79aa5889998a5ab18c5cd'] = '%1$sAvanzado%2$s [Opcional] Selector CSS utilizado por nuestros scripts para identificar el botón de pago Alma';
 $_MODULE['<{alma}prestashop>inpageadminformbuilder_cc12a5229a16dced1984745e05872a94'] = 'Por ejemplo, #id, .class, ...';
-$_MODULE['<{alma}prestashop>inpageadminformbuilder_8ee0042ba2657c2af782fcc8893fa45a'] = 'Selector de botones para realizar pedidos';
+$_MODULE['<{alma}prestashop>inpageadminformbuilder_8ee0042ba2657c2af782fcc8893fa45a'] = 'Ubica los botones para realizar pedidos';
 $_MODULE['<{alma}prestashop>inpageadminformbuilder_afa1a431a4735641af813166d75b1c06'] = '%1$sAvanzado%2$s [Opcional] Selector CSS utilizado por nuestros scripts para identificar el botón de confirmación de pago.';
 $_MODULE['<{alma}prestashop>inpageadminformbuilder_6de24747c86085e597f6b38d4d1d01a4'] = 'Pago integrado';
 $_MODULE['<{alma}prestashop>carteligibilityadminformbuilder_a2a52a9dd1864e2b995793bd67b8c6e5'] = 'Este widget te permite informar a tus Clientes de la disponibilidad del pago aplazado con Alma directamente desde la página del producto. Esto te ayudará a aumentar tu tasa de conversión. Para más detalles sobre su configuración o en caso de problemas, consulta %1$sesta documentación%2$s.';
@@ -158,7 +158,7 @@ $_MODULE['<{alma}prestashop>admininsurancehelper_f1206f9fadc5ce41694f69129aecac2
 $_MODULE['<{alma}prestashop>admininsurancehelper_7442e29d7d53e549b78d93c46b8cdcfc'] = 'Pedidos';
 $_MODULE['<{alma}prestashop>insuranceservice_d87aee5118a62a7ff6c21e4ac31006c5'] = 'Por la presente acepto suscribir el seguro ofrecido por Alma. Al hacerlo, confirmo que he revisado previamente el [aviso informativo, que constituye las condiciones generales], el [documento de información sobre el producto de seguro] y la [hoja de información y asesoramiento precontractual]. Y sin reservas, acepto firmar electrónicamente los distintos documentos que forman mi contrato, si procede. Consiento expresamente la recolección y utilización de mis datos personales a efectos de la suscripción y gestión de mi(s) contrato(s) de seguro.';
 $_MODULE['<{alma}prestashop>adminalmainsuranceconfiguration_b824200e9b8aca1fbb762d6566ff0cd7'] = 'Tu configuración se ha guardado';
-$_MODULE['<{alma}prestashop>adminalmainsuranceconfiguration_a6bf06f186e2fccecad054fd831c2144'] = '[Alma] Error al asegurar el producto durante la configuración del cambio: %1$s';
+$_MODULE['<{alma}prestashop>adminalmainsuranceconfiguration_a6bf06f186e2fccecad054fd831c2144'] = '[Alma] Error al asegurar el producto durante el cambio de configuración: %1$s';
 $_MODULE['<{alma}prestashop>adminalmainsuranceconfiguration_b42688965893bdb7a37cf1197e506e25'] = '[Alma] Error al crear la configuración Alma seguro: %1$s';
 $_MODULE['<{alma}prestashop>adminalmainsuranceorders_a66f446516cd125af12bd25073f88b78'] = 'Pedidos con seguro';
 $_MODULE['<{alma}prestashop>adminalmainsuranceorders_49414cda71621b3ee718ae5ff40804c5'] = 'Id Orden';
