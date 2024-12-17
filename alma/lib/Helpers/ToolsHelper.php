@@ -142,4 +142,14 @@ class ToolsHelper
 
         return json_encode($return);
     }
+
+    /**
+     * Return _PS_VERSION_
+     *
+     * @return string
+     */
+    public function getPsVersion()
+    {
+        return _PS_VERSION_;
+    }
 }

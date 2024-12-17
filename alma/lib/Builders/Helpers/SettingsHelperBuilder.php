@@ -45,7 +45,10 @@ class SettingsHelperBuilder
     {
         return new SettingsHelper(
             $this->getShopHelper(),
-            $this->getConfigurationHelper()
+            $this->getConfigurationHelper(),
+            $this->getCategoryFactory(),
+            $this->getContextFactory(),
+            $this->getValidateHelper()
         );
     }
 }

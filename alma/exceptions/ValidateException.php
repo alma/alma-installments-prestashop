@@ -22,49 +22,12 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
-namespace Alma\PrestaShop\Helpers;
-
-use Alma\API\Lib\RequestUtils;
-use Alma\PrestaShop\Exceptions\ValidateException;
+namespace Alma\PrestaShop\Exceptions;
 
 if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-class ValidateHelper
+class ValidateException extends AlmaException
 {
-    /**
-     * @param $object
-     *
-     * @return bool
-     */
-    public function isLoadedObject($object)
-    {
-        return \Validate::isLoadedObject($object);
-    }
-
-    /**
-     * @param $externalId
-     * @param $apiKey
-     * @param $signature
-     *
-     * @return void
-     *
-     * @throws \Alma\PrestaShop\Exceptions\ValidateException
-     */
-    public function checkSignature($externalId, $apiKey, $signature)
-    {
-        if (!$externalId) {
-            throw new ValidateException('[Alma] External ID is missing');
-        }
-        if (!$apiKey) {
-            throw new ValidateException('[Alma] Api key is missing');
-        }
-        if (!$signature) {
-            throw new ValidateException('[Alma] Signature is missing');
-        }
-        if (!RequestUtils::isHmacValidated($externalId, $apiKey, $signature)) {
-            throw new ValidateException('[Alma] Signature is invalid');
-        }
-    }
 }

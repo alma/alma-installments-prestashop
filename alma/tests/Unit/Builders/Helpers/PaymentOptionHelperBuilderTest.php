@@ -25,6 +25,7 @@
 namespace Alma\PrestaShop\Tests\Unit\Builders\Helpers;
 
 use Alma\PrestaShop\Builders\Helpers\PaymentOptionHelperBuilder;
+use Alma\PrestaShop\Factories\CategoryFactory;
 use Alma\PrestaShop\Factories\ContextFactory;
 use Alma\PrestaShop\Factories\MediaFactory;
 use Alma\PrestaShop\Helpers\ConfigurationHelper;
@@ -34,6 +35,7 @@ use Alma\PrestaShop\Helpers\PaymentOptionHelper;
 use Alma\PrestaShop\Helpers\PaymentOptionTemplateHelper;
 use Alma\PrestaShop\Helpers\SettingsHelper;
 use Alma\PrestaShop\Helpers\ShopHelper;
+use Alma\PrestaShop\Helpers\ValidateHelper;
 use PHPUnit\Framework\TestCase;
 
 class PaymentOptionHelperBuilderTest extends TestCase
@@ -53,7 +55,10 @@ class PaymentOptionHelperBuilderTest extends TestCase
         $this->paymentOptionHelperBuilder = new PaymentOptionHelperBuilder();
         $this->settingsHelper = new SettingsHelper(
             new ShopHelper(),
-            new ConfigurationHelper()
+            new ConfigurationHelper(),
+            new CategoryFactory(),
+            new ContextFactory(),
+            new ValidateHelper()
         );
     }
 

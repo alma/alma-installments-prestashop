@@ -28,6 +28,7 @@ use Alma\API\Endpoints\Results\Eligibility;
 use Alma\API\Entities\Merchant;
 use Alma\PrestaShop\Exceptions\ActivationException;
 use Alma\PrestaShop\Exceptions\ApiMerchantsException;
+use Alma\PrestaShop\Exceptions\ClientException;
 use Alma\PrestaShop\Exceptions\InsuranceInstallException;
 use Alma\PrestaShop\Exceptions\WrongCredentialsException;
 use Alma\PrestaShop\Factories\ModuleFactory;
@@ -75,14 +76,20 @@ class ApiHelper
      * @param ConfigurationHelper $configurationHelper
      * @param AdminInsuranceHelper $insuranceHelper
      */
-    public function __construct($moduleFactory, $clientHelper, $toolsHelper, $insuranceService, $configurationHelper, $insuranceHelper)
-    {
+    public function __construct(
+        $moduleFactory,
+        $clientHelper,
+        $toolsHelper,
+        $insuranceService,
+        $configurationHelper,
+        $insuranceHelper
+    ) {
         $this->moduleFactory = $moduleFactory;
-        $this->insuranceHelper = $insuranceHelper;
-        $this->insuranceService = $insuranceService;
-        $this->configurationHelper = $configurationHelper;
         $this->clientHelper = $clientHelper;
         $this->toolsHelper = $toolsHelper;
+        $this->insuranceService = $insuranceService;
+        $this->configurationHelper = $configurationHelper;
+        $this->insuranceHelper = $insuranceHelper;
     }
 
     /**
@@ -203,5 +210,24 @@ class ApiHelper
         }
 
         return [];
+    }
+
+    /**
+     * @param string $url
+     *
+     * @return void
+     */
+    public function sendUrlForGatherCmsData($url)
+    {
+        try {
+            $this->clientHelper->sendUrlForGatherCmsData($url);
+        } catch (ClientException $e) {
+            Logger::instance()->error(
+                sprintf(
+                    '[Alma] Error sending URL for gather CMS data: %s',
+                    $e->getMessage()
+                )
+            );
+        }
     }
 }
