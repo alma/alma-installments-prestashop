@@ -58,4 +58,14 @@ class ToolsProxy
     {
         return \Tools::getAdminTokenLite($tab);
     }
+
+    /**
+     * Check if submit has been posted.
+     *
+     * @param string $submit submit name
+     */
+    public function isSubmit($submit)
+    {
+        return \Tools::isSubmit($submit);
+    }
 }

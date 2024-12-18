@@ -24,7 +24,9 @@
 
 namespace Alma\PrestaShop\Helpers;
 
+use Alma\PrestaShop\Exceptions\PnxFormException;
 use Alma\PrestaShop\Factories\EligibilityFactory;
+use Alma\PrestaShop\Proxy\ToolsProxy;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -44,11 +46,25 @@ class FeePlanHelper
      * @var EligibilityFactory
      */
     protected $eligibilityFactory;
+    /**
+     * @var PriceHelper
+     */
+    private $priceHelper;
+    /**
+     * @var ToolsProxy
+     */
+    private $toolsProxy;
 
-    public function __construct($settingsHelper, $eligibilityFactory)
-    {
+    public function __construct(
+        $settingsHelper,
+        $eligibilityFactory,
+        $priceHelper,
+        $toolsProxy
+    ) {
         $this->settingsHelper = $settingsHelper;
         $this->eligibilityFactory = $eligibilityFactory;
+        $this->priceHelper = $priceHelper;
+        $this->toolsProxy = $toolsProxy;
     }
 
     /**
@@ -107,5 +123,89 @@ class FeePlanHelper
         }
 
         return $activePlans;
+    }
+
+    /**
+     * @throws \Alma\PrestaShop\Exceptions\PnxFormException
+     */
+    public function checkLimitsSaveFeePlans($feePlans)
+    {
+        foreach ($feePlans as $feePlan) {
+            $installment = $feePlan->installments_count;
+            $deferred_days = $feePlan->deferred_days;
+            $deferred_months = $feePlan->deferred_months;
+            $key = $this->settingsHelper->keyForFeePlan($feePlan);
+
+            if ($this->shouldSkipPlan($installment, $feePlan)) {
+                continue;
+            }
+
+            $min = $this->priceHelper->convertPriceToCents((int) $this->toolsProxy->getValue("ALMA_{$key}_MIN_AMOUNT"));
+            $max = $this->priceHelper->convertPriceToCents((int) $this->toolsProxy->getValue("ALMA_{$key}_MAX_AMOUNT"));
+            $limitMin = $this->priceHelper->convertPriceFromCents($feePlan->min_purchase_amount);
+            $limitMax = $this->priceHelper->convertPriceFromCents(min($max, $feePlan->max_purchase_amount));
+
+            $enablePlan = (bool) $this->toolsProxy->getValue("ALMA_{$key}_ENABLED_ON");
+
+            if ($enablePlan && !$this->isWithinLimits($min, $feePlan->min_purchase_amount, $max, $feePlan->max_purchase_amount)) {
+                throw new PnxFormException($this->generateErrorMessage('Minimum', $installment, $deferred_days, $deferred_months, $limitMin, $limitMax));
+            }
+
+            if ($enablePlan && !$this->isWithinLimits($max, $min, $feePlan->max_purchase_amount, $feePlan->max_purchase_amount)) {
+                throw new PnxFormException($this->generateErrorMessage('Maximum', $installment, $deferred_days, $deferred_months, $limitMin, $limitMax));
+            }
+        }
+    }
+
+    /**
+     * Vérifie si un plan doit être ignoré.
+     */
+    private function shouldSkipPlan($installment, $feePlan)
+    {
+        return $installment !== 1 && $this->settingsHelper->isDeferred($feePlan);
+    }
+
+    /**
+     * Vérifie si une valeur est dans les limites spécifiées.
+     */
+    private function isWithinLimits($amount, $min, $max, $feePlanMax)
+    {
+        return $amount >= $min && $amount <= min($max, $feePlanMax);
+    }
+
+    /**
+     * Génère un message d'erreur personnalisé en fonction des limites.
+     */
+    private function generateErrorMessage($type, $installment, $deferred_days, $deferred_months, $limitMin, $limitMax)
+    {
+        if ($installment === 1) {
+            if ($deferred_days > 0 && $deferred_months === 0) {
+                return sprintf(
+                    '%s amount for deferred + %s days plan must be within %s and %s.',
+                    ucfirst($type),
+                    $deferred_days,
+                    $limitMin,
+                    $limitMax
+                );
+            }
+
+            if ($deferred_days === 0 && $deferred_months > 0) {
+                return sprintf(
+                    '%s amount for deferred + %s months plan must be within %s and %s.',
+                    ucfirst($type),
+                    $deferred_months,
+                    $limitMin,
+                    $limitMax
+                );
+            }
+        }
+
+        return sprintf(
+            '%s amount for %s-installment plan must be within %s and %s.',
+            ucfirst($type),
+            $installment,
+            $limitMin,
+            $limitMax
+        );
     }
 }

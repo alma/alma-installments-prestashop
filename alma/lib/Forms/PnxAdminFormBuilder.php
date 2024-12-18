@@ -82,7 +82,7 @@ class PnxAdminFormBuilder extends AbstractAlmaAdminFormBuilder
         $this->priceHelper = $priceHelperBuilder->getInstance();
 
         if (!$clientModel) {
-            $clientModel = new ClientModel();
+            $clientModel = ClientModel::getInstance();
         }
         $this->clientModel = $clientModel;
 

@@ -22,13 +22,12 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
-namespace Alma\PrestaShop\Tests\Unit\Services;
+namespace Alma\PrestaShop\Exceptions;
 
-use PHPUnit\Framework\TestCase;
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
 
-class PaymentServiceTest extends TestCase
+class AlmaFormConfigurationException extends AlmaException
 {
-    public function testCreatePaymentOptions()
-    {
-    }
 }

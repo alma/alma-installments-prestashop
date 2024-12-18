@@ -26,6 +26,8 @@ namespace Alma\PrestaShop\Model;
 
 use Alma\PrestaShop\Exceptions\AlmaApiKeyException;
 use Alma\PrestaShop\Forms\ApiAdminFormBuilder;
+use Alma\PrestaShop\Helpers\ConstantsHelper;
+use Alma\PrestaShop\Helpers\EncryptionHelper;
 use Alma\PrestaShop\Helpers\SettingsHelper;
 use Alma\PrestaShop\Proxy\ConfigurationProxy;
 use Alma\PrestaShop\Proxy\ToolsProxy;
@@ -45,13 +47,23 @@ class AlmaApiKeyModel
      */
     private $toolsProxy;
     /**
-     * @var ConfigurationProxy|mixed|null
+     * @var ConfigurationProxy
      */
     private $configurationProxy;
+    /**
+     * @var \Alma\PrestaShop\Model\ClientModel
+     */
+    private $clientModel;
+    /**
+     * @var \Alma\PrestaShop\Helpers\EncryptionHelper
+     */
+    private $encryptionHelper;
 
     public function __construct(
         $toolsProxy = null,
-        $configurationProxy = null
+        $configurationProxy = null,
+        $clientModel = null,
+        $encryptionHelper = null
     ) {
         if (!$toolsProxy) {
             $toolsProxy = new ToolsProxy();
@@ -62,23 +74,102 @@ class AlmaApiKeyModel
             $configurationProxy = new ConfigurationProxy();
         }
         $this->configurationProxy = $configurationProxy;
+
+        if (!$clientModel) {
+            $clientModel = ClientModel::getInstance();
+        }
+        $this->clientModel = $clientModel;
+        if (!$encryptionHelper) {
+            $encryptionHelper = new EncryptionHelper();
+        }
+        $this->encryptionHelper = $encryptionHelper;
     }
 
     /**
-     * @param $mode
+     * @return void
+     *
+     * @throws \Alma\PrestaShop\Exceptions\AlmaApiKeyException
+     */
+    public function checkActiveApiKeySendIsEmpty()
+    {
+        $mode = $this->toolsProxy->getValue(ApiAdminFormBuilder::ALMA_API_MODE);
+        $apiKey = $this->toolsProxy->getValue(self::ALMA_API_KEY_MODE[$mode]);
+
+        if (empty($apiKey)) {
+            throw new AlmaApiKeyException("[Alma] API key {$mode} is empty");
+        }
+    }
+
+    /**
+     * @param array $apiKeys
      *
      * @return void
      *
      * @throws \Alma\PrestaShop\Exceptions\AlmaApiKeyException
      */
-    public function checkActiveApiKey($mode)
+    public function checkApiKeys($apiKeys)
     {
-        $apiKeyCurrentMode = $this->toolsProxy->getValue(self::ALMA_API_KEY_MODE[$mode]);
-        if (empty($apiKeyCurrentMode)) {
-            // TODO : set 'suggestPSAccounts' => false,
-            // TODO : set $this->hasKey = false;
-            throw new AlmaApiKeyException('[Alma] No active API key found');
+        $invalidKeys = [];
+        foreach ($apiKeys as $mode => $apiKey) {
+            if ($this->isObscureApiKey($apiKey)) {
+                $apiKey = $this->getApiKeyByMode($mode);
+            }
+            if (empty($apiKey)) {
+                continue;
+            }
+            $this->clientModel->setMode($mode);
+            $this->clientModel->setApiKey($apiKey);
+            /**
+             * @var \Alma\API\Entities\Merchant|null $merchant
+             */
+            $merchant = $this->clientModel->getMerchantMe();
+
+            if (!$merchant || !$merchant->can_create_payments) {
+                $invalidKeys[] = $mode;
+            }
         }
+
+        if (!empty($invalidKeys)) {
+            throw new AlmaApiKeyException('[Alma] API key(s) ' . implode(', ', $invalidKeys) . ' is/are invalid');
+        }
+    }
+
+    /**
+     * Check if the apikey is Obscure
+     *
+     * @param $apiKey
+     *
+     * @return bool
+     */
+    private function isObscureApiKey($apiKey)
+    {
+        return $apiKey === ConstantsHelper::OBSCURE_VALUE;
+    }
+
+    /**
+     * Check if the live api key is the same as the one saved
+     *
+     * @return bool
+     */
+    public function isSameLiveApiKeySaved()
+    {
+        $liveKey = $this->toolsProxy->getValue(ApiAdminFormBuilder::ALMA_LIVE_API_KEY);
+        $savedLiveKey = SettingsHelper::getLiveKey();
+
+        return $liveKey === $savedLiveKey && ConstantsHelper::OBSCURE_VALUE !== $liveKey;
+    }
+
+    /**
+     * Check if the mode is the same as the one saved
+     *
+     * @return bool
+     */
+    public function isSameModeSaved()
+    {
+        $oldMode = $this->configurationProxy->get(ApiAdminFormBuilder::ALMA_API_MODE);
+        $newMode = $this->toolsProxy->getValue(ApiAdminFormBuilder::ALMA_API_MODE);
+
+        return $oldMode === $newMode;
     }
 
     /**
@@ -101,5 +192,62 @@ class AlmaApiKeyModel
         $key = trim(SettingsHelper::getActiveAPIKey());
 
         return '' == $key || null == $key;
+    }
+
+    /**
+     * Get all API key send from form configuration
+     *
+     * @return array
+     */
+    public function getAllApiKeySend($mode)
+    {
+        $apiKeys = [
+            'test' => trim($this->toolsProxy->getValue(ApiAdminFormBuilder::ALMA_TEST_API_KEY)),
+            'live' => trim($this->toolsProxy->getValue(ApiAdminFormBuilder::ALMA_LIVE_API_KEY)),
+        ];
+
+        // This function sort the array to have the mode key selected at the end
+        // We need to have the selected mode key at the end to be able to get the AlmaClient with the mode selected
+        uksort($apiKeys, function ($a, $b) use ($mode) {
+            if ($a === $mode) {
+                return 1;
+            }
+            if ($b === $mode) {
+                return -1;
+            }
+
+            return 0;
+        });
+
+        return $apiKeys;
+    }
+
+    /**
+     * @param $apiKeys
+     *
+     * @return void
+     */
+    public function saveApiKeys($apiKeys)
+    {
+        foreach ($apiKeys as $mode => $apiKey) {
+            if ($this->isObscureApiKey($apiKey)) {
+                continue;
+            }
+            $this->configurationProxy->updateValue(self::ALMA_API_KEY_MODE[$mode], $this->encryptionHelper->encrypt($apiKey));
+        }
+    }
+
+    /**
+     * @param $mode
+     *
+     * @return string
+     */
+    private function getApiKeyByMode($mode)
+    {
+        if ($mode === 'live') {
+            return SettingsHelper::getLiveKey();
+        }
+
+        return SettingsHelper::getTestKey();
     }
 }

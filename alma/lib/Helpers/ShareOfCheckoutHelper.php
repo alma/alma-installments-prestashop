@@ -387,7 +387,7 @@ class ShareOfCheckoutHelper
      *
      * @return void
      *
-     * @throws \Exception
+     * @throws \Alma\PrestaShop\Exceptions\ShareOfCheckoutException
      */
     public function resetShareOfCheckoutConsent()
     {
@@ -402,6 +402,7 @@ class ShareOfCheckoutHelper
             }
         } catch (ShareOfCheckoutException $e) {
             $this->context->smarty->assign('validation_error', 'soc_api_error');
+            throw new ShareOfCheckoutException($e->getMessage());
         }
     }
 
@@ -511,5 +512,15 @@ class ShareOfCheckoutHelper
     public function getEnabledDate()
     {
         return \Configuration::get(ShareOfCheckoutAdminFormBuilder::ALMA_SHARE_OF_CHECKOUT_DATE);
+    }
+
+    /**
+     * Check if SoC State are answered with Yes or No. If state is null, return false
+     *
+     * @return bool
+     */
+    public function isShareOfCheckoutAnswered()
+    {
+        return SettingsHelper::isShareOfCheckoutAnswered() === true;
     }
 }
