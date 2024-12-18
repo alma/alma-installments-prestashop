@@ -25,7 +25,6 @@
 namespace Alma\PrestaShop\Services;
 
 use Alma\API\Entities\Insurance\Subscription;
-use Alma\API\Entities\Merchant;
 use Alma\API\Exceptions\MissingKeyException;
 use Alma\API\Lib\ArrayUtils;
 use Alma\PrestaShop\Builders\Admin\InsuranceHelperBuilder;
@@ -363,15 +362,13 @@ class InsuranceService
     }
 
     /**
-     * @param Merchant $merchant
-     *
      * @return void
      */
-    public function installIfCompatible($merchant)
+    public function installIfCompatible()
     {
         if ($this->toolsHelper->psVersionCompare('1.7', '>=')) {
             try {
-                $this->handleInsuranceFlag($merchant);
+                $this->handleInsuranceFlag();
             } catch (\PrestaShopException $e) {
                 Logger::instance()->error(
                     sprintf(
@@ -384,17 +381,15 @@ class InsuranceService
     }
 
     /**
-     * @param Merchant $merchant
-     *
      * @return void
      *
      * @throws \PrestaShopException
      */
-    public function handleInsuranceFlag($merchant)
+    public function handleInsuranceFlag()
     {
         try {
             $isAllowInsurance = $this->apiHelper->saveFeatureFlag(
-                $merchant,
+                $this->clientModel->getMerchantMe(),
                 'cms_insurance',
                 ConstantsHelper::ALMA_ALLOW_INSURANCE,
                 ConstantsHelper::ALMA_ACTIVATE_INSURANCE
