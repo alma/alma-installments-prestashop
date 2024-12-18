@@ -162,6 +162,7 @@ final class GetContentHookController extends AdminHookController
             }
         }
 
+        $this->insuranceService->installIfCompatible();
         $assignSmartyKeys['form'] = $this->configFormService->getRenderPaymentFormHtml();
         $assignSmartyKeys['hasKey'] = $this->configurationProxy->get(ConfigFormService::ALMA_FULLY_CONFIGURED);
         $assignSmartyKeys['error_messages'] = $messages;
