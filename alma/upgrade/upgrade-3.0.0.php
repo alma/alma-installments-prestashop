@@ -26,7 +26,6 @@ use Alma\PrestaShop\Builders\Helpers\ApiHelperBuilder;
 use Alma\PrestaShop\Forms\InpageAdminFormBuilder;
 use Alma\PrestaShop\Helpers\ConstantsHelper;
 use Alma\PrestaShop\Helpers\SettingsHelper;
-use Alma\PrestaShop\Services\InsuranceService;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -39,9 +38,7 @@ function upgrade_module_3_0_0($module)
     try {
         $apiHelperBuilder = new ApiHelperBuilder();
         $apiHelper = $apiHelperBuilder->getInstance();
-        $merchant = $apiHelper->getMerchant();
-        $insuranceService = new InsuranceService();
-        $insuranceService->installIfCompatible($merchant);
+        $apiHelper->getMerchant();
     } catch (\Exception $e) {
     }
 
