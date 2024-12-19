@@ -30,6 +30,7 @@ if (!defined('_PS_VERSION_')) {
 
 use Alma\PrestaShop\Exceptions\AlmaApiKeyException;
 use Alma\PrestaShop\Exceptions\ClientException;
+use Alma\PrestaShop\Exceptions\CompatibilityPsAccountsException;
 use Alma\PrestaShop\Exceptions\MissingParameterException;
 use Alma\PrestaShop\Exceptions\PnxFormException;
 use Alma\PrestaShop\Exceptions\ShareOfCheckoutException;
@@ -40,6 +41,8 @@ use Alma\PrestaShop\Proxy\ConfigurationProxy;
 use Alma\PrestaShop\Proxy\ToolsProxy;
 use Alma\PrestaShop\Services\ConfigFormService;
 use Alma\PrestaShop\Services\InsuranceService;
+use Alma\PrestaShop\Services\PsAccountService;
+use PrestaShop\PsAccountsInstaller\Installer\Exception\ModuleNotInstalledException;
 
 final class GetContentHookController extends AdminHookController
 {
@@ -62,6 +65,10 @@ final class GetContentHookController extends AdminHookController
      * @var \Alma\PrestaShop\Services\InsuranceService
      */
     protected $insuranceService;
+    /**
+     * @var \Alma\PrestaShop\Services\PsAccountService
+     */
+    protected $psAccountService;
 
     /**
      * GetContentHook Controller construct.
@@ -80,6 +87,10 @@ final class GetContentHookController extends AdminHookController
         $this->toolsProxy = new ToolsProxy();
         $this->configurationProxy = new ConfigurationProxy();
         $this->insuranceService = new InsuranceService();
+        $this->psAccountService = new PsAccountService(
+            $module,
+            $contextFactory->getContext()
+        );
 
         parent::__construct($module);
     }
@@ -93,11 +104,11 @@ final class GetContentHookController extends AdminHookController
         $href = $this->context->link->getAdminLink('AdminParentModulesSf', $token);
 
         $assignSmartyKeys = [
-            'hasPSAccounts' => false, // Dynamic content
-            'updated' => false, // Dynamic content
-            'suggestPSAccounts' => false, // Dynamic content
+            'hasPSAccounts' => false,
+            'suggestPSAccounts' => false,
             'validation_error_classes' => 'alert alert-danger',
             'tip_classes' => 'alert alert-info',
+            'success' => false,
             'success_classes' => 'alert alert-success',
             'breadcrumbs2' => [
                 'container' => [
@@ -113,9 +124,7 @@ final class GetContentHookController extends AdminHookController
             'quick_access_current_link_icon' => 'icon-AdminParentModulesSf',
             'token' => $token,
             'host_mode' => 0,
-            'validation_error' => '', //Add error key
-            'validation_message' => '', //Add error message
-            'hasKey' => false, //Return true if api key is set
+            'hasKey' => false,
             'tip' => 'fill_api_keys',
         ];
 
@@ -143,6 +152,7 @@ final class GetContentHookController extends AdminHookController
         if ($this->toolsProxy->isSubmit('alma_config_form')) {
             try {
                 $this->configFormService->saveConfigurations();
+                $assignSmartyKeys['success'] = true;
             } catch (AlmaApiKeyException $e) {
                 $messages[] = $e->getMessage();
             } catch (ShareOfCheckoutException $e) {
@@ -160,6 +170,15 @@ final class GetContentHookController extends AdminHookController
                 Logger::instance()->error($e->getMessage());
                 $messages[] = 'Please fill in all required settings';
             }
+        }
+
+        try {
+            $assignSmartyKeys['hasPSAccounts'] = $this->psAccountService->renderPSAccounts();
+        } catch (CompatibilityPsAccountsException $e) {
+            $assignSmartyKeys['hasPSAccounts'] = false;
+        } catch (ModuleNotInstalledException $e) {
+            $assignSmartyKeys['hasPSAccounts'] = false;
+            $assignSmartyKeys['suggestPSAccounts'] = true;
         }
 
         $this->insuranceService->installIfCompatible();
