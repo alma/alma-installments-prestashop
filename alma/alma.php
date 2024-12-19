@@ -67,6 +67,11 @@ class Alma extends PaymentModule
      */
     protected $container;
 
+    /**
+     * @var \Alma\PrestaShop\Services\PsAccountService
+     */
+    protected $psAccountService;
+
     public function __construct()
     {
         $this->name = 'alma';
@@ -109,52 +114,8 @@ class Alma extends PaymentModule
         if (version_compare(_PS_VERSION_, '1.5.0.1', '<')) {
             $this->local_path = _PS_MODULE_DIR_ . $this->name . '/';
         }
-    }
 
-    /**
-     * @return void
-     *
-     * @throws \Alma\PrestaShop\Exceptions\CompatibilityPsAccountsException
-     */
-    public function checkPsAccountsPresence()
-    {
-        if (_PS_MODE_DEV_ === true) {
-            throw new \Alma\PrestaShop\Exceptions\CompatibilityPsAccountsException('[Alma] Debug mode is activated');
-        }
-
-        if (
-            !class_exists(\Symfony\Component\Config\ConfigCache::class)
-            || !class_exists(\PrestaShop\ModuleLibServiceContainer\DependencyInjection\ServiceContainer::class)
-        ) {
-            throw new \Alma\PrestaShop\Exceptions\CompatibilityPsAccountsException('[Alma] Classes don\'t exist for PS Account');
-        }
-        $toolsHelper = new \Alma\PrestaShop\Helpers\ToolsHelper();
-        if (
-            $toolsHelper->psVersionCompare('1.6', '<')
-        ) {
-            throw new \Alma\PrestaShop\Exceptions\CompatibilityPsAccountsException('[Alma] Prestashop version lower than 1.6');
-        }
-    }
-
-    /**
-     * Check if PS Account is installed and up to date, minimal version required 5.0.
-     *
-     * @return void
-     *
-     * @throws \PrestaShop\PsAccountsInstaller\Installer\Exception\ModuleNotInstalledException
-     * @throws \Alma\PrestaShop\Exceptions\CompatibilityPsAccountsException
-     */
-    public function checkPsAccountsCompatibility()
-    {
-        $this->checkPsAccountsPresence();
-        $psAccountsModule = \Module::getInstanceByName('ps_accounts');
-        if (!$psAccountsModule) {
-            throw new \PrestaShop\PsAccountsInstaller\Installer\Exception\ModuleNotInstalledException('[Alma] PS Account is not installed');
-        }
-
-        if ($psAccountsModule->version < self::PS_ACCOUNTS_VERSION_REQUIRED) {
-            throw new \PrestaShop\PsAccountsInstaller\Installer\Exception\ModuleNotInstalledException('[Alma] PS Account is not up to date, minimal version required ' . self::PS_ACCOUNTS_VERSION_REQUIRED);
-        }
+        $this->psAccountService = new \Alma\PrestaShop\Services\PsAccountService($this, $this->context);
     }
 
     /**
@@ -229,13 +190,7 @@ class Alma extends PaymentModule
      */
     public function install()
     {
-        try {
-            $this->checkPsAccountsPresence();
-            $this->setContainer();
-            $this->getService('alma.ps_accounts_installer')->install();
-        } catch (\Alma\PrestaShop\Exceptions\CompatibilityPsAccountsException $e) {
-            \Alma\PrestaShop\Logger::instance()->info($e->getMessage());
-        }
+        $this->psAccountService->install();
 
         $coreInstall = parent::install();
 
@@ -255,26 +210,6 @@ class Alma extends PaymentModule
         $tabsHelper = new \Alma\PrestaShop\Helpers\Admin\TabsHelper();
 
         return $tabsHelper->installTabs($this->dataTabs());
-    }
-
-    /**
-     * Retrieve the service
-     *
-     * @param string $serviceName
-     *
-     * @return object|null
-     */
-    public function getService($serviceName)
-    {
-        return $this->container->getService($serviceName);
-    }
-
-    public function setContainer()
-    {
-        $this->container = new \PrestaShop\ModuleLibServiceContainer\DependencyInjection\ServiceContainer(
-            $this->name,
-            $this->getLocalPath()
-        );
     }
 
     /**
@@ -599,58 +534,7 @@ class Alma extends PaymentModule
      */
     public function getContent()
     {
-        $suggestPSAccounts = false;
-
-        try {
-            $hasPSAccounts = $this->renderPSAccounts();
-        } catch (\Alma\PrestaShop\Exceptions\CompatibilityPsAccountsException $e) {
-            $hasPSAccounts = false;
-        } catch (\PrestaShop\PsAccountsInstaller\Installer\Exception\ModuleNotInstalledException $e) {
-            $hasPSAccounts = false;
-            $suggestPSAccounts = true;
-        }
-
-        return $this->runHookController('getContent', ['hasPSAccounts' => $hasPSAccounts, 'suggestPSAccounts' => $suggestPSAccounts]);
-    }
-
-    /**
-     * @return bool
-     *
-     * @throws \Alma\PrestaShop\Exceptions\CompatibilityPsAccountsException
-     * @throws \PrestaShop\PsAccountsInstaller\Installer\Exception\ModuleNotInstalledException
-     */
-    public function renderPSAccounts()
-    {
-        $this->checkPsAccountsCompatibility();
-        $this->setContainer();
-
-        try {
-            $accountsFacade = $this->getService('alma.ps_accounts_facade');
-            $accountsService = $accountsFacade->getPsAccountsService();
-        } catch (\PrestaShop\PsAccountsInstaller\Installer\Exception\InstallerException $e) {
-            $accountsInstaller = $this->getService('alma.ps_accounts_installer');
-            $accountsInstaller->install();
-            $accountsFacade = $this->getService('alma.ps_accounts_facade');
-            $accountsService = $accountsFacade->getPsAccountsService();
-        }
-
-        try {
-            $mediaHelperBuilder = new Alma\PrestaShop\Builders\Models\MediaHelperBuilder();
-            $mediaHelper = $mediaHelperBuilder->getInstance();
-            $mediaHelper->addJsDef([
-                'contextPsAccounts' => $accountsFacade->getPsAccountsPresenter()
-                    ->present($this->name),
-            ]);
-
-            // Retrieve the PrestaShop Account CDN
-            $this->context->smarty->assign('urlAccountsCdn', $accountsService->getAccountsCdn());
-
-            return true;
-        } catch (Exception $e) {
-            $this->context->controller->errors[] = $e->getMessage();
-
-            return false;
-        }
+        return $this->runHookController('getContent', null);
     }
 
     public function hookHeader($params)

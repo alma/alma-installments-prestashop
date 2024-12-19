@@ -7,7 +7,7 @@
         </ul>
     </div>
 {/if}
-{if isset($success)}
+{if $success}
     <div class="{$success_classes|escape:'htmlall':'UTF-8'}">
         {l s='Settings successfully updated' mod='alma'}
     </div>
