@@ -23,7 +23,6 @@
 {if isset($hasPSAccounts) && $hasPSAccounts}
     <div class="ps-account-container">
         {if isset($hasKey) && !$hasKey}
-            {include file="./_partials/notificationFirstInstallation.tpl"}
             <div class="alma ps-account alert alert-info">
                 <h2>
                     {l s='To use Alma, please follow these steps' mod='alma'}
