@@ -192,8 +192,7 @@ class ConfigFormService
         if (!$adminFormBuilderService) {
             $adminFormBuilderService = new AdminFormBuilderService(
                 $module,
-                $context,
-                $this->needsAPIKey()
+                $context
             );
         }
         $this->adminFormBuilderService = $adminFormBuilderService;
@@ -254,7 +253,7 @@ class ConfigFormService
     {
         $feePlans = $this->clientModel->getMerchantFeePlans();
         $this->initPaymentForm();
-        $formFields = $this->adminFormBuilderService->getFormFields($this->needsAPIKey());
+        $formFields = $this->adminFormBuilderService->getFormFields();
 
         // If we have fee plans, we need to add them to the HelperForm
         if ($feePlans) {
@@ -432,17 +431,5 @@ class ConfigFormService
             'ALMA_PRODUCT_QUANTITY_SELECTOR' => SettingsHelper::getProductQuantityQuerySelector(),
             '_api_only' => true,
         ];
-    }
-
-    /**
-     * Check if the api_key is set in the settings
-     *
-     * @return bool
-     */
-    protected function needsAPIKey()
-    {
-        $key = trim(SettingsHelper::getActiveAPIKey());
-
-        return '' == $key || null == $key;
     }
 }

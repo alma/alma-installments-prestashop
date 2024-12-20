@@ -37,6 +37,7 @@ use Alma\PrestaShop\Forms\PnxAdminFormBuilder;
 use Alma\PrestaShop\Forms\ProductEligibilityAdminFormBuilder;
 use Alma\PrestaShop\Forms\RefundAdminFormBuilder;
 use Alma\PrestaShop\Forms\ShareOfCheckoutAdminFormBuilder;
+use Alma\PrestaShop\Model\AlmaApiKeyModel;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -92,11 +93,15 @@ class AdminFormBuilderService
      * @var \Alma\PrestaShop\Helpers\SettingsHelper
      */
     private $settingsHelper;
+    /**
+     * @var \Alma\PrestaShop\Model\AlmaApiKeyModel|mixed|null
+     */
+    private $almaApiKeyModel;
 
     public function __construct(
         $module,
         $context,
-        $needsKeys,
+        $almaApiKeyModel = null,
         $pnxAdminFormBuilder = null,
         $productEligibilityAdminFormBuilder = null,
         $cartEligibilityAdminFormBuilder = null,
@@ -112,6 +117,10 @@ class AdminFormBuilderService
     ) {
         $mediaHelper = (new MediaHelperBuilder())->getInstance();
         $image = $mediaHelper->getIconPathAlmaTiny();
+        if (!$almaApiKeyModel) {
+            $almaApiKeyModel = new AlmaApiKeyModel();
+        }
+        $this->almaApiKeyModel = $almaApiKeyModel;
         if (!$pnxAdminFormBuilder) {
             $pnxAdminFormBuilder = new PnxAdminFormBuilder(
                 $module,
@@ -188,8 +197,7 @@ class AdminFormBuilderService
             $apiAdminFormBuilder = new ApiAdminFormBuilder(
                 $module,
                 $context,
-                $image,
-                ['needsAPIKey' => $needsKeys]
+                $image
             );
         }
         $this->apiAdminFormBuilder = $apiAdminFormBuilder;
@@ -210,15 +218,13 @@ class AdminFormBuilderService
     /**
      * Use the form builder to get the form fields to send to the helper form
      *
-     * @param $needsApiKey
-     *
      * @return array
      */
-    public function getFormFields($needsApiKey = true)
+    public function getFormFields()
     {
         $formFields = [];
 
-        if (!$needsApiKey) {
+        if (!$this->almaApiKeyModel->needApiKey()) {
             $formFields[] = $this->pnxAdminFormBuilder->build();
             $formFields[] = $this->productEligibilityAdminFormBuilder->build();
             $formFields[] = $this->cartEligibilityAdminFormBuilder->build();
