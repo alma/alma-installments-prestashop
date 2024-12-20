@@ -68,9 +68,9 @@ class Alma extends PaymentModule
     protected $container;
 
     /**
-     * @var \Alma\PrestaShop\Services\PsAccountService
+     * @var \Alma\PrestaShop\Services\PsAccountsService
      */
-    protected $psAccountService;
+    protected $psAccountsService;
 
     public function __construct()
     {
@@ -115,7 +115,7 @@ class Alma extends PaymentModule
             $this->local_path = _PS_MODULE_DIR_ . $this->name . '/';
         }
 
-        $this->psAccountService = new \Alma\PrestaShop\Services\PsAccountService($this, $this->context);
+        $this->psAccountsService = new \Alma\PrestaShop\Services\PsAccountsService($this, $this->context);
     }
 
     /**
@@ -190,7 +190,7 @@ class Alma extends PaymentModule
      */
     public function install()
     {
-        $this->psAccountService->install();
+        $this->psAccountsService->install();
 
         $coreInstall = parent::install();
 

@@ -34,7 +34,7 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-class PsAccountService
+class PsAccountsService
 {
     const PS_ACCOUNTS_VERSION_REQUIRED = '5.3.0';
     /**
