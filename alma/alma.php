@@ -76,9 +76,9 @@ class Alma extends PaymentModule
      */
     protected $toolsHelper;
     /**
-     * @var \Alma\PrestaShop\Services\PsAccountService
+     * @var \Alma\PrestaShop\Services\PsAccountsService
      */
-    protected $psAccountService;
+    protected $psAccountsService;
 
     public function __construct()
     {
@@ -127,7 +127,7 @@ class Alma extends PaymentModule
         $this->tabsHelper = new \Alma\PrestaShop\Helpers\Admin\TabsHelper();
 
         $this->toolsHelper = new \Alma\PrestaShop\Helpers\ToolsHelper();
-        $this->psAccountService = new \Alma\PrestaShop\Services\PsAccountService($this, $this->context);
+        $this->psAccountsService = new \Alma\PrestaShop\Services\PsAccountsService($this, $this->context);
     }
 
     /**
@@ -202,7 +202,7 @@ class Alma extends PaymentModule
      */
     public function install()
     {
-        $this->psAccountService->install();
+        $this->psAccountsService->install();
 
         $coreInstall = parent::install();
 

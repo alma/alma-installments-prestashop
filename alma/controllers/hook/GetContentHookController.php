@@ -41,7 +41,7 @@ use Alma\PrestaShop\Proxy\ConfigurationProxy;
 use Alma\PrestaShop\Proxy\ToolsProxy;
 use Alma\PrestaShop\Services\ConfigFormService;
 use Alma\PrestaShop\Services\InsuranceService;
-use Alma\PrestaShop\Services\PsAccountService;
+use Alma\PrestaShop\Services\PsAccountsService;
 use PrestaShop\PsAccountsInstaller\Installer\Exception\ModuleNotInstalledException;
 
 final class GetContentHookController extends AdminHookController
@@ -66,9 +66,9 @@ final class GetContentHookController extends AdminHookController
      */
     protected $insuranceService;
     /**
-     * @var \Alma\PrestaShop\Services\PsAccountService
+     * @var \Alma\PrestaShop\Services\PsAccountsService
      */
-    protected $psAccountService;
+    protected $psAccountsService;
 
     /**
      * GetContentHook Controller construct.
@@ -87,7 +87,7 @@ final class GetContentHookController extends AdminHookController
         $this->toolsProxy = new ToolsProxy();
         $this->configurationProxy = new ConfigurationProxy();
         $this->insuranceService = new InsuranceService();
-        $this->psAccountService = new PsAccountService(
+        $this->psAccountsService = new PsAccountsService(
             $module,
             $contextFactory->getContext()
         );
@@ -106,6 +106,7 @@ final class GetContentHookController extends AdminHookController
         $assignSmartyKeys = [
             'hasPSAccounts' => false,
             'suggestPSAccounts' => false,
+            'psAccountVersionRequired' => PsAccountsService::PS_ACCOUNTS_VERSION_REQUIRED,
             'validation_error_classes' => 'alert alert-danger',
             'tip_classes' => 'alert alert-info',
             'success' => false,
@@ -129,7 +130,7 @@ final class GetContentHookController extends AdminHookController
         ];
 
         if (version_compare(_PS_VERSION_, '1.6', '<')) {
-            $assignSmartyKeys['validation_error_classes'] = 'alert';
+            $assignSmartyKeys['validation_error_classes'] = 'error';
             $assignSmartyKeys['tip_classes'] = 'conf';
             $assignSmartyKeys['success_classes'] = 'conf';
         }
@@ -173,7 +174,7 @@ final class GetContentHookController extends AdminHookController
         }
 
         try {
-            $assignSmartyKeys['hasPSAccounts'] = $this->psAccountService->renderPSAccounts();
+            $assignSmartyKeys['hasPSAccounts'] = $this->psAccountsService->renderPSAccounts();
         } catch (CompatibilityPsAccountsException $e) {
             $assignSmartyKeys['hasPSAccounts'] = false;
         } catch (ModuleNotInstalledException $e) {
