@@ -185,7 +185,7 @@ class AlmaApiKeyModel
     }
 
     /**
-     * @throws \Exception
+     * @return bool
      */
     public function needApiKey()
     {

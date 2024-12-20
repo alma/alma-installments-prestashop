@@ -36,15 +36,22 @@ use Alma\PrestaShop\Forms\ProductEligibilityAdminFormBuilder;
 use Alma\PrestaShop\Forms\RefundAdminFormBuilder;
 use Alma\PrestaShop\Forms\ShareOfCheckoutAdminFormBuilder;
 use Alma\PrestaShop\Helpers\SettingsHelper;
+use Alma\PrestaShop\Model\AlmaApiKeyModel;
 use Alma\PrestaShop\Services\AdminFormBuilderService;
 use PHPUnit\Framework\TestCase;
 
 class AdminFormBuilderServiceTest extends TestCase
 {
+    /**
+     * @var \Alma\PrestaShop\Model\AlmaApiKeyModel|(\Alma\PrestaShop\Model\AlmaApiKeyModel&\PHPUnit_Framework_MockObject_MockObject)|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $almaApiKeyModelMock;
+
     public function setUp()
     {
         $this->moduleMock = $this->createMock(\Module::class);
         $this->contextMock = $this->createMock(\Context::class);
+        $this->almaApiKeyModelMock = $this->createMock(AlmaApiKeyModel::class);
         $this->pnxAdminFormBuilderMock = $this->createMock(PnxAdminFormBuilder::class);
         $this->productEligibilityAdminFormBuilderMock = $this->createMock(ProductEligibilityAdminFormBuilder::class);
         $this->cartEligibilityAdminFormBuilderMock = $this->createMock(CartEligibilityAdminFormBuilder::class);
@@ -60,7 +67,7 @@ class AdminFormBuilderServiceTest extends TestCase
         $this->adminFormBuilderService = new AdminFormBuilderService(
             $this->moduleMock,
             $this->contextMock,
-            true,
+            $this->almaApiKeyModelMock,
             $this->pnxAdminFormBuilderMock,
             $this->productEligibilityAdminFormBuilderMock,
             $this->cartEligibilityAdminFormBuilderMock,
@@ -78,6 +85,9 @@ class AdminFormBuilderServiceTest extends TestCase
 
     public function testGetFormFieldsWithoutApiKeySaved()
     {
+        $this->almaApiKeyModelMock->expects($this->once())
+            ->method('needApiKey')
+            ->willReturn(true);
         $this->pnxAdminFormBuilderMock->expects($this->never())
             ->method('build');
         $this->productEligibilityAdminFormBuilderMock->expects($this->never())
@@ -100,11 +110,14 @@ class AdminFormBuilderServiceTest extends TestCase
             ->method('build');
         $this->debugAdminFormBuilderMock->expects($this->once())
             ->method('build');
-        $this->adminFormBuilderService->getFormFields(true);
+        $this->adminFormBuilderService->getFormFields();
     }
 
     public function testGetFormFieldsWithApiKeyAndWithoutSocAndPut()
     {
+        $this->almaApiKeyModelMock->expects($this->once())
+            ->method('needApiKey')
+            ->willReturn(false);
         $this->pnxAdminFormBuilderMock->expects($this->once())
             ->method('build');
         $this->productEligibilityAdminFormBuilderMock->expects($this->once())
@@ -133,11 +146,14 @@ class AdminFormBuilderServiceTest extends TestCase
             ->method('build');
         $this->debugAdminFormBuilderMock->expects($this->once())
             ->method('build');
-        $this->adminFormBuilderService->getFormFields(false);
+        $this->adminFormBuilderService->getFormFields();
     }
 
     public function testGetFormFieldsWithApiKeyAndWithSocAndPut()
     {
+        $this->almaApiKeyModelMock->expects($this->once())
+            ->method('needApiKey')
+            ->willReturn(false);
         $this->pnxAdminFormBuilderMock->expects($this->once())
             ->method('build');
         $this->productEligibilityAdminFormBuilderMock->expects($this->once())
@@ -166,6 +182,6 @@ class AdminFormBuilderServiceTest extends TestCase
             ->method('build');
         $this->debugAdminFormBuilderMock->expects($this->once())
             ->method('build');
-        $this->adminFormBuilderService->getFormFields(false);
+        $this->adminFormBuilderService->getFormFields();
     }
 }

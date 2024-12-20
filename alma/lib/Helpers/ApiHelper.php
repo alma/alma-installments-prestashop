@@ -129,7 +129,7 @@ class ApiHelper
     {
         $value = 1;
 
-        if (property_exists($merchant, $merchantKey)) {
+        if ($merchant && property_exists($merchant, $merchantKey)) {
             $value = $merchant->$merchantKey;
         }
 
