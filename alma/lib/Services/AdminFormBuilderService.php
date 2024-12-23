@@ -234,7 +234,7 @@ class AdminFormBuilderService
             if ($this->settingsHelper->shouldDisplayShareOfCheckoutForm()) {
                 $formFields[] = $this->shareOfCheckoutAdminFormBuilder->build();
             }
-            $this->inpageAdminFormBuilder->build();
+            $formFields[] = $this->inpageAdminFormBuilder->build();
             if ($this->settingsHelper->isPaymentTriggerEnabledByState()) {
                 $formFields[] = $this->paymentOnTriggeringAdminFormBuilder->build();
             }
