@@ -38,6 +38,7 @@ use Alma\PrestaShop\Factories\ContextFactory;
 use Alma\PrestaShop\Hooks\AdminHookController;
 use Alma\PrestaShop\Logger;
 use Alma\PrestaShop\Proxy\ConfigurationProxy;
+use Alma\PrestaShop\Proxy\ModuleProxy;
 use Alma\PrestaShop\Proxy\ToolsProxy;
 use Alma\PrestaShop\Services\ConfigFormService;
 use Alma\PrestaShop\Services\InsuranceService;
@@ -69,6 +70,10 @@ final class GetContentHookController extends AdminHookController
      * @var \Alma\PrestaShop\Services\PsAccountsService
      */
     protected $psAccountsService;
+    /**
+     * @var \Alma\PrestaShop\Proxy\ModuleProxy
+     */
+    protected $moduleProxy;
 
     /**
      * GetContentHook Controller construct.
@@ -77,6 +82,7 @@ final class GetContentHookController extends AdminHookController
      */
     public function __construct($module)
     {
+        $this->module = $module;
         $contextFactory = new ContextFactory();
 
         $this->configFormService = new ConfigFormService(
@@ -91,6 +97,7 @@ final class GetContentHookController extends AdminHookController
             $module,
             $contextFactory->getContext()
         );
+        $this->moduleProxy = new ModuleProxy();
 
         parent::__construct($module);
     }
@@ -127,6 +134,7 @@ final class GetContentHookController extends AdminHookController
             'host_mode' => 0,
             'hasKey' => false,
             'tip' => 'fill_api_keys',
+            'almaModuleIsEnabled' => $this->moduleProxy->isEnabled($this->module->name),
         ];
 
         if (version_compare(_PS_VERSION_, '1.6', '<')) {
