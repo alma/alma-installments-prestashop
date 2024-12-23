@@ -44,6 +44,7 @@ use Alma\PrestaShop\Services\ConfigFormService;
 use Alma\PrestaShop\Services\InsuranceService;
 use Alma\PrestaShop\Services\PsAccountsService;
 use PrestaShop\PsAccountsInstaller\Installer\Exception\ModuleNotInstalledException;
+use PrestaShop\PsAccountsInstaller\Installer\Exception\ModuleVersionException;
 
 final class GetContentHookController extends AdminHookController
 {
@@ -152,6 +153,8 @@ final class GetContentHookController extends AdminHookController
      * @param $params
      *
      * @return string
+     *
+     * @throws \Exception
      */
     public function run($params)
     {
@@ -186,6 +189,9 @@ final class GetContentHookController extends AdminHookController
         } catch (CompatibilityPsAccountsException $e) {
             $assignSmartyKeys['hasPSAccounts'] = false;
         } catch (ModuleNotInstalledException $e) {
+            $assignSmartyKeys['hasPSAccounts'] = false;
+            $assignSmartyKeys['suggestPSAccounts'] = true;
+        } catch (ModuleVersionException $e) {
             $assignSmartyKeys['hasPSAccounts'] = false;
             $assignSmartyKeys['suggestPSAccounts'] = true;
         }

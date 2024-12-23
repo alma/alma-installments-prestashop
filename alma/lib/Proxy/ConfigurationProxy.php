@@ -61,4 +61,14 @@ class ConfigurationProxy
     {
         return \Configuration::updateValue($key, $value, $html, $idShopGroup, $idShop);
     }
+
+    /**
+     * Return value of Debug mode defined in configuration.
+     *
+     * @return bool
+     */
+    public function isDevMode()
+    {
+        return _PS_MODE_DEV_ === true;
+    }
 }

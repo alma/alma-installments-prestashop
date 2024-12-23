@@ -28,7 +28,12 @@ use Alma\PrestaShop\Builders\Models\MediaHelperBuilder;
 use Alma\PrestaShop\Exceptions\CompatibilityPsAccountsException;
 use Alma\PrestaShop\Helpers\ToolsHelper;
 use Alma\PrestaShop\Logger;
+use Alma\PrestaShop\Proxy\ConfigurationProxy;
 use Exception;
+use PrestaShop\ModuleLibServiceContainer\DependencyInjection\ServiceContainer;
+use PrestaShop\PsAccountsInstaller\Installer\Exception\InstallerException;
+use PrestaShop\PsAccountsInstaller\Installer\Exception\ModuleNotInstalledException;
+use Symfony\Component\Config\ConfigCache;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -57,17 +62,36 @@ class PsAccountsService
      * @var \Context
      */
     private $context;
+    /**
+     * @var \Alma\PrestaShop\Proxy\ConfigurationProxy|mixed|null
+     */
+    private $configurationProxy;
 
-    public function __construct($module, $context)
-    {
+    public function __construct(
+        $module,
+        $context,
+        $mediaHelper = null,
+        $toolsHelper = null,
+        $configurationProxy = null
+    ) {
         $this->module = $module;
         $this->context = $context;
-        $this->mediaHelper = (new MediaHelperBuilder())->getInstance();
-        $this->toolsHelper = new ToolsHelper();
+        if (!$mediaHelper) {
+            $mediaHelper = (new MediaHelperBuilder())->getInstance();
+        }
+        $this->mediaHelper = $mediaHelper;
+        if (!$toolsHelper) {
+            $toolsHelper = new ToolsHelper();
+        }
+        $this->toolsHelper = $toolsHelper;
+        if (!$configurationProxy) {
+            $configurationProxy = new ConfigurationProxy();
+        }
+        $this->configurationProxy = $configurationProxy;
     }
 
     /**
-     * Check and Install PS Account during the install module
+     * Check and Install PS Account during the installation module
      *
      * @return void
      */
@@ -87,6 +111,8 @@ class PsAccountsService
      *
      * @throws \Alma\PrestaShop\Exceptions\CompatibilityPsAccountsException
      * @throws \PrestaShop\PsAccountsInstaller\Installer\Exception\ModuleNotInstalledException
+     * @throws \PrestaShop\PsAccountsInstaller\Installer\Exception\ModuleVersionException
+     * @throws \Exception
      */
     public function renderPSAccounts()
     {
@@ -95,8 +121,10 @@ class PsAccountsService
 
         try {
             $accountsFacade = $this->getService('alma.ps_accounts_facade');
+            /** @var \PrestaShop\PsAccountsInstaller\Installer\Facade\PsAccounts $accountsFacade */
             $accountsService = $accountsFacade->getPsAccountsService();
-        } catch (\PrestaShop\PsAccountsInstaller\Installer\Exception\InstallerException $e) {
+        } catch (InstallerException $e) {
+            /** @var \PrestaShop\PsAccountsInstaller\Installer\Installer $accountsInstaller */
             $accountsInstaller = $this->getService('alma.ps_accounts_installer');
             $accountsInstaller->install();
             $accountsFacade = $this->getService('alma.ps_accounts_facade');
@@ -139,7 +167,7 @@ class PsAccountsService
      */
     public function setContainer()
     {
-        $this->container = new \PrestaShop\ModuleLibServiceContainer\DependencyInjection\ServiceContainer(
+        $this->container = new ServiceContainer(
             $this->module->name,
             $this->module->getLocalPath()
         );
@@ -158,11 +186,11 @@ class PsAccountsService
         $this->checkPsAccountsPresence();
         $psAccountsModule = \Module::getInstanceByName('ps_accounts');
         if (!$psAccountsModule) {
-            throw new \PrestaShop\PsAccountsInstaller\Installer\Exception\ModuleNotInstalledException('[Alma] PS Account is not installed');
+            throw new ModuleNotInstalledException('[Alma] PS Account is not installed');
         }
 
         if ($psAccountsModule->version < self::PS_ACCOUNTS_VERSION_REQUIRED) {
-            throw new \PrestaShop\PsAccountsInstaller\Installer\Exception\ModuleNotInstalledException('[Alma] PS Account is not up to date, minimal version required ' . self::PS_ACCOUNTS_VERSION_REQUIRED);
+            throw new ModuleNotInstalledException('[Alma] PS Account is not up to date, minimal version required ' . self::PS_ACCOUNTS_VERSION_REQUIRED);
         }
     }
 
@@ -173,13 +201,13 @@ class PsAccountsService
      */
     public function checkPsAccountsPresence()
     {
-        if (_PS_MODE_DEV_ === true) {
-            throw new \Alma\PrestaShop\Exceptions\CompatibilityPsAccountsException('[Alma] Debug mode is activated');
+        if ($this->configurationProxy->isDevMode()) {
+            throw new CompatibilityPsAccountsException('[Alma] Debug mode is activated');
         }
 
         if (
-            !class_exists(\Symfony\Component\Config\ConfigCache::class)
-            || !class_exists(\PrestaShop\ModuleLibServiceContainer\DependencyInjection\ServiceContainer::class)
+            !class_exists(ConfigCache::class)
+            || !class_exists(ServiceContainer::class)
         ) {
             throw new CompatibilityPsAccountsException('[Alma] Classes don\'t exist for PS Account');
         }
