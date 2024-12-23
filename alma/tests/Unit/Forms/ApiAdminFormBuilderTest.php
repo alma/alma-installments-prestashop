@@ -25,6 +25,7 @@
 namespace Alma\PrestaShop\Tests\Unit\Forms;
 
 use Alma\PrestaShop\Forms\ApiAdminFormBuilder;
+use Alma\PrestaShop\Helpers\ConstantsHelper;
 use Alma\PrestaShop\Model\AlmaApiKeyModel;
 use PHPUnit\Framework\TestCase;
 
@@ -80,7 +81,7 @@ class ApiAdminFormBuilderTest extends TestCase
                         'size' => 75,
                         'required' => false,
                         'desc' => ' – ',
-                        'placeholder' => '********************************',
+                        'placeholder' => ConstantsHelper::OBSCURE_VALUE,
                     ],
                     [
                         'name' => 'ALMA_TEST_API_KEY',
@@ -89,7 +90,7 @@ class ApiAdminFormBuilderTest extends TestCase
                         'size' => 75,
                         'required' => false,
                         'desc' => ' – ',
-                        'placeholder' => '********************************',
+                        'placeholder' => ConstantsHelper::OBSCURE_VALUE,
                     ],
                     [
                         'name' => '_api_only',
@@ -147,7 +148,7 @@ class ApiAdminFormBuilderTest extends TestCase
                         'size' => 75,
                         'required' => false,
                         'desc' => ' – ',
-                        'placeholder' => '********************************',
+                        'placeholder' => ConstantsHelper::OBSCURE_VALUE,
                     ],
                     [
                         'name' => 'ALMA_TEST_API_KEY',
@@ -156,7 +157,7 @@ class ApiAdminFormBuilderTest extends TestCase
                         'size' => 75,
                         'required' => false,
                         'desc' => ' – ',
-                        'placeholder' => '********************************',
+                        'placeholder' => ConstantsHelper::OBSCURE_VALUE,
                     ],
                 ],
                 'submit' => [
