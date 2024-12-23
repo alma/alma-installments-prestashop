@@ -44,132 +44,112 @@ class ApiAdminFormBuilderTest extends TestCase
         );
     }
 
-    public function testBuildWithoutApiKey()
+    /**
+     * @dataProvider expectedArrayFormDataProvider
+     *
+     * @return void
+     */
+    public function testBuild($arrayForm, $needApiKey)
     {
-        $expected = [
-            'form' => [
-                'legend' => [
-                    'title' => null,
-                    'image' => 'image',
-                ],
-                'input' => [
-                    [
-                        'name' => 'ALMA_API_MODE',
-                        'label' => null,
-                        'desc' => null,
-                        'type' => 'select',
-                        'required' => true,
-                        'options' => [
-                            'query' => [
-                                [
-                                    'api_mode' => 'live',
-                                    'name' => 'Live',
-                                ],
-                                [
-                                    'api_mode' => 'test',
-                                    'name' => 'Test',
-                                ],
-                            ],
-                            'id' => 'api_mode',
-                            'name' => 'name',
-                        ],
-                    ],
-                    [
-                        'name' => 'ALMA_LIVE_API_KEY',
-                        'label' => null,
-                        'type' => 'secret',
-                        'size' => 75,
-                        'required' => false,
-                        'desc' => ' – ',
-                        'placeholder' => ConstantsHelper::OBSCURE_VALUE,
-                    ],
-                    [
-                        'name' => 'ALMA_TEST_API_KEY',
-                        'label' => null,
-                        'type' => 'secret',
-                        'size' => 75,
-                        'required' => false,
-                        'desc' => ' – ',
-                        'placeholder' => ConstantsHelper::OBSCURE_VALUE,
-                    ],
-                    [
-                        'name' => '_api_only',
-                        'label' => null,
-                        'type' => 'hidden',
-                    ],
-                ],
-                'submit' => [
-                    'title' => null,
-                    'class' => 'button btn btn-default pull-right',
-                ],
-            ],
-        ];
         $this->almaApiKeyModelMock->expects($this->once())
             ->method('needApiKey')
-            ->willReturn(true);
+            ->willReturn($needApiKey);
 
-        $this->assertEquals($expected, $this->apiAdminFormBuilder->build());
+        $this->assertEquals($arrayForm, $this->apiAdminFormBuilder->build());
     }
 
-    public function testBuildWithApiKey()
+    /**
+     * @return array[]
+     */
+    public function expectedArrayFormDataProvider()
     {
-        $expected = [
-            'form' => [
-                'legend' => [
-                    'title' => null,
-                    'image' => 'image',
-                ],
-                'input' => [
-                    [
-                        'name' => 'ALMA_API_MODE',
-                        'label' => null,
-                        'desc' => null,
-                        'type' => 'select',
-                        'required' => true,
-                        'options' => [
-                            'query' => [
-                                [
-                                    'api_mode' => 'live',
-                                    'name' => 'Live',
-                                ],
-                                [
-                                    'api_mode' => 'test',
-                                    'name' => 'Test',
-                                ],
-                            ],
-                            'id' => 'api_mode',
-                            'name' => 'name',
+        $commonLegend = [
+            'title' => null,
+            'image' => 'image',
+        ];
+        $commonSubmit = [
+            'title' => null,
+            'class' => 'button btn btn-default pull-right',
+        ];
+        $apiModeInput = [
+            [
+                'name' => 'ALMA_API_MODE',
+                'label' => null,
+                'desc' => null,
+                'type' => 'select',
+                'required' => true,
+                'options' => [
+                    'query' => [
+                        [
+                            'api_mode' => 'live',
+                            'name' => 'Live',
+                        ],
+                        [
+                            'api_mode' => 'test',
+                            'name' => 'Test',
                         ],
                     ],
-                    [
-                        'name' => 'ALMA_LIVE_API_KEY',
-                        'label' => null,
-                        'type' => 'secret',
-                        'size' => 75,
-                        'required' => false,
-                        'desc' => ' – ',
-                        'placeholder' => ConstantsHelper::OBSCURE_VALUE,
-                    ],
-                    [
-                        'name' => 'ALMA_TEST_API_KEY',
-                        'label' => null,
-                        'type' => 'secret',
-                        'size' => 75,
-                        'required' => false,
-                        'desc' => ' – ',
-                        'placeholder' => ConstantsHelper::OBSCURE_VALUE,
-                    ],
-                ],
-                'submit' => [
-                    'title' => null,
-                    'class' => 'button btn btn-default pull-right',
+                    'id' => 'api_mode',
+                    'name' => 'name',
                 ],
             ],
         ];
-        $this->almaApiKeyModelMock->expects($this->once())
-            ->method('needApiKey')
-            ->willReturn(false);
+        $apiKeyInputs = [
+            [
+                'name' => 'ALMA_LIVE_API_KEY',
+                'label' => null,
+                'type' => 'secret',
+                'size' => 75,
+                'required' => false,
+                'desc' => ' – ',
+                'placeholder' => ConstantsHelper::OBSCURE_VALUE,
+            ],
+            [
+                'name' => 'ALMA_TEST_API_KEY',
+                'label' => null,
+                'type' => 'secret',
+                'size' => 75,
+                'required' => false,
+                'desc' => ' – ',
+                'placeholder' => ConstantsHelper::OBSCURE_VALUE,
+            ],
+        ];
+        $hiddenInputs = [
+            [
+                'name' => '_api_only',
+                'label' => null,
+                'type' => 'hidden',
+            ],
+        ];
 
-        $this->assertEquals($expected, $this->apiAdminFormBuilder->build());
+        return [
+            'withoutApiKey' => [
+                'arrayForm' => [
+                    'form' => [
+                        'legend' => $commonLegend,
+                        'input' => array_merge(
+                            $apiModeInput,
+                            $apiKeyInputs,
+                            $hiddenInputs
+                        ),
+                        'submit' => $commonSubmit,
+                    ],
+                ],
+                'needApiKey' => true,
+            ],
+            'withApiKey' => [
+                'arrayForm' => [
+                    'form' => [
+                        'legend' => $commonLegend,
+                        'input' => array_merge(
+                            $apiModeInput,
+                            $apiKeyInputs
+                        ),
+                        'submit' => $commonSubmit,
+                    ],
+                ],
+                'needApiKey' => false,
+            ],
+        ];
     }
 }
