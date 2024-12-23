@@ -43,9 +43,16 @@ class ApiAdminFormBuilder extends AbstractAlmaAdminFormBuilder
      */
     protected $almaApiKeyModel;
 
-    public function __construct($module, $context, $image)
-    {
-        $this->almaApiKeyModel = new AlmaApiKeyModel();
+    public function __construct(
+        $module,
+        $context,
+        $image,
+        $almaApiKeyModel = null
+    ) {
+        if (!$almaApiKeyModel) {
+            $almaApiKeyModel = new AlmaApiKeyModel();
+        }
+        $this->almaApiKeyModel = $almaApiKeyModel;
         parent::__construct($module, $context, $image);
     }
 
