@@ -128,7 +128,9 @@ class ShareOfCheckoutHelper
      *
      * @return void
      *
-     * @throws RequestError
+     * @throws \Alma\API\RequestError
+     * @throws \PrestaShopDatabaseException
+     * @throws \PrestaShopException
      */
     public function shareDays()
     {
@@ -489,6 +491,9 @@ class ShareOfCheckoutHelper
      * @param string $date
      *
      * @return array
+     *
+     * @throws \PrestaShopDatabaseException
+     * @throws \PrestaShopException
      */
     public function getPayload($date)
     {

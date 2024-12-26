@@ -51,6 +51,9 @@ class OrderHelper
      * @var array
      */
     private $orders;
+    /**
+     * @var \Module
+     */
     private $module;
 
     /**
@@ -60,6 +63,7 @@ class OrderHelper
 
     public function __construct()
     {
+        $this->module = \Module::getInstanceByName(ConstantsHelper::ALMA_MODULE_NAME);
         $this->defaultStatesExcluded = [6, 7, 8];
         $this->orders = [];
         $this->orderRepository = new OrderRepository();
@@ -72,6 +76,9 @@ class OrderHelper
      * @param string $endDate
      *
      * @return \Order[]
+     *
+     * @throws \PrestaShopDatabaseException
+     * @throws \PrestaShopException
      */
     public function getOrdersByDate($startDate, $endDate)
     {
@@ -99,6 +106,8 @@ class OrderHelper
      * @param string $endDate
      *
      * @return array
+     *
+     * @throws \PrestaShopDatabaseException
      */
     public function getOrdersIdByDate($startDate, $endDate)
     {
