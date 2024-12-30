@@ -32,8 +32,6 @@ use Alma\PrestaShop\Proxy\ConfigurationProxy;
 use Exception;
 use PrestaShop\ModuleLibServiceContainer\DependencyInjection\ServiceContainer;
 use PrestaShop\PsAccountsInstaller\Installer\Exception\InstallerException;
-use PrestaShop\PsAccountsInstaller\Installer\Exception\ModuleNotInstalledException;
-use Symfony\Component\Config\ConfigCache;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -41,7 +39,6 @@ if (!defined('_PS_VERSION_')) {
 
 class PsAccountsService
 {
-    const PS_ACCOUNTS_VERSION_REQUIRED = '5.3.0';
     /**
      * @var \Module
      */
@@ -98,7 +95,6 @@ class PsAccountsService
     public function install()
     {
         try {
-            $this->checkPsAccountsPresence();
             $this->setContainer();
             $this->getService('alma.ps_accounts_installer')->install();
         } catch (CompatibilityPsAccountsException $e) {
@@ -116,7 +112,6 @@ class PsAccountsService
      */
     public function renderPSAccounts()
     {
-        $this->checkPsAccountsCompatibility();
         $this->setContainer();
 
         try {
@@ -171,50 +166,5 @@ class PsAccountsService
             $this->module->name,
             $this->module->getLocalPath()
         );
-    }
-
-    /**
-     * Check if PS Account is installed and up to date, minimal version required 5.0.
-     *
-     * @return void
-     *
-     * @throws \PrestaShop\PsAccountsInstaller\Installer\Exception\ModuleNotInstalledException
-     * @throws \Alma\PrestaShop\Exceptions\CompatibilityPsAccountsException
-     */
-    public function checkPsAccountsCompatibility()
-    {
-        $this->checkPsAccountsPresence();
-        $psAccountsModule = \Module::getInstanceByName('ps_accounts');
-        if (!$psAccountsModule) {
-            throw new ModuleNotInstalledException('[Alma] PS Account is not installed');
-        }
-
-        if ($psAccountsModule->version < self::PS_ACCOUNTS_VERSION_REQUIRED) {
-            throw new ModuleNotInstalledException('[Alma] PS Account is not up to date, minimal version required ' . self::PS_ACCOUNTS_VERSION_REQUIRED);
-        }
-    }
-
-    /**
-     * @return void
-     *
-     * @throws \Alma\PrestaShop\Exceptions\CompatibilityPsAccountsException
-     */
-    public function checkPsAccountsPresence()
-    {
-        if ($this->configurationProxy->isDevMode()) {
-            throw new CompatibilityPsAccountsException('[Alma] Debug mode is activated');
-        }
-
-        if (
-            !class_exists(ConfigCache::class)
-            || !class_exists(ServiceContainer::class)
-        ) {
-            throw new CompatibilityPsAccountsException('[Alma] Classes don\'t exist for PS Account');
-        }
-        if (
-            $this->toolsHelper->psVersionCompare('1.6', '<')
-        ) {
-            throw new CompatibilityPsAccountsException('[Alma] Prestashop version lower than 1.6');
-        }
     }
 }
