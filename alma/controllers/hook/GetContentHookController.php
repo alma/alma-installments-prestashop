@@ -30,7 +30,6 @@ if (!defined('_PS_VERSION_')) {
 
 use Alma\PrestaShop\Exceptions\AlmaApiKeyException;
 use Alma\PrestaShop\Exceptions\ClientException;
-use Alma\PrestaShop\Exceptions\CompatibilityPsAccountsException;
 use Alma\PrestaShop\Exceptions\MissingParameterException;
 use Alma\PrestaShop\Exceptions\PnxFormException;
 use Alma\PrestaShop\Exceptions\ShareOfCheckoutException;
@@ -43,8 +42,6 @@ use Alma\PrestaShop\Proxy\ToolsProxy;
 use Alma\PrestaShop\Services\ConfigFormService;
 use Alma\PrestaShop\Services\InsuranceService;
 use Alma\PrestaShop\Services\PsAccountsService;
-use PrestaShop\PsAccountsInstaller\Installer\Exception\ModuleNotInstalledException;
-use PrestaShop\PsAccountsInstaller\Installer\Exception\ModuleVersionException;
 
 final class GetContentHookController extends AdminHookController
 {
@@ -68,13 +65,13 @@ final class GetContentHookController extends AdminHookController
      */
     protected $insuranceService;
     /**
-     * @var \Alma\PrestaShop\Services\PsAccountsService
-     */
-    protected $psAccountsService;
-    /**
      * @var \Alma\PrestaShop\Proxy\ModuleProxy
      */
     protected $moduleProxy;
+    /**
+     * @var \Alma\PrestaShop\Factories\ContextFactory
+     */
+    protected $contextFactory;
 
     /**
      * GetContentHook Controller construct.
@@ -84,20 +81,16 @@ final class GetContentHookController extends AdminHookController
     public function __construct($module)
     {
         $this->module = $module;
-        $contextFactory = new ContextFactory();
+        $this->contextFactory = new ContextFactory();
 
         $this->configFormService = new ConfigFormService(
             $module,
-            $contextFactory->getContext()
+            $this->contextFactory->getContext()
         );
 
         $this->toolsProxy = new ToolsProxy();
         $this->configurationProxy = new ConfigurationProxy();
         $this->insuranceService = new InsuranceService();
-        $this->psAccountsService = new PsAccountsService(
-            $module,
-            $contextFactory->getContext()
-        );
         $this->moduleProxy = new ModuleProxy();
 
         parent::__construct($module);
@@ -114,7 +107,7 @@ final class GetContentHookController extends AdminHookController
         $assignSmartyKeys = [
             'hasPSAccounts' => false,
             'suggestPSAccounts' => false,
-            'psAccountVersionRequired' => PsAccountsService::PS_ACCOUNTS_VERSION_REQUIRED,
+            'psAccountVersionRequired' => \Alma::PS_ACCOUNTS_VERSION_REQUIRED,
             'validation_error_classes' => 'alert alert-danger',
             'tip_classes' => 'alert alert-info',
             'success' => false,
@@ -184,17 +177,14 @@ final class GetContentHookController extends AdminHookController
             }
         }
 
-        try {
-            $assignSmartyKeys['hasPSAccounts'] = $this->psAccountsService->renderPSAccounts();
-        } catch (CompatibilityPsAccountsException $e) {
-            $assignSmartyKeys['hasPSAccounts'] = false;
-        } catch (ModuleNotInstalledException $e) {
-            $assignSmartyKeys['hasPSAccounts'] = false;
-            $assignSmartyKeys['suggestPSAccounts'] = true;
-        } catch (ModuleVersionException $e) {
-            $assignSmartyKeys['hasPSAccounts'] = false;
-            $assignSmartyKeys['suggestPSAccounts'] = true;
+        if ($params['isPsAccountsCompatible'] && !$params['suggestPSAccounts']) {
+            $psAccountsService = new PsAccountsService(
+                $this->module,
+                $this->contextFactory->getContext()
+            );
+            $assignSmartyKeys['hasPSAccounts'] = $psAccountsService->renderPSAccounts();
         }
+        $assignSmartyKeys['suggestPSAccounts'] = $params['suggestPSAccounts'];
 
         $this->insuranceService->installIfCompatible();
         $assignSmartyKeys['form'] = $this->configFormService->getRenderPaymentFormHtml();
