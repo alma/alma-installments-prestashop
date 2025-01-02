@@ -612,21 +612,41 @@ class Alma extends PaymentModule
         return $this->runHookController('getContent', ['isPsAccountsCompatible' => $isPsAccountsCompatible, 'suggestPSAccounts' => $suggestPSAccounts]);
     }
 
+    /**
+     * @param $params
+     *
+     * @return mixed|null
+     */
     public function hookHeader($params)
     {
         return $this->runHookController('frontHeader', $params);
     }
 
+    /**
+     * @param $params
+     *
+     * @return mixed|null
+     */
     public function hookDisplayBackOfficeHeader($params)
     {
         return $this->runHookController('displayBackOfficeHeader', $params);
     }
 
+    /**
+     * @param $params
+     *
+     * @return mixed|null
+     */
     public function hookPaymentOptions($params)
     {
         return $this->runHookController('paymentOptions', $params);
     }
 
+    /**
+     * @param $params
+     *
+     * @return mixed|null
+     */
     public function hookDisplayPaymentEU($params)
     {
         $params['for_eu_compliance_module'] = true;
@@ -634,6 +654,11 @@ class Alma extends PaymentModule
         return $this->runHookController('paymentOptions', $params);
     }
 
+    /**
+     * @param $params
+     *
+     * @return mixed|null
+     */
     public function hookDisplayPayment($params)
     {
         return $this->runHookController('displayPayment', $params);
@@ -659,7 +684,13 @@ class Alma extends PaymentModule
         return $this->runHookController('actionObjectProductInCartDeleteAfter', $params);
     }
 
-    // Deprecated for version 1.7
+    /**
+     * Deprecated for version 1.7
+     *
+     * @param $params
+     *
+     * @return false|mixed|string|null
+     */
     public function hookDisplayPaymentReturn($params)
     {
         try {
@@ -674,6 +705,11 @@ class Alma extends PaymentModule
         }
     }
 
+    /**
+     * @param $params
+     *
+     * @return mixed|string|null
+     */
     // New name of displayPaymentReturn hook for 1.7
     public function hookPaymentReturn($params)
     {
@@ -684,21 +720,41 @@ class Alma extends PaymentModule
         }
     }
 
+    /**
+     * @param $params
+     *
+     * @return mixed|null
+     */
     public function hookDisplayShoppingCartFooter($params)
     {
         return $this->runHookController('displayShoppingCartFooter', $params);
     }
 
+    /**
+     * @param $params
+     *
+     * @return mixed|null
+     */
     public function hookDisplayAdminOrder($params)
     {
         return $this->runHookController('displayRefunds', $params);
     }
 
+    /**
+     * @param $params
+     *
+     * @return mixed|null
+     */
     public function hookDisplayAdminOrderMain($params)
     {
         return $this->runHookController('displayRefunds', $params);
     }
 
+    /**
+     * @param $params
+     *
+     * @return mixed|null
+     */
     public function hookActionOrderStatusPostUpdate($params)
     {
         return $this->runHookController('state', $params);
@@ -732,6 +788,11 @@ class Alma extends PaymentModule
         return $this->runHookController('actionGetProductPropertiesBefore', $params);
     }
 
+    /**
+     * @param $params
+     *
+     * @return void
+     */
     public function hookActionObjectUpdateAfter($params)
     {
         $orderFactory = new Alma\PrestaShop\Factories\OrderFactory();
