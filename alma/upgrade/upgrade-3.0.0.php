@@ -24,8 +24,10 @@
 
 use Alma\PrestaShop\Builders\Helpers\ApiHelperBuilder;
 use Alma\PrestaShop\Forms\InpageAdminFormBuilder;
+use Alma\PrestaShop\Helpers\Admin\TabsHelper;
 use Alma\PrestaShop\Helpers\ConstantsHelper;
 use Alma\PrestaShop\Helpers\SettingsHelper;
+use Alma\PrestaShop\Logger;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -33,6 +35,8 @@ if (!defined('_PS_VERSION_')) {
 
 function upgrade_module_3_0_0($module)
 {
+    $tabsHelper = new TabsHelper();
+    /* @var \Alma $module */
     $module->registerHooks();
 
     try {
@@ -40,6 +44,9 @@ function upgrade_module_3_0_0($module)
         $apiHelper = $apiHelperBuilder->getInstance();
         $apiHelper->getMerchant();
     } catch (\Exception $e) {
+        Logger::instance()->error("[Alma] ERROR upgrade v3.0.0: {$e->getMessage()}");
+
+        return false;
     }
 
     // Migration value option of In-Page v1 to In-Page v2
@@ -48,23 +55,29 @@ function upgrade_module_3_0_0($module)
         Configuration::get('ALMA_ACTIVATE_FRAGMENT')
     );
 
-    if (version_compare(_PS_VERSION_, '1.5.5.0', '<')) {
-        Tools::clearCache();
+    try {
+        if (version_compare(_PS_VERSION_, '1.5.5.0', '<')) {
+            Tools::clearCache();
 
-        return $module->uninstallTabs() && $module->installTabs();
-    }
-
-    if (version_compare(_PS_VERSION_, ConstantsHelper::PRESTASHOP_VERSION_1_7_0_2, '<=')) {
-        Tools::clearSmartyCache();
-        if (version_compare(_PS_VERSION_, '1.6.0.2', '>')) {
-            Tools::clearXMLCache();
+            return $tabsHelper->uninstallTabs($module->dataTabs()) && $tabsHelper->installTabs($module->dataTabs());
         }
 
-        return $module->uninstallTabs() && $module->installTabs();
+        if (version_compare(_PS_VERSION_, ConstantsHelper::PRESTASHOP_VERSION_1_7_0_2, '<=')) {
+            Tools::clearSmartyCache();
+            if (version_compare(_PS_VERSION_, '1.6.0.2', '>')) {
+                Tools::clearXMLCache();
+            }
+
+            return $tabsHelper->uninstallTabs($module->dataTabs()) && $tabsHelper->installTabs($module->dataTabs());
+        }
+
+        Tools::clearAllCache();
+        Tools::clearXMLCache();
+
+        return $tabsHelper->uninstallTabs($module->dataTabs()) && $tabsHelper->installTabs($module->dataTabs());
+    } catch (PrestaShopException $e) {
+        Logger::instance()->error("[Alma] ERROR upgrade v3.0.0: {$e->getMessage()}");
+
+        return false;
     }
-
-    Tools::clearAllCache();
-    Tools::clearXMLCache();
-
-    return $module->uninstallTabs() && $module->installTabs();
 }

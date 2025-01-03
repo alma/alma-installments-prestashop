@@ -64,7 +64,7 @@ function upgrade_module_2_3_2()
         } catch (RequestError $e) {
             Logger::instance()->error("[Alma] ERROR upgrade v2.3.2: {$e->getMessage()}");
 
-            return true;
+            return false;
         }
     }
 

@@ -38,7 +38,6 @@ if (!defined('_PS_VERSION_')) {
  */
 function upgrade_module_4_2_0($module)
 {
-    // TODO : Need to test this request
     $insuranceHelperBuilder = new InsuranceHelperBuilder();
     $insuranceHelper = $insuranceHelperBuilder->getInstance();
     if ($insuranceHelper->isInsuranceActivated()) {

@@ -25,8 +25,9 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-function upgrade_module_1_2_0($object)
+function upgrade_module_1_2_0($module)
 {
-    return $object->registerHook('actionOrderSlipAdd')
-        && $object->registerHook('actionOrderStatusPostUpdate');
+    /* @var \Alma $module */
+    return $module->registerHook('actionOrderSlipAdd')
+        && $module->registerHook('actionOrderStatusPostUpdate');
 }

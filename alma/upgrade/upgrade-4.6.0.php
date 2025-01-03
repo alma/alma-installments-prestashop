@@ -26,6 +26,7 @@ use Alma\API\Lib\IntegrationsConfigurationsUtils;
 use Alma\PrestaShop\Builders\Helpers\ApiHelperBuilder;
 use Alma\PrestaShop\Builders\Helpers\ContextHelperBuilder;
 use Alma\PrestaShop\Builders\Helpers\SettingsHelperBuilder;
+use Alma\PrestaShop\Exceptions\AlmaException;
 use Alma\PrestaShop\Helpers\CmsDataHelper;
 use Alma\PrestaShop\Helpers\ConstantsHelper;
 use Alma\PrestaShop\Logger;
@@ -45,7 +46,7 @@ function upgrade_module_4_6_0()
             $apiHelper->sendUrlForGatherCmsData($contextHelper->getModuleLink('cmsdataexport', [], true));
             $settingsHelper->updateKey(CmsDataHelper::ALMA_CMSDATA_DATE, time());
         }
-    } catch (\Alma\PrestaShop\Exceptions\AlmaException $e) {
+    } catch (AlmaException $e) {
         Logger::instance()->error('Failed to send URL for CMS data gathering', ['exception' => $e]);
     }
 

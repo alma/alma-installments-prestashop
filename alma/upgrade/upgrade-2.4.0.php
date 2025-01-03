@@ -21,12 +21,18 @@
  * @copyright 2018-2024 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
+
+use Alma\PrestaShop\Helpers\Admin\TabsHelper;
+use Alma\PrestaShop\Logger;
+
 if (!defined('_PS_VERSION_')) {
     exit;
 }
 
 function upgrade_module_2_4_0($module)
 {
+    $tabsHelper = new TabsHelper();
+    /* @var \Alma $module */
     if (version_compare(_PS_VERSION_, '1.7', '>=')) {
         $module->unregisterHook('displayPaymentReturn');
         $module->registerHook('paymentReturn');
@@ -44,5 +50,11 @@ function upgrade_module_2_4_0($module)
         $module->registerHook('displayAdminOrder');
     }
 
-    return $module->uninstallTabs() && $module->installTabs();
+    try {
+        return $tabsHelper->uninstallTabs($module->dataTabs()) && $tabsHelper->installTabs($module->dataTabs());
+    } catch (PrestaShopException $e) {
+        Logger::instance()->error("[Alma] ERROR upgrade v2.4.0: {$e->getMessage()}");
+
+        return false;
+    }
 }
