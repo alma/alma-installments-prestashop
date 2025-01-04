@@ -25,8 +25,6 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-include_once _PS_MODULE_DIR_ . 'alma/vendor/autoload.php';
-
 use Alma\API\RequestError;
 use Alma\PrestaShop\Builders\Helpers\CustomFieldHelperBuilder;
 use Alma\PrestaShop\Helpers\ClientHelper;
@@ -35,6 +33,9 @@ use Alma\PrestaShop\Logger;
 
 function upgrade_module_2_6_0()
 {
+    // Need to reload the autoloader if files are added between versions
+    include_once _PS_MODULE_DIR_ . 'alma/upgrade/autoload_upgrade.php';
+
     if (SettingsHelper::isFullyConfigured()) {
         $alma = ClientHelper::defaultInstance();
 

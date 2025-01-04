@@ -119,11 +119,6 @@ class Alma extends PaymentModule
         if (version_compare(_PS_VERSION_, '1.5.0.1', '<')) {
             $this->local_path = _PS_MODULE_DIR_ . $this->name . '/';
         }
-
-        $this->hook = new \Alma\PrestaShop\Helpers\HookHelper();
-        $this->tabsHelper = new \Alma\PrestaShop\Helpers\Admin\TabsHelper();
-
-        $this->toolsHelper = new \Alma\PrestaShop\Helpers\ToolsHelper();
     }
 
     /**
@@ -143,8 +138,9 @@ class Alma extends PaymentModule
         ) {
             throw new \Alma\PrestaShop\Exceptions\CompatibilityPsAccountsException('[Alma] Classes don\'t exist for PS Account');
         }
+        $toolsHelper = new \Alma\PrestaShop\Helpers\ToolsHelper();
         if (
-            $this->toolsHelper->psVersionCompare('1.6', '<')
+            $toolsHelper->psVersionCompare('1.6', '<')
         ) {
             throw new \Alma\PrestaShop\Exceptions\CompatibilityPsAccountsException('[Alma] Prestashop version lower than 1.6');
         }
@@ -266,7 +262,9 @@ class Alma extends PaymentModule
             $this->updateCarriersWithAlma();
         }
 
-        return $this->tabsHelper->installTabs($this->dataTabs());
+        $tabsHelper = new \Alma\PrestaShop\Helpers\Admin\TabsHelper();
+
+        return $tabsHelper->installTabs($this->dataTabs());
     }
 
     /**
@@ -311,7 +309,9 @@ class Alma extends PaymentModule
             }
         }
 
-        return $result && $this->tabsHelper->uninstallTabs($this->dataTabs());
+        $tabsHelper = new \Alma\PrestaShop\Helpers\Admin\TabsHelper();
+
+        return $result && $tabsHelper->uninstallTabs($this->dataTabs());
     }
 
     /**
@@ -321,7 +321,8 @@ class Alma extends PaymentModule
      */
     public function registerHooks()
     {
-        $hooks = $this->hook->almaRegisterHooks();
+        $hook = new \Alma\PrestaShop\Helpers\HookHelper();
+        $hooks = $hook->almaRegisterHooks();
 
         foreach ($hooks as $hook) {
             $this->registerHook($hook);
