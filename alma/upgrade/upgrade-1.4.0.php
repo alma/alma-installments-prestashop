@@ -35,7 +35,7 @@ if (!defined('_PS_VERSION_')) {
 function upgrade_module_1_4_0($module)
 {
     // Need to reload the autoloader if files are added between versions
-    include_once _PS_MODULE_DIR_ . 'alma/upgrade/autoload_upgrade.php';
+    require_once _PS_MODULE_DIR_ . 'alma/upgrade/autoload_upgrade.php';
 
     $tabsHelper = new TabsHelper();
     /* @var \Alma $module */

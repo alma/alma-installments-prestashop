@@ -24,7 +24,6 @@
 use Alma\API\RequestError;
 use Alma\PrestaShop\Forms\ShareOfCheckoutAdminFormBuilder;
 use Alma\PrestaShop\Helpers\Admin\TabsHelper;
-use Alma\PrestaShop\Helpers\ClientHelper;
 use Alma\PrestaShop\Helpers\SettingsHelper;
 use Alma\PrestaShop\Logger;
 
@@ -35,17 +34,12 @@ if (!defined('_PS_VERSION_')) {
 function upgrade_module_2_10_0($module)
 {
     // Need to reload the autoloader if files are added between versions
-    include_once _PS_MODULE_DIR_ . 'alma/upgrade/autoload_upgrade.php';
+    require_once _PS_MODULE_DIR_ . 'alma/upgrade/autoload_upgrade.php';
+    require_once _PS_MODULE_DIR_ . 'alma/vendor/autoload.php';
 
     $tabsHelper = new TabsHelper();
     /* @var \Alma $module */
     if (SettingsHelper::isFullyConfigured()) {
-        $alma = ClientHelper::defaultInstance();
-
-        if (!$alma) {
-            return true;
-        }
-
         $date = new DateTime();
 
         try {

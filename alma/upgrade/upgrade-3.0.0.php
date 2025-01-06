@@ -22,7 +22,6 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
-use Alma\PrestaShop\Builders\Helpers\ApiHelperBuilder;
 use Alma\PrestaShop\Forms\InpageAdminFormBuilder;
 use Alma\PrestaShop\Helpers\Admin\TabsHelper;
 use Alma\PrestaShop\Helpers\ConstantsHelper;
@@ -36,27 +35,20 @@ if (!defined('_PS_VERSION_')) {
 function upgrade_module_3_0_0($module)
 {
     // Need to reload the autoloader if files are added between versions
-    include_once _PS_MODULE_DIR_ . 'alma/upgrade/autoload_upgrade.php';
+    require_once _PS_MODULE_DIR_ . 'alma/upgrade/autoload_upgrade.php';
+    require_once _PS_MODULE_DIR_ . 'alma/vendor/autoload.php';
 
     $tabsHelper = new TabsHelper();
     /* @var \Alma $module */
     $module->registerHooks();
 
-    try {
-        $apiHelperBuilder = new ApiHelperBuilder();
-        $apiHelper = $apiHelperBuilder->getInstance();
-        $apiHelper->getMerchant();
-    } catch (\Exception $e) {
-        Logger::instance()->error("[Alma] ERROR upgrade v3.0.0: {$e->getMessage()}");
-
-        return false;
+    if (SettingsHelper::isFullyConfigured()) {
+        // Migration value option of In-Page v1 to In-Page v2
+        SettingsHelper::updateValue(
+            InpageAdminFormBuilder::ALMA_ACTIVATE_INPAGE,
+            Configuration::get('ALMA_ACTIVATE_FRAGMENT')
+        );
     }
-
-    // Migration value option of In-Page v1 to In-Page v2
-    SettingsHelper::updateValue(
-        InpageAdminFormBuilder::ALMA_ACTIVATE_INPAGE,
-        Configuration::get('ALMA_ACTIVATE_FRAGMENT')
-    );
 
     try {
         if (version_compare(_PS_VERSION_, '1.5.5.0', '<')) {

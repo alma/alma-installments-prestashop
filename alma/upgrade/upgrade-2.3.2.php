@@ -29,22 +29,16 @@ use Alma\API\RequestError;
 use Alma\PrestaShop\Builders\Helpers\CustomFieldHelperBuilder;
 use Alma\PrestaShop\Forms\ExcludedCategoryAdminFormBuilder;
 use Alma\PrestaShop\Forms\PaymentButtonAdminFormBuilder;
-use Alma\PrestaShop\Helpers\ClientHelper;
 use Alma\PrestaShop\Helpers\SettingsHelper;
 use Alma\PrestaShop\Logger;
 
 function upgrade_module_2_3_2()
 {
     // Need to reload the autoloader if files are added between versions
-    include_once _PS_MODULE_DIR_ . 'alma/upgrade/autoload_upgrade.php';
+    require_once _PS_MODULE_DIR_ . 'alma/upgrade/autoload_upgrade.php';
+    require_once _PS_MODULE_DIR_ . 'alma/vendor/autoload.php';
 
     if (SettingsHelper::isFullyConfigured()) {
-        $alma = ClientHelper::defaultInstance();
-
-        if (!$alma) {
-            return true;
-        }
-
         $configKeys = [
             PaymentButtonAdminFormBuilder::ALMA_PNX_BUTTON_TITLE,
             PaymentButtonAdminFormBuilder::ALMA_PNX_BUTTON_DESC,

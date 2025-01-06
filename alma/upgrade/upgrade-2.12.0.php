@@ -24,7 +24,6 @@
 use Alma\API\RequestError;
 use Alma\PrestaShop\Forms\ApiAdminFormBuilder;
 use Alma\PrestaShop\Helpers\ApiKeyHelper;
-use Alma\PrestaShop\Helpers\ClientHelper;
 use Alma\PrestaShop\Helpers\SettingsHelper;
 
 if (!defined('_PS_VERSION_')) {
@@ -37,12 +36,6 @@ if (!defined('_PS_VERSION_')) {
 function upgrade_module_2_12_0()
 {
     if (SettingsHelper::isFullyConfigured()) {
-        $alma = ClientHelper::defaultInstance();
-
-        if (!$alma) {
-            return true;
-        }
-
         $apiKeyHelper = new ApiKeyHelper();
 
         try {

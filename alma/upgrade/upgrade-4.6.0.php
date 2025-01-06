@@ -29,6 +29,7 @@ use Alma\PrestaShop\Builders\Helpers\SettingsHelperBuilder;
 use Alma\PrestaShop\Exceptions\AlmaException;
 use Alma\PrestaShop\Helpers\CmsDataHelper;
 use Alma\PrestaShop\Helpers\ConstantsHelper;
+use Alma\PrestaShop\Helpers\SettingsHelper;
 use Alma\PrestaShop\Logger;
 
 if (!defined('_PS_VERSION_')) {
@@ -37,17 +38,21 @@ if (!defined('_PS_VERSION_')) {
 
 function upgrade_module_4_6_0()
 {
-    $settingsHelper = (new SettingsHelperBuilder())->getInstance();
-    $contextHelper = (new ContextHelperBuilder())->getInstance();
-    $apiHelper = (new ApiHelperBuilder())->getInstance();
+    require_once _PS_MODULE_DIR_ . 'alma/vendor/autoload.php';
 
-    try {
-        if (IntegrationsConfigurationsUtils::isUrlRefreshRequired($settingsHelper->getKey(CmsDataHelper::ALMA_CMSDATA_DATE))) {
-            $apiHelper->sendUrlForGatherCmsData($contextHelper->getModuleLink('cmsdataexport', [], true));
-            $settingsHelper->updateKey(CmsDataHelper::ALMA_CMSDATA_DATE, time());
+    if (SettingsHelper::isFullyConfigured()) {
+        $settingsHelper = (new SettingsHelperBuilder())->getInstance();
+        $contextHelper = (new ContextHelperBuilder())->getInstance();
+        $apiHelper = (new ApiHelperBuilder())->getInstance();
+
+        try {
+            if (IntegrationsConfigurationsUtils::isUrlRefreshRequired($settingsHelper->getKey(CmsDataHelper::ALMA_CMSDATA_DATE))) {
+                $apiHelper->sendUrlForGatherCmsData($contextHelper->getModuleLink('cmsdataexport', [], true));
+                $settingsHelper->updateKey(CmsDataHelper::ALMA_CMSDATA_DATE, time());
+            }
+        } catch (AlmaException $e) {
+            Logger::instance()->error('Failed to send URL for CMS data gathering', ['exception' => $e]);
         }
-    } catch (AlmaException $e) {
-        Logger::instance()->error('Failed to send URL for CMS data gathering', ['exception' => $e]);
     }
 
     if (version_compare(_PS_VERSION_, ConstantsHelper::PRESTASHOP_VERSION_1_7_0_2, '>')) {
