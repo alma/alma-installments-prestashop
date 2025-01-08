@@ -38,15 +38,11 @@ if (!defined('_PS_VERSION_')) {
 
 function upgrade_module_4_6_0()
 {
-    Logger::instance()->info('start upgrade v4.6.0');
-    // Need to reload the autoloader if files are added between versions
     require_once _PS_MODULE_DIR_ . 'alma/upgrade/autoload_upgrade.php';
 
     if (SettingsHelper::isFullyConfigured()) {
         $settingsHelper = (new SettingsHelperBuilder())->getInstance();
         $contextHelper = (new ContextHelperBuilder())->getInstance();
-        Logger::instance()->info('Upgrade');
-        Logger::instance()->info(json_encode(get_declared_classes()));
         $apiHelper = (new ApiHelperBuilder())->getInstance();
 
         try {
@@ -63,8 +59,6 @@ function upgrade_module_4_6_0()
         Tools::clearAllCache();
         Tools::clearXMLCache();
     }
-
-    Logger::instance()->info('end upgrade v4.6.0');
 
     return true;
 }

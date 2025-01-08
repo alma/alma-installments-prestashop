@@ -25,7 +25,6 @@ use Alma\API\RequestError;
 use Alma\PrestaShop\Forms\ApiAdminFormBuilder;
 use Alma\PrestaShop\Helpers\ApiKeyHelper;
 use Alma\PrestaShop\Helpers\SettingsHelper;
-use Alma\PrestaShop\Logger;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -36,7 +35,8 @@ if (!defined('_PS_VERSION_')) {
  */
 function upgrade_module_2_12_0()
 {
-    Logger::instance()->info('start upgrade v2.12.0');
+    require_once _PS_MODULE_DIR_ . 'alma/upgrade/autoload_upgrade.php';
+
     if (SettingsHelper::isFullyConfigured()) {
         $apiKeyHelper = new ApiKeyHelper();
 
@@ -47,8 +47,6 @@ function upgrade_module_2_12_0()
             return false;
         }
     }
-
-    Logger::instance()->info('end upgrade v2.12.0');
 
     return true;
 }

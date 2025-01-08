@@ -31,10 +31,7 @@ if (!defined('_PS_VERSION_')) {
 
 function upgrade_module_2_4_0($module)
 {
-    Logger::instance()->info('start upgrade v2.4.0');
-    // Need to reload the autoloader if files are added between versions
     require_once _PS_MODULE_DIR_ . 'alma/upgrade/autoload_upgrade.php';
-    require_once _PS_MODULE_DIR_ . 'alma/vendor/autoload.php';
 
     $tabsHelper = new TabsHelper();
     /* @var \Alma $module */
@@ -56,8 +53,6 @@ function upgrade_module_2_4_0($module)
     }
 
     try {
-        Logger::instance()->info('end upgrade v2.4.0');
-
         return $tabsHelper->uninstallTabs($module->dataTabs()) && $tabsHelper->installTabs($module->dataTabs());
     } catch (PrestaShopException $e) {
         Logger::instance()->error("[Alma] ERROR upgrade v2.4.0: {$e->getMessage()}");

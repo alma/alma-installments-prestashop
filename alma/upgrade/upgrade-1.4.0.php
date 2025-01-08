@@ -34,8 +34,6 @@ if (!defined('_PS_VERSION_')) {
 
 function upgrade_module_1_4_0($module)
 {
-    Logger::instance()->info('start upgrade v1.4.0');
-    // Need to reload the autoloader if files are added between versions
     require_once _PS_MODULE_DIR_ . 'alma/upgrade/autoload_upgrade.php';
 
     $tabsHelper = new TabsHelper();
@@ -65,8 +63,6 @@ function upgrade_module_1_4_0($module)
     if ($currentValue === null) {
         SettingsHelper::updateValue('ALMA_DISPLAY_ORDER_CONFIRMATION', '0');
     }
-
-    Logger::instance()->info('end upgrade v1.4.0');
 
     return $tabsHelper->installTabs($module->dataTabs());
 }
