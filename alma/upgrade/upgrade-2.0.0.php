@@ -31,6 +31,7 @@ use Alma\PrestaShop\Logger;
 
 function upgrade_module_2_0_0()
 {
+    Logger::instance()->info('start upgrade v2.0.0');
     // Need to reload the autoloader if files are added between versions
     require_once _PS_MODULE_DIR_ . 'alma/upgrade/autoload_upgrade.php';
 
@@ -80,6 +81,8 @@ function upgrade_module_2_0_0()
             return false;
         }
     }
+
+    Logger::instance()->info('end upgrade v2.0.0');
 
     return true;
 }

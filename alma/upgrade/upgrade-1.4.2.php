@@ -21,18 +21,24 @@
  * @copyright 2018-2024 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
+
+use Alma\PrestaShop\Logger;
+
 if (!defined('_PS_VERSION_')) {
     exit;
 }
 
 function upgrade_module_1_4_2($module)
 {
+    Logger::instance()->info('start upgrade v1.4.2');
     /* @var \Alma $module */
     if (version_compare(_PS_VERSION_, '1.6', '>=')) {
         $module->registerHook('displayProductPriceBlock');
     } else {
         $module->registerHook('displayProductButtons');
     }
+
+    Logger::instance()->info('end upgrade v1.4.2');
 
     return true;
 }

@@ -25,6 +25,7 @@
 use Alma\PrestaShop\Builders\Helpers\SettingsHelperBuilder;
 use Alma\PrestaShop\Forms\InpageAdminFormBuilder;
 use Alma\PrestaShop\Helpers\ConstantsHelper;
+use Alma\PrestaShop\Logger;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -32,6 +33,7 @@ if (!defined('_PS_VERSION_')) {
 
 function upgrade_module_4_5_0()
 {
+    Logger::instance()->info('start upgrade v4.5.0');
     $settingsHelperBuilder = new SettingsHelperBuilder();
     $settingsHelper = $settingsHelperBuilder->getInstance();
 
@@ -49,6 +51,8 @@ function upgrade_module_4_5_0()
         Tools::clearAllCache();
         Tools::clearXMLCache();
     }
+
+    Logger::instance()->info('end upgrade v4.5.0');
 
     return true;
 }

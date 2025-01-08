@@ -34,6 +34,7 @@ if (!defined('_PS_VERSION_')) {
 
 function upgrade_module_3_0_0($module)
 {
+    Logger::instance()->info('start upgrade v3.0.0');
     // Need to reload the autoloader if files are added between versions
     require_once _PS_MODULE_DIR_ . 'alma/upgrade/autoload_upgrade.php';
     require_once _PS_MODULE_DIR_ . 'alma/vendor/autoload.php';
@@ -68,6 +69,8 @@ function upgrade_module_3_0_0($module)
 
         Tools::clearAllCache();
         Tools::clearXMLCache();
+
+        Logger::instance()->info('end upgrade v3.0.0');
 
         return $tabsHelper->uninstallTabs($module->dataTabs()) && $tabsHelper->installTabs($module->dataTabs());
     } catch (PrestaShopException $e) {

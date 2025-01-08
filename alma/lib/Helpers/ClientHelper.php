@@ -63,6 +63,8 @@ class ClientHelper
 
         $alma = null;
 
+        Logger::instance()->info('ClientHelper');
+        Logger::instance()->info(json_encode(get_declared_classes()));
         try {
             $alma = new Client($apiKey, [
                 'mode' => $mode,

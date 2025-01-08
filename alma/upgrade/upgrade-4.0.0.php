@@ -23,6 +23,7 @@
  */
 
 use Alma\PrestaShop\Helpers\Admin\TabsHelper;
+use Alma\PrestaShop\Logger;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -37,6 +38,7 @@ if (!defined('_PS_VERSION_')) {
  */
 function upgrade_module_4_0_0($module)
 {
+    Logger::instance()->info('start upgrade v4.0.0');
     // Need to reload the autoloader if files are added between versions
     require_once _PS_MODULE_DIR_ . 'alma/upgrade/autoload_upgrade.php';
     require_once _PS_MODULE_DIR_ . 'alma/vendor/autoload.php';
@@ -54,6 +56,8 @@ function upgrade_module_4_0_0($module)
         $module->registerHook('displayProductActions');
         $module->registerHook('termsAndConditions');
     }
+
+    Logger::instance()->info('end upgrade v4.0.0');
 
     return $tabsHelper->uninstallTabs($module->dataTabs()) && $tabsHelper->installTabs($module->dataTabs());
 }

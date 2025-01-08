@@ -24,6 +24,7 @@
 
 use Alma\PrestaShop\Builders\Helpers\InsuranceHelperBuilder;
 use Alma\PrestaShop\Helpers\ConstantsHelper;
+use Alma\PrestaShop\Logger;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -38,6 +39,7 @@ if (!defined('_PS_VERSION_')) {
  */
 function upgrade_module_4_2_0($module)
 {
+    Logger::instance()->info('start upgrade v4.2.0');
     $insuranceHelperBuilder = new InsuranceHelperBuilder();
     $insuranceHelper = $insuranceHelperBuilder->getInstance();
     if ($insuranceHelper->isInsuranceActivated()) {
@@ -58,6 +60,8 @@ function upgrade_module_4_2_0($module)
         Tools::clearAllCache();
         Tools::clearXMLCache();
     }
+
+    Logger::instance()->info('end upgrade v4.2.0');
 
     return true;
 }

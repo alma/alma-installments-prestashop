@@ -21,12 +21,17 @@
  * @copyright 2018-2024 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
+
+use Alma\PrestaShop\Logger;
+
 if (!defined('_PS_VERSION_')) {
     exit;
 }
 
 function upgrade_module_1_2_0($module)
 {
+    require_once _PS_MODULE_DIR_ . 'alma/upgrade/autoload_upgrade.php';
+    Logger::instance()->info('start upgrade v1.2.0');
     /* @var \Alma $module */
     return $module->registerHook('actionOrderSlipAdd')
         && $module->registerHook('actionOrderStatusPostUpdate');

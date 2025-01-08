@@ -26,9 +26,11 @@ if (!defined('_PS_VERSION_')) {
 }
 
 use Alma\PrestaShop\Helpers\SettingsHelper;
+use Alma\PrestaShop\Logger;
 
 function upgrade_module_3_1_3()
 {
+    Logger::instance()->info('start upgrade v3.1.3');
     if (SettingsHelper::isFullyConfigured()) {
         $deleteKeys = [
             'ALMA_ALLOW_INPAGE',
@@ -38,6 +40,8 @@ function upgrade_module_3_1_3()
             Configuration::deleteByName($deleteKey);
         }
     }
+
+    Logger::instance()->info('end upgrade v3.1.3');
 
     return true;
 }
