@@ -22,15 +22,7 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
-use Alma\API\Lib\IntegrationsConfigurationsUtils;
-use Alma\PrestaShop\Builders\Helpers\ApiHelperBuilder;
-use Alma\PrestaShop\Builders\Helpers\ContextHelperBuilder;
-use Alma\PrestaShop\Builders\Helpers\SettingsHelperBuilder;
-use Alma\PrestaShop\Exceptions\AlmaException;
-use Alma\PrestaShop\Helpers\CmsDataHelper;
 use Alma\PrestaShop\Helpers\ConstantsHelper;
-use Alma\PrestaShop\Helpers\SettingsHelper;
-use Alma\PrestaShop\Logger;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -39,26 +31,14 @@ if (!defined('_PS_VERSION_')) {
 /**
  * @throws \Alma\PrestaShop\Exceptions\AlmaException
  */
-function upgrade_module_4_6_0($module)
+function upgrade_module_4_7_0($module)
 {
+    /* @var \Alma $module */
     require_once _PS_MODULE_DIR_ . 'alma/upgrade/autoload_upgrade.php';
     include_once 'fix_specific_upgrade.php';
     fixSpecificUpgrade($module);
 
-    if (SettingsHelper::isFullyConfigured()) {
-        $settingsHelper = (new SettingsHelperBuilder())->getInstance();
-        $contextHelper = (new ContextHelperBuilder())->getInstance();
-        $apiHelper = (new ApiHelperBuilder())->getInstance();
-
-        try {
-            if (IntegrationsConfigurationsUtils::isUrlRefreshRequired($settingsHelper->getKey(CmsDataHelper::ALMA_CMSDATA_DATE))) {
-                $apiHelper->sendUrlForGatherCmsData($contextHelper->getModuleLink('cmsdataexport', [], true));
-                $settingsHelper->updateKey(CmsDataHelper::ALMA_CMSDATA_DATE, time());
-            }
-        } catch (AlmaException $e) {
-            Logger::instance()->error('Failed to send URL for CMS data gathering', ['exception' => $e]);
-        }
-    }
+    //Start migration here
 
     if (version_compare(_PS_VERSION_, ConstantsHelper::PRESTASHOP_VERSION_1_7_0_2, '>')) {
         Tools::clearAllCache();
