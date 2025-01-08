@@ -158,7 +158,7 @@ class FeePlanHelper
     }
 
     /**
-     * Vérifie si un plan doit être ignoré.
+     * Checks if plan need to be ignored.
      */
     private function shouldSkipPlan($installment, $feePlan)
     {
@@ -166,7 +166,7 @@ class FeePlanHelper
     }
 
     /**
-     * Vérifie si une valeur est dans les limites spécifiées.
+     * Checks if a value is within specified limits.
      */
     private function isWithinLimits($amount, $min, $max, $feePlanMax)
     {
@@ -174,7 +174,7 @@ class FeePlanHelper
     }
 
     /**
-     * Génère un message d'erreur personnalisé en fonction des limites.
+     * Generates a custom error message based on limits.
      */
     private function generateErrorMessage($type, $installment, $deferred_days, $deferred_months, $limitMin, $limitMax)
     {
