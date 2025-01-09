@@ -42,6 +42,8 @@ use Alma\PrestaShop\Proxy\ToolsProxy;
 use Alma\PrestaShop\Services\ConfigFormService;
 use Alma\PrestaShop\Services\InsuranceService;
 use Alma\PrestaShop\Services\PsAccountsService;
+use PrestaShop\PsAccountsInstaller\Installer\Exception\ModuleNotInstalledException;
+use PrestaShop\PsAccountsInstaller\Installer\Exception\ModuleVersionException;
 
 final class GetContentHookController extends AdminHookController
 {
@@ -182,7 +184,16 @@ final class GetContentHookController extends AdminHookController
                 $this->module,
                 $this->contextFactory->getContext()
             );
-            $assignSmartyKeys['hasPSAccounts'] = $psAccountsService->renderPSAccounts();
+            try {
+                $hasPSAccounts = $psAccountsService->renderPSAccounts();
+                $assignSmartyKeys['hasPSAccounts'] = $hasPSAccounts;
+            } catch (ModuleNotInstalledException $e) {
+                $messages[] = $e->getMessage();
+                Logger::instance()->info('[Alma] Issue with Installation PS Account: ' . $e->getMessage());
+            } catch (ModuleVersionException $e) {
+                $messages[] = $e->getMessage();
+                Logger::instance()->info('[Alma] Issue with Version PS Account: ' . $e->getMessage());
+            }
         }
         $assignSmartyKeys['suggestPSAccounts'] = $params['suggestPSAccounts'];
 

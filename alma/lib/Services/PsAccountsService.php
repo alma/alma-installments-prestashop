@@ -105,7 +105,6 @@ class PsAccountsService
     /**
      * @return bool
      *
-     * @throws \Alma\PrestaShop\Exceptions\CompatibilityPsAccountsException
      * @throws \PrestaShop\PsAccountsInstaller\Installer\Exception\ModuleNotInstalledException
      * @throws \PrestaShop\PsAccountsInstaller\Installer\Exception\ModuleVersionException
      * @throws \Exception

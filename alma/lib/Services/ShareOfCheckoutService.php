@@ -25,7 +25,6 @@
 namespace Alma\PrestaShop\Services;
 
 use Alma\PrestaShop\Builders\Helpers\ShareOfCheckoutHelperBuilder;
-use Alma\PrestaShop\Exceptions\ShareOfCheckoutException;
 use Alma\PrestaShop\Forms\ShareOfCheckoutAdminFormBuilder;
 use Alma\PrestaShop\Helpers\ShareOfCheckoutHelper;
 use Alma\PrestaShop\Model\AlmaApiKeyModel;
@@ -71,11 +70,7 @@ class ShareOfCheckoutService
     public function handleConsent()
     {
         if (!$this->almaApiKeyModel->isSameLiveApiKeySaved()) {
-            try {
-                $this->shareOfCheckoutHelper->resetShareOfCheckoutConsent();
-            } catch (ShareOfCheckoutException $e) {
-                throw new ShareOfCheckoutException($e->getMessage());
-            }
+            $this->shareOfCheckoutHelper->resetShareOfCheckoutConsent();
         }
         if (
             $this->almaApiKeyModel->isSameLiveApiKeySaved() &&
