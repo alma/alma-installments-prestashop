@@ -35,8 +35,19 @@ function upgrade_module_4_7_0($module)
 {
     /* @var \Alma $module */
     require_once _PS_MODULE_DIR_ . 'alma/upgrade/autoload_upgrade.php';
-    include_once 'fix_specific_upgrade.php';
-    fixSpecificUpgrade($module);
+
+    // Retrieve the current version of the module before migration
+    $sql = 'SELECT version FROM ' . _DB_PREFIX_ . 'module WHERE name = "' . pSQL($module->name) . '"';
+    $currentVersion = Db::getInstance()->getValue($sql);
+
+    if (
+        Module::isEnabled($module->name) &&
+        $currentVersion &&
+        version_compare($currentVersion, '1.4.3', '>=') &&
+        version_compare($currentVersion, '2.0.0', '<=')
+    ) {
+        return false;
+    }
 
     //Start migration here
 
