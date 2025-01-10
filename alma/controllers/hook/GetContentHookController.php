@@ -148,8 +148,6 @@ final class GetContentHookController extends AdminHookController
      * @param $params
      *
      * @return string
-     *
-     * @throws \Exception
      */
     public function run($params)
     {
@@ -193,6 +191,9 @@ final class GetContentHookController extends AdminHookController
             } catch (ModuleVersionException $e) {
                 $messages[] = $e->getMessage();
                 Logger::instance()->info('[Alma] Issue with Version PS Account: ' . $e->getMessage());
+            } catch (\Exception $e) {
+                $messages[] = $e->getMessage();
+                Logger::instance()->info('[Alma] Issue with PS Account: ' . $e->getMessage());
             }
         }
         $assignSmartyKeys['suggestPSAccounts'] = $params['suggestPSAccounts'];

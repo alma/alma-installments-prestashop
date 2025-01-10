@@ -385,7 +385,7 @@ class ShareOfCheckoutHelper
     }
 
     /**
-     * reset the activation of Share of Checkout feature.
+     * Reset the activation of Share of Checkout feature.
      *
      * @return void
      *

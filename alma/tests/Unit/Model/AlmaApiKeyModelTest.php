@@ -146,7 +146,7 @@ class AlmaApiKeyModelTest extends TestCase
             ->method('getMerchantMe')
             ->willReturnOnConsecutiveCalls($this->merchantMockTest, $this->merchantMockLive);
         $this->expectException(AlmaApiKeyException::class);
-        $this->almaApiKeyModel->checkApiKeys($apiKeys);
+        $this->almaApiKeyModel->getMerchantWithCheckApiKeys($apiKeys);
     }
 
     /**
@@ -170,7 +170,7 @@ class AlmaApiKeyModelTest extends TestCase
             ->method('getMerchantMe')
             ->willReturnOnConsecutiveCalls($this->merchantMockTest, $this->merchantMockLive);
         $this->expectException(AlmaApiKeyException::class);
-        $this->almaApiKeyModel->checkApiKeys($apiKeys);
+        $this->almaApiKeyModel->getMerchantWithCheckApiKeys($apiKeys);
     }
 
     /**
@@ -193,7 +193,7 @@ class AlmaApiKeyModelTest extends TestCase
         $this->clientModelMock->expects($this->exactly(2))
             ->method('getMerchantMe')
             ->willReturnOnConsecutiveCalls($this->merchantMockTest, $this->merchantMockLive);
-        $this->almaApiKeyModel->checkApiKeys($apiKeys);
+        $this->almaApiKeyModel->getMerchantWithCheckApiKeys($apiKeys);
     }
 
     public function testSaveApiKeysWithoutObscureKey()

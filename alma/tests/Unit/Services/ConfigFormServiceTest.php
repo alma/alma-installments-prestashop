@@ -24,6 +24,7 @@
 
 namespace Alma\PrestaShop\Tests\Unit\Services;
 
+use Alma\API\Entities\Merchant;
 use Alma\PrestaShop\Helpers\CustomFieldsHelper;
 use Alma\PrestaShop\Helpers\SettingsHelper;
 use Alma\PrestaShop\Model\AlmaApiKeyModel;
@@ -113,10 +114,15 @@ class ConfigFormServiceTest extends TestCase
      * @var \Alma\PrestaShop\Services\CustomFieldsFormService
      */
     protected $customFieldsFormServiceMock;
+    /**
+     * @var \Alma\API\Entities\Merchant
+     */
+    protected $merchantMock;
 
     public function setUp()
     {
         $this->helperFormMock = $this->createMock(\HelperForm::class);
+        $this->merchantMock = $this->createMock(Merchant::class);
         $this->moduleMock = $this->createMock(\Module::class);
         $this->contextMock = $this->createMock(\Context::class);
         $this->linkMock = $this->createMock(\Link::class);
@@ -249,6 +255,7 @@ class ConfigFormServiceTest extends TestCase
      */
     public function testSaveConfigurationsOnFirstInstallationWithoutSendUrlForGatherCmsData()
     {
+        $this->merchantMock->id = 'merchant_id';
         $apiKeys = [
             'test' => 'test_api__key',
             'live' => 'live_api_key',
@@ -258,7 +265,7 @@ class ConfigFormServiceTest extends TestCase
             ->method('updateValue')
             ->withConsecutive(
                 ['ALMA_FULLY_CONFIGURED', '0'],
-                ['ALMA_MERCHANT_ID', 'merchant_id'],
+                ['ALMA_MERCHANT_ID', $this->merchantMock->id],
                 ['ALMA_API_MODE', 'mode'],
                 ['ALMA_FULLY_CONFIGURED', '1']
             );
@@ -272,14 +279,12 @@ class ConfigFormServiceTest extends TestCase
         $this->almaApiKeyModelMock->expects($this->once())
             ->method('checkActiveApiKeySendIsEmpty');
         $this->almaApiKeyModelMock->expects($this->once())
-            ->method('checkApiKeys')
-            ->with($apiKeys);
+            ->method('getMerchantWithCheckApiKeys')
+            ->with($apiKeys)
+            ->willReturn($this->merchantMock);
         $this->almaApiKeyModelMock->expects($this->once())
             ->method('saveApiKeys')
             ->with($apiKeys);
-        $this->clientModelMock->expects($this->once())
-            ->method('getMerchantId')
-            ->willReturn('merchant_id');
         $this->configFormService->shouldNotReceive('updateStaticConfigurations');
         $this->customFieldsFormServiceMock->expects($this->once())
             ->method('save');
@@ -299,6 +304,7 @@ class ConfigFormServiceTest extends TestCase
 
     public function testSaveConfigurationsOnFirstInstallationAndSendUrlForGatherCmsData()
     {
+        $this->merchantMock->id = 'merchant_id';
         $apiKeys = [
             'test' => 'test_api__key',
             'live' => 'live_api_key',
@@ -310,7 +316,7 @@ class ConfigFormServiceTest extends TestCase
             ->method('updateValue')
             ->withConsecutive(
                 ['ALMA_FULLY_CONFIGURED', '0'],
-                ['ALMA_MERCHANT_ID', 'merchant_id'],
+                ['ALMA_MERCHANT_ID', $this->merchantMock->id],
                 ['ALMA_API_MODE', 'mode'],
                 ['ALMA_FULLY_CONFIGURED', '1']
             );
@@ -324,14 +330,12 @@ class ConfigFormServiceTest extends TestCase
         $this->almaApiKeyModelMock->expects($this->once())
             ->method('checkActiveApiKeySendIsEmpty');
         $this->almaApiKeyModelMock->expects($this->once())
-            ->method('checkApiKeys')
-            ->with($apiKeys);
+            ->method('getMerchantWithCheckApiKeys')
+            ->with($apiKeys)
+            ->willReturn($this->merchantMock);
         $this->almaApiKeyModelMock->expects($this->once())
             ->method('saveApiKeys')
             ->with($apiKeys);
-        $this->clientModelMock->expects($this->once())
-            ->method('getMerchantId')
-            ->willReturn('merchant_id');
         $this->configFormService->shouldNotReceive('updateStaticConfigurations');
         $this->customFieldsFormServiceMock->expects($this->once())
             ->method('save');

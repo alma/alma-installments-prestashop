@@ -26,9 +26,8 @@ namespace Alma\PrestaShop\Services;
 
 use Alma\PrestaShop\Builders\Models\MediaHelperBuilder;
 use Alma\PrestaShop\Exceptions\CompatibilityPsAccountsException;
-use Alma\PrestaShop\Helpers\ToolsHelper;
+use Alma\PrestaShop\Helpers\MediaHelper;
 use Alma\PrestaShop\Logger;
-use Alma\PrestaShop\Proxy\ConfigurationProxy;
 use Exception;
 use PrestaShop\ModuleLibServiceContainer\DependencyInjection\ServiceContainer;
 use PrestaShop\PsAccountsInstaller\Installer\Exception\InstallerException;
@@ -40,36 +39,26 @@ if (!defined('_PS_VERSION_')) {
 class PsAccountsService
 {
     /**
-     * @var \Module
+     * @var \Alma
      */
     private $module;
     /**
-     * @var \Alma\PrestaShop\Helpers\MediaHelper
+     * @var MediaHelper
      */
     private $mediaHelper;
     /**
-     * @var \PrestaShop\ModuleLibServiceContainer\DependencyInjection\ServiceContainer
+     * @var ServiceContainer
      */
     private $container;
-    /**
-     * @var \Alma\PrestaShop\Helpers\ToolsHelper
-     */
-    private $toolsHelper;
     /**
      * @var \Context
      */
     private $context;
-    /**
-     * @var \Alma\PrestaShop\Proxy\ConfigurationProxy|mixed|null
-     */
-    private $configurationProxy;
 
     public function __construct(
         $module,
         $context,
-        $mediaHelper = null,
-        $toolsHelper = null,
-        $configurationProxy = null
+        $mediaHelper = null
     ) {
         $this->module = $module;
         $this->context = $context;
@@ -77,14 +66,6 @@ class PsAccountsService
             $mediaHelper = (new MediaHelperBuilder())->getInstance();
         }
         $this->mediaHelper = $mediaHelper;
-        if (!$toolsHelper) {
-            $toolsHelper = new ToolsHelper();
-        }
-        $this->toolsHelper = $toolsHelper;
-        if (!$configurationProxy) {
-            $configurationProxy = new ConfigurationProxy();
-        }
-        $this->configurationProxy = $configurationProxy;
     }
 
     /**

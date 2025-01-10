@@ -37,6 +37,7 @@ use Alma\PrestaShop\Forms\PnxAdminFormBuilder;
 use Alma\PrestaShop\Forms\ProductEligibilityAdminFormBuilder;
 use Alma\PrestaShop\Forms\RefundAdminFormBuilder;
 use Alma\PrestaShop\Forms\ShareOfCheckoutAdminFormBuilder;
+use Alma\PrestaShop\Helpers\SettingsHelper;
 use Alma\PrestaShop\Model\AlmaApiKeyModel;
 
 if (!defined('_PS_VERSION_')) {
@@ -46,55 +47,55 @@ if (!defined('_PS_VERSION_')) {
 class AdminFormBuilderService
 {
     /**
-     * @var \Alma\PrestaShop\Forms\PnxAdminFormBuilder
+     * @var PnxAdminFormBuilder
      */
     private $pnxAdminFormBuilder;
     /**
-     * @var \Alma\PrestaShop\Forms\ProductEligibilityAdminFormBuilder
+     * @var ProductEligibilityAdminFormBuilder
      */
     private $productEligibilityAdminFormBuilder;
     /**
-     * @var \Alma\PrestaShop\Forms\CartEligibilityAdminFormBuilder
+     * @var CartEligibilityAdminFormBuilder
      */
     private $cartEligibilityAdminFormBuilder;
     /**
-     * @var \Alma\PrestaShop\Forms\PaymentButtonAdminFormBuilder
+     * @var PaymentButtonAdminFormBuilder
      */
     private $paymentButtonAdminFormBuilder;
     /**
-     * @var \Alma\PrestaShop\Forms\ExcludedCategoryAdminFormBuilder
+     * @var ExcludedCategoryAdminFormBuilder
      */
     private $excludedCategoryAdminFormBuilder;
     /**
-     * @var \Alma\PrestaShop\Forms\RefundAdminFormBuilder
+     * @var RefundAdminFormBuilder
      */
     private $refundAdminFormBuilder;
     /**
-     * @var \Alma\PrestaShop\Forms\ShareOfCheckoutAdminFormBuilder
+     * @var ShareOfCheckoutAdminFormBuilder
      */
     private $shareOfCheckoutAdminFormBuilder;
     /**
-     * @var \Alma\PrestaShop\Forms\InpageAdminFormBuilder
+     * @var InpageAdminFormBuilder
      */
     private $inpageAdminFormBuilder;
     /**
-     * @var \Alma\PrestaShop\Forms\PaymentOnTriggeringAdminFormBuilder
+     * @var PaymentOnTriggeringAdminFormBuilder
      */
     private $paymentOnTriggeringAdminFormBuilder;
     /**
-     * @var \Alma\PrestaShop\Forms\ApiAdminFormBuilder
+     * @var ApiAdminFormBuilder
      */
     private $apiAdminFormBuilder;
     /**
-     * @var \Alma\PrestaShop\Forms\DebugAdminFormBuilder
+     * @var DebugAdminFormBuilder
      */
     private $debugAdminFormBuilder;
     /**
-     * @var \Alma\PrestaShop\Helpers\SettingsHelper
+     * @var SettingsHelper
      */
     private $settingsHelper;
     /**
-     * @var \Alma\PrestaShop\Model\AlmaApiKeyModel|mixed|null
+     * @var AlmaApiKeyModel
      */
     private $almaApiKeyModel;
 

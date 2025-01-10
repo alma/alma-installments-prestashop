@@ -155,21 +155,6 @@ class ClientModel
     }
 
     /**
-     * Getter Merchant Id from Alma API
-     *
-     * @return string|null
-     */
-    public function getMerchantId()
-    {
-        $merchant = $this->getMerchantMe();
-        if ($merchant) {
-            return $merchant->id;
-        }
-
-        return null;
-    }
-
-    /**
      * Getter Merchant Fee Plans from Alma API
      *
      * @param $kind

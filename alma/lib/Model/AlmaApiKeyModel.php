@@ -24,6 +24,7 @@
 
 namespace Alma\PrestaShop\Model;
 
+use Alma\API\Entities\Merchant;
 use Alma\PrestaShop\Exceptions\AlmaApiKeyException;
 use Alma\PrestaShop\Forms\ApiAdminFormBuilder;
 use Alma\PrestaShop\Helpers\ConstantsHelper;
@@ -51,11 +52,11 @@ class AlmaApiKeyModel
      */
     private $configurationProxy;
     /**
-     * @var \Alma\PrestaShop\Model\ClientModel
+     * @var ClientModel
      */
     private $clientModel;
     /**
-     * @var \Alma\PrestaShop\Helpers\EncryptionHelper
+     * @var EncryptionHelper
      */
     private $encryptionHelper;
 
@@ -88,7 +89,7 @@ class AlmaApiKeyModel
     /**
      * @return void
      *
-     * @throws \Alma\PrestaShop\Exceptions\AlmaApiKeyException
+     * @throws AlmaApiKeyException
      */
     public function checkActiveApiKeySendIsEmpty()
     {
@@ -103,11 +104,11 @@ class AlmaApiKeyModel
     /**
      * @param array $apiKeys
      *
-     * @return void
+     * @return Merchant
      *
-     * @throws \Alma\PrestaShop\Exceptions\AlmaApiKeyException
+     * @throws AlmaApiKeyException
      */
-    public function checkApiKeys($apiKeys)
+    public function getMerchantWithCheckApiKeys($apiKeys)
     {
         $invalidKeys = [];
         foreach ($apiKeys as $mode => $apiKey) {
@@ -119,9 +120,6 @@ class AlmaApiKeyModel
             }
             $this->clientModel->setMode($mode);
             $this->clientModel->setApiKey($apiKey);
-            /**
-             * @var \Alma\API\Entities\Merchant|null $merchant
-             */
             $merchant = $this->clientModel->getMerchantMe();
 
             if (!$merchant || !$merchant->can_create_payments) {
@@ -132,6 +130,9 @@ class AlmaApiKeyModel
         if (!empty($invalidKeys)) {
             throw new AlmaApiKeyException('[Alma] API key(s) ' . implode(', ', $invalidKeys) . ' is/are invalid');
         }
+
+        /* @var Merchant $merchant */
+        return $merchant;
     }
 
     /**
@@ -173,7 +174,7 @@ class AlmaApiKeyModel
     }
 
     /**
-     * @throws \Exception
+     * @return string
      */
     public function getActiveApiKey()
     {
@@ -189,7 +190,7 @@ class AlmaApiKeyModel
      */
     public function needApiKey()
     {
-        $key = trim(SettingsHelper::getActiveAPIKey());
+        $key = trim($this->getActiveAPIKey());
 
         return '' == $key || null == $key;
     }

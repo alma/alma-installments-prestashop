@@ -28,6 +28,8 @@ use Alma\PrestaShop\Builders\Helpers\FeePlanHelperBuilder;
 use Alma\PrestaShop\Builders\Helpers\SettingsHelperBuilder;
 use Alma\PrestaShop\Exceptions\PnxFormException;
 use Alma\PrestaShop\Forms\PnxAdminFormBuilder;
+use Alma\PrestaShop\Helpers\FeePlanHelper;
+use Alma\PrestaShop\Helpers\SettingsHelper;
 use Alma\PrestaShop\Model\ClientModel;
 use Alma\PrestaShop\Model\FeePlanModel;
 use Alma\PrestaShop\Proxy\ConfigurationProxy;
@@ -40,27 +42,27 @@ if (!defined('_PS_VERSION_')) {
 class PnxFormService
 {
     /**
-     * @var \Alma\PrestaShop\Model\ClientModel
+     * @var ClientModel
      */
     private $clientModel;
     /**
-     * @var \Alma\PrestaShop\Helpers\SettingsHelper
+     * @var SettingsHelper
      */
     private $settingsHelper;
     /**
-     * @var \Alma\PrestaShop\Proxy\ConfigurationProxy
+     * @var ConfigurationProxy
      */
     private $configurationProxy;
     /**
-     * @var \Alma\PrestaShop\Proxy\ToolsProxy
+     * @var ToolsProxy
      */
     private $toolsProxy;
     /**
-     * @var \Alma\PrestaShop\Helpers\FeePlanHelper
+     * @var FeePlanHelper
      */
     private $feePlanHelper;
     /**
-     * @var \Alma\PrestaShop\Model\FeePlanModel
+     * @var FeePlanModel
      */
     private $feePlanModel;
 
@@ -109,7 +111,7 @@ class PnxFormService
     /**
      * Save the fee plans from the client or update it from the form
      *
-     * @throws \Alma\PrestaShop\Exceptions\PnxFormException
+     * @throws PnxFormException
      */
     public function save()
     {
@@ -151,7 +153,7 @@ class PnxFormService
     /**
      * Update the fee plans from the form
      *
-     * @throws \Alma\PrestaShop\Exceptions\PnxFormException
+     * @throws PnxFormException
      */
     private function updateFeePlans()
     {

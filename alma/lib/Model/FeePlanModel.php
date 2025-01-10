@@ -149,6 +149,13 @@ class FeePlanModel
         return $fieldsValue;
     }
 
+    /**
+     * Get array fee plans to save in DB configuration
+     *
+     * @param $feePlans
+     *
+     * @return array
+     */
     public function getFeePlanForSave($feePlans)
     {
         $almaPlans = [];

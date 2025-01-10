@@ -33,6 +33,7 @@ use Alma\PrestaShop\Forms\ExcludedCategoryAdminFormBuilder;
 use Alma\PrestaShop\Forms\InpageAdminFormBuilder;
 use Alma\PrestaShop\Forms\PaymentButtonAdminFormBuilder;
 use Alma\PrestaShop\Helpers\CmsDataHelper;
+use Alma\PrestaShop\Helpers\CustomFieldsHelper;
 use Alma\PrestaShop\Helpers\SettingsHelper;
 use Alma\PrestaShop\Model\AlmaApiKeyModel;
 use Alma\PrestaShop\Model\ClientModel;
@@ -109,11 +110,11 @@ class ConfigFormService
     ];
 
     /**
-     * @var \Alma\PrestaShop\Services\AdminFormBuilderService
+     * @var AdminFormBuilderService
      */
     private $adminFormBuilderService;
     /**
-     * @var \Alma\PrestaShop\Model\FeePlanModel
+     * @var FeePlanModel
      */
     private $feePlanModel;
     /**
@@ -125,43 +126,43 @@ class ConfigFormService
      */
     private $module;
     /**
-     * @var \Context|mixed|null
+     * @var \Context
      */
     private $context;
     /**
-     * @var \Alma\PrestaShop\Helpers\CustomFieldsHelper|mixed|null
+     * @var CustomFieldsHelper
      */
     private $customFieldsHelper;
     /**
-     * @var \Alma\PrestaShop\Helpers\SettingsHelper|mixed|null
+     * @var SettingsHelper
      */
     private $settingsHelper;
     /**
-     * @var \Alma\PrestaShop\Proxy\ToolsProxy|mixed|null
+     * @var ToolsProxy
      */
     private $toolsProxy;
     /**
-     * @var \Alma\PrestaShop\Proxy\ConfigurationProxy|mixed|null
+     * @var ConfigurationProxy
      */
     private $configurationProxy;
     /**
-     * @var \Alma\PrestaShop\Model\ClientModel|null
+     * @var ClientModel
      */
     private $clientModel;
     /**
-     * @var \Alma\PrestaShop\Model\AlmaApiKeyModel
+     * @var AlmaApiKeyModel
      */
     private $almaApiKeyModel;
     /**
-     * @var \Alma\PrestaShop\Services\ShareOfCheckoutService
+     * @var ShareOfCheckoutService
      */
     private $shareOfCheckoutService;
     /**
-     * @var \Alma\PrestaShop\Services\PnxFormService
+     * @var PnxFormService
      */
     private $pnxFormService;
     /**
-     * @var \Alma\PrestaShop\Services\CustomFieldsFormService
+     * @var CustomFieldsFormService
      */
     private $customFieldsFormService;
 
@@ -302,10 +303,10 @@ class ConfigFormService
         $apiMode = $this->toolsProxy->getValue(self::ALMA_API_MODE);
         $apiKeys = $this->almaApiKeyModel->getAllApiKeySend($apiMode);
         $this->almaApiKeyModel->checkActiveApiKeySendIsEmpty();
-        $this->almaApiKeyModel->checkApiKeys($apiKeys);
+        $merchant = $this->almaApiKeyModel->getMerchantWithCheckApiKeys($apiKeys);
         $this->almaApiKeyModel->saveApiKeys($apiKeys);
 
-        $this->configurationProxy->updateValue(self::ALMA_MERCHANT_ID, $this->clientModel->getMerchantId());
+        $this->configurationProxy->updateValue(self::ALMA_MERCHANT_ID, $merchant->id);
 
         // At the first installation we don't need to set the static configuration
         // The static configuration is get with default value

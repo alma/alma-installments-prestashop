@@ -36,12 +36,12 @@ if (!defined('_PS_VERSION_')) {
 class ClientFactory
 {
     /**
-     * @var \Alma\API\Client
+     * @var Client
      */
     private $alma = null;
 
     /**
-     * @return \Alma\API\Client|null
+     * @return Client|null
      */
     public function create($apiKey, $mode)
     {
@@ -67,7 +67,7 @@ class ClientFactory
     }
 
     /**
-     * @return \Alma\API\Client|null
+     * @return Client|null
      */
     public function get($apiKey, $mode)
     {

@@ -107,6 +107,14 @@ class FeePlanHelper
         return $eligibilities;
     }
 
+    /**
+     * Get the eligible fee plans.
+     *
+     * @param $feePlans
+     * @param $purchaseAmount
+     *
+     * @return array
+     */
     public function getEligibleFeePlans($feePlans, $purchaseAmount)
     {
         $activePlans = [];
@@ -126,6 +134,12 @@ class FeePlanHelper
     }
 
     /**
+     * Check the limit of fee plans and throw an exception if the limits are not respected.
+     *
+     * @param $feePlans
+     *
+     * @return void
+     *
      * @throws \Alma\PrestaShop\Exceptions\PnxFormException
      */
     public function checkLimitsSaveFeePlans($feePlans)
@@ -159,6 +173,11 @@ class FeePlanHelper
 
     /**
      * Checks if plan need to be ignored.
+     *
+     * @param $installment
+     * @param $feePlan
+     *
+     * @return bool
      */
     private function shouldSkipPlan($installment, $feePlan)
     {
@@ -167,6 +186,13 @@ class FeePlanHelper
 
     /**
      * Checks if a value is within specified limits.
+     *
+     * @param $amount
+     * @param $min
+     * @param $max
+     * @param $feePlanMax
+     *
+     * @return bool
      */
     private function isWithinLimits($amount, $min, $max, $feePlanMax)
     {
@@ -175,6 +201,15 @@ class FeePlanHelper
 
     /**
      * Generates a custom error message based on limits.
+     *
+     * @param $type
+     * @param $installment
+     * @param $deferred_days
+     * @param $deferred_months
+     * @param $limitMin
+     * @param $limitMax
+     *
+     * @return string
      */
     private function generateErrorMessage($type, $installment, $deferred_days, $deferred_months, $limitMin, $limitMax)
     {
