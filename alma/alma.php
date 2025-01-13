@@ -63,19 +63,9 @@ class Alma extends PaymentModule
     public $confirmUninstall;
 
     /**
-     * @var Alma\PrestaShop\Helpers\Admin\TabsHelper
-     */
-    private $tabsHelper;
-
-    /**
      * @var \PrestaShop\ModuleLibServiceContainer\DependencyInjection\ServiceContainer
      */
     protected $container;
-
-    /**
-     * @var \Alma\PrestaShop\Helpers\ToolsHelper
-     */
-    protected $toolsHelper;
 
     public function __construct()
     {
