@@ -29,7 +29,6 @@ use Alma\API\RequestError;
 use Alma\PrestaShop\Builders\Helpers\ApiHelperBuilder;
 use Alma\PrestaShop\Exceptions\ActivationException;
 use Alma\PrestaShop\Exceptions\ApiMerchantsException;
-use Alma\PrestaShop\Exceptions\WrongCredentialsException;
 use Alma\PrestaShop\Factories\ModuleFactory;
 use Alma\PrestaShop\Helpers\Admin\AdminInsuranceHelper;
 use Alma\PrestaShop\Helpers\ApiHelper;
@@ -77,7 +76,7 @@ class ApiHelperTest extends TestCase
 
         $apiHelper = $apiHelperBuilder->getInstance();
 
-        $this->expectException(WrongCredentialsException::class);
+        $this->expectException(ApiMerchantsException::class);
         $apiHelper->getMerchant();
 
         $clientHelper = Mockery::mock(ClientHelper::class)->makePartial();
