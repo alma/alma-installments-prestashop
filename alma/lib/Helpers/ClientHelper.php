@@ -101,10 +101,11 @@ class ClientHelper
     }
 
     /**
+     * @param null $alma
+     *
      * @return Merchant
      *
-     * @throws ClientException
-     * @throws RequestError
+     * @throws \Alma\API\RequestError
      */
     public function getMerchantsMe($alma = null)
     {

@@ -102,6 +102,10 @@ class AlmaApiKeyModel
     }
 
     /**
+     * We return the merchant of the last API set in the array
+     * If we set two API of different merchant, we return the merchant of the last API Key
+     * If the API key is obscure, we get the saved API key
+     *
      * @param array $apiKeys
      *
      * @return Merchant

@@ -84,6 +84,8 @@ class ApiHelper
     }
 
     /**
+     * @deprecated
+     *
      * @param $alma
      *
      * @return Merchant
@@ -91,7 +93,6 @@ class ApiHelper
      * @throws ActivationException
      * @throws ApiMerchantsException
      * @throws WrongCredentialsException
-     * @throws \PrestaShopException
      */
     public function getMerchant($alma = null)
     {
@@ -101,7 +102,7 @@ class ApiHelper
              */
             $merchant = $this->clientHelper->getMerchantsMe($alma);
         } catch (\Exception $e) {
-            if ($e->response && 401 === $e->response->responseCode) {
+            if (401 === $e->getCode()) {
                 throw new WrongCredentialsException($this->moduleFactory);
             }
 
