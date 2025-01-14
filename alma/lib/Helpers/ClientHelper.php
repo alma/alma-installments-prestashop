@@ -50,6 +50,8 @@ class ClientHelper
     }
 
     /**
+     * @deprecated Use create in ClientFactory instead
+     *
      * @param $apiKey
      * @param $mode
      *
@@ -99,10 +101,11 @@ class ClientHelper
     }
 
     /**
+     * @param null $alma
+     *
      * @return Merchant
      *
-     * @throws ClientException
-     * @throws RequestError
+     * @throws \Alma\API\RequestError
      */
     public function getMerchantsMe($alma = null)
     {

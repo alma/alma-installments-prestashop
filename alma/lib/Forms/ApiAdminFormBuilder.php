@@ -24,6 +24,8 @@
 
 namespace Alma\PrestaShop\Forms;
 
+use Alma\PrestaShop\Model\AlmaApiKeyModel;
+
 if (!defined('_PS_VERSION_')) {
     exit;
 }
@@ -36,11 +38,26 @@ class ApiAdminFormBuilder extends AbstractAlmaAdminFormBuilder
     const ALMA_API_MODE = 'ALMA_API_MODE';
     const ALMA_LIVE_API_KEY = 'ALMA_LIVE_API_KEY';
     const ALMA_TEST_API_KEY = 'ALMA_TEST_API_KEY';
+    /**
+     * @var \Alma\PrestaShop\Model\AlmaApiKeyModel
+     */
+    protected $almaApiKeyModel;
+
+    public function __construct(
+        $module,
+        $context,
+        $image,
+        $almaApiKeyModel = null
+    ) {
+        if (!$almaApiKeyModel) {
+            $almaApiKeyModel = new AlmaApiKeyModel();
+        }
+        $this->almaApiKeyModel = $almaApiKeyModel;
+        parent::__construct($module, $context, $image);
+    }
 
     protected function configForm()
     {
-        $needsAPIKey = isset($this->config['needsAPIKey']) ? boolval($this->config['needsAPIKey']) : false;
-
         $return = [
             $this->inputSelectForm(
                 self::ALMA_API_MODE,
@@ -76,7 +93,7 @@ class ApiAdminFormBuilder extends AbstractAlmaAdminFormBuilder
             ),
         ];
 
-        if ($needsAPIKey) {
+        if ($this->almaApiKeyModel->needApiKey()) {
             $return[] = $this->inputHiddenForm('_api_only');
         }
 

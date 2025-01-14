@@ -385,25 +385,21 @@ class ShareOfCheckoutHelper
     }
 
     /**
-     * reset the activation of Share of Checkout feature.
+     * Reset the activation of Share of Checkout feature.
      *
      * @return void
      *
-     * @throws \Exception
+     * @throws \Alma\PrestaShop\Exceptions\ShareOfCheckoutException
      */
     public function resetShareOfCheckoutConsent()
     {
-        try {
-            if (
-                \Tools::getValue(ApiAdminFormBuilder::ALMA_LIVE_API_KEY) !== SettingsHelper::getLiveKey()
-                && ConstantsHelper::OBSCURE_VALUE !== \Tools::getValue(ApiAdminFormBuilder::ALMA_LIVE_API_KEY)
-            ) {
-                $this->removeConsent();
-                \Configuration::deleteByName(ShareOfCheckoutAdminFormBuilder::ALMA_SHARE_OF_CHECKOUT_STATE);
-                \Configuration::deleteByName(ShareOfCheckoutAdminFormBuilder::ALMA_SHARE_OF_CHECKOUT_DATE);
-            }
-        } catch (ShareOfCheckoutException $e) {
-            $this->context->smarty->assign('validation_error', 'soc_api_error');
+        if (
+            \Tools::getValue(ApiAdminFormBuilder::ALMA_LIVE_API_KEY) !== SettingsHelper::getLiveKey()
+            && ConstantsHelper::OBSCURE_VALUE !== \Tools::getValue(ApiAdminFormBuilder::ALMA_LIVE_API_KEY)
+        ) {
+            $this->removeConsent();
+            \Configuration::deleteByName(ShareOfCheckoutAdminFormBuilder::ALMA_SHARE_OF_CHECKOUT_STATE);
+            \Configuration::deleteByName(ShareOfCheckoutAdminFormBuilder::ALMA_SHARE_OF_CHECKOUT_DATE);
         }
     }
 
@@ -428,7 +424,7 @@ class ShareOfCheckoutHelper
     }
 
     /**
-     * Set Accept Consent.
+     * Set accepted consent.
      *
      * @return void
      *
@@ -516,5 +512,15 @@ class ShareOfCheckoutHelper
     public function getEnabledDate()
     {
         return \Configuration::get(ShareOfCheckoutAdminFormBuilder::ALMA_SHARE_OF_CHECKOUT_DATE);
+    }
+
+    /**
+     * Check if SoC State are answered with Yes or No. If state is null, return false
+     *
+     * @return bool
+     */
+    public function isShareOfCheckoutAnswered()
+    {
+        return SettingsHelper::isShareOfCheckoutAnswered() === true;
     }
 }

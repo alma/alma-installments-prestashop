@@ -22,50 +22,53 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
-namespace Alma\PrestaShop\Forms;
+namespace Alma\PrestaShop\Proxy;
 
 if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-/**
- * Class AbstractAlmaAdminFormBuilder
- */
-abstract class AbstractAlmaAdminFormBuilder extends AbstractAdminFormBuilder
+class ConfigurationProxy
 {
     /**
-     * @var \Alma
+     * Get a single configuration value (in one language only).
+     *
+     * @param string $key Key wanted
+     * @param int $idLang Language ID
+     *
+     * @return string|false Value
      */
-    protected $module;
-
-    /**
-     * @var \Context
-     */
-    protected $context;
-    protected $config;
-
-    /**
-     * @param string $image
-     * @param array $config
-     */
-    public function __construct($module, $context, $image, $config = [])
+    public function get($key, $idLang = null, $idShopGroup = null, $idShop = null, $default = false)
     {
-        $this->module = $module;
-        $this->context = $context;
-        $this->config = $config;
-        parent::__construct(
-            $image,
-            $this->getTitle()
-        );
-    }
-
-    protected function getSubmitTitle()
-    {
-        return $this->module->l('Save');
+        return \Configuration::get($key, $idLang, $idShopGroup, $idShop, $default);
     }
 
     /**
-     * @return mixed
+     * Update configuration key and value into database (automatically insert if key does not exist).
+     *
+     * Values are inserted/updated directly using SQL, because using (Configuration) ObjectModel
+     * may not insert values correctly (for example, HTML is escaped, when it should not be).
+     *
+     * @param $key
+     * @param $value
+     * @param $html
+     * @param $idShopGroup
+     * @param $idShop
+     *
+     * @return bool
      */
-    abstract protected function getTitle();
+    public function updateValue($key, $value, $html = false, $idShopGroup = null, $idShop = null)
+    {
+        return \Configuration::updateValue($key, $value, $html, $idShopGroup, $idShop);
+    }
+
+    /**
+     * Return value of Debug mode defined in configuration.
+     *
+     * @return bool
+     */
+    public function isDevMode()
+    {
+        return _PS_MODE_DEV_ === true;
+    }
 }
