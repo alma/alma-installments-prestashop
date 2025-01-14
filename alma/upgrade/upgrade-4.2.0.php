@@ -38,7 +38,8 @@ if (!defined('_PS_VERSION_')) {
  */
 function upgrade_module_4_2_0($module)
 {
-    // TODO : Need to test this request
+    require_once _PS_MODULE_DIR_ . 'alma/upgrade/autoload_upgrade.php';
+
     $insuranceHelperBuilder = new InsuranceHelperBuilder();
     $insuranceHelper = $insuranceHelperBuilder->getInstance();
     if ($insuranceHelper->isInsuranceActivated()) {

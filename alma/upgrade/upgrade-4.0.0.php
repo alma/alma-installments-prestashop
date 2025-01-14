@@ -37,6 +37,8 @@ if (!defined('_PS_VERSION_')) {
  */
 function upgrade_module_4_0_0($module)
 {
+    require_once _PS_MODULE_DIR_ . 'alma/upgrade/autoload_upgrade.php';
+
     $tabsHelper = new TabsHelper();
 
     if (version_compare(_PS_VERSION_, '1.7.7', '>=')) {

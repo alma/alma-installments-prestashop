@@ -23,8 +23,9 @@
  */
 use Alma\API\RequestError;
 use Alma\PrestaShop\Forms\ShareOfCheckoutAdminFormBuilder;
-use Alma\PrestaShop\Helpers\ClientHelper;
+use Alma\PrestaShop\Helpers\Admin\TabsHelper;
 use Alma\PrestaShop\Helpers\SettingsHelper;
+use Alma\PrestaShop\Logger;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -32,13 +33,11 @@ if (!defined('_PS_VERSION_')) {
 
 function upgrade_module_2_10_0($module)
 {
+    require_once _PS_MODULE_DIR_ . 'alma/upgrade/autoload_upgrade.php';
+
+    $tabsHelper = new TabsHelper();
+    /* @var \Alma $module */
     if (SettingsHelper::isFullyConfigured()) {
-        $alma = ClientHelper::defaultInstance();
-
-        if (!$alma) {
-            return true;
-        }
-
         $date = new DateTime();
 
         try {
@@ -46,11 +45,17 @@ function upgrade_module_2_10_0($module)
             SettingsHelper::updateValue(ShareOfCheckoutAdminFormBuilder::ALMA_SHARE_OF_CHECKOUT_DATE, SettingsHelper::getCurrentTimestamp());
             SettingsHelper::updateValue('ALMA_SOC_CRON_TASK', $date->getTimestamp());
         } catch (RequestError $e) {
-            return true;
+            return false;
         }
     }
 
     $module->registerHook('displayAdminAfterHeader');
 
-    return $module->uninstallTabs() && $module->installTabs();
+    try {
+        return $tabsHelper->uninstallTabs($module->dataTabs()) && $tabsHelper->installTabs($module->dataTabs());
+    } catch (PrestaShopException $e) {
+        Logger::instance()->error("[Alma] ERROR upgrade v2.10.0: {$e->getMessage()}");
+
+        return false;
+    }
 }

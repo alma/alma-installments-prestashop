@@ -27,6 +27,7 @@ if (!defined('_PS_VERSION_')) {
 
 function upgrade_module_1_4_2($module)
 {
+    /* @var \Alma $module */
     if (version_compare(_PS_VERSION_, '1.6', '>=')) {
         $module->registerHook('displayProductPriceBlock');
     } else {

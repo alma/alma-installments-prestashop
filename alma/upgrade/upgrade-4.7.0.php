@@ -21,29 +21,39 @@
  * @copyright 2018-2024 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
+
+use Alma\PrestaShop\Helpers\ConstantsHelper;
+
 if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-use Alma\API\RequestError;
-use Alma\PrestaShop\Helpers\SettingsHelper;
-use Alma\PrestaShop\Logger;
-
 /**
- * @return bool
+ * @throws \Alma\PrestaShop\Exceptions\AlmaException
  */
-function upgrade_module_2_2_0()
+function upgrade_module_4_7_0($module)
 {
+    /* @var \Alma $module */
     require_once _PS_MODULE_DIR_ . 'alma/upgrade/autoload_upgrade.php';
 
-    if (SettingsHelper::isFullyConfigured()) {
-        try {
-            SettingsHelper::updateValue('ALMA_CATEGORIES_WDGT_NOT_ELGBL', SettingsHelper::showCategoriesWidgetIfNotEligible());
-        } catch (RequestError $e) {
-            Logger::instance()->error("[Alma] ERROR upgrade v2.2.0: {$e->getMessage()}");
+    // Retrieve the current version of the module before migration
+    $sql = 'SELECT version FROM ' . _DB_PREFIX_ . 'module WHERE name = "' . pSQL($module->name) . '"';
+    $currentVersion = Db::getInstance()->getValue($sql);
 
-            return false;
-        }
+    if (
+        Module::isEnabled($module->name)
+        && $currentVersion
+        && version_compare($currentVersion, '1.4.3', '>=')
+        && version_compare($currentVersion, '2.0.0', '<=')
+    ) {
+        return false;
+    }
+
+    //Start migration here
+
+    if (version_compare(_PS_VERSION_, ConstantsHelper::PRESTASHOP_VERSION_1_7_0_2, '>')) {
+        Tools::clearAllCache();
+        Tools::clearXMLCache();
     }
 
     return true;

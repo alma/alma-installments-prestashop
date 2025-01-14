@@ -25,18 +25,13 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-use Alma\PrestaShop\Helpers\ClientHelper;
 use Alma\PrestaShop\Helpers\SettingsHelper;
 
 function upgrade_module_3_1_3()
 {
+    require_once _PS_MODULE_DIR_ . 'alma/upgrade/autoload_upgrade.php';
+
     if (SettingsHelper::isFullyConfigured()) {
-        $alma = ClientHelper::defaultInstance();
-
-        if (!$alma) {
-            return true;
-        }
-
         $deleteKeys = [
             'ALMA_ALLOW_INPAGE',
         ];

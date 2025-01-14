@@ -32,6 +32,8 @@ if (!defined('_PS_VERSION_')) {
 
 function upgrade_module_4_5_0()
 {
+    require_once _PS_MODULE_DIR_ . 'alma/upgrade/autoload_upgrade.php';
+
     $settingsHelperBuilder = new SettingsHelperBuilder();
     $settingsHelper = $settingsHelperBuilder->getInstance();
 
