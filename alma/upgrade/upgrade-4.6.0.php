@@ -48,10 +48,10 @@ function upgrade_module_4_6_0($module)
     $currentVersion = Db::getInstance()->getValue($sql);
 
     if (
-        Module::isEnabled($module->name) &&
-        $currentVersion &&
-        version_compare($currentVersion, '1.4.3', '>=') &&
-        version_compare($currentVersion, '2.0.0', '<=')
+        Module::isEnabled($module->name)
+        && $currentVersion
+        && version_compare($currentVersion, '1.4.3', '>=')
+        && version_compare($currentVersion, '2.0.0', '<=')
     ) {
         return false;
     }
