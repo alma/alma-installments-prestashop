@@ -59,11 +59,25 @@ class ContextHelper
     /**
      * @param ContextFactory $contextFactory
      * @param ModuleFactory $moduleFactory
+     *
+     * @throws \Alma\PrestaShop\Exceptions\AlmaException
      */
     public function __construct($contextFactory, $moduleFactory)
     {
         $this->contextLink = $contextFactory->getContextLink();
         $this->moduleName = $moduleFactory->getModuleName();
+    }
+
+    /**
+     * Created for unit test
+     *
+     * @param $contextLink
+     *
+     * @return void
+     */
+    public function setContextLink($contextLink)
+    {
+        $this->contextLink = $contextLink;
     }
 
     /**

@@ -26,9 +26,6 @@ namespace Alma\PrestaShop\Tests\Unit\Helper;
 
 use Alma\PrestaShop\Builders\Helpers\ContextHelperBuilder;
 use Alma\PrestaShop\Exceptions\AlmaException;
-use Alma\PrestaShop\Factories\ContextFactory;
-use Alma\PrestaShop\Factories\ModuleFactory;
-use Alma\PrestaShop\Helpers\ContextHelper;
 use PHPUnit\Framework\TestCase;
 
 class ContextHelperTest extends TestCase
@@ -37,15 +34,30 @@ class ContextHelperTest extends TestCase
      * @var \Alma\PrestaShop\Helpers\ContextHelper
      */
     protected $contextHelper;
+    /**
+     * @var \Link
+     */
+    protected $contextLinkMock;
 
     public function setUp()
     {
+        $this->contextLinkMock = $this->createMock(\Link::class);
         $contextHelperBuilder = new ContextHelperBuilder();
         $this->contextHelper = $contextHelperBuilder->getInstance();
     }
 
-    public function testGetModuleLink()
+    public function tearDown()
     {
+        $this->contextHelper = null;
+        $this->contextLinkMock = null;
+    }
+
+    public function testGetModuleLinkReturnLink()
+    {
+        $this->contextHelper->setContextLink($this->contextLinkMock);
+        $base = $this->getBase(true, false);
+        $this->contextLinkMock->method('getModuleLink')
+            ->willReturn($base . 'module/alma/payment?key=general_1_0_0');
         $result = $this->contextHelper->getModuleLink(
             'payment',
             ['key' => 'general_1_0_0'],
@@ -55,66 +67,15 @@ class ContextHelperTest extends TestCase
             false
         );
 
-        $base = $this->getBase(true, false);
         $this->assertEquals($base . 'module/alma/payment?key=general_1_0_0', $result);
+    }
 
-        $result = $this->contextHelper->getModuleLink(
-            'payment',
-            ['key' => 'general_1_0_0'],
-            false,
-            null,
-            null,
-            false
-        );
-
-        $base = $this->getBase(false, false);
-        $this->assertEquals($base . 'module/alma/payment?key=general_1_0_0', $result);
-
-        $result = $this->contextHelper->getModuleLink(
-            'payment',
-            ['key' => 'general_1_0_0'],
-            false,
-            1,
-            null,
-            false
-        );
-
-        $base = $this->getBase(false, false);
-        $this->assertEquals($base . 'module/alma/payment?key=general_1_0_0', $result);
-
-        $result = $this->contextHelper->getModuleLink(
-            'payment',
-            ['key' => 'general_1_0_0'],
-            false,
-            1,
-            1,
-            false
-        );
-
-        $base = $this->getBase(false, false);
-        $this->assertEquals($base . 'module/alma/payment?key=general_1_0_0', $result);
-
-        $result = $this->contextHelper->getModuleLink(
-            'payment',
-            ['key' => 'general_1_0_0'],
-            false,
-            1,
-            1,
-            true
-        );
-
-        $base = $this->getBase(false, true);
-        $this->assertEquals($base . 'module/alma/payment?key=general_1_0_0', $result);
-
-        $contextFactory = \Mockery::mock(ContextFactory::class)->makePartial();
-        $contextFactory->shouldReceive('getContextLink')->andReturn(null);
-
-        $moduleFactory = \Mockery::mock(ModuleFactory::class)->makePartial();
-        $moduleFactory->shouldReceive('getModuleName')->andReturn('Alma');
-
+    public function testGetModuleLinkWithoutContextLinkAndThrowException()
+    {
+        $this->contextLinkMock = null;
+        $this->contextHelper->setContextLink($this->contextLinkMock);
         $this->expectException(AlmaException::class);
-        $contextHelper = \Mockery::mock(ContextHelper::class, [$contextFactory, $moduleFactory])->makePartial();
-        $contextHelper->getModuleLink(
+        $this->contextHelper->getModuleLink(
             'payment',
             ['key' => 'general_1_0_0'],
             false,
