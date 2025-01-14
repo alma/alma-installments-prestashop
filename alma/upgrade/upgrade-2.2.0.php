@@ -29,6 +29,9 @@ use Alma\API\RequestError;
 use Alma\PrestaShop\Helpers\SettingsHelper;
 use Alma\PrestaShop\Logger;
 
+/**
+ * @return bool
+ */
 function upgrade_module_2_2_0()
 {
     require_once _PS_MODULE_DIR_ . 'alma/upgrade/autoload_upgrade.php';
