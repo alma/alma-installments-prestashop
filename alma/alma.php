@@ -67,20 +67,6 @@ class Alma extends PaymentModule
      */
     protected $container;
 
-    /**
-     * @var \Alma\PrestaShop\Services\PsAccountsService
-     */
-    protected $psAccountsService;
-
-    /**
-     * @var \Alma\PrestaShop\Helpers\ToolsHelper
-     */
-    protected $toolsHelper;
-    /**
-     * @var \Alma\PrestaShop\Proxy\ConfigurationProxy
-     */
-    protected $configurationProxy;
-
     public function __construct()
     {
         $this->name = 'alma';
@@ -123,10 +109,6 @@ class Alma extends PaymentModule
         if (version_compare(_PS_VERSION_, '1.5.0.1', '<')) {
             $this->local_path = _PS_MODULE_DIR_ . $this->name . '/';
         }
-
-        $this->psAccountsService = new \Alma\PrestaShop\Services\PsAccountsService($this, $this->context);
-        $this->toolsHelper = new \Alma\PrestaShop\Helpers\ToolsHelper();
-        $this->configurationProxy = new \Alma\PrestaShop\Proxy\ConfigurationProxy();
     }
 
     /**
@@ -201,7 +183,9 @@ class Alma extends PaymentModule
      */
     private function checkPsAccountsPresence()
     {
-        if ($this->configurationProxy->isDevMode()) {
+        $configurationProxy = new \Alma\PrestaShop\Proxy\ConfigurationProxy();
+        $toolsHelper = new \Alma\PrestaShop\Helpers\ToolsHelper();
+        if ($configurationProxy->isDevMode()) {
             throw new \Alma\PrestaShop\Exceptions\CompatibilityPsAccountsException('[Alma] Debug mode is activated');
         }
 
@@ -212,7 +196,7 @@ class Alma extends PaymentModule
             throw new \Alma\PrestaShop\Exceptions\CompatibilityPsAccountsException('[Alma] Classes don\'t exist for PS Account');
         }
         if (
-            $this->toolsHelper->psVersionCompare('1.6', '<')
+            $toolsHelper->psVersionCompare('1.6', '<')
         ) {
             throw new \Alma\PrestaShop\Exceptions\CompatibilityPsAccountsException('[Alma] Prestashop version lower than 1.6');
         }
