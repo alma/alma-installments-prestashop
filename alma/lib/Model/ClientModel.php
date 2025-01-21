@@ -24,6 +24,7 @@
 
 namespace Alma\PrestaShop\Model;
 
+use Alma\API\Entities\DTO\MerchantBusinessEvent\OrderConfirmedBusinessEvent;
 use Alma\API\Exceptions\RequestException;
 use Alma\API\RequestError;
 use Alma\PrestaShop\Exceptions\ClientException;
@@ -191,6 +192,26 @@ class ClientModel
             throw new ClientException('[Alma] Error Request: ' . $e->getMessage());
         } catch (RequestError $e) {
             throw new ClientException('[Alma] Error Request: ' . $e->getMessage());
+        } catch (ClientException $e) {
+            throw new ClientException('[Alma] Error to get Alma Client: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Send order confirmed business event to Alma
+     *
+     * @param \Alma\API\Entities\DTO\MerchantBusinessEvent\OrderConfirmedBusinessEvent $orderConfirmedBusinessEvent
+     *
+     * @return void
+     *
+     * @throws \Alma\PrestaShop\Exceptions\ClientException
+     */
+    public function sendOrderConfirmedBusinessEvent(OrderConfirmedBusinessEvent $orderConfirmedBusinessEvent)
+    {
+        try {
+            $this->getClient()->merchants->sendOrderConfirmedBusinessEvent($orderConfirmedBusinessEvent);
+        } catch (RequestException $e) {
+            throw new ClientException('[Alma] Error Request for send order confirmed business event: ' . $e->getMessage());
         } catch (ClientException $e) {
             throw new ClientException('[Alma] Error to get Alma Client: ' . $e->getMessage());
         }
