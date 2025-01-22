@@ -28,21 +28,23 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-class AlmaMerchantEventRepository
+class AlmaBusinessDataRepository
 {
     /**
-     * Creates tables
+     * Creates table ps_alma_business_data
      *
      * @return bool
      */
     public function createTable()
     {
-        $sql = 'CREATE TABLE IF NOT EXISTS `' . _DB_PREFIX_ . 'alma_merchant_event` (
-            `id_alma_merchant_event` int(10) NOT NULL AUTO_INCREMENT,
-            `id_alma_payment` int(10) NOT NULL,
+        $sql = 'CREATE TABLE IF NOT EXISTS `' . _DB_PREFIX_ . 'alma_business_data` (
+            `id_alma_business_data` int(10) NOT NULL AUTO_INCREMENT,
+            `id_cart` int(10) NOT NULL,
+            `id_order` int(10) DEFAULT NULL,
+            `alma_payment_id` varchar(255) DEFAULT NULL,
             `is_bnpl_eligible` tinyint(1) unsigned NOT NULL DEFAULT \'0\',
             `plan_key` varchar(255) NOT NULL,
-            PRIMARY KEY (`id_alma_merchant_event`)
+            PRIMARY KEY (`id_alma_business_data`)
         ) ENGINE=' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=utf8;';
 
         return \Db::getInstance()->execute($sql);

@@ -47,11 +47,16 @@ class PaymentHelper
     }
 
     /**
+     * Return payload to send to Alma API for create payment
+     *
      * @param $activePlans
      *
      * @return array
      *
      * @throws \Alma\API\ParamsError
+     * @throws \Alma\PrestaShop\Exceptions\AlmaException
+     * @throws \PrestaShopDatabaseException
+     * @throws \PrestaShopException
      */
     public function checkPaymentData($activePlans)
     {

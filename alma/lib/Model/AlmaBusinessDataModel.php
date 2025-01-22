@@ -30,12 +30,12 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-class AlmaPaymentModel extends \ObjectModel
+class AlmaBusinessDataModel extends \ObjectModel
 {
     use ObjectModelTrait;
 
     /** @var int */
-    public $id_alma_payment;
+    public $id_alma_business_data;
 
     /** @var int */
     public $id_cart;
@@ -44,18 +44,26 @@ class AlmaPaymentModel extends \ObjectModel
     public $id_order;
 
     /** @var string */
-    public $id_payment;
+    public $alma_payment_id;
+
+    /** @var bool */
+    public $is_bnpl_eligible;
+
+    /** @var string */
+    public $plan_key;
 
     /**
      * @see ObjectModel::$definition
      */
     public static $definition = [
-        'table' => 'alma_payment',
-        'primary' => 'id_alma_payment',
+        'table' => 'alma_business_data',
+        'primary' => 'id_alma_business_data',
         'fields' => [
             'id_cart' => ['type' => self::TYPE_INT, 'validate' => 'isUnsignedId', 'required' => true],
             'id_order' => ['type' => self::TYPE_INT, 'validate' => 'isUnsignedId'],
-            'id_payment' => ['type' => self::TYPE_STRING, 'validate' => 'isGenericName'],
+            'alma_payment_id' => ['type' => self::TYPE_STRING, 'validate' => 'isGenericName'],
+            'is_bnpl_eligible' => ['type' => self::TYPE_BOOL, 'validate' => 'isBool'],
+            'plan_key' => ['type' => self::TYPE_STRING, 'validate' => 'isGenericName'],
         ],
     ];
 
@@ -63,7 +71,7 @@ class AlmaPaymentModel extends \ObjectModel
      * @param $null_values
      * @param $auto_date
      *
-     * @return bool|int|string
+     * @return bool
      *
      * @throws \PrestaShopException
      */
@@ -74,5 +82,19 @@ class AlmaPaymentModel extends \ObjectModel
         } else {
             return parent::save($null_values, $auto_date);
         }
+    }
+
+    /**
+     * @return array|bool|object|null
+     */
+    public function getByCartId($cartId)
+    {
+        $db = \Db::getInstance();
+        $query = new \DbQuery();
+        $query->select('*')
+            ->from(self::$definition['table'])
+            ->where('id_cart = ' . (int) $cartId);
+
+        return $db->getRow($query);
     }
 }

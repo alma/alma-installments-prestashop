@@ -68,9 +68,11 @@ class FeePlanHelper
     }
 
     /**
+     * Return array of fee plans enabled
+     *
      * @return array
      */
-    public function checkFeePlans()
+    public function getFeePlansEnable()
     {
         $feePlans = array_filter((array) json_decode($this->settingsHelper->getAlmaFeePlans()), function ($feePlan) {
             return $feePlan->enabled == 1;
@@ -84,6 +86,8 @@ class FeePlanHelper
     }
 
     /**
+     * Return array of fee plans not eligible for the purchase amount
+     *
      * @param array $feePlans
      * @param $purchaseAmount
      *
@@ -108,7 +112,7 @@ class FeePlanHelper
     }
 
     /**
-     * Get the eligible fee plans.
+     * Return array of fee plans eligible for the purchase amount
      *
      * @param $feePlans
      * @param $purchaseAmount

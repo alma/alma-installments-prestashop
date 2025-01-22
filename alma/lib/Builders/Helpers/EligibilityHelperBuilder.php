@@ -48,7 +48,8 @@ class EligibilityHelperBuilder
             $this->getApiHelper(),
             $this->getContextFactory(),
             $this->getFeePlanHelper(),
-            $this->getPaymentHelper()
+            $this->getPaymentHelper(),
+            $this->getConfigurationHelper()
         );
     }
 }

@@ -31,7 +31,6 @@ if (!defined('_PS_VERSION_')) {
 use Alma\PrestaShop\Builders\Services\PaymentServiceBuilder;
 use Alma\PrestaShop\Hooks\FrontendHookController;
 use Alma\PrestaShop\Services\PaymentService;
-use PrestaShop\PrestaShop\Core\Localization\Exception\LocalizationException;
 
 class PaymentOptionsHookController extends FrontendHookController
 {
@@ -59,12 +58,11 @@ class PaymentOptionsHookController extends FrontendHookController
      * @param array $params
      *
      * @return array
-     *
-     * @throws LocalizationException
-     * @throws \SmartyException
      */
     public function run($params)
     {
+        var_dump($this->paymentService->createPaymentOptions($params));
+
         return $this->paymentService->createPaymentOptions($params);
     }
 }

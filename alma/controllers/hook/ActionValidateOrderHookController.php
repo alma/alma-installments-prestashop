@@ -28,15 +28,12 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-use Alma\API\Entities\DTO\MerchantBusinessEvent\OrderConfirmedBusinessEvent;
-use Alma\API\Exceptions\ParametersException;
 use Alma\PrestaShop\Builders\Helpers\InsuranceHelperBuilder;
-use Alma\PrestaShop\Exceptions\ClientException;
 use Alma\PrestaShop\Helpers\InsuranceHelper;
 use Alma\PrestaShop\Hooks\FrontendHookController;
 use Alma\PrestaShop\Logger;
-use Alma\PrestaShop\Model\ClientModel;
 use Alma\PrestaShop\Repositories\AlmaInsuranceProductRepository;
+use Alma\PrestaShop\Services\AlmaBusinessDataService;
 
 class ActionValidateOrderHookController extends FrontendHookController
 {
@@ -50,13 +47,9 @@ class ActionValidateOrderHookController extends FrontendHookController
      */
     protected $insuranceHelper;
     /**
-     * @var \Alma\PrestaShop\Model\ClientModel
+     * @var \Alma\PrestaShop\Services\AlmaBusinessDataService
      */
-    protected $clientModel;
-    /**
-     * @var \Alma\PrestaShop\Logger|mixed
-     */
-    protected $logger;
+    protected $almaBusinessDataService;
 
     public function __construct($module)
     {
@@ -64,8 +57,7 @@ class ActionValidateOrderHookController extends FrontendHookController
         $this->almaInsuranceProductRepository = new AlmaInsuranceProductRepository();
         $insuranceHelperBuilder = new InsuranceHelperBuilder();
         $this->insuranceHelper = $insuranceHelperBuilder->getInstance();
-        $this->clientModel = new ClientModel();
-        $this->logger = Logger::instance();
+        $this->almaBusinessDataService = new AlmaBusinessDataService();
     }
 
     /**
@@ -83,7 +75,7 @@ class ActionValidateOrderHookController extends FrontendHookController
         /* @var \Cart $cart */
         $cart = $params['cart'];
 
-        $this->runMerchantEvent($order, $cart);
+        $this->almaBusinessDataService->runMerchantBusinessEvent($order, $cart);
 
         if ($this->insuranceHelper->isInsuranceActivated()) {
             try {
@@ -91,37 +83,6 @@ class ActionValidateOrderHookController extends FrontendHookController
             } catch (\PrestaShopDatabaseException $e) {
                 Logger::instance()->error('[Alma] Error to connect insurance database: ' . $e->getMessage());
             }
-        }
-    }
-
-    /**
-     * @param \Order $order
-     * @param \Cart $cart
-     *
-     * @return void
-     */
-    private function runMerchantEvent($order, $cart)
-    {
-        $hasValidParams = \Validate::isLoadedObject($order) && \Validate::isLoadedObject($cart);
-
-        if (!$hasValidParams) {
-            return;
-        }
-
-        try {
-            $orderConfirmedBusinessEvent = new OrderConfirmedBusinessEvent(
-                true,
-                true,
-                true,
-                $order->id,
-                $cart->id,
-                'alma_payment_id'
-            );
-            $this->clientModel->sendOrderConfirmedBusinessEvent($orderConfirmedBusinessEvent);
-        } catch (ParametersException $e) {
-            $this->logger->error('[Alma] Error in OrderConfirmedBusinessEvent constructor: ' . $e->getMessage());
-        } catch (ClientException $e) {
-            $this->logger->error('[Alma] Error Alma Client: ' . $e->getMessage());
         }
     }
 

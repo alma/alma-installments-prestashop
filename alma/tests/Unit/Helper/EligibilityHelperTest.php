@@ -47,7 +47,7 @@ class EligibilityHelperTest extends TestCase
         $contextFactory->shouldReceive('getContextCart')->andReturn($cart);
 
         $feePlansHelper = \Mockery::mock(FeePlanHelper::class)->makePartial();
-        $feePlansHelper->shouldReceive('checkFeePlans')->andReturn([]);
+        $feePlansHelper->shouldReceive('getFeePlansEnable')->andReturn([]);
         $feePlansHelper->shouldReceive('getNotEligibleFeePlans')->andReturn([]);
         $feePlansHelper->shouldReceive('getEligibleFeePlans')->andReturn([
             [
@@ -98,7 +98,7 @@ class EligibilityHelperTest extends TestCase
         $contextFactory->shouldReceive('getContextCart')->andReturn($cart);
 
         $feePlansHelper = \Mockery::mock(FeePlanHelper::class)->makePartial();
-        $feePlansHelper->shouldReceive('checkFeePlans')->andReturn([]);
+        $feePlansHelper->shouldReceive('getFeePlansEnable')->andReturn([]);
         $feePlansHelper->shouldReceive('getNotEligibleFeePlans')->andReturn([]);
         $feePlansHelper->shouldReceive('getEligibleFeePlans')->andReturn([]);
 

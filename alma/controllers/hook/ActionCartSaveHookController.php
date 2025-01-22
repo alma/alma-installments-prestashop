@@ -39,7 +39,9 @@ use Alma\PrestaShop\Helpers\InsuranceHelper;
 use Alma\PrestaShop\Helpers\SettingsHelper;
 use Alma\PrestaShop\Hooks\FrontendHookController;
 use Alma\PrestaShop\Logger;
+use Alma\PrestaShop\Model\AlmaBusinessDataModel;
 use Alma\PrestaShop\Modules\OpartSaveCart\OpartSaveCartCartService;
+use Alma\PrestaShop\Services\AlmaBusinessDataService;
 use Alma\PrestaShop\Services\CartService;
 use Alma\PrestaShop\Services\InsuranceProductService;
 
@@ -77,6 +79,14 @@ class ActionCartSaveHookController extends FrontendHookController
      * @var OpartSaveCartCartService
      */
     protected $opartCartSaveService;
+    /**
+     * @var \Alma\PrestaShop\Model\AlmaBusinessDataModel
+     */
+    protected $almaBusinessDataModel;
+    /**
+     * @var \Alma\PrestaShop\Services\AlmaBusinessDataService
+     */
+    protected $almaBusinessDataService;
 
     public function canRun()
     {
@@ -85,8 +95,7 @@ class ActionCartSaveHookController extends FrontendHookController
         // Front controllers can run if the module is properly configured ...
         return SettingsHelper::isFullyConfigured()
             // ... and the plugin is in LIVE mode, or the visitor is an admin
-            && ($isLive || $this->loggedAsEmployee())
-            && $this->insuranceHelper->isInsuranceActivated();
+            && ($isLive || $this->loggedAsEmployee());
     }
 
     /**
@@ -108,6 +117,8 @@ class ActionCartSaveHookController extends FrontendHookController
         $opartCartSaveServiceBuilder = new OpartSaveCartCartServiceBuilder();
         $this->opartCartSaveService = $opartCartSaveServiceBuilder->getInstance();
         $this->logger = new Logger();
+        $this->almaBusinessDataService = new AlmaBusinessDataService();
+        $this->almaBusinessDataModel = new AlmaBusinessDataModel();
     }
 
     /**
@@ -128,29 +139,36 @@ class ActionCartSaveHookController extends FrontendHookController
         $baseCart = $this->contextCart;
         $newCart = $params['cart'];
 
-        try {
-            if (
-                $baseCart
-                && (null === $baseCart->id || $baseCart->id != $newCart->id)
-            ) {
-                if ($this->toolsFactory->getValue('action') !== 'shareCart') {
-                    $baseCart = $this->opartCartSaveService->getCartSaved();
+        if (!$this->almaBusinessDataService->isAlmaPaymentExistByCart($newCart->id)) {
+            $this->almaBusinessDataModel->id_cart = $newCart->id;
+            $this->almaBusinessDataModel->add();
+        }
+
+        if ($this->insuranceHelper->isInsuranceActivated()) {
+            try {
+                if (
+                    $baseCart
+                    && (null === $baseCart->id || $baseCart->id != $newCart->id)
+                ) {
+                    if ($this->toolsFactory->getValue('action') !== 'shareCart') {
+                        $baseCart = $this->opartCartSaveService->getCartSaved();
+                    }
+
+                    $this->cartService->duplicateAlmaInsuranceProductsIfNotExist($newCart, $baseCart);
                 }
 
-                $this->cartService->duplicateAlmaInsuranceProductsIfNotExist($newCart, $baseCart);
+                if ($this->insuranceProductService->canHandleAddingProductInsuranceOnce()) {
+                    $this->insuranceProductService->addInsuranceProductInPsCart(
+                        $idProduct,
+                        $insuranceContractId,
+                        $quantity,
+                        $idCustomization,
+                        $params['cart']
+                    );
+                }
+            } catch (AlmaException $e) {
+                $this->logger->error($e->getMessage());
             }
-
-            if ($this->insuranceProductService->canHandleAddingProductInsuranceOnce()) {
-                $this->insuranceProductService->addInsuranceProductInPsCart(
-                    $idProduct,
-                    $insuranceContractId,
-                    $quantity,
-                    $idCustomization,
-                    $params['cart']
-                );
-            }
-        } catch (AlmaException $e) {
-            $this->logger->error($e->getMessage());
         }
     }
 }
