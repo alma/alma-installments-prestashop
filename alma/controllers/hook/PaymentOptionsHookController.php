@@ -29,6 +29,7 @@ if (!defined('_PS_VERSION_')) {
 }
 
 use Alma\PrestaShop\Builders\Services\PaymentServiceBuilder;
+use Alma\PrestaShop\Helpers\ConfigurationHelper;
 use Alma\PrestaShop\Hooks\FrontendHookController;
 use Alma\PrestaShop\Services\PaymentService;
 
@@ -38,6 +39,10 @@ class PaymentOptionsHookController extends FrontendHookController
      * @var PaymentService
      */
     protected $paymentService;
+    /**
+     * @var \Alma\PrestaShop\Helpers\ConfigurationHelper
+     */
+    protected $configurationHelper;
 
     /**
      * @codeCoverageIgnore
@@ -50,6 +55,7 @@ class PaymentOptionsHookController extends FrontendHookController
 
         $paymentServiceBuilder = new PaymentServiceBuilder();
         $this->paymentService = $paymentServiceBuilder->getInstance();
+        $this->configurationHelper = new ConfigurationHelper();
     }
 
     /**
@@ -61,8 +67,6 @@ class PaymentOptionsHookController extends FrontendHookController
      */
     public function run($params)
     {
-        var_dump($this->paymentService->createPaymentOptions($params));
-
         return $this->paymentService->createPaymentOptions($params);
     }
 }

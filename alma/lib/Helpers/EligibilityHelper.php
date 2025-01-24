@@ -26,6 +26,7 @@ namespace Alma\PrestaShop\Helpers;
 
 use Alma\API\Endpoints\Results\Eligibility;
 use Alma\PrestaShop\Factories\ContextFactory;
+use Alma\PrestaShop\Services\AlmaBusinessDataService;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -58,9 +59,9 @@ class EligibilityHelper
      */
     protected $paymentHelper;
     /**
-     * @var ConfigurationHelper
+     * @var AlmaBusinessDataService
      */
-    private $configurationHelper;
+    private $almaBusinessDataService;
 
     /**
      * @param PriceHelper $priceHelper
@@ -68,6 +69,7 @@ class EligibilityHelper
      * @param ContextFactory $contextFactory
      * @param FeePlanHelper $feePlanHelper
      * @param PaymentHelper $paymentHelper
+     * @param AlmaBusinessDataService $almaBusinessDataService
      */
     public function __construct(
         $priceHelper,
@@ -75,14 +77,14 @@ class EligibilityHelper
         $contextFactory,
         $feePlanHelper,
         $paymentHelper,
-        $configurationHelper
+        $almaBusinessDataService
     ) {
         $this->priceHelper = $priceHelper;
         $this->apiHelper = $apiHelper;
         $this->contextFactory = $contextFactory;
         $this->feePlanHelper = $feePlanHelper;
         $this->paymentHelper = $paymentHelper;
-        $this->configurationHelper = $configurationHelper;
+        $this->almaBusinessDataService = $almaBusinessDataService;
     }
 
     /**
@@ -101,7 +103,6 @@ class EligibilityHelper
     public function eligibilityCheck()
     {
         $plansEligibleFromApi = [];
-//        $isBnplEligible = false;
 
         $purchaseAmount = $this->priceHelper->convertPriceToCents(
             $this->contextFactory->getContextCart()->getOrderTotal(true, \Cart::BOTH)
@@ -113,6 +114,8 @@ class EligibilityHelper
         $paymentData = $this->paymentHelper->checkPaymentData($eligiblePlans);
 
         if (empty($eligiblePlans)) {
+            $this->almaBusinessDataService->updateIsBnplEligible(false, $this->contextFactory->getContextCart()->id);
+
             return $plansEligibleFromApi;
         }
 
@@ -128,16 +131,8 @@ class EligibilityHelper
             return $a->installmentsCount - $b->installmentsCount;
         });
 
-//        $filteredPlans = array_filter($allPlans, function ($plan) {
-//            var_dump($plan->plan_key);
-//            return $this->configurationHelper->isPayNow($plan->plan_key);
-//        });
-//        var_dump($filteredPlans);
-//        if (empty($plansEligibleFromApi)) {
-//            $isBnplEligible = true;
-//        }
-        // array_filter P1X
-        // Set True is_bnpl_eligible if not P1X
+        $this->almaBusinessDataService->saveIsBnplEligible($allPlans, $this->contextFactory->getContextCart()->id);
+
         return $allPlans;
     }
 

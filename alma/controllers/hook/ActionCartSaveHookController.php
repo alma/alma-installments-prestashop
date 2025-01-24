@@ -139,7 +139,7 @@ class ActionCartSaveHookController extends FrontendHookController
         $baseCart = $this->contextCart;
         $newCart = $params['cart'];
 
-        if (!$this->almaBusinessDataService->isAlmaPaymentExistByCart($newCart->id)) {
+        if (!$this->almaBusinessDataService->isAlmaBusinessDataExistByCart($newCart->id)) {
             $this->almaBusinessDataModel->id_cart = $newCart->id;
             $this->almaBusinessDataModel->add();
         }

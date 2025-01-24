@@ -852,7 +852,9 @@ class SettingsHelper
     }
 
     /**
-     * @param \Alma\API\Entities\FeePlan $plan
+     * @deprecated use static function keyForInstallmentPlanStatic
+     *
+     * @param \Alma\API\Endpoints\Results\Eligibility $plan
      *
      * @return string
      */
@@ -864,6 +866,16 @@ class SettingsHelper
             (int) $plan->deferredDays,
             (int) $plan->deferredMonths
         );
+    }
+
+    /**
+     * @param $plan
+     *
+     * @return string
+     */
+    public static function keyForInstallmentPlanStatic($plan)
+    {
+        return implode('_', ['general', (int) $plan->installmentsCount, (int) $plan->deferredDays, (int) $plan->deferredMonths]);
     }
 
     /**

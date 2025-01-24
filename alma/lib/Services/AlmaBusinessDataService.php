@@ -24,12 +24,16 @@
 
 namespace Alma\PrestaShop\Services;
 
+use Alma\API\Endpoints\Results\Eligibility;
 use Alma\API\Entities\DTO\MerchantBusinessEvent\OrderConfirmedBusinessEvent;
 use Alma\API\Exceptions\ParametersException;
 use Alma\PrestaShop\Exceptions\ClientException;
+use Alma\PrestaShop\Helpers\ConfigurationHelper;
+use Alma\PrestaShop\Helpers\SettingsHelper;
 use Alma\PrestaShop\Logger;
 use Alma\PrestaShop\Model\AlmaBusinessDataModel;
 use Alma\PrestaShop\Model\ClientModel;
+use Alma\PrestaShop\Repositories\AlmaBusinessDataRepository;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -49,37 +53,56 @@ class AlmaBusinessDataService
      * @var \Alma\PrestaShop\Logger|mixed
      */
     private $logger;
+    /**
+     * @var \Alma\PrestaShop\Repositories\AlmaBusinessDataRepository|mixed|null
+     */
+    private $almaBusinessDataRepository;
 
-    public function __construct()
-    {
-        $this->clientModel = new ClientModel();
-        $this->logger = Logger::instance();
-        $this->almaBusinessDataModel = new AlmaBusinessDataModel();
+    public function __construct(
+        $clientModel = null,
+        $logger = null,
+        $almaBusinessDataModel = null,
+        $almaBusinessDataRepository = null
+    ) {
+        if (!$clientModel) {
+            $clientModel = new ClientModel();
+        }
+        $this->clientModel = $clientModel;
+        if (!$logger) {
+            $logger = Logger::instance();
+        }
+        $this->logger = $logger;
+        if (!$almaBusinessDataModel) {
+            $almaBusinessDataModel = new AlmaBusinessDataModel();
+        }
+        $this->almaBusinessDataModel = $almaBusinessDataModel;
+        if (!$almaBusinessDataRepository) {
+            $almaBusinessDataRepository = new AlmaBusinessDataRepository();
+        }
+        $this->almaBusinessDataRepository = $almaBusinessDataRepository;
     }
 
     /**
-     * @param \Order $order
-     * @param \Cart $cart
+     * @param int $orderId
+     * @param int $cartId
      *
      * @return void
      */
-    public function runMerchantBusinessEvent($order, $cart)
+    public function runOrderConfirmedBusinessEvent($orderId, $cartId)
     {
-        $hasValidParams = \Validate::isLoadedObject($order) && \Validate::isLoadedObject($cart);
-
-        if (!$hasValidParams) {
-            return;
-        }
+        $this->updateOrderId($orderId, $cartId);
+        $almaBusinessData = $this->almaBusinessDataModel->getByCartId($cartId);
+        $isPayNow = ConfigurationHelper::isPayNowStatic($almaBusinessData['plan_key']);
+        $isBNPL = !empty($almaBusinessData['plan_key']) && !$isPayNow;
 
         try {
-            // Get Alma business data by cart id to set the OrderConfirmedBusinessEvent
             $orderConfirmedBusinessEvent = new OrderConfirmedBusinessEvent(
-                true,
-                true,
-                true,
-                $order->id,
-                $cart->id,
-                'alma_payment_id'
+                $isPayNow,
+                $isBNPL,
+                (bool) $almaBusinessData['is_bnpl_eligible'],
+                $orderId,
+                $cartId,
+                $almaBusinessData['alma_payment_id']
             );
             $this->clientModel->sendOrderConfirmedBusinessEvent($orderConfirmedBusinessEvent);
         } catch (ParametersException $e) {
@@ -94,8 +117,81 @@ class AlmaBusinessDataService
      *
      * @return bool
      */
-    public function isAlmaPaymentExistByCart($cartId)
+    public function isAlmaBusinessDataExistByCart($cartId)
     {
         return !empty($this->almaBusinessDataModel->getByCartId($cartId));
+    }
+
+    /**
+     * Return bool if the plans are eligible for BNPL without Pay Now
+     *
+     * @param Eligibility $plans
+     *
+     * @return void
+     */
+    public function saveIsBnplEligible($plans, $cartId)
+    {
+        $planKeys = [];
+        $isEligible = false;
+
+        foreach ($plans as $plan) {
+            /** @var Eligibility $plan */
+            if ($plan->isEligible) {
+                $planKeys[] = SettingsHelper::keyForInstallmentPlanStatic($plan);
+            }
+        }
+        $planKeysWithoutPayNow = array_filter($planKeys, function ($key) {
+            return !ConfigurationHelper::isPayNowStatic($key);
+        });
+
+        if (count($planKeysWithoutPayNow) > 0) {
+            $isEligible = true;
+        }
+
+        $this->updateIsBnplEligible($isEligible, $cartId);
+    }
+
+    /**
+     * @param bool $isEligible
+     * @param int $cartId
+     *
+     * @return void
+     */
+    public function updateIsBnplEligible($isEligible, $cartId)
+    {
+        $this->almaBusinessDataRepository->update('is_bnpl_eligible', $isEligible, 'id_cart = ' . $cartId);
+    }
+
+    /**
+     * @param $planKey
+     * @param $cartId
+     *
+     * @return void
+     */
+    public function updatePlanKey($planKey, $cartId)
+    {
+        $this->almaBusinessDataRepository->update('plan_key', $planKey, 'id_cart = ' . $cartId);
+    }
+
+    /**
+     * @param $orderId
+     * @param $cartId
+     *
+     * @return void
+     */
+    public function updateOrderId($orderId, $cartId)
+    {
+        $this->almaBusinessDataRepository->update('id_order', $orderId, 'id_cart = ' . $cartId);
+    }
+
+    /**
+     * @param $almaPaymentId
+     * @param $cartId
+     *
+     * @return void
+     */
+    public function updateAlmaPaymentId($almaPaymentId, $cartId)
+    {
+        $this->almaBusinessDataRepository->update('alma_payment_id', $almaPaymentId, 'id_cart = ' . $cartId);
     }
 }

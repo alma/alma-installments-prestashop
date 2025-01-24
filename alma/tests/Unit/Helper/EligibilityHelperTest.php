@@ -31,6 +31,7 @@ use Alma\PrestaShop\Helpers\ApiHelper;
 use Alma\PrestaShop\Helpers\FeePlanHelper;
 use Alma\PrestaShop\Helpers\PaymentHelper;
 use Alma\PrestaShop\Helpers\PriceHelper;
+use Alma\PrestaShop\Services\AlmaBusinessDataService;
 use PHPUnit\Framework\TestCase;
 
 class EligibilityHelperTest extends TestCase
@@ -40,8 +41,11 @@ class EligibilityHelperTest extends TestCase
         $priceHelper = \Mockery::mock(PriceHelper::class)->makePartial();
         $priceHelper->shouldReceive('convertPriceToCents', [200.00])->andReturn(20000);
 
-        $cart = $this->createMock(\Cart::class);
-        $cart->method('getOrderTotal')->willReturn(200.00);
+        //$cart = $this->createMock(\Cart::class);
+        $cart = \Mockery::mock(\Cart::class)->makePartial();
+        $cart->id = 1;
+        $cart->shouldReceive('getOrderTotal')->andReturn(200.00);
+        //$cart->method('getOrderTotal')->willReturn(200.00);
 
         $contextFactory = \Mockery::mock(ContextFactory::class)->makePartial();
         $contextFactory->shouldReceive('getContextCart')->andReturn($cart);
@@ -77,12 +81,16 @@ class EligibilityHelperTest extends TestCase
         $apiHelper = \Mockery::mock(ApiHelper::class)->makePartial();
         $apiHelper->shouldReceive('getPaymentEligibility', [])->andReturn($eligibility);
 
+        $almaBusinessDataServiceMock = \Mockery::mock(AlmaBusinessDataService::class)->makePartial();
+        $almaBusinessDataServiceMock->shouldReceive('saveIsBnplEligible', [$eligibility, $cart->id]);
+
         $eligibilityHelperBuilder = \Mockery::mock(EligibilityHelperBuilder::class)->makePartial();
         $eligibilityHelperBuilder->shouldReceive('getPriceHelper')->andReturn($priceHelper);
         $eligibilityHelperBuilder->shouldReceive('getContextFactory')->andReturn($contextFactory);
         $eligibilityHelperBuilder->shouldReceive('getFeePlanHelper')->andReturn($feePlansHelper);
         $eligibilityHelperBuilder->shouldReceive('getPaymentHelper')->andReturn($paymentHelper);
         $eligibilityHelperBuilder->shouldReceive('getApiHelper')->andReturn($apiHelper);
+        $eligibilityHelperBuilder->shouldReceive('getAlmaBusinessDataService')->andReturn($almaBusinessDataServiceMock);
 
         $eligibilityHelper = $eligibilityHelperBuilder->getInstance();
 
@@ -105,11 +113,14 @@ class EligibilityHelperTest extends TestCase
         $paymentHelper = \Mockery::mock(PaymentHelper::class)->makePartial();
         $paymentHelper->shouldReceive('checkPaymentData', [])->andReturn([]);
 
+        $almaBusinessDataServiceMock->shouldReceive('updateIsBnplEligible', [false, $cart->id]);
+
         $eligibilityHelperBuilder = \Mockery::mock(EligibilityHelperBuilder::class)->makePartial();
         $eligibilityHelperBuilder->shouldReceive('getPriceHelper')->andReturn($priceHelper);
         $eligibilityHelperBuilder->shouldReceive('getContextFactory')->andReturn($contextFactory);
         $eligibilityHelperBuilder->shouldReceive('getFeePlanHelper')->andReturn($feePlansHelper);
         $eligibilityHelperBuilder->shouldReceive('getPaymentHelper')->andReturn($paymentHelper);
+        $eligibilityHelperBuilder->shouldReceive('getAlmaBusinessDataService')->andReturn($almaBusinessDataServiceMock);
 
         $eligibilityHelper = $eligibilityHelperBuilder->getInstance();
 

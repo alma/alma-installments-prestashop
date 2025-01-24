@@ -49,4 +49,24 @@ class AlmaBusinessDataRepository
 
         return \Db::getInstance()->execute($sql);
     }
+
+    /**
+     * Update the table ps_alma_business_data for field set with value
+     *
+     * @param $field
+     * @param $value
+     * @param $where
+     *
+     * @return bool
+     */
+    public function update($field, $value, $where = '')
+    {
+        return \Db::getInstance()->update(
+            'alma_business_data',
+            [
+                $field => pSQL($value),
+            ],
+            $where
+        );
+    }
 }

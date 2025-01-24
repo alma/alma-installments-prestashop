@@ -75,7 +75,13 @@ class ActionValidateOrderHookController extends FrontendHookController
         /* @var \Cart $cart */
         $cart = $params['cart'];
 
-        $this->almaBusinessDataService->runMerchantBusinessEvent($order, $cart);
+        $hasValidParams = \Validate::isLoadedObject($order) && \Validate::isLoadedObject($cart);
+
+        if (!$hasValidParams) {
+            return;
+        }
+
+        $this->almaBusinessDataService->runOrderConfirmedBusinessEvent($order->id, $cart->id);
 
         if ($this->insuranceHelper->isInsuranceActivated()) {
             try {
