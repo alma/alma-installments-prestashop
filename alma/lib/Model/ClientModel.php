@@ -24,6 +24,7 @@
 
 namespace Alma\PrestaShop\Model;
 
+use Alma\API\Entities\DTO\MerchantBusinessEvent\CartInitiatedBusinessEvent;
 use Alma\API\Entities\DTO\MerchantBusinessEvent\OrderConfirmedBusinessEvent;
 use Alma\API\Exceptions\RequestException;
 use Alma\API\RequestError;
@@ -200,11 +201,11 @@ class ClientModel
     /**
      * Send order confirmed business event to Alma
      *
-     * @param \Alma\API\Entities\DTO\MerchantBusinessEvent\OrderConfirmedBusinessEvent $orderConfirmedBusinessEvent
+     * @param OrderConfirmedBusinessEvent $orderConfirmedBusinessEvent
      *
      * @return void
      *
-     * @throws \Alma\PrestaShop\Exceptions\ClientException
+     * @throws ClientException
      */
     public function sendOrderConfirmedBusinessEvent(OrderConfirmedBusinessEvent $orderConfirmedBusinessEvent)
     {
@@ -212,6 +213,26 @@ class ClientModel
             $this->getClient()->merchants->sendOrderConfirmedBusinessEvent($orderConfirmedBusinessEvent);
         } catch (RequestException $e) {
             throw new ClientException('[Alma] Error Request for send order confirmed business event: ' . $e->getMessage());
+        } catch (ClientException $e) {
+            throw new ClientException('[Alma] Error to get Alma Client: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Send cart initiated business event to Alma
+     *
+     * @param CartInitiatedBusinessEvent $cartInitiatedBusinessEvent
+     *
+     * @return void
+     *
+     * @throws ClientException
+     */
+    public function sendCartInitiatedBusinessEvent(CartInitiatedBusinessEvent $cartInitiatedBusinessEvent)
+    {
+        try {
+            $this->getClient()->merchants->sendCartInitiatedBusinessEvent($cartInitiatedBusinessEvent);
+        } catch (RequestException $e) {
+            throw new ClientException('[Alma] Error Request for send cart initiated business event: ' . $e->getMessage());
         } catch (ClientException $e) {
             throw new ClientException('[Alma] Error to get Alma Client: ' . $e->getMessage());
         }

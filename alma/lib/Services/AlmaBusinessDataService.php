@@ -25,6 +25,7 @@
 namespace Alma\PrestaShop\Services;
 
 use Alma\API\Endpoints\Results\Eligibility;
+use Alma\API\Entities\DTO\MerchantBusinessEvent\CartInitiatedBusinessEvent;
 use Alma\API\Entities\DTO\MerchantBusinessEvent\OrderConfirmedBusinessEvent;
 use Alma\API\Exceptions\ParametersException;
 use Alma\PrestaShop\Exceptions\ClientException;
@@ -83,6 +84,9 @@ class AlmaBusinessDataService
     }
 
     /**
+     * Update order id in alma_business_data table
+     * Send OrderConfirmedBusinessEvent to Alma
+     *
      * @param int $orderId
      * @param int $cartId
      *
@@ -107,6 +111,25 @@ class AlmaBusinessDataService
             $this->clientModel->sendOrderConfirmedBusinessEvent($orderConfirmedBusinessEvent);
         } catch (ParametersException $e) {
             $this->logger->error('[Alma] Error in OrderConfirmedBusinessEvent constructor: ' . $e->getMessage());
+        } catch (ClientException $e) {
+            $this->logger->error('[Alma] Error Alma Client: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Send CartInitiatedBusinessEvent to Alma
+     *
+     * @param $cartId
+     *
+     * @return void
+     */
+    public function runCartInitiatedBusinessEvent($cartId)
+    {
+        try {
+            $cartInitiatedBusinessEvent = new CartInitiatedBusinessEvent($cartId);
+            $this->clientModel->sendCartInitiatedBusinessEvent($cartInitiatedBusinessEvent);
+        } catch (ParametersException $e) {
+            $this->logger->error('[Alma] Error in CartInitiatedBusinessEvent constructor: ' . $e->getMessage());
         } catch (ClientException $e) {
             $this->logger->error('[Alma] Error Alma Client: ' . $e->getMessage());
         }

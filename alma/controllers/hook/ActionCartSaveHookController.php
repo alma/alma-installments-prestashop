@@ -122,7 +122,10 @@ class ActionCartSaveHookController extends FrontendHookController
     }
 
     /**
-     * Run Controller
+     * Run Controller ActionCartSaveHookController
+     * Create alma_business_data if not exist
+     * Run CartInitiatedBusinessEvent to Alma if alma_business_data not exist
+     * Run Insurance to save insurance product in cart if insurance activated
      *
      * @param array $params
      *
@@ -142,6 +145,7 @@ class ActionCartSaveHookController extends FrontendHookController
         if (!$this->almaBusinessDataService->isAlmaBusinessDataExistByCart($newCart->id)) {
             $this->almaBusinessDataModel->id_cart = $newCart->id;
             $this->almaBusinessDataModel->add();
+            $this->almaBusinessDataService->runCartInitiatedBusinessEvent($newCart->id);
         }
 
         if ($this->insuranceHelper->isInsuranceActivated()) {

@@ -25,7 +25,9 @@
 namespace Alma\PrestaShop\Tests\Unit\Services;
 
 use Alma\API\Endpoints\Results\Eligibility;
+use Alma\API\Entities\DTO\MerchantBusinessEvent\CartInitiatedBusinessEvent;
 use Alma\API\Entities\DTO\MerchantBusinessEvent\OrderConfirmedBusinessEvent;
+use Alma\PrestaShop\Exceptions\ClientException;
 use Alma\PrestaShop\Logger;
 use Alma\PrestaShop\Model\AlmaBusinessDataModel;
 use Alma\PrestaShop\Model\ClientModel;
@@ -42,7 +44,7 @@ class AlmaBusinessDataServiceTest extends TestCase
     /**
      * @var \Alma\PrestaShop\Model\AlmaBusinessDataModel
      */
-    protected $almabusinessDataModelMock;
+    protected $almaBusinessDataModelMock;
     /**
      * @var \Alma\PrestaShop\Logger
      */
@@ -72,12 +74,12 @@ class AlmaBusinessDataServiceTest extends TestCase
     {
         $this->clientModelMock = $this->createMock(ClientModel::class);
         $this->loggerMock = $this->createMock(Logger::class);
-        $this->almabusinessDataModelMock = $this->createMock(AlmaBusinessDataModel::class);
+        $this->almaBusinessDataModelMock = $this->createMock(AlmaBusinessDataModel::class);
         $this->almaBusinessDataRepositoryMock = $this->createMock(AlmaBusinessDataRepository::class);
         $this->almaBusinessDataService = new AlmaBusinessDataService(
             $this->clientModelMock,
             $this->loggerMock,
-            $this->almabusinessDataModelMock,
+            $this->almaBusinessDataModelMock,
             $this->almaBusinessDataRepositoryMock
         );
     }
@@ -100,7 +102,7 @@ class AlmaBusinessDataServiceTest extends TestCase
         $this->almaBusinessDataRepositoryMock->expects($this->once())
             ->method('update')
             ->with('id_order', $orderId, 'id_cart = ' . $cartId);
-        $this->almabusinessDataModelMock->expects($this->once())
+        $this->almaBusinessDataModelMock->expects($this->once())
             ->method('getByCartId')
             ->with($cartId)
             ->willReturn($almaBusinessData);
@@ -128,7 +130,7 @@ class AlmaBusinessDataServiceTest extends TestCase
         $this->almaBusinessDataRepositoryMock->expects($this->once())
             ->method('update')
             ->with('id_order', $orderId, 'id_cart = ' . $cartId);
-        $this->almabusinessDataModelMock->expects($this->once())
+        $this->almaBusinessDataModelMock->expects($this->once())
             ->method('getByCartId')
             ->with($cartId)
             ->willReturn($almaBusinessData);
@@ -139,13 +141,110 @@ class AlmaBusinessDataServiceTest extends TestCase
     }
 
     /**
+     * @return void
+     */
+    public function testRunOrderConfirmedBusinessEventWithClientIssueLoggerErrorNoThrow()
+    {
+        $orderId = '2';
+        $cartId = '3';
+        $almaBusinessData = [
+            'id_alma_business_data' => '5',
+            'id_cart' => '3',
+            'id_order' => '2',
+            'alma_payment_id' => 'alma_payment_id',
+            'is_bnpl_eligible' => '1',
+            'plan_key' => 'general_2_0_0',
+        ];
+        $this->almaBusinessDataRepositoryMock->expects($this->once())
+            ->method('update')
+            ->with('id_order', $orderId, 'id_cart = ' . $cartId);
+        $this->almaBusinessDataModelMock->expects($this->once())
+            ->method('getByCartId')
+            ->with($cartId)
+            ->willReturn($almaBusinessData);
+        $this->clientModelMock->expects($this->once())
+            ->method('sendOrderConfirmedBusinessEvent')
+            ->willThrowException(new ClientException());
+        $this->loggerMock->expects($this->once())->method('error');
+        $this->almaBusinessDataService->runOrderConfirmedBusinessEvent($orderId, $cartId);
+    }
+
+    /**
+     * @return void
+     */
+    public function testRunCartInitiatedBusinessEvent()
+    {
+        $cartId = '1';
+        $this->clientModelMock->expects($this->once())
+            ->method('sendCartInitiatedBusinessEvent')
+            ->with($this->isInstanceOf(CartInitiatedBusinessEvent::class));
+        $this->almaBusinessDataService->runCartInitiatedBusinessEvent($cartId);
+    }
+
+    /**
+     * @dataProvider wrongParamCartInitiatedBusinessEventDataProvider
+     *
+     * @return void
+     */
+    public function testRunCartInitiatedBusinessEventWithWrongParamLoggerErrorNoThrow($cartId)
+    {
+        $this->clientModelMock->expects($this->never())
+            ->method('sendCartInitiatedBusinessEvent');
+        $this->loggerMock->expects($this->once())->method('error');
+        $this->almaBusinessDataService->runCartInitiatedBusinessEvent($cartId);
+    }
+
+    /**
+     * @return void
+     */
+    public function testRunCartInitiatedBusinessEventWithClientIssueLoggerErrorNoThrow()
+    {
+        $cartId = '1';
+        $this->clientModelMock->expects($this->once())
+            ->method('sendCartInitiatedBusinessEvent')
+            ->willThrowException(new ClientException());
+        $this->loggerMock->expects($this->once())->method('error');
+        $this->almaBusinessDataService->runCartInitiatedBusinessEvent($cartId);
+    }
+
+    /**
+     * @return array
+     */
+    public function wrongParamCartInitiatedBusinessEventDataProvider()
+    {
+        return [
+            'data is empty string' => [
+                '',
+            ],
+            'data is array' => [
+                [],
+            ],
+            'data is null' => [
+                null,
+            ],
+            'data is bool' => [
+                false,
+            ],
+            'data is int' => [
+                1,
+            ],
+            'data is float' => [
+                1.1,
+            ],
+            'data is object' => [
+                new \stdClass(),
+            ],
+        ];
+    }
+
+    /**
      * @dataProvider isAlmaBusinessDataDataProvider
      *
      * @return void
      */
     public function testIsAlmaBusinessDataExistByCart($almaBusinessData, $expected)
     {
-        $this->almabusinessDataModelMock->expects($this->once())
+        $this->almaBusinessDataModelMock->expects($this->once())
             ->method('getByCartId')
             ->with(1)
             ->willReturn($almaBusinessData);

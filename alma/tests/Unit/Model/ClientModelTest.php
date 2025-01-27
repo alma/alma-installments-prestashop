@@ -27,6 +27,8 @@ namespace Alma\PrestaShop\Tests\Unit\Model;
 use Alma\API\Client;
 use Alma\API\Endpoints\Configuration;
 use Alma\API\Endpoints\Merchants;
+use Alma\API\Entities\DTO\MerchantBusinessEvent\CartInitiatedBusinessEvent;
+use Alma\API\Entities\DTO\MerchantBusinessEvent\OrderConfirmedBusinessEvent;
 use Alma\API\Exceptions\RequestException;
 use Alma\API\RequestError;
 use Alma\PrestaShop\Exceptions\ClientException;
@@ -130,6 +132,43 @@ class ClientModelTest extends TestCase
         return [
             'RequestException' => [new RequestException('error')],
             'RequestError' => [new RequestError('error')],
+            'ClientException' => [new ClientException('error')],
+        ];
+    }
+
+    /**
+     * @dataProvider exceptionMerchantBusinessEventDataProvider
+     *
+     * @throws \Alma\PrestaShop\Exceptions\ClientException
+     */
+    public function testSendOrderConfirmedBusinessEventThrowRequestException($exceptions)
+    {
+        $orderConfirmedBusinessEvent = new OrderConfirmedBusinessEvent(true, true, true, 'orderId', 'cartId', 'almaPaymentId');
+        $this->merchantMock->method('sendOrderConfirmedBusinessEvent')->willThrowException($exceptions);
+        $this->expectException(ClientException::class);
+        $this->clientModel->sendOrderConfirmedBusinessEvent($orderConfirmedBusinessEvent);
+    }
+
+    /**
+     * @dataProvider exceptionMerchantBusinessEventDataProvider
+     *
+     * @throws \Alma\PrestaShop\Exceptions\ClientException
+     */
+    public function testSendCartInitiatedBusinessEventThrowRequestException($exceptions)
+    {
+        $cartInitiatedBusinessEvent = new CartInitiatedBusinessEvent('1');
+        $this->merchantMock->method('sendCartInitiatedBusinessEvent')->willThrowException($exceptions);
+        $this->expectException(ClientException::class);
+        $this->clientModel->sendCartInitiatedBusinessEvent($cartInitiatedBusinessEvent);
+    }
+
+    /**
+     * @return array
+     */
+    public function exceptionMerchantBusinessEventDataProvider()
+    {
+        return [
+            'RequestException' => [new RequestException('error')],
             'ClientException' => [new ClientException('error')],
         ];
     }
