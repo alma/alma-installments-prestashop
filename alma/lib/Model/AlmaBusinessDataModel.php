@@ -92,7 +92,7 @@ class AlmaBusinessDataModel extends \ObjectModel
         $db = \Db::getInstance();
         $query = new \DbQuery();
         $query->select('*')
-            ->from(self::$definition['table'])
+            ->from(static::$definition['table'])
             ->where('id_cart = ' . (int) $cartId);
 
         return $db->getRow($query);
