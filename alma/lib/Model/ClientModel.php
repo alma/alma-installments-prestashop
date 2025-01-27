@@ -190,11 +190,11 @@ class ClientModel
         try {
             $this->getClient()->configuration->sendIntegrationsConfigurationsUrl($url);
         } catch (RequestException $e) {
-            throw new ClientException('[Alma] Error Request: ' . $e->getMessage());
+            throw new ClientException('[Alma] Error Request for sendUrlForGatherCmsData: ' . $e->getMessage());
         } catch (RequestError $e) {
-            throw new ClientException('[Alma] Error Request: ' . $e->getMessage());
+            throw new ClientException('[Alma] Error Request for sendUrlForGatherCmsData: ' . $e->getMessage());
         } catch (ClientException $e) {
-            throw new ClientException('[Alma] Error to get Alma Client: ' . $e->getMessage());
+            throw new ClientException('[Alma] Error to get Alma Client for sendUrlForGatherCmsData: ' . $e->getMessage());
         }
     }
 
@@ -214,7 +214,7 @@ class ClientModel
         } catch (RequestException $e) {
             throw new ClientException('[Alma] Error Request for send order confirmed business event: ' . $e->getMessage());
         } catch (ClientException $e) {
-            throw new ClientException('[Alma] Error to get Alma Client: ' . $e->getMessage());
+            throw new ClientException('[Alma] Error to get Alma Client for sendOrderConfirmedBusinessEvent: ' . $e->getMessage());
         }
     }
 
@@ -234,7 +234,7 @@ class ClientModel
         } catch (RequestException $e) {
             throw new ClientException('[Alma] Error Request for send cart initiated business event: ' . $e->getMessage());
         } catch (ClientException $e) {
-            throw new ClientException('[Alma] Error to get Alma Client: ' . $e->getMessage());
+            throw new ClientException('[Alma] Error to get Alma Client for sendCartInitiatedBusinessEvent: ' . $e->getMessage());
         }
     }
 }

@@ -42,6 +42,7 @@ if (!defined('_PS_VERSION_')) {
 
 class AlmaBusinessDataService
 {
+    const WHERE_ID_CART = 'id_cart = ';
     /**
      * @var \Alma\PrestaShop\Model\AlmaBusinessDataModel
      */
@@ -104,8 +105,8 @@ class AlmaBusinessDataService
                 $isPayNow,
                 $isBNPL,
                 (bool) $almaBusinessData['is_bnpl_eligible'],
-                !empty($orderId) ? (string) $orderId : null,
-                !empty($cartId) ? (string) $cartId : null,
+                (string) $orderId,
+                (string) $cartId,
                 $almaBusinessData['alma_payment_id'] ?: null
             );
             $this->clientModel->sendOrderConfirmedBusinessEvent($orderConfirmedBusinessEvent);
@@ -188,7 +189,7 @@ class AlmaBusinessDataService
      */
     public function updateIsBnplEligible($isEligible, $cartId)
     {
-        $this->almaBusinessDataRepository->update('is_bnpl_eligible', $isEligible, 'id_cart = ' . $cartId);
+        $this->almaBusinessDataRepository->update('is_bnpl_eligible', $isEligible, self::WHERE_ID_CART . $cartId);
     }
 
     /**
@@ -199,7 +200,7 @@ class AlmaBusinessDataService
      */
     public function updatePlanKey($planKey, $cartId)
     {
-        $this->almaBusinessDataRepository->update('plan_key', $planKey, 'id_cart = ' . $cartId);
+        $this->almaBusinessDataRepository->update('plan_key', $planKey, self::WHERE_ID_CART . $cartId);
     }
 
     /**
@@ -210,7 +211,7 @@ class AlmaBusinessDataService
      */
     public function updateOrderId($orderId, $cartId)
     {
-        $this->almaBusinessDataRepository->update('id_order', $orderId, 'id_cart = ' . $cartId);
+        $this->almaBusinessDataRepository->update('id_order', $orderId, self::WHERE_ID_CART . $cartId);
     }
 
     /**
@@ -221,6 +222,6 @@ class AlmaBusinessDataService
      */
     public function updateAlmaPaymentId($almaPaymentId, $cartId)
     {
-        $this->almaBusinessDataRepository->update('alma_payment_id', $almaPaymentId, 'id_cart = ' . $cartId);
+        $this->almaBusinessDataRepository->update('alma_payment_id', $almaPaymentId, self::WHERE_ID_CART . $cartId);
     }
 }
