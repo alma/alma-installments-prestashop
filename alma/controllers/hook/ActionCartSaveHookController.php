@@ -39,7 +39,6 @@ use Alma\PrestaShop\Helpers\InsuranceHelper;
 use Alma\PrestaShop\Helpers\SettingsHelper;
 use Alma\PrestaShop\Hooks\FrontendHookController;
 use Alma\PrestaShop\Logger;
-use Alma\PrestaShop\Model\AlmaBusinessDataModel;
 use Alma\PrestaShop\Modules\OpartSaveCart\OpartSaveCartCartService;
 use Alma\PrestaShop\Services\AlmaBusinessDataService;
 use Alma\PrestaShop\Services\CartService;
@@ -80,10 +79,6 @@ class ActionCartSaveHookController extends FrontendHookController
      */
     protected $opartCartSaveService;
     /**
-     * @var \Alma\PrestaShop\Model\AlmaBusinessDataModel
-     */
-    protected $almaBusinessDataModel;
-    /**
      * @var \Alma\PrestaShop\Services\AlmaBusinessDataService
      */
     protected $almaBusinessDataService;
@@ -118,7 +113,6 @@ class ActionCartSaveHookController extends FrontendHookController
         $this->opartCartSaveService = $opartCartSaveServiceBuilder->getInstance();
         $this->logger = new Logger();
         $this->almaBusinessDataService = new AlmaBusinessDataService();
-        $this->almaBusinessDataModel = new AlmaBusinessDataModel();
     }
 
     /**
@@ -143,8 +137,6 @@ class ActionCartSaveHookController extends FrontendHookController
         $newCart = $params['cart'];
 
         if (!$this->almaBusinessDataService->isAlmaBusinessDataExistByCart($newCart->id)) {
-            $this->almaBusinessDataModel->id_cart = $newCart->id;
-            $this->almaBusinessDataModel->add();
             $this->almaBusinessDataService->runCartInitiatedBusinessEvent($newCart->id);
         }
 

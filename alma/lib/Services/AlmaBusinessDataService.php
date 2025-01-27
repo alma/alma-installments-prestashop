@@ -104,9 +104,9 @@ class AlmaBusinessDataService
                 $isPayNow,
                 $isBNPL,
                 (bool) $almaBusinessData['is_bnpl_eligible'],
-                $orderId,
-                $cartId,
-                $almaBusinessData['alma_payment_id']
+                !empty($orderId) ? (string) $orderId : null,
+                !empty($cartId) ? (string) $cartId : null,
+                $almaBusinessData['alma_payment_id'] ?: null
             );
             $this->clientModel->sendOrderConfirmedBusinessEvent($orderConfirmedBusinessEvent);
         } catch (ParametersException $e) {
@@ -128,10 +128,16 @@ class AlmaBusinessDataService
         try {
             $cartInitiatedBusinessEvent = new CartInitiatedBusinessEvent($cartId);
             $this->clientModel->sendCartInitiatedBusinessEvent($cartInitiatedBusinessEvent);
+            $this->almaBusinessDataModel->id_cart = $cartId;
+            $this->almaBusinessDataModel->add();
         } catch (ParametersException $e) {
             $this->logger->error('[Alma] Error in CartInitiatedBusinessEvent constructor: ' . $e->getMessage());
         } catch (ClientException $e) {
             $this->logger->error('[Alma] Error Alma Client: ' . $e->getMessage());
+        } catch (\PrestaShopDatabaseException $e) {
+            $this->logger->error('[Alma] Error in PrestaShopDatabaseException : ' . $e->getMessage());
+        } catch (\PrestaShopException $e) {
+            $this->logger->error('[Alma] Error in PrestaShopException : ' . $e->getMessage());
         }
     }
 

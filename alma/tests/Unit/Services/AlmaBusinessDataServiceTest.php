@@ -113,6 +113,8 @@ class AlmaBusinessDataServiceTest extends TestCase
     }
 
     /**
+     * @dataProvider wrongDataOrderConfirmedBusinessEventDataProvider
+     *
      * @return void
      */
     public function testRunOrderConfirmedBusinessEventWithWrongParamLoggerErrorNoThrow()
@@ -138,6 +140,63 @@ class AlmaBusinessDataServiceTest extends TestCase
             ->method('sendOrderConfirmedBusinessEvent');
         $this->loggerMock->expects($this->once())->method('error');
         $this->almaBusinessDataService->runOrderConfirmedBusinessEvent($orderId, $cartId);
+    }
+
+    /**
+     * @return array[]
+     */
+    public function wrongDataOrderConfirmedBusinessEventDataProvider()
+    {
+        return [
+            'almaPaymentId is empty' => [
+                [
+                    'id_alma_business_data' => '5',
+                    'id_cart' => '3',
+                    'id_order' => '2',
+                    'alma_payment_id' => '',
+                    'is_bnpl_eligible' => '1',
+                    'plan_key' => 'general_2_0_0',
+                ],
+                '2',
+                '3',
+            ],
+            'orderId is null' => [
+                [
+                    'id_alma_business_data' => '5',
+                    'id_cart' => '3',
+                    'id_order' => '2',
+                    'alma_payment_id' => 'alma_payment_id',
+                    'is_bnpl_eligible' => '1',
+                    'plan_key' => 'general_2_0_0',
+                ],
+                null,
+                '3',
+            ],
+            'cartId is null' => [
+                [
+                    'id_alma_business_data' => '5',
+                    'id_cart' => '3',
+                    'id_order' => '2',
+                    'alma_payment_id' => 'alma_payment_id',
+                    'is_bnpl_eligible' => '1',
+                    'plan_key' => 'general_2_0_0',
+                ],
+                '2',
+                null,
+            ],
+            'plan_key empty with almaPaymentId not empty (isBNPL false with almaPaymentId not empty)' => [
+                [
+                    'id_alma_business_data' => '5',
+                    'id_cart' => '3',
+                    'id_order' => '2',
+                    'alma_payment_id' => 'alma_payment_id',
+                    'is_bnpl_eligible' => '1',
+                    'plan_key' => '',
+                ],
+                '2',
+                '3',
+            ],
+        ];
     }
 
     /**
