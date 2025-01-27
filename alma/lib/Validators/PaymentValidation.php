@@ -274,6 +274,16 @@ class PaymentValidation
                 }
             }
 
+            // Update payment's order reference
+            $order = $this->getOrderByCartId((int) $cart->id);
+            $customData = $payment->custom_data;
+            $customData['id_order'] = $order->id;
+
+            $planKey = $this->settingsHelper->key('general', $payment->installments_count, $payment->deferred_days, $payment->deferred_months);
+            $this->almaBusinessDataService->updatePlanKey($planKey, $cart->id);
+            $this->almaBusinessDataService->updateOrderId($order->id, $cart->id);
+            $this->almaBusinessDataService->updateAlmaPaymentId($payment->id, $cart->id);
+
             try {
                 // Place order
                 $this->module->validateOrder(
@@ -290,16 +300,6 @@ class PaymentValidation
             } catch (\PrestaShopException $e) {
                 Logger::instance()->warning("[Alma] Error validation Order: {$e->getMessage()}");
             }
-
-            // Update payment's order reference
-            $order = $this->getOrderByCartId((int) $cart->id);
-            $customData = $payment->custom_data;
-            $customData['id_order'] = $order->id;
-
-            $planKey = $this->settingsHelper->key('general', $payment->installments_count, $payment->deferred_days, $payment->deferred_months);
-            $this->almaBusinessDataService->updatePlanKey($planKey, $cart->id);
-            $this->almaBusinessDataService->updateOrderId($order->id, $cart->id);
-            $this->almaBusinessDataService->updateAlmaPaymentId($payment->id, $cart->id);
 
             try {
                 $alma->payments->edit($payment->id, [
