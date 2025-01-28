@@ -492,6 +492,6 @@ TAG;
     {
         $settings = json_encode($this->settingsHelper->getInPageSettings());
 
-        return "<div id='alma-inpage-global' data-settings='{$settings}'></div>";
+        return "<meta id='alma-inpage-global' data-settings='{$settings}'>";
     }
 }
