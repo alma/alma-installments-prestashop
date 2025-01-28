@@ -27,6 +27,7 @@ namespace Alma\PrestaShop\Tests\Unit\Model;
 use Alma\PrestaShop\Helpers\ConstantsHelper;
 use Alma\PrestaShop\Model\AlmaModuleModel;
 use Alma\PrestaShop\Proxy\ModuleProxy;
+use DbQuery;
 use PHPUnit\Framework\TestCase;
 
 class AlmaModuleModelTest extends TestCase
@@ -40,18 +41,31 @@ class AlmaModuleModelTest extends TestCase
      * @var ModuleProxy
      */
     protected $moduleProxyMock;
+    /**
+     * @var \Db
+     */
+    protected $dbMock;
+    /**
+     * @var \DbQuery
+     */
+    protected $dbQueryMock;
 
     public function setUp()
     {
         $this->moduleProxyMock = $this->createMock(ModuleProxy::class);
+        $this->dbQueryMock = $this->createMock(DbQuery::class);
+        $this->dbMock = $this->createMock(\Db::class);
         $this->almaModuleModel = new AlmaModuleModel(
-            $this->moduleProxyMock
+            $this->moduleProxyMock,
+            $this->dbQueryMock,
+            $this->dbMock
         );
     }
 
     public function tearDown()
     {
         $this->moduleProxyMock = null;
+        $this->dbMock = null;
         $this->almaModuleModel = null;
     }
 
@@ -90,5 +104,50 @@ class AlmaModuleModelTest extends TestCase
                 'expectedVersion' => '',
             ],
         ];
+    }
+
+    public function testGetPosition()
+    {
+        $hookName = 'paymentOptions';
+        if (version_compare(_PS_VERSION_, '1.7', '<')) {
+            $hookName = 'displayPayment';
+        }
+
+        $this->dbQueryMock->method('select')->willReturnSelf();
+        $this->dbQueryMock->method('from')->willReturnSelf();
+        $this->dbQueryMock->method('join')->willReturnSelf();
+        $this->dbQueryMock->method('where')->withConsecutive(
+            ['h.name = "' . pSQL($hookName) . '"'],
+            ['m.name = "' . pSQL('alma') . '"']
+        )->willReturnSelf();
+        $this->dbQueryMock->method('orderBy')->willReturnSelf();
+        $this->dbMock->method('getRow')
+            ->willReturn(['position' => 3]);
+
+        $this->assertEquals('3', $this->almaModuleModel->getPosition());
+    }
+
+    /**
+     * @return void
+     */
+    public function testGetPositionWithQueryReturnFalse()
+    {
+        $hookName = 'paymentOptions';
+        if (version_compare(_PS_VERSION_, '1.7', '<')) {
+            $hookName = 'displayPayment';
+        }
+
+        $this->dbQueryMock->method('select')->willReturnSelf();
+        $this->dbQueryMock->method('from')->willReturnSelf();
+        $this->dbQueryMock->method('join')->willReturnSelf();
+        $this->dbQueryMock->method('where')->withConsecutive(
+            ['h.name = "' . pSQL($hookName) . '"'],
+            ['m.name = "' . pSQL('alma') . '"']
+        )->willReturnSelf();
+        $this->dbQueryMock->method('orderBy')->willReturnSelf();
+        $this->dbMock->method('getRow')
+            ->willReturn(false);
+
+        $this->assertEquals('', $this->almaModuleModel->getPosition());
     }
 }

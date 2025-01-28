@@ -142,7 +142,7 @@ class CmsDataHelper
             'widget_cart_activated' => (bool) (int) $this->settingsHelper->getKey(CartEligibilityAdminFormBuilder::ALMA_SHOW_ELIGIBILITY_MESSAGE),
             'widget_product_activated' => (bool) (int) $this->settingsHelper->getKey(ProductEligibilityAdminFormBuilder::ALMA_SHOW_PRODUCT_ELIGIBILITY),
             'used_fee_plans' => $this->getUsedFeePlans(),
-            //'payment_method_position' => null, // not applicable - position is set in the used_fee_plans
+            'payment_method_position' => (int) $this->almaModuleModel->getPosition(),
             'in_page_activated' => (bool) (int) $this->settingsHelper->getKey(InpageAdminFormBuilder::ALMA_ACTIVATE_INPAGE),
             'log_activated' => (bool) (int) $this->settingsHelper->getKey(DebugAdminFormBuilder::ALMA_ACTIVATE_LOGGING),
             'excluded_categories' => $this->settingsHelper->getCategoriesExcludedNames(),
