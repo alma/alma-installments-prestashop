@@ -86,110 +86,89 @@ class CmsDataHelperTest extends TestCase
     }
 
     /**
+     * @dataProvider getCmsFeatureArrayDataProvider
+     *
      * @return void
      */
-    public function testGetCmsFeatureArray()
+    public function testGetCmsFeatureArray($jsonFeePlans, $getPosition, $expected)
     {
         $this->settingsHelper->method('getKey')->willReturnMap(
             [
                 [SettingsHelper::ALMA_FULLY_CONFIGURED, null, false],
                 [CartEligibilityAdminFormBuilder::ALMA_SHOW_ELIGIBILITY_MESSAGE, null, false],
                 [ProductEligibilityAdminFormBuilder::ALMA_SHOW_PRODUCT_ELIGIBILITY, null, false],
-                [PnxAdminFormBuilder::ALMA_FEE_PLANS, null, '{"general_1_0_0":{"enabled":"1"}}'],
+                [PnxAdminFormBuilder::ALMA_FEE_PLANS, null, $jsonFeePlans],
                 [InpageAdminFormBuilder::ALMA_ACTIVATE_INPAGE, null, true],
                 [DebugAdminFormBuilder::ALMA_ACTIVATE_LOGGING, null, true],
                 [ProductEligibilityAdminFormBuilder::ALMA_WIDGET_POSITION_SELECTOR, null, '#selectorCss'],
             ]
         );
         $this->shopModel->method('isMultisite')->willReturn(false);
-        $this->almaModuleModel->method('getPosition')->willReturn('4');
-        $expected = [
-            'alma_enabled' => false,
-            'widget_cart_activated' => false,
-            'widget_product_activated' => false,
-            'used_fee_plans' => ['general_1_0_0' => ['enabled' => '1']],
-            'payment_method_position' => 4,
-            'in_page_activated' => true,
-            'log_activated' => true,
-            'excluded_categories' => null,
-            'specific_features' => [],
-            'country_restriction' => [],
-            'custom_widget_css' => (bool) '#selectorCss',
-            'is_multisite' => false,
-        ];
+        $this->almaModuleModel->method('getPosition')->willReturn($getPosition);
 
         $this->assertEquals($expected, $this->cmsDataHelper->getCmsFeatureArray());
     }
 
     /**
-     * @return void
+     * @return array[]
      */
-    public function testGetCmsFeatureArrayWithFeePlansEmptyReturnNull()
+    public function getCmsFeatureArrayDataProvider()
     {
-        $this->settingsHelper->method('getKey')->willReturnMap(
-            [
-                [SettingsHelper::ALMA_FULLY_CONFIGURED, null, false],
-                [CartEligibilityAdminFormBuilder::ALMA_SHOW_ELIGIBILITY_MESSAGE, null, false],
-                [ProductEligibilityAdminFormBuilder::ALMA_SHOW_PRODUCT_ELIGIBILITY, null, false],
-                [PnxAdminFormBuilder::ALMA_FEE_PLANS, null, '{}'],
-                [InpageAdminFormBuilder::ALMA_ACTIVATE_INPAGE, null, true],
-                [DebugAdminFormBuilder::ALMA_ACTIVATE_LOGGING, null, true],
-                [ProductEligibilityAdminFormBuilder::ALMA_WIDGET_POSITION_SELECTOR, null, '#selectorCss'],
-            ]
-        );
-        $this->shopModel->method('isMultisite')->willReturn(false);
-        $this->almaModuleModel->method('getPosition')->willReturn('3');
-        $expected = [
-            'alma_enabled' => false,
-            'widget_cart_activated' => false,
-            'widget_product_activated' => false,
-            'used_fee_plans' => null,
-            'payment_method_position' => 3,
-            'in_page_activated' => true,
-            'log_activated' => true,
-            'excluded_categories' => null,
-            'specific_features' => [],
-            'country_restriction' => [],
-            'custom_widget_css' => (bool) '#selectorCss',
-            'is_multisite' => false,
+        return [
+            'With fee plans and getPosition' => [
+                'jsonFeePlans' => '{"general_1_0_0":{"enabled":"1"}}',
+                'getPosition' => '4',
+                'expected' => [
+                    'alma_enabled' => false,
+                    'widget_cart_activated' => false,
+                    'widget_product_activated' => false,
+                    'used_fee_plans' => ['general_1_0_0' => ['enabled' => '1']],
+                    'payment_method_position' => 4,
+                    'in_page_activated' => true,
+                    'log_activated' => true,
+                    'excluded_categories' => null,
+                    'specific_features' => [],
+                    'country_restriction' => [],
+                    'custom_widget_css' => (bool) '#selectorCss',
+                    'is_multisite' => false,
+                ],
+            ],
+            'Without fee plans and with getPosition' => [
+                'jsonFeePlans' => '{}',
+                'getPosition' => '3',
+                'expected' => [
+                    'alma_enabled' => false,
+                    'widget_cart_activated' => false,
+                    'widget_product_activated' => false,
+                    'used_fee_plans' => null,
+                    'payment_method_position' => 3,
+                    'in_page_activated' => true,
+                    'log_activated' => true,
+                    'excluded_categories' => null,
+                    'specific_features' => [],
+                    'country_restriction' => [],
+                    'custom_widget_css' => (bool) '#selectorCss',
+                    'is_multisite' => false,
+                ],
+            ],
+            'With fee plans and without getPosition' => [
+                'jsonFeePlans' => '{"general_1_0_0":{"enabled":"1"}}',
+                'getPosition' => '',
+                'expected' => [
+                    'alma_enabled' => false,
+                    'widget_cart_activated' => false,
+                    'widget_product_activated' => false,
+                    'used_fee_plans' => ['general_1_0_0' => ['enabled' => '1']],
+                    'payment_method_position' => 0,
+                    'in_page_activated' => true,
+                    'log_activated' => true,
+                    'excluded_categories' => null,
+                    'specific_features' => [],
+                    'country_restriction' => [],
+                    'custom_widget_css' => (bool) '#selectorCss',
+                    'is_multisite' => false,
+                ],
+            ],
         ];
-
-        $this->assertEquals($expected, $this->cmsDataHelper->getCmsFeatureArray());
-    }
-
-    /**
-     * @return void
-     */
-    public function testGetCmsFeatureArrayWithPositionEmptyReturnZero()
-    {
-        $this->settingsHelper->method('getKey')->willReturnMap(
-            [
-                [SettingsHelper::ALMA_FULLY_CONFIGURED, null, false],
-                [CartEligibilityAdminFormBuilder::ALMA_SHOW_ELIGIBILITY_MESSAGE, null, false],
-                [ProductEligibilityAdminFormBuilder::ALMA_SHOW_PRODUCT_ELIGIBILITY, null, false],
-                [PnxAdminFormBuilder::ALMA_FEE_PLANS, null, '{"general_1_0_0":{"enabled":"1"}}'],
-                [InpageAdminFormBuilder::ALMA_ACTIVATE_INPAGE, null, true],
-                [DebugAdminFormBuilder::ALMA_ACTIVATE_LOGGING, null, true],
-                [ProductEligibilityAdminFormBuilder::ALMA_WIDGET_POSITION_SELECTOR, null, '#selectorCss'],
-            ]
-        );
-        $this->shopModel->method('isMultisite')->willReturn(false);
-        $this->almaModuleModel->method('getPosition')->willReturn('');
-        $expected = [
-            'alma_enabled' => false,
-            'widget_cart_activated' => false,
-            'widget_product_activated' => false,
-            'used_fee_plans' => ['general_1_0_0' => ['enabled' => '1']],
-            'payment_method_position' => 0,
-            'in_page_activated' => true,
-            'log_activated' => true,
-            'excluded_categories' => null,
-            'specific_features' => [],
-            'country_restriction' => [],
-            'custom_widget_css' => (bool) '#selectorCss',
-            'is_multisite' => false,
-        ];
-
-        $this->assertEquals($expected, $this->cmsDataHelper->getCmsFeatureArray());
     }
 }

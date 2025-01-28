@@ -106,7 +106,12 @@ class AlmaModuleModelTest extends TestCase
         ];
     }
 
-    public function testGetPosition()
+    /**
+     * @dataProvider getPositionDataProvider
+     *
+     * @return void
+     */
+    public function testGetPosition($hookModule, $expected)
     {
         $hookName = 'paymentOptions';
         if (version_compare(_PS_VERSION_, '1.7', '<')) {
@@ -122,32 +127,25 @@ class AlmaModuleModelTest extends TestCase
         )->willReturnSelf();
         $this->dbQueryMock->method('orderBy')->willReturnSelf();
         $this->dbMock->method('getRow')
-            ->willReturn(['position' => 3]);
+            ->willReturn($hookModule);
 
-        $this->assertEquals('3', $this->almaModuleModel->getPosition());
+        $this->assertEquals($expected, $this->almaModuleModel->getPosition());
     }
 
     /**
-     * @return void
+     * @return array[]
      */
-    public function testGetPositionWithQueryReturnFalse()
+    public function getPositionDataProvider()
     {
-        $hookName = 'paymentOptions';
-        if (version_compare(_PS_VERSION_, '1.7', '<')) {
-            $hookName = 'displayPayment';
-        }
-
-        $this->dbQueryMock->method('select')->willReturnSelf();
-        $this->dbQueryMock->method('from')->willReturnSelf();
-        $this->dbQueryMock->method('join')->willReturnSelf();
-        $this->dbQueryMock->method('where')->withConsecutive(
-            ['h.name = "' . pSQL($hookName) . '"'],
-            ['m.name = "' . pSQL('alma') . '"']
-        )->willReturnSelf();
-        $this->dbQueryMock->method('orderBy')->willReturnSelf();
-        $this->dbMock->method('getRow')
-            ->willReturn(false);
-
-        $this->assertEquals('', $this->almaModuleModel->getPosition());
+        return [
+            'With SQL return position' => [
+                'hookModule' => ['position' => 3],
+                'expected' => '3',
+            ],
+            'Without SQL return position' => [
+                'hookModule' => false,
+                'expected' => '',
+            ],
+        ];
     }
 }
