@@ -108,13 +108,13 @@ class EligibilityHelper
             $this->contextFactory->getContextCart()->getOrderTotal(true, \Cart::BOTH)
         );
 
-        $plansEnableInDb = $this->feePlanHelper->getFeePlansEnable();
+        $plansEnableInDb = $this->feePlanHelper->getEnabledFeePlans();
         $plansNotEligible = $this->feePlanHelper->getNotEligibleFeePlans($plansEnableInDb, $purchaseAmount);
         $eligiblePlans = $this->feePlanHelper->getEligibleFeePlans($plansEnableInDb, $purchaseAmount);
         $paymentData = $this->paymentHelper->checkPaymentData($eligiblePlans);
 
         if (empty($eligiblePlans)) {
-            $this->almaBusinessDataService->updateIsBnplEligible(false, $this->contextFactory->getContextCart()->id);
+            $this->almaBusinessDataService->updateBnplEligibleStatus(false, $this->contextFactory->getContextCart()->id);
 
             return $plansEligibleFromApi;
         }
@@ -131,7 +131,7 @@ class EligibilityHelper
             return $a->installmentsCount - $b->installmentsCount;
         });
 
-        $this->almaBusinessDataService->saveIsBnplEligible($allPlans, $this->contextFactory->getContextCart()->id);
+        $this->almaBusinessDataService->saveBnplEligibleStatus($allPlans, $this->contextFactory->getContextCart()->id);
 
         return $allPlans;
     }

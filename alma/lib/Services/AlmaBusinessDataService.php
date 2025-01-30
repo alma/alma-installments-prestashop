@@ -159,7 +159,7 @@ class AlmaBusinessDataService
      *
      * @return void
      */
-    public function saveIsBnplEligible($plans, $cartId)
+    public function saveBnplEligibleStatus($plans, $cartId)
     {
         $planKeys = [];
         $isEligible = false;
@@ -178,7 +178,7 @@ class AlmaBusinessDataService
             $isEligible = true;
         }
 
-        $this->updateIsBnplEligible($isEligible, $cartId);
+        $this->updateBnplEligibleStatus($isEligible, $cartId);
     }
 
     /**
@@ -187,7 +187,7 @@ class AlmaBusinessDataService
      *
      * @return void
      */
-    public function updateIsBnplEligible($isEligible, $cartId)
+    public function updateBnplEligibleStatus($isEligible, $cartId)
     {
         $this->almaBusinessDataRepository->update('is_bnpl_eligible', $isEligible, self::WHERE_ID_CART . $cartId);
     }

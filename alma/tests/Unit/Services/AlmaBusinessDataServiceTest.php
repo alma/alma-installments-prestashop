@@ -340,19 +340,19 @@ class AlmaBusinessDataServiceTest extends TestCase
             ->method('update')
             ->with('is_bnpl_eligible', $expected, self::WHERE_ID_CART . $cartId);
 
-        $this->assertNull($this->almaBusinessDataService->saveIsBnplEligible($plans, $cartId));
+        $this->assertNull($this->almaBusinessDataService->saveBnplEligibleStatus($plans, $cartId));
     }
 
     /**
      * @return void
      */
-    public function testUpdateIsBnplEligible()
+    public function testUpdateBnplEligibleStatus()
     {
         $cartId = 1;
         $this->almaBusinessDataRepositoryMock->expects($this->once())
             ->method('update')
             ->with('is_bnpl_eligible', true, self::WHERE_ID_CART . $cartId);
-        $this->assertNull($this->almaBusinessDataService->updateIsBnplEligible(true, $cartId));
+        $this->assertNull($this->almaBusinessDataService->updateBnplEligibleStatus(true, $cartId));
     }
 
     /**

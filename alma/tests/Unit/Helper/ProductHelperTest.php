@@ -300,7 +300,7 @@ class ProductHelperTest extends TestCase
             ->with($this->productMock->id)
             ->willReturn($this->productMock);
 
-        // Make unitaire test if DB Change
+        // Make unit test if DB Change
         $this->assertEquals(
             $attributeCombinationsReturned,
             $this->productHelper->getAttributeCombinationsByProductId($this->productMock->id, $languageId)

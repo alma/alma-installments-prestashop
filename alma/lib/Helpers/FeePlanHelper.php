@@ -72,7 +72,7 @@ class FeePlanHelper
      *
      * @return array
      */
-    public function getFeePlansEnable()
+    public function getEnabledFeePlans()
     {
         $feePlans = array_filter((array) json_decode($this->settingsHelper->getAlmaFeePlans()), function ($feePlan) {
             return $feePlan->enabled == 1;
