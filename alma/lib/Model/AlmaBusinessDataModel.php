@@ -85,7 +85,7 @@ class AlmaBusinessDataModel extends \ObjectModel
     }
 
     /**
-     * @param int $cartId
+     * @param string $cartId
      *
      * @return array|bool|object|null
      */

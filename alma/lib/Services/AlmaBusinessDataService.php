@@ -147,7 +147,7 @@ class AlmaBusinessDataService
     }
 
     /**
-     * @param int $cartId
+     * @param string $cartId
      *
      * @return bool
      */
