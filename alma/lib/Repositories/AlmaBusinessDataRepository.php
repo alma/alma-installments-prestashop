@@ -24,6 +24,8 @@
 
 namespace Alma\PrestaShop\Repositories;
 
+use Alma\PrestaShop\Logger;
+
 if (!defined('_PS_VERSION_')) {
     exit;
 }
@@ -73,16 +75,20 @@ class AlmaBusinessDataRepository
      * @param string $value
      * @param string $where
      *
-     * @return bool
+     * @return bool|void
      */
     private function update($field, $value, $where = '')
     {
-        return \Db::getInstance()->update(
-            'alma_business_data',
-            [
-                $field => pSQL($value),
-            ],
-            $where
-        );
+        try {
+            return \Db::getInstance()->update(
+                'alma_business_data',
+                [
+                    $field => pSQL($value),
+                ],
+                $where
+            );
+        } catch (\PrestaShopDatabaseException $e) {
+            Logger::instance()->warning('Failed to update alma_business_data: ' . $e->getMessage());
+        }
     }
 }

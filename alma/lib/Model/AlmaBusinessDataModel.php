@@ -24,6 +24,7 @@
 
 namespace Alma\PrestaShop\Model;
 
+use Alma\PrestaShop\Logger;
 use Alma\PrestaShop\Traits\ObjectModelTrait;
 
 if (!defined('_PS_VERSION_')) {
@@ -87,7 +88,7 @@ class AlmaBusinessDataModel extends \ObjectModel
     /**
      * @param string $cartId
      *
-     * @return array|bool|object|null
+     * @return array|bool|object|void|null
      */
     public function getByCartId($cartId)
     {
@@ -97,6 +98,10 @@ class AlmaBusinessDataModel extends \ObjectModel
             ->from(static::$definition['table'])
             ->where('id_cart = ' . (int) $cartId);
 
-        return $db->getRow($query);
+        try {
+            return $db->getRow($query);
+        } catch (\PrestaShopDatabaseException $e) {
+            Logger::instance()->warning('Failed to fetch alma_business_data by cart ID: ' . $e->getMessage());
+        }
     }
 }
