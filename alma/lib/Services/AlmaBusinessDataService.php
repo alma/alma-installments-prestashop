@@ -97,6 +97,9 @@ class AlmaBusinessDataService
     {
         $this->updateOrderId($orderId, $cartId);
         $almaBusinessData = $this->almaBusinessDataModel->getByCartId($cartId);
+        if (!$almaBusinessData) {
+            return;
+        }
         $isPayNow = ConfigurationHelper::isPayNowStatic($almaBusinessData['plan_key']);
         $isBNPL = !empty($almaBusinessData['plan_key']) && !$isPayNow;
 
