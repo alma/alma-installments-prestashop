@@ -129,7 +129,7 @@ class AlmaBusinessDataService
     public function runCartInitiatedBusinessEvent($cartId)
     {
         try {
-            $cartInitiatedBusinessEvent = new CartInitiatedBusinessEvent($cartId);
+            $cartInitiatedBusinessEvent = new CartInitiatedBusinessEvent((string) $cartId);
             $this->clientModel->getClient()->merchants->sendCartInitiatedBusinessEvent($cartInitiatedBusinessEvent);
             $this->almaBusinessDataModel->id_cart = $cartId;
             $this->almaBusinessDataModel->add();
