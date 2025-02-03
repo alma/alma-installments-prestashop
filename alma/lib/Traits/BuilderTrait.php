@@ -78,7 +78,6 @@ use Alma\PrestaShop\Helpers\ToolsHelper;
 use Alma\PrestaShop\Helpers\TranslationHelper;
 use Alma\PrestaShop\Helpers\ValidateHelper;
 use Alma\PrestaShop\Logger;
-use Alma\PrestaShop\Model\AlmaBusinessDataModel;
 use Alma\PrestaShop\Model\CarrierData;
 use Alma\PrestaShop\Model\CartData;
 use Alma\PrestaShop\Model\PaymentData;
@@ -678,8 +677,7 @@ trait BuilderTrait
             $this->getContextFactory(),
             $this->getFeePlanHelper(),
             $this->getPaymentHelper(),
-            $this->getAlmaBusinessDataService(),
-            $this->getAlmaBusinessDataModel()
+            $this->getAlmaBusinessDataService()
         );
     }
 
@@ -1258,13 +1256,5 @@ trait BuilderTrait
     public function getAlmaBusinessDataService()
     {
         return new AlmaBusinessDataService();
-    }
-
-    /**
-     * @return AlmaBusinessDataModel
-     */
-    public function getAlmaBusinessDataModel()
-    {
-        return new AlmaBusinessDataModel();
     }
 }

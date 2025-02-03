@@ -49,8 +49,7 @@ class EligibilityHelperBuilder
             $this->getContextFactory(),
             $this->getFeePlanHelper(),
             $this->getPaymentHelper(),
-            $this->getAlmaBusinessDataService(),
-            $this->getAlmaBusinessDataModel()
+            $this->getAlmaBusinessDataService()
         );
     }
 }

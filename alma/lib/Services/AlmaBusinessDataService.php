@@ -28,6 +28,7 @@ use Alma\API\Endpoints\Results\Eligibility;
 use Alma\API\Entities\DTO\MerchantBusinessEvent\CartInitiatedBusinessEvent;
 use Alma\API\Entities\DTO\MerchantBusinessEvent\OrderConfirmedBusinessEvent;
 use Alma\API\Exceptions\ParametersException;
+use Alma\API\Exceptions\RequestException;
 use Alma\PrestaShop\Exceptions\ClientException;
 use Alma\PrestaShop\Helpers\ConfigurationHelper;
 use Alma\PrestaShop\Helpers\SettingsHelper;
@@ -42,7 +43,6 @@ if (!defined('_PS_VERSION_')) {
 
 class AlmaBusinessDataService
 {
-    const WHERE_ID_CART = 'id_cart = ';
     /**
      * @var \Alma\PrestaShop\Model\AlmaBusinessDataModel
      */
@@ -109,18 +109,20 @@ class AlmaBusinessDataService
                 (string) $cartId,
                 $almaBusinessData['alma_payment_id'] ?: null
             );
-            $this->clientModel->sendOrderConfirmedBusinessEvent($orderConfirmedBusinessEvent);
+            $this->clientModel->getClient()->merchants->sendOrderConfirmedBusinessEvent($orderConfirmedBusinessEvent);
         } catch (ParametersException $e) {
-            $this->logger->error('[Alma] Error in OrderConfirmedBusinessEvent constructor: ' . $e->getMessage());
+            $this->logger->error('[Alma] Error parameter in OrderConfirmedBusinessEvent constructor: ' . $e->getMessage());
         } catch (ClientException $e) {
             $this->logger->error('[Alma] Error Alma Client: ' . $e->getMessage());
+        } catch (RequestException $e) {
+            $this->logger->error('[Alma] Error Request for send order confirmed business event: ' . $e->getMessage());
         }
     }
 
     /**
      * Send CartInitiatedBusinessEvent to Alma
      *
-     * @param $cartId
+     * @param int $cartId
      *
      * @return void
      */
@@ -128,7 +130,7 @@ class AlmaBusinessDataService
     {
         try {
             $cartInitiatedBusinessEvent = new CartInitiatedBusinessEvent($cartId);
-            $this->clientModel->sendCartInitiatedBusinessEvent($cartInitiatedBusinessEvent);
+            $this->clientModel->getClient()->merchants->sendCartInitiatedBusinessEvent($cartInitiatedBusinessEvent);
             $this->almaBusinessDataModel->id_cart = $cartId;
             $this->almaBusinessDataModel->add();
         } catch (ParametersException $e) {
@@ -139,11 +141,13 @@ class AlmaBusinessDataService
             $this->logger->error('[Alma] Error in PrestaShopDatabaseException : ' . $e->getMessage());
         } catch (\PrestaShopException $e) {
             $this->logger->error('[Alma] Error in PrestaShopException : ' . $e->getMessage());
+        } catch (RequestException $e) {
+            $this->logger->error('[Alma] Error Request for send cart initiated business event: ' . $e->getMessage());
         }
     }
 
     /**
-     * @param $cartId
+     * @param int $cartId
      *
      * @return bool
      */
@@ -167,7 +171,7 @@ class AlmaBusinessDataService
         foreach ($plans as $plan) {
             /** @var Eligibility $plan */
             if ($plan->isEligible) {
-                $planKeys[] = SettingsHelper::keyForInstallmentPlanStatic($plan);
+                $planKeys[] = SettingsHelper::planKeyFromEligibilityPlan($plan);
             }
         }
         $planKeysWithoutPayNow = array_filter($planKeys, function ($key) {
@@ -189,39 +193,39 @@ class AlmaBusinessDataService
      */
     public function updateBnplEligibleStatus($isEligible, $cartId)
     {
-        $this->almaBusinessDataRepository->update('is_bnpl_eligible', $isEligible, self::WHERE_ID_CART . $cartId);
+        $this->almaBusinessDataRepository->updateByCartId('is_bnpl_eligible', $isEligible, $cartId);
     }
 
     /**
-     * @param $planKey
-     * @param $cartId
+     * @param string $planKey
+     * @param int $cartId
      *
      * @return void
      */
     public function updatePlanKey($planKey, $cartId)
     {
-        $this->almaBusinessDataRepository->update('plan_key', $planKey, self::WHERE_ID_CART . $cartId);
+        $this->almaBusinessDataRepository->updateByCartId('plan_key', $planKey, $cartId);
     }
 
     /**
-     * @param $orderId
-     * @param $cartId
+     * @param int $orderId
+     * @param int $cartId
      *
      * @return void
      */
     public function updateOrderId($orderId, $cartId)
     {
-        $this->almaBusinessDataRepository->update('id_order', $orderId, self::WHERE_ID_CART . $cartId);
+        $this->almaBusinessDataRepository->updateByCartId('id_order', $orderId, $cartId);
     }
 
     /**
-     * @param $almaPaymentId
-     * @param $cartId
+     * @param string $almaPaymentId
+     * @param int $cartId
      *
      * @return void
      */
     public function updateAlmaPaymentId($almaPaymentId, $cartId)
     {
-        $this->almaBusinessDataRepository->update('alma_payment_id', $almaPaymentId, self::WHERE_ID_CART . $cartId);
+        $this->almaBusinessDataRepository->updateByCartId('alma_payment_id', $almaPaymentId, $cartId);
     }
 }

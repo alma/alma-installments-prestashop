@@ -274,7 +274,7 @@ class PaymentValidation
                 }
             }
 
-            $planKey = $this->settingsHelper->key('general', $payment->installments_count, $payment->deferred_days, $payment->deferred_months);
+            $planKey = SettingsHelper::planKeyFromPayment($payment);
             $this->almaBusinessDataService->updatePlanKey($planKey, $cart->id);
             $this->almaBusinessDataService->updateAlmaPaymentId($payment->id, $cart->id);
 

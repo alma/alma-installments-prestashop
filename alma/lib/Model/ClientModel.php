@@ -24,8 +24,6 @@
 
 namespace Alma\PrestaShop\Model;
 
-use Alma\API\Entities\DTO\MerchantBusinessEvent\CartInitiatedBusinessEvent;
-use Alma\API\Entities\DTO\MerchantBusinessEvent\OrderConfirmedBusinessEvent;
 use Alma\API\Exceptions\RequestException;
 use Alma\API\RequestError;
 use Alma\PrestaShop\Exceptions\ClientException;
@@ -129,7 +127,7 @@ class ClientModel
      *
      * @throws \Alma\PrestaShop\Exceptions\ClientException
      */
-    private function getClient()
+    public function getClient()
     {
         if (!$this->almaClient) {
             throw new ClientException('No Api Key - it is normal at start');
@@ -195,46 +193,6 @@ class ClientModel
             throw new ClientException('[Alma] Error Request for sendUrlForGatherCmsData: ' . $e->getMessage());
         } catch (ClientException $e) {
             throw new ClientException('[Alma] Error to get Alma Client for sendUrlForGatherCmsData: ' . $e->getMessage());
-        }
-    }
-
-    /**
-     * Send order confirmed business event to Alma
-     *
-     * @param OrderConfirmedBusinessEvent $orderConfirmedBusinessEvent
-     *
-     * @return void
-     *
-     * @throws ClientException
-     */
-    public function sendOrderConfirmedBusinessEvent(OrderConfirmedBusinessEvent $orderConfirmedBusinessEvent)
-    {
-        try {
-            $this->getClient()->merchants->sendOrderConfirmedBusinessEvent($orderConfirmedBusinessEvent);
-        } catch (RequestException $e) {
-            throw new ClientException('[Alma] Error Request for send order confirmed business event: ' . $e->getMessage());
-        } catch (ClientException $e) {
-            throw new ClientException('[Alma] Error to get Alma Client for sendOrderConfirmedBusinessEvent: ' . $e->getMessage());
-        }
-    }
-
-    /**
-     * Send cart initiated business event to Alma
-     *
-     * @param CartInitiatedBusinessEvent $cartInitiatedBusinessEvent
-     *
-     * @return void
-     *
-     * @throws ClientException
-     */
-    public function sendCartInitiatedBusinessEvent(CartInitiatedBusinessEvent $cartInitiatedBusinessEvent)
-    {
-        try {
-            $this->getClient()->merchants->sendCartInitiatedBusinessEvent($cartInitiatedBusinessEvent);
-        } catch (RequestException $e) {
-            throw new ClientException('[Alma] Error Request for send cart initiated business event: ' . $e->getMessage());
-        } catch (ClientException $e) {
-            throw new ClientException('[Alma] Error to get Alma Client for sendCartInitiatedBusinessEvent: ' . $e->getMessage());
         }
     }
 }

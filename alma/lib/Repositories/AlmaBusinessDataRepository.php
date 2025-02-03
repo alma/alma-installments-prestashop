@@ -45,21 +45,37 @@ class AlmaBusinessDataRepository
             `is_bnpl_eligible` tinyint(1) unsigned NOT NULL DEFAULT \'0\',
             `plan_key` varchar(255) NOT NULL,
             PRIMARY KEY (`id_alma_business_data`)
+            UNIQUE KEY `unique_id_cart` (`id_cart`),
+            UNIQUE KEY `unique_alma_payment_id` (`alma_payment_id`)
         ) ENGINE=' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=utf8;';
 
         return \Db::getInstance()->execute($sql);
     }
 
     /**
-     * Update the table ps_alma_business_data for field set with value
+     * Update the table ps_alma_business_data for field set with value where id_cart is equal to cartId
      *
-     * @param $field
-     * @param $value
-     * @param $where
+     * @param string $field
+     * @param string $value
+     * @param string $cartId
      *
      * @return bool
      */
-    public function update($field, $value, $where = '')
+    public function updateByCartId($field, $value, $cartId)
+    {
+        return $this->update($field, $value, 'id_cart = ' . (int) $cartId);
+    }
+
+    /**
+     * Update the table ps_alma_business_data for field set with value
+     *
+     * @param string $field
+     * @param string $value
+     * @param string $where
+     *
+     * @return bool
+     */
+    private function update($field, $value, $where = '')
     {
         return \Db::getInstance()->update(
             'alma_business_data',

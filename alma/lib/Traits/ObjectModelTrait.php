@@ -41,14 +41,14 @@ trait ObjectModelTrait
      */
     protected function updateWithFullyQualifiedNamespace($null_values = false)
     {
-        // @hook actionObject*UpdateBefore
+        // @hook actionObject<ObjectClassName>UpdateBefore
         \Hook::exec('actionObjectUpdateBefore', ['object' => $this]);
         \Hook::exec('actionObject' . $this->getFullyQualifiedName() . 'UpdateBefore', ['object' => $this]);
 
         $this->clearCache();
 
         // Automatically fill dates
-        if (array_key_exists('date_upd', $this)) {
+        if (property_exists($this, 'date_upd')) {
             $this->date_upd = date('Y-m-d H:i:s');
             if (isset($this->update_fields) && is_array($this->update_fields) && count($this->update_fields)) {
                 $this->update_fields['date_upd'] = true;
@@ -56,7 +56,7 @@ trait ObjectModelTrait
         }
 
         // Automatically fill dates
-        if (array_key_exists('date_add', $this) && $this->date_add == null) {
+        if (property_exists($this, 'date_add') && $this->date_add == null) {
             $this->date_add = date('Y-m-d H:i:s');
             if (isset($this->update_fields) && is_array($this->update_fields) && count($this->update_fields)) {
                 $this->update_fields['date_add'] = true;
@@ -64,7 +64,7 @@ trait ObjectModelTrait
         }
 
         $id_shop_list = \Shop::getContextListShopID();
-        if (count($this->id_shop_list) > 0) {
+        if (count($this->id_shop_list)) {
             $id_shop_list = $this->id_shop_list;
         }
 
@@ -120,7 +120,7 @@ trait ObjectModelTrait
                     // If this table is linked to multishop system, update / insert for all shops from context
                     if ($this->isLangMultishop()) {
                         $id_shop_list = \Shop::getContextListShopID();
-                        if (count($this->id_shop_list) > 0) {
+                        if (count($this->id_shop_list)) {
                             $id_shop_list = $this->id_shop_list;
                         }
                         foreach ($id_shop_list as $id_shop) {
@@ -135,9 +135,8 @@ trait ObjectModelTrait
                                 $result &= \Db::getInstance()->insert($this->def['table'] . '_lang', $field);
                             }
                         }
-                    }
-                    // If this table is not linked to multishop system ...
-                    else {
+                    } else {
+                        // If this table is not linked to multishop system ...
                         $where = pSQL($this->def['primary']) . ' = ' . (int) $this->id
                             . ' AND id_lang = ' . (int) $field['id_lang'];
                         if (\Db::getInstance()->getValue('SELECT COUNT(*) FROM ' . pSQL(_DB_PREFIX_ . $this->def['table']) . '_lang WHERE ' . $where)) {
@@ -150,7 +149,7 @@ trait ObjectModelTrait
             }
         }
 
-        // @hook actionObject*UpdateAfter
+        // @hook actionObject<ObjectClassName>UpdateAfter
         \Hook::exec('actionObjectUpdateAfter', ['object' => $this]);
         \Hook::exec('actionObject' . $this->getFullyQualifiedName() . 'UpdateAfter', ['object' => $this]);
 

@@ -68,8 +68,8 @@ class AlmaBusinessDataModel extends \ObjectModel
     ];
 
     /**
-     * @param $null_values
-     * @param $auto_date
+     * @param bool $null_values
+     * @param bool $auto_date
      *
      * @return bool
      *
@@ -85,6 +85,8 @@ class AlmaBusinessDataModel extends \ObjectModel
     }
 
     /**
+     * @param int $cartId
+     *
      * @return array|bool|object|null
      */
     public function getByCartId($cartId)
