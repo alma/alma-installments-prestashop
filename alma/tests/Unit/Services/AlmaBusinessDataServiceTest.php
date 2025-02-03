@@ -24,10 +24,12 @@
 
 namespace Alma\PrestaShop\Tests\Unit\Services;
 
+use Alma\API\Client;
+use Alma\API\Endpoints\Merchants;
 use Alma\API\Endpoints\Results\Eligibility;
 use Alma\API\Entities\DTO\MerchantBusinessEvent\CartInitiatedBusinessEvent;
 use Alma\API\Entities\DTO\MerchantBusinessEvent\OrderConfirmedBusinessEvent;
-use Alma\PrestaShop\Exceptions\ClientException;
+use Alma\API\Exceptions\RequestException;
 use Alma\PrestaShop\Logger;
 use Alma\PrestaShop\Model\AlmaBusinessDataModel;
 use Alma\PrestaShop\Model\ClientModel;
@@ -37,7 +39,6 @@ use PHPUnit\Framework\TestCase;
 
 class AlmaBusinessDataServiceTest extends TestCase
 {
-    const WHERE_ID_CART = 'id_cart = ';
     /**
      * @var \Alma\PrestaShop\Services\AlmaBusinessDataService
      */
@@ -63,16 +64,27 @@ class AlmaBusinessDataServiceTest extends TestCase
      */
     protected $configurationHelperMock;
     /**
-     * @var \Alma\PrestaShop\Repositories\AlmaBusinessDataRepository|(\Alma\PrestaShop\Repositories\AlmaBusinessDataRepository&\PHPUnit_Framework_MockObject_MockObject)|\PHPUnit_Framework_MockObject_MockObject
+     * @var \Alma\PrestaShop\Repositories\AlmaBusinessDataRepository
      */
     protected $almaBusinessDataRepositoryMock;
     /**
-     * @var \Alma\API\Entities\DTO\MerchantBusinessEvent\OrderConfirmedBusinessEvent|(\Alma\API\Entities\DTO\MerchantBusinessEvent\OrderConfirmedBusinessEvent&\PHPUnit_Framework_MockObject_MockObject)|\PHPUnit_Framework_MockObject_MockObject
+     * @var \Alma\API\Entities\DTO\MerchantBusinessEvent\OrderConfirmedBusinessEvent
      */
     protected $orderConfirmedBusinessEventMock;
+    /**
+     * @var Client
+     */
+    protected $clientMock;
+    /**
+     * @var \Alma\API\Endpoints\Merchants
+     */
+    protected $merchantsMock;
 
     public function setUp()
     {
+        $this->merchantsMock = $this->createMock(Merchants::class);
+        $this->clientMock = $this->createMock(Client::class);
+        $this->clientMock->merchants = $this->merchantsMock;
         $this->clientModelMock = $this->createMock(ClientModel::class);
         $this->loggerMock = $this->createMock(Logger::class);
         $this->almaBusinessDataModelMock = $this->createMock(AlmaBusinessDataModel::class);
@@ -101,13 +113,16 @@ class AlmaBusinessDataServiceTest extends TestCase
             'plan_key' => 'general_2_0_0',
         ];
         $this->almaBusinessDataRepositoryMock->expects($this->once())
-            ->method('update')
-            ->with('id_order', $orderId, self::WHERE_ID_CART . $cartId);
+            ->method('updateByCartId')
+            ->with('id_order', $orderId, $cartId);
         $this->almaBusinessDataModelMock->expects($this->once())
             ->method('getByCartId')
             ->with($cartId)
             ->willReturn($almaBusinessData);
         $this->clientModelMock->expects($this->once())
+            ->method('getClient')
+            ->willReturn($this->clientMock);
+        $this->merchantsMock->expects($this->once())
             ->method('sendOrderConfirmedBusinessEvent')
             ->with($this->isInstanceOf(OrderConfirmedBusinessEvent::class));
         $this->almaBusinessDataService->runOrderConfirmedBusinessEvent($orderId, $cartId);
@@ -121,13 +136,15 @@ class AlmaBusinessDataServiceTest extends TestCase
     public function testRunOrderConfirmedBusinessEventWithWrongParamLoggerErrorNoThrow($almaBusinessData, $orderId, $cartId)
     {
         $this->almaBusinessDataRepositoryMock->expects($this->once())
-            ->method('update')
-            ->with('id_order', $orderId, self::WHERE_ID_CART . $cartId);
+            ->method('updateByCartId')
+            ->with('id_order', $orderId, $cartId);
         $this->almaBusinessDataModelMock->expects($this->once())
             ->method('getByCartId')
             ->with($cartId)
             ->willReturn($almaBusinessData);
         $this->clientModelMock->expects($this->never())
+            ->method('getClient');
+        $this->merchantsMock->expects($this->never())
             ->method('sendOrderConfirmedBusinessEvent');
         $this->loggerMock->expects($this->once())->method('error');
         $this->almaBusinessDataService->runOrderConfirmedBusinessEvent($orderId, $cartId);
@@ -206,15 +223,18 @@ class AlmaBusinessDataServiceTest extends TestCase
             'plan_key' => 'general_2_0_0',
         ];
         $this->almaBusinessDataRepositoryMock->expects($this->once())
-            ->method('update')
-            ->with('id_order', $orderId, self::WHERE_ID_CART . $cartId);
+            ->method('updateByCartId')
+            ->with('id_order', $orderId, $cartId);
         $this->almaBusinessDataModelMock->expects($this->once())
             ->method('getByCartId')
             ->with($cartId)
             ->willReturn($almaBusinessData);
         $this->clientModelMock->expects($this->once())
+            ->method('getClient')
+            ->willReturn($this->clientMock);
+        $this->merchantsMock->expects($this->once())
             ->method('sendOrderConfirmedBusinessEvent')
-            ->willThrowException(new ClientException());
+            ->willThrowException(new RequestException());
         $this->loggerMock->expects($this->once())->method('error');
         $this->almaBusinessDataService->runOrderConfirmedBusinessEvent($orderId, $cartId);
     }
@@ -226,6 +246,9 @@ class AlmaBusinessDataServiceTest extends TestCase
     {
         $cartId = '1';
         $this->clientModelMock->expects($this->once())
+            ->method('getClient')
+            ->willReturn($this->clientMock);
+        $this->merchantsMock->expects($this->once())
             ->method('sendCartInitiatedBusinessEvent')
             ->with($this->isInstanceOf(CartInitiatedBusinessEvent::class));
         $this->almaBusinessDataService->runCartInitiatedBusinessEvent($cartId);
@@ -239,6 +262,8 @@ class AlmaBusinessDataServiceTest extends TestCase
     public function testRunCartInitiatedBusinessEventWithWrongParamLoggerErrorNoThrow($cartId)
     {
         $this->clientModelMock->expects($this->never())
+            ->method('getClient');
+        $this->merchantsMock->expects($this->never())
             ->method('sendCartInitiatedBusinessEvent');
         $this->loggerMock->expects($this->once())->method('error');
         $this->almaBusinessDataService->runCartInitiatedBusinessEvent($cartId);
@@ -251,8 +276,11 @@ class AlmaBusinessDataServiceTest extends TestCase
     {
         $cartId = '1';
         $this->clientModelMock->expects($this->once())
+            ->method('getClient')
+            ->willReturn($this->clientMock);
+        $this->merchantsMock->expects($this->once())
             ->method('sendCartInitiatedBusinessEvent')
-            ->willThrowException(new ClientException());
+            ->willThrowException(new RequestException());
         $this->loggerMock->expects($this->once())->method('error');
         $this->almaBusinessDataService->runCartInitiatedBusinessEvent($cartId);
     }
@@ -337,8 +365,8 @@ class AlmaBusinessDataServiceTest extends TestCase
     {
         $cartId = 1;
         $this->almaBusinessDataRepositoryMock->expects($this->once())
-            ->method('update')
-            ->with('is_bnpl_eligible', $expected, self::WHERE_ID_CART . $cartId);
+            ->method('updateByCartId')
+            ->with('is_bnpl_eligible', $expected, $cartId);
 
         $this->assertNull($this->almaBusinessDataService->saveBnplEligibleStatus($plans, $cartId));
     }
@@ -350,8 +378,8 @@ class AlmaBusinessDataServiceTest extends TestCase
     {
         $cartId = 1;
         $this->almaBusinessDataRepositoryMock->expects($this->once())
-            ->method('update')
-            ->with('is_bnpl_eligible', true, self::WHERE_ID_CART . $cartId);
+            ->method('updateByCartId')
+            ->with('is_bnpl_eligible', true, $cartId);
         $this->assertNull($this->almaBusinessDataService->updateBnplEligibleStatus(true, $cartId));
     }
 
@@ -362,8 +390,8 @@ class AlmaBusinessDataServiceTest extends TestCase
     {
         $cartId = 1;
         $this->almaBusinessDataRepositoryMock->expects($this->once())
-            ->method('update')
-            ->with('plan_key', true, self::WHERE_ID_CART . $cartId);
+            ->method('updateByCartId')
+            ->with('plan_key', true, $cartId);
         $this->assertNull($this->almaBusinessDataService->updatePlanKey(true, $cartId));
     }
 
@@ -374,8 +402,8 @@ class AlmaBusinessDataServiceTest extends TestCase
     {
         $cartId = 1;
         $this->almaBusinessDataRepositoryMock->expects($this->once())
-            ->method('update')
-            ->with('id_order', false, self::WHERE_ID_CART . $cartId);
+            ->method('updateByCartId')
+            ->with('id_order', false, $cartId);
         $this->assertNull($this->almaBusinessDataService->updateOrderId(false, $cartId));
     }
 
@@ -386,8 +414,8 @@ class AlmaBusinessDataServiceTest extends TestCase
     {
         $cartId = 1;
         $this->almaBusinessDataRepositoryMock->expects($this->once())
-            ->method('update')
-            ->with('alma_payment_id', true, self::WHERE_ID_CART . $cartId);
+            ->method('updateByCartId')
+            ->with('alma_payment_id', true, $cartId);
         $this->assertNull($this->almaBusinessDataService->updateAlmaPaymentId(true, $cartId));
     }
 
