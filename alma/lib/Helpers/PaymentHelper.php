@@ -49,7 +49,7 @@ class PaymentHelper
     /**
      * Return payload to send to Alma API for create payment
      *
-     * @param $activePlans
+     * @param array $activePlans
      *
      * @return array
      *

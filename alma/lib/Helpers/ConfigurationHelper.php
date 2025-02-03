@@ -147,7 +147,7 @@ class ConfigurationHelper
     }
 
     /**
-     * @param $key
+     * @param string $key
      *
      * @return bool
      */
