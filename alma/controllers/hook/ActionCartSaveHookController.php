@@ -137,7 +137,7 @@ class ActionCartSaveHookController extends FrontendHookController
         $newCart = $params['cart'];
 
         if (!$this->almaBusinessDataService->isAlmaBusinessDataExistByCart($newCart->id)) {
-            $this->almaBusinessDataService->runCartInitiatedBusinessEvent($newCart->id);
+            $this->almaBusinessDataService->runCartInitiatedBusinessEvent((string) $newCart->id);
         }
 
         if ($this->insuranceHelper->isInsuranceActivated()) {
