@@ -127,7 +127,7 @@ class ClientModel
      *
      * @throws \Alma\PrestaShop\Exceptions\ClientException
      */
-    private function getClient()
+    public function getClient()
     {
         if (!$this->almaClient) {
             throw new ClientException('No Api Key - it is normal at start');
@@ -188,11 +188,11 @@ class ClientModel
         try {
             $this->getClient()->configuration->sendIntegrationsConfigurationsUrl($url);
         } catch (RequestException $e) {
-            throw new ClientException('[Alma] Error Request: ' . $e->getMessage());
+            throw new ClientException('[Alma] Error Request for sendUrlForGatherCmsData: ' . $e->getMessage());
         } catch (RequestError $e) {
-            throw new ClientException('[Alma] Error Request: ' . $e->getMessage());
+            throw new ClientException('[Alma] Error Request for sendUrlForGatherCmsData: ' . $e->getMessage());
         } catch (ClientException $e) {
-            throw new ClientException('[Alma] Error to get Alma Client: ' . $e->getMessage());
+            throw new ClientException('[Alma] Error to get Alma Client for sendUrlForGatherCmsData: ' . $e->getMessage());
         }
     }
 }

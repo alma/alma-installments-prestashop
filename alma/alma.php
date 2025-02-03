@@ -232,6 +232,9 @@ class Alma extends PaymentModule
      */
     public function install()
     {
+        $tabsHelper = new \Alma\PrestaShop\Helpers\Admin\TabsHelper();
+        $almaBusinessDataRepository = new \Alma\PrestaShop\Repositories\AlmaBusinessDataRepository();
+
         try {
             $this->checkPsAccountsPresence();
             $psAccountsService = new \Alma\PrestaShop\Services\PsAccountsService($this, $this->context);
@@ -255,7 +258,7 @@ class Alma extends PaymentModule
             $this->updateCarriersWithAlma();
         }
 
-        $tabsHelper = new \Alma\PrestaShop\Helpers\Admin\TabsHelper();
+        $almaBusinessDataRepository->createTable();
 
         return $tabsHelper->installTabs($this->dataTabs());
     }

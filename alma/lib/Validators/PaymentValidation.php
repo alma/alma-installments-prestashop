@@ -41,6 +41,7 @@ use Alma\PrestaShop\Helpers\RefundHelper;
 use Alma\PrestaShop\Helpers\SettingsHelper;
 use Alma\PrestaShop\Helpers\ToolsHelper;
 use Alma\PrestaShop\Logger;
+use Alma\PrestaShop\Services\AlmaBusinessDataService;
 use Alma\PrestaShop\Services\OrderService;
 
 if (!defined('_PS_VERSION_')) {
@@ -77,6 +78,10 @@ class PaymentValidation
      * @var PaymentValidator
      */
     protected $paymentValidator;
+    /**
+     * @var \Alma\PrestaShop\Services\AlmaBusinessDataService
+     */
+    private $almaBusinessDataService;
 
     /**
      * @param ContextFactory $contextFactory
@@ -103,6 +108,7 @@ class PaymentValidation
         $orderServiceBuilder = new OrderServiceBuilder();
 
         $this->orderService = $orderServiceBuilder->getInstance();
+        $this->almaBusinessDataService = new AlmaBusinessDataService();
     }
 
     /**
@@ -267,6 +273,10 @@ class PaymentValidation
                     );
                 }
             }
+
+            $planKey = SettingsHelper::planKeyFromPayment($payment);
+            $this->almaBusinessDataService->updatePlanKey($planKey, $cart->id);
+            $this->almaBusinessDataService->updateAlmaPaymentId($payment->id, $cart->id);
 
             try {
                 // Place order

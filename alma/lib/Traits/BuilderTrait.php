@@ -89,6 +89,7 @@ use Alma\PrestaShop\Repositories\AlmaInsuranceProductRepository;
 use Alma\PrestaShop\Repositories\CartProductRepository;
 use Alma\PrestaShop\Repositories\OrderRepository;
 use Alma\PrestaShop\Repositories\ProductRepository;
+use Alma\PrestaShop\Services\AlmaBusinessDataService;
 use Alma\PrestaShop\Services\AttributeGroupProductService;
 use Alma\PrestaShop\Services\AttributeProductService;
 use Alma\PrestaShop\Services\CartService;
@@ -675,7 +676,8 @@ trait BuilderTrait
             $this->getApiHelper(),
             $this->getContextFactory(),
             $this->getFeePlanHelper(),
-            $this->getPaymentHelper()
+            $this->getPaymentHelper(),
+            $this->getAlmaBusinessDataService()
         );
     }
 
@@ -1246,5 +1248,13 @@ trait BuilderTrait
     public function getToolsProxy()
     {
         return new ToolsProxy();
+    }
+
+    /**
+     * @return AlmaBusinessDataService
+     */
+    public function getAlmaBusinessDataService()
+    {
+        return new AlmaBusinessDataService();
     }
 }

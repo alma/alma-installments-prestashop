@@ -36,6 +36,8 @@ if (!defined('ALMA_MODE_LIVE')) {
     define('ALMA_MODE_LIVE', 'live');
 }
 
+use Alma\API\Endpoints\Results\Eligibility;
+use Alma\API\Entities\Payment;
 use Alma\PrestaShop\Exceptions\AlmaException;
 use Alma\PrestaShop\Exceptions\EncryptionException;
 use Alma\PrestaShop\Factories\CategoryFactory;
@@ -852,7 +854,9 @@ class SettingsHelper
     }
 
     /**
-     * @param \Alma\API\Entities\FeePlan $plan
+     * @deprecated use static function keyForInstallmentPlanStatic
+     *
+     * @param Eligibility $plan
      *
      * @return string
      */
@@ -867,6 +871,32 @@ class SettingsHelper
     }
 
     /**
+     * Get plan key from Eligibility
+     *
+     * @param Eligibility $plan
+     *
+     * @return string
+     */
+    public static function planKeyFromEligibilityPlan($plan)
+    {
+        return implode('_', ['general', (int) $plan->installmentsCount, (int) $plan->deferredDays, (int) $plan->deferredMonths]);
+    }
+
+    /**
+     * Get plan key from Payment
+     *
+     * @param Payment $payment
+     *
+     * @return string
+     */
+    public static function planKeyFromPayment($payment)
+    {
+        return implode('_', ['general', (int) $payment->installments_count, (int) $payment->deferred_days, (int) $payment->deferred_months]);
+    }
+
+    /**
+     * @deprecated use keyForInstallmentPlanStatic or planKeyFromPayment instead
+     *
      * @param string $planKind
      * @param int $installmentsCount
      * @param int $deferredDays

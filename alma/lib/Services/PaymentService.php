@@ -221,8 +221,10 @@ class PaymentService
     }
 
     /**
+     * Return array of payment options (Payment Method displayed in checkout)
+     * Sorted by position of plans in the back office
+     *
      * @param $params
-     * @param $module
      *
      * @return array
      */

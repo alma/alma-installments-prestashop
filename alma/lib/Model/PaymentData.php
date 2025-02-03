@@ -177,6 +177,9 @@ class PaymentData
     }
 
     /**
+     * Return data payload for create payment
+     * If $forPayment is false, return data for eligibility endpoint
+     *
      * @param $feePlans
      * @param $forPayment
      *

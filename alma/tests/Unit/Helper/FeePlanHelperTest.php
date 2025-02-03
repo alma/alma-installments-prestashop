@@ -114,7 +114,7 @@ class FeePlanHelperTest extends TestCase
         $feePlanHelperBuilder->shouldReceive('getSettingsHelper')->andReturn($settingsHelper);
 
         $feePlanHelper = $feePlanHelperBuilder->getInstance();
-        $result = $feePlanHelper->checkFeePlans();
+        $result = $feePlanHelper->getEnabledFeePlans();
 
         $this->assertCount(1, $result);
         $this->assertEquals(1, $result[0]->installments_count);
@@ -126,7 +126,7 @@ class FeePlanHelperTest extends TestCase
         $feePlanHelperBuilder->shouldReceive('getSettingsHelper')->andReturn($settingsHelper);
 
         $feePlanHelper = $feePlanHelperBuilder->getInstance();
-        $result = $feePlanHelper->checkFeePlans();
+        $result = $feePlanHelper->getEnabledFeePlans();
 
         $this->assertCount(0, $result);
     }

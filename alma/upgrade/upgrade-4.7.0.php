@@ -51,6 +51,10 @@ function upgrade_module_4_7_0($module)
 
     //Start migration here
 
+    // Create table alma_business_data
+    $almaBusinessDataRepository = new \Alma\PrestaShop\Repositories\AlmaBusinessDataRepository();
+    $almaBusinessDataRepository->createTable();
+
     if (version_compare(_PS_VERSION_, ConstantsHelper::PRESTASHOP_VERSION_1_7_0_2, '>')) {
         Tools::clearAllCache();
         Tools::clearXMLCache();
