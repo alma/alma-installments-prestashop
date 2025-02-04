@@ -47,8 +47,7 @@ class AlmaBusinessDataRepository
             `is_bnpl_eligible` tinyint(1) unsigned NOT NULL DEFAULT \'0\',
             `plan_key` varchar(255) NOT NULL,
             PRIMARY KEY (`id_alma_business_data`),
-            UNIQUE KEY `unique_id_cart` (`id_cart`),
-            UNIQUE KEY `unique_alma_payment_id` (`alma_payment_id`)
+            UNIQUE KEY `unique_id_cart` (`id_cart`)
         ) ENGINE=' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=utf8;';
 
         return \Db::getInstance()->execute($sql);

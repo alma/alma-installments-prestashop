@@ -25,16 +25,13 @@
 namespace Alma\PrestaShop\Model;
 
 use Alma\PrestaShop\Logger;
-use Alma\PrestaShop\Traits\ObjectModelTrait;
 
 if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-class AlmaBusinessDataModel extends \ObjectModel
+class AlmaBusinessDataModel extends AlmaObjectModel
 {
-    use ObjectModelTrait;
-
     /** @var int */
     public $id_alma_business_data;
 
@@ -102,6 +99,24 @@ class AlmaBusinessDataModel extends \ObjectModel
             return $db->getRow($query);
         } catch (\PrestaShopDatabaseException $e) {
             Logger::instance()->warning('Failed to fetch alma_business_data by cart ID: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * @param bool $auto_date
+     * @param bool $null_values
+     *
+     * @return bool|int|string
+     *
+     * @throws \PrestaShopDatabaseException
+     * @throws \PrestaShopException
+     */
+    public function add($auto_date = true, $null_values = false)
+    {
+        if (version_compare(_PS_VERSION_, '1.7.1.0', '<')) {
+            return $this->addWithFullyQualifiedNamespace($auto_date, $null_values);
+        } else {
+            return parent::add($auto_date, $null_values);
         }
     }
 }
