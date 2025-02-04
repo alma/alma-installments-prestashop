@@ -142,7 +142,7 @@ $_MODULE['<{alma}prestashop>refundhelper_446ae76a36687f9dbc62430e7006ca91'] = 'L
 $_MODULE['<{alma}prestashop>refundhelper_448edd2d5c593906afa202847b8d79c0'] = 'Wir bitten um Entschuldigung für die Unannehmlichkeiten, leider gab es ein Problem während des Zahlungsvorgangs, die Rückerstattung Ihrer Alma Zahlung war nicht möglich. Um dieses Problem zu lösen, bitten wir Sie, unser Support-Team mit Ihrer Zahlungsreferenz zu kontaktieren: %s. Unser Team wird Sie gerne unterstützen, damit Sie Ihre volle Rückerstattung erhalten. Vielen Dank für Ihre Mitarbeit.';
 $_MODULE['<{alma}prestashop>planhelper_1dd1c5fb7f25cd41b291d43a89e3aefd'] = 'Heute';
 $_MODULE['<{alma}prestashop>planhelper_96b0141273eabab320119c467cdcaf17'] = 'Insgesamt';
-$_MODULE['<{alma}prestashop>planhelper_9bbd94e0a507283ae202812ea1bd6f20'] = '%s Monat später';
+$_MODULE['<{alma}prestashop>planhelper_9bbd94e0a507283ae202812ea1bd6f20'] = '%s Monat(e) später';
 $_MODULE['<{alma}prestashop>orderhelper_7960c85fd5916169fc5038a2192094f8'] = 'Fehler: Alma-Transaktion konnte nicht gefunden werden';
 $_MODULE['<{alma}prestashop>paymentoptiontemplatehelper_9088921432b295dfe6f02863b2dc0ff8'] = '0 € heute dann %1$s am %2$s';
 $_MODULE['<{alma}prestashop>customfieldshelper_2c53dea2326232a2d867ddd1d2206aa0'] = 'Jetzt per Kreditkarte bezahlen';
@@ -159,7 +159,7 @@ $_MODULE['<{alma}prestashop>admininsurancehelper_7442e29d7d53e549b78d93c46b8cdcf
 $_MODULE['<{alma}prestashop>insuranceservice_d87aee5118a62a7ff6c21e4ac31006c5'] = 'I hereby acknowledge my acceptance to subscribe to the insurance offered by Alma. In doing so, I confirm that I have previously reviewed the [information notice, which constitutes the general conditions], the [insurance product information document], and the [pre-contractual information and advice sheet]. I ahead to it without reservation and agree to electronically sign the various documents forming my contract, if applicable. I expressly consent to the collection and use of my personal data for the purpose of subscribing to and managing my insurance contract(s).';
 $_MODULE['<{alma}prestashop>adminalmainsuranceconfiguration_b824200e9b8aca1fbb762d6566ff0cd7'] = 'Your configuration has been saved';
 $_MODULE['<{alma}prestashop>adminalmainsuranceconfiguration_a6bf06f186e2fccecad054fd831c2144'] = '[Alma] Fehler beim Versicherungsprodukt während der Änderungskonfiguration: %1$s';
-$_MODULE['<{alma}prestashop>adminalmainsuranceconfiguration_b42688965893bdb7a37cf1197e506e25'] = '[Alma] Fehler beim Erstellen der Konfiguration Alma Versicherung: %1$s';
+$_MODULE['<{alma}prestashop>adminalmainsuranceconfiguration_b42688965893bdb7a37cf1197e506e25'] = '[Alma] Fehler beim Erstellen der Konfiguration der Alma Versicherung: %1$s';
 $_MODULE['<{alma}prestashop>adminalmainsuranceorders_a66f446516cd125af12bd25073f88b78'] = 'Orders with insurance';
 $_MODULE['<{alma}prestashop>adminalmainsuranceorders_49414cda71621b3ee718ae5ff40804c5'] = 'Id Order';
 $_MODULE['<{alma}prestashop>adminalmainsuranceorders_63d5049791d9d79d86e9a108b0a999ca'] = 'Reference';
