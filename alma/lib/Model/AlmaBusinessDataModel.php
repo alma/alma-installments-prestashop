@@ -59,7 +59,7 @@ class AlmaBusinessDataModel extends AlmaObjectModel
         'fields' => [
             'id_cart' => ['type' => self::TYPE_INT, 'validate' => 'isUnsignedId', 'required' => true],
             'id_order' => ['type' => self::TYPE_INT, 'validate' => 'isUnsignedId'],
-            'alma_payment_id' => ['type' => self::TYPE_STRING, 'validate' => 'isGenericName'],
+            'alma_payment_id' => ['type' => self::TYPE_STRING, 'allow_null' => true, 'validate' => 'isGenericName'],
             'is_bnpl_eligible' => ['type' => self::TYPE_BOOL, 'validate' => 'isBool'],
             'plan_key' => ['type' => self::TYPE_STRING, 'validate' => 'isGenericName'],
         ],
