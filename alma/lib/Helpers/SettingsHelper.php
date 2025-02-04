@@ -36,7 +36,10 @@ if (!defined('ALMA_MODE_LIVE')) {
     define('ALMA_MODE_LIVE', 'live');
 }
 
+use Alma\API\Endpoints\Results\Eligibility;
+use Alma\API\Entities\Payment;
 use Alma\PrestaShop\Exceptions\AlmaException;
+use Alma\PrestaShop\Exceptions\EncryptionException;
 use Alma\PrestaShop\Factories\CategoryFactory;
 use Alma\PrestaShop\Factories\ContextFactory;
 use Alma\PrestaShop\Forms\ApiAdminFormBuilder;
@@ -300,7 +303,8 @@ class SettingsHelper
     }
 
     /**
-     * Get true if the consent SoC isn't answered.
+     * @deprecated use isShareOfCheckoutNoAnswered in ShareOfCheckoutHelper
+     * Get true if the consent SoC isn't answered
      *
      * @return bool
      */
@@ -336,7 +340,8 @@ class SettingsHelper
     }
 
     /**
-     * Get true if need to hide SoC form.
+     * @deprecated
+     * Get true if need to hide SoC form
      *
      * @return bool
      */
@@ -345,6 +350,16 @@ class SettingsHelper
         return (SettingsHelper::isShareOfCheckoutNoAnswered() && ALMA_MODE_LIVE === SettingsHelper::getActiveMode())
                 || (!SettingsHelper::isShareOfCheckoutSetting() && ALMA_MODE_LIVE === SettingsHelper::getActiveMode())
                 || ALMA_MODE_LIVE !== SettingsHelper::getActiveMode();
+    }
+
+    /**
+     * Return true if we need to display the SoC form.
+     *
+     * @return bool
+     */
+    public function shouldDisplayShareOfCheckoutForm()
+    {
+        return !static::shouldHideShareOfCheckoutForm();
     }
 
     /**
@@ -392,11 +407,9 @@ class SettingsHelper
     }
 
     /**
-     * Get API key of mode selected.
+     * Get decrypted API key of selected mode or empty string
      *
      * @return string
-     *
-     * @throws \Exception
      */
     public static function getActiveAPIKey()
     {
@@ -408,49 +421,54 @@ class SettingsHelper
     }
 
     /**
-     * Get API key Live.
+     * Get decrypted API key Live or empty string
      *
-     * @return string|null
-     *
-     * @throws \Exception
+     * @return string
      */
     public static function getLiveKey()
     {
         $apiKey = static::get(ApiAdminFormBuilder::ALMA_LIVE_API_KEY, null);
 
         if (!$apiKey) {
-            return false;
+            return '';
         }
-
+        // Check if the key is already decrypted
         if (false !== strpos($apiKey, ConstantsHelper::BEGIN_LIVE_API_KEY)) {
             return $apiKey;
         }
 
         $encryption = new EncryptionHelper();
 
-        return $encryption->decrypt($apiKey);
+        try {
+            return $encryption->decrypt($apiKey);
+        } catch (EncryptionException $e) {
+            return '';
+        }
     }
 
     /**
-     * Get API key Test.
+     * Get decrypted API key Test or empty string
      *
-     * @return string|null
-     *
-     * @throws \Exception
+     * @return string
      */
     public static function getTestKey()
     {
         $apiKey = static::get(ApiAdminFormBuilder::ALMA_TEST_API_KEY, null);
         if (!$apiKey) {
-            return false;
+            return '';
         }
+        // Check if the key is already decrypted
         if (false !== strpos($apiKey, ConstantsHelper::BEGIN_TEST_API_KEY)) {
             return $apiKey;
         }
 
         $encryption = new EncryptionHelper();
 
-        return $encryption->decrypt($apiKey);
+        try {
+            return $encryption->decrypt($apiKey);
+        } catch (EncryptionException $e) {
+            return '';
+        }
     }
 
     /**
@@ -836,7 +854,9 @@ class SettingsHelper
     }
 
     /**
-     * @param \Alma\API\Entities\FeePlan $plan
+     * @deprecated use static function keyForInstallmentPlanStatic
+     *
+     * @param Eligibility $plan
      *
      * @return string
      */
@@ -851,6 +871,32 @@ class SettingsHelper
     }
 
     /**
+     * Get plan key from Eligibility
+     *
+     * @param Eligibility $plan
+     *
+     * @return string
+     */
+    public static function planKeyFromEligibilityPlan($plan)
+    {
+        return implode('_', ['general', (int) $plan->installmentsCount, (int) $plan->deferredDays, (int) $plan->deferredMonths]);
+    }
+
+    /**
+     * Get plan key from Payment
+     *
+     * @param Payment $payment
+     *
+     * @return string
+     */
+    public static function planKeyFromPayment($payment)
+    {
+        return implode('_', ['general', (int) $payment->installments_count, (int) $payment->deferred_days, (int) $payment->deferred_months]);
+    }
+
+    /**
+     * @deprecated use keyForInstallmentPlanStatic or planKeyFromPayment instead
+     *
      * @param string $planKind
      * @param int $installmentsCount
      * @param int $deferredDays

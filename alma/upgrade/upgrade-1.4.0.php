@@ -21,19 +21,23 @@
  * @copyright 2018-2024 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
-if (!defined('_PS_VERSION_')) {
-    exit;
-}
-
-include_once _PS_MODULE_DIR_ . 'alma/vendor/autoload.php';
 
 use Alma\API\RequestError;
+use Alma\PrestaShop\Helpers\Admin\TabsHelper;
 use Alma\PrestaShop\Helpers\ClientHelper;
 use Alma\PrestaShop\Helpers\SettingsHelper;
 use Alma\PrestaShop\Logger;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 function upgrade_module_1_4_0($module)
 {
+    require_once _PS_MODULE_DIR_ . 'alma/upgrade/autoload_upgrade.php';
+
+    $tabsHelper = new TabsHelper();
+    /* @var \Alma $module */
     // If module has already been configured, get the merchant's API ID from Alma's API
     if (SettingsHelper::isFullyConfigured()) {
         $alma = ClientHelper::defaultInstance();
@@ -60,5 +64,5 @@ function upgrade_module_1_4_0($module)
         SettingsHelper::updateValue('ALMA_DISPLAY_ORDER_CONFIRMATION', '0');
     }
 
-    return $module->installTabs();
+    return $tabsHelper->installTabs($module->dataTabs());
 }

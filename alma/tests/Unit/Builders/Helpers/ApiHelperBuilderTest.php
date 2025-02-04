@@ -30,7 +30,6 @@ use Alma\PrestaShop\Helpers\ApiHelper;
 use Alma\PrestaShop\Helpers\ClientHelper;
 use Alma\PrestaShop\Helpers\ConfigurationHelper;
 use Alma\PrestaShop\Helpers\ToolsHelper;
-use Alma\PrestaShop\Services\InsuranceService;
 use PHPUnit\Framework\TestCase;
 
 class ApiHelperBuilderTest extends TestCase
@@ -63,14 +62,6 @@ class ApiHelperBuilderTest extends TestCase
         $this->assertInstanceOf(ToolsHelper::class, $this->apiHelperBuilder->getToolsHelper());
         $this->assertInstanceOf(ToolsHelper::class, $this->apiHelperBuilder->getToolsHelper(
             \Mockery::mock(ToolsHelper::class)
-        ));
-    }
-
-    public function testGetInsuranceService()
-    {
-        $this->assertInstanceOf(InsuranceService::class, $this->apiHelperBuilder->getInsuranceService());
-        $this->assertInstanceOf(InsuranceService::class, $this->apiHelperBuilder->getInsuranceService(
-            \Mockery::mock(InsuranceService::class)
         ));
     }
 

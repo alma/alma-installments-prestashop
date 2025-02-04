@@ -31,6 +31,7 @@ if (!defined('_PS_VERSION_')) {
 use Alma\API\Entities\Payment;
 use Alma\API\RequestError;
 use Alma\PrestaShop\Builders\Helpers\PriceHelperBuilder;
+use Alma\PrestaShop\Exceptions\OrderException;
 use Alma\PrestaShop\Exceptions\PaymentNotFoundException;
 use Alma\PrestaShop\Helpers\ClientHelper;
 use Alma\PrestaShop\Helpers\OrderHelper;
@@ -199,7 +200,11 @@ final class DisplayRefundsHookController extends AdminHookController
             throw new PaymentNotFoundException('Alma is not available');
         }
         $orderHelper = new OrderHelper();
-        $orderPayment = $orderHelper->ajaxGetOrderPayment($order);
+        try {
+            $orderPayment = $orderHelper->getOrderPayment($order);
+        } catch (OrderException $e) {
+            throw new PaymentNotFoundException($e->getMessage());
+        }
         $paymentId = $orderPayment->transaction_id;
         if (empty($paymentId)) {
             throw new PaymentNotFoundException("[Alma] paymentId doesn't exist");

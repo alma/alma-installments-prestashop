@@ -25,23 +25,15 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-include_once _PS_MODULE_DIR_ . 'alma/vendor/autoload.php';
-
 use Alma\API\RequestError;
-use Alma\PrestaShop\Forms\ExcludedCategoryAdminFormBuilder;
-use Alma\PrestaShop\Helpers\ClientHelper;
 use Alma\PrestaShop\Helpers\SettingsHelper;
 use Alma\PrestaShop\Logger;
 
 function upgrade_module_2_0_0()
 {
+    require_once _PS_MODULE_DIR_ . 'alma/upgrade/autoload_upgrade.php';
+
     if (SettingsHelper::isFullyConfigured()) {
-        $alma = ClientHelper::defaultInstance();
-
-        if (!$alma) {
-            return true;
-        }
-
         $configKeys = [
             'ALMA_P2X_ENABLED',
             'ALMA_P3X_ENABLED',
@@ -60,8 +52,6 @@ function upgrade_module_2_0_0()
             'ALMA_NOT_ELIGIBLE_MESSAGE',
         ];
 
-        $customFieldsHelper = new \Alma\PrestaShop\Helpers\CustomFieldsHelper();
-
         try {
             $almaPlans = [];
             for ($i = 2; $i <= 4; ++$i) {
@@ -77,17 +67,16 @@ function upgrade_module_2_0_0()
                 Configuration::deleteByName($configKey);
             }
 
-            Configuration::deleteByName('ALMA_NOT_ELIGIBLE_CATEGORIES');
             SettingsHelper::updateValue(
                 'ALMA_NOT_ELIGIBLE_CATEGORIES',
-                $customFieldsHelper->getValue(ExcludedCategoryAdminFormBuilder::ALMA_NOT_ELIGIBLE_CATEGORIES)
+                Configuration::get('ALMA_IS_ELIGIBLE_MESSAGE')
             );
 
             Tools::clearCache();
         } catch (RequestError $e) {
             Logger::instance()->error("[Alma] ERROR upgrade v2.0.0: {$e->getMessage()}");
 
-            return true;
+            return false;
         }
     }
 

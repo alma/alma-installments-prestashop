@@ -66,6 +66,18 @@ class ModuleProxy
     }
 
     /**
+     * Check if module is enabled.
+     *
+     * @param string $moduleName
+     *
+     * @return bool
+     */
+    public function isEnabled($moduleName)
+    {
+        return \Module::isEnabled($moduleName);
+    }
+
+    /**
      * Check if module is installed.
      *
      * @param string $moduleName

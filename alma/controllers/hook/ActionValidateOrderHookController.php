@@ -31,7 +31,9 @@ if (!defined('_PS_VERSION_')) {
 use Alma\PrestaShop\Builders\Helpers\InsuranceHelperBuilder;
 use Alma\PrestaShop\Helpers\InsuranceHelper;
 use Alma\PrestaShop\Hooks\FrontendHookController;
+use Alma\PrestaShop\Logger;
 use Alma\PrestaShop\Repositories\AlmaInsuranceProductRepository;
+use Alma\PrestaShop\Services\AlmaBusinessDataService;
 
 class ActionValidateOrderHookController extends FrontendHookController
 {
@@ -44,6 +46,10 @@ class ActionValidateOrderHookController extends FrontendHookController
      * @var InsuranceHelper
      */
     protected $insuranceHelper;
+    /**
+     * @var \Alma\PrestaShop\Services\AlmaBusinessDataService
+     */
+    protected $almaBusinessDataService;
 
     public function __construct($module)
     {
@@ -51,11 +57,7 @@ class ActionValidateOrderHookController extends FrontendHookController
         $this->almaInsuranceProductRepository = new AlmaInsuranceProductRepository();
         $insuranceHelperBuilder = new InsuranceHelperBuilder();
         $this->insuranceHelper = $insuranceHelperBuilder->getInstance();
-    }
-
-    public function canRun()
-    {
-        return parent::canRun() && $this->insuranceHelper->isInsuranceActivated();
+        $this->almaBusinessDataService = new AlmaBusinessDataService();
     }
 
     /**
@@ -67,18 +69,43 @@ class ActionValidateOrderHookController extends FrontendHookController
      */
     public function run($params)
     {
-        /**
-         * @var \OrderCore $order
-         */
+        /* @var \Order $order */
         $order = $params['order'];
 
-        /**
-         * @var \CartCore $cart
-         */
+        /* @var \Cart $cart */
         $cart = $params['cart'];
 
+        $hasValidParams = \Validate::isLoadedObject($order) && \Validate::isLoadedObject($cart);
+
+        if (!$hasValidParams) {
+            return;
+        }
+
+        $this->almaBusinessDataService->runOrderConfirmedBusinessEvent($order->id, $cart->id);
+
+        if ($this->insuranceHelper->isInsuranceActivated()) {
+            try {
+                $this->runInsurance($order->id, $cart->id);
+            } catch (\PrestaShopDatabaseException $e) {
+                Logger::instance()->error('[Alma] Error to connect insurance database: ' . $e->getMessage());
+            }
+        }
+    }
+
+    /**
+     * Run Insurance on Validate Order
+     *
+     * @param $orderId
+     * @param $cartId
+     *
+     * @return void
+     *
+     * @throws \PrestaShopDatabaseException
+     */
+    private function runInsurance($orderId, $cartId)
+    {
         $ids = $this->almaInsuranceProductRepository->getIdsByCartIdAndShop(
-            $cart->id,
+            $cartId,
             $this->context->shop->id
         );
 
@@ -89,7 +116,7 @@ class ActionValidateOrderHookController extends FrontendHookController
         }
 
         if (count($ids) > 0) {
-            $this->almaInsuranceProductRepository->updateAssociationsOrderId($order->id, $idsToUpdate);
+            $this->almaInsuranceProductRepository->updateAssociationsOrderId($orderId, $idsToUpdate);
         }
     }
 }

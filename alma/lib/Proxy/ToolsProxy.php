@@ -22,13 +22,50 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
-namespace Alma\PrestaShop\Tests\Unit\Services;
+namespace Alma\PrestaShop\Proxy;
 
-use PHPUnit\Framework\TestCase;
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
 
-class PaymentServiceTest extends TestCase
+/**
+ * Class ToolsProxy.
+ */
+class ToolsProxy
 {
-    public function testCreatePaymentOptions()
+    /**
+     * Get a value from $_POST / $_GET
+     * if unavailable, take a default value.
+     *
+     * @param string $key Value key
+     * @param mixed $default_value (optional)
+     *
+     * @codeCoverageIgnore Simple getter
+     *
+     * @return mixed Value
+     */
+    public function getValue($key, $default_value = false)
     {
+        return \Tools::getValue($key, $default_value);
+    }
+
+    /**
+     * @param string $tab
+     *
+     * @return bool|string
+     */
+    public function getAdminTokenLite($tab)
+    {
+        return \Tools::getAdminTokenLite($tab);
+    }
+
+    /**
+     * Check if submit has been posted.
+     *
+     * @param string $submit submit name
+     */
+    public function isSubmit($submit)
+    {
+        return \Tools::isSubmit($submit);
     }
 }

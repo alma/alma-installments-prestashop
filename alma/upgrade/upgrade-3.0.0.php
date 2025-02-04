@@ -22,10 +22,11 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
-use Alma\PrestaShop\Builders\Helpers\ApiHelperBuilder;
 use Alma\PrestaShop\Forms\InpageAdminFormBuilder;
+use Alma\PrestaShop\Helpers\Admin\TabsHelper;
 use Alma\PrestaShop\Helpers\ConstantsHelper;
 use Alma\PrestaShop\Helpers\SettingsHelper;
+use Alma\PrestaShop\Logger;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -33,38 +34,43 @@ if (!defined('_PS_VERSION_')) {
 
 function upgrade_module_3_0_0($module)
 {
+    require_once _PS_MODULE_DIR_ . 'alma/upgrade/autoload_upgrade.php';
+
+    $tabsHelper = new TabsHelper();
+    /* @var \Alma $module */
     $module->registerHooks();
 
+    if (SettingsHelper::isFullyConfigured()) {
+        // Migration value option of In-Page v1 to In-Page v2
+        SettingsHelper::updateValue(
+            InpageAdminFormBuilder::ALMA_ACTIVATE_INPAGE,
+            Configuration::get('ALMA_ACTIVATE_FRAGMENT')
+        );
+    }
+
     try {
-        $apiHelperBuilder = new ApiHelperBuilder();
-        $apiHelper = $apiHelperBuilder->getInstance();
-        $apiHelper->getMerchant();
-    } catch (\Exception $e) {
-    }
+        if (version_compare(_PS_VERSION_, '1.5.5.0', '<')) {
+            Tools::clearCache();
 
-    // Migration value option of In-Page v1 to In-Page v2
-    SettingsHelper::updateValue(
-        InpageAdminFormBuilder::ALMA_ACTIVATE_INPAGE,
-        Configuration::get('ALMA_ACTIVATE_FRAGMENT')
-    );
-
-    if (version_compare(_PS_VERSION_, '1.5.5.0', '<')) {
-        Tools::clearCache();
-
-        return $module->uninstallTabs() && $module->installTabs();
-    }
-
-    if (version_compare(_PS_VERSION_, ConstantsHelper::PRESTASHOP_VERSION_1_7_0_2, '<=')) {
-        Tools::clearSmartyCache();
-        if (version_compare(_PS_VERSION_, '1.6.0.2', '>')) {
-            Tools::clearXMLCache();
+            return $tabsHelper->uninstallTabs($module->dataTabs()) && $tabsHelper->installTabs($module->dataTabs());
         }
 
-        return $module->uninstallTabs() && $module->installTabs();
+        if (version_compare(_PS_VERSION_, ConstantsHelper::PRESTASHOP_VERSION_1_7_0_2, '<=')) {
+            Tools::clearSmartyCache();
+            if (version_compare(_PS_VERSION_, '1.6.0.2', '>')) {
+                Tools::clearXMLCache();
+            }
+
+            return $tabsHelper->uninstallTabs($module->dataTabs()) && $tabsHelper->installTabs($module->dataTabs());
+        }
+
+        Tools::clearAllCache();
+        Tools::clearXMLCache();
+
+        return $tabsHelper->uninstallTabs($module->dataTabs()) && $tabsHelper->installTabs($module->dataTabs());
+    } catch (PrestaShopException $e) {
+        Logger::instance()->error("[Alma] ERROR upgrade v3.0.0: {$e->getMessage()}");
+
+        return false;
     }
-
-    Tools::clearAllCache();
-    Tools::clearXMLCache();
-
-    return $module->uninstallTabs() && $module->installTabs();
 }

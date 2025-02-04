@@ -1,5 +1,26 @@
 # Changelog
 
+## v4.7.0 - 2025-02-04
+
+### Changes
+
+### 🚀 New Features
+
+- feat: Merchant business event (#631)
+- feat: Add position at checkout for GatherCMSData (#633)
+- feat: Refactor configuration form (#611)
+
+### 🐛 Bug Fixes
+
+- fix: Update HTML element in FrontHeaderHookController for better semantic (#636)
+- fix: Avoid error about get customer for eligibility of cart widget (#632)
+- fix: Update migration files from v1.1.0 (#622)
+- fix: Inject module in OrderHelper to use translation function (#621)
+
+#### Contributors
+
+@Benjamin-Freoua-Alma, @alma-renovate-bot[bot], @carine-bonnafous, @joyet-simon, @remi-zuffinetti, [alma-renovate-bot[bot]](https://github.com/apps/alma-renovate-bot) and [github-actions[bot]](https://github.com/apps/github-actions)
+
 ## v4.6.0 - 2024-12-16
 
 ### Changes

@@ -26,6 +26,7 @@ namespace Alma\PrestaShop\Helpers;
 
 use Alma\API\Endpoints\Results\Eligibility;
 use Alma\PrestaShop\Factories\ContextFactory;
+use Alma\PrestaShop\Services\AlmaBusinessDataService;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -57,6 +58,10 @@ class EligibilityHelper
      * @var PaymentHelper
      */
     protected $paymentHelper;
+    /**
+     * @var AlmaBusinessDataService
+     */
+    private $almaBusinessDataService;
 
     /**
      * @param PriceHelper $priceHelper
@@ -64,51 +69,71 @@ class EligibilityHelper
      * @param ContextFactory $contextFactory
      * @param FeePlanHelper $feePlanHelper
      * @param PaymentHelper $paymentHelper
+     * @param AlmaBusinessDataService $almaBusinessDataService
      */
-    public function __construct($priceHelper, $apiHelper, $contextFactory, $feePlanHelper, $paymentHelper)
-    {
+    public function __construct(
+        $priceHelper,
+        $apiHelper,
+        $contextFactory,
+        $feePlanHelper,
+        $paymentHelper,
+        $almaBusinessDataService
+    ) {
         $this->priceHelper = $priceHelper;
         $this->apiHelper = $apiHelper;
         $this->contextFactory = $contextFactory;
         $this->feePlanHelper = $feePlanHelper;
         $this->paymentHelper = $paymentHelper;
+        $this->almaBusinessDataService = $almaBusinessDataService;
     }
 
     /**
+     * Return array of all plans (enable or not)
+     * Plans eligible from API
+     * Plans not eligible from Db
+     * Sort plans by installments count
+     *
      * @return array
      *
      * @throws \Alma\API\ParamsError
+     * @throws \Alma\PrestaShop\Exceptions\AlmaException
+     * @throws \PrestaShopDatabaseException
+     * @throws \PrestaShopException
      */
     public function eligibilityCheck()
     {
-        $almaEligibilities = [];
+        $plansEligibleFromApi = [];
 
         $purchaseAmount = $this->priceHelper->convertPriceToCents(
             $this->contextFactory->getContextCart()->getOrderTotal(true, \Cart::BOTH)
         );
 
-        $feePlans = $this->feePlanHelper->checkFeePlans();
-        $eligibilities = $this->feePlanHelper->getNotEligibleFeePlans($feePlans, $purchaseAmount);
-        $activePlans = $this->feePlanHelper->getEligibleFeePlans($feePlans, $purchaseAmount);
-        $paymentData = $this->paymentHelper->checkPaymentData($activePlans);
+        $plansEnableInDb = $this->feePlanHelper->getEnabledFeePlans();
+        $plansNotEligible = $this->feePlanHelper->getNotEligibleFeePlans($plansEnableInDb, $purchaseAmount);
+        $eligiblePlans = $this->feePlanHelper->getEligibleFeePlans($plansEnableInDb, $purchaseAmount);
+        $paymentData = $this->paymentHelper->checkPaymentData($eligiblePlans);
 
-        if (empty($activePlans)) {
-            return $almaEligibilities;
+        if (empty($eligiblePlans)) {
+            $this->almaBusinessDataService->updateBnplEligibleStatus(false, $this->contextFactory->getContextCart()->id);
+
+            return $plansEligibleFromApi;
         }
 
-        $almaEligibilities = $this->apiHelper->getPaymentEligibility($paymentData);
+        $plansEligibleFromApi = $this->apiHelper->getPaymentEligibility($paymentData);
 
-        if ($almaEligibilities instanceof Eligibility) {
-            $almaEligibilities = [$almaEligibilities];
+        if ($plansEligibleFromApi instanceof Eligibility) {
+            $plansEligibleFromApi = [$plansEligibleFromApi];
         }
 
-        $eligibilities = array_merge((array) $eligibilities, (array) $almaEligibilities);
+        $allPlans = array_merge((array) $plansNotEligible, (array) $plansEligibleFromApi);
 
-        usort($eligibilities, function ($a, $b) {
+        usort($allPlans, function ($a, $b) {
             return $a->installmentsCount - $b->installmentsCount;
         });
 
-        return $eligibilities;
+        $this->almaBusinessDataService->saveBnplEligibleStatus($allPlans, $this->contextFactory->getContextCart()->id);
+
+        return $allPlans;
     }
 
     private static function checkClientInstance()

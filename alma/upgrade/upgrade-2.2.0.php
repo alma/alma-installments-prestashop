@@ -25,28 +25,24 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-include_once _PS_MODULE_DIR_ . 'alma/vendor/autoload.php';
-
 use Alma\API\RequestError;
-use Alma\PrestaShop\Helpers\ClientHelper;
 use Alma\PrestaShop\Helpers\SettingsHelper;
 use Alma\PrestaShop\Logger;
 
+/**
+ * @return bool
+ */
 function upgrade_module_2_2_0()
 {
+    require_once _PS_MODULE_DIR_ . 'alma/upgrade/autoload_upgrade.php';
+
     if (SettingsHelper::isFullyConfigured()) {
-        $alma = ClientHelper::defaultInstance();
-
-        if (!$alma) {
-            return true;
-        }
-
         try {
             SettingsHelper::updateValue('ALMA_CATEGORIES_WDGT_NOT_ELGBL', SettingsHelper::showCategoriesWidgetIfNotEligible());
         } catch (RequestError $e) {
             Logger::instance()->error("[Alma] ERROR upgrade v2.2.0: {$e->getMessage()}");
 
-            return true;
+            return false;
         }
     }
 

@@ -29,12 +29,10 @@ use Alma\API\Entities\Merchant;
 use Alma\PrestaShop\Exceptions\ActivationException;
 use Alma\PrestaShop\Exceptions\ApiMerchantsException;
 use Alma\PrestaShop\Exceptions\ClientException;
-use Alma\PrestaShop\Exceptions\InsuranceInstallException;
 use Alma\PrestaShop\Exceptions\WrongCredentialsException;
 use Alma\PrestaShop\Factories\ModuleFactory;
 use Alma\PrestaShop\Helpers\Admin\AdminInsuranceHelper;
 use Alma\PrestaShop\Logger;
-use Alma\PrestaShop\Services\InsuranceService;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -50,10 +48,6 @@ class ApiHelper
      * @var ModuleFactory
      */
     protected $moduleFactory;
-    /**
-     * @var InsuranceService
-     */
-    protected $insuranceService;
     /**
      * @var ConfigurationHelper
      */
@@ -72,7 +66,6 @@ class ApiHelper
      * @param ModuleFactory $moduleFactory
      * @param ClientHelper $clientHelper
      * @param ToolsHelper $toolsHelper
-     * @param InsuranceService $insuranceService
      * @param ConfigurationHelper $configurationHelper
      * @param AdminInsuranceHelper $insuranceHelper
      */
@@ -80,19 +73,19 @@ class ApiHelper
         $moduleFactory,
         $clientHelper,
         $toolsHelper,
-        $insuranceService,
         $configurationHelper,
         $insuranceHelper
     ) {
         $this->moduleFactory = $moduleFactory;
         $this->clientHelper = $clientHelper;
         $this->toolsHelper = $toolsHelper;
-        $this->insuranceService = $insuranceService;
         $this->configurationHelper = $configurationHelper;
         $this->insuranceHelper = $insuranceHelper;
     }
 
     /**
+     * @deprecated
+     *
      * @param $alma
      *
      * @return Merchant
@@ -100,7 +93,6 @@ class ApiHelper
      * @throws ActivationException
      * @throws ApiMerchantsException
      * @throws WrongCredentialsException
-     * @throws \PrestaShopException
      */
     public function getMerchant($alma = null)
     {
@@ -110,7 +102,7 @@ class ApiHelper
              */
             $merchant = $this->clientHelper->getMerchantsMe($alma);
         } catch (\Exception $e) {
-            if ($e->response && 401 === $e->response->responseCode) {
+            if (401 === $e->getCode()) {
                 throw new WrongCredentialsException($this->moduleFactory);
             }
 
@@ -124,45 +116,7 @@ class ApiHelper
             throw new ActivationException($this->moduleFactory);
         }
 
-        if ($this->toolsHelper->psVersionCompare('1.7', '>=')) {
-            $this->handleInsuranceFlag($merchant);
-        }
-
         return $merchant;
-    }
-
-    /**
-     * @param Merchant $merchant
-     *
-     * @return void
-     *
-     * @throws \PrestaShopException
-     */
-    protected function handleInsuranceFlag($merchant)
-    {
-        try {
-            $isAllowInsurance = $this->saveFeatureFlag(
-                $merchant,
-                'cms_insurance',
-                ConstantsHelper::ALMA_ALLOW_INSURANCE,
-                ConstantsHelper::ALMA_ACTIVATE_INSURANCE
-            );
-
-            if ($isAllowInsurance) {
-                $this->insuranceService->installDefaultData();
-            }
-
-            $this->insuranceHelper->handleBOMenu($isAllowInsurance);
-            $this->insuranceHelper->handleDefaultInsuranceFieldValues($isAllowInsurance);
-        } catch (InsuranceInstallException $e) {
-            Logger::instance()->error(
-                sprintf(
-                    '[Alma] Installation of exception has failed, message "%s", trace "%s"',
-                    $e->getMessage(),
-                    $e->getTraceAsString()
-                )
-            );
-        }
     }
 
     /**
@@ -172,11 +126,11 @@ class ApiHelper
      *
      * @return int
      */
-    protected function saveFeatureFlag($merchant, $merchantKey, $configKey, $formSettingName)
+    public function saveFeatureFlag($merchant, $merchantKey, $configKey, $formSettingName)
     {
         $value = 1;
 
-        if (property_exists($merchant, $merchantKey)) {
+        if ($merchant && property_exists($merchant, $merchantKey)) {
             $value = $merchant->$merchantKey;
         }
 

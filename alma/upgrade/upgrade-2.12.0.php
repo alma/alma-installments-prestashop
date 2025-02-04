@@ -24,7 +24,6 @@
 use Alma\API\RequestError;
 use Alma\PrestaShop\Forms\ApiAdminFormBuilder;
 use Alma\PrestaShop\Helpers\ApiKeyHelper;
-use Alma\PrestaShop\Helpers\ClientHelper;
 use Alma\PrestaShop\Helpers\SettingsHelper;
 
 if (!defined('_PS_VERSION_')) {
@@ -32,24 +31,20 @@ if (!defined('_PS_VERSION_')) {
 }
 
 /**
- * @return true
+ * @return bool
  */
 function upgrade_module_2_12_0()
 {
+    require_once _PS_MODULE_DIR_ . 'alma/upgrade/autoload_upgrade.php';
+
     if (SettingsHelper::isFullyConfigured()) {
-        $alma = ClientHelper::defaultInstance();
-
-        if (!$alma) {
-            return true;
-        }
-
         $apiKeyHelper = new ApiKeyHelper();
 
         try {
             $apiKeyHelper->setLiveApiKey(SettingsHelper::get(ApiAdminFormBuilder::ALMA_LIVE_API_KEY, null));
             $apiKeyHelper->setTestApiKey(SettingsHelper::get(ApiAdminFormBuilder::ALMA_TEST_API_KEY, null));
         } catch (RequestError $e) {
-            return true;
+            return false;
         }
     }
 

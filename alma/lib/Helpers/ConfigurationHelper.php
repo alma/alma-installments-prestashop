@@ -51,7 +51,8 @@ class ConfigurationHelper
     }
 
     /**
-     * Get a single configuration value (in one language only).
+     * @deprecated use the get in ConfigurationProxy instead
+     * Get a single configuration value (in one language only)
      *
      * @param string $key Key wanted
      * @param int $idLang Language ID
@@ -134,11 +135,23 @@ class ConfigurationHelper
     }
 
     /**
+     * @deprecated use static function isPayNowStatic instead
+     *
      * @param string $key
      *
      * @return bool
      */
     public function isPayNow($key)
+    {
+        return ConstantsHelper::ALMA_KEY_PAYNOW === $key;
+    }
+
+    /**
+     * @param string $key
+     *
+     * @return bool
+     */
+    public static function isPayNowStatic($key)
     {
         return ConstantsHelper::ALMA_KEY_PAYNOW === $key;
     }

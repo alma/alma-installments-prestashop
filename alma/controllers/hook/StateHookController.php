@@ -193,15 +193,14 @@ final class StateHookController extends AdminHookController
      *
      * @return void
      *
-     * @throws ParametersException
-     * @throws RequestException
-     * @throws \PrestaShopException
+     * @throws \Alma\API\Exceptions\ParametersException
+     * @throws \Alma\API\Exceptions\RequestException
      */
     private function refund($order)
     {
         if (SettingsHelper::isRefundEnabledByState()) {
             try {
-                $orderPayment = $this->orderHelper->ajaxGetOrderPayment($order);
+                $orderPayment = $this->orderHelper->getOrderPayment($order);
                 $idPayment = $orderPayment->transaction_id;
                 $this->orderHelper->checkIfIsOrderAlma($order);
 
@@ -224,14 +223,12 @@ final class StateHookController extends AdminHookController
      * @param \Order $order
      *
      * @return void
-     *
-     * @throws \PrestaShopException
      */
     private function triggerPayment($order)
     {
         if ($this->settingsHelper->isPaymentTriggerEnabledByState()) {
             try {
-                $orderPayment = $this->orderHelper->ajaxGetOrderPayment($order);
+                $orderPayment = $this->orderHelper->getOrderPayment($order);
                 $idPayment = $orderPayment->transaction_id;
                 $this->orderHelper->checkIfIsOrderAlma($order);
 

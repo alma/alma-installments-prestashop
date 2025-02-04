@@ -84,10 +84,12 @@ use Alma\PrestaShop\Model\PaymentData;
 use Alma\PrestaShop\Model\ShippingData;
 use Alma\PrestaShop\Modules\OpartSaveCart\OpartSaveCartCartRepository;
 use Alma\PrestaShop\Modules\OpartSaveCart\OpartSaveCartCartService;
+use Alma\PrestaShop\Proxy\ToolsProxy;
 use Alma\PrestaShop\Repositories\AlmaInsuranceProductRepository;
 use Alma\PrestaShop\Repositories\CartProductRepository;
 use Alma\PrestaShop\Repositories\OrderRepository;
 use Alma\PrestaShop\Repositories\ProductRepository;
+use Alma\PrestaShop\Services\AlmaBusinessDataService;
 use Alma\PrestaShop\Services\AttributeGroupProductService;
 use Alma\PrestaShop\Services\AttributeProductService;
 use Alma\PrestaShop\Services\CartService;
@@ -674,7 +676,8 @@ trait BuilderTrait
             $this->getApiHelper(),
             $this->getContextFactory(),
             $this->getFeePlanHelper(),
-            $this->getPaymentHelper()
+            $this->getPaymentHelper(),
+            $this->getAlmaBusinessDataService()
         );
     }
 
@@ -975,7 +978,17 @@ trait BuilderTrait
                 new ContextFactory(),
                 new ValidateHelper()
             ),
-            new EligibilityFactory()
+            new EligibilityFactory(),
+            new PriceHelper(
+                new ToolsHelper(),
+                new CurrencyHelper(
+                    new ContextFactory(),
+                    new ValidateHelper(),
+                    new CurrencyFactory()
+                ),
+                new ContextFactory()
+            ),
+            new ToolsProxy()
         );
     }
 
@@ -1227,5 +1240,21 @@ trait BuilderTrait
     public function getCategoryFactory()
     {
         return new CategoryFactory();
+    }
+
+    /**
+     * @return ToolsProxy
+     */
+    public function getToolsProxy()
+    {
+        return new ToolsProxy();
+    }
+
+    /**
+     * @return AlmaBusinessDataService
+     */
+    public function getAlmaBusinessDataService()
+    {
+        return new AlmaBusinessDataService();
     }
 }

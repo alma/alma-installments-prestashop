@@ -36,18 +36,36 @@ if (!defined('_PS_VERSION_')) {
  */
 class AlmaModuleModel
 {
+    const HOOK_NAME_PAYMENT_CHECKOUT_PS17 = 'paymentOptions';
+    const HOOK_NAME_PAYMENT_CHECKOUT_PS16 = 'displayPayment';
     /**
      * @var ModuleProxy
      */
     private $moduleProxy;
     private $moduleName = ConstantsHelper::ALMA_MODULE_NAME;
+    /**
+     * @var \Db
+     */
+    private $db;
+    /**
+     * @var \DbQuery|mixed|null
+     */
+    private $dbQuery;
 
-    public function __construct($moduleProxy = null)
+    public function __construct($moduleProxy = null, $dbQuery = null, $db = null)
     {
         if (!$moduleProxy) {
             $moduleProxy = new ModuleProxy();
         }
         $this->moduleProxy = $moduleProxy;
+        if (!$dbQuery) {
+            $dbQuery = new \DbQuery();
+        }
+        $this->dbQuery = $dbQuery;
+        if (!$db) {
+            $db = \Db::getInstance();
+        }
+        $this->db = $db;
     }
 
     /**
@@ -62,5 +80,33 @@ class AlmaModuleModel
         }
 
         return '';
+    }
+
+    /**
+     * @return string
+     */
+    public function getPosition()
+    {
+        $hookName = self::HOOK_NAME_PAYMENT_CHECKOUT_PS17;
+        if (version_compare(_PS_VERSION_, '1.7', '<')) {
+            $hookName = self::HOOK_NAME_PAYMENT_CHECKOUT_PS16;
+        }
+
+        $query = $this->dbQuery;
+        $query->select('h.id_hook, m.name, hm.position')
+            ->from('hook', 'h')
+            ->join('JOIN ' . _DB_PREFIX_ . 'hook_module hm ON hm.id_hook = h.id_hook')
+            ->join('JOIN ' . _DB_PREFIX_ . 'module m ON m.id_module = hm.id_module')
+            ->where('h.name = "' . pSQL($hookName) . '"')
+            ->where('m.name = "' . pSQL($this->moduleName) . '"')
+            ->orderBy('hm.position ASC');
+
+        $almaPosition = $this->db->getRow($query);
+
+        if (!$almaPosition) {
+            return '';
+        }
+
+        return $almaPosition['position'];
     }
 }

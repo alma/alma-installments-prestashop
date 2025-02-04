@@ -177,6 +177,9 @@ class PaymentData
     }
 
     /**
+     * Return data payload for create payment
+     * If $forPayment is false, return data for eligibility endpoint
+     *
      * @param $feePlans
      * @param $forPayment
      *
@@ -205,8 +208,6 @@ class PaymentData
             );
         }
 
-        $customer = $this->customerHelper->getCustomer();
-
         $shippingAddress = $this->addressFactory->create($this->context->cart->id_address_delivery);
         $billingAddress = $this->addressFactory->create((int) $this->context->cart->id_address_invoice);
         $countryShippingAddress = $this->countryHelper->getIsoById((int) $shippingAddress->id_country);
@@ -232,6 +233,7 @@ class PaymentData
             );
         }
 
+        $customer = $this->customerHelper->getCustomer();
         $customerData = $this->buildCustomerData($customer, $shippingAddress, $billingAddress);
 
         $dataPayment = $this->buildDataPayment(
