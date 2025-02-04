@@ -25,16 +25,12 @@
 
 namespace Alma\PrestaShop\Model;
 
-use Alma\PrestaShop\Traits\ObjectModelTrait;
-
 if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-class InsuranceProduct extends \ObjectModel
+class InsuranceProduct extends AlmaObjectModel
 {
-    use ObjectModelTrait;
-
     /** @var int Id */
     public $id_alma_insurance_product;
 

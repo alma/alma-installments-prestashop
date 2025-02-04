@@ -22,13 +22,13 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
-namespace Alma\PrestaShop\Traits;
+namespace Alma\PrestaShop\Model;
 
 if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-trait ObjectModelTrait
+class AlmaObjectModel extends \ObjectModel
 {
     /**
      * Updates the current object in the database
@@ -152,6 +152,101 @@ trait ObjectModelTrait
         // @hook actionObject<ObjectClassName>UpdateAfter
         \Hook::exec('actionObjectUpdateAfter', ['object' => $this]);
         \Hook::exec('actionObject' . $this->getFullyQualifiedName() . 'UpdateAfter', ['object' => $this]);
+
+        return $result;
+    }
+
+    /**
+     * Adds current object to the database.
+     *
+     * @param bool $auto_date
+     * @param bool $null_values
+     *
+     * @return bool Insertion result
+     *
+     * @throws \PrestaShopDatabaseException
+     * @throws \PrestaShopException
+     */
+    protected function addWithFullyQualifiedNamespace($auto_date = true, $null_values = false)
+    {
+        if (isset($this->id) && !$this->force_id) {
+            unset($this->id);
+        }
+
+        // @hook actionObject<ObjectClassName>AddBefore
+        \Hook::exec('actionObjectAddBefore', ['object' => $this]);
+        \Hook::exec('actionObject' . $this->getFullyQualifiedName() . 'AddBefore', ['object' => $this]);
+
+        // Automatically fill dates
+        if ($auto_date && property_exists($this, 'date_add')) {
+            $this->date_add = date('Y-m-d H:i:s');
+        }
+        if ($auto_date && property_exists($this, 'date_upd')) {
+            $this->date_upd = date('Y-m-d H:i:s');
+        }
+
+        if (\Shop::isTableAssociated($this->def['table'])) {
+            $id_shop_list = \Shop::getContextListShopID();
+            if (count($this->id_shop_list)) {
+                $id_shop_list = $this->id_shop_list;
+            }
+        }
+
+        // Database insertion
+        if (\Shop::checkIdShopDefault($this->def['table'])) {
+            $this->id_shop_default = (in_array(\Configuration::get('PS_SHOP_DEFAULT'), $id_shop_list) == true) ? \Configuration::get('PS_SHOP_DEFAULT') : min($id_shop_list);
+        }
+        if (!$result = \Db::getInstance()->insert($this->def['table'], $this->getFields(), $null_values)) {
+            return false;
+        }
+
+        // Get object id in database
+        $this->id = \Db::getInstance()->Insert_ID();
+
+        // Database insertion for multishop fields related to the object
+        if (\Shop::isTableAssociated($this->def['table'])) {
+            $fields = $this->getFieldsShop();
+            $fields[$this->def['primary']] = (int) $this->id;
+
+            foreach ($id_shop_list as $id_shop) {
+                $fields['id_shop'] = (int) $id_shop;
+                $result &= \Db::getInstance()->insert($this->def['table'] . '_shop', $fields, $null_values);
+            }
+        }
+
+        if (!$result) {
+            return false;
+        }
+
+        // Database insertion for multilingual fields related to the object
+        if (!empty($this->def['multilang'])) {
+            $fields = $this->getFieldsLang();
+            if ($fields && is_array($fields)) {
+                $shops = \Shop::getCompleteListOfShopsID();
+                $asso = \Shop::getAssoTable($this->def['table'] . '_lang');
+                foreach ($fields as $field) {
+                    foreach (array_keys($field) as $key) {
+                        if (!\Validate::isTableOrIdentifier($key)) {
+                            throw new \PrestaShopException('key ' . $key . ' is not table or identifier');
+                        }
+                    }
+                    $field[$this->def['primary']] = (int) $this->id;
+
+                    if ($asso !== false && $asso['type'] == 'fk_shop') {
+                        foreach ($shops as $id_shop) {
+                            $field['id_shop'] = (int) $id_shop;
+                            $result &= \Db::getInstance()->insert($this->def['table'] . '_lang', $field);
+                        }
+                    } else {
+                        $result &= \Db::getInstance()->insert($this->def['table'] . '_lang', $field);
+                    }
+                }
+            }
+        }
+
+        // @hook actionObject<ObjectClassName>AddAfter
+        \Hook::exec('actionObjectAddAfter', ['object' => $this]);
+        \Hook::exec('actionObject' . $this->getFullyQualifiedName() . 'AddAfter', ['object' => $this]);
 
         return $result;
     }

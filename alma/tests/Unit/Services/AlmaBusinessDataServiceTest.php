@@ -242,6 +242,28 @@ class AlmaBusinessDataServiceTest extends TestCase
     /**
      * @return void
      */
+    public function testRunOrderConfirmedBusinessEventWithGetByCartIdReturnFalse()
+    {
+        $orderId = '2';
+        $cartId = '3';
+        $this->almaBusinessDataRepositoryMock->expects($this->once())
+            ->method('updateByCartId')
+            ->with('id_order', $orderId, $cartId);
+        $this->almaBusinessDataModelMock->expects($this->once())
+            ->method('getByCartId')
+            ->with($cartId)
+            ->willReturn(false);
+        $this->clientModelMock->expects($this->never())
+            ->method('getClient');
+        $this->merchantsMock->expects($this->never())
+            ->method('sendOrderConfirmedBusinessEvent');
+        $this->loggerMock->expects($this->never())->method('error');
+        $this->assertNull($this->almaBusinessDataService->runOrderConfirmedBusinessEvent($orderId, $cartId));
+    }
+
+    /**
+     * @return void
+     */
     public function testRunCartInitiatedBusinessEvent()
     {
         $cartId = '1';
