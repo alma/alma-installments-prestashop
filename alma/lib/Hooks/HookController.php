@@ -85,6 +85,11 @@ abstract class HookController
     {
         $controller = $this->context->controller;
 
+        // Return 'unknown' if the controller doesn't exist
+        if (!$controller) {
+            return 'unknown';
+        }
+
         return !empty($controller->php_self)
             ? preg_replace('/[[:^alnum:]]+/', '', $controller->php_self)
             : explode('Controller', get_class($controller))[0];
