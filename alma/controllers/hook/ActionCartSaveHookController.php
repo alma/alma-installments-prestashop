@@ -136,7 +136,11 @@ class ActionCartSaveHookController extends FrontendHookController
         $baseCart = $this->contextCart;
         $newCart = $params['cart'];
 
-        if (!$this->almaBusinessDataService->isAlmaBusinessDataExistByCart($newCart->id)) {
+        $this->almaBusinessDataService->createTableIfNotExist();
+
+        if ($this->almaBusinessDataService->isAlmaBusinessDataTableExist() &&
+            !$this->almaBusinessDataService->isAlmaBusinessDataExistByCart($newCart->id)
+        ) {
             $this->almaBusinessDataService->runCartInitiatedBusinessEvent((string) $newCart->id);
         }
 

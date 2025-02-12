@@ -92,6 +92,8 @@ class AlmaBusinessDataService
      * @param int $cartId
      *
      * @return void
+     *
+     * @throws \PrestaShopException
      */
     public function runOrderConfirmedBusinessEvent($orderId, $cartId)
     {
@@ -140,8 +142,6 @@ class AlmaBusinessDataService
             $this->logger->error('[Alma] Error in CartInitiatedBusinessEvent constructor: ' . $e->getMessage());
         } catch (ClientException $e) {
             $this->logger->error('[Alma] Error Alma Client: ' . $e->getMessage());
-        } catch (\PrestaShopDatabaseException $e) {
-            $this->logger->error('[Alma] Error in PrestaShopDatabaseException : ' . $e->getMessage());
         } catch (\PrestaShopException $e) {
             $this->logger->error('[Alma] Error in PrestaShopException : ' . $e->getMessage());
         } catch (RequestException $e) {
@@ -163,8 +163,11 @@ class AlmaBusinessDataService
      * Return bool if the plans are eligible for BNPL without Pay Now
      *
      * @param Eligibility $plans
+     * @param $cartId
      *
      * @return void
+     *
+     * @throws \PrestaShopException
      */
     public function saveBnplEligibleStatus($plans, $cartId)
     {
@@ -193,6 +196,8 @@ class AlmaBusinessDataService
      * @param int $cartId
      *
      * @return void
+     *
+     * @throws \PrestaShopException
      */
     public function updateBnplEligibleStatus($isEligible, $cartId)
     {
@@ -204,6 +209,8 @@ class AlmaBusinessDataService
      * @param int $cartId
      *
      * @return void
+     *
+     * @throws \PrestaShopException
      */
     public function updatePlanKey($planKey, $cartId)
     {
@@ -215,6 +222,8 @@ class AlmaBusinessDataService
      * @param int $cartId
      *
      * @return void
+     *
+     * @throws \PrestaShopException
      */
     public function updateOrderId($orderId, $cartId)
     {
@@ -226,9 +235,33 @@ class AlmaBusinessDataService
      * @param int $cartId
      *
      * @return void
+     *
+     * @throws \PrestaShopException
      */
     public function updateAlmaPaymentId($almaPaymentId, $cartId)
     {
         $this->almaBusinessDataRepository->updateByCartId('alma_payment_id', $almaPaymentId, $cartId);
+    }
+
+    /**
+     * @return bool
+     */
+    public function isAlmaBusinessDataTableExist()
+    {
+        return !empty($this->almaBusinessDataRepository->checkIfTableExist());
+    }
+
+    /**
+     * @return void
+     */
+    public function createTableIfNotExist()
+    {
+        if (!$this->isAlmaBusinessDataTableExist()) {
+            try {
+                $this->almaBusinessDataRepository->createTable();
+            } catch (\PrestaShopException $e) {
+                $this->logger->warning('[Alma] Error in create table alma_business_data: ' . $e->getMessage());
+            }
+        }
     }
 }

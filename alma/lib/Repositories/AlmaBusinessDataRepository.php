@@ -36,6 +36,8 @@ class AlmaBusinessDataRepository
      * Creates table ps_alma_business_data
      *
      * @return bool
+     *
+     * @throws \PrestaShopException
      */
     public function createTable()
     {
@@ -51,6 +53,22 @@ class AlmaBusinessDataRepository
             UNIQUE KEY `unique_alma_payment_id` (`alma_payment_id`)
         ) ENGINE=' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=utf8;';
 
+        // For version less than 1.6.1.0 ObjectModel doesn't handle the allow_null attribute for set NULL value on alma_payment_id field
+        // We can't create UNIQUE KEY for alma_payment_id field
+        if (version_compare(_PS_VERSION_, '1.6.1.0', '<')) {
+            $sql = 'CREATE TABLE IF NOT EXISTS `' . _DB_PREFIX_ . 'alma_business_data` (
+                `id_alma_business_data` int(10) NOT NULL AUTO_INCREMENT,
+                `id_cart` int(10) NOT NULL,
+                `id_order` int(10) DEFAULT NULL,
+                `alma_payment_id` varchar(255) DEFAULT NULL,
+                `is_bnpl_eligible` tinyint(1) unsigned NOT NULL DEFAULT \'0\',
+                `plan_key` varchar(255) NOT NULL,
+                PRIMARY KEY (`id_alma_business_data`),
+                UNIQUE KEY `unique_id_cart` (`id_cart`),
+                INDEX `idx_alma_payment_id` (`alma_payment_id`)
+            ) ENGINE=' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=utf8;';
+        }
+
         return \Db::getInstance()->execute($sql);
     }
 
@@ -62,6 +80,8 @@ class AlmaBusinessDataRepository
      * @param string $cartId
      *
      * @return bool
+     *
+     * @throws \PrestaShopException
      */
     public function updateByCartId($field, $value, $cartId)
     {
@@ -76,6 +96,8 @@ class AlmaBusinessDataRepository
      * @param string $where
      *
      * @return bool|void
+     *
+     * @throws \PrestaShopException
      */
     private function update($field, $value, $where = '')
     {
@@ -89,6 +111,18 @@ class AlmaBusinessDataRepository
             );
         } catch (\PrestaShopDatabaseException $e) {
             Logger::instance()->warning('Failed to update alma_business_data: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * @return array|bool|\mysqli_result|\PDOStatement|resource|void|null
+     */
+    public function checkIfTableExist()
+    {
+        try {
+            return \Db::getInstance()->executeS('SHOW TABLES LIKE "' . _DB_PREFIX_ . 'alma_business_data"');
+        } catch (\PrestaShopException $e) {
+            Logger::instance()->warning('Failed to check if alma_business_data table exist: ' . $e->getMessage());
         }
     }
 }

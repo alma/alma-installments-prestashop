@@ -229,6 +229,8 @@ class Alma extends PaymentModule
      * @override
      *
      * @return bool
+     *
+     * @throws \PrestaShopException
      */
     public function install()
     {
