@@ -600,6 +600,18 @@ class Alma extends PaymentModule
     }
 
     /**
+     * To handle hook Header for some Prestashop versions
+     *
+     * @param $params
+     *
+     * @return mixed|null
+     */
+    public function hookDisplayHeader($params)
+    {
+        return $this->hookHeader($params);
+    }
+
+    /**
      * @param $params
      *
      * @return mixed|null
