@@ -81,11 +81,16 @@ abstract class HookController
         return true;
     }
 
+    /**
+     * Returns the current controller name.
+     * If controller is not use in the default context, it will return 'unknown' to avoid any issue.
+     *
+     * @return string
+     */
     protected function currentControllerName()
     {
         $controller = $this->context->controller;
 
-        // Return 'unknown' if the controller doesn't exist
         if (!$controller) {
             return 'unknown';
         }
