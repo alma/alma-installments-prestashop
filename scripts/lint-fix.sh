@@ -1,7 +1,5 @@
 #!/bin/bash
-PROJECT_ROOT=$(git rev-parse --show-toplevel)
-
-docker run --rm -v "$PROJECT_ROOT/alma:/app/alma" \
+docker run --rm -v "$(pwd)/alma:/app/alma" \
   lint:ps fix --config=alma/.php-cs-fixer.dist.php -v --using-cache=yes /app
 EXIT_CODE=$?
 
