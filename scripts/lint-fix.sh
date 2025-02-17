@@ -1,6 +1,11 @@
 #!/bin/bash
-docker run --rm -v "$(pwd)/alma:/app/alma" \
-  lint:ps fix --config=alma/.php-cs-fixer.dist.php -v --using-cache=yes /app
+CACHE_FILE="$(pwd)/.php_cs.cache"
+if [[ ! -f "$CACHE_FILE" ]]; then
+    echo "{}" > "$CACHE_FILE"
+fi
+
+docker run --rm -v "$(pwd)/alma:/app/alma" -v "$(pwd)/.php_cs.cache:/app/.php_cs.cache" \
+  lint:ps fix --config=alma/.php-cs-fixer.dist.php -v --using-cache=yes --cache-file=/app/.php_cs.cache /app
 EXIT_CODE=$?
 
 if [[ $EXIT_CODE -ne 0 ]]; then

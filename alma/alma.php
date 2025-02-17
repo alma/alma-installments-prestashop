@@ -794,10 +794,6 @@ class Alma extends PaymentModule
      */
     public function hookActionObjectUpdateAfter($params)
     {
-
-
-
-        
         $orderFactory = new Alma\PrestaShop\Factories\OrderFactory();
         $clientHelper = new Alma\PrestaShop\Helpers\ClientHelper();
         $carrierFactory = new Alma\PrestaShop\Factories\CarrierFactory();
