@@ -70,38 +70,29 @@ tasks:
     cmds:
       - docker compose run --no-deps --rm --entrypoint "php" -w /var/www/html/modules prestashop alma/vendor/bin/php-cs-fixer fix --dry-run --diff alma
 
-  build:phpcs:
-    desc: Build PHPCS container
+  lint:build:
+    desc: Build lint container (php-cs-fixer)
     cmds:
-      - docker build -t phpcs:ps -f phpcs.Dockerfile .
-
-  build:phpcbf:
-    desc: Build PHPCBF container
-    cmds:
-      - docker build -t phpcbf:ps -f phpcbf.Dockerfile .
+      - docker build -t lint:ps -f lint.Dockerfile .
 
   lint:
-    aliases:
-      - run:phpcs
-    desc: Run PHPCS container
+    desc: Run lint container (php-cs-fixer check)
     deps:
-      - build:phpcs
+      - lint:build
     cmds:
-      - ./scripts/coding-standard.sh
+      - ./scripts/lint.sh
 
   lint:fix:
-    aliases:
-      - run:phpcbf
-    desc: Run PHPCBF container
+    desc: Run lint container (php-cs-fixer fix)
     deps:
-      - build:phpcbf
+      - lint:build
     cmds:
-      - ./scripts/coding-standard-fixer.sh
+      - ./scripts/lint-fix.sh
 
   php-compatibility:
-    desc: Check compatibility code in PHPCS container
+    desc: Check compatibility code in PHP-CS container
     deps:
-      - build:phpcs
+      - build:php-cs
     cmds:
       - ./scripts/php-compatibility.sh
 
