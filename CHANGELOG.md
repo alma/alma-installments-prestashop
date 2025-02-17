@@ -1,5 +1,19 @@
 # Changelog
 
+## v4.7.1 - 2025-02-17
+
+### Changes
+
+### 🐛 Bug Fixes
+
+- fix: Controller unknown for marketplace tool (#643)
+- fix: Deduplicate business event calls (#646)
+- fix: Handle hook displayHeader for some Prestashop versions (#645)
+
+#### Contributors
+
+@Benjamin-Freoua-Alma, @alma-renovate-bot[bot], [alma-renovate-bot[bot]](https://github.com/apps/alma-renovate-bot) and [github-actions[bot]](https://github.com/apps/github-actions)
+
 ## v4.7.0 - 2025-02-04
 
 ### Changes

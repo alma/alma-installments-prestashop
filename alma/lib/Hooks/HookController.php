@@ -81,9 +81,19 @@ abstract class HookController
         return true;
     }
 
+    /**
+     * Returns the current controller name.
+     * If controller is not use in the default context, it will return 'unknown' to avoid any issue.
+     *
+     * @return string
+     */
     protected function currentControllerName()
     {
         $controller = $this->context->controller;
+
+        if (!$controller) {
+            return 'unknown';
+        }
 
         return !empty($controller->php_self)
             ? preg_replace('/[[:^alnum:]]+/', '', $controller->php_self)

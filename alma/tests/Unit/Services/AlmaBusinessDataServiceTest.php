@@ -395,6 +395,8 @@ class AlmaBusinessDataServiceTest extends TestCase
 
     /**
      * @return void
+     *
+     * @throws \PrestaShopException
      */
     public function testUpdateBnplEligibleStatus()
     {
@@ -407,6 +409,8 @@ class AlmaBusinessDataServiceTest extends TestCase
 
     /**
      * @return void
+     *
+     * @throws \PrestaShopException
      */
     public function testUpdatePlanKey()
     {
@@ -419,6 +423,8 @@ class AlmaBusinessDataServiceTest extends TestCase
 
     /**
      * @return void
+     *
+     * @throws \PrestaShopException
      */
     public function testUpdateOrderId()
     {
@@ -431,6 +437,8 @@ class AlmaBusinessDataServiceTest extends TestCase
 
     /**
      * @return void
+     *
+     * @throws \PrestaShopException
      */
     public function testUpdateAlmaPaymentId()
     {
@@ -553,6 +561,66 @@ class AlmaBusinessDataServiceTest extends TestCase
                     ]),
                 ],
                 true,
+            ],
+        ];
+    }
+
+    /**
+     * @dataProvider almaBusinessDataTableDataProvider
+     *
+     * @return void
+     */
+    public function testIsAlmaBusinessDataTableExist($table, $expected)
+    {
+        $this->almaBusinessDataRepositoryMock->expects($this->once())
+            ->method('checkIfTableExist')
+            ->willReturn($table);
+        $this->assertEquals($expected, $this->almaBusinessDataService->isAlmaBusinessDataTableExist());
+    }
+
+    /**
+     * @dataProvider almaBusinessDataTableDataProvider
+     *
+     * @return void
+     */
+    public function testCreateTableIfNotExist($table, $tableExist)
+    {
+        $this->almaBusinessDataRepositoryMock->expects($this->once())
+            ->method('checkIfTableExist')
+            ->willReturn($table);
+        $expectCreateTableIfNotExist = $tableExist ? $this->never() : $this->once();
+        $this->almaBusinessDataRepositoryMock->expects($expectCreateTableIfNotExist)
+            ->method('createTable');
+        $this->assertNull($this->almaBusinessDataService->createTableIfNotExist());
+    }
+
+    /**
+     * @return void
+     */
+    public function testCreateTableIfNotExistWithThrowPrestashopException()
+    {
+        $this->almaBusinessDataRepositoryMock->expects($this->once())
+            ->method('createTable')
+            ->willThrowException(new \PrestaShopException());
+        $this->loggerMock->expects($this->once())->method('warning');
+        $this->almaBusinessDataService->createTableIfNotExist();
+    }
+
+    /**
+     * @return array[]
+     */
+    public function almaBusinessDataTableDataProvider()
+    {
+        return [
+            'table exist' => [
+                [
+                    ['Tables_in_prestashop' => 'ps_alma_business_data'],
+                ],
+                true,
+            ],
+            'table not exist' => [
+                [],
+                false,
             ],
         ];
     }
