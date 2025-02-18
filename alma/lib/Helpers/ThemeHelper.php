@@ -74,18 +74,16 @@ class ThemeHelper
             if (file_exists($configFilePath)) {
                 $xmlContent = simplexml_load_file($configFilePath);
                 if ($xmlContent && isset($xmlContent->version)) {
-                    $themeVersion = (string) $xmlContent->version['value'];
+                    $themeVersion = isset($xmlContent->version['value']) ? $xmlContent->version['value'] : 'undefined';
                 }
             }
-
-            return $themeVersion;
         }
 
-        if (file_exists($themeConfigPath)) {
+        if (file_exists($themeConfigPath) && class_exists('\Symfony\Component\Yaml\Yaml')) {
             $themeConfig = \Symfony\Component\Yaml\Yaml::parseFile($themeConfigPath);
-            $themeVersion = $themeConfig['version'] ?: 'undefined';
+            $themeVersion = isset($themeConfig['version']) ? $themeConfig['version'] : 'undefined';
         }
 
-        return $themeVersion;
+        return (string) $themeVersion;
     }
 }
