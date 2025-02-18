@@ -8,14 +8,13 @@ Used to run the tests with the command
 
 *Tests need MySQL to run. The MySQL container is started by the `docker-compose.yml` file.*
 
-## PHPCS Dockerfile
+## Lint Dockerfile
 
-Used to run the `phpcs` command by the pre-commit hook or manually with the command
+Used to run the `php-cs-fixer` command by the pre-commit hook or manually with the commands
 
-```task lint```
+- ```task lint```
+- ```task lint:fix```
 
-## PHPCBF Dockerfile
+Used to run the `phpcs` command to check PHP compatibility by the pre-commit hook or manually with the command
 
-Used to run the `phpcbf` command by the pre-commit hook or manually with the command
-
-```task lint:fix```
+- ```task php-compatibility```
