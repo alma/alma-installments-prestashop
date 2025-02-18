@@ -66,26 +66,26 @@ class ClientHelperTest extends TestCase
      * And there is no alma client
      * Then I expect a client exception
      */
-    public function testSendOrderEndpointNoAlmaClient()
+    public function testEndpointNoAlmaClient()
     {
         $this->clientHelperMock->shouldReceive('getAlmaClient')->andThrow(ClientException::class);
 
         $this->expectException(ClientException::class);
-        $this->clientHelperMock->getClientOrdersEndpoint();
+        $this->clientHelperMock->getClientPaymentsEndpoint();
     }
 
     /**
      * When i call an api
      * Then I expect a endpoint orders
      */
-    public function testSendOrderEndpoint()
+    public function testGetClientPaymentEndpoint()
     {
         $almaClient = new \stdClass();
-        $almaClient->orders = new Orders(Mockery::mock(ClientContext::class));
+        $almaClient->payments = new Payments(Mockery::mock(ClientContext::class));
 
         $this->clientHelperMock->shouldReceive('getAlmaClient')->andReturn($almaClient);
 
-        $this->assertInstanceOf(Orders::class, $this->clientHelperMock->getClientOrdersEndpoint());
+        $this->assertInstanceOf(Payments::class, $this->clientHelperMock->getClientPaymentsEndpoint());
     }
 
     /**
@@ -114,7 +114,7 @@ class ClientHelperTest extends TestCase
         $paymentEndpoint->shouldReceive('addOrderStatusByMerchantOrderReference')->andThrow(RequestException::class);
 
         $clientHelper = Mockery::mock(ClientHelper::class)->makePartial();
-        $clientHelper->shouldReceive('getClientOrdersEndpoint')->andReturn($paymentEndpoint);
+        $clientHelper->shouldReceive('getClientPaymentsEndpoint')->andReturn($paymentEndpoint);
 
         $this->expectException(RequestException::class);
         $clientHelper->sendOrderStatus('transactionId', 'merchantOrderReference', 'status', true);
