@@ -28,6 +28,7 @@ use Alma\API\Client;
 use Alma\API\ClientContext;
 use Alma\API\Endpoints\Configuration;
 use Alma\API\Endpoints\Orders;
+use Alma\API\Endpoints\Payments;
 use Alma\API\Entities\Payment;
 use Alma\API\Exceptions\ParametersException;
 use Alma\API\Exceptions\RequestException;
@@ -93,14 +94,14 @@ class ClientHelperTest extends TestCase
      */
     public function testSendOrderStatusWrongParameters()
     {
-        $orderEndpoint = Mockery::mock(Orders::class)->makePartial();
-        $orderEndpoint->shouldReceive('sendStatus')->andThrow(ParametersException::class);
+        $paymentEndpoint = Mockery::mock(Payments::class)->makePartial();
+        $paymentEndpoint->shouldReceive('addOrderStatusByMerchantOrderReference')->andThrow(ParametersException::class);
 
         $clientHelper = Mockery::mock(ClientHelper::class)->makePartial();
-        $clientHelper->shouldReceive('getClientOrdersEndpoint')->andReturn($orderEndpoint);
+        $clientHelper->shouldReceive('getClientPaymentsEndpoint')->andReturn($paymentEndpoint);
 
         $this->expectException(ParametersException::class);
-        $clientHelper->sendOrderStatus('transactionId', []);
+        $clientHelper->sendOrderStatus('transactionId', 'merchantOrderReference', 'status', true);
     }
 
     /**
@@ -109,14 +110,14 @@ class ClientHelperTest extends TestCase
      */
     public function testSendOrderStatusBadRequest()
     {
-        $orderEndpoint = Mockery::mock(Orders::class)->makePartial();
-        $orderEndpoint->shouldReceive('sendStatus')->andThrow(RequestException::class);
+        $paymentEndpoint = Mockery::mock(Payments::class)->makePartial();
+        $paymentEndpoint->shouldReceive('addOrderStatusByMerchantOrderReference')->andThrow(RequestException::class);
 
         $clientHelper = Mockery::mock(ClientHelper::class)->makePartial();
-        $clientHelper->shouldReceive('getClientOrdersEndpoint')->andReturn($orderEndpoint);
+        $clientHelper->shouldReceive('getClientOrdersEndpoint')->andReturn($paymentEndpoint);
 
         $this->expectException(RequestException::class);
-        $clientHelper->sendOrderStatus('transactionId', []);
+        $clientHelper->sendOrderStatus('transactionId', 'merchantOrderReference', 'status', true);
     }
 
     /**

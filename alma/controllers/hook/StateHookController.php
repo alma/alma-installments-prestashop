@@ -134,6 +134,8 @@ final class StateHookController extends AdminHookController
         }
 
         $order = new \Order($params['id_order']);
+
+        /** @var \OrderState $newStatus */
         $newStatus = $params['newOrderStatus'];
 
         switch ($newStatus->id) {
@@ -156,18 +158,7 @@ final class StateHookController extends AdminHookController
                 break;
         }
 
-        try {
-            $this->orderService->manageStatusUpdate($order, $newStatus);
-        } catch (\Exception $e) {
-            $this->almaLogger->info(
-                sprintf(
-                    'Impossible to update order status: Error : %s, Code : %s, Type : %s',
-                    $e->getMessage(),
-                    $e->getCode(),
-                    get_class($e)
-                )
-            );
-        }
+        $this->orderService->manageStatusUpdate($order, $newStatus);
     }
 
     /**
