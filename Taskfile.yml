@@ -92,7 +92,7 @@ tasks:
   php-compatibility:
     desc: Check compatibility code in PHP-CS container
     deps:
-      - build:php-cs
+      - lint:build
     cmds:
       - ./scripts/php-compatibility.sh
 
