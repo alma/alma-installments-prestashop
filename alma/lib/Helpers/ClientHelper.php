@@ -31,6 +31,8 @@ if (!defined('_PS_VERSION_')) {
 use Alma;
 use Alma\API\Client;
 use Alma\API\Entities\Merchant;
+use Alma\API\Exceptions\ParametersException;
+use Alma\API\Exceptions\RequestException;
 use Alma\API\RequestError;
 use Alma\PrestaShop\Exceptions\ClientException;
 use Alma\PrestaShop\Logger;
@@ -50,12 +52,12 @@ class ClientHelper
     }
 
     /**
-     * @deprecated Use create in ClientFactory instead
-     *
      * @param $apiKey
      * @param $mode
      *
      * @return Client|null
+     *
+     * @deprecated Use create in ClientFactory instead
      */
     public static function createInstance($apiKey, $mode = null)
     {
@@ -147,18 +149,21 @@ class ClientHelper
     }
 
     /**
-     * @param string $orderExternalId
-     * @param array $data
+     * @param string $paymentId
+     * @param string $merchantOrderReference
+     * @param string $status
+     * @param bool|null $isShipped
      *
-     * @return null
+     * @return void
      *
-     * @throws Alma\API\Exceptions\ParametersException
-     * @throws Alma\API\Exceptions\RequestException
      * @throws ClientException
+     * @throws ParametersException
+     * @throws RequestError
+     * @throws RequestException
      */
-    public function sendOrderStatus($orderExternalId, $data)
+    public function sendOrderStatus($paymentId, $merchantOrderReference, $status, $isShipped = null)
     {
-        $this->getClientOrdersEndpoint()->sendStatus($orderExternalId, $data);
+        $this->getClientPaymentsEndpoint()->addOrderStatusByMerchantOrderReference($paymentId, $merchantOrderReference, $status, $isShipped);
     }
 
     /**

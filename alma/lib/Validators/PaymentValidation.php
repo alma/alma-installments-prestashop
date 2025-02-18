@@ -315,8 +315,6 @@ class PaymentValidation
                 $alma->payments->addOrder($payment->id, [
                     'merchant_reference' => $order->reference,
                 ]);
-
-                $this->orderService->manageStatusUpdate($order);
             } catch (\Exception $e) {
                 $msg = "[Alma] Error updating order reference {$order->reference}: {$e->getMessage()}";
                 Logger::instance()->error($msg);
