@@ -24,16 +24,18 @@
 
 namespace Alma\PrestaShop\Tests\Unit\Controllers\Front;
 
+use Alma\API\Entities\MerchantData\CmsFeatures;
+use Alma\API\Entities\MerchantData\CmsInfo;
 use Alma\API\Lib\PayloadFormatter;
-use Alma\PrestaShop\Exceptions\CartException;
-use Alma\PrestaShop\Exceptions\CmsDataException;
+use Alma\PrestaShop\Exceptions\ValidateException;
 use Alma\PrestaShop\Helpers\CmsDataHelper;
 use Alma\PrestaShop\Helpers\SettingsHelper;
 use Alma\PrestaShop\Helpers\ValidateHelper;
+use Mockery;
 use PHPUnit\Framework\TestCase;
-use PrestaShop\PrestaShop\Core\Foundation\IoC\Exception;
 
 include_once __DIR__ . '/../../../../controllers/front/cmsdataexport.php';
+
 class AlmaCmsDataExportTest extends TestCase
 {
     /**
@@ -55,21 +57,23 @@ class AlmaCmsDataExportTest extends TestCase
 
     public function setUp()
     {
+        $_SERVER['HTTP_X_ALMA_SIGNATURE'] = '1234';
         $this->validateHelper = $this->createMock(ValidateHelper::class);
         $this->settingsHelper = $this->createMock(SettingsHelper::class);
+        $this->settingsHelper->method('getIdMerchant');
         $this->payloadFormatter = $this->createMock(PayloadFormatter::class);
         $this->cmsDataHelper = $this->createMock(CmsDataHelper::class);
 
-        $this->cmsDataExportMock = $this->getMockBuilder(\AlmaCmsDataExportModuleFrontController::class)
-            ->disableOriginalConstructor()
-            ->setMethodsExcept(['postProcess', 'setValidateHelper', 'setSettingsHelper', 'setPayloadFormatter', 'setCmsDataHelper'])
-            ->getMock();
+        $this->cmsDataExportMock = Mockery::mock(\AlmaCmsDataExportModuleFrontController::class)->makePartial();
+        $this->cmsDataExportMock->shouldAllowMockingProtectedMethods();
     }
 
     public function tearDown()
     {
+        $this->cmsDataExportMock = null;
         $this->validateHelper = null;
         $this->settingsHelper = null;
+        Mockery::close();
         unset($_SERVER['HTTP_X_ALMA_SIGNATURE']);
     }
 
@@ -77,14 +81,14 @@ class AlmaCmsDataExportTest extends TestCase
      * @throws \PrestaShopException
      * @throws \Alma\PrestaShop\Exceptions\CmsDataException
      */
-    public function testPostProcessThrowExceptionWithWrongSignature()
+    public function testPostProcessNoSignature()
     {
-        $_SERVER['HTTP_X_ALMA_SIGNATURE'] = '1234';
-        $this->settingsHelper->method('getIdMerchant')->willReturn('merchant_id');
-        $this->validateHelper->method('checkSignature')->willThrowException(new CartException('Exception'));
+        unset($_SERVER['HTTP_X_ALMA_SIGNATURE']);
+        $this->validateHelper->method('checkSignature')->willThrowException(new ValidateException('Exception'));
         $this->cmsDataExportMock->setValidateHelper($this->validateHelper);
         $this->cmsDataExportMock->setSettingsHelper($this->settingsHelper);
-        $this->expectException(CmsDataException::class);
+        $this->cmsDataExportMock->shouldReceive('ajaxRenderAndExit')
+            ->with(Mockery::any(), 403)->once();
         $this->cmsDataExportMock->postProcess();
     }
 
@@ -92,14 +96,13 @@ class AlmaCmsDataExportTest extends TestCase
      * @throws \PrestaShopException
      * @throws \Alma\PrestaShop\Exceptions\CmsDataException
      */
-    public function testPostProcessThrowExceptionWithWrongGetMerchantId()
+    public function testPostProcessCheckSignatureThrowExceptionReturn403()
     {
-        $_SERVER['HTTP_X_ALMA_SIGNATURE'] = '1234';
-        $this->settingsHelper->method('getIdMerchant')->willThrowException(new Exception('Exception'));
-        $this->validateHelper->method('checkSignature')->willReturn(true);
+        $this->validateHelper->method('checkSignature')->willThrowException(new ValidateException('Exception'));
         $this->cmsDataExportMock->setValidateHelper($this->validateHelper);
         $this->cmsDataExportMock->setSettingsHelper($this->settingsHelper);
-        $this->expectException(CmsDataException::class);
+        $this->cmsDataExportMock->shouldReceive('ajaxRenderAndExit')
+            ->with(Mockery::any(), 403)->once();
         $this->cmsDataExportMock->postProcess();
     }
 
@@ -131,18 +134,24 @@ class AlmaCmsDataExportTest extends TestCase
             'is_multisite' => true,
         ];
 
-        $_SERVER['HTTP_X_ALMA_SIGNATURE'] = '1234';
         $this->settingsHelper
             ->method('getIdMerchant')
             ->willReturn('merchant_id');
         $this->validateHelper->method('checkSignature')->willReturn(true);
         $this->cmsDataHelper->method('getCmsInfoArray')->willReturn($cmsInfoArray);
         $this->cmsDataHelper->method('getCmsFeatureArray')->willReturn($cmsFeatureArray);
-        $this->payloadFormatter->method('formatConfigurationPayload');
+        $this->payloadFormatter
+            ->expects($this->once())
+            ->method('formatConfigurationPayload')
+            ->with(new CmsInfo($cmsInfoArray), new CmsFeatures($cmsFeatureArray))
+            ->willReturn(['test' => 'test']);
         $this->cmsDataExportMock->setValidateHelper($this->validateHelper);
         $this->cmsDataExportMock->setSettingsHelper($this->settingsHelper);
         $this->cmsDataExportMock->setPayloadFormatter($this->payloadFormatter);
         $this->cmsDataExportMock->setCmsDataHelper($this->cmsDataHelper);
+        $this->cmsDataExportMock->shouldReceive('ajaxRenderAndExit')
+            ->with(json_encode(['test' => 'test']), 200)->once();
         // We can't test the return value because the method exit after echo the response
+        $this->cmsDataExportMock->postProcess();
     }
 }
