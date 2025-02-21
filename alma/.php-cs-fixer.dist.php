@@ -54,33 +54,3 @@ $config = (new Config())->setRules([
 ]);
 
 return $config->setUsingCache(false)->setFinder($finder);
-
-
-/*
-        $rules = [
-            '@Symfony' => true,
-            'concat_space' => [
-                'spacing' => 'one',
-            ],
-            'cast_spaces' => [
-                'space' => 'single',
-            ],
-            'error_suppression' => [
-                'mute_deprecation_error' => false,
-                'noise_remaining_usages' => false,
-                'noise_remaining_usages_exclude' => [],
-            ],
-            'function_to_constant' => false,
-            'no_alias_functions' => false,
-            'phpdoc_summary' => false,
-            'phpdoc_align' => [
-                'align' => 'left',
-            ],
-            'protected_to_private' => false,
-            'psr4' => false,
-            'self_accessor' => false,
-            'yoda_style' => null,
-            'non_printable_character' => true,
-            'no_superfluous_phpdoc_tags' => false,
-        ];
-        */
