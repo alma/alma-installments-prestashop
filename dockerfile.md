@@ -15,6 +15,8 @@ Used to run the `php-cs-fixer` command by the pre-commit hook or manually with t
 - ```task lint```
 - ```task lint:fix```
 
+- ## PHP Compatibility Dockerfile
+
 Used to run the `phpcs` command to check PHP compatibility by the pre-commit hook or manually with the command
 
 - ```task php-compatibility```
