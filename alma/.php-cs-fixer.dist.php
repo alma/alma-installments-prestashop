@@ -24,9 +24,6 @@ $config = (new Config())->setRules([
     'function_to_constant' => false,
     'no_alias_functions' => false,
     'phpdoc_summary' => false,
-    'phpdoc_align' => [
-        'align' => 'left',
-    ],
     'protected_to_private' => false,
     'self_accessor' => false,
     'yoda_style' => false,
