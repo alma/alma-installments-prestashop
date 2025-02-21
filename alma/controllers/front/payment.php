@@ -24,9 +24,9 @@
 
 use Alma\PrestaShop\Builders\Helpers\SettingsHelperBuilder;
 use Alma\PrestaShop\Builders\Models\PaymentDataBuilder;
+use Alma\PrestaShop\Factories\LoggerFactory;
 use Alma\PrestaShop\Helpers\ClientHelper;
 use Alma\PrestaShop\Helpers\SettingsHelper;
-use Alma\PrestaShop\Logger;
 use Alma\PrestaShop\Model\PaymentData;
 use Alma\PrestaShop\Traits\AjaxTrait;
 
@@ -124,7 +124,7 @@ class AlmaPaymentModuleFrontController extends ModuleFrontController
             }
 
             if (!$authorized) {
-                Logger::instance()->warning('[Alma] Not authorized!');
+                LoggerFactory::instance()->warning('[Alma] Not authorized!');
                 $this->ajaxFailAndDie();
             }
 
@@ -163,7 +163,7 @@ class AlmaPaymentModuleFrontController extends ModuleFrontController
                 $e->getMessage(),
                 $e->getTraceAsString()
             );
-            Logger::instance()->error($msg);
+            LoggerFactory::instance()->error($msg);
             $this->ajaxErrorAndDie();
         }
 

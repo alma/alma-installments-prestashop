@@ -28,11 +28,11 @@ use Alma\PrestaShop\Exceptions\InsurancePendingCancellationException;
 use Alma\PrestaShop\Exceptions\InsuranceSubscriptionException;
 use Alma\PrestaShop\Exceptions\MessageOrderException;
 use Alma\PrestaShop\Exceptions\SubscriptionException;
+use Alma\PrestaShop\Factories\LoggerFactory;
 use Alma\PrestaShop\Helpers\InsuranceHelper;
 use Alma\PrestaShop\Helpers\MessageOrderHelper;
 use Alma\PrestaShop\Helpers\SubscriptionHelper;
 use Alma\PrestaShop\Helpers\TokenHelper;
-use Alma\PrestaShop\Logger;
 use Alma\PrestaShop\Repositories\AlmaInsuranceProductRepository;
 use Alma\PrestaShop\Repositories\CustomerThreadRepository;
 use Alma\PrestaShop\Services\InsuranceApiService;
@@ -128,7 +128,7 @@ class AlmaSubscriptionModuleFrontController extends ModuleFrontController
 
         if (!$sid) {
             $msg = $this->module->l('Subscription id is missing', 'subscription');
-            Logger::instance()->error($msg);
+            LoggerFactory::instance()->error($msg);
             $this->ajaxRenderAndExit(json_encode(['error' => $msg]), 500);
         }
 
@@ -187,7 +187,7 @@ class AlmaSubscriptionModuleFrontController extends ModuleFrontController
                 'message' => $e->getMessage(),
                 'code' => $e->getCode(),
             ];
-            Logger::instance()->error(json_encode($e->getMessage()));
+            LoggerFactory::instance()->error(json_encode($e->getMessage()));
         }
 
         if ($state === InsuranceHelper::ALMA_INSURANCE_STATUS_CANCELED) {
@@ -219,10 +219,10 @@ class AlmaSubscriptionModuleFrontController extends ModuleFrontController
         try {
             $this->subscriptionHelper->cancelSubscriptionWithToken($sid);
         } catch (InsurancePendingCancellationException $e) {
-            Logger::instance()->error($e->getMessage(), $e->getTrace());
+            LoggerFactory::instance()->error($e->getMessage(), $e->getTrace());
             $response['state'] = InsuranceHelper::ALMA_INSURANCE_STATUS_PENDING_CANCELLATION;
         } catch (AlmaException $e) {
-            Logger::instance()->error($e->getMessage(), $e->getTrace());
+            LoggerFactory::instance()->error($e->getMessage(), $e->getTrace());
             $response = [
                 'error' => true,
                 'message' => $this->module->l('Error to cancel subscription', 'subscription'),

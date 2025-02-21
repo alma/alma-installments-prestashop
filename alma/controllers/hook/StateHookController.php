@@ -36,12 +36,12 @@ use Alma\PrestaShop\Builders\Helpers\InsuranceHelperBuilder;
 use Alma\PrestaShop\Builders\Helpers\SettingsHelperBuilder;
 use Alma\PrestaShop\Builders\Services\OrderServiceBuilder;
 use Alma\PrestaShop\Exceptions\OrderException;
+use Alma\PrestaShop\Factories\LoggerFactory;
 use Alma\PrestaShop\Helpers\ClientHelper;
 use Alma\PrestaShop\Helpers\InsuranceHelper;
 use Alma\PrestaShop\Helpers\OrderHelper;
 use Alma\PrestaShop\Helpers\SettingsHelper;
 use Alma\PrestaShop\Hooks\AdminHookController;
-use Alma\PrestaShop\Logger;
 use Alma\PrestaShop\Services\InsuranceSubscriptionService;
 use Alma\PrestaShop\Services\OrderService;
 
@@ -77,10 +77,6 @@ final class StateHookController extends AdminHookController
     protected $insuranceHelper;
 
     /**
-     * @var Logger
-     */
-    protected $almaLogger;
-    /**
      * @var OrderService
      */
     protected $orderService;
@@ -97,7 +93,6 @@ final class StateHookController extends AdminHookController
         $this->settingsHelper = $settingsHelperBuilder->getInstance();
         $orderServiceBuilder = new OrderServiceBuilder();
         $this->orderService = $orderServiceBuilder->getInstance();
-        $this->almaLogger = new Logger();
     }
 
     /**
@@ -173,7 +168,7 @@ final class StateHookController extends AdminHookController
                 $this->insuranceSubscriptionService->triggerInsuranceSubscription($order);
             }
         } catch (\Exception $e) {
-            Logger::instance()->error($e->getMessage(), $e->getTrace());
+            LoggerFactory::instance()->error($e->getMessage(), $e->getTrace());
         }
     }
 
@@ -198,12 +193,12 @@ final class StateHookController extends AdminHookController
                 $this->alma->payments->refund($idPayment, true);
             } catch (RequestError $e) {
                 $msg = "[Alma] ERROR when creating refund for Order {$order->id}: {$e->getMessage()}";
-                Logger::instance()->error($msg);
+                LoggerFactory::instance()->error($msg);
 
                 return;
             } catch (OrderException $e) {
                 $msg = "[Alma] ERROR Refund Order {$order->id}: {$e->getMessage()}";
-                Logger::instance()->error($msg);
+                LoggerFactory::instance()->error($msg);
             }
         }
     }
@@ -226,12 +221,12 @@ final class StateHookController extends AdminHookController
                 $this->alma->payments->trigger($idPayment);
             } catch (RequestError $e) {
                 $msg = "[Alma] ERROR when creating trigger for Order {$order->id}: {$e->getMessage()}";
-                Logger::instance()->error($msg);
+                LoggerFactory::instance()->error($msg);
 
                 return;
             } catch (OrderException $e) {
                 $msg = "[Alma] ERROR Trigger Order {$order->id}: {$e->getMessage()}";
-                Logger::instance()->error($msg);
+                LoggerFactory::instance()->error($msg);
             }
         }
     }

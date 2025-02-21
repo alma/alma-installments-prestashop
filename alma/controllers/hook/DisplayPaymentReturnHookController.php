@@ -31,10 +31,10 @@ if (!defined('_PS_VERSION_')) {
 use Alma\API\RequestError;
 use Alma\PrestaShop\Exceptions\OrderException;
 use Alma\PrestaShop\Exceptions\RenderPaymentException;
+use Alma\PrestaShop\Factories\LoggerFactory;
 use Alma\PrestaShop\Helpers\ClientHelper;
 use Alma\PrestaShop\Helpers\OrderHelper;
 use Alma\PrestaShop\Hooks\FrontendHookController;
-use Alma\PrestaShop\Logger;
 
 class DisplayPaymentReturnHookController extends FrontendHookController
 {
@@ -54,7 +54,7 @@ class DisplayPaymentReturnHookController extends FrontendHookController
         $almaPaymentId = $orderPayment->transaction_id;
         if (!$almaPaymentId) {
             $msg = '[Alma] Payment_id not found';
-            Logger::instance()->error($msg);
+            LoggerFactory::instance()->error($msg);
             throw new RenderPaymentException($msg);
         }
         $alma = ClientHelper::defaultInstance();
@@ -62,7 +62,7 @@ class DisplayPaymentReturnHookController extends FrontendHookController
             try {
                 $payment = $alma->payments->fetch($almaPaymentId);
             } catch (RequestError $e) {
-                Logger::instance()->error("[Alma] DisplayPaymentReturn Error fetching payment with ID {$almaPaymentId}: {$e->getMessage()}");
+                LoggerFactory::instance()->error("[Alma] DisplayPaymentReturn Error fetching payment with ID {$almaPaymentId}: {$e->getMessage()}");
                 throw new RenderPaymentException($e->getMessage());
             }
         }

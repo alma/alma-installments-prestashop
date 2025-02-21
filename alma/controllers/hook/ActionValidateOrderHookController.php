@@ -29,9 +29,9 @@ if (!defined('_PS_VERSION_')) {
 }
 
 use Alma\PrestaShop\Builders\Helpers\InsuranceHelperBuilder;
+use Alma\PrestaShop\Factories\LoggerFactory;
 use Alma\PrestaShop\Helpers\InsuranceHelper;
 use Alma\PrestaShop\Hooks\FrontendHookController;
-use Alma\PrestaShop\Logger;
 use Alma\PrestaShop\Repositories\AlmaInsuranceProductRepository;
 use Alma\PrestaShop\Services\AlmaBusinessDataService;
 
@@ -84,14 +84,14 @@ class ActionValidateOrderHookController extends FrontendHookController
         try {
             $this->almaBusinessDataService->runOrderConfirmedBusinessEvent($order->id, $cart->id);
         } catch (\PrestaShopException $e) {
-            Logger::instance()->error('[Alma] Error to connect business data service: ' . $e->getMessage());
+            LoggerFactory::instance()->error('[Alma] Error to connect business data service: ' . $e->getMessage());
         }
 
         if ($this->insuranceHelper->isInsuranceActivated()) {
             try {
                 $this->runInsurance($order->id, $cart->id);
             } catch (\PrestaShopDatabaseException $e) {
-                Logger::instance()->error('[Alma] Error to connect insurance database: ' . $e->getMessage());
+                LoggerFactory::instance()->error('[Alma] Error to connect insurance database: ' . $e->getMessage());
             }
         }
     }

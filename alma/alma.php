@@ -160,7 +160,7 @@ class Alma extends PaymentModule
     private function checkCoreInstall($coreInstall)
     {
         if (!$coreInstall) {
-            $logger = \Alma\PrestaShop\Logger::loggerClass();
+            $logger = \Alma\PrestaShop\Factories\LoggerFactory::loggerClass();
             $logger::addLog("Alma: Core module install failed (returned {$coreInstall})", 3);
 
             if (count($this->_errors) > 0) {
@@ -242,7 +242,7 @@ class Alma extends PaymentModule
             $psAccountsService = new \Alma\PrestaShop\Services\PsAccountsService($this, $this->context);
             $psAccountsService->install();
         } catch (\Alma\PrestaShop\Exceptions\CompatibilityPsAccountsException $e) {
-            \Alma\PrestaShop\Logger::instance()->info($e->getMessage());
+            \Alma\PrestaShop\Factories\LoggerFactory::instance()->info($e->getMessage());
         }
 
         $coreInstall = parent::install();

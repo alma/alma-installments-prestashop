@@ -35,7 +35,7 @@ use Alma\API\Exceptions\ParametersException;
 use Alma\API\Exceptions\RequestException;
 use Alma\API\RequestError;
 use Alma\PrestaShop\Exceptions\ClientException;
-use Alma\PrestaShop\Logger;
+use Alma\PrestaShop\Factories\LoggerFactory;
 use Exception;
 
 class ClientHelper
@@ -70,13 +70,13 @@ class ClientHelper
         try {
             $alma = new Client($apiKey, [
                 'mode' => $mode,
-                'logger' => Logger::instance(),
+                'logger' => LoggerFactory::instance(),
             ]);
 
             $alma->addUserAgentComponent('PrestaShop', _PS_VERSION_);
             $alma->addUserAgentComponent('Alma for PrestaShop', Alma::VERSION);
         } catch (Exception $e) {
-            Logger::instance()->error('Error creating Alma API client: ' . $e->getMessage());
+            LoggerFactory::instance()->error('Error creating Alma API client: ' . $e->getMessage());
         }
 
         return $alma;
@@ -95,7 +95,7 @@ class ClientHelper
 
         if (!$alma) {
             $msg = '[Alma] Error instantiating Alma API Client';
-            Logger::instance()->error($msg);
+            LoggerFactory::instance()->error($msg);
             throw new ClientException($msg);
         }
 

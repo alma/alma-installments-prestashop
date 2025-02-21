@@ -29,8 +29,8 @@ use Alma\API\Exceptions\RequestException;
 use Alma\API\RequestError;
 use Alma\PrestaShop\Exceptions\ClientException;
 use Alma\PrestaShop\Exceptions\OrderServiceException;
+use Alma\PrestaShop\Factories\LoggerFactory;
 use Alma\PrestaShop\Helpers\ClientHelper;
-use Alma\PrestaShop\Logger;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -43,7 +43,7 @@ class OrderService
      */
     private $clientHelper;
     /**
-     * @var Logger|mixed
+     * @var LoggerFactory|mixed
      */
     private $logger;
 
@@ -53,7 +53,7 @@ class OrderService
     public function __construct($clientHelper)
     {
         $this->clientHelper = $clientHelper;
-        $this->logger = Logger::instance();
+        $this->logger = LoggerFactory::instance();
     }
 
     /**
@@ -163,7 +163,7 @@ class OrderService
     /**
      * You can set a custom logger generally use for testing purpose
      *
-     * @param Logger $logger
+     * @param LoggerFactory $logger
      *
      * @return void
      */

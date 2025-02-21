@@ -32,10 +32,10 @@ use Alma\PrestaShop\Builders\Helpers\ApiHelperBuilder;
 use Alma\PrestaShop\Builders\Services\CartServiceBuilder;
 use Alma\PrestaShop\Exceptions\InsuranceInstallException;
 use Alma\PrestaShop\Exceptions\TermsAndConditionsException;
+use Alma\PrestaShop\Factories\LoggerFactory;
 use Alma\PrestaShop\Helpers\Admin\AdminInsuranceHelper;
 use Alma\PrestaShop\Helpers\ConstantsHelper;
 use Alma\PrestaShop\Helpers\ToolsHelper;
-use Alma\PrestaShop\Logger;
 use Alma\PrestaShop\Model\ClientModel;
 use Alma\PrestaShop\Repositories\AlmaInsuranceProductRepository;
 use Alma\PrestaShop\Repositories\AttributeGroupRepository;
@@ -142,7 +142,7 @@ class InsuranceService
 
                 return $insuranceProduct;
             } catch (\Exception $e) {
-                Logger::instance()->error(
+                LoggerFactory::instance()->error(
                     sprintf(
                         '[Alma] The insurance product has not been created, message "%s", trace "%s"',
                         $e->getMessage(),
@@ -175,7 +175,7 @@ class InsuranceService
             try {
                 $this->attributeGroupRepository->createInsuranceAttributeGroup();
             } catch (\Exception $e) {
-                Logger::instance()->error(
+                LoggerFactory::instance()->error(
                     sprintf(
                         '[Alma] The insurance attribute group has not been created, message "%s", trace "%s"',
                         $e->getMessage(),
@@ -370,7 +370,7 @@ class InsuranceService
             try {
                 $this->handleInsuranceFlag();
             } catch (\PrestaShopException $e) {
-                Logger::instance()->error(
+                LoggerFactory::instance()->error(
                     sprintf(
                         '[Alma] Error handling insurance flag: %s',
                         $e->getMessage()
@@ -402,7 +402,7 @@ class InsuranceService
             $this->insuranceHelper->handleBOMenu($isAllowInsurance);
             $this->insuranceHelper->handleDefaultInsuranceFieldValues($isAllowInsurance);
         } catch (InsuranceInstallException $e) {
-            Logger::instance()->error(
+            LoggerFactory::instance()->error(
                 sprintf(
                     '[Alma] Installation of exception has failed, message "%s", trace "%s"',
                     $e->getMessage(),
