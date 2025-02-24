@@ -5,8 +5,7 @@ use PhpCsFixer\Config;
 
 $finder = Finder::create()
     ->in(__DIR__)
-    ->exclude('tests')
-    ->exclude('php8');
+    ->exclude('tests');
 
 $config = (new Config())->setRules([
     '@Symfony' => true,
