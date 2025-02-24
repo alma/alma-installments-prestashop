@@ -1,5 +1,8 @@
 <?php
 /**
+ * Our PHPCS is currently configured to check for older PHP syntax, so we need to disable it for now.
+ * If we need to add a new PHP file using the updated syntax, we will have to create a separate folder for all PHP 8 files
+ * and exclude it in the PHPCS configuration (php-compatibility.sh).
  * @phpcs:disable
  */
 
