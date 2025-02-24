@@ -186,7 +186,6 @@ class OrderHelper
         if (
             true === $checkIsAlma
             && 'alma' != $order->module
-            && 1 == $order->valid
         ) {
             return false;
         }
