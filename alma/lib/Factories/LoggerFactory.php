@@ -33,6 +33,11 @@ if (!defined('_PS_VERSION_')) {
 
 class LoggerFactory
 {
+    /**
+     * Need to return the correct logger depending on the PrestaShop version.
+     *
+     * @return LoggerPsr1|LoggerPsr3
+     */
     public static function instance()
     {
         static $instance;
