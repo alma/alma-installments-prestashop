@@ -29,50 +29,75 @@ if (!defined('_PS_VERSION_')) {
 }
 
 use Alma\API\RequestError;
+use Alma\PrestaShop\Exceptions\ClientException;
 use Alma\PrestaShop\Exceptions\OrderException;
-use Alma\PrestaShop\Exceptions\RenderPaymentException;
 use Alma\PrestaShop\Factories\LoggerFactory;
-use Alma\PrestaShop\Helpers\ClientHelper;
 use Alma\PrestaShop\Helpers\OrderHelper;
 use Alma\PrestaShop\Hooks\FrontendHookController;
+use Alma\PrestaShop\Model\ClientModel;
 
 class DisplayPaymentReturnHookController extends FrontendHookController
 {
+    /** @var \Alma */
+    public $module;
     /**
-     * @throws \PrestaShopException
-     * @throws RenderPaymentException
-     * @throws OrderException
+     * @var \Alma\PrestaShop\Helpers\OrderHelper
+     */
+    protected $orderHelper;
+    /**
+     * @var \Alma\PrestaShop\Model\ClientModel
+     */
+    protected $clientModel;
+
+    /**
+     * DisplayPaymentReturnHookController constructor.
+     *
+     * @param $module
+     */
+    public function __construct($module)
+    {
+        parent::__construct($module);
+        $this->orderHelper = new OrderHelper();
+        $this->clientModel = new ClientModel();
+    }
+
+    /**
+     * @param $params
+     *
+     * @return false|string
      */
     public function run($params)
     {
         $this->context->controller->addCSS($this->module->_path . 'views/css/alma.css', 'all');
+        $displayPaymentReturn = false;
+        $almaPaymentId = null;
 
-        $payment = null;
-        $order = array_key_exists('objOrder', $params) ? $params['objOrder'] : $params['order'];
-        $orderHelper = new OrderHelper();
-        $orderPayment = $orderHelper->getOrderPayment($order);
-        $almaPaymentId = $orderPayment->transaction_id;
-        if (!$almaPaymentId) {
-            $msg = '[Alma] Payment_id not found';
-            LoggerFactory::instance()->error($msg);
-            throw new RenderPaymentException($msg);
-        }
-        $alma = ClientHelper::defaultInstance();
-        if ($alma) {
-            try {
-                $payment = $alma->payments->fetch($almaPaymentId);
-            } catch (RequestError $e) {
-                LoggerFactory::instance()->error("[Alma] DisplayPaymentReturn Error fetching payment with ID {$almaPaymentId}: {$e->getMessage()}");
-                throw new RenderPaymentException($e->getMessage());
+        try {
+            $order = array_key_exists('objOrder', $params) ? $params['objOrder'] : $params['order'];
+            /** @var \OrderPayment $orderPayment */
+            $orderPayment = $this->orderHelper->getOrderPayment($order);
+            $almaPaymentId = $orderPayment->transaction_id;
+            if (!$almaPaymentId) {
+                $msg = '[Alma] Payment_id not found';
+                LoggerFactory::instance()->warning($msg);
+                throw new OrderException($msg);
             }
+            $payment = $this->clientModel->getClient()->payments->fetch($almaPaymentId);
+            $this->context->smarty->assign([
+                'order_reference' => $order->reference,
+                'payment_order' => $orderPayment,
+                'payment' => $payment,
+            ]);
+
+            $displayPaymentReturn = $this->module->display($this->module->file, 'displayPaymentReturn.tpl');
+        } catch (OrderException $e) {
+            LoggerFactory::instance()->warning(sprintf('[Alma] DisplayPaymentReturn Error fetching payment for order %s: %s', json_encode($order), $e->getMessage()));
+        } catch (ClientException $e) {
+            LoggerFactory::instance()->warning("[Alma] DisplayPaymentReturn Error fetching client with payment ID {$almaPaymentId}: {$e->getMessage()}");
+        } catch (RequestError $e) {
+            LoggerFactory::instance()->warning("[Alma] DisplayPaymentReturn Error fetching payment with ID {$almaPaymentId}: {$e->getMessage()}");
         }
 
-        $this->context->smarty->assign([
-            'order_reference' => $order->reference,
-            'payment_order' => $orderPayment,
-            'payment' => $payment,
-        ]);
-
-        return $this->module->display($this->module->file, 'displayPaymentReturn.tpl');
+        return $displayPaymentReturn;
     }
 }

@@ -33,7 +33,6 @@ use Alma\PrestaShop\Helpers\OrderHelper;
 use Alma\PrestaShop\Helpers\PriceHelper;
 use Alma\PrestaShop\Helpers\RefundHelper;
 use Alma\PrestaShop\Traits\AjaxTrait;
-use PrestaShop\PrestaShop\Core\Localization\Exception\LocalizationException;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -71,11 +70,8 @@ class AdminAlmaRefundsController extends ModuleAdminController
      *
      * @return void
      *
-     * @throws LocalizationException
-     * @throws PrestaShopDatabaseException
-     * @throws PrestaShopException
-     * @throws RequestException
-     * @throws \Alma\PrestaShop\Exceptions\OrderException
+     * @throws \PrestaShopDatabaseException
+     * @throws \PrestaShopException
      */
     public function ajaxProcessRefund()
     {
@@ -94,6 +90,10 @@ class AdminAlmaRefundsController extends ModuleAdminController
         } catch (RequestError $e) {
             $msg = "[Alma] ERROR when creating refund for Order {$order->id}: {$e->getMessage()}";
             LoggerFactory::instance()->error($msg);
+        } catch (RequestException $e) {
+            LoggerFactory::instance()->error('[Alma] RequestException: ' . $e->getMessage());
+        } catch (PrestaShopException $e) {
+            LoggerFactory::instance()->error('[Alma] PrestaShopException: ' . $e->getMessage());
         }
 
         if (false === $refundResult) {
