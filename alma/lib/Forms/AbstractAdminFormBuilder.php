@@ -24,8 +24,8 @@
 
 namespace Alma\PrestaShop\Forms;
 
+use Alma\PrestaShop\Factories\LoggerFactory;
 use Alma\PrestaShop\Helpers\ConstantsHelper;
-use Alma\PrestaShop\Logger;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -302,7 +302,7 @@ abstract class AbstractAdminFormBuilder
             try {
                 $dataInput['desc'] = $tpl->fetch();
             } catch (\Exception $e) {
-                Logger::instance()->error("Error while fetching tpl: {$e->getMessage()}");
+                LoggerFactory::instance()->error("Error while fetching tpl: {$e->getMessage()}");
                 $dataInput['desc'] = '';
             }
         }

@@ -2,7 +2,7 @@
 # See https://pre-commit.com/hooks.html for more hooks
 repos:
   - repo: https://github.com/commitizen-tools/commitizen
-    rev: v4.2.1
+    rev: v4.2.2
     hooks:
       - id: commitizen
         name: Check commit message format
@@ -22,24 +22,24 @@ repos:
         language: system
         pass_filenames: false
         entry:  task lint:fix
-        stages: [commit]
+        stages: [pre-commit]
 
       - id: coding-standard
         name: Check the PHP and Prestashop coding standards
         language: system
         pass_filenames: false
         entry:  task lint
-        stages: [commit]
+        stages: [pre-commit]
 
       - id: php-compatibility
         name: Check the PHP compatibility
         language: system
         pass_filenames: false
         entry:  task php-compatibility
-        stages: [commit]
+        stages: [pre-commit]
 
   - repo: https://github.com/returntocorp/semgrep
-    rev: v1.108.0
+    rev: v1.109.0
     hooks:
       - id: semgrep
         args:

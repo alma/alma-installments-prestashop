@@ -31,6 +31,7 @@ if (!defined('_PS_VERSION_')) {
 use Alma\API\RequestError;
 use Alma\PrestaShop\Exceptions\ClientException;
 use Alma\PrestaShop\Exceptions\OrderException;
+use Alma\PrestaShop\Factories\LoggerFactory;
 use Alma\PrestaShop\Helpers\OrderHelper;
 use Alma\PrestaShop\Hooks\FrontendHookController;
 use Alma\PrestaShop\Logger;
@@ -79,7 +80,7 @@ class DisplayPaymentReturnHookController extends FrontendHookController
             $almaPaymentId = $orderPayment->transaction_id;
             if (!$almaPaymentId) {
                 $msg = '[Alma] Payment_id not found';
-                Logger::instance()->warning($msg);
+                LoggerFactory::instance()->warning($msg);
                 throw new OrderException($msg);
             }
             $payment = $this->clientModel->getClient()->payments->fetch($almaPaymentId);
@@ -91,11 +92,11 @@ class DisplayPaymentReturnHookController extends FrontendHookController
 
             $displayPaymentReturn = $this->module->display($this->module->file, 'displayPaymentReturn.tpl');
         } catch (OrderException $e) {
-            Logger::instance()->warning(sprintf('[Alma] DisplayPaymentReturn Error fetching payment for order %s: %s', json_encode($order), $e->getMessage()));
+            LoggerFactory::instance()->warning(sprintf('[Alma] DisplayPaymentReturn Error fetching payment for order %s: %s', json_encode($order), $e->getMessage()));
         } catch (ClientException $e) {
-            Logger::instance()->warning("[Alma] DisplayPaymentReturn Error fetching client with payment ID {$almaPaymentId}: {$e->getMessage()}");
+            LoggerFactory::instance()->warning("[Alma] DisplayPaymentReturn Error fetching client with payment ID {$almaPaymentId}: {$e->getMessage()}");
         } catch (RequestError $e) {
-            Logger::instance()->warning("[Alma] DisplayPaymentReturn Error fetching payment with ID {$almaPaymentId}: {$e->getMessage()}");
+            LoggerFactory::instance()->warning("[Alma] DisplayPaymentReturn Error fetching payment with ID {$almaPaymentId}: {$e->getMessage()}");
         }
 
         return $displayPaymentReturn;

@@ -21,40 +21,34 @@
  * @copyright 2018-2024 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
+
+namespace Alma\PrestaShop\Factories;
+
+use Alma\PrestaShop\Model\LoggerPsr1;
+use Alma\PrestaShop\Model\LoggerPsr3;
+
 if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-use Alma\API\RequestError;
-use Alma\PrestaShop\Builders\Helpers\CustomFieldHelperBuilder;
-use Alma\PrestaShop\Factories\LoggerFactory;
-use Alma\PrestaShop\Helpers\SettingsHelper;
-
-function upgrade_module_2_6_0()
+class LoggerFactory
 {
-    require_once _PS_MODULE_DIR_ . 'alma/upgrade/autoload_upgrade.php';
-
-    if (SettingsHelper::isFullyConfigured()) {
-        $deleteKeys = [
-            'ALMA_PAYMENT_BUTTON_TITLE',
-            'ALMA_PAYMENT_BUTTON_DESC',
-        ];
-
-        try {
-            foreach ($deleteKeys as $deleteKey) {
-                Configuration::deleteByName($deleteKey);
+    /**
+     * Need to return the correct logger depending on the PrestaShop version.
+     *
+     * @return LoggerPsr1|LoggerPsr3
+     */
+    public static function instance()
+    {
+        static $instance;
+        if (!$instance) {
+            if (version_compare(_PS_VERSION_, '9', '>=')) {
+                $instance = new LoggerPsr3();
+            } else {
+                $instance = new LoggerPsr1();
             }
-
-            $customFieldHelperBuilder = new CustomFieldHelperBuilder();
-            $customFieldsHelper = $customFieldHelperBuilder->getInstance();
-
-            $customFieldsHelper->initCustomFields();
-        } catch (RequestError $e) {
-            LoggerFactory::instance()->error("[Alma] ERROR upgrade v2.6.0: {$e->getMessage()}");
-
-            return false;
         }
-    }
 
-    return true;
+        return $instance;
+    }
 }

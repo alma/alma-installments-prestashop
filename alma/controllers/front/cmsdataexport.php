@@ -26,7 +26,6 @@ use Alma\API\Entities\MerchantData\CmsFeatures;
 use Alma\API\Entities\MerchantData\CmsInfo;
 use Alma\API\Lib\PayloadFormatter;
 use Alma\PrestaShop\Builders\Helpers\SettingsHelperBuilder;
-use Alma\PrestaShop\Exceptions\CmsDataException;
 use Alma\PrestaShop\Exceptions\ValidateException;
 use Alma\PrestaShop\Helpers\CmsDataHelper;
 use Alma\PrestaShop\Helpers\SettingsHelper;
@@ -70,26 +69,23 @@ class AlmaCmsDataExportModuleFrontController extends ModuleFrontController
         $this->payloadFormatter = new PayloadFormatter();
     }
 
-    /**
-     * @throws \Alma\PrestaShop\Exceptions\CmsDataException
-     * @throws \PrestaShopException
-     */
     public function postProcess()
     {
         parent::postProcess();
         try {
-            $this->validateHelper->checkSignature($this->settingsHelper->getIdMerchant(), SettingsHelper::getActiveAPIKey(), $_SERVER['HTTP_X_ALMA_SIGNATURE']);
+            $signature = isset($_SERVER['HTTP_X_ALMA_SIGNATURE']) ? $_SERVER['HTTP_X_ALMA_SIGNATURE'] : '';
+            $this->validateHelper->checkSignature($this->settingsHelper->getIdMerchant(), SettingsHelper::getActiveAPIKey(), $signature);
         } catch (ValidateException $e) {
-            throw new CmsDataException('[Alma] checkSignature - ' . $e->getMessage());
-        } catch (\Exception $e) {
-            throw new CmsDataException('[Alma] Get Merchant Id - ' . $e->getMessage());
+            $this->ajaxRenderAndExit($e->getMessage(), 403);
+            // Return is call only in test;
+            return;
         }
 
         $cmsInfo = new CmsInfo($this->cmsDataHelper->getCmsInfoArray());
         $cmsFeature = new CmsFeatures($this->cmsDataHelper->getCmsFeatureArray());
 
         $payload = $this->payloadFormatter->formatConfigurationPayload($cmsInfo, $cmsFeature);
-        $this->ajaxRenderAndExit(json_encode($payload));
+        $this->ajaxRenderAndExit(json_encode($payload), 200);
     }
 
     /**

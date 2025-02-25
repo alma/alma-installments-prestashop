@@ -23,10 +23,10 @@
  */
 
 use Alma\API\RequestError;
+use Alma\PrestaShop\Factories\LoggerFactory;
 use Alma\PrestaShop\Helpers\Admin\TabsHelper;
 use Alma\PrestaShop\Helpers\ClientHelper;
 use Alma\PrestaShop\Helpers\SettingsHelper;
-use Alma\PrestaShop\Logger;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -49,7 +49,7 @@ function upgrade_module_1_4_0($module)
         try {
             $merchant = $alma->merchants->me();
         } catch (RequestError $e) {
-            Logger::instance()->error("[Alma] ERROR upgrade v1.4.0: {$e->getMessage()}");
+            LoggerFactory::instance()->error("[Alma] ERROR upgrade v1.4.0: {$e->getMessage()}");
 
             return true;
         }

@@ -33,10 +33,10 @@ use Alma\PrestaShop\Builders\Helpers\CartHelperBuilder;
 use Alma\PrestaShop\Exceptions\InsurancePendingCancellationException;
 use Alma\PrestaShop\Exceptions\InsuranceSubscriptionException;
 use Alma\PrestaShop\Exceptions\SubscriptionException;
+use Alma\PrestaShop\Factories\LoggerFactory;
 use Alma\PrestaShop\Helpers\CartHelper;
 use Alma\PrestaShop\Helpers\ClientHelper;
 use Alma\PrestaShop\Helpers\ProductHelper;
-use Alma\PrestaShop\Logger;
 use Alma\PrestaShop\Repositories\AlmaInsuranceProductRepository;
 
 class InsuranceApiService
@@ -114,7 +114,7 @@ class InsuranceApiService
 
             return $filesByType;
         } catch (\Exception  $e) {
-            Logger::instance()->error(
+            LoggerFactory::instance()->error(
                 sprintf(
                     '[Alma] Impossible to retrieve insurance contract files, message "%s", trace "%s"',
                     $e->getMessage(),
@@ -144,7 +144,7 @@ class InsuranceApiService
                 $this->cartHelper->getCartIdFromContext()
             );
         } catch (\Exception $e) {
-            Logger::instance()->error(
+            LoggerFactory::instance()->error(
                 sprintf(
                     '[Alma] Impossible to retrieve insurance contract, message "%s", trace "%s"',
                     $e->getMessage(),
@@ -182,7 +182,7 @@ class InsuranceApiService
                 return $result['subscriptions'];
             }
         } catch (\Exception  $e) {
-            Logger::instance()->error(
+            LoggerFactory::instance()->error(
                 sprintf(
                     '[Alma] Error when subscribing insurance contract, message "%s", trace "%s", subscriptionData : "%s", idTransaction : "%s"',
                     $e->getMessage(),
@@ -206,7 +206,7 @@ class InsuranceApiService
         $cmsReferences = $this->productHelper->getCmsReferencesByCart($cart);
 
         if (empty($cmsReferences)) {
-            Logger::instance()->warning(
+            LoggerFactory::instance()->warning(
                 sprintf(
                     '[Alma] No cms reference returned, cart: "%s"',
                     json_encode($cart)
@@ -219,7 +219,7 @@ class InsuranceApiService
         try {
             $this->almaApiClient->insurance->sendCustomerCart($cmsReferences, $cart->id);
         } catch (RequestError $e) {
-            Logger::instance()->error(
+            LoggerFactory::instance()->error(
                 sprintf(
                     '[Alma] Error while sending the cms_reference for tracking, message "%s", trace "%s", cmsReference : "%s", cartId: "%s"',
                     $e->getMessage(),

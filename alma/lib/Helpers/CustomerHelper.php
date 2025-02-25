@@ -26,7 +26,7 @@ namespace Alma\PrestaShop\Helpers;
 
 use Alma\PrestaShop\Factories\ContextFactory;
 use Alma\PrestaShop\Factories\CustomerFactory;
-use Alma\PrestaShop\Logger;
+use Alma\PrestaShop\Factories\LoggerFactory;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -96,7 +96,7 @@ class CustomerHelper
     public function validateCustomer($customer)
     {
         if (!$this->validateHelper->isLoadedObject($customer)) {
-            Logger::instance()->error(
+            LoggerFactory::instance()->error(
                 sprintf(
                     '[Alma] Error loading Customer %s from Cart %s',
                     $this->contextFactory->getContextCartCustomerId(),
