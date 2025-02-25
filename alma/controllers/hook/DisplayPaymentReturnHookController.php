@@ -78,7 +78,9 @@ class DisplayPaymentReturnHookController extends FrontendHookController
             $orderPayment = $this->orderHelper->getOrderPayment($order);
             $almaPaymentId = $orderPayment->transaction_id;
             if (!$almaPaymentId) {
-                Logger::instance()->warning('[Alma] Payment_id not found');
+                $msg = '[Alma] Payment_id not found';
+                Logger::instance()->warning($msg);
+                throw new OrderException($msg);
             }
             $payment = $this->clientModel->getClient()->payments->fetch($almaPaymentId);
             $this->context->smarty->assign([
