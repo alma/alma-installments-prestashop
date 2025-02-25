@@ -29,6 +29,7 @@ use Alma\API\ParamsError;
 use Alma\PrestaShop\Exceptions\AlmaException;
 use Alma\PrestaShop\Factories\AddressFactory;
 use Alma\PrestaShop\Factories\ContextFactory;
+use Alma\PrestaShop\Factories\LoggerFactory;
 use Alma\PrestaShop\Helpers\AddressHelper;
 use Alma\PrestaShop\Helpers\CarrierHelper;
 use Alma\PrestaShop\Helpers\CartHelper;
@@ -40,7 +41,6 @@ use Alma\PrestaShop\Helpers\PriceHelper;
 use Alma\PrestaShop\Helpers\SettingsHelper;
 use Alma\PrestaShop\Helpers\StateHelper;
 use Alma\PrestaShop\Helpers\ToolsHelper;
-use Alma\PrestaShop\Logger;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -200,7 +200,7 @@ class PaymentData
                 || 0 == $this->context->cart->id_address_invoice
             )
         ) {
-            Logger::instance()->warning(
+            LoggerFactory::instance()->warning(
                 sprintf(
                     '[Alma] Missing Customer ID or Delivery/Billing address ID for Cart %s',
                     $this->context->cart->id

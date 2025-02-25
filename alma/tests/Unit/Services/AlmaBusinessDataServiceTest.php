@@ -30,9 +30,9 @@ use Alma\API\Endpoints\Results\Eligibility;
 use Alma\API\Entities\DTO\MerchantBusinessEvent\CartInitiatedBusinessEvent;
 use Alma\API\Entities\DTO\MerchantBusinessEvent\OrderConfirmedBusinessEvent;
 use Alma\API\Exceptions\RequestException;
-use Alma\PrestaShop\Logger;
 use Alma\PrestaShop\Model\AlmaBusinessDataModel;
 use Alma\PrestaShop\Model\ClientModel;
+use Alma\PrestaShop\Model\LoggerPsr1;
 use Alma\PrestaShop\Repositories\AlmaBusinessDataRepository;
 use Alma\PrestaShop\Services\AlmaBusinessDataService;
 use PHPUnit\Framework\TestCase;
@@ -48,7 +48,7 @@ class AlmaBusinessDataServiceTest extends TestCase
      */
     protected $almaBusinessDataModelMock;
     /**
-     * @var \Alma\PrestaShop\Logger
+     * @var \Alma\PrestaShop\Factories\LoggerFactory
      */
     protected $loggerMock;
     /**
@@ -86,7 +86,7 @@ class AlmaBusinessDataServiceTest extends TestCase
         $this->clientMock = $this->createMock(Client::class);
         $this->clientMock->merchants = $this->merchantsMock;
         $this->clientModelMock = $this->createMock(ClientModel::class);
-        $this->loggerMock = $this->createMock(Logger::class);
+        $this->loggerMock = $this->createMock(LoggerPsr1::class);
         $this->almaBusinessDataModelMock = $this->createMock(AlmaBusinessDataModel::class);
         $this->almaBusinessDataRepositoryMock = $this->createMock(AlmaBusinessDataRepository::class);
         $this->almaBusinessDataService = new AlmaBusinessDataService(

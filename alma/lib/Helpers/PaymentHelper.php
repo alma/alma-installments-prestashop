@@ -24,7 +24,7 @@
 
 namespace Alma\PrestaShop\Helpers;
 
-use Alma\PrestaShop\Logger;
+use Alma\PrestaShop\Factories\LoggerFactory;
 use Alma\PrestaShop\Model\PaymentData;
 
 if (!defined('_PS_VERSION_')) {
@@ -63,7 +63,7 @@ class PaymentHelper
         $paymentData = $this->paymentData->dataFromCart($activePlans);
 
         if (!$paymentData) {
-            Logger::instance()->error('Cannot check cart eligibility: no data extracted from cart');
+            LoggerFactory::instance()->error('Cannot check cart eligibility: no data extracted from cart');
 
             return [];
         }

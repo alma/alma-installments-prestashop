@@ -30,7 +30,7 @@ if (!defined('_PS_VERSION_')) {
 
 abstract class HookController
 {
-    /** @var Alma */
+    /** @var \Alma */
     protected $module;
 
     /** @var \Context */

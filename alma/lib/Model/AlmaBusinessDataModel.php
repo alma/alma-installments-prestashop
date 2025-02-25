@@ -24,7 +24,7 @@
 
 namespace Alma\PrestaShop\Model;
 
-use Alma\PrestaShop\Logger;
+use Alma\PrestaShop\Factories\LoggerFactory;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -98,7 +98,7 @@ class AlmaBusinessDataModel extends AlmaObjectModel
         try {
             return $db->getRow($query);
         } catch (\PrestaShopDatabaseException $e) {
-            Logger::instance()->warning('Failed to fetch alma_business_data by cart ID: ' . $e->getMessage());
+            LoggerFactory::instance()->warning('Failed to fetch alma_business_data by cart ID: ' . $e->getMessage());
         }
     }
 

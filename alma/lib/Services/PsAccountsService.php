@@ -26,8 +26,8 @@ namespace Alma\PrestaShop\Services;
 
 use Alma\PrestaShop\Builders\Models\MediaHelperBuilder;
 use Alma\PrestaShop\Exceptions\CompatibilityPsAccountsException;
+use Alma\PrestaShop\Factories\LoggerFactory;
 use Alma\PrestaShop\Helpers\MediaHelper;
-use Alma\PrestaShop\Logger;
 use Exception;
 use PrestaShop\ModuleLibServiceContainer\DependencyInjection\ServiceContainer;
 use PrestaShop\PsAccountsInstaller\Installer\Exception\InstallerException;
@@ -79,7 +79,7 @@ class PsAccountsService
             $this->setContainer();
             $this->getService('alma.ps_accounts_installer')->install();
         } catch (CompatibilityPsAccountsException $e) {
-            Logger::instance()->info($e->getMessage());
+            LoggerFactory::instance()->info($e->getMessage());
         }
     }
 

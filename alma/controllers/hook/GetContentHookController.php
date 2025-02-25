@@ -34,8 +34,8 @@ use Alma\PrestaShop\Exceptions\MissingParameterException;
 use Alma\PrestaShop\Exceptions\PnxFormException;
 use Alma\PrestaShop\Exceptions\ShareOfCheckoutException;
 use Alma\PrestaShop\Factories\ContextFactory;
+use Alma\PrestaShop\Factories\LoggerFactory;
 use Alma\PrestaShop\Hooks\AdminHookController;
-use Alma\PrestaShop\Logger;
 use Alma\PrestaShop\Proxy\ConfigurationProxy;
 use Alma\PrestaShop\Proxy\ModuleProxy;
 use Alma\PrestaShop\Proxy\ToolsProxy;
@@ -165,14 +165,14 @@ final class GetContentHookController extends AdminHookController
             } catch (PnxFormException $e) {
                 $messages[] = $e->getMessage();
             } catch (ClientException $e) {
-                Logger::instance()->error(
+                LoggerFactory::instance()->error(
                     sprintf(
                         '[Alma] Error sending URL for gather CMS data: %s',
                         $e->getMessage()
                     )
                 );
             } catch (MissingParameterException $e) {
-                Logger::instance()->error($e->getMessage());
+                LoggerFactory::instance()->error($e->getMessage());
                 $messages[] = 'Please fill in all required settings';
             }
         }
@@ -187,13 +187,13 @@ final class GetContentHookController extends AdminHookController
                 $assignSmartyKeys['hasPSAccounts'] = $hasPSAccounts;
             } catch (ModuleNotInstalledException $e) {
                 $messages[] = $e->getMessage();
-                Logger::instance()->info('[Alma] Issue with Installation PS Account: ' . $e->getMessage());
+                LoggerFactory::instance()->info('[Alma] Issue with Installation PS Account: ' . $e->getMessage());
             } catch (ModuleVersionException $e) {
                 $messages[] = $e->getMessage();
-                Logger::instance()->info('[Alma] Issue with Version PS Account: ' . $e->getMessage());
+                LoggerFactory::instance()->info('[Alma] Issue with Version PS Account: ' . $e->getMessage());
             } catch (\Exception $e) {
                 $messages[] = $e->getMessage();
-                Logger::instance()->info('[Alma] Issue with PS Account: ' . $e->getMessage());
+                LoggerFactory::instance()->info('[Alma] Issue with PS Account: ' . $e->getMessage());
             }
         }
         $assignSmartyKeys['suggestPSAccounts'] = $params['suggestPSAccounts'];

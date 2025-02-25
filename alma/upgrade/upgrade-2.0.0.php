@@ -26,8 +26,8 @@ if (!defined('_PS_VERSION_')) {
 }
 
 use Alma\API\RequestError;
+use Alma\PrestaShop\Factories\LoggerFactory;
 use Alma\PrestaShop\Helpers\SettingsHelper;
-use Alma\PrestaShop\Logger;
 
 function upgrade_module_2_0_0()
 {
@@ -74,7 +74,7 @@ function upgrade_module_2_0_0()
 
             Tools::clearCache();
         } catch (RequestError $e) {
-            Logger::instance()->error("[Alma] ERROR upgrade v2.0.0: {$e->getMessage()}");
+            LoggerFactory::instance()->error("[Alma] ERROR upgrade v2.0.0: {$e->getMessage()}");
 
             return false;
         }

@@ -25,7 +25,7 @@
 namespace Alma\PrestaShop\Helpers;
 
 use Alma\PrestaShop\Factories\ContextFactory;
-use Alma\PrestaShop\Logger;
+use Alma\PrestaShop\Factories\LoggerFactory;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -128,7 +128,7 @@ class PriceHelper
         try {
             $formattedPrice = $this->toolsHelper->displayPrice($price, $currency);
         } catch (\Exception $e) {
-            Logger::instance()->warning(sprintf('Price localization error: %s', $e->getMessage()));
+            LoggerFactory::instance()->warning(sprintf('Price localization error: %s', $e->getMessage()));
         }
 
         return $formattedPrice;

@@ -27,8 +27,8 @@ if (!defined('_PS_VERSION_')) {
 
 use Alma\API\RequestError;
 use Alma\PrestaShop\Builders\Helpers\CustomFieldHelperBuilder;
+use Alma\PrestaShop\Factories\LoggerFactory;
 use Alma\PrestaShop\Helpers\SettingsHelper;
-use Alma\PrestaShop\Logger;
 
 function upgrade_module_2_6_0()
 {
@@ -50,7 +50,7 @@ function upgrade_module_2_6_0()
 
             $customFieldsHelper->initCustomFields();
         } catch (RequestError $e) {
-            Logger::instance()->error("[Alma] ERROR upgrade v2.6.0: {$e->getMessage()}");
+            LoggerFactory::instance()->error("[Alma] ERROR upgrade v2.6.0: {$e->getMessage()}");
 
             return false;
         }

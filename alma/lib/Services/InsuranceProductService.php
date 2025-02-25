@@ -30,6 +30,7 @@ use Alma\PrestaShop\Exceptions\InsuranceProductException;
 use Alma\PrestaShop\Factories\CartFactory;
 use Alma\PrestaShop\Factories\ContextFactory;
 use Alma\PrestaShop\Factories\LinkFactory;
+use Alma\PrestaShop\Factories\LoggerFactory;
 use Alma\PrestaShop\Factories\ProductFactory;
 use Alma\PrestaShop\Factories\ToolsFactory;
 use Alma\PrestaShop\Helpers\ConstantsHelper;
@@ -38,7 +39,6 @@ use Alma\PrestaShop\Helpers\InsuranceHelper;
 use Alma\PrestaShop\Helpers\PriceHelper;
 use Alma\PrestaShop\Helpers\ProductHelper;
 use Alma\PrestaShop\Helpers\ToolsHelper;
-use Alma\PrestaShop\Logger;
 use Alma\PrestaShop\Model\AlmaCartItemModel;
 use Alma\PrestaShop\Repositories\AlmaInsuranceProductRepository;
 use Alma\PrestaShop\Repositories\ProductRepository;
@@ -128,7 +128,7 @@ class InsuranceProductService
      */
     protected $toolsFactory;
     /**
-     * @var Logger
+     * @var LoggerFactory
      */
     protected $logger;
     /**
@@ -349,7 +349,7 @@ class InsuranceProductService
                 );
             }
         } catch (\Exception $e) {
-            Logger::instance()->error(
+            LoggerFactory::instance()->error(
                 sprintf(
                     '[Alma] An error occured when adding an insurance, InsuranceContratId : "%s", IdProduct : "%s", message "%s", trace "%s"',
                     $insuranceContractId,

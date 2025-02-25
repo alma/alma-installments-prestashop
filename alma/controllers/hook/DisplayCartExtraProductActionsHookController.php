@@ -33,6 +33,7 @@ use Alma\PrestaShop\Builders\Services\InsuranceProductServiceBuilder;
 use Alma\PrestaShop\Exceptions\AlmaCartItemFactoryException;
 use Alma\PrestaShop\Exceptions\InsuranceNotFoundException;
 use Alma\PrestaShop\Factories\AlmaCartItemFactory;
+use Alma\PrestaShop\Factories\LoggerFactory;
 use Alma\PrestaShop\Helpers\Admin\AdminInsuranceHelper;
 use Alma\PrestaShop\Helpers\CartHelper;
 use Alma\PrestaShop\Helpers\ConstantsHelper;
@@ -42,7 +43,6 @@ use Alma\PrestaShop\Helpers\PriceHelper;
 use Alma\PrestaShop\Helpers\ProductHelper;
 use Alma\PrestaShop\Helpers\SettingsHelper;
 use Alma\PrestaShop\Hooks\FrontendHookController;
-use Alma\PrestaShop\Logger;
 use Alma\PrestaShop\Repositories\AlmaInsuranceProductRepository;
 use Alma\PrestaShop\Repositories\ProductRepository;
 use Alma\PrestaShop\Services\InsuranceProductService;
@@ -108,7 +108,7 @@ class DisplayCartExtraProductActionsHookController extends FrontendHookControlle
      */
     protected $almaCartItemFactory;
     /**
-     * @var Logger
+     * @var LoggerFactory
      */
     protected $logger;
 
@@ -144,7 +144,7 @@ class DisplayCartExtraProductActionsHookController extends FrontendHookControlle
 
         $this->almaCartItemFactory = new AlmaCartItemFactory();
 
-        $this->logger = Logger::instance();
+        $this->logger = LoggerFactory::instance();
 
         parent::__construct($module);
     }

@@ -26,8 +26,8 @@ if (!defined('_PS_VERSION_')) {
 }
 
 use Alma\API\RequestError;
+use Alma\PrestaShop\Factories\LoggerFactory;
 use Alma\PrestaShop\Helpers\SettingsHelper;
-use Alma\PrestaShop\Logger;
 
 /**
  * @return bool
@@ -40,7 +40,7 @@ function upgrade_module_2_2_0()
         try {
             SettingsHelper::updateValue('ALMA_CATEGORIES_WDGT_NOT_ELGBL', SettingsHelper::showCategoriesWidgetIfNotEligible());
         } catch (RequestError $e) {
-            Logger::instance()->error("[Alma] ERROR upgrade v2.2.0: {$e->getMessage()}");
+            LoggerFactory::instance()->error("[Alma] ERROR upgrade v2.2.0: {$e->getMessage()}");
 
             return false;
         }

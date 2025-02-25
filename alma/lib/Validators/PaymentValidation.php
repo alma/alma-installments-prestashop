@@ -34,13 +34,13 @@ use Alma\PrestaShop\Builders\Services\OrderServiceBuilder;
 use Alma\PrestaShop\Exceptions\PaymentValidationException;
 use Alma\PrestaShop\Exceptions\RefundException;
 use Alma\PrestaShop\Factories\ContextFactory;
+use Alma\PrestaShop\Factories\LoggerFactory;
 use Alma\PrestaShop\Factories\ModuleFactory;
 use Alma\PrestaShop\Helpers\ClientHelper;
 use Alma\PrestaShop\Helpers\PriceHelper;
 use Alma\PrestaShop\Helpers\RefundHelper;
 use Alma\PrestaShop\Helpers\SettingsHelper;
 use Alma\PrestaShop\Helpers\ToolsHelper;
-use Alma\PrestaShop\Logger;
 use Alma\PrestaShop\Services\AlmaBusinessDataService;
 use Alma\PrestaShop\Services\OrderService;
 
@@ -146,33 +146,33 @@ class PaymentValidation
     {
         $alma = ClientHelper::defaultInstance();
         if (!$alma) {
-            Logger::instance()->error('[Alma] Error instantiating Alma API Client');
+            LoggerFactory::instance()->error('[Alma] Error instantiating Alma API Client');
             throw new PaymentValidationError(null, 'api_client_init');
         }
 
         try {
             $payment = $alma->payments->fetch($almaPaymentId);
         } catch (RequestError $e) {
-            Logger::instance()->error("[Alma] PaymentValidation Error fetching payment with ID {$almaPaymentId}: {$e->getMessage()}");
+            LoggerFactory::instance()->error("[Alma] PaymentValidation Error fetching payment with ID {$almaPaymentId}: {$e->getMessage()}");
             throw new PaymentValidationError(null, $e->getMessage());
         }
 
         // Check refund in Alma Payment
         if (count($payment->refunds) > 0) {
             $alreadyRefundMessage = '[Alma] PaymentValidation Error payment already refund';
-            Logger::instance()->error($alreadyRefundMessage);
+            LoggerFactory::instance()->error($alreadyRefundMessage);
             throw new PaymentValidationError(null, $alreadyRefundMessage);
         }
 
         // Check if cart exists and all fields are set
         $cart = new \Cart($payment->custom_data['cart_id']);
         if (!$cart || 0 == $cart->id_customer || 0 == $cart->id_address_delivery || 0 == $cart->id_address_invoice) {
-            Logger::instance()->error("[Alma] Payment validation error: Cart {$cart->id} does not look valid.");
+            LoggerFactory::instance()->error("[Alma] Payment validation error: Cart {$cart->id} does not look valid.");
             throw new PaymentValidationError($cart, 'cart_invalid');
         }
 
         if (!$this->module->active) {
-            Logger::instance()->error("[Alma] Payment validation error for Cart {$cart->id}: module not active.");
+            LoggerFactory::instance()->error("[Alma] Payment validation error for Cart {$cart->id}: module not active.");
             throw new PaymentValidationError($cart, 'inactive_module');
         }
 
@@ -185,21 +185,21 @@ class PaymentValidation
         }
 
         if (!$authorized) {
-            Logger::instance()->error(
+            LoggerFactory::instance()->error(
                 "[Alma] Payment validation error for Cart {$cart->id}: module not enabled anymore."
             );
             throw new PaymentValidationError($cart, 'disabled_module');
         }
 
         if (!$this->isValidCurrency()) {
-            Logger::instance()->error("[Alma] Payment validation error for Cart {$cart->id}: currency mismatch.");
+            LoggerFactory::instance()->error("[Alma] Payment validation error for Cart {$cart->id}: currency mismatch.");
             $msg = $this->module->l('Alma Monthly Installments are not available for this currency', 'PaymentValidation');
             throw new PaymentValidationError($cart, $msg);
         }
 
         $customer = new \Customer($cart->id_customer);
         if (!\Validate::isLoadedObject($customer)) {
-            Logger::instance()->error(
+            LoggerFactory::instance()->error(
                 "[Alma] Payment validation error for Cart {$cart->id}: cannot load Customer {$cart->id_customer}"
             );
 
@@ -210,7 +210,7 @@ class PaymentValidation
             try {
                 $cartTotals = $this->toolsHelper->psRound((float) $this->getCartTotals($cart, $customer), 2);
             } catch (\Exception $e) {
-                Logger::instance()->warning(
+                LoggerFactory::instance()->warning(
                     "[Alma] Payment validation error with cart total. {$e->getMessage()}"
                 );
             }
@@ -222,10 +222,10 @@ class PaymentValidation
                 try {
                     $alma->payments->flagAsPotentialFraud($almaPaymentId, $reason);
                 } catch (RequestError $e) {
-                    Logger::instance()->warning('[Alma] Failed to notify Alma of amount mismatch');
+                    LoggerFactory::instance()->warning('[Alma] Failed to notify Alma of amount mismatch');
                 }
 
-                Logger::instance()->error(
+                LoggerFactory::instance()->error(
                     "[Alma] Payment validation error for Cart {$cart->id}: Purchase amount mismatch!"
                 );
 
@@ -243,10 +243,10 @@ class PaymentValidation
                 try {
                     $alma->payments->flagAsPotentialFraud($almaPaymentId, Payment::FRAUD_STATE_ERROR);
                 } catch (RequestError $e) {
-                    Logger::instance()->warning('[Alma] Failed to notify Alma of potential fraud');
+                    LoggerFactory::instance()->warning('[Alma] Failed to notify Alma of potential fraud');
                 }
 
-                Logger::instance()->error(
+                LoggerFactory::instance()->error(
                     "Payment '{$almaPaymentId}': state error {$payment->state} & {$firstInstalment->state}"
                 );
 
@@ -292,7 +292,7 @@ class PaymentValidation
                     $customer->secure_key
                 );
             } catch (\PrestaShopException $e) {
-                Logger::instance()->warning("[Alma] Error validation Order: {$e->getMessage()}");
+                LoggerFactory::instance()->warning("[Alma] Error validation Order: {$e->getMessage()}");
             }
 
             // Update payment's order reference
@@ -308,7 +308,7 @@ class PaymentValidation
                 ]);
             } catch (RequestError $e) {
                 $msg = "[Alma] Error updating order id {$order->id}: {$e->getMessage()}";
-                Logger::instance()->error($msg);
+                LoggerFactory::instance()->error($msg);
             }
 
             try {
@@ -317,7 +317,7 @@ class PaymentValidation
                 ]);
             } catch (\Exception $e) {
                 $msg = "[Alma] Error updating order reference {$order->reference}: {$e->getMessage()}";
-                Logger::instance()->error($msg);
+                LoggerFactory::instance()->error($msg);
             }
 
             $extraRedirectArgs = '';

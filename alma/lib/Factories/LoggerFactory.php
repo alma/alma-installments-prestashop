@@ -22,56 +22,33 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
-namespace Alma\PrestaShop;
+namespace Alma\PrestaShop\Factories;
 
-use Alma\PrestaShop\Helpers\SettingsHelper;
-use Psr\Log\AbstractLogger;
-use Psr\Log\LogLevel;
+use Alma\PrestaShop\Model\LoggerPsr1;
+use Alma\PrestaShop\Model\LoggerPsr3;
 
 if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-class Logger extends AbstractLogger
+class LoggerFactory
 {
+    /**
+     * Need to return the correct logger depending on the PrestaShop version.
+     *
+     * @return LoggerPsr1|LoggerPsr3
+     */
     public static function instance()
     {
         static $instance;
-
         if (!$instance) {
-            $instance = new Logger();
+            if (version_compare(_PS_VERSION_, '9', '>=')) {
+                $instance = new LoggerPsr3();
+            } else {
+                $instance = new LoggerPsr1();
+            }
         }
 
         return $instance;
-    }
-
-    public static function loggerClass()
-    {
-        if (class_exists('PrestaShopLogger')) {
-            return 'PrestaShopLogger';
-        } else {
-            return 'Logger';
-        }
-    }
-
-    public function log($level, $message, array $context = [])
-    {
-        if (!SettingsHelper::canLog()) {
-            return;
-        }
-
-        $levels = [
-            LogLevel::DEBUG => 1,
-            LogLevel::INFO => 1,
-            LogLevel::NOTICE => 1,
-            LogLevel::WARNING => 2,
-            LogLevel::ERROR => 3,
-            LogLevel::ALERT => 4,
-            LogLevel::CRITICAL => 4,
-            LogLevel::EMERGENCY => 4,
-        ];
-
-        $logger = Logger::loggerClass();
-        $logger::addLog($message, $levels[$level]);
     }
 }

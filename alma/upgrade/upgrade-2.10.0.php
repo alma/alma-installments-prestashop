@@ -21,11 +21,12 @@
  * @copyright 2018-2024 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
+
 use Alma\API\RequestError;
+use Alma\PrestaShop\Factories\LoggerFactory;
 use Alma\PrestaShop\Forms\ShareOfCheckoutAdminFormBuilder;
 use Alma\PrestaShop\Helpers\Admin\TabsHelper;
 use Alma\PrestaShop\Helpers\SettingsHelper;
-use Alma\PrestaShop\Logger;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -54,7 +55,7 @@ function upgrade_module_2_10_0($module)
     try {
         return $tabsHelper->uninstallTabs($module->dataTabs()) && $tabsHelper->installTabs($module->dataTabs());
     } catch (PrestaShopException $e) {
-        Logger::instance()->error("[Alma] ERROR upgrade v2.10.0: {$e->getMessage()}");
+        LoggerFactory::instance()->error("[Alma] ERROR upgrade v2.10.0: {$e->getMessage()}");
 
         return false;
     }

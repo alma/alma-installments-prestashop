@@ -22,8 +22,8 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
+use Alma\PrestaShop\Factories\LoggerFactory;
 use Alma\PrestaShop\Helpers\ConstantsHelper;
-use Alma\PrestaShop\Logger;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -61,7 +61,7 @@ function upgrade_module_4_7_1($module)
         try {
             return Db::getInstance()->execute($sql);
         } catch (PrestaShopException $e) {
-            Logger::instance()->warning('[Alma] Error during migration table alma_business_data: ' . $e->getMessage());
+            LoggerFactory::instance()->warning('[Alma] Error during migration table alma_business_data: ' . $e->getMessage());
         }
     }
 

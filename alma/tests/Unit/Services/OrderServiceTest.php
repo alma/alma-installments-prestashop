@@ -25,7 +25,7 @@
 namespace Alma\PrestaShop\Tests\Unit\Services;
 
 use Alma\PrestaShop\Helpers\ClientHelper;
-use Alma\PrestaShop\Logger;
+use Alma\PrestaShop\Model\LoggerPsr1;
 use Alma\PrestaShop\Services\OrderService;
 use PHPUnit\Framework\TestCase;
 
@@ -39,7 +39,7 @@ class OrderServiceTest extends TestCase
     public function setUp()
     {
         $this->clientHelperMock = $this->createMock(ClientHelper::class);
-        $this->loggerMock = $this->createMock(Logger::class);
+        $this->loggerMock = $this->createMock(LoggerPsr1::class);
         $this->orderStateMock = $this->createMock(\OrderStateCore::class);
 
         $this->orderService = new OrderService($this->clientHelperMock);
