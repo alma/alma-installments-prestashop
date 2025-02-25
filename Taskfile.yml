@@ -66,7 +66,7 @@ tasks:
   lint:ci:
     desc: Run linter within docker-compose for the CI
     deps:
-      - docker:build
+      - lint:build
     cmds:
       - ./scripts/lint-ci.sh
 

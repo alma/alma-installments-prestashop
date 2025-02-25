@@ -30,6 +30,9 @@ jobs:
       with:
         python-version: 3.12
 
+    - name: Run linter
+      run: task lint:ci
+
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v3
 
@@ -50,23 +53,6 @@ jobs:
       run: task test
       env:
         XDEBUG_MODE: coverage
-
-    - name: Build linter image
-      run: task lint:build
-
-    - name: Authenticating to Artifact Registry
-      uses: "docker/login-action@v3"
-      with:
-        registry: "${{ env.REGISTRY_NAME }}"
-        username: "oauth2accesstoken"
-        password: "${{ steps.gcloud-auth.outputs.access_token }}"
-
-    - name: Publish the Docker image to Google Artifact Registry
-      run: |
-        docker push "lint:ps"
-
-    - name: Run linter
-      run: task lint:ci
 
     - name: Install semgrep
       run: pip install semgrep
