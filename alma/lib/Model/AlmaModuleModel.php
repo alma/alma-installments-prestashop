@@ -109,4 +109,12 @@ class AlmaModuleModel
 
         return $almaPosition['position'];
     }
+
+    /**
+     * @return false|\Module
+     */
+    public function getModule()
+    {
+        return $this->moduleProxy->getModule($this->moduleName);
+    }
 }

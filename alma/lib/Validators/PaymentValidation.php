@@ -41,6 +41,8 @@ use Alma\PrestaShop\Helpers\PriceHelper;
 use Alma\PrestaShop\Helpers\RefundHelper;
 use Alma\PrestaShop\Helpers\SettingsHelper;
 use Alma\PrestaShop\Helpers\ToolsHelper;
+use Alma\PrestaShop\Proxy\CartProxy;
+use Alma\PrestaShop\Proxy\PaymentModuleProxy;
 use Alma\PrestaShop\Services\AlmaBusinessDataService;
 use Alma\PrestaShop\Services\OrderService;
 
@@ -82,6 +84,14 @@ class PaymentValidation
      * @var \Alma\PrestaShop\Services\AlmaBusinessDataService
      */
     private $almaBusinessDataService;
+    /**
+     * @var \Alma\PrestaShop\Proxy\PaymentModuleProxy
+     */
+    private $paymentModuleProxy;
+    /**
+     * @var \Alma\PrestaShop\Proxy\CartProxy
+     */
+    private $cartProxy;
 
     /**
      * @param ContextFactory $contextFactory
@@ -109,6 +119,8 @@ class PaymentValidation
 
         $this->orderService = $orderServiceBuilder->getInstance();
         $this->almaBusinessDataService = new AlmaBusinessDataService();
+        $this->cartProxy = new CartProxy();
+        $this->paymentModuleProxy = new PaymentModuleProxy();
     }
 
     /**
@@ -139,8 +151,9 @@ class PaymentValidation
      * @return string URL to redirect the customer to
      *
      * @throws MismatchException
-     * @throws PaymentValidationError
      * @throws PaymentValidationException
+     * @throws PaymentValidationError
+     * @throws \PrestaShopException
      */
     public function validatePayment($almaPaymentId)
     {
@@ -206,7 +219,7 @@ class PaymentValidation
             throw new PaymentValidationError($cart, 'cannot load customer');
         }
 
-        if (!$cart->OrderExists()) {
+        if (!$this->cartProxy->orderExists($cart->id)) {
             try {
                 $cartTotals = $this->toolsHelper->psRound((float) $this->getCartTotals($cart, $customer), 2);
             } catch (\Exception $e) {
@@ -280,7 +293,7 @@ class PaymentValidation
 
             try {
                 // Place order
-                $this->module->validateOrder(
+                $this->paymentModuleProxy->validateOrder(
                     (int) $cart->id,
                     \Configuration::get('PS_OS_PAYMENT'),
                     $this->priceHelper->convertPriceFromCents($payment->purchase_amount),

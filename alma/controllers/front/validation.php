@@ -68,6 +68,7 @@ class AlmaValidationModuleFrontController extends ModuleFrontController
 
     /**
      * @return void
+     * @throws \PrestaShopException
      */
     public function postProcess()
     {
