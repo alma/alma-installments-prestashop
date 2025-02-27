@@ -25,6 +25,7 @@
 namespace Alma\PrestaShop\Proxy;
 
 use Alma\PrestaShop\Factories\LoggerFactory;
+use Alma\PrestaShop\Model\AlmaModuleModel;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -36,10 +37,21 @@ class PaymentModuleProxy
      * @var \Alma
      */
     private $module;
+    /**
+     * @var \Alma\PrestaShop\Proxy\CartProxy
+     */
+    private $cartProxy;
 
-    public function __construct($module)
+    public function __construct($module = null, $cartProxy = null)
     {
+        if (!$module) {
+            $module = (new AlmaModuleModel())->getModule();
+        }
         $this->module = $module;
+        if (!$cartProxy) {
+            $cartProxy = new CartProxy();
+        }
+        $this->cartProxy = $cartProxy;
     }
 
     /**
@@ -68,9 +80,8 @@ class PaymentModuleProxy
         $secure_key = false,
         Shop $shop = null
     ) {
-        $cart = new \Cart($id_cart);
-        if (CartProxy::orderExists($cart)) {
-            LoggerFactory::instance()->warning('Tentative de création d\'une commande en double pour le panier ID ' . $id_cart);
+        if ($this->cartProxy->orderExists($id_cart)) {
+            LoggerFactory::instance()->warning('[Alma] Attempting to create a duplicate order for cart ID ' . $id_cart);
             return false;
         }
 

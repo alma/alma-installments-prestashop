@@ -24,6 +24,8 @@
 
 namespace Alma\PrestaShop\Proxy;
 
+use Alma\PrestaShop\Factories\CartFactory;
+
 if (!defined('_PS_VERSION_')) {
     exit;
 }
@@ -31,20 +33,49 @@ if (!defined('_PS_VERSION_')) {
 class CartProxy
 {
     /**
+     * @var \Alma\PrestaShop\Factories\CartFactory
+     */
+    private $cartFactory;
+    /**
+     * @var string
+     */
+    private $psVersion;
+
+    public function __construct($cartFactory = null)
+    {
+        if (!$cartFactory) {
+            $cartFactory = new CartFactory();
+        }
+        $this->cartFactory = $cartFactory;
+        $this->psVersion = _PS_VERSION_;
+    }
+
+    /**
      * Check if order has already been placed with fix without cache for Prestashop versions < 1.7.7.0
      *
-     * @param \Cart $cart
+     * @param int|string $cartId
      * @return bool
      */
-    public static function orderExists($cart)
+    public function orderExists($cartId)
     {
-        if (version_compare(_PS_VERSION_, '1.7.7.0', '<')) {
+        if (version_compare($this->psVersion, '1.7.7.0', '<')) {
             return (bool) \Db::getInstance()->getValue(
-                'SELECT count(*) FROM `' . _DB_PREFIX_ . 'orders` WHERE `id_cart` = ' . (int) $cart->id,
+                'SELECT count(*) FROM `' . _DB_PREFIX_ . 'orders` WHERE `id_cart` = ' . (int) $cartId,
                 false
             );
         }
 
+        $cart = $this->cartFactory->create($cartId);
         return $cart->orderExists();
+    }
+
+    /**
+     * Setter for Unit Test
+     * @param $psVersion
+     * @return void
+     */
+    public function setPsVersion($psVersion)
+    {
+        $this->psVersion = $psVersion;
     }
 }

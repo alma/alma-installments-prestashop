@@ -88,6 +88,10 @@ class PaymentValidation
      * @var \Alma\PrestaShop\Proxy\PaymentModuleProxy
      */
     private $paymentModuleProxy;
+    /**
+     * @var \Alma\PrestaShop\Proxy\CartProxy
+     */
+    private $cartProxy;
 
     /**
      * @param ContextFactory $contextFactory
@@ -115,7 +119,8 @@ class PaymentValidation
 
         $this->orderService = $orderServiceBuilder->getInstance();
         $this->almaBusinessDataService = new AlmaBusinessDataService();
-        $this->paymentModuleProxy = new PaymentModuleProxy($this->module);
+        $this->cartProxy = new CartProxy();
+        $this->paymentModuleProxy = new PaymentModuleProxy();
     }
 
     /**
@@ -146,8 +151,9 @@ class PaymentValidation
      * @return string URL to redirect the customer to
      *
      * @throws MismatchException
-     * @throws PaymentValidationError
      * @throws PaymentValidationException
+     * @throws PaymentValidationError
+     * @throws \PrestaShopException
      */
     public function validatePayment($almaPaymentId)
     {
@@ -213,7 +219,7 @@ class PaymentValidation
             throw new PaymentValidationError($cart, 'cannot load customer');
         }
 
-        if (!CartProxy::orderExists($cart)) {
+        if (!$this->cartProxy->orderExists($cart->id)) {
             try {
                 $cartTotals = $this->toolsHelper->psRound((float) $this->getCartTotals($cart, $customer), 2);
             } catch (\Exception $e) {

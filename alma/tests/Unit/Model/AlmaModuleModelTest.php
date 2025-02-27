@@ -49,9 +49,14 @@ class AlmaModuleModelTest extends TestCase
      * @var \DbQuery
      */
     protected $dbQueryMock;
+    /**
+     * @var \Module
+     */
+    protected $moduleMock;
 
     public function setUp()
     {
+        $this->moduleMock = $this->createMock(\Module::class);
         $this->moduleProxyMock = $this->createMock(ModuleProxy::class);
         $this->dbQueryMock = $this->createMock(DbQuery::class);
         $this->dbMock = $this->createMock(\Db::class);
@@ -147,5 +152,17 @@ class AlmaModuleModelTest extends TestCase
                 'expected' => '',
             ],
         ];
+    }
+
+    /**
+     * @return void
+     */
+    public function testGetModule()
+    {
+        $this->moduleProxyMock->expects($this->once())
+            ->method('getModule')
+            ->with(ConstantsHelper::ALMA_MODULE_NAME)
+            ->willReturn($this->moduleMock);
+        $this->almaModuleModel->getModule();
     }
 }
