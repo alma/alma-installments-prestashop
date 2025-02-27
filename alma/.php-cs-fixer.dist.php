@@ -47,6 +47,7 @@ $config = (new Config())->setRules([
     'blank_line_before_statement' => false,
     'no_null_property_initialization' => false,
     'statement_indentation' => false,
+    'nullable_type_declaration_for_default_null_value' => false,
 ]);
 
 return $config->setUsingCache(false)->setFinder($finder);
