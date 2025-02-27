@@ -9,6 +9,7 @@ $finder = Finder::create()
 
 $config = (new Config())->setRules([
     '@Symfony' => true,
+    # To check
     'concat_space' => [
         'spacing' => 'one',
     ],
@@ -28,7 +29,9 @@ $config = (new Config())->setRules([
     'yoda_style' => false,
     'non_printable_character' => true,
     'no_superfluous_phpdoc_tags' => false,
-    # to fix
+    # Can't fix - rules no applicable to PHP 5.6
+    'nullable_type_declaration_for_default_null_value' => false,
+    # To fix
     'blank_line_after_opening_tag' => false,
     'fully_qualified_strict_types' => false,
     'array_indentation' => false,
@@ -47,7 +50,6 @@ $config = (new Config())->setRules([
     'blank_line_before_statement' => false,
     'no_null_property_initialization' => false,
     'statement_indentation' => false,
-    'nullable_type_declaration_for_default_null_value' => false,
 ]);
 
 return $config->setUsingCache(false)->setFinder($finder);
