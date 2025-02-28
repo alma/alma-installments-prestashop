@@ -43,6 +43,7 @@ use Alma\PrestaShop\Modules\OpartSaveCart\OpartSaveCartCartService;
 use Alma\PrestaShop\Services\AlmaBusinessDataService;
 use Alma\PrestaShop\Services\CartService;
 use Alma\PrestaShop\Services\InsuranceProductService;
+use PrestaShop\PrestaShop\Adapter\Entity\Validate;
 
 class ActionCartSaveHookController extends FrontendHookController
 {
@@ -130,6 +131,9 @@ class ActionCartSaveHookController extends FrontendHookController
         $idCustomization = $this->toolsFactory->getValue('id_customization');
         $baseCart = $this->contextCart;
         $newCart = $params['cart'];
+        if (!Validate::isLoadedObject($newCart)) {
+            return;
+        }
 
         $this->almaBusinessDataService->createTableIfNotExist();
 
