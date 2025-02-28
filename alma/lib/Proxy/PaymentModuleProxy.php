@@ -55,6 +55,9 @@ class PaymentModuleProxy
     }
 
     /**
+     * Issue duplicate order multiple payment in same time
+     * We proxify this method to avoid duplicate order
+     * Validate order if order has not been already placed
      * @param $id_cart
      * @param $id_order_state
      * @param $amount_paid

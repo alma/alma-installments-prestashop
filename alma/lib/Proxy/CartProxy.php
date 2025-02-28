@@ -51,7 +51,9 @@ class CartProxy
     }
 
     /**
-     * Check if order has already been placed with fix without cache for Prestashop versions < 1.7.7.0
+     * Issue duplicate order multiple payment in same time
+     * We proxify this method to avoid duplicate order for Prestashop versions < 1.7.7.0
+     * Check if order has already been placed
      *
      * @param int|string $cartId
      * @return bool
