@@ -2,7 +2,7 @@
 # See https://pre-commit.com/hooks.html for more hooks
 repos:
   - repo: https://github.com/commitizen-tools/commitizen
-    rev: v4.2.2
+    rev: v4.4.1
     hooks:
       - id: commitizen
         name: Check commit message format
@@ -39,7 +39,7 @@ repos:
         stages: [pre-commit]
 
   - repo: https://github.com/returntocorp/semgrep
-    rev: v1.109.0
+    rev: v1.110.0
     hooks:
       - id: semgrep
         args:
