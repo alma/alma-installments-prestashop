@@ -158,8 +158,14 @@ async function createPayment(url, inPage, input = null) {
         displayLoader();
         try {
             let response = await fetch(url);
+            if (!response.ok) {
+                throw new Error('Error during payment creation');
+            }
             let paymentData = await response.json();
 
+            if (!paymentData.id) {
+                throw new Error('Error during payment creation');
+            }
             inPage.startPayment(
                 {
                     paymentId: paymentData.id,
