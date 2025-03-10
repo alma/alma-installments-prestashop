@@ -25,6 +25,10 @@ let paymentButtonEvents = [];
 let inPageSettings = {};
 
 window.addEventListener("load", function() {
+    console.log('Alma Inpage loaded');
+    requestIdleCallback(() => {
+        console.log("Tout est chargé et le navigateur est au repos.");
+    });
     if (!document.getElementById('alma-inpage-global')) {
         throw new Error('[Alma] In Page Settings is missing.');
     }
