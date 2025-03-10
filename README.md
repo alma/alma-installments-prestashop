@@ -32,7 +32,7 @@ This plugin integrates Alma into PrestaShop 1.6+ by adding a new payment method 
 
 Before configuring the module, you need to create your merchant account on [dashboard.getalma.eu](https://dashboard.getalma.eu).
 
-1. Go to [registration page](https://dashboard.getalma.eu/new-register) and create an account.
+1. Go to [registration page](https://dashboard.getalma.eu/register) and create an account.
 2. Retrieve your API key from the dashboard.
 3. Use these credentials in the module configuration.
 
