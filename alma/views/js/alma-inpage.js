@@ -25,10 +25,6 @@ let paymentButtonEvents = [];
 let inPageSettings = {};
 
 window.addEventListener("load", function() {
-    console.log('Alma Inpage loaded');
-    requestIdleCallback(() => {
-        console.log("Tout est chargé et le navigateur est au repos.");
-    });
     if (!document.getElementById('alma-inpage-global')) {
         throw new Error('[Alma] In Page Settings is missing.');
     }
@@ -50,35 +46,11 @@ function onloadAlma() {
 
     //Prestashop 1.7+
     radioButtons.forEach(function (input) {
-        input.addEventListener("change", function () {
-            let paymentOptionId = input.getAttribute('id');
-            let blockForm = document.querySelector('#pay-with-' + paymentOptionId + '-form');
+        input.addEventListener("change", () => handleSelectedPaymentOption(input));
 
-            removeAlmaEventsFromPaymentButton();
-            if (inPage !== undefined) {
-                inPage.unmount();
-            }
-            if ($(input).is(inPageSettings.paymentButtonSelector)) {
-                let formInpage = blockForm.querySelector('.alma-inpage');
-                if (this.checked && formInpage) {
-                    let installment = formInpage.dataset.installment;
-                    let deferredDays = formInpage.dataset.deferreddays;
-                    let deferredMonths = formInpage.dataset.deferredmonths;
-
-                    if (
-                        installment === '1'
-                        && deferredDays === '0'
-                        && deferredMonths === '0'
-                    ) {
-                        blockForm.hidden = true;
-                    }
-                    let url = formInpage.dataset.action;
-
-                    inPage = createAlmaIframe(formInpage);
-                    mapPaymentButtonToAlmaPaymentCreation(url, inPage, input);
-                }
-            }
-        });
+        if (input.checked) {
+            handleSelectedPaymentOption(input);
+        }
     });
 
     //Prestashop 1.6-
@@ -99,6 +71,40 @@ function onloadAlma() {
             createAlmaIframe(settingInpage, true, url);
         });
     });
+}
+
+/**
+ * Handle the change of the payment option for Prestashop 1.7+
+ * @param input
+ */
+function handleSelectedPaymentOption(input) {
+    let paymentOptionId = input.getAttribute('id');
+    let blockForm = document.querySelector('#pay-with-' + paymentOptionId + '-form');
+
+    removeAlmaEventsFromPaymentButton();
+    if (inPage !== undefined) {
+        inPage.unmount();
+    }
+    if ($(input).is(inPageSettings.paymentButtonSelector)) {
+        let formInpage = blockForm.querySelector('.alma-inpage');
+        if (input.checked && formInpage) {
+            let installment = formInpage.dataset.installment;
+            let deferredDays = formInpage.dataset.deferreddays;
+            let deferredMonths = formInpage.dataset.deferredmonths;
+
+            if (
+                installment === '1'
+                && deferredDays === '0'
+                && deferredMonths === '0'
+            ) {
+                blockForm.hidden = true;
+            }
+            let url = formInpage.dataset.action;
+
+            inPage = createAlmaIframe(formInpage);
+            mapPaymentButtonToAlmaPaymentCreation(url, inPage, input);
+        }
+    }
 }
 
 function createAlmaIframe(form, showPayButton = false, url = '') {
