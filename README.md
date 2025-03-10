@@ -1,7 +1,7 @@
 Alma Installments for PrestaShop
 ===================================
 
-This plugin adds a new payment method to PrestaShop 1.5.6.2+, which allows you to offer installments payments to your customer using Alma.
+This plugin adds a new payment method to PrestaShop, which allows you to offer installments payments to your customer using Alma.
 
 ## ⚠️ Restricted availability
 
@@ -17,15 +17,30 @@ Let your customers pay for their purchases at their own pace! You'll receive the
 
 This plugin integrates Alma into PrestaShop 1.6+ by adding a new payment method that you can activate to offer monthly installments to your customers.
 
+## Requirements
+
+### Compatibility
+- **PrestaShop**: Compatible with versions `1.5.3.1` to `8.2.0`
+- **PHP**: Compatible with versions `5.6` to `8.1`
+
+### Other Dependencies
+- Recommended PHP extension: `Intl`
+
 ## Installation
 
-### Prerequisites
+### Account Setup (Required)
 
-You first need to create your merchant account on [dashboard.getalma.eu](https://dashboard.getalma.eu) and activate your account.
+Before configuring the module, you need to create your merchant account on [dashboard.getalma.eu](https://dashboard.getalma.eu).
 
-### Installing
+1. Go to [registration page](https://dashboard.getalma.eu/new-register) and create an account.
+2. Retrieve your API key from the dashboard.
+3. Use these credentials in the module configuration.
 
-Download [the latest release](https://github.com/alma/alma-installments-prestashop/releases) and unzip it in your `modules` directory, in a directory named `alma`.
+### Installation
+
+1. Download [the module archive](https://github.com/alma/alma-installments-prestashop/releases) or clone the repository.
+2. Upload the module folder to the `modules/` directory in your PrestaShop installation.
+3. Go to **Modules > Module Manager**, then install and activate the module.
 
 ### Configuring the module
 
@@ -37,3 +52,6 @@ You also have access to different settings to control what the module should dis
 We advise you to stay in \"Test\" mode until you\'re happy with your configuration and are ready to accept payments from your customers.
 
 Once everything is properly set up, go ahead and switch to \"Live\" mode!
+
+## Support
+If you encounter any issues or have questions, feel free to contact us at [support@getalma.eu](mailto:support@getalma.eu.).
