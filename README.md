@@ -20,7 +20,7 @@ This plugin integrates Alma into PrestaShop 1.6+ by adding a new payment method 
 ## Requirements
 
 ### Compatibility
-- **PrestaShop**: Compatible with versions `1.5.3.1` to `8.2.0`
+- **PrestaShop**: Compatible with versions `1.5.3.1` to `8.2.1`
 - **PHP**: Compatible with versions `5.6` to `8.1`
 
 ### Other Dependencies
