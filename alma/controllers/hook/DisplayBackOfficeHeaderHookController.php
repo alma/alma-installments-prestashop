@@ -104,7 +104,6 @@ class DisplayBackOfficeHeaderHookController extends FrontendHookController
             $this->context->controller->addJS($this->module->_path . 'views/js/admin/alma-insurance-orders.js');
         }
 
-        $this->context->controller->addJS($this->module->_path . 'views/js/admin/alma-insurance-configuration.js');
         $this->context->smarty->assign([
             'urlScriptInsuranceModal' => $this->adminInsuranceHelper->envUrl() . ConstantsHelper::SCRIPT_MODAL_WIDGET_INSURANCE_PATH,
         ]);

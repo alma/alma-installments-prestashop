@@ -22,7 +22,6 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
-use Alma\PrestaShop\Builders\Helpers\InsuranceHelperBuilder;
 use Alma\PrestaShop\Helpers\ConstantsHelper;
 
 if (!defined('_PS_VERSION_')) {
@@ -39,15 +38,6 @@ if (!defined('_PS_VERSION_')) {
 function upgrade_module_4_2_0($module)
 {
     require_once _PS_MODULE_DIR_ . 'alma/upgrade/autoload_upgrade.php';
-
-    $insuranceHelperBuilder = new InsuranceHelperBuilder();
-    $insuranceHelper = $insuranceHelperBuilder->getInstance();
-    if ($insuranceHelper->isInsuranceActivated()) {
-        $sql = 'ALTER TABLE `' . _DB_PREFIX_ . 'alma_insurance_product`
-        ADD `insurance_contract_name` varchar(255) NULL AFTER `insurance_contract_id`';
-
-        \Db::getInstance()->execute($sql);
-    }
 
     if (version_compare(_PS_VERSION_, '1.7', '>=')) {
         $module->registerHook('actionAfterDeleteProductInCart');

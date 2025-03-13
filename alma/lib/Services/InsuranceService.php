@@ -45,6 +45,9 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
+/**
+ * @deprecated We will remove insurance
+ */
 class InsuranceService
 {
     /**
@@ -113,94 +116,6 @@ class InsuranceService
         $this->apiHelper = (new ApiHelperBuilder())->getInstance();
         $this->clientModel = new ClientModel();
         $this->insuranceHelper = (new InsuranceHelperBuilder())->getInstance();
-    }
-
-    /**
-     * Create the default Insurance product
-     *
-     * @return \ProductCore
-     *
-     * @throws InsuranceInstallException
-     */
-    public function createProductIfNotExists()
-    {
-        $insuranceProductId = $this->productRepository->getProductIdByReference(
-            ConstantsHelper::ALMA_INSURANCE_PRODUCT_REFERENCE,
-            $this->context->language->id
-        );
-
-        if (!$insuranceProductId) {
-            try {
-                $insuranceProduct = $this->productRepository->createInsuranceProduct();
-                $shops = \Shop::getShops(true, null, true);
-
-                $this->imageService->associateImageToProduct(
-                    $insuranceProduct->id,
-                    $shops,
-                    ConstantsHelper::ALMA_INSURANCE_PRODUCT_IMAGE_URL
-                );
-
-                return $insuranceProduct;
-            } catch (\Exception $e) {
-                LoggerFactory::instance()->error(
-                    sprintf(
-                        '[Alma] The insurance product has not been created, message "%s", trace "%s"',
-                        $e->getMessage(),
-                        $e->getTraceAsString()
-                    )
-                );
-
-                throw new InsuranceInstallException();
-            }
-        }
-
-        return $this->productRepository->getProduct($insuranceProductId);
-    }
-
-    /**
-     * Create the default Insurance attribute group
-     *
-     * @return void
-     *
-     * @throws InsuranceInstallException
-     */
-    public function createAttributeGroupIfNotExists()
-    {
-        $insuranceAttributeGroup = $this->attributeGroupRepository->getAttributeIdByName(
-            ConstantsHelper::ALMA_INSURANCE_ATTRIBUTE_NAME,
-            $this->context->language->id
-        );
-
-        if (!$insuranceAttributeGroup) {
-            try {
-                $this->attributeGroupRepository->createInsuranceAttributeGroup();
-            } catch (\Exception $e) {
-                LoggerFactory::instance()->error(
-                    sprintf(
-                        '[Alma] The insurance attribute group has not been created, message "%s", trace "%s"',
-                        $e->getMessage(),
-                        $e->getTraceAsString()
-                    )
-                );
-
-                throw new InsuranceInstallException();
-            }
-        }
-    }
-
-    /**
-     * @return void
-     *
-     * @throws InsuranceInstallException
-     */
-    public function installDefaultData()
-    {
-        if (!$this->almaInsuranceProductRepository->createTable()) {
-            throw new InsuranceInstallException('The creation of table "alma_insurance_product" has failed');
-        }
-
-        $this->createProductIfNotExists();
-        $this->createAttributeGroupIfNotExists();
     }
 
     /**
@@ -394,10 +309,6 @@ class InsuranceService
                 ConstantsHelper::ALMA_ALLOW_INSURANCE,
                 ConstantsHelper::ALMA_ACTIVATE_INSURANCE
             );
-
-            if ($isAllowInsurance) {
-                $this->installDefaultData();
-            }
 
             $this->insuranceHelper->handleBOMenu($isAllowInsurance);
             $this->insuranceHelper->handleDefaultInsuranceFieldValues($isAllowInsurance);

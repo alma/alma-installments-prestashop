@@ -33,7 +33,6 @@ use Alma\PrestaShop\Factories\ToolsFactory;
 use Alma\PrestaShop\Helpers\InsuranceHelper;
 use Alma\PrestaShop\Helpers\InsuranceProductHelper;
 use Alma\PrestaShop\Helpers\ProductHelper;
-use Alma\PrestaShop\Modules\OpartSaveCart\OpartSaveCartCartService;
 use Alma\PrestaShop\Repositories\CartProductRepository;
 
 if (!defined('_PS_VERSION_')) {
@@ -47,10 +46,6 @@ class CartService
      */
     protected $cartProductRepository;
 
-    /**
-     * @var OpartSaveCartCartService
-     */
-    protected $opartCartSaveService;
     /**
      * @var InsuranceHelper
      */
@@ -80,7 +75,6 @@ class CartService
     /**
      * @param CartProductRepository $cartProductRepository
      * @param ContextFactory $contextFactory
-     * @param OpartSaveCartCartService $opartCartSaveService
      * @param InsuranceHelper $insuranceHelper
      * @param InsuranceProductHelper $insuranceProductHelper
      * @param ToolsFactory $toolsFactory
@@ -90,7 +84,6 @@ class CartService
     public function __construct(
         $cartProductRepository,
         $contextFactory,
-        $opartCartSaveService,
         $insuranceHelper,
         $insuranceProductHelper,
         $toolsFactory,
@@ -99,7 +92,6 @@ class CartService
     ) {
         $this->cartProductRepository = $cartProductRepository;
         $this->contextFactory = $contextFactory;
-        $this->opartCartSaveService = $opartCartSaveService;
         $this->insuranceHelper = $insuranceHelper;
         $this->insuranceProductHelper = $insuranceProductHelper;
         $this->toolsFactory = $toolsFactory;

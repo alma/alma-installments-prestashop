@@ -386,42 +386,6 @@ class Alma extends PaymentModule
     }
 
     /**
-     * Hook the template below the add to cart button
-     *
-     * @param $params
-     *
-     * @return mixed|null
-     */
-    public function hookDisplayProductActions($params)
-    {
-        return $this->runHookController('displayProductActions', $params);
-    }
-
-    /**
-     * Hook the template below the product item near to the delete button
-     *
-     * @param $params
-     *
-     * @return mixed|null
-     */
-    public function hookDisplayCartExtraProductActions($params)
-    {
-        return $this->runHookController('displayCartExtraProductActions', $params);
-    }
-
-    /**
-     * Hook to add terms and conditions
-     *
-     * @param $params
-     *
-     * @return mixed|null
-     */
-    public function hookTermsAndConditions($params)
-    {
-        return $this->runHookController('termsAndConditions', $params);
-    }
-
-    /**
      * Hook to modify the order table before Ps 1.7.5
      *
      * @param $params
@@ -459,6 +423,7 @@ class Alma extends PaymentModule
 
     /**
      * Hook action after add cart
+     * Used for Event Alma Business Data
      *
      * @param $params
      *
@@ -467,30 +432,6 @@ class Alma extends PaymentModule
     public function hookActionCartSave($params)
     {
         return $this->runHookController('actionCartSave', $params);
-    }
-
-    /**
-     * Hook to display notification on order page
-     *
-     * @param $params
-     *
-     * @return mixed|null
-     */
-    public function hookDisplayInvoice($params)
-    {
-        return $this->hookDisplayAdminOrderTop($params);
-    }
-
-    /**
-     * Hook to display notification on order page
-     *
-     * @param $params
-     *
-     * @return mixed|null
-     */
-    public function hookDisplayAdminOrderTop($params)
-    {
-        return $this->runHookController('displayAdminOrderTop', $params);
     }
 
     /**
@@ -666,26 +607,6 @@ class Alma extends PaymentModule
     }
 
     /**
-     * @param $params
-     *
-     * @return mixed|null
-     */
-    public function hookActionAfterDeleteProductInCart($params)
-    {
-        return $this->hookActionObjectProductInCartDeleteAfter($params);
-    }
-
-    /**
-     * @param $params
-     *
-     * @return mixed|null
-     */
-    public function hookActionObjectProductInCartDeleteAfter($params)
-    {
-        return $this->runHookController('actionObjectProductInCartDeleteAfter', $params);
-    }
-
-    /**
      * Deprecated for version 1.7
      *
      * @param $params
@@ -767,26 +688,6 @@ class Alma extends PaymentModule
     public function hookDisplayAdminAfterHeader($params)
     {
         return $this->runHookController('displayAdminAfterHeader', $params);
-    }
-
-    /**
-     * @param $params
-     *
-     * @return mixed|null
-     */
-    public function hookActionFrontControllerSetVariables($params)
-    {
-        return $this->runHookController('actionFrontControllerSetVariables', $params);
-    }
-
-    /**
-     * @param $params
-     *
-     * @return mixed|null
-     */
-    public function hookActionGetProductPropertiesBefore($params)
-    {
-        return $this->runHookController('actionGetProductPropertiesBefore', $params);
     }
 
     /**

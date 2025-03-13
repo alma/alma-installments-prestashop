@@ -81,8 +81,6 @@ use Alma\PrestaShop\Model\CarrierData;
 use Alma\PrestaShop\Model\CartData;
 use Alma\PrestaShop\Model\PaymentData;
 use Alma\PrestaShop\Model\ShippingData;
-use Alma\PrestaShop\Modules\OpartSaveCart\OpartSaveCartCartRepository;
-use Alma\PrestaShop\Modules\OpartSaveCart\OpartSaveCartCartService;
 use Alma\PrestaShop\Proxy\ToolsProxy;
 use Alma\PrestaShop\Repositories\AlmaInsuranceProductRepository;
 use Alma\PrestaShop\Repositories\CartProductRepository;
@@ -1062,39 +1060,6 @@ trait BuilderTrait
     }
 
     /**
-     * @param OpartSaveCartCartService $cartService
-     *
-     * @return OpartSaveCartCartService
-     */
-    public function getOpartSaveCartCartService($cartService = null)
-    {
-        if ($cartService) {
-            return $cartService;
-        }
-
-        return new OpartSaveCartCartService(
-           $this->getModuleFactory(),
-           $this->getOpartSaveCartRepository(),
-           $this->getToolsFactory(),
-           $this->getCartFactory()
-        );
-    }
-
-    /**
-     * @param OpartSaveCartCartRepository $opartSaveCartRepository
-     *
-     * @return OpartSaveCartCartRepository
-     */
-    public function getOpartSaveCartRepository($opartSaveCartRepository = null)
-    {
-        if ($opartSaveCartRepository) {
-            return $opartSaveCartRepository;
-        }
-
-        return new OpartSaveCartCartRepository();
-    }
-
-    /**
      * @param InsuranceHelper $insuranceHelper
      *
      * @return InsuranceHelper
@@ -1188,7 +1153,6 @@ trait BuilderTrait
         return new CartService(
             $this->getCartProductRepository(),
             $this->getContextFactory(),
-            $this->getOpartSaveCartCartService(),
             $this->getInsuranceHelper(),
             $this->getInsuranceProductHelper(),
             $this->getToolsFactory(),
