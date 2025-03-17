@@ -28,7 +28,6 @@ use Alma;
 use Alma\API\Client;
 use Alma\API\DependenciesError;
 use Alma\API\ParamsError;
-use Alma\PrestaShop\Logger;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -48,7 +47,7 @@ class ClientFactory
         try {
             $this->alma = new Client($apiKey, [
                 'mode' => $mode,
-                'logger' => Logger::instance(),
+                'logger' => LoggerFactory::instance(),
             ]);
 
             $this->alma->addUserAgentComponent('PrestaShop', _PS_VERSION_);
@@ -56,11 +55,11 @@ class ClientFactory
 
             return $this->alma;
         } catch (DependenciesError $e) {
-            Logger::instance()->error('[Alma] Dependencies Error creating Alma client', ['exception' => $e]);
+            LoggerFactory::instance()->error('[Alma] Dependencies Error creating Alma client', ['exception' => $e]);
 
             return null;
         } catch (ParamsError $e) {
-            Logger::instance()->error('[Alma] Error creating Alma client', ['exception' => $e]);
+            LoggerFactory::instance()->error('[Alma] Error creating Alma client', ['exception' => $e]);
 
             return null;
         }

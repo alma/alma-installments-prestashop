@@ -7,10 +7,10 @@ use Alma\API\Exceptions\AlmaException;
 use Alma\PrestaShop\Exceptions\AlmaActionObjectUpdateException;
 use Alma\PrestaShop\Exceptions\ClientException;
 use Alma\PrestaShop\Factories\CarrierFactory;
+use Alma\PrestaShop\Factories\LoggerFactory;
 use Alma\PrestaShop\Factories\OrderFactory;
 use Alma\PrestaShop\Helpers\ClientHelper;
 use Alma\PrestaShop\Helpers\ConstantsHelper;
-use Alma\PrestaShop\Logger;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -60,7 +60,7 @@ class ActionObjectUpdateAfter
         } catch (AlmaActionObjectUpdateException $e) {
             return;
         } catch (AlmaException $e) {
-            Logger::instance()->error('[Alma] - Add tracking error: ' . $e->getMessage());
+            LoggerFactory::instance()->error('[Alma] - Add tracking error: ' . $e->getMessage());
         }
     }
 
@@ -101,7 +101,7 @@ class ActionObjectUpdateAfter
         try {
             $order = $this->orderFactory->create($orderId);
         } catch (\PrestaShopException $e) {
-            Logger::instance()->error('[Alma] - PrestaShopException - Impossible to get Order with id :' . $orderId);
+            LoggerFactory::instance()->error('[Alma] - PrestaShopException - Impossible to get Order with id :' . $orderId);
             throw new AlmaActionObjectUpdateException('Impossible to get Order');
         }
         if ($order->module != ConstantsHelper::ALMA_MODULE_NAME) {
@@ -132,7 +132,7 @@ class ActionObjectUpdateAfter
                 return $orderPayment->transaction_id;
             }
         }
-        Logger::instance()->error('[Alma] - No Alma Payment External Id in order ' . $order->reference);
+        LoggerFactory::instance()->error('[Alma] - No Alma Payment External Id in order ' . $order->reference);
         throw new AlmaActionObjectUpdateException('No Alma Payment External Id');
     }
 
@@ -148,7 +148,7 @@ class ActionObjectUpdateAfter
         try {
             return $this->clientHelper->getAlmaClient();
         } catch (ClientException $e) {
-            Logger::instance()->error('[Alma] - ClientException - ' . $e->getMessage());
+            LoggerFactory::instance()->error('[Alma] - ClientException - ' . $e->getMessage());
             throw new AlmaActionObjectUpdateException('Impossible to get Alma Client');
         }
     }
@@ -185,7 +185,7 @@ class ActionObjectUpdateAfter
 
             return $orderExternalId;
         } catch (AlmaException $e) {
-            Logger::instance()->error('[Alma] - AlmaException ' . $e->getMessage());
+            LoggerFactory::instance()->error('[Alma] - AlmaException ' . $e->getMessage());
             throw new AlmaActionObjectUpdateException('Impossible to get or create Alma Order');
         }
     }

@@ -29,10 +29,10 @@ use Alma\PrestaShop\Builders\Admin\InsuranceHelperBuilder;
 use Alma\PrestaShop\Builders\Services\InsuranceProductServiceBuilder;
 use Alma\PrestaShop\Exceptions\InsuranceProductException;
 use Alma\PrestaShop\Exceptions\WrongParamsException;
+use Alma\PrestaShop\Factories\LoggerFactory;
 use Alma\PrestaShop\Helpers\Admin\AdminInsuranceHelper;
 use Alma\PrestaShop\Helpers\ConfigurationHelper;
 use Alma\PrestaShop\Helpers\ConstantsHelper;
-use Alma\PrestaShop\Logger;
 use Alma\PrestaShop\Services\InsuranceProductService;
 use Alma\PrestaShop\Traits\AjaxTrait;
 
@@ -113,7 +113,7 @@ class AdminAlmaInsuranceConfigurationController extends ModuleAdminController
                 ])
             );
         } catch (InsuranceProductException $e) {
-            Logger::instance()->error('[Alma] Error insurance product during change configuration: ' . $e->getMessage());
+            LoggerFactory::instance()->error('[Alma] Error insurance product during change configuration: ' . $e->getMessage());
             $this->ajaxRenderAndExit(json_encode([
                     'error' => [
                         'msg' => sprintf(
@@ -125,7 +125,7 @@ class AdminAlmaInsuranceConfigurationController extends ModuleAdminController
                 ])
             );
         } catch (WrongParamsException $e) {
-            Logger::instance()->error('[Alma] Error creating Alma configuration insurance: ' . $e->getMessage());
+            LoggerFactory::instance()->error('[Alma] Error creating Alma configuration insurance: ' . $e->getMessage());
             $this->ajaxRenderAndExit(json_encode([
                     'error' => [
                         'msg' => sprintf(

@@ -34,15 +34,16 @@ use Alma\PrestaShop\Builders\Services\CartServiceBuilder;
 use Alma\PrestaShop\Builders\Services\InsuranceProductServiceBuilder;
 use Alma\PrestaShop\Exceptions\AlmaException;
 use Alma\PrestaShop\Factories\ContextFactory;
+use Alma\PrestaShop\Factories\LoggerFactory;
 use Alma\PrestaShop\Factories\ToolsFactory;
 use Alma\PrestaShop\Helpers\InsuranceHelper;
 use Alma\PrestaShop\Helpers\SettingsHelper;
 use Alma\PrestaShop\Hooks\FrontendHookController;
-use Alma\PrestaShop\Logger;
 use Alma\PrestaShop\Modules\OpartSaveCart\OpartSaveCartCartService;
 use Alma\PrestaShop\Services\AlmaBusinessDataService;
 use Alma\PrestaShop\Services\CartService;
 use Alma\PrestaShop\Services\InsuranceProductService;
+use PrestaShop\PrestaShop\Adapter\Entity\Validate;
 
 class ActionCartSaveHookController extends FrontendHookController
 {
@@ -66,10 +67,6 @@ class ActionCartSaveHookController extends FrontendHookController
      */
     protected $cartService;
 
-    /**
-     * @var Logger
-     */
-    protected $logger;
     /**
      * @var ToolsFactory
      */
@@ -111,7 +108,6 @@ class ActionCartSaveHookController extends FrontendHookController
         $this->cartService = $cartServiceBuilder->getInstance();
         $opartCartSaveServiceBuilder = new OpartSaveCartCartServiceBuilder();
         $this->opartCartSaveService = $opartCartSaveServiceBuilder->getInstance();
-        $this->logger = new Logger();
         $this->almaBusinessDataService = new AlmaBusinessDataService();
     }
 
@@ -135,6 +131,9 @@ class ActionCartSaveHookController extends FrontendHookController
         $idCustomization = $this->toolsFactory->getValue('id_customization');
         $baseCart = $this->contextCart;
         $newCart = $params['cart'];
+        if (!Validate::isLoadedObject($newCart)) {
+            return;
+        }
 
         $this->almaBusinessDataService->createTableIfNotExist();
 
@@ -165,7 +164,7 @@ class ActionCartSaveHookController extends FrontendHookController
                     );
                 }
             } catch (AlmaException $e) {
-                $this->logger->error($e->getMessage());
+                LoggerFactory::instance()->error($e->getMessage());
             }
         }
     }

@@ -22,56 +22,12 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
-namespace Alma\PrestaShop;
-
-use Alma\PrestaShop\Helpers\SettingsHelper;
-use Psr\Log\AbstractLogger;
-use Psr\Log\LogLevel;
+namespace Alma\PrestaShop\Exceptions;
 
 if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-class Logger extends AbstractLogger
+class OrderServiceException extends AlmaException
 {
-    public static function instance()
-    {
-        static $instance;
-
-        if (!$instance) {
-            $instance = new Logger();
-        }
-
-        return $instance;
-    }
-
-    public static function loggerClass()
-    {
-        if (class_exists('PrestaShopLogger')) {
-            return 'PrestaShopLogger';
-        } else {
-            return 'Logger';
-        }
-    }
-
-    public function log($level, $message, array $context = [])
-    {
-        if (!SettingsHelper::canLog()) {
-            return;
-        }
-
-        $levels = [
-            LogLevel::DEBUG => 1,
-            LogLevel::INFO => 1,
-            LogLevel::NOTICE => 1,
-            LogLevel::WARNING => 2,
-            LogLevel::ERROR => 3,
-            LogLevel::ALERT => 4,
-            LogLevel::CRITICAL => 4,
-            LogLevel::EMERGENCY => 4,
-        ];
-
-        $logger = Logger::loggerClass();
-        $logger::addLog($message, $levels[$level]);
-    }
 }

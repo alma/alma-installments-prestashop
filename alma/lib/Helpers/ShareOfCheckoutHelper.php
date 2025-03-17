@@ -29,9 +29,9 @@ use Alma\API\RequestError;
 use Alma\PrestaShop\Builders\Helpers\PriceHelperBuilder;
 use Alma\PrestaShop\Exceptions\ClientException;
 use Alma\PrestaShop\Exceptions\ShareOfCheckoutException;
+use Alma\PrestaShop\Factories\LoggerFactory;
 use Alma\PrestaShop\Forms\ApiAdminFormBuilder;
 use Alma\PrestaShop\Forms\ShareOfCheckoutAdminFormBuilder;
-use Alma\PrestaShop\Logger;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -114,7 +114,7 @@ class ShareOfCheckoutHelper
         } catch (\Exception $e) {
             SettingsHelper::updateValue('ALMA_SOC_CRON_TASK', $lastSharingDate);
 
-            Logger::instance()->error(
+            LoggerFactory::instance()->error(
                 sprintf(
                     'An error occured when sending SOC Data - [message] %',
                     $e->getMessage()
@@ -205,10 +205,10 @@ class ShareOfCheckoutHelper
         try {
             $startDateUpdateDates = $this->almaClient->shareOfCheckout->getLastUpdateDates();
         } catch (RequestError $e) {
-            Logger::instance()->error('Cannot get last date share of checkout: ' . $e->getMessage());
+            LoggerFactory::instance()->error('Cannot get last date share of checkout: ' . $e->getMessage());
 
             if ('404' == $e->response->responseCode) {
-                Logger::instance()->info('First send to Share of checkout');
+                LoggerFactory::instance()->info('First send to Share of checkout');
             }
 
             return strtotime('-1 day');
@@ -330,7 +330,7 @@ class ShareOfCheckoutHelper
                 $alma->shareOfCheckout->addConsent();
             } catch (RequestError $e) {
                 $msg = 'Impossible to save the Share of Checkout settings, please try again later';
-                Logger::instance()->error($msg);
+                LoggerFactory::instance()->error($msg);
                 throw new ShareOfCheckoutException($msg);
             }
         }
@@ -351,7 +351,7 @@ class ShareOfCheckoutHelper
                 $alma->shareOfCheckout->removeConsent();
             } catch (RequestError $e) {
                 $msg = 'Impossible to save the Share of Checkout settings, please try again later';
-                Logger::instance()->error($msg);
+                LoggerFactory::instance()->error($msg);
                 throw new ShareOfCheckoutException($msg);
             }
         }

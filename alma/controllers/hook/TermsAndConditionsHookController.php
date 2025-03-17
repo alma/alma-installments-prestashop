@@ -26,9 +26,9 @@ namespace Alma\PrestaShop\Controllers\Hook;
 
 use Alma\API\Exceptions\MissingKeyException;
 use Alma\PrestaShop\Builders\Helpers\InsuranceHelperBuilder;
+use Alma\PrestaShop\Factories\LoggerFactory;
 use Alma\PrestaShop\Helpers\InsuranceHelper;
 use Alma\PrestaShop\Hooks\FrontendHookController;
-use Alma\PrestaShop\Logger;
 use Alma\PrestaShop\Repositories\AlmaInsuranceProductRepository;
 use Alma\PrestaShop\Services\InsuranceService;
 use PrestaShop\PrestaShop\Core\Checkout\TermsAndConditions;
@@ -110,7 +110,7 @@ class TermsAndConditionsHookController extends FrontendHookController
 
             return $returnedTermsAndConditions;
         } catch (\Exception $e) {
-            Logger::instance()->warning(
+            LoggerFactory::instance()->warning(
                 sprintf(
                     '[Alma] Warning: The contract files are missing and a client could not accept terms and conditions, message "%s", trace "%s"',
                     $e->getMessage(),

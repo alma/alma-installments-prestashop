@@ -22,8 +22,8 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
+use Alma\PrestaShop\Factories\LoggerFactory;
 use Alma\PrestaShop\Helpers\Admin\TabsHelper;
-use Alma\PrestaShop\Logger;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -55,7 +55,7 @@ function upgrade_module_2_4_0($module)
     try {
         return $tabsHelper->uninstallTabs($module->dataTabs()) && $tabsHelper->installTabs($module->dataTabs());
     } catch (PrestaShopException $e) {
-        Logger::instance()->error("[Alma] ERROR upgrade v2.4.0: {$e->getMessage()}");
+        LoggerFactory::instance()->error("[Alma] ERROR upgrade v2.4.0: {$e->getMessage()}");
 
         return false;
     }

@@ -28,8 +28,8 @@ use Alma\API\Exceptions\RequestException;
 use Alma\API\RequestError;
 use Alma\PrestaShop\Exceptions\ClientException;
 use Alma\PrestaShop\Factories\ClientFactory;
+use Alma\PrestaShop\Factories\LoggerFactory;
 use Alma\PrestaShop\Helpers\SettingsHelper;
-use Alma\PrestaShop\Logger;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -146,7 +146,7 @@ class ClientModel
         try {
             return $this->getClient()->merchants->me();
         } catch (RequestError $e) {
-            Logger::instance()->error('[Alma] Error getting merchant me', ['exception' => $e]);
+            LoggerFactory::instance()->error('[Alma] Error getting merchant me', ['exception' => $e]);
 
             return null;
         } catch (ClientException $e) {
@@ -168,7 +168,7 @@ class ClientModel
         try {
             return $this->getClient()->merchants->feePlans($kind, $installmentsCounts, $includeDeferred);
         } catch (RequestError $e) {
-            Logger::instance()->error('[Alma] Error getting merchant fee plans', ['exception' => $e]);
+            LoggerFactory::instance()->error('[Alma] Error getting merchant fee plans', ['exception' => $e]);
 
             return [];
         } catch (ClientException $e) {

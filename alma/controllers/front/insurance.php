@@ -25,7 +25,7 @@
 use Alma\PrestaShop\Builders\Repositories\InsuranceProductRepositoryBuilder;
 use Alma\PrestaShop\Builders\Services\InsuranceProductServiceBuilder;
 use Alma\PrestaShop\Exceptions\AlmaException;
-use Alma\PrestaShop\Logger;
+use Alma\PrestaShop\Factories\LoggerFactory;
 use Alma\PrestaShop\Repositories\AlmaInsuranceProductRepository;
 use Alma\PrestaShop\Services\InsuranceProductService;
 use Alma\PrestaShop\Traits\AjaxTrait;
@@ -99,7 +99,7 @@ class AlmaInsuranceModuleFrontController extends ModuleFrontController
                         throw new AlmaException(sprintf('Action unknown : %s', Tools::getValue('action')));
                 }
             } catch (\Exception $e) {
-                Logger::instance()->error(sprintf(
+                LoggerFactory::instance()->error(sprintf(
                     'Message : %s - Trace : %s',
                     $e->getMessage(),
                     $e->getTraceAsString())

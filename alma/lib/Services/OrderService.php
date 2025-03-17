@@ -24,8 +24,12 @@
 
 namespace Alma\PrestaShop\Services;
 
-use Alma\API\Entities\Payment;
-use Alma\PrestaShop\Exceptions\AlmaException;
+use Alma\API\Exceptions\ParametersException;
+use Alma\API\Exceptions\RequestException;
+use Alma\API\RequestError;
+use Alma\PrestaShop\Exceptions\ClientException;
+use Alma\PrestaShop\Exceptions\OrderServiceException;
+use Alma\PrestaShop\Factories\LoggerFactory;
 use Alma\PrestaShop\Helpers\ClientHelper;
 
 if (!defined('_PS_VERSION_')) {
@@ -37,7 +41,11 @@ class OrderService
     /**
      * @var ClientHelper
      */
-    protected $clientHelper;
+    private $clientHelper;
+    /**
+     * @var LoggerFactory|mixed
+     */
+    private $logger;
 
     /**
      * @param ClientHelper $clientHelper
@@ -45,104 +53,122 @@ class OrderService
     public function __construct($clientHelper)
     {
         $this->clientHelper = $clientHelper;
+        $this->logger = LoggerFactory::instance();
     }
 
     /**
-     * @param \OrderCore $order
-     * @param \OrderStateCore $orderState
+     * Manage send at order status update
+     *
+     * @param \Order $order
+     * @param \OrderState $orderState
      *
      * @return void
-     *
-     * @throws AlmaException
-     * @throws \Alma\API\Exceptions\ParametersException
-     * @throws \Alma\API\Exceptions\RequestException
-     * @throws \Alma\API\RequestError
-     * @throws \Alma\PrestaShop\Exceptions\ClientException
      */
-    public function manageStatusUpdate($order, $orderState = null)
+    public function manageStatusUpdate($order, $orderState)
     {
         if ($order->module !== 'alma') {
             return;
         }
 
-        if (!$orderState) {
-            $orderState = $order->getCurrentOrderState();
-        }
+        try {
+            $stateName = $this->getStateName($orderState);
+            $paymentTransactionId = $this->getPaymentTransactionId($order);
+            $this->sendStatus(
+                $paymentTransactionId,
+                $order->reference,
+                $stateName,
+                $orderState->shipped
+            );
+        } catch (OrderServiceException $e) {
+            $this->logger->warning('Impossible to update order status: ' . $e->getMessage());
 
-        if (!$orderState) {
             return;
         }
-
-        $paymentTransactionId = $this->getPaymentTransactionId($order);
-        $almaPayment = $this->getAlmaPayment($paymentTransactionId, $order->reference);
-
-        $this->clientHelper->sendOrderStatus($almaPayment->orders[0]->id, [
-           'status' => $orderState->getFieldByLang('name'),
-           'is_shipped' => (bool) $orderState->shipped,
-       ]);
     }
 
     /**
-     * @param \OrderCore $order
+     * Call the clientHelper to send the order status and handle the exceptions
+     *
+     * @param $paymentTransactionId
+     * @param $reference
+     * @param $stateName
+     * @param $shipped
+     *
+     * @return void
+     *
+     * @throws OrderServiceException
+     */
+    private function sendStatus($paymentTransactionId, $reference, $stateName, $shipped)
+    {
+        try {
+            $this->clientHelper->sendOrderStatus($paymentTransactionId, $reference, $stateName, $shipped);
+
+            return;
+        } catch (ClientException $e) {
+            $errorMessage = $e->getMessage();
+        } catch (ParametersException $e) {
+            $errorMessage = $e->getMessage();
+        } catch (RequestException $e) {
+            $errorMessage = $e->getMessage();
+        } catch (RequestError $e) {
+            $errorMessage = $e->getMessage();
+        }
+        $this->logger->warning('Error while sending order status: ' . $errorMessage);
+        throw new OrderServiceException('Error while sending order status');
+    }
+
+    /**
+     * Get the order state name
+     *
+     * @param \OrderState $orderState
+     *
+     * @return mixed
+     *
+     * @throws OrderServiceException
+     */
+    private function getStateName($orderState)
+    {
+        try {
+            return $orderState->getFieldByLang('name');
+        } catch (\PrestaShopException $e) {
+            $this->logger->warning('Error while getting order state name: ' . $e->getMessage());
+            throw new OrderServiceException('Error while getting order state name');
+        }
+    }
+
+    /**
+     * Extract Alma payment Id from Order transaction_id property
+     *
+     * @param \Order $order
      *
      * @return string
      *
-     * @throws AlmaException
+     * @throws OrderServiceException
      */
-    public function getPaymentTransactionId($order)
+    private function getPaymentTransactionId($order)
     {
-        // Retrieve the order Status from Alma
+        /** @var \OrderPayment $payments */
         $payments = $order->getOrderPayments();
 
         if (count($payments) === 0) {
-            throw new AlmaException(sprintf('No payment found for order "%s"', $order->id));
+            throw new OrderServiceException(sprintf('No payment found for order "%s"', $order->id));
+        }
+        if (empty($payments[0]->transaction_id)) {
+            throw new OrderServiceException(sprintf('No transaction ID found for order "%s"', $order->id));
         }
 
         return $payments[0]->transaction_id;
     }
 
     /**
-     * @param string $paymentTransactionId
+     * You can set a custom logger generally use for testing purpose
      *
-     * @return Payment
-     *
-     * @throws AlmaException
-     * @throws \Alma\API\RequestError
-     * @throws \Alma\PrestaShop\Exceptions\ClientException
-     */
-    public function getAlmaPayment($paymentTransactionId, $orderReference)
-    {
-        /**
-         * @var Payment $almaPayment
-         */
-        $almaPayment = $this->clientHelper->getPaymentByTransactionId($paymentTransactionId);
-
-        if (
-            !$almaPayment
-            || count($almaPayment->orders) == 0
-            || !isset($almaPayment->orders[0]->id)
-            || !isset($almaPayment->orders[0]->merchant_reference)
-        ) {
-            throw new AlmaException(sprintf('No alma payments found for transaction id "%s"', $paymentTransactionId));
-        }
-
-        $this->checkOrderReference($almaPayment->orders[0]->merchant_reference, $orderReference);
-
-        return $almaPayment;
-    }
-
-    /**
-     * @param string $merchantReference
-     * @param string $orderReference
+     * @param LoggerFactory $logger
      *
      * @return void
-     *
-     * @throws AlmaException
      */
-    public function checkOrderReference($merchantReference, $orderReference)
+    public function setCustomLogger($logger)
     {
-        if ($merchantReference !== $orderReference) {
-            throw new AlmaException(sprintf('Merchant reference from Alma order "%s" does not match order reference "%s"', $merchantReference, $orderReference));
-        }
+        $this->logger = $logger;
     }
 }

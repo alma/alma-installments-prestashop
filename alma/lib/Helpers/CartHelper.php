@@ -26,7 +26,7 @@ namespace Alma\PrestaShop\Helpers;
 
 use Alma\PrestaShop\Factories\CartFactory;
 use Alma\PrestaShop\Factories\ContextFactory;
-use Alma\PrestaShop\Logger;
+use Alma\PrestaShop\Factories\LoggerFactory;
 use Alma\PrestaShop\Model\CartData;
 use Alma\PrestaShop\Repositories\OrderRepository;
 
@@ -146,7 +146,7 @@ class CartHelper
             try {
                 $purchaseAmount = $this->toolsHelper->psRound((float) $cart->getOrderTotal(), 2);
             } catch (\Exception $e) {
-                Logger::instance()->warning('[Alma] purchase amount for previous cart ordered no found');
+                LoggerFactory::instance()->warning('[Alma] purchase amount for previous cart ordered no found');
             }
 
             $cartItems = [];
@@ -154,9 +154,9 @@ class CartHelper
             try {
                 $cartItems = $this->cartData->getCartItems($cart);
             } catch (\PrestaShopDatabaseException $e) {
-                Logger::instance()->warning('[Alma] cart items for previous cart ordered no found');
+                LoggerFactory::instance()->warning('[Alma] cart items for previous cart ordered no found');
             } catch (\PrestaShopException $e) {
-                Logger::instance()->warning('[Alma] cart items for previous cart ordered no found');
+                LoggerFactory::instance()->warning('[Alma] cart items for previous cart ordered no found');
             }
 
             $ordersData[] = [

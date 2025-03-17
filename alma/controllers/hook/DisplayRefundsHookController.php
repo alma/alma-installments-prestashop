@@ -33,12 +33,12 @@ use Alma\API\RequestError;
 use Alma\PrestaShop\Builders\Helpers\PriceHelperBuilder;
 use Alma\PrestaShop\Exceptions\OrderException;
 use Alma\PrestaShop\Exceptions\PaymentNotFoundException;
+use Alma\PrestaShop\Factories\LoggerFactory;
 use Alma\PrestaShop\Helpers\ClientHelper;
 use Alma\PrestaShop\Helpers\OrderHelper;
 use Alma\PrestaShop\Helpers\PriceHelper;
 use Alma\PrestaShop\Helpers\RefundHelper;
 use Alma\PrestaShop\Hooks\AdminHookController;
-use Alma\PrestaShop\Logger;
 
 final class DisplayRefundsHookController extends AdminHookController
 {
@@ -81,7 +81,7 @@ final class DisplayRefundsHookController extends AdminHookController
             $payment = $this->getPayment($order);
         } catch (PaymentNotFoundException $e) {
             // if we can't have the payment, log why and return null
-            Logger::instance()->warning('[Alma] DisplayRefounds Error - ' . $e->getMessage());
+            LoggerFactory::instance()->warning('[Alma] DisplayRefounds Error - ' . $e->getMessage());
 
             return null;
         }

@@ -25,7 +25,7 @@
 namespace Alma\PrestaShop\Helpers;
 
 use Alma\PrestaShop\Exceptions\OrderException;
-use Alma\PrestaShop\Logger;
+use Alma\PrestaShop\Factories\LoggerFactory;
 use Alma\PrestaShop\Repositories\OrderRepository;
 use Alma\PrestaShop\Traits\AjaxTrait;
 
@@ -150,7 +150,7 @@ class OrderHelper
 
         if (!$orderPayment) {
             $msg = '[Alma] orderPayment not found';
-            Logger::instance()->error($msg);
+            LoggerFactory::instance()->error($msg);
             throw new OrderException($msg);
         }
 
@@ -186,7 +186,6 @@ class OrderHelper
         if (
             true === $checkIsAlma
             && 'alma' != $order->module
-            && 1 == $order->valid
         ) {
             return false;
         }
@@ -214,7 +213,7 @@ class OrderHelper
                 $order->id
             );
 
-            Logger::instance()->error($msg);
+            LoggerFactory::instance()->error($msg);
             throw new OrderException($msg);
         }
     }

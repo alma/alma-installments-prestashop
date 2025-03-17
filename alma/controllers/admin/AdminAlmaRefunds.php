@@ -27,13 +27,12 @@ use Alma\API\Exceptions\ParametersException;
 use Alma\API\Exceptions\RequestException;
 use Alma\API\RequestError;
 use Alma\PrestaShop\Builders\Helpers\PriceHelperBuilder;
+use Alma\PrestaShop\Factories\LoggerFactory;
 use Alma\PrestaShop\Helpers\ClientHelper;
 use Alma\PrestaShop\Helpers\OrderHelper;
 use Alma\PrestaShop\Helpers\PriceHelper;
 use Alma\PrestaShop\Helpers\RefundHelper;
-use Alma\PrestaShop\Logger;
 use Alma\PrestaShop\Traits\AjaxTrait;
-use PrestaShop\PrestaShop\Core\Localization\Exception\LocalizationException;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -71,11 +70,8 @@ class AdminAlmaRefundsController extends ModuleAdminController
      *
      * @return void
      *
-     * @throws LocalizationException
-     * @throws PrestaShopDatabaseException
-     * @throws PrestaShopException
-     * @throws RequestException
-     * @throws \Alma\PrestaShop\Exceptions\OrderException
+     * @throws \PrestaShopDatabaseException
+     * @throws \PrestaShopException
      */
     public function ajaxProcessRefund()
     {
@@ -93,7 +89,11 @@ class AdminAlmaRefundsController extends ModuleAdminController
             $refundResult = $this->runRefund($paymentId, $amount, $isTotal);
         } catch (RequestError $e) {
             $msg = "[Alma] ERROR when creating refund for Order {$order->id}: {$e->getMessage()}";
-            Logger::instance()->error($msg);
+            LoggerFactory::instance()->error($msg);
+        } catch (RequestException $e) {
+            LoggerFactory::instance()->error('[Alma] RequestException: ' . $e->getMessage());
+        } catch (PrestaShopException $e) {
+            LoggerFactory::instance()->error('[Alma] PrestaShopException: ' . $e->getMessage());
         }
 
         if (false === $refundResult) {
@@ -145,7 +145,7 @@ class AdminAlmaRefundsController extends ModuleAdminController
         try {
             return $alma->payments->refund($paymentId, $isTotal, $this->priceHelper->convertPriceToCents($amount));
         } catch (ParametersException $e) {
-            Logger::instance()->error(
+            LoggerFactory::instance()->error(
                 sprintf('Message :%s - Trace: %s', $e->getMessage(), $e->getTraceAsString())
             );
             $this->ajaxFailAndDie(
@@ -249,7 +249,7 @@ class AdminAlmaRefundsController extends ModuleAdminController
             $refundType
         );
 
-        Logger::instance()->error($msg);
+        LoggerFactory::instance()->error($msg);
         $this->ajaxFailAndDie($msg, 400);
     }
 }

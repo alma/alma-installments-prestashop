@@ -24,7 +24,7 @@
 
 namespace Alma\PrestaShop\Repositories;
 
-use Alma\PrestaShop\Logger;
+use Alma\PrestaShop\Factories\LoggerFactory;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -110,7 +110,7 @@ class AlmaBusinessDataRepository
                 $where
             );
         } catch (\PrestaShopDatabaseException $e) {
-            Logger::instance()->warning('Failed to update alma_business_data: ' . $e->getMessage());
+            LoggerFactory::instance()->warning('Failed to update alma_business_data: ' . $e->getMessage());
         }
     }
 
@@ -122,7 +122,7 @@ class AlmaBusinessDataRepository
         try {
             return \Db::getInstance()->executeS('SHOW TABLES LIKE "' . _DB_PREFIX_ . 'alma_business_data"');
         } catch (\PrestaShopException $e) {
-            Logger::instance()->warning('Failed to check if alma_business_data table exist: ' . $e->getMessage());
+            LoggerFactory::instance()->warning('Failed to check if alma_business_data table exist: ' . $e->getMessage());
         }
     }
 }

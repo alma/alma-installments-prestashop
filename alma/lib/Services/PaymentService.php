@@ -25,6 +25,7 @@
 namespace Alma\PrestaShop\Services;
 
 use Alma\PrestaShop\Factories\ContextFactory;
+use Alma\PrestaShop\Factories\LoggerFactory;
 use Alma\PrestaShop\Factories\ModuleFactory;
 use Alma\PrestaShop\Helpers\CartHelper;
 use Alma\PrestaShop\Helpers\ConfigurationHelper;
@@ -41,7 +42,6 @@ use Alma\PrestaShop\Helpers\PriceHelper;
 use Alma\PrestaShop\Helpers\SettingsHelper;
 use Alma\PrestaShop\Helpers\ToolsHelper;
 use Alma\PrestaShop\Helpers\TranslationHelper;
-use Alma\PrestaShop\Logger;
 use Alma\PrestaShop\Model\CartData;
 
 if (!defined('_PS_VERSION_')) {
@@ -327,7 +327,7 @@ class PaymentService
 
             return $this->paymentOptionHelper->sortPaymentsOptions($sortOptions, $paymentOptions);
         } catch (\Exception $e) {
-            Logger::instance()->error(
+            LoggerFactory::instance()->error(
                 sprintf(
                     'An error occured when displaying options payments - message : %s, %s',
                     $e->getMessage(),

@@ -30,9 +30,9 @@ use Alma\PrestaShop\Exceptions\ActivationException;
 use Alma\PrestaShop\Exceptions\ApiMerchantsException;
 use Alma\PrestaShop\Exceptions\ClientException;
 use Alma\PrestaShop\Exceptions\WrongCredentialsException;
+use Alma\PrestaShop\Factories\LoggerFactory;
 use Alma\PrestaShop\Factories\ModuleFactory;
 use Alma\PrestaShop\Helpers\Admin\AdminInsuranceHelper;
-use Alma\PrestaShop\Logger;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -154,7 +154,7 @@ class ApiHelper
         try {
             return $this->clientHelper->getPaymentEligibility($paymentData);
         } catch (\Exception $e) {
-            Logger::instance()->error(
+            LoggerFactory::instance()->error(
                 sprintf(
                     'Error on check cart eligibility - payload : %s - message : %s',
                     json_encode($paymentData),
@@ -176,7 +176,7 @@ class ApiHelper
         try {
             $this->clientHelper->sendUrlForGatherCmsData($url);
         } catch (ClientException $e) {
-            Logger::instance()->error(
+            LoggerFactory::instance()->error(
                 sprintf(
                     '[Alma] Error sending URL for gather CMS data: %s',
                     $e->getMessage()

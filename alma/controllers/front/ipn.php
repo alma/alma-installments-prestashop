@@ -25,8 +25,8 @@
 use Alma\PrestaShop\API\MismatchException;
 use Alma\PrestaShop\Builders\Validators\PaymentValidationBuilder;
 use Alma\PrestaShop\Exceptions\PaymentValidationException;
+use Alma\PrestaShop\Factories\LoggerFactory;
 use Alma\PrestaShop\Helpers\SettingsHelper;
-use Alma\PrestaShop\Logger;
 use Alma\PrestaShop\Traits\AjaxTrait;
 use Alma\PrestaShop\Validators\PaymentValidation;
 use Alma\PrestaShop\Validators\PaymentValidationError;
@@ -85,7 +85,7 @@ class AlmaIpnModuleFrontController extends ModuleFrontController
         $paymentId = Tools::getValue('pid');
         if (!array_key_exists('HTTP_X_ALMA_SIGNATURE', $_SERVER)) {
             $msg = 'Header key X-Alma-Signature doesn\'t exist';
-            Logger::instance()->error('[Alma] IPN Payment Validation Error - Message : ' . $msg);
+            LoggerFactory::instance()->error('[Alma] IPN Payment Validation Error - Message : ' . $msg);
             $this->ajaxRenderAndExit(json_encode(['error' => $msg]), 500);
         }
 
@@ -94,13 +94,13 @@ class AlmaIpnModuleFrontController extends ModuleFrontController
             $this->paymentValidation->validatePayment($paymentId);
             $this->ajaxRenderAndExit(json_encode(['success' => true]));
         } catch (PaymentValidationException $e) {
-            Logger::instance()->error('[Alma] IPN Payment Validation Error - Message : ' . $e->getMessage());
+            LoggerFactory::instance()->error('[Alma] IPN Payment Validation Error - Message : ' . $e->getMessage());
             $this->ajaxRenderAndExit(json_encode(['error' => $e->getMessage()]), 500);
         } catch (PaymentValidationError $e) {
-            Logger::instance()->error('ipn payment_validation_error - Message : ' . $e->getMessage());
+            LoggerFactory::instance()->error('ipn payment_validation_error - Message : ' . $e->getMessage());
             $this->ajaxRenderAndExit(json_encode(['error' => $e->getMessage()]), 500);
         } catch (MismatchException $e) {
-            Logger::instance()->error('ipn payment_validation_mismatch_error - Message : ' . $e->getMessage());
+            LoggerFactory::instance()->error('ipn payment_validation_mismatch_error - Message : ' . $e->getMessage());
             $this->ajaxRenderAndExit(json_encode(['error' => $e->getMessage()]), 200);
         }
     }

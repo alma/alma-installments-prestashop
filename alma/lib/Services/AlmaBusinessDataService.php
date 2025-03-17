@@ -30,9 +30,9 @@ use Alma\API\Entities\DTO\MerchantBusinessEvent\OrderConfirmedBusinessEvent;
 use Alma\API\Exceptions\ParametersException;
 use Alma\API\Exceptions\RequestException;
 use Alma\PrestaShop\Exceptions\ClientException;
+use Alma\PrestaShop\Factories\LoggerFactory;
 use Alma\PrestaShop\Helpers\ConfigurationHelper;
 use Alma\PrestaShop\Helpers\SettingsHelper;
-use Alma\PrestaShop\Logger;
 use Alma\PrestaShop\Model\AlmaBusinessDataModel;
 use Alma\PrestaShop\Model\ClientModel;
 use Alma\PrestaShop\Repositories\AlmaBusinessDataRepository;
@@ -52,7 +52,7 @@ class AlmaBusinessDataService
      */
     private $clientModel;
     /**
-     * @var \Alma\PrestaShop\Logger|mixed
+     * @var LoggerFactory
      */
     private $logger;
     /**
@@ -71,7 +71,7 @@ class AlmaBusinessDataService
         }
         $this->clientModel = $clientModel;
         if (!$logger) {
-            $logger = Logger::instance();
+            $logger = LoggerFactory::instance();
         }
         $this->logger = $logger;
         if (!$almaBusinessDataModel) {
