@@ -1,5 +1,29 @@
 # Changelog
 
+## v4.8.0 - 2025-03-17
+
+### Changes
+
+### 🚀 New Features
+
+- feat: Update version compatibility with Prestashop 8.2.1 (#666)
+- feat: Weird calls to /return-urls. Payment id is undefined or absent (#662)
+- feat: Avoid prestashop issue with duplicate order for prestashop < 1.7.7.0 (#659)
+- feat: Compatibility PSRLog for Prestashop 9 (#656)
+- feat: Add error code 403 for invalid signature in gather cms data (#654)
+- feat: Use new payment endpoint for order status (#652)
+
+### 🐛 Bug Fixes
+
+- fix: Handle In-page if payment option is checked before page loaded (#665)
+- fix: Issue checkout process with old Prestashop version (#660)
+- fix: Error in payment return when the order payment was not retrieved (#658)
+- fix: Force type to string for cms data theme version (#653)
+
+#### Contributors
+
+@Benjamin-Freoua-Alma, @Francois-Gomis, @alma-renovate-bot[bot], @webaaz, [alma-renovate-bot[bot]](https://github.com/apps/alma-renovate-bot) and [github-actions[bot]](https://github.com/apps/github-actions)
+
 ## v4.7.1 - 2025-02-17
 
 ### Changes
