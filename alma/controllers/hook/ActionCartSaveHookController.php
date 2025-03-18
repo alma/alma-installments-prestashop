@@ -28,53 +28,13 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-use Alma\PrestaShop\Builders\Helpers\InsuranceHelperBuilder;
-use Alma\PrestaShop\Builders\Modules\OpartSaveCart\OpartSaveCartCartServiceBuilder;
-use Alma\PrestaShop\Builders\Services\CartServiceBuilder;
-use Alma\PrestaShop\Builders\Services\InsuranceProductServiceBuilder;
-use Alma\PrestaShop\Exceptions\AlmaException;
-use Alma\PrestaShop\Factories\ContextFactory;
-use Alma\PrestaShop\Factories\LoggerFactory;
-use Alma\PrestaShop\Factories\ToolsFactory;
-use Alma\PrestaShop\Helpers\InsuranceHelper;
 use Alma\PrestaShop\Helpers\SettingsHelper;
 use Alma\PrestaShop\Hooks\FrontendHookController;
-use Alma\PrestaShop\Modules\OpartSaveCart\OpartSaveCartCartService;
 use Alma\PrestaShop\Services\AlmaBusinessDataService;
-use Alma\PrestaShop\Services\CartService;
-use Alma\PrestaShop\Services\InsuranceProductService;
 use PrestaShop\PrestaShop\Adapter\Entity\Validate;
 
 class ActionCartSaveHookController extends FrontendHookController
 {
-    /**
-     * @var \Context
-     */
-    protected $contextCart;
-
-    /**
-     * @var InsuranceProductService
-     */
-    protected $insuranceProductService;
-
-    /**
-     * @var InsuranceHelper
-     */
-    protected $insuranceHelper;
-
-    /**
-     * @var CartService
-     */
-    protected $cartService;
-
-    /**
-     * @var ToolsFactory
-     */
-    protected $toolsFactory;
-    /**
-     * @var OpartSaveCartCartService
-     */
-    protected $opartCartSaveService;
     /**
      * @var \Alma\PrestaShop\Services\AlmaBusinessDataService
      */
@@ -97,17 +57,6 @@ class ActionCartSaveHookController extends FrontendHookController
     {
         parent::__construct($module);
 
-        $contextFactory = new ContextFactory();
-        $this->contextCart = $contextFactory->getContextCart();
-        $insuranceProductServiceBuilder = new InsuranceProductServiceBuilder();
-        $this->insuranceProductService = $insuranceProductServiceBuilder->getInstance();
-        $this->toolsFactory = new ToolsFactory();
-        $insuranceHelperBuilder = new InsuranceHelperBuilder();
-        $this->insuranceHelper = $insuranceHelperBuilder->getInstance();
-        $cartServiceBuilder = new CartServiceBuilder();
-        $this->cartService = $cartServiceBuilder->getInstance();
-        $opartCartSaveServiceBuilder = new OpartSaveCartCartServiceBuilder();
-        $this->opartCartSaveService = $opartCartSaveServiceBuilder->getInstance();
         $this->almaBusinessDataService = new AlmaBusinessDataService();
     }
 
@@ -115,57 +64,22 @@ class ActionCartSaveHookController extends FrontendHookController
      * Run Controller ActionCartSaveHookController
      * Create alma_business_data if not exist
      * Run CartInitiatedBusinessEvent to Alma if alma_business_data not exist
-     * Run Insurance to save insurance product in cart if insurance activated
      *
      * @param array $params
      *
      * @return void
-     *
-     * @throws \PrestaShopException
      */
     public function run($params)
     {
-        $idProduct = $this->toolsFactory->getValue('id_product');
-        $insuranceContractId = $this->toolsFactory->getValue('alma_id_insurance_contract');
-        $quantity = $this->insuranceHelper->getInsuranceQuantity();
-        $idCustomization = $this->toolsFactory->getValue('id_customization');
-        $baseCart = $this->contextCart;
-        $newCart = $params['cart'];
-        if (!Validate::isLoadedObject($newCart)) {
+        $cart = $params['cart'];
+        if (!Validate::isLoadedObject($cart)) {
             return;
         }
 
         $this->almaBusinessDataService->createTableIfNotExist();
 
-        if (!$this->almaBusinessDataService->isAlmaBusinessDataExistByCart($newCart->id)) {
-            $this->almaBusinessDataService->runCartInitiatedBusinessEvent((string) $newCart->id);
-        }
-
-        if ($this->insuranceHelper->isInsuranceActivated()) {
-            try {
-                if (
-                    $baseCart
-                    && (null === $baseCart->id || $baseCart->id != $newCart->id)
-                ) {
-                    if ($this->toolsFactory->getValue('action') !== 'shareCart') {
-                        $baseCart = $this->opartCartSaveService->getCartSaved();
-                    }
-
-                    $this->cartService->duplicateAlmaInsuranceProductsIfNotExist($newCart, $baseCart);
-                }
-
-                if ($this->insuranceProductService->canHandleAddingProductInsuranceOnce()) {
-                    $this->insuranceProductService->addInsuranceProductInPsCart(
-                        $idProduct,
-                        $insuranceContractId,
-                        $quantity,
-                        $idCustomization,
-                        $params['cart']
-                    );
-                }
-            } catch (AlmaException $e) {
-                LoggerFactory::instance()->error($e->getMessage());
-            }
+        if (!$this->almaBusinessDataService->isAlmaBusinessDataExistByCart($cart->id)) {
+            $this->almaBusinessDataService->runCartInitiatedBusinessEvent((string) $cart->id);
         }
     }
 }

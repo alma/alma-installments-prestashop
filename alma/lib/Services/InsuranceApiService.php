@@ -39,6 +39,9 @@ use Alma\PrestaShop\Helpers\ClientHelper;
 use Alma\PrestaShop\Helpers\ProductHelper;
 use Alma\PrestaShop\Repositories\AlmaInsuranceProductRepository;
 
+/**
+ * @deprecated We will remove insurance
+ */
 class InsuranceApiService
 {
     /**

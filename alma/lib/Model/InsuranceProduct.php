@@ -29,6 +29,9 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
+/**
+ * @deprecated We will remove insurance
+ */
 class InsuranceProduct extends AlmaObjectModel
 {
     /** @var int Id */

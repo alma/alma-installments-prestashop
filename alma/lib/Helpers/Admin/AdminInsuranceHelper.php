@@ -30,11 +30,15 @@ use Alma\PrestaShop\Helpers\ConfigurationHelper;
 use Alma\PrestaShop\Helpers\ConstantsHelper;
 use Alma\PrestaShop\Helpers\SettingsHelper;
 use Alma\PrestaShop\Repositories\AlmaInsuranceProductRepository;
+use phpDocumentor\Reflection\DocBlock\Tags\Deprecated;
 
 if (!defined('_PS_VERSION_')) {
     exit;
 }
 
+/**
+ * @deprecated We will remove insurance
+ */
 class AdminInsuranceHelper
 {
     /**
@@ -94,12 +98,6 @@ class AdminInsuranceHelper
                 'position' => 3,
                 'icon' => 'security',
             ],
-            ConstantsHelper::BO_CONTROLLER_INSURANCE_CONFIGURATION_CLASSNAME => [
-                'name' => $this->moduleFactory->l('Configure', 'InsuranceHelper'),
-                'parent' => ConstantsHelper::BO_CONTROLLER_INSURANCE_CLASSNAME,
-                'position' => 1,
-                'icon' => 'tune',
-            ],
             ConstantsHelper::BO_CONTROLLER_INSURANCE_ORDERS_CLASSNAME => [
                 'name' => $this->moduleFactory->l('Orders', 'InsuranceHelper'),
                 'parent' => ConstantsHelper::BO_CONTROLLER_INSURANCE_CLASSNAME,
@@ -130,21 +128,23 @@ class AdminInsuranceHelper
      */
     public function handleBOMenu($isAllowInsurance)
     {
-        $tab = $this->tabsHelper->getInstanceFromClassName(ConstantsHelper::BO_CONTROLLER_INSURANCE_CLASSNAME);
         // Remove tab if the tab exists and we are not allowed to have it
-        if (
-            $tab->id
-            && !$isAllowInsurance
-        ) {
+        if (!$isAllowInsurance) {
             $this->tabsHelper->uninstallTabs($this->tabsInsuranceDescription());
         }
 
         // Add tab if the tab not exists and we are allowed to have it
-        if (
-            !$tab->id
-            && $isAllowInsurance
-        ) {
+        if ($isAllowInsurance) {
             $this->tabsHelper->installTabs($this->tabsInsuranceDescription());
+            // Uninstall Insurance Configure tab everytime
+            $this->tabsHelper->uninstallTabs([
+                ConstantsHelper::BO_CONTROLLER_INSURANCE_CONFIGURATION_CLASSNAME => [
+                    'name' => $this->moduleFactory->l('Configure', 'InsuranceHelper'),
+                    'parent' => ConstantsHelper::BO_CONTROLLER_INSURANCE_CLASSNAME,
+                    'position' => 1,
+                    'icon' => 'tune',
+                ]
+            ]);
         }
 
         return null;

@@ -32,17 +32,14 @@ use Alma\API\Client;
 use Alma\API\Exceptions\ParametersException;
 use Alma\API\Exceptions\RequestException;
 use Alma\API\RequestError;
-use Alma\PrestaShop\Builders\Helpers\InsuranceHelperBuilder;
 use Alma\PrestaShop\Builders\Helpers\SettingsHelperBuilder;
 use Alma\PrestaShop\Builders\Services\OrderServiceBuilder;
 use Alma\PrestaShop\Exceptions\OrderException;
 use Alma\PrestaShop\Factories\LoggerFactory;
 use Alma\PrestaShop\Helpers\ClientHelper;
-use Alma\PrestaShop\Helpers\InsuranceHelper;
 use Alma\PrestaShop\Helpers\OrderHelper;
 use Alma\PrestaShop\Helpers\SettingsHelper;
 use Alma\PrestaShop\Hooks\AdminHookController;
-use Alma\PrestaShop\Services\InsuranceSubscriptionService;
 use Alma\PrestaShop\Services\OrderService;
 
 final class StateHookController extends AdminHookController
@@ -55,26 +52,11 @@ final class StateHookController extends AdminHookController
      * @var Client|mixed|null
      */
     protected $alma;
-    /**
-     * @var InsuranceSubscriptionService
-     */
-    protected $insuranceSubscriptionService;
 
     /**
      * @var SettingsHelper
      */
     protected $settingsHelper;
-
-    /**
-     * HookController constructor.
-     *
-     * @codeCoverageIgnore
-     *
-     * @param $module Alma
-     *
-     * @var InsuranceHelper
-     */
-    protected $insuranceHelper;
 
     /**
      * @var OrderService
@@ -86,9 +68,6 @@ final class StateHookController extends AdminHookController
         parent::__construct($module);
         $this->alma = ClientHelper::defaultInstance();
         $this->orderHelper = new OrderHelper();
-        $this->insuranceSubscriptionService = new InsuranceSubscriptionService();
-        $insuranceHelperBuilder = new InsuranceHelperBuilder();
-        $this->insuranceHelper = $insuranceHelperBuilder->getInstance();
         $settingsHelperBuilder = new SettingsHelperBuilder();
         $this->settingsHelper = $settingsHelperBuilder->getInstance();
         $orderServiceBuilder = new OrderServiceBuilder();
@@ -144,32 +123,11 @@ final class StateHookController extends AdminHookController
                     $this->triggerPayment($order);
                 }
                 break;
-            case (int) \Configuration::get('PS_OS_PAYMENT'):
-                if ($this->insuranceHelper->isInsuranceActivated()) {
-                    $this->processInsurance($order);
-                }
-                break;
             default:
                 break;
         }
 
         $this->orderService->manageStatusUpdate($order, $newStatus);
-    }
-
-    /**
-     * @param \OrderCore $order
-     *
-     * @return void
-     */
-    protected function processInsurance($order)
-    {
-        try {
-            if ($this->insuranceHelper->canInsuranceSubscriptionBeTriggered($order)) {
-                $this->insuranceSubscriptionService->triggerInsuranceSubscription($order);
-            }
-        } catch (\Exception $e) {
-            LoggerFactory::instance()->error($e->getMessage(), $e->getTrace());
-        }
     }
 
     /**
