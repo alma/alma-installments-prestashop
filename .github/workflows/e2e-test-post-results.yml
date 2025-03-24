@@ -28,7 +28,7 @@ jobs:
     steps:
 
       - name: Add a comment with E2E tests results in the Pull Request
-        uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7
+        uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7.0.1
         with:
             script: |
               let commentBody = '❌ E2E tests have failed. \n';
@@ -47,7 +47,7 @@ jobs:
 
       - name: Generate Github token for PR checks
         id: github-token-checks
-        uses: actions/create-github-app-token@21cfef2b496dd8ef5b904c159339626a10ad380e # v1
+        uses: actions/create-github-app-token@af35edadc00be37caa72ed9f3e6d5f7801bfdf09 # v1.11.7
         continue-on-error: true
         with:
           app-id: ${{ secrets.ALMA_UPDATE_CHECKS_APP_ID }}
@@ -55,7 +55,7 @@ jobs:
           repositories: alma-installments-prestashop
 
       - name: Update check in PR with E2E tests results
-        uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7
+        uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7.0.1
         with:
           github-token: ${{ steps.github-token-checks.outputs.token }}
           script: |
