@@ -31,6 +31,7 @@ use Alma\PrestaShop\API\MismatchException;
 use Alma\PrestaShop\Builders\Helpers\PriceHelperBuilder;
 use Alma\PrestaShop\Builders\Helpers\SettingsHelperBuilder;
 use Alma\PrestaShop\Builders\Services\OrderServiceBuilder;
+use Alma\PrestaShop\Exceptions\CartException;
 use Alma\PrestaShop\Exceptions\PaymentValidationException;
 use Alma\PrestaShop\Exceptions\RefundException;
 use Alma\PrestaShop\Factories\ContextFactory;
@@ -222,7 +223,7 @@ class PaymentValidation
         if (!$this->cartProxy->orderExists($cart->id)) {
             try {
                 $cartTotals = $this->toolsHelper->psRound((float) $this->getCartTotals($cart, $customer), 2);
-            } catch (\Exception $e) {
+            } catch (CartException $e) {
                 LoggerFactory::instance()->warning(
                     "[Alma] Payment validation error with cart total. {$e->getMessage()}"
                 );
@@ -381,19 +382,23 @@ class PaymentValidation
      * @param \Customer $customer
      *
      * @return float
+     * @throws CartException
      */
     private function getCartTotals($cart, $customer)
     {
-        if ((int) $this->context->customer->id === (int) $customer->id) {
-            return $cart->getOrderTotal(true, \Cart::BOTH);
-        }
-
         $ipnCustomer = $this->context->customer;
-        $this->context->customer = $customer;
-        $cartTotals = $cart->getOrderTotal(true, \Cart::BOTH);
-        $this->context->customer = $ipnCustomer;
+        try {
+            if ((int) $this->context->customer->id === (int) $customer->id) {
+                return $cart->getOrderTotal(true, \Cart::BOTH);
+            }
 
-        return $cartTotals;
+            $this->context->customer = $customer;
+            return $cart->getOrderTotal(true, \Cart::BOTH);
+        } catch (\Exception $e) {
+            throw new CartException("[Alma] Error calculating cart total: {$cart->id}", 0, $e->getPrevious());
+        } finally {
+            $this->context->customer = $ipnCustomer;
+        }
     }
 
     /**
