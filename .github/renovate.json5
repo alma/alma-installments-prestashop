@@ -1,0 +1,33 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [ "github>alma/renovate:defaults.json5" ],
+  "reviewers": [ "team:squad-e-commerce-integrations" ],
+  "baseBranches": [ "develop" ],
+  "packageRules": [
+    {
+      "matchManagers": [ "composer" ],
+      "groupName": "composer updates"
+    },
+    {
+      "matchManagers": [ "composer" ],
+      "matchUpdateTypes": [ "major" ],
+      "enabled": false
+    },
+    {
+      "matchManagers": [ "dockerfile" ],
+      "matchDepNames": [ "composer" ],
+      "matchFileNames": [ "scripts/build/Dockerfile" ],
+      "enabled": false
+    },
+    {
+      "matchManagers": [ "dockerfile", "docker-compose" ],
+      "groupName": "docker updates"
+    },
+    {
+      // PHP, composer and Prestashop versions in Dockerfiles must be freezed
+      "matchManagers": [ "dockerfile" ],
+      "matchDepNames": [ "prestashop/prestashop", "php", "composer" ],
+      "enabled": false
+    }
+  ]
+}
