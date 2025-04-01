@@ -539,7 +539,7 @@ class SettingsHelper
      */
     public function isInPageEnabled()
     {
-        return (bool) (int) $this->getKey(InpageAdminFormBuilder::ALMA_ACTIVATE_INPAGE, false);
+        return (bool) (int) $this->getKey(InpageAdminFormBuilder::ALMA_ACTIVATE_INPAGE, InpageAdminFormBuilder::ALMA_INPAGE_DEFAULT_VALUE);
     }
 
     /**
