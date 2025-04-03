@@ -80,8 +80,7 @@ $_MODULE['<{alma}prestashop>excludedcategoryadminformbuilder_41c2bdcbfb6ea702ac4
 $_MODULE['<{alma}prestashop>excludedcategoryadminformbuilder_c4cea4750fb3ef077cbf2e1283c312ac'] = 'Mensaje a mostrar en la página de un producto excluido o en la página del carrito si contiene un producto excluido.';
 $_MODULE['<{alma}prestashop>excludedcategoryadminformbuilder_36359547b09bdb31f46c419a0bd5807e'] = 'Categorías excluidas';
 $_MODULE['<{alma}prestashop>inpageadminformbuilder_2420ebe02d61c738479f399a97e1cf18'] = 'Activar el pago integrado';
-$_MODULE['<{alma}prestashop>inpageadminformbuilder_3dd32a0e923aeb930c7c0ced60f7b2e0'] = 'Activar in-page checkout para todos los métodos de pago Alma';
-$_MODULE['<{alma}prestashop>inpageadminformbuilder_220a4f39147308a2160f7abc4d00ae43'] = 'La página de pago en tu propio sitio web';
+$_MODULE['<{alma}prestashop>inpageadminformbuilder_0cd1e3328cb1f293875636fc439250a7'] = 'Deje que sus clientes paguen con Alma en una ventana emergente segura, sin salir de su sitio. %1$sMás información.%2$s';
 $_MODULE['<{alma}prestashop>inpageadminformbuilder_6f7991629de2e9ee19a0bf2a0469138c'] = 'Botón de pago de entrada Selector de Alma';
 $_MODULE['<{alma}prestashop>inpageadminformbuilder_6644897911f79aa5889998a5ab18c5cd'] = '%1$sAvanzado%2$s [Opcional] Selector CSS utilizado por nuestros scripts para identificar el botón de pago Alma';
 $_MODULE['<{alma}prestashop>inpageadminformbuilder_cc12a5229a16dced1984745e05872a94'] = 'Por ejemplo, #id, .class, ...';
