@@ -80,8 +80,7 @@ $_MODULE['<{alma}prestashop>excludedcategoryadminformbuilder_41c2bdcbfb6ea702ac4
 $_MODULE['<{alma}prestashop>excludedcategoryadminformbuilder_c4cea4750fb3ef077cbf2e1283c312ac'] = 'Bericht dat wordt weergegeven op een uitgesloten productpagina of op de winkelwagenpagina als deze een uitgesloten product bevat.';
 $_MODULE['<{alma}prestashop>excludedcategoryadminformbuilder_36359547b09bdb31f46c419a0bd5807e'] = 'Uitgesloten categorieën';
 $_MODULE['<{alma}prestashop>inpageadminformbuilder_2420ebe02d61c738479f399a97e1cf18'] = 'In-pagina afrekenen activeren';
-$_MODULE['<{alma}prestashop>inpageadminformbuilder_3dd32a0e923aeb930c7c0ced60f7b2e0'] = 'In-page checkout activeren voor alle betaalmethoden van Alma';
-$_MODULE['<{alma}prestashop>inpageadminformbuilder_220a4f39147308a2160f7abc4d00ae43'] = 'De in-pagina checkout op je eigen website';
+$_MODULE['<{alma}prestashop>inpageadminformbuilder_0cd1e3328cb1f293875636fc439250a7'] = 'Laat uw klanten betalen met Alma in een beveiligde pop-up, zonder uw site te verlaten. %1$sMeer informatie.%2$s';
 $_MODULE['<{alma}prestashop>inpageadminformbuilder_6f7991629de2e9ee19a0bf2a0469138c'] = 'Invoer betaalknop Alma keuzeschakelaar';
 $_MODULE['<{alma}prestashop>inpageadminformbuilder_6644897911f79aa5889998a5ab18c5cd'] = '%1$sGeavanceerd%2$s [Optioneel] CSS-selector gebruikt door onze scripts om de Alma-betaalknop te identificeren';
 $_MODULE['<{alma}prestashop>inpageadminformbuilder_cc12a5229a16dced1984745e05872a94'] = 'Bijv. #id, .class, ...';

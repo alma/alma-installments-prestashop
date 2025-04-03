@@ -80,8 +80,7 @@ $_MODULE['<{alma}prestashop>excludedcategoryadminformbuilder_41c2bdcbfb6ea702ac4
 $_MODULE['<{alma}prestashop>excludedcategoryadminformbuilder_c4cea4750fb3ef077cbf2e1283c312ac'] = 'Meldung, die auf einer Seite mit einem ausgeschlossenen Produkt oder auf der Seite mit dem Einkaufswagen angezeigt wird, wenn dieser ein ausgeschlossenes Produkt enthält.';
 $_MODULE['<{alma}prestashop>excludedcategoryadminformbuilder_36359547b09bdb31f46c419a0bd5807e'] = 'Ausgeschlossene Kategorien';
 $_MODULE['<{alma}prestashop>inpageadminformbuilder_2420ebe02d61c738479f399a97e1cf18'] = 'In-Page-Kaufabwicklung aktivieren';
-$_MODULE['<{alma}prestashop>inpageadminformbuilder_3dd32a0e923aeb930c7c0ced60f7b2e0'] = 'Aktivieren Sie den In-Page-Checkout für alle Alma-Zahlungsarten';
-$_MODULE['<{alma}prestashop>inpageadminformbuilder_220a4f39147308a2160f7abc4d00ae43'] = 'Die In-Page-Kasse auf Ihrer eigenen Website';
+$_MODULE['<{alma}prestashop>inpageadminformbuilder_0cd1e3328cb1f293875636fc439250a7'] = 'Lassen Sie Ihre Kunden mit Alma in einem sicheren Pop-up bezahlen, ohne Ihre Website zu verlassen. %1$sErfahren Sie mehr.%2$s';
 $_MODULE['<{alma}prestashop>inpageadminformbuilder_6f7991629de2e9ee19a0bf2a0469138c'] = 'Zahlungseingangstaste Alma-Selektor';
 $_MODULE['<{alma}prestashop>inpageadminformbuilder_6644897911f79aa5889998a5ab18c5cd'] = '%1$sAdvanced%2$s [Optional] CSS-Selektor, der von unseren Skripten verwendet wird, um die Alma-Zahlungsschaltfläche zu identifizieren';
 $_MODULE['<{alma}prestashop>inpageadminformbuilder_cc12a5229a16dced1984745e05872a94'] = 'Z.B. #id, .class, ...';
