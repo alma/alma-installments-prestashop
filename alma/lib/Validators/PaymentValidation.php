@@ -221,6 +221,7 @@ class PaymentValidation
         }
 
         if (!$this->cartProxy->orderExists($cart->id)) {
+            $cartTotals = 0;
             try {
                 $cartTotals = $this->toolsHelper->psRound((float) $this->getCartTotals($cart, $customer), 2);
             } catch (CartException $e) {
