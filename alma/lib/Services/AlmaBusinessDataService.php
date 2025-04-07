@@ -264,4 +264,17 @@ class AlmaBusinessDataService
             }
         }
     }
+
+    /**
+     * @param $cartId
+     * @return string|null
+     */
+    public function getAlmaPaymentIdByCartId($cartId)
+    {
+        $almaBusinessData = $this->almaBusinessDataModel->getByCartId($cartId);
+        if ($almaBusinessData) {
+            return $almaBusinessData['alma_payment_id'];
+        }
+        return null;
+    }
 }

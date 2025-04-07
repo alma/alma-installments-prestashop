@@ -29,9 +29,11 @@ if (!defined('_PS_VERSION_')) {
 }
 
 use Alma\API\Client;
+use Alma\API\Entities\Payment;
 use Alma\API\Exceptions\ParametersException;
 use Alma\API\Exceptions\RequestException;
 use Alma\API\RequestError;
+use Alma\PrestaShop\Builders\Helpers\PriceHelperBuilder;
 use Alma\PrestaShop\Builders\Helpers\SettingsHelperBuilder;
 use Alma\PrestaShop\Builders\Services\OrderServiceBuilder;
 use Alma\PrestaShop\Exceptions\OrderException;
@@ -40,6 +42,7 @@ use Alma\PrestaShop\Helpers\ClientHelper;
 use Alma\PrestaShop\Helpers\OrderHelper;
 use Alma\PrestaShop\Helpers\SettingsHelper;
 use Alma\PrestaShop\Hooks\AdminHookController;
+use Alma\PrestaShop\Services\AlmaBusinessDataService;
 use Alma\PrestaShop\Services\OrderService;
 
 final class StateHookController extends AdminHookController
@@ -62,6 +65,14 @@ final class StateHookController extends AdminHookController
      * @var OrderService
      */
     protected $orderService;
+    /**
+     * @var \Alma\PrestaShop\Services\AlmaBusinessDataService
+     */
+    protected $almaBusinessDataService;
+    /**
+     * @var \Alma\PrestaShop\Helpers\PriceHelper
+     */
+    private $priceHelper;
 
     public function __construct($module)
     {
@@ -72,6 +83,8 @@ final class StateHookController extends AdminHookController
         $this->settingsHelper = $settingsHelperBuilder->getInstance();
         $orderServiceBuilder = new OrderServiceBuilder();
         $this->orderService = $orderServiceBuilder->getInstance();
+        $this->almaBusinessDataService = new AlmaBusinessDataService();
+        $this->priceHelper = (new PriceHelperBuilder())->getInstance();
     }
 
     /**
@@ -122,6 +135,9 @@ final class StateHookController extends AdminHookController
                 if ($this->loggedAsEmployee() || $this->isKnownApiUser()) {
                     $this->triggerPayment($order);
                 }
+                break;
+            case SettingsHelper::getPaymentError():
+                $this->triggerPotentialFraud($order);
                 break;
             default:
                 break;
@@ -186,6 +202,26 @@ final class StateHookController extends AdminHookController
                 $msg = "[Alma] ERROR Trigger Order {$order->id}: {$e->getMessage()}";
                 LoggerFactory::instance()->error($msg);
             }
+        }
+    }
+
+    /**
+     * @param \Order $order
+     * @return void
+     */
+    private function triggerPotentialFraud($order)
+    {
+        try {
+            $almaPaymentId = $this->almaBusinessDataService->getAlmaPaymentIdByCartId($order->id_cart);
+            $reason = sprintf('%s - order: %s€ vs payment: %s€',
+                Payment::FRAUD_AMOUNT_MISMATCH,
+                $this->priceHelper->convertPriceToCents($order->getOrdersTotalPaid()),
+                $this->priceHelper->convertPriceToCents($order->getTotalPaid())
+            );
+
+            $this->alma->payments->flagAsPotentialFraud($almaPaymentId, $reason);
+        } catch (RequestError $e) {
+            LoggerFactory::instance()->warning('[Alma] Failed to notify Alma of amount mismatch');
         }
     }
 }
