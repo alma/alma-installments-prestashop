@@ -31,7 +31,6 @@ if (!defined('_PS_VERSION_')) {
 use Alma\PrestaShop\Helpers\SettingsHelper;
 use Alma\PrestaShop\Hooks\FrontendHookController;
 use Alma\PrestaShop\Services\AlmaBusinessDataService;
-use PrestaShop\PrestaShop\Adapter\Entity\Validate;
 
 class ActionCartSaveHookController extends FrontendHookController
 {
@@ -72,7 +71,7 @@ class ActionCartSaveHookController extends FrontendHookController
     public function run($params)
     {
         $cart = $params['cart'];
-        if (!Validate::isLoadedObject($cart)) {
+        if (!\Validate::isLoadedObject($cart)) {
             return;
         }
 
