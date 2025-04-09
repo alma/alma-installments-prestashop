@@ -206,13 +206,14 @@ final class StateHookController extends AdminHookController
     }
 
     /**
+     * Trigger potential fraud if amount mismatch between order and payment
      * @param \Order $order
      * @return void
      */
     private function triggerPotentialFraud($order)
     {
         try {
-            $almaPaymentId = $this->almaBusinessDataService->getAlmaPaymentIdByCartId($order->id_cart);
+            $almaPaymentId = $this->almaBusinessDataService->getAlmaPaymentIdByCartId((int) $order->id_cart);
             $reason = sprintf('%s - order: %s€ vs payment: %s€',
                 Payment::FRAUD_AMOUNT_MISMATCH,
                 $this->priceHelper->convertPriceToCents($order->getOrdersTotalPaid()),
@@ -221,7 +222,9 @@ final class StateHookController extends AdminHookController
 
             $this->alma->payments->flagAsPotentialFraud($almaPaymentId, $reason);
         } catch (RequestError $e) {
-            LoggerFactory::instance()->warning('[Alma] Failed to notify Alma of amount mismatch');
+            LoggerFactory::instance()->warning('[Alma] Failed to notify Alma of amount mismatch - ' . $e->getMessage());
+        } catch (ParametersException $e) {
+            LoggerFactory::instance()->warning('[Alma] ParameterException Failed to notify Alma of amount mismatch - ' . $e->getMessage());
         }
     }
 }

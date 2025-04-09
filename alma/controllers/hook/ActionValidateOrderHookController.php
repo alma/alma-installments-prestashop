@@ -67,7 +67,7 @@ class ActionValidateOrderHookController extends FrontendHookController
         }
 
         try {
-            $this->almaBusinessDataService->runOrderConfirmedBusinessEvent($order->id, $cart->id);
+            $this->almaBusinessDataService->runOrderConfirmedBusinessEvent($order->id, (int) $cart->id);
         } catch (\PrestaShopException $e) {
             LoggerFactory::instance()->error('[Alma] Error to connect business data service: ' . $e->getMessage());
         }
