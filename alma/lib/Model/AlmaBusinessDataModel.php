@@ -83,9 +83,9 @@ class AlmaBusinessDataModel extends AlmaObjectModel
     }
 
     /**
-     * @param string $cartId
+     * @param int $cartId
      *
-     * @return array|bool|object|void|null
+     * @return array|bool return array alma_business_data or false
      */
     public function getByCartId($cartId)
     {
@@ -93,12 +93,13 @@ class AlmaBusinessDataModel extends AlmaObjectModel
         $query = new \DbQuery();
         $query->select('*')
             ->from(static::$definition['table'])
-            ->where('id_cart = ' . (int) $cartId);
+            ->where('id_cart = ' . $cartId);
 
         try {
             return $db->getRow($query);
         } catch (\PrestaShopDatabaseException $e) {
             LoggerFactory::instance()->warning('Failed to fetch alma_business_data by cart ID: ' . $e->getMessage());
+            return false;
         }
     }
 

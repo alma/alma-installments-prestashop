@@ -22,7 +22,6 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
-use Alma\PrestaShop\API\MismatchException;
 use Alma\PrestaShop\Builders\Validators\PaymentValidationBuilder;
 use Alma\PrestaShop\Exceptions\PaymentValidationException;
 use Alma\PrestaShop\Factories\LoggerFactory;
@@ -99,9 +98,6 @@ class AlmaIpnModuleFrontController extends ModuleFrontController
         } catch (PaymentValidationError $e) {
             LoggerFactory::instance()->error('ipn payment_validation_error - Message : ' . $e->getMessage());
             $this->ajaxRenderAndExit(json_encode(['error' => $e->getMessage()]), 500);
-        } catch (MismatchException $e) {
-            LoggerFactory::instance()->error('ipn payment_validation_mismatch_error - Message : ' . $e->getMessage());
-            $this->ajaxRenderAndExit(json_encode(['error' => $e->getMessage()]), 200);
         }
     }
 }

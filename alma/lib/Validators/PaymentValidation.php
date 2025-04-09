@@ -27,18 +27,15 @@ namespace Alma\PrestaShop\Validators;
 use Alma\API\Entities\Payment;
 use Alma\API\Lib\PaymentValidator;
 use Alma\API\RequestError;
-use Alma\PrestaShop\API\MismatchException;
 use Alma\PrestaShop\Builders\Helpers\PriceHelperBuilder;
 use Alma\PrestaShop\Builders\Helpers\SettingsHelperBuilder;
 use Alma\PrestaShop\Builders\Services\OrderServiceBuilder;
 use Alma\PrestaShop\Exceptions\PaymentValidationException;
-use Alma\PrestaShop\Exceptions\RefundException;
 use Alma\PrestaShop\Factories\ContextFactory;
 use Alma\PrestaShop\Factories\LoggerFactory;
 use Alma\PrestaShop\Factories\ModuleFactory;
 use Alma\PrestaShop\Helpers\ClientHelper;
 use Alma\PrestaShop\Helpers\PriceHelper;
-use Alma\PrestaShop\Helpers\RefundHelper;
 use Alma\PrestaShop\Helpers\SettingsHelper;
 use Alma\PrestaShop\Helpers\ToolsHelper;
 use Alma\PrestaShop\Proxy\CartProxy;
@@ -150,7 +147,6 @@ class PaymentValidation
      *
      * @return string URL to redirect the customer to
      *
-     * @throws MismatchException
      * @throws PaymentValidationException
      * @throws PaymentValidationError
      * @throws \PrestaShopException
@@ -220,37 +216,6 @@ class PaymentValidation
         }
 
         if (!$this->cartProxy->orderExists($cart->id)) {
-            try {
-                $cartTotals = $this->toolsHelper->psRound((float) $this->getCartTotals($cart, $customer), 2);
-            } catch (\Exception $e) {
-                LoggerFactory::instance()->warning(
-                    "[Alma] Payment validation error with cart total. {$e->getMessage()}"
-                );
-            }
-
-            if (abs($payment->purchase_amount - $this->priceHelper->convertPriceToCents($cartTotals)) > 2) {
-                $reason = Payment::FRAUD_AMOUNT_MISMATCH;
-                $reason .= ' - ' . $cartTotals . ' * 100 vs ' . $payment->purchase_amount;
-
-                try {
-                    $alma->payments->flagAsPotentialFraud($almaPaymentId, $reason);
-                } catch (RequestError $e) {
-                    LoggerFactory::instance()->warning('[Alma] Failed to notify Alma of amount mismatch');
-                }
-
-                LoggerFactory::instance()->error(
-                    "[Alma] Payment validation error for Cart {$cart->id}: Purchase amount mismatch!"
-                );
-
-                $clientHelper = new ClientHelper();
-                $refundHelper = new RefundHelper($this->module, $cart, $payment->id, $clientHelper);
-                try {
-                    $refundHelper->mismatchFullRefund();
-                } catch (RefundException $e) {
-                    throw new PaymentValidationException('[Alma] Error refund from mismatch', $cart->id, 0, $e);
-                }
-            }
-
             $firstInstalment = $payment->payment_plan[0];
             if (!in_array($payment->state, [Payment::STATE_IN_PROGRESS, Payment::STATE_PAID])) {
                 try {
@@ -370,30 +335,6 @@ class PaymentValidation
                 throw new PaymentValidationException('[Alma] Error Prestashop', $cartId, 0, $e);
             }
         }
-    }
-
-    /**
-     * We have to temporary update the customer object
-     * in context to prevent amount_mismatch error
-     * When calculating cart amount from an IPN call.
-     *
-     * @param \Cart $cart
-     * @param \Customer $customer
-     *
-     * @return float
-     */
-    private function getCartTotals($cart, $customer)
-    {
-        if ((int) $this->context->customer->id === (int) $customer->id) {
-            return $cart->getOrderTotal(true, \Cart::BOTH);
-        }
-
-        $ipnCustomer = $this->context->customer;
-        $this->context->customer = $customer;
-        $cartTotals = $cart->getOrderTotal(true, \Cart::BOTH);
-        $this->context->customer = $ipnCustomer;
-
-        return $cartTotals;
     }
 
     /**

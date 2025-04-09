@@ -29,6 +29,7 @@ use Alma\API\Endpoints\Merchants;
 use Alma\API\Endpoints\Results\Eligibility;
 use Alma\API\Entities\DTO\MerchantBusinessEvent\CartInitiatedBusinessEvent;
 use Alma\API\Entities\DTO\MerchantBusinessEvent\OrderConfirmedBusinessEvent;
+use Alma\API\Exceptions\ParametersException;
 use Alma\API\Exceptions\RequestException;
 use Alma\PrestaShop\Model\AlmaBusinessDataModel;
 use Alma\PrestaShop\Model\ClientModel;
@@ -132,6 +133,7 @@ class AlmaBusinessDataServiceTest extends TestCase
      * @dataProvider wrongDataOrderConfirmedBusinessEventDataProvider
      *
      * @return void
+     * @throws \PrestaShopException
      */
     public function testRunOrderConfirmedBusinessEventWithWrongParamLoggerErrorNoThrow($almaBusinessData, $orderId, $cartId)
     {
@@ -151,6 +153,40 @@ class AlmaBusinessDataServiceTest extends TestCase
     }
 
     /**
+     * @throws \PrestaShopException
+     */
+    public function testRunOrderConfirmedBusinessEventWithoutOrderId()
+    {
+        $orderId = null;
+        $cartId = '3';
+        $this->almaBusinessDataRepositoryMock->expects($this->never())
+        ->method('updateByCartId');
+        $this->clientModelMock->expects($this->never())
+            ->method('getClient');
+        $this->merchantsMock->expects($this->never())
+            ->method('sendOrderConfirmedBusinessEvent');
+        $this->loggerMock->expects($this->once())->method('error');
+        $this->assertNull($this->almaBusinessDataService->runOrderConfirmedBusinessEvent($orderId, $cartId));
+    }
+
+    /**
+     * @throws \PrestaShopException
+     */
+    public function testRunOrderConfirmedBusinessEventWithoutCartId()
+    {
+        $orderId = 5;
+        $cartId = 0;
+        $this->almaBusinessDataRepositoryMock->expects($this->never())
+            ->method('updateByCartId');
+        $this->clientModelMock->expects($this->never())
+            ->method('getClient');
+        $this->merchantsMock->expects($this->never())
+            ->method('sendOrderConfirmedBusinessEvent');
+        $this->loggerMock->expects($this->once())->method('error');
+        $this->assertNull($this->almaBusinessDataService->runOrderConfirmedBusinessEvent($orderId, $cartId));
+    }
+
+    /**
      * @return array[]
      */
     public function wrongDataOrderConfirmedBusinessEventDataProvider()
@@ -165,32 +201,8 @@ class AlmaBusinessDataServiceTest extends TestCase
                     'is_bnpl_eligible' => '1',
                     'plan_key' => 'general_2_0_0',
                 ],
-                '2',
-                '3',
-            ],
-            'orderId is empty' => [
-                [
-                    'id_alma_business_data' => '5',
-                    'id_cart' => '3',
-                    'id_order' => '2',
-                    'alma_payment_id' => 'alma_payment_id',
-                    'is_bnpl_eligible' => '1',
-                    'plan_key' => 'general_2_0_0',
-                ],
-                '',
-                '3',
-            ],
-            'cartId is empty' => [
-                [
-                    'id_alma_business_data' => '5',
-                    'id_cart' => '3',
-                    'id_order' => '2',
-                    'alma_payment_id' => 'alma_payment_id',
-                    'is_bnpl_eligible' => '1',
-                    'plan_key' => 'general_2_0_0',
-                ],
-                '2',
-                '',
+                2,
+                3,
             ],
             'plan_key empty with almaPaymentId not empty (isBNPL false with almaPaymentId not empty)' => [
                 [
@@ -201,8 +213,8 @@ class AlmaBusinessDataServiceTest extends TestCase
                     'is_bnpl_eligible' => '1',
                     'plan_key' => '',
                 ],
-                '2',
-                '3',
+                2,
+                3,
             ],
         ];
     }
@@ -622,6 +634,120 @@ class AlmaBusinessDataServiceTest extends TestCase
                 [],
                 false,
             ],
+        ];
+    }
+
+    /**
+     * @return void
+     * @throws \Alma\API\Exceptions\ParametersException
+     */
+    public function testGetAlmaPaymentIdByCartIdWithThrowException()
+    {
+        $this->almaBusinessDataModelMock->expects($this->once())
+            ->method('getByCartId')
+            ->with(7)
+            ->willReturn(false);
+        $this->expectException(ParametersException::class);
+        $this->almaBusinessDataService->getAlmaPaymentIdByCartId(7);
+    }
+
+    /**
+     * @dataProvider almaPaymentIdWithWrongDataProvider
+     * @param $almaBusinessData
+     * @param $cartId
+     * @return void
+     * @throws \Alma\API\Exceptions\ParametersException
+     */
+    public function testGetAlmaPaymentIdByCartIdWithWrongCartIdThrowException($almaBusinessData, $cartId)
+    {
+        $this->almaBusinessDataModelMock->expects($this->never())
+            ->method('getByCartId');
+        $this->expectException(ParametersException::class);
+        $this->almaBusinessDataService->getAlmaPaymentIdByCartId($cartId);
+    }
+
+    /**
+     * @return void
+     * @throws \Alma\API\Exceptions\ParametersException
+     */
+    public function testGetAlmaPaymentIdByCartIdWithoutAlmaBusinessId()
+    {
+        $almaBusinessData = [
+            'id_alma_business_data' => '1',
+            'id_cart' => '5',
+            'id_order' => '2',
+            'is_bnpl_eligible' => '1',
+            'plan_key' => 'general_3_0_0',
+        ];
+        $this->almaBusinessDataModelMock->expects($this->once())
+            ->method('getByCartId')
+            ->with(5)
+            ->willReturn($almaBusinessData);
+        $this->expectException(ParametersException::class);
+        $this->assertNull($this->almaBusinessDataService->getAlmaPaymentIdByCartId(5));
+    }
+
+    /**
+     * @return void
+     * @throws \Alma\API\Exceptions\ParametersException
+     */
+    public function testGetAlmaPaymentIdByCartIdWithAlmaBusinessIdEmpty()
+    {
+        $almaBusinessData = [
+            'id_alma_business_data' => '1',
+            'id_cart' => '5',
+            'id_order' => '2',
+            'alma_payment_id' => null,
+            'is_bnpl_eligible' => '1',
+            'plan_key' => 'general_3_0_0',
+        ];
+        $this->almaBusinessDataModelMock->expects($this->once())
+            ->method('getByCartId')
+            ->with(5)
+            ->willReturn($almaBusinessData);
+        $this->expectException(ParametersException::class);
+        $this->assertNull($this->almaBusinessDataService->getAlmaPaymentIdByCartId(5));
+    }
+
+    public function testGetAlmaPaymentIdByCartIdWithRightValue()
+    {
+        $almaBusinessData = [
+            'id_alma_business_data' => '1',
+            'id_cart' => '5',
+            'id_order' => '2',
+            'alma_payment_id' => 'alma_payment_id',
+            'is_bnpl_eligible' => '1',
+            'plan_key' => 'general_3_0_0',
+        ];
+        $this->almaBusinessDataModelMock->expects($this->once())
+            ->method('getByCartId')
+            ->with(5)
+            ->willReturn($almaBusinessData);
+        $this->assertEquals('alma_payment_id', $this->almaBusinessDataService->getAlmaPaymentIdByCartId(5));
+    }
+
+    /**
+     * @return array[]
+     */
+    public function almaPaymentIdWithWrongDataProvider()
+    {
+        return [
+            'return exception with Cart Id array' => [
+                false,
+                [],
+            ],
+            'return exception with Cart Id object' => [
+                false,
+                new \stdClass(),
+            ],
+            'return exception with Cart Id bool' => [
+                false,
+                true,
+            ],
+            'return exception with Cart Id string' => [
+                false,
+                'string',
+            ]
         ];
     }
 }

@@ -605,6 +605,14 @@ class SettingsHelper
     }
 
     /**
+     * @return int
+     */
+    public static function getPaymentError()
+    {
+        return (int) static::get('ALMA_PAYMENT_ERROR', 8);
+    }
+
+    /**
      * @return bool
      */
     public function isPaymentTriggerEnabledByState()
