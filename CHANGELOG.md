@@ -1,5 +1,25 @@
 # Changelog
 
+## v4.9.0 - 2025-04-09
+
+### Changes
+
+### 🚀 New Features
+
+- feat: Refactor mismatch with native Prestashop process (#684)
+- feat: Re-wording in page back office field (#679)
+- feat: set inpage by default on activation (#677)
+- feat: update widget version to 4.x.x (#678)
+- feat: Remove insurance feature without history order insurance (#667)
+
+### 🐛 Bug Fixes
+
+- fix: Validate injection for old Prestashop version (#680)
+
+#### Contributors
+
+@Benjamin-Freoua-Alma, @alma-renovate-bot[bot], @carine-bonnafous, @joyet-simon, @remi-zuffinetti, @webaaz, [alma-renovate-bot[bot]](https://github.com/apps/alma-renovate-bot) and [github-actions[bot]](https://github.com/apps/github-actions)
+
 ## v4.8.0 - 2025-03-17
 
 ### Changes
