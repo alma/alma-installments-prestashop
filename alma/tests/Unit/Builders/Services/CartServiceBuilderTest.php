@@ -27,7 +27,6 @@ namespace Alma\PrestaShop\Tests\Unit\Builders\Services;
 use Alma\PrestaShop\Builders\Services\CartServiceBuilder;
 use Alma\PrestaShop\Helpers\InsuranceHelper;
 use Alma\PrestaShop\Helpers\InsuranceProductHelper;
-use Alma\PrestaShop\Modules\OpartSaveCart\OpartSaveCartCartService;
 use Alma\PrestaShop\Repositories\CartProductRepository;
 use Alma\PrestaShop\Services\CartService;
 use PHPUnit\Framework\TestCase;
@@ -45,17 +44,6 @@ class CartServiceBuilderTest extends TestCase
     public function testGetInstance()
     {
         $this->assertInstanceOf(CartService::class, $this->cartServiceBuilder->getInstance());
-    }
-
-    /**
-     * @return void
-     */
-    public function testGetOpartSaveCartCartService()
-    {
-        $this->assertInstanceOf(OpartSaveCartCartService::class, $this->cartServiceBuilder->getOpartSaveCartCartService());
-        $this->assertInstanceOf(OpartSaveCartCartService::class, $this->cartServiceBuilder->getOpartSaveCartCartService(
-            \Mockery::mock(OpartSaveCartCartService::class)
-        ));
     }
 
     /**

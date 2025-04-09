@@ -24,6 +24,9 @@
 
 namespace Alma\PrestaShop\Exceptions;
 
+/**
+ * @deprecated We will remove insurance
+ */
 class InsuranceNotFoundException extends \Exception
 {
 }

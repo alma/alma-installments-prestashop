@@ -28,16 +28,10 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-use Alma\PrestaShop\Builders\Admin\InsuranceHelperBuilder as AdminInsuranceHelperBuilder;
-use Alma\PrestaShop\Builders\Helpers\InsuranceHelperBuilder;
 use Alma\PrestaShop\Builders\Helpers\SettingsHelperBuilder;
-use Alma\PrestaShop\Helpers\Admin\AdminInsuranceHelper;
 use Alma\PrestaShop\Helpers\ConstantsHelper;
-use Alma\PrestaShop\Helpers\InsuranceHelper;
 use Alma\PrestaShop\Helpers\SettingsHelper;
 use Alma\PrestaShop\Hooks\FrontendHookController;
-use Alma\PrestaShop\Repositories\ProductRepository;
-use Alma\PrestaShop\Services\InsuranceService;
 
 class FrontHeaderHookController extends FrontendHookController
 {
@@ -52,27 +46,9 @@ class FrontHeaderHookController extends FrontendHookController
     private $moduleName;
 
     /**
-     * @var InsuranceHelper
-     */
-    protected $insuranceHelper;
-
-    /**
-     * @var InsuranceService
-     */
-    protected $insuranceService;
-
-    /**
      * @var SettingsHelper
      */
     protected $settingsHelper;
-    /**
-     * @var ProductRepository
-     */
-    protected $productRepository;
-    /**
-     * @var AdminInsuranceHelper
-     */
-    protected $adminInsuranceHelper;
 
     /**
      * @codeCoverageIgnore
@@ -87,14 +63,6 @@ class FrontHeaderHookController extends FrontendHookController
 
         $settingsHelperBuilder = new SettingsHelperBuilder();
         $this->settingsHelper = $settingsHelperBuilder->getInstance();
-
-        $insuranceHelperBuilder = new InsuranceHelperBuilder();
-        $this->insuranceHelper = $insuranceHelperBuilder->getInstance();
-
-        $adminInsuranceHelperBuilder = new AdminInsuranceHelperBuilder();
-        $this->adminInsuranceHelper = $adminInsuranceHelperBuilder->getInstance();
-        $this->insuranceService = new InsuranceService();
-        $this->productRepository = new ProductRepository();
     }
 
     /**
@@ -233,14 +201,6 @@ class FrontHeaderHookController extends FrontendHookController
     {
         $content = '';
 
-        // Insurance Assets
-        if (
-            $this->insuranceHelper->isInsuranceActivated()
-            && version_compare(_PS_VERSION_, '1.7', '>=')
-        ) {
-            $content .= $this->manageInsuranceAssetsAfter17();
-        }
-
         if (
             $this->displayWidgetOnCartPage()
             || $this->displayWidgetOnProductPage()
@@ -252,39 +212,6 @@ class FrontHeaderHookController extends FrontendHookController
             if (version_compare(_PS_VERSION_, '1.7.0.0', '>=')) {
                 $content .= $this->manageAssetVersionForPrestashopAfter17();
             }
-        }
-
-        return $content;
-    }
-
-    /**
-     * @return string
-     */
-    protected function manageInsuranceAssetsBefore17()
-    {
-        $content = '';
-
-        $this->controller->addJS($this->module->_path . ConstantsHelper::INSURANCE_16_SCRIPT_PATH);
-
-        if ($this->insuranceHelper->hasInsuranceInCart()) {
-            $this->controller->addJS($this->module->_path . ConstantsHelper::MINI_CART_INSURANCE_16_SCRIPT_PATH);
-            $text = $this->module->l('To manage your purchases with Assurance, please go to the checkout page.', 'FrontHeaderHookController');
-            $content .= '<input type="hidden" value="' . $text . '" id="alma-mini-cart-insurance-message">';
-
-            if ($this->iAmInOrderPage()) {
-                $this->controller->addJS($this->module->_path . ConstantsHelper::ORDER_INSURANCE_16_SCRIPT_PATH);
-            }
-
-            if ($this->iAmInCartPage()) {
-                $this->controller->addJS($this->module->_path . ConstantsHelper::CART_INSURANCE_16_SCRIPT_PATH);
-            }
-        }
-
-        if (
-            $this->insuranceHelper->isInsuranceAllowedInProductPage()
-            && $this->iAmInProductPage()
-        ) {
-            $this->controller->addJS($this->module->_path . ConstantsHelper::PRODUCT_INSURANCE_16_SCRIPT_PATH);
         }
 
         return $content;
@@ -319,82 +246,6 @@ class FrontHeaderHookController extends FrontendHookController
         }
 
         return $content;
-    }
-
-    /**
-     * @return string
-     */
-    public function manageInsuranceAssetsAfter17()
-    {
-        $scripts = '';
-
-        if (
-            $this->insuranceHelper->isInsuranceAllowedInProductPage()
-            && $this->iAmInProductPage()
-        ) {
-            $this->controller->addJS($this->module->_path . ConstantsHelper::PRODUCT_INSURANCE_SCRIPT_PATH);
-
-            $this->controller->registerStylesheet(
-                ConstantsHelper::INSURANCE_PRODUCT_CSS_ID,
-                "modules/$this->moduleName/" . ConstantsHelper::INSURANCE_PRODUCT_CSS_PATH
-            );
-
-            $scripts .= $this->urlScriptInsuranceModal();
-        }
-
-        if (
-            $this->iAmInCartPage()
-            && $this->cartIsNotEmpty()
-        ) {
-            $this->controller->addJS($this->module->_path . ConstantsHelper::CART_INSURANCE_SCRIPT_PATH);
-
-            $this->controller->registerStylesheet(
-                ConstantsHelper::INSURANCE_PRODUCT_CSS_ID,
-                "modules/$this->moduleName/" . ConstantsHelper::INSURANCE_PRODUCT_CSS_PATH
-            );
-
-            if ($this->insuranceHelper->isInsuranceAllowedInCartPage()) {
-                $scripts .= $this->urlScriptInsuranceModal();
-            }
-        }
-
-        if (
-            $this->insuranceHelper->isInsuranceAllowedInProductPage()
-            && $this->iAmInOrderPage()
-        ) {
-            $this->controller->addJS($this->module->_path . ConstantsHelper::ORDER_INSURANCE_SCRIPT_PATH);
-        }
-
-        $this->controller->addJS($this->module->_path . ConstantsHelper::INSURANCE_SCRIPT_PATH);
-
-        $scripts .= $this->almaInsuranceIdInHeader();
-
-        return $scripts;
-    }
-
-    /**
-     * @return string
-     */
-    protected function almaInsuranceIdInHeader()
-    {
-        $insuranceProductId = $this->productRepository->getProductIdByReference(
-            ConstantsHelper::ALMA_INSURANCE_PRODUCT_REFERENCE,
-            $this->context->language->id
-        );
-
-        $message = $this->module->l('Alma insurance can only be added to your cart if it is associated with a product eligible for insurance. It will be offered on the product page concerned.');
-
-        return "<div id='alma-insurance-global' data-insurance-id='{$insuranceProductId}' data-message-insurance-page='{$message}'></div>";
-    }
-
-    /**
-     * @return string
-     */
-    protected function urlScriptInsuranceModal()
-    {
-        $urlScriptInsuranceModal = $this->adminInsuranceHelper->envUrl() . ConstantsHelper::SCRIPT_MODAL_WIDGET_INSURANCE_PATH;
-
-        return "<script data-cfasync='false' type='module' src='{$urlScriptInsuranceModal}'></script><div id='alma-insurance-modal'></div>";
     }
 
     /**

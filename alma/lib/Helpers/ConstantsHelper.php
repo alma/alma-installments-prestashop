@@ -33,8 +33,8 @@ class ConstantsHelper
     const ALMA_MODULE_NAME = 'alma';
     const INPAGE_SCRIPT_PATH = 'views/js/alma-inpage.js';
     const INPAGE_JS_URL = 'https://cdn.jsdelivr.net/npm/@alma/in-page@2.x.x/dist/index.umd.js';
-    const WIDGETS_CSS_URL = 'https://cdn.jsdelivr.net/npm/@alma/widgets@3.x.x/dist/widgets.min.css';
-    const WIDGETS_JS_URL = 'https://cdn.jsdelivr.net/npm/@alma/widgets@3.x.x/dist/widgets.umd.js';
+    const WIDGETS_CSS_URL = 'https://cdn.jsdelivr.net/npm/@alma/widgets@4.x.x/dist/widgets.min.css';
+    const WIDGETS_JS_URL = 'https://cdn.jsdelivr.net/npm/@alma/widgets@4.x.x/dist/widgets.umd.js';
     const PRODUCT_SCRIPT_PATH = 'views/js/alma-product.js';
     const PRODUCT_INSURANCE_SCRIPT_PATH = 'views/js/alma-product-insurance.js';
     const ORDER_INSURANCE_SCRIPT_PATH = 'views/js/alma-order-insurance.js';

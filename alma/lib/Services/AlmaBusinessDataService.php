@@ -88,7 +88,7 @@ class AlmaBusinessDataService
      * Update order id in alma_business_data table
      * Send OrderConfirmedBusinessEvent to Alma
      *
-     * @param int $orderId
+     * @param int|null $orderId
      * @param int $cartId
      *
      * @return void
@@ -97,6 +97,10 @@ class AlmaBusinessDataService
      */
     public function runOrderConfirmedBusinessEvent($orderId, $cartId)
     {
+        if (!$orderId || !$cartId) {
+            $this->logger->error('[Alma] runOrderConfirmedBusinessEvent - Order ID or Cart Id is null - orderId:' . $orderId . ' - CartId:' . $cartId);
+            return;
+        }
         $this->updateOrderId($orderId, $cartId);
         $almaBusinessData = $this->almaBusinessDataModel->getByCartId($cartId);
         if (!$almaBusinessData) {
@@ -127,7 +131,7 @@ class AlmaBusinessDataService
     /**
      * Send CartInitiatedBusinessEvent to Alma
      *
-     * @param int $cartId
+     * @param string|int $cartId
      *
      * @return void
      */
@@ -150,13 +154,13 @@ class AlmaBusinessDataService
     }
 
     /**
-     * @param string $cartId
+     * @param int $cartId
      *
      * @return bool
      */
     public function isAlmaBusinessDataExistByCart($cartId)
     {
-        return !empty($this->almaBusinessDataModel->getByCartId($cartId));
+        return !empty($this->almaBusinessDataModel->getByCartId((int) $cartId));
     }
 
     /**
@@ -263,5 +267,26 @@ class AlmaBusinessDataService
                 $this->logger->warning('[Alma] Error in create table alma_business_data: ' . $e->getMessage());
             }
         }
+    }
+
+    /**
+     * @param int $cartId
+     * @return string
+     * @throws \Alma\API\Exceptions\ParametersException
+     */
+    public function getAlmaPaymentIdByCartId($cartId)
+    {
+        if (!is_int($cartId)) {
+            throw new ParametersException('[Alma] Cart ID must be an integer');
+        }
+        $almaBusinessData = $this->almaBusinessDataModel->getByCartId($cartId);
+        if (!$almaBusinessData) {
+            throw new ParametersException('[Alma] Alma Business Data not found');
+        }
+        if (!key_exists('alma_payment_id', $almaBusinessData) || !isset($almaBusinessData['alma_payment_id'])) {
+            throw new ParametersException('[Alma] Alma Payment ID not found');
+        }
+
+        return $almaBusinessData['alma_payment_id'];
     }
 }

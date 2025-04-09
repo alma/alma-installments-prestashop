@@ -539,7 +539,7 @@ class SettingsHelper
      */
     public function isInPageEnabled()
     {
-        return (bool) (int) $this->getKey(InpageAdminFormBuilder::ALMA_ACTIVATE_INPAGE, false);
+        return (bool) (int) $this->getKey(InpageAdminFormBuilder::ALMA_ACTIVATE_INPAGE, InpageAdminFormBuilder::ALMA_INPAGE_DEFAULT_VALUE);
     }
 
     /**
@@ -602,6 +602,14 @@ class SettingsHelper
     public static function getPaymentTriggerState()
     {
         return (int) static::get('ALMA_STATE_TRIGGER', 4);
+    }
+
+    /**
+     * @return int
+     */
+    public static function getPaymentError()
+    {
+        return (int) static::get('ALMA_PAYMENT_ERROR', 8);
     }
 
     /**

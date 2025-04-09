@@ -88,7 +88,6 @@ class CartServiceTest extends TestCase
         $this->cartMock = $this->createMock(\Cart::class);
         $this->newCartMock = \Mockery::mock(\Cart::class);
         $this->contextFactoryMock = $this->createMock(ContextFactory::class);
-        $this->opartCartSaveServiceSpy = \Mockery::spy(OpartSaveCartCartService::class);
         $this->toolsFactoryMock = \Mockery::mock(ToolsFactory::class);
         $this->insuranceHelperMock = \Mockery::mock(InsuranceHelper::class);
         $this->insuranceProductHelperSpy = \Mockery::spy(InsuranceProductHelper::class);
@@ -100,7 +99,6 @@ class CartServiceTest extends TestCase
             [
                 \Mockery::mock(CartProductRepository::class),
                 $this->contextFactoryMock,
-                $this->opartCartSaveServiceSpy,
                 $this->insuranceHelperMock,
                 $this->insuranceProductHelperSpy,
                 $this->toolsFactoryMock,
@@ -111,7 +109,6 @@ class CartServiceTest extends TestCase
         $this->cartService = new CartService(
             $this->createMock(CartProductRepository::class),
             $this->contextFactoryMock,
-            $this->opartCartSaveServiceSpy,
             $this->insuranceHelperMock,
             $this->insuranceProductHelperSpy,
             $this->toolsFactoryMock,

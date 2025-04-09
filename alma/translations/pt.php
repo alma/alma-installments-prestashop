@@ -80,8 +80,7 @@ $_MODULE['<{alma}prestashop>excludedcategoryadminformbuilder_41c2bdcbfb6ea702ac4
 $_MODULE['<{alma}prestashop>excludedcategoryadminformbuilder_c4cea4750fb3ef077cbf2e1283c312ac'] = 'Mensagem exibida numa página de produto excluído ou na página do cesto, se incluir um produto excluído.';
 $_MODULE['<{alma}prestashop>excludedcategoryadminformbuilder_36359547b09bdb31f46c419a0bd5807e'] = 'Categorias excluídas';
 $_MODULE['<{alma}prestashop>inpageadminformbuilder_2420ebe02d61c738479f399a97e1cf18'] = 'Ativar o checkout na página';
-$_MODULE['<{alma}prestashop>inpageadminformbuilder_3dd32a0e923aeb930c7c0ced60f7b2e0'] = 'Ativar o checkout na página para todos os métodos de pagamento Alma';
-$_MODULE['<{alma}prestashop>inpageadminformbuilder_220a4f39147308a2160f7abc4d00ae43'] = 'A página de checkout no seu próprio sítio Web';
+$_MODULE['<{alma}prestashop>inpageadminformbuilder_0cd1e3328cb1f293875636fc439250a7'] = 'Permita que os seus clientes paguem com a Alma num pop-up seguro, sem sair do seu site. %1$sSaiba mais.%2$s';
 $_MODULE['<{alma}prestashop>inpageadminformbuilder_6f7991629de2e9ee19a0bf2a0469138c'] = 'Botão de pagamento de entrada Seletor de Alma';
 $_MODULE['<{alma}prestashop>inpageadminformbuilder_6644897911f79aa5889998a5ab18c5cd'] = '%1$sAvançado%2$s [Opcional] Seletor CSS utilizado pelos nossos scripts para identificar o botão de pagamento Alma';
 $_MODULE['<{alma}prestashop>inpageadminformbuilder_cc12a5229a16dced1984745e05872a94'] = 'Por exemplo, #id, .class...';
@@ -201,7 +200,7 @@ $_MODULE['<{alma}prestashop>displayrefundshookcontroller_becd29bb1a0004cdfc177e9
 $_MODULE['<{alma}prestashop>getcontenthookcontroller_bf17ac149e2e7a530c677e9bd51d3fd2'] = 'Módulos';
 $_MODULE['<{alma}prestashop>getcontenthookcontroller_5f265dfcb9ab68a1258ec25393ffb886'] = 'Gestor do módulo';
 $_MODULE['<{alma}prestashop>getcontenthookcontroller_c6e24f81cb99e08c3d56b191c00aea28'] = 'Gestor do módulo - Lista';
-$_MODULE['<{alma}prestashop>frontheaderhookcontroller_0bbf1fb0708055cf522541b4151894c4'] = 'Para gerir as suas compras com a Assurance, aceda à página de finalização da compra.';
+$_MODULE['<{alma}prestashop>frontheaderhookcontroller_0bbf1fb0708055cf522541b4151894c4'] = 'Para gerir as suas compras com a Assurance, aceda à página de checkout.';
 $_MODULE['<{alma}prestashop>frontheaderhookcontroller_8f1e80580ceb2bb7a54a7288ea169b30'] = 'O seguro Alma só pode ser adicionado ao seu carrinho se estiver associado a um produto elegível para seguro. Este será proposto na página do produto em causa.';
 $_MODULE['<{alma}prestashop>displaypaymenthookcontroller_afd8ac1c65e1519d6a890e5f98558a52'] = '%1$s e depois %2$d x %3$s';
 $_MODULE['<{alma}prestashop>displaypaymenthookcontroller_bc69b42c4bd339154f9025f3299ad146'] = '%1$s hoje, e depois %2$d x %3$s';

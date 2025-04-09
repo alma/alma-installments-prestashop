@@ -92,22 +92,8 @@ class HookHelper
             'version' => '1.7.6',
             'operand' => '<',
         ],
-        'displayProductActions' => [
-            'version' => '1.7.6',
-            'operand' => '>=',
-        ],
-        'actionAfterDeleteProductInCart' => [
-            'version' => '1.7',
-            'operand' => '>=',
-        ],
-        'actionObjectProductInCartDeleteAfter' => [
-            'version' => '1.7.1',
-            'operand' => '>',
-        ],
         'actionCartSave' => 'all',
         'actionValidateOrder' => 'all',
-        'displayCartExtraProductActions' => 'all',
-        'termsAndConditions' => 'all',
         'actionAdminOrdersListingFieldsModifier' => [
             'version' => '1.7.5',
             'operand' => '<',
@@ -119,22 +105,6 @@ class HookHelper
         'actionOrderGridDefinitionModifier' => [
             'version' => '1.7.5',
             'operand' => '>=',
-        ],
-        'displayInvoice' => [
-            'version' => '1.7.7',
-            'operand' => '<',
-        ],
-        'displayAdminOrderTop' => [
-            'version' => '1.7.7',
-            'operand' => '>=',
-        ],
-        'actionFrontControllerSetVariables' => [
-            'version' => '1.7.5',
-            'operand' => '>=',
-        ],
-        'actionGetProductPropertiesBefore' => [
-            'version' => '1.7.5',
-            'operand' => '<',
         ],
     ];
 

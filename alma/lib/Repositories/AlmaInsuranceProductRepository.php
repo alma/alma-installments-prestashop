@@ -33,6 +33,7 @@ if (!defined('_PS_VERSION_')) {
 }
 
 /**
+ * @deprecated We will remove insurance
  * Class AlmaInsuranceProductRepository.
  *
  * Use for Product
@@ -266,48 +267,6 @@ class AlmaInsuranceProductRepository
         }
 
         return true;
-    }
-
-    /**
-     * @return bool
-     */
-    public function createTable()
-    {
-        $sql = 'CREATE TABLE IF NOT EXISTS `' . _DB_PREFIX_ . 'alma_insurance_product` (
-            `id_alma_insurance_product` int(10) unsigned NOT NULL AUTO_INCREMENT,
-            `id_cart` int(10) unsigned NOT NULL,
-            `id_product` int(10) unsigned NOT NULL,
-            `id_shop` int(10) unsigned NOT NULL DEFAULT 1,
-            `id_product_attribute` int(10) unsigned NOT NULL DEFAULT 0,
-            `id_customization` int(10) unsigned NOT NULL DEFAULT 0,
-            `id_product_insurance` int(10) unsigned NOT NULL,
-            `id_product_attribute_insurance` int(10) unsigned NOT NULL,
-            `id_address_delivery` int(10) unsigned NOT NULL,
-            `id_order` int(10) unsigned NULL,
-            `price` int(10) unsigned NULL,
-            `insurance_contract_id` varchar(255) NULL,
-            `insurance_contract_name` varchar(255) NULL,
-            `cms_reference` varchar(255) NULL,
-            `product_price` int(10) unsigned NULL,
-            `date_add` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
-            `subscription_id` varchar(255) null,
-            `subscription_amount` int(10) unsigned NULL,
-            `subscription_broker_id` varchar(255) null,
-            `subscription_broker_reference` varchar(255) null,
-            `subscription_state` varchar(255) null,
-            `date_of_cancelation` datetime null,
-            `reason_of_cancelation` text null,   
-            `is_refunded` boolean default 0 null,
-            `date_of_refund` datetime null,
-            `date_of_cancelation_request` datetime null,
-            `mode` varchar(255) not NULL,
-            PRIMARY KEY (`id_alma_insurance_product`),
-            index `ps_alma_insurance_product_cart_shop` (`id_cart`, `id_shop`),
-            index `ps_alma_insurance_product` (`id_product`, `id_shop`, `id_product_attribute`, `id_customization`, `id_cart`),
-            index `ps_broker_id` (`subscription_broker_id`)
-        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci';
-
-        return \Db::getInstance()->execute($sql);
     }
 
     /**

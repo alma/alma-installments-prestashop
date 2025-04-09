@@ -33,6 +33,7 @@ if (!defined('_PS_VERSION_')) {
  */
 class InpageAdminFormBuilder extends AbstractAlmaAdminFormBuilder
 {
+    const ALMA_INPAGE_DEFAULT_VALUE = true;
     const ALMA_ACTIVATE_INPAGE = 'ALMA_ACTIVATE_INPAGE';
     const ALMA_INPAGE_PAYMENT_BUTTON_SELECTOR = 'ALMA_INPAGE_PAYMENT_BUTTON_SELECTOR';
     const ALMA_INPAGE_DEFAULT_VALUE_PAYMENT_BUTTON_SELECTOR = '[data-module-name=alma]';
@@ -48,8 +49,11 @@ class InpageAdminFormBuilder extends AbstractAlmaAdminFormBuilder
             $this->inputAlmaSwitchForm(
                 self::ALMA_ACTIVATE_INPAGE,
                 $this->module->l('Activate in-page checkout', 'InpageAdminFormBuilder'),
-                $this->module->l('Activate in-page checkout for all Alma payment methods', 'InpageAdminFormBuilder'),
-                $this->module->l('The checkout in-page in your own website', 'InpageAdminFormBuilder')
+                sprintf(
+                    $this->module->l('Let your customers pay with Alma in a secure pop-up, without leaving your site. %1$sLearn more.%2$s', 'InpageAdminFormBuilder'),
+                    '<a href="https://docs.almapay.com/docs/in-page-prestashop" target="_blank">',
+                    '</a>'
+                )
             ),
             $this->inputTextForm(
                 self::ALMA_INPAGE_PAYMENT_BUTTON_SELECTOR,

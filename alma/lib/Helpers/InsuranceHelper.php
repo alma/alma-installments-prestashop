@@ -34,6 +34,9 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
+/**
+ * @deprecated We will remove insurance
+ */
 class InsuranceHelper
 {
     const ALMA_INSURANCE_STATUS_FAILED = 'failed';

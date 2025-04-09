@@ -28,24 +28,12 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-use Alma\PrestaShop\Builders\Helpers\InsuranceHelperBuilder;
 use Alma\PrestaShop\Factories\LoggerFactory;
-use Alma\PrestaShop\Helpers\InsuranceHelper;
 use Alma\PrestaShop\Hooks\FrontendHookController;
-use Alma\PrestaShop\Repositories\AlmaInsuranceProductRepository;
 use Alma\PrestaShop\Services\AlmaBusinessDataService;
 
 class ActionValidateOrderHookController extends FrontendHookController
 {
-    /**
-     * @var AlmaInsuranceProductRepository
-     */
-    protected $almaInsuranceProductRepository;
-
-    /**
-     * @var InsuranceHelper
-     */
-    protected $insuranceHelper;
     /**
      * @var \Alma\PrestaShop\Services\AlmaBusinessDataService
      */
@@ -54,9 +42,6 @@ class ActionValidateOrderHookController extends FrontendHookController
     public function __construct($module)
     {
         parent::__construct($module);
-        $this->almaInsuranceProductRepository = new AlmaInsuranceProductRepository();
-        $insuranceHelperBuilder = new InsuranceHelperBuilder();
-        $this->insuranceHelper = $insuranceHelperBuilder->getInstance();
         $this->almaBusinessDataService = new AlmaBusinessDataService();
     }
 
@@ -82,45 +67,9 @@ class ActionValidateOrderHookController extends FrontendHookController
         }
 
         try {
-            $this->almaBusinessDataService->runOrderConfirmedBusinessEvent($order->id, $cart->id);
+            $this->almaBusinessDataService->runOrderConfirmedBusinessEvent($order->id, (int) $cart->id);
         } catch (\PrestaShopException $e) {
             LoggerFactory::instance()->error('[Alma] Error to connect business data service: ' . $e->getMessage());
-        }
-
-        if ($this->insuranceHelper->isInsuranceActivated()) {
-            try {
-                $this->runInsurance($order->id, $cart->id);
-            } catch (\PrestaShopDatabaseException $e) {
-                LoggerFactory::instance()->error('[Alma] Error to connect insurance database: ' . $e->getMessage());
-            }
-        }
-    }
-
-    /**
-     * Run Insurance on Validate Order
-     *
-     * @param $orderId
-     * @param $cartId
-     *
-     * @return void
-     *
-     * @throws \PrestaShopDatabaseException
-     */
-    private function runInsurance($orderId, $cartId)
-    {
-        $ids = $this->almaInsuranceProductRepository->getIdsByCartIdAndShop(
-            $cartId,
-            $this->context->shop->id
-        );
-
-        $idsToUpdate = [];
-
-        foreach ($ids as $data) {
-            $idsToUpdate[] = $data['id'];
-        }
-
-        if (count($ids) > 0) {
-            $this->almaInsuranceProductRepository->updateAssociationsOrderId($orderId, $idsToUpdate);
         }
     }
 }

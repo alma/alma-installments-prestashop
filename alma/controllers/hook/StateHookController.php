@@ -29,20 +29,20 @@ if (!defined('_PS_VERSION_')) {
 }
 
 use Alma\API\Client;
+use Alma\API\Entities\Payment;
 use Alma\API\Exceptions\ParametersException;
 use Alma\API\Exceptions\RequestException;
 use Alma\API\RequestError;
-use Alma\PrestaShop\Builders\Helpers\InsuranceHelperBuilder;
+use Alma\PrestaShop\Builders\Helpers\PriceHelperBuilder;
 use Alma\PrestaShop\Builders\Helpers\SettingsHelperBuilder;
 use Alma\PrestaShop\Builders\Services\OrderServiceBuilder;
 use Alma\PrestaShop\Exceptions\OrderException;
 use Alma\PrestaShop\Factories\LoggerFactory;
 use Alma\PrestaShop\Helpers\ClientHelper;
-use Alma\PrestaShop\Helpers\InsuranceHelper;
 use Alma\PrestaShop\Helpers\OrderHelper;
 use Alma\PrestaShop\Helpers\SettingsHelper;
 use Alma\PrestaShop\Hooks\AdminHookController;
-use Alma\PrestaShop\Services\InsuranceSubscriptionService;
+use Alma\PrestaShop\Services\AlmaBusinessDataService;
 use Alma\PrestaShop\Services\OrderService;
 
 final class StateHookController extends AdminHookController
@@ -55,10 +55,6 @@ final class StateHookController extends AdminHookController
      * @var Client|mixed|null
      */
     protected $alma;
-    /**
-     * @var InsuranceSubscriptionService
-     */
-    protected $insuranceSubscriptionService;
 
     /**
      * @var SettingsHelper
@@ -66,33 +62,29 @@ final class StateHookController extends AdminHookController
     protected $settingsHelper;
 
     /**
-     * HookController constructor.
-     *
-     * @codeCoverageIgnore
-     *
-     * @param $module Alma
-     *
-     * @var InsuranceHelper
-     */
-    protected $insuranceHelper;
-
-    /**
      * @var OrderService
      */
     protected $orderService;
+    /**
+     * @var \Alma\PrestaShop\Services\AlmaBusinessDataService
+     */
+    protected $almaBusinessDataService;
+    /**
+     * @var \Alma\PrestaShop\Helpers\PriceHelper
+     */
+    private $priceHelper;
 
     public function __construct($module)
     {
         parent::__construct($module);
         $this->alma = ClientHelper::defaultInstance();
         $this->orderHelper = new OrderHelper();
-        $this->insuranceSubscriptionService = new InsuranceSubscriptionService();
-        $insuranceHelperBuilder = new InsuranceHelperBuilder();
-        $this->insuranceHelper = $insuranceHelperBuilder->getInstance();
         $settingsHelperBuilder = new SettingsHelperBuilder();
         $this->settingsHelper = $settingsHelperBuilder->getInstance();
         $orderServiceBuilder = new OrderServiceBuilder();
         $this->orderService = $orderServiceBuilder->getInstance();
+        $this->almaBusinessDataService = new AlmaBusinessDataService();
+        $this->priceHelper = (new PriceHelperBuilder())->getInstance();
     }
 
     /**
@@ -144,32 +136,14 @@ final class StateHookController extends AdminHookController
                     $this->triggerPayment($order);
                 }
                 break;
-            case (int) \Configuration::get('PS_OS_PAYMENT'):
-                if ($this->insuranceHelper->isInsuranceActivated()) {
-                    $this->processInsurance($order);
-                }
+            case SettingsHelper::getPaymentError():
+                $this->triggerPotentialFraud($order);
                 break;
             default:
                 break;
         }
 
         $this->orderService->manageStatusUpdate($order, $newStatus);
-    }
-
-    /**
-     * @param \OrderCore $order
-     *
-     * @return void
-     */
-    protected function processInsurance($order)
-    {
-        try {
-            if ($this->insuranceHelper->canInsuranceSubscriptionBeTriggered($order)) {
-                $this->insuranceSubscriptionService->triggerInsuranceSubscription($order);
-            }
-        } catch (\Exception $e) {
-            LoggerFactory::instance()->error($e->getMessage(), $e->getTrace());
-        }
     }
 
     /**
@@ -228,6 +202,29 @@ final class StateHookController extends AdminHookController
                 $msg = "[Alma] ERROR Trigger Order {$order->id}: {$e->getMessage()}";
                 LoggerFactory::instance()->error($msg);
             }
+        }
+    }
+
+    /**
+     * Trigger potential fraud if amount mismatch between order and payment
+     * @param \Order $order
+     * @return void
+     */
+    private function triggerPotentialFraud($order)
+    {
+        try {
+            $almaPaymentId = $this->almaBusinessDataService->getAlmaPaymentIdByCartId((int) $order->id_cart);
+            $reason = sprintf('%s - order: %s€ vs payment: %s€',
+                Payment::FRAUD_AMOUNT_MISMATCH,
+                $this->priceHelper->convertPriceToCents($order->getOrdersTotalPaid()),
+                $this->priceHelper->convertPriceToCents($order->getTotalPaid())
+            );
+
+            $this->alma->payments->flagAsPotentialFraud($almaPaymentId, $reason);
+        } catch (RequestError $e) {
+            LoggerFactory::instance()->warning('[Alma] Failed to notify Alma of amount mismatch - ' . $e->getMessage());
+        } catch (ParametersException $e) {
+            LoggerFactory::instance()->warning('[Alma] ParameterException Failed to notify Alma of amount mismatch - ' . $e->getMessage());
         }
     }
 }
