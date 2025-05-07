@@ -77,10 +77,10 @@ class OrderService
                 $paymentTransactionId,
                 $order->reference,
                 $stateName,
-                $orderState->shipped
+                (bool) $orderState->shipped
             );
         } catch (OrderServiceException $e) {
-            $this->logger->warning('Impossible to update order status: ' . $e->getMessage());
+            $this->logger->warning('[Alma] Impossible to update order status: ' . $e->getMessage());
 
             return;
         }
@@ -89,10 +89,10 @@ class OrderService
     /**
      * Call the clientHelper to send the order status and handle the exceptions
      *
-     * @param $paymentTransactionId
-     * @param $reference
-     * @param $stateName
-     * @param $shipped
+     * @param string $paymentTransactionId
+     * @param string $reference
+     * @param string $stateName
+     * @param bool|null $shipped
      *
      * @return void
      *
@@ -113,8 +113,8 @@ class OrderService
         } catch (RequestError $e) {
             $errorMessage = $e->getMessage();
         }
-        $this->logger->warning('Error while sending order status: ' . $errorMessage);
-        throw new OrderServiceException('Error while sending order status');
+        $this->logger->warning('[Alma] Error while sending order status: ' . $errorMessage);
+        throw new OrderServiceException('[Alma] Error while sending order status');
     }
 
     /**
@@ -122,7 +122,7 @@ class OrderService
      *
      * @param \OrderState $orderState
      *
-     * @return mixed
+     * @return string
      *
      * @throws OrderServiceException
      */
