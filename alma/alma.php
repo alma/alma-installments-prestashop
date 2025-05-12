@@ -30,7 +30,7 @@ require_once _PS_MODULE_DIR_ . 'alma/vendor/autoload.php';
 
 class Alma extends PaymentModule
 {
-    const VERSION = '4.9.0';
+    const VERSION = '4.9.1';
     const PS_ACCOUNTS_VERSION_REQUIRED = '5.3.0';
 
     public $_path;
@@ -71,7 +71,7 @@ class Alma extends PaymentModule
     {
         $this->name = 'alma';
         $this->tab = 'payments_gateways';
-        $this->version = '4.9.0';
+        $this->version = '4.9.1';
         $this->author = 'Alma';
         $this->need_instance = false;
         $this->bootstrap = true;
@@ -372,17 +372,13 @@ class Alma extends PaymentModule
      *
      * @param $params
      *
-     * @return mixed|null
+     * @return mixed|void|null
      */
     public function hookDisplayProductButtons($params)
     {
-        // @todo find another hook for prestashop 1.5
         if (version_compare(_PS_VERSION_, '1.6', '<')) {
             return $this->runHookController('displayProductPriceBlock', $params);
         }
-
-        // until version 1.7.6
-        return $this->runHookController('displayProductActions', $params);
     }
 
     /**
