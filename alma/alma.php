@@ -372,17 +372,13 @@ class Alma extends PaymentModule
      *
      * @param $params
      *
-     * @return mixed|null
+     * @return mixed|void|null
      */
     public function hookDisplayProductButtons($params)
     {
-        // @todo find another hook for prestashop 1.5
         if (version_compare(_PS_VERSION_, '1.6', '<')) {
             return $this->runHookController('displayProductPriceBlock', $params);
         }
-
-        // until version 1.7.6
-        return $this->runHookController('displayProductActions', $params);
     }
 
     /**

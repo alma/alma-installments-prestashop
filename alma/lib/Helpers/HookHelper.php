@@ -89,7 +89,7 @@ class HookHelper
             'operand' => '>=',
         ],
         'displayProductButtons' => [
-            'version' => '1.7.6',
+            'version' => '1.6',
             'operand' => '<',
         ],
         'actionCartSave' => 'all',
