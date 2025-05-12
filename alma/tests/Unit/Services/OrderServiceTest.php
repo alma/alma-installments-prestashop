@@ -132,7 +132,7 @@ class OrderServiceTest extends TestCase
         $order->method('getOrderPayments')->willReturn([$orderPayment]);
 
         $this->orderStateWithStatus();
-        $this->orderStateMock->shipped = false;
+        $this->orderStateMock->shipped = '0';
 
         $this->clientHelperMock
             ->expects($this->once())
