@@ -1,5 +1,18 @@
 # Changelog
 
+## v4.9.1 - 2025-05-12
+
+### Changes
+
+### 🐛 Bug Fixes
+
+- fix: Unregister hook DisplayProductActions (#697)
+- fix: Shipment data type error (#693)
+
+#### Contributors
+
+@Benjamin-Freoua-Alma, @alma-renovate-bot[bot], @remi-zuffinetti, [alma-renovate-bot[bot]](https://github.com/apps/alma-renovate-bot) and [github-actions[bot]](https://github.com/apps/github-actions)
+
 ## v4.9.0 - 2025-04-09
 
 ### Changes
