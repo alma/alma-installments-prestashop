@@ -73,7 +73,7 @@ jobs:
                   \"check_id\": \"${{ steps.create-github-check.outputs.id  }}\"
                   }"
               }'
-          workflow_timeout_seconds: 120 # Default: 300
+          workflow_timeout_seconds: 300
 
     - name: Hide deprecated E2E test run info message
       uses: int128/hide-comment-action@185e98e4e71b2ee7a4ce37e40c084db335833770 # v1.42.0
