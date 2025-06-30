@@ -23,12 +23,14 @@
 let inPage = undefined;
 let paymentButtonEvents = [];
 let inPageSettings = {};
+let paymentButtons = [];
 
 window.addEventListener("load", function() {
     if (!document.getElementById('alma-inpage-global')) {
         throw new Error('[Alma] In Page Settings is missing.');
     }
     inPageSettings = JSON.parse(document.querySelector('#alma-inpage-global').dataset.settings);
+    paymentButtons = document.querySelectorAll(inPageSettings.placeOrderButtonSelector);
     onloadAlma();
     window.__alma_refreshInpage = onloadAlma;
 });
@@ -151,8 +153,6 @@ function createAlmaIframe(form, showPayButton = false, url = '') {
 }
 
 function mapPaymentButtonToAlmaPaymentCreation(url, inPage, input) {
-    let paymentButton = document.querySelector(inPageSettings.placeOrderButtonSelector);
-
     const eventAlma = async function (e) {
         e.preventDefault();
         e.stopPropagation();
@@ -160,7 +160,9 @@ function mapPaymentButtonToAlmaPaymentCreation(url, inPage, input) {
     };
 
     paymentButtonEvents.push(eventAlma);
-    paymentButton.addEventListener('click', eventAlma);
+    paymentButtons.forEach((paymentButton) => {
+        paymentButton.addEventListener('click', eventAlma);
+    })
 }
 
 async function createPayment(url, inPage, input = null) {
@@ -208,7 +210,9 @@ async function createPayment(url, inPage, input = null) {
 function removeAlmaEventsFromPaymentButton() {
     let event = paymentButtonEvents.shift();
     while (event) {
-        document.querySelector(inPageSettings.placeOrderButtonSelector).removeEventListener('click', event);
+        paymentButtons.forEach((paymentButton) => {
+            paymentButton.removeEventListener('click', event);
+        })
         event = paymentButtonEvents.shift();
     }
 }
