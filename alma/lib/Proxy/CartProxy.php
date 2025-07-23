@@ -90,8 +90,6 @@ class CartProxy
                 throw new OrderException('Unable to lock cart or cart not found');
             }
 
-            sleep(5);
-
             $orderExists = $this->orderExists($cartId);
 
             if (!$orderExists) {
