@@ -20,11 +20,19 @@
  * @copyright 2018-2024 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  *}
+{$installmentsCount=count($plans)}
 <br>
 <small>
-    {if $customer_fee > 0}
-        {include file="modules/alma/views/templates/hook/_partials/customerFees.tpl" fees=$fees}
+    {if 4 < $installmentsCount}
+        {l s='Cart total' mod='alma'}: {almaFormatPrice cents=$creditInfo.totalCart} |
+        {l s='Cost of credit' mod='alma'}: {almaFormatPrice cents=$creditInfo.costCredit} |
+        {l s='Fixed APR' mod='alma'}: {$creditInfo.taeg / 100}% |
+        {l s='Total' mod='alma'}: {almaFormatPrice cents=$creditInfo.totalCredit}
     {else}
-        {l s='(No additional fees)' mod='alma'}
+        {if $customer_fee > 0}
+            {include file="modules/alma/views/templates/hook/_partials/customerFees.tpl" fees=$fees}
+        {else}
+            {l s='(No additional fees)' mod='alma'}
+        {/if}
     {/if}
 </small>
