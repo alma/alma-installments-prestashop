@@ -24,6 +24,7 @@
 
 namespace Alma\PrestaShop\Proxy;
 
+use Alma\PrestaShop\Exceptions\OrderException;
 use Alma\PrestaShop\Factories\LoggerFactory;
 use Alma\PrestaShop\Model\AlmaModuleModel;
 
@@ -70,6 +71,7 @@ class PaymentModuleProxy
      * @param \Alma\PrestaShop\Proxy\Shop|null $shop
      * @return false|void
      * @throws \PrestaShopException
+     * @throws OrderException
      */
     public function validateOrder(
         $id_cart,
@@ -83,7 +85,7 @@ class PaymentModuleProxy
         $secure_key = false,
         Shop $shop = null
     ) {
-        if ($this->cartProxy->orderExists($id_cart)) {
+        if ($this->cartProxy->checkOrderExistsForPayment($id_cart)) {
             LoggerFactory::instance()->warning('[Alma] Attempting to create a duplicate order for cart ID ' . $id_cart);
             return false;
         }

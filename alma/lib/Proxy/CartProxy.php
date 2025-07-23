@@ -24,6 +24,7 @@
 
 namespace Alma\PrestaShop\Proxy;
 
+use Alma\PrestaShop\Exceptions\OrderException;
 use Alma\PrestaShop\Factories\CartFactory;
 
 if (!defined('_PS_VERSION_')) {
@@ -69,6 +70,40 @@ class CartProxy
 
         $cart = $this->cartFactory->create($cartId);
         return $cart->orderExists();
+    }
+
+    /**
+     * Vérification thread-safe pour les retours de paiement
+     */
+    public function checkOrderExistsForPayment($cartId)
+    {
+        \Db::getInstance()->execute('START TRANSACTION');
+
+        try {
+            $lockResult = \Db::getInstance()->execute(
+                'SELECT id_cart FROM ' . _DB_PREFIX_ . 'cart
+             WHERE id_cart = ' . (int) $cartId . '
+             FOR UPDATE'
+            );
+
+            if (!$lockResult) {
+                throw new OrderException('Unable to lock cart or cart not found');
+            }
+
+            sleep(5);
+
+            $orderExists = $this->orderExists($cartId);
+
+            if (!$orderExists) {
+                return false;
+            }
+
+            \Db::getInstance()->execute('COMMIT');
+            return true;
+        } catch (OrderException $e) {
+            \Db::getInstance()->execute('ROLLBACK');
+            throw $e;
+        }
     }
 
     /**
