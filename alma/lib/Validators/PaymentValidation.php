@@ -30,6 +30,7 @@ use Alma\API\RequestError;
 use Alma\PrestaShop\Builders\Helpers\PriceHelperBuilder;
 use Alma\PrestaShop\Builders\Helpers\SettingsHelperBuilder;
 use Alma\PrestaShop\Builders\Services\OrderServiceBuilder;
+use Alma\PrestaShop\Exceptions\OrderException;
 use Alma\PrestaShop\Exceptions\PaymentValidationException;
 use Alma\PrestaShop\Factories\ContextFactory;
 use Alma\PrestaShop\Factories\LoggerFactory;
@@ -150,6 +151,7 @@ class PaymentValidation
      * @throws PaymentValidationException
      * @throws PaymentValidationError
      * @throws \PrestaShopException
+     * @throws OrderException
      */
     public function validatePayment($almaPaymentId)
     {
@@ -215,7 +217,7 @@ class PaymentValidation
             throw new PaymentValidationError($cart, 'cannot load customer');
         }
 
-        if (!$this->cartProxy->orderExists($cart->id)) {
+        if (!$this->cartProxy->checkOrderExistsForPayment($cart->id)) {
             $firstInstalment = $payment->payment_plan[0];
             if (!in_array($payment->state, [Payment::STATE_IN_PROGRESS, Payment::STATE_PAID])) {
                 try {
@@ -272,6 +274,8 @@ class PaymentValidation
             } catch (\PrestaShopException $e) {
                 LoggerFactory::instance()->warning("[Alma] Error validation Order: {$e->getMessage()}");
             }
+
+            \Db::getInstance()->execute('COMMIT');
 
             // Update payment's order reference
             $order = $this->getOrderByCartId((int) $cart->id);

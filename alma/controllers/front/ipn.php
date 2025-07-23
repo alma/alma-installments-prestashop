@@ -23,6 +23,7 @@
  */
 
 use Alma\PrestaShop\Builders\Validators\PaymentValidationBuilder;
+use Alma\PrestaShop\Exceptions\OrderException;
 use Alma\PrestaShop\Exceptions\PaymentValidationException;
 use Alma\PrestaShop\Factories\LoggerFactory;
 use Alma\PrestaShop\Helpers\SettingsHelper;
@@ -97,6 +98,10 @@ class AlmaIpnModuleFrontController extends ModuleFrontController
             $this->ajaxRenderAndExit(json_encode(['error' => $e->getMessage()]), 500);
         } catch (PaymentValidationError $e) {
             LoggerFactory::instance()->error('ipn payment_validation_error - Message : ' . $e->getMessage());
+            $this->ajaxRenderAndExit(json_encode(['error' => $e->getMessage()]), 500);
+        } catch (OrderException $e) {
+            \Db::getInstance()->execute('ROLLBACK');
+            LoggerFactory::instance()->error('ipn order payment_validation_error - Message : ' . $e->getMessage());
             $this->ajaxRenderAndExit(json_encode(['error' => $e->getMessage()]), 500);
         }
     }
