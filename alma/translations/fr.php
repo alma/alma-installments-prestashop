@@ -299,4 +299,4 @@ $_MODULE['<{alma}prestashop>notificationpsaccount_b040aba3ff898146cd8c1fb8cfd04d
 $_MODULE['<{alma}prestashop>notificationpsaccount_9700e091d54b8ff1fafcd27518c75b23'] = 'Liez votre boutique à votre compte PrestaShop pour profiter pleinement des modules proposés par PrestaShop Marketplace et optimiser votre expérience.';
 $_MODULE['<{alma}prestashop>notificationpsaccount_6997dde298b14fbf6a7c95bd39fe8dc4'] = 'Vous pouvez trouver le module %1$sici%2$s';
 $_MODULE['<{alma}prestashop>displaypayment_pnx_905dbe578ba7a221e637203026fdb986'] = 'Le paiement différé Alma n\'est pas disponible pour cette commande';
-$_MODULE['<{alma}prestashop>notificationformconfiguration_7f40d377cc4942c4f0d6e75a736f8445'] = 'Paramètres mis à jour avec succès';
+$_MODULE['<{alma}prestashop>notificationformconfiguration_7f40d377cc4942c4f0d6e75a736f8445'] = 'Configuration enregistrée avec succès';
