@@ -1,5 +1,21 @@
 # Changelog
 
+## v4.10.0 - 2025-07-28
+
+### Changes
+
+### 🚀 New Features
+
+- feat: Add fee sharing for credit in Prestashop 1.6 (#705)
+
+### 🐛 Bug Fixes
+
+- fix: Handle the in-page event button for multiple payment buttons (#703)
+
+#### Contributors
+
+@Benjamin-Freoua-Alma, @alma-renovate-bot[bot], [alma-renovate-bot[bot]](https://github.com/apps/alma-renovate-bot) and [github-actions[bot]](https://github.com/apps/github-actions)
+
 ## v4.9.1 - 2025-05-12
 
 ### Changes
