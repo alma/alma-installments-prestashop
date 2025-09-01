@@ -30,7 +30,6 @@ window.addEventListener("load", function() {
         throw new Error('[Alma] In Page Settings is missing.');
     }
     inPageSettings = JSON.parse(document.querySelector('#alma-inpage-global').dataset.settings);
-    paymentButtons = document.querySelectorAll(inPageSettings.placeOrderButtonSelector);
     onloadAlma();
     window.__alma_refreshInpage = onloadAlma;
 });
@@ -45,6 +44,7 @@ function removeLoaderButtonPayment(button) {
 
 function onloadAlma() {
     let radioButtons = document.querySelectorAll('input[name="payment-option"]');
+    paymentButtons = document.querySelectorAll(inPageSettings.placeOrderButtonSelector);
 
     //Prestashop 1.7+
     radioButtons.forEach(function (input) {
