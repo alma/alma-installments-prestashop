@@ -143,6 +143,7 @@ class CmsDataHelper
             'widget_product_activated' => (bool) (int) $this->settingsHelper->getKey(ProductEligibilityAdminFormBuilder::ALMA_SHOW_PRODUCT_ELIGIBILITY),
             'used_fee_plans' => $this->getUsedFeePlans(),
             'payment_method_position' => (int) $this->almaModuleModel->getPosition(),
+            'payment_methods_list' => $this->almaModuleModel->getPaymentMethodsList(),
             'in_page_activated' => (bool) (int) $this->settingsHelper->getKey(InpageAdminFormBuilder::ALMA_ACTIVATE_INPAGE),
             'log_activated' => (bool) (int) $this->settingsHelper->getKey(DebugAdminFormBuilder::ALMA_ACTIVATE_LOGGING),
             'excluded_categories' => $this->settingsHelper->getCategoriesExcludedNames(),
