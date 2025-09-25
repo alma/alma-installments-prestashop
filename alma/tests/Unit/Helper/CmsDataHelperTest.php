@@ -90,7 +90,7 @@ class CmsDataHelperTest extends TestCase
      *
      * @return void
      */
-    public function testGetCmsFeatureArray($jsonFeePlans, $getPosition, $expected)
+    public function testGetCmsFeatureArray($jsonFeePlans, $getPosition, $getPaymentMethodsList, $expected)
     {
         $this->settingsHelper->method('getKey')->willReturnMap(
             [
@@ -105,6 +105,7 @@ class CmsDataHelperTest extends TestCase
         );
         $this->shopModel->method('isMultisite')->willReturn(false);
         $this->almaModuleModel->method('getPosition')->willReturn($getPosition);
+        $this->almaModuleModel->method('getPaymentMethodsList')->willReturn($getPaymentMethodsList);
 
         $this->assertEquals($expected, $this->cmsDataHelper->getCmsFeatureArray());
     }
@@ -118,12 +119,19 @@ class CmsDataHelperTest extends TestCase
             'With fee plans and getPosition' => [
                 'jsonFeePlans' => '{"general_1_0_0":{"enabled":"1"}}',
                 'getPosition' => '4',
+                'getPaymentMethodsList' => [
+                    ['name' => 'ps_checkout',  'position' => 1],
+                    ['name' => 'ps_checkpayment',  'position' => 2],
+                    ['name' => 'ps_wirepayment',  'position' => 3],
+                    ['name' => 'alma',  'position' => 4]
+                ],
                 'expected' => [
                     'alma_enabled' => false,
                     'widget_cart_activated' => false,
                     'widget_product_activated' => false,
                     'used_fee_plans' => ['general_1_0_0' => ['enabled' => '1']],
                     'payment_method_position' => 4,
+                    'payment_methods_list' => [['name' => 'ps_checkout',  'position' => 1], ['name' => 'ps_checkpayment',  'position' => 2], ['name' => 'ps_wirepayment',  'position' => 3], ['name' => 'alma',  'position' => 4]],
                     'in_page_activated' => true,
                     'log_activated' => true,
                     'excluded_categories' => null,
@@ -136,12 +144,19 @@ class CmsDataHelperTest extends TestCase
             'Without fee plans and with getPosition' => [
                 'jsonFeePlans' => '{}',
                 'getPosition' => '3',
+                'getPaymentMethodsList' => [
+                    ['name' => 'ps_checkout',  'position' => 1],
+                    ['name' => 'ps_checkpayment',  'position' => 2],
+                    ['name' => 'alma',  'position' => 3],
+                    ['name' => 'ps_wirepayment',  'position' => 4]
+                ],
                 'expected' => [
                     'alma_enabled' => false,
                     'widget_cart_activated' => false,
                     'widget_product_activated' => false,
                     'used_fee_plans' => null,
                     'payment_method_position' => 3,
+                    'payment_methods_list' => [['name' => 'ps_checkout',  'position' => 1], ['name' => 'ps_checkpayment',  'position' => 2], ['name' => 'alma',  'position' => 3], ['name' => 'ps_wirepayment',  'position' => 4]],
                     'in_page_activated' => true,
                     'log_activated' => true,
                     'excluded_categories' => null,
@@ -154,12 +169,14 @@ class CmsDataHelperTest extends TestCase
             'With fee plans and without getPosition' => [
                 'jsonFeePlans' => '{"general_1_0_0":{"enabled":"1"}}',
                 'getPosition' => '',
+                'getPaymentMethodsList' => [],
                 'expected' => [
                     'alma_enabled' => false,
                     'widget_cart_activated' => false,
                     'widget_product_activated' => false,
                     'used_fee_plans' => ['general_1_0_0' => ['enabled' => '1']],
                     'payment_method_position' => 0,
+                    'payment_methods_list' => [],
                     'in_page_activated' => true,
                     'log_activated' => true,
                     'excluded_categories' => null,
