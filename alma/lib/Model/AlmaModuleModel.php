@@ -47,21 +47,14 @@ class AlmaModuleModel
      * @var \Db
      */
     private $db;
-    /**
-     * @var \DbQuery|mixed|null
-     */
-    private $dbQuery;
 
-    public function __construct($moduleProxy = null, $dbQuery = null, $db = null)
+    public function __construct($moduleProxy = null, $db = null)
     {
         if (!$moduleProxy) {
             $moduleProxy = new ModuleProxy();
         }
         $this->moduleProxy = $moduleProxy;
-        if (!$dbQuery) {
-            $dbQuery = new \DbQuery();
-        }
-        $this->dbQuery = $dbQuery;
+
         if (!$db) {
             $db = \Db::getInstance();
         }
@@ -92,7 +85,7 @@ class AlmaModuleModel
             $hookName = self::HOOK_NAME_PAYMENT_CHECKOUT_PS16;
         }
 
-        $query = $this->dbQuery;
+        $query = new \DbQuery();
         $query->select('h.id_hook, m.name, hm.position')
             ->from('hook', 'h')
             ->join('JOIN ' . _DB_PREFIX_ . 'hook_module hm ON hm.id_hook = h.id_hook')
@@ -108,6 +101,31 @@ class AlmaModuleModel
         }
 
         return $almaPosition['position'];
+    }
+
+    /**
+     * @return array
+     */
+    public function getPaymentMethodsList()
+    {
+        $hookName = self::HOOK_NAME_PAYMENT_CHECKOUT_PS17;
+        if (version_compare(_PS_VERSION_, '1.7', '<')) {
+            $hookName = self::HOOK_NAME_PAYMENT_CHECKOUT_PS16;
+        }
+
+        $query = new \DbQuery();
+        $query->select('m.name, hm.position')
+            ->from('hook', 'h')
+            ->innerJoin('hook_module', 'hm', 'hm.id_hook = h.id_hook')
+            ->innerJoin('module', 'm', 'm.id_module = hm.id_module')
+            ->where('h.name = "' . pSQL($hookName) . '"')
+            ->orderBy('hm.position ASC');
+
+        try {
+            return $this->db->executeS($query);
+        } catch (\PrestaShopDatabaseException $e) {
+            return [];
+        }
     }
 
     /**

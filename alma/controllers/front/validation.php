@@ -23,6 +23,7 @@
  */
 
 use Alma\PrestaShop\Builders\Validators\PaymentValidationBuilder;
+use Alma\PrestaShop\Exceptions\OrderException;
 use Alma\PrestaShop\Exceptions\PaymentValidationException;
 use Alma\PrestaShop\Factories\LoggerFactory;
 use Alma\PrestaShop\Validators\PaymentValidation;
@@ -78,11 +79,15 @@ class AlmaValidationModuleFrontController extends ModuleFrontController
         try {
             $redirect_to = $this->paymentValidation->validatePayment($paymentId);
         } catch (PaymentValidationError $e) {
-            LoggerFactory::instance()->error('payment_validation_error - Message : ' . $e->getMessage());
+            LoggerFactory::instance()->error('Payment Validation Error - Message : ' . $e->getMessage());
             $redirect_to = $this->fail($e->cart, $e->getMessage());
         } catch (PaymentValidationException $e) {
-            LoggerFactory::instance()->error('payment_validation_error - Message : ' . $e->getMessage());
+            LoggerFactory::instance()->error('Payment Validation Exception - Message : ' . $e->getMessage());
             $redirect_to = $this->fail($e->cartId, $e->getMessage());
+        } catch (OrderException $e) {
+            \Db::getInstance()->execute('ROLLBACK');
+            LoggerFactory::instance()->error('Order Exception - Message : ' . $e->getMessage());
+            $redirect_to = $this->fail(null, $e->getMessage());
         }
 
         if (is_callable([$this, 'setRedirectAfter'])) {

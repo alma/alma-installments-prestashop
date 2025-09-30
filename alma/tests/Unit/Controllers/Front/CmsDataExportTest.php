@@ -78,8 +78,7 @@ class AlmaCmsDataExportTest extends TestCase
     }
 
     /**
-     * @throws \PrestaShopException
-     * @throws \Alma\PrestaShop\Exceptions\CmsDataException
+     * @return void
      */
     public function testPostProcessNoSignature()
     {
@@ -93,8 +92,7 @@ class AlmaCmsDataExportTest extends TestCase
     }
 
     /**
-     * @throws \PrestaShopException
-     * @throws \Alma\PrestaShop\Exceptions\CmsDataException
+     * @return void
      */
     public function testPostProcessCheckSignatureThrowExceptionReturn403()
     {

@@ -1,5 +1,22 @@
 # Changelog
 
+## v4.11.0 - 2025-09-30
+
+### Changes
+
+### 🚀 New Features
+
+- feat: add payment methods list in gather CMS data (#715)
+- feat: add lock in database for fix duplicate order (#706)
+
+### 🐛 Bug Fixes
+
+- fix: load payment button in page on one page checkout (#714)
+
+#### Contributors
+
+@Benjamin-Freoua-Alma, @alma-renovate-bot[bot], @carine-bonnafous, @remi-zuffinetti, [alma-renovate-bot[bot]](https://github.com/apps/alma-renovate-bot) and [github-actions[bot]](https://github.com/apps/github-actions)
+
 ## v4.10.0 - 2025-07-28
 
 ### Changes
