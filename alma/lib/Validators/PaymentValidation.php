@@ -260,7 +260,7 @@ class PaymentValidation
 
             try {
                 // Place order
-                $this->paymentModuleProxy->validateOrder(
+                $this->module->validateOrder(
                     (int) $cart->id,
                     \Configuration::get('PS_OS_PAYMENT'),
                     $this->priceHelper->convertPriceFromCents($payment->purchase_amount),
