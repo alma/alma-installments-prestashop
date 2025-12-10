@@ -5,7 +5,7 @@
     "require-dev": {
         "phpunit/phpunit": "^5",
         "mockery/mockery": "^1.3",
-        "phpcompatibility/php-compatibility": "ˆ9.3.5",
+        "phpcompatibility/php-compatibility": "^9.3.5",
         "prestashop/php-dev-tools": "^3.16",
         "prestashop/autoindex": "^1.0.0"
     },
