@@ -21,13 +21,10 @@
  * @copyright 2018-2026 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
-require '../../config/config.inc.php';
-
-require 'alma.php';
-
-// Workaround to avoid error during generation of html report file
-use PrestaShop\Module\Alma\Tests\ReportConfigForHTMLReport;
-
-$configFilePath = __DIR__ . '/../phpunit.ci.xml';
-$reportConfig = new ReportConfigForHTMLReport($configFilePath);
-$reportConfig->handleReportConfig();
+header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
+header('Last-Modified: ' . gmdate('D, d M Y H:i:s') . ' GMT');
+header('Cache-Control: no-store, no-cache, must-revalidate');
+header('Cache-Control: post-check=0, pre-check=0', false);
+header('Pragma: no-cache');
+header('Location: ../');
+exit;

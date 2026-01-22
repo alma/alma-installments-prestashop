@@ -21,6 +21,9 @@
  * @copyright 2018-2026 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
+
+use PrestaShop\Module\Alma\Application\Service\ModuleInstallerService;
+
 if (!defined('_PS_VERSION_')) {
     exit;
 }
@@ -30,7 +33,7 @@ require_once _PS_MODULE_DIR_ . 'alma/vendor/autoload.php';
 
 class Alma extends PaymentModule
 {
-    const PS_ACCOUNTS_VERSION_REQUIRED = '5.3.0';
+    public const PS_ACCOUNTS_VERSION_REQUIRED = '5.3.0';
 
     public $_path;
     public $local_path;
@@ -102,18 +105,20 @@ class Alma extends PaymentModule
      *
      * @throws \PrestaShopException
      */
-    public function install()
+    public function install(): bool
     {
+        $installer = new ModuleInstallerService($this);
+
         if (Shop::isFeatureActive()) {
             Shop::setContext(Shop::CONTEXT_ALL);
         }
-        return parent::install();
+        return $installer->install() && parent::install();
     }
 
     /**
      * @return bool
      */
-    public function uninstall()
+    public function uninstall(): bool
     {
         return parent::uninstall();
     }

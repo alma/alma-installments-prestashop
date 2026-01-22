@@ -8,7 +8,7 @@
  * It should be removed later when we have an upgrading plan for PHP 5.6
  * */
 
-namespace Alma\PrestaShop\Tests;
+namespace PrestaShop\Module\Alma\Tests;
 
 class ReportConfigForHTMLReport
 {
