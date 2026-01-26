@@ -45,11 +45,6 @@ class Alma extends PaymentModule
     public $limited_currencies;
 
     /**
-     * @var Alma\PrestaShop\Helpers\HookHelper
-     */
-    public $hook;
-
-    /**
      * @var true
      */
     public $bootstrap;
