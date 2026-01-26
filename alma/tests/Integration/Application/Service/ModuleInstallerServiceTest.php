@@ -26,11 +26,6 @@ class ModuleInstallerServiceTest extends TestCase
      */
     public function testRegisterHooksSuccessfullyInstallationSuccess()
     {
-        // Remove all hooks before testing
-        foreach (ModuleInstallerService::HOOK_LIST as $hook) {
-            $this->module->unregisterHook($hook);
-        }
-
         $this->assertTrue($this->moduleInstallerService->registerHooks());
 
         // Check that all hooks are registered
