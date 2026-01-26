@@ -97,7 +97,8 @@ class Alma extends PaymentModule
     }
 
     /**
-     * Insert module into datable.
+     * Executed during the installation module.
+     * return always need begin with parent::install()
      *
      * @override
      *
@@ -113,7 +114,8 @@ class Alma extends PaymentModule
         if (Shop::isFeatureActive()) {
             Shop::setContext(Shop::CONTEXT_ALL);
         }
-        return $installer->install() && parent::install();
+
+        return parent::install() && $installer->install();
     }
 
     /**
