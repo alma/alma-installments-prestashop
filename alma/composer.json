@@ -42,7 +42,11 @@
     "scripts": {
         "php-cs": "php vendor/bin/php-cs-fixer fix --dry-run",
         "php-cs-fixer": "php vendor/bin/php-cs-fixer fix",
-        "php-compatibility": "vendor/bin/phpcs -p . --standard=PHPCompatibility -s --runtime-set testVersion 7.4-8.1 --ignore=\\*/vendor/\\*"
+        "php-compatibility": "vendor/bin/phpcs -p . --standard=PHPCompatibility -s --runtime-set testVersion 7.4-8.1 --ignore=\\*/vendor/\\*",
+        "test:watch": [
+            "Composer\\Config::disableProcessTimeout",
+            "phpunit-watcher watch < /dev/tty"
+        ]
     },
     "extra": {
         "installer-name": "alma"
