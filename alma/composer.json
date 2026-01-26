@@ -9,7 +9,8 @@
         "prestashop/php-dev-tools": "~4.0",
         "prestashop/autoindex": "^2.0",
         "prestashop/header-stamp": "^2.0",
-        "phpstan/phpstan": "2.1.x-dev"
+        "phpstan/phpstan": "2.1.x-dev",
+        "spatie/phpunit-watcher": "^1.23"
     },
     "require": {
         "php": ">=7.4",

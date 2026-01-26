@@ -17,13 +17,18 @@ class ModuleInstallerService
         $this->module = $module;
     }
 
+    /**
+     * Register all hooks needed by the module
+     * If $this->module->registerHook return false the module does not install
+     *
+     * @return bool
+     */
     public function registerHooks(): bool
     {
-        foreach (self::HOOK_LIST as $hookName) {
-            if (!$this->module->registerHook($hookName)) {
-                return false;
-            }
+        if (!$this->module->registerHook(self::HOOK_LIST)) {
+            return false;
         }
+
         return true;
     }
 

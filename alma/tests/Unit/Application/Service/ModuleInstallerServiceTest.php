@@ -15,7 +15,7 @@ class ModuleInstallerServiceTest extends TestCase
     /**
      * @return void
      */
-    public function setUp()
+    public function setUp(): void
     {
         $this->module = $this->createMock(\Alma::class);
         $this->moduleInstallerService = new ModuleInstallerService($this->module);
@@ -24,9 +24,9 @@ class ModuleInstallerServiceTest extends TestCase
     /**
      * @return void
      */
-    public function testRegisterHooksFailed()
+    public function testRegisterHooksFailedNotInstallModule()
     {
-        $this->module->expects($this->atLeastOnce())
+        $this->module->expects($this->once())
             ->method('registerHook')
             ->willReturn(false);
 
@@ -36,9 +36,9 @@ class ModuleInstallerServiceTest extends TestCase
     /**
      * @return void
      */
-    public function testRegisterHooksSuccess()
+    public function testRegisterHooksSuccessInstallModule()
     {
-        $this->module->expects($this->atLeastOnce())
+        $this->module->expects($this->once())
             ->method('registerHook')
             ->willReturn(true);
 
