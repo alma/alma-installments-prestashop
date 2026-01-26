@@ -32,6 +32,15 @@ class ModuleInstallerService
         return true;
     }
 
+    /**
+     * Install the module by :
+     * Registering all hooks
+     * Create alma database tables
+     * Create tabs for menus
+     * Check compatibility with PS_account
+     *
+     * @return bool
+     */
     public function install(): bool
     {
         return $this->registerHooks();
