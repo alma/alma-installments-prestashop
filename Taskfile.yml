@@ -50,6 +50,14 @@ tasks:
     cmds:
       - docker compose run --rm prestashop
 
+  test:local:
+    desc: Execute Unit Tests in local environment
+    vars:
+      VERSION: '{{.VERSION | default "1-7-8-9"}}'
+    dir: ../../integration-infrastructure/
+    cmds:
+      - task prestashop:{{.VERSION}}:test
+
   dist:
     desc: Build the zip file of the module
     deps:
