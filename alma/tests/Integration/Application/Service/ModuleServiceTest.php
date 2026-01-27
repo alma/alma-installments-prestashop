@@ -3,14 +3,14 @@
 namespace PrestaShop\Module\Alma\Tests\Integration\Application\Service;
 
 use PHPUnit\Framework\TestCase;
-use PrestaShop\Module\Alma\Application\Service\ModuleInstallerService;
+use PrestaShop\Module\Alma\Application\Service\ModuleService;
 
-class ModuleInstallerServiceTest extends TestCase
+class ModuleServiceTest extends TestCase
 {
     /**
-     * @var \PrestaShop\Module\Alma\Application\Service\ModuleInstallerService
+     * @var \PrestaShop\Module\Alma\Application\Service\ModuleService
      */
-    private ModuleInstallerService $moduleInstallerService;
+    private ModuleService $moduleService;
 
     /**
      * @return void
@@ -18,7 +18,7 @@ class ModuleInstallerServiceTest extends TestCase
     public function setUp(): void
     {
         $this->module = \Module::getInstanceByName('alma');
-        $this->moduleInstallerService = new ModuleInstallerService($this->module);
+        $this->moduleService = new ModuleService($this->module);
     }
 
     /**
@@ -26,10 +26,11 @@ class ModuleInstallerServiceTest extends TestCase
      */
     public function testRegisterHooksSuccessfullyInstallationSuccess()
     {
-        $this->assertTrue($this->moduleInstallerService->registerHooks());
+        $hooks = ['actionFrontControllerSetMedia'];
+        $this->assertTrue($this->moduleService->registerHooks($hooks));
 
         // Check that all hooks are registered
-        foreach (ModuleInstallerService::HOOK_LIST as $hook) {
+        foreach ($hooks as $hook) {
             $this->assertTrue(
                 \Hook::isModuleRegisteredOnHook($this->module, $hook, 1),
                 sprintf('Hook %s should be register', $hook)
@@ -42,9 +43,10 @@ class ModuleInstallerServiceTest extends TestCase
      */
     public function testRegisterHooksWhenAlreadyRegisteredInstallationSuccess()
     {
-        $this->moduleInstallerService->registerHooks();
+        $hook = ['actionFrontControllerSetMedia'];
+        $this->moduleService->registerHooks($hook);
 
-        $this->assertTrue($this->moduleInstallerService->registerHooks());
+        $this->assertTrue($this->moduleService->registerHooks($hook));
     }
 
     /**
@@ -52,8 +54,6 @@ class ModuleInstallerServiceTest extends TestCase
      */
     protected function tearDown(): void
     {
-        $this->moduleInstallerService->registerHooks();
-
         parent::tearDown();
     }
 }

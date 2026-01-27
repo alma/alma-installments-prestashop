@@ -10,4 +10,4 @@ watch:
   ignoreVCSIgnored: false
 phpunit:
   binaryPath: vendor/bin/phpunit
-  arguments: '-c phpunit.ci.xml --stop-on-failure'
+  arguments: '-c phpunit.ci.xml'

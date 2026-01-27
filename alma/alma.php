@@ -23,6 +23,7 @@
  */
 
 use PrestaShop\Module\Alma\Application\Service\ModuleInstallerService;
+use PrestaShop\Module\Alma\Application\Service\ModuleService;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -103,7 +104,9 @@ class Alma extends PaymentModule
      */
     public function install(): bool
     {
-        $installer = new ModuleInstallerService($this);
+        $installer = new ModuleInstallerService(
+            new ModuleService($this)
+        );
 
         // TODO : Check multi-shop functionnalities (https://devdocs.prestashop-project.org/1.7/development/multistore/)
         if (Shop::isFeatureActive()) {
