@@ -2,6 +2,8 @@
 
 namespace PrestaShop\Module\Alma\Application\Service;
 
+use Db;
+
 class ModuleInstallerService
 {
     private const HOOK_LIST = [
@@ -27,10 +29,32 @@ class ModuleInstallerService
      * @var ModuleService
      */
     private ModuleService $moduleService;
+    /**
+     * @var mixed
+     */
+    private Db $dbInstance;
 
-    public function __construct(ModuleService $moduleService)
+    public function __construct(ModuleService $moduleService, Db $dbInstance)
     {
         $this->moduleService = $moduleService;
+        $this->dbInstance = $dbInstance;
+    }
+
+    /**
+     * Create alma database tables
+     *
+     * @return bool
+     */
+    public function installDb(): bool
+    {
+        $sql = file_get_contents($this->moduleService->getLocalPath() . '/sql/install.sql');
+        $sql = str_replace(['{_DB_PREFIX_}', '{_MYSQL_ENGINE_}'], [_DB_PREFIX_, _MYSQL_ENGINE_], $sql);
+
+        if (!$this->dbInstance->execute($sql)) {
+            return false;
+        }
+
+        return true;
     }
 
     /**
@@ -45,6 +69,7 @@ class ModuleInstallerService
     public function install(): bool
     {
         return $this->moduleService->registerHooks(self::HOOK_LIST)
-            && $this->moduleService->installTabs(self::TABS);
+            && $this->moduleService->installTabs(self::TABS)
+            && $this->installDB();
     }
 }

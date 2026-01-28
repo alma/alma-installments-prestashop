@@ -36,6 +36,16 @@ class ModuleService
     }
 
     /**
+     * Get the local path of the module
+     *
+     * @return string
+     */
+    public function getLocalPath(): string
+    {
+        return $this->module->getLocalPath();
+    }
+
+    /**
      * Register one or all hooks needed by the module
      * If $this->module->registerHook return false the module does not install
      *
