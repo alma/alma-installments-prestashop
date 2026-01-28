@@ -4,12 +4,12 @@ namespace PrestaShop\Module\Alma\Application\Service;
 
 class ModuleInstallerService
 {
-    public const HOOK_LIST = [
+    private const HOOK_LIST = [
         'actionFrontControllerSetMedia', // Hook used for load assets
     ];
 
     /**
-     * @var \Alma
+     * @var ModuleService
      */
     private ModuleService $moduleService;
 
