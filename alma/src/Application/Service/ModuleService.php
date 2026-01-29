@@ -17,6 +17,16 @@ class ModuleService
     }
 
     /**
+     * Get the module instance
+     *
+     * @return Module
+     */
+    public function getModule(): Module
+    {
+        return $this->module;
+    }
+
+    /**
      * Register one or all hooks needed by the module
      * If $this->module->registerHook return false the module does not install
      *
