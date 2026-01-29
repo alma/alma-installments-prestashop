@@ -7,7 +7,9 @@ $finder = Finder::create()
     ->in(__DIR__)
     ->exclude('tests');
 
-$config = (new Config())->setRules([
+$config = (new Config())
+    ->setRiskyAllowed(true)
+    ->setRules([
     '@Symfony' => true,
     # To check
     'concat_space' => [
@@ -39,7 +41,7 @@ $config = (new Config())->setRules([
     'trailing_comma_in_multiline' => false,
     'phpdoc_align' => false,
     'global_namespace_import' => false,
-    'modifier_keywords' => false,
+    'visibility_required' => false,
     'phpdoc_order' => false,
     'phpdoc_separation' => false,
     'phpdoc_trim' => false,

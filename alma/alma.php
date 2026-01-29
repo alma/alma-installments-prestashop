@@ -21,6 +21,10 @@
  * @copyright 2018-2026 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
+
+use PrestaShop\Module\Alma\Application\Service\ModuleInstallerService;
+use PrestaShop\Module\Alma\Application\Service\ModuleService;
+
 if (!defined('_PS_VERSION_')) {
     exit;
 }
@@ -30,7 +34,7 @@ require_once _PS_MODULE_DIR_ . 'alma/vendor/autoload.php';
 
 class Alma extends PaymentModule
 {
-    const PS_ACCOUNTS_VERSION_REQUIRED = '5.3.0';
+    public const PS_ACCOUNTS_VERSION_REQUIRED = '5.3.0';
 
     public $_path;
     public $local_path;
@@ -40,11 +44,6 @@ class Alma extends PaymentModule
 
     /** @var string[] */
     public $limited_currencies;
-
-    /**
-     * @var Alma\PrestaShop\Helpers\HookHelper
-     */
-    public $hook;
 
     /**
      * @var true
@@ -94,7 +93,8 @@ class Alma extends PaymentModule
     }
 
     /**
-     * Insert module into datable.
+     * Executed during the installation module.
+     * return always need begin with parent::install()
      *
      * @override
      *
@@ -102,18 +102,24 @@ class Alma extends PaymentModule
      *
      * @throws \PrestaShopException
      */
-    public function install()
+    public function install(): bool
     {
+        $installer = new ModuleInstallerService(
+            new ModuleService($this)
+        );
+
+        // TODO : Check multi-shop functionnalities (https://devdocs.prestashop-project.org/1.7/development/multistore/)
         if (Shop::isFeatureActive()) {
             Shop::setContext(Shop::CONTEXT_ALL);
         }
-        return parent::install();
+
+        return parent::install() && $installer->install();
     }
 
     /**
      * @return bool
      */
-    public function uninstall()
+    public function uninstall(): bool
     {
         return parent::uninstall();
     }
