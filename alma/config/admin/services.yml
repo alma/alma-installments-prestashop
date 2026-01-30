@@ -1,4 +1,8 @@
 services:
+  alma.controller.settings:
+    public: true
+    class: 'PrestaShop\Module\Alma\Controller\SettingsController'
+    parent: 'PrestaShopBundle\Controller\Admin\FrameworkBundleAdminController'
   #####################
   # PS Account
   alma.ps_accounts_installer:

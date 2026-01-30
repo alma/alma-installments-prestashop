@@ -2,9 +2,6 @@
 
 namespace PrestaShop\Module\Alma\Application\Service;
 
-use Language;
-use Tab;
-
 class ModuleInstallerService
 {
     private const HOOK_LIST = [
@@ -15,13 +12,13 @@ class ModuleInstallerService
         [
             'label' => 'Alma',
             'class_name' => 'ALMA',
-            'parent' => 0,
             'icon' => null
         ],
         [
             'label' => 'Settings',
             'class_name' => 'AdminAlmaSettings',
-            'parent' => 'ALMA',
+            'parent_class_name' => 'ALMA',
+            'route_name' => 'alma_settings',
             'icon' => 'tune'
         ]
     ];
@@ -36,33 +33,6 @@ class ModuleInstallerService
         $this->moduleService = $moduleService;
     }
 
-    public function installTabs($tabs): bool
-    {
-        foreach ($tabs as $tabData) {
-            $tab = new Tab();
-            $tab->active = 1;
-            $tab->class_name = $tabData['class_name'];
-            $tab->icon = $tabData['icon'];
-            $tab->module = $this->moduleService->getModule()->name;
-            if ($tabData['parent'] === 0) {
-                $tab->id_parent = 0;
-            } else {
-                $tab->id_parent = (int) Tab::getIdFromClassName($tabData['parent']);
-            }
-            foreach (Language::getLanguages() as $lang) {
-                $tab->name[$lang['id_lang']] = $tabData['label'];
-            }
-            $tab->wording = $tabData['label'];
-            $tab->wording_domain = 'Modules.Alma.Admin';
-
-            if (!$tab->add()) {
-                return false;
-            }
-        }
-
-        return true;
-    }
-
     /**
      * Install the module by :
      * Registering all hooks
@@ -75,6 +45,6 @@ class ModuleInstallerService
     public function install(): bool
     {
         return $this->moduleService->registerHooks(self::HOOK_LIST)
-            && $this->installTabs(self::TABS);
+            && $this->moduleService->installTabs(self::TABS);
     }
 }

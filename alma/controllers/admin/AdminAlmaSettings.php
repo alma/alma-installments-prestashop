@@ -19,13 +19,10 @@ class AdminAlmaSettingsController extends ModuleAdminController
     public function initContent(): void
     {
         parent::initContent();
+        $link = new Link();
 
         Tools::redirectAdmin(
-            $this->context->link->getAdminLink('AdminModules', true, [], [
-                'configure' => $this->module->name,
-                'module_name' => $this->module->name,
-                'tab_module' => $this->module->tab
-            ])
+            $link->getAdminLink('AdminAlmaSettings')
         );
     }
 }
