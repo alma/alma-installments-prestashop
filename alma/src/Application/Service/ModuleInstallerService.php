@@ -3,6 +3,7 @@
 namespace PrestaShop\Module\Alma\Application\Service;
 
 use Db;
+use PrestaShop\PsAccountsInstaller\Installer\Installer;
 
 class ModuleInstallerService
 {
@@ -68,9 +69,15 @@ class ModuleInstallerService
      */
     public function install(): bool
     {
-        return $this->moduleService->registerHooks(self::HOOK_LIST)
-            && $this->moduleService->installTabs(self::TABS)
-            && $this->installDB()
-            && $this->moduleService->getService('alma.ps_accounts_installer')->install();
+        /* @var Installer $psAccountsInstaller  */
+        $psAccountsInstaller = $this->moduleService->getService('alma.ps_accounts_installer');
+        try {
+            return $this->moduleService->registerHooks(self::HOOK_LIST)
+                && $this->moduleService->installTabs(self::TABS)
+                && $this->installDB()
+                && $psAccountsInstaller->install();
+        } catch (\Exception $e) {
+            return false;
+        }
     }
 }

@@ -38,8 +38,6 @@ if (file_exists($autoloadPath)) {
 
 class Alma extends PaymentModule
 {
-    public const PS_ACCOUNTS_VERSION_REQUIRED = '5.3.0';
-
     public $_path;
     public $local_path;
 

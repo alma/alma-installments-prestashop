@@ -3,9 +3,8 @@
 namespace PrestaShop\Module\Alma\Infrastructure\Controller;
 
 use Media;
+use PrestaShop\Module\Alma\Application\Exception\PsAccountsException;
 use PrestaShop\Module\Alma\Application\Service\PsAccountsService;
-use PrestaShop\PsAccountsInstaller\Installer\Exception\ModuleNotInstalledException;
-use PrestaShop\PsAccountsInstaller\Installer\Exception\ModuleVersionException;
 use PrestaShopBundle\Controller\Admin\FrameworkBundleAdminController;
 
 class SettingsController extends FrameworkBundleAdminController
@@ -20,25 +19,32 @@ class SettingsController extends FrameworkBundleAdminController
         $this->psAccountsService = $psAccountsService;
     }
 
+    /**
+     * Render the settings page
+     */
     public function indexAction()
     {
         $errors = [];
+        $urlAccountsCdn = '';
+        $displayPsAccounts = true;
 
         try {
             Media::addJsDef([
                 'contextPsAccounts' => $this->psAccountsService->getPsAccountsPresenter()
                     ->present(),
             ]);
-        } catch (ModuleNotInstalledException|ModuleVersionException|\Exception $e) {
+            $urlAccountsCdn = $this->psAccountsService->getAccountsCdn();
+        } catch (PsAccountsException|\Exception $e) {
             $errors[] = $e->getMessage();
-            return '';
+            $displayPsAccounts = false;
         }
 
         return $this->render(
             '@Modules/alma/views/templates/admin/settings.html.twig',
             [
                 'title' => 'Alma Settings',
-                'urlAccountsCdn' => $this->psAccountsService->getAccountsCdn(),
+                'displayPsAccounts' => $displayPsAccounts,
+                'urlAccountsCdn' => $urlAccountsCdn,
                 'errors' => $errors
             ]
         );

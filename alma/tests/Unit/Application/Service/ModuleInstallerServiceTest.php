@@ -95,6 +95,31 @@ class ModuleInstallerServiceTest extends TestCase
     /**
      * @return void
      */
+    public function testInstallPsAccountFailedNotInstallModule()
+    {
+        $this->moduleService->expects($this->once())
+            ->method('registerHooks')
+            ->willReturn(true);
+
+        $this->moduleService->expects($this->once())
+            ->method('installTabs')
+            ->willReturn(true);
+
+        $this->moduleService->expects($this->once())
+            ->method('getService')
+            ->with('alma.ps_accounts_installer')
+            ->willReturn($this->psAcountsInstallerService);
+
+        $this->psAcountsInstallerService->expects($this->once())
+            ->method('install')
+            ->willThrowException(new \Exception());
+
+        $this->assertFalse($this->moduleInstallerService->install());
+    }
+
+    /**
+     * @return void
+     */
     public function testInstallSuccessInstallModule()
     {
         $this->moduleService->expects($this->once())
