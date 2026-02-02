@@ -42,6 +42,28 @@ class ModuleInstallerServiceTest extends TestCase
             ->method('registerHooks')
             ->willReturn(false);
 
+        $this->moduleService->expects($this->never())
+            ->method('installTabs');
+
+        $this->dbInstance->expects($this->never())
+            ->method('execute');
+
+        $this->assertFalse($this->moduleInstallerService->install());
+    }
+
+    /**
+     * @return void
+     */
+    public function testInstallerTabsFailedNotInstallModule()
+    {
+        $this->moduleService->expects($this->once())
+            ->method('registerHooks')
+            ->willReturn(true);
+
+        $this->moduleService->expects($this->once())
+            ->method('installTabs')
+            ->willReturn(false);
+
         $this->dbInstance->expects($this->never())
             ->method('execute');
 
@@ -55,6 +77,10 @@ class ModuleInstallerServiceTest extends TestCase
     {
         $this->moduleService->expects($this->once())
             ->method('registerHooks')
+            ->willReturn(true);
+
+        $this->moduleService->expects($this->once())
+            ->method('installTabs')
             ->willReturn(true);
 
         $this->dbInstance->expects($this->once())
@@ -87,6 +113,7 @@ class ModuleInstallerServiceTest extends TestCase
     public function tearDown(): void
     {
         $this->moduleService = null;
+        $this->dbInstance = null;
         parent::tearDown();
     }
 }

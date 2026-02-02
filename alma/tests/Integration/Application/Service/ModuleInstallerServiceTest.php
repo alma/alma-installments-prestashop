@@ -6,6 +6,7 @@ use Db;
 use PHPUnit\Framework\TestCase;
 use PrestaShop\Module\Alma\Application\Service\ModuleInstallerService;
 use PrestaShop\Module\Alma\Application\Service\ModuleService;
+use PrestaShop\Module\Alma\Infrastructure\Repository\LanguageRepository;
 
 class ModuleInstallerServiceTest extends TestCase
 {
@@ -13,13 +14,21 @@ class ModuleInstallerServiceTest extends TestCase
      * @var \PrestaShop\Module\Alma\Application\Service\ModuleInstallerService
      */
     private ModuleInstallerService $moduleInstallerService;
+    /**
+     * @var \Db
+     */
+    private $dbInstance;
 
     /**
      * @return void
      */
     public function setUp(): void
     {
-        $this->moduleService = new ModuleService(\Module::getInstanceByName('alma'));
+        $this->languageRepository = new LanguageRepository();
+        $this->moduleService = new ModuleService(
+            \Module::getInstanceByName('alma'),
+            $this->languageRepository
+        );
         $this->dbInstance = Db::getInstance();
         $this->moduleInstallerService = new ModuleInstallerService(
             $this->moduleService,
