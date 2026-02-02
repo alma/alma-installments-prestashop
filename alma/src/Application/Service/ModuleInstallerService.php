@@ -70,6 +70,7 @@ class ModuleInstallerService
     {
         return $this->moduleService->registerHooks(self::HOOK_LIST)
             && $this->moduleService->installTabs(self::TABS)
-            && $this->installDB();
+            && $this->installDB()
+            && $this->moduleService->getService('alma.ps_accounts_installer')->install();
     }
 }

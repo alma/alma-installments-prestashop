@@ -7,7 +7,17 @@
         </h3>
 
         <div class="card-body">
+            <prestashop-accounts></prestashop-accounts>
             <p>Bienvenue dans la page de configuration du module 🚀</p>
+
         </div>
     </div>
+    <script src="{{ urlAccountsCdn }}" rel=preload></script>
+
+    <script>
+        /*********************
+         * PrestaShop Account *
+         * *******************/
+        window?.psaccountsVue?.init();
+    </script>
 {% endblock %}

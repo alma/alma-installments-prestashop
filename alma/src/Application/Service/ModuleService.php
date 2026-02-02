@@ -4,6 +4,8 @@ namespace PrestaShop\Module\Alma\Application\Service;
 
 use Module;
 use PrestaShop\Module\Alma\Infrastructure\Repository\LanguageRepository;
+use PrestaShop\ModuleLibServiceContainer\DependencyInjection\ServiceContainer;
+
 use Tab;
 
 class ModuleService
@@ -16,6 +18,10 @@ class ModuleService
      * @var LanguageRepository
      */
     private LanguageRepository $language;
+    /**
+     * @var \PrestaShop\ModuleLibServiceContainer\DependencyInjection\ServiceContainer
+     */
+    private ServiceContainer $container;
 
     public function __construct(
         Module $module,
@@ -23,6 +29,10 @@ class ModuleService
     ) {
         $this->module = $module;
         $this->language = $language;
+        $this->container = new ServiceContainer(
+            $module->name,
+            $module->getLocalPath()
+        );
     }
 
     /**
@@ -43,6 +53,18 @@ class ModuleService
     public function getLocalPath(): string
     {
         return $this->module->getLocalPath();
+    }
+
+    /**
+     * Retrieve the service
+     *
+     * @param string $serviceName
+     *
+     * @return object|null
+     */
+    public function getService(string $serviceName): ?object
+    {
+        return $this->container->getService($serviceName);
     }
 
     /**

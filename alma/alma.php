@@ -31,7 +31,10 @@ if (!defined('_PS_VERSION_')) {
 }
 
 // Autoload here for the module definition
-require_once _PS_MODULE_DIR_ . 'alma/vendor/autoload.php';
+$autoloadPath = __DIR__ . '/vendor/autoload.php';
+if (file_exists($autoloadPath)) {
+    require_once $autoloadPath;
+}
 
 class Alma extends PaymentModule
 {
@@ -60,11 +63,6 @@ class Alma extends PaymentModule
      * @var string
      */
     public $confirmUninstall;
-
-    /**
-     * @var \PrestaShop\ModuleLibServiceContainer\DependencyInjection\ServiceContainer
-     */
-    protected $container;
 
     public function __construct()
     {
@@ -132,9 +130,9 @@ class Alma extends PaymentModule
     }
 
     /**
-     * @return mixed|null
+     * @return string
      */
-    public function getContent()
+    public function getContent(): string
     {
         return '';
     }
