@@ -12,13 +12,20 @@ class ModuleInstallerServiceTest extends TestCase
      * @var \PrestaShop\Module\Alma\Application\Service\ModuleInstallerService
      */
     private ModuleInstallerService $moduleInstallerService;
+    /**
+     * @var \Module
+     */
+    private \Module $module;
 
     /**
      * @return void
      */
     public function setUp(): void
     {
+        $this->module = $this->createMock(\Module::class);
+        $this->module->name = 'alma';
         $this->moduleService = $this->createMock(ModuleService::class);
+        $this->tab = $this->createMock(\Tab::class);
         $this->moduleInstallerService = new ModuleInstallerService($this->moduleService);
     }
 
@@ -43,6 +50,16 @@ class ModuleInstallerServiceTest extends TestCase
             ->method('registerHooks')
             ->willReturn(true);
 
+        $this->moduleService->expects($this->once())
+            ->method('installTabs')
+            ->willReturn(true);
+
         $this->assertTrue($this->moduleInstallerService->install());
+    }
+
+    public function tearDown(): void
+    {
+        $this->moduleService = null;
+        parent::tearDown();
     }
 }

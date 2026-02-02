@@ -8,6 +8,21 @@ class ModuleInstallerService
         'actionFrontControllerSetMedia', // Hook used for load assets
     ];
 
+    private const TABS = [
+        [
+            'label' => 'Alma',
+            'class_name' => 'ALMA',
+            'icon' => null
+        ],
+        [
+            'label' => 'Settings',
+            'class_name' => 'AdminAlmaSettings',
+            'parent_class_name' => 'ALMA',
+            'route_name' => 'alma_settings',
+            'icon' => 'tune'
+        ]
+    ];
+
     /**
      * @var ModuleService
      */
@@ -29,6 +44,7 @@ class ModuleInstallerService
      */
     public function install(): bool
     {
-        return $this->moduleService->registerHooks(self::HOOK_LIST);
+        return $this->moduleService->registerHooks(self::HOOK_LIST)
+            && $this->moduleService->installTabs(self::TABS);
     }
 }

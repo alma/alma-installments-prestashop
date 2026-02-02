@@ -4,6 +4,7 @@ namespace PrestaShop\Module\Alma\Tests\Integration\Application\Service;
 
 use PHPUnit\Framework\TestCase;
 use PrestaShop\Module\Alma\Application\Service\ModuleService;
+use PrestaShop\Module\Alma\Infrastructure\Repository\LanguageRepository;
 
 class ModuleServiceTest extends TestCase
 {
@@ -18,7 +19,11 @@ class ModuleServiceTest extends TestCase
     public function setUp(): void
     {
         $this->module = \Module::getInstanceByName('alma');
-        $this->moduleService = new ModuleService($this->module);
+        $this->language = new LanguageRepository();
+        $this->moduleService = new ModuleService(
+            $this->module,
+            $this->language
+        );
     }
 
     /**
@@ -54,6 +59,7 @@ class ModuleServiceTest extends TestCase
      */
     protected function tearDown(): void
     {
+        $this->module = null;
         parent::tearDown();
     }
 }

@@ -24,6 +24,7 @@
 
 use PrestaShop\Module\Alma\Application\Service\ModuleInstallerService;
 use PrestaShop\Module\Alma\Application\Service\ModuleService;
+use PrestaShop\Module\Alma\Infrastructure\Repository\LanguageRepository;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -104,16 +105,19 @@ class Alma extends PaymentModule
      */
     public function install(): bool
     {
-        $installer = new ModuleInstallerService(
-            new ModuleService($this)
+        $languageRepository = new LanguageRepository();
+        $moduleService = new ModuleService(
+            $this,
+            $languageRepository
         );
+        $installerService = new ModuleInstallerService($moduleService);
 
         // TODO : Check multi-shop functionnalities (https://devdocs.prestashop-project.org/1.7/development/multistore/)
         if (Shop::isFeatureActive()) {
             Shop::setContext(Shop::CONTEXT_ALL);
         }
 
-        return parent::install() && $installer->install();
+        return parent::install() && $installerService->install();
     }
 
     /**
