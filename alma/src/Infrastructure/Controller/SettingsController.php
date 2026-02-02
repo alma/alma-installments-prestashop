@@ -1,6 +1,6 @@
 <?php
 
-namespace PrestaShop\Module\Alma\Controller;
+namespace PrestaShop\Module\Alma\Infrastructure\Controller;
 
 use PrestaShopBundle\Controller\Admin\FrameworkBundleAdminController;
 
