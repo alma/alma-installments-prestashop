@@ -4,16 +4,13 @@ namespace PrestaShop\Module\Alma\Infrastructure\Model;
 
 use PrestaShop\PrestaShop\Adapter\Entity\ObjectModel;
 
-class AlmaModel extends ObjectModel
+class AlmaBusinessModel extends ObjectModel
 {
-    /** @var int */
-    public int $id_alma;
-
     /** @var int */
     public int $id_cart;
 
-    /** @var int */
-    public int $id_order;
+    /** @var string */
+    public int $orders;
 
     /** @var string */
     public string $alma_payment_id;
@@ -32,11 +29,11 @@ class AlmaModel extends ObjectModel
 
     public static $definition = [
         'table' => 'alma',
-        'primary' => 'id_alma',
+        'primary' => 'id_cart',
         'multishop' => true,
         'fields' => [
             'id_cart' => ['type' => self::TYPE_INT, 'validate' => 'isUnsignedId', 'required' => true],
-            'id_order' => ['type' => self::TYPE_INT, 'validate' => 'isUnsignedId', 'required' => false],
+            'orders' => ['type' => self::TYPE_STRING, 'validate' => 'isString', 'required' => false],
             'alma_payment_id' => ['type' => self::TYPE_STRING, 'validate' => 'isString', 'size' => 64, 'required' => false],
             'is_bnpl_eligible' => ['type' => self::TYPE_BOOL, 'validate' => 'isBool', 'required' => false],
             'plan_key' => ['type' => self::TYPE_STRING, 'validate' => 'isString', 'size' => 32, 'required' => false],
