@@ -34,9 +34,6 @@ class ModuleInstallerServiceTest extends TestCase
             $this->moduleService,
             $this->dbInstance
         );
-
-        // Drop alma table if exists to ensure installation
-        $this->dbInstance->execute('DROP TABLE IF EXISTS `' . _DB_PREFIX_ . 'alma`');
     }
 
     /**
@@ -45,5 +42,15 @@ class ModuleInstallerServiceTest extends TestCase
     public function testInstallSuccessInstallModule()
     {
         $this->assertTrue($this->moduleInstallerService->install());
+    }
+
+    /**
+     * @return void
+     */
+    public function tearDown(): void
+    {
+        // Drop alma table if exists after test to clean up
+        $this->dbInstance->execute('DROP TABLE IF EXISTS `' . _DB_PREFIX_ . 'alma`');
+        parent::tearDown();
     }
 }
