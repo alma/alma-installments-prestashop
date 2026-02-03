@@ -28,7 +28,9 @@
         </h3>
 
         <div class="card-body">
-            <p>Bienvenue dans la page de configuration du module 🚀</p>
+            {% if isPsAccountsLinked %}
+                <p>Bienvenue dans la page de configuration du module 🚀</p>
+            {% endif %}
         </div>
     </div>
 

@@ -27,6 +27,7 @@ class SettingsController extends FrameworkBundleAdminController
         $errors = [];
         $urlAccountsCdn = '';
         $displayPsAccounts = true;
+        $isAccountLinked = false;
 
         try {
             Media::addJsDef([
@@ -34,6 +35,8 @@ class SettingsController extends FrameworkBundleAdminController
                     ->present(),
             ]);
             $urlAccountsCdn = $this->psAccountsService->getAccountsCdn();
+            // TODO : Verification is been in PHP but can be check in JS, need to wait the configuration form to check the best usage
+            $isAccountLinked = $this->psAccountsService->isAccountLinked();
         } catch (PsAccountsException|\Exception $e) {
             $errors[] = $e->getMessage();
             $displayPsAccounts = false;
@@ -44,6 +47,7 @@ class SettingsController extends FrameworkBundleAdminController
             [
                 'title' => 'Alma Settings',
                 'displayPsAccounts' => $displayPsAccounts,
+                'isPsAccountsLinked' => $isAccountLinked,
                 'urlAccountsCdn' => $urlAccountsCdn,
                 'errors' => $errors
             ]

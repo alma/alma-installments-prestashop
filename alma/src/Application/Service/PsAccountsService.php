@@ -68,4 +68,18 @@ class PsAccountsService
             throw new PsAccountsException('Unable to get PsAccounts presenter: ' . $e->getMessage());
         }
     }
+
+    /**
+     * @throws \PrestaShop\Module\Alma\Application\Exception\PsAccountsException
+     */
+    public function isAccountLinked(): bool
+    {
+        try {
+            /** @var \PrestaShop\Module\PsAccounts\Service\PsAccountsService $psAccountsService */
+            $psAccountsService = $this->psAccountsFacade->getPsAccountsService();
+            return $psAccountsService->isAccountLinked();
+        } catch (\Exception $e) {
+            throw new PsAccountsException('Unable to get link information PsAccounts module: ' . $e->getMessage());
+        }
+    }
 }

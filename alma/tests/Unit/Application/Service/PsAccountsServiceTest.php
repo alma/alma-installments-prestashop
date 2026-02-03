@@ -17,7 +17,7 @@ class PsAccountsServiceTest extends TestCase
         $this->psAccountsFacade = $this->createMock(PsAccounts::class);
         $this->psAccountsInstaller = $this->createMock(Installer::class);
         $this->psAccountsService = $this->getMockBuilder(\stdClass::class)
-            ->addMethods(['getAccountsCdn'])
+            ->addMethods(['getAccountsCdn', 'isAccountLinked'])
             ->getMock();
         $this->almaPsAccountsService = new PsAccountsService(
             $this->psAccountsFacade,
@@ -110,6 +110,35 @@ class PsAccountsServiceTest extends TestCase
             ->method('getPsAccountsPresenter')
             ->willReturn(new \stdClass());
         $this->almaPsAccountsService->getPsAccountsPresenter();
+    }
+
+    /**
+     * @throws \PrestaShop\Module\Alma\Application\Exception\PsAccountsException
+     */
+    public function testIsAccountLinkedThrowException()
+    {
+        $this->psAccountsFacade->expects($this->once())
+            ->method('getPsAccountsService')
+            ->willReturn($this->psAccountsService);
+        $this->psAccountsService->expects($this->once())
+            ->method('isAccountLinked')
+            ->willThrowException(new \Exception());
+        $this->expectException(PsAccountsException::class);
+        $this->almaPsAccountsService->isAccountLinked();
+    }
+
+    /**
+     * @throws \PrestaShop\Module\Alma\Application\Exception\PsAccountsException
+     */
+    public function testIsAccountLinkedReturnTrue()
+    {
+        $this->psAccountsFacade->expects($this->once())
+            ->method('getPsAccountsService')
+            ->willReturn($this->psAccountsService);
+        $this->psAccountsService->expects($this->once())
+            ->method('isAccountLinked')
+            ->willReturn(true);
+        $this->assertTrue($this->almaPsAccountsService->isAccountLinked());
     }
 
     public function tearDown(): void
