@@ -2,8 +2,22 @@ services:
   _defaults:
     public: true
 
+  #####################
+  # PrestaShop Account
+  alma.ps_accounts_installer:
+    class: 'PrestaShop\PsAccountsInstaller\Installer\Installer'
+    arguments:
+      - '5.3'
+
+  alma.ps_accounts_facade:
+    class: 'PrestaShop\PsAccountsInstaller\Installer\Facade\PsAccounts'
+    arguments:
+      - '@alma.ps_accounts_installer'
+
   ##############
   # Alma
+
+  # Controllers
   PrestaShop\Module\Alma\Infrastructure\Controller\SettingsController:
     class: PrestaShop\Module\Alma\Infrastructure\Controller\SettingsController
     arguments:
@@ -11,6 +25,7 @@ services:
     tags:
       - 'controller.service_arguments'
 
+  # Services
   alma.module:
     class: Alma
     factory: [ 'Module', 'getInstanceByName' ]
@@ -27,7 +42,8 @@ services:
   alma.ps_accounts_service:
     class: 'PrestaShop\Module\Alma\Application\Service\PsAccountsService'
     arguments:
-      - '@alma.module_service'
+      - '@alma.ps_accounts_facade'
+      - '@alma.ps_accounts_installer'
 
   alma.module_service:
     class: 'PrestaShop\Module\Alma\Application\Service\ModuleService'
@@ -35,14 +51,8 @@ services:
       - '@alma.module'
       - '@alma.language_repository'
 
-  #####################
-  # PrestaShop Account
-  alma.ps_accounts_installer:
-    class: 'PrestaShop\PsAccountsInstaller\Installer\Installer'
+  alma.module_installer_service:
+    class: 'PrestaShop\Module\Alma\Application\Service\ModuleInstallerService'
     arguments:
-      - '5.0'
-
-  alma.ps_accounts_facade:
-    class: 'PrestaShop\PsAccountsInstaller\Installer\Facade\PsAccounts'
-    arguments:
+      - '@alma.module_service'
       - '@alma.ps_accounts_installer'

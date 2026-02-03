@@ -34,11 +34,19 @@ class ModuleInstallerService
      * @var mixed
      */
     private Db $dbInstance;
+    /**
+     * @var Installer
+     */
+    private Installer $psAccountsInstaller;
 
-    public function __construct(ModuleService $moduleService, Db $dbInstance)
-    {
+    public function __construct(
+        ModuleService $moduleService,
+        Db $dbInstance,
+        Installer $psAccountsInstallerService
+    ) {
         $this->moduleService = $moduleService;
         $this->dbInstance = $dbInstance;
+        $this->psAccountsInstaller = $psAccountsInstallerService;
     }
 
     /**
@@ -69,13 +77,11 @@ class ModuleInstallerService
      */
     public function install(): bool
     {
-        /* @var Installer $psAccountsInstaller  */
-        $psAccountsInstaller = $this->moduleService->getService('alma.ps_accounts_installer');
         try {
             return $this->moduleService->registerHooks(self::HOOK_LIST)
                 && $this->moduleService->installTabs(self::TABS)
                 && $this->installDB()
-                && $psAccountsInstaller->install();
+                && $this->psAccountsInstaller->install();
         } catch (\Exception $e) {
             return false;
         }

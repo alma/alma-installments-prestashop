@@ -7,49 +7,53 @@ use PrestaShop\PsAccountsInstaller\Installer\Exception\InstallerException;
 use PrestaShop\PsAccountsInstaller\Installer\Exception\ModuleNotInstalledException;
 use PrestaShop\PsAccountsInstaller\Installer\Exception\ModuleVersionException;
 use PrestaShop\PsAccountsInstaller\Installer\Facade\PsAccounts;
+use PrestaShop\PsAccountsInstaller\Installer\Installer;
 
 class PsAccountsService
 {
-    public const PS_ACCOUNTS_VERSION_REQUIRED = '5.3.0';
-
     /**
-     * @var \PrestaShop\Module\Alma\Application\Service\ModuleService
+     * @var \PrestaShop\PsAccountsInstaller\Installer\Facade\PsAccounts
      */
-    private ModuleService $moduleService;
-
-    public function __construct(ModuleService $moduleService)
-    {
-        $this->moduleService = $moduleService;
-    }
-
+    private PsAccounts $psAccountsFacade;
     /**
-     * @return object|null
+     * @var \PrestaShop\PsAccountsInstaller\Installer\Installer
      */
-    public function getPsAccountsFacade(): ?object
-    {
-        return $this->moduleService->getService('alma.ps_accounts_facade');
+    private Installer $psAccountsInstaller;
+
+    public function __construct(
+        PsAccounts $psAccountsFacade,
+        Installer $psAccountsInstaller
+    ) {
+        $this->psAccountsFacade = $psAccountsFacade;
+        $this->psAccountsInstaller = $psAccountsInstaller;
     }
 
     /**
      * @return string
-     * @throws PsAccountsException
+     * @throws \PrestaShop\Module\Alma\Application\Exception\PsAccountsException
+     * @throws \PrestaShop\PsAccountsInstaller\Installer\Exception\ModuleNotInstalledException
+     * @throws \PrestaShop\PsAccountsInstaller\Installer\Exception\ModuleVersionException
      */
     public function getAccountsCdn(): string
     {
+        /* @var \PrestaShop\Module\PsAccounts\Service\PsAccountsService $psAccountsService */
         try {
-            /* @var PsAccounts $psAccountsFacade */
-            $psAccountsFacade = $this->getPsAccountsFacade();
-            $accountsService = $psAccountsFacade->getPsAccountsService();
+            $psAccountsService = $this->psAccountsFacade->getPsAccountsService();
         } catch (InstallerException $e) {
-            /* @var \PrestaShop\PsAccountsInstaller\Installer\Installer $accountsInstaller */
-            $accountsInstaller = $this->moduleService->getService('alma.ps_accounts_installer');
-            $accountsInstaller->install();
-            $accountsService = $this->getPsAccountsFacade()->getPsAccountsService();
-        } catch (\Exception $e) {
-            throw new PsAccountsException('Unable to get PsAccounts service: ' . $e->getMessage());
+            try {
+                $this->psAccountsInstaller->install();
+            } catch (\Exception $e) {
+                throw new PsAccountsException('Unable to install PsAccounts module: ' . $e->getMessage());
+            }
+
+            $psAccountsService = $this->psAccountsFacade->getPsAccountsService();
         }
 
-        return $accountsService->getAccountsCdn();
+        try {
+            return $psAccountsService->getAccountsCdn();
+        } catch (\Exception $e) {
+            throw new PsAccountsException('Unable to get PsAccounts CDN: ' . $e->getMessage());
+        }
     }
 
     /**
@@ -58,10 +62,8 @@ class PsAccountsService
      */
     public function getPsAccountsPresenter(): object
     {
-        /* @var PsAccounts $psAccountsFacade */
-        $psAccountsFacade = $this->getPsAccountsFacade();
         try {
-            return $psAccountsFacade->getPsAccountsPresenter();
+            return $this->psAccountsFacade->getPsAccountsPresenter();
         } catch (ModuleNotInstalledException|ModuleVersionException $e) {
             throw new PsAccountsException('Unable to get PsAccounts presenter: ' . $e->getMessage());
         }

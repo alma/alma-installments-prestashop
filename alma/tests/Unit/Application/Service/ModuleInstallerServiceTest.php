@@ -31,7 +31,8 @@ class ModuleInstallerServiceTest extends TestCase
         $this->psAcountsInstallerService = $this->createMock(Installer::class);
         $this->moduleInstallerService = new ModuleInstallerService(
             $this->moduleService,
-            $this->dbInstance
+            $this->dbInstance,
+            $this->psAcountsInstallerService
         );
     }
 
@@ -105,11 +106,6 @@ class ModuleInstallerServiceTest extends TestCase
             ->method('installTabs')
             ->willReturn(true);
 
-        $this->moduleService->expects($this->once())
-            ->method('getService')
-            ->with('alma.ps_accounts_installer')
-            ->willReturn($this->psAcountsInstallerService);
-
         $this->psAcountsInstallerService->expects($this->once())
             ->method('install')
             ->willThrowException(new \Exception());
@@ -133,11 +129,6 @@ class ModuleInstallerServiceTest extends TestCase
         $this->dbInstance->expects($this->once())
             ->method('execute')
             ->willReturn(true);
-
-        $this->moduleService->expects($this->once())
-            ->method('getService')
-            ->with('alma.ps_accounts_installer')
-            ->willReturn($this->psAcountsInstallerService);
 
         $this->psAcountsInstallerService->expects($this->once())
             ->method('install')
