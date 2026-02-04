@@ -10,6 +10,5 @@ CREATE TABLE IF NOT EXISTS `{_DB_PREFIX_}alma` (
     `date_add` DATETIME NOT NULL,
     `date_upd` DATETIME NOT NULL,
     PRIMARY KEY (`id_cart`),
-    UNIQUE KEY `uniq_alma_payment_id` (`alma_payment_id`),
-    KEY `idx_id_cart` (`id_cart`)
+    UNIQUE KEY `uniq_alma_payment_id` (`alma_payment_id`)
 ) ENGINE={_MYSQL_ENGINE_} DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
