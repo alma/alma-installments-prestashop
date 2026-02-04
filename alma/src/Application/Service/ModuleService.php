@@ -5,7 +5,6 @@ namespace PrestaShop\Module\Alma\Application\Service;
 use Module;
 use PrestaShop\Module\Alma\Infrastructure\Repository\LanguageRepository;
 use PrestaShop\ModuleLibServiceContainer\DependencyInjection\ServiceContainer;
-
 use Tab;
 
 class ModuleService

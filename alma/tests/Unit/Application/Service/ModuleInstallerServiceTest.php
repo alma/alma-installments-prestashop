@@ -51,6 +51,9 @@ class ModuleInstallerServiceTest extends TestCase
         $this->dbInstance->expects($this->never())
             ->method('execute');
 
+        $this->psAcountsInstallerService->expects($this->never())
+            ->method('install');
+
         $this->assertFalse($this->moduleInstallerService->install());
     }
 
@@ -69,6 +72,9 @@ class ModuleInstallerServiceTest extends TestCase
 
         $this->dbInstance->expects($this->never())
             ->method('execute');
+
+        $this->psAcountsInstallerService->expects($this->never())
+            ->method('install');
 
         $this->assertFalse($this->moduleInstallerService->install());
     }
@@ -90,6 +96,9 @@ class ModuleInstallerServiceTest extends TestCase
             ->method('execute')
             ->willReturn(false);
 
+        $this->psAcountsInstallerService->expects($this->never())
+            ->method('install');
+
         $this->assertFalse($this->moduleInstallerService->install());
     }
 
@@ -104,6 +113,10 @@ class ModuleInstallerServiceTest extends TestCase
 
         $this->moduleService->expects($this->once())
             ->method('installTabs')
+            ->willReturn(true);
+
+        $this->dbInstance->expects($this->once())
+            ->method('execute')
             ->willReturn(true);
 
         $this->psAcountsInstallerService->expects($this->once())
