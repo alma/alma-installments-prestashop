@@ -83,9 +83,9 @@ class Alma extends PaymentModule
 
         parent::__construct();
 
-        $this->displayName = $this->trans('1x 2x 3x 4x, D+15 or D+30 Alma - Payment in instalments and deferred', [], 'Modules.Alma.Alma');
-        $this->description = $this->trans('Offer an easy and safe installments payments option to your customers', [], 'Modules.Alma.Alma');
-        $this->confirmUninstall = $this->trans('Are you sure you want to deactivate Alma payments from your shop?', [], 'Modules.Alma.Alma');
+        $this->displayName = $this->trans('1x 2x 3x 4x, D+15 or D+30 Alma - Payment in instalments and deferred');
+        $this->description = $this->trans('Offer an easy and safe installments payments option to your customers');
+        $this->confirmUninstall = $this->trans('Are you sure you want to deactivate Alma payments from your shop?');
 
         $this->file = __FILE__;
     }
