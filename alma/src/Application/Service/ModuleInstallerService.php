@@ -11,7 +11,7 @@ class ModuleInstallerService
         'actionFrontControllerSetMedia', // Hook used for load assets
     ];
 
-    private const TABS = [
+    public const TABS = [
         [
             'label' => 'Alma',
             'class_name' => 'ALMA',

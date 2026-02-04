@@ -49,9 +49,13 @@ class ModuleInstallerServiceTest extends TestCase
 
     /**
      * @return void
+     * @throws \PrestaShopException
      */
     public function tearDown(): void
     {
+        // Uninstall tabs after test
+        $this->moduleService->uninstallTabs(ModuleInstallerService::TABS);
+
         // Drop alma table if exists after test to clean up
         $this->dbInstance->execute('DROP TABLE IF EXISTS `' . _DB_PREFIX_ . 'alma`');
         parent::tearDown();
