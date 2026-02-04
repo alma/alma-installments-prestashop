@@ -83,9 +83,9 @@ class Alma extends PaymentModule
 
         parent::__construct();
 
-        $this->displayName = $this->l('1x 2x 3x 4x, D+15 or D+30 Alma - Payment in instalments and deferred', 'alma');
-        $this->description = $this->l('Offer an easy and safe installments payments option to your customers', 'alma');
-        $this->confirmUninstall = $this->l('Are you sure you want to deactivate Alma payments from your shop?', 'alma');
+        $this->displayName = $this->trans('1x 2x 3x 4x, D+15 or D+30 Alma - Payment in instalments and deferred', [], 'Modules.Alma.Alma');
+        $this->description = $this->trans('Offer an easy and safe installments payments option to your customers', [], 'Modules.Alma.Alma');
+        $this->confirmUninstall = $this->trans('Are you sure you want to deactivate Alma payments from your shop?', [], 'Modules.Alma.Alma');
 
         $this->file = __FILE__;
     }
@@ -144,6 +144,15 @@ class Alma extends PaymentModule
     {
         // TODO: To install the module in PS8 we need to set the function linked to the hook installed
         // We don't set the assets yet, so we return true to avoid any issue with the module installation, but we will need to implement it in the future
+        return true;
+    }
+
+    /**
+     * Enables the new translation system for PrestaShop 1.7.6 and later.
+     * @return bool
+     */
+    public function isUsingNewTranslationSystem(): bool
+    {
         return true;
     }
 }
