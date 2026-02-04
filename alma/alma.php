@@ -110,7 +110,10 @@ class Alma extends PaymentModule
             $this,
             $languageRepository
         );
-        $installerService = new ModuleInstallerService($moduleService);
+        $installerService = new ModuleInstallerService(
+            $moduleService,
+            Db::getInstance()
+        );
 
         // TODO : Check multi-shop functionnalities (https://devdocs.prestashop-project.org/1.7/development/multistore/)
         if (Shop::isFeatureActive()) {
