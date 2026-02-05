@@ -21,7 +21,9 @@ services:
   PrestaShop\Module\Alma\Infrastructure\Controller\SettingsController:
     class: PrestaShop\Module\Alma\Infrastructure\Controller\SettingsController
     arguments:
+      - '@alma.module'
       - '@alma.ps_accounts_service'
+      - '@alma.settings_service'
     tags:
       - 'controller.service_arguments'
 
@@ -39,6 +41,9 @@ services:
   alma.db:
     class: Db
     factory: [ 'Db', 'getInstance' ]
+
+  alma.helper_form:
+    class: HelperForm
 
   alma.language_repository:
     class: 'PrestaShop\Module\Alma\Infrastructure\Repository\LanguageRepository'
@@ -61,3 +66,9 @@ services:
       - '@alma.module_service'
       - '@alma.db'
       - '@alma.ps_accounts_installer'
+
+  alma.settings_service:
+    class: 'PrestaShop\Module\Alma\Application\Service\SettingsService'
+    arguments:
+      - '@alma.module'
+      - '@alma.helper_form'

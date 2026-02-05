@@ -1,6 +1,7 @@
 alma_settings:
   path: /alma/settings
-  methods: [GET]
+  methods: [GET, POST]
   defaults:
     _controller: 'PrestaShop\Module\Alma\Infrastructure\Controller\SettingsController::indexAction'
     _legacy_controller: 'AdminAlmaSettings'
+    _legacy_link: 'AdminAlmaSettings'

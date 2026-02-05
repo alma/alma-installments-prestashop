@@ -2,9 +2,11 @@
 
 namespace PrestaShop\Module\Alma\Infrastructure\Controller;
 
+use Alma;
 use Media;
 use PrestaShop\Module\Alma\Application\Exception\PsAccountsException;
 use PrestaShop\Module\Alma\Application\Service\PsAccountsService;
+use PrestaShop\Module\Alma\Application\Service\SettingsService;
 use PrestaShopBundle\Controller\Admin\FrameworkBundleAdminController;
 
 class SettingsController extends FrameworkBundleAdminController
@@ -13,10 +15,20 @@ class SettingsController extends FrameworkBundleAdminController
      * @var PsAccountsService
      */
     private PsAccountsService $psAccountsService;
+    private Alma $module;
+    /**
+     * @var SettingsService
+     */
+    private SettingsService $settingsService;
 
-    public function __construct(PsAccountsService $psAccountsService)
-    {
+    public function __construct(
+        Alma $module,
+        PsAccountsService $psAccountsService,
+        SettingsService $settingsService
+    ) {
+        $this->module = $module;
         $this->psAccountsService = $psAccountsService;
+        $this->settingsService = $settingsService;
     }
 
     /**
@@ -49,7 +61,8 @@ class SettingsController extends FrameworkBundleAdminController
                 'displayPsAccounts' => $displayPsAccounts,
                 'isPsAccountsLinked' => $isAccountLinked,
                 'urlAccountsCdn' => $urlAccountsCdn,
-                'errors' => $errors
+                'errors' => $errors,
+                'form' => $this->settingsService->getFormFromHelperForm(),
             ]
         );
     }
