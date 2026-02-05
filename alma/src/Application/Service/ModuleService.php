@@ -55,18 +55,6 @@ class ModuleService
     }
 
     /**
-     * Retrieve the service
-     *
-     * @param string $serviceName
-     *
-     * @return object|null
-     */
-    public function getService(string $serviceName): ?object
-    {
-        return $this->container->getService($serviceName);
-    }
-
-    /**
      * Register one or all hooks needed by the module
      * If $this->module->registerHook return false the module does not install
      *
