@@ -104,4 +104,32 @@ class ModuleService
 
         return true;
     }
+
+    /**
+     * @throws \PrestaShopException
+     */
+    public function uninstallTabs(array $tabs, callable $tabFactory = null): bool
+    {
+        $tabFactory = $tabFactory ?? fn () => new Tab();
+
+        foreach ($tabs as $tabData) {
+            if (!array_key_exists('class_name', $tabData)) {
+                return false;
+            }
+
+            $idTab = (int) Tab::getIdFromClassName($tabData['class_name']);
+            if ($idTab === 0) {
+                continue;
+            }
+
+            $tab = $tabFactory();
+            $tab->id = $idTab;
+
+            if (!$tab->delete()) {
+                return false;
+            }
+        }
+
+        return true;
+    }
 }
