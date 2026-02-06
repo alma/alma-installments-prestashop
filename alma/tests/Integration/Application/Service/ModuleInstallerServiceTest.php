@@ -7,6 +7,7 @@ use PHPUnit\Framework\TestCase;
 use PrestaShop\Module\Alma\Application\Service\ModuleInstallerService;
 use PrestaShop\Module\Alma\Application\Service\ModuleService;
 use PrestaShop\Module\Alma\Infrastructure\Repository\LanguageRepository;
+use PrestaShop\PsAccountsInstaller\Installer\Installer;
 
 class ModuleInstallerServiceTest extends TestCase
 {
@@ -30,9 +31,11 @@ class ModuleInstallerServiceTest extends TestCase
             $this->languageRepository
         );
         $this->dbInstance = Db::getInstance();
+        $this->psAccountInstaller = new Installer('5.3');
         $this->moduleInstallerService = new ModuleInstallerService(
             $this->moduleService,
-            $this->dbInstance
+            $this->dbInstance,
+            $this->psAccountInstaller
         );
     }
 

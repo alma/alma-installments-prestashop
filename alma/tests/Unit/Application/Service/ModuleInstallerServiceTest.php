@@ -5,6 +5,7 @@ namespace PrestaShop\Module\Alma\Tests\Unit\Application\Service;
 use PHPUnit\Framework\TestCase;
 use PrestaShop\Module\Alma\Application\Service\ModuleInstallerService;
 use PrestaShop\Module\Alma\Application\Service\ModuleService;
+use PrestaShop\PsAccountsInstaller\Installer\Installer;
 
 class ModuleInstallerServiceTest extends TestCase
 {
@@ -27,9 +28,11 @@ class ModuleInstallerServiceTest extends TestCase
         $this->moduleService = $this->createMock(ModuleService::class);
         $this->dbInstance = $this->createMock(\Db::class);
         $this->tab = $this->createMock(\Tab::class);
+        $this->psAcountsInstallerService = $this->createMock(Installer::class);
         $this->moduleInstallerService = new ModuleInstallerService(
             $this->moduleService,
-            $this->dbInstance
+            $this->dbInstance,
+            $this->psAcountsInstallerService
         );
     }
 
@@ -47,6 +50,9 @@ class ModuleInstallerServiceTest extends TestCase
 
         $this->dbInstance->expects($this->never())
             ->method('execute');
+
+        $this->psAcountsInstallerService->expects($this->never())
+            ->method('install');
 
         $this->assertFalse($this->moduleInstallerService->install());
     }
@@ -66,6 +72,9 @@ class ModuleInstallerServiceTest extends TestCase
 
         $this->dbInstance->expects($this->never())
             ->method('execute');
+
+        $this->psAcountsInstallerService->expects($this->never())
+            ->method('install');
 
         $this->assertFalse($this->moduleInstallerService->install());
     }
@@ -87,6 +96,33 @@ class ModuleInstallerServiceTest extends TestCase
             ->method('execute')
             ->willReturn(false);
 
+        $this->psAcountsInstallerService->expects($this->never())
+            ->method('install');
+
+        $this->assertFalse($this->moduleInstallerService->install());
+    }
+
+    /**
+     * @return void
+     */
+    public function testInstallPsAccountFailedNotInstallModule()
+    {
+        $this->moduleService->expects($this->once())
+            ->method('registerHooks')
+            ->willReturn(true);
+
+        $this->moduleService->expects($this->once())
+            ->method('installTabs')
+            ->willReturn(true);
+
+        $this->dbInstance->expects($this->once())
+            ->method('execute')
+            ->willReturn(true);
+
+        $this->psAcountsInstallerService->expects($this->once())
+            ->method('install')
+            ->willThrowException(new \Exception());
+
         $this->assertFalse($this->moduleInstallerService->install());
     }
 
@@ -105,6 +141,10 @@ class ModuleInstallerServiceTest extends TestCase
 
         $this->dbInstance->expects($this->once())
             ->method('execute')
+            ->willReturn(true);
+
+        $this->psAcountsInstallerService->expects($this->once())
+            ->method('install')
             ->willReturn(true);
 
         $this->assertTrue($this->moduleInstallerService->install());

@@ -24,7 +24,10 @@
         "psr-4": {
             "PrestaShop\\Module\\Alma\\": "src/",
             "Alma\\Api\\": "vendor/alma/alma-php-client/src/"
-        }
+        },
+        "classmap": [
+            "alma.php"
+        ]
     },
     "autoload-dev": {
         "psr-4": {
@@ -37,6 +40,9 @@
         "optimize-autoloader": true,
         "allow-plugins": {
             "dealerdirect/phpcodesniffer-composer-installer": true
+        },
+        "platform": {
+            "php": "7.4"
         }
     },
     "scripts": {

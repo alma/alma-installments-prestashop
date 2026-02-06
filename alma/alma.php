@@ -25,18 +25,20 @@
 use PrestaShop\Module\Alma\Application\Service\ModuleInstallerService;
 use PrestaShop\Module\Alma\Application\Service\ModuleService;
 use PrestaShop\Module\Alma\Infrastructure\Repository\LanguageRepository;
+use PrestaShop\PsAccountsInstaller\Installer\Installer;
 
 if (!defined('_PS_VERSION_')) {
     exit;
 }
 
 // Autoload here for the module definition
-require_once _PS_MODULE_DIR_ . 'alma/vendor/autoload.php';
+$autoloadPath = __DIR__ . '/vendor/autoload.php';
+if (file_exists($autoloadPath)) {
+    require_once $autoloadPath;
+}
 
 class Alma extends PaymentModule
 {
-    public const PS_ACCOUNTS_VERSION_REQUIRED = '5.3.0';
-
     public $_path;
     public $local_path;
 
@@ -60,11 +62,6 @@ class Alma extends PaymentModule
      * @var string
      */
     public $confirmUninstall;
-
-    /**
-     * @var \PrestaShop\ModuleLibServiceContainer\DependencyInjection\ServiceContainer
-     */
-    protected $container;
 
     public function __construct()
     {
@@ -106,13 +103,15 @@ class Alma extends PaymentModule
     public function install(): bool
     {
         $languageRepository = new LanguageRepository();
+        $psAccountsInstaller = new Installer('5.3');
         $moduleService = new ModuleService(
             $this,
             $languageRepository
         );
         $installerService = new ModuleInstallerService(
             $moduleService,
-            Db::getInstance()
+            Db::getInstance(),
+            $psAccountsInstaller
         );
 
         // TODO : Check multi-shop functionnalities (https://devdocs.prestashop-project.org/1.7/development/multistore/)
@@ -132,9 +131,9 @@ class Alma extends PaymentModule
     }
 
     /**
-     * @return mixed|null
+     * @return string
      */
-    public function getContent()
+    public function getContent(): string
     {
         return '';
     }

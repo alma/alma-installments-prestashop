@@ -25,6 +25,9 @@ require '../../config/config.inc.php';
 
 require 'alma.php';
 
+// Autoload for tests Ps Accounts module
+require '../../modules/ps_accounts/src/Service/PsAccountsService.php';
+
 // Workaround to avoid error during generation of html report file
 use PrestaShop\Module\Alma\Tests\ReportConfigForHTMLReport;
 
