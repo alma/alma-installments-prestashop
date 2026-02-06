@@ -5,6 +5,7 @@ namespace PrestaShop\Module\Alma\Tests\Unit\Application\Service;
 use PHPUnit\Framework\TestCase;
 use PrestaShop\Module\Alma\Application\Exception\PsAccountsException;
 use PrestaShop\Module\Alma\Application\Service\PsAccountsService;
+use PrestaShop\Module\PsAccounts\Service\PsAccountsService as PrestashopAccountsService;
 use PrestaShop\PsAccountsInstaller\Installer\Exception\InstallerException;
 use PrestaShop\PsAccountsInstaller\Installer\Exception\ModuleVersionException;
 use PrestaShop\PsAccountsInstaller\Installer\Facade\PsAccounts;
@@ -16,9 +17,7 @@ class PsAccountsServiceTest extends TestCase
     {
         $this->psAccountsFacade = $this->createMock(PsAccounts::class);
         $this->psAccountsInstaller = $this->createMock(Installer::class);
-        $this->psAccountsService = $this->getMockBuilder(\stdClass::class)
-            ->addMethods(['getAccountsCdn', 'isAccountLinked'])
-            ->getMock();
+        $this->psAccountsService = $this->createMock(PrestashopAccountsService::class);
         $this->almaPsAccountsService = new PsAccountsService(
             $this->psAccountsFacade,
             $this->psAccountsInstaller
@@ -38,8 +37,6 @@ class PsAccountsServiceTest extends TestCase
         $this->psAccountsInstaller->expects($this->once())
             ->method('install')
             ->willThrowException(new \Exception());
-        $this->psAccountsService->expects($this->never())
-            ->method('getAccountsCdn');
         $this->expectException(PsAccountsException::class);
         $this->almaPsAccountsService->getAccountsCdn();
     }
