@@ -45,6 +45,18 @@ services:
   alma.helper_form:
     class: HelperForm
 
+  alma.form_builder:
+    class: 'PrestaShop\Module\Alma\Infrastructure\Form\FormBuilder'
+
+  alma.input_form_builder:
+    class: 'PrestaShop\Module\Alma\Infrastructure\Form\InputFormBuilder'
+
+  alma.api_admin_form:
+    class: 'PrestaShop\Module\Alma\Infrastructure\Form\AbstractAdminForm'
+    arguments:
+      - '@alma.form_builder'
+      - '@alma.input_form_builder'
+
   alma.language_repository:
     class: 'PrestaShop\Module\Alma\Infrastructure\Repository\LanguageRepository'
 
@@ -67,8 +79,17 @@ services:
       - '@alma.db'
       - '@alma.ps_accounts_installer'
 
+  alma.settings_repository:
+    class: 'PrestaShop\Module\Alma\Infrastructure\Repository\SettingsRepository'
+
   alma.settings_service:
     class: 'PrestaShop\Module\Alma\Application\Service\SettingsService'
     arguments:
       - '@alma.module'
-      - '@alma.helper_form'
+      - '@alma.settings_form_builder'
+      - '@alma.settings_repository'
+
+  alma.settings_form_builder:
+    class: 'PrestaShop\Module\Alma\Infrastructure\Form\SettingsFormBuilder'
+    arguments:
+      - '@alma.api_admin_form'

@@ -6,7 +6,9 @@ use Alma;
 use Configuration;
 use HelperForm;
 use PrestaShop\Module\Alma\Infrastructure\Form\SettingsFormBuilder;
+use PrestaShop\Module\Alma\Infrastructure\Repository\ConfigurationRepository;
 use PrestaShop\Module\Alma\Infrastructure\Repository\SettingsRepository;
+use PrestaShop\Module\Alma\Infrastructure\Repository\ToolsRepository;
 use Tools;
 use Validate;
 
@@ -15,7 +17,7 @@ class SettingsService
     /**
      * @var Alma
      */
-    private Alma $module;
+    private \Module $module;
     /**
      * @var SettingsFormBuilder
      */
@@ -43,23 +45,22 @@ class SettingsService
     {
         $output = '';
 
-        // this part is executed only when the form is submitted
         if (Tools::isSubmit('submit' . $this->module->name)) {
-            // retrieve the value set by the user
-            $configValue = (string) Tools::getValue('ALMA_API_KEY');
-
-            // check that the value is valid
+            // TODO : need to validate each fields and return error if not
+            $configValue = (string) Tools::getValue('ALMA_API_KEY_TEST');
             if (empty($configValue) || !Validate::isGenericName($configValue)) {
-                // invalid value, show an error
                 $output = $this->module->displayError('Invalid Configuration value');
             } else {
-                // value is ok, update it and display a confirmation message
                 $this->settings->save();
-
                 $output = $this->module->displayConfirmation('Settings updated');
             }
         }
 
-        return $output . $this->settingsFormBuilder->build(new HelperForm(), $this->module);
+        return $output . $this->settingsFormBuilder->build(
+            new HelperForm(),
+            $this->module,
+            new ToolsRepository(),
+            new ConfigurationRepository()
+        );
     }
 }

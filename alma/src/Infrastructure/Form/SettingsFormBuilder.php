@@ -3,51 +3,53 @@
 namespace PrestaShop\Module\Alma\Infrastructure\Form;
 
 use AdminController;
-use Alma;
-use Configuration;
 use HelperForm;
-use Tools;
+use PrestaShop\Module\Alma\Infrastructure\Repository\ConfigurationRepository;
+use PrestaShop\Module\Alma\Infrastructure\Repository\SettingsRepository;
+use PrestaShop\Module\Alma\Infrastructure\Repository\ToolsRepository;
 
 class SettingsFormBuilder
 {
-    public function build(HelperForm $helperForm, Alma $module): string
+    /**
+     * @var ApiAdminForm
+     */
+    private ApiAdminForm $apiAdminForm;
+    /**
+     * @var SettingsRepository
+     */
+    private SettingsRepository $settingsRepository;
+
+    public function __construct(SettingsRepository $settingsRepository, ApiAdminForm $apiAdminForm)
     {
+        $this->settingsRepository = $settingsRepository;
+        $this->apiAdminForm = $apiAdminForm;
+    }
+
+    /**
+     * @param HelperForm $helperForm
+     * @param \Module $module
+     * @param ToolsRepository $tools
+     * @param ConfigurationRepository $configuration
+     *
+     * @return string
+     */
+    public function build(
+        HelperForm $helperForm,
+        \Module $module,
+        ToolsRepository $tools,
+        ConfigurationRepository $configuration
+    ): string {
         // Table of inputs
-        $apiForm = new ApiAdminFormType();
-        $inputs = $apiForm->getForm();
-        $inputs2 = [
-            'form' => [
-                'legend' => [
-                    'title' => 'New panel',
-                ],
-                'input' => [
-                    [
-                        'type' => 'text',
-                        'label' => 'Widget',
-                        'name' => 'ALMA_WIDGET',
-                        'size' => 20,
-                        'required' => true,
-                    ],
-                ],
-                'submit' => [
-                    'title' => 'Save',
-                    'class' => 'btn btn-default pull-right',
-                ],
-            ],
-        ];
+        $apiForm = $this->apiAdminForm->build();
 
         $helperForm->table = $module->name;
         $helperForm->name_controller = $module->name;
-        $helperForm->token = Tools::getAdminTokenLite('AdminModules');
+        $helperForm->token = $tools->getAdminTokenLite('AdminModules');
         $helperForm->currentIndex = AdminController::$currentIndex . '&' . http_build_query(['configure' => $module->name]);
         $helperForm->submit_action = 'submit' . $module->name;
-        $helperForm->default_form_language = (int) Configuration::get('PS_LANG_DEFAULT');
-        $helperForm->fields_value = [
-            'ALMA_API_KEY' => Tools::getValue('ALMA_API_KEY', Configuration::get('ALMA_API_KEY')),
-            'ALMA_API_KEY_LIVE' => Tools::getValue('ALMA_API_KEY_LIVE', Configuration::get('ALMA_API_KEY_LIVE')),
-            'ALMA_WIDGET' => Tools::getValue('ALMA_WIDGET', Configuration::get('ALMA_WIDGET')),
-        ];
+        $helperForm->default_form_language = (int) $configuration->get('PS_LANG_DEFAULT');
+        $helperForm->fields_value = $this->settingsRepository->get();
 
-        return $helperForm->generateForm([$inputs, $inputs2]);
+        return $helperForm->generateForm([$apiForm]);
     }
 }

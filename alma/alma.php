@@ -25,9 +25,11 @@
 use PrestaShop\Module\Alma\Application\Service\ModuleInstallerService;
 use PrestaShop\Module\Alma\Application\Service\ModuleService;
 use PrestaShop\Module\Alma\Application\Service\SettingsService;
-use PrestaShop\Module\Alma\Infrastructure\Form\SettingsFormBuilder;
+use PrestaShop\Module\Alma\Infrastructure\Factory\SettingsFormFactory;
+use PrestaShop\Module\Alma\Infrastructure\Repository\ConfigurationRepository;
 use PrestaShop\Module\Alma\Infrastructure\Repository\LanguageRepository;
 use PrestaShop\Module\Alma\Infrastructure\Repository\SettingsRepository;
+use PrestaShop\Module\Alma\Infrastructure\Repository\ToolsRepository;
 use PrestaShop\PsAccountsInstaller\Installer\Installer;
 
 if (!defined('_PS_VERSION_')) {
@@ -140,8 +142,11 @@ class Alma extends PaymentModule
     {
         $settingsService = new SettingsService(
             $this,
-            new SettingsFormBuilder(),
-            new SettingsRepository()
+            SettingsFormFactory::createSettingsFormBuilder(),
+            new SettingsRepository(
+                new ConfigurationRepository(),
+                new ToolsRepository()
+            )
         );
 
         return $settingsService->getFormFromHelperForm();

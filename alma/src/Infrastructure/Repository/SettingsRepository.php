@@ -2,19 +2,46 @@
 
 namespace PrestaShop\Module\Alma\Infrastructure\Repository;
 
-use Configuration;
-use Tools;
+use PrestaShop\Module\Alma\Infrastructure\Controller\SettingsController;
 
 class SettingsRepository
 {
-    public function get()
+    /**
+     * @var ConfigurationRepository
+     */
+    private ConfigurationRepository $configuration;
+    /**
+     * @var ToolsRepository
+     */
+    private ToolsRepository $tools;
+
+    public function __construct(ConfigurationRepository $configuration, ToolsRepository $tools)
     {
+        $this->configuration = $configuration;
+        $this->tools = $tools;
     }
 
+    /**
+     * @return array
+     */
+    public function get(): array
+    {
+        $fields_value = [];
+
+        foreach (SettingsController::FIELDS_FORM as $field) {
+            $fields_value[$field] = $this->tools->getValue($field, $this->configuration->get($field));
+        }
+
+        return $fields_value;
+    }
+
+    /**
+     * @return void
+     */
     public function save()
     {
-        Configuration::updateValue('ALMA_API_KEY', Tools::getValue('ALMA_API_KEY'));
-        Configuration::updateValue('ALMA_API_KEY_LIVE', Tools::getValue('ALMA_API_KEY_LIVE'));
-        Configuration::updateValue('ALMA_WIDGET', Tools::getValue('ALMA_WIDGET'));
+        foreach (SettingsController::FIELDS_FORM as $field) {
+            $this->configuration->updateValue($field, $this->tools->getValue($field));
+        }
     }
 }
