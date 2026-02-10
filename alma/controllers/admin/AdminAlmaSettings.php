@@ -1,7 +1,6 @@
 <?php
 
-use PrestaShop\Module\Alma\Application\Service\PsAccountsService;
-use PrestaShop\Module\Alma\Application\Service\SettingsService;
+use PrestaShop\Module\Alma\Application\Exception\PsAccountsException;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -9,15 +8,6 @@ if (!defined('_PS_VERSION_')) {
 
 class AdminAlmaSettingsController extends ModuleAdminController
 {
-    /**
-     * @var PsAccountsService
-     */
-    private PsAccountsService $psAccountsService;
-    /**
-     * @var SettingsService
-     */
-    private SettingsService $settingsService;
-
     public function __construct()
     {
         $this->bootstrap = true;
@@ -29,10 +19,36 @@ class AdminAlmaSettingsController extends ModuleAdminController
      */
     public function initContent(): void
     {
-        $this->psAccountsService = $this->get('alma.ps_accounts_service');
-        $this->settingsService = $this->get('alma.settings_service');
+        $psAccountsService = $this->get('alma.ps_accounts_service');
+        $settingsService = $this->get('alma.settings_service');
+
+        $errors = [];
+        $urlAccountsCdn = '';
+        $displayPsAccounts = true;
+        $isAccountLinked = false;
+
+        try {
+            Media::addJsDef([
+                'contextPsAccounts' => $psAccountsService->getPsAccountsPresenter()
+                    ->present(),
+            ]);
+            $urlAccountsCdn = $psAccountsService->getAccountsCdn();
+            // TODO : Verification is been in PHP but can be check in JS, need to wait the configuration form to check the best usage
+            $isAccountLinked = $psAccountsService->isAccountLinked();
+        } catch (PsAccountsException|\Exception $e) {
+            $errors[] = $e->getMessage();
+            $displayPsAccounts = false;
+        }
+
+        $form = $settingsService->getFormFromHelperForm();
+
         $this->context->smarty->assign([
-            'my_variable' => 'value',
+            'title' => 'Alma Settings - We can custom the title',
+            'displayPsAccounts' => $displayPsAccounts,
+            'isPsAccountsLinked' => $isAccountLinked,
+            'urlAccountsCdn' => $urlAccountsCdn,
+            'errors' => $errors,
+            'form' => $form,
         ]);
 
         $this->content = $this->module->display(

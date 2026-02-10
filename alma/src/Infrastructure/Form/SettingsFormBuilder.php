@@ -43,8 +43,8 @@ class SettingsFormBuilder
 
         $helperForm->table = $module->name;
         $helperForm->name_controller = $module->name;
-        $helperForm->token = $tools->getAdminTokenLite('AdminModules');
-        $helperForm->currentIndex = AdminController::$currentIndex . '&' . http_build_query(['configure' => $module->name]);
+        $helperForm->token = $tools->getAdminTokenLite('AdminAlmaSettings');
+        $helperForm->currentIndex = AdminController::$currentIndex . '&' . http_build_query(['configure' => $module->name]) . '&token=' . $helperForm->token;
         $helperForm->submit_action = 'submit' . $module->name;
         $helperForm->default_form_language = (int) $configuration->get('PS_LANG_DEFAULT');
         $helperForm->fields_value = $this->settingsRepository->get();

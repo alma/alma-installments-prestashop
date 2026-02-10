@@ -52,7 +52,7 @@ services:
     class: 'PrestaShop\Module\Alma\Infrastructure\Form\InputFormBuilder'
 
   alma.api_admin_form:
-    class: 'PrestaShop\Module\Alma\Infrastructure\Form\AbstractAdminForm'
+    class: 'PrestaShop\Module\Alma\Infrastructure\Form\ApiAdminForm'
     arguments:
       - '@alma.form_builder'
       - '@alma.input_form_builder'
@@ -81,6 +81,12 @@ services:
 
   alma.settings_repository:
     class: 'PrestaShop\Module\Alma\Infrastructure\Repository\SettingsRepository'
+    arguments:
+      - '@alma.configuration_repository'
+      - '@alma.tools_repository'
+
+  alma.configuration_repository:
+    class: 'PrestaShop\Module\Alma\Infrastructure\Repository\ConfigurationRepository'
 
   alma.tools_repository:
     class: 'PrestaShop\Module\Alma\Infrastructure\Repository\ToolsRepository'
@@ -96,4 +102,5 @@ services:
   alma.settings_form_builder:
     class: 'PrestaShop\Module\Alma\Infrastructure\Form\SettingsFormBuilder'
     arguments:
+      - '@alma.settings_repository'
       - '@alma.api_admin_form'

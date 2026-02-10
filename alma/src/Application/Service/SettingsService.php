@@ -52,6 +52,7 @@ class SettingsService
     {
         $output = '';
 
+        // TODO: move the if condition and call the validate in the controller
         if (Tools::isSubmit('submit' . $this->module->name)) {
             $errors = $this->validate(SettingsController::FIELDS_FORM);
             if (!empty($errors)) {
