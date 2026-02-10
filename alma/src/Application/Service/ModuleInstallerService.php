@@ -21,7 +21,6 @@ class ModuleInstallerService
             'label' => 'Settings',
             'class_name' => 'AdminAlmaSettings',
             'parent_class_name' => 'ALMA',
-            'route_name' => 'alma_settings',
             'icon' => 'tune'
         ]
     ];

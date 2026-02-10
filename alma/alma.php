@@ -146,7 +146,8 @@ class Alma extends PaymentModule
             new SettingsRepository(
                 new ConfigurationRepository(),
                 new ToolsRepository()
-            )
+            ),
+            new ToolsRepository()
         );
 
         return $settingsService->getFormFromHelperForm();

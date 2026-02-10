@@ -19,6 +19,19 @@ To create a route for the admin page, you need to create a new class in the Infr
 And add a function with suffix Action like `indexAction` to define the content of the page.
 And return the rendered template with the `render` function, and pass the template path and the variables to the template.
 And create the template in the `views/templates/admin` folder of your module, and name it like `template.html.twig`.
+
+#### Route
+```yaml
+alma_settings:
+  path: /alma/settings
+  methods: [GET, POST]
+  defaults:
+    _controller: 'PrestaShop\Module\Alma\Infrastructure\Controller\SettingsController::indexAction'
+    _legacy_controller: 'AdminAlmaSettings'
+    _legacy_link: 'AdminAlmaSettings'
+```
+
+#### Controller
 ```php
 return $this->render(
     '@Modules/alma/views/templates/admin/template.html.twig',
@@ -27,5 +40,14 @@ return $this->render(
         'key' => 'Value',
     ]
 );
+```
+#### In the tabs array
+Add the `route_name`
+```php
+[
+            [...]
+            'route_name' => 'alma_settings',
+            [...]
+        ]
 ```
 Then, you need to define the route in the `routes.yml` file.

@@ -5,6 +5,7 @@ namespace PrestaShop\Module\Alma\Application\Service;
 use Alma;
 use Configuration;
 use HelperForm;
+use PrestaShop\Module\Alma\Infrastructure\Controller\SettingsController;
 use PrestaShop\Module\Alma\Infrastructure\Form\SettingsFormBuilder;
 use PrestaShop\Module\Alma\Infrastructure\Repository\ConfigurationRepository;
 use PrestaShop\Module\Alma\Infrastructure\Repository\SettingsRepository;
@@ -26,15 +27,21 @@ class SettingsService
      * @var SettingsRepository
      */
     private SettingsRepository $settings;
+    /**
+     * @var ToolsRepository
+     */
+    private ToolsRepository $tools;
 
     public function __construct(
-        Alma $module,
+        \Module $module,
         SettingsFormBuilder $settingsFormBuilder,
-        SettingsRepository $settingsRepository
+        SettingsRepository $settingsRepository,
+        ToolsRepository $tools
     ) {
         $this->module = $module;
         $this->settingsFormBuilder = $settingsFormBuilder;
         $this->settings = $settingsRepository;
+        $this->tools = $tools;
     }
 
     /**
@@ -46,10 +53,9 @@ class SettingsService
         $output = '';
 
         if (Tools::isSubmit('submit' . $this->module->name)) {
-            // TODO : need to validate each fields and return error if not
-            $configValue = (string) Tools::getValue('ALMA_API_KEY_TEST');
-            if (empty($configValue) || !Validate::isGenericName($configValue)) {
-                $output = $this->module->displayError('Invalid Configuration value');
+            $errors = $this->validate(SettingsController::FIELDS_FORM);
+            if (!empty($errors)) {
+                $output = $this->module->displayError($errors);
             } else {
                 $this->settings->save();
                 $output = $this->module->displayConfirmation('Settings updated');
@@ -62,5 +68,28 @@ class SettingsService
             new ToolsRepository(),
             new ConfigurationRepository()
         );
+    }
+
+    /**
+     * Validate the configuration form fields.
+     *
+     * @param array $fieldsForm The fields to validate with their parameters (type, required, etc.)
+     *
+     * @return array an array of error messages if validation fails, or an empty array if validation passes
+     */
+    public function validate(array $fieldsForm): array
+    {
+        $errors = [];
+        foreach ($fieldsForm as $field => $params) {
+            if ($params['required'] === false) {
+                continue;
+            }
+            $value = $this->tools->getValue($field);
+            if (empty($value) || !Validate::isGenericName($value)) {
+                $errors[] = sprintf('Invalid Configuration value for %s', $field);
+            }
+        }
+
+        return $errors;
     }
 }

@@ -12,7 +12,12 @@ use PrestaShopBundle\Controller\Admin\FrameworkBundleAdminController;
 class SettingsController extends FrameworkBundleAdminController
 {
     public const FIELDS_FORM = [
-        'ALMA_MODE',
+        'ALMA_MODE' => [
+            'type' => 'select',
+            'required' => true,
+            'form' => 'api',
+            'options' => []
+        ],
         'ALMA_API_KEY_TEST',
         'ALMA_API_KEY_LIVE',
     ];

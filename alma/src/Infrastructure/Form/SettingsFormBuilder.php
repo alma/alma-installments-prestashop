@@ -39,7 +39,6 @@ class SettingsFormBuilder
         ToolsRepository $tools,
         ConfigurationRepository $configuration
     ): string {
-        // Table of inputs
         $apiForm = $this->apiAdminForm->build();
 
         $helperForm->table = $module->name;

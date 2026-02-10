@@ -82,12 +82,16 @@ services:
   alma.settings_repository:
     class: 'PrestaShop\Module\Alma\Infrastructure\Repository\SettingsRepository'
 
+  alma.tools_repository:
+    class: 'PrestaShop\Module\Alma\Infrastructure\Repository\ToolsRepository'
+
   alma.settings_service:
     class: 'PrestaShop\Module\Alma\Application\Service\SettingsService'
     arguments:
       - '@alma.module'
       - '@alma.settings_form_builder'
       - '@alma.settings_repository'
+      - '@alma.tools_repository'
 
   alma.settings_form_builder:
     class: 'PrestaShop\Module\Alma\Infrastructure\Form\SettingsFormBuilder'
