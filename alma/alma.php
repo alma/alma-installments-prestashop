@@ -137,4 +137,11 @@ class Alma extends PaymentModule
     {
         Tools::redirectAdmin($this->context->link->getAdminLink('AdminAlmaSettings'));
     }
+
+    public function hookActionFrontControllerSetMedia(): bool
+    {
+        // TODO: To install the module in PS8 we need to set the function linked to the hook installed
+        // We don't set the assets yet, so we return true to avoid any issue with the module installation, but we will need to implement it in the future
+        return true;
+    }
 }
