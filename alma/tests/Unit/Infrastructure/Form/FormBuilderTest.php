@@ -5,6 +5,7 @@ namespace PrestaShop\Module\Alma\Tests\Unit\Infrastructure\Form;
 use PHPUnit\Framework\TestCase;
 use PrestaShop\Module\Alma\Infrastructure\Form\FormBuilder;
 use PrestaShop\Module\Alma\Tests\Mocks\FormExpectedMother;
+use PrestaShop\Module\Alma\Tests\Mocks\InputExpectedMother;
 
 class FormBuilderTest extends TestCase
 {
@@ -20,6 +21,9 @@ class FormBuilderTest extends TestCase
 
     public function testBuildForm()
     {
-        $this->assertEquals(FormExpectedMother::form(), $this->formBuilder->build('Form title'));
+        $this->assertEquals(FormExpectedMother::form(), $this->formBuilder->build(
+            'Form title',
+            [InputExpectedMother::text()]
+        ));
     }
 }

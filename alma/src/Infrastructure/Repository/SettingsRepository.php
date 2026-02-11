@@ -2,7 +2,7 @@
 
 namespace PrestaShop\Module\Alma\Infrastructure\Repository;
 
-use PrestaShop\Module\Alma\Infrastructure\Controller\SettingsController;
+use PrestaShop\Module\Alma\Infrastructure\Form\AbstractAdminForm;
 
 class SettingsRepository
 {
@@ -28,7 +28,7 @@ class SettingsRepository
     {
         $fields_value = [];
 
-        foreach (SettingsController::FIELDS_FORM as $field => $param) {
+        foreach (AbstractAdminForm::getAllFieldsFromNamespace() as $field => $param) {
             $fields_value[$field] = $this->tools->getValue($field, $this->configuration->get($field));
         }
 
@@ -40,7 +40,7 @@ class SettingsRepository
      */
     public function save()
     {
-        foreach (SettingsController::FIELDS_FORM as $field => $param) {
+        foreach (AbstractAdminForm::getAllFieldsFromNamespace() as $field => $param) {
             $this->configuration->updateValue($field, $this->tools->getValue($field));
         }
     }

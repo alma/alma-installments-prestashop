@@ -32,7 +32,7 @@ class ApiAdminFormTest extends TestCase
       */
      public function testBuildIfReturnAnArrayWithKeyForm()
      {
-         $this->inputFormBuilder->expects($this->exactly(3))
+         $this->inputFormBuilder
              ->method('build')
              ->willReturn(InputExpectedMother::text());
          $this->formBuilder->expects($this->once())

@@ -131,9 +131,9 @@ class Alma extends PaymentModule
     }
 
     /**
-     * @return string
+     * @return void
      */
-    public function getContent(): string
+    public function getContent(): void
     {
         Tools::redirectAdmin($this->context->link->getAdminLink('AdminAlmaSettings'));
     }

@@ -19,7 +19,7 @@ To create a route for the admin page, you need to create a new class in the Infr
 And add a function with suffix Action like `indexAction` to define the content of the page.
 And return the rendered template with the `render` function, and pass the template path and the variables to the template.
 And create the template in the `views/templates/admin` folder of your module, and name it like `template.html.twig`.
-
+Then, you need to define the route in the `routes.yml` file.
 #### Route
 ```yaml
 alma_settings:
@@ -41,13 +41,41 @@ return $this->render(
     ]
 );
 ```
+
+#### Twig
+Create twig file with layout
+```html
+{% extends '@PrestaShop/Admin/layout.html.twig' %}
+
+{% block content %}
+    {% if errors is defined and errors|length > 0 %}
+        <div class="alert alert-danger">
+            <ul>
+                {% for error in errors %}
+                    <li>{{ error }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+    {% endif %}
+
+    <div class="card">
+        <h3 class="card-header">
+            {{ title }}
+        </h3>
+
+        <div class="card-body">
+            <p>Welcode to the new controller 🚀</p>
+        </div>
+    </div>
+{% endblock %}
+```
+
 #### In the tabs array
 Add the `route_name`
 ```php
 [
-            [...]
-            'route_name' => 'alma_settings',
-            [...]
-        ]
+    [...]
+    'route_name' => 'alma_settings',
+    [...]
+]
 ```
-Then, you need to define the route in the `routes.yml` file.

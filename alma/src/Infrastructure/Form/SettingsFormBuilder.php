@@ -11,44 +11,48 @@ use PrestaShop\Module\Alma\Infrastructure\Repository\ToolsRepository;
 class SettingsFormBuilder
 {
     /**
-     * @var ApiAdminForm
-     */
-    private ApiAdminForm $apiAdminForm;
-    /**
      * @var SettingsRepository
      */
     private SettingsRepository $settingsRepository;
+    private \Module $module;
+    private HelperForm $helperForm;
+    /**
+     * @var \PrestaShop\Module\Alma\Infrastructure\Repository\ToolsRepository
+     */
+    private ToolsRepository $tools;
+    /**
+     * @var \PrestaShop\Module\Alma\Infrastructure\Repository\ConfigurationRepository
+     */
+    private ConfigurationRepository $configuration;
 
-    public function __construct(SettingsRepository $settingsRepository, ApiAdminForm $apiAdminForm)
-    {
+    public function __construct(
+        \Module $module,
+        HelperForm $helperForm,
+        SettingsRepository $settingsRepository,
+        ToolsRepository $tools,
+        ConfigurationRepository $configuration
+    ) {
+        $this->module = $module;
+        $this->helperForm = $helperForm;
         $this->settingsRepository = $settingsRepository;
-        $this->apiAdminForm = $apiAdminForm;
+        $this->tools = $tools;
+        $this->configuration = $configuration;
     }
 
     /**
-     * @param HelperForm $helperForm
-     * @param \Module $module
-     * @param ToolsRepository $tools
-     * @param ConfigurationRepository $configuration
-     *
+     * @param array $forms
      * @return string
      */
-    public function build(
-        HelperForm $helperForm,
-        \Module $module,
-        ToolsRepository $tools,
-        ConfigurationRepository $configuration
-    ): string {
-        $apiForm = $this->apiAdminForm->build();
+    public function build(array $forms = []): string
+    {
+        $this->helperForm->table = $this->module->name;
+        $this->helperForm->name_controller = $this->module->name;
+        $this->helperForm->token = $this->tools->getAdminTokenLite('AdminAlmaSettings');
+        $this->helperForm->currentIndex = AdminController::$currentIndex . '&' . http_build_query(['configure' => $this->module->name]) . '&token=' . $this->helperForm->token;
+        $this->helperForm->submit_action = 'submit' . $this->module->name;
+        $this->helperForm->default_form_language = (int) $this->configuration->get('PS_LANG_DEFAULT');
+        $this->helperForm->fields_value = $this->settingsRepository->get();
 
-        $helperForm->table = $module->name;
-        $helperForm->name_controller = $module->name;
-        $helperForm->token = $tools->getAdminTokenLite('AdminAlmaSettings');
-        $helperForm->currentIndex = AdminController::$currentIndex . '&' . http_build_query(['configure' => $module->name]) . '&token=' . $helperForm->token;
-        $helperForm->submit_action = 'submit' . $module->name;
-        $helperForm->default_form_language = (int) $configuration->get('PS_LANG_DEFAULT');
-        $helperForm->fields_value = $this->settingsRepository->get();
-
-        return $helperForm->generateForm([$apiForm]);
+        return $this->helperForm->generateForm($forms);
     }
 }

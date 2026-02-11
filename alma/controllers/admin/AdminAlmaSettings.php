@@ -1,6 +1,12 @@
 <?php
 
 use PrestaShop\Module\Alma\Application\Exception\PsAccountsException;
+use PrestaShop\Module\Alma\Application\Service\PsAccountsService;
+use PrestaShop\Module\Alma\Application\Service\SettingsService;
+use PrestaShop\Module\Alma\Infrastructure\Form\AbstractAdminForm;
+use PrestaShop\Module\Alma\Infrastructure\Form\ApiAdminForm;
+use PrestaShop\Module\Alma\Infrastructure\Form\SettingsFormBuilder;
+use PrestaShop\Module\Alma\Infrastructure\Repository\SettingsRepository;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -19,9 +25,18 @@ class AdminAlmaSettingsController extends ModuleAdminController
      */
     public function initContent(): void
     {
+        /** @var PsAccountsService $psAccountsService */
         $psAccountsService = $this->get('alma.ps_accounts_service');
+        /** @var SettingsService $settingsService */
         $settingsService = $this->get('alma.settings_service');
+        /** @var SettingsFormBuilder $settingsFormBuilder */
+        $settingsFormBuilder = $this->get('alma.settings_form_builder');
+        /** @var SettingsRepository $settings */
+        $settings = $this->get('alma.settings_repository');
+        /** @var ApiAdminForm $apiAdminForm */
+        $apiAdminForm = $this->get('alma.api_admin_form');
 
+        $notifications = '';
         $errors = [];
         $urlAccountsCdn = '';
         $displayPsAccounts = true;
@@ -40,15 +55,28 @@ class AdminAlmaSettingsController extends ModuleAdminController
             $displayPsAccounts = false;
         }
 
-        $form = $settingsService->getFormFromHelperForm();
+        if (Tools::isSubmit('submit' . $this->module->name)) {
+            $errors = array_merge($settingsService->validate(AbstractAdminForm::getAllFieldsFromNamespace()));
+            if (empty($errors)) {
+                $settings->save();
+                $notifications = $this->module->displayConfirmation('Settings updated');
+            }
+        }
+        if (!empty($errors)) {
+            $notifications = $this->module->displayError($errors);
+        }
+
+        $forms = [
+            $apiAdminForm->build(),
+        ];
 
         $this->context->smarty->assign([
             'title' => 'Alma Settings - We can custom the title',
             'displayPsAccounts' => $displayPsAccounts,
             'isPsAccountsLinked' => $isAccountLinked,
             'urlAccountsCdn' => $urlAccountsCdn,
-            'errors' => $errors,
-            'form' => $form,
+            'notifications' => $notifications,
+            'form' => $settingsFormBuilder->build($forms),
         ]);
 
         $this->content = $this->module->display(

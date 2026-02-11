@@ -12,6 +12,7 @@ final class FormExpectedMother
                     'title' => 'Form title',
                 ],
                 'input' => [
+                    InputExpectedMother::text(),
                 ],
                 'submit' => [
                     'title' => 'Save',

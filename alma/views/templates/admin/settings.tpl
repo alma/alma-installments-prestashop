@@ -9,6 +9,7 @@
         window?.psaccountsVue?.init();
     </script>
 {/if}
+{$notifications}
 {if isPsAccountsLinked}
     {$form}
 {/if}

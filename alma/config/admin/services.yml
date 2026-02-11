@@ -18,14 +18,7 @@ services:
   # Alma
 
   # Controllers
-  PrestaShop\Module\Alma\Infrastructure\Controller\SettingsController:
-    class: PrestaShop\Module\Alma\Infrastructure\Controller\SettingsController
-    arguments:
-      - '@alma.module'
-      - '@alma.ps_accounts_service'
-      - '@alma.settings_service'
-    tags:
-      - 'controller.service_arguments'
+
 
   # Services
   alma.module:
@@ -102,5 +95,8 @@ services:
   alma.settings_form_builder:
     class: 'PrestaShop\Module\Alma\Infrastructure\Form\SettingsFormBuilder'
     arguments:
+      - '@alma.module'
+      - '@alma.helper_form'
       - '@alma.settings_repository'
-      - '@alma.api_admin_form'
+      - '@alma.tools_repository'
+      - '@alma.configuration_repository'
