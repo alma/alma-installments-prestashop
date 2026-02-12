@@ -328,7 +328,7 @@ class PaymentValidation
     {
         if (is_callable(['\Order', 'getByCartId'])) {
             return \Order::getByCartId((int) $cartId);
-        } else {
+        }
             $orderId = (int) \Order::getOrderByCartId((int) $cartId);
 
             try {
@@ -338,7 +338,6 @@ class PaymentValidation
             } catch (\PrestaShopException $e) {
                 throw new PaymentValidationException('[Alma] Error Prestashop', $cartId, 0, $e);
             }
-        }
     }
 
     /**
