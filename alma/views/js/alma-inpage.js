@@ -228,7 +228,7 @@ function displayLoader() {
 }
 
 function isAlmaPayment(url) {
-    return url.indexOf("module/alma/payment") !== -1 || url.indexOf("module=alma") !== -1;
+    return url.indexOf("/alma/payment") !== -1 || url.indexOf("module=alma") !== -1;
 }
 
 function uncheckTermsAndConditions() {
