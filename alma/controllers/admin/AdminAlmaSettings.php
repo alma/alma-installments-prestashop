@@ -3,8 +3,8 @@
 use PrestaShop\Module\Alma\Application\Exception\PsAccountsException;
 use PrestaShop\Module\Alma\Application\Service\PsAccountsService;
 use PrestaShop\Module\Alma\Application\Service\SettingsService;
-use PrestaShop\Module\Alma\Infrastructure\Form\AbstractAdminForm;
 use PrestaShop\Module\Alma\Infrastructure\Form\ApiAdminForm;
+use PrestaShop\Module\Alma\Infrastructure\Form\SettingsCollectionForm;
 use PrestaShop\Module\Alma\Infrastructure\Form\SettingsFormBuilder;
 use PrestaShop\Module\Alma\Infrastructure\Form\ValidatorForm;
 
@@ -33,6 +33,8 @@ class AdminAlmaSettingsController extends ModuleAdminController
         $settingsFormBuilder = $this->get('alma.settings_form_builder');
         /** @var ApiAdminForm $apiAdminForm */
         $apiAdminForm = $this->get('alma.api_admin_form');
+        /** @var SettingsCollectionForm $settingsCollectionForm */
+        $settingsCollectionForm = $this->get('alma.settings_collection_form');
 
         $notifications = '';
         $errors = [];
@@ -43,7 +45,7 @@ class AdminAlmaSettingsController extends ModuleAdminController
         $defaultLang = (int) Configuration::get('PS_LANG_DEFAULT');
 
         if (Tools::isSubmit('submit' . $this->module->name)) {
-            $errors = ValidatorForm::legacyValidate(AbstractAdminForm::getAllFieldsFromNamespace(), Tools::getAllValues());
+            $errors = ValidatorForm::legacyValidate($settingsCollectionForm->getAllFields(SettingsCollectionForm::SETTINGS_FORMS_CLASSES), Tools::getAllValues());
             if (empty($errors)) {
                 $settingsService->save();
                 $notifications = $this->module->displayConfirmation('Settings updated');
@@ -68,7 +70,7 @@ class AdminAlmaSettingsController extends ModuleAdminController
         }
 
         $forms = [
-            $apiAdminForm->build(),
+            $apiAdminForm->build()
         ];
 
         $this->context->smarty->assign([

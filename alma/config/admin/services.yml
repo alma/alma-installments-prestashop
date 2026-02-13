@@ -54,6 +54,9 @@ services:
   alma.language_repository:
     class: 'PrestaShop\Module\Alma\Infrastructure\Repository\LanguageRepository'
 
+  alma.settings_collection_form:
+    class: 'PrestaShop\Module\Alma\Infrastructure\Form\SettingsCollectionForm'
+
   alma.ps_accounts_service:
     class: 'PrestaShop\Module\Alma\Application\Service\PsAccountsService'
     arguments:
@@ -76,6 +79,7 @@ services:
   alma.settings_repository:
     class: 'PrestaShop\Module\Alma\Infrastructure\Repository\SettingsRepository'
     arguments:
+      - '@alma.settings_collection_form'
       - '@alma.configuration_repository'
       - '@alma.tools_proxy'
 

@@ -36,7 +36,7 @@ class SettingsFormBuilder
         $this->helperForm->table = $this->module->name;
         $this->helperForm->name_controller = $this->module->name;
         $this->helperForm->token = $token;
-        $this->helperForm->currentIndex = AdminController::$currentIndex . '&' . http_build_query(['configure' => $this->module->name]) . '&token=' . $this->helperForm->token;
+        $this->helperForm->currentIndex = AdminController::$currentIndex . '&' . http_build_query(['configure' => $this->module->name]);
         $this->helperForm->submit_action = 'submit' . $this->module->name;
         $this->helperForm->default_form_language = $defaultLang;
         $this->helperForm->fields_value = $this->settingsRepository->get();
