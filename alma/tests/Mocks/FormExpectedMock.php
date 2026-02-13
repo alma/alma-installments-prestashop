@@ -2,7 +2,7 @@
 
 namespace PrestaShop\Module\Alma\Tests\Mocks;
 
-final class FormExpectedMother
+final class FormExpectedMock
 {
     public static function form(): array
     {
@@ -12,7 +12,7 @@ final class FormExpectedMother
                     'title' => 'Form title',
                 ],
                 'input' => [
-                    InputExpectedMother::text(),
+                    InputExpectedMock::text(),
                 ],
                 'submit' => [
                     'title' => 'Save',

@@ -131,6 +131,8 @@ class Alma extends PaymentModule
     }
 
     /**
+     * Redirect to the configuration page when clicking on the "Configure" button of the module in the back office
+     * Because the configuration page use a legacy controller thanks to tab, we need to redirect to it instead of using the getContent function to display the configuration page
      * @return void
      */
     public function getContent(): void

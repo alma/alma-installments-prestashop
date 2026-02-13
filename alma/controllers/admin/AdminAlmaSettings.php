@@ -6,7 +6,7 @@ use PrestaShop\Module\Alma\Application\Service\SettingsService;
 use PrestaShop\Module\Alma\Infrastructure\Form\AbstractAdminForm;
 use PrestaShop\Module\Alma\Infrastructure\Form\ApiAdminForm;
 use PrestaShop\Module\Alma\Infrastructure\Form\SettingsFormBuilder;
-use PrestaShop\Module\Alma\Infrastructure\Repository\SettingsRepository;
+use PrestaShop\Module\Alma\Infrastructure\Form\ValidatorForm;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -31,8 +31,6 @@ class AdminAlmaSettingsController extends ModuleAdminController
         $settingsService = $this->get('alma.settings_service');
         /** @var SettingsFormBuilder $settingsFormBuilder */
         $settingsFormBuilder = $this->get('alma.settings_form_builder');
-        /** @var SettingsRepository $settings */
-        $settings = $this->get('alma.settings_repository');
         /** @var ApiAdminForm $apiAdminForm */
         $apiAdminForm = $this->get('alma.api_admin_form');
 
@@ -41,6 +39,16 @@ class AdminAlmaSettingsController extends ModuleAdminController
         $urlAccountsCdn = '';
         $displayPsAccounts = true;
         $isAccountLinked = false;
+        $token = Tools::getAdminTokenLite('AdminAlmaSettings');
+        $defaultLang = (int) Configuration::get('PS_LANG_DEFAULT');
+
+        if (Tools::isSubmit('submit' . $this->module->name)) {
+            $errors = ValidatorForm::legacyValidate(AbstractAdminForm::getAllFieldsFromNamespace(), Tools::getAllValues());
+            if (empty($errors)) {
+                $settingsService->save();
+                $notifications = $this->module->displayConfirmation('Settings updated');
+            }
+        }
 
         try {
             Media::addJsDef([
@@ -55,13 +63,6 @@ class AdminAlmaSettingsController extends ModuleAdminController
             $displayPsAccounts = false;
         }
 
-        if (Tools::isSubmit('submit' . $this->module->name)) {
-            $errors = array_merge($settingsService->validate(AbstractAdminForm::getAllFieldsFromNamespace()));
-            if (empty($errors)) {
-                $settings->save();
-                $notifications = $this->module->displayConfirmation('Settings updated');
-            }
-        }
         if (!empty($errors)) {
             $notifications = $this->module->displayError($errors);
         }
@@ -76,7 +77,7 @@ class AdminAlmaSettingsController extends ModuleAdminController
             'isPsAccountsLinked' => $isAccountLinked,
             'urlAccountsCdn' => $urlAccountsCdn,
             'notifications' => $notifications,
-            'form' => $settingsFormBuilder->build($forms),
+            'form' => $settingsFormBuilder->render($token, $defaultLang, $forms),
         ]);
 
         $this->content = $this->module->display(

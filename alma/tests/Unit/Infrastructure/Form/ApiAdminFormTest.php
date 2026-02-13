@@ -6,8 +6,8 @@ use PHPUnit\Framework\TestCase;
 use PrestaShop\Module\Alma\Infrastructure\Form\ApiAdminForm;
 use PrestaShop\Module\Alma\Infrastructure\Form\FormBuilder;
 use PrestaShop\Module\Alma\Infrastructure\Form\InputFormBuilder;
-use PrestaShop\Module\Alma\Tests\Mocks\FormExpectedMother;
-use PrestaShop\Module\Alma\Tests\Mocks\InputExpectedMother;
+use PrestaShop\Module\Alma\Tests\Mocks\FormExpectedMock;
+use PrestaShop\Module\Alma\Tests\Mocks\InputExpectedMock;
 
 class ApiAdminFormTest extends TestCase
 {
@@ -34,10 +34,10 @@ class ApiAdminFormTest extends TestCase
      {
          $this->inputFormBuilder
              ->method('build')
-             ->willReturn(InputExpectedMother::text());
+             ->willReturn(InputExpectedMock::text());
          $this->formBuilder->expects($this->once())
              ->method('build')
-             ->willReturn(FormExpectedMother::form());
+             ->willReturn(FormExpectedMock::form());
          $this->assertArrayHasKey('form', $this->apiAdminForm->build());
      }
 

@@ -2,7 +2,7 @@
 
 namespace PrestaShop\Module\Alma\Tests\Mocks;
 
-final class InputExpectedMother
+final class InputExpectedMock
 {
     public static function text(array $overrides = []): array
     {

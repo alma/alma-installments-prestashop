@@ -1,12 +1,13 @@
 <?php
 
-namespace PrestaShop\Module\Alma\Infrastructure\Repository;
+namespace PrestaShop\Module\Alma\Infrastructure\Proxy;
 
 use Tools;
 
-class ToolsRepository
+class ToolsProxy
 {
     /**
+     * Get a token for a tab.
      * @param string $tab
      *
      * @return bool|string
@@ -17,6 +18,8 @@ class ToolsRepository
     }
 
     /**
+     * Get a value from $_POST / $_GET
+     *  if unavailable, take a default value.
      * @param string $key
      * @param bool|string $default_value
      *

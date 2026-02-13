@@ -13,10 +13,9 @@ abstract class AbstractAdminForm
      */
     protected InputFormBuilder $inputFormBuilder;
 
-    public function __construct(FormBuilder $formBuilder, InputFormBuilder $inputFormBuilder)
+    public function __construct(FormBuilder $formBuilder)
     {
         $this->formBuilder = $formBuilder;
-        $this->inputFormBuilder = $inputFormBuilder;
     }
 
     /**
@@ -44,17 +43,6 @@ abstract class AbstractAdminForm
      */
     public function build(): array
     {
-        $inputs = [];
-        foreach (static::FIELDS_FORM as $key => $field) {
-            $inputs[] = $this->inputFormBuilder->build(
-                $field['type'],
-                $key,
-                $field['label'],
-                $field['required'],
-                $field['options'] ?? []
-            );
-        }
-
-        return $this->formBuilder->build(static::TITLE, $inputs);
+        return $this->formBuilder->build(static::TITLE, static::FIELDS_FORM);
     }
 }

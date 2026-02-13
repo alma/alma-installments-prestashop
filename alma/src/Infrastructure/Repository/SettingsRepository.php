@@ -3,6 +3,7 @@
 namespace PrestaShop\Module\Alma\Infrastructure\Repository;
 
 use PrestaShop\Module\Alma\Infrastructure\Form\AbstractAdminForm;
+use PrestaShop\Module\Alma\Infrastructure\Proxy\ToolsProxy;
 
 class SettingsRepository
 {
@@ -11,11 +12,11 @@ class SettingsRepository
      */
     private ConfigurationRepository $configuration;
     /**
-     * @var ToolsRepository
+     * @var ToolsProxy
      */
-    private ToolsRepository $tools;
+    private ToolsProxy $tools;
 
-    public function __construct(ConfigurationRepository $configuration, ToolsRepository $tools)
+    public function __construct(ConfigurationRepository $configuration, ToolsProxy $tools)
     {
         $this->configuration = $configuration;
         $this->tools = $tools;
