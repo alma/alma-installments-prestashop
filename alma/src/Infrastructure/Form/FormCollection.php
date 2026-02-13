@@ -2,7 +2,11 @@
 
 namespace PrestaShop\Module\Alma\Infrastructure\Form;
 
-class SettingsCollectionForm
+/**
+ * Class FormCollection
+ * This class is responsible for collecting all fields from registered legacy form.
+ */
+class FormCollection
 {
     // You can add here all form classes that you want to include in the settings collection
     public const SETTINGS_FORMS_CLASSES = [
@@ -14,7 +18,7 @@ class SettingsCollectionForm
      * @param array $formClasses Array of form class names to retrieve fields from
      * @return array
      */
-    public function getAllFields(array $formClasses): array
+    public static function getAllFields(array $formClasses): array
     {
         $allFields = [];
 
