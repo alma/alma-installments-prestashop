@@ -23,8 +23,8 @@ class FormCollection
         $allFields = [];
 
         foreach ($formClasses as $formClass) {
-            if (defined("{$formClass}::FIELDS_FORM")) {
-                $allFields = array_merge($allFields, constant("{$formClass}::FIELDS_FORM"));
+            if (method_exists($formClass, 'fieldsForm')) {
+                $allFields = array_merge($allFields, $formClass::fieldsForm());
             }
         }
 

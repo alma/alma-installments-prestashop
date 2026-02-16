@@ -10,7 +10,7 @@ It is defined in the `AdminController` class of the module. And how we use the f
 [Fields of Form builder](https://devdocs.prestashop-project.org/1.7/development/components/helpers/helperform/#fields)
 
 ## Create a form
-To create a form, you need to add a new Class in the `src/Infrastructure/Form` folder who contains TITLE and FIELDS_FORM constants and extends AbstractAdminForm.
+To create a form, you need to add a new Class in the `src/Infrastructure/Form` folder who contains `title` and `fieldForm` static function and extends AbstractAdminForm.
 And you need to add this class in the `FormCollection` file in the `SETTINGS_FORMS_CLASSES` constant to register it in the form collection.
 To display the form in the controller back office, you need to inject the new class of the form and build the form with the `build` method.
 

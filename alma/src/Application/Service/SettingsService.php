@@ -49,7 +49,7 @@ class SettingsService
     }
 
     /**
-     * Save the configuration form fields values.
+     * Save the configuration form from all fields values.
      */
     public function save(): void
     {
