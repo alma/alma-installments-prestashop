@@ -38,6 +38,11 @@ services:
   alma.helper_form:
     class: HelperForm
 
+  alma.php_encryption:
+    class: PhpEncryption
+    arguments:
+      - !php/const _NEW_COOKIE_KEY_
+
   alma.form_builder:
     class: 'PrestaShop\Module\Alma\Infrastructure\Form\FormBuilder'
     arguments:
@@ -81,6 +86,7 @@ services:
     arguments:
       - '@alma.configuration_repository'
       - '@alma.tools_proxy'
+      - '@alma.php_encryption'
 
   alma.configuration_repository:
     class: 'PrestaShop\Module\Alma\Infrastructure\Repository\ConfigurationRepository'
