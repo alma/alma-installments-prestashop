@@ -60,6 +60,18 @@ class ApiAdminForm extends AbstractAdminForm
                     ),
                 ],
             ],
+            'ALMA_MERCHANT_ID' => [
+                'type' => 'text',
+                'label' => 'Merchant ID',
+                'required' => false,
+                'form' => 'api',
+                'encrypted' => false,
+                'getFromDb' => true,
+                'options' => [
+                    'size' => 20,
+                    'readonly' => true,
+                ],
+            ],
         ];
     }
 }

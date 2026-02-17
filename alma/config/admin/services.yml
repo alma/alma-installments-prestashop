@@ -98,8 +98,8 @@ services:
     class: 'PrestaShop\Module\Alma\Application\Service\SettingsService'
     arguments:
       - '@alma.settings_repository'
+      - '@alma.authentication_service'
       - '@alma.tools_proxy'
-      - '@alma.configuration_repository'
 
   alma.settings_form_builder:
     class: 'PrestaShop\Module\Alma\Infrastructure\Form\SettingsFormBuilder'
@@ -112,3 +112,35 @@ services:
     class: 'PrestaShop\Module\Alma\Application\Helper\EncryptionHelper'
     arguments:
       - '@alma.php_encryption'
+
+  alma.authentication_service:
+    class: 'PrestaShop\Module\Alma\Application\Service\AuthenticationService'
+    arguments:
+      - '@alma.merchant_endpoint'
+
+  alma.client_configuration:
+    class: 'Alma\Client\Application\ClientConfiguration'
+    factory: ['@alma.client_configuration_factory', 'create']
+
+  alma.client_configuration_factory:
+    class: 'PrestaShop\Module\Alma\Infrastructure\Factory\ClientConfigurationFactory'
+    arguments:
+      - '@alma.settings_repository'
+      - '@alma.environment'
+      - '@alma.module'
+      - '@alma.tools_proxy'
+
+  alma.curl_client:
+    class: 'Alma\Client\Application\CurlClient'
+    arguments:
+      - '@alma.client_configuration'
+
+  alma.merchant_endpoint:
+    class: 'Alma\Client\Application\Endpoint\MerchantEndpoint'
+    arguments:
+      - '@alma.curl_client'
+
+  alma.environment:
+    class: 'Alma\Client\Domain\ValueObject\Environment'
+    arguments:
+      - 'test'
