@@ -17,18 +17,18 @@ class SettingsRepository
      */
     private ToolsProxy $toolsProxy;
     /**
-     * @var \PhpEncryption
+     * @var EncryptionHelper
      */
-    private \PhpEncryption $phpEncryption;
+    private EncryptionHelper $encryptionHelper;
 
     public function __construct(
         ConfigurationRepository $configurationRepository,
         ToolsProxy $toolsProxy,
-        \PhpEncryption $phpEncryption
+        EncryptionHelper $encryptionHelper
     ) {
         $this->configurationRepository = $configurationRepository;
         $this->toolsProxy = $toolsProxy;
-        $this->phpEncryption = $phpEncryption;
+        $this->encryptionHelper = $encryptionHelper;
     }
 
     /**
@@ -64,41 +64,9 @@ class SettingsRepository
                 continue;
             }
             if (isset($param['encrypted']) && EncryptionHelper::isEncryptionValue($param['encrypted'], $value)) {
-                $value = $this->encryptionValue($value);
+                $value = $this->encryptionHelper->encrypt($value);
             }
             $this->configurationRepository->updateValue($field, $value);
         }
-    }
-
-    /**
-     * @param string $value
-     * @return string
-     */
-    public function encryptionValue(string $value): string
-    {
-        if (class_exists('\PhpEncryption')) {
-            return $this->phpEncryption->encrypt($value);
-        }
-
-        return $value;
-    }
-
-    /**
-     * @param string $value
-     * @return string
-     */
-    public function decryptionValue(string $value): string
-    {
-        if (class_exists('\PhpEncryption')) {
-            try {
-                return $this->phpEncryption->decrypt($value);
-            } catch (\Exception $e) {
-                // TODO: Add logging for decryption failure
-                return $value;
-            }
-        }
-
-        // TODO: Add logging for decryption librairy missing
-        return $value;
     }
 }

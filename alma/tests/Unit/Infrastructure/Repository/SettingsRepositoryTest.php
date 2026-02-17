@@ -23,19 +23,19 @@ class SettingsRepositoryTest extends TestCase
      */
     private ToolsProxy $tools;
     /**
-     * @var \PhpEncryption
+     * @var EncryptionHelper
      */
-    private \PhpEncryption $phpEncryption;
+    private EncryptionHelper $encryptionHelper;
 
     public function setUp(): void
     {
         $this->configuration = $this->createMock(ConfigurationRepository::class);
         $this->tools = $this->createMock(ToolsProxy::class);
-        $this->phpEncryption = $this->createMock(\PhpEncryption::class);
+        $this->encryptionHelper = $this->createMock(EncryptionHelper::class);
         $this->settings = new SettingsRepository(
             $this->configuration,
             $this->tools,
-            $this->phpEncryption
+            $this->encryptionHelper
         );
     }
 
@@ -49,7 +49,7 @@ class SettingsRepositoryTest extends TestCase
             ->method('getValue')
             ->withConsecutive(['field1'], ['field2'])
             ->willReturnOnConsecutiveCalls('value1', 'value2');
-        $this->phpEncryption->expects($this->once())
+        $this->encryptionHelper->expects($this->once())
             ->method('encrypt')
             ->with('value1')
             ->willReturn('encrypted_value1');
@@ -69,7 +69,7 @@ class SettingsRepositoryTest extends TestCase
             ->method('getValue')
             ->withConsecutive(['field1'], ['field2'])
             ->willReturnOnConsecutiveCalls('value1', 'value2');
-        $this->phpEncryption->expects($this->exactly(2))
+        $this->encryptionHelper->expects($this->exactly(2))
             ->method('encrypt')
             ->withConsecutive(['value1'], ['value2'])
             ->willReturnOnConsecutiveCalls('encrypted_value1', 'encrypted_value2');
@@ -89,7 +89,7 @@ class SettingsRepositoryTest extends TestCase
             ->method('getValue')
             ->withConsecutive(['field1'], ['field2'])
             ->willReturnOnConsecutiveCalls('value1', 'value2');
-        $this->phpEncryption->expects($this->never())
+        $this->encryptionHelper->expects($this->never())
             ->method('encrypt');
         $this->configuration->expects($this->exactly(2))
             ->method('updateValue')
@@ -107,7 +107,7 @@ class SettingsRepositoryTest extends TestCase
             ->method('getValue')
             ->withConsecutive(['field1'], ['field2'])
             ->willReturnOnConsecutiveCalls(EncryptionHelper::OBSCURE_VALUE, EncryptionHelper::OBSCURE_VALUE);
-        $this->phpEncryption->expects($this->never())
+        $this->encryptionHelper->expects($this->never())
             ->method('encrypt');
         $this->configuration->expects($this->never())
             ->method('updateValue');
@@ -124,7 +124,7 @@ class SettingsRepositoryTest extends TestCase
             ->method('getValue')
             ->withConsecutive(['field1'], ['field2'])
             ->willReturnOnConsecutiveCalls(EncryptionHelper::OBSCURE_VALUE, 'value2');
-        $this->phpEncryption->expects($this->never())
+        $this->encryptionHelper->expects($this->never())
             ->method('encrypt');
         $this->configuration->expects($this->once())
             ->method('updateValue')
@@ -142,7 +142,7 @@ class SettingsRepositoryTest extends TestCase
             ->method('getValue')
             ->withConsecutive(['field1'], ['field2'])
             ->willReturnOnConsecutiveCalls(EncryptionHelper::OBSCURE_VALUE, 'value2');
-        $this->phpEncryption->expects($this->once())
+        $this->encryptionHelper->expects($this->once())
             ->method('encrypt')
             ->with('value2')
             ->willReturn('encrypted_value2');
@@ -150,18 +150,5 @@ class SettingsRepositoryTest extends TestCase
             ->method('updateValue')
             ->with('field2', 'encrypted_value2');
         $this->settings->save($fields);
-    }
-
-    public function testEncryptionValue(): void
-    {
-        $value = 'test';
-        $encryptedValue = 'encrypted_test';
-
-        $this->phpEncryption->expects($this->once())
-            ->method('encrypt')
-            ->with($value)
-            ->willReturn($encryptedValue);
-
-        $this->assertEquals($encryptedValue, $this->settings->encryptionValue($value));
     }
 }
