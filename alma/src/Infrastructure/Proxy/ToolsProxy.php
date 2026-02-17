@@ -29,4 +29,14 @@ class ToolsProxy
     {
         return Tools::getValue($key, $default_value);
     }
+
+    /**
+     * Check if submit has been posted.
+     *
+     * @param string $submit submit name
+     */
+    public function isSubmit(string $submit): bool
+    {
+        return Tools::isSubmit($submit);
+    }
 }
