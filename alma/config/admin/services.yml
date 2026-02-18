@@ -92,10 +92,12 @@ services:
     class: 'PrestaShop\Module\Alma\Application\Service\SettingsService'
     arguments:
       - '@alma.settings_repository'
+      - '@alma.tools_proxy'
+      - '@alma.configuration_repository'
 
   alma.settings_form_builder:
     class: 'PrestaShop\Module\Alma\Infrastructure\Form\SettingsFormBuilder'
     arguments:
       - '@alma.module'
       - '@alma.helper_form'
-      - '@alma.settings_repository'
+      - '@alma.settings_service'

@@ -5,24 +5,15 @@ namespace PrestaShop\Module\Alma\Tests\Unit\Infrastructure\Form;
 use PHPUnit\Framework\TestCase;
 use PrestaShop\Module\Alma\Infrastructure\Form\ApiAdminForm;
 use PrestaShop\Module\Alma\Infrastructure\Form\FormBuilder;
-use PrestaShop\Module\Alma\Infrastructure\Form\InputFormBuilder;
 use PrestaShop\Module\Alma\Tests\Mocks\FormExpectedMock;
-use PrestaShop\Module\Alma\Tests\Mocks\InputExpectedMock;
 
 class ApiAdminFormTest extends TestCase
 {
-    /**
-     * @var InputFormBuilder
-     */
-    private $inputFormBuilder;
-
     public function setup(): void
     {
         $this->formBuilder = $this->createMock(FormBuilder::class);
-        $this->inputFormBuilder = $this->createMock(InputFormBuilder::class);
         $this->apiAdminForm = new ApiAdminForm(
-            $this->formBuilder,
-            $this->inputFormBuilder
+            $this->formBuilder
         );
     }
 
@@ -32,9 +23,6 @@ class ApiAdminFormTest extends TestCase
       */
      public function testBuildIfReturnAnArrayWithKeyForm()
      {
-         $this->inputFormBuilder
-             ->method('build')
-             ->willReturn(InputExpectedMock::text());
          $this->formBuilder->expects($this->once())
              ->method('build')
              ->willReturn(FormExpectedMock::form());
@@ -44,6 +32,5 @@ class ApiAdminFormTest extends TestCase
      public function tearDown(): void
      {
          $this->formBuilder = null;
-         $this->inputFormBuilder = null;
      }
 }

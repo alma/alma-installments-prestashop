@@ -14,7 +14,7 @@ class FormCollection
     ];
 
     /**
-     * Get all fields from registered forms
+     * Get all fields from registered forms for save, display and validation from registered forms.
      * @param array $formClasses Array of form class names to retrieve fields from
      * @return array
      */

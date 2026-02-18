@@ -8,6 +8,8 @@ class ValidatorForm
 {
     /**
      * Validate the legacy configuration form fields.
+     * Check input text fields for being non-empty and containing only valid characters (using Validate::isGenericName).
+     * If a field is not required, it will be skipped in validation even if it's empty.
      *
      * @param array $fieldsForm The fields to validate with their parameters (type, required, etc.)
      * @param array $allValues The values submitted from the form, indexed by field name

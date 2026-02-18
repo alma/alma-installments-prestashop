@@ -3,8 +3,8 @@
 namespace PrestaShop\Module\Alma\Tests\Unit\Infrastructure\Form;
 
 use PHPUnit\Framework\TestCase;
+use PrestaShop\Module\Alma\Application\Service\SettingsService;
 use PrestaShop\Module\Alma\Infrastructure\Form\SettingsFormBuilder;
-use PrestaShop\Module\Alma\Infrastructure\Repository\SettingsRepository;
 use PrestaShop\Module\Alma\Tests\Mocks\FormExpectedMock;
 
 class SettingsFormBuilderTest extends TestCase
@@ -17,11 +17,11 @@ class SettingsFormBuilderTest extends TestCase
         $this->helperForm->table = $this->module->name;
         $this->helperForm->name_controller = $this->module->name;
         $this->helperForm->submit = 'submit' . $this->module->name;
-        $this->settingsRepository = $this->createMock(SettingsRepository::class);
+        $this->settingsService = $this->createMock(SettingsService::class);
         $this->settingsFormBuilder = new SettingsFormBuilder(
             $this->module,
             $this->helperForm,
-            $this->settingsRepository
+            $this->settingsService
         );
     }
 
@@ -30,8 +30,8 @@ class SettingsFormBuilderTest extends TestCase
         $token = 'token';
         $defaultLang = 1;
         $forms = FormExpectedMock::form();
-        $this->settingsRepository->expects($this->once())
-            ->method('get')
+        $this->settingsService->expects($this->once())
+            ->method('getFieldsValue')
             ->willReturn(['field1' => 'value1']);
         $this->helperForm->expects($this->once())
             ->method('generateForm')
@@ -44,7 +44,7 @@ class SettingsFormBuilderTest extends TestCase
     {
         $this->module = null;
         $this->helperForm = null;
-        $this->settingsRepository = null;
+        $this->settingsService = null;
         $this->settingsFormBuilder = null;
     }
 }

@@ -4,25 +4,25 @@ namespace PrestaShop\Module\Alma\Infrastructure\Form;
 
 use AdminController;
 use HelperForm;
-use PrestaShop\Module\Alma\Infrastructure\Repository\SettingsRepository;
+use PrestaShop\Module\Alma\Application\Service\SettingsService;
 
 class SettingsFormBuilder
 {
     private \Module $module;
     private HelperForm $helperForm;
     /**
-     * @var SettingsRepository
+     * @var SettingsService
      */
-    private SettingsRepository $settingsRepository;
+    private SettingsService $settingsService;
 
     public function __construct(
         \Module $module,
         HelperForm $helperForm,
-        SettingsRepository $settingsRepository
+        SettingsService $settingsService
     ) {
         $this->module = $module;
         $this->helperForm = $helperForm;
-        $this->settingsRepository = $settingsRepository;
+        $this->settingsService = $settingsService;
     }
 
     /**
@@ -39,7 +39,7 @@ class SettingsFormBuilder
         $this->helperForm->currentIndex = AdminController::$currentIndex . '&' . http_build_query(['configure' => $this->module->name]);
         $this->helperForm->submit_action = 'submit' . $this->module->name;
         $this->helperForm->default_form_language = $defaultLang;
-        $this->helperForm->fields_value = $this->settingsRepository->get();
+        $this->helperForm->fields_value = $this->settingsService->getFieldsValue();
 
         return $this->helperForm->generateForm($forms);
     }

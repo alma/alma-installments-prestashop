@@ -2,7 +2,6 @@
 
 namespace PrestaShop\Module\Alma\Infrastructure\Repository;
 
-use PrestaShop\Module\Alma\Infrastructure\Form\FormCollection;
 use PrestaShop\Module\Alma\Infrastructure\Proxy\ToolsProxy;
 
 class SettingsRepository
@@ -10,41 +9,29 @@ class SettingsRepository
     /**
      * @var ConfigurationRepository
      */
-    private ConfigurationRepository $configuration;
+    private ConfigurationRepository $configurationRepository;
     /**
      * @var ToolsProxy
      */
-    private ToolsProxy $tools;
+    private ToolsProxy $toolsProxy;
 
     public function __construct(
-        ConfigurationRepository $configuration,
-        ToolsProxy $tools
+        ConfigurationRepository $configurationRepository,
+        ToolsProxy $toolsProxy
     ) {
-        $this->configuration = $configuration;
-        $this->tools = $tools;
+        $this->configurationRepository = $configurationRepository;
+        $this->toolsProxy = $toolsProxy;
     }
 
     /**
-     * @return array
-     */
-    public function get(): array
-    {
-        $fields_value = [];
-
-        foreach (FormCollection::getAllFields(FormCollection::SETTINGS_FORMS_CLASSES) as $field => $param) {
-            $fields_value[$field] = $this->tools->getValue($field, $this->configuration->get($field));
-        }
-
-        return $fields_value;
-    }
-
-    /**
+     * Save the configuration form fields values.
+     * @param array $fields
      * @return void
      */
-    public function save()
+    public function save(array $fields): void
     {
-        foreach (FormCollection::getAllFields(FormCollection::SETTINGS_FORMS_CLASSES) as $field => $param) {
-            $this->configuration->updateValue($field, $this->tools->getValue($field));
+        foreach ($fields as $field => $param) {
+            $this->configurationRepository->updateValue($field, $this->toolsProxy->getValue($field));
         }
     }
 }

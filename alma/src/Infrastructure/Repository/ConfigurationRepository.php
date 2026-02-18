@@ -26,4 +26,16 @@ class ConfigurationRepository
     {
         return Configuration::updateValue($key, $value);
     }
+
+    /**
+     * Delete a configuration key in database (with or without language management).
+     *
+     * @param string $key Key to delete
+     *
+     * @return bool Deletion result
+     */
+    public function deleteByName(string $key): bool
+    {
+        return Configuration::deleteByName($key);
+    }
 }

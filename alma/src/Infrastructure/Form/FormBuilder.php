@@ -22,7 +22,7 @@ class FormBuilder
      *
      * @return array
      */
-    public function build(string $title, array $fieldsForm = []): array
+    public function build(string $title, array $fieldsForm): array
     {
         $inputs = [];
         foreach ($fieldsForm as $key => $field) {

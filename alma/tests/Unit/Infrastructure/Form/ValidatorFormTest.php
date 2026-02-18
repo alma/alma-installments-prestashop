@@ -7,11 +7,6 @@ use PrestaShop\Module\Alma\Infrastructure\Form\ValidatorForm;
 
 class ValidatorFormTest extends TestCase
 {
-    /**
-     * @var ValidatorFormTest
-     */
-    private ValidatorFormTest $validatorForm;
-
     public function testValidateTextRequiredWithEmptyValue()
     {
         $fields = [
