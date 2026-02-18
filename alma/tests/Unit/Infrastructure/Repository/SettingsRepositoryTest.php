@@ -39,6 +39,15 @@ class SettingsRepositoryTest extends TestCase
         );
     }
 
+    public function testGetEnvironment(): void
+    {
+        $this->configuration->expects($this->once())
+            ->method('get')
+            ->with('ALMA_API_MODE')
+            ->willReturn('test');
+        $this->assertEquals('test', $this->settings->getEnvironment());
+    }
+
     public function testSaveTwoFieldsWithOneEncryptedValueWeEncryptOnce(): void
     {
         $fields = [
