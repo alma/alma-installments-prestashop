@@ -71,6 +71,15 @@ class SettingsRepository
     }
 
     /**
+     * Get the environment value from the configuration and return it.
+     * @return string
+     */
+    public function getEnvironment(): string
+    {
+        return $this->configuration->get('ALMA_API_MODE');
+    }
+
+    /**
      * Save the fields values sent by the configuration form.
      * If the params of the field contains 'encrypted' with true value, the field value will be encrypted before saving it in the configuration.
      * @param array $fields

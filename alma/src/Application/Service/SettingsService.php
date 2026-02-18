@@ -4,6 +4,7 @@ namespace PrestaShop\Module\Alma\Application\Service;
 
 use PrestaShop\Module\Alma\Application\Exception\AuthenticationException;
 use PrestaShop\Module\Alma\Application\Exception\SettingsServiceException;
+use PrestaShop\Module\Alma\Application\Helper\EncryptionHelper;
 use PrestaShop\Module\Alma\Infrastructure\Form\FormCollection;
 use PrestaShop\Module\Alma\Infrastructure\Proxy\ToolsProxy;
 use PrestaShop\Module\Alma\Infrastructure\Repository\SettingsRepository;
@@ -11,35 +12,62 @@ use PrestaShop\Module\Alma\Infrastructure\Repository\SettingsRepository;
 class SettingsService
 {
     /**
-     * @var SettingsRepository
-     */
-    private SettingsRepository $settingsRepository;
-    /**
      * @var AuthenticationService
      */
     private AuthenticationService $authenticationService;
+    /**
+     * @var SettingsRepository
+     */
+    private SettingsRepository $settingsRepository;
+    private \Module $module;
     /**
      * @var ToolsProxy
      */
     private ToolsProxy $toolsProxy;
 
     public function __construct(
-        SettingsRepository $settingsRepository,
         AuthenticationService $authenticationService,
+        SettingsRepository $settingsRepository,
+        \Module $module,
         ToolsProxy $toolsProxy
     ) {
-        $this->settingsRepository = $settingsRepository;
         $this->authenticationService = $authenticationService;
+        $this->settingsRepository = $settingsRepository;
+        $this->module = $module;
         $this->toolsProxy = $toolsProxy;
     }
 
     /**
-     * Get the API key from the POST of Form.
+     * Get the API key from the POST if we submit Form or GET from Repository.
      * @return string
      */
     public function getApiKey(): string
     {
-        return $this->toolsProxy->getValue('ALMA_TEST_API_KEY', $this->settings->getApiKey());
+        $apiKey = $this->settings->getApiKey();
+
+        if (
+            $this->toolsProxy->isSubmit('submit' . $this->module->name)
+            && $this->toolsProxy->getValue('ALMA_TEST_API_KEY') !== EncryptionHelper::OBSCURE_VALUE
+        ) {
+            $apiKey = $this->toolsProxy->getValue('ALMA_TEST_API_KEY', $apiKey);
+        }
+
+        return $apiKey;
+    }
+
+    /**
+     * Get the environment from the POST if we submit Form or GET from Repository.
+     * @return string
+     */
+    public function getEnvironment(): string
+    {
+        $environment = $this->settings->getEnvironment();
+
+        if ($this->toolsProxy->isSubmit('submit' . $this->module->name)) {
+            $environment = $this->toolsProxy->getValue('ALMA_API_MODE', $environment);
+        }
+
+        return $environment;
     }
 
     /**
