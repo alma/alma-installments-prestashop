@@ -4,24 +4,24 @@ namespace PrestaShop\Module\Alma\Infrastructure\Factory;
 
 use Alma\Client\Application\ClientConfiguration;
 use Alma\Client\Domain\ValueObject\Environment;
-use PrestaShop\Module\Alma\Application\Service\SettingsService;
+use PrestaShop\Module\Alma\Application\Provider\SettingsProvider;
 
 class ClientConfigurationFactory
 {
     /**
-     * @var SettingsService
+     * @var SettingsProvider
      */
-    private SettingsService $settingsService;
+    private SettingsProvider $settingsProvider;
     /**
      * @var Environment
      */
     private Environment $environment;
 
     public function __construct(
-        SettingsService $settingsService,
+        SettingsProvider $settingsProvider,
         Environment $environment
     ) {
-        $this->settingsService = $settingsService;
+        $this->settingsProvider = $settingsProvider;
         $this->environment = $environment;
     }
 
@@ -31,7 +31,7 @@ class ClientConfigurationFactory
      */
     public function create(): ClientConfiguration
     {
-        $apiKey = $this->settingsService->getApiKey();
+        $apiKey = $this->settingsProvider->getApiKey();
 
         return new ClientConfiguration($apiKey, $this->environment);
     }

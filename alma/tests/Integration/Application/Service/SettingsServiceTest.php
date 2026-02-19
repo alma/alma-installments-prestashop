@@ -5,7 +5,6 @@ namespace PrestaShop\Module\Alma\Tests\Integration\Application\Service;
 use Alma\Client\Domain\Entity\Merchant;
 use PHPUnit\Framework\TestCase;
 use PrestaShop\Module\Alma\Application\Exception\SettingsServiceException;
-use PrestaShop\Module\Alma\Application\Helper\EncryptionHelper;
 use PrestaShop\Module\Alma\Application\Service\AuthenticationService;
 use PrestaShop\Module\Alma\Application\Service\SettingsService;
 use PrestaShop\Module\Alma\Infrastructure\Proxy\ToolsProxy;
@@ -26,50 +25,6 @@ class SettingsServiceTest extends TestCase
             $this->module,
             $this->toolsProxy
         );
-    }
-
-    public function testGetApiKeyWithCorrectApiKeyFromRepository(): void
-    {
-        $apiKeyFromDb = 'test_api_key';
-        $this->settings->expects($this->once())
-            ->method('getApiKey')
-            ->willReturn($apiKeyFromDb);
-        $this->assertEquals($apiKeyFromDb, $this->settingsService->getApiKey());
-    }
-
-    public function testGetApiKeyWithCorrectApiKeyFromPostWithObscureValue(): void
-    {
-        $apiKeyFromDb = 'test_api_key';
-        $this->settings->expects($this->once())
-            ->method('getApiKey')
-            ->willReturn($apiKeyFromDb);
-        $this->toolsProxy->expects($this->once())
-            ->method('isSubmit')
-            ->with('submit' . $this->module->name)
-            ->willReturn(true);
-        $this->toolsProxy->expects($this->once())
-            ->method('getValue')
-            ->with('ALMA_TEST_API_KEY')
-            ->willReturn(EncryptionHelper::OBSCURE_VALUE);
-        $this->assertEquals($apiKeyFromDb, $this->settingsService->getApiKey());
-    }
-
-    public function testGetApiKeyWithCorrectApiKeyFromPostWithApiKey(): void
-    {
-        $apiKeyFromDb = 'test_api_key_db';
-        $apiKeyFromPost = 'test_api_key_post';
-        $this->settings->expects($this->once())
-            ->method('getApiKey')
-            ->willReturn($apiKeyFromDb);
-        $this->toolsProxy->expects($this->once())
-            ->method('isSubmit')
-            ->with('submit' . $this->module->name)
-            ->willReturn(true);
-        $this->toolsProxy->expects($this->exactly(2))
-            ->method('getValue')
-            ->withConsecutive(['ALMA_TEST_API_KEY'], ['ALMA_TEST_API_KEY', $apiKeyFromDb])
-            ->willReturnOnConsecutiveCalls($apiKeyFromPost, $apiKeyFromPost);
-        $this->assertEquals($apiKeyFromPost, $this->settingsService->getApiKey());
     }
 
     /**

@@ -5,7 +5,7 @@ namespace PrestaShop\Module\Alma\Tests\Unit\Infrastructure\Factory;
 use Alma\Client\Application\ClientConfiguration;
 use Alma\Client\Domain\ValueObject\Environment;
 use PHPUnit\Framework\TestCase;
-use PrestaShop\Module\Alma\Application\Service\SettingsService;
+use PrestaShop\Module\Alma\Application\Provider\SettingsProvider;
 use PrestaShop\Module\Alma\Infrastructure\Factory\ClientConfigurationFactory;
 
 class ClientConfigurationFactoryTest extends TestCase
@@ -15,16 +15,16 @@ class ClientConfigurationFactoryTest extends TestCase
      */
     private ClientConfigurationFactory $clientConfigurationFactory;
     /**
-     * @var SettingsService
+     * @var SettingsProvider
      */
-    private $settingsService;
+    private $settingsProvider;
 
     public function setUp(): void
     {
-        $this->settingsService = $this->createMock(SettingsService::class);
+        $this->settingsProvider = $this->createMock(SettingsProvider::class);
         $environment = new Environment(Environment::TEST_MODE);
         $this->clientConfigurationFactory = new ClientConfigurationFactory(
-            $this->settingsService,
+            $this->settingsProvider,
             $environment
         );
     }
@@ -33,7 +33,7 @@ class ClientConfigurationFactoryTest extends TestCase
     {
         $apiKey = 'test_api_key_123';
 
-        $this->settingsService->expects($this->once())
+        $this->settingsProvider->expects($this->once())
             ->method('getApiKey')
             ->willReturn($apiKey);
 
