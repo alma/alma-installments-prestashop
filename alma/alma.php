@@ -131,10 +131,19 @@ class Alma extends PaymentModule
     }
 
     /**
-     * @return string
+     * Redirect to the configuration page when clicking on the "Configure" button of the module in the back office
+     * Because the configuration page use a legacy controller thanks to tab, we need to redirect to it instead of using the getContent function to display the configuration page
+     * @return void
      */
-    public function getContent(): string
+    public function getContent(): void
     {
-        return '';
+        Tools::redirectAdmin($this->context->link->getAdminLink('AdminAlmaSettings'));
+    }
+
+    public function hookActionFrontControllerSetMedia(): bool
+    {
+        // TODO: To install the module in PS8 we need to set the function linked to the hook installed
+        // We don't set the assets yet, so we return true to avoid any issue with the module installation, but we will need to implement it in the future
+        return true;
     }
 }

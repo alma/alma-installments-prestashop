@@ -18,12 +18,7 @@ services:
   # Alma
 
   # Controllers
-  PrestaShop\Module\Alma\Infrastructure\Controller\SettingsController:
-    class: PrestaShop\Module\Alma\Infrastructure\Controller\SettingsController
-    arguments:
-      - '@alma.ps_accounts_service'
-    tags:
-      - 'controller.service_arguments'
+
 
   # Services
   alma.module:
@@ -40,8 +35,27 @@ services:
     class: Db
     factory: [ 'Db', 'getInstance' ]
 
+  alma.helper_form:
+    class: HelperForm
+
+  alma.form_builder:
+    class: 'PrestaShop\Module\Alma\Infrastructure\Form\FormBuilder'
+    arguments:
+      - '@alma.input_form_builder'
+
+  alma.input_form_builder:
+    class: 'PrestaShop\Module\Alma\Infrastructure\Form\InputFormBuilder'
+
+  alma.api_admin_form:
+    class: 'PrestaShop\Module\Alma\Infrastructure\Form\ApiAdminForm'
+    arguments:
+      - '@alma.form_builder'
+
   alma.language_repository:
     class: 'PrestaShop\Module\Alma\Infrastructure\Repository\LanguageRepository'
+
+  alma.settings_collection_form:
+    class: 'PrestaShop\Module\Alma\Infrastructure\Form\SettingsCollectionForm'
 
   alma.ps_accounts_service:
     class: 'PrestaShop\Module\Alma\Application\Service\PsAccountsService'
@@ -61,3 +75,29 @@ services:
       - '@alma.module_service'
       - '@alma.db'
       - '@alma.ps_accounts_installer'
+
+  alma.settings_repository:
+    class: 'PrestaShop\Module\Alma\Infrastructure\Repository\SettingsRepository'
+    arguments:
+      - '@alma.configuration_repository'
+      - '@alma.tools_proxy'
+
+  alma.configuration_repository:
+    class: 'PrestaShop\Module\Alma\Infrastructure\Repository\ConfigurationRepository'
+
+  alma.tools_proxy:
+    class: 'PrestaShop\Module\Alma\Infrastructure\Proxy\ToolsProxy'
+
+  alma.settings_service:
+    class: 'PrestaShop\Module\Alma\Application\Service\SettingsService'
+    arguments:
+      - '@alma.settings_repository'
+      - '@alma.tools_proxy'
+      - '@alma.configuration_repository'
+
+  alma.settings_form_builder:
+    class: 'PrestaShop\Module\Alma\Infrastructure\Form\SettingsFormBuilder'
+    arguments:
+      - '@alma.module'
+      - '@alma.helper_form'
+      - '@alma.settings_service'

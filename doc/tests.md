@@ -1,6 +1,9 @@
-Alma Installments for PrestaShop structure documentation
+Tests documentation
 ===================================
-This document provides an overview of the Alma Installments module for PrestaShop, detailing its features, installation process, and configuration steps.
+
+## Context
+This document is a guide to execute tests on the integration framework.
+It will explain how to execute tests on the docker container and how to use the test watcher.
 
 ## Execute test
 You need to connect to the docker ssh
