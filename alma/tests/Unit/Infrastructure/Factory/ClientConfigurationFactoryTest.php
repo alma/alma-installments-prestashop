@@ -31,11 +31,14 @@ class ClientConfigurationFactoryTest extends TestCase
 
     public function testCreateReturnsClientConfigurationWithCorrectApiKeyFromRepository(): void
     {
-        $apiKey = 'test_api_key_123';
+        $apiKeys = [
+            'test' => 'test_api_key_123',
+            'live' => 'live_api_key_456',
+        ];
 
         $this->settingsProvider->expects($this->once())
-            ->method('getApiKey')
-            ->willReturn($apiKey);
+            ->method('getApiKeys')
+            ->willReturn($apiKeys);
 
         $this->assertInstanceOf(ClientConfiguration::class, $this->clientConfigurationFactory->create());
     }

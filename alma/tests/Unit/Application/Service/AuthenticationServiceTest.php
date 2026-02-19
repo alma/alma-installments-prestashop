@@ -7,6 +7,7 @@ use Alma\Client\Application\Exception\Endpoint\MerchantEndpointException;
 use Alma\Client\Domain\Entity\Merchant;
 use PHPUnit\Framework\TestCase;
 use PrestaShop\Module\Alma\Application\Exception\AuthenticationException;
+use PrestaShop\Module\Alma\Application\Provider\SettingsProvider;
 use PrestaShop\Module\Alma\Application\Service\AuthenticationService;
 
 class AuthenticationServiceTest extends TestCase
@@ -15,12 +16,18 @@ class AuthenticationServiceTest extends TestCase
      * @var Merchant
      */
     private $merchant;
+    /**
+     * @var AuthenticationService
+     */
+    private AuthenticationService $authenticationService;
 
     public function setUp(): void
     {
+        $this->settingsProvider = $this->createMock(SettingsProvider::class);
         $this->merchant = $this->createMock(Merchant::class);
         $this->merchantEndpoint = $this->createMock(MerchantEndpoint::class);
         $this->authenticationService = new AuthenticationService(
+            $this->settingsProvider,
             $this->merchantEndpoint,
         );
     }
@@ -65,5 +72,29 @@ class AuthenticationServiceTest extends TestCase
             ->willReturn($this->merchant);
 
         $this->assertTrue($this->authenticationService->isAuthenticated());
+    }
+
+    public function testSameMerchantIdsWithDifferentIds(): void
+    {
+        $merchantIds = [
+            'test' => '123',
+            'live' => '456'
+        ];
+
+        $this->expectException(AuthenticationException::class);
+        $this->authenticationService->checkSameMerchantIds($merchantIds);
+    }
+
+    /**
+     * @throws \PrestaShop\Module\Alma\Application\Exception\AuthenticationException
+     */
+    public function testSameMerchantIdsWithSameIds(): void
+    {
+        $merchantIds = [
+            'test' => '123',
+            'live' => '123'
+        ];
+
+        $this->assertNull($this->authenticationService->checkSameMerchantIds($merchantIds));
     }
 }

@@ -53,21 +53,25 @@ class SettingsRepository
     }
 
     /**
-     * Get the API key value from the configuration, decrypt it if it's encrypted, and return it.
-     * @return string
+     * Get the API keys values from the configuration in array with key 'test' ans 'live'
+     * Decrypt it if it's encrypted, and return it.
+     * @return array
      */
-    public function getApiKey(): string
+    public function getApiKeys(): array
     {
-        $apiKey = $this->configuration->get('ALMA_TEST_API_KEY');
-        if (empty($apiKey)) {
-            return '';
+        $apiKeys = [
+            'test' => $this->configuration->get('ALMA_TEST_API_KEY'),
+            'live' => $this->configuration->get('ALMA_LIVE_API_KEY'),
+        ];
+        foreach ($apiKeys as $environment => $value) {
+            $apiKeys[$environment] = '';
+
+            if (EncryptionHelper::isEncryptionValue(true, $value)) {
+                $apiKeys[$environment] = $this->encryptionHelper->decrypt($value);
+            }
         }
 
-        if (EncryptionHelper::isEncryptionValue(true, $apiKey)) {
-            return $this->encryptionHelper->decrypt($apiKey);
-        }
-
-        return $apiKey;
+        return $apiKeys;
     }
 
     /**

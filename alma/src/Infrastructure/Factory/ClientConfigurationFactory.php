@@ -31,8 +31,8 @@ class ClientConfigurationFactory
      */
     public function create(): ClientConfiguration
     {
-        $apiKey = $this->settingsProvider->getApiKey();
+        $apiKeys = $this->settingsProvider->getApiKeys();
 
-        return new ClientConfiguration($apiKey, $this->environment);
+        return new ClientConfiguration($apiKeys[$this->environment->getMode()], $this->environment);
     }
 }

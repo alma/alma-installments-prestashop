@@ -4,6 +4,11 @@ namespace PrestaShop\Module\Alma\Infrastructure\Form;
 
 class ApiAdminForm extends AbstractAdminForm
 {
+    public const KEY_FIELDS_API_KEYS = [
+        'test' => 'ALMA_TEST_API_KEY',
+        'live' => 'ALMA_LIVE_API_KEY',
+    ];
+
     public static function title(): string
     {
         return 'API configuration';

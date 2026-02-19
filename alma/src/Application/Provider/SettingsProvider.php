@@ -3,6 +3,7 @@
 namespace PrestaShop\Module\Alma\Application\Provider;
 
 use PrestaShop\Module\Alma\Application\Helper\EncryptionHelper;
+use PrestaShop\Module\Alma\Infrastructure\Form\ApiAdminForm;
 use PrestaShop\Module\Alma\Infrastructure\Proxy\ToolsProxy;
 use PrestaShop\Module\Alma\Infrastructure\Repository\SettingsRepository;
 
@@ -30,20 +31,21 @@ class SettingsProvider
 
     /**
      * Get the API key from the POST if we submit Form or GET from Repository.
-     * @return string
+     * @return array
      */
-    public function getApiKey(): string
+    public function getApiKeys(): array
     {
-        $apiKey = $this->settingsRepository->getApiKey();
+        $apiKeys = $this->settingsRepository->getApiKeys();
 
-        if (
-            $this->toolsProxy->isSubmit('submit' . $this->module->name)
-            && $this->toolsProxy->getValue('ALMA_TEST_API_KEY') !== EncryptionHelper::OBSCURE_VALUE
-        ) {
-            $apiKey = $this->toolsProxy->getValue('ALMA_TEST_API_KEY', $apiKey);
+        if ($this->toolsProxy->isSubmit('submit' . $this->module->name)) {
+            foreach ($apiKeys as $environment => $apiKey) {
+                if ($this->toolsProxy->getValue(ApiAdminForm::KEY_FIELDS_API_KEYS[$environment]) !== EncryptionHelper::OBSCURE_VALUE) {
+                    $apiKeys[$environment] = $this->toolsProxy->getValue(ApiAdminForm::KEY_FIELDS_API_KEYS[$environment], $apiKey);
+                }
+            }
         }
 
-        return $apiKey;
+        return $apiKeys;
     }
 
     /**

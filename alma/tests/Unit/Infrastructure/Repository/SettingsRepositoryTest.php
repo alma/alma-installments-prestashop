@@ -39,6 +39,57 @@ class SettingsRepositoryTest extends TestCase
         );
     }
 
+    public function testGetApiKeysWithTestValueAndLiveNull(): void
+    {
+        $expectedApiKeys = [
+            'test' => 'decrypted_test_api_key',
+            'live' => '',
+        ];
+        $this->configuration->expects($this->exactly(2))
+            ->method('get')
+            ->withConsecutive(['ALMA_TEST_API_KEY'], ['ALMA_LIVE_API_KEY'])
+            ->willReturnOnConsecutiveCalls('test_api_key', '');
+        $this->encryptionHelper->expects($this->once())
+            ->method('decrypt')
+            ->with('test_api_key')
+            ->willReturn('decrypted_test_api_key');
+        $this->assertEquals($expectedApiKeys, $this->settings->getApiKeys());
+    }
+
+    public function testGetApiKeysWithBothValues(): void
+    {
+        $expectedApiKeys = [
+            'test' => 'decrypted_test_api_key',
+            'live' => 'decrypted_live_api_key',
+        ];
+        $this->configuration->expects($this->exactly(2))
+            ->method('get')
+            ->withConsecutive(['ALMA_TEST_API_KEY'], ['ALMA_LIVE_API_KEY'])
+            ->willReturnOnConsecutiveCalls('test_api_key', 'live_api_key');
+        $this->encryptionHelper->expects($this->exactly(2))
+            ->method('decrypt')
+            ->withConsecutive(['test_api_key'], ['live_api_key'])
+            ->willReturnOnConsecutiveCalls('decrypted_test_api_key', 'decrypted_live_api_key');
+
+        $this->assertEquals($expectedApiKeys, $this->settings->getApiKeys());
+    }
+
+    public function testGetApiKeysWithBothEmptyValues(): void
+    {
+        $expectedApiKeys = [
+            'test' => '',
+            'live' => '',
+        ];
+        $this->configuration->expects($this->exactly(2))
+            ->method('get')
+            ->withConsecutive(['ALMA_TEST_API_KEY'], ['ALMA_LIVE_API_KEY'])
+            ->willReturnOnConsecutiveCalls('', '');
+        $this->encryptionHelper->expects($this->never())
+            ->method('decrypt');
+
+        $this->assertEquals($expectedApiKeys, $this->settings->getApiKeys());
+    }
+
     public function testGetEnvironment(): void
     {
         $this->configuration->expects($this->once())
