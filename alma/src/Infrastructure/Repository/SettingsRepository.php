@@ -3,7 +3,6 @@
 namespace PrestaShop\Module\Alma\Infrastructure\Repository;
 
 use PrestaShop\Module\Alma\Application\Helper\EncryptionHelper;
-use PrestaShop\Module\Alma\Infrastructure\Form\FormCollection;
 use PrestaShop\Module\Alma\Infrastructure\Proxy\ToolsProxy;
 
 class SettingsRepository
@@ -32,27 +31,6 @@ class SettingsRepository
     }
 
     /**
-     * @return array
-     */
-    public function get(): array
-    {
-        $fields_value = [];
-
-        foreach (FormCollection::getAllFields(FormCollection::SETTINGS_FORMS_CLASSES) as $field => $param) {
-            $fields_value[$field] = $this->toolsProxy->getValue($field, $this->configurationRepository->get($field));
-            if (isset($param['getFromDb']) && $param['getFromDb'] === true) {
-                $fields_value[$field] = $this->configuration->get($field);
-            }
-
-            if (isset($param['encrypted']) && EncryptionHelper::isEncryptionValue($param['encrypted'], $fields_value[$field])) {
-                $fields_value[$field] = EncryptionHelper::OBSCURE_VALUE;
-            }
-        }
-
-        return $fields_value;
-    }
-
-    /**
      * Get the API keys values from the configuration in array with key 'test' ans 'live'
      * Decrypt it if it's encrypted, and return it.
      * @return array
@@ -60,8 +38,8 @@ class SettingsRepository
     public function getApiKeys(): array
     {
         $apiKeys = [
-            'test' => $this->configuration->get('ALMA_TEST_API_KEY'),
-            'live' => $this->configuration->get('ALMA_LIVE_API_KEY'),
+            'test' => $this->configurationRepository->get('ALMA_TEST_API_KEY'),
+            'live' => $this->configurationRepository->get('ALMA_LIVE_API_KEY'),
         ];
         foreach ($apiKeys as $environment => $value) {
             $apiKeys[$environment] = '';
@@ -80,7 +58,7 @@ class SettingsRepository
      */
     public function getEnvironment(): string
     {
-        return $this->configuration->get('ALMA_API_MODE');
+        return $this->configurationRepository->get('ALMA_API_MODE');
     }
 
     /**
