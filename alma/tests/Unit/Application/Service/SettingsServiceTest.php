@@ -8,6 +8,7 @@ use PrestaShop\Module\Alma\Application\Exception\SettingsException;
 use PrestaShop\Module\Alma\Application\Service\AuthenticationService;
 use PrestaShop\Module\Alma\Application\Service\SettingsService;
 use PrestaShop\Module\Alma\Infrastructure\Form\ApiAdminForm;
+use PrestaShop\Module\Alma\Infrastructure\Form\FormCollection;
 use PrestaShop\Module\Alma\Infrastructure\Proxy\ToolsProxy;
 use PrestaShop\Module\Alma\Infrastructure\Repository\ConfigurationRepository;
 use PrestaShop\Module\Alma\Infrastructure\Repository\SettingsRepository;
@@ -54,7 +55,7 @@ class SettingsServiceTest extends TestCase
         $this->settingsRepository->expects($this->never())
             ->method('save');
 
-        $this->settingsService->save();
+        $this->settingsService->saveWithNotification();
     }
 
     public function testSaveAuthenticationWrongWithDifferentMerchantIds(): void
@@ -74,7 +75,38 @@ class SettingsServiceTest extends TestCase
             ->method('save');
         $this->expectException(SettingsException::class);
 
-        $this->settingsService->save();
+        $this->settingsService->saveWithNotification();
+    }
+
+    /**
+     * @throws \PrestaShop\Module\Alma\Application\Exception\SettingsException
+     */
+    public function testSaveWithOneKeySet(): void
+    {
+        $merchantIds = [
+            'test' => '42'
+        ];
+        $overrideValues = [
+            ApiAdminForm::KEY_FIELD_MERCHANT_ID => '42',
+            ApiAdminForm::KEY_FIELD_MODE => 'test'
+        ];
+        $this->authenticationService->expects($this->once())
+            ->method('isValidKeys')
+            ->willReturn($merchantIds);
+        $this->authenticationService->expects($this->once())
+            ->method('checkSameMerchantIds')
+            ->with($merchantIds);
+        $this->settingsRepository->expects($this->once())
+            ->method('save')
+            ->with(
+                FormCollection::getAllFields(FormCollection::SETTINGS_FORMS_CLASSES),
+                $overrideValues
+            );
+
+        $this->assertEquals(
+            'Settings updated and mode changed to test because the API key of this mode is the only one valid',
+            $this->settingsService->saveWithNotification()
+        );
     }
 
     /**
@@ -102,6 +134,6 @@ class SettingsServiceTest extends TestCase
         $this->settingsRepository->expects($this->once())
             ->method('save');
 
-        $this->settingsService->save();
+        $this->assertEquals('Settings updated', $this->settingsService->saveWithNotification());
     }
 }
