@@ -72,10 +72,14 @@ class SettingsService
     /**
      * Check validity of the API keys and the equal merchantIds
      * Save the configuration form from all fields values.
+     * And return the notification message to show in the configuration form after saving it.
+     *
+     * @return string
      * @throws \PrestaShop\Module\Alma\Application\Exception\SettingsException
      */
-    public function save(): void
+    public function saveWithNotification(): string
     {
+        $notificationSuccess = 'Settings updated';
         try {
             $merchantIds = $this->authenticationService->isValidKeys();
             $this->authenticationService->checkSameMerchantIds($merchantIds);
@@ -84,14 +88,19 @@ class SettingsService
         }
 
         $mode = $this->toolsProxy->getValue(ApiAdminForm::KEY_FIELD_MODE, $this->settingsRepository->getEnvironment());
+        if (!array_key_exists($mode, $merchantIds)) {
+            $mode = key($merchantIds);
+            $overrideValues[ApiAdminForm::KEY_FIELD_MODE] = $mode;
+            $notificationSuccess = 'Settings updated and mode changed to ' . $mode . ' because the API key of this mode is the only one valid';
+        }
 
-        $overrideValues = [
-            ApiAdminForm::KEY_FIELD_MERCHANT_ID => $merchantIds[$mode],
-        ];
+        $overrideValues[ApiAdminForm::KEY_FIELD_MERCHANT_ID] = $merchantIds[$mode];
 
         $this->settingsRepository->save(
             FormCollection::getAllFields(FormCollection::SETTINGS_FORMS_CLASSES),
             $overrideValues
         );
+
+        return $notificationSuccess;
     }
 }

@@ -50,8 +50,8 @@ class AdminAlmaSettingsController extends ModuleAdminController
             }
             if (empty($errors)) {
                 try {
-                    $settingsService->save();
-                    $notifications = $this->module->displayConfirmation('Settings updated');
+                    $notificationSuccess = $settingsService->saveWithNotification();
+                    $notifications = $this->module->displayConfirmation($notificationSuccess);
                 } catch (SettingsException $e) {
                     $notifications = $this->module->displayError($e->getMessage());
                 }
