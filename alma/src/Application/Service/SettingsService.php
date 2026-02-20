@@ -3,8 +3,9 @@
 namespace PrestaShop\Module\Alma\Application\Service;
 
 use PrestaShop\Module\Alma\Application\Exception\AuthenticationException;
-use PrestaShop\Module\Alma\Application\Exception\SettingsServiceException;
+use PrestaShop\Module\Alma\Application\Exception\SettingsException;
 use PrestaShop\Module\Alma\Application\Helper\EncryptionHelper;
+use PrestaShop\Module\Alma\Infrastructure\Form\ApiAdminForm;
 use PrestaShop\Module\Alma\Infrastructure\Form\FormCollection;
 use PrestaShop\Module\Alma\Infrastructure\Proxy\ToolsProxy;
 use PrestaShop\Module\Alma\Infrastructure\Repository\ConfigurationRepository;
@@ -42,7 +43,10 @@ class SettingsService
     }
 
     /**
-     * Get the configuration form fields values from POST.
+     * Get the configuration form fields values from POST or DB for put the value on each input.
+     * Sometimes we need to get the value only from DB with the param 'getFromDb' if the field is not in the POST,
+     * to avoid losing the value when we save the form without changing all fields.
+     * And if the field is encrypted, we need to put the obscure value in the input to not show the encrypted value.
      *
      * @return array
      */
@@ -52,7 +56,7 @@ class SettingsService
 
         foreach (FormCollection::getAllFields(FormCollection::SETTINGS_FORMS_CLASSES) as $field => $param) {
             $fieldsValue[$field] = $this->toolsProxy->getValue($field, $this->configurationRepository->get($field));
-            // This function is to get the value from the database if the field is not in the POST, to avoid losing the value when we save the form without changing all fields.
+            // This function is to get the value from the database if the field is not in the POST.
             if (isset($param['getFromDb']) && $param['getFromDb'] === true) {
                 $fieldsValue[$field] = $this->configurationRepository->get($field);
             }
@@ -66,26 +70,24 @@ class SettingsService
     }
 
     /**
+     * Check validity of the API keys and the equal merchantIds
      * Save the configuration form from all fields values.
-     * @throws \PrestaShop\Module\Alma\Application\Exception\SettingsServiceException
+     * @throws \PrestaShop\Module\Alma\Application\Exception\SettingsException
      */
     public function save(): void
     {
         try {
-            $merchantIds = $this->authenticationService->isValidKey();
+            $merchantIds = $this->authenticationService->isValidKeys();
             $this->authenticationService->checkSameMerchantIds($merchantIds);
         } catch (AuthenticationException $e) {
-            throw new SettingsServiceException($e->getMessage());
+            throw new SettingsException($e->getMessage());
         }
 
-        // TODO : Duplicate catch, can we improve it ?
-        try {
-            $overrideValues = [
-                'ALMA_MERCHANT_ID' => $this->authenticationService->getMerchantId()
-            ];
-        } catch (AuthenticationException $e) {
-            throw new SettingsServiceException($e->getMessage());
-        }
+        $mode = $this->toolsProxy->getValue(ApiAdminForm::KEY_FIELD_MODE, $this->settingsRepository->getEnvironment());
+
+        $overrideValues = [
+            ApiAdminForm::KEY_FIELD_MERCHANT_ID => $merchantIds[$mode],
+        ];
 
         $this->settingsRepository->save(
             FormCollection::getAllFields(FormCollection::SETTINGS_FORMS_CLASSES),

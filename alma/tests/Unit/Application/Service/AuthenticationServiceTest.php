@@ -9,6 +9,7 @@ use PHPUnit\Framework\TestCase;
 use PrestaShop\Module\Alma\Application\Exception\AuthenticationException;
 use PrestaShop\Module\Alma\Application\Provider\SettingsProvider;
 use PrestaShop\Module\Alma\Application\Service\AuthenticationService;
+use PrestaShop\Module\Alma\Infrastructure\Factory\CurlClientFactory;
 
 class AuthenticationServiceTest extends TestCase
 {
@@ -24,54 +25,54 @@ class AuthenticationServiceTest extends TestCase
     public function setUp(): void
     {
         $this->settingsProvider = $this->createMock(SettingsProvider::class);
-        $this->merchant = $this->createMock(Merchant::class);
         $this->merchantEndpoint = $this->createMock(MerchantEndpoint::class);
+        $this->curlClientFactory = $this->createMock(CurlClientFactory::class);
+        $this->merchant = $this->createMock(Merchant::class);
         $this->authenticationService = new AuthenticationService(
             $this->settingsProvider,
             $this->merchantEndpoint,
+            $this->curlClientFactory
         );
     }
 
-    public function testGetMerchantIdErrorThrowException(): void
+    public function testIsValidKeysWithOneKeyEmptyAndOneKeyInvalid(): void
     {
-        $this->merchantEndpoint->expects($this->once())
-            ->method('me')
+        $apiKeys = [
+            'test' => '',
+            'live' => 'invalid_key'
+        ];
+
+        $this->settingsProvider->expects($this->once())
+            ->method('getApiKeys')
+            ->willReturn($apiKeys);
+
+        $this->curlClientFactory->expects($this->once())
+            ->method('create')
+            ->with('invalid_key', 'live')
             ->willThrowException(new MerchantEndpointException());
+
         $this->expectException(AuthenticationException::class);
-        $this->authenticationService->getMerchantId();
+        $this->authenticationService->isValidKeys();
     }
 
-    /**
-     * @throws \PrestaShop\Module\Alma\Application\Exception\AuthenticationException
-     */
-    public function testGetMerchantId(): void
+    public function testIsValidKeysWithBothKeyInvalid(): void
     {
-        $this->merchant->method('getId')
-            ->willReturn('42');
-        $this->merchantEndpoint->expects($this->once())
-            ->method('me')
-            ->willReturn($this->merchant);
-        $this->assertEquals('42', $this->authenticationService->getMerchantId());
-    }
+        $apiKeys = [
+            'test' => 'invalid_key_test',
+            'live' => 'invalid_key_live'
+        ];
 
-    public function testIsAuthenticatedNoReturnFalse(): void
-    {
-        $this->merchantEndpoint->expects($this->once())
-            ->method('me')
+        $this->settingsProvider->expects($this->once())
+            ->method('getApiKeys')
+            ->willReturn($apiKeys);
+
+        $this->curlClientFactory->expects($this->once())
+            ->method('create')
+            ->with('invalid_key_test', 'test')
             ->willThrowException(new MerchantEndpointException());
 
-        $this->assertFalse($this->authenticationService->isAuthenticated());
-    }
-
-    public function testIsAuthenticatedYesReturnTrue(): void
-    {
-        $this->merchant->method('getId')
-            ->willReturn('123');
-        $this->merchantEndpoint->expects($this->once())
-            ->method('me')
-            ->willReturn($this->merchant);
-
-        $this->assertTrue($this->authenticationService->isAuthenticated());
+        $this->expectException(AuthenticationException::class);
+        $this->authenticationService->isValidKeys();
     }
 
     public function testSameMerchantIdsWithDifferentIds(): void

@@ -38,9 +38,9 @@ class SettingsProvider
         $apiKeys = $this->settingsRepository->getApiKeys();
 
         if ($this->toolsProxy->isSubmit('submit' . $this->module->name)) {
-            foreach ($apiKeys as $environment => $apiKey) {
-                if ($this->toolsProxy->getValue(ApiAdminForm::KEY_FIELDS_API_KEYS[$environment]) !== EncryptionHelper::OBSCURE_VALUE) {
-                    $apiKeys[$environment] = $this->toolsProxy->getValue(ApiAdminForm::KEY_FIELDS_API_KEYS[$environment], $apiKey);
+            foreach ($apiKeys as $mode => $apiKey) {
+                if ($this->toolsProxy->getValue(ApiAdminForm::KEY_FIELDS_API_KEYS[$mode]) !== EncryptionHelper::OBSCURE_VALUE) {
+                    $apiKeys[$mode] = $this->toolsProxy->getValue(ApiAdminForm::KEY_FIELDS_API_KEYS[$mode], $apiKey);
                 }
             }
         }
@@ -57,7 +57,7 @@ class SettingsProvider
         $environment = $this->settingsRepository->getEnvironment();
 
         if ($this->toolsProxy->isSubmit('submit' . $this->module->name)) {
-            $environment = $this->toolsProxy->getValue('ALMA_API_MODE', $environment);
+            $environment = $this->toolsProxy->getValue(ApiAdminForm::KEY_FIELD_MODE, $environment);
         }
 
         return $environment;

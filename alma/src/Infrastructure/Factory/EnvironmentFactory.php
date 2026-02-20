@@ -18,7 +18,8 @@ class EnvironmentFactory
     }
 
     /**
-     * Create an Environment instance based on the settings repository.
+     * Create an Environment instance using the mode from the settings repository or from the POST of Form if submitted.
+     * The provider get the right value
      *
      * @return Environment
      */
