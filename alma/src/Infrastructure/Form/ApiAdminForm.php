@@ -2,11 +2,17 @@
 
 namespace PrestaShop\Module\Alma\Infrastructure\Form;
 
+use Alma\Client\Domain\ValueObject\Environment;
+
 class ApiAdminForm extends AbstractAdminForm
 {
+    public const KEY_FIELD_MODE = 'ALMA_API_MODE';
+    public const KEY_FIELD_MERCHANT_ID = 'ALMA_MERCHANT_ID';
+    public const KEY_FIELD_LIVE_API_KEY = 'ALMA_LIVE_API_KEY';
+    public const KEY_FIELD_TEST_API_KEY = 'ALMA_TEST_API_KEY';
     public const KEY_FIELDS_API_KEYS = [
-        'test' => 'ALMA_TEST_API_KEY',
-        'live' => 'ALMA_LIVE_API_KEY',
+        Environment::TEST_MODE => self::KEY_FIELD_TEST_API_KEY,
+        Environment::LIVE_MODE => self::KEY_FIELD_LIVE_API_KEY,
     ];
 
     public static function title(): string
@@ -17,7 +23,7 @@ class ApiAdminForm extends AbstractAdminForm
     public static function fieldsForm(): array
     {
         return [
-            'ALMA_API_MODE' => [
+            self::KEY_FIELD_MODE => [
                 'type' => 'select',
                 'label' => 'API Mode',
                 'required' => true,
@@ -26,8 +32,8 @@ class ApiAdminForm extends AbstractAdminForm
                 'options' => [
                     'options' => [
                         'query' => [
-                            ['id' => 'test', 'name' => 'Test'],
-                            ['id' => 'live', 'name' => 'Live'],
+                            ['id' => Environment::TEST_MODE, 'name' => 'Test'],
+                            ['id' => Environment::LIVE_MODE, 'name' => 'Live'],
                         ],
                         'id' => 'id',
                         'name' => 'name',
@@ -35,7 +41,7 @@ class ApiAdminForm extends AbstractAdminForm
                     'desc' => 'Use Test mode until you are ready to take real orders with Alma. In Test mode, only admins can see Alma on cart/checkout pages.'
                 ]
             ],
-            'ALMA_LIVE_API_KEY' => [
+            self::KEY_FIELD_LIVE_API_KEY => [
                 'type' => 'text',
                 'label' => 'Live API key',
                 'required' => false,
@@ -50,7 +56,7 @@ class ApiAdminForm extends AbstractAdminForm
                     ),
                 ],
             ],
-            'ALMA_TEST_API_KEY' => [
+            self::KEY_FIELD_TEST_API_KEY => [
                 'type' => 'text',
                 'label' => 'Test API key',
                 'required' => false,
@@ -65,7 +71,7 @@ class ApiAdminForm extends AbstractAdminForm
                     ),
                 ],
             ],
-            'ALMA_MERCHANT_ID' => [
+            self::KEY_FIELD_MERCHANT_ID => [
                 'type' => 'text',
                 'label' => 'Merchant ID',
                 'required' => false,

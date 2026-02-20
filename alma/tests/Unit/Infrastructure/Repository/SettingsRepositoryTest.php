@@ -4,6 +4,7 @@ namespace PrestaShop\Module\Alma\Tests\Unit\Infrastructure\Repository;
 
 use PHPUnit\Framework\TestCase;
 use PrestaShop\Module\Alma\Application\Helper\EncryptionHelper;
+use PrestaShop\Module\Alma\Infrastructure\Form\ApiAdminForm;
 use PrestaShop\Module\Alma\Infrastructure\Proxy\ToolsProxy;
 use PrestaShop\Module\Alma\Infrastructure\Repository\ConfigurationRepository;
 use PrestaShop\Module\Alma\Infrastructure\Repository\SettingsRepository;
@@ -47,7 +48,7 @@ class SettingsRepositoryTest extends TestCase
         ];
         $this->configuration->expects($this->exactly(2))
             ->method('get')
-            ->withConsecutive(['ALMA_TEST_API_KEY'], ['ALMA_LIVE_API_KEY'])
+            ->withConsecutive([ApiAdminForm::KEY_FIELD_TEST_API_KEY], [ApiAdminForm::KEY_FIELD_LIVE_API_KEY])
             ->willReturnOnConsecutiveCalls('test_api_key', '');
         $this->encryptionHelper->expects($this->once())
             ->method('decrypt')
@@ -64,7 +65,7 @@ class SettingsRepositoryTest extends TestCase
         ];
         $this->configuration->expects($this->exactly(2))
             ->method('get')
-            ->withConsecutive(['ALMA_TEST_API_KEY'], ['ALMA_LIVE_API_KEY'])
+            ->withConsecutive([ApiAdminForm::KEY_FIELD_TEST_API_KEY], [ApiAdminForm::KEY_FIELD_LIVE_API_KEY])
             ->willReturnOnConsecutiveCalls('test_api_key', 'live_api_key');
         $this->encryptionHelper->expects($this->exactly(2))
             ->method('decrypt')
@@ -82,7 +83,7 @@ class SettingsRepositoryTest extends TestCase
         ];
         $this->configuration->expects($this->exactly(2))
             ->method('get')
-            ->withConsecutive(['ALMA_TEST_API_KEY'], ['ALMA_LIVE_API_KEY'])
+            ->withConsecutive([ApiAdminForm::KEY_FIELD_TEST_API_KEY], [ApiAdminForm::KEY_FIELD_LIVE_API_KEY])
             ->willReturnOnConsecutiveCalls('', '');
         $this->encryptionHelper->expects($this->never())
             ->method('decrypt');
@@ -94,7 +95,7 @@ class SettingsRepositoryTest extends TestCase
     {
         $this->configuration->expects($this->once())
             ->method('get')
-            ->with('ALMA_API_MODE')
+            ->with(ApiAdminForm::KEY_FIELD_MODE)
             ->willReturn('test');
         $this->assertEquals('test', $this->settings->getEnvironment());
     }
@@ -212,5 +213,27 @@ class SettingsRepositoryTest extends TestCase
         $this->settings->save($fields);
     }
 
-    // TODO: Add test with override values if feature is validated
+    public function testSaveThreeFieldsWithOneOverrided(): void
+    {
+        $fields = [
+            'field1' => ['encrypted' => false],
+            'field2' => ['encrypted' => true],
+            'field3' => ['encrypted' => false],
+        ];
+        $overrideValues = [
+            'field3' => 'override_value3',
+        ];
+        $this->tools->expects($this->exactly(3))
+            ->method('getValue')
+            ->withConsecutive(['field1'], ['field2'], ['field3'])
+            ->willReturnOnConsecutiveCalls('value1', 'value2', 'value3');
+        $this->encryptionHelper->expects($this->once())
+            ->method('encrypt')
+            ->with('value2')
+            ->willReturn('encrypted_value2');
+        $this->configuration->expects($this->exactly(3))
+            ->method('updateValue')
+            ->withConsecutive(['field1', 'value1'], ['field2', 'encrypted_value2'], ['field3', 'override_value3']);
+        $this->settings->save($fields, $overrideValues);
+    }
 }

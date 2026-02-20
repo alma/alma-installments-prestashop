@@ -119,6 +119,7 @@ services:
     arguments:
       - '@alma.settings_provider'
       - '@alma.merchant_endpoint'
+      - '@alma.curl_client_factory'
 
   alma.client_configuration:
     class: 'Alma\Client\Application\ClientConfiguration'
@@ -144,6 +145,9 @@ services:
     class: 'PrestaShop\Module\Alma\Infrastructure\Factory\EnvironmentFactory'
     arguments:
       - '@alma.settings_provider'
+
+  alma.curl_client_factory:
+    class: 'PrestaShop\Module\Alma\Infrastructure\Factory\CurlClientFactory'
 
   alma.settings_provider:
     class: 'PrestaShop\Module\Alma\Application\Provider\SettingsProvider'

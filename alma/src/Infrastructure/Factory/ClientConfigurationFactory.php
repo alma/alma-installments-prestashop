@@ -27,6 +27,8 @@ class ClientConfigurationFactory
 
     /**
      * Create a ClientConfiguration instance using the API key from the settings repository or from the POST of Form if submitted.
+     * The provider get the right value
+     *
      * @return ClientConfiguration
      */
     public function create(): ClientConfiguration

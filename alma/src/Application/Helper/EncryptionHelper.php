@@ -46,6 +46,7 @@ class EncryptionHelper
     }
 
     /**
+     * Decrypt the value if the PhpEncryption class exists, otherwise return the value as is.
      * @param string $value
      * @return string
      */

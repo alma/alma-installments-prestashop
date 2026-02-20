@@ -2,7 +2,9 @@
 
 namespace PrestaShop\Module\Alma\Infrastructure\Repository;
 
+use Alma\Client\Domain\ValueObject\Environment;
 use PrestaShop\Module\Alma\Application\Helper\EncryptionHelper;
+use PrestaShop\Module\Alma\Infrastructure\Form\ApiAdminForm;
 use PrestaShop\Module\Alma\Infrastructure\Proxy\ToolsProxy;
 
 class SettingsRepository
@@ -38,14 +40,14 @@ class SettingsRepository
     public function getApiKeys(): array
     {
         $apiKeys = [
-            'test' => $this->configurationRepository->get('ALMA_TEST_API_KEY'),
-            'live' => $this->configurationRepository->get('ALMA_LIVE_API_KEY'),
+            Environment::TEST_MODE => $this->configurationRepository->get(ApiAdminForm::KEY_FIELD_TEST_API_KEY),
+            Environment::LIVE_MODE => $this->configurationRepository->get(ApiAdminForm::KEY_FIELD_LIVE_API_KEY),
         ];
-        foreach ($apiKeys as $environment => $value) {
-            $apiKeys[$environment] = '';
+        foreach ($apiKeys as $mode => $value) {
+            $apiKeys[$mode] = '';
 
             if (EncryptionHelper::isEncryptionValue(true, $value)) {
-                $apiKeys[$environment] = $this->encryptionHelper->decrypt($value);
+                $apiKeys[$mode] = $this->encryptionHelper->decrypt($value);
             }
         }
 
@@ -58,31 +60,33 @@ class SettingsRepository
      */
     public function getEnvironment(): string
     {
-        return $this->configurationRepository->get('ALMA_API_MODE');
+        return $this->configurationRepository->get(ApiAdminForm::KEY_FIELD_MODE);
     }
 
     /**
      * Save the fields values sent by the configuration form.
      * If the params of the field contains 'encrypted' with true value, the field value will be encrypted before saving it in the configuration.
+     * We can override the value of the field with the param $overrideValues to set the value from another service, like API to update the value.
+     *
      * @param array $fields
      * @param array $overrideValues
      * @return void
      */
     public function save(array $fields, array $overrideValues = []): void
     {
-        foreach ($fields as $field => $param) {
-            $value = $this->toolsProxy->getValue($field);
-            if (isset($overrideValues[$field])) {
-                $value = $overrideValues[$field];
+        foreach ($fields as $keyField => $paramField) {
+            $value = $this->toolsProxy->getValue($keyField);
+            if (isset($overrideValues[$keyField])) {
+                $value = $overrideValues[$keyField];
             }
 
             if ($value === EncryptionHelper::OBSCURE_VALUE) {
                 continue;
             }
-            if (isset($param['encrypted']) && EncryptionHelper::isEncryptionValue($param['encrypted'], $value)) {
+            if (isset($paramField['encrypted']) && EncryptionHelper::isEncryptionValue($paramField['encrypted'], $value)) {
                 $value = $this->encryptionHelper->encrypt($value);
             }
-            $this->configurationRepository->updateValue($field, $value);
+            $this->configurationRepository->updateValue($keyField, $value);
         }
     }
 }
