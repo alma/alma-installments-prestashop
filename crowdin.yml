@@ -5,5 +5,7 @@ base_url: https://almapay.crowdin.com
 
 preserve_hierarchy: true
 files:
-  - source: /translations/en-US/*
-    translation: /translations/%locale%/%file_name%.%locale%.xlf
+  - source: /translations/en-US/*.en-US.xlf
+    translation: /translations/%locale%/%original_file_name%.%locale%.xlf
+    translation_replace:
+      .en-US.xlf: ''

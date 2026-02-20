@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
-  <file original="almin" source-language="en" target-language="de" datatype="plaintext">
+  <file original="almin" source-language="en-US" target-language="en-US" datatype="plaintext">
     <body>
       <trans-unit id="6591c974418404b034f43893150f90a5">
         <source>Welcome in the configuration module page !</source>
-        <target state="needs-review-translation" state-qualifier="leveraged-mt">Willkommen auf der Seite des Konfigurationsmoduls!</target>
+        <target>Welcome in the configuration module page ! test2</target>
         <note>Line: </note>
       </trans-unit>
     </body>
