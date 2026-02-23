@@ -77,9 +77,8 @@ class AlmaBusinessDataModel extends AlmaObjectModel
     {
         if (version_compare(_PS_VERSION_, '1.7.1.0', '<')) {
             return $this->updateWithFullyQualifiedNamespace($null_values);
-        } else {
-            return parent::save($null_values, $auto_date);
         }
+            return parent::save($null_values, $auto_date);
     }
 
     /**
@@ -116,8 +115,7 @@ class AlmaBusinessDataModel extends AlmaObjectModel
     {
         if (version_compare(_PS_VERSION_, '1.7.1.0', '<')) {
             return $this->addWithFullyQualifiedNamespace($auto_date, $null_values);
-        } else {
-            return parent::add($auto_date, $null_values);
         }
+            return parent::add($auto_date, $null_values);
     }
 }
