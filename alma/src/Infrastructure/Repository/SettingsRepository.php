@@ -66,6 +66,7 @@ class SettingsRepository
     /**
      * Save the fields values sent by the configuration form.
      * If the params of the field contains 'encrypted' with true value, the field value will be encrypted before saving it in the configuration.
+     * If the type of the field is 'html', we will not save it in the configuration because it's not a real field, it's just for display.
      * We can override the value of the field with the param $overrideValues to set the value from another service, like API to update the value.
      *
      * @param array $fields
@@ -80,6 +81,9 @@ class SettingsRepository
                 $value = $overrideValues[$keyField];
             }
 
+            if (isset($paramField['type']) && $paramField['type'] === 'html') {
+                continue;
+            }
             if ($value === EncryptionHelper::OBSCURE_VALUE) {
                 continue;
             }
