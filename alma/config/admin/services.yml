@@ -56,6 +56,11 @@ services:
     arguments:
       - '@alma.form_builder'
 
+  alma.fee_plans_admin_form:
+    class: 'PrestaShop\Module\Alma\Infrastructure\Form\FeePlansAdminForm'
+    arguments:
+      - '@alma.form_builder'
+
   alma.language_repository:
     class: 'PrestaShop\Module\Alma\Infrastructure\Repository\LanguageRepository'
 
