@@ -160,6 +160,11 @@ services:
       - '@alma.settings_repository'
       - '@alma.tools_proxy'
 
+  alma.fee_plans_provider:
+    class: 'PrestaShop\Module\Alma\Application\Provider\FeePlansProvider'
+    arguments:
+      - '@alma.merchant_endpoint'
+
   alma.environment:
     class: 'Alma\Client\Domain\ValueObject\Environment'
     factory: ['@alma.environment_factory', 'create']
