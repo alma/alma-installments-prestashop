@@ -35,11 +35,9 @@ class SettingsServiceTest extends TestCase
     public function testGetFieldsValue(): void
     {
         $this->configurationRepository->expects($this->any())
-            ->method('get')
-            ->willReturnOnConsecutiveCalls('value1', 'value2', 'value3', 'value4', 'value5');
+            ->method('get');
         $this->toolsProxy->expects($this->any())
-            ->method('getValue')
-            ->willReturnOnConsecutiveCalls('value1', 'value2', 'value3', 'value4', 'value5');
+            ->method('getValue');
         $this->assertIsArray($this->settingsService->getFieldsValue());
     }
 

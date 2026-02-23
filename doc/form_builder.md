@@ -68,8 +68,8 @@ You need to add key with the keyName of the input value, in the value of this ke
                 ['id' => 'value_option_1', 'name' => 'Name Option 1'],
                 ['id' => 'value_option_2', 'name' => 'Name Option 2'],
             ],
-            'id' => 'id',
-            'name' => 'name',
+            'id' => 'id', // The value of the 'id' key must be the same as the key for the 'value' attribute of the <option> tag in each $options sub-array.
+            'name' => 'name', // The value of the 'name' key must be the same as the key for the text content of the <option> tag in each $options sub-array.
         ],
     ]
 ]
@@ -89,8 +89,8 @@ You need to add key with the keyName of the input value, in the value of this ke
                 ['id' => 'value_option_1', 'name' => 'Name Option 1'],
                 ['id' => 'value_option_2', 'name' => 'Name Option 2'],
             ],
-            'id' => 'id',
-            'name' => 'name',
+            'id' => 'id', // The value of the 'id' key must be the same as the key for the 'value' attribute of the <option> tag in each $options sub-array.
+            'name' => 'name', // The value of the 'name' key must be the same as the key for the text content of the <option> tag in each $options sub-array.
         ],
     ]
 ]
@@ -119,6 +119,28 @@ You need to add key with the keyName of the input value, in the value of this ke
                 'label' => 'Name Option 2',
             ],
         ],
+    ]
+]
+```
+
+### Switch (Two radio inputs)
+```php
+'KEY_INPUT_SWITCH' => [
+    'type' => 'switch',
+    'label' => 'Label name',
+    'required' => true,
+    'form' => 'form_name',
+    'options' => [
+        [
+            'id' => 'id_option_1',
+            'value' => 1,
+            'label' => 'Label Option 1'
+        ],
+        [
+            'id' => 'id_option_2',
+            'value' => 0,
+            'label' => 'Label Option 2'
+        ]
     ]
 ]
 ```

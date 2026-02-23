@@ -10,7 +10,8 @@ class FormCollection
 {
     // You can add here all form classes that you want to include in the settings collection
     public const SETTINGS_FORMS_CLASSES = [
-        ApiAdminForm::class
+        ApiAdminForm::class,
+        FeePlansAdminForm::class,
     ];
 
     /**

@@ -34,6 +34,8 @@ class AdminAlmaSettingsController extends ModuleAdminController
         $settingsFormBuilder = $this->get('alma.settings_form_builder');
         /** @var ApiAdminForm $apiAdminForm */
         $apiAdminForm = $this->get('alma.api_admin_form');
+        /** @var ApiAdminForm $apiAdminForm */
+        $feePlansAdminForm = $this->get('alma.fee_plans_admin_form');
 
         $notifications = '';
         $errors = [];
@@ -76,7 +78,8 @@ class AdminAlmaSettingsController extends ModuleAdminController
         }
 
         $forms = [
-            $apiAdminForm->build()
+            $apiAdminForm->build(),
+            $feePlansAdminForm->build()
         ];
 
         $this->context->smarty->assign([
