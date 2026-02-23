@@ -2,6 +2,7 @@
 
 use PrestaShop\Module\Alma\Application\Exception\PsAccountsException;
 use PrestaShop\Module\Alma\Application\Exception\SettingsException;
+use PrestaShop\Module\Alma\Application\Provider\FeePlansProvider;
 use PrestaShop\Module\Alma\Application\Service\PsAccountsService;
 use PrestaShop\Module\Alma\Application\Service\SettingsService;
 use PrestaShop\Module\Alma\Infrastructure\Form\ApiAdminForm;
@@ -44,6 +45,10 @@ class AdminAlmaSettingsController extends ModuleAdminController
         $isAccountLinked = false;
         $token = Tools::getAdminTokenLite('AdminAlmaSettings');
         $defaultLang = (int) Configuration::get('PS_LANG_DEFAULT');
+
+        /** @var FeePlansProvider $feePlansProvider */
+        $feePlansProvider = $this->get('alma.fee_plans_provider');
+        var_dump($feePlansProvider->getFeePlans());
 
         if (Tools::isSubmit('submit' . $this->module->name)) {
             $errors = ValidatorForm::legacyValidate(FormCollection::getAllFields(FormCollection::SETTINGS_FORMS_CLASSES), Tools::getAllValues());
