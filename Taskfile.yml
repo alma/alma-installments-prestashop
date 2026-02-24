@@ -109,6 +109,12 @@ tasks:
     cmds:
       - ./scripts/php-compatibility.sh
 
+  # TODO : We will need to use this command in a docker, we will need to create it with DevX team
+  translation:update:
+    desc: Update translations for our module in the en-US folder
+    cmds:
+      - php bin/console translation:update en-US --domain=Modules.Alma --force
+
   crowdin:
     internal: true
     preconditions:

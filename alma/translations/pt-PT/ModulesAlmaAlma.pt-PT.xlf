@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
+  <file original="almin" source-language="en" target-language="pt" datatype="plaintext">
+    <body>
+      <trans-unit id="c407a14c73b61d727c55a42fb531f2e3">
+        <source>1x 2x 3x 4x, D+15 or D+30 Alma - Payment in instalments and deferred</source>
+        <target state="needs-review-translation" state-qualifier="leveraged-mt">1x 2x 3x 4x, D+15 ou D+30 Alma - Pagamento em prestações e diferido</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="7f9c508fa226d3e72644403653115c29">
+        <source>Offer an easy and safe installments payments option to your customers</source>
+        <target state="needs-review-translation" state-qualifier="leveraged-mt">Ofereça uma opção de pagamento em prestações fácil e segura aos seus clientes</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="ce67a7d4b82bc360a17d25943924b388">
+        <source>Are you sure you want to deactivate Alma payments from your shop?</source>
+        <target state="needs-review-translation" state-qualifier="leveraged-mt">Tem a certeza de que pretende desativar os pagamentos Alma da sua loja?</target>
+        <note>Line: </note>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>
