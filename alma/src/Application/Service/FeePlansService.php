@@ -4,6 +4,8 @@ namespace PrestaShop\Module\Alma\Application\Service;
 
 use Alma\Client\Domain\Entity\FeePlan;
 use PrestaShop\Module\Alma\Application\Exception\FeePlansException;
+use PrestaShop\Module\Alma\Application\Helper\FeePlanHelper;
+use PrestaShop\Module\Alma\Application\Helper\PriceHelper;
 use PrestaShop\Module\Alma\Application\Provider\FeePlansProvider;
 
 class FeePlansService
@@ -49,7 +51,11 @@ class FeePlansService
             /** @var FeePlan $feePlan */
             $planKey = $feePlan->getPlanKey();
             $feePlansTabs[$planKey] = [
-                'title' => $feePlan->getLabel(),
+                'title' => FeePlanHelper::getTitle(
+                    $feePlan->getInstallmentsCount(),
+                    $feePlan->getDeferredDays(),
+                    $feePlan->getDeferredMonths()
+                ),
                 // TODO : Default active tab. We need to enable the first plan enable if saved in DB or P3X for the first save
                 'active' => $planKey === 'general_3_0_0',
             ];
@@ -75,7 +81,7 @@ class FeePlansService
             $feePlansFields = array_merge($feePlansFields, [
                 'ALMA_' . $planKey . '_STATE' => [
                     'type' => 'switch',
-                    'label' => 'Enable ' . $feePlan->getInstallmentsCount() . ' installments payment',
+                    'label' => FeePlanHelper::getLabel($feePlan->getInstallmentsCount(), $feePlan->getDeferredDays(), $feePlan->getDeferredMonths()),
                     'required' => false,
                     'form' => 'fee_plans',
                     'encrypted' => false,
@@ -152,8 +158,8 @@ class FeePlansService
             $planKey = mb_strtoupper($feePlan->getPlanKey());
             $feePlansFieldsValue = array_merge($feePlansFieldsValue, [
                 'ALMA_' . $planKey . '_STATE' => $feePlan->getPlanKey() === 'general_3_0_0',
-                'ALMA_' . $planKey . '_MIN_AMOUNT' => $feePlan->getMinPurchaseAmount(),
-                'ALMA_' . $planKey . '_MAX_AMOUNT' => $feePlan->getMaxPurchaseAmount(),
+                'ALMA_' . $planKey . '_MIN_AMOUNT' => PriceHelper::priceToEuro($feePlan->getMinPurchaseAmount()),
+                'ALMA_' . $planKey . '_MAX_AMOUNT' => PriceHelper::priceToEuro($feePlan->getMaxPurchaseAmount()),
                 'ALMA_' . $planKey . '_SORT_ORDER' => 1,
             ]);
         }
