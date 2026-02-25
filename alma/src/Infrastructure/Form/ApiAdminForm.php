@@ -20,7 +20,7 @@ class ApiAdminForm extends AbstractAdminForm
         return 'API configuration';
     }
 
-    public static function fieldsForm(): array
+    public static function fieldsForm(string $templateHtml = '', array $dynamicForm = []): array
     {
         return [
             self::KEY_FIELD_MODE => [

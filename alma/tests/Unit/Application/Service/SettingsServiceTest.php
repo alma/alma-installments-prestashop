@@ -6,23 +6,32 @@ use PHPUnit\Framework\TestCase;
 use PrestaShop\Module\Alma\Application\Exception\AuthenticationException;
 use PrestaShop\Module\Alma\Application\Exception\SettingsException;
 use PrestaShop\Module\Alma\Application\Service\AuthenticationService;
+use PrestaShop\Module\Alma\Application\Service\FeePlansService;
 use PrestaShop\Module\Alma\Application\Service\SettingsService;
 use PrestaShop\Module\Alma\Infrastructure\Form\ApiAdminForm;
 use PrestaShop\Module\Alma\Infrastructure\Form\FormCollection;
 use PrestaShop\Module\Alma\Infrastructure\Proxy\ToolsProxy;
 use PrestaShop\Module\Alma\Infrastructure\Repository\ConfigurationRepository;
 use PrestaShop\Module\Alma\Infrastructure\Repository\SettingsRepository;
+use PrestaShop\Module\Alma\Tests\Mocks\FeePlansMock;
 
 class SettingsServiceTest extends TestCase
 {
+    /**
+     * @var FeePlansService
+     */
+    private $feePlansService;
+
     public function setup(): void
     {
         $this->authenticationService = $this->createMock(AuthenticationService::class);
         $this->toolsProxy = $this->createMock(ToolsProxy::class);
         $this->configurationRepository = $this->createMock(ConfigurationRepository::class);
         $this->settingsRepository = $this->createMock(SettingsRepository::class);
+        $this->feePlansService = $this->createMock(FeePlansService::class);
         $this->settingsService = new SettingsService(
             $this->authenticationService,
+            $this->feePlansService,
             $this->settingsRepository,
             $this->configurationRepository,
             $this->toolsProxy
@@ -34,6 +43,9 @@ class SettingsServiceTest extends TestCase
      */
     public function testGetFieldsValue(): void
     {
+        $this->feePlansService->expects($this->once())
+            ->method('fieldsValue')
+            ->willReturn(FeePlansMock::feePlanFieldsExpected(3));
         $this->configurationRepository->expects($this->any())
             ->method('get');
         $this->toolsProxy->expects($this->any())
@@ -50,6 +62,8 @@ class SettingsServiceTest extends TestCase
             ->method('isValidKeys')
             ->willThrowException(new AuthenticationException());
         $this->expectException(SettingsException::class);
+        $this->feePlansService->expects($this->never())
+            ->method('fieldsValue');
         $this->settingsRepository->expects($this->never())
             ->method('save');
 
@@ -69,6 +83,8 @@ class SettingsServiceTest extends TestCase
             ->method('checkSameMerchantIds')
             ->with($merchantIds)
             ->willThrowException(new AuthenticationException());
+        $this->feePlansService->expects($this->never())
+            ->method('fieldsValue');
         $this->settingsRepository->expects($this->never())
             ->method('save');
         $this->expectException(SettingsException::class);
@@ -94,10 +110,17 @@ class SettingsServiceTest extends TestCase
         $this->authenticationService->expects($this->once())
             ->method('checkSameMerchantIds')
             ->with($merchantIds);
+        $this->feePlansService->expects($this->once())
+            ->method('fieldsValue')
+            ->willReturn(FeePlansMock::feePlanFieldsExpected(3));
+        $fieldsValue = array_merge(
+            FormCollection::getAllFields(FormCollection::SETTINGS_FORMS_CLASSES),
+            FeePlansMock::feePlanFieldsExpected(3)
+        );
         $this->settingsRepository->expects($this->once())
             ->method('save')
             ->with(
-                FormCollection::getAllFields(FormCollection::SETTINGS_FORMS_CLASSES),
+                $fieldsValue,
                 $overrideValues
             );
 
@@ -129,8 +152,16 @@ class SettingsServiceTest extends TestCase
             ->method('getValue')
             ->with(ApiAdminForm::KEY_FIELD_MODE, 'test')
             ->willReturn('test');
+        $this->feePlansService->expects($this->once())
+            ->method('fieldsValue')
+            ->willReturn(FeePlansMock::feePlanFieldsExpected(3));
+        $fieldsValue = array_merge(
+            FormCollection::getAllFields(FormCollection::SETTINGS_FORMS_CLASSES),
+            FeePlansMock::feePlanFieldsExpected(3)
+        );
         $this->settingsRepository->expects($this->once())
-            ->method('save');
+            ->method('save')
+            ->with($fieldsValue);
 
         $this->assertEquals('Settings updated', $this->settingsService->saveWithNotification());
     }
