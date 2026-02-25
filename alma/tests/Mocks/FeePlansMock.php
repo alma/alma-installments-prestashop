@@ -3,6 +3,8 @@
 namespace PrestaShop\Module\Alma\Tests\Mocks;
 
 use Alma\Client\Domain\Entity\FeePlan;
+use PrestaShop\Module\Alma\Application\Helper\FeePlanHelper;
+use PrestaShop\Module\Alma\Application\Helper\PriceHelper;
 
 final class FeePlansMock
 {
@@ -27,7 +29,7 @@ final class FeePlansMock
     {
         return [
             sprintf('general_%d_%d_%d', $installmentCount, $deferredDays, $deferredMonth) => [
-                'title' => sprintf('%dx', $installmentCount),
+                'title' => FeePlanHelper::getTitle($installmentCount, $deferredDays, $deferredMonth),
                 'active' => $active,
             ],
         ];
@@ -56,7 +58,7 @@ final class FeePlansMock
         return [
             'ALMA_' . $planKey . '_STATE' => [
                 'type' => 'switch',
-                'label' => 'Enable ' . $installmentCount . ' installments payment',
+                'label' => FeePlanHelper::getLabel($installmentCount, $deferredDays, $deferredMonth),
                 'required' => false,
                 'form' => 'fee_plans',
                 'encrypted' => false,
@@ -121,8 +123,8 @@ final class FeePlansMock
 
         return [
             'ALMA_' . $planKey . '_STATE' => 1,
-            'ALMA_' . $planKey . '_MIN_AMOUNT' => 10000,
-            'ALMA_' . $planKey . '_MAX_AMOUNT' => 200000,
+            'ALMA_' . $planKey . '_MIN_AMOUNT' => PriceHelper::priceToEuro(10000),
+            'ALMA_' . $planKey . '_MAX_AMOUNT' => PriceHelper::priceToEuro(200000),
             'ALMA_' . $planKey . '_SORT_ORDER' => 1,
         ];
     }

@@ -82,8 +82,8 @@ class AdminAlmaSettingsController extends ModuleAdminController
 
         $templateTabs = $feePlansService->createTemplateTabs();
         $forms = [
-            $apiAdminForm->build(),
             $feePlansAdminForm->build($templateTabs->fetch(), $feePlansService->feePlansFields()),
+            $apiAdminForm->build(),
         ];
 
         $this->context->smarty->assign([
