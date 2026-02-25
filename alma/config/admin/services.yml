@@ -103,9 +103,16 @@ services:
     class: 'PrestaShop\Module\Alma\Application\Service\SettingsService'
     arguments:
       - '@alma.authentication_service'
+      - '@alma.fee_plans_service'
       - '@alma.settings_repository'
       - '@alma.configuration_repository'
       - '@alma.tools_proxy'
+
+  alma.fee_plans_service:
+    class: 'PrestaShop\Module\Alma\Application\Service\FeePlansService'
+    arguments:
+      - '@alma.context'
+      - '@alma.fee_plans_provider'
 
   alma.settings_form_builder:
     class: 'PrestaShop\Module\Alma\Infrastructure\Form\SettingsFormBuilder'

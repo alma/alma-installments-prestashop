@@ -2,10 +2,11 @@
 
 use PrestaShop\Module\Alma\Application\Exception\PsAccountsException;
 use PrestaShop\Module\Alma\Application\Exception\SettingsException;
-use PrestaShop\Module\Alma\Application\Provider\FeePlansProvider;
+use PrestaShop\Module\Alma\Application\Service\FeePlansService;
 use PrestaShop\Module\Alma\Application\Service\PsAccountsService;
 use PrestaShop\Module\Alma\Application\Service\SettingsService;
 use PrestaShop\Module\Alma\Infrastructure\Form\ApiAdminForm;
+use PrestaShop\Module\Alma\Infrastructure\Form\FeePlansAdminForm;
 use PrestaShop\Module\Alma\Infrastructure\Form\FormCollection;
 use PrestaShop\Module\Alma\Infrastructure\Form\SettingsFormBuilder;
 use PrestaShop\Module\Alma\Infrastructure\Form\ValidatorForm;
@@ -35,8 +36,10 @@ class AdminAlmaSettingsController extends ModuleAdminController
         $settingsFormBuilder = $this->get('alma.settings_form_builder');
         /** @var ApiAdminForm $apiAdminForm */
         $apiAdminForm = $this->get('alma.api_admin_form');
-        /** @var ApiAdminForm $apiAdminForm */
+        /** @var FeePlansAdminForm $feePlansAdminForm */
         $feePlansAdminForm = $this->get('alma.fee_plans_admin_form');
+        /** @var FeePlansService $feePlansService */
+        $feePlansService = $this->get('alma.fee_plans_service');
 
         $notifications = '';
         $errors = [];
@@ -45,10 +48,6 @@ class AdminAlmaSettingsController extends ModuleAdminController
         $isAccountLinked = false;
         $token = Tools::getAdminTokenLite('AdminAlmaSettings');
         $defaultLang = (int) Configuration::get('PS_LANG_DEFAULT');
-
-        /** @var FeePlansProvider $feePlansProvider */
-        $feePlansProvider = $this->get('alma.fee_plans_provider');
-        var_dump($feePlansProvider->getFeePlans());
 
         if (Tools::isSubmit('submit' . $this->module->name)) {
             $errors = ValidatorForm::legacyValidate(FormCollection::getAllFields(FormCollection::SETTINGS_FORMS_CLASSES), Tools::getAllValues());
@@ -81,9 +80,10 @@ class AdminAlmaSettingsController extends ModuleAdminController
             $notifications = $this->module->displayError($errors);
         }
 
+        $templateTabs = $feePlansService->createTemplateTabs();
         $forms = [
             $apiAdminForm->build(),
-            $feePlansAdminForm->build()
+            $feePlansAdminForm->build($templateTabs->fetch(), $feePlansService->feePlansFields()),
         ];
 
         $this->context->smarty->assign([
