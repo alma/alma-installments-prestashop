@@ -8,14 +8,14 @@ use PrestaShop\Module\Alma\Application\Helper\PriceHelper;
 
 final class FeePlansMock
 {
-    public static function feePlan($installmentCount, $allowed = true, $minAmount = 10000, $maxAmount = 200000): FeePlan
+    public static function feePlan($installmentCount, $deferredDays = 0, $deferredMonths = 0, $allowed = true, $minAmount = 10000, $maxAmount = 200000): FeePlan
     {
         return new FeePlan([
             'allowed' => $allowed,
             'available_online' => true,
             'customer_fee_variable' => 0,
-            'deferred_days' => 0,
-            'deferred_months' => 0,
+            'deferred_days' => $deferredDays,
+            'deferred_months' => $deferredMonths,
             'installments_count' => $installmentCount,
             'kind' => 'general',
             'max_purchase_amount' => $maxAmount,
@@ -29,7 +29,7 @@ final class FeePlansMock
     {
         return [
             sprintf('general_%d_%d_%d', $installmentCount, $deferredDays, $deferredMonth) => [
-                'title' => FeePlanHelper::getTitle($installmentCount, $deferredDays, $deferredMonth),
+                'title' => FeePlanHelper::getTitle(FeePlansMock::feePlan($installmentCount)),
                 'active' => $active,
             ],
         ];
@@ -58,7 +58,7 @@ final class FeePlansMock
         return [
             'ALMA_' . $planKey . '_STATE' => [
                 'type' => 'switch',
-                'label' => FeePlanHelper::getLabel($installmentCount, $deferredDays, $deferredMonth),
+                'label' => FeePlanHelper::getLabel(FeePlansMock::feePlan($installmentCount)),
                 'required' => false,
                 'form' => 'fee_plans',
                 'encrypted' => false,
