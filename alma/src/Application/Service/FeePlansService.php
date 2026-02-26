@@ -51,11 +51,7 @@ class FeePlansService
             /** @var FeePlan $feePlan */
             $planKey = $feePlan->getPlanKey();
             $feePlansTabs[$planKey] = [
-                'title' => FeePlanHelper::getTitle(
-                    $feePlan->getInstallmentsCount(),
-                    $feePlan->getDeferredDays(),
-                    $feePlan->getDeferredMonths()
-                ),
+                'title' => FeePlanHelper::getTitle($feePlan),
                 // TODO : Default active tab. We need to enable the first plan enable if saved in DB or P3X for the first save
                 'active' => $planKey === 'general_3_0_0',
             ];
@@ -81,7 +77,7 @@ class FeePlansService
             $feePlansFields = array_merge($feePlansFields, [
                 'ALMA_' . $planKey . '_STATE' => [
                     'type' => 'switch',
-                    'label' => FeePlanHelper::getLabel($feePlan->getInstallmentsCount(), $feePlan->getDeferredDays(), $feePlan->getDeferredMonths()),
+                    'label' => FeePlanHelper::getLabel($feePlan),
                     'required' => false,
                     'form' => 'fee_plans',
                     'encrypted' => false,

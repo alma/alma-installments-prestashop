@@ -2,43 +2,33 @@
 
 namespace PrestaShop\Module\Alma\Application\Helper;
 
+use Alma\Client\Domain\Entity\FeePlan;
+
 class FeePlanHelper
 {
-    public static function getTitle(int $installmentCount, int $deferredDays, int $deferredMonth): string
+    public static function getTitle(FeePlan $feePlan): string
     {
-        $title = 'Unknown';
+        $title = 'Pay Now';
 
-        if ($installmentCount === 1 && $deferredDays === 0 && $deferredMonth === 0) {
-            $title = 'Pay Now';
+        if ($feePlan->isPnXOnly() || $feePlan->isCredit()) {
+            $title = sprintf('%d-installment payments', $feePlan->getInstallmentsCount());
         }
-        if ($installmentCount > 1 && ($deferredDays === 0 && $deferredMonth === 0)) {
-            $title = sprintf('%d-installment payments', $installmentCount);
-        }
-        if ($installmentCount === 1 && ($deferredDays !== 0 && $deferredMonth === 0)) {
-            $title = sprintf('Deferred payments + %d days', $deferredDays);
-        }
-        if ($installmentCount === 1 && ($deferredDays === 0 && $deferredMonth !== 0)) {
-            $title = sprintf('Deferred payments + %d months', $deferredMonth);
+        if ($feePlan->isPayLaterOnly()) {
+            $title = sprintf('Deferred payments + %d days', $feePlan->getDeferredDays());
         }
 
         return $title;
     }
 
-    public static function getLabel(int $installmentCount, int $deferredDays, int $deferredMonth): string
+    public static function getLabel(FeePlan $feePlan): string
     {
-        $title = 'Unknown';
+        $title = 'Enable pay now';
 
-        if ($installmentCount === 1 && $deferredDays === 0 && $deferredMonth === 0) {
-            $title = 'Enable pay now';
+        if ($feePlan->isPnXOnly() || $feePlan->isCredit()) {
+            $title = sprintf('Enable %d-installment payments', $feePlan->getInstallmentsCount());
         }
-        if ($installmentCount > 1 && ($deferredDays === 0 && $deferredMonth === 0)) {
-            $title = sprintf('Enable %d-installment payments', $installmentCount);
-        }
-        if ($installmentCount === 1 && ($deferredDays !== 0 && $deferredMonth === 0)) {
-            $title = sprintf('Enable deferred payments +%d days', $deferredDays);
-        }
-        if ($installmentCount === 1 && ($deferredDays === 0 && $deferredMonth !== 0)) {
-            $title = sprintf('Enable deferred payments +%d months', $deferredMonth);
+        if ($feePlan->isPayLaterOnly()) {
+            $title = sprintf('Enable deferred payments +%d days', $feePlan->getDeferredDays());
         }
 
         return $title;
