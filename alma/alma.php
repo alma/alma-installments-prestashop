@@ -25,6 +25,7 @@
 use PrestaShop\Module\Alma\Application\Service\ModuleInstallerService;
 use PrestaShop\Module\Alma\Application\Service\ModuleService;
 use PrestaShop\Module\Alma\Infrastructure\Repository\LanguageRepository;
+use PrestaShop\PrestaShop\Core\Module\WidgetInterface;
 use PrestaShop\PsAccountsInstaller\Installer\Installer;
 use PrestaShopBundle\Translation\TranslatorInterface;
 
@@ -38,7 +39,7 @@ if (file_exists($autoloadPath)) {
     require_once $autoloadPath;
 }
 
-class Alma extends PaymentModule
+class Alma extends PaymentModule implements WidgetInterface
 {
     public $_path;
     public $local_path;
@@ -158,5 +159,42 @@ class Alma extends PaymentModule
     public function isUsingNewTranslationSystem(): bool
     {
         return true;
+    }
+
+    // TODO: Check if it's better to centralize name of the hook or keep the native name and remove this function
+    public function hookDisplayProductAdditionalInfo($params): string
+    {
+        return $this->renderWidget('alma.widget.ProductAdditionalInfo', $params);
+    }
+
+    /**
+     * @param string $hookName
+     * @param array $configuration
+     * @return string
+     */
+    public function renderWidget($hookName, array $configuration): string
+    {
+        // TODO: Create a switch between product and cart to fetch the template in function of the hook
+        $this->smarty->assign($this->getWidgetVariables($hookName, $configuration));
+
+        return $this->fetch('module:' . $this->name . '/views/templates/widget/product.tpl');
+    }
+
+    public function getWidgetVariables($hookName, array $configuration): array
+    {
+        switch ($hookName) {
+            case 'alma.widget.product':
+                $idProduct = $configuration['product']['id_product'];
+                break;
+            case 'alma.widget.cart':
+                $idProduct = $configuration['cart']['products'][0]['id_product'];
+                break;
+            default:
+                $idProduct = null;
+        }
+
+        return [
+            'my_custom_data' => 'Hello product ' . $idProduct,
+        ];
     }
 }
