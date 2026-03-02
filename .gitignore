@@ -15,5 +15,6 @@ tools/composer.lock
 /alma/.php-cs-fixer.cache
 /alma/.coverage
 .task/
+*.exe
 .php-cs-fixer.cache
 .php_cs.cache
