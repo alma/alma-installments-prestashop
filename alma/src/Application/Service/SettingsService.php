@@ -106,10 +106,13 @@ class SettingsService
 
         $overrideValues[ApiAdminForm::KEY_FIELD_MERCHANT_ID] = $merchantIds[$mode];
 
-        // TODO : We will need to save the plan in the first time.
         $feePlansFieldsValue = $this->feePlansService->fieldsValue();
         $fieldsValue = array_merge(
             FormCollection::getAllFields(FormCollection::SETTINGS_FORMS_CLASSES),
+            $feePlansFieldsValue
+        );
+        $overrideValues = array_merge(
+            $overrideValues,
             $feePlansFieldsValue
         );
 
