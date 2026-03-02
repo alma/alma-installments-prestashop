@@ -112,10 +112,14 @@ class SettingsServiceTest extends TestCase
             ->with($merchantIds);
         $this->feePlansService->expects($this->once())
             ->method('fieldsValue')
-            ->willReturn(FeePlansMock::feePlanFieldsExpected(3));
+            ->willReturn(FeePlansMock::feePlanFieldsValueExpected(3));
         $fieldsValue = array_merge(
             FormCollection::getAllFields(FormCollection::SETTINGS_FORMS_CLASSES),
-            FeePlansMock::feePlanFieldsExpected(3)
+            FeePlansMock::feePlanFieldsValueExpected(3)
+        );
+        $overrideValues = array_merge(
+            $overrideValues,
+            FeePlansMock::feePlanFieldsValueExpected(3)
         );
         $this->settingsRepository->expects($this->once())
             ->method('save')
@@ -139,6 +143,9 @@ class SettingsServiceTest extends TestCase
             'test' => '42',
             'live' => '42'
         ];
+        $overrideValues = [
+            ApiAdminForm::KEY_FIELD_MERCHANT_ID => '42'
+        ];
         $this->authenticationService->expects($this->once())
             ->method('isValidKeys')
             ->willReturn($merchantIds);
@@ -154,14 +161,21 @@ class SettingsServiceTest extends TestCase
             ->willReturn('test');
         $this->feePlansService->expects($this->once())
             ->method('fieldsValue')
-            ->willReturn(FeePlansMock::feePlanFieldsExpected(3));
+            ->willReturn(FeePlansMock::feePlanFieldsValueExpected(3));
         $fieldsValue = array_merge(
             FormCollection::getAllFields(FormCollection::SETTINGS_FORMS_CLASSES),
-            FeePlansMock::feePlanFieldsExpected(3)
+            FeePlansMock::feePlanFieldsValueExpected(3)
+        );
+        $overrideValues = array_merge(
+            $overrideValues,
+            FeePlansMock::feePlanFieldsValueExpected(3)
         );
         $this->settingsRepository->expects($this->once())
             ->method('save')
-            ->with($fieldsValue);
+            ->with(
+                $fieldsValue,
+                $overrideValues
+            );
 
         $this->assertEquals('Settings successfully updated', $this->settingsService->saveWithNotification());
     }

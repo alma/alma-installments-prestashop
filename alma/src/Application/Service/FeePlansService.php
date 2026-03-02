@@ -149,14 +149,15 @@ class FeePlansService
             return $feePlansFieldsValue;
         }
 
-        foreach ($feePlansProvider as $feePlan) {
+        foreach ($feePlansProvider as $key => $feePlan) {
+            $orderPlan = $key + 1;
             /** @var FeePlan $feePlan */
             $planKey = mb_strtoupper($feePlan->getPlanKey());
             $feePlansFieldsValue = array_merge($feePlansFieldsValue, [
                 'ALMA_' . $planKey . '_STATE' => $feePlan->getPlanKey() === 'general_3_0_0',
                 'ALMA_' . $planKey . '_MIN_AMOUNT' => PriceHelper::priceToEuro($feePlan->getMinPurchaseAmount()),
                 'ALMA_' . $planKey . '_MAX_AMOUNT' => PriceHelper::priceToEuro($feePlan->getMaxPurchaseAmount()),
-                'ALMA_' . $planKey . '_SORT_ORDER' => 1,
+                'ALMA_' . $planKey . '_SORT_ORDER' => $orderPlan,
             ]);
         }
 
