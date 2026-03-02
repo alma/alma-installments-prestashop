@@ -2,11 +2,9 @@
 
 use PrestaShop\Module\Alma\Application\Exception\PsAccountsException;
 use PrestaShop\Module\Alma\Application\Exception\SettingsException;
-use PrestaShop\Module\Alma\Application\Service\FeePlansService;
+use PrestaShop\Module\Alma\Application\Service\FormService;
 use PrestaShop\Module\Alma\Application\Service\PsAccountsService;
 use PrestaShop\Module\Alma\Application\Service\SettingsService;
-use PrestaShop\Module\Alma\Infrastructure\Form\ApiAdminForm;
-use PrestaShop\Module\Alma\Infrastructure\Form\FeePlansAdminForm;
 use PrestaShop\Module\Alma\Infrastructure\Form\FormCollection;
 use PrestaShop\Module\Alma\Infrastructure\Form\SettingsFormBuilder;
 use PrestaShop\Module\Alma\Infrastructure\Form\ValidatorForm;
@@ -34,12 +32,8 @@ class AdminAlmaSettingsController extends ModuleAdminController
         $settingsService = $this->get('alma.settings_service');
         /** @var SettingsFormBuilder $settingsFormBuilder */
         $settingsFormBuilder = $this->get('alma.settings_form_builder');
-        /** @var ApiAdminForm $apiAdminForm */
-        $apiAdminForm = $this->get('alma.api_admin_form');
-        /** @var FeePlansAdminForm $feePlansAdminForm */
-        $feePlansAdminForm = $this->get('alma.fee_plans_admin_form');
-        /** @var FeePlansService $feePlansService */
-        $feePlansService = $this->get('alma.fee_plans_service');
+        /** @var FormService $formService */
+        $formService = $this->get('alma.form_service');
 
         $notifications = '';
         $errors = [];
@@ -81,19 +75,13 @@ class AdminAlmaSettingsController extends ModuleAdminController
             $notifications = $this->module->displayError($errors);
         }
 
-        $templateTabs = $feePlansService->createTemplateTabs();
-        $forms = [
-            $feePlansAdminForm->build($templateTabs->fetch(), $feePlansService->feePlansFields()),
-            $apiAdminForm->build(),
-        ];
-
         $this->context->smarty->assign([
             'title' => 'Alma Settings - We can custom the title',
             'displayPsAccounts' => $displayPsAccounts,
             'isPsAccountsLinked' => $isAccountLinked,
             'urlAccountsCdn' => $urlAccountsCdn,
             'notifications' => $notifications,
-            'form' => $settingsFormBuilder->render($token, $defaultLang, $forms),
+            'form' => $settingsFormBuilder->render($token, $defaultLang, $formService->getForm()),
         ]);
 
         $this->content = $this->module->display(
