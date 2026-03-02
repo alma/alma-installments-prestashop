@@ -31,7 +31,7 @@ class FeePlansService
             'fee_plans' => $this->feePlansTabs(),
         ]);
 
-        return $tpl;
+        return $tpl->fetch();
     }
 
     /**
