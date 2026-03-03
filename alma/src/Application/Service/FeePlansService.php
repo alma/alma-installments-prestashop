@@ -41,12 +41,7 @@ class FeePlansService
     public function feePlansTabs(): array
     {
         $feePlansTabs = [];
-        try {
-            $feePlansProvider = $this->feePlanProvider->getFeePlansAllowed();
-        } catch (FeePlansException $e) {
-            // TODO : Add Log here
-            return $feePlansTabs;
-        }
+        $feePlansProvider = $this->feePlanProvider->getFeePlanList();
         foreach ($feePlansProvider as $feePlan) {
             /** @var FeePlan $feePlan */
             $planKey = $feePlan->getPlanKey();
@@ -63,12 +58,7 @@ class FeePlansService
     public function feePlansFields(): array
     {
         $feePlansFields = [];
-        try {
-            $feePlansProvider = $this->feePlanProvider->getFeePlansAllowed();
-        } catch (FeePlansException $e) {
-            // TODO : Add Log here
-            return $feePlansFields;
-        }
+        $feePlansProvider = $this->feePlanProvider->getFeePlanList();
 
         foreach ($feePlansProvider as $feePlan) {
             /** @var FeePlan $feePlan */
@@ -142,12 +132,7 @@ class FeePlansService
     public function fieldsValue(): array
     {
         $feePlansFieldsValue = [];
-        try {
-            $feePlansProvider = $this->feePlanProvider->getFeePlansAllowed();
-        } catch (FeePlansException $e) {
-            // TODO : Add Log here
-            return $feePlansFieldsValue;
-        }
+        $feePlansProvider = $this->feePlanProvider->getFeePlanList();
 
         foreach ($feePlansProvider as $key => $feePlan) {
             $orderPlan = $key + 1;
