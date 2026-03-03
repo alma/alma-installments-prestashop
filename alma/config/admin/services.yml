@@ -113,6 +113,8 @@ services:
     arguments:
       - '@alma.context'
       - '@alma.fee_plans_provider'
+      - '@alma.configuration_repository'
+      - '@alma.tools_proxy'
 
   alma.settings_form_builder:
     class: 'PrestaShop\Module\Alma\Infrastructure\Form\SettingsFormBuilder'

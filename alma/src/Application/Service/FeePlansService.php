@@ -6,6 +6,10 @@ use Alma\Client\Domain\Entity\FeePlan;
 use PrestaShop\Module\Alma\Application\Helper\FeePlanHelper;
 use PrestaShop\Module\Alma\Application\Helper\PriceHelper;
 use PrestaShop\Module\Alma\Application\Provider\FeePlansProvider;
+use PrestaShop\Module\Alma\Infrastructure\Form\ApiAdminForm;
+use PrestaShop\Module\Alma\Infrastructure\Form\FeePlansAdminForm;
+use PrestaShop\Module\Alma\Infrastructure\Proxy\ToolsProxy;
+use PrestaShop\Module\Alma\Infrastructure\Repository\ConfigurationRepository;
 
 class FeePlansService
 {
@@ -14,16 +18,32 @@ class FeePlansService
      * @var FeePlansProvider
      */
     private FeePlansProvider $feePlanProvider;
+    /**
+     * @var ConfigurationRepository
+     */
+    private ConfigurationRepository $configurationRepository;
+    /**
+     * @var ToolsProxy
+     */
+    private ToolsProxy $toolsProxy;
 
     public function __construct(
         \Context $context,
-        FeePlansProvider $feePlanProvider
+        FeePlansProvider $feePlanProvider,
+        ConfigurationRepository $configurationRepository,
+        ToolsProxy $toolsProxy
     ) {
         $this->context = $context;
         $this->feePlanProvider = $feePlanProvider;
+        $this->configurationRepository = $configurationRepository;
+        $this->toolsProxy = $toolsProxy;
     }
 
-    public function createTemplateTabs()
+    /**
+     * Create the fee plans tabs template with the fee plans list from fee plan provider to create nav tabs in the fee plans template
+     * @return string
+     */
+    public function createTemplateTabs(): string
     {
         $tpl = $this->context->smarty->createTemplate(_PS_MODULE_DIR_ . 'alma/views/templates/admin/fee_plans_tabs.tpl');
         $tpl->assign([
@@ -54,6 +74,10 @@ class FeePlansService
         return $feePlansTabs;
     }
 
+    /**
+     * Get fee plans fields to build the array for loop the fields in the form
+     * @return array
+     */
     public function feePlansFields(): array
     {
         $feePlansFields = [];
@@ -128,20 +152,42 @@ class FeePlansService
         return $feePlansFields;
     }
 
+    /**
+     * Get fee plans fields value for set the value in the form.
+     * If merchant id is not saved in DB, get value from fee plan provider,
+     * else get value from post (Tools::getValue) for each field of plan
+     * @return array
+     */
     public function fieldsValue(): array
     {
         $feePlansFieldsValue = [];
         $feePlansProvider = $this->feePlanProvider->getFeePlanList();
 
+        /** @var FeePlan $feePlan */
         foreach ($feePlansProvider as $key => $feePlan) {
+            $state = $feePlan->getPlanKey() === 'general_3_0_0';
+            $minAmount = PriceHelper::priceToEuro($feePlan->getMinPurchaseAmount());
+            $maxAmount = PriceHelper::priceToEuro($feePlan->getMaxPurchaseAmount());
             $orderPlan = $key + 1;
-            /** @var FeePlan $feePlan */
             $planKey = mb_strtoupper($feePlan->getPlanKey());
+
+            $keyFieldFeePlanState = sprintf(FeePlansAdminForm::KEY_FIELD_FEE_PLAN_STATE, $planKey);
+            $keyFieldFeePlanMinAmount = sprintf(FeePlansAdminForm::KEY_FIELD_FEE_PLAN_MIN_AMOUNT, $planKey);
+            $keyFieldFeePlanMaxAmount = sprintf(FeePlansAdminForm::KEY_FIELD_FEE_PLAN_MAX_AMOUNT, $planKey);
+            $keyFieldFeePlanSortOrder = sprintf(FeePlansAdminForm::KEY_FIELD_FEE_PLAN_SORT_ORDER, $planKey);
+
+            if (!empty($this->configurationRepository->get(ApiAdminForm::KEY_FIELD_MERCHANT_ID))) {
+                $state = $this->toolsProxy->getValue($keyFieldFeePlanState);
+                $minAmount = $this->toolsProxy->getValue($keyFieldFeePlanMinAmount);
+                $maxAmount = $this->toolsProxy->getValue($keyFieldFeePlanMaxAmount);
+                $orderPlan = $this->toolsProxy->getValue($keyFieldFeePlanSortOrder);
+            }
+
             $feePlansFieldsValue = array_merge($feePlansFieldsValue, [
-                'ALMA_' . $planKey . '_STATE' => $feePlan->getPlanKey() === 'general_3_0_0',
-                'ALMA_' . $planKey . '_MIN_AMOUNT' => PriceHelper::priceToEuro($feePlan->getMinPurchaseAmount()),
-                'ALMA_' . $planKey . '_MAX_AMOUNT' => PriceHelper::priceToEuro($feePlan->getMaxPurchaseAmount()),
-                'ALMA_' . $planKey . '_SORT_ORDER' => $orderPlan,
+                $keyFieldFeePlanState => $state,
+                $keyFieldFeePlanMinAmount => $minAmount,
+                $keyFieldFeePlanMaxAmount => $maxAmount,
+                $keyFieldFeePlanSortOrder => $orderPlan,
             ]);
         }
 
