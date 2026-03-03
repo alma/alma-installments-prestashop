@@ -4,7 +4,6 @@ namespace PrestaShop\Module\Alma\Tests\Unit\Application\Service;
 
 use Alma\Client\Domain\Entity\FeePlanList;
 use PHPUnit\Framework\TestCase;
-use PrestaShop\Module\Alma\Application\Exception\FeePlansException;
 use PrestaShop\Module\Alma\Application\Provider\FeePlansProvider;
 use PrestaShop\Module\Alma\Application\Service\FeePlansService;
 use PrestaShop\Module\Alma\Tests\Mocks\FeePlansMock;
@@ -21,11 +20,11 @@ class FeePlansServiceTest extends TestCase
         );
     }
 
-    public function testFeePlansTabsExpectExceptionReturnEmptyArray()
+    public function testFeePlansTabsGetFeePlanListEmptyReturnEmptyArray()
     {
         $this->feePlansProvider->expects($this->once())
-            ->method('getFeePlansAllowed')
-            ->willThrowException(new FeePlansException());
+            ->method('getFeePlanList')
+            ->willReturn(new FeePlanList());
 
         $this->assertEquals([], $this->feePlansService->feePlansTabs());
     }
@@ -46,16 +45,16 @@ class FeePlansServiceTest extends TestCase
 
         $feePlanList = new FeePlanList([$feePlan2X, $feePlan3X, $feePlan4X]);
         $this->feePlansProvider->expects($this->once())
-            ->method('getFeePlansAllowed')
+            ->method('getFeePlanList')
             ->willReturn($feePlanList);
         $this->assertEquals($expected, $this->feePlansService->feePlansTabs());
     }
 
-    public function testFeePlansFieldsExpectExceptionReturnEmptyArray()
+    public function testFeePlansFieldsGetFeePlanListEmptyReturnEmptyArray()
     {
         $this->feePlansProvider->expects($this->once())
-            ->method('getFeePlansAllowed')
-            ->willThrowException(new FeePlansException());
+            ->method('getFeePlanList')
+            ->willReturn(new FeePlanList());
 
         $this->assertEquals([], $this->feePlansService->feePlansFields());
     }
@@ -68,10 +67,19 @@ class FeePlansServiceTest extends TestCase
 
         $feePlanList = new FeePlanList([$feePlan3X]);
         $this->feePlansProvider->expects($this->once())
-            ->method('getFeePlansAllowed')
+            ->method('getFeePlanList')
             ->willReturn($feePlanList);
 
         $this->assertEquals($expected, $this->feePlansService->feePlansFields());
+    }
+
+    public function testFeePlansFieldsValueGetFeePlanListEmptyReturnEmptyArray()
+    {
+        $this->feePlansProvider->expects($this->once())
+            ->method('getFeePlanList')
+            ->willReturn(new FeePlanList());
+
+        $this->assertEquals([], $this->feePlansService->fieldsValue());
     }
 
     public function testFieldsValue()
@@ -82,7 +90,7 @@ class FeePlansServiceTest extends TestCase
 
         $feePlanList = new FeePlanList([$feePlan3X]);
         $this->feePlansProvider->expects($this->once())
-            ->method('getFeePlansAllowed')
+            ->method('getFeePlanList')
             ->willReturn($feePlanList);
 
         $this->assertEquals($expected, $this->feePlansService->fieldsValue());
