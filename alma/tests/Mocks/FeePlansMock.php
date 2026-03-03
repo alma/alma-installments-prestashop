@@ -117,14 +117,14 @@ final class FeePlansMock
         ];
     }
 
-    public static function feePlanFieldsValueExpected(int $installmentCount, $deferredDays = 0, $deferredMonth = 0): array
+    public static function feePlanFieldsValueExpected(int $installmentCount, $deferredDays = 0, $deferredMonth = 0, $enable = 1, $minAmount = 10000, $maxAmount = 200000): array
     {
         $planKey = sprintf('GENERAL_%d_%d_%d', $installmentCount, $deferredDays, $deferredMonth);
 
         return [
-            'ALMA_' . $planKey . '_STATE' => 1,
-            'ALMA_' . $planKey . '_MIN_AMOUNT' => PriceHelper::priceToEuro(10000),
-            'ALMA_' . $planKey . '_MAX_AMOUNT' => PriceHelper::priceToEuro(200000),
+            'ALMA_' . $planKey . '_STATE' => $enable,
+            'ALMA_' . $planKey . '_MIN_AMOUNT' => PriceHelper::priceToEuro($minAmount),
+            'ALMA_' . $planKey . '_MAX_AMOUNT' => PriceHelper::priceToEuro($maxAmount),
             'ALMA_' . $planKey . '_SORT_ORDER' => 1,
         ];
     }
