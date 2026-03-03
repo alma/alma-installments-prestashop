@@ -1,10 +1,10 @@
 <?php
 
-namespace PrestaShop\Module\Alma\Application\Helper;
+namespace PrestaShop\Module\Alma\Application\Presenter;
 
 use Alma\Client\Domain\Entity\FeePlan;
 
-class FeePlanHelper
+class FeePlanPresenter
 {
     public static function getTitle(FeePlan $feePlan): string
     {

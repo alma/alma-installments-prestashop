@@ -3,8 +3,8 @@
 namespace PrestaShop\Module\Alma\Tests\Mocks;
 
 use Alma\Client\Domain\Entity\FeePlan;
-use PrestaShop\Module\Alma\Application\Helper\FeePlanHelper;
 use PrestaShop\Module\Alma\Application\Helper\PriceHelper;
+use PrestaShop\Module\Alma\Application\Presenter\FeePlanPresenter;
 
 final class FeePlansMock
 {
@@ -29,7 +29,7 @@ final class FeePlansMock
     {
         return [
             sprintf('general_%d_%d_%d', $installmentCount, $deferredDays, $deferredMonth) => [
-                'title' => FeePlanHelper::getTitle(FeePlansMock::feePlan($installmentCount)),
+                'title' => FeePlanPresenter::getTitle(FeePlansMock::feePlan($installmentCount)),
                 'active' => $active,
             ],
         ];
@@ -58,7 +58,7 @@ final class FeePlansMock
         return [
             'ALMA_' . $planKey . '_STATE' => [
                 'type' => 'switch',
-                'label' => FeePlanHelper::getLabel(FeePlansMock::feePlan($installmentCount)),
+                'label' => FeePlanPresenter::getLabel(FeePlansMock::feePlan($installmentCount)),
                 'required' => false,
                 'form' => 'fee_plans',
                 'encrypted' => false,

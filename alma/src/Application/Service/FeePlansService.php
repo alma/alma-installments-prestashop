@@ -4,8 +4,8 @@ namespace PrestaShop\Module\Alma\Application\Service;
 
 use Alma\Client\Domain\Entity\FeePlan;
 use PrestaShop\Module\Alma\Application\Exception\FeePlansException;
-use PrestaShop\Module\Alma\Application\Helper\FeePlanHelper;
 use PrestaShop\Module\Alma\Application\Helper\PriceHelper;
+use PrestaShop\Module\Alma\Application\Presenter\FeePlanPresenter;
 use PrestaShop\Module\Alma\Application\Provider\FeePlansProvider;
 
 class FeePlansService
@@ -51,7 +51,7 @@ class FeePlansService
             /** @var FeePlan $feePlan */
             $planKey = $feePlan->getPlanKey();
             $feePlansTabs[$planKey] = [
-                'title' => FeePlanHelper::getTitle($feePlan),
+                'title' => FeePlanPresenter::getTitle($feePlan),
                 // TODO : Default active tab. We need to enable the first plan enable if saved in DB or P3X for the first save
                 'active' => $planKey === 'general_3_0_0',
             ];
@@ -77,7 +77,7 @@ class FeePlansService
             $feePlansFields = array_merge($feePlansFields, [
                 'ALMA_' . $planKey . '_STATE' => [
                     'type' => 'switch',
-                    'label' => FeePlanHelper::getLabel($feePlan),
+                    'label' => FeePlanPresenter::getLabel($feePlan),
                     'required' => false,
                     'form' => 'fee_plans',
                     'encrypted' => false,
