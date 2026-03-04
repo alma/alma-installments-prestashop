@@ -17,9 +17,9 @@ class PriceHelperTest extends TestCase
 
     public function testPriceToEuro()
     {
-        $this->assertSame(13, PriceHelper::priceToEuro(1300));
-        $this->assertSame(10, PriceHelper::priceToEuro(1030));
-        $this->assertSame(10, PriceHelper::priceToEuro(1016));
-        $this->assertSame(101, PriceHelper::priceToEuro(10165));
+        $this->assertSame(13.0, PriceHelper::priceToEuro(1300));
+        $this->assertSame(10.3, PriceHelper::priceToEuro(1030));
+        $this->assertSame(10.16, PriceHelper::priceToEuro(1016));
+        $this->assertSame(101.65, PriceHelper::priceToEuro(10165));
     }
 }

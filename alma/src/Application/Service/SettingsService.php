@@ -3,6 +3,7 @@
 namespace PrestaShop\Module\Alma\Application\Service;
 
 use PrestaShop\Module\Alma\Application\Exception\AuthenticationException;
+use PrestaShop\Module\Alma\Application\Exception\FeePlansException;
 use PrestaShop\Module\Alma\Application\Exception\SettingsException;
 use PrestaShop\Module\Alma\Application\Helper\EncryptionHelper;
 use PrestaShop\Module\Alma\Infrastructure\Form\ApiAdminForm;
@@ -55,6 +56,7 @@ class SettingsService
      * And if the field is encrypted, we need to put the obscure value in the input to not show the encrypted value.
      *
      * @return array
+     * @throws \PrestaShop\Module\Alma\Application\Exception\FeePlansException
      */
     public function getFieldsValue(): array
     {
@@ -106,7 +108,11 @@ class SettingsService
 
         $overrideValues[ApiAdminForm::KEY_FIELD_MERCHANT_ID] = $merchantIds[$mode];
 
-        $feePlansFieldsValue = $this->feePlansService->fieldsValue();
+        try {
+            $feePlansFieldsValue = $this->feePlansService->fieldsValue();
+        } catch (FeePlansException $e) {
+            throw new SettingsException($e->getMessage());
+        }
         $fieldsValue = array_merge(
             FormCollection::getAllFields(FormCollection::SETTINGS_FORMS_CLASSES),
             $feePlansFieldsValue
