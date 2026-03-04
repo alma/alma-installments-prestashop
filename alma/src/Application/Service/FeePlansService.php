@@ -3,6 +3,7 @@
 namespace PrestaShop\Module\Alma\Application\Service;
 
 use Alma\Client\Domain\Entity\FeePlan;
+use PrestaShop\Module\Alma\Application\Assembler\FeePlanListAssembler;
 use PrestaShop\Module\Alma\Application\Helper\FeePlanHelper;
 use PrestaShop\Module\Alma\Application\Helper\PriceHelper;
 use PrestaShop\Module\Alma\Application\Provider\FeePlansProvider;
@@ -26,15 +27,21 @@ class FeePlansService
      * @var ToolsProxy
      */
     private ToolsProxy $toolsProxy;
+    /**
+     * @var FeePlanListAssembler
+     */
+    private FeePlanListAssembler $feePlanListAssembler;
 
     public function __construct(
         \Context $context,
         FeePlansProvider $feePlanProvider,
+        FeePlanListAssembler $feePlanListAssembler,
         ConfigurationRepository $configurationRepository,
         ToolsProxy $toolsProxy
     ) {
         $this->context = $context;
         $this->feePlanProvider = $feePlanProvider;
+        $this->feePlanListAssembler = $feePlanListAssembler;
         $this->configurationRepository = $configurationRepository;
         $this->toolsProxy = $toolsProxy;
     }
@@ -42,6 +49,7 @@ class FeePlansService
     /**
      * Create the fee plans tabs template with the fee plans list from fee plan provider to create nav tabs in the fee plans template
      * @return string
+     * @throws \Alma\Client\Application\Exception\ParametersException
      */
     public function createTemplateTabs(): string
     {
@@ -56,18 +64,27 @@ class FeePlansService
     /**
      * Get fee plans for loop the tabs in the fee plans template
      * @return array
+     * @throws \Alma\Client\Application\Exception\ParametersException
      */
     public function feePlansTabs(): array
     {
         $feePlansTabs = [];
-        $feePlansProvider = $this->feePlanProvider->getFeePlanList();
-        foreach ($feePlansProvider as $feePlan) {
-            /** @var FeePlan $feePlan */
-            $planKey = $feePlan->getPlanKey();
+        $feePlanListAssembled = $this->feePlanListAssembler->getFeePlanList();
+
+        $enabledPlans = array_filter($feePlanListAssembled, fn ($plan) => $plan['enabled']);
+        $firstEnabledPlan = !empty($enabledPlans) ? reset($enabledPlans) : null;
+        $firstEnabledPlanKey = $firstEnabledPlan
+            ? (new FeePlan($firstEnabledPlan))->getPlanKey()
+            : 'general_3_0_0';
+
+        foreach ($feePlanListAssembled as $feePlan) {
+            // TODO : $objectFeePlan it's temporary, we need to ad optinal fields (enabled and sortOrder) in the FeePlan entity to keep object FeePlan and avoid to create new FeePlan object
+            $objectFeePlan = new FeePlan($feePlan);
+            $planKey = $objectFeePlan->getPlanKey();
             $feePlansTabs[$planKey] = [
-                'title' => FeePlanHelper::getTitle($feePlan),
-                // TODO : Default active tab. We need to enable the first plan enable if saved in DB or P3X for the first save
-                'active' => $planKey === 'general_3_0_0',
+                'title' => FeePlanHelper::getTitle($objectFeePlan),
+                'active' => $feePlan['enabled'],
+                'firstPlanEnable' => $firstEnabledPlanKey,
             ];
         }
 

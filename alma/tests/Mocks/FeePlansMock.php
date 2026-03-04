@@ -8,6 +8,9 @@ use PrestaShop\Module\Alma\Application\Helper\PriceHelper;
 
 final class FeePlansMock
 {
+    /**
+     * @throws \Alma\Client\Application\Exception\ParametersException
+     */
     public static function feePlan($installmentCount, $deferredDays = 0, $deferredMonths = 0, $allowed = true, $minAmount = 10000, $maxAmount = 200000): FeePlan
     {
         return new FeePlan([
@@ -25,12 +28,32 @@ final class FeePlansMock
         ]);
     }
 
-    public static function feePlansTabsExpected($installmentCount, $active = false, $deferredDays = 0, $deferredMonth = 0): array
+    public static function feePlanAssembled($installmentCount, $deferredDays = 0, $deferredMonths = 0, $allowed = true, $minAmount = 10000, $maxAmount = 200000, $enabled = false, $sortOrder = 0): array
+    {
+        return [
+            'allowed' => $allowed,
+            'available_online' => true,
+            'customer_fee_variable' => 0,
+            'deferred_days' => $deferredDays,
+            'deferred_months' => $deferredMonths,
+            'installments_count' => $installmentCount,
+            'kind' => 'general',
+            'max_purchase_amount' => $maxAmount,
+            'merchant_fee_variable' => 0,
+            'merchant_fee_fixed' => 0,
+            'min_purchase_amount' => $minAmount,
+            'enabled' => $enabled,
+            'sort_order' => $sortOrder,
+        ];
+    }
+
+    public static function feePlansTabsExpected($installmentCount, $active = false, $deferredDays = 0, $deferredMonth = 0, $firstPlanEnable = 'general_3_0_0'): array
     {
         return [
             sprintf('general_%d_%d_%d', $installmentCount, $deferredDays, $deferredMonth) => [
                 'title' => FeePlanHelper::getTitle(FeePlansMock::feePlan($installmentCount)),
                 'active' => $active,
+                'firstPlanEnable' => $firstPlanEnable,
             ],
         ];
     }
