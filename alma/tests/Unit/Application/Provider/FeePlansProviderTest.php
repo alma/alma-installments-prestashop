@@ -5,9 +5,9 @@ namespace PrestaShop\Module\Alma\Tests\Unit\Application\Provider;
 use Alma\Client\Application\Endpoint\MerchantEndpoint;
 use Alma\Client\Application\Exception\Endpoint\MerchantEndpointException;
 use Alma\Client\Domain\Entity\FeePlanList;
-use Alma\Plugin\Infrastructure\Adapter\FeePlanListInterface;
 use PHPUnit\Framework\TestCase;
 use PrestaShop\Module\Alma\Application\Provider\FeePlansProvider;
+use PrestaShop\Module\Alma\Tests\Mocks\FeePlansMock;
 
 class FeePlansProviderTest extends TestCase
 {
@@ -63,7 +63,7 @@ class FeePlansProviderTest extends TestCase
 
     public function testGetFeesPlansAllowedReturnFeePlanList(): void
     {
-        $feePlanListFiltered = $this->createMock(FeePlanListInterface::class);
+        $feePlanListFiltered = $this->createMock(FeePlanList::class);
         $feePlanList = $this->createMock(FeePlanList::class);
         $feePlanList->expects($this->once())
             ->method('filterAllowed')
@@ -73,6 +73,33 @@ class FeePlansProviderTest extends TestCase
             ->method('getFeePlanList')
             ->willReturn($feePlanList);
 
-        $this->assertInstanceOf(FeePlanListInterface::class, $this->feePlansProvider->getFeePlansAllowed());
+        $this->assertInstanceOf(FeePlanList::class, $this->feePlansProvider->getFeePlansAllowed());
+    }
+
+    /**
+     * @throws \Alma\Client\Application\Exception\ParametersException
+     */
+    public function testGetFeesPlansAllowedReturnFeePlanListOrdered(): void
+    {
+        $feePlanPayNow = FeePlansMock::feePlan(1);
+        $feePlan30D = FeePlansMock::feePlan(1, 30);
+        $feePlanP2x = FeePlansMock::feePlan(2);
+        $feePlanP6x = FeePlansMock::feePlan(6);
+        $expectedFeePlanListOrdered = new FeePlanList();
+        $expectedFeePlanListOrdered->add($feePlanPayNow);
+        $expectedFeePlanListOrdered->add($feePlanP2x);
+        $expectedFeePlanListOrdered->add($feePlanP6x);
+        $expectedFeePlanListOrdered->add($feePlan30D);
+        $feePlanList = new FeePlanList();
+        $feePlanList->add($feePlanPayNow);
+        $feePlanList->add($feePlan30D);
+        $feePlanList->add($feePlanP2x);
+        $feePlanList->add($feePlanP6x);
+
+        $this->merchantEndpoint->expects($this->once())
+            ->method('getFeePlanList')
+            ->willReturn($feePlanList);
+
+        $this->assertEquals($expectedFeePlanListOrdered, $this->feePlansProvider->getFeePlansAllowed());
     }
 }
