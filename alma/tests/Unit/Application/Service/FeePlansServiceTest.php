@@ -19,6 +19,11 @@ class FeePlansServiceTest extends TestCase
      */
     private $feePlansProvider;
 
+    /**
+     * @var ToolsProxy
+     */
+    private $toolsProxy;
+
     public function setUp(): void
     {
         $this->context = $this->createMock(\Context::class);
@@ -134,6 +139,9 @@ class FeePlansServiceTest extends TestCase
         $this->assertEquals($expected, $this->feePlansService->feePlansFields());
     }
 
+    /**
+     * @throws \PrestaShop\Module\Alma\Application\Exception\FeePlansException
+     */
     public function testFeePlansFieldsValueGetFeePlanListEmptyReturnEmptyArray()
     {
         $this->feePlansProvider->expects($this->once())
@@ -145,6 +153,30 @@ class FeePlansServiceTest extends TestCase
 
     /**
      * @throws \Alma\Client\Application\Exception\ParametersException
+     * @throws \PrestaShop\Module\Alma\Application\Exception\FeePlansException
+     */
+    public function testFieldsValueDisplayFormWithoutMerchantIdSavedInDbReturnFieldValueFromClient()
+    {
+        $feePlanFromClient = FeePlansMock::feePlanFieldsValueExpected(3);
+
+        $feePlan3X = FeePlansMock::feePlan(3);
+
+        $feePlanList = new FeePlanList([$feePlan3X]);
+        $this->feePlansProvider->expects($this->once())
+            ->method('getFeePlanList')
+            ->willReturn($feePlanList);
+        $this->toolsProxy->expects($this->once())
+            ->method('isSubmit')
+            ->willReturn(false);
+        $this->configurationRepository->expects($this->never())
+            ->method('get');
+
+        $this->assertEquals($feePlanFromClient, $this->feePlansService->fieldsValue());
+    }
+
+    /**
+     * @throws \Alma\Client\Application\Exception\ParametersException
+     * @throws \PrestaShop\Module\Alma\Application\Exception\FeePlansException
      */
     public function testFieldsValueFirstSaveWithoutMerchantIdSavedInDbReturnFieldValueFromClient()
     {
@@ -156,6 +188,9 @@ class FeePlansServiceTest extends TestCase
         $this->feePlansProvider->expects($this->once())
             ->method('getFeePlanList')
             ->willReturn($feePlanList);
+        $this->toolsProxy->expects($this->once())
+            ->method('isSubmit')
+            ->willReturn(true);
         $this->configurationRepository->expects($this->once())
             ->method('get')
             ->with(ApiAdminForm::KEY_FIELD_MERCHANT_ID)
@@ -166,6 +201,7 @@ class FeePlansServiceTest extends TestCase
 
     /**
      * @throws \Alma\Client\Application\Exception\ParametersException
+     * @throws \PrestaShop\Module\Alma\Application\Exception\FeePlansException
      */
     public function testFieldsValueWithMerchantIdSavedInDbReturnFieldValueFromPost()
     {
@@ -177,6 +213,9 @@ class FeePlansServiceTest extends TestCase
         $this->feePlansProvider->expects($this->once())
             ->method('getFeePlanList')
             ->willReturn($feePlanList);
+        $this->toolsProxy->expects($this->once())
+            ->method('isSubmit')
+            ->willReturn(true);
         $this->configurationRepository->expects($this->once())
             ->method('get')
             ->with(ApiAdminForm::KEY_FIELD_MERCHANT_ID)

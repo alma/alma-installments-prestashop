@@ -37,6 +37,9 @@ class FormService
         $this->configurationRepository = $configurationRepository;
     }
 
+    /**
+     * @throws \Alma\Client\Application\Exception\ParametersException
+     */
     public function getForm(): array
     {
         if (!empty($this->configurationRepository->get(ApiAdminForm::KEY_FIELD_MERCHANT_ID))) {

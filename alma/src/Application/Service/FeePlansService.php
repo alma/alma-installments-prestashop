@@ -98,6 +98,7 @@ class FeePlansService
         $feePlansFields = [];
         $feePlansProvider = $this->feePlansProvider->getFeePlanList();
 
+        // TODO : Add readonly for pay now min amount fiels.
         foreach ($feePlansProvider as $feePlan) {
             /** @var FeePlan $feePlan */
             $planKey = mb_strtoupper($feePlan->getPlanKey());
@@ -172,6 +173,7 @@ class FeePlansService
      * If merchant id is not saved in DB, get value from fee plan provider,
      * else get value from post (Tools::getValue) for each field of plan
      * @return array
+     * @throws \PrestaShop\Module\Alma\Application\Exception\FeePlansException
      */
     public function fieldsValue(): array
     {
@@ -191,11 +193,22 @@ class FeePlansService
             $keyFieldFeePlanMaxAmount = sprintf(FeePlansAdminForm::KEY_FIELD_FEE_PLAN_MAX_AMOUNT, $planKey);
             $keyFieldFeePlanSortOrder = sprintf(FeePlansAdminForm::KEY_FIELD_FEE_PLAN_SORT_ORDER, $planKey);
 
-            if (!empty($this->configurationRepository->get(ApiAdminForm::KEY_FIELD_MERCHANT_ID))) {
+            if (
+                $this->toolsProxy->isSubmit('submitalma') &&
+                !empty($this->configurationRepository->get(ApiAdminForm::KEY_FIELD_MERCHANT_ID))
+            ) {
                 $state = $this->toolsProxy->getValue($keyFieldFeePlanState);
-                $minAmount = $this->toolsProxy->getValue($keyFieldFeePlanMinAmount);
-                $maxAmount = $this->toolsProxy->getValue($keyFieldFeePlanMaxAmount);
+                $minAmount = (int) $this->toolsProxy->getValue($keyFieldFeePlanMinAmount);
+                $maxAmount = (int) $this->toolsProxy->getValue($keyFieldFeePlanMaxAmount);
                 $orderPlan = $this->toolsProxy->getValue($keyFieldFeePlanSortOrder);
+                if ($feePlan->isPayNow()) {
+                    $minAmount = 1;
+                }
+                FeePlanHelper::checkLimitAmountPlan(
+                    $feePlan,
+                    PriceHelper::priceToCent($minAmount),
+                    PriceHelper::priceToCent($maxAmount)
+                );
             }
 
             $feePlansFieldsValue = array_merge($feePlansFieldsValue, [
