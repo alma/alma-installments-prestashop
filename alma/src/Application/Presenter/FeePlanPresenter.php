@@ -3,6 +3,7 @@
 namespace PrestaShop\Module\Alma\Application\Presenter;
 
 use Alma\Client\Domain\Entity\FeePlan;
+use PrestaShop\Module\Alma\Application\Exception\FeePlansException;
 
 class FeePlanPresenter
 {
@@ -32,5 +33,27 @@ class FeePlanPresenter
         }
 
         return $title;
+    }
+
+    /**
+     * @throws \PrestaShop\Module\Alma\Application\Exception\FeePlansException
+     */
+    public static function checkLimitAmountPlan(FeePlan $feePlan, int $minAmount, int $maxAmount): void
+    {
+        if ($minAmount < $feePlan->getMinPurchaseAmount()) {
+            throw new FeePlansException('The minimum purchase amount cannot be lower than the minimum allowed by Alma.');
+        }
+
+        if ($maxAmount > $feePlan->getMaxPurchaseAmount()) {
+            throw new FeePlansException('The maximum purchase amount cannot be higher than the maximum allowed by Alma.');
+        }
+
+        if ($minAmount > $feePlan->getMaxPurchaseAmount()) {
+            throw new FeePlansException('The minimum purchase amount cannot be higher than the maximum.');
+        }
+
+        if ($maxAmount < $feePlan->getMinPurchaseAmount()) {
+            throw new FeePlansException('The maximum purchase amount cannot be lower than the minimum.');
+        }
     }
 }
