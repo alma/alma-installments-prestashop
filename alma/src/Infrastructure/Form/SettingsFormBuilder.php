@@ -32,6 +32,7 @@ class SettingsFormBuilder
      * @param array $languages
      * @param array $forms
      * @return string
+     * @throws \PrestaShop\Module\Alma\Application\Exception\FeePlansException
      */
     public function render(string $token, int $defaultLang, int $allowEmployeeFormLang, array $languages, array $forms = []): string
     {
