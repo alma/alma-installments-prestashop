@@ -105,7 +105,6 @@ class FeePlansService
         $feePlansFields = [];
         $feePlansProvider = $this->feePlansProvider->getFeePlanList();
 
-        // TODO : Add readonly for pay now min amount fiels.
         foreach ($feePlansProvider as $feePlan) {
             /** @var FeePlan $feePlan */
             $planKey = mb_strtoupper($feePlan->getPlanKey());
