@@ -7,6 +7,7 @@ use Alma\Client\Application\Exception\Endpoint\MerchantEndpointException;
 use Alma\Client\Domain\Entity\FeePlanList;
 use PHPUnit\Framework\TestCase;
 use PrestaShop\Module\Alma\Application\Provider\FeePlansProvider;
+use PrestaShop\Module\Alma\Tests\Mocks\FeePlansMock;
 
 class FeePlansProviderTest extends TestCase
 {
@@ -58,5 +59,32 @@ class FeePlansProviderTest extends TestCase
             ->willThrowException(new MerchantEndpointException());
 
         $this->assertEquals(new FeePlanList(), $this->feePlansProvider->getFeePlanList());
+    }
+
+    /**
+    * @throws \Alma\Client\Application\Exception\ParametersException
+    */
+    public function testGetFeesPlansAllowedReturnFeePlanListOrdered(): void
+    {
+        $feePlanPayNow = FeePlansMock::feePlan(1);
+        $feePlan30D = FeePlansMock::feePlan(1, 30);
+        $feePlanP2x = FeePlansMock::feePlan(2);
+        $feePlanP6x = FeePlansMock::feePlan(6);
+        $expectedFeePlanListOrdered = new FeePlanList();
+        $expectedFeePlanListOrdered->add($feePlanPayNow);
+        $expectedFeePlanListOrdered->add($feePlanP2x);
+        $expectedFeePlanListOrdered->add($feePlanP6x);
+        $expectedFeePlanListOrdered->add($feePlan30D);
+        $feePlanList = new FeePlanList();
+        $feePlanList->add($feePlanPayNow);
+        $feePlanList->add($feePlan30D);
+        $feePlanList->add($feePlanP2x);
+        $feePlanList->add($feePlanP6x);
+
+        $this->merchantEndpoint->expects($this->once())
+            ->method('getFeePlanList')
+            ->willReturn($feePlanList);
+
+        $this->assertEquals($expectedFeePlanListOrdered, $this->feePlansProvider->getFeePlansAllowed());
     }
 }
