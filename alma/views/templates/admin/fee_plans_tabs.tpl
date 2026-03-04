@@ -7,9 +7,13 @@
         {else}
             {assign var='tabClasses' value="`$tabClasses`, .tab-`$planKey`"}
         {/if}
-        <li {if $feePlan.active}class='active'{/if}>
+        <li {if $feePlan.firstPlanEnable === $planKey}class='active'{/if}>
             <a href='javascript:void(0)' data-target='{$planKey|escape:'htmlall':'UTF-8'}' data-toggle='tab'>
-{*                <i class="material-icons mi-check">check</i>*}
+                {if $feePlan.active}
+                    <i class="material-icons mi-check small text-success">check</i>
+                {else}
+                    <i class="material-icons mi-close small text-danger">close</i>
+                {/if}
                 {$feePlan.title|escape:'htmlall':'UTF-8'}
             </a>
         </li>
