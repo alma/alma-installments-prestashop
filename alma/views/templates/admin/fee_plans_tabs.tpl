@@ -1,13 +1,14 @@
 {assign var='tabClasses' value=''}
 <ul class='nav nav-tabs alma-pnx-tabs'>
     {foreach $fee_plans as $planKey => $feePlan name=loop}
+        {assign var='firstPlanEnable' value=$feePlan.firstPlanEnable}
         {* Loop to explode the plans for the selector in string *}
         {if $smarty.foreach.loop.first}
             {assign var='tabClasses' value=".tab-`$planKey`"}
         {else}
             {assign var='tabClasses' value="`$tabClasses`, .tab-`$planKey`"}
         {/if}
-        <li {if $feePlan.firstPlanEnable === $planKey}class='active'{/if}>
+        <li {if $firstPlanEnable === $planKey}class='active'{/if}>
             <a href='javascript:void(0)' data-target='{$planKey|escape:'htmlall':'UTF-8'}' data-toggle='tab'>
                 {if $feePlan.active}
                     <i class="material-icons mi-check small text-success">check</i>
@@ -26,7 +27,7 @@
                 $('{$tabClasses}').hide();
                 $('.tab-' + tab).show();
             }
-            showTab('general_3_0_0');
+            showTab('{$firstPlanEnable}');
             $('.alma-pnx-tabs li a').click(function(e) {
                 e.preventDefault();
                 $('.alma-pnx-tabs li').removeClass('active');

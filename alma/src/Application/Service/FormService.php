@@ -38,7 +38,7 @@ class FormService
     }
 
     /**
-     * @throws \Alma\Client\Application\Exception\ParametersException
+     * @return array
      */
     public function getForm(): array
     {

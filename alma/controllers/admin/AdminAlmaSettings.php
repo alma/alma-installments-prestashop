@@ -1,6 +1,5 @@
 <?php
 
-use PrestaShop\Module\Alma\Application\Exception\FeePlansException;
 use PrestaShop\Module\Alma\Application\Exception\PsAccountsException;
 use PrestaShop\Module\Alma\Application\Exception\SettingsException;
 use PrestaShop\Module\Alma\Application\Service\FormService;
@@ -58,14 +57,6 @@ class AdminAlmaSettingsController extends ModuleAdminController
             }
         }
 
-        // TODO : Handle the exception in the form builder
-        try {
-            $form = $settingsFormBuilder->render($token, $defaultLang, $formService->getForm());
-        } catch (FeePlansException $e) {
-            $form = [];
-            $notifications = $this->module->displayError($e->getMessage());
-        }
-
         try {
             Media::addJsDef([
                 'contextPsAccounts' => $psAccountsService->getPsAccountsPresenter()
@@ -89,7 +80,7 @@ class AdminAlmaSettingsController extends ModuleAdminController
             'isPsAccountsLinked' => $isAccountLinked,
             'urlAccountsCdn' => $urlAccountsCdn,
             'notifications' => $notifications,
-            'form' => $form,
+            'form' => $settingsFormBuilder->render($token, $defaultLang, $formService->getForm()),
         ]);
 
         $this->content = $this->module->display(

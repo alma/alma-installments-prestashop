@@ -42,7 +42,6 @@ class FeePlansService
     /**
      * Create the fee plans tabs template with the fee plans list from fee plan provider to create nav tabs in the fee plans template
      * @return string
-     * @throws \Alma\Client\Application\Exception\ParametersException
      */
     public function createTemplateTabs(): string
     {
@@ -133,6 +132,7 @@ class FeePlansService
                     'form' => 'fee_plans',
                     'encrypted' => false,
                     'options' => [
+                        'readonly' => $feePlan->isPayNow(),
                         'form_group_class' => 'tab-' . $planKeyTab,
                         'size' => 20,
                         'desc' => 'Minimum purchase amount to activate this plan',
@@ -170,12 +170,47 @@ class FeePlansService
 
     /**
      * Get fee plans fields value for set the value in the form.
+     * From the loop of fee plan list.
+     * @return array
+     */
+    public function fieldsValue(): array
+    {
+        $feePlansFieldsValue = [];
+        $feePlansProvider = $this->feePlansProvider->getFeePlanList();
+
+        /** @var FeePlan $feePlan */
+        foreach ($feePlansProvider as $feePlan) {
+            $planKey = mb_strtoupper($feePlan->getPlanKey());
+
+            $keyFieldFeePlanState = sprintf(FeePlansAdminForm::KEY_FIELD_FEE_PLAN_STATE, $planKey);
+            $keyFieldFeePlanMinAmount = sprintf(FeePlansAdminForm::KEY_FIELD_FEE_PLAN_MIN_AMOUNT, $planKey);
+            $keyFieldFeePlanMaxAmount = sprintf(FeePlansAdminForm::KEY_FIELD_FEE_PLAN_MAX_AMOUNT, $planKey);
+            $keyFieldFeePlanSortOrder = sprintf(FeePlansAdminForm::KEY_FIELD_FEE_PLAN_SORT_ORDER, $planKey);
+
+            $state = $this->configurationRepository->get($keyFieldFeePlanState);
+            $minAmount = $this->configurationRepository->get($keyFieldFeePlanMinAmount);
+            $maxAmount = $this->configurationRepository->get($keyFieldFeePlanMaxAmount);
+            $sortOrder = $this->configurationRepository->get($keyFieldFeePlanSortOrder);
+
+            $feePlansFieldsValue = array_merge($feePlansFieldsValue, [
+                $keyFieldFeePlanState => $state,
+                $keyFieldFeePlanMinAmount => $minAmount,
+                $keyFieldFeePlanMaxAmount => $maxAmount,
+                $keyFieldFeePlanSortOrder => $sortOrder,
+            ]);
+        }
+
+        return $feePlansFieldsValue;
+    }
+
+    /**
+     * Get fee plans fields value to save in the database.
      * If merchant id is not saved in DB, get value from fee plan provider,
      * else get value from post (Tools::getValue) for each field of plan
      * @return array
      * @throws \PrestaShop\Module\Alma\Application\Exception\FeePlansException
      */
-    public function fieldsValue(): array
+    public function fieldsToSave(): array
     {
         $feePlansFieldsValue = [];
         $feePlansProvider = $this->feePlansProvider->getFeePlanList();
@@ -193,10 +228,7 @@ class FeePlansService
             $keyFieldFeePlanMaxAmount = sprintf(FeePlansAdminForm::KEY_FIELD_FEE_PLAN_MAX_AMOUNT, $planKey);
             $keyFieldFeePlanSortOrder = sprintf(FeePlansAdminForm::KEY_FIELD_FEE_PLAN_SORT_ORDER, $planKey);
 
-            if (
-                $this->toolsProxy->isSubmit('submitalma') &&
-                !empty($this->configurationRepository->get(ApiAdminForm::KEY_FIELD_MERCHANT_ID))
-            ) {
+            if (!empty($this->configurationRepository->get(ApiAdminForm::KEY_FIELD_MERCHANT_ID))) {
                 $state = $this->toolsProxy->getValue($keyFieldFeePlanState);
                 $minAmount = (int) $this->toolsProxy->getValue($keyFieldFeePlanMinAmount);
                 $maxAmount = (int) $this->toolsProxy->getValue($keyFieldFeePlanMaxAmount);
