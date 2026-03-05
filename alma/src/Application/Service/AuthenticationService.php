@@ -52,16 +52,28 @@ class AuthenticationService
                 continue;
             }
 
-            try {
-                $curlClient = $this->curlClientFactory->create($apiKey, $mode);
-                $merchantEndpoint = new MerchantEndpoint($curlClient);
-                $merchantIds[$mode] = $merchantEndpoint->me()->getId();
-            } catch (MerchantEndpointException $e) {
-                throw new AuthenticationException($e->getMessage() . ': ' . $mode);
-            }
+            $merchantIds[$mode] = $this->checkAuthentication($apiKey, $mode);
         }
 
         return $merchantIds;
+    }
+
+    /**
+     * Check if the API key is valid or expect Exception.
+     * @param string $apiKey
+     * @param string $mode
+     * @return string
+     * @throws \PrestaShop\Module\Alma\Application\Exception\AuthenticationException
+     */
+    public function checkAuthentication(string $apiKey, string $mode): string
+    {
+        try {
+            $curlClient = $this->curlClientFactory->create($apiKey, $mode);
+            $merchantEndpoint = new MerchantEndpoint($curlClient);
+            return $merchantEndpoint->me()->getId();
+        } catch (MerchantEndpointException $e) {
+            throw new AuthenticationException($e->getMessage() . ': ' . $mode);
+        }
     }
 
     /**

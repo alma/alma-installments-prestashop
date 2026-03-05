@@ -86,7 +86,7 @@ services:
     arguments:
       - '@alma.configuration_repository'
       - '@alma.tools_proxy'
-      - '@alma.encryption_helper'
+      - '@alma.encryptor_helper'
 
   alma.configuration_repository:
     class: 'PrestaShop\Module\Alma\Infrastructure\Repository\ConfigurationRepository'
@@ -109,8 +109,8 @@ services:
       - '@alma.helper_form'
       - '@alma.settings_service'
 
-  alma.encryption_helper:
-    class: 'PrestaShop\Module\Alma\Application\Helper\EncryptionHelper'
+  alma.encryptor_helper:
+    class: 'PrestaShop\Module\Alma\Application\Helper\EncryptorHelper'
     arguments:
       - '@alma.php_encryption'
 
