@@ -111,7 +111,7 @@ class SettingsServiceTest extends TestCase
             ->method('checkSameMerchantIds')
             ->with($merchantIds);
         $this->feePlansService->expects($this->once())
-            ->method('fieldsValue')
+            ->method('fieldsToSave')
             ->willReturn(FeePlansMock::feePlanFieldsValueExpected(3));
         $fieldsValue = array_merge(
             FormCollection::getAllFields(FormCollection::SETTINGS_FORMS_CLASSES),
@@ -160,7 +160,7 @@ class SettingsServiceTest extends TestCase
             ->with(ApiAdminForm::KEY_FIELD_MODE, 'test')
             ->willReturn('test');
         $this->feePlansService->expects($this->once())
-            ->method('fieldsValue')
+            ->method('fieldsToSave')
             ->willReturn(FeePlansMock::feePlanFieldsValueExpected(3));
         $fieldsValue = array_merge(
             FormCollection::getAllFields(FormCollection::SETTINGS_FORMS_CLASSES),

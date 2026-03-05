@@ -56,7 +56,6 @@ class SettingsService
      * And if the field is encrypted, we need to put the obscure value in the input to not show the encrypted value.
      *
      * @return array
-     * @throws \PrestaShop\Module\Alma\Application\Exception\FeePlansException
      */
     public function getFieldsValue(): array
     {
@@ -109,7 +108,7 @@ class SettingsService
         $overrideValues[ApiAdminForm::KEY_FIELD_MERCHANT_ID] = $merchantIds[$mode];
 
         try {
-            $feePlansFieldsValue = $this->feePlansService->fieldsValue();
+            $feePlansFieldsValue = $this->feePlansService->fieldsToSave();
         } catch (FeePlansException $e) {
             throw new SettingsException($e->getMessage());
         }

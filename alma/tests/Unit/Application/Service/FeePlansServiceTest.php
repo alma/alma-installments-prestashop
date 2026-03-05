@@ -18,6 +18,10 @@ class FeePlansServiceTest extends TestCase
      * @var ToolsProxy
      */
     private $toolsProxy;
+    /**
+     * @var FeePlansService
+     */
+    private FeePlansService $feePlansService;
 
     public function setUp(): void
     {
@@ -122,22 +126,46 @@ class FeePlansServiceTest extends TestCase
     }
 
     /**
+     * @throws \Alma\Client\Application\Exception\ParametersException
+     */
+    public function testFieldsValueFromRepositoryLoopedFromFeePlanList()
+    {
+        $feePlanFromClient = FeePlansMock::feePlanFieldsValueExpected(3, 0, 0, 1, 10000, 200000, 5);
+
+        $feePlan3X = FeePlansMock::feePlan(3);
+
+        $feePlanList = new FeePlanList([$feePlan3X]);
+        $this->feePlansProvider->expects($this->once())
+            ->method('getFeePlanList')
+            ->willReturn($feePlanList);
+        $this->configurationRepository->expects($this->exactly(4))
+            ->method('get')
+            ->willReturnMap([
+                ['ALMA_GENERAL_3_0_0_STATE', '1'],
+                ['ALMA_GENERAL_3_0_0_MIN_AMOUNT', '100'],
+                ['ALMA_GENERAL_3_0_0_MAX_AMOUNT', '2000'],
+                ['ALMA_GENERAL_3_0_0_SORT_ORDER', '5'],
+            ]);
+        $this->assertEquals($feePlanFromClient, $this->feePlansService->fieldsValue());
+    }
+
+    /**
      * @throws \PrestaShop\Module\Alma\Application\Exception\FeePlansException
      */
-    public function testFeePlansFieldsValueGetFeePlanListEmptyReturnEmptyArray()
+    public function testFeePlansFieldsToSaveGetFeePlanListEmptyReturnEmptyArray()
     {
         $this->feePlansProvider->expects($this->once())
             ->method('getFeePlanList')
             ->willReturn(new FeePlanList());
 
-        $this->assertEquals([], $this->feePlansService->fieldsValue());
+        $this->assertEquals([], $this->feePlansService->fieldsToSave());
     }
 
     /**
      * @throws \Alma\Client\Application\Exception\ParametersException
      * @throws \PrestaShop\Module\Alma\Application\Exception\FeePlansException
      */
-    public function testFieldsValueDisplayFormWithoutMerchantIdSavedInDbReturnFieldValueFromClient()
+    public function testFieldsToSaveFirstSaveWithoutMerchantIdSavedInDbReturnFieldValueFromClient()
     {
         $feePlanFromClient = FeePlansMock::feePlanFieldsValueExpected(3);
 
@@ -147,45 +175,19 @@ class FeePlansServiceTest extends TestCase
         $this->feePlansProvider->expects($this->once())
             ->method('getFeePlanList')
             ->willReturn($feePlanList);
-        $this->toolsProxy->expects($this->once())
-            ->method('isSubmit')
-            ->willReturn(false);
-        $this->configurationRepository->expects($this->never())
-            ->method('get');
-
-        $this->assertEquals($feePlanFromClient, $this->feePlansService->fieldsValue());
-    }
-
-    /**
-     * @throws \Alma\Client\Application\Exception\ParametersException
-     * @throws \PrestaShop\Module\Alma\Application\Exception\FeePlansException
-     */
-    public function testFieldsValueFirstSaveWithoutMerchantIdSavedInDbReturnFieldValueFromClient()
-    {
-        $feePlanFromClient = FeePlansMock::feePlanFieldsValueExpected(3);
-
-        $feePlan3X = FeePlansMock::feePlan(3);
-
-        $feePlanList = new FeePlanList([$feePlan3X]);
-        $this->feePlansProvider->expects($this->once())
-            ->method('getFeePlanList')
-            ->willReturn($feePlanList);
-        $this->toolsProxy->expects($this->once())
-            ->method('isSubmit')
-            ->willReturn(true);
         $this->configurationRepository->expects($this->once())
             ->method('get')
             ->with(ApiAdminForm::KEY_FIELD_MERCHANT_ID)
             ->willReturn('');
 
-        $this->assertEquals($feePlanFromClient, $this->feePlansService->fieldsValue());
+        $this->assertEquals($feePlanFromClient, $this->feePlansService->fieldsToSave());
     }
 
     /**
      * @throws \Alma\Client\Application\Exception\ParametersException
      * @throws \PrestaShop\Module\Alma\Application\Exception\FeePlansException
      */
-    public function testFieldsValueWithMerchantIdSavedInDbReturnFieldValueFromPost()
+    public function testFieldsToSaveWithMerchantIdSavedInDbReturnFieldValueFromPost()
     {
         $feePlanFromClient = FeePlansMock::feePlanFieldsValueExpected(3);
         $feePlanFromPost = FeePlansMock::feePlanFieldsValueExpected(3, 0, 0, 0, 10000, 100000);
@@ -196,9 +198,6 @@ class FeePlansServiceTest extends TestCase
         $this->feePlansProvider->expects($this->once())
             ->method('getFeePlanList')
             ->willReturn($feePlanList);
-        $this->toolsProxy->expects($this->once())
-            ->method('isSubmit')
-            ->willReturn(true);
         $this->configurationRepository->expects($this->once())
             ->method('get')
             ->with(ApiAdminForm::KEY_FIELD_MERCHANT_ID)
@@ -214,6 +213,6 @@ class FeePlansServiceTest extends TestCase
                 ]
             );
 
-        $this->assertEquals($feePlanFromPost, $this->feePlansService->fieldsValue());
+        $this->assertEquals($feePlanFromPost, $this->feePlansService->fieldsToSave());
     }
 }
