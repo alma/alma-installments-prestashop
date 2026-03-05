@@ -4,7 +4,7 @@ namespace PrestaShop\Module\Alma\Application\Service;
 
 use PrestaShop\Module\Alma\Application\Exception\AuthenticationException;
 use PrestaShop\Module\Alma\Application\Exception\SettingsException;
-use PrestaShop\Module\Alma\Application\Helper\EncryptionHelper;
+use PrestaShop\Module\Alma\Application\Helper\EncryptorHelper;
 use PrestaShop\Module\Alma\Infrastructure\Form\ApiAdminForm;
 use PrestaShop\Module\Alma\Infrastructure\Form\FormCollection;
 use PrestaShop\Module\Alma\Infrastructure\Proxy\ToolsProxy;
@@ -61,8 +61,8 @@ class SettingsService
                 $fieldsValue[$field] = $this->configurationRepository->get($field);
             }
 
-            if (isset($param['encrypted']) && EncryptionHelper::isEncryptionValue($param['encrypted'], $fieldsValue[$field])) {
-                $fieldsValue[$field] = EncryptionHelper::OBSCURE_VALUE;
+            if (isset($param['encrypted']) && EncryptorHelper::isEncryptionValue($param['encrypted'], $fieldsValue[$field])) {
+                $fieldsValue[$field] = EncryptorHelper::OBSCURE_VALUE;
             }
         }
 

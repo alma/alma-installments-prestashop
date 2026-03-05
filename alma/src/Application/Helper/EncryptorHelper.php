@@ -2,7 +2,7 @@
 
 namespace PrestaShop\Module\Alma\Application\Helper;
 
-class EncryptionHelper
+class EncryptorHelper
 {
     public const OBSCURE_VALUE = '********************************';
     /**

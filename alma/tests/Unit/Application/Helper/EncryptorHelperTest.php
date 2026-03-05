@@ -3,41 +3,41 @@
 namespace PrestaShop\Module\Alma\Tests\Unit\Application\Helper;
 
 use PHPUnit\Framework\TestCase;
-use PrestaShop\Module\Alma\Application\Helper\EncryptionHelper;
+use PrestaShop\Module\Alma\Application\Helper\EncryptorHelper;
 
-class EncryptionHelperTest extends TestCase
+class EncryptorHelperTest extends TestCase
 {
     /**
-     * @var EncryptionHelper
+     * @var EncryptorHelper
      */
-    private EncryptionHelper $encryptionHelper;
+    private EncryptorHelper $encryptorHelper;
 
     public function setUp(): void
     {
         $this->phpEncryption = $this->createMock(\PhpEncryption::class);
-        $this->encryptionHelper = new EncryptionHelper(
+        $this->encryptorHelper = new EncryptorHelper(
             $this->phpEncryption
         );
     }
 
     public function testCheckIfIsEncryptionValueWithValueReturnTrue(): void
     {
-        $this->assertTrue(EncryptionHelper::isEncryptionValue(true, 'value'));
+        $this->assertTrue(EncryptorHelper::isEncryptionValue(true, 'value'));
     }
 
     public function testCheckIfIsEncryptionValueWithoutValueReturnFalse(): void
     {
-        $this->assertFalse(EncryptionHelper::isEncryptionValue(true, ''));
+        $this->assertFalse(EncryptorHelper::isEncryptionValue(true, ''));
     }
 
     public function testCheckIfIsNotEncryptionValueWithValueReturnFalse(): void
     {
-        $this->assertFalse(EncryptionHelper::isEncryptionValue(false, 'value'));
+        $this->assertFalse(EncryptorHelper::isEncryptionValue(false, 'value'));
     }
 
     public function testCheckIfIsNotEncryptionValueWithoutValueReturnFalse(): void
     {
-        $this->assertFalse(EncryptionHelper::isEncryptionValue(false, ''));
+        $this->assertFalse(EncryptorHelper::isEncryptionValue(false, ''));
     }
 
     public function testEncryptionValue(): void
@@ -50,6 +50,6 @@ class EncryptionHelperTest extends TestCase
             ->with($value)
             ->willReturn($encryptedValue);
 
-        $this->assertEquals($encryptedValue, $this->encryptionHelper->encrypt($value));
+        $this->assertEquals($encryptedValue, $this->encryptorHelper->encrypt($value));
     }
 }

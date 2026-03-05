@@ -3,7 +3,7 @@
 namespace PrestaShop\Module\Alma\Tests\Integration\Infrastructure\Repository;
 
 use PHPUnit\Framework\TestCase;
-use PrestaShop\Module\Alma\Application\Helper\EncryptionHelper;
+use PrestaShop\Module\Alma\Application\Helper\EncryptorHelper;
 use PrestaShop\Module\Alma\Infrastructure\Proxy\ToolsProxy;
 use PrestaShop\Module\Alma\Infrastructure\Repository\ConfigurationRepository;
 use PrestaShop\Module\Alma\Infrastructure\Repository\SettingsRepository;
@@ -14,11 +14,11 @@ class SettingsRepositoryTest extends TestCase
     {
         $this->toolsProxy = new ToolsProxy();
         $this->configurationRepository = new ConfigurationRepository();
-        $this->encryptionHelper = $this->createMock(EncryptionHelper::class);
+        $this->encryptorHelper = $this->createMock(EncryptorHelper::class);
         $this->settingsRepository = new SettingsRepository(
             $this->configurationRepository,
             $this->toolsProxy,
-            $this->encryptionHelper
+            $this->encryptorHelper
         );
     }
 

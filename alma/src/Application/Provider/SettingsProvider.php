@@ -2,7 +2,7 @@
 
 namespace PrestaShop\Module\Alma\Application\Provider;
 
-use PrestaShop\Module\Alma\Application\Helper\EncryptionHelper;
+use PrestaShop\Module\Alma\Application\Helper\EncryptorHelper;
 use PrestaShop\Module\Alma\Infrastructure\Form\ApiAdminForm;
 use PrestaShop\Module\Alma\Infrastructure\Proxy\ToolsProxy;
 use PrestaShop\Module\Alma\Infrastructure\Repository\SettingsRepository;
@@ -39,7 +39,7 @@ class SettingsProvider
 
         if ($this->toolsProxy->isSubmit('submit' . $this->module->name)) {
             foreach ($apiKeys as $mode => $apiKey) {
-                if ($this->toolsProxy->getValue(ApiAdminForm::KEY_FIELDS_API_KEYS[$mode]) !== EncryptionHelper::OBSCURE_VALUE) {
+                if ($this->toolsProxy->getValue(ApiAdminForm::KEY_FIELDS_API_KEYS[$mode]) !== EncryptorHelper::OBSCURE_VALUE) {
                     $apiKeys[$mode] = $this->toolsProxy->getValue(ApiAdminForm::KEY_FIELDS_API_KEYS[$mode], $apiKey);
                 }
             }

@@ -3,7 +3,7 @@
 namespace PrestaShop\Module\Alma\Tests\Unit\Application\Provider;
 
 use PHPUnit\Framework\TestCase;
-use PrestaShop\Module\Alma\Application\Helper\EncryptionHelper;
+use PrestaShop\Module\Alma\Application\Helper\EncryptorHelper;
 use PrestaShop\Module\Alma\Application\Provider\SettingsProvider;
 use PrestaShop\Module\Alma\Infrastructure\Form\ApiAdminForm;
 use PrestaShop\Module\Alma\Infrastructure\Proxy\ToolsProxy;
@@ -56,7 +56,7 @@ class SettingsProviderTest extends TestCase
                 [ApiAdminForm::KEY_FIELD_LIVE_API_KEY],
                 [ApiAdminForm::KEY_FIELD_LIVE_API_KEY, $apiKeysFromRepository['live']]
             )
-            ->willReturnOnConsecutiveCalls(EncryptionHelper::OBSCURE_VALUE, '', '');
+            ->willReturnOnConsecutiveCalls(EncryptorHelper::OBSCURE_VALUE, '', '');
         $this->assertEquals($apiKeysFromRepository, $this->settingsProvider->getApiKeys());
     }
 
@@ -80,7 +80,7 @@ class SettingsProviderTest extends TestCase
                 [ApiAdminForm::KEY_FIELD_LIVE_API_KEY],
                 [ApiAdminForm::KEY_FIELD_LIVE_API_KEY, $apiKeysFromRepository['live']]
             )
-            ->willReturnOnConsecutiveCalls(EncryptionHelper::OBSCURE_VALUE, 'live_api_key', 'live_api_key');
+            ->willReturnOnConsecutiveCalls(EncryptorHelper::OBSCURE_VALUE, 'live_api_key', 'live_api_key');
         $this->assertEquals($apiKeysFromRepository, $this->settingsProvider->getApiKeys());
     }
 
@@ -103,7 +103,7 @@ class SettingsProviderTest extends TestCase
                 [ApiAdminForm::KEY_FIELD_TEST_API_KEY],
                 [ApiAdminForm::KEY_FIELD_LIVE_API_KEY]
             )
-            ->willReturnOnConsecutiveCalls(EncryptionHelper::OBSCURE_VALUE, EncryptionHelper::OBSCURE_VALUE);
+            ->willReturnOnConsecutiveCalls(EncryptorHelper::OBSCURE_VALUE, EncryptorHelper::OBSCURE_VALUE);
         $this->assertEquals($apiKeysFromRepository, $this->settingsProvider->getApiKeys());
     }
 

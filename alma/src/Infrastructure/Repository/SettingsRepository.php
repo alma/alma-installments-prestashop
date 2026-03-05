@@ -3,7 +3,7 @@
 namespace PrestaShop\Module\Alma\Infrastructure\Repository;
 
 use Alma\Client\Domain\ValueObject\Environment;
-use PrestaShop\Module\Alma\Application\Helper\EncryptionHelper;
+use PrestaShop\Module\Alma\Application\Helper\EncryptorHelper;
 use PrestaShop\Module\Alma\Infrastructure\Form\ApiAdminForm;
 use PrestaShop\Module\Alma\Infrastructure\Proxy\ToolsProxy;
 
@@ -18,18 +18,18 @@ class SettingsRepository
      */
     private ToolsProxy $toolsProxy;
     /**
-     * @var EncryptionHelper
+     * @var EncryptorHelper
      */
-    private EncryptionHelper $encryptionHelper;
+    private EncryptorHelper $encryptorHelper;
 
     public function __construct(
         ConfigurationRepository $configurationRepository,
         ToolsProxy $toolsProxy,
-        EncryptionHelper $encryptionHelper
+        EncryptorHelper $encryptorHelper
     ) {
         $this->configurationRepository = $configurationRepository;
         $this->toolsProxy = $toolsProxy;
-        $this->encryptionHelper = $encryptionHelper;
+        $this->encryptorHelper = $encryptorHelper;
     }
 
     /**
@@ -46,8 +46,8 @@ class SettingsRepository
         foreach ($apiKeys as $mode => $value) {
             $apiKeys[$mode] = '';
 
-            if (EncryptionHelper::isEncryptionValue(true, $value)) {
-                $apiKeys[$mode] = $this->encryptionHelper->decrypt($value);
+            if (EncryptorHelper::isEncryptionValue(true, $value)) {
+                $apiKeys[$mode] = $this->encryptorHelper->decrypt($value);
             }
         }
 
@@ -80,11 +80,11 @@ class SettingsRepository
                 $value = $overrideValues[$keyField];
             }
 
-            if ($value === EncryptionHelper::OBSCURE_VALUE) {
+            if ($value === EncryptorHelper::OBSCURE_VALUE) {
                 continue;
             }
-            if (isset($paramField['encrypted']) && EncryptionHelper::isEncryptionValue($paramField['encrypted'], $value)) {
-                $value = $this->encryptionHelper->encrypt($value);
+            if (isset($paramField['encrypted']) && EncryptorHelper::isEncryptionValue($paramField['encrypted'], $value)) {
+                $value = $this->encryptorHelper->encrypt($value);
             }
             $this->configurationRepository->updateValue($keyField, $value);
         }

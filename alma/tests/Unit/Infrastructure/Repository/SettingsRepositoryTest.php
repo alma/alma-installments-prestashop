@@ -3,7 +3,7 @@
 namespace PrestaShop\Module\Alma\Tests\Unit\Infrastructure\Repository;
 
 use PHPUnit\Framework\TestCase;
-use PrestaShop\Module\Alma\Application\Helper\EncryptionHelper;
+use PrestaShop\Module\Alma\Application\Helper\EncryptorHelper;
 use PrestaShop\Module\Alma\Infrastructure\Form\ApiAdminForm;
 use PrestaShop\Module\Alma\Infrastructure\Proxy\ToolsProxy;
 use PrestaShop\Module\Alma\Infrastructure\Repository\ConfigurationRepository;
@@ -24,19 +24,19 @@ class SettingsRepositoryTest extends TestCase
      */
     private ToolsProxy $tools;
     /**
-     * @var EncryptionHelper
+     * @var EncryptorHelper
      */
-    private EncryptionHelper $encryptionHelper;
+    private EncryptorHelper $encryptorHelper;
 
     public function setUp(): void
     {
         $this->configuration = $this->createMock(ConfigurationRepository::class);
         $this->tools = $this->createMock(ToolsProxy::class);
-        $this->encryptionHelper = $this->createMock(EncryptionHelper::class);
+        $this->encryptorHelper = $this->createMock(EncryptorHelper::class);
         $this->settings = new SettingsRepository(
             $this->configuration,
             $this->tools,
-            $this->encryptionHelper
+            $this->encryptorHelper
         );
     }
 
@@ -50,7 +50,7 @@ class SettingsRepositoryTest extends TestCase
             ->method('get')
             ->withConsecutive([ApiAdminForm::KEY_FIELD_TEST_API_KEY], [ApiAdminForm::KEY_FIELD_LIVE_API_KEY])
             ->willReturnOnConsecutiveCalls('test_api_key', '');
-        $this->encryptionHelper->expects($this->once())
+        $this->encryptorHelper->expects($this->once())
             ->method('decrypt')
             ->with('test_api_key')
             ->willReturn('decrypted_test_api_key');
@@ -67,7 +67,7 @@ class SettingsRepositoryTest extends TestCase
             ->method('get')
             ->withConsecutive([ApiAdminForm::KEY_FIELD_TEST_API_KEY], [ApiAdminForm::KEY_FIELD_LIVE_API_KEY])
             ->willReturnOnConsecutiveCalls('test_api_key', 'live_api_key');
-        $this->encryptionHelper->expects($this->exactly(2))
+        $this->encryptorHelper->expects($this->exactly(2))
             ->method('decrypt')
             ->withConsecutive(['test_api_key'], ['live_api_key'])
             ->willReturnOnConsecutiveCalls('decrypted_test_api_key', 'decrypted_live_api_key');
@@ -85,7 +85,7 @@ class SettingsRepositoryTest extends TestCase
             ->method('get')
             ->withConsecutive([ApiAdminForm::KEY_FIELD_TEST_API_KEY], [ApiAdminForm::KEY_FIELD_LIVE_API_KEY])
             ->willReturnOnConsecutiveCalls('', '');
-        $this->encryptionHelper->expects($this->never())
+        $this->encryptorHelper->expects($this->never())
             ->method('decrypt');
 
         $this->assertEquals($expectedApiKeys, $this->settings->getApiKeys());
@@ -110,7 +110,7 @@ class SettingsRepositoryTest extends TestCase
             ->method('getValue')
             ->withConsecutive(['field1'], ['field2'])
             ->willReturnOnConsecutiveCalls('value1', 'value2');
-        $this->encryptionHelper->expects($this->once())
+        $this->encryptorHelper->expects($this->once())
             ->method('encrypt')
             ->with('value1')
             ->willReturn('encrypted_value1');
@@ -130,7 +130,7 @@ class SettingsRepositoryTest extends TestCase
             ->method('getValue')
             ->withConsecutive(['field1'], ['field2'])
             ->willReturnOnConsecutiveCalls('value1', 'value2');
-        $this->encryptionHelper->expects($this->exactly(2))
+        $this->encryptorHelper->expects($this->exactly(2))
             ->method('encrypt')
             ->withConsecutive(['value1'], ['value2'])
             ->willReturnOnConsecutiveCalls('encrypted_value1', 'encrypted_value2');
@@ -150,7 +150,7 @@ class SettingsRepositoryTest extends TestCase
             ->method('getValue')
             ->withConsecutive(['field1'], ['field2'])
             ->willReturnOnConsecutiveCalls('value1', 'value2');
-        $this->encryptionHelper->expects($this->never())
+        $this->encryptorHelper->expects($this->never())
             ->method('encrypt');
         $this->configuration->expects($this->exactly(2))
             ->method('updateValue')
@@ -167,8 +167,8 @@ class SettingsRepositoryTest extends TestCase
         $this->tools->expects($this->exactly(2))
             ->method('getValue')
             ->withConsecutive(['field1'], ['field2'])
-            ->willReturnOnConsecutiveCalls(EncryptionHelper::OBSCURE_VALUE, EncryptionHelper::OBSCURE_VALUE);
-        $this->encryptionHelper->expects($this->never())
+            ->willReturnOnConsecutiveCalls(EncryptorHelper::OBSCURE_VALUE, EncryptorHelper::OBSCURE_VALUE);
+        $this->encryptorHelper->expects($this->never())
             ->method('encrypt');
         $this->configuration->expects($this->never())
             ->method('updateValue');
@@ -184,8 +184,8 @@ class SettingsRepositoryTest extends TestCase
         $this->tools->expects($this->exactly(2))
             ->method('getValue')
             ->withConsecutive(['field1'], ['field2'])
-            ->willReturnOnConsecutiveCalls(EncryptionHelper::OBSCURE_VALUE, 'value2');
-        $this->encryptionHelper->expects($this->never())
+            ->willReturnOnConsecutiveCalls(EncryptorHelper::OBSCURE_VALUE, 'value2');
+        $this->encryptorHelper->expects($this->never())
             ->method('encrypt');
         $this->configuration->expects($this->once())
             ->method('updateValue')
@@ -202,8 +202,8 @@ class SettingsRepositoryTest extends TestCase
         $this->tools->expects($this->exactly(2))
             ->method('getValue')
             ->withConsecutive(['field1'], ['field2'])
-            ->willReturnOnConsecutiveCalls(EncryptionHelper::OBSCURE_VALUE, 'value2');
-        $this->encryptionHelper->expects($this->once())
+            ->willReturnOnConsecutiveCalls(EncryptorHelper::OBSCURE_VALUE, 'value2');
+        $this->encryptorHelper->expects($this->once())
             ->method('encrypt')
             ->with('value2')
             ->willReturn('encrypted_value2');
@@ -227,7 +227,7 @@ class SettingsRepositoryTest extends TestCase
             ->method('getValue')
             ->withConsecutive(['field1'], ['field2'], ['field3'])
             ->willReturnOnConsecutiveCalls('value1', 'value2', 'value3');
-        $this->encryptionHelper->expects($this->once())
+        $this->encryptorHelper->expects($this->once())
             ->method('encrypt')
             ->with('value2')
             ->willReturn('encrypted_value2');
