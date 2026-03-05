@@ -56,6 +56,16 @@ services:
     arguments:
       - '@alma.form_builder'
 
+  alma.product_widget_admin_form:
+    class: 'PrestaShop\Module\Alma\Infrastructure\Form\ProductWidgetAdminForm'
+    arguments:
+      - '@alma.form_builder'
+
+  alma.cart_widget_admin_form:
+    class: 'PrestaShop\Module\Alma\Infrastructure\Form\CartWidgetAdminForm'
+    arguments:
+      - '@alma.form_builder'
+
   alma.fee_plans_admin_form:
     class: 'PrestaShop\Module\Alma\Infrastructure\Form\FeePlansAdminForm'
     arguments:
@@ -141,6 +151,8 @@ services:
       - '@alma.fee_plans_service'
       - '@alma.api_admin_form'
       - '@alma.fee_plans_admin_form'
+      - '@alma.product_widget_admin_form'
+      - '@alma.cart_widget_admin_form'
       - '@alma.configuration_repository'
 
   alma.client_configuration:

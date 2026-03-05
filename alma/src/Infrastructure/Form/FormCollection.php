@@ -12,6 +12,8 @@ class FormCollection
     public const SETTINGS_FORMS_CLASSES = [
         ApiAdminForm::class,
         FeePlansAdminForm::class,
+        ProductWidgetAdminForm::class,
+        CartWidgetAdminForm::class,
     ];
 
     /**
