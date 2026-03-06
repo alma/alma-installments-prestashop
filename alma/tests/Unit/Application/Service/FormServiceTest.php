@@ -9,6 +9,7 @@ use PrestaShop\Module\Alma\Application\Service\FormService;
 use PrestaShop\Module\Alma\Application\Service\WidgetService;
 use PrestaShop\Module\Alma\Infrastructure\Form\ApiAdminForm;
 use PrestaShop\Module\Alma\Infrastructure\Form\CartWidgetAdminForm;
+use PrestaShop\Module\Alma\Infrastructure\Form\DebugAdminForm;
 use PrestaShop\Module\Alma\Infrastructure\Form\ExcludedCategoriesAdminForm;
 use PrestaShop\Module\Alma\Infrastructure\Form\FeePlansAdminForm;
 use PrestaShop\Module\Alma\Infrastructure\Form\ProductWidgetAdminForm;
@@ -16,6 +17,11 @@ use PrestaShop\Module\Alma\Infrastructure\Repository\ConfigurationRepository;
 
 class FormServiceTest extends TestCase
 {
+    /**
+     * @var DebugAdminForm
+     */
+    private $debugAdminForm;
+
     public function setUp(): void
     {
         $this->feePlansService = $this->createMock(FeePlansService::class);
@@ -26,6 +32,7 @@ class FormServiceTest extends TestCase
         $this->productWidgetAdminForm = $this->createMock(ProductWidgetAdminForm::class);
         $this->cartWidgetAdminForm = $this->createMock(CartWidgetAdminForm::class);
         $this->excludedCategoriesAdminForm = $this->createMock(ExcludedCategoriesAdminForm::class);
+        $this->debugAdminForm = $this->createMock(DebugAdminForm::class);
         $this->configurationRepository = $this->createMock(ConfigurationRepository::class);
         $this->formService = new FormService(
             $this->feePlansService,
@@ -36,6 +43,7 @@ class FormServiceTest extends TestCase
             $this->productWidgetAdminForm,
             $this->cartWidgetAdminForm,
             $this->excludedCategoriesAdminForm,
+            $this->debugAdminForm,
             $this->configurationRepository
         );
     }
@@ -51,11 +59,16 @@ class FormServiceTest extends TestCase
             ->method('build')
             ->willReturn(['api_form']);
 
+        $this->debugAdminForm->expects($this->once())
+            ->method('build')
+            ->willReturn(['debug_form']);
+
         $form = $this->formService->getForm();
 
-        $this->assertCount(1, $form);
+        $this->assertCount(2, $form);
         $this->assertEquals([
-            ['api_form']
+            ['api_form'],
+            ['debug_form'],
         ], $form);
     }
 
@@ -64,6 +77,10 @@ class FormServiceTest extends TestCase
         $this->apiAdminForm->expects($this->once())
             ->method('build')
             ->willReturn(['api_form']);
+
+        $this->debugAdminForm->expects($this->once())
+            ->method('build')
+            ->willReturn(['debug_form']);
 
         $this->configurationRepository->expects($this->once())
             ->method('get')
@@ -97,13 +114,14 @@ class FormServiceTest extends TestCase
 
         $form = $this->formService->getForm();
 
-        $this->assertCount(5, $form);
+        $this->assertCount(6, $form);
         $this->assertEquals([
             ['fee_plans_form'],
             ['product_widget_form'],
             ['cart_widget_form'],
             ['excluded_categories_form'],
             ['api_form'],
+            ['debug_form'],
         ], $form);
     }
 }
