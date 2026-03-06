@@ -28,19 +28,25 @@ class SettingsService
      */
     private ToolsProxy $toolsProxy;
     /**
-     * @var \PrestaShop\Module\Alma\Application\Service\FeePlansService
+     * @var FeePlansService
      */
     private FeePlansService $feePlansService;
+    /**
+     * @var WidgetService
+     */
+    private WidgetService $widgetService;
 
     public function __construct(
         AuthenticationService $authenticationService,
         FeePlansService $feePlansService,
+        WidgetService $widgetService,
         SettingsRepository $settingsRepository,
         ConfigurationRepository $configurationRepository,
         ToolsProxy $toolsProxy
     ) {
         $this->authenticationService = $authenticationService;
         $this->feePlansService = $feePlansService;
+        $this->widgetService = $widgetService;
         $this->settingsRepository = $settingsRepository;
         $this->configurationRepository = $configurationRepository;
         $this->toolsProxy = $toolsProxy;
@@ -108,7 +114,8 @@ class SettingsService
         );
         $overrideValues = array_merge(
             $overrideValues,
-            $feePlansFieldsValue
+            $feePlansFieldsValue,
+            $this->widgetService->defaultFieldsToSave()
         );
 
         $this->settingsRepository->save(

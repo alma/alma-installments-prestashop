@@ -4,6 +4,9 @@ namespace PrestaShop\Module\Alma\Infrastructure\Form;
 
 class CartWidgetAdminForm extends AbstractAdminForm
 {
+    public const KEY_FIELD_CART_WIDGET_STATE = 'ALMA_CART_WIDGET_STATE';
+    public const KEY_FIELD_CART_WIDGET_DISPLAY_NOT_ELIGIBLE = 'ALMA_CART_WIDGET_DISPLAY_NOT_ELIGIBLE';
+
     public static function title(): string
     {
         return 'Display widget on cart page';
@@ -12,7 +15,7 @@ class CartWidgetAdminForm extends AbstractAdminForm
     public static function fieldsForm(string $templateHtml = '', array $dynamicForm = []): array
     {
         return [
-            'ALMA_SHOW_CART_ELIGIBILITY' => [
+            self::KEY_FIELD_CART_WIDGET_STATE => [
                 'type' => 'switch',
                 'label' => 'Display widget',
                 'required' => false,
@@ -33,7 +36,7 @@ class CartWidgetAdminForm extends AbstractAdminForm
                     ],
                 ],
             ],
-            'ALMA_CART_WDGT_NOT_ELGBL' => [
+            self::KEY_FIELD_CART_WIDGET_DISPLAY_NOT_ELIGIBLE => [
                 'type' => 'switch',
                 'label' => 'Display even if the cart is not eligible',
                 'required' => false,

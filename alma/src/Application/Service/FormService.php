@@ -34,9 +34,14 @@ class FormService
      * @var CartWidgetAdminForm
      */
     private CartWidgetAdminForm $cartWidgetAdminForm;
+    /**
+     * @var WidgetService
+     */
+    private WidgetService $widgetService;
 
     public function __construct(
         FeePlansService $feePlansService,
+        WidgetService $widgetService,
         ApiAdminForm $apiAdminForm,
         FeePlansAdminForm $feePlansAdminForm,
         ProductWidgetAdminForm $productWidgetAdminForm,
@@ -44,6 +49,7 @@ class FormService
         ConfigurationRepository $configurationRepository
     ) {
         $this->feePlansService = $feePlansService;
+        $this->widgetService = $widgetService;
         $this->apiAdminForm = $apiAdminForm;
         $this->feePlansAdminForm = $feePlansAdminForm;
         $this->productWidgetAdminForm = $productWidgetAdminForm;
@@ -59,9 +65,10 @@ class FormService
     {
         if (!empty($this->configurationRepository->get(ApiAdminForm::KEY_FIELD_MERCHANT_ID))) {
             $templateTabs = $this->feePlansService->createTemplateTabs();
+            $templateWidget = $this->widgetService->createTemplate();
             $form = [
                 $this->feePlansAdminForm->build($templateTabs, $this->feePlansService->feePlansFields()),
-                $this->productWidgetAdminForm->build(),
+                $this->productWidgetAdminForm->build($templateWidget),
                 $this->cartWidgetAdminForm->build()
             ];
         }

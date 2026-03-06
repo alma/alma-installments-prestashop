@@ -5,6 +5,7 @@ namespace PrestaShop\Module\Alma\Tests\Unit\Application\Service;
 use PHPUnit\Framework\TestCase;
 use PrestaShop\Module\Alma\Application\Service\FeePlansService;
 use PrestaShop\Module\Alma\Application\Service\FormService;
+use PrestaShop\Module\Alma\Application\Service\WidgetService;
 use PrestaShop\Module\Alma\Infrastructure\Form\ApiAdminForm;
 use PrestaShop\Module\Alma\Infrastructure\Form\CartWidgetAdminForm;
 use PrestaShop\Module\Alma\Infrastructure\Form\FeePlansAdminForm;
@@ -16,6 +17,7 @@ class FormServiceTest extends TestCase
     public function setUp(): void
     {
         $this->feePlansService = $this->createMock(FeePlansService::class);
+        $this->widgetService = $this->createMock(WidgetService::class);
         $this->apiAdminForm = $this->createMock(ApiAdminForm::class);
         $this->feePlansAdminForm = $this->createMock(FeePlansAdminForm::class);
         $this->productWidgetAdminForm = $this->createMock(ProductWidgetAdminForm::class);
@@ -23,6 +25,7 @@ class FormServiceTest extends TestCase
         $this->configurationRepository = $this->createMock(ConfigurationRepository::class);
         $this->formService = new FormService(
             $this->feePlansService,
+            $this->widgetService,
             $this->apiAdminForm,
             $this->feePlansAdminForm,
             $this->productWidgetAdminForm,

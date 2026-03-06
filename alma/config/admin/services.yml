@@ -114,6 +114,7 @@ services:
     arguments:
       - '@alma.authentication_service'
       - '@alma.fee_plans_service'
+      - '@alma.widget_service'
       - '@alma.settings_repository'
       - '@alma.configuration_repository'
       - '@alma.tools_proxy'
@@ -126,6 +127,12 @@ services:
       - '@alma.fee_plan_list_assembler'
       - '@alma.configuration_repository'
       - '@alma.tools_proxy'
+
+  alma.widget_service:
+    class: 'PrestaShop\Module\Alma\Application\Service\WidgetService'
+    arguments:
+      - '@alma.context'
+      - '@alma.configuration_repository'
 
   alma.settings_form_builder:
     class: 'PrestaShop\Module\Alma\Infrastructure\Form\SettingsFormBuilder'
@@ -149,6 +156,7 @@ services:
     class: 'PrestaShop\Module\Alma\Application\Service\FormService'
     arguments:
       - '@alma.fee_plans_service'
+      - '@alma.widget_service'
       - '@alma.api_admin_form'
       - '@alma.fee_plans_admin_form'
       - '@alma.product_widget_admin_form'

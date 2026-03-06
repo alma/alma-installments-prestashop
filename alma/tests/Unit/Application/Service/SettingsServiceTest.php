@@ -7,6 +7,7 @@ use PrestaShop\Module\Alma\Application\Exception\AuthenticationException;
 use PrestaShop\Module\Alma\Application\Service\AuthenticationService;
 use PrestaShop\Module\Alma\Application\Service\FeePlansService;
 use PrestaShop\Module\Alma\Application\Service\SettingsService;
+use PrestaShop\Module\Alma\Application\Service\WidgetService;
 use PrestaShop\Module\Alma\Infrastructure\Form\ApiAdminForm;
 use PrestaShop\Module\Alma\Infrastructure\Form\FormCollection;
 use PrestaShop\Module\Alma\Infrastructure\Proxy\ToolsProxy;
@@ -28,9 +29,11 @@ class SettingsServiceTest extends TestCase
         $this->configurationRepository = $this->createMock(ConfigurationRepository::class);
         $this->settingsRepository = $this->createMock(SettingsRepository::class);
         $this->feePlansService = $this->createMock(FeePlansService::class);
+        $this->widgetService = $this->createMock(WidgetService::class);
         $this->settingsService = new SettingsService(
             $this->authenticationService,
             $this->feePlansService,
+            $this->widgetService,
             $this->settingsRepository,
             $this->configurationRepository,
             $this->toolsProxy
