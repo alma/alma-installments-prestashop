@@ -79,7 +79,7 @@ class SettingsService
      */
     public function saveWithNotification(): string
     {
-        $notificationSuccess = 'Settings updated';
+        $notificationSuccess = 'Settings successfully updated';
         try {
             $merchantIds = $this->authenticationService->isValidKeys();
             $this->authenticationService->checkSameMerchantIds($merchantIds);
@@ -91,7 +91,7 @@ class SettingsService
         if (!array_key_exists($mode, $merchantIds)) {
             $mode = key($merchantIds);
             $overrideValues[ApiAdminForm::KEY_FIELD_MODE] = $mode;
-            $notificationSuccess = 'Settings updated and mode changed to ' . $mode . ' because the API key of this mode is the only one valid';
+            $notificationSuccess = "Mode automatically switched to {$mode} mode. To use the other mode, please enter the corresponding API key.";
         }
 
         $overrideValues[ApiAdminForm::KEY_FIELD_MERCHANT_ID] = $merchantIds[$mode];

@@ -83,7 +83,7 @@ class AuthenticationService
     public function checkSameMerchantIds(array $merchantIds)
     {
         if (count(array_unique($merchantIds)) !== 1) {
-            throw new AuthenticationException('Merchant IDs are different between environments, please check your API keys.');
+            throw new AuthenticationException('The API keys you entered belong to two different merchant accounts. Please use keys from the same account.');
         }
     }
 }

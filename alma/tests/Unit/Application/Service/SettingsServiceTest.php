@@ -104,7 +104,7 @@ class SettingsServiceTest extends TestCase
             );
 
         $this->assertEquals(
-            'Settings updated and mode changed to test because the API key of this mode is the only one valid',
+            'Mode automatically switched to test mode. To use the other mode, please enter the corresponding API key.',
             $this->settingsService->saveWithNotification()
         );
     }
@@ -134,6 +134,6 @@ class SettingsServiceTest extends TestCase
         $this->settingsRepository->expects($this->once())
             ->method('save');
 
-        $this->assertEquals('Settings updated', $this->settingsService->saveWithNotification());
+        $this->assertEquals('Settings successfully updated', $this->settingsService->saveWithNotification());
     }
 }
