@@ -35,11 +35,16 @@ class SettingsService
      * @var WidgetService
      */
     private WidgetService $widgetService;
+    /**
+     * @var ExcludedCategoriesService
+     */
+    private ExcludedCategoriesService $excludedCategoriesService;
 
     public function __construct(
         AuthenticationService $authenticationService,
         FeePlansService $feePlansService,
         WidgetService $widgetService,
+        ExcludedCategoriesService $excludedCategoriesService,
         SettingsRepository $settingsRepository,
         ConfigurationRepository $configurationRepository,
         ToolsProxy $toolsProxy
@@ -47,6 +52,7 @@ class SettingsService
         $this->authenticationService = $authenticationService;
         $this->feePlansService = $feePlansService;
         $this->widgetService = $widgetService;
+        $this->excludedCategoriesService = $excludedCategoriesService;
         $this->settingsRepository = $settingsRepository;
         $this->configurationRepository = $configurationRepository;
         $this->toolsProxy = $toolsProxy;
@@ -115,7 +121,8 @@ class SettingsService
         $overrideValues = array_merge(
             $overrideValues,
             $feePlansFieldsValue,
-            $this->widgetService->defaultFieldsToSave()
+            $this->widgetService->defaultFieldsToSave(),
+            $this->excludedCategoriesService->defaultFieldsToSave()
         );
 
         $this->settingsRepository->save(
