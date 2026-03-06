@@ -67,6 +67,8 @@ class SettingsServiceTest extends TestCase
         $this->expectException(AuthenticationException::class);
         $this->feePlansService->expects($this->never())
             ->method('fieldsValue');
+        $this->widgetService->expects($this->never())
+            ->method('defaultFieldsToSave');
         $this->settingsRepository->expects($this->never())
             ->method('save');
 
@@ -91,6 +93,8 @@ class SettingsServiceTest extends TestCase
             ->willThrowException(new AuthenticationException());
         $this->feePlansService->expects($this->never())
             ->method('fieldsValue');
+        $this->widgetService->expects($this->never())
+            ->method('defaultFieldsToSave');
         $this->settingsRepository->expects($this->never())
             ->method('save');
         $this->expectException(AuthenticationException::class);
@@ -120,6 +124,8 @@ class SettingsServiceTest extends TestCase
         $this->feePlansService->expects($this->once())
             ->method('fieldsToSave')
             ->willReturn(FeePlansMock::feePlanFieldsValueExpected(3));
+        $this->widgetService->expects($this->once())
+            ->method('defaultFieldsToSave');
         $fieldsValue = array_merge(
             FormCollection::getAllFields(FormCollection::SETTINGS_FORMS_CLASSES),
             FeePlansMock::feePlanFieldsValueExpected(3)
@@ -170,6 +176,8 @@ class SettingsServiceTest extends TestCase
         $this->feePlansService->expects($this->once())
             ->method('fieldsToSave')
             ->willReturn(FeePlansMock::feePlanFieldsValueExpected(3));
+        $this->widgetService->expects($this->once())
+            ->method('defaultFieldsToSave');
         $fieldsValue = array_merge(
             FormCollection::getAllFields(FormCollection::SETTINGS_FORMS_CLASSES),
             FeePlansMock::feePlanFieldsValueExpected(3)
