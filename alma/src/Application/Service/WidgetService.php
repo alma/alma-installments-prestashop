@@ -31,10 +31,6 @@ class WidgetService
     {
         $tpl = $this->context->smarty->createTemplate(_PS_MODULE_DIR_ . 'alma/views/templates/admin/embed_widget.tpl');
 
-        $tpl->assign([
-            'toto' => 'tata',
-        ]);
-
         return $tpl->fetch();
     }
 
