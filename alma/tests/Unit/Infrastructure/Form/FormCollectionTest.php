@@ -15,7 +15,7 @@ use PrestaShop\Module\Alma\Infrastructure\Form\ProductWidgetAdminForm;
 use PrestaShop\Module\Alma\Infrastructure\Form\RefundAdminForm;
 use stdClass;
 
-class FormCollectionTest extends TestCase
+class SettingsCollectionFormTest extends TestCase
 {
     public function testGetAllFieldsWithOneClassWithoutFieldForm()
     {
