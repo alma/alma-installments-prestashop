@@ -118,7 +118,6 @@ services:
     class: 'PrestaShop\Module\Alma\Application\Service\AuthenticationService'
     arguments:
       - '@alma.settings_provider'
-      - '@alma.merchant_endpoint'
       - '@alma.curl_client_factory'
 
   alma.client_configuration:

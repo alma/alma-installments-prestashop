@@ -2,37 +2,28 @@
 
 namespace PrestaShop\Module\Alma\Application\Service;
 
-use Alma\Client\Application\ClientConfiguration;
-use Alma\Client\Application\CurlClient;
 use Alma\Client\Application\Endpoint\MerchantEndpoint;
 use Alma\Client\Application\Exception\Endpoint\MerchantEndpointException;
-use Alma\Client\Domain\Entity\Merchant;
 use PrestaShop\Module\Alma\Application\Exception\AuthenticationException;
-use PrestaShop\Module\Alma\Application\Provider\SettingsProvider;
+use PrestaShop\Module\Alma\Application\Provider\AuthenticationSettingsProvider;
 use PrestaShop\Module\Alma\Infrastructure\Factory\CurlClientFactory;
 
 class AuthenticationService
 {
     /**
-     * @var MerchantEndpoint
+     * @var \PrestaShop\Module\Alma\Application\Provider\AuthenticationSettingsProvider
      */
-    private MerchantEndpoint $merchantEndpoint;
-    /**
-     * @var \PrestaShop\Module\Alma\Application\Provider\SettingsProvider
-     */
-    private SettingsProvider $settingsProvider;
+    private AuthenticationSettingsProvider $authenticationSettingsProvider;
     /**
      * @var CurlClientFactory
      */
     private CurlClientFactory $curlClientFactory;
 
     public function __construct(
-        SettingsProvider $settingsProvider,
-        MerchantEndpoint $merchantEndpoint,
+        AuthenticationSettingsProvider $authenticationSettingsProvider,
         CurlClientFactory $curlClientFactory
     ) {
-        $this->settingsProvider = $settingsProvider;
-        $this->merchantEndpoint = $merchantEndpoint;
+        $this->authenticationSettingsProvider = $authenticationSettingsProvider;
         $this->curlClientFactory = $curlClientFactory;
     }
 
@@ -45,7 +36,7 @@ class AuthenticationService
      */
     public function isValidKeys(): array
     {
-        $apiKeys = $this->settingsProvider->getApiKeys();
+        $apiKeys = $this->authenticationSettingsProvider->getApiKeys();
         $merchantIds = [];
         foreach ($apiKeys as $mode => $apiKey) {
             if (empty($apiKey)) {

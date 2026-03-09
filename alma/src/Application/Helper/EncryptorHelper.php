@@ -38,11 +38,7 @@ class EncryptorHelper
      */
     public function encrypt(string $value): string
     {
-        if (class_exists('\PhpEncryption')) {
-            return $this->phpEncryption->encrypt($value);
-        }
-
-        return $value;
+        return $this->phpEncryption->encrypt($value);
     }
 
     /**
@@ -52,16 +48,11 @@ class EncryptorHelper
      */
     public function decrypt(string $value): string
     {
-        if (class_exists('\PhpEncryption')) {
-            try {
-                return $this->phpEncryption->decrypt($value);
-            } catch (\Exception $e) {
-                // TODO: Add logging for decryption failure
-                return $value;
-            }
+        try {
+            return $this->phpEncryption->decrypt($value);
+        } catch (\Exception $e) {
+            // TODO: Add logging for decryption failure
+            return $value;
         }
-
-        // TODO: Add logging for decryption librairy missing
-        return $value;
     }
 }

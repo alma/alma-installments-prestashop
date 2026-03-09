@@ -4,7 +4,7 @@ namespace PrestaShop\Module\Alma\Tests\Unit\Application\Provider;
 
 use PHPUnit\Framework\TestCase;
 use PrestaShop\Module\Alma\Application\Helper\EncryptorHelper;
-use PrestaShop\Module\Alma\Application\Provider\SettingsProvider;
+use PrestaShop\Module\Alma\Application\Provider\AuthenticationSettingsProvider;
 use PrestaShop\Module\Alma\Infrastructure\Form\ApiAdminForm;
 use PrestaShop\Module\Alma\Infrastructure\Proxy\ToolsProxy;
 use PrestaShop\Module\Alma\Infrastructure\Repository\SettingsRepository;
@@ -17,7 +17,7 @@ class SettingsProviderTest extends TestCase
         $this->module->name = 'alma';
         $this->settingsRepository = $this->createMock(SettingsRepository::class);
         $this->toolsProxy = $this->createMock(ToolsProxy::class);
-        $this->settingsProvider = new SettingsProvider(
+        $this->settingsProvider = new AuthenticationSettingsProvider(
             $this->module,
             $this->settingsRepository,
             $this->toolsProxy

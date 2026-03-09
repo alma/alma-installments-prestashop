@@ -7,7 +7,7 @@ use PrestaShop\Module\Alma\Infrastructure\Form\ApiAdminForm;
 use PrestaShop\Module\Alma\Infrastructure\Proxy\ToolsProxy;
 use PrestaShop\Module\Alma\Infrastructure\Repository\SettingsRepository;
 
-class SettingsProvider
+class AuthenticationSettingsProvider
 {
     private \Module $module;
     /**

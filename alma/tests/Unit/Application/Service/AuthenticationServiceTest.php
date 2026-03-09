@@ -2,21 +2,15 @@
 
 namespace PrestaShop\Module\Alma\Tests\Unit\Application\Service;
 
-use Alma\Client\Application\Endpoint\MerchantEndpoint;
 use Alma\Client\Application\Exception\Endpoint\MerchantEndpointException;
-use Alma\Client\Domain\Entity\Merchant;
 use PHPUnit\Framework\TestCase;
 use PrestaShop\Module\Alma\Application\Exception\AuthenticationException;
-use PrestaShop\Module\Alma\Application\Provider\SettingsProvider;
+use PrestaShop\Module\Alma\Application\Provider\AuthenticationSettingsProvider;
 use PrestaShop\Module\Alma\Application\Service\AuthenticationService;
 use PrestaShop\Module\Alma\Infrastructure\Factory\CurlClientFactory;
 
 class AuthenticationServiceTest extends TestCase
 {
-    /**
-     * @var Merchant
-     */
-    private $merchant;
     /**
      * @var AuthenticationService
      */
@@ -24,13 +18,10 @@ class AuthenticationServiceTest extends TestCase
 
     public function setUp(): void
     {
-        $this->settingsProvider = $this->createMock(SettingsProvider::class);
-        $this->merchantEndpoint = $this->createMock(MerchantEndpoint::class);
+        $this->settingsProvider = $this->createMock(AuthenticationSettingsProvider::class);
         $this->curlClientFactory = $this->createMock(CurlClientFactory::class);
-        $this->merchant = $this->createMock(Merchant::class);
         $this->authenticationService = new AuthenticationService(
             $this->settingsProvider,
-            $this->merchantEndpoint,
             $this->curlClientFactory
         );
     }

@@ -47,8 +47,7 @@ class AdminAlmaSettingsController extends ModuleAdminController
             $errors = ValidatorForm::legacyValidate(FormCollection::getAllFields(FormCollection::SETTINGS_FORMS_CLASSES), Tools::getAllValues());
             if (!empty($errors)) {
                 $notifications = $this->module->displayError($errors);
-            }
-            if (empty($errors)) {
+            } else {
                 try {
                     $notificationSuccess = $settingsService->saveWithNotification();
                     $notifications = $this->module->displayConfirmation($notificationSuccess);

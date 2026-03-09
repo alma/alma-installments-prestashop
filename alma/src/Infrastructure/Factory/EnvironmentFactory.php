@@ -3,18 +3,18 @@
 namespace PrestaShop\Module\Alma\Infrastructure\Factory;
 
 use Alma\Client\Domain\ValueObject\Environment;
-use PrestaShop\Module\Alma\Application\Provider\SettingsProvider;
+use PrestaShop\Module\Alma\Application\Provider\AuthenticationSettingsProvider;
 
 class EnvironmentFactory
 {
     /**
-     * @var SettingsProvider
+     * @var AuthenticationSettingsProvider
      */
-    private SettingsProvider $settingsProvider;
+    private AuthenticationSettingsProvider $authenticationSettingsProvider;
 
-    public function __construct(SettingsProvider $settingsProvider)
+    public function __construct(AuthenticationSettingsProvider $authenticationSettingsProvider)
     {
-        $this->settingsProvider = $settingsProvider;
+        $this->authenticationSettingsProvider = $authenticationSettingsProvider;
     }
 
     /**
@@ -25,7 +25,7 @@ class EnvironmentFactory
      */
     public function create(): Environment
     {
-        $environment = $this->settingsProvider->getEnvironment();
+        $environment = $this->authenticationSettingsProvider->getEnvironment();
 
         return new Environment($environment);
     }
