@@ -183,17 +183,17 @@ services:
       - '@alma.configuration_repository'
       - '@alma.language_repository'
 
+  alma.in_page_service:
+    class: 'PrestaShop\Module\Alma\Application\Service\InPageService'
+    arguments:
+      - '@alma.configuration_repository'
+
   alma.refund_service:
     class: 'PrestaShop\Module\Alma\Application\Service\RefundService'
     arguments:
       - '@alma.context'
       - '@alma.configuration_repository'
       - '@alma.order_state_repository'
-
-  alma.in_page_service:
-    class: 'PrestaShop\Module\Alma\Application\Service\InPageService'
-    arguments:
-      - '@alma.configuration_repository'
 
   alma.settings_form_builder:
     class: 'PrestaShop\Module\Alma\Infrastructure\Form\SettingsFormBuilder'
