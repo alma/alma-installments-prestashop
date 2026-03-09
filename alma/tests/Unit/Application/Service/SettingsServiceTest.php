@@ -7,6 +7,7 @@ use PrestaShop\Module\Alma\Application\Exception\AuthenticationException;
 use PrestaShop\Module\Alma\Application\Service\AuthenticationService;
 use PrestaShop\Module\Alma\Application\Service\ExcludedCategoriesService;
 use PrestaShop\Module\Alma\Application\Service\FeePlansService;
+use PrestaShop\Module\Alma\Application\Service\RefundService;
 use PrestaShop\Module\Alma\Application\Service\SettingsService;
 use PrestaShop\Module\Alma\Application\Service\WidgetService;
 use PrestaShop\Module\Alma\Infrastructure\Form\ApiAdminForm;
@@ -32,11 +33,13 @@ class SettingsServiceTest extends TestCase
         $this->feePlansService = $this->createMock(FeePlansService::class);
         $this->widgetService = $this->createMock(WidgetService::class);
         $this->excludedCategoriesService = $this->createMock(ExcludedCategoriesService::class);
+        $this->refundService = $this->createMock(RefundService::class);
         $this->settingsService = new SettingsService(
             $this->authenticationService,
             $this->feePlansService,
             $this->widgetService,
             $this->excludedCategoriesService,
+            $this->refundService,
             $this->settingsRepository,
             $this->configurationRepository,
             $this->toolsProxy
@@ -74,6 +77,8 @@ class SettingsServiceTest extends TestCase
             ->method('defaultFieldsToSave');
         $this->excludedCategoriesService->expects($this->never())
             ->method('defaultFieldsToSave');
+        $this->refundService->expects($this->never())
+            ->method('defaultFieldsToSave');
         $this->settingsRepository->expects($this->never())
             ->method('save');
 
@@ -101,6 +106,8 @@ class SettingsServiceTest extends TestCase
         $this->widgetService->expects($this->never())
             ->method('defaultFieldsToSave');
         $this->excludedCategoriesService->expects($this->never())
+            ->method('defaultFieldsToSave');
+        $this->refundService->expects($this->never())
             ->method('defaultFieldsToSave');
         $this->settingsRepository->expects($this->never())
             ->method('save');
@@ -134,6 +141,8 @@ class SettingsServiceTest extends TestCase
         $this->widgetService->expects($this->once())
             ->method('defaultFieldsToSave');
         $this->excludedCategoriesService->expects($this->once())
+            ->method('defaultFieldsToSave');
+        $this->refundService->expects($this->once())
             ->method('defaultFieldsToSave');
         $fieldsValue = array_merge(
             FormCollection::getAllFields(FormCollection::SETTINGS_FORMS_CLASSES),
@@ -188,6 +197,8 @@ class SettingsServiceTest extends TestCase
         $this->widgetService->expects($this->once())
             ->method('defaultFieldsToSave');
         $this->excludedCategoriesService->expects($this->once())
+            ->method('defaultFieldsToSave');
+        $this->refundService->expects($this->once())
             ->method('defaultFieldsToSave');
         $fieldsValue = array_merge(
             FormCollection::getAllFields(FormCollection::SETTINGS_FORMS_CLASSES),

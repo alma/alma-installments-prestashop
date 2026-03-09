@@ -10,6 +10,7 @@ use PrestaShop\Module\Alma\Infrastructure\Form\ExcludedCategoriesAdminForm;
 use PrestaShop\Module\Alma\Infrastructure\Form\FeePlansAdminForm;
 use PrestaShop\Module\Alma\Infrastructure\Form\FormCollection;
 use PrestaShop\Module\Alma\Infrastructure\Form\ProductWidgetAdminForm;
+use PrestaShop\Module\Alma\Infrastructure\Form\RefundAdminForm;
 use stdClass;
 
 class SettingsCollectionFormTest extends TestCase
@@ -24,6 +25,7 @@ class SettingsCollectionFormTest extends TestCase
                 ProductWidgetAdminForm::fieldsForm(),
                 CartWidgetAdminForm::fieldsForm(),
                 ExcludedCategoriesAdminForm::fieldsForm(),
+                RefundAdminForm::fieldsForm(),
                 DebugAdminForm::fieldsForm()
             ),
             FormCollection::getAllFields($classes)
@@ -39,6 +41,7 @@ class SettingsCollectionFormTest extends TestCase
                 ProductWidgetAdminForm::fieldsForm(),
                 CartWidgetAdminForm::fieldsForm(),
                 ExcludedCategoriesAdminForm::fieldsForm(),
+                RefundAdminForm::fieldsForm(),
                 DebugAdminForm::fieldsForm()
             ),
             FormCollection::getAllFields(FormCollection::SETTINGS_FORMS_CLASSES)

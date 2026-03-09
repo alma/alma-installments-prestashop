@@ -22,7 +22,7 @@ class ValidatorForm
     {
         $errors = [];
         foreach ($fieldsForm as $field => $params) {
-            if ($params['required'] === false) {
+            if (!isset($params['required']) || $params['required'] === false) {
                 continue;
             }
 
