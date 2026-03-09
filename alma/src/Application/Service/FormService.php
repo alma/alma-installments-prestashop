@@ -8,6 +8,7 @@ use PrestaShop\Module\Alma\Infrastructure\Form\DebugAdminForm;
 use PrestaShop\Module\Alma\Infrastructure\Form\ExcludedCategoriesAdminForm;
 use PrestaShop\Module\Alma\Infrastructure\Form\FeePlansAdminForm;
 use PrestaShop\Module\Alma\Infrastructure\Form\InPageAdminForm;
+use PrestaShop\Module\Alma\Infrastructure\Form\PaymentButtonAdminForm;
 use PrestaShop\Module\Alma\Infrastructure\Form\ProductWidgetAdminForm;
 use PrestaShop\Module\Alma\Infrastructure\Form\RefundAdminForm;
 use PrestaShop\Module\Alma\Infrastructure\Repository\ConfigurationRepository;
@@ -66,16 +67,26 @@ class FormService
      * @var InPageAdminForm
      */
     private InPageAdminForm $inPageAdminForm;
+    /**
+     * @var PaymentButtonAdminForm
+     */
+    private PaymentButtonAdminForm $paymentButtonAdminForm;
+    /**
+     * @var PaymentButtonService
+     */
+    private PaymentButtonService $paymentButtonService;
 
     public function __construct(
         FeePlansService $feePlansService,
         WidgetService $widgetService,
+        PaymentButtonService $paymentButtonService,
         ExcludedCategoriesService $excludedCategoriesService,
         RefundService $refundService,
         ApiAdminForm $apiAdminForm,
         FeePlansAdminForm $feePlansAdminForm,
         ProductWidgetAdminForm $productWidgetAdminForm,
         CartWidgetAdminForm $cartWidgetAdminForm,
+        PaymentButtonAdminForm $paymentButtonAdminForm,
         ExcludedCategoriesAdminForm $excludedCategoriesAdminForm,
         RefundAdminForm $refundAdminForm,
         InPageAdminForm $inPageAdminForm,
@@ -84,12 +95,14 @@ class FormService
     ) {
         $this->feePlansService = $feePlansService;
         $this->widgetService = $widgetService;
+        $this->paymentButtonService = $paymentButtonService;
         $this->excludedCategoriesService = $excludedCategoriesService;
         $this->refundService = $refundService;
         $this->apiAdminForm = $apiAdminForm;
         $this->feePlansAdminForm = $feePlansAdminForm;
         $this->productWidgetAdminForm = $productWidgetAdminForm;
         $this->cartWidgetAdminForm = $cartWidgetAdminForm;
+        $this->paymentButtonAdminForm = $paymentButtonAdminForm;
         $this->excludedCategoriesAdminForm = $excludedCategoriesAdminForm;
         $this->refundAdminForm = $refundAdminForm;
         $this->inPageAdminForm = $inPageAdminForm;
@@ -107,12 +120,14 @@ class FormService
         if (!empty($this->configurationRepository->get(ApiAdminForm::KEY_FIELD_MERCHANT_ID))) {
             $templateTabs = $this->feePlansService->createTemplateTabs();
             $templateWidget = $this->widgetService->createTemplate();
+            $templatePaymentButton = $this->paymentButtonService->createTemplate();
             $templateExcludedCategories = $this->excludedCategoriesService->createTemplate();
             $templateRefund = $this->refundService->createTemplate();
             $form = [
                 $this->feePlansAdminForm->build($templateTabs, $this->feePlansService->feePlansFields()),
                 $this->productWidgetAdminForm->build($templateWidget),
                 $this->cartWidgetAdminForm->build(),
+                $this->paymentButtonAdminForm->build($templatePaymentButton),
                 $this->excludedCategoriesAdminForm->build($templateExcludedCategories),
                 $this->refundAdminForm->build($templateRefund, $this->refundService->refundStateOrder()),
                 $this->inPageAdminForm->build(),

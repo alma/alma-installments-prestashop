@@ -71,6 +71,11 @@ services:
     arguments:
       - '@alma.form_builder'
 
+  alma.payment_button_admin_form:
+    class: 'PrestaShop\Module\Alma\Infrastructure\Form\PaymentButtonAdminForm'
+    arguments:
+      - '@alma.form_builder'
+
   alma.fee_plans_admin_form:
     class: 'PrestaShop\Module\Alma\Infrastructure\Form\FeePlansAdminForm'
     arguments:
@@ -140,6 +145,7 @@ services:
       - '@alma.authentication_service'
       - '@alma.fee_plans_service'
       - '@alma.widget_service'
+      - '@alma.payment_button_service'
       - '@alma.excluded_categories_service'
       - '@alma.refund_service'
       - '@alma.in_page_service'
@@ -158,6 +164,12 @@ services:
 
   alma.widget_service:
     class: 'PrestaShop\Module\Alma\Application\Service\WidgetService'
+    arguments:
+      - '@alma.context'
+      - '@alma.configuration_repository'
+
+  alma.payment_button_service:
+    class: 'PrestaShop\Module\Alma\Application\Service\PaymentButtonService'
     arguments:
       - '@alma.context'
       - '@alma.configuration_repository'
@@ -203,12 +215,14 @@ services:
     arguments:
       - '@alma.fee_plans_service'
       - '@alma.widget_service'
+      - '@alma.payment_button_service'
       - '@alma.excluded_categories_service'
       - '@alma.refund_service'
       - '@alma.api_admin_form'
       - '@alma.fee_plans_admin_form'
       - '@alma.product_widget_admin_form'
       - '@alma.cart_widget_admin_form'
+      - '@alma.payment_button_admin_form'
       - '@alma.excluded_categories_admin_form'
       - '@alma.refund_admin_form'
       - '@alma.in_page_admin_form'
