@@ -16,6 +16,7 @@ class FormCollection
         CartWidgetAdminForm::class,
         ExcludedCategoriesAdminForm::class,
         RefundAdminForm::class,
+        InPageAdminForm::class,
         DebugAdminForm::class
     ];
 

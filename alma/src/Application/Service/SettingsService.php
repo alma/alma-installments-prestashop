@@ -43,6 +43,10 @@ class SettingsService
      * @var RefundService
      */
     private RefundService $refundService;
+    /**
+     * @var InPageService
+     */
+    private InPageService $inPageService;
 
     public function __construct(
         AuthenticationService $authenticationService,
@@ -50,6 +54,7 @@ class SettingsService
         WidgetService $widgetService,
         ExcludedCategoriesService $excludedCategoriesService,
         RefundService $refundService,
+        InPageService $inPageService,
         SettingsRepository $settingsRepository,
         ConfigurationRepository $configurationRepository,
         ToolsProxy $toolsProxy
@@ -59,6 +64,7 @@ class SettingsService
         $this->widgetService = $widgetService;
         $this->excludedCategoriesService = $excludedCategoriesService;
         $this->refundService = $refundService;
+        $this->inPageService = $inPageService;
         $this->settingsRepository = $settingsRepository;
         $this->configurationRepository = $configurationRepository;
         $this->toolsProxy = $toolsProxy;
@@ -129,7 +135,8 @@ class SettingsService
             $feePlansFieldsValue,
             $this->widgetService->defaultFieldsToSave(),
             $this->excludedCategoriesService->defaultFieldsToSave(),
-            $this->refundService->defaultFieldsToSave()
+            $this->refundService->defaultFieldsToSave(),
+            $this->inPageService->defaultFieldsToSave()
         );
 
         $this->settingsRepository->save(
