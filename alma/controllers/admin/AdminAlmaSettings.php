@@ -43,6 +43,8 @@ class AdminAlmaSettingsController extends ModuleAdminController
         $isAccountLinked = false;
         $token = Tools::getAdminTokenLite('AdminAlmaSettings');
         $defaultLang = (int) Configuration::get('PS_LANG_DEFAULT');
+        $allowEmployeeFormLang = (int) Configuration::get('PS_BO_ALLOW_EMPLOYEE_FORM_LANG');
+        $languages = $this->context->controller->getLanguages();
 
         if (Tools::isSubmit('submit' . $this->module->name)) {
             $settingsFormClasses = FormCollection::SETTINGS_FORMS_CLASSES_BEFORE_AUTH;
@@ -85,7 +87,7 @@ class AdminAlmaSettingsController extends ModuleAdminController
             'isPsAccountsLinked' => $isAccountLinked,
             'urlAccountsCdn' => $urlAccountsCdn,
             'notifications' => $notifications,
-            'form' => $settingsFormBuilder->render($token, $defaultLang, $formService->getForm()),
+            'form' => $settingsFormBuilder->render($token, $defaultLang, $allowEmployeeFormLang, $languages, $formService->getForm()),
         ]);
 
         $this->content = $this->module->display(

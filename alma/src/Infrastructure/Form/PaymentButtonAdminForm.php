@@ -49,6 +49,7 @@ class PaymentButtonAdminForm extends AbstractAdminForm
                 'encrypted' => false,
                 'options' => [
                     'size' => 20,
+                    'lang' => true,
                 ],
             ],
             self::KEY_FIELD_PAYNOW_BUTTON_DESC => [
