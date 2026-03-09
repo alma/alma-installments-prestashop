@@ -2,6 +2,10 @@
 
 namespace PrestaShop\Module\Alma\Application\Service;
 
+use PrestaShop\Module\Alma\Application\Exception\AuthenticationException;
+use PrestaShop\Module\Alma\Application\Exception\SettingsException;
+use PrestaShop\Module\Alma\Application\Helper\EncryptorHelper;
+use PrestaShop\Module\Alma\Infrastructure\Form\ApiAdminForm;
 use PrestaShop\Module\Alma\Infrastructure\Form\FormCollection;
 use PrestaShop\Module\Alma\Infrastructure\Proxy\ToolsProxy;
 use PrestaShop\Module\Alma\Infrastructure\Repository\ConfigurationRepository;
@@ -10,30 +14,39 @@ use PrestaShop\Module\Alma\Infrastructure\Repository\SettingsRepository;
 class SettingsService
 {
     /**
+     * @var AuthenticationService
+     */
+    private AuthenticationService $authenticationService;
+    /**
      * @var SettingsRepository
      */
     private SettingsRepository $settingsRepository;
     /**
-     * @var ToolsProxy
-     */
-    private ToolsProxy $toolsProxy;
-    /**
      * @var ConfigurationRepository
      */
     private ConfigurationRepository $configurationRepository;
+    /**
+     * @var ToolsProxy
+     */
+    private ToolsProxy $toolsProxy;
 
     public function __construct(
+        AuthenticationService $authenticationService,
         SettingsRepository $settingsRepository,
-        ToolsProxy $toolsProxy,
-        ConfigurationRepository $configurationRepository
+        ConfigurationRepository $configurationRepository,
+        ToolsProxy $toolsProxy
     ) {
+        $this->authenticationService = $authenticationService;
         $this->settingsRepository = $settingsRepository;
-        $this->toolsProxy = $toolsProxy;
         $this->configurationRepository = $configurationRepository;
+        $this->toolsProxy = $toolsProxy;
     }
 
     /**
-     * Get the configuration form fields values from POST.
+     * Get the configuration form fields values from POST or DB for put the value on each input.
+     * Sometimes we need to get the value only from DB with the param 'getFromDb' if the field is not in the POST,
+     * to avoid losing the value when we save the form without changing all fields.
+     * And if the field is encrypted, we need to put the obscure value in the input to not show the encrypted value.
      *
      * @return array
      */
@@ -43,16 +56,51 @@ class SettingsService
 
         foreach (FormCollection::getAllFields(FormCollection::SETTINGS_FORMS_CLASSES) as $field => $param) {
             $fieldsValue[$field] = $this->toolsProxy->getValue($field, $this->configurationRepository->get($field));
+            // This function is to get the value from the database if the field is not in the POST.
+            if (isset($param['getFromDb']) && $param['getFromDb'] === true) {
+                $fieldsValue[$field] = $this->configurationRepository->get($field);
+            }
+
+            if (isset($param['encrypted']) && EncryptorHelper::isEncryptionValue($param['encrypted'], $fieldsValue[$field])) {
+                $fieldsValue[$field] = EncryptorHelper::OBSCURE_VALUE;
+            }
         }
 
         return $fieldsValue;
     }
 
     /**
-     * Save the configuration form fields values.
+     * Check validity of the API keys and the equal merchantIds
+     * Save the configuration form from all fields values.
+     * And return the notification message to show in the configuration form after saving it.
+     *
+     * @return string
+     * @throws \PrestaShop\Module\Alma\Application\Exception\SettingsException
      */
-    public function save(): void
+    public function saveWithNotification(): string
     {
-        $this->settingsRepository->save(FormCollection::getAllFields(FormCollection::SETTINGS_FORMS_CLASSES));
+        $notificationSuccess = 'Settings successfully updated';
+        try {
+            $merchantIds = $this->authenticationService->isValidKeys();
+            $this->authenticationService->checkSameMerchantIds($merchantIds);
+        } catch (AuthenticationException $e) {
+            throw new SettingsException($e->getMessage());
+        }
+
+        $mode = $this->toolsProxy->getValue(ApiAdminForm::KEY_FIELD_MODE, $this->settingsRepository->getEnvironment());
+        if (!array_key_exists($mode, $merchantIds)) {
+            $mode = key($merchantIds);
+            $overrideValues[ApiAdminForm::KEY_FIELD_MODE] = $mode;
+            $notificationSuccess = "Mode automatically switched to {$mode} mode. To use the other mode, please enter the corresponding API key.";
+        }
+
+        $overrideValues[ApiAdminForm::KEY_FIELD_MERCHANT_ID] = $merchantIds[$mode];
+
+        $this->settingsRepository->save(
+            FormCollection::getAllFields(FormCollection::SETTINGS_FORMS_CLASSES),
+            $overrideValues
+        );
+
+        return $notificationSuccess;
     }
 }

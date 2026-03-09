@@ -14,7 +14,7 @@ class SettingsCollectionFormTest extends TestCase
         $classes = array_merge(FormCollection::SETTINGS_FORMS_CLASSES, [stdClass::class]);
         $this->assertEquals(
             array_merge(
-                ApiAdminForm::FIELDS_FORM
+                ApiAdminForm::fieldsForm()
             ),
             FormCollection::getAllFields($classes)
         );
@@ -24,7 +24,7 @@ class SettingsCollectionFormTest extends TestCase
     {
         $this->assertEquals(
             array_merge(
-                ApiAdminForm::FIELDS_FORM
+                ApiAdminForm::fieldsForm()
             ),
             FormCollection::getAllFields(FormCollection::SETTINGS_FORMS_CLASSES)
         );

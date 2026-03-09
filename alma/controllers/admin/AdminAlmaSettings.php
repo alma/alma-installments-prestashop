@@ -1,6 +1,7 @@
 <?php
 
 use PrestaShop\Module\Alma\Application\Exception\PsAccountsException;
+use PrestaShop\Module\Alma\Application\Exception\SettingsException;
 use PrestaShop\Module\Alma\Application\Service\PsAccountsService;
 use PrestaShop\Module\Alma\Application\Service\SettingsService;
 use PrestaShop\Module\Alma\Infrastructure\Form\ApiAdminForm;
@@ -44,9 +45,15 @@ class AdminAlmaSettingsController extends ModuleAdminController
 
         if (Tools::isSubmit('submit' . $this->module->name)) {
             $errors = ValidatorForm::legacyValidate(FormCollection::getAllFields(FormCollection::SETTINGS_FORMS_CLASSES), Tools::getAllValues());
-            if (empty($errors)) {
-                $settingsService->save();
-                $notifications = $this->module->displayConfirmation('Settings updated');
+            if (!empty($errors)) {
+                $notifications = $this->module->displayError($errors);
+            } else {
+                try {
+                    $notificationSuccess = $settingsService->saveWithNotification();
+                    $notifications = $this->module->displayConfirmation($notificationSuccess);
+                } catch (SettingsException $e) {
+                    $notifications = $this->module->displayError($e->getMessage());
+                }
             }
         }
 

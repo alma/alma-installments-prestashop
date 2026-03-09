@@ -18,11 +18,15 @@ abstract class AbstractAdminForm
         $this->formBuilder = $formBuilder;
     }
 
+    abstract public static function fieldsForm(): array;
+
+    abstract public static function title(): string;
+
     /**
      * @return array
      */
     public function build(): array
     {
-        return $this->formBuilder->build(static::TITLE, static::FIELDS_FORM);
+        return $this->formBuilder->build(static::title(), static::fieldsForm());
     }
 }
