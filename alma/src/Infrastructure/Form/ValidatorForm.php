@@ -21,6 +21,10 @@ class ValidatorForm
     public static function legacyValidate(array $fieldsForm, array $allValues, array $languages = []): array
     {
         $errors = [];
+        $languages = [
+            ['id_lang' => 1, 'iso_code' => 'en'],
+            ['id_lang' => 2, 'iso_code' => 'fr'],
+        ];
         foreach ($fieldsForm as $field => $params) {
             if (!isset($params['required']) || $params['required'] === false) {
                 continue;
