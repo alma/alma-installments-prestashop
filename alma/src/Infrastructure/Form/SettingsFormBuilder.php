@@ -42,7 +42,7 @@ class SettingsFormBuilder
         $this->helperForm->submit_action = 'submit' . $this->module->name;
         $this->helperForm->default_form_language = $defaultLang;
         $this->helperForm->allow_employee_form_lang = $allowEmployeeFormLang;
-        $this->helperForm->fields_value = $this->settingsService->getFieldsValue();
+        $this->helperForm->fields_value = $this->settingsService->getFieldsValue($languages);
         $this->helperForm->languages = $languages;
 
         return $this->helperForm->generateForm($forms);

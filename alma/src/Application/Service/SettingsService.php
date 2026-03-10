@@ -3,6 +3,7 @@
 namespace PrestaShop\Module\Alma\Application\Service;
 
 use PrestaShop\Module\Alma\Application\Helper\EncryptorHelper;
+use PrestaShop\Module\Alma\Application\Provider\SettingsProvider;
 use PrestaShop\Module\Alma\Infrastructure\Form\ApiAdminForm;
 use PrestaShop\Module\Alma\Infrastructure\Form\FormCollection;
 use PrestaShop\Module\Alma\Infrastructure\Proxy\ToolsProxy;
@@ -51,6 +52,10 @@ class SettingsService
      * @var PaymentButtonService
      */
     private PaymentButtonService $paymentButtonService;
+    /**
+     * @var SettingsProvider
+     */
+    private SettingsProvider $settingsProvider;
 
     public function __construct(
         AuthenticationService $authenticationService,
@@ -60,6 +65,7 @@ class SettingsService
         ExcludedCategoriesService $excludedCategoriesService,
         RefundService $refundService,
         InPageService $inPageService,
+        SettingsProvider $settingsProvider,
         SettingsRepository $settingsRepository,
         ConfigurationRepository $configurationRepository,
         ToolsProxy $toolsProxy
@@ -71,6 +77,7 @@ class SettingsService
         $this->excludedCategoriesService = $excludedCategoriesService;
         $this->refundService = $refundService;
         $this->inPageService = $inPageService;
+        $this->settingsProvider = $settingsProvider;
         $this->settingsRepository = $settingsRepository;
         $this->configurationRepository = $configurationRepository;
         $this->toolsProxy = $toolsProxy;
@@ -82,17 +89,19 @@ class SettingsService
      * to avoid losing the value when we save the form without changing all fields.
      * And if the field is encrypted, we need to put the obscure value in the input to not show the encrypted value.
      *
+     * @param array $languages
      * @return array
      */
-    public function getFieldsValue(): array
+    public function getFieldsValue(array $languages = []): array
     {
         $feePlansFieldsValue = $this->feePlansService->fieldsValue();
         $fieldsValue = array_merge(
-            FormCollection::getAllFields(FormCollection::SETTINGS_FORMS_CLASSES),
+            $this->settingsProvider->getAllFields(),
             $feePlansFieldsValue
         );
 
         foreach ($fieldsValue as $field => $param) {
+            $fieldsValueByLang = [];
             $fieldsValue[$field] = $this->toolsProxy->getValue($field, $this->configurationRepository->get($field));
             // This function is to get the value from the database if the field is not in the POST.
             if (isset($param['getFromDb']) && $param['getFromDb'] === true) {
@@ -102,9 +111,30 @@ class SettingsService
             if (isset($param['encrypted']) && EncryptorHelper::isEncryptionValue($param['encrypted'], $fieldsValue[$field])) {
                 $fieldsValue[$field] = EncryptorHelper::OBSCURE_VALUE;
             }
+
+            if (isset($param['options']['lang']) && $param['options']['lang']) {
+                foreach ($languages as $lang) {
+                    $fieldWithIdLang = $field . '_' . $lang['id_lang'];
+                    $fieldsValueByLang[$lang['id_lang']] = $this->toolsProxy->getValue($fieldWithIdLang, $this->configurationRepository->get($fieldWithIdLang));
+                }
+
+                $fieldsValue[$field] = $fieldsValueByLang;
+            }
         }
 
         return $fieldsValue;
+    }
+
+    /**
+     * Get all fields with language fields exploded for each language with the language id at the end of the field name.
+     * For example, if we have a field 'title' with 'lang' option and 2 languages with id 1 and 2, we will have 2 fields 'title_1' and 'title_2'.
+     *
+     * @param array $fields
+     * @return array
+     */
+    public function getSplitLanguageFields(array $fields): array
+    {
+        return $this->settingsProvider->getSplitLanguageFields($fields);
     }
 
     /**
@@ -133,7 +163,7 @@ class SettingsService
 
         $feePlansFieldsValue = $this->feePlansService->fieldsToSave();
         $fieldsValue = array_merge(
-            FormCollection::getAllFields(FormCollection::SETTINGS_FORMS_CLASSES),
+            $this->settingsProvider->getSplitLanguageFields(FormCollection::getAllFields(FormCollection::SETTINGS_FORMS_CLASSES)),
             $feePlansFieldsValue
         );
         $overrideValues = array_merge(

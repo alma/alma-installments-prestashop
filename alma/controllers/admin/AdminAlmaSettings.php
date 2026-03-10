@@ -51,7 +51,8 @@ class AdminAlmaSettingsController extends ModuleAdminController
             if (Configuration::get(ApiAdminForm::KEY_FIELD_MERCHANT_ID)) {
                 $settingsFormClasses = FormCollection::SETTINGS_FORMS_CLASSES;
             }
-            $errors = ValidatorForm::legacyValidate(FormCollection::getAllFields($settingsFormClasses), Tools::getAllValues());
+            $splitLanguageFields = $settingsService->getSplitLanguageFields(FormCollection::getAllFields($settingsFormClasses));
+            $errors = ValidatorForm::legacyValidate($splitLanguageFields, Tools::getAllValues());
             if (!empty($errors)) {
                 $notifications = $this->module->displayError($errors);
             } else {
