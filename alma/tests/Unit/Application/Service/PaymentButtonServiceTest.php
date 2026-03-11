@@ -89,4 +89,13 @@ class PaymentButtonServiceTest extends TestCase
 
         $this->assertEquals($expected, $this->paymentButtonService->defaultFieldsToSave());
     }
+
+    public function testDefaultFieldsToSaveUpdateValues()
+    {
+        $this->configurationRepository->expects($this->once())
+            ->method('get')
+            ->with(ApiAdminForm::KEY_FIELD_MERCHANT_ID)
+            ->willReturn('merchant_id');
+        $this->assertEquals([], $this->paymentButtonService->defaultFieldsToSave());
+    }
 }
