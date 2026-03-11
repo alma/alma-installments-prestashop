@@ -4,7 +4,6 @@ namespace PrestaShop\Module\Alma\Application\Service;
 
 use Alma\Client\Domain\Entity\FeePlan;
 use PrestaShop\Module\Alma\Application\Assembler\FeePlanListAssembler;
-use PrestaShop\Module\Alma\Application\Helper\FeePlanHelper;
 use PrestaShop\Module\Alma\Application\Helper\PriceHelper;
 use PrestaShop\Module\Alma\Application\Presenter\FeePlanPresenter;
 use PrestaShop\Module\Alma\Application\Provider\FeePlansProvider;
@@ -83,7 +82,7 @@ class FeePlansService
             $objectFeePlan = new FeePlan($feePlan);
             $planKey = $objectFeePlan->getPlanKey();
             $feePlansTabs[$planKey] = [
-                'title' => FeePlanHelper::getTitle($objectFeePlan),
+                'title' => FeePlanPresenter::getTitle($objectFeePlan),
                 'active' => $feePlan['enabled'],
                 'firstPlanEnable' => $firstEnabledPlanKey,
             ];
