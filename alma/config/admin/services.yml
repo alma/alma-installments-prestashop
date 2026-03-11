@@ -181,6 +181,7 @@ services:
     arguments:
       - '@alma.context'
       - '@alma.configuration_repository'
+      - '@alma.language_repository'
 
   alma.refund_service:
     class: 'PrestaShop\Module\Alma\Application\Service\RefundService'
