@@ -5,6 +5,7 @@ namespace PrestaShop\Module\Alma\Application\Service;
 use PrestaShop\Module\Alma\Infrastructure\Form\ApiAdminForm;
 use PrestaShop\Module\Alma\Infrastructure\Form\PaymentButtonAdminForm;
 use PrestaShop\Module\Alma\Infrastructure\Repository\ConfigurationRepository;
+use PrestaShop\Module\Alma\Infrastructure\Repository\LanguageRepository;
 
 class PaymentButtonService
 {
@@ -13,13 +14,53 @@ class PaymentButtonService
      * @var ConfigurationRepository
      */
     private ConfigurationRepository $configurationRepository;
+    /**
+     * @var LanguageRepository
+     */
+    private LanguageRepository $languageRepository;
+
+    // TODO : Provisional values, need to be get the transalation value from .xlf file when I18N rebased
+    private const VALUE_PAYNOW_BUTTON_TITLE = [
+        'en' => 'Pay now by credit card',
+        'fr' => 'Payer maintenant par carte bancaire'
+    ];
+    private const VALUE_PAYNOW_BUTTON_DESC = [
+        'en' => 'Fast and secure payments.',
+        'fr' => 'Paiement rapide et sécurisé.'
+    ];
+    private const VALUE_PNX_BUTTON_TITLE = [
+        'en' => 'Pay in %d installments',
+        'fr' => 'Payer en %d fois'
+    ];
+    private const VALUE_PNX_BUTTON_DESC = [
+        'en' => 'Fast and secure payment by credit card.',
+        'fr' => 'Paiement rapide et sécurisé, par carte bancaire.'
+    ];
+    private const VALUE_PAYLATER_BUTTON_TITLE = [
+        'en' => 'Buy now Pay in %d days',
+        'fr' => 'Payer dans %d jours'
+    ];
+    private const VALUE_PAYLATER_BUTTON_DESC = [
+        'en' => 'Fast and secure payment by credit card.',
+        'fr' => 'Paiement rapide et sécurisé, par carte bancaire.'
+    ];
+    private const VALUE_CREDIT_BUTTON_TITLE = [
+        'en' => 'Pay in %d installments',
+        'fr' => 'Payer en %d fois'
+    ];
+    private const VALUE_CREDIT_BUTTON_DESC = [
+        'en' => 'Fast and secure payment by credit card.',
+        'fr' => 'Paiement rapide et sécurisé, par carte bancaire.'
+    ];
 
     public function __construct(
         \Context $context,
-        ConfigurationRepository $configurationRepository
+        ConfigurationRepository $configurationRepository,
+        LanguageRepository $languageRepository
     ) {
         $this->context = $context;
         $this->configurationRepository = $configurationRepository;
+        $this->languageRepository = $languageRepository;
     }
 
     /**
@@ -33,7 +74,7 @@ class PaymentButtonService
     }
 
     /**
-     * TODO : Need to save the default value of payment button with language
+     * TODO : Need to get the default value from .xlf file when I18N rebased, and remove the provisional const values
      * @return array
      */
     public function defaultFieldsToSave(): array
@@ -42,15 +83,20 @@ class PaymentButtonService
             return [];
         }
 
-        return [
-            PaymentButtonAdminForm::KEY_FIELD_PAYNOW_BUTTON_TITLE => 'Pay now by credit card',
-            PaymentButtonAdminForm::KEY_FIELD_PAYNOW_BUTTON_DESC => 'Fast and secure payments.',
-            PaymentButtonAdminForm::KEY_FIELD_PNX_BUTTON_TITLE => 'Pay in %d installments',
-            PaymentButtonAdminForm::KEY_FIELD_PNX_BUTTON_DESC => 'Fast and secure payment by credit card.',
-            PaymentButtonAdminForm::KEY_FIELD_PAYLATER_BUTTON_TITLE => 'Buy now Pay in %d days',
-            PaymentButtonAdminForm::KEY_FIELD_PAYLATER_BUTTON_DESC => 'Fast and secure payment by credit card.',
-            PaymentButtonAdminForm::KEY_FIELD_CREDIT_BUTTON_TITLE => 'Pay in %d installments',
-            PaymentButtonAdminForm::KEY_FIELD_CREDIT_BUTTON_DESC => 'Fast and secure payment by credit card.',
-        ];
+        $fields = [];
+
+        foreach ($this->languageRepository->getActiveLanguages() as $language) {
+            $suffixLanguage = '_' . $language['id_lang'];
+            $fields[PaymentButtonAdminForm::KEY_FIELD_PAYNOW_BUTTON_TITLE . $suffixLanguage] = self::VALUE_PAYNOW_BUTTON_TITLE[$language['iso_code']];
+            $fields[PaymentButtonAdminForm::KEY_FIELD_PAYNOW_BUTTON_DESC . $suffixLanguage] = self::VALUE_PAYNOW_BUTTON_DESC[$language['iso_code']];
+            $fields[PaymentButtonAdminForm::KEY_FIELD_PNX_BUTTON_TITLE . $suffixLanguage] = self::VALUE_PNX_BUTTON_TITLE[$language['iso_code']];
+            $fields[PaymentButtonAdminForm::KEY_FIELD_PNX_BUTTON_DESC . $suffixLanguage] = self::VALUE_PNX_BUTTON_DESC[$language['iso_code']];
+            $fields[PaymentButtonAdminForm::KEY_FIELD_PAYLATER_BUTTON_TITLE . $suffixLanguage] = self::VALUE_PAYLATER_BUTTON_TITLE[$language['iso_code']];
+            $fields[PaymentButtonAdminForm::KEY_FIELD_PAYLATER_BUTTON_DESC . $suffixLanguage] = self::VALUE_PAYLATER_BUTTON_DESC[$language['iso_code']];
+            $fields[PaymentButtonAdminForm::KEY_FIELD_CREDIT_BUTTON_TITLE . $suffixLanguage] = self::VALUE_CREDIT_BUTTON_TITLE[$language['iso_code']];
+            $fields[PaymentButtonAdminForm::KEY_FIELD_CREDIT_BUTTON_DESC . $suffixLanguage] = self::VALUE_CREDIT_BUTTON_DESC[$language['iso_code']];
+        }
+
+        return $fields;
     }
 }

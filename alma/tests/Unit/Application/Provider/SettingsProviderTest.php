@@ -150,15 +150,14 @@ class SettingsProviderTest extends TestCase
         $this->assertEquals($apiKeysFromPost, $this->settingsProvider->getApiKeys());
     }
 
-    public function testGetAllFieldsWithoutLanguageKeyExploded()
+    public function testGetAllFieldsWithoutMultiLanguageKeyExploded()
     {
         $allFields = array_merge(
             FieldsMock::fieldsWithLangFalse(),
             FieldsMock::fieldsWithoutLang(),
         );
         $languages = [
-            ['id_lang' => 1, 'iso_code' => 'en', 'language_code' => 'en-us', 'locale' => 'en-US'],
-            ['id_lang' => 2, 'iso_code' => 'fr', 'language_code' => 'fr-fr', 'locale' => 'fr-FR']
+            ['id_lang' => 1, 'iso_code' => 'en', 'language_code' => 'en-us', 'locale' => 'en-US']
         ];
         $expected = array_merge(
             FieldsMock::fieldsWithLangFalse(),
