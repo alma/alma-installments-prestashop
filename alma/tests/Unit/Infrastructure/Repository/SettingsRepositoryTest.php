@@ -248,7 +248,7 @@ class SettingsRepositoryTest extends TestCase
             ->method('getValue')
             ->withConsecutive(['field1'], ['field2'], ['field3'])
             ->willReturnOnConsecutiveCalls('value1', 'value2', '');
-        $this->encryptionHelper->expects($this->once())
+        $this->encryptorHelper->expects($this->once())
             ->method('encrypt')
             ->with('value1')
             ->willReturn('encrypted_value1');
