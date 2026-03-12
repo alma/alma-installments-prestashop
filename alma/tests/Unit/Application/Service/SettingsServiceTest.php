@@ -4,7 +4,7 @@ namespace PrestaShop\Module\Alma\Tests\Unit\Application\Service;
 
 use PHPUnit\Framework\TestCase;
 use PrestaShop\Module\Alma\Application\Exception\AuthenticationException;
-use PrestaShop\Module\Alma\Application\Provider\SettingsProvider;
+use PrestaShop\Module\Alma\Application\Provider\AuthenticationSettingsProvider;
 use PrestaShop\Module\Alma\Application\Service\AuthenticationService;
 use PrestaShop\Module\Alma\Application\Service\ExcludedCategoriesService;
 use PrestaShop\Module\Alma\Application\Service\FeePlansService;
@@ -40,9 +40,9 @@ class SettingsServiceTest extends TestCase
      */
     private SettingsService $settingsService;
     /**
-     * @var SettingsProvider
+     * @var AuthenticationSettingsProvider
      */
-    private $settingsProvider;
+    private $authenticationSettingsProvider;
 
     public function setup(): void
     {
@@ -56,7 +56,7 @@ class SettingsServiceTest extends TestCase
         $this->excludedCategoriesService = $this->createMock(ExcludedCategoriesService::class);
         $this->refundService = $this->createMock(RefundService::class);
         $this->inPageService = $this->createMock(InPageService::class);
-        $this->settingsProvider = $this->createMock(SettingsProvider::class);
+        $this->authenticationSettingsProvider = $this->createMock(AuthenticationSettingsProvider::class);
         $this->settingsService = new SettingsService(
             $this->authenticationService,
             $this->feePlansService,
@@ -65,7 +65,7 @@ class SettingsServiceTest extends TestCase
             $this->excludedCategoriesService,
             $this->refundService,
             $this->inPageService,
-            $this->settingsProvider,
+            $this->authenticationSettingsProvider,
             $this->settingsRepository,
             $this->configurationRepository,
             $this->toolsProxy
@@ -99,7 +99,7 @@ class SettingsServiceTest extends TestCase
         $this->feePlansService->expects($this->once())
             ->method('fieldsValue')
             ->willReturn(FeePlansMock::feePlanFieldsExpected(3));
-        $this->settingsProvider->expects($this->any())
+        $this->authenticationSettingsProvider->expects($this->any())
             ->method('getAllFields')
             ->willReturn(FieldsMock::allFields());
         $this->configurationRepository->expects($this->any())
@@ -142,7 +142,7 @@ class SettingsServiceTest extends TestCase
             FieldsMock::fieldsWithoutLang(),
         ];
 
-        $this->settingsProvider->expects($this->once())
+        $this->authenticationSettingsProvider->expects($this->once())
             ->method('getSplitLanguageFields')
             ->with($allFields)
             ->willReturn($expected);
@@ -162,7 +162,7 @@ class SettingsServiceTest extends TestCase
             FieldsMock::fieldsWithoutLang(),
         ];
 
-        $this->settingsProvider->expects($this->once())
+        $this->authenticationSettingsProvider->expects($this->once())
             ->method('getSplitLanguageFields')
             ->with($allFields)
             ->willReturn($expected);
@@ -265,7 +265,7 @@ class SettingsServiceTest extends TestCase
             ->method('defaultFieldsToSave');
         $this->inPageService->expects($this->once())
             ->method('defaultFieldsToSave');
-        $this->settingsProvider->expects($this->once())
+        $this->authenticationSettingsProvider->expects($this->once())
             ->method('getSplitLanguageFields')
             ->with(FormCollection::getAllFields(FormCollection::SETTINGS_FORMS_CLASSES))
             ->willReturn(FieldsMock::allFields());
@@ -329,7 +329,7 @@ class SettingsServiceTest extends TestCase
             ->method('defaultFieldsToSave');
         $this->inPageService->expects($this->once())
             ->method('defaultFieldsToSave');
-        $this->settingsProvider->expects($this->once())
+        $this->authenticationSettingsProvider->expects($this->once())
             ->method('getSplitLanguageFields')
             ->with(FormCollection::getAllFields(FormCollection::SETTINGS_FORMS_CLASSES))
             ->willReturn(FieldsMock::allFields());

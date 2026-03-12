@@ -3,7 +3,7 @@
 namespace PrestaShop\Module\Alma\Application\Service;
 
 use PrestaShop\Module\Alma\Application\Helper\EncryptorHelper;
-use PrestaShop\Module\Alma\Application\Provider\SettingsProvider;
+use PrestaShop\Module\Alma\Application\Provider\AuthenticationSettingsProvider;
 use PrestaShop\Module\Alma\Infrastructure\Form\ApiAdminForm;
 use PrestaShop\Module\Alma\Infrastructure\Form\FormCollection;
 use PrestaShop\Module\Alma\Infrastructure\Proxy\ToolsProxy;
@@ -53,9 +53,9 @@ class SettingsService
      */
     private PaymentButtonService $paymentButtonService;
     /**
-     * @var SettingsProvider
+     * @var AuthenticationSettingsProvider
      */
-    private SettingsProvider $settingsProvider;
+    private AuthenticationSettingsProvider $authenticationSettingsProvider;
 
     public function __construct(
         AuthenticationService $authenticationService,
@@ -65,7 +65,7 @@ class SettingsService
         ExcludedCategoriesService $excludedCategoriesService,
         RefundService $refundService,
         InPageService $inPageService,
-        SettingsProvider $settingsProvider,
+        AuthenticationSettingsProvider $authenticationSettingsProvider,
         SettingsRepository $settingsRepository,
         ConfigurationRepository $configurationRepository,
         ToolsProxy $toolsProxy
@@ -77,7 +77,7 @@ class SettingsService
         $this->excludedCategoriesService = $excludedCategoriesService;
         $this->refundService = $refundService;
         $this->inPageService = $inPageService;
-        $this->settingsProvider = $settingsProvider;
+        $this->authenticationSettingsProvider = $authenticationSettingsProvider;
         $this->settingsRepository = $settingsRepository;
         $this->configurationRepository = $configurationRepository;
         $this->toolsProxy = $toolsProxy;
@@ -96,7 +96,7 @@ class SettingsService
     {
         $feePlansFieldsValue = $this->feePlansService->fieldsValue();
         $fieldsValue = array_merge(
-            $this->settingsProvider->getAllFields(),
+            $this->authenticationSettingsProvider->getAllFields(),
             $feePlansFieldsValue
         );
 
@@ -134,7 +134,7 @@ class SettingsService
      */
     public function getSplitLanguageFields(array $fields): array
     {
-        return $this->settingsProvider->getSplitLanguageFields($fields);
+        return $this->authenticationSettingsProvider->getSplitLanguageFields($fields);
     }
 
     /**
@@ -163,7 +163,7 @@ class SettingsService
 
         $feePlansFieldsValue = $this->feePlansService->fieldsToSave();
         $fieldsValue = array_merge(
-            $this->settingsProvider->getSplitLanguageFields(FormCollection::getAllFields(FormCollection::SETTINGS_FORMS_CLASSES)),
+            $this->authenticationSettingsProvider->getSplitLanguageFields(FormCollection::getAllFields(FormCollection::SETTINGS_FORMS_CLASSES)),
             $feePlansFieldsValue
         );
         $overrideValues = array_merge(
