@@ -56,6 +56,11 @@ services:
     arguments:
       - '@alma.form_builder'
 
+  alma.fee_plans_admin_form:
+    class: 'PrestaShop\Module\Alma\Infrastructure\Form\FeePlansAdminForm'
+    arguments:
+      - '@alma.form_builder'
+
   alma.language_repository:
     class: 'PrestaShop\Module\Alma\Infrastructure\Repository\LanguageRepository'
 
@@ -98,9 +103,16 @@ services:
     class: 'PrestaShop\Module\Alma\Application\Service\SettingsService'
     arguments:
       - '@alma.authentication_service'
+      - '@alma.fee_plans_service'
       - '@alma.settings_repository'
       - '@alma.configuration_repository'
       - '@alma.tools_proxy'
+
+  alma.fee_plans_service:
+    class: 'PrestaShop\Module\Alma\Application\Service\FeePlansService'
+    arguments:
+      - '@alma.context'
+      - '@alma.fee_plans_provider'
 
   alma.settings_form_builder:
     class: 'PrestaShop\Module\Alma\Infrastructure\Form\SettingsFormBuilder'
@@ -154,6 +166,11 @@ services:
       - '@alma.module'
       - '@alma.settings_repository'
       - '@alma.tools_proxy'
+
+  alma.fee_plans_provider:
+    class: 'PrestaShop\Module\Alma\Application\Provider\FeePlansProvider'
+    arguments:
+      - '@alma.merchant_endpoint'
 
   alma.environment:
     class: 'Alma\Client\Domain\ValueObject\Environment'

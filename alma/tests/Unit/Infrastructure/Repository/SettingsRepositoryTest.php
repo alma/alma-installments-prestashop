@@ -236,4 +236,25 @@ class SettingsRepositoryTest extends TestCase
             ->withConsecutive(['field1', 'value1'], ['field2', 'encrypted_value2'], ['field3', 'override_value3']);
         $this->settings->save($fields, $overrideValues);
     }
+
+    public function testSaveThreeFieldsWithOneEncryptedOneHtmlFieldAndHtmlFieldDoesntSaved(): void
+    {
+        $fields = [
+            'field1' => ['encrypted' => true, 'type' => 'text'],
+            'field2' => ['encrypted' => false, 'type' => 'select'],
+            'field3' => ['encrypted' => false, 'type' => 'html'],
+        ];
+        $this->tools->expects($this->exactly(3))
+            ->method('getValue')
+            ->withConsecutive(['field1'], ['field2'], ['field3'])
+            ->willReturnOnConsecutiveCalls('value1', 'value2', '');
+        $this->encryptorHelper->expects($this->once())
+            ->method('encrypt')
+            ->with('value1')
+            ->willReturn('encrypted_value1');
+        $this->configuration->expects($this->exactly(2))
+            ->method('updateValue')
+            ->withConsecutive(['field1', 'encrypted_value1'], ['field2', 'value2']);
+        $this->settings->save($fields);
+    }
 }

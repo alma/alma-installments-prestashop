@@ -1,0 +1,36 @@
+<?php
+
+namespace PrestaShop\Module\Alma\Application\Presenter;
+
+use Alma\Client\Domain\Entity\FeePlan;
+
+class FeePlanPresenter
+{
+    public static function getTitle(FeePlan $feePlan): string
+    {
+        $title = 'Pay Now';
+
+        if ($feePlan->isPnXOnly() || $feePlan->isCredit()) {
+            $title = sprintf('%d-installment payments', $feePlan->getInstallmentsCount());
+        }
+        if ($feePlan->isPayLaterOnly()) {
+            $title = sprintf('Deferred payments + %d days', $feePlan->getDeferredDays());
+        }
+
+        return $title;
+    }
+
+    public static function getLabel(FeePlan $feePlan): string
+    {
+        $title = 'Enable pay now';
+
+        if ($feePlan->isPnXOnly() || $feePlan->isCredit()) {
+            $title = sprintf('Enable %d-installment payments', $feePlan->getInstallmentsCount());
+        }
+        if ($feePlan->isPayLaterOnly()) {
+            $title = sprintf('Enable deferred payments +%d days', $feePlan->getDeferredDays());
+        }
+
+        return $title;
+    }
+}

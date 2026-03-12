@@ -29,14 +29,20 @@ class SettingsService
      * @var ToolsProxy
      */
     private ToolsProxy $toolsProxy;
+    /**
+     * @var \PrestaShop\Module\Alma\Application\Service\FeePlansService
+     */
+    private FeePlansService $feePlansService;
 
     public function __construct(
         AuthenticationService $authenticationService,
+        FeePlansService $feePlansService,
         SettingsRepository $settingsRepository,
         ConfigurationRepository $configurationRepository,
         ToolsProxy $toolsProxy
     ) {
         $this->authenticationService = $authenticationService;
+        $this->feePlansService = $feePlansService;
         $this->settingsRepository = $settingsRepository;
         $this->configurationRepository = $configurationRepository;
         $this->toolsProxy = $toolsProxy;
@@ -52,9 +58,13 @@ class SettingsService
      */
     public function getFieldsValue(): array
     {
-        $fieldsValue = [];
+        $feePlansFieldsValue = $this->feePlansService->fieldsValue();
+        $fieldsValue = array_merge(
+            FormCollection::getAllFields(FormCollection::SETTINGS_FORMS_CLASSES),
+            $feePlansFieldsValue
+        );
 
-        foreach (FormCollection::getAllFields(FormCollection::SETTINGS_FORMS_CLASSES) as $field => $param) {
+        foreach ($fieldsValue as $field => $param) {
             $fieldsValue[$field] = $this->toolsProxy->getValue($field, $this->configurationRepository->get($field));
             // This function is to get the value from the database if the field is not in the POST.
             if (isset($param['getFromDb']) && $param['getFromDb'] === true) {
@@ -96,8 +106,15 @@ class SettingsService
 
         $overrideValues[ApiAdminForm::KEY_FIELD_MERCHANT_ID] = $merchantIds[$mode];
 
-        $this->settingsRepository->save(
+        // TODO : We will need to save the plan in the first time.
+        $feePlansFieldsValue = $this->feePlansService->fieldsValue();
+        $fieldsValue = array_merge(
             FormCollection::getAllFields(FormCollection::SETTINGS_FORMS_CLASSES),
+            $feePlansFieldsValue
+        );
+
+        $this->settingsRepository->save(
+            $fieldsValue,
             $overrideValues
         );
 
