@@ -3,12 +3,15 @@
 namespace PrestaShop\Module\Alma\Tests\Unit\Application\Presenter;
 
 use PHPUnit\Framework\TestCase;
-use PrestaShop\Module\Alma\Application\Presenter\FeePlanPresenter;
 use PrestaShop\Module\Alma\Application\Exception\FeePlansException;
+use PrestaShop\Module\Alma\Application\Presenter\FeePlanPresenter;
 use PrestaShop\Module\Alma\Tests\Mocks\FeePlansMock;
 
 class FeePlanPresenterTest extends TestCase
 {
+    /**
+     * @throws \Alma\Client\Application\Exception\ParametersException
+     */
     public function testGetTitleWithPayNow()
     {
         $this->assertEquals('Pay Now', FeePlanPresenter::getTitle(
@@ -16,6 +19,9 @@ class FeePlanPresenterTest extends TestCase
         ));
     }
 
+    /**
+     * @throws \Alma\Client\Application\Exception\ParametersException
+     */
     public function testGetTitleWithPnx()
     {
         $this->assertEquals('2-installment payments', FeePlanPresenter::getTitle(
@@ -23,6 +29,9 @@ class FeePlanPresenterTest extends TestCase
         ));
     }
 
+    /**
+     * @throws \Alma\Client\Application\Exception\ParametersException
+     */
     public function testGetTitleWithDeferredDays()
     {
         $this->assertEquals('Deferred payments + 30 days', FeePlanPresenter::getTitle(
@@ -30,6 +39,9 @@ class FeePlanPresenterTest extends TestCase
         ));
     }
 
+    /**
+     * @throws \Alma\Client\Application\Exception\ParametersException
+     */
     public function testGetLabelWithPayNow()
     {
         $this->assertEquals('Enable pay now', FeePlanPresenter::getLabel(
@@ -37,6 +49,9 @@ class FeePlanPresenterTest extends TestCase
         ));
     }
 
+    /**
+     * @throws \Alma\Client\Application\Exception\ParametersException
+     */
     public function testGetLabelWithPnx()
     {
         $this->assertEquals('Enable 2-installment payments', FeePlanPresenter::getLabel(
@@ -44,6 +59,9 @@ class FeePlanPresenterTest extends TestCase
         ));
     }
 
+    /**
+     * @throws \Alma\Client\Application\Exception\ParametersException
+     */
     public function testGetLabelWithDeferredDays()
     {
         $this->assertEquals('Enable deferred payments +30 days', FeePlanPresenter::getLabel(
@@ -59,7 +77,7 @@ class FeePlanPresenterTest extends TestCase
         $feePlan = FeePlansMock::feePlan(2);
         $this->expectException(FeePlansException::class);
         $this->expectExceptionMessage('The maximum purchase amount cannot be higher than the maximum allowed by Alma.');
-        FeePlanHelper::checkLimitAmountPlan($feePlan, 10000, 200100);
+        FeePlanPresenter::checkLimitAmountPlan($feePlan, 10000, 200100);
     }
 
     /**
@@ -71,7 +89,7 @@ class FeePlanPresenterTest extends TestCase
         $feePlan = FeePlansMock::feePlan(2);
         $this->expectException(FeePlansException::class);
         $this->expectExceptionMessage('The minimum purchase amount cannot be lower than the minimum allowed by Alma.');
-        FeePlanHelper::checkLimitAmountPlan($feePlan, 5000, 200000);
+        FeePlanPresenter::checkLimitAmountPlan($feePlan, 5000, 200000);
     }
 
     /**
@@ -82,7 +100,7 @@ class FeePlanPresenterTest extends TestCase
         $feePlan = FeePlansMock::feePlan(2);
         $this->expectException(FeePlansException::class);
         $this->expectExceptionMessage('The minimum purchase amount cannot be higher than the maximum.');
-        FeePlanHelper::checkLimitAmountPlan($feePlan, 200100, 200000);
+        FeePlanPresenter::checkLimitAmountPlan($feePlan, 200100, 200000);
     }
 
     /**
@@ -93,12 +111,16 @@ class FeePlanPresenterTest extends TestCase
         $feePlan = FeePlansMock::feePlan(2);
         $this->expectException(FeePlansException::class);
         $this->expectExceptionMessage('The maximum purchase amount cannot be lower than the minimum.');
-        FeePlanHelper::checkLimitAmountPlan($feePlan, 10000, 5000);
+        FeePlanPresenter::checkLimitAmountPlan($feePlan, 10000, 5000);
     }
 
+    /**
+     * @throws \Alma\Client\Application\Exception\ParametersException
+     * @throws \PrestaShop\Module\Alma\Application\Exception\FeePlansException
+     */
     public function testCheckLimitAmountPlanWithRightAmountReturnVoid()
     {
         $feePlan = FeePlansMock::feePlan(2);
-        $this->assertNull(FeePlanHelper::checkLimitAmountPlan($feePlan, 10000, 200000));
+        $this->assertNull(FeePlanPresenter::checkLimitAmountPlan($feePlan, 10000, 200000));
     }
 }

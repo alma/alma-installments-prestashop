@@ -236,7 +236,7 @@ class FeePlansService
                 if ($feePlan->isPayNow()) {
                     $minAmount = 1;
                 }
-                FeePlanHelper::checkLimitAmountPlan(
+                FeePlanPresenter::checkLimitAmountPlan(
                     $feePlan,
                     PriceHelper::priceToCent($minAmount),
                     PriceHelper::priceToCent($maxAmount)
