@@ -214,7 +214,7 @@ class SettingsProviderTest extends TestCase
             ->method('getActiveLanguages')
             ->willReturn($languages);
 
-        $this->assertEquals($expected, $this->settingsProvider->getSplitLanguageFields($allFields));
+        $this->assertEquals($expected, $this->authenticationSettingsProvider->getSplitLanguageFields($allFields));
     }
 
     public function testGetAllValuesWithLanguageKeyExploded()
@@ -238,6 +238,6 @@ class SettingsProviderTest extends TestCase
             ->method('getActiveLanguages')
             ->willReturn($languages);
 
-        $this->assertEquals($expected, $this->settingsProvider->getSplitLanguageFields($allFields));
+        $this->assertEquals($expected, $this->authenticationSettingsProvider->getSplitLanguageFields($allFields));
     }
 }
