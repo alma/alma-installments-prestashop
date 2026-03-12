@@ -132,6 +132,14 @@ services:
       - '@alma.settings_provider'
       - '@alma.curl_client_factory'
 
+  alma.form_service:
+    class: 'PrestaShop\Module\Alma\Application\Service\FormService'
+    arguments:
+      - '@alma.fee_plans_service'
+      - '@alma.api_admin_form'
+      - '@alma.fee_plans_admin_form'
+      - '@alma.configuration_repository'
+
   alma.client_configuration:
     class: 'Alma\Client\Application\ClientConfiguration'
     factory: ['@alma.client_configuration_factory', 'create']
