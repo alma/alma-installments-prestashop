@@ -146,90 +146,41 @@ class FeePlansServiceTest extends TestCase
     /**
      * @throws \Alma\Client\Application\Exception\ParametersException
      */
-    public function testFieldsValueFromRepositoryLoopedFromFeePlanList()
+    public function testFieldsToSaveFromApi()
     {
-        $feePlanFromClient = FeePlansMock::feePlanFieldsValueExpected(3, 0, 0, 1, 10000, 200000, 5);
-
-        $feePlan3X = FeePlansMock::feePlan(3);
-
-        $feePlanList = new FeePlanList([$feePlan3X]);
-        $this->feePlansProvider->expects($this->once())
-            ->method('getFeePlanList')
-            ->willReturn($feePlanList);
-        $this->configurationRepository->expects($this->exactly(4))
-            ->method('get')
-            ->willReturnMap([
-                ['ALMA_GENERAL_3_0_0_STATE', '1'],
-                ['ALMA_GENERAL_3_0_0_MIN_AMOUNT', '100'],
-                ['ALMA_GENERAL_3_0_0_MAX_AMOUNT', '2000'],
-                ['ALMA_GENERAL_3_0_0_SORT_ORDER', '5'],
-            ]);
-        $this->assertEquals($feePlanFromClient, $this->feePlansService->fieldsValue());
+        $feePlan = FeePlansMock::feePlan(3);
+        $feePlanList = new FeePlanList([$feePlan]);
+        $expected = FeePlansMock::almaFeePlanForDbExpected(3);
+        $this->assertEquals($expected, $this->feePlansService->fieldsToSaveFromApi($feePlanList));
     }
 
-    /**
-     * @throws \PrestaShop\Module\Alma\Application\Exception\FeePlansException
-     */
-    public function testFeePlansFieldsToSaveGetFeePlanListEmptyReturnEmptyArray()
+    public function testFieldsToSaveFromPostWithFeePlanReturnOneKeyFeePlanJson()
     {
-        $this->feePlansProvider->expects($this->once())
-            ->method('getFeePlanList')
-            ->willReturn(new FeePlanList());
+        $postFromForm = [
+            'ALMA_OTHER_FIELD' => 'other_value',
+            'ALMA_GENERAL_3_0_0_STATE' => '1',
+            'ALMA_GENERAL_3_0_0_MIN_AMOUNT' => '100',
+            'ALMA_GENERAL_3_0_0_MAX_AMOUNT' => '2000',
+            'ALMA_GENERAL_3_0_0_SORT_ORDER' => '5',
+        ];
 
-        $this->assertEquals([], $this->feePlansService->fieldsToSave());
+        $expected = FeePlansMock::almaFeePlanForDbExpected(3, 0, 0, '1', '10000', '200000', '5');
+
+        $this->assertEquals($expected, $this->feePlansService->fieldsToSaveFromPost($postFromForm));
     }
 
-    /**
-     * @throws \Alma\Client\Application\Exception\ParametersException
-     * @throws \PrestaShop\Module\Alma\Application\Exception\FeePlansException
-     */
-    public function testFieldsToSaveFirstSaveWithoutMerchantIdSavedInDbReturnFieldValueFromClient()
+    public function testFieldsToSaveFromPostWithFeePlanEmptyReturnOneKeyFeePlanJsonEmpty()
     {
-        $feePlanFromClient = FeePlansMock::feePlanFieldsValueExpected(3);
+        $postFromForm = [
+            'ALMA_OTHER_FIELD' => 'other_value',
+        ];
 
-        $feePlan3X = FeePlansMock::feePlan(3);
+        $plansEncode = json_encode([]);
 
-        $feePlanList = new FeePlanList([$feePlan3X]);
-        $this->feePlansProvider->expects($this->once())
-            ->method('getFeePlanList')
-            ->willReturn($feePlanList);
-        $this->configurationRepository->expects($this->once())
-            ->method('get')
-            ->with(ApiAdminForm::KEY_FIELD_MERCHANT_ID)
-            ->willReturn('');
+        $expected = [
+            'ALMA_FEE_PLAN_LIST' => $plansEncode
+        ];
 
-        $this->assertEquals($feePlanFromClient, $this->feePlansService->fieldsToSave());
-    }
-
-    /**
-     * @throws \Alma\Client\Application\Exception\ParametersException
-     * @throws \PrestaShop\Module\Alma\Application\Exception\FeePlansException
-     */
-    public function testFieldsToSaveWithMerchantIdSavedInDbReturnFieldValueFromPost()
-    {
-        $feePlanFromPost = FeePlansMock::feePlanFieldsValueExpected(3, 0, 0, 0, 10000, 100000);
-
-        $feePlan3X = FeePlansMock::feePlan(3);
-
-        $feePlanList = new FeePlanList([$feePlan3X]);
-        $this->feePlansProvider->expects($this->once())
-            ->method('getFeePlanList')
-            ->willReturn($feePlanList);
-        $this->configurationRepository->expects($this->once())
-            ->method('get')
-            ->with(ApiAdminForm::KEY_FIELD_MERCHANT_ID)
-            ->willReturn('merchant_id');
-        $this->toolsProxy->expects($this->exactly(4))
-            ->method('getValue')
-            ->willReturnMap(
-                [
-                    ['ALMA_GENERAL_3_0_0_STATE', false, '0'],
-                    ['ALMA_GENERAL_3_0_0_MIN_AMOUNT', false, '100'],
-                    ['ALMA_GENERAL_3_0_0_MAX_AMOUNT', false, '1000'],
-                    ['ALMA_GENERAL_3_0_0_SORT_ORDER', false, '1'],
-                ]
-            );
-
-        $this->assertEquals($feePlanFromPost, $this->feePlansService->fieldsToSave());
+        $this->assertEquals($expected, $this->feePlansService->fieldsToSaveFromPost($postFromForm));
     }
 }

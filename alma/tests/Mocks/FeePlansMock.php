@@ -5,6 +5,7 @@ namespace PrestaShop\Module\Alma\Tests\Mocks;
 use Alma\Client\Domain\Entity\FeePlan;
 use PrestaShop\Module\Alma\Application\Helper\PriceHelper;
 use PrestaShop\Module\Alma\Application\Presenter\FeePlanPresenter;
+use PrestaShop\Module\Alma\Infrastructure\Form\FeePlansAdminForm;
 
 final class FeePlansMock
 {
@@ -152,6 +153,22 @@ final class FeePlansMock
             'ALMA_' . $planKey . '_MIN_AMOUNT' => PriceHelper::priceToEuro($minAmount),
             'ALMA_' . $planKey . '_MAX_AMOUNT' => PriceHelper::priceToEuro($maxAmount),
             'ALMA_' . $planKey . '_SORT_ORDER' => $sortOrder,
+        ];
+    }
+
+    public static function almaFeePlanForDbExpected(int $installmentCount, int $deferredDays = 0, int $deferredMonth = 0, string $state = '1', string $minAmount = '10000', string $maxAmount = '200000', $sortOrder = '1'): array
+    {
+        $planKey = sprintf('general_%d_%d_%d', $installmentCount, $deferredDays, $deferredMonth);
+
+        return [
+            FeePlansAdminForm::KET_FIELD_FEE_PLAN_LIST => json_encode([
+                $planKey => [
+                    'state' => $state,
+                    'min_amount' => $minAmount,
+                    'max_amount' => $maxAmount,
+                    'sort_order' => $sortOrder,
+                ]
+            ])
         ];
     }
 }

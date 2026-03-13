@@ -43,6 +43,10 @@ class SettingsServiceTest extends TestCase
      * @var AuthenticationSettingsProvider
      */
     private $authenticationSettingsProvider;
+    /**
+     * @var ToolsProxy
+     */
+    private $toolsProxy;
 
     public function setup(): void
     {
@@ -252,8 +256,12 @@ class SettingsServiceTest extends TestCase
         $this->authenticationService->expects($this->once())
             ->method('checkSameMerchantIds')
             ->with($merchantIds);
+        $this->toolsProxy->expects($this->once())
+            ->method('getAllValues')
+            ->willReturn(['post' => 'values']);
         $this->feePlansService->expects($this->once())
-            ->method('fieldsToSave')
+            ->method('fieldsToSaveFromPost')
+            ->with(['post' => 'values'])
             ->willReturn(FeePlansMock::feePlanFieldsValueExpected(3));
         $this->widgetService->expects($this->once())
             ->method('defaultFieldsToSave');
@@ -317,7 +325,7 @@ class SettingsServiceTest extends TestCase
             ->with(ApiAdminForm::KEY_FIELD_MODE, 'test')
             ->willReturn('test');
         $this->feePlansService->expects($this->once())
-            ->method('fieldsToSave')
+            ->method('fieldsToSaveFromPost')
             ->willReturn(FeePlansMock::feePlanFieldsValueExpected(3));
         $this->widgetService->expects($this->once())
             ->method('defaultFieldsToSave');

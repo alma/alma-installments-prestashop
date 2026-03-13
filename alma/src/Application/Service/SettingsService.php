@@ -161,7 +161,7 @@ class SettingsService
 
         $overrideValues[ApiAdminForm::KEY_FIELD_MERCHANT_ID] = $merchantIds[$mode];
 
-        $feePlansFieldsValue = $this->feePlansService->fieldsToSave();
+        $feePlansFieldsValue = $this->feePlansService->fieldsToSaveFromPost($this->toolsProxy->getAllValues());
         $fieldsValue = array_merge(
             $this->authenticationSettingsProvider->getSplitLanguageFields(FormCollection::getAllFields(FormCollection::SETTINGS_FORMS_CLASSES)),
             $feePlansFieldsValue
