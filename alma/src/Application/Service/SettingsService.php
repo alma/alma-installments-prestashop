@@ -2,8 +2,11 @@
 
 namespace PrestaShop\Module\Alma\Application\Service;
 
+use PrestaShop\Module\Alma\Application\Exception\AuthenticationException;
+use PrestaShop\Module\Alma\Application\Exception\SettingsException;
 use PrestaShop\Module\Alma\Application\Helper\EncryptorHelper;
 use PrestaShop\Module\Alma\Application\Provider\AuthenticationSettingsProvider;
+use PrestaShop\Module\Alma\Application\Provider\FeePlansProvider;
 use PrestaShop\Module\Alma\Infrastructure\Form\ApiAdminForm;
 use PrestaShop\Module\Alma\Infrastructure\Form\FormCollection;
 use PrestaShop\Module\Alma\Infrastructure\Proxy\ToolsProxy;
@@ -56,6 +59,10 @@ class SettingsService
      * @var AuthenticationSettingsProvider
      */
     private AuthenticationSettingsProvider $authenticationSettingsProvider;
+    /**
+     * @var FeePlansProvider
+     */
+    private FeePlansProvider $feePlansProvider;
 
     public function __construct(
         AuthenticationService $authenticationService,
@@ -66,6 +73,7 @@ class SettingsService
         RefundService $refundService,
         InPageService $inPageService,
         AuthenticationSettingsProvider $authenticationSettingsProvider,
+        FeePlansProvider $feePlansProvider,
         SettingsRepository $settingsRepository,
         ConfigurationRepository $configurationRepository,
         ToolsProxy $toolsProxy
@@ -78,6 +86,7 @@ class SettingsService
         $this->refundService = $refundService;
         $this->inPageService = $inPageService;
         $this->authenticationSettingsProvider = $authenticationSettingsProvider;
+        $this->feePlansProvider = $feePlansProvider;
         $this->settingsRepository = $settingsRepository;
         $this->configurationRepository = $configurationRepository;
         $this->toolsProxy = $toolsProxy;
@@ -142,29 +151,34 @@ class SettingsService
      * Save the configuration form from all fields values.
      * And return the notification message to show in the configuration form after saving it.
      *
+     * @param array $allValuesFromPost
      * @return string
      * @throws \PrestaShop\Module\Alma\Application\Exception\AuthenticationException
      * @throws \PrestaShop\Module\Alma\Application\Exception\FeePlansException
      */
-    public function saveWithNotification(): string
+    public function saveWithNotification(array $allValuesFromPost): string
     {
         $notificationSuccess = 'Settings successfully updated';
-        $merchantIds = $this->authenticationService->isValidKeys();
-        $this->authenticationService->checkSameMerchantIds($merchantIds);
+        $overrideValues = [];
+        $feePlansFieldsValue = $this->feePlansService->fieldsToSaveFromPost($allValuesFromPost);
 
-        $mode = $this->toolsProxy->getValue(ApiAdminForm::KEY_FIELD_MODE, $this->settingsRepository->getEnvironment());
-        if (!array_key_exists($mode, $merchantIds)) {
-            $mode = key($merchantIds);
-            $overrideValues[ApiAdminForm::KEY_FIELD_MODE] = $mode;
-            $notificationSuccess = "Mode automatically switched to {$mode} mode. To use the other mode, please enter the corresponding API key.";
+        if ($this->hasNewKey($allValuesFromPost)) {
+            $merchantIds = $this->authenticationService->isValidKeys();
+            $this->authenticationService->checkSameMerchantIds($merchantIds);
+            $mode = $this->toolsProxy->getValue(ApiAdminForm::KEY_FIELD_MODE, $this->settingsRepository->getEnvironment());
+            if (!array_key_exists($mode, $merchantIds)) {
+                $mode = key($merchantIds);
+                $overrideValues[ApiAdminForm::KEY_FIELD_MODE] = $mode;
+                $notificationSuccess = "Mode automatically switched to {$mode} mode. To use the other mode, please enter the corresponding API key.";
+            }
+            $overrideValues[ApiAdminForm::KEY_FIELD_MERCHANT_ID] = $merchantIds[$mode];
+            $feePlanList = $this->feePlansProvider->getFeePlanList();
+            $feePlansFieldsValue = $this->feePlansService->fieldsToSaveFromApi($feePlanList);
         }
 
-        $overrideValues[ApiAdminForm::KEY_FIELD_MERCHANT_ID] = $merchantIds[$mode];
-
-        $feePlansFieldsValue = $this->feePlansService->fieldsToSaveFromPost($this->toolsProxy->getAllValues());
         $fieldsValue = array_merge(
+            $feePlansFieldsValue,
             $this->authenticationSettingsProvider->getSplitLanguageFields(FormCollection::getAllFields(FormCollection::SETTINGS_FORMS_CLASSES)),
-            $feePlansFieldsValue
         );
         $overrideValues = array_merge(
             $overrideValues,
@@ -182,5 +196,33 @@ class SettingsService
         );
 
         return $notificationSuccess;
+    }
+
+    /**
+     * Check if there is a new API key in the form submission.
+     * A new key is detected when the value is not the obscure placeholder and not empty.
+     *
+     * @param array $allValuesFromPost
+     * @return bool
+     */
+    public function hasNewKey(array $allValuesFromPost): bool
+    {
+        $testKey = $allValuesFromPost[ApiAdminForm::KEY_FIELD_TEST_API_KEY] ?? null;
+        $liveKey = $allValuesFromPost[ApiAdminForm::KEY_FIELD_LIVE_API_KEY] ?? null;
+
+        return $this->isNewKey($testKey) || $this->isNewKey($liveKey);
+    }
+
+    /**
+     * Check if a key value is a new key (not obscure and not empty).
+     *
+     * @param string|null $key
+     * @return bool
+     */
+    private function isNewKey(?string $key): bool
+    {
+        return $key !== null
+            && $key !== EncryptorHelper::OBSCURE_VALUE
+            && $key !== '';
     }
 }
