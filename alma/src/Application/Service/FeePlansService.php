@@ -211,6 +211,13 @@ class FeePlansService
         return $feePlansFieldsValue;
     }
 
+    /**
+     * Build the fee plan list in JSON format to save in the database with the key ALMA_FEE_PLAN_LIST
+     * The fee plan list is build with the fields from API with the pattern general_{installments_count}_{deferred_months}_{deferred_days}
+     * For example, for a fee plan with 3 installments, 0 deferred months and 0 deferred days, the key will be general_3_0_0
+     * @param FeePlanList $feePlanList
+     * @return array
+     */
     public function fieldsToSaveFromApi(FeePlanList $feePlanList): array
     {
         $feePlans = [];

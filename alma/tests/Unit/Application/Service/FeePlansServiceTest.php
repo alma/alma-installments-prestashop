@@ -146,11 +146,21 @@ class FeePlansServiceTest extends TestCase
     /**
      * @throws \Alma\Client\Application\Exception\ParametersException
      */
-    public function testFieldsToSaveFromApi()
+    public function testFieldsToSaveFromApiWithFeePlanList()
     {
         $feePlan = FeePlansMock::feePlan(3);
         $feePlanList = new FeePlanList([$feePlan]);
         $expected = FeePlansMock::almaFeePlanForDbExpected(3);
+        $this->assertEquals($expected, $this->feePlansService->fieldsToSaveFromApi($feePlanList));
+    }
+
+    public function testFieldsToSaveFromApiWithEmptyFeePlanList()
+    {
+        $feePlanList = new FeePlanList();
+        $plansEncode = json_encode([]);
+        $expected = [
+            'ALMA_FEE_PLAN_LIST' => $plansEncode
+        ];
         $this->assertEquals($expected, $this->feePlansService->fieldsToSaveFromApi($feePlanList));
     }
 
