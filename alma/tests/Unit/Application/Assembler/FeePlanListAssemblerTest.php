@@ -11,6 +11,11 @@ use PrestaShop\Module\Alma\Tests\Mocks\FeePlansMock;
 
 class FeePlanListAssemblerTest extends TestCase
 {
+    /**
+     * @var FeePlansProvider
+     */
+    private $feePlansProvider;
+
     public function setUp(): void
     {
         $this->feePlansProvider = $this->createMock(FeePlansProvider::class);
@@ -50,12 +55,9 @@ class FeePlanListAssemblerTest extends TestCase
         $this->feePlansProvider->expects($this->once())
             ->method('getFeePlanList')
             ->willReturn($feePlanList);
-        $this->configurationRepository->expects($this->exactly(2))
-            ->method('get')
-            ->willReturnMap([
-                ['ALMA_GENERAL_3_0_0_STATE', '1'],
-                ['ALMA_GENERAL_3_0_0_SORT_ORDER', '5'],
-            ]);
+        $this->feePlansProvider->expects($this->once())
+            ->method('getFeePlanFromConfiguration')
+            ->willReturn(FeePlansMock::almaFeePlanFromDb(3, 0, 0, '1', '10000', '200000', '5'));
         $this->assertEquals($expectedFeePlanListAssembled, $this->feePlanListAssembler->assemble());
     }
 
@@ -88,12 +90,9 @@ class FeePlanListAssemblerTest extends TestCase
         $this->feePlansProvider->expects($this->once())
             ->method('getFeePlanList')
             ->willReturn($feePlanList);
-        $this->configurationRepository->expects($this->exactly(2))
-            ->method('get')
-            ->willReturnMap([
-                ['ALMA_GENERAL_3_0_0_STATE', ''],
-                ['ALMA_GENERAL_3_0_0_SORT_ORDER', ''],
-            ]);
+        $this->feePlansProvider->expects($this->once())
+            ->method('getFeePlanFromConfiguration')
+            ->willReturn([]);
         $this->assertEquals($expectedFeePlanListAssembled, $this->feePlanListAssembler->assemble());
     }
 }
