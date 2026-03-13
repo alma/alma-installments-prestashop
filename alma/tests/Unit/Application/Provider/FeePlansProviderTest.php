@@ -7,6 +7,8 @@ use Alma\Client\Application\Exception\Endpoint\MerchantEndpointException;
 use Alma\Client\Domain\Entity\FeePlanList;
 use PHPUnit\Framework\TestCase;
 use PrestaShop\Module\Alma\Application\Provider\FeePlansProvider;
+use PrestaShop\Module\Alma\Infrastructure\Form\FeePlansAdminForm;
+use PrestaShop\Module\Alma\Infrastructure\Repository\ConfigurationRepository;
 use PrestaShop\Module\Alma\Tests\Mocks\FeePlansMock;
 
 class FeePlansProviderTest extends TestCase
@@ -15,12 +17,18 @@ class FeePlansProviderTest extends TestCase
      * @var \PrestaShop\Module\Alma\Application\Provider\FeePlansProvider
      */
     private FeePlansProvider $feePlansProvider;
+    /**
+     * @var ConfigurationRepository
+     */
+    private $configurationRepository;
 
     public function setUp(): void
     {
         $this->merchantEndpoint = $this->createMock(MerchantEndpoint::class);
+        $this->configurationRepository = $this->createMock(ConfigurationRepository::class);
         $this->feePlansProvider = new FeePlansProvider(
             $this->merchantEndpoint,
+            $this->configurationRepository
         );
     }
 
@@ -50,6 +58,17 @@ class FeePlansProviderTest extends TestCase
         $this->feePlansProvider->getFeePlanList();
 
         $this->feePlansProvider->getFeePlanList(true);
+    }
+
+    public function testGetFeePlanFromConfigurationReturnsDecodedValue(): void
+    {
+        $encodedFeePlanList = json_encode(['plan1', 'plan2']);
+        $this->configurationRepository->expects($this->once())
+            ->method('get')
+            ->with(FeePlansAdminForm::KET_FIELD_FEE_PLAN_LIST)
+            ->willReturn($encodedFeePlanList);
+
+        $this->assertEquals(['plan1', 'plan2'], $this->feePlansProvider->getFeePlanFromConfiguration());
     }
 
     public function testGetFeesPlansAllowedExpectExceptionReturnFeePlanListEmpty(): void

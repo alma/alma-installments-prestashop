@@ -142,6 +142,25 @@ class FeePlansServiceTest extends TestCase
         $this->assertEquals($expected, $this->feePlansService->feePlansFields());
     }
 
+    public function testFieldsValueWithFeePlanFromDb()
+    {
+        $feePlanFromDb = FeePlansMock::almaFeePlanFromDb(3, 0, 0, '1', '10000', '200000', '5');
+        $expected = [
+            'ALMA_GENERAL_3_0_0_STATE' => '1',
+            'ALMA_GENERAL_3_0_0_MIN_AMOUNT' => '100',
+            'ALMA_GENERAL_3_0_0_MAX_AMOUNT' => '2000',
+            'ALMA_GENERAL_3_0_0_SORT_ORDER' => '5',
+        ];
+        $this->assertEquals($expected, $this->feePlansService->fieldsValue($feePlanFromDb));
+    }
+
+    public function testFieldsValueWithFeePlanFromDbEmpty()
+    {
+        $feePlanFromDb = [];
+        $expected = [];
+        $this->assertEquals($expected, $this->feePlansService->fieldsValue($feePlanFromDb));
+    }
+
     /**
      * @throws \Alma\Client\Application\Exception\ParametersException
      */

@@ -171,4 +171,17 @@ final class FeePlansMock
             ])
         ];
     }
+
+    public static function almaFeePlanFromDb(int $installmentCount, int $deferredDays = 0, int $deferredMonth = 0, string $state = '1', string $minAmount = '10000', string $maxAmount = '200000', $sortOrder = '1'): array
+    {
+        $planKey = sprintf('general_%d_%d_%d', $installmentCount, $deferredDays, $deferredMonth);
+        return [
+            $planKey => [
+                'state' => $state,
+                'min_amount' => $minAmount,
+                'max_amount' => $maxAmount,
+                'sort_order' => $sortOrder,
+            ]
+        ];
+    }
 }

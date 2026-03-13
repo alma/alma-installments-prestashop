@@ -273,6 +273,7 @@ services:
     class: 'PrestaShop\Module\Alma\Application\Provider\FeePlansProvider'
     arguments:
       - '@alma.merchant_endpoint'
+      - '@alma.configuration_repository'
 
   alma.environment:
     class: 'Alma\Client\Domain\ValueObject\Environment'

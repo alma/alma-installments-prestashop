@@ -9,6 +9,8 @@ use Alma\Client\Domain\Entity\FeePlanList;
 use Alma\Client\Domain\ValueObject\PaymentMethod;
 use Alma\Plugin\Application\Port\FeePlanProviderInterface;
 use Alma\Plugin\Infrastructure\Adapter\FeePlanListInterface;
+use PrestaShop\Module\Alma\Infrastructure\Form\FeePlansAdminForm;
+use PrestaShop\Module\Alma\Infrastructure\Repository\ConfigurationRepository;
 
 class FeePlansProvider implements FeePlanProviderInterface
 {
@@ -20,11 +22,17 @@ class FeePlansProvider implements FeePlanProviderInterface
      * @var \Alma\Plugin\Infrastructure\Adapter\FeePlanListInterface
      */
     private FeePlanListInterface $feePlanList;
+    /**
+     * @var ConfigurationRepository
+     */
+    private ConfigurationRepository $configurationRepository;
 
     public function __construct(
-        MerchantEndpoint $merchantEndpoint
+        MerchantEndpoint $merchantEndpoint,
+        ConfigurationRepository $configurationRepository
     ) {
         $this->merchantEndpoint = $merchantEndpoint;
+        $this->configurationRepository = $configurationRepository;
     }
 
     /**
@@ -38,6 +46,15 @@ class FeePlansProvider implements FeePlanProviderInterface
         }
 
         return $this->feePlanList;
+    }
+
+    /**
+     * Get the fee plan list from configuration
+     * @return array
+     */
+    public function getFeePlanFromConfiguration(): array
+    {
+        return json_decode($this->configurationRepository->get(FeePlansAdminForm::KET_FIELD_FEE_PLAN_LIST), true);
     }
 
     /**
