@@ -223,6 +223,7 @@ class FeePlansService
         $feePlans = [];
 
         foreach ($feePlanList as $key => $feePlan) {
+            /** @var FeePlan $feePlan */
             $installmentsCount = $feePlan->getInstallmentsCount();
             $deferredDays = $feePlan->getDeferredDays();
             $deferredMonths = $feePlan->getDeferredMonths();
@@ -231,7 +232,7 @@ class FeePlansService
             $sortOrder = $key + 1;
 
             $feePlans[$planKey] = [
-                'state' => $feePlan->isAllowed() ? '1' : '0',
+                'state' => $feePlan->getPlanKey() === 'general_3_0_0' ? '1' : '0',
                 'min_amount' => (string) $feePlan->getMinPurchaseAmount(),
                 'max_amount' => (string) $feePlan->getMaxPurchaseAmount(),
                 'sort_order' => (string) $sortOrder,
