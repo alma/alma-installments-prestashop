@@ -39,8 +39,8 @@ class AdminAlmaSettingsController extends ModuleAdminController
         $notifications = '';
         $errors = [];
         $urlAccountsCdn = '';
-        $displayPsAccounts = true;
-        $isAccountLinked = false;
+        $displayPsAccounts = $psAccountsService->displayPsAccount();
+        $isPsAccountLinked = false;
         $token = Tools::getAdminTokenLite('AdminAlmaSettings');
         $defaultLang = (int) Configuration::get('PS_LANG_DEFAULT');
         $allowEmployeeFormLang = (int) Configuration::get('PS_BO_ALLOW_EMPLOYEE_FORM_LANG');
@@ -73,7 +73,7 @@ class AdminAlmaSettingsController extends ModuleAdminController
             ]);
             $urlAccountsCdn = $psAccountsService->getAccountsCdn();
             // TODO : Verification is been in PHP but can be check in JS, need to wait the configuration form to check the best usage
-            $isAccountLinked = $psAccountsService->isAccountLinked();
+            $isPsAccountLinked = $psAccountsService->isAccountLinked();
         } catch (PsAccountsException|\Exception $e) {
             $errors[] = $e->getMessage();
             $displayPsAccounts = false;
@@ -86,7 +86,8 @@ class AdminAlmaSettingsController extends ModuleAdminController
         $this->context->smarty->assign([
             'title' => 'Alma Settings - We can custom the title',
             'displayPsAccounts' => $displayPsAccounts,
-            'isPsAccountsLinked' => $isAccountLinked,
+            'isPsAccountsLinked' => $isPsAccountLinked,
+            'isConfiguredModule' => $settingsService->isConfigured(),
             'urlAccountsCdn' => $urlAccountsCdn,
             'notifications' => $notifications,
             'form' => $settingsFormBuilder->render($token, $defaultLang, $allowEmployeeFormLang, $languages, $formService->getForm()),

@@ -1,3 +1,7 @@
+{if !$isPsAccountsLinked}
+    {include file="./_partials/notification_ps_account.tpl"}
+{/if}
+
 {if displayPsAccounts}
     <prestashop-accounts></prestashop-accounts>
     <script src="{$urlAccountsCdn}" rel=preload></script>
@@ -10,6 +14,10 @@
     </script>
 {/if}
 {$notifications}
-{if isPsAccountsLinked}
+{if $isPsAccountsLinked || $isConfiguredModule}
+    {if !$isConfiguredModule}
+        {include file="./_partials/notification_first_installation.tpl"}
+    {/if}
+
     {$form}
 {/if}
