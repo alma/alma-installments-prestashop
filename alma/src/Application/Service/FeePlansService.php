@@ -260,7 +260,7 @@ class FeePlansService
             }
         }
 
-        $result[FeePlansAdminForm::KET_FIELD_FEE_PLAN_LIST] = json_encode($feePlans);
+        $result[FeePlansAdminForm::KEY_FIELD_FEE_PLAN_LIST] = json_encode($feePlans);
 
         return $result;
     }

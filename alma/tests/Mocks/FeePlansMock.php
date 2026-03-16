@@ -161,7 +161,7 @@ final class FeePlansMock
         $planKey = sprintf('general_%d_%d_%d', $installmentCount, $deferredDays, $deferredMonth);
 
         return [
-            FeePlansAdminForm::KET_FIELD_FEE_PLAN_LIST => json_encode([
+            FeePlansAdminForm::KEY_FIELD_FEE_PLAN_LIST => json_encode([
                 $planKey => [
                     'state' => $state,
                     'min_amount' => $minAmount,
