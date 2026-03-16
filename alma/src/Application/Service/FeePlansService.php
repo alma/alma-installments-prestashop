@@ -240,7 +240,7 @@ class FeePlansService
         }
 
         return [
-            'ALMA_FEE_PLAN_LIST' => json_encode($feePlans)
+            FeePlansAdminForm::KET_FIELD_FEE_PLAN_LIST => json_encode($feePlans)
         ];
     }
 
