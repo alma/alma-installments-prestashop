@@ -18,20 +18,13 @@ class ValidatorForm
      *
      * @return array an array of error messages if validation fails, or an empty array if validation passes
      */
-    public static function legacyValidate(array $fieldsForm, array $allValues): array
+    public static function legacyValidate(array $fieldsForm, array $allValues, array $languages = []): array
     {
         $errors = [];
-        $languages = [
-            ['id_lang' => 1, 'iso_code' => 'en'],
-            ['id_lang' => 2, 'iso_code' => 'fr'],
-        ];
         foreach ($fieldsForm as $field => $params) {
             if (!isset($params['required']) || $params['required'] === false) {
                 continue;
             }
-            // TODO : Add check for multi language, it's sufixed with incremented index
-            //["ALMA_PAYNOW_BUTTON_TITLE_1"]=> string(7) "Pay now"
-            //["ALMA_PAYNOW_BUTTON_TITLE_2"]=> string(16) "Payer maintenant"
 
             if (isset($params['lang']) && $params['lang']) {
                 foreach ($languages as $language) {
@@ -40,10 +33,12 @@ class ValidatorForm
                         $errors[] = sprintf('Invalid Configuration value for %s', $fieldLanguage);
                     }
                 }
-            } else {
-                if (empty($allValues[$field]) || !Validate::isGenericName($allValues[$field])) {
-                    $errors[] = sprintf('Invalid Configuration value for %s', $field);
-                }
+
+                continue;
+            }
+
+            if (empty($allValues[$field]) || !Validate::isGenericName($allValues[$field])) {
+                $errors[] = sprintf('Invalid Configuration value for %s', $field);
             }
         }
 

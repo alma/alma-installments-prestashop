@@ -52,7 +52,7 @@ class AdminAlmaSettingsController extends ModuleAdminController
                 $settingsFormClasses = FormCollection::SETTINGS_FORMS_CLASSES;
             }
             $splitLanguageFields = $settingsService->getSplitLanguageFields(FormCollection::getAllFields($settingsFormClasses));
-            $errors = ValidatorForm::legacyValidate($splitLanguageFields, Tools::getAllValues());
+            $errors = ValidatorForm::legacyValidate($splitLanguageFields, Tools::getAllValues(), $languages);
             if (!empty($errors)) {
                 $notifications = $this->module->displayError($errors);
             } else {

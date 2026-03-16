@@ -144,3 +144,34 @@ You need to add key with the keyName of the input value, in the value of this ke
     ]
 ]
 ```
+
+## Multi-language fields
+To create a multi-language field, you need to add the `lang` key in `options` with the value `true`, and the form builder will automatically create an input for each language available in the back office.
+
+```php
+'KEY_INPUT_MULTI_LANGUAGE' => [
+    'type' => 'text',
+    'label' => 'Label name',
+    'required' => false,
+    'form' => 'form_name',
+    'options' => [
+        'desc' => 'Help text for this input',
+        'lang' => true,
+    ],
+```
+
+### How does it work ?
+If you enable the `lang` option for a field, the configuration saved in the database add the language id to the key of the field, `KEY_FIELS_NAME_{LANG_ID}`
+To get the fields_value for display the value in the form, we need to get the key configuration value in array with the language id like
+
+```php
+'KEY_FIELDS_NAME' => [
+    {LANG_ID_EN} => 'text EN',
+    {LANG_ID_FR} => 'text FR',
+]
+```
+
+So we had to create a function to get the value with the multi-language to split it with the language id to validate the field value with the validator.
+And in the getValueFields, handle the multi-language option to return the value in array with the language id to display the value in the form.
+
+Currently, we define the default value in a const, but we will need to get the default value from the .xlf file.

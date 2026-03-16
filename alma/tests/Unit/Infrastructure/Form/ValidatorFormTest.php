@@ -158,6 +158,10 @@ class ValidatorFormTest extends TestCase
                 'lang' => true,
             ],
         ];
+        $languages = [
+            ['id_lang' => 1],
+            ['id_lang' => 2],
+        ];
         $allValues = [
             'extra_value' => 'extra_value',
             'field1_1' => '',
@@ -165,7 +169,7 @@ class ValidatorFormTest extends TestCase
         ];
         $this->assertEquals(
             ['Invalid Configuration value for field1_1', 'Invalid Configuration value for field1_2'],
-            ValidatorForm::legacyValidate($fields, $allValues)
+            ValidatorForm::legacyValidate($fields, $allValues, $languages)
         );
     }
 
