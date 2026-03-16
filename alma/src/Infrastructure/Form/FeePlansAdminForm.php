@@ -12,7 +12,8 @@ class FeePlansAdminForm extends AbstractAdminForm
 
     public static function title(): string
     {
-        return 'Installments plans';
+        $translator = \Context::getContext()->getTranslator();
+        return $translator->trans('Installments plans', [], 'Modules.Alma.Settings');
     }
 
     public static function fieldsForm(string $templateHtml = '', array $dynamicForm = []): array

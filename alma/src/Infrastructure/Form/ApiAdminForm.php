@@ -17,15 +17,17 @@ class ApiAdminForm extends AbstractAdminForm
 
     public static function title(): string
     {
-        return 'API configuration';
+        $translator = \Context::getContext()->getTranslator();
+        return $translator->trans('API configuration', [], 'Modules.Alma.Settings');
     }
 
     public static function fieldsForm(string $templateHtml = '', array $dynamicForm = []): array
     {
+        $translator = \Context::getContext()->getTranslator();
         return [
             self::KEY_FIELD_MODE => [
                 'type' => 'select',
-                'label' => 'API Mode',
+                'label' => $translator->trans('API Mode', [], 'Modules.Alma.Settings'),
                 'required' => true,
                 'form' => 'api',
                 'encrypted' => false,
@@ -38,19 +40,27 @@ class ApiAdminForm extends AbstractAdminForm
                         'id' => 'id',
                         'name' => 'name',
                     ],
-                    'desc' => 'Use Test mode until you are ready to take real orders with Alma. In Test mode, only admins can see Alma on cart/checkout pages.'
+                    'desc' => $translator->trans(
+                        'Use Test mode until you are ready to take real orders with Alma. In Test mode, only admins can see Alma on cart/checkout pages.',
+                        [],
+                        'Modules.Alma.Settings'
+                    ),
                 ]
             ],
             self::KEY_FIELD_LIVE_API_KEY => [
                 'type' => 'text',
-                'label' => 'Live API key',
+                'label' => $translator->trans('Live API key', [], 'Modules.Alma.Settings'),
                 'required' => false,
                 'form' => 'api',
                 'encrypted' => true,
                 'options' => [
                     'size' => 20,
                     'desc' => sprintf(
-                        'Not required for Test mode – You can find your Live API key on %1$syour Alma dashboard%2$s',
+                        $translator->trans(
+                            'Not required for Test mode – You can find your Live API key on %1$syour Alma dashboard%2$s',
+                            [],
+                            'Modules.Alma.Settings'
+                        ),
                         '<a href="https://dashboard.getalma.eu/api" target="_blank">',
                         '</a>'
                     ),
@@ -58,14 +68,18 @@ class ApiAdminForm extends AbstractAdminForm
             ],
             self::KEY_FIELD_TEST_API_KEY => [
                 'type' => 'text',
-                'label' => 'Test API key',
+                'label' => $translator->trans('Test API key', [], 'Modules.Alma.Settings'),
                 'required' => false,
                 'form' => 'api',
                 'encrypted' => true,
                 'options' => [
                     'size' => 20,
                     'desc' => sprintf(
-                        'Not required for Live mode – You can find your Test API key on %1$syour sandbox dashboard%2$s',
+                        $translator->trans(
+                            'Not required for Live mode – You can find your Test API key on %1$syour sandbox dashboard%2$s',
+                            [],
+                            'Modules.Alma.Settings'
+                        ),
                         '<a href="https://dashboard.sandbox.getalma.eu/api" target="_blank">',
                         '</a>'
                     ),
@@ -73,7 +87,7 @@ class ApiAdminForm extends AbstractAdminForm
             ],
             self::KEY_FIELD_MERCHANT_ID => [
                 'type' => 'text',
-                'label' => 'Merchant ID',
+                'label' => $translator->trans('Merchant ID', [], 'Modules.Alma.Settings'),
                 'required' => false,
                 'form' => 'api',
                 'encrypted' => false,

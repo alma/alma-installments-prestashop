@@ -15,11 +15,14 @@ class PaymentButtonAdminForm extends AbstractAdminForm
 
     public static function title(): string
     {
-        return 'Payment method configuration';
+        $translator = \Context::getContext()->getTranslator();
+        return $translator->trans('Payment method configuration', [], 'Modules.Alma.Settings');
     }
 
     public static function fieldsForm(string $templateHtml = '', array $dynamicForm = []): array
     {
+        $translator = \Context::getContext()->getTranslator();
+
         return [
             'ALMA_PAYMENT_BUTTON_HTML' => [
                 'type' => 'html',
@@ -43,7 +46,7 @@ class PaymentButtonAdminForm extends AbstractAdminForm
             ],
             self::KEY_FIELD_PAYNOW_BUTTON_TITLE => [
                 'type' => 'text',
-                'label' => 'Title',
+                'label' => $translator->trans('Title', [], 'Modules.Alma.Settings'),
                 'required' => true,
                 'form' => 'payment_button',
                 'encrypted' => false,
@@ -54,7 +57,7 @@ class PaymentButtonAdminForm extends AbstractAdminForm
             ],
             self::KEY_FIELD_PAYNOW_BUTTON_DESC => [
                 'type' => 'text',
-                'label' => 'Description',
+                'label' => $translator->trans('Description', [], 'Modules.Alma.Settings'),
                 'required' => true,
                 'form' => 'payment_button',
                 'encrypted' => false,
@@ -70,12 +73,12 @@ class PaymentButtonAdminForm extends AbstractAdminForm
                 'form' => 'payment_button',
                 'options' => [
                     'col' => 12,
-                    'html_content' => '<h2>Payments in 2, 3 and 4 installments</h2>',
+                    'html_content' => '<h2>' . $translator->trans('Payments in 2, 3 and 4 installments', [], 'Modules.Alma.Settings') . '</h2>',
                 ],
             ],
             self::KEY_FIELD_PNX_BUTTON_TITLE => [
                 'type' => 'text',
-                'label' => 'Title',
+                'label' => $translator->trans('Title', [], 'Modules.Alma.Settings'),
                 'required' => true,
                 'form' => 'payment_button',
                 'encrypted' => false,
@@ -86,7 +89,7 @@ class PaymentButtonAdminForm extends AbstractAdminForm
             ],
             self::KEY_FIELD_PNX_BUTTON_DESC => [
                 'type' => 'text',
-                'label' => 'Description',
+                'label' => $translator->trans('Description', [], 'Modules.Alma.Settings'),
                 'required' => true,
                 'form' => 'payment_button',
                 'encrypted' => false,
@@ -102,12 +105,12 @@ class PaymentButtonAdminForm extends AbstractAdminForm
                 'form' => 'payment_button',
                 'options' => [
                     'col' => 12,
-                    'html_content' => '<h2>Deferred payments</h2>',
+                    'html_content' => '<h2>' . $translator->trans('Deferred payments', [], 'Modules.Alma.Settings') . '</h2>',
                 ],
             ],
             self::KEY_FIELD_PAYLATER_BUTTON_TITLE => [
                 'type' => 'text',
-                'label' => 'Title',
+                'label' => $translator->trans('Title', [], 'Modules.Alma.Settings'),
                 'required' => true,
                 'form' => 'payment_button',
                 'encrypted' => false,
@@ -118,7 +121,7 @@ class PaymentButtonAdminForm extends AbstractAdminForm
             ],
             self::KEY_FIELD_PAYLATER_BUTTON_DESC => [
                 'type' => 'text',
-                'label' => 'Description',
+                'label' => $translator->trans('Description', [], 'Modules.Alma.Settings'),
                 'required' => true,
                 'form' => 'payment_button',
                 'encrypted' => false,
@@ -134,12 +137,12 @@ class PaymentButtonAdminForm extends AbstractAdminForm
                 'form' => 'payment_button',
                 'options' => [
                     'col' => 12,
-                    'html_content' => '<h2>Payments in more than 4 installments</h2>',
+                    'html_content' => '<h2>' . $translator->trans('Payments in more than 4 installments', [], 'Modules.Alma.Settings') . '</h2>',
                 ],
             ],
             self::KEY_FIELD_CREDIT_BUTTON_TITLE => [
                 'type' => 'text',
-                'label' => 'Title',
+                'label' => $translator->trans('Title', [], 'Modules.Alma.Settings'),
                 'required' => true,
                 'form' => 'payment_button',
                 'encrypted' => false,
@@ -150,7 +153,7 @@ class PaymentButtonAdminForm extends AbstractAdminForm
             ],
             self::KEY_FIELD_CREDIT_BUTTON_DESC => [
                 'type' => 'text',
-                'label' => 'Description',
+                'label' => $translator->trans('Description', [], 'Modules.Alma.Settings'),
                 'required' => true,
                 'form' => 'payment_button',
                 'encrypted' => false,

@@ -3,7 +3,6 @@
 namespace PrestaShop\Module\Alma\Tests\Unit\Infrastructure\Form;
 
 use PHPUnit\Framework\TestCase;
-use PrestaShop\Module\Alma\Infrastructure\Form\ApiAdminForm;
 use PrestaShop\Module\Alma\Infrastructure\Form\FeePlansAdminForm;
 use PrestaShop\Module\Alma\Infrastructure\Form\FormBuilder;
 use PrestaShop\Module\Alma\Tests\Mocks\FeePlansMock;

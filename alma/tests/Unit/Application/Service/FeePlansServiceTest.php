@@ -4,12 +4,12 @@ namespace PrestaShop\Module\Alma\Tests\Unit\Application\Service;
 
 use Alma\Client\Domain\Entity\FeePlanList;
 use PHPUnit\Framework\TestCase;
+use PrestaShop\Module\Alma\Application\Presenter\FeePlanPresenter;
 use PrestaShop\Module\Alma\Application\Provider\FeePlansProvider;
 use PrestaShop\Module\Alma\Application\Service\FeePlansService;
 use PrestaShop\Module\Alma\Infrastructure\Form\FeePlansAdminForm;
-use PrestaShop\Module\Alma\Infrastructure\Proxy\ToolsProxy;
-use PrestaShop\Module\Alma\Infrastructure\Repository\ConfigurationRepository;
 use PrestaShop\Module\Alma\Tests\Mocks\FeePlansMock;
+use PrestaShopBundle\Translation\TranslatorInterface;
 
 class FeePlansServiceTest extends TestCase
 {
@@ -17,27 +17,30 @@ class FeePlansServiceTest extends TestCase
      * @var FeePlansProvider
      */
     private $feePlansProvider;
-
-    /**
-     * @var ToolsProxy
-     */
-    private $toolsProxy;
     /**
      * @var FeePlansService
      */
     private FeePlansService $feePlansService;
+    /**
+     * @var FeePlanPresenter
+     */
+    private $feePlanPresenter;
+    /**
+     * @var TranslatorInterface
+     */
+    private $translator;
 
     public function setUp(): void
     {
         $this->context = $this->createMock(\Context::class);
         $this->feePlansProvider = $this->createMock(FeePlansProvider::class);
-        $this->configurationRepository = $this->createMock(ConfigurationRepository::class);
-        $this->toolsProxy = $this->createMock(ToolsProxy::class);
+        $this->feePlanPresenter = $this->createMock(FeePlanPresenter::class);
+        $this->translator = $this->createMock(TranslatorInterface::class);
         $this->feePlansService = new FeePlansService(
             $this->context,
             $this->feePlansProvider,
-            $this->configurationRepository,
-            $this->toolsProxy
+            $this->feePlanPresenter,
+            $this->translator
         );
     }
 
@@ -74,13 +77,18 @@ class FeePlansServiceTest extends TestCase
         $this->feePlansProvider->expects($this->once())
             ->method('getFeePlanList')
             ->willReturn($feePlanList);
-        $this->configurationRepository->expects($this->exactly(3))
-            ->method('get')
-            ->willReturnMap([
-                [sprintf(FeePlansAdminForm::KEY_FIELD_FEE_PLAN_STATE, 'GENERAL_2_0_0'), '0'],
-                [sprintf(FeePlansAdminForm::KEY_FIELD_FEE_PLAN_STATE, 'GENERAL_3_0_0'), '1'],
-                [sprintf(FeePlansAdminForm::KEY_FIELD_FEE_PLAN_STATE, 'GENERAL_4_0_0'), '0'],
-            ]);
+        $this->feePlanPresenter->expects($this->exactly(3))
+            ->method('getTitle')
+            ->withConsecutive(
+                [FeePlansMock::feePlan(2)],
+                [FeePlansMock::feePlan(3)],
+                [FeePlansMock::feePlan(4)]
+            )
+            ->willReturnOnConsecutiveCalls(
+                '2-installment payments',
+                '3-installment payments',
+                '4-installment payments'
+            );
         $this->assertEquals($expected, $this->feePlansService->feePlansTabs());
     }
 
@@ -105,13 +113,18 @@ class FeePlansServiceTest extends TestCase
         $this->feePlansProvider->expects($this->once())
             ->method('getFeePlanList')
             ->willReturn($feePlanList);
-        $this->configurationRepository->expects($this->exactly(3))
-            ->method('get')
-            ->willReturnMap([
-                [sprintf(FeePlansAdminForm::KEY_FIELD_FEE_PLAN_STATE, 'GENERAL_2_0_0'), '1'],
-                [sprintf(FeePlansAdminForm::KEY_FIELD_FEE_PLAN_STATE, 'GENERAL_3_0_0'), '1'],
-                [sprintf(FeePlansAdminForm::KEY_FIELD_FEE_PLAN_STATE, 'GENERAL_4_0_0'), '0'],
-            ]);
+        $this->feePlanPresenter->expects($this->exactly(3))
+            ->method('getTitle')
+            ->withConsecutive(
+                [FeePlansMock::feePlan(2)],
+                [FeePlansMock::feePlan(3)],
+                [FeePlansMock::feePlan(4)]
+            )
+            ->willReturnOnConsecutiveCalls(
+                '2-installment payments',
+                '3-installment payments',
+                '4-installment payments'
+            );
 
         $this->assertEquals($expected, $this->feePlansService->feePlansTabs());
     }
@@ -138,6 +151,24 @@ class FeePlansServiceTest extends TestCase
         $this->feePlansProvider->expects($this->once())
             ->method('getFeePlanList')
             ->willReturn($feePlanList);
+
+        $this->feePlanPresenter->expects($this->once())
+            ->method('getLabel')
+            ->with(FeePlansMock::feePlan(3))
+            ->willReturn('Enable 3-installment payments');
+
+        $this->translator->expects($this->any())
+            ->method('trans')
+            ->willReturnOnConsecutiveCalls(
+                'Enabled',
+                'Disabled',
+                'Minimum amount (€)',
+                'Minimum purchase amount to activate this plan',
+                'Maximum amount (€)',
+                'Maximum purchase amount to activate this plan',
+                'Position',
+                'Use relative values to set the order on the checkout page',
+            );
 
         $this->assertEquals($expected, $this->feePlansService->feePlansFields());
     }

@@ -10,6 +10,7 @@ use PrestaShop\Module\Alma\Infrastructure\Form\FormCollection;
 use PrestaShop\Module\Alma\Infrastructure\Proxy\ToolsProxy;
 use PrestaShop\Module\Alma\Infrastructure\Repository\ConfigurationRepository;
 use PrestaShop\Module\Alma\Infrastructure\Repository\SettingsRepository;
+use PrestaShopBundle\Translation\TranslatorInterface;
 
 class SettingsService
 {
@@ -61,6 +62,10 @@ class SettingsService
      * @var FeePlansProvider
      */
     private FeePlansProvider $feePlansProvider;
+    /**
+     * @var TranslatorInterface
+     */
+    private TranslatorInterface $translator;
 
     public function __construct(
         AuthenticationService $authenticationService,
@@ -74,7 +79,8 @@ class SettingsService
         FeePlansProvider $feePlansProvider,
         SettingsRepository $settingsRepository,
         ConfigurationRepository $configurationRepository,
-        ToolsProxy $toolsProxy
+        ToolsProxy $toolsProxy,
+        TranslatorInterface $translator
     ) {
         $this->authenticationService = $authenticationService;
         $this->feePlansService = $feePlansService;
@@ -88,6 +94,7 @@ class SettingsService
         $this->settingsRepository = $settingsRepository;
         $this->configurationRepository = $configurationRepository;
         $this->toolsProxy = $toolsProxy;
+        $this->translator = $translator;
     }
 
     /**
@@ -156,7 +163,7 @@ class SettingsService
      */
     public function saveWithNotification(array $allValuesFromPost): string
     {
-        $notificationSuccess = 'Settings successfully updated';
+        $notificationSuccess = $this->translator->trans('Settings successfully updated', [], 'Modules.Alma.Notifications');
         $overrideValues = [];
         $feePlansFieldsValue = $this->feePlansService->fieldsToSaveFromPost($allValuesFromPost);
 
@@ -167,7 +174,11 @@ class SettingsService
             if (!array_key_exists($mode, $merchantIds)) {
                 $mode = key($merchantIds);
                 $overrideValues[ApiAdminForm::KEY_FIELD_MODE] = $mode;
-                $notificationSuccess = "Mode automatically switched to {$mode} mode. To use the other mode, please enter the corresponding API key.";
+                $notificationSuccess = $this->translator->trans(
+                    'Mode automatically switched to %mode% mode. To use the other mode, please enter the corresponding API key.',
+                    ['%mode%' => $mode],
+                    'Modules.Alma.Notifications'
+                );
             }
             $overrideValues[ApiAdminForm::KEY_FIELD_MERCHANT_ID] = $merchantIds[$mode];
             $feePlanList = $this->feePlansProvider->getFeePlanList();

@@ -9,11 +9,13 @@ class ExcludedCategoriesAdminForm extends AbstractAdminForm
 
     public static function title(): string
     {
-        return 'Excluded categories';
+        $translator = \Context::getContext()->getTranslator();
+        return $translator->trans('Excluded categories', [], 'Modules.Alma.Settings');
     }
 
     public static function fieldsForm(string $templateHtml = '', array $dynamicForm = []): array
     {
+        $translator = \Context::getContext()->getTranslator();
         return [
             'ALMA_EXCLUDED_CATEGORIES_HTML' => [
                 'type' => 'html',
@@ -27,7 +29,7 @@ class ExcludedCategoriesAdminForm extends AbstractAdminForm
             ],
             self::KEY_FIELD_EXCLUDED_CATEGORIES_WIDGET_DISPLAY_NOT_ELIGIBLE => [
                 'type' => 'switch',
-                'label' => 'Display message',
+                'label' => $translator->trans('Display message', [], 'Modules.Alma.Settings'),
                 'required' => false,
                 'form' => 'excluded_categories',
                 'encrypted' => false,
@@ -36,25 +38,29 @@ class ExcludedCategoriesAdminForm extends AbstractAdminForm
                         [
                             'id' => 'ENABLE',
                             'value' => 1,
-                            'label' => 'Enabled',
+                            'label' => $translator->trans('Enabled', [], 'Modules.Alma.Settings'),
                         ],
                         [
                             'id' => 'DISABLE',
                             'value' => 0,
-                            'label' => 'Disabled'
+                            'label' => $translator->trans('Disabled', [], 'Modules.Alma.Settings')
                         ]
                     ],
                 ],
             ],
             self::KEY_FIELD_EXCLUDED_CATEGORIES_MESSAGE => [
                 'type' => 'text',
-                'label' => 'Excluded categories non-eligibility message',
+                'label' => $translator->trans('Excluded categories non-eligibility message', [], 'Modules.Alma.Settings'),
                 'required' => false,
                 'form' => 'excluded_categories',
                 'encrypted' => false,
                 'options' => [
                     'size' => 20,
-                    'desc' => 'Message displayed on an excluded product page or on the cart page if it contains an excluded product.',
+                    'desc' => $translator->trans(
+                        'Message displayed on an excluded product page or on the cart page if it contains an excluded product.',
+                        [],
+                        'Modules.Alma.Settings'
+                    ),
                     'lang' => true,
                 ],
             ]

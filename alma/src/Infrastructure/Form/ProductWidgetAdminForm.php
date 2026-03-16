@@ -9,11 +9,14 @@ class ProductWidgetAdminForm extends AbstractAdminForm
 
     public static function title(): string
     {
-        return 'Display widget on product page';
+        $translator = \Context::getContext()->getTranslator();
+        return $translator->trans('Display widget on product page', [], 'Modules.Alma.Settings');
     }
 
     public static function fieldsForm(string $templateHtml = '', array $dynamicForm = []): array
     {
+        $translator = \Context::getContext()->getTranslator();
+
         return [
             'ALMA_EMBED_WIDGET_HTML' => [
                 'type' => 'html',
@@ -27,7 +30,7 @@ class ProductWidgetAdminForm extends AbstractAdminForm
             ],
             self::KEY_FIELD_PRODUCT_WIDGET_STATE => [
                 'type' => 'switch',
-                'label' => 'Display widget',
+                'label' => $translator->trans('Display widget', [], 'Modules.Alma.Settings'),
                 'required' => false,
                 'form' => 'product_widget',
                 'encrypted' => false,
@@ -36,19 +39,19 @@ class ProductWidgetAdminForm extends AbstractAdminForm
                         [
                             'id' => 'ENABLE',
                             'value' => 1,
-                            'label' => 'Enabled',
+                            'label' => $translator->trans('Enabled', [], 'Modules.Alma.Settings'),
                         ],
                         [
                             'id' => 'DISABLE',
                             'value' => 0,
-                            'label' => 'Disabled'
+                            'label' => $translator->trans('Disabled', [], 'Modules.Alma.Settings')
                         ]
                     ],
                 ],
             ],
             self::KEY_FIELD_PRODUCT_WIDGET_DISPLAY_NOT_ELIGIBLE => [
                 'type' => 'switch',
-                'label' => 'Display even if the product is not eligible',
+                'label' => $translator->trans('Display even if the product is not eligible', [], 'Modules.Alma.Settings'),
                 'required' => false,
                 'form' => 'product_widget',
                 'encrypted' => false,
@@ -57,12 +60,12 @@ class ProductWidgetAdminForm extends AbstractAdminForm
                         [
                             'id' => 'ENABLE',
                             'value' => 1,
-                            'label' => 'Enabled',
+                            'label' => $translator->trans('Enabled', [], 'Modules.Alma.Settings'),
                         ],
                         [
                             'id' => 'DISABLE',
                             'value' => 0,
-                            'label' => 'Disabled'
+                            'label' => $translator->trans('Disabled', [], 'Modules.Alma.Settings')
                         ]
                     ],
                 ],

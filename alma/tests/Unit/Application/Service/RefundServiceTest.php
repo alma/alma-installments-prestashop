@@ -8,18 +8,26 @@ use PrestaShop\Module\Alma\Infrastructure\Form\ApiAdminForm;
 use PrestaShop\Module\Alma\Infrastructure\Form\RefundAdminForm;
 use PrestaShop\Module\Alma\Infrastructure\Repository\ConfigurationRepository;
 use PrestaShop\Module\Alma\Infrastructure\Repository\OrderStateRepository;
+use PrestaShopBundle\Translation\TranslatorInterface;
 
 class RefundServiceTest extends TestCase
 {
+    /**
+     * @var TranslatorInterface
+     */
+    private $translator;
+
     public function setUp(): void
     {
         $this->context = $this->createMock(\Context::class);
         $this->configurationRepository = $this->createMock(ConfigurationRepository::class);
         $this->orderStateRepository = $this->createMock(OrderStateRepository::class);
+        $this->translator = $this->createMock(TranslatorInterface::class);
         $this->refundService = new RefundService(
             $this->context,
             $this->configurationRepository,
-            $this->orderStateRepository
+            $this->orderStateRepository,
+            $this->translator
         );
     }
 
@@ -44,6 +52,9 @@ class RefundServiceTest extends TestCase
                 ],
             ],
         ];
+        $this->translator->expects($this->exactly(2))
+            ->method('trans')
+            ->willReturnOnConsecutiveCalls('Refund state order', 'Your order state to sync refund with Alma');
         $this->orderStateRepository->expects($this->once())
             ->method('getOrderStates')
             ->willReturn($orderState);

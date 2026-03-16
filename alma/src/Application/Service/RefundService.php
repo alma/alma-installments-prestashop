@@ -6,6 +6,7 @@ use PrestaShop\Module\Alma\Infrastructure\Form\ApiAdminForm;
 use PrestaShop\Module\Alma\Infrastructure\Form\RefundAdminForm;
 use PrestaShop\Module\Alma\Infrastructure\Repository\ConfigurationRepository;
 use PrestaShop\Module\Alma\Infrastructure\Repository\OrderStateRepository;
+use PrestaShopBundle\Translation\TranslatorInterface;
 
 class RefundService
 {
@@ -18,15 +19,21 @@ class RefundService
      * @var OrderStateRepository
      */
     private OrderStateRepository $orderStateRepository;
+    /**
+     * @var TranslatorInterface
+     */
+    private TranslatorInterface $translator;
 
     public function __construct(
         \Context $context,
         ConfigurationRepository $configurationRepository,
-        OrderStateRepository $orderStateRepository
+        OrderStateRepository $orderStateRepository,
+        TranslatorInterface $translator
     ) {
         $this->context = $context;
         $this->configurationRepository = $configurationRepository;
         $this->orderStateRepository = $orderStateRepository;
+        $this->translator = $translator;
     }
 
     /**
@@ -47,12 +54,12 @@ class RefundService
     {
         return [
             'type' => 'select',
-            'label' => 'Refund state order',
+            'label' => $this->translator->trans('Refund state order', [], 'Modules.Alma.Settings'),
             'required' => false,
             'form' => 'refund_on_change',
             'encrypted' => false,
             'options' => [
-                'desc' => 'Your order state to sync refund with Alma',
+                'desc' => $this->translator->trans('Your order state to sync refund with Alma', [], 'Modules.Alma.Settings'),
                 'options' => [
                     'query' => $this->orderStateRepository->getOrderStates(),
                     'id' => 'id_order_state',
