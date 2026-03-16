@@ -107,6 +107,7 @@ services:
     arguments:
       - '@alma.ps_accounts_facade'
       - '@alma.ps_accounts_installer'
+      - !php/const _PS_MODE_DEV_
 
   alma.module_service:
     class: 'PrestaShop\Module\Alma\Application\Service\ModuleService'
