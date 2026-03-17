@@ -4,25 +4,12 @@ namespace PrestaShop\Module\Alma\Application\Service;
 
 use Db;
 use PrestaShop\PsAccountsInstaller\Installer\Installer;
+use PrestaShopBundle\Translation\TranslatorInterface;
 
 class ModuleInstallerService
 {
     private const HOOK_LIST = [
         'actionFrontControllerSetMedia', // Hook used for load assets
-    ];
-
-    public const TABS = [
-        [
-            'label' => 'Alma',
-            'class_name' => 'ALMA',
-            'icon' => null
-        ],
-        [
-            'label' => 'Settings',
-            'class_name' => 'AdminAlmaSettings',
-            'parent_class_name' => 'ALMA',
-            'icon' => 'tune'
-        ]
     ];
 
     /**
@@ -37,15 +24,45 @@ class ModuleInstallerService
      * @var Installer
      */
     private Installer $psAccountsInstaller;
+    /**
+     * @var TranslatorInterface
+     */
+    private TranslatorInterface $translator;
 
     public function __construct(
         ModuleService $moduleService,
         Db $dbInstance,
-        Installer $psAccountsInstallerService
+        Installer $psAccountsInstallerService,
+        TranslatorInterface $translator
     ) {
         $this->moduleService = $moduleService;
         $this->dbInstance = $dbInstance;
         $this->psAccountsInstaller = $psAccountsInstallerService;
+        $this->translator = $translator;
+    }
+
+    public function tabs(): array
+    {
+        return [
+            [
+                'label' => 'Alma',
+                'class_name' => 'ALMA',
+                'icon' => null
+            ],
+            [
+                'label' => $this->translator->trans('Settings', [], 'Modules.Alma.Admin'),
+                'class_name' => 'AdminAlmaSettings',
+                'parent_class_name' => 'ALMA',
+                'icon' => 'tune'
+            ],
+            [
+                'label' => $this->translator->trans('Excluded Categories', [], 'Modules.Alma.Admin'),
+                'class_name' => 'AdminAlmaExcludedCategories',
+                'parent_class_name' => 'ALMA',
+                'route_name' => 'alma_excluded_categories',
+                'icon' => 'not_interested'
+            ]
+        ];
     }
 
     /**
@@ -78,7 +95,7 @@ class ModuleInstallerService
     {
         try {
             return $this->moduleService->registerHooks(self::HOOK_LIST)
-                && $this->moduleService->installTabs(self::TABS)
+                && $this->moduleService->installTabs($this->tabs())
                 && $this->installDB()
                 && $this->psAccountsInstaller->install();
         } catch (\Exception $e) {

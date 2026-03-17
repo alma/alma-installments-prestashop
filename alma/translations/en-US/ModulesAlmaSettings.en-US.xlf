@@ -72,6 +72,11 @@
         <target>Use relative values to set the order on the checkout page</target>
         <note>Line: </note>
       </trans-unit>
+      <trans-unit id="7a854e750fe5f3e7120020c7c20987d4">
+        <source>Your cart is not eligible for payments with Alma.</source>
+        <target>Your cart is not eligible for payments with Alma.</target>
+        <note>Line: </note>
+      </trans-unit>
       <trans-unit id="76d8f6f6704ea9de044aa669d133c500">
         <source>Refund state order</source>
         <target>Refund state order</target>
@@ -85,6 +90,26 @@
       <trans-unit id="2c53dea2326232a2d867ddd1d2206aa0">
         <source>Pay now by credit card</source>
         <target>Pay now by credit card</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="4f05e285f22aa8b5d8f88f302c1633c1">
+        <source>Fast and secure payments.</source>
+        <target>Fast and secure payments.</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="300de0751d957421cc332ba21c43a598">
+        <source>Pay in %d installments</source>
+        <target>Pay in %d installments</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="82d2b98eb8f9388d13766a9367096499">
+        <source>Fast and secure payment by credit card.</source>
+        <target>Fast and secure payment by credit card.</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="726c61fad46c135efb4198820e5484ba">
+        <source>Buy now Pay in %d days</source>
+        <target>Buy now Pay in %d days</target>
         <note>Line: </note>
       </trans-unit>
       <trans-unit id="1bd879809ceec8809db58ca2f12965bc">
@@ -267,14 +292,14 @@
         <target>If you usually refund orders by changing their state, activate this option and choose the state you want to use to trigger refunds on Alma payments</target>
         <note>Line: </note>
       </trans-unit>
-      <trans-unit id="906bb7846b2f28c5ede22c9edfe24b96">
-        <source>With Alma, you can make your refunds directly from your PrestaShop back-office. Go to your order to find the new Alma section. [1]More information on how to use it[/1].</source>
-        <target>With Alma, you can make your refunds directly from your PrestaShop back-office. Go to your order to find the new Alma section. [1]More information on how to use it[/1].</target>
+      <trans-unit id="bedd7ebb429b76b301a727a4db06d9fe">
+        <source>With Alma, you can make your refunds directly from your PrestaShop back-office. Go to your order to find the new Alma section. %sMore information on how to use it%s.</source>
+        <target>With Alma, you can make your refunds directly from your PrestaShop back-office. Go to your order to find the new Alma section. %sMore information on how to use it%s.</target>
         <note>Line: </note>
       </trans-unit>
-      <trans-unit id="e0d189c4fa93da66fd69984a4a54641b">
-        <source>Some products (gift cards, license keys, software, weapons, ...) cannot be sold with Alma, as per [1]our terms[/1] (see Exclusions paragraph).</source>
-        <target>Some products (gift cards, license keys, software, weapons, ...) cannot be sold with Alma, as per [1]our terms[/1] (see Exclusions paragraph).</target>
+      <trans-unit id="ebb1e29b7a24f7244361d8c9bef5cafd">
+        <source>Some products (gift cards, license keys, software, weapons, ...) cannot be sold with Alma, as per %sour terms%s (see Exclusions paragraph).</source>
+        <target>Some products (gift cards, license keys, software, weapons, ...) cannot be sold with Alma, as per %sour terms%s (see Exclusions paragraph).</target>
         <note>Line: </note>
       </trans-unit>
       <trans-unit id="2b02fe17f294da7167110f5df2b72fc0">
@@ -282,9 +307,9 @@
         <target>If you are selling such products on your shop, you need to configure Alma so that it is not enabled when customers view or shop them.</target>
         <note>Line: </note>
       </trans-unit>
-      <trans-unit id="5251acbb568b5a6efbeb5433057a957c">
-        <source>Use the [1]category exclusions page[/1] to comply with these restrictions.</source>
-        <target>Use the [1]category exclusions page[/1] to comply with these restrictions.</target>
+      <trans-unit id="1e9a8d43b6687270f9e45f3d753e5f4f">
+        <source>Use the %scategory exclusions page%s to comply with these restrictions.</source>
+        <target>Use the %scategory exclusions page%s to comply with these restrictions.</target>
         <note>Line: </note>
       </trans-unit>
       <trans-unit id="576dc983c16c3d346e6dfe174b662bf2">
@@ -307,9 +332,9 @@
         <target>Example of title and description.</target>
         <note>Line: </note>
       </trans-unit>
-      <trans-unit id="2ab68429eb0100311fe4f9432217426a">
-        <source>This widget allows you to inform your customers of the availability of Alma's payment facilities right from the product page, which will help to increase your conversion rate. For more details on its configuration or in case of problems, please consult [1]this documentation[/1].</source>
-        <target>This widget allows you to inform your customers of the availability of Alma's payment facilities right from the product page, which will help to increase your conversion rate. For more details on its configuration or in case of problems, please consult [1]this documentation[/1].</target>
+      <trans-unit id="d2586adb36ab1c1d5065dda926a9ea31">
+        <source>This widget allows you to inform your customers of the availability of Alma's payment facilities right from the product page, which will help to increase your conversion rate. For more details on its configuration or in case of problems, please consult %sthis documentation%s.</source>
+        <target>This widget allows you to inform your customers of the availability of Alma's payment facilities right from the product page, which will help to increase your conversion rate. For more details on its configuration or in case of problems, please consult %sthis documentation%s.</target>
         <note>Line: </note>
       </trans-unit>
       <trans-unit id="ee4d20be41f0955a9cb0a3b05a496972">

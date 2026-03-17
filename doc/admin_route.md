@@ -17,6 +17,7 @@ And how we use the twig template to display the content of the page.
 ### Symfony System
 To create a route for the admin page, you need to create a new class in the Infrastructure\Controller\Admin namespace of your module, and extend the `FrameworkBundleAdminController` class.
 And add a function with suffix Action like `indexAction` to define the content of the page.
+And Extend the Controller class with `FrameworkBundleAdminController` to use the `render` function to render the template.
 And return the rendered template with the `render` function, and pass the template path and the variables to the template.
 And create the template in the `views/templates/admin` folder of your module, and name it like `template.html.twig`.
 Then, you need to define the route in the `routes.yml` file.
@@ -33,6 +34,8 @@ alma_settings:
 
 #### Controller
 ```php
+class SampleController extends FrameworkBundleAdminController
+
 return $this->render(
     '@Modules/alma/views/templates/admin/template.html.twig',
     [
