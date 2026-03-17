@@ -84,7 +84,7 @@
       </trans-unit>
       <trans-unit id="2c53dea2326232a2d867ddd1d2206aa0">
         <source>Pay now by credit card</source>
-        <target state="needs-translation">Pay now by credit card</target>
+        <target state="needs-review-translation" state-qualifier="leveraged-mt">Betaal nu met creditcard</target>
         <note>Line: </note>
       </trans-unit>
       <trans-unit id="1bd879809ceec8809db58ca2f12965bc">
