@@ -82,6 +82,11 @@
         <target>Your order state to sync refund with Alma</target>
         <note>Line: </note>
       </trans-unit>
+      <trans-unit id="2c53dea2326232a2d867ddd1d2206aa0">
+        <source>Pay now by credit card</source>
+        <target>Pay now by credit card</target>
+        <note>Line: </note>
+      </trans-unit>
       <trans-unit id="1bd879809ceec8809db58ca2f12965bc">
         <source>Debug options</source>
         <target>Debug options</target>

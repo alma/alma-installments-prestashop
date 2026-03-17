@@ -178,6 +178,7 @@ services:
       - '@alma.context'
       - '@alma.configuration_repository'
       - '@alma.language_repository'
+      - '@translator'
 
   alma.excluded_categories_service:
     class: 'PrestaShop\Module\Alma\Application\Service\ExcludedCategoriesService'
@@ -185,6 +186,7 @@ services:
       - '@alma.context'
       - '@alma.configuration_repository'
       - '@alma.language_repository'
+      - '@translator'
 
   alma.in_page_service:
     class: 'PrestaShop\Module\Alma\Application\Service\InPageService'
