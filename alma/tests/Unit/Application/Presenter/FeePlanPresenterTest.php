@@ -3,8 +3,9 @@
 namespace PrestaShop\Module\Alma\Tests\Unit\Application\Presenter;
 
 use PHPUnit\Framework\TestCase;
-use PrestaShop\Module\Alma\Application\Presenter\FeePlanPresenter;
 use PrestaShop\Module\Alma\Application\Exception\FeePlansException;
+use PrestaShop\Module\Alma\Application\Presenter\FeePlanPresenter;
+use PrestaShop\Module\Alma\Infrastructure\Form\ValidatorForm;
 use PrestaShop\Module\Alma\Tests\Mocks\FeePlansMock;
 
 class FeePlanPresenterTest extends TestCase
@@ -77,7 +78,7 @@ class FeePlanPresenterTest extends TestCase
         $feePlan = FeePlansMock::feePlan(2);
         $this->expectException(FeePlansException::class);
         $this->expectExceptionMessage('The maximum purchase amount cannot be higher than the maximum allowed by Alma.');
-        FeePlanHelper::checkLimitAmountPlan($feePlan, 10000, 200100);
+        ValidatorForm::checkLimitAmountPlan($feePlan, 10000, 200100);
     }
 
     /**
@@ -89,7 +90,7 @@ class FeePlanPresenterTest extends TestCase
         $feePlan = FeePlansMock::feePlan(2);
         $this->expectException(FeePlansException::class);
         $this->expectExceptionMessage('The minimum purchase amount cannot be lower than the minimum allowed by Alma.');
-        FeePlanHelper::checkLimitAmountPlan($feePlan, 5000, 200000);
+        ValidatorForm::checkLimitAmountPlan($feePlan, 5000, 200000);
     }
 
     /**
@@ -100,7 +101,7 @@ class FeePlanPresenterTest extends TestCase
         $feePlan = FeePlansMock::feePlan(2);
         $this->expectException(FeePlansException::class);
         $this->expectExceptionMessage('The minimum purchase amount cannot be higher than the maximum.');
-        FeePlanHelper::checkLimitAmountPlan($feePlan, 200100, 200000);
+        ValidatorForm::checkLimitAmountPlan($feePlan, 200100, 200000);
     }
 
     /**
@@ -111,12 +112,12 @@ class FeePlanPresenterTest extends TestCase
         $feePlan = FeePlansMock::feePlan(2);
         $this->expectException(FeePlansException::class);
         $this->expectExceptionMessage('The maximum purchase amount cannot be lower than the minimum.');
-        FeePlanHelper::checkLimitAmountPlan($feePlan, 10000, 5000);
+        ValidatorForm::checkLimitAmountPlan($feePlan, 10000, 5000);
     }
 
     public function testCheckLimitAmountPlanWithRightAmountReturnVoid()
     {
         $feePlan = FeePlansMock::feePlan(2);
-        $this->assertNull(FeePlanHelper::checkLimitAmountPlan($feePlan, 10000, 200000));
+        $this->assertNull(ValidatorForm::checkLimitAmountPlan($feePlan, 10000, 200000));
     }
 }
