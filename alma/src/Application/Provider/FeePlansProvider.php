@@ -42,7 +42,7 @@ class FeePlansProvider implements FeePlanProviderInterface
     /**
      * @return \Alma\Plugin\Infrastructure\Adapter\FeePlanListInterface
      */
-    public function getFeePlansAllowed(): FeePlanListInterface
+    private function getFeePlansAllowed(): FeePlanListInterface
     {
         try {
             $feePlanList = $this->merchantEndpoint->getFeePlanList(FeePlan::KIND_GENERAL, 'all', true)->filterAllowed();

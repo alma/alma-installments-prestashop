@@ -109,7 +109,6 @@ class FeePlansServiceTest extends TestCase
 
     public function testFieldsValueWithMerchantIdSavedInDbReturnFieldValueFromPost()
     {
-        $feePlanFromClient = FeePlansMock::feePlanFieldsValueExpected(3);
         $feePlanFromPost = FeePlansMock::feePlanFieldsValueExpected(3, 0, 0, 0, 10000, 100000);
 
         $feePlan3X = FeePlansMock::feePlan(3);

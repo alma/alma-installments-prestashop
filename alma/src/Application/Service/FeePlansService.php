@@ -3,7 +3,6 @@
 namespace PrestaShop\Module\Alma\Application\Service;
 
 use Alma\Client\Domain\Entity\FeePlan;
-use PrestaShop\Module\Alma\Application\Exception\FeePlansException;
 use PrestaShop\Module\Alma\Application\Helper\PriceHelper;
 use PrestaShop\Module\Alma\Application\Presenter\FeePlanPresenter;
 use PrestaShop\Module\Alma\Application\Provider\FeePlansProvider;
