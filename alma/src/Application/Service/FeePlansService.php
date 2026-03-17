@@ -3,7 +3,6 @@
 namespace PrestaShop\Module\Alma\Application\Service;
 
 use Alma\Client\Domain\Entity\FeePlan;
-use PrestaShop\Module\Alma\Application\Assembler\FeePlanListAssembler;
 use PrestaShop\Module\Alma\Application\Helper\PriceHelper;
 use PrestaShop\Module\Alma\Application\Presenter\FeePlanPresenter;
 use PrestaShop\Module\Alma\Application\Provider\FeePlansProvider;
@@ -18,7 +17,7 @@ class FeePlansService
     /**
      * @var FeePlansProvider
      */
-    private FeePlansProvider $feePlanProvider;
+    private FeePlansProvider $feePlansProvider;
     /**
      * @var ConfigurationRepository
      */
@@ -27,21 +26,15 @@ class FeePlansService
      * @var ToolsProxy
      */
     private ToolsProxy $toolsProxy;
-    /**
-     * @var FeePlanListAssembler
-     */
-    private FeePlanListAssembler $feePlanListAssembler;
 
     public function __construct(
         \Context $context,
         FeePlansProvider $feePlanProvider,
-        FeePlanListAssembler $feePlanListAssembler,
         ConfigurationRepository $configurationRepository,
         ToolsProxy $toolsProxy
     ) {
         $this->context = $context;
-        $this->feePlanProvider = $feePlanProvider;
-        $this->feePlanListAssembler = $feePlanListAssembler;
+        $this->feePlansProvider = $feePlanProvider;
         $this->configurationRepository = $configurationRepository;
         $this->toolsProxy = $toolsProxy;
     }
@@ -69,22 +62,27 @@ class FeePlansService
     public function feePlansTabs(): array
     {
         $feePlansTabs = [];
-        $feePlanListAssembled = $this->feePlanListAssembler->getFeePlanList();
+        $feePlanListAssembled = [];
+        $feePlanList = $this->feePlansProvider->getFeePlanList();
+
+        foreach ($feePlanList as $feePlan) {
+            $planKey = mb_strtoupper($feePlan->getPlanKey());
+
+            $feePlanListAssembled[] = [
+                'enabled' => (bool) $this->configurationRepository->get(sprintf(FeePlansAdminForm::KEY_FIELD_FEE_PLAN_STATE, $planKey)),
+                'plan_key' => $feePlan->getPlanKey(),
+                'title' => FeePlanPresenter::getTitle($feePlan),
+            ];
+        }
 
         $enabledPlans = array_filter($feePlanListAssembled, fn ($plan) => $plan['enabled']);
         $firstEnabledPlan = !empty($enabledPlans) ? reset($enabledPlans) : null;
-        $firstEnabledPlanKey = $firstEnabledPlan
-            ? (new FeePlan($firstEnabledPlan))->getPlanKey()
-            : 'general_3_0_0';
 
         foreach ($feePlanListAssembled as $feePlan) {
-            // TODO : $objectFeePlan it's temporary, we need to ad optinal fields (enabled and sortOrder) in the FeePlan entity to keep object FeePlan and avoid to create new FeePlan object
-            $objectFeePlan = new FeePlan($feePlan);
-            $planKey = $objectFeePlan->getPlanKey();
-            $feePlansTabs[$planKey] = [
-                'title' => FeePlanPresenter::getTitle($objectFeePlan),
+            $feePlansTabs[$feePlan['plan_key']] = [
+                'title' => $feePlan['title'],
                 'active' => $feePlan['enabled'],
-                'firstPlanEnable' => $firstEnabledPlanKey,
+                'firstPlanEnable' => $firstEnabledPlan['plan_key'] ?? 'general_3_0_0',
             ];
         }
 
@@ -98,7 +96,7 @@ class FeePlansService
     public function feePlansFields(): array
     {
         $feePlansFields = [];
-        $feePlansProvider = $this->feePlanProvider->getFeePlanList();
+        $feePlansProvider = $this->feePlansProvider->getFeePlanList();
 
         foreach ($feePlansProvider as $feePlan) {
             /** @var FeePlan $feePlan */
@@ -178,7 +176,7 @@ class FeePlansService
     public function fieldsValue(): array
     {
         $feePlansFieldsValue = [];
-        $feePlansProvider = $this->feePlanProvider->getFeePlanList();
+        $feePlansProvider = $this->feePlansProvider->getFeePlanList();
 
         /** @var FeePlan $feePlan */
         foreach ($feePlansProvider as $key => $feePlan) {
