@@ -7,6 +7,7 @@ use PrestaShop\Module\Alma\Application\Exception\AuthenticationException;
 use PrestaShop\Module\Alma\Application\Service\AuthenticationService;
 use PrestaShop\Module\Alma\Application\Service\FeePlansService;
 use PrestaShop\Module\Alma\Application\Service\SettingsService;
+use PrestaShop\Module\Alma\Application\Service\WidgetService;
 use PrestaShop\Module\Alma\Infrastructure\Form\ApiAdminForm;
 use PrestaShop\Module\Alma\Infrastructure\Form\FormCollection;
 use PrestaShop\Module\Alma\Infrastructure\Proxy\ToolsProxy;
@@ -28,9 +29,11 @@ class SettingsServiceTest extends TestCase
         $this->configurationRepository = $this->createMock(ConfigurationRepository::class);
         $this->settingsRepository = $this->createMock(SettingsRepository::class);
         $this->feePlansService = $this->createMock(FeePlansService::class);
+        $this->widgetService = $this->createMock(WidgetService::class);
         $this->settingsService = new SettingsService(
             $this->authenticationService,
             $this->feePlansService,
+            $this->widgetService,
             $this->settingsRepository,
             $this->configurationRepository,
             $this->toolsProxy
@@ -64,6 +67,8 @@ class SettingsServiceTest extends TestCase
         $this->expectException(AuthenticationException::class);
         $this->feePlansService->expects($this->never())
             ->method('fieldsValue');
+        $this->widgetService->expects($this->never())
+            ->method('defaultFieldsToSave');
         $this->settingsRepository->expects($this->never())
             ->method('save');
 
@@ -88,6 +93,8 @@ class SettingsServiceTest extends TestCase
             ->willThrowException(new AuthenticationException());
         $this->feePlansService->expects($this->never())
             ->method('fieldsValue');
+        $this->widgetService->expects($this->never())
+            ->method('defaultFieldsToSave');
         $this->settingsRepository->expects($this->never())
             ->method('save');
         $this->expectException(AuthenticationException::class);
@@ -117,6 +124,8 @@ class SettingsServiceTest extends TestCase
         $this->feePlansService->expects($this->once())
             ->method('fieldsToSave')
             ->willReturn(FeePlansMock::feePlanFieldsValueExpected(3));
+        $this->widgetService->expects($this->once())
+            ->method('defaultFieldsToSave');
         $fieldsValue = array_merge(
             FormCollection::getAllFields(FormCollection::SETTINGS_FORMS_CLASSES),
             FeePlansMock::feePlanFieldsValueExpected(3)
@@ -167,6 +176,8 @@ class SettingsServiceTest extends TestCase
         $this->feePlansService->expects($this->once())
             ->method('fieldsToSave')
             ->willReturn(FeePlansMock::feePlanFieldsValueExpected(3));
+        $this->widgetService->expects($this->once())
+            ->method('defaultFieldsToSave');
         $fieldsValue = array_merge(
             FormCollection::getAllFields(FormCollection::SETTINGS_FORMS_CLASSES),
             FeePlansMock::feePlanFieldsValueExpected(3)

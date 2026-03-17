@@ -23,6 +23,7 @@ class FeePlansAdminForm extends AbstractAdminForm
                 'required' => false,
                 'form' => 'fee_plans',
                 'options' => [
+                    'col' => 12,
                     'html_content' => $templateHtml,
                 ],
             ]
