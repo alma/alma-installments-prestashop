@@ -76,10 +76,10 @@ class FeePlansProviderTest extends TestCase
         $expectedFeePlanListOrdered->add($feePlanP6x);
         $expectedFeePlanListOrdered->add($feePlan30D);
         $feePlanList = new FeePlanList();
-        $feePlanList->add($feePlanPayNow);
         $feePlanList->add($feePlan30D);
-        $feePlanList->add($feePlanP2x);
         $feePlanList->add($feePlanP6x);
+        $feePlanList->add($feePlanP2x);
+        $feePlanList->add($feePlanPayNow);
 
         $this->merchantEndpoint->expects($this->once())
             ->method('getFeePlanList')

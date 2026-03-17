@@ -65,27 +65,18 @@ class FeePlansProvider implements FeePlanProviderInterface
      */
     private function orderFeePlanList(FeePlanList $feePlanList): FeePlanList
     {
-        $payNowPlans = $feePlanList->filterFeePlanList([PaymentMethod::PAY_NOW]);
-        $pnx = $feePlanList->filterFeePlanList([PaymentMethod::PNX]);
-        $credit = $feePlanList->filterFeePlanList([PaymentMethod::CREDIT]);
-        $deferredPlans = $feePlanList->filterFeePlanList([PaymentMethod::PAY_LATER]);
-
         $orderedFeePlanList = new FeePlanList();
+        $orderedMethods = [
+            PaymentMethod::PAY_NOW,
+            PaymentMethod::PNX,
+            PaymentMethod::CREDIT,
+            PaymentMethod::PAY_LATER,
+        ];
 
-        foreach ($payNowPlans as $plan) {
-            $orderedFeePlanList->add($plan);
-        }
-
-        foreach ($pnx as $plan) {
-            $orderedFeePlanList->add($plan);
-        }
-
-        foreach ($credit as $plan) {
-            $orderedFeePlanList->add($plan);
-        }
-
-        foreach ($deferredPlans as $plan) {
-            $orderedFeePlanList->add($plan);
+        foreach ($orderedMethods as $method) {
+            foreach ($feePlanList->filterFeePlanList([$method]) as $plan) {
+                $orderedFeePlanList->add($plan);
+            }
         }
 
         return $orderedFeePlanList;
