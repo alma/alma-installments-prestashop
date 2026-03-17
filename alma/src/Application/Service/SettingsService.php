@@ -2,9 +2,6 @@
 
 namespace PrestaShop\Module\Alma\Application\Service;
 
-use PrestaShop\Module\Alma\Application\Exception\AuthenticationException;
-use PrestaShop\Module\Alma\Application\Exception\FeePlansException;
-use PrestaShop\Module\Alma\Application\Exception\SettingsException;
 use PrestaShop\Module\Alma\Application\Helper\EncryptorHelper;
 use PrestaShop\Module\Alma\Infrastructure\Form\ApiAdminForm;
 use PrestaShop\Module\Alma\Infrastructure\Form\FormCollection;
@@ -86,17 +83,14 @@ class SettingsService
      * And return the notification message to show in the configuration form after saving it.
      *
      * @return string
-     * @throws \PrestaShop\Module\Alma\Application\Exception\SettingsException
+     * @throws \PrestaShop\Module\Alma\Application\Exception\AuthenticationException
+     * @throws \PrestaShop\Module\Alma\Application\Exception\FeePlansException
      */
     public function saveWithNotification(): string
     {
         $notificationSuccess = 'Settings successfully updated';
-        try {
-            $merchantIds = $this->authenticationService->isValidKeys();
-            $this->authenticationService->checkSameMerchantIds($merchantIds);
-        } catch (AuthenticationException $e) {
-            throw new SettingsException($e->getMessage());
-        }
+        $merchantIds = $this->authenticationService->isValidKeys();
+        $this->authenticationService->checkSameMerchantIds($merchantIds);
 
         $mode = $this->toolsProxy->getValue(ApiAdminForm::KEY_FIELD_MODE, $this->settingsRepository->getEnvironment());
         if (!array_key_exists($mode, $merchantIds)) {
@@ -107,11 +101,7 @@ class SettingsService
 
         $overrideValues[ApiAdminForm::KEY_FIELD_MERCHANT_ID] = $merchantIds[$mode];
 
-        try {
-            $feePlansFieldsValue = $this->feePlansService->fieldsToSave();
-        } catch (FeePlansException $e) {
-            throw new SettingsException($e->getMessage());
-        }
+        $feePlansFieldsValue = $this->feePlansService->fieldsToSave();
         $fieldsValue = array_merge(
             FormCollection::getAllFields(FormCollection::SETTINGS_FORMS_CLASSES),
             $feePlansFieldsValue

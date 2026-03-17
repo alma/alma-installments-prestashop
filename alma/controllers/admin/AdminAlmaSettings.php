@@ -1,7 +1,7 @@
 <?php
 
+use PrestaShop\Module\Alma\Application\Exception\AlmaException;
 use PrestaShop\Module\Alma\Application\Exception\PsAccountsException;
-use PrestaShop\Module\Alma\Application\Exception\SettingsException;
 use PrestaShop\Module\Alma\Application\Service\FormService;
 use PrestaShop\Module\Alma\Application\Service\PsAccountsService;
 use PrestaShop\Module\Alma\Application\Service\SettingsService;
@@ -51,7 +51,7 @@ class AdminAlmaSettingsController extends ModuleAdminController
                 try {
                     $notificationSuccess = $settingsService->saveWithNotification();
                     $notifications = $this->module->displayConfirmation($notificationSuccess);
-                } catch (SettingsException $e) {
+                } catch (AlmaException $e) {
                     $notifications = $this->module->displayError($e->getMessage());
                 }
             }

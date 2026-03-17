@@ -38,6 +38,7 @@ class FormService
     }
 
     /**
+     * Get the forms to display in the configuration page.
      * @return array
      */
     public function getForm(): array
