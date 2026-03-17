@@ -17,7 +17,7 @@ class FeePlansService
     /**
      * @var FeePlansProvider
      */
-    private FeePlansProvider $feePlanProvider;
+    private FeePlansProvider $feePlansProvider;
     /**
      * @var ConfigurationRepository
      */
@@ -34,7 +34,7 @@ class FeePlansService
         ToolsProxy $toolsProxy
     ) {
         $this->context = $context;
-        $this->feePlanProvider = $feePlanProvider;
+        $this->feePlansProvider = $feePlanProvider;
         $this->configurationRepository = $configurationRepository;
         $this->toolsProxy = $toolsProxy;
     }
@@ -42,6 +42,7 @@ class FeePlansService
     /**
      * Create the fee plans tabs template with the fee plans list from fee plan provider to create nav tabs in the fee plans template
      * @return string
+     * @throws \Alma\Client\Application\Exception\ParametersException
      */
     public function createTemplateTabs(): string
     {
@@ -56,18 +57,32 @@ class FeePlansService
     /**
      * Get fee plans for loop the tabs in the fee plans template
      * @return array
+     * @throws \Alma\Client\Application\Exception\ParametersException
      */
     public function feePlansTabs(): array
     {
         $feePlansTabs = [];
-        $feePlansProvider = $this->feePlanProvider->getFeePlanList();
-        foreach ($feePlansProvider as $feePlan) {
-            /** @var FeePlan $feePlan */
-            $planKey = $feePlan->getPlanKey();
-            $feePlansTabs[$planKey] = [
+        $feePlanListAssembled = [];
+        $feePlanList = $this->feePlansProvider->getFeePlanList();
+
+        foreach ($feePlanList as $feePlan) {
+            $planKey = mb_strtoupper($feePlan->getPlanKey());
+
+            $feePlanListAssembled[] = [
+                'enabled' => (bool) $this->configurationRepository->get(sprintf(FeePlansAdminForm::KEY_FIELD_FEE_PLAN_STATE, $planKey)),
+                'plan_key' => $feePlan->getPlanKey(),
                 'title' => FeePlanPresenter::getTitle($feePlan),
-                // TODO : Default active tab. We need to enable the first plan enable if saved in DB or P3X for the first save
-                'active' => $planKey === 'general_3_0_0',
+            ];
+        }
+
+        $enabledPlans = array_filter($feePlanListAssembled, fn ($plan) => $plan['enabled']);
+        $firstEnabledPlan = !empty($enabledPlans) ? reset($enabledPlans) : null;
+
+        foreach ($feePlanListAssembled as $feePlan) {
+            $feePlansTabs[$feePlan['plan_key']] = [
+                'title' => $feePlan['title'],
+                'active' => $feePlan['enabled'],
+                'firstPlanEnable' => $firstEnabledPlan['plan_key'] ?? 'general_3_0_0',
             ];
         }
 
@@ -81,7 +96,7 @@ class FeePlansService
     public function feePlansFields(): array
     {
         $feePlansFields = [];
-        $feePlansProvider = $this->feePlanProvider->getFeePlanList();
+        $feePlansProvider = $this->feePlansProvider->getFeePlanList();
 
         foreach ($feePlansProvider as $feePlan) {
             /** @var FeePlan $feePlan */
@@ -161,7 +176,7 @@ class FeePlansService
     public function fieldsValue(): array
     {
         $feePlansFieldsValue = [];
-        $feePlansProvider = $this->feePlanProvider->getFeePlanList();
+        $feePlansProvider = $this->feePlansProvider->getFeePlanList();
 
         /** @var FeePlan $feePlan */
         foreach ($feePlansProvider as $key => $feePlan) {

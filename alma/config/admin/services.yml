@@ -131,7 +131,7 @@ services:
   alma.authentication_service:
     class: 'PrestaShop\Module\Alma\Application\Service\AuthenticationService'
     arguments:
-      - '@alma.settings_provider'
+      - '@alma.authentication_settings_provider'
       - '@alma.curl_client_factory'
 
   alma.form_service:
@@ -149,7 +149,7 @@ services:
   alma.client_configuration_factory:
     class: 'PrestaShop\Module\Alma\Infrastructure\Factory\ClientConfigurationFactory'
     arguments:
-      - '@alma.settings_provider'
+      - '@alma.authentication_settings_provider'
       - '@alma.environment'
 
   alma.curl_client:
@@ -165,13 +165,13 @@ services:
   alma.environment_factory:
     class: 'PrestaShop\Module\Alma\Infrastructure\Factory\EnvironmentFactory'
     arguments:
-      - '@alma.settings_provider'
+      - '@alma.authentication_settings_provider'
 
   alma.curl_client_factory:
     class: 'PrestaShop\Module\Alma\Infrastructure\Factory\CurlClientFactory'
 
-  alma.settings_provider:
-    class: 'PrestaShop\Module\Alma\Application\Provider\SettingsProvider'
+  alma.authentication_settings_provider:
+    class: 'PrestaShop\Module\Alma\Application\Provider\AuthenticationSettingsProvider'
     arguments:
       - '@alma.module'
       - '@alma.settings_repository'
