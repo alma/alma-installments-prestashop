@@ -1,7 +1,7 @@
 <p>
     {l
-        s='This widget allows you to inform your customers of the availability of Alma\'s payment facilities right from the product page, which will help to increase your conversion rate. For more details on its configuration or in case of problems, please consult [1]this documentation[/1].'
-        sprintf=['<a href="https://docs.getalma.eu/docs/prestashop-alma-widget" target="_blank">']
+        s='This widget allows you to inform your customers of the availability of Alma\'s payment facilities right from the product page, which will help to increase your conversion rate. For more details on its configuration or in case of problems, please consult %sthis documentation%s.'
+        sprintf=['<a href="https://docs.getalma.eu/docs/prestashop-alma-widget" target="_blank">', '</a>']
         d='Modules.Alma.Settings'
     }
 </p>

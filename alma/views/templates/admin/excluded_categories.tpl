@@ -1,7 +1,7 @@
 <p>
     {l
-        s='Some products (gift cards, license keys, software, weapons, ...) cannot be sold with Alma, as per [1]our terms[/1] (see Exclusions paragraph).'
-        sprintf=['<a href="https://getalma.eu/legal/terms/payment" target="_blank">']
+        s='Some products (gift cards, license keys, software, weapons, ...) cannot be sold with Alma, as per %sour terms%s (see Exclusions paragraph).'
+        sprintf=['<a href="https://getalma.eu/legal/terms/payment" target="_blank">', '</a>']
         d='Modules.Alma.Settings'
     }
 </p>
@@ -10,7 +10,7 @@
 
 <p>
     {l
-        s='Use the [1]category exclusions page[/1] to comply with these restrictions.'
+        s='Use the %scategory exclusions page%s to comply with these restrictions.'
         sprintf=["<strong><a href='$excludedCategoriesPageLink'>", "</a></strong>"]
         d='Modules.Alma.Settings'
     }
