@@ -3,7 +3,9 @@
 namespace PrestaShop\Module\Alma\Tests\Unit\Infrastructure\Form;
 
 use PHPUnit\Framework\TestCase;
+use PrestaShop\Module\Alma\Application\Exception\FeePlansException;
 use PrestaShop\Module\Alma\Infrastructure\Form\ValidatorForm;
+use PrestaShop\Module\Alma\Tests\Mocks\FeePlansMock;
 
 class ValidatorFormTest extends TestCase
 {
@@ -128,5 +130,60 @@ class ValidatorFormTest extends TestCase
             [],
             ValidatorForm::legacyValidate($fields, $allValues)
         );
+    }
+
+    /**
+     * @throws \Alma\Client\Application\Exception\ParametersException
+     */
+    public function testCheckLimitAmountPlanMaxAmountExceededThrowException()
+    {
+        $feePlan = FeePlansMock::feePlan(2);
+        $this->expectException(FeePlansException::class);
+        $this->expectExceptionMessage('The maximum purchase amount cannot be higher than the maximum allowed by Alma.');
+        ValidatorForm::checkLimitAmountPlan($feePlan, 10000, 200100);
+    }
+
+    /**
+     * @throws \Alma\Client\Application\Exception\ParametersException
+     * @throws \PrestaShop\Module\Alma\Application\Exception\FeePlansException
+     */
+    public function testCheckLimitAmountPlanMinAmountExceededThrowException()
+    {
+        $feePlan = FeePlansMock::feePlan(2);
+        $this->expectException(FeePlansException::class);
+        $this->expectExceptionMessage('The minimum purchase amount cannot be lower than the minimum allowed by Alma.');
+        ValidatorForm::checkLimitAmountPlan($feePlan, 5000, 200000);
+    }
+
+    /**
+     * @throws \Alma\Client\Application\Exception\ParametersException
+     */
+    public function testCheckLimitAmountPlanMinAmountExceededMaxAmountThrowException()
+    {
+        $feePlan = FeePlansMock::feePlan(2);
+        $this->expectException(FeePlansException::class);
+        $this->expectExceptionMessage('The minimum purchase amount cannot be higher than the maximum.');
+        ValidatorForm::checkLimitAmountPlan($feePlan, 200100, 200000);
+    }
+
+    /**
+     * @throws \Alma\Client\Application\Exception\ParametersException
+     */
+    public function testCheckLimitAmountPlanMaxAmountExceededMinAmountThrowException()
+    {
+        $feePlan = FeePlansMock::feePlan(2);
+        $this->expectException(FeePlansException::class);
+        $this->expectExceptionMessage('The maximum purchase amount cannot be lower than the minimum.');
+        ValidatorForm::checkLimitAmountPlan($feePlan, 10000, 5000);
+    }
+
+    /**
+     * @throws \Alma\Client\Application\Exception\ParametersException
+     * @throws \PrestaShop\Module\Alma\Application\Exception\FeePlansException
+     */
+    public function testCheckLimitAmountPlanWithRightAmountReturnVoid()
+    {
+        $feePlan = FeePlansMock::feePlan(2);
+        $this->assertNull(ValidatorForm::checkLimitAmountPlan($feePlan, 10000, 200000));
     }
 }

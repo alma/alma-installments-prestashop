@@ -8,6 +8,7 @@ use PrestaShop\Module\Alma\Application\Presenter\FeePlanPresenter;
 use PrestaShop\Module\Alma\Application\Provider\FeePlansProvider;
 use PrestaShop\Module\Alma\Infrastructure\Form\ApiAdminForm;
 use PrestaShop\Module\Alma\Infrastructure\Form\FeePlansAdminForm;
+use PrestaShop\Module\Alma\Infrastructure\Form\ValidatorForm;
 use PrestaShop\Module\Alma\Infrastructure\Proxy\ToolsProxy;
 use PrestaShop\Module\Alma\Infrastructure\Repository\ConfigurationRepository;
 
@@ -237,7 +238,7 @@ class FeePlansService
                 if ($feePlan->isPayNow()) {
                     $minAmount = 1;
                 }
-                FeePlanPresenter::checkLimitAmountPlan(
+                ValidatorForm::checkLimitAmountPlan(
                     $feePlan,
                     PriceHelper::priceToCent($minAmount),
                     PriceHelper::priceToCent($maxAmount)
