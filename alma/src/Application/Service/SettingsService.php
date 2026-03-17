@@ -2,8 +2,6 @@
 
 namespace PrestaShop\Module\Alma\Application\Service;
 
-use PrestaShop\Module\Alma\Application\Exception\AuthenticationException;
-use PrestaShop\Module\Alma\Application\Exception\SettingsException;
 use PrestaShop\Module\Alma\Application\Helper\EncryptorHelper;
 use PrestaShop\Module\Alma\Application\Provider\AuthenticationSettingsProvider;
 use PrestaShop\Module\Alma\Application\Provider\FeePlansProvider;

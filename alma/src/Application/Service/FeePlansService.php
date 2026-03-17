@@ -5,12 +5,10 @@ namespace PrestaShop\Module\Alma\Application\Service;
 use Alma\Client\Application\Exception\ParametersException;
 use Alma\Client\Domain\Entity\FeePlan;
 use Alma\Client\Domain\Entity\FeePlanList;
-use PrestaShop\Module\Alma\Application\Assembler\FeePlanListAssembler;
 use PrestaShop\Module\Alma\Application\Helper\PriceHelper;
 use PrestaShop\Module\Alma\Application\Presenter\FeePlanPresenter;
 use PrestaShop\Module\Alma\Application\Provider\FeePlansProvider;
 use PrestaShop\Module\Alma\Infrastructure\Form\FeePlansAdminForm;
-use PrestaShop\Module\Alma\Infrastructure\Form\ValidatorForm;
 use PrestaShop\Module\Alma\Infrastructure\Proxy\ToolsProxy;
 use PrestaShop\Module\Alma\Infrastructure\Repository\ConfigurationRepository;
 

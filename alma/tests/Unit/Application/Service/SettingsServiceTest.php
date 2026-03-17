@@ -5,7 +5,6 @@ namespace PrestaShop\Module\Alma\Tests\Unit\Application\Service;
 use Alma\Client\Domain\Entity\FeePlanList;
 use PHPUnit\Framework\TestCase;
 use PrestaShop\Module\Alma\Application\Exception\AuthenticationException;
-use PrestaShop\Module\Alma\Application\Exception\SettingsException;
 use PrestaShop\Module\Alma\Application\Helper\EncryptorHelper;
 use PrestaShop\Module\Alma\Application\Provider\AuthenticationSettingsProvider;
 use PrestaShop\Module\Alma\Application\Provider\FeePlansProvider;
