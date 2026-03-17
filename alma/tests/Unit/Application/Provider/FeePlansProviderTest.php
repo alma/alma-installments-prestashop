@@ -62,8 +62,8 @@ class FeePlansProviderTest extends TestCase
     }
 
     /**
-    * @throws \Alma\Client\Application\Exception\ParametersException
-    */
+     * @throws \Alma\Client\Application\Exception\ParametersException
+     */
     public function testGetFeesPlansAllowedReturnFeePlanListOrdered(): void
     {
         $feePlanPayNow = FeePlansMock::feePlan(1);
@@ -85,6 +85,6 @@ class FeePlansProviderTest extends TestCase
             ->method('getFeePlanList')
             ->willReturn($feePlanList);
 
-        $this->assertEquals($expectedFeePlanListOrdered, $this->feePlansProvider->getFeePlansAllowed());
+        $this->assertEquals($expectedFeePlanListOrdered, $this->feePlansProvider->getFeePlanList());
     }
 }
