@@ -4,7 +4,6 @@ namespace PrestaShop\Module\Alma\Tests\Unit\Application\Service;
 
 use PHPUnit\Framework\TestCase;
 use PrestaShop\Module\Alma\Application\Exception\AuthenticationException;
-use PrestaShop\Module\Alma\Application\Exception\SettingsException;
 use PrestaShop\Module\Alma\Application\Service\AuthenticationService;
 use PrestaShop\Module\Alma\Application\Service\FeePlansService;
 use PrestaShop\Module\Alma\Application\Service\SettingsService;
@@ -54,14 +53,15 @@ class SettingsServiceTest extends TestCase
     }
 
     /**
-     * @throws \PrestaShop\Module\Alma\Application\Exception\SettingsException
+     * @throws \PrestaShop\Module\Alma\Application\Exception\AuthenticationException
+     * @throws \PrestaShop\Module\Alma\Application\Exception\FeePlansException
      */
     public function testDontSaveAuthenticationFailExpectException(): void
     {
         $this->authenticationService->expects($this->once())
             ->method('isValidKeys')
             ->willThrowException(new AuthenticationException());
-        $this->expectException(SettingsException::class);
+        $this->expectException(AuthenticationException::class);
         $this->feePlansService->expects($this->never())
             ->method('fieldsValue');
         $this->settingsRepository->expects($this->never())
@@ -70,6 +70,9 @@ class SettingsServiceTest extends TestCase
         $this->settingsService->saveWithNotification();
     }
 
+    /**
+     * @throws \PrestaShop\Module\Alma\Application\Exception\FeePlansException
+     */
     public function testSaveAuthenticationWrongWithDifferentMerchantIds(): void
     {
         $merchantIds = [
@@ -87,13 +90,14 @@ class SettingsServiceTest extends TestCase
             ->method('fieldsValue');
         $this->settingsRepository->expects($this->never())
             ->method('save');
-        $this->expectException(SettingsException::class);
+        $this->expectException(AuthenticationException::class);
 
         $this->settingsService->saveWithNotification();
     }
 
     /**
-     * @throws \PrestaShop\Module\Alma\Application\Exception\SettingsException
+     * @throws \PrestaShop\Module\Alma\Application\Exception\AuthenticationException
+     * @throws \PrestaShop\Module\Alma\Application\Exception\FeePlansException
      */
     public function testSaveWithOneKeySet(): void
     {
@@ -111,7 +115,7 @@ class SettingsServiceTest extends TestCase
             ->method('checkSameMerchantIds')
             ->with($merchantIds);
         $this->feePlansService->expects($this->once())
-            ->method('fieldsValue')
+            ->method('fieldsToSave')
             ->willReturn(FeePlansMock::feePlanFieldsValueExpected(3));
         $fieldsValue = array_merge(
             FormCollection::getAllFields(FormCollection::SETTINGS_FORMS_CLASSES),
@@ -135,7 +139,8 @@ class SettingsServiceTest extends TestCase
     }
 
     /**
-     * @throws \PrestaShop\Module\Alma\Application\Exception\SettingsException
+     * @throws \PrestaShop\Module\Alma\Application\Exception\AuthenticationException
+     * @throws \PrestaShop\Module\Alma\Application\Exception\FeePlansException
      */
     public function testSaveAuthenticationFine(): void
     {
@@ -160,7 +165,7 @@ class SettingsServiceTest extends TestCase
             ->with(ApiAdminForm::KEY_FIELD_MODE, 'test')
             ->willReturn('test');
         $this->feePlansService->expects($this->once())
-            ->method('fieldsValue')
+            ->method('fieldsToSave')
             ->willReturn(FeePlansMock::feePlanFieldsValueExpected(3));
         $fieldsValue = array_merge(
             FormCollection::getAllFields(FormCollection::SETTINGS_FORMS_CLASSES),

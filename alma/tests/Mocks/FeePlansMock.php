@@ -77,6 +77,7 @@ final class FeePlansMock
     {
         $planKey = sprintf('GENERAL_%d_%d_%d', $installmentCount, $deferredDays, $deferredMonth);
         $planKeyTab = sprintf('general_%d_%d_%d', $installmentCount, $deferredDays, $deferredMonth);
+        $readonly = $planKey === 'GENERAL_1_0_0';
 
         return [
             'ALMA_' . $planKey . '_STATE' => [
@@ -108,6 +109,7 @@ final class FeePlansMock
                 'form' => 'fee_plans',
                 'encrypted' => false,
                 'options' => [
+                    'readonly' => $readonly,
                     'form_group_class' => 'tab-' . $planKeyTab,
                     'size' => 20,
                     'desc' => 'Minimum purchase amount to activate this plan',
@@ -140,7 +142,7 @@ final class FeePlansMock
         ];
     }
 
-    public static function feePlanFieldsValueExpected(int $installmentCount, $deferredDays = 0, $deferredMonth = 0, $enable = 1, $minAmount = 10000, $maxAmount = 200000): array
+    public static function feePlanFieldsValueExpected(int $installmentCount, $deferredDays = 0, $deferredMonth = 0, $enable = 1, $minAmount = 10000, $maxAmount = 200000, $sortOrder = 1): array
     {
         $planKey = sprintf('GENERAL_%d_%d_%d', $installmentCount, $deferredDays, $deferredMonth);
 
@@ -148,7 +150,7 @@ final class FeePlansMock
             'ALMA_' . $planKey . '_STATE' => $enable,
             'ALMA_' . $planKey . '_MIN_AMOUNT' => PriceHelper::priceToEuro($minAmount),
             'ALMA_' . $planKey . '_MAX_AMOUNT' => PriceHelper::priceToEuro($maxAmount),
-            'ALMA_' . $planKey . '_SORT_ORDER' => 1,
+            'ALMA_' . $planKey . '_SORT_ORDER' => $sortOrder,
         ];
     }
 }

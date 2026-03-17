@@ -11,16 +11,16 @@ class PriceHelper
      */
     public static function priceToCent(float $price): int
     {
-        return round($price * 100);
+        return (int) round($price * 100);
     }
 
     /**
      * Convert a price in cent to euro, by dividing it by 100.
      * Cents aren't rounded.
      * @param int $price
-     * @return int
+     * @return float
      */
-    public static function priceToEuro(int $price): int
+    public static function priceToEuro(int $price): float
     {
         return $price / 100;
     }

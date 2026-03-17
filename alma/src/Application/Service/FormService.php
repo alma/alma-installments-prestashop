@@ -37,6 +37,10 @@ class FormService
         $this->configurationRepository = $configurationRepository;
     }
 
+    /**
+     * Get the forms to display in the configuration page.
+     * @return array
+     */
     public function getForm(): array
     {
         if (!empty($this->configurationRepository->get(ApiAdminForm::KEY_FIELD_MERCHANT_ID))) {
