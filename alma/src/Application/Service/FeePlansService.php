@@ -42,6 +42,7 @@ class FeePlansService
     /**
      * Create the fee plans tabs template with the fee plans list from fee plan provider to create nav tabs in the fee plans template
      * @return string
+     * @throws \Alma\Client\Application\Exception\ParametersException
      */
     public function createTemplateTabs(): string
     {
