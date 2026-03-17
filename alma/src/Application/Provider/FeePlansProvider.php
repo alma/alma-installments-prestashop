@@ -6,6 +6,7 @@ use Alma\Client\Application\Endpoint\MerchantEndpoint;
 use Alma\Client\Application\Exception\Endpoint\MerchantEndpointException;
 use Alma\Client\Domain\Entity\FeePlan;
 use Alma\Client\Domain\Entity\FeePlanList;
+use Alma\Client\Domain\ValueObject\PaymentMethod;
 use Alma\Plugin\Application\Port\FeePlanProviderInterface;
 use Alma\Plugin\Infrastructure\Adapter\FeePlanListInterface;
 
@@ -51,6 +52,33 @@ class FeePlansProvider implements FeePlanProviderInterface
             $feePlanList = new FeePlanList();
         }
 
-        return $feePlanList;
+        return $this->orderFeePlanList($feePlanList);
+    }
+
+    /**
+     * Order the fee plan list by payment method.
+     * Pay Now, PNX, Credit, Deferred Plans.
+     * TODO : I think we should move this logic to the FeePlanList class in the PHP-Client
+     *
+     * @param FeePlanList $feePlanList
+     * @return FeePlanList
+     */
+    private function orderFeePlanList(FeePlanList $feePlanList): FeePlanList
+    {
+        $orderedFeePlanList = new FeePlanList();
+        $orderedMethods = [
+            PaymentMethod::PAY_NOW,
+            PaymentMethod::PNX,
+            PaymentMethod::CREDIT,
+            PaymentMethod::PAY_LATER,
+        ];
+
+        foreach ($orderedMethods as $method) {
+            foreach ($feePlanList->filterFeePlanList([$method]) as $plan) {
+                $orderedFeePlanList->add($plan);
+            }
+        }
+
+        return $orderedFeePlanList;
     }
 }
