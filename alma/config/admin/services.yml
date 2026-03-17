@@ -113,7 +113,6 @@ services:
     arguments:
       - '@alma.context'
       - '@alma.fee_plans_provider'
-      - '@alma.fee_plan_list_assembler'
       - '@alma.configuration_repository'
       - '@alma.tools_proxy'
 
