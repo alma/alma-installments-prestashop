@@ -186,9 +186,3 @@ services:
   alma.environment:
     class: 'Alma\Client\Domain\ValueObject\Environment'
     factory: ['@alma.environment_factory', 'create']
-
-  alma.fee_plan_list_assembler:
-    class: 'PrestaShop\Module\Alma\Application\Assembler\FeePlanListAssembler'
-    arguments:
-      - '@alma.fee_plans_provider'
-      - '@alma.configuration_repository'
