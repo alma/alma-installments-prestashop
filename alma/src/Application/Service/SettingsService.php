@@ -101,11 +101,9 @@ class SettingsService
      */
     public function getFieldsValue(array $languages = []): array
     {
-        $feePlansFieldsValue = $this->feePlansService->fieldsValue();
-        $fieldsValue = array_merge(
-            $this->authenticationSettingsProvider->getAllFields(),
-            $feePlansFieldsValue
-        );
+        $feePlansConfiguration = $this->feePlansProvider->getFeePlanFromConfiguration();
+        $feePlansFieldsValue = $this->feePlansService->fieldsValue($feePlansConfiguration);
+        $fieldsValue = $this->authenticationSettingsProvider->getAllFields();
 
         foreach ($fieldsValue as $field => $param) {
             $fieldsValueByLang = [];
@@ -129,7 +127,10 @@ class SettingsService
             }
         }
 
-        return $fieldsValue;
+        return array_merge(
+            $fieldsValue,
+            $feePlansFieldsValue
+        );
     }
 
     /**

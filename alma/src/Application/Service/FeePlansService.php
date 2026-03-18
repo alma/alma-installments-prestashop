@@ -177,32 +177,27 @@ class FeePlansService
     /**
      * Get fee plans fields value for set the value in the form.
      * From the loop of fee plan list.
+     * @param $feePlanConfiguration
      * @return array
      */
-    public function fieldsValue(): array
+    public function fieldsValue($feePlanConfiguration): array
     {
         $feePlansFieldsValue = [];
         $feePlansProvider = $this->feePlansProvider->getFeePlanList();
 
         /** @var FeePlan $feePlan */
-        foreach ($feePlansProvider as $feePlan) {
-            $planKey = mb_strtoupper($feePlan->getPlanKey());
-
+        foreach ($feePlanConfiguration as $planKey => $feePlan) {
+            $planKey = mb_strtoupper($planKey);
             $keyFieldFeePlanState = sprintf(FeePlansAdminForm::KEY_FIELD_FEE_PLAN_STATE, $planKey);
             $keyFieldFeePlanMinAmount = sprintf(FeePlansAdminForm::KEY_FIELD_FEE_PLAN_MIN_AMOUNT, $planKey);
             $keyFieldFeePlanMaxAmount = sprintf(FeePlansAdminForm::KEY_FIELD_FEE_PLAN_MAX_AMOUNT, $planKey);
             $keyFieldFeePlanSortOrder = sprintf(FeePlansAdminForm::KEY_FIELD_FEE_PLAN_SORT_ORDER, $planKey);
 
-            $state = $this->configurationRepository->get($keyFieldFeePlanState);
-            $minAmount = $this->configurationRepository->get($keyFieldFeePlanMinAmount);
-            $maxAmount = $this->configurationRepository->get($keyFieldFeePlanMaxAmount);
-            $sortOrder = $this->configurationRepository->get($keyFieldFeePlanSortOrder);
-
             $feePlansFieldsValue = array_merge($feePlansFieldsValue, [
-                $keyFieldFeePlanState => $state,
-                $keyFieldFeePlanMinAmount => $minAmount,
-                $keyFieldFeePlanMaxAmount => $maxAmount,
-                $keyFieldFeePlanSortOrder => $sortOrder,
+                $keyFieldFeePlanState => $feePlan['state'],
+                $keyFieldFeePlanMinAmount => PriceHelper::priceToEuro($feePlan['min_amount']),
+                $keyFieldFeePlanMaxAmount => PriceHelper::priceToEuro($feePlan['max_amount']),
+                $keyFieldFeePlanSortOrder => $feePlan['sort_order'],
             ]);
         }
 
@@ -265,7 +260,7 @@ class FeePlansService
             }
         }
 
-        $result[FeePlansAdminForm::KET_FIELD_FEE_PLAN_LIST] = json_encode($feePlans);
+        $result[FeePlansAdminForm::KEY_FIELD_FEE_PLAN_LIST] = json_encode($feePlans);
 
         return $result;
     }

@@ -161,7 +161,7 @@ final class FeePlansMock
         $planKey = sprintf('general_%d_%d_%d', $installmentCount, $deferredDays, $deferredMonth);
 
         return [
-            FeePlansAdminForm::KET_FIELD_FEE_PLAN_LIST => json_encode([
+            FeePlansAdminForm::KEY_FIELD_FEE_PLAN_LIST => json_encode([
                 $planKey => [
                     'state' => $state,
                     'min_amount' => $minAmount,
@@ -169,6 +169,19 @@ final class FeePlansMock
                     'sort_order' => $sortOrder,
                 ]
             ])
+        ];
+    }
+
+    public static function almaFeePlanFromDb(int $installmentCount, int $deferredDays = 0, int $deferredMonth = 0, string $state = '1', string $minAmount = '10000', string $maxAmount = '200000', $sortOrder = '1'): array
+    {
+        $planKey = sprintf('general_%d_%d_%d', $installmentCount, $deferredDays, $deferredMonth);
+        return [
+            $planKey => [
+                'state' => $state,
+                'min_amount' => $minAmount,
+                'max_amount' => $maxAmount,
+                'sort_order' => $sortOrder,
+            ]
         ];
     }
 }

@@ -216,4 +216,50 @@ class AuthenticationSettingsProviderTest extends TestCase
 
         $this->assertEquals($expected, $this->authenticationSettingsProvider->getSplitLanguageFields($allFields));
     }
+
+    public function testGetAllFieldsWithoutLanguageKeyExplodedToCheck1()
+    {
+        $allFields = array_merge(
+            FieldsMock::fieldsWithLangFalse(),
+            FieldsMock::fieldsWithoutLang(),
+        );
+        $languages = [
+            ['id_lang' => 1, 'iso_code' => 'en', 'language_code' => 'en-us', 'locale' => 'en-US'],
+            ['id_lang' => 2, 'iso_code' => 'fr', 'language_code' => 'fr-fr', 'locale' => 'fr-FR']
+        ];
+        $expected = array_merge(
+            FieldsMock::fieldsWithLangFalse(),
+            FieldsMock::fieldsWithoutLang(),
+        );
+
+        $this->languageRepository->expects($this->never())
+            ->method('getActiveLanguages')
+            ->willReturn($languages);
+
+        $this->assertEquals($expected, $this->authenticationSettingsProvider->getSplitLanguageFields($allFields));
+    }
+
+    public function testGetAllValuesWithLanguageKeyExplodedToCheck2()
+    {
+        $allFields = array_merge(
+            FieldsMock::fieldsWithLangTrue(),
+            FieldsMock::fieldsWithoutLang()
+        );
+
+        $languages = [
+            ['id_lang' => 1, 'iso_code' => 'en', 'language_code' => 'en-us', 'locale' => 'en-US'],
+            ['id_lang' => 2, 'iso_code' => 'fr', 'language_code' => 'fr-fr', 'locale' => 'fr-FR']
+        ];
+
+        $expected = array_merge(
+            FieldsMock::fieldsWithLangTrueExpected('classic_field_lang_true_1'),
+            FieldsMock::fieldsWithLangTrueExpected('classic_field_lang_true_2'),
+            FieldsMock::fieldsWithoutLang()
+        );
+        $this->languageRepository->expects($this->once())
+            ->method('getActiveLanguages')
+            ->willReturn($languages);
+
+        $this->assertEquals($expected, $this->authenticationSettingsProvider->getSplitLanguageFields($allFields));
+    }
 }
