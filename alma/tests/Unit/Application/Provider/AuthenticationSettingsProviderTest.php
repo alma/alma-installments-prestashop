@@ -217,7 +217,7 @@ class AuthenticationSettingsProviderTest extends TestCase
         $this->assertEquals($expected, $this->authenticationSettingsProvider->getSplitLanguageFields($allFields));
     }
 
-    public function testGetAllFieldsWithoutLanguageKeyExploded_toCheck1()
+    public function testGetAllFieldsWithoutLanguageKeyExplodedToCheck1()
     {
         $allFields = array_merge(
             FieldsMock::fieldsWithLangFalse(),
@@ -239,7 +239,7 @@ class AuthenticationSettingsProviderTest extends TestCase
         $this->assertEquals($expected, $this->authenticationSettingsProvider->getSplitLanguageFields($allFields));
     }
 
-    public function testGetAllValuesWithLanguageKeyExploded_toCheck2()
+    public function testGetAllValuesWithLanguageKeyExplodedToCheck2()
     {
         $allFields = array_merge(
             FieldsMock::fieldsWithLangTrue(),
