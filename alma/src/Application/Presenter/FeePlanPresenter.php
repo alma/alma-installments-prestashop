@@ -22,12 +22,10 @@ class FeePlanPresenter
         $title = $this->translator->trans('Pay Now', [], 'Modules.Alma.Settings');
 
         if ($feePlan->isPnXOnly() || $feePlan->isCredit()) {
-            $title = $this->translator->trans('%d-installment payments', [], 'Modules.Alma.Settings');
-            $title = sprintf($title, $feePlan->getInstallmentsCount());
+            $title = $this->translator->trans('%installmentCount%-installment payments', ['%installmentCount%' => $feePlan->getInstallmentsCount()], 'Modules.Alma.Settings');
         }
         if ($feePlan->isPayLaterOnly()) {
-            $title = $this->translator->trans('Deferred payments + %d days', [], 'Modules.Alma.Settings');
-            $title = sprintf($title, $feePlan->getDeferredDays());
+            $title = $this->translator->trans('Deferred payments + %deferredDay% days', ['%deferredDay%' => $feePlan->getDeferredDays()], 'Modules.Alma.Settings');
         }
 
         return $title;
@@ -38,12 +36,10 @@ class FeePlanPresenter
         $title = $this->translator->trans('Enable pay now', [], 'Modules.Alma.Settings');
 
         if ($feePlan->isPnXOnly() || $feePlan->isCredit()) {
-            $title = $this->translator->trans('Enable %d-installment payments', [], 'Modules.Alma.Settings');
-            $title = sprintf($title, $feePlan->getInstallmentsCount());
+            $title = $this->translator->trans('Enable %installmentCount%-installment payments', ['%installmentCount%' => $feePlan->getInstallmentsCount()], 'Modules.Alma.Settings');
         }
         if ($feePlan->isPayLaterOnly()) {
-            $title = $this->translator->trans('Enable deferred payments + %d days', [], 'Modules.Alma.Settings');
-            $title = sprintf($title, $feePlan->getDeferredDays());
+            $title = $this->translator->trans('Enable deferred payments + %deferredDay% days', ['%deferredDay%' => $feePlan->getDeferredDays()], 'Modules.Alma.Settings');
         }
 
         return $title;

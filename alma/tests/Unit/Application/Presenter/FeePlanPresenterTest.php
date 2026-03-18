@@ -33,6 +33,7 @@ class FeePlanPresenterTest extends TestCase
     {
         $this->translator->expects($this->once())
             ->method('trans')
+            ->with('Pay Now', [], 'Modules.Alma.Settings')
             ->willReturn('Pay Now');
 
         $this->assertEquals('Pay Now', $this->feePlanPresenter->getTitle(
@@ -47,7 +48,10 @@ class FeePlanPresenterTest extends TestCase
     {
         $this->translator->expects($this->exactly(2))
             ->method('trans')
-            ->willReturn('2-installment payments');
+            ->willReturnMap([
+                ['Pay Now', [], 'Modules.Alma.Settings', null, 'Pay Now'],
+                ['%installmentCount%-installment payments', ['%installmentCount%' => 2], 'Modules.Alma.Settings', null, '2-installment payments']
+            ]);
 
         $this->assertEquals('2-installment payments', $this->feePlanPresenter->getTitle(
             FeePlansMock::feePlan(2)
@@ -61,7 +65,10 @@ class FeePlanPresenterTest extends TestCase
     {
         $this->translator->expects($this->exactly(2))
             ->method('trans')
-            ->willReturn('Deferred payments + 30 days');
+            ->willReturnMap([
+                ['Pay Now', [], 'Modules.Alma.Settings', null, 'Pay Now'],
+                ['Deferred payments + %deferredDay% days', ['%deferredDay%' => 30], 'Modules.Alma.Settings', null, 'Deferred payments + 30 days']
+            ]);
 
         $this->assertEquals('Deferred payments + 30 days', $this->feePlanPresenter->getTitle(
             FeePlansMock::feePlan(1, 30)
@@ -75,6 +82,7 @@ class FeePlanPresenterTest extends TestCase
     {
         $this->translator->expects($this->once())
             ->method('trans')
+            ->with('Enable pay now', [], 'Modules.Alma.Settings')
             ->willReturn('Enable pay now');
 
         $this->assertEquals('Enable pay now', $this->feePlanPresenter->getLabel(
@@ -89,10 +97,13 @@ class FeePlanPresenterTest extends TestCase
     {
         $this->translator->expects($this->exactly(2))
             ->method('trans')
-            ->willReturn('Enable 2-installment payments');
+            ->willReturnMap([
+                ['Enable pay now', [], 'Modules.Alma.Settings', null, 'Enable pay now'],
+                ['Enable %installmentCount%-installment payments', ['%installmentCount%' => 3], 'Modules.Alma.Settings', null, 'Enable 3-installment payments']
+            ]);
 
-        $this->assertEquals('Enable 2-installment payments', $this->feePlanPresenter->getLabel(
-            FeePlansMock::feePlan(2)
+        $this->assertEquals('Enable 3-installment payments', $this->feePlanPresenter->getLabel(
+            FeePlansMock::feePlan(3)
         ));
     }
 
@@ -103,7 +114,10 @@ class FeePlanPresenterTest extends TestCase
     {
         $this->translator->expects($this->exactly(2))
             ->method('trans')
-            ->willReturn('Enable deferred payments +30 days');
+            ->willReturnMap([
+                ['Enable pay now', [], 'Modules.Alma.Settings', null, 'Enable pay now'],
+                ['Enable deferred payments + %deferredDay% days', ['%deferredDay%' => 30], 'Modules.Alma.Settings', null, 'Enable deferred payments +30 days']
+            ]);
 
         $this->assertEquals('Enable deferred payments +30 days', $this->feePlanPresenter->getLabel(
             FeePlansMock::feePlan(1, 30, 0)
