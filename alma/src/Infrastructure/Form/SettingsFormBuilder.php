@@ -28,10 +28,12 @@ class SettingsFormBuilder
     /**
      * @param string $token
      * @param int $defaultLang
+     * @param int $allowEmployeeFormLang
+     * @param array $languages
      * @param array $forms
      * @return string
      */
-    public function render(string $token, int $defaultLang, array $forms = []): string
+    public function render(string $token, int $defaultLang, int $allowEmployeeFormLang, array $languages, array $forms = []): string
     {
         $this->helperForm->table = $this->module->name;
         $this->helperForm->name_controller = $this->module->name;
@@ -39,7 +41,9 @@ class SettingsFormBuilder
         $this->helperForm->currentIndex = AdminController::$currentIndex . '&' . http_build_query(['configure' => $this->module->name]);
         $this->helperForm->submit_action = 'submit' . $this->module->name;
         $this->helperForm->default_form_language = $defaultLang;
-        $this->helperForm->fields_value = $this->settingsService->getFieldsValue();
+        $this->helperForm->allow_employee_form_lang = $allowEmployeeFormLang;
+        $this->helperForm->fields_value = $this->settingsService->getFieldsValue($languages);
+        $this->helperForm->languages = $languages;
 
         return $this->helperForm->generateForm($forms);
     }

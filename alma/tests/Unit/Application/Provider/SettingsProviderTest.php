@@ -7,19 +7,28 @@ use PrestaShop\Module\Alma\Application\Helper\EncryptorHelper;
 use PrestaShop\Module\Alma\Application\Provider\AuthenticationSettingsProvider;
 use PrestaShop\Module\Alma\Infrastructure\Form\ApiAdminForm;
 use PrestaShop\Module\Alma\Infrastructure\Proxy\ToolsProxy;
+use PrestaShop\Module\Alma\Infrastructure\Repository\LanguageRepository;
 use PrestaShop\Module\Alma\Infrastructure\Repository\SettingsRepository;
+use PrestaShop\Module\Alma\Tests\Mocks\FieldsMock;
 
 class SettingsProviderTest extends TestCase
 {
+    /**
+     * @var AuthenticationSettingsProvider
+     */
+    private AuthenticationSettingsProvider $authenticationSettingsProvider;
+
     public function setup(): void
     {
         $this->module = $this->createMock(\Module::class);
         $this->module->name = 'alma';
         $this->settingsRepository = $this->createMock(SettingsRepository::class);
+        $this->languageRepository = $this->createMock(LanguageRepository::class);
         $this->toolsProxy = $this->createMock(ToolsProxy::class);
-        $this->settingsProvider = new AuthenticationSettingsProvider(
+        $this->authenticationSettingsProvider = new AuthenticationSettingsProvider(
             $this->module,
             $this->settingsRepository,
+            $this->languageRepository,
             $this->toolsProxy
         );
     }
@@ -33,7 +42,7 @@ class SettingsProviderTest extends TestCase
         $this->settingsRepository->expects($this->once())
             ->method('getApiKeys')
             ->willReturn($apiKeysFromRepository);
-        $this->assertEquals($apiKeysFromRepository, $this->settingsProvider->getApiKeys());
+        $this->assertEquals($apiKeysFromRepository, $this->authenticationSettingsProvider->getApiKeys());
     }
 
     public function testGetApiKeysWithTestApiKeyFromPostWithObscureValueAndLiveEmpty(): void
@@ -57,7 +66,7 @@ class SettingsProviderTest extends TestCase
                 [ApiAdminForm::KEY_FIELD_LIVE_API_KEY, $apiKeysFromRepository['live']]
             )
             ->willReturnOnConsecutiveCalls(EncryptorHelper::OBSCURE_VALUE, '', '');
-        $this->assertEquals($apiKeysFromRepository, $this->settingsProvider->getApiKeys());
+        $this->assertEquals($apiKeysFromRepository, $this->authenticationSettingsProvider->getApiKeys());
     }
 
     public function testGetApiKeysWithTestApiKeyFromPostWithObscureValueAndLiveApiKey(): void
@@ -81,7 +90,7 @@ class SettingsProviderTest extends TestCase
                 [ApiAdminForm::KEY_FIELD_LIVE_API_KEY, $apiKeysFromRepository['live']]
             )
             ->willReturnOnConsecutiveCalls(EncryptorHelper::OBSCURE_VALUE, 'live_api_key', 'live_api_key');
-        $this->assertEquals($apiKeysFromRepository, $this->settingsProvider->getApiKeys());
+        $this->assertEquals($apiKeysFromRepository, $this->authenticationSettingsProvider->getApiKeys());
     }
 
     public function testGetApiKeysWithBothApiKeyFromPostWithBothObscureValues(): void
@@ -104,7 +113,7 @@ class SettingsProviderTest extends TestCase
                 [ApiAdminForm::KEY_FIELD_LIVE_API_KEY]
             )
             ->willReturnOnConsecutiveCalls(EncryptorHelper::OBSCURE_VALUE, EncryptorHelper::OBSCURE_VALUE);
-        $this->assertEquals($apiKeysFromRepository, $this->settingsProvider->getApiKeys());
+        $this->assertEquals($apiKeysFromRepository, $this->authenticationSettingsProvider->getApiKeys());
     }
 
     public function testGetApiKeysWithApiKeysFromPostWithBothApiKeys(): void
@@ -138,6 +147,51 @@ class SettingsProviderTest extends TestCase
                 'live_api_key_db',
                 'live_api_key_post'
             );
-        $this->assertEquals($apiKeysFromPost, $this->settingsProvider->getApiKeys());
+        $this->assertEquals($apiKeysFromPost, $this->authenticationSettingsProvider->getApiKeys());
+    }
+
+    public function testGetAllFieldsWithoutMultiLanguageKeyExploded()
+    {
+        $allFields = array_merge(
+            FieldsMock::fieldsWithLangFalse(),
+            FieldsMock::fieldsWithoutLang(),
+        );
+        $languages = [
+            ['id_lang' => 1, 'iso_code' => 'en', 'language_code' => 'en-us', 'locale' => 'en-US']
+        ];
+        $expected = array_merge(
+            FieldsMock::fieldsWithLangFalse(),
+            FieldsMock::fieldsWithoutLang(),
+        );
+
+        $this->languageRepository->expects($this->never())
+            ->method('getActiveLanguages')
+            ->willReturn($languages);
+
+        $this->assertEquals($expected, $this->authenticationSettingsProvider->getSplitLanguageFields($allFields));
+    }
+
+    public function testGetAllValuesWithLanguageKeyExploded()
+    {
+        $allFields = array_merge(
+            FieldsMock::fieldsWithLangTrue(),
+            FieldsMock::fieldsWithoutLang()
+        );
+
+        $languages = [
+            ['id_lang' => 1, 'iso_code' => 'en', 'language_code' => 'en-us', 'locale' => 'en-US'],
+            ['id_lang' => 2, 'iso_code' => 'fr', 'language_code' => 'fr-fr', 'locale' => 'fr-FR']
+        ];
+
+        $expected = array_merge(
+            FieldsMock::fieldsWithLangTrueExpected('classic_field_lang_true_1'),
+            FieldsMock::fieldsWithLangTrueExpected('classic_field_lang_true_2'),
+            FieldsMock::fieldsWithoutLang()
+        );
+        $this->languageRepository->expects($this->once())
+            ->method('getActiveLanguages')
+            ->willReturn($languages);
+
+        $this->assertEquals($expected, $this->authenticationSettingsProvider->getSplitLanguageFields($allFields));
     }
 }

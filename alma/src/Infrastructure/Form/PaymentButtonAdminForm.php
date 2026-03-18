@@ -49,6 +49,7 @@ class PaymentButtonAdminForm extends AbstractAdminForm
                 'encrypted' => false,
                 'options' => [
                     'size' => 20,
+                    'lang' => true,
                 ],
             ],
             self::KEY_FIELD_PAYNOW_BUTTON_DESC => [
@@ -59,6 +60,7 @@ class PaymentButtonAdminForm extends AbstractAdminForm
                 'encrypted' => false,
                 'options' => [
                     'size' => 20,
+                    'lang' => true,
                 ],
             ],
             'ALMA_PNX_BUTTON_HTML' => [
@@ -79,6 +81,7 @@ class PaymentButtonAdminForm extends AbstractAdminForm
                 'encrypted' => false,
                 'options' => [
                     'size' => 20,
+                    'lang' => true,
                 ],
             ],
             self::KEY_FIELD_PNX_BUTTON_DESC => [
@@ -89,6 +92,7 @@ class PaymentButtonAdminForm extends AbstractAdminForm
                 'encrypted' => false,
                 'options' => [
                     'size' => 20,
+                    'lang' => true,
                 ],
             ],
             'ALMA_PAYLATER_BUTTON_HTML' => [
@@ -109,6 +113,7 @@ class PaymentButtonAdminForm extends AbstractAdminForm
                 'encrypted' => false,
                 'options' => [
                     'size' => 20,
+                    'lang' => true,
                 ],
             ],
             self::KEY_FIELD_PAYLATER_BUTTON_DESC => [
@@ -119,6 +124,7 @@ class PaymentButtonAdminForm extends AbstractAdminForm
                 'encrypted' => false,
                 'options' => [
                     'size' => 20,
+                    'lang' => true,
                 ],
             ],
             'ALMA_CREDIT_BUTTON_HTML' => [
@@ -139,6 +145,7 @@ class PaymentButtonAdminForm extends AbstractAdminForm
                 'encrypted' => false,
                 'options' => [
                     'size' => 20,
+                    'lang' => true,
                 ],
             ],
             self::KEY_FIELD_CREDIT_BUTTON_DESC => [
@@ -149,6 +156,7 @@ class PaymentButtonAdminForm extends AbstractAdminForm
                 'encrypted' => false,
                 'options' => [
                     'size' => 20,
+                    'lang' => true,
                 ],
             ]
         ];

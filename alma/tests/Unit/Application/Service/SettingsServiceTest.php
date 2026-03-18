@@ -4,6 +4,7 @@ namespace PrestaShop\Module\Alma\Tests\Unit\Application\Service;
 
 use PHPUnit\Framework\TestCase;
 use PrestaShop\Module\Alma\Application\Exception\AuthenticationException;
+use PrestaShop\Module\Alma\Application\Provider\AuthenticationSettingsProvider;
 use PrestaShop\Module\Alma\Application\Service\AuthenticationService;
 use PrestaShop\Module\Alma\Application\Service\ExcludedCategoriesService;
 use PrestaShop\Module\Alma\Application\Service\FeePlansService;
@@ -18,6 +19,7 @@ use PrestaShop\Module\Alma\Infrastructure\Proxy\ToolsProxy;
 use PrestaShop\Module\Alma\Infrastructure\Repository\ConfigurationRepository;
 use PrestaShop\Module\Alma\Infrastructure\Repository\SettingsRepository;
 use PrestaShop\Module\Alma\Tests\Mocks\FeePlansMock;
+use PrestaShop\Module\Alma\Tests\Mocks\FieldsMock;
 
 class SettingsServiceTest extends TestCase
 {
@@ -33,6 +35,14 @@ class SettingsServiceTest extends TestCase
      * @var PaymentButtonService
      */
     private $paymentButtonService;
+    /**
+     * @var SettingsService
+     */
+    private SettingsService $settingsService;
+    /**
+     * @var AuthenticationSettingsProvider
+     */
+    private $authenticationSettingsProvider;
 
     public function setup(): void
     {
@@ -46,6 +56,7 @@ class SettingsServiceTest extends TestCase
         $this->excludedCategoriesService = $this->createMock(ExcludedCategoriesService::class);
         $this->refundService = $this->createMock(RefundService::class);
         $this->inPageService = $this->createMock(InPageService::class);
+        $this->authenticationSettingsProvider = $this->createMock(AuthenticationSettingsProvider::class);
         $this->settingsService = new SettingsService(
             $this->authenticationService,
             $this->feePlansService,
@@ -54,6 +65,7 @@ class SettingsServiceTest extends TestCase
             $this->excludedCategoriesService,
             $this->refundService,
             $this->inPageService,
+            $this->authenticationSettingsProvider,
             $this->settingsRepository,
             $this->configurationRepository,
             $this->toolsProxy
@@ -70,6 +82,92 @@ class SettingsServiceTest extends TestCase
         $this->toolsProxy->expects($this->any())
             ->method('getValue');
         $this->assertIsArray($this->settingsService->getFieldsValue());
+    }
+
+    public function testGetFieldsValueWithLang(): void
+    {
+        $expected = array_merge(
+            FieldsMock::fieldsValueWithLang(),
+            FieldsMock::fieldValueWithoutLang('classic_field_lang_false', 'value_lang_false_from_repo'),
+            FieldsMock::fieldValueWithoutLang('classic_field', 'value_classic_field_from_repo'),
+            FeePlansMock::feePlanFieldsValueExpected(3)
+        );
+        $languages = [
+            ['id_lang' => 1, 'iso_code' => 'en', 'language_code' => 'en-us', 'locale' => 'en-US'],
+            ['id_lang' => 2, 'iso_code' => 'fr', 'language_code' => 'fr-fr', 'locale' => 'fr-FR']
+        ];
+        $this->feePlansService->expects($this->once())
+            ->method('fieldsValue')
+            ->willReturn(FeePlansMock::feePlanFieldsExpected(3));
+        $this->authenticationSettingsProvider->expects($this->any())
+            ->method('getAllFields')
+            ->willReturn(FieldsMock::allFields());
+        $this->configurationRepository->expects($this->any())
+            ->method('get')
+            ->willReturnMap([
+                ['classic_field_lang_true', 'value_lang_true_from_repo'],
+                ['classic_field_lang_true_1', 'value_1_lang_true_from_repo'],
+                ['classic_field_lang_true_2', 'value_2_lang_true_from_repo'],
+                ['classic_field_lang_false', 'value_lang_false_from_repo'],
+                ['classic_field', 'value_classic_field_from_repo'],
+                ['ALMA_GENERAL_3_0_0_STATE', '1'],
+                ['ALMA_GENERAL_3_0_0_MIN_AMOUNT', '100'],
+                ['ALMA_GENERAL_3_0_0_MAX_AMOUNT', '2000'],
+                ['ALMA_GENERAL_3_0_0_SORT_ORDER', '1'],
+            ]);
+        $this->toolsProxy->expects($this->any())
+            ->method('getValue')
+            ->willReturnMap([
+                ['classic_field_lang_true', 'value_lang_true_from_repo', 'value_lang_true_from_repo'],
+                ['classic_field_lang_true_1', 'value_1_lang_true_from_repo', 'value_1'],
+                ['classic_field_lang_true_2', 'value_2_lang_true_from_repo', 'value_2'],
+                ['classic_field_lang_false', 'value_lang_false_from_repo', 'value_lang_false_from_repo'],
+                ['classic_field', 'value_classic_field_from_repo', 'value_classic_field_from_repo'],
+                ['ALMA_GENERAL_3_0_0_STATE', '1', '1'],
+                ['ALMA_GENERAL_3_0_0_MIN_AMOUNT', '100', '100'],
+                ['ALMA_GENERAL_3_0_0_MAX_AMOUNT', '2000', '2000'],
+                ['ALMA_GENERAL_3_0_0_SORT_ORDER', '1', '1'],
+            ]);
+        $this->assertEquals($expected, $this->settingsService->getFieldsValue($languages));
+    }
+
+    public function testGetAllFieldsWithoutLanguageKeyExploded()
+    {
+        $allFields = [
+            FieldsMock::fieldsWithLangFalse(),
+            FieldsMock::fieldsWithoutLang(),
+        ];
+        $expected = [
+            FieldsMock::fieldsWithLangFalse(),
+            FieldsMock::fieldsWithoutLang(),
+        ];
+
+        $this->authenticationSettingsProvider->expects($this->once())
+            ->method('getSplitLanguageFields')
+            ->with($allFields)
+            ->willReturn($expected);
+        $this->assertEquals($expected, $this->settingsService->getSplitLanguageFields($allFields));
+    }
+
+    public function testGetAllValuesWithLanguageKeyExploded()
+    {
+        $allFields = [
+            FieldsMock::fieldsWithLangTrue(),
+            FieldsMock::fieldsWithoutLang(),
+        ];
+
+        $expected = [
+            FieldsMock::fieldsWithLangTrueExpected('classic_field_lang_true_1'),
+            FieldsMock::fieldsWithLangTrueExpected('classic_field_lang_true_2'),
+            FieldsMock::fieldsWithoutLang(),
+        ];
+
+        $this->authenticationSettingsProvider->expects($this->once())
+            ->method('getSplitLanguageFields')
+            ->with($allFields)
+            ->willReturn($expected);
+
+        $this->assertEquals($expected, $this->settingsService->getSplitLanguageFields($allFields));
     }
 
     /**
@@ -167,8 +265,12 @@ class SettingsServiceTest extends TestCase
             ->method('defaultFieldsToSave');
         $this->inPageService->expects($this->once())
             ->method('defaultFieldsToSave');
+        $this->authenticationSettingsProvider->expects($this->once())
+            ->method('getSplitLanguageFields')
+            ->with(FormCollection::getAllFields(FormCollection::SETTINGS_FORMS_CLASSES))
+            ->willReturn(FieldsMock::allFields());
         $fieldsValue = array_merge(
-            FormCollection::getAllFields(FormCollection::SETTINGS_FORMS_CLASSES),
+            FieldsMock::allFields(),
             FeePlansMock::feePlanFieldsValueExpected(3)
         );
         $overrideValues = array_merge(
@@ -227,8 +329,12 @@ class SettingsServiceTest extends TestCase
             ->method('defaultFieldsToSave');
         $this->inPageService->expects($this->once())
             ->method('defaultFieldsToSave');
+        $this->authenticationSettingsProvider->expects($this->once())
+            ->method('getSplitLanguageFields')
+            ->with(FormCollection::getAllFields(FormCollection::SETTINGS_FORMS_CLASSES))
+            ->willReturn(FieldsMock::allFields());
         $fieldsValue = array_merge(
-            FormCollection::getAllFields(FormCollection::SETTINGS_FORMS_CLASSES),
+            FieldsMock::allFields(),
             FeePlansMock::feePlanFieldsValueExpected(3)
         );
         $overrideValues = array_merge(

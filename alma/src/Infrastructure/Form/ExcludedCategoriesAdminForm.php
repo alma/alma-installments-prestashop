@@ -54,7 +54,8 @@ class ExcludedCategoriesAdminForm extends AbstractAdminForm
                 'encrypted' => false,
                 'options' => [
                     'size' => 20,
-                    'desc' => 'Message displayed on an excluded product page or on the cart page if it contains an excluded product.'
+                    'desc' => 'Message displayed on an excluded product page or on the cart page if it contains an excluded product.',
+                    'lang' => true,
                 ],
             ]
         ];

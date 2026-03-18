@@ -29,6 +29,11 @@ class SettingsFormBuilderTest extends TestCase
     {
         $token = 'token';
         $defaultLang = 1;
+        $allowEmployeeFormLang = 1;
+        $languages = [
+            ['id_lang' => 1, 'name' => 'English'],
+            ['id_lang' => 2, 'name' => 'French'],
+        ];
         $forms = FormExpectedMock::form();
         $this->settingsService->expects($this->once())
             ->method('getFieldsValue')
@@ -37,7 +42,7 @@ class SettingsFormBuilderTest extends TestCase
             ->method('generateForm')
             ->with($forms)
             ->willReturn('form_html');
-        $this->assertEquals('form_html', $this->settingsFormBuilder->render($token, $defaultLang, $forms));
+        $this->assertEquals('form_html', $this->settingsFormBuilder->render($token, $defaultLang, $allowEmployeeFormLang, $languages, $forms));
     }
 
     public function tearDown(): void

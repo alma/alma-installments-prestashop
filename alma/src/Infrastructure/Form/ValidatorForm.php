@@ -18,11 +18,22 @@ class ValidatorForm
      *
      * @return array an array of error messages if validation fails, or an empty array if validation passes
      */
-    public static function legacyValidate(array $fieldsForm, array $allValues): array
+    public static function legacyValidate(array $fieldsForm, array $allValues, array $languages = []): array
     {
         $errors = [];
         foreach ($fieldsForm as $field => $params) {
             if (!isset($params['required']) || $params['required'] === false) {
+                continue;
+            }
+
+            if (isset($params['lang']) && $params['lang']) {
+                foreach ($languages as $language) {
+                    $fieldLanguage = $field . '_' . $language['id_lang'];
+                    if (empty($allValues[$fieldLanguage]) || !Validate::isGenericName($allValues[$fieldLanguage])) {
+                        $errors[] = sprintf('Invalid Configuration value for %s', $fieldLanguage);
+                    }
+                }
+
                 continue;
             }
 

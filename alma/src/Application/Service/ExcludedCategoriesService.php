@@ -5,6 +5,7 @@ namespace PrestaShop\Module\Alma\Application\Service;
 use PrestaShop\Module\Alma\Infrastructure\Form\ApiAdminForm;
 use PrestaShop\Module\Alma\Infrastructure\Form\ExcludedCategoriesAdminForm;
 use PrestaShop\Module\Alma\Infrastructure\Repository\ConfigurationRepository;
+use PrestaShop\Module\Alma\Infrastructure\Repository\LanguageRepository;
 
 class ExcludedCategoriesService
 {
@@ -13,14 +14,26 @@ class ExcludedCategoriesService
      * @var ConfigurationRepository
      */
     private ConfigurationRepository $configurationRepository;
+    /**
+     * @var LanguageRepository
+     */
+    private LanguageRepository $languageRepository;
 
     public function __construct(
         \Context $context,
-        ConfigurationRepository $configurationRepository
+        ConfigurationRepository $configurationRepository,
+        LanguageRepository $languageRepository
     ) {
         $this->context = $context;
         $this->configurationRepository = $configurationRepository;
+        $this->languageRepository = $languageRepository;
     }
+
+    // TODO : Provisional values, need to be get the transalation value from .xlf file when I18N rebased
+    private const VALUE_EXCLUDED_CATEGORIES_MESSAGE = [
+        'en' => 'Your cart is not eligible for payments with Alma.',
+        'fr' => 'Paiements avec Alma indisponibles'
+    ];
 
     /**
      * @return string
@@ -47,9 +60,15 @@ class ExcludedCategoriesService
             return [];
         }
 
-        return [
+        $fields = [
             ExcludedCategoriesAdminForm::KEY_FIELD_EXCLUDED_CATEGORIES_WIDGET_DISPLAY_NOT_ELIGIBLE => 1,
-            ExcludedCategoriesAdminForm::KEY_FIELD_EXCLUDED_CATEGORIES_MESSAGE => 'Your cart is not eligible for payments with Alma.',
         ];
+
+        foreach ($this->languageRepository->getActiveLanguages() as $language) {
+            $suffixLanguage = '_' . $language['id_lang'];
+            $fields[ExcludedCategoriesAdminForm::KEY_FIELD_EXCLUDED_CATEGORIES_MESSAGE . $suffixLanguage] = self::VALUE_EXCLUDED_CATEGORIES_MESSAGE[$language['iso_code']];
+        }
+
+        return $fields;
     }
 }

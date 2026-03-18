@@ -43,13 +43,16 @@ class AdminAlmaSettingsController extends ModuleAdminController
         $isAccountLinked = false;
         $token = Tools::getAdminTokenLite('AdminAlmaSettings');
         $defaultLang = (int) Configuration::get('PS_LANG_DEFAULT');
+        $allowEmployeeFormLang = (int) Configuration::get('PS_BO_ALLOW_EMPLOYEE_FORM_LANG');
+        $languages = $this->context->controller->getLanguages();
 
         if (Tools::isSubmit('submit' . $this->module->name)) {
             $settingsFormClasses = FormCollection::SETTINGS_FORMS_CLASSES_BEFORE_AUTH;
             if (Configuration::get(ApiAdminForm::KEY_FIELD_MERCHANT_ID)) {
                 $settingsFormClasses = FormCollection::SETTINGS_FORMS_CLASSES;
             }
-            $errors = ValidatorForm::legacyValidate(FormCollection::getAllFields($settingsFormClasses), Tools::getAllValues());
+            $splitLanguageFields = $settingsService->getSplitLanguageFields(FormCollection::getAllFields($settingsFormClasses));
+            $errors = ValidatorForm::legacyValidate($splitLanguageFields, Tools::getAllValues(), $languages);
             if (!empty($errors)) {
                 $notifications = $this->module->displayError($errors);
             } else {
@@ -85,7 +88,7 @@ class AdminAlmaSettingsController extends ModuleAdminController
             'isPsAccountsLinked' => $isAccountLinked,
             'urlAccountsCdn' => $urlAccountsCdn,
             'notifications' => $notifications,
-            'form' => $settingsFormBuilder->render($token, $defaultLang, $formService->getForm()),
+            'form' => $settingsFormBuilder->render($token, $defaultLang, $allowEmployeeFormLang, $languages, $formService->getForm()),
         ]);
 
         $this->content = $this->module->display(
