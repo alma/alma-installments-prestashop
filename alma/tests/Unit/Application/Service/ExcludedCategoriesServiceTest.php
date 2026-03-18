@@ -8,6 +8,7 @@ use PrestaShop\Module\Alma\Infrastructure\Form\ApiAdminForm;
 use PrestaShop\Module\Alma\Infrastructure\Form\ExcludedCategoriesAdminForm;
 use PrestaShop\Module\Alma\Infrastructure\Repository\ConfigurationRepository;
 use PrestaShop\Module\Alma\Infrastructure\Repository\LanguageRepository;
+use PrestaShopBundle\Translation\TranslatorInterface;
 
 class ExcludedCategoriesServiceTest extends TestCase
 {
@@ -29,10 +30,12 @@ class ExcludedCategoriesServiceTest extends TestCase
         $this->context = $this->createMock(\Context::class);
         $this->configurationRepository = $this->createMock(ConfigurationRepository::class);
         $this->languageRepository = $this->createMock(LanguageRepository::class);
+        $this->translator = $this->createMock(TranslatorInterface::class);
         $this->excludedCategories = new ExcludedCategoriesService(
             $this->context,
             $this->configurationRepository,
-            $this->languageRepository
+            $this->languageRepository,
+            $this->translator
         );
     }
 
@@ -44,7 +47,7 @@ class ExcludedCategoriesServiceTest extends TestCase
         ];
 
         $languages = [
-            ['id_lang' => 1, 'iso_code' => 'en']
+            ['id_lang' => 1, 'iso_code' => 'en', 'locale' => 'en-US'],
         ];
 
         $this->configurationRepository->expects($this->once())
@@ -55,6 +58,10 @@ class ExcludedCategoriesServiceTest extends TestCase
         $this->languageRepository->expects($this->once())
             ->method('getActiveLanguages')
             ->willReturn($languages);
+
+        $this->translator->expects($this->once())
+            ->method('trans')
+            ->willReturn('Your cart is not eligible for payments with Alma.');
 
         $this->assertEquals($expected, $this->excludedCategories->defaultFieldsToSave());
     }
@@ -68,8 +75,8 @@ class ExcludedCategoriesServiceTest extends TestCase
         ];
 
         $languages = [
-            ['id_lang' => 1, 'iso_code' => 'en'],
-            ['id_lang' => 2, 'iso_code' => 'fr'],
+            ['id_lang' => 1, 'iso_code' => 'en', 'locale' => 'en-US'],
+            ['id_lang' => 2, 'iso_code' => 'fr', 'locale' => 'fr-FR'],
         ];
 
         $this->configurationRepository->expects($this->once())
@@ -80,6 +87,13 @@ class ExcludedCategoriesServiceTest extends TestCase
         $this->languageRepository->expects($this->once())
             ->method('getActiveLanguages')
             ->willReturn($languages);
+
+        $this->translator->expects($this->any())
+            ->method('trans')
+            ->willReturnOnConsecutiveCalls(
+                'Your cart is not eligible for payments with Alma.',
+                'Paiements avec Alma indisponibles'
+            );
 
         $this->assertEquals($expected, $this->excludedCategories->defaultFieldsToSave());
     }

@@ -135,6 +135,13 @@ tasks:
     cmds:
       - crowdin upload sources
 
+  crowdin:clean-upload:
+    desc: Upload translations to Crowdin and delete obsolete files
+    deps:
+      - crowdin
+    cmds:
+      - crowdin upload sources --delete-obsolete
+
   gh-cli:
     internal: true
     preconditions:

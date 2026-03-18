@@ -6,6 +6,7 @@ use PrestaShop\Module\Alma\Infrastructure\Form\ApiAdminForm;
 use PrestaShop\Module\Alma\Infrastructure\Form\ExcludedCategoriesAdminForm;
 use PrestaShop\Module\Alma\Infrastructure\Repository\ConfigurationRepository;
 use PrestaShop\Module\Alma\Infrastructure\Repository\LanguageRepository;
+use PrestaShopBundle\Translation\TranslatorInterface;
 
 class ExcludedCategoriesService
 {
@@ -18,22 +19,22 @@ class ExcludedCategoriesService
      * @var LanguageRepository
      */
     private LanguageRepository $languageRepository;
+    /**
+     * @var TranslatorInterface
+     */
+    private TranslatorInterface $translator;
 
     public function __construct(
         \Context $context,
         ConfigurationRepository $configurationRepository,
-        LanguageRepository $languageRepository
+        LanguageRepository $languageRepository,
+        TranslatorInterface $translator
     ) {
         $this->context = $context;
         $this->configurationRepository = $configurationRepository;
         $this->languageRepository = $languageRepository;
+        $this->translator = $translator;
     }
-
-    // TODO : Provisional values, need to be get the transalation value from .xlf file when I18N rebased
-    private const VALUE_EXCLUDED_CATEGORIES_MESSAGE = [
-        'en' => 'Your cart is not eligible for payments with Alma.',
-        'fr' => 'Paiements avec Alma indisponibles'
-    ];
 
     /**
      * @return string
@@ -66,7 +67,7 @@ class ExcludedCategoriesService
 
         foreach ($this->languageRepository->getActiveLanguages() as $language) {
             $suffixLanguage = '_' . $language['id_lang'];
-            $fields[ExcludedCategoriesAdminForm::KEY_FIELD_EXCLUDED_CATEGORIES_MESSAGE . $suffixLanguage] = self::VALUE_EXCLUDED_CATEGORIES_MESSAGE[$language['iso_code']];
+            $fields[ExcludedCategoriesAdminForm::KEY_FIELD_EXCLUDED_CATEGORIES_MESSAGE . $suffixLanguage] = $this->translator->trans('Your cart is not eligible for payments with Alma.', [], 'Modules.Alma.Settings', $language['locale']);
         }
 
         return $fields;

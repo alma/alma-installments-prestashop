@@ -2,15 +2,14 @@
 
 namespace PrestaShop\Module\Alma\Application\Service;
 
-use Alma\Client\Application\Exception\ParametersException;
 use Alma\Client\Domain\Entity\FeePlan;
 use Alma\Client\Domain\Entity\FeePlanList;
 use PrestaShop\Module\Alma\Application\Helper\PriceHelper;
 use PrestaShop\Module\Alma\Application\Presenter\FeePlanPresenter;
 use PrestaShop\Module\Alma\Application\Provider\FeePlansProvider;
 use PrestaShop\Module\Alma\Infrastructure\Form\FeePlansAdminForm;
-use PrestaShop\Module\Alma\Infrastructure\Proxy\ToolsProxy;
 use PrestaShop\Module\Alma\Infrastructure\Repository\ConfigurationRepository;
+use PrestaShopBundle\Translation\TranslatorInterface;
 
 class FeePlansService
 {
@@ -20,24 +19,30 @@ class FeePlansService
      */
     private FeePlansProvider $feePlansProvider;
     /**
+     * @var FeePlanPresenter
+     */
+    private FeePlanPresenter $feePlanPresenter;
+    /**
      * @var ConfigurationRepository
      */
     private ConfigurationRepository $configurationRepository;
     /**
-     * @var ToolsProxy
+     * @var TranslatorInterface
      */
-    private ToolsProxy $toolsProxy;
+    private TranslatorInterface $translator;
 
     public function __construct(
         \Context $context,
         FeePlansProvider $feePlanProvider,
+        FeePlanPresenter $feePlanPresenter,
         ConfigurationRepository $configurationRepository,
-        ToolsProxy $toolsProxy
+        TranslatorInterface $translator
     ) {
         $this->context = $context;
         $this->feePlansProvider = $feePlanProvider;
+        $this->feePlanPresenter = $feePlanPresenter;
         $this->configurationRepository = $configurationRepository;
-        $this->toolsProxy = $toolsProxy;
+        $this->translator = $translator;
     }
 
     /**
@@ -47,16 +52,10 @@ class FeePlansService
     public function createTemplateTabs(): string
     {
         $tpl = $this->context->smarty->createTemplate(_PS_MODULE_DIR_ . 'alma/views/templates/admin/fee_plans_tabs.tpl');
-        try {
-            $tpl->assign([
-                'fee_plans' => $this->feePlansTabs(),
-            ]);
-        } catch (ParametersException $e) {
-            // TODO: Add log here
-            $tpl->assign([
-                'fee_plans' => [],
-            ]);
-        }
+
+        $tpl->assign([
+            'fee_plans' => $this->feePlansTabs(),
+        ]);
 
         return $tpl->fetch();
     }
@@ -77,7 +76,7 @@ class FeePlansService
             $feePlanListAssembled[] = [
                 'enabled' => (bool) $this->configurationRepository->get(sprintf(FeePlansAdminForm::KEY_FIELD_FEE_PLAN_STATE, $planKey)),
                 'plan_key' => $feePlan->getPlanKey(),
-                'title' => FeePlanPresenter::getTitle($feePlan),
+                'title' => $this->feePlanPresenter->getTitle($feePlan),
             ];
         }
 
@@ -111,7 +110,7 @@ class FeePlansService
             $feePlansFields = array_merge($feePlansFields, [
                 'ALMA_' . $planKey . '_STATE' => [
                     'type' => 'switch',
-                    'label' => FeePlanPresenter::getLabel($feePlan),
+                    'label' => $this->feePlanPresenter->getLabel($feePlan),
                     'required' => false,
                     'form' => 'fee_plans',
                     'encrypted' => false,
@@ -121,19 +120,19 @@ class FeePlansService
                             [
                                 'id' => 'ENABLE',
                                 'value' => 1,
-                                'label' => 'Enabled',
+                                'label' => $this->translator->trans('Enabled', [], 'Modules.Alma.Settings'),
                             ],
                             [
                                 'id' => 'DISABLE',
                                 'value' => 0,
-                                'label' => 'Disabled'
+                                'label' => $this->translator->trans('Disabled', [], 'Modules.Alma.Settings')
                             ]
                         ],
                     ],
                 ],
                 'ALMA_' . $planKey . '_MIN_AMOUNT' => [
                     'type' => 'text',
-                    'label' => 'Minimum amount (€)',
+                    'label' => $this->translator->trans('Minimum amount (€)', [], 'Modules.Alma.Settings'),
                     'required' => false,
                     'form' => 'fee_plans',
                     'encrypted' => false,
@@ -141,31 +140,31 @@ class FeePlansService
                         'readonly' => $feePlan->isPayNow(),
                         'form_group_class' => 'tab-' . $planKeyTab,
                         'size' => 20,
-                        'desc' => 'Minimum purchase amount to activate this plan',
+                        'desc' => $this->translator->trans('Minimum purchase amount to activate this plan', [], 'Modules.Alma.Settings'),
                     ],
                 ],
                 'ALMA_' . $planKey . '_MAX_AMOUNT' => [
                     'type' => 'text',
-                    'label' => 'Maximum amount (€)',
+                    'label' => $this->translator->trans('Maximum amount (€)', [], 'Modules.Alma.Settings'),
                     'required' => false,
                     'form' => 'fee_plans',
                     'encrypted' => false,
                     'options' => [
                         'form_group_class' => 'tab-' . $planKeyTab,
                         'size' => 20,
-                        'desc' => 'Maximum purchase amount to activate this plan',
+                        'desc' => $this->translator->trans('Maximum purchase amount to activate this plan', [], 'Modules.Alma.Settings'),
                     ],
                 ],
                 'ALMA_' . $planKey . '_SORT_ORDER' => [
                     'type' => 'text',
-                    'label' => 'Position',
+                    'label' => $this->translator->trans('Position', [], 'Modules.Alma.Settings'),
                     'required' => false,
                     'form' => 'fee_plans',
                     'encrypted' => false,
                     'options' => [
                         'form_group_class' => 'tab-' . $planKeyTab,
                         'size' => 20,
-                        'desc' => 'Use relative values to set the order on the checkout page',
+                        'desc' => $this->translator->trans('Use relative values to set the order on the checkout page', [], 'Modules.Alma.Settings'),
                     ],
                 ]
             ]);

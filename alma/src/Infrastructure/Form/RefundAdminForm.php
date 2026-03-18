@@ -9,11 +9,14 @@ class RefundAdminForm extends AbstractAdminForm
 
     public static function title(): string
     {
-        return 'Refund with state change';
+        $translator = \Context::getContext()->getTranslator();
+        return $translator->trans('Refund with state change', [], 'Modules.Alma.Settings');
     }
 
     public static function fieldsForm(string $templateHtml = '', array $dynamicForm = []): array
     {
+        $translator = \Context::getContext()->getTranslator();
+
         return [
             'ALMA_REFUND_ON_CHANGE_HTML' => [
                 'type' => 'html',
@@ -27,7 +30,7 @@ class RefundAdminForm extends AbstractAdminForm
             ],
             self::KEY_FIELD_REFUND_ON_CHANGE_STATE => [
                 'type' => 'switch',
-                'label' => 'Activate refund by change state',
+                'label' => $translator->trans('Activate refund by change state', [], 'Modules.Alma.Settings'),
                 'required' => false,
                 'form' => 'refund_on_change',
                 'encrypted' => false,
@@ -36,12 +39,12 @@ class RefundAdminForm extends AbstractAdminForm
                         [
                             'id' => 'ENABLE',
                             'value' => 1,
-                            'label' => 'Enabled',
+                            'label' => $translator->trans('Enabled', [], 'Modules.Alma.Settings'),
                         ],
                         [
                             'id' => 'DISABLE',
                             'value' => 0,
-                            'label' => 'Disabled'
+                            'label' => $translator->trans('Disabled', [], 'Modules.Alma.Settings')
                         ]
                     ],
                 ],

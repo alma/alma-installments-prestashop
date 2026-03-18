@@ -4,10 +4,21 @@ namespace PrestaShop\Module\Alma\Infrastructure\Form;
 
 use Alma\Client\Domain\Entity\FeePlan;
 use PrestaShop\Module\Alma\Application\Exception\FeePlansException;
+use PrestaShopBundle\Translation\TranslatorInterface;
 use Validate;
 
 class ValidatorForm
 {
+    /**
+     * @var TranslatorInterface
+     */
+    private TranslatorInterface $translator;
+
+    public function __construct(TranslatorInterface $translator)
+    {
+        $this->translator = $translator;
+    }
+
     /**
      * Validate the legacy configuration form fields.
      * Check input text fields for being non-empty and containing only valid characters (using Validate::isGenericName).
@@ -52,22 +63,26 @@ class ValidatorForm
     /**
      * @throws \PrestaShop\Module\Alma\Application\Exception\FeePlansException
      */
-    public static function checkLimitAmountPlan(FeePlan $feePlan, int $minAmount, int $maxAmount): void
+    public function checkLimitAmountPlan(FeePlan $feePlan, int $minAmount, int $maxAmount): void
     {
         if ($minAmount < $feePlan->getMinPurchaseAmount()) {
-            throw new FeePlansException('The minimum purchase amount cannot be lower than the minimum allowed by Alma.');
+            $message = $this->translator->trans('The minimum purchase amount cannot be lower than the minimum allowed by Alma.', [], 'Modules.Alma.Notifications');
+            throw new FeePlansException($message);
         }
 
         if ($maxAmount > $feePlan->getMaxPurchaseAmount()) {
-            throw new FeePlansException('The maximum purchase amount cannot be higher than the maximum allowed by Alma.');
+            $message = $this->translator->trans('The maximum purchase amount cannot be higher than the maximum allowed by Alma.', [], 'Modules.Alma.Notifications');
+            throw new FeePlansException($message);
         }
 
         if ($minAmount > $feePlan->getMaxPurchaseAmount()) {
-            throw new FeePlansException('The minimum purchase amount cannot be higher than the maximum.');
+            $message = $this->translator->trans('The minimum purchase amount cannot be higher than the maximum.', [], 'Modules.Alma.Notifications');
+            throw new FeePlansException($message);
         }
 
         if ($maxAmount < $feePlan->getMinPurchaseAmount()) {
-            throw new FeePlansException('The maximum purchase amount cannot be lower than the minimum.');
+            $message = $this->translator->trans('The maximum purchase amount cannot be lower than the minimum.', [], 'Modules.Alma.Notifications');
+            throw new FeePlansException($message);
         }
     }
 }

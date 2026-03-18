@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
+  <file original="almin" source-language="en" target-language="nl" datatype="plaintext">
+    <body>
+      <trans-unit id="cdd8de47381b84b9a25abe977c1782d2">
+        <source>The minimum purchase amount cannot be lower than the minimum allowed by Alma.</source>
+        <target state="needs-review-translation" state-qualifier="leveraged-mt">Het minimumaankoopbedrag kan niet lager zijn dan het door Alma toegestane minimum.</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="d2ed4b47e95827371fea2246c92c300b">
+        <source>The maximum purchase amount cannot be higher than the maximum allowed by Alma.</source>
+        <target state="needs-review-translation" state-qualifier="leveraged-mt">Het maximale aankoopbedrag kan niet hoger zijn dan het door Alma toegestane maximum.</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="5f55a7d9286ce88cdfe36699bf0064f8">
+        <source>The minimum purchase amount cannot be higher than the maximum.</source>
+        <target state="needs-review-translation" state-qualifier="leveraged-mt">Het minimumaankoopbedrag kan niet hoger zijn dan het maximum.</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="c5638a3a3922d4cbb4a0ef6853c713c2">
+        <source>The maximum purchase amount cannot be lower than the minimum.</source>
+        <target state="needs-review-translation" state-qualifier="leveraged-mt">Het maximale aankoopbedrag kan niet lager zijn dan het minimum.</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="7f40d377cc4942c4f0d6e75a736f8445">
+        <source>Settings successfully updated</source>
+        <target state="needs-review-translation" state-qualifier="leveraged-mt">Instellingen succesvol bijgewerkt</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="a6dbd2cda1b008bdd1d8c13750da6efb">
+        <source>Mode automatically switched to %mode% mode. To use the other mode, please enter the corresponding API key.</source>
+        <target state="needs-review-translation" state-qualifier="leveraged-mt">De modus wordt automatisch omgeschakeld naar %mode% . Om de andere modus te gebruiken, moet u de overeenkomstige API-sleutel invoeren.</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="2d4a12c50532eb37b1a827fe310070c3">
+        <source>Thanks for installing Alma!</source>
+        <target state="needs-review-translation" state-qualifier="leveraged-mt">Bedankt voor het installeren Alma!</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="bbea702c04c766345509aa28d60812ad">
+        <source>You need to create an Alma account before proceeding.</source>
+        <target state="needs-review-translation" state-qualifier="leveraged-mt">U moet een Alma-account aanmaken voordat u verder kunt gaan.</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="bc2323832922e12693c983c2e2d63cc0">
+        <source>Read our getting started guide</source>
+        <target state="needs-review-translation" state-qualifier="leveraged-mt">Lees onze handleiding om aan de slag te gaan</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="8e51eafe439b0adfecc2dc209c2efb15">
+        <source>You can then fill in your API keys:</source>
+        <target state="needs-review-translation" state-qualifier="leveraged-mt">Je kunt dan je API-sleutels invullen:</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="0af00b6347601ba49ed2549945fd168c">
+        <source>You can find your Live API key in [1]your Alma dashboard[/1]</source>
+        <target state="needs-review-translation" state-qualifier="leveraged-mt">U vindt uw Live API-sleutel in [1]uw Alma-dashboard[/1]</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="f7d0b87703e7649098af6346dcdabca2">
+        <source>To use the Test mode, you need your Test API key from [1]your sandbox dasboard[/1]</source>
+        <target state="needs-review-translation" state-qualifier="leveraged-mt">Om de Testmodus te gebruiken, heb je je Test API-sleutel nodig van [1]je Sandbox dasboard[/1].</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="7b8ac6d999703e62653c9e1bfc7ee5e3">
+        <source>If you have any problems, please contact us by email at [1]support@getalma.eu[/1]</source>
+        <target state="needs-review-translation" state-qualifier="leveraged-mt">Als u problemen ondervindt, kunt u contact met ons opnemen via e-mail op [1]support@getalma.eu[/1]</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="9f246d669c560d2ac604f5e01c8dd981">
+        <source>To use Alma, please follow these steps</source>
+        <target state="needs-review-translation" state-qualifier="leveraged-mt">Volg deze stappen om Alma te gebruiken</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="3f2c7ed52eb56243edc3a40def7df34b">
+        <source>Associate PrestaShop account (just below)</source>
+        <target state="needs-review-translation" state-qualifier="leveraged-mt">Gekoppelde PrestaShop-account (net hieronder)</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="b6a9cb8bac15ad209cf970e3f7cc73a0">
+        <source>Create an Alma account</source>
+        <target state="needs-review-translation" state-qualifier="leveraged-mt">Maak een Alma-account aan</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="e243bbd390b43c9ee6047fab4ab3cdc0">
+        <source>Consult our getting started guide</source>
+        <target state="needs-review-translation" state-qualifier="leveraged-mt">Raadpleeg onze handleiding om aan de slag te gaan</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="cf5ec9fb9f7214a3db82a5a39fec5b48">
+        <source>Enter your API key</source>
+        <target state="needs-review-translation" state-qualifier="leveraged-mt">Voer uw API-sleutel in</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="6b229715170319356c7c8391d742b74b">
+        <source>Find your API live key on your [1]Alma dashboard[/1]</source>
+        <target state="needs-review-translation" state-qualifier="leveraged-mt">Vind je API live key op je [1]Alma dashboard[/1]</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="ca49e6672dee134828f65ed7f7257c23">
+        <source>To use Test mode, retrieve your Test API key from your [1]sandbox dashboard[/1]</source>
+        <target state="needs-review-translation" state-qualifier="leveraged-mt">Om de Testmodus te gebruiken, haalt u uw Test API-sleutel op uit uw [1]sandbox dashboard[/1]</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="9700e091d54b8ff1fafcd27518c75b23">
+        <source>Link your store to your PrestaShop account to take full advantage of the modules offered by the PrestaShop Marketplace and optimize your experience.</source>
+        <target state="needs-review-translation" state-qualifier="leveraged-mt">Koppel uw winkel aan uw PrestaShop-account om optimaal te profiteren van de modules die worden aangeboden door de PrestaShop Marketplace en optimaliseer uw ervaring.</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="f87a37a2610232d53fa30a059440c2dd">
+        <source>You can find the module [1]here[/1]</source>
+        <target state="needs-review-translation" state-qualifier="leveraged-mt">Je kunt de module [1]hier[/1] vinden.</target>
+        <note>Line: </note>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

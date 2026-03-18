@@ -23,6 +23,7 @@ use PrestaShop\Module\Alma\Infrastructure\Repository\ConfigurationRepository;
 use PrestaShop\Module\Alma\Infrastructure\Repository\SettingsRepository;
 use PrestaShop\Module\Alma\Tests\Mocks\FeePlansMock;
 use PrestaShop\Module\Alma\Tests\Mocks\FieldsMock;
+use PrestaShopBundle\Translation\TranslatorInterface;
 
 class SettingsServiceTest extends TestCase
 {
@@ -66,6 +67,10 @@ class SettingsServiceTest extends TestCase
      * @var ConfigurationRepository
      */
     private $configurationRepository;
+    /**
+     * @var TranslatorInterface
+     */
+    private $translator;
 
     public function setup(): void
     {
@@ -81,6 +86,7 @@ class SettingsServiceTest extends TestCase
         $this->inPageService = $this->createMock(InPageService::class);
         $this->authenticationSettingsProvider = $this->createMock(AuthenticationSettingsProvider::class);
         $this->feePlansProvider = $this->createMock(FeePlansProvider::class);
+        $this->translator = $this->createMock(TranslatorInterface::class);
         $this->settingsService = new SettingsService(
             $this->authenticationService,
             $this->feePlansService,
@@ -93,7 +99,8 @@ class SettingsServiceTest extends TestCase
             $this->feePlansProvider,
             $this->settingsRepository,
             $this->configurationRepository,
-            $this->toolsProxy
+            $this->toolsProxy,
+            $this->translator
         );
     }
 
@@ -216,6 +223,9 @@ class SettingsServiceTest extends TestCase
         ];
         $feePlanP3x = FeePlansMock::feePlan(3);
         $feePlanList = new FeePlanList([$feePlanP3x]);
+        $this->translator->expects($this->once())
+            ->method('trans')
+            ->willReturn('Settings successfully updated');
         $this->feePlansService->expects($this->once())
             ->method('fieldsToSaveFromPost')
             ->with($allValuesFromPost)
@@ -241,6 +251,9 @@ class SettingsServiceTest extends TestCase
             'ALMA_LIVE_API_KEY' => EncryptorHelper::OBSCURE_VALUE,
         ];
         $overrideValues = [];
+        $this->translator->expects($this->once())
+            ->method('trans')
+            ->willReturn('Settings successfully updated');
         $this->authenticationService->expects($this->never())
             ->method('isValidKeys');
         $this->authenticationSettingsProvider->expects($this->once())
@@ -266,6 +279,9 @@ class SettingsServiceTest extends TestCase
             'ALMA_LIVE_API_KEY' => '',
         ];
         $overrideValues = [];
+        $this->translator->expects($this->once())
+            ->method('trans')
+            ->willReturn('Settings successfully updated');
         $this->authenticationService->expects($this->never())
             ->method('isValidKeys');
         $this->authenticationSettingsProvider->expects($this->once())
@@ -371,6 +387,9 @@ class SettingsServiceTest extends TestCase
         $overrideValues = [
             ApiAdminForm::KEY_FIELD_MERCHANT_ID => '42',
         ];
+        $this->translator->expects($this->once())
+            ->method('trans')
+            ->willReturn('Settings successfully updated');
         $this->feePlansService->expects($this->once())
             ->method('fieldsToSaveFromPost')
             ->with($allValuesFromPost)
@@ -443,6 +462,9 @@ class SettingsServiceTest extends TestCase
             ApiAdminForm::KEY_FIELD_MERCHANT_ID => '42',
             ApiAdminForm::KEY_FIELD_MODE => 'live',
         ];
+        $this->translator->expects($this->exactly(2))
+            ->method('trans')
+            ->willReturn('Mode automatically switched to live mode. To use the other mode, please enter the corresponding API key.');
         $this->feePlansService->expects($this->once())
             ->method('fieldsToSaveFromPost')
             ->with($allValuesFromPost)
@@ -515,6 +537,9 @@ class SettingsServiceTest extends TestCase
         $overrideValues = [
             ApiAdminForm::KEY_FIELD_MERCHANT_ID => '42'
         ];
+        $this->translator->expects($this->once())
+            ->method('trans')
+            ->willReturn('Settings successfully updated');
         $this->authenticationService->expects($this->once())
             ->method('isValidKeys')
             ->willReturn($merchantIds);

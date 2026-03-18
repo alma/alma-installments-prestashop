@@ -3,32 +3,43 @@
 namespace PrestaShop\Module\Alma\Application\Presenter;
 
 use Alma\Client\Domain\Entity\FeePlan;
+use PrestaShopBundle\Translation\TranslatorInterface;
 
 class FeePlanPresenter
 {
-    public static function getTitle(FeePlan $feePlan): string
+    /**
+     * @var TranslatorInterface
+     */
+    private TranslatorInterface $translator;
+
+    public function __construct(TranslatorInterface $translator)
     {
-        $title = 'Pay Now';
+        $this->translator = $translator;
+    }
+
+    public function getTitle(FeePlan $feePlan): string
+    {
+        $title = $this->translator->trans('Pay Now', [], 'Modules.Alma.Settings');
 
         if ($feePlan->isPnXOnly() || $feePlan->isCredit()) {
-            $title = sprintf('%d-installment payments', $feePlan->getInstallmentsCount());
+            $title = $this->translator->trans('%installmentCount%-installment payments', ['%installmentCount%' => $feePlan->getInstallmentsCount()], 'Modules.Alma.Settings');
         }
         if ($feePlan->isPayLaterOnly()) {
-            $title = sprintf('Deferred payments + %d days', $feePlan->getDeferredDays());
+            $title = $this->translator->trans('Deferred payments + %deferredDay% days', ['%deferredDay%' => $feePlan->getDeferredDays()], 'Modules.Alma.Settings');
         }
 
         return $title;
     }
 
-    public static function getLabel(FeePlan $feePlan): string
+    public function getLabel(FeePlan $feePlan): string
     {
-        $title = 'Enable pay now';
+        $title = $this->translator->trans('Enable pay now', [], 'Modules.Alma.Settings');
 
         if ($feePlan->isPnXOnly() || $feePlan->isCredit()) {
-            $title = sprintf('Enable %d-installment payments', $feePlan->getInstallmentsCount());
+            $title = $this->translator->trans('Enable %installmentCount%-installment payments', ['%installmentCount%' => $feePlan->getInstallmentsCount()], 'Modules.Alma.Settings');
         }
         if ($feePlan->isPayLaterOnly()) {
-            $title = sprintf('Enable deferred payments +%d days', $feePlan->getDeferredDays());
+            $title = $this->translator->trans('Enable deferred payments + %deferredDay% days', ['%deferredDay%' => $feePlan->getDeferredDays()], 'Modules.Alma.Settings');
         }
 
         return $title;

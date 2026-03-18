@@ -8,15 +8,17 @@ class DebugAdminForm extends AbstractAdminForm
 
     public static function title(): string
     {
-        return 'Debug options';
+        $translator = \Context::getContext()->getTranslator();
+        return $translator->trans('Debug options', [], 'Modules.Alma.Settings');
     }
 
     public static function fieldsForm(string $templateHtml = '', array $dynamicForm = []): array
     {
+        $translator = \Context::getContext()->getTranslator();
         return [
             self::KEY_FIELD_DEBUG_STATE => [
                 'type' => 'switch',
-                'label' => 'Activate logging',
+                'label' => $translator->trans('Activate logging', [], 'Modules.Alma.Settings'),
                 'required' => false,
                 'form' => 'debug_mode',
                 'encrypted' => false,
@@ -25,12 +27,12 @@ class DebugAdminForm extends AbstractAdminForm
                         [
                             'id' => 'ENABLE',
                             'value' => 1,
-                            'label' => 'Enabled',
+                            'label' => $translator->trans('Enabled', [], 'Modules.Alma.Settings'),
                         ],
                         [
                             'id' => 'DISABLE',
                             'value' => 0,
-                            'label' => 'Disabled'
+                            'label' => $translator->trans('Disabled', [], 'Modules.Alma.Settings')
                         ]
                     ],
                 ],

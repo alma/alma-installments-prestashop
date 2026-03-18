@@ -8,6 +8,7 @@ use PrestaShop\Module\Alma\Infrastructure\Form\ApiAdminForm;
 use PrestaShop\Module\Alma\Infrastructure\Form\PaymentButtonAdminForm;
 use PrestaShop\Module\Alma\Infrastructure\Repository\ConfigurationRepository;
 use PrestaShop\Module\Alma\Infrastructure\Repository\LanguageRepository;
+use PrestaShopBundle\Translation\TranslatorInterface;
 
 class PaymentButtonServiceTest extends TestCase
 {
@@ -16,10 +17,12 @@ class PaymentButtonServiceTest extends TestCase
         $this->context = $this->createMock(\Context::class);
         $this->configurationRepository = $this->createMock(ConfigurationRepository::class);
         $this->languageRepository = $this->createMock(LanguageRepository::class);
+        $this->translator = $this->createMock(TranslatorInterface::class);
         $this->paymentButtonService = new PaymentButtonService(
             $this->context,
             $this->configurationRepository,
-            $this->languageRepository
+            $this->languageRepository,
+            $this->translator
         );
     }
 
@@ -37,7 +40,7 @@ class PaymentButtonServiceTest extends TestCase
         ];
 
         $languages = [
-            ['id_lang' => 1, 'iso_code' => 'en']
+            ['id_lang' => 1, 'iso_code' => 'en', 'locale' => 'en-US'],
         ];
 
         $this->configurationRepository->expects($this->once())
@@ -48,6 +51,19 @@ class PaymentButtonServiceTest extends TestCase
         $this->languageRepository->expects($this->once())
             ->method('getActiveLanguages')
             ->willReturn($languages);
+
+        $this->translator->expects($this->any())
+            ->method('trans')
+            ->willReturnOnConsecutiveCalls(
+                'Pay now by credit card',
+                'Fast and secure payments.',
+                'Pay in %d installments',
+                'Fast and secure payment by credit card.',
+                'Buy now Pay in %d days',
+                'Fast and secure payment by credit card.',
+                'Pay in %d installments',
+                'Fast and secure payment by credit card.',
+            );
 
         $this->assertEquals($expected, $this->paymentButtonService->defaultFieldsToSave());
     }
@@ -74,8 +90,8 @@ class PaymentButtonServiceTest extends TestCase
         ];
 
         $languages = [
-            ['id_lang' => 1, 'iso_code' => 'en'],
-            ['id_lang' => 2, 'iso_code' => 'fr'],
+            ['id_lang' => 1, 'iso_code' => 'en', 'locale' => 'en-US'],
+            ['id_lang' => 2, 'iso_code' => 'fr', 'locale' => 'fr-FR'],
         ];
 
         $this->configurationRepository->expects($this->once())
@@ -86,6 +102,27 @@ class PaymentButtonServiceTest extends TestCase
         $this->languageRepository->expects($this->once())
             ->method('getActiveLanguages')
             ->willReturn($languages);
+
+        $this->translator->expects($this->any())
+            ->method('trans')
+            ->willReturnOnConsecutiveCalls(
+                'Pay now by credit card',
+                'Fast and secure payments.',
+                'Pay in %d installments',
+                'Fast and secure payment by credit card.',
+                'Buy now Pay in %d days',
+                'Fast and secure payment by credit card.',
+                'Pay in %d installments',
+                'Fast and secure payment by credit card.',
+                'Payer maintenant par carte bancaire',
+                'Paiement rapide et sécurisé.',
+                'Payer en %d fois',
+                'Paiement rapide et sécurisé, par carte bancaire.',
+                'Payer dans %d jours',
+                'Paiement rapide et sécurisé, par carte bancaire.',
+                'Payer en %d fois',
+                'Paiement rapide et sécurisé, par carte bancaire.',
+            );
 
         $this->assertEquals($expected, $this->paymentButtonService->defaultFieldsToSave());
     }

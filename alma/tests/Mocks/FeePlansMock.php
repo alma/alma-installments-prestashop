@@ -4,7 +4,6 @@ namespace PrestaShop\Module\Alma\Tests\Mocks;
 
 use Alma\Client\Domain\Entity\FeePlan;
 use PrestaShop\Module\Alma\Application\Helper\PriceHelper;
-use PrestaShop\Module\Alma\Application\Presenter\FeePlanPresenter;
 use PrestaShop\Module\Alma\Infrastructure\Form\FeePlansAdminForm;
 
 final class FeePlansMock
@@ -50,9 +49,10 @@ final class FeePlansMock
 
     public static function feePlansTabsExpected($installmentCount, $active = false, $deferredDays = 0, $deferredMonth = 0, $firstPlanEnable = 'general_3_0_0'): array
     {
+        $title = sprintf('%d-installment payments', $installmentCount);
         return [
             sprintf('general_%d_%d_%d', $installmentCount, $deferredDays, $deferredMonth) => [
-                'title' => FeePlanPresenter::getTitle(FeePlansMock::feePlan($installmentCount)),
+                'title' => $title,
                 'active' => $active,
                 'firstPlanEnable' => $firstPlanEnable,
             ],
@@ -80,11 +80,12 @@ final class FeePlansMock
         $planKey = sprintf('GENERAL_%d_%d_%d', $installmentCount, $deferredDays, $deferredMonth);
         $planKeyTab = sprintf('general_%d_%d_%d', $installmentCount, $deferredDays, $deferredMonth);
         $readonly = $planKey === 'GENERAL_1_0_0';
+        $label = sprintf('Enable %d-installment payments', $installmentCount);
 
         return [
             'ALMA_' . $planKey . '_STATE' => [
                 'type' => 'switch',
-                'label' => FeePlanPresenter::getLabel(FeePlansMock::feePlan($installmentCount)),
+                'label' => $label,
                 'required' => false,
                 'form' => 'fee_plans',
                 'encrypted' => false,
