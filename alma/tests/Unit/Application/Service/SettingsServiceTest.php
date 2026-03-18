@@ -192,8 +192,8 @@ class SettingsServiceTest extends TestCase
     }
 
     /**
-     * @throws \PrestaShop\Module\Alma\Application\Exception\SettingsException
      * @throws \Alma\Client\Application\Exception\ParametersException
+     * @throws \PrestaShop\Module\Alma\Application\Exception\AuthenticationException
      */
     public function testSaveWithNotificationWithStringApiKeyExecuteAuthentication()
     {
@@ -217,13 +217,6 @@ class SettingsServiceTest extends TestCase
             ->willReturn($merchantIds);
         $this->authenticationService->expects($this->once())
             ->method('checkSameMerchantIds');
-        $this->settingsRepository->expects($this->once())
-            ->method('getEnvironment')
-            ->willReturn('test');
-        $this->toolsProxy->expects($this->once())
-            ->method('getValue')
-            ->with(ApiAdminForm::KEY_FIELD_MODE, 'test')
-            ->willReturn('test');
         $this->feePlansProvider->expects($this->once())
             ->method('getFeePlanList')
             ->willReturn($feePlanList);
@@ -231,7 +224,7 @@ class SettingsServiceTest extends TestCase
     }
 
     /**
-     * @throws \PrestaShop\Module\Alma\Application\Exception\SettingsException
+     * @throws \PrestaShop\Module\Alma\Application\Exception\AuthenticationException
      */
     public function testSaveWithNotificationWithObscureApiKeyNotExecuteAuthentication()
     {
@@ -352,8 +345,8 @@ class SettingsServiceTest extends TestCase
     }
 
     /**
+     * @throws \Alma\Client\Application\Exception\ParametersException
      * @throws \PrestaShop\Module\Alma\Application\Exception\AuthenticationException
-     * @throws \PrestaShop\Module\Alma\Application\Exception\FeePlansException
      */
     public function testSaveWithOneKeySet(): void
     {
@@ -361,6 +354,7 @@ class SettingsServiceTest extends TestCase
             'test' => '42'
         ];
         $allValuesFromPost = [
+            ApiAdminForm::KEY_FIELD_MODE => 'test',
             'ALMA_TEST_API_KEY' => 'test_api_key_post',
             'ALMA_LIVE_API_KEY' => EncryptorHelper::OBSCURE_VALUE,
         ];
@@ -379,13 +373,6 @@ class SettingsServiceTest extends TestCase
         $this->authenticationService->expects($this->once())
             ->method('checkSameMerchantIds')
             ->with($merchantIds);
-        $this->settingsRepository->expects($this->once())
-            ->method('getEnvironment')
-            ->willReturn('test');
-        $this->toolsProxy->expects($this->once())
-            ->method('getValue')
-            ->with(ApiAdminForm::KEY_FIELD_MODE, 'test')
-            ->willReturn('test');
         $this->feePlansProvider->expects($this->once())
             ->method('getFeePlanList')
             ->willReturn($feePlanList);
@@ -430,7 +417,7 @@ class SettingsServiceTest extends TestCase
 
     /**
      * @throws \Alma\Client\Application\Exception\ParametersException
-     * @throws \PrestaShop\Module\Alma\Application\Exception\SettingsException
+     * @throws \PrestaShop\Module\Alma\Application\Exception\AuthenticationException
      */
     public function testSaveWithOneKeySetAutoSwitch(): void
     {
@@ -438,6 +425,7 @@ class SettingsServiceTest extends TestCase
             'live' => '42'
         ];
         $allValuesFromPost = [
+            ApiAdminForm::KEY_FIELD_MODE => 'test',
             'ALMA_TEST_API_KEY' => '',
             'ALMA_LIVE_API_KEY' => 'test_api_key_post',
         ];
@@ -457,13 +445,6 @@ class SettingsServiceTest extends TestCase
         $this->authenticationService->expects($this->once())
             ->method('checkSameMerchantIds')
             ->with($merchantIds);
-        $this->settingsRepository->expects($this->once())
-            ->method('getEnvironment')
-            ->willReturn('test');
-        $this->toolsProxy->expects($this->once())
-            ->method('getValue')
-            ->with(ApiAdminForm::KEY_FIELD_MODE, 'test')
-            ->willReturn('test');
         $this->feePlansProvider->expects($this->once())
             ->method('getFeePlanList')
             ->willReturn($feePlanList);
@@ -508,7 +489,7 @@ class SettingsServiceTest extends TestCase
 
     /**
      * @throws \Alma\Client\Application\Exception\ParametersException
-     * @throws \PrestaShop\Module\Alma\Application\Exception\SettingsException
+     * @throws \PrestaShop\Module\Alma\Application\Exception\AuthenticationException
      */
     public function testSaveWithTwoKeysSet(): void
     {
@@ -517,6 +498,7 @@ class SettingsServiceTest extends TestCase
             'live' => '42'
         ];
         $allValuesFromPost = [
+            ApiAdminForm::KEY_FIELD_MODE => 'test',
             'ALMA_TEST_API_KEY' => 'test_api_key_post',
             'ALMA_LIVE_API_KEY' => 'live_api_key_post',
         ];
@@ -531,13 +513,6 @@ class SettingsServiceTest extends TestCase
         $this->authenticationService->expects($this->once())
             ->method('checkSameMerchantIds')
             ->with($merchantIds);
-        $this->settingsRepository->expects($this->once())
-            ->method('getEnvironment')
-            ->willReturn('test');
-        $this->toolsProxy->expects($this->once())
-            ->method('getValue')
-            ->with(ApiAdminForm::KEY_FIELD_MODE, 'test')
-            ->willReturn('test');
         $this->feePlansProvider->expects($this->once())
             ->method('getFeePlanList')
             ->willReturn($feePlanList);

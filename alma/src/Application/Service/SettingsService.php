@@ -152,7 +152,6 @@ class SettingsService
      * @param array $allValuesFromPost
      * @return string
      * @throws \PrestaShop\Module\Alma\Application\Exception\AuthenticationException
-     * @throws \PrestaShop\Module\Alma\Application\Exception\FeePlansException
      */
     public function saveWithNotification(array $allValuesFromPost): string
     {
@@ -163,7 +162,7 @@ class SettingsService
         if ($this->hasNewKey($allValuesFromPost)) {
             $merchantIds = $this->authenticationService->isValidKeys();
             $this->authenticationService->checkSameMerchantIds($merchantIds);
-            $mode = $this->toolsProxy->getValue(ApiAdminForm::KEY_FIELD_MODE, $this->settingsRepository->getEnvironment());
+            $mode = $allValuesFromPost[ApiAdminForm::KEY_FIELD_MODE];
             if (!array_key_exists($mode, $merchantIds)) {
                 $mode = key($merchantIds);
                 $overrideValues[ApiAdminForm::KEY_FIELD_MODE] = $mode;

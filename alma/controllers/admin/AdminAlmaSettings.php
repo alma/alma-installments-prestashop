@@ -4,6 +4,7 @@ use PrestaShop\Module\Alma\Application\Exception\AlmaException;
 use PrestaShop\Module\Alma\Application\Exception\PsAccountsException;
 use PrestaShop\Module\Alma\Application\Service\FormService;
 use PrestaShop\Module\Alma\Application\Service\PsAccountsService;
+use PrestaShop\Module\Alma\Application\Service\SettingsService;
 use PrestaShop\Module\Alma\Infrastructure\Form\ApiAdminForm;
 use PrestaShop\Module\Alma\Infrastructure\Form\FormCollection;
 use PrestaShop\Module\Alma\Infrastructure\Form\SettingsFormBuilder;
