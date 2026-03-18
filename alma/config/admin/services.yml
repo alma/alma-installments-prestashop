@@ -56,6 +56,11 @@ services:
     arguments:
       - '@alma.form_builder'
 
+  alma.debug_admin_form:
+    class: 'PrestaShop\Module\Alma\Infrastructure\Form\DebugAdminForm'
+    arguments:
+      - '@alma.form_builder'
+
   alma.product_widget_admin_form:
     class: 'PrestaShop\Module\Alma\Infrastructure\Form\ProductWidgetAdminForm'
     arguments:
@@ -174,6 +179,7 @@ services:
       - '@alma.product_widget_admin_form'
       - '@alma.cart_widget_admin_form'
       - '@alma.excluded_categories_admin_form'
+      - '@alma.debug_admin_form'
       - '@alma.configuration_repository'
 
   alma.client_configuration:

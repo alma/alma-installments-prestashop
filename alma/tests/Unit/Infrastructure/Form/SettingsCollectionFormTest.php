@@ -5,6 +5,7 @@ namespace PrestaShop\Module\Alma\Tests\Unit\Infrastructure\Form;
 use PHPUnit\Framework\TestCase;
 use PrestaShop\Module\Alma\Infrastructure\Form\ApiAdminForm;
 use PrestaShop\Module\Alma\Infrastructure\Form\CartWidgetAdminForm;
+use PrestaShop\Module\Alma\Infrastructure\Form\DebugAdminForm;
 use PrestaShop\Module\Alma\Infrastructure\Form\ExcludedCategoriesAdminForm;
 use PrestaShop\Module\Alma\Infrastructure\Form\FeePlansAdminForm;
 use PrestaShop\Module\Alma\Infrastructure\Form\FormCollection;
@@ -22,7 +23,8 @@ class SettingsCollectionFormTest extends TestCase
                 FeePlansAdminForm::fieldsForm(),
                 ProductWidgetAdminForm::fieldsForm(),
                 CartWidgetAdminForm::fieldsForm(),
-                ExcludedCategoriesAdminForm::fieldsForm()
+                ExcludedCategoriesAdminForm::fieldsForm(),
+                DebugAdminForm::fieldsForm()
             ),
             FormCollection::getAllFields($classes)
         );
@@ -36,7 +38,8 @@ class SettingsCollectionFormTest extends TestCase
                 FeePlansAdminForm::fieldsForm(),
                 ProductWidgetAdminForm::fieldsForm(),
                 CartWidgetAdminForm::fieldsForm(),
-                ExcludedCategoriesAdminForm::fieldsForm()
+                ExcludedCategoriesAdminForm::fieldsForm(),
+                DebugAdminForm::fieldsForm()
             ),
             FormCollection::getAllFields(FormCollection::SETTINGS_FORMS_CLASSES)
         );

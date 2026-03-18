@@ -4,6 +4,7 @@ namespace PrestaShop\Module\Alma\Application\Service;
 
 use PrestaShop\Module\Alma\Infrastructure\Form\ApiAdminForm;
 use PrestaShop\Module\Alma\Infrastructure\Form\CartWidgetAdminForm;
+use PrestaShop\Module\Alma\Infrastructure\Form\DebugAdminForm;
 use PrestaShop\Module\Alma\Infrastructure\Form\ExcludedCategoriesAdminForm;
 use PrestaShop\Module\Alma\Infrastructure\Form\FeePlansAdminForm;
 use PrestaShop\Module\Alma\Infrastructure\Form\ProductWidgetAdminForm;
@@ -47,6 +48,10 @@ class FormService
      * @var ExcludedCategoriesAdminForm
      */
     private ExcludedCategoriesAdminForm $excludedCategoriesAdminForm;
+    /**
+     * @var DebugAdminForm
+     */
+    private DebugAdminForm $debugAdminForm;
 
     public function __construct(
         FeePlansService $feePlansService,
@@ -57,6 +62,7 @@ class FormService
         ProductWidgetAdminForm $productWidgetAdminForm,
         CartWidgetAdminForm $cartWidgetAdminForm,
         ExcludedCategoriesAdminForm $excludedCategoriesAdminForm,
+        DebugAdminForm $debugAdminForm,
         ConfigurationRepository $configurationRepository
     ) {
         $this->feePlansService = $feePlansService;
@@ -67,6 +73,7 @@ class FormService
         $this->productWidgetAdminForm = $productWidgetAdminForm;
         $this->cartWidgetAdminForm = $cartWidgetAdminForm;
         $this->excludedCategoriesAdminForm = $excludedCategoriesAdminForm;
+        $this->debugAdminForm = $debugAdminForm;
         $this->configurationRepository = $configurationRepository;
     }
 
@@ -76,6 +83,7 @@ class FormService
      */
     public function getForm(): array
     {
+        $form = [];
         if (!empty($this->configurationRepository->get(ApiAdminForm::KEY_FIELD_MERCHANT_ID))) {
             $templateTabs = $this->feePlansService->createTemplateTabs();
             $templateWidget = $this->widgetService->createTemplate();
@@ -88,8 +96,9 @@ class FormService
             ];
         }
 
-        $form[] = $this->apiAdminForm->build();
-
-        return $form;
+        return array_merge($form, [
+            $this->apiAdminForm->build(),
+            $this->debugAdminForm->build(),
+        ]);
     }
 }
