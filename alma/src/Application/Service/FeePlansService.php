@@ -4,12 +4,11 @@ namespace PrestaShop\Module\Alma\Application\Service;
 
 use Alma\Client\Application\Exception\ParametersException;
 use Alma\Client\Domain\Entity\FeePlan;
+use Alma\Client\Domain\Entity\FeePlanList;
 use PrestaShop\Module\Alma\Application\Helper\PriceHelper;
 use PrestaShop\Module\Alma\Application\Presenter\FeePlanPresenter;
 use PrestaShop\Module\Alma\Application\Provider\FeePlansProvider;
-use PrestaShop\Module\Alma\Infrastructure\Form\ApiAdminForm;
 use PrestaShop\Module\Alma\Infrastructure\Form\FeePlansAdminForm;
-use PrestaShop\Module\Alma\Infrastructure\Form\ValidatorForm;
 use PrestaShop\Module\Alma\Infrastructure\Proxy\ToolsProxy;
 use PrestaShop\Module\Alma\Infrastructure\Repository\ConfigurationRepository;
 
@@ -211,53 +210,63 @@ class FeePlansService
     }
 
     /**
-     * Get fee plans fields value to save in the database.
-     * If merchant id is not saved in DB, get value from fee plan provider,
-     * else get value from post (Tools::getValue) for each field of plan
+     * Build the fee plan list in JSON format to save in the database with the key ALMA_FEE_PLAN_LIST
+     * The fee plan list is build with the fields from API with the pattern general_{installments_count}_{deferred_months}_{deferred_days}
+     * For example, for a fee plan with 3 installments, 0 deferred months and 0 deferred days, the key will be general_3_0_0
+     * @param FeePlanList $feePlanList
      * @return array
-     * @throws \PrestaShop\Module\Alma\Application\Exception\FeePlansException
      */
-    public function fieldsToSave(): array
+    public function fieldsToSaveFromApi(FeePlanList $feePlanList): array
     {
-        $feePlansFieldsValue = [];
-        $feePlansProvider = $this->feePlansProvider->getFeePlanList();
+        $feePlans = [];
 
-        /** @var FeePlan $feePlan */
-        foreach ($feePlansProvider as $key => $feePlan) {
-            $state = $feePlan->getPlanKey() === 'general_3_0_0';
-            $minAmount = PriceHelper::priceToEuro($feePlan->getMinPurchaseAmount());
-            $maxAmount = PriceHelper::priceToEuro($feePlan->getMaxPurchaseAmount());
-            $orderPlan = $key + 1;
-            $planKey = mb_strtoupper($feePlan->getPlanKey());
+        foreach ($feePlanList as $key => $feePlan) {
+            /** @var FeePlan $feePlan */
+            $installmentsCount = $feePlan->getInstallmentsCount();
+            $deferredDays = $feePlan->getDeferredDays();
+            $deferredMonths = $feePlan->getDeferredMonths();
 
-            $keyFieldFeePlanState = sprintf(FeePlansAdminForm::KEY_FIELD_FEE_PLAN_STATE, $planKey);
-            $keyFieldFeePlanMinAmount = sprintf(FeePlansAdminForm::KEY_FIELD_FEE_PLAN_MIN_AMOUNT, $planKey);
-            $keyFieldFeePlanMaxAmount = sprintf(FeePlansAdminForm::KEY_FIELD_FEE_PLAN_MAX_AMOUNT, $planKey);
-            $keyFieldFeePlanSortOrder = sprintf(FeePlansAdminForm::KEY_FIELD_FEE_PLAN_SORT_ORDER, $planKey);
+            $planKey = sprintf('general_%d_%d_%d', $installmentsCount, $deferredDays, $deferredMonths);
+            $sortOrder = $key + 1;
 
-            if (!empty($this->configurationRepository->get(ApiAdminForm::KEY_FIELD_MERCHANT_ID))) {
-                $state = $this->toolsProxy->getValue($keyFieldFeePlanState);
-                $minAmount = (int) $this->toolsProxy->getValue($keyFieldFeePlanMinAmount);
-                $maxAmount = (int) $this->toolsProxy->getValue($keyFieldFeePlanMaxAmount);
-                $orderPlan = $this->toolsProxy->getValue($keyFieldFeePlanSortOrder);
-                if ($feePlan->isPayNow()) {
-                    $minAmount = 1;
-                }
-                ValidatorForm::checkLimitAmountPlan(
-                    $feePlan,
-                    PriceHelper::priceToCent($minAmount),
-                    PriceHelper::priceToCent($maxAmount)
-                );
-            }
-
-            $feePlansFieldsValue = array_merge($feePlansFieldsValue, [
-                $keyFieldFeePlanState => $state,
-                $keyFieldFeePlanMinAmount => $minAmount,
-                $keyFieldFeePlanMaxAmount => $maxAmount,
-                $keyFieldFeePlanSortOrder => $orderPlan,
-            ]);
+            $feePlans[$planKey] = [
+                'state' => $feePlan->getPlanKey() === 'general_3_0_0' ? '1' : '0',
+                'min_amount' => (string) $feePlan->getMinPurchaseAmount(),
+                'max_amount' => (string) $feePlan->getMaxPurchaseAmount(),
+                'sort_order' => (string) $sortOrder,
+            ];
         }
 
-        return $feePlansFieldsValue;
+        return [
+            FeePlansAdminForm::KET_FIELD_FEE_PLAN_LIST => json_encode($feePlans)
+        ];
+    }
+
+    /**
+     * Build the fee plan list in JSON format to save in the database with the key ALMA_FEE_PLAN_LIST
+     * The fee plan list is build with the fields from post with the prefix ALMA_GENERAL_ and the pattern ALMA_GENERAL_{installments_count}_{deferred_months}_{deferred_days}_{field_name}
+     * For example, for a fee plan with 3 installments, 0 deferred months and 0 deferred days, the field for state will be ALMA_GENERAL_3_0_0_STATE, for min amount will be ALMA_GENERAL_3_0_0_MIN_AMOUNT, for max amount will be ALMA_GENERAL_3_0_0_MAX_AMOUNT and for sort order will be ALMA_GENERAL_3_0_0_SORT_ORDER
+     * @param array $formData
+     * @return array
+     */
+    public function fieldsToSaveFromPost(array $formData): array
+    {
+        $feePlans = [];
+        $result = [];
+
+        foreach ($formData as $key => $value) {
+            if (preg_match('/^ALMA_GENERAL_(\d+)_(\d+)_(\d+)_(.+)$/', $key, $matches)) {
+                $planKey = sprintf('general_%s_%s_%s', $matches[1], $matches[2], $matches[3]);
+                $fieldName = strtolower($matches[4]);
+                if ($fieldName === 'min_amount' || $fieldName === 'max_amount') {
+                    $value = (string) PriceHelper::priceToCent($value);
+                }
+                $feePlans[$planKey][$fieldName] = $value;
+            }
+        }
+
+        $result[FeePlansAdminForm::KET_FIELD_FEE_PLAN_LIST] = json_encode($feePlans);
+
+        return $result;
     }
 }

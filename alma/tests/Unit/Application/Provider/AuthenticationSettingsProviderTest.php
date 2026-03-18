@@ -11,7 +11,7 @@ use PrestaShop\Module\Alma\Infrastructure\Repository\LanguageRepository;
 use PrestaShop\Module\Alma\Infrastructure\Repository\SettingsRepository;
 use PrestaShop\Module\Alma\Tests\Mocks\FieldsMock;
 
-class SettingsProviderTest extends TestCase
+class AuthenticationSettingsProviderTest extends TestCase
 {
     /**
      * @var AuthenticationSettingsProvider
@@ -189,6 +189,28 @@ class SettingsProviderTest extends TestCase
             FieldsMock::fieldsWithoutLang()
         );
         $this->languageRepository->expects($this->once())
+            ->method('getActiveLanguages')
+            ->willReturn($languages);
+
+        $this->assertEquals($expected, $this->authenticationSettingsProvider->getSplitLanguageFields($allFields));
+    }
+
+    public function testGetAllFieldsWithoutLanguageKeyExploded()
+    {
+        $allFields = array_merge(
+            FieldsMock::fieldsWithLangFalse(),
+            FieldsMock::fieldsWithoutLang(),
+        );
+        $languages = [
+            ['id_lang' => 1, 'iso_code' => 'en', 'language_code' => 'en-us', 'locale' => 'en-US'],
+            ['id_lang' => 2, 'iso_code' => 'fr', 'language_code' => 'fr-fr', 'locale' => 'fr-FR']
+        ];
+        $expected = array_merge(
+            FieldsMock::fieldsWithLangFalse(),
+            FieldsMock::fieldsWithoutLang(),
+        );
+
+        $this->languageRepository->expects($this->never())
             ->method('getActiveLanguages')
             ->willReturn($languages);
 

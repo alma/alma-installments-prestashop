@@ -45,4 +45,14 @@ class ToolsProxy
     {
         return Tools::isSubmit($submit);
     }
+
+    /**
+     * Get all values from $_POST / $_GET
+     *
+     * @return array
+     */
+    public function getAllValues(): array
+    {
+        return Tools::getAllValues();
+    }
 }
