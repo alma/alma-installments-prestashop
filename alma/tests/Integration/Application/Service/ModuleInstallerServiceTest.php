@@ -8,6 +8,7 @@ use PrestaShop\Module\Alma\Application\Service\ModuleInstallerService;
 use PrestaShop\Module\Alma\Application\Service\ModuleService;
 use PrestaShop\Module\Alma\Infrastructure\Repository\LanguageRepository;
 use PrestaShop\PsAccountsInstaller\Installer\Installer;
+use PrestaShopBundle\Translation\TranslatorInterface;
 
 class ModuleInstallerServiceTest extends TestCase
 {
@@ -32,10 +33,12 @@ class ModuleInstallerServiceTest extends TestCase
         );
         $this->dbInstance = Db::getInstance();
         $this->psAccountInstaller = new Installer('5.3');
+        $this->translator = $this->createMock(TranslatorInterface::class);
         $this->moduleInstallerService = new ModuleInstallerService(
             $this->moduleService,
             $this->dbInstance,
-            $this->psAccountInstaller
+            $this->psAccountInstaller,
+            $this->translator
         );
     }
 
@@ -54,7 +57,7 @@ class ModuleInstallerServiceTest extends TestCase
     public function tearDown(): void
     {
         // Uninstall tabs after test
-        $this->moduleService->uninstallTabs(ModuleInstallerService::TABS);
+        $this->moduleService->uninstallTabs($this->moduleInstallerService->tabs());
 
         // Drop alma table if exists after test to clean up
         $this->dbInstance->execute('DROP TABLE IF EXISTS `' . _DB_PREFIX_ . 'alma`');

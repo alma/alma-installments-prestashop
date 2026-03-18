@@ -6,6 +6,7 @@ use PHPUnit\Framework\TestCase;
 use PrestaShop\Module\Alma\Application\Service\ModuleInstallerService;
 use PrestaShop\Module\Alma\Application\Service\ModuleService;
 use PrestaShop\PsAccountsInstaller\Installer\Installer;
+use PrestaShopBundle\Translation\TranslatorInterface;
 
 class ModuleInstallerServiceTest extends TestCase
 {
@@ -29,10 +30,12 @@ class ModuleInstallerServiceTest extends TestCase
         $this->dbInstance = $this->createMock(\Db::class);
         $this->tab = $this->createMock(\Tab::class);
         $this->psAcountsInstallerService = $this->createMock(Installer::class);
+        $this->translator = $this->createMock(TranslatorInterface::class);
         $this->moduleInstallerService = new ModuleInstallerService(
             $this->moduleService,
             $this->dbInstance,
-            $this->psAcountsInstallerService
+            $this->psAcountsInstallerService,
+            $this->translator
         );
     }
 
