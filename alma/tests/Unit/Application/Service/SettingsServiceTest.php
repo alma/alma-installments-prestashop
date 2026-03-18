@@ -8,6 +8,7 @@ use PrestaShop\Module\Alma\Application\Service\AuthenticationService;
 use PrestaShop\Module\Alma\Application\Service\ExcludedCategoriesService;
 use PrestaShop\Module\Alma\Application\Service\FeePlansService;
 use PrestaShop\Module\Alma\Application\Service\InPageService;
+use PrestaShop\Module\Alma\Application\Service\PaymentButtonService;
 use PrestaShop\Module\Alma\Application\Service\RefundService;
 use PrestaShop\Module\Alma\Application\Service\SettingsService;
 use PrestaShop\Module\Alma\Application\Service\WidgetService;
@@ -28,6 +29,10 @@ class SettingsServiceTest extends TestCase
      * @var InPageService
      */
     private $inPageService;
+    /**
+     * @var PaymentButtonService
+     */
+    private $paymentButtonService;
 
     public function setup(): void
     {
@@ -37,6 +42,7 @@ class SettingsServiceTest extends TestCase
         $this->settingsRepository = $this->createMock(SettingsRepository::class);
         $this->feePlansService = $this->createMock(FeePlansService::class);
         $this->widgetService = $this->createMock(WidgetService::class);
+        $this->paymentButtonService = $this->createMock(PaymentButtonService::class);
         $this->excludedCategoriesService = $this->createMock(ExcludedCategoriesService::class);
         $this->refundService = $this->createMock(RefundService::class);
         $this->inPageService = $this->createMock(InPageService::class);
@@ -44,6 +50,7 @@ class SettingsServiceTest extends TestCase
             $this->authenticationService,
             $this->feePlansService,
             $this->widgetService,
+            $this->paymentButtonService,
             $this->excludedCategoriesService,
             $this->refundService,
             $this->inPageService,
@@ -79,6 +86,8 @@ class SettingsServiceTest extends TestCase
             ->method('fieldsValue');
         $this->widgetService->expects($this->never())
             ->method('defaultFieldsToSave');
+        $this->paymentButtonService->expects($this->never())
+            ->method('defaultFieldsToSave');
         $this->excludedCategoriesService->expects($this->never())
             ->method('defaultFieldsToSave');
         $this->refundService->expects($this->never())
@@ -110,6 +119,8 @@ class SettingsServiceTest extends TestCase
         $this->feePlansService->expects($this->never())
             ->method('fieldsValue');
         $this->widgetService->expects($this->never())
+            ->method('defaultFieldsToSave');
+        $this->paymentButtonService->expects($this->never())
             ->method('defaultFieldsToSave');
         $this->excludedCategoriesService->expects($this->never())
             ->method('defaultFieldsToSave');
@@ -147,6 +158,8 @@ class SettingsServiceTest extends TestCase
             ->method('fieldsToSave')
             ->willReturn(FeePlansMock::feePlanFieldsValueExpected(3));
         $this->widgetService->expects($this->once())
+            ->method('defaultFieldsToSave');
+        $this->paymentButtonService->expects($this->once())
             ->method('defaultFieldsToSave');
         $this->excludedCategoriesService->expects($this->once())
             ->method('defaultFieldsToSave');
@@ -205,6 +218,8 @@ class SettingsServiceTest extends TestCase
             ->method('fieldsToSave')
             ->willReturn(FeePlansMock::feePlanFieldsValueExpected(3));
         $this->widgetService->expects($this->once())
+            ->method('defaultFieldsToSave');
+        $this->paymentButtonService->expects($this->once())
             ->method('defaultFieldsToSave');
         $this->excludedCategoriesService->expects($this->once())
             ->method('defaultFieldsToSave');

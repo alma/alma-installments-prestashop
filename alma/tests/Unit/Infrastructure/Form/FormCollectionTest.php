@@ -10,11 +10,12 @@ use PrestaShop\Module\Alma\Infrastructure\Form\ExcludedCategoriesAdminForm;
 use PrestaShop\Module\Alma\Infrastructure\Form\FeePlansAdminForm;
 use PrestaShop\Module\Alma\Infrastructure\Form\FormCollection;
 use PrestaShop\Module\Alma\Infrastructure\Form\InPageAdminForm;
+use PrestaShop\Module\Alma\Infrastructure\Form\PaymentButtonAdminForm;
 use PrestaShop\Module\Alma\Infrastructure\Form\ProductWidgetAdminForm;
 use PrestaShop\Module\Alma\Infrastructure\Form\RefundAdminForm;
 use stdClass;
 
-class SettingsCollectionFormTest extends TestCase
+class FormCollectionTest extends TestCase
 {
     public function testGetAllFieldsWithOneClassWithoutFieldForm()
     {
@@ -25,6 +26,7 @@ class SettingsCollectionFormTest extends TestCase
                 FeePlansAdminForm::fieldsForm(),
                 ProductWidgetAdminForm::fieldsForm(),
                 CartWidgetAdminForm::fieldsForm(),
+                PaymentButtonAdminForm::fieldsForm(),
                 ExcludedCategoriesAdminForm::fieldsForm(),
                 RefundAdminForm::fieldsForm(),
                 InPageAdminForm::fieldsForm(),
@@ -42,12 +44,24 @@ class SettingsCollectionFormTest extends TestCase
                 FeePlansAdminForm::fieldsForm(),
                 ProductWidgetAdminForm::fieldsForm(),
                 CartWidgetAdminForm::fieldsForm(),
+                PaymentButtonAdminForm::fieldsForm(),
                 ExcludedCategoriesAdminForm::fieldsForm(),
                 RefundAdminForm::fieldsForm(),
                 InPageAdminForm::fieldsForm(),
                 DebugAdminForm::fieldsForm()
             ),
             FormCollection::getAllFields(FormCollection::SETTINGS_FORMS_CLASSES)
+        );
+    }
+
+    public function testGetAllFieldsBeforeApiKeySaved()
+    {
+        $this->assertEquals(
+            array_merge(
+                ApiAdminForm::fieldsForm(),
+                DebugAdminForm::fieldsForm()
+            ),
+            FormCollection::getAllFields(FormCollection::SETTINGS_FORMS_CLASSES_BEFORE_AUTH)
         );
     }
 }

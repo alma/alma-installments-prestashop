@@ -14,9 +14,15 @@ class FormCollection
         FeePlansAdminForm::class,
         ProductWidgetAdminForm::class,
         CartWidgetAdminForm::class,
+        PaymentButtonAdminForm::class,
         ExcludedCategoriesAdminForm::class,
         RefundAdminForm::class,
         InPageAdminForm::class,
+        DebugAdminForm::class
+    ];
+
+    public const SETTINGS_FORMS_CLASSES_BEFORE_AUTH = [
+        ApiAdminForm::class,
         DebugAdminForm::class
     ];
 

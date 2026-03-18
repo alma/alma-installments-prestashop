@@ -47,11 +47,16 @@ class SettingsService
      * @var InPageService
      */
     private InPageService $inPageService;
+    /**
+     * @var PaymentButtonService
+     */
+    private PaymentButtonService $paymentButtonService;
 
     public function __construct(
         AuthenticationService $authenticationService,
         FeePlansService $feePlansService,
         WidgetService $widgetService,
+        PaymentButtonService $paymentButtonService,
         ExcludedCategoriesService $excludedCategoriesService,
         RefundService $refundService,
         InPageService $inPageService,
@@ -62,6 +67,7 @@ class SettingsService
         $this->authenticationService = $authenticationService;
         $this->feePlansService = $feePlansService;
         $this->widgetService = $widgetService;
+        $this->paymentButtonService = $paymentButtonService;
         $this->excludedCategoriesService = $excludedCategoriesService;
         $this->refundService = $refundService;
         $this->inPageService = $inPageService;
@@ -134,6 +140,7 @@ class SettingsService
             $overrideValues,
             $feePlansFieldsValue,
             $this->widgetService->defaultFieldsToSave(),
+            $this->paymentButtonService->defaultFieldsToSave(),
             $this->excludedCategoriesService->defaultFieldsToSave(),
             $this->refundService->defaultFieldsToSave(),
             $this->inPageService->defaultFieldsToSave()

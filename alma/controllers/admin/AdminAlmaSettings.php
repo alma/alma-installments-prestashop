@@ -5,6 +5,7 @@ use PrestaShop\Module\Alma\Application\Exception\PsAccountsException;
 use PrestaShop\Module\Alma\Application\Service\FormService;
 use PrestaShop\Module\Alma\Application\Service\PsAccountsService;
 use PrestaShop\Module\Alma\Application\Service\SettingsService;
+use PrestaShop\Module\Alma\Infrastructure\Form\ApiAdminForm;
 use PrestaShop\Module\Alma\Infrastructure\Form\FormCollection;
 use PrestaShop\Module\Alma\Infrastructure\Form\SettingsFormBuilder;
 use PrestaShop\Module\Alma\Infrastructure\Form\ValidatorForm;
@@ -44,7 +45,11 @@ class AdminAlmaSettingsController extends ModuleAdminController
         $defaultLang = (int) Configuration::get('PS_LANG_DEFAULT');
 
         if (Tools::isSubmit('submit' . $this->module->name)) {
-            $errors = ValidatorForm::legacyValidate(FormCollection::getAllFields(FormCollection::SETTINGS_FORMS_CLASSES), Tools::getAllValues());
+            $settingsFormClasses = FormCollection::SETTINGS_FORMS_CLASSES_BEFORE_AUTH;
+            if (Configuration::get(ApiAdminForm::KEY_FIELD_MERCHANT_ID)) {
+                $settingsFormClasses = FormCollection::SETTINGS_FORMS_CLASSES;
+            }
+            $errors = ValidatorForm::legacyValidate(FormCollection::getAllFields($settingsFormClasses), Tools::getAllValues());
             if (!empty($errors)) {
                 $notifications = $this->module->displayError($errors);
             } else {
