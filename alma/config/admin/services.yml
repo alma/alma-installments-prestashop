@@ -121,6 +121,7 @@ services:
       - '@alma.module_service'
       - '@alma.db'
       - '@alma.ps_accounts_installer'
+      - '@translator'
 
   alma.settings_repository:
     class: 'PrestaShop\Module\Alma\Infrastructure\Repository\SettingsRepository'

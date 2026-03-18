@@ -26,6 +26,7 @@ use PrestaShop\Module\Alma\Application\Service\ModuleInstallerService;
 use PrestaShop\Module\Alma\Application\Service\ModuleService;
 use PrestaShop\Module\Alma\Infrastructure\Repository\LanguageRepository;
 use PrestaShop\PsAccountsInstaller\Installer\Installer;
+use PrestaShopBundle\Translation\TranslatorInterface;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -104,6 +105,8 @@ class Alma extends PaymentModule
     {
         $languageRepository = new LanguageRepository();
         $psAccountsInstaller = new Installer('5.3');
+        /** @var TranslatorInterface $translator */
+        $translator = $this->get('translator');
         $moduleService = new ModuleService(
             $this,
             $languageRepository
@@ -111,7 +114,8 @@ class Alma extends PaymentModule
         $installerService = new ModuleInstallerService(
             $moduleService,
             Db::getInstance(),
-            $psAccountsInstaller
+            $psAccountsInstaller,
+            $translator
         );
 
         // TODO : Check multi-shop functionnalities (https://devdocs.prestashop-project.org/1.7/development/multistore/)
