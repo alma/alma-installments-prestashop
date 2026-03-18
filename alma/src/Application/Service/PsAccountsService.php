@@ -19,13 +19,16 @@ class PsAccountsService
      * @var \PrestaShop\PsAccountsInstaller\Installer\Installer
      */
     private Installer $psAccountsInstaller;
+    private bool $isDevMode;
 
     public function __construct(
         PsAccounts $psAccountsFacade,
-        Installer $psAccountsInstaller
+        Installer $psAccountsInstaller,
+        bool $isDevMode = false
     ) {
         $this->psAccountsFacade = $psAccountsFacade;
         $this->psAccountsInstaller = $psAccountsInstaller;
+        $this->isDevMode = $isDevMode ?? (defined('_PS_MODE_DEV_') && _PS_MODE_DEV_);
     }
 
     /**
@@ -81,5 +84,15 @@ class PsAccountsService
         } catch (\Exception $e) {
             throw new PsAccountsException('Unable to get link information PsAccounts module: ' . $e->getMessage());
         }
+    }
+
+    /**
+     * Check if the PsAccounts module and its features can be displayed.
+     * We disable PsAccount in Mode Dev because PS Account need a public url to work and in dev mode, we are in localhost.
+     * @return bool
+     */
+    public function displayPsAccount(): bool
+    {
+        return !$this->isDevMode;
     }
 }

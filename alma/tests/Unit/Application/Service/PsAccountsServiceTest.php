@@ -138,6 +138,21 @@ class PsAccountsServiceTest extends TestCase
         $this->assertTrue($this->almaPsAccountsService->isAccountLinked());
     }
 
+    public function testDisplayPsAccountDevModeEnableReturnFalse()
+    {
+        $almaPsAccountsService = new PsAccountsService(
+            $this->psAccountsFacade,
+            $this->psAccountsInstaller,
+            true
+        );
+        $this->assertFalse($almaPsAccountsService->displayPsAccount());
+    }
+
+    public function testDisplayPsAccountDevModeDisableReturnTrue()
+    {
+        $this->assertTrue($this->almaPsAccountsService->displayPsAccount());
+    }
+
     public function tearDown(): void
     {
         $this->psAccountsFacade = null;

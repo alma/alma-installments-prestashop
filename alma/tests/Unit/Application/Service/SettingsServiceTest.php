@@ -62,6 +62,10 @@ class SettingsServiceTest extends TestCase
      * @var FeePlansProvider
      */
     private $feePlansProvider;
+    /**
+     * @var ConfigurationRepository
+     */
+    private $configurationRepository;
 
     public function setup(): void
     {
@@ -602,5 +606,23 @@ class SettingsServiceTest extends TestCase
             'ALMA_LIVE_API_KEY' => '',
         ];
         $this->assertFalse($this->settingsService->hasNewKey($allValuesFromPost));
+    }
+
+    public function testIsConfiguredWithMerchantId()
+    {
+        $this->configurationRepository->expects($this->once())
+            ->method('get')
+            ->with(ApiAdminForm::KEY_FIELD_MERCHANT_ID)
+            ->willReturn('42');
+        $this->assertTrue($this->settingsService->isConfigured());
+    }
+
+    public function testIsNotConfiguredWithoutMerchantId()
+    {
+        $this->configurationRepository->expects($this->once())
+            ->method('get')
+            ->with(ApiAdminForm::KEY_FIELD_MERCHANT_ID)
+            ->willReturn('');
+        $this->assertFalse($this->settingsService->isConfigured());
     }
 }

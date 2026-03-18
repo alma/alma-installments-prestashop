@@ -223,4 +223,14 @@ class SettingsService
             && $key !== EncryptorHelper::OBSCURE_VALUE
             && $key !== '';
     }
+
+    /**
+     * Check if the configuration is already configured with a merchant id.
+     *
+     * @return bool
+     */
+    public function isConfigured(): bool
+    {
+        return $this->configurationRepository->get(ApiAdminForm::KEY_FIELD_MERCHANT_ID);
+    }
 }
