@@ -13,6 +13,7 @@ use PrestaShop\Module\Alma\Infrastructure\Form\CartWidgetAdminForm;
 use PrestaShop\Module\Alma\Infrastructure\Form\DebugAdminForm;
 use PrestaShop\Module\Alma\Infrastructure\Form\ExcludedCategoriesAdminForm;
 use PrestaShop\Module\Alma\Infrastructure\Form\FeePlansAdminForm;
+use PrestaShop\Module\Alma\Infrastructure\Form\InPageAdminForm;
 use PrestaShop\Module\Alma\Infrastructure\Form\ProductWidgetAdminForm;
 use PrestaShop\Module\Alma\Infrastructure\Form\RefundAdminForm;
 use PrestaShop\Module\Alma\Infrastructure\Repository\ConfigurationRepository;
@@ -23,6 +24,10 @@ class FormServiceTest extends TestCase
      * @var DebugAdminForm
      */
     private $debugAdminForm;
+    /**
+     * @var InPageAdminForm
+     */
+    private $inPageAdminForm;
 
     public function setUp(): void
     {
@@ -36,6 +41,7 @@ class FormServiceTest extends TestCase
         $this->cartWidgetAdminForm = $this->createMock(CartWidgetAdminForm::class);
         $this->excludedCategoriesAdminForm = $this->createMock(ExcludedCategoriesAdminForm::class);
         $this->refundAdminForm = $this->createMock(RefundAdminForm::class);
+        $this->inPageAdminForm = $this->createMock(InPageAdminForm::class);
         $this->debugAdminForm = $this->createMock(DebugAdminForm::class);
         $this->configurationRepository = $this->createMock(ConfigurationRepository::class);
         $this->formService = new FormService(
@@ -49,6 +55,7 @@ class FormServiceTest extends TestCase
             $this->cartWidgetAdminForm,
             $this->excludedCategoriesAdminForm,
             $this->refundAdminForm,
+            $this->inPageAdminForm,
             $this->debugAdminForm,
             $this->configurationRepository
         );
@@ -122,15 +129,20 @@ class FormServiceTest extends TestCase
             ->method('build')
             ->willReturn(['refund_form']);
 
+        $this->inPageAdminForm->expects($this->once())
+            ->method('build')
+            ->willReturn(['inpage_form']);
+
         $form = $this->formService->getForm();
 
-        $this->assertCount(7, $form);
+        $this->assertCount(8, $form);
         $this->assertEquals([
             ['fee_plans_form'],
             ['product_widget_form'],
             ['cart_widget_form'],
             ['excluded_categories_form'],
             ['refund_form'],
+            ['inpage_form'],
             ['api_form'],
             ['debug_form'],
         ], $form);

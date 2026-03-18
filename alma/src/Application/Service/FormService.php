@@ -7,6 +7,7 @@ use PrestaShop\Module\Alma\Infrastructure\Form\CartWidgetAdminForm;
 use PrestaShop\Module\Alma\Infrastructure\Form\DebugAdminForm;
 use PrestaShop\Module\Alma\Infrastructure\Form\ExcludedCategoriesAdminForm;
 use PrestaShop\Module\Alma\Infrastructure\Form\FeePlansAdminForm;
+use PrestaShop\Module\Alma\Infrastructure\Form\InPageAdminForm;
 use PrestaShop\Module\Alma\Infrastructure\Form\ProductWidgetAdminForm;
 use PrestaShop\Module\Alma\Infrastructure\Form\RefundAdminForm;
 use PrestaShop\Module\Alma\Infrastructure\Repository\ConfigurationRepository;
@@ -61,6 +62,10 @@ class FormService
      * @var RefundService
      */
     private RefundService $refundService;
+    /**
+     * @var InPageAdminForm
+     */
+    private InPageAdminForm $inPageAdminForm;
 
     public function __construct(
         FeePlansService $feePlansService,
@@ -73,6 +78,7 @@ class FormService
         CartWidgetAdminForm $cartWidgetAdminForm,
         ExcludedCategoriesAdminForm $excludedCategoriesAdminForm,
         RefundAdminForm $refundAdminForm,
+        InPageAdminForm $inPageAdminForm,
         DebugAdminForm $debugAdminForm,
         ConfigurationRepository $configurationRepository
     ) {
@@ -86,6 +92,7 @@ class FormService
         $this->cartWidgetAdminForm = $cartWidgetAdminForm;
         $this->excludedCategoriesAdminForm = $excludedCategoriesAdminForm;
         $this->refundAdminForm = $refundAdminForm;
+        $this->inPageAdminForm = $inPageAdminForm;
         $this->debugAdminForm = $debugAdminForm;
         $this->configurationRepository = $configurationRepository;
     }
@@ -108,6 +115,7 @@ class FormService
                 $this->cartWidgetAdminForm->build(),
                 $this->excludedCategoriesAdminForm->build($templateExcludedCategories),
                 $this->refundAdminForm->build($templateRefund, $this->refundService->refundStateOrder()),
+                $this->inPageAdminForm->build(),
             ];
         }
 
