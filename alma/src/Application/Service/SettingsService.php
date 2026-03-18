@@ -39,12 +39,17 @@ class SettingsService
      * @var ExcludedCategoriesService
      */
     private ExcludedCategoriesService $excludedCategoriesService;
+    /**
+     * @var RefundService
+     */
+    private RefundService $refundService;
 
     public function __construct(
         AuthenticationService $authenticationService,
         FeePlansService $feePlansService,
         WidgetService $widgetService,
         ExcludedCategoriesService $excludedCategoriesService,
+        RefundService $refundService,
         SettingsRepository $settingsRepository,
         ConfigurationRepository $configurationRepository,
         ToolsProxy $toolsProxy
@@ -53,6 +58,7 @@ class SettingsService
         $this->feePlansService = $feePlansService;
         $this->widgetService = $widgetService;
         $this->excludedCategoriesService = $excludedCategoriesService;
+        $this->refundService = $refundService;
         $this->settingsRepository = $settingsRepository;
         $this->configurationRepository = $configurationRepository;
         $this->toolsProxy = $toolsProxy;
@@ -122,7 +128,8 @@ class SettingsService
             $overrideValues,
             $feePlansFieldsValue,
             $this->widgetService->defaultFieldsToSave(),
-            $this->excludedCategoriesService->defaultFieldsToSave()
+            $this->excludedCategoriesService->defaultFieldsToSave(),
+            $this->refundService->defaultFieldsToSave()
         );
 
         $this->settingsRepository->save(

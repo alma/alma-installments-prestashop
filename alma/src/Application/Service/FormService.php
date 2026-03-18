@@ -8,6 +8,7 @@ use PrestaShop\Module\Alma\Infrastructure\Form\DebugAdminForm;
 use PrestaShop\Module\Alma\Infrastructure\Form\ExcludedCategoriesAdminForm;
 use PrestaShop\Module\Alma\Infrastructure\Form\FeePlansAdminForm;
 use PrestaShop\Module\Alma\Infrastructure\Form\ProductWidgetAdminForm;
+use PrestaShop\Module\Alma\Infrastructure\Form\RefundAdminForm;
 use PrestaShop\Module\Alma\Infrastructure\Repository\ConfigurationRepository;
 
 class FormService
@@ -52,27 +53,39 @@ class FormService
      * @var DebugAdminForm
      */
     private DebugAdminForm $debugAdminForm;
+    /**
+     * @var RefundAdminForm
+     */
+    private RefundAdminForm $refundAdminForm;
+    /**
+     * @var RefundService
+     */
+    private RefundService $refundService;
 
     public function __construct(
         FeePlansService $feePlansService,
         WidgetService $widgetService,
         ExcludedCategoriesService $excludedCategoriesService,
+        RefundService $refundService,
         ApiAdminForm $apiAdminForm,
         FeePlansAdminForm $feePlansAdminForm,
         ProductWidgetAdminForm $productWidgetAdminForm,
         CartWidgetAdminForm $cartWidgetAdminForm,
         ExcludedCategoriesAdminForm $excludedCategoriesAdminForm,
+        RefundAdminForm $refundAdminForm,
         DebugAdminForm $debugAdminForm,
         ConfigurationRepository $configurationRepository
     ) {
         $this->feePlansService = $feePlansService;
         $this->widgetService = $widgetService;
         $this->excludedCategoriesService = $excludedCategoriesService;
+        $this->refundService = $refundService;
         $this->apiAdminForm = $apiAdminForm;
         $this->feePlansAdminForm = $feePlansAdminForm;
         $this->productWidgetAdminForm = $productWidgetAdminForm;
         $this->cartWidgetAdminForm = $cartWidgetAdminForm;
         $this->excludedCategoriesAdminForm = $excludedCategoriesAdminForm;
+        $this->refundAdminForm = $refundAdminForm;
         $this->debugAdminForm = $debugAdminForm;
         $this->configurationRepository = $configurationRepository;
     }
@@ -88,11 +101,13 @@ class FormService
             $templateTabs = $this->feePlansService->createTemplateTabs();
             $templateWidget = $this->widgetService->createTemplate();
             $templateExcludedCategories = $this->excludedCategoriesService->createTemplate();
+            $templateRefund = $this->refundService->createTemplate();
             $form = [
                 $this->feePlansAdminForm->build($templateTabs, $this->feePlansService->feePlansFields()),
                 $this->productWidgetAdminForm->build($templateWidget),
                 $this->cartWidgetAdminForm->build(),
                 $this->excludedCategoriesAdminForm->build($templateExcludedCategories),
+                $this->refundAdminForm->build($templateRefund, $this->refundService->refundStateOrder()),
             ];
         }
 

@@ -45,6 +45,23 @@ class ValidatorFormTest extends TestCase
         );
     }
 
+    public function testValidateSelectWithoutRequiredField()
+    {
+        $fields = [
+            'field1' => [
+                'type' => 'select',
+            ],
+        ];
+        $allValues = [
+            'extra_value' => 'extra_value',
+            'field1' => 'value',
+        ];
+        $this->assertEquals(
+            [],
+            ValidatorForm::legacyValidate($fields, $allValues)
+        );
+    }
+
     public function testValidateSelectRequiredWithStringValue()
     {
         $fields = [

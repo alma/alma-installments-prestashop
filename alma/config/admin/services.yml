@@ -81,6 +81,11 @@ services:
     arguments:
       - '@alma.form_builder'
 
+  alma.refund_admin_form:
+    class: 'PrestaShop\Module\Alma\Infrastructure\Form\RefundAdminForm'
+    arguments:
+      - '@alma.form_builder'
+
   alma.language_repository:
     class: 'PrestaShop\Module\Alma\Infrastructure\Repository\LanguageRepository'
 
@@ -116,6 +121,11 @@ services:
   alma.configuration_repository:
     class: 'PrestaShop\Module\Alma\Infrastructure\Repository\ConfigurationRepository'
 
+  alma.order_state_repository:
+    class: 'PrestaShop\Module\Alma\Infrastructure\Repository\OrderStateRepository'
+    arguments:
+      - '@alma.context'
+
   alma.tools_proxy:
     class: 'PrestaShop\Module\Alma\Infrastructure\Proxy\ToolsProxy'
 
@@ -126,6 +136,7 @@ services:
       - '@alma.fee_plans_service'
       - '@alma.widget_service'
       - '@alma.excluded_categories_service'
+      - '@alma.refund_service'
       - '@alma.settings_repository'
       - '@alma.configuration_repository'
       - '@alma.tools_proxy'
@@ -149,6 +160,13 @@ services:
     arguments:
       - '@alma.context'
       - '@alma.configuration_repository'
+
+  alma.refund_service:
+    class: 'PrestaShop\Module\Alma\Application\Service\RefundService'
+    arguments:
+      - '@alma.context'
+      - '@alma.configuration_repository'
+      - '@alma.order_state_repository'
 
   alma.settings_form_builder:
     class: 'PrestaShop\Module\Alma\Infrastructure\Form\SettingsFormBuilder'
@@ -174,11 +192,13 @@ services:
       - '@alma.fee_plans_service'
       - '@alma.widget_service'
       - '@alma.excluded_categories_service'
+      - '@alma.refund_service'
       - '@alma.api_admin_form'
       - '@alma.fee_plans_admin_form'
       - '@alma.product_widget_admin_form'
       - '@alma.cart_widget_admin_form'
       - '@alma.excluded_categories_admin_form'
+      - '@alma.refund_admin_form'
       - '@alma.debug_admin_form'
       - '@alma.configuration_repository'
 

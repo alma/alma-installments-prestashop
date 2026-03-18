@@ -6,6 +6,7 @@ use PHPUnit\Framework\TestCase;
 use PrestaShop\Module\Alma\Application\Service\ExcludedCategoriesService;
 use PrestaShop\Module\Alma\Application\Service\FeePlansService;
 use PrestaShop\Module\Alma\Application\Service\FormService;
+use PrestaShop\Module\Alma\Application\Service\RefundService;
 use PrestaShop\Module\Alma\Application\Service\WidgetService;
 use PrestaShop\Module\Alma\Infrastructure\Form\ApiAdminForm;
 use PrestaShop\Module\Alma\Infrastructure\Form\CartWidgetAdminForm;
@@ -13,6 +14,7 @@ use PrestaShop\Module\Alma\Infrastructure\Form\DebugAdminForm;
 use PrestaShop\Module\Alma\Infrastructure\Form\ExcludedCategoriesAdminForm;
 use PrestaShop\Module\Alma\Infrastructure\Form\FeePlansAdminForm;
 use PrestaShop\Module\Alma\Infrastructure\Form\ProductWidgetAdminForm;
+use PrestaShop\Module\Alma\Infrastructure\Form\RefundAdminForm;
 use PrestaShop\Module\Alma\Infrastructure\Repository\ConfigurationRepository;
 
 class FormServiceTest extends TestCase
@@ -27,22 +29,26 @@ class FormServiceTest extends TestCase
         $this->feePlansService = $this->createMock(FeePlansService::class);
         $this->widgetService = $this->createMock(WidgetService::class);
         $this->excludedCategoriesService = $this->createMock(ExcludedCategoriesService::class);
+        $this->refundService = $this->createMock(RefundService::class);
         $this->apiAdminForm = $this->createMock(ApiAdminForm::class);
         $this->feePlansAdminForm = $this->createMock(FeePlansAdminForm::class);
         $this->productWidgetAdminForm = $this->createMock(ProductWidgetAdminForm::class);
         $this->cartWidgetAdminForm = $this->createMock(CartWidgetAdminForm::class);
         $this->excludedCategoriesAdminForm = $this->createMock(ExcludedCategoriesAdminForm::class);
+        $this->refundAdminForm = $this->createMock(RefundAdminForm::class);
         $this->debugAdminForm = $this->createMock(DebugAdminForm::class);
         $this->configurationRepository = $this->createMock(ConfigurationRepository::class);
         $this->formService = new FormService(
             $this->feePlansService,
             $this->widgetService,
             $this->excludedCategoriesService,
+            $this->refundService,
             $this->apiAdminForm,
             $this->feePlansAdminForm,
             $this->productWidgetAdminForm,
             $this->cartWidgetAdminForm,
             $this->excludedCategoriesAdminForm,
+            $this->refundAdminForm,
             $this->debugAdminForm,
             $this->configurationRepository
         );
@@ -112,14 +118,19 @@ class FormServiceTest extends TestCase
             ->method('build')
             ->willReturn(['excluded_categories_form']);
 
+        $this->refundAdminForm->expects($this->once())
+            ->method('build')
+            ->willReturn(['refund_form']);
+
         $form = $this->formService->getForm();
 
-        $this->assertCount(6, $form);
+        $this->assertCount(7, $form);
         $this->assertEquals([
             ['fee_plans_form'],
             ['product_widget_form'],
             ['cart_widget_form'],
             ['excluded_categories_form'],
+            ['refund_form'],
             ['api_form'],
             ['debug_form'],
         ], $form);
