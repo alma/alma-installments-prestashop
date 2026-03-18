@@ -75,7 +75,7 @@ class FeePlansService
             $planKey = $feePlan->getPlanKey();
 
             $feePlanListAssembled[] = [
-                'enabled' => (bool) $feePlanConfig[$planKey]['state'] ?? 0,
+                'enabled' => (bool) ($feePlanConfig[$planKey]['state'] ?? 0),
                 'plan_key' => $planKey,
                 'title' => $this->feePlanPresenter->getTitle($feePlan),
             ];
