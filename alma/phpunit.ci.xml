@@ -25,6 +25,16 @@
                 <directory>../alma/translations</directory>
                 <directory>../alma/views</directory>
                 <directory>../alma/upgrade</directory>
+                <file>../alma/.php-cs-fixer.dist.php</file>
+                <file>../alma/phpunit-threshold.php</file>
+                <file>../alma/index.php</file>
+                <file>../alma/override/index.php</file>
+                <file>../alma/controllers/index.php</file>
+                <file>../alma/controllers/admin/index.php</file>
+                <file>../alma/controllers/front/index.php</file>
+                <file>../alma/config/index.php</file>
+                <file>../alma/config/admin/index.php</file>
+                <file>../alma/config/front/index.php</file>
             </exclude>
         </whitelist>
     </filter>
