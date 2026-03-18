@@ -6,9 +6,27 @@ use PHPUnit\Framework\TestCase;
 use PrestaShop\Module\Alma\Application\Exception\FeePlansException;
 use PrestaShop\Module\Alma\Infrastructure\Form\ValidatorForm;
 use PrestaShop\Module\Alma\Tests\Mocks\FeePlansMock;
+use PrestaShopBundle\Translation\Translator;
 
 class ValidatorFormTest extends TestCase
 {
+    /**
+     * @var ValidatorForm
+     */
+    private ValidatorForm $validatorForm;
+    /**
+     * @var Translator
+     */
+    private $translator;
+
+    public function setUp(): void
+    {
+        $this->translator = $this->createMock(Translator::class);
+        $this->validatorForm = new ValidatorForm(
+            $this->translator
+        );
+    }
+
     public function testValidateTextRequiredWithEmptyValue()
     {
         $fields = [
@@ -179,9 +197,12 @@ class ValidatorFormTest extends TestCase
     public function testCheckLimitAmountPlanMaxAmountExceededThrowException()
     {
         $feePlan = FeePlansMock::feePlan(2);
+        $this->translator->expects($this->once())
+            ->method('trans')
+            ->willReturn('The maximum purchase amount cannot be higher than the maximum allowed by Alma.');
         $this->expectException(FeePlansException::class);
         $this->expectExceptionMessage('The maximum purchase amount cannot be higher than the maximum allowed by Alma.');
-        ValidatorForm::checkLimitAmountPlan($feePlan, 10000, 200100);
+        $this->validatorForm->checkLimitAmountPlan($feePlan, 10000, 200100);
     }
 
     /**
@@ -191,9 +212,12 @@ class ValidatorFormTest extends TestCase
     public function testCheckLimitAmountPlanMinAmountExceededThrowException()
     {
         $feePlan = FeePlansMock::feePlan(2);
+        $this->translator->expects($this->once())
+            ->method('trans')
+            ->willReturn('The minimum purchase amount cannot be lower than the minimum allowed by Alma.');
         $this->expectException(FeePlansException::class);
         $this->expectExceptionMessage('The minimum purchase amount cannot be lower than the minimum allowed by Alma.');
-        ValidatorForm::checkLimitAmountPlan($feePlan, 5000, 200000);
+        $this->validatorForm->checkLimitAmountPlan($feePlan, 5000, 200000);
     }
 
     /**
@@ -202,9 +226,12 @@ class ValidatorFormTest extends TestCase
     public function testCheckLimitAmountPlanMinAmountExceededMaxAmountThrowException()
     {
         $feePlan = FeePlansMock::feePlan(2);
+        $this->translator->expects($this->once())
+            ->method('trans')
+            ->willReturn('The minimum purchase amount cannot be higher than the maximum.');
         $this->expectException(FeePlansException::class);
         $this->expectExceptionMessage('The minimum purchase amount cannot be higher than the maximum.');
-        ValidatorForm::checkLimitAmountPlan($feePlan, 200100, 200000);
+        $this->validatorForm->checkLimitAmountPlan($feePlan, 200100, 200000);
     }
 
     /**
@@ -213,18 +240,17 @@ class ValidatorFormTest extends TestCase
     public function testCheckLimitAmountPlanMaxAmountExceededMinAmountThrowException()
     {
         $feePlan = FeePlansMock::feePlan(2);
+        $this->translator->expects($this->once())
+            ->method('trans')
+            ->willReturn('The maximum purchase amount cannot be lower than the minimum.');
         $this->expectException(FeePlansException::class);
         $this->expectExceptionMessage('The maximum purchase amount cannot be lower than the minimum.');
-        ValidatorForm::checkLimitAmountPlan($feePlan, 10000, 5000);
+        $this->validatorForm->checkLimitAmountPlan($feePlan, 10000, 5000);
     }
 
-    /**
-     * @throws \Alma\Client\Application\Exception\ParametersException
-     * @throws \PrestaShop\Module\Alma\Application\Exception\FeePlansException
-     */
     public function testCheckLimitAmountPlanWithRightAmountReturnVoid()
     {
         $feePlan = FeePlansMock::feePlan(2);
-        $this->assertNull(ValidatorForm::checkLimitAmountPlan($feePlan, 10000, 200000));
+        $this->assertNull($this->validatorForm->checkLimitAmountPlan($feePlan, 10000, 200000));
     }
 }

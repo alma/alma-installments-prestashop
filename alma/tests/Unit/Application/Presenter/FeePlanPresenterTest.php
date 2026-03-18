@@ -3,7 +3,6 @@
 namespace PrestaShop\Module\Alma\Tests\Unit\Application\Presenter;
 
 use PHPUnit\Framework\TestCase;
-use PrestaShop\Module\Alma\Application\Exception\FeePlansException;
 use PrestaShop\Module\Alma\Application\Presenter\FeePlanPresenter;
 use PrestaShop\Module\Alma\Tests\Mocks\FeePlansMock;
 use PrestaShopBundle\Translation\Translator;
@@ -109,68 +108,5 @@ class FeePlanPresenterTest extends TestCase
         $this->assertEquals('Enable deferred payments +30 days', $this->feePlanPresenter->getLabel(
             FeePlansMock::feePlan(1, 30, 0)
         ));
-    }
-
-    /**
-     * @throws \Alma\Client\Application\Exception\ParametersException
-     */
-    public function testCheckLimitAmountPlanMaxAmountExceededThrowException()
-    {
-        $feePlan = FeePlansMock::feePlan(2);
-        $this->translator->expects($this->once())
-            ->method('trans')
-            ->willReturn('The maximum purchase amount cannot be higher than the maximum allowed by Alma.');
-        $this->expectException(FeePlansException::class);
-        $this->expectExceptionMessage('The maximum purchase amount cannot be higher than the maximum allowed by Alma.');
-        $this->feePlanPresenter->checkLimitAmountPlan($feePlan, 10000, 200100);
-    }
-
-    /**
-     * @throws \Alma\Client\Application\Exception\ParametersException
-     * @throws \PrestaShop\Module\Alma\Application\Exception\FeePlansException
-     */
-    public function testCheckLimitAmountPlanMinAmountExceededThrowException()
-    {
-        $feePlan = FeePlansMock::feePlan(2);
-        $this->translator->expects($this->once())
-            ->method('trans')
-            ->willReturn('The minimum purchase amount cannot be lower than the minimum allowed by Alma.');
-        $this->expectException(FeePlansException::class);
-        $this->expectExceptionMessage('The minimum purchase amount cannot be lower than the minimum allowed by Alma.');
-        $this->feePlanPresenter->checkLimitAmountPlan($feePlan, 5000, 200000);
-    }
-
-    /**
-     * @throws \Alma\Client\Application\Exception\ParametersException
-     */
-    public function testCheckLimitAmountPlanMinAmountExceededMaxAmountThrowException()
-    {
-        $feePlan = FeePlansMock::feePlan(2);
-        $this->translator->expects($this->once())
-            ->method('trans')
-            ->willReturn('The minimum purchase amount cannot be higher than the maximum.');
-        $this->expectException(FeePlansException::class);
-        $this->expectExceptionMessage('The minimum purchase amount cannot be higher than the maximum.');
-        $this->feePlanPresenter->checkLimitAmountPlan($feePlan, 200100, 200000);
-    }
-
-    /**
-     * @throws \Alma\Client\Application\Exception\ParametersException
-     */
-    public function testCheckLimitAmountPlanMaxAmountExceededMinAmountThrowException()
-    {
-        $feePlan = FeePlansMock::feePlan(2);
-        $this->translator->expects($this->once())
-            ->method('trans')
-            ->willReturn('The maximum purchase amount cannot be lower than the minimum.');
-        $this->expectException(FeePlansException::class);
-        $this->expectExceptionMessage('The maximum purchase amount cannot be lower than the minimum.');
-        $this->feePlanPresenter->checkLimitAmountPlan($feePlan, 10000, 5000);
-    }
-
-    public function testCheckLimitAmountPlanWithRightAmountReturnVoid()
-    {
-        $feePlan = FeePlansMock::feePlan(2);
-        $this->assertNull($this->feePlanPresenter->checkLimitAmountPlan($feePlan, 10000, 200000));
     }
 }

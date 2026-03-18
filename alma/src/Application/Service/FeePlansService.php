@@ -2,7 +2,6 @@
 
 namespace PrestaShop\Module\Alma\Application\Service;
 
-use Alma\Client\Application\Exception\ParametersException;
 use Alma\Client\Domain\Entity\FeePlan;
 use Alma\Client\Domain\Entity\FeePlanList;
 use PrestaShop\Module\Alma\Application\Helper\PriceHelper;
@@ -53,14 +52,9 @@ class FeePlansService
     public function createTemplateTabs(): string
     {
         $tpl = $this->context->smarty->createTemplate(_PS_MODULE_DIR_ . 'alma/views/templates/admin/fee_plans_tabs.tpl');
-        try {
-            $feePlans = $this->feePlansTabs();
-        } catch (ParametersException $e) {
-            // TODO: Add log here
-             $feePlans = [];
-        }
+
         $tpl->assign([
-            'fee_plans' => $feePlans,
+            'fee_plans' => $this->feePlansTabs(),
         ]);
 
         return $tpl->fetch();
