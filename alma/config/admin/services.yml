@@ -162,8 +162,8 @@ services:
     arguments:
       - '@alma.context'
       - '@alma.fee_plans_provider'
-      - '@alma.fee_plan_list_assembler'
       - '@alma.fee_plan_presenter'
+      - '@alma.configuration_repository'
       - '@translator'
 
   alma.widget_service:
@@ -283,12 +283,6 @@ services:
   alma.environment:
     class: 'Alma\Client\Domain\ValueObject\Environment'
     factory: ['@alma.environment_factory', 'create']
-
-  alma.fee_plan_list_assembler:
-    class: 'PrestaShop\Module\Alma\Application\Assembler\FeePlanListAssembler'
-    arguments:
-      - '@alma.fee_plans_provider'
-      - '@alma.configuration_repository'
 
   alma.fee_plan_presenter:
     class: 'PrestaShop\Module\Alma\Application\Presenter\FeePlanPresenter'

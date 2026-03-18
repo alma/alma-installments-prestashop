@@ -7,7 +7,7 @@ use PHPUnit\Framework\TestCase;
 use PrestaShop\Module\Alma\Application\Presenter\FeePlanPresenter;
 use PrestaShop\Module\Alma\Application\Provider\FeePlansProvider;
 use PrestaShop\Module\Alma\Application\Service\FeePlansService;
-use PrestaShop\Module\Alma\Infrastructure\Form\FeePlansAdminForm;
+use PrestaShop\Module\Alma\Infrastructure\Repository\ConfigurationRepository;
 use PrestaShop\Module\Alma\Tests\Mocks\FeePlansMock;
 use PrestaShopBundle\Translation\TranslatorInterface;
 
@@ -35,11 +35,13 @@ class FeePlansServiceTest extends TestCase
         $this->context = $this->createMock(\Context::class);
         $this->feePlansProvider = $this->createMock(FeePlansProvider::class);
         $this->feePlanPresenter = $this->createMock(FeePlanPresenter::class);
+        $this->configurationRepository = $this->createMock(ConfigurationRepository::class);
         $this->translator = $this->createMock(TranslatorInterface::class);
         $this->feePlansService = new FeePlansService(
             $this->context,
             $this->feePlansProvider,
             $this->feePlanPresenter,
+            $this->configurationRepository,
             $this->translator
         );
     }
@@ -68,15 +70,20 @@ class FeePlansServiceTest extends TestCase
         );
 
         $feePlan2X = FeePlansMock::feePlan(2);
-
         $feePlan3X = FeePlansMock::feePlan(3, 0, 0, true, 10000, 200000, true, 5);
-
         $feePlan4X = FeePlansMock::feePlan(4);
 
         $feePlanList = new FeePlanList([$feePlan2X, $feePlan3X, $feePlan4X]);
         $this->feePlansProvider->expects($this->once())
             ->method('getFeePlanList')
             ->willReturn($feePlanList);
+        $this->configurationRepository->expects($this->exactly(3))
+            ->method('get')
+            ->willReturnMap([
+                ['ALMA_GENERAL_2_0_0_STATE', '0'],
+                ['ALMA_GENERAL_3_0_0_STATE', '1'],
+                ['ALMA_GENERAL_4_0_0_STATE', '0'],
+            ]);
         $this->feePlanPresenter->expects($this->exactly(3))
             ->method('getTitle')
             ->withConsecutive(
@@ -104,15 +111,20 @@ class FeePlansServiceTest extends TestCase
         );
 
         $feePlan2X = FeePlansMock::feePlan(2, 0, 0, true, 10000, 200000, true, 5);
-
         $feePlan3X = FeePlansMock::feePlan(3, 0, 0, true, 10000, 200000, true, 5);
-
         $feePlan4X = FeePlansMock::feePlan(4);
 
         $feePlanList = new FeePlanList([$feePlan2X, $feePlan3X, $feePlan4X]);
         $this->feePlansProvider->expects($this->once())
             ->method('getFeePlanList')
             ->willReturn($feePlanList);
+        $this->configurationRepository->expects($this->exactly(3))
+            ->method('get')
+            ->willReturnMap([
+                ['ALMA_GENERAL_2_0_0_STATE', '1'],
+                ['ALMA_GENERAL_3_0_0_STATE', '1'],
+                ['ALMA_GENERAL_4_0_0_STATE', '0'],
+            ]);
         $this->feePlanPresenter->expects($this->exactly(3))
             ->method('getTitle')
             ->withConsecutive(

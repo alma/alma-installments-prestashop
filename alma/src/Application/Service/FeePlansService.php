@@ -36,11 +36,11 @@ class FeePlansService
         \Context $context,
         FeePlansProvider $feePlanProvider,
         FeePlanPresenter $feePlanPresenter,
-        TranslatorInterface $translator,
         ConfigurationRepository $configurationRepository,
+        TranslatorInterface $translator
     ) {
         $this->context = $context;
-        $this->feePlanProvider = $feePlanProvider;
+        $this->feePlansProvider = $feePlanProvider;
         $this->feePlanPresenter = $feePlanPresenter;
         $this->configurationRepository = $configurationRepository;
         $this->translator = $translator;
@@ -82,7 +82,7 @@ class FeePlansService
             $feePlanListAssembled[] = [
                 'enabled' => (bool) $this->configurationRepository->get(sprintf(FeePlansAdminForm::KEY_FIELD_FEE_PLAN_STATE, $planKey)),
                 'plan_key' => $feePlan->getPlanKey(),
-                'title' => FeePlanPresenter::getTitle($feePlan),
+                'title' => $this->feePlanPresenter->getTitle($feePlan),
             ];
         }
 

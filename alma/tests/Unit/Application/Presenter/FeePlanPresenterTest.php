@@ -3,8 +3,8 @@
 namespace PrestaShop\Module\Alma\Tests\Unit\Application\Presenter;
 
 use PHPUnit\Framework\TestCase;
-use PrestaShop\Module\Alma\Application\Presenter\FeePlanPresenter;
 use PrestaShop\Module\Alma\Application\Exception\FeePlansException;
+use PrestaShop\Module\Alma\Application\Presenter\FeePlanPresenter;
 use PrestaShop\Module\Alma\Tests\Mocks\FeePlansMock;
 use PrestaShopBundle\Translation\Translator;
 
