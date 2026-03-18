@@ -14,6 +14,7 @@ class FormCollection
         FeePlansAdminForm::class,
         ProductWidgetAdminForm::class,
         CartWidgetAdminForm::class,
+        ExcludedCategoriesAdminForm::class
     ];
 
     /**
