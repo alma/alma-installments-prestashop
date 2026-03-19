@@ -289,3 +289,35 @@ services:
     class: 'PrestaShop\Module\Alma\Application\Presenter\FeePlanPresenter'
     arguments:
       - '@translator'
+
+  alma.category_grid_factory:
+    class: 'PrestaShop\PrestaShop\Core\Grid\GridFactory'
+    arguments:
+      - '@alma.category_grid_definition_factory'
+      - '@alma.category_data_factory'
+      - '@prestashop.core.grid.filter.form_factory'
+      - '@prestashop.core.hook.dispatcher'
+    public: true
+
+  alma.category_grid_definition_factory:
+    class: 'PrestaShop\Module\Alma\Infrastructure\Grid\Definition\CategoryGridDefinitionFactory'
+    parent: 'prestashop.core.grid.definition.factory.abstract_grid_definition'
+    public: true
+    arguments:
+      - '@twig'
+
+  alma.category_query_builder:
+    class: 'PrestaShop\Module\Alma\Infrastructure\Grid\Query\CategoryQueryBuilder'
+    parent: 'prestashop.core.grid.abstract_query_builder'
+    arguments:
+      - "@=service('prestashop.adapter.legacy.context').getContext().language.id"
+      - "@=service('prestashop.adapter.legacy.context').getContext().shop.id"
+    public: true
+
+  alma.category_data_factory:
+    class: 'PrestaShop\PrestaShop\Core\Grid\Data\Factory\DoctrineGridDataFactory'
+    arguments:
+      - '@alma.category_query_builder'
+      - '@prestashop.core.hook.dispatcher'
+      - '@prestashop.core.grid.query.doctrine_query_parser'
+      - 'category'

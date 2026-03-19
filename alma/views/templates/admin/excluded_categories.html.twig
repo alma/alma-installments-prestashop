@@ -1,5 +1,5 @@
 {% extends '@PrestaShop/Admin/layout.html.twig' %}
 
 {% block content %}
-    Page Excluded Categories
+    {% include '@PrestaShop/Admin/Common/Grid/grid_panel.html.twig' with { 'grid': categoryGrid } %}
 {% endblock %}
