@@ -69,6 +69,27 @@ class FeePlansServiceTest extends TestCase
             FeePlansMock::feePlansTabsExpected(4),
         );
 
+        $feePlanFromConfig = [
+            'general_2_0_0' => [
+                'state' => '0',
+                'min_amount' => '5000',
+                'max_amount' => '300000',
+                'sort_order' => '2',
+            ],
+            'general_3_0_0' => [
+                'state' => '1',
+                'min_amount' => '5000',
+                'max_amount' => '300000',
+                'sort_order' => '3',
+            ],
+            'general_4_0_0' => [
+                'state' => '0',
+                'min_amount' => '5000',
+                'max_amount' => '300000',
+                'sort_order' => '4',
+            ],
+        ];
+
         $feePlan2X = FeePlansMock::feePlan(2);
         $feePlan3X = FeePlansMock::feePlan(3, 0, 0, true, 10000, 200000, true, 5);
         $feePlan4X = FeePlansMock::feePlan(4);
@@ -77,13 +98,9 @@ class FeePlansServiceTest extends TestCase
         $this->feePlansProvider->expects($this->once())
             ->method('getFeePlanList')
             ->willReturn($feePlanList);
-        $this->configurationRepository->expects($this->exactly(3))
-            ->method('get')
-            ->willReturnMap([
-                ['ALMA_GENERAL_2_0_0_STATE', '0'],
-                ['ALMA_GENERAL_3_0_0_STATE', '1'],
-                ['ALMA_GENERAL_4_0_0_STATE', '0'],
-            ]);
+        $this->feePlansProvider->expects($this->once())
+            ->method('getFeePlanFromConfiguration')
+            ->willReturn($feePlanFromConfig);
         $this->feePlanPresenter->expects($this->exactly(3))
             ->method('getTitle')
             ->withConsecutive(
@@ -110,6 +127,27 @@ class FeePlansServiceTest extends TestCase
             FeePlansMock::feePlansTabsExpected(4, false, 0, 0, 'general_2_0_0'),
         );
 
+        $feePlanFromConfig = [
+            'general_2_0_0' => [
+                'state' => '1',
+                'min_amount' => '5000',
+                'max_amount' => '300000',
+                'sort_order' => '2',
+            ],
+            'general_3_0_0' => [
+                'state' => '1',
+                'min_amount' => '5000',
+                'max_amount' => '300000',
+                'sort_order' => '3',
+            ],
+            'general_4_0_0' => [
+                'state' => '0',
+                'min_amount' => '5000',
+                'max_amount' => '300000',
+                'sort_order' => '4',
+            ],
+        ];
+
         $feePlan2X = FeePlansMock::feePlan(2, 0, 0, true, 10000, 200000, true, 5);
         $feePlan3X = FeePlansMock::feePlan(3, 0, 0, true, 10000, 200000, true, 5);
         $feePlan4X = FeePlansMock::feePlan(4);
@@ -118,13 +156,9 @@ class FeePlansServiceTest extends TestCase
         $this->feePlansProvider->expects($this->once())
             ->method('getFeePlanList')
             ->willReturn($feePlanList);
-        $this->configurationRepository->expects($this->exactly(3))
-            ->method('get')
-            ->willReturnMap([
-                ['ALMA_GENERAL_2_0_0_STATE', '1'],
-                ['ALMA_GENERAL_3_0_0_STATE', '1'],
-                ['ALMA_GENERAL_4_0_0_STATE', '0'],
-            ]);
+        $this->feePlansProvider->expects($this->once())
+            ->method('getFeePlanFromConfiguration')
+            ->willReturn($feePlanFromConfig);
         $this->feePlanPresenter->expects($this->exactly(3))
             ->method('getTitle')
             ->withConsecutive(
@@ -136,6 +170,66 @@ class FeePlansServiceTest extends TestCase
                 '2-installment payments',
                 '3-installment payments',
                 '4-installment payments'
+            );
+
+        $this->assertEquals($expected, $this->feePlansService->feePlansTabs());
+    }
+
+    public function testFeePlansTabsWithNewFeePlanAddAfterSaveInDb()
+    {
+        $expected = array_merge(
+            FeePlansMock::feePlansTabsExpected(2, true, 0, 0, 'general_2_0_0'),
+            FeePlansMock::feePlansTabsExpected(3, true, 0, 0, 'general_2_0_0'),
+            FeePlansMock::feePlansTabsExpected(4, false, 0, 0, 'general_2_0_0'),
+            FeePlansMock::feePlansTabsExpected(5, false, 0, 0, 'general_2_0_0'),
+        );
+
+        $feePlanFromConfig = [
+            'general_2_0_0' => [
+                'state' => '1',
+                'min_amount' => '5000',
+                'max_amount' => '300000',
+                'sort_order' => '2',
+            ],
+            'general_3_0_0' => [
+                'state' => '1',
+                'min_amount' => '5000',
+                'max_amount' => '300000',
+                'sort_order' => '3',
+            ],
+            'general_4_0_0' => [
+                'state' => '0',
+                'min_amount' => '5000',
+                'max_amount' => '300000',
+                'sort_order' => '4',
+            ]
+        ];
+
+        $feePlan2X = FeePlansMock::feePlan(2, 0, 0, true, 10000, 200000, true, 5);
+        $feePlan3X = FeePlansMock::feePlan(3, 0, 0, true, 10000, 200000, true, 5);
+        $feePlan4X = FeePlansMock::feePlan(4);
+        $feePlan5X = FeePlansMock::feePlan(5);
+
+        $feePlanList = new FeePlanList([$feePlan2X, $feePlan3X, $feePlan4X, $feePlan5X]);
+        $this->feePlansProvider->expects($this->once())
+            ->method('getFeePlanList')
+            ->willReturn($feePlanList);
+        $this->feePlansProvider->expects($this->once())
+            ->method('getFeePlanFromConfiguration')
+            ->willReturn($feePlanFromConfig);
+        $this->feePlanPresenter->expects($this->exactly(4))
+            ->method('getTitle')
+            ->withConsecutive(
+                [FeePlansMock::feePlan(2)],
+                [FeePlansMock::feePlan(3)],
+                [FeePlansMock::feePlan(4)],
+                [FeePlansMock::feePlan(5)]
+            )
+            ->willReturnOnConsecutiveCalls(
+                '2-installment payments',
+                '3-installment payments',
+                '4-installment payments',
+                '5-installment payments'
             );
 
         $this->assertEquals($expected, $this->feePlansService->feePlansTabs());

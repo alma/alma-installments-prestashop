@@ -69,13 +69,14 @@ class FeePlansService
         $feePlansTabs = [];
         $feePlanListAssembled = [];
         $feePlanList = $this->feePlansProvider->getFeePlanList();
+        $feePlanConfig = $this->feePlansProvider->getFeePlanFromConfiguration();
 
         foreach ($feePlanList as $feePlan) {
-            $planKey = mb_strtoupper($feePlan->getPlanKey());
+            $planKey = $feePlan->getPlanKey();
 
             $feePlanListAssembled[] = [
-                'enabled' => (bool) $this->configurationRepository->get(sprintf(FeePlansAdminForm::KEY_FIELD_FEE_PLAN_STATE, $planKey)),
-                'plan_key' => $feePlan->getPlanKey(),
+                'enabled' => (bool) ($feePlanConfig[$planKey]['state'] ?? 0),
+                'plan_key' => $planKey,
                 'title' => $this->feePlanPresenter->getTitle($feePlan),
             ];
         }
