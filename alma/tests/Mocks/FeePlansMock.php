@@ -20,7 +20,7 @@ final class FeePlansMock
             'deferred_days' => $deferredDays,
             'deferred_months' => $deferredMonths,
             'installments_count' => $installmentCount,
-            'kind' => 'general',
+            'kind' => sprintf('general_%d_%d_%d', $installmentCount, $deferredDays, $deferredMonths),
             'max_purchase_amount' => $maxAmount,
             'merchant_fee_variable' => 0,
             'merchant_fee_fixed' => 0,
@@ -28,7 +28,7 @@ final class FeePlansMock
         ]);
     }
 
-    public static function feePlanAssembled($installmentCount, $deferredDays = 0, $deferredMonths = 0, $allowed = true, $minAmount = 10000, $maxAmount = 200000, $enabled = false, $sortOrder = 0): array
+    public static function originalFeePlan($installmentCount, $deferredDays = 0, $deferredMonths = 0, $allowed = true, $minAmount = 10000, $maxAmount = 200000): array
     {
         return [
             'allowed' => $allowed,
@@ -37,13 +37,11 @@ final class FeePlansMock
             'deferred_days' => $deferredDays,
             'deferred_months' => $deferredMonths,
             'installments_count' => $installmentCount,
-            'kind' => 'general',
+            'kind' => sprintf('general_%d_%d_%d', $installmentCount, $deferredDays, $deferredMonths),
             'max_purchase_amount' => $maxAmount,
             'merchant_fee_variable' => 0,
             'merchant_fee_fixed' => 0,
             'min_purchase_amount' => $minAmount,
-            'enabled' => $enabled,
-            'sort_order' => $sortOrder,
         ];
     }
 
