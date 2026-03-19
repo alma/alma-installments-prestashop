@@ -7,6 +7,7 @@ use PHPUnit\Framework\TestCase;
 use PrestaShop\Module\Alma\Application\Presenter\FeePlanPresenter;
 use PrestaShop\Module\Alma\Application\Provider\FeePlansProvider;
 use PrestaShop\Module\Alma\Application\Service\FeePlansService;
+use PrestaShop\Module\Alma\Infrastructure\Form\FeePlansAdminForm;
 use PrestaShop\Module\Alma\Infrastructure\Repository\ConfigurationRepository;
 use PrestaShop\Module\Alma\Tests\Mocks\FeePlansMock;
 use PrestaShopBundle\Translation\TranslatorInterface;
@@ -29,6 +30,10 @@ class FeePlansServiceTest extends TestCase
      * @var TranslatorInterface
      */
     private $translator;
+    /**
+     * @var ConfigurationRepository
+     */
+    private $configurationRepository;
 
     public function setUp(): void
     {
@@ -46,13 +51,10 @@ class FeePlansServiceTest extends TestCase
         );
     }
 
-    /**
-     * @throws \Alma\Client\Application\Exception\ParametersException
-     */
     public function testFeePlansTabsGetFeePlanListEmptyReturnEmptyArray()
     {
         $this->feePlansProvider->expects($this->once())
-            ->method('getFeePlanList')
+            ->method('getOriginalFeePlan')
             ->willReturn(new FeePlanList());
 
         $this->assertEquals([], $this->feePlansService->feePlansTabs());
@@ -96,7 +98,7 @@ class FeePlansServiceTest extends TestCase
 
         $feePlanList = new FeePlanList([$feePlan2X, $feePlan3X, $feePlan4X]);
         $this->feePlansProvider->expects($this->once())
-            ->method('getFeePlanList')
+            ->method('getOriginalFeePlan')
             ->willReturn($feePlanList);
         $this->feePlansProvider->expects($this->once())
             ->method('getFeePlanFromConfiguration')
@@ -154,7 +156,7 @@ class FeePlansServiceTest extends TestCase
 
         $feePlanList = new FeePlanList([$feePlan2X, $feePlan3X, $feePlan4X]);
         $this->feePlansProvider->expects($this->once())
-            ->method('getFeePlanList')
+            ->method('getOriginalFeePlan')
             ->willReturn($feePlanList);
         $this->feePlansProvider->expects($this->once())
             ->method('getFeePlanFromConfiguration')
@@ -212,7 +214,7 @@ class FeePlansServiceTest extends TestCase
 
         $feePlanList = new FeePlanList([$feePlan2X, $feePlan3X, $feePlan4X, $feePlan5X]);
         $this->feePlansProvider->expects($this->once())
-            ->method('getFeePlanList')
+            ->method('getOriginalFeePlan')
             ->willReturn($feePlanList);
         $this->feePlansProvider->expects($this->once())
             ->method('getFeePlanFromConfiguration')
@@ -238,7 +240,7 @@ class FeePlansServiceTest extends TestCase
     public function testFeePlansFieldsGetFeePlanListEmptyReturnEmptyArray()
     {
         $this->feePlansProvider->expects($this->once())
-            ->method('getFeePlanList')
+            ->method('getOriginalFeePlan')
             ->willReturn(new FeePlanList());
 
         $this->assertEquals([], $this->feePlansService->feePlansFields());
@@ -255,7 +257,7 @@ class FeePlansServiceTest extends TestCase
 
         $feePlanList = new FeePlanList([$feePlan3X]);
         $this->feePlansProvider->expects($this->once())
-            ->method('getFeePlanList')
+            ->method('getOriginalFeePlan')
             ->willReturn($feePlanList);
 
         $this->feePlanPresenter->expects($this->once())
@@ -279,7 +281,7 @@ class FeePlansServiceTest extends TestCase
         $this->assertEquals($expected, $this->feePlansService->feePlansFields());
     }
 
-    public function testFieldsValueWithFeePlanFromDb()
+    public function testFieldsValueWithFeePlanFromApi()
     {
         $feePlanFromDb = FeePlansMock::almaFeePlanFromDb(3, 0, 0, '1', '10000', '200000', '5');
         $expected = [
@@ -288,14 +290,51 @@ class FeePlansServiceTest extends TestCase
             'ALMA_GENERAL_3_0_0_MAX_AMOUNT' => '2000',
             'ALMA_GENERAL_3_0_0_SORT_ORDER' => '5',
         ];
-        $this->assertEquals($expected, $this->feePlansService->fieldsValue($feePlanFromDb));
+        $feePlan3x = FeePlansMock::feePlan(3);
+        $feePlanList = new FeePlanList([$feePlan3x]);
+        $this->feePlansProvider->expects($this->once())
+            ->method('getOriginalFeePlan')
+            ->willReturn($feePlanList);
+        $this->feePlansProvider->expects($this->once())
+            ->method('getFeePlanFromConfiguration')
+            ->willReturn($feePlanFromDb);
+        $this->assertSame($expected, $this->feePlansService->fieldsValue());
     }
 
-    public function testFieldsValueWithFeePlanFromDbEmpty()
+    public function testFieldsValueWithFeePlanFromDbAndNewPlanInApi()
     {
-        $feePlanFromDb = [];
-        $expected = [];
-        $this->assertEquals($expected, $this->feePlansService->fieldsValue($feePlanFromDb));
+        $feePlanFromDb = FeePlansMock::almaFeePlanFromDb(3, 0, 0, '1', '15000', '200000', '5');
+        $expected = [
+            'ALMA_GENERAL_3_0_0_STATE' => '1',
+            'ALMA_GENERAL_3_0_0_MIN_AMOUNT' => '150',
+            'ALMA_GENERAL_3_0_0_MAX_AMOUNT' => '2000',
+            'ALMA_GENERAL_3_0_0_SORT_ORDER' => '5',
+            'ALMA_GENERAL_4_0_0_STATE' => '0',
+            'ALMA_GENERAL_4_0_0_MIN_AMOUNT' => '100',
+            'ALMA_GENERAL_4_0_0_MAX_AMOUNT' => '2000',
+            'ALMA_GENERAL_4_0_0_SORT_ORDER' => '2',
+        ];
+        $feePlan3x = FeePlansMock::feePlan(3);
+        $feePlan4x = FeePlansMock::feePlan(4);
+        $feePlanList = new FeePlanList([$feePlan3x, $feePlan4x]);
+        $this->feePlansProvider->expects($this->once())
+            ->method('getOriginalFeePlan')
+            ->willReturn($feePlanList);
+        $this->feePlansProvider->expects($this->once())
+            ->method('getFeePlanFromConfiguration')
+            ->willReturn($feePlanFromDb);
+        $this->assertSame($expected, $this->feePlansService->fieldsValue());
+    }
+
+    public function testFieldsValueWithFeePlanFromApiAndDbEmpty()
+    {
+        $this->feePlansProvider->expects($this->once())
+            ->method('getOriginalFeePlan')
+            ->willReturn(new FeePlanList());
+        $this->feePlansProvider->expects($this->once())
+            ->method('getFeePlanFromConfiguration')
+            ->willReturn([]);
+        $this->assertEquals([], $this->feePlansService->fieldsValue());
     }
 
     /**
@@ -347,5 +386,21 @@ class FeePlansServiceTest extends TestCase
         ];
 
         $this->assertEquals($expected, $this->feePlansService->fieldsToSaveFromPost($postFromForm));
+    }
+
+    public function testSaveOriginalFeePlan()
+    {
+        $expected = '[{"allowed":true,"available_online":true,"customer_fee_variable":0,"deferred_days":0,"deferred_months":0,"installments_count":2,"kind":"general","max_purchase_amount":200000,"merchant_fee_variable":0,"merchant_fee_fixed":0,"min_purchase_amount":10000},{"allowed":true,"available_online":true,"customer_fee_variable":0,"deferred_days":0,"deferred_months":0,"installments_count":3,"kind":"general","max_purchase_amount":200000,"merchant_fee_variable":0,"merchant_fee_fixed":0,"min_purchase_amount":10000},{"allowed":true,"available_online":true,"customer_fee_variable":0,"deferred_days":0,"deferred_months":0,"installments_count":4,"kind":"general","max_purchase_amount":200000,"merchant_fee_variable":0,"merchant_fee_fixed":0,"min_purchase_amount":10000}]';
+        $feePlan2x = FeePlansMock::feePlan(2);
+        $feePlan3x = FeePlansMock::feePlan(3);
+        $feePlan4x = FeePlansMock::feePlan(4);
+        $feePlanList = new FeePlanList([$feePlan2x, $feePlan3x, $feePlan4x]);
+        $this->feePlansProvider->expects($this->once())
+            ->method('getFeePlanList')
+            ->willReturn($feePlanList);
+        $this->configurationRepository->expects($this->once())
+            ->method('updateValue')
+            ->with(FeePlansAdminForm::KEY_FIELD_ORIGINAL_FEE_PLAN, $expected);
+        $this->feePlansService->saveOriginalFeePlan();
     }
 }

@@ -68,7 +68,7 @@ class FeePlansService
     {
         $feePlansTabs = [];
         $feePlanListAssembled = [];
-        $feePlanList = $this->feePlansProvider->getFeePlanList();
+        $feePlanList = $this->feePlansProvider->getOriginalFeePlan();
         $feePlanConfig = $this->feePlansProvider->getFeePlanFromConfiguration();
 
         foreach ($feePlanList as $feePlan) {
@@ -102,7 +102,7 @@ class FeePlansService
     public function feePlansFields(): array
     {
         $feePlansFields = [];
-        $feePlansProvider = $this->feePlansProvider->getFeePlanList();
+        $feePlansProvider = $this->feePlansProvider->getOriginalFeePlan();
 
         foreach ($feePlansProvider as $feePlan) {
             /** @var FeePlan $feePlan */
@@ -177,27 +177,28 @@ class FeePlansService
     /**
      * Get fee plans fields value for set the value in the form.
      * From the loop of fee plan list.
-     * @param $feePlanConfiguration
      * @return array
      */
-    public function fieldsValue($feePlanConfiguration): array
+    public function fieldsValue(): array
     {
         $feePlansFieldsValue = [];
-        $feePlansProvider = $this->feePlansProvider->getFeePlanList();
+        $feePlansConfiguration = $this->feePlansProvider->getFeePlanFromConfiguration();
+        $feePlansList = $this->feePlansProvider->getOriginalFeePlan();
 
         /** @var FeePlan $feePlan */
-        foreach ($feePlanConfiguration as $planKey => $feePlan) {
-            $planKey = mb_strtoupper($planKey);
+        foreach ($feePlansList as $key => $feePlan) {
+            $feePlanConfiguration = $feePlansConfiguration[$feePlan->getPlanKey()] ?? [];
+            $planKey = mb_strtoupper($feePlan->getPlanKey());
             $keyFieldFeePlanState = sprintf(FeePlansAdminForm::KEY_FIELD_FEE_PLAN_STATE, $planKey);
             $keyFieldFeePlanMinAmount = sprintf(FeePlansAdminForm::KEY_FIELD_FEE_PLAN_MIN_AMOUNT, $planKey);
             $keyFieldFeePlanMaxAmount = sprintf(FeePlansAdminForm::KEY_FIELD_FEE_PLAN_MAX_AMOUNT, $planKey);
             $keyFieldFeePlanSortOrder = sprintf(FeePlansAdminForm::KEY_FIELD_FEE_PLAN_SORT_ORDER, $planKey);
 
             $feePlansFieldsValue = array_merge($feePlansFieldsValue, [
-                $keyFieldFeePlanState => $feePlan['state'],
-                $keyFieldFeePlanMinAmount => PriceHelper::priceToEuro($feePlan['min_amount']),
-                $keyFieldFeePlanMaxAmount => PriceHelper::priceToEuro($feePlan['max_amount']),
-                $keyFieldFeePlanSortOrder => $feePlan['sort_order'],
+                $keyFieldFeePlanState => $feePlanConfiguration['state'] ?? '0',
+                $keyFieldFeePlanMinAmount => (string) PriceHelper::priceToEuro($feePlanConfiguration['min_amount'] ?? $feePlan->getMinPurchaseAmount()),
+                $keyFieldFeePlanMaxAmount => (string) PriceHelper::priceToEuro($feePlanConfiguration['max_amount'] ?? $feePlan->getMaxPurchaseAmount()),
+                $keyFieldFeePlanSortOrder => (string) ($feePlanConfiguration['sort_order'] ?? $key + 1),
             ]);
         }
 
@@ -263,5 +264,32 @@ class FeePlansService
         $result[FeePlansAdminForm::KEY_FIELD_FEE_PLAN_LIST] = json_encode($feePlans);
 
         return $result;
+    }
+
+    /**
+     * Save the original fee plan list in the database with the key ALMA_ORIGINAL_FEE_PLAN
+     */
+    public function saveOriginalFeePlan(): void
+    {
+        $feePlanList = $this->feePlansProvider->getFeePlanList();
+        $feePlansArray = [];
+        foreach ($feePlanList as $feePlan) {
+            /* @var FeePlan $feePlan */
+            $feePlansArray[] = [
+                'allowed' => $feePlan->isAllowed(),
+                'available_online' => $feePlan->isAvailableOnline(),
+                'customer_fee_variable' => $feePlan->getCustomerFeeVariable(),
+                'deferred_days' => $feePlan->getDeferredDays(),
+                'deferred_months' => $feePlan->getDeferredMonths(),
+                'installments_count' => $feePlan->getInstallmentsCount(),
+                'kind' => $feePlan->getKind(),
+                'max_purchase_amount' => $feePlan->getMaxPurchaseAmount(),
+                'merchant_fee_variable' => $feePlan->getMerchantFeeVariable(),
+                'merchant_fee_fixed' => $feePlan->getMerchantFeeFixed(),
+                'min_purchase_amount' => $feePlan->getMinPurchaseAmount(),
+            ];
+        }
+
+        $this->configurationRepository->updateValue(FeePlansAdminForm::KEY_FIELD_ORIGINAL_FEE_PLAN, json_encode($feePlansArray));
     }
 }

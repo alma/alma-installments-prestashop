@@ -128,12 +128,8 @@ class SettingsServiceTest extends TestCase
             ['id_lang' => 1, 'iso_code' => 'en', 'language_code' => 'en-us', 'locale' => 'en-US'],
             ['id_lang' => 2, 'iso_code' => 'fr', 'language_code' => 'fr-fr', 'locale' => 'fr-FR']
         ];
-        $this->feePlansProvider->expects($this->once())
-            ->method('getFeePlanFromConfiguration')
-            ->willReturn(FeePlansMock::almaFeePlanFromDb(3));
         $this->feePlansService->expects($this->once())
             ->method('fieldsValue')
-            ->with(FeePlansMock::almaFeePlanFromDb(3))
             ->willReturn(FeePlansMock::feePlanFieldsValueExpected(3));
         $this->authenticationSettingsProvider->expects($this->any())
             ->method('getAllFields')

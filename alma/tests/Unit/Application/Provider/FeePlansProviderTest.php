@@ -116,4 +116,27 @@ class FeePlansProviderTest extends TestCase
 
         $this->assertEquals($expectedFeePlanListOrdered, $this->feePlansProvider->getFeePlanList());
     }
+
+    public function testGetOriginalFeePlanReturnsDecodedValue(): void
+    {
+        $feePlan3x = FeePlansMock::originalFeePlan(3);
+        $feePlanList = new FeePlanList([$feePlan3x]);
+        $encodedOriginalFeePlan = json_encode($feePlanList);
+        $this->configurationRepository->expects($this->once())
+            ->method('get')
+            ->with(FeePlansAdminForm::KEY_FIELD_ORIGINAL_FEE_PLAN)
+            ->willReturn($encodedOriginalFeePlan);
+
+        $this->assertEquals($feePlanList, $this->feePlansProvider->getOriginalFeePlan());
+    }
+
+     public function testGetOriginalFeePlanWithoutKeySavedReturnsArrayEmpty(): void
+     {
+        $this->configurationRepository->expects($this->once())
+            ->method('get')
+            ->with(FeePlansAdminForm::KEY_FIELD_ORIGINAL_FEE_PLAN)
+            ->willReturn('');
+
+        $this->assertEquals(new FeePlanList(), $this->feePlansProvider->getOriginalFeePlan());
+    }
 }

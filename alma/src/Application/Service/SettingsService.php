@@ -108,8 +108,7 @@ class SettingsService
      */
     public function getFieldsValue(array $languages = []): array
     {
-        $feePlansConfiguration = $this->feePlansProvider->getFeePlanFromConfiguration();
-        $feePlansFieldsValue = $this->feePlansService->fieldsValue($feePlansConfiguration);
+        $feePlansFieldsValue = $this->feePlansService->fieldsValue();
         $fieldsValue = $this->authenticationSettingsProvider->getAllFields();
 
         foreach ($fieldsValue as $field => $param) {

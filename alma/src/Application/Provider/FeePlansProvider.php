@@ -63,6 +63,22 @@ class FeePlansProvider implements FeePlanProviderInterface
         return json_decode($feePlanList, true);
     }
 
+    public function getOriginalFeePlan(): FeePlanList
+    {
+        $originalFeePlanList = $this->configurationRepository->get(FeePlansAdminForm::KEY_FIELD_ORIGINAL_FEE_PLAN);
+
+        if (empty($originalFeePlanList)) {
+            return new FeePlanList();
+        }
+
+        $feePlanList = new FeePlanList();
+        foreach (json_decode($originalFeePlanList, true) as $feePlan) {
+            $feePlanList->add(new FeePlan($feePlan));
+        }
+
+        return $feePlanList;
+    }
+
     /**
      * @return \Alma\Plugin\Infrastructure\Adapter\FeePlanListInterface
      */

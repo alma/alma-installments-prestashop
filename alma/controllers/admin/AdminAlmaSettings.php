@@ -2,6 +2,7 @@
 
 use PrestaShop\Module\Alma\Application\Exception\AlmaException;
 use PrestaShop\Module\Alma\Application\Exception\PsAccountsException;
+use PrestaShop\Module\Alma\Application\Service\FeePlansService;
 use PrestaShop\Module\Alma\Application\Service\FormService;
 use PrestaShop\Module\Alma\Application\Service\PsAccountsService;
 use PrestaShop\Module\Alma\Application\Service\SettingsService;
@@ -35,6 +36,9 @@ class AdminAlmaSettingsController extends ModuleAdminController
         $settingsFormBuilder = $this->get('alma.settings_form_builder');
         /** @var FormService $formService */
         $formService = $this->get('alma.form_service');
+        /** @var FeePlansService $feePlansService */
+        $feePlansService = $this->get('alma.fee_plans_service');
+        $feePlansService->saveOriginalFeePlan();
 
         $notifications = '';
         $errors = [];
