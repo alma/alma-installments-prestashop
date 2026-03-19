@@ -102,9 +102,9 @@ class FeePlansService
     public function feePlansFields(): array
     {
         $feePlansFields = [];
-        $feePlansProvider = $this->feePlansProvider->getOriginalFeePlan();
+        $feePlansList = $this->feePlansProvider->getOriginalFeePlan();
 
-        foreach ($feePlansProvider as $feePlan) {
+        foreach ($feePlansList as $feePlan) {
             /** @var FeePlan $feePlan */
             $planKey = mb_strtoupper($feePlan->getPlanKey());
             $planKeyTab = $feePlan->getPlanKey();

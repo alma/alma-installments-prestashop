@@ -20,7 +20,7 @@ final class FeePlansMock
             'deferred_days' => $deferredDays,
             'deferred_months' => $deferredMonths,
             'installments_count' => $installmentCount,
-            'kind' => 'general',
+            'kind' => sprintf('general_%d_%d_%d', $installmentCount, $deferredDays, $deferredMonths),
             'max_purchase_amount' => $maxAmount,
             'merchant_fee_variable' => 0,
             'merchant_fee_fixed' => 0,
@@ -42,7 +42,6 @@ final class FeePlansMock
             'merchant_fee_variable' => 0,
             'merchant_fee_fixed' => 0,
             'min_purchase_amount' => $minAmount,
-            'title' => sprintf('%d-installment payments', $installmentCount),
         ];
     }
 

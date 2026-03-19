@@ -4,6 +4,7 @@ namespace PrestaShop\Module\Alma\Application\Provider;
 
 use Alma\Client\Application\Endpoint\MerchantEndpoint;
 use Alma\Client\Application\Exception\Endpoint\MerchantEndpointException;
+use Alma\Client\Application\Exception\ParametersException;
 use Alma\Client\Domain\Entity\FeePlan;
 use Alma\Client\Domain\Entity\FeePlanList;
 use Alma\Client\Domain\ValueObject\PaymentMethod;
@@ -67,13 +68,16 @@ class FeePlansProvider implements FeePlanProviderInterface
     {
         $originalFeePlanList = $this->configurationRepository->get(FeePlansAdminForm::KEY_FIELD_ORIGINAL_FEE_PLAN);
 
-        if (empty($originalFeePlanList)) {
-            return new FeePlanList();
-        }
-
         $feePlanList = new FeePlanList();
-        foreach (json_decode($originalFeePlanList, true) as $feePlan) {
-            $feePlanList->add(new FeePlan($feePlan));
+
+        if (!empty($originalFeePlanList)) {
+            foreach (json_decode($originalFeePlanList, true) as $feePlan) {
+                try {
+                    $feePlanList->add(new FeePlan($feePlan));
+                } catch (ParametersException $e) {
+                    // TODO : Add Log here
+                }
+            }
         }
 
         return $feePlanList;
