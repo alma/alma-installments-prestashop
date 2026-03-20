@@ -9,3 +9,9 @@ alma_excluded_categories_bulk_exclude:
   methods: [POST]
   defaults:
     _controller: 'PrestaShop\Module\Alma\Infrastructure\Controller\ExcludedCategoriesController::bulkExcludeAction'
+
+alma_excluded_categories_bulk_include:
+  path: /alma/excluded-categories/bulk-include
+  methods: [POST]
+  defaults:
+    _controller: 'PrestaShop\Module\Alma\Infrastructure\Controller\ExcludedCategoriesController::bulkIncludeAction'

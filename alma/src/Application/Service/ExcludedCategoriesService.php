@@ -72,4 +72,34 @@ class ExcludedCategoriesService
 
         return $fields;
     }
+
+    /**
+     * @param array $newCategoriesIds
+     */
+    public function addExcludeCategories(array $newCategoriesIds): void
+    {
+        $categoriesIdsFromDb = $this->configurationRepository->get(ExcludedCategoriesAdminForm::KEY_FIELD_EXCLUDED_CATEGORIES);
+        $categoriesIdsFromDb = json_decode($categoriesIdsFromDb, true) ?? [];
+
+        $categoriesIdsToSave = array_merge($categoriesIdsFromDb, $newCategoriesIds);
+        $categoriesIdsToSave = array_unique($categoriesIdsToSave);
+
+        $this->configurationRepository->updateValue(ExcludedCategoriesAdminForm::KEY_FIELD_EXCLUDED_CATEGORIES, json_encode($categoriesIdsToSave));
+    }
+
+    public function removeExcludeCategories($categoryIds)
+    {
+        $savedCategories = $this->configurationRepository->get(
+            ExcludedCategoriesAdminForm::KEY_FIELD_EXCLUDED_CATEGORIES
+        );
+
+        $existingIds = $savedCategories ? json_decode($savedCategories, true) : [];
+
+        $updatedIds = array_values(array_diff($existingIds, $categoryIds));
+
+        $this->configurationRepository->updateValue(
+            ExcludedCategoriesAdminForm::KEY_FIELD_EXCLUDED_CATEGORIES,
+            json_encode($updatedIds)
+        );
+    }
 }

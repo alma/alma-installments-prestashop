@@ -6,6 +6,7 @@ class ExcludedCategoriesAdminForm extends AbstractAdminForm
 {
     public const KEY_FIELD_EXCLUDED_CATEGORIES_WIDGET_DISPLAY_NOT_ELIGIBLE = 'ALMA_EXCLUDED_CATEGORIES_WIDGET_DISPLAY_NOT_ELIGIBLE';
     public const KEY_FIELD_EXCLUDED_CATEGORIES_MESSAGE = 'ALMA_EXCLUDED_CATEGORIES_MESSAGE';
+    public const KEY_FIELD_EXCLUDED_CATEGORIES = 'ALMA_EXCLUDED_CATEGORIES';
 
     public static function title(): string
     {

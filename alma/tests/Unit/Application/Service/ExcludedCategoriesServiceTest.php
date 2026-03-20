@@ -106,4 +106,66 @@ class ExcludedCategoriesServiceTest extends TestCase
             ->willReturn('merchant_id');
         $this->assertEquals([], $this->excludedCategories->defaultFieldsToSave());
     }
+
+    public function testAddExcludeCategoriesWithIdsCategoriesAndZeroCategoriesSavedBefore(): void
+    {
+        $categoriesIds = [1, 2, 3];
+        $categoriesIdsToSave = json_encode($categoriesIds);
+        $this->configurationRepository->expects($this->once())
+            ->method('get')
+            ->with(ExcludedCategoriesAdminForm::KEY_FIELD_EXCLUDED_CATEGORIES)
+            ->willReturn('');
+        $this->configurationRepository->expects($this->once())
+            ->method('updateValue')
+            ->with(ExcludedCategoriesAdminForm::KEY_FIELD_EXCLUDED_CATEGORIES, $categoriesIdsToSave);
+
+        $this->excludedCategories->addExcludeCategories($categoriesIds);
+    }
+
+    public function testAddExcludeCategoriesWithNewIdsCategoriesAndCategoriesSavedBefore(): void
+    {
+        $categoriesIdsInDb = json_encode([4, 2]);
+        $newCategoriesIds = [1, 2];
+        $categoriesIdsToSave = json_encode([4, 2, 1]);
+        $this->configurationRepository->expects($this->once())
+            ->method('get')
+            ->with(ExcludedCategoriesAdminForm::KEY_FIELD_EXCLUDED_CATEGORIES)
+            ->willReturn($categoriesIdsInDb);
+        $this->configurationRepository->expects($this->once())
+            ->method('updateValue')
+            ->with(ExcludedCategoriesAdminForm::KEY_FIELD_EXCLUDED_CATEGORIES, $categoriesIdsToSave);
+
+        $this->excludedCategories->addExcludeCategories($newCategoriesIds);
+    }
+
+    public function testRemoveExcludeCategoriesWithIdsCategoriesAndZeroCategoriesSavedBefore(): void
+    {
+        $categoriesIds = [1, 2, 3];
+        $categoriesIdsToSave = json_encode([]);
+        $this->configurationRepository->expects($this->once())
+            ->method('get')
+            ->with(ExcludedCategoriesAdminForm::KEY_FIELD_EXCLUDED_CATEGORIES)
+            ->willReturn('');
+        $this->configurationRepository->expects($this->once())
+            ->method('updateValue')
+            ->with(ExcludedCategoriesAdminForm::KEY_FIELD_EXCLUDED_CATEGORIES, $categoriesIdsToSave);
+
+        $this->excludedCategories->removeExcludeCategories($categoriesIds);
+    }
+
+    public function testRemoveExcludeCategoriesWithNewIdsCategoriesAndCategoriesSavedBefore(): void
+    {
+        $categoriesIdsInDb = json_encode([4, 2]);
+        $categoriesIdsToRemove = [1, 2];
+        $categoriesIdsToSave = json_encode([4]);
+        $this->configurationRepository->expects($this->once())
+            ->method('get')
+            ->with(ExcludedCategoriesAdminForm::KEY_FIELD_EXCLUDED_CATEGORIES)
+            ->willReturn($categoriesIdsInDb);
+        $this->configurationRepository->expects($this->once())
+            ->method('updateValue')
+            ->with(ExcludedCategoriesAdminForm::KEY_FIELD_EXCLUDED_CATEGORIES, $categoriesIdsToSave);
+
+        $this->excludedCategories->removeExcludeCategories($categoriesIdsToRemove);
+    }
 }

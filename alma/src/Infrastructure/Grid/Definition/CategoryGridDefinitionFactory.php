@@ -131,6 +131,13 @@ final class CategoryGridDefinitionFactory extends AbstractFilterableGridDefiniti
                     ->setOptions([
                         'submit_route' => 'alma_excluded_categories_bulk_exclude',
                     ])
+            )
+            ->add(
+                (new SubmitBulkAction('include_categories'))
+                    ->setName('Inclure les catégories sélectionnées')
+                    ->setOptions([
+                        'submit_route' => 'alma_excluded_categories_bulk_include',
+                    ])
             );
     }
 }

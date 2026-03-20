@@ -18,24 +18,33 @@ final class CategoryQueryBuilder extends AbstractDoctrineQueryBuilder
      * @var int
      */
     private int $contextShopId;
+    private array $excludedCategoryIds;
 
     /**
      * @param Connection $connection
      * @param string $dbPrefix
      * @param int $contextLangId
      * @param int $contextShopId
+     * @param array $excludedCategoryIds
      */
-    public function __construct(Connection $connection, $dbPrefix, int $contextLangId, int $contextShopId)
-    {
+    public function __construct(
+        Connection $connection,
+        $dbPrefix,
+        int $contextLangId,
+        int $contextShopId,
+        array $excludedCategoryIds = []
+    ) {
         parent::__construct($connection, $dbPrefix);
 
         $this->contextLangId = $contextLangId;
         $this->contextShopId = $contextShopId;
+        $this->excludedCategoryIds = $excludedCategoryIds;
     }
 
     public function getSearchQueryBuilder(SearchCriteriaInterface $searchCriteria): QueryBuilder
     {
         $qb = $this->getBaseQuery();
+
         $qb->select('c.id_category, cl.name, cl.description, c.active')
             ->orderBy(
                 $searchCriteria->getOrderBy() ?: 'c.id_category',
@@ -43,6 +52,15 @@ final class CategoryQueryBuilder extends AbstractDoctrineQueryBuilder
             )
             ->setFirstResult($searchCriteria->getOffset())
             ->setMaxResults($searchCriteria->getLimit());
+
+        if (!empty($this->excludedCategoryIds)) {
+            $qb->addSelect(
+                'CASE WHEN c.id_category IN (:excluded_category_ids) THEN 1 ELSE 0 END as is_excluded'
+            );
+            $qb->setParameter('excluded_category_ids', $this->excludedCategoryIds, Connection::PARAM_INT_ARRAY);
+        } else {
+            $qb->addSelect('0 as is_excluded');
+        }
 
         foreach ($searchCriteria->getFilters() ?? [] as $filterName => $filterValue) {
             if ('id_category' === $filterName) {
@@ -55,8 +73,6 @@ final class CategoryQueryBuilder extends AbstractDoctrineQueryBuilder
             $qb->andWhere("$filterName LIKE :$filterName");
             $qb->setParameter($filterName, '%' . $filterValue . '%');
         }
-
-        $qb->addSelect('0 as is_excluded');
 
         return $qb;
     }
