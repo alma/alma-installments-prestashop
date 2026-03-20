@@ -43,4 +43,9 @@ class ExcludedCategoriesController extends FrameworkBundleAdminController
 
         return $this->redirectToRoute('alma_excluded_categories');
     }
+
+    public function bulkExcludeAction(Request $request): RedirectResponse
+    {
+        return $this->redirectToRoute('alma_excluded_categories');
+    }
 }
