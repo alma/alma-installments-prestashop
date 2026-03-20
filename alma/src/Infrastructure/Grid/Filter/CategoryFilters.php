@@ -12,7 +12,7 @@ class CategoryFilters extends Filters
     public static function getDefaults(): array
     {
         return [
-            'limit' => 100,
+            'limit' => 1000,
             'offset' => 0,
             'orderBy' => 'id_category',
             'sortOrder' => 'ASC',

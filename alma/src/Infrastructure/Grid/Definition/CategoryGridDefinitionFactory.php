@@ -6,17 +6,10 @@ use PrestaShop\Module\Alma\Infrastructure\Grid\Column\Type\IconBooleanColumn;
 use PrestaShop\PrestaShop\Core\Grid\Action\Bulk\BulkActionCollection;
 use PrestaShop\PrestaShop\Core\Grid\Action\Bulk\Type\SubmitBulkAction;
 use PrestaShop\PrestaShop\Core\Grid\Action\GridActionCollection;
-use PrestaShop\PrestaShop\Core\Grid\Action\Row\RowActionCollection;
 use PrestaShop\PrestaShop\Core\Grid\Column\ColumnCollection;
-use PrestaShop\PrestaShop\Core\Grid\Column\Type\Common\ActionColumn;
 use PrestaShop\PrestaShop\Core\Grid\Column\Type\Common\BulkActionColumn;
 use PrestaShop\PrestaShop\Core\Grid\Column\Type\DataColumn;
 use PrestaShop\PrestaShop\Core\Grid\Definition\Factory\AbstractFilterableGridDefinitionFactory;
-use PrestaShop\PrestaShop\Core\Grid\Filter\Filter;
-use PrestaShop\PrestaShop\Core\Grid\Filter\FilterCollection;
-use PrestaShopBundle\Form\Admin\Type\SearchAndResetType;
-use Symfony\Component\Form\Extension\Core\Type\NumberType;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
 
 final class CategoryGridDefinitionFactory extends AbstractFilterableGridDefinitionFactory
 {
@@ -63,57 +56,9 @@ final class CategoryGridDefinitionFactory extends AbstractFilterableGridDefiniti
                     ])
             )
             ->add(
-                (new ActionColumn('actions'))
-                ->setName('Actions')
-                    ->setOptions([
-                        'actions' => (new RowActionCollection()),
-                    ])
-            )
-            ->add(
                 (new IconBooleanColumn('is_excluded'))
                     ->setName('Status')
                     ->setOptions(['field' => 'is_excluded'])
-            );
-    }
-
-    protected function getFilters()
-    {
-        return (new FilterCollection())
-            ->add(
-                (new Filter('id_category', NumberType::class))
-                    ->setTypeOptions([
-                        'required' => false,
-                        'attr' => ['placeholder' => 'ID'],
-                    ])
-                    ->setAssociatedColumn('id_category')
-            )
-            ->add(
-                (new Filter('name', TextType::class))
-                    ->setTypeOptions([
-                        'required' => false,
-                        'attr' => ['placeholder' => 'Nom'],
-                    ])
-                    ->setAssociatedColumn('name')
-            )
-            ->add(
-                (new Filter('description', TextType::class))
-                    ->setTypeOptions([
-                        'required' => false,
-                        'attr' => ['placeholder' => 'Description'],
-                    ])
-                    ->setAssociatedColumn('description')
-            )
-            ->add(
-                (new Filter('actions', SearchAndResetType::class))
-                    ->setTypeOptions([
-                        'reset_route' => 'admin_common_reset_search_by_filter_id',
-                        'reset_route_params' => [
-                            'filterId' => CategoryGridDefinitionFactory::GRID_ID,
-                            'filters_id' => CategoryGridDefinitionFactory::GRID_ID,
-                        ],
-                        'redirect_route' => 'alma_excluded_categories',
-                    ])
-                    ->setAssociatedColumn('actions')
             );
     }
 
