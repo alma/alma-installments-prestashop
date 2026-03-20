@@ -294,7 +294,7 @@ services:
     class: 'PrestaShop\PrestaShop\Core\Grid\GridFactory'
     arguments:
       - '@alma.category_grid_definition_factory'
-      - '@alma.category_data_factory'
+      - '@alma.category_grid_data_factory'
       - '@prestashop.core.grid.filter.form_factory'
       - '@prestashop.core.hook.dispatcher'
     public: true
@@ -321,3 +321,9 @@ services:
       - '@prestashop.core.hook.dispatcher'
       - '@prestashop.core.grid.query.doctrine_query_parser'
       - 'category'
+
+  alma.category_grid_data_factory:
+    class: 'PrestaShop\Module\Alma\Infrastructure\Grid\Data\CategoryGridDataFactory'
+    decorates: 'alma.category_data_factory'
+    arguments:
+      - '@alma.category_grid_data_factory.inner'

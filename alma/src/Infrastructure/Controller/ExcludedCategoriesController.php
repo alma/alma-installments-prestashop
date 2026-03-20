@@ -2,7 +2,7 @@
 
 namespace PrestaShop\Module\Alma\Infrastructure\Controller;
 
-use PrestaShop\PrestaShop\Core\Grid\Search\SearchCriteria;
+use PrestaShop\Module\Alma\Infrastructure\Grid\Filter\CategoryFilters;
 use PrestaShopBundle\Controller\Admin\FrameworkBundleAdminController;
 use PrestaShopBundle\Service\Grid\ResponseBuilder;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -11,30 +11,12 @@ use Symfony\Component\HttpFoundation\Response;
 
 class ExcludedCategoriesController extends FrameworkBundleAdminController
 {
-    public function indexAction(Request $request): ?Response
+    public function indexAction(): ?Response
     {
-        $gridDefinitionFactory = $this->get('alma.category_grid_definition_factory');
-        $gridDefinition = $gridDefinitionFactory->getDefinition();
-
-        $categoryFilters = $this->get('prestashop.core.grid.filter.form_factory')
-            ->create($gridDefinition);
-
-        $categoryFilters->handleRequest($request);
-
-        $filters = $categoryFilters->isSubmitted() && $categoryFilters->isValid()
-            ? $categoryFilters->getData()
-            : [];
-
-        $searchCriteria = new SearchCriteria(
-            $filters,        // filters
-            'id_category', // orderBy
-            'ASC',     // orderWay
-            0,         // offset
-            100         // limit
-        );
+        $categoryFilters = new CategoryFilters(CategoryFilters::getDefaults());
 
         $categoryGridFactory = $this->get('alma.category_grid_factory');
-        $categoryGrid = $categoryGridFactory->getGrid($searchCriteria);
+        $categoryGrid = $categoryGridFactory->getGrid($categoryFilters);
 
         return $this->render(
             '@Modules/alma/views/templates/admin/excluded_categories.html.twig',
