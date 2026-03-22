@@ -7,6 +7,7 @@ use PrestaShop\Module\Alma\Infrastructure\Form\CartWidgetAdminForm;
 use PrestaShop\Module\Alma\Infrastructure\Form\FeePlansAdminForm;
 use PrestaShop\Module\Alma\Infrastructure\Form\ProductWidgetAdminForm;
 use PrestaShop\Module\Alma\Infrastructure\Repository\ConfigurationRepository;
+use PrestaShop\Module\Alma\Infrastructure\Repository\LanguageRepository;
 
 class MigrationService
 {
@@ -22,15 +23,27 @@ class MigrationService
      * @var FeePlansService
      */
     private FeePlansService $feePlansService;
+    /**
+     * @var PaymentButtonService
+     */
+    private PaymentButtonService $paymentButtonService;
+    /**
+     * @var LanguageRepository
+     */
+    private LanguageRepository $languageRepository;
 
     public function __construct(
         FeePlansProvider $feePlansProvider,
         FeePlansService $feePlansService,
-        ConfigurationRepository $configurationRepository
+        PaymentButtonService $paymentButtonService,
+        ConfigurationRepository $configurationRepository,
+        LanguageRepository $languageRepository
     ) {
         $this->feePlansProvider = $feePlansProvider;
         $this->feePlansService = $feePlansService;
+        $this->paymentButtonService = $paymentButtonService;
         $this->configurationRepository = $configurationRepository;
+        $this->languageRepository = $languageRepository;
     }
 
     /**
@@ -123,6 +136,36 @@ class MigrationService
      */
     public function languageKeyMigration(): void
     {
+        $languageKeys = [
+            'ALMA_PAY_NOW_BUTTON_TITLE' => 'ALMA_PAYNOW_BUTTON_TITLE_%d',
+            'ALMA_PAY_NOW_BUTTON_DESC' => 'ALMA_PAYNOW_BUTTON_DESC_%d',
+            'ALMA_PNX_BUTTON_TITLE' => 'ALMA_PNX_BUTTON_TITLE_%d',
+            'ALMA_PNX_BUTTON_DESC' => 'ALMA_PNX_BUTTON_DESC_%d',
+            'ALMA_PNX_AIR_BUTTON_TITLE' => 'ALMA_CREDIT_BUTTON_TITLE_%d',
+            'ALMA_PNX_AIR_BUTTON_DESC' => 'ALMA_CREDIT_BUTTON_DESC_%d',
+            'ALMA_DEFERRED_BUTTON_TITLE' => 'ALMA_PAYLATER_BUTTON_TITLE_%d',
+            'ALMA_DEFERRED_BUTTON_DESC' => 'ALMA_PAYLATER_BUTTON_DESC_%d',
+            'ALMA_NOT_ELIGIBLE_CATEGORIES' => 'ALMA_EXCLUDED_CATEGORIES_MESSAGE_%d',
+        ];
+        // TODO : Need to add default value of Excluded categories message
+        $defaultPaymentButtonKey = $this->paymentButtonService->defaultFieldsToSave();
+        $languagesStore = $this->languageRepository->getActiveLanguages();
+        foreach ($languageKeys as $oldLanguageKey => $newLanguageKey) {
+            $languageValue = $this->configurationRepository->get($oldLanguageKey);
+            $languageValue = json_decode($languageValue, true);
+            if (is_array($languageValue)) {
+                foreach ($languageValue as $idLang => $value) {
+                    $newLanguageKeyFormated = sprintf($newLanguageKey, $idLang);
+                    $this->configurationRepository->updateValue($newLanguageKeyFormated, $value['string']);
+                }
+            }
+            if (!$languageValue) {
+                foreach ($languagesStore as $value) {
+                    $newLanguageKeyFormated = sprintf($newLanguageKey, $value['id_lang']);
+                    $this->configurationRepository->updateValue($newLanguageKeyFormated, $defaultPaymentButtonKey[$newLanguageKeyFormated]);
+                }
+            }
+        }
     }
 
     /**
