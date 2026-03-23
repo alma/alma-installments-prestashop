@@ -63,6 +63,9 @@ class MigrationService
     public function migrate(): void
     {
         $this->feePlanMigration();
+        $this->widgetMigration();
+        $this->languageKeyMigration();
+        $this->simpleKeyMigration();
     }
 
     /**

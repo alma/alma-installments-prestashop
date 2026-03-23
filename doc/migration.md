@@ -3,6 +3,11 @@ Migration documentation
 
 ## Context
 The migration process allow to migrate configuration data from an old version of the module to a new one, without losing data and configuration.
+To create a migration we need to create a new file in the `upgrade` folder with a file name like `upgrade-{NEW_VERSION}.php` and implement the function `upgrade_module_{NEW_VERSION}`
+and execute all migration needed in this function. In our case we execute the Migration Service that will handle all migration for v5.0.0.
+
+## Link to the documentation
+[Auto-Upgrate PS Documentation](https://devdocs.prestashop-project.org/1.7/modules/creation/enabling-auto-update/#script-name)
 
 ## FeePlan Migration
 For the feePlan migration we get the old feePlan configuration from the key `ALMA_FEE_PLANS`,
