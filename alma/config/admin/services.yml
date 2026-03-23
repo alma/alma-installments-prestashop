@@ -245,6 +245,12 @@ services:
       - '@alma.debug_admin_form'
       - '@alma.configuration_repository'
 
+  alma.asset_service:
+    class: 'PrestaShop\Module\Alma\Application\Service\AssetService'
+    arguments:
+      - '@alma.module'
+      - '@alma.context'
+
   alma.client_configuration:
     class: 'Alma\Client\Application\ClientConfiguration'
     factory: ['@alma.client_configuration_factory', 'create']
