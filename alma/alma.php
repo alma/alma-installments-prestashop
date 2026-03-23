@@ -68,9 +68,6 @@ class Alma extends PaymentModule implements WidgetInterface
      */
     public $confirmUninstall;
 
-    private bool $widgetCartRendered = false;
-    private bool $hookCartRendered = false;
-
     public function __construct()
     {
         $this->name = 'alma';
