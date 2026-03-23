@@ -246,6 +246,19 @@ class MigrationServiceTest extends TestCase
                 ['ALMA_PAYLATER_BUTTON_DESC_1', 'Fast and secure payment by credit card.', true],
                 ['ALMA_EXCLUDED_CATEGORIES_MESSAGE_1', 'Your cart is not eligible for payments with Alma.', true],
             ]);
+        $this->configurationRepository->expects($this->exactly(9))
+            ->method('deleteByName')
+            ->willReturnMap([
+                ['ALMA_PAY_NOW_BUTTON_TITLE', true],
+                ['ALMA_PAY_NOW_BUTTON_DESC', true],
+                ['ALMA_PNX_BUTTON_TITLE', true],
+                ['ALMA_PNX_BUTTON_DESC', true],
+                ['ALMA_PNX_AIR_BUTTON_TITLE', true],
+                ['ALMA_PNX_AIR_BUTTON_DESC', true],
+                ['ALMA_DEFERRED_BUTTON_TITLE', true],
+                ['ALMA_DEFERRED_BUTTON_DESC', true],
+                ['ALMA_NOT_ELIGIBLE_CATEGORIES', true],
+            ]);
         $this->migrationService->languageKeyMigration();
     }
 
@@ -296,6 +309,19 @@ class MigrationServiceTest extends TestCase
                 ['ALMA_PAYLATER_BUTTON_DESC_2', 'Paiement rapide et sécurisé par carte de crédit.', true],
                 ['ALMA_EXCLUDED_CATEGORIES_MESSAGE_1', 'Your cart is not eligible for payments with Alma.', true],
                 ['ALMA_EXCLUDED_CATEGORIES_MESSAGE_2', 'Votre panier n\'est pas éligible aux paiements avec Alma.', true],
+            ]);
+        $this->configurationRepository->expects($this->exactly(9))
+            ->method('deleteByName')
+            ->willReturnMap([
+                ['ALMA_PAY_NOW_BUTTON_TITLE', true],
+                ['ALMA_PAY_NOW_BUTTON_DESC', true],
+                ['ALMA_PNX_BUTTON_TITLE', true],
+                ['ALMA_PNX_BUTTON_DESC', true],
+                ['ALMA_PNX_AIR_BUTTON_TITLE', true],
+                ['ALMA_PNX_AIR_BUTTON_DESC', true],
+                ['ALMA_DEFERRED_BUTTON_TITLE', true],
+                ['ALMA_DEFERRED_BUTTON_DESC', true],
+                ['ALMA_NOT_ELIGIBLE_CATEGORIES', true],
             ]);
         $this->migrationService->languageKeyMigration();
     }
@@ -361,6 +387,19 @@ class MigrationServiceTest extends TestCase
                 ['ALMA_PAYLATER_BUTTON_TITLE_1', 'Buy now Pay in %d days', true],
                 ['ALMA_PAYLATER_BUTTON_DESC_1', 'Fast and secure payment by credit card.', true],
                 ['ALMA_EXCLUDED_CATEGORIES_MESSAGE_1', 'Your cart is not eligible for payments with Alma.', true],
+            ]);
+        $this->configurationRepository->expects($this->exactly(9))
+            ->method('deleteByName')
+            ->willReturnMap([
+                ['ALMA_PAY_NOW_BUTTON_TITLE', true],
+                ['ALMA_PAY_NOW_BUTTON_DESC', true],
+                ['ALMA_PNX_BUTTON_TITLE', true],
+                ['ALMA_PNX_BUTTON_DESC', true],
+                ['ALMA_PNX_AIR_BUTTON_TITLE', true],
+                ['ALMA_PNX_AIR_BUTTON_DESC', true],
+                ['ALMA_DEFERRED_BUTTON_TITLE', true],
+                ['ALMA_DEFERRED_BUTTON_DESC', true],
+                ['ALMA_NOT_ELIGIBLE_CATEGORIES', true],
             ]);
         $this->migrationService->languageKeyMigration();
     }
@@ -446,7 +485,24 @@ class MigrationServiceTest extends TestCase
                 ['ALMA_EXCLUDED_CATEGORIES_MESSAGE_1', 'Your cart is not eligible for payments with Alma.', true],
                 ['ALMA_EXCLUDED_CATEGORIES_MESSAGE_2', 'Votre panier n\'est pas éligible aux paiements avec Alma.', true],
             ]);
+        $this->configurationRepository->expects($this->exactly(9))
+            ->method('deleteByName')
+            ->willReturnMap([
+                ['ALMA_PAY_NOW_BUTTON_TITLE', true],
+                ['ALMA_PAY_NOW_BUTTON_DESC', true],
+                ['ALMA_PNX_BUTTON_TITLE', true],
+                ['ALMA_PNX_BUTTON_DESC', true],
+                ['ALMA_PNX_AIR_BUTTON_TITLE', true],
+                ['ALMA_PNX_AIR_BUTTON_DESC', true],
+                ['ALMA_DEFERRED_BUTTON_TITLE', true],
+                ['ALMA_DEFERRED_BUTTON_DESC', true],
+                ['ALMA_NOT_ELIGIBLE_CATEGORIES', true],
+            ]);
         $this->migrationService->languageKeyMigration();
+    }
+
+    public function simpleKeyMigration(): void
+    {
     }
 
     public function tearDown(): void

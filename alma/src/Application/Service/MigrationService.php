@@ -176,6 +176,7 @@ class MigrationService
                     $this->configurationRepository->updateValue($newLanguageKeyFormated, $defaultValue);
                 }
             }
+            $this->configurationRepository->deleteByName($oldLanguageKey);
         }
     }
 
