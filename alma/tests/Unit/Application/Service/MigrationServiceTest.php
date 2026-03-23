@@ -10,8 +10,12 @@ use PrestaShop\Module\Alma\Application\Service\FeePlansService;
 use PrestaShop\Module\Alma\Application\Service\MigrationService;
 use PrestaShop\Module\Alma\Application\Service\PaymentButtonService;
 use PrestaShop\Module\Alma\Infrastructure\Form\CartWidgetAdminForm;
+use PrestaShop\Module\Alma\Infrastructure\Form\DebugAdminForm;
+use PrestaShop\Module\Alma\Infrastructure\Form\ExcludedCategoriesAdminForm;
 use PrestaShop\Module\Alma\Infrastructure\Form\FeePlansAdminForm;
+use PrestaShop\Module\Alma\Infrastructure\Form\InPageAdminForm;
 use PrestaShop\Module\Alma\Infrastructure\Form\ProductWidgetAdminForm;
+use PrestaShop\Module\Alma\Infrastructure\Form\RefundAdminForm;
 use PrestaShop\Module\Alma\Infrastructure\Repository\ConfigurationRepository;
 use PrestaShop\Module\Alma\Infrastructure\Repository\LanguageRepository;
 use PrestaShop\Module\Alma\Tests\Mocks\FeePlansMock;
@@ -501,8 +505,68 @@ class MigrationServiceTest extends TestCase
         $this->migrationService->languageKeyMigration();
     }
 
-    public function simpleKeyMigration(): void
+    public function testSimpleKeyMigrationWithAllKeysExist()
     {
+        $this->configurationRepository->expects($this->exactly(5))
+            ->method('get')
+            ->willReturnMap([
+                ['ALMA_CATEGORIES_WDGT_NOT_ELGBL', '1'],
+                ['ALMA_STATE_REFUND_ENABLED', '0'],
+                ['ALMA_STATE_REFUND', '7'],
+                ['ALMA_ACTIVATE_INPAGE', '0'],
+                ['ALMA_ACTIVATE_LOGGING_ON', '0'],
+            ]);
+        $this->configurationRepository->expects($this->exactly(5))
+            ->method('updateValue')
+            ->willReturnMap([
+                [ExcludedCategoriesAdminForm::KEY_FIELD_EXCLUDED_CATEGORIES_WIDGET_DISPLAY_NOT_ELIGIBLE, '1', true],
+                [RefundAdminForm::KEY_FIELD_REFUND_ON_CHANGE_STATE, '0', true],
+                [RefundAdminForm::KEY_FIELD_STATE_REFUND_SELECT, '7', true],
+                [InPageAdminForm::KEY_FIELD_INPAGE_STATE, '0', true],
+                [DebugAdminForm::KEY_FIELD_DEBUG_STATE, '0', true],
+            ]);
+        $this->configurationRepository->expects($this->exactly(5))
+            ->method('deleteByName')
+            ->willReturnMap([
+                ['ALMA_CATEGORIES_WDGT_NOT_ELGBL', true],
+                ['ALMA_STATE_REFUND_ENABLED', true],
+                ['ALMA_STATE_REFUND', true],
+                ['ALMA_ACTIVATE_INPAGE', true],
+                ['ALMA_ACTIVATE_LOGGING_ON', true],
+            ]);
+        $this->migrationService->simpleKeyMigration();
+    }
+
+    public function testSimpleKeyMigrationWithKeysDoesNotExist()
+    {
+        $this->configurationRepository->expects($this->exactly(5))
+            ->method('get')
+            ->willReturnMap([
+                ['ALMA_CATEGORIES_WDGT_NOT_ELGBL', ''],
+                ['ALMA_STATE_REFUND_ENABLED', ''],
+                ['ALMA_STATE_REFUND', ''],
+                ['ALMA_ACTIVATE_INPAGE', ''],
+                ['ALMA_ACTIVATE_LOGGING_ON', ''],
+            ]);
+        $this->configurationRepository->expects($this->exactly(5))
+            ->method('updateValue')
+            ->willReturnMap([
+                [ExcludedCategoriesAdminForm::KEY_FIELD_EXCLUDED_CATEGORIES_WIDGET_DISPLAY_NOT_ELIGIBLE, '1', true],
+                [RefundAdminForm::KEY_FIELD_REFUND_ON_CHANGE_STATE, '0', true],
+                [RefundAdminForm::KEY_FIELD_STATE_REFUND_SELECT, '7', true],
+                [InPageAdminForm::KEY_FIELD_INPAGE_STATE, '1', true],
+                [DebugAdminForm::KEY_FIELD_DEBUG_STATE, '0', true],
+            ]);
+        $this->configurationRepository->expects($this->exactly(5))
+            ->method('deleteByName')
+            ->willReturnMap([
+                ['ALMA_CATEGORIES_WDGT_NOT_ELGBL', true],
+                ['ALMA_STATE_REFUND_ENABLED', true],
+                ['ALMA_STATE_REFUND', true],
+                ['ALMA_ACTIVATE_INPAGE', true],
+                ['ALMA_ACTIVATE_LOGGING_ON', true],
+            ]);
+        $this->migrationService->simpleKeyMigration();
     }
 
     public function tearDown(): void

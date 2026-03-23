@@ -55,6 +55,7 @@ For the other keys we just need to change the key name:
 - `ALMA_STATE_REFUND` => `ALMA_STATE_REFUND_SELECT`
 - `ALMA_ACTIVATE_INPAGE` => `ALMA_INPAGE_STATE`
 - `ALMA_ACTIVATE_LOGGING_ON` => `ALMA_DEBUG_STATE`
+If the key doesn't exist in the old version of the module, we create it with a default value.
 
 And some keys are not changed because they are still used in the new version of the module:
 - `ALMA_INPAGE_PAYMENT_BUTTON_SELECTOR` => `ALMA_INPAGE_PAYMENT_BUTTON_SELECTOR` // No change

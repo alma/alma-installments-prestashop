@@ -4,8 +4,13 @@ namespace PrestaShop\Module\Alma\Application\Service;
 
 use PrestaShop\Module\Alma\Application\Provider\FeePlansProvider;
 use PrestaShop\Module\Alma\Infrastructure\Form\CartWidgetAdminForm;
+use PrestaShop\Module\Alma\Infrastructure\Form\DebugAdminForm;
+use PrestaShop\Module\Alma\Infrastructure\Form\ExcludedCategoriesAdminForm;
 use PrestaShop\Module\Alma\Infrastructure\Form\FeePlansAdminForm;
+use PrestaShop\Module\Alma\Infrastructure\Form\InPageAdminForm;
+use PrestaShop\Module\Alma\Infrastructure\Form\PaymentButtonAdminForm;
 use PrestaShop\Module\Alma\Infrastructure\Form\ProductWidgetAdminForm;
+use PrestaShop\Module\Alma\Infrastructure\Form\RefundAdminForm;
 use PrestaShop\Module\Alma\Infrastructure\Repository\ConfigurationRepository;
 use PrestaShop\Module\Alma\Infrastructure\Repository\LanguageRepository;
 
@@ -143,15 +148,15 @@ class MigrationService
     public function languageKeyMigration(): void
     {
         $languageKeys = [
-            'ALMA_PAY_NOW_BUTTON_TITLE' => 'ALMA_PAYNOW_BUTTON_TITLE_%d',
-            'ALMA_PAY_NOW_BUTTON_DESC' => 'ALMA_PAYNOW_BUTTON_DESC_%d',
-            'ALMA_PNX_BUTTON_TITLE' => 'ALMA_PNX_BUTTON_TITLE_%d',
-            'ALMA_PNX_BUTTON_DESC' => 'ALMA_PNX_BUTTON_DESC_%d',
-            'ALMA_PNX_AIR_BUTTON_TITLE' => 'ALMA_CREDIT_BUTTON_TITLE_%d',
-            'ALMA_PNX_AIR_BUTTON_DESC' => 'ALMA_CREDIT_BUTTON_DESC_%d',
-            'ALMA_DEFERRED_BUTTON_TITLE' => 'ALMA_PAYLATER_BUTTON_TITLE_%d',
-            'ALMA_DEFERRED_BUTTON_DESC' => 'ALMA_PAYLATER_BUTTON_DESC_%d',
-            'ALMA_NOT_ELIGIBLE_CATEGORIES' => 'ALMA_EXCLUDED_CATEGORIES_MESSAGE_%d',
+            'ALMA_PAY_NOW_BUTTON_TITLE' => PaymentButtonAdminForm::KEY_FIELD_PAYNOW_BUTTON_TITLE . '_%d',
+            'ALMA_PAY_NOW_BUTTON_DESC' => PaymentButtonAdminForm::KEY_FIELD_PAYNOW_BUTTON_DESC . '_%d',
+            'ALMA_PNX_BUTTON_TITLE' => PaymentButtonAdminForm::KEY_FIELD_PNX_BUTTON_TITLE . '_%d',
+            'ALMA_PNX_BUTTON_DESC' => PaymentButtonAdminForm::KEY_FIELD_PNX_BUTTON_DESC . '_%d',
+            'ALMA_PNX_AIR_BUTTON_TITLE' => PaymentButtonAdminForm::KEY_FIELD_CREDIT_BUTTON_TITLE . '_%d',
+            'ALMA_PNX_AIR_BUTTON_DESC' => PaymentButtonAdminForm::KEY_FIELD_CREDIT_BUTTON_DESC . '_%d',
+            'ALMA_DEFERRED_BUTTON_TITLE' => PaymentButtonAdminForm::KEY_FIELD_PAYLATER_BUTTON_TITLE . '_%d',
+            'ALMA_DEFERRED_BUTTON_DESC' => PaymentButtonAdminForm::KEY_FIELD_PAYLATER_BUTTON_DESC . '_%d',
+            'ALMA_NOT_ELIGIBLE_CATEGORIES' => ExcludedCategoriesAdminForm::KEY_FIELD_EXCLUDED_CATEGORIES_MESSAGE . '_%d',
         ];
         $defaultPaymentButtonKey = $this->paymentButtonService->defaultFieldsToSave();
         $defaultExcludedCategoriesKey = $this->excludedCategoriesService->defaultFieldsToSave();
@@ -186,5 +191,35 @@ class MigrationService
      */
     public function simpleKeyMigration(): void
     {
+        $simpleKeyToMigrate = [
+            'ALMA_CATEGORIES_WDGT_NOT_ELGBL' => ExcludedCategoriesAdminForm::KEY_FIELD_EXCLUDED_CATEGORIES_WIDGET_DISPLAY_NOT_ELIGIBLE,
+            'ALMA_STATE_REFUND_ENABLED' => RefundAdminForm::KEY_FIELD_REFUND_ON_CHANGE_STATE,
+            'ALMA_STATE_REFUND' => RefundAdminForm::KEY_FIELD_STATE_REFUND_SELECT,
+            'ALMA_ACTIVATE_INPAGE' => InPageAdminForm::KEY_FIELD_INPAGE_STATE,
+            'ALMA_ACTIVATE_LOGGING_ON' => DebugAdminForm::KEY_FIELD_DEBUG_STATE
+        ];
+
+        foreach ($simpleKeyToMigrate as $oldKey => $newKey) {
+            $oldValue = $this->configurationRepository->get($oldKey);
+            $defaultValue = '';
+            if ($oldValue === '') {
+                switch ($newKey) {
+                    case InPageAdminForm::KEY_FIELD_INPAGE_STATE:
+                    case ExcludedCategoriesAdminForm::KEY_FIELD_EXCLUDED_CATEGORIES_WIDGET_DISPLAY_NOT_ELIGIBLE:
+                        $defaultValue = '1';
+                        break;
+                    case DebugAdminForm::KEY_FIELD_DEBUG_STATE:
+                    case RefundAdminForm::KEY_FIELD_REFUND_ON_CHANGE_STATE:
+                        $defaultValue = '0';
+                        break;
+                    case RefundAdminForm::KEY_FIELD_STATE_REFUND_SELECT:
+                        $defaultValue = '7';
+                        break;
+                }
+                $oldValue = $defaultValue;
+            }
+            $this->configurationRepository->updateValue($newKey, $oldValue);
+            $this->configurationRepository->deleteByName($oldKey);
+        }
     }
 }
