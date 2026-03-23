@@ -35,6 +35,20 @@
                 <file>../alma/config/index.php</file>
                 <file>../alma/config/admin/index.php</file>
                 <file>../alma/config/front/index.php</file>
+                <file>../alma/src/index.php</file>
+                <file>../alma/src/Application/index.php</file>
+                <file>../alma/src/Application/Exception/index.php</file>
+                <file>../alma/src/Application/Helper/index.php</file>
+                <file>../alma/src/Application/Presenter/index.php</file>
+                <file>../alma/src/Application/Provider/index.php</file>
+                <file>../alma/src/Application/Service/index.php</file>
+                <file>../alma/src/Infrastructure/index.php</file>
+                <file>../alma/src/Infrastructure/Controller/index.php</file>
+                <file>../alma/src/Infrastructure/Factory/index.php</file>
+                <file>../alma/src/Infrastructure/Form/index.php</file>
+                <file>../alma/src/Infrastructure/Model/index.php</file>
+                <file>../alma/src/Infrastructure/Proxy/index.php</file>
+                <file>../alma/src/Infrastructure/Repository/index.php</file>
             </exclude>
         </whitelist>
     </filter>
