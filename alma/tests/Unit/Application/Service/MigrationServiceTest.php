@@ -5,6 +5,7 @@ namespace PrestaShop\Module\Alma\Tests\Unit\Application\Service;
 use Alma\Client\Domain\Entity\FeePlanList;
 use PHPUnit\Framework\TestCase;
 use PrestaShop\Module\Alma\Application\Provider\FeePlansProvider;
+use PrestaShop\Module\Alma\Application\Service\ExcludedCategoriesService;
 use PrestaShop\Module\Alma\Application\Service\FeePlansService;
 use PrestaShop\Module\Alma\Application\Service\MigrationService;
 use PrestaShop\Module\Alma\Application\Service\PaymentButtonService;
@@ -41,18 +42,24 @@ class MigrationServiceTest extends TestCase
      * @var LanguageRepository
      */
     private $languageRepository;
+    /**
+     * @var ExcludedCategoriesService
+     */
+    private $excludedCategoriesService;
 
     public function setUp(): void
     {
         $this->feePlansProvider = $this->createMock(FeePlansProvider::class);
         $this->feePlansService = $this->createMock(FeePlansService::class);
         $this->paymentButtonService = $this->createMock(PaymentButtonService::class);
+        $this->excludedCategoriesService = $this->createMock(ExcludedCategoriesService::class);
         $this->configurationRepository = $this->createMock(ConfigurationRepository::class);
         $this->languageRepository = $this->createMock(LanguageRepository::class);
         $this->migrationService = new MigrationService(
             $this->feePlansProvider,
             $this->feePlansService,
             $this->paymentButtonService,
+            $this->excludedCategoriesService,
             $this->configurationRepository,
             $this->languageRepository
         );
@@ -330,6 +337,11 @@ class MigrationServiceTest extends TestCase
                 'ALMA_CREDIT_BUTTON_DESC_1' => 'Fast and secure payment by credit card.',
                 'ALMA_PAYLATER_BUTTON_TITLE_1' => 'Buy now Pay in %d days',
                 'ALMA_PAYLATER_BUTTON_DESC_1' => 'Fast and secure payment by credit card.',
+            ]);
+        $this->excludedCategoriesService->expects($this->once())
+            ->method('defaultFieldsToSave')
+            ->willReturn([
+                'ALMA_EXCLUDED_CATEGORIES_WIDGET_DISPLAY_NOT_ELIGIBLE' => 1,
                 'ALMA_EXCLUDED_CATEGORIES_MESSAGE_1' => 'Your cart is not eligible for payments with Alma.',
             ]);
         $this->languageRepository->expects($this->once())
@@ -398,6 +410,11 @@ class MigrationServiceTest extends TestCase
                 'ALMA_PAYLATER_BUTTON_TITLE_2' => 'Achetez maintenant Payez dans %d jours',
                 'ALMA_PAYLATER_BUTTON_DESC_1' => 'Fast and secure payment by credit card.',
                 'ALMA_PAYLATER_BUTTON_DESC_2' => 'Paiement rapide et sécurisé par carte de crédit.',
+            ]);
+        $this->excludedCategoriesService->expects($this->once())
+            ->method('defaultFieldsToSave')
+            ->willReturn([
+                'ALMA_EXCLUDED_CATEGORIES_WIDGET_DISPLAY_NOT_ELIGIBLE' => 1,
                 'ALMA_EXCLUDED_CATEGORIES_MESSAGE_1' => 'Your cart is not eligible for payments with Alma.',
                 'ALMA_EXCLUDED_CATEGORIES_MESSAGE_2' => 'Votre panier n\'est pas éligible aux paiements avec Alma.',
             ]);

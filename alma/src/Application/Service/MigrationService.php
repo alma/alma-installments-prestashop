@@ -31,17 +31,23 @@ class MigrationService
      * @var LanguageRepository
      */
     private LanguageRepository $languageRepository;
+    /**
+     * @var ExcludedCategoriesService
+     */
+    private ExcludedCategoriesService $excludedCategoriesService;
 
     public function __construct(
         FeePlansProvider $feePlansProvider,
         FeePlansService $feePlansService,
         PaymentButtonService $paymentButtonService,
+        ExcludedCategoriesService $excludedCategoriesService,
         ConfigurationRepository $configurationRepository,
         LanguageRepository $languageRepository
     ) {
         $this->feePlansProvider = $feePlansProvider;
         $this->feePlansService = $feePlansService;
         $this->paymentButtonService = $paymentButtonService;
+        $this->excludedCategoriesService = $excludedCategoriesService;
         $this->configurationRepository = $configurationRepository;
         $this->languageRepository = $languageRepository;
     }
@@ -147,8 +153,8 @@ class MigrationService
             'ALMA_DEFERRED_BUTTON_DESC' => 'ALMA_PAYLATER_BUTTON_DESC_%d',
             'ALMA_NOT_ELIGIBLE_CATEGORIES' => 'ALMA_EXCLUDED_CATEGORIES_MESSAGE_%d',
         ];
-        // TODO : Need to add default value of Excluded categories message
         $defaultPaymentButtonKey = $this->paymentButtonService->defaultFieldsToSave();
+        $defaultExcludedCategoriesKey = $this->excludedCategoriesService->defaultFieldsToSave();
         $languagesStore = $this->languageRepository->getActiveLanguages();
         foreach ($languageKeys as $oldLanguageKey => $newLanguageKey) {
             $languageValue = $this->configurationRepository->get($oldLanguageKey);
@@ -162,7 +168,12 @@ class MigrationService
             if (!$languageValue) {
                 foreach ($languagesStore as $value) {
                     $newLanguageKeyFormated = sprintf($newLanguageKey, $value['id_lang']);
-                    $this->configurationRepository->updateValue($newLanguageKeyFormated, $defaultPaymentButtonKey[$newLanguageKeyFormated]);
+                    if (str_contains($newLanguageKeyFormated, 'EXCLUDED_CATEGORIES_MESSAGE')) {
+                        $defaultValue = $defaultExcludedCategoriesKey[$newLanguageKeyFormated];
+                    } else {
+                        $defaultValue = $defaultPaymentButtonKey[$newLanguageKeyFormated];
+                    }
+                    $this->configurationRepository->updateValue($newLanguageKeyFormated, $defaultValue);
                 }
             }
         }
