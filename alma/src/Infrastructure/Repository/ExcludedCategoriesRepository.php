@@ -1,11 +1,10 @@
 <?php
 
-namespace PrestaShop\Module\Alma\Application\Provider;
+namespace PrestaShop\Module\Alma\Infrastructure\Repository;
 
 use PrestaShop\Module\Alma\Infrastructure\Form\ExcludedCategoriesAdminForm;
-use PrestaShop\Module\Alma\Infrastructure\Repository\ConfigurationRepository;
 
-class ExcludedCategoryProvider
+class ExcludedCategoriesRepository
 {
     /**
      * @var ConfigurationRepository
@@ -24,5 +23,13 @@ class ExcludedCategoryProvider
         );
 
         return $saved ? json_decode($saved, true) : [];
+    }
+
+    public function update(array $categoriesIds): void
+    {
+        $this->configurationRepository->updateValue(
+            ExcludedCategoriesAdminForm::KEY_FIELD_EXCLUDED_CATEGORIES,
+            json_encode($categoriesIds)
+        );
     }
 }

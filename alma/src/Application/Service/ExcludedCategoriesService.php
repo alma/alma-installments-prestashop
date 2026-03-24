@@ -5,6 +5,7 @@ namespace PrestaShop\Module\Alma\Application\Service;
 use PrestaShop\Module\Alma\Infrastructure\Form\ApiAdminForm;
 use PrestaShop\Module\Alma\Infrastructure\Form\ExcludedCategoriesAdminForm;
 use PrestaShop\Module\Alma\Infrastructure\Repository\ConfigurationRepository;
+use PrestaShop\Module\Alma\Infrastructure\Repository\ExcludedCategoriesRepository;
 use PrestaShop\Module\Alma\Infrastructure\Repository\LanguageRepository;
 use PrestaShopBundle\Translation\TranslatorInterface;
 
@@ -23,14 +24,20 @@ class ExcludedCategoriesService
      * @var TranslatorInterface
      */
     private TranslatorInterface $translator;
+    /**
+     * @var ExcludedCategoriesRepository
+     */
+    private ExcludedCategoriesRepository $excludedCategoriesRepository;
 
     public function __construct(
         \Context $context,
+        ExcludedCategoriesRepository $excludedCategoriesRepository,
         ConfigurationRepository $configurationRepository,
         LanguageRepository $languageRepository,
         TranslatorInterface $translator
     ) {
         $this->context = $context;
+        $this->excludedCategoriesRepository = $excludedCategoriesRepository;
         $this->configurationRepository = $configurationRepository;
         $this->languageRepository = $languageRepository;
         $this->translator = $translator;
@@ -74,32 +81,29 @@ class ExcludedCategoriesService
     }
 
     /**
+     * Add categories to the excluded categories list
      * @param array $newCategoriesIds
      */
     public function addExcludeCategories(array $newCategoriesIds): void
     {
-        $categoriesIdsFromDb = $this->configurationRepository->get(ExcludedCategoriesAdminForm::KEY_FIELD_EXCLUDED_CATEGORIES);
-        $categoriesIdsFromDb = json_decode($categoriesIdsFromDb, true) ?? [];
+        $categoriesIdsFromDb = $this->excludedCategoriesRepository->getIds();
 
         $categoriesIdsToSave = array_merge($categoriesIdsFromDb, $newCategoriesIds);
         $categoriesIdsToSave = array_unique($categoriesIdsToSave);
 
-        $this->configurationRepository->updateValue(ExcludedCategoriesAdminForm::KEY_FIELD_EXCLUDED_CATEGORIES, json_encode($categoriesIdsToSave));
+        $this->excludedCategoriesRepository->update($categoriesIdsToSave);
     }
 
-    public function removeExcludeCategories($categoryIds)
+    /**
+     * Remove categories from the excluded categories list
+     * @param array $categoryIds
+     */
+    public function removeExcludeCategories(array $categoryIds)
     {
-        $savedCategories = $this->configurationRepository->get(
-            ExcludedCategoriesAdminForm::KEY_FIELD_EXCLUDED_CATEGORIES
-        );
+        $categoriesIdsFromDb = $this->excludedCategoriesRepository->getIds();
 
-        $existingIds = $savedCategories ? json_decode($savedCategories, true) : [];
+        $updatedIds = array_values(array_diff($categoriesIdsFromDb, $categoryIds));
 
-        $updatedIds = array_values(array_diff($existingIds, $categoryIds));
-
-        $this->configurationRepository->updateValue(
-            ExcludedCategoriesAdminForm::KEY_FIELD_EXCLUDED_CATEGORIES,
-            json_encode($updatedIds)
-        );
+        $this->excludedCategoriesRepository->update($updatedIds);
     }
 }

@@ -138,6 +138,11 @@ services:
     arguments:
       - '@alma.context'
 
+  alma.excluded_categories_repository:
+    class: 'PrestaShop\Module\Alma\Infrastructure\Repository\ExcludedCategoriesRepository'
+    arguments:
+      - '@alma.configuration_repository'
+
   alma.tools_proxy:
     class: 'PrestaShop\Module\Alma\Infrastructure\Proxy\ToolsProxy'
 
@@ -185,6 +190,7 @@ services:
     class: 'PrestaShop\Module\Alma\Application\Service\ExcludedCategoriesService'
     arguments:
       - '@alma.context'
+      - '@alma.excluded_categories_repository'
       - '@alma.configuration_repository'
       - '@alma.language_repository'
       - '@translator'
@@ -281,11 +287,6 @@ services:
       - '@alma.merchant_endpoint'
       - '@alma.configuration_repository'
 
-  alma.excluded_category_provider:
-    class: 'PrestaShop\Module\Alma\Application\Provider\ExcludedCategoryProvider'
-    arguments:
-      - '@alma.configuration_repository'
-
   alma.environment:
     class: 'Alma\Client\Domain\ValueObject\Environment'
     factory: ['@alma.environment_factory', 'create']
@@ -320,7 +321,7 @@ services:
     arguments:
       - '@=service("prestashop.adapter.legacy.context").getContext().language.id'
       - '@=service("prestashop.adapter.legacy.context").getContext().shop.id'
-      - '@=service("alma.excluded_category_provider").getIds()'
+      - '@=service("alma.excluded_categories_repository").getIds()'
     public: true
 
   alma.category_data_factory:
