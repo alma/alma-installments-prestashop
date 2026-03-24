@@ -4,6 +4,7 @@ watch:
     - tests
   exclude:
     - vendor
+    - '**/index.php'
   fileMask: '*.php'
   ignoreDotFiles: true
   ignoreVCS: true
