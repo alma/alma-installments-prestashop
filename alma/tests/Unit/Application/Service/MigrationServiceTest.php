@@ -2,11 +2,8 @@
 
 namespace PrestaShop\Module\Alma\Tests\Unit\Application\Service;
 
-use Alma\Client\Domain\Entity\FeePlanList;
 use PHPUnit\Framework\TestCase;
-use PrestaShop\Module\Alma\Application\Provider\FeePlansProvider;
 use PrestaShop\Module\Alma\Application\Service\ExcludedCategoriesService;
-use PrestaShop\Module\Alma\Application\Service\FeePlansService;
 use PrestaShop\Module\Alma\Application\Service\MigrationService;
 use PrestaShop\Module\Alma\Application\Service\PaymentButtonService;
 use PrestaShop\Module\Alma\Infrastructure\Form\CartWidgetAdminForm;
@@ -18,7 +15,6 @@ use PrestaShop\Module\Alma\Infrastructure\Form\ProductWidgetAdminForm;
 use PrestaShop\Module\Alma\Infrastructure\Form\RefundAdminForm;
 use PrestaShop\Module\Alma\Infrastructure\Repository\ConfigurationRepository;
 use PrestaShop\Module\Alma\Infrastructure\Repository\LanguageRepository;
-use PrestaShop\Module\Alma\Tests\Mocks\FeePlansMock;
 
 class MigrationServiceTest extends TestCase
 {
@@ -30,14 +26,6 @@ class MigrationServiceTest extends TestCase
      * @var ConfigurationRepository
      */
     private $configurationRepository;
-    /**
-     * @var FeePlansProvider
-     */
-    private $feePlansProvider;
-    /**
-     * @var FeePlansService
-     */
-    private $feePlansService;
     /**
      * @var PaymentButtonService
      */
@@ -53,15 +41,11 @@ class MigrationServiceTest extends TestCase
 
     public function setUp(): void
     {
-        $this->feePlansProvider = $this->createMock(FeePlansProvider::class);
-        $this->feePlansService = $this->createMock(FeePlansService::class);
         $this->paymentButtonService = $this->createMock(PaymentButtonService::class);
         $this->excludedCategoriesService = $this->createMock(ExcludedCategoriesService::class);
         $this->configurationRepository = $this->createMock(ConfigurationRepository::class);
         $this->languageRepository = $this->createMock(LanguageRepository::class);
         $this->migrationService = new MigrationService(
-            $this->feePlansProvider,
-            $this->feePlansService,
             $this->paymentButtonService,
             $this->excludedCategoriesService,
             $this->configurationRepository,
@@ -83,34 +67,15 @@ class MigrationServiceTest extends TestCase
         $this->migrationService->feePlanMigration();
     }
 
-    public function testFeePlanMigrationWithoutOldDataOrWithoutKeyInConfiguration()
+    public function testFeePlanMigrationWithoutOldDataOrWithoutKeyInConfigurationReturnEmptyFeePlan()
     {
         $oldDataFeePlan = '';
-        $newDataFeePlanToSave = '{"general_1_0_0":{"state":"0","min_amount":"100","max_amount":"200000","sort_order":"1"},"general_2_0_0":{"state":"0","min_amount":"10000","max_amount":"200000","sort_order":"2"},"general_3_0_0":{"state":"1","min_amount":"10000","max_amount":"200000","sort_order":"3"},"general_4_0_0":{"state":"0","min_amount":"10000","max_amount":"200000","sort_order":"4"}}';
-        $feePlanP1x = FeePlansMock::feePlan(1, 0, 0, false, 100);
-        $feePlanP2x = FeePlansMock::feePlan(2, 0, 0, false);
-        $feePlanP3x = FeePlansMock::feePlan(3);
-        $feePlanP4x = FeePlansMock::feePlan(4, 0, 0, false);
-
-        $feePlanList = new FeePlanList([$feePlanP1x, $feePlanP2x, $feePlanP3x, $feePlanP4x]);
-        $fieldFeePlan[FeePlansAdminForm::KEY_FIELD_FEE_PLAN_LIST] = array_merge(
-            FeePlansMock::almaFeePlanFromDb(1, 0, 0, '0', '100', '200000', '1'),
-            FeePlansMock::almaFeePlanFromDb(2, 0, 0, '0', '10000', '200000', '2'),
-            FeePlansMock::almaFeePlanFromDb(3, 0, 0, '1', '10000', '200000', '3'),
-            FeePlansMock::almaFeePlanFromDb(4, 0, 0, '0', '10000', '200000', '4')
-        );
+        $newDataFeePlanToSave = '[]';
 
         $this->configurationRepository->expects($this->once())
             ->method('get')
             ->with('ALMA_FEE_PLANS')
             ->willReturn($oldDataFeePlan);
-        $this->feePlansProvider->expects($this->once())
-            ->method('getFeePlanList')
-            ->willReturn($feePlanList);
-        $this->feePlansService->expects($this->once())
-            ->method('fieldsToSaveFromApi')
-            ->with($feePlanList)
-            ->willReturn($fieldFeePlan);
         $this->configurationRepository->expects($this->once())
             ->method('updateValue')
             ->with(FeePlansAdminForm::KEY_FIELD_FEE_PLAN_LIST, $newDataFeePlanToSave);

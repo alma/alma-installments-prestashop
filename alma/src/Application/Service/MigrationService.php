@@ -2,7 +2,6 @@
 
 namespace PrestaShop\Module\Alma\Application\Service;
 
-use PrestaShop\Module\Alma\Application\Provider\FeePlansProvider;
 use PrestaShop\Module\Alma\Infrastructure\Form\CartWidgetAdminForm;
 use PrestaShop\Module\Alma\Infrastructure\Form\DebugAdminForm;
 use PrestaShop\Module\Alma\Infrastructure\Form\ExcludedCategoriesAdminForm;
@@ -21,14 +20,6 @@ class MigrationService
      */
     private ConfigurationRepository $configurationRepository;
     /**
-     * @var FeePlansProvider
-     */
-    private FeePlansProvider $feePlansProvider;
-    /**
-     * @var FeePlansService
-     */
-    private FeePlansService $feePlansService;
-    /**
      * @var PaymentButtonService
      */
     private PaymentButtonService $paymentButtonService;
@@ -42,15 +33,11 @@ class MigrationService
     private ExcludedCategoriesService $excludedCategoriesService;
 
     public function __construct(
-        FeePlansProvider $feePlansProvider,
-        FeePlansService $feePlansService,
         PaymentButtonService $paymentButtonService,
         ExcludedCategoriesService $excludedCategoriesService,
         ConfigurationRepository $configurationRepository,
         LanguageRepository $languageRepository
     ) {
-        $this->feePlansProvider = $feePlansProvider;
-        $this->feePlansService = $feePlansService;
         $this->paymentButtonService = $paymentButtonService;
         $this->excludedCategoriesService = $excludedCategoriesService;
         $this->configurationRepository = $configurationRepository;
@@ -85,12 +72,6 @@ class MigrationService
                 'max_amount' => (string) $feePlan['max'],
                 'sort_order' => (string) $feePlan['order']
             ];
-        }
-
-        if (empty($newDataConfiguration)) {
-            $feePlanList = $this->feePlansProvider->getFeePlanList();
-            $fieldFeePlan = $this->feePlansService->fieldsToSaveFromApi($feePlanList);
-            $newDataConfiguration = $fieldFeePlan[FeePlansAdminForm::KEY_FIELD_FEE_PLAN_LIST];
         }
 
         $newDataConfiguration = json_encode($newDataConfiguration);
