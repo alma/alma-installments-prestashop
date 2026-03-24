@@ -10,6 +10,8 @@ We will use the widget Interface to display our widget in the front office.
 ## Inject the widget CDN
 We need to inject the widget CDN in the hook `actionFrontControllerSetMedia` to insert assets in the header of the page needed.
 [Asset Management Doc](https://devdocs.prestashop-project.org/1.7/themes/getting-started/asset-management/#registering-assets)
+To check if we load the assets, we need to check the `php_self` of the controller or the name of the controller.
+We load the asset for php_self `product`, `cart` and `index` or for controllers `ProductController`, `CartController` and `IndexController`.
 
 ### Architecture
 - `WidgetService::ALLOWED_CONTROLLERS` defines the list of allowed controllers as a map `ClassName => php_self` (e.g. `'ProductController' => 'product'`). This is the single source of truth for pages where the widget is available.
