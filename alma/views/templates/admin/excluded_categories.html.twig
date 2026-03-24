@@ -1,5 +1,38 @@
 {% extends '@PrestaShop/Admin/layout.html.twig' %}
 
 {% block content %}
-    Page Excluded Categories
+    {{ include('@PrestaShop/Admin/Common/Grid/grid_panel.html.twig', {
+        'grid': categoryGrid
+    }) }}
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        // JavaScript to handle bulk actions in the excluded categories grid
+        // The JavaScript uses `grid.getContainer()` to find the checkboxes and the button. The problem is that the grid isn't initialized for your custom grid.
+        // This JavaScript is an ES6 module that's part of PrestaShop's grid system; it needs to be explicitly instantiated. In the native back office, each grid is initialized in a dedicated JavaScript file.
+        $(document).ready(function() {
+            const container = $('#alma_excluded_categories_grid');
+
+            container.on('change', '.js-bulk-action-checkbox', function() {
+                const checkedCount = container.find('.js-bulk-action-checkbox:checked').length;
+                container.find('.js-bulk-actions-btn').prop('disabled', checkedCount === 0);
+            });
+
+            container.on('change', '.js-bulk-action-select-all', function() {
+                const isChecked = $(this).is(':checked');
+                container.find('.js-bulk-action-checkbox').prop('checked', isChecked);
+                container.find('.js-bulk-actions-btn').prop('disabled', !isChecked);
+            });
+
+            container.on('click', '.js-bulk-action-submit-btn', function(e) {
+                e.preventDefault();
+                const form = container.find('form');
+                const action = $(this).data('form-url');
+                form.attr('action', action);
+                form.submit();
+            });
+        });
+    </script>
 {% endblock %}

@@ -1,5 +1,11 @@
 alma_excluded_categories:
   path: /alma/excluded-categories
-  methods: [GET, POST]
+  methods: [GET]
   defaults:
     _controller: 'PrestaShop\Module\Alma\Infrastructure\Controller\ExcludedCategoriesController::indexAction'
+
+alma_excluded_categories_bulk_exclude:
+  path: /alma/excluded-categories/bulk-exclude
+  methods: [POST]
+  defaults:
+    _controller: 'PrestaShop\Module\Alma\Infrastructure\Controller\ExcludedCategoriesController::bulkExcludeAction'
