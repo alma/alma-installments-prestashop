@@ -26,11 +26,6 @@ class ExcludedCategoriesController extends FrameworkBundleAdminController
 
     public function bulkExcludeAction(Request $request): RedirectResponse
     {
-        return $this->redirectToRoute('alma_excluded_categories');
-    }
-
-    public function bulkExcludeAction(Request $request): RedirectResponse
-    {
         $categoryIds = $request->request->get('alma_excluded_categories_bulk', []);
         /** @var ExcludedCategoriesService $excludedCategoriesService */
         $excludedCategoriesService = $this->get('alma.excluded_categories_service');
