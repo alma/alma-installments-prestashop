@@ -337,3 +337,13 @@ services:
     decorates: 'alma.category_data_factory'
     arguments:
       - '@alma.category_grid_data_factory.inner'
+
+  alma.migration_service:
+    class: 'PrestaShop\Module\Alma\Application\Service\MigrationService'
+    arguments:
+      - '@alma.fee_plans_provider'
+      - '@alma.fee_plans_service'
+      - '@alma.payment_button_service'
+      - '@alma.excluded_categories_service'
+      - '@alma.configuration_repository'
+      - '@alma.language_repository'
