@@ -43,44 +43,4 @@ class ExcludedCategoriesController extends FrameworkBundleAdminController
 
         return $this->redirectToRoute('alma_excluded_categories');
     }
-
-    public function bulkExcludeAction(Request $request): RedirectResponse
-    {
-        $categoryIds = $request->request->get('alma_excluded_categories_bulk', []);
-        /** @var ExcludedCategoriesService $excludedCategoriesService */
-        $excludedCategoriesService = $this->get('alma.excluded_categories_service');
-        $excludedCategoriesService->addExcludeCategories($categoryIds);
-
-        return $this->redirectToRoute('alma_excluded_categories');
-    }
-
-    public function bulkIncludeAction(Request $request): RedirectResponse
-    {
-        $categoryIds = $request->request->get('alma_excluded_categories_bulk', []);
-        /** @var ExcludedCategoriesService $excludedCategoriesService */
-        $excludedCategoriesService = $this->get('alma.excluded_categories_service');
-        $excludedCategoriesService->removeExcludeCategories($categoryIds);
-
-        return $this->redirectToRoute('alma_excluded_categories');
-    }
-
-    public function bulkExcludeAction(Request $request): RedirectResponse
-    {
-        $categoryIds = $request->request->get('alma_excluded_categories_bulk', []);
-        /** @var ExcludedCategoriesService $excludedCategoriesService */
-        $excludedCategoriesService = $this->get('alma.excluded_categories_service');
-        $excludedCategoriesService->addExcludeCategories($categoryIds);
-
-        return $this->redirectToRoute('alma_excluded_categories');
-    }
-
-    public function bulkIncludeAction(Request $request): RedirectResponse
-    {
-        $categoryIds = $request->request->get('alma_excluded_categories_bulk', []);
-        /** @var ExcludedCategoriesService $excludedCategoriesService */
-        $excludedCategoriesService = $this->get('alma.excluded_categories_service');
-        $excludedCategoriesService->removeExcludeCategories($categoryIds);
-
-        return $this->redirectToRoute('alma_excluded_categories');
-    }
 }
