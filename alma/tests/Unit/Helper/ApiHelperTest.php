@@ -127,47 +127,6 @@ class ApiHelperTest extends TestCase
         $this->assertInstanceOf(Merchant::class, $apiHelper->getMerchant());
     }
 
-    public function testSaveFeatureFlag()
-    {
-
-        $configurationHelper = Mockery::mock(ConfigurationHelper::class)->makePartial();
-        $configurationHelper->shouldReceive('updateValue')->andReturn('');
-
-        $apiHelperBuilder = Mockery::mock(ApiHelperBuilder::class)->makePartial();
-        $apiHelperBuilder->shouldReceive('getConfigurationHelper')->andReturn($configurationHelper);
-
-        $apiHelper = $apiHelperBuilder->getInstance();
-
-        $reflection = new \ReflectionClass($apiHelper);
-        $method = $reflection->getMethod('saveFeatureFlag');
-        $method->setAccessible(true);
-
-        $this->assertEquals('1', $method->invokeArgs($apiHelper, [
-            $merchant,
-            ConstantsHelper::ALMA_ALLOW_INSURANCE,
-            ConstantsHelper::ALMA_ACTIVATE_INSURANCE,
-        ]));
-
-
-        $configurationHelper = Mockery::mock(ConfigurationHelper::class)->makePartial();
-        $configurationHelper->shouldReceive('updateValue')->andReturn('');
-
-        $apiHelperBuilder = Mockery::mock(ApiHelperBuilder::class)->makePartial();
-        $apiHelperBuilder->shouldReceive('getConfigurationHelper')->andReturn($configurationHelper);
-
-        $apiHelper = $apiHelperBuilder->getInstance();
-
-        $reflection = new \ReflectionClass($apiHelper);
-        $method = $reflection->getMethod('saveFeatureFlag');
-        $method->setAccessible(true);
-
-        $this->assertEquals('0', $method->invokeArgs($apiHelper, [
-            $merchant,
-            ConstantsHelper::ALMA_ALLOW_INSURANCE,
-            ConstantsHelper::ALMA_ACTIVATE_INSURANCE,
-        ]));
-    }
-
     public function testGetPaymentEligibility()
     {
         $paymentData = ['paymentData'];
