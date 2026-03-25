@@ -166,8 +166,6 @@ class AssetServiceTest extends TestCase
 
     /**
      * Data provider for controller pages
-     *
-     * @return array
      */
     public function controllerPagesDataProvider(): array
     {
