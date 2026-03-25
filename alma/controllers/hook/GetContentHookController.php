@@ -40,7 +40,6 @@ use Alma\PrestaShop\Proxy\ConfigurationProxy;
 use Alma\PrestaShop\Proxy\ModuleProxy;
 use Alma\PrestaShop\Proxy\ToolsProxy;
 use Alma\PrestaShop\Services\ConfigFormService;
-use Alma\PrestaShop\Services\InsuranceService;
 use Alma\PrestaShop\Services\PsAccountsService;
 use PrestaShop\PsAccountsInstaller\Installer\Exception\ModuleNotInstalledException;
 use PrestaShop\PsAccountsInstaller\Installer\Exception\ModuleVersionException;
@@ -62,10 +61,6 @@ final class GetContentHookController extends AdminHookController
      * @var \Alma\PrestaShop\Proxy\ConfigurationProxy
      */
     protected $configurationProxy;
-    /**
-     * @var \Alma\PrestaShop\Services\InsuranceService
-     */
-    protected $insuranceService;
     /**
      * @var \Alma\PrestaShop\Proxy\ModuleProxy
      */
@@ -92,7 +87,6 @@ final class GetContentHookController extends AdminHookController
 
         $this->toolsProxy = new ToolsProxy();
         $this->configurationProxy = new ConfigurationProxy();
-        $this->insuranceService = new InsuranceService();
         $this->moduleProxy = new ModuleProxy();
 
         parent::__construct($module);
@@ -198,7 +192,6 @@ final class GetContentHookController extends AdminHookController
         }
         $assignSmartyKeys['suggestPSAccounts'] = $params['suggestPSAccounts'];
 
-        $this->insuranceService->installIfCompatible();
         $assignSmartyKeys['form'] = $this->configFormService->getRenderPaymentFormHtml();
         $assignSmartyKeys['hasKey'] = $this->configurationProxy->get(ConfigFormService::ALMA_FULLY_CONFIGURED);
         $assignSmartyKeys['error_messages'] = $messages;
