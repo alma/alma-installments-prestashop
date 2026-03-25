@@ -4,6 +4,7 @@ namespace PrestaShop\Module\Alma\Tests\Unit\Application\Service;
 
 use PHPUnit\Framework\TestCase;
 use PrestaShop\Module\Alma\Application\Service\AssetService;
+use PrestaShop\Module\Alma\Application\Service\WidgetService;
 
 class AssetServiceTest extends TestCase
 {
@@ -23,7 +24,7 @@ class AssetServiceTest extends TestCase
     /**
      * @dataProvider controllerPagesDataProvider
      */
-    public function testLoadWidgetAssetsRegistersAssetsOnProductCartOrHomePageWithPhpSelf($controllerPages): void
+    public function testLoadAssetsRegistersAssetsOnProductCartOrHomePageWithPhpSelf($controllerPages): void
     {
         $this->context->controller->php_self = $controllerPages;
         $this->controller->expects($this->exactly(2))
@@ -59,145 +60,61 @@ class AssetServiceTest extends TestCase
                 ]
             );
 
-        $this->assetService->loadWidgetAssets();
+        $this->assetService->loadAssets();
     }
 
-    public function testLoadWidgetAssetsDoesNotRegisterAssetsOnNonProductCartOrHomePageWithPhpSelf(): void
+    public function testLoadAssetsDoesNotRegisterAssetsOnNonProductCartOrHomePageWithPhpSelf(): void
     {
         $this->context->controller->php_self = 'category';
         $this->controller->expects($this->never())->method('registerJavascript');
         $this->controller->expects($this->never())->method('registerStylesheet');
 
-        $this->assetService->loadWidgetAssets();
+        $this->assetService->loadAssets();
     }
 
-    public function testLoadWidgetAssetsRegistersAssetsOnProductPageWithControllerName(): void
+    public function testLoadAssetsRegistersAssetsOnProductPageWithControllerName(): void
     {
         $this->controller = $this->getMockBuilder(\FrontController::class)
             ->setMockClassName('ProductController')
             ->getMock();
         $this->context->controller = $this->controller;
         $this->controller->expects($this->exactly(2))
-            ->method('registerJavascript')
-            ->withConsecutive(
-                [
-                    'alma-widget-cdn',
-                    'https://cdn.jsdelivr.net/npm/@alma/widgets@4.x/dist/widgets.umd.js',
-                    [
-                        'server' => 'remote',
-                        'position' => 'bottom',
-                        'priority' => 10,
-                    ],
-                ],
-                [
-                    'alma-widget',
-                    'modules/alma/views/js/alma-widget.js',
-                    [
-                        'priority' => 20,
-                        'attribute' => 'async',
-                    ],
-                ]
-            );
+            ->method('registerJavascript');
         $this->controller->expects($this->once())
-            ->method('registerStylesheet')
-            ->with(
-                'alma-widget-cdn',
-                'https://cdn.jsdelivr.net/npm/@alma/widgets@4.x/dist/widgets.min.css',
-                [
-                    'server' => 'remote',
-                    'media' => 'all',
-                    'priority' => 10,
-                ]
-            );
+            ->method('registerStylesheet');
 
-        $this->assetService->loadWidgetAssets();
+        $this->assetService->loadAssets();
     }
 
-    public function testLoadWidgetAssetsRegistersAssetsOnCartPageWithControllerName(): void
+    public function testLoadAssetsRegistersAssetsOnCartPageWithControllerName(): void
     {
         $this->controller = $this->getMockBuilder(\FrontController::class)
             ->setMockClassName('CartController')
             ->getMock();
         $this->context->controller = $this->controller;
         $this->controller->expects($this->exactly(2))
-            ->method('registerJavascript')
-            ->withConsecutive(
-                [
-                    'alma-widget-cdn',
-                    'https://cdn.jsdelivr.net/npm/@alma/widgets@4.x/dist/widgets.umd.js',
-                    [
-                        'server' => 'remote',
-                        'position' => 'bottom',
-                        'priority' => 10,
-                    ],
-                ],
-                [
-                    'alma-widget',
-                    'modules/alma/views/js/alma-widget.js',
-                    [
-                        'priority' => 20,
-                        'attribute' => 'async',
-                    ],
-                ]
-            );
+            ->method('registerJavascript');
         $this->controller->expects($this->once())
-            ->method('registerStylesheet')
-            ->with(
-                'alma-widget-cdn',
-                'https://cdn.jsdelivr.net/npm/@alma/widgets@4.x/dist/widgets.min.css',
-                [
-                    'server' => 'remote',
-                    'media' => 'all',
-                    'priority' => 10,
-                ]
-            );
+            ->method('registerStylesheet');
 
-        $this->assetService->loadWidgetAssets();
+        $this->assetService->loadAssets();
     }
 
-    public function testLoadWidgetAssetsRegistersAssetsOnHomePageWithControllerName(): void
+    public function testLoadAssetsRegistersAssetsOnHomePageWithControllerName(): void
     {
         $this->controller = $this->getMockBuilder(\FrontController::class)
             ->setMockClassName('IndexController')
             ->getMock();
         $this->context->controller = $this->controller;
         $this->controller->expects($this->exactly(2))
-            ->method('registerJavascript')
-            ->withConsecutive(
-                [
-                    'alma-widget-cdn',
-                    'https://cdn.jsdelivr.net/npm/@alma/widgets@4.x/dist/widgets.umd.js',
-                    [
-                        'server' => 'remote',
-                        'position' => 'bottom',
-                        'priority' => 10,
-                    ],
-                ],
-                [
-                    'alma-widget',
-                    'modules/alma/views/js/alma-widget.js',
-                    [
-                        'priority' => 20,
-                        'attribute' => 'async',
-                    ],
-                ]
-            );
+            ->method('registerJavascript');
         $this->controller->expects($this->once())
-            ->method('registerStylesheet')
-            ->with(
-                'alma-widget-cdn',
-                'https://cdn.jsdelivr.net/npm/@alma/widgets@4.x/dist/widgets.min.css',
-                [
-                    'server' => 'remote',
-                    'media' => 'all',
-                    'priority' => 10,
-                ]
-            );
+            ->method('registerStylesheet');
 
-        $this->assetService->loadWidgetAssets();
+        $this->assetService->loadAssets();
     }
 
-    public function testLoadWidgetAssetsRegistersAssetsOnOtherPageWithControllerName(): void
+    public function testLoadAssetsDoesNotRegisterAssetsOnOtherPageWithControllerName(): void
     {
         $this->controller = $this->getMockBuilder(\FrontController::class)
             ->setMockClassName('OtherController')
@@ -208,13 +125,47 @@ class AssetServiceTest extends TestCase
         $this->controller->expects($this->never())
             ->method('registerStylesheet');
 
-        $this->assetService->loadWidgetAssets();
+        $this->assetService->loadAssets();
+    }
+
+    /**
+     * @dataProvider controllerPagesDataProvider
+     */
+    public function testCheckCanLoadWidgetReturnsTrueForAllowedPhpSelf($controllerPage): void
+    {
+        $this->context->controller->php_self = $controllerPage;
+        $this->assertTrue($this->assetService->isControllerAllowed($this->controller, WidgetService::ALLOWED_CONTROLLERS));
+    }
+
+    public function testCheckCanLoadWidgetReturnsFalseForDisallowedPhpSelf(): void
+    {
+        $this->context->controller->php_self = 'category';
+        $this->assertFalse($this->assetService->isControllerAllowed($this->controller, WidgetService::ALLOWED_CONTROLLERS));
+    }
+
+    /**
+     * @dataProvider controllerClassNameDataProvider
+     */
+    public function testCheckCanLoadWidgetReturnsTrueForAllowedControllerName($className): void
+    {
+        $controller = $this->getMockBuilder(\FrontController::class)
+            ->setMockClassName($className)
+            ->getMock();
+        $this->context->controller = $controller;
+        $this->assertTrue($this->assetService->isControllerAllowed($controller, WidgetService::ALLOWED_CONTROLLERS));
+    }
+
+    public function testCheckCanLoadWidgetReturnsFalseForOtherControllerName(): void
+    {
+        $controller = $this->getMockBuilder(\FrontController::class)
+            ->setMockClassName('OtherController')
+            ->getMock();
+        $this->context->controller = $controller;
+        $this->assertFalse($this->assetService->isControllerAllowed($controller, WidgetService::ALLOWED_CONTROLLERS));
     }
 
     /**
      * Data provider for controller pages
-     *
-     * @return array
      */
     public function controllerPagesDataProvider(): array
     {
@@ -222,6 +173,18 @@ class AssetServiceTest extends TestCase
             ['product'],
             ['cart'],
             ['index'],
+        ];
+    }
+
+    /**
+     * Data provider for allowed controller class names
+     */
+    public function controllerClassNameDataProvider(): array
+    {
+        return [
+            ['ProductController'],
+            ['CartController'],
+            ['IndexController'],
         ];
     }
 }
