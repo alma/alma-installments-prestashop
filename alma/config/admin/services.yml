@@ -176,6 +176,7 @@ services:
     class: 'PrestaShop\Module\Alma\Application\Service\WidgetService'
     arguments:
       - '@alma.context'
+      - '@alma.fee_plans_service'
       - '@alma.configuration_repository'
 
   alma.payment_button_service:

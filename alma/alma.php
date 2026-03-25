@@ -25,6 +25,7 @@
 use PrestaShop\Module\Alma\Application\Service\AssetService;
 use PrestaShop\Module\Alma\Application\Service\ModuleInstallerService;
 use PrestaShop\Module\Alma\Application\Service\ModuleService;
+use PrestaShop\Module\Alma\Infrastructure\Factory\HookServiceFactory;
 use PrestaShop\Module\Alma\Infrastructure\Repository\LanguageRepository;
 use PrestaShop\PrestaShop\Core\Module\WidgetInterface;
 use PrestaShop\PsAccountsInstaller\Installer\Installer;
@@ -65,6 +66,9 @@ class Alma extends PaymentModule implements WidgetInterface
      * @var string
      */
     public $confirmUninstall;
+
+    private bool $widgetCartRendered = false;
+    private bool $hookCartRendered = false;
 
     public function __construct()
     {
@@ -160,7 +164,7 @@ class Alma extends PaymentModule implements WidgetInterface
     }
 
     /**
-     * Enables the new translation system for PrestaShop 1.7.6 and later.
+     * Enables the new translation system for Prestashop 1.7.6 and later.
      * @return bool
      */
     public function isUsingNewTranslationSystem(): bool
@@ -168,41 +172,52 @@ class Alma extends PaymentModule implements WidgetInterface
         return true;
     }
 
-    // TODO: Check if it's better to centralize name of the hook or keep the native name and remove this function
-    public function hookDisplayShoppingCartFooter($params): string
+    /**
+     * Display widget in the cart page
+     *
+     * @param array $params
+     * @return string
+     */
+    public function hookDisplayShoppingCartFooter(array $params): string
     {
+        $this->hookCartRendered = true;
+
+        if ($this->widgetCartRendered) {
+            return '';
+        }
+
         return $this->renderWidget('alma.widget.ShoppingCartFooter', $params);
     }
 
     /**
+     * Display widget with WidgetInterface
+     *
      * @param string $hookName
      * @param array $configuration
      * @return string
      */
     public function renderWidget($hookName, array $configuration): string
     {
-        // TODO: Create a switch between product and cart to fetch the template in function of the hook
-        var_dump($hookName);
-        $this->smarty->assign($this->getWidgetVariables($hookName, $configuration));
+        $this->widgetCartRendered = true;
 
-        return $this->fetch('module:' . $this->name . '/views/templates/widget/cart.tpl');
-    }
-
-    public function getWidgetVariables($hookName, array $configuration): array
-    {
-        switch ($hookName) {
-            case 'alma.widget.product':
-                $idProduct = $configuration['product']['id_product'];
-                break;
-            case 'alma.widget.cart':
-                $idProduct = $configuration['cart']['products'][0]['id_product'];
-                break;
-            default:
-                $idProduct = null;
+        if ($this->hookCartRendered && $hookName === 'alma.widget.cart') {
+            return '';
         }
 
-        return [
-            'my_custom_data' => 'Hello product ' . $idProduct,
-        ];
+        $widgetFrontendService = HookServiceFactory::createWidgetService($this->context);
+        return $widgetFrontendService->renderWidget($hookName, $configuration);
+    }
+
+    /**
+     * Get the variables needed for the widget template.
+     *
+     * @param string $hookName
+     * @param array $configuration
+     * @return array
+     */
+    public function getWidgetVariables($hookName, array $configuration): array
+    {
+        $widgetFrontendService = HookServiceFactory::createWidgetService($this->context);
+        return $widgetFrontendService->getWidgetVariables($hookName, $configuration);
     }
 }
