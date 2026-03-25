@@ -25,7 +25,6 @@
 namespace Alma\PrestaShop\Tests\Unit\Helper;
 
 use Alma\PrestaShop\Exceptions\ProductException;
-use Alma\PrestaShop\Factories\ProductFactory;
 use Alma\PrestaShop\Helpers\ProductHelper;
 use PHPUnit\Framework\TestCase;
 
@@ -43,12 +42,6 @@ class ProductHelperTest extends TestCase
      * @var \PHPUnit_Framework_MockObject_MockObject|\Product|(\Product&\PHPUnit_Framework_MockObject_MockObject)
      */
     protected $productMock;
-    /**
-     */
-    /**
-     * @var ProductFactory
-     */
-    protected $productFactoryMock;
 
     /**
      * @return void
@@ -59,10 +52,7 @@ class ProductHelperTest extends TestCase
         $this->productMock = $this->getMockBuilder(\Product::class)
             ->setMethods(['getAttributeCombination'])
             ->getMock();
-        $this->productFactoryMock = $this->createMock(ProductFactory::class);
-        $this->productHelper = new ProductHelper(
-            $this->productFactoryMock
-        );
+        $this->productHelper = new ProductHelper();
     }
 
     public function tearDown()
@@ -70,7 +60,6 @@ class ProductHelperTest extends TestCase
         $this->productHelper = null;
         $this->categoryMock = null;
         $this->productMock = null;
-        $this->productFactoryMock = null;
     }
 
     /**
@@ -154,175 +143,6 @@ class ProductHelperTest extends TestCase
             'product is null' => [null],
             'product is false' => [false],
             'product is true' => [true],
-        ];
-    }
-
-    /**
-     * @dataProvider wrongParamsForGetAttributeCombinationDataProvider
-     *
-     * @return void
-     *
-     * @throws ProductException
-     */
-    public function testGetAttributeCombinationsByProductIdWithWrongParams($productId, $languageId)
-    {
-        $this->expectException(ProductException::class);
-        $this->productHelper->getAttributeCombinationsByProductId($productId, $languageId);
-    }
-
-    public function testGetAttributeCombinationsByProductIdWithRightParams()
-    {
-        $this->productMock->id = 2;
-        $attributeCombinationsReturned = [
-            [
-                'id_product_attribute' => '9',
-                'id_product' => (string) $this->productMock->id,
-                'reference' => 'demo_3',
-                'supplier_reference' => '',
-                'location' => '',
-                'ean13' => '',
-                'isbn' => '',
-                'upc' => '',
-                'mpn' => '',
-                'wholesale_price' => '0.000000',
-                'price' => '0.000000',
-                'ecotax' => '0.000000',
-                'quantity' => 1200,
-                'weight' => '0.000000',
-                'unit_price_impact' => '0.000000',
-                'default_on' => '1',
-                'minimal_quantity' => '1',
-                'low_stock_threshold' => null,
-                'low_stock_alert' => '0',
-                'available_date' => '0000-00-00',
-                'id_shop' => '1',
-                'id_attribute_group' => '1',
-                'is_color_group' => '0',
-                'group_name' => null,
-                'attribute_name' => null,
-                'id_attribute' => '1',
-            ],
-            [
-                'id_product_attribute' => '10',
-                'id_product' => (string) $this->productMock->id,
-                'reference' => 'demo_3',
-                'supplier_reference' => '',
-                'location' => '',
-                'ean13' => '',
-                'isbn' => '',
-                'upc' => '',
-                'mpn' => '',
-                'wholesale_price' => '0.000000',
-                'price' => '0.000000',
-                'ecotax' => '0.000000',
-                'quantity' => 300,
-                'weight' => '0.000000',
-                'unit_price_impact' => '0.000000',
-                'default_on' => null,
-                'minimal_quantity' => '1',
-                'low_stock_threshold' => null,
-                'low_stock_alert' => '0',
-                'available_date' => '0000-00-00',
-                'id_shop' => '1',
-                'id_attribute_group' => '1',
-                'is_color_group' => '0',
-                'group_name' => null,
-                'attribute_name' => null,
-                'id_attribute' => '2',
-            ],
-            [
-                'id_product_attribute' => '11',
-                'id_product' => (string) $this->productMock->id,
-                'reference' => 'demo_3',
-                'supplier_reference' => '',
-                'location' => '',
-                'ean13' => '',
-                'isbn' => '',
-                'upc' => '',
-                'mpn' => '',
-                'wholesale_price' => '0.000000',
-                'price' => '0.000000',
-                'ecotax' => '0.000000',
-                'quantity' => 300,
-                'weight' => '0.000000',
-                'unit_price_impact' => '0.000000',
-                'default_on' => null,
-                'minimal_quantity' => '1',
-                'low_stock_threshold' => null,
-                'low_stock_alert' => '0',
-                'available_date' => '0000-00-00',
-                'id_shop' => '1',
-                'id_attribute_group' => '1',
-                'is_color_group' => '0',
-                'group_name' => null,
-                'attribute_name' => null,
-                'id_attribute' => '3',
-            ],
-            [
-                'id_product_attribute' => '12',
-                'id_product' => (string) $this->productMock->id,
-                'reference' => 'demo_3',
-                'supplier_reference' => '',
-                'location' => '',
-                'ean13' => '',
-                'isbn' => '',
-                'upc' => '',
-                'mpn' => '',
-                'wholesale_price' => '0.000000',
-                'price' => '0.000000',
-                'ecotax' => '0.000000',
-                'quantity' => 300,
-                'weight' => '0.000000',
-                'unit_price_impact' => '0.000000',
-                'default_on' => null,
-                'minimal_quantity' => '1',
-                'low_stock_threshold' => null,
-                'low_stock_alert' => '0',
-                'available_date' => '0000-00-00',
-                'id_shop' => '1',
-                'id_attribute_group' => '1',
-                'is_color_group' => '0',
-                'group_name' => null,
-                'attribute_name' => null,
-                'id_attribute' => '4',
-            ],
-        ];
-        $languageId = 4;
-
-        $this->productFactoryMock->expects($this->once())
-            ->method('create')
-            ->with($this->productMock->id)
-            ->willReturn($this->productMock);
-
-        // Make unit test if DB Change
-        $this->assertEquals(
-            $attributeCombinationsReturned,
-            $this->productHelper->getAttributeCombinationsByProductId($this->productMock->id, $languageId)
-        );
-    }
-
-    /**
-     * @return array
-     */
-    public function wrongParamsForGetAttributeCombinationDataProvider()
-    {
-        return [
-            'params are null' => [
-                'productId' => null,
-                'languageId' => null,
-            ],
-            'params are string' => [
-                'productId' => 'wrong productId',
-                'languageId' => 'wrongLanguageId',
-            ],
-            'productId is int and languageId is null' => [
-                'productId' => 2,
-                'languageId' => null,
-            ],
-            'productId is null and languageId is int' => [
-                'productId' => null,
-                'languageId' => 3,
-            ],
         ];
     }
 }
