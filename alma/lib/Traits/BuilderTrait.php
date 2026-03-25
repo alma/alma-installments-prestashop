@@ -42,7 +42,6 @@ use Alma\PrestaShop\Factories\PhpFactory;
 use Alma\PrestaShop\Factories\ProductFactory;
 use Alma\PrestaShop\Factories\ToolsFactory;
 use Alma\PrestaShop\Helpers\AddressHelper;
-use Alma\PrestaShop\Helpers\Admin\AdminInsuranceHelper;
 use Alma\PrestaShop\Helpers\Admin\TabsHelper;
 use Alma\PrestaShop\Helpers\ApiHelper;
 use Alma\PrestaShop\Helpers\CarrierHelper;
@@ -58,8 +57,6 @@ use Alma\PrestaShop\Helpers\DateHelper;
 use Alma\PrestaShop\Helpers\EligibilityHelper;
 use Alma\PrestaShop\Helpers\FeePlanHelper;
 use Alma\PrestaShop\Helpers\ImageHelper;
-use Alma\PrestaShop\Helpers\InsuranceHelper;
-use Alma\PrestaShop\Helpers\InsuranceProductHelper;
 use Alma\PrestaShop\Helpers\LanguageHelper;
 use Alma\PrestaShop\Helpers\LocaleHelper;
 use Alma\PrestaShop\Helpers\MediaHelper;
@@ -82,7 +79,6 @@ use Alma\PrestaShop\Model\CartData;
 use Alma\PrestaShop\Model\PaymentData;
 use Alma\PrestaShop\Model\ShippingData;
 use Alma\PrestaShop\Proxy\ToolsProxy;
-use Alma\PrestaShop\Repositories\AlmaInsuranceProductRepository;
 use Alma\PrestaShop\Repositories\CartProductRepository;
 use Alma\PrestaShop\Repositories\OrderRepository;
 use Alma\PrestaShop\Repositories\ProductRepository;
@@ -91,8 +87,6 @@ use Alma\PrestaShop\Services\AttributeGroupProductService;
 use Alma\PrestaShop\Services\AttributeProductService;
 use Alma\PrestaShop\Services\CartService;
 use Alma\PrestaShop\Services\CombinationProductAttributeService;
-use Alma\PrestaShop\Services\InsuranceApiService;
-use Alma\PrestaShop\Services\InsuranceService;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -611,9 +605,7 @@ trait BuilderTrait
             $this->getModuleFactory(),
             $this->getClientHelper(),
             $this->getToolsHelper(),
-            $this->getInsuranceService(),
             $this->getConfigurationHelper(),
-            $this->getAdminInsuranceHelper()
         );
     }
 
@@ -854,49 +846,30 @@ trait BuilderTrait
     }
 
     /**
-     * @param AlmaInsuranceProductRepository $almaInsuranceProductRepository
      *
-     * @return AlmaInsuranceProductRepository
      */
-    public function getAlmaInsuranceProductRepository($almaInsuranceProductRepository = null)
     {
-        if ($almaInsuranceProductRepository) {
-            return $almaInsuranceProductRepository;
         }
 
-        return new AlmaInsuranceProductRepository();
     }
 
     /**
-     * @param InsuranceService $insuranceService
      *
-     * @return InsuranceService
      */
-    public function getInsuranceService($insuranceService = null)
     {
-        if ($insuranceService) {
-            return $insuranceService;
         }
 
-        return new InsuranceService();
     }
 
     /**
-     * @param AdminInsuranceHelper $insuranceHelper
      *
-     * @return AdminInsuranceHelper
      */
-    public function getAdminInsuranceHelper($insuranceHelper = null)
     {
-        if ($insuranceHelper) {
-            return $insuranceHelper;
         }
 
-        return new AdminInsuranceHelper(
             $this->getModuleFactory(),
             $this->getTabsHelper(),
             $this->getConfigurationHelper(),
-            $this->getAlmaInsuranceProductRepository()
         );
     }
 
@@ -1060,20 +1033,13 @@ trait BuilderTrait
     }
 
     /**
-     * @param InsuranceHelper $insuranceHelper
      *
-     * @return InsuranceHelper
      */
-    public function getInsuranceHelper($insuranceHelper = null)
     {
-        if ($insuranceHelper) {
-            return $insuranceHelper;
         }
 
-        return new InsuranceHelper(
             $this->getCartProductRepository(),
             $this->getProductRepository(),
-            $this->getAlmaInsuranceProductRepository(),
             $this->getContextFactory(),
             $this->getToolsHelper(),
             $this->getSettingsHelper()
@@ -1081,18 +1047,11 @@ trait BuilderTrait
     }
 
     /**
-     * @param InsuranceProductHelper $insuranceProductHelper
      *
-     * @return InsuranceProductHelper
      */
-    public function getInsuranceProductHelper($insuranceProductHelper = null)
     {
-        if ($insuranceProductHelper) {
-            return $insuranceProductHelper;
         }
 
-        return new InsuranceProductHelper(
-            $this->getAlmaInsuranceProductRepository(),
             $this->getContextFactory()
         );
     }
@@ -1153,8 +1112,6 @@ trait BuilderTrait
         return new CartService(
             $this->getCartProductRepository(),
             $this->getContextFactory(),
-            $this->getInsuranceHelper(),
-            $this->getInsuranceProductHelper(),
             $this->getToolsFactory(),
             $this->getCartFactory(),
             $this->getProductHelper()
@@ -1162,17 +1119,11 @@ trait BuilderTrait
     }
 
     /**
-     * @param InsuranceApiService $insuranceApiService
      *
-     * @return InsuranceApiService
      */
-    public function getInsuranceApiService($insuranceApiService = null)
     {
-        if ($insuranceApiService) {
-            return $insuranceApiService;
         }
 
-        return new InsuranceApiService();
     }
 
     /**

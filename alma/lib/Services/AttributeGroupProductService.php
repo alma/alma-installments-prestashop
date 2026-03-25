@@ -61,7 +61,6 @@ class AttributeGroupProductService
         );
 
         if (!$attributeGroupId) {
-            $attributeGroup = $this->attributeGroupRepository->createInsuranceAttributeGroup();
             $attributeGroupId = $attributeGroup->id;
         }
 

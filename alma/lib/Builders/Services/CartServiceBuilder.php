@@ -46,8 +46,6 @@ class CartServiceBuilder
         return new CartService(
             $this->getCartProductRepository(),
             $this->getContextFactory(),
-            $this->getInsuranceHelper(),
-            $this->getInsuranceProductHelper(),
             $this->getToolsFactory(),
             $this->getCartFactory(),
             $this->getProductHelper()

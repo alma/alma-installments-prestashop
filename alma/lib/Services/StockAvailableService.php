@@ -46,17 +46,14 @@ class StockAvailableService
      * @param int $idProduct
      * @param bool $outOfStock
      * @param int $shopId
-     * @param int $idProductAttributeInsurance
      *
      * @return void
      */
-    public function createStocks($idProduct, $outOfStock, $shopId, $idProductAttributeInsurance)
     {
         \StockAvailable::setProductOutOfStock(
             $idProduct,
             $outOfStock,
             $shopId,
-            $idProductAttributeInsurance
         );
 
         if (version_compare(_PS_VERSION_, '1.7.8', '<')) {
@@ -64,7 +61,6 @@ class StockAvailableService
                 $idProduct,
                 $outOfStock == 1 ? false : true,
                 $shopId,
-                $idProductAttributeInsurance
             );
         }
     }
@@ -73,12 +69,9 @@ class StockAvailableService
      * @param int $idProduct
      * @param int $quantity
      * @param int $shopId
-     * @param int $idProductAttributeInsurance
      *
      * @return void
      */
-    public function updateStocks($idProduct, $quantity, $shopId, $idProductAttributeInsurance)
     {
-        $this->stockAvailableRepository->setQuantity($idProduct, $idProductAttributeInsurance, $quantity, $shopId);
     }
 }

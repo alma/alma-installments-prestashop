@@ -25,7 +25,6 @@
 namespace Alma\PrestaShop\Helpers;
 
 use Alma\PrestaShop\Exceptions\MessageOrderException;
-use Alma\PrestaShop\Services\InsuranceApiService;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -34,9 +33,7 @@ if (!defined('_PS_VERSION_')) {
 class MessageOrderHelper
 {
     /**
-     * @var InsuranceApiService
      */
-    protected $insuranceApiService;
     /**
      * @var \Context
      */
@@ -54,47 +51,33 @@ class MessageOrderHelper
     /**
      * @param $module
      * @param $context
-     * @param $insuranceApiService
      * @param PriceHelper $priceHelper
      */
-    public function __construct($module, $context, $insuranceApiService, $priceHelper)
     {
         $this->module = $module;
         $this->context = $context;
-        $this->insuranceApiService = $insuranceApiService;
         $this->priceHelper = $priceHelper;
     }
 
     /**
-     * @param $almaInsuranceProduct
      *
      * @return string
      *
      * @throws MessageOrderException
      */
-    public function getInsuranceCancelMessageRefundAllow($almaInsuranceProduct)
     {
-        if (!is_array($almaInsuranceProduct)) {
-            throw new MessageOrderException('The parameter $almaInsuranceProduct must be an array');
         }
-        $price = $almaInsuranceProduct['price'];
-        $insuranceContract = $this->insuranceApiService->getInsuranceContract(
-            $almaInsuranceProduct['insurance_contract_id'],
-            $almaInsuranceProduct['cms_reference'],
             $price
         );
         $product = new \Product(
-            $almaInsuranceProduct['id_product'],
             false,
             \Configuration::get('PS_LANG_DEFAULT')
         );
 
         $text = sprintf(
-            'The Insurance %s at %s for the product %s has been cancelled.
             Please refund the customer.
             Action Required: Refund the customer for the affected subscriptions.
             Thank you.',
-            $insuranceContract->getName(),
             $this->priceHelper->convertPriceFromCents($price) . '€',
             $product->name
         );

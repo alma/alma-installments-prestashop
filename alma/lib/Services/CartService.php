@@ -30,8 +30,6 @@ use Alma\PrestaShop\Exceptions\ProductException;
 use Alma\PrestaShop\Factories\CartFactory;
 use Alma\PrestaShop\Factories\ContextFactory;
 use Alma\PrestaShop\Factories\ToolsFactory;
-use Alma\PrestaShop\Helpers\InsuranceHelper;
-use Alma\PrestaShop\Helpers\InsuranceProductHelper;
 use Alma\PrestaShop\Helpers\ProductHelper;
 use Alma\PrestaShop\Repositories\CartProductRepository;
 
@@ -47,13 +45,9 @@ class CartService
     protected $cartProductRepository;
 
     /**
-     * @var InsuranceHelper
      */
-    protected $insuranceHelper;
     /**
-     * @var InsuranceProductHelper
      */
-    protected $insuranceProductHelper;
 
     /**
      * @var ContextFactory
@@ -75,8 +69,6 @@ class CartService
     /**
      * @param CartProductRepository $cartProductRepository
      * @param ContextFactory $contextFactory
-     * @param InsuranceHelper $insuranceHelper
-     * @param InsuranceProductHelper $insuranceProductHelper
      * @param ToolsFactory $toolsFactory
      * @param CartFactory $cartFactory
      * @param ProductHelper $productHelper
@@ -84,16 +76,12 @@ class CartService
     public function __construct(
         $cartProductRepository,
         $contextFactory,
-        $insuranceHelper,
-        $insuranceProductHelper,
         $toolsFactory,
         $cartFactory,
         $productHelper
     ) {
         $this->cartProductRepository = $cartProductRepository;
         $this->contextFactory = $contextFactory;
-        $this->insuranceHelper = $insuranceHelper;
-        $this->insuranceProductHelper = $insuranceProductHelper;
         $this->toolsFactory = $toolsFactory;
         $this->cartFactory = $cartFactory;
         $this->productHelper = $productHelper;
@@ -108,16 +96,10 @@ class CartService
      * @throws AlmaException
      * @throws \PrestaShopException
      */
-    public function duplicateAlmaInsuranceProductsIfNotExist($newCart, $currentCart)
     {
-        // We check if alma insurance product exist because this function is executed for each product updated
-        if (!$this->insuranceHelper->almaInsuranceProductsAlreadyExist($newCart)) {
             try {
-                $this->insuranceProductHelper->duplicateAlmaInsuranceProducts($currentCart->id, $newCart->id);
             } catch (\PrestaShopDatabaseException $e) {
                 $newCart->delete();
-                // We throw an exception to prevent to buy insurance product without the possibility to subscribe
-                throw new AlmaException('[Alma] Impossible to duplicate insurance product in fact error connect to database');
             }
         }
     }
@@ -264,14 +246,11 @@ class CartService
         $languageId = $this->contextFactory->getContextLanguageId();
 
         try {
-            $insuranceProductAttributes = $this->productHelper->getAttributeCombinationsByProductId($productId, $languageId);
         } catch (ProductException $e) {
             throw new CartException("[Alma] Cannot get Attribute combination of productId {$productId}, with languageId {$languageId} ");
         }
 
         try {
-            foreach ($insuranceProductAttributes as $insuranceProductAttribute) {
-                $cart->deleteProduct($productId, $insuranceProductAttribute['id_product_attribute']);
             }
 
             return true;

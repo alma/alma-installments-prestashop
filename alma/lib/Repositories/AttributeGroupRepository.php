@@ -80,7 +80,6 @@ class AttributeGroupRepository
      * @throws \PrestaShopDatabaseException
      * @throws \PrestaShopException
      */
-    public function createInsuranceAttributeGroup()
     {
         /**
          * @var \AttributeGroupCore $attributeGroup

@@ -24,13 +24,8 @@
 
 namespace Alma\PrestaShop\Helpers;
 
-use Alma\PrestaShop\Exceptions\InsurancePendingCancellationException;
-use Alma\PrestaShop\Exceptions\InsuranceSubscriptionException;
 use Alma\PrestaShop\Exceptions\SubscriptionException;
 use Alma\PrestaShop\Exceptions\TokenException;
-use Alma\PrestaShop\Repositories\AlmaInsuranceProductRepository;
-use Alma\PrestaShop\Services\InsuranceApiService;
-use Alma\PrestaShop\Services\InsuranceSubscriptionService;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -42,32 +37,20 @@ if (!defined('_PS_VERSION_')) {
 class SubscriptionHelper
 {
     /**
-     * @var AlmaInsuranceProductRepository|mixed|null
      */
-    protected $almaInsuranceProductRepository;
     /**
-     * @var InsuranceApiService
      */
-    protected $insuranceApiService;
     /**
      * @var TokenHelper
      */
     protected $tokenHelper;
     /**
-     * @var InsuranceSubscriptionService
      */
-    protected $insuranceSubscriptionService;
 
     public function __construct(
-        $almaInsuranceProductRepository,
-        $insuranceApiService,
         $tokenHelper,
-        $insuranceSubscriptionService
     ) {
-        $this->almaInsuranceProductRepository = $almaInsuranceProductRepository;
-        $this->insuranceApiService = $insuranceApiService;
         $this->tokenHelper = $tokenHelper;
-        $this->insuranceSubscriptionService = $insuranceSubscriptionService;
     }
 
     /**
@@ -75,8 +58,6 @@ class SubscriptionHelper
      *
      * @return void
      *
-     * @throws InsurancePendingCancellationException
-     * @throws InsuranceSubscriptionException
      * @throws TokenException
      */
     public function cancelSubscriptionWithToken($sid)
@@ -88,7 +69,6 @@ class SubscriptionHelper
             throw new TokenException('Invalid Token', 401);
         }
 
-        $this->insuranceApiService->cancelSubscription($sid);
     }
 
     /**
@@ -103,16 +83,13 @@ class SubscriptionHelper
     {
         $this->isTraceValid($trace);
 
-        $subscriptionArray = $this->insuranceApiService->getSubscriptionById($sid);
         if (
-            !$this->almaInsuranceProductRepository->updateSubscription(
                 $sid,
                 $subscriptionArray['state'],
                 $subscriptionArray['broker_subscription_id'],
                 $subscriptionArray['broker_subscription_reference']
             )
         ) {
-            throw new SubscriptionException('Error to update DB Alma Insurance Product', 500);
         }
 
         return $subscriptionArray['state'];

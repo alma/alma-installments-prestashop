@@ -24,7 +24,6 @@
 
 namespace Alma\PrestaShop\Helpers;
 
-use Alma\PrestaShop\Builders\Helpers\InsuranceHelperBuilder;
 use Alma\PrestaShop\Exceptions\ProductException;
 use Alma\PrestaShop\Factories\ProductFactory;
 
@@ -40,17 +39,13 @@ if (!defined('_PS_VERSION_')) {
 class ProductHelper
 {
     /**
-     * @var InsuranceHelper
      */
-    protected $insuranceHelper;
     /**
      * @var ProductHelper
      */
     protected $productFactory;
 
-    public function __construct($insuranceHelper = null, $productFactory = null)
     {
-        $this->insuranceHelper = $insuranceHelper ?: (new InsuranceHelperBuilder())->getInstance();
         $this->productFactory = $productFactory ?: new ProductFactory();
     }
 
@@ -224,7 +219,6 @@ class ProductHelper
         $products = $cart->getProducts();
         foreach ($products as $product) {
             for ($qty = 1; $qty <= $product['cart_quantity']; ++$qty) {
-                $cmsReferences[] = $this->insuranceHelper->createCmsReference($product['id_product'], $product['id_product_attribute']);
             }
         }
 

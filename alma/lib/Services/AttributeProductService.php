@@ -65,7 +65,6 @@ class AttributeProductService
     }
 
     /**
-     * @param string $insuranceContractId
      * @param int $attributeGroupId
      *
      * @return int
@@ -73,25 +72,15 @@ class AttributeProductService
      * @throws \PrestaShopDatabaseException
      * @throws \PrestaShopException
      */
-    public function getOrCreateAttributeId($insuranceContractId, $attributeGroupId)
     {
-        $insuranceAttributeId = $this->attributeRepository->getAttributeIdByNameAndGroup(
-            $insuranceContractId,
             $attributeGroupId,
             $this->context->language->id
         );
 
-        if (!$insuranceAttributeId) {
-            $insuranceAttribute = $this->getProductAttributeObject();
 
-            $insuranceAttribute->name = $this->localeHelper->createMultiLangField($insuranceContractId);
-            $insuranceAttribute->id_attribute_group = $attributeGroupId;
-            $insuranceAttribute->add();
 
-            $insuranceAttributeId = $insuranceAttribute->id;
         }
 
-        return $insuranceAttributeId;
     }
 
     /**
@@ -101,13 +90,11 @@ class AttributeProductService
     {
         if (version_compare(_PS_VERSION_, '8.0', '<')) {
             /*
-             * @var \AttributeCore $insuranceAttribute
              */
             return new \AttributeCore();
         }
 
         /*
-         * @var \ProductAttributeCore $insuranceAttribute
          */
         return new \ProductAttributeCore();
     }

@@ -196,7 +196,6 @@ class ProductRepository
      * @throws \PrestaShopDatabaseException
      * @throws \PrestaShopException
      */
-    public function createInsuranceProduct()
     {
         /**
          * @var \ContextCore $context
@@ -214,11 +213,8 @@ class ProductRepository
         /*
          * @var \ProductCore $product
          */
-        $insuranceProductName = $this->module->l('Insurance by Alma', 'ProductRepository');
         $product = new \Product();
-        $product->name = $this->localeHelper->createMultiLangField($insuranceProductName);
         $product->reference = ConstantsHelper::ALMA_INSURANCE_PRODUCT_REFERENCE;
-        $product->link_rewrite = $this->localeHelper->createMultiLangField(\Tools::str2url($insuranceProductName));
         $product->id_category_default = $id_root;
         $product->product_type = self::PRODUCT_TYPE_COMBINATIONS;
         $product->visibility = self::VISIBILITY_NONE;

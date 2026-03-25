@@ -64,14 +64,11 @@ class CombinationProductAttributeService
         /**
          * @var \CombinationCore $combinaison
          */
-        $idProductAttributeInsurance = $this->combinationRepository->getIdByReferenceAndPrice(
             $product->id,
             $reference,
             $price
         );
 
-        if (!$idProductAttributeInsurance) {
-            $idProductAttributeInsurance = $product->addCombinationEntity(
                 $price,
                 $price,
                 0,
@@ -85,14 +82,12 @@ class CombinationProductAttributeService
                 0
             );
 
-            $combination = new \CombinationCore((int) $idProductAttributeInsurance);
             $combination->setAttributes([$attributeId]);
 
             $this->stockAvailableService->createStocks(
                 $product->id,
                 $outOfStock,
                 $shopId,
-                $idProductAttributeInsurance
             );
         }
 
@@ -100,9 +95,7 @@ class CombinationProductAttributeService
             $product->id,
             $quantity,
             $shopId,
-            $idProductAttributeInsurance
         );
 
-        return $idProductAttributeInsurance;
     }
 }
