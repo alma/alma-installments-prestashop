@@ -169,9 +169,9 @@ class Alma extends PaymentModule implements WidgetInterface
     }
 
     // TODO: Check if it's better to centralize name of the hook or keep the native name and remove this function
-    public function hookDisplayProductAdditionalInfo($params): string
+    public function hookDisplayShoppingCartFooter($params): string
     {
-        return $this->renderWidget('alma.widget.ProductAdditionalInfo', $params);
+        return $this->renderWidget('alma.widget.ShoppingCartFooter', $params);
     }
 
     /**
@@ -182,9 +182,10 @@ class Alma extends PaymentModule implements WidgetInterface
     public function renderWidget($hookName, array $configuration): string
     {
         // TODO: Create a switch between product and cart to fetch the template in function of the hook
+        var_dump($hookName);
         $this->smarty->assign($this->getWidgetVariables($hookName, $configuration));
 
-        return $this->fetch('module:' . $this->name . '/views/templates/widget/product.tpl');
+        return $this->fetch('module:' . $this->name . '/views/templates/widget/cart.tpl');
     }
 
     public function getWidgetVariables($hookName, array $configuration): array
