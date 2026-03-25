@@ -83,10 +83,6 @@ use Alma\PrestaShop\Repositories\CartProductRepository;
 use Alma\PrestaShop\Repositories\OrderRepository;
 use Alma\PrestaShop\Repositories\ProductRepository;
 use Alma\PrestaShop\Services\AlmaBusinessDataService;
-use Alma\PrestaShop\Services\AttributeGroupProductService;
-use Alma\PrestaShop\Services\AttributeProductService;
-use Alma\PrestaShop\Services\CartService;
-use Alma\PrestaShop\Services\CombinationProductAttributeService;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -1002,68 +998,6 @@ trait BuilderTrait
         }
 
         return new LinkFactory();
-    }
-
-    /**
-     * @param AttributeGroupProductService $attributeGroupProductService
-     *
-     * @return AttributeGroupProductService
-     */
-    public function getAttributeGroupProductService($attributeGroupProductService = null)
-    {
-        if ($attributeGroupProductService) {
-            return $attributeGroupProductService;
-        }
-
-        return new AttributeGroupProductService();
-    }
-
-    /**
-     * @param AttributeProductService $attributeProductService
-     *
-     * @return AttributeProductService
-     */
-    public function getAttributeProductService($attributeProductService = null)
-    {
-        if ($attributeProductService) {
-            return $attributeProductService;
-        }
-
-        return new AttributeProductService();
-    }
-
-    /**
-     * @param CombinationProductAttributeService $combinationProductAttributeService
-     *
-     * @return CombinationProductAttributeService
-     */
-    public function getCombinationProductAttributeService($combinationProductAttributeService = null)
-    {
-        if ($combinationProductAttributeService) {
-            return $combinationProductAttributeService;
-        }
-
-        return new CombinationProductAttributeService();
-    }
-
-    /**
-     * @param CartService $cartService
-     *
-     * @return CartService
-     */
-    public function getCartService($cartService = null)
-    {
-        if ($cartService) {
-            return $cartService;
-        }
-
-        return new CartService(
-            $this->getCartProductRepository(),
-            $this->getContextFactory(),
-            $this->getToolsFactory(),
-            $this->getCartFactory(),
-            $this->getProductHelper()
-        );
     }
 
     /**

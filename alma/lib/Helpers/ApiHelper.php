@@ -40,8 +40,6 @@ if (!defined('_PS_VERSION_')) {
 class ApiHelper
 {
     /**
-     */
-    /**
      * @var ModuleFactory
      */
     protected $moduleFactory;

@@ -181,8 +181,6 @@ $_MODULE['<{alma}prestashop>getcontenthookcontroller_c6e24f81cb99e08c3d56b191c00
 $_MODULE['<{alma}prestashop>displaypaymenthookcontroller_afd8ac1c65e1519d6a890e5f98558a52'] = '%1$s then %2$d x %3$s';
 $_MODULE['<{alma}prestashop>displaypaymenthookcontroller_bc69b42c4bd339154f9025f3299ad146'] = '%1$s today then %2$d x %3$s';
 $_MODULE['<{alma}prestashop>displaypaymenthookcontroller_9088921432b295dfe6f02863b2dc0ff8'] = '0 € today then %1$s on %2$s';
-$_MODULE['<{alma}prestashop>actionordergriddefinitionmodifierhookcontroller_93cba07454f06a4a960172bbd6e2a435'] = 'Yes';
-$_MODULE['<{alma}prestashop>actionordergriddefinitionmodifierhookcontroller_bafd7322c6e97d25b6299b5d6fe8920b'] = 'No';
 $_MODULE['<{alma}prestashop>form_1908624a0bca678cd26b99bfd405324e'] = 'File size';
 $_MODULE['<{alma}prestashop>form_ba34ea40525a4379add785228e37fe86'] = 'kb';
 $_MODULE['<{alma}prestashop>form_f2a6c498fb90ee345d997f888fce3b18'] = 'Delete';
