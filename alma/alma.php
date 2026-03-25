@@ -78,7 +78,6 @@ class Alma extends PaymentModule
         $controllers = ['payment', 'validation', 'ipn'];
 
         if (version_compare(_PS_VERSION_, '1.7', '>=')) {
-            $controllers[] = 'insurance';
             $controllers[] = 'subscription';
             $controllers[] = 'cancellation';
         }
@@ -381,41 +380,6 @@ class Alma extends PaymentModule
         }
     }
 
-    /**
-     * Hook to modify the order table before Ps 1.7.5
-     *
-     * @param $params
-     *
-     * @return mixed|null
-     */
-    public function hookActionAdminOrdersListingFieldsModifier($params)
-    {
-        return $this->runHookController('actionAdminOrdersListingFieldsModifier', $params);
-    }
-
-    /**
-     * Hook to modify the order table after Ps 1.7.5
-     *
-     * @param $params
-     *
-     * @return mixed|null
-     */
-    public function hookActionOrderGridQueryBuilderModifier($params)
-    {
-        return $this->runHookController('actionOrderGridQueryBuilderModifier', $params);
-    }
-
-    /**
-     * Hook to modify the order table after Ps 1.7.5
-     *
-     * @param $params
-     *
-     * @return mixed|null
-     */
-    public function hookActionOrderGridDefinitionModifier($params)
-    {
-        return $this->runHookController('actionOrderGridDefinitionModifier', $params);
-    }
 
     /**
      * Hook action after add cart
