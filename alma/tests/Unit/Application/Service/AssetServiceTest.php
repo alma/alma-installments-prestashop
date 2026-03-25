@@ -24,7 +24,7 @@ class AssetServiceTest extends TestCase
     /**
      * @dataProvider controllerPagesDataProvider
      */
-    public function testLoadAssetsRegistersAssetsOnProductCartOrHomePageWithPhpSelf($controllerPages): void
+    public function testCheckAndLoadAssetsRegistersAssetsOnProductCartOrHomePageWithPhpSelf($controllerPages): void
     {
         $this->context->controller->php_self = $controllerPages;
         $this->controller->expects($this->exactly(2))
@@ -60,19 +60,19 @@ class AssetServiceTest extends TestCase
                 ]
             );
 
-        $this->assetService->loadAssets();
+        $this->assetService->checkAndLoadAssets();
     }
 
-    public function testLoadAssetsDoesNotRegisterAssetsOnNonProductCartOrHomePageWithPhpSelf(): void
+    public function testCheckAndLoadAssetsDoesNotRegisterAssetsOnNonProductCartOrHomePageWithPhpSelf(): void
     {
         $this->context->controller->php_self = 'category';
         $this->controller->expects($this->never())->method('registerJavascript');
         $this->controller->expects($this->never())->method('registerStylesheet');
 
-        $this->assetService->loadAssets();
+        $this->assetService->checkAndLoadAssets();
     }
 
-    public function testLoadAssetsRegistersAssetsOnProductPageWithControllerName(): void
+    public function testCheckAndLoadAssetsRegistersAssetsOnProductPageWithControllerName(): void
     {
         $this->controller = $this->getMockBuilder(\FrontController::class)
             ->setMockClassName('ProductController')
@@ -83,10 +83,10 @@ class AssetServiceTest extends TestCase
         $this->controller->expects($this->once())
             ->method('registerStylesheet');
 
-        $this->assetService->loadAssets();
+        $this->assetService->checkAndLoadAssets();
     }
 
-    public function testLoadAssetsRegistersAssetsOnCartPageWithControllerName(): void
+    public function testCheckAndLoadAssetsRegistersAssetsOnCartPageWithControllerName(): void
     {
         $this->controller = $this->getMockBuilder(\FrontController::class)
             ->setMockClassName('CartController')
@@ -97,10 +97,10 @@ class AssetServiceTest extends TestCase
         $this->controller->expects($this->once())
             ->method('registerStylesheet');
 
-        $this->assetService->loadAssets();
+        $this->assetService->checkAndLoadAssets();
     }
 
-    public function testLoadAssetsRegistersAssetsOnHomePageWithControllerName(): void
+    public function testCheckAndLoadAssetsRegistersAssetsOnHomePageWithControllerName(): void
     {
         $this->controller = $this->getMockBuilder(\FrontController::class)
             ->setMockClassName('IndexController')
@@ -111,10 +111,10 @@ class AssetServiceTest extends TestCase
         $this->controller->expects($this->once())
             ->method('registerStylesheet');
 
-        $this->assetService->loadAssets();
+        $this->assetService->checkAndLoadAssets();
     }
 
-    public function testLoadAssetsDoesNotRegisterAssetsOnOtherPageWithControllerName(): void
+    public function testCheckAndLoadAssetsDoesNotRegisterAssetsOnOtherPageWithControllerName(): void
     {
         $this->controller = $this->getMockBuilder(\FrontController::class)
             ->setMockClassName('OtherController')
@@ -125,19 +125,19 @@ class AssetServiceTest extends TestCase
         $this->controller->expects($this->never())
             ->method('registerStylesheet');
 
-        $this->assetService->loadAssets();
+        $this->assetService->checkAndLoadAssets();
     }
 
     /**
      * @dataProvider controllerPagesDataProvider
      */
-    public function testCheckCanLoadWidgetReturnsTrueForAllowedPhpSelf($controllerPage): void
+    public function testIsControllerAllowedReturnsTrueForAllowedPhpSelf($controllerPage): void
     {
         $this->context->controller->php_self = $controllerPage;
         $this->assertTrue($this->assetService->isControllerAllowed($this->controller, WidgetService::ALLOWED_CONTROLLERS));
     }
 
-    public function testCheckCanLoadWidgetReturnsFalseForDisallowedPhpSelf(): void
+    public function testIsControllerAllowedReturnsFalseForDisallowedPhpSelf(): void
     {
         $this->context->controller->php_self = 'category';
         $this->assertFalse($this->assetService->isControllerAllowed($this->controller, WidgetService::ALLOWED_CONTROLLERS));
@@ -146,7 +146,7 @@ class AssetServiceTest extends TestCase
     /**
      * @dataProvider controllerClassNameDataProvider
      */
-    public function testCheckCanLoadWidgetReturnsTrueForAllowedControllerName($className): void
+    public function testIsControllerAllowedReturnsTrueForAllowedControllerName($className): void
     {
         $controller = $this->getMockBuilder(\FrontController::class)
             ->setMockClassName($className)
@@ -155,7 +155,7 @@ class AssetServiceTest extends TestCase
         $this->assertTrue($this->assetService->isControllerAllowed($controller, WidgetService::ALLOWED_CONTROLLERS));
     }
 
-    public function testCheckCanLoadWidgetReturnsFalseForOtherControllerName(): void
+    public function testIsControllerAllowedReturnsFalseForOtherControllerName(): void
     {
         $controller = $this->getMockBuilder(\FrontController::class)
             ->setMockClassName('OtherController')

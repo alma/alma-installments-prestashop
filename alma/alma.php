@@ -155,7 +155,7 @@ class Alma extends PaymentModule
             $this,
             $this->context
         );
-        return $assetService->loadAssets();
+        return $assetService->checkAndLoadAssets();
     }
 
     /**

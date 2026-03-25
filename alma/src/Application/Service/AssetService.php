@@ -15,7 +15,7 @@ class AssetService
         $this->context = $context;
     }
 
-    public function loadAssets(): bool
+    public function checkAndLoadAssets(): bool
     {
         if ($this->isControllerAllowed($this->context->controller, WidgetService::ALLOWED_CONTROLLERS)) {
             $this->loadWidgetAssets();
