@@ -24,16 +24,11 @@
 
 namespace Alma\PrestaShop\Tests\Unit\Helper;
 
-use Alma\PrestaShop\Exceptions\InsurancePendingCancellationException;
-use Alma\PrestaShop\Exceptions\InsuranceSubscriptionException;
 use Alma\PrestaShop\Exceptions\SubscriptionException;
 use Alma\PrestaShop\Exceptions\TokenException;
 use Alma\PrestaShop\Helpers\ConstantsHelper;
 use Alma\PrestaShop\Helpers\SubscriptionHelper;
 use Alma\PrestaShop\Helpers\TokenHelper;
-use Alma\PrestaShop\Repositories\AlmaInsuranceProductRepository;
-use Alma\PrestaShop\Services\InsuranceApiService;
-use Alma\PrestaShop\Services\InsuranceSubscriptionService;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use PrestaShop\PrestaShop\Adapter\Module\Module;
@@ -45,9 +40,7 @@ class SubscriptionHelperTest extends TestCase
      */
     protected $subscriptionHelper;
     /**
-     * @var AlmaInsuranceProductRepository|(AlmaInsuranceProductRepository&MockObject)|MockObject
      */
-    protected $almaInsuranceProductRepository;
     /**
      * @var MockObject|Module|(Module&MockObject)
      */
@@ -57,26 +50,16 @@ class SubscriptionHelperTest extends TestCase
      */
     protected $tokenHelper;
     /**
-     * @var InsuranceApiService|(InsuranceApiService&MockObject)|MockObject
      */
-    protected $insuranceApiService;
     /**
-     * @var InsuranceSubscriptionException|(InsuranceSubscriptionException&MockObject)|MockObject
      */
-    protected $insuranceSubscriptionService;
 
     public function setUp()
     {
-        $this->almaInsuranceProductRepository = $this->createMock(AlmaInsuranceProductRepository::class);
-        $this->insuranceApiService = $this->createMock(InsuranceApiService::class);
         $this->module = $this->createMock(Module::class);
         $this->tokenHelper = $this->createMock(TokenHelper::class);
-        $this->insuranceSubscriptionService = $this->createMock(InsuranceSubscriptionService::class);
         $this->subscriptionHelper = new SubscriptionHelper(
-            $this->almaInsuranceProductRepository,
-            $this->insuranceApiService,
             $this->tokenHelper,
-            $this->insuranceSubscriptionService
         );
     }
 
@@ -85,14 +68,11 @@ class SubscriptionHelperTest extends TestCase
      *
      * @return void
      *
-     * @throws InsuranceSubscriptionException
      * @throws TokenException
-     * @throws InsurancePendingCancellationException
      */
     public function testGetCancelSubscriptionWithValidToken()
     {
         $sid = 'subscription_39lGsF0UdBfpjQ8UXdYvkX';
-        $this->insuranceApiService->expects($this->once())
             ->method('cancelSubscription')
             ->with($sid);
 
@@ -108,17 +88,13 @@ class SubscriptionHelperTest extends TestCase
      *
      * @return void
      *
-     * @throws InsurancePendingCancellationException
-     * @throws InsuranceSubscriptionException
      * @throws TokenException
      */
     public function testGetCancelSubscriptionWithValidTokenAndThrowException()
     {
         $sid = 'subscription_39lGsF0UdBfpjQ8UXdYvkX';
-        $this->insuranceApiService->expects($this->once())
             ->method('cancelSubscription')
             ->with($sid)
-            ->willReturn(InsuranceSubscriptionException::class);
 
         $this->tokenHelper->expects($this->once())->method('isAdminTokenValid')
             ->with(ConstantsHelper::BO_CONTROLLER_INSURANCE_ORDERS_DETAILS_CLASSNAME, 'token')
@@ -131,8 +107,6 @@ class SubscriptionHelperTest extends TestCase
      *
      * @return void
      *
-     * @throws InsurancePendingCancellationException
-     * @throws InsuranceSubscriptionException
      * @throws TokenException
      */
     public function testGetCancelSubscriptionReturnErrorIfTokenIsNotValid()
@@ -162,7 +136,6 @@ class SubscriptionHelperTest extends TestCase
         $sid = 'subscription_39lGsF0UdBfpjQ8UXdYvkX';
 
         $this->expectException(SubscriptionException::class);
-        $this->insuranceApiService->expects($this->never())->method('getSubscriptionById');
         $this->subscriptionHelper->updateSubscriptionWithTrace($sid, $trace);
     }
 
@@ -180,11 +153,9 @@ class SubscriptionHelperTest extends TestCase
             'broker_subscription_id' => 'broker_id',
             'broker_subscription_reference' => 'broker_reference',
         ];
-        $this->almaInsuranceProductRepository->expects($this->once())
             ->method('updateSubscription')
             ->with($sid, $subscriptionArray['state'], $subscriptionArray['broker_subscription_id'], $subscriptionArray['broker_subscription_reference'])
             ->willReturn(true);
-        $this->insuranceApiService->expects($this->once())
             ->method('getSubscriptionById')
             ->with($sid)
             ->willReturn($subscriptionArray);
@@ -204,10 +175,8 @@ class SubscriptionHelperTest extends TestCase
         $sid = 'subscription_39lGsF0UdBfpjQ8UXdYvkX';
 
         $this->expectException(SubscriptionException::class);
-        $this->almaInsuranceProductRepository->expects($this->never())
             ->method('updateSubscription');
 
-        $this->insuranceApiService->expects($this->once())
             ->method('getSubscriptionById')
             ->with($sid)
             ->willThrowException(new SubscriptionException('Impossible to get subscription'));
@@ -231,11 +200,9 @@ class SubscriptionHelperTest extends TestCase
             'broker_subscription_reference' => 'broker_reference',
         ];
         $this->expectException(SubscriptionException::class);
-        $this->almaInsuranceProductRepository->expects($this->once())
             ->method('updateSubscription')
             ->with($sid, $subscriptionArray['state'], $subscriptionArray['broker_subscription_id'], $subscriptionArray['broker_subscription_reference'])
             ->willReturn(false);
-        $this->insuranceApiService->expects($this->once())
             ->method('getSubscriptionById')
             ->with($sid)
             ->willReturn($subscriptionArray);

@@ -25,7 +25,6 @@
 namespace Alma\PrestaShop\Tests\Unit\Builders\Helpers;
 
 use Alma\PrestaShop\Builders\Helpers\ApiHelperBuilder;
-use Alma\PrestaShop\Helpers\Admin\AdminInsuranceHelper;
 use Alma\PrestaShop\Helpers\ApiHelper;
 use Alma\PrestaShop\Helpers\ClientHelper;
 use Alma\PrestaShop\Helpers\ConfigurationHelper;
@@ -73,11 +72,7 @@ class ApiHelperBuilderTest extends TestCase
         ));
     }
 
-    public function testGetAdminInsuranceHelper()
     {
-        $this->assertInstanceOf(AdminInsuranceHelper::class, $this->apiHelperBuilder->getAdminInsuranceHelper());
-        $this->assertInstanceOf(AdminInsuranceHelper::class, $this->apiHelperBuilder->getAdminInsuranceHelper(
-            \Mockery::mock(AdminInsuranceHelper::class)
         ));
     }
 }

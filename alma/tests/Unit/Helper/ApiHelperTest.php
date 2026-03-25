@@ -30,7 +30,6 @@ use Alma\PrestaShop\Builders\Helpers\ApiHelperBuilder;
 use Alma\PrestaShop\Exceptions\ActivationException;
 use Alma\PrestaShop\Exceptions\ApiMerchantsException;
 use Alma\PrestaShop\Factories\ModuleFactory;
-use Alma\PrestaShop\Helpers\Admin\AdminInsuranceHelper;
 use Alma\PrestaShop\Helpers\ApiHelper;
 use Alma\PrestaShop\Helpers\ClientHelper;
 use Alma\PrestaShop\Helpers\ConfigurationHelper;
@@ -58,7 +57,6 @@ class ApiHelperTest extends TestCase
             $this->clientHelperMock,
             $this->createMock(ToolsHelper::class),
             $this->createMock(ConfigurationHelper::class),
-            $this->createMock(AdminInsuranceHelper::class)
         );
     }
 
@@ -131,7 +129,6 @@ class ApiHelperTest extends TestCase
 
     public function testSaveFeatureFlag()
     {
-        $merchant = new Merchant(['cms_insurance' => 1]);
 
         $configurationHelper = Mockery::mock(ConfigurationHelper::class)->makePartial();
         $configurationHelper->shouldReceive('updateValue')->andReturn('');
@@ -147,12 +144,10 @@ class ApiHelperTest extends TestCase
 
         $this->assertEquals('1', $method->invokeArgs($apiHelper, [
             $merchant,
-            'cms_insurance',
             ConstantsHelper::ALMA_ALLOW_INSURANCE,
             ConstantsHelper::ALMA_ACTIVATE_INSURANCE,
         ]));
 
-        $merchant = new Merchant(['cms_insurance' => 0]);
 
         $configurationHelper = Mockery::mock(ConfigurationHelper::class)->makePartial();
         $configurationHelper->shouldReceive('updateValue')->andReturn('');
@@ -168,7 +163,6 @@ class ApiHelperTest extends TestCase
 
         $this->assertEquals('0', $method->invokeArgs($apiHelper, [
             $merchant,
-            'cms_insurance',
             ConstantsHelper::ALMA_ALLOW_INSURANCE,
             ConstantsHelper::ALMA_ACTIVATE_INSURANCE,
         ]));

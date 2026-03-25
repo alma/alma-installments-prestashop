@@ -26,7 +26,6 @@ namespace Alma\PrestaShop\Tests\Unit\Helper;
 
 use Alma\PrestaShop\Exceptions\ProductException;
 use Alma\PrestaShop\Factories\ProductFactory;
-use Alma\PrestaShop\Helpers\InsuranceHelper;
 use Alma\PrestaShop\Helpers\ProductHelper;
 use PHPUnit\Framework\TestCase;
 
@@ -45,9 +44,7 @@ class ProductHelperTest extends TestCase
      */
     protected $productMock;
     /**
-     * @var InsuranceHelper
      */
-    protected $insuranceHelperMock;
     /**
      * @var ProductFactory
      */
@@ -62,10 +59,8 @@ class ProductHelperTest extends TestCase
         $this->productMock = $this->getMockBuilder(\Product::class)
             ->setMethods(['getAttributeCombination'])
             ->getMock();
-        $this->insuranceHelperMock = $this->createMock(InsuranceHelper::class);
         $this->productFactoryMock = $this->createMock(ProductFactory::class);
         $this->productHelper = new ProductHelper(
-            $this->insuranceHelperMock,
             $this->productFactoryMock
         );
     }
@@ -75,7 +70,6 @@ class ProductHelperTest extends TestCase
         $this->productHelper = null;
         $this->categoryMock = null;
         $this->productMock = null;
-        $this->insuranceHelperMock = null;
         $this->productFactoryMock = null;
     }
 

@@ -29,8 +29,6 @@ use Alma\PrestaShop\Exceptions\CartException;
 use Alma\PrestaShop\Factories\CartFactory;
 use Alma\PrestaShop\Factories\ContextFactory;
 use Alma\PrestaShop\Factories\ToolsFactory;
-use Alma\PrestaShop\Helpers\InsuranceHelper;
-use Alma\PrestaShop\Helpers\InsuranceProductHelper;
 use Alma\PrestaShop\Helpers\ProductHelper;
 use Alma\PrestaShop\Modules\OpartSaveCart\OpartSaveCartCartService;
 use Alma\PrestaShop\Repositories\CartProductRepository;
@@ -89,8 +87,6 @@ class CartServiceTest extends TestCase
         $this->newCartMock = \Mockery::mock(\Cart::class);
         $this->contextFactoryMock = $this->createMock(ContextFactory::class);
         $this->toolsFactoryMock = \Mockery::mock(ToolsFactory::class);
-        $this->insuranceHelperMock = \Mockery::mock(InsuranceHelper::class);
-        $this->insuranceProductHelperSpy = \Mockery::spy(InsuranceProductHelper::class);
         $this->cartFactoryMock = $this->createMock(CartFactory::class);
         $this->productHelperMock = $this->createMock(ProductHelper::class);
         $this->productMock = $this->createMock(\Product::class);
@@ -99,8 +95,6 @@ class CartServiceTest extends TestCase
             [
                 \Mockery::mock(CartProductRepository::class),
                 $this->contextFactoryMock,
-                $this->insuranceHelperMock,
-                $this->insuranceProductHelperSpy,
                 $this->toolsFactoryMock,
                 $this->cartFactoryMock,
                 $this->productHelperMock,
@@ -109,8 +103,6 @@ class CartServiceTest extends TestCase
         $this->cartService = new CartService(
             $this->createMock(CartProductRepository::class),
             $this->contextFactoryMock,
-            $this->insuranceHelperMock,
-            $this->insuranceProductHelperSpy,
             $this->toolsFactoryMock,
             $this->cartFactoryMock,
             $this->productHelperMock
@@ -135,15 +127,11 @@ class CartServiceTest extends TestCase
      * @throws \Alma\PrestaShop\Exceptions\AlmaException
      * @throws \PrestaShopException
      */
-    public function testDuplicateAlmaInsuranceProductsIfExist()
     {
         $this->newCartMock->id = 2;
         $this->cartMock->id = 1;
-        $this->insuranceHelperMock->shouldReceive('almaInsuranceProductsAlreadyExist')
             ->with($this->newCartMock)
             ->andReturn(true);
-        $this->cartServiceMock->duplicateAlmaInsuranceProductsIfNotExist($this->newCartMock, $this->cartMock);
-        $this->insuranceProductHelperSpy->shouldNotHaveReceived('duplicateAlmaInsuranceProducts');
     }
 
     /**
@@ -152,15 +140,11 @@ class CartServiceTest extends TestCase
      * @throws \Alma\PrestaShop\Exceptions\AlmaException
      * @throws \PrestaShopException
      */
-    public function testDuplicateAlmaInsuranceProductsIfNotExist()
     {
         $this->newCartMock->id = 2;
         $this->cartMock->id = 1;
-        $this->insuranceHelperMock->shouldReceive('almaInsuranceProductsAlreadyExist')
             ->with($this->newCartMock)
             ->andReturn(false);
-        $this->cartServiceMock->duplicateAlmaInsuranceProductsIfNotExist($this->newCartMock, $this->cartMock);
-        $this->insuranceProductHelperSpy->shouldHaveReceived('duplicateAlmaInsuranceProducts')->once();
     }
 
     /**

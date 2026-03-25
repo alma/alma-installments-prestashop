@@ -73,7 +73,6 @@ class MessageOrderServiceTest extends TestCase
         $order->id = 1;
         $this->context->shop->id = 1;
         $this->context->language->id = 1;
-        $idProductInsurance = 20;
         $idCustomerThread = null;
         $messageText = 'text message order test';
 
@@ -85,7 +84,6 @@ class MessageOrderServiceTest extends TestCase
             ->willReturn(true);
         $this->messageOrderService->addCustomerMessageOnThread(
             $order,
-            $idProductInsurance,
             $idCustomerThread,
             $messageText
         );
@@ -102,7 +100,6 @@ class MessageOrderServiceTest extends TestCase
         $order = $this->order;
         $order->id_customer = 1;
         $order->id = 1;
-        $idProductInsurance = 20;
         $idCustomerThread = 1;
         $messageText = 'text message order test';
 
@@ -114,7 +111,6 @@ class MessageOrderServiceTest extends TestCase
             ->willReturn(true);
         $this->messageOrderService->addCustomerMessageOnThread(
             $order,
-            $idProductInsurance,
             $idCustomerThread,
             $messageText
         );
