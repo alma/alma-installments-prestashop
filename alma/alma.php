@@ -216,10 +216,6 @@ class Alma extends PaymentModule implements WidgetInterface
     public function getWidgetVariables($hookName, array $configuration): array
     {
         $widgetFrontendService = HookServiceFactory::createWidgetService($this->context);
-        try {
-            return $widgetFrontendService->getWidgetVariables($hookName);
-        } catch (WidgetException $e) {
-            return ['error_widget' => $e->getMessage()];
-        }
+        return $widgetFrontendService->getWidgetVariables($hookName);
     }
 }
