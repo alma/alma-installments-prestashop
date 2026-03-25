@@ -33,8 +33,6 @@ if (!defined('_PS_VERSION_')) {
 class MessageOrderHelper
 {
     /**
-     */
-    /**
      * @var \Context
      */
     protected $context;
@@ -53,35 +51,10 @@ class MessageOrderHelper
      * @param $context
      * @param PriceHelper $priceHelper
      */
+    public function __construct($module, $context, $priceHelper)
     {
         $this->module = $module;
         $this->context = $context;
         $this->priceHelper = $priceHelper;
-    }
-
-    /**
-     *
-     * @return string
-     *
-     * @throws MessageOrderException
-     */
-    {
-        }
-            $price
-        );
-        $product = new \Product(
-            false,
-            \Configuration::get('PS_LANG_DEFAULT')
-        );
-
-        $text = sprintf(
-            Please refund the customer.
-            Action Required: Refund the customer for the affected subscriptions.
-            Thank you.',
-            $this->priceHelper->convertPriceFromCents($price) . '€',
-            $product->name
-        );
-
-        return $this->module->l($text, 'messageOrderService');
     }
 }

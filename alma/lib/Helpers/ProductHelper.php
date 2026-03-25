@@ -39,12 +39,14 @@ if (!defined('_PS_VERSION_')) {
 class ProductHelper
 {
     /**
-     */
-    /**
-     * @var ProductHelper
+     * @var ProductFactory
      */
     protected $productFactory;
 
+    /**
+     * @param ProductFactory|null $productFactory
+     */
+    public function __construct($productFactory = null)
     {
         $this->productFactory = $productFactory ?: new ProductFactory();
     }

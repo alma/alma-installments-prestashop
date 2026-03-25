@@ -42,36 +42,4 @@ class StockAvailableService
         $this->stockAvailableRepository = new StockAvailableRepository();
     }
 
-    /**
-     * @param int $idProduct
-     * @param bool $outOfStock
-     * @param int $shopId
-     *
-     * @return void
-     */
-    {
-        \StockAvailable::setProductOutOfStock(
-            $idProduct,
-            $outOfStock,
-            $shopId,
-        );
-
-        if (version_compare(_PS_VERSION_, '1.7.8', '<')) {
-            \StockAvailable::setProductDependsOnStock(
-                $idProduct,
-                $outOfStock == 1 ? false : true,
-                $shopId,
-            );
-        }
-    }
-
-    /**
-     * @param int $idProduct
-     * @param int $quantity
-     * @param int $shopId
-     *
-     * @return void
-     */
-    {
-    }
 }

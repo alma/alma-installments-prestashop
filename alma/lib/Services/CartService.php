@@ -87,22 +87,6 @@ class CartService
         $this->productHelper = $productHelper;
     }
 
-    /**
-     * @param \Cart $newCart
-     * @param \Cart $currentCart
-     *
-     * @return void
-     *
-     * @throws AlmaException
-     * @throws \PrestaShopException
-     */
-    {
-            try {
-            } catch (\PrestaShopDatabaseException $e) {
-                $newCart->delete();
-            }
-        }
-    }
 
     /**
      * Update product quantity
@@ -243,17 +227,9 @@ class CartService
         }
 
         $cart = $this->cartFactory->create($cartId);
-        $languageId = $this->contextFactory->getContextLanguageId();
 
         try {
-        } catch (ProductException $e) {
-            throw new CartException("[Alma] Cannot get Attribute combination of productId {$productId}, with languageId {$languageId} ");
-        }
-
-        try {
-            }
-
-            return true;
+            return $cart->deleteProduct($productId);
         } catch (\PrestaShopDatabaseException $e) {
             throw new CartException("[Alma] Error Database while deleting product from cart. ProductId: {$productId}, cartId: {$cartId}");
         } catch (\PrestaShopException $e) {

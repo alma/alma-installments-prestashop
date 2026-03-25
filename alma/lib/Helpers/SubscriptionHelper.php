@@ -62,13 +62,9 @@ class SubscriptionHelper
      */
     public function cancelSubscriptionWithToken($sid)
     {
-        if (!$this->tokenHelper->isAdminTokenValid(
-            ConstantsHelper::BO_CONTROLLER_INSURANCE_ORDERS_DETAILS_CLASSNAME,
-            'token'
-        )) {
+        if (!$this->tokenHelper->isAdminTokenValid('token')) {
             throw new TokenException('Invalid Token', 401);
         }
-
     }
 
     /**
@@ -83,16 +79,7 @@ class SubscriptionHelper
     {
         $this->isTraceValid($trace);
 
-        if (
-                $sid,
-                $subscriptionArray['state'],
-                $subscriptionArray['broker_subscription_id'],
-                $subscriptionArray['broker_subscription_reference']
-            )
-        ) {
-        }
-
-        return $subscriptionArray['state'];
+        return null;
     }
 
     /**

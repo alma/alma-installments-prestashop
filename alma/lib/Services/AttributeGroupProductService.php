@@ -60,10 +60,6 @@ class AttributeGroupProductService
             $this->context->language->id
         );
 
-        if (!$attributeGroupId) {
-            $attributeGroupId = $attributeGroup->id;
-        }
-
         return $attributeGroupId;
     }
 }

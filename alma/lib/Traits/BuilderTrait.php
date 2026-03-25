@@ -605,7 +605,7 @@ trait BuilderTrait
             $this->getModuleFactory(),
             $this->getClientHelper(),
             $this->getToolsHelper(),
-            $this->getConfigurationHelper(),
+            $this->getConfigurationHelper()
         );
     }
 
@@ -846,34 +846,6 @@ trait BuilderTrait
     }
 
     /**
-     *
-     */
-    {
-        }
-
-    }
-
-    /**
-     *
-     */
-    {
-        }
-
-    }
-
-    /**
-     *
-     */
-    {
-        }
-
-            $this->getModuleFactory(),
-            $this->getTabsHelper(),
-            $this->getConfigurationHelper(),
-        );
-    }
-
-    /**
      * @param CartFactory $cartFactory
      *
      * @return CartFactory
@@ -1033,30 +1005,6 @@ trait BuilderTrait
     }
 
     /**
-     *
-     */
-    {
-        }
-
-            $this->getCartProductRepository(),
-            $this->getProductRepository(),
-            $this->getContextFactory(),
-            $this->getToolsHelper(),
-            $this->getSettingsHelper()
-        );
-    }
-
-    /**
-     *
-     */
-    {
-        }
-
-            $this->getContextFactory()
-        );
-    }
-
-    /**
      * @param AttributeGroupProductService $attributeGroupProductService
      *
      * @return AttributeGroupProductService
@@ -1112,18 +1060,12 @@ trait BuilderTrait
         return new CartService(
             $this->getCartProductRepository(),
             $this->getContextFactory(),
+            $this->getInsuranceHelper(),
+            $this->getInsuranceProductHelper(),
             $this->getToolsFactory(),
             $this->getCartFactory(),
             $this->getProductHelper()
         );
-    }
-
-    /**
-     *
-     */
-    {
-        }
-
     }
 
     /**

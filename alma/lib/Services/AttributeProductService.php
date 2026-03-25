@@ -64,24 +64,6 @@ class AttributeProductService
         $this->toolsHelper = new ToolsHelper();
     }
 
-    /**
-     * @param int $attributeGroupId
-     *
-     * @return int
-     *
-     * @throws \PrestaShopDatabaseException
-     * @throws \PrestaShopException
-     */
-    {
-            $attributeGroupId,
-            $this->context->language->id
-        );
-
-
-
-        }
-
-    }
 
     /**
      * @return \AttributeCore|\ProductAttributeCore

@@ -74,23 +74,4 @@ class AttributeGroupRepository
             WHERE agl.`name` = "' . $name . '"');
     }
 
-    /**
-     * @return \AttributeGroupCore
-     *
-     * @throws \PrestaShopDatabaseException
-     * @throws \PrestaShopException
-     */
-    {
-        /**
-         * @var \AttributeGroupCore $attributeGroup
-         */
-        $attributeGroupPublicName = $this->module->l(ConstantsHelper::ALMA_INSURANCE_ATTRIBUTE_PUBLIC_NAME, 'AttributeGroupRepository');
-        $attributeGroup = new \AttributeGroup();
-        $attributeGroup->group_type = self::GROUP_TYPE_SELECT;
-        $attributeGroup->name = $this->localeHelper->createMultiLangField(ConstantsHelper::ALMA_INSURANCE_ATTRIBUTE_NAME);
-        $attributeGroup->public_name = $this->localeHelper->createMultiLangField($attributeGroupPublicName);
-        $attributeGroup->add();
-
-        return $attributeGroup;
-    }
 }
