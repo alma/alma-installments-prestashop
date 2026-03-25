@@ -56,7 +56,7 @@ class ApiHelperTest extends TestCase
             $this->createMock(ModuleFactory::class),
             $this->clientHelperMock,
             $this->createMock(ToolsHelper::class),
-            $this->createMock(ConfigurationHelper::class),
+            $this->createMock(ConfigurationHelper::class)
         );
     }
 

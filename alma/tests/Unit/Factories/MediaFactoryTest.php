@@ -26,6 +26,7 @@ namespace Alma\PrestaShop\Tests\Unit\Factories;
 
 use Alma\PrestaShop\Factories\MediaFactory;
 use Alma\PrestaShop\Factories\ModuleFactory;
+use Alma\PrestaShop\Helpers\ToolsHelper;
 use PHPUnit\Framework\TestCase;
 
 class MediaFactoryTest extends TestCase
@@ -37,7 +38,7 @@ class MediaFactoryTest extends TestCase
 
     public function setUp()
     {
-        $this->mediaFactory = new MediaFactory(new ModuleFactory());
+        $this->mediaFactory = new MediaFactory(new ModuleFactory(new ToolsHelper()));
     }
 
     public function testGetMediaPath()

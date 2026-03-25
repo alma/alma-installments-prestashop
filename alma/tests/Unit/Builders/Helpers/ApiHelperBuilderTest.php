@@ -71,8 +71,4 @@ class ApiHelperBuilderTest extends TestCase
             \Mockery::mock(ConfigurationHelper::class)
         ));
     }
-
-    {
-        ));
-    }
 }

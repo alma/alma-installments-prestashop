@@ -67,7 +67,7 @@ class ApiHelper
         $moduleFactory,
         $clientHelper,
         $toolsHelper,
-        $configurationHelper,
+        $configurationHelper
     ) {
         $this->moduleFactory = $moduleFactory;
         $this->clientHelper = $clientHelper;
