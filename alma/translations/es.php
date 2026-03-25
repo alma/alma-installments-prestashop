@@ -161,9 +161,6 @@ $_MODULE['<{alma}prestashop>adminalmarefunds_69c00601627a9011bf5c4816abf00b5a'] 
 $_MODULE['<{alma}prestashop>adminalmarefunds_9bbf53faf470010110269d041cab1e9f'] = 'El reembolso se ha procesado';
 $_MODULE['<{alma}prestashop>adminalmarefunds_4ba820211f99849725468bd56fc50216'] = 'Error: El importe es mayor que el máximo reembolsable';
 $_MODULE['<{alma}prestashop>adminalmarefunds_dde9188155937e885e5f5b002e6dcb39'] = 'Error: tipo de reembolso desconocido (%s)';
-$_MODULE['<{alma}prestashop>subscription_e8b288e3bc9f8001cb5e625c549420e9'] = 'Falta el identificador de suscripción';
-$_MODULE['<{alma}prestashop>subscription_0d06849941740b4bdd9281f07d28e0dd'] = 'Acción desconocida';
-$_MODULE['<{alma}prestashop>subscription_a8cec6fae3a5545458fcf2f8a34dcbe9'] = 'Error al cancelar la suscripción';
 $_MODULE['<{alma}prestashop>payment_2f9f52496706027b880bac2e3c9af1d8'] = 'Se ha producido un error al buscar el pago. Inténtalo de nuevo o ponte en contacto con nosotros si el problema persiste.';
 $_MODULE['<{alma}prestashop>payment_efa820507b1951ee5722003639b1a0b0'] = 'El pago aplazado con Alma no está disponible para esta divisa';
 $_MODULE['<{alma}prestashop>validation_9d55a51cbc2d6cf7f9251b0cec59390e'] = 'Se ha producido un error durante la validación de tu pago. Vuelve a intentarlo o ponte en contacto con nosotros si el problema persiste. ID compra: %d';

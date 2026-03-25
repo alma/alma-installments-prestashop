@@ -161,9 +161,6 @@ $_MODULE['<{alma}prestashop>adminalmarefunds_69c00601627a9011bf5c4816abf00b5a'] 
 $_MODULE['<{alma}prestashop>adminalmarefunds_9bbf53faf470010110269d041cab1e9f'] = 'Le remboursement a été déclenché';
 $_MODULE['<{alma}prestashop>adminalmarefunds_4ba820211f99849725468bd56fc50216'] = 'Erreur : Le montant renseigné est supérieur au montant maximum remboursable';
 $_MODULE['<{alma}prestashop>adminalmarefunds_dde9188155937e885e5f5b002e6dcb39'] = 'Erreur : type de remboursement inconnu (%s)';
-$_MODULE['<{alma}prestashop>subscription_e8b288e3bc9f8001cb5e625c549420e9'] = 'L\'identifiant de l\'abonnement est manquant';
-$_MODULE['<{alma}prestashop>subscription_0d06849941740b4bdd9281f07d28e0dd'] = 'L\'action est inconnue';
-$_MODULE['<{alma}prestashop>subscription_a8cec6fae3a5545458fcf2f8a34dcbe9'] = 'Erreur de résiliation de l\'abonnement';
 $_MODULE['<{alma}prestashop>payment_2f9f52496706027b880bac2e3c9af1d8'] = 'Une erreur est survenue lors de la requête de paiement. Veuillez réessayer, ou contactez-nous si le problème persiste.';
 $_MODULE['<{alma}prestashop>payment_efa820507b1951ee5722003639b1a0b0'] = 'Le paiement en plusieurs fois Alma n\'est pas disponible pour cette devise';
 $_MODULE['<{alma}prestashop>validation_9d55a51cbc2d6cf7f9251b0cec59390e'] = 'Une erreur est survenue lors de la validation de votre paiement. Veuillez réessayer ou nous contacter si le problème persiste. ID Panier : %d';

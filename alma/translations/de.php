@@ -160,9 +160,6 @@ $_MODULE['<{alma}prestashop>adminalmarefunds_69c00601627a9011bf5c4816abf00b5a'] 
 $_MODULE['<{alma}prestashop>adminalmarefunds_9bbf53faf470010110269d041cab1e9f'] = 'Die Erstattung wurde bearbeitet';
 $_MODULE['<{alma}prestashop>adminalmarefunds_4ba820211f99849725468bd56fc50216'] = 'Fehler: Betrag ist höher als der maximal erstattungsfähige Betrag';
 $_MODULE['<{alma}prestashop>adminalmarefunds_dde9188155937e885e5f5b002e6dcb39'] = 'Fehler: unbekannter Erstattungstyp (%s)';
-$_MODULE['<{alma}prestashop>subscription_e8b288e3bc9f8001cb5e625c549420e9'] = 'Subscription id is missing';
-$_MODULE['<{alma}prestashop>subscription_0d06849941740b4bdd9281f07d28e0dd'] = 'Action is unknown';
-$_MODULE['<{alma}prestashop>subscription_a8cec6fae3a5545458fcf2f8a34dcbe9'] = 'Error to cancel subscription';
 $_MODULE['<{alma}prestashop>payment_2f9f52496706027b880bac2e3c9af1d8'] = 'Bei der Zahlungsanforderung ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut oder kontaktieren Sie uns, falls das Problem weiter besteht.';
 $_MODULE['<{alma}prestashop>payment_efa820507b1951ee5722003639b1a0b0'] = 'Die Ratenzahlung mit Alma ist in dieser Währung nicht möglich';
 $_MODULE['<{alma}prestashop>validation_9d55a51cbc2d6cf7f9251b0cec59390e'] = 'Bei der Bestätigung Ihrer Zahlung ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut oder kontaktieren Sie uns, falls das Problem weiter besteht. Warenkorb-ID: %d';

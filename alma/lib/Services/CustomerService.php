@@ -24,7 +24,6 @@
 
 namespace Alma\PrestaShop\Services;
 
-use Alma\API\Entities\Insurance\Subscriber;
 use Alma\PrestaShop\Model\AddressModel;
 use Alma\PrestaShop\Model\CustomerModel;
 
@@ -60,25 +59,6 @@ class CustomerService
         if ($idShippingAddress) {
             $this->shippingAddress = new AddressModel((int) $idShippingAddress);
         }
-    }
-
-    /**
-     * @return Subscriber
-     */
-    public function getSubscriber()
-    {
-        return new Subscriber(
-            $this->customer->getEmail(),
-            $this->getPhone(),
-            $this->customer->getLastname(),
-            $this->customer->getFirstname(),
-            $this->billingAddress->getAddressLine1(),
-            $this->billingAddress->getAddressLine2(),
-            $this->billingAddress->getZipCode(),
-            $this->billingAddress->getCity(),
-            $this->billingAddress->getCountry(),
-            $this->customer->getBirthday()
-        );
     }
 
     /**

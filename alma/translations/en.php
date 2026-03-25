@@ -160,9 +160,6 @@ $_MODULE['<{alma}prestashop>adminalmarefunds_69c00601627a9011bf5c4816abf00b5a'] 
 $_MODULE['<{alma}prestashop>adminalmarefunds_9bbf53faf470010110269d041cab1e9f'] = 'Refund has been processed';
 $_MODULE['<{alma}prestashop>adminalmarefunds_4ba820211f99849725468bd56fc50216'] = 'Error: Amount is higher than maximum refundable';
 $_MODULE['<{alma}prestashop>adminalmarefunds_dde9188155937e885e5f5b002e6dcb39'] = 'Error: unknown refund type (%s)';
-$_MODULE['<{alma}prestashop>subscription_e8b288e3bc9f8001cb5e625c549420e9'] = 'Subscription id is missing';
-$_MODULE['<{alma}prestashop>subscription_0d06849941740b4bdd9281f07d28e0dd'] = 'Action is unknown';
-$_MODULE['<{alma}prestashop>subscription_a8cec6fae3a5545458fcf2f8a34dcbe9'] = 'Error to cancel subscription';
 $_MODULE['<{alma}prestashop>payment_2f9f52496706027b880bac2e3c9af1d8'] = 'There was an error while generating your payment request. Please try again later or contact us if the problem persists.';
 $_MODULE['<{alma}prestashop>payment_efa820507b1951ee5722003639b1a0b0'] = 'Alma Monthly Installments are not available for this currency';
 $_MODULE['<{alma}prestashop>validation_9d55a51cbc2d6cf7f9251b0cec59390e'] = 'There was an error while validating your payment. Please try again or contact us if the problem persists. Cart ID: %d';

@@ -161,9 +161,6 @@ $_MODULE['<{alma}prestashop>adminalmarefunds_69c00601627a9011bf5c4816abf00b5a'] 
 $_MODULE['<{alma}prestashop>adminalmarefunds_9bbf53faf470010110269d041cab1e9f'] = 'Terugbetaling is verwerkt';
 $_MODULE['<{alma}prestashop>adminalmarefunds_4ba820211f99849725468bd56fc50216'] = 'Fout: bedrag is hoger dan maximaal terug te betalen';
 $_MODULE['<{alma}prestashop>adminalmarefunds_dde9188155937e885e5f5b002e6dcb39'] = 'Fout: restitutietype onbekend (%s)';
-$_MODULE['<{alma}prestashop>subscription_e8b288e3bc9f8001cb5e625c549420e9'] = 'Abonnements-id ontbreekt';
-$_MODULE['<{alma}prestashop>subscription_0d06849941740b4bdd9281f07d28e0dd'] = 'Actie is onbekend';
-$_MODULE['<{alma}prestashop>subscription_a8cec6fae3a5545458fcf2f8a34dcbe9'] = 'Fout bij opzeggen abonnement';
 $_MODULE['<{alma}prestashop>payment_2f9f52496706027b880bac2e3c9af1d8'] = 'Er is iets fout gegaan bij de betaalopdracht. Probeer het opnieuw of neem contact met ons op als het probleem zich blijft voordoen.';
 $_MODULE['<{alma}prestashop>payment_efa820507b1951ee5722003639b1a0b0'] = 'Gespreide betaling van Alma is niet beschikbaar voor deze valuta';
 $_MODULE['<{alma}prestashop>validation_9d55a51cbc2d6cf7f9251b0cec59390e'] = 'Er is iets fout gegaan bij de bevestiging van de betaling. Probeer het opnieuw of neem contact met ons op als het probleem zich blijft voordoen. ID winkelmandje: %d';

@@ -161,9 +161,6 @@ $_MODULE['<{alma}prestashop>adminalmarefunds_69c00601627a9011bf5c4816abf00b5a'] 
 $_MODULE['<{alma}prestashop>adminalmarefunds_9bbf53faf470010110269d041cab1e9f'] = 'Il rimborso è stato elaborato';
 $_MODULE['<{alma}prestashop>adminalmarefunds_4ba820211f99849725468bd56fc50216'] = 'Errore: l\'importo è superiore al massimo rimborsabile';
 $_MODULE['<{alma}prestashop>adminalmarefunds_dde9188155937e885e5f5b002e6dcb39'] = 'Errore: tipo di rimborso sconosciuto (%s)';
-$_MODULE['<{alma}prestashop>subscription_e8b288e3bc9f8001cb5e625c549420e9'] = 'Manca l\'id dell\'abbonamento';
-$_MODULE['<{alma}prestashop>subscription_0d06849941740b4bdd9281f07d28e0dd'] = 'L\'azione è sconosciuta';
-$_MODULE['<{alma}prestashop>subscription_a8cec6fae3a5545458fcf2f8a34dcbe9'] = 'Errore durante la cancellazione dell\'abbonamento';
 $_MODULE['<{alma}prestashop>payment_2f9f52496706027b880bac2e3c9af1d8'] = 'Si è verificato un errore al momento della richiesta di pagamento. Si prega di riprovare più tardi o di contattarci qualora il problema dovesse persistere.';
 $_MODULE['<{alma}prestashop>payment_efa820507b1951ee5722003639b1a0b0'] = 'Il pagamento rateale Alma non è disponibile per questa valuta';
 $_MODULE['<{alma}prestashop>validation_9d55a51cbc2d6cf7f9251b0cec59390e'] = 'Si è verificato un errore al momento della convalida del pagamento. Si prega di riprovare più tardi o di contattarci qualora il problema dovesse persistere. ID carrello: %d';

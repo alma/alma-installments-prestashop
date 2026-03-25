@@ -77,11 +77,6 @@ class Alma extends PaymentModule
         $this->bootstrap = true;
         $controllers = ['payment', 'validation', 'ipn'];
 
-        if (version_compare(_PS_VERSION_, '1.7', '>=')) {
-            $controllers[] = 'subscription';
-            $controllers[] = 'cancellation';
-        }
-
         $this->controllers = $controllers;
         $this->is_eu_compatible = 1;
         $this->currencies = true;
