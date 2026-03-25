@@ -9,6 +9,12 @@ use PrestaShop\Module\Alma\Infrastructure\Repository\ConfigurationRepository;
 
 class WidgetService
 {
+    const ALLOWED_CONTROLLERS = [
+        'ProductController' => 'product',
+        'CartController' => 'cart',
+        'IndexController' => 'index',
+    ];
+
     private \Context $context;
     /**
      * @var ConfigurationRepository
