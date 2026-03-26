@@ -3,6 +3,7 @@
 namespace PrestaShop\Module\Alma\Tests\Unit\Application\Service;
 
 use PHPUnit\Framework\TestCase;
+use PrestaShop\Module\Alma\Application\Exception\WidgetException;
 use PrestaShop\Module\Alma\Application\Service\WidgetFrontendService;
 use PrestaShop\Module\Alma\Infrastructure\Repository\ConfigurationRepository;
 
@@ -45,6 +46,9 @@ class WidgetFrontendServiceTest extends TestCase
         $this->assertEquals($expected, $this->widgetFrontendService->renderWidget('alma.widget.cart', $configuration));
     }
 
+    /**
+     * @throws \PrestaShop\Module\Alma\Application\Exception\WidgetException
+     */
     public function testGetWidgetVariablesForCartWithWidgetTag()
     {
         $expected = [
@@ -89,6 +93,9 @@ class WidgetFrontendServiceTest extends TestCase
         $this->assertEquals($expected, $this->widgetFrontendService->getWidgetVariables('alma.widget.cart', $configuration));
     }
 
+    /**
+     * @throws \PrestaShop\Module\Alma\Application\Exception\WidgetException
+     */
     public function testGetWidgetVariablesForCartWithHookTag()
     {
         $expected = [
@@ -133,10 +140,22 @@ class WidgetFrontendServiceTest extends TestCase
         $this->assertEquals($expected, $this->widgetFrontendService->getWidgetVariables('alma.widget.ShoppingCartFooter', $configuration));
     }
 
+    /**
+     * @throws \PrestaShop\Module\Alma\Application\Exception\WidgetException
+     */
     public function testGetWidgetVariablesWithUnknownHookName()
     {
-        $expected = ['error_widget' => true];
+        $this->expectException(WidgetException::class);
+        $this->widgetFrontendService->getWidgetVariables('unknown.hookname');
+    }
 
-        $this->assertEquals($expected, $this->widgetFrontendService->getWidgetVariables('unknown.hookname', ['config' => 'value']));
+    /**
+     * @throws \PrestaShop\Module\Alma\Application\Exception\WidgetException
+     */
+    public function testGetWidgetVariablesWithoutCartInContext()
+    {
+        $this->context->cart = null;
+        $this->expectException(WidgetException::class);
+        $this->widgetFrontendService->getWidgetVariables('alma.widget.cart');
     }
 }

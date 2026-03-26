@@ -2,6 +2,7 @@
 
 namespace PrestaShop\Module\Alma\Application\Service;
 
+use PrestaShop\Module\Alma\Application\Exception\WidgetException;
 use PrestaShop\Module\Alma\Application\Helper\FeePlanHelper;
 use PrestaShop\Module\Alma\Application\Helper\PriceHelper;
 use PrestaShop\Module\Alma\Infrastructure\Repository\ConfigurationRepository;
@@ -48,6 +49,7 @@ class WidgetFrontendService
      * Get the variables needed for the widget template based on the hook name and parameters.
      * @param string $hookName
      * @return array
+     * @throws \PrestaShop\Module\Alma\Application\Exception\WidgetException
      */
     public function getWidgetVariables(string $hookName): array
     {
@@ -56,11 +58,16 @@ class WidgetFrontendService
             case 'alma.widget.cart':
                 /** @var \Cart $cart */
                 $cart = $this->context->cart;
-                $purchaseAmount = $cart->getCartTotalPrice();
+
+                if (!$cart instanceof \Cart) {
+                    throw new WidgetException('Cart not found in context');
+                }
+
+                $purchaseAmount = $cart->getCartTotalPrice() ?? 0;
                 $containerId = '#alma-widget-cart';
                 break;
             default:
-                return ['error_widget' => true];
+                throw new WidgetException('Hook not supported for widget: ' . $hookName);
         }
 
         return [
@@ -88,9 +95,10 @@ class WidgetFrontendService
                 continue;
             }
 
+            $arrayPlanKey = FeePlanHelper::getPlanFromPlanKey($planKey);
             $plans[] = [
-                'installmentsCount' => FeePlanHelper::getPlanFromPlanKey($planKey)['installments_count'],
-                'deferredDays' => FeePlanHelper::getPlanFromPlanKey($planKey)['deferred_days'],
+                'installmentsCount' => $arrayPlanKey['installments_count'],
+                'deferredDays' => $arrayPlanKey['deferred_days'],
                 'minAmount' => (int) $plan['min_amount'],
                 'maxAmount' => (int) $plan['max_amount'],
             ];

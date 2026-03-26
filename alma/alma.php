@@ -22,6 +22,7 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
+use PrestaShop\Module\Alma\Application\Exception\WidgetException;
 use PrestaShop\Module\Alma\Application\Service\AssetService;
 use PrestaShop\Module\Alma\Application\Service\ModuleInstallerService;
 use PrestaShop\Module\Alma\Application\Service\ModuleService;
@@ -218,6 +219,10 @@ class Alma extends PaymentModule implements WidgetInterface
     public function getWidgetVariables($hookName, array $configuration): array
     {
         $widgetFrontendService = HookServiceFactory::createWidgetService($this->context);
-        return $widgetFrontendService->getWidgetVariables($hookName);
+        try {
+            return $widgetFrontendService->getWidgetVariables($hookName);
+        } catch (WidgetException $e) {
+            return ['error_widget' => $e->getMessage()];
+        }
     }
 }
