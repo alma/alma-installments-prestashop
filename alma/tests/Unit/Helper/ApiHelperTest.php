@@ -30,11 +30,9 @@ use Alma\PrestaShop\Builders\Helpers\ApiHelperBuilder;
 use Alma\PrestaShop\Exceptions\ActivationException;
 use Alma\PrestaShop\Exceptions\ApiMerchantsException;
 use Alma\PrestaShop\Factories\ModuleFactory;
-use Alma\PrestaShop\Helpers\Admin\AdminInsuranceHelper;
 use Alma\PrestaShop\Helpers\ApiHelper;
 use Alma\PrestaShop\Helpers\ClientHelper;
 use Alma\PrestaShop\Helpers\ConfigurationHelper;
-use Alma\PrestaShop\Helpers\ConstantsHelper;
 use Alma\PrestaShop\Helpers\ToolsHelper;
 use Mockery;
 use PHPUnit\Framework\TestCase;
@@ -57,8 +55,7 @@ class ApiHelperTest extends TestCase
             $this->createMock(ModuleFactory::class),
             $this->clientHelperMock,
             $this->createMock(ToolsHelper::class),
-            $this->createMock(ConfigurationHelper::class),
-            $this->createMock(AdminInsuranceHelper::class)
+            $this->createMock(ConfigurationHelper::class)
         );
     }
 
@@ -127,51 +124,6 @@ class ApiHelperTest extends TestCase
         $apiHelper = $apiHelperBuilder->getInstance();
 
         $this->assertInstanceOf(Merchant::class, $apiHelper->getMerchant());
-    }
-
-    public function testSaveFeatureFlag()
-    {
-        $merchant = new Merchant(['cms_insurance' => 1]);
-
-        $configurationHelper = Mockery::mock(ConfigurationHelper::class)->makePartial();
-        $configurationHelper->shouldReceive('updateValue')->andReturn('');
-
-        $apiHelperBuilder = Mockery::mock(ApiHelperBuilder::class)->makePartial();
-        $apiHelperBuilder->shouldReceive('getConfigurationHelper')->andReturn($configurationHelper);
-
-        $apiHelper = $apiHelperBuilder->getInstance();
-
-        $reflection = new \ReflectionClass($apiHelper);
-        $method = $reflection->getMethod('saveFeatureFlag');
-        $method->setAccessible(true);
-
-        $this->assertEquals('1', $method->invokeArgs($apiHelper, [
-            $merchant,
-            'cms_insurance',
-            ConstantsHelper::ALMA_ALLOW_INSURANCE,
-            ConstantsHelper::ALMA_ACTIVATE_INSURANCE,
-        ]));
-
-        $merchant = new Merchant(['cms_insurance' => 0]);
-
-        $configurationHelper = Mockery::mock(ConfigurationHelper::class)->makePartial();
-        $configurationHelper->shouldReceive('updateValue')->andReturn('');
-
-        $apiHelperBuilder = Mockery::mock(ApiHelperBuilder::class)->makePartial();
-        $apiHelperBuilder->shouldReceive('getConfigurationHelper')->andReturn($configurationHelper);
-
-        $apiHelper = $apiHelperBuilder->getInstance();
-
-        $reflection = new \ReflectionClass($apiHelper);
-        $method = $reflection->getMethod('saveFeatureFlag');
-        $method->setAccessible(true);
-
-        $this->assertEquals('0', $method->invokeArgs($apiHelper, [
-            $merchant,
-            'cms_insurance',
-            ConstantsHelper::ALMA_ALLOW_INSURANCE,
-            ConstantsHelper::ALMA_ACTIVATE_INSURANCE,
-        ]));
     }
 
     public function testGetPaymentEligibility()

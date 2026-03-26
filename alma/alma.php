@@ -77,12 +77,6 @@ class Alma extends PaymentModule
         $this->bootstrap = true;
         $controllers = ['payment', 'validation', 'ipn'];
 
-        if (version_compare(_PS_VERSION_, '1.7', '>=')) {
-            $controllers[] = 'insurance';
-            $controllers[] = 'subscription';
-            $controllers[] = 'cancellation';
-        }
-
         $this->controllers = $controllers;
         $this->is_eu_compatible = 1;
         $this->currencies = true;
@@ -379,42 +373,6 @@ class Alma extends PaymentModule
         if (version_compare(_PS_VERSION_, '1.6', '<')) {
             return $this->runHookController('displayProductPriceBlock', $params);
         }
-    }
-
-    /**
-     * Hook to modify the order table before Ps 1.7.5
-     *
-     * @param $params
-     *
-     * @return mixed|null
-     */
-    public function hookActionAdminOrdersListingFieldsModifier($params)
-    {
-        return $this->runHookController('actionAdminOrdersListingFieldsModifier', $params);
-    }
-
-    /**
-     * Hook to modify the order table after Ps 1.7.5
-     *
-     * @param $params
-     *
-     * @return mixed|null
-     */
-    public function hookActionOrderGridQueryBuilderModifier($params)
-    {
-        return $this->runHookController('actionOrderGridQueryBuilderModifier', $params);
-    }
-
-    /**
-     * Hook to modify the order table after Ps 1.7.5
-     *
-     * @param $params
-     *
-     * @return mixed|null
-     */
-    public function hookActionOrderGridDefinitionModifier($params)
-    {
-        return $this->runHookController('actionOrderGridDefinitionModifier', $params);
     }
 
     /**
