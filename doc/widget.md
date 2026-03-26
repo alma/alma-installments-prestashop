@@ -42,5 +42,5 @@ If our tags is used, we will not display the widget in the default hooks.
 {widget name='alma' hook="alma.widget.product" product=$product}
 
 // Widget tag to display the widget in a template cart
-{widget name='alma' hook="alma.widget.cart" cart=$cart}
+{widget name='alma' hook="alma.widget.cart"}
 ```

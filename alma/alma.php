@@ -205,7 +205,7 @@ class Alma extends PaymentModule implements WidgetInterface
         }
 
         $widgetFrontendService = HookServiceFactory::createWidgetService($this->context);
-        return $widgetFrontendService->renderWidget($hookName, $configuration);
+        return $widgetFrontendService->renderWidget($hookName);
     }
 
     /**
@@ -218,6 +218,6 @@ class Alma extends PaymentModule implements WidgetInterface
     public function getWidgetVariables($hookName, array $configuration): array
     {
         $widgetFrontendService = HookServiceFactory::createWidgetService($this->context);
-        return $widgetFrontendService->getWidgetVariables($hookName, $configuration);
+        return $widgetFrontendService->getWidgetVariables($hookName);
     }
 }

@@ -25,10 +25,9 @@ class WidgetFrontendService
     /**
      * Render the widget template with the variables needed for the widget.
      * @param string $hookName
-     * @param array $configuration
      * @return string
      */
-    public function renderWidget(string $hookName, array $configuration): string
+    public function renderWidget(string $hookName): string
     {
         $templatePath = '';
         if (in_array($hookName, ['alma.widget.ShoppingCartFooter', 'alma.widget.cart'])) {
@@ -37,7 +36,7 @@ class WidgetFrontendService
 
         try {
             $tpl = $this->context->smarty->createTemplate($templatePath);
-            $tpl->assign($this->getWidgetVariables($hookName, $configuration));
+            $tpl->assign($this->getWidgetVariables($hookName));
 
             return $tpl->fetch();
         } catch (\SmartyException|\Exception $e) {
@@ -45,18 +44,19 @@ class WidgetFrontendService
         }
     }
 
-    public function getWidgetVariables($hookName, array $configuration): array
+    /**
+     * Get the variables needed for the widget template based on the hook name and parameters.
+     * @param string $hookName
+     * @return array
+     */
+    public function getWidgetVariables(string $hookName): array
     {
         switch ($hookName) {
             case 'alma.widget.ShoppingCartFooter':
-                /** @var \Cart $cart */
-                $cart = $configuration['cart'];
-                $purchaseAmount = $cart->getCartTotalPrice();
-                $containerId = '#alma-widget-cart';
-                break;
             case 'alma.widget.cart':
-                $cart = $configuration['cart'];
-                $purchaseAmount = $cart['totals']['total']['amount'];
+                /** @var \Cart $cart */
+                $cart = $this->context->cart;
+                $purchaseAmount = $cart->getCartTotalPrice();
                 $containerId = '#alma-widget-cart';
                 break;
             default:
@@ -67,7 +67,7 @@ class WidgetFrontendService
             'purchaseAmount' => PriceHelper::priceToCent($purchaseAmount),
             'containerId' => $containerId,
             'merchantId' => $this->configurationRepository->getMerchantId(),
-            'hideIfNotEligible' => !$this->configurationRepository->getCartWidgetDisplayNotEligible(),
+            'hideIfNotEligible' => (int) !$this->configurationRepository->getCartWidgetDisplayNotEligible(),
             'mode' => $this->configurationRepository->getMode(),
             'plans' => json_encode($this->getActivePlans()),
             'locale' => $this->context->language->iso_code,

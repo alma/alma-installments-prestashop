@@ -5,7 +5,6 @@ namespace PrestaShop\Module\Alma\Tests\Unit\Application\Service;
 use PHPUnit\Framework\TestCase;
 use PrestaShop\Module\Alma\Application\Service\WidgetFrontendService;
 use PrestaShop\Module\Alma\Infrastructure\Repository\ConfigurationRepository;
-use PrestaShop\PrestaShop\Adapter\Presenter\Product\ProductListingLazyArray;
 
 class WidgetFrontendServiceTest extends TestCase
 {
@@ -18,8 +17,10 @@ class WidgetFrontendServiceTest extends TestCase
     {
         $this->language = $this->createMock(\Language::class);
         $this->language->iso_code = 'en';
+        $this->cart = $this->createMock(\Cart::class);
         $this->context = $this->createMock(\Context::class);
         $this->context->language = $this->language;
+        $this->context->cart = $this->cart;
         $this->configurationRepository = $this->createMock(ConfigurationRepository::class);
         $this->widgetFrontendService = new WidgetFrontendService(
             $this->context,
@@ -47,7 +48,7 @@ class WidgetFrontendServiceTest extends TestCase
     public function testGetWidgetVariablesForCartWithWidgetTag()
     {
         $expected = [
-            'purchaseAmount' => 2872,
+            'purchaseAmount' => 42000,
             'containerId' => '#alma-widget-cart',
             'merchantId' => 'merchant_id',
             'hideIfNotEligible' => false,
@@ -55,67 +56,10 @@ class WidgetFrontendServiceTest extends TestCase
             'plans' => '[{"installmentsCount":3,"deferredDays":0,"minAmount":5000,"maxAmount":200000}]',
             'locale' => 'en',
         ];
-        $prestashopProductMock = $this->createMock(ProductListingLazyArray::class);
-        $configuration = [
-            'hook' => 'widget.cart',
-            'cart' => [
-                'products' => [
-                    $prestashopProductMock
-                ],
-                'totals' => [
-                    'total' => [
-                        'type' => 'total',
-                        'label' => 'Total',
-                        'amount' => 28.72,
-                        'value' => '€28.72',
-                    ],
-                    'total_including_tax' => [
-                        'type' => 'total',
-                        'label' => 'Total (tax incl.)',
-                        'amount' => 28.72,
-                        'value' => '€28.72',
-                    ],
-                    'total_excluding_tax' => [
-                        'type' => 'total',
-                        'label' => 'Total (tax excl.)',
-                        'amount' => 28.72,
-                        'value' => '€28.72',
-                    ],
-                ],
-                'subtotals' => [
-                    'products' => [
-                        'type' => 'products',
-                        'label' => 'Subtotal',
-                        'amount' => 28.72,
-                        'value' => '€28.72',
-                    ],
-                    'discounts' => null,
-                    'shipping' => [
-                        'type' => 'shipping',
-                        'label' => 'Shipping',
-                        'amount' => 0,
-                        'value' => 'Free',
-                    ],
-                    'tax' => null,
-                ],
-                'products_count' => 1,
-                'summary_string' => '1 item',
-                'labels' => [
-                    'tax_short' => '(tax incl.)',
-                    'tax_long' => '(tax included)',
-                ],
-                'id_address_delivery' => '0',
-                'id_address_invoice' => '0',
-                'is_virtual' => false,
-                'vouchers' => [
-                    'allowed' => 0,
-                    'added' => [],
-                ],
-                'discounts' => [],
-                'minimalPurchase' => 0.0,
-                'minimalPurchaseRequired' => '',
-            ],
-        ];
+        $configuration = [];
+        $this->cart->expects($this->once())
+            ->method('getCartTotalPrice')
+            ->willReturn(420.00);
         $feePlanList = [
                 'general_1_0_0' => [
                     'state' => '0',
@@ -156,14 +100,8 @@ class WidgetFrontendServiceTest extends TestCase
             'plans' => '[{"installmentsCount":3,"deferredDays":0,"minAmount":5000,"maxAmount":200000}]',
             'locale' => 'en',
         ];
-        $prestashopCartMock = $this->createMock(\Cart::class);
-        $configuration = [
-            'smarty' => [],
-            'cookie' => [],
-            'cart' => $prestashopCartMock,
-            'altern' => []
-        ];
-        $prestashopCartMock->expects($this->once())
+        $configuration = [];
+        $this->cart->expects($this->once())
             ->method('getCartTotalPrice')
             ->willReturn(420.00);
         $feePlanList = [
