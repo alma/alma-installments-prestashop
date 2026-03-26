@@ -24,9 +24,6 @@
 
 namespace Alma\PrestaShop\Helpers;
 
-use Alma\PrestaShop\Exceptions\ProductException;
-use Alma\PrestaShop\Factories\ProductFactory;
-
 if (!defined('_PS_VERSION_')) {
     exit;
 }

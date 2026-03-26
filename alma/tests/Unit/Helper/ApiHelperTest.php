@@ -33,7 +33,6 @@ use Alma\PrestaShop\Factories\ModuleFactory;
 use Alma\PrestaShop\Helpers\ApiHelper;
 use Alma\PrestaShop\Helpers\ClientHelper;
 use Alma\PrestaShop\Helpers\ConfigurationHelper;
-use Alma\PrestaShop\Helpers\ConstantsHelper;
 use Alma\PrestaShop\Helpers\ToolsHelper;
 use Mockery;
 use PHPUnit\Framework\TestCase;

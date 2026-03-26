@@ -24,7 +24,6 @@
 
 namespace Alma\PrestaShop\Tests\Unit\Helper;
 
-use Alma\PrestaShop\Exceptions\ProductException;
 use Alma\PrestaShop\Helpers\ProductHelper;
 use PHPUnit\Framework\TestCase;
 

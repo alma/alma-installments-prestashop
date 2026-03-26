@@ -37,7 +37,6 @@ use Alma\PrestaShop\Factories\MediaFactory;
 use Alma\PrestaShop\Factories\ModuleFactory;
 use Alma\PrestaShop\Factories\OrderStateFactory;
 use Alma\PrestaShop\Factories\PhpFactory;
-use Alma\PrestaShop\Factories\ProductFactory;
 use Alma\PrestaShop\Helpers\AddressHelper;
 use Alma\PrestaShop\Helpers\Admin\TabsHelper;
 use Alma\PrestaShop\Helpers\ApiHelper;

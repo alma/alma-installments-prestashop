@@ -375,7 +375,6 @@ class Alma extends PaymentModule
         }
     }
 
-
     /**
      * Hook action after add cart
      * Used for Event Alma Business Data
