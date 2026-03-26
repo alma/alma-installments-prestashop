@@ -178,12 +178,6 @@ class Alma extends PaymentModule implements WidgetInterface
      */
     public function hookDisplayShoppingCartFooter(array $params): string
     {
-        $this->hookCartRendered = true;
-
-        if ($this->widgetCartRendered) {
-            return '';
-        }
-
         return $this->renderWidget('alma.widget.ShoppingCartFooter', $params);
     }
 
@@ -196,12 +190,6 @@ class Alma extends PaymentModule implements WidgetInterface
      */
     public function renderWidget($hookName, array $configuration): string
     {
-        $this->widgetCartRendered = true;
-
-        if ($this->hookCartRendered && $hookName === 'alma.widget.cart') {
-            return '';
-        }
-
         $widgetFrontendService = HookServiceFactory::createWidgetService($this->context);
         return $widgetFrontendService->renderWidget($hookName);
     }

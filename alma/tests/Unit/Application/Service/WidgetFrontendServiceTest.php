@@ -52,13 +52,23 @@ class WidgetFrontendServiceTest extends TestCase
     public function testGetWidgetVariablesForCartWithWidgetTag()
     {
         $expected = [
-            'purchaseAmount' => 42000,
-            'containerId' => '#alma-widget-cart',
-            'merchantId' => 'merchant_id',
-            'hideIfNotEligible' => false,
-            'mode' => 'test',
-            'plans' => '[{"installmentsCount":3,"deferredDays":0,"minAmount":5000,"maxAmount":200000}]',
-            'locale' => 'en',
+            'container' => 'alma-widget-cart',
+            'widgetConfig' => json_encode([
+                'purchaseAmount' => 42000,
+                'containerId' => '#alma-widget-cart',
+                'merchantId' => 'merchant_id',
+                'hideIfNotEligible' => 0,
+                'mode' => 'test',
+                'plans' => [
+                    [
+                        'installmentsCount' => 3,
+                        'deferredDays' => 0,
+                        'minAmount' => 5000,
+                        'maxAmount' => 200000
+                    ]
+                ],
+                'locale' => 'en',
+            ])
         ];
         $configuration = [];
         $this->cart->expects($this->once())
@@ -90,7 +100,7 @@ class WidgetFrontendServiceTest extends TestCase
         $this->configurationRepository->expects($this->once())
             ->method('getFeePlanList')
             ->willReturn($feePlanList);
-        $this->assertEquals($expected, $this->widgetFrontendService->getWidgetVariables('alma.widget.cart', $configuration));
+        $this->assertEquals($expected, $this->widgetFrontendService->getWidgetVariables('alma.widget.cart'));
     }
 
     /**
@@ -99,13 +109,23 @@ class WidgetFrontendServiceTest extends TestCase
     public function testGetWidgetVariablesForCartWithHookTag()
     {
         $expected = [
-            'purchaseAmount' => 42000,
-            'containerId' => '#alma-widget-cart',
-            'merchantId' => 'merchant_id',
-            'hideIfNotEligible' => false,
-            'mode' => 'test',
-            'plans' => '[{"installmentsCount":3,"deferredDays":0,"minAmount":5000,"maxAmount":200000}]',
-            'locale' => 'en',
+            'container' => 'alma-widget-ShoppingCartFooter',
+            'widgetConfig' => json_encode([
+                'purchaseAmount' => 42000,
+                'containerId' => '#alma-widget-ShoppingCartFooter',
+                'merchantId' => 'merchant_id',
+                'hideIfNotEligible' => 0,
+                'mode' => 'test',
+                'plans' => [
+                    [
+                        'installmentsCount' => 3,
+                        'deferredDays' => 0,
+                        'minAmount' => 5000,
+                        'maxAmount' => 200000
+                    ]
+                ],
+                'locale' => 'en',
+            ])
         ];
         $configuration = [];
         $this->cart->expects($this->once())
@@ -137,7 +157,7 @@ class WidgetFrontendServiceTest extends TestCase
         $this->configurationRepository->expects($this->once())
             ->method('getFeePlanList')
             ->willReturn($feePlanList);
-        $this->assertEquals($expected, $this->widgetFrontendService->getWidgetVariables('alma.widget.ShoppingCartFooter', $configuration));
+        $this->assertEquals($expected, $this->widgetFrontendService->getWidgetVariables('alma.widget.ShoppingCartFooter'));
     }
 
     /**
