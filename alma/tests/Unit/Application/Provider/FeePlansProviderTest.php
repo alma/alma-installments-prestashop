@@ -62,10 +62,9 @@ class FeePlansProviderTest extends TestCase
 
     public function testGetFeePlanFromConfigurationReturnsDecodedValue(): void
     {
-        $encodedFeePlanList = json_encode(['plan1', 'plan2']);
+        $encodedFeePlanList = ['plan1', 'plan2'];
         $this->configurationRepository->expects($this->once())
-            ->method('get')
-            ->with(FeePlansAdminForm::KEY_FIELD_FEE_PLAN_LIST)
+            ->method('getFeePlanList')
             ->willReturn($encodedFeePlanList);
 
         $this->assertEquals(['plan1', 'plan2'], $this->feePlansProvider->getFeePlanFromConfiguration());
@@ -74,9 +73,8 @@ class FeePlansProviderTest extends TestCase
     public function testGetFeePlanFromConfigurationWithoutKeySavedReturnsArrayEmpty(): void
     {
         $this->configurationRepository->expects($this->once())
-            ->method('get')
-            ->with(FeePlansAdminForm::KEY_FIELD_FEE_PLAN_LIST)
-            ->willReturn('');
+            ->method('getFeePlanList')
+            ->willReturn([]);
 
         $this->assertEquals([], $this->feePlansProvider->getFeePlanFromConfiguration());
     }

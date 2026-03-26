@@ -22,10 +22,13 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
+use PrestaShop\Module\Alma\Application\Exception\WidgetException;
 use PrestaShop\Module\Alma\Application\Service\AssetService;
 use PrestaShop\Module\Alma\Application\Service\ModuleInstallerService;
 use PrestaShop\Module\Alma\Application\Service\ModuleService;
+use PrestaShop\Module\Alma\Infrastructure\Factory\HookServiceFactory;
 use PrestaShop\Module\Alma\Infrastructure\Repository\LanguageRepository;
+use PrestaShop\PrestaShop\Core\Module\WidgetInterface;
 use PrestaShop\PsAccountsInstaller\Installer\Installer;
 use PrestaShopBundle\Translation\TranslatorInterface;
 
@@ -39,7 +42,7 @@ if (file_exists($autoloadPath)) {
     require_once $autoloadPath;
 }
 
-class Alma extends PaymentModule
+class Alma extends PaymentModule implements WidgetInterface
 {
     public $_path;
     public $local_path;
@@ -64,6 +67,9 @@ class Alma extends PaymentModule
      * @var string
      */
     public $confirmUninstall;
+
+    private bool $widgetCartRendered = false;
+    private bool $hookCartRendered = false;
 
     public function __construct()
     {
@@ -159,11 +165,64 @@ class Alma extends PaymentModule
     }
 
     /**
-     * Enables the new translation system for PrestaShop 1.7.6 and later.
+     * Enables the new translation system for Prestashop 1.7.6 and later.
      * @return bool
      */
     public function isUsingNewTranslationSystem(): bool
     {
         return true;
+    }
+
+    /**
+     * Display widget in the cart page
+     *
+     * @param array $params
+     * @return string
+     */
+    public function hookDisplayShoppingCartFooter(array $params): string
+    {
+        $this->hookCartRendered = true;
+
+        if ($this->widgetCartRendered) {
+            return '';
+        }
+
+        return $this->renderWidget('alma.widget.ShoppingCartFooter', $params);
+    }
+
+    /**
+     * Display widget with WidgetInterface
+     *
+     * @param string $hookName
+     * @param array $configuration
+     * @return string
+     */
+    public function renderWidget($hookName, array $configuration): string
+    {
+        $this->widgetCartRendered = true;
+
+        if ($this->hookCartRendered && $hookName === 'alma.widget.cart') {
+            return '';
+        }
+
+        $widgetFrontendService = HookServiceFactory::createWidgetService($this->context);
+        return $widgetFrontendService->renderWidget($hookName);
+    }
+
+    /**
+     * Get the variables needed for the widget template.
+     *
+     * @param string $hookName
+     * @param array $configuration
+     * @return array
+     */
+    public function getWidgetVariables($hookName, array $configuration): array
+    {
+        $widgetFrontendService = HookServiceFactory::createWidgetService($this->context);
+        try {
+            return $widgetFrontendService->getWidgetVariables($hookName);
+        } catch (WidgetException $e) {
+            return ['error_widget' => $e->getMessage()];
+        }
     }
 }

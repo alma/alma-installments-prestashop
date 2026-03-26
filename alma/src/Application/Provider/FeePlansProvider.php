@@ -50,18 +50,13 @@ class FeePlansProvider implements FeePlanProviderInterface
     }
 
     /**
+     * @deprecated
      * Get the fee plan list from configuration
      * @return array
      */
     public function getFeePlanFromConfiguration(): array
     {
-        $feePlanList = $this->configurationRepository->get(FeePlansAdminForm::KEY_FIELD_FEE_PLAN_LIST);
-
-        if (empty($feePlanList)) {
-            return [];
-        }
-
-        return json_decode($feePlanList, true);
+        return $this->configurationRepository->getFeePlanList();
     }
 
     public function getOriginalFeePlan(): FeePlanList
