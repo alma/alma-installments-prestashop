@@ -109,6 +109,9 @@ class WidgetFrontendServiceTest extends TestCase
         $this->configurationRepository->expects($this->once())
             ->method('getFeePlanList')
             ->willReturn($feePlanList);
+        $this->configurationRepository->expects($this->once())
+            ->method('getCartWidgetPositionCustom')
+            ->willReturn(false);
         $this->assertEquals($expected, $this->widgetFrontendService->getWidgetVariables('alma.widget.cart'));
     }
 
@@ -173,6 +176,9 @@ class WidgetFrontendServiceTest extends TestCase
         $this->configurationRepository->expects($this->once())
             ->method('getFeePlanList')
             ->willReturn($feePlanList);
+        $this->configurationRepository->expects($this->once())
+            ->method('getCartWidgetPositionCustom')
+            ->willReturn(false);
         $this->assertEquals($expected, $this->widgetFrontendService->getWidgetVariables('alma.widget.ShoppingCartFooter'));
     }
 
@@ -183,6 +189,103 @@ class WidgetFrontendServiceTest extends TestCase
     {
         $this->expectException(WidgetException::class);
         $this->widgetFrontendService->getWidgetVariables('unknown.hookname');
+    }
+
+    /**
+     * Custom position enabled — containerId uses the selector from configuration, container unchanged.
+     * @throws \PrestaShop\Module\Alma\Application\Exception\WidgetException
+     */
+    public function testGetWidgetVariablesWithCustomPositionEnabled()
+    {
+        $expected = [
+            'container' => 'alma-widget-cart',
+            'isExcluded' => false,
+            'showExcludedMessage' => false,
+            'excludedMessage' => 'Excluded product.',
+            'almaLogoUrl' => _MODULE_DIR_ . 'alma/views/img/logos/logo_alma.svg',
+            'widgetConfig' => json_encode([
+                'purchaseAmount' => 0,
+                'containerId' => '#my-custom-selector',
+                'merchantId' => 'merchant_id',
+                'hideIfNotEligible' => 1,
+                'mode' => 'test',
+                'plans' => [],
+                'locale' => 'en',
+            ])
+        ];
+        $this->cart->expects($this->once())
+            ->method('getCartTotalPrice')
+            ->willReturn(0.0);
+        $this->excludedCategoriesService->method('isExcluded')->willReturn(false);
+        $this->excludedCategoriesService->method('isWidgetDisplayNotEligibleEnabled')->willReturn(false);
+        $this->excludedCategoriesService->method('getExcludedMessage')->with(1)->willReturn('Excluded product.');
+        $this->configurationRepository->expects($this->once())
+            ->method('getMerchantId')
+            ->willReturn('merchant_id');
+        $this->configurationRepository->expects($this->once())
+            ->method('getCartWidgetDisplayNotEligible')
+            ->willReturn(false);
+        $this->configurationRepository->expects($this->once())
+            ->method('getMode')
+            ->willReturn('test');
+        $this->configurationRepository->expects($this->once())
+            ->method('getFeePlanList')
+            ->willReturn([]);
+        $this->configurationRepository->expects($this->once())
+            ->method('getCartWidgetPositionCustom')
+            ->willReturn(true);
+        $this->configurationRepository->expects($this->once())
+            ->method('getCartWidgetPositionSelector')
+            ->willReturn('#my-custom-selector');
+        $this->assertEquals($expected, $this->widgetFrontendService->getWidgetVariables('alma.widget.cart'));
+    }
+
+    /**
+     * Custom position disabled — containerId falls back to '#' . $container.
+     * @throws \PrestaShop\Module\Alma\Application\Exception\WidgetException
+     */
+    public function testGetWidgetVariablesWithCustomPositionDisabled()
+    {
+        $expected = [
+            'container' => 'alma-widget-cart',
+            'isExcluded' => false,
+            'showExcludedMessage' => false,
+            'excludedMessage' => '',
+            'almaLogoUrl' => _MODULE_DIR_ . 'alma/views/img/logos/logo_alma.svg',
+            'widgetConfig' => json_encode([
+                'purchaseAmount' => 0,
+                'containerId' => '#alma-widget-cart',
+                'merchantId' => 'merchant_id',
+                'hideIfNotEligible' => 1,
+                'mode' => 'test',
+                'plans' => [],
+                'locale' => 'en',
+            ])
+        ];
+        $this->cart->expects($this->once())
+            ->method('getCartTotalPrice')
+            ->willReturn(0.0);
+        $this->excludedCategoriesService->method('isExcluded')->willReturn(false);
+        $this->excludedCategoriesService->method('isWidgetDisplayNotEligibleEnabled')->willReturn(false);
+        $this->excludedCategoriesService->method('getExcludedMessage')->with(1)->willReturn('');
+        $this->configurationRepository->expects($this->once())
+            ->method('getMerchantId')
+            ->willReturn('merchant_id');
+        $this->configurationRepository->expects($this->once())
+            ->method('getCartWidgetDisplayNotEligible')
+            ->willReturn(false);
+        $this->configurationRepository->expects($this->once())
+            ->method('getMode')
+            ->willReturn('test');
+        $this->configurationRepository->expects($this->once())
+            ->method('getFeePlanList')
+            ->willReturn([]);
+        $this->configurationRepository->expects($this->once())
+            ->method('getCartWidgetPositionCustom')
+            ->willReturn(false);
+        $this->configurationRepository->expects($this->never())
+            ->method('getCartWidgetPositionSelector');
+        $this->assertEquals($expected, $this->widgetFrontendService->getWidgetVariables('alma.widget.cart'));
     }
 
     /**
