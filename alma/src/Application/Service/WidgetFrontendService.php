@@ -14,13 +14,19 @@ class WidgetFrontendService
      * @var ConfigurationRepository
      */
     private ConfigurationRepository $configurationRepository;
+    /**
+     * @var ExcludedCategoriesService
+     */
+    private ExcludedCategoriesService $excludedCategoriesService;
 
     public function __construct(
         \Context $context,
-        ConfigurationRepository $configurationRepository
+        ConfigurationRepository $configurationRepository,
+        ExcludedCategoriesService $excludedCategoriesService
     ) {
         $this->context = $context;
         $this->configurationRepository = $configurationRepository;
+        $this->excludedCategoriesService = $excludedCategoriesService;
     }
 
     /**
@@ -65,13 +71,21 @@ class WidgetFrontendService
 
                 $purchaseAmount = $cart->getCartTotalPrice() ?? 0;
                 $container = str_replace('.', '-', $hookName);
+                $products = $cart->getProducts();
                 break;
             default:
                 throw new WidgetException('Hook not supported for widget: ' . $hookName);
         }
 
+        $isExcluded = $this->excludedCategoriesService->isExcluded($products);
+        $showExcludedMessage = $isExcluded && $this->excludedCategoriesService->isWidgetDisplayNotEligibleEnabled();
+
         return [
             'container' => $container,
+            'isExcluded' => $isExcluded,
+            'showExcludedMessage' => $showExcludedMessage,
+            'excludedMessage' => $this->excludedCategoriesService->getExcludedMessage((int) $this->context->language->id),
+            'almaLogoUrl' => _MODULE_DIR_ . 'alma/views/img/logos/logo_alma.svg',
             'widgetConfig' => json_encode([
                 'purchaseAmount' => PriceHelper::priceToCent($purchaseAmount),
                 'containerId' => '#' . $container,

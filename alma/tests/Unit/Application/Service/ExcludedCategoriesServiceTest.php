@@ -6,6 +6,7 @@ use PHPUnit\Framework\TestCase;
 use PrestaShop\Module\Alma\Application\Service\ExcludedCategoriesService;
 use PrestaShop\Module\Alma\Infrastructure\Form\ApiAdminForm;
 use PrestaShop\Module\Alma\Infrastructure\Form\ExcludedCategoriesAdminForm;
+use PrestaShop\Module\Alma\Infrastructure\Proxy\ProductProxy;
 use PrestaShop\Module\Alma\Infrastructure\Repository\ConfigurationRepository;
 use PrestaShop\Module\Alma\Infrastructure\Repository\ExcludedCategoriesRepository;
 use PrestaShop\Module\Alma\Infrastructure\Repository\LanguageRepository;
@@ -37,12 +38,14 @@ class ExcludedCategoriesServiceTest extends TestCase
         $this->configurationRepository = $this->createMock(ConfigurationRepository::class);
         $this->languageRepository = $this->createMock(LanguageRepository::class);
         $this->translator = $this->createMock(TranslatorInterface::class);
+        $this->productProxy = $this->createMock(ProductProxy::class);
         $this->excludedCategories = new ExcludedCategoriesService(
             $this->context,
             $this->excludedCategoriesRepository,
             $this->configurationRepository,
             $this->languageRepository,
-            $this->translator
+            $this->translator,
+            $this->productProxy
         );
     }
 
@@ -169,5 +172,77 @@ class ExcludedCategoriesServiceTest extends TestCase
             ->with($categoriesIdsToSave);
 
         $this->excludedCategories->removeExcludeCategories($categoriesIdsToRemove);
+    }
+
+    public function testIsExcludedReturnsFalseWhenNoExcludedCategories(): void
+    {
+        $this->excludedCategoriesRepository->method('getIds')->willReturn([]);
+
+        $this->assertFalse($this->excludedCategories->isExcluded([]));
+    }
+
+    public function testIsExcludedReturnsFalseWhenCartIsEmpty(): void
+    {
+        $this->excludedCategoriesRepository->method('getIds')->willReturn([10, 20]);
+
+        $this->assertFalse($this->excludedCategories->isExcluded([]));
+    }
+
+    public function testIsExcludedReturnsFalseWhenNoProductMatchesExcludedCategory(): void
+    {
+        $this->excludedCategoriesRepository->method('getIds')->willReturn([10, 20]);
+        $this->productProxy->method('getCategories')
+            ->willReturnOnConsecutiveCalls([5, 6], [7, 8]);
+
+        $this->assertFalse($this->excludedCategories->isExcluded([
+            ['id_product' => 1],
+            ['id_product' => 2],
+        ]));
+    }
+
+    public function testIsExcludedReturnsTrueWhenOneProductMatchesExcludedCategory(): void
+    {
+        $this->excludedCategoriesRepository->method('getIds')->willReturn([10, 20]);
+        $this->productProxy->method('getCategories')
+            ->willReturnOnConsecutiveCalls([5, 6], [8, 20]); // category 20 is excluded
+
+        $this->assertTrue($this->excludedCategories->isExcluded([
+            ['id_product' => 1],
+            ['id_product' => 2],
+        ]));
+    }
+
+    public function testIsExcludedReturnsTrueOnFirstExcludedProduct(): void
+    {
+        $this->excludedCategoriesRepository->method('getIds')->willReturn([10]);
+        $this->productProxy->method('getCategories')
+            ->willReturnOnConsecutiveCalls([10], [3]); // excluded at first product
+
+        $this->assertTrue($this->excludedCategories->isExcluded([
+            ['id_product' => 1],
+            ['id_product' => 2],
+        ]));
+    }
+
+    public function testIsWidgetDisplayNotEligibleEnabledDelegatesToRepository(): void
+    {
+        $this->excludedCategoriesRepository->expects($this->once())
+            ->method('isWidgetDisplayNotEligibleEnabled')
+            ->willReturn(true);
+
+        $this->assertTrue($this->excludedCategories->isWidgetDisplayNotEligibleEnabled());
+    }
+
+    public function testGetExcludedMessageDelegatesToRepository(): void
+    {
+        $this->excludedCategoriesRepository->expects($this->once())
+            ->method('getMessage')
+            ->with(1)
+            ->willReturn('Your cart contains excluded products.');
+
+        $this->assertSame(
+            'Your cart contains excluded products.',
+            $this->excludedCategories->getExcludedMessage(1)
+        );
     }
 }

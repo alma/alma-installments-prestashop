@@ -55,3 +55,15 @@ Widget settings (enable/disable, display if not eligible) are configurable per p
 ### Cart refresh
 
 When the cart is updated (e.g. quantity change, product removal), the widget refreshes automatically without a page reload. `alma-widget.js` listens to PrestaShop's native `prestashop.on('updateCart')` event, reads the new cart total from `prestashop.cart.totals`, updates the `purchaseAmount` in the widget's `data-widget-config`, and re-initializes the widget with the new amount.
+
+## Excluded categories
+
+Merchants can exclude specific product categories from Alma eligibility via the **Excluded categories** page in the back office. When a cart contains at least one product belonging to an excluded category, the widget is hidden.
+
+If the **Display message** option is enabled (configurable in the module settings), a non-eligibility message is shown in place of the widget, along with the Alma logo. The message is customizable per language.
+
+### How it works
+
+- `ExcludedCategoriesService::isExcluded()` checks whether any product in the cart belongs to an excluded category by comparing the product's categories against the stored exclusion list.
+- `WidgetFrontendService::getWidgetVariables()` calls this service and passes `isExcluded`, `showExcludedMessage`, and `excludedMessage` to the template.
+- The `cart.tpl` template renders the widget normally when no product is excluded. When a product is excluded, it either hides the widget entirely or displays the configured message depending on the **Display message** setting.
