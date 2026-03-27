@@ -25,6 +25,20 @@ class ExcludedCategoriesRepository
         return $saved ? json_decode($saved, true) : [];
     }
 
+    public function isWidgetDisplayNotEligibleEnabled(): bool
+    {
+        return (bool) $this->configurationRepository->get(
+            ExcludedCategoriesAdminForm::KEY_FIELD_EXCLUDED_CATEGORIES_WIDGET_DISPLAY_NOT_ELIGIBLE
+        );
+    }
+
+    public function getMessage(int $idLang): string
+    {
+        return (string) $this->configurationRepository->get(
+            ExcludedCategoriesAdminForm::KEY_FIELD_EXCLUDED_CATEGORIES_MESSAGE . '_' . $idLang
+        );
+    }
+
     public function update(array $categoriesIds): void
     {
         $this->configurationRepository->updateValue(
