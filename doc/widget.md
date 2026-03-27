@@ -47,6 +47,15 @@ The cart widget is rendered via the `displayShoppingCartFooter` hook (or the `al
 
 Widget settings (enable/disable, display if not eligible) are configurable per page (product, cart) from the module's admin configuration page via `ProductWidgetAdminForm` and `CartWidgetAdminForm`.
 
+#### Legacy custom widget position (module v5 backward compatibility)
+
+Module v5 allowed merchants to define a custom CSS selector to control where the cart widget was injected in the DOM. This setting is preserved and still honored in the current version.
+
+When `ALMA_CART_WIDGET_POSITION_CUSTOM` is enabled, `WidgetFrontendService` uses the CSS selector stored in `ALMA_WDGT_POS_SELECTOR` as the widget's `containerId` instead of the default `#alma-widget-cart`. If the option is disabled, the standard container ID is used.
+
+- `ConfigurationRepository::getCartWidgetPositionCustom()` — returns `true` if the legacy custom position is active.
+- `ConfigurationRepository::getCartWidgetPositionSelector()` — returns the saved CSS selector (e.g. `#my-custom-selector`).
+
 ```tpl
 {* Widget tag to display the widget on the cart page *}
 {widget name='alma' hook="alma.widget.cart"}

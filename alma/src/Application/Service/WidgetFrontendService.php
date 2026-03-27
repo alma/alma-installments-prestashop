@@ -88,7 +88,9 @@ class WidgetFrontendService
             'almaLogoUrl' => _MODULE_DIR_ . 'alma/views/img/logos/logo_alma.svg',
             'widgetConfig' => json_encode([
                 'purchaseAmount' => PriceHelper::priceToCent($purchaseAmount),
-                'containerId' => '#' . $container,
+                'containerId' => $this->configurationRepository->getCartWidgetPositionCustom()
+                    ? $this->configurationRepository->getCartWidgetPositionSelector()
+                    : '#' . $container,
                 'merchantId' => $this->configurationRepository->getMerchantId(),
                 'hideIfNotEligible' => (int) !$this->configurationRepository->getCartWidgetDisplayNotEligible(),
                 'mode' => $this->configurationRepository->getMode(),
