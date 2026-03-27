@@ -1,4 +1,5 @@
 alma/vendor
+alma/node_modules
 alma/config*.xml
 alma/composer.lock
 alma/phpunit.xml
