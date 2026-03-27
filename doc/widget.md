@@ -24,25 +24,34 @@ Conversely, some module controllers do not set `php_self` (it can be empty or fa
 Checking both ensures the widget loads correctly in all scenarios.
 
 ## Display the widget
-To display the widget, we need to set some data:
-- Merchant id
-- Mode (test or live)
-- Container id
-- Purchase amount
-- Locale
-- hideIfNotEligible
-- Fee Plan
+
+The module implements PrestaShop's `WidgetInterface`, which means it can be rendered anywhere via the `{widget}` Smarty tag.
+
+The widget configuration is passed as a JSON `data-widget-config` attribute on the container `<div>`. It includes:
+- `merchantId`
+- `mode` (test or live)
+- `containerId`
+- `purchaseAmount` (in cents)
+- `locale`
+- `hideIfNotEligible`
+- `plans` (active fee plans)
 
 ### How it works
-By default, we will set the widget in the hook used natively `displayProductAdditionalInfo` for the product page and `displayShoppingCartFooter` for the cart page,
-but the merchant cans use our tag `alma.widget.product` and `alma.widget.cart` to customize the position of the widget in the template.
-If our tags is used, we will not display the widget in the default hooks.
-// TODO: Need to validate this process with Product and EM.
+
+Two services handle the frontend rendering:
+- `WidgetFrontendService::renderWidget()` — selects the right template and renders it.
+- `WidgetFrontendService::getWidgetVariables()` — builds the widget config from the current context (cart total, merchant settings, active plans).
+
+#### Cart widget
+The cart widget is rendered via the `displayShoppingCartFooter` hook (or the `alma.widget.cart` tag). It uses the current cart total as `purchaseAmount` and renders `widget/cart.tpl`.
+
+Widget settings (enable/disable, display if not eligible) are configurable per page (product, cart) from the module's admin configuration page via `ProductWidgetAdminForm` and `CartWidgetAdminForm`.
 
 ```tpl
-// Widget tag to display the widget in a template product
-{widget name='alma' hook="alma.widget.product" product=$product}
-
-// Widget tag to display the widget in a template cart
+{* Widget tag to display the widget on the cart page *}
 {widget name='alma' hook="alma.widget.cart"}
 ```
+
+### Cart refresh
+
+When the cart is updated (e.g. quantity change, product removal), the widget refreshes automatically without a page reload. `alma-widget.js` listens to PrestaShop's native `prestashop.on('updateCart')` event, reads the new cart total from `prestashop.cart.totals`, updates the `purchaseAmount` in the widget's `data-widget-config`, and re-initializes the widget with the new amount.

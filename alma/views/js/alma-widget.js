@@ -1,3 +1,15 @@
+function getCartAmountInCents() {
+    if (typeof prestashop === 'undefined' || !prestashop.cart || !prestashop.cart.totals) {
+        return null;
+    }
+    const totals = prestashop.cart.totals;
+    const total = totals.total_including_tax || totals.total;
+    if (!total || total.amount === undefined) {
+        return null;
+    }
+    return Math.round(parseFloat(total.amount) * 100);
+}
+
 function initAlmaWidget($, Alma) {
     if (!$("#alma-widget-ShoppingCartFooter").length && !$("#alma-widget-cart").length) {
         return null;
@@ -29,13 +41,32 @@ function initAlmaWidget($, Alma) {
 }
 
 if (typeof module !== 'undefined') {
-    console.log('Exporting initAlmaWidget for testing');
-    module.exports = { initAlmaWidget };
+    module.exports = { initAlmaWidget, getCartAmountInCents };
 } else {
-    console.log('Initializing Alma Widget on page load');
     (function ($) {
         $(function () {
-            initAlmaWidget($, Alma);
+            const widgets = initAlmaWidget($, Alma);
+
+            if (typeof prestashop !== 'undefined') {
+                prestashop.on('updateCart', function () {
+                    const newAmount = getCartAmountInCents();
+                    if (newAmount === null) return;
+
+                    const $widget = $("#alma-widget-cart").length
+                        ? $("#alma-widget-cart")
+                        : $("#alma-widget-ShoppingCartFooter");
+
+                    if (!$widget.length) return;
+
+                    const config = $widget.data('widget-config');
+                    if (!config) return;
+
+                    config.purchaseAmount = newAmount;
+                    $widget.data('widget-config', config);
+
+                    initAlmaWidget($, Alma);
+                });
+            }
         });
     })(jQuery);
 }
