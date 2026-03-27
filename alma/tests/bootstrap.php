@@ -1,6 +1,6 @@
 <?php
 /**
- * 2018-2024 Alma SAS.
+ * 2018-2026 Alma SAS.
  *
  * THE MIT LICENSE
  *
@@ -18,15 +18,18 @@
  * IN THE SOFTWARE.
  *
  * @author    Alma SAS <contact@getalma.eu>
- * @copyright 2018-2024 Alma SAS
+ * @copyright 2018-2026 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 require '../../config/config.inc.php';
 
 require 'alma.php';
 
+// Autoload for tests Ps Accounts module
+require '../../modules/ps_accounts/src/Service/PsAccountsService.php';
+
 // Workaround to avoid error during generation of html report file
-use Alma\PrestaShop\Tests\ReportConfigForHTMLReport;
+use PrestaShop\Module\Alma\Tests\ReportConfigForHTMLReport;
 
 $configFilePath = __DIR__ . '/../phpunit.ci.xml';
 $reportConfig = new ReportConfigForHTMLReport($configFilePath);

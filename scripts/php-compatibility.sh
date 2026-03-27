@@ -1,6 +1,9 @@
 #!/bin/bash
-docker run --rm -v "$(pwd)/alma:/app/alma" -v "$(pwd)/.php_cs.cache:/app/.php_cs.cache" --entrypoint /composer/vendor/bin/phpcs \
-  php-compatibility:ps -p alma --standard=PHPCompatibility -s --runtime-set testVersion 5.6-8.4 --ignore=\*/vendor/\*,\*/.coverage/\*
+docker run --rm -v "$(pwd)/alma:/app/alma" -v "$(pwd)/.php_cs.cache:/app/.php_cs.cache" --entrypoint php \
+  php-compatibility:ps -d memory_limit=512M /composer/vendor/bin/phpcs \
+  -p alma --standard=PHPCompatibility -s --runtime-set testVersion 7.4-8.4 \
+  --extensions=php \
+  --ignore=\*/vendor/\*,\*/.coverage/\*
 EXIT_CODE=$?
 
 if [[ $EXIT_CODE -ne 0 ]]; then

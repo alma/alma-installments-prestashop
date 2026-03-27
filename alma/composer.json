@@ -3,50 +3,66 @@
     "description": "Payment method module to integrate Alma in PrestaShop",
     "type": "prestashop-module",
     "require-dev": {
-        "phpunit/phpunit": "^5",
+        "phpunit/phpunit": "^8.5",
         "mockery/mockery": "^1.3",
-        "phpcompatibility/php-compatibility": "10.x-dev",
-        "prestashop/php-dev-tools": "^3.16",
-        "prestashop/autoindex": "^1.0.0"
+        "phpcompatibility/php-compatibility": "^9.3",
+        "prestashop/php-dev-tools": "~4.0",
+        "prestashop/autoindex": "^2.0",
+        "prestashop/header-stamp": "^2.0",
+        "phpstan/phpstan": "2.1.x-dev",
+        "spatie/phpunit-watcher": "^1.23"
     },
     "require": {
-        "php": "^5.6 || ~7.0 || ~7.1 || ~7.2 || ~7.3 || ~7.4 || ~8.0 || ~8.1",
-        "alma/alma-php-client": "^2.6.1",
+        "php": ">=7.4",
+        "alma/alma-php-client": "3.0.*|dev-feature/3.0",
         "ext-json": "*",
         "ext-openssl": "*",
-        "prestashop/prestashop-accounts-installer": "^v1.0.4",
-        "prestashop/module-lib-service-container": "v2.0"
+        "prestashop/prestashop-accounts-installer": "^1.0",
+        "prestashop/module-lib-service-container": "^2.0"
     },
     "autoload": {
         "psr-4": {
-            "Alma\\PrestaShop\\": [
-                "lib/",
-                "."
-            ],
-            "Alma\\PrestaShop\\Controllers\\Hook\\": "controllers/hook/",
-            "Alma\\PrestaShop\\Exceptions\\": "exceptions/"
-        }
+            "PrestaShop\\Module\\Alma\\": "src/",
+            "Alma\\Api\\": "vendor/alma/alma-php-client/src/"
+        },
+        "classmap": [
+            "alma.php"
+        ]
     },
     "autoload-dev": {
         "psr-4": {
-            "Alma\\PrestaShop\\Tests\\": "tests/"
+            "PrestaShop\\Module\\Alma\\Tests\\": "tests/"
         }
     },
     "config": {
+        "preferred-install": "dist",
         "prepend-autoloader": false,
         "optimize-autoloader": true,
         "allow-plugins": {
             "dealerdirect/phpcodesniffer-composer-installer": true
+        },
+        "platform": {
+            "php": "7.4"
         }
     },
     "scripts": {
         "php-cs": "php vendor/bin/php-cs-fixer fix --dry-run",
         "php-cs-fixer": "php vendor/bin/php-cs-fixer fix",
-        "php-compatibility": "vendor/bin/phpcs -p . --standard=PHPCompatibility -s --runtime-set testVersion 5.6-8.1 --ignore=\\*/vendor/\\*"
+        "php-compatibility": "vendor/bin/phpcs -p . --standard=PHPCompatibility -s --runtime-set testVersion 7.4-8.1 --ignore=\\*/vendor/\\*",
+        "test:watch": [
+            "Composer\\Config::disableProcessTimeout",
+            "phpunit-watcher watch < /dev/tty"
+        ]
     },
     "extra": {
         "installer-name": "alma"
     },
+    "authors": [
+        {
+            "name": "Alma SAS",
+            "email": "support@almapay.com"
+        }
+    ],
     "license": "MIT",
     "minimum-stability": "dev"
 }

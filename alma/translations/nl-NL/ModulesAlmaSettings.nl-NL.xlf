@@ -1,0 +1,357 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
+  <file original="almin" source-language="en" target-language="nl" datatype="plaintext">
+    <body>
+      <trans-unit id="1b498eaafc20a6c7d28810c82c493eba">
+        <source>Pay Now</source>
+        <target state="needs-review-translation" state-qualifier="leveraged-mt">Nu betalen</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="445b31fd41d49bfa07607421c51fe814">
+        <source>%d-installment payments</source>
+        <target state="needs-review-translation" state-qualifier="leveraged-mt">%d-betalingstermijnen</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="00a67585074c0f91b2446943f30f8c33">
+        <source>Deferred payments + %d days</source>
+        <target state="needs-review-translation" state-qualifier="leveraged-mt">Uitgestelde betalingen + %d dagen</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="d3031c512b31f2a2b9bc7fb786c94fba">
+        <source>Enable pay now</source>
+        <target state="needs-review-translation" state-qualifier="leveraged-mt">Nu betalen inschakelen</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="200b9884c24938888bc2462029b5241d">
+        <source>Enable %d-installment payments</source>
+        <target state="needs-review-translation" state-qualifier="leveraged-mt">Schakel %d-betaling in</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="3451f078031a8b93f2f7589a3fb1c177">
+        <source>Enable deferred payments + %d days</source>
+        <target state="needs-review-translation" state-qualifier="leveraged-mt">Uitgestelde betalingen inschakelen + %d dagen</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="00d23a76e43b46dae9ec7aa9dcbebb32">
+        <source>Enabled</source>
+        <target state="needs-review-translation" state-qualifier="leveraged-mt">Ingeschakeld</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="b9f5c797ebbf55adccdd8539a65a0241">
+        <source>Disabled</source>
+        <target state="needs-review-translation" state-qualifier="leveraged-mt">Uitgeschakeld</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="d504e870a0b1c384090207ca30b7a558">
+        <source>Minimum amount (€)</source>
+        <target state="needs-review-translation" state-qualifier="leveraged-mt">Minimumbedrag (€)</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="f1b557392c6a71b77a2752b67700c43d">
+        <source>Minimum purchase amount to activate this plan</source>
+        <target state="needs-review-translation" state-qualifier="leveraged-mt">Minimaal aankoopbedrag om dit plan te activeren</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="c86bcf847758c12df1f6344fda4de53b">
+        <source>Maximum amount (€)</source>
+        <target state="needs-review-translation" state-qualifier="leveraged-mt">Maximumbedrag (€)</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="08731158c9453896032d9e106813dc22">
+        <source>Maximum purchase amount to activate this plan</source>
+        <target state="needs-review-translation" state-qualifier="leveraged-mt">Maximaal aankoopbedrag om dit plan te activeren</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="52f5e0bc3859bc5f5e25130b6c7e8881">
+        <source>Position</source>
+        <target state="needs-review-translation" state-qualifier="leveraged-mt">Positie</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="471efc56e22a91e31c909a7d7044dc8e">
+        <source>Use relative values to set the order on the checkout page</source>
+        <target state="needs-review-translation" state-qualifier="leveraged-mt">Gebruik relatieve waarden om de volgorde in te stellen op de afrekenpagina</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="7a854e750fe5f3e7120020c7c20987d4">
+        <source>Your cart is not eligible for payments with Alma.</source>
+        <target state="needs-translation">Your cart is not eligible for payments with Alma.</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="76d8f6f6704ea9de044aa669d133c500">
+        <source>Refund state order</source>
+        <target state="needs-review-translation" state-qualifier="leveraged-mt">Staat terugbetalen</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="a2175c8178a92176b9810d330fbc0e9e">
+        <source>Your order state to sync refund with Alma</source>
+        <target state="needs-review-translation" state-qualifier="leveraged-mt">Uw bestelstatus voor terugbetaling synchroniseren met Alma</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="2c53dea2326232a2d867ddd1d2206aa0">
+        <source>Pay now by credit card</source>
+        <target state="needs-review-translation" state-qualifier="leveraged-mt">Betaal nu met creditcard</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="4f05e285f22aa8b5d8f88f302c1633c1">
+        <source>Fast and secure payments.</source>
+        <target state="needs-translation">Fast and secure payments.</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="300de0751d957421cc332ba21c43a598">
+        <source>Pay in %d installments</source>
+        <target state="needs-translation">Pay in %d installments</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="82d2b98eb8f9388d13766a9367096499">
+        <source>Fast and secure payment by credit card.</source>
+        <target state="needs-translation">Fast and secure payment by credit card.</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="726c61fad46c135efb4198820e5484ba">
+        <source>Buy now Pay in %d days</source>
+        <target state="needs-translation">Buy now Pay in %d days</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="1bd879809ceec8809db58ca2f12965bc">
+        <source>Debug options</source>
+        <target state="needs-review-translation" state-qualifier="leveraged-mt">Debug-opties</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="3132e398e6e7acace9290305a55a7d25">
+        <source>Activate logging</source>
+        <target state="needs-review-translation" state-qualifier="leveraged-mt">Logboekregistratie activeren</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="36359547b09bdb31f46c419a0bd5807e">
+        <source>Excluded categories</source>
+        <target state="needs-review-translation" state-qualifier="leveraged-mt">Uitgesloten categorieën</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="df5ed76049aadaf1ebbbfa69f07f40a7">
+        <source>Display message</source>
+        <target state="needs-review-translation" state-qualifier="leveraged-mt">Bericht weergeven</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="a7d510a512a11edac263228544834b21">
+        <source>Excluded categories non-eligibility message</source>
+        <target state="needs-review-translation" state-qualifier="leveraged-mt">Uitgesloten categorieën niet in aanmerking komend bericht</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="c4cea4750fb3ef077cbf2e1283c312ac">
+        <source>Message displayed on an excluded product page or on the cart page if it contains an excluded product.</source>
+        <target state="needs-review-translation" state-qualifier="leveraged-mt">Bericht dat wordt weergegeven op een uitgesloten productpagina of op de winkelwagenpagina als deze een uitgesloten product bevat.</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="1d13f5970032b45327add3c337ac82ee">
+        <source>API configuration</source>
+        <target state="needs-review-translation" state-qualifier="leveraged-mt">API-configuratie</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="fe1d478b2e434b92277b47f0cf62e040">
+        <source>API Mode</source>
+        <target state="needs-review-translation" state-qualifier="leveraged-mt">API-modus</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="0e95e5facc2cad62d6458c65164c4455">
+        <source>Use Test mode until you are ready to take real orders with Alma. In Test mode, only admins can see Alma on cart/checkout pages.</source>
+        <target state="needs-review-translation" state-qualifier="leveraged-mt">Gebruik de Testmodus totdat u klaar bent om echte bestellingen aan te nemen met Alma. In de Testmodus kunnen alleen beheerders Alma zien op de winkelwagen-/kassa-pagina's.</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="1460d8f2c6a41fef185dfbf0e09bc83a">
+        <source>Live API key</source>
+        <target state="needs-review-translation" state-qualifier="leveraged-mt">Live API-sleutel</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="e1814c4190a4176db90fbf357f1b3582">
+        <source>Not required for Test mode – You can find your Live API key on %1$syour Alma dashboard%2$s</source>
+        <target state="needs-review-translation" state-qualifier="leveraged-mt">Niet nodig voor Testmodus - Je kunt je Live API-sleutel vinden op %1$sje Alma dashboard%2$s</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="0408302fc36580b66e3417aa178c7f1c">
+        <source>Test API key</source>
+        <target state="needs-review-translation" state-qualifier="leveraged-mt">Test API-sleutel</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="bc2133c0f67a227cd4c22fd7409433fc">
+        <source>Not required for Live mode – You can find your Test API key on %1$syour sandbox dashboard%2$s</source>
+        <target state="needs-review-translation" state-qualifier="leveraged-mt">Niet vereist voor Live modus - Je kunt je Test API sleutel vinden op %1$sje sandbox dashboard%2$s</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="229a7ec501323b94db7ff3157a7623c9">
+        <source>Merchant ID</source>
+        <target state="needs-review-translation" state-qualifier="leveraged-mt">Handelaar ID</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="24fbd1d7621f23cfb3682abe6eb77502">
+        <source>Display widget on cart page</source>
+        <target state="needs-review-translation" state-qualifier="leveraged-mt">Widget weergeven op winkelwagenpagina</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="ac6329ea064b9212be7e442cb46bf68f">
+        <source>Display widget</source>
+        <target state="needs-review-translation" state-qualifier="leveraged-mt">Widget weergeven</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="f18e8a0396c09ce7e167471f551ff536">
+        <source>Display even if the cart is not eligible</source>
+        <target state="needs-review-translation" state-qualifier="leveraged-mt">Zelfs weergeven als de winkelwagen niet in aanmerking komt</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="039b5313d8eacb12b7520d4e31c5053d">
+        <source>Payment method configuration</source>
+        <target state="needs-review-translation" state-qualifier="leveraged-mt">Configuratie betaalmethode</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="b78a3223503896721cca1303f776159b">
+        <source>Title</source>
+        <target state="needs-review-translation" state-qualifier="leveraged-mt">Titel</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="b5a7adde1af5c87d7fd797b6245c2a39">
+        <source>Description</source>
+        <target state="needs-review-translation" state-qualifier="leveraged-mt">Beschrijving</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="bd348b62a28c8a1ff9932c0dfb8b53a9">
+        <source>Payments in 2, 3 and 4 installments</source>
+        <target state="needs-review-translation" state-qualifier="leveraged-mt">Betalingen in 2, 3 en 4 termijnen</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="f253e6ecb1d145ce02bd31c383dbad3c">
+        <source>Deferred payments</source>
+        <target state="needs-review-translation" state-qualifier="leveraged-mt">Uitgestelde betalingen</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="1bb665a61ac795bdc55e2a503fa824f5">
+        <source>Payments in more than 4 installments</source>
+        <target state="needs-review-translation" state-qualifier="leveraged-mt">Betalingen in meer dan 4 termijnen</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="8841cbed16fb69dda4d4812dcde78043">
+        <source>Installments plans</source>
+        <target state="needs-review-translation" state-qualifier="leveraged-mt">Plannen met termijnen</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="6de24747c86085e597f6b38d4d1d01a4">
+        <source>In-page checkout</source>
+        <target state="needs-review-translation" state-qualifier="leveraged-mt">In-pagina afrekenen</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="2420ebe02d61c738479f399a97e1cf18">
+        <source>Activate in-page checkout</source>
+        <target state="needs-review-translation" state-qualifier="leveraged-mt">In-pagina afrekenen activeren</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="4ff4eb829324e28bce3873a044040187">
+        <source>Let your customers pay with Alma in a secure pop-up, without leaving your site. Learn more.</source>
+        <target state="needs-review-translation" state-qualifier="leveraged-mt">Laat uw klanten betalen met Alma in een beveiligde pop-up, zonder uw site te verlaten. Meer informatie.</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="6f7991629de2e9ee19a0bf2a0469138c">
+        <source>Input payment button Alma selector</source>
+        <target state="needs-review-translation" state-qualifier="leveraged-mt">Invoer betaalknop Alma keuzeschakelaar</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="53bb0c97dea99e0f6df7940cb16a12c7">
+        <source>Advanced [Optional] CSS selector used by our scripts to identify the Alma payment button</source>
+        <target state="needs-review-translation" state-qualifier="leveraged-mt">Geavanceerd [Optioneel] CSS selector gebruikt door onze scripts om de Alma betaalknop te identificeren</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="8ee0042ba2657c2af782fcc8893fa45a">
+        <source>Place order button selector</source>
+        <target state="needs-review-translation" state-qualifier="leveraged-mt">Bestelling plaatsen knop selector</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="a6874385c7e01549286d83061a791407">
+        <source>Advanced [Optional] CSS selector used by our scripts to identify the payment confirmation button</source>
+        <target state="needs-review-translation" state-qualifier="leveraged-mt">Geavanceerd [Optioneel] CSS-selector die door onze scripts wordt gebruikt om de knop voor betalingsbevestiging te identificeren</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="9d21f767a50ad583330024bce9afa2e1">
+        <source>Refund with state change</source>
+        <target state="needs-review-translation" state-qualifier="leveraged-mt">Restitutie bij verandering van status</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="49908a1beb86a417b6f77ed65cbf83d2">
+        <source>Activate refund by change state</source>
+        <target state="needs-review-translation" state-qualifier="leveraged-mt">Restitutie activeren door status te wijzigen</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="500cde25580890603dc759aac02ff085">
+        <source>Display widget on product page</source>
+        <target state="needs-review-translation" state-qualifier="leveraged-mt">Widget weergeven op productpagina</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="8af7a0384521c3351829ce6e626fc028">
+        <source>Display even if the product is not eligible</source>
+        <target state="needs-review-translation" state-qualifier="leveraged-mt">Weergave zelfs als het product niet in aanmerking komt</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="0a07c3044858beda6297a34fb0be9236">
+        <source>If you usually refund orders by changing their state, activate this option and choose the state you want to use to trigger refunds on Alma payments</source>
+        <target state="needs-review-translation" state-qualifier="leveraged-mt">Als je normaal gesproken orders terugbetaalt door hun staat te wijzigen, activeer dan deze optie en kies de staat die je wilt gebruiken om terugbetalingen op Alma-betalingen te triggeren.</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="bedd7ebb429b76b301a727a4db06d9fe">
+        <source>With Alma, you can make your refunds directly from your PrestaShop back-office. Go to your order to find the new Alma section. %sMore information on how to use it%s.</source>
+        <target state="needs-translation">With Alma, you can make your refunds directly from your PrestaShop back-office. Go to your order to find the new Alma section. %sMore information on how to use it%s.</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="ebb1e29b7a24f7244361d8c9bef5cafd">
+        <source>Some products (gift cards, license keys, software, weapons, ...) cannot be sold with Alma, as per %sour terms%s (see Exclusions paragraph).</source>
+        <target state="needs-translation">Some products (gift cards, license keys, software, weapons, ...) cannot be sold with Alma, as per %sour terms%s (see Exclusions paragraph).</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="2b02fe17f294da7167110f5df2b72fc0">
+        <source>If you are selling such products on your shop, you need to configure Alma so that it is not enabled when customers view or shop them.</source>
+        <target state="needs-review-translation" state-qualifier="leveraged-mt">Als je dergelijke producten in je winkel verkoopt, moet je Alma zo configureren dat het niet is ingeschakeld wanneer klanten ze bekijken of winkelen.</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="1e9a8d43b6687270f9e45f3d753e5f4f">
+        <source>Use the %scategory exclusions page%s to comply with these restrictions.</source>
+        <target state="needs-translation">Use the %scategory exclusions page%s to comply with these restrictions.</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="576dc983c16c3d346e6dfe174b662bf2">
+        <source>Categories currently excluded : </source>
+        <target state="needs-review-translation" state-qualifier="leveraged-mt">Categorieën die momenteel zijn uitgesloten : </target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="1f956efd3d3772790153d1e9e95e64c5">
+        <source>Edit the text displayed when choosing the payment method in your checkout. It will adapt to the languages of your site.</source>
+        <target state="needs-review-translation" state-qualifier="leveraged-mt">Bewerk de tekst die wordt weergegeven bij het kiezen van de betaalmethode in je kassa. De tekst wordt aangepast aan de talen van je site.</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="f3244aba99d8eb5ccaf1f3a6b8ad1a93">
+        <source>Sample payment button Alma</source>
+        <target state="needs-review-translation" state-qualifier="leveraged-mt">Voorbeeld betaalknop Alma</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="9f04fe30d0288024643a1dd3074abe2e">
+        <source>Example of title and description.</source>
+        <target state="needs-review-translation" state-qualifier="leveraged-mt">Voorbeeld van titel en beschrijving.</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="d2586adb36ab1c1d5065dda926a9ea31">
+        <source>This widget allows you to inform your customers of the availability of Alma's payment facilities right from the product page, which will help to increase your conversion rate. For more details on its configuration or in case of problems, please consult %sthis documentation%s.</source>
+        <target state="needs-translation">This widget allows you to inform your customers of the availability of Alma's payment facilities right from the product page, which will help to increase your conversion rate. For more details on its configuration or in case of problems, please consult %sthis documentation%s.</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="ee4d20be41f0955a9cb0a3b05a496972">
+        <source>Sample widget Alma</source>
+        <target state="needs-review-translation" state-qualifier="leveraged-mt">Voorbeeld widget Alma</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="a54c98ce66641a5346707192d2ca86a6">
+        <source>Widget when Alma payments are available for this product.</source>
+        <target state="needs-review-translation" state-qualifier="leveraged-mt">Widget wanneer Alma-betalingen beschikbaar zijn voor dit product.</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="53b86cade31dfce70c3e02e012acb899">
+        <source>Widget when Alma payments are not available for this product.</source>
+        <target state="needs-review-translation" state-qualifier="leveraged-mt">Widget wanneer Alma-betalingen niet beschikbaar zijn voor dit product.</target>
+        <note>Line: </note>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>
