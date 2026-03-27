@@ -64,20 +64,23 @@ class WidgetFrontendService
                 }
 
                 $purchaseAmount = $cart->getCartTotalPrice() ?? 0;
-                $containerId = '#alma-widget-cart';
+                $container = str_replace('.', '-', $hookName);
                 break;
             default:
                 throw new WidgetException('Hook not supported for widget: ' . $hookName);
         }
 
         return [
-            'purchaseAmount' => PriceHelper::priceToCent($purchaseAmount),
-            'containerId' => $containerId,
-            'merchantId' => $this->configurationRepository->getMerchantId(),
-            'hideIfNotEligible' => (int) !$this->configurationRepository->getCartWidgetDisplayNotEligible(),
-            'mode' => $this->configurationRepository->getMode(),
-            'plans' => json_encode($this->getActivePlans()),
-            'locale' => $this->context->language->iso_code,
+            'container' => $container,
+            'widgetConfig' => json_encode([
+                'purchaseAmount' => PriceHelper::priceToCent($purchaseAmount),
+                'containerId' => '#' . $container,
+                'merchantId' => $this->configurationRepository->getMerchantId(),
+                'hideIfNotEligible' => (int) !$this->configurationRepository->getCartWidgetDisplayNotEligible(),
+                'mode' => $this->configurationRepository->getMode(),
+                'plans' => $this->getActivePlans(),
+                'locale' => $this->context->language->iso_code,
+            ])
         ];
     }
 

@@ -1,3 +1,1 @@
-<div id="alma-widget-cart">
-    Mon Widget Cart
-</div>
+<div id="{$container}" data-widget-config="{$widgetConfig}"></div>

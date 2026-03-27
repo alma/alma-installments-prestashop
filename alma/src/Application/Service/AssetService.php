@@ -51,7 +51,7 @@ class AssetService
             'alma-widget',
             'modules/' . $this->module->name . '/views/js/alma-widget.js',
             [
-                'priority' => 20,
+                'priority' => 200,
                 'attribute' => 'async',
             ]
         );

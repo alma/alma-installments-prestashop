@@ -43,7 +43,7 @@ class AssetServiceTest extends TestCase
                     'alma-widget',
                     'modules/alma/views/js/alma-widget.js',
                     [
-                        'priority' => 20,
+                        'priority' => 200,
                         'attribute' => 'async',
                     ],
                 ]
