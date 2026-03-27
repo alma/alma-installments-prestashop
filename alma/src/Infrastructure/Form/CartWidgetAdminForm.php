@@ -6,6 +6,8 @@ class CartWidgetAdminForm extends AbstractAdminForm
 {
     public const KEY_FIELD_CART_WIDGET_STATE = 'ALMA_CART_WIDGET_STATE';
     public const KEY_FIELD_CART_WIDGET_DISPLAY_NOT_ELIGIBLE = 'ALMA_CART_WIDGET_DISPLAY_NOT_ELIGIBLE';
+    public const KEY_FIELD_CART_WIDGET_POSITION_CUSTOM = 'ALMA_CART_WIDGET_POSITION_CUSTOM'; // Old key for custom position on our module v5
+    public const KEY_FIELD_CART_WIDGET_POSITION_SELECTOR = 'ALMA_CART_WDGT_POS_SELECTOR'; // Old key for custom position selector on our module v5
 
     public static function title(): string
     {
