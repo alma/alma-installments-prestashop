@@ -58,6 +58,14 @@ tasks:
     cmds:
       - task prestashop:{{.VERSION}}:test
 
+  test:local:js:
+    desc: Execute JS Unit Tests in local environment
+    vars:
+      VERSION: '{{.VERSION | default "1-7-8-9"}}'
+    dir: ../../integration-infrastructure/
+    cmds:
+      - task prestashop:{{.VERSION}}:test-js
+
   dist:
     desc: Build the zip file of the module
     deps:
