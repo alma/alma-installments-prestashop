@@ -1,10 +1,12 @@
 function getCartAmountInCents() {
     if (typeof prestashop === 'undefined' || !prestashop.cart || !prestashop.cart.totals) {
+        console.error('Prestashop cart totals are not available.');
         return null;
     }
     const totals = prestashop.cart.totals;
     const total = totals.total_including_tax || totals.total;
     if (!total || total.amount === undefined) {
+        console.error('Total amount is not available in cart totals.');
         return null;
     }
     return Math.round(parseFloat(total.amount) * 100);
@@ -12,6 +14,7 @@ function getCartAmountInCents() {
 
 function initAlmaWidget($, Alma) {
     if (!$("#alma-widget-ShoppingCartFooter").length && !$("#alma-widget-cart").length) {
+        console.error('No Alma widget container found on the page.');
         return null;
     }
     let widgetConfig = $("#alma-widget-ShoppingCartFooter").data('widget-config');
@@ -40,6 +43,8 @@ function initAlmaWidget($, Alma) {
     return widgets;
 }
 
+// module is defined in Node.js environments, but not in browsers.
+// This check allows the code to be used for unit test and browser contexts.
 if (typeof module !== 'undefined') {
     module.exports = { initAlmaWidget, getCartAmountInCents };
 } else {
@@ -50,6 +55,7 @@ if (typeof module !== 'undefined') {
             if (typeof prestashop !== 'undefined') {
                 prestashop.on('updateCart', function () {
                     const newAmount = getCartAmountInCents();
+                    // If we can't get the new amount, we shouldn't try to update the widget.
                     if (newAmount === null) return;
 
                     const $widget = $("#alma-widget-cart").length
