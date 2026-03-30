@@ -4,6 +4,7 @@ namespace PrestaShop\Module\Alma\Application\Service;
 
 use PrestaShop\Module\Alma\Infrastructure\Form\ApiAdminForm;
 use PrestaShop\Module\Alma\Infrastructure\Form\ExcludedCategoriesAdminForm;
+use PrestaShop\Module\Alma\Infrastructure\Proxy\ProductProxy;
 use PrestaShop\Module\Alma\Infrastructure\Repository\ConfigurationRepository;
 use PrestaShop\Module\Alma\Infrastructure\Repository\ExcludedCategoriesRepository;
 use PrestaShop\Module\Alma\Infrastructure\Repository\LanguageRepository;
@@ -28,19 +29,25 @@ class ExcludedCategoriesService
      * @var ExcludedCategoriesRepository
      */
     private ExcludedCategoriesRepository $excludedCategoriesRepository;
+    /**
+     * @var ProductProxy
+     */
+    private ProductProxy $productProxy;
 
     public function __construct(
         \Context $context,
         ExcludedCategoriesRepository $excludedCategoriesRepository,
         ConfigurationRepository $configurationRepository,
         LanguageRepository $languageRepository,
-        TranslatorInterface $translator
+        TranslatorInterface $translator,
+        ProductProxy $productProxy
     ) {
         $this->context = $context;
         $this->excludedCategoriesRepository = $excludedCategoriesRepository;
         $this->configurationRepository = $configurationRepository;
         $this->languageRepository = $languageRepository;
         $this->translator = $translator;
+        $this->productProxy = $productProxy;
     }
 
     /**
@@ -105,5 +112,45 @@ class ExcludedCategoriesService
         $updatedIds = array_values(array_diff($categoriesIdsFromDb, $categoryIds));
 
         $this->excludedCategoriesRepository->update($updatedIds);
+    }
+
+    /**
+     * Check if any product in the given list belongs to an excluded category.
+     * @param array $products Array of products as returned by Cart::getProducts()
+     * @return bool
+     */
+    public function isExcluded(array $products): bool
+    {
+        $excludedIds = $this->excludedCategoriesRepository->getIds();
+
+        if (empty($excludedIds)) {
+            return false;
+        }
+
+        foreach ($products as $productData) {
+            $productCategories = $this->productProxy->getCategories((int) $productData['id_product']);
+            if (!empty(array_intersect($productCategories, $excludedIds))) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isWidgetDisplayNotEligibleEnabled(): bool
+    {
+        return $this->excludedCategoriesRepository->isWidgetDisplayNotEligibleEnabled();
+    }
+
+    /**
+     * @param int $idLang
+     * @return string
+     */
+    public function getExcludedMessage(int $idLang): string
+    {
+        return $this->excludedCategoriesRepository->getMessage($idLang);
     }
 }

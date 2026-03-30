@@ -146,6 +146,9 @@ services:
   alma.tools_proxy:
     class: 'PrestaShop\Module\Alma\Infrastructure\Proxy\ToolsProxy'
 
+  alma.product_proxy:
+    class: 'PrestaShop\Module\Alma\Infrastructure\Proxy\ProductProxy'
+
   alma.settings_service:
     class: 'PrestaShop\Module\Alma\Application\Service\SettingsService'
     arguments:
@@ -200,6 +203,7 @@ services:
       - '@alma.configuration_repository'
       - '@alma.language_repository'
       - '@translator'
+      - '@alma.product_proxy'
 
   alma.in_page_service:
     class: 'PrestaShop\Module\Alma\Application\Service\InPageService'
