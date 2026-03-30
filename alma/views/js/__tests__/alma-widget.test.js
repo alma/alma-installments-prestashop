@@ -1,4 +1,4 @@
-const { initAlmaWidget } = require('../alma-widget');
+const { initAlmaWidget, getCartAmountInCents } = require('../alma-widget');
 
 const mockWidgetConfig = {
     purchaseAmount: 22976,
@@ -99,5 +99,63 @@ describe('initAlmaWidget', () => {
         expect(widgets.add).toHaveBeenCalledWith('PaymentPlans', expect.objectContaining({
             plans: [{ installmentsCount: 3 }],
         }));
+    });
+});
+
+describe('getCartAmountInCents', () => {
+    const originalPrestashop = global.prestashop;
+
+    afterEach(() => {
+        global.prestashop = originalPrestashop;
+    });
+
+    test('returns null when prestashop is undefined', () => {
+        delete global.prestashop;
+        expect(getCartAmountInCents()).toBeNull();
+    });
+
+    test('returns null when prestashop.cart is missing', () => {
+        global.prestashop = {};
+        expect(getCartAmountInCents()).toBeNull();
+    });
+
+    test('returns null when totals are missing', () => {
+        global.prestashop = { cart: {} };
+        expect(getCartAmountInCents()).toBeNull();
+    });
+
+    test('returns amount in cents from total_including_tax', () => {
+        global.prestashop = { cart: { totals: { total_including_tax: { amount: '229.76' } } } };
+        expect(getCartAmountInCents()).toBe(22976);
+    });
+
+    test('falls back to total when total_including_tax is absent', () => {
+        global.prestashop = { cart: { totals: { total: { amount: '150.00' } } } };
+        expect(getCartAmountInCents()).toBe(15000);
+    });
+
+    test('rounds up correctly for 3-decimal amounts', () => {
+        global.prestashop = { cart: { totals: { total_including_tax: { amount: '10.999' } } } };
+        expect(getCartAmountInCents()).toBe(1100);
+    });
+
+    test('rounds down correctly for 3-decimal amounts', () => {
+        global.prestashop = { cart: { totals: { total_including_tax: { amount: '10.994' } } } };
+        expect(getCartAmountInCents()).toBe(1099);
+    });
+
+    test('rounds correctly for amounts with more than 3 decimals', () => {
+        global.prestashop = { cart: { totals: { total_including_tax: { amount: '229.7654' } } } };
+        expect(getCartAmountInCents()).toBe(22977);
+    });
+
+    test('handles numeric (non-string) amount', () => {
+        global.prestashop = { cart: { totals: { total_including_tax: { amount: 229.76 } } } };
+        expect(getCartAmountInCents()).toBe(22976);
+    });
+
+    test('handles numeric integer amount', () => {
+        global.prestashop = { cart: { totals: { total_including_tax: { amount: 229 } } } };
+        expect(getCartAmountInCents()).toBe(22900);
     });
 });
