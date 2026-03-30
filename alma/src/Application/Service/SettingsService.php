@@ -109,6 +109,7 @@ class SettingsService
     public function getFieldsValue(array $languages = []): array
     {
         $feePlansFieldsValue = $this->feePlansService->fieldsValue();
+        $widgetFieldsValue = $this->widgetService->fieldsValueOldCartWidgetPosition();
         $fieldsValue = $this->authenticationSettingsProvider->getAllFields();
 
         foreach ($fieldsValue as $field => $param) {
@@ -135,7 +136,8 @@ class SettingsService
 
         return array_merge(
             $fieldsValue,
-            $feePlansFieldsValue
+            $feePlansFieldsValue,
+            $widgetFieldsValue
         );
     }
 
@@ -165,6 +167,7 @@ class SettingsService
         $notificationSuccess = $this->translator->trans('Settings successfully updated', [], 'Modules.Alma.Notifications');
         $overrideValues = [];
         $feePlansFieldsValue = $this->feePlansService->fieldsToSaveFromPost($allValuesFromPost);
+        $widgetFieldsValue = $this->widgetService->fieldsValueOldCartWidgetPosition();
 
         if ($this->hasNewKey($allValuesFromPost)) {
             $merchantIds = $this->authenticationService->isValidKeys();
@@ -187,6 +190,7 @@ class SettingsService
         $fieldsValue = array_merge(
             $feePlansFieldsValue,
             $this->authenticationSettingsProvider->getSplitLanguageFields(FormCollection::getAllFields(FormCollection::SETTINGS_FORMS_CLASSES)),
+            $widgetFieldsValue
         );
         $overrideValues = array_merge(
             $overrideValues,

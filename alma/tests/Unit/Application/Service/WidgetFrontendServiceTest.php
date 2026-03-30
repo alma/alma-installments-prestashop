@@ -110,7 +110,7 @@ class WidgetFrontendServiceTest extends TestCase
             ->method('getFeePlanList')
             ->willReturn($feePlanList);
         $this->configurationRepository->expects($this->once())
-            ->method('getCartWidgetPositionCustom')
+            ->method('getCartWidgetOldPositionCustom')
             ->willReturn(false);
         $this->assertEquals($expected, $this->widgetFrontendService->getWidgetVariables('alma.widget.cart'));
     }
@@ -177,7 +177,7 @@ class WidgetFrontendServiceTest extends TestCase
             ->method('getFeePlanList')
             ->willReturn($feePlanList);
         $this->configurationRepository->expects($this->once())
-            ->method('getCartWidgetPositionCustom')
+            ->method('getCartWidgetOldPositionCustom')
             ->willReturn(false);
         $this->assertEquals($expected, $this->widgetFrontendService->getWidgetVariables('alma.widget.ShoppingCartFooter'));
     }
@@ -232,10 +232,10 @@ class WidgetFrontendServiceTest extends TestCase
             ->method('getFeePlanList')
             ->willReturn([]);
         $this->configurationRepository->expects($this->once())
-            ->method('getCartWidgetPositionCustom')
+            ->method('getCartWidgetOldPositionCustom')
             ->willReturn(true);
         $this->configurationRepository->expects($this->once())
-            ->method('getCartWidgetPositionSelector')
+            ->method('getCartWidgetOldPositionSelector')
             ->willReturn('#my-custom-selector');
         $this->assertEquals($expected, $this->widgetFrontendService->getWidgetVariables('alma.widget.cart'));
     }
@@ -281,10 +281,10 @@ class WidgetFrontendServiceTest extends TestCase
             ->method('getFeePlanList')
             ->willReturn([]);
         $this->configurationRepository->expects($this->once())
-            ->method('getCartWidgetPositionCustom')
+            ->method('getCartWidgetOldPositionCustom')
             ->willReturn(false);
         $this->configurationRepository->expects($this->never())
-            ->method('getCartWidgetPositionSelector');
+            ->method('getCartWidgetOldPositionSelector');
         $this->assertEquals($expected, $this->widgetFrontendService->getWidgetVariables('alma.widget.cart'));
     }
 

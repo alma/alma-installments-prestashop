@@ -60,7 +60,7 @@ class ConfigurationRepository
     /**
      * @return bool
      */
-    public function getCartWidgetPositionCustom(): bool
+    public function getCartWidgetOldPositionCustom(): bool
     {
         return (bool) $this->get(CartWidgetAdminForm::KEY_FIELD_CART_WIDGET_POSITION_CUSTOM);
     }
@@ -68,7 +68,7 @@ class ConfigurationRepository
     /**
      * @return string
      */
-    public function getCartWidgetPositionSelector(): string
+    public function getCartWidgetOldPositionSelector(): string
     {
         return $this->get(CartWidgetAdminForm::KEY_FIELD_CART_WIDGET_POSITION_SELECTOR);
     }

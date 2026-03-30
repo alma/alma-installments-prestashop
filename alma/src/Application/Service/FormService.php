@@ -126,7 +126,7 @@ class FormService
             $form = [
                 $this->feePlansAdminForm->build($templateTabs, $this->feePlansService->feePlansFields()),
                 $this->productWidgetAdminForm->build($templateWidget),
-                $this->cartWidgetAdminForm->build(),
+                $this->cartWidgetAdminForm->build('', $this->widgetService->getOldWidgetPositionForm()),
                 $this->paymentButtonAdminForm->build($templatePaymentButton),
                 $this->excludedCategoriesAdminForm->build($templateExcludedCategories),
                 $this->refundAdminForm->build($templateRefund, $this->refundService->refundStateOrder()),
