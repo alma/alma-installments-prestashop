@@ -8,6 +8,7 @@ use PrestaShop\Module\Alma\Infrastructure\Form\ApiAdminForm;
 use PrestaShop\Module\Alma\Infrastructure\Form\CartWidgetAdminForm;
 use PrestaShop\Module\Alma\Infrastructure\Form\ProductWidgetAdminForm;
 use PrestaShop\Module\Alma\Infrastructure\Repository\ConfigurationRepository;
+use PrestaShopBundle\Translation\TranslatorInterface;
 
 class WidgetServiceTest extends TestCase
 {
@@ -24,9 +25,11 @@ class WidgetServiceTest extends TestCase
     {
         $this->context = $this->createMock(\Context::class);
         $this->configurationRepository = $this->createMock(ConfigurationRepository::class);
+        $this->translator = $this->createMock(TranslatorInterface::class);
         $this->widgetService = new WidgetService(
             $this->context,
-            $this->configurationRepository
+            $this->configurationRepository,
+            $this->translator
         );
     }
 
@@ -53,5 +56,66 @@ class WidgetServiceTest extends TestCase
             ->with(ApiAdminForm::KEY_FIELD_MERCHANT_ID)
             ->willReturn('merchant_id');
         $this->assertEquals([], $this->widgetService->defaultFieldsToSave());
+    }
+
+    public function testGetOldWidgetPositionFormWithoutCustomPositionSaved()
+    {
+        $this->configurationRepository->expects($this->once())
+            ->method('getCartWidgetOldPositionCustom')
+            ->willReturn(false);
+        $this->assertEquals([], $this->widgetService->getOldWidgetPositionForm());
+    }
+
+    public function testGetOldWidgetPositionFormWithCustomPositionSaved()
+    {
+        $expected = [
+            CartWidgetAdminForm::KEY_FIELD_CART_WIDGET_POSITION_CUSTOM => [
+                'type' => 'switch',
+                'label' => '',
+                'required' => false,
+                'form' => 'cart_widget',
+                'encrypted' => false,
+                'options' => [
+                    'values' => [
+                        [
+                            'id' => 'ENABLE',
+                            'value' => 1,
+                            'label' => '',
+                        ],
+                        [
+                            'id' => 'DISABLE',
+                            'value' => 0,
+                            'label' => ''
+                        ]
+                    ],
+                    'desc' => '',
+                ]
+            ],
+        ];
+
+        $this->configurationRepository->expects($this->once())
+            ->method('getCartWidgetOldPositionCustom')
+            ->willReturn(true);
+        $this->assertEquals($expected, $this->widgetService->getOldWidgetPositionForm());
+    }
+
+    public function testFieldsValueOldCartWidgetPositionWithoutCustomPositionSaved()
+    {
+        $this->configurationRepository->expects($this->once())
+            ->method('getCartWidgetOldPositionCustom')
+            ->willReturn(false);
+        $this->assertEquals([], $this->widgetService->fieldsValueOldCartWidgetPosition());
+    }
+
+    public function testFieldsValueOldCartWidgetPositionWithCustomPositionSaved()
+    {
+        $expected = [
+            CartWidgetAdminForm::KEY_FIELD_CART_WIDGET_POSITION_CUSTOM => 1,
+        ];
+
+        $this->configurationRepository->expects($this->once())
+            ->method('getCartWidgetOldPositionCustom')
+            ->willReturn(true);
+        $this->assertEquals($expected, $this->widgetService->fieldsValueOldCartWidgetPosition());
     }
 }

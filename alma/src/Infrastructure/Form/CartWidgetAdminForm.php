@@ -18,7 +18,7 @@ class CartWidgetAdminForm extends AbstractAdminForm
     public static function fieldsForm(string $templateHtml = '', array $dynamicForm = []): array
     {
         $translator = \Context::getContext()->getTranslator();
-        return [
+        $arrayForm = [
             self::KEY_FIELD_CART_WIDGET_STATE => [
                 'type' => 'switch',
                 'label' => $translator->trans('Display widget', [], 'Modules.Alma.Settings'),
@@ -62,5 +62,7 @@ class CartWidgetAdminForm extends AbstractAdminForm
                 ],
             ]
         ];
+
+        return array_merge($arrayForm, $dynamicForm);
     }
 }
