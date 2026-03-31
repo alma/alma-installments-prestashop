@@ -41,10 +41,73 @@ class WidgetFrontendServiceTest extends TestCase
     public function testRenderWidgetExpectException()
     {
         $expected = '';
+        $this->configurationRepository->expects($this->once())
+            ->method('getCartWidgetState')
+            ->willReturn(true);
         $this->context->smarty = $this->createMock(\Smarty::class);
         $this->context->smarty->expects($this->once())
             ->method('createTemplate')
             ->willThrowException(new \SmartyException());
+        $this->assertEquals($expected, $this->widgetFrontendService->renderWidget('alma.widget.cart'));
+    }
+
+    public function testRenderWidgetReturnTemplateCart()
+    {
+        $widgetVariables = [
+            'container' => 'alma-widget-cart',
+            'isExcluded' => false,
+            'showExcludedMessage' => false,
+            'excludedMessage' => '',
+            'almaLogoUrl' => _MODULE_DIR_ . 'alma/views/img/logos/logo_alma.svg',
+            'widgetConfig' => json_encode([
+                'purchaseAmount' => 42000,
+                'containerId' => '#alma-widget-cart',
+                'merchantId' => 'merchant_id',
+                'hideIfNotEligible' => 1,
+                'mode' => 'test',
+                'plans' => [],
+                'locale' => 'en',
+            ])
+        ];
+        $expected = 'cart template';
+        $this->configurationRepository->expects($this->once())
+            ->method('getCartWidgetState')
+            ->willReturn(true);
+        $this->cart->method('getCartTotalPrice')->willReturn(420.00);
+        $this->excludedCategoriesService->method('isExcluded')->willReturn(false);
+        $this->excludedCategoriesService->method('isWidgetDisplayNotEligibleEnabled')->willReturn(false);
+        $this->excludedCategoriesService->method('getExcludedMessage')->willReturn('');
+        $this->configurationRepository->method('getMerchantId')->willReturn('merchant_id');
+        $this->configurationRepository->method('getCartWidgetDisplayNotEligible')->willReturn(false);
+        $this->configurationRepository->method('getMode')->willReturn('test');
+        $this->configurationRepository->method('getFeePlanList')->willReturn([]);
+        $this->configurationRepository->method('getCartWidgetOldPositionCustom')->willReturn(false);
+
+        $this->context->smarty = $this->createMock(\Smarty::class);
+        $tpl = $this->createMock(\Smarty_Internal_Template::class);
+        $this->context->smarty->expects($this->once())
+            ->method('createTemplate')
+            ->with(_PS_MODULE_DIR_ . 'alma/views/templates/widget/cart.tpl')
+            ->willReturn($tpl);
+        $tpl->expects($this->once())
+            ->method('assign')
+            ->with($widgetVariables);
+        $tpl->expects($this->once())
+            ->method('fetch')
+            ->willReturn($expected);
+        $this->assertEquals($expected, $this->widgetFrontendService->renderWidget('alma.widget.cart'));
+    }
+
+    public function testRenderWidgetWidgetDisabledReturnEmptyString()
+    {
+        $expected = '';
+
+        $this->configurationRepository->expects($this->once())
+            ->method('getCartWidgetState')
+            ->willReturn(false);
+        $this->context->smarty = $this->createMock(\Smarty::class);
+        $this->context->smarty->expects($this->never())
+            ->method('createTemplate');
         $this->assertEquals($expected, $this->widgetFrontendService->renderWidget('alma.widget.cart'));
     }
 
@@ -296,5 +359,32 @@ class WidgetFrontendServiceTest extends TestCase
         $this->context->cart = null;
         $this->expectException(WidgetException::class);
         $this->widgetFrontendService->getWidgetVariables('alma.widget.cart');
+    }
+
+    public function testIsWidgetCartReturnTrue()
+    {
+        $this->assertTrue($this->widgetFrontendService->isWidgetCart('alma.widget.ShoppingCartFooter'));
+        $this->assertTrue($this->widgetFrontendService->isWidgetCart('alma.widget.cart'));
+    }
+
+    public function testIsWidgetCartReturnFalse()
+    {
+        $this->assertFalse($this->widgetFrontendService->isWidgetCart('alma.widget.nocart'));
+    }
+
+    public function testIsWidgetCartEnabledWidgetEnabledReturnTrue()
+    {
+        $this->configurationRepository->expects($this->once())
+            ->method('getCartWidgetState')
+            ->willReturn(true);
+        $this->assertTrue($this->widgetFrontendService->isWidgetCartEnabled('alma.widget.cart'));
+    }
+
+    public function testIsWidgetCartEnabledWidgetDisabledReturnFalse()
+    {
+        $this->configurationRepository->expects($this->once())
+            ->method('getCartWidgetState')
+            ->willReturn(false);
+        $this->assertFalse($this->widgetFrontendService->isWidgetCartEnabled('alma.widget.cart'));
     }
 }

@@ -36,8 +36,12 @@ class WidgetFrontendService
      */
     public function renderWidget(string $hookName): string
     {
+        if (!$this->isWidgetCartEnabled($hookName)) {
+            return '';
+        }
+
         $templatePath = '';
-        if (in_array($hookName, ['alma.widget.ShoppingCartFooter', 'alma.widget.cart'])) {
+        if ($this->isWidgetCart($hookName)) {
             $templatePath = _PS_MODULE_DIR_ . 'alma/views/templates/widget/cart.tpl';
         }
 
@@ -124,5 +128,15 @@ class WidgetFrontendService
         }
 
         return $plans;
+    }
+
+    public function isWidgetCart(string $hookName): bool
+    {
+        return in_array($hookName, ['alma.widget.ShoppingCartFooter', 'alma.widget.cart']);
+    }
+
+    public function isWidgetCartEnabled(string $hookName): bool
+    {
+        return $this->isWidgetCart($hookName) && $this->configurationRepository->getCartWidgetState();
     }
 }
