@@ -182,6 +182,21 @@ class Alma extends PaymentModule implements WidgetInterface
     }
 
     /**
+     * Display widget in the product page
+     *
+     * @param array $params
+     * @return string
+     */
+    public function hookDisplayProductPriceBlock(array $params): string
+    {
+        if (($params['type'] ?? '') !== 'after_price') {
+            return '';
+        }
+
+        return $this->renderWidget('alma.widget.ProductPriceBlock', $params);
+    }
+
+    /**
      * Display widget with WidgetInterface
      *
      * @param string $hookName

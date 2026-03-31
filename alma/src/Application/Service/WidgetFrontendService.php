@@ -36,14 +36,11 @@ class WidgetFrontendService
      */
     public function renderWidget(string $hookName): string
     {
-        if (!$this->canDisplayWidgetCart($hookName)) {
+        if (!$this->canDisplayWidgetCart($hookName) && !$this->isWidgetProductEnabled($hookName)) {
             return '';
         }
 
-        $templatePath = '';
-        if ($this->isWidgetCart($hookName)) {
-            $templatePath = _PS_MODULE_DIR_ . 'alma/views/templates/widget/cart.tpl';
-        }
+        $templatePath = _PS_MODULE_DIR_ . 'alma/views/templates/widget/widget.tpl';
 
         try {
             $tpl = $this->context->smarty->createTemplate($templatePath);
@@ -76,6 +73,31 @@ class WidgetFrontendService
                 $purchaseAmount = $cart->getCartTotalPrice() ?? 0;
                 $container = str_replace('.', '-', $hookName);
                 $products = $cart->getProducts();
+                $containerId = $this->configurationRepository->getCartWidgetOldPositionCustom()
+                    ? $this->configurationRepository->getCartWidgetOldPositionSelector()
+                    : '#' . $container;
+                $hideIfNotEligible = (int) !$this->configurationRepository->getCartWidgetDisplayNotEligible();
+                break;
+            case 'alma.widget.ProductPriceBlock':
+            case 'alma.widget.product':
+                $controller = $this->context->controller;
+
+                if (!method_exists($controller, 'getProduct')) {
+                    throw new WidgetException('Product not found in context');
+                }
+
+                /** @var \Product $product */
+                $product = $controller->getProduct();
+
+                if (!$product instanceof \Product) {
+                    throw new WidgetException('Product not found in context');
+                }
+
+                $purchaseAmount = $product->getPrice(true);
+                $container = str_replace('.', '-', $hookName);
+                $products = [$product];
+                $containerId = '#' . $container;
+                $hideIfNotEligible = (int) !$this->configurationRepository->getProductWidgetDisplayNotEligible();
                 break;
             default:
                 throw new WidgetException('Hook not supported for widget: ' . $hookName);
@@ -92,11 +114,9 @@ class WidgetFrontendService
             'almaLogoUrl' => _MODULE_DIR_ . 'alma/views/img/logos/logo_alma.svg',
             'widgetConfig' => json_encode([
                 'purchaseAmount' => PriceHelper::priceToCent($purchaseAmount),
-                'containerId' => $this->configurationRepository->getCartWidgetOldPositionCustom()
-                    ? $this->configurationRepository->getCartWidgetOldPositionSelector()
-                    : '#' . $container,
+                'containerId' => $containerId,
                 'merchantId' => $this->configurationRepository->getMerchantId(),
-                'hideIfNotEligible' => (int) !$this->configurationRepository->getCartWidgetDisplayNotEligible(),
+                'hideIfNotEligible' => $hideIfNotEligible,
                 'mode' => $this->configurationRepository->getMode(),
                 'plans' => $this->getActivePlans(),
                 'locale' => $this->context->language->iso_code,
@@ -138,5 +158,15 @@ class WidgetFrontendService
     public function canDisplayWidgetCart(string $hookName): bool
     {
         return $this->isWidgetCart($hookName) && $this->configurationRepository->getCartWidgetState();
+    }
+
+    public function isWidgetProduct(string $hookName): bool
+    {
+        return in_array($hookName, ['alma.widget.ProductPriceBlock', 'alma.widget.product']);
+    }
+
+    public function isWidgetProductEnabled(string $hookName): bool
+    {
+        return $this->isWidgetProduct($hookName) && $this->configurationRepository->getProductWidgetState();
     }
 }

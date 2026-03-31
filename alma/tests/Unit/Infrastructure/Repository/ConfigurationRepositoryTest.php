@@ -31,4 +31,14 @@ class ConfigurationRepositoryTest extends TestCase
     {
         $this->assertIsBool($this->configurationRepository->getCartWidgetDisplayNotEligible());
     }
+
+    public function testGetProductWidgetState()
+    {
+        $this->assertIsBool($this->configurationRepository->getProductWidgetState());
+    }
+
+    public function testGetProductWidgetDisplayNotEligible()
+    {
+        $this->assertIsBool($this->configurationRepository->getProductWidgetDisplayNotEligible());
+    }
 }

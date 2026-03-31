@@ -12,25 +12,26 @@ function getCartAmountInCents() {
     return Math.round(parseFloat(total.amount) * 100);
 }
 
-function initAlmaWidget($, Alma) {
-    if (!$("#alma-widget-ShoppingCartFooter").length && !$("#alma-widget-cart").length) {
-        console.error('No Alma widget container found on the page.');
-        return null;
+function findWidgetContainer($, selectors) {
+    for (const selector of selectors) {
+        const $el = $(selector);
+        if ($el.length) return $el;
     }
-    let widgetConfig = $("#alma-widget-ShoppingCartFooter").data('widget-config');
-    if ($("#alma-widget-cart").length) {
-        widgetConfig = $("#alma-widget-cart").data('widget-config');
-    }
+    return null;
+}
 
-    const mode = (widgetConfig.mode === 'test') ? Alma.ApiMode.TEST : Alma.ApiMode.LIVE
-    const widgets = Alma.Widgets.initialize(
-        widgetConfig.merchantId,
-        mode,
-    )
+function initAlmaWidgetFromContainer($container, Alma) {
+    let widgetConfig = $container.data('widget-config');
 
     if (typeof widgetConfig.plans === 'string') {
         widgetConfig.plans = JSON.parse(widgetConfig.plans);
     }
+
+    const mode = (widgetConfig.mode === 'test') ? Alma.ApiMode.TEST : Alma.ApiMode.LIVE;
+    const widgets = Alma.Widgets.initialize(
+        widgetConfig.merchantId,
+        mode,
+    );
 
     widgets.add(Alma.Widgets.PaymentPlans, {
         container: widgetConfig.containerId,
@@ -38,19 +39,37 @@ function initAlmaWidget($, Alma) {
         locale: widgetConfig.locale,
         hideIfNotEligible: widgetConfig.hideIfNotEligible,
         plans: widgetConfig.plans,
-    })
+    });
 
     return widgets;
+}
+
+function initAlmaCartWidget($, Alma) {
+    const $container = findWidgetContainer($, ['#alma-widget-cart', '#alma-widget-ShoppingCartFooter']);
+    if (!$container) {
+        console.error('No Alma widget container found on the page.');
+        return null;
+    }
+    return initAlmaWidgetFromContainer($container, Alma);
+}
+
+function initAlmaProductWidget($, Alma) {
+    const $container = findWidgetContainer($, ['#alma-widget-product', '#alma-widget-ProductPriceBlock']);
+    if (!$container) {
+        return null;
+    }
+    return initAlmaWidgetFromContainer($container, Alma);
 }
 
 // module is defined in Node.js environments, but not in browsers.
 // This check allows the code to be used for unit test and browser contexts.
 if (typeof module !== 'undefined') {
-    module.exports = { initAlmaWidget, getCartAmountInCents };
+    module.exports = { initAlmaCartWidget, initAlmaProductWidget, findWidgetContainer, initAlmaWidgetFromContainer, getCartAmountInCents };
 } else {
     (function ($) {
         $(function () {
-            const widgets = initAlmaWidget($, Alma);
+            initAlmaCartWidget($, Alma);
+            initAlmaProductWidget($, Alma);
 
             if (typeof prestashop !== 'undefined') {
                 prestashop.on('updateCart', function () {
@@ -58,11 +77,8 @@ if (typeof module !== 'undefined') {
                     // If we can't get the new amount, we shouldn't try to update the widget.
                     if (newAmount === null) return;
 
-                    const $widget = $("#alma-widget-cart").length
-                        ? $("#alma-widget-cart")
-                        : $("#alma-widget-ShoppingCartFooter");
-
-                    if (!$widget.length) return;
+                    const $widget = findWidgetContainer($, ['#alma-widget-cart', '#alma-widget-ShoppingCartFooter']);
+                    if (!$widget) return;
 
                     const config = $widget.data('widget-config');
                     if (!config) return;
@@ -70,7 +86,7 @@ if (typeof module !== 'undefined') {
                     config.purchaseAmount = newAmount;
                     $widget.data('widget-config', config);
 
-                    initAlmaWidget($, Alma);
+                    initAlmaCartWidget($, Alma);
                 });
             }
         });
