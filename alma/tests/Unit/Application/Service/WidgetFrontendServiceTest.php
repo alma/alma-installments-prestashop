@@ -698,4 +698,244 @@ class WidgetFrontendServiceTest extends TestCase
             ->method('fetch');
         $this->assertEquals('Product not found in context controller', $this->widgetFrontendService->renderWidget('alma.widget.product'));
     }
+
+    public function testRenderWidgetReturnTemplateProduct()
+    {
+        $widgetVariables = [
+            'container' => 'alma-widget-product',
+            'isExcluded' => false,
+            'showExcludedMessage' => false,
+            'excludedMessage' => '',
+            'almaLogoUrl' => _MODULE_DIR_ . 'alma/views/img/logos/logo_alma.svg',
+            'widgetConfig' => json_encode([
+                'purchaseAmount' => 9900,
+                'containerId' => '#alma-widget-product',
+                'merchantId' => 'merchant_id',
+                'hideIfNotEligible' => 1,
+                'mode' => 'test',
+                'plans' => [],
+                'locale' => 'en',
+            ])
+        ];
+        $expected = 'product template';
+        $this->configurationRepository->expects($this->once())
+            ->method('getProductWidgetState')
+            ->willReturn(true);
+        $this->productController->expects($this->once())
+            ->method('getProduct')
+            ->willReturn($this->product);
+        $this->excludedCategoriesService->method('isExcluded')->willReturn(false);
+        $this->excludedCategoriesService->method('isWidgetDisplayNotEligibleEnabled')->willReturn(false);
+        $this->excludedCategoriesService->method('getExcludedMessage')->willReturn('');
+        $this->configurationRepository->method('getMerchantId')->willReturn('merchant_id');
+        $this->configurationRepository->method('getProductWidgetDisplayNotEligible')->willReturn(false);
+        $this->configurationRepository->method('getMode')->willReturn('test');
+        $this->configurationRepository->method('getFeePlanList')->willReturn([]);
+
+        $this->context->smarty = $this->createMock(\Smarty::class);
+        $tpl = $this->createMock(\Smarty_Internal_Template::class);
+        $this->context->smarty->expects($this->once())
+            ->method('createTemplate')
+            ->with(_PS_MODULE_DIR_ . 'alma/views/templates/widget/widget.tpl')
+            ->willReturn($tpl);
+        $tpl->expects($this->once())
+            ->method('assign')
+            ->with($widgetVariables);
+        $tpl->expects($this->once())
+            ->method('fetch')
+            ->willReturn($expected);
+        $this->assertEquals($expected, $this->widgetFrontendService->renderWidget('alma.widget.product'));
+    }
+
+    public function testRenderWidgetProductWidgetDisabledReturnEmptyString()
+    {
+        $expected = '';
+        $this->configurationRepository->expects($this->once())
+            ->method('getProductWidgetState')
+            ->willReturn(false);
+        $this->context->smarty = $this->createMock(\Smarty::class);
+        $this->context->smarty->expects($this->never())
+            ->method('createTemplate');
+        $this->assertEquals($expected, $this->widgetFrontendService->renderWidget('alma.widget.product'));
+    }
+
+    /**
+     * Product is excluded, message display is enabled — widget is hidden, message shown.
+     * @throws \PrestaShop\Module\Alma\Application\Exception\WidgetException
+     */
+    public function testGetWidgetVariablesForProductWithWidgetTag()
+    {
+        $feePlanList = [
+            'general_1_0_0' => [
+                'state' => '0',
+                'min_amount' => '50',
+                'max_amount' => '200000',
+                'sort_order' => '1',
+            ],
+            'general_3_0_0' => [
+                'state' => '1',
+                'min_amount' => '5000',
+                'max_amount' => '200000',
+                'sort_order' => '3',
+            ]
+        ];
+        $expected = [
+            'container' => 'alma-widget-product',
+            'isExcluded' => true,
+            'showExcludedMessage' => true,
+            'excludedMessage' => 'Excluded product.',
+            'almaLogoUrl' => _MODULE_DIR_ . 'alma/views/img/logos/logo_alma.svg',
+            'widgetConfig' => json_encode([
+                'purchaseAmount' => 9900,
+                'containerId' => '#alma-widget-product',
+                'merchantId' => 'merchant_id',
+                'hideIfNotEligible' => 0,
+                'mode' => 'test',
+                'plans' => [
+                    [
+                        'installmentsCount' => 3,
+                        'deferredDays' => 0,
+                        'minAmount' => 5000,
+                        'maxAmount' => 200000
+                    ]
+                ],
+                'locale' => 'en',
+            ])
+        ];
+        $this->excludedCategoriesService->method('isExcluded')->willReturn(true);
+        $this->excludedCategoriesService->method('isWidgetDisplayNotEligibleEnabled')->willReturn(true);
+        $this->excludedCategoriesService->method('getExcludedMessage')->with(1)->willReturn('Excluded product.');
+        $this->productController->expects($this->once())
+            ->method('getProduct')
+            ->willReturn($this->product);
+        $this->configurationRepository->expects($this->once())
+            ->method('getMerchantId')
+            ->willReturn('merchant_id');
+        $this->configurationRepository->expects($this->once())
+            ->method('getProductWidgetDisplayNotEligible')
+            ->willReturn(true);
+        $this->configurationRepository->expects($this->once())
+            ->method('getMode')
+            ->willReturn('test');
+        $this->configurationRepository->expects($this->once())
+            ->method('getFeePlanList')
+            ->willReturn($feePlanList);
+        $this->assertEquals($expected, $this->widgetFrontendService->getWidgetVariables('alma.widget.product'));
+    }
+
+    /**
+     * Product is excluded, message display is disabled — widget hidden, no message shown.
+     * @throws \PrestaShop\Module\Alma\Application\Exception\WidgetException
+     */
+    public function testGetWidgetVariablesForProductWithHookTag()
+    {
+        $feePlanList = [
+            'general_1_0_0' => [
+                'state' => '0',
+                'min_amount' => '50',
+                'max_amount' => '200000',
+                'sort_order' => '1',
+            ],
+            'general_3_0_0' => [
+                'state' => '1',
+                'min_amount' => '5000',
+                'max_amount' => '200000',
+                'sort_order' => '3',
+            ]
+        ];
+        $expected = [
+            'container' => 'alma-widget-ProductPriceBlock',
+            'isExcluded' => true,
+            'showExcludedMessage' => false,
+            'excludedMessage' => 'Excluded product.',
+            'almaLogoUrl' => _MODULE_DIR_ . 'alma/views/img/logos/logo_alma.svg',
+            'widgetConfig' => json_encode([
+                'purchaseAmount' => 9900,
+                'containerId' => '#alma-widget-ProductPriceBlock',
+                'merchantId' => 'merchant_id',
+                'hideIfNotEligible' => 0,
+                'mode' => 'test',
+                'plans' => [
+                    [
+                        'installmentsCount' => 3,
+                        'deferredDays' => 0,
+                        'minAmount' => 5000,
+                        'maxAmount' => 200000
+                    ]
+                ],
+                'locale' => 'en',
+            ])
+        ];
+        $this->excludedCategoriesService->method('isExcluded')->willReturn(true);
+        $this->excludedCategoriesService->method('isWidgetDisplayNotEligibleEnabled')->willReturn(false);
+        $this->excludedCategoriesService->method('getExcludedMessage')->with(1)->willReturn('Excluded product.');
+        $this->productController->expects($this->once())
+            ->method('getProduct')
+            ->willReturn($this->product);
+        $this->configurationRepository->expects($this->once())
+            ->method('getMerchantId')
+            ->willReturn('merchant_id');
+        $this->configurationRepository->expects($this->once())
+            ->method('getProductWidgetDisplayNotEligible')
+            ->willReturn(true);
+        $this->configurationRepository->expects($this->once())
+            ->method('getMode')
+            ->willReturn('test');
+        $this->configurationRepository->expects($this->once())
+            ->method('getFeePlanList')
+            ->willReturn($feePlanList);
+        $this->assertEquals($expected, $this->widgetFrontendService->getWidgetVariables('alma.widget.ProductPriceBlock'));
+    }
+
+    /**
+     * @throws \PrestaShop\Module\Alma\Application\Exception\WidgetException
+     */
+    public function testGetWidgetVariablesWithoutProductInContext()
+    {
+        $controller = new \stdClass();
+        $this->context->controller = $controller;
+        $this->expectException(WidgetException::class);
+        $this->widgetFrontendService->getWidgetVariables('alma.widget.product');
+    }
+
+    /**
+     * @throws \PrestaShop\Module\Alma\Application\Exception\WidgetException
+     */
+    public function testGetWidgetVariablesWithProductNotInstanceOfProduct()
+    {
+        $controller = $this->getMockBuilder(\FrontController::class)
+            ->addMethods(['getProduct'])
+            ->getMock();
+        $controller->method('getProduct')->willReturn(null);
+        $this->context->controller = $controller;
+        $this->expectException(WidgetException::class);
+        $this->widgetFrontendService->getWidgetVariables('alma.widget.product');
+    }
+
+    public function testIsWidgetProductReturnTrue()
+    {
+        $this->assertTrue($this->widgetFrontendService->isWidgetProduct('alma.widget.ProductPriceBlock'));
+        $this->assertTrue($this->widgetFrontendService->isWidgetProduct('alma.widget.product'));
+    }
+
+    public function testIsWidgetProductReturnFalse()
+    {
+        $this->assertFalse($this->widgetFrontendService->isWidgetProduct('alma.widget.cart'));
+    }
+
+    public function testIsWidgetProductEnabledWidgetEnabledReturnTrue()
+    {
+        $this->configurationRepository->expects($this->once())
+            ->method('getProductWidgetState')
+            ->willReturn(true);
+        $this->assertTrue($this->widgetFrontendService->isWidgetProductEnabled('alma.widget.product'));
+    }
+
+    public function testIsWidgetProductEnabledWidgetDisabledReturnFalse()
+    {
+        $this->configurationRepository->expects($this->once())
+            ->method('getProductWidgetState')
+            ->willReturn(false);
+        $this->assertFalse($this->widgetFrontendService->isWidgetProductEnabled('alma.widget.product'));
+    }
 }
