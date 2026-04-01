@@ -624,7 +624,7 @@ class WidgetFrontendServiceTest extends TestCase
         $this->configurationRepository->expects($this->once())
             ->method('getProductWidgetState')
             ->willReturn(true);
-        $this->assertTrue($this->widgetFrontendService->isWidgetProductEnabled('alma.widget.product'));
+        $this->assertTrue($this->widgetFrontendService->canDisplayWidgetProduct('alma.widget.product'));
     }
 
     public function testIsWidgetProductEnabledWidgetDisabledReturnFalse()
@@ -632,6 +632,6 @@ class WidgetFrontendServiceTest extends TestCase
         $this->configurationRepository->expects($this->once())
             ->method('getProductWidgetState')
             ->willReturn(false);
-        $this->assertFalse($this->widgetFrontendService->isWidgetProductEnabled('alma.widget.product'));
+        $this->assertFalse($this->widgetFrontendService->canDisplayWidgetProduct('alma.widget.product'));
     }
 }

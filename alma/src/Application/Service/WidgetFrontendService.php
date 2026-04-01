@@ -36,7 +36,7 @@ class WidgetFrontendService
      */
     public function renderWidget(string $hookName): string
     {
-        if (!$this->canDisplayWidgetCart($hookName) && !$this->isWidgetProductEnabled($hookName)) {
+        if (!$this->canDisplayWidgetCart($hookName) && !$this->canDisplayWidgetProduct($hookName)) {
             return '';
         }
 
@@ -150,22 +150,42 @@ class WidgetFrontendService
         return $plans;
     }
 
+    /**
+     * Check if the hook name is for the cart widget.
+     * @param string $hookName
+     * @return bool
+     */
     public function isWidgetCart(string $hookName): bool
     {
         return in_array($hookName, ['alma.widget.ShoppingCartFooter', 'alma.widget.cart']);
     }
 
+    /**
+     * Check if the cart widget can be displayed based on the configuration and the hook name.
+     * @param string $hookName
+     * @return bool
+     */
     public function canDisplayWidgetCart(string $hookName): bool
     {
         return $this->isWidgetCart($hookName) && $this->configurationRepository->getCartWidgetState();
     }
 
+    /**
+     * Check if the hook name is for the product widget.
+     * @param string $hookName
+     * @return bool
+     */
     public function isWidgetProduct(string $hookName): bool
     {
         return in_array($hookName, ['alma.widget.ProductPriceBlock', 'alma.widget.product']);
     }
 
-    public function isWidgetProductEnabled(string $hookName): bool
+    /**
+     * Check if the product widget can be displayed based on the configuration and the hook name.
+     * @param string $hookName
+     * @return bool
+     */
+    public function canDisplayWidgetProduct(string $hookName): bool
     {
         return $this->isWidgetProduct($hookName) && $this->configurationRepository->getProductWidgetState();
     }
