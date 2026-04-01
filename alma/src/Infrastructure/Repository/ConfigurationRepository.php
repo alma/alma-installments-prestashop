@@ -49,6 +49,11 @@ class ConfigurationRepository
         return json_decode($feePlanList, true);
     }
 
+    public function getCartWidgetState(): bool
+    {
+        return (bool) $this->get(CartWidgetAdminForm::KEY_FIELD_CART_WIDGET_STATE);
+    }
+
     /**
      * @return bool
      */
