@@ -79,6 +79,16 @@ When `ALMA_CART_WIDGET_POSITION_CUSTOM` is enabled, `WidgetFrontendService` uses
 
 When the cart is updated (e.g. quantity change, product removal), the widget refreshes automatically without a page reload. `alma-widget.js` listens to PrestaShop's native `prestashop.on('updateCart')` event, reads the new cart total from `prestashop.cart.totals`, updates the `purchaseAmount` in the widget's `data-widget-config`, and re-initializes the widget with the new amount.
 
+### Product widget dynamic update
+
+On the product page, the widget amount updates automatically when the selected combination or quantity changes.
+
+**Combination change** — PrestaShop fires `prestashop.on('updatedProduct', eventData)` when a combination is selected. `alma-widget.js` extracts the new unit price from `eventData.product_prices` (the re-rendered price HTML) by reading the `content` attribute of `.current-price-value` via native `getAttribute()` (jQuery's `.attr()` is unreliable for non-standard attributes on `<span>`). The price is converted to cents and stored as the new unit price.
+
+**Quantity change** — A `change` listener on `[name="qty"]` recalculates the total amount (`unit price × quantity`) and re-initializes the widget.
+
+Both paths call `updateProductWidget()` which updates `purchaseAmount` in `data-widget-config` and re-initializes the widget.
+
 ## Excluded categories
 
 Merchants can exclude specific product categories from Alma eligibility via the **Excluded categories** page in the back office. When a cart or product belongs to an excluded category, the widget is hidden.
