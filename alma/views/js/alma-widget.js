@@ -15,6 +15,29 @@ const ALMA_WIDGET_SELECTORS = [
 
 const TEST_MODE = 'test';
 
+// Returns the unit price in cents by parsing the product_prices HTML fragment
+// Reads .current-price-value[content] which the theme updates on combination change.
+function getProductUnitPriceFromEventData(eventData, $) {
+    if (!eventData || !eventData.product_prices) return null;
+
+    const $html = $('<div>').html(eventData.product_prices);
+
+    const priceEl = $html.find('.current-price-value').get(0);
+    const content = priceEl ? priceEl.getAttribute('content') : undefined;
+    if (content !== undefined && !isNaN(parseFloat(content))) {
+        return Math.round(parseFloat(content) * 100);
+    }
+
+    return null;
+}
+
+// Returns the total product amount in cents given the unit price and the current quantity.
+function getProductAmountInCents($, unitPriceInCents) {
+    if (!unitPriceInCents) return null;
+    const quantity = parseInt($('[name="qty"]').val(), 10) || 1;
+    return unitPriceInCents * quantity;
+}
+
 function getCartAmountInCents() {
     if (typeof prestashop === 'undefined' || !prestashop.cart || !prestashop.cart.totals) {
         console.error('Prestashop cart totals are not available.');
@@ -73,7 +96,7 @@ function initAlmaWidget($, Alma) {
 // module is defined in Node.js environments, but not in browsers.
 // This check allows the code to be used for unit test and browser contexts.
 if (typeof module !== 'undefined') {
-    module.exports = { initAlmaWidget, findWidgetContainer, initAlmaWidgetFromContainer, getCartAmountInCents };
+    module.exports = { initAlmaWidget, findWidgetContainer, initAlmaWidgetFromContainer, getCartAmountInCents, getProductAmountInCents, getProductUnitPriceFromEventData };
 } else {
     (function ($) {
         $(function () {
@@ -95,6 +118,40 @@ if (typeof module !== 'undefined') {
                     $widget.data('widget-config', config);
 
                     initAlmaWidget($, Alma);
+                });
+
+                // Product unit price in cents, initialized from the widget config (price for qty=1).
+                let productUnitPriceInCents = (function () {
+                    const $widgetContainer = findWidgetContainer($, ['#alma-widget-product', '#alma-widget-ProductPriceBlock']);
+                    if (!$widgetContainer) return null;
+                    const config = $widgetContainer.data('widget-config');
+                    return config ? config.purchaseAmount : null;
+                })();
+
+                function updateProductWidget(newAmount) {
+                    const $widget = findWidgetContainer($, ['#alma-widget-product', '#alma-widget-ProductPriceBlock']);
+                    if (!$widget) return;
+                    const config = $widget.data('widget-config');
+                    if (!config) return;
+                    config.purchaseAmount = newAmount;
+                    $widget.data('widget-config', config);
+                    initAlmaProductWidget($, Alma);
+                }
+
+                prestashop.on('updatedProduct', function (eventData) {
+                    const newUnitPrice = getProductUnitPriceFromEventData(eventData, $);
+                    if (newUnitPrice !== null) {
+                        productUnitPriceInCents = newUnitPrice;
+                    }
+                    const newAmount = getProductAmountInCents($, productUnitPriceInCents);
+                    if (newAmount === null) return;
+                    updateProductWidget(newAmount);
+                });
+
+                $(document).on('change', '[name="qty"]', function () {
+                    const newAmount = getProductAmountInCents($, productUnitPriceInCents);
+                    if (newAmount === null) return;
+                    updateProductWidget(newAmount);
                 });
             }
         });
