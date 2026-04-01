@@ -377,7 +377,7 @@ class WidgetFrontendServiceTest extends TestCase
         $this->configurationRepository->expects($this->once())
             ->method('getCartWidgetState')
             ->willReturn(true);
-        $this->assertTrue($this->widgetFrontendService->isWidgetCartEnabled('alma.widget.cart'));
+        $this->assertTrue($this->widgetFrontendService->canDisplayWidgetCart('alma.widget.cart'));
     }
 
     public function testIsWidgetCartEnabledWidgetDisabledReturnFalse()
@@ -385,6 +385,6 @@ class WidgetFrontendServiceTest extends TestCase
         $this->configurationRepository->expects($this->once())
             ->method('getCartWidgetState')
             ->willReturn(false);
-        $this->assertFalse($this->widgetFrontendService->isWidgetCartEnabled('alma.widget.cart'));
+        $this->assertFalse($this->widgetFrontendService->canDisplayWidgetCart('alma.widget.cart'));
     }
 }

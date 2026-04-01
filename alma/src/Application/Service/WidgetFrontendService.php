@@ -36,7 +36,7 @@ class WidgetFrontendService
      */
     public function renderWidget(string $hookName): string
     {
-        if (!$this->isWidgetCartEnabled($hookName)) {
+        if (!$this->canDisplayWidgetCart($hookName)) {
             return '';
         }
 
@@ -135,7 +135,7 @@ class WidgetFrontendService
         return in_array($hookName, ['alma.widget.ShoppingCartFooter', 'alma.widget.cart']);
     }
 
-    public function isWidgetCartEnabled(string $hookName): bool
+    public function canDisplayWidgetCart(string $hookName): bool
     {
         return $this->isWidgetCart($hookName) && $this->configurationRepository->getCartWidgetState();
     }
