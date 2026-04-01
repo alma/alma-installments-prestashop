@@ -82,6 +82,22 @@ class ConfigurationRepository
     /**
      * @return bool
      */
+    public function getProductWidgetOldPositionCustom(): bool
+    {
+        return (bool) $this->get(ProductWidgetAdminForm::KEY_FIELD_PRODUCT_WIDGET_POSITION_CUSTOM);
+    }
+
+    /**
+     * @return string
+     */
+    public function getProductWidgetOldPositionSelector(): string
+    {
+        return $this->get(ProductWidgetAdminForm::KEY_FIELD_PRODUCT_WIDGET_POSITION_SELECTOR);
+    }
+
+    /**
+     * @return bool
+     */
     public function getProductWidgetState(): bool
     {
         return (bool) $this->get(ProductWidgetAdminForm::KEY_FIELD_PRODUCT_WIDGET_STATE);
