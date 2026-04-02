@@ -3,7 +3,6 @@
 namespace PrestaShop\Module\Alma\Tests\Unit\Application\Service;
 
 use PHPUnit\Framework\TestCase;
-use PrestaShop\Module\Alma\Application\Exception\WidgetException;
 use PrestaShop\Module\Alma\Application\Service\ExcludedCategoriesService;
 use PrestaShop\Module\Alma\Application\Service\WidgetFrontendService;
 use PrestaShop\Module\Alma\Infrastructure\Repository\ConfigurationRepository;
@@ -18,6 +17,10 @@ class WidgetFrontendServiceTest extends TestCase
      * @var ExcludedCategoriesService
      */
     private $excludedCategoriesService;
+    /**
+     * @var \ProductControllerCore
+     */
+    private $productController;
 
     public function setUp(): void
     {
@@ -29,9 +32,7 @@ class WidgetFrontendServiceTest extends TestCase
         $this->product = $this->createMock(\Product::class);
         $this->product->id = 1;
         $this->product->method('getPrice')->willReturn(99.0);
-        $this->productController = $this->getMockBuilder(\FrontController::class)
-            ->addMethods(['getProduct'])
-            ->getMock();
+        $this->productController = $this->createMock(\ProductControllerCore::class);
         $this->context = $this->createMock(\Context::class);
         $this->context->language = $this->language;
         $this->context->cart = $this->cart;
@@ -119,12 +120,11 @@ class WidgetFrontendServiceTest extends TestCase
     }
 
     /**
-     * Cart is excluded, message display is enabled — widget is hidden, message shown.
-     * @throws \PrestaShop\Module\Alma\Application\Exception\WidgetException
+     * Cart is excluded, message display is enabled — widget is hidden, message shown from widget tag.
      */
-    public function testGetWidgetVariablesForCartWithWidgetTag()
+    public function testGetWidgetVariablesForCartWithWidgetTagAndExcludedCategoriesAndDisplayMessage()
     {
-        $expected = [
+        $widgetVariables = [
             'container' => 'alma-widget-cart',
             'isExcluded' => true,
             'showExcludedMessage' => true,
@@ -147,6 +147,7 @@ class WidgetFrontendServiceTest extends TestCase
                 'locale' => 'en',
             ])
         ];
+        $expected = 'cart template widget';
         $this->cart->expects($this->once())
             ->method('getCartTotalPrice')
             ->willReturn(420.00);
@@ -164,9 +165,19 @@ class WidgetFrontendServiceTest extends TestCase
                 'sort_order' => '3',
             ]
         ];
-        $this->excludedCategoriesService->method('isExcluded')->willReturn(true);
-        $this->excludedCategoriesService->method('isWidgetDisplayNotEligibleEnabled')->willReturn(true);
-        $this->excludedCategoriesService->method('getExcludedMessage')->with(1)->willReturn('Excluded product.');
+        $this->configurationRepository->expects($this->once())
+            ->method('getCartWidgetState')
+            ->willReturn(true);
+        $this->excludedCategoriesService->expects($this->once())
+            ->method('isExcluded')
+            ->willReturn(true);
+        $this->excludedCategoriesService->expects($this->once())
+            ->method('isWidgetDisplayNotEligibleEnabled')
+            ->willReturn(true);
+        $this->excludedCategoriesService->expects($this->once())
+            ->method('getExcludedMessage')
+            ->with(1)
+            ->willReturn('Excluded product.');
         $this->configurationRepository->expects($this->once())
             ->method('getMerchantId')
             ->willReturn('merchant_id');
@@ -182,16 +193,27 @@ class WidgetFrontendServiceTest extends TestCase
         $this->configurationRepository->expects($this->once())
             ->method('getCartWidgetOldPositionCustom')
             ->willReturn(false);
-        $this->assertEquals($expected, $this->widgetFrontendService->getWidgetVariables('alma.widget.cart'));
+        $this->context->smarty = $this->createMock(\Smarty::class);
+        $tpl = $this->createMock(\Smarty_Internal_Template::class);
+        $this->context->smarty->expects($this->once())
+            ->method('createTemplate')
+            ->with(_PS_MODULE_DIR_ . 'alma/views/templates/widget/widget.tpl')
+            ->willReturn($tpl);
+        $tpl->expects($this->once())
+            ->method('assign')
+            ->with($widgetVariables);
+        $tpl->expects($this->once())
+            ->method('fetch')
+            ->willReturn($expected);
+        $this->assertEquals($expected, $this->widgetFrontendService->renderWidget('alma.widget.cart'));
     }
 
     /**
-     * Cart is excluded, message display is disabled — widget hidden, no message shown.
-     * @throws \PrestaShop\Module\Alma\Application\Exception\WidgetException
+     * Cart is excluded, message display is disabled — widget hidden, no message shown from hook.
      */
-    public function testGetWidgetVariablesForCartWithHookTag()
+    public function testGetWidgetVariablesForCartWithHookTagAndExcludedCategoriesAndDisplayMessage()
     {
-        $expected = [
+        $widgetVariables = [
             'container' => 'alma-widget-ShoppingCartFooter',
             'isExcluded' => true,
             'showExcludedMessage' => false,
@@ -214,6 +236,7 @@ class WidgetFrontendServiceTest extends TestCase
                 'locale' => 'en',
             ])
         ];
+        $expected = 'cart template hook';
         $this->cart->expects($this->once())
             ->method('getCartTotalPrice')
             ->willReturn(420.00);
@@ -231,6 +254,9 @@ class WidgetFrontendServiceTest extends TestCase
                 'sort_order' => '3',
             ]
         ];
+        $this->configurationRepository->expects($this->once())
+            ->method('getCartWidgetState')
+            ->willReturn(true);
         $this->excludedCategoriesService->method('isExcluded')->willReturn(true);
         $this->excludedCategoriesService->method('isWidgetDisplayNotEligibleEnabled')->willReturn(false);
         $this->excludedCategoriesService->method('getExcludedMessage')->with(1)->willReturn('Excluded product.');
@@ -249,25 +275,32 @@ class WidgetFrontendServiceTest extends TestCase
         $this->configurationRepository->expects($this->once())
             ->method('getCartWidgetOldPositionCustom')
             ->willReturn(false);
-        $this->assertEquals($expected, $this->widgetFrontendService->getWidgetVariables('alma.widget.ShoppingCartFooter'));
+        $this->context->smarty = $this->createMock(\Smarty::class);
+        $tpl = $this->createMock(\Smarty_Internal_Template::class);
+        $this->context->smarty->expects($this->once())
+            ->method('createTemplate')
+            ->with(_PS_MODULE_DIR_ . 'alma/views/templates/widget/widget.tpl')
+            ->willReturn($tpl);
+        $tpl->expects($this->once())
+            ->method('assign')
+            ->with($widgetVariables);
+        $tpl->expects($this->once())
+            ->method('fetch')
+            ->willReturn($expected);
+        $this->assertEquals($expected, $this->widgetFrontendService->renderWidget('alma.widget.ShoppingCartFooter'));
     }
 
-    /**
-     * @throws \PrestaShop\Module\Alma\Application\Exception\WidgetException
-     */
-    public function testGetWidgetVariablesWithUnknownHookName()
+    public function testGetWidgetVariablesWithUnknownHookNameReturnEmpty()
     {
-        $this->expectException(WidgetException::class);
-        $this->widgetFrontendService->getWidgetVariables('unknown.hookname');
+        $this->assertEquals('', $this->widgetFrontendService->renderWidget('unknown.hookname'));
     }
 
     /**
      * Custom position enabled — containerId uses the selector from configuration, container unchanged.
-     * @throws \PrestaShop\Module\Alma\Application\Exception\WidgetException
      */
     public function testGetWidgetVariablesWithCustomPositionEnabled()
     {
-        $expected = [
+        $widgetVariables = [
             'container' => 'alma-widget-cart',
             'isExcluded' => false,
             'showExcludedMessage' => false,
@@ -283,9 +316,13 @@ class WidgetFrontendServiceTest extends TestCase
                 'locale' => 'en',
             ])
         ];
+        $expected = 'template with custom position';
         $this->cart->expects($this->once())
             ->method('getCartTotalPrice')
             ->willReturn(0.0);
+        $this->configurationRepository->expects($this->once())
+            ->method('getCartWidgetState')
+            ->willReturn(true);
         $this->excludedCategoriesService->method('isExcluded')->willReturn(false);
         $this->excludedCategoriesService->method('isWidgetDisplayNotEligibleEnabled')->willReturn(false);
         $this->excludedCategoriesService->method('getExcludedMessage')->with(1)->willReturn('Excluded product.');
@@ -307,16 +344,27 @@ class WidgetFrontendServiceTest extends TestCase
         $this->configurationRepository->expects($this->once())
             ->method('getCartWidgetOldPositionSelector')
             ->willReturn('#my-custom-selector');
-        $this->assertEquals($expected, $this->widgetFrontendService->getWidgetVariables('alma.widget.cart'));
+        $this->context->smarty = $this->createMock(\Smarty::class);
+        $tpl = $this->createMock(\Smarty_Internal_Template::class);
+        $this->context->smarty->expects($this->once())
+            ->method('createTemplate')
+            ->with(_PS_MODULE_DIR_ . 'alma/views/templates/widget/widget.tpl')
+            ->willReturn($tpl);
+        $tpl->expects($this->once())
+            ->method('assign')
+            ->with($widgetVariables);
+        $tpl->expects($this->once())
+            ->method('fetch')
+            ->willReturn($expected);
+        $this->assertEquals($expected, $this->widgetFrontendService->renderWidget('alma.widget.cart'));
     }
 
     /**
      * Custom position disabled — containerId falls back to '#' . $container.
-     * @throws \PrestaShop\Module\Alma\Application\Exception\WidgetException
      */
     public function testGetWidgetVariablesWithCustomPositionDisabled()
     {
-        $expected = [
+        $widgetVariables = [
             'container' => 'alma-widget-cart',
             'isExcluded' => false,
             'showExcludedMessage' => false,
@@ -332,9 +380,13 @@ class WidgetFrontendServiceTest extends TestCase
                 'locale' => 'en',
             ])
         ];
+        $expected = 'template with default position';
         $this->cart->expects($this->once())
             ->method('getCartTotalPrice')
             ->willReturn(0.0);
+        $this->configurationRepository->expects($this->once())
+            ->method('getCartWidgetState')
+            ->willReturn(true);
         $this->excludedCategoriesService->method('isExcluded')->willReturn(false);
         $this->excludedCategoriesService->method('isWidgetDisplayNotEligibleEnabled')->willReturn(false);
         $this->excludedCategoriesService->method('getExcludedMessage')->with(1)->willReturn('');
@@ -355,17 +407,38 @@ class WidgetFrontendServiceTest extends TestCase
             ->willReturn(false);
         $this->configurationRepository->expects($this->never())
             ->method('getCartWidgetOldPositionSelector');
-        $this->assertEquals($expected, $this->widgetFrontendService->getWidgetVariables('alma.widget.cart'));
+        $this->context->smarty = $this->createMock(\Smarty::class);
+        $tpl = $this->createMock(\Smarty_Internal_Template::class);
+        $this->context->smarty->expects($this->once())
+            ->method('createTemplate')
+            ->with(_PS_MODULE_DIR_ . 'alma/views/templates/widget/widget.tpl')
+            ->willReturn($tpl);
+        $tpl->expects($this->once())
+            ->method('assign')
+            ->with($widgetVariables);
+        $tpl->expects($this->once())
+            ->method('fetch')
+            ->willReturn($expected);
+        $this->assertEquals($expected, $this->widgetFrontendService->renderWidget('alma.widget.cart'));
     }
 
-    /**
-     * @throws \PrestaShop\Module\Alma\Application\Exception\WidgetException
-     */
-    public function testGetWidgetVariablesWithoutCartInContext()
+    public function testGetWidgetVariablesWithoutCartInContextReturnMessageCartNotFound()
     {
         $this->context->cart = null;
-        $this->expectException(WidgetException::class);
-        $this->widgetFrontendService->getWidgetVariables('alma.widget.cart');
+        $this->configurationRepository->expects($this->once())
+            ->method('getCartWidgetState')
+            ->willReturn(true);
+        $this->context->smarty = $this->createMock(\Smarty::class);
+        $tpl = $this->createMock(\Smarty_Internal_Template::class);
+        $this->context->smarty->expects($this->once())
+            ->method('createTemplate')
+            ->with(_PS_MODULE_DIR_ . 'alma/views/templates/widget/widget.tpl')
+            ->willReturn($tpl);
+        $tpl->expects($this->never())
+            ->method('assign');
+        $tpl->expects($this->never())
+            ->method('fetch');
+        $this->assertEquals('Cart not found in context', $this->widgetFrontendService->renderWidget('alma.widget.cart'));
     }
 
     public function testIsWidgetCartReturnTrue()
@@ -457,7 +530,6 @@ class WidgetFrontendServiceTest extends TestCase
 
     /**
      * Product is excluded, message display is enabled — widget is hidden, message shown.
-     * @throws \PrestaShop\Module\Alma\Application\Exception\WidgetException
      */
     public function testGetWidgetVariablesForProductWithWidgetTag()
     {
@@ -475,7 +547,7 @@ class WidgetFrontendServiceTest extends TestCase
                 'sort_order' => '3',
             ]
         ];
-        $expected = [
+        $widgetVariables = [
             'container' => 'alma-widget-product',
             'isExcluded' => true,
             'showExcludedMessage' => true,
@@ -498,6 +570,10 @@ class WidgetFrontendServiceTest extends TestCase
                 'locale' => 'en',
             ])
         ];
+        $expected = 'product template widget tag';
+        $this->configurationRepository->expects($this->once())
+            ->method('getProductWidgetState')
+            ->willReturn(true);
         $this->excludedCategoriesService->method('isExcluded')->willReturn(true);
         $this->excludedCategoriesService->method('isWidgetDisplayNotEligibleEnabled')->willReturn(true);
         $this->excludedCategoriesService->method('getExcludedMessage')->with(1)->willReturn('Excluded product.');
@@ -516,12 +592,23 @@ class WidgetFrontendServiceTest extends TestCase
         $this->configurationRepository->expects($this->once())
             ->method('getFeePlanList')
             ->willReturn($feePlanList);
-        $this->assertEquals($expected, $this->widgetFrontendService->getWidgetVariables('alma.widget.product'));
+        $this->context->smarty = $this->createMock(\Smarty::class);
+        $tpl = $this->createMock(\Smarty_Internal_Template::class);
+        $this->context->smarty->expects($this->once())
+            ->method('createTemplate')
+            ->with(_PS_MODULE_DIR_ . 'alma/views/templates/widget/widget.tpl')
+            ->willReturn($tpl);
+        $tpl->expects($this->once())
+            ->method('assign')
+            ->with($widgetVariables);
+        $tpl->expects($this->once())
+            ->method('fetch')
+            ->willReturn($expected);
+        $this->assertEquals($expected, $this->widgetFrontendService->renderWidget('alma.widget.product'));
     }
 
     /**
      * Product is excluded, message display is disabled — widget hidden, no message shown.
-     * @throws \PrestaShop\Module\Alma\Application\Exception\WidgetException
      */
     public function testGetWidgetVariablesForProductWithHookTag()
     {
@@ -539,7 +626,7 @@ class WidgetFrontendServiceTest extends TestCase
                 'sort_order' => '3',
             ]
         ];
-        $expected = [
+        $widgetVariables = [
             'container' => 'alma-widget-ProductPriceBlock',
             'isExcluded' => true,
             'showExcludedMessage' => false,
@@ -562,6 +649,10 @@ class WidgetFrontendServiceTest extends TestCase
                 'locale' => 'en',
             ])
         ];
+        $expected = 'product template hook tag';
+        $this->configurationRepository->expects($this->once())
+            ->method('getProductWidgetState')
+            ->willReturn(true);
         $this->excludedCategoriesService->method('isExcluded')->willReturn(true);
         $this->excludedCategoriesService->method('isWidgetDisplayNotEligibleEnabled')->willReturn(false);
         $this->excludedCategoriesService->method('getExcludedMessage')->with(1)->willReturn('Excluded product.');
@@ -580,32 +671,59 @@ class WidgetFrontendServiceTest extends TestCase
         $this->configurationRepository->expects($this->once())
             ->method('getFeePlanList')
             ->willReturn($feePlanList);
-        $this->assertEquals($expected, $this->widgetFrontendService->getWidgetVariables('alma.widget.ProductPriceBlock'));
+        $this->context->smarty = $this->createMock(\Smarty::class);
+        $tpl = $this->createMock(\Smarty_Internal_Template::class);
+        $this->context->smarty->expects($this->once())
+            ->method('createTemplate')
+            ->with(_PS_MODULE_DIR_ . 'alma/views/templates/widget/widget.tpl')
+            ->willReturn($tpl);
+        $tpl->expects($this->once())
+            ->method('assign')
+            ->with($widgetVariables);
+        $tpl->expects($this->once())
+            ->method('fetch')
+            ->willReturn($expected);
+        $this->assertEquals($expected, $this->widgetFrontendService->renderWidget('alma.widget.ProductPriceBlock'));
     }
 
-    /**
-     * @throws \PrestaShop\Module\Alma\Application\Exception\WidgetException
-     */
-    public function testGetWidgetVariablesWithoutProductInContext()
+    public function testGetWidgetVariablesWithoutGetProductFunctionInContextController()
     {
+        $this->configurationRepository->expects($this->once())
+            ->method('getProductWidgetState')
+            ->willReturn(true);
         $controller = new \stdClass();
         $this->context->controller = $controller;
-        $this->expectException(WidgetException::class);
-        $this->widgetFrontendService->getWidgetVariables('alma.widget.product');
+        $this->context->smarty = $this->createMock(\Smarty::class);
+        $tpl = $this->createMock(\Smarty_Internal_Template::class);
+        $this->context->smarty->expects($this->once())
+            ->method('createTemplate')
+            ->with(_PS_MODULE_DIR_ . 'alma/views/templates/widget/widget.tpl')
+            ->willReturn($tpl);
+        $tpl->expects($this->never())
+            ->method('assign');
+        $tpl->expects($this->never())
+            ->method('fetch');
+        $this->assertEquals('getProduct does not exist in context controller', $this->widgetFrontendService->renderWidget('alma.widget.product'));
     }
 
-    /**
-     * @throws \PrestaShop\Module\Alma\Application\Exception\WidgetException
-     */
-    public function testGetWidgetVariablesWithProductNotInstanceOfProduct()
+    public function testGetWidgetVariablesWithGetProductNotInstanceOfProductInContextController()
     {
-        $controller = $this->getMockBuilder(\FrontController::class)
-            ->addMethods(['getProduct'])
-            ->getMock();
-        $controller->method('getProduct')->willReturn(null);
-        $this->context->controller = $controller;
-        $this->expectException(WidgetException::class);
-        $this->widgetFrontendService->getWidgetVariables('alma.widget.product');
+        $this->configurationRepository->expects($this->once())
+            ->method('getProductWidgetState')
+            ->willReturn(true);
+        $this->productController->method('getProduct')->willReturn(null);
+        $this->context->controller = $this->productController;
+        $this->context->smarty = $this->createMock(\Smarty::class);
+        $tpl = $this->createMock(\Smarty_Internal_Template::class);
+        $this->context->smarty->expects($this->once())
+            ->method('createTemplate')
+            ->with(_PS_MODULE_DIR_ . 'alma/views/templates/widget/widget.tpl')
+            ->willReturn($tpl);
+        $tpl->expects($this->never())
+            ->method('assign');
+        $tpl->expects($this->never())
+            ->method('fetch');
+        $this->assertEquals('Product not found in context controller', $this->widgetFrontendService->renderWidget('alma.widget.product'));
     }
 
     public function testIsWidgetProductReturnTrue()

@@ -1,3 +1,18 @@
+const ALMA_CART_WIDGET_SELECTORS = [
+    '#alma-widget-cart',
+    '#alma-widget-ShoppingCartFooter',
+];
+
+const ALMA_PRODUCT_WIDGET_SELECTORS = [
+    '#alma-widget-product',
+    '#alma-widget-ProductPriceBlock',
+];
+
+const ALMA_WIDGET_SELECTORS = [
+    ...ALMA_CART_WIDGET_SELECTORS,
+    ...ALMA_PRODUCT_WIDGET_SELECTORS,
+];
+
 function getCartAmountInCents() {
     if (typeof prestashop === 'undefined' || !prestashop.cart || !prestashop.cart.totals) {
         console.error('Prestashop cart totals are not available.');
@@ -44,18 +59,10 @@ function initAlmaWidgetFromContainer($container, Alma) {
     return widgets;
 }
 
-function initAlmaCartWidget($, Alma) {
-    const $container = findWidgetContainer($, ['#alma-widget-cart', '#alma-widget-ShoppingCartFooter']);
+function initAlmaWidget($, Alma) {
+    const $container = findWidgetContainer($, ALMA_WIDGET_SELECTORS);
     if (!$container) {
         console.error('No Alma widget container found on the page.');
-        return null;
-    }
-    return initAlmaWidgetFromContainer($container, Alma);
-}
-
-function initAlmaProductWidget($, Alma) {
-    const $container = findWidgetContainer($, ['#alma-widget-product', '#alma-widget-ProductPriceBlock']);
-    if (!$container) {
         return null;
     }
     return initAlmaWidgetFromContainer($container, Alma);
@@ -64,12 +71,11 @@ function initAlmaProductWidget($, Alma) {
 // module is defined in Node.js environments, but not in browsers.
 // This check allows the code to be used for unit test and browser contexts.
 if (typeof module !== 'undefined') {
-    module.exports = { initAlmaCartWidget, initAlmaProductWidget, findWidgetContainer, initAlmaWidgetFromContainer, getCartAmountInCents };
+    module.exports = { initAlmaWidget, findWidgetContainer, initAlmaWidgetFromContainer, getCartAmountInCents };
 } else {
     (function ($) {
         $(function () {
-            initAlmaCartWidget($, Alma);
-            initAlmaProductWidget($, Alma);
+            initAlmaWidget($, Alma);
 
             if (typeof prestashop !== 'undefined') {
                 prestashop.on('updateCart', function () {
@@ -77,7 +83,7 @@ if (typeof module !== 'undefined') {
                     // If we can't get the new amount, we shouldn't try to update the widget.
                     if (newAmount === null) return;
 
-                    const $widget = findWidgetContainer($, ['#alma-widget-cart', '#alma-widget-ShoppingCartFooter']);
+                    const $widget = findWidgetContainer($, ALMA_CART_WIDGET_SELECTORS);
                     if (!$widget) return;
 
                     const config = $widget.data('widget-config');
@@ -86,7 +92,7 @@ if (typeof module !== 'undefined') {
                     config.purchaseAmount = newAmount;
                     $widget.data('widget-config', config);
 
-                    initAlmaCartWidget($, Alma);
+                    initAlmaWidget($, Alma);
                 });
             }
         });

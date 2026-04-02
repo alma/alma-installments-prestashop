@@ -47,7 +47,7 @@ class WidgetFrontendService
             $tpl->assign($this->getWidgetVariables($hookName));
 
             return $tpl->fetch();
-        } catch (\SmartyException|\Exception $e) {
+        } catch (WidgetException|\SmartyException|\Exception $e) {
             return $e->getMessage();
         }
     }
@@ -58,7 +58,7 @@ class WidgetFrontendService
      * @return array
      * @throws \PrestaShop\Module\Alma\Application\Exception\WidgetException
      */
-    public function getWidgetVariables(string $hookName): array
+    private function getWidgetVariables(string $hookName): array
     {
         switch ($hookName) {
             case 'alma.widget.ShoppingCartFooter':
@@ -83,17 +83,17 @@ class WidgetFrontendService
                 $controller = $this->context->controller;
 
                 if (!method_exists($controller, 'getProduct')) {
-                    throw new WidgetException('Product not found in context');
+                    throw new WidgetException('getProduct does not exist in context controller');
                 }
 
                 /** @var \Product $product */
                 $product = $controller->getProduct();
 
                 if (!$product instanceof \Product) {
-                    throw new WidgetException('Product not found in context');
+                    throw new WidgetException('Product not found in context controller');
                 }
 
-                $purchaseAmount = $product->getPrice(true);
+                $purchaseAmount = $product->getPrice();
                 $container = str_replace('.', '-', $hookName);
                 $products = [$product];
                 $containerId = '#' . $container;

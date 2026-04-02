@@ -1,4 +1,4 @@
-const { initAlmaCartWidget, initAlmaProductWidget, findWidgetContainer, initAlmaWidgetFromContainer, getCartAmountInCents } = require('../alma-widget');
+const { initAlmaWidget, initAlmaProductWidget, findWidgetContainer, initAlmaWidgetFromContainer, getCartAmountInCents } = require('../alma-widget');
 
 const mockCartWidgetConfig = {
     purchaseAmount: 22976,
@@ -66,32 +66,32 @@ const mockJQueryWithProduct = ({ productAdditionalInfoExists = false, productExi
     });
 };
 
-describe('initAlmaCartWidget', () => {
+describe('initAlmaWidget', () => {
     beforeEach(() => {
         jest.clearAllMocks();
     });
 
     test('return null if container doesn\'t exist', () => {
         const $ = mockJQuery({ cartExists: false, footerExists: false });
-        const result = initAlmaCartWidget($, mockAlma);
+        const result = initAlmaWidget($, mockAlma);
         expect(result).toBeNull();
     });
 
     test('initialize Alma TEST mode with #alma-widget-cart', () => {
         const $ = mockJQuery({ cartExists: true });
-        initAlmaCartWidget($, mockAlma);
+        initAlmaWidget($, mockAlma);
         expect(mockAlma.Widgets.initialize).toHaveBeenCalledWith('merchant_123', 'test');
     });
 
     test('initialize Alma LIVE mode with #alma-widget-cart', () => {
         const $ = mockJQuery({ cartExists: true, config: { ...mockCartWidgetConfig, mode: 'live' } });
-        initAlmaCartWidget($, mockAlma);
+        initAlmaWidget($, mockAlma);
         expect(mockAlma.Widgets.initialize).toHaveBeenCalledWith('merchant_123', 'live');
     });
 
     test('initialize Alma with #alma-widget-ShoppingCartFooter if no cart', () => {
         const $ = mockJQuery({ footerExists: true });
-        initAlmaCartWidget($, mockAlma);
+        initAlmaWidget($, mockAlma);
         expect(mockAlma.Widgets.initialize).toHaveBeenCalledWith('merchant_123', 'test');
     });
 
@@ -107,13 +107,13 @@ describe('initAlmaCartWidget', () => {
             }
             return { length: 0 };
         });
-        initAlmaCartWidget($, mockAlma);
+        initAlmaWidget($, mockAlma);
         expect(mockAlma.Widgets.initialize).toHaveBeenCalledWith('merchant_cart', 'test');
     });
 
     test('call widgets.add with good parameters', () => {
         const $ = mockJQuery({ cartExists: true });
-        const widgets = initAlmaCartWidget($, mockAlma);
+        const widgets = initAlmaWidget($, mockAlma);
         expect(widgets.add).toHaveBeenCalledWith('PaymentPlans', expect.objectContaining({
             purchaseAmount: 22976,
             locale: 'en',
@@ -123,71 +123,7 @@ describe('initAlmaCartWidget', () => {
     test('parse plans if it is a string', () => {
         const config = { ...mockCartWidgetConfig, plans: '[{"installmentsCount":3}]' };
         const $ = mockJQuery({ cartExists: true, config });
-        const widgets = initAlmaCartWidget($, mockAlma);
-        expect(widgets.add).toHaveBeenCalledWith('PaymentPlans', expect.objectContaining({
-            plans: [{ installmentsCount: 3 }],
-        }));
-    });
-});
-
-describe('initAlmaProductWidget', () => {
-    beforeEach(() => {
-        jest.clearAllMocks();
-    });
-
-    test('return null if no product container exists', () => {
-        const $ = mockJQueryWithProduct({ productAdditionalInfoExists: false, productExists: false });
-        const result = initAlmaProductWidget($, mockAlma);
-        expect(result).toBeNull();
-    });
-
-    test('initialize with #alma-widget-ProductPriceBlock', () => {
-        const $ = mockJQueryWithProduct({ productAdditionalInfoExists: true });
-        initAlmaProductWidget($, mockAlma);
-        expect(mockAlma.Widgets.initialize).toHaveBeenCalledWith('merchant_123', 'test');
-    });
-
-    test('initialize with #alma-widget-product if no ProductPriceBlock', () => {
-        const $ = mockJQueryWithProduct({ productExists: true });
-        initAlmaProductWidget($, mockAlma);
-        expect(mockAlma.Widgets.initialize).toHaveBeenCalledWith('merchant_123', 'test');
-    });
-
-    test('use #alma-widget-product priority if both exist', () => {
-        const additionalInfoConfig = { ...mockProductWidgetConfig, merchantId: 'merchant_hook' };
-        const productConfig = { ...mockProductWidgetConfig, merchantId: 'merchant_widget_tag' };
-        const $ = jest.fn().mockImplementation((selector) => {
-            if (selector === '#alma-widget-ProductPriceBlock') {
-                return { length: 1, data: jest.fn().mockReturnValue(additionalInfoConfig) };
-            }
-            if (selector === '#alma-widget-product') {
-                return { length: 1, data: jest.fn().mockReturnValue(productConfig) };
-            }
-            return { length: 0 };
-        });
-        initAlmaProductWidget($, mockAlma);
-        expect(mockAlma.Widgets.initialize).toHaveBeenCalledWith('merchant_widget_tag', 'test');
-    });
-
-    test('call widgets.add with good parameters', () => {
-        const $ = mockJQueryWithProduct({ productAdditionalInfoExists: true });
-        const widgets = initAlmaProductWidget($, mockAlma);
-        expect(widgets.add).toHaveBeenCalledWith('PaymentPlans', expect.objectContaining({
-            purchaseAmount: 9900,
-            locale: 'en',
-        }));
-    });
-
-    test('initialize Alma LIVE mode for product', () => {
-        const $ = mockJQueryWithProduct({ productAdditionalInfoExists: true, config: { ...mockProductWidgetConfig, mode: 'live' } });
-        initAlmaProductWidget($, mockAlma);
-        expect(mockAlma.Widgets.initialize).toHaveBeenCalledWith('merchant_123', 'live');
-    });
-
-    test('parse plans if it is a string', () => {
-        const config = { ...mockProductWidgetConfig, plans: '[{"installmentsCount":3}]' };
-        const $ = mockJQueryWithProduct({ productAdditionalInfoExists: true, config });
-        const widgets = initAlmaProductWidget($, mockAlma);
+        const widgets = initAlmaWidget($, mockAlma);
         expect(widgets.add).toHaveBeenCalledWith('PaymentPlans', expect.objectContaining({
             plans: [{ installmentsCount: 3 }],
         }));
