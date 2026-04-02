@@ -155,7 +155,7 @@ class WidgetFrontendService
      * @param string $hookName
      * @return bool
      */
-    public function isWidgetCart(string $hookName): bool
+    private function isWidgetCart(string $hookName): bool
     {
         return in_array($hookName, ['alma.widget.ShoppingCartFooter', 'alma.widget.cart']);
     }
@@ -165,7 +165,7 @@ class WidgetFrontendService
      * @param string $hookName
      * @return bool
      */
-    public function canDisplayWidgetCart(string $hookName): bool
+    private function canDisplayWidgetCart(string $hookName): bool
     {
         return $this->isWidgetCart($hookName) && $this->configurationRepository->getCartWidgetState();
     }
@@ -175,7 +175,7 @@ class WidgetFrontendService
      * @param string $hookName
      * @return bool
      */
-    public function isWidgetProduct(string $hookName): bool
+    private function isWidgetProduct(string $hookName): bool
     {
         return in_array($hookName, ['alma.widget.ProductPriceBlock', 'alma.widget.product']);
     }
@@ -185,7 +185,7 @@ class WidgetFrontendService
      * @param string $hookName
      * @return bool
      */
-    public function canDisplayWidgetProduct(string $hookName): bool
+    private function canDisplayWidgetProduct(string $hookName): bool
     {
         return $this->isWidgetProduct($hookName) && $this->configurationRepository->getProductWidgetState();
     }

@@ -441,33 +441,6 @@ class WidgetFrontendServiceTest extends TestCase
         $this->assertEquals('Cart not found in context', $this->widgetFrontendService->renderWidget('alma.widget.cart'));
     }
 
-    public function testIsWidgetCartReturnTrue()
-    {
-        $this->assertTrue($this->widgetFrontendService->isWidgetCart('alma.widget.ShoppingCartFooter'));
-        $this->assertTrue($this->widgetFrontendService->isWidgetCart('alma.widget.cart'));
-    }
-
-    public function testIsWidgetCartReturnFalse()
-    {
-        $this->assertFalse($this->widgetFrontendService->isWidgetCart('alma.widget.nocart'));
-    }
-
-    public function testIsWidgetCartEnabledWidgetEnabledReturnTrue()
-    {
-        $this->configurationRepository->expects($this->once())
-            ->method('getCartWidgetState')
-            ->willReturn(true);
-        $this->assertTrue($this->widgetFrontendService->canDisplayWidgetCart('alma.widget.cart'));
-    }
-
-    public function testIsWidgetCartEnabledWidgetDisabledReturnFalse()
-    {
-        $this->configurationRepository->expects($this->once())
-            ->method('getCartWidgetState')
-            ->willReturn(false);
-        $this->assertFalse($this->widgetFrontendService->canDisplayWidgetCart('alma.widget.cart'));
-    }
-
     public function testRenderWidgetReturnTemplateProduct()
     {
         $widgetVariables = [
@@ -724,32 +697,5 @@ class WidgetFrontendServiceTest extends TestCase
         $tpl->expects($this->never())
             ->method('fetch');
         $this->assertEquals('Product not found in context controller', $this->widgetFrontendService->renderWidget('alma.widget.product'));
-    }
-
-    public function testIsWidgetProductReturnTrue()
-    {
-        $this->assertTrue($this->widgetFrontendService->isWidgetProduct('alma.widget.ProductPriceBlock'));
-        $this->assertTrue($this->widgetFrontendService->isWidgetProduct('alma.widget.product'));
-    }
-
-    public function testIsWidgetProductReturnFalse()
-    {
-        $this->assertFalse($this->widgetFrontendService->isWidgetProduct('alma.widget.cart'));
-    }
-
-    public function testIsWidgetProductEnabledWidgetEnabledReturnTrue()
-    {
-        $this->configurationRepository->expects($this->once())
-            ->method('getProductWidgetState')
-            ->willReturn(true);
-        $this->assertTrue($this->widgetFrontendService->canDisplayWidgetProduct('alma.widget.product'));
-    }
-
-    public function testIsWidgetProductEnabledWidgetDisabledReturnFalse()
-    {
-        $this->configurationRepository->expects($this->once())
-            ->method('getProductWidgetState')
-            ->willReturn(false);
-        $this->assertFalse($this->widgetFrontendService->canDisplayWidgetProduct('alma.widget.product'));
     }
 }
