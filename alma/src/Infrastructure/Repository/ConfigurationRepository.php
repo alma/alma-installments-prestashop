@@ -6,6 +6,7 @@ use Configuration;
 use PrestaShop\Module\Alma\Infrastructure\Form\ApiAdminForm;
 use PrestaShop\Module\Alma\Infrastructure\Form\CartWidgetAdminForm;
 use PrestaShop\Module\Alma\Infrastructure\Form\FeePlansAdminForm;
+use PrestaShop\Module\Alma\Infrastructure\Form\ProductWidgetAdminForm;
 
 class ConfigurationRepository
 {
@@ -76,6 +77,22 @@ class ConfigurationRepository
     public function getCartWidgetOldPositionSelector(): string
     {
         return $this->get(CartWidgetAdminForm::KEY_FIELD_CART_WIDGET_POSITION_SELECTOR);
+    }
+
+    /**
+     * @return bool
+     */
+    public function getProductWidgetState(): bool
+    {
+        return (bool) $this->get(ProductWidgetAdminForm::KEY_FIELD_PRODUCT_WIDGET_STATE);
+    }
+
+    /**
+     * @return bool
+     */
+    public function getProductWidgetDisplayNotEligible(): bool
+    {
+        return (bool) $this->get(ProductWidgetAdminForm::KEY_FIELD_PRODUCT_WIDGET_DISPLAY_NOT_ELIGIBLE);
     }
 
     /**
