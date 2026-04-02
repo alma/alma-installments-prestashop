@@ -122,20 +122,20 @@ if (typeof module !== 'undefined') {
 
                 // Product unit price in cents, initialized from the widget config (price for qty=1).
                 let productUnitPriceInCents = (function () {
-                    const $widgetContainer = findWidgetContainer($, ['#alma-widget-product', '#alma-widget-ProductPriceBlock']);
+                    const $widgetContainer = findWidgetContainer($, ALMA_PRODUCT_WIDGET_SELECTORS);
                     if (!$widgetContainer) return null;
                     const config = $widgetContainer.data('widget-config');
                     return config ? config.purchaseAmount : null;
                 })();
 
                 function updateProductWidget(newAmount) {
-                    const $widget = findWidgetContainer($, ['#alma-widget-product', '#alma-widget-ProductPriceBlock']);
+                    const $widget = findWidgetContainer($, ALMA_PRODUCT_WIDGET_SELECTORS);
                     if (!$widget) return;
                     const config = $widget.data('widget-config');
                     if (!config) return;
                     config.purchaseAmount = newAmount;
                     $widget.data('widget-config', config);
-                    initAlmaProductWidget($, Alma);
+                    initAlmaWidget($, Alma);
                 }
 
                 prestashop.on('updatedProduct', function (eventData) {
