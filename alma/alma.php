@@ -196,6 +196,21 @@ class Alma extends PaymentModule implements WidgetInterface
     }
 
     /**
+     * Display widget in the product page
+     *
+     * @param array $params
+     * @return string
+     */
+    public function hookDisplayProductPriceBlock(array $params): string
+    {
+        if (($params['type'] ?? '') !== 'after_price') {
+            return '';
+        }
+
+        return $this->renderWidget('alma.widget.ProductPriceBlock', $params);
+    }
+
+    /**
      * Display widget with WidgetInterface
      *
      * @param string $hookName
@@ -209,7 +224,8 @@ class Alma extends PaymentModule implements WidgetInterface
     }
 
     /**
-     * Get the variables needed for the widget template.
+     * We return an empty array because we don't use this function to pass variables to the widget,
+     * we use the WidgetFrontendService::getWidgetVariables function instead to move intelligence
      *
      * @param string $hookName
      * @param array $configuration

@@ -40,12 +40,31 @@ The widget configuration is passed as a JSON `data-widget-config` attribute on t
 
 Two services handle the frontend rendering:
 - `WidgetFrontendService::renderWidget()` — selects the right template and renders it.
-- `WidgetFrontendService::getWidgetVariables()` — builds the widget config from the current context (cart total, merchant settings, active plans).
+- `WidgetFrontendService::getWidgetVariables()` — builds the widget config from the current context (cart total or product price, merchant settings, active plans).
 
-#### Cart widget
-The cart widget is rendered via the `displayShoppingCartFooter` hook (or the `alma.widget.cart` tag). It uses the current cart total as `purchaseAmount` and renders `widget/cart.tpl`.
+Both the cart and product widgets share the same `views/templates/widget/widget.tpl` template.
 
 Widget settings (enable/disable, display if not eligible) are configurable per page (product, cart) from the module's admin configuration page via `ProductWidgetAdminForm` and `CartWidgetAdminForm`.
+
+#### Cart widget
+The cart widget is rendered via the `displayShoppingCartFooter` hook or the `{widget}` tag with `alma.widget.cart`. It uses the current cart total as `purchaseAmount`.
+
+```tpl
+{* Widget tag to display the widget on the cart page *}
+{widget name='alma' hook="alma.widget.cart"}
+```
+
+#### Product widget
+The product widget is rendered via the `displayProductPriceBlock` hook (filtered to `type === after_price` only) or the `{widget}` tag with `alma.widget.product`. It uses the current product price (tax included) as `purchaseAmount`, retrieved from the page's `FrontController`.
+
+The `after_price` filter ensures the widget is only injected at the right position on the product page — directly after the price — and not at other positions where `displayProductPriceBlock` is also called (e.g. `weight`, `before_price`).
+
+When both the hook and the widget tag containers are present on the page, the widget tag (`#alma-widget-product`) takes priority over the hook container (`#alma-widget-ProductPriceBlock`).
+
+```tpl
+{* Widget tag to display the widget on the product page *}
+{widget name='alma' hook="alma.widget.product"}
+```
 
 #### Legacy custom widget position (module v5 backward compatibility)
 
@@ -53,13 +72,8 @@ Module v5 allowed merchants to define a custom CSS selector to control where the
 
 When `ALMA_CART_WIDGET_POSITION_CUSTOM` is enabled, `WidgetFrontendService` uses the CSS selector stored in `ALMA_WDGT_POS_SELECTOR` as the widget's `containerId` instead of the default `#alma-widget-cart`. If the option is disabled, the standard container ID is used.
 
-- `ConfigurationRepository::getCartWidgetPositionCustom()` — returns `true` if the legacy custom position is active.
-- `ConfigurationRepository::getCartWidgetPositionSelector()` — returns the saved CSS selector (e.g. `#my-custom-selector`).
-
-```tpl
-{* Widget tag to display the widget on the cart page *}
-{widget name='alma' hook="alma.widget.cart"}
-```
+- `ConfigurationRepository::getCartWidgetOldPositionCustom()` — returns `true` if the legacy custom position is active.
+- `ConfigurationRepository::getCartWidgetOldPositionSelector()` — returns the saved CSS selector (e.g. `#my-custom-selector`).
 
 ### Cart refresh
 
@@ -67,12 +81,12 @@ When the cart is updated (e.g. quantity change, product removal), the widget ref
 
 ## Excluded categories
 
-Merchants can exclude specific product categories from Alma eligibility via the **Excluded categories** page in the back office. When a cart contains at least one product belonging to an excluded category, the widget is hidden.
+Merchants can exclude specific product categories from Alma eligibility via the **Excluded categories** page in the back office. When a cart or product belongs to an excluded category, the widget is hidden.
 
 If the **Display message** option is enabled (configurable in the module settings), a non-eligibility message is shown in place of the widget, along with the Alma logo. The message is customizable per language.
 
 ### How it works
 
-- `ExcludedCategoriesService::isExcluded()` checks whether any product in the cart belongs to an excluded category by comparing the product's categories against the stored exclusion list.
+- `ExcludedCategoriesService::isExcluded()` checks whether any product belongs to an excluded category by comparing the product's categories against the stored exclusion list. For the cart widget it receives the full cart products list; for the product widget it receives a single-item array with the current product.
 - `WidgetFrontendService::getWidgetVariables()` calls this service and passes `isExcluded`, `showExcludedMessage`, and `excludedMessage` to the template.
-- The `cart.tpl` template renders the widget normally when no product is excluded. When a product is excluded, it either hides the widget entirely or displays the configured message depending on the **Display message** setting.
+- The `widget.tpl` template renders the widget normally when no product is excluded. When a product is excluded, it either hides the widget entirely or displays the configured message depending on the **Display message** setting.
