@@ -83,11 +83,17 @@ When the cart is updated (e.g. quantity change, product removal), the widget ref
 
 On the product page, the widget amount updates automatically when the selected combination or quantity changes.
 
-**Combination change** — PrestaShop fires `prestashop.on('updatedProduct', eventData)` when a combination is selected. `alma-widget.js` extracts the new unit price from `eventData.product_prices` (the re-rendered price HTML) by reading the `content` attribute of `.current-price-value` via native `getAttribute()` (jQuery's `.attr()` is unreliable for non-standard attributes on `<span>`). The price is converted to cents and stored as the new unit price.
+The product container (`data-widget-config`) also carries a `data-product` attribute populated with PrestaShop's embedded product attributes (`{$productEmbeddedAttributes}`). This object contains `price_amount` (unit price with discount, tax included) and `quantity_wanted`, which are used directly to compute the widget amount without any DOM parsing.
 
-**Quantity change** — A `change` listener on `[name="qty"]` recalculates the total amount (`unit price × quantity`) and re-initializes the widget.
+**Combination change** — PrestaShop fires `prestashop.on('updatedProduct')` when a combination is selected. `alma-widget.js` reads `price_amount` and `quantity_wanted` directly from `data-product` on the widget container, converts to cents via `toCents()`, and calls `updateProductWidget()`.
+
+**Quantity change** — A `change` listener on `[name="qty"]` reads `price_amount` from `data-product` (the last selected combination price) and multiplies by the new input value to compute the updated total.
 
 Both paths call `updateProductWidget()` which updates `purchaseAmount` in `data-widget-config` and re-initializes the widget.
+
+### Price utility
+
+`toCents(amount)` is a shared utility that converts any price (string or number) to integer cents via `Math.round(parseFloat(amount) * 100)`. It is used by both the cart and product update paths.
 
 ## Excluded categories
 
