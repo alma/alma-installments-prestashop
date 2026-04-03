@@ -130,6 +130,32 @@ describe('initAlmaWidget', () => {
     });
 });
 
+describe('toCents', () => {
+    test('converts integer amount', () => {
+        expect(toCents(10)).toBe(1000);
+    });
+
+    test('converts float amount', () => {
+        expect(toCents(29.99)).toBe(2999);
+    });
+
+    test('converts string amount', () => {
+        expect(toCents('229.76')).toBe(22976);
+    });
+
+    test('rounds up for 3-decimal amounts', () => {
+        expect(toCents('10.999')).toBe(1100);
+    });
+
+    test('rounds down for 3-decimal amounts', () => {
+        expect(toCents('10.994')).toBe(1099);
+    });
+
+    test('handles 0', () => {
+        expect(toCents(0)).toBe(0);
+    });
+});
+
 describe('getCartAmountInCents', () => {
     const originalPrestashop = global.prestashop;
 
