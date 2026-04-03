@@ -105,6 +105,7 @@ class WidgetFrontendService
 
                 $purchaseAmount = $product->getPrice();
                 $container = str_replace('.', '-', $hookName);
+                /** @var \Product $products */
                 $products = [$product];
                 $productEmbeddedAttributes = $controller->getTemplateVarProduct()->getEmbeddedAttributes();
                 $containerId = '#' . $container;

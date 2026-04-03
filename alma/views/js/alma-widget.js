@@ -19,27 +19,14 @@ function toCents(amount) {
     return Math.round(parseFloat(amount) * 100);
 }
 
-// Returns the unit price in cents by parsing the product_prices HTML fragment
-// Reads .current-price-value[content] which the theme updates on combination change.
-function getProductUnitPriceFromEventData(eventData, $) {
-    if (!eventData || !eventData.product_prices) return null;
-
-    const $html = $('<div>').html(eventData.product_prices);
-
-    const priceEl = $html.find('.current-price-value').get(0);
-    const content = priceEl ? priceEl.getAttribute('content') : undefined;
-    if (content !== undefined && !isNaN(parseFloat(content))) {
-        return Math.round(parseFloat(content) * 100);
-    }
-
-    return null;
-}
-
-// Returns the total product amount in cents given the unit price and the current quantity.
-function getProductAmountInCents($, unitPriceInCents) {
+// Returns the total product amount in cents from the embedded data-product attribute.
+// If quantity is provided (e.g. from the qty input on manual change), it overrides quantity_wanted.
+function getProductAmountFromProductData(productData, quantity) {
+    if (!productData || productData.price_amount === undefined) return null;
+    const unitPriceInCents = toCents(productData.price_amount);
     if (!unitPriceInCents) return null;
-    const quantity = parseInt($('[name="qty"]').val(), 10) || 1;
-    return unitPriceInCents * quantity;
+    const qty = quantity !== undefined ? parseInt(quantity, 10) : parseInt(productData.quantity_wanted, 10);
+    return unitPriceInCents * (qty || 1);
 }
 
 function getCartAmountInCents() {
@@ -100,7 +87,7 @@ function initAlmaWidget($, Alma) {
 // module is defined in Node.js environments, but not in browsers.
 // This check allows the code to be used for unit test and browser contexts.
 if (typeof module !== 'undefined') {
-    module.exports = { initAlmaWidget, findWidgetContainer, initAlmaWidgetFromContainer, getCartAmountInCents, getProductAmountInCents, getProductUnitPriceFromEventData, toCents };
+    module.exports = { initAlmaWidget, findWidgetContainer, initAlmaWidgetFromContainer, getCartAmountInCents, getProductAmountFromProductData, toCents };
 } else {
     (function ($) {
         $(function () {
@@ -133,27 +120,28 @@ if (typeof module !== 'undefined') {
                 })();
 
                 function updateProductWidget(newAmount) {
-                    const $widget = findWidgetContainer($, ['#alma-widget-product', '#alma-widget-ProductPriceBlock']);
+                    const $widget = findWidgetContainer($, ALMA_PRODUCT_WIDGET_SELECTORS);
                     if (!$widget) return;
                     const config = $widget.data('widget-config');
                     if (!config) return;
                     config.purchaseAmount = newAmount;
                     $widget.data('widget-config', config);
-                    initAlmaProductWidget($, Alma);
+                    initAlmaWidget($, Alma);
                 }
 
-                prestashop.on('updatedProduct', function (eventData) {
-                    const newUnitPrice = getProductUnitPriceFromEventData(eventData, $);
-                    if (newUnitPrice !== null) {
-                        productUnitPriceInCents = newUnitPrice;
-                    }
-                    const newAmount = getProductAmountInCents($, productUnitPriceInCents);
+                prestashop.on('updatedProduct', function () {
+                    const $widget = findWidgetContainer($, ALMA_PRODUCT_WIDGET_SELECTORS);
+                    if (!$widget) return;
+                    const newAmount = getProductAmountFromProductData($widget.data('product'));
                     if (newAmount === null) return;
                     updateProductWidget(newAmount);
                 });
 
                 $(document).on('change', '[name="qty"]', function () {
-                    const newAmount = getProductAmountInCents($, productUnitPriceInCents);
+                    const $widget = findWidgetContainer($, ALMA_PRODUCT_WIDGET_SELECTORS);
+                    if (!$widget) return;
+                    const newQty = parseInt($('[name="qty"]').val(), 10) || 1;
+                    const newAmount = getProductAmountFromProductData($widget.data('product'), newQty);
                     if (newAmount === null) return;
                     updateProductWidget(newAmount);
                 });
