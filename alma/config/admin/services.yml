@@ -43,6 +43,9 @@ services:
     arguments:
       - !php/const _NEW_COOKIE_KEY_
 
+  alma.payment_options:
+    class: PaymentOptions
+
   alma.form_builder:
     class: 'PrestaShop\Module\Alma\Infrastructure\Form\FormBuilder'
     arguments:
@@ -260,6 +263,13 @@ services:
     arguments:
       - '@alma.module'
       - '@alma.context'
+
+  alma_payment_options_service:
+    class: 'PrestaShop\Module\Alma\Application\Service\PaymentOptionsService'
+    arguments:
+      - '@alma.module'
+      - '@alma.payment_options'
+      - '@translator'
 
   alma.client_configuration:
     class: 'Alma\Client\Application\ClientConfiguration'

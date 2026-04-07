@@ -2,12 +2,17 @@
 
 namespace PrestaShop\Module\Alma\Infrastructure\Factory;
 
+use Context;
 use PrestaShop\Module\Alma\Application\Service\ExcludedCategoriesService;
+use PrestaShop\Module\Alma\Application\Service\PaymentOptionsService;
 use PrestaShop\Module\Alma\Application\Service\WidgetFrontendService;
+use PrestaShop\Module\Alma\Application\Validator\CurrencyValidator;
+use PrestaShop\Module\Alma\Infrastructure\Proxy\CurrencyProxy;
 use PrestaShop\Module\Alma\Infrastructure\Proxy\ProductProxy;
 use PrestaShop\Module\Alma\Infrastructure\Repository\ConfigurationRepository;
 use PrestaShop\Module\Alma\Infrastructure\Repository\ExcludedCategoriesRepository;
 use PrestaShop\Module\Alma\Infrastructure\Repository\LanguageRepository;
+use PrestaShop\PrestaShop\Core\Payment\PaymentOption;
 
 class HookServiceFactory
 {
@@ -28,6 +33,23 @@ class HookServiceFactory
             $context,
             $configurationRepository,
             $excludedCategoriesService
+        );
+    }
+
+    public static function createPaymentOptionsService(\Module $module, Context $context, \Cart $cart): PaymentOptionsService
+    {
+        $paymentOptions = new PaymentOption();
+        $currencyValidator = new CurrencyValidator(
+                new CurrencyProxy()
+        );
+        $translator = $context->getTranslator();
+
+        return new PaymentOptionsService(
+            $module,
+            $paymentOptions,
+            $currencyValidator,
+            $translator,
+            $cart
         );
     }
 }

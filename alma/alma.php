@@ -219,7 +219,13 @@ class Alma extends PaymentModule implements WidgetInterface
      */
     public function hookPaymentOptions(array $params): array
     {
-        return [];
+        $paymentOptionsService = HookServiceFactory::createPaymentOptionsService(
+            $this,
+            $this->context,
+            $params['cart'] ?? null
+        );
+
+        return $paymentOptionsService->buildPaymentOptions();
     }
 
     /**
