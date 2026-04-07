@@ -210,4 +210,26 @@ class Alma extends PaymentModule implements WidgetInterface
             return ['error_widget' => $e->getMessage()];
         }
     }
+
+    /**
+     * Display payment options in the checkout page
+     *
+     * @param array $params
+     * @return array
+     */
+    public function hookPaymentOptions(array $params): array
+    {
+        return [];
+    }
+
+    /**
+     * Display information in the order confirmation page
+     *
+     * @param array $params
+     * @return string
+     */
+    public function hookDisplayPaymentReturn(array $params): string
+    {
+        return '';
+    }
 }

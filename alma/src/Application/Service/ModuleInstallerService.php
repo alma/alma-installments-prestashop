@@ -10,7 +10,9 @@ class ModuleInstallerService
 {
     private const HOOK_LIST = [
         'actionFrontControllerSetMedia', // Hook used for load assets
-        'displayShoppingCartFooter' // Hook used for display widget in the cart page
+        'displayShoppingCartFooter', // Hook used for display widget in the cart page
+        'paymentOptions', // Hook used for display payment options in the checkout page
+        'displayPaymentReturn', // Hook used for display information in the order confirmation page
     ];
 
     /**
