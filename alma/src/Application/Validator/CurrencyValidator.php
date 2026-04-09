@@ -20,7 +20,10 @@ class CurrencyValidator
         $this->currencyProxy = $currencyProxy;
     }
 
-    public function checkCurrency($idCurrency)
+    /**
+     * @throws \PrestaShop\Module\Alma\Application\Exception\CurrencyException
+     */
+    public function checkCurrency($idCurrency): void
     {
         $currency = $this->currencyProxy->getCurrencyIsoCode($idCurrency);
         if (!in_array($currency, self::SUPPORTED_CURRENCIES)) {

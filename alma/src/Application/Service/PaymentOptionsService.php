@@ -23,17 +23,23 @@ class PaymentOptionsService
      * @var CurrencyValidator
      */
     private CurrencyValidator $currencyValidator;
+    /**
+     * @var ExcludedCategoriesService
+     */
+    private ExcludedCategoriesService $excludedCategoriesService;
 
     public function __construct(
         \Module $module,
         PaymentOption $paymentOption,
         CurrencyValidator $currencyValidator,
+        ExcludedCategoriesService $excludedCategoriesService,
         TranslatorInterface $translator,
         \Cart $cart
     ) {
         $this->module = $module;
         $this->paymentOption = $paymentOption;
         $this->currencyValidator = $currencyValidator;
+        $this->excludedCategoriesService = $excludedCategoriesService;
         $this->translator = $translator;
         $this->cart = $cart;
     }
@@ -48,6 +54,10 @@ class PaymentOptionsService
         } catch (CurrencyException $e) {
             return [];
         }
+        if ($this->excludedCategoriesService->isExcluded($this->cart->getProducts())) {
+            return [];
+        }
+
         $this->paymentOption->setModuleName($this->module->name);
         $this->paymentOption->setLogo(_PS_MODULE_DIR_ . 'alma/views/img/logos/p3x_logo.svg');
         $this->paymentOption->setAction('alma/payment');

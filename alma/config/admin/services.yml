@@ -264,11 +264,13 @@ services:
       - '@alma.module'
       - '@alma.context'
 
-  alma_payment_options_service:
+  alma.payment_options_service:
     class: 'PrestaShop\Module\Alma\Application\Service\PaymentOptionsService'
     arguments:
       - '@alma.module'
       - '@alma.payment_options'
+      - '@alma.currency_validator'
+      - '@alma.excluded_categories_service'
       - '@translator'
 
   alma.client_configuration:
@@ -373,3 +375,11 @@ services:
       - '@alma.excluded_categories_service'
       - '@alma.configuration_repository'
       - '@alma.language_repository'
+
+  alma.currency_validator:
+    class: 'PrestaShop\Module\Alma\Application\Validator\CurrencyValidator'
+    arguments:
+      - '@alma.currency_proxy'
+
+  alma.currency_proxy:
+    class: 'PrestaShop\Module\Alma\Infrastructure\Proxy\CurrencyProxy'

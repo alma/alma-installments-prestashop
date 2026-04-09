@@ -42,12 +42,22 @@ class HookServiceFactory
         $currencyValidator = new CurrencyValidator(
                 new CurrencyProxy()
         );
+        $configurationRepository = new ConfigurationRepository();
+        $excludedCategoriesService = new ExcludedCategoriesService(
+            $context,
+            new ExcludedCategoriesRepository($configurationRepository),
+            $configurationRepository,
+            new LanguageRepository(),
+            $context->getTranslator(),
+            new ProductProxy()
+        );
         $translator = $context->getTranslator();
 
         return new PaymentOptionsService(
             $module,
             $paymentOptions,
             $currencyValidator,
+            $excludedCategoriesService,
             $translator,
             $cart
         );
