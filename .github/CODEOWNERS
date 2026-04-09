@@ -3,6 +3,3 @@
 
 # Grant DevX ownership of Github workflows and actions
 .github                     @alma/squad-devx
-
-# Grant DevX ownership of Taskfile
-Taskfile.yml                @alma/squad-devx
