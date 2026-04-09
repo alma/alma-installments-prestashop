@@ -78,8 +78,9 @@ class WidgetFrontendService
                 $container = str_replace('.', '-', $hookName);
                 $products = $cart->getProducts();
                 $productEmbeddedAttributes = [];
-                $containerId = $this->configurationRepository->getCartWidgetOldPositionCustom()
-                    ? $this->configurationRepository->getCartWidgetOldPositionSelector()
+                $legacySelector = $this->configurationRepository->getCartWidgetOldPositionSelector();
+                $containerId = ($this->configurationRepository->getCartWidgetOldPositionCustom() && !empty($legacySelector))
+                    ? $legacySelector
                     : '#' . $container;
                 $hideIfNotEligible = (int) !$this->configurationRepository->getCartWidgetDisplayNotEligible();
                 break;
@@ -108,7 +109,10 @@ class WidgetFrontendService
                 /** @var \Product $products */
                 $products = [$product];
                 $productEmbeddedAttributes = $controller->getTemplateVarProduct()->getEmbeddedAttributes();
-                $containerId = '#' . $container;
+                $legacySelector = $this->configurationRepository->getProductWidgetOldPositionSelector();
+                $containerId = ($this->configurationRepository->getProductWidgetOldPositionCustom() && !empty($legacySelector))
+                    ? $legacySelector
+                    : '#' . $container;
                 $hideIfNotEligible = (int) !$this->configurationRepository->getProductWidgetDisplayNotEligible();
                 break;
             default:

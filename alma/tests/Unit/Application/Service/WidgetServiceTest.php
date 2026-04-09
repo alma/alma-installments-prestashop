@@ -125,6 +125,21 @@ class WidgetServiceTest extends TestCase
         $this->assertEquals($expected, $this->widgetService->fieldsValueOldWidgetPosition());
     }
 
+    public function testFieldsValueOldWidgetPositionWithProductCustomPositionSaved()
+    {
+        $expected = [
+            ProductWidgetAdminForm::KEY_FIELD_PRODUCT_WIDGET_POSITION_CUSTOM => 1,
+        ];
+
+        $this->configurationRepository->expects($this->once())
+            ->method('getCartWidgetOldPositionCustom')
+            ->willReturn(false);
+        $this->configurationRepository->expects($this->once())
+            ->method('getProductWidgetOldPositionCustom')
+            ->willReturn(true);
+        $this->assertEquals($expected, $this->widgetService->fieldsValueOldWidgetPosition());
+    }
+
     public function testFieldsValueOldWidgetPositionWithCartAndProductCustomPositionSaved()
     {
         $expected = [
