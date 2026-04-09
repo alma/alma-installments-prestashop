@@ -99,9 +99,12 @@ class WidgetFrontendService
                     throw new WidgetException('Product not found in context controller');
                 }
 
+                if (!method_exists($controller, 'getTemplateVarProduct')) {
+                    throw new WidgetException('getTemplateVarProduct does not exist in context controller');
+                }
+
                 $purchaseAmount = $product->getPrice();
                 $container = str_replace('.', '-', $hookName);
-                /** @var \Product $products */
                 $products = [$product];
                 $productEmbeddedAttributes = $controller->getTemplateVarProduct()->getEmbeddedAttributes();
                 $containerId = '#' . $container;

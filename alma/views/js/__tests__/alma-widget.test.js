@@ -1,4 +1,4 @@
-const { initAlmaWidget, findWidgetContainer, initAlmaWidgetFromContainer, getCartAmountInCents } = require('../alma-widget');
+const { initAlmaWidget, findWidgetContainer, initAlmaWidgetFromContainer, getCartAmountInCents, toCents } = require('../alma-widget');
 
 const mockCartWidgetConfig = {
     purchaseAmount: 22976,
