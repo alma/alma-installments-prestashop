@@ -82,7 +82,6 @@ class AlmaCmsDataExportTest extends TestCase
         $this->validateHelper = null;
         $this->settingsHelper = null;
         Mockery::close();
-        unset($_SERVER['HTTP_X_ALMA_SIGNATURE']);
     }
 
     /**
