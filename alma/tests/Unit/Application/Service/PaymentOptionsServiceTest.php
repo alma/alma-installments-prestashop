@@ -64,4 +64,23 @@ class PaymentOptionsServiceTest extends TestCase
             ->willReturn(true);
         $this->assertEquals([], $this->paymentOptionsService->buildPaymentOptions());
     }
+
+    public function testBuildPaymentOptionsWithFeePlanReturnPaymentOption(): void
+    {
+        $products = [
+            ProductMock::productArray(),
+        ];
+        $this->cart->id_currency = 1;
+        $this->currencyValidator->expects($this->once())
+            ->method('checkCurrency')
+            ->with(1);
+        $this->cart->expects($this->once())
+            ->method('getProducts')
+            ->willReturn($products);
+        $this->excludedCategoriesService->expects($this->once())
+            ->method('isExcluded')
+            ->with($products)
+            ->willReturn(false);
+        $this->assertEquals([$this->paymentOption], $this->paymentOptionsService->buildPaymentOptions());
+    }
 }
