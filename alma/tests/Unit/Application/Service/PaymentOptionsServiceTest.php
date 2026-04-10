@@ -4,12 +4,12 @@ namespace PrestaShop\Module\Alma\Tests\Unit\Application\Service;
 
 use PHPUnit\Framework\TestCase;
 use PrestaShop\Module\Alma\Application\Exception\CurrencyException;
+use PrestaShop\Module\Alma\Application\Service\EligibilityService;
 use PrestaShop\Module\Alma\Application\Service\ExcludedCategoriesService;
 use PrestaShop\Module\Alma\Application\Service\PaymentOptionsService;
 use PrestaShop\Module\Alma\Application\Validator\CurrencyValidator;
 use PrestaShop\Module\Alma\Tests\Mocks\ProductMock;
 use PrestaShop\PrestaShop\Core\Payment\PaymentOption;
-use PrestaShopBundle\Translation\TranslatorInterface;
 
 class PaymentOptionsServiceTest extends TestCase
 {
@@ -17,28 +17,32 @@ class PaymentOptionsServiceTest extends TestCase
      * @var ExcludedCategoriesService
      */
     private $excludedCategoriesService;
+    /**
+     * @var PaymentOptionsService
+     */
+    private PaymentOptionsService $paymentOptionsService;
 
     public function setUp(): void
     {
-        $this->module = $this->createMock(\Module::class);
+        $this->module = $this->createMock(\Alma::class);
         $this->paymentOption = $this->createMock(PaymentOption::class);
         $this->currencyValidator = $this->createMock(CurrencyValidator::class);
         $this->excludedCategoriesService = $this->createMock(ExcludedCategoriesService::class);
-        $this->translator = $this->createMock(TranslatorInterface::class);
+        $this->eligibilityService = $this->createMock(EligibilityService::class);
         $this->cart = $this->createMock(\Cart::class);
         $this->paymentOptionsService = new PaymentOptionsService(
             $this->module,
             $this->paymentOption,
             $this->currencyValidator,
             $this->excludedCategoriesService,
-            $this->translator,
-            $this->cart
+            $this->eligibilityService
         );
     }
 
     public function testBuildPaymentOptionsReturnEmptyArrayIfCurrencyNotSupported(): void
     {
         $this->cart->id_currency = 2;
+        $this->paymentOptionsService->setCart($this->cart);
         $this->currencyValidator->expects($this->once())
             ->method('checkCurrency')
             ->with(2)
@@ -52,6 +56,7 @@ class PaymentOptionsServiceTest extends TestCase
             ProductMock::productArray(),
         ];
         $this->cart->id_currency = 1;
+        $this->paymentOptionsService->setCart($this->cart);
         $this->currencyValidator->expects($this->once())
             ->method('checkCurrency')
             ->with(1);
@@ -71,6 +76,7 @@ class PaymentOptionsServiceTest extends TestCase
             ProductMock::productArray(),
         ];
         $this->cart->id_currency = 1;
+        $this->paymentOptionsService->setCart($this->cart);
         $this->currencyValidator->expects($this->once())
             ->method('checkCurrency')
             ->with(1);

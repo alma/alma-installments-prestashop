@@ -1,0 +1,138 @@
+services:
+  _defaults:
+    public: true
+
+  # Services
+  alma.module:
+    class: Alma
+    factory: [ 'Module', 'getInstanceByName' ]
+    arguments:
+      - 'alma'
+
+  alma.context:
+    class: Context
+    factory: [ 'Context', 'getContext' ]
+
+  alma.db:
+    class: Db
+    factory: [ 'Db', 'getInstance' ]
+
+  alma.php_encryption:
+    class: PhpEncryption
+    arguments:
+      - !php/const _NEW_COOKIE_KEY_
+
+  alma.payment_option:
+    class: 'PrestaShop\PrestaShop\Core\Payment\PaymentOption'
+
+  alma.excluded_categories_service:
+    class: 'PrestaShop\Module\Alma\Application\Service\ExcludedCategoriesService'
+    arguments:
+      - '@alma.module'
+      - '@alma.context'
+      - '@alma.excluded_categories_repository'
+      - '@alma.configuration_repository'
+      - '@alma.language_repository'
+      - '@alma.product_proxy'
+
+  alma.payment_options_service:
+    class: 'PrestaShop\Module\Alma\Application\Service\PaymentOptionsService'
+    arguments:
+      - '@alma.module'
+      - '@alma.payment_option'
+      - '@alma.currency_validator'
+      - '@alma.excluded_categories_service'
+      - '@alma.eligibility_service'
+
+  alma.eligibility_service:
+    class: 'PrestaShop\Module\Alma\Application\Service\EligibilityService'
+    arguments:
+      - '@alma.eligibility_provider'
+      - '@alma.configuration_repository'
+
+  # Repositories
+  alma.configuration_repository:
+    class: 'PrestaShop\Module\Alma\Infrastructure\Repository\ConfigurationRepository'
+
+  alma.language_repository:
+    class: 'PrestaShop\Module\Alma\Infrastructure\Repository\LanguageRepository'
+
+  alma.settings_repository:
+    class: 'PrestaShop\Module\Alma\Infrastructure\Repository\SettingsRepository'
+    arguments:
+      - '@alma.configuration_repository'
+      - '@alma.tools_proxy'
+      - '@alma.encryptor_helper'
+
+  alma.excluded_categories_repository:
+    class: 'PrestaShop\Module\Alma\Infrastructure\Repository\ExcludedCategoriesRepository'
+    arguments:
+      - '@alma.configuration_repository'
+
+  # Helpers
+  alma.encryptor_helper:
+    class: 'PrestaShop\Module\Alma\Application\Helper\EncryptorHelper'
+    arguments:
+      - '@alma.php_encryption'
+
+  # Providers
+  alma.eligibility_provider:
+    class: 'PrestaShop\Module\Alma\Application\Provider\EligibilityProvider'
+    arguments:
+      - '@alma.eligibility_endpoint'
+
+  alma.authentication_settings_provider:
+    class: 'PrestaShop\Module\Alma\Application\Provider\AuthenticationSettingsProvider'
+    arguments:
+      - '@alma.module'
+      - '@alma.settings_repository'
+      - '@alma.language_repository'
+      - '@alma.tools_proxy'
+
+  # Validators
+  alma.currency_validator:
+    class: 'PrestaShop\Module\Alma\Application\Validator\CurrencyValidator'
+    arguments:
+      - '@alma.currency_proxy'
+
+  # Proxies
+  alma.tools_proxy:
+    class: 'PrestaShop\Module\Alma\Infrastructure\Proxy\ToolsProxy'
+
+  alma.currency_proxy:
+    class: 'PrestaShop\Module\Alma\Infrastructure\Proxy\CurrencyProxy'
+
+  alma.product_proxy:
+    class: 'PrestaShop\Module\Alma\Infrastructure\Proxy\ProductProxy'
+
+  # Endpoints
+  alma.eligibility_endpoint:
+    class: 'Alma\Client\Application\Endpoint\EligibilityEndpoint'
+    arguments:
+      - '@alma.curl_client'
+
+  # Factories
+  alma.client_configuration_factory:
+    class: 'PrestaShop\Module\Alma\Infrastructure\Factory\ClientConfigurationFactory'
+    arguments:
+      - '@alma.authentication_settings_provider'
+      - '@alma.environment'
+
+  alma.environment_factory:
+    class: 'PrestaShop\Module\Alma\Infrastructure\Factory\EnvironmentFactory'
+    arguments:
+      - '@alma.authentication_settings_provider'
+
+  # Clients
+  alma.curl_client:
+    class: 'Alma\Client\Application\CurlClient'
+    arguments:
+      - '@alma.client_configuration'
+
+  alma.client_configuration:
+    class: 'Alma\Client\Application\ClientConfiguration'
+    factory: ['@alma.client_configuration_factory', 'create']
+
+  alma.environment:
+    class: 'Alma\Client\Domain\ValueObject\Environment'
+    factory: [ '@alma.environment_factory', 'create' ]

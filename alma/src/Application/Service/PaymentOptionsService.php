@@ -27,21 +27,23 @@ class PaymentOptionsService
      * @var ExcludedCategoriesService
      */
     private ExcludedCategoriesService $excludedCategoriesService;
+    /**
+     * @var EligibilityService
+     */
+    private EligibilityService $eligibilityService;
 
     public function __construct(
-        \Module $module,
+        \Alma $module,
         PaymentOption $paymentOption,
         CurrencyValidator $currencyValidator,
         ExcludedCategoriesService $excludedCategoriesService,
-        TranslatorInterface $translator,
-        \Cart $cart
+        EligibilityService $eligibilityService
     ) {
         $this->module = $module;
         $this->paymentOption = $paymentOption;
         $this->currencyValidator = $currencyValidator;
         $this->excludedCategoriesService = $excludedCategoriesService;
-        $this->translator = $translator;
-        $this->cart = $cart;
+        $this->eligibilityService = $eligibilityService;
     }
 
     /**
@@ -58,10 +60,14 @@ class PaymentOptionsService
             return [];
         }
 
+        $this->eligibilityService->getEligibilityForCheckout($this->cart);
+
+        // Make loop from eligibility to create multiple payment options if needed in the future
+
         $this->paymentOption->setModuleName($this->module->name);
         $this->paymentOption->setLogo(_PS_MODULE_DIR_ . 'alma/views/img/logos/p3x_logo.svg');
         $this->paymentOption->setAction('alma/payment');
-        $this->paymentOption->setCallToActionText($this->translator->trans('Pay with Alma'));
+        $this->paymentOption->setCallToActionText($this->module->translate('Pay with Alma'));
         $this->paymentOption->setInputs([
             'token' => [
                 'name' => 'token',
@@ -73,5 +79,14 @@ class PaymentOptionsService
         return [
             $this->paymentOption
         ];
+    }
+
+    /**
+     * Set Cart from parameter or from Context if not provided, to not inject in constructor.
+     * @param \Cart $cart
+     */
+    public function setCart(\Cart $cart): void
+    {
+        $this->cart = $cart;
     }
 }

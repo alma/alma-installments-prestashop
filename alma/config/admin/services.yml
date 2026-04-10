@@ -43,9 +43,6 @@ services:
     arguments:
       - !php/const _NEW_COOKIE_KEY_
 
-  alma.payment_options:
-    class: PaymentOptions
-
   alma.form_builder:
     class: 'PrestaShop\Module\Alma\Infrastructure\Form\FormBuilder'
     arguments:
@@ -201,11 +198,11 @@ services:
   alma.excluded_categories_service:
     class: 'PrestaShop\Module\Alma\Application\Service\ExcludedCategoriesService'
     arguments:
+      - '@alma.module'
       - '@alma.context'
       - '@alma.excluded_categories_repository'
       - '@alma.configuration_repository'
       - '@alma.language_repository'
-      - '@translator'
       - '@alma.product_proxy'
 
   alma.in_page_service:
@@ -263,15 +260,6 @@ services:
     arguments:
       - '@alma.module'
       - '@alma.context'
-
-  alma.payment_options_service:
-    class: 'PrestaShop\Module\Alma\Application\Service\PaymentOptionsService'
-    arguments:
-      - '@alma.module'
-      - '@alma.payment_options'
-      - '@alma.currency_validator'
-      - '@alma.excluded_categories_service'
-      - '@translator'
 
   alma.client_configuration:
     class: 'Alma\Client\Application\ClientConfiguration'
