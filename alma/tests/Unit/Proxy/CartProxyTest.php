@@ -33,7 +33,7 @@ class CartProxyTest extends TestCase
     /**
      * @var CartProxy
      */
-    private $cartProxyPsAfter1770;
+    private $cartProxy;
     /**
      * @var CartFactory
      */

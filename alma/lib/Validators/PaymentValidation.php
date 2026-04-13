@@ -42,6 +42,7 @@ use Alma\PrestaShop\Helpers\ToolsHelper;
 use Alma\PrestaShop\Proxy\CartProxy;
 use Alma\PrestaShop\Proxy\PaymentModuleProxy;
 use Alma\PrestaShop\Services\AlmaBusinessDataService;
+use Alma\PrestaShop\Services\CartLockService;
 use Alma\PrestaShop\Services\OrderService;
 
 if (!defined('_PS_VERSION_')) {
@@ -90,16 +91,22 @@ class PaymentValidation
      * @var \Alma\PrestaShop\Proxy\CartProxy
      */
     private $cartProxy;
+    /**
+     * @var CartLockService
+     */
+    private $cartLockService;
 
     /**
      * @param ContextFactory $contextFactory
      * @param ModuleFactory $moduleFactory
      * @param PaymentValidator $clientPaymentValidator
+     * @param CartLockService|null $cartLockService
      */
     public function __construct(
         $contextFactory,
         $moduleFactory,
-        $clientPaymentValidator
+        $clientPaymentValidator,
+        $cartLockService = null
     ) {
         $this->context = $contextFactory->getContext();
         $this->module = $moduleFactory->getModule();
@@ -119,6 +126,7 @@ class PaymentValidation
         $this->almaBusinessDataService = new AlmaBusinessDataService();
         $this->cartProxy = new CartProxy();
         $this->paymentModuleProxy = new PaymentModuleProxy();
+        $this->cartLockService = $cartLockService ?: new CartLockService();
     }
 
     /**
@@ -217,7 +225,7 @@ class PaymentValidation
             throw new PaymentValidationError($cart, 'cannot load customer');
         }
 
-        if (!$this->cartProxy->checkOrderExistsForPayment($cart->id)) {
+        if (!$this->cartProxy->orderExists((int) $cart->id)) {
             $firstInstalment = $payment->payment_plan[0];
             if (!in_array($payment->state, [Payment::STATE_IN_PROGRESS, Payment::STATE_PAID])) {
                 try {
@@ -233,76 +241,107 @@ class PaymentValidation
                 throw new PaymentValidationError($cart, Payment::FRAUD_STATE_ERROR);
             }
 
-            $extraVars = ['transaction_id' => $payment->id];
+            // Acquire advisory MySQL lock — prevents concurrent validateOrder() for the same cart.
+            // Uses GET_LOCK which is connection-scoped: automatically released on DB disconnect/crash.
+            if (!$this->cartLockService->acquireLock((int) $cart->id)) {
+                // Lock timeout: another process is already handling this cart.
+                // Check if it already created the order and redirect idempotently.
+                if ($this->cartProxy->orderExists((int) $cart->id)) {
+                    $this->module->currentOrder = $this->getOrderByCartId((int) $cart->id)->id;
+                    $tokenCart = md5(_COOKIE_KEY_ . 'recover_cart_' . $cart->id);
 
-            $installmentCount = $payment->installments_count;
-
-            if ($this->settingsHelper->isDeferred($payment)) {
-                $days = $this->settingsHelper->getDuration($payment);
-                $paymentMode = sprintf(
-                    $this->module->l('Alma - +%d days payment', 'PaymentValidation'),
-                    $days
-                );
-            } else {
-                if (1 === $installmentCount) {
-                    $paymentMode = $this->module->l('Alma - Pay now', 'PaymentValidation');
-                } else {
-                    $paymentMode = sprintf(
-                        $this->module->l('Alma - %d monthly installments', 'PaymentValidation'),
-                        $installmentCount
-                    );
+                    return $this->context->link->getPageLink('order-confirmation', true)
+                        . '?id_cart=' . (int) $cart->id
+                        . '&id_module=' . (int) $this->module->id
+                        . '&id_order=' . (int) $this->module->currentOrder
+                        . '&key=' . $customer->secure_key
+                        . '&recover_cart=' . $cart->id
+                        . '&token_cart=' . $tokenCart;
                 }
-            }
 
-            $planKey = SettingsHelper::planKeyFromPayment($payment);
-            $this->almaBusinessDataService->updatePlanKey($planKey, $cart->id);
-            $this->almaBusinessDataService->updateAlmaPaymentId($payment->id, $cart->id);
-
-            try {
-                // Place order
-                $this->paymentModuleProxy->validateOrder(
-                    (int) $cart->id,
-                    \Configuration::get('PS_OS_PAYMENT'),
-                    $this->priceHelper->convertPriceFromCents($payment->purchase_amount),
-                    $paymentMode,
-                    null,
-                    $extraVars,
-                    (int) $cart->id_currency,
-                    false,
-                    $customer->secure_key
-                );
-            } catch (\PrestaShopException $e) {
-                LoggerFactory::instance()->warning("[Alma] Error validation Order: {$e->getMessage()}");
-            }
-
-            \Db::getInstance()->execute('COMMIT');
-
-            // Update payment's order reference
-            $order = $this->getOrderByCartId((int) $cart->id);
-            $customData = $payment->custom_data;
-            $customData['id_order'] = $order->id;
-
-            try {
-                $alma->payments->edit($payment->id, [
-                    'payment' => [
-                        'custom_data' => $customData,
-                    ],
-                ]);
-            } catch (RequestError $e) {
-                $msg = "[Alma] Error updating order id {$order->id}: {$e->getMessage()}";
-                LoggerFactory::instance()->error($msg);
+                throw new OrderException('Could not acquire lock for cart ' . $cart->id);
             }
 
             try {
-                $alma->payments->addOrder($payment->id, [
-                    'merchant_reference' => $order->reference,
-                ]);
-            } catch (\Exception $e) {
-                $msg = "[Alma] Error updating order reference {$order->reference}: {$e->getMessage()}";
-                LoggerFactory::instance()->error($msg);
-            }
+                // Critical section: re-check inside the lock to guard against the race condition
+                // where another process created the order between our first check and lock acquisition.
+                if ($this->cartProxy->orderExists((int) $cart->id)) {
+                    $this->module->currentOrder = $this->getOrderByCartId((int) $cart->id)->id;
+                    $tokenCart = md5(_COOKIE_KEY_ . 'recover_cart_' . $cart->id);
+                    $extraRedirectArgs = '&recover_cart=' . $cart->id . '&token_cart=' . $tokenCart;
+                } else {
+                    $extraVars = ['transaction_id' => $payment->id];
 
-            $extraRedirectArgs = '';
+                    $installmentCount = $payment->installments_count;
+
+                    if ($this->settingsHelper->isDeferred($payment)) {
+                        $days = $this->settingsHelper->getDuration($payment);
+                        $paymentMode = sprintf(
+                            $this->module->l('Alma - +%d days payment', 'PaymentValidation'),
+                            $days
+                        );
+                    } else {
+                        if (1 === $installmentCount) {
+                            $paymentMode = $this->module->l('Alma - Pay now', 'PaymentValidation');
+                        } else {
+                            $paymentMode = sprintf(
+                                $this->module->l('Alma - %d monthly installments', 'PaymentValidation'),
+                                $installmentCount
+                            );
+                        }
+                    }
+
+                    $planKey = SettingsHelper::planKeyFromPayment($payment);
+                    $this->almaBusinessDataService->updatePlanKey($planKey, $cart->id);
+                    $this->almaBusinessDataService->updateAlmaPaymentId($payment->id, $cart->id);
+
+                    try {
+                        // Place order — PaymentModuleProxy does a final defensive orderExists() check
+                        $this->paymentModuleProxy->validateOrder(
+                            (int) $cart->id,
+                            \Configuration::get('PS_OS_PAYMENT'),
+                            $this->priceHelper->convertPriceFromCents($payment->purchase_amount),
+                            $paymentMode,
+                            null,
+                            $extraVars,
+                            (int) $cart->id_currency,
+                            false,
+                            $customer->secure_key
+                        );
+                    } catch (\PrestaShopException $e) {
+                        LoggerFactory::instance()->warning("[Alma] Error validation Order: {$e->getMessage()}");
+                    }
+
+                    // Update payment's order reference
+                    $order = $this->getOrderByCartId((int) $cart->id);
+                    $customData = $payment->custom_data;
+                    $customData['id_order'] = $order->id;
+
+                    try {
+                        $alma->payments->edit($payment->id, [
+                            'payment' => [
+                                'custom_data' => $customData,
+                            ],
+                        ]);
+                    } catch (RequestError $e) {
+                        $msg = "[Alma] Error updating order id {$order->id}: {$e->getMessage()}";
+                        LoggerFactory::instance()->error($msg);
+                    }
+
+                    try {
+                        $alma->payments->addOrder($payment->id, [
+                            'merchant_reference' => $order->reference,
+                        ]);
+                    } catch (\Exception $e) {
+                        $msg = "[Alma] Error updating order reference {$order->reference}: {$e->getMessage()}";
+                        LoggerFactory::instance()->error($msg);
+                    }
+
+                    $extraRedirectArgs = '';
+                }
+            } finally {
+                $this->cartLockService->releaseLock((int) $cart->id);
+            }
         } else {
             $this->module->currentOrder = $this->getOrderByCartId((int) $cart->id)->id;
             $tokenCart = md5(_COOKIE_KEY_ . 'recover_cart_' . $cart->id);
