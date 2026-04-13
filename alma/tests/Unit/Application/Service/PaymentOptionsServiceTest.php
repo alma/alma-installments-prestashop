@@ -2,12 +2,14 @@
 
 namespace PrestaShop\Module\Alma\Tests\Unit\Application\Service;
 
+use Alma\Client\Domain\Entity\EligibilityList;
 use PHPUnit\Framework\TestCase;
 use PrestaShop\Module\Alma\Application\Exception\CurrencyException;
 use PrestaShop\Module\Alma\Application\Service\EligibilityService;
 use PrestaShop\Module\Alma\Application\Service\ExcludedCategoriesService;
 use PrestaShop\Module\Alma\Application\Service\PaymentOptionsService;
 use PrestaShop\Module\Alma\Application\Validator\CurrencyValidator;
+use PrestaShop\Module\Alma\Tests\Mocks\EligibilityMock;
 use PrestaShop\Module\Alma\Tests\Mocks\ProductMock;
 use PrestaShop\PrestaShop\Core\Payment\PaymentOption;
 
@@ -21,6 +23,10 @@ class PaymentOptionsServiceTest extends TestCase
      * @var PaymentOptionsService
      */
     private PaymentOptionsService $paymentOptionsService;
+    /**
+     * @var EligibilityService
+     */
+    private $eligibilityService;
 
     public function setUp(): void
     {
@@ -70,11 +76,17 @@ class PaymentOptionsServiceTest extends TestCase
         $this->assertEquals([], $this->paymentOptionsService->buildPaymentOptions());
     }
 
+    /**
+     * @throws \Alma\Client\Application\Exception\ParametersException
+     */
     public function testBuildPaymentOptionsWithFeePlanReturnPaymentOption(): void
     {
         $products = [
             ProductMock::productArray(),
         ];
+        $eligibilityList = new EligibilityList();
+        $eligibilityList->add(EligibilityMock::eligibility(2));
+
         $this->cart->id_currency = 1;
         $this->paymentOptionsService->setCart($this->cart);
         $this->currencyValidator->expects($this->once())
@@ -87,6 +99,10 @@ class PaymentOptionsServiceTest extends TestCase
             ->method('isExcluded')
             ->with($products)
             ->willReturn(false);
+        $this->eligibilityService->expects($this->once())
+            ->method('getEligibilityForCheckout')
+            ->with($this->cart)
+            ->willReturn($eligibilityList);
         $this->assertEquals([$this->paymentOption], $this->paymentOptionsService->buildPaymentOptions());
     }
 }

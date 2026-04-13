@@ -51,6 +51,7 @@ class PaymentOptionsService
      */
     public function buildPaymentOptions(): array
     {
+        $paymentOptions = [];
         try {
             $this->currencyValidator->checkCurrency($this->cart->id_currency);
         } catch (CurrencyException $e) {
@@ -60,25 +61,26 @@ class PaymentOptionsService
             return [];
         }
 
-        $this->eligibilityService->getEligibilityForCheckout($this->cart);
+        $eligibilityList = $this->eligibilityService->getEligibilityForCheckout($this->cart);
 
-        // Make loop from eligibility to create multiple payment options if needed in the future
+        // Handle the payment option for each payment methods
+        foreach ($eligibilityList as $eligibility) {
+            $this->paymentOption->setModuleName($this->module->name);
+            $this->paymentOption->setLogo(_PS_MODULE_DIR_ . 'alma/views/img/logos/p3x_logo.svg');
+            $this->paymentOption->setAction('alma/payment');
+            $this->paymentOption->setCallToActionText($this->module->translate('Pay with Alma'));
+            $this->paymentOption->setInputs([
+                'token' => [
+                    'name' => 'token',
+                    'type' => 'hidden',
+                    'value' => 'totoken',
+                ],
+            ]);
 
-        $this->paymentOption->setModuleName($this->module->name);
-        $this->paymentOption->setLogo(_PS_MODULE_DIR_ . 'alma/views/img/logos/p3x_logo.svg');
-        $this->paymentOption->setAction('alma/payment');
-        $this->paymentOption->setCallToActionText($this->module->translate('Pay with Alma'));
-        $this->paymentOption->setInputs([
-            'token' => [
-                'name' => 'token',
-                'type' => 'hidden',
-                'value' => 'totoken',
-            ],
-        ]);
+            $paymentOptions[] = $this->paymentOption;
+        }
 
-        return [
-            $this->paymentOption
-        ];
+        return $paymentOptions;
     }
 
     /**
