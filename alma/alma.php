@@ -236,6 +236,7 @@ class Alma extends PaymentModule
     {
         $tabsHelper = new \Alma\PrestaShop\Helpers\Admin\TabsHelper();
         $almaBusinessDataRepository = new \Alma\PrestaShop\Repositories\AlmaBusinessDataRepository();
+        $almaPaymentRepository = new \Alma\PrestaShop\Repositories\AlmaPaymentRepository();
 
         try {
             $this->checkPsAccountsPresence();
@@ -261,6 +262,7 @@ class Alma extends PaymentModule
         }
 
         $almaBusinessDataRepository->createTable();
+        $almaPaymentRepository->createTable();
 
         return $tabsHelper->installTabs($this->dataTabs());
     }

@@ -40,6 +40,7 @@ use Alma\PrestaShop\Helpers\SettingsHelper;
 use Alma\PrestaShop\Helpers\ToolsHelper;
 use Alma\PrestaShop\Proxy\CartProxy;
 use Alma\PrestaShop\Proxy\PaymentModuleProxy;
+use Alma\PrestaShop\Repositories\AlmaPaymentRepository;
 use Alma\PrestaShop\Services\AlmaBusinessDataService;
 use Alma\PrestaShop\Services\CartLockService;
 use Alma\PrestaShop\Services\OrderService;
@@ -94,18 +95,24 @@ class PaymentValidation
      * @var CartLockService
      */
     private $cartLockService;
+    /**
+     * @var AlmaPaymentRepository
+     */
+    private $almaPaymentRepository;
 
     /**
      * @param ContextFactory $contextFactory
      * @param ModuleFactory $moduleFactory
      * @param PaymentValidator $clientPaymentValidator
      * @param CartLockService|null $cartLockService
+     * @param AlmaPaymentRepository|null $almaPaymentRepository
      */
     public function __construct(
         $contextFactory,
         $moduleFactory,
         $clientPaymentValidator,
-        $cartLockService = null
+        $cartLockService = null,
+        $almaPaymentRepository = null
     ) {
         $this->context = $contextFactory->getContext();
         $this->module = $moduleFactory->getModule();
@@ -126,6 +133,7 @@ class PaymentValidation
         $this->cartProxy = new CartProxy();
         $this->paymentModuleProxy = new PaymentModuleProxy();
         $this->cartLockService = $cartLockService ?: new CartLockService();
+        $this->almaPaymentRepository = $almaPaymentRepository ?: new AlmaPaymentRepository();
     }
 
     /**
@@ -286,50 +294,59 @@ class PaymentValidation
                     $this->almaBusinessDataService->updatePlanKey($planKey, $cart->id);
                     $this->almaBusinessDataService->updateAlmaPaymentId($payment->id, $cart->id);
 
-                    try {
-                        // Place order
-                        $this->paymentModuleProxy->validateOrder(
-                            (int) $cart->id,
-                            \Configuration::get('PS_OS_PAYMENT'),
-                            $this->priceHelper->convertPriceFromCents($payment->purchase_amount),
-                            $paymentMode,
-                            null,
-                            $extraVars,
-                            (int) $cart->id_currency,
-                            false,
-                            $customer->secure_key
+                    if (!$this->almaPaymentRepository->insertCapture((int) $cart->id, $payment->id)) {
+                        LoggerFactory::instance()->warning(
+                            "[Alma] Duplicate capture blocked by UNIQUE constraint for cart {$cart->id} — skipping validateOrder()"
                         );
-                    } catch (\PrestaShopException $e) {
-                        LoggerFactory::instance()->warning("[Alma] Error validation Order: {$e->getMessage()}");
-                        return 'index.php?controller=order&step=1';
+                        $this->module->currentOrder = $this->getOrderByCartId((int) $cart->id)->id;
+                        $tokenCart = md5(_COOKIE_KEY_ . 'recover_cart_' . $cart->id);
+                        $extraRedirectArgs = '&recover_cart=' . $cart->id . '&token_cart=' . $tokenCart;
+                    } else {
+                        try {
+                            // Place order
+                            $this->paymentModuleProxy->validateOrder(
+                                (int) $cart->id,
+                                \Configuration::get('PS_OS_PAYMENT'),
+                                $this->priceHelper->convertPriceFromCents($payment->purchase_amount),
+                                $paymentMode,
+                                null,
+                                $extraVars,
+                                (int) $cart->id_currency,
+                                false,
+                                $customer->secure_key
+                            );
+                        } catch (\PrestaShopException $e) {
+                            LoggerFactory::instance()->warning("[Alma] Error validation Order: {$e->getMessage()}");
+                            return 'index.php?controller=order&step=1';
+                        }
+
+                        // Update payment's order reference
+                        $order = $this->getOrderByCartId((int) $cart->id);
+                        $customData = $payment->custom_data;
+                        $customData['id_order'] = $order->id;
+
+                        try {
+                            $alma->payments->edit($payment->id, [
+                                'payment' => [
+                                    'custom_data' => $customData,
+                                ],
+                            ]);
+                        } catch (RequestError $e) {
+                            $msg = "[Alma] Error updating order id {$order->id}: {$e->getMessage()}";
+                            LoggerFactory::instance()->error($msg);
+                        }
+
+                        try {
+                            $alma->payments->addOrder($payment->id, [
+                                'merchant_reference' => $order->reference,
+                            ]);
+                        } catch (\Exception $e) {
+                            $msg = "[Alma] Error updating order reference {$order->reference}: {$e->getMessage()}";
+                            LoggerFactory::instance()->error($msg);
+                        }
+
+                        $extraRedirectArgs = '';
                     }
-
-                    // Update payment's order reference
-                    $order = $this->getOrderByCartId((int) $cart->id);
-                    $customData = $payment->custom_data;
-                    $customData['id_order'] = $order->id;
-
-                    try {
-                        $alma->payments->edit($payment->id, [
-                            'payment' => [
-                                'custom_data' => $customData,
-                            ],
-                        ]);
-                    } catch (RequestError $e) {
-                        $msg = "[Alma] Error updating order id {$order->id}: {$e->getMessage()}";
-                        LoggerFactory::instance()->error($msg);
-                    }
-
-                    try {
-                        $alma->payments->addOrder($payment->id, [
-                            'merchant_reference' => $order->reference,
-                        ]);
-                    } catch (\Exception $e) {
-                        $msg = "[Alma] Error updating order reference {$order->reference}: {$e->getMessage()}";
-                        LoggerFactory::instance()->error($msg);
-                    }
-
-                    $extraRedirectArgs = '';
                 }
             } finally {
                 $this->cartLockService->releaseLock();
