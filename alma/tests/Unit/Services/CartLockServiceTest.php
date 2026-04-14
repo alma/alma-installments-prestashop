@@ -38,7 +38,7 @@ class CartLockServiceTest extends TestCase
     public function setUp()
     {
         $this->dbMock = $this->createMock(\Db::class);
-        \Db::setInstance($this->dbMock);
+        \Db::setInstanceForTesting($this->dbMock);
         $this->cartLockService = new CartLockService();
     }
 

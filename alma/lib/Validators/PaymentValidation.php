@@ -30,7 +30,6 @@ use Alma\API\RequestError;
 use Alma\PrestaShop\Builders\Helpers\PriceHelperBuilder;
 use Alma\PrestaShop\Builders\Helpers\SettingsHelperBuilder;
 use Alma\PrestaShop\Builders\Services\OrderServiceBuilder;
-use Alma\PrestaShop\Exceptions\OrderException;
 use Alma\PrestaShop\Exceptions\PaymentValidationException;
 use Alma\PrestaShop\Factories\ContextFactory;
 use Alma\PrestaShop\Factories\LoggerFactory;
@@ -156,10 +155,9 @@ class PaymentValidation
      *
      * @return string URL to redirect the customer to
      *
-     * @throws PaymentValidationException
-     * @throws PaymentValidationError
+     * @throws \Alma\PrestaShop\Exceptions\PaymentValidationException
+     * @throws \Alma\PrestaShop\Validators\PaymentValidationError
      * @throws \PrestaShopException
-     * @throws OrderException
      */
     public function validatePayment($almaPaymentId)
     {
@@ -225,6 +223,7 @@ class PaymentValidation
             throw new PaymentValidationError($cart, 'cannot load customer');
         }
 
+        $tokenCart = md5(_COOKIE_KEY_ . 'recover_cart_' . $cart->id);
         if (!$this->cartProxy->orderExists((int) $cart->id)) {
             $firstInstalment = $payment->payment_plan[0];
             if (!in_array($payment->state, [Payment::STATE_IN_PROGRESS, Payment::STATE_PAID])) {
@@ -241,33 +240,21 @@ class PaymentValidation
                 throw new PaymentValidationError($cart, Payment::FRAUD_STATE_ERROR);
             }
 
-            // Acquire advisory MySQL lock — prevents concurrent validateOrder() for the same cart.
-            // Uses GET_LOCK which is connection-scoped: automatically released on DB disconnect/crash.
             if (!$this->cartLockService->acquireLock((int) $cart->id)) {
-                // Lock timeout: another process is already handling this cart.
-                // Check if it already created the order and redirect idempotently.
-                if ($this->cartProxy->orderExists((int) $cart->id)) {
-                    $this->module->currentOrder = $this->getOrderByCartId((int) $cart->id)->id;
-                    $tokenCart = md5(_COOKIE_KEY_ . 'recover_cart_' . $cart->id);
+                $this->module->currentOrder = $this->getOrderByCartId((int) $cart->id)->id;
 
-                    return $this->context->link->getPageLink('order-confirmation', true)
-                        . '?id_cart=' . (int) $cart->id
-                        . '&id_module=' . (int) $this->module->id
-                        . '&id_order=' . (int) $this->module->currentOrder
-                        . '&key=' . $customer->secure_key
-                        . '&recover_cart=' . $cart->id
-                        . '&token_cart=' . $tokenCart;
-                }
-
-                throw new OrderException('Could not acquire lock for cart ' . $cart->id);
+                return $this->context->link->getPageLink('order-confirmation', true)
+                    . '?id_cart=' . (int) $cart->id
+                    . '&id_module=' . (int) $this->module->id
+                    . '&id_order=' . (int) $this->module->currentOrder
+                    . '&key=' . $customer->secure_key
+                    . '&recover_cart=' . $cart->id
+                    . '&token_cart=' . $tokenCart;
             }
 
             try {
-                // Critical section: re-check inside the lock to guard against the race condition
-                // where another process created the order between our first check and lock acquisition.
                 if ($this->cartProxy->orderExists((int) $cart->id)) {
                     $this->module->currentOrder = $this->getOrderByCartId((int) $cart->id)->id;
-                    $tokenCart = md5(_COOKIE_KEY_ . 'recover_cart_' . $cart->id);
                     $extraRedirectArgs = '&recover_cart=' . $cart->id . '&token_cart=' . $tokenCart;
                 } else {
                     $extraVars = ['transaction_id' => $payment->id];
@@ -296,7 +283,7 @@ class PaymentValidation
                     $this->almaBusinessDataService->updateAlmaPaymentId($payment->id, $cart->id);
 
                     try {
-                        // Place order — PaymentModuleProxy does a final defensive orderExists() check
+                        // Place order
                         $this->paymentModuleProxy->validateOrder(
                             (int) $cart->id,
                             \Configuration::get('PS_OS_PAYMENT'),
@@ -310,6 +297,13 @@ class PaymentValidation
                         );
                     } catch (\PrestaShopException $e) {
                         LoggerFactory::instance()->warning("[Alma] Error validation Order: {$e->getMessage()}");
+                        return $this->context->link->getPageLink('order-confirmation', true)
+                            . '?id_cart=' . (int) $cart->id
+                            . '&id_module=' . (int) $this->module->id
+                            . '&id_order=' . (int) $this->module->currentOrder
+                            . '&key=' . $customer->secure_key
+                            . '&recover_cart=' . $cart->id
+                            . '&token_cart=' . $tokenCart;
                     }
 
                     // Update payment's order reference
@@ -344,7 +338,6 @@ class PaymentValidation
             }
         } else {
             $this->module->currentOrder = $this->getOrderByCartId((int) $cart->id)->id;
-            $tokenCart = md5(_COOKIE_KEY_ . 'recover_cart_' . $cart->id);
             $extraRedirectArgs = "&recover_cart={$cart->id}&token_cart={$tokenCart}";
         }
 
@@ -365,6 +358,10 @@ class PaymentValidation
      */
     private function getOrderByCartId($cartId)
     {
+        if (!\Order::getIdByCartId((int) $cartId)) {
+            throw new PaymentValidationException('[Alma] Order does not exist', $cartId);
+        }
+
         if (is_callable(['\Order', 'getByCartId'])) {
             return \Order::getByCartId((int) $cartId);
         }

@@ -24,6 +24,8 @@
 
 namespace Alma\PrestaShop\Services;
 
+use Alma\PrestaShop\Factories\LoggerFactory;
+
 if (!defined('_PS_VERSION_')) {
     exit;
 }
@@ -60,7 +62,7 @@ class CartLockService
     {
         $lockKey = $this->getLockKey((int) $cartId);
         $acquired = (bool) \Db::getInstance()->getValue(
-            "SELECT GET_LOCK('" . pSQL($lockKey) . "', " . (int) $timeout . ')'
+            "SELECT GET_LOCK('" . $lockKey . "', " . (int) $timeout . ')'
         );
 
         if ($acquired) {
@@ -80,6 +82,10 @@ class CartLockService
      */
     public function releaseLock($cartId)
     {
+        if ($this->lockedCartId !== null && $this->lockedCartId !== (int) $cartId) {
+            LoggerFactory::instance()->warning('[Alma] releaseLock called with wrong cartId');
+        }
+
         $lockKey = $this->getLockKey((int) $cartId);
         $released = (bool) \Db::getInstance()->getValue(
             "SELECT RELEASE_LOCK('" . pSQL($lockKey) . "')"
