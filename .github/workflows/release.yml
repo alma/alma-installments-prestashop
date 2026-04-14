@@ -8,11 +8,11 @@ on:
     types:
       - closed
     branches:
-      - 'release/v*'
+      - main
 
 jobs:
   create-draft-release:
-    if: github.event.pull_request.merged == true
+    if: (github.event.pull_request.merged == true) && startsWith(github.event.pull_request.head.ref, 'release/')
     runs-on: ubuntu-24.04
 
     steps:
@@ -72,6 +72,8 @@ jobs:
         shell: bash
         run: |
           cd dist && gh release upload "${{ steps.version.outputs.version }}" alma.zip
+        env:
+          GH_TOKEN: ${{ github.token }}
 
       - name: Publish the release
         shell: bash
