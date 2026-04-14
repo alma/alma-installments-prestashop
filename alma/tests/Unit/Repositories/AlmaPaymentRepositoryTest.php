@@ -24,6 +24,7 @@
 
 namespace Alma\PrestaShop\Tests\Unit\Repositories;
 
+use Alma\PrestaShop\Exceptions\PaymentValidationException;
 use Alma\PrestaShop\Repositories\AlmaPaymentRepository;
 use PHPUnit\Framework\TestCase;
 
@@ -38,7 +39,7 @@ class AlmaPaymentRepositoryTest extends TestCase
     public function setUp()
     {
         $this->dbMock = $this->createMock(\Db::class);
-        \Db::setInstance($this->dbMock);
+        \Db::setInstanceForTesting($this->dbMock);
         $this->repository = new AlmaPaymentRepository();
     }
 
@@ -61,7 +62,11 @@ class AlmaPaymentRepositoryTest extends TestCase
     {
         $this->dbMock->expects($this->once())
             ->method('execute')
-            ->with($this->stringContains('uq_cart_captured'))
+            ->with($this->logicalAnd(
+                $this->stringContains('uq_payment_status'),
+                $this->stringContains('alma_payment_id'),
+                $this->stringContains('status')
+            ))
             ->willReturn(true);
 
         $this->repository->createTable();
@@ -73,11 +78,11 @@ class AlmaPaymentRepositoryTest extends TestCase
             ->method('insert')
             ->with(
                 'alma_payment',
-                $this->callback(function ($data) {
-                    return $data['id_cart'] === 42
-                        && $data['alma_payment_id'] === 'pay_test_123'
-                        && $data['status'] === AlmaPaymentRepository::STATUS_CAPTURED;
-                })
+                [
+                    'id_cart' => 42,
+                    'alma_payment_id' => 'pay_test_123',
+                    'status' => AlmaPaymentRepository::STATUS_CAPTURED,
+                ]
             )
             ->willReturn(true);
 
@@ -86,7 +91,7 @@ class AlmaPaymentRepositoryTest extends TestCase
 
     public function testInsertCaptureReturnsFalseOnDuplicateEntry1062()
     {
-        $duplicateException = new \PrestaShopDatabaseException('Duplicate entry for key uq_cart_captured — 1062');
+        $duplicateException = new \PrestaShopDatabaseException('Duplicate entry for key uq_payment_status — 1062');
 
         $this->dbMock->expects($this->once())
             ->method('insert')
@@ -97,7 +102,7 @@ class AlmaPaymentRepositoryTest extends TestCase
 
     public function testInsertCaptureReturnsFalseOnDuplicateEntryMessage()
     {
-        $duplicateException = new \PrestaShopDatabaseException('Duplicate entry \'42-CAPTURED\' for key \'uq_cart_captured\'');
+        $duplicateException = new \PrestaShopDatabaseException('Duplicate entry \'payment_123-CAPTURED\' for key \'uq_payment_status\'');
 
         $this->dbMock->expects($this->once())
             ->method('insert')
@@ -114,26 +119,14 @@ class AlmaPaymentRepositoryTest extends TestCase
             ->method('insert')
             ->willThrowException($unexpectedException);
 
-        $this->expectException(\PrestaShopDatabaseException::class);
-        $this->expectExceptionMessage('Table does not exist');
+        $this->expectException(PaymentValidationException::class);
+        $this->expectExceptionMessage('DB error during capture insert for payment pay_test_789');
 
         $this->repository->insertCapture(42, 'pay_test_789');
     }
 
-    public function testDeleteByCartIdExecutesDeleteStatement()
+    public function testStatusConstantCapturedIsCorrect()
     {
-        $this->dbMock->expects($this->once())
-            ->method('delete')
-            ->with('alma_payment', '`id_cart` = 42')
-            ->willReturn(true);
-
-        $this->assertTrue($this->repository->deleteByCartId(42));
-    }
-
-    public function testStatusConstantsAreCorrect()
-    {
-        $this->assertSame('PENDING', AlmaPaymentRepository::STATUS_PENDING);
         $this->assertSame('CAPTURED', AlmaPaymentRepository::STATUS_CAPTURED);
-        $this->assertSame('FAILED', AlmaPaymentRepository::STATUS_FAILED);
     }
 }

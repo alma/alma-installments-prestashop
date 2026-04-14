@@ -38,7 +38,7 @@ function upgrade_module_4_12_0($module)
     require_once _PS_MODULE_DIR_ . 'alma/upgrade/autoload_upgrade.php';
 
     // Create the anti-duplication payment tracking table.
-    // The UNIQUE KEY on (id_cart, status) prevents duplicate order creation
+    // The UNIQUE KEY on (alma_payment_id, status) prevents duplicate order creation
     // at the SQL level, as a complement to the advisory lock (CartLockService).
     $almaPaymentRepository = new \Alma\PrestaShop\Repositories\AlmaPaymentRepository();
     $almaPaymentRepository->createTable();

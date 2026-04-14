@@ -24,6 +24,7 @@
 
 namespace Alma\PrestaShop\Repositories;
 
+use Alma\PrestaShop\Exceptions\PaymentValidationException;
 use Alma\PrestaShop\Factories\LoggerFactory;
 
 if (!defined('_PS_VERSION_')) {
@@ -34,26 +35,27 @@ if (!defined('_PS_VERSION_')) {
  * Repository for the ps_alma_payment table.
  *
  * This table is a SQL-level safety net against duplicate order creation.
- * The UNIQUE KEY on (id_cart, status) makes it impossible to insert two
- * CAPTURED rows for the same cart — even under concurrent load — because
+ * The UNIQUE KEY on (alma_payment_id, status) makes it impossible to insert two
+ * CAPTURED rows for the same Alma payment — even under concurrent load — because
  * the second INSERT will raise a MySQL 1062 error before validateOrder() is
  * ever called.
  *
  * It works as a complement to the advisory lock (CartLockService): the lock
  * handles the common race condition, while this constraint handles the edge
  * case where two processes both pass the lock (e.g. abnormal lock timeout).
+ * Using alma_payment_id (not id_cart) as the key ensures the protection is
+ * tied to the actual payment entity, which is globally unique at Alma's side.
  */
 class AlmaPaymentRepository
 {
-    const STATUS_PENDING = 'PENDING';
     const STATUS_CAPTURED = 'CAPTURED';
-    const STATUS_FAILED = 'FAILED';
     const MYSQL_DUPLICATE_ENTRY_CODE = 1062;
 
     /**
      * Creates the ps_alma_payment table.
-     * The UNIQUE KEY uq_cart_captured on (id_cart, status) guarantees that
-     * a given cart cannot have more than one CAPTURED row — blocking SQL-level duplicates.
+     * The UNIQUE KEY uq_payment_status on (alma_payment_id, status) guarantees that
+     * a given Alma payment cannot have more than one CAPTURED row — blocking SQL-level duplicates.
+     * alma_payment_id is globally unique at Alma's side and is the correct entity identifier.
      *
      * @return bool
      */
@@ -66,27 +68,53 @@ class AlmaPaymentRepository
             `status`           VARCHAR(50)  NOT NULL,
             `created_at`       DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
             PRIMARY KEY (`id_alma_payment`),
-            UNIQUE KEY `uq_cart_captured` (`id_cart`, `status`)
+            UNIQUE KEY `uq_payment_status` (`alma_payment_id`, `status`)
         ) ENGINE=' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=utf8mb4;';
 
         return \Db::getInstance()->execute($sql);
     }
 
     /**
-     * Attempts to insert a CAPTURED row for the given cart before validateOrder() is called.
+     * Records the initial payment state right after creation in payment.php, before the customer
+     * is redirected to Alma's checkout. This creates the row that will later be updated to CAPTURED
+     * when the customer returns. Uses INSERT ... ON DUPLICATE KEY UPDATE so it is safely idempotent
+     * (browser retries, network glitches).
+     *
+     * @param int    $cartId
+     * @param string $almaPaymentId
+     * @param string $status        The initial state returned by Alma (e.g. "not_started")
+     *
+     * @return bool
+     */
+    public function trackInitialPayment($cartId, $almaPaymentId, $status)
+    {
+        $sql = 'INSERT INTO `' . _DB_PREFIX_ . 'alma_payment`
+                    (`id_cart`, `alma_payment_id`, `status`)
+                VALUES
+                    (' . (int) $cartId . ', \'' . pSQL($almaPaymentId) . '\', \'' . pSQL($status) . '\')
+                ON DUPLICATE KEY UPDATE
+                    `status` = VALUES(`status`),
+                    `created_at` = `created_at`';
+
+        return \Db::getInstance()->execute($sql);
+    }
+
+    /**
+     * Attempts to insert a CAPTURED row for the given payment before validateOrder() is called.
      *
      * Returns true if the INSERT succeeded (this process is the sole owner of the capture).
      * Returns false if a UNIQUE KEY violation is raised (MySQL 1062), meaning another process
-     * already inserted a CAPTURED row for this cart — validateOrder() must NOT be called.
+     * already inserted a CAPTURED row for this payment — validateOrder() must NOT be called.
      *
-     * Any other database exception is re-thrown so the caller can handle it appropriately.
+     * Any other database exception is wrapped in a PaymentValidationException so the caller
+     * can handle it explicitly (e.g. redirect to error page) without leaking DB internals.
      *
      * @param int    $cartId
      * @param string $almaPaymentId
      *
      * @return bool true if INSERT succeeded, false on duplicate
      *
-     * @throws \PrestaShopDatabaseException on unexpected DB errors
+     * @throws PaymentValidationException on unexpected DB errors
      */
     public function insertCapture($cartId, $almaPaymentId)
     {
@@ -95,37 +123,25 @@ class AlmaPaymentRepository
                 'alma_payment',
                 [
                     'id_cart' => (int) $cartId,
-                    'alma_payment_id' => pSQL($almaPaymentId),
-                    'status' => pSQL(self::STATUS_CAPTURED),
+                    'alma_payment_id' => $almaPaymentId,
+                    'status' => self::STATUS_CAPTURED,
                 ]
             );
         } catch (\PrestaShopDatabaseException $e) {
             if ($this->isDuplicateEntryError($e)) {
                 LoggerFactory::instance()->warning(
-                    '[Alma] Duplicate CAPTURED row blocked for cart ' . $cartId . ' — order already being created by another process'
+                    '[Alma] Duplicate CAPTURED row blocked for payment ' . $almaPaymentId . ' — order already being created by another process'
                 );
 
                 return false;
             }
 
-            throw $e;
-        }
-    }
+            LoggerFactory::instance()->error(
+                '[Alma] Unexpected DB error in insertCapture for payment ' . $almaPaymentId . ': ' . $e->getMessage()
+            );
 
-    /**
-     * Removes all payment rows for a given cart.
-     * Useful for cleanup in tests or error recovery.
-     *
-     * @param int $cartId
-     *
-     * @return bool
-     */
-    public function deleteByCartId($cartId)
-    {
-        return \Db::getInstance()->delete(
-            'alma_payment',
-            '`id_cart` = ' . (int) $cartId
-        );
+            throw new PaymentValidationException('[Alma] DB error during capture insert for payment ' . $almaPaymentId, (int) $cartId, 0, $e);
+        }
     }
 
     /**
