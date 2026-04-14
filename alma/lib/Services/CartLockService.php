@@ -83,7 +83,9 @@ class CartLockService
     public function releaseLock($cartId)
     {
         if ($this->lockedCartId !== null && $this->lockedCartId !== (int) $cartId) {
-            LoggerFactory::instance()->warning('[Alma] releaseLock called with wrong cartId');
+            LoggerFactory::instance()->warning('[Alma] releaseLock called with wrong cartId: expected ' . $this->lockedCartId . ', got ' . (int) $cartId);
+
+            $cartId = $this->lockedCartId;
         }
 
         $lockKey = $this->getLockKey((int) $cartId);
