@@ -88,8 +88,12 @@ class CartLockService
 
         $lockKey = $this->getLockKey((int) $cartId);
         $released = (bool) \Db::getInstance()->getValue(
-            "SELECT RELEASE_LOCK('" . pSQL($lockKey) . "')"
+            "SELECT RELEASE_LOCK('" . $lockKey . "')"
         );
+
+        if ($this->lockedCartId !== null && $released === false) {
+            LoggerFactory::instance()->warning('[Alma] releaseLock failed to release lock for cartId ' . $cartId);
+        }
 
         if ($released) {
             $this->lockedCartId = null;
@@ -100,7 +104,6 @@ class CartLockService
 
     /**
      * Returns true if this instance currently holds a lock.
-     * Useful for register_shutdown_function cleanup (PR 4).
      *
      * @return bool
      */

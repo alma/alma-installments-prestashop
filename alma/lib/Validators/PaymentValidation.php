@@ -297,13 +297,7 @@ class PaymentValidation
                         );
                     } catch (\PrestaShopException $e) {
                         LoggerFactory::instance()->warning("[Alma] Error validation Order: {$e->getMessage()}");
-                        return $this->context->link->getPageLink('order-confirmation', true)
-                            . '?id_cart=' . (int) $cart->id
-                            . '&id_module=' . (int) $this->module->id
-                            . '&id_order=' . (int) $this->module->currentOrder
-                            . '&key=' . $customer->secure_key
-                            . '&recover_cart=' . $cart->id
-                            . '&token_cart=' . $tokenCart;
+                        return 'index.php?controller=order&step=1';
                     }
 
                     // Update payment's order reference
