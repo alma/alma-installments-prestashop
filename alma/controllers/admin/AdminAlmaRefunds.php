@@ -93,12 +93,14 @@ class AdminAlmaRefundsController extends ModuleAdminController
         $refundResult = false;
         $lockId = $order->id_cart . '_' . $amount;
         if (!$this->lockService->acquireLock(CartLockService::LOCK_REFUND_KEY_PREFIX, $lockId)) {
+            $msg = sprintf(
+                '[Alma] A refund was already executed for this Cart: %s and Amount: %s',
+                $order->id_cart,
+                $amount
+            );
+            LoggerFactory::instance()->warning($msg);
             $this->ajaxFailAndDie(
-                $this->module->l(sprintf(
-                    'A refund was already executed for this Cart: %s and Amount: %s',
-                    $order->id_cart,
-                    $amount
-                ), 'AdminAlmaRefunds'),
+                $this->module->l($msg, 'AdminAlmaRefunds'),
                 423
             );
         }
