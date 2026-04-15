@@ -47,7 +47,7 @@ class PaymentModuleProxyTest extends TestCase
     {
         $cartId = 1;
         $this->cartProxyMock->expects($this->once())
-            ->method('checkOrderExistsForPayment')
+            ->method('orderExists')
             ->with($cartId)
             ->willReturn(true);
         $this->moduleMock->expects($this->never())
@@ -72,7 +72,7 @@ class PaymentModuleProxyTest extends TestCase
     {
         $cartId = 1;
         $this->cartProxyMock->expects($this->once())
-            ->method('checkOrderExistsForPayment')
+            ->method('orderExists')
             ->with($cartId)
             ->willReturn(false);
         $this->moduleMock->expects($this->once())
