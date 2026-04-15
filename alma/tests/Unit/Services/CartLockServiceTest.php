@@ -51,10 +51,10 @@ class CartLockServiceTest extends TestCase
     {
         $this->dbMock->expects($this->once())
             ->method('getValue')
-            ->with($this->stringContains("GET_LOCK('alma_order_cart_42', 10)"))
+            ->with($this->stringContains("GET_LOCK('prefix_42', 10)"))
             ->willReturn('1');
 
-        $this->assertTrue($this->cartLockService->acquireLock(42));
+        $this->assertTrue($this->cartLockService->acquireLock('prefix_', 42));
     }
 
     public function testAcquireLockReturnsFalseOnTimeout()
@@ -63,79 +63,79 @@ class CartLockServiceTest extends TestCase
             ->method('getValue')
             ->willReturn('0');
 
-        $this->assertFalse($this->cartLockService->acquireLock(42));
+        $this->assertFalse($this->cartLockService->acquireLock('prefix_', 42));
     }
 
     public function testAcquireLockStoresCartId()
     {
         $this->dbMock->method('getValue')->willReturn('1');
 
-        $this->cartLockService->acquireLock(42);
+        $this->cartLockService->acquireLock('prefix_', 42);
 
         $this->assertTrue($this->cartLockService->isLockAcquired());
-        $this->assertSame(42, $this->cartLockService->getLockedCartId());
+        $this->assertSame(42, $this->cartLockService->getLockedId());
     }
 
     public function testAcquireLockDoesNotSetCartIdOnFailure()
     {
         $this->dbMock->method('getValue')->willReturn('0');
 
-        $this->cartLockService->acquireLock(42);
+        $this->cartLockService->acquireLock('prefix_', 42);
 
         $this->assertFalse($this->cartLockService->isLockAcquired());
-        $this->assertNull($this->cartLockService->getLockedCartId());
+        $this->assertNull($this->cartLockService->getLockedId());
     }
 
     public function testReleaseLockReturnsTrueWhenSuccessful()
     {
         $this->dbMock->method('getValue')->willReturnOnConsecutiveCalls('1', '1');
 
-        $this->cartLockService->acquireLock(42);
-        $this->assertTrue($this->cartLockService->releaseLock());
+        $this->cartLockService->acquireLock('prefix_', 42);
+        $this->assertTrue($this->cartLockService->releaseLock('prefix_'));
     }
 
     public function testReleaseLockClearsLockedCartId()
     {
         $this->dbMock->method('getValue')->willReturnOnConsecutiveCalls('1', '1');
 
-        $this->cartLockService->acquireLock(42);
-        $this->cartLockService->releaseLock();
+        $this->cartLockService->acquireLock('prefix_', 42);
+        $this->cartLockService->releaseLock('prefix_');
 
         $this->assertFalse($this->cartLockService->isLockAcquired());
-        $this->assertNull($this->cartLockService->getLockedCartId());
+        $this->assertNull($this->cartLockService->getLockedId());
     }
 
     public function testReleaseLockReturnsFalseWhenLockNotHeld()
     {
         $this->dbMock->method('getValue')->willReturn('0');
 
-        $this->assertFalse($this->cartLockService->releaseLock());
-        $this->assertNull($this->cartLockService->getLockedCartId());
+        $this->assertFalse($this->cartLockService->releaseLock('prefix_'));
+        $this->assertNull($this->cartLockService->getLockedId());
     }
 
     public function testIsLockAcquiredIsFalseByDefault()
     {
         $this->assertFalse($this->cartLockService->isLockAcquired());
-        $this->assertNull($this->cartLockService->getLockedCartId());
+        $this->assertNull($this->cartLockService->getLockedId());
     }
 
     public function testLockKeyContainsCartId()
     {
         $this->dbMock->expects($this->once())
             ->method('getValue')
-            ->with($this->stringContains('alma_order_cart_99'))
+            ->with($this->stringContains('prefix_99'))
             ->willReturn('1');
 
-        $this->cartLockService->acquireLock(99);
+        $this->cartLockService->acquireLock('prefix_', 99);
     }
 
     public function testAcquireLockUsesCustomTimeout()
     {
         $this->dbMock->expects($this->once())
             ->method('getValue')
-            ->with($this->stringContains("GET_LOCK('alma_order_cart_5', 30)"))
+            ->with($this->stringContains("GET_LOCK('prefix_5', 30)"))
             ->willReturn('1');
 
-        $this->cartLockService->acquireLock(5, 30);
+        $this->cartLockService->acquireLock('prefix_', 5, 30);
     }
 }

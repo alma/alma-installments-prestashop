@@ -32,6 +32,7 @@ use Alma\PrestaShop\Helpers\ClientHelper;
 use Alma\PrestaShop\Helpers\OrderHelper;
 use Alma\PrestaShop\Helpers\PriceHelper;
 use Alma\PrestaShop\Helpers\RefundHelper;
+use Alma\PrestaShop\Services\CartLockService;
 use Alma\PrestaShop\Traits\AjaxTrait;
 
 if (!defined('_PS_VERSION_')) {
@@ -54,6 +55,10 @@ class AdminAlmaRefundsController extends ModuleAdminController
      * @var PriceHelper
      */
     protected $priceHelper;
+    /**
+     * @var CartLockService
+     */
+    private $lockService;
 
     /**
      * @codeCoverageIgnore
@@ -63,6 +68,7 @@ class AdminAlmaRefundsController extends ModuleAdminController
         parent::__construct();
         $priceHelperBuilder = new PriceHelperBuilder();
         $this->priceHelper = $priceHelperBuilder->getInstance();
+        $this->lockService = new CartLockService();
     }
 
     /**
@@ -85,6 +91,18 @@ class AdminAlmaRefundsController extends ModuleAdminController
         $amount = $this->getRefundAmount($refundType, $order);
 
         $refundResult = false;
+        $lockId = $order->id_cart . '_' . $amount;
+        if (!$this->lockService->acquireLock(CartLockService::LOCK_REFUND_KEY_PREFIX, $lockId)) {
+            $this->ajaxFailAndDie(
+                $this->module->l(sprintf(
+                    'A refund was already executed for this Cart: %s and Amount: %s',
+                    $order->id_cart,
+                    $amount
+                ), 'AdminAlmaRefunds'),
+                423
+            );
+        }
+
         try {
             $refundResult = $this->runRefund($paymentId, $amount, $isTotal);
         } catch (RequestError $e) {
@@ -94,6 +112,8 @@ class AdminAlmaRefundsController extends ModuleAdminController
             LoggerFactory::instance()->error('[Alma] RequestException: ' . $e->getMessage());
         } catch (PrestaShopException $e) {
             LoggerFactory::instance()->error('[Alma] PrestaShopException: ' . $e->getMessage());
+        } finally {
+            $this->lockService->releaseLock(CartLockService::LOCK_REFUND_KEY_PREFIX);
         }
 
         if (false === $refundResult) {

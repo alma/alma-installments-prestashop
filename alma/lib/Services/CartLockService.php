@@ -36,64 +36,66 @@ if (!defined('_PS_VERSION_')) {
  * infrastructure required, and the lock is automatically released if the DB connection drops.
  *
  * Usage pattern:
- *   1. acquireLock($cartId)  → enter critical section
+ *   1. acquireLock($prefix, $lockId)  → enter critical section
  *   2. check + validateOrder()
- *   3. releaseLock($cartId)  → always in a finally block
+ *   3. releaseLock($prefix)  → always in a finally block
  */
 class CartLockService
 {
     const LOCK_TIMEOUT_SECONDS = 10;
-    const LOCK_KEY_PREFIX = 'alma_order_cart_';
+    const LOCK_ORDER_KEY_PREFIX = 'alma_order_cart_';
+    const LOCK_REFUND_KEY_PREFIX = 'alma_refund_cart_';
 
-    /** @var int|null Cart ID currently locked by this instance, null if no lock held */
-    private $lockedCartId = null;
+    /** @var string|null Cart ID currently locked by this instance, null if no lock held */
+    private $lockedId = null;
 
     /**
-     * Acquires a MySQL advisory lock for the given cart ID.
+     * Acquires a MySQL advisory lock for the given lock ID.
      * If another process already holds the lock, waits up to $timeout seconds.
      * Returns true if the lock was acquired, false on timeout.
      *
-     * @param int $cartId
+     * @param string $prefix
+     * @param string $lockId
      * @param int $timeout seconds to wait before giving up (default: 10)
      *
      * @return bool
      */
-    public function acquireLock($cartId, $timeout = self::LOCK_TIMEOUT_SECONDS)
+    public function acquireLock($prefix, $lockId, $timeout = self::LOCK_TIMEOUT_SECONDS)
     {
-        $lockKey = $this->getLockKey((int) $cartId);
+        $lockKey = $this->getLockKey($prefix, $lockId);
         $acquired = (bool) \Db::getInstance()->getValue(
             "SELECT GET_LOCK('" . $lockKey . "', " . (int) $timeout . ')'
         );
 
         if ($acquired) {
-            $this->lockedCartId = (int) $cartId;
+            $this->lockedId = $lockId;
         }
 
         return $acquired;
     }
 
     /**
-     * Releases the advisory lock previously acquired for the given cart ID.
+     * Releases the advisory lock previously acquired for the given lock ID.
      * Safe to call even if the lock was never acquired (returns false in that case).
      *
      * @return bool true if the lock was released, false if it was not held by this connection
      */
-    public function releaseLock()
+    public function releaseLock($prefix)
     {
-        if ($this->lockedCartId === null) {
+        if ($this->lockedId === null) {
             return false;
         }
 
-        $lockKey = $this->getLockKey((int) $this->lockedCartId);
+        $lockKey = $this->getLockKey($prefix, $this->lockedId);
         $released = (bool) \Db::getInstance()->getValue(
             "SELECT RELEASE_LOCK('" . $lockKey . "')"
         );
 
-        if ($this->lockedCartId !== null && $released === false) {
-            LoggerFactory::instance()->warning('[Alma] releaseLock failed to release lock for cartId ' . $this->lockedCartId);
+        if ($this->lockedId !== null && $released === false) {
+            LoggerFactory::instance()->warning('[Alma] releaseLock failed to release lock for Id ' . $this->lockedId);
         }
 
-        $this->lockedCartId = null;
+        $this->lockedId = null;
 
         return $released;
     }
@@ -105,26 +107,26 @@ class CartLockService
      */
     public function isLockAcquired()
     {
-        return $this->lockedCartId !== null;
+        return $this->lockedId !== null;
     }
 
     /**
-     * Returns the cart ID currently locked by this instance, or null.
+     * Returns the lock ID currently locked by this instance, or null.
      *
-     * @return int|null
+     * @return string|null
      */
-    public function getLockedCartId()
+    public function getLockedId()
     {
-        return $this->lockedCartId;
+        return $this->lockedId;
     }
 
     /**
-     * @param int $cartId
+     * @param string $lockId
      *
      * @return string
      */
-    private function getLockKey($cartId)
+    private function getLockKey($prefix, $lockId)
     {
-        return self::LOCK_KEY_PREFIX . $cartId;
+        return $prefix . $lockId;
     }
 }
