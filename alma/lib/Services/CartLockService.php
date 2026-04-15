@@ -93,9 +93,7 @@ class CartLockService
             LoggerFactory::instance()->warning('[Alma] releaseLock failed to release lock for cartId ' . $this->lockedCartId);
         }
 
-        if ($released) {
-            $this->lockedCartId = null;
-        }
+        $this->lockedCartId = null;
 
         return $released;
     }
