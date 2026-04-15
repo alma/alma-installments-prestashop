@@ -91,7 +91,7 @@ class CartLockServiceTest extends TestCase
         $this->dbMock->method('getValue')->willReturnOnConsecutiveCalls('1', '1');
 
         $this->cartLockService->acquireLock(42);
-        $this->assertTrue($this->cartLockService->releaseLock(42));
+        $this->assertTrue($this->cartLockService->releaseLock());
     }
 
     public function testReleaseLockClearsLockedCartId()
@@ -99,7 +99,7 @@ class CartLockServiceTest extends TestCase
         $this->dbMock->method('getValue')->willReturnOnConsecutiveCalls('1', '1');
 
         $this->cartLockService->acquireLock(42);
-        $this->cartLockService->releaseLock(42);
+        $this->cartLockService->releaseLock();
 
         $this->assertFalse($this->cartLockService->isLockAcquired());
         $this->assertNull($this->cartLockService->getLockedCartId());
@@ -109,7 +109,7 @@ class CartLockServiceTest extends TestCase
     {
         $this->dbMock->method('getValue')->willReturn('0');
 
-        $this->assertFalse($this->cartLockService->releaseLock(42));
+        $this->assertFalse($this->cartLockService->releaseLock());
         $this->assertNull($this->cartLockService->getLockedCartId());
     }
 

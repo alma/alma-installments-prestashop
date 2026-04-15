@@ -241,15 +241,19 @@ class PaymentValidation
             }
 
             if (!$this->cartLockService->acquireLock((int) $cart->id)) {
-                $this->module->currentOrder = $this->getOrderByCartId((int) $cart->id)->id;
+                if ($this->cartProxy->orderExists((int) $cart->id)) {
+                    $this->module->currentOrder = $this->getOrderByCartId((int) $cart->id)->id;
 
-                return $this->context->link->getPageLink('order-confirmation', true)
-                    . '?id_cart=' . (int) $cart->id
-                    . '&id_module=' . (int) $this->module->id
-                    . '&id_order=' . (int) $this->module->currentOrder
-                    . '&key=' . $customer->secure_key
-                    . '&recover_cart=' . $cart->id
-                    . '&token_cart=' . $tokenCart;
+                    return $this->context->link->getPageLink('order-confirmation', true)
+                        . '?id_cart=' . (int) $cart->id
+                        . '&id_module=' . (int) $this->module->id
+                        . '&id_order=' . (int) $this->module->currentOrder
+                        . '&key=' . $customer->secure_key
+                        . '&recover_cart=' . $cart->id
+                        . '&token_cart=' . $tokenCart;
+                }
+
+                throw new PaymentValidationException('[Alma] Unable to acquire lock and order does not exist for cart ' . $cart->id, $cart->id);
             }
 
             try {
@@ -328,7 +332,7 @@ class PaymentValidation
                     $extraRedirectArgs = '';
                 }
             } finally {
-                $this->cartLockService->releaseLock((int) $cart->id);
+                $this->cartLockService->releaseLock();
             }
         } else {
             $this->module->currentOrder = $this->getOrderByCartId((int) $cart->id)->id;

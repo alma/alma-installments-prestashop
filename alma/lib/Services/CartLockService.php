@@ -76,25 +76,21 @@ class CartLockService
      * Releases the advisory lock previously acquired for the given cart ID.
      * Safe to call even if the lock was never acquired (returns false in that case).
      *
-     * @param int $cartId
-     *
      * @return bool true if the lock was released, false if it was not held by this connection
      */
-    public function releaseLock($cartId)
+    public function releaseLock()
     {
-        if ($this->lockedCartId !== null && $this->lockedCartId !== (int) $cartId) {
-            LoggerFactory::instance()->warning('[Alma] releaseLock called with wrong cartId: expected ' . $this->lockedCartId . ', got ' . (int) $cartId);
-
-            $cartId = $this->lockedCartId;
+        if ($this->lockedCartId === null) {
+            return false;
         }
 
-        $lockKey = $this->getLockKey((int) $cartId);
+        $lockKey = $this->getLockKey((int) $this->lockedCartId);
         $released = (bool) \Db::getInstance()->getValue(
             "SELECT RELEASE_LOCK('" . $lockKey . "')"
         );
 
         if ($this->lockedCartId !== null && $released === false) {
-            LoggerFactory::instance()->warning('[Alma] releaseLock failed to release lock for cartId ' . $cartId);
+            LoggerFactory::instance()->warning('[Alma] releaseLock failed to release lock for cartId ' . $this->lockedCartId);
         }
 
         if ($released) {
