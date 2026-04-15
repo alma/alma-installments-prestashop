@@ -41,7 +41,9 @@ function upgrade_module_4_12_0($module)
     // The UNIQUE KEY on (alma_payment_id, status) prevents duplicate order creation
     // at the SQL level, as a complement to the advisory lock (CartLockService).
     $almaPaymentRepository = new \Alma\PrestaShop\Repositories\AlmaPaymentRepository();
-    $almaPaymentRepository->createTable();
+    if (!$almaPaymentRepository->createTable()) {
+        return false;
+    }
 
     if (version_compare(_PS_VERSION_, ConstantsHelper::PRESTASHOP_VERSION_1_7_0_2, '>')) {
         Tools::clearAllCache();

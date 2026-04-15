@@ -298,9 +298,13 @@ class PaymentValidation
                         LoggerFactory::instance()->warning(
                             "[Alma] Duplicate capture blocked by UNIQUE constraint for cart {$cart->id} — skipping validateOrder()"
                         );
-                        $this->module->currentOrder = $this->getOrderByCartId((int) $cart->id)->id;
-                        $tokenCart = md5(_COOKIE_KEY_ . 'recover_cart_' . $cart->id);
-                        $extraRedirectArgs = '&recover_cart=' . $cart->id . '&token_cart=' . $tokenCart;
+                        if ($this->cartProxy->orderExists((int) $cart->id)) {
+                            $this->module->currentOrder = $this->getOrderByCartId((int) $cart->id)->id;
+                            $tokenCart = md5(_COOKIE_KEY_ . 'recover_cart_' . $cart->id);
+                            $extraRedirectArgs = '&recover_cart=' . $cart->id . '&token_cart=' . $tokenCart;
+                        } else {
+                            throw new PaymentValidationException('[Alma] Duplicate capture blocked but order not yet created for cart ' . $cart->id, $cart->id);
+                        }
                     } else {
                         try {
                             // Place order

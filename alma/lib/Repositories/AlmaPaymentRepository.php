@@ -153,7 +153,7 @@ class AlmaPaymentRepository
      */
     private function isDuplicateEntryError(\PrestaShopDatabaseException $e)
     {
-        return strpos($e->getMessage(), (string) self::MYSQL_DUPLICATE_ENTRY_CODE) !== false
+        return strpos($e->getCode(), self::MYSQL_DUPLICATE_ENTRY_CODE) !== false
             || strpos($e->getMessage(), 'Duplicate entry') !== false;
     }
 }
