@@ -25,8 +25,10 @@
 namespace Alma\PrestaShop\Tests\Unit\Repositories;
 
 use Alma\PrestaShop\Exceptions\PaymentValidationException;
+use Alma\PrestaShop\Factories\LoggerFactory;
 use Alma\PrestaShop\Repositories\AlmaPaymentRepository;
 use PHPUnit\Framework\TestCase;
+use Psr\Log\LoggerInterface;
 
 class AlmaPaymentRepositoryTest extends TestCase
 {
@@ -46,6 +48,7 @@ class AlmaPaymentRepositoryTest extends TestCase
     public function tearDown()
     {
         $this->repository = null;
+        LoggerFactory::setInstanceForTesting(null);
     }
 
     public function testCreateTableExecutesCreateStatement()
@@ -89,19 +92,14 @@ class AlmaPaymentRepositoryTest extends TestCase
         $this->assertTrue($this->repository->insertCapture(42, 'pay_test_123'));
     }
 
-    public function testInsertCaptureReturnsFalseOnDuplicateEntry1062()
-    {
-        $duplicateException = new \PrestaShopDatabaseException('Duplicate entry for key uq_payment_status — 1062');
-
-        $this->dbMock->expects($this->once())
-            ->method('insert')
-            ->willThrowException($duplicateException);
-
-        $this->assertFalse($this->repository->insertCapture(42, 'pay_test_123'));
-    }
-
     public function testInsertCaptureReturnsFalseOnDuplicateEntryMessage()
     {
+        $loggerMock = $this->createMock(LoggerInterface::class);
+        $loggerMock->expects($this->once())
+            ->method('warning');
+
+        LoggerFactory::setInstanceForTesting($loggerMock);
+
         $duplicateException = new \PrestaShopDatabaseException('Duplicate entry \'payment_123-CAPTURED\' for key \'uq_payment_status\'');
 
         $this->dbMock->expects($this->once())
@@ -113,6 +111,12 @@ class AlmaPaymentRepositoryTest extends TestCase
 
     public function testInsertCaptureRethrowsUnexpectedDatabaseException()
     {
+        $loggerMock = $this->createMock(LoggerInterface::class);
+        $loggerMock->expects($this->once())
+            ->method('error');
+
+        LoggerFactory::setInstanceForTesting($loggerMock);
+
         $unexpectedException = new \PrestaShopDatabaseException('Table does not exist');
 
         $this->dbMock->expects($this->once())

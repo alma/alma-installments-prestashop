@@ -49,7 +49,6 @@ if (!defined('_PS_VERSION_')) {
 class AlmaPaymentRepository
 {
     const STATUS_CAPTURED = 'CAPTURED';
-    const MYSQL_DUPLICATE_ENTRY_CODE = 1062;
 
     /**
      * Creates the ps_alma_payment table.
@@ -153,7 +152,6 @@ class AlmaPaymentRepository
      */
     private function isDuplicateEntryError(\PrestaShopDatabaseException $e)
     {
-        return strpos($e->getCode(), self::MYSQL_DUPLICATE_ENTRY_CODE) !== false
-            || strpos($e->getMessage(), 'Duplicate entry') !== false;
+        return strpos($e->getMessage(), 'Duplicate entry') !== false;
     }
 }
