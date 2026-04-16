@@ -91,10 +91,10 @@ class AdminAlmaRefundsController extends ModuleAdminController
         $amount = $this->getRefundAmount($refundType, $order);
 
         $refundResult = false;
-        $lockId = $order->id_cart . '_' . $amount;
-        if (!$this->lockService->acquireLock(CartLockService::LOCK_REFUND_KEY_PREFIX, $lockId)) {
+        $lockId = CartLockService::LOCK_REFUND_KEY_PREFIX . $order->id_cart . '_' . (int) round($amount * 100);
+        if (!$this->lockService->acquireLock($lockId)) {
             $msg = sprintf(
-                '[Alma] A refund was already executed for this Cart: %s and Amount: %s',
+                '[Alma] A refund is already in progress for Cart: %s and Amount: %s',
                 $order->id_cart,
                 $amount
             );
@@ -115,7 +115,7 @@ class AdminAlmaRefundsController extends ModuleAdminController
         } catch (PrestaShopException $e) {
             LoggerFactory::instance()->error('[Alma] PrestaShopException: ' . $e->getMessage());
         } finally {
-            $this->lockService->releaseLock(CartLockService::LOCK_REFUND_KEY_PREFIX);
+            $this->lockService->releaseLock();
         }
 
         if (false === $refundResult) {

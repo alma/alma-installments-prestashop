@@ -240,7 +240,8 @@ class PaymentValidation
                 throw new PaymentValidationError($cart, Payment::FRAUD_STATE_ERROR);
             }
 
-            if (!$this->cartLockService->acquireLock(CartLockService::LOCK_ORDER_KEY_PREFIX, $cart->id)) {
+            $lockId = CartLockService::LOCK_ORDER_KEY_PREFIX . $cart->id;
+            if (!$this->cartLockService->acquireLock($lockId)) {
                 if ($this->cartProxy->orderExists((int) $cart->id)) {
                     $this->module->currentOrder = $this->getOrderByCartId((int) $cart->id)->id;
 
@@ -332,7 +333,7 @@ class PaymentValidation
                     $extraRedirectArgs = '';
                 }
             } finally {
-                $this->cartLockService->releaseLock(CartLockService::LOCK_ORDER_KEY_PREFIX);
+                $this->cartLockService->releaseLock();
             }
         } else {
             $this->module->currentOrder = $this->getOrderByCartId((int) $cart->id)->id;

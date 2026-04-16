@@ -54,17 +54,15 @@ class CartLockService
      * If another process already holds the lock, waits up to $timeout seconds.
      * Returns true if the lock was acquired, false on timeout.
      *
-     * @param string $prefix
      * @param string $lockId
      * @param int $timeout seconds to wait before giving up (default: 10)
      *
      * @return bool
      */
-    public function acquireLock($prefix, $lockId, $timeout = self::LOCK_TIMEOUT_SECONDS)
+    public function acquireLock($lockId, $timeout = self::LOCK_TIMEOUT_SECONDS)
     {
-        $lockKey = $this->getLockKey($prefix, $lockId);
         $acquired = (bool) \Db::getInstance()->getValue(
-            "SELECT GET_LOCK('" . $lockKey . "', " . (int) $timeout . ')'
+            "SELECT GET_LOCK('" . $lockId . "', " . (int) $timeout . ')'
         );
 
         if ($acquired) {
@@ -80,53 +78,22 @@ class CartLockService
      *
      * @return bool true if the lock was released, false if it was not held by this connection
      */
-    public function releaseLock($prefix)
+    public function releaseLock()
     {
         if ($this->lockedId === null) {
             return false;
         }
 
-        $lockKey = $this->getLockKey($prefix, $this->lockedId);
         $released = (bool) \Db::getInstance()->getValue(
-            "SELECT RELEASE_LOCK('" . $lockKey . "')"
+            "SELECT RELEASE_LOCK('" . $this->lockedId . "')"
         );
 
-        if ($this->lockedId !== null && $released === false) {
+        if ($released === false) {
             LoggerFactory::instance()->warning('[Alma] releaseLock failed to release lock for Id ' . $this->lockedId);
         }
 
         $this->lockedId = null;
 
         return $released;
-    }
-
-    /**
-     * Returns true if this instance currently holds a lock.
-     *
-     * @return bool
-     */
-    public function isLockAcquired()
-    {
-        return $this->lockedId !== null;
-    }
-
-    /**
-     * Returns the lock ID currently locked by this instance, or null.
-     *
-     * @return string|null
-     */
-    public function getLockedId()
-    {
-        return $this->lockedId;
-    }
-
-    /**
-     * @param string $lockId
-     *
-     * @return string
-     */
-    private function getLockKey($prefix, $lockId)
-    {
-        return $prefix . $lockId;
     }
 }
