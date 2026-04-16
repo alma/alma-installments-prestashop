@@ -91,13 +91,14 @@ class AdminAlmaRefundsController extends ModuleAdminController
         $amount = $this->getRefundAmount($refundType, $order);
 
         $refundResult = false;
-        if (!$this->lockService->acquireRefundLock($order->id_cart, (int) round($amount * 100), 3)) {
+        if (!$this->lockService->acquireRefundLock($order->id_cart, (int) round($amount * 100), 0)) {
             $msg = sprintf(
                 '[Alma] A refund is already in progress for Cart: %s and Amount: %s',
                 $order->id_cart,
                 $amount
             );
             LoggerFactory::instance()->warning($msg);
+            // Exit after render
             $this->ajaxFailAndDie(
                 $this->module->l($msg, 'AdminAlmaRefunds'),
                 423

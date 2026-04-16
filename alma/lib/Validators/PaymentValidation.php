@@ -240,7 +240,7 @@ class PaymentValidation
                 throw new PaymentValidationError($cart, Payment::FRAUD_STATE_ERROR);
             }
 
-            if (!$this->cartLockService->acquireLock($cart->id)) {
+            if (!$this->cartLockService->acquireLock((int) $cart->id)) {
                 if ($this->cartProxy->orderExists((int) $cart->id)) {
                     $this->module->currentOrder = $this->getOrderByCartId((int) $cart->id)->id;
 

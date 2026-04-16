@@ -47,7 +47,9 @@ class CartLockService
     const LOCK_REFUND_KEY_PREFIX = 'alma_refund_cart_';
 
     /** @var string|null Cart ID currently locked by this instance, null if no lock held */
-    private $lockedId = null;
+    private $lockedOrderId = null;
+    /** @var string|null Cart ID and amount currently locked for refund by this instance, null if no lock held */
+    private $lockedRefundId = null;
 
     /**
      * Acquires a MySQL advisory lock for the given lock ID.
@@ -67,7 +69,7 @@ class CartLockService
         );
 
         if ($acquired) {
-            $this->lockedId = $cartId;
+            $this->lockedOrderId = $cartId;
         }
 
         return $acquired;
@@ -93,7 +95,7 @@ class CartLockService
         );
 
         if ($acquired) {
-            $this->lockedId = $cartId . '_' . $amount;
+            $this->lockedRefundId = $cartId . '_' . $amount;
         }
 
         return $acquired;
@@ -107,20 +109,20 @@ class CartLockService
      */
     public function releaseLock()
     {
-        if ($this->lockedId === null) {
+        if ($this->lockedOrderId === null) {
             return false;
         }
 
-        $lockKey = self::LOCK_ORDER_KEY_PREFIX . $this->lockedId;
+        $lockKey = self::LOCK_ORDER_KEY_PREFIX . $this->lockedOrderId;
         $released = (bool) \Db::getInstance()->getValue(
             "SELECT RELEASE_LOCK('" . $lockKey . "')"
         );
 
         if ($released === false) {
-            LoggerFactory::instance()->warning('[Alma] releaseLock failed to release lock for Cart Id ' . $this->lockedId);
+            LoggerFactory::instance()->warning('[Alma] releaseLock failed to release lock for Cart Id ' . $this->lockedOrderId);
         }
 
-        $this->lockedId = null;
+        $this->lockedOrderId = null;
 
         return $released;
     }
@@ -133,20 +135,20 @@ class CartLockService
      */
     public function releaseRefundLock()
     {
-        if ($this->lockedId === null) {
+        if ($this->lockedRefundId === null) {
             return false;
         }
 
-        $lockKey = self::LOCK_REFUND_KEY_PREFIX . $this->lockedId;
+        $lockKey = self::LOCK_REFUND_KEY_PREFIX . $this->lockedRefundId;
         $released = (bool) \Db::getInstance()->getValue(
             "SELECT RELEASE_LOCK('" . $lockKey . "')"
         );
 
         if ($released === false) {
-            LoggerFactory::instance()->warning('[Alma] releaseRefundLock failed to release lock for Cart Id and amount' . $this->lockedId);
+            LoggerFactory::instance()->warning('[Alma] releaseRefundLock failed to release lock for Cart Id and amount: ' . $this->lockedOrderId);
         }
 
-        $this->lockedId = null;
+        $this->lockedRefundId = null;
 
         return $released;
     }
