@@ -22,35 +22,33 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
-namespace Alma\PrestaShop\Builders\Validators;
-
-use Alma\PrestaShop\Repositories\AlmaPaymentRepository;
-use Alma\PrestaShop\Services\CartLockService;
-use Alma\PrestaShop\Traits\BuilderTrait;
-use Alma\PrestaShop\Validators\PaymentValidation;
+use Alma\PrestaShop\Helpers\ConstantsHelper;
 
 if (!defined('_PS_VERSION_')) {
     exit;
 }
 
 /**
- * PaymentValidationBuilder.
+ * @param \Alma $module
+ *
+ * @return bool
  */
-class PaymentValidationBuilder
+function upgrade_module_4_12_0($module)
 {
-    use BuilderTrait;
+    require_once _PS_MODULE_DIR_ . 'alma/upgrade/autoload_upgrade.php';
 
-    /**
-     * @return PaymentValidation
-     */
-    public function getInstance()
-    {
-        return new PaymentValidation(
-            $this->getContextFactory(),
-            $this->getModuleFactory(),
-            $this->getClientPaymentValidator(),
-            new CartLockService(),
-            new AlmaPaymentRepository()
-        );
+    // Create the anti-duplication payment tracking table.
+    // The UNIQUE KEY on (alma_payment_id, status) prevents duplicate order creation
+    // at the SQL level, as a complement to the advisory lock (CartLockService).
+    $almaPaymentRepository = new \Alma\PrestaShop\Repositories\AlmaPaymentRepository();
+    if (!$almaPaymentRepository->createTable()) {
+        return false;
     }
+
+    if (version_compare(_PS_VERSION_, ConstantsHelper::PRESTASHOP_VERSION_1_7_0_2, '>')) {
+        Tools::clearAllCache();
+        Tools::clearXMLCache();
+    }
+
+    return true;
 }

@@ -34,12 +34,21 @@ if (!defined('_PS_VERSION_')) {
 class LoggerFactory
 {
     /**
+     * @var LoggerPsr1|LoggerPsr3|\Psr\Log\LoggerInterface|null
+     */
+    private static $testInstance = null;
+
+    /**
      * Need to return the correct logger depending on the PrestaShop version.
      *
      * @return LoggerPsr1|LoggerPsr3
      */
     public static function instance()
     {
+        if (self::$testInstance !== null) {
+            return self::$testInstance;
+        }
+
         static $instance;
         if (!$instance) {
             if (version_compare(_PS_VERSION_, '9', '>=')) {
@@ -50,5 +59,17 @@ class LoggerFactory
         }
 
         return $instance;
+    }
+
+    /**
+     * For testing purposes only. Allows injecting a mock logger.
+     *
+     * @param \Psr\Log\LoggerInterface|null $logger
+     *
+     * @return void
+     */
+    public static function setInstanceForTesting($logger)
+    {
+        self::$testInstance = $logger;
     }
 }
