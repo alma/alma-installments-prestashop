@@ -54,19 +54,46 @@ class CartLockService
      * If another process already holds the lock, waits up to $timeout seconds.
      * Returns true if the lock was acquired, false on timeout.
      *
-     * @param string $lockId
+     * @param int $cartId
      * @param int $timeout seconds to wait before giving up (default: 10)
      *
      * @return bool
      */
-    public function acquireLock($lockId, $timeout = self::LOCK_TIMEOUT_SECONDS)
+    public function acquireLock($cartId, $timeout = self::LOCK_TIMEOUT_SECONDS)
     {
+        $lockKey = self::LOCK_ORDER_KEY_PREFIX . $cartId;
         $acquired = (bool) \Db::getInstance()->getValue(
-            "SELECT GET_LOCK('" . $lockId . "', " . (int) $timeout . ')'
+            "SELECT GET_LOCK('" . $lockKey . "', " . (int) $timeout . ')'
         );
 
         if ($acquired) {
-            $this->lockedId = $lockId;
+            $this->lockedId = $cartId;
+        }
+
+        return $acquired;
+    }
+
+    /**
+     * Acquires a MySQL advisory lock for the given cart ID and refund amount.
+     * This is used to prevent concurrent refunds for the same cart and amount.
+     * If another process already holds the lock, waits up to $timeout seconds.
+     * Returns true if the lock was acquired, false on timeout.
+     *
+     * @param int $cartId
+     * @param int $amount
+     * @param int $timeout seconds to wait before giving up (default: 10)
+     *
+     * @return bool
+     */
+    public function acquireRefundLock($cartId, $amount, $timeout = self::LOCK_TIMEOUT_SECONDS)
+    {
+        $lockKey = self::LOCK_REFUND_KEY_PREFIX . $cartId . '_' . $amount;
+        $acquired = (bool) \Db::getInstance()->getValue(
+            "SELECT GET_LOCK('" . $lockKey . "', " . (int) $timeout . ')'
+        );
+
+        if ($acquired) {
+            $this->lockedId = $cartId . '_' . $amount;
         }
 
         return $acquired;
@@ -84,12 +111,39 @@ class CartLockService
             return false;
         }
 
+        $lockKey = self::LOCK_ORDER_KEY_PREFIX . $this->lockedId;
         $released = (bool) \Db::getInstance()->getValue(
-            "SELECT RELEASE_LOCK('" . $this->lockedId . "')"
+            "SELECT RELEASE_LOCK('" . $lockKey . "')"
         );
 
         if ($released === false) {
-            LoggerFactory::instance()->warning('[Alma] releaseLock failed to release lock for Id ' . $this->lockedId);
+            LoggerFactory::instance()->warning('[Alma] releaseLock failed to release lock for Cart Id ' . $this->lockedId);
+        }
+
+        $this->lockedId = null;
+
+        return $released;
+    }
+
+    /**
+     * Releases the advisory lock previously acquired for the refund lock ID.
+     * Safe to call even if the lock was never acquired (returns false in that case).
+     *
+     * @return bool true if the lock was released, false if it was not held by this connection
+     */
+    public function releaseRefundLock()
+    {
+        if ($this->lockedId === null) {
+            return false;
+        }
+
+        $lockKey = self::LOCK_REFUND_KEY_PREFIX . $this->lockedId;
+        $released = (bool) \Db::getInstance()->getValue(
+            "SELECT RELEASE_LOCK('" . $lockKey . "')"
+        );
+
+        if ($released === false) {
+            LoggerFactory::instance()->warning('[Alma] releaseRefundLock failed to release lock for Cart Id and amount' . $this->lockedId);
         }
 
         $this->lockedId = null;

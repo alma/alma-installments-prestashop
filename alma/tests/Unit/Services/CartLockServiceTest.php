@@ -51,21 +51,24 @@ class CartLockServiceTest extends TestCase
     {
         $this->dbMock->expects($this->once())
             ->method('getValue')
-            ->with($this->stringContains("GET_LOCK('prefix_42', 10)"))
+            ->with($this->stringContains("GET_LOCK('alma_order_cart_42', 10)"))
             ->willReturn('1');
 
-        $this->assertTrue($this->cartLockService->acquireLock('prefix_42'));
+        $this->assertTrue($this->cartLockService->acquireLock(42));
     }
 
     public function testAcquireLockExecutedTwiceWithoutReleaseSecondReturnFalse()
     {
         $this->dbMock->expects($this->exactly(2))
             ->method('getValue')
-            ->withConsecutive([$this->stringContains("GET_LOCK('prefix_42', 10)")], [$this->stringContains("GET_LOCK('prefix_42', 10)")])
+            ->withConsecutive(
+                [$this->stringContains("GET_LOCK('alma_order_cart_42', 10)")],
+                [$this->stringContains("GET_LOCK('alma_order_cart_42', 10)")]
+            )
             ->willReturnOnConsecutiveCalls('1', '0');
 
-        $this->assertTrue($this->cartLockService->acquireLock('prefix_42'));
-        $this->assertFalse($this->cartLockService->acquireLock('prefix_42'));
+        $this->assertTrue($this->cartLockService->acquireLock(42));
+        $this->assertFalse($this->cartLockService->acquireLock(42));
     }
 
     public function testAcquireLockExecutedTwiceWithReleaseSecondReturnTrue()
@@ -73,15 +76,31 @@ class CartLockServiceTest extends TestCase
         $this->dbMock->expects($this->exactly(3))
             ->method('getValue')
             ->withConsecutive(
-                [$this->stringContains("GET_LOCK('prefix_42', 10)")],
-                [$this->stringContains("GET_LOCK('prefix_42', 10)")],
-                [$this->stringContains("SELECT RELEASE_LOCK('prefix_42')")]
+                [$this->stringContains("GET_LOCK('alma_order_cart_42', 10)")],
+                [$this->stringContains("GET_LOCK('alma_order_cart_42', 10)")],
+                [$this->stringContains("RELEASE_LOCK('alma_order_cart_42')")]
             )
             ->willReturnOnConsecutiveCalls('1', '1', '1');
 
-        $this->assertTrue($this->cartLockService->acquireLock('prefix_42'));
-        $this->assertTrue($this->cartLockService->acquireLock('prefix_42'));
+        $this->assertTrue($this->cartLockService->acquireLock(42));
+        $this->assertTrue($this->cartLockService->acquireLock(42));
         $this->assertTrue($this->cartLockService->releaseLock());
+    }
+
+    public function testAcquireRefundLockExecutedTwiceWithReleaseRefundSecondReturnTrue()
+    {
+        $this->dbMock->expects($this->exactly(3))
+            ->method('getValue')
+            ->withConsecutive(
+                [$this->stringContains("GET_LOCK('alma_refund_cart_42_42000', 3)")],
+                [$this->stringContains("GET_LOCK('alma_refund_cart_42_42000', 3)")],
+                [$this->stringContains("RELEASE_LOCK('alma_refund_cart_42_42000')")]
+            )
+            ->willReturnOnConsecutiveCalls('1', '1', '1');
+
+        $this->assertTrue($this->cartLockService->acquireRefundLock(42, 42000, 3));
+        $this->assertTrue($this->cartLockService->acquireRefundLock(42, 42000, 3));
+        $this->assertTrue($this->cartLockService->releaseRefundLock());
     }
 
     public function testAcquireLockReturnsFalseOnTimeout()
@@ -90,7 +109,7 @@ class CartLockServiceTest extends TestCase
             ->method('getValue')
             ->willReturn('0');
 
-        $this->assertFalse($this->cartLockService->acquireLock('prefix_42'));
+        $this->assertFalse($this->cartLockService->acquireLock(42));
     }
 
     public function testReleaseLockReturnsTrueWhenSuccessful()
@@ -99,7 +118,7 @@ class CartLockServiceTest extends TestCase
             ->method('getValue')
             ->willReturnOnConsecutiveCalls('1', '1');
 
-        $this->cartLockService->acquireLock('prefix_42');
+        $this->cartLockService->acquireLock(42);
         $this->assertTrue($this->cartLockService->releaseLock());
     }
 
@@ -115,9 +134,9 @@ class CartLockServiceTest extends TestCase
     {
         $this->dbMock->expects($this->once())
             ->method('getValue')
-            ->with($this->stringContains("GET_LOCK('prefix_5', 30)"))
+            ->with($this->stringContains("GET_LOCK('alma_order_cart_5', 30)"))
             ->willReturn('1');
 
-        $this->cartLockService->acquireLock('prefix_5', 30);
+        $this->cartLockService->acquireLock(5, 30);
     }
 }
