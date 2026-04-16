@@ -80,7 +80,7 @@ class AlmaCmsDataExportModuleFrontController extends ModuleFrontController
     {
         parent::postProcess();
         try {
-            $signature = $this->httpHelper->getHeader('X-Alma-Signature');
+            $signature = $this->httpHelper->getHeader(ValidateHelper::HEADER_SIGNATURE);
             $this->validateHelper->checkSignature($this->settingsHelper->getIdMerchant(), SettingsHelper::getActiveAPIKey(), $signature);
         } catch (ValidateException $e) {
             $this->ajaxRenderAndExit($e->getMessage(), 403);

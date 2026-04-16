@@ -27,6 +27,7 @@ use Alma\PrestaShop\Exceptions\PaymentValidationException;
 use Alma\PrestaShop\Factories\LoggerFactory;
 use Alma\PrestaShop\Helpers\HttpHelper;
 use Alma\PrestaShop\Helpers\SettingsHelper;
+use Alma\PrestaShop\Helpers\ValidateHelper;
 use Alma\PrestaShop\Traits\AjaxTrait;
 use Alma\PrestaShop\Validators\PaymentValidation;
 use Alma\PrestaShop\Validators\PaymentValidationError;
@@ -89,7 +90,7 @@ class AlmaIpnModuleFrontController extends ModuleFrontController
         header('Content-Type: application/json');
 
         $paymentId = Tools::getValue('pid');
-        $signature = $this->httpHelper->getHeader('X-Alma-Signature');
+        $signature = $this->httpHelper->getHeader(ValidateHelper::HEADER_SIGNATURE);
         if ($signature === null) {
             $msg = 'Header key X-Alma-Signature doesn\'t exist';
             LoggerFactory::instance()->error('[Alma] IPN Payment Validation Error - Message : ' . $msg);
