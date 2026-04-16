@@ -182,7 +182,7 @@ class AlmaApiKeyModel
      */
     public function getActiveApiKey()
     {
-        if (ALMA_MODE_LIVE == $this->configurationProxy->get(ApiAdminFormBuilder::ALMA_API_MODE)) {
+        if (SettingsHelper::ALMA_MODE_LIVE == $this->configurationProxy->get(ApiAdminFormBuilder::ALMA_API_MODE)) {
             return SettingsHelper::getLiveKey();
         }
 

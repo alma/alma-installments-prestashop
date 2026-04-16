@@ -28,14 +28,6 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-if (!defined('ALMA_MODE_TEST')) {
-    define('ALMA_MODE_TEST', 'test');
-}
-
-if (!defined('ALMA_MODE_LIVE')) {
-    define('ALMA_MODE_LIVE', 'live');
-}
-
 use Alma\API\Endpoints\Results\Eligibility;
 use Alma\API\Entities\Payment;
 use Alma\PrestaShop\Exceptions\AlmaException;
@@ -54,6 +46,9 @@ use Alma\PrestaShop\Forms\ShareOfCheckoutAdminFormBuilder;
  */
 class SettingsHelper
 {
+    public const ALMA_MODE_TEST = 'test';
+    public const ALMA_MODE_LIVE = 'live';
+
     const ALMA_FULLY_CONFIGURED = 'ALMA_FULLY_CONFIGURED';
     const ALMA_EXCLUDED_CATEGORIES = 'ALMA_EXCLUDED_CATEGORIES';
     /**
@@ -347,9 +342,9 @@ class SettingsHelper
      */
     public static function shouldHideShareOfCheckoutForm()
     {
-        return (SettingsHelper::isShareOfCheckoutNoAnswered() && ALMA_MODE_LIVE === SettingsHelper::getActiveMode())
-                || (!SettingsHelper::isShareOfCheckoutSetting() && ALMA_MODE_LIVE === SettingsHelper::getActiveMode())
-                || ALMA_MODE_LIVE !== SettingsHelper::getActiveMode();
+        return (SettingsHelper::isShareOfCheckoutNoAnswered() && SettingsHelper::ALMA_MODE_LIVE === SettingsHelper::getActiveMode())
+                || (!SettingsHelper::isShareOfCheckoutSetting() && SettingsHelper::ALMA_MODE_LIVE === SettingsHelper::getActiveMode())
+                || SettingsHelper::ALMA_MODE_LIVE !== SettingsHelper::getActiveMode();
     }
 
     /**
@@ -393,7 +388,7 @@ class SettingsHelper
      */
     public static function getActiveMode()
     {
-        return static::get('ALMA_API_MODE', ALMA_MODE_TEST);
+        return static::get('ALMA_API_MODE', SettingsHelper::ALMA_MODE_TEST);
     }
 
     /**
@@ -403,7 +398,7 @@ class SettingsHelper
      */
     public function getModeActive()
     {
-        return $this->getKey('ALMA_API_MODE', ALMA_MODE_TEST);
+        return $this->getKey('ALMA_API_MODE', SettingsHelper::ALMA_MODE_TEST);
     }
 
     /**
@@ -413,7 +408,7 @@ class SettingsHelper
      */
     public static function getActiveAPIKey()
     {
-        if (ALMA_MODE_LIVE == static::getActiveMode()) {
+        if (SettingsHelper::ALMA_MODE_LIVE == static::getActiveMode()) {
             return static::getLiveKey();
         }
 

@@ -40,7 +40,7 @@ class DisplayAdminAfterHeaderHookController extends FrontendHookController
      */
     public function canRun()
     {
-        $isLive = SettingsHelper::getActiveMode() === ALMA_MODE_LIVE;
+        $isLive = SettingsHelper::getActiveMode() === SettingsHelper::ALMA_MODE_LIVE;
 
         return parent::canRun()
             && (\Tools::strtolower($this->currentControllerName()) == 'admindashboard'

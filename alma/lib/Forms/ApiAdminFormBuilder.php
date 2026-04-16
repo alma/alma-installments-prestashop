@@ -24,6 +24,7 @@
 
 namespace Alma\PrestaShop\Forms;
 
+use Alma\PrestaShop\Helpers\SettingsHelper;
 use Alma\PrestaShop\Model\AlmaApiKeyModel;
 
 if (!defined('_PS_VERSION_')) {
@@ -64,8 +65,8 @@ class ApiAdminFormBuilder extends AbstractAlmaAdminFormBuilder
                 $this->module->l('API Mode', 'ApiAdminFormBuilder'),
                 $this->module->l('Use Test mode until you are ready to take real orders with Alma. In Test mode, only admins can see Alma on cart/checkout pages.', 'ApiAdminFormBuilder'),
                 [
-                    ['api_mode' => ALMA_MODE_LIVE, 'name' => 'Live'],
-                    ['api_mode' => ALMA_MODE_TEST, 'name' => 'Test'],
+                    ['api_mode' => SettingsHelper::ALMA_MODE_LIVE, 'name' => 'Live'],
+                    ['api_mode' => SettingsHelper::ALMA_MODE_TEST, 'name' => 'Test'],
                 ],
                 'api_mode'
             ),
