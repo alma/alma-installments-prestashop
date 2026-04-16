@@ -63,7 +63,7 @@ class CartLockService
      */
     public function acquireLock($cartId, $timeout = self::LOCK_TIMEOUT_SECONDS)
     {
-        $lockKey = self::LOCK_ORDER_KEY_PREFIX . $cartId;
+        $lockKey = self::LOCK_ORDER_KEY_PREFIX . (int) $cartId;
         $acquired = (bool) \Db::getInstance()->getValue(
             "SELECT GET_LOCK('" . $lockKey . "', " . (int) $timeout . ')'
         );
@@ -145,7 +145,7 @@ class CartLockService
         );
 
         if ($released === false) {
-            LoggerFactory::instance()->warning('[Alma] releaseRefundLock failed to release lock for Cart Id and amount: ' . $this->lockedOrderId);
+            LoggerFactory::instance()->warning('[Alma] releaseRefundLock failed to release lock for Cart Id and amount: ' . $this->lockedRefundId);
         }
 
         $this->lockedRefundId = null;
