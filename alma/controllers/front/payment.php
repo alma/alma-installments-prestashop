@@ -164,7 +164,9 @@ class AlmaPaymentModuleFrontController extends ModuleFrontController
             }
 
             $payment = $alma->payments->create($data);
-            if (!$this->almaPaymentRepository->trackInitialPayment((int) $cart->id, $payment->id, $payment->state)) {
+            try {
+                $this->almaPaymentRepository->trackInitialPayment((int) $cart->id, $payment->id, $payment->state);
+            } catch (\Exception $e) {
                 LoggerFactory::instance()->warning(sprintf(
                     '[Alma] Failed to track initial payment for Cart %s, Payment %s and status %s',
                     $cart->id,

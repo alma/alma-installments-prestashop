@@ -87,13 +87,10 @@ class AlmaPaymentRepository
      */
     public function trackInitialPayment($cartId, $almaPaymentId, $status)
     {
-        $sql = 'INSERT INTO `' . _DB_PREFIX_ . 'alma_payment`
+        $sql = 'INSERT IGNORE INTO `' . _DB_PREFIX_ . 'alma_payment`
                     (`id_cart`, `alma_payment_id`, `status`)
                 VALUES
-                    (' . (int) $cartId . ', \'' . pSQL($almaPaymentId) . '\', \'' . pSQL($status) . '\')
-                ON DUPLICATE KEY UPDATE
-                    `status` = VALUES(`status`),
-                    `created_at` = `created_at`';
+                    (' . (int) $cartId . ', \'' . pSQL($almaPaymentId) . '\', \'' . pSQL($status) . '\')';
 
         return \Db::getInstance()->execute($sql);
     }
