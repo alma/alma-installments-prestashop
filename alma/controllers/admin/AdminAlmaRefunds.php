@@ -92,7 +92,7 @@ class AdminAlmaRefundsController extends ModuleAdminController
 
         $refundResult = false;
         $lockId = CartLockService::LOCK_REFUND_KEY_PREFIX . $order->id_cart . '_' . (int) round($amount * 100);
-        if (!$this->lockService->acquireLock($lockId)) {
+        if (!$this->lockService->acquireLock($lockId, 3)) {
             $msg = sprintf(
                 '[Alma] A refund is already in progress for Cart: %s and Amount: %s',
                 $order->id_cart,

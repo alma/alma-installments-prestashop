@@ -36,9 +36,9 @@ if (!defined('_PS_VERSION_')) {
  * infrastructure required, and the lock is automatically released if the DB connection drops.
  *
  * Usage pattern:
- *   1. acquireLock($prefix, $lockId)  → enter critical section
+ *   1. acquireLock($lockId)  → enter critical section
  *   2. check + validateOrder()
- *   3. releaseLock($prefix)  → always in a finally block
+ *   3. releaseLock()  → always in a finally block
  */
 class CartLockService
 {
