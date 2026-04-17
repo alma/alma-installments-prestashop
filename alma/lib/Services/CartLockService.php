@@ -63,7 +63,7 @@ class CartLockService
      */
     public function acquireLock($cartId, $timeout = self::LOCK_TIMEOUT_SECONDS)
     {
-        $lockKey = self::LOCK_ORDER_KEY_PREFIX . (int) $cartId;
+        $lockKey = $this->getOrderKey($cartId);
         $acquired = (bool) \Db::getInstance()->getValue(
             "SELECT GET_LOCK('" . $lockKey . "', " . (int) $timeout . ')'
         );
@@ -89,7 +89,7 @@ class CartLockService
      */
     public function acquireRefundLock($cartId, $amount, $timeout = self::LOCK_TIMEOUT_SECONDS)
     {
-        $lockKey = self::LOCK_REFUND_KEY_PREFIX . $cartId . '_' . $amount;
+        $lockKey = $this->getRefundKey($cartId . '_' . $amount);
         $acquired = (bool) \Db::getInstance()->getValue(
             "SELECT GET_LOCK('" . $lockKey . "', " . (int) $timeout . ')'
         );
@@ -113,7 +113,7 @@ class CartLockService
             return false;
         }
 
-        $lockKey = self::LOCK_ORDER_KEY_PREFIX . $this->lockedOrderId;
+        $lockKey = $this->getOrderKey($this->lockedOrderId);
         $released = (bool) \Db::getInstance()->getValue(
             "SELECT RELEASE_LOCK('" . $lockKey . "')"
         );
@@ -139,7 +139,7 @@ class CartLockService
             return false;
         }
 
-        $lockKey = self::LOCK_REFUND_KEY_PREFIX . $this->lockedRefundId;
+        $lockKey = $this->getRefundKey($this->lockedRefundId);
         $released = (bool) \Db::getInstance()->getValue(
             "SELECT RELEASE_LOCK('" . $lockKey . "')"
         );
@@ -151,5 +151,31 @@ class CartLockService
         $this->lockedRefundId = null;
 
         return $released;
+    }
+
+    /**
+     * Returns the lock key that would be used for a given cart ID.
+     * Useful for logging and debugging purposes.
+     *
+     * @param int $cartId
+     *
+     * @return string
+     */
+    public function getOrderKey($cartId)
+    {
+        return self::LOCK_ORDER_KEY_PREFIX . (int) $cartId;
+    }
+
+    /**
+     * Returns the lock key that would be used for a given cart ID and refund amount.
+     * Useful for logging and debugging purposes.
+     *
+     * @param string $lockKey
+     *
+     * @return string
+     */
+    public function getRefundKey($lockKey)
+    {
+        return self::LOCK_REFUND_KEY_PREFIX . $lockKey;
     }
 }

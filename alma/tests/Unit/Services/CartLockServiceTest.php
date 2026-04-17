@@ -139,4 +139,14 @@ class CartLockServiceTest extends TestCase
 
         $this->cartLockService->acquireLock(5, 30);
     }
+
+    public function testGetOrderKeyReturnsCorrectKey()
+    {
+        $this->assertEquals('alma_order_cart_42', $this->cartLockService->getOrderKey(42));
+    }
+
+    public function testGetRefundKeyReturnsCorrectKey()
+    {
+        $this->assertEquals('alma_refund_cart_42_42000', $this->cartLockService->getRefundKey('42_42000'));
+    }
 }
