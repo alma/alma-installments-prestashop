@@ -170,12 +170,12 @@ class CartLockService
      * Returns the lock key that would be used for a given cart ID and refund amount.
      * Useful for logging and debugging purposes.
      *
-     * @param string $lockKey
+     * @param string $cartIdAndAmount
      *
      * @return string
      */
-    public function getRefundKey($lockKey)
+    public function getRefundKey($cartIdAndAmount)
     {
-        return self::LOCK_REFUND_KEY_PREFIX . $lockKey;
+        return self::LOCK_REFUND_KEY_PREFIX . $cartIdAndAmount;
     }
 }
