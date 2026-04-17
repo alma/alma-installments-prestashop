@@ -57,6 +57,52 @@ class CartLockServiceTest extends TestCase
         $this->assertTrue($this->cartLockService->acquireLock(42));
     }
 
+    public function testAcquireLockExecutedTwiceWithoutReleaseSecondReturnFalse()
+    {
+        $this->dbMock->expects($this->exactly(2))
+            ->method('getValue')
+            ->withConsecutive(
+                [$this->stringContains("GET_LOCK('alma_order_cart_42', 10)")],
+                [$this->stringContains("GET_LOCK('alma_order_cart_42', 10)")]
+            )
+            ->willReturnOnConsecutiveCalls('1', '0');
+
+        $this->assertTrue($this->cartLockService->acquireLock(42));
+        $this->assertFalse($this->cartLockService->acquireLock(42));
+    }
+
+    public function testAcquireLockExecutedTwiceWithReleaseSecondReturnTrue()
+    {
+        $this->dbMock->expects($this->exactly(3))
+            ->method('getValue')
+            ->withConsecutive(
+                [$this->stringContains("GET_LOCK('alma_order_cart_42', 10)")],
+                [$this->stringContains("GET_LOCK('alma_order_cart_42', 10)")],
+                [$this->stringContains("RELEASE_LOCK('alma_order_cart_42')")]
+            )
+            ->willReturnOnConsecutiveCalls('1', '1', '1');
+
+        $this->assertTrue($this->cartLockService->acquireLock(42));
+        $this->assertTrue($this->cartLockService->acquireLock(42));
+        $this->assertTrue($this->cartLockService->releaseLock());
+    }
+
+    public function testAcquireRefundLockExecutedTwiceWithReleaseRefundSecondReturnTrue()
+    {
+        $this->dbMock->expects($this->exactly(3))
+            ->method('getValue')
+            ->withConsecutive(
+                [$this->stringContains("GET_LOCK('alma_refund_cart_42_42000', 3)")],
+                [$this->stringContains("GET_LOCK('alma_refund_cart_42_42000', 3)")],
+                [$this->stringContains("RELEASE_LOCK('alma_refund_cart_42_42000')")]
+            )
+            ->willReturnOnConsecutiveCalls('1', '1', '1');
+
+        $this->assertTrue($this->cartLockService->acquireRefundLock(42, 42000, 3));
+        $this->assertTrue($this->cartLockService->acquireRefundLock(42, 42000, 3));
+        $this->assertTrue($this->cartLockService->releaseRefundLock());
+    }
+
     public function testAcquireLockReturnsFalseOnTimeout()
     {
         $this->dbMock->expects($this->once())
@@ -66,67 +112,22 @@ class CartLockServiceTest extends TestCase
         $this->assertFalse($this->cartLockService->acquireLock(42));
     }
 
-    public function testAcquireLockStoresCartId()
-    {
-        $this->dbMock->method('getValue')->willReturn('1');
-
-        $this->cartLockService->acquireLock(42);
-
-        $this->assertTrue($this->cartLockService->isLockAcquired());
-        $this->assertSame(42, $this->cartLockService->getLockedCartId());
-    }
-
-    public function testAcquireLockDoesNotSetCartIdOnFailure()
-    {
-        $this->dbMock->method('getValue')->willReturn('0');
-
-        $this->cartLockService->acquireLock(42);
-
-        $this->assertFalse($this->cartLockService->isLockAcquired());
-        $this->assertNull($this->cartLockService->getLockedCartId());
-    }
-
     public function testReleaseLockReturnsTrueWhenSuccessful()
     {
-        $this->dbMock->method('getValue')->willReturnOnConsecutiveCalls('1', '1');
+        $this->dbMock->expects($this->exactly(2))
+            ->method('getValue')
+            ->willReturnOnConsecutiveCalls('1', '1');
 
         $this->cartLockService->acquireLock(42);
         $this->assertTrue($this->cartLockService->releaseLock());
     }
 
-    public function testReleaseLockClearsLockedCartId()
-    {
-        $this->dbMock->method('getValue')->willReturnOnConsecutiveCalls('1', '1');
-
-        $this->cartLockService->acquireLock(42);
-        $this->cartLockService->releaseLock();
-
-        $this->assertFalse($this->cartLockService->isLockAcquired());
-        $this->assertNull($this->cartLockService->getLockedCartId());
-    }
-
     public function testReleaseLockReturnsFalseWhenLockNotHeld()
     {
-        $this->dbMock->method('getValue')->willReturn('0');
+        $this->dbMock->expects($this->never())
+            ->method('getValue');
 
         $this->assertFalse($this->cartLockService->releaseLock());
-        $this->assertNull($this->cartLockService->getLockedCartId());
-    }
-
-    public function testIsLockAcquiredIsFalseByDefault()
-    {
-        $this->assertFalse($this->cartLockService->isLockAcquired());
-        $this->assertNull($this->cartLockService->getLockedCartId());
-    }
-
-    public function testLockKeyContainsCartId()
-    {
-        $this->dbMock->expects($this->once())
-            ->method('getValue')
-            ->with($this->stringContains('alma_order_cart_99'))
-            ->willReturn('1');
-
-        $this->cartLockService->acquireLock(99);
     }
 
     public function testAcquireLockUsesCustomTimeout()
@@ -137,5 +138,15 @@ class CartLockServiceTest extends TestCase
             ->willReturn('1');
 
         $this->cartLockService->acquireLock(5, 30);
+    }
+
+    public function testGetOrderKeyReturnsCorrectKey()
+    {
+        $this->assertEquals('alma_order_cart_42', $this->cartLockService->getOrderKey(42));
+    }
+
+    public function testGetRefundKeyReturnsCorrectKey()
+    {
+        $this->assertEquals('alma_refund_cart_42_42000', $this->cartLockService->getRefundKey('42_42000'));
     }
 }

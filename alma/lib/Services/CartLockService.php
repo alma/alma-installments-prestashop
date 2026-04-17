@@ -36,20 +36,23 @@ if (!defined('_PS_VERSION_')) {
  * infrastructure required, and the lock is automatically released if the DB connection drops.
  *
  * Usage pattern:
- *   1. acquireLock($cartId)  → enter critical section
+ *   1. acquireLock($lockId)  → enter critical section
  *   2. check + validateOrder()
- *   3. releaseLock($cartId)  → always in a finally block
+ *   3. releaseLock()  → always in a finally block
  */
 class CartLockService
 {
     const LOCK_TIMEOUT_SECONDS = 10;
-    const LOCK_KEY_PREFIX = 'alma_order_cart_';
+    const LOCK_ORDER_KEY_PREFIX = 'alma_order_cart_';
+    const LOCK_REFUND_KEY_PREFIX = 'alma_refund_cart_';
 
-    /** @var int|null Cart ID currently locked by this instance, null if no lock held */
-    private $lockedCartId = null;
+    /** @var string|null Cart ID currently locked by this instance, null if no lock held */
+    private $lockedOrderId = null;
+    /** @var string|null Cart ID and amount currently locked for refund by this instance, null if no lock held */
+    private $lockedRefundId = null;
 
     /**
-     * Acquires a MySQL advisory lock for the given cart ID.
+     * Acquires a MySQL advisory lock for the given lock ID.
      * If another process already holds the lock, waits up to $timeout seconds.
      * Returns true if the lock was acquired, false on timeout.
      *
@@ -60,71 +63,119 @@ class CartLockService
      */
     public function acquireLock($cartId, $timeout = self::LOCK_TIMEOUT_SECONDS)
     {
-        $lockKey = $this->getLockKey((int) $cartId);
+        $lockKey = $this->getOrderKey($cartId);
         $acquired = (bool) \Db::getInstance()->getValue(
             "SELECT GET_LOCK('" . $lockKey . "', " . (int) $timeout . ')'
         );
 
         if ($acquired) {
-            $this->lockedCartId = (int) $cartId;
+            $this->lockedOrderId = $cartId;
         }
 
         return $acquired;
     }
 
     /**
-     * Releases the advisory lock previously acquired for the given cart ID.
+     * Acquires a MySQL advisory lock for the given cart ID and refund amount.
+     * This is used to prevent concurrent refunds for the same cart and amount.
+     * If another process already holds the lock, waits up to $timeout seconds.
+     * Returns true if the lock was acquired, false on timeout.
+     *
+     * @param int $cartId
+     * @param int $amount
+     * @param int $timeout seconds to wait before giving up (default: 10)
+     *
+     * @return bool
+     */
+    public function acquireRefundLock($cartId, $amount, $timeout = self::LOCK_TIMEOUT_SECONDS)
+    {
+        $lockKey = $this->getRefundKey($cartId . '_' . $amount);
+        $acquired = (bool) \Db::getInstance()->getValue(
+            "SELECT GET_LOCK('" . $lockKey . "', " . (int) $timeout . ')'
+        );
+
+        if ($acquired) {
+            $this->lockedRefundId = $cartId . '_' . $amount;
+        }
+
+        return $acquired;
+    }
+
+    /**
+     * Releases the advisory lock previously acquired for the given lock ID.
      * Safe to call even if the lock was never acquired (returns false in that case).
      *
      * @return bool true if the lock was released, false if it was not held by this connection
      */
     public function releaseLock()
     {
-        if ($this->lockedCartId === null) {
+        if ($this->lockedOrderId === null) {
             return false;
         }
 
-        $lockKey = $this->getLockKey((int) $this->lockedCartId);
+        $lockKey = $this->getOrderKey($this->lockedOrderId);
         $released = (bool) \Db::getInstance()->getValue(
             "SELECT RELEASE_LOCK('" . $lockKey . "')"
         );
 
-        if ($this->lockedCartId !== null && $released === false) {
-            LoggerFactory::instance()->warning('[Alma] releaseLock failed to release lock for cartId ' . $this->lockedCartId);
+        if ($released === false) {
+            LoggerFactory::instance()->warning('[Alma] releaseLock failed to release lock for Cart Id ' . $this->lockedOrderId);
         }
 
-        $this->lockedCartId = null;
+        $this->lockedOrderId = null;
 
         return $released;
     }
 
     /**
-     * Returns true if this instance currently holds a lock.
+     * Releases the advisory lock previously acquired for the refund lock ID.
+     * Safe to call even if the lock was never acquired (returns false in that case).
      *
-     * @return bool
+     * @return bool true if the lock was released, false if it was not held by this connection
      */
-    public function isLockAcquired()
+    public function releaseRefundLock()
     {
-        return $this->lockedCartId !== null;
+        if ($this->lockedRefundId === null) {
+            return false;
+        }
+
+        $lockKey = $this->getRefundKey($this->lockedRefundId);
+        $released = (bool) \Db::getInstance()->getValue(
+            "SELECT RELEASE_LOCK('" . $lockKey . "')"
+        );
+
+        if ($released === false) {
+            LoggerFactory::instance()->warning('[Alma] releaseRefundLock failed to release lock for Cart Id and amount: ' . $this->lockedRefundId);
+        }
+
+        $this->lockedRefundId = null;
+
+        return $released;
     }
 
     /**
-     * Returns the cart ID currently locked by this instance, or null.
+     * Returns the lock key that would be used for a given cart ID.
+     * Useful for logging and debugging purposes.
      *
-     * @return int|null
-     */
-    public function getLockedCartId()
-    {
-        return $this->lockedCartId;
-    }
-
-    /**
      * @param int $cartId
      *
      * @return string
      */
-    private function getLockKey($cartId)
+    public function getOrderKey($cartId)
     {
-        return self::LOCK_KEY_PREFIX . $cartId;
+        return self::LOCK_ORDER_KEY_PREFIX . (int) $cartId;
+    }
+
+    /**
+     * Returns the lock key that would be used for a given cart ID and refund amount.
+     * Useful for logging and debugging purposes.
+     *
+     * @param string $cartIdAndAmount
+     *
+     * @return string
+     */
+    public function getRefundKey($cartIdAndAmount)
+    {
+        return self::LOCK_REFUND_KEY_PREFIX . $cartIdAndAmount;
     }
 }
