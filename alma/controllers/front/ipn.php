@@ -107,6 +107,9 @@ class AlmaIpnModuleFrontController extends ModuleFrontController
         } catch (PaymentValidationError $e) {
             LoggerFactory::instance()->error('ipn payment_validation_error - Message : ' . $e->getMessage());
             $this->ajaxRenderAndExit(json_encode(['error' => $e->getMessage()]), 500);
+        } catch (\Exception $e) {
+            LoggerFactory::instance()->error('[Alma] IPN unexpected error - ' . get_class($e) . ': ' . $e->getMessage() . ' in ' . $e->getFile() . ':' . $e->getLine());
+            $this->ajaxRenderAndExit(json_encode(['error' => 'Unexpected error: ' . $e->getMessage()]), 500);
         }
     }
 }
