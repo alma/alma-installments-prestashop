@@ -86,7 +86,7 @@ class WidgetFrontendService
                 break;
             case self::WIDGET_HOOK_PRODUCT_PRICE_BLOCK:
             case self::WIDGET_PRODUCT:
-            /** @var \ProductControllerCore $controller */
+                /** @var \ProductControllerCore $controller */
                 $controller = $this->context->controller;
 
                 if (!method_exists($controller, 'getProduct')) {

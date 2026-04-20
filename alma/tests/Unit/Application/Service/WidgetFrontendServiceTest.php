@@ -412,7 +412,7 @@ class WidgetFrontendServiceTest extends TestCase
         $this->configurationRepository->expects($this->once())
             ->method('getCartWidgetOldPositionCustom')
             ->willReturn(false);
-        $this->configurationRepository->expects($this->never())
+        $this->configurationRepository->expects($this->once())
             ->method('getCartWidgetOldPositionSelector');
         $this->context->smarty = $this->createMock(\Smarty::class);
         $tpl = $this->createMock(\Smarty_Internal_Template::class);
