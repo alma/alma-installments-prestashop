@@ -2,13 +2,13 @@
 
 namespace PrestaShop\Module\Alma\Application\Service;
 
+use Alma;
 use PrestaShop\Module\Alma\Infrastructure\Form\ApiAdminForm;
 use PrestaShop\Module\Alma\Infrastructure\Form\ExcludedCategoriesAdminForm;
 use PrestaShop\Module\Alma\Infrastructure\Proxy\ProductProxy;
 use PrestaShop\Module\Alma\Infrastructure\Repository\ConfigurationRepository;
 use PrestaShop\Module\Alma\Infrastructure\Repository\ExcludedCategoriesRepository;
 use PrestaShop\Module\Alma\Infrastructure\Repository\LanguageRepository;
-use PrestaShopBundle\Translation\TranslatorInterface;
 
 class ExcludedCategoriesService
 {
@@ -22,10 +22,6 @@ class ExcludedCategoriesService
      */
     private LanguageRepository $languageRepository;
     /**
-     * @var TranslatorInterface
-     */
-    private TranslatorInterface $translator;
-    /**
      * @var ExcludedCategoriesRepository
      */
     private ExcludedCategoriesRepository $excludedCategoriesRepository;
@@ -33,25 +29,27 @@ class ExcludedCategoriesService
      * @var ProductProxy
      */
     private ProductProxy $productProxy;
+    private Alma $module;
 
     public function __construct(
+        Alma $module,
         \Context $context,
         ExcludedCategoriesRepository $excludedCategoriesRepository,
         ConfigurationRepository $configurationRepository,
         LanguageRepository $languageRepository,
-        TranslatorInterface $translator,
         ProductProxy $productProxy
     ) {
+        $this->module = $module;
         $this->context = $context;
         $this->excludedCategoriesRepository = $excludedCategoriesRepository;
         $this->configurationRepository = $configurationRepository;
         $this->languageRepository = $languageRepository;
-        $this->translator = $translator;
         $this->productProxy = $productProxy;
     }
 
     /**
      * @return string
+     * @throws \SmartyException
      */
     public function createTemplate(): string
     {
@@ -81,7 +79,7 @@ class ExcludedCategoriesService
 
         foreach ($this->languageRepository->getActiveLanguages() as $language) {
             $suffixLanguage = '_' . $language['id_lang'];
-            $fields[ExcludedCategoriesAdminForm::KEY_FIELD_EXCLUDED_CATEGORIES_MESSAGE . $suffixLanguage] = $this->translator->trans('Your cart is not eligible for payments with Alma.', [], 'Modules.Alma.Settings', $language['locale']);
+            $fields[ExcludedCategoriesAdminForm::KEY_FIELD_EXCLUDED_CATEGORIES_MESSAGE . $suffixLanguage] = $this->module->translate('Your cart is not eligible for payments with Alma.', [], 'Modules.Alma.Settings', $language['locale']);
         }
 
         return $fields;
