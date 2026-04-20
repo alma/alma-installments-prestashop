@@ -6,17 +6,23 @@ use Configuration;
 use PrestaShop\Module\Alma\Infrastructure\Form\ApiAdminForm;
 use PrestaShop\Module\Alma\Infrastructure\Form\CartWidgetAdminForm;
 use PrestaShop\Module\Alma\Infrastructure\Form\FeePlansAdminForm;
+use PrestaShop\Module\Alma\Infrastructure\Form\ProductWidgetAdminForm;
 
 class ConfigurationRepository
 {
     /**
      * @param string $key
      *
-     * @return string|false
+     * @return string
      */
     public function get(string $key): string
     {
-        return Configuration::get($key);
+        $getValue = Configuration::get($key);
+        if (false === $getValue) {
+            return '';
+        }
+
+        return $getValue;
     }
 
     /**
@@ -49,12 +55,65 @@ class ConfigurationRepository
         return json_decode($feePlanList, true);
     }
 
+    public function getCartWidgetState(): bool
+    {
+        return (bool) $this->get(CartWidgetAdminForm::KEY_FIELD_CART_WIDGET_STATE);
+    }
+
     /**
      * @return bool
      */
     public function getCartWidgetDisplayNotEligible(): bool
     {
         return (bool) $this->get(CartWidgetAdminForm::KEY_FIELD_CART_WIDGET_DISPLAY_NOT_ELIGIBLE);
+    }
+
+    /**
+     * @return bool
+     */
+    public function getCartWidgetOldPositionCustom(): bool
+    {
+        return (bool) $this->get(CartWidgetAdminForm::KEY_FIELD_CART_WIDGET_POSITION_CUSTOM);
+    }
+
+    /**
+     * @return string
+     */
+    public function getCartWidgetOldPositionSelector(): string
+    {
+        return $this->get(CartWidgetAdminForm::KEY_FIELD_CART_WIDGET_POSITION_SELECTOR);
+    }
+
+    /**
+     * @return bool
+     */
+    public function getProductWidgetOldPositionCustom(): bool
+    {
+        return (bool) $this->get(ProductWidgetAdminForm::KEY_FIELD_PRODUCT_WIDGET_POSITION_CUSTOM);
+    }
+
+    /**
+     * @return string
+     */
+    public function getProductWidgetOldPositionSelector(): string
+    {
+        return $this->get(ProductWidgetAdminForm::KEY_FIELD_PRODUCT_WIDGET_POSITION_SELECTOR);
+    }
+
+    /**
+     * @return bool
+     */
+    public function getProductWidgetState(): bool
+    {
+        return (bool) $this->get(ProductWidgetAdminForm::KEY_FIELD_PRODUCT_WIDGET_STATE);
+    }
+
+    /**
+     * @return bool
+     */
+    public function getProductWidgetDisplayNotEligible(): bool
+    {
+        return (bool) $this->get(ProductWidgetAdminForm::KEY_FIELD_PRODUCT_WIDGET_DISPLAY_NOT_ELIGIBLE);
     }
 
     /**

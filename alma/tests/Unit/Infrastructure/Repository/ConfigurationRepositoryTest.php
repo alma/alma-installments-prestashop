@@ -12,6 +12,11 @@ class ConfigurationRepositoryTest extends TestCase
         $this->configurationRepository = new ConfigurationRepository();
     }
 
+    public function testGetFalseReturnEmptyString()
+    {
+        $this->assertSame('', $this->configurationRepository->get('non_existent_key'));
+    }
+
     public function testGetMode()
     {
         $this->assertIsString($this->configurationRepository->getMode());
@@ -30,5 +35,15 @@ class ConfigurationRepositoryTest extends TestCase
     public function testGetCartWidgetDisplayNotEligible()
     {
         $this->assertIsBool($this->configurationRepository->getCartWidgetDisplayNotEligible());
+    }
+
+    public function testGetProductWidgetState()
+    {
+        $this->assertIsBool($this->configurationRepository->getProductWidgetState());
+    }
+
+    public function testGetProductWidgetDisplayNotEligible()
+    {
+        $this->assertIsBool($this->configurationRepository->getProductWidgetDisplayNotEligible());
     }
 }

@@ -6,6 +6,8 @@ class ProductWidgetAdminForm extends AbstractAdminForm
 {
     public const KEY_FIELD_PRODUCT_WIDGET_STATE = 'ALMA_PRODUCT_WIDGET_STATE';
     public const KEY_FIELD_PRODUCT_WIDGET_DISPLAY_NOT_ELIGIBLE = 'ALMA_PRODUCT_WIDGET_DISPLAY_NOT_ELIGIBLE';
+    public const KEY_FIELD_PRODUCT_WIDGET_POSITION_CUSTOM = 'ALMA_WIDGET_POSITION_CUSTOM'; // Old key for custom position on our module v5
+    public const KEY_FIELD_PRODUCT_WIDGET_POSITION_SELECTOR = 'ALMA_WIDGET_POSITION_SELECTOR'; // Old key for custom position selector on our module v5
 
     public static function title(): string
     {
@@ -17,7 +19,7 @@ class ProductWidgetAdminForm extends AbstractAdminForm
     {
         $translator = \Context::getContext()->getTranslator();
 
-        return [
+        $arrayForm = [
             'ALMA_EMBED_WIDGET_HTML' => [
                 'type' => 'html',
                 'label' => '',
@@ -71,5 +73,7 @@ class ProductWidgetAdminForm extends AbstractAdminForm
                 ],
             ]
         ];
+
+        return array_merge($arrayForm, $dynamicForm);
     }
 }

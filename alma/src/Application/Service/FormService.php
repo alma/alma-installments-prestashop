@@ -125,8 +125,8 @@ class FormService
             $templateRefund = $this->refundService->createTemplate();
             $form = [
                 $this->feePlansAdminForm->build($templateTabs, $this->feePlansService->feePlansFields()),
-                $this->productWidgetAdminForm->build($templateWidget),
-                $this->cartWidgetAdminForm->build(),
+                $this->productWidgetAdminForm->build($templateWidget, $this->widgetService->getOldProductWidgetPositionForm()),
+                $this->cartWidgetAdminForm->build('', $this->widgetService->getOldCartWidgetPositionForm()),
                 $this->paymentButtonAdminForm->build($templatePaymentButton),
                 $this->excludedCategoriesAdminForm->build($templateExcludedCategories),
                 $this->refundAdminForm->build($templateRefund, $this->refundService->refundStateOrder()),

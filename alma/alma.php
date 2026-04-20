@@ -27,6 +27,7 @@ use PrestaShop\Module\Alma\Application\Service\AssetService;
 use PrestaShop\Module\Alma\Application\Service\ModuleInstallerService;
 use PrestaShop\Module\Alma\Application\Service\ModuleService;
 use PrestaShop\Module\Alma\Application\Service\PaymentOptionsService;
+use PrestaShop\Module\Alma\Application\Service\WidgetFrontendService;
 use PrestaShop\Module\Alma\Infrastructure\Factory\HookServiceFactory;
 use PrestaShop\Module\Alma\Infrastructure\Repository\LanguageRepository;
 use PrestaShop\PrestaShop\Core\Module\WidgetInterface;
@@ -192,7 +193,22 @@ class Alma extends PaymentModule implements WidgetInterface
      */
     public function hookDisplayShoppingCartFooter(array $params): string
     {
-        return $this->renderWidget('alma.widget.ShoppingCartFooter', $params);
+        return $this->renderWidget(WidgetFrontendService::WIDGET_HOOK_SHOPPING_CART_FOOTER, $params);
+    }
+
+    /**
+     * Display widget in the product page
+     *
+     * @param array $params
+     * @return string
+     */
+    public function hookDisplayProductPriceBlock(array $params): string
+    {
+        if (($params['type'] ?? '') !== 'after_price') {
+            return '';
+        }
+
+        return $this->renderWidget(WidgetFrontendService::WIDGET_HOOK_PRODUCT_PRICE_BLOCK, $params);
     }
 
     /**
@@ -209,7 +225,8 @@ class Alma extends PaymentModule implements WidgetInterface
     }
 
     /**
-     * Get the variables needed for the widget template.
+     * We return an empty array because we don't use this function to pass variables to the widget,
+     * we use the WidgetFrontendService::getWidgetVariables function instead to move intelligence
      *
      * @param string $hookName
      * @param array $configuration

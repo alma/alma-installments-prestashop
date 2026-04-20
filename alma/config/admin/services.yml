@@ -180,6 +180,7 @@ services:
     arguments:
       - '@alma.context'
       - '@alma.configuration_repository'
+      - '@translator'
 
   alma.widget_frontend_service:
     class: 'PrestaShop\Module\Alma\Application\Service\WidgetFrontendService'

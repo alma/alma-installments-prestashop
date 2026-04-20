@@ -9,6 +9,10 @@ use PrestaShop\Module\Alma\Infrastructure\Repository\ConfigurationRepository;
 
 class WidgetFrontendService
 {
+    const WIDGET_HOOK_SHOPPING_CART_FOOTER = 'alma.widget.ShoppingCartFooter';
+    const WIDGET_CART = 'alma.widget.cart';
+    const WIDGET_HOOK_PRODUCT_PRICE_BLOCK = 'alma.widget.ProductPriceBlock';
+    const WIDGET_PRODUCT = 'alma.widget.product';
     private \Context $context;
     /**
      * @var ConfigurationRepository
@@ -36,17 +40,18 @@ class WidgetFrontendService
      */
     public function renderWidget(string $hookName): string
     {
-        $templatePath = '';
-        if (in_array($hookName, ['alma.widget.ShoppingCartFooter', 'alma.widget.cart'])) {
-            $templatePath = _PS_MODULE_DIR_ . 'alma/views/templates/widget/cart.tpl';
+        if (!$this->canDisplayWidgetCart($hookName) && !$this->canDisplayWidgetProduct($hookName)) {
+            return '';
         }
+
+        $templatePath = _PS_MODULE_DIR_ . 'alma/views/templates/widget/widget.tpl';
 
         try {
             $tpl = $this->context->smarty->createTemplate($templatePath);
             $tpl->assign($this->getWidgetVariables($hookName));
 
             return $tpl->fetch();
-        } catch (\SmartyException|\Exception $e) {
+        } catch (WidgetException|\SmartyException|\Exception $e) {
             return $e->getMessage();
         }
     }
@@ -57,11 +62,11 @@ class WidgetFrontendService
      * @return array
      * @throws \PrestaShop\Module\Alma\Application\Exception\WidgetException
      */
-    public function getWidgetVariables(string $hookName): array
+    private function getWidgetVariables(string $hookName): array
     {
         switch ($hookName) {
-            case 'alma.widget.ShoppingCartFooter':
-            case 'alma.widget.cart':
+            case self::WIDGET_HOOK_SHOPPING_CART_FOOTER:
+            case self::WIDGET_CART:
                 /** @var \Cart $cart */
                 $cart = $this->context->cart;
 
@@ -72,6 +77,43 @@ class WidgetFrontendService
                 $purchaseAmount = $cart->getCartTotalPrice() ?? 0;
                 $container = str_replace('.', '-', $hookName);
                 $products = $cart->getProducts();
+                $productEmbeddedAttributes = [];
+                $legacySelector = $this->configurationRepository->getCartWidgetOldPositionSelector();
+                $containerId = ($this->configurationRepository->getCartWidgetOldPositionCustom() && !empty($legacySelector))
+                    ? $legacySelector
+                    : '#' . $container;
+                $hideIfNotEligible = (int) !$this->configurationRepository->getCartWidgetDisplayNotEligible();
+                break;
+            case self::WIDGET_HOOK_PRODUCT_PRICE_BLOCK:
+            case self::WIDGET_PRODUCT:
+                /** @var \ProductControllerCore $controller */
+                $controller = $this->context->controller;
+
+                if (!method_exists($controller, 'getProduct')) {
+                    throw new WidgetException('getProduct does not exist in context controller');
+                }
+
+                /** @var \Product $product */
+                $product = $controller->getProduct();
+
+                if (!$product instanceof \Product) {
+                    throw new WidgetException('Product not found in context controller');
+                }
+
+                if (!method_exists($controller, 'getTemplateVarProduct')) {
+                    throw new WidgetException('getTemplateVarProduct does not exist in context controller');
+                }
+
+                $purchaseAmount = $product->getPrice();
+                $container = str_replace('.', '-', $hookName);
+                /** @var \Product $products */
+                $products = [$product];
+                $productEmbeddedAttributes = $controller->getTemplateVarProduct()->getEmbeddedAttributes();
+                $legacySelector = $this->configurationRepository->getProductWidgetOldPositionSelector();
+                $containerId = ($this->configurationRepository->getProductWidgetOldPositionCustom() && !empty($legacySelector))
+                    ? $legacySelector
+                    : '#' . $container;
+                $hideIfNotEligible = (int) !$this->configurationRepository->getProductWidgetDisplayNotEligible();
                 break;
             default:
                 throw new WidgetException('Hook not supported for widget: ' . $hookName);
@@ -86,11 +128,12 @@ class WidgetFrontendService
             'showExcludedMessage' => $showExcludedMessage,
             'excludedMessage' => $this->excludedCategoriesService->getExcludedMessage((int) $this->context->language->id),
             'almaLogoUrl' => _MODULE_DIR_ . 'alma/views/img/logos/logo_alma.svg',
+            'productEmbeddedAttributes' => json_encode($productEmbeddedAttributes),
             'widgetConfig' => json_encode([
                 'purchaseAmount' => PriceHelper::priceToCent($purchaseAmount),
-                'containerId' => '#' . $container,
+                'containerId' => $containerId,
                 'merchantId' => $this->configurationRepository->getMerchantId(),
-                'hideIfNotEligible' => (int) !$this->configurationRepository->getCartWidgetDisplayNotEligible(),
+                'hideIfNotEligible' => $hideIfNotEligible,
                 'mode' => $this->configurationRepository->getMode(),
                 'plans' => $this->getActivePlans(),
                 'locale' => $this->context->language->iso_code,
@@ -122,5 +165,45 @@ class WidgetFrontendService
         }
 
         return $plans;
+    }
+
+    /**
+     * Check if the hook name is for the cart widget.
+     * @param string $hookName
+     * @return bool
+     */
+    private function isWidgetCart(string $hookName): bool
+    {
+        return in_array($hookName, [self::WIDGET_HOOK_SHOPPING_CART_FOOTER, self::WIDGET_CART]);
+    }
+
+    /**
+     * Check if the cart widget can be displayed based on the configuration and the hook name.
+     * @param string $hookName
+     * @return bool
+     */
+    private function canDisplayWidgetCart(string $hookName): bool
+    {
+        return $this->isWidgetCart($hookName) && $this->configurationRepository->getCartWidgetState();
+    }
+
+    /**
+     * Check if the hook name is for the product widget.
+     * @param string $hookName
+     * @return bool
+     */
+    private function isWidgetProduct(string $hookName): bool
+    {
+        return in_array($hookName, [self::WIDGET_HOOK_PRODUCT_PRICE_BLOCK, self::WIDGET_PRODUCT]);
+    }
+
+    /**
+     * Check if the product widget can be displayed based on the configuration and the hook name.
+     * @param string $hookName
+     * @return bool
+     */
+    private function canDisplayWidgetProduct(string $hookName): bool
+    {
+        return $this->isWidgetProduct($hookName) && $this->configurationRepository->getProductWidgetState();
     }
 }

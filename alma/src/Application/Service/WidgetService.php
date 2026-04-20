@@ -6,6 +6,7 @@ use PrestaShop\Module\Alma\Infrastructure\Form\ApiAdminForm;
 use PrestaShop\Module\Alma\Infrastructure\Form\CartWidgetAdminForm;
 use PrestaShop\Module\Alma\Infrastructure\Form\ProductWidgetAdminForm;
 use PrestaShop\Module\Alma\Infrastructure\Repository\ConfigurationRepository;
+use PrestaShopBundle\Translation\TranslatorInterface;
 
 class WidgetService
 {
@@ -20,13 +21,19 @@ class WidgetService
      * @var ConfigurationRepository
      */
     private ConfigurationRepository $configurationRepository;
+    /**
+     * @var TranslatorInterface
+     */
+    private TranslatorInterface $translator;
 
     public function __construct(
         \Context $context,
-        ConfigurationRepository $configurationRepository
+        ConfigurationRepository $configurationRepository,
+        TranslatorInterface $translator
     ) {
         $this->context = $context;
         $this->configurationRepository = $configurationRepository;
+        $this->translator = $translator;
     }
 
     /**
@@ -56,5 +63,96 @@ class WidgetService
             CartWidgetAdminForm::KEY_FIELD_CART_WIDGET_STATE => 1,
             CartWidgetAdminForm::KEY_FIELD_CART_WIDGET_DISPLAY_NOT_ELIGIBLE => 1,
         ];
+    }
+
+    /**
+     * Get the old widget position field to migrate the configuration from our module v5.
+     * @return array
+     */
+    public function getOldCartWidgetPositionForm(): array
+    {
+        if (!$this->configurationRepository->getCartWidgetOldPositionCustom()) {
+            return [];
+        }
+
+        return [
+            CartWidgetAdminForm::KEY_FIELD_CART_WIDGET_POSITION_CUSTOM => [
+                'type' => 'switch',
+                'label' => $this->translator->trans('Old Custom position', [], 'Modules.Alma.Settings'),
+                'required' => false,
+                'form' => 'cart_widget',
+                'encrypted' => false,
+                'options' => [
+                    'values' => [
+                        [
+                            'id' => 'ENABLE',
+                            'value' => 1,
+                            'label' => $this->translator->trans('Enabled', [], 'Modules.Alma.Settings'),
+                        ],
+                        [
+                            'id' => 'DISABLE',
+                            'value' => 0,
+                            'label' => $this->translator->trans('Disabled', [], 'Modules.Alma.Settings')
+                        ]
+                    ],
+                    'desc' => $this->translator->trans('Used for disabled old custom position of widget', [], 'Modules.Alma.Settings'),
+                ],
+            ]
+        ];
+    }
+
+    /**
+     * Get the old product widget position field to migrate the configuration from our module v5.
+     * @return array
+     */
+    public function getOldProductWidgetPositionForm(): array
+    {
+        if (!$this->configurationRepository->getProductWidgetOldPositionCustom()) {
+            return [];
+        }
+
+        return [
+            ProductWidgetAdminForm::KEY_FIELD_PRODUCT_WIDGET_POSITION_CUSTOM => [
+                'type' => 'switch',
+                'label' => $this->translator->trans('Old Custom position', [], 'Modules.Alma.Settings'),
+                'required' => false,
+                'form' => 'product_widget',
+                'encrypted' => false,
+                'options' => [
+                    'values' => [
+                        [
+                            'id' => 'ENABLE',
+                            'value' => 1,
+                            'label' => $this->translator->trans('Enabled', [], 'Modules.Alma.Settings'),
+                        ],
+                        [
+                            'id' => 'DISABLE',
+                            'value' => 0,
+                            'label' => $this->translator->trans('Disabled', [], 'Modules.Alma.Settings')
+                        ]
+                    ],
+                    'desc' => $this->translator->trans('Used for disabled old custom position of widget', [], 'Modules.Alma.Settings'),
+                ],
+            ]
+        ];
+    }
+
+    /**
+     * Get the value of the old widget position field to migrate the configuration from our module v5.
+     * @return array
+     */
+    public function fieldsValueOldWidgetPosition(): array
+    {
+        $fieldsValue = [];
+
+        if (!empty($this->configurationRepository->getCartWidgetOldPositionCustom())) {
+            $fieldsValue[CartWidgetAdminForm::KEY_FIELD_CART_WIDGET_POSITION_CUSTOM] = 1;
+        }
+
+        if (!empty($this->configurationRepository->getProductWidgetOldPositionCustom())) {
+            $fieldsValue[ProductWidgetAdminForm::KEY_FIELD_PRODUCT_WIDGET_POSITION_CUSTOM] = 1;
+        }
+
+        return $fieldsValue;
     }
 }
