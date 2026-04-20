@@ -6,6 +6,7 @@ use PHPUnit\Framework\TestCase;
 use PrestaShop\Module\Alma\Application\Service\ExcludedCategoriesService;
 use PrestaShop\Module\Alma\Application\Service\WidgetFrontendService;
 use PrestaShop\Module\Alma\Infrastructure\Repository\ConfigurationRepository;
+use PrestaShop\PrestaShop\Adapter\Presenter\Product\ProductLazyArray;
 
 class WidgetFrontendServiceTest extends TestCase
 {
@@ -33,6 +34,7 @@ class WidgetFrontendServiceTest extends TestCase
         $this->product->id = 1;
         $this->product->method('getPrice')->willReturn(99.0);
         $this->productController = $this->createMock(\ProductControllerCore::class);
+        $this->productLazyArray = $this->createMock(ProductLazyArray::class);
         $this->context = $this->createMock(\Context::class);
         $this->context->language = $this->language;
         $this->context->cart = $this->cart;
@@ -67,6 +69,7 @@ class WidgetFrontendServiceTest extends TestCase
             'showExcludedMessage' => false,
             'excludedMessage' => '',
             'almaLogoUrl' => _MODULE_DIR_ . 'alma/views/img/logos/logo_alma.svg',
+            'productEmbeddedAttributes' => json_encode([]),
             'widgetConfig' => json_encode([
                 'purchaseAmount' => 42000,
                 'containerId' => '#alma-widget-cart',
@@ -130,6 +133,7 @@ class WidgetFrontendServiceTest extends TestCase
             'showExcludedMessage' => true,
             'excludedMessage' => 'Excluded product.',
             'almaLogoUrl' => _MODULE_DIR_ . 'alma/views/img/logos/logo_alma.svg',
+            'productEmbeddedAttributes' => json_encode([]),
             'widgetConfig' => json_encode([
                 'purchaseAmount' => 42000,
                 'containerId' => '#alma-widget-cart',
@@ -219,6 +223,7 @@ class WidgetFrontendServiceTest extends TestCase
             'showExcludedMessage' => false,
             'excludedMessage' => 'Excluded product.',
             'almaLogoUrl' => _MODULE_DIR_ . 'alma/views/img/logos/logo_alma.svg',
+            'productEmbeddedAttributes' => json_encode([]),
             'widgetConfig' => json_encode([
                 'purchaseAmount' => 42000,
                 'containerId' => '#alma-widget-ShoppingCartFooter',
@@ -306,6 +311,7 @@ class WidgetFrontendServiceTest extends TestCase
             'showExcludedMessage' => false,
             'excludedMessage' => 'Excluded product.',
             'almaLogoUrl' => _MODULE_DIR_ . 'alma/views/img/logos/logo_alma.svg',
+            'productEmbeddedAttributes' => json_encode([]),
             'widgetConfig' => json_encode([
                 'purchaseAmount' => 0,
                 'containerId' => '#my-custom-selector',
@@ -370,6 +376,7 @@ class WidgetFrontendServiceTest extends TestCase
             'showExcludedMessage' => false,
             'excludedMessage' => '',
             'almaLogoUrl' => _MODULE_DIR_ . 'alma/views/img/logos/logo_alma.svg',
+            'productEmbeddedAttributes' => json_encode([]),
             'widgetConfig' => json_encode([
                 'purchaseAmount' => 0,
                 'containerId' => '#alma-widget-cart',
@@ -405,7 +412,7 @@ class WidgetFrontendServiceTest extends TestCase
         $this->configurationRepository->expects($this->once())
             ->method('getCartWidgetOldPositionCustom')
             ->willReturn(false);
-        $this->configurationRepository->expects($this->never())
+        $this->configurationRepository->expects($this->once())
             ->method('getCartWidgetOldPositionSelector');
         $this->context->smarty = $this->createMock(\Smarty::class);
         $tpl = $this->createMock(\Smarty_Internal_Template::class);
@@ -443,12 +450,16 @@ class WidgetFrontendServiceTest extends TestCase
 
     public function testRenderWidgetReturnTemplateProduct()
     {
+        $embeddedProductAttributes = [
+            'price_amount' => 99.0,
+        ];
         $widgetVariables = [
             'container' => 'alma-widget-product',
             'isExcluded' => false,
             'showExcludedMessage' => false,
             'excludedMessage' => '',
             'almaLogoUrl' => _MODULE_DIR_ . 'alma/views/img/logos/logo_alma.svg',
+            'productEmbeddedAttributes' => json_encode($embeddedProductAttributes),
             'widgetConfig' => json_encode([
                 'purchaseAmount' => 9900,
                 'containerId' => '#alma-widget-product',
@@ -466,6 +477,12 @@ class WidgetFrontendServiceTest extends TestCase
         $this->productController->expects($this->once())
             ->method('getProduct')
             ->willReturn($this->product);
+        $this->productController->expects($this->once())
+            ->method('getTemplateVarProduct')
+            ->willReturn($this->productLazyArray);
+        $this->productLazyArray->expects($this->once())
+            ->method('getEmbeddedAttributes')
+            ->willReturn($embeddedProductAttributes);
         $this->excludedCategoriesService->method('isExcluded')->willReturn(false);
         $this->excludedCategoriesService->method('isWidgetDisplayNotEligibleEnabled')->willReturn(false);
         $this->excludedCategoriesService->method('getExcludedMessage')->willReturn('');
@@ -520,12 +537,16 @@ class WidgetFrontendServiceTest extends TestCase
                 'sort_order' => '3',
             ]
         ];
+        $embeddedProductAttributes = [
+            'price_amount' => 99.0,
+        ];
         $widgetVariables = [
             'container' => 'alma-widget-product',
             'isExcluded' => true,
             'showExcludedMessage' => true,
             'excludedMessage' => 'Excluded product.',
             'almaLogoUrl' => _MODULE_DIR_ . 'alma/views/img/logos/logo_alma.svg',
+            'productEmbeddedAttributes' => json_encode($embeddedProductAttributes),
             'widgetConfig' => json_encode([
                 'purchaseAmount' => 9900,
                 'containerId' => '#alma-widget-product',
@@ -553,6 +574,12 @@ class WidgetFrontendServiceTest extends TestCase
         $this->productController->expects($this->once())
             ->method('getProduct')
             ->willReturn($this->product);
+        $this->productController->expects($this->once())
+            ->method('getTemplateVarProduct')
+            ->willReturn($this->productLazyArray);
+        $this->productLazyArray->expects($this->once())
+            ->method('getEmbeddedAttributes')
+            ->willReturn($embeddedProductAttributes);
         $this->configurationRepository->expects($this->once())
             ->method('getMerchantId')
             ->willReturn('merchant_id');
@@ -599,12 +626,16 @@ class WidgetFrontendServiceTest extends TestCase
                 'sort_order' => '3',
             ]
         ];
+        $embeddedProductAttributes = [
+            'price_amount' => 99.0,
+        ];
         $widgetVariables = [
             'container' => 'alma-widget-ProductPriceBlock',
             'isExcluded' => true,
             'showExcludedMessage' => false,
             'excludedMessage' => 'Excluded product.',
             'almaLogoUrl' => _MODULE_DIR_ . 'alma/views/img/logos/logo_alma.svg',
+            'productEmbeddedAttributes' => json_encode($embeddedProductAttributes),
             'widgetConfig' => json_encode([
                 'purchaseAmount' => 9900,
                 'containerId' => '#alma-widget-ProductPriceBlock',
@@ -632,6 +663,12 @@ class WidgetFrontendServiceTest extends TestCase
         $this->productController->expects($this->once())
             ->method('getProduct')
             ->willReturn($this->product);
+        $this->productController->expects($this->once())
+            ->method('getTemplateVarProduct')
+            ->willReturn($this->productLazyArray);
+        $this->productLazyArray->expects($this->once())
+            ->method('getEmbeddedAttributes')
+            ->willReturn($embeddedProductAttributes);
         $this->configurationRepository->expects($this->once())
             ->method('getMerchantId')
             ->willReturn('merchant_id');
@@ -697,5 +734,37 @@ class WidgetFrontendServiceTest extends TestCase
         $tpl->expects($this->never())
             ->method('fetch');
         $this->assertEquals('Product not found in context controller', $this->widgetFrontendService->renderWidget('alma.widget.product'));
+    }
+
+    public function testGetWidgetVariablesWithoutGetTemplateVarProductFunctionInContextController()
+    {
+        $this->configurationRepository->expects($this->once())
+            ->method('getProductWidgetState')
+            ->willReturn(true);
+        $controller = new class($this->product) {
+            private \Product $product;
+
+            public function __construct(\Product $product)
+            {
+                $this->product = $product;
+            }
+
+            public function getProduct(): \Product
+            {
+                return $this->product;
+            }
+        };
+        $this->context->controller = $controller;
+        $this->context->smarty = $this->createMock(\Smarty::class);
+        $tpl = $this->createMock(\Smarty_Internal_Template::class);
+        $this->context->smarty->expects($this->once())
+            ->method('createTemplate')
+            ->with(_PS_MODULE_DIR_ . 'alma/views/templates/widget/widget.tpl')
+            ->willReturn($tpl);
+        $tpl->expects($this->never())
+            ->method('assign');
+        $tpl->expects($this->never())
+            ->method('fetch');
+        $this->assertEquals('getTemplateVarProduct does not exist in context controller', $this->widgetFrontendService->renderWidget('alma.widget.product'));
     }
 }

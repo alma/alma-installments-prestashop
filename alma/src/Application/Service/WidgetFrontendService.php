@@ -77,13 +77,16 @@ class WidgetFrontendService
                 $purchaseAmount = $cart->getCartTotalPrice() ?? 0;
                 $container = str_replace('.', '-', $hookName);
                 $products = $cart->getProducts();
-                $containerId = $this->configurationRepository->getCartWidgetOldPositionCustom()
-                    ? $this->configurationRepository->getCartWidgetOldPositionSelector()
+                $productEmbeddedAttributes = [];
+                $legacySelector = $this->configurationRepository->getCartWidgetOldPositionSelector();
+                $containerId = ($this->configurationRepository->getCartWidgetOldPositionCustom() && !empty($legacySelector))
+                    ? $legacySelector
                     : '#' . $container;
                 $hideIfNotEligible = (int) !$this->configurationRepository->getCartWidgetDisplayNotEligible();
                 break;
             case self::WIDGET_HOOK_PRODUCT_PRICE_BLOCK:
             case self::WIDGET_PRODUCT:
+                /** @var \ProductControllerCore $controller */
                 $controller = $this->context->controller;
 
                 if (!method_exists($controller, 'getProduct')) {
@@ -97,10 +100,19 @@ class WidgetFrontendService
                     throw new WidgetException('Product not found in context controller');
                 }
 
+                if (!method_exists($controller, 'getTemplateVarProduct')) {
+                    throw new WidgetException('getTemplateVarProduct does not exist in context controller');
+                }
+
                 $purchaseAmount = $product->getPrice();
                 $container = str_replace('.', '-', $hookName);
+                /** @var \Product $products */
                 $products = [$product];
-                $containerId = '#' . $container;
+                $productEmbeddedAttributes = $controller->getTemplateVarProduct()->getEmbeddedAttributes();
+                $legacySelector = $this->configurationRepository->getProductWidgetOldPositionSelector();
+                $containerId = ($this->configurationRepository->getProductWidgetOldPositionCustom() && !empty($legacySelector))
+                    ? $legacySelector
+                    : '#' . $container;
                 $hideIfNotEligible = (int) !$this->configurationRepository->getProductWidgetDisplayNotEligible();
                 break;
             default:
@@ -116,6 +128,7 @@ class WidgetFrontendService
             'showExcludedMessage' => $showExcludedMessage,
             'excludedMessage' => $this->excludedCategoriesService->getExcludedMessage((int) $this->context->language->id),
             'almaLogoUrl' => _MODULE_DIR_ . 'alma/views/img/logos/logo_alma.svg',
+            'productEmbeddedAttributes' => json_encode($productEmbeddedAttributes),
             'widgetConfig' => json_encode([
                 'purchaseAmount' => PriceHelper::priceToCent($purchaseAmount),
                 'containerId' => $containerId,

@@ -70,14 +70,37 @@ When both the hook and the widget tag containers are present on the page, the wi
 
 Module v5 allowed merchants to define a custom CSS selector to control where the cart widget was injected in the DOM. This setting is preserved and still honored in the current version.
 
-When `ALMA_CART_WIDGET_POSITION_CUSTOM` is enabled, `WidgetFrontendService` uses the CSS selector stored in `ALMA_WDGT_POS_SELECTOR` as the widget's `containerId` instead of the default `#alma-widget-cart`. If the option is disabled, the standard container ID is used.
+When `ALMA_CART_WIDGET_POSITION_CUSTOM` is enabled, `WidgetFrontendService` uses the CSS selector stored in `ALMA_CART_WDGT_POS_SELECTOR` as the widget's `containerId` instead of the default `#alma-widget-cart`. If the option is disabled, the standard container ID is used.
 
 - `ConfigurationRepository::getCartWidgetOldPositionCustom()` — returns `true` if the legacy custom position is active.
 - `ConfigurationRepository::getCartWidgetOldPositionSelector()` — returns the saved CSS selector (e.g. `#my-custom-selector`).
 
+The same backward compatibility exists for the product widget. When `ALMA_WIDGET_POSITION_CUSTOM` is enabled, `WidgetFrontendService` uses the CSS selector stored in `ALMA_WIDGET_POSITION_SELECTOR` as the widget's `containerId` instead of the default `#alma-widget-product`.
+
+- `ConfigurationRepository::getProductWidgetOldPositionCustom()` — returns `true` if the legacy custom position is active.
+- `ConfigurationRepository::getProductWidgetOldPositionSelector()` — returns the saved CSS selector (e.g. `#my-custom-product-selector`).
+
+In both cases, `WidgetService::getOldProductWidgetPositionForm()` and `WidgetService::fieldsValueOldWidgetPosition()` expose a toggle in the admin configuration page to let merchants disable the legacy position and switch to the standard one. The toggle is only displayed if the legacy configuration key exists in the database.
+
 ### Cart refresh
 
 When the cart is updated (e.g. quantity change, product removal), the widget refreshes automatically without a page reload. `alma-widget.js` listens to PrestaShop's native `prestashop.on('updateCart')` event, reads the new cart total from `prestashop.cart.totals`, updates the `purchaseAmount` in the widget's `data-widget-config`, and re-initializes the widget with the new amount.
+
+### Product widget dynamic update
+
+On the product page, the widget amount updates automatically when the selected combination or quantity changes.
+
+The product container (`data-widget-config`) also carries a `data-product` attribute populated with PrestaShop's embedded product attributes (`{$productEmbeddedAttributes}`). This object contains `price_amount` (unit price with discount, tax included) and `quantity_wanted`, which are used directly to compute the widget amount without any DOM parsing.
+
+**Combination change** — PrestaShop fires `prestashop.on('updatedProduct')` when a combination is selected. `alma-widget.js` reads `price_amount` and `quantity_wanted` directly from `data-product` on the widget container, converts to cents via `toCents()`, and calls `updateProductWidget()`.
+
+**Quantity change** — A `change` listener on `[name="qty"]` reads `price_amount` from `data-product` (the last selected combination price) and multiplies by the new input value to compute the updated total.
+
+Both paths call `updateProductWidget()` which updates `purchaseAmount` in `data-widget-config` and re-initializes the widget.
+
+### Price utility
+
+`toCents(amount)` is a shared utility that converts any price (string or number) to integer cents via `Math.round(parseFloat(amount) * 100)`. It is used by both the cart and product update paths.
 
 ## Excluded categories
 

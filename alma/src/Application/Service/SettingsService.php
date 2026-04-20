@@ -109,7 +109,7 @@ class SettingsService
     public function getFieldsValue(array $languages = []): array
     {
         $feePlansFieldsValue = $this->feePlansService->fieldsValue();
-        $widgetFieldsValue = $this->widgetService->fieldsValueOldCartWidgetPosition();
+        $widgetFieldsValue = $this->widgetService->fieldsValueOldWidgetPosition();
         $fieldsValue = $this->authenticationSettingsProvider->getAllFields();
 
         foreach ($fieldsValue as $field => $param) {
@@ -167,7 +167,7 @@ class SettingsService
         $notificationSuccess = $this->translator->trans('Settings successfully updated', [], 'Modules.Alma.Notifications');
         $overrideValues = [];
         $feePlansFieldsValue = $this->feePlansService->fieldsToSaveFromPost($allValuesFromPost);
-        $widgetFieldsValue = $this->widgetService->fieldsValueOldCartWidgetPosition();
+        $widgetFieldsValue = $this->widgetService->fieldsValueOldWidgetPosition();
 
         if ($this->hasNewKey($allValuesFromPost)) {
             $merchantIds = $this->authenticationService->isValidKeys();
