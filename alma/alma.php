@@ -22,13 +22,11 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
-use PrestaShop\Module\Alma\Application\Exception\WidgetException;
 use PrestaShop\Module\Alma\Application\Service\AssetService;
 use PrestaShop\Module\Alma\Application\Service\ModuleInstallerService;
 use PrestaShop\Module\Alma\Application\Service\ModuleService;
 use PrestaShop\Module\Alma\Application\Service\PaymentOptionsService;
 use PrestaShop\Module\Alma\Application\Service\WidgetFrontendService;
-use PrestaShop\Module\Alma\Infrastructure\Factory\HookServiceFactory;
 use PrestaShop\Module\Alma\Infrastructure\Repository\LanguageRepository;
 use PrestaShop\PrestaShop\Core\Module\WidgetInterface;
 use PrestaShop\PsAccountsInstaller\Installer\Installer;
@@ -220,8 +218,14 @@ class Alma extends PaymentModule implements WidgetInterface
      */
     public function renderWidget($hookName, array $configuration): string
     {
-        $widgetFrontendService = HookServiceFactory::createWidgetService($this, $this->context);
-        return $widgetFrontendService->renderWidget($hookName);
+        /* @var WidgetFrontendService $widgetFrontendService */
+        try {
+            $widgetFrontendService = $this->get('alma.widget_frontend_service');
+            return $widgetFrontendService->renderWidget($hookName);
+        } catch (Exception $e) {
+            //TODO : Add log here with $e->getMessage()
+            return '';
+        }
     }
 
     /**
@@ -234,12 +238,7 @@ class Alma extends PaymentModule implements WidgetInterface
      */
     public function getWidgetVariables($hookName, array $configuration): array
     {
-        $widgetFrontendService = HookServiceFactory::createWidgetService($this, $this->context);
-        try {
-            return $widgetFrontendService->getWidgetVariables($hookName);
-        } catch (WidgetException $e) {
-            return ['error_widget' => $e->getMessage()];
-        }
+        return [];
     }
 
     /**
