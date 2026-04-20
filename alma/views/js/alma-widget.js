@@ -13,6 +13,8 @@ const ALMA_WIDGET_SELECTORS = [
     ...ALMA_PRODUCT_WIDGET_SELECTORS,
 ];
 
+const TEST_MODE = 'test';
+
 function getCartAmountInCents() {
     if (typeof prestashop === 'undefined' || !prestashop.cart || !prestashop.cart.totals) {
         console.error('Prestashop cart totals are not available.');
@@ -42,7 +44,7 @@ function initAlmaWidgetFromContainer($container, Alma) {
         widgetConfig.plans = JSON.parse(widgetConfig.plans);
     }
 
-    const mode = (widgetConfig.mode === 'test') ? Alma.ApiMode.TEST : Alma.ApiMode.LIVE;
+    const mode = (widgetConfig.mode === TEST_MODE) ? Alma.ApiMode.TEST : Alma.ApiMode.LIVE;
     const widgets = Alma.Widgets.initialize(
         widgetConfig.merchantId,
         mode,
