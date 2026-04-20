@@ -33,6 +33,8 @@ if (!defined('_PS_VERSION_')) {
 
 class ValidateHelper
 {
+    const HEADER_SIGNATURE = 'X-Alma-Signature';
+
     /**
      * @param $object
      *

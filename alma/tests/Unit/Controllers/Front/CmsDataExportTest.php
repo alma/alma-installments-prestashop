@@ -29,6 +29,7 @@ use Alma\API\Entities\MerchantData\CmsInfo;
 use Alma\API\Lib\PayloadFormatter;
 use Alma\PrestaShop\Exceptions\ValidateException;
 use Alma\PrestaShop\Helpers\CmsDataHelper;
+use Alma\PrestaShop\Helpers\HttpHelper;
 use Alma\PrestaShop\Helpers\SettingsHelper;
 use Alma\PrestaShop\Helpers\ValidateHelper;
 use Mockery;
@@ -55,17 +56,24 @@ class AlmaCmsDataExportTest extends TestCase
      */
     protected $cmsDataHelper;
 
+    /**
+     * @var HttpHelper
+     */
+    protected $httpHelper;
+
     public function setUp()
     {
-        $_SERVER['HTTP_X_ALMA_SIGNATURE'] = '1234';
         $this->validateHelper = $this->createMock(ValidateHelper::class);
         $this->settingsHelper = $this->createMock(SettingsHelper::class);
         $this->settingsHelper->method('getIdMerchant');
         $this->payloadFormatter = $this->createMock(PayloadFormatter::class);
         $this->cmsDataHelper = $this->createMock(CmsDataHelper::class);
+        $this->httpHelper = $this->createMock(HttpHelper::class);
+        $this->httpHelper->method('getHeader')->willReturn('1234');
 
         $this->cmsDataExportMock = Mockery::mock(\AlmaCmsDataExportModuleFrontController::class)->makePartial();
         $this->cmsDataExportMock->shouldAllowMockingProtectedMethods();
+        $this->cmsDataExportMock->setHttpHelper($this->httpHelper);
     }
 
     public function tearDown()
@@ -74,7 +82,6 @@ class AlmaCmsDataExportTest extends TestCase
         $this->validateHelper = null;
         $this->settingsHelper = null;
         Mockery::close();
-        unset($_SERVER['HTTP_X_ALMA_SIGNATURE']);
     }
 
     /**
@@ -82,8 +89,10 @@ class AlmaCmsDataExportTest extends TestCase
      */
     public function testPostProcessNoSignature()
     {
-        unset($_SERVER['HTTP_X_ALMA_SIGNATURE']);
+        $httpHelperNoSignature = $this->createMock(HttpHelper::class);
+        $httpHelperNoSignature->method('getHeader')->willReturn(null);
         $this->validateHelper->method('checkSignature')->willThrowException(new ValidateException('Exception'));
+        $this->cmsDataExportMock->setHttpHelper($httpHelperNoSignature);
         $this->cmsDataExportMock->setValidateHelper($this->validateHelper);
         $this->cmsDataExportMock->setSettingsHelper($this->settingsHelper);
         $this->cmsDataExportMock->shouldReceive('ajaxRenderAndExit')

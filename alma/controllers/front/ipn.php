@@ -25,7 +25,9 @@
 use Alma\PrestaShop\Builders\Validators\PaymentValidationBuilder;
 use Alma\PrestaShop\Exceptions\PaymentValidationException;
 use Alma\PrestaShop\Factories\LoggerFactory;
+use Alma\PrestaShop\Helpers\HttpHelper;
 use Alma\PrestaShop\Helpers\SettingsHelper;
+use Alma\PrestaShop\Helpers\ValidateHelper;
 use Alma\PrestaShop\Traits\AjaxTrait;
 use Alma\PrestaShop\Validators\PaymentValidation;
 use Alma\PrestaShop\Validators\PaymentValidationError;
@@ -57,6 +59,11 @@ class AlmaIpnModuleFrontController extends ModuleFrontController
     protected $paymentValidation;
 
     /**
+     * @var HttpHelper
+     */
+    protected $httpHelper;
+
+    /**
      * IPN constructor
      *
      * @codeCoverageIgnore
@@ -67,6 +74,7 @@ class AlmaIpnModuleFrontController extends ModuleFrontController
         $this->context = Context::getContext();
         $paymentValidationBuilder = new PaymentValidationBuilder();
         $this->paymentValidation = $paymentValidationBuilder->getInstance();
+        $this->httpHelper = new HttpHelper();
     }
 
     /**
@@ -82,14 +90,15 @@ class AlmaIpnModuleFrontController extends ModuleFrontController
         header('Content-Type: application/json');
 
         $paymentId = Tools::getValue('pid');
-        if (!array_key_exists('HTTP_X_ALMA_SIGNATURE', $_SERVER)) {
+        $signature = $this->httpHelper->getHeader(ValidateHelper::HEADER_SIGNATURE);
+        if ($signature === null) {
             $msg = 'Header key X-Alma-Signature doesn\'t exist';
             LoggerFactory::instance()->error('[Alma] IPN Payment Validation Error - Message : ' . $msg);
             $this->ajaxRenderAndExit(json_encode(['error' => $msg]), 500);
         }
 
         try {
-            $this->paymentValidation->checkSignature($paymentId, SettingsHelper::getActiveAPIKey(), $_SERVER['HTTP_X_ALMA_SIGNATURE']);
+            $this->paymentValidation->checkSignature($paymentId, SettingsHelper::getActiveAPIKey(), $signature);
             $this->paymentValidation->validatePayment($paymentId);
             $this->ajaxRenderAndExit(json_encode(['success' => true]));
         } catch (PaymentValidationException $e) {
@@ -98,6 +107,9 @@ class AlmaIpnModuleFrontController extends ModuleFrontController
         } catch (PaymentValidationError $e) {
             LoggerFactory::instance()->error('ipn payment_validation_error - Message : ' . $e->getMessage());
             $this->ajaxRenderAndExit(json_encode(['error' => $e->getMessage()]), 500);
+        } catch (\Exception $e) {
+            LoggerFactory::instance()->error('[Alma] IPN unexpected error - ' . get_class($e) . ': ' . $e->getMessage() . ' in ' . $e->getFile() . ':' . $e->getLine());
+            $this->ajaxRenderAndExit(json_encode(['error' => 'Unexpected error: ' . $e->getMessage()]), 500);
         }
     }
 }

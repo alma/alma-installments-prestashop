@@ -28,6 +28,7 @@ use Alma\API\Lib\PayloadFormatter;
 use Alma\PrestaShop\Builders\Helpers\SettingsHelperBuilder;
 use Alma\PrestaShop\Exceptions\ValidateException;
 use Alma\PrestaShop\Helpers\CmsDataHelper;
+use Alma\PrestaShop\Helpers\HttpHelper;
 use Alma\PrestaShop\Helpers\SettingsHelper;
 use Alma\PrestaShop\Helpers\ValidateHelper;
 use Alma\PrestaShop\Traits\AjaxTrait;
@@ -60,6 +61,11 @@ class AlmaCmsDataExportModuleFrontController extends ModuleFrontController
      */
     protected $cmsDataHelper;
 
+    /**
+     * @var HttpHelper
+     */
+    protected $httpHelper;
+
     public function __construct()
     {
         parent::__construct();
@@ -67,13 +73,14 @@ class AlmaCmsDataExportModuleFrontController extends ModuleFrontController
         $this->cmsDataHelper = new CmsDataHelper();
         $this->settingsHelper = (new SettingsHelperBuilder())->getInstance();
         $this->payloadFormatter = new PayloadFormatter();
+        $this->httpHelper = new HttpHelper();
     }
 
     public function postProcess()
     {
         parent::postProcess();
         try {
-            $signature = isset($_SERVER['HTTP_X_ALMA_SIGNATURE']) ? $_SERVER['HTTP_X_ALMA_SIGNATURE'] : '';
+            $signature = $this->httpHelper->getHeader(ValidateHelper::HEADER_SIGNATURE);
             $this->validateHelper->checkSignature($this->settingsHelper->getIdMerchant(), SettingsHelper::getActiveAPIKey(), $signature);
         } catch (ValidateException $e) {
             $this->ajaxRenderAndExit($e->getMessage(), 403);
@@ -126,5 +133,15 @@ class AlmaCmsDataExportModuleFrontController extends ModuleFrontController
     public function setCmsDataHelper($cmsDataHelper)
     {
         $this->cmsDataHelper = $cmsDataHelper;
+    }
+
+    /**
+     * @param $httpHelper
+     *
+     * @return void
+     */
+    public function setHttpHelper($httpHelper)
+    {
+        $this->httpHelper = $httpHelper;
     }
 }
