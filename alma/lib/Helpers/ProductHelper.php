@@ -24,10 +24,6 @@
 
 namespace Alma\PrestaShop\Helpers;
 
-use Alma\PrestaShop\Builders\Helpers\InsuranceHelperBuilder;
-use Alma\PrestaShop\Exceptions\ProductException;
-use Alma\PrestaShop\Factories\ProductFactory;
-
 if (!defined('_PS_VERSION_')) {
     exit;
 }
@@ -39,19 +35,8 @@ if (!defined('_PS_VERSION_')) {
  */
 class ProductHelper
 {
-    /**
-     * @var InsuranceHelper
-     */
-    protected $insuranceHelper;
-    /**
-     * @var ProductHelper
-     */
-    protected $productFactory;
-
-    public function __construct($insuranceHelper = null, $productFactory = null)
+    public function __construct()
     {
-        $this->insuranceHelper = $insuranceHelper ?: (new InsuranceHelperBuilder())->getInstance();
-        $this->productFactory = $productFactory ?: new ProductFactory();
     }
 
     /**
@@ -167,29 +152,6 @@ class ProductHelper
     }
 
     /**
-     * We get the price without reduction and with tax with the param usereduc at false.
-     *
-     * @param $productId
-     * @param $productAttributeId
-     *
-     * @return float
-     */
-    public function getRegularPrice($productId, $productAttributeId)
-    {
-        $product = new \Product();
-
-        return $product->getPriceStatic(
-            $productId,
-            true,
-            $productAttributeId,
-            6,
-            null,
-            false,
-            false
-        );
-    }
-
-    /**
      * @param $productParams
      *
      * @return int|mixed
@@ -210,51 +172,6 @@ class ProductHelper
         }
 
         return $quantity;
-    }
-
-    /**
-     * @param \CartCore $cart
-     *
-     * @return array
-     */
-    public function getCmsReferencesByCart($cart)
-    {
-        $cmsReferences = [];
-
-        $products = $cart->getProducts();
-        foreach ($products as $product) {
-            for ($qty = 1; $qty <= $product['cart_quantity']; ++$qty) {
-                $cmsReferences[] = $this->insuranceHelper->createCmsReference($product['id_product'], $product['id_product_attribute']);
-            }
-        }
-
-        return $cmsReferences;
-    }
-
-    /**
-     * @param \ProductCore $product
-     * @param int $languageId
-     * @param int|null $idProductAttribute
-     *
-     * @return string
-     */
-    public function getProductName($product, $languageId, $idProductAttribute = null)
-    {
-        $productName = $product->name[$languageId];
-
-        if (null !== $idProductAttribute) {
-            /*
-             * @var CombinationCore $combinationProduct;
-             */
-            $combinationProduct = new \Combination($idProductAttribute);
-
-            $nameDetails = $combinationProduct->getAttributesName($languageId);
-            foreach ($nameDetails as $nameDetail) {
-                $productName .= ' - ' . $nameDetail['name'];
-            }
-        }
-
-        return htmlspecialchars($productName, ENT_NOQUOTES);
     }
 
     /**
@@ -281,24 +198,5 @@ class ProductHelper
         }
 
         return $category;
-    }
-
-    /**
-     * @param int $productId
-     * @param int $languageId
-     *
-     * @return array
-     *
-     * @throws ProductException
-     */
-    public function getAttributeCombinationsByProductId($productId, $languageId)
-    {
-        if (!$productId || !$languageId || !is_int($productId) || !is_int($languageId)) {
-            throw new ProductException("[Alma] Error to get attribute combination with productId {$productId} and languageId {$languageId}");
-        }
-
-        $product = $this->productFactory->create($productId);
-
-        return $product->getAttributeCombinations($languageId);
     }
 }

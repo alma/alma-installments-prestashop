@@ -32,7 +32,6 @@ use Alma\PrestaShop\Exceptions\ClientException;
 use Alma\PrestaShop\Exceptions\WrongCredentialsException;
 use Alma\PrestaShop\Factories\LoggerFactory;
 use Alma\PrestaShop\Factories\ModuleFactory;
-use Alma\PrestaShop\Helpers\Admin\AdminInsuranceHelper;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -40,10 +39,6 @@ if (!defined('_PS_VERSION_')) {
 
 class ApiHelper
 {
-    /**
-     * @var AdminInsuranceHelper
-     */
-    protected $insuranceHelper;
     /**
      * @var ModuleFactory
      */
@@ -67,20 +62,17 @@ class ApiHelper
      * @param ClientHelper $clientHelper
      * @param ToolsHelper $toolsHelper
      * @param ConfigurationHelper $configurationHelper
-     * @param AdminInsuranceHelper $insuranceHelper
      */
     public function __construct(
         $moduleFactory,
         $clientHelper,
         $toolsHelper,
-        $configurationHelper,
-        $insuranceHelper
+        $configurationHelper
     ) {
         $this->moduleFactory = $moduleFactory;
         $this->clientHelper = $clientHelper;
         $this->toolsHelper = $toolsHelper;
         $this->configurationHelper = $configurationHelper;
-        $this->insuranceHelper = $insuranceHelper;
     }
 
     /**
