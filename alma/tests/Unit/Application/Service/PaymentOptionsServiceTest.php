@@ -2,6 +2,7 @@
 
 namespace PrestaShop\Module\Alma\Tests\Unit\Application\Service;
 
+use Alma;
 use Alma\Client\Domain\Entity\EligibilityList;
 use PHPUnit\Framework\TestCase;
 use PrestaShop\Module\Alma\Application\Exception\CurrencyException;
@@ -10,8 +11,8 @@ use PrestaShop\Module\Alma\Application\Service\ExcludedCategoriesService;
 use PrestaShop\Module\Alma\Application\Service\PaymentOptionsService;
 use PrestaShop\Module\Alma\Application\Validator\CurrencyValidator;
 use PrestaShop\Module\Alma\Tests\Mocks\EligibilityMock;
+use PrestaShop\Module\Alma\Tests\Mocks\PaymentOptionMock;
 use PrestaShop\Module\Alma\Tests\Mocks\ProductMock;
-use PrestaShop\PrestaShop\Core\Payment\PaymentOption;
 
 class PaymentOptionsServiceTest extends TestCase
 {
@@ -27,18 +28,21 @@ class PaymentOptionsServiceTest extends TestCase
      * @var EligibilityService
      */
     private $eligibilityService;
+    /**
+     * @var Alma
+     */
+    private $module;
 
     public function setUp(): void
     {
         $this->module = $this->createMock(\Alma::class);
-        $this->paymentOption = $this->createMock(PaymentOption::class);
+        $this->module->name = 'alma';
         $this->currencyValidator = $this->createMock(CurrencyValidator::class);
         $this->excludedCategoriesService = $this->createMock(ExcludedCategoriesService::class);
         $this->eligibilityService = $this->createMock(EligibilityService::class);
         $this->cart = $this->createMock(\Cart::class);
         $this->paymentOptionsService = new PaymentOptionsService(
             $this->module,
-            $this->paymentOption,
             $this->currencyValidator,
             $this->excludedCategoriesService,
             $this->eligibilityService
@@ -81,6 +85,7 @@ class PaymentOptionsServiceTest extends TestCase
      */
     public function testBuildPaymentOptionsWithFeePlanReturnPaymentOption(): void
     {
+        $paymentOption = PaymentOptionMock::paymentOption();
         $products = [
             ProductMock::productArray(),
         ];
@@ -103,6 +108,10 @@ class PaymentOptionsServiceTest extends TestCase
             ->method('getEligibilityForCheckout')
             ->with($this->cart)
             ->willReturn($eligibilityList);
-        $this->assertEquals([$this->paymentOption], $this->paymentOptionsService->buildPaymentOptions());
+        $this->module->expects($this->once())
+            ->method('translate')
+            ->with('Pay with Alma', [], 'Modules.Alma.Checkout')
+            ->willReturn('Pay with Alma');
+        $this->assertEquals([$paymentOption], $this->paymentOptionsService->buildPaymentOptions());
     }
 }

@@ -2,22 +2,14 @@
 
 namespace PrestaShop\Module\Alma\Application\Service;
 
+use Alma;
 use PrestaShop\Module\Alma\Application\Exception\CurrencyException;
 use PrestaShop\Module\Alma\Application\Validator\CurrencyValidator;
 use PrestaShop\PrestaShop\Core\Payment\PaymentOption;
-use PrestaShopBundle\Translation\TranslatorInterface;
 
 class PaymentOptionsService
 {
     private \Module $module;
-    /**
-     * @var \PrestaShop\PrestaShop\Core\Payment\PaymentOption
-     */
-    private PaymentOption $paymentOption;
-    /**
-     * @var \PrestaShopBundle\Translation\TranslatorInterface
-     */
-    private TranslatorInterface $translator;
     private \Cart $cart;
     /**
      * @var CurrencyValidator
@@ -33,14 +25,12 @@ class PaymentOptionsService
     private EligibilityService $eligibilityService;
 
     public function __construct(
-        \Alma $module,
-        PaymentOption $paymentOption,
+        Alma $module,
         CurrencyValidator $currencyValidator,
         ExcludedCategoriesService $excludedCategoriesService,
         EligibilityService $eligibilityService
     ) {
         $this->module = $module;
-        $this->paymentOption = $paymentOption;
         $this->currencyValidator = $currencyValidator;
         $this->excludedCategoriesService = $excludedCategoriesService;
         $this->eligibilityService = $eligibilityService;
@@ -65,11 +55,12 @@ class PaymentOptionsService
 
         // Handle the payment option for each payment methods
         foreach ($eligibilityList as $eligibility) {
-            $this->paymentOption->setModuleName($this->module->name);
-            $this->paymentOption->setLogo(_PS_MODULE_DIR_ . 'alma/views/img/logos/p3x_logo.svg');
-            $this->paymentOption->setAction('alma/payment');
-            $this->paymentOption->setCallToActionText($this->module->translate('Pay with Alma'));
-            $this->paymentOption->setInputs([
+            $paymentOption = new PaymentOption();
+            $paymentOption->setModuleName($this->module->name);
+            $paymentOption->setLogo(_PS_MODULE_DIR_ . 'alma/views/img/logos/p3x_logo.svg');
+            $paymentOption->setAction('alma/payment');
+            $paymentOption->setCallToActionText($this->module->translate('Pay with Alma', [], 'Modules.Alma.Checkout'));
+            $paymentOption->setInputs([
                 'token' => [
                     'name' => 'token',
                     'type' => 'hidden',
@@ -77,7 +68,7 @@ class PaymentOptionsService
                 ],
             ]);
 
-            $paymentOptions[] = $this->paymentOption;
+            $paymentOptions[] = $paymentOption;
         }
 
         return $paymentOptions;

@@ -32,6 +32,9 @@ class EligibilityService
     }
 
     /**
+     * Get eligibility for checkout based on local fee plan configuration.
+     * @param \Cart $cart
+     * @return array
      * @throws \PrestaShop\Module\Alma\Application\Exception\EligibilityException
      */
     public function getLocalEligibilityForCheckout(\Cart $cart): array

@@ -2,6 +2,7 @@
 
 namespace PrestaShop\Module\Alma\Application\Service;
 
+use Alma;
 use PrestaShop\Module\Alma\Infrastructure\Form\ApiAdminForm;
 use PrestaShop\Module\Alma\Infrastructure\Form\ExcludedCategoriesAdminForm;
 use PrestaShop\Module\Alma\Infrastructure\Proxy\ProductProxy;
@@ -28,10 +29,10 @@ class ExcludedCategoriesService
      * @var ProductProxy
      */
     private ProductProxy $productProxy;
-    private \Alma $module;
+    private Alma $module;
 
     public function __construct(
-        \Alma $module,
+        Alma $module,
         \Context $context,
         ExcludedCategoriesRepository $excludedCategoriesRepository,
         ConfigurationRepository $configurationRepository,
@@ -48,6 +49,7 @@ class ExcludedCategoriesService
 
     /**
      * @return string
+     * @throws \SmartyException
      */
     public function createTemplate(): string
     {

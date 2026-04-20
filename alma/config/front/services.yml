@@ -22,9 +22,6 @@ services:
     arguments:
       - !php/const _NEW_COOKIE_KEY_
 
-  alma.payment_option:
-    class: 'PrestaShop\PrestaShop\Core\Payment\PaymentOption'
-
   alma.excluded_categories_service:
     class: 'PrestaShop\Module\Alma\Application\Service\ExcludedCategoriesService'
     arguments:
@@ -39,7 +36,6 @@ services:
     class: 'PrestaShop\Module\Alma\Application\Service\PaymentOptionsService'
     arguments:
       - '@alma.module'
-      - '@alma.payment_option'
       - '@alma.currency_validator'
       - '@alma.excluded_categories_service'
       - '@alma.eligibility_service'
