@@ -13,11 +13,16 @@ class ConfigurationRepository
     /**
      * @param string $key
      *
-     * @return string|false
+     * @return string
      */
     public function get(string $key): string
     {
-        return Configuration::get($key);
+        $getValue = Configuration::get($key);
+        if (false === $getValue) {
+            return '';
+        }
+
+        return $getValue;
     }
 
     /**

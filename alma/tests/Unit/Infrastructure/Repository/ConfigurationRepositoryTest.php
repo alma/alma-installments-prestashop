@@ -12,6 +12,11 @@ class ConfigurationRepositoryTest extends TestCase
         $this->configurationRepository = new ConfigurationRepository();
     }
 
+    public function testGetFalseReturnEmptyString()
+    {
+        $this->assertSame('', $this->configurationRepository->get('non_existent_key'));
+    }
+
     public function testGetMode()
     {
         $this->assertIsString($this->configurationRepository->getMode());
