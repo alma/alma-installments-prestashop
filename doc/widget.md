@@ -70,10 +70,17 @@ When both the hook and the widget tag containers are present on the page, the wi
 
 Module v5 allowed merchants to define a custom CSS selector to control where the cart widget was injected in the DOM. This setting is preserved and still honored in the current version.
 
-When `ALMA_CART_WIDGET_POSITION_CUSTOM` is enabled, `WidgetFrontendService` uses the CSS selector stored in `ALMA_WDGT_POS_SELECTOR` as the widget's `containerId` instead of the default `#alma-widget-cart`. If the option is disabled, the standard container ID is used.
+When `ALMA_CART_WIDGET_POSITION_CUSTOM` is enabled, `WidgetFrontendService` uses the CSS selector stored in `ALMA_CART_WDGT_POS_SELECTOR` as the widget's `containerId` instead of the default `#alma-widget-cart`. If the option is disabled, the standard container ID is used.
 
 - `ConfigurationRepository::getCartWidgetOldPositionCustom()` — returns `true` if the legacy custom position is active.
 - `ConfigurationRepository::getCartWidgetOldPositionSelector()` — returns the saved CSS selector (e.g. `#my-custom-selector`).
+
+The same backward compatibility exists for the product widget. When `ALMA_WIDGET_POSITION_CUSTOM` is enabled, `WidgetFrontendService` uses the CSS selector stored in `ALMA_WIDGET_POSITION_SELECTOR` as the widget's `containerId` instead of the default `#alma-widget-product`.
+
+- `ConfigurationRepository::getProductWidgetOldPositionCustom()` — returns `true` if the legacy custom position is active.
+- `ConfigurationRepository::getProductWidgetOldPositionSelector()` — returns the saved CSS selector (e.g. `#my-custom-product-selector`).
+
+In both cases, `WidgetService::getOldProductWidgetPositionForm()` and `WidgetService::fieldsValueOldWidgetPosition()` expose a toggle in the admin configuration page to let merchants disable the legacy position and switch to the standard one. The toggle is only displayed if the legacy configuration key exists in the database.
 
 ### Cart refresh
 

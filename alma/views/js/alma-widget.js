@@ -111,6 +111,14 @@ if (typeof module !== 'undefined') {
                     initAlmaWidget($, Alma);
                 });
 
+                // Product unit price in cents, initialized from the widget config (price for qty=1).
+                let productUnitPriceInCents = (function () {
+                    const $widgetContainer = findWidgetContainer($, ['#alma-widget-product', '#alma-widget-ProductPriceBlock']);
+                    if (!$widgetContainer) return null;
+                    const config = $widgetContainer.data('widget-config');
+                    return config ? config.purchaseAmount : null;
+                })();
+
                 function updateProductWidget(newAmount) {
                     const $widget = findWidgetContainer($, ALMA_PRODUCT_WIDGET_SELECTORS);
                     if (!$widget) return;
@@ -132,7 +140,7 @@ if (typeof module !== 'undefined') {
                 $(document).on('change', '[name="qty"]', function () {
                     const $widget = findWidgetContainer($, ALMA_PRODUCT_WIDGET_SELECTORS);
                     if (!$widget) return;
-                    const newQty = parseInt($(this).val(), 10) || 1;
+                    const newQty = parseInt($('[name="qty"]').val(), 10) || 1;
                     const newAmount = getProductAmountFromProductData($widget.data('product'), newQty);
                     if (newAmount === null) return;
                     updateProductWidget(newAmount);

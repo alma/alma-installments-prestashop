@@ -13,11 +13,16 @@ class ConfigurationRepository
     /**
      * @param string $key
      *
-     * @return string|false
+     * @return string
      */
     public function get(string $key): string
     {
-        return Configuration::get($key);
+        $getValue = Configuration::get($key);
+        if (false === $getValue) {
+            return '';
+        }
+
+        return $getValue;
     }
 
     /**
@@ -77,6 +82,22 @@ class ConfigurationRepository
     public function getCartWidgetOldPositionSelector(): string
     {
         return $this->get(CartWidgetAdminForm::KEY_FIELD_CART_WIDGET_POSITION_SELECTOR);
+    }
+
+    /**
+     * @return bool
+     */
+    public function getProductWidgetOldPositionCustom(): bool
+    {
+        return (bool) $this->get(ProductWidgetAdminForm::KEY_FIELD_PRODUCT_WIDGET_POSITION_CUSTOM);
+    }
+
+    /**
+     * @return string
+     */
+    public function getProductWidgetOldPositionSelector(): string
+    {
+        return $this->get(ProductWidgetAdminForm::KEY_FIELD_PRODUCT_WIDGET_POSITION_SELECTOR);
     }
 
     /**
